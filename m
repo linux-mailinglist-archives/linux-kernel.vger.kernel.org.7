@@ -1,387 +1,100 @@
-Return-Path: <linux-kernel+bounces-876512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B89C1BB49
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:37:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EBAC1BD45
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81F825A5041
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:26:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76FED5C525C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DCF328622;
-	Wed, 29 Oct 2025 15:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8B13358A5;
+	Wed, 29 Oct 2025 15:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NAWlCtzi"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p14OK/pA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706AA325705
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C74132862C;
+	Wed, 29 Oct 2025 15:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751585; cv=none; b=XRaPdc3GOSZ3GCrCccACECaG9wpFnzr9FVKVRsc/ZJEBr/4Ksp13LSlF0NV2RbyfOjYH3bJO4CSh72GKheJ25uz524Iq39hko1rAAx3h659aM9LHI8cwSVSYa0t38z56LRbFQLHzZeWPOHh2UYqCrG2xpQLIPPiPKl/tAhLhGUM=
+	t=1761751597; cv=none; b=akKfZtf4CaToVDCuul9bE4RMs/pdlFX2rflZTV3NruECeS86ClDNVew2KOwb6kqreNLXd7t6FulUVEWCC0+i/iALyj6PJreMlbxe/aaVHMH/+AAnfTMELaDDtALYrIsnBQJdPiFWKJbtxdupyPAhnGJxGmd0B6dlTeNHARtwWec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751585; c=relaxed/simple;
-	bh=A75nn3ZcdPFO0/iiRt1im4FRP7YD0CDNuQLHKxOdYDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DSJUIjqFvNfQoefEsnSxLU0NL56/zL6EcLZeHLIcw+pcaf8qnSfrXNfg7on+hpnP+hkPKc5bl731orJqkSdY7R22Ws76iXQonLAkGp0rNImX6qA8shklAR4dXQqfqRGSKZ4ZvCcMF5U1SZbz8ilB7OqbeeTF8rsQUqdKrwi7Wco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NAWlCtzi; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <541b7765-28eb-4d1f-9409-863db6798395@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761751570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h6rT2u5jZqcJFPEHt5+2nqGYZpBxrbksH3Wcy8bmlmM=;
-	b=NAWlCtzibVwTAvbMq6Qwih+hGX4htTCfp8dSY4rkbqp+Ki6earJpWa7ne0St86JahdCcdO
-	TUjzYLZJ2ADZDPN5Dl33kJOmPlHH2FiaNLAOihjv0vhfaUQ/WYr1oCTvwe3u4U26GH2KjR
-	wzEFQLhnwulAE0eR3YsqY/r10RIlc40=
-Date: Wed, 29 Oct 2025 08:26:01 -0700
+	s=arc-20240116; t=1761751597; c=relaxed/simple;
+	bh=DOI6gyVeo4a6kw7xLiiWwg46FMQvx6VSCtZfRDcnTjc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=d2jqfL8tu/mvZkLu07JrC91QyT5cAIXe6++/emF/7UDH2yyLZ9/iw1IQs/D0hSGibeRP9xMTSLQ1I58IINoyjT6vjrQV9R9/qB9Z8D5yQDqvCoOQlVfYCBcteXYnfn3ZYbDCCKABPzX9EQd+EQsoevVO7a9y9O/ebBlpsNJn5gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p14OK/pA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1052C4CEF7;
+	Wed, 29 Oct 2025 15:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761751597;
+	bh=DOI6gyVeo4a6kw7xLiiWwg46FMQvx6VSCtZfRDcnTjc=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=p14OK/pAxog1HFDJrJs0vo0gmUYhgqGQcPcbeoSNofB1v6oECmN/OP5xhM1Fi8l3p
+	 2WIxf/xTZwds0sAujVxkm9LHAvP9RBIlYG8w1xccSzVIyvp2kwTsalJbW3Aapwfzf+
+	 qtzlEGqjkC8JVRM95YcopwoEa632ZaMeu/lmd1w2PEn+GehZQO0gP3eXSKPlBLghKa
+	 bHxi7jtVm9Zw556OHI8yk8/sZ1awvekCUj51stG+qYAVxNd4wGCjUNEWvwcNFwdUs/
+	 UBlGJrhIhdtxV4jufH+UaT+KUaj+bCpebyrjoF8eCeJNff/c/3OCJx5YCJ3n1cKbKx
+	 vEc/yUZesOZOA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
-Content-Language: en-GB
-To: Sahil Chandna <chandna.sahil@gmail.com>
-Cc: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com, andrii@kernel.org,
- ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
- eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- listout@listout.xyz, martin.lau@linux.dev, netdev@vger.kernel.org,
- sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com,
- linux-rt-devel@lists.linux.dev, bigeasy@linutronix.de
-References: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
- <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
- <aPklOxw0W-xUbMEI@chandna.localdomain>
- <8dd359dd-b42f-4676-bb94-07288b38fac1@linux.dev>
- <aP5_JbddrpnDs-WN@chandna.localdomain>
- <95e1fd95-896f-4d33-956f-a0ef0e0f152c@linux.dev>
- <aQH5EtKBbklfH0Wq@chandna.localdomain>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <aQH5EtKBbklfH0Wq@chandna.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 Oct 2025 16:26:31 +0100
+Message-Id: <DDUWTG8C84CF.TIASKA4B1K6Q@kernel.org>
+To: "Christian Brauner" <brauner@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Jan Kara" <jack@suse.cz>
+References: <20251020222722.240473-1-dakr@kernel.org>
+ <20251020222722.240473-2-dakr@kernel.org>
+ <20251029-orgel-eishockey-44848cc46a6d@brauner>
+In-Reply-To: <20251029-orgel-eishockey-44848cc46a6d@brauner>
 
-
-
-On 10/29/25 4:22 AM, Sahil Chandna wrote:
-> On Mon, Oct 27, 2025 at 08:45:25PM -0700, Yonghong Song wrote:
->>
->>
->> On 10/26/25 1:05 PM, Sahil Chandna wrote:
->>> On Wed, Oct 22, 2025 at 12:56:25PM -0700, Yonghong Song wrote:
->>>>
->>>>
->>>> On 10/22/25 11:40 AM, Sahil Chandna wrote:
->>>>> On Wed, Oct 22, 2025 at 09:57:22AM -0700, Yonghong Song wrote:
->>>>>>
->>>>>>
->>>>>> On 10/20/25 2:08 PM, syzbot wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> syzbot found the following issue on:
->>>>>>>
->>>>>>> HEAD commit:    a1e83d4c0361 selftests/bpf: Fix redefinition of 
->>>>>>> 'off' as d..
->>>>>>> git tree:       bpf
->>>>>>> console output: 
->>>>>>> https://syzkaller.appspot.com/x/log.txt?x=12d21de2580000
->>>>>>> kernel config: 
->>>>>>> https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
->>>>>>> dashboard link: 
->>>>>>> https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
->>>>>>> compiler:       Debian clang version 20.1.8 
->>>>>>> (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), 
->>>>>>> Debian LLD 20.1.8
->>>>>>> syz repro: 
->>>>>>> https://syzkaller.appspot.com/x/repro.syz?x=160cf542580000
->>>>>>> C reproducer: 
->>>>>>> https://syzkaller.appspot.com/x/repro.c?x=128d5c58580000
->>>>>>>
->>>>>>> Downloadable assets:
->>>>>>> disk image: 
->>>>>>> https://storage.googleapis.com/syzbot-assets/2f6a7a0cd1b7/disk-a1e83d4c.raw.xz
->>>>>>> vmlinux: 
->>>>>>> https://storage.googleapis.com/syzbot-assets/873984cfc71e/vmlinux-a1e83d4c.xz
->>>>>>> kernel image: 
->>>>>>> https://storage.googleapis.com/syzbot-assets/16711d84070c/bzImage-a1e83d4c.xz
->>>>>>>
->>>>>>> The issue was bisected to:
->>>>>>>
->>>>>>> commit 7c33e97a6ef5d84e98b892c3e00c6d1678d20395
->>>>>>> Author: Sahil Chandna <chandna.sahil@gmail.com>
->>>>>>> Date:   Tue Oct 14 18:56:35 2025 +0000
->>>>>>>
->>>>>>>     bpf: Do not disable preemption in bpf_test_run().
->>>>>>>
->>>>>>> bisection log: 
->>>>>>> https://syzkaller.appspot.com/x/bisect.txt?x=172fe492580000
->>>>>>> final oops: 
->>>>>>> https://syzkaller.appspot.com/x/report.txt?x=14afe492580000
->>>>>>> console output: 
->>>>>>> https://syzkaller.appspot.com/x/log.txt?x=10afe492580000
->>>>>>>
->>>>>>> IMPORTANT: if you fix the issue, please add the following tag to 
->>>>>>> the commit:
->>>>>>> Reported-by: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com
->>>>>>> Fixes: 7c33e97a6ef5 ("bpf: Do not disable preemption in 
->>>>>>> bpf_test_run().")
->>>>>>>
->>>>>>> ------------[ cut here ]------------
->>>>>>> WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 
->>>>>>> bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
->>>>>>> WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 
->>>>>>> bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
->>>>>>
->>>>>> Okay, the warning is due to the following WARN_ON_ONCE:
->>>>>>
->>>>>> static DEFINE_PER_CPU(struct 
->>>>>> bpf_bprintf_buffers[MAX_BPRINTF_NEST_LEVEL], bpf_bprintf_bufs);
->>>>>> static DEFINE_PER_CPU(int, bpf_bprintf_nest_level);
->>>>>>
->>>>>> int bpf_try_get_buffers(struct bpf_bprintf_buffers **bufs)
->>>>>> {
->>>>>>        int nest_level;
->>>>>>
->>>>>>        nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
->>>>>>        if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
->>>>>>                this_cpu_dec(bpf_bprintf_nest_level);
->>>>>>                return -EBUSY;
->>>>>>        }
->>>>>>        *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
->>>>>>
->>>>>>        return 0;
->>>>>> }
->>>>>>
->>>>>> Basically without preempt disable, at process level, it is possible
->>>>>> more than one process may trying to take bpf_bprintf_buffers.
->>>>>> Adding softirq and nmi, it is totally likely to have more than 3
->>>>>> level for buffers. Also, more than one process with 
->>>>>> bpf_bprintf_buffers
->>>>>> will cause problem in releasing buffers, so we need to have
->>>>>> preempt_disable surrounding bpf_try_get_buffers() and
->>>>>> bpf_put_buffers().
->>>>> Right, but using preempt_disable() may impact builds with
->>>>> CONFIG_PREEMPT_RT=y, similar to bug[1]? Do you think local_lock() 
->>>>> could be used here
->>>>
->>>> We should be okay. for all the kfuncs/helpers I mentioned below,
->>>> with the help of AI, I didn't find any spin_lock in the code path
->>>> and all these helpers although they try to *print* some contents,
->>>> but the kfuncs/helpers itself is only to deal with buffers and
->>>> actual print will happen asynchronously.
->>>>
->>>>> as nest level is per cpu variable and local lock semantics can work
->>>>> for both RT and non rt builds ?
->>>>
->>>> I am not sure about local_lock() in RT as for RT, local_lock() could
->>>> be nested and the release may not in proper order. See
->>>>  https://www.kernel.org/doc/html/v5.8/locking/locktypes.html
->>>>
->>>>  local_lock is not suitable to protect against preemption or 
->>>> interrupts on a
->>>>  PREEMPT_RT kernel due to the PREEMPT_RT specific spinlock_t 
->>>> semantics.
->>>>
->>>> So I suggest to stick to preempt_disable/enable approach.
->>>>
->>>>>>
->>>>>> There are some kfuncs/helpers need such preempt_disable
->>>>>> protection, e.g. bpf_stream_printk, bpf_snprintf,
->>>>>> bpf_trace_printk, bpf_trace_vprintk, bpf_seq_printf.
->>>>>> But please double check.
->>>>>>
->>>>> Sure, thanks!
->>>
->>> Since these helpers eventually call bpf_bprintf_prepare(),
->>> I figured adding protection around bpf_try_get_buffers(),
->>> which triggers the original warning, should be sufficient.
->>> I tried a few approaches to address the warning as below :
->>>
->>> 1. preempt_disable() / preempt_enable() around 
->>> bpf_prog_run_pin_on_cpu()
->>> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
->>> index 1b61bb25ba0e..6a128179a26f 100644
->>> --- a/net/core/flow_dissector.c
->>> +++ b/net/core/flow_dissector.c
->>> @@ -1021,7 +1021,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, 
->>> struct bpf_flow_dissector *ctx,
->>>                (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
->>>       flow_keys->flags = flags;
->>>
->>> +    preempt_disable();
->>>       result = bpf_prog_run_pin_on_cpu(prog, ctx);
->>> +    preempt_enable();
->>>
->>>       flow_keys->nhoff = clamp_t(u16, flow_keys->nhoff, nhoff, hlen);
->>>       flow_keys->thoff = clamp_t(u16, flow_keys->thoff,
->>> This fixes the original WARN_ON in both PREEMPT_FULL and RT builds.
->>> However, when tested with the syz reproducer of the original bug 
->>> [1], it
->>> still triggers the expected 
->>> DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt)) warning from 
->>> __local_bh_disable_ip(), due to the preempt_disable() interacting 
->>> with RT spinlock semantics.
->>> [1] [https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
->>> So this approach avoids the buffer nesting issue, but re-introduces 
->>> the following issue:
->>> [  363.968103][T21257] 
->>> DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt))
->>> [  363.968922][T21257] WARNING: CPU: 0 PID: 21257 at 
->>> kernel/softirq.c:176 __local_bh_disable_ip+0x3d9/0x540
->>> [  363.969046][T21257] Modules linked in:
->>> [  363.969176][T21257] Call Trace:
->>> [  363.969181][T21257]  <TASK>
->>> [  363.969186][T21257]  ? __local_bh_disable_ip+0xa1/0x540
->>> [  363.969197][T21257]  ? sock_map_delete_elem+0xa2/0x170
->>> [  363.969209][T21257]  ? preempt_schedule_common+0x83/0xd0
->>> [  363.969252][T21257]  ? rt_spin_unlock+0x161/0x200
->>> [  363.969269][T21257]  sock_map_delete_elem+0xaf/0x170
->>> [  363.969280][T21257]  bpf_prog_464bc2be3fc7c272+0x43/0x47
->>> [  363.969289][T21257]  bpf_flow_dissect+0x22b/0x750
->>> [  363.969299][T21257] bpf_prog_test_run_flow_dissector+0x37c/0x5c0
->>>
->>> 2. preempt_disable() inside bpf_try_get_buffers() and bpf_put_buffers()
->>>
->>> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
->>> index 8eb117c52817..bc8630833a94 100644
->>> --- a/kernel/bpf/helpers.c
->>> +++ b/kernel/bpf/helpers.c
->>> @@ -777,12 +777,14 @@ int bpf_try_get_buffers(struct 
->>> bpf_bprintf_buffers **bufs)
->>>  {
->>>         int nest_level;
->>>
->>> +       preempt_disable();
->>>         nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
->>>         if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
->>>                 this_cpu_dec(bpf_bprintf_nest_level);
->>>                 return -EBUSY;
->>>         }
->>>         *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
->>> +       preempt_enable();
->>>
->>>         return 0;
->>>  }
->>> @@ -791,7 +793,10 @@ void bpf_put_buffers(void)
->>>  {
->>>         if (WARN_ON_ONCE(this_cpu_read(bpf_bprintf_nest_level) == 0))
->>>                 return;
->>> +
->>> +       preempt_disable();
->>>         this_cpu_dec(bpf_bprintf_nest_level);
->>> +       preempt_enable();
->>>  }
->>> This *still* reproduces the original syz issue, so the protection 
->>> needs to be placed around the entire program run, not inside the 
->>> helper itself as
->>> in above experiment.
->>
->> This does not work. See my earlier suggestions.
->>
->>> Basically without preempt disable, at process level, it is possible
->>> more than one process may trying to take bpf_bprintf_buffers.
->>> Adding softirq and nmi, it is totally likely to have more than 3
->>> level for buffers. Also, more than one process with bpf_bprintf_buffers
->>> will cause problem in releasing buffers, so we need to have
->>> preempt_disable surrounding bpf_try_get_buffers() and
->>> bpf_put_buffers().
->>
->> That is,
->>  preempt_disable();
->>  ...
->>  bpf_try_get_buffers()
->>  ...
->>  bpf_put_buffers()
->>  ...
->>  preempt_enable();
->>
->>>
->>> 3. Using a per-CPU local_lock
->>> Finally, I tested with a per-CPU local_lock around 
->>> bpf_prog_run_pin_on_cpu():
->>> +struct bpf_cpu_lock {
->>> +    local_lock_t lock;
->>> +};
->>> +
->>> +static DEFINE_PER_CPU(struct bpf_cpu_lock, bpf_cpu_lock) = {
->>> +    .lock = INIT_LOCAL_LOCK(),
->>> +};
->>> @@ -1021,7 +1030,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, 
->>> struct bpf_flow_dissector *ctx,
->>>                      (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
->>>         flow_keys->flags = flags;
->>>
->>> +       local_lock(&bpf_cpu_lock.lock);
->>>         result = bpf_prog_run_pin_on_cpu(prog, ctx);
->>> +       local_unlock(&bpf_cpu_lock.lock);
->>>
->>> This approach avoid the warning on both RT and non-RT builds, with 
->>> both the syz reproducer. The intention of introducing the per-CPU 
->>> local_lock is to maintain consistent per-CPU execution semantics 
->>> between RT and non-RT kernels.
->>> On non-RT builds, local_lock maps to preempt_disable()/enable(),
->>> which provides the same semantics as before.
->>> On RT builds, it maps to an RT-safe per-CPU spinlock, avoiding the
->>> softirq_ctrl.cnt issue.
->>
->> This should work, but local lock disable interrupts which could have
->> negative side effects on the system. We don't want this.
->> That is the reason we have 3 nested level for bpf_bprintf_buffers.
->>
->> Please try my above preempt_disalbe/enable() solution.
->>
-> I tried following patch with reproducer from both syzbot [1] and [2]
-> and issue *did not reproduce* with them.
+On Wed Oct 29, 2025 at 1:49 PM CET, Christian Brauner wrote:
+> On Tue, Oct 21, 2025 at 12:26:13AM +0200, Danilo Krummrich wrote:
+>> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
+>> avoid using raw bindings types, this seems to be the better alternative
+>> compared to just using i64.
+>>=20
+>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>> Cc: Christian Brauner <brauner@kernel.org>
+>> Cc: Jan Kara <jack@suse.cz>
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>> ---
+>> Al, Christian: If you are okay with the patch, kindly provide an ACK, so=
+ I can
+>> take it through the driver-core tree.
+>> ---
 >
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index 8eb117c52817..4be6dde89d39 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -777,9 +777,11 @@ int bpf_try_get_buffers(struct 
-> bpf_bprintf_buffers **bufs)
->  {
->         int nest_level;
->
-> +       preempt_disable();
->         nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
->         if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
->                 this_cpu_dec(bpf_bprintf_nest_level);
-> +               preempt_enable();
->                 return -EBUSY;
->         }
->         *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
-> @@ -792,6 +794,7 @@ void bpf_put_buffers(void)
->         if (WARN_ON_ONCE(this_cpu_read(bpf_bprintf_nest_level) == 0))
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-For completeness, we need to add preempt_enable() here as well.
+Thanks Christian!
 
-> return;
->         this_cpu_dec(bpf_bprintf_nest_level);
-> +       preempt_enable();
->  }
->
-> [1] https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
-> [2] https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
->>>
->>> Let me know if you’d like me to run some more experiments on this.
->>
-> Shall I submit a patch with your suggested changes ?
+Based on Miguel's suggestion [1] v3 of the series introduces a new type for
+file::Offset rather than just a type alias.
 
-Please. The change looks good to me.
+Therefore, v3 [2] is significantly different, hence I will wait for you to =
+reply
+to v3 before picking up the entire series.
 
->
-> Regards,
-> Sahil
+Thanks,
+Danilo
 
+[1] https://github.com/Rust-for-Linux/linux/issues/1198
+[2] https://lore.kernel.org/lkml/20251022143158.64475-2-dakr@kernel.org/
 
