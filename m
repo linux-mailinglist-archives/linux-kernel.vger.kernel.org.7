@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-876062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF503C1A8EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CACC1A8FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A418588199
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:03:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99B6F5805AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E0C2BEFFE;
-	Wed, 29 Oct 2025 12:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130B2301001;
+	Wed, 29 Oct 2025 12:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HuSrHF1g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8/tgfN1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0FA2BEC2C;
-	Wed, 29 Oct 2025 12:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B512DA740;
+	Wed, 29 Oct 2025 12:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742286; cv=none; b=dFW0b5KXZ+1LzKC96qfAmUx3tfpMKPzVyYvkrjhWnw2+0XZ1r7ieJc37slUkutUJD+zMfr4i/OpehmIZplkw+BceABwHsfkiFcV5SOtOF16vQ9Toc+cWuKHOWO8tB//0h+Sey5vEiMH1BtblohMDzDLw42Q8LnEySwog9CDkqsg=
+	t=1761742318; cv=none; b=rHnKhgR0QRacN95DC3wSZG8EMpp4QPPo1i71CpmoZZiKB155k7lxBlUYbGeMnZxX2m12HRNcpvC64qa3zGEa7EGIoSt+K+SAbx97YskRGQ2/ckBHC+LrOTWw7wKK81/XNAlcxPXwuhjuPjufX5Asit01lPrHzWCtGnr8eUXNgzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742286; c=relaxed/simple;
-	bh=IA6/gMGcF2fDDfJ6rUgbwhSBCtmCKF8Pfd0AulLr3Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPLvjyyJ1L+HEedQ19s4xyOV79kbVxZfjsACAQC4zDI4jA3ZvCWTBnBXiGJ8u1d+Q5dDsk62cPJEiYV7euAoOlFbNNMvRtgH9Jby0FECyASicmd41uGitz2Qet6xipRK8c+zDfL6C+GXotU3xPn093Fwz/xSImm5Y9ua0kc6450=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HuSrHF1g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E6B3C4CEFD;
-	Wed, 29 Oct 2025 12:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761742285;
-	bh=IA6/gMGcF2fDDfJ6rUgbwhSBCtmCKF8Pfd0AulLr3Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HuSrHF1gX5xHlhJoXyI/WY4pftAPLZ3a2C8f/v24Nza6ZVNCJUK6/eEGOAWWYWQFc
-	 AjhuK/TnGwS4AZG3U1QvnJ8MBLM3izyqYIScijTTQvAO3Ks6fmnrdNC948qkDi7KKQ
-	 9YSnHDbNVIyZZLK26V2C9VREfS0z1hCt24z3fQM4=
-Date: Wed, 29 Oct 2025 13:51:19 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: uttkarsh.aggarwal@oss.qualcomm.com, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, mathias.nyman@intel.com,
-	wesley.cheng@oss.qualcomm.com
-Subject: Re: [RFT PATCH v3] xhci: sideband: Fix race condition in sideband
- unregister
-Message-ID: <2025102956-daunting-roping-a987@gregkh>
-References: <2025102948-trickery-creative-417e@gregkh>
- <20251029122436.375009-1-mathias.nyman@linux.intel.com>
+	s=arc-20240116; t=1761742318; c=relaxed/simple;
+	bh=trgHu+OgJ4YBzaEsKqjIc/+pTNH39DWYH/f9B8ikyNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D4IeHHfStDgfHHrhSVlL0/l97iOOaYA4GdOAMH+kH2fTRxD6XCoact1KKVqmGogRoRP0QOFiWF5ou60QCWH60qungeUtTdLQIhTfaXDAnu7kQGB+o2FJqYmadbZVd3afjcW8RxPaQINvLrwJV/rWkmR+VxBQRt5Cx2tXAnN7Loo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8/tgfN1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E79EC4CEF7;
+	Wed, 29 Oct 2025 12:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761742317;
+	bh=trgHu+OgJ4YBzaEsKqjIc/+pTNH39DWYH/f9B8ikyNE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=U8/tgfN13n5SydJrSW2k3LUUZ4eNIY1HRTg1ElVY4cFXgSwpF0WWZ9eZPJU9ZckWD
+	 lrb+ZAdbOozpfCIZ6Plzz02XXRPppgLj11zXJqYIYtqUTFP9PGISISqkaLAL7noOwJ
+	 DNBmzZBaEDdycuFtLFh1LDJZBp/Z7P8P/GazUFK9EvbjNl0RCbuLwOETxpzAWRq75Q
+	 FDkIuyQQ69dyVgUy68pgIR79nokhh0WBbwwSklr6vtSrVqj4ze/KAI4Owi+INz0co2
+	 ZjVVXWHthyRqJ2kYOXa9ESLoVfQULwHffsr1Aq5RVYtEKtXZZIIKhHpIMWTBrtCU+d
+	 JnGJ9PQRlW96Q==
+From: Christian Brauner <brauner@kernel.org>
+To: Markus Suvanto <markus.suvanto@gmail.com>,
+	David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Fix dynamic lookup to fail on cell lookup failure
+Date: Wed, 29 Oct 2025 13:51:52 +0100
+Message-ID: <20251029-abgibt-bisweilen-e4d33dc3dbbe@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <1784747.1761158912@warthog.procyon.org.uk>
+References: <1784747.1761158912@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029122436.375009-1-mathias.nyman@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1341; i=brauner@kernel.org; h=from:subject:message-id; bh=trgHu+OgJ4YBzaEsKqjIc/+pTNH39DWYH/f9B8ikyNE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQy8b68z32Ip9M04kNPV1Hass8fRYxbVneXvNPyPlQTo q426d/VjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlImTIyPLzqsyNa8O9zoS1+ cVUrTcI7v9hG13X9O1/okseu3K3/n5Fh+gLuR1xVW1IK/ViqEyXKVV84/VUT2La1p5Gl6Zy0jQE 3AA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 29, 2025 at 02:24:35PM +0200, Mathias Nyman wrote:
-> Uttkarsh Aggarwal observed a kernel panic during sideband un-register
-> and found it was caused by a race condition between sideband unregister,
-> and creating sideband interrupters.
-> The issue occurrs when thread T1 runs uaudio_disconnect() and released
-> sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
-> the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
-> a crash.
+On Wed, 22 Oct 2025 19:48:32 +0100, David Howells wrote:
+> When a process tries to access an entry in /afs, normally what happens is
+> that an automount dentry is created by ->lookup() and then triggered, which
+> jumps through the ->d_automount() op.  Currently, afs_dynroot_lookup() does
+> not do cell DNS lookup, leaving that to afs_d_automount() to perform -
+> however, it is possible to use access() or stat() on the automount point,
+> which will always return successfully, have briefly created an afs_cell
+> record if one did not already exist.
 > 
-> Ensure new endpoints or interrupter can't be added to a sidenband after
-> xhci_sideband_unregister() cleared the existing ones, and unlocked the
-> sideband mutex.
-> Reorganize code so that mutex is only taken and released once in
-> xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
-> 
-> Use mutex guards to reduce human unlock errors in code
-> 
-> Refuse to add endpoints or interrupter if sb->vdev is not set.
-> sb->vdev is set when sideband is created and registered.
-> 
-> Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
-> Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
-> Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
-> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> ---
+> [...]
 
-Looks good, thanks for respinning this.  I don't know if it fixes the
-issue, but it looks sane :)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] afs: Fix dynamic lookup to fail on cell lookup failure
+      https://git.kernel.org/vfs/vfs/c/330e2c514823
 
