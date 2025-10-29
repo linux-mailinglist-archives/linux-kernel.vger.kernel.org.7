@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-876045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C31CC1A8CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:12:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FDFC1A80A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E875884F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38CA1A63CC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B773596E3;
-	Wed, 29 Oct 2025 12:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B42F3596EA;
+	Wed, 29 Oct 2025 12:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQVzvhI4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CHDIzTnr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="otwHCUiJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB34A3590CC;
-	Wed, 29 Oct 2025 12:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5773596E6;
+	Wed, 29 Oct 2025 12:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761741593; cv=none; b=I2YQf2h4ihtqiFd58C6b/JxgWZ93JX27pl4eR5qE9j5oitRBslSEk2FPReUMRb7IOlwRyX/vg6RtBkq3OvvTjzBd3ywxh9e2tpY30erLViT9lyiETP6UciZfNb+8YW171N9ykBGh5YEptwOiSVldG9GAekM6er+pXn+z14YoVhY=
+	t=1761741596; cv=none; b=BRnkBf6cQzzqA0kFxTOeOWQB2sqX1+kgdh+BIP7KZhsEvIvUDU3WS5rTeRyQaiAqIZqqqnyD2G4LKx9N8v0RCAbi2qn1KIAGVKKbHRbC0t71C9pnAAcyNDh6cubO/qnNydPZQu6At6+pLReveZvECT/8XpI5PUCQMGUGyNYnKWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761741593; c=relaxed/simple;
-	bh=oItGI3gaeX0LbA7f+lmtznbanR9gHvj7um23N51MZD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUJtdf90N1b73mYusuCJD0NG3NJfimAwC7o1zJ+V3p9YWcJauNA84SUPnsW596ZEN3JLfsDG+dhM0siampN5CFdPzN/FZFg7fJICgHZpuA1zjTMW890rqU59ZLdkqxC7t5qw59oH1u8YgH6LEm9GTm28ZYlLeA7Ont95oM7/NVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQVzvhI4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C08DC4CEF7;
-	Wed, 29 Oct 2025 12:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761741591;
-	bh=oItGI3gaeX0LbA7f+lmtznbanR9gHvj7um23N51MZD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oQVzvhI4br2EUD6cJ6INSkNPzmq/N0lp1dCm1XyG2KSN5m7FVqFc8hVygLWZFAAFB
-	 j2/mcCNv9Na9WPoeVd+OHn85jkvfIu+pCDyJbUXWCxDJf7mjIrj88GvmZXJOP7t6QJ
-	 krgIT/KwdKIsXqTb7dmZ4DV+tbU6mXGCP9QjnqccHdKREbu/OndEC+REoYiAogTZPM
-	 Mb6Hdq3uFLURgMsRN/nsB7ZlDuqtBK5DDa7Fm9ex7A564KwI51ftFiE6LL+re8lD1F
-	 6SW/g35xF/FtTGUlqPwa5r46HWaG4QTZrk6QJia0ICHD5mQc4HCF33wC8yeCnL2rAH
-	 pcbKlTK/B+bcA==
-Date: Wed, 29 Oct 2025 13:39:45 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <christian@brauner.io>, Marc Dionne <marc.dionne@auristor.com>, 
-	Jeffrey Altman <jaltman@auristor.com>, Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org, 
-	openafs-devel@openafs.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Etienne Champetier <champetier.etienne@gmail.com>, Chet Ramey <chet.ramey@case.edu>, 
-	Cheyenne Wills <cwills@sinenomine.net>, Mimi Zohar <zohar@linux.ibm.com>, 
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 1/2] vfs: Allow filesystems with foreign owner IDs to
- override UID checks
-Message-ID: <20251029-brust-reden-b61f1a55dc3b@brauner>
-References: <20251021-agieren-spruch-65c107748c09@brauner>
- <20251014133551.82642-1-dhowells@redhat.com>
- <20251014133551.82642-2-dhowells@redhat.com>
- <1523597.1761052821@warthog.procyon.org.uk>
+	s=arc-20240116; t=1761741596; c=relaxed/simple;
+	bh=J4/4fiNX5+it+nt8aJqkW32pNkN+oppAQYbJWH38Ig0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ovcKQml/VjyBhI1qhY6OXZSWf3Tx+ck5jkmEdWZM/bino/gjeVOSHiCY0iSPp2ppgxNdR98ZBmUjnzBt72GLvUJfAYARzMbTZc6mnDAgjyFqrEYX8cK7aa6zYl7zqWl6a8Dg24Wik01p4npxooNzSosl0kUi0hu3BLrXJhzBbtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CHDIzTnr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=otwHCUiJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 12:39:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761741593;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G8+yYjj7yuRmLDm8RL5fJnPwS6OLROU8x8efpD1X+IE=;
+	b=CHDIzTnrWEUPOxvdcxaYUehgiZu+ipsTnwk4Ea9cgkKSV6DWirRurb/PxT0a0t0VSy3uqj
+	EA7ilj4Xvr/u2vNyZhqoej9nHLi+Gq6ptikODz6SSDJAIyh5HY5sUNClwk9ARM6fa86Rmz
+	II74VRPxzT7NG5nP3nyFOXqXKowqJMUZza5tqB4k5NI7EzySly79OzEsovz/Lngq+TpahP
+	ftCUIXurLK2mc1/3X7pZlg7hGmJRoF9og3JO06VhlqwtE2Q0pdQGsiXzXRfTgzk5q5HzmO
+	Lb9IzyNCHGJoG/qXbHgaJ+XX8pUB59BQWcOl3PFptg1dsJ32XzVGUKS2Pmk6bw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761741593;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G8+yYjj7yuRmLDm8RL5fJnPwS6OLROU8x8efpD1X+IE=;
+	b=otwHCUiJhG6RpmFQtNrHRkCOYEJRB7r0UQlThze/EsrebXQcKHK8s7vYCisyq9NkYO/W0O
+	Gf6GTwlaSvLvQKCw==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/CPU/AMD: Extend Zen6 model range
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251029123056.19987-1-bp@kernel.org>
+References: <20251029123056.19987-1-bp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1523597.1761052821@warthog.procyon.org.uk>
+Message-ID: <176174159143.2601451.12751489956748385782.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 02:20:21PM +0100, David Howells wrote:
-> Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > > +	if (unlikely(inode->i_op->have_same_owner)) {
-> > 
-> > Same, as above: similar to IOP_FASTPERM this should use a flag to avoid pointer derefs.
-> 
-> Can we do these IOP_* flags better?  Surely we can determine at the point the
-> inode has its ->i_op assigned that these things are provided?  This optimises
-> the case where they don't exist at the expense of the case where they do (we
-> still have to check the pointer every time).
-> 
-> > > +	if (unlikely(inode->i_op->have_same_owner)) {
+The following commit has been merged into the x86/urgent branch of tip:
 
-I think I mentioned this off-list. It looks like we can but I don't know
-if there was any history behind not doing it that way. But please try.
+Commit-ID:     94831a4857b6ffd387b52bbdc6bc444dd3658ca0
+Gitweb:        https://git.kernel.org/tip/94831a4857b6ffd387b52bbdc6bc444dd36=
+58ca0
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Wed, 29 Oct 2025 12:34:31 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 29 Oct 2025 13:34:27 +01:00
+
+x86/CPU/AMD: Extend Zen6 model range
+
+Add some more Zen6 models.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://patch.msgid.link/20251029123056.19987-1-bp@kernel.org
+---
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index bc29be6..8e36964 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -516,7 +516,7 @@ static void bsp_init_amd(struct cpuinfo_x86 *c)
+ 			setup_force_cpu_cap(X86_FEATURE_ZEN5);
+ 			break;
+ 		case 0x50 ... 0x5f:
+-		case 0x90 ... 0xaf:
++		case 0x80 ... 0xaf:
+ 		case 0xc0 ... 0xcf:
+ 			setup_force_cpu_cap(X86_FEATURE_ZEN6);
+ 			break;
 
