@@ -1,85 +1,113 @@
-Return-Path: <linux-kernel+bounces-876662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D567CC1C084
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5EAC1C02D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5BF9644DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:10:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05EE4661AF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8986B33F399;
-	Wed, 29 Oct 2025 16:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E6D2C237F;
+	Wed, 29 Oct 2025 16:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="s/A1U/KI"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afGpRvZ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661A92F0C7E;
-	Wed, 29 Oct 2025 16:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9E31DEFE0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753993; cv=none; b=ttP1+RLD/Rv7rBrfFDubJkPIYNJRZd8vQHKTB4OrF6Qfpos+jieimIP5BEYRSa6kROsGe4SByfo4dfujT2jV3sv4EFTDO9Di4W2MiZIk/AM/7+lsJyosKwuSDSgIj0Gl6mybnXVLjumKb1aE6HRYB2UDIF90S5E+DJfyU7zXEoQ=
+	t=1761754063; cv=none; b=hkybRnqjb5TtNV+fbKTFmoFvZV8E816N2MbWXMoBdFoXOu3VGmw3pAECItOslHIVGoaPw7j6atWEctoIP4jYoKvQscqu8Prh6BokbAAqFFTopwXHPjiXFIhl5EUxHIF7VDVetDV1xXoJQrBD1ibnHagNSN5hazqVaCDRhG/1BQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753993; c=relaxed/simple;
-	bh=G4fzs3qtuEZIZn6cNxi72MzHtdibefMFo5Ql+qG0WZg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DLW6N2Cqrod6cKLH9BrM/DGITa1xAPhB7Pq26NZKL0INT5R8mLLnTi+HioNU+iTlRvi6vYG4easixrLeq4vkEWJmyjlkC+SfFWgHQ0gapqPMGS5dY4T6wsD/U1+K3Vz56FDiKcIL1jjK71/752TuIgZ2kdZU6q2EYBZbRNAaww0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=s/A1U/KI; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 74C68406FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761753991; bh=lebOGd4UUNX/YiX1K71ON6xZSdBIVmPT1U7jx75xdHI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=s/A1U/KId6KvmqDVwRh2H7K+2wzytsyUXksrEVNPOLZodvb+WILqnipYulKSCfSJ2
-	 6wJarniWzfulx7L5nsSQU4hVfYoWLDx86Xwc8vq8HTQnrY+SFE+jkaPE/e5so72t8n
-	 fHPk0RP02PeosSlXFChYtzBUgwt9ohEgtqR+ajWGQchIS+1+NIlPeBbHGCkQJa0N4s
-	 wDF8nkjWBmut2dvQ0xTQuXWRuvHsTLzxf9ShTcTKRqk99+bvIuHod1ALr9kNXhnewP
-	 zX5UrA8domUoDfs3DVLTZ1WlXUKTO0gEWGd9qEjg1v9aFsn6FxJpTMUh9/sDGyIVtp
-	 pDb19D5HQ5FpA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 74C68406FB;
-	Wed, 29 Oct 2025 16:06:31 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Nadav Tasher <tashernadav@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Nadav Tasher <tashernadav@gmail.com>
-Subject: Re: [PATCH] docs: replace broken links in ramfs-rootfs-initramfs docs
-In-Reply-To: <20251025171625.33197-1-tashernadav@gmail.com>
-References: <20251025171625.33197-1-tashernadav@gmail.com>
-Date: Wed, 29 Oct 2025 10:06:30 -0600
-Message-ID: <87jz0dr8u1.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761754063; c=relaxed/simple;
+	bh=F5+Hw1BLHdd/jOpifshQgHGM/MjPHsTkf301Hl25/QM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NbPtRIysF2gkYNi5t+8aSZGBUXEs285Z8KFq6hgKi2QK6GYd+0nmw0AqZECyYs3XcviN9m97jbbvJKakSIg2/k6ES9IPOf/0qZtO1efwKIk6x/WpklKnKhaqCi+vNyDmenp5mCh8qw18y90hfgLOgOBTVOtx38x3eU51Ww48DQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afGpRvZ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B173C116C6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761754063;
+	bh=F5+Hw1BLHdd/jOpifshQgHGM/MjPHsTkf301Hl25/QM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=afGpRvZ+BUQkZZN4tAn6Zcb6yp4ha+EWuH1pLCq21d0CIqP0WvSHqBKMgs3gSN90C
+	 iy8GSuq1op3iwgoOo+mj3yoOsYkTZwNZeGW21ZH2Omw+hrppimrxKooIzMsgdUk1gi
+	 mE6BLNmdKG8y+Z7Gjxln6y6qWZfZvYyWlS4QKImEYKc6yj882iWelIUSG/QjHSdJQv
+	 8XAZtujQL7kCqLbBYe+YmESIwmhppcBWltjmj8fgLKzvaC4sL/RQ4hlYZe6rEmIyzu
+	 0xPu2m0xBa2whsslaK1p7JpGbN8pDSPJ2qfti5SjKyq/d7e5xS9aZ8gMdeotoOaIQ8
+	 GNMS22URwARsA==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-44d9d7aacc5so24696b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:07:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDndz+6oPjcAFb1KyV9hfVmoIzO/ntregs28aTRZAVVamPfI681lt3Te4KiJtVtEjiwdHHeJjFfCo+XfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKEyXLbIWqo4cN3QpJFmfIKFirhzj8Vz6MqVgkvEtR8ZQmya1q
+	CI39PpG8rNr0LQWqChLh0NPt5vj4dJ/GLMy92JNn9s/co6vcwHXIdRUSw3iCED3NafnblAwjyL1
+	uWHSkcapPpXoPIwYVEfXpx6G9yw3yS08=
+X-Google-Smtp-Source: AGHT+IEbzw7Oo24iBx/i5pLAvUOqV49daxyoxh0Zst0nRDhzzuj4dZSkbx+qzIQEpV908Ef4LcFLiMCpaQk0k3UlWJo=
+X-Received: by 2002:a05:6808:2225:b0:43b:426b:fbeb with SMTP id
+ 5614622812f47-44f7a7a9e93mr1512151b6e.27.1761754062653; Wed, 29 Oct 2025
+ 09:07:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <5935682.DvuYhMxLoT@rafael.j.wysocki> <4dd9d86f-7c20-40fa-838c-b7634bbebf9a@kernel.org>
+In-Reply-To: <4dd9d86f-7c20-40fa-838c-b7634bbebf9a@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 29 Oct 2025 17:07:31 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hXFtCcon6uBfjXVtst=zDQ6_o-O3aBt4-SH_auw0YBEg@mail.gmail.com>
+X-Gm-Features: AWmQ_blvJ_9P1rUGl3893iYEqZa5Dq74kJVWCTqPKMtbs9EWSV31Imp3LVTF2qc
+Message-ID: <CAJZ5v0hXFtCcon6uBfjXVtst=zDQ6_o-O3aBt4-SH_auw0YBEg@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: sleep: Allow pm_restrict_gfp_mask() stacking
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Askar Safin <safinaskar@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Nadav Tasher <tashernadav@gmail.com> writes:
-
-> http://www.uwsg.iu.edu/ doesn't seem to exist anymore.
-> I managed to find backups on archive.org, which helped me find
-> the right links on https://lore.kernel.org/.
+On Wed, Oct 29, 2025 at 4:22=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
 >
-> http://freecode.com/projects/afio was also down, so I figured
-> it could be replaced with https://linux.die.net/man/1/afio.
+> On 10/28/25 3:52 PM, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Allow pm_restrict_gfp_mask() to be called many times in a row to avoid
+> > issues with calling dpm_suspend_start() when the GFP mask has been
+> > already restricted.
+> >
+> > Only the first invocation of pm_restrict_gfp_mask() will actually
+> > restrict the GFP mask and the subsequent calls will warn if there is
+> > a mismatch between the expected allowed GFP mask and the actual one.
+> >
+> > Moreover, if pm_restrict_gfp_mask() is called many times in a row,
+> > pm_restore_gfp_mask() needs to be called matching number of times in
+> > a row to actually restore the GFP mask.  Calling it when the GFP mask
+> > has not been restricted will cause it to warn.
+> >
+> > This is necessary for the GFP mask restriction starting in
+> > hibernation_snapshot() to continue throughout the entire hibernation
+> > flow until it completes or it is aborted (either by a wakeup event or
+> > by an error).
+> >
+> > Fixes: 449c9c02537a1 ("PM: hibernate: Restrict GFP mask in hibernation_=
+snapshot()")
+> > Fixes: 469d80a3712c ("PM: hibernate: Fix hybrid-sleep")
+> > Reported-by: Askar Safin <safinaskar@gmail.com>
+> > Closes: https://lore.kernel.org/linux-pm/20251025050812.421905-1-safina=
+skar@gmail.com/
+> > Link: https://lore.kernel.org/linux-pm/20251028111730.2261404-1-safinas=
+kar@gmail.com/
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> Replace broken links to mailing list and aifo tool.
+> Great idea.  Looks good to me, and it passes the S4 tests on my side.
 >
-> Signed-off-by: Nadav Tasher <tashernadav@gmail.com>
-> ---
->  Documentation/filesystems/ramfs-rootfs-initramfs.rst | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> Tested-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
-Applied, thanks.
-
-jon
+Great, thanks!
 
