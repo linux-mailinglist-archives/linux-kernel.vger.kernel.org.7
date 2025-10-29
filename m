@@ -1,149 +1,197 @@
-Return-Path: <linux-kernel+bounces-877218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF72C1D767
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:40:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01352C1D6B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4DAE188330E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:40:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEE994E0524
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11BE31A552;
-	Wed, 29 Oct 2025 21:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7F931984C;
+	Wed, 29 Oct 2025 21:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b="FPz/K/Y2"
-Received: from out26.tophost.ch (out26.tophost.ch [46.232.182.235])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rw6GEiTV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4C213C914;
-	Wed, 29 Oct 2025 21:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.182.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15A13195E7
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761774022; cv=none; b=V1nLRBC0SbrO6s8jwASxSYZsvkmJ/n579dRwcaOD/Cxdn4UPT62qzrOoUk5LdK1qac7ipO/Mh3wzvSz5SqvcU2/I+gUix4yvbRJNRijT2H1ntu9XroGX4gr7EZyoQ6gGkTNtvinqvp52xKNumnU/UKlcZbQPTl3ljYwWrmI3Qe8=
+	t=1761773038; cv=none; b=c6d+YJIeM1J91wacy8mq3dAyIWq334kM0CWMIHxxRO59mhAFrjKhcSnKyOtp/ezvaNZsqF9jejSwgnXnDRLA7wyn2CdfhxhC1Z0TxfM5Vmqt3tlQ2GZOh4YxbfQyk567g60hEC/ZoobcXOBzw7utyT9e4v6vg/AVDC2DkydcrTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761774022; c=relaxed/simple;
-	bh=KsLICYSdai358ng0LbivT+XEiH/kal9SLt5IS1MUsRQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bucPGpF2T3y3gzRJSw2JLchlCxvI9An5Ugkxt7ZTBLDp3R4k1dKFjRo85W0BQH8yPCL1KxmBMlK5U/cNpFlyakdPfALKM3JyjhBFIeITqr6oQ5MfioPE72vrM9y5+jhcU5gYmdNxWlHGoHG7PJzQbCAZdv4/miCZeFn5vGq0d4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz; spf=pass smtp.mailfrom=wismer.xyz; dkim=pass (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b=FPz/K/Y2; arc=none smtp.client-ip=46.232.182.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wismer.xyz
-Received: from srv125.tophost.ch ([194.150.248.5])
-	by filter4.tophost.ch with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <thomas@wismer.xyz>)
-	id 1vEDeP-00EABt-KW; Wed, 29 Oct 2025 22:24:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wismer.xyz;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MCaTi5+1GdvtDvu93JLcxGyOsiwEWFfOOZdGKf+f5WM=; b=FPz/K/Y2Fn/1cbmSQ6IdK2LtDl
-	62el0AbYDSohkObKYK1HerVTZwU9l5OKqbFA6NOLcaXPTDC5tLoAMLmzHaKz45fx0VAeh7qiK6+mZ
-	h47Wv1eyltgc/7p+UGd4NbNkyEpKzxH6xnWFmXMW8wdrykqT+FrGebST95E+sa7ZXgarz10wiGJ6L
-	U5IkhOUgnAQhJN7dIveDupoXNqZnOo0OO/OQ30jqWLdV90oSnKbkBCuQDwBdaMUQNLhQZdF510Kib
-	4oOfEHmXcRFmM3yeXkYVBYYDlRab0zTJfv7NT6TuO5y9So3yK2IrZIs7mymliiVX+XeI2k5ZOL9Lr
-	khQX7ZvQ==;
-Received: from [2001:1680:4957:0:9918:f56f:598b:c8cf] (port=39522 helo=pavilion.lan)
-	by srv125.tophost.ch with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <thomas@wismer.xyz>)
-	id 1vEDeP-0000000Bf5t-1AjL;
-	Wed, 29 Oct 2025 22:24:11 +0100
-From: Thomas Wismer <thomas@wismer.xyz>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Thomas Wismer <thomas@wismer.xyz>,
-	Thomas Wismer <thomas.wismer@scs.ch>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH net-next v3 2/2] dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
-Date: Wed, 29 Oct 2025 22:23:10 +0100
-Message-ID: <20251029212312.108749-3-thomas@wismer.xyz>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251029212312.108749-1-thomas@wismer.xyz>
-References: <20251029212312.108749-1-thomas@wismer.xyz>
+	s=arc-20240116; t=1761773038; c=relaxed/simple;
+	bh=YxJkHaOGqtmtID7r7jgJwxwqavOG8btDMZK73zs/svk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gR1ru1nIbm8+B/X1Q6JOHTav7MHHUy70p0kkPsRvhprdaKYgOekqMkQsGfNnC4sPsLC1evN7jQIleaowtzZHy1vVG+Nt0+cVBLuWa47bOOGcWE8y/F5Uj+gdCzEjHbje5ZM79p2TUxerMi5k0Ptz3FJDtHcKM5v1EBRl+YutYG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rw6GEiTV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761773035;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YxJkHaOGqtmtID7r7jgJwxwqavOG8btDMZK73zs/svk=;
+	b=Rw6GEiTVBkuB2nHXgtik9wM5cnaKJAciRp876yxsZb98ITDsVDKh2u8+6A86v32Wv4gyTm
+	4iGqqlFA1FiZuGwwd3DUGm7qzvel4xWMpOctyVQDIBAVkbHvg78okToEE/IA3Kk16Eu8Tx
+	l22sUBw++PLeKR6XASjHdPEcS8W0kCk=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-319-th7f2HSVPlqRjvXIG59TKA-1; Wed, 29 Oct 2025 17:23:54 -0400
+X-MC-Unique: th7f2HSVPlqRjvXIG59TKA-1
+X-Mimecast-MFC-AGG-ID: th7f2HSVPlqRjvXIG59TKA_1761773034
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-785c4b8a18bso5200627b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:23:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761773034; x=1762377834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YxJkHaOGqtmtID7r7jgJwxwqavOG8btDMZK73zs/svk=;
+        b=l68OIrsTvDw3Rjcs46eDIeku738Xnl9YlSYzzSW9Z7xtTl5tYtTrnT8WZQq6lT4TSc
+         svdZnfcChsHGZiRxkMh843NqptP7+t6wPXMUq3T9noC9R6SM6nExv0FyxnXc3q2JTRga
+         CEikMHkZ12nM1+J7aa4VoMuuVIBoVlRhB1Zs9eV3BF87rJ/JvOvkcPTnW5NXrdQ2mXba
+         pGfiOfEdurFURArqIPOd0cfM3VMFDVNLqpXAxYw5w0s+idTt1tiyomjJ7C5VwB0AWotu
+         SoWkugxY9DnqfTowkvC/e/Uny4TbbbJUtj3ShcJTe7zDFoGC/PQF/xiPogWXvwATd/Ty
+         QbtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiv/RrAVueWZtjVtqJfk7osyByCjCIBKMCiGWTI/0zPeHUUq1xFEH3GnbD2WRMu18G6cIf48qzqPZChWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5fNjwqT6Jea7uQdpq/YQ+BrFARzXi0pPeHUMKqv54KiqGNNrn
+	0k5S7xYq3DOl4z8wC7hR1FqYd0UYdgBUC6uZWeg3+YMssE5igt+FF4XDE3tD1xhq6zepK5Wz9cO
+	GjFjqiuaT/6yvpa8kFGYZXMLALsIUM/GAEL+3WCgJaFmZNIXMcI+j2ReImHBrccW4V3nFg9xPQ/
+	B4SUNInvVIjJuhyTmnFePMHnPkgc1uR8TSgfWa7Kxr
+X-Gm-Gg: ASbGncslXYsI7gsD2hqFtzpaXZ6P6V7Ow0l+h0TysWfy48CVgxJDvn9J3TyOLVQA2ev
+	xIyGVegJT4kaWtijG48wYBsHl5C5y1z/pQKbWd5soRtWY1EdMkKqOvrAwn8kVbMgU67heKMnczd
+	b405rRsqXZNaDdhcstCBF/sc6aydXdhbFecV2qGx0Cg18jFsUmO3CuM/nsnJsJxuz4e8jqxg==
+X-Received: by 2002:a05:690c:6701:b0:783:6943:f530 with SMTP id 00721157ae682-78629002465mr47289457b3.63.1761773033725;
+        Wed, 29 Oct 2025 14:23:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8yc33v52nQ6YPYjNybWuYm4cbGSVVsczrtKKNT1ij0PL3hQrawg7LmLb9r6Fd2P+MKYkK8oJ/nx9Rz6pq4gs=
+X-Received: by 2002:a05:690c:6701:b0:783:6943:f530 with SMTP id
+ 00721157ae682-78629002465mr47289077b3.63.1761773033204; Wed, 29 Oct 2025
+ 14:23:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Get-Message-Sender-Via: srv125.tophost.ch: authenticated_id: thomas@wismer.xyz
-X-Authenticated-Sender: srv125.tophost.ch: thomas@wismer.xyz
-X-Spampanel-Domain: smtpout.tophost.ch
-X-Spampanel-Username: 194.150.248.5
-Authentication-Results: tophost.ch; auth=pass smtp.auth=194.150.248.5@smtpout.tophost.ch
-X-Spampanel-Outgoing-Class: unsure
-X-Spampanel-Outgoing-Evidence: Combined (0.50)
-X-Recommended-Action: accept
-X-Filter-ID: 9kzQTOBWQUFZTohSKvQbgI7ZDo5ubYELi59AwcWUnuV5syPzpWv16mXo6WqDDpKEChjzQ3JIZVFF
- 8HV60IETFiu2SmbhJN1U9FKs8X3+Nt208ASTx3o2OZ4zYnDmkLm5Mv/tafLC72ko3Lqe/Da7zC9N
- dw2t5iMEflZxRNqEOiZKZR2tNRPIxp/vINc/oXVUCtmoQhY2xrBb8C+tWUvqrqBKsSdhvd/J5sX5
- daZjkYv0hq6Ot6Cbd9hg3807OZKQzthz0vNkOX8Em4cj6D/wdel5pGtBZGkILbtkwjuL+TU9W7vD
- 6C469DIPe8wH3iOJ3xyMg3et4b3PQUopDmbZCssYHNuxAmlPRpR5yzngsxCROUzReCS8EpKh0It9
- L25JS816nuiE0t5pG6MLXGczoanVmeCF7bI0BP7dENKtPTBPq+vGO3Vx+SwwWschmkdvs376y2A4
- OBi1/UyqO7jQnnICeA+KlS7G8xqewTcs6w6HLg3eq1lKkYVFbZT99AeINpdbOTIWFiLv1jhppNXa
- xS6MN8xFxlxHZge6OlcoYA//qN5p5dmu6xjQN9nmCfj7VmpmZJyx9iy0UVkVD75IgLollI+8fg4q
- Ktu8I/h2Z0dHZM6qE0STp2v0JiRE8jha5ZR/nf5efcITxrfNKzy0W9Bd37g8M9SCqD8uOq9nJ+Mm
- AyVp7BgHET6y8CCeFlQ7QPOIjlkSAfAYMUguLL/iJ9vYqKPILmSoZcvfXhdPMA/OB6L3DS5gd1SE
- E3USj80Z55NePwA7jxwlhcjVdk/mr85ytrd63MVeviF0i7IZfcqGEigUra+zu74YMVqBb/nqBf/o
- O9ENx2nriip8WhgYbnEnhEbOEzk5yB9ZHNSFnOX3WOuu10rVtxDPgG7Vtev3VUWM7vJdUMhhfiBi
- T4p0qQinxQdAM7oWNvokRStU21kywDQw+mt8yiYotxY5kTqW31/E3ahF5MMcDI7KdpjQKSCN+J6l
- bGev7o3ca3HK7nAdJ4O6PN0m2d+J9ACj3NF3yf2emCiQ6AuTowflAWn4v/afTNuGqIKbeT3Q0BtD
- AboBIkUL/j1Y48GvmeURQjjEeKVXbbsuQxCT7KwYHrWmLStOsQFbw8vrkGLslTiuxw4nPK5DkQL/
- /M3fHsVNrsMGJz4RQfBVfxkAwoVpA4J/KzRZEq6vMKhJ9oG2v1yvThzPEGEatp9rvw0eoI0HqUDY
- Z5lBVqqSQepN0b2sqifLOj/1zwA5Elj0L2+pr2KRBXGwDoDEJrayfp9Tsh2+VPTlfegw9R5Cyryt
- +7lKCjnJY+t4m7skVkCUrb1O+GFi8/GtOCoPdeOKuroIXJBF3iBhveOWAg2/DdpIH6kX9BAh5T56
- bZ65fgYTpVbNpCTXfzY/9c8AORJY9C9vqa9ikQVx1Rhgh1oSgTV2HRO5RU/ccaLd8PL+e7kGwNtP
- GEbZHUTlo9rdeDz1q6e5q9bAUPzG/Nre5J0/CRkN14v1yHfTQHe0DazGWAam0o2Vp5zQ/L8xL7hr
- JSk60SF3F6RYOYr2
-X-Report-Abuse-To: spam@filter1.tophost.ch
-X-Complaints-To: abuse@filter1.tophost.ch
+References: <20251022183717.70829-1-npache@redhat.com> <20251022183717.70829-7-npache@redhat.com>
+ <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local> <CAA1CXcA4AcHrw18JfAoVygRgUZW3EzsN6RPZVrC=OJwSNu_9HA@mail.gmail.com>
+ <e69acbc5-0824-4b07-8744-8d5145e2580b@redhat.com> <e66b671f-c6df-48c1-8045-903631a8eb85@lucifer.local>
+ <74583699-bd9e-496c-904c-ce6a8e1b42d9@redhat.com> <3dc6b17f-a3e0-4b2c-9348-c75257b0e7f6@lucifer.local>
+ <CAA1CXcD1YDAbYzdYfchOWbmUasa3tN55AYroOLJb2EqoQfibvw@mail.gmail.com> <02a72419-bc89-481a-ad2a-a3c91713244d@lucifer.local>
+In-Reply-To: <02a72419-bc89-481a-ad2a-a3c91713244d@lucifer.local>
+From: Nico Pache <npache@redhat.com>
+Date: Wed, 29 Oct 2025 15:23:27 -0600
+X-Gm-Features: AWmQ_bnwjuOd-l21r_gYz6uTD3EwVnE8ezkHiJEP0hwQdGdZ9Dom1N0UNfRsm3E
+Message-ID: <CAA1CXcDR7pe1jKvPOBv-WVYObYtZNNx0w9vESaUsLe+BPR=Dzg@mail.gmail.com>
+Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
+ collapse_max_ptes_none helper function
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, kas@kernel.org, 
+	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com, 
+	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, 
+	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, jglisse@google.com, 
+	surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
+	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, 
+	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Thomas Wismer <thomas.wismer@scs.ch>
+On Wed, Oct 29, 2025 at 12:59=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Tue, Oct 28, 2025 at 08:47:12PM -0600, Nico Pache wrote:
+> > On Tue, Oct 28, 2025 at 1:00=E2=80=AFPM Lorenzo Stoakes
+> > > Right, well I agree if we can make this 0/511 thing work, let's do th=
+at.
+> >
+> > Ok, great, some consensus! I will go ahead with that solution.
+>
+> :) awesome.
+>
+> >
+> > Just to make sure we are all on the same page,
+>
+> I am still stabilising my understanding of the creep issue, see the threa=
+d
+> where David kindly + patiently goes in detail, I think I am at a
+> (pre-examining algorithm itself) broad understanding of this.
 
-Add the TPS23881B I2C power sourcing equipment controller to the list of
-supported devices.
+I added some details of the creep issue in my other replies, hopefully
+that also helps!
 
-Falling back to the TPS23881 predecessor device is not suitable as firmware
-loading needs to handled differently by the driver. The TPS23881 and
-TPS23881B devices require different firmware. Trying to load the TPS23881
-firmware on a TPS23881B device fails and must therefore be omitted.
+>
+> >
+> > the max_ptes_none value will be treated as 0 for anything other than
+> > PMD collapse, or in the case of 511. Or will the max_ptes_none only
+> > work for mTHP collapse when it is 0.
+>
+> 511 implies always collapse zero/none, 0 implies never, as I understand i=
+t.
 
-Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
- Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml | 1 +
- 1 file changed, 1 insertion(+)
+0 implies only collapse if a given mTHP size is fully occupied by
+present PTES. Since we start at PMD and work our way down we will
+always end up with a PMD range of fully occupied mTHPs, potentially of
+all different sizes.
 
-diff --git a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-index bb1ee3398655..0b3803f647b7 100644
---- a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-+++ b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-@@ -16,6 +16,7 @@ properties:
-   compatible:
-     enum:
-       - ti,tps23881
-+      - ti,tps23881b
- 
-   reg:
-     maxItems: 1
--- 
-2.43.0
+>
+> >
+> > static unsigned int collapse_max_ptes_none(unsigned int order, bool ful=
+l_scan)
+> > {
+> > unsigned int max_ptes_none;
+> >
+> > /* ignore max_ptes_none limits */
+> > if (full_scan)
+> > return HPAGE_PMD_NR - 1;
+> >
+> > if (order =3D=3D HPAGE_PMD_ORDER)
+> > return khugepaged_max_ptes_none;
+> >
+> > if (khugepaged_max_ptes_none !=3D HPAGE_PMD_NR - 1)
+> > return 0;
+> >
+> > return max_ptes_none >> (HPAGE_PMD_ORDER - order);
+> > }
+> >
+> > Here's the implementation for the first approach, looks like Baolin
+> > was able to catch up and beat me to the other solution while I was
+> > mulling over the thread lol
+>
+> Broadly looks similar to Baolin's, I made some suggestions over there
+> though!
+
+Thanks! They are both based on my current collapse_max_ptes_none! Just
+a slight difference in behavior surrounding the two suggested
+solutions by David.
+
+I will still have to implement the logic for not attempting mTHP
+collapses if it is any intermediate value (i.e. the function returns
+-EINVAL).
+
+-- Nico
+
+>
+> >
+> > Cheers,
+> > -- Nico
+>
+> Thanks, Lorenzo
+>
 
 
