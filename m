@@ -1,132 +1,97 @@
-Return-Path: <linux-kernel+bounces-875904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E33AC1A16E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:42:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C81C1A13B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8CC58120D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:36:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF7318900CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B8E330337;
-	Wed, 29 Oct 2025 11:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8391DF271;
+	Wed, 29 Oct 2025 11:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3Labvbx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orre+9VH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786C73161B8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD41D32E13F;
+	Wed, 29 Oct 2025 11:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761737795; cv=none; b=M0XEBxKtAhYZ6YbaACgSiDTkXcaCyCwEU7Q3hD8HogCXJVn+mi0aijboL5rRPpqVckp64g4O4KOysAxPfhmWGT8HQIuDwksDoj+M1DmXZlJWIp+PQiX/s2W2++pr51tSgf2Ck1CLsb5qJCJzJvW1+lD8ubkPKlGcd9d8dL0fybU=
+	t=1761737786; cv=none; b=jNxga+skiSIoDTVXSSkV4y9bW+gp+Hbsvw9BgGSWtAVzHS8UrQh9IlGN1SE+NCxF51NCljx2pFV8RrYSCqguJYvaZcYQtUOw1Cm4f8FENEhgfd78s/IbB53HzPzBt84fYHoiMB3hVCYBouNwWrEEmacKOQ0nEOFro0oXih+/BXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761737795; c=relaxed/simple;
-	bh=uBh/VIvn4X+SWEQPE+uFpXGqcS5G3IgcPGIJmDTsaWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NkSfpE8pqRVNC2dfmtI80ogEz91+FqLzOkHyJZehueFT0qCL5wfeRJgmdEZu9SmXL1p0HRifFEWUhCBLd0+NPUlMO2vfEpJ0v2FKHDRQPEoo76PK+RHqSI68dAZ5LZIvyfwo7mi4BQR+T1uJvgfhq2V/u8A2QYowVRh7Etiv/6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3Labvbx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761737792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JewGrExeY4YUsH2Q4/QPO/3tV8s8JWgMbXOK4V6Kv3s=;
-	b=h3LabvbxEb6SceoL9YIVUJ8j4gIcYfZ75O5IU1AiJR2jSIhjqJnwwIfb05iZbE2+SKy3ZX
-	jBfDDlvwRX0q4l5/pyhkn5TBTxiQkYFlX2GAxAwBHPJJrL6rlc5U8eLIWWYrx2LDJuggLz
-	21cj+G4IstnnhftDvCM1qKlZaNPzaJc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-YWvrsIZNM_63qENBF2bUfQ-1; Wed,
- 29 Oct 2025 07:36:29 -0400
-X-MC-Unique: YWvrsIZNM_63qENBF2bUfQ-1
-X-Mimecast-MFC-AGG-ID: YWvrsIZNM_63qENBF2bUfQ_1761737786
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF401180899A;
-	Wed, 29 Oct 2025 11:36:24 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.80])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 015433000223;
-	Wed, 29 Oct 2025 11:36:20 +0000 (UTC)
-Date: Wed, 29 Oct 2025 19:36:08 +0800
-From: Pingfan Liu <piliu@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Joel Granados <joel.granados@kernel.org>
-Subject: Re: [RFC 2/3] kernel/cpu: Mark nonboot cpus as inactive when
- shutting down nonboot cpus
-Message-ID: <aQH8KJ8RsnzbLfN2@fedora>
-References: <20251022121345.23496-1-piliu@redhat.com>
- <20251022121345.23496-3-piliu@redhat.com>
- <877bwgw9yf.ffs@tglx>
- <aQAvnjVvJOUx78Nk@fedora>
- <87qzunuqqo.ffs@tglx>
+	s=arc-20240116; t=1761737786; c=relaxed/simple;
+	bh=2jx+TIh8gvU1T7h86kUnIS1+C65cSUbjzUvdLnx9Bdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y/FyMWatgtLRFD+0jkRohV3xJrbsOnpq8Z5/7RSPy8RIWBnZ2ciliwQLZel7pqJBZ6JgqKeFKVKX+D/cDxjCZYsW1iWYQXuArIAQopyQ0PSFXY9PForHlIPlPDZRIPN8SIC0CUaZwO7QqzH09Vkb13znac6MiUxkfWr7ODpNCY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orre+9VH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 687B7C4CEF7;
+	Wed, 29 Oct 2025 11:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761737786;
+	bh=2jx+TIh8gvU1T7h86kUnIS1+C65cSUbjzUvdLnx9Bdo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=orre+9VHQMaNwuV2EKOVk1igoUDc8lFLeD/uZYx+n0pjYWut69ePF7C7DQjMb6DcR
+	 Mfh275K5DGCIgRsCy4y4v/A2doF6BNe5HZSB5Lr3KsvUE16JVVNDdYR8k5ZvdbXMkj
+	 FIm7XvTU//CO1F06z+mqWtaKHA4RSq2nas3C+6rNCA+mkQbRRNJvnK+txIBaaVwKNm
+	 rIKlqu5oLacq35wfK11wYfxd5tN/i592pBjGwYdvLoSkqjxaYnTE2TPYeCF39ZQDyT
+	 1lDIyfKvDeJ3JGPhFVlhJYAFXgBOy8/FHDQ7O8eBfUPjpm4IRDTvVz7U6ec0pFiI94
+	 FK+vaTUKdJCKQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	sr@sladewatkins.com,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.12 000/117] 6.12.56-rc1 review
+Date: Wed, 29 Oct 2025 12:36:15 +0100
+Message-ID: <20251029113615.697924-1-ojeda@kernel.org>
+In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
+References: <20251027183453.919157109@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87qzunuqqo.ffs@tglx>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 01:59:11PM +0100, Thomas Gleixner wrote:
-> On Tue, Oct 28 2025 at 10:51, Pingfan Liu wrote:
-> > On Mon, Oct 27, 2025 at 06:06:32PM +0100, Thomas Gleixner wrote:
-> >> When kexec() is in progress, then running user space tasks at all is a
-> >> completely pointless exercise.
-> >> 
-> >> So the obvious solution to the problem is to freeze all user space tasks
-> >
-> > I agree, but what about a less intrusive approach? Simply stopping the 
-> > DL tasks should suffice, as everything works correctly without them.
-> 
-> What's intrusive about that? Task freezing exists already.
-> 
+On Mon, 27 Oct 2025 19:35:26 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.56 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
 
-Thanks for your guidance. That's a good point -- system suspending is a
-good analogy. I will check how PM handles it.
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
-> > I have a draft patch ready. Let's discuss it and go from there.
-> >
-> >> when kexec() is invoked. No horrible hacks in the deadline scheduler and
-> >> elsewhere required to make that work. No?
-> >
-> > To clarify, skipping the dl_bw_deactivate() validation is necessary 
-> > because it prevents CPU hot-removal.
-> 
-> If you freeze stuff there is nothing to do. Hibernation works exactly
-> that way without any magic hacks in a particular scheduling class, no?
-> 
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-There is a nuance: DL bandwidth represents a commitment, not necessarily
-the actual payload. Even a blocked DL task still occupies DL bandwidth.
-The system's DL bandwidth remains unchanged as long as the CPUs stay
-online, which is the case in hibernation.
+Thanks!
 
-
-Best Regards,
-
-Pingfan
-
+Cheers,
+Miguel
 
