@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-876377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D220C1BB8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:40:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F1FC1B8FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6ACA644B74
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:38:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63EF95C920A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E322DEA9B;
-	Wed, 29 Oct 2025 14:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B55133F38A;
+	Wed, 29 Oct 2025 14:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BMTZjA2P"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1ZT8Wp7I"
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE3E2D5C6C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7FC33B6FF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748630; cv=none; b=qifyhr/LmFxpDxF5ZSgO3yURpkMyRL9zmlGrMHl8n5t/KKiNhcSz+5ynds8gDw1R5zjTBIU2RdUyrP3MBilYCaoSVt5sMziUw9Bd37QzhZK/yFftNvs+8aF6IXXdU7Xqej4RVN3NH2gtFroGPlPUQfu7993aLmqmNe3crF8V36U=
+	t=1761748652; cv=none; b=pm5LqdnIBESTsZZhZZ7tTA89Zt71PBBDUAvBVKx8+aR5u+EZRGwOviuLqwnHt9hcEqMfVPT/v2+EJjejn9bfj/v2wdmVj40Dszt80RB925NKUcB/L5Qbu6h3dGycjCuVaEK0r5KGA0hyLck8sK9XBcyJTR+lpkkLRGoXkQKg9CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748630; c=relaxed/simple;
-	bh=Dv+LTI2ccj4n/EV0vGVog8BjMGvNzDlPlpeBGi9mOcY=;
+	s=arc-20240116; t=1761748652; c=relaxed/simple;
+	bh=LUx3WgpJ+5BY9H52t76Y/Q40Ik9Sz02o7+/xgILTIdY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KQmabB/gfTazo7NwRfVpkZUUy6VFbncIXfpws6pcnunGKK1bvN63oUCZcrLqxZnCeXzabu4av8vPAu6ao8r15YwttHBywpQ3Q4MS9CYJeqesxQPmzZm3Luc7uXJ5hCawnwE5IH3XBEZFtqCAQ65k+09FboqcYYIou2q9jxpytOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BMTZjA2P; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=eFJ87Inu6bnFyM4C394D1EiYM5fqVLrf4+W/bSj9lhg0Fv3fv8pism5WP3DTLSFk4kyO5lTzSN5ZHioOVhFVrcgUnotBIk7EgO83GdfVediBBVxKsEBzNYCHbw4svsNF8UDRzru/POnjUakU8cIt5brfAflVmRzZWzkgups+fFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1ZT8Wp7I; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 8CC464E413CD;
-	Wed, 29 Oct 2025 14:37:06 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5D6034E413CF;
+	Wed, 29 Oct 2025 14:37:29 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5FD05606E8;
-	Wed, 29 Oct 2025 14:37:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2562B117F81B0;
-	Wed, 29 Oct 2025 15:37:04 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 32F23606E8;
+	Wed, 29 Oct 2025 14:37:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 24ACB117F81B6;
+	Wed, 29 Oct 2025 15:37:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761748625; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761748648; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=iqMVLDuN4ai0MP2bHzX+4+j1XnBiI2VvRCwM5QgdY5E=;
-	b=BMTZjA2Pvjs5jSnws+Oa7xbu+CTkBt0d1AxX95ba8GDtE0gqV5x6Q+Ruw2Aof6JmQtMqZN
-	DNabOeN+t8SdVzTTRd472OtzE++VDPaQ2xaB5tT43SYzYjOFW/8EgG9W94E5kJxMt3Qc1w
-	Ftt19J6lU56kdTv3Xjddb8XAop531QuRMUFqfBNkLR9JZRH/b8xPq+GzI4exlS+E4OaDSz
-	ubasmz/lDv7pUkwIyHcKwUgAiYL8M2p7sGLrIDmLPpi4oXnnMn5gKgxUNHG4Xcbyjw3sC5
-	PoLbZ16ascBTypRohq1RAvVOCyCeeUjxokTB5dFQJPWxo3Nuoa7zi63j++h86A==
+	bh=TiSP9apTRMTQa/+Qm2OMWAOpekvvQHx/ArvOL/FMv3k=;
+	b=1ZT8Wp7IhA0jpWViW/RL1lMvau22xIyx6MpyZ4NhS+GjZj7+EerXqiBfDrX56WW5EHyLes
+	ccHEP4/sQvbyIumX/R/qYmutb7uJ9Hru9PZy7SnAmbkgpcXla2UfuRwdOv+wUoBAGYB5xl
+	f/HkC6TDoYP7CDXczsslPF4gP353gtam5QoJUi6cJtdTrdQynxX8OdtY5rAXGTqzjjl3Ge
+	K4VqmcKoPMckr4vd8uJ8cE+pZU0ovTPdob8l9R6GtyR5HL7iexHhSyG6u3FjoD4pxqLUxZ
+	gPEj3opRcwPyUnfkLm80y/XmxC7zdk+K/VeT/6NO8Q3a9GYKpRt2tTJv6FW2og==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 29 Oct 2025 15:36:46 +0100
-Subject: [PATCH RESEND v2 09/32] drm/vkms: Introduce configfs for plane
- rotation
+Date: Wed, 29 Oct 2025 15:36:59 +0100
+Subject: [PATCH RESEND v2 22/32] drm/vkms: Introduce configfs for connector
+ type
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,8 +58,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251029-vkms-all-config-v2-9-a49a2d4cba26@bootlin.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-vkms-all-config-v2-22-a49a2d4cba26@bootlin.com>
 References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 In-Reply-To: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
@@ -73,167 +73,127 @@ Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4874;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3281;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=Dv+LTI2ccj4n/EV0vGVog8BjMGvNzDlPlpeBGi9mOcY=;
- b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ7YNP9XXMDrcnEpQgcHgNfI8K5oQV5Wsbk8
- MSmunogl0+JAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImewAKCRAgrS7GWxAs
- 4tiGEADMtOf6Q6j/mf3hw8cA7hMigthOuclQTLk3/siF5eq2tAKJXYerW5cYJ+SAwANdlNgTC6S
- VdgfooiYs02K3ZelEcw61ZEiyu7O1yiz01P4ktW6b3HAxxTp9Ru7LIJV2ShXOYiSoCtIWfC95Xa
- 6aC+EY20c18r8MjBRZO9B6AaeBKL9sM2rEoBnW6KGixbxWMsIFq+pxLnT8xXLowkQ8naF5Ol0+m
- 1Fiq87LAJSoIq8WKZNcpp5AYabIwL5aICbgQGz8rcUYeJUEHum9WF08njnI1TXI8avjKUe/Ggs6
- RzdcwsDqX1r4meZ/FHB9ktuWVX42m/Hr7rbf0GJ6/gikYnD3jQz8VY1as2yZqyYmY43x+9Gpd0d
- EaXazISN8/RLVCVrQQHjSF8jZSzwbwuZapyubhdciCz9xkfWeqeZr0+YaqBKLM3e0D6bRAhgkRx
- gJ/H89q1gI4IZxZ1xHjCE/asZtb0VMTVCV49Abv9USlDa0d/y1l25strh6lo7qDuE+puXPCc6xD
- MlQKNG/9hY91ywa+5M5gfTr+TP6hvmhyPuWmShs6/qlR6M1LH17IJ+vqlI+r56Ul4GhsE/JaS+6
- 0PgLZskezt4m+mYdhlbntLCtd6dpa5UDw3nUFNdxjrinRoqWAvrFMDMc0HEWT34VNkqMd4bC890
- OPECg4pVPw4LqTA==
+ bh=LUx3WgpJ+5BY9H52t76Y/Q40Ik9Sz02o7+/xgILTIdY=;
+ b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ9E+Gt4xDUfca6oSRjlO9l81jkjGC5fN41Q
+ wZPk4xKYW+JAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImfQAKCRAgrS7GWxAs
+ 4tiVD/95NgwtNTW58Dw5zlRj9WzngKn1GBaAFI+2AWbj0K5+yYiR4XoX6KIjCh62WRWxvIRP6ku
+ 0DhCJ+Lt8h8WZ09G1tk+q8SyuHgxoILusiIjbVF3WI2ZVb9Dmrj+hEmFZpdqLtZIcoZNAL07Yk+
+ 6vGL8paQ5O6F4NyjF0/3B/YHJ0MCryiFytm9C5RPC7fBxOm5PV9IABmfjylrsZEC89ZiuBxbTmE
+ EayYkekH8p6Ij8uGPnwH1k2gtdXYXtrHDj6ZrlhGbwvzXammcPahHrtG1bU/s8xH9WbWmS+6wjm
+ Ch43jSMMZqdf+iMzjVrG2h73Br0/qvPIqqqqMbBOr6k+ZUOk9ZLYrTnhXX2sBXFItwKHNrSJaPF
+ /2V3h6b2GbSelVVTRxuAYWjGoE22zEANXyIYg4pQ7o9XEIewtPugar2JgswpCtJ7YsUwA2B9A6o
+ p2DhUYJG0UkRgv0XlvQ0oJMnJbq1OPLJzxgRvINka/sdhvpK0fiZTK/XGwXqC2Kltcw6/UKSL//
+ oxV5Z7/e5sT0Cyo69CDUDuALkP+VPJ+j8FZ2icCCGCDRqbLviSs9Atlurf98Tt8SYabJagR9LRI
+ lJcq3BHHwFQm9xLWGv2HauxriIeOtGekElAT7dTu/NEfeZKDSLUzDf76OthN0SiVtfyfVmraSOK
+ KXS9xksk+54w0sQ==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-Last-TLS-Session-Version: TLSv1.3
 
-To allows the userspace to test many hardware configuration, introduce a
-new interface to configure the available rotation per planes. VKMS
-supports any rotation and reflection, so the userspace can choose any
-combination.
-
-The supported rotations are configured by writing a rotation bitmask to
-the file `supported_rotations` and the default rotation is chosen by
-writing a rotation bitmask to `default_rotation`.
+Add a new attribute to connector to change its type. This is mostly
+cosmetic and don't have direct effect in VKMS behavior.
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- Documentation/gpu/vkms.rst           |  7 ++-
- drivers/gpu/drm/vkms/vkms_configfs.c | 91 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+), 1 deletion(-)
+ Documentation/gpu/vkms.rst           |  3 +-
+ drivers/gpu/drm/vkms/vkms_configfs.c | 64 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index 1fe6e420c963..eac1a942d6c4 100644
+index 32858f9a3357..99c5cf3dbd78 100644
 --- a/Documentation/gpu/vkms.rst
 +++ b/Documentation/gpu/vkms.rst
-@@ -87,11 +87,16 @@ Start by creating one or more planes::
+@@ -138,10 +138,11 @@ Last but not least, create one or more connectors::
  
-   sudo mkdir /config/vkms/my-vkms/planes/plane0
+   sudo mkdir /config/vkms/my-vkms/connectors/connector0
  
--Planes have 2 configurable attributes:
-+Planes have 4 configurable attributes:
+-Connectors have 1 configurable attribute:
++Connectors have 2 configurable attribute:
  
- - type: Plane type: 0 overlay, 1 primary, 2 cursor (same values as those
-   exposed by the "type" property of a plane)
- - name: Name of the plane
-+- possible_rotations: Available rotation for a plane, as a bitmask: 0x01 no rotation,
-+  0x02 rotate 90°, 0x04 rotate 180°, 0x08 rotate 270°, 0x10 reflect x, 0x20 reflect y
-+  (same values as those exposed by the "rotation" property of a plane)
-+- default_rotation: Default rotation presented to the userspace, same values as
-+  possible_rotations.
+ - status: Connection status: 1 connected, 2 disconnected, 3 unknown (same values
+   as those exposed by the "status" property of a connector)
++- type: Type of connector. Same values as exposed by the "type" field in drm_connector.
  
- Continue by creating one or more CRTCs::
+ To finish the configuration, link the different pipeline items::
  
 diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index be6c3ba998b9..7cc8ba315ef0 100644
+index 1c0a6ecf2f29..b03e9af569b6 100644
 --- a/drivers/gpu/drm/vkms/vkms_configfs.c
 +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -352,12 +352,103 @@ static ssize_t plane_name_store(struct config_item *item, const char *page,
+@@ -1161,10 +1161,74 @@ static ssize_t connector_status_store(struct config_item *item,
  	return (ssize_t)count;
  }
  
-+static ssize_t plane_supported_rotations_show(struct config_item *item, char *page)
++static ssize_t connector_type_show(struct config_item *item, char *page)
 +{
-+	struct vkms_configfs_plane *plane;
-+	unsigned int plane_supported_rotations;
++	struct vkms_configfs_connector *connector;
++	int type;
 +
-+	plane = plane_item_to_vkms_configfs_plane(item);
++	connector = connector_item_to_vkms_configfs_connector(item);
 +
-+	scoped_guard(mutex, &plane->dev->lock) {
-+		plane_supported_rotations = vkms_config_plane_get_supported_rotations(plane->config);
++	scoped_guard(mutex, &connector->dev->lock) {
++		type = vkms_config_connector_get_type(connector->config);
 +	}
 +
-+	return sprintf(page, "%u", plane_supported_rotations);
++	return sprintf(page, "%u", type);
 +}
 +
-+static ssize_t plane_supported_rotations_store(struct config_item *item,
-+					       const char *page, size_t count)
++static ssize_t connector_type_store(struct config_item *item,
++				    const char *page, size_t count)
 +{
-+	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
-+	int ret, val = 0;
++	struct vkms_configfs_connector *connector;
++	int val, ret;
 +
-+	ret = kstrtouint(page, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	/* Should be a supported value */
-+	if (val & ~(DRM_MODE_ROTATE_MASK | DRM_MODE_REFLECT_MASK))
-+		return -EINVAL;
-+	/* Should at least provide one rotation */
-+	if (!(val & DRM_MODE_ROTATE_MASK))
-+		return -EINVAL;
-+
-+	scoped_guard(mutex, &plane->dev->lock) {
-+		/* Ensures that the default rotation is included in supported rotation */
-+		if (plane->dev->enabled)
-+			return -EINVAL;
-+
-+		vkms_config_plane_set_supported_rotations(plane->config, val);
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t plane_default_rotation_show(struct config_item *item, char *page)
-+{
-+	struct vkms_configfs_plane *plane;
-+	unsigned int plane_default_rotation;
-+
-+	plane = plane_item_to_vkms_configfs_plane(item);
-+
-+	scoped_guard(mutex, &plane->dev->lock) {
-+		plane_default_rotation = vkms_config_plane_get_default_rotation(plane->config);
-+	}
-+
-+	return sprintf(page, "%u", plane_default_rotation);
-+}
-+
-+static ssize_t plane_default_rotation_store(struct config_item *item,
-+					    const char *page, size_t count)
-+{
-+	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
-+	int ret, val = 0;
++	connector = connector_item_to_vkms_configfs_connector(item);
 +
 +	ret = kstrtouint(page, 10, &val);
++
 +	if (ret)
 +		return ret;
 +
-+	/* Should be a supported value */
-+	if (val & ~(DRM_MODE_ROTATE_MASK | DRM_MODE_REFLECT_MASK))
++	switch (val) {
++	case DRM_MODE_CONNECTOR_Unknown:
++	case DRM_MODE_CONNECTOR_VGA:
++	case DRM_MODE_CONNECTOR_DVII:
++	case DRM_MODE_CONNECTOR_DVID:
++	case DRM_MODE_CONNECTOR_DVIA:
++	case DRM_MODE_CONNECTOR_Composite:
++	case DRM_MODE_CONNECTOR_SVIDEO:
++	case DRM_MODE_CONNECTOR_LVDS:
++	case DRM_MODE_CONNECTOR_Component:
++	case DRM_MODE_CONNECTOR_9PinDIN:
++	case DRM_MODE_CONNECTOR_DisplayPort:
++	case DRM_MODE_CONNECTOR_HDMIA:
++	case DRM_MODE_CONNECTOR_HDMIB:
++	case DRM_MODE_CONNECTOR_TV:
++	case DRM_MODE_CONNECTOR_eDP:
++	case DRM_MODE_CONNECTOR_VIRTUAL:
++	case DRM_MODE_CONNECTOR_DSI:
++	case DRM_MODE_CONNECTOR_DPI:
++	case DRM_MODE_CONNECTOR_SPI:
++	case DRM_MODE_CONNECTOR_USB:
++		break;
++	default:
 +		return -EINVAL;
-+	/* Should at least provide one rotation */
-+	if ((val & DRM_MODE_ROTATE_MASK) == 0)
-+		return -EINVAL;
-+	/* Should contains only one rotation */
-+	if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK))
-+		return -EINVAL;
++	}
 +
-+	scoped_guard(mutex, &plane->dev->lock) {
-+		/* Ensures that the default rotation is included in supported rotation */
-+		if (plane->dev->enabled)
++	scoped_guard(mutex, &connector->dev->lock) {
++		if (connector->dev->enabled)
 +			return -EINVAL;
-+
-+		vkms_config_plane_set_default_rotation(plane->config, val);
++		vkms_config_connector_set_type(connector->config, val);
 +	}
 +
 +	return count;
 +}
 +
- CONFIGFS_ATTR(plane_, type);
- CONFIGFS_ATTR(plane_, name);
-+CONFIGFS_ATTR(plane_, supported_rotations);
-+CONFIGFS_ATTR(plane_, default_rotation);
+ CONFIGFS_ATTR(connector_, status);
++CONFIGFS_ATTR(connector_, type);
  
- static struct configfs_attribute *plane_item_attrs[] = {
- 	&plane_attr_type,
- 	&plane_attr_name,
-+	&plane_attr_supported_rotations,
-+	&plane_attr_default_rotation,
+ static struct configfs_attribute *connector_item_attrs[] = {
+ 	&connector_attr_status,
++	&connector_attr_type,
  	NULL,
  };
  
