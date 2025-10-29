@@ -1,193 +1,190 @@
-Return-Path: <linux-kernel+bounces-876990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4ADC1CF1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1293C1CED9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6ED4B4E4327
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FA9C4E6358
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4BF261B62;
-	Wed, 29 Oct 2025 19:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A97E35A122;
+	Wed, 29 Oct 2025 19:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="cz/dFH6R"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012033.outbound.protection.outlook.com [52.101.43.33])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="fFgp0OHh"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62B83596E5;
-	Wed, 29 Oct 2025 19:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764874; cv=fail; b=eQ5BPR698qHLheGGwDlqBwgqaAGXCnvQq+d+2VM4RD2WCzCND4CWGWC4UT8ysG+kPgUV5LiBPHmIXF6UDDcpgrSp0bWh6sgM05uyzRyYEyXyYNAKBSZQkyn+NNCkyfBJQgkJbSByIwPrHFyh4mhWGQQwRVDQmKqJdUal1XKLKUg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764874; c=relaxed/simple;
-	bh=r4UIl/UKl9DHi4g7sXMVNSaBtyekNFPsDYRmLNjsO04=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hlCSwZT8+tuhQeLoUkSaYm8o7X9rWt4a4PNBNID/CljIY9/fzn2QgiVAKLu5XYweOVi1vtSdscpK6yJ6sJnKbEDFUS6SI0SStdxWLLq7bzHn8voEEE8WoWgPGxX/JqGbVCEn2/lltjgXP8rCugIXnNNOleyNZhzAGqfqHLtCcFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=cz/dFH6R; arc=fail smtp.client-ip=52.101.43.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eKyXGAmK5FrbUwimr0RSrHmdAvtM3w0Yji0Oywae8QzbJrZndB35eBWt74d4+azE4VHTWrJpRKmIkb4bNyt2XuLZ67DZgje2KpLxgNALPXarL/NYBBBvyEPUHEuS7RTjfJLNGZSZ5aBPeOrOXQn6625yXflsS2Fd5ktaIZX+jOfeGg7aUuoUyCfWghEjT99U8Up5r4xwwrPh60DBqXXDgnI2gfas4uXt8tni9UWk2UgcGESQYVhsFXx7N5vSG0KpM/M7YHR8rhg2GaRAu4feX7+6cnOSTcoDcaPieVsjcebwZdXYiTZK+/qIg0WYpCuX6BtquMMIr7Xo+/hALfbiBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PKF3aIJDw6pOngsBvz6oUnxUIMFaual0x1to6OhopH4=;
- b=YkWZbpzuzCC4jXyjGoBb1RqFiBPuT2hpAtw1aec1aIl24oNDxFM7L65BYKlyLD35ivJhZkWlg+jPkcEjc1CxnwlWQwkYRNwnvmJikXp0a3eE+RF/mDoTuAujK71JbpoJ6KI054d/1Gvd3n5sUNRT5p+B3xhXA9xSpg2GnRxz4z3RSrG3QBJoEKJewbTDFbpxkn1Lo3p3zhQSVFtBuvah1QlyZI5JShWJyiz5XQe2fJSexwnm5bgMsYOgtHRUemz30JwrPuiTpoi03l6i3L2PAt1aCJ4q1o5IYIafiZ6hohV2U40UVcFuVyxzOyi0yPWWtWNRe2LMRp+2B192T23HIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PKF3aIJDw6pOngsBvz6oUnxUIMFaual0x1to6OhopH4=;
- b=cz/dFH6RM6m3RVqnxwaqaKpDVelQ7s9SN2TQuFn/ZeNjKjMSffJS91mZLpg0f0irgjPRoH4SO/DUWXMQq89FBNSW3fP55eSTQBI9I+PPZLKhF3KfkBW1+nYsAva8UU+Vlf8NYE6R/TDwodC66Zb7lJ4PU4Yc78gnzcigk5FCgPMEvNnYSLIlWz8PO2O07llPGpn5dY4hAhWfFjMKez+7z2b1R2rXMctwv4laMXunV167iihctAOgHNjEbgEXOEJOmTU3GUfRdQ25Wb2+dVUdFbGdhBbbFKSJNcV5VIrXLIjXgMHihjWNjZuQ+Q+9U9jaFmzmUGCAVuyhkSf7utfUvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from PH0PR03MB5893.namprd03.prod.outlook.com (2603:10b6:510:32::6)
- by DS7PR03MB5510.namprd03.prod.outlook.com (2603:10b6:5:2ce::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 19:07:50 +0000
-Received: from PH0PR03MB5893.namprd03.prod.outlook.com
- ([fe80::d003:bc08:7968:c605]) by PH0PR03MB5893.namprd03.prod.outlook.com
- ([fe80::d003:bc08:7968:c605%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 19:07:50 +0000
-From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
-Subject: [RESEND][PATCH 1/1] fpga: altera-cvp: Limit driver registration to specific device ID
-Date: Thu, 30 Oct 2025 03:05:44 +0800
-Message-Id: <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
-References: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: KU2P306CA0072.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:3a::12) To PH0PR03MB5893.namprd03.prod.outlook.com
- (2603:10b6:510:32::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832E1359FB5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761764765; cv=none; b=frr0xAIFIec0XRPQOIThvBl5QzINLw0FyfTEiTuGNPxSmDOZbA4/FiXc8/OqV2w4W0VfnxT9XGzJ5oAhVYtA9Iw8ZBfGkzLXxVt1Na+B0O4lNWolJ9B3yw5IAA4O53zNAECaTXTOELB0ySIeqPJLr4SxRArI/3VXNl8eV/H2+rQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761764765; c=relaxed/simple;
+	bh=bMT6zwC9CBlFeLlkzXFrhE34J++x8Mj3alXKXMT5fIg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hv90gJCp46IGgzbemxnwUIuEAOYInaMekJvP1jcbc3GLG0Apy7MsiQ7r5v4qjcMoKZh+CAF67QFgHGZuRBu0sXQqDZOTE71BIjxAB10Vb27SFCS4Dls3gSLbx3skPnb7GhTLqwM+YIDsIN1Qw5tukEhyAj/z1Joc52mr2ZDv8Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=fFgp0OHh; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1761764754; x=1762023954;
+	bh=rr0Rm1n5HeBo5Fap/+IfVyHkvEn5nn0dcbxf514Q+kg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=fFgp0OHhcEPVlbbfupp7L0/UqzlPp2RufUT4rPPgcExkOWMJvc4oNZYRsMnJtLaiq
+	 tbZ0pJJzf7+iztM4ZLjdgxVnfM0mU6sf7aJcNlMahV5ULYqRdQak8/GsfTRouV/FV6
+	 Rs3i2/tvdQy39XdXhteb1Q2psCmSv2YN7LhtWCCQ7XWYMeotnXT6CCvT66EtLFz+NN
+	 sdhEsdTaaCaHmgD+5tvbCHk0oBbsVLiQdk1opgevss+X0r7JVDeWWz63T8Rl3NBTQs
+	 fXUxKPqTm1DzR2rgkTnD11K7i77mRTHyM41THQ7Jcuwksy4ckzfzi12AR2jyyGpRiX
+	 +IffcE9sHZTTA==
+Date: Wed, 29 Oct 2025 19:05:49 +0000
+To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
+From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me, stable@vger.kernel.org, Baoquan He <bhe@redhat.com>
+Subject: [PATCH v6 01/18] kasan: Unpoison pcpu chunks with base address tag
+Message-ID: <fbce40a59b0a22a5735cb6e9b95c5a45a34b23cb.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
+References: <cover.1761763681.git.m.wieczorretman@pm.me>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: aef5b12294c25038010fe20ffdc227c541613b14
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR03MB5893:EE_|DS7PR03MB5510:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ccc054c-f3ab-49d0-44bb-08de171e747a
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fMgqGb1VFvkKfbAQVvH4d7ZJonlFJ5cnKX1QD1jMZW3IBDbNFL+jSZ2VnsOT?=
- =?us-ascii?Q?R5f0P6JE6xJtomsygIzZ9Y2TakyRUw3j2CzZUzkhMSmZVIE7yInEjCHWvQuv?=
- =?us-ascii?Q?bgeL06GAKgHcRV8+vGmqHdUsP6IIAE3jpVsE22epe99C635F5sqe4Y45eQfq?=
- =?us-ascii?Q?/I22s18JXimheEPqCURnmczu4rAgn/b0T2jKd1II5/aNPGbXxeLu5yn47aqO?=
- =?us-ascii?Q?GPk/e+5crivM3Z1Wg2qdFKQju6h84az91zi7NtIH6wbW7UwzKGmI0J3TMlys?=
- =?us-ascii?Q?kf0O37DSkIm92vM7KwxwhlDin5vmMZ0b0xEOrhHFAJu0ffXdGBIgYMRFecT/?=
- =?us-ascii?Q?+8t+8Etnzk5wspWhfRhEx26NZDiiVdr5lz7UofW5brbfGJq8ZMZc+JMURvoK?=
- =?us-ascii?Q?SyOyzd8wFqpq2eF8lC5EBtr9c4oG1/w+UZ+JsIwrLugTYtMjjgbkSfUiL5bu?=
- =?us-ascii?Q?KrfRuaZVPbhSDnULRoAEo8vVy9dxvzmUI2MSA7MX2AOScUH5Dgg7IJmTry3o?=
- =?us-ascii?Q?mFIRcMjLpuTV9G7/TvMdZaE0954jkbWrv+ZRfxnR8+TQWMuUa1+HXBSLYHk0?=
- =?us-ascii?Q?6Wz0Nq+ofcW2ySzd+pLwfVhDLk3n11bqqvjKFkXiJ7KCgs9nhIBWeYqxtCi6?=
- =?us-ascii?Q?MJmwwwwy4b9GUO694bhzbOhBsHI2Qy5Jx5u0zQQ8Kk3oFavurt0r+xUwt2pe?=
- =?us-ascii?Q?DUOHCpPKQsQUO7PYfy/JoO0WO8eH8qei1Hl0RxdKT7efyIjfFz3H0tNFJIyZ?=
- =?us-ascii?Q?gSD6ARFUeEdFUaWT/zqY0t5dc51zVThQ62D6PHOGAIVWJxadazxty2ifK0zP?=
- =?us-ascii?Q?VOonm5iqlcvNMv+SNqUi5JtSYe74g9LGgjezk+E6ty1j2ZZYPOwEjcAYE3tg?=
- =?us-ascii?Q?+By+3uEUg3vq201UkBjZc/8AyCxIDvQS6t7uyWTxghRI1YD/CTi4VN1Bq55V?=
- =?us-ascii?Q?yQBv+PIwFmM4OaYq88jpcl+Bk01gZGWHtcRmKO73kT4RhuOxHUUYeyDWXguk?=
- =?us-ascii?Q?fB2a2kCp3JwRHmDwwR3gTEUy3wgFbMR4p7Pm+XHAdCbKoS+BAETglVzcdjeQ?=
- =?us-ascii?Q?5205dK6ValwhPHQQoocR2CAgv853nVaFsz5mKwn5+1vId4k2QOdUXoGiCd0Q?=
- =?us-ascii?Q?nRjD7qbrROj3TQuPIplPJlXuB95UYHQEid7e68Ud5pOSeQGrFN7E6NiJsLe2?=
- =?us-ascii?Q?wG3baDFJdjGYvloMEbIyWde+s5ggsJdg2cOviUggv4LQ0d0BLJ82ZfDvLUF+?=
- =?us-ascii?Q?Fa86tjectb7T5IxvAUiNBWFPHkdo7jmVifeCj6zYq4pptgQEHpK0cADqgai3?=
- =?us-ascii?Q?jhSPO0jGiBFhVd8eM1ZXQL11cbcF31mCciZqAubnUEeh1Eb5sg+4v5UK0MIP?=
- =?us-ascii?Q?QijgOTE8W0pPl2EYqcYu1PeoD69Jhbp3qp19RcaSv5/MCi7X49SmcjFmTqqn?=
- =?us-ascii?Q?9ER2VmCQJGXJRrBD3GkaPtxfM7pg8Beo?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB5893.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Z7e+Q3Zudx3RGMu0WjH1BjgCPbjNAgaTYqRgk5H8IFMPT/E/H1+jgNDFDlFH?=
- =?us-ascii?Q?Tv81xgsb+ywwftN+pHZ+0UXbpUmd7xqSJMsSwFhSe1LjWE38dy8UhrbERf/4?=
- =?us-ascii?Q?CrwNb+ik4IWn7+g4iHY+R/tH0CSWWw3mqNRziINr9uIQFiMobsSigl3kxkw3?=
- =?us-ascii?Q?nWNpOTPQ8VAkD8vd7qLLL0L1cFZ4w9ClajBH6HAPOSIs/oIAY/PvNs1PVkHQ?=
- =?us-ascii?Q?0kCQ9QO7SvizAI8w57sDNtylp69SSHAXmITSuUVDb1pAVfFyGjD6oJtDnRhL?=
- =?us-ascii?Q?B3aFvtDQ/mIMlx6Q1SYVQE/mHTYQ0z6EPOR8n8bFlrorHFMaMmWtxN9+8MEa?=
- =?us-ascii?Q?N1zTRSrpdydfsrFAfSKggJHEtoziHk/N8GBrFMMMsmw1aHspcAosh0R34CF0?=
- =?us-ascii?Q?gnBn22RPwjHAX8kMJb5SGNxC9hGVwOmk155tTE/y0aNCZ4imb76lLMOXovnS?=
- =?us-ascii?Q?XxUQ7RsQ9mKjFbrZTmaro9TcAjAgpzL1hRxVRStr9jzvHbuJnPyoYd1gomjl?=
- =?us-ascii?Q?m+FVsJaZ5upLEWPv2e7hV819AWl1/rST72o+sIdd8bJ6AZXizV9oW+jBsUOn?=
- =?us-ascii?Q?eHBdOYAXiNU7aK9lC/BKXepvIDZ9sSNWwFX+B6KNKpfTbQ/x7UT0aaEUi7Wv?=
- =?us-ascii?Q?0vayEv3B3Ev+17VZGrIGToyDzl1iID0yGbDZNrUPIyfrWERFV9mUKmYraDEi?=
- =?us-ascii?Q?e7O8w8sOpapJeLtBM86nEVA7/YBiVyPZIrynWeDmVdEZJmnAr/QLw09hBnau?=
- =?us-ascii?Q?riIJk3R5gK+PDTsMtXAXoV6vDjXkyvbKlc+sOUflBceZR1YRQm6uqaoecRXf?=
- =?us-ascii?Q?xDD2G4d58rFeVFn+UZ0lXhFBuMJAiUxrjxqdxlTI2M+bJj1Ye65ZFvbIpgp5?=
- =?us-ascii?Q?cP485GseqMLsPLZUTbKI6ubWcYmUe9stBh6+TB5hCfKbWu0No/guGALa5fMH?=
- =?us-ascii?Q?rH7QBHkkk9HyPNlmO/lp8kYYoh2rjulax9dbtphhXDIyagaMCzHTeUc3f2kC?=
- =?us-ascii?Q?nuChqL9raw+h9Rvmhuh59SU9qkL9DPqFpStURkePsUggLF9LLVqW/6agFMUI?=
- =?us-ascii?Q?VWe2q4f5xWmuzPPUfHohiUwv/3Hs+CqU8qyMj4Wv2pv4wo6tNLKKBwoBb2qU?=
- =?us-ascii?Q?YsVL0VXOEgVHxPr8dubQuPkHQt3u2PqVGtnvIIYhmRM0ttJQw1LnUwaN5ADP?=
- =?us-ascii?Q?MCKx37iXIWLLFRdA5rPNf7ZA0eVIWsUxTwdIGSbfVumZCVObG/PaiGop5OMc?=
- =?us-ascii?Q?tnqzd0xc4cQiRAL6IvrskHSfdYLA8AOb19tG41CA7nWYfnHxegU2Bgv3hf2L?=
- =?us-ascii?Q?VMGG8Y+hwHXduVnocHaGL5TN87M7NzHfnabzX53sZDBPDtFdNNbpY68vZCYa?=
- =?us-ascii?Q?Q4oQQL5x1IVpvCyazBoLkDcFxKXtlhK22p+lwqnM8rhLIHke2qoStCjpPUeF?=
- =?us-ascii?Q?YUdc57JDe5elhRSIhZRxjewkCbIgHvXCSNV63Sx9A0HEA0LbrAHt2n+7gGyT?=
- =?us-ascii?Q?fGsfVUT37vmt3xR8bga0hjlR6Pb3gyL15MvmDoeVWcKk7nOePtcA/jOA3kk4?=
- =?us-ascii?Q?IryfTI8C8DxaML2/qMWNyxbeGi24U+ZLQzPkyTX33EklZsBtb8QwBq7Hjfix?=
- =?us-ascii?Q?ExNbEEwoPZJjOApXZewSlEs=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ccc054c-f3ab-49d0-44bb-08de171e747a
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB5893.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 19:07:50.7563
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OzcM0+LCVogykWWe3mkxsJvYyO8rsNKWQsG14W+7XI30E9/chrR8mTSSvejZ/dCPL08ORxyeUNzYuaAGeWstTX2PiUn6F/t5iZjjyuj3lt18NH9842rvagga2z3HIoxK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR03MB5510
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 
-The Altera CvP driver previously used PCI_ANY_ID, which caused it to
-bind to all PCIe devices with the Altera vendor ID. This led to
-incorrect driver association when multiple PCIe devices with different
-device IDs were present on the same platform.
+The problem presented here is related to NUMA systems and tag-based
+KASAN modes - software and hardware ones. It can be explained in the
+following points:
 
-Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
-the driver only attaches to the intended device.
+=091. There can be more than one virtual memory chunk.
+=092. Chunk's base address has a tag.
+=093. The base address points at the first chunk and thus inherits
+=09   the tag of the first chunk.
+=094. The subsequent chunks will be accessed with the tag from the
+=09   first chunk.
+=095. Thus, the subsequent chunks need to have their tag set to
+=09   match that of the first chunk.
 
-Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
-Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
-Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
+Refactor code by moving it into a helper in preparation for the actual
+fix.
+
+Fixes: 1d96320f8d53 ("kasan, vmalloc: add vmalloc tagging for SW_TAGS")
+Cc: <stable@vger.kernel.org> # 6.1+
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Tested-by: Baoquan He <bhe@redhat.com>
 ---
- drivers/fpga/altera-cvp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog v6:
+- Add Baoquan's tested-by tag.
+- Move patch to the beginning of the series as it is a fix.
+- Move the refactored code to tags.c because both software and hardware
+  modes compile it.
+- Add fixes tag.
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 5af0bd33890c..97e9d4d981ad 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- static void altera_cvp_remove(struct pci_dev *pdev);
- 
- static struct pci_device_id altera_cvp_id_tbl[] = {
--	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
-+	{ PCI_VDEVICE(ALTERA, 0x00) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
--- 
-2.25.1
+Changelog v4:
+- Redo the patch message numbered list.
+- Do the refactoring in this patch and move additions to the next new
+  one.
+
+Changelog v3:
+- Remove last version of this patch that just resets the tag on
+  base_addr and add this patch that unpoisons all areas with the same
+  tag instead.
+
+ include/linux/kasan.h | 10 ++++++++++
+ mm/kasan/tags.c       | 11 +++++++++++
+ mm/vmalloc.c          |  4 +---
+ 3 files changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index d12e1a5f5a9a..b00849ea8ffd 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -614,6 +614,13 @@ static __always_inline void kasan_poison_vmalloc(const=
+ void *start,
+ =09=09__kasan_poison_vmalloc(start, size);
+ }
+=20
++void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms);
++static __always_inline void kasan_unpoison_vmap_areas(struct vm_struct **v=
+ms, int nr_vms)
++{
++=09if (kasan_enabled())
++=09=09__kasan_unpoison_vmap_areas(vms, nr_vms);
++}
++
+ #else /* CONFIG_KASAN_VMALLOC */
+=20
+ static inline void kasan_populate_early_vm_area_shadow(void *start,
+@@ -638,6 +645,9 @@ static inline void *kasan_unpoison_vmalloc(const void *=
+start,
+ static inline void kasan_poison_vmalloc(const void *start, unsigned long s=
+ize)
+ { }
+=20
++static inline void kasan_unpoison_vmap_areas(struct vm_struct **vms, int n=
+r_vms)
++{ }
++
+ #endif /* CONFIG_KASAN_VMALLOC */
+=20
+ #if (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)) && \
+diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+index b9f31293622b..ecc17c7c675a 100644
+--- a/mm/kasan/tags.c
++++ b/mm/kasan/tags.c
+@@ -18,6 +18,7 @@
+ #include <linux/static_key.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
++#include <linux/vmalloc.h>
+=20
+ #include "kasan.h"
+ #include "../slab.h"
+@@ -146,3 +147,13 @@ void __kasan_save_free_info(struct kmem_cache *cache, =
+void *object)
+ {
+ =09save_stack_info(cache, object, 0, true);
+ }
++
++void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
++{
++=09int area;
++
++=09for (area =3D 0 ; area < nr_vms ; area++) {
++=09=09kasan_poison(vms[area]->addr, vms[area]->size,
++=09=09=09     arch_kasan_get_tag(vms[area]->addr), false);
++=09}
++}
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 798b2ed21e46..934c8bfbcebf 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -4870,9 +4870,7 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned l=
+ong *offsets,
+ =09 * With hardware tag-based KASAN, marking is skipped for
+ =09 * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
+ =09 */
+-=09for (area =3D 0; area < nr_vms; area++)
+-=09=09vms[area]->addr =3D kasan_unpoison_vmalloc(vms[area]->addr,
+-=09=09=09=09vms[area]->size, KASAN_VMALLOC_PROT_NORMAL);
++=09kasan_unpoison_vmap_areas(vms, nr_vms);
+=20
+ =09kfree(vas);
+ =09return vms;
+--=20
+2.51.0
+
 
 
