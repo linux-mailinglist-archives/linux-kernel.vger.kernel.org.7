@@ -1,141 +1,257 @@
-Return-Path: <linux-kernel+bounces-876293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2E9C1B28F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD67C1B2B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:22:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB6F188CEB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:05:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AFE61AA5606
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69773241673;
-	Wed, 29 Oct 2025 13:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tm+5stKC"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172F21DE8AD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A4F2EBB96;
+	Wed, 29 Oct 2025 13:56:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FFC35580B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746146; cv=none; b=ge0/2l3vULMIH2HEsSjLD+xR8GPaLfGnCx5qxfEglgC3IMijEIzM7M7I53ao6mNh+lbGIW0KuIHrvYtoxogTfC+3DdoRnzZrflktc3nIFb05Xg94ye2Y85gCjJ2HZyvLrrYKfXJOq+T+6OYSCT0uRVmivr+3O51DLlraNp0SJ9Y=
+	t=1761746172; cv=none; b=f8mQIFZ0dIp1FfTTYQ8spf4nSdgo7t+LKF6qmcA1npHlqvo2QCH+WSghZwF3C6fTgAPSVHZlHA2FLWm1kfvkMz+HGbrTCkTF9uNN3aKzbpo5OIXa2hzD5WxwfoyQJUSnU/2zc8qvtgCpy0I1ZxWvsQ8ycnWegi2C7VLSIvFbElc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746146; c=relaxed/simple;
-	bh=kDjiYYa+XoKtrZgKJjxdI4my5UeWml8agUmpTGGgvQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K2wc93sKJkHjX1XASnBHump9zqUutPJskbtCbwqeMUQstU55iiNnHHOtf+IzEU2h9jBfkEEjKWX1UL6b7dQTziYjM+m4s/VNAS+MfsTW8slGxAs4zLAlYpAcxbAyC31CerdeLLfkLiBe98wqZctFGC6z4Il6kPPWxVn2u7xsHL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tm+5stKC; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso5757606a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761746143; x=1762350943; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IInKCL3RDPRCGSLvZWACn/czzIIKwfck9D0q9Pkvxck=;
-        b=Tm+5stKC4jStX8LWJV6ob8xXcVXT3OPf6isMYwc+r53zVEoP6tEEx37NENs3EPNlRG
-         QTumnQYeTXYqo77NjtoKpp7BfffV3mxkynnnpbryh+C7Nax6Gvcm6ACmgfwKZ4RkSR2A
-         Pgb0rcUUhj3c4HahEJFvo9MCcAaB38h8fA+a4oDvo/YEV68m8nBeSyTpLKtbreXsIqUD
-         2efSH+ttZizbQDxDm1tUnfbf5eVJ4AeC74zB4zngz9EjtNQJk+SVm1NuSJ6IXa/DVKlm
-         6oqfpLu69btXiSyj4I2WLDd5tLFp4OSpNxglEYjXBf1iv3f9NIdO5jNl64hjCx+dC55e
-         oUbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761746143; x=1762350943;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IInKCL3RDPRCGSLvZWACn/czzIIKwfck9D0q9Pkvxck=;
-        b=Wl8MbMKogF+KyXT1lbstX2HV6OvL/CzwaPv+0/UEFDqkVklmkEEw7wGC2SA2kx8pZn
-         PDCUkUpy835yxt66YweEnMYW0pq9r+QFFURdDf1b6MKF9egVCnkUgytEbKgpv4mzOXEk
-         vVGdaALdNbSyRn1gAEL+hG410ZkTqtasOvQhR882li110+ssAo7VAdgOgOFsvIhsFvbH
-         0qRF0HA9Hj2cjh/w2ZTeEWQ7RNlrtbd7O6ZdqsJxO49F47RhrrxPY0JT1ud3rSGUo25a
-         maiSqcILnfpKhxxVEMZ6XvK7ZGa9fJkS4eXzT17VtZgC3fmJMVCnLJDygblfSWYr1bw1
-         pXjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfPRD49tGKR3pF4X3I4stfM1kGU3CXKpKvJYdgORff+CPxda6NkthaubfhSe24tWNfRoEAKfxRyKNzAWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEGTLUkixF23ZDUSivODSB8H/hNjMBCN8ZjuQs0DRNjY7vKTKz
-	ekkRckehMdQ6Tu+7joesaWf1jqKDFZysTxj+sLzPCHRFkvhSkPl7dinS
-X-Gm-Gg: ASbGncsy2+Rdd/5KkWlqs1g5lFWe1E2+5kHyRnfj7mlZjA5NqkqXkkUactCpvz59qJA
-	QaiQbl7i/2ivYcr1+1hfS9I0g2o9SxVtHRg6aoQ7yym/jUq1EguR+ZKmwo8Xrvzql43t67f4Aeo
-	66UsDUxm8n/x4OJqv/4EztQ7qrNbgaDbTXeOnAkL6ng0GQqSuTkS5xQuZPo7fO9qbDl2L/xZGL1
-	f0CF8KZXjUfcyhgVL+CevMGqNGC7zC7rivXJnte2EFSIwGR6nB2T037DStdbxnH2S7bhW0bMP6l
-	Shoena35qrusXHHIzjFq73veCWG8EAywd7XCMI5uOeH03yS76OP8GPbrPjLjglgJzN4dnqLKUFv
-	owB3mPyoxszUDavs9z3vOP3Dae1U69IBv6kcUi12vcVonjFMJWqGBpYzCQaUzyax6UeVhEkKW45
-	DG1DjthlGQ2Jgi+NCFh3CGAgzl0vKMkDeOi6MVHUeOssd47km3aIV6XkzrTgE=
-X-Google-Smtp-Source: AGHT+IHGF8rgk9jMOle8qoaOj44dzw/iGjaOwXckf8wSylKdB6FkqWuzCorlot8CB5ukyGmS0ZQuNw==
-X-Received: by 2002:a05:6402:2353:b0:63c:3c63:75ed with SMTP id 4fb4d7f45d1cf-6404425113dmr2611515a12.22.1761746143277;
-        Wed, 29 Oct 2025 06:55:43 -0700 (PDT)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef82b6esm12043982a12.11.2025.10.29.06.55.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:55:42 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [WIP RFC PATCH] fs: hide names_cachep behind runtime_const machinery
-Date: Wed, 29 Oct 2025 14:55:38 +0100
-Message-ID: <20251029135538.658951-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761746172; c=relaxed/simple;
+	bh=KubnLurAppQNnPOcx/MIihZ9+VYxUP4oaCZb0K//AZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GiaW0KDgIdLyc0+SMgRff+XrQcbTMw4iDXPS6OHkX/r6WXqHjRIc5H7Vm+x04DK1u7x8N8cebBm/EQrLOqd9yrGvA9lpBLJpaMvYxnr86AvYOxQKNhvZtSpKxJZ2QDZ2EFyLG/7ieuSzv0Pbp6IKglVX0TOK6Z1czwrMIbP6gbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1A6C1C2B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:56:01 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3CA2E3F66E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:56:09 -0700 (PDT)
+Date: Wed, 29 Oct 2025 13:55:43 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Rob Herring <robh@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v8 1/5] dt-bindings: gpu: mali-valhall-csf: add
+ mediatek,mt8196-mali variant
+Message-ID: <aQIc39c8MvU37G_q@e110455-lin.cambridge.arm.com>
+References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
+ <6599426.lOV4Wx5bFT@workhorse>
+ <aQFoKoWIlf7xPzZX@e110455-lin.cambridge.arm.com>
+ <3127655.ElGaqSPkdT@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3127655.ElGaqSPkdT@workhorse>
 
-All path lookups end up allocating and freeing a buffer. The namei cache
-is created and at boot time and remains constant, meaning there is no
-reason to spend a cacheline to load the pointer.
+On Wed, Oct 29, 2025 at 02:42:35PM +0100, Nicolas Frattaroli wrote:
+> On Wednesday, 29 October 2025 02:04:42 Central European Standard Time Liviu Dudau wrote:
+> > On Tue, Oct 28, 2025 at 09:51:43PM +0100, Nicolas Frattaroli wrote:
+> > > On Tuesday, 28 October 2025 18:12:35 Central European Standard Time Liviu Dudau wrote:
+> > > > On Fri, Oct 17, 2025 at 05:31:08PM +0200, Nicolas Frattaroli wrote:
+> > > > > The Mali-based GPU on the MediaTek MT8196 SoC uses a separate MCU to
+> > > > > control the power and frequency of the GPU. This is modelled as a power
+> > > > > domain and clock provider.
+> > > > > 
+> > > > > It lets us omit the OPP tables from the device tree, as those can now be
+> > > > > enumerated at runtime from the MCU.
+> > > > > 
+> > > > > Add the necessary schema logic to handle what this SoC expects in terms
+> > > > > of clocks and power-domains.
+> > > > > 
+> > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > > > > ---
+> > > > >  .../bindings/gpu/arm,mali-valhall-csf.yaml         | 37 +++++++++++++++++++++-
+> > > > >  1 file changed, 36 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> > > > > index 613040fdb444..860691ce985e 100644
+> > > > > --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> > > > > @@ -45,7 +45,9 @@ properties:
+> > > > >      minItems: 1
+> > > > >      items:
+> > > > >        - const: core
+> > > > > -      - const: coregroup
+> > > > > +      - enum:
+> > > > > +          - coregroup
+> > > > > +          - stacks
+> > > > >        - const: stacks
+> > > > 
+> > > > I'm not sure how to parse this part of the change. We're overwriting the property
+> > > > for mt8196-mali anyway so why do we need this? And if we do, should 'stacks'
+> > > > still remain as a const?
+> > > 
+> > > The properties section outside of the if branches outside here
+> > > specifies a pattern of properties that matches for all devices.
+> > > 
+> > > In this case, I changed it so that the second clock-names item
+> > > may either be "coregroup" or "stacks".
+> > 
+> > Why would we want to do that for non-MT8196 devices? It doesn't make sense to me.
+> > The overwrite in the if branch should be enough to give you want you want (i.e.
+> > core followed by stacks and only that).
+> 
+> I built my understanding of why on the same reason of why we specify
+> a minItems of 1 but require it to be 3 in the if branch of the only
+> other compatible (rk3588): it describes what may be found in those
+> properties, not what is required by the specific compatible preceding
+> the generic valhall compatible. arm,mali-valhall-csf is currently
+> not described as a compatible that's allowed to appear stand-alone
+> without some other compatible before it to specify further which SoC
+> it's on, so it really just is whatever RK3588 needs vs. whatever
+> MT8196 needs at the moment.
+> 
+> Arguably though, there's no functional difference here, and I'm not
+> aware on any rules regarding this. My change may be problematic
+> however, because of the whole double stacks thing.
 
-I verified this boots on x86-64.
+I think I'm saying the same thing. The "arm,mali-valhall-csf" is the most general
+compatible string and defines the common denominator if not overwritten. I'm
+not expecting anyone to use just that string for a compatible, but downstream
+we have additional compatible strings that don't have to update the schema at all.
+rk3588 has a specific setup that requires 3 clocks so you cannot have any optional,
+that's why it is overwriting the minItems. Your whole double stack thing is
+actually not needed if all you do is overwrite in the MT8196 case the clock
+names and maxItems to only need two clocks.
 
-The problem is that when building I get the following:
-ld: warning: orphan section `runtime_ptr_names_cachep' from `vmlinux.o' being placed in section `runtime_ptr_names_cachep'
+> 
+> > > Yes, the third "stacks"
+> > > remains, though if you wanted to be extra precise you could
+> > > then specify in the non-MT8196 cases that we should not have
+> > > stacks followed by stacks, but I'd wager some checker for
+> > > duplicate names may already catch that.
+> > > 
+> > > However, I don't think it's a big enough deal to reroll this
+> > > series again.
+> > 
+> > I'm not asking you to re-roll the series but if you agree to drop that
+> > part I can make the edit when merging it.
+> 
+> If the other DT maintainers (especially Rob who gave it his R-b)
+> are okay with dropping it, then yes please do.
 
-I don't know what's up with that yet, but I will sort it out. Before I
-put any effort into it I need to know if the idea looks fine.
+Rob, do you agree with dropping the change in the generic bindings?
 
----
- fs/dcache.c        | 1 +
- include/linux/fs.h | 5 +++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Best regards,
+Liviu
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 035cccbc9276..786d09798313 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3265,6 +3265,7 @@ void __init vfs_caches_init(void)
- {
- 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
-+	runtime_const_init(ptr, names_cachep);
- 
- 	dcache_init();
- 	inode_init();
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 68c4a59ec8fb..08ea27340309 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2960,8 +2960,9 @@ extern void __init vfs_caches_init(void);
- 
- extern struct kmem_cache *names_cachep;
- 
--#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
--#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
-+#define __const_names_cachep	runtime_const_ptr(names_cachep)
-+#define __getname()		kmem_cache_alloc(__const_names_cachep, GFP_KERNEL)
-+#define __putname(name)		kmem_cache_free(__const_names_cachep, (void *)(name))
- 
- extern struct super_block *blockdev_superblock;
- static inline bool sb_is_blkdev_sb(struct super_block *sb)
+> 
+> Kind regards,
+> Nicolas Frattaroli
+> 
+> > 
+> > Best regards,
+> > Liviu
+> > 
+> > > 
+> > > Kind regards,
+> > > Nicolas Frattaroli
+> > > 
+> > > > 
+> > > > Best regards,
+> > > > Liviu
+> > > > 
+> > > > >  
+> > > > >    mali-supply: true
+> > > > > @@ -110,6 +112,27 @@ allOf:
+> > > > >          power-domain-names: false
+> > > > >        required:
+> > > > >          - mali-supply
+> > > > > +  - if:
+> > > > > +      properties:
+> > > > > +        compatible:
+> > > > > +          contains:
+> > > > > +            const: mediatek,mt8196-mali
+> > > > > +    then:
+> > > > > +      properties:
+> > > > > +        mali-supply: false
+> > > > > +        sram-supply: false
+> > > > > +        operating-points-v2: false
+> > > > > +        power-domains:
+> > > > > +          maxItems: 1
+> > > > > +        power-domain-names: false
+> > > > > +        clocks:
+> > > > > +          maxItems: 2
+> > > > > +        clock-names:
+> > > > > +          items:
+> > > > > +            - const: core
+> > > > > +            - const: stacks
+> > > > > +      required:
+> > > > > +        - power-domains
+> > > > >  
+> > > > >  examples:
+> > > > >    - |
+> > > > > @@ -145,5 +168,17 @@ examples:
+> > > > >              };
+> > > > >          };
+> > > > >      };
+> > > > > +  - |
+> > > > > +    gpu@48000000 {
+> > > > > +        compatible = "mediatek,mt8196-mali", "arm,mali-valhall-csf";
+> > > > > +        reg = <0x48000000 0x480000>;
+> > > > > +        clocks = <&gpufreq 0>, <&gpufreq 1>;
+> > > > > +        clock-names = "core", "stacks";
+> > > > > +        interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH 0>,
+> > > > > +                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH 0>,
+> > > > > +                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > > > +        interrupt-names = "job", "mmu", "gpu";
+> > > > > +        power-domains = <&gpufreq>;
+> > > > > +    };
+> > > > >  
+> > > > >  ...
+> > > > > 
+> > > > 
+> > > > 
+> > > 
+> > > 
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
+> 
+> 
+
 -- 
-2.34.1
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
