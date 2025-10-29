@@ -1,284 +1,177 @@
-Return-Path: <linux-kernel+bounces-876986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4187C1CEAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:09:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C693C1CF0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8AB42756D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB69C4E831D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD35358D3D;
-	Wed, 29 Oct 2025 19:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88FC359718;
+	Wed, 29 Oct 2025 19:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="kVBnL3t8"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hx/9GIUz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F401E3596F9
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B453590B5;
+	Wed, 29 Oct 2025 19:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764852; cv=none; b=cfjBIPZyCoWscdg32DQ0gORxeKk/utBTCj/QAaChx9IK9x/DWa4+stNErnxJ23ycArOeAsQ3JAcSPaGccOAqDdjQSm5iJOVxZlXcNpAJe3HD317JF7RjQyHm84CkbdQ7Q2sGfKVjnKMIlbDD4lg2MRXGbFZXQvDpbQkYZjM3MGw=
+	t=1761764863; cv=none; b=L5X424Mzeb4x5Nb8AJYwWutCOH+qKv/ZvQHIqqh0T6r/wnz7VL4HOd3EaEaTZ6AC8z3ld4f61dwURySSPWs9TqkO0StyxrQD7xz9qrSMYAt/FR2CHbFLQfQFNZJbSGpsveOIzlFr+CZ1rT3rM4RFOpuZZ9kg5Sk3pI+3T55lJ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764852; c=relaxed/simple;
-	bh=JqCzUyZ0QNBihHUXBSMPwH8gRHOq8dWLEy51Mzzfv0k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AV+OUnCeu6VS11OjuihXCu+B42zu6qEW7lSWgJSK3JidffV4CO1YL2D3O6/VwNLrcxog++ZhFkpzokArLPKyLoFH0qsse7fVhQlre8kzkqtHuMG5JraPE27znz/0rIDIVVJvEe2E0yWWKORLaA2uIehf31hwpMC6PVQ+hEHo5vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=kVBnL3t8; arc=none smtp.client-ip=109.224.244.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1761764845; x=1762024045;
-	bh=lbXAxn7Fr4Nsk0Pj0RuqXVl7zH+aG4MTOYlJmhasqg0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=kVBnL3t8JvjQ9HqLZI8hjXHke1yeuJACxtQMIgo03RCuNpTJrog3nwzZuch3Sq2HX
-	 eplFtslhSeF1H9XtAz3TxhLc6rYpwoIwfwtCSB2izjzP5z4ouVdqY5oxIo9OQ9YfhX
-	 qoZE7Gx/tHaWOqcYpYKTMNgSLXDkK5d02/7j6xlwl3K+JI82dbPfEcEQ2wB0zOdp6e
-	 lpeOLa2anhhZTFZd5bLxzRN+RgujTzwyFrhLbahp3HIh2XgpHF+W2YfZ9IWQrn9F7P
-	 Jyb2XOVHcLarA36q7cAU+FE+SailOTdfiMn1UOHBwFbxw/Hba8Y36Fl1VihdBITwZk
-	 AsGfuPMCtIARw==
-Date: Wed, 29 Oct 2025 19:07:18 +0000
-To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
-	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
-From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me
-Subject: [PATCH v6 07/18] kasan: arm64: x86: Make special tags arch specific
-Message-ID: <fd549c974b53b5410dbf85c0cf6a1f9a74c1f63a.1761763681.git.m.wieczorretman@pm.me>
-In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
-References: <cover.1761763681.git.m.wieczorretman@pm.me>
-Feedback-ID: 164464600:user:proton
-X-Pm-Message-ID: ce29df287bb81048c364d183798873981c136eab
+	s=arc-20240116; t=1761764863; c=relaxed/simple;
+	bh=SmwYGicsn9m0OHUOOJiH9i7ncGvQG3j1PcmMujf4lNg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Og233UKZgtJFacMYJIj7kyXGs3O4HvuSorFZqydoh6ZFnR3d6LTSgDeiW8YFDxwA3MuzMhtyuSNpL/0ASYDM/i1KpnBCFg/WRmC6AVU99aRPz5u2Jua1iz5NDQB0hBotSQ5sdpC0amLNe4EKEvKSFKBohvrIneU5nPbU4x9lzS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hx/9GIUz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDB8C4CEF7;
+	Wed, 29 Oct 2025 19:07:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761764862;
+	bh=SmwYGicsn9m0OHUOOJiH9i7ncGvQG3j1PcmMujf4lNg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hx/9GIUzC6weS+i2CiFEMICfL1ntPu0oH8I8jR1NeERYr75bTL7qChXEoigeKp2ne
+	 zAR8l+J28+CW4+GVIzeTUElK8+2VgmjRs/u08bp3F/Drot6nkkJwQE95a7mfgaZxLS
+	 VIgdlVv7CV4hi54AFgLtqmqtAORnkqY81MKvtfcq6h2dFuPptpoS59mSb+/1KKlo1F
+	 W9Vsk9I9ocLvLgZ7gebPPPJ+0TWQXvM0sTSgyKIjwV5IpvouInDzKdiLqHsG+al2Ix
+	 JTOXX21aTqWZphIWkWiHU8bb4XueaelN8t6ALrnVwZoxRI7lms/cd4RuxtZmHcI9gm
+	 lKuDVuBEmxGZw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
+  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
+ preservation and state management
+In-Reply-To: <20250929010321.3462457-15-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Mon, 29 Sep 2025 01:03:05 +0000")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<20250929010321.3462457-15-pasha.tatashin@soleen.com>
+Date: Wed, 29 Oct 2025 20:07:31 +0100
+Message-ID: <mafs0tszhcyrw.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Hi Pasha,
 
-KASAN's tag-based mode defines multiple special tag values. They're
-reserved for:
-- Native kernel value. On arm64 it's 0xFF and it causes an early return
-  in the tag checking function.
-- Invalid value. 0xFE marks an area as freed / unallocated. It's also
-  the value that is used to initialize regions of shadow memory.
-- Max value. 0xFD is the highest value that can be randomly generated
-  for a new tag.
+On Mon, Sep 29 2025, Pasha Tatashin wrote:
 
-Metadata macro is also defined:
-- Tag width equal to 8.
+> Introducing the userspace interface and internal logic required to
+> manage the lifecycle of file descriptors within a session. Previously, a
+> session was merely a container; this change makes it a functional
+> management unit.
+>
+> The following capabilities are added:
+>
+> A new set of ioctl commands are added, which operate on the file
+> descriptor returned by CREATE_SESSION. This allows userspace to:
+> - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
+>   to be preserved across the live update.
+> - LIVEUPDATE_SESSION_UNPRESERVE_FD: Remove a previously added file
+>   descriptor from the session.
+> - LIVEUPDATE_SESSION_RESTORE_FD: Retrieve a preserved file in the
+>   new kernel using its unique token.
+>
+> A state machine for each individual session, distinct from the global
+> LUO state. This enables more granular control, allowing userspace to
+> prepare or freeze specific sessions independently. This is managed via:
+> - LIVEUPDATE_SESSION_SET_EVENT: An ioctl to send PREPARE, FREEZE,
+>   CANCEL, or FINISH events to a single session.
+> - LIVEUPDATE_SESSION_GET_STATE: An ioctl to query the current state
+>   of a single session.
+>
+> The global subsystem callbacks (luo_session_prepare, luo_session_freeze)
+> are updated to iterate through all existing sessions. They now trigger
+> the appropriate per-session state transitions for any sessions that
+> haven't already been transitioned individually by userspace.
+>
+> The session's .release handler is enhanced to be state-aware. When a
+> session's file descriptor is closed, it now correctly cancels or
+> finishes the session based on its current state before freeing all
+> associated file resources, preventing resource leaks.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
+> +/**
+> + * struct liveupdate_session_get_state - ioctl(LIVEUPDATE_SESSION_GET_STATE)
+> + * @size:     Input; sizeof(struct liveupdate_session_get_state)
+> + * @incoming: Input; If 1, query the state of a restored file from the incoming
+> + *            (previous kernel's) set. If 0, query a file being prepared for
+> + *            preservation in the current set.
 
-Tag-based mode on x86 is going to use 4 bit wide tags so all the above
-values need to be changed accordingly.
+Spotted this when working on updating my test suite for LUO. This seems
+to be a leftover from a previous version. I don't see it being used
+anywhere in the code.
 
-Make native kernel tag arch specific for x86 and arm64.
+Also, I think the model we should have is to only allow new sessions in
+normal state. Currently luo_session_create() allows creating a new
+session in updated state. This would end up mixing sessions from a
+previous boot and sessions from current boot. I don't really see a
+reason for that and I think the userspace should first call finish
+before starting new serialization. Keeps things simpler.
 
-Replace hardcoded kernel tag value and tag width with macros in KASAN's
-non-arch specific code.
+> + * @reserved: Must be zero.
+> + * @state:    Output; The live update state of this FD.
+> + *
+> + * Query the current live update state of a specific preserved file descriptor.
+> + *
+> + * - %LIVEUPDATE_STATE_NORMAL:   Default state
+> + * - %LIVEUPDATE_STATE_PREPARED: Prepare callback has been performed on this FD.
+> + * - %LIVEUPDATE_STATE_FROZEN:   Freeze callback ahs been performed on this FD.
+> + * - %LIVEUPDATE_STATE_UPDATED:  The system has successfully rebooted into the
+> + *                               new kernel.
+> + *
+> + * See the definition of &enum liveupdate_state for more details on each state.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +struct liveupdate_session_get_state {
+> +	__u32		size;
+> +	__u8		incoming;
+> +	__u8		reserved[3];
+> +	__u32		state;
+> +};
+> +
+> +#define LIVEUPDATE_SESSION_GET_STATE					\
+> +	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_GET_STATE)
+[...]
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v6:
-- Add hardware tags KASAN_TAG_WIDTH value to the arm64 arch file.
-- Keep KASAN_TAG_MASK in the mmzone.h.
-- Remove ifndef from KASAN_SHADOW_INIT.
-
-Changelog v5:
-- Move KASAN_TAG_MIN to the arm64 kasan-tags.h for the hardware KASAN
-  mode case.
-
-Changelog v4:
-- Move KASAN_TAG_MASK to kasan-tags.h.
-
-Changelog v2:
-- Remove risc-v from the patch.
-
- MAINTAINERS                         |  2 +-
- arch/arm64/include/asm/kasan-tags.h | 14 ++++++++++++++
- arch/arm64/include/asm/kasan.h      |  4 ----
- arch/x86/include/asm/kasan-tags.h   |  9 +++++++++
- include/linux/kasan-tags.h          | 10 +++++++++-
- include/linux/kasan.h               |  3 +--
- include/linux/mm.h                  |  6 +++---
- include/linux/page-flags-layout.h   |  9 +--------
- 8 files changed, 38 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm64/include/asm/kasan-tags.h
- create mode 100644 arch/x86/include/asm/kasan-tags.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3da2c26a796b..53cbc7534911 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13421,7 +13421,7 @@ L:=09kasan-dev@googlegroups.com
- S:=09Maintained
- B:=09https://bugzilla.kernel.org/buglist.cgi?component=3DSanitizers&produc=
-t=3DMemory%20Management
- F:=09Documentation/dev-tools/kasan.rst
--F:=09arch/*/include/asm/*kasan.h
-+F:=09arch/*/include/asm/*kasan*.h
- F:=09arch/*/mm/kasan_init*
- F:=09include/linux/kasan*.h
- F:=09lib/Kconfig.kasan
-diff --git a/arch/arm64/include/asm/kasan-tags.h b/arch/arm64/include/asm/k=
-asan-tags.h
-new file mode 100644
-index 000000000000..e6b5086e3f44
---- /dev/null
-+++ b/arch/arm64/include/asm/kasan-tags.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ASM_KASAN_TAGS_H
-+#define __ASM_KASAN_TAGS_H
-+
-+#define KASAN_TAG_KERNEL=090xFF /* native kernel pointers tag */
-+
-+#define KASAN_TAG_WIDTH=09=098
-+
-+#ifdef CONFIG_KASAN_HW_TAGS
-+#define KASAN_TAG_MIN=09=090xF0 /* minimum value for random tags */
-+#define KASAN_TAG_WIDTH=09=094
-+#endif
-+
-+#endif /* ASM_KASAN_TAGS_H */
-diff --git a/arch/arm64/include/asm/kasan.h b/arch/arm64/include/asm/kasan.=
-h
-index 4ab419df8b93..d2841e0fb908 100644
---- a/arch/arm64/include/asm/kasan.h
-+++ b/arch/arm64/include/asm/kasan.h
-@@ -7,10 +7,6 @@
- #include <linux/linkage.h>
- #include <asm/memory.h>
-=20
--#ifdef CONFIG_KASAN_HW_TAGS
--#define KASAN_TAG_MIN=09=09=090xF0 /* minimum value for random tags */
--#endif
--
- #define arch_kasan_set_tag(addr, tag)=09__tag_set(addr, tag)
- #define arch_kasan_reset_tag(addr)=09__tag_reset(addr)
- #define arch_kasan_get_tag(addr)=09__tag_get(addr)
-diff --git a/arch/x86/include/asm/kasan-tags.h b/arch/x86/include/asm/kasan=
--tags.h
-new file mode 100644
-index 000000000000..68ba385bc75c
---- /dev/null
-+++ b/arch/x86/include/asm/kasan-tags.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ASM_KASAN_TAGS_H
-+#define __ASM_KASAN_TAGS_H
-+
-+#define KASAN_TAG_KERNEL=090xF /* native kernel pointers tag */
-+
-+#define KASAN_TAG_WIDTH=09=094
-+
-+#endif /* ASM_KASAN_TAGS_H */
-diff --git a/include/linux/kasan-tags.h b/include/linux/kasan-tags.h
-index e07c896f95d3..fe80fa8f3315 100644
---- a/include/linux/kasan-tags.h
-+++ b/include/linux/kasan-tags.h
-@@ -2,7 +2,15 @@
- #ifndef _LINUX_KASAN_TAGS_H
- #define _LINUX_KASAN_TAGS_H
-=20
--#include <asm/kasan.h>
-+#if defined(CONFIG_KASAN_SW_TAGS) || defined(CONFIG_KASAN_HW_TAGS)
-+#include <asm/kasan-tags.h>
-+#endif
-+
-+#ifndef KASAN_TAG_WIDTH
-+#define KASAN_TAG_WIDTH=09=090
-+#endif
-+
-+#define KASAN_TAG_MASK=09=09((1UL << KASAN_TAG_WIDTH) - 1)
-=20
- #ifndef KASAN_TAG_KERNEL
- #define KASAN_TAG_KERNEL=090xFF /* native kernel pointers tag */
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 952ade776e51..3c0c60ed5d5c 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -39,8 +39,7 @@ typedef unsigned int __bitwise kasan_vmalloc_flags_t;
- /* Software KASAN implementations use shadow memory. */
-=20
- #ifdef CONFIG_KASAN_SW_TAGS
--/* This matches KASAN_TAG_INVALID. */
--#define KASAN_SHADOW_INIT 0xFE
-+#define KASAN_SHADOW_INIT KASAN_TAG_INVALID
- #else
- #define KASAN_SHADOW_INIT 0
- #endif
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d16b33bacc32..09538c7487f3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1762,7 +1762,7 @@ static inline u8 page_kasan_tag(const struct page *pa=
-ge)
-=20
- =09if (kasan_enabled()) {
- =09=09tag =3D (page->flags.f >> KASAN_TAG_PGSHIFT) & KASAN_TAG_MASK;
--=09=09tag ^=3D 0xff;
-+=09=09tag ^=3D KASAN_TAG_KERNEL;
- =09}
-=20
- =09return tag;
-@@ -1775,7 +1775,7 @@ static inline void page_kasan_tag_set(struct page *pa=
-ge, u8 tag)
- =09if (!kasan_enabled())
- =09=09return;
-=20
--=09tag ^=3D 0xff;
-+=09tag ^=3D KASAN_TAG_KERNEL;
- =09old_flags =3D READ_ONCE(page->flags.f);
- =09do {
- =09=09flags =3D old_flags;
-@@ -1794,7 +1794,7 @@ static inline void page_kasan_tag_reset(struct page *=
-page)
-=20
- static inline u8 page_kasan_tag(const struct page *page)
- {
--=09return 0xff;
-+=09return KASAN_TAG_KERNEL;
- }
-=20
- static inline void page_kasan_tag_set(struct page *page, u8 tag) { }
-diff --git a/include/linux/page-flags-layout.h b/include/linux/page-flags-l=
-ayout.h
-index 760006b1c480..b2cc4cb870e0 100644
---- a/include/linux/page-flags-layout.h
-+++ b/include/linux/page-flags-layout.h
-@@ -3,6 +3,7 @@
- #define PAGE_FLAGS_LAYOUT_H
-=20
- #include <linux/numa.h>
-+#include <linux/kasan-tags.h>
- #include <generated/bounds.h>
-=20
- /*
-@@ -72,14 +73,6 @@
- #define NODE_NOT_IN_PAGE_FLAGS=091
- #endif
-=20
--#if defined(CONFIG_KASAN_SW_TAGS)
--#define KASAN_TAG_WIDTH 8
--#elif defined(CONFIG_KASAN_HW_TAGS)
--#define KASAN_TAG_WIDTH 4
--#else
--#define KASAN_TAG_WIDTH 0
--#endif
--
- #ifdef CONFIG_NUMA_BALANCING
- #define LAST__PID_SHIFT 8
- #define LAST__PID_MASK  ((1 << LAST__PID_SHIFT)-1)
---=20
-2.51.0
-
-
+-- 
+Regards,
+Pratyush Yadav
 
