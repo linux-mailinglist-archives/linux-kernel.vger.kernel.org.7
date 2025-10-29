@@ -1,107 +1,229 @@
-Return-Path: <linux-kernel+bounces-876355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EECC1B8B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:07:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A9EC1B9E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5E0A5C396D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641716418D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9673358AC;
-	Wed, 29 Oct 2025 14:27:05 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7112D3220;
+	Wed, 29 Oct 2025 14:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTXKct5T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC516279DAD;
-	Wed, 29 Oct 2025 14:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C3B288C3D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748025; cv=none; b=buSD8RU7NOoTosvszDJMKnOQuyHmGXdEb+dBS6qD7ptFWdgjxjPkH6MT5IIhyz1VRjwo2eksidtpu/fMFJuF5fUTgI53TJyRmNnGwlmGLEwf/Y1sLTrGnmSXL4My6ysDRtuSD1YstnZ8dt7yxd6tx9JADPte/3t5t0TW8GIGQoE=
+	t=1761748114; cv=none; b=fGom+o9B37LENMCAMX5GubvoAOgLix65GFAMib0gssrMZ+muJBtJ4eiJzevKjufb+5nPJZnYst3s6J+099nqFNclt4CGF9xgyivh0dyvmPeePDVMvFt9+sRJ6qpvVSw2g1k/vrTpQs3yAg4wnYeec6L2gehm4FAqwwk95xcDYRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748025; c=relaxed/simple;
-	bh=dbygQzHttqjNpSjAjnD19UM0SjBDk0tlkiBX6toMasA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=VuoU09bVl8ra+F9OVq11snhpUrpLahp06OPMyZZYAwgM5ED/8JRFfBsJX5+Q0g0XQJQz6CCwjeT+8+1Df/mzPRms5tcHH4LSJ1puvGIcgXSxIHFlMNY8gCu5f0Zy0aNWvFPTcYBAm7nQSrLTs9+RTUpAswTfJm8YJDWC48yHDeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [10.101.2.66] (ip-217-65-134-37.ptr.icomera.net [217.65.134.37])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AAFAD6020D324;
-	Wed, 29 Oct 2025 15:26:44 +0100 (CET)
-Message-ID: <ff745987-6e62-40e2-b2c1-ed35c0b9ffe4@molgen.mpg.de>
-Date: Wed, 29 Oct 2025 14:26:43 +0000
+	s=arc-20240116; t=1761748114; c=relaxed/simple;
+	bh=ycvf+w2/mE/h70FPsnRAceCWxI81fhZqTWfT4beEqSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S2Y8Xs0DAxJDYovr0NHMUfb6RapkBOhIdiH2usMeMOTFxSaNxRnBJyBOnEVTEBRtgkxGwbv7mZa6Nx6u1MgIZLJ0Hj6q46UC2Skwcdx+HXuinUQ9ykQ5E6VA04mcC+sItiiYFNhnsq6/kgIPOFssDHrEQQsstXjfsk0vCOMiPU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTXKct5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14AAC116C6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761748113;
+	bh=ycvf+w2/mE/h70FPsnRAceCWxI81fhZqTWfT4beEqSQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fTXKct5Tr2OCcU7ojjD51pRyEUrXc+9BpzAI8O3q13A5PKttXUox/d92JvMblaF++
+	 /yI6seIlXdbbtxweiU8FU2zXD6g2+TAEMGTxx7YIW0m9s7XAWMtvtaDPSmGYbg4Fw3
+	 jJKitfK2viCKcOsyImlNwg1BVMQI5tpe+GluYKdvcjhkizVnOukzJfzjjOI9R3osj5
+	 RPJRMPJu2JsmuopW3JGTNaFBBeUGyBQPNk4ERIrEB/rrged4XbJAO+Wha5tG4k+IIQ
+	 TE7V5fNUArewtl25kBLnHdJkHN2RcgUiGw76Qo/riB6Nuh6bEEkjC6n8Q5gtyx3Ys7
+	 qLg30sfeoB2Lw==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-654ef376363so2399289eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:28:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWj3aB26rMlpxIuE23eM94pO7/ljuWi/TZcowXReUFbWMdiRRQEfjma/b4kF11mGTxSBV0/0bobIjMWwNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9LUvT2zCrXYKDTHQdcuGtj2Sc5lyvFsSSOGMnIKXjfJJMT0Ds
+	MytvwFvBEjjDniJNnpXMRMaDBfY1ibtPCBu10gvTomnKCRn0ftvdEisW6llRSMQluolu/U2faVy
+	qJJqXGHeDNAZ9puoCHzVS4qrD0d4O1kI=
+X-Google-Smtp-Source: AGHT+IEbUd+JQ5DjQ2Y6NcLaDkmrtcoQ7Y649VF2s/mqXuH/MYD5YaA1OxjGFB3FBRuaAt9mj2Gb7FORgEwULlV/4P8=
+X-Received: by 2002:a05:6820:603:b0:64e:822b:e6de with SMTP id
+ 006d021491bc7-65677f12406mr1360346eaf.7.1761748112978; Wed, 29 Oct 2025
+ 07:28:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Bluetooth: MAINTAINERS: Add Bartosz Golaszewski as
- Qualcomm hci_qca maintainer
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann
- <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <20251016151929.75863-2-ulf.hansson@linaro.org> <20251029081014.443psmqznd2pqm4i@lcpd911>
+In-Reply-To: <20251029081014.443psmqznd2pqm4i@lcpd911>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 29 Oct 2025 15:28:22 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkIRMLKAw2hRsQOICKn11WWYrSkSN53qmpIka5w-KJlYGIgupNtIdm9ew8
+Message-ID: <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
+To: Dhruva Gole <d-gole@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Krzysztof,
+On Wed, Oct 29, 2025 at 9:10=E2=80=AFAM Dhruva Gole <d-gole@ti.com> wrote:
+>
+> Hi Ulf,
+>
+> On Oct 16, 2025 at 17:19:21 +0200, Ulf Hansson wrote:
+> > Some platforms supports multiple low-power states for CPUs that can be =
+used
+> > when entering system-wide suspend. Currently we are always selecting th=
+e
+> > deepest possible state for the CPUs, which can break the system-wakeup
+> > latency constraint that may be required for some use-cases.
+> >
+> > Let's take the first step towards addressing this problem, by introduci=
+ng
+> > an interface for user-space, that allows us to specify the CPU
+> > system-wakeup QoS limit. Subsequent changes will start taking into acco=
+unt
+> > the new QoS limit.
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >
+> > Changes in v2:
+> >       - Renamings to reflect the QoS are limited to CPUs.
+> >       - Move code inside "CONFIG_CPU_IDLE".
+> >
+> > ---
+> >  include/linux/pm_qos.h |   5 ++
+> >  kernel/power/qos.c     | 102 +++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 107 insertions(+)
+> >
+> > diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+> > index 4a69d4af3ff8..bf7524d38933 100644
+> > --- a/include/linux/pm_qos.h
+> > +++ b/include/linux/pm_qos.h
+> > @@ -149,6 +149,7 @@ bool cpu_latency_qos_request_active(struct pm_qos_r=
+equest *req);
+> >  void cpu_latency_qos_add_request(struct pm_qos_request *req, s32 value=
+);
+> >  void cpu_latency_qos_update_request(struct pm_qos_request *req, s32 ne=
+w_value);
+> >  void cpu_latency_qos_remove_request(struct pm_qos_request *req);
+> > +s32 cpu_wakeup_latency_qos_limit(void);
+> >  #else
+> >  static inline s32 cpu_latency_qos_limit(void) { return INT_MAX; }
+> >  static inline bool cpu_latency_qos_request_active(struct pm_qos_reques=
+t *req)
+> > @@ -160,6 +161,10 @@ static inline void cpu_latency_qos_add_request(str=
+uct pm_qos_request *req,
+> >  static inline void cpu_latency_qos_update_request(struct pm_qos_reques=
+t *req,
+> >                                                 s32 new_value) {}
+> >  static inline void cpu_latency_qos_remove_request(struct pm_qos_reques=
+t *req) {}
+> > +static inline s32 cpu_wakeup_latency_qos_limit(void)
+> > +{
+> > +     return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+> > +}
+> >  #endif
+> >
+> >  #ifdef CONFIG_PM
+> > diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+> > index 4244b069442e..8c024d7dc43e 100644
+> > --- a/kernel/power/qos.c
+> > +++ b/kernel/power/qos.c
+> > @@ -415,6 +415,103 @@ static struct miscdevice cpu_latency_qos_miscdev =
+=3D {
+> >       .fops =3D &cpu_latency_qos_fops,
+> >  };
+> >
+> > +/* The CPU system wakeup latency QoS. */
+> > +static struct pm_qos_constraints cpu_wakeup_latency_constraints =3D {
+> > +     .list =3D PLIST_HEAD_INIT(cpu_wakeup_latency_constraints.list),
+> > +     .target_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
+> > +     .default_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
+> > +     .no_constraint_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
+> > +     .type =3D PM_QOS_MIN,
+> > +};
+> > +
+> > +/**
+> > + * cpu_wakeup_latency_qos_limit - Current CPU system wakeup latency Qo=
+S limit.
+> > + *
+> > + * Returns the current CPU system wakeup latency QoS limit that may ha=
+ve been
+> > + * requested by user-space.
+> > + */
+> > +s32 cpu_wakeup_latency_qos_limit(void)
+> > +{
+> > +     return pm_qos_read_value(&cpu_wakeup_latency_constraints);
+> > +}
+> > +
+> > +static int cpu_wakeup_latency_qos_open(struct inode *inode, struct fil=
+e *filp)
+> > +{
+> > +     struct pm_qos_request *req;
+> > +
+> > +     req =3D kzalloc(sizeof(*req), GFP_KERNEL);
+> > +     if (!req)
+> > +             return -ENOMEM;
+> > +
+> > +     req->qos =3D &cpu_wakeup_latency_constraints;
+> > +     pm_qos_update_target(req->qos, &req->node, PM_QOS_ADD_REQ,
+> > +                          PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
+> > +     filp->private_data =3D req;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int cpu_wakeup_latency_qos_release(struct inode *inode,
+> > +                                       struct file *filp)
+> > +{
+> > +     struct pm_qos_request *req =3D filp->private_data;
+> > +
+> > +     filp->private_data =3D NULL;
+> > +     pm_qos_update_target(req->qos, &req->node, PM_QOS_REMOVE_REQ,
+> > +                          PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
+>
+> Please excuse the delay in reviewing these patches,
+> I was wondering why we have decided here in release to reset the
+> constraints set by a user. For eg. even when I was testing the previous
+> revision locally I'd just commented out this release hook, since I
+> wanted to be able to just echo 0xABCD into /dev/cpu_wakeup_latency...
 
+If you want "fire and forget", that would be a different interface.
+Device special files are not for that.
 
-Thank you for your patch.
+Cleaning up after closing a file descriptor is a safety measure and
+CPU wakeup latency constraints are a big deal.  Leaving leftover ones
+behind dead processes is not a good idea.
 
-Am 28.10.25 um 16:53 schrieb Krzysztof Kozlowski:
-> There are no dedicated maintainers of Qualcomm hci_qca Bluetooth
-> drivers, but there should be, because these are actively used on many
-> old and new platforms.  Bartosz Golaszewski agreed to take care of this
-> code.
-> 
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Marcel Holtmann <marcel@holtmann.org>
-> Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-> Link: https://lore.kernel.org/r/CAMRc=MdqAATOcDPhd=u0vOb8nLxSRd7N8rLGLO8F5Ywq3+=JCw@mail.gmail.com/
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v2:
-> Don't orphan, add Bartosz.
-> ---
->   MAINTAINERS | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8abdc0e50699..8a2c5fb0ba55 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21145,6 +21145,7 @@ F:	Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
->   F:	drivers/net/wwan/qcom_bam_dmux.c
->   
->   QUALCOMM BLUETOOTH DRIVER
-> +M:	Bartosz Golaszewski <brgl@bgdev.pl>
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
->   F:	drivers/bluetooth/btqca.[ch]
+> It seems an overkill to me that a userspace program be required to hold
+> open this file just to make sure the constraints are honoured for the
+> lifetime of the device. We should definitely give the freedom to just be
+> able to echo and also be able to cat and read back from the same place
+> about the latency constraint being set.
 
-Bartosz, thank you for stepping up!
+So you'd want a sysfs attribute here, but that has its own issues (the
+last writer "wins", so if there are multiple users of it with
+different needs in user space, things get tricky).
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> One other thing on my mind is - and probably unrelated to this specific
+> series, but I think we must have some sysfs entry either appear in
+> /sys/.../cpu0/cpuidle or s2idle/ where we can show next feesible s2idle
+> state that the governor has chosen to enter based on the value set in
+> cpu_wakeup_latency.
 
-
-Kind regards,
-
-Paul
+Exit latency values for all states are exposed via sysfs.  Since
+s2idle always uses the deepest state it can use, it is quite
+straightforward to figure out which of them will be used going
+forward, given a specific latency constraint.
 
