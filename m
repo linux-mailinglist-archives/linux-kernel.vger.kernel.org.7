@@ -1,214 +1,182 @@
-Return-Path: <linux-kernel+bounces-874940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1B3C178F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:37:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E5AC1792A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F1B44EB77E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD1B3AA9E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B41F2C237F;
-	Wed, 29 Oct 2025 00:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6877C2C3774;
+	Wed, 29 Oct 2025 00:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E3+F7DuD";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RVVB5wK7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SqKqCy3H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D818026A0F8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB482C235E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761698160; cv=none; b=leaXaFIg58yz082Sw629kvtNkMxdJ21MMKwrgG/MrQsfL++fxNfPeHI3VoaNP1wdWp1zn2IIkd6i7y2HlG5vw5e376zJdn8CT0V802CjkPh4Etmwy6d9gKDAio5RrhB/h44gY/IrR2noMyXgY+JNeYzCgKDI4pxFCY24C+0KTwg=
+	t=1761698228; cv=none; b=UQs8EK+Hbxc5v+E0L1h5+YoqxDYNdJ1+VxPXqvXNPSMSjkDb0+70AojhJTuluEz8xlOcxGCl4rSKpjeBrTmC88Z1fx6CH2qbTRhAb1ORYZL1D/MOtInuZP19/Bi1p10Xdzfb4O2jjwwjra2CvcFZa67YsFFZm9s5USCUrVS9pTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761698160; c=relaxed/simple;
-	bh=EoE8k0KBFJiVu+lUu/6ffmeuppX2gDDFdvUcYzSJ2Fk=;
+	s=arc-20240116; t=1761698228; c=relaxed/simple;
+	bh=z2KxUywKM/o4sjXFIMx/mY+Zmwl/FX3Tzo88dQEt2xs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DYy2RyWfAI16rJKQEyrxBULRmAbEpgkl0TDXLkz3c7p96b9YslZtJT9ec03Jhb6dQZmROXoiiX7TEK6TVAYD8x9DEAur0lPOXd0XVfg5/l6+UNKHgwNmeScd2fRDv0oX5TRtLHn02TorEQOvaULdfBECIvIUuEYLD1vBeZlrR+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E3+F7DuD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RVVB5wK7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlUG62525421
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:35:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5d++JhR83X1EkIgn5+hFamsAqFSB3yWcWtebHioBuH4=; b=E3+F7DuDzmsYWcMk
-	EvBz9HHrOuqIhWRtyx5i68YDA57L77H05A2iHS8AmLmxTsYc2h2USz3mKFW+5+1P
-	62bMGSVQH36yGH9DRz551AOwgCse2afKyGbeImDfEpmbvB2g+mCGijg1N/KxwtNa
-	BH36h3xBoG6LyCs7BeM7eU2GJ/0elX6rlWbw6kN0RXpwv750b9Qf03dCRFbtsaCb
-	EoWA/2zaQSy6Jj3EelTbthCyzj/041/nj0RZeaHVcgO6b+cwlr9tHa6yOpR44X2Y
-	RgbeXib1hoG29zNqihwjn2nc3dCPQAKN9IidxUvT0a79A5pioNETLExxdfRFY81Y
-	nh9xLg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a3rnds-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:35:57 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-26985173d8eso170853185ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761698157; x=1762302957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5d++JhR83X1EkIgn5+hFamsAqFSB3yWcWtebHioBuH4=;
-        b=RVVB5wK7fTlNeHlWOXQ6APs02EN2FG6+lQkIyntzLwTRudCncrXq1g8c09HgVJPhXW
-         1Xi/MxCwC+2bL59L3Z+vf60rzyJJFzx7eezxnfXUgKTqRjgbGN6QBkQ+5wBu0x3BaxGu
-         l4GjA37DWdBOgJiSUUJjPhfHm4nGd6dW+gewKEEZL3FSoYP96azz3eN1mT+2zQs95C88
-         +M2GWOYoSedWjQ2ggrJlJbjIL3Ak7dMEaUW2yEpFZk3Wn0s3uaqVJ917cxqDccedv6uq
-         Rb/TVYQMhJt0m2/ilhfpZVY/KvgfOJFmgNIMpvB+Xp+dZvh1Kobv7PTF99ZQS0LeTnng
-         XCnA==
+	 To:Cc:Content-Type; b=FF1Geig1RUZSgMhNVSzI5neMRbi7FF82V+LPaTeD6SANnsgibTi10/4BxN0E2twLhAL81IrOtBF8Lr0UjdlxhHXAE+1y0O8+Z/nj34W+bGHdpxl/1tdxA6RgLt6a2lIM7vTILfQ1LosbFky7ikaQSR+wJoRA4CG4Cl/OPRTOMJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SqKqCy3H; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761698226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z2KxUywKM/o4sjXFIMx/mY+Zmwl/FX3Tzo88dQEt2xs=;
+	b=SqKqCy3HOkbeW/a6ipLPP0dtoWBpmtUS0Cj+CBN9PAVTx3iZWYgI4cEa6jIXD0YoyiAwkU
+	N1AjdERdyDp2NQx9fG9axt2A0V1T1ImP7bD9OHAIkG0svLWS9gJ2/mj62vwbaCrNcWMtGr
+	Dc2riachxeeYuaCYo0Kdp8o/MTJiA2g=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-280--ndVHt-lOWailEEz75LxPw-1; Tue, 28 Oct 2025 20:37:04 -0400
+X-MC-Unique: -ndVHt-lOWailEEz75LxPw-1
+X-Mimecast-MFC-AGG-ID: -ndVHt-lOWailEEz75LxPw_1761698223
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b6ce1b57b9cso4435326a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:37:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761698157; x=1762302957;
+        d=1e100.net; s=20230601; t=1761698223; x=1762303023;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5d++JhR83X1EkIgn5+hFamsAqFSB3yWcWtebHioBuH4=;
-        b=qXrp/zDgfvDx1juyUUXb4Hj7AwXoibAidKDWBekVrDG8ydSaZbNLAJZqTRUVPFzUqr
-         5gASbrbZRZWWACquas4AIBP9BKh47jo7WF4VQTzbpXg4u5OqncO13y1hPANHkYdzHXOI
-         rLpIYODfGlZOyCk7gLJ4MPykQsQgb992VNTO7vzVUAZChKlscLaE101oOs3I/ow8OybO
-         Vcoi5uRuIMQqW5cm3L/6I5OEXN1TuIAeBu3RR8eCtJlHLkLzsr+x1Maawvhq1aGcCVMP
-         qA6s5PPbjt7skNjKf8s9S2oeE7rAIC4wBVHXMkb6PsLLmo6cj0abpRq8JR1nfgbhmpE1
-         KJhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4p1BeViK1meEhimQd/ka3BnF+9Vwf6lyosuDxJdVgRxMIsfDkvpBbqhRISRz0SgGJz0fPRLawpEqJaKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzljA6uXyGJY+h17cf367ELl6j2b4ONKNXfsw3InEUktZPv7wxM
-	kyN2pVYnra0cpY5NFiWdY+2dE3HTRkLryIkqQB9CT4LSMECmZlX7nL7j3o7gBYFr1OtvtM1cum2
-	q6T/5oeg4M1q7PbVbNs5y4DczppdtrDJn8nf81WWSwRmhJkT9xtCPgTp3EeZOYQvCX0kRAbjjRO
-	VOnf2keN7TxmwlCZgptsYNu25fTNjISysXoL7kfJl3lw==
-X-Gm-Gg: ASbGncuR6FhpP7cjsKrV0O9zOQ5LNMdtBQ4Ov5t6o4C+QMHlhwjRAARhVA1HNUxSL3F
-	GzEvSlj2/gXY+K4A/2k9Ei4s3jDnKUtBIcScsj/ovHUeLUl3klJeL3ef6RLTllP8Cf0D+fkNPn+
-	On7m0IapgcEbl7YPt3meXInvBfVGXJ3dKmmo+sCZnpjLxK7qiv8f08tCoG
-X-Received: by 2002:a17:902:e88a:b0:269:63ea:6d4e with SMTP id d9443c01a7336-294deec53e7mr14264715ad.37.1761698157218;
-        Tue, 28 Oct 2025 17:35:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9OPHkH91X5aZoXnjzphjr5S5o2KvwNZWa5RxYObLofGJt/ji5FPIw8MHSQiXS9oyAy6iO/yF+aesYbSbF248=
-X-Received: by 2002:a17:902:e88a:b0:269:63ea:6d4e with SMTP id
- d9443c01a7336-294deec53e7mr14264395ad.37.1761698156747; Tue, 28 Oct 2025
- 17:35:56 -0700 (PDT)
+        bh=z2KxUywKM/o4sjXFIMx/mY+Zmwl/FX3Tzo88dQEt2xs=;
+        b=HSe2VcYDffK/JoRQyXDigNd7zIvABI6CU5LDujq+ID1NFH96TyBj3zewIRvUD16zsx
+         h68/+Copup+vLQjD4uDo8PjX9hxIjAPqGLp+UQOiyTkafLzby4lyVqD8TkH1ssxllivu
+         j5wnOSLUKnr/UxiuAjCos2jpr7kP3ntr1oIIYR+eo1AsuI/WwDPJ0o2Wknp0kYSWXBS0
+         aRi7Ky2DscCeaZ4PTKsDLoxo8MA+fMVwVPwY6UFdtqqr4Ay+3EKw9o/F2OH3lDFxaFgF
+         CvoeQ3+56CU7QBrdY3FNytPNKvNOhDN4aODoZmPU3WNfDLdKHQfpz4ApG29b0oQzmc+A
+         BceA==
+X-Forwarded-Encrypted: i=1; AJvYcCVawY/w4Tdgm/L4wLVoOLexaPlPbiJ8XKLR+gHTT41goTJeNcjQBpWgqnpQ5YKmpKmfbM3aYFl0YU+IgcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpmY5ZJZPkYCHGxwwEelpq+cTDo7vjw+QQsB9rj4UTx8Lwbp9Y
+	0C2Rmzf98sjJLEYRN55D4s9fWWyurlLRFyisAlENXhOy6ZYM3ihYsHItd64u0EiYmOkY0e9Ru+U
+	xQ4Y9Ut5Ur8PPlcL/ZUSsW+TavvbbpfCCX5hV1Otc8VjmKSXc9JWa6yF3+VPLMGR0+Fvgi10ocn
+	Ohne9RXltJwfAx8jEQLFD54g2QruVlE2k2D6KUPPHZ
+X-Gm-Gg: ASbGncseUN5ms3fejABACDMigzYhbJrO7ViCaTVQY9iVllbi6xneL08bBIFc2pvpxBp
+	rYWyqw9AaeRXTJqDEyhCYa2LA2oLCRBElmzR7CC4IFu1iL8FhpJLp6LVhonabucxWmmGWzfGbZ2
+	zEvKvG3EZ1Xv+BFB7aopu+lTDYCv0in+JdhwXnNci1TMTUK4xs/Ooa
+X-Received: by 2002:a17:903:18c:b0:25c:76f1:b024 with SMTP id d9443c01a7336-294dee3572dmr10317145ad.25.1761698223424;
+        Tue, 28 Oct 2025 17:37:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/SiMLBBOrGOScV5jwu3LEgWMNSKEpwIxmJj+/O/Qz7kK4bu5+UPkMl7kc61nl2u6Eqbd9szURp9TnMPpT23k=
+X-Received: by 2002:a17:903:18c:b0:25c:76f1:b024 with SMTP id
+ d9443c01a7336-294dee3572dmr10316805ad.25.1761698222965; Tue, 28 Oct 2025
+ 17:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
- <20250923-smp2p-v1-2-2c045af73dac@oss.qualcomm.com> <bb25208e-a6a6-4a81-9dd5-5c5eb1cf16b4@oss.qualcomm.com>
- <ff382661-4d05-4f9a-8b9e-55fa9932a22a@quicinc.com> <15617371-0b20-4326-8e08-2c20b3d3c767@oss.qualcomm.com>
-In-Reply-To: <15617371-0b20-4326-8e08-2c20b3d3c767@oss.qualcomm.com>
-From: Christopher Lew <christopher.lew@oss.qualcomm.com>
-Date: Tue, 28 Oct 2025 17:35:45 -0700
-X-Gm-Features: AWmQ_blJ0XZJj57smLg3viz2rnoGszVfVoBpYuAGhEffTwa9-ivzie97R69q8yA
-Message-ID: <CAOdFzchG34Eq-Px--ii3s+3yUf4ZNc=+0msr2bB86xMUExsanw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] soc: qcom: smp2p: Add support for smp2p v2
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chris Lew <chris.lew@oss.qualcomm.com>
+References: <CAJaqyWfRmhXM8eV+=wMVKgrc8SJ98OTtBCtNDJj8ZRUM5Y9Nmg@mail.gmail.com>
+ <CAO55csx2rbjxEZk5K3aKcZ501KY3Zfs8ThEQHFqQ1ZB9RSXECA@mail.gmail.com>
+ <20251015040722-mutt-send-email-mst@kernel.org> <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
+ <20251022060748-mutt-send-email-mst@kernel.org> <CAJaqyWdRN3C1nOHQjWroBPWKjc5efNfVbecpruL=Cgsk6i1FXg@mail.gmail.com>
+ <20251022073231-mutt-send-email-mst@kernel.org> <CAJaqyWeDcyKKOvVdqUkpTuH3d-Tb9rBHG3ym+LC0fcmhrN_FJA@mail.gmail.com>
+ <20251028100923-mutt-send-email-mst@kernel.org> <CAJaqyWePMtM8vtgm8UnGAv+_XNTnVNFSNuoqzt_Cn-CpZg46mA@mail.gmail.com>
+ <20251028104154-mutt-send-email-mst@kernel.org> <CAJaqyWc=Fhp2+m8P6cctkqG+oeXUgiGhKAsR5Ns20JMun=wvbQ@mail.gmail.com>
+In-Reply-To: <CAJaqyWc=Fhp2+m8P6cctkqG+oeXUgiGhKAsR5Ns20JMun=wvbQ@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 29 Oct 2025 08:36:51 +0800
+X-Gm-Features: AWmQ_blHBTuatMSJPDVuJEjsd9mldfKukgTo-6k1-Y6oj3d-VR92-lkw7uaPq1E
+Message-ID: <CACGkMEsv3SXnQ74bQKadcOr5Ztv-O-VZ8Zgfdq7mXqXN_Yrg0Q@mail.gmail.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea DE <dtatulea@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: 1azTze4hkGK9gbIPjoQ9q5pXB4Y3Y0Gb
-X-Authority-Analysis: v=2.4 cv=HM3O14tv c=1 sm=1 tr=0 ts=6901616e cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=eY5W3OMkMx8GTqqscWgA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAwMiBTYWx0ZWRfX9u60TGOTcLYX
- QPzu8UgxUr1aqwXe2TAN48bBowtixbLQj2A5TSIhdyQ0O8LdNHzYm15SqS3rrTjTjJsYd9BwNM8
- LEtN0rYXQ34u+0i/DRbpQsMXKTN9WOmTHJi34uyHcPGBqMH10ibAQIDFF7ef6N6PhvNluwEYsXr
- 4xAzIzb/3MZQZ/Ap8HIanGsF39onkUrB8Sniu9aGPB2+ixDgN0c8Ln5V2EwoftVFk2lsnKNq7lh
- 9+GFRkZfWFG8Ow4iKL3qbSB5A/a2z9CD4SoFgw/xQg+C5g6EiOXMsA/pDbhp8OCbQeQevB/Ewcj
- BQbfu/0fbdJIdPVFnNsslbeEzGypkY/yrk1FwxPPs7/1eHnr6as8A6Lh3neJjh4/zCF9IaOdqCl
- CkK/2kRjbok4deqzgIXca/XfiBwLtw==
-X-Proofpoint-GUID: 1azTze4hkGK9gbIPjoQ9q5pXB4Y3Y0Gb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_09,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
- spamscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290002
 
-On Tue, Oct 21, 2025 at 2:39=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
+On Tue, Oct 28, 2025 at 10:58=E2=80=AFPM Eugenio Perez Martin
+<eperezma@redhat.com> wrote:
 >
-> On 10/21/25 10:23 AM, Deepak Kumar Singh wrote:
+> On Tue, Oct 28, 2025 at 3:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat.co=
+m> wrote:
+> >
+> > On Tue, Oct 28, 2025 at 03:37:09PM +0100, Eugenio Perez Martin wrote:
+> > > On Tue, Oct 28, 2025 at 3:10=E2=80=AFPM Michael S. Tsirkin <mst@redha=
+t.com> wrote:
+> > > >
+> > > > On Wed, Oct 22, 2025 at 02:55:18PM +0200, Eugenio Perez Martin wrot=
+e:
+> > > > > On Wed, Oct 22, 2025 at 1:43=E2=80=AFPM Michael S. Tsirkin <mst@r=
+edhat.com> wrote:
+> > > > > >
+> > > > > > On Wed, Oct 22, 2025 at 12:50:53PM +0200, Eugenio Perez Martin =
+wrote:
+> > > > > > > Let me switch to MQ as I think it illustrates the point bette=
+r.
+> > > > > > >
+> > > > > > > IIUC the workflow:
+> > > > > > > a) virtio-net sends MQ_VQ_PAIRS_SET 2 to the device
+> > > > > > > b) VDUSE CVQ sends ok to the virtio-net driver
+> > > > > > > c) VDUSE CVQ sends the command to the VDUSE device
+> > > > > > > d) Now the virtio-net driver sends virtio-net sends MQ_VQ_PAI=
+RS_SET 1
+> > > > > > > e) VDUSE CVQ sends ok to the virtio-net driver
+> > > > > > >
+> > > > > > > The device didn't process the MQ_VQ_PAIRS_SET 1 command at th=
+is point,
+> > > > > > > so it potentially uses the second rx queue. But, by the stand=
+ard:
+> > > > > > >
+> > > > > > > The device MUST NOT queue packets on receive queues greater t=
+han
+> > > > > > > virtqueue_pairs once it has placed the VIRTIO_NET_CTRL_MQ_VQ_=
+PAIRS_SET
+> > > > > > > command in a used buffer.
+> > > > > > >
+> > > > > > > So the driver does not expect rx buffers on that queue at all=
+. From
+> > > > > > > the driver's POV, the device is invalid, and it could mark it=
+ as
+> > > > > > > broken.
+> > > > > >
+> > > > > > ok intresting. Note that if userspace processes vqs it should p=
+rocess
+> > > > > > cvq too. I don't know what to do in this case yet, I'm going on
+> > > > > > vacation, let me ponder this a bit.
+> > > > > >
+> > > > >
+> > > > > Sure.
+> > > >
+> > > > So let me ask you this, how are you going to handle device reset?
+> > > > Same issue, it seems to me.
+> > > >
+> > >
+> > > Well my proposal is to mark it as broken so it needs to be reset
+> > > manually.
 > >
 > >
-> > On 9/24/2025 8:27 PM, Konrad Dybcio wrote:
-> >> On 9/24/25 6:18 AM, Jingyi Wang wrote:
-> >>> From: Chris Lew <chris.lew@oss.qualcomm.com>
-> >>>
-> >>> Some remoteproc need smp2p v2 support, mirror the version written by =
-the
-> >>> remote if the remote supports v2. This is needed if the remote does n=
-ot
-> >>> have backwards compatibility with v1. And reset entry last value on S=
-SR for
-> >>> smp2p v2.
-> >>>
-> >>> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
-> >>> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >>> ---
-> >>
-> >> [...]
-> >>
-> >>> +static int qcom_smp2p_in_version(struct qcom_smp2p *smp2p)
-> >>> +{
-> >>> +    unsigned int smem_id =3D smp2p->smem_items[SMP2P_INBOUND];
-> >>> +    unsigned int pid =3D smp2p->remote_pid;
-> >>> +    struct smp2p_smem_item *in;
-> >>> +    size_t size;
-> >>> +
-> >>> +    in =3D qcom_smem_get(pid, smem_id, &size);
-> >>> +    if (IS_ERR(in))
-> >>> +        return 0;
-> >>> +
-> >>> +    return in->version;
-> >>
-> >> are in and out versions supposed to be out of sync in case of
-> >> error?
-> >>
-> > I think that should be ok. If we return error smp2p connection will be =
-completely broken. With default version 1 partial features can be supported=
- even if remote is using version 2. Some features like smp2p connection aft=
-er subsystem restart may be affected by this.>> +}
+> > Heh but guest assumes after reset device does not poke at guest
+> > memory, and will free up and reuse that memory.
+> > If userspace still pokes at it -> plus plus ungood.
+> >
 >
-> Perhaps a different question is in order.. do we ever expect smem_get to
-> fail under normal conditions?
+> I don't get this part. Once the device is reset, the device should not
+> poke at guest memory (unless it is malicious or similar). Why would it
+> do it?
 >
 
-We would, this new flow gets executed for all the smp2p device probes.
-For remoteprocs booted by HLOS, I would expect this call to
-qcom_smem_get() to fail during smp2p probe time, so I have a silent
-error. The in item will be found when we get the first ipcc interrupt
-from the remote. I would only expect qcom_smem_get() to succeed here
-on smp2p devices for early boot processors.
+At least for this case virtio-vDPA + VDUSE, there's no way for the
+userspace to poke after reset since everything is done via IOTLB.
 
-> [...]
->
-> >>>       /*
-> >>>        * Make sure the rest of the header is written before we valida=
-te the
-> >>>        * item by writing a valid version number.
-> >>>        */
-> >>>       wmb();
-> >>> -    out->version =3D 1;
-> >>> +    out->version =3D (in_version) ? in_version : 1;
-> >>
-> >> =3D in_version ?: 1
-> >>
-> >> Konrad
-> >>
-> > We want to assign in_version when value is 1/2 and 1 if value is 0 i.e.=
- error case.
->
-> That's what this syntax does, with less characters
->
-> Konrad
+For other devices, if we want this extra safety, we need to enable swiotlb.
+
+Thanks
+
 
