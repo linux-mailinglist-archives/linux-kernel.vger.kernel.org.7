@@ -1,162 +1,140 @@
-Return-Path: <linux-kernel+bounces-875062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C27AC181B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:59:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94745C181BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:00:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6654F3B8BB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:59:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AF874E7BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99AF2ECD39;
-	Wed, 29 Oct 2025 02:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F034E2ECE98;
+	Wed, 29 Oct 2025 03:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="sBl827Su"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtCq750y"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C1817A310;
-	Wed, 29 Oct 2025 02:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC56C2EC562
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761706777; cv=none; b=SOqc2cuA4COEjeTrCLmAO2yBl2lxQs7xxNvNGGXbcs3Qbq8A4BVhvTJQ2a9qfW82SxBoKfZGRZUvZpwflzzQpzr+k/v2+c4Pwh2ogHmAfmq+yBJYU0svE7UC/n3dnhad+RmSJHY8OrL54s5XBHEOWyPrMmX/PJHOQmPMM0/y8o0=
+	t=1761706802; cv=none; b=gzYfet5bmaZTryWkmxBeIgo9pyksfLc4Ofd3IRxD5Q/AHiIBvByACR8u4JZMObh7tcf0AwNz7yS2juBVe5T0PF288mAGv/2Hx/4SkNNLsO96ces4Yn+4/ukiFMfBF0/HYeeoCBS0Dqwjn+BjwbyXCZzd7/y/ZNKKOX66tP6nvHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761706777; c=relaxed/simple;
-	bh=3C4LK3yhmTxdX/lbtOU2wNo/rvyXok5BkicTvWpPRiM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FGA0vTYKcYjcLyfmPwvZmqhYutEPWa+9VkonZzHU0/hB+Daq1co0EGUrSx5t7A90syjvSOuPjWiATC0F44avdeJ4kAace57Jw8kwmJZDJMN/rqeYD4SbnwIqYqlUbyU2Mz+uQaJ3haHwWXd/+2VXpsDgyuuitVpHB5UQBGJ/nHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=sBl827Su; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59T1vjWq2567042;
-	Wed, 29 Oct 2025 02:59:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=orvursf417qpdmLDGFURg5es0bnAKOClQ3zlkzfPbMk=; b=
-	sBl827SuBXPAP9R31QUsWhh48Qqo1juED9NyAAOtXDBKrjcG4f/4mA199zb6Uw6b
-	BcQljI8H5D/uO5YSTsRyQ2BOO2a0m7TK3Sw/7R8gNHLUZ8MRAbZHdx2GomEFfzBj
-	UUhz6gi2WOTTP4m3I1BhMfR1NM3ol0c2wfsOVYjgWGj7hvVFDrM+cdzWEXZpmoZ8
-	dKuNsl9T4L5N1fREHdAkf8zw8vp25gK1Q1Xtghk+cwDrpz19uyno/WUGpk95a5jV
-	RhrOTX+35Gz51xwClEnbShyxTMHV01gE4H1/E+GCo3u5KGUBkYFb8cNaD7ccCeZz
-	pTX4d0FP08atCuhPK/Ldbw==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a3489gaxu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 29 Oct 2025 02:59:09 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Tue, 28 Oct 2025 19:59:07 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Tue, 28 Oct 2025 19:59:05 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <pabeni@redhat.com>
-CC: <dan.carpenter@linaro.org>, <davem@davemloft.net>, <edumazet@google.com>,
-        <horms@kernel.org>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <netdev@vger.kernel.org>,
-        <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH V4] netrom: Preventing the use of abnormal neighbor
-Date: Wed, 29 Oct 2025 10:59:04 +0800
-Message-ID: <20251029025904.63619-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <785c8add-ab09-47b2-94bf-a4bfe8c13388@redhat.com>
-References: <785c8add-ab09-47b2-94bf-a4bfe8c13388@redhat.com>
+	s=arc-20240116; t=1761706802; c=relaxed/simple;
+	bh=uvWxTYSvYRprQ1ZW3Euflh2mgClxsjMln7S5s7l2A4k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tvFLNIsTo3oRnfRHUj7VFiZ48WuYZlcWZNPtz2T1zvr3Fso+k6GJUeSfYp+7cCpMKrpHHi6OP5/iABlEZJasxFVQO/JLMVA2lDz/W0DISjnWLED4DSr2qQU3adY7ql5Y+op05I4GMRcI8yxjogtpP/D4e5nZTZfPQXt8JZwuEvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtCq750y; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ed101e8486so17113381cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761706799; x=1762311599; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikVE0ssZ8PILuEq4k6Un4Yxlye8b1lZqi+jy3bbKHWs=;
+        b=KtCq750yzMPqbDB0T+rDe5/DIlCbEsm60oNYzlPaDsnuNmnQPje3PncG0HV+7wJqoy
+         GmOJBIEW2st+e0owkZgEsDpF88zX0Zb+MkqlLFwdoKDdL1RiIkiiaI8ncDw6k/8IC5uA
+         TMUcvbpaqCxubrCEvsO4hdKvbnGCc0ceaqAXMq4Rd06jPi8+ugsw8oOgTyiQUYZUt6/p
+         bCb0m1cCriaUFskYpq+KE6QKvY/kfiZ9uNsdoX47+VikXAzBHBaDQMAPyd/GEYL0eGx+
+         ixef1QrjUe8ohSBywYOAgrriyDd5yWmuLZRRTr9fGLb9fqX/1px/vNErbd0xZylsR+Ey
+         V+DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761706799; x=1762311599;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ikVE0ssZ8PILuEq4k6Un4Yxlye8b1lZqi+jy3bbKHWs=;
+        b=vq/p7Usc4fAsWPfWGFDb+ySuMAplnVbxtmej2M1SUflOoKOQewzuSKxB2aEVK78siF
+         Rq+FXdo2oH4WPIHYLp3zyeZ0BMXi/c/Bo7rOUdo+HluPdlk9EMO7h14yBjc+R/NHBmQE
+         ja4I0e/oX9yGkkzQRCoIxHVm5viVuo4CA53RKEUt1MN/F3/sUR4VheO2XgKYbblNBi1Y
+         9IhiGDAOnXxUntocXTY9FQV2AC/5de2lWDmqChI1xuwPdGSqO8ttahkLYmN9BmCbJHlA
+         zLmkuZjHMwPNgOnBWvK3MrTTqKvXQ276pyNbK5JRfvAApuZ7hsIBNqf9I/hHubG4B+iX
+         N40w==
+X-Forwarded-Encrypted: i=1; AJvYcCVC02cI33In8SYblNzVMOzdK6ePN7BpgXANT30ZK59p+TTKtXzO4t5M+iFksexKGFyS4zhnCka7I+VQOZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkKZeEjKoABnC+pnidKQuYxC/Tjkp+KA6aRkWZUZUCrZY/Qcby
+	hw0T9TnNS5pqpMxo+9wB5DG2Z/ks1HtaRcKfNsKNp10R7RZBIWoZTCEA
+X-Gm-Gg: ASbGncvolp7D0uSlb17XlKQIIL++jU7+ZmwVNjd2mdXTkLy3Dm9whb+lcfKc3rNzgQP
+	hcSlyy6JvwfKUN+vUlg5WfLFw8/Vg88R9ePLRZpxvVzJpdYeId708F00WhudaQ72IUo8S0DHyR1
+	lLYEdPnWV697jO0IOcdS/V7TdMbSxhdtyXbb3/5LlgsMZKNWJkY8vig+RKyAA8FX0aK/vvMyy9E
+	Cm/6cJ25ro7SXkqM1Y3DEMfYBmeXqHsl0u5UkIKruaW9jtjK6m92fLBPIvHMSPt+PV1KW/mj/cu
+	rJN/gYhEUQuIpW3qa08CMp7Hl64C8FmhlmnVG69hfNRdBMWbLOwZF/QuOamnM4XFCxPhOlNjm67
+	mg15vhWtOCeJ42+mi/PDv2Tx6xXY6eXdkMJTttXHhG4XAWpyewaO+4t6JoLE9fsCGi2Odpx/d/F
+	Rze7PNxrg=
+X-Google-Smtp-Source: AGHT+IEvOug73vtl4ROvl4ozZsUcProXlbhk8qKycNCnxdG+O+1krran8kKir/F0sNEdEd48ksbtCQ==
+X-Received: by 2002:a05:622a:4089:b0:4d3:3ecd:efd0 with SMTP id d75a77b69052e-4ed15b32dafmr19732431cf.6.1761706799473;
+        Tue, 28 Oct 2025 19:59:59 -0700 (PDT)
+Received: from [192.168.90.162] ([142.182.130.176])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc49783eesm91505776d6.44.2025.10.28.19.59.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 19:59:58 -0700 (PDT)
+From: Samuel Kayode <samkay014@gmail.com>
+Date: Tue, 28 Oct 2025 22:59:35 -0400
+Subject: [PATCH] input: pf1550: Replace deprecated PM_OPS define
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: Qle8lwbp3_mE3r4qzFcLBoM2_DByylm7
-X-Proofpoint-ORIG-GUID: Qle8lwbp3_mE3r4qzFcLBoM2_DByylm7
-X-Authority-Analysis: v=2.4 cv=E83AZKdl c=1 sm=1 tr=0 ts=690182fd cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=U1BIhdE-NrZgBzzozqwA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAyMiBTYWx0ZWRfX8NiZpAPpJ0kE
- OyuQrvyW2k95RzHJ7+045dpCsNvrqha9RVty0Xmpgu4FFgJ9I2j2Nzr7fpg90zVfonHO8KgKh0o
- xh/iOMVz6hvRoS32IblrE56m6FsTDComHjNNZ5EdkDLZ9h47D6gAZHjy+hgmkDGvYBIdp/aBXcN
- Z0gLQV5XXxXvMo/vliksVRfWFrriXAFxbdjQpbwdp9BIxP6nA2Ppa8/O0UCOEQwQAJ2bFWU0aaF
- W+038DlYHCk/pnAHfLQI+3YVd/k4iMj1kewXxlZFwNlM7f5TogYUBNDkXIkS3jlfzi+Ww14kxi/
- UB5KZ+AR0qnKWuZKbhuY/+tu8QN9Mf86vvAo8fcqXVsd6RDZ3xoRLQg9AqobMmnRnAubnZnfWx7
- BHqSD3WUI/TVWdFsFL+1siibuqAztQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290022
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251028-pf1550-v1-1-c50fae56b9b1@gmail.com>
+X-B4-Tracking: v=1; b=H4sIABaDAWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyML3YI0Q1NTA11zw+TURGPTRINkSwMloOKCotS0zAqwQdGxtbUAZM+
+ jM1gAAAA=
+X-Change-ID: 20251028-pf1550-71cea35a0c90
+To: Jerome Oufella <jerome.oufella@savoirfairelinux.com>, 
+ naresh.kamboju@linaro.org, maddy@linux.ibm.com, mpe@ellerman.id.au, 
+ lee@kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Frank Li <Frank.Li@nxp.com>, Sean Nyekjaer <sean@geanix.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Samuel Kayode <samkay014@gmail.com>, 
+ imx@lists.linux.dev
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761706797; l=1053;
+ i=samkay014@gmail.com; s=20251028; h=from:subject:message-id;
+ bh=uvWxTYSvYRprQ1ZW3Euflh2mgClxsjMln7S5s7l2A4k=;
+ b=4fOl76a+CJsXMrMz+3jonDtJ6NY+vU6ExNNoQfFuEd/1lba8UY1jfJ+UsD9eN1tHk4G1uPX5R
+ 14VlvMCGU0DDnq7Zctg0xOZZ6d15Bc2fsqI4Bw14sECTQ5Ysid+PEw+
+X-Developer-Key: i=samkay014@gmail.com; a=ed25519;
+ pk=favoK08ilD1j62PrGf+RHihBzbqJGWMC6f2nszR5UIc=
 
-On Tue, 28 Oct 2025 15:13:37 +0100, Paolo Abeni wrote:
-> > The root cause of the problem is that multiple different tasks initiate
-> > SIOCADDRT & NETROM_NODE commands to add new routes, there is no lock
-> > between them to protect the same nr_neigh.
-> >
-> > Task0 can add the nr_neigh.refcount value of 1 on Task1 to routes[2].
-> > When Task2 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
-> > release the neighbour because its refcount value is 1.
-> >
-> > In this case, the following situation causes a UAF on Task2:
-> >
-> > Task0					Task1						Task2
-> > =====					=====						=====
-> > nr_add_node()
-> > nr_neigh_get_dev()			nr_add_node()
-> > 					nr_node_lock()
-> > 					nr_node->routes[2].neighbour->count--
-> > 					nr_neigh_put(nr_node->routes[2].neighbour);
-> > 					nr_remove_neigh(nr_node->routes[2].neighbour)
-> > 					nr_node_unlock()
-> > nr_node_lock()
-> > nr_node->routes[2].neighbour = nr_neigh
-> > nr_neigh_hold(nr_neigh);								nr_add_node()
-> > 											nr_neigh_put()
-> > 											if (nr_node->routes[2].neighbour->count
-> > Description of the UAF triggering process:
-> > First, Task 0 executes nr_neigh_get_dev() to set neighbor refcount to 3.
-> > Then, Task 1 puts the same neighbor from its routes[2] and executes
-> > nr_remove_neigh() because the count is 0. After these two operations,
-> > the neighbor's refcount becomes 1. Then, Task 0 acquires the nr node
-> > lock and writes it to its routes[2].neighbour.
-> > Finally, Task 2 executes nr_neigh_put(nr_node->routes[2].neighbour) to
-> > release the neighbor. The subsequent execution of the neighbor->count
-> > check triggers a UAF.
-> 
-> I looked at the code quite a bit and I think this could possibly avoid
-> the above mentioned race, but this whole area looks quite confusing to me.
-> 
-> I think it would be helpful if you could better describe the relevant
-> scenario starting from the initial setup (no nodes, no neighs).
-OK. Let me fill in the origin of neigh.
+Replace SIMPLE_DEV_PM_OPS with DEFINE_SIMPLE_DEV_PM_OPS as the former is
+deprecated.
 
-Task3
-=====
-nr_add_node()
-[146]if ((nr_neigh = kmalloc(sizeof(*nr_neigh), GFP_ATOMIC)) == NULL)
-[253]nr_node->routes[2].neighbour = nr_neigh;
-[255]nr_neigh_hold(nr_neigh);
-[256]nr_neigh->count++;
+Signed-off-by: Samuel Kayode <samkay014@gmail.com>
+---
+ drivers/input/misc/pf1550-onkey.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-neigh is created on line 146 in nr_add_node(), and added to node on
-lines 253-256. It occurs before all Task0, Task1, and Task2.
+diff --git a/drivers/input/misc/pf1550-onkey.c b/drivers/input/misc/pf1550-onkey.c
+index 9be6377151cb3be824ab34ff37f983196b909324..a636ceedfc04f0946e002a0b1be4586138429f12 100644
+--- a/drivers/input/misc/pf1550-onkey.c
++++ b/drivers/input/misc/pf1550-onkey.c
+@@ -173,8 +173,8 @@ static int pf1550_onkey_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(pf1550_onkey_pm_ops, pf1550_onkey_suspend,
+-			 pf1550_onkey_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(pf1550_onkey_pm_ops, pf1550_onkey_suspend,
++				pf1550_onkey_resume);
+ 
+ static const struct platform_device_id pf1550_onkey_id[] = {
+ 	{ "pf1550-onkey", },
 
-Note:
-1. [x], x is line number.
-2. During my debugging process, I didn't pay attention to where the node
-was created, and I apologize that I cannot provide the relevant creation
-process.
+---
+base-commit: a7d6255a0bf302c028ac680564633a6aac5f611d
+change-id: 20251028-pf1550-71cea35a0c90
 
-BR,
-Lizhi
+Best regards,
+-- 
+Samuel Kayode <samkay014@gmail.com>
+
 
