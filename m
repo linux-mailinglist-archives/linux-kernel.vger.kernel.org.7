@@ -1,120 +1,158 @@
-Return-Path: <linux-kernel+bounces-875813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2361C19DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:53:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79756C19DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397FB426CDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:45:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D18D1CC2A1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA0032E13A;
-	Wed, 29 Oct 2025 10:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A60D23D7D4;
+	Wed, 29 Oct 2025 10:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3DBtGnp"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="KUgcSda7"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F25E32A3F9
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B25253F39
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761734626; cv=none; b=TETvKsNp+IoLaEfy3YSHANibVVjKVIzhDajeb2i6d7rr6VeP0KLxZ/dXCIBlclRBmPJZKohsBaAGEDlzn88z8jZB/ZXiQW3KelmPmOOFSmcjGyOJ7giOumMxiW3R3nbnH+wr7+xuhdmDRZSk+OwbGiGDVF5ocFGEZkoXV2d6O7E=
+	t=1761734678; cv=none; b=kqXyPfq6LZcjE0Gg/2xyL/zDc7cyvKcExphKZVZNzFIAv0a2L6Brzl7fiBytPRkgmN9d3ywdpyOFggJmorrWgR27po3tqiB4p5c1rYPRFk9zyySVpL9L4JAc8mtVIEE2/iI7x7caR7CgT1Xh+XUGrw9k10ndGtPnQwXB458Wi6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761734626; c=relaxed/simple;
-	bh=2oXoC0z5iX1QVctIx7be9YVECKd3qVj+JpFkjgooT/U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VRLOuKTIyDAu9mzKoKO1aqa4hLwY+QeLd90m9mK/OUAdNkSjb+KsotUKVpAVcSQNpAA3pZUJI+Z7laBSSqDoIu0bJRjPakwhIcumFqgGa1AZcFBQM/a8rUti+XG3TgdhRglf4xYH6uWufHL0ulYik10SafXf4RAIhkK0geLYrcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U3DBtGnp; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4285169c005so3407342f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:43:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761734623; x=1762339423; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcoHF11ENhR3RrvSYHkD59wUi5AUsDEUQzjKh8Eb0i0=;
-        b=U3DBtGnptuySBoVepvxKVciNuLzjA4f+SKmg7g0BuvrqxoloHXBwdNA4F5FVVCuN+m
-         1OwQBQa5qhU0MeU+d76nXZSnLq7PB/YuyGIP1pJXy3iyX3gEx9MEnemTqtUjKhN49EN6
-         DasjY9uQPLGuNmoirYLtOW/dJIQWucjbtN9CTAueSGTy0ndPvH1XxEYwVbSmXaGhu2Jw
-         hHBpgJ5xPuM7HF21x+HBYQLeUR69iT/pj3Uo0Gmopkrz2U1yU9aYn0d7dQFocRu9MR6I
-         oHNmYdf0QkWCSgXT3avcBe6Fu//CH4fk198qQ+d448V0TzqNfY/CZ/cX8jsIzAmOJl/o
-         GptQ==
+	s=arc-20240116; t=1761734678; c=relaxed/simple;
+	bh=sOHeG5cN49D0DcSt5Q19c6bG/mpse29l2rxIUgCAzPg=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g5PWNoclI9Yn2mXT49VTuiuD/gLpyIZMhj0Dprrxg9CjRvC/iTMSPHMC1Byq2Of4Dwh3740JR5z9fKn/T64ET1XBeC5gwXP4N6q7aJJZftUm+ZkHanjItlDnoL7POtK14z0r9+dXdH2ZStvfv40I6OPYcFX3yDfLo7xL5JJricU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=KUgcSda7; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5CE043F718
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1761734668;
+	bh=V0fXLNytZLyk2YPIXYe5tFjfSCJQtOqgtquMldsZjLo=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=KUgcSda7v8ckgKnlwX9382aM/M4AwCpZkYN7AlgOc5zO6rVlN/29GlcpsFDoikQEq
+	 KSWHEprUvHcXOCA0iGafq35f6WwmK6I5lvDQIKBOK2p/+EmyWJq3ZU0qBQls7diJgo
+	 4W11pM88PXX82NoVAGdVBN4QfmAfg2V3BLFtAUG4u7pi4F+h20RlynB8QXWpzuIFFX
+	 Ex+6w1eOmL+POsGJBUwyhJ/yotZLAoTdDLZ9pbTB7IbeF4ULL/njQTD/2DWNQ0Jodk
+	 s2ehjJ/Q+74xg6CysG3rHSlC+Zvtl3VoyV2WV+5tp/5vJ1yicfq4R83Pn7+G/YZvDJ
+	 4iSjCmNKqebQg1GjW//rFJktyCWG09kWXL1aote32Tegh88iKvHEGr9ZcG7eDRaH13
+	 WoaOUIRjeYx/wit51zLcUcxiFZz3WgCOXiJswTux5zDyGKBkgM/6bW6tfmMXPhtX55
+	 WUIaw5+tvHRrrJZFBOIZR/kmiVQzTEIK0UvUz33z6oRt+dye+KiY+5aWzRHfXDxSW9
+	 jIg19AWcckUZo6r1Ev4YEydCMuKQ0wvIC6exOcXrro9TwGX+nogeFqgJ/6UO3gdg9f
+	 ycwOcwoTsuXXtVgJyVIOqZQs5bJfc9HaJ3nZ/dR2u90FrpWlh9qEWKfkpGmTjKSjuO
+	 9snxsj0fa9zIVC3LEAgWG4nw=
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5db34e16abfso3026840137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:44:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761734623; x=1762339423;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HcoHF11ENhR3RrvSYHkD59wUi5AUsDEUQzjKh8Eb0i0=;
-        b=vwvetkQA4OgBh5C68cpPpUy9bhyGdTtGqJktNlQ9h4JZyG8zJCut36xvLJiT722t/Y
-         IowjUBlCpftUS6wvHwGpr7st00qHQWFtMOl1ww+gQJjR3X3JAc9HufjcCDsAb8t23gQJ
-         aRS/17byuqmF2ff1lwnWGj6+bYkTF7TmEep6D2PHZqk9Wcqgz9H5GLjD3Bj+rbvH10AW
-         tSj25uqxreYprJdWdgUDsdVJWRZedNT3OQp80oxdq8KUygTbO5l6BwDIg+JNHyPEufZ4
-         GTOgpfw/uAv1NRJ6Zt+lgaj2tjOMuKRHyLZYmnDoj2+hUSTpsJX7U0UfoAs6A0m7qJZL
-         S6pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd0Gae03LXtykp2/+0rCn37GFujzg/31m83gcmFIPCFZiu3G3tiodehzbG193whYe/OFfatD7Vc+fFjzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz62/bj1l4Klax/0H4eLniR1RFisScJIDr7caq+e9/W31Faq7La
-	dgUQhSagAaDnn3IsNW/AsuvIIZrTAltuGeV/gmOaS0YmEBqBfRzuWu/B
-X-Gm-Gg: ASbGncvV+8od4JvyDCX0zpJqxbJEpe0iVOop5Hi1C1h7OqUkpTMxNfQ47EQU+EbeRYX
-	JHc4nWKemoo0spnITLPqmrs6QHpEhjce+jwJx+1PpYAg/IPtPgaaY0CP3QYcBr67ul9meBfmMxJ
-	Lo06IjfdCeiPqpCjGXUWEmcyPBGlezSM0eypCyAXtvB6iYnEJ9fdscAoFMldpV7ybj8hw2LYRGR
-	OlW8gO6G6scXrkBiDibFzcn71PTkcgCZ80jW3iIRABqkPC522+AHpS9tSaZQiAOYw2BeWJM+MEj
-	EgTkkgi759UgsFvSYAeuwL42o4PY1+nxdiUfDZctDPmfVJARsLFGAMCgOdWjP/xHbfTBnfD0LRx
-	W6jCQEY4Es1gTUKMiH6NwP6AJrw+xUKRg/DgJztC0OH7V4ndE9sSncLzdlvrunrWhBiu2qtmX8e
-	8atLyq
-X-Google-Smtp-Source: AGHT+IEmRI4Z/M00oieKbPxeIQldJKpH25/9dKm0itRMgfx3Wj6z2aQjBwr5JnK2lV2Z2mKsh3XAaQ==
-X-Received: by 2002:a05:6000:240f:b0:427:a27:3a6c with SMTP id ffacd0b85a97d-429aefda93bmr1775484f8f.63.1761734623193;
-        Wed, 29 Oct 2025 03:43:43 -0700 (PDT)
-Received: from vasant-suse.suse.org ([81.95.8.245])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df62dsm28137267f8f.45.2025.10.29.03.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 03:43:42 -0700 (PDT)
-From: vsntk18@gmail.com
-To: ashish.kalra@amd.com
-Cc: Sairaj.ArunKodilkar@amd.com,
-	Vasant.Hegde@amd.com,
-	davem@davemloft.net,
-	herbert@gondor.apana.org.au,
-	iommu@lists.linux.dev,
-	john.allen@amd.com,
-	joro@8bytes.org,
-	kvm@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.roth@amd.com,
-	pbonzini@redhat.com,
-	robin.murphy@arm.com,
-	seanjc@google.com,
-	suravee.suthikulpanit@amd.com,
-	thomas.lendacky@amd.com,
-	will@kernel.org
-Subject: Re: [PATCH v6 3/4] crypto: ccp: Skip SEV and SNP INIT for kdump boot
-Date: Wed, 29 Oct 2025 11:43:42 +0100
-Message-Id: <20251029104342.47980-1-vsntk18@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <d884eff5f6180d8b8c6698a6168988118cf9cba1.1756157913.git.ashish.kalra@amd.com>
-References: <d884eff5f6180d8b8c6698a6168988118cf9cba1.1756157913.git.ashish.kalra@amd.com>
+        d=1e100.net; s=20230601; t=1761734667; x=1762339467;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V0fXLNytZLyk2YPIXYe5tFjfSCJQtOqgtquMldsZjLo=;
+        b=IB6TKc4ul4u2Ni5RVWBCXcRbe2i/QLOTkCyh3P7+DGormrczGqD5cb8+l5HIU4kmLI
+         trkIqhUWotA3L3RrCdgvZ9fROdO9DPNmcPyTdednldhnHEUSn9F4Et1ivNwpn8WuyZ/j
+         3aBX70oAAKL3DKFXa0mN/jrjx0ZmsmLO2ItIxQuynsBtbZrgDWKGXKs/W4TWqDLiNeFt
+         txgA5JQRE3NMGhTKYVvPgopmyA/ZESqrLre71GfuuwvyD4nZdWhRh1wfISTQFGUf/+Ti
+         yrraVqHaDdrPhfejsHAc5jzDcOB5SgvldeG19BnSj+MZf+XZ4M5TxQtiInVI/UDU/7F0
+         60Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWel0sJXYvqfnVw6BFruhiZ10IheKipDp9EvwSXTwYmHweakHuIXiF4Q6mk1+OMH66mYqYThdJi4JsiLVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS0+uWSbSaM/zvin/3tFtQriVnks+BxFs4PPUrg3Kk7llctl3j
+	dZFPJlyl1lztvPGfM8prfXbl6pljmaHalH5YMrAns433PFKTHG7v+xLEZZ/DD0YX6rBp9QXJCmJ
+	j7ifOeKVcgm+v85joGep9z6Lvb5bnqCB7hlgB+5lz0l5XEQUbnhWwYB4/eKlbo+i0Qm+cS2vcH3
+	ZGgvShdxDDDETvq/XuD2zu/7UQyGsFBXofpdbCfhDvo+PWlh8Nvv/vb37M
+X-Gm-Gg: ASbGncuCWeR+cSkv2RUJUZHmXoahJRIVrB3WpAp6YuVzusULMDos0Ll1fwMpZwgeim7
+	i3rkEH93Re8tezkoDrRBGqGNyQ5fjIaoXsd/UbbktpaWxpt69a50mlT95pIbURtmGtbz2rzJt+X
+	peWp0hMHyRCY2xoYYc6tPy3CyaU6G8TDlynzNb5d0+eUB0ykfwtvQCdaOmSnghfyhkRJ6YOnWPb
+	2woWJ90wl6G
+X-Received: by 2002:a05:6102:dca:b0:520:a44f:3dd6 with SMTP id ada2fe7eead31-5db905b1c78mr499488137.8.1761734667203;
+        Wed, 29 Oct 2025 03:44:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrvsaT17GcF11Y07yPaEH3PHInbBmPpeRxqjkwSa39c9aiOCgJ/LnnUPj2EbAtqZSoycaQDJmuoIVdQyPt07Q=
+X-Received: by 2002:a05:6102:dca:b0:520:a44f:3dd6 with SMTP id
+ ada2fe7eead31-5db905b1c78mr499483137.8.1761734666843; Wed, 29 Oct 2025
+ 03:44:26 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 29 Oct 2025 03:44:26 -0700
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 29 Oct 2025 03:44:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251029094429.553842-2-jiangfeng@kylinos.cn>
+References: <20251029094429.553842-1-jiangfeng@kylinos.cn> <20251029094429.553842-2-jiangfeng@kylinos.cn>
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+User-Agent: alot/0.0.0
+Date: Wed, 29 Oct 2025 03:44:26 -0700
+X-Gm-Features: AWmQ_bl7oCY_kQJcWc7-dqRtKvoOuAPTtTsC7TvWy7sH2sDNjauX7GaF92P7jqM
+Message-ID: <CAJM55Z8c5fy4Gy+6JRy_p4=4sbMuGbKyNMQB4cwUdNLcFjgLEQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] riscv: Remove redundant judgment for the default
+ build target
+To: Feng Jiang <jiangfeng@kylinos.cn>, alex@ghiti.fr, aou@eecs.berkeley.edu, 
+	masahiroy@kernel.org, nicolas.schier@linux.dev, palmer@dabbelt.com, 
+	pjw@kernel.org
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Quoting Feng Jiang (2025-10-29 10:44:29)
+> The value of KBUILD_IMAGE is derived from $(boot-image-y),
+> so there's no need for redundant checks before this.
+>
+> Signed-off-by: Feng Jiang <jiangfeng@kylinos.cn>
+> ---
+>  arch/riscv/Makefile | 15 ---------------
+>  1 file changed, 15 deletions(-)
+>
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index 3998d4036f15..4c6de57f65ef 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -134,21 +134,6 @@ endif
+>  CHECKFLAGS += -D__riscv -D__riscv_xlen=$(BITS)
+>
+>  # Default target when executing plain make
+> -boot           := arch/riscv/boot
+> -ifeq ($(CONFIG_XIP_KERNEL),y)
+> -KBUILD_IMAGE := $(boot)/xipImage
+> -else
+> -ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_SOC_CANAAN_K210),yy)
+> -KBUILD_IMAGE := $(boot)/loader.bin
+> -else
+> -ifeq ($(CONFIG_EFI_ZBOOT),)
+> -KBUILD_IMAGE   := $(boot)/Image.gz
+> -else
+> -KBUILD_IMAGE := $(boot)/vmlinuz.efi
+> -endif
+> -endif
+> -endif
+> -
 
-   these changes seem to have been overwritten after
-   459daec42ea0c("crypto: ccp - Cache SEV platform status and platform state")
-   has been merged upstream.
+I think this might be a leftover from a faulty merge. The original patchset
+removed this part, so
 
-   I can send a patch if that's not been done already. Please let me know.
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Thanks,
-Vasant
-
+>  boot                                   := arch/riscv/boot
+>  boot-image-y                           := Image
+>  boot-image-$(CONFIG_KERNEL_BZIP2)      := Image.bz2
+> --
+> 2.25.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
