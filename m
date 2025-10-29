@@ -1,143 +1,212 @@
-Return-Path: <linux-kernel+bounces-875243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB07DC1882E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:44:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB26FC18834
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA0B55040FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:38:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC2135037B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FFA305055;
-	Wed, 29 Oct 2025 06:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D513D30216D;
+	Wed, 29 Oct 2025 06:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJXMi3Hg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="IpMOnKmo"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A9C26ED57;
-	Wed, 29 Oct 2025 06:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EE72206AC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761719930; cv=none; b=hMnWzeI2lx8bHEgSG1TEy3W5C4tdaPeav7LuAw8JVPDuZjIT3cTB2ZvDXDN3jm7T4Zjm8pefekZtmE2kreO9d85u7Vxc0B5SPHT6OWadlAn3RVxhUkWrAJhH/ho+9TWlDaKDn6zbdHQq9zoAA5wYajgIFlWXuAVhNGtlR6flIvQ=
+	t=1761720021; cv=none; b=gNBj0wQVBQCtvsC0olKKAwEF4GgzFEHH7pUaDyoB3hQGrd+n4x8VJWXfUDDp58gMl00+rZ7rfm7vD8bnfcpC4DqTtST3eB8SWYFDYMTM9jgGPFIVAErMub7rJFbAsBATJUJ6Ne+UKg4pXB9F4WC9gReVu9zPLNagGkeal5zSygI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761719930; c=relaxed/simple;
-	bh=fX3TRzUQYUf1han5LmQiXqOpSD9A4DO71dz9uUOS4is=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hWusvg7lT3PezktVuutU7Q+0Sg8KW31EzFAEM2GruWtdNhPlounLRWXGSYX9uDlCU2/dRa9fC95zjqri/yWfNpKSib6Lh00MUKVB4hXy3s8/oD+UqZDLBT2KVYh0ThpI2a21bicGSbb5xtMMgIiFpl7oTGWIuWFD1zx2R54a6bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJXMi3Hg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613EEC4CEF7;
-	Wed, 29 Oct 2025 06:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761719930;
-	bh=fX3TRzUQYUf1han5LmQiXqOpSD9A4DO71dz9uUOS4is=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HJXMi3Hgw+/3aMPfeEVJnKtQaiwt7w/n22xHs8HAVtqgIX0YWbxbwQSFMgZ77MDpI
-	 A75tr5v27T2AjaUGzR/6wv3rP9884/uQyNRj46ptNA2AlauzZ4+UzMY1d5458XqvWz
-	 LpGM0AmxnA4GxSlIQ8kbDzdZrtCuKbuyU+N+ijx/zGlPgcNCwSJUo/klIeEoJV85cS
-	 9/xeKQq9K1QC8LFvt+OxUCjjqg0Uln6NyNGriRZ7PjvmrC2BW6PdGYbeBxBCmBPy6/
-	 GNAkj0DqdGTrS2evq1oNBTklF8B3iTkDz6Purl1IU7AZ4mfSPt+J5IBLyvpw4JqSp2
-	 Znims/ChXSgwQ==
-Message-ID: <068e8e8e-2968-44e8-8769-be0dfe1409c2@kernel.org>
-Date: Wed, 29 Oct 2025 07:38:45 +0100
+	s=arc-20240116; t=1761720021; c=relaxed/simple;
+	bh=UK3Oazws8lU0QcFGb6Imol0JxiYdY4nsY1S0YRrN4uY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qp3QK5iyb6pMP46qFMtJznC9Vu9mQve4WXQ1O7b5EAyHKpvTlxGTRki0hZYBorupmLyOGaZYYreAfmNeTMXFZ4Kwp3YajCWRsDwfjxRyhjfIiE+bgxza//VDOhkFSFHENPSxkZ6l2/quem7MwjBmlyKqnA2fXTlypH+lL3CCWgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=IpMOnKmo; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=R2FdD5J/Lr6BnGwMKRTDIEW2p4Dh3z/n14/cPtSxKg4=;
+	b=IpMOnKmoS6zK+4EVtk8S3WHaTh5AL00RQBseN5kgB2Ev70POZb4Je5zUJWtprvuJpp47OgMEq
+	MOXFez0vV1bPbCJ4ziREV4gK0zcNxU3m1eII/EP21O++DpFU7LSEZsnLYqk6jaxqESBjosdlxTd
+	uSlw04DKUcdrRNDy8XH4TYQ=
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cxHfV2CvBz1prQ0;
+	Wed, 29 Oct 2025 14:39:46 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8643D18048D;
+	Wed, 29 Oct 2025 14:40:15 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 29 Oct 2025 14:40:15 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 29 Oct 2025 14:40:14 +0800
+Subject: Re: [PATCH v2 1/1] mm/ksm: recover from memory failure on KSM page by
+ migrating to healthy duplicate
+To: Long long Xia <xialonglong2025@163.com>
+CC: <markus.elfring@web.de>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <wangkefeng.wang@huawei.com>,
+	<qiuxu.zhuo@intel.com>, <xu.xin16@zte.com.cn>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Longlong Xia
+	<xialonglong@kylinos.cn>, <david@redhat.com>, <lance.yang@linux.dev>
+References: <20251016101813.484565-1-xialonglong2025@163.com>
+ <20251016101813.484565-2-xialonglong2025@163.com>
+ <af769443-e855-81d0-a44a-d5890f5d1d2f@huawei.com>
+ <7c069611-21e1-40df-bdb1-a3144c54507e@163.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <db70f612-bbb1-0f9a-3dd6-884b1d64ab61@huawei.com>
+Date: Wed, 29 Oct 2025 14:40:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add identifiers for VIIF on
- Toshiba Visconti TMPV770x SoC
-To: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251029061344.451222-1-yuji2.ishikawa@toshiba.co.jp>
- <20251029061344.451222-2-yuji2.ishikawa@toshiba.co.jp>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <7c069611-21e1-40df-bdb1-a3144c54507e@163.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251029061344.451222-2-yuji2.ishikawa@toshiba.co.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-On 29/10/2025 07:13, Yuji Ishikawa wrote:
-> Add clock and reset identifiers for the Video Input Interface.
-> These identifiers support two instances: VIIF0 and VIIF1.
+On 2025/10/28 15:54, Long long Xia wrote:
+> Thanks for the reply.
 > 
-> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-> ---
-> Changelog v2:
-> - Do not modify existing identifiers to avoid breaking ABI.
->   Keep existing identfiers for VIIF0.
->   Introduce new idenfifiers for VIIF1, following the same naming conventions.
-> ---
->  include/dt-bindings/clock/toshiba,tmpv770x.h | 15 +++++++++++++--
->  include/dt-bindings/reset/toshiba,tmpv770x.h | 10 +++++++++-
->  2 files changed, 22 insertions(+), 3 deletions(-)
+> 在 2025/10/23 19:54, Miaohe Lin 写道:
+>> On 2025/10/16 18:18, Longlong Xia wrote:
+>>> From: Longlong Xia <xialonglong@kylinos.cn>
+>>>
+>>> When a hardware memory error occurs on a KSM page, the current
+>>> behavior is to kill all processes mapping that page. This can
+>>> be overly aggressive when KSM has multiple duplicate pages in
+>>> a chain where other duplicates are still healthy.
+>>>
+>>> This patch introduces a recovery mechanism that attempts to
+>>> migrate mappings from the failing KSM page to a newly
+>>> allocated KSM page or another healthy duplicate already
+>>> present in the same chain, before falling back to the
+>>> process-killing procedure.
+>>>
+>>> The recovery process works as follows:
+>>> 1. Identify if the failing KSM page belongs to a stable node chain.
+>>> 2. Locate a healthy duplicate KSM page within the same chain.
+>>> 3. For each process mapping the failing page:
+>>>     a. Attempt to allocate a new KSM page copy from healthy duplicate
+>>>        KSM page. If successful, migrate the mapping to this new KSM page.
+>>>     b. If allocation fails, migrate the mapping to the existing healthy
+>>>        duplicate KSM page.
+>>> 4. If all migrations succeed, remove the failing KSM page from the chain.
+>>> 5. Only if recovery fails (e.g., no healthy duplicate found or migration
+>>>     error) does the kernel fall back to killing the affected processes.
+>>>
+>>> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+>> Thanks for your patch. Some comments below.
+>>
+>>> ---
+>>>   mm/ksm.c | 246 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 246 insertions(+)
+>>>
+>>> diff --git a/mm/ksm.c b/mm/ksm.c
+>>> index 160787bb121c..9099bad1ab35 100644
+>>> --- a/mm/ksm.c
+>>> +++ b/mm/ksm.c
+>>> @@ -3084,6 +3084,246 @@ void rmap_walk_ksm(struct folio *folio, struct rmap_walk_control *rwc)
+>>>   }
+>>>     #ifdef CONFIG_MEMORY_FAILURE
+>>> +static struct ksm_stable_node *find_chain_head(struct ksm_stable_node *dup_node)
+>>> +{
+>>> +    struct ksm_stable_node *stable_node, *dup;
+>>> +    struct rb_node *node;
+>>> +    int nid;
+>>> +
+>>> +    if (!is_stable_node_dup(dup_node))
+>>> +        return NULL;
+>>> +
+>>> +    for (nid = 0; nid < ksm_nr_node_ids; nid++) {
+>>> +        node = rb_first(root_stable_tree + nid);
+>>> +        for (; node; node = rb_next(node)) {
+>>> +            stable_node = rb_entry(node,
+>>> +                    struct ksm_stable_node,
+>>> +                    node);
+>>> +
+>>> +            if (!is_stable_node_chain(stable_node))
+>>> +                continue;
+>>> +
+>>> +            hlist_for_each_entry(dup, &stable_node->hlist,
+>>> +                    hlist_dup) {
+>>> +                if (dup == dup_node)
+>>> +                    return stable_node;
+>>> +            }
+>>> +        }
+>>> +    }
+>> Would above multiple loops take a long time in some corner cases?
 > 
-> diff --git a/include/dt-bindings/clock/toshiba,tmpv770x.h b/include/dt-bindings/clock/toshiba,tmpv770x.h
-> index 5fce71300..ff4ef1be5 100644
-> --- a/include/dt-bindings/clock/toshiba,tmpv770x.h
-> +++ b/include/dt-bindings/clock/toshiba,tmpv770x.h
-> @@ -141,7 +141,10 @@
->  #define TMPV770X_CLK_PIREFCLK		124
->  #define TMPV770X_CLK_SBUS		125
->  #define TMPV770X_CLK_BUSLCK		126
-> -#define TMPV770X_NR_CLK			127
+> Thanks for the concern.
+> 
+> I do some simple test。
+> 
+> Test 1: 10 Virtual Machines (Real-world Scenario)
+> Environment: 10 VMs (256MB each) with KSM enabled
+> 
+> KSM State:
+> pages_sharing: 262,802 (≈1GB)
+> pages_shared: 17,374 （≈68MB）
+> pages_unshared = 124,057 (≈485MB)
+> total ≈1.5GB
+> chain_count = 9, not_chain_count = 17152
+> Red-black tree nodes to traverse:
+> 17,161 (9 chains + 17,152 non-chains)
+> 
+> Performance:
+> find_chain: 898 μs (0.9 ms)
+> collect_procs_ksm: 4,409 μs (4.4 ms)
+> Total memory failure handling: 6,135 μs (6.1 ms)
+> 
+> 
+> Test 2: 10GB Single Process (Extreme Case)
+> Environment: Single process with 10GB memory,
+> 1,310,720 page pairs (each pair identical, different from others)
+> 
+> KSM State:
+> pages_sharing: 1,311,740 （≈5GB)
+> pages_shared: 1,310,724 （≈5GB)
+> pages_unshared = 0
+> total ≈10GB
+> Red-black tree nodes to traverse:
+> 1,310,721 (1 chain + 1,310,720 non-chains)
+> 
+> Performance:
+> find_chain: 28,822 μs (28.8 ms)
+> collect_procs_ksm: 45,944 μs (45.9 ms)
+> Total memory failure handling: 46,594 μs (46.6 ms)
 
-You cannot change it, as explained last time. If this is not an ABI,
-then in separate patch drop it (see examples in the history for Samsung,
-NXP and probably many more SoCs).
+Thanks for your test.
 
-Best regards,
-Krzysztof
+> 
+> Summary:
+> The find_chain function shows approximately linear scaling with the number of red-black tree nodes.
+> With a 76x increase in nodes (17,161 → 1,310,721), latency increased by 32x (898 μs → 28,822 μs).
+> representing 62% of total memory failure handling time (46.6ms).
+> However, since memory failures are rare events, this latency may be acceptable
+> as it does not impact normal system performance and only affects error recovery paths.
+> 
+
+IMHO, the execution time of a kernel function must not be too long without any scheduling points.
+Otherwise it may affect the normal scheduling of the system and leads to something like performance
+fluctuation. Or am I miss something?
+
+Thanks.
+.
 
