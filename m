@@ -1,248 +1,130 @@
-Return-Path: <linux-kernel+bounces-876365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F776C1BA22
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:25:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3CCC1BAFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 946D44E9A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899FB5870F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B09283683;
-	Wed, 29 Oct 2025 14:33:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1754A2BD001
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A63289378;
+	Wed, 29 Oct 2025 14:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG80Au/z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7323189B84;
+	Wed, 29 Oct 2025 14:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748417; cv=none; b=kKhJ/2UQR3hML4d1GYvqDnxLngBkq6m6DHdZUTEzC+lIHWHbgQV8oC3Fa4m34MuFehT6Ol9H1iBjYuitMQJrjyAvOH0go0VV8H9z61Cx9xEaBvr9YTqXoeVeyXXVwqrhEpZrB6rX2pDJQC0PFDqg7eU8DGP1J/Q7gDp+eYjdo+E=
+	t=1761748411; cv=none; b=E8zUdmjzakxuJNf9Jwy7jlr+kxnsxe7WzWpDq92smPUMZNQygg4ZucAdXuuqxZgzUiq4czfweXGg1pWS6M0oiTFd9oobPlcBO5UjIGKA+CEJjZbDq3pNaDzgQl9ScvPBw2xeHXbWIPl4qUcT0Jd48E+Tyg19UyrC/6004VkpVGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748417; c=relaxed/simple;
-	bh=YS6sQNVHlAdBS6vHtXcSV/2beSmCmquuq27nnmmYGHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1+v/+oBGv4DtF2ceai76dpbSbNBqzhFpgg4m4RFjCBh7D7mS0yHYgsl9Sw8WL0MkbF5XPaxAM1+uYsm1GP1MUb/98RuOLVo7PEzvQ/VkEe7NK+jyDDKuNTieNj+Hu9xEGpuMyirMdUgs9MmEoP7pWxL07DO3YIh3OINRSm9QiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 918791AC1;
-	Wed, 29 Oct 2025 07:33:26 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B60463F66E;
-	Wed, 29 Oct 2025 07:33:32 -0700 (PDT)
-Date: Wed, 29 Oct 2025 14:33:26 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Ben Niu <benniu@meta.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, tytso@mit.edu, Jason@zx2c4.com,
-	Ben Niu <niuben003@gmail.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Enable kprobe tracing for Arm64 asm functions
-Message-ID: <aQIltqoIVDwh4A6p@J2N7QTR9R3>
-References: <20251027181749.240466-1-benniu@meta.com>
+	s=arc-20240116; t=1761748411; c=relaxed/simple;
+	bh=KBexipZinacsmi51W/An1mVKtsS6DoAr0PqX5xgZB5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rtpqpX7BaKb7HT8a5dO8Piz19SVvUxrH8eHNIc5InFRyG1opr1Gdzt4OlEXEKi0qfsG5Xc6cBO30aQ7iiGU+LfhqtGy+49ZSClodfUESEYV/qJHvblZW47PF5V4l81C5f+oeKn5UX9me0S6vdNQ/hmlAn6VjzJk4vUrPgXT/SX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG80Au/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0001EC4CEF7;
+	Wed, 29 Oct 2025 14:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761748411;
+	bh=KBexipZinacsmi51W/An1mVKtsS6DoAr0PqX5xgZB5s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VG80Au/zpuSHRueSTHUFZR/1bZL28JCayNjHxCoG26OBnSuxkV80upA4J5ugWGUkD
+	 4dwRjt6wHcHp7yYiwSODIz4aLnKfk/Dfoen8JzMwDOn9eT/lYp6hy1r1fF+P/u/CVV
+	 xvP8po+84ATTQC37CgGJYpcITqmDvO5+bpCFbpf0MfiXpqvuoMyBnukdKBCsFJL3I3
+	 uC2ZPKbEoL3KExRBwmCI3SEA/M62j3zozMnHCOHYtP/5lHqEekiAQk6bTowalGH8am
+	 k+sftZ6uNO0ao3kOp3YxVZuuTjKhk30F9y4D6GGJo/mlutf1OsJkvJXk4IkILsqdWP
+	 HmT+WlrES4uQg==
+Message-ID: <59ab13be-f72d-4567-a512-15b2c0be5ff4@kernel.org>
+Date: Wed, 29 Oct 2025 15:33:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027181749.240466-1-benniu@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] wifi: ath11k: add hw ring mask for QCN6122
+To: george.moussalem@outlook.com, Johannes Berg <johannes@sipsolutions.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
+ <20251029-ath11k-qcn6122-v1-3-58ed68eba333@outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251029-ath11k-qcn6122-v1-3-58ed68eba333@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 11:17:49AM -0700, Ben Niu wrote:
-> Currently, Arm64 assembly functions always have a bti c
-> instruction inserted before the prologue. When ftrace is enabled,
-> no padding nops are inserted at all.
-> 
-> This breaks kprobe tracing for asm functions, which assumes that
-> proper nops are added before and within functions (when ftrace is
-> enabled) and bti c is only present when CONFIG_ARM64_BTI_KERNEL is
-> defined.
+On 29/10/2025 15:26, George Moussalem via B4 Relay wrote:
+> +};
+> +
+>  /* Target firmware's Copy Engine configuration for IPQ5018 */
+>  const struct ce_pipe_config ath11k_target_ce_config_wlan_ipq5018[] = {
+>  	/* CE0: host->target HTC control and raw streams */
+> diff --git a/drivers/net/wireless/ath/ath11k/hw.h b/drivers/net/wireless/ath/ath11k/hw.h
+> index 52d9f4c13b1366f2339b8900cf9db91e6ff1bcff..e7220c46de10c378ea5b452d78f921054ff54e54 100644
+> --- a/drivers/net/wireless/ath/ath11k/hw.h
+> +++ b/drivers/net/wireless/ath/ath11k/hw.h
+> @@ -285,6 +285,7 @@ extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_ipq8074;
+>  extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_qca6390;
+>  extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_qcn9074;
+>  extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_wcn6750;
+> +extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_qcn6122;
 
-What exactly do you mean by "breaks kprobe tracing"?
+Why are you breaking the order in every such list? Keep it
+alphabetically sorted.
 
-The kprobes code knows NOTHING about those ftrace NOPs, so I cannot see
-how those are relevant.
-
-The patch adds entries to __patchable_function_entries, which is owned
-by ftrace, and has NOTHING to do with kprobes.
-
-> The patch fixes the bug by inserting nops and bti c in Arm64 asm
-> in the same way as compiled C code.
-
-As it stands, NAK to this change.
-
-I'm not averse to making (some) assembly functions traceable by ftrace,
-and hence giving those NOPs. However, that's not safe generally (e.g.
-due to noinstr requirements), and so special care will need to be taken.
-
-The rationale above does not make sense; it conflates distinct things,
-and I think a more complete explanation is necessary.
-
-Mark.
-
-> Note: although this patch unblocks kprobe tracing, fentry is still
-> broken because no BTF info gets generated from assembly files. A
-> separate patch is needed to fix that.
-> 
-> I built this patch with different combos of the following features
-> and confirmed kprobe tracing for asm function __arch_copy_to_user
-> worked in all cases:
-> 
-> CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS
-> CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> CONFIG_ARM64_BTI_KERNEL
-> 
-> Signed-off-by: Ben Niu <benniu@meta.com>
-> ---
->  arch/arm64/include/asm/linkage.h           | 103 ++++++++++++++++-----
->  arch/arm64/kernel/vdso/vgetrandom-chacha.S |   2 +-
->  2 files changed, 81 insertions(+), 24 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/linkage.h b/arch/arm64/include/asm/linkage.h
-> index d3acd9c87509..f3f3bc168162 100644
-> --- a/arch/arm64/include/asm/linkage.h
-> +++ b/arch/arm64/include/asm/linkage.h
-> @@ -5,8 +5,47 @@
->  #include <asm/assembler.h>
->  #endif
->  
-> -#define __ALIGN		.balign CONFIG_FUNCTION_ALIGNMENT
-> -#define __ALIGN_STR	".balign " #CONFIG_FUNCTION_ALIGNMENT
-> +#define __ALIGN .balign CONFIG_FUNCTION_ALIGNMENT
-> +#define __ALIGN_STR ".balign " #CONFIG_FUNCTION_ALIGNMENT
-> +
-> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS
-> +
-> +#define PRE_FUNCTION_NOPS                                                   \
-> +	ALIGN;                                                              \
-> +	nops CONFIG_FUNCTION_ALIGNMENT / 4 - 2;                             \
-> +	.pushsection __patchable_function_entries, "awo", @progbits, .text; \
-> +	.p2align 3;                                                         \
-> +	.8byte 1f;                                                          \
-> +	.popsection;                                                        \
-> +	1 :;                                                                \
-> +	nops 2;
-> +
-> +#define PRE_PROLOGUE_NOPS nops 2;
-> +
-> +#elif defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS)
-> +
-> +#define PRE_FUNCTION_NOPS
-> +
-> +#define PRE_PROLOGUE_NOPS                                                   \
-> +	.pushsection __patchable_function_entries, "awo", @progbits, .text; \
-> +	.p2align 3;                                                         \
-> +	.8byte 1f;                                                          \
-> +	.popsection;                                                        \
-> +	1 :;                                                                \
-> +	nops 2;
-> +
-> +#else
-> +
-> +#define PRE_FUNCTION_NOPS
-> +#define PRE_PROLOGUE_NOPS
-> +
-> +#endif
-> +
-> +#ifdef CONFIG_ARM64_BTI_KERNEL
-> +#define BTI_C bti c;
-> +#else
-> +#define BTI_C
-> +#endif
->  
->  /*
->   * When using in-kernel BTI we need to ensure that PCS-conformant
-> @@ -15,32 +54,50 @@
->   * everything, the override is done unconditionally so we're more
->   * likely to notice any drift from the overridden definitions.
->   */
-> -#define SYM_FUNC_START(name)				\
-> -	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)	\
-> -	bti c ;
-> +#define SYM_FUNC_START(name)                       \
-> +	PRE_FUNCTION_NOPS                          \
-> +	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN) \
-> +	BTI_C                                      \
-> +	PRE_PROLOGUE_NOPS
-> +
-> +#define SYM_FUNC_START_NOTRACE(name)               \
-> +	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN) \
-> +	BTI_C
->  
-> -#define SYM_FUNC_START_NOALIGN(name)			\
-> -	SYM_START(name, SYM_L_GLOBAL, SYM_A_NONE)	\
-> -	bti c ;
-> +#define SYM_FUNC_START_NOALIGN(name)              \
-> +	PRE_FUNCTION_NOPS                         \
-> +	SYM_START(name, SYM_L_GLOBAL, SYM_A_NONE) \
-> +	BTI_C                                     \
-> +	PRE_PROLOGUE_NOPS
->  
-> -#define SYM_FUNC_START_LOCAL(name)			\
-> -	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN)	\
-> -	bti c ;
-> +#define SYM_FUNC_START_LOCAL(name)                \
-> +	PRE_FUNCTION_NOPS                         \
-> +	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN) \
-> +	BTI_C                                     \
-> +	PRE_PROLOGUE_NOPS
->  
-> -#define SYM_FUNC_START_LOCAL_NOALIGN(name)		\
-> -	SYM_START(name, SYM_L_LOCAL, SYM_A_NONE)	\
-> -	bti c ;
-> +#define SYM_FUNC_START_LOCAL_NOALIGN(name)       \
-> +	PRE_FUNCTION_NOPS                        \
-> +	SYM_START(name, SYM_L_LOCAL, SYM_A_NONE) \
-> +	BTI_C                                    \
-> +	PRE_PROLOGUE_NOPS
->  
-> -#define SYM_FUNC_START_WEAK(name)			\
-> -	SYM_START(name, SYM_L_WEAK, SYM_A_ALIGN)	\
-> -	bti c ;
-> +#define SYM_FUNC_START_WEAK(name)                \
-> +	PRE_FUNCTION_NOPS                        \
-> +	SYM_START(name, SYM_L_WEAK, SYM_A_ALIGN) \
-> +	BTI_C                                    \
-> +	PRE_PROLOGUE_NOPS
->  
-> -#define SYM_FUNC_START_WEAK_NOALIGN(name)		\
-> -	SYM_START(name, SYM_L_WEAK, SYM_A_NONE)		\
-> -	bti c ;
-> +#define SYM_FUNC_START_WEAK_NOALIGN(name)       \
-> +	PRE_FUNCTION_NOPS                       \
-> +	SYM_START(name, SYM_L_WEAK, SYM_A_NONE) \
-> +	BTI_C                                   \
-> +	PRE_PROLOGUE_NOPS
->  
-> -#define SYM_TYPED_FUNC_START(name)				\
-> -	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)	\
-> -	bti c ;
-> +#define SYM_TYPED_FUNC_START(name)                       \
-> +	PRE_FUNCTION_NOPS                                \
-> +	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN) \
-> +	BTI_C                                            \
-> +	PRE_PROLOGUE_NOPS
->  
->  #endif
-> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> index 67890b445309..21c27b64cf9f 100644
-> --- a/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> +++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> @@ -40,7 +40,7 @@
->   *	x2: 8-byte counter input/output
->   *	x3: number of 64-byte block to write to output
->   */
-> -SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-> +SYM_FUNC_START_NOTRACE(__arch_chacha20_blocks_nostack)
->  
->  	/* copy0 = "expand 32-byte k" */
->  	mov_q		x8, 0x3320646e61707865
-> -- 
-> 2.47.3
-> 
-> 
+Best regards,
+Krzysztof
 
