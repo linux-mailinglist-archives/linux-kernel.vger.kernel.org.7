@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-875829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F92C19E7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:58:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B007C19E96
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C78F54F32D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416461886ACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663FE313E39;
-	Wed, 29 Oct 2025 10:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478EA2F691E;
+	Wed, 29 Oct 2025 11:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RwnSt7HV"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="npceiVXa"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8167F1D27B6;
-	Wed, 29 Oct 2025 10:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3952D8395;
+	Wed, 29 Oct 2025 11:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761735386; cv=none; b=IWzoU6BXIeQb4vSQqCxFq6c+w1Mn7m+rgy3MDceB1BIAugbIwPmvXpzLoJSACJKpyOFmBmAFO2u91xcrHotCjzMNOcRRWAtzYsaIe/g0Olb/f9aTvJf9zIWBCHutTxCa5G3LWs7N3KLiBvr+XqmJjAgmvL0+yLk5jPpsOaoNzrw=
+	t=1761735642; cv=none; b=aVLU4/0i0mjluE3cEWO3Qm4SytFzJB+4jHVwLt5+Jc03LwBXVoP+It8DFNpSccgY5z2cOnthkYcYLa9KAdi4miuRHQ62mol9hHIyr0PawFJU6y7I5K8VPCZx6E16zCIbaWDqJAtJA8s19qp3KUErO4EF19XW22gJgbYVoW2+Vf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761735386; c=relaxed/simple;
-	bh=OTOHySwJe6r6YYDtowd4j3NiPv+2ssam78yCEgppdVo=;
+	s=arc-20240116; t=1761735642; c=relaxed/simple;
+	bh=AUNH3u8bUF8JoMehOHg6y00+85aYv43ceW1GQNK7K5s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDSB5wFjFTTABjURl1HCO6sgn+EKr+bT+I/44c265s8JGp2kQN9cFqsB0I9csWSFAMfYXkuV1T6pNu6YhlQlnXMrkJmT22ckmLG4IpH7EQdzDABx5g2S2YgpQ3kCl6ID3SYKo28IGUOSFDFeaClUXlYhzpyRvVx51LfKkfIeR5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RwnSt7HV; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=PUZgcGIGTDN946eHZVLlN6K0ag/9JH0fhug9r1k7NRxVsRbfegTmG3oOPlg3v6msCloIij9/Z/7DODwxxCKtzYZvKpvCd4yc95A9WXThVHqkJ7PrYIjVXtwXa3iVf2DcKpV8WQOuJ0g1WaioXPQaTVCYl72U/yoC4DzJMU9+Mb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=npceiVXa; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761735382;
-	bh=OTOHySwJe6r6YYDtowd4j3NiPv+2ssam78yCEgppdVo=;
+	s=mail; t=1761735638;
+	bh=AUNH3u8bUF8JoMehOHg6y00+85aYv43ceW1GQNK7K5s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RwnSt7HVUCjaxf67VSYhbu/C1B86w2NwjHjei7n435b5I6NWt4mRo+aa7JhaDuXH9
-	 SyUVbxl9VqICpOUIgSwLFOhcZXdodbYJsKcpWXa4s7Ki1ukAen2Xf4cZypNXdh3C3X
-	 ixhlLCvJz53QxZELnn0343aY5Jlf1siKYnc1CMut6/dMwCSgUJkc1ONbjAGveIz57A
-	 9Yq34SBcpQmm0N3BZaA05vPcDCkTC4ReHrq9bgcqByUCTyImeQ4gqNVK2VPn1Nrp8V
-	 zF2aqn0N/sgxCrdz+6Sc4xZBsQGwxuj06BJfxcWUCW9i9SAvZbj+pR4yQfLZxcSSI2
-	 JfrjGolwiS6JA==
+	b=npceiVXaTi0bcWltz/elJ2izmVPaJxNQfRfpfBaK8UTFwuPZdfN3zVBRtpkCMNsv+
+	 VQv3/j0SmSX/99v/AW5H1pWEDf0vkB9r/lV0LO4QobLJRMsNRZNwS43Reo8yNycTcn
+	 WM+Q4H/vwPN9z/KMwq3zUsN1+RfSDJgcObSW3cDv7A5vUMjiSBcsMGVXRvAZkuAkOI
+	 O/ZD+mPnlwq4Lath0eWq88jkRiNiMPqjy5lm/bgw7DBt6/HwoXCllw9tKBkSYWYbfe
+	 B8WahyXgtqjdfqet3rV+cGrq7VeXN5JSJdWdZ7WW/svX6AiMCzkh6LfI/J7cQhWkJT
+	 GREuVRg4QKMig==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3879D17E0FC7;
-	Wed, 29 Oct 2025 11:56:21 +0100 (CET)
-Message-ID: <21f51f37-787b-48a5-a871-d61810adff42@collabora.com>
-Date: Wed, 29 Oct 2025 11:56:20 +0100
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 293B417E00A6;
+	Wed, 29 Oct 2025 12:00:37 +0100 (CET)
+Message-ID: <ef7fa25a-d8bc-4b57-8b96-c676ae7f9cb7@collabora.com>
+Date: Wed, 29 Oct 2025 12:00:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,154 +56,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] pmdomain: mediatek: Refactor bus protection
- regmaps retrieval
-To: =?UTF-8?B?TWFjcGF1bCBMaW4gKOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- Sjoerd Simons <sjoerd@collabora.com>
-Cc: =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
- "lihongbo22@huawei.com" <lihongbo22@huawei.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+Subject: Re: [PATCH v8 10/20] soc: mediatek: mtk-cmdq: Extend cmdq_pkt_write
+ API for SoCs without subsys ID
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
  =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
+ =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+ =?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
+ <Xiandong.Wang@mediatek.com>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- =?UTF-8?B?QmVhciBXYW5nICjokKnljp/mg5/lvrcp?= <bear.wang@mediatek.com>,
- "mbrugger@suse.com" <mbrugger@suse.com>,
+ "nicolas@ndufresne.ca" <nicolas@ndufresne.ca>,
+ =?UTF-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?= <Paul-pl.Chen@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
  "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- Nicolas Prado <nfraprado@collabora.com>,
- "macpaul@gmail.com" <macpaul@gmail.com>,
+ "fshao@chromium.org" <fshao@chromium.org>,
+ =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
  "wenst@chromium.org" <wenst@chromium.org>,
  "linux-arm-kernel@lists.infradead.org"
  <linux-arm-kernel@lists.infradead.org>,
- "y.oudjana@protonmail.com" <y.oudjana@protonmail.com>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?TWFuZHlKSCBMaXUgKOWKieS6uuWDlik=?= <MandyJH.Liu@mediatek.com>
-References: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
- <20250805074746.29457-5-angelogioacchino.delregno@collabora.com>
- <a2eae87efe46ebf397bcec3580eb9bc152b80846.camel@collabora.com>
- <be3a2d50-044b-429a-820c-5260c6ce730c@collabora.com>
- <0d8da30aaec2a5dc4bda6d67b640081dcc320f37.camel@mediatek.com>
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+References: <20251017065028.1676930-1-jason-jh.lin@mediatek.com>
+ <20251017065028.1676930-11-jason-jh.lin@mediatek.com>
+ <24b74989-4e31-49e3-8652-c2439f368b26@collabora.com>
+ <1f1377ebec26f767a4af9a0c542817be7cfaeddc.camel@mediatek.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <0d8da30aaec2a5dc4bda6d67b640081dcc320f37.camel@mediatek.com>
+In-Reply-To: <1f1377ebec26f767a4af9a0c542817be7cfaeddc.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 29/10/25 05:11, Macpaul Lin (林智斌) ha scritto:
-> On Tue, 2025-10-14 at 11:59 +0200, AngeloGioacchino Del Regno wrote:
+Il 23/10/25 06:03, Jason-JH Lin (林睿祥) ha scritto:
+> On Mon, 2025-10-20 at 12:04 +0200, AngeloGioacchino Del Regno wrote:
 >>
 >> External email : Please do not click links or open attachments until
 >> you have verified the sender or the content.
 >>
 >>
->> Il 13/10/25 15:41, Sjoerd Simons ha scritto:
->>> Hey,
+>> Il 17/10/25 08:44, Jason-JH Lin ha scritto:
+>>> This patch extends the cmdq_pkt_write API to support SoCs that do
+>>> not
+>>> have subsys ID mapping by introducing new register write APIs:
+>>> - cmdq_pkt_write_pa() and cmdq_pkt_write_subsys() replace
+>>>     cmdq_pkt_write()
+>>> - cmdq_pkt_write_mask_pa() and cmdq_pkt_write_mask_subsys() replace
+>>>     cmdq_pkt_write_mask()
 >>>
->>> On Tue, 2025-08-05 at 09:47 +0200, AngeloGioacchino Del Regno
->>> wrote:
->>>> In preparation to add support for new generation SoCs like
->>>> MT8196,
->>>> MT6991 and other variants, which require to set bus protection on
->>>> different busses than the ones found on legacy chips, and to also
->>>> simplify and reduce memory footprint of this driver, refactor the
->>>> mechanism to retrieve and use the bus protection regmaps.
->>>>
->>>> This is done by removing the three pointers to struct regmap from
->>>> struct scpsys_domain (allocated for each power domain) and moving
->>>> them to the main struct scpsys (allocated per driver instance) as
->>>> an array of pointers to regmap named **bus_prot.
+>>> To ensure consistent function pointer interfaces, both
+>>> cmdq_pkt_write_pa() and cmdq_pkt_write_subsys() provide subsys and
+>>> pa_base parameters. This unifies how register writes are invoked,
+>>> regardless of whether subsys ID is supported by the device.
 >>>
->>> Trying to boot v6.18.0-rc1 on a Genio 700 EVK using the arm64
->>> defconfig,
->>> ends up hanging at boot (seemingly when probing MTU3 and/or mmc,
->>> but that
->>> might be a red herring).
+>>> All GCEs support writing registers by PA (with mask) without
+>>> subsys,
+>>> but this requires extra GCE instructions to convert the PA into a
+>>> GCE
+>>> readable format, reducing performance compared to using subsys
+>>> directly.
+>>> Therefore, subsys is preferred for register writes when available.
 >>>
->>> Either reverting this patch *or* having CONFIG_MTK_MMSYS builtin
->>> rather
->>> then a module seems to solve that.
+>>> API documentation and function pointer declarations in
+>>> cmdq_client_reg
+>>> have been updated. The original write APIs will be removed after
+>>> all
+>>> CMDQ users transition to the new interfaces.
+>>>
+>>> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+>>> ---
+>>>    drivers/soc/mediatek/mtk-cmdq-helper.c | 54 +++++++++++++++++
+>>>    include/linux/soc/mediatek/mtk-cmdq.h  | 83
+>>> ++++++++++++++++++++++++++
+>>>    2 files changed, 137 insertions(+)
 >>>
 >>
->> Thanks for the report.
+>>> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h
+>>> b/include/linux/soc/mediatek/mtk-cmdq.h
+>>> index 154d0511a0ad..f6dc43c036bd 100644
+>>> --- a/include/linux/soc/mediatek/mtk-cmdq.h
+>>> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
+>>> @@ -57,6 +57,10 @@ struct cmdq_client_reg {
+>>>        phys_addr_t pa_base;
+>>>        u16 offset;
+>>>        u16 size;
+>>> +     int (*reg_write)(struct cmdq_pkt *pkt, u8 subsys, u32
+>>> pa_base,
+>>> +                      u16 offset, u32 value);
 >>
->> This is not a problem with this patch specifically, but surely some
->> race condition
->> that was already present before and that does get uncovered with this
->> one in some
->> conditions.
+>> (*pkt_write)
 >>
->> Without the devicetree updates (which are not upstream yet) this
->> patch is
->> fully retaining the legacy functionality 1-to-1.
+>>> +     int (*reg_write_mask)(struct cmdq_pkt *pkt, u8 subsys, u32
+>>> pa_base,
+>>> +                           u16 offset, u32 value, u32 mask);
 >>
->> I'll check what's going on ASAP.
+>> (*pkt_write_mask)
 >>
->> Cheers,
->> Angelo
+>> those names make a lot more sense.
 >>
+> Hi Angelo,
 > 
+> The reason why I use reg_write/reg_write_mask is to imply these APIs
+> only provide writing HW register address function, not writing DRAM
+> address.
+> So we don't need to care about mminfra_offset in these APIs.
 
-Hello Macpaul,
+Sure I understand that we don't need to care about mminfra_offset - but those
+function pointers are effectively replacing the "(xyz)pkt_write" functions.
 
-> I did a git bisect on linux-next master branch and
-> the result shows c29345fa5f66bea0790cf2219f57b974d4fc177b is the first
-> bad commit. This change also affect MT8195.
-> 
-> This patch couldn't be simply reverted because there are some dependent
-> commits follows this change.
-> I'm not sure it this refactor causes API or flag not synced with the
-> SCP firmware.
-
-There's no interaction with the SCP on this patch.
-
-> Just a remind that it is hard for MediaTek to update scp firmware for
-> an already in mass production state chip.
-> Each scp firmware and the pm-domain interface are designed specifically
-> for 'that' chip only. So it is difficult to adopt pm-domain refactor
-> by only reviewing the patch.
-
-There's no need to update the SCP firmware at all - the pmdomain driver
-does not communicate with that - infact, you can keep using all of the
-pmdomains without ever loading any SCP firmware from the kernel.
+Changing the name to reg_write will create a lot of confusion.
 
 > 
-> Here are the error logs with latest linux-next master on mt8395-genio-
-> 1200-evk. Hope this could help on futher debugging.
+> I can add comment for this.
 > 
+> What do you think?
+> Or should I change its name to pkt_write/pkt_write_amsk?
 
-Thanks for the logs! Getting issues on MSDC is really odd because the MSDC
-controller does *not* use nor have any power domain...
+Please change the name to pkt_write/pkt_write_mask and if you think it's useful
+also add a comment saying that those functions are already accounting for the
+mminfra_offset internally.
 
-I'll take a look at this as soon as I can, anyway.
-
-Thanks again,
+Cheers,
 Angelo
 
-> [    1.291055] mtk-msdc 11240000.mmc: msdc_track_cmd_data: cmd=8
-> arg=000001AA; host->error=0x00000002
-> [    1.292775] mtk-msdc 11240000.mmc: msdc_track_cmd_data: cmd=55
-> arg=00000000; host->error=0x00000002
-> [    1.294539] mtk-msdc 11240000.mmc: msdc_track_cmd_data: cmd=55
-> arg=00000000; host->error=0x00000002
-> [    1.296293] mtk-msdc 11240000.mmc: msdc_track_cmd_data: cmd=55
-> arg=00000000; host->error=0x00000002
-> ...
-> [    1.430408] mtk-msdc 11240000.mmc: msdc_track_cmd_data: cmd=55
-> arg=00000000; host->error=0x00000002
-> [    1.433766] mmc0: Failed to initialize a non-removable card
-> [   22.297240] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> [   22.298723] rcu:     6-...0: (2 ticks this GP)
-> idle=104c/1/0x4000000000000000 softirq=45/45 fqs=37
-> [   22.299827] rcu:     (detected by 2, t=5256 jiffies, g=-1051, q=200
-> ncpus=8)
-> [   22.300689] Sending NMI from CPU 2 to CPUs 6:
 > 
-> Best regards,
-> Macpaul Lin
-
+> Regards,
+> Jason-JH Lin
+> 
+>> After applying the requested changes,
+>>
+>> Reviewed-by: AngeloGioacchino Del Regno
+>> <angelogioacchino.delregno@collabora.com>
+>>
+>>>    };
+> 
 
 
