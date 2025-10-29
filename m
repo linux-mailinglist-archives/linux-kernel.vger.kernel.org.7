@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-875869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14717C1A02D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:29:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB28C1A04D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64829465A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:23:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD4465622A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A61733A007;
-	Wed, 29 Oct 2025 11:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502AE32E121;
+	Wed, 29 Oct 2025 11:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYQKErra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxt7xc37"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0177335098;
-	Wed, 29 Oct 2025 11:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE5D2E2EFC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761736877; cv=none; b=HLYnMCptTUdrD04mOFspPwh/v2Mxg0UEDB2eGCHa93Er4HN2BWDqRniVDESgcp3ZhLwnZYCAplqAxwk3IF891651AXWE8CVIlI17ZQcvP2UtR03WZe8RDFTmpOtspyxTFCTczZ6VRCwAzpH9dmge6r9tuokZ6WzMQFld+IkbfMc=
+	t=1761736936; cv=none; b=jKQZvnRU/fEVEGvqJfiL0+sQYjX/vWDomRACLl3zKsTZYiYlt6RHOXcRA+HW2fNKWoGP5396huyvHtaverrFNFmAg6G1EQTxNs+RvW7G16O5eSKaaBBbffv4KawtDx0NX5iDZQYFrEJiceb5XMZ1nbIieewb2ALUjq4OLOVaT9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761736877; c=relaxed/simple;
-	bh=8BmBcwaL7A9ygphEJ12kD6LT8Wb8PJbvdOUlXZ5aB80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aRUUpKdc5tbD8JyjIZGG5uNOr5SXf+4u/IF0KW1AR84jguBaeU4Nyk+t4x/dzk2d/5lMxtGrnKeat/gQ17Qb98GyW1cauxi+JBMAIiJmvohCDR7z8mlsPXop0M/vYsHScte3qqwvqxu/+ewY76LtWWjsq+SZ1++95EK4cCtjZ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYQKErra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E56C4AF0D;
-	Wed, 29 Oct 2025 11:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761736876;
-	bh=8BmBcwaL7A9ygphEJ12kD6LT8Wb8PJbvdOUlXZ5aB80=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iYQKErraG9QOOrMRARXrJ4pKUtl1vLtcmKVq3UcnrUG3bA6dDjLvIa68/hpLmIeyi
-	 N+/aYIX9zDG8tVNYljDOpPQb8hj9BBM/ST0z6RSg8LaIHlVBVhCVF6GS5qZ02ttyu7
-	 IW742IMwoSqrNKghOsQq1M8E66YbAdUd9UThII80WDN60Vs0S5K4eujsp1acCyxK22
-	 hMVS6QxCzInCY4w9pVzYdTm8939Gl3KabCqqYbeSvCIrfT8A6SbAykmcGfbenIGJc2
-	 +wmf709Ks0ZFn1kTdP5OtUO3JSxrvIr4bS/h/Phs4f8MjE0E9l9cTn4y6kCiK1viih
-	 iQW3KmJzikIHA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: achill@achill.org,
-	akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	sr@sladewatkins.com,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.6 00/84] 6.6.115-rc1 review
-Date: Wed, 29 Oct 2025 12:21:02 +0100
-Message-ID: <20251029112102.696779-1-ojeda@kernel.org>
-In-Reply-To: <20251027183438.817309828@linuxfoundation.org>
-References: <20251027183438.817309828@linuxfoundation.org>
+	s=arc-20240116; t=1761736936; c=relaxed/simple;
+	bh=EDUtqO8PePY47rqraTgqQcnx+NDx1LFP7gvDlG+r7fU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E9fPxJd//iv4JTBqBW02SiX3JSVzyir2BSN/l30qWbG+/RUHelNi0wyxbah5cQrc0R4HejdtPVKKAcBUDZCKfJJGoxMqYDFk0768Z9dk2Ij0LSi7NdrQ477UFRFS+UEKkQo8ybWK4AhdN3qmgEXRALGG5RbdHZ5cFTsq+Kvp1kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxt7xc37; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-59052926cf9so3193568e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761736933; x=1762341733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EDUtqO8PePY47rqraTgqQcnx+NDx1LFP7gvDlG+r7fU=;
+        b=dxt7xc376bmsPY89zw356rMpGf4Vyp0Axzh+cK6h/NKDJpjxbfQxwtd+sg40RTRd9Z
+         Wh9y8IOvu79rKshKWXK/QkzdYlJK2Ducb8646aR4zb1CQqp2bkKFnf7toFACkhUB+7sT
+         b8gF1a0ehaGjU4qh1wHX3MZ/pbBaMQ9S7fQXwmaj/gwZx0iC7j/AQVA0tSdHZiV+b/q5
+         pAidlLMkSmAVPJQFSxWGa2KynKvd1C3Hhan+Fk2fYLImQvfxkduOggdyzxjVu12dFX+3
+         u2ZNEkb5Z4Mr5QMRCvvuDAwsVuBm4eJYiZXdUqfuauxAf9i/cX7b52flY386SnyKeLLb
+         VZ9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761736933; x=1762341733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EDUtqO8PePY47rqraTgqQcnx+NDx1LFP7gvDlG+r7fU=;
+        b=xIs8ocKNDTN5dLbYnkFCokNDABv9TrElmkneNj0fEySf9OBimmbiHnk+rZss33tNAT
+         KDHF32ON2Wd3gcVMIkjbn1jDzW6k+VZ1QsnFC2KftgQvnzWB0d+aU5aJsbfsGxB50omv
+         YLQMep4MAzLjJo+qK5iqietFnKTy0Haoo4A0g6/bNVm4+One/ho34naesfnH/mdAVdMz
+         G4hj/w217aOvBFtgScSt69mYI37B9j3FBzmgcm5rHtWaCwF3gEA1VJ+5imMHpeiKJBcc
+         JXFCEFl+qjUJNT0R3gZ5UsZDiqmLQrfl2OYu4u2qg1SIVA/oSGMG7OdhUUQPEvN3lVDO
+         hNOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGTukEfrTd8tUe3W2TyuPF4Ct/WXw8LaV08ylTPK4ZW4mkl15cLpGpeKhZoAKz172r6lz7zAoTVVelJiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw18ZtawXXuabLrquOB9t4xE+2ohnHj/sPDRaYNTC+pHATPT8Bg
+	ObB7ghteHcbULXoodX7oRyJ7aBhN/7GKRHcHeprg9vI/2ZQA95x5/j7ct6hpWMSj4A5a9t24mHF
+	GJg7k5bRRn7WzO3UmOMFG+Pr+YOKOios=
+X-Gm-Gg: ASbGncuzJ5L45g00u0HxIdhlM6cZE5CAawnRG28WrI/6oSoqRTQb+aMoYVyRu3gYYmO
+	y0R0T27c6r6okgha9vGLz1f/Iyvoix7b49Pt+PD43M3XztSwDsNYMMZnONs6BkoyAhSdpaLWLjV
+	7JVOkWJRlYlc9RLL1W5IGV7Q2kA7hUw5AaOGKUw6vfD701g/NqWz/UWvxxAIydOzRnRyToO9oCj
+	NIIEa8b64GM8JEXNzjT7hw62gpGA+kwLde0Dr1EVjZ6vj0CnjeDX4MF0bk3Hztif6DjgYzTX75W
+	u3OnRkgrXmec1va4+X1x4MIE2btfAstS/lOu7A==
+X-Google-Smtp-Source: AGHT+IHc4LI3CCYCeXedzWEMPrCQwraenU/iOkhCterIRDyKhtcKSuDxLJCCmfvBj668P02zxck5F1RCdCRawh/y0mQ=
+X-Received: by 2002:a05:6512:6c9:b0:560:8b86:75d9 with SMTP id
+ 2adb3069b0e04-59412a3d1femr855771e87.14.1761736932471; Wed, 29 Oct 2025
+ 04:22:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251029075117.104758-1-hsukrut3@gmail.com> <aQHMvdQXD4eRvPSV@smile.fi.intel.com>
+In-Reply-To: <aQHMvdQXD4eRvPSV@smile.fi.intel.com>
+From: sukrut heroorkar <hsukrut3@gmail.com>
+Date: Wed, 29 Oct 2025 16:52:00 +0530
+X-Gm-Features: AWmQ_blOcs28nOwA4mRzZbzsddmE8hj5NWFZNo5p4Pwmd7EkxFCZpTsV9vvv3Oc
+Message-ID: <CAHCkknoUyV3erQa2QJUY_MzPXuybQMv1neXJQJsZFS8epsyBiA@mail.gmail.com>
+Subject: Re: [PATCH] iio: backend: document @chan in iio_backend_oversampling_ratio_set
+ kernel-doc comment
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Andy Shevchenko <andy@kernel.org>, Pop Ioan Daniel <pop.ioan-daniel@analog.com>, 
+	"open list:IIO BACKEND FRAMEWORK" <linux-iio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	shuah@kernel.org, david.hunter.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025 19:35:49 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Wed, Oct 29, 2025 at 1:43=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> This is the start of the stable review cycle for the 6.6.115 release.
-> There are 84 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Wed, Oct 29, 2025 at 01:21:16PM +0530, Sukrut Heroorkar wrote:
+> > Buidling with W=3D1 reports:
+> > Warning: drivers/iio/industrialio-backend.c:727 function parameter 'cha=
+n'
+> > not described in 'iio_backend_oversampling_ratio_set'
+> >
+> > The @chan parameter was added when iio_backend_oversampling_ratio_set()=
+ was
+> > updated so the contexts could specify the channel, but the parameter wa=
+s
+> > never documented. Document @chan to silence this warning.
 >
-> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> Anything received after that time might be too late.
-
-Boot-tested under QEMU for Rust x86_64:
-
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks!
-
-Cheers,
-Miguel
+> There is already more comprehensive patch available:
+> https://lore.kernel.org/linux-iio/20251028093326.1087660-1-kriish.sharma2=
+006@gmail.com/
+Thanks for the update, Andy.
+Regards,
+Sukurt Heroorkar
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
