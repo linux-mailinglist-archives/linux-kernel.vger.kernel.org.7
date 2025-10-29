@@ -1,120 +1,93 @@
-Return-Path: <linux-kernel+bounces-876243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38340C1B148
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:07:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4009C1B130
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4F7F506DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D091C188E864
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8834F481;
-	Wed, 29 Oct 2025 13:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EC82F657C;
+	Wed, 29 Oct 2025 13:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="znqZ9PNP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jM42F88i"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="iokc/DQR"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039AA1B4257;
-	Wed, 29 Oct 2025 13:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD42868A7;
+	Wed, 29 Oct 2025 13:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745122; cv=none; b=AsTJrnv510HRbUnxDaCKAZAlaCrMO6aId0u4jiwzqvW/wEovTwiXDqtZ5AULo8KkWZFzDzxhSsNy46GE0D/Q+QESdqzf4uDid+KqQuoWl3R2MuFzHFEg0+/Ce0nRQIkrdGBiFvvIX3GikU78157L8ofdUzOX3whmBXObRemfLRU=
+	t=1761745482; cv=none; b=loiiJJTVgsaT+waP83rtVAveINkyCpCbV4UH5tWG9REyNpaXoM4npHH2ZS1WAs7wnlRol6/nc1hq9qM6TL+6gcSe3iTBLFMJBy/RiDq7DM3hXyVwEmpG6dM7btY30r7FmRTMnhtdPpJg4O21Bl5Th65ypXqJ0yXGp5ojKcLBCPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745122; c=relaxed/simple;
-	bh=hFZLjU9NPVF/W1rkjz2cM6ZlnNo6t2/RL2LgX2vWtaQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=FttviHGp3icClzvzkoGsD1tQC1af2GHyx/TU+p9tD8UPpAKfO2c2+0HK3YW1vfm1UeDTIwruKzSU+uvCTDhYr3vHl0J41KGJZoovKH1Z43vzZRJ2CJbkIQ0vGmZAtkje3WOk7kBHP0jA1fD6lCnFpCuJLS7RvRu9jBOI8aIMdmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=znqZ9PNP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jM42F88i; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 29 Oct 2025 13:38:37 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761745119;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=lpHN9woy0RN37Ctf4Men1kb0Bi10pWWNAL9apjOKfIc=;
-	b=znqZ9PNPfGLQXmrWCb1sRMfHr7KCKEAuo5+GhdShXw3ZP/Z/dI05dASg1Y9hsCXLJm43zP
-	uIqUexeOrxw4TqbVKEtr5mn7rbzJyBpaurAGGMdUfMjttz0/41C20G27dAkEN9NnIRX1JP
-	1P/fcCdoHpCrXCdkJdQwLYlA+pqvDXKRMr+urfGC6M0bPp+WJjj0J+15RGsJmqWmtEi7OO
-	LAMCNx3gj1JBeWoGq41ycc6uDT4VkqSuD/Gto2OD8g1T1/dheqxqEIImb54o7TizMUeusc
-	hOdBp0UV57vvgkhh5heoWDxQ8nbGdcL5c8McwqP6fiR94htiskOyXyh7c6dQ7Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761745119;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=lpHN9woy0RN37Ctf4Men1kb0Bi10pWWNAL9apjOKfIc=;
-	b=jM42F88ioC2IiLZgWmJTiE7I+MzvcO+wZPyny6DJQX00m12o8Wwh10CAjlXMdJa9wZGY05
-	0iYiAvE9G0edz1DQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] Subject: unwind_user/x86: Fix arch=um build
-Cc: kernel test robot <lkp@intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1761745482; c=relaxed/simple;
+	bh=KvrdxWAGh2gYjAr+RZLd1zfOYJ/NZSuVoSG6qU8tc4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G+zoL6PU3a7puMQYQqm1zmWL2oGHodvOx0D4Mgas4/ncfrR6s6rBjG5THuon2JTbNmo35L/EhmepSn739E8IH25CB+p9uXwiMtB92Wp9MarFl9i6YOiSu02BiOasO5kZ9946/MhKVeMv7n3g2AZfQ+T7EqIWghkPHAOriNM2Vco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=iokc/DQR; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 29BF56002984;
+	Wed, 29 Oct 2025 13:39:27 +0000 (WET)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id daCFBIXVt6n7; Wed, 29 Oct 2025 13:39:24 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 37E6E600299E;
+	Wed, 29 Oct 2025 13:39:24 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail2; t=1761745164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvrdxWAGh2gYjAr+RZLd1zfOYJ/NZSuVoSG6qU8tc4I=;
+	b=iokc/DQRdh0la0ZBwziE2D3zfNahEuDw7OgVJ7s5cHldlZGVkXPwLnc5oyd8rbtAiKzZr2
+	U9FjOhoks0Z5veziX7dYn+dpFet3eUqklWfP0xYGD29lsoOzL2XfdgXk129uPpLn6QyUKn
+	auv3YXRVY5FS+oMN6tSk/vVTZ5eoQ9lWNRr9zVyG2FOIUtGr8+eTsBt4iDWJOKC2nyXH8A
+	osJcqREeOdktRBlUC3wJY8NUtsggs+UkfEJm+1q/x5e8cLQdq6eHTFJmREXp8pbyfyaiei
+	NvkH8jIwbJszdBdOA0ZxpmJDco7eZ4TI/a7YtefEADgRos0p2D6H5F9hqunoWw==
+Received: from diogo-gram (dial-b1-161-46.telepac.pt [194.65.161.46])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id D54C53600CF;
+	Wed, 29 Oct 2025 13:39:23 +0000 (WET)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: devnull+webgeek1234.gmail.com@kernel.org
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	jonathanh@nvidia.com,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	robh@kernel.org,
+	thierry.reding@gmail.com,
+	webgeek1234@gmail.com
+Subject: Re: [PATCH] arm64: tegra: Enable NVDEC and NVENC on Tegra210
+Date: Wed, 29 Oct 2025 13:39:16 +0000
+Message-ID: <20251029133916.569333-1-diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
+References: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176174511766.2601451.10946132380682286777.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the perf/core branch of tip:
+Hello,
 
-Commit-ID:     e56b519d9d7742f3b2ad1debb4e231c46cdda218
-Gitweb:        https://git.kernel.org/tip/e56b519d9d7742f3b2ad1debb4e231c46cd=
-da218
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 29 Oct 2025 14:24:57 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 29 Oct 2025 14:29:08 +01:00
+Jumping in this reminder to add a gentle ping about the related series [1]
+adding support for NVJPG.
 
-Subject: unwind_user/x86: Fix arch=3Dum build
+Thank you,
+Diogo
 
-Add CONFIG_HAVE_UNWIND_USER_FP guards to make sure this code
-doesn't break arch=3Dum builds.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510291919.FFGyU7nq-lkp@intel=
-.com/
----
- arch/x86/include/asm/unwind_user.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind=
-_user.h
-index c4f1ff8..1206428 100644
---- a/arch/x86/include/asm/unwind_user.h
-+++ b/arch/x86/include/asm/unwind_user.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_UNWIND_USER_H
- #define _ASM_X86_UNWIND_USER_H
-=20
-+#ifdef CONFIG_HAVE_UNWIND_USER_FP
-+
- #include <asm/ptrace.h>
- #include <asm/uprobes.h>
-=20
-@@ -34,4 +36,6 @@ static inline bool unwind_user_at_function_start(struct pt_=
-regs *regs)
- 	return is_uprobe_at_func_entry(regs);
- }
-=20
-+#endif /* CONFIG_HAVE_UNWIND_USER_FP */
-+
- #endif /* _ASM_X86_UNWIND_USER_H */
+[1]: https://lore.kernel.org/linux-tegra/20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt/
 
