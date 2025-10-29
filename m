@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-876439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD01EC1BAA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:30:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8196DC1BB82
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 097B9509804
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6482F587301
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39A434DB4C;
-	Wed, 29 Oct 2025 14:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gzkw2kEE"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35232D593D;
+	Wed, 29 Oct 2025 14:52:09 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6810F34C147;
-	Wed, 29 Oct 2025 14:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96230262FFF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749242; cv=none; b=Eqs0efLZfI38hXIAs002djOruJjlhY8uiLxerNbmpV4uZafu5XgV4ndoDwBmfMmn48Cef7ksvO572XvfDGUVY1ejPpBwJdRNXK3yIRXRq1JcMmg1jmwxBdON9W7ZE3wa7x0ZC5wI4s/Gyk51m7GWQMAgqiVycPqyth4Q5xhjOu0=
+	t=1761749529; cv=none; b=OylsCIBVKn1ugfsjrFnbR0y1BbcQaMKXTpld1tespQIpfQtq7q9JZnzlOS2xzCRrk/fatBHQOXiYfQsfpKLWpwWFzM5koZgUbFMHsdcW8sttTqkivSD2KwA1/5z3+D+1RRb9fDSo/CTUB5R/vPXJk5AU1688fL9zsGYIp1bKWjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749242; c=relaxed/simple;
-	bh=3Aa+fgQhdXLmlBHwfKVF+zrnnydGtI+5KOVHCkraqPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nBeS3mauFVp+t5/0VxQD7vpt8Uat7cDHz/KSJmTlhMqXmQDbmmcP7Ih6D5ZzzrTiAhah9JJKrwSxAHamWiFNQwGvlzAhXJdTABrXd8qWKzMepFKg8wLFSHtwlaydDDGIh/7O1Bw3g7mjSwsH3QC/CcHBUA2pAhIw+9LvWexT1uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gzkw2kEE; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id DB1E64E413CF;
-	Wed, 29 Oct 2025 14:47:18 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B0E29606E8;
-	Wed, 29 Oct 2025 14:47:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EB3BD117F81D7;
-	Wed, 29 Oct 2025 15:47:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761749237; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qkvhfd+aBeHI1uCgJoi4uMlo/YG8LyAVwUYzHTQgZ9w=;
-	b=Gzkw2kEEQEj3X5XxSDtl4tVFNKLwoXeXxslib+9dhSlg5S1cr6GK+Cvpk0oM7cEtK5mm7h
-	EIRxLC03Y6l5nNsDqJHyrB8L6FZFmXxsj1pDo32t+BbF7oWei9A85uvnSZwvrOvINzjY11
-	leO2R2hK0z5q8xQW7AilzEf2+9H14fn+qAq6IvYUSaZBTxTberuvVlN/z72LymvgcRhR+o
-	XM77xqsPwcqDj7xOGyZrzSA7W0oXuF2ST8r15/9pMnDb67DCFeU+i7tiaB2NuK9AGl+cIn
-	S8TH9F2h1jEsj4a/XYSljuOzzZogWQJqds9Ztnv45GKk084Bg+GEhrnqUVRBMg==
-From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 4/4] MAINTAINERS: Add the Renesas RZ/N1 ADC driver entry
-Date: Wed, 29 Oct 2025 15:46:44 +0100
-Message-ID: <20251029144644.667561-5-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251029144644.667561-1-herve.codina@bootlin.com>
-References: <20251029144644.667561-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1761749529; c=relaxed/simple;
+	bh=x8Q6phZmuf/56rhTPcAI9gNeRvjsr//c9Go6x2HJnsU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BOA8zU0Ef37dswSukPKS0JD6uX2G93rBsc5RQtRswktn6aTAc+pYKenQz/4OBsfc+6fLkC5R4LfllYMoQPN7jtF4MRgfRXCEdGPFY+R138HQPXNX10tih8+YALEVzsLvklVY/cD9I5u4u3nZ3RVMd23aPbNNkyhqeI0aDVQWFWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5db308cddf0so7596967137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:52:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761749526; x=1762354326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6X2VdOjut9PuIWiMUTBESV6nSJnAJvEj2IyZk3vIzkk=;
+        b=o6DJFk5J8dx4BSaCmLU2W9PZ47T6jRFx3Ti6hgaoTwyC4hUWJyWW3TjL3YtL2/NUgM
+         opZ0aWvlFlSKL7ztDpXTYvzJ+3/PYbfTO4wxgZ2FaILCP7TV6oo0Q5Dbqujv+9Y1J8uB
+         Nk/YEOLq419eSSCZq5dw6vnZHOGNaiO1umzJ46jMFCfqzx8xtXaC5OFXRSSBOJkw8RvY
+         ekJhv6sD+VT471DaOj+Eviort2aC6QNpPINKHI8Lm+AzibgHlP6f1R+QDEPFA8dAiNfl
+         gd2dT861z1xqhpxVaqtBwA+mZd7FDWqeJUHI7SYe1yX5B0ET1kDvSoExwGAxlFMGY71k
+         iO5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWNKlXRLDi334vJEnL+ylvdOcz8oQXKjIswrQqv0xp/43CGJD3fKUKJJ3DAsZq+pdjzld19xeAfoVA/Kk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdqUBrpmY/8LhAfEvMimSa9rjlWGCAFB7JgtmgbrIG06nLU8MX
+	WoWVDr4+LD2UHCqmwd4Ok/xnMV72IvacsHMZSNebKK1VOjiAVP6pXEyMGozcnC1q
+X-Gm-Gg: ASbGncs9t+fPA0UTp8Nt007QvhQkqXC0U4v0CksYI1EPqvhMEmp/OdLvPkpAxIbFpWo
+	8LDP/2Nt69KLb9+5VGCATVc2YQxqFsHGW1V6oR8/pt/DvNQ/YdTWEQgebK4FSYaGv38116LsQpj
+	meGwNDO8lgkWLbiaUxj9Obo2JXoU0eosK8P2D/j14MecSNQgXr4IJJ5OO6UNVMa2dA3+iY6v+LK
+	5Wrty7d2Jd4WGnKIck1B+KwzhgWg1ToYkQLpgREK0P6noVa0Uhq7QzVWex/LCBqbQ56eTkogDVA
+	Kfpuhg8HVDxpLkBiXReUMD/5HTnh+eNSzKJLscIS0XV60M76ojWnsmbnpov/ou6IxR6gtPUA0xm
+	UlTIh/XeIROekfnmfDJVT7NXdPfY8TKhsMhHOXaStZ5LQyzXnRPR3UlOPzca3SMPLCqYX6XASmd
+	8OicKhL9EPKs8mMixZtU++rxP2GrqIZN+Fr0C6z6r/dn7djkynZWaE
+X-Google-Smtp-Source: AGHT+IGKR8KyvQCt2k6fUda6VsZobc+igbjTHibxZw7uj0Fk4eDMQfXlDOSgm1ftAGPVaPYyxC3w+g==
+X-Received: by 2002:a05:6102:5cc5:b0:56c:eed1:276d with SMTP id ada2fe7eead31-5db905b0c98mr1075351137.18.1761749526064;
+        Wed, 29 Oct 2025 07:52:06 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db4e5718d4sm5209869137.10.2025.10.29.07.52.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 07:52:05 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-934c9de5cacso3945520241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:52:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWClWO7hP941F1as+uzRdLhjf537Ty8i+zmRFaCXcfjrZi3/jSsyBzybam25sRVcalszRbMSok764PViWY=@vger.kernel.org
+X-Received: by 2002:a05:6102:2927:b0:59d:ad3:e1e4 with SMTP id
+ ada2fe7eead31-5db90575883mr955429137.5.1761749525479; Wed, 29 Oct 2025
+ 07:52:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Oct 2025 15:51:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVwXjE0Bq1KjENkN4m2h0_nN0F2S=CC8mW3B92NdpN2_g@mail.gmail.com>
+X-Gm-Features: AWmQ_bmfWRMn93VJbp2i3KyknET1ZJrYFFCyir3HovrKjiX49vnsC4NYomuCi4I
+Message-ID: <CAMuHMdVwXjE0Bq1KjENkN4m2h0_nN0F2S=CC8mW3B92NdpN2_g@mail.gmail.com>
+Subject: Re: [PATCH 1/5] arm64: dts: renesas: r8a77960-ulcb: Enable GPU support
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-After contributing the driver, add myself as the maintainer for the
-Renesas RZ/N1 ADC driver.
+On Mon, 27 Oct 2025 at 22:13, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Enable GPU on M3ULCB with R-Car M3-W.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3da2c26a796b..a67babe1a5b4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21900,6 +21900,13 @@ F:	include/dt-bindings/net/pcs-rzn1-miic.h
- F:	include/linux/pcs-rzn1-miic.h
- F:	net/dsa/tag_rzn1_a5psw.c
- 
-+RENESAS RZ/N1 ADC DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
-+F:	drivers/iio/adc/rzn1-adc.c
-+
- RENESAS RZ/N1 DWMAC GLUE LAYER
- M:	Romain Gantois <romain.gantois@bootlin.com>
- S:	Maintained
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
