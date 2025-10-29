@@ -1,209 +1,190 @@
-Return-Path: <linux-kernel+bounces-875783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A487C19D27
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:45:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FF9C19D15
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A701C812FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A6E1CC2FA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA31E30103F;
-	Wed, 29 Oct 2025 10:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D1E3314D2;
+	Wed, 29 Oct 2025 10:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cnncW+AO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dg/ag7QC"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399412FC865
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DCC2E0418
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733608; cv=none; b=SqCRFZKHNbZ3nZSErF/mrysIZt5Ff2MDA6+lxKvcNrRYtVOhA4c2HZx/aSHLA0933mMuCVXMsanJUUGF1+iwL/moXQ6YDJ4X3G4LzADWEiwAPNv9++vtQHMOqrppSYJR8vfVVmuQtcCYxN358yal+5bEmS00aeorESg3nFgpOJU=
+	t=1761733656; cv=none; b=VnkCVX2DtCKZcyusMQ88m2shDwF4LUs2JM9juhsmUXDyHt+j034vxlD3FjeCxblSKdqdRdTLmoacKqkfwOhEGwkFSF3PHMFu3s/bn7iJgeheSucl/4mcoGepSoFxTm72whk3X0/C8KTpQtX2Frv1ZEu76/SC8SqXqR0BES2n6RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733608; c=relaxed/simple;
-	bh=zkE0vyis83Qnd4j3qFtBbD4uxT5fDgXxEKk32YXAR1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KMP52+mkiVeYZ10804GuwZgaspPxZCWeOoljaSShoF2S8OHQoJy8r7alHB1TmD2ITzFkj37PdacvwfHQobtRQwHIgXPJWddVa3mg7vHO90L5P+Zci794MtGWVVx3BqiLTixxKtj1n3Ma6wHmYIZgPIkheKck91SwBBgGRg3xIQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cnncW+AO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761733606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/l/eBTg6PDk2gq24yxrQmlGvSlksP+1NRV8KnJwBP8E=;
-	b=cnncW+AON+djwLkCGRV01SWIpFPM/uefZqgxtKSyfKIdwhdN2cEMX5WYCgx9cWmbY//jV0
-	aPxQfs0D+r5sOG5glob+B5YMFQLOI6VfJZw/5nsCWh3cW2TILgfBEDWjLQrBC3S0cq1RoZ
-	2mDCh4qfsQy9PIfuMEbjTEw8m8Mq/hE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-QVJke5ANNZ2g6Brlfu5tgQ-1; Wed, 29 Oct 2025 06:26:45 -0400
-X-MC-Unique: QVJke5ANNZ2g6Brlfu5tgQ-1
-X-Mimecast-MFC-AGG-ID: QVJke5ANNZ2g6Brlfu5tgQ_1761733604
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47106720618so50907825e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:26:44 -0700 (PDT)
+	s=arc-20240116; t=1761733656; c=relaxed/simple;
+	bh=3wZ1AtNcLaqnW/LsJGF0b9O1btUD0rIr+5C9+r+Gpd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q2hC35aztsjQYRAhwnJ7f/Fbou3yjWGedITV8CkaC7KATof5cf24o/OGld5jbSGdr7YZB3cInliDSZ1zhGGerP7NHMgCi57WYNhwIzmf3n2QCfulY8ytEgXM4Mn+p9BTRALZCmKzU8emYqRHeDXgo4DxshKrY/KNoPDizdAJ1ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dg/ag7QC; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47105bbb8d9so41405e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:27:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761733651; x=1762338451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=51XkTbr+6yxRjDoZdk3XOJ3OIVOjmWe3fG1xSTac55Y=;
+        b=Dg/ag7QCyXgAYsyxuSowEUiJaRhXjCxtWnRAB0n0bpxxAHetkiVdf8tGFCEBcQgf3i
+         Rx7JubFcTkOiKCtJSnMa53/eRBO/Y10iBumMn+qMZ+HqMR4TJawGLtcI5+GklYmy5ZGf
+         ZpnWMgWEbqiXqJqsKIaud9Tq/o6f3/+Gtv6nxyiNAuPMZ7Uz7aE7e+RjyabPGXnQDQ0E
+         rbNioREUFB6ITiVj+kecA8TaobqFAomQ9mb5zZtw2we9YN6rZlersTUFJMz6fIgFp1Un
+         gC+l11gLVdy1ZRzXT+jNpV6MVibtSDUEzbCqrOyw6qWQJKDztTGritgTV5KmLRQq3Ey9
+         HnXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761733604; x=1762338404;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/l/eBTg6PDk2gq24yxrQmlGvSlksP+1NRV8KnJwBP8E=;
-        b=m6zWlWkWCwK1TjMJ0/sOOGlKcXarX2jTft4+2Ban0X15ZBLTxAntYNsWGWgAGcLZbd
-         IiPg6Srv77Qoyto1iVCVcKTA4DWDhJCjv23CSmSho21EWl0IIXmR2DKGd84zbVd4XsZy
-         MsKwI+Tj7hCwHtFu/1Rbr0UQnmBDtER2iveLBhop0EzrpWBMPvjKyzqBZXGwypTBYj4x
-         EeJF/g47WWJ+y8BumZQsNMeAhTj5FDnenEq4OJIF8xfU3vrEqE4mCF7/H1bUYK/N2aQS
-         tC960N+nTqy6S2z7GTxNhJTfEudnl7RCkT6svIJMt2klLgjQjo1kyxxro1r4k3u5NDRi
-         gb1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUoUsmvhPBnOstNh+/7lIQ+YG6Wa+CMzhfwKK1AGgANLrDkQNLovIylDk5/fEKMrkXwNs/bgsmoW0vdb8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwcDAudhQVagzlMr2u3f4NsnxYvrd16M4/bo0x+1t5axguEand
-	p5vG30v7Rc89VyIx3+rgcvm4dmZVnfK9NNPb9gZ6TuChSLurkrwj0x7peEfhD5KHqUkGeZvdw5O
-	7lM+JLcOE5ZehKLpRIdgLldMk+iRLbVTDk4OzS0P3/ooWMxkysi6XAp3YRmkl774ALg==
-X-Gm-Gg: ASbGncuPc6Gzx4X+Jt2H13++dl2IKGnzBCD+BXWByRnCk+sM0OXFlHoTFNtTzczu9v0
-	B7041Seowy6MkzNEIUpSKaDrFD/pj1PkY6liFT4PDa5DVsPTCx0i+gCVzg2TOyGkXYJE5ACpY44
-	NqF3ovon+fA//J+8BMY+t1SYtYHS0vK8X9Z8ThdYSlzbUgY/bwG7q8XtAvHFLpjg9ANs3rU5XW5
-	bN3gdmOahlyM1GuGwJXXz+HwwmGmhBUNlitRMfTXKhckUViYN7osR49GtOgzmb3FqfIygLasoGj
-	QmdEI6D70/dh4di27uLDA+VOHweY+nqtFQelwpfaliYG+DzRB6R2B1abaKPHAlsRy/2Cisj4+oZ
-	ih5fhXv9c/mXAqW0yer7evQ==
-X-Received: by 2002:a05:600c:4591:b0:471:115e:624b with SMTP id 5b1f17b1804b1-4771e18cc1fmr23359195e9.17.1761733603675;
-        Wed, 29 Oct 2025 03:26:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtQTrCoapOr6bX5uVmtmRqcuUC4lYBRzIXvtaTPDducTLRlHN+f7pxZPgextJafstOMsxSuw==
-X-Received: by 2002:a05:600c:4591:b0:471:115e:624b with SMTP id 5b1f17b1804b1-4771e18cc1fmr23358735e9.17.1761733603198;
-        Wed, 29 Oct 2025 03:26:43 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e202093sm43202745e9.11.2025.10.29.03.26.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 03:26:41 -0700 (PDT)
-Message-ID: <c6f8871a-5118-4947-9801-43b2a7a42993@redhat.com>
-Date: Wed, 29 Oct 2025 11:26:39 +0100
+        d=1e100.net; s=20230601; t=1761733651; x=1762338451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=51XkTbr+6yxRjDoZdk3XOJ3OIVOjmWe3fG1xSTac55Y=;
+        b=A3dcZUqIg/TTBGScKvI0zMWT78r1gb5MCDoVgk5FGtOo4SSlkBZZTC4KMBDeFWyk0P
+         aUuvMFqFfx327sDMQC6wxQ0rPX691gyDX3X84EMPDGcPijijc8Jvpo/XWH/sj7MCuh5z
+         Ew9RUdMbg/x2vvENhwagg9r8AngniGe/vbiO/TXvaaGmURtCkHrwDpa3KfrPAezQsGCW
+         pVokfmII3hLqYa9BGQhC5tmMkHuRAxR5ZKCM0coqPTFE/GMC5D4Hns9W84qUkLhix+/K
+         yFygIWYvE7fJKA9kPaxCjqWL6Ks7+Ld1WqxXnwnJ6+EsNa+22WOya+is6QlxGeAoD07U
+         GW8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2vTVf1FcWyYWUwYUEiav6aPaV2LwUM4zAcFipI4xyADoqRgFFqyrhXfJRNOpPfgmOx4xsv34kDwx6pKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvq+DGbKxXNGAjmWVKwU9XoxZHmlkvlgDZ85lDAYKRbW6OR5YZ
+	nTEwPvJdNV6841qu47J5EYiQ3yYd6u9yZ6+NmvsXSuSrb57v7tncvfdA4/N8bjMHyw==
+X-Gm-Gg: ASbGncubxDi4W9wECFcmsijb3QTHi9xGFXetei69nngtSCNsbBlJPuhTEq2FLGfq8xa
+	+s2aWOl3P8lZrXexuwjeaLFcbNkacggq/JdpT6zdSnOQNgnmiNmjpJ5o8oqGO6uKQauhkfD4TAF
+	cvKRRNMe3YwQqv3hJFOJS3kxRaHNl8EUnN06jKGdTCSoRLKFMQPJDAxGGqWnsA2m/5svdOLlYyG
+	PSKEYMug5mUz3zrQVu+L5MgrLXvfPceI938j8xVqKRVUBNrTSqVFAikNct/CEyucM9uDOGDGFmh
+	iIBjj1gzqHIg/9M7VAoPFFvQGWl4nUB38K7iSunlqsVVFl9m3RR0l+NmvqhL7O/PDFLJwIDAmtc
+	6XkWhwXcJdPvzWfo23c/wT6C+Meb44xCFYcEcD85RzLwsJZvvq++o1XsvCO0JahsLw9/T/djopZ
+	FxLbhiWPoGKTATmFeELodmxEeVKqxKDwsiOUeqEXIpU9t1WQPg3LSt3eyZig==
+X-Google-Smtp-Source: AGHT+IFpaQKCalYnjuLKmUHFSWvCchMH8++STvYUFO8XIcwGgMjADJ7NW+YIN5UXP+K6GoePivht9A==
+X-Received: by 2002:a05:600c:245:b0:45f:2e6d:c9ee with SMTP id 5b1f17b1804b1-47721016cc6mr823485e9.6.1761733651168;
+        Wed, 29 Oct 2025 03:27:31 -0700 (PDT)
+Received: from google.com (177.112.205.35.bc.googleusercontent.com. [35.205.112.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a94sm30414651f8f.5.2025.10.29.03.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 03:27:30 -0700 (PDT)
+Date: Wed, 29 Oct 2025 10:27:27 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: maz@kernel.org, oliver.upton@linux.dev, will@kernel.org,
+	catalin.marinas@arm.com, suzuki.poulose@arm.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, joey.gouly@arm.com, ayrton@google.com,
+	yuzenghui@huawei.com, qperret@google.com, kernel-team@android.com
+Subject: Re: [PATCH] KVM: arm64: Check the untrusted offset in FF-A memory
+ share
+Message-ID: <aQHsD0MnZYSTDOf8@google.com>
+References: <20251017075710.2605118-1-sebastianene@google.com>
+ <aPj2hTXbGUseUqhE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Optimize code generation during context
-To: Xie Yuanbin <qq570070308@gmail.com>, riel@surriel.com,
- linux@armlinux.org.uk, mathieu.desnoyers@efficios.com, paulmck@kernel.org,
- pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
- borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
- andreas@gaisler.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, anna-maria@linutronix.de,
- frederic@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, thuth@redhat.com,
- akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- segher@kernel.crashing.org, ryan.roberts@arm.com, max.kellermann@ionos.com,
- urezki@gmail.com, nysal@linux.ibm.com
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-perf-users@vger.kernel.org, will@kernel.org
-References: <18734a4944e47952b7ad3e10a36c902392bdaa91.camel@surriel.com>
- <20251025173700.754-1-qq570070308@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251025173700.754-1-qq570070308@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPj2hTXbGUseUqhE@google.com>
 
-On 25.10.25 19:37, Xie Yuanbin wrote:
-> On Fri, 24 Oct 2025 17:36:06 -0400, Rik van Riel wrote:
->> Also, what kind of performance improvement
->> have you measured with these changes?
+On Wed, Oct 22, 2025 at 04:21:41PM +0100, Vincent Donnefort wrote:
+> On Fri, Oct 17, 2025 at 07:57:10AM +0000, Sebastian Ene wrote:
+> > Verify the offset to prevent OOB access in the hypervisor
 > 
-> When I debugged performance issues before, I used the company's equipment.
-> I could only observe the macro business performance data, but not the
-> specific scheduling time. Today I did some testing using my devices,
-> and the testing logic is as follows:
-> ```
-> -	return finish_task_switch(prev);
-> +	start_time = rdtsc();
-> +	barrier();
-> +	rq = finish_task_switch(prev);
-> +	barrier();
-> +	end_time = rdtsc;
-> +	return rq;
-> ```
+> I believe that would be just a read, so probably it would be difficult to use
+> this to compromise anything, except crashing the system?
+
+The simplest way is to crash the system but a more advanced one might
+lead to a confused deputy attack:
+
+1. Use the original bug to trigger the overflow of the offset variable
+which bypasses this check:
+https://elixir.bootlin.com/linux/v6.18-rc2/source/arch/arm64/kvm/hyp/nvhe/ffa.c#L519
+
+2. Use the host_share_hyp from the host to create a mapping in the hyp
+address space so that : reg from reg = (void *)buf + offset; points to
+memory mapped in the hyp address space & controlled from the host.
+
+3. Make the __ffa_host_share_ranges fail (since we control the content of
+the reg) to trigger the recovery mechanism for __ffa_host_unshare_ranges
+(https://elixir.bootlin.com/linux/v6.18-rc2/source/arch/arm64/kvm/hyp/nvhe/ffa.c#L392)
+and replace the content of the reg with pages that we want to remove the
+host stage-2 FF-A annotation from.
+
+With step(3) we can remove the host stage-2 FF-A annotation from pages
+without having to invoke the FF-A reclaim mechanism. This allows a
+confused deputy attack because the pages can be given to another entity
+after the annotation is removed (eg. given to a protected VM).
+
 > 
-> The test data is as follows:
-> 1. mitigations Off, without patches: 13.5 - 13.7
-> 2. mitigations Off, with patches: 13.5 - 13.7
-> 3. mitigations On, without patches: 23.3 - 23.6
-> 4. mitigations On, with patches: 16.6 - 16.8
+> > FF-A buffer in case an untrusted large enough value
+> > [U32_MAX - sizeof(struct ffa_composite_mem_region) + 1, U32_MAX]
+> > is set from the host kernel.
+> > 
+> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/ffa.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > index 4e16f9b96f63..58b7d0c477d7 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > @@ -479,7 +479,7 @@ static void __do_ffa_mem_xfer(const u64 func_id,
+> >  	struct ffa_mem_region_attributes *ep_mem_access;
+> >  	struct ffa_composite_mem_region *reg;
+> >  	struct ffa_mem_region *buf;
+> > -	u32 offset, nr_ranges;
+> > +	u32 offset, nr_ranges, checked_offset;
+> >  	int ret = 0;
+> >  
+> >  	if (addr_mbz || npages_mbz || fraglen > len ||
+> > @@ -516,7 +516,12 @@ static void __do_ffa_mem_xfer(const u64 func_id,
+> >  		goto out_unlock;
+> >  	}
+> >  
+> > -	if (fraglen < offset + sizeof(struct ffa_composite_mem_region)) {
+> > +	if (check_add_overflow(offset, sizeof(struct ffa_composite_mem_region), &checked_offset)) {
+> > +		ret = FFA_RET_INVALID_PARAMETERS;
+> > +		goto out_unlock;
+> > +	}
+> > +
+> > +	if (fraglen < checked_offset) {
+> >  		ret = FFA_RET_INVALID_PARAMETERS;
+> >  		goto out_unlock;
+> >  
+> 
+> Perhaps this could be easier to reason about by moving this check with the nr_ranges?
 
-Such numbers absolutely have to be part of the relevant patches / cover 
-letter to show that the compiler is not actually smart enough to make a 
-good decision.
+I found it a bit more clear to use the helper on the offset variable, I
+would like to keep it in this way if you are ok with this.
 
-Having that said, sometimes it helps to understand "why" the compiler 
-does a bad job, and try to tackle that instead.
 
-For example, compilers will not inline functions that might be too big 
-(there is a compiler tunable), factoring out slow-paths etc could help 
-to convince the compiler to do the right thing.
+> 
+>         reg = (void *)buf + offset;
+>         if ((void *)reg->constituents > (void *)buf + fraglen) {
+>                 ret = FFA_RET_INVALID_PARAMETERS;
+>                 goto out_unlock;
+>         }
+>  
+>         nr_ranges = ((void *)buf + fraglen) - (void *)reg->constituents;
+>         if (nr_ranges % sizeof(reg->constituents[0])) {
+>                 ret = FFA_RET_INVALID_PARAMETERS;
+> 
 
-Of course, it's not always possible, and sometimes we just now that we 
-always want to inline.
+Thanks,
+Sebastian
 
--- 
-Cheers
-
-David / dhildenb
-
+> }
+> > -- 
+> > 2.51.0.858.gf9c4a03a3a-goog
+> > 
 
