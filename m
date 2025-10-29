@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-876090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E429C1A988
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:18:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BF1C1AFF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DCC1B209DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010B45878CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7C323C513;
-	Wed, 29 Oct 2025 13:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CDB1FCCF8;
+	Wed, 29 Oct 2025 13:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nKqGe1Te"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="MdWLjoTs"
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F5726B2D5;
-	Wed, 29 Oct 2025 13:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1903226A0D0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743024; cv=none; b=ahZ3BslY3RbsLyBg22TMU3jxdKuHY3HOBXp5zPCEGhmmMs3uL2idG/HUivOs1Auy++lL/JC6l6VPvj963h6BzUyRZq1DWoXbHOCuAPVU3bCnaajf6GT5YYmRrzVydFANc9BKpVv+lDPrkwThDy14s+xpXv5jukoPcqMjuBurMYs=
+	t=1761743063; cv=none; b=FUbTmt9cQ4DVBQRFRJVNTImyZfY8S4e4XIKhPLXoVyBiFTTyWUjkXgb30PL45qNf47oYlZSUwQl35W5+ePmDgmmDH+yhitVPh6S2y2Dy9K1E+s5SFxs0jFJ+UYgEZYRo2Eby8NFwFNN0z0f1++qsCYlsnMKSgY4qt5cEJtPlzTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743024; c=relaxed/simple;
-	bh=3GZfxYY1lE9q6kPXQ4mdjc6k1cRrn7Z7T8r/CPfao5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rbE5bNrlaVOTjmyoaePGAR8n4SF182PnJr0Nk0t++9Vh7XviGXZyo/Vh5QEgmXHqsqgQ4M158Tbul+1rPLQmhQEmbeC3Jj/0dE3E+76rE7hOxoOuZQBstiiMA8zKnE85KmDQ1KABdULCJu7hLRNYFFEGCIQmBCnYDm9Vu4RV7mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nKqGe1Te; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=14vRFbB6EdU4ZT3decFu+xUDgwupG9tolVx3j09z9B0=; b=nKqGe1TegnnuCoD6I04XQSv9gP
-	VUwnC9FfQ/Qg4gqC0eO4lqDeEj+IdcS6+mQfattlg1nVo3y4mdUFMKxy3za9lLsgfpyekgALpLRYZ
-	EKzJVMcx9YzbCEEFvZlxIi/js9srhKgGs6AP3pnKmS2vJoyAXCLE5xEUcDnAz7znLkM8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vE5pq-00CPHI-Jz; Wed, 29 Oct 2025 14:03:30 +0100
-Date: Wed, 29 Oct 2025 14:03:30 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Buday Csaba <buday.csaba@prolan.hu>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 1/4] net: mdio: common handling of phy reset
- properties
-Message-ID: <3a937e5c-0c0f-431f-a300-9d4c60f3a3ff@lunn.ch>
-References: <cover.1761732347.git.buday.csaba@prolan.hu>
- <a96ac9a58165a4ea15b1c96cab3bbc5d568e9cba.1761732347.git.buday.csaba@prolan.hu>
+	s=arc-20240116; t=1761743063; c=relaxed/simple;
+	bh=EHIy8dEPDqxt6PRozzxc6lMy2O+yWldQhMw2v42rm5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hJkf3TLqokkgaZmZQ68ycetvnGpJvjBRd4TcevrVR+jl3dlbyzPaw0PspafsmoIXVTEqmv2y1EBnx7EXUvyomv8RXC9D/iiIAsEHLHUM2RCC46RD4RLFHy4pDU9y+M9QZ8PZPuqQRvLrlKj7FDWEfL7VCTNpW+cxfmF2Czi4Tb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=MdWLjoTs; arc=none smtp.client-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id 238FA9B0A2;
+	Wed, 29 Oct 2025 13:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1761743057;
+	bh=e6UOPjDX6GDXZTJ3BHTWH5HK3Gp1+g+0ZC9njXBfRgQ=;
+	h=Date:From:To:Cc:Subject;
+	b=MdWLjoTs6WniJw8FZjPLjYpkbsb8W4VjF9f4JZlD08j8G97AZFszqMhmNAydD6wE9
+	 gT+w/ohZBLe6VrsAp7OPPIv7/0lzn2bt+n0+KIL69ot+smBQx0sYudPG4+0Zr0yi6d
+	 UdUaf9365vaKny5bqZnB2aHp0lCx+6TsjkT1kq1c=
+Date: Wed, 29 Oct 2025 13:04:13 +0000
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: [PATCH RESEND] x86/irq: Optimize interrupts decimals printing
+Message-ID: <aQIQzdKSnW4CIaR0@shell.ilvokhin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,70 +58,241 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a96ac9a58165a4ea15b1c96cab3bbc5d568e9cba.1761732347.git.buday.csaba@prolan.hu>
 
-On Wed, Oct 29, 2025 at 11:23:41AM +0100, Buday Csaba wrote:
-> Unify the handling of reset properties for an `mdio_device`.
-> Replace mdiobus_register_gpiod() and mdiobus_register_reset() with
-> mdio_device_register_reset() and mdio_device_unregister_reset(),
-> and move them from mdio_bus.c to mdio_device.c, where they belong.
+Function seq_printf supports rich format string for decimals printing,
+but it doesn't required for printing /proc/interrupts per CPU counters,
+seq_put_decimal_ull_width function can be used instead to print per CPU
+counters, because very limited formatting is required for this case.
 
-You should probably mention here that there are two sets of reset
-properties. One set applies to the bus as a whole, and the second is
-per device on the bus. You would expect the whole bus properties to be
-handled in mdio_bus.c, where as the per device properties might make
-more sense in mdio_device.c. So you can comment you are only moving
-the per device reset code.
+Performance counter stats (truncated) for 'sh -c cat /proc/interrupts
+>/dev/null' (1000 runs) before and after applying the patch below.
 
-> 
-> The new functions handle both reset-controllers and reset-gpios,
-> and also read the corresponding firmware properties from the
-> device tree, which were previously handled in fwnode_mdio.c.
-> This makes tracking the reset properties easier.
+Before:
 
-Please split this patch.
+      3.42 msec task-clock        #    0.802 CPUs utilized   ( +-  0.05% )
+         1      context-switches  #  291.991 /sec            ( +-  0.74% )
+         0      cpu-migrations    #    0.000 /sec
+       343      page-faults       #  100.153 K/sec           ( +-  0.01% )
+ 8,932,242      instructions      #    1.66  insn per cycle  ( +-  0.34% )
+ 5,374,427      cycles            #    1.569 GHz             ( +-  0.04% )
+ 1,483,154      branches          #  433.068 M/sec           ( +-  0.22% )
+    28,768      branch-misses     #    1.94% of all branches ( +-  0.31% )
 
-It is normal when moving a function to just move it, make no
-additional changes. That makes the change smaller, easier to review,
-since it is all about, does the new location make sense?
+0.00427182 +- 0.00000215 seconds time elapsed  ( +-  0.05% )
 
-Once it is in the new location, you can then have patches which
-refactor it.
+After:
 
-> -static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
-> -{
-> -	/* Deassert the optional reset signal */
-> -	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
-> -						 "reset", GPIOD_OUT_LOW);
-> -	if (IS_ERR(mdiodev->reset_gpio))
-> -		return PTR_ERR(mdiodev->reset_gpio);
-> -
-> -	if (mdiodev->reset_gpio)
-> -		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
-> -
-> -	return 0;
-> -}
-> -
+      2.39 msec task-clock        #    0.796 CPUs utilized   ( +-  0.06% )
+         1      context-switches  #  418.541 /sec            ( +-  0.70% )
+         0      cpu-migrations    #    0.000 /sec
+       343      page-faults       #  143.560 K/sec           ( +-  0.01% )
+ 7,020,982      instructions      #    1.30  insn per cycle  ( +-  0.52% )
+ 5,397,266      cycles            #    2.259 GHz             ( +-  0.06% )
+ 1,569,648      branches          #  656.962 M/sec           ( +-  0.08% )
+    25,419      branch-misses     #    1.62% of all branches ( +-  0.72% )
 
-> +/**
-> + * mdio_device_register_reset - Read and initialize the reset properties of
-> + *				an mdio device
-> + * @mdiodev: mdio_device structure
-> + *
-> + * Return: Zero if successful, negative error code on failure
-> + */
-> +int mdio_device_register_reset(struct mdio_device *mdiodev)
-> +{
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(mdio_device_register_reset);
+0.00299996 +- 0.00000206 seconds time elapsed  ( +-  0.07% )
 
-Before it did not require an EXPORT_SYMBOL, but now it does?  That
-makes me wounder if it is in the correct place. This should be a core
-function, why would something outside of the core need it?
+Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+---
+ arch/x86/kernel/irq.c | 96 +++++++++++++++++++++++--------------------
+ 1 file changed, 52 insertions(+), 44 deletions(-)
 
-Also, please use the _GPL variant.
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 10721a125226..3b5a5e2d16e1 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -61,6 +61,14 @@ void ack_bad_irq(unsigned int irq)
+ 	apic_eoi();
+ }
+ 
++static void put_spaced_decimal(struct seq_file *p, unsigned long long num)
++{
++	const char *delimiter = " ";
++	unsigned int width = 10;
++
++	seq_put_decimal_ull_width(p, delimiter, num, width);
++}
++
+ #define irq_stats(x)		(&per_cpu(irq_stat, x))
+ /*
+  * /proc/interrupts printing for arch specific interrupts
+@@ -69,102 +77,102 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ {
+ 	int j;
+ 
+-	seq_printf(p, "%*s: ", prec, "NMI");
++	seq_printf(p, "%*s:", prec, "NMI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->__nmi_count);
++		put_spaced_decimal(p, irq_stats(j)->__nmi_count);
+ 	seq_puts(p, "  Non-maskable interrupts\n");
+ #ifdef CONFIG_X86_LOCAL_APIC
+-	seq_printf(p, "%*s: ", prec, "LOC");
++	seq_printf(p, "%*s:", prec, "LOC");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->apic_timer_irqs);
++		put_spaced_decimal(p, irq_stats(j)->apic_timer_irqs);
+ 	seq_puts(p, "  Local timer interrupts\n");
+ 
+-	seq_printf(p, "%*s: ", prec, "SPU");
++	seq_printf(p, "%*s:", prec, "SPU");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_spurious_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_spurious_count);
+ 	seq_puts(p, "  Spurious interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "PMI");
++	seq_printf(p, "%*s:", prec, "PMI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->apic_perf_irqs);
++		put_spaced_decimal(p, irq_stats(j)->apic_perf_irqs);
+ 	seq_puts(p, "  Performance monitoring interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "IWI");
++	seq_printf(p, "%*s:", prec, "IWI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->apic_irq_work_irqs);
++		put_spaced_decimal(p, irq_stats(j)->apic_irq_work_irqs);
+ 	seq_puts(p, "  IRQ work interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "RTR");
++	seq_printf(p, "%*s:", prec, "RTR");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->icr_read_retry_count);
++		put_spaced_decimal(p, irq_stats(j)->icr_read_retry_count);
+ 	seq_puts(p, "  APIC ICR read retries\n");
+ 	if (x86_platform_ipi_callback) {
+-		seq_printf(p, "%*s: ", prec, "PLT");
++		seq_printf(p, "%*s:", prec, "PLT");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ", irq_stats(j)->x86_platform_ipis);
++			put_spaced_decimal(p, irq_stats(j)->x86_platform_ipis);
+ 		seq_puts(p, "  Platform interrupts\n");
+ 	}
+ #endif
+ #ifdef CONFIG_SMP
+-	seq_printf(p, "%*s: ", prec, "RES");
++	seq_printf(p, "%*s:", prec, "RES");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_resched_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_resched_count);
+ 	seq_puts(p, "  Rescheduling interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "CAL");
++	seq_printf(p, "%*s:", prec, "CAL");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_call_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_call_count);
+ 	seq_puts(p, "  Function call interrupts\n");
+-	seq_printf(p, "%*s: ", prec, "TLB");
++	seq_printf(p, "%*s:", prec, "TLB");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_tlb_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_tlb_count);
+ 	seq_puts(p, "  TLB shootdowns\n");
+ #endif
+ #ifdef CONFIG_X86_THERMAL_VECTOR
+-	seq_printf(p, "%*s: ", prec, "TRM");
++	seq_printf(p, "%*s:", prec, "TRM");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_thermal_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_thermal_count);
+ 	seq_puts(p, "  Thermal event interrupts\n");
+ #endif
+ #ifdef CONFIG_X86_MCE_THRESHOLD
+-	seq_printf(p, "%*s: ", prec, "THR");
++	seq_printf(p, "%*s:", prec, "THR");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_threshold_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_threshold_count);
+ 	seq_puts(p, "  Threshold APIC interrupts\n");
+ #endif
+ #ifdef CONFIG_X86_MCE_AMD
+-	seq_printf(p, "%*s: ", prec, "DFR");
++	seq_printf(p, "%*s:", prec, "DFR");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->irq_deferred_error_count);
++		put_spaced_decimal(p, irq_stats(j)->irq_deferred_error_count);
+ 	seq_puts(p, "  Deferred Error APIC interrupts\n");
+ #endif
+ #ifdef CONFIG_X86_MCE
+-	seq_printf(p, "%*s: ", prec, "MCE");
++	seq_printf(p, "%*s:", prec, "MCE");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", per_cpu(mce_exception_count, j));
++		put_spaced_decimal(p, per_cpu(mce_exception_count, j));
+ 	seq_puts(p, "  Machine check exceptions\n");
+-	seq_printf(p, "%*s: ", prec, "MCP");
++	seq_printf(p, "%*s:", prec, "MCP");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", per_cpu(mce_poll_count, j));
++		put_spaced_decimal(p, per_cpu(mce_poll_count, j));
+ 	seq_puts(p, "  Machine check polls\n");
+ #endif
+ #ifdef CONFIG_X86_HV_CALLBACK_VECTOR
+ 	if (test_bit(HYPERVISOR_CALLBACK_VECTOR, system_vectors)) {
+-		seq_printf(p, "%*s: ", prec, "HYP");
++		seq_printf(p, "%*s:", prec, "HYP");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ",
++			put_spaced_decimal(p,
+ 				   irq_stats(j)->irq_hv_callback_count);
+ 		seq_puts(p, "  Hypervisor callback interrupts\n");
+ 	}
+ #endif
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 	if (test_bit(HYPERV_REENLIGHTENMENT_VECTOR, system_vectors)) {
+-		seq_printf(p, "%*s: ", prec, "HRE");
++		seq_printf(p, "%*s:", prec, "HRE");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ",
++			put_spaced_decimal(p,
+ 				   irq_stats(j)->irq_hv_reenlightenment_count);
+ 		seq_puts(p, "  Hyper-V reenlightenment interrupts\n");
+ 	}
+ 	if (test_bit(HYPERV_STIMER0_VECTOR, system_vectors)) {
+-		seq_printf(p, "%*s: ", prec, "HVS");
++		seq_printf(p, "%*s:", prec, "HVS");
+ 		for_each_online_cpu(j)
+-			seq_printf(p, "%10u ",
++			put_spaced_decimal(p,
+ 				   irq_stats(j)->hyperv_stimer0_count);
+ 		seq_puts(p, "  Hyper-V stimer0 interrupts\n");
+ 	}
+@@ -174,27 +182,27 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ 	seq_printf(p, "%*s: %10u\n", prec, "MIS", atomic_read(&irq_mis_count));
+ #endif
+ #if IS_ENABLED(CONFIG_KVM)
+-	seq_printf(p, "%*s: ", prec, "PIN");
++	seq_printf(p, "%*s:", prec, "PIN");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", irq_stats(j)->kvm_posted_intr_ipis);
++		put_spaced_decimal(p, irq_stats(j)->kvm_posted_intr_ipis);
+ 	seq_puts(p, "  Posted-interrupt notification event\n");
+ 
+-	seq_printf(p, "%*s: ", prec, "NPI");
++	seq_printf(p, "%*s:", prec, "NPI");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ",
++		put_spaced_decimal(p,
+ 			   irq_stats(j)->kvm_posted_intr_nested_ipis);
+ 	seq_puts(p, "  Nested posted-interrupt event\n");
+ 
+-	seq_printf(p, "%*s: ", prec, "PIW");
++	seq_printf(p, "%*s:", prec, "PIW");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ",
++		put_spaced_decimal(p,
+ 			   irq_stats(j)->kvm_posted_intr_wakeup_ipis);
+ 	seq_puts(p, "  Posted-interrupt wakeup event\n");
+ #endif
+ #ifdef CONFIG_X86_POSTED_MSI
+-	seq_printf(p, "%*s: ", prec, "PMN");
++	seq_printf(p, "%*s:", prec, "PMN");
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ",
++		put_spaced_decimal(p,
+ 			   irq_stats(j)->posted_msi_notification_count);
+ 	seq_puts(p, "  Posted MSI notification event\n");
+ #endif
+-- 
+2.47.3
 
-	Andrew
 
