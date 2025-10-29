@@ -1,124 +1,269 @@
-Return-Path: <linux-kernel+bounces-875824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2726FC19E47
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D6CC19E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:56:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21BD5504463
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:53:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 210A8505E2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E1F30ACFD;
-	Wed, 29 Oct 2025 10:53:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F18A2FE065;
+	Wed, 29 Oct 2025 10:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=kvaser.com header.i=@kvaser.com header.b="VIgdCToC"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11020105.outbound.protection.outlook.com [52.101.84.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E9C2DBF73
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761735185; cv=none; b=qLawkdPF+SRMlL4xHVeRgznuW9pTkhf5HHsKhUMtEQldElAuhV8zo5+pRDzHJPO1ncGVTMzSKBaaH0zVyHtUWihXgtTycGjIXUUd6MVF/SfkAQwSEE4W0jJnPWcobixrA/YtQwBuhyJXRu4qLPOtHUA3O4vkImONhD/ez6nQNvw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761735185; c=relaxed/simple;
-	bh=uJua2anUILPjE8vB2NpFDAD61wDcDo6Uf6Pl9zHeTto=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N355Egyf1nnWMaeWpOTYxiYQZ6KlCde4ejMLwIOYix5QOYIrfE3yVNB1FzsLa1cLyCpKvTdNq8zIlePCC0FW3kQEzVVvRLz+kbmwOIlxASsd6KXTnGn5YqZkKbLw4HVWiFq7P7mtH+BdHQAHISqanhzYTlhlwU6kds66O/HkrSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d789ee5aso91792215ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:53:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761735183; x=1762339983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/NA3i7c8W4rMjzEXGsZSL4aXPgrhGLfmIypWWmxikqg=;
-        b=KUD/vKHYFKT9PgUTQgyuLGU7DaPIkffyEflh/EaYorJMmnQiqIA5QYf+wvfmTVT0ng
-         LFmmwmhQ0DWPVgXM6JvCsQMuRQ1kQwklAMHaP3mEKXXfK4H1Ka2j0rNPp2GwxK4eoaRh
-         wQ+LvjrZ2k6mWokfhdgR6FbNWlywgJPIqQKAzXXpLhfNwC+FWciMjgSHXY/HMYnfjN0a
-         YHwYwCZqFOzs3aVGHkwUZqDJkXBe0ZNVVvpOT9wBypF1Blv/VXvci9/t71f1wc/XasEr
-         TOqvZqYmYosvHEo/BEeAlmzq/pNt+EIyEYTl71vC1XW0kADaoynKpTHpO+us3bU4BxUT
-         8xiA==
-X-Gm-Message-State: AOJu0Yz6EpTnI48pPNC8fMa3bbYGjgH9uS+xVc233Hr7YKJymiXvrNYu
-	INhsj942OTEcSIKJN2q4LLUduirLnYLD7uEioGqs5GLuK2X1oHAbS4ma9LLI3YgJ/wE7ATLKUvZ
-	FFBCGXYGcs7LDd9UqnahvdJIHudf3Wh9HTVWKBoBCEDERPDhMSMlg9F/hbYs=
-X-Google-Smtp-Source: AGHT+IFeoHGmxJeVZYbwuNxxJ0kEy44rD9TZcaY5P95MfWiWxaBRy6vwEjiva5GNZyOUXIdiyXc6jVv/cPggPHurwux/tTBODcn+
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA38332C326;
+	Wed, 29 Oct 2025 10:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.105
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761735203; cv=fail; b=SFWOzmlom2DSP+9AZ8CBzUFKyVJkqhAnMhFMc/TviSS52vWPrkK31R9gbVaxzKMSNYRWWrDA9E3yGNDEnQ028ChZBkvtl9TOAV61TztASBGA+LzvNHlNeb/ZGhSkW3/yqdryMRyAgNeF5b1vgixW+4jourLXBTqk1KDsz0SN3sM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761735203; c=relaxed/simple;
+	bh=BzeZwNpt5LVmjC8ZIibfNU7wMSc6uIlntgMWhJaPorM=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YNTtv+ZzakluK40rfELIsVLvU3nAt8FJQTWKuKwY2ok6qMrLyZQO8A8KLfWE3yq7F2UwOKwXKIWP7MVy5AyApMq+KsXELPm3JiL8oWGta2iEMwHkIwDrg5DPXuuSNehdnAelavc6eR1wtAF0XOq83bKsG9xNcyjKxSl8angQiNg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kvaser.com; spf=pass smtp.mailfrom=kvaser.com; dkim=pass (1024-bit key) header.d=kvaser.com header.i=@kvaser.com header.b=VIgdCToC; arc=fail smtp.client-ip=52.101.84.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kvaser.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kvaser.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vJzBXt1qr57won2LCHdhLgTve4EmhkaxbG1a/4yRznlQjnNECKkcGCDZ3IDIW/Lc/0mkvrBvnVzLq56wgK3jVGH0G2Xv3aWRG92oO7fIvHnC2JgZ82egnb3BkM6sxUpUglVOP2zdZGP8j3BLWC1J7hpXyVoL1opyBguRnmqW5a6nSlbyQTVxnRRwGt7OEAQIGjrhZ2L3bYymbrsxLeTHv8nDl1utEj7RcSUSEwFE/VRjCsybP/uKCxiBVtgPDeBrH90s/rhkMKyJqKL2/jSINI+Ihxk2E2TApeCzVH5jiOi9g7ZjIhCbOEWyw09e0RbT+FBdgYwHGu2AcyNo7X71pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=20K100AnseVlL6IDVQ3O4af/2NI1AQJRG8Xy2dOqGk8=;
+ b=EjyDaf+toXXkQU89nVUpRzsyrWLSz/L5BLx4qjAiL6GAFTZYNwaP73urpVCA8f+mXYFqkRDXt6IjTdfnt7IGALHsfmgHpdoWwDUaG6IpCFEulVbwYhizNPgcQZGaiO0W5UR5XRSB3wCEenknSE1O+ypE9p56LurBYEJdsO7aeRKBPj14t7YTci4DSombq870y/Hwqw1STRy5agKdAdUWuy5zyO1oyilL6qDxh1s5KbEqEPVj36N5RT1KfOOWASONn5QdVrO/lpIgAm1dOhVS82gpqBDJB4nLTKCaKWLKlyaEIdOD9vDss0l3Yqd+Wae9h7X7UX0SQ8dRXm/WyXIWow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kvaser.com; dmarc=pass action=none header.from=kvaser.com;
+ dkim=pass header.d=kvaser.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kvaser.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=20K100AnseVlL6IDVQ3O4af/2NI1AQJRG8Xy2dOqGk8=;
+ b=VIgdCToCilOcKkwuWIU1nDzq+NSIEaqyBFt/ww8jbv/Z9HLkCINHfIooj8J7ki3mf2AUZ9rsc3eOWLLMIO6NOYosQ2CkfZNfb+OGGfY563cIlFehRC89tZBZZ+1vNyTqhP+yQlToHW4vAg88spMelnp0BcIucBQDr1VAlF4jF2Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kvaser.com;
+Received: from AS8P193MB2014.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:40d::20)
+ by PA1P193MB2662.EURP193.PROD.OUTLOOK.COM (2603:10a6:102:4e7::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.19; Wed, 29 Oct
+ 2025 10:53:16 +0000
+Received: from AS8P193MB2014.EURP193.PROD.OUTLOOK.COM
+ ([fe80::7f84:ce8a:8fc2:fdc]) by AS8P193MB2014.EURP193.PROD.OUTLOOK.COM
+ ([fe80::7f84:ce8a:8fc2:fdc%3]) with mapi id 15.20.9228.016; Wed, 29 Oct 2025
+ 10:53:16 +0000
+Message-ID: <5d794063-9f4a-452e-b19a-6442b0ce5fd3@kvaser.com>
+Date: Wed, 29 Oct 2025 11:53:13 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] can: kvaser_usb: leaf: Fix potential infinite loop in
+ command parsers
+From: Jimmy Assarsson <extja@kvaser.com>
+To: pip-izony <eeodqql09@gmail.com>
+Cc: Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
+ Vincent Mailhol <mailhol@kernel.org>
+References: <CAAsoPpV7Kzap1Sn8QFtBbvwW-DJMTTcU_bBOUDYYC286Uaddtg@mail.gmail.com>
+ <20251023162709.348240-1-eeodqql09@gmail.com>
+ <1d960d0d-06ab-4f38-817f-b9a5e949d3c7@kvaser.com>
+Content-Language: en-US
+In-Reply-To: <1d960d0d-06ab-4f38-817f-b9a5e949d3c7@kvaser.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MM0P280CA0029.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:a::17) To AS8P193MB2014.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:40d::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:194c:b0:430:9f96:23b9 with SMTP id
- e9e14a558f8ab-432f8f94257mr35561565ab.3.1761735183180; Wed, 29 Oct 2025
- 03:53:03 -0700 (PDT)
-Date: Wed, 29 Oct 2025 03:53:03 -0700
-In-Reply-To: <CAMz+-CPDh3FF3Fso8UjYyd0=uyV2hJvYQLTVracNyo896rsF1A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901f20f.050a0220.32483.020c.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] WARNING in chown_common
-From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	vnranganath.20@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8P193MB2014:EE_|PA1P193MB2662:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb9d2e36-fa28-46b4-fa65-08de16d95d40
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d3d5dXI2NGphTmxmOVhhdjdNSkwrYWpGYTZHMVF5Zk56YVlkaU5MdmRmekUv?=
+ =?utf-8?B?ZzZ5L0tjWEI3YkgzbHhLVndnN3B0bWNWQ3orbjZEUWpzRFM4VllFajJkL0FY?=
+ =?utf-8?B?MFNSV1FnN3AyY3Z2d2NRQVQxRmRIRDZWTUpaWmxkUWFyTkVHQnUxTmxXOTN1?=
+ =?utf-8?B?cXFNQUFIZTFWOWZ2M2VVNllqaFZPOVp4MXFUajE5TjZNZVduRDBZMkQ0a0pG?=
+ =?utf-8?B?TGtwOFdyM1pjYVh3NjBqMzlrQWpaN1dMVy9HTUxKSFNxWEFUa1l3cGJpUUlj?=
+ =?utf-8?B?b1NaRGZLSk0zNlBPSk85N0xieDI3SzhzU05nelB2RkFWbVE0WGMwRHpMWGh3?=
+ =?utf-8?B?RzNxYTYzUTQ3Sjc0aVp4M2dmdFlObVE2eS9FZnowNXhwNEs4K013bmxYOEZK?=
+ =?utf-8?B?cEJjNE5DbWc5Umpxc3laZWlkVmRBaHdGbUlnUy9rb3V1ZS9ZL0V2NVZHMTJN?=
+ =?utf-8?B?SHUxRVhVR3ZZa1ZGa0wvK1BES3V4YTVCaEhjbkZPa1BGWVlPT09pekdpeFZo?=
+ =?utf-8?B?dldoRjFuZWN6Ly83N2grNkhRTk1jS1VONTU4MEdkcm9SM3BQcmhyaVh5S1Q2?=
+ =?utf-8?B?ZFZDOFVxQW9JODlIWWx1WXNvcnorbXNyZVNKd0FRRjArSDZxZ1NvRjF1akVO?=
+ =?utf-8?B?ZmIvbENISU9yTmg1eHVnM2NLN0RuN0lMMGtmeHo5NVVjRzQ0b2diTkVQR3JX?=
+ =?utf-8?B?dlV0TUhqRnk2R0ZMSnA0Qk41RGJ0TXdYSHcwNDFNWXE1MzdhK1hadzRLTm9C?=
+ =?utf-8?B?K1lESEVIK2Nld0VaWWFJVVRwZm5UUUEreHNOZFpCSHFvNEtHdE1UR3h6eU1D?=
+ =?utf-8?B?SDJuMVBvTHJSRGNIb1BRVzcySXd1OEhuT0ErUTFEcVNUS1k0YjR4K25na1Bj?=
+ =?utf-8?B?dGFNRE4rdkt1QmFWU25FbngxYXJSUVVkSWlna1ZVeTlsSC92ZHpVTjErSkNH?=
+ =?utf-8?B?aHVmSVhGdmtNaWo1RTBrTnlGanJ4S3lyeGd2Z1lSMzlNMDRucExWVmdDWm96?=
+ =?utf-8?B?UEdHZE95YlVxVHdqdEJDU24vNkswQXF1VGpuOVBDc2J1ekNtYW0xN1E5aTJ5?=
+ =?utf-8?B?QmFJbU5HT0hkdEtOQVBjbmJrSHhYcHZ3UVBUWDRMODFRS3l3WDlRTGlJbUNV?=
+ =?utf-8?B?S21RZklIeW5QT0NnQkJtZGxLNlZRdGU4QjNvV3ZLbUN6QmtWUW1SKzhGQkl2?=
+ =?utf-8?B?VFZWNzJXdnRVR3BnbEhMOVVaTmpoZHM5R0VuM3duYVlkTUw1aE42d05VVEtC?=
+ =?utf-8?B?Uy9sL3NUWVM4S0pGRjFRek4wNVczM00rRitoclVYOHVCd2x3TjdvcUtrdG1w?=
+ =?utf-8?B?ZDBVU2VlRTk3TVV1QUpjMU1XRkl1Vk1uMnlPNzFFcU84NnllanBOOXFkOStJ?=
+ =?utf-8?B?VTZQZFRFWmNOZi9VWDNZL0Exa2kvVWtDZHR4WHJMVWRZNG1YMXprQkczYkJj?=
+ =?utf-8?B?S1cyMXZQeE9HRm5oTWRzbXpCQUJ6QUdPREozZjZ3QURtcTIvT0FKb0RqcmJ0?=
+ =?utf-8?B?dWFxT1N3b0VFQXk0ZDUwRHZhMWdhdVlqSFZWbkR2UWlpVzVUbFpRWlAvWVFU?=
+ =?utf-8?B?Q2JZWnNDOGV0YjVYQUxvQjVENGZiRHpJRWdKWmlwSEpDcnhpbmc3WG1JSHU5?=
+ =?utf-8?B?citFbmlsZVh1RU5rMmhxUUpyZ3lKOVlFV0VrQmw4bHdMUjlMN2VTajdWcGZU?=
+ =?utf-8?B?ZCtrcm40UmQ5KzFxd25oREtpakVZZzlrZXB6OVd0Y1ZQQW1wVnNMTjA2TkUr?=
+ =?utf-8?B?K0pvZVIrZVBtZ2tFSE9ISmd4S3Y4Vm5JNVYxQ3I5dEMyemltS3ZoaGxRRVg2?=
+ =?utf-8?B?K2srRjZpM0xyNFpjSm5sOGthU1prVEtEa056SUhOZUtLZW9zQ1kyUU15SzhJ?=
+ =?utf-8?B?R1BZS3ZqUHUvc3ZJWVhjanBEemJDbXNOditNK3hKNm4zUlFWdGczNEZOOXlD?=
+ =?utf-8?Q?j1j4CB5a+Uzq4y6uyhmq30aLN0DMzeSF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8P193MB2014.EURP193.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2NwSnpwaHdzd1I0K3pCaVRUQ3hYSkcwSzFlL0VlaXFxdWgvemMvR1huTUZJ?=
+ =?utf-8?B?SkdDemN3a1dBdE9iOU1uMWIzMXNaa1NKMGlYc2VwTmpncWFpR3oyUTBRVlpU?=
+ =?utf-8?B?VW1aRHJHOXhySDF6d2lPR1lwNVdXZi9ZTDRVT0xmb2QvNWp5YVNQSEFDVE4x?=
+ =?utf-8?B?d0RGc09hVXBTWnp6Ym5yVHNheDRPanBlUGlmV0ZnL1hrVkV3Z2ZHenZsY3U0?=
+ =?utf-8?B?TUh0cVdLMFRkR3Jkb1RMOWRZZW9xb1U2WEkxWlFYSHhPbGhXdlQ4WjZ3TklM?=
+ =?utf-8?B?T25teEl5SW9zZEYrZ0FCL2FuWFZBc0xuTTFZRnRucGdRUFJ6SGVYRWxUUzlj?=
+ =?utf-8?B?NnQ5aXU3c094aGxYNzd2SkhwWmhPdHNsVU1oRjJVTzQ1NGpNTndwUDljVGFO?=
+ =?utf-8?B?bEt1ZDFucmZwdE52eGFicitDZlpaeEYzTXFpOGFoYWR5cEZTYm1jUXREL0Zo?=
+ =?utf-8?B?eHFVU093aDRjelh1VW5Ha0ZVZ0U0blNadDZnYjBLZnE2UkJCMWl2aUhJQVZY?=
+ =?utf-8?B?c3hydmx6VXN1aFJWNHRyS1E4N0dLcmRWaHVGeE9tWTNqbHFpUUlVclFUaVAv?=
+ =?utf-8?B?U0p2dUxIenpHc3ZXcGhadFQ0TTBEWEpWQk9hbWdrNnZzeW5jVDVTK0FwV3ND?=
+ =?utf-8?B?K0pQUG5tU21FYWFGMk5aQy9XWlREQ3B3UHBpWEdwRGdvMXJrWVREOFFoMUJR?=
+ =?utf-8?B?ZVdqaUlOcHloenVsWmFUbDhZSHVzUjZhYkNESGJNK2hYQllLMHBwQmRSNEU4?=
+ =?utf-8?B?RFIrNWo0S2tLNU5EcSt5U2oySVFjQkQxQ0sxZUpvY2hTNmR4V2RtSjZ3bVZi?=
+ =?utf-8?B?ajl6S0Fteklsc0JTVXNhTnVVck9JUDEvMkdWT2NWZXRUaHBhSDJiWUdUTk9z?=
+ =?utf-8?B?WC9xdHFoci90ZWp2Y2ZhRGsxdmhXYmxqaVBia1Y0RXIxOFFjYnBUaUJ2THV0?=
+ =?utf-8?B?V1FpYUJzUytEVGF4RWwybjhDVFJiV2FmUm1IWkhvZHhWM2ZHWjcwQUxRQlVs?=
+ =?utf-8?B?MFYxM3ZhTkhFRFpEOU54aGFFUlRmSmh1QWZ1SWp1UjJCdHU5K1RwT2o2UmZm?=
+ =?utf-8?B?bks4a0JRZnd4ak41NE5iSEUzdDllZHdhd1NKZlJVeW94Z3k4c0hjQjNlYXpv?=
+ =?utf-8?B?WXVwMHBhcEs0ZDRyQ1ZZS0VJMnk4QUIyMmVzeTRLWjNELzNQTlVOdllhVmNO?=
+ =?utf-8?B?WlZoYzNLaVRGcFFpU2diSEx4cmxQWm5Vd05jeUFsUk9EYVR1WFZmaVZGcndE?=
+ =?utf-8?B?Q1g1a3pudFFSaldmWEpTL3ErYnQ2S1BXbEI1NXhPQ0JzUTF5SVVTVCtCTm1U?=
+ =?utf-8?B?K00vbEU4cDZwSlN6QVBxQzdkVGxTSnVhMGpLV1lpaUZpZTEwVG9BZzVmZWxU?=
+ =?utf-8?B?MVVla01KRzNCaUVZK3FpZE9WZ00vYzA1MDRSSjVNQjA2RUVKZ1F0aVg5LzNl?=
+ =?utf-8?B?U3BoRFQ5ME1jMkcwRzZWZzUzWFBhNVkwbG1uNkgzNGJvWW1hVlU3dmt0SkJq?=
+ =?utf-8?B?TjZXdmsyMmVqMER4dEx5MGFsTktDT0FJUHhYY2VWUFRzM2ZDQUxRMkFGRmwv?=
+ =?utf-8?B?UHEzd0grbGZaRkFNNVdaTUZIN2g4Qm9Vb0ZRUGxBclFVVTJPUVBqQ3BsaXlC?=
+ =?utf-8?B?R05ZZitzcjk3bjRuMGI1WmdWKzZGdGJNTyttaXFKY2xZSzRsVnRrZ3lnT0Ew?=
+ =?utf-8?B?WG85UDVKWFl2Z2RTc25RU3VMK2pqcW1wOGpCQUlmc0ZxdlZRQnJFV2RjZHli?=
+ =?utf-8?B?Rk1DM1BmeTR0Q0R4aTNKOVBJYjNFSktLNlZWbVM2cE9xalNFakN4bnJyemxV?=
+ =?utf-8?B?b2RmUVduK3Z2Um5vc0RhdGVubHZsa0dkbzR1S3FBTndvZEJKbXJPV056U3hI?=
+ =?utf-8?B?MS9QNlB2SHQvMFFQRVZIMDZQSkowYmZIaDNYaTloTnk0ZVZVNWxIQk8vbGc3?=
+ =?utf-8?B?V3VrOVRjckNvVERZY1JRekoxSWFNMzE2WWZyVWNyZ24yZFpLK0xSelRkK2ty?=
+ =?utf-8?B?eGZpYlQvdjgxREYra3k1YVlYSVQxbEYwRnNZU1pnQUpNZFBqUHV6OFhobnNL?=
+ =?utf-8?B?Ym1iUmVEcllvalNjNXJYZXlNOGJOY0czbWVKNU16S2ZyUnZ4MEJlUkExOUdM?=
+ =?utf-8?B?dDZSNlkyOXNFcXc4ZlZXaEFhT0J0am1Zakh4U2kwOVZDQS9kUlZFSGluemp3?=
+ =?utf-8?B?MVE9PQ==?=
+X-OriginatorOrg: kvaser.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb9d2e36-fa28-46b4-fa65-08de16d95d40
+X-MS-Exchange-CrossTenant-AuthSource: AS8P193MB2014.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 10:53:16.3460
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 73c42141-e364-4232-a80b-d96bd34367f3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J1Z0yMnQyUQga/B+nqb99sWHJ0bMcxc4sIG1wjCDGQeUOqFixi4A9A54d64f6k5TvUkIBV5t/Bm4aC+4F2zFKfzgPvCto3C0zUvj73sGcH8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1P193MB2662
 
-Hello,
+On 10/26/25 14:26, Jimmy Assarsson wrote:
+> Hi Seungjin,
+> 
+> Thanks for fixing this!
+> I'll do some testing in the beginning of next week.
+> Which Kvaser device did you use when you discovered the problem?
+> 
+> Best regards,
+> jimmy
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in chown_common
+Hi Seungjin,
 
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888040e85058, owner = 0x0, curr 0xffff888000f0a480, list empty
-WARNING: CPU: 0 PID: 5805 at kernel/locking/rwsem.c:1381 __up_write kernel/locking/rwsem.c:1380 [inline]
-WARNING: CPU: 0 PID: 5805 at kernel/locking/rwsem.c:1381 up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Modules linked in:
-CPU: 0 UID: 0 PID: 5805 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
-RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Code: d0 48 c7 c7 20 ff 6a 8b 48 c7 c6 40 01 6b 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 f3 35 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 94 24 7d 8f 80 e1 07 80 c1 03
-RSP: 0018:ffffc9000cd5fc10 EFLAGS: 00010292
-RAX: 137f67c4e7e18000 RBX: ffff888040e85058 RCX: ffff888000f0a480
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bba650 R12: 0000000000000000
-R13: ffff888040e850b0 R14: ffff888040e85058 R15: 1ffff110081d0a0c
-FS:  00007f716bd5d6c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000041ac2000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:990 [inline]
- chown_common+0x406/0x5b0 fs/open.c:-1
- do_fchownat+0x161/0x270 fs/open.c:825
- __do_sys_fchownat fs/open.c:840 [inline]
- __se_sys_fchownat fs/open.c:837 [inline]
- __x64_sys_fchownat+0xb5/0xd0 fs/open.c:837
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f716af8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f716bd5d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000104
-RAX: ffffffffffffffda RBX: 00007f716b1e6090 RCX: 00007f716af8efc9
-RDX: 0000000000000000 RSI: 0000200000000000 RDI: ffffffffffffff9c
-RBP: 00007f716b011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f716b1e6128 R14: 00007f716b1e6090 R15: 00007fff5b24d448
- </TASK>
+I've not been able to reproduce this problem, when testing with the
+latest firmware on multiple different devices.
 
+If the next command in the firmware packet queue, doesn't fit within the
+current endpoint transaction (wMaxPacketSize), the firmware will
+terminate the transaction with a zero byte. The driver then interprets
+this as a zero-length command, and skip to the next transaction.
 
-Tested on:
+The firmware is responsible to insert a "zero termination byte" only
+when there is already one or more packets in the current transaction.
+Since all commands have even lengths (4,8,10,12,16,20,24,30,32 bytes)
+and the wMaxPacketSize is also even (64 bytes or 512 bytes, depending on
+the device), I cannot see a situation where the zero termination byte
+would be inserted exactly at the wMaxPacketSize boundary.
 
-commit:         e53642b8 Merge tag 'v6.18-rc3-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13031258580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=929790bc044e87d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12051258580000
+Can you please provide which Kvaser device and firmware you use:
+   lsusb -d 0bfd:
+   ethtool -i can0
+
+Best regards,
+jimmy
+
+> On 10/23/25 18:27, pip-izony wrote:
+>> From: Seungjin Bae <eeodqql09@gmail.com>
+>>
+>> The `kvaser_usb_leaf_wait_cmd()` and `kvaser_usb_leaf_read_bulk_callback`
+>> functions contain logic to zero-length commands. These commands are used
+>> to align data to the USB endpoint's wMaxPacketSize boundary.
+>>
+>> The driver attempts to skip these placeholders by aligning the buffer
+>> position `pos` to the next packet boundary using `round_up()` function.
+>>
+>> However, if zero-length command is found exactly on a packet boundary
+>> (i.e., `pos` is a multiple of wMaxPacketSize, including 0), `round_up`
+>> function will return the unchanged value of `pos`. This prevents `pos`
+>> to be increased, causing an infinite loop in the parsing logic.
+>>
+>> This patch fixes this in the function by using `pos + 1` instead.
+>> This ensures that even if `pos` is on a boundary, the calculation is
+>> based on `pos + 1`, forcing `round_up()` to always return the next
+>> aligned boundary.
+>>
+>> Fixes: 7259124eac7d ("can: kvaser_usb: Split driver into 
+>> kvaser_usb_core.c and kvaser_usb_leaf.c")
+>> Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+>> ---
+>>   v1 -> v2: Apply the same infinite loop fix to 
+>> kvaser_usb_leaf_wait_cmd()
+>>   drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c b/ 
+>> drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
+>> index c29828a94ad0..1167d38344f1 100644
+>> --- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
+>> +++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
+>> @@ -685,7 +685,7 @@ static int kvaser_usb_leaf_wait_cmd(const struct 
+>> kvaser_usb *dev, u8 id,
+>>                * for further details.
+>>                */
+>>               if (tmp->len == 0) {
+>> -                pos = round_up(pos,
+>> +                pos = round_up(pos + 1,
+>>                              le16_to_cpu
+>>                           (dev->bulk_in->wMaxPacketSize));
+>>                   continue;
+>> @@ -1732,7 +1732,7 @@ static void 
+>> kvaser_usb_leaf_read_bulk_callback(struct kvaser_usb *dev,
+>>            * number of events in case of a heavy rx load on the bus.
+>>            */
+>>           if (cmd->len == 0) {
+>> -            pos = round_up(pos, le16_to_cpu
+>> +            pos = round_up(pos + 1, le16_to_cpu
+>>                           (dev->bulk_in->wMaxPacketSize));
+>>               continue;
+>>           }
+> 
+> 
 
 
