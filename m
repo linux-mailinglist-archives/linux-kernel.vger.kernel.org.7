@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-875621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B508CC19727
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:45:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5232C197AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C100C466E39
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:41:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D146548966
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305C3321C6;
-	Wed, 29 Oct 2025 09:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF1D3328F7;
+	Wed, 29 Oct 2025 09:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AnPzfyrn"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="McJClldz"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90473321A6;
-	Wed, 29 Oct 2025 09:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48BE3328FF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761730781; cv=none; b=epeak2rK1M3/8kUZ7ASbmrjGX74zH3JoNR2c4dopiFgydtgkfGLfrBCxmuGKIcVRqNb7UjQrUKCY+lLU732ALbzpHHZerkMwqnhKss291wsxGIKBNJb091z/LkTYaXmdXNIswyDBgMR2U5bhbFjlTD/ViCfXVARAjQKxfnPfiik=
+	t=1761730783; cv=none; b=tscAh1aTd857XzPySTxJk1HT4iIYWpOJAVv4wqD8VtqevUDi+1vDGdpL/pD4uXrpQPCAsRSTPm2nb0MvwsqvxKuH15HPRJ7R/qZXRrI57iyfeg3Ct+qwegpEf6iqu8QQ4jHW8OYRc3X5JOTZG1hAXaBRT+W7p51Iru86xa4yOws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761730781; c=relaxed/simple;
-	bh=IVDScBKmFFaCLSQrllzQaCmJgM4AfNhIPlPvVyFW2yM=;
+	s=arc-20240116; t=1761730783; c=relaxed/simple;
+	bh=9Jrp+ehv1bHsY53MY3h58OEcHjCmI5PtpCsDcMmBsMo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c9jP+kTZAhvzJB0wT0EflXS1iULvhEnr42KJnvhrEU2uA9O3eIy1BTfosK/QTsMgIjV432gFuUpyIa7PytHKFxKisB1OQotf7nBlsoB0Pxh4lJ8jIq5ClObN+WsUY1vKcreDuJKsUsLcz20DqHqSct8eaTCvuv4KL4RnQQG80tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AnPzfyrn; arc=none smtp.client-ip=185.246.84.56
+	 MIME-Version; b=Yj3YFidBt/dhj64ks2iwt0nxvdSeEAVRxmO7I+bZcqRDhd1ldgEM9wqBR7eWfcOm6rmpIgzKfYQide/X1HRSyYb9nk+6rQUQ6HGo2yPuDgGM1s/wXQAvyv163//1ZTdef/SBHAgA0W1NvBhF7fX9Bd9NNdk2FaTFTU3OPHkQUfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=McJClldz; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 4AC551A1730;
-	Wed, 29 Oct 2025 09:39:38 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 8BFCA4E413C6;
+	Wed, 29 Oct 2025 09:39:40 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 215C0606E8;
-	Wed, 29 Oct 2025 09:39:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C514117F19DC;
-	Wed, 29 Oct 2025 10:39:35 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 60D4B606E8;
+	Wed, 29 Oct 2025 09:39:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BE099117F19E1;
+	Wed, 29 Oct 2025 10:39:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761730777; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1761730779; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=LcbzbbFlItjrhGLz15qb3R8NFa0q0DWjO/2UGxU62ww=;
-	b=AnPzfyrnVBgV0R7LaWb+IPN73q/msOqJwyeCtr9uhqnaIBMYxeF4Cd+y3cVxrH0t9IeScX
-	2GakTgMLe+zy0QFWuBjNyNV6ZZzOmSdpz8x7TXo/xfxuse+y0JITlMRb9w4LAPK2CYjFuh
-	YrIITgAKsjDV3ks9h5xI8vqm4YiHDqfpKNQ/UDb4XkFlea9aRNcsdMWFoZLaMYFzfKaOIe
-	30PO3JYx47S0duhEDAvRVEsUOoNb+YeotSL01Pq6yAE8wF7hso6uBprArw2W1xuExB5zeP
-	6L0WmMaRKiVUkrLh+t63Dywb7IWrrv0+gZTIuvXZ8YkVrda7TaDqqk9AUBSKxA==
+	bh=cag2UQaMgFonyUk6auPnw8wxwz30sT+vgy2pDfTh9FE=;
+	b=McJClldzrIeRFKB4lV5B+LrsznjEJVBrhnFiYKfRM/oF0P+2JHq4H5AU1C3vQRIZKH/+m0
+	zdpgbyD5+rxfmQLC7ag4iUh/+wi+MH8hUgvlx2evyb546mf6kP28pTmknpX0C3OX9y10eA
+	OfykYcrXqc97WrBipy16emLqhOS3jmqh/Ds6N63k02x7KzcS8euA44ZTfZ64OPXf+XU7E3
+	iVFebs5g2Ap6JWxY8KkVFHX9B3v0E4Zwa4pr+Kj+Qj9OCcvrDAUM1YzkPkYlrN1Bp3A6vL
+	NgdmGyXHACqDjhn+czoywIA5c8R6NR5TRoktWagR9ifEtxddB8hfW+1FW79C+Q==
 From: Herve Codina <herve.codina@bootlin.com>
 To: David Rhodes <david.rhodes@cirrus.com>,
 	Richard Fitzgerald <rf@opensource.cirrus.com>,
@@ -66,11 +66,10 @@ Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 3/4] ASoC: dt-bindings: cirrus,cs4271: Document mclk clock
-Date: Wed, 29 Oct 2025 10:39:19 +0100
-Message-ID: <20251029093921.624088-4-herve.codina@bootlin.com>
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH v2 4/4] ASoC: cs4271: Add support for the external mclk
+Date: Wed, 29 Oct 2025 10:39:20 +0100
+Message-ID: <20251029093921.624088-5-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251029093921.624088-1-herve.codina@bootlin.com>
 References: <20251029093921.624088-1-herve.codina@bootlin.com>
@@ -83,42 +82,120 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The Cirrus CS4271 codec can use an external clock as an input Master
-Clock. When no crystal is used, the CS4271 component considers its MCLK
-pin as an input pin and expects the external clock connected to provide
-the Master Clock.
+The mclk (master clock) of the cs4271 codec can be an input clock.
 
-This clock is not documented in the binding.
+In this case the connected clock needs to be enabled outside of any
+audio stream. Indeed, this clock is needed for i2c communication.
 
-Add the missing clock.
+Add support of this clock and enable it before the first i2c transfer.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/sound/cirrus,cs4271.yaml       | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ sound/soc/codecs/cs4271.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
-index 68fbf5cc208f..d286eb169915 100644
---- a/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
-+++ b/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
-@@ -25,6 +25,16 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
+index a9d333e6c723..b8a50b9001e1 100644
+--- a/sound/soc/codecs/cs4271.c
++++ b/sound/soc/codecs/cs4271.c
+@@ -10,6 +10,7 @@
+  * DAPM support not implemented.
+  */
  
-+  clocks:
-+    items:
-+      - description:
-+          Master clock connected to the MCLK pin if MCLK is an input (i.e. no
-+          crystal used).
-+
-+  clock-names:
-+    items:
-+      - const: mclk
-+
-   spi-cpha: true
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+@@ -163,6 +164,7 @@ struct cs4271_private {
+ 	/* enable soft reset workaround */
+ 	bool				enable_soft_reset;
+ 	struct regulator_bulk_data      supplies[ARRAY_SIZE(supply_names)];
++	struct clk *clk;
+ };
  
-   spi-cpol: true
+ static const struct snd_soc_dapm_widget cs4271_dapm_widgets[] = {
+@@ -505,6 +507,7 @@ static int cs4271_soc_suspend(struct snd_soc_component *component)
+ 		return ret;
+ 
+ 	regcache_mark_dirty(cs4271->regmap);
++	clk_disable_unprepare(cs4271->clk);
+ 	regulator_bulk_disable(ARRAY_SIZE(cs4271->supplies), cs4271->supplies);
+ 
+ 	return 0;
+@@ -522,6 +525,12 @@ static int cs4271_soc_resume(struct snd_soc_component *component)
+ 		return ret;
+ 	}
+ 
++	ret = clk_prepare_enable(cs4271->clk);
++	if (ret) {
++		dev_err(component->dev, "Failed to enable clk: %d\n", ret);
++		return ret;
++	}
++
+ 	/* Do a proper reset after power up */
+ 	cs4271_reset(component);
+ 
+@@ -567,22 +576,29 @@ static int cs4271_component_probe(struct snd_soc_component *component)
+ 		cs4271->enable_soft_reset = cs4271plat->enable_soft_reset;
+ 	}
+ 
++	ret = clk_prepare_enable(cs4271->clk);
++	if (ret) {
++		dev_err(component->dev, "Failed to enable clk: %d\n", ret);
++		goto err_disable_regulators;
++	}
++
+ 	/* Reset codec */
+ 	cs4271_reset(component);
+ 
+ 	ret = regcache_sync(cs4271->regmap);
+ 	if (ret < 0)
+-		goto err_disable_regulators;
++		goto err_disable_clk;
+ 
+ 	ret = regmap_update_bits(cs4271->regmap, CS4271_MODE2,
+ 				 CS4271_MODE2_PDN | CS4271_MODE2_CPEN,
+ 				 CS4271_MODE2_PDN | CS4271_MODE2_CPEN);
+ 	if (ret < 0)
+-		goto err_disable_regulators;
++		goto err_disable_clk;
+ 	ret = regmap_update_bits(cs4271->regmap, CS4271_MODE2,
+ 				 CS4271_MODE2_PDN, 0);
+ 	if (ret < 0)
+-		goto err_disable_regulators;
++		goto err_disable_clk;
++
+ 	/* Power-up sequence requires 85 uS */
+ 	udelay(85);
+ 
+@@ -593,6 +609,8 @@ static int cs4271_component_probe(struct snd_soc_component *component)
+ 
+ 	return 0;
+ 
++err_disable_clk:
++	clk_disable_unprepare(cs4271->clk);
+ err_disable_regulators:
+ 	regulator_bulk_disable(ARRAY_SIZE(cs4271->supplies), cs4271->supplies);
+ 	return ret;
+@@ -607,6 +625,7 @@ static void cs4271_component_remove(struct snd_soc_component *component)
+ 
+ 	regcache_mark_dirty(cs4271->regmap);
+ 	regulator_bulk_disable(ARRAY_SIZE(cs4271->supplies), cs4271->supplies);
++	clk_disable_unprepare(cs4271->clk);
+ };
+ 
+ static const struct snd_soc_component_driver soc_component_dev_cs4271 = {
+@@ -641,6 +660,10 @@ static int cs4271_common_probe(struct device *dev,
+ 				     "error retrieving RESET GPIO\n");
+ 	gpiod_set_consumer_name(cs4271->reset, "CS4271 Reset");
+ 
++	cs4271->clk = devm_clk_get_optional(dev, "mclk");
++	if (IS_ERR(cs4271->clk))
++		return dev_err_probe(dev, PTR_ERR(cs4271->clk), "Failed to get mclk\n");
++
+ 	for (i = 0; i < ARRAY_SIZE(supply_names); i++)
+ 		cs4271->supplies[i].supply = supply_names[i];
+ 
 -- 
 2.51.0
 
