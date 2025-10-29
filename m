@@ -1,100 +1,110 @@
-Return-Path: <linux-kernel+bounces-876514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EBAC1BD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:54:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843E7C1BF0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76FED5C525C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F43663936
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8B13358A5;
-	Wed, 29 Oct 2025 15:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D075932570B;
+	Wed, 29 Oct 2025 15:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p14OK/pA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFixKe+a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C74132862C;
-	Wed, 29 Oct 2025 15:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2364F2E62D0;
+	Wed, 29 Oct 2025 15:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751597; cv=none; b=akKfZtf4CaToVDCuul9bE4RMs/pdlFX2rflZTV3NruECeS86ClDNVew2KOwb6kqreNLXd7t6FulUVEWCC0+i/iALyj6PJreMlbxe/aaVHMH/+AAnfTMELaDDtALYrIsnBQJdPiFWKJbtxdupyPAhnGJxGmd0B6dlTeNHARtwWec=
+	t=1761751464; cv=none; b=rnBTzjlb4XQskKs9pc22wItzurK/YLttU9MEJ+CkQxwIHOpVGANwDBZ1Ef4iP69Tdjz1jBnwJ+InPcPLG8w02NO7GKl32ovcs32Jlrcf+x4Bl9vhZy18Uagw+5GA2OKRc77ubYjIFQtu8LIPU8VRZer3HOgdv8N3av9e9+1H2lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751597; c=relaxed/simple;
-	bh=DOI6gyVeo4a6kw7xLiiWwg46FMQvx6VSCtZfRDcnTjc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=d2jqfL8tu/mvZkLu07JrC91QyT5cAIXe6++/emF/7UDH2yyLZ9/iw1IQs/D0hSGibeRP9xMTSLQ1I58IINoyjT6vjrQV9R9/qB9Z8D5yQDqvCoOQlVfYCBcteXYnfn3ZYbDCCKABPzX9EQd+EQsoevVO7a9y9O/ebBlpsNJn5gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p14OK/pA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1052C4CEF7;
-	Wed, 29 Oct 2025 15:26:33 +0000 (UTC)
+	s=arc-20240116; t=1761751464; c=relaxed/simple;
+	bh=C78jSd2R7ge8lnlFlJKPQI9tQmjpUUXAcq2TBYPRtsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7mXrd7uU+3Zsdtmw6bYmPiEHfin6ztX1GJtEAwN99TibG1ytv3tDvUTJjutfr4Cy9kEaj+tF1xHw8RZeE55kAPm6t5W7IA1lKKm2VNBkAo1Wmo5MytD++ENToUhSW6C60xxg86/+7BZfvQ4SfwNVSmB1+IdK1KaE5TESwen92A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFixKe+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64FFDC4CEF7;
+	Wed, 29 Oct 2025 15:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761751597;
-	bh=DOI6gyVeo4a6kw7xLiiWwg46FMQvx6VSCtZfRDcnTjc=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=p14OK/pAxog1HFDJrJs0vo0gmUYhgqGQcPcbeoSNofB1v6oECmN/OP5xhM1Fi8l3p
-	 2WIxf/xTZwds0sAujVxkm9LHAvP9RBIlYG8w1xccSzVIyvp2kwTsalJbW3Aapwfzf+
-	 qtzlEGqjkC8JVRM95YcopwoEa632ZaMeu/lmd1w2PEn+GehZQO0gP3eXSKPlBLghKa
-	 bHxi7jtVm9Zw556OHI8yk8/sZ1awvekCUj51stG+qYAVxNd4wGCjUNEWvwcNFwdUs/
-	 UBlGJrhIhdtxV4jufH+UaT+KUaj+bCpebyrjoF8eCeJNff/c/3OCJx5YCJ3n1cKbKx
-	 vEc/yUZesOZOA==
+	s=k20201202; t=1761751463;
+	bh=C78jSd2R7ge8lnlFlJKPQI9tQmjpUUXAcq2TBYPRtsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sFixKe+aIbeQujqaC/YV1xKNvQDajUPI3gt1V/tMkOThpr9JXeUGMO+EPU8/N76tL
+	 5nI9bwWf/7RH1BmMNdduG6y+mCwmlbl3ezcbXxMAqElyS58nJNYVyuth8gEghkA8Oh
+	 IuzipPhzUFZqmNWR0nCeB5DfhsDsGsQkcL5KJZqoexAQ4f5+pSHJA9iHo5cH+HKpoo
+	 FXnjjkCCUx8tK8iR6r6K0z7veF9UjK4VlMilddnA5YYZw1pvmS9feULnPEQWt1O0ey
+	 TSjMiPPKa6uZVfC47c9jb5SC/bPHNEnHfHczM0zctmHitWdSg/bapuWYI6kTChRm1J
+	 mSEXaHQKQECKQ==
+Date: Wed, 29 Oct 2025 10:27:26 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Gaurav Kashyap <gaurav.kashyap@oss.qualcomm.com>
+Subject: Re: [PATCH v2 3/3] crypto: qce: fix version check
+Message-ID: <fkqs3deirpi3sdljuo4fnod2pryoqg2ho5bbuie77k55mktrlq@heg4gvoo2rvy>
+References: <20251029-knp-crypto-v2-0-b109a22da4f7@oss.qualcomm.com>
+ <20251029-knp-crypto-v2-3-b109a22da4f7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 16:26:31 +0100
-Message-Id: <DDUWTG8C84CF.TIASKA4B1K6Q@kernel.org>
-To: "Christian Brauner" <brauner@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <mmaurer@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Jan Kara" <jack@suse.cz>
-References: <20251020222722.240473-1-dakr@kernel.org>
- <20251020222722.240473-2-dakr@kernel.org>
- <20251029-orgel-eishockey-44848cc46a6d@brauner>
-In-Reply-To: <20251029-orgel-eishockey-44848cc46a6d@brauner>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-knp-crypto-v2-3-b109a22da4f7@oss.qualcomm.com>
 
-On Wed Oct 29, 2025 at 1:49 PM CET, Christian Brauner wrote:
-> On Tue, Oct 21, 2025 at 12:26:13AM +0200, Danilo Krummrich wrote:
->> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
->> avoid using raw bindings types, this seems to be the better alternative
->> compared to just using i64.
->>=20
->> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Cc: Jan Kara <jack@suse.cz>
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> ---
->> Al, Christian: If you are okay with the patch, kindly provide an ACK, so=
- I can
->> take it through the driver-core tree.
->> ---
->
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+On Wed, Oct 29, 2025 at 01:25:31AM -0700, Jingyi Wang wrote:
+> From: Gaurav Kashyap <gaurav.kashyap@oss.qualcomm.com>
+> 
+> The previous version check made it difficult to support newer major
+> versions (e.g., v6.0) without adding extra checks/macros. Update the
+> logic to only reject v5.0 and allow future versions without additional
+> changes.
+> 
+> Signed-off-by: Gaurav Kashyap <gaurav.kashyap@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
-Thanks Christian!
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-Based on Miguel's suggestion [1] v3 of the series introduces a new type for
-file::Offset rather than just a type alias.
-
-Therefore, v3 [2] is significantly different, hence I will wait for you to =
-reply
-to v3 before picking up the entire series.
-
-Thanks,
-Danilo
-
-[1] https://github.com/Rust-for-Linux/linux/issues/1198
-[2] https://lore.kernel.org/lkml/20251022143158.64475-2-dakr@kernel.org/
+> ---
+>  drivers/crypto/qce/core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
+> index e95e84486d9a..b966f3365b7d 100644
+> --- a/drivers/crypto/qce/core.c
+> +++ b/drivers/crypto/qce/core.c
+> @@ -21,7 +21,6 @@
+>  #include "sha.h"
+>  #include "aead.h"
+>  
+> -#define QCE_MAJOR_VERSION5	0x05
+>  #define QCE_QUEUE_LENGTH	1
+>  
+>  #define QCE_DEFAULT_MEM_BANDWIDTH	393600
+> @@ -161,7 +160,7 @@ static int qce_check_version(struct qce_device *qce)
+>  	 * the driver does not support v5 with minor 0 because it has special
+>  	 * alignment requirements.
+>  	 */
+> -	if (major != QCE_MAJOR_VERSION5 || minor == 0)
+> +	if (major == 5 && minor == 0)
+>  		return -ENODEV;
+>  
+>  	qce->burst_size = QCE_BAM_BURST_SIZE;
+> 
+> -- 
+> 2.25.1
+> 
 
