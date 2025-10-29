@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-876147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC01C1B1DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:14:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95C5C1AB20
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC48661224
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:22:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7392C5A2422
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B2B33DEFF;
-	Wed, 29 Oct 2025 13:16:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E2624DD17;
+	Wed, 29 Oct 2025 13:18:09 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464C33B6F4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E3F153BD9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743782; cv=none; b=LuQ7xtfotNyPJJeLPcfTq9Vv+Ksq1Umfskql5anfHBYzrlf8LsugA+P/vjZEJ7fy3g65aZ7ZvbnI17jSIkUQILaaavP6yTEwruVBGJUh9tacdDCnNhbmxHu6mYRZgz5ButwVbsjSvuAvO24v3Z+n9MPbKUyZX04lbPG+PaAsUr8=
+	t=1761743889; cv=none; b=ZgVZGdloVSnzCzlKkuqaL+caeq61EdnKUoTmDW2iAJralufXEutIPLlnj42kmvMl6w5OovDX5GYqMT719rpFTO7ecoZYigiJx57XlaIlqjAencY90iqiZ6uc1JE76BOHOuQsmcPfmVkC82p/K10OULpSmvCrjLvLO8Zluo61bIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743782; c=relaxed/simple;
-	bh=++TOku7q7JkaasZMWl28vaI/G0/7hPUQddtaccZHTYY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YCg89wzO4ArtgFfbCfygjd+H1yYXsZdepZQK36RxCzMk8dKgqe6Zr1wL6sbZRcigiWwXcECq2DiNx49MPg/N5uG5MS2S1hX0MEVsWBiZh4+glk8EeoIBhD7qRX0tIytYgbaYeboMTdsXlcDaxfx1NxX7gb8gwnlzv2xThQjieWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vE623-0001hG-KG; Wed, 29 Oct 2025 14:16:07 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vE623-0062zu-0r;
-	Wed, 29 Oct 2025 14:16:07 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vE623-000000008ef-0mJV;
-	Wed, 29 Oct 2025 14:16:07 +0100
-Message-ID: <0b8ec641c76b39f6a96863c16e5f758451641849.camel@pengutronix.de>
-Subject: Re: [PATCH v3 00/10] reset: rework reset-gpios handling
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij	
- <linus.walleij@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski	 <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Date: Wed, 29 Oct 2025 14:16:07 +0100
-In-Reply-To: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
-References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1761743889; c=relaxed/simple;
+	bh=/YNIQ2UF1/+GxUfOk5uFMZJpgT1pbGLwoA6u0/iTfRg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pwYxa2E9Ikf5YbHPWpZo4RCtxfyJAuoDZ8ogobTH4KEOpEv+ahPu/j5431+evaGuxAnWhVJVdpFbOOurOb77nx2r43CbDWx9sNm94rfFMlrXvgRxGUIiudJAxcF7fZpw27GacCr5V1FQSBO6GwqRAQgYL4Gf3IXBizdLX4brO10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-945a94ceab8so366034939f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761743884; x=1762348684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgNl6WywUcR4Z/yxVl/hc2vWHbewAzZn/17z94yWkQI=;
+        b=QS/RyN13fTvCOv7nI1hMOWcvtV27+YNszluzsLxnHHU5D6XzCRGmHnx4vMeaxv0qBY
+         I8kDHKd8vMpuYAlfIcxppdktL5Pxd823ojhZUtpfY1R1XbdZRlIH4HprbLINGfENJtv0
+         q55IonXrBw71tkUFR6NewJZk9cgCfJHmnFvEC9S69ChgCQIxBo6gKvokVDX4iUJj1w3N
+         6qWhM5Jlajj9Q16wYEoOxEr+70g4FShseKlwcg+3sNiixh3lf9xX0XVe1UhaxE0H8g0r
+         5py2oqp7x6y1D7thY/LQPwAj63BcMstQY+fz+895fZLnvmQEpHhMVSGnFCiSS6kcwJ1H
+         ulfw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/EPNzSqvk1/Ev3YHZ8r+Njk/9bidU1Rq/cGjFtsJ+AbTswkV+DSdOYvPngmQf6HnzPRC9ofxXj2n6XaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQBlMR8hzD22Wx83TJI0ngEwZqptwcYwzFC4mjA3iFIi31vsyh
+	eWxK92j4Jq6drXOpj856Yz9EECCXcKpNk//kjVjTmDTU3+0UYWJ1d4Hv6PdF2vyda4qOpCUWJct
+	U1dAJmOnUEnEERSJPAAEUwDqCN1cqigcQ+Ht5NCTU10Sx8psbVyDQmR6s370=
+X-Google-Smtp-Source: AGHT+IGyG+IEcXZEeSWmuIjemue/R++7Dlj7GeKIvsooGh2IJtG9j62qZ6fqgXXdRCLPyxJil/Cyz1ot2WgjSQQqjIo15J8e5D6x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1fe7:b0:430:1c6b:7ed2 with SMTP id
+ e9e14a558f8ab-432f8fad576mr40533765ab.10.1761743883839; Wed, 29 Oct 2025
+ 06:18:03 -0700 (PDT)
+Date: Wed, 29 Oct 2025 06:18:03 -0700
+In-Reply-To: <20251029062549.Ioi6x%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6902140b.050a0220.3344a1.0421.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
+From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mi, 2025-10-29 at 13:28 +0100, Bartosz Golaszewski wrote:
-> Machine GPIO lookup is a nice, if a bit clunky, mechanism when we have
-> absolutely no idea what the GPIO provider is or when it will be created.
-> However in the case of reset-gpios, we not only know if the chip is
-> there - we also already hold a reference to its firmware node.
->=20
-> In this case using fwnode lookup makes more sense. However, since the
-> reset provider is created dynamically, it doesn't have a corresponding
-> firmware node (in this case: an OF-node). That leaves us with software
-> nodes which currently cannot reference other implementations of the
-> fwnode API, only other struct software_node objects. This is a needless
-> limitation as it's imaginable that a dynamic auxiliary device (with a
-> software node attached) would want to reference a real device with an OF
-> node.
->=20
-> This series does three things: extends the software node implementation,
-> allowing its properties to reference not only static software nodes but
-> also existing firmware nodes, updates the GPIO property interface to use
-> the reworked swnode macros and finally makes the reset-gpio code the
-> first user by converting the GPIO lookup from machine to swnode.
->=20
-> Another user of the software node changes in the future could become the
-> shared GPIO modules that's in the works in parallel[1].
->=20
-> Merging strategy: the series is logically split into three parts: driver
-> core, GPIO and reset respectively. However there are build-time
-> dependencies between all three parts so I suggest the reset tree as the
-> right one to take it upstream with an immutable branch provided to
-> driver core and GPIO.
+Hello,
 
-Should that branch include the reset changes, or only up to patch 6?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-regards
-Philipp
+Reported-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
+Tested-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=1514efe2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3fff88b67220f824
+dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10ba9932580000
+
+Note: testing is done by a robot and is best-effort only.
 
