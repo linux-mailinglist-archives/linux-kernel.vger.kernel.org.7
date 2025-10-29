@@ -1,104 +1,76 @@
-Return-Path: <linux-kernel+bounces-874985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828F9C17F24
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A48CFC17F1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4F6D502D49
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:43:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D92184FFCDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8CC2E03E8;
-	Wed, 29 Oct 2025 01:43:18 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1CF2E0B59;
+	Wed, 29 Oct 2025 01:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gu0Ipmop"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F712E090B;
-	Wed, 29 Oct 2025 01:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22941A5B9E;
+	Wed, 29 Oct 2025 01:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761702197; cv=none; b=tJ7nlAnJdpdsfxE8gxgcgLqTpj6N5xV1d9vou5FWhjVhGvWvU121Dmw6sq7Bv2/CFpLH1x3jbO+fktsZ6xyIoko6NXUnSVmgtRjPz466TvKx/2GYwTxjwa7mITdZlSrLNGbzuBCCQ4IYWWy9pvrj4v0ANy7zzEkeX2r2Tme7tyI=
+	t=1761702176; cv=none; b=mQ6gbUDhSGEGbyN+TjZ9xVABaMh0CaFMXdcxI4GdhGk3V7vhEe0Z/Iet5pFvpcTrEC/7OUHGPcsJQT3e7gl6WempRHO/keT74t1scOHNpnsk05I9FNvKVHwaDm8Rbv+3igX+90CPQT/7412yu7odJkraxwf9k1of489HwpPB7io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761702197; c=relaxed/simple;
-	bh=4nGAiaaKLihh3UgCeKTmQqCr/kqa7bDINIVvbOXRz8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKDMskCx0whnYGLny10VyeCf2VUWPEK5prpRoE23VWsv7R2xQwISPl2yN+igq7y2Sk0Eg2pNke5LUpSknsuXMTLr5nC4c30IGsfGaulBYDo4dexHLq4JtYvLg3Sd02cTA55Oeo3WSoTC+PXUDi57omhUA0RqVivWC9N56GSSP5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowAAXnWEgcQFpeS8SBQ--.2182S2;
-	Wed, 29 Oct 2025 09:42:57 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: antonio.borneo@foss.st.com,
-	linus.walleij@linaro.org
-Cc: mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] pinctrl: stm32: fix hwspinlock resource leak in probe function
-Date: Wed, 29 Oct 2025 09:42:52 +0800
-Message-ID: <20251029014252.178-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1761702176; c=relaxed/simple;
+	bh=jWr0CgYg7cpIZ8ye/JqrhZKd5ayP3bDy1ZwF3O16X/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qiZNhHiUUKXf9MVXmx9tow87hyUfbHp0ECDw/SJrYZZIOnZL+CfeCwTskpmHBU8T5wgb3DFTVZrKXUa/el9MMyFA+ySLpSwP2VvuwPeNEa2KzsHyTu0/kEatHPj2seiQGFWqK7z3/m/6jZ1D/7r527c6MWDY/TR9xbGtGuiyMiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gu0Ipmop; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB38C4CEE7;
+	Wed, 29 Oct 2025 01:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761702176;
+	bh=jWr0CgYg7cpIZ8ye/JqrhZKd5ayP3bDy1ZwF3O16X/Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gu0IpmopdDJ0HKluYSPYjp764rrWndEMic4i3aRfW100trY3Tb1v1PQye/nx5K7Nj
+	 NKhejn5KOMHDQwH/SVMRRIuSaefoa3XqqJZhetpLkNHFwlKV/nAd6KbpxmXCaKqfPX
+	 GUel1QmkZMNfQ2VMKsdagbCJu7P1J5ZXwifrIYPL//uj4pl3KEQnUhAhpsItiekh1T
+	 PUXptc+kNKhE+mk9hL6HNf1At8zQkRROuh8CAnaD5iyxcrNbXokOsb3Yn2PmyAIhMU
+	 PLjOjiUzK+s+SWSfjF8G+6gXaa7YkdHtBYyXCxoeui9bRFUvhM0rSE9OGXQMVLTFkC
+	 GSxOfsUmTLabA==
+Date: Tue, 28 Oct 2025 18:42:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Ankan Biswas <spyjetfayed@gmail.com>
+Cc: ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+ somnath.kotur@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, khalid@kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v3] net: ethernet: emulex: benet: fix
+ adapter->fw_on_flash truncation warning
+Message-ID: <20251028184254.1d902b50@kernel.org>
+In-Reply-To: <20251024181541.5532-1-spyjetfayed@gmail.com>
+References: <20251024181541.5532-1-spyjetfayed@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAXnWEgcQFpeS8SBQ--.2182S2
-X-Coremail-Antispam: 1UD129KBjvJXoWruF4fAry8Kry7Kr17GrWrGrg_yoW8JrWkpF
-	s3JF1YyFsxXw4avayUt348WFyYga97G3y2g3y8t347Zr4FvFWqqF1rKFyDZr4qgF4xJ3sx
-	Jr1UGry5ZFy0yFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B
-	_UUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgoKA2kBDmHzgQAAsw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In stm32_pctl_probe(), hwspin_lock_request_specific() is called to
-request a hwspinlock, but the acquired lock is not freed on multiple
-error paths after this call. This causes resource leakage when the
-function fails to initialize properly.
+On Fri, 24 Oct 2025 23:45:41 +0530 Ankan Biswas wrote:
+> The benet driver copies both fw_ver (32 bytes) and fw_on_flash (32 bytes)
+> into ethtool_drvinfo->fw_version (32 bytes), leading to a potential
+> string truncation warning when built with W=1.
+> 
+> Store fw_on_flash in ethtool_drvinfo->erom_version instead, which some
+> drivers use to report secondary firmware information.
 
-Use devm_hwspin_lock_request_specific() instead of
-hwspin_lock_request_specific() to automatically manage the hwspinlock
-resource lifecycle.
-
-Fixes: 97cfb6cd34f2 ("pinctrl: stm32: protect configuration registers with a hwspinlock")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 823c8fe758e2..d9a2d20a7e6b 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -1671,7 +1671,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		if (hwlock_id == -EPROBE_DEFER)
- 			return hwlock_id;
- 	} else {
--		pctl->hwlock = hwspin_lock_request_specific(hwlock_id);
-+		pctl->hwlock = devm_hwspin_lock_request_specific(dev, hwlock_id);
- 	}
- 
- 	spin_lock_init(&pctl->irqmux_lock);
--- 
-2.50.1.windows.1
-
+You are changing user-visible behavior to silence a W=1 warning.
+I can't stress enough how bad of an idea this is.
+Please find a better fix.. or leave this code be.
 
