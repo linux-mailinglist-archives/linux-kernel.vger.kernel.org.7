@@ -1,139 +1,176 @@
-Return-Path: <linux-kernel+bounces-876521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D400C1BFDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:15:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C89C1BA9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4951E5C1B7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:30:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 694B934AFB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5FB1F5827;
-	Wed, 29 Oct 2025 15:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBB13358CF;
+	Wed, 29 Oct 2025 15:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AyPmYQXN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eB6wzXTC"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D13D2BEC28;
-	Wed, 29 Oct 2025 15:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE082D23A6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751828; cv=none; b=hK/vNQVCfNWD8wlXzkUwxjnWuo1Dx3EjEhbEaPhjHACXXqdwXVeV4Ggs+OnTe52VhwsM/ltWa/jg5kHoU1eGFY3EA7MdmTnMeYXMjTKXc1lOtNJj4G5wWYOTQQhmaI1pvm8x5enbo8yxkl9xOUvjcTslpPkms7zy7K+gqnaGxuo=
+	t=1761751840; cv=none; b=Cu6kN2sEMxN9LlZVT/OYQkWOnIm0ImmVOqgb91t3DjuzFUoncmzZIocrMIciqXGAXbVValKP5zFxmjeMIJB06DFlRCT2z4pYj9UxClwONIcF5p1soU7wz3faMdr/fIYfKyyVcdq3RViTJgMPr1DBK0xKE4DmBEJE2s6k/1RgKk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751828; c=relaxed/simple;
-	bh=QI+3NuHAULegYSg+VL29kjpFXdr9o+ejvnVWqLJLfPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9MsB5tSFJIJZ9AF+oQGQWpPKQyRNrS6n2Lj5EIcIjNti1+IEpVx5senbJDchaRO2rGePiKvmOo1aMS6pgKUH6CdJjSoQh4kzKeWu3+2lKT0yQxbakFcp7QeCzLPNbWjBdcmIZjPda6nyftzHhxTCusnv7u61kCMQ+yGNUOm+go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AyPmYQXN; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761751827; x=1793287827;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QI+3NuHAULegYSg+VL29kjpFXdr9o+ejvnVWqLJLfPA=;
-  b=AyPmYQXNmRCE/jeEW46V2J1bHy5w878fG3PdTGafbU5e60Tj6kPP4Y7d
-   8eaKVhgb9QyB3/1sWEKO1iHyWmd62SsWKtq5MGM+kK9nfa//tDVlpQ66C
-   c4gSnzOfa2i0SXLyaCEv5nUEuJ+pEs6vHRx6fQz5UacDOfVDU6wrG3imf
-   zewErOVbTgVPRd3l3D/YgjjOXQ0PKWS/ntTYzmvn50MBtF9w4RzgSNJh5
-   UpmnLEwXBKMA3h0u8tkgiICKTyHGonkM+Ef4fWq/wYOFwUgTb4NdoiN+L
-   hwDke3gj732KR1AXlNRX/8BjYYhIh/ZyPzh3fQkAI0rPXVtCemNvtuU12
-   w==;
-X-CSE-ConnectionGUID: C7GA/+psTYePIrq5Jt606Q==
-X-CSE-MsgGUID: XpjhBACIRGa/o9kfzv7y1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74994808"
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="74994808"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:30:26 -0700
-X-CSE-ConnectionGUID: QAp6n/FITk6+MHT+dMkLdA==
-X-CSE-MsgGUID: 2K0V7+sYTO664w/WZy1PQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="185580899"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:30:23 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vE87w-00000003eWe-2GpP;
-	Wed, 29 Oct 2025 17:30:20 +0200
-Date: Wed, 29 Oct 2025 17:30:20 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Raag Jadav <raag.jadav@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] cpufreq: qcom-nvmem: add compatible fallback for
- ipq806x for no SMEM
-Message-ID: <aQIzDItA9vo0b9FB@smile.fi.intel.com>
-References: <20251029133323.24565-1-ansuelsmth@gmail.com>
- <20251029133323.24565-3-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1761751840; c=relaxed/simple;
+	bh=czqUyHu3APMJiqqPr8Ae2kVqLVKK6zfWutM89e13YLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FO9hFZqpQLzPFUBYphhh6HS6bCUCxqTvyxMI9Pk/oqgbwbVRLqohghsuDFNzGKdUZoWDsXySn1+gTmgRN+F1dZXZgL3D1ccmiOmf0hET0FRzwmRuMFoYo04Z5KD/6FPbxpXvefAv1lNspWARFliYFNTPQjJas24kp9WPGRlDfXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eB6wzXTC; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id AC402C0DA85;
+	Wed, 29 Oct 2025 15:30:15 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F1C7F606E8;
+	Wed, 29 Oct 2025 15:30:35 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AEB67117F828E;
+	Wed, 29 Oct 2025 16:30:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761751835; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=+ofRlSsFnhj/Eeu/sD0PofisXJqQ/KuD7u+eEwaLVpo=;
+	b=eB6wzXTCe/N3Q7dnaf6E9dD6yIWqSPDSn9o8vSlwVuWiOke9KspcmyR3CG1QVsw+HezX0y
+	1X3jvFHAgVvLW7k+aUOuDRVmTgLNHUEO3Jb3BuAhw8b9nT00u7344feagp5jWlgxn+6ShB
+	uFOtaX+PLP3cVmuPojb2e71INjODRojB3xvSIxQjBymXckqYskJBKFpCrtS8SsVpnVDBTJ
+	n2W65bWJ73uXwf92pagwrmpkPIHj9zHjYnhiqecpGzL/r9vScHejb19tGlB2XiXcXEvJhA
+	ZB7DFlblrUEZSB76ilrkkTxXfu2APGPgSKtbo+H5ODgnR9r6xURX9SY93+4I3Q==
+Message-ID: <a58f9a1c-a2f7-4c61-838e-7808e157ae25@bootlin.com>
+Date: Wed, 29 Oct 2025 16:30:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029133323.24565-3-ansuelsmth@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/4] net: stmmac: socfpga: Agilex5 EMAC platform
+ configuration
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251029-agilex5_ext-v1-0-1931132d77d6@altera.com>
+ <20251029-agilex5_ext-v1-1-1931132d77d6@altera.com>
+ <a871daac-364e-4c2c-8343-d458b373e1fd@bootlin.com>
+ <db213912-2250-4d3e-9b2c-a4e36e92e1cb@altera.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <db213912-2250-4d3e-9b2c-a4e36e92e1cb@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 29, 2025 at 02:33:21PM +0100, Christian Marangi wrote:
-> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
-> case for some Google devices (the OnHub family) that can't make use of
-> SMEM to detect the SoC ID.
+Hi,
+
+On 29/10/2025 15:53, G Thomas, Rohan wrote:
+> Hi Maxime,
 > 
-> To handle these specific case, check if the SMEM is not initialized (by
-> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
-> OF machine compatible checking to identify the SoC variant.
+> On 10/29/2025 7:04 PM, Maxime Chevallier wrote:
+>> Hi Rohan,
+>>
+>> On 29/10/2025 09:06, Rohan G Thomas via B4 Relay wrote:
+>>> From: Rohan G Thomas <rohan.g.thomas@altera.com>
+>>>
+>>> Agilex5 HPS EMAC uses the dwxgmac-3.10a IP, unlike previous socfpga
+>>> platforms which use dwmac1000 IP. Due to differences in platform
+>>> configuration, Agilex5 requires a distinct setup.
+>>>
+>>> Introduce a setup_plat_dat() callback in socfpga_dwmac_ops to handle
+>>> platform-specific setup. This callback is invoked before
+>>> stmmac_dvr_probe() to ensure the platform data is correctly
+>>> configured. Also, implemented separate setup_plat_dat() callback for
+>>> current socfpga platforms and Agilex5.
+>>>
+>>> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+>>> ---
+>>>   .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    | 53 ++++++++++++++++++----
+>>>   1 file changed, 43 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+>>> index 2ff5db6d41ca08a1652d57f3eb73923b9a9558bf..3dae4f3c103802ed1c2cd390634bd5473192d4ee 100644
+>>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+>>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+>>> @@ -44,6 +44,7 @@
+>>>   struct socfpga_dwmac;
+>>>   struct socfpga_dwmac_ops {
+>>>   	int (*set_phy_mode)(struct socfpga_dwmac *dwmac_priv);
+>>> +	void (*setup_plat_dat)(struct socfpga_dwmac *dwmac_priv);
+>>>   };
+>>>   
+>>>   struct socfpga_dwmac {
+>>> @@ -441,6 +442,39 @@ static int socfpga_dwmac_init(struct platform_device *pdev, void *bsp_priv)
+>>>   	return dwmac->ops->set_phy_mode(dwmac);
+>>>   }
+>>>   
+>>> +static void socfpga_common_plat_dat(struct socfpga_dwmac *dwmac)
+>>> +{
+>>> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
+>>> +
+>>> +	plat_dat->bsp_priv = dwmac;
+>>> +	plat_dat->fix_mac_speed = socfpga_dwmac_fix_mac_speed;
+>>> +	plat_dat->init = socfpga_dwmac_init;
+>>> +	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
+>>> +	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
+>>> +	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
+>>> +}
+>>> +
+>>> +static void socfpga_gen5_setup_plat_dat(struct socfpga_dwmac *dwmac)
+>>> +{
+>>> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
+>>> +
+>>> +	socfpga_common_plat_dat(dwmac);
+>>> +
+>>> +	plat_dat->core_type = DWMAC_CORE_GMAC;
+>>> +
+>>> +	/* Rx watchdog timer in dwmac is buggy in this hw */
+>>> +	plat_dat->riwt_off = 1;
+>>> +}
+>>> +
+>>> +static void socfpga_agilex5_setup_plat_dat(struct socfpga_dwmac *dwmac)
+>>> +{
+>>> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
+>>> +
+>>> +	socfpga_common_plat_dat(dwmac);
+>>
+>> I"m not familiar with this device (I only have a Cyclone V on hand), does
+>> it still make sense to try to instantiate a Lynx (i.e. Altera TSE) PCS
+>> for that IP ?
 > 
-> Notice that the checking order is important as the machine compatible
-> are normally defined with the specific one following the generic SoC.
-> (for example compatible = "qcom,ipq8065", "qcom,ipq8064")
+> AFAIK, yes it is supported by Agilex V device family also.
+> https://www.altera.com/products/ip/a1jui0000049uuomam/triple-speed-ethernet-fpga-ip
 
-Misplaced period, should be at the end of closing parenthesis.
+Ah nice to know, thanks !
 
-...
+this looks correct then :)
 
->  	ret = qcom_smem_get_soc_id(&msm_id);
-> -	if (ret)
-> -		goto exit;
-> +	if (ret) {
-> +		if (ret != -ENODEV)
-> +			goto exit;
+Maxime
 
-	if (ret == ...) {
-		...
-	} else if (ret)
-		goto exit;
-
-Even patch will look better after that.
-
-> +		/* Fallback to compatible match with no SMEM initialized */
-> +		if (of_machine_is_compatible("qcom,ipq8062"))
-> +			msm_id = QCOM_ID_IPQ8062;
-> +		else if (of_machine_is_compatible("qcom,ipq8065") ||
-> +			 of_machine_is_compatible("qcom,ipq8069"))
-> +			msm_id = QCOM_ID_IPQ8065;
-> +		else if (of_machine_is_compatible("qcom,ipq8064") ||
-> +			 of_machine_is_compatible("qcom,ipq8066") ||
-> +			 of_machine_is_compatible("qcom,ipq8068"))
-> +			msm_id = QCOM_ID_IPQ8064;
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> 
+>>
+>> Maxime
+>>
+> 
+> Best Regards,
+> Rohan
+> 
 
 
