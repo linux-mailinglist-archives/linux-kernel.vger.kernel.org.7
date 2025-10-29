@@ -1,195 +1,162 @@
-Return-Path: <linux-kernel+bounces-877012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F8EC1CF97
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:18:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64DEC1CFCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4FD188A8D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:18:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B4A63453CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF4C30CD81;
-	Wed, 29 Oct 2025 19:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E376C2F0C6D;
+	Wed, 29 Oct 2025 19:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x7nRolZ0"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012006.outbound.protection.outlook.com [52.101.53.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUBFtFyv"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CC3261B62
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761765473; cv=fail; b=gi6GK4wmZsDO1lEQsHYDeu8l0Mp6F6LXohQDhwdZkc9bnA//RX/ILEFqLeIR8+csP9j8JAIL/KuXvHk9Sx6TYsChJ9VjLM/R/tyCnq0n3qUa/6EVHexOADJCk11w47vX6RyaWtLqq7N2VlSCNODlwKt3TCvSNfJdpRVQ27RoOwc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761765473; c=relaxed/simple;
-	bh=JNQ0BIUSvXJLWzorYrAg48Fl649OXxSdFQKJNxV99XI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i/yB7+ZcL76X4/sZm42oyJAkIRkoaMc4k6bGozR/xxo3JuhVhIWH0WfQv9oM4Vse0fxuDlYLOAqY6OYuPQ5Q/lvdkbm0N/aNP5JoCPZCO3gzn/EJN7gk3Cz7zO0YLvAbM3WAe/33q8q+mIAVacJRk7xoK4Hamk8nE9S6mTvgU7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x7nRolZ0; arc=fail smtp.client-ip=52.101.53.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wdU7xHgAFK/YvzP74R6p58MGKrBpRzh9jEIrF7MdKsQWPEl8nGuOPDD5xKMiYv+SGcpFEYxszRWibYYrviy0IglcejaN22nPNcC6/3f/2Bki0Tm+0+bB0IkZLBFLDusMJytFJ7XVA5qmgWVvDtTpfg0ZopYSsvy3A7wg5+cwZmnCoAFps6YYqHBNSApbD08pUy++knxEtHTnXZv2DMV3t2LP4L9m67AqRHXQ4Fov1JDTsgUTVx7T7bWieALQ34B5TBCeEUKVOiTkAG5ATCXfNs8CJ3dk0mWVL0ohVhtSJ/BirnD/664P1F7L1/clvwhJx2LjJNs65oftgHci23e7Sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=prnH9vUo2tzbyLklO1rwdijeVNb0xkm3YMvM973/QJE=;
- b=IIfIyX57BXUJQFjTsf2dszCsp9dbJbsvOjF4XEFx2+ylSfsLVVY6QEZtehuF9XgtQG7upvyJtIcZHgstSXysb1WD9wVXABS7uLCZ/XPLYCqtR0xsZTuknUkfOFQu4kB9pxA1HfU2IvUqshB+ru4WiykvBb+JATIcs/16bMP/uRICdqL6AtK0P9EbYm2t2gSKM9pNQgsaLzm1maXpTS0kphwjpbxiwVo9QcufHccPxQ411AH9eJYq6YUhs+TGSWWA4vxxA7ocEkB5ocs20O3rdliw1l/L5oU0Z/6Ct5GTfDdSjw50hOBwq2XaoeCb8iQ0cuqAYx+tpsb9R2IiNiGGNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=web.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=prnH9vUo2tzbyLklO1rwdijeVNb0xkm3YMvM973/QJE=;
- b=x7nRolZ0HObhztw0P+M/ks+PNEQhJjU2+V843J7Cm+RzoKa8gBIiN4ssKRNwmLFQAiuYkPIt7PvTTY3XJUpWeCwjnTiIhX3s7IRsn/kCB9TqJRPC8MYrAawrV5jFTma2IIH01MI0bhM0bAj4DSdyBjHVN3NWCplTjlpJzML+Kys=
-Received: from PH7PR13CA0004.namprd13.prod.outlook.com (2603:10b6:510:174::25)
- by BN7PPFB3F5C406F.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6e0) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Wed, 29 Oct
- 2025 19:17:40 +0000
-Received: from CY4PEPF0000EE3E.namprd03.prod.outlook.com
- (2603:10b6:510:174:cafe::f3) by PH7PR13CA0004.outlook.office365.com
- (2603:10b6:510:174::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.4 via Frontend Transport; Wed,
- 29 Oct 2025 19:17:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF0000EE3E.mail.protection.outlook.com (10.167.242.16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 19:17:39 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 29 Oct
- 2025 12:17:39 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 29 Oct
- 2025 12:17:39 -0700
-Received: from [172.19.71.207] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 29 Oct 2025 12:17:38 -0700
-Message-ID: <260d8ab9-c986-9dab-a447-ebb55df302c9@amd.com>
-Date: Wed, 29 Oct 2025 12:17:33 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD1A261B62
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761765657; cv=none; b=ZclDvbJTkJE5RwtRD3vMbhEDFwZIKCyUgdd/3QAM5HBL7yh7QI7AQvNXODOUxRLO49sUKLnKzOTNNTlrDlKxz50USN13gHHzjKLfLhscEQG7zYts5UN+dfhfYcal/0oh9atm1EjR91pU4WR9W8cMhqYOKJ0CsjLAreYZorkBE0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761765657; c=relaxed/simple;
+	bh=bUxSGUE6x4yj9mkYgOW19a5Hrg6nb81As/MFR8V8BJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AilHjdPm1VoRpDOr9VPZUP7sz+OdAPidyfDIubqzZEKhc+arXNnF5+wSpG85JHJtcS0BTsNF92REx+sOW6mHaVHFrn1i7iklwgkyk2+XFsCX+LTXRm0+1m1sXLhbRSJZ0zNh5mCo5eEtoSckEDhihPZY7CDBIOVWrG1xiyOZoCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUBFtFyv; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63e35e48a25so346619d50.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761765654; x=1762370454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xInHZdf3d2AKtpx353xPkwoYqlwGNev8XW2C5vaWvls=;
+        b=kUBFtFyvy7uVQ/jiLglCxZGwhTz8CxTFeh96Yb0Q1ze/c8D7QOFQLnQ3TbsRv6gJNL
+         4teh8K9w37bFhCazUtQ3S/tbWmNM6tjMjm2KPWO+4LPBAhudT2Y5HkxBucQxBMGfd39l
+         UUzejnAEfU/nQE8QTZ7zlz/pTF2fovIxhLKglqM1oCL3QGkqL0EhwyoQdY64A/24ypqj
+         WfNyPA4VXgb3nL2X1+BqbemXYgjlU4RdBnPJk/iIK/vh7aZ7GZriAcc6ufiNFFQp3XqD
+         VVqSaHb3T9Fujchjfl4N6q2JkkVkEzjXiGaler/bZFf4YEdHGkP1s0Z3/BEC/zksG2FG
+         5TrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761765654; x=1762370454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xInHZdf3d2AKtpx353xPkwoYqlwGNev8XW2C5vaWvls=;
+        b=PvpQESsVPN72dUy432hXUJ/wA8SE9Fj4PA11tjCHzL0IT3lm147bNU97b2gwFYP0bJ
+         dn1hd6JdZt7N2GPjQVfOOGgG1PV5tYlOmEPquwpqfgek6dr3P88+DYmS45+sW3zyJrlw
+         LdvhsVXZy3SZkFs3twzC5hQNvOwN9gnSaupa900zKoIcTHLqZfbHXb0hGeSa24Kblwfy
+         9cVDZBAJCra/NFd+4+/xsoV7BFQWnTbvOlcYX9/uXIiexY+Gqzhm//zh4NTSQ+lC7c/J
+         d2M6+jef4iBPQ3lpjV+IpxF2Y5blx0RpsRTp06okwj/U8e5RE1L0757C8Ugb8lF7Bjt5
+         t1FQ==
+X-Gm-Message-State: AOJu0YzGF3ZDGfMBe8YGesjrai9QLhglsAa1Zu7ZILP/4FljQsNmyC7Q
+	PuU7YJOBVka34pize17xryprgyXAQeMPFbYVs1wnDL7sa3us8RqXKWJS9F1RZirWGCnFDSLqzNd
+	RwdCmRhGPKeVITb9HjqvWNOdndYMOoYZpeQ==
+X-Gm-Gg: ASbGncvw09mS8Bm6Dl7htOzLABDH6uDKtJnjFGFD31l6e2wS5uCZtpmyX6/vgYpQQDH
+	1wFc9Ln7fgI9BaKJHTkKY/Mr+VwJYDPhHDBqN5I4X7GcdodbfDtT3Q817qpL9lYw+jyIDC0A4A8
+	n4499zRPtUnzMpuIcVO2IpORf28q5M0Fr60TZ3g0oDm6YNESKihQ4FdCoz2KIOJArXsyo5ZK3Tb
+	qei/rNP3dV9qThx0IIwTyH+XH4b61IxDtRYp3YDrZ7V9d+CT9Zs1zvb+G9Ltk1Y2m5B
+X-Google-Smtp-Source: AGHT+IGNMUHSZBK5M3mvH4m5es/ifJUDIZUv+RKEQha8tkNUR80Dzrak0GxvnBnDdeLItDtmwPJOif8UnqKkFr8D2vc=
+X-Received: by 2002:a05:690e:d55:b0:63d:bfad:6c7 with SMTP id
+ 956f58d0204a3-63f76dcda2fmr2696936d50.58.1761765654145; Wed, 29 Oct 2025
+ 12:20:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: accel/amdxdna: Fix incorrect command state for timed out job
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, <dri-devel@lists.freedesktop.org>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>, Maciej Falkowski
-	<maciej.falkowski@linux.intel.com>, Oded Gabbay <ogabbay@kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>, Mario Limonciello
-	<mario.limonciello@amd.com>, Max Zhen <max.zhen@amd.com>, Sonal Santan
-	<sonal.santan@amd.com>
-References: <20251028175452.2329497-1-lizhi.hou@amd.com>
- <b7a2ac2a-53c3-49ce-862d-eaba86f0b298@web.de>
- <605e6f4f-8e96-dbe4-d43d-16bcac63f94e@amd.com>
- <3dd7e061-8e6f-4d3d-b56c-7005da8197f6@web.de>
- <b2cf67a4-6795-d743-e90b-db10f636db2e@amd.com>
- <6238912a-8733-4b2c-a155-82bb081e6063@web.de>
- <e4c8b7be-588d-b0b7-00ca-e60cbde034a6@amd.com>
- <80fe1dd3-7541-4629-a540-021603d1f150@web.de>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <80fe1dd3-7541-4629-a540-021603d1f150@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3E:EE_|BN7PPFB3F5C406F:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9b1458f-dd21-47ff-4a6a-08de171fd3da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dWh2VXhZQkYxSnJib0ZKeGVmTU5HUG5KbUYwRnhZUzJlV2pkL2R3RlpZVlpQ?=
- =?utf-8?B?NHlPWjFwWFRHZmpNVy9wNWRoSTgyeFhXSGx1YTlSYVJTWjRyYm1NTUpZOUhF?=
- =?utf-8?B?am1SSFEzVnRNL3N4L3IvWGp5M21nMVFjb0hrb0FWMmZ1T09CTlIzUHFDRVNY?=
- =?utf-8?B?R09PZjBSME53ZHhaK1Q0b2hSNnZhNzlCTmZOU3M4ODZCUjVwSzIrbFlqaWRl?=
- =?utf-8?B?SnB3WnBtS202MGxQWTRDamx0ekRIVUhPQWRsMHpXS3JqSEVRR0ZlS0MvQVUy?=
- =?utf-8?B?NUxkdUIxRXBhUmhucXFuaW16bk9Vb1dLb01QVkhESDVXVXBRbVpoNTFBVklj?=
- =?utf-8?B?K2NGZUNzcmhOTkZLNTArZGh1Qm5zZG15Yjh0eEtjaXMxdVhkajhLdmhXeCtZ?=
- =?utf-8?B?d1UvWXVCSnV2ZDM2NU5TdzFnRk03M0xnWUsxOTJLRkJoMUovVFhWNW1DL05m?=
- =?utf-8?B?SkJzMzQ4b0E1aUhrcTVHU205TVFpOXRPN0FsVEU1UUQweDNBQWJubVJ2Wm5n?=
- =?utf-8?B?NEJ5TnAzVGx4cG1IcXNBNSthMmNaZDJyaXh5K0xVWmxDQWpSV3JkMGREMGJn?=
- =?utf-8?B?YUdQVm50bVREUnBtZmpTK3A1RXYvWW1mUWxhSVBqYXhrd2dYVXZPZllzSlpN?=
- =?utf-8?B?MnFHM0ZkMjFZcFo1OVdVWFJWdVl1K1R6YTFZVHUrZE5OSEhxRk1MMnFLZldK?=
- =?utf-8?B?dDZVV0szM2xhWWFEQUltYWhuQndwQmRTZXUrTzZsaXhEU0JIc0lxQ0o3UWFS?=
- =?utf-8?B?dFpLS2pmWWVMSnBhekNkcHFSSlNVVmVqZ01PODVBaCs2NkFKcW0rSWZBR3l0?=
- =?utf-8?B?WlVIbi9YTTdHYmg5MG53KzdKTG94ZmFBeWoxYUIvdFVPWFhNYk0wTVBMQm9i?=
- =?utf-8?B?eU5oRjVoTEkrOVlrYVdjc0xOczV5eXRyZDJmNVVSeFdGVUdUdjIxREZ5S1ph?=
- =?utf-8?B?NVRTOGtkaVFacGJJWk1jVXFiTHMvWUJDN1NncmZGSXU4ampsa3pWdDlFY3ow?=
- =?utf-8?B?RnduZGJtd1ZPZXNZVmNMWWlEbGo3RWpwK2pYUW9iY1hFeCtGMENXZy9yM2Jm?=
- =?utf-8?B?MnJLNldTbjk1RTNvZUxoK0wxME44YmZ6TGt4aWJETkNYVDcxWW8raUJ4aDlY?=
- =?utf-8?B?aklWTy82cVorWE10NVEzeE1WNWQwNmp3eWJZR0xkMU15a2RXcFRHMXZoQ045?=
- =?utf-8?B?d05GQ09VbnNDTmhBWDFVMEIwclpRQUhwRWM4KzlsdkZJcGc0bi9zVlFSVjVM?=
- =?utf-8?B?TUp1K1o3dEtKMkxBaWF2d1RxeEl4V09zVGdXRkVRekYxSXREaFRpajMzdURO?=
- =?utf-8?B?Q3c2R1lRYnpaayt6U0JjNzA4S1ExN2xZUEc0ZEZkVklmVFowc0hja2t6cWh5?=
- =?utf-8?B?amx3RnBFVHlZMEx4Z0VTZ2VtNG84QWZRSUl3U3hZYjRkQVpqaWNJdnRNQkxV?=
- =?utf-8?B?V3VzVjBwU2Vxam1mMVpHWHZFZnhmb0NGVzBHbVhWNGgyZGxFa1A0cGFVdWND?=
- =?utf-8?B?Q3BJa3Y4cnhHVFdZSWZpa2V1ekNadGZUdXdqTjQzQmpnMmExNXUvZkowNzc4?=
- =?utf-8?B?dXN0YzdveVcvV1YvZWhBZTFnMnlEUU96REJaTzFsVGJlekUxOTdtYUYyT0lB?=
- =?utf-8?B?d1ZyRGhlcFU2Q3V4SG41cEJaKzJMalZnazhyaVMvc3hvTnhKQXFUeGNBbXdj?=
- =?utf-8?B?L3lSbkhBWm9vYmRwTTRJVkpMR1BBcmRTZE1qTFpSaVZjeVRYRTVXMHdDdXBr?=
- =?utf-8?B?ZEZ1MEFzVWFJZnJPMEJwMUdMazc2d0kvTFAyT2l4alkrREErc0hoa0xPK1ky?=
- =?utf-8?B?SGQ5ZzE5R096RUNUODhjZFVtbkFZb3hmSkdsSUo1RFN5ZFVZZ1MrMzl3UGJ1?=
- =?utf-8?B?VWFLL0xlWXBZem9EVkRsd2UrZXFEU1VWTkJqaUVodUFXMVgzZEtqUlp0d1Fp?=
- =?utf-8?B?dnRTT2tiVDlyRUxSZmhTZmFMbllJQllCN2YrMnN0TmtRWXQ1MFV4bWVtanQ2?=
- =?utf-8?B?c2srb2VYT2tRUENuKzdGTGd6ckpsNTVVWE5KTzZxQkZkUDEydlNjR1cybjIw?=
- =?utf-8?B?czBlUUxDVnBmSHhkaCtndTVGZXU3N1FBK1lRQVVUREpHSndmRk9BVzRZTmE2?=
- =?utf-8?Q?F0RA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 19:17:39.8036
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9b1458f-dd21-47ff-4a6a-08de171fd3da
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3E.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPFB3F5C406F
+References: <20251026202142.1622060-1-jim.cromie@gmail.com>
+ <20251026202142.1622060-3-jim.cromie@gmail.com> <5114af1db16a396b65b798029b83d7b8a2c3aff5.camel@perches.com>
+In-Reply-To: <5114af1db16a396b65b798029b83d7b8a2c3aff5.camel@perches.com>
+From: jim.cromie@gmail.com
+Date: Wed, 29 Oct 2025 13:20:28 -0600
+X-Gm-Features: AWmQ_bked0PQgtrs6Ckp1UEteGLFWJc5brUPCZGWyfPkp1elICAAkSdG6pAEUpo
+Message-ID: <CAJfuBxwEeLLoiUttroUCj4wUaWvBUqiXyHha4RgQLcxmy81_5g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] checkpatch: 3 use-cases for --debug rx=1 option
+To: Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org, akpm@linuxfoundation.org, 
+	Andy Whitcroft <apw@canonical.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 10/29/25 11:54, Markus Elfring wrote:
->>> https://elixir.bootlin.com/linux/v6.18-rc3/C/ident/amdxdna_cmd_set_state
->> Sure. amdxdna_cmd_set_state() updates the return code to command buffer. So application which issues the command will be able to get the return code.
->>
->> The function return value "ret" is used by mailbox receiving kernel thread to deal with the error.
-> I miss a clearer answer for the indicated function call incidence.
+On Sun, Oct 26, 2025 at 5:40=E2=80=AFPM Joe Perches <joe@perches.com> wrote=
+:
 >
-> Can it be helpful to determine the state value before it would be passed to a concrete call?
-
-aie2_sched_resp_handler() is called either after get the firmware 
-response through mailbox or the request is timed out/ canceled. So in 
-this handler, it based on the response to set the state field in command 
-buffer.
-
-What do you mean here for "determine the state value before it would be 
-passed to a concrete call?". What is your concern here? Maybe you can 
-provide a simple patch if you think there is anything can be improved?
-
-
-Thanks,
-
-Lizhi
-
+> On Sun, 2025-10-26 at 14:21 -0600, Jim Cromie wrote:
+> > Use the drx_print() helper in 3 cases inside code which counts macro
+> > arg expansions.
+> []
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+> > @@ -6078,9 +6078,17 @@ sub process {
+> >                               next if ($arg =3D~ /\.\.\./);
+> >                               next if ($arg =3D~ /^type$/i);
+> >                               my $tmp_stmt =3D $define_stmt;
+> > -                             $tmp_stmt =3D~ s/\b(__must_be_array|offse=
+tof|sizeof|sizeof_field|__stringify|typeof|__typeof__|__builtin\w+|typechec=
+k\s*\(\s*$Type\s*,|\#+)\s*\(*\s*$arg\s*\)*\b//g;
+> > -                             $tmp_stmt =3D~ s/\#+\s*$arg\b//g;
+> > -                             $tmp_stmt =3D~ s/\b$arg\s*\#\#//g;
+> > +
+> > +                             $tmp_stmt =3D~ s/\#+\s*$arg\b/drx_print("=
+'#|## arg' catenations")/ge;
+> > +                             $tmp_stmt =3D~ s/\b$arg\s*\#\#/drx_print(=
+"'arg ##' catenations");/ge;
 >
-> Regards,
-> Markus
+> stray trailing ; in the replacement ?
+>
+> > +                             $tmp_stmt =3D~ s{
+> > +                                     \b(__must_be_array|offsetof|sizeo=
+f|sizeof_field|
+> > +                                        __stringify|typeof|__typeof__|=
+__builtin\w+|
+> > +                                        typecheck\s*\(\s*$Type\s*,|\#+=
+)\s*\(*\s*$arg\s*\)*\b }
+>
+> This might be easier to read using a qr but I'm not sure the
+> embedded capture groups and their use in drx_print is sensible
+> as it doesn't seem extensible.
+>
+
+yes, the extra whitespace is better.
+I will play with qr// see if the captures work the same.
+
+> our $stmt_stripper =3D qr{\b(
+>                 __must_be_array |
+>                 offsetof | typeof | __typeof__ |
+>                 sizeof | sizeof_field |
+>                 __builtin\w+
+>                 typecheck\s*\(\s*$Type\s*,|\#+)\s*\(*\s*$arg\s*\)\(*\s*$a=
+rg\s*\)*
+>
+> > +                             {
+> > +                                     drx_print("-arg-inspections-");
+> > +                             }xge;
+> > +
+> >                               my $use_cnt =3D () =3D $tmp_stmt =3D~ /\b=
+$arg\b/g;
+> >                               if ($use_cnt > 1) {
+> >                                       CHK("MACRO_ARG_REUSE",
+>
+> Back with I suggested this a dozen years ago I thought it was overkill.
+> Maybe it is and the whole test should be offed.
+>
+
+I am now playing with an __lvalue(x) macro,
+based upon  __must_be_array(x),
+it is a compile-time check, so it gives a high-quality signal to checkpatch
+if x is an lval, the multiple expansion warnings can be silenced for x.
+
+So if this works out, we could take off the wart, rather than the finger.
+
+> https://lore.kernel.org/lkml/1352198139.16194.21.camel@joe-AO722/
 
