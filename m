@@ -1,355 +1,239 @@
-Return-Path: <linux-kernel+bounces-876158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE18C1AC29
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:37:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8EDC1AF3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C2655A3992
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B33621B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978AC2DFF28;
-	Wed, 29 Oct 2025 13:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B28301001;
+	Wed, 29 Oct 2025 13:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pb0Fggjm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UtHfZZ2W";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bDIchJJi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D32D63FC;
-	Wed, 29 Oct 2025 13:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C763B2FFFA9;
+	Wed, 29 Oct 2025 13:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744134; cv=none; b=JL8ZWXyJtEr8n2VcmY94URVu36INP6oCyx5npXpissfqjrJEoK9Bxsf/itYbhyHhZYx9cWJfyZFfLJj4y/VeYHuzKn4F5i4MwNcbBdsiCA7GBlKXOnRFVcwaylQphREdnMS1Vbe0AA/KF3/EZLQvg09ojQaO/wB9o/vSvG23cHk=
+	t=1761744139; cv=none; b=fW+r1Y/Ht3VPbXjNb+r5ePHyUTNxyYdANz+qkAW2BeB4JeaQlUrdP5q7faZPoVkUoeOOWWbvCWctu4amN4NSYhNjIiQY+hSGeb6WVEVculHuG3mJxd2r5CJSipa1D83cSq1mYwR1/8zlu4krV+mxhf/EN1CDhAsb8zc6W1PHlQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744134; c=relaxed/simple;
-	bh=dksurn2Zyj1v1QRVjbcMWup8hwJVLLosZUHH7lCpAAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhTBQSU9cfdyvExtyaq/XgJnKAHLd7P1AfuNcoB9TB1ibzFdFlPgFvwngBFEH1a66uwDZH3sr9S0thH2eW1tzchVc8LrUbmth2bCrX2jjIfq1fpp5bui5+YAHXDWl5agLM6zb5uuAZhzHIo9NxLZzJkdeVFqm0+z2/ebWHaK8pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pb0Fggjm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB954C4CEF7;
-	Wed, 29 Oct 2025 13:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761744134;
-	bh=dksurn2Zyj1v1QRVjbcMWup8hwJVLLosZUHH7lCpAAw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pb0FggjmE6SQJcgQbdY4cGWQg+JdplqPCOhJBVsAZqREpW6i+dQZmraxw16JEtqEr
-	 RystfgNR5IjDlnnTDD9TT9xVMuK3bIaRq2d+vB7A1Aa/PYdHRrw3ASNXCQ8F6Jte0s
-	 2s8ah4p8n7UWckh1ohibTDG4JJwBHkHtmrhG0mcKto052wKJu3Vw4jqLqFLbvEVEoi
-	 F3nJFTQH6Uvk5qt8rKNDSnvtV8M4UDQ36B7WrE2/JtS+BgkeEtpfxnFaEsy7PZrol7
-	 Ofyj5IwCeiZrOEnsXwSRd792bkKuZPP8eV72N45iW4fDPTga0h7dRNz6xuSSm4o3PY
-	 15dJX+HCd+Tyg==
-Date: Wed, 29 Oct 2025 08:22:12 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom,pas: Document pas
- for SoCCP on Kaanapali and Glymur platforms
-Message-ID: <20251029132212.GA662078-robh@kernel.org>
-References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
- <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
+	s=arc-20240116; t=1761744139; c=relaxed/simple;
+	bh=9hKJ62qRumSYPajdKUalFip3RljCJYdn2MyOAH/gVzA=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=b+nY2g3Y7L/gaD7Bxydjtw3mVZC2Qh3/xoT9k24Z8RKcQTgTk+FadpivbwfGK+hOR7IzEL4D4m6BPq1dsMfPyfRLGLPZCadprTRW75Ivw/L5IDyBcOTuZVUf9s18IqIJR/dgZkoe8VxZt0xo02Ra70FfljkRXGG5g2U9TFYjS84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UtHfZZ2W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bDIchJJi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20251029130403.478719754@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761744133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=2g38H2t97CfuEItSmZo2neOje1ClgHPr6tKCh0GHxNk=;
+	b=UtHfZZ2WSxYsxH1YSW1Me9uvRZU6s7C3FVAbHuk5NoTfHrRjWuibUGYKkc0Dr4wRiV4m+g
+	e/syHXk1a4co6VMtewvGfvykbdBOmsSCQnV6xLyeF0hr8c3HKoFNLfCmbw5WNi/1i+OSWp
+	ezI8P96bd9WbcImW9YSxp/fDi1vcAhJU3ZX+sCk9UsvzVAluvbem05UOuwuhcN846YfHOr
+	drvuBQkTC6jZkOSIdP8wDrwyqO5quOcr0sPbif3w1SfX0tbnnBAsUVrzGBtbp8tFDGIEIg
+	5nS0ElyO3KCn8X4IMd7RgR+Rwcy8JrRQMWYcKdiAbEg/9Q9/hSUlphbfPqG8IQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761744133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=2g38H2t97CfuEItSmZo2neOje1ClgHPr6tKCh0GHxNk=;
+	b=bDIchJJidLFMyph+JHmL7nIR/1UhYxvKx1l8tq00+K/mU7tIOka+CJx3vPKC9K9gnTxFs4
+	/Cc8vByT/lBuJ4CA==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+Subject: [patch V3 01/12] sched: Provide and use set_need_resched_current()
+References: <20251029125514.496134233@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 Oct 2025 14:22:12 +0100 (CET)
 
-On Wed, Oct 29, 2025 at 01:05:41AM -0700, Jingyi Wang wrote:
-> Document the component used to boot SoCCP on Kaanapali SoC and add
-> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
-> the "qcom,smem-states" and "qcom,smem-state-names" properties and
-> add conditions for the "interrupts" and "interrupt-names" properties
-> in the pas-common.
-> 
-> Co-developed-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 134 +++++++++++++++++++++
->  .../bindings/remoteproc/qcom,pas-common.yaml       |  83 +++++++++----
->  2 files changed, 194 insertions(+), 23 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-> new file mode 100644
-> index 000000000000..6b53121eede1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-> @@ -0,0 +1,134 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,kaanapali-soccp-pas.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Kaanapali SoCCP Peripheral Authentication Service
-> +
-> +maintainers:
-> +  - Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> +
-> +description:
-> +  The SoC Control Processor (SoCCP) is small RISC-V MCU that controls USB
-> +  Type-C, battery charging and various other functions on Qualcomm SoCs, somewhat
-> +  analogous to traditional PC Embedded Controllers. This document describes
-> +  the Peripheral Authentication Service loads and boots firmware for SoCCP.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - qcom,glymur-soccp-pas
-> +          - const: qcom,kaanapali-soccp-pas
-> +      - enum:
-> +          - qcom,kaanapali-soccp-pas
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: XO clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xo
-> +
-> +  power-domains:
-> +    items:
-> +      - description: CX power domain
-> +      - description: MX power domain
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: cx
-> +      - const: mx
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
+From: Peter Zijlstra <peterz@infradead.org>
 
-Already has a type. Drop.
+set_tsk_need_resched(current) requires set_preempt_need_resched(current) to
+work correctly outside of the scheduler.
 
-> +    items:
-> +      - description: Firmware name of the Hexagon core
-> +      - description: Firmware name of the Hexagon Devicetree
-> +
-> +  memory-region:
-> +    items:
-> +      - description: Memory region for main Firmware authentication
-> +      - description: Memory region for Devicetree Firmware authentication
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - memory-region
-> +  - power-domains
-> +  - power-domain-names
-> +
-> +allOf:
-> +  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/mailbox/qcom-ipcc.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    remoteproc@d00000 {
-> +        compatible = "qcom,kaanapali-soccp-pas";
-> +        reg = <0x00d00000 0x200000>;
-> +
-> +        clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +        clock-names = "xo";
-> +
-> +        interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
-> +                              <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +                              <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +                              <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +                              <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-> +                              <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>,
-> +                              <&soccp_smp2p_in 10 IRQ_TYPE_EDGE_RISING>;
-> +        interrupt-names = "wdog",
-> +                          "fatal",
-> +                          "ready",
-> +                          "handover",
-> +                          "stop-ack",
-> +                          "pong",
-> +                          "wake-ack";
-> +
-> +        memory-region = <&soccp_mem>,
-> +                        <&soccp_dtb_mem_mem>;
-> +
-> +        firmware-name = "qcom/kaanapali/soccp.mbn",
-> +                        "qcom/kaanapali/soccp_dtb.mbn";
-> +
-> +        power-domains = <&rpmhpd RPMHPD_CX>,
-> +                        <&rpmhpd RPMHPD_MX>;
-> +        power-domain-names = "cx",
-> +                             "mx";
-> +
-> +        qcom,smem-states = <&soccp_smp2p_out 0>,
-> +                           <&soccp_smp2p_out 10>,
-> +                           <&soccp_smp2p_out 9>,
-> +                           <&soccp_smp2p_out 8>;
-> +        qcom,smem-state-names = "stop",
-> +                                "wakeup",
-> +                                "sleep",
-> +                                "ping";
-> +
-> +        glink-edge {
-> +            interrupts-extended = <&ipcc IPCC_MPROC_SOCCP
-> +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-> +                                         IRQ_TYPE_EDGE_RISING>;
-> +            mboxes = <&ipcc IPCC_MPROC_SOCCP
-> +                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +            label = "soccp";
-> +            qcom,remote-pid = <19>;
-> +
-> +            /* ... */
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> index 63a82e7a8bf8..f81d088c2bad 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> @@ -24,26 +24,6 @@ properties:
->    interconnects:
->      maxItems: 1
->  
-> -  interrupts:
-> -    minItems: 5
-> -    items:
-> -      - description: Watchdog interrupt
-> -      - description: Fatal interrupt
-> -      - description: Ready interrupt
-> -      - description: Handover interrupt
-> -      - description: Stop acknowledge interrupt
-> -      - description: Shutdown acknowledge interrupt
-> -
-> -  interrupt-names:
-> -    minItems: 5
-> -    items:
-> -      - const: wdog
-> -      - const: fatal
-> -      - const: ready
-> -      - const: handover
-> -      - const: stop-ack
-> -      - const: shutdown-ack
-> -
->    power-domains:
->      minItems: 1
->      maxItems: 3
-> @@ -55,13 +35,21 @@ properties:
->    qcom,smem-states:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      description: States used by the AP to signal the Hexagon core
-> +    minItems: 1
->      items:
-> -      - description: Stop the modem
-> +      - description: Stop the remoteproc
-> +      - description: Wake up the remoteproc
-> +      - description: Make the remoteproc sleep
-> +      - description: Ping the remoteproc
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> +    minItems: 1
->      items:
->        - const: stop
-> +      - const: wakeup
-> +      - const: sleep
-> +      - const: ping
->  
->    smd-edge:
->      $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
-> @@ -80,9 +68,58 @@ properties:
->  required:
->    - clocks
->    - clock-names
-> -  - interrupts
-> -  - interrupt-names
->    - qcom,smem-states
->    - qcom,smem-state-names
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,kaanapali-soccp-pas
+Provide set_need_resched_current() which wraps this correctly and replace
+all the open coded instances.
 
-The point of common schemas is to not have if/then/else schemas. If 
-interrupts is now variable, then it is no longer common and should be 
-moved out of the common schema. Or just have the widest constraints that 
-covers all cases ({minItems: 5, maxItems: 7}).
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/s390/mm/pfault.c    |    3 +--
+ include/linux/sched.h    |    7 +++++++
+ kernel/rcu/tiny.c        |    8 +++-----
+ kernel/rcu/tree.c        |   14 +++++---------
+ kernel/rcu/tree_exp.h    |    3 +--
+ kernel/rcu/tree_plugin.h |    9 +++------
+ kernel/rcu/tree_stall.h  |    3 +--
+ 7 files changed, 21 insertions(+), 26 deletions(-)
 
+--- a/arch/s390/mm/pfault.c
++++ b/arch/s390/mm/pfault.c
+@@ -199,8 +199,7 @@ static void pfault_interrupt(struct ext_
+ 			 * return to userspace schedule() to block.
+ 			 */
+ 			__set_current_state(TASK_UNINTERRUPTIBLE);
+-			set_tsk_need_resched(tsk);
+-			set_preempt_need_resched();
++			set_need_resched_current();
+ 		}
+ 	}
+ out:
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2033,6 +2033,13 @@ static inline int test_tsk_need_resched(
+ 	return unlikely(test_tsk_thread_flag(tsk,TIF_NEED_RESCHED));
+ }
+ 
++static inline void set_need_resched_current(void)
++{
++	lockdep_assert_irqs_disabled();
++	set_tsk_need_resched(current);
++	set_preempt_need_resched();
++}
++
+ /*
+  * cond_resched() and cond_resched_lock(): latency reduction via
+  * explicit rescheduling in places that are safe. The return
+--- a/kernel/rcu/tiny.c
++++ b/kernel/rcu/tiny.c
+@@ -70,12 +70,10 @@ void rcu_qs(void)
+  */
+ void rcu_sched_clock_irq(int user)
+ {
+-	if (user) {
++	if (user)
+ 		rcu_qs();
+-	} else if (rcu_ctrlblk.donetail != rcu_ctrlblk.curtail) {
+-		set_tsk_need_resched(current);
+-		set_preempt_need_resched();
+-	}
++	else if (rcu_ctrlblk.donetail != rcu_ctrlblk.curtail)
++		set_need_resched_current();
+ }
+ 
+ /*
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2696,10 +2696,8 @@ void rcu_sched_clock_irq(int user)
+ 	/* The load-acquire pairs with the store-release setting to true. */
+ 	if (smp_load_acquire(this_cpu_ptr(&rcu_data.rcu_urgent_qs))) {
+ 		/* Idle and userspace execution already are quiescent states. */
+-		if (!rcu_is_cpu_rrupt_from_idle() && !user) {
+-			set_tsk_need_resched(current);
+-			set_preempt_need_resched();
+-		}
++		if (!rcu_is_cpu_rrupt_from_idle() && !user)
++			set_need_resched_current();
+ 		__this_cpu_write(rcu_data.rcu_urgent_qs, false);
+ 	}
+ 	rcu_flavor_sched_clock_irq(user);
+@@ -2824,7 +2822,6 @@ static void strict_work_handler(struct w
+ /* Perform RCU core processing work for the current CPU.  */
+ static __latent_entropy void rcu_core(void)
+ {
+-	unsigned long flags;
+ 	struct rcu_data *rdp = raw_cpu_ptr(&rcu_data);
+ 	struct rcu_node *rnp = rdp->mynode;
+ 
+@@ -2837,8 +2834,8 @@ static __latent_entropy void rcu_core(vo
+ 	if (IS_ENABLED(CONFIG_PREEMPT_COUNT) && (!(preempt_count() & PREEMPT_MASK))) {
+ 		rcu_preempt_deferred_qs(current);
+ 	} else if (rcu_preempt_need_deferred_qs(current)) {
+-		set_tsk_need_resched(current);
+-		set_preempt_need_resched();
++		guard(irqsave)();
++		set_need_resched_current();
+ 	}
+ 
+ 	/* Update RCU state based on any recent quiescent states. */
+@@ -2847,10 +2844,9 @@ static __latent_entropy void rcu_core(vo
+ 	/* No grace period and unregistered callbacks? */
+ 	if (!rcu_gp_in_progress() &&
+ 	    rcu_segcblist_is_enabled(&rdp->cblist) && !rcu_rdp_is_offloaded(rdp)) {
+-		local_irq_save(flags);
++		guard(irqsave)();
+ 		if (!rcu_segcblist_restempty(&rdp->cblist, RCU_NEXT_READY_TAIL))
+ 			rcu_accelerate_cbs_unlocked(rnp, rdp);
+-		local_irq_restore(flags);
+ 	}
+ 
+ 	rcu_check_gp_start_stall(rnp, rdp, rcu_jiffies_till_stall_check());
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -729,8 +729,7 @@ static void rcu_exp_need_qs(void)
+ 	__this_cpu_write(rcu_data.cpu_no_qs.b.exp, true);
+ 	/* Store .exp before .rcu_urgent_qs. */
+ 	smp_store_release(this_cpu_ptr(&rcu_data.rcu_urgent_qs), true);
+-	set_tsk_need_resched(current);
+-	set_preempt_need_resched();
++	set_need_resched_current();
+ }
+ 
+ #ifdef CONFIG_PREEMPT_RCU
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -753,8 +753,7 @@ static void rcu_read_unlock_special(stru
+ 			// Also if no expediting and no possible deboosting,
+ 			// slow is OK.  Plus nohz_full CPUs eventually get
+ 			// tick enabled.
+-			set_tsk_need_resched(current);
+-			set_preempt_need_resched();
++			set_need_resched_current();
+ 			if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
+ 			    needs_exp && rdp->defer_qs_iw_pending != DEFER_QS_PENDING &&
+ 			    cpu_online(rdp->cpu)) {
+@@ -813,10 +812,8 @@ static void rcu_flavor_sched_clock_irq(i
+ 	if (rcu_preempt_depth() > 0 ||
+ 	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+ 		/* No QS, force context switch if deferred. */
+-		if (rcu_preempt_need_deferred_qs(t)) {
+-			set_tsk_need_resched(t);
+-			set_preempt_need_resched();
+-		}
++		if (rcu_preempt_need_deferred_qs(t))
++			set_need_resched_current();
+ 	} else if (rcu_preempt_need_deferred_qs(t)) {
+ 		rcu_preempt_deferred_qs(t); /* Report deferred QS. */
+ 		return;
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -763,8 +763,7 @@ static void print_cpu_stall(unsigned lon
+ 	 * progress and it could be we're stuck in kernel space without context
+ 	 * switches for an entirely unreasonable amount of time.
+ 	 */
+-	set_tsk_need_resched(current);
+-	set_preempt_need_resched();
++	set_need_resched_current();
+ }
+ 
+ static bool csd_lock_suppress_rcu_stall;
 
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          items:
-> +            - description: Watchdog interrupt
-> +            - description: Fatal interrupt
-> +            - description: Ready interrupt
-> +            - description: Handover interrupt
-> +            - description: Stop acknowledge interrupt
-> +            - description: Pong interrupt
-> +            - description: Wake acknowledge interrupt
-> +
-> +        interrupt-names:
-> +          items:
-> +            - const: wdog
-> +            - const: fatal
-> +            - const: ready
-> +            - const: handover
-> +            - const: stop-ack
-> +            - const: pong
-> +            - const: wake-ack
-> +
-> +    else:
-> +      properties:
-> +        interrupts:
-> +          minItems: 5
-> +          items:
-> +            - description: Watchdog interrupt
-> +            - description: Fatal interrupt
-> +            - description: Ready interrupt
-> +            - description: Handover interrupt
-> +            - description: Stop acknowledge interrupt
-> +            - description: Shutdown acknowledge interrupt
-> +
-> +        interrupt-names:
-> +          minItems: 5
-> +          items:
-> +            - const: wdog
-> +            - const: fatal
-> +            - const: ready
-> +            - const: handover
-> +            - const: stop-ack
-> +            - const: shutdown-ack
-> +
->  additionalProperties: true
-> 
-> -- 
-> 2.25.1
-> 
 
