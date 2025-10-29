@@ -1,139 +1,210 @@
-Return-Path: <linux-kernel+bounces-875050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB95CC18155
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:42:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF7EC18158
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0369A4E9C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:42:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91A774EA20F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77882E2DD4;
-	Wed, 29 Oct 2025 02:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346242EA752;
+	Wed, 29 Oct 2025 02:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Aui1rmRQ"
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUez+F0C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1FF266565
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A42283129;
+	Wed, 29 Oct 2025 02:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761705722; cv=none; b=lbDUPgMIQGcKSvhK9XNVsgNmK9K9GEbdcKbPd0MSDAzK90yQe9WTcAtg+YPEt6nJKRi+Wlo1DJx1qh8aucOrz37L9Gyg3OF/DWZKvDuIBrM0+ZDGvYLUsH2fAI+5iEYofA7cmziBw70BM9jBbrNOkqAyDTv47ifDWBTBrnPOYUI=
+	t=1761705805; cv=none; b=RaWX7XtEkUpuXRZ2V9Nix61N1v8L4lemEBGXzC8j5JZ1X9nGXdc+08Cx82/UlHhjXQG2VnsBLFEDqHkARklu26HAhHCDfsg5sI1TmUs7migPpGb9hYRLJzo0tHSww0OxN/atXoembwB0Kf+w7vAyLeBxhQ5gmqxj+6NlYHvJvLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761705722; c=relaxed/simple;
-	bh=H8in62bCZX1u6grl68iOx2j4pfI6C9u94V3AaNK2gB4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aOxu6Y2ReLNUVKqE+DM8COXUm2faMgPN90vRmsQwD3VSgrpGxRZxedU2Gfv+JmybCK4+FeRNxNr4WIFiLFySKTQ6tUKTMZrx147EGhQTXalApuB9HkMqYcDPLInlOB+xREzwKpoLOu6E2/7N6jpmNHb+lY+h3/h20GMi5dIMtbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Aui1rmRQ; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=FTZjyfw+Xgeed69jhy5PrzVKjkTsZcfK7eV+J3iJrzI=;
-	b=Aui1rmRQGwtpzaZP4CDWOuHR1qNAPte2+RlcUSnoIYcf56zoatQeM6z9V6wkti3EPR0s9R1tj
-	uzzCcgJXtdjJEcM9+fc7AbbZknSHvt0+rsHgNvJGQF9WSCCkWdqR8Utfmynr9hXZQKN2mDktowX
-	hKih1QtHOmdRXsEH1kqQTbc=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cxBMM6jl5z12LJn;
-	Wed, 29 Oct 2025 10:41:19 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 518FD180B4A;
-	Wed, 29 Oct 2025 10:41:57 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 10:41:56 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <bigeasy@linutronix.de>
-CC: <akpm@linux-foundation.org>, <arnd@arndb.de>, <brauner@kernel.org>,
-	<kuninori.morimoto.gx@renesas.com>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux@armlinux.org.uk>,
-	<lorenzo.stoakes@oracle.com>, <marc.zyngier@arm.com>, <pfalcato@suse.de>,
-	<punitagrawal@gmail.com>, <rjw@rjwysocki.net>, <rmk+kernel@armlinux.org.uk>,
-	<rppt@kernel.org>, <tony@atomide.com>, <vbabka@suse.cz>, <will@kernel.org>,
-	<xieyuanbin1@huawei.com>
-Subject: Re: [PATCH v2 RESEND 1/2] ARM: spectre-v2: Fix potential missing mitigations
-Date: Wed, 29 Oct 2025 10:41:51 +0800
-Message-ID: <20251029024151.6005-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251028182052.nrRad87D@linutronix.de>
-References: <20251028182052.nrRad87D@linutronix.de>
+	s=arc-20240116; t=1761705805; c=relaxed/simple;
+	bh=Km83RPcsFyOOaHMC0IXrd8w/TKJKJjJESuj/zLlhIeY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=L5jHV1QfkAXxFGpqAJDDqAVDLvSUSDnR7gqwVVYv0//WVYwxlhVo709xV8QuVZz8+T+Fqybiprx6sXgzeXNYnWy/a+Sj9C0z2bAUOY/L9uF6yNe+mm2PZKHYe1dmEAA4XqOA9Q4NLaUps65RnnKWvuij93Tfpjt5kshsHv6Qyjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUez+F0C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C86C4CEFD;
+	Wed, 29 Oct 2025 02:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761705804;
+	bh=Km83RPcsFyOOaHMC0IXrd8w/TKJKJjJESuj/zLlhIeY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bUez+F0C+mbjixIPs6/hVqz+YUV9Qv8Ide9LxpNZCNtWbDQEsiBKA62iBhXhbzk0g
+	 ODpTKlZqPCDwcv/xiA7X8ZJ0fMnsRlopbFUvy4vq7kNFdqHYPkfuJhy3EmguhCfi6F
+	 XCT04x95a5UA4+NLvTN+Cf8LK9Gc5jkmdsH+GBkHIFuvz8j1KOnBVkwD11+CUTipqC
+	 FsvJFlX6jT/D7ahOc48XZxT6tUKBIhJ/AhPqyr9gPBI/o8LFlQVls1C1YJewS+Gr4P
+	 oadJoD3Fjf/B93KcYjVDaw+vOpMA25ElW1/Hu1mO8bfhnpY5LoHMpuu6gIOhKYhI61
+	 avwMqaX3fP4rg==
+Date: Wed, 29 Oct 2025 11:43:17 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Mark Brown <broonie@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@kernel.org>, x86@kernel.org, Jinchao Wang
+ <wangjinchao600@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
+ wprobe
+Message-Id: <20251029114317.167b7d908533385c1c9e6782@kernel.org>
+In-Reply-To: <20251029004219.dc9cda0eb56ae46c55855844@kernel.org>
+References: <175859019940.374439.7398451124225791618.stgit@devnote2>
+	<175859026716.374439.14852239332989324292.stgit@devnote2>
+	<aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
+	<20251027224347.4c887cc956df63602f377550@kernel.org>
+	<20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
+	<20251028105549.ae94e8eeb42f4efc183d2807@kernel.org>
+	<20251029004219.dc9cda0eb56ae46c55855844@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 Oct 2025 17:20:05 +0100, Sebastian Andrzej Siewior wrote:
-> If I apply both patches (of yours) then it sends a
-> signal with disabled interrupts which breaks my PREEMPT_RT case.
+On Wed, 29 Oct 2025 00:42:19 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-I am not familiar with PREEMPT_RT yet and do not know that signals cannot
-be sent with disabled interrupts and PREEMPT_RT=y.
-I apologize for this.
+> On Tue, 28 Oct 2025 10:55:49 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> 
+> > On Tue, 28 Oct 2025 08:42:22 +0900
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > 
+> > > ~ # cd /sys/kernel/tracing/
+> > > /sys/kernel/tracing # echo 'w:my_wprobe w@jiffies' >> dynamic_events 
+> > > /sys/kernel/tracing # echo 1 > events/wprobes/my_wprobe/enable 
+> > > [   54.942288] trace_wprobe: enable_trace_wprobe called
+> > > [   54.945306] trace_wprobe: trying to register wprobes
+> > > [   54.947367] trace_wprobe: __register_trace_wprobe called
+> > > [   54.949586] trace_wprobe: registering wprobe at addr: 0xffffb6ce429fb200, len: 4, type: 2
+> > > [   54.951639] Creating wide hw breakpoint on CPU 0
+> > > [   54.966390] Creating kernel counter on CPU 0 for event type 5
+> > > [   54.967758] perf_install_in_context: event 00000000736da1d9 ctx 000000005d4db900 cpu 0
+> > > [   54.972015] perf_install_in_context2: event 00000000736da1d9 ctx set to 000000005d4db900
+> > > [   54.976697] cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2c8
+> > > 
+> > > What happen if the cpu calls function on itself by
+> > > smp_call_function_single() on arm64?
+> > > 
+> > >   smp_call_function_single(this_cpu, remote_function, &data, 1);
+> > 
+> > Sorry, that was printk buffering issue. I used trace_printk() instead
+> > and persistent ring buffer[1] to trace it.
+> > 
+> > [1] https://docs.kernel.org/trace/debugging.html#persistent-buffers-across-boots
+> > 
+> > ~ # echo 1 > /sys/kernel/tracing/instances/boot_map/options/trace_printk_dest
+> > ~ # echo 'w:my_wprobe w@jiffies' >> /sys/kernel/tracing/dynamic_events 
+> > ~ # echo 1 > /sys/kernel/tracing/events/wprobes/my_wprobe/enable 
+> > QEMU 8.2.2 monitor - type 'help' for more information
+> > (qemu) system_reset
+> > ...
+> > 
+> > ~ # cat /sys/kernel/tracing/instances/boot_map/trace 
+> > # tracer: nop
+> > #
+> > # entries-in-buffer/entries-written: 16/16   #P:1
+> > #
+> > #                                _-----=> irqs-off/BH-disabled
+> > #                               / _----=> need-resched
+> > #                              | / _---=> hardirq/softirq
+> > #                              || / _--=> preempt-depth
+> > #                              ||| / _-=> migrate-disable
+> > #                              |||| /     delay
+> > #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+> > #              | |         |   |||||     |         |
+> >            <...>-63      [000] .....    21.065038: register_wide_hw_breakpoint: Creating wide hw breakpoint on CPU 0
+> >            <...>-63      [000] .....    21.079678: perf_event_create_kernel_counter: Creating kernel counter on CPU 0 for event type 5
+> >            <...>-63      [000] .....    21.080051: perf_install_in_context: perf_install_in_context: event 000000000b3ac4d3 ctx 00000000097d6337 cpu 0
+> >            <...>-63      [000] .....    21.080140: perf_install_in_context: perf_install_in_context2: event 000000000b3ac4d3 ctx set to 00000000097d6337
+> >            <...>-63      [000] .....    21.080939: cpu_function_call: cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2f0
+> >            <...>-63      [000] .....    21.080966: smp_call_function_single: smp_call_function_single: calling function on CPU 0, func: remote_function+0x0/0x78, wait=1
+> >            <...>-63      [000] ...1.    21.080973: smp_call_function_single: smp_call_function_single: running on CPU 0, call CPU 0
+> >            <...>-63      [000] ...1.    21.081099: smp_call_function_single: smp_call_function_single: checking for potential deadlock conditions
+> >            <...>-63      [000] ...1.    21.081259: generic_exec_single: generic_exec_single: preparing to call function on CPU 0, func: remote_function+0x0/0x78
+> >            <...>-63      [000] ...1.    21.081269: generic_exec_single: Executing smp_call_function_single on self CPU 0, func: remote_function+0x0/0x78
+> >            <...>-63      [000] d..1.    21.081289: csd_do_func: csd_do_func: CPU 0 executing func remote_function+0x0/0x78
+> >            <...>-63      [000] d..1.    21.081429: __perf_install_in_context: __perf_install_in_context: event 000000000b3ac4d3 ctx 00000000097d6337
+> >            <...>-63      [000] d..2.    21.083211: hw_breakpoint_control: hw_breakpoint_control: ops=0
+> >            <...>-63      [000] d..1.    21.084191: __perf_install_in_context: __perf_install_in_context: event 000000000b3ac4d3 done, ret=0
+> >            <...>-63      [000] d..1.    21.084237: csd_do_func: csd_do_func: CPU 0 finished func remote_function+0x0/0x78
+> >            <...>-63      [000] d..1.    21.084243: generic_exec_single: Finished csd_lock_record(NULL)
+> > ~ # 
+> > 
+> > 
+> > So the last message is right before the local_irq_restore() in
+> > generic_exec_single().
+> > 
+> > static int generic_exec_single(int cpu, call_single_data_t *csd)
+> > {
+> > 	...
+> > 		csd_lock_record(csd);
+> > 		csd_unlock(csd);
+> > 		local_irq_save(flags);
+> > 		csd_do_func(func, info, NULL);
+> > 		csd_lock_record(NULL);
+> > 		trace_printk("Finished csd_lock_record(NULL)\n"); <- 
+> > 		local_irq_restore(flags);
+> > 		return 0;
+> > 
+> > Actually, I added another trace_printk() right after generic_exec_single().
+> > 
+> > 	err = generic_exec_single(cpu, csd);
+> > 	trace_printk("generic_exec_single returned %d for CPU %d, func: %pS\n",
+> > 		err, cpu, func);
+> > 
+> > This means after setting the hw_breakpoint, when enabing the IRQ,
+> > the machine is frozen - but qemu is running busy.
+> > 
+> > Can we specify the kernel memory address to HW breakpoint on arm64?
+> 
+> Hmm, it seems that jiffies related things are updated frequently
+> and it may cause interrupt storm or infinit recursive call.
 
-On Tue, 28 Oct 2025 19:20:52 +0100, Sebastian Andrzej Siewior wrote:
-> !LPAE does do_bad_area() -> __do_user_fault() and does not trigger the
-> warning in harden_branch_predictor() because the interrupts are off.
-> On PREEMPT_RT this leads to an error due to accessing spinlock_t from
-> force_sig_fault() with disabled interrupts.
+I added another trace_printk() in el1_watchpt(). It seems el1_watchpt()
+takes too long and there is no time to do any other things.
+(Note the interval shown below is only within the el1_watchpt function,
+ and in reality various processes (save/restore registers etc) for
+ exception handling will be inserted before and after.)
 
-This seems to be a more serious bug, and may require another patch to
-fix it. Not only !LPAE is affected, but LAPE=y is also affected:
-do_translation_fault() -> do_bad_area() -> __do_user_fault()
-This code path seems very easy to trigger.
+   kworker/u32:3-75      [001] d.h2.    43.216706: el1_watchpt: FAR=0xjiffies+0x0/0x40, ESR=0xd6000062, WP index=0, n
+est=0
+   kworker/u32:3-75      [001] d.h2.    43.216750: el1_watchpt: returning to EL1: nest=0
+   kworker/u32:3-75      [001] d.h2.    43.216816: el1_watchpt: FAR=0xjiffies+0x0/0x40, ESR=0xd6000062, WP index=0, n
+est=0
+   kworker/u32:3-75      [001] d.h2.    43.216860: el1_watchpt: returning to EL1: nest=0
+   kworker/u32:3-75      [001] d.h2.    43.216927: el1_watchpt: FAR=0xjiffies+0x0/0x40, ESR=0xd6000062, WP index=0, n
+est=0
+   kworker/u32:3-75      [001] d.h2.    43.216971: el1_watchpt: returning to EL1: nest=0
+   kworker/u32:3-75      [001] d.h2.    43.217058: el1_watchpt: FAR=0xjiffies+0x0/0x40, ESR=0xd6000062, WP index=0, n
+est=0
+   kworker/u32:3-75      [001] d.h2.    43.217106: el1_watchpt: returning to EL1: nest=0
+   kworker/u32:3-75      [001] d.h2.    43.217175: el1_watchpt: FAR=0xjiffies+0x0/0x40, ESR=0xd6000062, WP index=0, n
+est=0
+   kworker/u32:3-75      [001] d.h2.    43.217219: el1_watchpt: returning to EL1: nest=0
 
-> I guess the requirement is to invoke harden_branch_predictor() on the
-> same CPU that triggered the page_fault, right? Couldn't we then move
-> harden_branch_predictor() a little bit earlier, invoke it in the >=
-> TASK_SIZE case and then enable interrupts if they were enabled?
->
-> That would make me happy ;)
+So watching any variables which is frequently updated will
+almost freeze the system. Hmmm, the handler should check the
+interval and if it is too frequently, it should disable the
+wprobe.
 
-This seems to only fix the warning in harden_branch_predictor, but cannot
-fix the issue of sending signals with disabled interrupts mentioned above.
+Thank you,
 
-What about adding:
-
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 09dde89a88ed..b9c9c80db109 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -182,6 +182,12 @@ __do_user_fault(unsigned long addr, unsigned int fsr, unsigned int sig,
- 		int code, struct pt_regs *regs)
- {
- 	struct task_struct *tsk = current;
-+	const bool save_irqs_disabled = irqs_disabled();
-+
-+	if (save_irqs_disabled) {
-+		preempt_disable();
-+		local_irq_enable();
-+	}
-
- 	if (addr > TASK_SIZE)
- 		harden_branch_predictor();
-@@ -207,6 +213,11 @@ __do_user_fault(unsigned long addr, unsigned int fsr, unsigned int sig,
- 	tsk->thread.error_code = fsr;
- 	tsk->thread.trap_no = 14;
- 	force_sig_fault(sig, code, (void __user *)addr);
-+
-+	if (save_irqs_disabled) {
-+		local_irq_disable();
-+		preempt_enable_no_resched();
-+	}
- }
-
-and the modification of patch 1 is still retained.
-
-Xie Yuanbin
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
