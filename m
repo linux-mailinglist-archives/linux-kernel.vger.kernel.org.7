@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-876104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430F7C1A9E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:21:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0FDC1A9BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC51188EEEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:14:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B43750837D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C25D3358A0;
-	Wed, 29 Oct 2025 13:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42383358D2;
+	Wed, 29 Oct 2025 13:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AyOmu0Bq"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pk9g9oaS"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD85327213;
-	Wed, 29 Oct 2025 13:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D9329397
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743335; cv=none; b=dRj3urfTAQ4OR22wU8vGfb4VttdjWlgtZcBVxp7TcBD0QSeHZC1V72iG09jRtEzVVocnfkUuxjvfzrLOa/iHZ9O2GIsbUguHY1b7AmLNr4RdY7rKwybZXQizCWo5qUE5VHGixWwGN4Hh19DSvQ8zUiC1THPkG+yTmIVB2OScXF0=
+	t=1761743337; cv=none; b=GhRA2nxRDKL4861ebcz/DfDwyVLmvNzJ9CIyPzLLtXLeX9o/2mHeM9OUa9QVeiiVt/RVRs0/fwWdXxe+VOuOctNn8KuCzAdpzGzteVG1EQxP+qP2qP5sskupq1neAiRVo+NawcUTF52XGt1FHFMdYDNIOwJurbSAJsLUUBhbx/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743335; c=relaxed/simple;
-	bh=UngHmgDP1nr6K0S8aa8Y0NIoHUi35dCsUpErrVr5J9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhH0pwVh2qR1t1Lqa6/LiRiB9cBFp18fV7Dxlvci7n3kvEVYanV2JA2VykUQP+2qkwXBkhREHFTeHL/kerE8+dNpYnRIaqPn5y2r6ovBJIqmFsCtPvtszcKHuvU/i1BNAxrvWQbrtWzcDf6iK+aCu+mD3ySvcpt1UEy4Ph6c+Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AyOmu0Bq; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6C27440E0231;
-	Wed, 29 Oct 2025 13:08:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JXSUdgHo4cTz; Wed, 29 Oct 2025 13:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761743326; bh=2JgUCL+m1awbrs708pVpItdTrCu+IIhOCpTs2+LmYl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AyOmu0BqXehF6sQ85sEKJCavJx84OVp5WuTATkBcSaZFbqGETlhvoGpA6rwYTzH3a
-	 K6xxMEJfE662xlv9YEimnuMr8IjagDg0YPXXcwVV/ArFKXCJb55/u5AMMLmklcOSd3
-	 TXTWYo/+8EFdv0R4vXp/DegMeZ6vRUjcMLdwyyUhZracw3Hxddv7OdAA+RQYBCDILz
-	 ssZuPfbfnhpY8QG6gHFoT2l0pe23RMakSrXKH1ZA1S0/NRdkkvLaePKzi19pWVlmQ3
-	 23apIAlriFXb+5h9w2Y9tnrt+qhL3A5WJAnn/Wd/zLN1lSb33TidWEi6FQbNvXLyi1
-	 fX+coo0KGh6enkl7kALTxxCL85ikVerz7w8aqtlj8ZmvxCsC3k7rsgSF/6RgOgssU9
-	 B1M/0Er0VTxszVup0PtOBCti/A6jqFDI4lHYJATD4s+Juv5OwNkmQU9n7+wi+C1rpB
-	 Hh5Bn/IQ4mI3OHw/N5vJNhkNKc1hkMVOK/6AC7bJHvnMX9ulERGpIJwq1K283Aq8OI
-	 5rjcZD5fbJuCjX88v3TNcJrmOHtZ2cN85XTM0QSvDp0BjUZYgMa8oQC3NAzvqYaiVp
-	 RQTKS2Ka87FKlBQyzwi1EjEKHpuxMqQYGwAXS+tZzGhc4whnWXE0EMs13Be7obwT79
-	 M+hH/Uz+OtzHSx76l08aTdpM=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 16F1240E0225;
-	Wed, 29 Oct 2025 13:08:37 +0000 (UTC)
-Date: Wed, 29 Oct 2025 14:08:32 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, git@amd.com,
-	shubhrajyoti.datta@gmail.com, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>
-Subject: Re: [PATCH] EDAC/versalnet: Handle split messages for non-standard
- errors
-Message-ID: <20251029130832.GBaQIR0CF8kSl6exi7@fat_crate.local>
-References: <20251023113108.3467132-1-shubhrajyoti.datta@amd.com>
+	s=arc-20240116; t=1761743337; c=relaxed/simple;
+	bh=Z55s3i9xSKU27fw2ODBvX6XiH5+LNXp+zms/8kq1IqE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BZbktU84JTWC3KjJJ79zUtytQJOFHCzcmcJorZhaONdCrRN1FjyV3IxOQjN7y+P2FgeHrfmA1NqSl6QQzf2RR5yTG9wqBQFO4UXLoqdRQkNnoBRr46hEDmfeaxI4PYTQ6gEh+kEt9jsCtUiaGkhAMyzjv25QA8WnrfYLG54uV68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pk9g9oaS; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 683688aab4c811f0ae1e63ff8927bad3-20251029
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5rqruaBGbdBage9RelMNC/uGmvBCpu4gWGsl5QOYqT0=;
+	b=pk9g9oaSYj3I+TOZUiQQGGHiCWJRB61dGuuMc0yCvDer0LubkfUzbbDEGLelDX7P58QHftHW/ISbCMet9wVF4uL8mNn0DAoGqPcmwh5mMoelcPNs6BkTL3I/uPZOsrmwO0xlGKvbOsCS0kKK100+Er44P9SZROenVmEp3q8hsfE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:752901ef-bde3-4493-a0e1-379b11936704,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:70fcb118-3399-4579-97ab-008f994989ea,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 683688aab4c811f0ae1e63ff8927bad3-20251029
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <sirius.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 274325936; Wed, 29 Oct 2025 21:08:48 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 29 Oct 2025 21:08:45 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Wed, 29 Oct 2025 21:08:45 +0800
+From: Sirius Wang <sirius.wang@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@mediatek.com>
+CC: <wenst@chromium.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, <jh.hsu@mediatek.com>,
+	Sirius Wang <sirius.wang@mediatek.com>
+Subject: [PATCH] soc: mediatek: mtk-socinfo: Add extra entry for MT8189
+Date: Wed, 29 Oct 2025 21:08:34 +0800
+Message-ID: <20251029130842.32633-1-sirius.wang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251023113108.3467132-1-shubhrajyoti.datta@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Oct 23, 2025 at 05:01:08PM +0530, Shubhrajyoti Datta wrote:
-> The current code assumes that only DDR errors have split messages.
-> Ensures proper logging of non-standard event errors
-> that may be split across multiple messages.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> ---
-> 
->  drivers/edac/versalnet_edac.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/edac/versalnet_edac.c b/drivers/edac/versalnet_edac.c
-> index fc7e4c43b387..a055f54a389b 100644
-> --- a/drivers/edac/versalnet_edac.c
-> +++ b/drivers/edac/versalnet_edac.c
-> @@ -605,6 +605,12 @@ static int rpmsg_cb(struct rpmsg_device *rpdev, void *data,
->  	length = result[MSG_ERR_LENGTH];
->  	offset = result[MSG_ERR_OFFSET];
->  
-> +	for (i = 0 ; i < length; i++) {
-> +		k = offset + i;
-> +		j = ERROR_DATA + i;
-> +		mc_priv->regs[k] = result[j];
-> +	}
-> +
->  	if (result[TOTAL_ERR_LENGTH] > length) {
->  		if (!mc_priv->part_len)
->  			mc_priv->part_len = length;
-> @@ -615,11 +621,6 @@ static int rpmsg_cb(struct rpmsg_device *rpdev, void *data,
->  		 * messages the offset indicates the offset from which the data is to
->  		 * be taken
->  		 */
+The MT8189 has a different socinfo match for MT8189 SoC
+(commercial name Kompanio 540), so add it the driver.
 
-I'm guessing you want to move that comment too?
+Signed-off-by: Sirius Wang <sirius.wang@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-socinfo.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-If so, I can move it - you don't have to resend.
-
-> -		for (i = 0 ; i < length; i++) {
-> -			k = offset + i;
-> -			j = ERROR_DATA + i;
-> -			mc_priv->regs[k] = result[j];
-> -		}a
-
+diff --git a/drivers/soc/mediatek/mtk-socinfo.c b/drivers/soc/mediatek/mtk-socinfo.c
+index c697a0398d91..32153c122416 100644
+--- a/drivers/soc/mediatek/mtk-socinfo.c
++++ b/drivers/soc/mediatek/mtk-socinfo.c
+@@ -50,6 +50,8 @@ static struct socinfo_data socinfo_data_table[] = {
+ 	MTK_SOCINFO_ENTRY("MT8186T", "MT8186TV/AZA", "Kompanio 528", 0x81862001, CELL_NOT_USED),
+ 	MTK_SOCINFO_ENTRY("MT8188", "MT8188GV/AZA", "Kompanio 838", 0x81880000, 0x00000010),
+ 	MTK_SOCINFO_ENTRY("MT8188", "MT8188GV/HZA", "Kompanio 838", 0x81880000, 0x00000011),
++	MTK_SOCINFO_ENTRY("MT8189", "MT8189GV/AZA", "Kompanio 540", 0x81890000, 0x00000020),
++	MTK_SOCINFO_ENTRY("MT8189", "MT8189HV/AZA", "Kompanio 540", 0x81890000, 0x00000021),
+ 	MTK_SOCINFO_ENTRY("MT8192", "MT8192V/AZA", "Kompanio 820", 0x00001100, 0x00040080),
+ 	MTK_SOCINFO_ENTRY("MT8192T", "MT8192V/ATZA", "Kompanio 828", 0x00000100, 0x000400C0),
+ 	MTK_SOCINFO_ENTRY("MT8195", "MT8195GV/EZA", "Kompanio 1200", 0x81950300, CELL_NOT_USED),
 -- 
-Regards/Gruss,
-    Boris.
+2.45.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
