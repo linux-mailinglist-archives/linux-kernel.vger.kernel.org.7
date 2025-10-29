@@ -1,177 +1,259 @@
-Return-Path: <linux-kernel+bounces-877091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BC3C1D2C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:12:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768CEC1D2A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAF6C4E2255
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1622B3AD1D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E4F35A921;
-	Wed, 29 Oct 2025 20:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB3535A924;
+	Wed, 29 Oct 2025 20:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VRqH9COy"
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com [209.85.216.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="cXdMGkjY"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765D935A930
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FF635A13D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761768679; cv=none; b=aOlu/ufJwOGa3cMkEsYdg8c+6NIYz4+1h90/jEAzbp05DUVsuTpZ5NyBu8lr6v1/ExsCwkL5JQkP9au0FJZC1xnqqCqlqQVRYg/0btQR1mlHrLm4SUAP8YWmLTQJOWBRoJWrlsnSer9bUmtgyP96QrOhPTTOI4LDVOiHXQsgj/M=
+	t=1761768694; cv=none; b=oV4pr20NlKqj/tdWS2liOLslwww/03YUATIjClWzxBh5/Vv44OF7y86Rn9TjY3oMtC7tiojTst67+ICzr/yhZmaSE6sefaii/xFmxjV0Pay8Si+HgLMEvoClZRa31uqLIbHrBa75fObNaVR46oyvgsbT7pMElUqLhWKIK6Sng1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761768679; c=relaxed/simple;
-	bh=5kwQs+9suNK+4X2kC6NQpa2xZpkIM4WvOQV/rVeCd9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUWc6KBvAdyG10fyvnVdV6LjLyyWH38F1dFFuOlc+EjjLS4VDWhoMIE2P91HHpsBSNWiivND4r9jl8lwYl/58TzF68aidSk1Q8YntEWzUKaAjkl8lYoA0LqtMONL3gPfE5lvba4mMbzqZyaIYOG22K4i6kqYk3sB3m6hLSUbE7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VRqH9COy; arc=none smtp.client-ip=209.85.216.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f98.google.com with SMTP id 98e67ed59e1d1-33e27a3b153so352677a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:11:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761768676; x=1762373476;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Fd8815X1RUqCabuTvLuXZbJKbv+i/J65/QtTSTp+uo=;
-        b=endzCEAmeOVmQjZdmZG4jK9eZbBlRI9b9i0O2Pa0odFs7QkwxRLk7YW/nV+l5aKNWW
-         fSgogyodT6nKPSYLWRTnPtwQegDSv46U0voQ8xi0LaeSpPrAcVSzThkFsuak4s2mLoeN
-         7v6fLBKC4SjXL6LXsOUD02sUjrLQCVY3yqoQqWurBx4CyqDC7Nsa+9KJuhGL7NXZ7KNl
-         j7+w67/8UktPtANWeFp2lE8kBbe4dlwFKjXCtKNGrLm2wAotrQi+qK7MxJ06liA1dJlG
-         +jI1Kfu63sEXeSUeJi5sN4z9zTBf9+wJhAh8TLNeAjx3cpGnV5FcPTrMnAzperheQUsq
-         t4mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJwjJIblCVIu4hoLJtwwSjvF1N4fFcyvw+wu+6E1zZDIRUiBaxA6TEDl5yI5OVw1RZ7A7dK2yU4Vi9xt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFzjTkg8z94jPDNl5QlB2wd8qYcBYhIU3DuxxWmN2KG/DD6EB2
-	prrUFH3qOpEUio/WL5kE8ny/MGJtS1D7ix9rpAqQ0uXj6JDNompGK3lUzsUlpiwtYak8PXUFht2
-	YA/mxsenrm16ruL6rWWQ5QkA+RmvKi0QecrMf82cxSNdpCFkyUpX1UjuKDAA+yfE/enO2MBR0jZ
-	twEqN+2RIQB+PmuWGD+Szyl+RjIofGI1WV0IZRcxv9bBDhwXi24CtFFQXqLz9ibKgqjUXmMg+jC
-	qQgLj0pgnmKy3AWnjH55ZGW
-X-Gm-Gg: ASbGnctjNoZUTLbGTxtO9KG9kX+RRtCuQX94vo9Q3TEzTfLOt9w2Auuq2nYXSbJ/ZmF
-	VnEc/pGOQYWFNQ4icv2NCY7sXq/lIcSwDrhlnp44DQ2S+MRU3hOX0HthmaWYgGIJINmGoMaOdSu
-	2NZPCmUBJqBTqd8yQUwu8oZhVMgCENi5vYz7NeICthKRRLJHnXseahlYuD+5pcwKQ4/Ulv3qF2B
-	EzsK5X4q03F9IOVtC9kdEKhzLDnoOArlZN0o5sUQdoRHgZU5AMa7RKqHh9SDwFICLb2ebVvzoA0
-	fHA9YTW3DY6YZ40MsRWoI3Qgv56t9bsrwDMDfwGHZRHSBvk3tklVF2qP3UFdoK5qnPshu2Kk5Lb
-	7+j/LED4zqwvyDMLThp1c83KJ9Mv9fxlHnLJYHRD3/Vk9joS4/5cUTIf8nqUAbtGsvpeu3/4ms8
-	hFVvpWVJi0PBBp1kdDpn+VXTDvwNnQuXsBm0RyK2pD7g==
-X-Google-Smtp-Source: AGHT+IHP7q/05bMQEbxObiBlHl9BEM6f3ovc3efn0T0OgcuiZiijD6UNnfZhqKj/zRNSKarA5gsHWswC3EaY
-X-Received: by 2002:a17:90b:2246:b0:30a:4874:5397 with SMTP id 98e67ed59e1d1-3403a25f8b1mr4691024a91.9.1761768676161;
-        Wed, 29 Oct 2025 13:11:16 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
-        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-3404f19105asm14798a91.0.2025.10.29.13.11.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Oct 2025 13:11:16 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-87c0e0d12ddso9320386d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761768675; x=1762373475; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Fd8815X1RUqCabuTvLuXZbJKbv+i/J65/QtTSTp+uo=;
-        b=VRqH9COyQnoCZWeentq1MpsDlcFrHGrr7wFpjdKTpGOhE1NzM8K5NxCGt9zMQ+AwNz
-         NB7Sm/7h9vRCXHcKVeYmk8r3uo/aLoKD3i519ujHOcvcTNmFZPDAFdrbITHjy3hNbAuX
-         p1Z9q+hg0ot8dNfx4QCmoLBMkJdxvza2qjO94=
-X-Forwarded-Encrypted: i=1; AJvYcCWSPxqfmKc2RF7xWzXUjQlR1aLn4M1CiBxpNmxK8WBCHIgphyy8w1CDIoobf0gv1/K1y4LhlbRFmnlembE=@vger.kernel.org
-X-Received: by 2002:ad4:5d44:0:b0:87e:d590:89b7 with SMTP id 6a1803df08f44-88009afcaa5mr61772176d6.19.1761768674858;
-        Wed, 29 Oct 2025 13:11:14 -0700 (PDT)
-X-Received: by 2002:ad4:5d44:0:b0:87e:d590:89b7 with SMTP id 6a1803df08f44-88009afcaa5mr61771726d6.19.1761768674483;
-        Wed, 29 Oct 2025 13:11:14 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fd3c48f20sm91342686d6.32.2025.10.29.13.11.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 13:11:13 -0700 (PDT)
-Message-ID: <e71b90ba-176b-4178-812e-2437bc81ce3f@broadcom.com>
-Date: Wed, 29 Oct 2025 13:11:10 -0700
+	s=arc-20240116; t=1761768694; c=relaxed/simple;
+	bh=i2x6FuRzHHu3DqZfnTFMfT434IIQFJZMu963TwDZRwE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MLeQSBh8AnxvoVaqtLP+gEdz2ntnK6PrY5VxiZN/Q9fWe4Dld+CYXXYl72iEo+E+ZhTNfaDVTYhB9+SK469MjIj709rXhkASeXwYsGVvq0ikG8v4doRXrQuCJG79B5/2zGT1ZL0s9MubiOhDgFoWJANDfyGrZSG09P1fd/OroAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=cXdMGkjY; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1761768688; x=1762027888;
+	bh=801m/BDnq+4IDZrRjH01sT6fZRZq5h0m340QBaMU7xk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=cXdMGkjYQPcz0Nv21dBbiab8WuIQ4hr8ZJRQqwUepbPD1rbiz/vhDeUFcNs+IGjar
+	 od6iv3/pch7jNVp38Q2cmI4VQR0pGdQZyx7xwgvOjcMGXYKinHJUeISc801+Y8WgrO
+	 SCNfKcZPXZtF2+rk0dIn06Lyyoiy42cPczWw1N9Ui8kQDW0LXKyASTAfV23YHt8/QB
+	 FHk6Lay8dA8JodN9I7Vt57QyS2WDP7aNMHr/4vq1HuuEYHnPPI3dMERBgdU9EwiM+L
+	 Mj22z+1Gh8UFKiZFiqV8G56jWG5bH3ehdlP3bMiXUuyMKOD3PJOh+zXTgfnU3nZFJH
+	 7Bb570r+dWC+Q==
+Date: Wed, 29 Oct 2025 20:11:22 +0000
+To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
+From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me
+Subject: [PATCH v6 18/18] x86/kasan: Make software tag-based kasan available
+Message-ID: <d98f04754c3f37f153493c13966c1e02852f551d.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
+References: <cover.1761763681.git.m.wieczorretman@pm.me>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: f951758d099748a231d1551fe212ba144d88e29b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] PCI: brcmstb: Add a way to indicate if PCIe bridge
- is active
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
- jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251029193616.3670003-1-james.quinlan@broadcom.com>
- <20251029193616.3670003-2-james.quinlan@broadcom.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251029193616.3670003-2-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/25 12:36, Jim Quinlan wrote:
-> In a future commit, a new handler will be introduced that in part does
-> reads and writes to some of the PCIe registers.  When this handler is
-> invoked, it is paramount that it does not do these register accesses when
-> the PCIe bridge is inactive, as this will cause CPU abort errors.
-> 
-> To solve this we keep a spinlock that guards a variable which indicates
-> whether the bridge is on or off.  When the bridge is on, access of the PCIe
-> HW registers may proceed.
-> 
-> Since there are multiple ways to reset the bridge, we introduce a general
-> function to obtain the spinlock, call the specific function that is used
-> for the specific SoC, sets the bridge active indicator variable, and
-> releases the spinlock.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Make CONFIG_KASAN_SW_TAGS available for x86 machines if they have
+ADDRESS_MASKING enabled (LAM) as that works similarly to Top-Byte Ignore
+(TBI) that allows the software tag-based mode on arm64 platform.
+
+Set scale macro based on KASAN mode: in software tag-based mode 16 bytes
+of memory map to one shadow byte and 8 in generic mode.
+
+Disable CONFIG_KASAN_INLINE and CONFIG_KASAN_STACK when
+CONFIG_KASAN_SW_TAGS is enabled on x86 until the appropriate compiler
+support is available.
+
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+---
+Changelog v6:
+- Don't enable KASAN if LAM is not supported.
+- Move kasan_init_tags() to kasan_init_64.c to not clutter the setup.c
+  file.
+- Move the #ifdef for the KASAN scale shift here.
+- Move the gdb code to patch "Use arithmetic shift for shadow
+  computation".
+- Return "depends on KASAN" line to Kconfig.
+- Add the defer kasan config option so KASAN can be disabled on hardware
+  that doesn't have LAM.
+
+Changelog v4:
+- Add x86 specific kasan_mem_to_shadow().
+- Revert x86 to the older unsigned KASAN_SHADOW_OFFSET. Do the same to
+  KASAN_SHADOW_START/END.
+- Modify scripts/gdb/linux/kasan.py to keep x86 using unsigned offset.
+- Disable inline and stack support when software tags are enabled on
+  x86.
+
+Changelog v3:
+- Remove runtime_const from previous patch and merge the rest here.
+- Move scale shift definition back to header file.
+- Add new kasan offset for software tag based mode.
+- Fix patch message typo 32 -> 16, and 16 -> 8.
+- Update lib/Kconfig.kasan with x86 now having software tag-based
+  support.
+
+Changelog v2:
+- Remove KASAN dense code.
+
+ Documentation/arch/x86/x86_64/mm.rst | 6 ++++--
+ arch/x86/Kconfig                     | 4 ++++
+ arch/x86/boot/compressed/misc.h      | 1 +
+ arch/x86/include/asm/kasan.h         | 4 ++++
+ arch/x86/mm/kasan_init_64.c          | 5 +++++
+ lib/Kconfig.kasan                    | 3 ++-
+ 6 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/arch/x86/x86_64/mm.rst b/Documentation/arch/x86/=
+x86_64/mm.rst
+index a6cf05d51bd8..ccbdbb4cda36 100644
+--- a/Documentation/arch/x86/x86_64/mm.rst
++++ b/Documentation/arch/x86/x86_64/mm.rst
+@@ -60,7 +60,8 @@ Complete virtual memory map with 4-level page tables
+    ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused=
+ hole
+    ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual me=
+mory map (vmemmap_base)
+    ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused=
+ hole
+-   ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shad=
+ow memory
++   ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shad=
+ow memory (generic mode)
++   fffff40000000000 |   -8    TB | fffffbffffffffff |    8 TB | KASAN shad=
+ow memory (software tag-based mode)
+   __________________|____________|__________________|_________|___________=
+_________________________________________________
+                                                               |
+                                                               | Identical =
+layout to the 56-bit one from here on:
+@@ -130,7 +131,8 @@ Complete virtual memory map with 5-level page tables
+    ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused=
+ hole
+    ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual me=
+mory map (vmemmap_base)
+    ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused=
+ hole
+-   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
+ow memory
++   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
+ow memory (generic mode)
++   ffeffc0000000000 |   -6    PB | fffffbffffffffff |    4 PB | KASAN shad=
+ow memory (software tag-based mode)
+   __________________|____________|__________________|_________|___________=
+_________________________________________________
+                                                               |
+                                                               | Identical =
+layout to the 47-bit one from here on:
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index fa3b616af03a..7c73a2688172 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -67,6 +67,7 @@ config X86
+ =09select ARCH_CLOCKSOURCE_INIT
+ =09select ARCH_CONFIGURES_CPU_MITIGATIONS
+ =09select ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
++=09select ARCH_DISABLE_KASAN_INLINE=09if X86_64 && KASAN_SW_TAGS
+ =09select ARCH_ENABLE_HUGEPAGE_MIGRATION if X86_64 && HUGETLB_PAGE && MIGR=
+ATION
+ =09select ARCH_ENABLE_MEMORY_HOTPLUG if X86_64
+ =09select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
+@@ -196,6 +197,8 @@ config X86
+ =09select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ =09select HAVE_ARCH_KASAN=09=09=09if X86_64
+ =09select HAVE_ARCH_KASAN_VMALLOC=09=09if X86_64
++=09select HAVE_ARCH_KASAN_SW_TAGS=09=09if ADDRESS_MASKING
++=09select ARCH_NEEDS_DEFER_KASAN=09=09if ADDRESS_MASKING
+ =09select HAVE_ARCH_KFENCE
+ =09select HAVE_ARCH_KMSAN=09=09=09if X86_64
+ =09select HAVE_ARCH_KGDB
+@@ -406,6 +409,7 @@ config AUDIT_ARCH
+ config KASAN_SHADOW_OFFSET
+ =09hex
+ =09depends on KASAN
++=09default 0xeffffc0000000000 if KASAN_SW_TAGS
+ =09default 0xdffffc0000000000
+=20
+ config HAVE_INTEL_TXT
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/mis=
+c.h
+index db1048621ea2..ded92b439ada 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -13,6 +13,7 @@
+ #undef CONFIG_PARAVIRT_SPINLOCKS
+ #undef CONFIG_KASAN
+ #undef CONFIG_KASAN_GENERIC
++#undef CONFIG_KASAN_SW_TAGS
+=20
+ #define __NO_FORTIFY
+=20
+diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
+index 2372397bc3e5..8320fffc71a1 100644
+--- a/arch/x86/include/asm/kasan.h
++++ b/arch/x86/include/asm/kasan.h
+@@ -7,6 +7,7 @@
+ #include <linux/types.h>
+ #define KASAN_SHADOW_OFFSET _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
+=20
++#ifdef CONFIG_KASAN_SW_TAGS
+ /*
+  * LLVM ABI for reporting tag mismatches in inline KASAN mode.
+  * On x86 the UD1 instruction is used to carry metadata in the ECX registe=
+r
+@@ -24,7 +25,10 @@
+ #define KASAN_ECX_WRITE=09=090x10
+ #define KASAN_ECX_SIZE_MASK=090x0f
+ #define KASAN_ECX_SIZE(ecx)=09(1 << ((ecx) & KASAN_ECX_SIZE_MASK))
++#define KASAN_SHADOW_SCALE_SHIFT 4
++#else
+ #define KASAN_SHADOW_SCALE_SHIFT 3
++#endif
+=20
+ /*
+  * Compiler uses shadow offset assuming that addresses start
+diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+index e69b7210aaae..4a5a4a4d43db 100644
+--- a/arch/x86/mm/kasan_init_64.c
++++ b/arch/x86/mm/kasan_init_64.c
+@@ -465,4 +465,9 @@ void __init kasan_init(void)
+=20
+ =09init_task.kasan_depth =3D 0;
+ =09kasan_init_generic();
++
++=09if (boot_cpu_has(X86_FEATURE_LAM))
++=09=09kasan_init_sw_tags();
++=09else
++=09=09pr_info("KernelAddressSanitizer not initialized (sw-tags): hardware =
+doesn't support LAM\n");
+ }
+diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+index a4bb610a7a6f..d13ea8da7bfd 100644
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -112,7 +112,8 @@ config KASAN_SW_TAGS
+=20
+ =09  Requires GCC 11+ or Clang.
+=20
+-=09  Supported only on arm64 CPUs and relies on Top Byte Ignore.
++=09  Supported on arm64 CPUs that support Top Byte Ignore and on x86 CPUs
++=09  that support Linear Address Masking.
+=20
+ =09  Consumes about 1/16th of available memory at kernel start and
+ =09  add an overhead of ~20% for dynamic allocations.
+--=20
+2.51.0
+
+
 
