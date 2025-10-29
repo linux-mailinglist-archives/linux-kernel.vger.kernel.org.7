@@ -1,175 +1,109 @@
-Return-Path: <linux-kernel+bounces-875682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312F0C19979
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9EE8C199E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C99034E2478
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:10:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAA014FE8B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9B62F5496;
-	Wed, 29 Oct 2025 10:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DAE2E764C;
+	Wed, 29 Oct 2025 10:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDeN95tO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r5q0vX0A"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3AA23E342
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F382E6CCB;
+	Wed, 29 Oct 2025 10:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761732600; cv=none; b=ChrECIL27if1jfT5hx6mhbZ4YOoNbi+mKLNLo6kFuNI5ZpyrT6H29+ifUG5V4FHANtbaWnJY/+Zgj6P3rnZGswkuZzcg45Qm7Kb7uBAxN2qLpBv6d3up29FMPNBc2XKRVxIkbT1HPN9l/K3/rzz4CiN3Di4Fzst7Sdvdq+TDiQQ=
+	t=1761732718; cv=none; b=kMfLGn+oUWNVn1XkNeTfyoniE90OadMhnsjeR8LJO7uHzhNtOPHb4qOdLgBJfxcY4QJuWPIU/OfRHx0pbJg4VwAR+q2vNiy2gqyUX6SlQrk0umH5CbLwd3IYXSyjDkEDRHa89bj+p6++L67RJmLYLbQ6LL8nNte99IPJv9NL0QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761732600; c=relaxed/simple;
-	bh=Q+xHtZ6LCUfDVi4zhyxd0pSM1tPgfsgGrZ8Ux4ie/xI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ev1AKhwAWX1xiBmLrnjWJxiCyIEpsy2cQ4juzhuZzzOaVfygzuJ1FMu+rsVXunBDrgyflz2mksB6QCOSpCGZIthlRfbjEiIWYFzuxRa8OoPcgf1HZc3YTbmO5zbvf+J3SCV28FwCY9+NfXc4sq1kDjuTmMkRj13w+wMlGK4he4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDeN95tO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761732597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F7va99Zg9nu4+XxtsT3y+i0Qg89ua4ByIHfysL3F+F4=;
-	b=VDeN95tOHiAf5nLj+XF/8L2OMAhP13w8G/DDQel8bmKmlWTDkwwLEFxGaLv8QHhri+Islz
-	ClSDlFMhn62ZWJRiRAIzX6xBfCni1aWEQhOtIVuWs8Rx8s6/kC1ihI4u7aGF7zvdeSxlnW
-	BUDU9OkeHYJpCW3utqFQuKluGXM/3RY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-tJiY9DE8O3ugeiiLWlvOeA-1; Wed, 29 Oct 2025 06:09:55 -0400
-X-MC-Unique: tJiY9DE8O3ugeiiLWlvOeA-1
-X-Mimecast-MFC-AGG-ID: tJiY9DE8O3ugeiiLWlvOeA_1761732594
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4298da9effcso4895619f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:09:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761732594; x=1762337394;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F7va99Zg9nu4+XxtsT3y+i0Qg89ua4ByIHfysL3F+F4=;
-        b=eC+vUkbCpR7/G93F0IMWIdgGyUcaIMbAEW7YiOfQr91L8nFexbzvaePhD3QOOZvp8F
-         jXRB8aMvVLgyiMxbHo3HMPC1dYNszrIVBmM9o0iLCMpLb/k2COfbXRBz0SeeQCt2iAul
-         sFAcKr3wRHiC85XSsjrjicSJwlpBgHOnmJx5A/trznqlHdSc75FJPjXPyu/9qZKaPqC9
-         j7ya0t7oD1wse0bF+ttCPzLYmWHY0OB5y3ssNZeRsr959dH6+qr3xr3hLP05njxkdUxB
-         /mEdwuKxHOM2UfMNMM1Dd0H4oPAazgCIzSEbFAPXXb970iwcbVZ8LpSzR2YZEocn5WJT
-         /R1g==
-X-Gm-Message-State: AOJu0YybV4ft6OGOjiQZG3/I4ORb1xaH8Ko2KQFkkP6b+uADuYMY2lTU
-	g+pD5mHfjoUVdPr7YPu4vpQepOdQlIhU8jPnna1M0Ecyg+AlpVfWyBr01SYY3UDXPaAjPEoYspU
-	W5ddjapJwdYlYRfgD83VGH/Uykd8Wju/XphZ0c+a6+HE967vSOUY4MLtObIRHIHjIfw==
-X-Gm-Gg: ASbGncujc+ewNuMgFRzAJKbMGWP1yMkEQcU9jIXc9cjj70cFkgzfSogdS5hpQzmZ/Y3
-	L8LIzY/PZZqS18eqw39wyRYrtSekGM3Xd4u5cz5Nht2D3F/mNcjCwlQaITDWrlCDJVGfpMtECsB
-	6ahu7tmd+eC64gugquQKllK6TmfwpRjMX4UZLytF5tyQtwIrhwaEQDOK1QEXgbHNJjQyX79bD04
-	EHmJE8rkEDEZ5HUdIINcOSrAUlfxpDo7Nyn7OnFK341wjCRzcNZxdNmfbqSPsdg8BLmVSVPjb8E
-	teyV06wD8CN2PNW9ISj2ItG6Ad1lyLAzHlcXe0Ui8/RJDueR5gKjC4HPrMPawWJolMgCtd79p8I
-	6tl+tikBvUIUoKx/RYSJ6S98O54suHRfcA42QexAZgV2kzSohcNNuR+rTCrGH
-X-Received: by 2002:a05:6000:2089:b0:428:4354:aa43 with SMTP id ffacd0b85a97d-429aef83083mr1733928f8f.18.1761732594344;
-        Wed, 29 Oct 2025 03:09:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMwZOd1Sm4LKIO70Dn8iCGAQm9z32hncQVtTx+dFITCY/jcrLahS/V2gOWr58H4oqqEmvh5w==
-X-Received: by 2002:a05:6000:2089:b0:428:4354:aa43 with SMTP id ffacd0b85a97d-429aef83083mr1733872f8f.18.1761732593822;
-        Wed, 29 Oct 2025 03:09:53 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952e3201sm25467518f8f.47.2025.10.29.03.09.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 03:09:52 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Nicolas
- Saenz Julienne <nsaenzju@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Josh
- Poimboeuf <jpoimboe@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Arnd
- Bergmann <arnd@arndb.de>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- "David S. Miller" <davem@davemloft.net>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, Josh
- Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, Andrew
- Morton <akpm@linux-foundation.org>, Masahiro Yamada
- <masahiroy@kernel.org>, Han Shen <shenhan@google.com>, Rik van Riel
- <riel@surriel.com>, Jann Horn <jannh@google.com>, Dan Carpenter
- <dan.carpenter@linaro.org>, Oleg Nesterov <oleg@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Clark Williams <williams@redhat.com>, Yair
- Podemsky <ypodemsk@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>,
- Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [PATCH v6 23/29] context-tracking: Introduce work deferral
- infrastructure
-In-Reply-To: <aQDMfu0tzecFzoGr@localhost.localdomain>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <20251010153839.151763-24-vschneid@redhat.com>
- <aQDMfu0tzecFzoGr@localhost.localdomain>
-Date: Wed, 29 Oct 2025 11:09:50 +0100
-Message-ID: <xhsmh5xbyqas1.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1761732718; c=relaxed/simple;
+	bh=CUUOdyc/khnhMaB/pO72Lo9pzWdd7f2cZa7Ceux+uPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrdABoMSUh5SlBuopQX/9KZHfAUO0AE9OwL8bKDBWAc93G2qZF126Y/JjAy+jY+8gk6kxQKAhPXlEBQ4GWWt1+b1da31Llhb9pULoZFeG/2BiC3VFMoPXgQOaz5pbR0dJla4n8Gx5QyUEbdNFyydr4giRQFW5wrDIKGey2i3SQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r5q0vX0A; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QOFc5nggaPB8WHBRshnnKBHCTEMMmozxPcWhZmUgnVY=; b=r5q0vX0ASiswNLiQRVMZfzsQAW
+	BbZmIE7A5pMxsPkzx19DGaXFTYJPzivHdkJmAqvydnFnIXXe5+bZT37d3CtAeUhYyWiJr6MKKgJL3
+	EfaEFxeXT2E01Ki6vOMxbjtZvlA6m/Tqc+czq1S9LH26MiZ/LHvCuuiP6vXvMfOtjOUzy4cEvSYeA
+	59zOxwV1BuOHoo91hpStae2M4WZmF4TgPb8+For7q784tcxixrmckLJH339LX3pguOCTLe/XSoZb6
+	tVFlRlGJY2hkIB7vwdq/oFRHnijBOd/U7hCh/9cogRA5YIN4svQhsPXBGofj5epdwSV++dZN8peBe
+	mUxikPHA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE39e-00000006zld-2nwT;
+	Wed, 29 Oct 2025 10:11:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B0AA8300343; Wed, 29 Oct 2025 11:11:46 +0100 (CET)
+Date: Wed, 29 Oct 2025 11:11:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [PATCH 1/2] perf/x86/intel: Add PMU support for WildcatLake
+Message-ID: <20251029101146.GG3419281@noisy.programming.kicks-ass.net>
+References: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
+ <ef7801a3-d2c3-44da-b0da-d014bd7e3e8f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef7801a3-d2c3-44da-b0da-d014bd7e3e8f@linux.intel.com>
 
-On 28/10/25 15:00, Frederic Weisbecker wrote:
-> Le Fri, Oct 10, 2025 at 05:38:33PM +0200, Valentin Schneider a =C3=A9crit=
- :
->> +	old =3D atomic_read(&ct->state);
->> +
->> +	/*
->> +	 * The work bit must only be set if the target CPU is not executing
->> +	 * in kernelspace.
->> +	 * CT_RCU_WATCHING is used as a proxy for that - if the bit is set, we
->> +	 * know for sure the CPU is executing in the kernel whether that be in
->> +	 * NMI, IRQ or process context.
->> +	 * Set CT_RCU_WATCHING here and let the cmpxchg do the check for us;
->> +	 * the state could change between the atomic_read() and the cmpxchg().
->> +	 */
->> +	old |=3D CT_RCU_WATCHING;
->
-> Most of the time, the task should be either idle or in userspace. I'm sti=
-ll not
-> sure why you start with a bet that the CPU is in the kernel with RCU watc=
-hing.
->
+On Wed, Oct 29, 2025 at 05:58:38PM +0800, Mi, Dapeng wrote:
+> 
+> On 9/8/2025 2:16 PM, Dapeng Mi wrote:
+> > WildcatLake is a variant of PantherLake and shares same PMU features,
+> > so directly reuse Pantherlake's code to enable PMU features for
+> > WildcatLake.
+> >
+> > Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> > ---
+> >  arch/x86/events/intel/core.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> > index 28f5468a6ea3..fe65be0b9d9c 100644
+> > --- a/arch/x86/events/intel/core.c
+> > +++ b/arch/x86/events/intel/core.c
+> > @@ -7596,6 +7596,7 @@ __init int intel_pmu_init(void)
+> >  		break;
+> >  
+> >  	case INTEL_PANTHERLAKE_L:
+> > +	case INTEL_WILDCATLAKE_L:
+> >  		pr_cont("Pantherlake Hybrid events, ");
+> >  		name = "pantherlake_hybrid";
+> >  		goto lnl_common;
+> >
+> > base-commit: 16ed389227651330879e17bd83d43bd234006722
+> 
+> Hi Peter,
+> 
+> Wildcat Lake is a variant of Panther Lake, it shares same PMU capabilities
+> with Panther Lake. Could you please review this small patch-set? If no
+> issue, could you please merge this patch-set? Thanks.
 
-Right I think I got that the wrong way around when I switched to using
-CT_RCU_WATCHING vs CT_STATE_KERNEL. That wants to be
-
-  old &=3D ~CT_RCU_WATCHING;
-
-i.e. bet the CPU is NOHZ-idle, if it's not the cmpxchg fails and we don't
-store the work bit.
-
->> +	/*
->> +	 * Try setting the work until either
->> +	 * - the target CPU has entered kernelspace
->> +	 * - the work has been set
->> +	 */
->> +	do {
->> +		ret =3D atomic_try_cmpxchg(&ct->state, &old, old | (work << CT_WORK_S=
-TART));
->> +	} while (!ret && !(old & CT_RCU_WATCHING));
->
-> So this applies blindly to idle as well, right? It should work but note t=
-hat
-> idle entry code before RCU watches is also fragile.
->
-
-Yeah I remember losing some hair trying to grok the idle entry situation;
-we could keep this purely NOHZ_FULL and have the deferral condition be:
-
-  (ct->state & CT_STATE_USER) && !(ct->state & CT_RCU_WATCHING)
-
+Yes, sorry, got lost. Let me go queue them momentarily. Thanks!
 
