@@ -1,251 +1,139 @@
-Return-Path: <linux-kernel+bounces-875831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F36C19E9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:01:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766DFC19EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D68FC3542CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:01:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 665F44E100C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B652EA72A;
-	Wed, 29 Oct 2025 11:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A464C30B512;
+	Wed, 29 Oct 2025 11:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d2Ab3UA0"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eRfHB5ns"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60C62D8DC8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6361E5B70;
+	Wed, 29 Oct 2025 11:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761735677; cv=none; b=l12+h4UNccfvrjeGGRIpwArHdezt/fJUpntY9fo+8uYbdwTJVlrij9yxshTwVbK7nXDE2atQ2CHcYpq63U7bcko8j/MCSjmAXqqpb1rodQkuh5mv9ptrHpqjxByeuGB8IKazaEqOrfCv9I2SCYCLZtJMOrEpo1WjteGNT7WgUVw=
+	t=1761735938; cv=none; b=XfShl0A24QI2ELx5x4f4p9atgjrd4wJPmg/l8hyqTmq6vg7Ztp98cKi7V0zqMe1goAZl+D6olxlrBT4Om8QVCs/K2HCOBO+HEXHIIC+JoxHlm4tHfTLscdwEv7n1bP4MfEJfBximjox5J3bRln5Kslqb91kRs160b4oyvCDcu2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761735677; c=relaxed/simple;
-	bh=hXAUBSkUqybhhXZyTYQ9DuFdsPNmrVbpbQYulz4IDPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iIrGn/yQrx7/x9ndNfwtasiK/VmOqiMRr9QpPy8jCwuTRNC4mywWKTf+7NvniqEvtB5AOZ6+4YfPEdeg0R3YmEHoJ5Q0e+iwdpU+lohkMpgjVWXsTonPfaoBfu5qc8nSwkWgw8GBcLJ2UVkseRqcjOZD5QWsDVT5xRWjLs08CZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d2Ab3UA0; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-891208f6185so649086485a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761735675; x=1762340475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eQWDpVejCHNnm4EwaVB6drbJOWDW2V1Yh8yBgxJN8YA=;
-        b=d2Ab3UA0YObITkdK6FoBmoK0OZVlsKdKYJPms8kn3nOg2HLJfJA+G1sL/ZyOVvf8wo
-         KBylXVJ/xk5CYCcoW7Oj2veY2xoOF8Y7ksl6ogjdGO2jvdKIL6I/3WN3kXwammHa4Hex
-         niBiJrBggqs+lcEY7KMiyFCzSLWKcsxyKQpi95l2JndUav0dEOJahdoRI7a8K1m9jdph
-         XYiFWMHG8tvaT1g8qbQqg9q05UFZ1BCSUBEtvu2TJhg5ylTRCSh1iC3ysxaLA8iY1EY0
-         SQE7mh9veBTJvJl5IJXUD4yFccv5hgRI7/On1htphSMKry5IsVfP/xcir+5EU0FmdYoe
-         fdTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761735675; x=1762340475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eQWDpVejCHNnm4EwaVB6drbJOWDW2V1Yh8yBgxJN8YA=;
-        b=Zc9nagc8FpC5wWGLF9S9ojWESfhaBh6RocJU9VEE1FoiQnf71KRerVZqhHZj3N3N5g
-         z5h2ou7LBgmlvfbo/U4whN3VA6zHclVWZ8jq225tFmI2cwQJTsCVlUcXyXL+0yorH1qQ
-         4reqZTcP5jYXD9RQVjM424liFgRyBmvnlmpUh35Sfwa8MPMig8FonMuP59lg+3kSoCZK
-         IzUKf0WyOJZLaF6/EOF7YZ03TxKlPnGDk6l3sRr7960FknLKXcDNy3Xra/AlqARjewxA
-         57blDoODazZKNdfA2oQItD/IRDUe5seSbCA7QCA5Uto4KhZsgibCyqS7II626VCTBzkj
-         u2TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfGHf8wsSkQQAK7AVUZLzkj45ALLK86njkL67mOIWVKnIzDmt1k18tL4yk612t+84W33KbdokbFrYgcFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEvzS2Hdk5gv/pLxjSKVgaUIDJlqwxapdIA3hue83aCP/ldEKb
-	sqIh+JjUEFvsw93n1v3b4a98sQ6hnIX45U0WcVGNr8Ve4ZGRfu7k2tQGdsuZeReLs33D05+iNqw
-	NE6R77b4z4+e9gP+/TIlUl7Ymppn6GmQ5xj+CiYyQuQ==
-X-Gm-Gg: ASbGncs8SdLwB03mpRlp2Mt85+sCq5QqiuZh0dKspGWpmJi23sdBWzTxXCtgdzK+xQq
-	YN2zI89YkEbhYcFcqPBiNT8b4lOXuJK9lk/XUIS6RagTYneNLwQR35BUAMRfyliltKdLf3gaBH/
-	aP296BTK3rUuzygc+E9MpkXqI9G7QgpLOa/cA9ZCPqOm1vU6O9DZZCTkGNfQl1o4r2ZpZ7RHZFO
-	d7690LC+BwE+AOEz5m7Kn2J+shCbaecf5cVedsXUtBvfwy0RUdod573RPoHhvTi3Y1zwTiNajV+
-	mWXXS46FDxwQxEycGA==
-X-Google-Smtp-Source: AGHT+IHWP5Cbc3G4W0Ik0NLLQcf3Rmww0dInCJA9bBcxiEAnG512YgHlmnNkFU3hoCfwOl86Kin1pgVlI3IyVxMDBkU=
-X-Received: by 2002:a05:620a:7019:b0:829:fa5d:6f0d with SMTP id
- af79cd13be357-8a8efb03ddfmr306069985a.82.1761735674490; Wed, 29 Oct 2025
- 04:01:14 -0700 (PDT)
+	s=arc-20240116; t=1761735938; c=relaxed/simple;
+	bh=mUg1Il3vEFNsxJBIHBHWg1fUx+lCuD7mOLuml/XS/kA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YnbSPi/y1mEacbqn/MvKidc6Ll3dlE+M/lwVCqGZT8tEVxQ/kCSsT/srXjTNbOXjRVfdnF1CK+V34bM5ae0qQx0W9NMY0A+SzdodWAH75Rm3jbx5Sr52H5SraYU8ffa7AwotnHhrxsf4uXJXvMI4jCfKjLvpBsX4PSMd5JSUyoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eRfHB5ns; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761735934;
+	bh=mUg1Il3vEFNsxJBIHBHWg1fUx+lCuD7mOLuml/XS/kA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eRfHB5nsrIx60bM6lSYTUZqKtS5Pa1OP6sGcYsJddJ0b05Uodu+JnvDDIS6sACk99
+	 50QDCdU8GShKx6PB8udgn8h1R5GvWHl/Mda9iQ97OTt3saA0BRGWK4Zlv5DknpJNti
+	 7DdaYDPP+5pJRotYCu9a03ChBbPmnENIsYaWfcDb+DzywBoKUYaG9YRtp/AnBPd3zG
+	 XOAC6jemBWGFUMxkXcmuOZNYu1yLpMSWMGtTmyhvX2yQy3dcaGGFKtzX/QlZVs6iJ9
+	 0pPhc7W1jsX/4H7ghLo8Wr1/+hB6RaMfTRjf0NR8n7CsExfF5IdhPYQ7yjkGp/aqc/
+	 ftDzSawq8J3lQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C0BA117E00AC;
+	Wed, 29 Oct 2025 12:05:33 +0100 (CET)
+Message-ID: <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
+Date: Wed, 29 Oct 2025 12:05:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-cpu_cluster_component_pm-v1-0-31355ac588c2@oss.qualcomm.com>
-In-Reply-To: <20251027-cpu_cluster_component_pm-v1-0-31355ac588c2@oss.qualcomm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Wed, 29 Oct 2025 11:01:03 +0000
-X-Gm-Features: AWmQ_bmBZ4u6Nr5AkhU0uSKV2P-I149L6WKOoDdLwfOOqdcc5hyzFz1zWOkxIwc
-Message-ID: <CAJ9a7VipQh=y0o+6k=fLMMK408E5eGD6vhY2TKBMm+q63NUiWA@mail.gmail.com>
-Subject: Re: [PATCH 00/12] coresight: Add CPU cluster funnel/replicator/tmc support
-To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, kernel@oss.qualcomm.com, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Jie Gan <jie.gan@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
+ firmware-name not present
+To: Chen-Yu Tsai <wenst@chromium.org>, mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, arnd@arndb.de, andersson@kernel.org,
+ matthias.bgg@gmail.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Il 29/10/25 10:14, Chen-Yu Tsai ha scritto:
+> On Wed, Oct 15, 2025 at 4:41 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> After a reply on the mailing lists [1] it emerged that the DT
+>> property "firmware-name" should not be relied on because of
+>> possible issues with firmware versions.
+>> For MediaTek SCP, there has never been any firmware version vs
+>> driver version desync issue but, regardless, the firmwares are
+>> always using the same name and they're always located in a path
+>> with a specific pattern.
+>>
+>> Instead of unconditionally always relying on the firmware-name
+>> devicetree property to get a path to the SCP FW file, drivers
+>> should construct a name based on what firmware it knows and
+>> what hardware it is running on.
+>>
+>> In order to do that, add a `scp_get_default_fw_path()` function
+>> that constructs the path and filename based on two of the infos
+>> that the driver can get:
+>>   1. The compatible string with the highest priority (so, the
+>>      first one at index 0); and
+>>   2. The type of SCP HW - single-core or multi-core.
+>>
+>> This means that the default firmware path is generated as:
+>>   - Single core SCP: mediatek/(soc_model)/scp.img
+>>     for example:     mediatek/mt8183/scp.img;
+>>
+>>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
+>>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
+>>                      mediatek/mt8188/scp_c1.img for Core 1.
+> 
+> I know this patch has been applied, but this scheme doesn't actually
+> follow what is already in the linux-firmware repository.
+> 
+> For all the supported platforms, the first core, even for multi core SCP,
+> already have their firmware uploaded as just "scp.img". Multicore SCP
+> is seen in MT8195 and MT8188.
 
-This entire set seems to initially check the generic power domain for
-a list of associated CPUs, then check CPU state for all other
-operations.
+The only one that is affected is MT8188, which needs a rename or a symlink in
+linux-firmware.
 
-Why not simply use the generic power domain state itself, along with
-the power up / down notifiers to determine if the registers are safe
-to access? If the genpd is powered up then the registers must be safe
-to access?
+MT8195 is not affected by this change, because the SCP is used as single-core,
+hence this code will look for scp.img and not for scp_c0.img.
 
-Regards
+> 
+> I guess I can send a followup patch?
 
-Mike
+The only followup patch that I deem to be necessary is one adding a symlink
+or renaming for MT8188's SCP and nothing else.
 
-On Tue, 28 Oct 2025 at 06:28, Yuanfang Zhang
-<yuanfang.zhang@oss.qualcomm.com> wrote:
->
-> This patch series introduces support for CPU cluster local CoreSight comp=
-onents,
-> including funnel, replicator, and TMC, which reside inside CPU cluster
-> power domains. These components require special handling due to power
-> domain constraints.
->
-> Unlike system-level CoreSight devices, CPU cluster local components share=
- the
-> power domain of the CPU cluster. When the cluster enters low-power mode (=
-LPM),
-> the registers of these components become inaccessible. Importantly, `pm_r=
-untime_get`
-> calls alone are insufficient to bring the CPU cluster out of LPM, making
-> standard register access unreliable in such cases.
->
-> To address this, the series introduces:
-> - Device tree bindings for CPU cluster local funnel, replicator, and TMC.
-> - Introduce a cpumask to record the CPUs belonging to the cluster where t=
-he
->   cpu cluster local component resides.
-> - Safe register access via smp_call_function_single() on CPUs within the
->   associated cpumask, ensuring the cluster is power-resident during acces=
-s.
-> - Delayed probe support for CPU cluster local components when all CPUs of
->   this CPU cluster are offline, re-probe the component when any CPU in th=
-e
->   cluster comes online.
-> - Introduce `cs_mode` to link enable interfaces to avoid the use
->   smp_call_function_single() under perf mode.
->
-> Patch summary:
-> Patch 1: Adds device tree bindings for CPU cluster funnel/replicator/TMC =
-devices.
-> Patches 2=E2=80=933: Add support for CPU cluster funnel.
-> Patches 4-6: Add support for CPU cluster replicator.
-> Patches 7-10: Add support for CPU cluster TMC.
-> Patch 11: Add 'cs_mode' to link enable functions.
-> Patches 12-13: Add Coresight nodes for APSS debug block for x1e80100 and
-> fix build issue.
->
-> Verification:
->
-> This series has been verified on sm8750.
->
-> Test steps for delay probe:
->
-> 1. limit the system to enable at most 6 CPU cores during boot.
-> 2. echo 1 >/sys/bus/cpu/devices/cpu6/online.
-> 3. check whether ETM6 and ETM7 have been probed.
->
-> Test steps for sysfs mode:
->
-> echo 1 >/sys/bus/coresight/devices/tmc_etf0/enable_sink
-> echo 1 >/sys/bus/coresight/devices/etm0/enable_source
-> echo 1 >/sys/bus/coresight/devices/etm6/enable_source
-> echo 0 >/sys/bus/coresight/devices/etm0/enable_source
-> echo 0 >/sys/bus/coresight/devicse/etm6/enable_source
-> echo 0 >/sys/bus/coresight/devices/tmc_etf0/enable_sink
->
-> echo 1 >/sys/bus/coresight/devices/tmc_etf1/enable_sink
-> echo 1 >/sys/bus/coresight/devcies/etm0/enable_source
-> cat /dev/tmc_etf1 >/tmp/etf1.bin
-> echo 0 >/sys/bus/coresight/devices/etm0/enable_source
-> echo 0 >/sys/bus/coresight/devices/tmc_etf1/enable_sink
->
-> echo 1 >/sys/bus/coresight/devices/tmc_etf2/enable_sink
-> echo 1 >/sys/bus/coresight/devices/etm6/enable_source
-> cat /dev/tmc_etf2 >/tmp/etf2.bin
-> echo 0 >/sys/bus/coresight/devices/etm6/enable_source
-> echo 0 >/sys/bus/coresight/devices/tmc_etf2/enable_sink
->
-> Test steps for sysfs node:
->
-> cat /sys/bus/coresight/devices/tmc_etf*/mgmt/*
->
-> cat /sys/bus/coresight/devices/funnel*/funnel_ctrl
->
-> cat /sys/bus/coresight/devices/replicator*/mgmt/*
->
-> Test steps for perf mode:
->
-> perf record -a -e cs_etm//k -- sleep 5
->
-> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-> ---
-> Yuanfang Zhang (12):
->       dt-bindings: arm: coresight: Add cpu cluster tmc/funnel/replicator =
-support
->       coresight-funnel: Add support for CPU cluster funnel
->       coresight-funnel: Handle delay probe for CPU cluster funnel
->       coresight-replicator: Add support for CPU cluster replicator
->       coresight-replicator: Handle delayed probe for CPU cluster replicat=
-or
->       coresight-replicator: Update mgmt_attrs for CPU cluster replicator =
-compatibility
->       coresight-tmc: Add support for CPU cluster ETF and refactor probe f=
-low
->       coresight-tmc-etf: Refactor enable function for CPU cluster ETF sup=
-port
->       coresight-tmc: Update tmc_mgmt_attrs for CPU cluster TMC compatibil=
-ity
->       coresight-tmc: Handle delayed probe for CPU cluster TMC
->       coresight: add 'cs_mode' to link enable functions
->       arm64: dts: qcom: x1e80100: add Coresight nodes for APSS debug bloc=
-k
->
->  .../bindings/arm/arm,coresight-dynamic-funnel.yaml |  23 +-
->  .../arm/arm,coresight-dynamic-replicator.yaml      |  22 +-
->  .../devicetree/bindings/arm/arm,coresight-tmc.yaml |  22 +-
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 885 +++++++++++++++=
-++++++
->  arch/arm64/boot/dts/qcom/x1p42100.dtsi             |  12 +
->  drivers/hwtracing/coresight/coresight-core.c       |   7 +-
->  drivers/hwtracing/coresight/coresight-funnel.c     | 260 +++++-
->  drivers/hwtracing/coresight/coresight-replicator.c | 343 +++++++-
->  drivers/hwtracing/coresight/coresight-tmc-core.c   | 396 +++++++--
->  drivers/hwtracing/coresight/coresight-tmc-etf.c    | 105 ++-
->  drivers/hwtracing/coresight/coresight-tmc.h        |  10 +
->  drivers/hwtracing/coresight/coresight-tnoc.c       |   3 +-
->  drivers/hwtracing/coresight/coresight-tpda.c       |   3 +-
->  include/linux/coresight.h                          |   3 +-
->  14 files changed, 1912 insertions(+), 182 deletions(-)
-> ---
-> base-commit: 01f96b812526a2c8dcd5c0e510dda37e09ec8bcd
-> change-id: 20251016-cpu_cluster_component_pm-ce518f510433
->
-> Best regards,
-> --
-> Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
->
+Please remember that some of those SoCs (including MT8195) allow the SCP to be
+configured as *either* single-core *or* dual-core - and usually firmwares for
+single-core configurations are not compatible with dual-core ones, because of
+the SRAM carveout/usage.
+
+Cheers,
+Angelo
+
+> 
+> 
+> ChenYu
 
 
---=20
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+
 
