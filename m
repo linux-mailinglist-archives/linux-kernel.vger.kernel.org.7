@@ -1,127 +1,191 @@
-Return-Path: <linux-kernel+bounces-875631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AC8C19721
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:45:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07810C197CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4292F19C216C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC82561CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833332E54D7;
-	Wed, 29 Oct 2025 09:45:13 +0000 (UTC)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24531AF25;
+	Wed, 29 Oct 2025 09:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXvyNhLs"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9813228507B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75A4225402
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731113; cv=none; b=S38lzOavvSHNTuRJN3PFvfiFRtXinJ/khf17l2xuraj67q6Cy27dM1lJvWqtzaqSnQj0Wbr47O0heITmRIojJDGVDZqhAUoGt5BuBaehz42ywrAasOq7kTLd/imcD/OasXZ8h4c2B/DXN2UK44FIEKOaknRkNqOxThge/aSI02A=
+	t=1761731159; cv=none; b=YXZYtmjUayAmyGTBQ2geSlBSxwSi82fzcd35VLd5WfVoCMYd903DsnLGgj1zFpO03yq8Le9V3zRwLQrK0bWEnfJYE1nwmGF0J5Wv1u+WlA1o3EynKdzm/aESiJCEEZxgN/f6jxJRtI27APeuPoO7Aiyc380uscGVf7mvtfxcToc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761731113; c=relaxed/simple;
-	bh=ul7h+XS6GRSBMYFmPhQ6YeIMEuayPqL/cWHKXtbASjE=;
+	s=arc-20240116; t=1761731159; c=relaxed/simple;
+	bh=4o1P0z9zgAdcg3159+pZiazrU0J4QU5VpIS8Y7AdyTI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=obBOn+JxqrJblrPKwKrJ8huL3tof/0/htPTuaDzeaN1MsvkujMdvIzsMrWYaIJn8kP0FKCnh3HnZR0nTPFuXNTHppWeYhAByI5vD/hUxXks/yAPwTn1wLZg9YrFOU3ESUbJBJDHWlr9K3SZySuYDqUaB2Y+9LTjGP1y0a9K7ODg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=KZ0OJixsTBDMCV3Z6jL3+aLM8P1kp/FCDPxwc7pBSssmsiXM4488g94i/6AVDCZNYMEQEQttPi8ziYGavKdK6pWZ1KTZc4rD3dp9/3AGTxHNMsMdKUyYUn+RTzwAqFX07GSDg3sfrbDsY6nrQxwRQRd3PzgHHsG3ussRgBN2NFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXvyNhLs; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-932c411d355so3231380241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:45:11 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7815092cd0bso83733857b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761731156; x=1762335956; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T+0dV49Z0hZQvL1JwoyFgg+j9v/HxeFYx2d1Gt9wCQ4=;
+        b=nXvyNhLsiC4mm3n0m2EBak1+nEu0PBavqaH1RVnAxjtT9Y4SQwQ0hYXC37SaVdUqNq
+         cIzw+jBiAKZIXCA92prJliUZjArWgaLt0Nt4+1o0YL2R+WJqpei4kSS6yAuU8/Gn/vBY
+         376mH2ffCsHWRyeIqYfTt/RxvuYwGXKxCtg1myKYt67I8YyqZAC6X1nXEu+3kypt+a/0
+         oKLnv861ibTA1bQJ5wM3e7AC3fB8hYV/Nv3dL+82FUTZabk7s03AdRDhErCUtqhrLmZi
+         M9QVypEqxMx176JycHS7SybFT//ZAwRrmDQJzIXpjr8kE9hYY6DjYxQ5uza1QpcvGXV0
+         IH5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761731110; x=1762335910;
+        d=1e100.net; s=20230601; t=1761731156; x=1762335956;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FUXGCcljy1WS6CKdaLlHjT9lGZyhiLJv69Z5NYW430U=;
-        b=lSd7/Z3CYEErR98bHVQkN9cOeACEh1VdNilxSdnqk7VFiNvvDOQnroYV1GUGRQAb5Y
-         WfRiCb7sA37HQD4P16mzq/WZpW2XgwW3xFIIKjFtTa5sFILQYYnPtZPlgi8VuMqzLqpw
-         OW9wGNqP7WO1fwNc7dSKX6he61ZrLBLrcHDQuOTSsGfoA8FIbmqp5sKLyUEfqLHb0IOL
-         mUqgj7GyCbqaa6eStobYLkV0G7FrdUqaqYmeRIGDyS9NKwu+2GvLvJfjeztiyvj5iyYh
-         d5VQN/TD2mo3veTG+JJkDAAmSjlx94qnGm/puPaz8OB6eo9dH9GrrHDQ2ZJE9lfmpeP2
-         GJOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYuYEtexpuah6zQTBgEnvIAYnKWQb9U8kz3S4fnswnR/+ydMqca5Gk1xN3PZO0A9FMWF14WQmoNZhuIvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz69+OK1kYVpiTNkaFZ4rJZG3Dh98n0X8v/c3F/9mRu477UQ6Kp
-	76X2NXlKJxbpMp3nh8zCVdeE6XvRBbFOybHQP4nB3Ywg1iN8uXHxoFWp7htb3rNc
-X-Gm-Gg: ASbGncsugr8YDLTJdCPjV8gGqhT860D7lYJKuLnV08qqWWyYtNrhmZ1aR62dGB8i1s8
-	7xVDt8QZMLdmIa9rit/LczNa6FJW9QHFcAdaYP0GZ1ropYpx1pmPqTzdsOwQGi1YnZFfxER4OE3
-	7e2x9S/U9hO/eUK4vLyhla1qTgn5pJIli4xl9+LcG1mxYgOy0BaSq0yGucfAs3vpg1CUK9N7vSS
-	xwV6G4cBJQozYtFm7Z1GLCYaXkBIDCrvxdC7Yj600qM0ZMxiN9AbIGih0bCeeEPAbXcrUPwnPLI
-	8rDJ3jT1clwq5LDumQk89fNGy2/8rRqhU56VszmX9O98tu8PpkfnSKWtwF954imATh5U1UWF4Cj
-	xN1UpkV9qSWZzPzyF+ZnTee2grPxvPaLCi9brpvW5MneGAjgTWLf0El7wQAc4sFbk6F5xoTjwfb
-	x/8aA84mU6tTYfLOFKCMjlx/VvE7d3kGLgjBqD1w==
-X-Google-Smtp-Source: AGHT+IGpYpfpzcs2itFEahqpjC0xTlTgyy/u37/lhNA5kTR7Zth1UwPbwt7uAPXfop+VNqA69PoSHA==
-X-Received: by 2002:a05:6102:3e84:b0:5d5:f49b:fcd8 with SMTP id ada2fe7eead31-5db905c7918mr530470137.13.1761731110137;
-        Wed, 29 Oct 2025 02:45:10 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db4e592e61sm4856736137.13.2025.10.29.02.45.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 02:45:09 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-932c3aa32f3so3528870241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:45:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUc7AuKUTSEjXFl2j2IeX5rBeFxfc0eOqCsmcWqkRhv8h8ZGkMN2cvtvZCWXjPN9G08Phl8DckHeJNBRKE=@vger.kernel.org
-X-Received: by 2002:a05:6102:2910:b0:5db:3111:9330 with SMTP id
- ada2fe7eead31-5db9066385fmr535126137.27.1761731109576; Wed, 29 Oct 2025
- 02:45:09 -0700 (PDT)
+        bh=T+0dV49Z0hZQvL1JwoyFgg+j9v/HxeFYx2d1Gt9wCQ4=;
+        b=Kx0YeaDeQzpF/c0wKBZqKfEJCDmDMsEtCsgoMW6mJ1VAOygrXol5isht8tP4fl/L/d
+         coJinVZwWlVOmT4x1uiceAu1S6/nTMUJ/UyD5OylRh3l76jj+bzam3XALMk6XNDrPCnC
+         sGQCzpT65mxMDwkCOSd939uM/8krPQuz0vypGxjaab5aS6ecyvGuvWsA5kl6ptr5eOIx
+         hVa8VwIgfp0NX8gtv3qtuOZuffq9zmXSCfjmmVBxRAkOLKhzh2ZX9IzozYdRx4ZoKFnQ
+         iiokZ7PyzmHIAicdjiCMIQ+VrJoUo3gYprg5bvuZiyRfo4dniUCYD6h9SDEzHHIVU6AX
+         Gsew==
+X-Forwarded-Encrypted: i=1; AJvYcCVxDIh7wDH5C29MgpUYwzpqG45GQw2VXWIciXYdT+ZgH7y02jsYazcvGSjjcKQQDnFbPQxopUpGqQyevG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj3GdWl1Xou9KjXUBTB4mXgB22fLHjyPYZ5Icvb12Y9ZtKkeMN
+	ZX1gRgMUL6f4+SgRnS9uy9ToxDtP90eiAP1forCzMjbbMBCERF7uZAz7s71zdjTOhAGqLH37Om7
+	fFnGcwLVR8Lv6WWhlh+SmE0fIUZq0hLM=
+X-Gm-Gg: ASbGncuLn3Bex1cWMmvW8nFlBm2pIGxIdp72v7KO8Y7+EP2/RCAUSGjTZ9ksTqmhChC
+	6yJ9ksv8CYzOnjJpuDq9LGpgAosK8QjfErEs5oGAj075wanXOQo1zBLVG1jRx/vvifr2EGsmO6r
+	JjFkbdXoF7stu9iIvXqGnXNWGWj6uGciLpxA940QQ8tgHnV22+HDV4FhPKRGzHlkpTlnXhXLyce
+	sfV/fFw7tYVNENg77doYsdy7vr3buEU6tL+yMqG1beGJNJ197w0XCzxwTm61NN+zNEgLQ==
+X-Google-Smtp-Source: AGHT+IFXTGFBQZQCvoFTcD2XW69zJNvRv2jA1skYdjLaN3X9V8WOQAc0sJLs73yBIhsOL2y0JL1ybcsga9Zkjczkf4s=
+X-Received: by 2002:a05:690c:680d:b0:785:bfd8:c4ad with SMTP id
+ 00721157ae682-78629298707mr36580707b3.3.1761731156514; Wed, 29 Oct 2025
+ 02:45:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029082101.92156-1-biju.das.jz@bp.renesas.com> <20251029082101.92156-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20251029082101.92156-2-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 10:44:58 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXaxk5mEDFJ3uWwdZYqkhd_jCRjVB55MJmHRZxyWGE=Pw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkf4dSdvLrN2gk-FVgCqZ8SF2_j8HOolSnL2gtCu3wVMEe_dcdoAdns_ts
-Message-ID: <CAMuHMdXaxk5mEDFJ3uWwdZYqkhd_jCRjVB55MJmHRZxyWGE=Pw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: serial: rsci: Drop "uart-has-rtscts: false"
-To: Biju <biju.das.au@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, stable@kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
+References: <20251029071435.88-1-kernel@airkyi.com> <20251029071435.88-11-kernel@airkyi.com>
+In-Reply-To: <20251029071435.88-11-kernel@airkyi.com>
+From: Peter Chen <hzpeterchen@gmail.com>
+Date: Wed, 29 Oct 2025 17:45:45 +0800
+X-Gm-Features: AWmQ_blYmsodv_vg4uKolYRe0NzpqIhwJ3rq0FrOe8J4voY-HqIG6eRi0roVBPc
+Message-ID: <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
+Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
+ support for DisplayPort
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>, 
+	Andy Yan <andy.yan@rock-chips.com>, Yubing Zhang <yubing.zhang@rock-chips.com>, 
+	Frank Wang <frank.wang@rock-chips.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Amit Sunil Dhamne <amitsd@google.com>, Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>, 
+	Diederik de Haas <didi.debian@cknow.org>, Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 29 Oct 2025 at 09:21, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+> +&i2c4 {
+> +       i2c-scl-rising-time-ns = <475>;
+> +       i2c-scl-falling-time-ns = <26>;
+> +       status = "okay";
+> +
+> +       usbc0: typec-portc@22 {
+> +               compatible = "fcs,fusb302";
+> +               reg = <0x22>;
+> +               interrupt-parent = <&gpio1>;
+> +               interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&usbc0_int>;
+> +               vbus-supply = <&vbus_typec>;
+> +
+> +               usb_con: connector {
+> +                       compatible = "usb-c-connector";
+> +                       label = "USB-C";
+> +                       data-role = "dual";
+> +                       power-role = "dual";
+> +                       try-power-role = "sink";
+> +                       op-sink-microwatt = <1000000>;
+> +                       sink-pdos =
+> +                               <PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
+> +                       source-pdos =
+> +                               <PDO_FIXED(5000, 1500, PDO_FIXED_USB_COMM)>;
+> +
+> +                       altmodes {
+> +                               displayport {
+> +                                       svid = /bits/ 16 <0xff01>;
+> +                                       vdo = <0x00001c46>;
+> +                               };
+> +                       };
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               port@0 {
+> +                                       reg = <0>;
+> +
+> +                                       usbc_hs: endpoint {
+> +                                               remote-endpoint = <&u2phy0_typec_hs>;
+> +                                       };
+> +                               };
+> +
+
+Why USB2 PHY needs to be notified for Type-C connection?
+
+> +                               port@1 {
+> +                                       reg = <1>;
+> +
+> +                                       usbc_ss: endpoint {
+> +                                               remote-endpoint = <&tcphy0_typec_ss>;
+> +                                       };
+> +                               };
+> +
+> +                               port@2 {
+> +                                       reg = <2>;
+> +
+> +                                       usbc_dp: endpoint {
+> +                                               remote-endpoint = <&tcphy0_typec_dp>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+
+.....
 >
-> Drop "uart-has-rtscts: false" from binding as the IP supports hardware
-> flow control on all SoCs.
+>  &u2phy0 {
+>         status = "okay";
+> +
+> +       port {
+> +               u2phy0_typec_hs: endpoint {
+> +                       remote-endpoint = <&usbc_hs>;
+> +               };
+> +       };
+>  };
 >
-> Cc: stable@kernel.org
-> Fixes: 25422e8f46c1 ("dt-bindings: serial: Add compatible for Renesas RZ/T2H SoC in sci")
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Updated commit message to make it clear that hardware flow control
->    supported on all SoC
->  * Added Ack from Conor
->  * Added fixes tag
 
-Yeah, this was introduced when renesas,rsci.yaml was split off
-incorrectly from renesas,sci.yaml in v7.
+There is no switch and mux, how to co-work with Type-C?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Peter
 
