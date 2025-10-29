@@ -1,177 +1,157 @@
-Return-Path: <linux-kernel+bounces-876987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C693C1CF0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:12:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0B2C1CEDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB69C4E831D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACF1C582700
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88FC359718;
-	Wed, 29 Oct 2025 19:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33000359F95;
+	Wed, 29 Oct 2025 19:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hx/9GIUz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="oLFtUaeP"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B453590B5;
-	Wed, 29 Oct 2025 19:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFC63590B5;
+	Wed, 29 Oct 2025 19:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764863; cv=none; b=L5X424Mzeb4x5Nb8AJYwWutCOH+qKv/ZvQHIqqh0T6r/wnz7VL4HOd3EaEaTZ6AC8z3ld4f61dwURySSPWs9TqkO0StyxrQD7xz9qrSMYAt/FR2CHbFLQfQFNZJbSGpsveOIzlFr+CZ1rT3rM4RFOpuZZ9kg5Sk3pI+3T55lJ6g=
+	t=1761764869; cv=none; b=CvL+u1TAgTamDAi0OYE/S8sAIbNKdI9SIC8D28KRyyZzE5eIkluG5vc9W08sa2qZVMwNKWpnfl4tuaF2SDHqmCyHiS01SK2kqkjKM+cScOgsGviLHBBkwRsJohptf0moPfTOcH2eUkno+OyCaiP+UNXdipq81IkVmklssr/hrOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764863; c=relaxed/simple;
-	bh=SmwYGicsn9m0OHUOOJiH9i7ncGvQG3j1PcmMujf4lNg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Og233UKZgtJFacMYJIj7kyXGs3O4HvuSorFZqydoh6ZFnR3d6LTSgDeiW8YFDxwA3MuzMhtyuSNpL/0ASYDM/i1KpnBCFg/WRmC6AVU99aRPz5u2Jua1iz5NDQB0hBotSQ5sdpC0amLNe4EKEvKSFKBohvrIneU5nPbU4x9lzS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hx/9GIUz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDB8C4CEF7;
-	Wed, 29 Oct 2025 19:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761764862;
-	bh=SmwYGicsn9m0OHUOOJiH9i7ncGvQG3j1PcmMujf4lNg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hx/9GIUzC6weS+i2CiFEMICfL1ntPu0oH8I8jR1NeERYr75bTL7qChXEoigeKp2ne
-	 zAR8l+J28+CW4+GVIzeTUElK8+2VgmjRs/u08bp3F/Drot6nkkJwQE95a7mfgaZxLS
-	 VIgdlVv7CV4hi54AFgLtqmqtAORnkqY81MKvtfcq6h2dFuPptpoS59mSb+/1KKlo1F
-	 W9Vsk9I9ocLvLgZ7gebPPPJ+0TWQXvM0sTSgyKIjwV5IpvouInDzKdiLqHsG+al2Ix
-	 JTOXX21aTqWZphIWkWiHU8bb4XueaelN8t6ALrnVwZoxRI7lms/cd4RuxtZmHcI9gm
-	 lKuDVuBEmxGZw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
- preservation and state management
-In-Reply-To: <20250929010321.3462457-15-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Mon, 29 Sep 2025 01:03:05 +0000")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-15-pasha.tatashin@soleen.com>
-Date: Wed, 29 Oct 2025 20:07:31 +0100
-Message-ID: <mafs0tszhcyrw.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761764869; c=relaxed/simple;
+	bh=gaNXZp8CyQJ3XJXYSkh9xwZ1pMXf7iNAYXLNmmh0VKI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dkc/uzr9yScvTn8sfrepsFzFn7Ll3UTWuEg4U2oi7WPwLkPsAO0oK6OBGFNjuBok1XsRSXCIHOuP5UYbOrwbs1PGKSJ1paMWoGbniJZjehFqtq7vQ8slnFXs7Av8nB/BpIfF/PDIb55La5tu2axiHS3oLzXg9kSXcnt27eOVMe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=oLFtUaeP; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1761764863; x=1762024063;
+	bh=sFQWpkAgZ4WYl8uNu/8Fmdid7sZ+Bxs6DzYolFKr5rI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=oLFtUaePcdKPdIcWB++mjgoA1FYxZr+2qq4hruE3cTHdK9B3d+RcwNSKm4Yjzuean
+	 Yy3mXhLMxlUY79Y37OsojkJOCfOOwHoANbiDCLpmuEgEynKBfImp9SUS6yWy3g3D4+
+	 ZWfCuzapxDyymtwWB1LxqIVav+eW6ttVRuFBHhxAyTJImw+MKe3v3cF7Py5MKMvy/W
+	 erm3j57lR0Z4dpzNDQPJ2WldIPuRsSCDx1m3pNOWYpjYPErDQAlXPG3R7vrqH1xbA4
+	 d2dtAZhxuJk/uir+koJ2LsPFTm9IhIxQtSGaCQEf+N+oe3ms7MPhnPNrYi+DQPJaaa
+	 cQqb0wWO5S0ow==
+Date: Wed, 29 Oct 2025 19:07:34 +0000
+To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
+From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me
+Subject: [PATCH v6 08/18] x86/mm: Reset tag for virtual to physical address conversions
+Message-ID: <d030a07c956c1e7cbf8cd44d6b42120baaa41723.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
+References: <cover.1761763681.git.m.wieczorretman@pm.me>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: c34c086f0ceececd458efcce81b943565370c09a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pasha,
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 
-On Mon, Sep 29 2025, Pasha Tatashin wrote:
+Any place where pointer arithmetic is used to convert a virtual address
+into a physical one can raise errors if the virtual address is tagged.
 
-> Introducing the userspace interface and internal logic required to
-> manage the lifecycle of file descriptors within a session. Previously, a
-> session was merely a container; this change makes it a functional
-> management unit.
->
-> The following capabilities are added:
->
-> A new set of ioctl commands are added, which operate on the file
-> descriptor returned by CREATE_SESSION. This allows userspace to:
-> - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
->   to be preserved across the live update.
-> - LIVEUPDATE_SESSION_UNPRESERVE_FD: Remove a previously added file
->   descriptor from the session.
-> - LIVEUPDATE_SESSION_RESTORE_FD: Retrieve a preserved file in the
->   new kernel using its unique token.
->
-> A state machine for each individual session, distinct from the global
-> LUO state. This enables more granular control, allowing userspace to
-> prepare or freeze specific sessions independently. This is managed via:
-> - LIVEUPDATE_SESSION_SET_EVENT: An ioctl to send PREPARE, FREEZE,
->   CANCEL, or FINISH events to a single session.
-> - LIVEUPDATE_SESSION_GET_STATE: An ioctl to query the current state
->   of a single session.
->
-> The global subsystem callbacks (luo_session_prepare, luo_session_freeze)
-> are updated to iterate through all existing sessions. They now trigger
-> the appropriate per-session state transitions for any sessions that
-> haven't already been transitioned individually by userspace.
->
-> The session's .release handler is enhanced to be state-aware. When a
-> session's file descriptor is closed, it now correctly cancels or
-> finishes the session based on its current state before freeing all
-> associated file resources, preventing resource leaks.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-[...]
-> +/**
-> + * struct liveupdate_session_get_state - ioctl(LIVEUPDATE_SESSION_GET_STATE)
-> + * @size:     Input; sizeof(struct liveupdate_session_get_state)
-> + * @incoming: Input; If 1, query the state of a restored file from the incoming
-> + *            (previous kernel's) set. If 0, query a file being prepared for
-> + *            preservation in the current set.
+Reset the pointer's tag by sign extending the tag bits in macros that do
+pointer arithmetic in address conversions. There will be no change in
+compiled code with KASAN disabled since the compiler will optimize the
+__tag_reset() out.
 
-Spotted this when working on updating my test suite for LUO. This seems
-to be a leftover from a previous version. I don't see it being used
-anywhere in the code.
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+---
+Changelog v5:
+- Move __tag_reset() calls into __phys_addr_nodebug() and
+  __virt_addr_valid() instead of calling it on the arguments of higher
+  level functions.
 
-Also, I think the model we should have is to only allow new sessions in
-normal state. Currently luo_session_create() allows creating a new
-session in updated state. This would end up mixing sessions from a
-previous boot and sessions from current boot. I don't really see a
-reason for that and I think the userspace should first call finish
-before starting new serialization. Keeps things simpler.
+Changelog v4:
+- Simplify page_to_virt() by removing pointless casts.
+- Remove change in __is_canonical_address() because it's taken care of
+  in a later patch due to a LAM compatible definition of canonical.
 
-> + * @reserved: Must be zero.
-> + * @state:    Output; The live update state of this FD.
-> + *
-> + * Query the current live update state of a specific preserved file descriptor.
-> + *
-> + * - %LIVEUPDATE_STATE_NORMAL:   Default state
-> + * - %LIVEUPDATE_STATE_PREPARED: Prepare callback has been performed on this FD.
-> + * - %LIVEUPDATE_STATE_FROZEN:   Freeze callback ahs been performed on this FD.
-> + * - %LIVEUPDATE_STATE_UPDATED:  The system has successfully rebooted into the
-> + *                               new kernel.
-> + *
-> + * See the definition of &enum liveupdate_state for more details on each state.
-> + *
-> + * Return: 0 on success, negative error code on failure.
-> + */
-> +struct liveupdate_session_get_state {
-> +	__u32		size;
-> +	__u8		incoming;
-> +	__u8		reserved[3];
-> +	__u32		state;
-> +};
-> +
-> +#define LIVEUPDATE_SESSION_GET_STATE					\
-> +	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_GET_STATE)
-[...]
+ arch/x86/include/asm/page.h    | 8 ++++++++
+ arch/x86/include/asm/page_64.h | 1 +
+ arch/x86/mm/physaddr.c         | 2 ++
+ 3 files changed, 11 insertions(+)
 
--- 
-Regards,
-Pratyush Yadav
+diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+index 9265f2fca99a..bcf5cad3da36 100644
+--- a/arch/x86/include/asm/page.h
++++ b/arch/x86/include/asm/page.h
+@@ -7,6 +7,7 @@
+ #ifdef __KERNEL__
+=20
+ #include <asm/page_types.h>
++#include <asm/kasan.h>
+=20
+ #ifdef CONFIG_X86_64
+ #include <asm/page_64.h>
+@@ -65,6 +66,13 @@ static inline void copy_user_page(void *to, void *from, =
+unsigned long vaddr,
+  * virt_to_page(kaddr) returns a valid pointer if and only if
+  * virt_addr_valid(kaddr) returns true.
+  */
++
++#ifdef CONFIG_KASAN_SW_TAGS
++#define page_to_virt(x) ({=09=09=09=09=09=09=09\
++=09void *__addr =3D __va(page_to_pfn((struct page *)x) << PAGE_SHIFT);=09\
++=09__tag_set(__addr, page_kasan_tag(x));=09=09=09=09=09\
++})
++#endif
+ #define virt_to_page(kaddr)=09pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
+ extern bool __virt_addr_valid(unsigned long kaddr);
+ #define virt_addr_valid(kaddr)=09__virt_addr_valid((unsigned long) (kaddr)=
+)
+diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.=
+h
+index 015d23f3e01f..b18fef43dd34 100644
+--- a/arch/x86/include/asm/page_64.h
++++ b/arch/x86/include/asm/page_64.h
+@@ -21,6 +21,7 @@ extern unsigned long direct_map_physmem_end;
+=20
+ static __always_inline unsigned long __phys_addr_nodebug(unsigned long x)
+ {
++=09x =3D __tag_reset(x);
+ =09unsigned long y =3D x - __START_KERNEL_map;
+=20
+ =09/* use the carry flag to determine if x was < __START_KERNEL_map */
+diff --git a/arch/x86/mm/physaddr.c b/arch/x86/mm/physaddr.c
+index fc3f3d3e2ef2..d6aa3589c798 100644
+--- a/arch/x86/mm/physaddr.c
++++ b/arch/x86/mm/physaddr.c
+@@ -14,6 +14,7 @@
+ #ifdef CONFIG_DEBUG_VIRTUAL
+ unsigned long __phys_addr(unsigned long x)
+ {
++=09x =3D __tag_reset(x);
+ =09unsigned long y =3D x - __START_KERNEL_map;
+=20
+ =09/* use the carry flag to determine if x was < __START_KERNEL_map */
+@@ -46,6 +47,7 @@ EXPORT_SYMBOL(__phys_addr_symbol);
+=20
+ bool __virt_addr_valid(unsigned long x)
+ {
++=09x =3D __tag_reset(x);
+ =09unsigned long y =3D x - __START_KERNEL_map;
+=20
+ =09/* use the carry flag to determine if x was < __START_KERNEL_map */
+--=20
+2.51.0
+
+
 
