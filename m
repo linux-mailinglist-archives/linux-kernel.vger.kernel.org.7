@@ -1,226 +1,172 @@
-Return-Path: <linux-kernel+bounces-875914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60175C1A1C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:51:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A281C1A1D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74A4F4EAA49
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41A6403AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D114337BB2;
-	Wed, 29 Oct 2025 11:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1216E33859A;
+	Wed, 29 Oct 2025 11:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nwx8NcEa"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u35cEB6K"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8DD2DE71D;
-	Wed, 29 Oct 2025 11:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BE13376A3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761738657; cv=none; b=lfhEEYDPIbijMe8IblwnWfVjpAEYLnmVkNF84e7VDZ7tBUS0pBBcZG4sgvSA0qi8jrr/gxXYOvyc/XjwRUBofQPz45i0QUzV0+KkhvvCd6i9TMGy62jj1k3h0Fj98NiCKGVM3H8Irz8QSpnTJwSWK5UpyXQ58c9vK/P1Wftpyz0=
+	t=1761738674; cv=none; b=Xjhs444VqGWwinbuvne6x56IMMkV32Ma5k+7Z8kGzm9KaOoeWviO2Yo+GVWjXyVBWJpf2bVNy3zY2a9MPFmasR6NfwOtXqlfKOcpXYhX4nWkJNMBk9Xy1l0tdKYGa6YCAYjylfXfUZwiXZRhYTnQBEOArEagP/AjkzkJ72NJEqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761738657; c=relaxed/simple;
-	bh=aWBg/5FAXfkDx0QZCOU/nqj2uohrdhR0Ob7qiD0W2wE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fmvWd2X/yibCWEkXd9lfkWpJFbjxj5Z+JTLGaNQQ8ZtOYyD+CrzglIamVCiIXRtxM6WcCxbQ38RF57whQrcq+H279NO0bJBugF/eEBb4p+zAwQf3T5vaAhlbEdaEdrkIdr1TGbpUat4jFZEdKmT8XzMqh4TNvEYPXOM0iPsXheI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nwx8NcEa; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761738653;
-	bh=aWBg/5FAXfkDx0QZCOU/nqj2uohrdhR0Ob7qiD0W2wE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nwx8NcEajHmNE7tE6vwMx7cecLGrrCBRulGwKWaSxaQYJprJ9yS6aYFgdBc71EgHD
-	 MFS6PIcS+SYMmlNWDNk0m1HvAHoyYYk4PZ5uIQUd4k159MpxarJL5/s2BWqTquJe8S
-	 kXyrhuCtJmxyZG5SwiZ+vmuw/pWqfeYM1WVeEoWenQ2VPWkdYRmQhRbE6rbeRIfee2
-	 P11j7XIBntKdBaSVNpV4KOIWSW91TF1CccQc0Vgmy8n6NYnQ2JG1Bw7xVHdxs3xf95
-	 /hJZRgwbfZOYF3qljCDP5FaTaYC7Ni9mccFe5hRCJmpwFSOK2G8uSBzJZW16nZn7sv
-	 V94AelF4TZxNA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2BA4D17E1315;
-	Wed, 29 Oct 2025 12:50:53 +0100 (CET)
-Message-ID: <2cb49197-6588-4e89-8b37-29477bfc7e98@collabora.com>
-Date: Wed, 29 Oct 2025 12:50:52 +0100
+	s=arc-20240116; t=1761738674; c=relaxed/simple;
+	bh=B8ftc5m+Zx4NqRnN3ISF7R2X5LgtjQfowgPyiLC8Mv4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S/xzjQsUcYUcDwFPulbepeVbSKpzRCBtDZni8Xyp6BSGDoWhGpZmZt3i+iTJZBE7fFsmEOoG3bqW84kxnTy2X3DZPxcpn/9y97ZJRF9ZpqSQFGENnZE1gL5KBEiEyjHv9igo9YIXvpIoZeJ4zZuBkFEWpaRnBrvjkS+1+QEFgks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u35cEB6K; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-475de1afec6so2343725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761738670; x=1762343470; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zJBte9qL2F5esy8PjX1qFQqZ0U8KWh6KuSrYtDXvXAk=;
+        b=u35cEB6KH1ByQYznvOmFuFM1wWxG4RkDHI69ARWelb5r5GSzUHc935pSQWmz0X/nc2
+         rqrwByGt1R6Avth0jooVk2znrewC2qNQbP+vePEsVJeRGNmMf984sEnZklj/5ujtXMZv
+         pf5zFBb7YLuepMUNFDEXPhkFecUJggzjBO0djcKkvYEFOGQTuA0KBzPj3RYqYGObKfjj
+         Om60cNTaplUcYRKkrNqa0GtZUlMZQ/fCu2lvg56arSFEu1Whr7pkStNLm4ayktQUt9T3
+         YIzpiOtRa0OgGOP0G56a60TJIHm4hTRgMT3jP3to/Kb6bPVNWu5uvG1OtfY+L6b+UzEy
+         fHDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761738670; x=1762343470;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zJBte9qL2F5esy8PjX1qFQqZ0U8KWh6KuSrYtDXvXAk=;
+        b=hTjdpPE+lutE7l8GjVcemOh+PqGdzAc9vbXE8o7/6hOiZioDPCCIHgealbdrOF2XbN
+         dHO6dA96Mb2t33MLvE3Iy4wQpSS7FDCb368fUZbk484IA+gu+CeiUNsGuPtHlS2r+y6m
+         9HP+IF1Qpy4Li+VXVhrSAA+peQeuMiJoeTyJQTBn+UzlRsRhojYCwR+55w1RCndkMrun
+         7pO14xIGQ2/ev/+L+8uQwxrXppCT8AyxXB20bbKgqmCY5WfRsP5X/ksjZ91/Dp6d7lOZ
+         nCETnv7dOkDpEXpu9FOFsdjXxrPoa7elP1a+mEXKoHSCYmk5VVxJ1CcobihkSOZJkIgU
+         ivPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeprTGEWDr/Late7CfB5abLp0BXZY3Nkqlveho+0rI2iabqGs58v83by80P9FWrASECLI4Am3LzVBuGu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFIFrnSDvSa8NCUNO85NgEmqrKxJ2RsLbA3XdK2nLAUhfraLNa
+	WMydGxuvEeQxL6Cy7NGgLhdy90kkQ7lmcDtt7GDU4VWQRq3jx14mNJcgiYxL7GQ9T9TBSaURtsd
+	MWH0QCgePcy6yCqQEQQ==
+X-Google-Smtp-Source: AGHT+IEzf5DD/ZRDP11ls1+sFcSAz2cd265PwvZLISiIYrx/8qfvp7AvDnt2fHl6SuXE/oHiYPwAdnca/cPmAbM=
+X-Received: from wmdv22.prod.google.com ([2002:a05:600c:12d6:b0:477:d88:1a31])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4e4c:b0:46f:a8fd:c0dc with SMTP id 5b1f17b1804b1-4771e5db04emr26052395e9.3.1761738669830;
+ Wed, 29 Oct 2025 04:51:09 -0700 (PDT)
+Date: Wed, 29 Oct 2025 11:50:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/10] SPMI: Implement sub-devices and migrate drivers
-To: sboyd@kernel.org
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
- srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
- krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
- casey.connolly@linaro.org
-References: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAKH/AWkC/x3MQQqDMBBG4avIrDuQTFGpV5EumvjHzibKpBVBv
+ LvB5Vt876ACUxQamoMMmxZdcg3/aCh+P3kG61SbxEnrnbw4aJ5gHGIyIPwTL+uvGn620ndO+gj vqerVkHS/z+P7PC9hgd1JaQAAAA==
+X-Change-Id: 20251029-binder-bcfreebuf-option-35276027ce11
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2821; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=B8ftc5m+Zx4NqRnN3ISF7R2X5LgtjQfowgPyiLC8Mv4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpAf+j/0TpHWgX3C0dn1iRCIlDpudV75Wgg54qQ
+ A7LO685EO+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaQH/owAKCRAEWL7uWMY5
+ RpSeD/4i9RElIid/eJ+RJvAgLnEgcdvR/dRGlPZLzTbgS3GKXRW5FPl8MDpliRncatVYADLLnAT
+ qUc7fjegkgAl6hWBK4iTHve4ErgA+PVcURZbccW7a1Y3+EPGik1keGcRAB4cMuYqrP3wfZdE3M+
+ 0Sp4gyaD8zVa2oSqSeNknec7qX5Z/9RhlVCs8U1h8GhA2PLRC6nKr5HXwfKrPxFWXTn7KWZo9Tu
+ 6+3rn4O0T7qb6acCrxdD2P0kFInGYIHMISV2HFYOQdj8bWiTX4jNciTxZdInCwwqt925I4KUol9
+ xtsUPku+Ss84vgZu5j+HcEkmfaqwvvuMIa+yYclFByrpF7gD4f+ZYIKmyDOTvGJJe7iTrZAfqcv
+ v7kQRL0za3UH0Rczkwt6Z3soaVeTC9HnuARaZgJbBnyn+mZO/UxAsh+L/sEah1SPFV5LgoTnZbg
+ c7/2ET3eK9+1Llof/mIQBEHu2KJ0/xJSRd6AWrM+s0ynXsZx22iKJWHg1xRDfMPLIQqE2X6vfQd
+ 0w4dCq2tLP+v76HIuenbN8xay1TrozIZiDShI55X0lSKypc24qXop/zcapcpsC/Ai69fOP3peYj
+ WDGsPrIZfHsBdGuqCLb9BH1gAt+6/0hCX2a6x8sMT4F3zQMtMdJX+PzlTd9tZS1jFGnbjWSlS9x K59UrCoZSzaW7mA==
+X-Mailer: b4 0.14.2
+Message-ID: <20251029-binder-bcfreebuf-option-v1-1-4d282be0439f@google.com>
+Subject: [PATCH] rust_binder: move BC_FREE_BUFFER drop inside if statement
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>
+Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Christian Brauner <brauner@kernel.org>, Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Il 21/10/25 10:32, AngeloGioacchino Del Regno ha scritto:
-> Changes in v7:
->   - Added commit to cleanup redundant dev_name() in the pre-existing
->     spmi_device_add() function
->   - Added commit removing unneeded goto and improving spmi_device_add()
->     readability by returning error in error path, and explicitly zero
->     for success at the end.
+When looking at flamegraphs, there is a pretty large entry for the
+function call drop_in_place::<Option<Allocation>> which in turn calls
+drop_in_place::<Allocation>. Combined with the looper_need_return
+condition, this means that the generated code looks like this:
 
-Any further comments on this series?
-Any chance we can get it picked in this merge window please?
+	if let Some(buffer) = buffer {
+	    if buffer.looper_need_return_on_free() {
+	        self.inner.lock().looper_need_return = true;
+	    }
+	}
+	drop_in_place::<Option<Allocation>>() { // not inlined
+	    if let Some(buffer) = buffer {
+	    	drop_in_place::<Allocation>(buffer);
+	    }
+	}
 
-Please note that this series either needs two cycles or an immutable branch
-because of the driver migration commits.
+This kind of situation where you check X and then check X again is
+normally optimized into a single condition, but in this case due to the
+non-inlined function call to drop_in_place::<Option<Allocation>>, that
+optimization does not happen.
 
-Thanks,
-Angelo
+Furthermore, the drop_in_place::<Allocation> call is only two-thirds of
+the drop_in_place::<Option<Allocation>> call in the flamegraph. This
+indicates that this double condition is not performing well. Also, last
+time I looked at Binder perf, I remember finding that the destructor of
+Allocation was involved with many branch mispredictions.
 
-> 
-> Changes in v6:
->   - Added commit to convert spmi.c to %pe error format and used
->     %pe error format in spmi_subdevice code as wanted by Uwe Kleine-Konig
-> 
-> Changes in v5:
->   - Changed dev_err to dev_err_probe in qcom-spmi-sdam (and done
->     that even though I disagree - because I wanted this series to
->     *exclusively* introduce the minimum required changes to
->     migrate to the new API, but okay, whatever....!);
->   - Added missing REGMAP dependency in Kconfig for qcom-spmi-sdam,
->     phy-qcom-eusb2-repeater and qcom-coincell to resolve build
->     issues when the already allowed COMPILE_TEST is enabled
->     as pointed out by the test robot's randconfig builds.
-> 
-> Changes in v4:
->   - Added selection of REGMAP_SPMI in Kconfig for qcom-coincell and
->     for phy-qcom-eusb2-repeater to resolve undefined references when
->     compiled with some randconfig
-> 
-> Changes in v3:
->   - Fixed importing "SPMI" namespace in spmi-devres.c
->   - Removed all instances of defensive programming, as pointed out by
->     jic23 and Sebastian
->   - Removed explicit casting as pointed out by jic23
->   - Moved ida_free call to spmi_subdev_release() and simplified error
->     handling in spmi_subdevice_alloc_and_add() as pointed out by jic23
-> 
-> Changes in v2:
->   - Fixed missing `sparent` initialization in phy-qcom-eusb2-repeater
->   - Changed val_bits to 8 in all Qualcomm drivers to ensure
->     compatibility as suggested by Casey
->   - Added struct device pointer in all conversion commits as suggested
->     by Andy
->   - Exported newly introduced functions with a new "SPMI" namespace
->     and imported the same in all converted drivers as suggested by Andy
->   - Added missing error checking for dev_set_name() call in spmi.c
->     as suggested by Andy
->   - Added comma to last entry of regmap_config as suggested by Andy
-> 
-> While adding support for newer MediaTek platforms, featuring complex
-> SPMI PMICs, I've seen that those SPMI-connected chips are internally
-> divided in various IP blocks, reachable in specific contiguous address
-> ranges... more or less like a MMIO, but over a slow SPMI bus instead.
-> 
-> I recalled that Qualcomm had something similar... and upon checking a
-> couple of devicetrees, yeah - indeed it's the same over there.
-> 
-> What I've seen then is a common pattern of reading the "reg" property
-> from devicetree in a struct member and then either
->   A. Wrapping regmap_{read/write/etc}() calls in a function that adds
->      the register base with "base + ..register", like it's done with
->      writel()/readl() calls; or
->   B. Doing the same as A. but without wrapper functions.
-> 
-> Even though that works just fine, in my opinion it's wrong.
-> 
-> The regmap API is way more complex than MMIO-only readl()/writel()
-> functions for multiple reasons (including supporting multiple busses
-> like SPMI, of course) - but everyone seemed to forget that regmap
-> can manage register base offsets transparently and automatically in
-> its API functions by simply adding a `reg_base` to the regmap_config
-> structure, which is used for initializing a `struct regmap`.
-> 
-> So, here we go: this series implements the software concept of an SPMI
-> Sub-Device (which, well, also reflects how Qualcomm and MediaTek's
-> actual hardware is laid out anyway).
-> 
->                 SPMI Controller
->                       |                ______
->                       |               /       Sub-Device 1
->                       V              /
->                SPMI Device (PMIC) ----------- Sub-Device 2
->                                      \
->                                       \______ Sub-Device 3
-> 
-> As per this implementation, an SPMI Sub-Device can be allocated/created
-> and added in any driver that implements a... well.. subdevice (!) with
-> an SPMI "main" device as its parent: this allows to create and finally
-> to correctly configure a regmap that is specific to the sub-device,
-> operating on its specific address range and reading, and writing, to
-> its registers with the regmap API taking care of adding the base address
-> of a sub-device's registers as per regmap API design.
-> 
-> All of the SPMI Sub-Devices are therefore added as children of the SPMI
-> Device (usually a PMIC), as communication depends on the PMIC's SPMI bus
-> to be available (and the PMIC to be up and running, of course).
-> 
-> Summarizing the dependency chain (which is obvious to whoever knows what
-> is going on with Qualcomm and/or MediaTek SPMI PMICs):
->      "SPMI Sub-Device x...N" are children "SPMI Device"
->      "SPMI Device" is a child of "SPMI Controller"
-> 
-> (that was just another way to say the same thing as the graph above anyway).
-> 
-> Along with the new SPMI Sub-Device registration functions, I have also
-> performed a conversion of some Qualcomm SPMI drivers and only where the
-> actual conversion was trivial.
-> 
-> I haven't included any conversion of more complex Qualcomm SPMI drivers
-> because I don't have the required bandwidth to do so (and besides, I think,
-> but haven't exactly verified, that some of those require SoCs that I don't
-> have for testing anyway).
-> 
-> AngeloGioacchino Del Regno (10):
->    spmi: Print error status with %pe format
->    spmi: Remove redundant dev_name() print in spmi_device_add()
->    spmi: Remove unneeded goto in spmi_device_add() error path
->    spmi: Implement spmi_subdevice_alloc_and_add() and devm variant
->    nvmem: qcom-spmi-sdam: Migrate to devm_spmi_subdevice_alloc_and_add()
->    power: reset: qcom-pon: Migrate to devm_spmi_subdevice_alloc_and_add()
->    phy: qualcomm: eusb2-repeater: Migrate to
->      devm_spmi_subdevice_alloc_and_add()
->    misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
->    iio: adc: qcom-spmi-iadc: Migrate to
->      devm_spmi_subdevice_alloc_and_add()
->    iio: adc: qcom-spmi-iadc: Remove regmap R/W wrapper functions
-> 
->   drivers/iio/adc/qcom-spmi-iadc.c              | 109 ++++++++----------
->   drivers/misc/Kconfig                          |   2 +
->   drivers/misc/qcom-coincell.c                  |  38 ++++--
->   drivers/nvmem/Kconfig                         |   1 +
->   drivers/nvmem/qcom-spmi-sdam.c                |  36 ++++--
->   drivers/phy/qualcomm/Kconfig                  |   2 +
->   .../phy/qualcomm/phy-qcom-eusb2-repeater.c    |  53 ++++++---
->   drivers/power/reset/qcom-pon.c                |  34 ++++--
->   drivers/spmi/spmi-devres.c                    |  24 ++++
->   drivers/spmi/spmi.c                           |  95 +++++++++++++--
->   include/linux/spmi.h                          |  16 +++
->   11 files changed, 289 insertions(+), 121 deletions(-)
-> 
+Thus, change this code to look like this:
 
+	if let Some(buffer) = buffer {
+	    if buffer.looper_need_return_on_free() {
+	        self.inner.lock().looper_need_return = true;
+	    }
+	    drop_in_place::<Allocation>(buffer);
+	}
+
+by dropping the Allocation directly. Flamegraphs confirm that the
+drop_in_place::<Option<Allocation>> call disappears from this change.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ drivers/android/binder/thread.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/android/binder/thread.rs b/drivers/android/binder/thread.rs
+index 7e34ccd394f8049bab88562ffb4601739aea670a..1a8e6fdc0dc42369ee078e720aa02b2554fb7332 100644
+--- a/drivers/android/binder/thread.rs
++++ b/drivers/android/binder/thread.rs
+@@ -1323,12 +1323,12 @@ fn write(self: &Arc<Self>, req: &mut BinderWriteRead) -> Result {
+                 }
+                 BC_FREE_BUFFER => {
+                     let buffer = self.process.buffer_get(reader.read()?);
+-                    if let Some(buffer) = &buffer {
++                    if let Some(buffer) = buffer {
+                         if buffer.looper_need_return_on_free() {
+                             self.inner.lock().looper_need_return = true;
+                         }
++                        drop(buffer);
+                     }
+-                    drop(buffer);
+                 }
+                 BC_INCREFS => {
+                     self.process
+
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251029-binder-bcfreebuf-option-35276027ce11
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
