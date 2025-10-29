@@ -1,166 +1,106 @@
-Return-Path: <linux-kernel+bounces-876609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89781C1BD96
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:57:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB33C1BEB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2024188B64A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB36627D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3FB33A03F;
-	Wed, 29 Oct 2025 15:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181163451CE;
+	Wed, 29 Oct 2025 15:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FsOyoEWI"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sl8vO++y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEAD2F6932
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AF633A03F;
+	Wed, 29 Oct 2025 15:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753433; cv=none; b=cCR4CSV7dDmIXWjc1BsNptdCqmxmBY2Y0lRNkH2hk69Ke3YmB6wACrpYnw4wjtbof0V/tUNH1Id0gBlcHhVh6JVx7CyG3+hq1tuWdR16fuzIDEvfNYGd6aGLZSQPGbdy9/WiMiyQHKfgmbBNBcTfrRhkhN1di7Ls5YFxtNlMxd4=
+	t=1761753455; cv=none; b=mwQsPsS7ry6GbETtvNgeslMTIf7S7PkAYQFSLCEp2v/yKuhlrmqS/q4XcnqmFdUkfuOrvgviU2d9hP30WtsMwpW9SzWYcUkaxINY5F6xyKFSsJNms6hU9DheZpFwyPi3kKdJtFUIDpH88ZTK3nRnFrl06dbXg/gT6M++1u22FYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753433; c=relaxed/simple;
-	bh=BkVZwqqcbUg4h4qiKHFRlKUHrGq1vwEvs0NkhRiKaik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d9LFZWteMxSx4xuKKmigxd8BDcdBggWJJe/YrK0kQKuGjMNgaABHwjlCxfNN3LQiM9oaaHm4OnyOWAZ6MqXvPtjaCSAOo4BBo8vYTuj8XgbltcUxu4cc0L5txuP4lbjlfrzGynSaWbG7DlsNoyFSExbVDhjjqN+WvxyLhFNMFc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FsOyoEWI; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7a4176547bfso67867b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761753430; x=1762358230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=YHKaCHVvW4pAa4aGkUydgPlkht3aebf1HBtV+L4fUbI=;
-        b=FsOyoEWIwiO5GxvQiRncPYmZr8YdpGTob03IcYGym23y8WBEXnCO/ow88wN/+LXm6g
-         70hq1OZUNoSKwMdAYRBXFpyBGempGvJJNauL8Ra7+CEbMSBgikea5y68DP+vjqVOPetY
-         4YThanhvBnr101kvYvcw3p4n/n5A9MGAL42KdXAYcLPdYHDjeRMG61RFkQ/bNduGaj4T
-         rRAnpor0YqauNVFDv6M0AzKXzRh3KcLBYthv1HrO+8AA37QM6jIGxAZT3XzQGTld/8br
-         Z/wJU9uQLpEeACbqeD1npCHG87UR6IIApspi8r2lOw9D+p1rF4I86BQudh8l8KwlylQt
-         mUqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761753430; x=1762358230;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YHKaCHVvW4pAa4aGkUydgPlkht3aebf1HBtV+L4fUbI=;
-        b=d21TSkI9om7DnIYhIVSCdtMSQkeWOcfB3pixG6y+C0H9NrPyLvGzFr0E3OP+QrVVsV
-         znEWGGd8aS21IillR+2lFH/gbTD5jjvYF+jHpGDSx+91+0KFjPxL9MP+erQxNlSKsUyf
-         kW6tIPDCymOgR6ykjw+ei2KznA0jL4canT1FYdeeudfrx27E7q8wApLApsWPJnrPOX8n
-         NOUZ7/sQT/SfwjjQ98REX/Xyt/OJudd3nKzj7RFNcSrmw45/FcnI6iaRnmTInv5/UGwC
-         jg1mo2qNokp/xCZPRAzJZ42m/nTnmVDGA6ETWICvrwFLvBaJe0Bl8vwDIuxvanmvb8QJ
-         xt+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpZmWRgCHqs0A/4RQxn/Rc9Zs1bE/FbRwT2R1bQXGI2537fiZTtvEASyK/cpj5492Ct56PGNmGxG2cuPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKBSEsxRCTF/RfaX54v0SrkkMMY/XWNf/nXSiRKpttoNXegw7g
-	rkx3bT1g2RdZSxo4tnN+HQASjZzgxR1G5tjuU03xHhrIuh1Kux+Mhamy
-X-Gm-Gg: ASbGncuhzrPclcdVOZO+g1Y7FvdwNEFixq5mdERksgPp+uB7o1OWSnQuxrdYc5I+pa4
-	TdQ63inbGkuBSJnEniZBbmEBJjJOtvJk58swnraSbBZprk5HHfQA4gSuZBxAcnI/XyWtgq1rE3v
-	xg0WBzHk5t7fKKI3PUzTG6Y9hpUMh/70pCuLEMqeHdaP0zMmcuMttrR6N14D8tANmnlrD62q08v
-	MIO4cr5p4bgfRWr2E/vQ0rvPw+4kzM+spG43nJbW0IZDfRYJ1+GUki8rm6/Bcth9lm7eo35rc7G
-	oVWKfm3qjLtem9bk/LW+wmNYk/z22PR2WB7pITKmC/lQVbH44IdPIMKOJQSQmrkn1w3KjufLvTr
-	tRl5gS/ojplWH3j647O+qTQYwvzOknHM1voD0EqA+HEcQtM4MZbeZrTjNHgnLLNVjQ3No2BWgB6
-	7p6nCeepo31XfFO3bf5xM8O+b4RDv+W9OrBldOxH/ItbFyL2UY
-X-Google-Smtp-Source: AGHT+IGf0JH6EjTEscJDZCE1UX51LztZustHvoXPPNnJE/xXANxakASKFDeS86f8TvevOGkVeEuG3g==
-X-Received: by 2002:a05:6a20:3ca2:b0:343:af1:9a57 with SMTP id adf61e73a8af0-346558e2944mr4231242637.56.1761753430231;
-        Wed, 29 Oct 2025 08:57:10 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712d4f12f2sm14601971a12.30.2025.10.29.08.57.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 08:57:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <88a23acc-9dc2-42c1-b9c4-95fbb077cc9d@roeck-us.net>
-Date: Wed, 29 Oct 2025 08:57:07 -0700
+	s=arc-20240116; t=1761753455; c=relaxed/simple;
+	bh=gdBT7RGAcvNZIAmXTRdX9CBhEySRzp4H9DzlkxrSvJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWrVD/RNxvYCwxJFUcEgXU1g1G0GYhZvyw+SyPeZ+CgGxBLQpq6O0RXUEtYBgv4K2E2zLERro6kL1Rgb0jqQ8wE+ukyta+5KswzuWNM9GOJM/8nTneEuOA9BiMEK1cwfD9/5gpHhV4gPsuKofxQJqiPiNVb9Of7rXIhrRgjawkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sl8vO++y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD42C4CEF7;
+	Wed, 29 Oct 2025 15:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761753455;
+	bh=gdBT7RGAcvNZIAmXTRdX9CBhEySRzp4H9DzlkxrSvJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sl8vO++yy8LE5VN1jxLfkD7i/YiTjiLMBaZLE7vU3HUzw/xOjgxKCUk+hmg+yZ1Uu
+	 RzFRlnQ2OdGIeRFuBXWJlP673k8CH1i9LnFWnD83fMXidYVPmG2yCVErms+cbAvxlf
+	 ej2ItBho4PdxhOJNa1SzBIjLzgNLQln0+IXgdpgZIgmJ3b1+rq0hI9p3OTaCcPITN8
+	 hInYjqdnzb/G1z1AcOpHT/6DRXxfYr/YTH4uqthANY4kD2CoR0ClWUR974AvDjSkCj
+	 dFyXHgp8EZrQEemU4+Y8MzXsU6i9Btjf7xFvyDYRaVfjfyD2anX506w0rYkDCp/Rox
+	 xnCrFX63o0oig==
+Date: Wed, 29 Oct 2025 08:57:34 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH 3/4] xfs: use IOCB_DONTCACHE when falling back to
+ buffered writes
+Message-ID: <20251029155734.GD3356773@frogsfrogsfrogs>
+References: <20251029071537.1127397-1-hch@lst.de>
+ <20251029071537.1127397-4-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] hwmon: (lm75): switch to use i3c_xfer from
- i3c_priv_xfer
-To: Frank Li <Frank.Li@nxp.com>, Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-i3c@lists.infradead.org
-References: <20251028-lm75-v1-0-9bf88989c49c@nxp.com>
- <20251028-lm75-v1-1-9bf88989c49c@nxp.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20251028-lm75-v1-1-9bf88989c49c@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029071537.1127397-4-hch@lst.de>
 
-On 10/28/25 07:57, Frank Li wrote:
-> Switch to use i3c_xfer instead of i3c_priv_xfer because framework will
-> update to support HDR mode. i3c_priv_xfer is now an alias of i3c_xfer.
+On Wed, Oct 29, 2025 at 08:15:04AM +0100, Christoph Hellwig wrote:
+> Doing sub-block direct writes to COW inodes is not supported by XFS,
+> because new blocks need to be allocated as a whole.  Such writes
+> fall back to buffered I/O, and really should be using the
+> IOCB_DONTCACHE that didn't exist when the code was added to mimic
+> direct I/O semantics as closely as possible.  Also clear the
+> IOCB_DIRECT flags so that later code can't get confused by it being
+> set for something that at this point is not a direct I/O operation
+> any more.
 > 
-> Replace i3c_device_do_priv_xfers() with i3c_device_do_xfers(..., I3C_SDR)
-> to align with the new API.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Seems like a reasonable fallback now that we have dontcache
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/xfs/xfs_file.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Prepare for removal of i3c_priv_xfer and i3c_device_do_priv_xfers().
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 5703b6681b1d..e09ae86e118e 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -1119,6 +1119,9 @@ xfs_file_write_iter(
+>  		ret = xfs_file_dio_write(iocb, from);
+>  		if (ret != -ENOTBLK)
+>  			return ret;
+> +
+> +		iocb->ki_flags &= ~IOCB_DIRECT;
+> +		iocb->ki_flags |= IOCB_DONTCACHE;
+>  	}
+>  
+>  	if (xfs_is_zoned_inode(ip))
+> -- 
+> 2.47.3
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-
-I assume this will be submitted through the i2c/i3c tree when ready.
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-
+> 
 
