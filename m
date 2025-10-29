@@ -1,216 +1,344 @@
-Return-Path: <linux-kernel+bounces-875075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B5BC1828F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:20:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8168C18295
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A006F3B514D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3691C64FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A862ECEBC;
-	Wed, 29 Oct 2025 03:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4618F2D7DDA;
+	Wed, 29 Oct 2025 03:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XbjZI9NM";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bC/VxZsU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w5FOM64f"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F4728466F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA89286887
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761707992; cv=none; b=ZpzqkBw7flXNzVXNHAdCzxe2mN6K2wdLhumCb8IzDcORV7lNBqqED6D+Zd4LlXl9A4sHFIJKMDd5WgqeDa4QgsxBT2v+Stzft6ZA7TPcent4mGONQi1n2Hcb/2/9L9UzxSH8RtyYPjqMTN1gBfJtUtf0ZC/7Tqo8R52G9OxYdmc=
+	t=1761708013; cv=none; b=UNQTGOKu22y7wkTxHPXg/Fzc8yiSDZMusbjOIPOAf2h+klGrXF7jEIArebt6kI8YL7cgyCGSHRFwIulDC6IOyuIvBovx5ppk5BkEqRI30fTen2nf8acDltMh7jFDg9Gk0bsnurrCRfsGW6a1ECvmCqlVGNaJQeVFDpQ40T9kpsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761707992; c=relaxed/simple;
-	bh=TDBNjpHbqgscAOvy2+GugorvShf4pjjc9+ahVVZmdE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+AR+rnRXbgTkN38biTspLvvT/2QQW9/GQPPeWnp+Ol8t1BRxEvPixsMzbDFiw+41rKGsA+1rvtwqPmde8hAgqhTalHP70ucwlFb96MhS1bfDLfeNAZIWRnGTk+hR4QC55clsA1wOHVbA/4VA+WVWYtzpkAdhIg5pmuh1LKOlec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XbjZI9NM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bC/VxZsU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlZaQ2575817
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:19:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tfuOdHYPuBbRAFi2S3af3q0y
-	P5GTo3VvO9e3ehC0+QY=; b=XbjZI9NMTCuvP0ON7ljI95ue2bFZ+B/HKFusXoAu
-	qEkt+u/kwHbY8Nxkjzf2PRQWD1DuCUHonMVw5yzIiNiZmhfXP4vdbOAhjk1YiMIG
-	zNTDt2EbSh50D7j1fYqcSFrRq98ideoANTkSqSxFp/e3b7oLxSNmJRvJoybnpeP3
-	pCviYwjRMLsogwg3RyK2Z76CnbIfWBKVjjMGrg65qXMQ3taif6HPBANHFNWHdaYR
-	Lte9dBJUcmzMsOr4ZVRduSwJ5/qxgCc7ppEgZvLXcyOs/NvaPjSStmiVG+lSsaAH
-	SaAVA+G4HDXUtIRRgn2eN0Uu81mc0iArsSZc3/5EEFP1oQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a2117u-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:19:49 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8a0aa0df911so1135991085a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:19:49 -0700 (PDT)
+	s=arc-20240116; t=1761708013; c=relaxed/simple;
+	bh=SIP++6o+k6IcipYfeugLKrXlgVr2Mx3kGzLxkrySjFs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j3vAnXM7Yykb6PnJATI+4qwfLwGTBeMw+nHmfk7GNUuMBAgbyLYPQ5NtmlEuLSHs5EdtLNdIJFRA3wn1SdHKrt9e+Cs+gFpNIxG694NSWW27tQKL0z+8egGfDT4Y6eEj7UbBkqWEv/gbUFk+0BfmQQ62PvibA4wLGMVxGB3AOa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w5FOM64f; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ea12242d2eso130551cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761707989; x=1762312789; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tfuOdHYPuBbRAFi2S3af3q0yP5GTo3VvO9e3ehC0+QY=;
-        b=bC/VxZsUz+d+GRYO7j1qiOT3HJ6mfuGS9bv2mtirPz68IuDjwNSO/lyyMi1QcZgQ8p
-         EHvErgfmnsut0Hy7eLFDLoW7J3mV2k0e/g4rBR9IGxevs1kJC1Klh89+LANCb/DXb4zj
-         HNLn/0oCu5NHg2kHRME3UrJgv0h4kKXBvA2fK25z0yJrXYHXZgFeDcUvo7NWXVe3i2dU
-         XYRB4Ge/Y1nijjyTkrrLyn2GVRJEarXQeYEsY0BvHd94YyAmQbk8tThbgNFhZG4aY+hu
-         OANVBpo8DI+CvuDiV4tc+lP0Op1uvhqdhHJYTz9ZDf5i1YgcMz1SxtMIDomcIRAQ1c+L
-         tj4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761707989; x=1762312789;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1761708010; x=1762312810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tfuOdHYPuBbRAFi2S3af3q0yP5GTo3VvO9e3ehC0+QY=;
-        b=X+P3QmvsSmKyieyJn7c13RdCVgRq2F82SF06lPH9nZnxhqzdNQ45a1FC1KYQqfjhLV
-         /xHHxszZcXHjjfmPLf+8zE9tMW+/D4ZonGjss13GWo3AhmZzNHu50R1OnYau+z5dKg7K
-         fozIot0QjBRHU72dAmPNXCXU6mi2EKXGQ0sIOpGCc07RGp6XSMx6nqxOkFfG3Pa62k2w
-         zphb/tCRzHqKsfzMOExFmRxMZolVeOwYogf0viezoVxw0Kdu2TpoSWUbC48MCIuRVjUV
-         2kykTlHa0YdJuO4q499qqtqFJUXL8yPU4AkiA5lWBu+KrYiexiMkFhzWRdrbMLx6NyUi
-         veAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdcT8/LRaZlzkB4uzvhzro1I///U/NSoOS22kuNyfRYlxb70di7yG6DCS3KmOxCz0urfg1S1X/ZVrHaLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Ns+V5bFlzrE23WMN1J43YOWXBfas/9mCfLfyMfcfCq0TYqim
-	pl0E+zrltk507RXRIjBwcQ0Chv7XHi9jJZlNcOhSaijYUZNrzu4/m6mQSjoen2ZsP3uHYrxfjum
-	ruEBenZiw7cLX4woDIcJvTiC+AHZUPefTYhnx1OulifExaiFv3/UZkprA32E8OhuY3Bs=
-X-Gm-Gg: ASbGncvpdWs3QOpPU8nyez0w3032h8ByuqT4Yfyfbsr95vdbrLYxRJlrtboBiwQjmSy
-	DXcrmvDMumtRecdd40XSMTIFsj6o09j5QQdVWI2vuFJ3YMuvBZEqS9RKqP7K3y3dLsbNiiOargy
-	XZdY3ixV6Ze2xDGgtvjzZCQHCk2bAd4aV1ofB0ETeqfRf1cJUBUJhNrkT+vd9X36lxy3hkoVUZo
-	y90ju5uT2o/PsNo5z0lubSyKYuAU0nMRshy+0QYW6GpySKq4YlhbkWUlugrj2x9Yu0G/W8Loz2I
-	MUuYpNtGvbJlSzNaBZ+ht+LzMq8EKSazam2e3PuWAPzbUAyFCXMqj19DIk0uNyfNoZk5CyUX1Sv
-	KTc0QOEPx80eCaVJ8skjMawSd4bFaazRT3whcu/47zeNUKpqXWmVVsw20eet8GUGY
-X-Received: by 2002:a05:620a:c47:b0:8a6:999f:df02 with SMTP id af79cd13be357-8a8ea5951e0mr221841085a.0.1761707988866;
-        Tue, 28 Oct 2025 20:19:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPR1bnU91lCiITa3K23J2bvukY1QCUyEKr+SagA9SP4DVjvaGRLpGPgwIenuTxiRjw0NjoWg==
-X-Received: by 2002:a05:620a:c47:b0:8a6:999f:df02 with SMTP id af79cd13be357-8a8ea5951e0mr221839085a.0.1761707988386;
-        Tue, 28 Oct 2025 20:19:48 -0700 (PDT)
-Received: from yuanjiey.ap.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f243142b5sm979056185a.8.2025.10.28.20.19.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 20:19:47 -0700 (PDT)
-Date: Wed, 29 Oct 2025 11:19:36 +0800
-From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        robin.clark@oss.qualcomm.com, lumag@kernel.org,
-        abhinav.kumar@linux.dev, sean@poorly.run,
-        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 01/12] drm/msm/dsi/phy: Add support for Kaanapali
-Message-ID: <aQGHyN19/a/tl0BH@yuanjiey.ap.qualcomm.com>
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023075401.1148-2-yuanjie.yang@oss.qualcomm.com>
- <omlhiywjr46ik6bj2aiutgcf4aifen4vsvtlut7b44ayu4g4vl@zn4u3zkf6cqx>
- <ad906eb5-c08f-4b66-9e37-aaba99889ad4@oss.qualcomm.com>
- <aPryORKIuSwtXpon@yuanjiey.ap.qualcomm.com>
- <einog245dsbqtx3by2cojyzmyctk2fffpwndwoe24puwqq4fta@cu6iiidxqgr4>
- <0291d0f2-483f-48d8-8c75-f1bbcd1ab18f@oss.qualcomm.com>
- <ehgdx7av3jewowkvtsqrbnsphgxm5hryl6n5otnapi4xneldze@gcwvpssisv2x>
+        bh=7sWCgjKKhp7TKcKNU9g7Njs3zaKm3E/eeC+3FUQGpNQ=;
+        b=w5FOM64fgukX+r7h07DpMYI7lUOz5Hr/kgQ2syyKIYt9SDRWbyeFt0Bd09nNwqm9Wk
+         X7UeR6s+KD/VlJq+wt9j3cYiC4st47t4lKQR1bknICZ9mbCpFvP0zWyTWFxHfAHcbBkM
+         C86q7A5m+A8k9AG1Fue704S0Qsd5ZcByYhPuc3tDaagJFwIi6SmJjY17UM76YhP9WSR6
+         LGB7x3UsZyA24lMaPcPx15HoiXGCjumm7yYGRYNW2CpguRdZPexqnoTwOwrjl9q4ZLDe
+         9+fky52j0gi9aKJzrvOIaTLqJ9DAsGv5BjewEmqrXMhfKzHllByjswovEaOh3/6phsd6
+         OdbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761708010; x=1762312810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7sWCgjKKhp7TKcKNU9g7Njs3zaKm3E/eeC+3FUQGpNQ=;
+        b=VYcL7yc1nW7OMtMk8rJ0/zK4qIZA4mfQbuH72eHVyEI+4f3d4HgbthL3BwLLxM8YrU
+         GtC4M63uQx2xjAZvLvJGbkZai2TiaVmTSTrZtio+N0/R+6I8EThuy+13QvFM7b+tVBqh
+         vs+jdeq3euJ+rZO4aCcY1eF522gKj8VS8Fz1kauUmATzSUKP/S9qje3TpfWIgZg/+zLa
+         J6fypX88q12E71HURUEfn+dWheXjstdh+xClqz07cGCmzO9NVAhrh2dlpCF1kbJES1iJ
+         3Mw6EuCm4YpFvLtWhcYdMepDMUm8Rftjxea0xOsqqOAxnp5lQhXoOiX0ZpuD6lcTjfEj
+         QrVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjFmaZCy4I9crhfKEVSckHfnxQNqov/0iRuXjPwRrDm8JxYEezFhu0o1ubKjzm19F2+p0k3GGLepuItZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsCo7DAtkq/srjf4RNhuACsE3UiIIeWm0fXoKS0/0Vls7d/2Pk
+	9qNdwOTyFVdV3HQUrLuN3vCyssIZTa0/6P4Ux9dMOREeqbaL67aA6bVSWxlgAb/cMQMby2zcxK8
+	prF1anX/gWT+mfnNCXb4txMbN0iWUs8QUH0MO1Vny
+X-Gm-Gg: ASbGncu+ufk/FMvYNWT87575I5afDYvc9w7MgPNWeWhJUCj4lx7dXVCZIC5B4TtXcA+
+	ZzYNatmRBPs3eiO55vLVhPfdqgTnDqztxdEOo4MIKFQKbp8WALyJqQ5amGAmmNuTPTOf3sKXZtG
+	Mt8eG69KuUgeOx2L8cFB0G7k3grR2twttCgg2UJXbAGgBGCR7vE0rjsw3++JBj8DKGh5Bw4oqoc
+	znJ5CVUPM6rcUiNmTZYTO42WmlZlmuXccypkCFQlvvsw58Wr8xKddztHjM2Hy9odM//yw==
+X-Google-Smtp-Source: AGHT+IEgHBrwGW14wfvE+tNAHLr5vJEtehAhSwoEdeqMmNNr0R+yG/j5eehRFy4Sh6qRX8n2G2p+LqQGRABiqViVmh0=
+X-Received: by 2002:a05:622a:244d:b0:4b7:9b06:ca9f with SMTP id
+ d75a77b69052e-4ed157de56amr3957211cf.2.1761708010022; Tue, 28 Oct 2025
+ 20:20:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ehgdx7av3jewowkvtsqrbnsphgxm5hryl6n5otnapi4xneldze@gcwvpssisv2x>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAyNCBTYWx0ZWRfXzY/PQ39e0w0F
- ELp/PgfWB3GH73wLqZ8zI7BzY9BjzMH0V6HcczaC3anCy3UH6Q0sG+WhhC9prRhZEoItZ1SXoll
- VoJaAAhSS8/OBJsnGFtqi1wVupLdLPqCh520NgcENzNHH2cX1QFMQiI4sZbvwPtwCQwslIHSxj0
- soRrVRudl/e8qoL5oUjdbIwXNr6fSyk8ObNA0IFCzaSWuLyObof/kZ3AqnrGMn1ArjL8SMCbQAX
- s1HzmaiuKps0/dyW41LrRzWV4hBtleLEpzCiivF1lr0yf/YDxLY9DegdtwsVpS8pVEQg+stQAzL
- H4y43wn43ck9atpLCb0QiGImfhKJofchl4x/8ptzY3NTvVwYeqmDlzBGdhRMWPM46BOPtOc8s8m
- 81gjEtTXuGMoUi9y76qTMMhl8g5oEg==
-X-Authority-Analysis: v=2.4 cv=V5ZwEOni c=1 sm=1 tr=0 ts=690187d5 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=dRtYTIcgi1dzbadgoRkA:9
- a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: e8wgyxNbYqyBNNG7_IgwbKkfquk-1vNO
-X-Proofpoint-ORIG-GUID: e8wgyxNbYqyBNNG7_IgwbKkfquk-1vNO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 adultscore=0 suspectscore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510290024
+References: <20251027122847.320924-1-harry.yoo@oracle.com> <20251027122847.320924-8-harry.yoo@oracle.com>
+In-Reply-To: <20251027122847.320924-8-harry.yoo@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 28 Oct 2025 20:19:59 -0700
+X-Gm-Features: AWmQ_blp-ZEBcawtFO459XLUyJcG47lh4LXAakbZFQWgL79B818mKpJ-2TDZ1ko
+Message-ID: <CAJuCfpHNhes_csqvm9-Z2f-C6XWuyRuXpchNtXwTSXxTpARZSg@mail.gmail.com>
+Subject: Re: [RFC PATCH V3 7/7] mm/slab: place slabobj_ext metadata in unused
+ space within s->size
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, andreyknvl@gmail.com, 
+	cl@linux.com, dvyukov@google.com, glider@google.com, hannes@cmpxchg.org, 
+	linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev, 
+	rientjes@google.com, roman.gushchin@linux.dev, ryabinin.a.a@gmail.com, 
+	shakeel.butt@linux.dev, vincenzo.frascino@arm.com, yeoreum.yun@arm.com, 
+	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 03:29:40PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Oct 27, 2025 at 02:20:26PM +0100, Konrad Dybcio wrote:
-> > On 10/27/25 2:14 PM, Dmitry Baryshkov wrote:
-> > > On Fri, Oct 24, 2025 at 11:27:53AM +0800, yuanjiey wrote:
-> > >> On Thu, Oct 23, 2025 at 02:02:45PM +0200, Konrad Dybcio wrote:
-> > >>> On 10/23/25 1:48 PM, Dmitry Baryshkov wrote:
-> > >>>> On Thu, Oct 23, 2025 at 03:53:50PM +0800, yuanjie yang wrote:
-> > >>>>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > >>>>>
-> > >>>>> Add DSI PHY support for the Kaanapali platform.
-> > >>>>>
-> > >>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > >>>>> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > >>>>> ---
-> > >>>
-> > >>> [...]
-> > >>>
-> > >>>>> +	.io_start = { 0x9ac1000, 0xae97000 },
-> > >>>>
-> > >>>> These two addresses are very strange. Would you care to explain? Other
-> > >>>> than that there is no difference from SM8750 entry.
-> > >>>
-> > >>> They're correct.
-> > >>> Although they correspond to DSI_0 and DSI_2..
-> > >>>
-> > >>> Yuanjie, none of the DSI patches mention that v2.10.0 is packed with
-> > >>> new features. Please provide some more context and how that impacts
-> > >>> the hw description.
-> > >>
-> > >> Thanks for your reminder.
-> > >>
-> > >> Correct here:
-> > >> io_start = { 0x9ac1000, 0x9ac4000 }  DSI_Phy0 DSI_phy1
-> > >>
-> > >> And v2.10.0 no clearly meaningful changes compared to v2.9.0.
-> > >> just some register address change.
-> > > 
-> > > Addition of DSI2 is a meaningful change, which needs to be handled both
-> > > in the core and in the DSI / DSI PHY drivers.
-> > 
-> > DSI2 was introduced in 8750 already, but it was done without any
-> > fanfare..
-> > 
-> > I see a diagram that shows an XBAR with inputs from DSI0 and DSI2,
-> > and an output to DSI0_PHY (same thing on kaanapali - meaning this
-> > patch is potentially wrong and should ref DSI1_PHY instead?)
-> 
-Yes, I check ipcata Doc, I see DSI0\DSI0_PHY DSI1\DSI1_PHY DSI2\DSI2_PHY in Kaanapali, 
-addition of DSI2\DSI2_PHY compared to SM8650.
+On Mon, Oct 27, 2025 at 5:29=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
+ote:
+>
+> When a cache has high s->align value and s->object_size is not aligned
+> to it, each object ends up with some unused space because of alignment.
+> If this wasted space is big enough, we can use it to store the
+> slabobj_ext metadata instead of wasting it.
+>
+> On my system, this happens with caches like kmem_cache, mm_struct, pid,
+> task_struct, sighand_cache, xfs_inode, and others.
+>
+> To place the slabobj_ext metadata within each object, the existing
+> slab_obj_ext() logic can still be used by setting:
+>
+>   - slab->obj_exts =3D slab_address(slab) + s->red_left_zone +
+>                      (slabobj_ext offset)
+>   - stride =3D s->size
+>
+> slab_obj_ext() doesn't need know where the metadata is stored,
+> so this method works without adding extra overhead to slab_obj_ext().
+>
+> A good example benefiting from this optimization is xfs_inode
+> (object_size: 992, align: 64). To measure memory savings, 2 millions of
+> files were created on XFS.
+>
+> [ MEMCG=3Dy, MEM_ALLOC_PROFILING=3Dn ]
+>
+> Before patch (creating 2M directories on xfs):
+>   Slab:            6693844 kB
+>   SReclaimable:    6016332 kB
+>   SUnreclaim:       677512 kB
+>
+> After patch (creating 2M directories on xfs):
+>   Slab:            6697572 kB
+>   SReclaimable:    6034744 kB
+>   SUnreclaim:       662828 kB (-14.3 MiB)
+>
+> Enjoy the memory savings!
+>
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
+> ---
+>  include/linux/slab.h |  9 ++++++
+>  mm/slab_common.c     |  6 ++--
+>  mm/slub.c            | 72 ++++++++++++++++++++++++++++++++++++++++++--
+>  3 files changed, 82 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 561597dd2164..fd09674cc117 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -59,6 +59,9 @@ enum _slab_flag_bits {
+>         _SLAB_CMPXCHG_DOUBLE,
+>  #ifdef CONFIG_SLAB_OBJ_EXT
+>         _SLAB_NO_OBJ_EXT,
+> +#endif
+> +#if defined(CONFIG_SLAB_OBJ_EXT) && defined(CONFIG_64BIT)
+> +       _SLAB_OBJ_EXT_IN_OBJ,
+>  #endif
+>         _SLAB_FLAGS_LAST_BIT
+>  };
+> @@ -244,6 +247,12 @@ enum _slab_flag_bits {
+>  #define SLAB_NO_OBJ_EXT                __SLAB_FLAG_UNUSED
+>  #endif
+>
+> +#if defined(CONFIG_SLAB_OBJ_EXT) && defined(CONFIG_64BIT)
+> +#define SLAB_OBJ_EXT_IN_OBJ    __SLAB_FLAG_BIT(_SLAB_OBJ_EXT_IN_OBJ)
+> +#else
+> +#define SLAB_OBJ_EXT_IN_OBJ    __SLAB_FLAG_UNUSED
+> +#endif
+> +
+>  /*
+>   * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.
+>   *
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 2c2ed2452271..bfe2f498e622 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -43,11 +43,13 @@ DEFINE_MUTEX(slab_mutex);
+>  struct kmem_cache *kmem_cache;
+>
+>  /*
+> - * Set of flags that will prevent slab merging
+> + * Set of flags that will prevent slab merging.
+> + * Any flag that adds per-object metadata should be included,
+> + * since slab merging can update s->inuse that affects the metadata layo=
+ut.
+>   */
+>  #define SLAB_NEVER_MERGE (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER =
+| \
+>                 SLAB_TRACE | SLAB_TYPESAFE_BY_RCU | SLAB_NOLEAKTRACE | \
+> -               SLAB_FAILSLAB | SLAB_NO_MERGE)
+> +               SLAB_FAILSLAB | SLAB_NO_MERGE | SLAB_OBJ_EXT_IN_OBJ)
+>
+>  #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
+>                          SLAB_CACHE_DMA32 | SLAB_ACCOUNT)
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 8101df5fdccf..7de6e8f8f8c2 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -970,6 +970,40 @@ static inline bool obj_exts_in_slab(struct kmem_cach=
+e *s, struct slab *slab)
+>  {
+>         return false;
+>  }
+> +
+> +#endif
+> +
+> +#if defined(CONFIG_SLAB_OBJ_EXT) && defined(CONFIG_64BIT)
+> +static bool obj_exts_in_object(struct kmem_cache *s)
+> +{
+> +       return s->flags & SLAB_OBJ_EXT_IN_OBJ;
+> +}
+> +
+> +static unsigned int obj_exts_offset_in_object(struct kmem_cache *s)
+> +{
+> +       unsigned int offset =3D get_info_end(s);
+> +
+> +       if (kmem_cache_debug_flags(s, SLAB_STORE_USER))
+> +               offset +=3D sizeof(struct track) * 2;
+> +
+> +       if (slub_debug_orig_size(s))
+> +               offset +=3D ALIGN(sizeof(unsigned int),
+> +                               __alignof__(unsigned long));
+> +
+> +       offset +=3D kasan_metadata_size(s, false);
+> +
+> +       return offset;
+> +}
+> +#else
+> +static inline bool obj_exts_in_object(struct kmem_cache *s)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline unsigned int obj_exts_offset_in_object(struct kmem_cache *=
+s)
+> +{
+> +       return 0;
+> +}
+>  #endif
+>
+>  #ifdef CONFIG_SLUB_DEBUG
+> @@ -1270,6 +1304,9 @@ static void print_trailer(struct kmem_cache *s, str=
+uct slab *slab, u8 *p)
+>
+>         off +=3D kasan_metadata_size(s, false);
+>
+> +       if (obj_exts_in_object(s))
+> +               off +=3D sizeof(struct slabobj_ext);
+> +
+>         if (off !=3D size_from_object(s))
+>                 /* Beginning of the filler is the free pointer */
+>                 print_section(KERN_ERR, "Padding  ", p + off,
+> @@ -1439,7 +1476,10 @@ check_bytes_and_report(struct kmem_cache *s, struc=
+t slab *slab,
+>   *     A. Free pointer (if we cannot overwrite object on free)
+>   *     B. Tracking data for SLAB_STORE_USER
+>   *     C. Original request size for kmalloc object (SLAB_STORE_USER enab=
+led)
+> - *     D. Padding to reach required alignment boundary or at minimum
+> + *     D. KASAN alloc metadata (KASAN enabled)
+> + *     E. struct slabobj_ext to store accounting metadata
+> + *        (SLAB_OBJ_EXT_IN_OBJ enabled)
+> + *     F. Padding to reach required alignment boundary or at minimum
+>   *             one word if debugging is on to be able to detect writes
+>   *             before the word boundary.
+>   *
+> @@ -1468,6 +1508,9 @@ static int check_pad_bytes(struct kmem_cache *s, st=
+ruct slab *slab, u8 *p)
+>
+>         off +=3D kasan_metadata_size(s, false);
+>
+> +       if (obj_exts_in_object(s))
+> +               off +=3D sizeof(struct slabobj_ext);
+> +
+>         if (size_from_object(s) =3D=3D off)
+>                 return 1;
+>
+> @@ -2250,7 +2293,8 @@ static inline void free_slab_obj_exts(struct slab *=
+slab)
+>         if (!obj_exts)
+>                 return;
+>
+> -       if (obj_exts_in_slab(slab->slab_cache, slab)) {
+> +       if (obj_exts_in_slab(slab->slab_cache, slab) ||
+> +                       obj_exts_in_object(slab->slab_cache)) {
 
-look like I should add: config io_start = {DSI0_PHY, DSI1_PHY, DSI2_PHY},
 
-Do you thinks this fix is OK?
+I think you need a check for obj_exts_in_object() inside
+alloc_slab_obj_exts() to avoid allocating the vector.
 
-Thanks,
-Yuanjie
-
-> Most likely.
-
-
-> 
-> -- 
-> With best wishes
-> Dmitry
+>                 slab->obj_exts =3D 0;
+>                 return;
+>         }
+> @@ -2291,6 +2335,21 @@ static void alloc_slab_obj_exts_early(struct kmem_=
+cache *s, struct slab *slab)
+>                 if (IS_ENABLED(CONFIG_MEMCG))
+>                         slab->obj_exts |=3D MEMCG_DATA_OBJEXTS;
+>                 slab_set_stride(slab, sizeof(struct slabobj_ext));
+> +       } else if (obj_exts_in_object(s)) {
+> +               unsigned int offset =3D obj_exts_offset_in_object(s);
+> +
+> +               slab->obj_exts =3D (unsigned long)slab_address(slab);
+> +               slab->obj_exts +=3D s->red_left_pad;
+> +               slab->obj_exts +=3D obj_exts_offset_in_object(s);
+> +               if (IS_ENABLED(CONFIG_MEMCG))
+> +                       slab->obj_exts |=3D MEMCG_DATA_OBJEXTS;
+> +               slab_set_stride(slab, s->size);
+> +
+> +               for_each_object(addr, s, slab_address(slab), slab->object=
+s) {
+> +                       kasan_unpoison_range(addr + offset,
+> +                                            sizeof(struct slabobj_ext));
+> +                       memset(addr + offset, 0, sizeof(struct slabobj_ex=
+t));
+> +               }
+>         }
+>         metadata_access_disable();
+>  }
+> @@ -7883,6 +7942,7 @@ static int calculate_sizes(struct kmem_cache_args *=
+args, struct kmem_cache *s)
+>  {
+>         slab_flags_t flags =3D s->flags;
+>         unsigned int size =3D s->object_size;
+> +       unsigned int aligned_size;
+>         unsigned int order;
+>
+>         /*
+> @@ -7997,7 +8057,13 @@ static int calculate_sizes(struct kmem_cache_args =
+*args, struct kmem_cache *s)
+>          * offset 0. In order to align the objects we have to simply size
+>          * each object to conform to the alignment.
+>          */
+> -       size =3D ALIGN(size, s->align);
+> +       aligned_size =3D ALIGN(size, s->align);
+> +#if defined(CONFIG_SLAB_OBJ_EXT) && defined(CONFIG_64BIT)
+> +       if (aligned_size - size >=3D sizeof(struct slabobj_ext))
+> +               s->flags |=3D SLAB_OBJ_EXT_IN_OBJ;
+> +#endif
+> +       size =3D aligned_size;
+> +
+>         s->size =3D size;
+>         s->reciprocal_size =3D reciprocal_value(size);
+>         order =3D calculate_order(size);
+> --
+> 2.43.0
+>
 
