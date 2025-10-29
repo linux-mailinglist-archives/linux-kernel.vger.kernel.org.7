@@ -1,39 +1,94 @@
-Return-Path: <linux-kernel+bounces-875644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F587C197A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:50:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99618C19823
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:56:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174EB19C3D91
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:49:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 848AA505313
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9D62DE1E0;
-	Wed, 29 Oct 2025 09:49:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AEA314B77
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B4F2E22BE;
+	Wed, 29 Oct 2025 09:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rqL7t67g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ws90S6XI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rqL7t67g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ws90S6XI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4282A2E172D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731350; cv=none; b=PuUei7Et5nr1Q+YN43rfcbPvCDY7TK1r1jprwPbNgKxZFZCn/oCBEoedus+OVnzYOLaJRvO2e+KqXU43WiqhC6j4Mxm9PNBZfHD3yQRBzz/lLOuq0XGumX9ryXaVeTXrEaXKCemszYpJ5GLeo/zP80mIjEOVsKyT6RCvPSg4iH4=
+	t=1761731376; cv=none; b=j/6JqV8JqwB8tqm0gRaV9FT1/5kO6t2Rd3vi4Vv1aFtLrNMnuWhK3tK8tjy5hDpuq+TndlmWZz98yCW0UBayiNhiOJxnWeb8j2LDribv7pZ+FeamPQs2PhlsTE2KHqvf6Xd1KTG9JnBqnHljwlOv3iu+f3ZrQ8t/keDHzYz3yis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761731350; c=relaxed/simple;
-	bh=Rx6T/2ZiVqtM8p1WOZ5s4RFLxTBoy7M4bJuEZ03wm2M=;
+	s=arc-20240116; t=1761731376; c=relaxed/simple;
+	bh=G0tIvhV8Vf7r8n3UYK+kjTswXAUes0hqnnqNoknGxIQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sD2OmrExR/hYQzfGFMBZOc0eC0sfWxo9IQyvLSdCfsJI+mhZkPmtDsjurJduX01FlwzzdpDLAf7FnG711qoxJ4FCgDTRRobnMpNZIXccwJLrrgFYS2IfqLPOIFwT+P5ojwF1RFdb2lHuZmd9gX/GhnMiuM5PoQEgUU0GhW8yUNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20F561AC1;
-	Wed, 29 Oct 2025 02:49:00 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E22E53F673;
-	Wed, 29 Oct 2025 02:49:05 -0700 (PDT)
-Message-ID: <61e923d6-388b-4cc6-8c26-5581a1e1cc10@arm.com>
-Date: Wed, 29 Oct 2025 09:49:04 +0000
+	 In-Reply-To:Content-Type; b=i4osnGUfYuJ6RSbtdoPpfMVVlv5+o1HmRUQ4bd/rshBcdMnmFhjwlh48TzloyiVSGny2IUlmTlxDTP/qE5qU9mvpYvdzMQqUWGfns6ts8+DrDrWUEWMAzpJfiJLQayVIdm3hceSBLBTNChw99UGahLfEkFZxolGw3OYMW+u7ulo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rqL7t67g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ws90S6XI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rqL7t67g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ws90S6XI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6E01D20528;
+	Wed, 29 Oct 2025 09:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761731372; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/Vv6j2uH3syB4b/fkObS4cP+KWy+SLbrkAU6OiUQlDI=;
+	b=rqL7t67g5ziw6SAaOf5kVgSeAYKFtSthBd/obhILYC5ceXSJypIueQt4fsI022dQHsuzZE
+	O5gSnMdN2dd93EzyxkKrdftg4tPP+oe373efY3OkG/IQL+rtCeljjC/e3JF5JIlb+MOz3n
+	Vv4Uo0gsaPTSUzYpnBw/whb/ktTDuY0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761731372;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/Vv6j2uH3syB4b/fkObS4cP+KWy+SLbrkAU6OiUQlDI=;
+	b=ws90S6XIWRLvQI6zPQSU9szcvmV0858ilSKtkmfZkf/3+gRLO/wWsKR5cLMtXRCRE9aO+0
+	LEuJz+YBtBOE7hAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761731372; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/Vv6j2uH3syB4b/fkObS4cP+KWy+SLbrkAU6OiUQlDI=;
+	b=rqL7t67g5ziw6SAaOf5kVgSeAYKFtSthBd/obhILYC5ceXSJypIueQt4fsI022dQHsuzZE
+	O5gSnMdN2dd93EzyxkKrdftg4tPP+oe373efY3OkG/IQL+rtCeljjC/e3JF5JIlb+MOz3n
+	Vv4Uo0gsaPTSUzYpnBw/whb/ktTDuY0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761731372;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/Vv6j2uH3syB4b/fkObS4cP+KWy+SLbrkAU6OiUQlDI=;
+	b=ws90S6XIWRLvQI6zPQSU9szcvmV0858ilSKtkmfZkf/3+gRLO/wWsKR5cLMtXRCRE9aO+0
+	LEuJz+YBtBOE7hAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 492131396A;
+	Wed, 29 Oct 2025 09:49:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3LCGECzjAWm8FgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 29 Oct 2025 09:49:32 +0000
+Message-ID: <bd93498e-749c-4e85-9c63-918aa8f2d6f3@suse.de>
+Date: Wed, 29 Oct 2025 10:49:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,141 +96,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: arm64: support optional calls of FF-A v1.2
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
- suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com,
- will@kernel.org, perlarsen@google.com, ayrton@google.com,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
- <20251027191729.1704744-3-yeoreum.yun@arm.com>
- <f5aa3c19-fdea-4f62-9541-530e59b20a87@arm.com>
- <aQEwVe8+okm/Nmso@e129823.arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH] drm/tiny: pixpaper: add explicit dependency on MMU
+To: LiangCheng Wang <zaq14760@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20251028-bar-v1-1-edfbd13fafff@gmail.com>
 Content-Language: en-US
-In-Reply-To: <aQEwVe8+okm/Nmso@e129823.arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251028-bar-v1-1-edfbd13fafff@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,intel.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-Hi Levi,
+Hi
 
-On 10/28/25 21:06, Yeoreum Yun wrote:
-> Hi Ben,
-> 
->>> To use TPM drvier which uses CRB over FF-A with FFA_DIRECT_REQ2,
->>> support the FF-A v1.2's optinal calls by querying whether
->>> SPMC supports those.
->>>
->>> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
->>> ---
->>>  arch/arm64/kvm/hyp/nvhe/ffa.c | 19 ++++++++++++++++++-
->>>  1 file changed, 18 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
->>> index 0ae87ff61758..9ded1c6369b9 100644
->>> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
->>> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
->>> @@ -646,6 +646,22 @@ static void do_ffa_mem_reclaim(struct arm_smccc_1_2_regs *res,
->>>  		ffa_to_smccc_res(res, ret);
->>>  }
->>>
->>> +static bool ffa_1_2_optional_calls_supported(u64 func_id)
->>> +{
->>> +	struct arm_smccc_1_2_regs res;
->>> +
->>> +	if (!smp_load_acquire(&has_version_negotiated) ||
->>> +		(FFA_MINOR_VERSION(FFA_VERSION_1_2) < 2))
->>> +		return false;
->>> +
->>> +	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
->>> +		.a0 = FFA_FEATURES,
->>> +		.a1 = func_id,
->>> +	}, &res);
->>> +
->>> +	return res.a0 == FFA_SUCCESS;
->>> +}
->>> +
->>>  /*
->>>   * Is a given FFA function supported, either by forwarding on directly
->>>   * or by handling at EL2?
->>> @@ -678,12 +694,13 @@ static bool ffa_call_supported(u64 func_id)
->>>  	case FFA_NOTIFICATION_SET:
->>>  	case FFA_NOTIFICATION_GET:
->>>  	case FFA_NOTIFICATION_INFO_GET:
->>> +		return false;
->>>  	/* Optional interfaces added in FF-A 1.2 */
->>>  	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
->>>  	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
->>>  	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
->>
->> Looking at table 13.54 in the FF-A 1.2 spec FFA_CONSOLE_LOG is only supported in secure FF-A
->> instances and not from the normal world.
-> 
-> Thanks. in that case, we can return false for FFA_CONSOLE_LOG
-> unconditionally.
-> 
->>
->>>  	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
->>> -		return false;
->>> +		return ffa_1_2_optional_calls_supported(func_id);
->>>  	}
->>
->> I don't think that an smc call here is the right thing to do. This changes this from a light
->> weight deny list to an extra smc call for each ffa_msg_send_direct_req2 from the driver.
->>
->> Instead, I would expect this patch just to remove FFA_MSG_SEND_DIRECT_REQ2 from the deny list
->> and rely on the TPM driver to use FFA_FEATURES to check whether it's supported.
->>
->> So, just this change:
->>
->> @@ -679,7 +679,6 @@ static bool ffa_call_supported(u64 func_id)
->>         case FFA_NOTIFICATION_GET:
->>         case FFA_NOTIFICATION_INFO_GET:
->>         /* Optional interfaces added in FF-A 1.2 */
->> -       case FFA_MSG_SEND_DIRECT_REQ2:          /* Optional per 7.5.1 */
->>         case FFA_MSG_SEND_DIRECT_RESP2:         /* Optional per 7.5.1 */
->>         case FFA_CONSOLE_LOG:                   /* Optional per 13.1: not in Table 13.1 */
->>         case FFA_PARTITION_INFO_GET_REGS:       /* Optional for virtual instances per 13.1 */
->>
->> Am I missing something?
-> 
-> Nope. I think you don't think you miss anything and
-> I also think about it.
-> 
-> But, I'm not sure about "support" means in the pkvm about FF-A.
-> Anyway unless the SPMC doesn't support the specific FF-A ABI,
-> I don't know that's meaningful to return "TRUE" in here.
-> IOW, suppose pkvm returns supports of  FFA_MSG_SEND_DIRECT_REQ2
-> but user receive when it calls FFA_MSG_SEND_DIRECT_REQ2 with NOT SUPPORTED.
+Am 28.10.25 um 03:55 schrieb LiangCheng Wang:
+> The DRM_GEM_SHMEM_HELPER helper requires MMU enabled because it uses
+> vmf_insert_pfn() in its mmap implementation. On NOMMU configurations
+> (e.g. some RISC-V randconfig builds), this symbol is unavailable and
+> selecting DRM_GEM_SHMEM_HELPER causes a modpost undefined reference:
+>
+>      ERROR: modpost: "vmf_insert_pfn" [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
+>
+> Normally, Kconfig prevents this helper from being selected when
+> CONFIG_MMU=n. However, in some randconfig builds (such as those used by
+> 0day CI), select statements can override unmet dependencies, triggering
+> the issue.
+>
+> Add an explicit dependency on MMU to DRM_PIXPAPER to prevent this.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510280213.0rlYA4T3-lkp@intel.com/
+> Fixes: 0c4932f6ddf8 ("drm/tiny: pixpaper: Fix missing dependency on DRM_GEM_SHMEM_HELPER")
+> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
+> ---
+> This patch fixes a build issue reported by the kernel test robot when
+> building with CONFIG_MMU=n on RISC-V randconfig.
+>
+> In such configurations, the DRM_GEM_SHMEM_HELPER helper uses
+> vmf_insert_pfn(), which is unavailable without MMU support. Although
+> normal Kconfig rules prevent DRM_GEM_SHMEM_HELPER from being selected
+> in this case, randconfig builds may forcibly enable it via select,
+> leading to the following modpost error:
+>
+>      ERROR: modpost: "vmf_insert_pfn" [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
+>
+> The fix is to add an explicit `depends on MMU` to the DRM_PIXPAPER
+> driver, ensuring it cannot be built for NOMMU systems.
+>
+> This issue cannot always be reproduced locally because typical builds
+> do not violate Kconfig dependencies, but it was confirmed that the fix
+> prevents the reported 0day failure.
 
-As I understand it, the ffa_call_supported() is used in two places:
-1. To return NOT SUPPORTED to an FFA_FEATURE call for ffa calls that are
-on the deny list.
-2. To block ffa calls if they are on the deny list.
+The problem most likely comes from [1]. Is it possible to fix this instead?
 
-For both your patch and just removing FFA_MSG_SEND_DIRECT_REQ2 from the
-denylist I think the behaviour is the same.
+[1] https://elixir.bootlin.com/linux/v6.17.5/source/arch/riscv/Kconfig#L1345
 
-If FFA_MSG_SEND_DIRECT_REQ2 is not supported at the spmc then:
-a) an FFA_FEATURE call will return not supported
-b) an FFA_MSG_SEND_DIRECT_REQ2 will return not supported
+Best regards
+Thomas
 
-> 
-> I'm not sure this inconsistency is allowed or not so as a defensive
-> perspective.
-> 
-> If that allows, I don't have a any special comment for this.
-> 
-> Thanks!
-> 
-> --
-> Sincerely,
-> Yeoreum Yun
+> ---
+> LiangCheng Wang (1):
+>    drm/tiny: pixpaper: add explicit dependency on MMU
+>
+>   drivers/gpu/drm/tiny/Kconfig
+>
+> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
+> ---
+>   drivers/gpu/drm/tiny/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
+> index 7d9e85e932d7fd7bdb6ad7a4c6ba0f835841f623..f0e72d4b6a4709564e63c758e857bdb4a320dbe7 100644
+> --- a/drivers/gpu/drm/tiny/Kconfig
+> +++ b/drivers/gpu/drm/tiny/Kconfig
+> @@ -85,6 +85,7 @@ config DRM_PANEL_MIPI_DBI
+>   config DRM_PIXPAPER
+>           tristate "DRM support for PIXPAPER display panels"
+>           depends on DRM && SPI
+> +        depends on MMU
+>           select DRM_CLIENT_SELECTION
+>           select DRM_GEM_SHMEM_HELPER
+>           select DRM_KMS_HELPER
+>
+> ---
+> base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
+> change-id: 20251028-bar-ae0d85b16f13
+>
+> Best regards,
 
 -- 
-Thanks,
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Ben
 
 
