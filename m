@@ -1,165 +1,490 @@
-Return-Path: <linux-kernel+bounces-875591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E54C19652
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:38:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCEAC1963D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E434A4F87FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021954039F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AEC3081CE;
-	Wed, 29 Oct 2025 09:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F49326D50;
+	Wed, 29 Oct 2025 09:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HZTLtbVI";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="diWlTxH0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qOdlCiFo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pM76xRKp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891F532861E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEB0223DF6;
+	Wed, 29 Oct 2025 09:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761730531; cv=none; b=iQAVPKAbGIB8RFEuti+ly6HcF/NQUjtO+YRJVjTRdS66T2mT2SygeE+PC8x789UXsjTCx66Syn9KoIEcIWynm6P9gu9CkLunm95hMRzYsa/wI+0JXJp4VREO5jFClF4qCYcKgE1907iwDs5uco9RDyRh5Mfx+jHtTjuYualQoXI=
+	t=1761730573; cv=none; b=K0GuVn/NSPSzLp2PCmEp0qwI3z8DP7xBvx4JQ619oJEI3fQ1Bou+2EFNrayPjrkzgzX/wTp29v1vkRJtmksYTJNQLVhtxZcNR0nCFeHNSOcvJlruIAPiBTZcKQLbJ6cJNQiq3BEzvIbs6JWsvf6DEsOT4IGIo1mAuRJkxNWAhbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761730531; c=relaxed/simple;
-	bh=NgfyWXD4ZMuCkyaN3+/uoeoSemySMrT4tQNuxgJ6Tl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZlUxPsabeWM3YEncqqJm/uscLxBouSvVhqLKzOHEhhkJdW5DvwsWNOzndeYfeGdpdtJDHM2iEcjuoIZJMRFhCnqfx5TUxdJ7UlFW0fRZ1+ymZEfq1hlv46U5xYQt53l5k0gSpVvI5yygfy1wya3o/xBlsTJ5XcZKr3QfofD6BWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HZTLtbVI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=diWlTxH0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59T4v3Pg3755366
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:35:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FJeGESJ/n35Xq37cXnQAMlzhqerXJpjFv7StBPPW6Nc=; b=HZTLtbVIfaBwHupY
-	1Gdt5SJCj7qX6I8zBP2cMp3lCgpuQh4uFGHmpTD3MOtoCEqeD5mbDUbMgFcVK9C/
-	Qh6EPwOd3JmmWBopEa821c9asfvR62YsFGCHzo2+I8bordxus1H6wutc+ZZo9ci4
-	eWQLIfPpo/hiHaeHB+TDn3cf2jP1P55UP9BlnbsB9ktNhsXKz4VBWnEnc73DmsiM
-	nrXMwBI81mkw6v23ScllVWHIC+S3EmeQVXk2SoBRghcpfBwaMkx2gDrxjGjWiIzA
-	Wj11JOM5iJrVkequeioJNMo8MWqFPhqoih3yuHcjcRmNBmmDcDdLYpCXeiIzN0cx
-	5gQMug==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a0j0nj-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:35:28 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4eceefa36d0so121941871cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761730527; x=1762335327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FJeGESJ/n35Xq37cXnQAMlzhqerXJpjFv7StBPPW6Nc=;
-        b=diWlTxH0oibIWIoCpYXEAb1v4UNn+AcydGwRWs34tHGNsH6Ra2GnRieDNm2xJkc9ra
-         n0+2QalcIGopycTpjwCHpbnfeqdzcBcFxwB3Inn5m7Mdn3tfqJSnKzowfXFRKP9cYSRp
-         mGJGgzfKm2P5hRTMIpBRXk49BWAmyYVhlHGNcTf+qN1MFXTU11PQURwOdEC6IPaq9Jdq
-         c1aOgF1NUP2tWfbuW01a+PUvRtRAGXmcWDilYDGS9Lo4AEoB9nzn2zstYby+KLNUnoGH
-         DSxL+RibRyhhFdZup4WTzEci2fv/nHDrWG+U1QLFtGTKNAvHC2iih/iLhzs/J3I1DFmY
-         nCYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761730527; x=1762335327;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FJeGESJ/n35Xq37cXnQAMlzhqerXJpjFv7StBPPW6Nc=;
-        b=jxjbkJUjnF5KxGAkgsgUokXXDP6TFY0N4BrSBCtP0m5T9YhTY0S7MGpxnIC415FoLu
-         LD7g5iYboSzrb43Jqz6wnX583nHdRW+UmamFc9zXr21Wy2q/gIjwfhlqYTV6z7X8/9dK
-         0UnicBlz8a/TKa7D7OpywS/N3/dONHQkPA9IqFiwyfj7P54k4PjE6J4g8iYZtVRRFKjh
-         ffzACHbErSUwi0IfaM+/rSUKinY9bFTSGRg0/UR+xecqxj3GOharRbZOU0Nkb3XJFlzA
-         e3zPWHcGJU8vqxYcODer7A5UHXzQzJM+WZuwRNZ0uxwXbUQOpE23r3y8RTyYWGAgZ/Yo
-         pUiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw61MC1MGzumNJq3WotC+DWL9SM7AG97iyXEfAsdAZU7W08UC/oCY408OrDHu1/ZaUl6lSp1y7XXzjZwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqlv2jRrvcMUWjzs25O1TbPr3AgS3egppEKF5oZXwPY3G6aufO
-	b8P+z7wCxBT56uUK0n7rqeVJFMjLATRG0XvZbzkGRu+qvUcoOjuLSSO21XK9qIfyHjk//2fN+/g
-	nG44TwLNE1i3gPB3D6R6FghigVNLI+xzAdBCz7lK4pSQmcO/9jWj/hsIJHsayZwITktE=
-X-Gm-Gg: ASbGncs4XsKRRyg25ed37BRcv8Xl4uSTCP7iZy5sm/CLhyoKbK1yybikgQHM/Nu69Ha
-	uF9AF1/2S8a2rmd788g4TP2ldkPabKI1swklDP7FYr9Cfbb0U0IMg/+ve4jhrpiYfha9MF+ggwm
-	x8pjUTHDVPGRz40PRd7CUH+nGp0HQVS3W91Sshf+nujK3EnFIm/d3NT4nxn/vmXisMVOruvZO9t
-	BYQAFIs0f5HsGq3yeCdoY45qvoqzmFzH9hH2F7bx6bxSbeG8bx7S9ZWo0AJKbJjPOX0YotgdiVz
-	9jvUZzRkOn0knnh+NvbfwriVfLn0rtHdb+9WUzaqpusoPOB/WtZEJhDVz18meaTTrbM0RdHobWx
-	ySxKVja/o5hPoqCk8jW7hIEygv2oglLRLzPletFtpC/Wsv0MKczSmAbjiZ4crWnOO6wSuoxMADZ
-	R3SA==
-X-Received: by 2002:a05:622a:56:b0:4eb:a2ab:4182 with SMTP id d75a77b69052e-4ed15b5970emr27737521cf.22.1761730527377;
-        Wed, 29 Oct 2025 02:35:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrRwSSecdIRfs936+1xe5RDYK9h1uyw0BYIZUGcu6vRuRGwPaVc++qS+lMTWMFUdJMj22VSw==
-X-Received: by 2002:a05:622a:56:b0:4eb:a2ab:4182 with SMTP id d75a77b69052e-4ed15b5970emr27737401cf.22.1761730526925;
-        Wed, 29 Oct 2025 02:35:26 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0c3:3a00::4c9? (2001-14ba-a0c3-3a00--4c9.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::4c9])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941566452esm133254e87.8.2025.10.29.02.35.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 02:35:26 -0700 (PDT)
-Message-ID: <51f10d4e-3962-4c20-9d5f-afd0ac3f598e@oss.qualcomm.com>
-Date: Wed, 29 Oct 2025 11:35:25 +0200
+	s=arc-20240116; t=1761730573; c=relaxed/simple;
+	bh=CHFGh7xrm1s6z1qFOOXMEGkLVph6xj2MAy8oBMtx3DQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=cUe3cQ3zMoe2Uzim7TX71JC/Xrt8fXe9X01a3wEPcpL1F1I0OfKLVy6fMlXtTMh/DSh/yPNDp5pWlJH+Z8k/DW6lLoAxIx0Bz6rT9qxpaSjS1tb9YiFWYbW0+5wsfaq9c9hrVjfVwG8wJGX2u3k28FPdo+4r2StmUwMFfHn+2Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qOdlCiFo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pM76xRKp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 09:36:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761730568;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K1djE5S+G3WnenKKATIXY6Xk5fC+blQx6ShFVItsSK0=;
+	b=qOdlCiFo9xLgxXq5rzOVYrCUlQTXGsLtmv8sJk1ZOZyKRzviZcbwSdxE4WayRe4jb1fujX
+	8xp76BiE8b7kYmwPiQ+r1bOmmGDo+rxT3jL38NZJm94gvM2HPlctgeg6hQtceaBcPbkUGZ
+	0O+AP4IhEKZFN68fs7eKL1WF2BSXSG8kYqXgylpRN+jy3vtEcpQClzMIAWumELZi27U36Y
+	xMXH4t0bMQZ+TJMCNvSNyO56P6DaKqyM7M9imKreD8QY6jyHASSfZEyVwU+jHY4/l3Lx6k
+	xLj4Z1xNrbFDnMm4w65i3H+7R160xnHHZQJHmh2oSrwUf/IW2NyeHS5FRO1cpQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761730568;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K1djE5S+G3WnenKKATIXY6Xk5fC+blQx6ShFVItsSK0=;
+	b=pM76xRKpdTObSOPmNYGr9XteeTxmi5OGSe6LTMdiYiI+M1C2JDFC/Cxg23/mflNlfhPGTo
+	YFxYLMyARY1Go+CA==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf: Support deferred user unwind
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+References: <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] arm64: dts: qcom: cleanup GPU's zap-shader node
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
- <c83079bd-ebd2-49fc-ab62-1fba08276cc4@oss.qualcomm.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <c83079bd-ebd2-49fc-ab62-1fba08276cc4@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=HvZ72kTS c=1 sm=1 tr=0 ts=6901dfe0 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VH_4oVhpAmBFcI_Eq3kA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: ZYL5zgApdXc3GR-ndYNNnhPYI9OXQuvz
-X-Proofpoint-ORIG-GUID: ZYL5zgApdXc3GR-ndYNNnhPYI9OXQuvz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDA3MSBTYWx0ZWRfX6fsRbGgszNgD
- xFZ5EV/3exdQlTyNtyGzTnxdjq9Urcqt42E1rpYefwCF6kfMSnP7qT0gJWCgbd0MgPqDjUPp+13
- Iv2RHyzKuR4ISFzHkTDV6FmeXobLkhzn6/9sreROy7+45vO4cnxjy0enQ/GfF21pdScLXehQVV9
- CWlJz5jEseWURw8qSsBIAKIfAgzsjj/mQp0SnAUmDYUwLDSzlaTjYPCuOBKEN0fAC592rMDGNa5
- S/O/UJ8TMUKMu2lSrocCIxHXT7NSwtoj3PWKoytmfpIElqcBOqP6KN8I0yw4HkUAQvmPGCwU9zy
- QZgR1tBMq34fEIbcRdhZ17P/W5Eyg4ICgO3jTtOi2QtpQVmqLC8d00yo4w88wMVFb8Oeq+vsFLN
- uge321OwKmvj98qnURx0tNBIbU6h1g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-29_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290071
+Message-ID: <176173056623.2601451.17637048270139232619.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/10/2025 11:33, Konrad Dybcio wrote:
-> On 10/28/25 9:59 PM, Dmitry Baryshkov wrote:
->> Historically all devices manually defined GPU zap-shader node in their
->> board DT files. This practice is frowned upon. Add the zap-shader node
->> on all platforms, define a label for it and use the label in order to
->> patch the node with the firmware name.
-> 
-> I'm not sure this is much of an improvement, since at the end of the
-> series, boards still have a &gpu { zap-shader {} } section, with the
-> inner one not being referred to through a label, which reduces
-> duplication in the single LoC used to assign memory-region, but
-> doesn't e.g. prevent typos in the zap-shader node name
+The following commit has been merged into the perf/core branch of tip:
 
-By the end of the series the boards don't have zap-shader{}. They use 
-&gpu_zap_shader { firmware-name = "something" ; };
+Commit-ID:     c69993ecdd4dfde2b7da08b022052a33b203da07
+Gitweb:        https://git.kernel.org/tip/c69993ecdd4dfde2b7da08b022052a33b20=
+3da07
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Thu, 23 Oct 2025 15:17:05 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 29 Oct 2025 10:29:58 +01:00
 
+perf: Support deferred user unwind
 
--- 
-With best wishes
-Dmitry
+Add support for deferred userspace unwind to perf.
+
+Where perf currently relies on in-place stack unwinding; from NMI
+context and all that. This moves the userspace part of the unwind to
+right before the return-to-userspace.
+
+This has two distinct benefits, the biggest is that it moves the
+unwind to a faultable context. It becomes possible to fault in debug
+info (.eh_frame, SFrame etc.) that might not otherwise be readily
+available. And secondly, it de-duplicates the user callchain where
+multiple samples happen during the same kernel entry.
+
+To facilitate this the perf interface is extended with a new record
+type:
+
+  PERF_RECORD_CALLCHAIN_DEFERRED
+
+and two new attribute flags:
+
+  perf_event_attr::defer_callchain - to request the user unwind be deferred
+  perf_event_attr::defer_output    - to request PERF_RECORD_CALLCHAIN_DEFERRE=
+D records
+
+The existing PERF_RECORD_SAMPLE callchain section gets a new
+context type:
+
+  PERF_CONTEXT_USER_DEFERRED
+
+After which will come a single entry, denoting the 'cookie' of the
+deferred callchain that should be attached here, matching the 'cookie'
+field of the above mentioned PERF_RECORD_CALLCHAIN_DEFERRED.
+
+The 'defer_callchain' flag is expected on all events with
+PERF_SAMPLE_CALLCHAIN. The 'defer_output' flag is expect on the event
+responsible for collecting side-band events (like mmap, comm etc.).
+Setting 'defer_output' on multiple events will get you duplicated
+PERF_RECORD_CALLCHAIN_DEFERRED records.
+
+Based on earlier patches by Josh and Steven.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://patch.msgid.link/20251023150002.GR4067720@noisy.programming.kic=
+ks-ass.net
+---
+ include/linux/perf_event.h            |  2 +-
+ include/linux/unwind_deferred.h       | 12 +----
+ include/linux/unwind_deferred_types.h | 13 ++++-
+ include/uapi/linux/perf_event.h       | 21 ++++++-
+ kernel/bpf/stackmap.c                 |  4 +-
+ kernel/events/callchain.c             | 14 ++++-
+ kernel/events/core.c                  | 78 +++++++++++++++++++++++++-
+ tools/include/uapi/linux/perf_event.h | 21 ++++++-
+ 8 files changed, 145 insertions(+), 20 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index fd1d910..9870d76 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1720,7 +1720,7 @@ extern void perf_callchain_user(struct perf_callchain_e=
+ntry_ctx *entry, struct p
+ extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, st=
+ruct pt_regs *regs);
+ extern struct perf_callchain_entry *
+ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+-		   u32 max_stack, bool crosstask, bool add_mark);
++		   u32 max_stack, bool crosstask, bool add_mark, u64 defer_cookie);
+ extern int get_callchain_buffers(int max_stack);
+ extern void put_callchain_buffers(void);
+ extern struct perf_callchain_entry *get_callchain_entry(int *rctx);
+diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+index f4743c8..bc7ae7d 100644
+--- a/include/linux/unwind_deferred.h
++++ b/include/linux/unwind_deferred.h
+@@ -6,18 +6,6 @@
+ #include <linux/unwind_user.h>
+ #include <linux/unwind_deferred_types.h>
+=20
+-struct unwind_work;
+-
+-typedef void (*unwind_callback_t)(struct unwind_work *work,
+-				  struct unwind_stacktrace *trace,
+-				  u64 cookie);
+-
+-struct unwind_work {
+-	struct list_head		list;
+-	unwind_callback_t		func;
+-	int				bit;
+-};
+-
+ #ifdef CONFIG_UNWIND_USER
+=20
+ enum {
+diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_def=
+erred_types.h
+index 0a4c8dd..18fa393 100644
+--- a/include/linux/unwind_deferred_types.h
++++ b/include/linux/unwind_deferred_types.h
+@@ -39,4 +39,17 @@ struct unwind_task_info {
+ 	union unwind_task_id	id;
+ };
+=20
++struct unwind_work;
++struct unwind_stacktrace;
++
++typedef void (*unwind_callback_t)(struct unwind_work *work,
++				  struct unwind_stacktrace *trace,
++				  u64 cookie);
++
++struct unwind_work {
++	struct list_head		list;
++	unwind_callback_t		func;
++	int				bit;
++};
++
+ #endif /* _LINUX_UNWIND_USER_DEFERRED_TYPES_H */
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 78a362b..d292f96 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -463,7 +463,9 @@ struct perf_event_attr {
+ 				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREA=
+D */
+ 				remove_on_exec :  1, /* event is removed from task on exec */
+ 				sigtrap        :  1, /* send synchronous SIGTRAP on event */
+-				__reserved_1   : 26;
++				defer_callchain:  1, /* request PERF_RECORD_CALLCHAIN_DEFERRED records */
++				defer_output   :  1, /* output PERF_RECORD_CALLCHAIN_DEFERRED records */
++				__reserved_1   : 24;
+=20
+ 	union {
+ 		__u32		wakeup_events;	  /* wake up every n events */
+@@ -1239,6 +1241,22 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_AUX_OUTPUT_HW_ID		=3D 21,
+=20
++	/*
++	 * This user callchain capture was deferred until shortly before
++	 * returning to user space.  Previous samples would have kernel
++	 * callchains only and they need to be stitched with this to make full
++	 * callchains.
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				cookie;
++	 *	u64				nr;
++	 *	u64				ips[nr];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_CALLCHAIN_DEFERRED		=3D 22,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+=20
+@@ -1269,6 +1287,7 @@ enum perf_callchain_context {
+ 	PERF_CONTEXT_HV				=3D (__u64)-32,
+ 	PERF_CONTEXT_KERNEL			=3D (__u64)-128,
+ 	PERF_CONTEXT_USER			=3D (__u64)-512,
++	PERF_CONTEXT_USER_DEFERRED		=3D (__u64)-640,
+=20
+ 	PERF_CONTEXT_GUEST			=3D (__u64)-2048,
+ 	PERF_CONTEXT_GUEST_KERNEL		=3D (__u64)-2176,
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 4d53cdd..8f1daca 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -315,7 +315,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struc=
+t bpf_map *, map,
+ 		max_depth =3D sysctl_perf_event_max_stack;
+=20
+ 	trace =3D get_perf_callchain(regs, kernel, user, max_depth,
+-				   false, false);
++				   false, false, 0);
+=20
+ 	if (unlikely(!trace))
+ 		/* couldn't fetch the stack trace */
+@@ -452,7 +452,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct =
+task_struct *task,
+ 		trace =3D get_callchain_entry_for_task(task, max_depth);
+ 	else
+ 		trace =3D get_perf_callchain(regs, kernel, user, max_depth,
+-					   crosstask, false);
++					   crosstask, false, 0);
+=20
+ 	if (unlikely(!trace) || trace->nr < skip) {
+ 		if (may_fault)
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index 808c0d7..b9c7e00 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -218,7 +218,7 @@ static void fixup_uretprobe_trampoline_entries(struct per=
+f_callchain_entry *entr
+=20
+ struct perf_callchain_entry *
+ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+-		   u32 max_stack, bool crosstask, bool add_mark)
++		   u32 max_stack, bool crosstask, bool add_mark, u64 defer_cookie)
+ {
+ 	struct perf_callchain_entry *entry;
+ 	struct perf_callchain_entry_ctx ctx;
+@@ -251,6 +251,18 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bo=
+ol user,
+ 			regs =3D task_pt_regs(current);
+ 		}
+=20
++		if (defer_cookie) {
++			/*
++			 * Foretell the coming of PERF_RECORD_CALLCHAIN_DEFERRED
++			 * which can be stitched to this one, and add
++			 * the cookie after it (it will be cut off when the
++			 * user stack is copied to the callchain).
++			 */
++			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER_DEFERRED);
++			perf_callchain_store_context(&ctx, defer_cookie);
++			goto exit_put;
++		}
++
+ 		if (add_mark)
+ 			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
+=20
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7541f6f..f6a08c7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -56,6 +56,7 @@
+ #include <linux/buildid.h>
+ #include <linux/task_work.h>
+ #include <linux/percpu-rwsem.h>
++#include <linux/unwind_deferred.h>
+=20
+ #include "internal.h"
+=20
+@@ -8200,6 +8201,8 @@ static u64 perf_get_page_size(unsigned long addr)
+=20
+ static struct perf_callchain_entry __empty_callchain =3D { .nr =3D 0, };
+=20
++static struct unwind_work perf_unwind_work;
++
+ struct perf_callchain_entry *
+ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+ {
+@@ -8208,8 +8211,11 @@ perf_callchain(struct perf_event *event, struct pt_reg=
+s *regs)
+ 		!(current->flags & (PF_KTHREAD | PF_USER_WORKER));
+ 	/* Disallow cross-task user callchains. */
+ 	bool crosstask =3D event->ctx->task && event->ctx->task !=3D current;
++	bool defer_user =3D IS_ENABLED(CONFIG_UNWIND_USER) && user &&
++			  event->attr.defer_callchain;
+ 	const u32 max_stack =3D event->attr.sample_max_stack;
+ 	struct perf_callchain_entry *callchain;
++	u64 defer_cookie;
+=20
+ 	if (!current->mm)
+ 		user =3D false;
+@@ -8217,8 +8223,13 @@ perf_callchain(struct perf_event *event, struct pt_reg=
+s *regs)
+ 	if (!kernel && !user)
+ 		return &__empty_callchain;
+=20
+-	callchain =3D get_perf_callchain(regs, kernel, user,
+-				       max_stack, crosstask, true);
++	if (!(user && defer_user && !crosstask &&
++	      unwind_deferred_request(&perf_unwind_work, &defer_cookie) >=3D 0))
++		defer_cookie =3D 0;
++
++	callchain =3D get_perf_callchain(regs, kernel, user, max_stack,
++				       crosstask, true, defer_cookie);
++
+ 	return callchain ?: &__empty_callchain;
+ }
+=20
+@@ -10003,6 +10014,66 @@ void perf_event_bpf_event(struct bpf_prog *prog,
+ 	perf_iterate_sb(perf_event_bpf_output, &bpf_event, NULL);
+ }
+=20
++struct perf_callchain_deferred_event {
++	struct unwind_stacktrace *trace;
++	struct {
++		struct perf_event_header	header;
++		u64				cookie;
++		u64				nr;
++		u64				ips[];
++	} event;
++};
++
++static void perf_callchain_deferred_output(struct perf_event *event, void *d=
+ata)
++{
++	struct perf_callchain_deferred_event *deferred_event =3D data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	int ret, size =3D deferred_event->event.header.size;
++
++	if (!event->attr.defer_output)
++		return;
++
++	/* XXX do we really need sample_id_all for this ??? */
++	perf_event_header__init_id(&deferred_event->event.header, &sample, event);
++
++	ret =3D perf_output_begin(&handle, &sample, event,
++				deferred_event->event.header.size);
++	if (ret)
++		goto out;
++
++	perf_output_put(&handle, deferred_event->event);
++	for (int i =3D 0; i < deferred_event->trace->nr; i++) {
++		u64 entry =3D deferred_event->trace->entries[i];
++		perf_output_put(&handle, entry);
++	}
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++out:
++	deferred_event->event.header.size =3D size;
++}
++
++static void perf_unwind_deferred_callback(struct unwind_work *work,
++					 struct unwind_stacktrace *trace, u64 cookie)
++{
++	struct perf_callchain_deferred_event deferred_event =3D {
++		.trace =3D trace,
++		.event =3D {
++			.header =3D {
++				.type =3D PERF_RECORD_CALLCHAIN_DEFERRED,
++				.misc =3D PERF_RECORD_MISC_USER,
++				.size =3D sizeof(deferred_event.event) +
++					(trace->nr * sizeof(u64)),
++			},
++			.cookie =3D cookie,
++			.nr =3D trace->nr,
++		},
++	};
++
++	perf_iterate_sb(perf_callchain_deferred_output, &deferred_event, NULL);
++}
++
+ struct perf_text_poke_event {
+ 	const void		*old_bytes;
+ 	const void		*new_bytes;
+@@ -14799,6 +14870,9 @@ void __init perf_event_init(void)
+=20
+ 	idr_init(&pmu_idr);
+=20
++	unwind_deferred_init(&perf_unwind_work,
++			     perf_unwind_deferred_callback);
++
+ 	perf_event_init_all_cpus();
+ 	init_srcu_struct(&pmus_srcu);
+ 	perf_pmu_register(&perf_swevent, "software", PERF_TYPE_SOFTWARE);
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux=
+/perf_event.h
+index 78a362b..d292f96 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -463,7 +463,9 @@ struct perf_event_attr {
+ 				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREA=
+D */
+ 				remove_on_exec :  1, /* event is removed from task on exec */
+ 				sigtrap        :  1, /* send synchronous SIGTRAP on event */
+-				__reserved_1   : 26;
++				defer_callchain:  1, /* request PERF_RECORD_CALLCHAIN_DEFERRED records */
++				defer_output   :  1, /* output PERF_RECORD_CALLCHAIN_DEFERRED records */
++				__reserved_1   : 24;
+=20
+ 	union {
+ 		__u32		wakeup_events;	  /* wake up every n events */
+@@ -1239,6 +1241,22 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_AUX_OUTPUT_HW_ID		=3D 21,
+=20
++	/*
++	 * This user callchain capture was deferred until shortly before
++	 * returning to user space.  Previous samples would have kernel
++	 * callchains only and they need to be stitched with this to make full
++	 * callchains.
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				cookie;
++	 *	u64				nr;
++	 *	u64				ips[nr];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_CALLCHAIN_DEFERRED		=3D 22,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+=20
+@@ -1269,6 +1287,7 @@ enum perf_callchain_context {
+ 	PERF_CONTEXT_HV				=3D (__u64)-32,
+ 	PERF_CONTEXT_KERNEL			=3D (__u64)-128,
+ 	PERF_CONTEXT_USER			=3D (__u64)-512,
++	PERF_CONTEXT_USER_DEFERRED		=3D (__u64)-640,
+=20
+ 	PERF_CONTEXT_GUEST			=3D (__u64)-2048,
+ 	PERF_CONTEXT_GUEST_KERNEL		=3D (__u64)-2176,
 
