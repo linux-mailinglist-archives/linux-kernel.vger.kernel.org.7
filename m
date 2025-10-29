@@ -1,112 +1,107 @@
-Return-Path: <linux-kernel+bounces-875026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8050C180AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:27:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D67C180AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 405913552E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116CF3BD3DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47252D2391;
-	Wed, 29 Oct 2025 02:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h+xYBjTn"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5939B2D2391;
+	Wed, 29 Oct 2025 02:27:55 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECEC1F0994
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C231E2307;
+	Wed, 29 Oct 2025 02:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761704860; cv=none; b=ctAtfDebxf+GvZW9Ry5jixUG9FK9a5SjiCEzepXfDxay931GnzIW+Mcmmu06YTs4zfug/QY2ok9picrK0bNL2yClHwzP2bkiHCxE5d/xbZLo72NymoqbKmiY4YCQOYOfnI9uyiPblUJrCDug3pViS7MEpV4Npqd7AvoExepECTw=
+	t=1761704875; cv=none; b=C9T7IESUno2STElPzWVwmU8L5OK2ofNagNO6IU4FPTEJ9rCcrmSBM0SFLj22RkskUnrQ9XZ9ZOiIH0Sel2XEBVcdFm89TyUc+wf/0XF6r9jT+t/HMGFt709u8xnyhp17mF6sBXbad/iMXMxRVRgRg9a0lHjryFDJB/W8Ln81yQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761704860; c=relaxed/simple;
-	bh=ZAa8YrfBZCJJvU2+LBOiK9HqGPmJmDvCTByCdVc/+HY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PesTUIB8pVSuSE0rN0lumjTrBL+tOxdKT/uSx/BSum+eCTL/9SNJb/g5aGIeuMn1bdaTIdex4SPWfhtHH7Zea3Huy5RzUlEgHmOBAbR1qSdXY7DscQyKcFw6Rcp5VvFfEng34t4HLPx9WvpWWkERdS08IF6iwIfxXDCLI431zs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h+xYBjTn; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <91de05f5-3475-45eb-bbf7-162365186297@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761704846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KpJ/2UeKPOQj3QH3COAUSbB7u7mUiVa8jSdlFJvPeMY=;
-	b=h+xYBjTnwvtV8tO5ZhjdcS7E0G6taAoRUCOOgWBTWHbElXWR3LpAeUx5YkqzPzBMa90Pbi
-	Ya7p27k5tTBBM1w7JB/Xmi72kuhvRm/TUhsOHq7Si8JL74OLnArhYLYHtmvCBjORNeYfVT
-	mpMW4w3z6E3xICCX7KpnzwvHz/9T23A=
-Date: Wed, 29 Oct 2025 10:27:18 +0800
+	s=arc-20240116; t=1761704875; c=relaxed/simple;
+	bh=R0QHUv/WgXvHGlBRf2jmyo+ur9BbI3F2Zn7ndzuKc0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cuzL6rr1Ej7vX0ONM3cPol7EaDu2gRIcYNdxGSwEex03XU64dUdt4JSVZyw2kvpojqGRM1vZL24Zn0tnzuG1YL4GpQCyNHWy4UiPuvS+z1PAS9FfDsBM2e7fnfdEGuS2N1/im20LzwG2rQrbt6qQDz75y+0z+nTf8yaBIoSGzGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowACny1qiewFpdyAyBQ--.29216S2;
+	Wed, 29 Oct 2025 10:27:47 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: andersson@kernel.org,
+	konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] soc: qcom: smem: fix hwspinlock resource leak in probe error paths
+Date: Wed, 29 Oct 2025 10:27:33 +0800
+Message-ID: <20251029022733.255-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 1/3] net: stmmac: Add generic suspend/resume
- helper for PCI-based controllers
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Yao Zi <ziyao@disroot.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Huacai Chen <chenhuacai@kernel.org>, Philipp Stanner <phasta@kernel.org>,
- Tiezhu Yang <yangtiezhu@loongson.cn>, Qunqin Zhao <zhaoqunqin@loongson.cn>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Furong Xu <0x1207@gmail.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Jacob Keller <jacob.e.keller@intel.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251028154332.59118-1-ziyao@disroot.org>
- <20251028154332.59118-2-ziyao@disroot.org>
- <aQDoZaET4D64KfQA@shell.armlinux.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <aQDoZaET4D64KfQA@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:zQCowACny1qiewFpdyAyBQ--.29216S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFWDZry3Cw43tw47Zw18Zrb_yoW8Gr1kpa
+	1kJas0kF1UuF4jvwsFga4kZa4Yka1xK3y2grZ7A3srZF9FqrnIqF1fGFyUZrWSqFyxGrsx
+	Jr42q3yrZF4DZFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUSNt
+	xUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ8KA2kBUHqjagAAsE
 
+The hwspinlock acquired via hwspin_lock_request_specific() is not
+released on several error paths. This results in resource leakage
+when probe fails.
 
-在 2025/10/28 下午11:59, Russell King (Oracle) 写道:
-> On Tue, Oct 28, 2025 at 03:43:30PM +0000, Yao Zi wrote:
->> Most glue driver for PCI-based DWMAC controllers utilize similar
->> platform suspend/resume routines. Add a generic implementation to reduce
->> duplicated code.
->>
->> Signed-off-by: Yao Zi <ziyao@disroot.org>
->> ---
->>   drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 +
->>   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 37 +++++++++++++++++++
-> I would prefer not to make stmmac_main.c even larger by including bus
-> specific helpers there. We already have stmmac_pltfm.c for those which
-> use struct platform_device. The logical name would be stmmac_pci.c, but
-> that's already taken by a driver.
->
-> One way around that would be to rename stmmac_pci.c to dwmac-pci.c
-> (glue drivers tend to be named dwmac-foo.c) and then re-use
-> stmmac_pci.c for PCI-related stuff in the same way that stmmac_pltfm.c
-> is used.
->
-> Another idea would be stmmac_libpci.c.
+Switch to devm_hwspin_lock_request_specific() to automatically
+handle cleanup on probe failure. Remove the manual hwspin_lock_free()
+in qcom_smem_remove() as devm handles it automatically.
 
-I also don't want stmmac_main.c to grow larger, and I prefer
+Fixes: 20bb6c9de1b7 ("soc: qcom: smem: map only partitions used by local HOST")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/soc/qcom/smem.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-stmmac_libpci.c instead. Another approach - maybe we can
+diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+index cf425930539e..5d831b551c9a 100644
+--- a/drivers/soc/qcom/smem.c
++++ b/drivers/soc/qcom/smem.c
+@@ -1190,7 +1190,7 @@ static int qcom_smem_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, hwlock_id,
+ 				     "failed to retrieve hwlock\n");
+ 
+-	smem->hwlock = hwspin_lock_request_specific(hwlock_id);
++	smem->hwlock = devm_hwspin_lock_request_specific(&pdev->dev, hwlock_id);
+ 	if (!smem->hwlock)
+ 		return -ENXIO;
+ 
+@@ -1243,7 +1243,6 @@ static void qcom_smem_remove(struct platform_device *pdev)
+ {
+ 	platform_device_unregister(__smem->socinfo);
+ 
+-	hwspin_lock_free(__smem->hwlock);
+ 	__smem = NULL;
+ }
+ 
+-- 
+2.50.1.windows.1
 
-keep these helper functions in stmmac_pci.c and just declare
-
-them as extern where needed?
-
-
-Thanks,
-
-Yanteng
-
->
 
