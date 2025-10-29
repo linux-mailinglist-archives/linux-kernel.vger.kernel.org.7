@@ -1,109 +1,79 @@
-Return-Path: <linux-kernel+bounces-876893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9F1C1CBAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:16:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E9FC1CB90
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0A5622AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F815657BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62D83546E9;
-	Wed, 29 Oct 2025 18:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWs0dk9C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5BA2FABEE;
+	Wed, 29 Oct 2025 18:03:24 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B1B2F7ABE;
-	Wed, 29 Oct 2025 18:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C1C273D9A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761022; cv=none; b=NCai6uhjHHK5EcG62ttn/8vUQklix/GSfMd8lNy1rYhBRXjrkDTCvdSp9s+btCcQ95SxHC1PgZb7H8foQSbeQ3446IWgqiLE9XZp/Rndf+g1yZATngiEF1tBHHq/3CwnhLYck1uful1LmGHUUs4JinFVrAZ/35ArWWMIzZFaZtk=
+	t=1761761003; cv=none; b=TtkN1oER36A5rb7bA1YEVHZp0wcvFYQ8q5D7qN59vepZRzmPbXHYRGF3CJg34NF0jNxEYCqpqvi9MX8yLhk+RBSGyIl7I13yG78LaTryjlc7mQGRXCarlp+raD5nEsOJbdOnFXovixN9SDL7+ota+yt3wgT1sUDe1itAykcsv5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761022; c=relaxed/simple;
-	bh=p2p1mExq+VbfFKSn6yZ7QGZN0xXJpJitifw6k/WPVOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drVcAaUhFzhEsna+DLZhyXF9y9qbzx2DfVBw9bPT4us91ge5nB22K9pxVsogEbnp344fuCJiYH4/h/KuuS9h+pt8OswXg0c/Fw/dMDV/XWMhSVSNqkPC02JW+q3HWJ9QEhCK4LbFN6ZV0MHai+kwXeJdAmvYx4MFdxwmVpOKrUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWs0dk9C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BECC4CEF7;
-	Wed, 29 Oct 2025 18:03:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761761022;
-	bh=p2p1mExq+VbfFKSn6yZ7QGZN0xXJpJitifw6k/WPVOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mWs0dk9CVveUACfVBHLnH0vvLET//9eyp2+mEZOh0A3qXzZ5Xj487wNb//CtU6nsM
-	 MA7Gzw6qCg3Av8DOuxrluoQSF9/pGWc7D6gaS742ePZ285RAKm0AxTfFZCXUieNM/v
-	 6VAr3hlQUI5DT/RbH6LK/QlzdXUYiXpVMvSJKzksFmhznx6BL7V+5ROyZF7C05X4iN
-	 ldvUO9Fqjq1xtHRuB0xP1Uf59f6gRIgSkhWaGN1jCUjpdakgDgbx1PfQcC7TKFhGgb
-	 E8eJ2PrOrmLvefy1cxgoFrMVBvvrQZtjIELEoBcC3QEGKzDJl7RkJ8Xff7heUvEngZ
-	 lUSIHtZaRw+qQ==
-Date: Wed, 29 Oct 2025 19:03:35 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, Loic Poulain <loic.poulain@oss.qualcomm.com>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: i2c: qcom-cci: Document msm8953
- compatible
-Message-ID: <wgxgjhzbkkzbjz64bshooo7mstnpm7ames66e4ctjwjyx3p52i@j6db4r2x64nm>
-References: <20251028-msm8953-cci-v2-0-b5f9f7135326@lucaweiss.eu>
- <20251028-msm8953-cci-v2-1-b5f9f7135326@lucaweiss.eu>
- <48a217db-b85a-411c-81f2-3106b60da86f@oss.qualcomm.com>
+	s=arc-20240116; t=1761761003; c=relaxed/simple;
+	bh=0DhNQvS/wj4N35CJKIOfX1w88jcHmNnTT/ePHi8SEZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eHdVbKciprwP/RYiKCriI9AaoMhXLbuMCeoM6FwIlFP4KLn+QUAQy19iAimui8TZXdWU2o8GFsXHBeCmV2WrV6Hl2APLFH+z2lMpE4pV92u80Wtcykt5H/euH86zKVJBdjNo1XaD1HPv9sg6OujtSnPJ8uIBEXKLkLx+A4edJJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 9F8CA1A05DE;
+	Wed, 29 Oct 2025 18:03:14 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id C513C20028;
+	Wed, 29 Oct 2025 18:03:12 +0000 (UTC)
+Date: Wed, 29 Oct 2025 14:03:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Jakub Kicinski
+ <kuba@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] scripts: add tracepoint-update to .gitignore
+Message-ID: <20251029140353.58a4d6dd@gandalf.local.home>
+In-Reply-To: <20251029175720.12998-1-ansuelsmth@gmail.com>
+References: <20251029175720.12998-1-ansuelsmth@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <48a217db-b85a-411c-81f2-3106b60da86f@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: hh53eeyx46t6xcwosxbxxgrohuhsimdi
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: C513C20028
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19P3xqApsh0BRdYXoPUIuu/U3yG7wfK2cY=
+X-HE-Tag: 1761760992-73358
+X-HE-Meta: U2FsdGVkX197qUwp0UcIWDJVnFQ7VN/B739EgZeBLETSaGHiOhJeP+TUXyMDuEmFcHRSCtG+atsd5ebtRmjWGqywnJyI3z6fGAj/KzAQKN3sogYeFBlQ000pi18vEW4Zon3kboBi8qnMk1nQ6IJ02Yf/yugjtliOOGmJrIVZi1m9aLM95t4sY1i1yc9rolTtGaywIAt7qVIXPKiaQ2IVTr55bXTS793Scs8D22wqmBdRzxp/LOl/TiIr+JUBmiSLJrilt+KTPoHRyOEZHwqyzxnxg1CuxlrABqRGGthDs+qULdJMPgsKsz5V8L4zL9SmZUfJ3VDtj24pgLIPg8VPui4cYc5GZgpmdZnjfJmjDEJKd27OMlWEbA==
 
-Hi,
+On Wed, 29 Oct 2025 18:57:18 +0100
+Christian Marangi <ansuelsmth@gmail.com> wrote:
 
-On Wed, Oct 29, 2025 at 10:36:16AM +0100, Konrad Dybcio wrote:
-> On 10/28/25 5:40 PM, Luca Weiss wrote:
-> > Add the msm8953 CCI device string compatible.
-> > 
-> > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> > ---
-> >  Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
-> > index 9bc99d736343..ef8f5fe3a8e1 100644
-> > --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
-> > +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
-> > @@ -15,6 +15,7 @@ properties:
-> >      oneOf:
-> >        - enum:
-> >            - qcom,msm8226-cci
-> > +          - qcom,msm8953-cci
-> >            - qcom,msm8974-cci
-> >            - qcom,msm8996-cci
-> >  
-> > @@ -146,6 +147,7 @@ allOf:
-> >              - contains:
-> >                  enum:
-> >                    - qcom,msm8916-cci
-> > +                  - qcom,msm8953-cci
-> >  
-> >              - const: qcom,msm8996-cci
+> New tracepoint-update tool is not ignored from git when built.
 > 
-> Sorry for only bringing it up now - could you check whether
-> all the clocks that you defined are actually necessary?
-> 
-> It may be that you can do without CAMSS_AHB_CLK and/or
-> TOP_AHB_CLK
+> Add it to scripts .gitignore to prevent including files in commits by
+> mistake (for use that have the bad habits of using git add .).
 
-I was about to merge this. I'll wait for Luca's confirmation.
+Bartosz beat you to it:
 
-Andi
+  https://lore.kernel.org/all/20251029120709.24669-1-brgl@bgdev.pl/
+
+I already applied the patch and pushed it to my for-next branch. It will
+likely be in linux-next by tomorrow.
+
+-- Steve
 
