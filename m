@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-875136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6EFC184AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:29:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F7AC184B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B84C188DFCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:30:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9DB04EF2D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48162F7ACB;
-	Wed, 29 Oct 2025 05:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B522D0C82;
+	Wed, 29 Oct 2025 05:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFQdn1y4"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yCSzuSN6"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C9C2F7AB7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793DF213E6A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761715793; cv=none; b=MmDj+o5WnkUlXgWDNRSFiwDr0wLD+WpG9CLBfl7otv8JlmFAZRT+jKEsQdSkNKzjj3jKyRWdFZNsLxnnJs3Y7JtZtqlNazAavfAEOBHJp97fKwL5grPHUJERRINSynlEl7TnLABoN7pOb/fOqtNNEDioz1D6nf9pzjAxMBGehTE=
+	t=1761715818; cv=none; b=Pp0vkpLVcIiRwjKlLQicgzQNMf2pyrx6BGPBZVWHFix73vHFGn5rOR2QU0KuNgfJciaDt5nIUZjbfGYLefIqK/z1DOpzZM9Lu6xOkE0a0p4Jrl5BY/fWkAg2+HupUiDZX//yzV1rmSLTuSD3KUI9d9A5mXVS+Nln7RNUqDni8gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761715793; c=relaxed/simple;
-	bh=08/mzPYxSm/1nDpxNMmjbrtO5PkDhUO1zOysCCv/okI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGsR1lTsODqd8+BmsVzZ1RnZJWAzLWXDszIg0Dj49UzJguYdp0CziG+csXaXhuzSm3s692UgmzZwtC52U3MLqn8uaCOFj/oC6N4kV2v/8mr8s7O1n294iPMVzf+L+MGyQYQLj9egWh0wiXZzmh6YHQbxs2ThhVpNTPja6hZrq2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFQdn1y4; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1761715818; c=relaxed/simple;
+	bh=KQDf+j6lWSbdmJagka2ZggVCUrfKneNyC6Ve+TcVxXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KxQ44WBhEsTtAkArTgl4kIovfuNGgpa1LfH4EsfpqWN/G6L8oVy1SuXLZccjKhm1XHDAyZx4cz6GQ9WzGX7cuNx71HlRTPCP4rD1ANBQC4qR5W77mVV2Q6H/gdeO1uZdqf36TRX7q4idISip5WayPlNh7N8rIQXBrPMtpbWY5Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yCSzuSN6; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47721293fd3so910625e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:29:50 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4285169c005so3221471f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761715789; x=1762320589; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHaGH2NXIUYjcvzs9hO31NRTn0XjtT+KRdHL3PUBxU8=;
-        b=rFQdn1y4g5Z1CkF1aKD8Y1A5sQ9H7frsuEwID6DGNdKuVJ4vH63j+v2GeB5ClCwK4Z
-         nmX0u3AkNmsgQfP6YoZOEC+RPKrejDZBwOlWJi9AQ7JbkanngvBPtFA4o8AJ1ihj3hP1
-         RkZM20fTfKEUCnT8zEH5r/Qb7OL0X9M9CtL6UsiZi/VAQgWrRMT5KqsPuwBx6NcA07Zi
-         on9ERJ2a0o0l28BWwqfig9eT9oxVp/iEvnKZI3LSrlvWeiF5gvRkOssLcpS4xfGEtkl7
-         sb/yHKlmAnb0cE+QvR7OidAsIv+arfms2ekr9yk3Aj/YbwSNH1g6pcU8bA1qlWYlcKgG
-         XEuQ==
+        d=linaro.org; s=google; t=1761715815; x=1762320615; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uYokdTDrhX36UcN1b58PWjPF3nJOxVfqj7lGD2QXmPw=;
+        b=yCSzuSN6iYfTHHsfXgxxbSE91faHCXzOqdq6F1IsZgXJTI6O72tklazw/1/gIR1W+h
+         ELIkWIY1cLzGj1MUcaSmvJWnIaXUkM1jWIy0H8GkXrCz8rIWUp/wnVbZESo/jK29j3sI
+         I4OI5MeutIsaFucBEOF6kDWw2H8wiVFNt0TK9mxFMeWVobBqhOP0OztIdpmybS+NKc+G
+         KgiF0UQyTxh5zVb0EIt4AGNtkX0Ombf4QLlEdXlvh9LBnfg3njwooXdPJXsg9JcydqAA
+         KrRs4VBAEIzoA/LNukxn4F4O9+5obvIuVh8K724G0aTZlFytYkgQbiBrQogxu7Jb6k+k
+         7jgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761715789; x=1762320589;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pHaGH2NXIUYjcvzs9hO31NRTn0XjtT+KRdHL3PUBxU8=;
-        b=aS8HNMCIoZfAWjr9oh+fgK/dRFw/wokk9E3jab6ALgv/WUgCbE+08r0uyUgWMlDHNt
-         Hj4Djvs0vyk9TzTfJMSnZsNrQQK01u+G0O/638nQBsbbwh2ssFqvnIWcdnuH2WikIof4
-         YMU0PyyWnrcBujq6mzv2TRvAa8Y9LWcupjXMwh6yeNQtI9pU9iUfIMMURaYZBCHo/92O
-         mDs9yPG0DPoYl9ChsmOdYIC1+U/Rd58j7m1P1jjzECBUewCjnnEouf5JGt6ODRKIJKge
-         aHTDmvxdxGoC/IsDvUsndHfBe2yyg7tYiP/13AEpR2tMlMsxg0bR6GJtEI0IDEcTLg5k
-         Vgkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnQOOlpR2vHLwBO7NhyyGdbXFOwBckAZJIOD7PdvMkqE6w34X94VI/k33NcpZXSD3apDz6PgB4FjcSkRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7bU4OM6F7qjZDRIf6u9cYND9WkqJniUKYAiht9xXsCNzxkJG5
-	+p6S+wjhD9L9xsUzyCswyzPrw2IWE0CHpcs+3/XjHr3HoEbl0p9CsLj4Xgrnt4qCkbo=
-X-Gm-Gg: ASbGncvBzwvd78STGKB4NaskRNbwt0pFe1OZBRkv7aCZrQm2bWWujIbb+i7Fkl4UCOa
-	N+EIjaPZnx07OnNCP8y2PSz8+DhZLfPmghSlBIH5KPlLbcD1/9tekFeHmbbQhntCOUzFPWRKIBt
-	Ky5eEAPErwv0koo3Mlqqv3sfvb/0YGMNbiUEhkMhtkNIj5axz1d55XNw8Mi0pmKQLCXEx/K5aPU
-	UJnyK1DuOWyGquzXT2jYxzlFjcxNW9qttyiKDxrXxbj0JkQ5+gZxAQx/4nckP16WRs4bZ7Bo1VV
-	3kRpGHMYxz9SotJ3cRpKUooLit+Nhx9nd5bwPv6Xb6Nde+95tVZwMqVNc6YljCieRG4Om5CXYPE
-	FzziKEvfrPcpdcie+I34T+ynYfELjE0y7xI/mH2/hnNCblck/pWU+QrzDcdSK12IWrBYqbJBiNf
-	3lLWYiywyENq+ViDnF
-X-Google-Smtp-Source: AGHT+IHG2WznNN/Rizk/zJNzOf90BpJVy0QqUr8IDk1RCx9tIDyYps0DxYX9Z8QZNUQwV5GlDx1Ltw==
-X-Received: by 2002:a05:600c:58d7:b0:46f:b42e:e363 with SMTP id 5b1f17b1804b1-477181c334emr32548945e9.20.1761715789186;
-        Tue, 28 Oct 2025 22:29:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761715815; x=1762320615;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uYokdTDrhX36UcN1b58PWjPF3nJOxVfqj7lGD2QXmPw=;
+        b=Z1116QhQvrf0rq2g3lNd0ssLV7VX7N3u6JL53Lw23orBhxkI5H0u2azNdu+xjlaff/
+         kS/yTOkpQtuGpUCGcs1rAjiIb3bsTulkhH7R8PSNSN/rwgg5VlYTsRd0TxpZylQw79bv
+         pPhnvfhWJ802SHCRPsWRIAaazIUPEtxy6ozIoOq/8uDAY43BkcDxTxuShbGj/Ewecmjh
+         Juf0bMKZ1IW4Lye6u3CS+LwvmSkabUEfyMtE/24ZYa+BM8pxne5rhQAYG3+gcmYDA0p4
+         PDDQrL7jfrXO4zY5ZGCDhMQ+aMWbowsolZYlqN5gbZK73a7rwao5bm01AlEh9I24RziZ
+         hJxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUFeEv+xEMMQGqefqIUD1K+sVWLqoRiy834yzriAYUWhD8eAtmqT3GFR4pGax+cLsnSJpz9YTrwtdJRnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzWaIyc6k/QdBdZfyAvzvsooofWvAmsKet9GlSjWxWyW3q6XYd
+	hK9jZ3mLO48uGLsBwy3s4xU5xYSbMaIfdX3GIyH2paG58AAyNLqHbINm4sJhO7Z+GG8=
+X-Gm-Gg: ASbGncsKoBfNgP6xv2CdZ2ajRTxluu+WgiR8DLyJPXPAjW4wKVc8kvBDIy24dw7guud
+	lowpdiNfVrp7BTQjNV2p7djArQNxuML7kGrKGfUlPG+h/6Xo4qGAZc8tAiKoQtPoX4/ZWclczkh
+	H8KU67GNClr+KNk779Ck792ParVXh0WJI7L5d3Fni3xj+UCIkuEnq7Ue0JD8AdczYQeUaEirTlT
+	laBfI9CbP+HOnyK6Xvx64N2h6jJM/i8emcRV2qTyj4y9vUnCLnTFNfMs2bfzwnLAO38FZhWUr99
+	2JqZ7SO+dPKK+YOZuAylCUeT1HKzkOtUx+VDISsodo28K/QNDt2qlhEO6fG6JvOFc7X+ykYwSHP
+	4isCDc2gtP41NJ2tnT02e1NFE+OuiRzFj2BM1UvbU1zA8bEoChb7iLXFpg4u/MzPGSe+SgbK/g2
+	1UdqgdgQ==
+X-Google-Smtp-Source: AGHT+IHfC6E3lLu6ybmmfp1SQT7iGC+X39jKfB/plKPnN7tDBkq5CsrdtgMBZl4VfAAcWqEotczZdg==
+X-Received: by 2002:a05:6000:2403:b0:429:978f:16ef with SMTP id ffacd0b85a97d-429aefb9b5amr853947f8f.30.1761715814562;
+        Tue, 28 Oct 2025 22:30:14 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4771e3c878fsm28225995e9.17.2025.10.28.22.29.48
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952df5c9sm24207547f8f.41.2025.10.28.22.30.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 22:29:48 -0700 (PDT)
-Date: Wed, 29 Oct 2025 08:29:44 +0300
+        Tue, 28 Oct 2025 22:30:14 -0700 (PDT)
+Date: Wed, 29 Oct 2025 08:30:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
-Cc: sudip.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: sm750fb: style fixes: align call and split
- chained assignment
-Message-ID: <aQGmSIinidUQnHT4@stanley.mountain>
-References: <20251029022123.5829-1-cristiandelgobbo87@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Oded Gabbay <ogabbay@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Frank Li <Frank.Li@nxp.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] accel: ethosu: Fix shift overflow in cmd_to_addr()
+Message-ID: <aQGmY64tWcwOGFP4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,67 +88,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029022123.5829-1-cristiandelgobbo87@gmail.com>
+X-Mailer: git-send-email haha only kidding
 
-This patch was really confusing because I had no idea what I reported.
-Just remove my reported by tag...
+The "((cmd[0] & 0xff0000) << 16)" shift is zero.  This was intended
+to be (((u64)cmd[0] & 0xff0000) << 16).  Move the cast to the correct
+location.
 
-This is not a v2 patch, it's a whole new patch.  Don't call it a v2.
+Fixes: 5a5e9c0228e6 ("accel: Add Arm Ethos-U NPU driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+From static analysis.  Not tested.
 
-On Wed, Oct 29, 2025 at 03:21:23AM +0100, Cristian Del Gobbo wrote:
-> - Drop previous change that made g_fbmode[] elements const (broke build).
+ drivers/accel/ethosu/ethosu_gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But if it were a v2, this isn't the right way to send a v2.  In a v2 this
-would go under the --- cut off line.
-
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-
-> - Align the continued arguments of sm750_hw_cursor_set_size() with the
->   opening parenthesis.
-> - Replace a chained assignment of red/green/blue with a temporary
->   variable to satisfy checkpatch and improve readability.
-
-These are unrelated changes.  Do them as separate patches.
-
-> 
-> No functional change intended.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> Signed-off-by: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
-
-Also run your patch through checkpatch.pl.
-
-> ---
->  drivers/staging/sm750fb/sm750.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-> index 3659af7e519d..94a99af4320e 100644
-> --- a/drivers/staging/sm750fb/sm750.c
-> +++ b/drivers/staging/sm750fb/sm750.c
-> @@ -121,8 +121,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
->  	sm750_hw_cursor_disable(cursor);
->  	if (fbcursor->set & FB_CUR_SETSIZE)
->  		sm750_hw_cursor_set_size(cursor,
-> -					fbcursor->image.width,
-> -					fbcursor->image.height);
-> +					 fbcursor->image.width,
-> +					 fbcursor->image.height);
->  
->  	if (fbcursor->set & FB_CUR_SETPOS)
->  		sm750_hw_cursor_set_pos(cursor,
-> @@ -538,7 +538,11 @@ static int lynxfb_ops_setcolreg(unsigned int regno,
->  	}
->  
->  	if (info->var.grayscale)
-> -		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
-> +		int y = (red * 77 + green * 151 + blue * 28) >> 8;
-
-y is a strange variable name.  It has nothing to do with the y axis.
-
-regards,
-dan carpenter
-
+diff --git a/drivers/accel/ethosu/ethosu_gem.c b/drivers/accel/ethosu/ethosu_gem.c
+index 473b5f5d7514..7b073116314b 100644
+--- a/drivers/accel/ethosu/ethosu_gem.c
++++ b/drivers/accel/ethosu/ethosu_gem.c
+@@ -154,7 +154,7 @@ static void cmd_state_init(struct cmd_state *st)
+ 
+ static u64 cmd_to_addr(u32 *cmd)
+ {
+-	return ((u64)((cmd[0] & 0xff0000) << 16)) | cmd[1];
++	return (((u64)cmd[0] & 0xff0000) << 16) | cmd[1];
+ }
+ 
+ static u64 dma_length(struct ethosu_validated_cmdstream_info *info,
+-- 
+2.51.0
 
 
