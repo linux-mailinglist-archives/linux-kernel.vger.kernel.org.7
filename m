@@ -1,215 +1,222 @@
-Return-Path: <linux-kernel+bounces-876542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F12BC1BB46
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:37:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4D7C1BC1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA9F189A55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE3F6250D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AA0337BB1;
-	Wed, 29 Oct 2025 15:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B269B3358D9;
+	Wed, 29 Oct 2025 15:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fgmgu+IT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Uu6lBP9H";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fgmgu+IT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Uu6lBP9H"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hE/jr6Um"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5133D3358CD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFED32A3C5;
+	Wed, 29 Oct 2025 15:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761752246; cv=none; b=JOp6LL7+JYWqY8Ifn5oVelfYi59LdQDiuYkgmD7JHVZUJxCUisEFipr4T2QIopzFyIx/ta52TT7DYErw4n8nMXbo6HhEw4+wTE6sU4WkCLp1hqj6vBgx/UQiZjzpSO6Pl91YhYpv6F05H0bybN+JY0zDKIdxcLiX5acf7c4rj/c=
+	t=1761752074; cv=none; b=fcYhKOPkNF1e5vrj36G7sYx2axwN0hRhLNljUcgj9tUhPgHGmeM/+rtYjcwlVlfg9vKNgLHtla/B+cQmIVI4cNWU5340poZabeUnHBdeB+3a3thqsXdk9udP0arsbRX0/WyXzXhQ3Jtx19cXIxzH5lymnkBJtfd2NG3s2onogPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761752246; c=relaxed/simple;
-	bh=9Y2WvGaMa2bKc20q0TCsBVe2ydw/xHs+K/dsfu9TV9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iqv106xX132GIK/PKVqXPBSxZZg1G7JYTAMMi1wtdWG4jA07nl+mwMHR2Aq0bmL2DZRCIGQDlileSBVBulAM4WmvJwhFYEHJgHIRJwo3/LFWrbN2eCv+MARwQjQT2WayUKuyLnQ1WnJYQ/WNYMNZp8mupfmA/Z0MRWvpwowzdV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fgmgu+IT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Uu6lBP9H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fgmgu+IT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Uu6lBP9H; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6BB5120FD0;
-	Wed, 29 Oct 2025 15:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761752241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ENJQWumhQFBRbBzZ2XQ78O0uq9YHFwzP1q0R/p8ERLo=;
-	b=Fgmgu+ITLbZdDiWMzTF5FTjtGkdaD46txdnMMZCqCfBWgtK8RQqazEPPUkHwj3GyEmDt2r
-	HHC7drpWoGk/xtmHwSSDGjF42ChHmSNSqUsOC0OKPgCirEJE3ZLPCCPP27ZOuc/4gOzwlV
-	bhIex/DRWbgcXMvYdp1qnOeX1JLGgUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761752241;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ENJQWumhQFBRbBzZ2XQ78O0uq9YHFwzP1q0R/p8ERLo=;
-	b=Uu6lBP9HxMWJt9zMWubGmWEMUPxMGNADw5c/VIE2hc2Af17a5+c+tDA4DHBQCBu7FLCgvf
-	t0VSyC4F+rQn3mCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761752241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ENJQWumhQFBRbBzZ2XQ78O0uq9YHFwzP1q0R/p8ERLo=;
-	b=Fgmgu+ITLbZdDiWMzTF5FTjtGkdaD46txdnMMZCqCfBWgtK8RQqazEPPUkHwj3GyEmDt2r
-	HHC7drpWoGk/xtmHwSSDGjF42ChHmSNSqUsOC0OKPgCirEJE3ZLPCCPP27ZOuc/4gOzwlV
-	bhIex/DRWbgcXMvYdp1qnOeX1JLGgUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761752241;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ENJQWumhQFBRbBzZ2XQ78O0uq9YHFwzP1q0R/p8ERLo=;
-	b=Uu6lBP9HxMWJt9zMWubGmWEMUPxMGNADw5c/VIE2hc2Af17a5+c+tDA4DHBQCBu7FLCgvf
-	t0VSyC4F+rQn3mCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D5DF1349D;
-	Wed, 29 Oct 2025 15:37:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aaF/ErE0AmlyeAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 29 Oct 2025 15:37:21 +0000
-Message-ID: <90f21264-b227-4a83-9944-39d3e0ea40dd@suse.cz>
-Date: Wed, 29 Oct 2025 16:37:21 +0100
+	s=arc-20240116; t=1761752074; c=relaxed/simple;
+	bh=oNcXp8gdfxVeszlYk66nASq1kzOb0Ssu6NZIeyKk7zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ljfky/Arb7KBTfQbDs8dO6yBgaI6Y7I17Q+2sa+6+00Z8R7pHB4BqFCZTcPQA19oZ/0pHA1eT4IzdARH4nTNb+eDB2NhRz+5RoxP74QYsR2NnXn+8hoWkhRCQZG75fwBa/ffPDzYp6fWU9cxLTueIisBVcRreWNNpKFdGc/7/VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hE/jr6Um; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 154B1C4CEF7;
+	Wed, 29 Oct 2025 15:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761752074;
+	bh=oNcXp8gdfxVeszlYk66nASq1kzOb0Ssu6NZIeyKk7zo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hE/jr6UmoeEWC6iPIljNx/9tlBFwlDtK48q/Jzn8vf7lr4GVm5v62CyUQrnE3ZQv3
+	 g3jjloFRmehvz3VXskd2AxiBpogBbLTG3wviLJ/90FA7DWIdKcSfmjcdmmaexUEv9F
+	 AWVltj9y7vM2w5HYXEi60R4juEoDl0KvjCGN8YKeZA0iJDeK6B8pN+s0dGyuaAjiB3
+	 1FpxCZmmVYezVi8j6nxnZ6ma/iKyK9vcCqoSCINgTCPMmMoNtyHAij9Zf2tmoAQaXC
+	 Aau0ViRLO/oOzlwaFv6deAg78MsFiqCFw8CFJvKE0YIvZ+HeuifyLYS8E6NPqci0+a
+	 UgNbvk1THbf2g==
+Date: Wed, 29 Oct 2025 10:37:37 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>, 
+	Das Srinagesh <quic_gurus@quicinc.com>, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Eugen Hristev <eugen.hristev@linaro.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
+ compatible
+Message-ID: <x4rzktpij4ggnbvnuyoli65gugymli5acrmrlovglttpakaauw@o3vu23bjedul>
+References: <20251022-knp-soc-binding-v2-0-3cd3f390f3e2@oss.qualcomm.com>
+ <20251022-knp-soc-binding-v2-1-3cd3f390f3e2@oss.qualcomm.com>
+ <g2iviaqetgxf5ycz2otzkpmmc4goo7xuyjmttuu254bfzqqvkf@4vybjh4eghpm>
+ <4eebcb7d-1eca-4914-915a-d42232233f9f@oss.qualcomm.com>
+ <dwfvko3hszsoh4ihnz3qdpsugmocbkrbhosijdw5q3bxh64kuo@o74as2li74px>
+ <lz4sbvzfiij3qsa4d7jeblmi2vfubc4ltf435sh6tcs53l6fbq@7f3tfm7yiyjc>
+ <mwin3lfvpcwxxhsub2whcpibuayk36f4ljrodvithfygqad5w4@cg4h6peh4v4a>
+ <ygqgzflpavwgd43e5zedgcijm3lz27nqlzprttalgcroedz45u@ztqkppajpyry>
+ <a7cdd2b3-6097-4a8c-a639-af974292cc8b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 03/19] slub: remove CONFIG_SLUB_TINY specific code
- paths
-Content-Language: en-US
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev,
- bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>
-References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
- <20251023-sheaves-for-all-v1-3-6ffa2c9941c0@suse.cz>
- <CAADnVQKYkMVmjMrRhsg29fgYKQU8=bDJW3ghTHLbmFHJPmdNxA@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAADnVQKYkMVmjMrRhsg29fgYKQU8=bDJW3ghTHLbmFHJPmdNxA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+In-Reply-To: <a7cdd2b3-6097-4a8c-a639-af974292cc8b@oss.qualcomm.com>
 
-On 10/25/25 00:34, Alexei Starovoitov wrote:
-> On Thu, Oct 23, 2025 at 6:53 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> CONFIG_SLUB_TINY minimizes the SLUB's memory overhead in multiple ways,
->> mainly by avoiding percpu caching of slabs and objects. It also reduces
->> code size by replacing some code paths with simplified ones through
->> ifdefs, but the benefits of that are smaller and would complicate the
->> upcoming changes.
->>
->> Thus remove these code paths and associated ifdefs and simplify the code
->> base.
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->>  mm/slab.h |   2 --
->>  mm/slub.c | 107 +++-----------------------------------------------------------
->>  2 files changed, 4 insertions(+), 105 deletions(-)
+On Wed, Oct 29, 2025 at 07:47:11PM +0800, Aiqun(Maria) Yu wrote:
+> On 10/28/2025 2:44 AM, Bjorn Andersson wrote:
+> > On Thu, Oct 23, 2025 at 03:06:00AM +0300, Dmitry Baryshkov wrote:
+> >> On Wed, Oct 22, 2025 at 05:42:58PM -0500, Bjorn Andersson wrote:
+> >>> On Wed, Oct 22, 2025 at 12:34:58PM +0300, Dmitry Baryshkov wrote:
+> >>>> On Wed, Oct 22, 2025 at 05:05:30PM +0800, Jingyi Wang wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 10/22/2025 4:49 PM, Dmitry Baryshkov wrote:
+> >>>>>> On Wed, Oct 22, 2025 at 12:28:41AM -0700, Jingyi Wang wrote:
+> >>>>>>> Document qcom,kaanapali-imem compatible.
+> >>>>>>>
+> >>>>>>> Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
+> >>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> >>>>>>> ---
+> >>>>>>>  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 1 +
+> >>>>>>>  1 file changed, 1 insertion(+)
+> >>>>>>>
+> >>>>>>> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> >>>>>>> index 6a627c57ae2f..1e29a8ff287f 100644
+> >>>>>>> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> >>>>>>> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+> >>>>>>> @@ -19,6 +19,7 @@ properties:
+> >>>>>>>        - enum:
+> >>>>>>>            - qcom,apq8064-imem
+> >>>>>>>            - qcom,ipq5424-imem
+> >>>>>>> +          - qcom,kaanapali-imem
+> >>>>>>
+> >>>>>> Can you use mmio-sram instead?
+> >>>>>>
+> >>>>>
+> >>>>> Here is the node: 
+> >>>>>
+> >>>>> 		sram@14680000 {
+> >>>>> 			compatible = "qcom,kaanapali-imem", "syscon", "simple-mfd";
+> >>>>> 			reg = <0x0 0x14680000 0x0 0x1000>;
+> >>>>> 			ranges = <0 0 0x14680000 0x1000>;
+> >>>>>
+> >>>>> 			#address-cells = <1>;
+> >>>>> 			#size-cells = <1>;
+> >>>>>
+> >>>>> 			pil-reloc@94c {
+> >>>>> 				compatible = "qcom,pil-reloc-info";
+> >>>>> 				reg = <0x94c 0xc8>;
+> >>>>> 			};
+> >>>>> 		};
+> >>>>>
+> >>>>> other qualcomm are also using imem, could you please give more details on why
+> >>>>> we should use mmio-sram here?
+> >>>>
+> >>>> https://lore.kernel.org/linux-arm-msm/e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org/
+> >>>>
+> >>>
+> >>> I considered exactly this when I wrote the binding back then...
+> >>>
+> >>> But the binding defines mmio-sram as "Simple IO memory regions to be
+> >>> managed by the genalloc API." and the Linux sram driver follows that and
+> >>> registers a gen_pool across the sram memory region.
+> >>>
+> >>> I believe IMEM is SRAM (it's at least not registers), but its memory
+> >>> layout is fixed, so it's not a pool in any form.
+> >>>
+> >>>
+> >>> What Krzysztof says makes sense, but rather than just throwing a yak at
+> >>> Jingyi, it would be nice if you provided some guidance on how you would
+> >>> like to see this turn out.
+> >>
+> >> I tested, pretty same approach seems to work:
+> >>
+> > 
+> > Now you're shaving at random ;)
+> > 
+> >> 	sram@14680000 {
+> >> 		compatible = "mmio-sram";
+> > 
+> > You can put "pil-reloc-sram" wherever, because it will perform a
+> > of_find_compatible_node() to dig up some node with the compatible
+> > "qcom,pil-reloc-info" .
+> > 
+> > In other words, this line created a genpool for something that really
+> > isn't a genpool, but luckily that didn't have any side effects.
+> > 
+> > 
+> > There are however other users of IMEM, such as the "reboot-mode", which
+> > relies on the "sram" device probing child devices, and is implemented by
+> > "syscon-reboot-mode".
+> > 
+> > Perhaps the solution is to not support any new users of that?
+> > 
+> > 
+> > But no matter what, the definition "Simple IO memory regions to be
+> > managed by the genalloc API" will never be true for IMEM.
+> > 
+> > And as this isn't a syscon, simple-mfd, or mmio-sram...how about making
+> > the fallback "qcom,imem" (in this same binding) and omitting any
+> > implementation until we need one)?
 > 
-> Looks like it is removing most of it.
+> 
+> Totally agree. We can remove the "syscon" and "simple-mfd" compatibles
+> for Kaanapali.
+> For Kaanapali, the reboot reason does not rely on imem at all—it uses
+> nvmem cells instead.
+> Previously, the syscon-reboot-mode required "syscon" and "simple-mfd"
+> compatibles for older targets like APQ8064, which used imem as the
+> reboot mode solution.
+> 
 
-The special code, yes. But the savings from avoiding percpu caching are the
-most important anyway and they stay.
+And there's
+https://lore.kernel.org/lkml/20250527-topic-ipa_imem-v2-0-6d1aad91b841@oss.qualcomm.com/
+which Konrad pointed out, which would also work with this model
+(qcom,imem fallback but no implementation).
 
-> Just remove the whole thing. Do people care about keeping SLUB_TINY?
 
-They did when SLOB was being removed. We can always remove it completely
-later, but this code cleanup is enough for me not to complicate the further
-changes, so I wouldn't want to put the complete removal in this series.
+This also does leave the door open for a future qcom,imem
+implementation, if we need to associate some logic to the imem device
+itself.
+
+Regards,
+Bjorn
+
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> >> 		reg = <0x0 0x14680000 0x0 0x1000>;
+> >> 		ranges = <0 0 0x14680000 0x1000>;
+> >>
+> >> 		#address-cells = <1>;
+> >> 		#size-cells = <1>;
+> >>
+> >> 		pil-reloc-sram@94c {
+> >> 			compatible = "qcom,pil-reloc-info";
+> >> 			reg = <0x94c 0xc8>;
+> >> 		};
+> >> 	};
+> >>
+> >>
+> >> -- 
+> >> With best wishes
+> >> Dmitry
+> 
+> 
+> -- 
+> Thx and BRs,
+> Aiqun(Maria) Yu
 
