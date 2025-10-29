@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-876178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAD1C1AE90
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:48:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61870C1AC8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3EF7627605
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831C71B20C24
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066829AB00;
-	Wed, 29 Oct 2025 13:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77F229D273;
+	Wed, 29 Oct 2025 13:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TUPCO2I/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUmnKqAV"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4890299AB1;
-	Wed, 29 Oct 2025 13:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1257729ACE5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744377; cv=none; b=iTj3Y2/ehpQnD47YJVc8YZTp0ts26pQeWlBvARgBTRV/EzsLmX1BZeC1N/GTh6oTaWcNiM9gijMaHA/nglw5IrH6rPaTrK6tkJsC/Hs5e5iL+2laBi5dAR8eeaGGSFElBW6v+7HVPqWQ1wz6Z0SrCbWf4zhtaF/nlCEJOBIOSfI=
+	t=1761744384; cv=none; b=cfvdQbfA1ngc80r/P/pql0ylW5KIp6iRJw6W5ByDgCXofecDXgqkGaKdq9vRH+NKvs3WwYA32KzQA4orv4C6bDbcAfrAcALSzs6GSHjJ+z4paxV+3JyrATGOxd+qzqyftGI60sHqM2XnYzk3ObHWkk3TmSdiigTRutQnwXLda5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744377; c=relaxed/simple;
-	bh=CKjKWDSuFg61Q3UumaNfQrY9nYh58Mn1xSRT4RFKlfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ToaowA3u7h/5SkbxW4rA5j7l5T8oRlCL21se38p1gOBvTR+Y049G2n4vL9u+JY8LXzQhVsHyuDQZRTk2cjWcB/ELuOfUt1rKFupeDKM22f1qCQgHptEMLKSv/Q4rxqWdP4oQIqXYR18kDxm7V0Uoac1XugwxzDho6gf5O/Okf2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TUPCO2I/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761744373;
-	bh=CKjKWDSuFg61Q3UumaNfQrY9nYh58Mn1xSRT4RFKlfA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=TUPCO2I/RFRnEZZh/BwABQNzIDTNAUn3iwfxUR2lpw5jKamLKdHYzJScfCsCcY0WI
-	 rN1VZGXNXPAfQ7AoYpAxFcXLO9Ss3nM8JNXwKwTOPIPYmFx6f/1wSod+wmw+xndtLs
-	 PC2elcimt/evu+6MNZPGuUmBp/brN8efDNZW5M964naogHwbH5pdtVUQr7qjeT9Hmt
-	 KJPF20zTzkhSS/OOM2oUOJMcLVYn6uf2GQZ+G2dYL4ylZyeLhMjSwP2HfQ3Lyc0vCs
-	 v0bkzsUo3f4Pi3mXwnoXnCn/TT1sS9VYpulbofCtj4tEXi1O6irFpJbAhHk0icnPd6
-	 tbofaAJGYvfiA==
-Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5B47717E1315;
-	Wed, 29 Oct 2025 14:26:13 +0100 (CET)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Wed, 29 Oct 2025 14:25:57 +0100
-Subject: [PATCH] dt-bindings: soc: mediatek: pwrap: Add compatible for
- MT8189 SoC
+	s=arc-20240116; t=1761744384; c=relaxed/simple;
+	bh=aSKuU9xIOHp+USY+0olHQZuj/v2CpxFRMmxMh6Q5UbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EUaI9uF0FqOPJYhIedowIVEE8FWS7SYvB050Ettx9f3tJW8PYNDHlo6CBQoqrt3WSKL6JRDqTagQuT5W7ZwHcvmWmcK6Zts6PsHddmImPhUSPQ1AOdZxJJeYvHVweLDTPHdDVK+wnVQ38hJOhZukGcvZW1v1pfY8sdg4vgM6/UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUmnKqAV; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-378cffe5e1aso76412501fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761744380; x=1762349180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aSKuU9xIOHp+USY+0olHQZuj/v2CpxFRMmxMh6Q5UbY=;
+        b=iUmnKqAV2ZqMdwnarD5Ij79DsuDs8d9nv9eDEmFWWJiu41QA9o1q9vb8Pkbw3xbwmL
+         c6QCK4LsJtvpN8Y7BhbLijAl1jzxLs/rlhWG9ZVtfRggaPEayDKQmSSxpfpjumVUz0H5
+         I8GBQUEMGUmH5HGOvkZB47Y6tPmwj/vITe7gdeYhYEY9X5hUMk4F8RQ/Hv0XqxijV+c+
+         nb6NKK0uARBBlJV1IRx5XEZ8x3KkQqHeyeRmN11znwsMl4mZwxGKDovmKAqV81udKgkq
+         VTaAMZFkD/rpE6QxRLyak22lIf8mIBCRZqn4bUBxHJiRW7plr8/Hq7YjCbztGtpv29yI
+         C6+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761744380; x=1762349180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aSKuU9xIOHp+USY+0olHQZuj/v2CpxFRMmxMh6Q5UbY=;
+        b=Xl17p75pkqvvOyHfJZmy5OvEfiRI2TI0cVeBANB0Ok5ftpGhzaA44w92YlYYSbs9A3
+         xbjaeIQT9qP154UX0fmadrlTQrokTdYt4Vt4HCShlIqsiSmppnBuIqeQw7Jsnfuev4y0
+         /+kTyTdkghgBoj12vqW1jbW0v+B4FB4s0+OphWskPEkG7R8nHt4xRc1afS+EQyfUIK9J
+         PT3vEJIt4oy08bJ6Ixs1FOyHdWjPKaY/TSDo1VuNd4zoYJAsGqU8ghhpMLY0jI3OSWw0
+         TsGsa/xNzVMHuJnKrqQueHhN79JbRQUtaSQMuypOOt5RFaWkAx/bOxO0ei/y4/lhE1jF
+         brDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwDHrYKaKBjUM6fYCKLzE8ieMz9Z+diTrrY+r9vDy9WCEhs5JMFxgod75mJffQIyOWGE/zWuKv9rMulMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuhlIbFHen32dPeXAMtPMNypnhVD24+AHJGaVOlxa9B+E0qhZF
+	0zM52Cv04MG9FZtu340kyyfrRzh1JuC6ROD17vkEUu5cJyWKdrKkGlmZ2C5GGFq+AlTtU7p9h/K
+	WEC76UCpanSvc37HSEMxgYhHtJpAKXzeIuaUVGdHr7A==
+X-Gm-Gg: ASbGnctGZ+AU3EnWaJqHzbTBtL697dZItCZ3/FPSZ5+PFySnGmyNIN3OeZPhqy0bGUD
+	qkXJLQAJQNlFKkQpQCJivUdF50gT6gqecMDLv9BQf/Msi5TWLDM7Wu0eo6ivPVq239LyQ98OVxQ
+	WWXArFYeUKg7vpZKCLZD9N2oTPvmwsoV7P+Srl/yXnLZrULmuAGnF+RC2jfAMFqxMgJayToertk
+	G5LPUni04NtjsNMA9FXJ4nKDDPtFYTQ6YgoF8yJFBBdyunIc9fwV5acxOFz
+X-Google-Smtp-Source: AGHT+IFc/hCvDE1Zso/0IxQN+geIgWUqlAHmVbZSzAYj2L1gPzKHQM2rtOb3cVJ3wqFIdmrbO8L60WWStqgI5NAbuCE=
+X-Received: by 2002:a2e:9a12:0:b0:36a:f4d3:82e9 with SMTP id
+ 38308e7fff4ca-37a023ba912mr9579411fa.6.1761744380200; Wed, 29 Oct 2025
+ 06:26:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-mt8189-dt-bindings-pwrap-v1-1-d52b1aa5f5a4@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAOQVAmkC/zWNQQ7CIBBFr0Jm7SRANZZexXRBYayzgCKgNml6d
- 4mNy/eT/94GhTJTgUFskOnNhZfYQJ0EuIeNMyH7xqClviipDYbaq96grzhx9BzngumTbcLOWXO
- dzt530kK7p0x3Xn/q23hwpuerFeoxwmQLoVtC4DqISGvFfwXGff8CmCRP3ZsAAAA=
-X-Change-ID: 20251029-mt8189-dt-bindings-pwrap-3ca97b4dd30a
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Flora Fu <flora.fu@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761744373; l=1112;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=CKjKWDSuFg61Q3UumaNfQrY9nYh58Mn1xSRT4RFKlfA=;
- b=PtEPwukhbAFkJ1aMh8EEF3ugB3jaEJ4wWeZDUZrrokc4K8A1lDjWI7mN8u+mjQOC4B7Yp0IOO
- kKwUOLl9c1qBKgycdo89Rk988sOGKJJ7Ikrs7b4OvBInzxKh2jnGWvl
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
+ <20251029-adamant-mamba-of-patience-cddb65@kuoka> <a81fba66-adf0-440f-96e1-bf3a83d504d8@gmail.com>
+In-Reply-To: <a81fba66-adf0-440f-96e1-bf3a83d504d8@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Oct 2025 14:26:08 +0100
+X-Gm-Features: AWmQ_bkO8UFcogwNBcRXNNMdmHiXiiZyPgTHaU5THyaD5CILTj16yxOphtBr7r4
+Message-ID: <CACRpkdZcszMZEU2Wzx8kaoR46ytziqtedmCrsjEL3QOrDtDgzg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add compatible string for the PWRAP block on MT8189 SoC, which is
-compatible with the one used on MT8195.
+On Wed, Oct 29, 2025 at 7:22=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> > But I believe this is wrong. Trickle charging does not switch to
+> > anything more, there is no fast charging after trickle. You have some
+> > sort of pre-pre-charging, which is just pre-charging.
+>
+> There is trickle, pre and fast-charge phases. Furthermore, the
+> fast-charge is further divided to CC and CV. Finally, if my memory
+> serves me well, Linus W did explain me that some chargers use
+> 'trickle-charging' as a _last_ charging phase for a full battery. Thus
+> the term 'trickle-charging' is slightly confusing - but it is already
+> used by the existing bindings...
+>
+> https://lore.kernel.org/all/20211116001755.2132036-1-linus.walleij@linaro=
+.org/
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
-index 54c0cd64d3094648844fa7b9fff44649a72ec021..e7c4a3984c601f36858908c1d974e7d5f3587838 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
-+++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
-@@ -52,6 +52,7 @@ properties:
-       - items:
-           - enum:
-               - mediatek,mt8188-pwrap
-+              - mediatek,mt8189-pwrap
-           - const: mediatek,mt8195-pwrap
-           - const: syscon
- 
+I think we need to refer to a textbook or IEEE articles to get this
+terminology right.
 
----
-base-commit: c9a389ffad27e7847c69f4d2b67ba56b77190209
-change-id: 20251029-mt8189-dt-bindings-pwrap-3ca97b4dd30a
+As you say it appears "trickle-charging" is ambiguous.
 
-Best regards,
--- 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Maybe what Krzysztof suggest to use: "pre-pre-charging" or
+"empty-battery-charging" or something like this is needed.
 
+But we really need a trustworthy academic source here.
+
+Yours,
+Linus Walleij
 
