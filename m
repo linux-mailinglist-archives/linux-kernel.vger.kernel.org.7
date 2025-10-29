@@ -1,146 +1,223 @@
-Return-Path: <linux-kernel+bounces-875502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D7DC191C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:41:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08324C191D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3991C822CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F0C1CC4818
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD6D31D748;
-	Wed, 29 Oct 2025 08:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2184B313547;
+	Wed, 29 Oct 2025 08:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jK1XeKd/"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPg3Zagk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397C431D754
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399A41B3923;
+	Wed, 29 Oct 2025 08:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761726730; cv=none; b=F8ZV3bKCqGBQVqu8oCP9AaK550n12ylS30nkbggniNi4CVvPH6/EKwZ6xikexcNB5KTribxU60cB7sFmNd6e3+ptBXf6ZwHAcdmlDg3D3chY4sHauFQSplyXD09FrSywAqEFzAxvFvz0eGxQV2WP04hQ3G0VctiBYYEJQJBj454=
+	t=1761726897; cv=none; b=njmwQERscbom+R8bUkyXZyXOj30NnJkRAtTG1WzTr6CsSWf5y6052eX7ega+mxViJ8Es+fOOYvOJfAOglDLLgoYOJvgP1KdjLVie749elZCfVvCWqPASFCj44cdM7Rvyi0xp628ovPq/Z7Ve4Kvl3dK5bhIAviLecnYGhVS9hsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761726730; c=relaxed/simple;
-	bh=GVdRbX+vh3f/FX0Xwtw4rWEoQgE8vYYkTKmeR3SKQYQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gA53wxzkR7fLLnPhr3SQn7iYxY4hnn4BhGtlYKtFdXXFX7ZszoEho/JIxK5OJ9AQ04eRCQXs2H0p9X9O1DaSIieDLouGYWSDYuZQnC3kXAYDGRVpGK7nsV6U4fytcdUrcqxrGp3Y+hdcBNXwUBsg2xlqS29VJlp7AdjYK+ke9kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jK1XeKd/; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-784826b775aso80646567b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761726726; x=1762331526; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/EgblGubgbnW5Hgy0d7e6d/LE+Ic8+V16TSffZZqhU=;
-        b=jK1XeKd/KpuoctD4dR+V/FPl/uAU0Jy7cmLFN+CdPbMut3j6r0g0KdTTTGv683jX4T
-         /eOgo6W4A11tZoxaitbwM9xMHYqmT6UW1SSY0XWfh6WHA2wzHG5j0AhauN1CcEZqrs4d
-         acKj+SnWZCyvtPEOcls1X7newpYKgpC3H80b4P7T1S0s/sJiosQWi5Cj4sVikHVOalZz
-         rYr8lloEAuUOxIW9cMIALi/JKZu/9MUyChb7T+q/LjJK2OEtcP7w04u/amx/e5w/hwZ2
-         7Vk9aiSuPD0NWPntKZeD+WE6P3R51mPEE/JquSEEky0Ar5cLv8vkvghzQQWaB7jXQiZP
-         AWNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761726726; x=1762331526;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/EgblGubgbnW5Hgy0d7e6d/LE+Ic8+V16TSffZZqhU=;
-        b=GMZRlilUBSzpKZFkZLwn7ZV+Mak6ZzZ5X485yF3+LlG2jqkvVWLZZ63n/JQtOaq4ab
-         5iSmySE267yJdMBZhWIBCWt2sAA/lPiQHxm/oPrCi5+OmVndNT20hoBjdBnSrMOVoZrl
-         VXXz7FnaUCgu/D4JqzYD7Tklu9xCufTL//lgZQh+aVT0+U7S3MrFbd84tLnbX/bjgGeW
-         RtVx6V48ygUOXuzUefjHdV2iKIyw3zbgPjd0Je9LxdkY0rjcrIKqISzYV8TdXiY91Dfn
-         c94QmTrfvnPHFD/h/sZ5tLzvfPeEm41wFZp5kYS9FzyBneqpwScH4lq4rHoWMLRTPQc6
-         96VA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNe8IE/vkAvWBwo7JRR+3g2yGbKinTdLPSOHJlPqRb/IOM7eqH14qkZUiyY0NaoKeRee+LhJFAkvvN0z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV+VfBsGuuxLmh0ZPUT1WE8xqAppabNvGtwSaE7yGQSmJbvnGr
-	058fkIug1CWn6Caiynnpw1qGAAlZlyKlTOPcNDRzf2eDfv9Ql9FMhFDRCVc8wu8X/Q==
-X-Gm-Gg: ASbGncuvZ+miXqHKjtApYA8U4vSu5QBQGv2F+2jEI9vB3gyONH7hnzhHC3Vbk0CkqRD
-	60gmBwaQ3FuqGCV0F0M/ZJc1P3Kzsf9ov54Ky0+5CqU+3k9/ykeGMquTpd8opDiwSiCiQ0/pUFk
-	oJaWaCHPkp1EH0sEXEY+Z4/xDS3Iu5tZ3ofuRatUnDp0vGDukqbbrBAZgA2PhJGzZJ/YvYphAND
-	OWeJNtY1C5dfBoQVVZqN702XLDWwfIOZto1k3CmfePrcJPP/FZhHOUg1MvXanAUtCeIhPyjfLy+
-	uuvkPe0x9/35DWmRbbq2U8aEACCGqNXjLz/o6jiLZfCPw9Sf78OPyGmAO97Bs0P30iPbttablew
-	dtOjX/L6MnV2evQmMdA8uBI+ycgZI+3LlY3e84Kic+V6+/E/U1SPb021wmPB+SOJY15c/p8OElz
-	Fvujrhv8nNo0ve10udR+j0nwylaJ25zxA8qF9XYAUNOcJ5G8LD8WDLTz9Ra+mKKy81WobQ+7c=
-X-Google-Smtp-Source: AGHT+IFVcmXHrgxMeuEDR2XWr4vAoODDTaHWS/nA8ziQ2WO9nTasjsDjFaROIorfvY19NOZaSKeT+Q==
-X-Received: by 2002:a05:690c:6f12:b0:785:caab:e660 with SMTP id 00721157ae682-78628e81678mr18542897b3.26.1761726725736;
-        Wed, 29 Oct 2025 01:32:05 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed13e443sm33974877b3.8.2025.10.29.01.32.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 01:32:03 -0700 (PDT)
-Date: Wed, 29 Oct 2025 01:31:45 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: David Hildenbrand <david@redhat.com>
-cc: Hugh Dickins <hughd@google.com>, Kiryl Shutsemau <kirill@shutemov.name>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Matthew Wilcox <willy@infradead.org>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
-    Johannes Weiner <hannes@cmpxchg.org>, 
-    Shakeel Butt <shakeel.butt@linux.dev>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
-    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-In-Reply-To: <8fc01e1d-11b4-4f92-be43-ea21a06fcef1@redhat.com>
-Message-ID: <9646894c-01ef-90b9-0c55-4bdfe3aabffd@google.com>
-References: <20251023093251.54146-1-kirill@shutemov.name> <20251023093251.54146-2-kirill@shutemov.name> <96102837-402d-c671-1b29-527f2b5361bf@google.com> <8fc01e1d-11b4-4f92-be43-ea21a06fcef1@redhat.com>
+	s=arc-20240116; t=1761726897; c=relaxed/simple;
+	bh=T5M4OYzbtGq4uNL+woM2n6WsyikovnjBbwLn9F2Otxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qbHIoFpn1z7tMDOYzNVVxNsaCk4/sRy/7aIE/Awh2/d9J385DLXGddmI/imqRoKxDWU7wl9FV/NvgsDFPbU88eRP9zoXImQcHfSXwVYAy7+UQrAlW74/BcXd8gX8jbLZSxkoRysKApDX6ApLWzvcXX+31sNFCuQkJNEdx1NraZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPg3Zagk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A3DCC4CEF7;
+	Wed, 29 Oct 2025 08:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761726896;
+	bh=T5M4OYzbtGq4uNL+woM2n6WsyikovnjBbwLn9F2Otxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPg3ZagkEoJXDNC196gMdQDa9jAew5cDxdRbtvJwE4Zt6gKxERb1EzG9jdai8DuYA
+	 L3MPZ5JhBuhekw5n1UfkeWj9397lJk6Bi5WuVOASSftwgcaLz4OJlTK1o4KqLwru4J
+	 AoGPupK4mT7OQcADSjE/62F80JCtX7rUu/EBxcsdpUTu7bnvd6eFzom3MhVGqgLFEq
+	 vEFDUGeVO9TaRFNw6ru1Wt853khKhdx69lq6vqyFpfhiXWI+bzd8y3lY/zwtjCdcAH
+	 UnAMtKseRsuvGM0R2sb+Ccpf+4I3wOiR8LBka1ux/9bsnPUkUk5y5UHxoYdf8eqgBu
+	 +rfxwQxlAA92w==
+Date: Wed, 29 Oct 2025 09:34:53 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
+	Jocelyn Falempe <jfalempe@redhat.com>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-embedded@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+Message-ID: <k5ktlmzszlk2qzn4mteduardoda7npxyd6m5rn6avjneayoqbw@q32utxpy7lk6>
+References: <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
+ <yq4btdc5qqukuqps7y53dratmu64ghyifgprlndnk5rbgml4of@rvca75sncvsm>
+ <2756316.lGaqSPkdTl@fedora.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="tqge3ljteei5cd4q"
+Content-Disposition: inline
+In-Reply-To: <2756316.lGaqSPkdTl@fedora.fritz.box>
 
-On Mon, 27 Oct 2025, David Hildenbrand wrote:
-...
-> 
-> Just so we are on the same page: this is not about which folio sizes we
-> allocate (like what Baolin fixed) but what/how much to map.
-> 
-> I guess this patch here would imply the following changes
-> 
-> 1) A file with a size that is not PMD aligned will have the last (unaligned
-> part) not mapped by PMDs.
-> 
-> 2) Once growing a file, the previously-last-part would not be mapped by PMDs.
 
-Yes, the v2 patch was so, and the v3 patch fixes it.
+--tqge3ljteei5cd4q
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+MIME-Version: 1.0
 
-khugepaged might have fixed it up later on, I suppose.
+On Tue, Oct 28, 2025 at 08:58:05AM +0100, Francesco Valla wrote:
+> On Monday, 27 October 2025 at 11:09:56 Maxime Ripard <mripard@kernel.org>=
+ wrote:
+> > > Once compiled inside the kernel, the client can be enabled through the
+> > > command line specifying the drm_client_lib.active=3Dsplash parameter.
+> > >=20
+> > > =3D=3D Motivation =3D=3D
+> > >=20
+> > > The motivation behind this work is to offer to embedded system
+> > > developers a new path for a simple activation of the display(s)
+> > > connected to their system, with the following usecases:
+> > >=20
+> > >   - bootsplash - possibly displaying even before init;
+> > >   - early activation of the display pipeline, in particular whenever =
+one
+> > >     component of the pipeline (e.g.: a panel) takes a non-negligible
+> > >     time to initialize;
+> > >   - recovery systems, where the splash client can offer a simple feed=
+back
+> > >     for unattended recovery tasks;
+> > >   - update systems, where the splash client can offer a simple feedba=
+ck
+> > >     for unattended update tasks.
+> >=20
+> > If plymouth cannot be used by embedded systems for some reason, then you
+> > should work on a plymouth alternative.
+>
+> Thing is: any possible alternative would still start after userspace has
+> been loaded, checked (in case of secure boot, which is ubiquitous now)
+> and initialized. This means, at least in my usecases, several hundreds of
+> milliseconds after userspace start, to be summed to the panel initializat=
+ion
+> time.
 
-Hmm, does hpage_collapse_scan_file() or collapse_pte_mapped_thp()
-want a modification, to prevent reinserting a PMD after a failed
-non-shmem truncation folio_split?  And collapse_file() after a
-successful non-shmem truncation folio_split?
+Yeah, but you have a *lot* of policies even for something as simple as a
+bootsplash:
 
-Conversely, shouldn't MADV_COLLAPSE be happy to give you a PMD
-if the map size permits, even when spanning EOF?
+  * Do you want it on all your screens or just one, if so, which one?
 
-> 
-> Of course, we would have only mapped the last part of the file by PMDs if the
-> VMA would have been large enough in the first place. I'm curious, is that
-> something that is commonly done by applications with shmem files (map beyond
-> eof)?
+  * If the bootsplash image doesn't fit the screen you chose, what
+    should you do? stretch, crop, keep the same resolution? If the image
+    is smaller than the screen, where do you want to put it? Top left
+    corner? In the center?
 
-Setting aside the very common case of mapping a fraction of PAGE_SIZE
-beyond EOF...
+  * If there's BGRT, do you want to have BGRT always, bootsplash always,
+    compose the bootsplash with BGRT? If so, same questions than before.
 
-I do not know whether it's common to map a >= PAGE_SIZE fraction of
-HPAGE_PMD_SIZE beyond EOF, but it has often been sensible to do so.
-For example, imagine (using x86_64 numbers) a 4MiB map of a 3MiB
-file on huge tmpfs, requiring two TLB entries for the whole file.
+etc.
 
-Hugh
+The kernel can't answer all these questions, and can't address every
+possible use case. Userspace can, and that's largely why plymouth
+exists.
+
+But If the main thing you care about is boot time, U-Boot has everything
+needed to setup a bootsplash early.
+
+> > > While the first seems the most obvious one, it was the second that ac=
+ted
+> > > as the driver, as in the past I had to implement a ugly workaround us=
+ing
+> > > a systemd generator to kickstart the initialization of a display and
+> > > shave ~400ms of boot time.
+> > >=20
+> > > The last 2 usecase, instead, are the reason I dropped the "boot" part
+> > > from bootsplash.
+> > >=20
+> > > =3D=3D Implementation details =3D=3D
+> > >=20
+> > > The design is quite simple, with a kernel thread doing the heavylifti=
+ng
+> > > for the rendering part and some locking to protect interactions with =
+it.
+> > >=20
+> > > The splash image is loaded using the firmware framework, with the cli=
+ent
+> > > expecting to find a binary dump having the right dimensions (width and
+> > > height) and FOURCC format for each modeset. Given a 1920x1080 RGB888
+> > > modeset, the client will for example search for a firmware named:
+> > >=20
+> > >    drm_splash_1920x1080_RG24.raw
+> > >=20
+> > > If the firmware cannot be loaded directly, the NOUEVENT sysfs fallback
+> > > mechanism is used to let userspace load the appropriate image.
+> > >=20
+> > > =3D=3D Testing =3D=3D
+> > >=20
+> > > Testing was done on qemu (both with vkms and bochs drivers), on a HDMI
+> > > display connected to a Beagleplay and on a ILI9341 SPI display connec=
+ted
+> > > to a i.MX93 FRDM board. All these platforms revealed different
+> > > weaknesses that were hopefully removed.
+> > >=20
+> > > =3D=3D Open points / issues =3D=3D
+> > >=20
+> > > The reason for this being an RFC is that there are several open point=
+s:
+> > >=20
+> > >   - Support for tiled connectors should be there, but has not been
+> > >     tested. Any idea on how to test it?
+> >=20
+> > Did you mean tiled formats?
+> >=20
+>=20
+> No, AFAIU the tiled connectors are different connectors that feed differe=
+nt
+> panels, which however are part of a single logical screen. Support for th=
+is
+> setup is present at drm level [1], but I'm not familiar with it.
+>=20
+> I've only found this used inside the i915 Intel driver [2].
+
+TIL, thanks.
+
+> > >   - I'm not entirely convinced that using the firmware framework to l=
+oad
+> > >     the images is the right path. The idea behind it was to re-use the
+> > >     compressed firmware support, but then I discovered it is not there
+> > >     for built-in firmware.
+> >=20
+> > Yeah, firmware loading for this has a few issues (being tedious to setup
+> > for when built-in being one). I think just going the fbdev penguin road
+> > is a better choice: you provide the path, and it's embedded in the
+> > kernel directly.
+> >=20
+>=20
+> Yes, this is already working, but if large-ish images are used, the loadi=
+ng
+> time for them defeats the entire purpose of an in-kernel splash.
+
+The loading time of what exactly? If the image is in some section of the
+binary, you wouldn't have to load anything.
+
+Maxime
+
+--tqge3ljteei5cd4q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaQHRqAAKCRAnX84Zoj2+
+djzCAYDaKmYFhpOkgKZJJ+Bb+IhDgJSV9GzaDbqTEpY8XdxJdV1TaCl22fNgNIFg
+BhrgPE8BgNYwZoD2kVyUo/rssBBRzXJJWNVl2fj6b5Ne5C7lWCsQahWMesz3nERo
+J0UAczwfMw==
+=tBvk
+-----END PGP SIGNATURE-----
+
+--tqge3ljteei5cd4q--
 
