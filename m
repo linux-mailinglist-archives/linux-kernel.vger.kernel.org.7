@@ -1,161 +1,152 @@
-Return-Path: <linux-kernel+bounces-876817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAFAC1C6E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1226C1C6E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C7C24E134D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:24:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A4AA4E2C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95D234D92D;
-	Wed, 29 Oct 2025 17:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A4F34EEEC;
+	Wed, 29 Oct 2025 17:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QrPntXzj"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaCvJ3fi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA33B33B6FF;
-	Wed, 29 Oct 2025 17:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED834DB44;
+	Wed, 29 Oct 2025 17:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761758679; cv=none; b=bEjW3XLO1z34mcrbfrhS5k14r+NPQnaN/Aeh7B0e0OjxrhU0aXwPUaBgauucIQUWR6Bkhe8ktjJAbjZYqbK2PNLygQMPaZZkvLcF8F3UqF26EYPJpcK//B1dJoihWhrLTai1r30nOeapch2PykKttLGscPpHPm6xgdu8w3RgH8w=
+	t=1761758700; cv=none; b=fO+OKncC6SdJiKIQEB450bh3rlsTNkORTzoQ3CDZtzwo/eRPNLsKw3HWSniuVv3ApwQok8fWXt6BrL1996SosApH6BE/qy5ExliYbMdfLMclOWQgIBmUx1tTtiofYFYV4xS3Uor7P7P3hWJoYH4mjvmJWqNY7Wera6Vbxym9BPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761758679; c=relaxed/simple;
-	bh=ml62RTcwJQcVcY1YIw3Li/hjlYxo6TN7z08zfWL0XXo=;
+	s=arc-20240116; t=1761758700; c=relaxed/simple;
+	bh=Y9eg+bqtuiBvhj27qPsEMgI3sW1YPbmbNenD0mtafaU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEt1niuvjIFRWhU7z91p0reaYcfwecjLY+OMDP9KMXWL9bmBLAIPtUAZmKj1mwexj88ufXcpMDRHq2KGAydBLqWXzmtyYvDlyP6bKTpb/pqUtUXUba2Mz7TVo1I/1T4MnIiC597f4Yl/LhqqgZTp1WUmvSzlg5aiIfPZnfNtA4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QrPntXzj; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5EB2740E0225;
-	Wed, 29 Oct 2025 17:24:34 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id p3IC36XRQCpI; Wed, 29 Oct 2025 17:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761758670; bh=a/+6LNiRu1DlYCHQd/RYBWALLkaVEWIO3d3etSvLgYI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvaDjIitzZ3T00JIxbypcLbByQ0W2VVPRzPktVc5/k3HIlvHp9oke8YcHlM/Ex0B3mUzzd53GT12QfWIr0xBdRW1qc6rmasnCFD165suUDl4ejAm4jjGrxchx8d82WxrkvuXYdqNB7AQUvaN3nML7O427RGEKjYhBNpvlEnLhf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaCvJ3fi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560EFC4CEF7;
+	Wed, 29 Oct 2025 17:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761758699;
+	bh=Y9eg+bqtuiBvhj27qPsEMgI3sW1YPbmbNenD0mtafaU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QrPntXzjRTTVHxS7EVupekXVKqNepWZ5vhJCncpsn7B2vl+j4RAyXTkWLYUDO/gnO
-	 /rXbSjOeowWV8YKb/ayJmywKW/Ev/WqIgCy7EreT7B6ACtwvpz5QS0Dem7clTOaPut
-	 8e7UaYak1OkEJtx8w1W1StEcvLhlCRUVIZ7y8qEeHjsnhYTXNDD+RPqBUvhP+fd6/s
-	 qRb65LfMktisPFMuvP77WecxlPwurMopB717XROYSeRlYxBihkYcyBR79uaefesQoy
-	 0sMpMz1yBSaP62Y8hUIn8cHaazgTwsCNRADdimstAUB28BWNeIclS3b0WNrqyO2KlC
-	 BqQ25YSVk7vgtRfgelGcak57HHryJ++BvMsaB2pc2oBLv1GsJcKFkgO8lIlpJmQHl6
-	 E379RiWelk/0CGJRoneb9Jm53yVgxsoGbriBw/Kv9AL1oZYyQQJZtAXi7MaTLdbYEZ
-	 o0g4pfyv11IsQ3kjjUBIJ4fSH4oTtNkafclT0Q5YUgRNtQgtZ3JY97oPujE1VKeyJQ
-	 VUaOBp8PelxWoKBrh6X7Z7ieIIF4NoI9OzXEzIxGulKgJyh1ILWCaQChWRPqFBY9WS
-	 pqs1BYBEjoDYwDbq3Eq+sFxGtAlXBGAGuDNI3P89VZjp22cTK9OpXwQG8AjLZNMVR3
-	 k27cgig6qmsnZq3ypKQwVTJ4=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 23D8B40E021A;
-	Wed, 29 Oct 2025 17:24:25 +0000 (UTC)
-Date: Wed, 29 Oct 2025 18:24:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>,
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] EDAC/mc_sysfs: Begin deprecating legacy sysfs EDAC
- interface
-Message-ID: <20251029172419.GGaQJNw4Pofl1x1mve@fat_crate.local>
-References: <20251013173632.1449366-1-avadhut.naik@amd.com>
- <20251013173632.1449366-5-avadhut.naik@amd.com>
+	b=EaCvJ3fiHxDt543+sjeDB8LsZ82ttPD7FQK0tI8+cvxbDcPE7liNpVCjbI6Bd3T5Y
+	 x+w4+dvepmDJXwiWd50kB95RLAM9dQRLbW3k60fPkivDBZVeYqxun0qWyark9akkKn
+	 MhL7NBjfLVhfH1d0eQY9xoeY68/dNDYU95kQuI9PURJVhVHno8mZ4PSGbBHoyAz4b6
+	 wQ3yxMXqOcUO/G7tU740cLgruD5pAF4FAaN+v+nqe/9gO7LDQaXab1TKVs8NJWeAZx
+	 qb3CCXhg5Fm7q365p30Cx5ETU4bXovasTXW64WcHN4Y0X5sqnBhh15ZCxj3k5vVek3
+	 vSWVve+SE470Q==
+Date: Wed, 29 Oct 2025 17:24:55 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Coia Prant <coiaprant@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add NineTripod
+Message-ID: <20251029-reseller-unsavory-5461fe7f6cce@spud>
+References: <20251028-semicolon-audacity-dd5bdd418207@spud>
+ <CALj3r0hWzH+pmkbJe7DdqEzwqcpSQdkfPFtv3S7m-H8gZp0A6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bqqsbG4ObdDSRjQO"
 Content-Disposition: inline
-In-Reply-To: <20251013173632.1449366-5-avadhut.naik@amd.com>
+In-Reply-To: <CALj3r0hWzH+pmkbJe7DdqEzwqcpSQdkfPFtv3S7m-H8gZp0A6w@mail.gmail.com>
 
-+ Greg to tell us whether that would be a proper deprecation strategy.
 
-On Mon, Oct 13, 2025 at 05:30:43PM +0000, Avadhut Naik wrote:
-> The legacy sysfs EDAC interface has been made obsolete more than a decade
-> ago through the introduction of a new per-DIMM interface.
-> 
-> The legacy interface however, hasn't been removed till date.
-> 
-> Begin deprecating it so that it can eventually be removed by v6.21.
-> 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> ---
->  drivers/edac/Kconfig         |  2 +-
->  drivers/edac/edac_mc.h       |  5 +++++
->  drivers/edac/edac_mc_sysfs.c | 16 ++++++++++++++++
->  3 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-> index 39352b9b7a7e..fdfeba848114 100644
-> --- a/drivers/edac/Kconfig
-> +++ b/drivers/edac/Kconfig
-> @@ -25,7 +25,7 @@ if EDAC
->  
->  config EDAC_LEGACY_SYSFS
->  	bool "EDAC legacy sysfs"
+--bqqsbG4ObdDSRjQO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add "DEPRECATED: EDAC ..."
+On Tue, Oct 28, 2025 at 01:04:32PM -0700, Coia Prant wrote:
+> There won't be any problems at the moment.
 
-here.
+Please stop top posting.
 
-> -	default y
-> +	default n
->  	help
->  	  Enable the compatibility sysfs nodes.
->  	  Use 'Y' if your edac utilities aren't ported to work with the newer
-> diff --git a/drivers/edac/edac_mc.h b/drivers/edac/edac_mc.h
-> index 881b00eadf7a..78b49d6906fd 100644
-> --- a/drivers/edac/edac_mc.h
-> +++ b/drivers/edac/edac_mc.h
-> @@ -95,6 +95,11 @@ do {									\
->  
->  #define to_mci(k) container_of(k, struct mem_ctl_info, dev)
->  
-> +static inline void deprecate_interface(void)
-> +{
-> +	pr_warn_once("NOTICE: The legacy EDAC sysfs interface has been deprecated and will be removed by v6.21. Please switch to the new interface!\n");
-> +}
+> Just out of habit (because when writing code, variable names cannot
+> begin with a number)
+> There may be some misimplemented parsers that cannot do this.
+>=20
+> As a practical matter, the branch of openwrt has added support for
+> this board in advance, and openwrt uses the DTS name to initialize
+> some default settings such as LEDs and bridge
 
-You don't need to have a function which you replicate everywhere. Simply dump
-this notice once...
+That sounds like a problem with the WRT development process. This is a
+trivial change, there could be more disruptive things required to
+satisfy reviewers. Why was it submitted there in advance anyway?
 
-edac_create_sysfs_mci_device:
+> I'm not sure if he will affect the version that has been released.
+> But maybe it's not a big problem.
+>=20
+> If you feel that there is no problem, I can send a new set of patches
+> to fix this problem.
 
-	...
+Please do.
 
-#ifdef CONFIG_EDAC_LEGACY_SYSFS
+> 2025-10-28 19:46 (GMT+00:00), Conor Dooley <conor@kernel.org> said:
+> > On Tue, Oct 28, 2025 at 12:38:10PM -0700, Coia Prant wrote:
+> > At first, it was to avoid problems with the beginning of numbers.
+> > What problems does starting with a number produce?
+> > Given that it is already used by downstream projects, we have retained
+> > this to ensure that users can seamlessly migrate to the mainline
+> > version.
+> > What's the actual impact of changing it from "nine" to "9" for
+> > downstream users? This is a board vendor, probably nothing is even
+> > interacting with the board-level compatible at all programmatically?
+> > Please don't top post.
+> > Thanks.
+> >
+> > 2025-10-28 19:35 (GMT+00:00), Conor Dooley  said:
+> > On Sun, Oct 26, 2025 at 10:36:44PM +0800, Coia Prant wrote:
+> > Add NineTripod to the vendor prefixes.
+> >
+> > Signed-off-by: Coia Prant
+> > ---
+> > Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+> > 1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > index f1d188200..37687737e 100644
+> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > @@ -1124,6 +1124,8 @@ patternProperties:
+> > description: National Instruments
+> > "^nicera,.*":
+> > description: Nippon Ceramic Co., Ltd.
+> > +  "^ninetripod,.*":
+> > Why ninetripod instead of 9tripod? That's what the company uses and in
+> > the marketing fluff for the boards.
+> > +    description: Shenzhen 9Tripod Innovation and Development CO., LTD.
+> > "^nintendo,.*":
+> > description: Nintendo
+> > "^nlt,.*":
+> > --
+> > 2.47.3
+> >
 
-<--- here.
+--bqqsbG4ObdDSRjQO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-        err = edac_create_csrow_objects(mci);
-        if (err < 0)
-                goto fail;
-#endif
+-----BEGIN PGP SIGNATURE-----
 
-So that it gets issued and hopefully someone sees it.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJN5gAKCRB4tDGHoIJi
+0jDdAPoClQkD6kyF0W8zdSBg6g+HBjeLj8bAkhQPXRv5HmS7DAD7B0sWK1QT34S4
+iTErDKBUfPq7GGimNUNj0cY2Mjo7tgI=
+=2YvP
+-----END PGP SIGNATURE-----
 
-Then, I'd say around 6.19 we should make those functions return an error
-unconditionally and then zap them in 6.21.
-
-That is, if no one comes crawling out of the woodwork with a valid use case.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--bqqsbG4ObdDSRjQO--
 
