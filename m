@@ -1,187 +1,268 @@
-Return-Path: <linux-kernel+bounces-876087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC57EC1A95E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:17:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B482DC1AE27
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:46:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C240588519
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE34C6266B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A525D24679C;
-	Wed, 29 Oct 2025 13:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="a32ahlzL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="H0xwOUXl"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FB470830;
+	Wed, 29 Oct 2025 13:01:36 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B993B7262E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742928; cv=pass; b=FTyYi3IuCn5b1LVTsGB03eyr5c+/qfVEEEwyDEP43kGvMnWvmi4zVKa/fumk10QtFDCvG9k8cpJcejSK1acsVWOjDWw6zq6hYmMU3ytzSV/UgkWAFOcVUp9DhFTHDAQSjvGDLYyNykjbUS0SV/EW3oI+BwQJnG3kehTBpgzNO8E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742928; c=relaxed/simple;
-	bh=nxJ0l8pFIkUd1XOOatN08dN48GI7BMxEKiJskrqIjPs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mRzQN9C/65aUrnon3tG0b/8OfkFeH+dIHZi3FGGvpeZHa0cwQK8LY+K8cSZ3gXPlP9a8iJHorMWzFx3yYlmSs6FxxtgoSp/BO1lK22b2/fEdAM6bV3cbBjM1EIkoso4T3AVr8jxazfITsfQedEqkawWjxc0zFSvzSmdjqfo5Kms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=a32ahlzL; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=H0xwOUXl; arc=pass smtp.client-ip=185.56.87.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com; s=arckey; t=1761742926;
-	 b=l7+xDzQjNS20cZmGhfILUoYPakmS3KY4hG6U2K0l5lkSiq0AOc6TYrAjgJGyZejWucJ3h+GAD3
-	  0ISdUX6wMH6v3OPBJ/zdwVyO1sepIW3Z7ZNs37Gc6m/CW7+FEv1s9Lvzr0ZlcAsItWaxAlHBTu
-	  hi/N+IafGFt2R/ITnmA8gGKwGll1Dw3DsBz/sMqnA/+2kAU+gP+ACumYXrdVJV8MiBYNG70WGs
-	  vSUXiGK1GmhT9KcN+AdhpI06/vuWT6RHGa+Mcs2xC+4VDBQTq+1+y/v1O/ngJebELogZ+JSasJ
-	  vy9d1EthUwjyGPYxtuiiy11FuVPu10qKEof6w0MIr7VaoQ==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com; s=arckey; t=1761742926;
-	bh=nxJ0l8pFIkUd1XOOatN08dN48GI7BMxEKiJskrqIjPs=;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
-	  To:From:DKIM-Signature:DKIM-Signature;
-	b=go+beyjVrs/ILnvfnz1UiCusO99vgEz/RnDM+oGY4SaQJRgC4hDmvuZJbx0ZasTWReHb1VYzMu
-	  Dw40hyHdmUvkkAmb629pKSZ04e75xf9KmXnHHYA+EdEqDoVYPJG3URsN8sUZY49KuQNI6NUL+O
-	  N4MqcjxPle5QC1y+9dbDrFO8BweXL759AYPBFiIkQQxSksYqceicGF4LHtE1JO1FWSOIPQIRec
-	  xfmzX0stU67r1MTApCJzpBtGo5scDKtilNrtzGyG/gGKgiXqRFkhgxt8Tr/NpiaVVBxighMRVq
-	  dP1EkxToddEgRzhKEdlottH8bj/gLeVVJ3uKCJxl6elwFA==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=3vbMUDHqHdbLF0JamSxILfazqzvKVxLGjQW/n+lyM2g=; b=a32ahlzLDhZr798KcQnJuvqvXb
-	SxO4q3IrVzv6hs4RHRZF0e/ESyxhUepTCf1UiHdf135q/JQi7g06aUNoVFNGmC9qYXxjAOW0yAztQ
-	kNtCOqyRyJDGC/dAlhZWSel5mor0CL7hNEIe8tDshFvwzZxmkB8koGHr1ruq7AafOXoM=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vE5oK-0000000AdmA-20QM
-	for linux-kernel@vger.kernel.org;
-	Wed, 29 Oct 2025 13:01:58 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=3vbMUDHqHdbLF0JamSxILfazqzvKVxLGjQW/n+lyM2g=; b=H0xwOUXlsVJKBjrSJwFCyxItJe
-	4q8UpJeUIFhDmIEzqQSDJzAaTmZ7QpfDX0WA2kzQTqHXmYrss0fEHSs8p5elLMVRAE2EVCoKfPlY0
-	xq3pn6P1tgyPf6bHega40w7ggju/lDPR8FmN0PA/eoddE+78s1XXruwK7Agajd3LsSaw=;
-Received: from [95.75.8.65] (port=19648 helo=fedora.localnet)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vE5nq-00000000FE6-0Uqj;
-	Wed, 29 Oct 2025 13:01:26 +0000
-From: Francesco Valla <francesco@valla.it>
-To: Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Liu Ying <victor.liu@nxp.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Fabian Pflug <f.pflug@pengutronix.de>, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: ldb: add support for an external bridge
-Date: Wed, 29 Oct 2025 14:01:24 +0100
-Message-ID: <2756377.lGaqSPkdTl@fedora>
-In-Reply-To: <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
-References:
- <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
- <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CBD153BD9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761742895; cv=none; b=Jzka93GQUnAea19R7HDa2AHRBSZZbj5xFzYlAjuixqaHsVIQ7hkSRbDOPJw7+3bFEWcGLsJnLQs71KYuw9iHKY603zk/oTaWe4uzPZVhPWOMF7s1XKffXQT7sbusRhbjkbugvLZPLXZaGeTSo8b7bo8SsBsZS3+GkdiPgCkHFNM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761742895; c=relaxed/simple;
+	bh=zhINIyNBIxbSz6z5BgTMThjlPu5ih/7UFryr1xO89+k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OiFAQa5DsxfnaqI5+pJVbMddCuZ+7nFFI7jahj2Ht2FX87jIcZWMyLrjyvOuQPngSPTID5ccMMRFvbW0e80d/RB3OpFuOwFXC1o2r2YCmn1SFSWi4GAgKdq8JuvKxO/SxAZXIKnwONtSAkvOmmx85qNO+CymVBw6XDZZfhMXBSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-945a5690cb4so1261010139f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:01:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761742893; x=1762347693;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhc9/9BSZcBCT2PDLCFj4u2QQurrcg6m9v9HE8ceWrU=;
+        b=nebnuShnjhhecyHs8iPwSUSKZT2kmrDblK3cUPpMEOzgJ1U4VfN3dWJxpNJLi5Oxtw
+         2GAhZy2b0JotgWKw4OCc5GMv60uUVUqXaAiLs6dHtvjKVf5S8ci+cIs8o9k20ZmQ8jOb
+         qszKMv1OLOELDJCx8Jz4advgkhRcavAf8Xk+lApUqRDKZW7mUZfZ9lQvPRcbCOMTqVsd
+         ab0U2oeHylWnszFzweW6CSzLf/Vkv6MkRB2eowbAttsNge93TkMvukkJ9v8W9LPHtCNe
+         wlnRyONY1qs9pNRYInYcVw7SGZ7mq3hha+PqVkGaoMWzwnikMkjVeMi2WnP5pXFiC5Y0
+         FdmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU3vpmFoKf1Cl3RWk7NOaAE+l5Z/2bR/TjHcxmkNH2NzHGgXQQpIyaCrKf322gIj8y3cysg9eZ088LQIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8S8tQZD2jtSB5gvANMisOokCDed0dsNmTdtvY9xV9Q+tQSgjW
+	bTJKyD7oq7RJTE3gsIien/QBv1xAbtcMTX8sGHJnU1jk9Vop+ffkCB5GfdxYGqTdi1WEdHKKDu7
+	yHPnhuVv29NQKYSSiAZFx2H2ktlPoukk7EhswJTKelFTebOSk/erfQMpOZ/I=
+X-Google-Smtp-Source: AGHT+IGzZTTmtszlDZr4cDI5oEOBxJawItxGytprSH4d+qDgm7CDcD5qG6EYsPc4lL7/xyarsuozxoVfMNIeB8DF/qoZ+pDKatBk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2568054.XAFRqVoOGU";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 85b3294b630697b80bfc44e07840fa05
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1vE5oK-0000000AdmA-20QM-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+X-Received: by 2002:a05:6e02:18c8:b0:430:ab94:4223 with SMTP id
+ e9e14a558f8ab-432f8fac79cmr31652505ab.8.1761742889715; Wed, 29 Oct 2025
+ 06:01:29 -0700 (PDT)
+Date: Wed, 29 Oct 2025 06:01:29 -0700
+In-Reply-To: <68fe7262.050a0220.3344a1.0145.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69021029.050a0220.3344a1.041e.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_destroy_inode (3)
+From: syzbot <syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---nextPart2568054.XAFRqVoOGU
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Francesco Valla <francesco@valla.it>
-Date: Wed, 29 Oct 2025 14:01:24 +0100
-Message-ID: <2756377.lGaqSPkdTl@fedora>
-In-Reply-To: <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
-MIME-Version: 1.0
+syzbot has found a reproducer for the following issue on:
 
-Hi,
+HEAD commit:    b98c94eed4a9 arm64: mte: Do not warn if the page is alread..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15febd42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=158bd6857eb7a550
+dashboard link: https://syzkaller.appspot.com/bug?extid=25df068cd8509f8c0fe1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13febd42580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ca0e14580000
 
-On Wednesday, 29 October 2025 at 04:41:51 Liu Ying <victor.liu@nxp.com> wrote:
-> On 10/28/2025, Francesco Valla wrote:
-> > I was trying to add display support for the i.MX93 FRDM on top of the
-> > patch sent some time ago by Fabian Pflug [1], using some of the work
-> > already done by Alexander Stein but not yet merged [2], but then I
-> > noticed that the support for LVDS-HDMI converter bridges was missing
-> > from the LDB driver already present for the i.MX93.
-> > 
-> > Not a fail of the driver itself, obviously, but I wonder if/how the
-> > existing i.MX8MP setups (e.g.: [3]), which use the same driver, work
-> > correclty. Unfortunately I don't have the i.MX8MP hardware to test them.
-> 
-> [3] was in my previous patch series[a].  Only patch 6&7 of [a] are applied,
-> so for now [3] doesn't actually work with i.MX8MP.
-> 
-> And, patch 3 of [a] supports the external bridge this patch tries to support.
-> 
-> [b] is another patch series which includes my patch.
-> 
-> [a] https://patchwork.freedesktop.org/series/139266/#rev7
-> [b] https://patchwork.freedesktop.org/series/154381/
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2c82e514449b/disk-b98c94ee.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a322ed38c368/vmlinux-b98c94ee.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/059db7d7114e/Image-b98c94ee.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7af3d5d4bd72/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=174a0e14580000)
 
-Thank you for your answer, it's much clearer now.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com
 
-I'll drop this one and wait for [b], then.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6657 at fs/btrfs/inode.c:7942 btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942
+Modules linked in:
+CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942
+lr : btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942
+sp : ffff8000a6067900
+x29: ffff8000a6067920 x28: dfff800000000000 x27: 1fffe0001e3721a3
+x26: ffff700014c0cf38 x25: dfff800000000000 x24: 1fffe0001e372114
+x23: ffff0000cb81c000 x22: 0000000000010000 x21: ffff0000f1b90b10
+x20: ffff0000f1b90c48 x19: ffff0000f1b908a0 x18: 00000000ffffffff
+x17: ffff800093305000 x16: ffff800082de95c8 x15: 0000000000000001
+x14: 1fffe0001e3721cc x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001e3721cd x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d166dc40 x7 : ffff800080e995c0 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080f03e80
+x2 : 0000000000000000 x1 : 0000000000010000 x0 : 0000000000000000
+Call trace:
+ btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942 (P)
+ destroy_inode fs/inode.c:396 [inline]
+ evict+0x6e4/0x928 fs/inode.c:834
+ dispose_list fs/inode.c:852 [inline]
+ evict_inodes+0x638/0x6d0 fs/inode.c:906
+ generic_shutdown_super+0xa0/0x2b8 fs/super.c:627
+ kill_anon_super+0x4c/0x7c fs/super.c:1281
+ btrfs_kill_super+0x40/0x58 fs/btrfs/super.c:2129
+ deactivate_locked_super+0xc4/0x12c fs/super.c:473
+ deactivate_super+0xe0/0x100 fs/super.c:506
+ cleanup_mnt+0x31c/0x3ac fs/namespace.c:1327
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1334
+ task_work_run+0x1dc/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
+ el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 140212
+hardirqs last  enabled at (140211): [<ffff8000805b8d70>] __call_rcu_common kernel/rcu/tree.c:3148 [inline]
+hardirqs last  enabled at (140211): [<ffff8000805b8d70>] call_rcu+0x65c/0x978 kernel/rcu/tree.c:3243
+hardirqs last disabled at (140212): [<ffff80008ade9670>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
+softirqs last  enabled at (138874): [<ffff8000803d7488>] softirq_handle_end kernel/softirq.c:468 [inline]
+softirqs last  enabled at (138874): [<ffff8000803d7488>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:650
+softirqs last disabled at (138851): [<ffff800080022024>] __do_softirq+0x14/0x20 kernel/softirq.c:656
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6657 at fs/btrfs/inode.c:7943 btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943
+Modules linked in:
+CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943
+lr : btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943
+sp : ffff8000a6067900
+x29: ffff8000a6067920 x28: dfff800000000000 x27: 1fffe0001e3721a3
+x26: ffff700014c0cf38 x25: dfff800000000000 x24: 1fffe0001e372114
+x23: ffff0000cb81c000 x22: 0000000000010000 x21: 0000000000010000
+x20: ffff0000f1b90c48 x19: ffff0000f1b908a0 x18: 00000000ffffffff
+x17: ffff800093305000 x16: ffff800082de95c8 x15: 0000000000000001
+x14: 1fffe0001e3721cc x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001e3721cd x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d166dc40 x7 : ffff800080e995c0 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080f03e80
+x2 : 0000000000000000 x1 : 0000000000010000 x0 : 0000000000000000
+Call trace:
+ btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943 (P)
+ destroy_inode fs/inode.c:396 [inline]
+ evict+0x6e4/0x928 fs/inode.c:834
+ dispose_list fs/inode.c:852 [inline]
+ evict_inodes+0x638/0x6d0 fs/inode.c:906
+ generic_shutdown_super+0xa0/0x2b8 fs/super.c:627
+ kill_anon_super+0x4c/0x7c fs/super.c:1281
+ btrfs_kill_super+0x40/0x58 fs/btrfs/super.c:2129
+ deactivate_locked_super+0xc4/0x12c fs/super.c:473
+ deactivate_super+0xe0/0x100 fs/super.c:506
+ cleanup_mnt+0x31c/0x3ac fs/namespace.c:1327
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1334
+ task_work_run+0x1dc/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
+ el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 140270
+hardirqs last  enabled at (140269): [<ffff80008adef224>] irqentry_exit+0xd8/0x108 kernel/entry/common.c:214
+hardirqs last disabled at (140270): [<ffff80008ade9670>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
+softirqs last  enabled at (140254): [<ffff8000803d7488>] softirq_handle_end kernel/softirq.c:468 [inline]
+softirqs last  enabled at (140254): [<ffff8000803d7488>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:650
+softirqs last disabled at (140215): [<ffff800080022024>] __do_softirq+0x14/0x20 kernel/softirq.c:656
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6657 at fs/btrfs/inode.c:7948 btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948
+Modules linked in:
+CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948
+lr : btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948
+sp : ffff8000a6067900
+x29: ffff8000a6067920 x28: dfff800000000000 x27: 1fffe0001e3721a3
+x26: ffff700014c0cf38 x25: dfff800000000000 x24: 1fffe0001e372114
+x23: ffff0000cb81c000 x22: 0000000000010000 x21: 0000000000001000
+x20: ffff0000f1b90c48 x19: ffff0000f1b908a0 x18: 00000000ffffffff
+x17: ffff800093305000 x16: ffff800082de95c8 x15: 0000000000000001
+x14: 1fffe0001e3721cc x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001e3721cd x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d166dc40 x7 : ffff800080e995c0 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080f03e80
+x2 : 0000000000000000 x1 : 0000000000001000 x0 : 0000000000000000
+Call trace:
+ btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948 (P)
+ destroy_inode fs/inode.c:396 [inline]
+ evict+0x6e4/0x928 fs/inode.c:834
+ dispose_list fs/inode.c:852 [inline]
+ evict_inodes+0x638/0x6d0 fs/inode.c:906
+ generic_shutdown_super+0xa0/0x2b8 fs/super.c:627
+ kill_anon_super+0x4c/0x7c fs/super.c:1281
+ btrfs_kill_super+0x40/0x58 fs/btrfs/super.c:2129
+ deactivate_locked_super+0xc4/0x12c fs/super.c:473
+ deactivate_super+0xe0/0x100 fs/super.c:506
+ cleanup_mnt+0x31c/0x3ac fs/namespace.c:1327
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1334
+ task_work_run+0x1dc/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
+ el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+irq event stamp: 140312
+hardirqs last  enabled at (140311): [<ffff80008adef224>] irqentry_exit+0xd8/0x108 kernel/entry/common.c:214
+hardirqs last disabled at (140312): [<ffff80008ade9670>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
+softirqs last  enabled at (140306): [<ffff8000803d7488>] softirq_handle_end kernel/softirq.c:468 [inline]
+softirqs last  enabled at (140306): [<ffff8000803d7488>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:650
+softirqs last disabled at (140273): [<ffff800080022024>] __do_softirq+0x14/0x20 kernel/softirq.c:656
+---[ end trace 0000000000000000 ]---
+BTRFS info (device loop0): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6657 at fs/btrfs/block-group.c:4462 check_removing_space_info+0x10c/0x280 fs/btrfs/block-group.c:4463
+Modules linked in:
+CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : check_removing_space_info+0x10c/0x280 fs/btrfs/block-group.c:4463
+lr : check_removing_space_info+0x260/0x280 fs/btrfs/block-group.c:4462
+sp : ffff8000a6067930
+x29: ffff8000a6067930 x28: 1fffe0001bc4a12c x27: dfff800000000000
+x26: ffff0000ca5681c0 x25: 0000000000000001 x24: 1fffe0001bc4a002
+x23: dfff800000000000 x22: 0000000000000000 x21: 0000000000010000
+x20: ffff0000cb314000 x19: ffff0000de250000 x18: 00000000ffffffff
+x17: ffff800093305000 x16: ffff800080536230 x15: 0000000000000001
+x14: 1fffe0001bc4a004 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001bc4a005 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d166dc40 x7 : ffff800082594440 x6 : 0000000000000000
+x5 : ffff8000934e52c0 x4 : 0000000000000008 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : ffff0000de250000 x0 : ffff0000cb314000
+Call trace:
+ check_removing_space_info+0x10c/0x280 fs/btrfs/block-group.c:4463 (P)
+ btrfs_free_block_groups+0xa80/0xd10 fs/btrfs/block-group.c:4580
+ close_ctree+0x650/0x113c fs/btrfs/disk-io.c:4426
+ btrfs_put_super+0x1ac/0x1c0 fs/btrfs/super.c:74
 
 
-BR,
-Francesco
-
-
---nextPart2568054.XAFRqVoOGU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRUrtjevJ039mawAeLir2xSXEi5AAUCaQIQJAAKCRDir2xSXEi5
-AH56APwKzsvlloyWlfPnMHnak/8E8bYBfPmKrRKeQQQedjSq8wEAg3BhwGYJnq5+
-NGhnp06M8E4EpL9w3NYZ4PZVND0UWQo=
-=PUAv
------END PGP SIGNATURE-----
-
---nextPart2568054.XAFRqVoOGU--
-
-
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
