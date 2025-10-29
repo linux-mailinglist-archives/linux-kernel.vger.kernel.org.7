@@ -1,93 +1,187 @@
-Return-Path: <linux-kernel+bounces-876767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B736C1C499
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:56:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43946C1C44A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37127584437
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961BE1A61EFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A262DAFC4;
-	Wed, 29 Oct 2025 16:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B382D24B4;
+	Wed, 29 Oct 2025 16:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enQR59jh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P9JbqjjN"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADC338F80;
-	Wed, 29 Oct 2025 16:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E2B2E6CB8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761756385; cv=none; b=fGOsIx9Hg0bCOvz3P0HLSdt0SZeOaQrK5eqFuR9TFdmJhM6Y2o0oedED/OB5deP45HamMCOm9TtCksv+l1ZrUrXiDqSCSO7jrpsd8U/iywjtw+J3G7+Js1+2KrcuDw2ySLtgXXzj+aNuo3JjXWVUy4k0aFxP/LZra2O+NlTULrc=
+	t=1761756473; cv=none; b=lwxycJISm/fmlaH2opuP6XCmsSriUzvvng+brIlbHRuXOhp5wkme9on/l0jbIuyhjGCnO8TxF6Tl7yoHBEv4d3nFu66+mf2XXRjHI8RUXb5w5WQZv5QKJNEJu9V6YH845LkHqBVBB4lH1sf1zvthodz2t6HN0rzBY7OXy7fiRio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761756385; c=relaxed/simple;
-	bh=1wHTyfHcCvA7hCo0cByI9EKq0KDnXxwt2RgKk4naDnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s36+njiYCsM4LLwubDhuwrNIMJl+h75e3M272yFK3z8eFXwAlxpJ3ju/9LMBhOA69IWSudr3Tb/jRFs1Sr4zhskMkK2N4xCtjP+drjgBOE6CH6NKXBJ71cT8jaByhZizBbmMppdWxiDMuwsY3bVXiTg7qlL+Junb29WtB4hxX9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enQR59jh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7B5C4CEF7;
-	Wed, 29 Oct 2025 16:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761756384;
-	bh=1wHTyfHcCvA7hCo0cByI9EKq0KDnXxwt2RgKk4naDnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=enQR59jhZ3V3HgFXlpnmI5zXIRRYY7VIh/eSvu+R9Lj7qehfm6stRKDnLBb++y4/Z
-	 8MkYiFa9w+92dPjE4G0gVdusAmGfYphsi+50fErGmuM4fFcmeOe6lzoOBpib6bPneN
-	 NkM/XWDmeba3a3JRtTs3B92onvwt/KzRtdW03WD7etwBSiesJFhDhlznSQtkNlEdAz
-	 YmhVshkq58ak7w3N4dguZ9ZFU8X4daT96QPZ4w1gOcsEBFQYbBfFr7Vf/ekUzgDQeY
-	 rPoBPX3BLNzSV6/K2u/4/OluQcJ6XMsdi1H4h7hZ8ZaLfEL7LGuUFFaPby+F0uidqx
-	 x9A+yA6hXaT/w==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vE9Je-000000007Po-3IGG;
-	Wed, 29 Oct 2025 17:46:31 +0100
-Date: Wed, 29 Oct 2025 17:46:30 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 9/9] dt-bindings: PCI: qcom,pcie-x1e80100: Add missing
- required power-domains
-Message-ID: <aQJE5kkOGh76dLvf@hovoldconsulting.com>
-References: <20251029-dt-bindings-pci-qcom-fixes-power-domains-v1-0-da7ac2c477f4@linaro.org>
- <20251029-dt-bindings-pci-qcom-fixes-power-domains-v1-9-da7ac2c477f4@linaro.org>
+	s=arc-20240116; t=1761756473; c=relaxed/simple;
+	bh=vIeGqyVGKrSdApqCZkZRhZ14gVeP6rCHTgitactBbW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CXwjhP66UIGtWwHFP6gLSoYHI7dG/jucozTrAB6tHPwrSWIfgRnSjiVLKPxsWXq+0VWCocUXYmF+QNx3fnesJmSmxvneRNukVsgC6W9Oy9GbEQCapFI+0oSvF0C5kULcGU0egws3Mw0dP+zFkmjzM/MMw+0zmDU+NNDxZLueb3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P9JbqjjN; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6E504C0DA89;
+	Wed, 29 Oct 2025 16:47:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BDEA4606E8;
+	Wed, 29 Oct 2025 16:47:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E09BA117F83F2;
+	Wed, 29 Oct 2025 17:47:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761756467; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=+ZD8qKKAj7LLIn7XZPJ61tzZK6etWByMbTQs5Vyy61w=;
+	b=P9JbqjjN9yPnHT3N4tDhHFGOu9FQV/HLNyBTOiqudEKDTT+oeEjRseC6TTgT/X8LViQLBM
+	QVWNxol3vphN+liQJmMbKiJXyq2oz5f7v8TeIYAGg4WMaEC0Poc65n3Rotkejz8HjlkI/w
+	NBC6MG2WU4JcOk94md6EVFWVXQuF7O7ELd8G/5VXdbXr9mLmyYfFX5NzfZpiEeeXlTIUQK
+	IY+1OhN/5Jz5YuDfEBTonv5gNSd/EnEYDyNCfL8gEgf3he1e1c5PBqwujuG+VImdOWdvH+
+	4qYNm/jHKrGQD0RHVWw7hG4xkyrMn1QiG7tRZxgFryO4ew0sm28S4lp+X6sCvw==
+Date: Wed, 29 Oct 2025 17:47:40 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Jiaming Zhang <r772577952@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, horms@kernel.org, kuniyu@google.com,
+ linux-kernel@vger.kernel.org, sdf@fomichev.me, syzkaller@googlegroups.com,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Subject: Re: [Linux Kernel Bug] KASAN: null-ptr-deref Read in
+ generic_hwtstamp_ioctl_lower
+Message-ID: <20251029174740.0f064865@kmaincent-XPS-13-7390>
+In-Reply-To: <20251029161934.xwxzqoknqmwtrsgv@skbuf>
+References: <CANypQFZ8KO=eUe7YPC+XdtjOAvdVyRnpFk_V3839ixCbdUNsGA@mail.gmail.com>
+	<20251029110651.25c4936d@kmaincent-XPS-13-7390>
+	<20251029161934.xwxzqoknqmwtrsgv@skbuf>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-dt-bindings-pci-qcom-fixes-power-domains-v1-9-da7ac2c477f4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 29, 2025 at 04:40:46PM +0100, Krzysztof Kozlowski wrote:
-> Power domains should be required for PCI, so the proper SoC supplies are
-> turned on.
-> 
-> Cc: <stable@vger.kernel.org>
+On Wed, 29 Oct 2025 18:19:34 +0200
+Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
 
-I have a feeling I've pointed this out before, but these kind of binding
-patches really does not seem to qualify for stable backporting (e.g.
-does not "fix a real bug that bothers people").
+> On Wed, Oct 29, 2025 at 11:06:51AM +0100, Kory Maincent wrote:
+> > Hello Jiaming,
+> >=20
+> > +Vlad
+> >=20
+> > On Wed, 29 Oct 2025 16:45:37 +0800
+> > Jiaming Zhang <r772577952@gmail.com> wrote:
+> >  =20
+> > > Dear Linux kernel developers and maintainers,
+> > >=20
+> > > We are writing to report a null pointer dereference bug discovered in
+> > > the net subsystem. This bug is reproducible on the latest version
+> > > (v6.18-rc3, commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa).
+> > >=20
+> > > The root cause is in tsconfig_prepare_data(), where a local
+> > > kernel_hwtstamp_config struct (cfg) is initialized using {}, setting
+> > > all its members to zero. Consequently, cfg.ifr becomes NULL.
+> > >=20
+> > > cfg is then passed as: tsconfig_prepare_data() ->
+> > > dev_get_hwtstamp_phylib() -> vlan_hwtstamp_get() (via
+> > > dev->netdev_ops->ndo_hwtstamp_get) -> generic_hwtstamp_get_lower() ->
+> > > generic_hwtstamp_ioctl_lower().
+> > >=20
+> > > The function generic_hwtstamp_ioctl_lower() assumes cfg->ifr is a
+> > > valid pointer and attempts to access cfg->ifr->ifr_ifru. This access
+> > > dereferences the NULL pointer, triggering the bug. =20
+> >=20
+> > Thanks for spotting this issue!
+> >=20
+> > In the ideal world we would have all Ethernet driver supporting the
+> > hwtstamp_get/set NDOs but that not currently the case.=09
+> > Vladimir Oltean was working on this but it is not done yet.=20
+> > $ git grep SIOCGHWTSTAMP drivers/net/ethernet | wc -l
+> > 16 =20
+>=20
+> Vadim also took the initiative and submitted (is still submitting?) some
+> more conversions, whereas I lost all steam.
 
-> Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- 
-> +required:
-> +  - power-domains
-> +
+Ok no worry I was simply pointing this out, people will convert it when they
+want to use the new netlink API.
+=20
+> > > As a potential fix, we can declare a local struct ifreq variable in
+> > > tsconfig_prepare_data(), zero-initializing it, and then assigning its
+> > > address to cfg.ifr before calling dev_get_hwtstamp_phylib(). This
+> > > ensures that functions down the call chain receive a valid pointer. =
+=20
+> >=20
+> > If we do that we will have legacy IOCTL path inside the Netlink path and
+> > that's not something we want.
+> > In fact it is possible because the drivers calling
+> > generic_hwtstamp_get/set_lower functions are already converted to hwtst=
+amp
+> > NDOs therefore the NDO check in tsconfig_prepare_data is not working on
+> > these case. =20
+>=20
+> I remember we had this discussion before.
+>=20
+> | This is why I mentioned by ndo_hwtstamp_set() conversion, because
+> | suddenly it is a prerequisite for any further progress to be done.
+> | You can't convert SIOCSHWTSTAMP to netlink if there are some driver
+> | implementations which still use ndo_eth_ioctl(). They need to be
+> | UAPI-agnostic.
+>=20
+> https://lore.kernel.org/netdev/20231122140850.li2mvf6tpo3f2fhh@skbuf/
+>=20
+> I'm not sure what was your agreement with the netdev maintainer
+> accepting the tsconfig netlink work with unconverted device drivers left
+> in the tree.
 
-Johan
+I did like 21th versions and there was not many people active in the review=
+s.
+No one stand against this work.
+
+> > IMO the solution is to add a check on the ifr value in the
+> > generic_hwtstamp_set/get_lower functions like that:
+> >=20
+> > int generic_hwtstamp_set_lower(struct net_device *dev,
+> > 			       struct kernel_hwtstamp_config *kernel_cfg,
+> > 			       struct netlink_ext_ack *extack)
+> > {
+> > ...
+> >=20
+> > 	/* Netlink path with unconverted lower driver */
+> > 	if (!kernel_cfg->ifr)
+> > 		return -EOPNOTSUPP;
+> >=20
+> > 	/* Legacy path: unconverted lower driver */
+> > 	return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cfg);
+> > } =20
+>=20
+> This plugs one hole (two including _get). How many more are there? If
+> this is an oversight, the entire tree needs to be reviewed for
+> ndo_hwtstamp_get() / ndo_hwtstamp_test() pointer tests which were used
+> as an indication that this net device is netlink ready. Stacked
+> virtual interfaces are netlink-ready only when the entire chain down to
+> the physical interface is netlink-ready.
+
+I don't see this as a hole. The legacy ioctl path still works.
+If people want to use the new Netlink path on their board, yes they need to
+convert all the parts of the chain to hwtstamp NDOs. If they don't they will
+get now a EOPNOTSUPP error instead of a null pointer dereference koops.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
