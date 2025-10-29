@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-876418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700DEC1B892
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:05:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D39C1B632
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08A564298F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:49:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4D3C93490B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3273559E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8E13358B6;
 	Wed, 29 Oct 2025 14:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9us2OvS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SN6barIj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24383358B2
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1089D3358CF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748845; cv=none; b=uMp70CkEMrPZNvdt0hY8BKpmFSUJRtSjfVdY3CnvuHh/rCHXs+0fhpwiBszPZNrA6Aiq7aFWFuaj9bMGhHtXASUzZ8fU4S+MzOf8PCSXkRwdmgommMUFtgQkkfDGbVy23aQVUhpe2WtsC1YkvxU0OYMaSUZxJfPw5VIof1+YSWA=
+	t=1761748845; cv=none; b=XYeL3LRm9QfDaASMFCWIBUAUGK+Bq0g33VlvaTCzxO3ngvQbZ/2x3Q2+ucV/ChzYX1B/3SogmB6vQsWUwnZUl/Za1+X6yqODtn7IWoEw8ZtSZgfqhWbYLJobBwro7vevWXkwEOEXwx1wemefwumOmmPtNIjRrKE/OHF43dpZoBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761748845; c=relaxed/simple;
-	bh=lT04hyvXI3hRYRjGC/NWe2ZlZUcXJ5lKgvqe06P2w1Q=;
+	bh=yo5CmuKZA3/tkEE6ni8PGvX51r42GAR+KIaPKtkB9yE=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=CNB77qB5Td715PhArdRiBI2+Zqbp7s2cO6sqryCtukt56qSJh1RnxCQASE4Urb8Ol9j7w7lbkEYvSQGlqBVCx2OC6yOq5m8Z3u+4mypn7KjOWeuXyZvDzBmDTT8aA5zXo7tq/bQRrv5C1XcRBD7Mh4+a4NBPl05J1iTvZeR5izU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9us2OvS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3158C116B1;
+	 Content-Type; b=n05sgInrTOuNEjKyW5Umgufw33kK2aWuEnj2UwmK/UReb9aL3sYqI6HIZWizdx/q5gZytsIymKHKneOEzaJ3/D5wWCY50tG7og3d3q6D2o4b6xWZmcYyasaojkNnVm/S/0ao/xNck2/t62rPP2SimiDpX/J/MdcuYV/GpXOHX1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SN6barIj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E55A1C4CEF7;
 	Wed, 29 Oct 2025 14:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761748844;
-	bh=lT04hyvXI3hRYRjGC/NWe2ZlZUcXJ5lKgvqe06P2w1Q=;
+	bh=yo5CmuKZA3/tkEE6ni8PGvX51r42GAR+KIaPKtkB9yE=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=n9us2OvSrZx+atrtqSiiH86nSrJAvWh1HGodF1AvfBJSGSPWSj/BBRe2k6dzMetL+
-	 tF5E3NBSLg7QN06wJ3SgwxgJ733JLJMt1rR8zMPVeRMkc+HF+lHZl9Us57DcGoLjxn
-	 g/2ue7+Phz1Oo1/NEdRmix8qXM8IwwiSLf9Z690wX7ftRishlQAWivHcDp8IxOPfuJ
-	 5qRI1+qYmn3LpZmOeKpOQpFn1cQYgm/VZkOqx5Kad/vq2wyS2e/fxF55+6GRg+HR9T
-	 Zri/kp6y3u6eV6dT9tXUtRMAU0q3KRF4I7VQ9d6VAH7aBux041PJ+CGTeMiuzA4G/d
-	 TALd008CxWOqw==
+	b=SN6barIjspeVfeOccK2m8S9LgXiFv6MFQzJgDvny2FNCOsILnQauWfEQSiLrK/88B
+	 R2IN+wf9+LS8IXXU+RJ5v7Of/S9dxzsVItS3s38nXvlB9VM9hoIMKDcagVkza4f1aU
+	 MagimuyWwfLk2s0JivCdi95bnNN0enTbfVu0bOxXdU3bvn6gOkznxbaYVUcm2R14TS
+	 aKnQQD/kABungWwxIzg96PFucRr3EFvSyirr/m0n9kJHdPjbEFiM3cb425PDb6BjiH
+	 neQarq8ijVaR69TlTgWbnYU8DGcjv+9UHQwR3Fj/sOXWmLFzc1hGWXjvIl0GXuc4cC
+	 QgBTlJwyjzZNQ==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vE7Mb-000000052zh-2ZTU;
+	id 1vE7Mb-0000000530C-3Hv1;
 	Wed, 29 Oct 2025 10:41:25 -0400
-Message-ID: <20251029144125.462405292@kernel.org>
+Message-ID: <20251029144125.633472489@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 29 Oct 2025 10:40:53 -0400
+Date: Wed, 29 Oct 2025 10:40:54 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -64,8 +64,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Jiri Olsa <jolsa@kernel.org>,
  Adrian Hunter <adrian.hunter@intel.com>,
  Ingo Molnar <mingo@redhat.com>
-Subject: [for-next][PATCH 12/13] tracing: Check for printable characters when printing field dyn
- strings
+Subject: [for-next][PATCH 13/13] tracing: Have persistent ring buffer print syscalls normally
 References: <20251029144041.475297995@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,14 +76,47 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-When the "fields" option is enabled, it prints each trace event field
-based on its type. But a dynamic array and a dynamic string can both have
-a "char *" type. Printing it as a string can cause escape characters to be
-printed and mess up the output of the trace.
+The persistent ring buffer from a previous boot has to be careful printing
+events as the print formats of random events can have pointers to strings
+and such that are not available.
 
-For dynamic strings, test if there are any non-printable characters, and
-if so, print both the string with the non printable characters as '.', and
-the print the hex value of the array.
+Ftrace static events (like the function tracer event) are stable and are
+printed normally.
+
+System call event formats are also stable. Allow them to be printed
+normally as well:
+
+Instead of:
+
+  <...>-1       [005] ...1.    57.240405: sys_enter_waitid: __syscall_nr=0xf7 (247) which=0x1 (1) upid=0x499 (1177) infop=0x7ffd5294d690 (140725988939408) options=0x5 (5) ru=0x0 (0)
+  <...>-1       [005] ...1.    57.240433: sys_exit_waitid: __syscall_nr=0xf7 (247) ret=0x0 (0)
+  <...>-1       [005] ...1.    57.240437: sys_enter_rt_sigprocmask: __syscall_nr=0xe (14) how=0x2 (2) nset=0x7ffd5294d7c0 (140725988939712) oset=0x0 (0) sigsetsize=0x8 (8)
+  <...>-1       [005] ...1.    57.240438: sys_exit_rt_sigprocmask: __syscall_nr=0xe (14) ret=0x0 (0)
+  <...>-1       [005] ...1.    57.240442: sys_enter_close: __syscall_nr=0x3 (3) fd=0x4 (4)
+  <...>-1       [005] ...1.    57.240463: sys_exit_close: __syscall_nr=0x3 (3) ret=0x0 (0)
+  <...>-1       [005] ...1.    57.240485: sys_enter_openat: __syscall_nr=0x101 (257) dfd=0xffffffffffdfff9c (-2097252) filename=(0xffff8b81639ca01c) flags=0x80000 (524288) mode=0x0 (0) __filename_val=/run/systemd/reboot-param
+  <...>-1       [005] ...1.    57.240555: sys_exit_openat: __syscall_nr=0x101 (257) ret=0xffffffffffdffffe (-2097154)
+  <...>-1       [005] ...1.    57.240571: sys_enter_openat: __syscall_nr=0x101 (257) dfd=0xffffffffffdfff9c (-2097252) filename=(0xffff8b81639ca01c) flags=0x80000 (524288) mode=0x0 (0) __filename_val=/run/systemd/reboot-param
+  <...>-1       [005] ...1.    57.240620: sys_exit_openat: __syscall_nr=0x101 (257) ret=0xffffffffffdffffe (-2097154)
+  <...>-1       [005] ...1.    57.240629: sys_enter_writev: __syscall_nr=0x14 (20) fd=0x3 (3) vec=0x7ffd5294ce50 (140725988937296) vlen=0x7 (7)
+  <...>-1       [005] ...1.    57.242281: sys_exit_writev: __syscall_nr=0x14 (20) ret=0x24 (36)
+  <...>-1       [005] ...1.    57.242286: sys_enter_reboot: __syscall_nr=0xa9 (169) magic1=0xfee1dead (4276215469) magic2=0x28121969 (672274793) cmd=0x1234567 (19088743) arg=0x0 (0)
+
+Have:
+
+  <...>-1       [000] ...1.    91.446011: sys_waitid(which: 1, upid: 0x4d2, infop: 0x7ffdccdadfd0, options: 5, ru: 0)
+  <...>-1       [000] ...1.    91.446042: sys_waitid -> 0x0
+  <...>-1       [000] ...1.    91.446045: sys_rt_sigprocmask(how: 2, nset: 0x7ffdccdae100, oset: 0, sigsetsize: 8)
+  <...>-1       [000] ...1.    91.446047: sys_rt_sigprocmask -> 0x0
+  <...>-1       [000] ...1.    91.446051: sys_close(fd: 4)
+  <...>-1       [000] ...1.    91.446073: sys_close -> 0x0
+  <...>-1       [000] ...1.    91.446095: sys_openat(dfd: 18446744073709551516, filename: 139732544945794 "/run/systemd/reboot-param", flags: O_RDONLY|O_CLOEXEC)
+  <...>-1       [000] ...1.    91.446165: sys_openat -> 0xfffffffffffffffe
+  <...>-1       [000] ...1.    91.446182: sys_openat(dfd: 18446744073709551516, filename: 139732544945794 "/run/systemd/reboot-param", flags: O_RDONLY|O_CLOEXEC)
+  <...>-1       [000] ...1.    91.446233: sys_openat -> 0xfffffffffffffffe
+  <...>-1       [000] ...1.    91.446242: sys_writev(fd: 3, vec: 0x7ffdccdad790, vlen: 7)
+  <...>-1       [000] ...1.    91.447877: sys_writev -> 0x24
+  <...>-1       [000] ...1.    91.447883: sys_reboot(magic1: 0xfee1dead, magic2: 0x28121969, cmd: 0x1234567, arg: 0)
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -101,58 +133,72 @@ Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Link: https://lore.kernel.org/20251028231148.929243047@kernel.org
+Link: https://lore.kernel.org/20251028231149.097404581@kernel.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_output.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ kernel/trace/trace.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 97db0b0ccf3e..718b255b6fd8 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -950,7 +950,9 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
- 	int offset;
- 	int len;
- 	int ret;
-+	int i;
- 	void *pos;
-+	char *str;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 2aee9a3088f4..a765792d3428 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -20,6 +20,7 @@
+ #include <linux/security.h>
+ #include <linux/seq_file.h>
+ #include <linux/irqflags.h>
++#include <linux/syscalls.h>
+ #include <linux/debugfs.h>
+ #include <linux/tracefs.h>
+ #include <linux/pagemap.h>
+@@ -4219,6 +4220,22 @@ static void test_cpu_buff_start(struct trace_iterator *iter)
+ 				iter->cpu);
+ }
  
- 	list_for_each_entry_reverse(field, head, link) {
- 		trace_seq_printf(&iter->seq, " %s=", field->name);
-@@ -977,8 +979,29 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
- 				trace_seq_puts(&iter->seq, "<OVERFLOW>");
- 				break;
- 			}
--			pos = (void *)iter->ent + offset;
--			trace_seq_printf(&iter->seq, "%.*s", len, (char *)pos);
-+			str = (char *)iter->ent + offset;
-+			/* Check if there's any non printable strings */
-+			for (i = 0; i < len; i++) {
-+				if (str[i] && !(isascii(str[i]) && isprint(str[i])))
-+					break;
-+			}
-+			if (i < len) {
-+				for (i = 0; i < len; i++) {
-+					if (isascii(str[i]) && isprint(str[i]))
-+						trace_seq_putc(&iter->seq, str[i]);
-+					else
-+						trace_seq_putc(&iter->seq, '.');
-+				}
-+				trace_seq_puts(&iter->seq, " (");
-+				for (i = 0; i < len; i++) {
-+					if (i)
-+						trace_seq_putc(&iter->seq, ':');
-+					trace_seq_printf(&iter->seq, "%02x", str[i]);
-+				}
-+				trace_seq_putc(&iter->seq, ')');
-+			} else {
-+				trace_seq_printf(&iter->seq, "%.*s", len, str);
-+			}
- 			break;
- 		case FILTER_PTR_STRING:
- 			if (!iter->fmt_size)
++#ifdef CONFIG_FTRACE_SYSCALLS
++static bool is_syscall_event(struct trace_event *event)
++{
++	return (event->funcs == &enter_syscall_print_funcs) ||
++	       (event->funcs == &exit_syscall_print_funcs);
++
++}
++#define syscall_buf_size CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT
++#else
++static inline bool is_syscall_event(struct trace_event *event)
++{
++	return false;
++}
++#define syscall_buf_size 0
++#endif /* CONFIG_FTRACE_SYSCALLS */
++
+ static enum print_line_t print_trace_fmt(struct trace_iterator *iter)
+ {
+ 	struct trace_array *tr = iter->tr;
+@@ -4251,10 +4268,12 @@ static enum print_line_t print_trace_fmt(struct trace_iterator *iter)
+ 		 * safe to use if the array has delta offsets
+ 		 * Force printing via the fields.
+ 		 */
+-		if ((tr->text_delta) &&
+-		    event->type > __TRACE_LAST_TYPE)
++		if ((tr->text_delta)) {
++			/* ftrace and system call events are still OK */
++			if ((event->type > __TRACE_LAST_TYPE) &&
++			    !is_syscall_event(event))
+ 			return print_event_fields(iter, event);
+-
++		}
+ 		return event->funcs->trace(iter, sym_flags, event);
+ 	}
+ 
+@@ -11436,7 +11455,7 @@ __init static int tracer_alloc_buffers(void)
+ 
+ 	global_trace.flags = TRACE_ARRAY_FL_GLOBAL;
+ 
+-	global_trace.syscall_buf_sz = CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT;
++	global_trace.syscall_buf_sz = syscall_buf_size;
+ 
+ 	INIT_LIST_HEAD(&global_trace.systems);
+ 	INIT_LIST_HEAD(&global_trace.events);
 -- 
 2.51.0
 
