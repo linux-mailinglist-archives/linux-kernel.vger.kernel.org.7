@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-875316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76244C18AFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:29:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF5AC18ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32AFA1AA4297
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:22:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2353D4F0BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4660431064A;
-	Wed, 29 Oct 2025 07:20:02 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1C83112C2;
+	Wed, 29 Oct 2025 07:20:51 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB34830E825;
-	Wed, 29 Oct 2025 07:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B557273D77;
+	Wed, 29 Oct 2025 07:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722401; cv=none; b=gaGwbM+EevGKu/7Xk6lqPEu6PGlOs5igS8JRyrknL4h478rrvhCMvXI0g4If3iE57HUvrnlbE4qmtbf1KRKDZAxFWkhk1LikjBJAzC4WTWiCi3xJfJI+P4TMaJ2O+ErVM5lQlfX7sQKVVI/072+F6DzJCXUP1+QOOW5nO+Jm1I0=
+	t=1761722451; cv=none; b=W3n6kVHsgtK766JNQXN1QnUCVaazAu5WUV8Dpl4VLEPP4cJjYr2O2Xv2iRTN6MoGyVvyzhLXVFrozCUskmgaIZfBX8BqCXVC234QvMby8/l1gM9Sq0tfV2E+mCFFsCSI7GZJ4UnJBwR0K618+d9QxTRRdiioXzyyKQaNkOeLxyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722401; c=relaxed/simple;
-	bh=2oUrvVYVcEfEhnF8zghiEAXINHLSQ5C5FO8ptqYtW1c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QISUDHmNovMKPkElUpXBRu6sUzfITNZRCYOfpGnk8FlinMu99mssFTQDd4SAiFaVAfrQ1vxDtJp+zbKwkp3P107vu9Io6B8HKj7uO8NMs+MjRZqoGGqrBXDFisDxANpdfi2RogG7UVeMLxTNq6zdnYqUqcg4EKZKsF4QQaYVaBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+	s=arc-20240116; t=1761722451; c=relaxed/simple;
+	bh=tpA9JhQM0zKzxnv53gLEYkSSwJ9KjADguR8RpH5FPqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hGnVeCHn1973KqFKNRmlumv/9yFFsCLkq0OxJA/5j82YiMkLT5pmXIGqfdRc6rru5yZbROXaB2JYR7Q22NAPk/LAvegjXnN0l63n8+Xp7cLMeFvi1E8ricq1+0nWYxyTMhxvRo+GwbWJQVaSq5O1R3xgQok6zwGfCXIRYr/veJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201621.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202510291519525547;
-        Wed, 29 Oct 2025 15:19:52 +0800
-Received: from jtjnmail201626.home.langchao.com (10.100.2.36) by
- jtjnmail201621.home.langchao.com (10.100.2.21) with Microsoft SMTP Server
+Received: from jtjnmail201623.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202510291520390231;
+        Wed, 29 Oct 2025 15:20:39 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ jtjnmail201623.home.langchao.com (10.100.2.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 15:19:53 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- jtjnmail201626.home.langchao.com (10.100.2.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 15:19:53 +0800
-Received: from inspur.com (10.100.2.113) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 29 Oct 2025 15:19:53 +0800
+ 15.1.2507.58; Wed, 29 Oct 2025 15:20:39 +0800
+Received: from inspur.com (10.100.2.113) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 29 Oct 2025 15:20:39 +0800
 Received: from localhost.localdomain.com (unknown [10.94.19.60])
-	by app9 (Coremail) with SMTP id cQJkCsDwSHkYwAFpvDgHAA--.5677S2;
-	Wed, 29 Oct 2025 15:19:53 +0800 (CST)
+	by app9 (Coremail) with SMTP id cQJkCsDwg3hGwAFpzTgHAA--.5720S2;
+	Wed, 29 Oct 2025 15:20:39 +0800 (CST)
 From: Bo Liu <liubo03@inspur.com>
-To: <hca@linux.ibm.com>, <gor@linux.ibm.com>, <agordeev@linux.ibm.com>
-CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+To: <anil.gurumurthy@qlogic.com>, <sudarsana.kalluru@qlogic.com>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<hare@suse.de>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bo Liu
 	<liubo03@inspur.com>
-Subject: [PATCH] s390: Fix double word in comments
-Date: Wed, 29 Oct 2025 15:19:51 +0800
-Message-ID: <20251029071951.17817-1-liubo03@inspur.com>
+Subject: [PATCH] scsi: Fix double word in comments
+Date: Wed, 29 Oct 2025 15:20:37 +0800
+Message-ID: <20251029072037.17862-1-liubo03@inspur.com>
 X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,11 +57,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: cQJkCsDwSHkYwAFpvDgHAA--.5677S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4rArWkXr4UGFy8JrykGrg_yoW8WF43pr
-	1UC3WDK397KF1kCa45Gr48uFW0vFs7Ww4ag3Wvk3yrAFy3tanYvF9Yq3WxJrWjgrykW3W0
-	vF1j9r4qg3ZFyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID: cQJkCsDwg3hGwAFpzTgHAA--.5720S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1xXr43AF4UJryfAw18Zrb_yoWrAF1Upa
+	y8J34Skr4DJa1IkrnFgw4UXF98Wa1xJasxGay7Wa45WFZ5Cryj9ryUKayYvFWDJrW0gF98
+	trn8try7Wa4kJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
 	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
@@ -72,16 +70,16 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4rArWkXr4UGFy8JrykGrg_yoW8WF43pr
 	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
 	YxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
 	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0x
 	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
 	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUjubytUUUUU==
+	nxnUUI43ZEXa7VUbfWrJUUUUU==
 X-CM-SenderInfo: xolxu0iqt6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?C5GA72LVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
-	KIpTmu65QLO7A6N1gSP9mxsXKgek6oylbblD+cE1k59TTWLCnfFf9em/y2GKvcH0fiGg/m
+X-CM-DELIVERINFO: =?B?zWsStmLVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
+	KIpenFMbKCZoIFWTeFCC31qk0gFLmSPkJRWi0SASSU6eCAmSP57uUykdsmbTmoZSZkTA/m
 	7GVnSw1ZoFM5AiCEqoM=
 Content-Type: text/plain
-tUid: 20251029151952593e14a479a2dc171287098f999e4d4e
+tUid: 20251029152039e8fd1a4853760a3903c29caac8466c66
 X-Abuse-Reports-To: service@corp-email.com
 Abuse-Reports-To: service@corp-email.com
 X-Complaints-To: service@corp-email.com
@@ -91,36 +89,92 @@ Remove the repeated word "the" in comments.
 
 Signed-off-by: Bo Liu <liubo03@inspur.com>
 ---
- arch/s390/kernel/perf_cpum_sf.c | 2 +-
- arch/s390/kernel/sthyi.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/bfa/bfa_fcs_rport.c        | 2 +-
+ drivers/scsi/fcoe/fcoe_ctlr.c           | 2 +-
+ drivers/scsi/isci/host.h                | 2 +-
+ drivers/scsi/isci/remote_device.h       | 2 +-
+ drivers/scsi/isci/remote_node_context.h | 2 +-
+ drivers/scsi/isci/task.c                | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index f432869f8921..bf816b134fb1 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -1093,7 +1093,7 @@ static void perf_event_count_update(struct perf_event *event, u64 count)
-  * combined-sampling data entry consists of a basic- and a diagnostic-sampling
-  * data entry.	The sampling function is determined by the flags in the perf
-  * event hardware structure.  The function always works with a combined-sampling
-- * data entry but ignores the the diagnostic portion if it is not available.
-+ * data entry but ignores the diagnostic portion if it is not available.
-  *
-  * Note that the implementation focuses on basic-sampling data entries and, if
-  * such an entry is not valid, the entire combined-sampling data entry is
-diff --git a/arch/s390/kernel/sthyi.c b/arch/s390/kernel/sthyi.c
-index f4ccdbed4b89..5eae2e25997a 100644
---- a/arch/s390/kernel/sthyi.c
-+++ b/arch/s390/kernel/sthyi.c
-@@ -253,7 +253,7 @@ static void fill_diag_mac(struct sthyi_sctns *sctns,
- 	sctns->mac.infmval1 |= MAC_CNT_VLD;
- }
+diff --git a/drivers/scsi/bfa/bfa_fcs_rport.c b/drivers/scsi/bfa/bfa_fcs_rport.c
+index d4bde9bbe75b..f88320715c16 100644
+--- a/drivers/scsi/bfa/bfa_fcs_rport.c
++++ b/drivers/scsi/bfa/bfa_fcs_rport.c
+@@ -1987,7 +1987,7 @@ bfa_fcs_rport_gidpn_response(void *fcsarg, struct bfa_fcxp_s *fcxp, void *cbarg,
+ 			/*
+ 			 * Device's PID has changed. We need to cleanup
+ 			 * and re-login. If there is another device with
+-			 * the the newly discovered pid, send an scn notice
++			 * the newly discovered pid, send an scn notice
+ 			 * so that its new pid can be discovered.
+ 			 */
+ 			list_for_each(qe, &rport->port->rport_q) {
+diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+index 8e4241c295e3..21b91f1b6d07 100644
+--- a/drivers/scsi/fcoe/fcoe_ctlr.c
++++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+@@ -205,7 +205,7 @@ static int fcoe_sysfs_fcf_add(struct fcoe_fcf *new)
+ 		 * that doesn't have a priv (fcf was deleted). However,
+ 		 * libfcoe will always delete FCFs before trying to add
+ 		 * them. This is ensured because both recv_adv and
+-		 * age_fcfs are protected by the the fcoe_ctlr's mutex.
++		 * age_fcfs are protected by the fcoe_ctlr's mutex.
+ 		 * This means that we should never get a FCF with a
+ 		 * non-NULL priv pointer.
+ 		 */
+diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
+index 52388374cf31..e4971ca00769 100644
+--- a/drivers/scsi/isci/host.h
++++ b/drivers/scsi/isci/host.h
+@@ -244,7 +244,7 @@ enum sci_controller_states {
+ 	SCIC_INITIALIZED,
  
--/* Returns a pointer to the the next partition block. */
-+/* Returns a pointer to the next partition block. */
- static struct diag204_x_part_block *lpar_cpu_inf(struct lpar_cpu_inf *part_inf,
- 						 bool this_lpar,
- 						 void *diag224_buf,
+ 	/**
+-	 * This state indicates the the controller is in the process of becoming
++	 * This state indicates the controller is in the process of becoming
+ 	 * ready (i.e. starting).  In this state no new IO operations are permitted.
+ 	 * This state is entered from the INITIALIZED state.
+ 	 */
+diff --git a/drivers/scsi/isci/remote_device.h b/drivers/scsi/isci/remote_device.h
+index c1fdf45751cd..0ab1db862de3 100644
+--- a/drivers/scsi/isci/remote_device.h
++++ b/drivers/scsi/isci/remote_device.h
+@@ -170,7 +170,7 @@ enum sci_status sci_remote_device_stop(
+  * permitted.  This state is entered from the INITIAL state.  This state
+  * is entered from the STOPPING state.
+  *
+- * @SCI_DEV_STARTING: This state indicates the the remote device is in
++ * @SCI_DEV_STARTING: This state indicates the remote device is in
+  * the process of becoming ready (i.e. starting).  In this state no new
+  * IO operations are permitted.  This state is entered from the STOPPED
+  * state.
+diff --git a/drivers/scsi/isci/remote_node_context.h b/drivers/scsi/isci/remote_node_context.h
+index c7ee81d01125..f22950b12b8b 100644
+--- a/drivers/scsi/isci/remote_node_context.h
++++ b/drivers/scsi/isci/remote_node_context.h
+@@ -154,7 +154,7 @@ enum sci_remote_node_context_destination_state {
+ /**
+  * struct sci_remote_node_context - This structure contains the data
+  *    associated with the remote node context object.  The remote node context
+- *    (RNC) object models the the remote device information necessary to manage
++ *    (RNC) object models the remote device information necessary to manage
+  *    the silicon RNC.
+  */
+ struct sci_remote_node_context {
+diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
+index 3a25b1a2c52d..aeb2cda92465 100644
+--- a/drivers/scsi/isci/task.c
++++ b/drivers/scsi/isci/task.c
+@@ -67,7 +67,7 @@
+ /**
+ * isci_task_refuse() - complete the request to the upper layer driver in
+ *     the case where an I/O needs to be completed back in the submit path.
+-* @ihost: host on which the the request was queued
++* @ihost: host on which the request was queued
+ * @task: request to complete
+ * @response: response code for the completed task.
+ * @status: status code for the completed task.
 -- 
 2.31.1
 
