@@ -1,275 +1,145 @@
-Return-Path: <linux-kernel+bounces-876477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C78C1B940
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:14:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601D5C1B8C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3A3188E9A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:08:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0B0D9341ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C647B2DFF13;
-	Wed, 29 Oct 2025 15:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0962E542C;
+	Wed, 29 Oct 2025 15:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UWG7eyBj"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazhn15011023.outbound.protection.outlook.com [52.102.137.23])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D8FpEFXm"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9CC2EC09D;
-	Wed, 29 Oct 2025 15:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.137.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750422; cv=fail; b=eVn7NBwfghYMwJuzx0CnIeWC3ep9eTwTo1IyXldbfAnurNqhmWJXpBJntc+ghKHKiAimWY2h/hJUohqNkwBn+ILoN+3iozBZJrFkLBvBwOd0H5PhV5Ai3l/rkzpMxo0n199Z2tmCDxaG7DO0Bpw2jKBipxEQ8TTOgfoHurxlxpA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750422; c=relaxed/simple;
-	bh=42TKNicB0XKTrxG9rx6XDwfz3+Hg3kmsEaH3ujv0pI8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sThDGeSw5HBqFZsaGlCmaz5y+yQ1cmyudPH1hkWhLSkZwIoOjfaM9HYaxnXGGGJJyk51HRHMB025aWBEKNEGTeGWGS4svj51HUxNyFnp+0gJyaGLYio0w4P6smOCaWX8sKF5mwNgS18tgKm6ihP3oxz9XWrRQaaKmzDmsh9nXVg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UWG7eyBj; arc=fail smtp.client-ip=52.102.137.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gqwGO5KuSGkMqpgp3MHo0xtPpe1a5AuEALjDVYsnPcQU57K2RM5WA1gOAQw4VnYtAbIuQ3EhCtjwc7Yz0LgjS7rw30XxKBCBEQBCfHDb+2tlRazfuLqDlNdoGVMGlG8MCeazQTgM6i2pf3wn6UjFSt7s8YYPWIsFQjGyb3dRg3bTCTOH8A11okKIAXd42GbC4/OvYpNkQZR9lcylzS+Z55CBdxkzekuZRhyMuaXZR9BEhuaQ0JlxfaKfW0dAZ7WKcL4EkaAjEaxKBmcTqjenT++421yl8fA2+SMulKLGc7u+HB1PQnqeDYfx5QSv0pLwMtgDou0zjmnQnv09cpknxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rMZ44PNrUrDuN8LhBFHa+4JMsZv6tiOKplJ+9mP0wGc=;
- b=HSYlpLEgRRTEERfbmA8U3FUITeV0oJfiCt95l/aDCNiAcO15P7JYNJqAAlBYfcuKirogyB3aOqJyeIN7BHrRSWZVQYaazcLuH1cEDZPO6kGW8Xpsss2pPBjUPIhae3gWdcGDKeNAEIwtKOM5cKZyn9P2ZWXvL1fTMP1oJNE1iP5Mid61jLvmKN5w5aseiWGsi+TG2UuNJN7HlBFsshGgqVsUtmNsfCeQ28mH8ybOe37nBhGXk8LDFvmmeAVRsJFQ3emMJGTcfCKysVsu4V6ieXe7kAnFS5y7nfo8adYERIDMi2rsdrVhgMIS/H6ZblqQDe1O94va4N/1l09rFl+x7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rMZ44PNrUrDuN8LhBFHa+4JMsZv6tiOKplJ+9mP0wGc=;
- b=UWG7eyBjh4hI2q22yU7cIey1lrdLUP5WShyFcNUDjoVx+j67JOPbMG6cXxp3TSb9MpVIVgzFh6lfpYbHiDBmkvYoowj2kkceRB/Uymj8SFCeJ15qay9xh34BmRIOWNJWk+dNGJtZwcA8qWhuWeuw3sC1LDfDcrF+CqHzpTRaQhQ=
-Received: from MW4PR04CA0081.namprd04.prod.outlook.com (2603:10b6:303:6b::26)
- by BLAPR10MB4945.namprd10.prod.outlook.com (2603:10b6:208:324::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 15:06:56 +0000
-Received: from SJ5PEPF000001ED.namprd05.prod.outlook.com
- (2603:10b6:303:6b:cafe::1c) by MW4PR04CA0081.outlook.office365.com
- (2603:10b6:303:6b::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.13 via Frontend Transport; Wed,
- 29 Oct 2025 15:06:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- SJ5PEPF000001ED.mail.protection.outlook.com (10.167.242.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Wed, 29 Oct 2025 15:06:54 +0000
-Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
- 2025 10:06:44 -0500
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
- 2025 10:06:44 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 29 Oct 2025 10:06:44 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59TF6i7I022439;
-	Wed, 29 Oct 2025 10:06:44 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Simona Vetter <simona@ffwll.ch>, David Airlie <airlied@gmail.com>, "Thomas
- Zimmermann" <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Robert Foss <rfoss@kernel.org>, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Phong LE <ple@baylibre.com>, Dmitry <dmitry.baryshkov@oss.qualcomm.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, Robert Nelson <robertcnelson@gmail.com>,
-	Jason Kridner <jkridner@beagleboard.org>, Andrew Davis <afd@ti.com>, Tomi V
-	<tomi.valkeinen@ideasonboard.com>, Devarsh <devarsht@ti.com>, Nishanth Menon
-	<nm@ti.com>
-Subject: [PATCH V6 5/5] drm/bridge: it66121: Add minimal it66122 support
-Date: Wed, 29 Oct 2025 10:06:36 -0500
-Message-ID: <20251029150636.3118628-6-nm@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20251029150636.3118628-1-nm@ti.com>
-References: <20251029150636.3118628-1-nm@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1B0299947
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761750416; cv=none; b=spZdIDmayCyCo3amNO8F4cmb1YJLKg0FRkdPOjq0MYuU7GCqpDkiZFWXK7lZwm2YnoZQc5ZoOsJKHwPkdLZjZh0/gh9duOZQU+buCxgPvk0/DOiKL7RmJ6ugb6JRhAKWtegI/mynZE1Y6CZXrITWpb2kwVZlRjBZjxPyCB805xE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761750416; c=relaxed/simple;
+	bh=sbP76ZccqYBcT5G3vhjCWTl19JAdNGbIi+mbAkqJuY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J2pXkSZFuiwvg9o53HeI4rcvd94uZNC7joKfulY0yjU7q1tsPFHMMiGbFC3wXnrS/9THaUEnpSVfkjJ+dwFdbakSUlE38wsBHutO5CcT8fS4Y6w4r0DEcluHK4TpHEnPh7ONZKoJqGz4cQT8XYuBK0tRBNuS1ZTt6qYrv2YL9A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D8FpEFXm; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EFE9CC0DA83;
+	Wed, 29 Oct 2025 15:06:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 49CAA606E8;
+	Wed, 29 Oct 2025 15:06:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 301DF117F8229;
+	Wed, 29 Oct 2025 16:06:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761750411; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=/Nw6Y6Sr0yR7McdjN8jB2CldXstC1tCci1tzXd/HAvg=;
+	b=D8FpEFXmjMF4R+aWYMbORindagatYBKwV/YIrHsuRMZ8cek3j1pjCNLb9U2Sf67BGYvyJ6
+	/EoLZqLjt2+v74Au2HsINS06LScrLZlo/dV/MblC1t1KCPQt8l6qQrdPPm+Mm1pU4fmDgs
+	P3ibVon21ooaDqIxYi/vNhy+KdtvBMlxUybFEa9l3dKYojcO8g2wfPthhgGN2+8VcOWjYl
+	VM83huEwodh6AgYJDFP870reTD9JKQ6dncAtSv/87ZF6LkjLvz/yeGfXdy11i5A337JEFY
+	OEHl2e3gDtAfG1RYv/LMdJPw+qgZurNkvESt5wOlCl9lybM0srT8577QXB+QhQ==
+Message-ID: <d4b1c65d-17d2-4f41-b559-9cae55993f6e@bootlin.com>
+Date: Wed, 29 Oct 2025 16:06:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001ED:EE_|BLAPR10MB4945:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65a0ba76-dd5c-41e3-df4b-08de16fccc56
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|34020700016|82310400026|376014|921020|7053199007|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HLeMV32h/SrsCUnKqlRe1rwQwE3rso7YMGNhO9hYLqygrtSN/HJ04ObFuypq?=
- =?us-ascii?Q?yDu6LKdbOPgJqIyRBvIfUK6XVyRIk/SAgB1UPiu74Tqcx1RjYDTyh8g4qakm?=
- =?us-ascii?Q?KMA5s68PjgF+kR76ZyrAc2Gf3Z7gIrHgnvZZvcS9UZzZWYJeLa/1KH+rrLU7?=
- =?us-ascii?Q?UTfwRxGp2Xe7fY5MFtymMzI46hhGvefbF+HugliBf/6Rg/n5OzFettW4EghJ?=
- =?us-ascii?Q?fkF9fNujNrvXcJR22w0xZYN/cPzpXrnjbCvEpvZ9AQ4idM2hz10nbwAtL8yz?=
- =?us-ascii?Q?HH57fynF6GOyN8QTmg4m2GjSWcwMiBZTEnMGpXsM3cm95QuO6l5hm839yC1E?=
- =?us-ascii?Q?MxHRdcexOpVYwyu3CtJ/hpw5yEChmgKXpOMkHhsvl7Kh9SuTfUt38DA6LbRg?=
- =?us-ascii?Q?uq9zOUiuWlARKa+xEj9cDyPIewP0GpvDwjlHpEcChoOp4rbUm0jwnW8Xh8U9?=
- =?us-ascii?Q?wRcnMYxFgEEdJE31o2H05aL1Czhx0Z/fEyL0XYLw8kBoVMXFoojT1IfAQtpX?=
- =?us-ascii?Q?pToTIIhJzi3OsIawy79G9NAgI4QMkD8XSDUWBgiZL5RbxdIBl/Qga9CI/xBR?=
- =?us-ascii?Q?+5yGiXt24ii7m+l9el+4BXGurEVb6cJMpkqrGRb7vVMnicMUjienfRpl3oky?=
- =?us-ascii?Q?50NqKp8AyZo542uPJ0xU6EcF11isLQed5HMK4YtiGzUIVW92m2fkLrexxC3F?=
- =?us-ascii?Q?2bhEv7Vb4Bs0X0zHGPJ/Cpjp5lWFmrpynExYI/Xx//WBY8YWKPUYtcm2RStI?=
- =?us-ascii?Q?sir8M+rJftNpgDRDOY2qJ/2Rx3L8GeoW1VECrtQDGr8VqaaSwGJ9I2u7ShhQ?=
- =?us-ascii?Q?Y5InVmgGeQXloajAgFcBK2MTb3ENhmYVDebJMAKo2rUJhbogIO8avad1anM7?=
- =?us-ascii?Q?I4G1clbMPjTNJVUHjDUYt6DHvRErndnpGZXjhEKF3g3+oPxvYQ0Wpy0au+No?=
- =?us-ascii?Q?8+kFBqz2KOsq4ZRNBMYBLFojRBM25hdGPqGodJUaOJ58QnYhQWy2UXv8DZDU?=
- =?us-ascii?Q?s/aSGtDRX/kbo1ody2udDXzKKmkcQTwVpIMW8I0UPgjkKNJ4HhHR/+dOYAnt?=
- =?us-ascii?Q?kc11NpRt9zPCkkau+1c5UYsiN/4Z9ZYpaNP9AT9LwfZDkP+lgiiLVOQ6CAS4?=
- =?us-ascii?Q?P+VBmdXqWSW/oVWXwdNQKN+SI4uz0NtYp/79koF0iiHOp5YMyxnAkowyFZwx?=
- =?us-ascii?Q?3D5tkBiNVdCg5sKl9fsMRA2vqCPvyCG2br8PYbLSXCGbirHV0Y9SyF72aP0f?=
- =?us-ascii?Q?9WcXIoLtRZ9+V7oTywivJg+mTEe+6FBloLl3EX7rWPOlir9TFZ4mj9dLCeaN?=
- =?us-ascii?Q?OybVDi3HtsVySrpPrK31BmPcN+Awlh7sO7WsLuo2O0ltbpzHjAMoMILyASWv?=
- =?us-ascii?Q?8oP2FPfJPP15h9WAX+BU+eHliPi5zCTc9zk2IB3quQoFR8hjlogBNvtP9vEV?=
- =?us-ascii?Q?E9mtmT78lF0GTD7nIJCHu2lfhr+2QbIJW3F+Eqx1W1FtWEwdC4YGmMsxIo1O?=
- =?us-ascii?Q?NzHLp0mGa3VxadWmHt3elAHhidNrOZxg7oCmVpBoHZBQrswQyzEzpo2leKbk?=
- =?us-ascii?Q?UU6K7Nt3lSUxu3HWPP3aHnf5K5ANrl/OnAT/ykVP?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(34020700016)(82310400026)(376014)(921020)(7053199007)(12100799066);DIR:OUT;SFP:1501;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:06:54.8266
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65a0ba76-dd5c-41e3-df4b-08de16fccc56
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001ED.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4945
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 4/4] net: stmmac: socfpga: Add hardware supported
+ cross-timestamp
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251029-agilex5_ext-v1-0-1931132d77d6@altera.com>
+ <20251029-agilex5_ext-v1-4-1931132d77d6@altera.com>
+ <07589613-8567-4e14-b17a-a8dd04f3098c@bootlin.com>
+ <ed9e4ffb-3386-4a22-8d4c-38058885845a@altera.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <ed9e4ffb-3386-4a22-8d4c-38058885845a@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The IT66122 is a pin compatible replacement for the IT66122. Based on
-empirical testing, the new device looks to be compatible with IT66121.
-However due to a lack of public data sheet at this time beyond overall
-feature list[1] (which seems to add additional features vs ITT66121),
-it is hard to determine that additional register operations required
-to enable additional features.
+Hi Rohan,
 
-So, introduce the device as a new compatible that we will detect based
-on vid/pid match, with explicit id that can be used to extend the
-driver capability as information becomes available later on.
+On 29/10/2025 15:41, G Thomas, Rohan wrote:
+> Hi Maxime,
+> 
+> On 10/29/2025 3:20 PM, Maxime Chevallier wrote:
+>> Hi Rohan,
+>>
+>> On 29/10/2025 09:06, Rohan G Thomas via B4 Relay wrote:
+>>> From: Rohan G Thomas <rohan.g.thomas@altera.com>
+>>>
+>>> Cross timestamping is supported on Agilex5 platform with Synchronized
+>>> Multidrop Timestamp Gathering(SMTG) IP. The hardware cross-timestamp
+>>> result is made available the applications through the ioctl call
+>>> PTP_SYS_OFFSET_PRECISE, which inturn calls stmmac_getcrosststamp().
+>>>
+>>> Device time is stored in the MAC Auxiliary register. The 64-bit System
+>>> time (ARM_ARCH_COUNTER) is stored in SMTG IP. SMTG IP is an MDIO device
+>>> with 0xC - 0xF MDIO register space holds 64-bit system time.
+>>>
+>>> This commit is similar to following commit for Intel platforms:
+>>> Commit 341f67e424e5 ("net: stmmac: Add hardware supported cross-timestamp")
+>>>
+>>> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
 
-[1] https://www.ite.com.tw/en/product/cate1/IT66122
+[...]
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
-Reviewed-by: Andrew Davis <afd@ti.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
-Changes since V5:
-* Picked Tomi's Ack
+>>> +	/* Time sync done Indication - Interrupt method */
+>>> +	if (!wait_event_interruptible_timeout(priv->tstamp_busy_wait,
+>>> +					      dwxgmac_cross_ts_isr(priv),
+>>> +					      HZ / 100)) {
+>>> +		priv->plat->flags &= ~STMMAC_FLAG_INT_SNAPSHOT_EN;
+>>> +		return -ETIMEDOUT;
+>>
+>> Don't you need to set priv->plat->flags |= STMMAC_FLAG_INT_SNAPSHOT_EN first?
+>> Otherwise, timestamp_interrupt() in stmmac_hwtstamp() won't call wake_up()
+>> on the wait_queue.
+>>
+> 
+> Thanks for pointing this out. My intention was to use the polling
+> method, but I accidentally left behind some code from experimenting with
+> the interrupt method. While reverting those changes, I missed updating
+> this part of the code. Will fix this in the next revision. Sorry for the
+> error. Currently not seeing any timeout issues with polling method on
+> XGMAC IP. Also some spurios interrupts causing stall when using
+> the interrupt method in XGMAC.
 
-V5: https://lore.kernel.org/all/20250827202354.2017972-6-nm@ti.com/
-V4: https://lore.kernel.org/all/20250819130807.3322536-6-nm@ti.com/
-V3: https://lore.kernel.org/all/20250815034105.1276548-5-nm@ti.com/
-V2: https://lore.kernel.org/all/20250813204106.580141-4-nm@ti.com/
+So, if you use the polling method, this will likely bring this code
+even closer to what's implemented in the intel dwmac wrapper. Is this
+the same IP ?
 
- drivers/gpu/drm/bridge/ite-it66121.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+To me it looks like the only difference will be a few
+register offsets (XGMAC vs GMAC), some clock id and the mdio accesses,
+maybe it could be worth considering re-using what's been done on the
+Intel side and avoid duplication...
 
-diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-index 1b2ef774c770..0185f61e6e59 100644
---- a/drivers/gpu/drm/bridge/ite-it66121.c
-+++ b/drivers/gpu/drm/bridge/ite-it66121.c
-@@ -287,6 +287,7 @@
- enum chip_id {
- 	ID_IT6610,
- 	ID_IT66121,
-+	ID_IT66122,
- };
- 
- struct it66121_chip_info {
-@@ -402,7 +403,7 @@ static int it66121_configure_afe(struct it66121_ctx *ctx,
- 		if (ret)
- 			return ret;
- 
--		if (ctx->id == ID_IT66121) {
-+		if (ctx->id == ID_IT66121 || ctx->id == ID_IT66122) {
- 			ret = regmap_write_bits(ctx->regmap, IT66121_AFE_IP_REG,
- 						IT66121_AFE_IP_EC1, 0);
- 			if (ret)
-@@ -428,7 +429,7 @@ static int it66121_configure_afe(struct it66121_ctx *ctx,
- 		if (ret)
- 			return ret;
- 
--		if (ctx->id == ID_IT66121) {
-+		if (ctx->id == ID_IT66121 || ctx->id == ID_IT66122) {
- 			ret = regmap_write_bits(ctx->regmap, IT66121_AFE_IP_REG,
- 						IT66121_AFE_IP_EC1,
- 						IT66121_AFE_IP_EC1);
-@@ -599,7 +600,7 @@ static int it66121_bridge_attach(struct drm_bridge *bridge,
- 	if (ret)
- 		return ret;
- 
--	if (ctx->id == ID_IT66121) {
-+	if (ctx->id == ID_IT66121 || ctx->id == ID_IT66122) {
- 		ret = regmap_write_bits(ctx->regmap, IT66121_CLK_BANK_REG,
- 					IT66121_CLK_BANK_PWROFF_RCLK, 0);
- 		if (ret)
-@@ -802,7 +803,7 @@ void it66121_bridge_mode_set(struct drm_bridge *bridge,
- 	if (regmap_write(ctx->regmap, IT66121_HDMI_MODE_REG, IT66121_HDMI_MODE_HDMI))
- 		goto unlock;
- 
--	if (ctx->id == ID_IT66121 &&
-+	if ((ctx->id == ID_IT66121 || ctx->id == ID_IT66122) &&
- 	    regmap_write_bits(ctx->regmap, IT66121_CLK_BANK_REG,
- 			      IT66121_CLK_BANK_PWROFF_TXCLK,
- 			      IT66121_CLK_BANK_PWROFF_TXCLK)) {
-@@ -815,7 +816,7 @@ void it66121_bridge_mode_set(struct drm_bridge *bridge,
- 	if (it66121_configure_afe(ctx, adjusted_mode))
- 		goto unlock;
- 
--	if (ctx->id == ID_IT66121 &&
-+	if ((ctx->id == ID_IT66121 || ctx->id == ID_IT66122) &&
- 	    regmap_write_bits(ctx->regmap, IT66121_CLK_BANK_REG,
- 			      IT66121_CLK_BANK_PWROFF_TXCLK, 0)) {
- 		goto unlock;
-@@ -1501,6 +1502,7 @@ static const char * const it66121_supplies[] = {
- static const struct it66121_chip_info it66xx_chip_info[] = {
- 	{.id = ID_IT6610, .vid = 0xca00, .pid = 0x0611 },
- 	{.id = ID_IT66121, .vid = 0x4954, .pid = 0x0612 },
-+	{.id = ID_IT66122, .vid = 0x4954, .pid = 0x0622 },
- };
- 
- static int it66121_probe(struct i2c_client *client)
-@@ -1621,6 +1623,7 @@ static void it66121_remove(struct i2c_client *client)
- static const struct of_device_id it66121_dt_match[] = {
- 	{ .compatible = "ite,it6610" },
- 	{ .compatible = "ite,it66121" },
-+	{ .compatible = "ite,it66122" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, it66121_dt_match);
-@@ -1628,6 +1631,7 @@ MODULE_DEVICE_TABLE(of, it66121_dt_match);
- static const struct i2c_device_id it66121_id[] = {
- 	{ .name = "it6610" },
- 	{ .name = "it66121" },
-+	{ .name = "it66122" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, it66121_id);
--- 
-2.47.0
+That could be all moved to stmmac_ptp for instance, using some flag
+in the plat data to indicate if cross timestamping is supported, and
+use the core type (xgmac, gmac, etc.) for the offsets ?
 
+Of course with the risk of regressing dwmac-intel.c :(
+
+Maxime
 
