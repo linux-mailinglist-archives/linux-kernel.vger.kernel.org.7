@@ -1,205 +1,170 @@
-Return-Path: <linux-kernel+bounces-875665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6015EC198E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:03:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFADC198CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E7D44F99B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:59:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14F15547305
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483AF31AF3B;
-	Wed, 29 Oct 2025 09:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4E0BNLTW"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012068.outbound.protection.outlook.com [52.101.53.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B64326D69;
+	Wed, 29 Oct 2025 09:59:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B27329C78
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731956; cv=fail; b=j9rY/ktyJ55gTgXE7GfIBF3yJa8feutlDVPDN5AFuyDmVaVPW8WyUyccUSjKkZ2K4o8MLjDP2nZAijZgXuQws3OtdTDv4qTBmuL9vEIgMhjqDd1eG+f/UUMgRi1F7HlEEkUIcTafxyDbeCSDKTlDWygMuhoO7/bOCxAkHsEJgpg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761731956; c=relaxed/simple;
-	bh=MWmOr0WqqhYF5AOrZOhzm1FZXcaJfePjG7Rq1VtWfGM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eqBL6zfuR6wx5bks7DQRvxCTBqZMKOKnAMA0OOEwupK2VxaDfhajeUJtcrkMeJ7a0HJHCoIzH2IoGuU/zIthKzD/IT3yC/YdKTzyWdzpovKlPK60jyrmDcyPi6JyQBxilY+CcryFH3jFx8aDA3gJ0MGwjh050b5PjJ8WxM+01UQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4E0BNLTW; arc=fail smtp.client-ip=52.101.53.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GzEyZG1CqOCAVIKTA2WssGZ2Y1k3UaGqisDszAQJXr8itxnZiWPSEwfPlfPbUd+/5wJzPW9u12b2Mm45J0GtOyi50ZdIrIjLs9YRMro6JUeAYyzc8FQ/UCvXk2OhtY0FjUH8Kv2goqNiPigCQtDcnIScoG34/U7qx4HyzUqzaN++xV9m4uM31L3P7z9PxYcQwq9GXRZVBDfsvJJeS3gvyy/kg+6Tb2OVxiG4iH1R5ki+EWjSTAeCIeKAtzsT62BkeYjcpcJH2N4CLp0GLR+UFHEeS0eVzdgjYUaNzkG3eoflfg2LzwBd9VJQAloje+SIOA4y7mkWWlqaVyVrS6uSpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4F0M6j1g6EAVC3oOELlkU2ZLcNeNNPitHFL2kJZ2/Z0=;
- b=sqoq8j4T5akw8PFY5Ybqra9w1Cv2XJiA6tAAAbpG1KUAto6kPCkOR/4AbnvtpiATqi/f7Jb3Kqvk16SJ4KS2YfTZ2NibE8jf4R//FHgvSB7N5HHwJok97rudK8TsntBCkFvmJkwgeaCVJ/DQa7fa7bJKhvZoTHOGLdnR33DGCBLF0BBS5FIwwu6fArjTRzYfLISmfOFNQQ0jqrkDD9TR1Izlp/8oiW0JIlzgqlpAwFOmVENAvzuWotbpM9U6qvBq0OPljct9WT+SS4UWFF8cALt8ux53plFUMdF49E+zhECvsaxQMK5m3MzHu+y6HQjNsIdvrLEot/ph48/rq7z8cg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4F0M6j1g6EAVC3oOELlkU2ZLcNeNNPitHFL2kJZ2/Z0=;
- b=4E0BNLTWGrnep/fALicFMZDpG3rWbLkJE78+4XIyXYpzfcTiT9jYV14/QQQzC+WOPtfTaHg0aitj+0ZolKN7lzyNyNwl0df0QRjd7vCG7VzkJE5g5QCQSm/qsSeWXOinh5XMwyzjIoyu942xe0K86sO9hQmffSowhoidGgYufDw=
-Received: from BN0PR04CA0168.namprd04.prod.outlook.com (2603:10b6:408:eb::23)
- by IA1PR12MB8495.namprd12.prod.outlook.com (2603:10b6:208:44d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 09:59:04 +0000
-Received: from BN3PEPF0000B06C.namprd21.prod.outlook.com
- (2603:10b6:408:eb:cafe::52) by BN0PR04CA0168.outlook.office365.com
- (2603:10b6:408:eb::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.18 via Frontend Transport; Wed,
- 29 Oct 2025 09:59:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN3PEPF0000B06C.mail.protection.outlook.com (10.167.243.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.0 via Frontend Transport; Wed, 29 Oct 2025 09:59:04 +0000
-Received: from BLR-L1-SARUNKOD.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 29 Oct
- 2025 02:59:00 -0700
-From: Sairaj Kodilkar <sarunkod@amd.com>
-To: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<vasant.hegde@amd.com>
-CC: Sairaj Kodilkar <sarunkod@amd.com>
-Subject: [RFC PATCH] iommu/amd: Add control register in `struct iommu_hw_info_amd`
-Date: Wed, 29 Oct 2025 15:28:46 +0530
-Message-ID: <20251029095846.4486-1-sarunkod@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C44274B27
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761731947; cv=none; b=S4KreFLG0N54gz0/lCtHM4kPuYWTo8TAs2SNBFBt62LycXRREIq4s3ijWPzj8XvdGHtjbuMPhAMFjAZOGCFIVS9hh0u5hgR7wc8irpFSR3FHiPxx1Jm8tdcEspWvt7gm266XCuDGnLXt4DQ3Jmug3yjbfJnv1ZgWN62lmqlpg4A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761731947; c=relaxed/simple;
+	bh=YQzoQ5yAdi23Tt9qQAqr0i4nxw4iZuUM9kmUcKA9p9I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QycuydC9wuSkkWK/9mMz2uvuXZFPflEKE7Byemh5ncD4zPqdVr9TT3zIj2glBj7kbdlSZKwHbu6fzGUILV3KUD4QDob7bYWwUInvhpj7kqdVT8flLpcaJZGVUvljTGvPMzAsfUDW02oiAgw2Tdkf/4vY3xkD+gogLq30iCj8NUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-945c705df24so95373939f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:59:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761731943; x=1762336743;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mY4oJZDSqNwJvUB9XSL+gSw5nf+tolM73YPDnIuRbTo=;
+        b=myoBvUMyUfqhBkDf/hS5QYhlmd08FOyDh22PuIRzsTnScQEMFdJMwoJors/KsOQxt3
+         EVvrL2299o+FERmiLqEOfZlffQ1SbE3zMOWBmO7SrxvcNwqZ6DMo9fGscPzZSo9kVwQp
+         vy2zPvxxhJ/kiA6gkYQ9c1cnsv2VMCt2w89g3FlIipwjJtO6/5DtkhF0QKhvJEQfJot0
+         r3LnwUjlc+yog4wCuHOZL+W0NbhsymRmNmIyQBCPbFNP8972pz+VYtjy5LfFRzYCxrAo
+         HkSDxzeWVDWo1FYvzwldRP1HBZMLx7GHtlzUQ1mvjBPpwzXnqiYxUGewi/RUUafHXZun
+         /r2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXISy8jlWS0wxO5/2+kPWMmbVibg3QzMUl9LxxvNrGTZzF0DWhyxZuYGzWeJr0kYSvH6oYTK7W6CoPYVvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP556MG4o6kMLc0yMAMlAk5D1Cx77s/F2rDpELFmt4X6oSmX7Z
+	MpSCsKfs9f9HBl13yfMeRvxHC6VU80eiRsW3hQCVGZloDqR+YZFaZrwvY+zobAMU1ZVOHAYfXpG
+	ul2xTZN2QYOAM/i8Ri8OJ/WiDjtTncwmV+y+PjaXbgM6sG2mM/qp2CnuuJcM=
+X-Google-Smtp-Source: AGHT+IHUze1QF6x+6wGRo8TN/YAQqiH5CPERIW5NXlyuNkMBaIQERBys+uFYzgDOpAF2Q82Adt4D7zdWH9+Ev/2pPh/oQEVcE14j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06C:EE_|IA1PR12MB8495:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39fb947e-3a3d-4abc-0061-08de16d1cb1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1FAKKtx0O9B/bciyLTc6pQ4ezHg2XuJNEiJRHS/zy36iuLY0Y79NTGiss2cq?=
- =?us-ascii?Q?wZ8CYE5Hxy+ufY5EOlkIViYo5rQ2ue2+npUdr5lGhLaMkNzEqM0TBu1e77df?=
- =?us-ascii?Q?61vQqfQFUtSftrBSjFOhfQgUJUwB+g1vqH+cKh2pGXHW6H2fvOMSrJgjZHxI?=
- =?us-ascii?Q?Wo3aL3/q9ekwKrJ2eeytKR210luglbEcqKTU4huy3tFKLDKlAsP3HvmuySRL?=
- =?us-ascii?Q?IpqDExm99P4RHCHJVhMSM7y3IQ2VuvLikB9ON3+FTl8UMIHg/tccP1aIcSfL?=
- =?us-ascii?Q?JEeHcaj4g3P9pYU3KlPDxvH+ExBd92laNsQLdVXVkYqUTU+qhsR5n/IJRo1b?=
- =?us-ascii?Q?tj2jRRPJZs/X6Cu/nxt5P7eDLsZnuzML4eSjAdQ0jdu89vd3uDiu25J2uPiN?=
- =?us-ascii?Q?0jlVeaPdw+feOBxpsNnagiBLhX3Y6w+4zk9gChorK8RtKnf/M7+yc+fBFURj?=
- =?us-ascii?Q?iqdqwflXb6ygK3vJprnZxTjlO4TsLZ4BeIsXw9x64grqwFn8i0DmROgPhNcp?=
- =?us-ascii?Q?dQ25olkYVuMO+y0qsweNHg8qZX8+DeZ16xR/Xvo3KKfQRfznrDLbJg2TkQzg?=
- =?us-ascii?Q?h4J52rO34/TvjK8IKVPfVLHv+S/OhxnvwddAjctQTW3iq9miuRDWNrV9kGsG?=
- =?us-ascii?Q?EV11eIt22TKkaYBDiLrf+d51MEKS7U8GkQVqdCKywj2t7oi5BBX8VfmOZJoj?=
- =?us-ascii?Q?aj9VNGDnhR8XPgP4RJqKXuAJXmEn4Zae3BcFlU9fMD4ruI2ERI+t27rg94XN?=
- =?us-ascii?Q?WMKzpQ0b5xh/fLa69bQXROmyA/kNzDncRtGx2tixW2mDk40WQczrLCmKNu0z?=
- =?us-ascii?Q?td5pFfCiJaZcHAOgcd39vhqoP1yaohRYrCYvusPmKM/6w8WtZmQDT1JskG6h?=
- =?us-ascii?Q?psAk4RK6IEMEVqTugvPYi6dDy2HPelY49Nb3GE9wIMTq8+2w4ePXZpcdwB6w?=
- =?us-ascii?Q?0b9wmY93wKxbfOIZclIPv6YIufcHxEOQ+SF04fxcTEX3/eb9XLkb0z2EKoLN?=
- =?us-ascii?Q?JezG2gdFYoNbJYB5aVL3M5R5VCy2RsMCiiXEjNCmfiNKCNlf75iT1ycVli/F?=
- =?us-ascii?Q?VLDWG0DY66GaU2PZcI9v892iNSNoXh6BtYG7JhbEliQeWlo5ani6ryLLUqRo?=
- =?us-ascii?Q?sw1lCm+BcydVZqeX6kqVEA0f2JB7Vp6v0wo8qMpW4cNCzZ0ndzrVYT8rySbB?=
- =?us-ascii?Q?Qf+Y/Jl7czkDzT6Qo4DF8jI1vH+4cF4/CDHz/0d7nPvYyyK0bRb1/saNK+jL?=
- =?us-ascii?Q?VL2bx3dCSjm1xyqJ+JbqjSRWFKGRAe9ZefFjx0dQsEC50LS0QomT6egB6+J7?=
- =?us-ascii?Q?p9w2SePyM8bhy9EmZVKZaw1iwRDauB944x6QzuBHz3EhjyT6/hfFov/dKzja?=
- =?us-ascii?Q?6/rWq7O5+lrHrOEnoZOT2gGN3R0eYMMCjxIEYVZkoe/P21IiK82V0JtQ/Mr1?=
- =?us-ascii?Q?KUjhPfmz9szLc66xZ3LdA/gOqsNLcBKqbdX5SalMMywGn1jrWj8Q1STz+Vmq?=
- =?us-ascii?Q?WpbxV0D9vVesF0AxDm+dDg21Eyyfc6YvWBfrD5dFcN/Y0z9YPO5ognJTbPqn?=
- =?us-ascii?Q?gmRUXFaI37E6sIByQTA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 09:59:04.4495
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39fb947e-3a3d-4abc-0061-08de16d1cb1e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06C.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8495
+X-Received: by 2002:a05:6e02:1888:b0:430:b4e1:bcb8 with SMTP id
+ e9e14a558f8ab-432f8e49782mr32118225ab.13.1761731943680; Wed, 29 Oct 2025
+ 02:59:03 -0700 (PDT)
+Date: Wed, 29 Oct 2025 02:59:03 -0700
+In-Reply-To: <20251029062155.3faRf%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6901e567.050a0220.32483.0209.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When user does IOMMU_GET_HW_INFO ioctl, read the IOMMU control
-register (MMIO offset 0x0018) and return it as part of
-`struct iommu_hw_info_amd`.
+Hello,
 
-Userspace can use this information to determine the features
-supported by the underlying host kernel.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: signed-integer-overflow in ip_idents_reserve
 
-Signed-off-by: Sairaj Kodilkar <sarunkod@amd.com>
----
+================================================================================
+UBSAN: signed-integer-overflow in ./arch/x86/include/asm/atomic.h:165:11
+1823136308 + 1553543319 cannot be represented in type 'int'
+CPU: 1 PID: 234 Comm: kworker/u4:4 Not tainted syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: phy9 ieee80211_iface_work
+Call Trace:
+ <IRQ>
+ dump_stack+0xfd/0x16e lib/dump_stack.c:118
+ ubsan_epilogue+0xa/0x30 lib/ubsan.c:148
+ handle_overflow+0x192/0x1b0 lib/ubsan.c:180
+ arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
+ atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
+ ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
+ __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
+ iptunnel_xmit+0x465/0x840 net/ipv4/ip_tunnel_core.c:80
+ udp_tunnel_xmit_skb+0x1b7/0x280 net/ipv4/udp_tunnel_core.c:190
+ geneve_xmit_skb drivers/net/geneve.c:1004 [inline]
+ geneve_xmit+0x1d00/0x2130 drivers/net/geneve.c:1117
+ __netdev_start_xmit include/linux/netdevice.h:4824 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4838 [inline]
+ xmit_one net/core/dev.c:3601 [inline]
+ dev_hard_start_xmit+0x2aa/0x7f0 net/core/dev.c:3617
+ __dev_queue_xmit+0x1684/0x2960 net/core/dev.c:4203
+ neigh_output include/net/neighbour.h:509 [inline]
+ ip6_finish_output2+0x101a/0x1480 net/ipv6/ip6_output.c:130
+ rcu_read_lock include/linux/rcupdate.h:718 [inline]
+ nf_hook include/linux/netfilter.h:220 [inline]
+ NF_HOOK+0x45/0x2c0 include/linux/netfilter.h:294
+ mld_sendpack+0x5f1/0xa50 net/ipv6/mcast.c:1676
+ mld_send_cr net/ipv6/mcast.c:1972 [inline]
+ mld_ifc_timer_expire+0x7e1/0x990 net/ipv6/mcast.c:2471
+ call_timer_fn+0x105/0x490 kernel/time/timer.c:1444
+ expire_timers kernel/time/timer.c:1489 [inline]
+ __run_timers+0x5d5/0x7a0 kernel/time/timer.c:1783
+ run_timer_softirq+0x63/0xf0 kernel/time/timer.c:1796
+ __do_softirq+0x267/0x92e kernel/softirq.c:298
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
+ run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
+ do_softirq_own_stack+0x9b/0xe0 arch/x86/kernel/irq_64.c:77
+ invoke_softirq kernel/softirq.c:393 [inline]
+ __irq_exit_rcu+0x227/0x230 kernel/softirq.c:423
+ irq_exit_rcu+0x5/0x20 kernel/softirq.c:435
+ sysvec_apic_timer_interrupt+0xea/0x100 arch/x86/kernel/apic/apic.c:1106
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:635
+RIP: 0010:console_unlock+0xbb0/0xfc0 kernel/printk/printk.c:2548
+Code: 00 00 48 83 7c 24 28 00 48 8b 5c 24 30 75 07 e8 76 5d 18 00 eb 0a e8 6f 5d 18 00 e8 ba 5b 1e 00 48 89 5c 24 58 ff 74 24 58 9d <f6> 44 24 07 01 0f 84 08 f6 ff ff e8 50 5d 18 00 48 c7 c7 40 1c 4a
+RSP: 0018:ffffc9000197f9b0 EFLAGS: 00000293
+RAX: fa4294196ff25300 RBX: 0000000000000293 RCX: ffff888019648000
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffffffff81594776
+RBP: ffffc9000197fb00 R08: dffffc0000000000 R09: fffffbfff191fb2e
+R10: fffffbfff191fb2e R11: 1ffffffff191fb2d R12: 0000000000000057
+R13: ffffc9000197fa20 R14: 1ffffffff179392d R15: dffffc0000000000
+ vprintk_emit+0x160/0x240 kernel/printk/printk.c:2060
+ printk+0x76/0xa0 kernel/printk/printk.c:2108
+ ieee80211_sta_find_ibss net/mac80211/ibss.c:1486 [inline]
+ ieee80211_ibss_work+0x1054/0x1180 net/mac80211/ibss.c:1712
+ process_one_work+0x85b/0xfe0 kernel/workqueue.c:2282
+ worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
+ kthread+0x384/0x410 kernel/kthread.c:328
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+================================================================================
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	48 83 7c 24 28 00    	cmpq   $0x0,0x28(%rsp)
+   8:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+   d:	75 07                	jne    0x16
+   f:	e8 76 5d 18 00       	call   0x185d8a
+  14:	eb 0a                	jmp    0x20
+  16:	e8 6f 5d 18 00       	call   0x185d8a
+  1b:	e8 ba 5b 1e 00       	call   0x1e5bda
+  20:	48 89 5c 24 58       	mov    %rbx,0x58(%rsp)
+  25:	ff 74 24 58          	push   0x58(%rsp)
+  29:	9d                   	popf
+* 2a:	f6 44 24 07 01       	testb  $0x1,0x7(%rsp) <-- trapping instruction
+  2f:	0f 84 08 f6 ff ff    	je     0xfffff63d
+  35:	e8 50 5d 18 00       	call   0x185d8a
+  3a:	48                   	rex.W
+  3b:	c7                   	.byte 0xc7
+  3c:	c7                   	.byte 0xc7
+  3d:	40 1c 4a             	rex sbb $0x4a,%al
 
-The patch exposes the control register to the user space so that QEMU
-can determine the list of features enabled by the host IOMMU driver
-when there are passthrough devices. QEMU can use this information to
-selectively enable the guest feature. One example of such feature is
-enabling upto 2048 MSIs for passthrough devices. QEMU must not enable
-this feature for passthrough devices when host IOMMU driver has not
-enabled it.
 
-The patch is based on top v6.17 (e5f0a698b34e) and patch [1] by Suravee
+Tested on:
 
-[1] https://lore.kernel.org/linux-iommu/20250926141901.511313-1-suravee.suthikulpanit@amd.com/
-
----
-
- drivers/iommu/amd/iommufd.c  | 3 +++
- include/uapi/linux/iommufd.h | 1 +
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/iommu/amd/iommufd.c b/drivers/iommu/amd/iommufd.c
-index 72eaaa923d04..83f34fc77ae8 100644
---- a/drivers/iommu/amd/iommufd.c
-+++ b/drivers/iommu/amd/iommufd.c
-@@ -12,6 +12,7 @@
- void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type)
- {
- 	struct iommu_hw_info_amd *hwinfo;
-+	struct amd_iommu *iommu = get_amd_iommu_from_dev(dev);
- 
- 	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
- 	    *type != IOMMU_HW_INFO_TYPE_AMD)
-@@ -26,6 +27,8 @@ void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type)
- 
- 	hwinfo->efr = amd_iommu_efr;
- 	hwinfo->efr2 = amd_iommu_efr2;
-+	hwinfo->control_register = readq(iommu->mmio_base
-+					 + MMIO_CONTROL_OFFSET);
- 
- 	return hwinfo;
- }
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index efb52709c0a2..9435b2d877e7 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -637,6 +637,7 @@ struct iommu_hw_info_tegra241_cmdqv {
- struct iommu_hw_info_amd {
- 	__aligned_u64 efr;
- 	__aligned_u64 efr2;
-+	__aligned_u64 control_register;
- };
- 
- /**
--- 
-2.34.1
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=126abd42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1734393bfd41d2b
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142bf614580000
 
 
