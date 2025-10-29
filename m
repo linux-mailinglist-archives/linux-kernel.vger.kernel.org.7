@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-876063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B922C1A8A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:11:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF503C1A8EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9820118801BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:04:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A418588199
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE3A2BD5AD;
-	Wed, 29 Oct 2025 12:51:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E0C2BEFFE;
+	Wed, 29 Oct 2025 12:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HuSrHF1g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D9D29CB57
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0FA2BEC2C;
+	Wed, 29 Oct 2025 12:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742301; cv=none; b=p3CLc+uHkW3qCTv5R0zfjkaG6XXf/X77z/YFn+KpPIAbUB69hLZcj8qXi2twHwZ5gZNDey3vpt1TOKyq8/5/myPQ4YvOhYINASpLwC09OrMeJ4Y7hZT77cV1V84tan6YhuO5AqWN5N/yB5WO88rsFFPb//aDU0/6XKFt2C5Zv0o=
+	t=1761742286; cv=none; b=dFW0b5KXZ+1LzKC96qfAmUx3tfpMKPzVyYvkrjhWnw2+0XZ1r7ieJc37slUkutUJD+zMfr4i/OpehmIZplkw+BceABwHsfkiFcV5SOtOF16vQ9Toc+cWuKHOWO8tB//0h+Sey5vEiMH1BtblohMDzDLw42Q8LnEySwog9CDkqsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742301; c=relaxed/simple;
-	bh=APfDTeJ3GfMW/qDOyoRWE6xVpfg/wTcIb4VWWvexGKU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QnZQU15T6iIUCeuEZAxDkb0V/K+wGZTYNkbQFHwbBSNl7GFc7fzSd/9LAU3IcpCxK49/zDsYCtngjdetuMAOVBzA8G1rF1knMfNtjc5WVj+tHnWwquxnm8Ihl7OEJHgG+lxjj0FN1omNeabcgTv94ONfzgxmi9vra1Q6ppZtB4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vE5dr-0005sp-IP; Wed, 29 Oct 2025 13:51:07 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vE5dq-0062hO-0I;
-	Wed, 29 Oct 2025 13:51:06 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vE5dq-000000007zg-02zh;
-	Wed, 29 Oct 2025 13:51:06 +0100
-Message-ID: <06c7a64647ac78cfc5366a073ec12ccddda49572.camel@pengutronix.de>
-Subject: Re: [PATCH v3 03/10] software node: allow referencing firmware nodes
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij	
- <linus.walleij@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski	 <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Date: Wed, 29 Oct 2025 13:51:05 +0100
-In-Reply-To: <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
-References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
-	 <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1761742286; c=relaxed/simple;
+	bh=IA6/gMGcF2fDDfJ6rUgbwhSBCtmCKF8Pfd0AulLr3Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPLvjyyJ1L+HEedQ19s4xyOV79kbVxZfjsACAQC4zDI4jA3ZvCWTBnBXiGJ8u1d+Q5dDsk62cPJEiYV7euAoOlFbNNMvRtgH9Jby0FECyASicmd41uGitz2Qet6xipRK8c+zDfL6C+GXotU3xPn093Fwz/xSImm5Y9ua0kc6450=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HuSrHF1g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E6B3C4CEFD;
+	Wed, 29 Oct 2025 12:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761742285;
+	bh=IA6/gMGcF2fDDfJ6rUgbwhSBCtmCKF8Pfd0AulLr3Us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HuSrHF1gX5xHlhJoXyI/WY4pftAPLZ3a2C8f/v24Nza6ZVNCJUK6/eEGOAWWYWQFc
+	 AjhuK/TnGwS4AZG3U1QvnJ8MBLM3izyqYIScijTTQvAO3Ks6fmnrdNC948qkDi7KKQ
+	 9YSnHDbNVIyZZLK26V2C9VREfS0z1hCt24z3fQM4=
+Date: Wed, 29 Oct 2025 13:51:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: uttkarsh.aggarwal@oss.qualcomm.com, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, mathias.nyman@intel.com,
+	wesley.cheng@oss.qualcomm.com
+Subject: Re: [RFT PATCH v3] xhci: sideband: Fix race condition in sideband
+ unregister
+Message-ID: <2025102956-daunting-roping-a987@gregkh>
+References: <2025102948-trickery-creative-417e@gregkh>
+ <20251029122436.375009-1-mathias.nyman@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029122436.375009-1-mathias.nyman@linux.intel.com>
 
-On Mi, 2025-10-29 at 13:28 +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> At the moment software nodes can only reference other software nodes.
-> This is a limitation for devices created, for instance, on the auxiliary
-> bus with a dynamic software node attached which cannot reference devices
-> the firmware node of which is "real" (as an OF node or otherwise).
->=20
-> Make it possible for a software node to reference all firmware nodes in
-> addition to static software nodes. To that end: add a second pointer to
-> struct software_node_ref_args of type struct fwnode_handle. The core
-> swnode code will first check the swnode pointer and if it's NULL, it
-> will assume the fwnode pointer should be set. Rework the helper macros
-> and deprecate the existing ones whose names don't indicate the reference
-> type.
->=20
-> Software node graphs remain the same, as in: the remote endpoints still
-> have to be software nodes.
->=20
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Oct 29, 2025 at 02:24:35PM +0200, Mathias Nyman wrote:
+> Uttkarsh Aggarwal observed a kernel panic during sideband un-register
+> and found it was caused by a race condition between sideband unregister,
+> and creating sideband interrupters.
+> The issue occurrs when thread T1 runs uaudio_disconnect() and released
+> sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
+> the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
+> a crash.
+> 
+> Ensure new endpoints or interrupter can't be added to a sidenband after
+> xhci_sideband_unregister() cleared the existing ones, and unlocked the
+> sideband mutex.
+> Reorganize code so that mutex is only taken and released once in
+> xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
+> 
+> Use mutex guards to reduce human unlock errors in code
+> 
+> Refuse to add endpoints or interrupter if sb->vdev is not set.
+> sb->vdev is set when sideband is created and registered.
+> 
+> Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+> Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
+> Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
+> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 > ---
->  drivers/base/swnode.c    | 13 +++++++++++--
->  include/linux/property.h | 38 +++++++++++++++++++++++++++++++-------
->  2 files changed, 42 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-> index b7c3926b67be72671ba4e4c442b3acca80688cf7..8601d1612be31febb6abbbe1f=
-b35228499480c56 100644
-> --- a/drivers/base/swnode.c
-> +++ b/drivers/base/swnode.c
-> @@ -535,7 +535,13 @@ software_node_get_reference_args(const struct fwnode=
-_handle *fwnode,
->  	ref_array =3D prop->pointer;
->  	ref =3D &ref_array[index];
-> =20
-> -	refnode =3D software_node_fwnode(ref->node);
-> +	if (ref->swnode)
-> +		refnode =3D software_node_fwnode(ref->swnode);
 
-software_node_fwnode(ref->swnode) never returns NULL if given a non-
-NULL parameter.
+Looks good, thanks for respinning this.  I don't know if it fixes the
+issue, but it looks sane :)
 
-> +	else if (ref->fwnode)
-> +		refnode =3D ref->fwnode;
-> +	else
-> +		return -EINVAL;
-> +
->  	if (!refnode)
->  		return -ENOENT;
-
-So this check is not needed anymore.
-
-regards
-Philipp
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
