@@ -1,113 +1,53 @@
-Return-Path: <linux-kernel+bounces-875696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085D2C199EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:14:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3538C199F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:14:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2768E4F9D28
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E263BE79A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CF92E6CAF;
-	Wed, 29 Oct 2025 10:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637F22E7F1D;
+	Wed, 29 Oct 2025 10:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="SVEKhXK5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S0QENVzD"
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zThxjnm1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B722E888A;
-	Wed, 29 Oct 2025 10:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9999C2E03F3;
+	Wed, 29 Oct 2025 10:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761732720; cv=none; b=D13fHW8pk3MnAdu0nHF/sL1CJyBoniXyrPcjD27W5azdOqASuDCtIeAkVkLDPsOZvieN9t79NX2HvfwQvXCmXDncSYsZnnuHUAKHOF1iBB0KkHFWy1/v9Wtbz+XcTqZYSfrq/xAu/PNUhRDQdO33IMd2zoX3SfrOpBb+ZPynaac=
+	t=1761732852; cv=none; b=ixH/LxlbM7Z646DDX+aaQ5MdcUrgfKHjSffcwsw+/kbGcywOKxHMaPTQYBj+tP6IhcA6oGKyIvafiDmbMkqqTTraEzynMB7Z+X8pmR99m3qLI4Qc+5saYXfunpn1R/6Oiy+Aq0i9DbsgBnPKVWR8IgfcoTsAixEp9mUhIo/NfaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761732720; c=relaxed/simple;
-	bh=SM63apfLDACdH8j9XOGHvzLDTOFE7TRicfVmIm0MrFs=;
+	s=arc-20240116; t=1761732852; c=relaxed/simple;
+	bh=oiA7zy0NdAu0L/ynPdQmpBGIMgCRLjHGckZBqV35RTc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svzGooxePu/xWhfbmoSh+ZtZUN66vRiyGWBadellSwNIwNIAGX1Vrjz0SfEv0Pe7YTGNXzd6eVCXTkbe0pH79HXbiK8e2kenhkMqDLM13c4LK7EPiuYLXbXZUcB9f6xD5SRMH9b+DbGrmHGYvN/ETSRV/VgNOOKVaZBBvuFETTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=SVEKhXK5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S0QENVzD; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailflow.phl.internal (Postfix) with ESMTP id 526F513800B6;
-	Wed, 29 Oct 2025 06:11:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 29 Oct 2025 06:11:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761732715; x=
-	1761739915; bh=fQYcWk4qBSw8yxndIGua6DOrTN7MNNasIXpj5Zvlj0w=; b=S
-	VEKhXK5c6LFW9isXMw+HLLHAP6fSPEuZFJ1c3CuDm3IWRZdx7UKkUW/2FObd3aSk
-	YkNpuSYlpc2WNrQmCIJ03rjhhbcpH4lJbki6NtbS/BoF4z35Rp/4aFJVkYqlvQu7
-	Jy3BFlvmFd3hB3AvsX8ZoaVOldapGwq/9XmOEmQhmR/xufDWr/WPvRle1QbrrW9D
-	8IHygUMPp7le4hCtUHX15CINnO9O+t/9z6qWF/Evvhw5U3V6r7JoNp68ivlh5LUB
-	MV48ezb05xLuxC+Ck7qf68TvsdtUO0kQe83jylJeCPNSNoF7GjqEvkycghBkLapm
-	fR9Qr3iOa56ZNaEHUFr2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1761732715; x=1761739915; bh=fQYcWk4qBSw8yxndIGua6DOrTN7MNNasIXp
-	j5Zvlj0w=; b=S0QENVzDgUwMR7eY+vAnD4RBq9DFaSM92Vg8JhvLEuj6DeqqNYc
-	7mnMCc4IyICjre7ZZ9kNtnoj+NKcM0j5Hog1tNRB15pYqn3u+vrppe9NdDMpGCEQ
-	fuwlsp6Yryqw8RfP76mDLmrn9tjroIGdqGrJ+MiGNGbFr/40rNiUlT/nMequlBSG
-	e6h24I9HVNdvL+TPlvqOQilJo3x5LBmSfh/+wXjcaKYPDoUizF/armm6Mc1nrjAa
-	yVw41Um/blekjsLf8+kvKPhPIKecSQs2r6pn+XKbfQSnOl4Fc6/FZvFYxduwrJ+j
-	0bygpEqU5pWqer62mXdmLbbJmcxykvvQsmQ==
-X-ME-Sender: <xms:aegBafANSD1fuUWZ0v6m-SiRyvr65VzyAKdfiMWLGtP0VmPM3aUE3g>
-    <xme:aegBaemk5fKBmypcCcDr_uej9CFIvBJmgMau7nAq7et4vFpq4HUPR_mlJPaiqbUrU
-    27XFo8cRFf6G5GfZvy3uXfXRkFrPcXSGrSEwuXdhzcq1PnH6URLkZA>
-X-ME-Received: <xmr:aegBadijXcXUgXxwzcVCpdvPt1gY0u4MuMOAaodUAlinen_6vi2YnOfXOkGe-w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieefgeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhhughhhugesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohep
-    rghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:aegBae3i4OeX1v2tI89vH399VXsdDV4ad3VFAvjh1eYo6IhVuJ8pvw>
-    <xmx:aegBaRQSx0cI4StlFMzzFiLYEPM3MmBLWl9Kz8bTrO18w5d_hDqlXg>
-    <xmx:aegBaQYUEJm8bRLRcx1bxvxxkk81Fcw6tKwt7xZU7v5ZKMdcKxdjig>
-    <xmx:aegBae6fNX0u1VrBUg_3J7s8MRXF_9-lZoqlxYCd3SE8XStTjnTzag>
-    <xmx:a-gBaaeyvRdca66Ug_Q7G96lsSxaWl3YMxVQ5Z-ctmWd91aznQJ0s0eS>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Oct 2025 06:11:53 -0400 (EDT)
-Date: Wed, 29 Oct 2025 10:11:50 +0000
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Hugh Dickins <hughd@google.com>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <xtsartutnbe7uiyloqrus3b6ja7ik2xbop7sulrnbdyzxweyaj@4ow5jd2eq6z2>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-2-kirill@shutemov.name>
- <96102837-402d-c671-1b29-527f2b5361bf@google.com>
- <8fc01e1d-11b4-4f92-be43-ea21a06fcef1@redhat.com>
- <9646894c-01ef-90b9-0c55-4bdfe3aabffd@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u69cABbpjLyz4FF0nETS4vnNvwFZ12KSXy2BgXHbDCgNwQzMDSeWKqcBIX3XJImJOgcvuZnJ9sLjaMcY1xl4UAQUCKSNSFRTtA9YDIyblayBPsToXkz36fOIcK3XRMn5ztfZm4quruJ8l9e+475nsx3W84ha6Vjx1qMQqzt+LHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zThxjnm1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B704C4CEF7;
+	Wed, 29 Oct 2025 10:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761732852;
+	bh=oiA7zy0NdAu0L/ynPdQmpBGIMgCRLjHGckZBqV35RTc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zThxjnm1T6e5WErhINrFddYqUkU+Uer1PMtSrBb83eUMgigHx+MXZ5Lqn/n6vlie6
+	 Dj7m1o2Z1EUE+TxnekL92RDKptcz1l1DfhhT80gD9dQhpBQhRSESl2qkLYv084+tkL
+	 fm+jubxWY6mcyjaTOVPFJYYzzt2ohpVgLK3y7gmU=
+Date: Wed, 29 Oct 2025 11:14:02 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: uttkarsh.aggarwal@oss.qualcomm.com, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, mathias.nyman@intel.com,
+	wesley.cheng@oss.qualcomm.com
+Subject: Re: [RFT PATCH v2] xhci: sideband: Fix race condition in sideband
+ unregister
+Message-ID: <2025102948-trickery-creative-417e@gregkh>
+References: <db07f48d-27cf-4681-b10e-38d252e24512@linux.intel.com>
+ <20251028165153.283980-1-mathias.nyman@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,64 +56,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9646894c-01ef-90b9-0c55-4bdfe3aabffd@google.com>
+In-Reply-To: <20251028165153.283980-1-mathias.nyman@linux.intel.com>
 
-On Wed, Oct 29, 2025 at 01:31:45AM -0700, Hugh Dickins wrote:
-> On Mon, 27 Oct 2025, David Hildenbrand wrote:
-> ...
-> > 
-> > Just so we are on the same page: this is not about which folio sizes we
-> > allocate (like what Baolin fixed) but what/how much to map.
-> > 
-> > I guess this patch here would imply the following changes
-> > 
-> > 1) A file with a size that is not PMD aligned will have the last (unaligned
-> > part) not mapped by PMDs.
-> > 
-> > 2) Once growing a file, the previously-last-part would not be mapped by PMDs.
+On Tue, Oct 28, 2025 at 06:51:53PM +0200, Mathias Nyman wrote:
+> Uttkarsh Aggarwal observed a kernel panic during sideband un-register
+> and found it was caused by a race condition between sideband unregister,
+> and creating sideband interrupters.
+> The issue occurrs when thread T1 runs uaudio_disconnect() and released
+> sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
+> the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
+> a crash.
 > 
-> Yes, the v2 patch was so, and the v3 patch fixes it.
+> Ensure new endpoints or interrupter can't be added to a sidenband after
+> xhci_sideband_unregister() cleared the existing ones, and unlocked the
+> sideband mutex.
+> Reorganize code so that mutex is only taken and released once in
+> xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
 > 
-> khugepaged might have fixed it up later on, I suppose.
+> Use mutex guards to reduce human unlock errors in code
 > 
-> Hmm, does hpage_collapse_scan_file() or collapse_pte_mapped_thp()
-> want a modification, to prevent reinserting a PMD after a failed
-> non-shmem truncation folio_split?  And collapse_file() after a
-> successful non-shmem truncation folio_split?
-
-I operated from an assumption that file collapse is still lazy as I
-wrote it back it the days and doesn't install PMDs. It *seems* to be
-true for khugepaged, but not MADV_COLLAPSE.
-
-Hm...
-
-> Conversely, shouldn't MADV_COLLAPSE be happy to give you a PMD
-> if the map size permits, even when spanning EOF?
-
-Filesystem folks say allowing the folio to be mapped beyond
-round_up(i_size, PAGE_SIZE) is a correctness issue, not only POSIX
-violation.
-
-I consider dropping 'install_pmd' from collapse_pte_mapped_thp() so the
-fault path is source of truth of whether PMD can be installed or not.
-
-Objections?
-
-> > Of course, we would have only mapped the last part of the file by PMDs if the
-> > VMA would have been large enough in the first place. I'm curious, is that
-> > something that is commonly done by applications with shmem files (map beyond
-> > eof)?
+> Refuse to add endpoints or interrupter if sb->vdev is not set.
+> sb->vdev is set when sideband is created and registered.
 > 
-> Setting aside the very common case of mapping a fraction of PAGE_SIZE
-> beyond EOF...
+> Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+> Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
+> Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
+> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> ---
 > 
-> I do not know whether it's common to map a >= PAGE_SIZE fraction of
-> HPAGE_PMD_SIZE beyond EOF, but it has often been sensible to do so.
-> For example, imagine (using x86_64 numbers) a 4MiB map of a 3MiB
-> file on huge tmpfs, requiring two TLB entries for the whole file.
+> v2:
+>   use guard() and fix missing mutex_unlock as recommended by greg k-h 
+> 
+> ---
+>  drivers/usb/host/xhci-sideband.c | 97 +++++++++++++++++---------------
+>  1 file changed, 53 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-sideband.c b/drivers/usb/host/xhci-sideband.c
+> index e771a476fef2..2daa0ba7ad9a 100644
+> --- a/drivers/usb/host/xhci-sideband.c
+> +++ b/drivers/usb/host/xhci-sideband.c
+> @@ -86,6 +86,22 @@ __xhci_sideband_remove_endpoint(struct xhci_sideband *sb, struct xhci_virt_ep *e
+>  	sb->eps[ep->ep_index] = NULL;
+>  }
+>  
+> +static void
+> +__xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
 
-I am all for ignoring POSIX here. But I am in minority.
+This function must be called with the mutex locked, so shouldn't you
+document that here so that the compiler can catch it if we mess up in
+the future and forget to grab it?
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> +{
+> +	struct usb_device *udev;
+> +
+> +	if (!sb->ir)
+> +		return;
+> +
+> +	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
+> +	sb->ir = NULL;
+> +	udev = sb->vdev->udev;
+> +
+> +	if (udev->state != USB_STATE_NOTATTACHED)
+> +		usb_offload_put(udev);
+> +}
+> +
+>  /* sideband api functions */
+>  
+>  /**
+> @@ -131,14 +147,17 @@ xhci_sideband_add_endpoint(struct xhci_sideband *sb,
+>  	struct xhci_virt_ep *ep;
+>  	unsigned int ep_index;
+>  
+> -	mutex_lock(&sb->mutex);
+> +	guard(mutex)(&sb->mutex);
+> +
+> +	if (!sb->vdev)
+> +		return -ENODEV;
+> +
+>  	ep_index = xhci_get_endpoint_index(&host_ep->desc);
+>  	ep = &sb->vdev->eps[ep_index];
+>  
+> -	if (ep->ep_state & EP_HAS_STREAMS) {
+> -		mutex_unlock(&sb->mutex);
+> +	if (ep->ep_state & EP_HAS_STREAMS)
+>  		return -EINVAL;
+> -	}
+> +
+
+Very minor nit, just delete the extra line, like you did in the rest of
+the diff below here, otherwise you have 2 blank lines.
+
+thanks,
+
+greg k-h
 
