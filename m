@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-875482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97473C1924D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:45:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A06FC190B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44DDB584F49
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:30:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B863F355C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FECF314D24;
-	Wed, 29 Oct 2025 08:22:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230D531D749;
+	Wed, 29 Oct 2025 08:23:59 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AA92DF68
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E4931D377
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761726125; cv=none; b=sfNcQfJD/iaKmkanVLWhWH6tzIPUwN/JgWD31uGudDwmit8cglJRpvqc4L4AUi3KYAYCcki7eoPwoNVv3Fi1aXI8Wjsyk74i6yCzoHQeRyNm0Yue/ZSexLadxI3Cfw5NiW3ac+8WoabWS0u58crxhWvkUxl8/ZoXolzXN5DsYWE=
+	t=1761726238; cv=none; b=OSnUHrTu97vlpmULhlKdWNV9xFssrm5bSK4diIvLk6Hk+lrHJ3m4r3OtguQsyLkJlBsDubZzN5F0bNKWpD1Ia0CosEmxy2SbnrtCtGKUMT3/TLYjQPubPsiydKWHoo6RpAv3GfMnmll9ng/YB0Iw+YXBsjPOfqGiqlH91y6zkX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761726125; c=relaxed/simple;
-	bh=hGnLMO4Ejfe2ROb3dj9LkULwUqjgwn6DokHUIBIwEaI=;
+	s=arc-20240116; t=1761726238; c=relaxed/simple;
+	bh=Lcmjw7aWmD63/Qxpz91f93TIJ3fdroLgvYyqOafdTN4=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W74NQI14k8it8W8klDjFmZQO1F2tdgXqsydUX0OVsi1yuM6WS7qHE45XHQ91i+4uvvUdkzYqJ+k6f0A1hpJZkocyvmuo2EX/8mNE6RGAHE7hFtsU7e+YRnnNWw3Mhs6fVFYtx5YjxLeBM+amRxPOp43S1RSwGgsiyaP7CLB9KSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	 Content-Type; b=cJRf/iduG66mZkSg8bCZbDDxUlkM3pjru4Wc8ZxOWdOZciTwqQ1JmVmcQNDy1jH37/76lTxYzjQX0q7icF1jYNh3MuabDhW93nCZU/t7wN+cdUGaK6qg2vncI1ISLxRIaef/XHn1+kbHjAX78nzKOQB05RMrSqmQR7b5robGcNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c684035eso8819875ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:22:04 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430db6d36c6so265262265ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:23:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761726123; x=1762330923;
+        d=1e100.net; s=20230601; t=1761726236; x=1762331036;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fsL5p8dpWlBLgJ5DSEyO2TC332KM5dBqXBVJ3uDpJ9Y=;
-        b=t493G0FE0VQzTSmDHKETp5TxSKZNJrxKIkf7LzoERh/x6WjgyF5vjPNWXjM3yu5Uew
-         GUqxBKUNjT+PFEd2y2LFFIS2SKVWWx2qhCb6Bmt5Rsaa6DFNgFmea0EkjVCSReTuVCBH
-         5P/LYBatqiK9Qm6fJX17fn24yEyfIaY5O6JHbfy1nOD5qdywevDA3hFg+wgbX0xdPxbL
-         eCgNEFvbf0P/rgWpB8AnBQPwecYb6A7w9Zl/ZJbFTv0ELNoOIcvKGrH4nGVy8k1GDoTQ
-         bV8AB3aJvWoz2Ba114Dq92+iMX4CHwGOPcWuJdJEq3b45hEntz69og+0BtKLS+xPBBGg
-         6Yjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXI2ecbSDkoILZvf6kXB667FS5bBy1o02ZN/BfYHatiaG28Qavj/e4NXrqRFe5VKtv2bAfDaPmTeIxmTIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyksia6ZagTGFTvA1cTniozHG+7HiZP/1gAq3vq/pL+1YCdH5jY
-	DQBbTdQODOiC/1DRxNKL8B+Lsr2Qu8X9CoTh3Cbzyqz8NhuLrTJtDM/KcNjcpR36c2094khNckv
-	G8vAD8RKG1waEeyNvhPdQxtOkVhjjly3wfyeiPeCVZlPirZgn2eGuD+XrwZ0=
-X-Google-Smtp-Source: AGHT+IG0K/QjEf+FKduqoOaTZLipgca/lZQnE2YMVgqGlt3bTriUxz/OStrtDeyISdl0soyZzCgdb3nC2CioUzZchTnJzTyuCuh9
+        bh=Lcmjw7aWmD63/Qxpz91f93TIJ3fdroLgvYyqOafdTN4=;
+        b=m4yMgMSMZW4vdFwNKGug/z/2lV3nPF6H7hDtA4GC9YN8N7NLK/UJKAsx+1Rv1kpyXh
+         GPBEtfCqVWyYvNV1+/P/MqTQijjDD2hm4PtGS4iHEeOBiGIX3ep/D9QRansL82xiLIci
+         70Q2Uq3ms1xa2o84u7nN59VZ3MpcnvidN8R9sUODm8EVhda4xv5Ro3kphU8BAS1PAvfR
+         fJah85HsmjG1FklTPAYkMTJPvMTyA/pRvHAeqAwoacDIZD0XWX2pYsHctvuB/HvGklJN
+         0hl6JGm5/96RtM6kahQYmBzyJ4Yuk/G9aCm1cMaYdy6Wx1fkbo/ByMMVfSCAnXwpyGPz
+         Enug==
+X-Gm-Message-State: AOJu0YyovRl5m/fXb6n6Z9rt8kHWD7g9wb9oTXuxhGflp/gDXNIX1cdY
+	IX5DV2UbVysVcUsDgNKi96li93HpaCXXfpQwhrYV/1khOiq/f89aO/EGLjA6HebbuzuPyeyiH17
+	xs1lUcPr4qZa2sIe0wKBoP528Azo0GtPMSqDVjDDSeHg8MGKkzsmOv0EUv/I=
+X-Google-Smtp-Source: AGHT+IHd7Mh2SiRUjPbkWKyEj1fVLfXhdRmP1KfqSwzgq1l1jxwBgZPy5heuu1/niKIU38jkKE7lPkyP1OvP7IhZ74kE9DKCtWAF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2a:b0:430:b2a8:a9eb with SMTP id
- e9e14a558f8ab-432f8d9e806mr27050455ab.1.1761726123599; Wed, 29 Oct 2025
- 01:22:03 -0700 (PDT)
-Date: Wed, 29 Oct 2025 01:22:03 -0700
-In-Reply-To: <20251029062548.aHv48%dmantipov@yandex.ru>
+X-Received: by 2002:a05:6e02:4607:b0:430:c323:2bca with SMTP id
+ e9e14a558f8ab-432f8fad5cemr27659315ab.10.1761726236558; Wed, 29 Oct 2025
+ 01:23:56 -0700 (PDT)
+Date: Wed, 29 Oct 2025 01:23:56 -0700
+In-Reply-To: <68eb4077.050a0220.ac43.0005.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901ceab.050a0220.3344a1.0416.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
-From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <6901cf1c.050a0220.3344a1.0417.GAE@google.com>
+Subject: Forwarded: Test patch for [syzbot] [gfs2?] WARNING in chown_common
+From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+***
 
-Reported-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
-Tested-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
+Subject: Test patch for [syzbot] [gfs2?] WARNING in chown_common
+Author: vnranganath.20@gmail.com
 
-Tested on:
-
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=1482bd42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c4111dd2cd8811f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c24237f0eee59c0c2abb
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14059f34580000
-
-Note: testing is done by a robot and is best-effort only.
+#syz test
 
