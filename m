@@ -1,77 +1,127 @@
-Return-Path: <linux-kernel+bounces-876536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94F9C1BE3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD94C1C04B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0E5D5C3574
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:34:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E8345A2976
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0EE337BA1;
-	Wed, 29 Oct 2025 15:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157163358D9;
+	Wed, 29 Oct 2025 15:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtcHDpte"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GP7DUozK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC24F29DB65;
-	Wed, 29 Oct 2025 15:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B8D2E6CB8;
+	Wed, 29 Oct 2025 15:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761752005; cv=none; b=KW8UyvehA6IOL9FJ7lhbFO8fuBcl2kw3l4c6yobMWMAirkOP1R79pRxLVPhBJ35zLyBSu10N5Xn8xdgHIT/7iwldPgu5OSxrd2GfItocOgE4iOosQFD7n8KS+kgMC6GAY3proJa0XKO71LK1rNAGF6gJV1ZnMtP+mtM3TALIOAI=
+	t=1761752173; cv=none; b=E1/+cRc6Ze0ZmCX9SGNKj+kjlU4aj7HIyMgJj3rND+XqjnZoEwhrHaGNm9/CUb7ej4L4esWuzV1WFKJp8vLhM2T46lE5EKuuDQKCr2I4+XpfFXSvp5FOysjQj2mmRkMyoLbeWaBBRNV4D4nU82KTY2e2mgl29DdWpbTnM9q9Z+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761752005; c=relaxed/simple;
-	bh=YkjLzcWzu5npTsZdcICWCghQ3/qLgL8lA0vFu7y9i0k=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=qBL8kUFHcqQXnxbDzy+ujMsQWAh/uYMBsBwKE1604u0+mSZBJ+KKwawqWIbuxoKYgaob+spHcJiTHQmW4HLZ2Na3CK89u1ZvNa3ivE+ZzaO9Q2fs72Bej3LraxITWhHw3TUwj+O6y3furweSRqa8Acb7wyN+i/sz6/OJaL1R2Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtcHDpte; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 564A6C4CEFF;
-	Wed, 29 Oct 2025 15:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761752005;
-	bh=YkjLzcWzu5npTsZdcICWCghQ3/qLgL8lA0vFu7y9i0k=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=OtcHDpteJ1TPbr24tR7zT2T58Naxe5x/irqXJn+5UtA4jmPHKQGbxJkzXm6YgegOM
-	 HYCrlOfD2WHYBXpgaaymGsN1J33dv3Iyg1E2zoswD+kx47v7b8iGFV7tzGy26ELZ4z
-	 Fl/jnuQTRUH1B2qwm6z99CUrWsdMCe+uFjpcEvLOl2H1HriDEtUD0sUqmUrADkECwM
-	 l/DMUlTcyhvOfWEx3TYnhgqij5ECCya4d/9/XO14mOX/laXPjWP1+3YkNeto0v6QIA
-	 UgonmDzY1vdb2VpkirZPFWEOefvso1ift1Jrl23B5/faHrU9boOsu0ihcSxSpSZTZa
-	 okFsu9ZBPQ7lQ==
+	s=arc-20240116; t=1761752173; c=relaxed/simple;
+	bh=NOtaDD0yEl9+6Z0oltjyvQBKR0NopvU+ncmTXk/MU/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZS4Kwq30+8uFI+Sf4hwM4SpYgeUkF0yppUMcsEGAYlU7p+i1duQ8Hcl9MKmCUmd6TM8X24RHIGoyl/KgyRIdtE1yLRvLzrc0TcoAqXofYXSALuMRzdrkkh2Snl/YGKvUQxwH0k15nUrhd9YSwb3tANcv3PahtOurA8a2rD21yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GP7DUozK; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761752172; x=1793288172;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NOtaDD0yEl9+6Z0oltjyvQBKR0NopvU+ncmTXk/MU/U=;
+  b=GP7DUozKjAcZEYIl7te6iiSwV1qXysZCv+DYkJpJjyRtLTzV8tXxN2vi
+   gzZ+7NASIXLmxR4gvQpJGyvd5H/s1rJcXq5ikVDUl4ZtSuE/QhTTM4S0h
+   cJeBKOVdAz04fn9tGrh7uWqVsKNpNT2X112ov9r0sNtgxaGhoUrHkuXEl
+   uyZY0K0VmD77sMaVncescRMRfDIvj1napjBr0hPKaoVOrc8eFQ/N7kaID
+   cY5+OZdhiPjRXBy0un+z7vjfUkUiT7z9flWqCw52EMvb9lnNe5GbC6rlN
+   oKyWP7HTj9FgU8DnMOIiBr1osStN4Y/sL06u/GNGmdqbBgxxYRGjxfB+q
+   w==;
+X-CSE-ConnectionGUID: QwZ9TW4ZTcq7CC77WleVFA==
+X-CSE-MsgGUID: ftDLAsHhRHCbNEWD5gz4fw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="67530229"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="67530229"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:36:11 -0700
+X-CSE-ConnectionGUID: uSKz2MDCRv6d3icnoqm3VA==
+X-CSE-MsgGUID: xejXBqrgTQyFdIeFEEo+vQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="222912225"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 29 Oct 2025 08:36:07 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vE8CW-000KjZ-2u;
+	Wed, 29 Oct 2025 15:35:21 +0000
+Date: Wed, 29 Oct 2025 23:34:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	muislam@microsoft.com
+Cc: oe-kbuild-all@lists.linux.dev, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	longli@microsoft.com, mhklinux@outlook.com,
+	skinsburskii@linux.microsoft.com, romank@linux.microsoft.com,
+	Jinank Jain <jinankjain@microsoft.com>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: Re: [PATCH] mshv: Extend create partition ioctl to support cpu
+ features
+Message-ID: <202510292330.LCHvPCLt-lkp@intel.com>
+References: <1761685562-6272-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 16:33:19 +0100
-Message-Id: <DDUWYNJTZ7RT.3ML0O9UNX5LON@kernel.org>
-Subject: Re: [PATCH 0/8] Device::drvdata() and driver/driver interaction
- (auxiliary)
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <david.m.ertman@intel.com>, <ira.weiny@intel.com>, <leon@kernel.org>,
- <acourbot@nvidia.com>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
- <pcolberg@redhat.com>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251020223516.241050-1-dakr@kernel.org>
- <aQIQl8lMhztucZhK@google.com>
-In-Reply-To: <aQIQl8lMhztucZhK@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1761685562-6272-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-On Wed Oct 29, 2025 at 2:03 PM CET, Alice Ryhl wrote:
-> It looks like there are some patches that add code that doesn't pass
-> rustfmt, which are then fixed in follow-up commits. You might want to do
-> a pass of rustfmt after each commit.
+Hi Nuno,
 
-Oops, thanks for catching this -- my apply scripts will do exactly that. :)
+kernel test robot noticed the following build errors:
 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.18-rc3 next-20251029]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Nuno-Das-Neves/mshv-Extend-create-partition-ioctl-to-support-cpu-features/20251029-050748
+base:   linus/master
+patch link:    https://lore.kernel.org/r/1761685562-6272-1-git-send-email-nunodasneves%40linux.microsoft.com
+patch subject: [PATCH] mshv: Extend create partition ioctl to support cpu features
+config: x86_64-rhel-9.4-ltp (https://download.01.org/0day-ci/archive/20251029/202510292330.LCHvPCLt-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510292330.LCHvPCLt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510292330.LCHvPCLt-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> error: include/uapi/linux/mshv.h: leak CONFIG_X86_64 to user-space
+   make[3]: *** [scripts/Makefile.headersinst:63: usr/include/linux/mshv.h] Error 1
+   make[3]: Target '__headers' not remade because of errors.
+   make[2]: *** [Makefile:1378: headers] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
