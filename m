@@ -1,245 +1,145 @@
-Return-Path: <linux-kernel+bounces-875571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19E2C1951C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:12:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88D3C19522
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584EF1A23197
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:12:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5101AA6444
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DA431E115;
-	Wed, 29 Oct 2025 09:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FEF31E0E1;
+	Wed, 29 Oct 2025 09:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yCDsHwsM"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010045.outbound.protection.outlook.com [52.101.56.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sNZQQqO3"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAA9283FD9;
-	Wed, 29 Oct 2025 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761729088; cv=fail; b=CKMVGry6MlUdLDOYy9vU9UBF8XgZrOogtUAQkQZFk8l2jSkxZIaP7hqrPk84aZLZzhc5MLcuKtzyb71EsH/6hSdx9hc8trOPYImR+rUAQvKAPu1nA50oZREy6z4uppfXAfVp8XhFCXudf5fgvdptGgVZvcNZFkbFDQL93HGw/9g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761729088; c=relaxed/simple;
-	bh=S2S7eAMatI5tneVKp86CAvpP+RhuiGNUcQws4KB3CDE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZzcQF5UcPtahmmYTXU569mxwIQldUmt8X9/6LC3a3EkInH+LBfUvHGmG4NQ9dPDtnMHThthA2aP0K8fAUShlrS63rJZCvfRYiYd9Y733pJd4x36NOsnHZhjxfuXEqW912KDXA0cDxUoLvc09iLdl2096UknIfFilWVURvZEm9so=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yCDsHwsM; arc=fail smtp.client-ip=52.101.56.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qCbTEMD40DzSj6JHMQG6RlHAPpyRQTMDSHlMyel5gFVftjy7Wp4mXWn5k/mABQX1gAiRZYIR4ifLQCWo9f5UlhtiAs7MYn8HXm+T3afCNEvftFtd5YZJTqg6LEYHBBQvvDVXId7oKv10GMM/fNG15Vttp0V1PfIGCoJUsvHFhnGSYdHH5PikoCeAsEZzKAeowEVPkVeH3X3AdgCtotnIr7gW4ovLS9UDDPg1TjMoYj07UwZ9vez6Z1cuFuGl8PjHyYUj3eFt94nYmX2sbPsaG/Et8A/t+avjDRH1kBTVTd6ITX5E34IATaS0z/7ufFLQOonTGU+YL9g0+11j++zt+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cYEZMNdDHnQvp43EQ0z67oy2BWoeTy2Bkh33Yh9ro9s=;
- b=k8NNKJuCjM6bVbBaUHl2D6OkMFuJBxWma5h1srUlonxPedq/mlMU6bNVv1uBmkrpJ/gyVrGTmTiQHv34BnBV/Ed1omFN4j5bK+eGZjH4SVEwdS2TxDReauDB6e02MaOilOdvieAx/yvn6X3dYAhb/E6gEFRkaOHKpmzm+ZrAP1SeqiMCJNa6HbKviwzfw56wn+JRByIn/KPbk5uUQ986nvfoa6UtRTJr4YV8+pTdAAwAIt8QPIBOqJesevgFhTeKGQn+Md/7g0FGFlMrQ1EiE6Ow3/JdCEIsFieVY8lcqwuUJqQHvrFTs83oIWg3kwHnwCivxUPtglUYQgnR8YJdaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cYEZMNdDHnQvp43EQ0z67oy2BWoeTy2Bkh33Yh9ro9s=;
- b=yCDsHwsMvOa4KVN7aojms7kWcWmkJTDiLGsq8SVooWgyXwj40z6w13ktvfUCDAZqWBtrVjUS0UmkmDLjoZgGAiEik0PKzCOkVc3i/EEUmjPthw5YsSH+J3h8QWrrwOkS+ljHNC6h/rS7xqrqs2n29d9th9Mi08ACKIOJ5EdEoeE=
-Received: from MN2PR20CA0022.namprd20.prod.outlook.com (2603:10b6:208:e8::35)
- by BY5PR12MB4211.namprd12.prod.outlook.com (2603:10b6:a03:20f::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 09:11:22 +0000
-Received: from BL6PEPF0001AB55.namprd02.prod.outlook.com
- (2603:10b6:208:e8:cafe::3c) by MN2PR20CA0022.outlook.office365.com
- (2603:10b6:208:e8::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.13 via Frontend Transport; Wed,
- 29 Oct 2025 09:11:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL6PEPF0001AB55.mail.protection.outlook.com (10.167.241.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 09:11:22 +0000
-Received: from FRAPPELLOUX01-WSLPUB.amd.com (10.180.168.240) by
- satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 29 Oct 2025 02:11:19 -0700
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
-	<dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
-	<sumit.semwal@linaro.org>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
-Subject: [PATCH v1] drm/sched: fix deadlock in drm_sched_entity_kill_jobs_cb
-Date: Wed, 29 Oct 2025 10:11:03 +0100
-Message-ID: <20251029091103.1159-1-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19677311C31
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761729107; cv=none; b=YUBz0U0j24olo2kozuGyG5DY+sq2qtYYfbIaye+Q44OcGvDRo8WYj+vCPxbVmw2NKwhcXuE+8xRDuYwfy4FYcrozGI8svo0IrBq8MJRThWLHQi6Ru8M99dAOhw/LEggMWIR92w+G0/KiyE3+qZy88UcYQ7J+kYBHT3WchQnMmJU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761729107; c=relaxed/simple;
+	bh=v1RlcqU+jzCZ92shMGmfN/CxGCYCmXWYYW9AKLagie8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TiFjX1MloXADG6wLk4+xpmqhVBkWPYQ/QtZ8jQI6j+cTbYxWwgQ0fHjATq6qZEqjqda8OmdagwQCvWP6SBIKb6RmCWijyKIz02iryQ+OzspSqHX5e941hIDamIZ/OmotVdAbNozvPrOdTewGm8FVEf763X1SZErHLv41Lw0DviA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sNZQQqO3; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42557c5cedcso4375074f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761729101; x=1762333901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h7yTOb0DBw1VbIj1gPXYjKXMO6PHiSPU/ZLQwHA7s8I=;
+        b=sNZQQqO3F+ZglloCZfPP7PJSzuKSGkq/5reOBp4lTzUfGKROViFmtSNMGUXDkZ1Wbs
+         D4skoB2nrt2Saw6qShitrbOBQdSb+D1YhKY6mYrgv0qyegvdUMgKNViKoo/S3wObOzAh
+         A//GOEsFBto6G5XacRjnl9HHlQSV9xAvcT8xSxmeVj7dq2uct6EoHBfuK8hYGlAGU662
+         iN30hLCbHYT4iOJCO2iqe7e+jQNt8+TXK3yOl0vI2ZkDsi5iyTnUQRUo2Z3n6/15AmYH
+         o31mRk2BBCh5Jy1clUSpB3mavkn8Nae9tKu8Uki4YzBADLYf/c0mSzGqGcV58fKf+qi7
+         YQTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761729101; x=1762333901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h7yTOb0DBw1VbIj1gPXYjKXMO6PHiSPU/ZLQwHA7s8I=;
+        b=Sxz+DaaxPWjwtUtI7ADHDXiFjBkZzf88zndMJsbdGBm7h+Fzi4nHwmFdbOwFvgvGsw
+         66UZrFkipgEuvdlJb6Cn1PNUEnaORsCQOv0cO4akRih5vP7qsW2DJD16cWKmsFvCujFw
+         N4fM9I7T3tKCSJ8RArpAb21FCHy/WHugyX1Ci4IUBhBq6uTaew0tkNMC02VX1jczEhh1
+         CGRqBj9mpj45tkVmJDvm1MnLVJrPuqyu/DprDt46qiQaBGv5iuoanjt9OmwFy7sRmHFZ
+         jwtCyqK/iWW2zpQfKfGhqHtjpOkS/b36iIE+CgWRacd4FBgazxiTAZzhVBJa+8zjGNIo
+         5qXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9J+GLbwa8HcbpRla790NGPcM37Zo5EmBSL0evRwy19k7/yh1I7heus/XkxoaXQPbbfLeEcMqaffUfdhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlCSlJHmWC6pG/IE6iCleParsH94MK+i3aGyI889fbFJfUkWhQ
+	bbq556GlWmKvEu5WgO5k+1RtbqpxOt/QNX1RAmcET2npTS8Xr2deEGlWL0nWE2bs09E=
+X-Gm-Gg: ASbGncvyxJ/mfxI02cyulibnEJE4/v5pAdaFSbhxlbbl2dvades4NW6EbLP+04EfbD+
+	jdptdtDtQJCaAuGbPm7GHhpCPAxZBYRWK5URKI6kYk8OP07mqRWD3yFrXMWdrVK1sk3kILkSTYY
+	R8EBr4XrjWPYzWBkGmBObZF3vPMy/g1+tMYe+o1XMxAmCWQ5kg9a6b6fOF7KQMVxUKwLAjNo5TP
+	F9li5bt5kzcp0HtLvaPzL8xDHAhD4yOFbG4jEMdQSrX9NS/XaRaLd/6s3cH+XoXWVCe2A3IPQ3g
+	CtlKRQkXszP3Ldj5oJzfG8x+xgbj8q7RltE48DU6QqBiP+qd9WLy58764BYj30Jx3BNMixmdLzX
+	r2lQ2vJ5gJb2As/sLoWIElGCKrnS/u7C9QZFws73TI2Y/QsTLMrMU1K5glW7o0pyYZIKqEBZMjV
+	01IKQ3wGCcLhA=
+X-Google-Smtp-Source: AGHT+IGDyulGoYcyx6jU9Pxepcswwi8toc9gOJoAK0Kv095CCsZqF5B43vi69L++DfHx0JIkYMss0g==
+X-Received: by 2002:a05:6000:2c05:b0:428:55c3:cea8 with SMTP id ffacd0b85a97d-429aefca395mr1382550f8f.50.1761729100844;
+        Wed, 29 Oct 2025 02:11:40 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:69f2:5f2d:9ffc:a805])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e196b27sm39871275e9.8.2025.10.29.02.11.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 02:11:40 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] gpio: mm-lantiq: update kernel docs
+Date: Wed, 29 Oct 2025 10:11:38 +0100
+Message-ID: <20251029091138.7995-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB55:EE_|BY5PR12MB4211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 026e1c61-7025-4e33-57dd-08de16cb2116
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TGo3Nm1MN3cvZkJGazZ3VHNwNW1rMU5yMEc3aUNpbzA4RFhCd0kwd1ZiTklV?=
- =?utf-8?B?azg5QmhIMlYyVDd6NHE1SS9yaGZ5NFlxMGlsWFpCcVdYb2xWWkFCVzVLcytQ?=
- =?utf-8?B?dFpaTzE2YytiVGNxb214VHp1Q2JqcGxjTDNZZTJValhhR3BHVXpKdjFubk9X?=
- =?utf-8?B?TnY4bk5iUHZ2VGlBdXJWektkb242aGRVVktNbUxxWWN2V1RkNGNOSWtkRnJU?=
- =?utf-8?B?L2k5dms5SDZqZjlkRi9yU2lzam1UeUZlS0JMNzB0dno1akFqRnlpNm9iVkR3?=
- =?utf-8?B?dThrQnhBVTN6RW9UNTNQVkZlUHhVK3RHN1daSlBYSXNtdFNIc1N4OFJPS2JM?=
- =?utf-8?B?QnIranpaVVoydUQ1YWlqaEpUYXJ4VURoL2YvSVVhQWM1eVVyZjBNSkE0Sko3?=
- =?utf-8?B?N2svcWxTckc2dXdiRXp1RWdSN1gvZTc5Z2tSYXBRbjBzQVlRTG4rRnYvR3Vw?=
- =?utf-8?B?QkVIbWE0RXBmV0RXKzNLc3dPNG5tSG1qZkdGSjl3MkIvWmNQRDZuTXJjY2Fm?=
- =?utf-8?B?UHVBNHh1c05LbjlnMGdJU1AzSloydEZzbVNCVVZ0a0lJdklXZkJ0bnRZc0Zq?=
- =?utf-8?B?UzZ0WjlBU1V0RDhrdTVGdHJmNGtwc2VVMmtRMjQ4VCtzcHBiaUlsNGZkS0g4?=
- =?utf-8?B?Ti85endWKzVVbVU4Uy8yZlFzTGVtY3ArQW51Um11NEp0bFBnekxub2ZaTDdt?=
- =?utf-8?B?dXFHdlc3TmlDbFc1WGRCQW9xTDk0bkgvUFEzZHJXSGpXR05YZ3VtREt0MXpT?=
- =?utf-8?B?WXZPWWl1ZFhkMHphdzg0RUNCQzNPcHlKK2kvcjdhalg2MjEvVWRKTlZpMS8z?=
- =?utf-8?B?aDYrUExUb0dGY1N1d0V4TEVjM1dpUTBCZElXRDN4WU90MTJOY2J3YVNIeGRR?=
- =?utf-8?B?dHlTbUhUTUw2VXV2NnVYbjRxRXFhS1Vwc2Q4cEJ6UytoQi8wbjE0TGxPekcx?=
- =?utf-8?B?bnRsQ2ZHNHk0VTJlM3RQNU9IdmJKMzdLYmVSY0tGUVVvek5nTEFSWVduNzY0?=
- =?utf-8?B?MW1QSW1GSXI5WHlPNU9kdjZoVVBsM00xRmRlbTY0bUhydXVEelBXdTVrc0ZO?=
- =?utf-8?B?akFYR1pES1V6T2dyanp5dWxNcWV6ckdOZUUxaExHZEJveHR5M0pxVmp4L0Jo?=
- =?utf-8?B?Qkk3OWsraEcrOUNtcWJ5Y3FPdmxnVXpGa1hYNFNoYlF1RndJK1MxRU5MZXFk?=
- =?utf-8?B?TGw3T0x2enZiYis4dE5qNlBkSk95M1pLNEk0TUV4aHpEd2s4TXdlcmZpbUto?=
- =?utf-8?B?WjdrcXE4UDVMdVVtTUJLL0VZbGNmZDJmZlFNM3NZTEJ1UzFZTU95Wkt5YmhJ?=
- =?utf-8?B?WW1weFlDMVh4ZFVyay9VczQvN25IR29CaW9DY2ljbitaeDhQSG03cDNxNjA4?=
- =?utf-8?B?cVJhYjNDMjNpd0ZqOEIyTVlWSG5paWJpSCsvcVVYdi9TNm1ubkl6aFdueU1C?=
- =?utf-8?B?a0dyN0ZGMi9YUHpVZG4wUmkwWnJCaC9oM3Y1aTRrcWxaWkxpS1RNOTZuM2xW?=
- =?utf-8?B?U2tZMGFKVldyK3drY3NpQUZjNDYrWkxnRzJDV1dURldzZFpNaGZOTzR1YmNJ?=
- =?utf-8?B?TWJDT0hNc2NsSEFYYzVnc2tkT29Nc250UEk5U2UrQktHcEdLKy9ocFYwekpY?=
- =?utf-8?B?YlI1dlNKTldrcXVBb092enFiQ3NKWnZLaGhIcnFNa1N2ZWsvL3hmQ3ZXMDlr?=
- =?utf-8?B?blU3aENjVVhuSStzeXFLS20waVE0TVF1UVR4UmxvRzUrWGRMUVlxYk5VMkls?=
- =?utf-8?B?UU91L0tlOUFUbzVrTi9SMmNCcFpmcUNVQ1p4RlZmR2lRMnBQbGpQR1R3SUJp?=
- =?utf-8?B?SEZnSmxQM1NCTzRaWUFIZWRtMkZSQ3ZHaU5yV2hJV1dkQkg5N2V1aGFkVnJw?=
- =?utf-8?B?MkJCOUp5VW9oamRDRTFNQ1JpT0cveG9Eelc5ZzVZYktIU25mdHRaMkJBS1U5?=
- =?utf-8?B?U05zOWpUK3M5RjhJNjlVeSt6VjNNSWM4WXdyUUs3Y0lzQUxqTjZpeHVZZUFK?=
- =?utf-8?B?ZW1yZ0xBRzl5eXU1MjdQdGdIaUozc3F0Q3ArV2FZbFNseFJoSnNOOGdpSVd5?=
- =?utf-8?Q?fviA9Z?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 09:11:22.2033
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 026e1c61-7025-4e33-57dd-08de16cb2116
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB55.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4211
 
-https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908 pointed out
-a possible deadlock:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-[ 1231.611031]  Possible interrupt unsafe locking scenario:
+Update kernel docs which are now outdated following the conversion to
+using the modern GPIO provider API.
 
-[ 1231.611033]        CPU0                    CPU1
-[ 1231.611034]        ----                    ----
-[ 1231.611035]   lock(&xa->xa_lock#17);
-[ 1231.611038]                                local_irq_disable();
-[ 1231.611039]                                lock(&fence->lock);
-[ 1231.611041]                                lock(&xa->xa_lock#17);
-[ 1231.611044]   <Interrupt>
-[ 1231.611045]     lock(&fence->lock);
-[ 1231.611047]
-                *** DEADLOCK ***
-
-My initial fix was to replace xa_erase by xa_erase_irq, but Christian
-pointed out that calling dma_fence_add_callback from a callback can
-also deadlock if the signalling fence and the one passed to
-dma_fence_add_callback share the same lock.
-
-To fix both issues, the code iterating on dependencies and re-arming them
-is moved out to drm_sched_entity_kill_jobs_work.
-
-Suggested-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Fixes: 8d0d46da40c8 ("gpio: mm-lantiq: Drop legacy-of-mm-gpiochip.h header from GPIO driver")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510290348.IpSNHCxr-lkp@intel.com/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++++-----------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+ drivers/gpio/gpio-mm-lantiq.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index c8e949f4a568..fe174a4857be 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_entity *entity)
- }
- EXPORT_SYMBOL(drm_sched_entity_error);
+diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
+index 3d2e24d61475..1bd98c50a459 100644
+--- a/drivers/gpio/gpio-mm-lantiq.c
++++ b/drivers/gpio/gpio-mm-lantiq.c
+@@ -52,8 +52,8 @@ static void ltq_mm_apply(struct ltq_mm *chip)
+ /**
+  * ltq_mm_set() - gpio_chip->set - set gpios.
+  * @gc:     Pointer to gpio_chip device structure.
+- * @gpio:   GPIO signal number.
+- * @val:    Value to be written to specified signal.
++ * @offset: GPIO signal number.
++ * @value:  Value to be written to specified signal.
+  *
+  * Set the shadow value and call ltq_mm_apply. Always returns 0.
+  */
+@@ -73,8 +73,8 @@ static int ltq_mm_set(struct gpio_chip *gc, unsigned int offset, int value)
+ /**
+  * ltq_mm_dir_out() - gpio_chip->dir_out - set gpio direction.
+  * @gc:     Pointer to gpio_chip device structure.
+- * @gpio:   GPIO signal number.
+- * @val:    Value to be written to specified signal.
++ * @offset: GPIO signal number.
++ * @value:  Value to be written to specified signal.
+  *
+  * Same as ltq_mm_set, always returns 0.
+  */
+@@ -85,7 +85,7 @@ static int ltq_mm_dir_out(struct gpio_chip *gc, unsigned offset, int value)
  
-+static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-+					  struct dma_fence_cb *cb);
-+
- static void drm_sched_entity_kill_jobs_work(struct work_struct *wrk)
+ /**
+  * ltq_mm_save_regs() - Set initial values of GPIO pins
+- * @mm_gc: pointer to memory mapped GPIO chip structure
++ * @chip: Pointer to our private data structure.
+  */
+ static void ltq_mm_save_regs(struct ltq_mm *chip)
  {
- 	struct drm_sched_job *job = container_of(wrk, typeof(*job), work);
--
--	drm_sched_fence_scheduled(job->s_fence, NULL);
--	drm_sched_fence_finished(job->s_fence, -ESRCH);
--	WARN_ON(job->s_fence->parent);
--	job->sched->ops->free_job(job);
--}
--
--/* Signal the scheduler finished fence when the entity in question is killed. */
--static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
--					  struct dma_fence_cb *cb)
--{
--	struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
--						 finish_cb);
-+	struct dma_fence *f;
- 	unsigned long index;
- 
--	dma_fence_put(f);
--
- 	/* Wait for all dependencies to avoid data corruptions */
- 	xa_for_each(&job->dependencies, index, f) {
- 		struct drm_sched_fence *s_fence = to_drm_sched_fence(f);
-@@ -220,6 +209,21 @@ static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
- 		dma_fence_put(f);
- 	}
- 
-+	drm_sched_fence_scheduled(job->s_fence, NULL);
-+	drm_sched_fence_finished(job->s_fence, -ESRCH);
-+	WARN_ON(job->s_fence->parent);
-+	job->sched->ops->free_job(job);
-+}
-+
-+/* Signal the scheduler finished fence when the entity in question is killed. */
-+static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-+					  struct dma_fence_cb *cb)
-+{
-+	struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
-+						 finish_cb);
-+
-+	dma_fence_put(f);
-+
- 	INIT_WORK(&job->work, drm_sched_entity_kill_jobs_work);
- 	schedule_work(&job->work);
- }
 -- 
-2.43.0
+2.48.1
 
 
