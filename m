@@ -1,136 +1,191 @@
-Return-Path: <linux-kernel+bounces-874948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C5AC17B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:59:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9161C17B41
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B32188B437
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:59:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C48E354F1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E347D2D7DCA;
-	Wed, 29 Oct 2025 00:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B3B2D7DDB;
+	Wed, 29 Oct 2025 00:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KGcbP/Ui"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Db3JaVht"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615E7277C9E;
-	Wed, 29 Oct 2025 00:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9618F24BD1A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761699552; cv=none; b=BoVWzvlLGIg5hWdgwEnVdgobVlAsxOtseKFc0KnRC6rNmkZ1vFVvpl/BYOMdZ5t3eELRo3hpQo4Gc4V8HTt2AzARN9yqOgi8FxMqFBDzv3609HbBqFccPh4oGySbVi+d9Z0NyXXT62p2itg33kld2yC4qlVpDPI/J2/f6ZhGz2U=
+	t=1761699563; cv=none; b=B5ZFdHgSiH6NI0mFCbNMgtmmWY0mo+ybqlx4rXDwCJFsRmN479xziweXwMHyKjoA+hZ1iUD8hCuk+Lzr8PAKucwENl9RvL5QHHP0LOo6LuJ9g7Ox/fvbC1vgcJeKidyyOX2txieSWDnJGEamgx+HZECo1VtyVITSng6AV4WJghw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761699552; c=relaxed/simple;
-	bh=L1fwkKyfGCopimO2KT6ZjVWg4mk91IJv4XRwdhvRqpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjqdLZ/d8nNoY0RbAY0Hr1ANsM+X9cd5nbr7OWMhLRUALMNjirrzOhjQhHyQnwTR5U/Y1I/kh370gOOohodjS2S/cNiqu1yR8pfBVMsdG2rmbU4fiYgeQV+n+HuD0fHRaHbmSvA71wyxnjfxaBu3O6Edb/yrbHR/ZHzSbkRni2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KGcbP/Ui; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761699551; x=1793235551;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L1fwkKyfGCopimO2KT6ZjVWg4mk91IJv4XRwdhvRqpk=;
-  b=KGcbP/Ui9AJUd5sYSh9O7CSeBm6GylszWXYjoCXSWMNkyTaqgJF+bo81
-   HrdJ2on47MhtA137MGBTrj+gWf6fTm3YAmJMR9QpuCx1vo1FZYKsW26+h
-   T9yDPNumdWCQ4Tof8y9cL39nzM8Z5oCp1Re/ifWdoyYJG6QGGY8SzVYWv
-   83dPQxTlb/qo9Pz7QbocPc+nL2Xp460fhO1erWyB8bISKY7wEHEOErqkN
-   BVM/h8sFJpWWKsaeVW3ebyXP55dRw0pwTBiCb0qY7PJla3FfjLBhzSR2w
-   LMs9ccZ5bxNDMVcruWGP9opRGkH+HC2uR1iP9MzfhtKXT5dkemGalSQ+/
-   Q==;
-X-CSE-ConnectionGUID: EeZumeyvRneK6bGFcehd9g==
-X-CSE-MsgGUID: hbtp6LSjS8mG8I8GUjKKlw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75260111"
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="75260111"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 17:59:10 -0700
-X-CSE-ConnectionGUID: dXL4dUxQTLy/VrcE6UDrBA==
-X-CSE-MsgGUID: Y4zkv6KLQZ+6jtEdLHrAng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="185391143"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 28 Oct 2025 17:59:06 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDuWT-000JyH-23;
-	Wed, 29 Oct 2025 00:58:54 +0000
-Date: Wed, 29 Oct 2025 08:57:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	David Plowman <david.plowman@raspberrypi.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	"Ivan T. Ivanov" <iivanov@suse.de>,
-	Jai Luthra <jai.luthra@ideasonboard.com>
-Subject: Re: [PATCH 04/13] media: i2c: ov5647: Fix v4l2-compliance failure
- subscribing to events
-Message-ID: <202510290816.8EQhDjD8-lkp@intel.com>
-References: <20251028-b4-rpi-ov5647-v1-4-098413454f5e@ideasonboard.com>
+	s=arc-20240116; t=1761699563; c=relaxed/simple;
+	bh=59r1336W9+OTwstjI3TwUKacm6kaOVnO9mxXZSPTbCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kdd9Ztfu8GcEQIZQO8rIJWEj2pgOioSQGmvDZxJNuqDaVRgBXh4/OY+asqaaHpQhUoMdWlxi1zhb/dq3QVC5INj9IDPYHuSPWabi5t5MR6spY1CwLWYlz9s5HM4MBp0UYUFWntbUmAEi2IpP1ePFNVu2ghZ8T/seziDTaupjksE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Db3JaVht; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d78062424so1416986566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1761699560; x=1762304360; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yugpZ0CmKY4qcuIn89QXxUqHhihKLi+NyAHXMCOOMuA=;
+        b=Db3JaVht0retmi2cB9so6yct1h7lPAgQ2ae+DLSrCtbw+xRG/K8bmGbYR9Ad6UTsjk
+         hrOMjFUlZKxdihKlesmup1xTALN21xQI8EzAbAAivpjOcLEKNSvwQ4vFJIjkqSz+JjAh
+         8gzcg+Sa45ywWdPsYD8RnrKIsJCj3u0azwrGY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761699560; x=1762304360;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yugpZ0CmKY4qcuIn89QXxUqHhihKLi+NyAHXMCOOMuA=;
+        b=IW9Aq2yyALsWeJFmHrO1CdoTvm6ze2/f3oJx2TAFjCaoQsjteEb0N3+13y7btTx+7E
+         HGHkzwVKaTcW0m03f/d1RiZoTwpBudarYEnmDowW9CcjEj4TmbOXimeOHZYiRoKck63z
+         x3V3CReYepKeBmxw8fcklzVcIu3wflPIT4bni/q0HpInZ893MMX68DnTj8seBwDkr45n
+         L/2Ze7DkpLc8Y01nwU8A3MPnzdCjZRKQCEnkSFoD9xk9PJ154nY7wP28ZVPP/NvlE6dw
+         Is0IflhuuB4IblH0Rx7OXpl5YNpf1opxtFyvt4/S7Jtqe/8p1DrzksK79KI1JBOuf+4b
+         tJ1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXScamiM9IS9Cq3XYyzrtmlbHhHi6/UQ9Qz5vk6P1p7FLsrgoXKA92T1KCtk8USE/FcCz0Ts2B93ZGFSTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEiPhMDeZmpgmaE9rDJ836JyIHNQvdtrLA6Z45qteKFVpH8i3B
+	vQXY1BN/vKgWp08OPYkkaJ2D6LBlbXZ2o4E889VFBxqQzil5jLVj8/TVmU1rpmowca6I8OPcOp1
+	8W+MZWVcvBg==
+X-Gm-Gg: ASbGncvmqlyoGUYkIvlRA2feW2gBT3wt+g8oNvmkX1vbWAg2WGUnhrsNpaSk6j0N4k4
+	mCfQPBfcd5s3imavclzI6nmRT3Ok6yxMNUx5lldYR81+aDIrlFyXXW/LjsDWLhP9vqhVcqUMend
+	p1E5+KPFn6lJzFutktlfwZnrSO8wiZBv96NL6inj+VetThqndUO2rtPdr0p5B91xzB20IDblRTi
+	lpi18OiFpdMdVmFQgCcbMDt5pZ8Od6jmNeJ3K/QiTScSnEdI+mRBY+GLKoDJVGyFdj5Z5lhdSBU
+	6cyCkEnUbaUgd5WnDi9sDqKvdfth97cfaXCuGRUFKx/zlTyHCyYwqidECeCJJ0bqDOZfLo4aBSD
+	ZLwfmFxpTs91vLS46tK138d3FxjE5PxqV/+huKr3fpwuhVXDE5T+bpSDyhWYb60m5SXoWTFShDs
+	3AxFkLon+10YuC4Em8iHE+80AORBtYLzgwwBNhlJWB18Ix03DkEQ==
+X-Google-Smtp-Source: AGHT+IEH+TI5QgvCnZslam0zQn7pW77kAhYe+Ge/xZZbHdmH6rywrnhNSFYbsCxM4v+MlM/989uj4Q==
+X-Received: by 2002:a17:907:a088:b0:b46:abad:430e with SMTP id a640c23a62f3a-b703d4cdbb3mr92155366b.37.1761699559709;
+        Tue, 28 Oct 2025 17:59:19 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85309074sm1241824566b.2.2025.10.28.17.59.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 17:59:19 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so10413757a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:59:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWbsos+IQYV4gOOyTNut0sV7lwFckJrkgvw+aMCmkEJD5IFJ6JVjakshj2nXGX/0Fka94e6Djq5sFIKbWw=@vger.kernel.org
+X-Received: by 2002:a05:6402:5244:b0:63b:ede0:240d with SMTP id
+ 4fb4d7f45d1cf-6404419f0e1mr699847a12.4.1761699557818; Tue, 28 Oct 2025
+ 17:59:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-4-098413454f5e@ideasonboard.com>
+References: <CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com>
+ <ubqjeplvslhnspqw6pnqwo7c6sq2ygdtmkuqr4q3hjlxfkuwii@xn63k6qz22mz>
+In-Reply-To: <ubqjeplvslhnspqw6pnqwo7c6sq2ygdtmkuqr4q3hjlxfkuwii@xn63k6qz22mz>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 28 Oct 2025 17:59:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgs8+xVbv5tu9kv5n=LwWFZ0FW4GPwVmXBPjLQ0goLfjQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnWsezmseuUgtNvSRArtoGyuOm8TLGzEUg_cA8BtlMOKIE_K0kYA-m0NJ0
+Message-ID: <CAHk-=wgs8+xVbv5tu9kv5n=LwWFZ0FW4GPwVmXBPjLQ0goLfjQ@mail.gmail.com>
+Subject: Re: odd objtool 'unreachable instruction' warning
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Alexandre Chartre <alexandre.chartre@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jai,
+On Tue, 28 Oct 2025 at 17:21, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> See the diff below, hopefully that fixes things for you?
 
-kernel test robot noticed the following build warnings:
+Bingo, that patch works for me.
 
-[auto build test WARNING on 3a8660878839faadb4f1a6dd72c3179c1df56787]
+> On a related note, it would be nice if we could make that codegen more
+> readable...  Here were a few formats I had played with before, any
+> thoughts?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jai-Luthra/media-i2c-ov5647-Parse-and-register-properties/20251028-153619
-base:   3a8660878839faadb4f1a6dd72c3179c1df56787
-patch link:    https://lore.kernel.org/r/20251028-b4-rpi-ov5647-v1-4-098413454f5e%40ideasonboard.com
-patch subject: [PATCH 04/13] media: i2c: ov5647: Fix v4l2-compliance failure subscribing to events
-config: sparc64-randconfig-r134-20251029 (https://download.01.org/0day-ci/archive/20251029/202510290816.8EQhDjD8-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510290816.8EQhDjD8-lkp@intel.com/reproduce)
+I don't think any of this is ever going to be remotely readable,
+because of the whole horrible section noise.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510290816.8EQhDjD8-lkp@intel.com/
+If I recall correctly, one of the ideas you had was to use macros to
+make things more legible, but that sadly didn't work with clang or
+something like that?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/media/i2c/ov5647.c:870:10: sparse: sparse: Initializer entry defined twice
-   drivers/media/i2c/ov5647.c:876:10: sparse:   also defined here
+Anyway, I certainly agree that we can make it *slightly* better, and
+I'm not objecting to trying to do some incremental improvement, but
+it's just always going to be pretty bad, and so I'd probably always
+end up doing my ugly hack anyway.
 
-vim +870 drivers/media/i2c/ov5647.c
+Because for the assembler readability case, I do think the "avoid
+alternatives" is just fundamentally nicer and simpler.
 
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  867  
-c9a05cece64c60 Jacopo Mondi    2020-11-19  868  /* Subdev core operations registration */
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  869  static const struct v4l2_subdev_core_ops ov5647_subdev_core_ops = {
-dc3373081396f5 Jacopo Mondi    2020-11-19 @870  	.subscribe_event	= v4l2_ctrl_subdev_subscribe_event,
-dc3373081396f5 Jacopo Mondi    2020-11-19  871  	.unsubscribe_event	= v4l2_event_subdev_unsubscribe,
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  872  #ifdef CONFIG_VIDEO_ADV_DEBUG
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  873  	.g_register		= ov5647_sensor_get_register,
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  874  	.s_register		= ov5647_sensor_set_register,
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  875  #endif
-d812c6225cf5be David Plowman   2025-10-28  876  	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-d812c6225cf5be David Plowman   2025-10-28  877  	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  878  };
-3c2472a3c54895 Ramiro Oliveira 2017-03-22  879  
+Now, at one point I tried to do a build config option to just have the
+"assume feature XYZ" - so that you could just have a config option
+that turns on SMAP and other features unconditionally.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+That made the asm obviously look fine, but my simplistic patch at the
+time made the source code itself so much less legible that I trashed
+it. It just ended up being a mess of ifdefs.
+
+(I did think that maybe I could make my patch cleaner with a few
+helper macros, but it all ended up feeling like I was overthinking
+things.  I suspect very few people actually care about that legible
+assembler thing. End result: I just ended up with the very simple
+local hack in my tree)
+
+> Note there's also an objtool "disas" feature Alexandre is working on
+> which will show the disassembly annotated with runtime patching info
+> (alternatives, static branches, etc):
+
+Yeah, that would be a good feature to have, although I wouldn't
+obviate the asm cleanup for me.
+
+Depending on what I am looking for, I end up looking at either the asm
+output and the objdump output (or at both) because they each have
+their good and bad parts.
+
+Sometimes I *want* the comments that gcc in particular adds to the
+assembler, and sometimes I prefer the "raw objdump" format.
+
+Oh, and Alexandre: if you are working on improving objdump - are you
+perhaps also looking at making the relocation output saner?
+
+Because I absolutely detest the odd relocation output format. I use it
+occasionally, but it's just crazy to see things like
+
+<delayed_put_task_struct>:
+        ...
+        call   <delayed_put_task_struct+0x1a>
+                        R_X86_64_PLT32  rethook_flush_task-0x4
+
+when any *sane* tool would just output the simple
+
+        call   rethook_flush_task
+
+instead.  Because as it is, the line without the relocation info is
+useless, and then the separate relocation line (with -r) is just
+crazy.
+
+I kind of do understand why it happens - few people care, objdump
+supports many different instruction formats, the instruction decoding
+is a separate thing from the relocation logic etc etc. But if somebody
+is looking at making objdump generate prettier output, I'd love for
+this to be one of the things fixed.
+
+(And yes, I see this horrid output because I run objdump on individual
+object files before linking, because it's *so* much simpler and
+quicker)
+
+Again - the real problem is that I'm just doing odd things that are
+probably unusual enough that very few people care. And I've done it so
+long that I can deal with it and read the horrors when necessary.
+
+So it's not like this is a huge problem, it's just that I go "Oh Gods,
+objdump output is not meant for humans" every time I do this.
+
+                Linus
 
