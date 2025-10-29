@@ -1,76 +1,65 @@
-Return-Path: <linux-kernel+bounces-876001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0168C1A6AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:54:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10318C1A71E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABC3E5660ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:47:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10452566DA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3612D363376;
-	Wed, 29 Oct 2025 12:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506AC3358CA;
+	Wed, 29 Oct 2025 12:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DBtqZ5hW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="gpHV/DPp"
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BA4363350;
-	Wed, 29 Oct 2025 12:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B24F34F47A;
+	Wed, 29 Oct 2025 12:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740741; cv=none; b=PDrWZM43ZwHYi1np/xOD/ufaTtg+QDGPqBUnAnrlOsDvAfy09dXA48No9xzKFCdfv6JTdD+ce6azq4oNiF3mag6lb2L1R9hEVFIGtYLibkb3U127uLC6Qh+fiB4eRSr66U6jfBhG60QgMuZUCt6F8/d/my+sQMXRJHw/pekR6gc=
+	t=1761740725; cv=none; b=Ux4H7tShU1crhqjXIsBIniigiV9H7uAEPEBRD2+sfoSjW5hz5GqHAdRMsX2hnOQ5as5r1JD0ZM715fIpAgMkuYWr+QPsR5pyoTmIn1GyzIG9/5ZqW2GEzIvD0UI3Ik+4Sp1Ai6eYq+M19PM6GQVwZNblrUn/zmz4JjzqydNRyHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740741; c=relaxed/simple;
-	bh=/k3x/0AN/exk9JVJ8ZYwkOpX/jPOrTmTlUIRyGrUZm0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WiZfUJUTmQE2l36KNK9NBWW0wxDGsylgtx5gtacJssE4NLxH3KgvwzgdgZcGdo3plMBeKaNne+ZYOGkDVGTRVEJ+rOds5xn8hY5b0bwco9UD/fOWOp1ttGVDfNQzMORPfmdzS5e6RNTMtLmf+4kb44kE/N1XETG+oloqIC9LeyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DBtqZ5hW; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761740739; x=1793276739;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/k3x/0AN/exk9JVJ8ZYwkOpX/jPOrTmTlUIRyGrUZm0=;
-  b=DBtqZ5hWDfithI1HT15/ftlTKsoy3ztJMi1ReMi+OuefGPoeECbfoxgF
-   9udaOaSNKeAmDl1w/6U19qr+aeRZGUM6UUfUglcoQjND3nHYs+XYcaep4
-   OWwd/nGhN/KsGCoImTVoeJ+7u1y4pqZ6lH6xK9z3XDuWIKZ5CwZ1QQ/hR
-   KQyJEiHrz4Mo9M4sKo+lRwmounTbYoKpvPH4y1ho2QZlIRRdDRDkatNKR
-   1PzCqj2gen7iClDlL2OowXgFPGOjre/DVyA3uSUhwbPOkFYhIsoeiwQOY
-   zKndviEpPideYKwLyAbbAojZpGorHlUsDUmVjRl/tNb9MiuLW4x8lkQEh
-   g==;
-X-CSE-ConnectionGUID: RaprOX+ATlC0EHkc/7Y7jA==
-X-CSE-MsgGUID: OmUa/K07TgeD4sp1z1upQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="86487947"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="86487947"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 05:25:38 -0700
-X-CSE-ConnectionGUID: 93DNKLRPSSm+Ui7lTpwiBw==
-X-CSE-MsgGUID: 8g88Ve9hRYufn0mhnjdLOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="186398815"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO mnyman-desk.intel.com) ([10.245.245.23])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 05:25:36 -0700
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-To: gregkh@linuxfoundation.org,
-	uttkarsh.aggarwal@oss.qualcomm.com
-Cc: mathias.nyman@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	mathias.nyman@intel.com,
-	wesley.cheng@oss.qualcomm.com
-Subject: [RFT PATCH v3] xhci: sideband: Fix race condition in sideband unregister
-Date: Wed, 29 Oct 2025 14:24:35 +0200
-Message-ID: <20251029122436.375009-1-mathias.nyman@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025102948-trickery-creative-417e@gregkh>
-References: <2025102948-trickery-creative-417e@gregkh>
+	s=arc-20240116; t=1761740725; c=relaxed/simple;
+	bh=N0fKrga/9ZrRSK58UnOVSOIYKbAWXH05g1TXql8H/0A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FoithHjAzWny72A/1WXC3QfhrxTVcU25b8nNrmIxL2PYAB8+6bZUDibBWZrb90rCxhmpDD5YrhtY0AJddxvZ2nYyXi8YTCa5kxvMdEyek52CgLlLNeSgjAzroALdxygOqyFSqPPM0cRotkpkTI72AijtGLzSBzXtbcxqzSGin3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=gpHV/DPp; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=4lZ7W/AJQKzFvzfkI8m0+Z5zcmH8GpfmoJ9YqHPB62E=;
+	b=gpHV/DPpAbYD9zLwr7ZQC/BCYjmIolvdBIPYuhdO6OiUM8/VLWyqanWnaL+r1V77RHKiFEY1W
+	t4gXl4kB3d2w+Ao4t9JZ7nLKc4uKTvaSDClc4/Fomn6s1eiM25hDaavwmvu/YDnqRMJ6hWvp14X
+	EWHb0cC1DqV56kvL5roA56E=
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cxRJX508SzRhTt;
+	Wed, 29 Oct 2025 20:24:44 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id E65B418048E;
+	Wed, 29 Oct 2025 20:25:13 +0800 (CST)
+Received: from huawei.com (10.90.31.46) by dggpemf500015.china.huawei.com
+ (7.185.36.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
+ 2025 20:25:13 +0800
+From: Longfang Liu <liulongfang@huawei.com>
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<herbert@gondor.apana.org.au>, <shameerkolothum@gmail.com>,
+	<jonathan.cameron@huawei.com>
+CC: <linux-crypto@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>,
+	<liulongfang@huawei.com>
+Subject: [PATCH v11 1/2] crypto: hisilicon - qm updates BAR configuration
+Date: Wed, 29 Oct 2025 20:24:40 +0800
+Message-ID: <20251029122441.3063127-2-liulongfang@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20251029122441.3063127-1-liulongfang@huawei.com>
+References: <20251029122441.3063127-1-liulongfang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,248 +67,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-Uttkarsh Aggarwal observed a kernel panic during sideband un-register
-and found it was caused by a race condition between sideband unregister,
-and creating sideband interrupters.
-The issue occurrs when thread T1 runs uaudio_disconnect() and released
-sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
-the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
-a crash.
+On new platforms greater than QM_HW_V3, the configuration region for the
+live migration function of the accelerator device is no longer
+placed in the VF, but is instead placed in the PF.
 
-Ensure new endpoints or interrupter can't be added to a sidenband after
-xhci_sideband_unregister() cleared the existing ones, and unlocked the
-sideband mutex.
-Reorganize code so that mutex is only taken and released once in
-xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
+Therefore, the configuration region of the live migration function
+needs to be opened when the QM driver is loaded. When the QM driver
+is uninstalled, the driver needs to clear this configuration.
 
-Use mutex guards to reduce human unlock errors in code
-
-Refuse to add endpoints or interrupter if sb->vdev is not set.
-sb->vdev is set when sideband is created and registered.
-
-Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
-Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
-Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+Reviewed-by: Shameer Kolothum <shameerkolothum@gmail.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 ---
+ drivers/crypto/hisilicon/qm.c | 27 +++++++++++++++++++++++++++
+ include/linux/hisi_acc_qm.h   |  3 +++
+ 2 files changed, 30 insertions(+)
 
-v3:
-  Remove extra blank line
-  Add lockdep_assert_held() and comment for functions where caller must hold mutex
-
-v2:
-  use guard() and fix missing mutex_unlock as recommended by greg k-h
-
----
- drivers/usb/host/xhci-sideband.c | 102 ++++++++++++++++++-------------
- 1 file changed, 58 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-sideband.c b/drivers/usb/host/xhci-sideband.c
-index e771a476fef2..a85f62a73313 100644
---- a/drivers/usb/host/xhci-sideband.c
-+++ b/drivers/usb/host/xhci-sideband.c
-@@ -73,9 +73,12 @@ xhci_ring_to_sgtable(struct xhci_sideband *sb, struct xhci_ring *ring)
- 	return NULL;
+diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+index a5b96adf2d1e..f0fd0c3698eb 100644
+--- a/drivers/crypto/hisilicon/qm.c
++++ b/drivers/crypto/hisilicon/qm.c
+@@ -3019,11 +3019,36 @@ static void qm_put_pci_res(struct hisi_qm *qm)
+ 	pci_release_mem_regions(pdev);
  }
  
-+/* Caller must hold sb->mutex */
- static void
- __xhci_sideband_remove_endpoint(struct xhci_sideband *sb, struct xhci_virt_ep *ep)
- {
-+	lockdep_assert_held(&sb->mutex);
-+
- 	/*
- 	 * Issue a stop endpoint command when an endpoint is removed.
- 	 * The stop ep cmd handler will handle the ring cleanup.
-@@ -86,6 +89,25 @@ __xhci_sideband_remove_endpoint(struct xhci_sideband *sb, struct xhci_virt_ep *e
- 	sb->eps[ep->ep_index] = NULL;
- }
- 
-+/* Caller must hold sb->mutex */
-+static void
-+__xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
++static void hisi_mig_region_clear(struct hisi_qm *qm)
 +{
-+	struct usb_device *udev;
++	u32 val;
 +
-+	lockdep_assert_held(&sb->mutex);
-+
-+	if (!sb->ir)
-+		return;
-+
-+	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
-+	sb->ir = NULL;
-+	udev = sb->vdev->udev;
-+
-+	if (udev->state != USB_STATE_NOTATTACHED)
-+		usb_offload_put(udev);
++	/* Clear migration region set of PF */
++	if (qm->fun_type == QM_HW_PF && qm->ver > QM_HW_V3) {
++		val = readl(qm->io_base + QM_MIG_REGION_SEL);
++		val &= ~BIT(0);
++		writel(val, qm->io_base + QM_MIG_REGION_SEL);
++	}
 +}
 +
- /* sideband api functions */
- 
- /**
-@@ -131,14 +153,16 @@ xhci_sideband_add_endpoint(struct xhci_sideband *sb,
- 	struct xhci_virt_ep *ep;
- 	unsigned int ep_index;
- 
--	mutex_lock(&sb->mutex);
-+	guard(mutex)(&sb->mutex);
++static void hisi_mig_region_enable(struct hisi_qm *qm)
++{
++	u32 val;
 +
-+	if (!sb->vdev)
-+		return -ENODEV;
-+
- 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
- 	ep = &sb->vdev->eps[ep_index];
- 
--	if (ep->ep_state & EP_HAS_STREAMS) {
--		mutex_unlock(&sb->mutex);
-+	if (ep->ep_state & EP_HAS_STREAMS)
- 		return -EINVAL;
--	}
- 
- 	/*
- 	 * Note, we don't know the DMA mask of the audio DSP device, if its
-@@ -148,14 +172,11 @@ xhci_sideband_add_endpoint(struct xhci_sideband *sb,
- 	 * and let this function add the endpoint and allocate the ring buffer
- 	 * with the smallest common DMA mask
- 	 */
--	if (sb->eps[ep_index] || ep->sideband) {
--		mutex_unlock(&sb->mutex);
-+	if (sb->eps[ep_index] || ep->sideband)
- 		return -EBUSY;
--	}
- 
- 	ep->sideband = sb;
- 	sb->eps[ep_index] = ep;
--	mutex_unlock(&sb->mutex);
- 
- 	return 0;
- }
-@@ -180,18 +201,16 @@ xhci_sideband_remove_endpoint(struct xhci_sideband *sb,
- 	struct xhci_virt_ep *ep;
- 	unsigned int ep_index;
- 
--	mutex_lock(&sb->mutex);
-+	guard(mutex)(&sb->mutex);
-+
- 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
- 	ep = sb->eps[ep_index];
- 
--	if (!ep || !ep->sideband || ep->sideband != sb) {
--		mutex_unlock(&sb->mutex);
-+	if (!ep || !ep->sideband || ep->sideband != sb)
- 		return -ENODEV;
--	}
- 
- 	__xhci_sideband_remove_endpoint(sb, ep);
- 	xhci_initialize_ring_info(ep->ring);
--	mutex_unlock(&sb->mutex);
- 
- 	return 0;
- }
-@@ -316,28 +335,25 @@ xhci_sideband_create_interrupter(struct xhci_sideband *sb, int num_seg,
- 	if (!sb || !sb->xhci)
- 		return -ENODEV;
- 
--	mutex_lock(&sb->mutex);
--	if (sb->ir) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	guard(mutex)(&sb->mutex);
-+
-+	if (!sb->vdev)
-+		return -ENODEV;
-+
-+	if (sb->ir)
-+		return -EBUSY;
- 
- 	sb->ir = xhci_create_secondary_interrupter(xhci_to_hcd(sb->xhci),
- 						   num_seg, imod_interval,
- 						   intr_num);
--	if (!sb->ir) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (!sb->ir)
-+		return -ENOMEM;
- 
- 	udev = sb->vdev->udev;
- 	ret = usb_offload_get(udev);
- 
- 	sb->ir->ip_autoclear = ip_autoclear;
- 
--out:
--	mutex_unlock(&sb->mutex);
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(xhci_sideband_create_interrupter);
-@@ -352,21 +368,12 @@ EXPORT_SYMBOL_GPL(xhci_sideband_create_interrupter);
- void
- xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
- {
--	struct usb_device *udev;
--
--	if (!sb || !sb->ir)
-+	if (!sb)
- 		return;
- 
--	mutex_lock(&sb->mutex);
--	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
--
--	sb->ir = NULL;
--	udev = sb->vdev->udev;
-+	guard(mutex)(&sb->mutex);
- 
--	if (udev->state != USB_STATE_NOTATTACHED)
--		usb_offload_put(udev);
--
--	mutex_unlock(&sb->mutex);
-+	__xhci_sideband_remove_interrupter(sb);
- }
- EXPORT_SYMBOL_GPL(xhci_sideband_remove_interrupter);
- 
-@@ -465,6 +472,7 @@ EXPORT_SYMBOL_GPL(xhci_sideband_register);
- void
- xhci_sideband_unregister(struct xhci_sideband *sb)
- {
-+	struct xhci_virt_device *vdev;
- 	struct xhci_hcd *xhci;
- 	int i;
- 
-@@ -473,17 +481,23 @@ xhci_sideband_unregister(struct xhci_sideband *sb)
- 
- 	xhci = sb->xhci;
- 
--	mutex_lock(&sb->mutex);
--	for (i = 0; i < EP_CTX_PER_DEV; i++)
--		if (sb->eps[i])
--			__xhci_sideband_remove_endpoint(sb, sb->eps[i]);
--	mutex_unlock(&sb->mutex);
-+	scoped_guard(mutex, &sb->mutex) {
-+		vdev = sb->vdev;
-+		if (!vdev)
-+			return;
-+
-+		for (i = 0; i < EP_CTX_PER_DEV; i++)
-+			if (sb->eps[i])
-+				__xhci_sideband_remove_endpoint(sb, sb->eps[i]);
- 
--	xhci_sideband_remove_interrupter(sb);
-+		__xhci_sideband_remove_interrupter(sb);
-+
-+		sb->vdev = NULL;
++	/* Select migration region of PF */
++	if (qm->fun_type == QM_HW_PF && qm->ver > QM_HW_V3) {
++		val = readl(qm->io_base + QM_MIG_REGION_SEL);
++		val |= QM_MIG_REGION_EN;
++		writel(val, qm->io_base + QM_MIG_REGION_SEL);
 +	}
++}
++
+ static void hisi_qm_pci_uninit(struct hisi_qm *qm)
+ {
+ 	struct pci_dev *pdev = qm->pdev;
  
- 	spin_lock_irq(&xhci->lock);
- 	sb->xhci = NULL;
--	sb->vdev->sideband = NULL;
-+	vdev->sideband = NULL;
- 	spin_unlock_irq(&xhci->lock);
+ 	pci_free_irq_vectors(pdev);
++	hisi_mig_region_clear(qm);
+ 	qm_put_pci_res(qm);
+ 	pci_disable_device(pdev);
+ }
+@@ -5725,6 +5750,7 @@ int hisi_qm_init(struct hisi_qm *qm)
+ 		goto err_free_qm_memory;
  
- 	kfree(sb);
+ 	qm_cmd_init(qm);
++	hisi_mig_region_enable(qm);
+ 
+ 	return 0;
+ 
+@@ -5863,6 +5889,7 @@ static int qm_rebuild_for_resume(struct hisi_qm *qm)
+ 	}
+ 
+ 	qm_cmd_init(qm);
++	hisi_mig_region_enable(qm);
+ 	hisi_qm_dev_err_init(qm);
+ 	/* Set the doorbell timeout to QM_DB_TIMEOUT_CFG ns. */
+ 	writel(QM_DB_TIMEOUT_SET, qm->io_base + QM_DB_TIMEOUT_CFG);
+diff --git a/include/linux/hisi_acc_qm.h b/include/linux/hisi_acc_qm.h
+index c4690e365ade..aa0129d20c51 100644
+--- a/include/linux/hisi_acc_qm.h
++++ b/include/linux/hisi_acc_qm.h
+@@ -99,6 +99,9 @@
+ 
+ #define QM_DEV_ALG_MAX_LEN		256
+ 
++#define QM_MIG_REGION_SEL		0x100198
++#define QM_MIG_REGION_EN		0x1
++
+ /* uacce mode of the driver */
+ #define UACCE_MODE_NOUACCE		0 /* don't use uacce */
+ #define UACCE_MODE_SVA			1 /* use uacce sva mode */
 -- 
-2.43.0
+2.33.0
 
 
