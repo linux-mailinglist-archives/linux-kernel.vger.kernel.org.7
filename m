@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-875490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD79FC191D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:41:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8B0C193C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3CA4234F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3545A566427
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6B132E68C;
-	Wed, 29 Oct 2025 08:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04499321448;
+	Wed, 29 Oct 2025 08:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQ4Y24FI"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhOUqMRB"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FC7321448
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9723F32E6B9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761726391; cv=none; b=GlJPdgZkRqw53Dr6cmwta8gMRZ6pm7fE9rutfdstvb8u6vv2WHgMkWMk/igEvEbqV4Nd5cEZ4BfzDQaCYgzGG2gH5/xeGArcTS8lcwCUJ7mco+k3cF0PbM+7ASLfdoDHwyIkz82RxxHm88b3lYgCNgXjZ0IXiRxS97Mqkl7KyKE=
+	t=1761726394; cv=none; b=KUkam4BB5w1GR9cScY1ZP9GIHQ5ava0A7IW0Iv+HL8Oou541bneqG/rNh4/rbNw90/5P9gBBMGs7wxBG4D2goD6bzqziygE74VRjwR35D3J+1sSdUnUswffmLlSl28SqbsvSqTkeT8XMCNIL+m3eXy4F5ztua1OK96PO5tzIn+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761726391; c=relaxed/simple;
-	bh=nyCZSmt1D2HnBq6FkYiMqYxTiXGKqyUbzskuCw+9U/Y=;
+	s=arc-20240116; t=1761726394; c=relaxed/simple;
+	bh=sF2dC0yEoZfqsMqlw23WcrsBb8sQVqBQWtlJoeU/pAs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jsHUcAFOgNf91mTAF0heTRNDd7cngTo1sygQPQU3oHs7gtDPt8gSuzNIQQVbD775QL7CRXtq6YLKpN8v//9veL/6vJ7zGuOT+DS71GTLdv6ZGm3ULq6ePu/9yZ5zbAL6108HSXv2s9BN+V5mmc4E1VI91V15kkS92RpM/0AO6Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQ4Y24FI; arc=none smtp.client-ip=209.85.216.54
+	 MIME-Version; b=MzktLAUd4xfFx+OIg04Geoxzsa50y5idUXMcxQOTOsUFqsFkh89rAgWoNZyjG2s02Ze+8m1PI2IO4kuuFdV/wo84R/DqIkk7dvNm//6jsa0/P2QoYdAQuzcplmqOEwb2uA2JCGTdoqIcJTMYM4VRfDiy1QwMFQRSCRN3t9wPFQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhOUqMRB; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so688590a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:26:29 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7a26dab3a97so4343608b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761726389; x=1762331189; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761726392; x=1762331192; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z6KBv+9LBo3P3W+l1WrAwkIVp2BK7WV9DO0KdC2+trI=;
-        b=gQ4Y24FIrYLGwFP1CDMVDSh9tT495PySd+Uok72QSadHsvG7IYpY4hdt1WbJkoha6V
-         c5tCurjgQL8P49tiiO5STDT/l27HuuV+utchBh4iy7K17PXlEe4+O8qacN9j85ZIXmqv
-         elvHpm3vTCfocfOBAH0AEGFEXtqbTV0BoX6Ku8eTKozmYTcsLkSz9T5UW+yOeT8t5+Dc
-         ZFMZICimSFNLgMEAu8Ee/0POsUjPcAxGuDZdfG4jolDNAtxX9Y7Q1C+RIOHTjNHrMtxE
-         NceL4socaw+iUjI1L6m3KiaMKgEp0oXklq0HG1Gd857SiafntseFksH9ibE9jAMT+gFA
-         DOOw==
+        bh=yn0tHntcIm9TXsQwef8sNUxYfqf9R0uILDPExZJh0QE=;
+        b=AhOUqMRBS0xyASLrnCRYf2ZPSq2eR/Raby/ourfh6kYxEsV7ujJHtGrmXM+ULGpxqt
+         rT3kuYxau9VH8bVDKI2NqtsgnebKxoRrMdVBgGd2DCPBHlLeIXWRg64u3Jehw28MOyOn
+         KfhTzGlXHSGMwcaHkaIUhJ7j/v766QFjOdjBRAqcelELGsVsfRb1KCf/jCGwokFoHMSM
+         FwlBEvAuqYdBjkKVgmIYPwYArQmPKeoC9drjm9nLGR3LFBmTw+1d1f7UKtlnO+0EDCWi
+         Yyz58rdzOHR5blTztCaZpw4otDtfDWzegKjf8tnMlmb3hJXHh0RARiXpkKZpt7rCjSW5
+         5nmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761726389; x=1762331189;
+        d=1e100.net; s=20230601; t=1761726392; x=1762331192;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z6KBv+9LBo3P3W+l1WrAwkIVp2BK7WV9DO0KdC2+trI=;
-        b=rcBti0Q6NI6x++AoVSLoe77HMq/YxgRG4FSlHITV1X2ahnF4Cs5Iy0LTCkS3XiNIVp
-         ZnkSMgY4RqgBWU12R39uToC9X2VzR7V92CBjEdvm35Tj9/dxXjFlwdDSEvNwverScoAn
-         6G9FwZeG4TLmemt1z9vwFDCKr7uEcXKUq5gy04i68F6xzt2PTIv9ppGT14F1Sufdf+ob
-         NCRDD9bl3l2YPzOlPOaem33gejJ5z28yBz8uhj+4HJGv83Xzy6EqjiTF8FZ+FUUPq+gJ
-         B99TFXhYvpC1VThOl7HgIqlVGU6AWgAUQ5U58MTdabxrlr5LPizRw2iGbXtjcA006FnQ
-         7Ukw==
-X-Gm-Message-State: AOJu0Yym0lg7SczZlre+gSqPM1OkYxELQtEse/2lzmHQiQOs5MgOh8Xr
-	0UR61sY4qvxvyd59vZrF4V4Wz6NFsjWGxqZ84C1wdD9dayfTa5BdCvlqYZYE3vaty58=
-X-Gm-Gg: ASbGncvgHWuqWt64TdNvLpEseMExqMvCblfeia68RszAiORp3NycEXOuMeHk3/QUmG7
-	ulRgHsS8b7FxocmEKBm4dGMmTo1nLUG6qlwqY1sB3H2SViE8JLfmNv1kyG9fGkVJipq2qX23RS3
-	u0E3DeWJAYB2ECuSrOjqBB6aQK/GK1IQgMVz5XnZORq6xLgFxZujYjjyvEFd3nb5pkmzg4AobiN
-	2k5qeytqa6y155uqeOtrwOO6JlLwZv+95j08FiN4E3iA61lP4oXvE7o4Y4MrMApllev2DbVkPtp
-	YuoiI+GsJjK2xZJ4w4PllNfkUyAMkQ0sxgG2ugbPHrb3SqIoxlHWgU5d+P6izNNXfIaLOfmvMMo
-	U/fgKo1+6Bsaq+LJCQGHnSTJ2+QrzcCozPr/btMaBq2ui/oIOJL7sDvMTU67aOJDUVp6rmyxmZg
-	l7DBEnJb0hhRI=
-X-Google-Smtp-Source: AGHT+IFEMctQ1glWsB5FN3W+UH1ALcUxipYIN+xXnYZnB3spEDqZoPtSw+8CX6fNdREkn3EzAPpmnA==
-X-Received: by 2002:a17:90b:280b:b0:32b:7d35:a7e6 with SMTP id 98e67ed59e1d1-340396eb178mr2640689a91.18.1761726388553;
-        Wed, 29 Oct 2025 01:26:28 -0700 (PDT)
+        bh=yn0tHntcIm9TXsQwef8sNUxYfqf9R0uILDPExZJh0QE=;
+        b=C+rAPNgK9KhzN1AU6zMxLwD20VnUDOxudvrNj/ljt9iHjOzgKhVu2VzNkklo1YK3i8
+         XlxyZXSpemVYF7EtP3KUsKT1oDXY/DvJV4SCmAD+YNkeoNikc389CNaIYeFKhk0BwllS
+         HD3KjY+UMnt0b34+IJGERJdodZFAysesEnLY5i5CZY51jVm+91LNmOXxQmKr/dGYMvIF
+         nqSaylAYVa2f5IKXAl7JyKtW7+dCtebLkLPDCJr7SmT5J4o+B3ESRVPuhjZjYt3kT5+Y
+         7adG1i70TFQhqLAHf51BG8+EA/HSoRm1NSD63JO0SCLNPnKFW9Acsx1FEtSjM30dO0xy
+         A47g==
+X-Gm-Message-State: AOJu0Yy5NGXqyFd0Gdt6ACekRTPwjVNVUyDzMpYcIl+zK4iVtMhyUkUt
+	olc8HC34GfVPNF6uM/5pb6EHYv1XYGVwzXqyVwh8AngIo6y7cCeRpub3
+X-Gm-Gg: ASbGncuqmriGu5Xnhb07twe6yt67YoD9aWt2+gSMOqnFLoeZzZBoAJFv6WrxcSaBThk
+	GWKgFJkvECkpBrrtAQyTppPrN0WS6dMwPafmN9VGCP+J1xQ9hShRCOLVjU9yv/uyfUzrWWZI2XV
+	9gZa0uVpGzl2+isiLCiRtwZLh+RjLDjHttarJVhmQjGBh6NuZyoTtqQ5VWoblwqZuBThpOZfit5
+	iSIqEj0F9yvMpIlSGP9tFmFmnlusUwc9SfcEUiptbQ9Wrwu1+SGNyzr+4aX8yBoSxYCwiNJWGfx
+	ySfY1kP+VZxB9fyl16Qbm8c9PTtU5xdP4E8hgr3pG3m1g6/NBC+zmbrWeUcucl5pj1lcYPPf+hG
+	Okh9Mx+ADl3DNIsc4OBGsOSlw1AaP2VlcCRCbbkMTm5eBKnWOnE2uqEYfP3RG7t5hT5kJmZPwRG
+	ZjjWNNxwzUPGs=
+X-Google-Smtp-Source: AGHT+IGaPtjJNURBFreVhHociDTVO8Qt3Z5yfA7jdZER+9HScrmDJ5QCPbGQTLP2IHCC1IeBVmLIIA==
+X-Received: by 2002:a05:6a20:4328:b0:263:4717:53d with SMTP id adf61e73a8af0-3465381698fmr2495369637.48.1761726391775;
+        Wed, 29 Oct 2025 01:26:31 -0700 (PDT)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b8087fac6d5sm7538006a12.15.2025.10.29.01.26.27
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b7127bf6accsm13075614a12.14.2025.10.29.01.26.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 01:26:27 -0700 (PDT)
+        Wed, 29 Oct 2025 01:26:29 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 3D735420A6BF; Wed, 29 Oct 2025 15:26:19 +0700 (WIB)
+	id 4EE824201B81; Wed, 29 Oct 2025 15:26:19 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -87,9 +87,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Steffen Klassert <steffen.klassert@secunet.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH net-next 1/6] Documentation: xfrm_device: Wrap iproute2 snippets in literal code block
-Date: Wed, 29 Oct 2025 15:26:09 +0700
-Message-ID: <20251029082615.39518-2-bagasdotme@gmail.com>
+Subject: [PATCH net-next 2/6] Documentation: xfrm_device: Use numbered list for offloading steps
+Date: Wed, 29 Oct 2025 15:26:10 +0700
+Message-ID: <20251029082615.39518-3-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251029082615.39518-1-bagasdotme@gmail.com>
 References: <20251029082615.39518-1-bagasdotme@gmail.com>
@@ -99,41 +99,53 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1413; i=bagasdotme@gmail.com; h=from:subject; bh=nyCZSmt1D2HnBq6FkYiMqYxTiXGKqyUbzskuCw+9U/Y=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJmM5zVsT2rF9Xw1WfpGmUmQmenQnZeaX84Erus1XZxr+ Xd2xWTljlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzkZg4jQ1u4S61VnT7Pxy5m ltoXrEuZ8k+oLlo+Y1aO6aMbJ5JthRgZll9oOlV47/2FCIO5gvd+Jp1VLjVaF1Us3eb5Un0ugwM vAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1691; i=bagasdotme@gmail.com; h=from:subject; bh=sF2dC0yEoZfqsMqlw23WcrsBb8sQVqBQWtlJoeU/pAs=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJmM5zUM9v13EGe3tvn6LGGFpkSJcNtu3neHdaPPH9v+T /f7rjD5jlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAExkazYjw4Ir2UHbpfU4bh8I +d3Xec7o4ZqlBavYLjF6bl0TOSsmKpaRYWKL+KoWH+3XKvIPVz+7vPilZoDbHRmPd2W/N7U5emW u5AUA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-iproute2 snippets (ip x) are shown in long-running definition lists
-instead. Format them as literal code blocks that do the semantic job
-better.
+Format xfrm offloading steps as numbered list.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/networking/xfrm_device.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/networking/xfrm_device.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/Documentation/networking/xfrm_device.rst b/Documentation/networking/xfrm_device.rst
-index 122204da0fff69..7a13075b5bf06a 100644
+index 7a13075b5bf06a..86db3f42552dd0 100644
 --- a/Documentation/networking/xfrm_device.rst
 +++ b/Documentation/networking/xfrm_device.rst
-@@ -34,7 +34,7 @@ Right now, there are two types of hardware offload that kernel supports.
- Userland access to the offload is typically through a system such as
- libreswan or KAME/raccoon, but the iproute2 'ip xfrm' command set can
- be handy when experimenting.  An example command might look something
--like this for crypto offload:
-+like this for crypto offload::
+@@ -153,26 +153,26 @@ the packet's skb.  At this point the data should be decrypted but the
+ IPsec headers are still in the packet data; they are removed later up
+ the stack in xfrm_input().
  
-   ip x s add proto esp dst 14.0.0.70 src 14.0.0.52 spi 0x07 mode transport \
-      reqid 0x07 replay-window 32 \
-@@ -42,7 +42,7 @@ like this for crypto offload:
-      sel src 14.0.0.52/24 dst 14.0.0.70/24 proto tcp \
-      offload dev eth4 dir in
+-	find and hold the SA that was used to the Rx skb::
++1. Find and hold the SA that was used to the Rx skb::
  
--and for packet offload
-+and for packet offload::
+-		get spi, protocol, and destination IP from packet headers
++		/* get spi, protocol, and destination IP from packet headers */
+ 		xs = find xs from (spi, protocol, dest_IP)
+ 		xfrm_state_hold(xs);
  
-   ip x s add proto esp dst 14.0.0.70 src 14.0.0.52 spi 0x07 mode transport \
-      reqid 0x07 replay-window 32 \
+-	store the state information into the skb::
++2. Store the state information into the skb::
+ 
+ 		sp = secpath_set(skb);
+ 		if (!sp) return;
+ 		sp->xvec[sp->len++] = xs;
+ 		sp->olen++;
+ 
+-	indicate the success and/or error status of the offload::
++3. Indicate the success and/or error status of the offload::
+ 
+ 		xo = xfrm_offload(skb);
+ 		xo->flags = CRYPTO_DONE;
+ 		xo->status = crypto_status;
+ 
+-	hand the packet to napi_gro_receive() as usual
++4. Hand the packet to napi_gro_receive() as usual.
+ 
+ In ESN mode, xdo_dev_state_advance_esn() is called from
+ xfrm_replay_advance_esn() for RX, and xfrm_replay_overflow_offload_esn for TX.
 -- 
 An old man doll... just what I always wanted! - Clara
 
