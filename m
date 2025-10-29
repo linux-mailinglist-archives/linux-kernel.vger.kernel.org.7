@@ -1,267 +1,338 @@
-Return-Path: <linux-kernel+bounces-876947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51FBC1CD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:53:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8073C1CD69
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F3434E1CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1570189F15A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231B6357A20;
-	Wed, 29 Oct 2025 18:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BD1357725;
+	Wed, 29 Oct 2025 18:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="Oy4ATxSh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bjt04KRT"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="aRcttS/R"
+Received: from sinmsgout03.his.huawei.com (sinmsgout03.his.huawei.com [119.8.177.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55003546E0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938CB3563E3;
+	Wed, 29 Oct 2025 18:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764002; cv=none; b=e8gduC7imgCGduAoSTlmh6SvFPdu3kPYnvPTM6FQ4tn/iGznDYemy3w7fYswF+mQ9dglpaB7lXKM7u8XzSlED9bPjPaRz3F6BKv/HqK4OWDnmisXZf2IvgyY5LTsbta88xeQ/4V7GhdNDB23OZs4FJ8g7+JSxn/3RkljVWqrwdk=
+	t=1761764036; cv=none; b=iGYYNBaEuHMtux4oXVgmXJT8ZFCgPs+inXva7ZfJhyevc+rA2KcsgzvX4mh3gBXy8CC4WdnO44CETiQc1C6768XpC2WcedyLPlGb2KJgpWpHsA/4zxp6PKsMmKY7kFg/liQMp4CBsqmTOFH3eWhLcdNu4WvlUNVTVpbQI5m726k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764002; c=relaxed/simple;
-	bh=wRMznDOqGBi9hyKvz/BjSxU2ib+WPCwV3akiITfgc3E=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OWKOCrJ+WGjPglfdOdgHVKNt5lkBUgdw26eZjEio7ycOCU9MYvf/lijwMeu7fnjoULEMcHSWh2OKAz9PKji441qkygIbFSy2V9uBnGI3ERv5Ai8DCL2e3ALGlL48DQ6QbaCRu9gr/EUJzr8MLlaitv4EjQk3m9adiNsb6lFiBzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=Oy4ATxSh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bjt04KRT; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 930A07A0132;
-	Wed, 29 Oct 2025 14:53:18 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-03.internal (MEProxy); Wed, 29 Oct 2025 14:53:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1761763998; x=1761850398; bh=xhWzsyF84r
-	OxsZy1PQhYuMBk7u+GLofG6sdJyhzqzqM=; b=Oy4ATxShA5onn6JSH+ruS2ULVh
-	mruFg6/7SgWfJ6pTKC5CL13St844gyb166wxShY7xE2yNMDCr/9p+dvuCI1Mk0id
-	dgG1JgrosoDQaiEstEH74ssxutdWTWYSpT5jWHBUv6+f1hhkENNKMcbd+axrHkfq
-	7zXjypZzYykAJ0aeQB2hafRrRqa0sInc1clF9jxfacyPR65qCqvCTJYUeBB4re7I
-	K4761qJL87XTvJvsVsZJ4cuw6H9cN3/OL3YGhSP6DBIORhLwmBpTcPYrKz26gVV7
-	0T0ed8a7HX8MUCjHQ0I3192jLXb+TS9HsKynJvUIRQhdWqtbjNfPNdhzK0XQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1761763998; x=1761850398; bh=xhWzsyF84rOxsZy1PQhYuMBk7u+GLofG6sd
-	JyhzqzqM=; b=Bjt04KRTyUWBzvRRv9PbmuHkKuBY4YluIAWx1WjL7lQbpeeNXZU
-	g7eGtBHx52IAKBn/vDcZA1jIqqXnBcuca2colZ3xbSUbv0buahPAyVvVHBxTNQye
-	R8O5X/ugYTKtKLyY9GSSId49Rm0MGvOF+98was40WLh8wSc5C8//oyegcQNEFT3T
-	ei6IokT8JDSfGJAOHZmlrmoYCTft6faS78lMG0m6Kl5wsRzq3cVE6E3+r8C6/YJT
-	DZoafZVTOwqlvFYQNOcfJCJIQWBDZXUH3NphPX8sRnAH7C6T+Xz8BX+2k6bfwIw6
-	Po5HtfGLvJwZCvQfsUkiHhmaYuPIfiYOorQ==
-X-ME-Sender: <xms:m2ICaYwBJUPaM4zWUbqVy8TtQD3ukxtQK1ctj0pJIN7xTPG49zTvDQ>
-    <xme:m2ICadPubefICf7aZTTFd12_vGZwXTC-t112nMtiw5Sv5hW32y8gx09x425heLqkT
-    HuPT_65sSPtuIe-HCiF2ft4UjMHEdBa_VgWmv1q4_asIyh-fW8BIQ>
-X-ME-Received: <xmr:m2ICaapHkVH5OfCe_0UwVhrc1hm_0jJ8qHM3DdVrCCc_n2X0b99uFEmdj4fTY52MDzsg2b_fZCwkd7FGqPw2xVsWey0b0WYrV_JcilZL>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeghedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefpihgtohhlrghs
-    ucfrihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvghtqeenucggtffrrghtthgvrh
-    hnpefgvedvhfefueejgefggfefhfelffeiieduvdehffduheduffekkefhgeffhfefveen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtoh
-    esfhhluhignhhitgdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehlihhroh
-    hnghhqihhnghessggrihguuhdrtghomhdprhgtphhtthhopehurdhklhgvihhnvgdqkhho
-    vghnihhgsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopegsihhjuhdruggrshdrjh
-    iisegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopehkhhgriihhhiestghhrhho
-    mhhiuhhmrdhorhhgpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohephihukhhurghifeeshhhurgifvghirdgtohhm
-    pdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    eprgigsghovgeskhgvrhhnvghlrdgukh
-X-ME-Proxy: <xmx:m2ICaU8JeGu8VsTCq3u1gFUWwxZ8kSTWs2iOyPtplK_7iAJvjH8KmQ>
-    <xmx:m2ICaQ2TQmu4vrlPatBmtX_598wE1-vCFSW_fdWDTDV2YkpuTP-a_Q>
-    <xmx:m2ICaXAJt5rEBlRf0DEEN_d4YcMqMrYi1cWAUdag7yp_s_wAHTmz4w>
-    <xmx:m2ICafBAi-ilJ5BFwxktMrjk6Cw6yrjgHoYIJ3XOG_LTGUvEbb4JQw>
-    <xmx:nmICaQswlNpaaIMHxwcWHArh2x0pYmxojqGV43iHmxtjOY10LhfdeFYL>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Oct 2025 14:53:14 -0400 (EDT)
-Received: from xanadu (xanadu.lan [192.168.1.120])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 038AE13E371B;
-	Wed, 29 Oct 2025 14:53:13 -0400 (EDT)
-Date: Wed, 29 Oct 2025 14:53:13 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: David Laight <david.laight.linux@gmail.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, 
-    Yu Kuai <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, 
-    Jens Axboe <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 6/9] lib: test_mul_u64_u64_div_u64: Test both
- generic and arch versions
-In-Reply-To: <20251029173828.3682-7-david.laight.linux@gmail.com>
-Message-ID: <06s18s2p-97n5-9s2o-0rq0-7o8o2ns9s3qn@syhkavp.arg>
-References: <20251029173828.3682-1-david.laight.linux@gmail.com> <20251029173828.3682-7-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1761764036; c=relaxed/simple;
+	bh=QYApO3MfS9J0LIrWE7POhwN4+UJMBTuGqjI7z0wBsB0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=er5qdnOPcSb4kZvff9rAIP/Gb0mTVKkNWmxSD+Kddkiwn9rTxqcSvayvQyC58BYssq2lX/zLmotyrz8Spa6uPXHRSmN+EiDCmVuNXRWwhXssWEnW2e7K3pKo2cVWHwWOINkMFuuV52FWvGZc/bTNJLnexWzgAxPM86AZAGS8pEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=aRcttS/R; arc=none smtp.client-ip=119.8.177.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=kHa9VxLTKrpVmQMTd3u1VXcvIkYKv0AO/Hnmqp/OGho=;
+	b=aRcttS/RbiKAHRyXy99ro1Dg7gdjRzL8w03c0sjJg49oVWGQ55XjOu2wdqm1WLB9Q+w6Cdzly
+	x3qmsDeZtSk41EsGoza0PisB8QuGLa42M/wTQNd6E7xLaSVb5lcrEry7DmiVu6lgXHMxmH5lllS
+	6q9zh0GKJ93m6LC5zlDjMf0=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.32])
+	by sinmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cxbwY0mJBzMlQs;
+	Thu, 30 Oct 2025 02:53:00 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cxbwM4jNHzHnGct;
+	Wed, 29 Oct 2025 18:52:51 +0000 (UTC)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8455F1402EF;
+	Thu, 30 Oct 2025 02:53:44 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
+ 2025 18:53:43 +0000
+Date: Wed, 29 Oct 2025 18:53:42 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dan.j.williams@intel.com>, <aik@amd.com>, <lukas@wunner.de>, Samuel Ortiz
+	<sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe
+	<jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven Price
+	<steven.price@arm.com>, Bjorn Helgaas <helgaas@kernel.org>, Catalin Marinas
+	<catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
+	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH RESEND v2 12/12] coco: host: arm64: Register device
+ public key with RMM
+Message-ID: <20251029185342.00001dc2@huawei.com>
+In-Reply-To: <20251027095602.1154418-13-aneesh.kumar@kernel.org>
+References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
+	<20251027095602.1154418-13-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, 29 Oct 2025, David Laight wrote:
+On Mon, 27 Oct 2025 15:26:02 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-> Change the #if in div64.c so that test_mul_u64_u64_div_u64.c
-> can compile and test the generic version (including the 'long multiply')
-> on architectures (eg amd64) that define their own copy.
-> 
-> Test the kernel version and the locally compiled version on all arch.
-> Output the time taken (in ns) on the 'test completed' trace.
-> 
-> For reference, on my zen 5, the optimised version takes ~220ns and the
-> generic version ~3350ns.
-> Using the native multiply saves ~200ns and adding back the ilog2() 'optimisation'
-> test adds ~50ms.
-> 
-> Signed-off-by: David Laight <david.laight.linux@gmail.com>
+> - Introduce the SMC_RMI_PDEV_SET_PUBKEY helper and the associated struct
+> rmi_public_key_params so the host can hand the device=E2=80=99s public ke=
+y to
+> the RMM.
+>=20
+> - Parse the certificate chain cached during IDE setup, extract the final
+> certificate=E2=80=99s public key, and recognise RSA-3072, ECDSA-P256, and
+> ECDSA-P384 keys before calling into the RMM.
+>=20
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 
-Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
+Various comments inline.
 
-> ---
-> 
-> Changes for v4:
-> - Fix build on non x86 (eg arm32)
-> 
->  lib/math/div64.c                    |  8 +++--
->  lib/math/test_mul_u64_u64_div_u64.c | 51 +++++++++++++++++++++++++----
->  2 files changed, 50 insertions(+), 9 deletions(-)
-> 
-> diff --git a/lib/math/div64.c b/lib/math/div64.c
-> index 25295daebde9..f92e7160feb6 100644
-> --- a/lib/math/div64.c
-> +++ b/lib/math/div64.c
-> @@ -177,16 +177,18 @@ EXPORT_SYMBOL(div64_s64);
->   * Iterative div/mod for use when dividend is not expected to be much
->   * bigger than divisor.
->   */
-> +#ifndef iter_div_u64_rem
->  u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
->  {
->  	return __iter_div_u64_rem(dividend, divisor, remainder);
+Overall this patch set seems to be coming together nicely to me.
+
+Jonathan
+
+> diff --git a/drivers/virt/coco/arm-cca-host/rmi-da.c b/drivers/virt/coco/=
+arm-cca-host/rmi-da.c
+> index 644609618a7a..c9780ca64c17 100644
+> --- a/drivers/virt/coco/arm-cca-host/rmi-da.c
+> +++ b/drivers/virt/coco/arm-cca-host/rmi-da.c
+> @@ -8,6 +8,9 @@
+>  #include <linux/pci-doe.h>
+>  #include <linux/delay.h>
+>  #include <asm/rmi_cmds.h>
+> +#include <crypto/internal/rsa.h>
+> +#include <keys/asymmetric-type.h>
+> +#include <keys/x509-parser.h>
+> =20
+>  #include "rmi-da.h"
+> =20
+> @@ -361,6 +364,146 @@ static int do_pdev_communicate(struct pci_tsm *tsm,=
+ enum rmi_pdev_state target_s
+>  	return do_dev_communicate(PDEV_COMMUNICATE, tsm, target_state, RMI_PDEV=
+_ERROR);
 >  }
->  EXPORT_SYMBOL(iter_div_u64_rem);
-> +#endif
->  
-> -#ifndef mul_u64_add_u64_div_u64
-> +#if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
->  u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  {
-> -#if defined(__SIZEOF_INT128__)
-> +#if defined(__SIZEOF_INT128__) && !defined(test_mul_u64_add_u64_div_u64)
->  
->  	/* native 64x64=128 bits multiplication */
->  	u128 prod = (u128)a * b + c;
-> @@ -267,5 +269,7 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  
->  	return res;
->  }
-> +#if !defined(test_mul_u64_add_u64_div_u64)
->  EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
->  #endif
-> +#endif
-> diff --git a/lib/math/test_mul_u64_u64_div_u64.c b/lib/math/test_mul_u64_u64_div_u64.c
-> index 4d5e4e5dac67..a3c5e54f37ef 100644
-> --- a/lib/math/test_mul_u64_u64_div_u64.c
-> +++ b/lib/math/test_mul_u64_u64_div_u64.c
-> @@ -73,21 +73,34 @@ done
->  
->   */
->  
-> -static int __init test_init(void)
-> +static u64 test_mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d);
+> =20
+> +static int parse_certificate_chain(struct pci_tsm *tsm)
+> +{
+> +	struct cca_host_pf0_dsc *pf0_dsc;
+> +	unsigned int chain_size;
+> +	unsigned int offset =3D 0;
+> +	u8 *chain_data;
 > +
-> +static int __init test_run(unsigned int fn_no, const char *fn_name)
->  {
-> +	u64 start_time;
->  	int errors = 0;
->  	int tests = 0;
->  	int i;
->  
-> -	pr_info("Starting mul_u64_u64_div_u64() test\n");
-> +	start_time = ktime_get_ns();
->  
->  	for (i = 0; i < ARRAY_SIZE(test_values); i++) {
->  		u64 a = test_values[i].a;
->  		u64 b = test_values[i].b;
->  		u64 d = test_values[i].d;
->  		u64 expected_result = test_values[i].result;
-> -		u64 result = mul_u64_u64_div_u64(a, b, d);
-> -		u64 result_up = mul_u64_u64_div_u64_roundup(a, b, d);
-> +		u64 result, result_up;
+> +	pf0_dsc =3D to_cca_pf0_dsc(tsm->pdev);
 > +
-> +		switch (fn_no) {
-> +		default:
-> +			result = mul_u64_u64_div_u64(a, b, d);
-> +			result_up = mul_u64_u64_div_u64_roundup(a, b, d);
-> +			break;
-> +		case 1:
-> +			result = test_mul_u64_add_u64_div_u64(a, b, 0, d);
-> +			result_up = test_mul_u64_add_u64_div_u64(a, b, d - 1, d);
-> +			break;
+> +	/* If device communication didn't results in certificate caching. */
+> +	if (!pf0_dsc->cert_chain.cache || !pf0_dsc->cert_chain.cache->offset)
+> +		return -EINVAL;
+> +
+> +	chain_size =3D pf0_dsc->cert_chain.cache->offset;
+> +	chain_data =3D pf0_dsc->cert_chain.cache->buf;
+> +
+> +	while (offset < chain_size) {
+> +		ssize_t cert_len =3D
+> +			x509_get_certificate_length(chain_data + offset,
+> +						    chain_size - offset);
+> +		if (cert_len < 0)
+> +			return cert_len;
+> +
+> +		struct x509_certificate *cert __free(x509_free_certificate) =3D
+> +			x509_cert_parse(chain_data + offset, cert_len);
+> +
+> +		if (IS_ERR(cert)) {
+> +			pci_warn(tsm->pdev, "parsing of certificate chain not successful\n");
+> +			return PTR_ERR(cert);
 > +		}
->  
->  		tests += 2;
->  
-> @@ -106,15 +119,39 @@ static int __init test_init(void)
->  		}
->  	}
->  
-> -	pr_info("Completed mul_u64_u64_div_u64() test, %d tests, %d errors\n",
-> -		tests, errors);
-> -	return errors ? -EINVAL : 0;
-> +	pr_info("Completed %s() test, %d tests, %d errors, %llu ns\n",
-> +		fn_name, tests, errors, ktime_get_ns() - start_time);
-> +	return errors;
+> +
+> +		/* The key in the last cert in the chain is used */
+> +		if (offset + cert_len =3D=3D chain_size) {
+> +			pf0_dsc->cert_chain.public_key =3D kzalloc(cert->pub->keylen, GFP_KER=
+NEL);
+I'd use a local variable for this + __free(kfree)
+Then assign with no_free_ptr()
+> +			if (!pf0_dsc->cert_chain.public_key)
+> +				return -ENOMEM;
+> +
+> +			if (!strcmp("ecdsa-nist-p256", cert->pub->pkey_algo)) {
+> +				pf0_dsc->rmi_signature_algorithm =3D RMI_SIG_ECDSA_P256;
+> +			} else if (!strcmp("ecdsa-nist-p384", cert->pub->pkey_algo)) {
+> +				pf0_dsc->rmi_signature_algorithm =3D RMI_SIG_ECDSA_P384;
+> +			} else if (!strcmp("rsa", cert->pub->pkey_algo)) {
+> +				pf0_dsc->rmi_signature_algorithm =3D RMI_SIG_RSASSA_3072;
+> +			} else {
+> +				kfree(pf0_dsc->cert_chain.public_key);
+> +				pf0_dsc->cert_chain.public_key =3D NULL;
+Set it only when succeeded (local variable until then).=20
+> +				return -ENXIO;
+> +			}
+> +			memcpy(pf0_dsc->cert_chain.public_key, cert->pub->key, cert->pub->key=
+len);
+> +			pf0_dsc->cert_chain.public_key_size =3D cert->pub->keylen;
+I think at this point we know we are at end of cert chain?  Break would mak=
+e that obvious.
+
+> +		}
+> +
+> +		offset +=3D cert_len;
+> +	}
+> +
+> +	pf0_dsc->cert_chain.valid =3D true;
+> +	return 0;
 > +}
 > +
-> +static int __init test_init(void)
+> +DEFINE_FREE(free_page, unsigned long, if (_T) free_page(_T))
+
+Fully agree with Jason on this one. If it make sense
+belongs in appropriate header.
+I'm a bit bothered by types though as the parameter is IIRC an unsigned lon=
+g.
+
+Might need some wrappers to deal with casting.  To me feels likely
+to be controversial so pitch it separately from this series.
+
+If you want a define free here create a local helper function tightly
+scoped to the type you use it for below.
+
+Or just wrap up the guts of the code in a helper function and
+unconditionally free it the old fashioned way.
+
+
+> +static int pdev_set_public_key(struct pci_tsm *tsm)
 > +{
-> +	pr_info("Starting mul_u64_u64_div_u64() test\n");
-> +	if (test_run(0, "mul_u64_u64_div_u64"))
+> +	unsigned long expected_key_len;
+> +	struct cca_host_pf0_dsc *pf0_dsc;
+> +	int ret;
+> +
+> +	pf0_dsc =3D to_cca_pf0_dsc(tsm->pdev);
+> +	/* Check that all the necessary information was captured from communica=
+tion */
+> +	if (!pf0_dsc->cert_chain.valid)
 > +		return -EINVAL;
-> +	if (test_run(1, "test_mul_u64_u64_div_u64"))
+> +
+> +	struct rmi_public_key_params *key_params __free(free_page) =3D
+> +		(struct rmi_public_key_params *)get_zeroed_page(GFP_KERNEL);
+> +	if (!key_params)
+> +		return -ENOMEM;
+> +
+> +	key_params->rmi_signature_algorithm =3D pf0_dsc->rmi_signature_algorith=
+m;
+> +
+> +	switch (key_params->rmi_signature_algorithm) {
+> +	case RMI_SIG_ECDSA_P384:
+> +	{
+> +		expected_key_len =3D 97;
+That feels like it should be a define somewhere.
+> +
+> +		if (pf0_dsc->cert_chain.public_key_size !=3D expected_key_len)
+> +			return -EINVAL;
+> +
+> +		key_params->public_key_len =3D pf0_dsc->cert_chain.public_key_size;
+> +		memcpy(key_params->public_key,
+> +		       pf0_dsc->cert_chain.public_key,
+> +		       pf0_dsc->cert_chain.public_key_size);
+> +		key_params->metadata_len =3D 0;
+> +		break;
+> +	}
+> +	case RMI_SIG_ECDSA_P256:
+> +	{
+> +		expected_key_len =3D 65;
+Same with this constant.
+
+> +
+> +		if (pf0_dsc->cert_chain.public_key_size !=3D expected_key_len)
+> +			return -EINVAL;
+> +
+> +		key_params->public_key_len =3D pf0_dsc->cert_chain.public_key_size;
+> +		memcpy(key_params->public_key,
+> +		       pf0_dsc->cert_chain.public_key,
+> +		       pf0_dsc->cert_chain.public_key_size);
+> +		key_params->metadata_len =3D 0;
+> +		break;
+> +	}
+> +	case RMI_SIG_RSASSA_3072:
+> +	{
+> +		struct rsa_key rsa_key =3D {0};
+> +
+> +		expected_key_len =3D 385;
+And this one ;)
+> +		int ret_rsa_parse =3D rsa_parse_pub_key(&rsa_key,
+> +						      pf0_dsc->cert_chain.public_key,
+> +						      pf0_dsc->cert_chain.public_key_size);
+Don't mix declarations and code except for cleanup.h stuff.
+
+> +		/* This also checks the key_len */
+> +		if (ret_rsa_parse)
+> +			return ret_rsa_parse;
+> +		/*
+> +		 * exponent is usually 65537 (size =3D 24bits) but in rare cases
+> +		 * the size can be as large as the modulus
+> +		 */
+> +		if (rsa_key.e_sz > expected_key_len)
+> +			return -EINVAL;
+> +
+> +		key_params->public_key_len =3D rsa_key.n_sz;
+> +		key_params->metadata_len =3D rsa_key.e_sz;
+> +		memcpy(key_params->public_key, rsa_key.n, rsa_key.n_sz);
+> +		memcpy(key_params->metadata, rsa_key.e, rsa_key.e_sz);
+> +		break;
+> +	}
+> +	default:
 > +		return -EINVAL;
-> +	return 0;
->  }
->  
->  static void __exit test_exit(void)
+> +	}
+> +
+> +	ret =3D rmi_pdev_set_pubkey(virt_to_phys(pf0_dsc->rmm_pdev),
+> +				  virt_to_phys(key_params));
+> +	return ret;
+
+return rmi_pdev_set_pubkey();
+
+> +}
+> +
+>  void pdev_communicate_work(struct work_struct *work)
 >  {
+>  	unsigned long state;
+> @@ -410,7 +553,28 @@ static int submit_pdev_comm_work(struct pci_dev *pde=
+v, int target_state)
+> =20
+>  int pdev_ide_setup(struct pci_dev *pdev)
+>  {
+> -	return submit_pdev_comm_work(pdev, RMI_PDEV_NEEDS_KEY);
+> +	int ret;
+> +
+> +	ret =3D submit_pdev_comm_work(pdev, RMI_PDEV_NEEDS_KEY);
+> +	if (ret)
+> +		return ret;
+> +	/*
+> +	 * we now have certificate chain in dsm->cert_chain. Parse
+
+Wrap at 80 chars. This is a bit short.
+
+> +	 * that and set the pubkey.
+> +	 */
+> +	ret =3D parse_certificate_chain(pdev->tsm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D pdev_set_public_key(pdev->tsm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D submit_pdev_comm_work(pdev, RMI_PDEV_READY);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+	return submit_pdev_comm_work(...)
+
 >  }
->  
-> +/* Compile the generic mul_u64_add_u64_div_u64() code */
-> +#define __div64_32 __div64_32
-> +#define div_s64_rem div_s64_rem
-> +#define div64_u64_rem div64_u64_rem
-> +#define div64_u64 div64_u64
-> +#define div64_s64 div64_s64
-> +#define iter_div_u64_rem iter_div_u64_rem
-> +
-> +#undef mul_u64_add_u64_div_u64
-> +#define mul_u64_add_u64_div_u64 test_mul_u64_add_u64_div_u64
-> +#define test_mul_u64_add_u64_div_u64 test_mul_u64_add_u64_div_u64
-> +
-> +#include "div64.c"
-> +
->  module_init(test_init);
->  module_exit(test_exit);
->  
-> -- 
-> 2.39.5
-> 
-> 
+
+
 
