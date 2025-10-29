@@ -1,668 +1,193 @@
-Return-Path: <linux-kernel+bounces-875126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED1BC1845B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:04:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C68C18637
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1C1B4E95ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:04:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6CA21A26863
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5D2F6579;
-	Wed, 29 Oct 2025 05:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFA82FE06D;
+	Wed, 29 Oct 2025 06:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIlxOBWP"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="EnhdmNK7"
+Received: from mail-m49205.qiye.163.com (mail-m49205.qiye.163.com [45.254.49.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246C62882A1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A31A1F4606;
+	Wed, 29 Oct 2025 06:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761714277; cv=none; b=Ow8D+qD3i+rlnI4LObhbfJFZ2HRbOa0B6dSQdw4QAORDAT6Yr6ZrlqVL4pmdw/RuAS40N/bvsAJdVVwZoQX/YwTR7oVdXLfua6W43+QLbDnQnVmRyWPqVDgcIsLPD35NCNBrji6HzBxsLD7U9OprLrZIO/YFVGcj14IuNytzzJQ=
+	t=1761718270; cv=none; b=boI0q0Fl/Z5UVykcxw7X5jhlOtZgw3oOzREWtnA8fItTzglODBrCJur/eJA6ow1Yz9o8BF8cuIfQsqHagqa8mbQIZpp4c4Gm1Cj05b3YNTvrXNVtp1owOmighcoI2CvULlliFYOPkGoowZpR2jpZ4Wg9LtEd+8DWJK/Ro5B53b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761714277; c=relaxed/simple;
-	bh=uUMjKQd1nrUi8O/tjDJIsP49/XT1Fe5H5AwXoJVbfjA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CYmJ5m+RC0ZHNBZCVG52l1DChULpZcyJYstlRUvgkPT/NjPN57VoG6Wg3pZhK6tQ/ugAcfdQcHpCFSbJzAbKrJlhjSt5pNeQchS8PgOWXt9hzMRoukOb1IC93XLZ2chKmanjlSvXSCzbF/vf34fzgEjTYz+T/FljXIvSpCyvBMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIlxOBWP; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b70406feed3so83429266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761714272; x=1762319072; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vgfDUzdG5W6T8jK17/beJCx0BfwfHWG0x2BFbH1rXQA=;
-        b=IIlxOBWPIC3uF3werTbV6j1JiPNv6t+HMPQkcoC9BZ4AhGeOSv6KOuLuiAb9ZUh1+M
-         eqedQW5vu2u07Een26vSfEZCnTHI+LF/nkkRwDG1yXsgDPvpRdniEu+Dhw22y2tAgqp/
-         CxUf3rHlQ58pMBwQxMHvtAn7qJucShQdRBkEnCigS9hX4VQBfmF6y75elS74ZSy2TR1k
-         kuCxu867l0gNbj64VIA223ZGf+Pfki2LprFUPpnzS7Mfs3i+z5s4j+6bSGkyUD9LGwS/
-         v9cHajMnv4zmGguZgCQjRWmbpf7RuFRS9bYJWljvsgPDyeQo+4ccHRdKWRX45SlfwdYi
-         piPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761714272; x=1762319072;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vgfDUzdG5W6T8jK17/beJCx0BfwfHWG0x2BFbH1rXQA=;
-        b=IQIzGUxwDOq6bbkiHeK4hl98RWOJIAs+X5qpjbZK+YflThpPC1jySgZVDdqB/KS1KD
-         LTapi7Uoiahrv/IcVvnaCwEH3nuPsD8OvE9B4jVLYqv8i4vtbOs+9a4LKXdnJErh5SMz
-         n/MK9CVvs3QOg2wjKlvZJ0QH8Raety8hcaJZsD1H7K+ZlqVptNax5VzGFN5I/I5GDew/
-         qUdYANqHmZt+boltw34uzsTr0PVPiX7HTkDdch9DyACRwp/+52Ni64W9ngP6CtOJMYfF
-         bHvKiSG4qpaIcTN6+UCuCdWHuLI99NA7r+D2rj/riVvITRNkZfLbXpKNh5QQ2u2yZH72
-         e7tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUia3jNSEmwSXA1KzuLaXUBLyzmXsshBwqf2m0K/YSwD9AgmWs4pktOgT5sIhYzcBdV6EzAIQrU/W4suoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxZ3Gr7YMFwgvBsTXkNgHcIzsebxF+TTFotnGM2JQ7samGrIX7
-	2fVrWsSPTx6rrWX+PgxruEGqDK5tzDhTo45kxfTJKF/bS0Vd9RGZKBYV+QqchPhluxw7p1+VyFK
-	ZOnrlv2+4RaFQgsNDKrUP+9BaGG8kWXY=
-X-Gm-Gg: ASbGncuOQS5za/Wp6G031ypNtZzTrOEodf6nJ8ijJ0zHU+K8Fjy19J61lLMg71hJS/c
-	z5BnByhGEc3tIWdHZuoNqax8EqH9pICo6AAC2OTok1QejzYU03q7XFaIh3RMWh8K87lA7Tr23pk
-	KfCJ7HTygPf3ULAzn6M2VIlIayiJLrEgVFd7UnYnyDiV3Cdf6qlGibAnDwj/ntBMwKF2+KrqJuX
-	BTdVK1D8kNT+H9EyUEIT3N8Hn+9CzlKGI9w82SRPqOi9BJBU9duXhGdKjUFhQ==
-X-Google-Smtp-Source: AGHT+IGtf2mvPt1zHXOCTQN2kA6uPHYPIk/PSDkri1uGTVEGlimrmvlhMVnvFMqkX4sof8I3CnxNW3z7Fhubf5cXBJk=
-X-Received: by 2002:a05:6402:2347:b0:63b:ed9c:dd0e with SMTP id
- 4fb4d7f45d1cf-64044380ee1mr1085214a12.33.1761714272173; Tue, 28 Oct 2025
- 22:04:32 -0700 (PDT)
+	s=arc-20240116; t=1761718270; c=relaxed/simple;
+	bh=AXxcj1V8QdcEZ6+NUQdvhEijUxhQu5p79+OdzWF+vJs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZZHZ+GXAo6f5BCjpY5QvPJ4CA4UAYurwEz7Y4UL56qmne0oLCMDifDaNGIAYJKMQZvYBegzDbC1Zs4deEJw0EBpBdut9HqABVMcEN5gvUmYh/WR4FFTWZ4RwxPo0xnxQSrNdhMgUJ3G6vYP3XB+KzFIGaAE02I061O1tKsQauK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=EnhdmNK7; arc=none smtp.client-ip=45.254.49.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 278abcfb1;
+	Wed, 29 Oct 2025 08:28:13 +0800 (GMT+08:00)
+Message-ID: <3fcd5562-a367-41e9-8bff-51e5990145e2@rock-chips.com>
+Date: Wed, 29 Oct 2025 08:28:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
- <20251027135423.3098490-2-dolinux.peng@gmail.com> <CAEf4BzZXVARn5_-3eMmPupU-gun7p3VX-VuCVOuHBC0o0L-Pjg@mail.gmail.com>
-In-Reply-To: <CAEf4BzZXVARn5_-3eMmPupU-gun7p3VX-VuCVOuHBC0o0L-Pjg@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 29 Oct 2025 13:04:20 +0800
-X-Gm-Features: AWmQ_bk235WkiUHpG6Ys6yUj08lpcXzcjhrRTYwKLTDr-3l7gRegbj6yb63Y_nE
-Message-ID: <CAErzpms3cyc0urFkZ3dPYR9UwL=3393qLh0PTZvcGhF2GXSrww@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 1/3] btf: implement BTF type sorting for
- accelerated lookups
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
+ Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>,
+ "moderated list:ARM/Rockchip SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource
+ cleanup
+To: Anand Moon <linux.amoon@gmail.com>
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-2-linux.amoon@gmail.com>
+ <4fe0ccf9-8866-443a-8083-4a2af7035ee6@rock-chips.com>
+ <CANAwSgRXcg4tO00SNu77EKdp6Ay6X7+_f-ZoHxgkv1himxdi0Q@mail.gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <CANAwSgRXcg4tO00SNu77EKdp6Ay6X7+_f-ZoHxgkv1himxdi0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a2d5d7fa609cckunm42001d6025423a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUJKGlYdHRlOTRlIQ0MYQkxWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=EnhdmNK7UPDdSC1XgqbfxEnNOjTCjGjaaUnxh2iZtaj5IhIedJTIvIhcCv8kSzJCibxayqMndZwLbtjWAa0MSChiyaL9qn1PrpBiqijpLzyLMPj9MTV4tpwSc+SzHZbhlLbls67xsUtwKxdbSWyM9FPC6TLvQ0aYkJ2sb7BHuXI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=VXeB1XRi1t4+hav00/PO85fUCGM4DHZek+mbIiPUEtA=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, Oct 29, 2025 at 2:38=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.=
-com> wrote:
-> >
-> > This patch introduces a new libbpf interface btf__permute() to reorgani=
-ze
-> > BTF types according to a provided mapping. The BTF lookup mechanism is
-> > enhanced with binary search capability, significantly improving lookup
-> > performance for large type sets.
-> >
-> > The pahole tool can invoke this interface with a sorted type ID array,
-> > enabling binary search in both user space and kernel. To share core log=
-ic
-> > between kernel and libbpf, common sorting functionality is implemented
-> > in a new btf_sort.c source file.
-> >
-> > Cc: Eduard Zingerman <eddyz87@gmail.com>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > Cc: Alan Maguire <alan.maguire@oracle.com>
-> > Cc: Song Liu <song@kernel.org>
-> > Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
-> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > ---
-> > v2->v3:
-> > - Remove sorting logic from libbpf and provide a generic btf__permute()=
- interface
-> > - Remove the search direction patch since sorted lookup provides suffic=
-ient performance
-> >   and changing search order could cause conflicts between BTF and base =
-BTF
-> > - Include btf_sort.c directly in btf.c to reduce function call overhead
-> > ---
-> >  tools/lib/bpf/btf.c            | 262 ++++++++++++++++++++++++++++++---
-> >  tools/lib/bpf/btf.h            |  17 +++
-> >  tools/lib/bpf/btf_sort.c       | 174 ++++++++++++++++++++++
-> >  tools/lib/bpf/btf_sort.h       |  11 ++
-> >  tools/lib/bpf/libbpf.map       |   6 +
-> >  tools/lib/bpf/libbpf_version.h |   2 +-
-> >  6 files changed, 447 insertions(+), 25 deletions(-)
-> >  create mode 100644 tools/lib/bpf/btf_sort.c
-> >  create mode 100644 tools/lib/bpf/btf_sort.h
-> >
->
-> This looks a bit over-engineered, let's try to simplify and have more
-> succinct implementation
 
-Thanks, I will simplify it.
+在 2025/10/28 星期二 17:34, Anand Moon 写道:
+> Hi Shawn,
+> 
+> Thanks for your review comments.
+> 
+> On Tue, 28 Oct 2025 at 05:56, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>>
+>> 在 2025/10/27 星期一 22:55, Anand Moon 写道:
+>>> Introduce a .remove() callback to the Rockchip DesignWare PCIe
+>>> controller driver to ensure proper resource deinitialization during
+>>> device removal. This includes disabling clocks and deinitializing the
+>>> PCIe PHY.
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>> ---
+>>>    drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+>>>    1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>>> index 87dd2dd188b4..b878ae8e2b3e 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+>>> @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>>>        return ret;
+>>>    }
+>>>
+>>> +static void rockchip_pcie_remove(struct platform_device *pdev)
+>>> +{
+>>> +     struct device *dev = &pdev->dev;
+>>> +     struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
+>>> +
+>>> +     /* Perform other cleanups as necessary */
+>>> +     clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+>>> +     rockchip_pcie_phy_deinit(rockchip);
+>>> +}
+>>
+>> Thanks for the patch.
+>>
+>> Dou you need to call dw_pcie_host_deinit()?
+> I feel the rockchip_pcie_phy_deinit will power off the phy
+>> And I think you should also try to mask PCIE_CLIENT_INTR_MASK_MISC and
+>> remove the irq domain as well.
+>>
+>> if (rockchip->irq_domain) {
+>>          int virq, j;
+>>          for (j = 0; j < PCI_NUM_INTX; j++) {
+>>                  virq = irq_find_mapping(rockchip->irq_domain, j);
+>>                  if (virq > 0)
+>>                          irq_dispose_mapping(virq);
+>>           }
+>>          irq_set_chained_handler_and_data(rockchip->irq, NULL, NULL);
+>>          irq_domain_remove(rockchip->irq_domain);
+>> }
+>>
+> I have implemented resource cleanup in rockchip_pcie_remove,
+> which is invoked when the system is shutting down.
+> Your feedback on the updated code is welcome.
+> 
+> static void rockchip_pcie_remove(struct platform_device *pdev)
+> {
+>          struct device *dev = &pdev->dev;
+>          struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
+>          int irq;
+> 
+>          irq = of_irq_get_byname(dev->of_node, "legacy");
+>          if (irq < 0)
+>                  return;
+> 
+>          /* Perform other cleanups as necessary */
+>          /* clear up INTR staatus register */
+>          rockchip_pcie_writel_apb(rockchip, 0xffffffff,
+>                                   PCIE_CLIENT_INTR_STATUS_MISC);
+>          if (rockchip->irq_domain) {
+>                  int virq, j;
+>                  for (j = 0; j < PCI_NUM_INTX; j++) {
+>                          virq = irq_find_mapping(rockchip->irq_domain, j);
+>                          if (virq > 0)
+>                                  irq_dispose_mapping(virq);
+>                  }
+>                  irq_set_chained_handler_and_data(irq, NULL, NULL);
+>                  irq_domain_remove(rockchip->irq_domain);
+>          }
+> 
+>          clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+>          /* poweroff the phy */
+>          rockchip_pcie_phy_deinit(rockchip);
+>          /* release the reset */
 
->
-> pw-bot: cr
->
-> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > index 18907f0fcf9f..d20bf81a21ce 100644
-> > --- a/tools/lib/bpf/btf.c
-> > +++ b/tools/lib/bpf/btf.c
-> > @@ -23,6 +23,7 @@
-> >  #include "libbpf_internal.h"
-> >  #include "hashmap.h"
-> >  #include "strset.h"
-> > +#include "btf_sort.h"
-> >
-> >  #define BTF_MAX_NR_TYPES 0x7fffffffU
-> >  #define BTF_MAX_STR_OFFSET 0x7fffffffU
-> > @@ -92,6 +93,12 @@ struct btf {
-> >          *   - for split BTF counts number of types added on top of bas=
-e BTF.
-> >          */
-> >         __u32 nr_types;
-> > +       /* number of sorted and named types in this BTF instance:
-> > +        *   - doesn't include special [0] void type;
-> > +        *   - for split BTF counts number of sorted and named types ad=
-ded on
-> > +        *     top of base BTF.
-> > +        */
-> > +       __u32 nr_sorted_types;
-> >         /* if not NULL, points to the base BTF on top of which the curr=
-ent
-> >          * split BTF is based
-> >          */
-> > @@ -624,6 +631,11 @@ const struct btf *btf__base_btf(const struct btf *=
-btf)
-> >         return btf->base_btf;
-> >  }
-> >
-> > +__u32 btf__start_id(const struct btf *btf)
-> > +{
-> > +       return btf->start_id;
-> > +}
->
-> this can already be determined using btf__base_btf() (and then getting
-> its btf__type_cnt()), but I guess I don't mind having a small
+release? Or "reset the controller"?
 
-Yes, you're right. The calculation is sufficient:
-- If base_btf is NULL, start_id =3D 1
-- If base_btf is not NULL, start_id =3D btf__type_cnt(base_btf)
+>          reset_control_assert(rockchip->rst);
+>          pm_runtime_put_sync(dev);
+>          pm_runtime_disable(dev);
+>          pm_runtime_no_callbacks(dev);
+> }
+> 
+>> Another thin I noticed is should we call pm_runtime_* here for hope that
+>> genpd could be powered donw once removed?
+>>
+> I could not find 'genpd' (power domain) used in the PCIe driver
+> If we have an example to use genpd I will update this.
+ > > I am also looking into adding NOIRQ_SYSTEM_SLEEP_PM_OPS
 
-> dedicated API for this. But please add it as a separate patch
->
-> > +
-> >  /* internal helper returning non-const pointer to a type */
-> >  struct btf_type *btf_type_by_id(const struct btf *btf, __u32 type_id)
-> >  {
-> > @@ -915,38 +927,16 @@ __s32 btf__find_by_name(const struct btf *btf, co=
-nst char *type_name)
-> >         return libbpf_err(-ENOENT);
-> >  }
-> >
-> > -static __s32 btf_find_by_name_kind(const struct btf *btf, int start_id=
-,
-> > -                                  const char *type_name, __u32 kind)
-> > -{
-> > -       __u32 i, nr_types =3D btf__type_cnt(btf);
-> > -
-> > -       if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
-> > -               return 0;
-> > -
-> > -       for (i =3D start_id; i < nr_types; i++) {
-> > -               const struct btf_type *t =3D btf__type_by_id(btf, i);
-> > -               const char *name;
-> > -
-> > -               if (btf_kind(t) !=3D kind)
-> > -                       continue;
-> > -               name =3D btf__name_by_offset(btf, t->name_off);
-> > -               if (name && !strcmp(type_name, name))
-> > -                       return i;
-> > -       }
-> > -
-> > -       return libbpf_err(-ENOENT);
-> > -}
-> > -
-> >  __s32 btf__find_by_name_kind_own(const struct btf *btf, const char *ty=
-pe_name,
-> >                                  __u32 kind)
-> >  {
-> > -       return btf_find_by_name_kind(btf, btf->start_id, type_name, kin=
-d);
-> > +       return _btf_find_by_name_kind(btf, btf->start_id, type_name, ki=
-nd);
-> >  }
-> >
-> >  __s32 btf__find_by_name_kind(const struct btf *btf, const char *type_n=
-ame,
-> >                              __u32 kind)
-> >  {
-> > -       return btf_find_by_name_kind(btf, 1, type_name, kind);
-> > +       return _btf_find_by_name_kind(btf, 1, type_name, kind);
->
-> nit: please avoid using underscore-prefixed names
+That sounds good, you can pick up my patch[1] if you'd like to continue
+addressing the comments that I haven't had time to think more.
 
-Thanks. I will fix it in the next version.
+[1] https://www.spinics.net/lists/linux-pci/msg171846.html
 
->
-> >  }
-> >
-> >  static bool btf_is_modifiable(const struct btf *btf)
-> > @@ -1091,6 +1081,7 @@ static struct btf *btf_new(const void *data, __u3=
-2 size, struct btf *base_btf, b
-> >         err =3D err ?: btf_sanity_check(btf);
-> >         if (err)
-> >                 goto done;
-> > +       btf_check_sorted(btf, btf->start_id);
->
-> let's do this lazily when we actually need to search by name, that
-> will also work better with invalidation (currently you don't recheck
-> sortedness after invalidation)
+> 
+> Thanks
+> -Anand
+> 
 
-Thanks. I'll defer the call to btf_check_sorted until the first invocation =
-of
-btf__find_by_name_kind.
-
->
-> [...]
->
-> > +/*
-> > + * Permute BTF types in-place using the ID mapping from btf_permute_op=
-ts->ids.
-> > + * After permutation, all type ID references are updated to reflect th=
-e new
-> > + * ordering. If a struct btf_ext (representing '.BTF.ext' section) is =
-provided,
-> > + * type ID references within the BTF extension data are also updated.
-> > + */
->
-> See how we provide doc comment for public APIs and do the same with btf__=
-permute
-
-Thanks, I will fix it in the next version.
-
->
-> > +int btf__permute(struct btf *btf, const struct btf_permute_opts *opts)
->
-> id map array is mandatory parameter which will always be specified,
-> make it a fixed argument. We use opts for something that's optional
-> and/or infrequently used. btf_ext being part of opts makes total
-> sense, though.
-
-Thanks, I will fix it in the next version, like:
-
-int btf__permute(struct btf *btf, __u32 *id_map, const struct
-btf_permute_opts *opts)
-
->
-> > +{
-> > +       struct btf_permute *p;
-> > +       int err =3D 0;
-> > +
-> > +       if (!OPTS_VALID(opts, btf_permute_opts))
-> > +               return libbpf_err(-EINVAL);
-> > +
-> > +       p =3D btf_permute_new(btf, opts);
-> > +       if (!p) {
-> > +               pr_debug("btf_permute_new failed: %ld\n", PTR_ERR(p));
-> > +               return libbpf_err(-EINVAL);
-> > +       }
-> > +
-> > +       if (btf_ensure_modifiable(btf)) {
-> > +               err =3D -ENOMEM;
-> > +               goto done;
-> > +       }
-> > +
-> > +       err =3D btf_permute_shuffle_types(p);
-> > +       if (err < 0) {
-> > +               pr_debug("btf_permute_shuffle_types failed: %s\n", errs=
-tr(err));
-> > +               goto done;
-> > +       }
-> > +       err =3D btf_permute_remap_types(p);
->
-> can't we remap IDs as we shuffle and move types around? I'm not sure
-
-This approach appears infeasible, as it necessitates first generating a
-complete type ID mapping (similar to btf_dedup's hypot_map) to translate
-original IDs to new IDs for all referenced types, followed by executing the
-remapping phase.
-
-> we need entire struct btf_permute to keep track of all of this, this
-> can be a local state in a single function
-
-Thank you. I think that a btf_permute function may be necessary. As Eduard
-suggested, we can generalize btf_dedup_remap_types into a reusable function=
-,
-which would require a dedicated structure to encapsulate all necessary
-parameters.
-
->
-> > +       if (err) {
-> > +               pr_debug("btf_permute_remap_types failed: %s\n", errstr=
-(err));
-> > +               goto done;
-> > +       }
-> > +
-> > +done:
-> > +       btf_permute_free(p);
-> > +       return libbpf_err(err);
-> > +}
-> > +
->
-> [...]
->
-> > +/*
-> > + * Shuffle BTF types.
-> > + *
-> > + * Rearranges types according to the permutation map in p->ids. The p-=
->map
-> > + * array stores the mapping from original type IDs to new shuffled IDs=
-,
-> > + * which is used in the next phase to update type references.
-> > + */
-> > +static int btf_permute_shuffle_types(struct btf_permute *p)
-> > +{
-> > +       struct btf *btf =3D p->btf;
-> > +       const struct btf_type *t;
-> > +       __u32 *new_offs =3D NULL;
-> > +       void *l, *new_types =3D NULL;
-> > +       int i, id, len, err;
-> > +
-> > +       new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
-> > +       new_types =3D calloc(btf->hdr->type_len, 1);
-> > +       if (!new_types || !new_offs) {
-> > +               err =3D -ENOMEM;
-> > +               goto out_err;
-> > +       }
-> > +
-> > +       l =3D new_types;
->
-> What does "l" refer to in this name? It rings no bells for me...
-
-Would the name "nt" be acceptable?
-
->
-> > +       for (i =3D 0; i < btf->nr_types; i++) {
->
-> this won't work with split BTF, no?
-
-The `ids` array in `btf_permute` stores type IDs for split BTF.
-Local testing confirms that kernel module BTF is properly
-pre-sorted during build using a patched pahole version.
-
-Example usage in pahole:
-
-static int btf_encoder__sort(struct btf *btf)
-{
-       LIBBPF_OPTS(btf_permute_opts, opts);
-       int start_id =3D btf__start_id(btf);
-       int nr_types =3D btf__type_cnt(btf) - start_id;
-       __u32 *permute_ids;
-       int i, id, err =3D 0;
-
-       if (nr_types < 2)
-               return 0;
-
-       permute_ids =3D calloc(nr_types, sizeof(*permute_ids));
-       if (!permute_ids) {
-               err =3D -ENOMEM;
-               goto out_free;
-       }
-
-       for (i =3D 0, id =3D start_id; i < nr_types; i++, id++)
-               permute_ids[i] =3D id;
-
-       qsort_r(permute_ids, nr_types, sizeof(*permute_ids),
-               cmp_types_kinds_names, btf);
-
-       opts.ids =3D permute_ids;
-       err =3D btf__permute(btf, &opts);
-       if (err)
-               goto out_free;
-
-out_free:
-       if (permute_ids)
-               free(permute_ids);
-       return err;
-}
-
->
-> > +               id =3D p->ids[i];
-> > +               t =3D btf__type_by_id(btf, id);
-> > +               len =3D btf_type_size(t);
-> > +               memcpy(l, t, len);
-> > +               new_offs[i] =3D l - new_types;
-> > +               p->map[id - btf->start_id] =3D btf->start_id + i;
-> > +               l +=3D len;
-> > +       }
-> > +
-> > +       free(btf->types_data);
-> > +       free(btf->type_offs);
-> > +       btf->types_data =3D new_types;
-> > +       btf->type_offs =3D new_offs;
-> > +       return 0;
-> > +
->
-> [...]
->
-> > diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
-> > new file mode 100644
-> > index 000000000000..553c5f5e61bd
-> > --- /dev/null
-> > +++ b/tools/lib/bpf/btf_sort.c
->
-> why does this have to be a separate file? can't it be part of btf.c?
-
-Thanks. The kernel can leverage existing common infrastructure, similar to
-the approach used in bpf_relocate.c. If this shared approach isn't acceptab=
-le,
-I'm prepared to implement separate versions for both libbpf and the kernel.
-
-https://lore.kernel.org/all/34a168e2-204d-47e2-9923-82d8ad645273@oracle.com=
-/#t
-https://lore.kernel.org/all/7f770a27-6ca6-463f-9145-5c795e0b3f40@oracle.com=
-/
-
->
-> > @@ -0,0 +1,174 @@
-> > +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> > +/* Copyright (c) 2025 Xiaomi */
-> > +
-> > +#ifndef _GNU_SOURCE
-> > +#define _GNU_SOURCE
-> > +#endif
-> > +
-> > +#ifdef __KERNEL__
-> > +
-> > +#define btf_type_by_id                         (struct btf_type *)btf_=
-type_by_id
-> > +#define btf__str_by_offset                     btf_str_by_offset
-> > +#define btf__type_cnt                          btf_nr_types
-> > +#define btf__start_id                          btf_start_id
-> > +#define libbpf_err(x)                          x
-> > +
-> > +#else
-> > +
-> > +#define notrace
-> > +
-> > +#endif /* __KERNEL__ */
-> > +
-> > +/*
-> > + * Skip the sorted check if the number of BTF types is below this thre=
-shold.
-> > + * The value 4 is chosen based on the theoretical break-even point whe=
-re
-> > + * linear search (N/2) and binary search (LOG2(N)) require approximate=
-ly
-> > + * the same number of comparisons.
-> > + */
-> > +#define BTF_CHECK_SORT_THRESHOLD  4
->
-> I agree with Eduard, it seems like an overkill. For small BTFs this
-> all doesn't matter anyways.
-
-Thanks, I will remove it in the next  version.
-
->
-> > +
-> > +struct btf;
-> > +
-> > +static int cmp_btf_kind_name(int ka, const char *na, int kb, const cha=
-r *nb)
-> > +{
-> > +       return (ka - kb) ?: strcmp(na, nb);
-> > +}
-> > +
-> > +/*
-> > + * Sort BTF types by kind and name in ascending order, placing named t=
-ypes
-> > + * before anonymous ones.
-> > + */
-> > +static int btf_compare_type_kinds_names(const void *a, const void *b, =
-void *priv)
-> > +{
-> > +       struct btf *btf =3D (struct btf *)priv;
-> > +       struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
-> > +       struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
-> > +       const char *na, *nb;
-> > +       bool anon_a, anon_b;
-> > +       int ka, kb;
-> > +
-> > +       na =3D btf__str_by_offset(btf, ta->name_off);
-> > +       nb =3D btf__str_by_offset(btf, tb->name_off);
-> > +       anon_a =3D str_is_empty(na);
-> > +       anon_b =3D str_is_empty(nb);
-> > +
-> > +       /* ta w/o name is greater than tb */
-> > +       if (anon_a && !anon_b)
-> > +               return 1;
-> > +       /* tb w/o name is smaller than ta */
-> > +       if (!anon_a && anon_b)
-> > +               return -1;
-> > +
-> > +       ka =3D btf_kind(ta);
-> > +       kb =3D btf_kind(tb);
-> > +
-> > +       if (anon_a && anon_b)
-> > +               return ka - kb;
-> > +
-> > +       return cmp_btf_kind_name(ka, na, kb, nb);
-> > +}
->
-> I think we should keep it simple and only use sorted-by-name property.
-> Within the same name, we can just search linearly for necessary kind.
-
-This approach is feasible, though it may introduce some overhead in the sea=
-rch
-function. I previously implemented a hybrid method that first sorts
-types by name
-and then combines binary search with linear search for handling collisions.
-
-https://lore.kernel.org/all/20240608140835.965949-1-dolinux.peng@gmail.com/
-
-id =3D btf_find_by_name_bsearch(btf, name, &start, &end);
-if (id > 0) {
-    while (start <=3D end) {
-        t =3D btf_type_by_id(btf, start);
-        if (BTF_INFO_KIND(t->info) =3D=3D kind)
-            return start;
-        start++;
-        }
-}
-
-Could this be acceptable?
-
->
-> > +
-> > +static __s32 notrace __btf_find_by_name_kind(const struct btf *btf, in=
-t start_id,
-> > +                                  const char *type_name, __u32 kind)
-> > +{
-> > +       const struct btf_type *t;
-> > +       const char *tname;
-> > +       int err =3D -ENOENT;
-> > +
-> > +       if (!btf)
-> > +               goto out;
-> > +
-> > +       if (start_id < btf__start_id(btf)) {
-> > +               err =3D __btf_find_by_name_kind(btf->base_btf, start_id=
-, type_name, kind);
-> > +               if (err =3D=3D -ENOENT)
-> > +                       start_id =3D btf__start_id(btf);
-> > +       }
-> > +
-> > +       if (err =3D=3D -ENOENT) {
-> > +               if (btf->nr_sorted_types) {
-> > +                       /* binary search */
-> > +                       __s32 start, end, mid, found =3D -1;
-> > +                       int ret;
-> > +
-> > +                       start =3D start_id;
-> > +                       end =3D start + btf->nr_sorted_types - 1;
-> > +                       /* found the leftmost btf_type that matches */
-> > +                       while(start <=3D end) {
-> > +                               mid =3D start + (end - start) / 2;
->
-> nit: binary search is, IMO, where succinct names like "l", "r", "m"
-> are good and actually help keeping algorithm code more succinct
-> without making it more obscure
-
-Thanks, I will fix it in the next version.
-
->
-> > +                               t =3D btf_type_by_id(btf, mid);
-> > +                               tname =3D btf__str_by_offset(btf, t->na=
-me_off);
-> > +                               ret =3D cmp_btf_kind_name(BTF_INFO_KIND=
-(t->info), tname,
-> > +                                                       kind, type_name=
-);
-> > +                               if (ret < 0)
-> > +                                       start =3D mid + 1;
-> > +                               else {
-> > +                                       if (ret =3D=3D 0)
-> > +                                               found =3D mid;
-> > +                                       end =3D mid - 1;
-> > +                               }
-> > +                       }
-> > +
-> > +                       if (found !=3D -1)
-> > +                               return found;
->
-> please check find_linfo() in kernel/bpf/log.c for a very succinct
-> implementation of binary search where we look not for exact match, but
-> rather leftmost or rightmost element satisfying some condition.
-> find_linfo() is actually looking for leftmost element (despite what
-> comment says :) ), so I think can be followed very closely.
-
-Thank you for the suggestion. If we sort types solely by name as proposed,
-we would need to first identify the leftmost and rightmost bounds of the
-matching name range (similar to find_linfo's approach), then perform a
-linear search within that range to find the first type with a matching kind=
-.
-
->
-> > +               } else {
-> > +                       /* linear search */
-> > +                       __u32 i, total;
-> > +
-> > +                       total =3D btf__type_cnt(btf);
-> > +                       for (i =3D start_id; i < total; i++) {
-> > +                               t =3D btf_type_by_id(btf, i);
-> > +                               if (btf_kind(t) !=3D kind)
-> > +                                       continue;
-> > +
-> > +                               tname =3D btf__str_by_offset(btf, t->na=
-me_off);
-> > +                               if (tname && !strcmp(tname, type_name))
-> > +                                       return i;
-> > +                       }
-> > +               }
-> > +       }
-> > +
->
-> [...]
 
