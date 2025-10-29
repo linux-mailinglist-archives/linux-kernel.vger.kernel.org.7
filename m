@@ -1,145 +1,202 @@
-Return-Path: <linux-kernel+bounces-875793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77703C19D72
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:48:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDF5C19CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8C7564222
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:40:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 085D5357B97
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA6833970F;
-	Wed, 29 Oct 2025 10:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A5A32F76E;
+	Wed, 29 Oct 2025 10:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQHpiMhH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GmeuiUAx"
+Received: from mail-m49229.qiye.163.com (mail-m49229.qiye.163.com [45.254.49.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAF1338906;
-	Wed, 29 Oct 2025 10:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9BC32E15A;
+	Wed, 29 Oct 2025 10:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733897; cv=none; b=aGjsfPcwV2tFWtLtfla3baPsKum9VMLpOKfoece61kLESKHc1YWv7hw2aKYf8JMFRPEVwynyGFD+9mVg/GfJGW5dB3WZ8vyyGjElHAyCWvYE3kiUsjP8w9kQUXmhkHUDwwTpSQns6bc9TMP9lWc/c0VRfpWsc4CLLBvwOdccNio=
+	t=1761734234; cv=none; b=mTHEUNUvdy2akbdi1SbE+QQNHf3IGRRucRqU4OL7lyqJv/eukv50P7Bw1xj8GPCANjc/hXeDUBFjJwme//9q8/RJbdhIjQgm0YePWXHcIUO/8nAxlDfzq7KPcTmXcLLwqXybJzYkC6sdvH0J1QT4hrXH3VJf4iW94sCLrw89tQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733897; c=relaxed/simple;
-	bh=Kk/z5xbjPIxTq926BScJO1YbAE6B21A/nQcvL+Stxjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bztdQpvm0KrA4pTKa1csPNOz3m2+mRLdE54U5Xv+SeyFNCGqvygYVhhPR68784rbn95k7xs2ebHeaHSclhzi/PhFktsKXnFogBqtBwNrvuCiPnX5iapsoECr+AnNVAyV5ZrPeFNuK8azpAyg3luxtj9jwX9kz10+gLS8pOa+g1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQHpiMhH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4DAC116D0;
-	Wed, 29 Oct 2025 10:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761733896;
-	bh=Kk/z5xbjPIxTq926BScJO1YbAE6B21A/nQcvL+Stxjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mQHpiMhHIipyykg71nO9gr0ccOWvAw3jtxADhT6O9/iW0PpIiw/qmz5zVTUW3oo0Y
-	 Yq4gg7lmHuk8qvkB8w7kGP3dJ/Es/yfXH9Z/5NpT3GdhmC3rdV4d9InuM6AE6YDHuy
-	 66y1CBVkVJ47bCQATzwguaNY0rGy4czAnJJf2Xq0+TNv8MsAXP6t2uwOLwNqTFFpSC
-	 b93q4JO88FSbhgGajCQoNTlTc5GzNikQEX4E8U13MGQNOniIiwlNgiHYmZ4xaVekC8
-	 PXMEnG8bUYp8VmovluQl1CaebknBe933wtZ0M/W93tFXssHpX/nRz8xuoWt5VU0UOX
-	 RCaW/NJFhcGtw==
-Date: Wed, 29 Oct 2025 11:31:34 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
-	Jann Horn <jannh@google.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v6 27/29] x86/mm/pti: Implement a TLB flush
- immediately after a switch to kernel CR3
-Message-ID: <aQHtBudA4aw4a3gT@localhost.localdomain>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <20251010153839.151763-28-vschneid@redhat.com>
- <aQDoVAs5UZwQo-ds@localhost.localdomain>
- <xhsmh3472qah4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1761734234; c=relaxed/simple;
+	bh=P2NiPidEnQFByT+RVIM7L2lvzhmA6l9uXK5U21d4lYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d1ZEYrRGn+WNRiIzng0t5nrQn5+F13QT41szxZ9EHb/kbmv+H6mWzcVV+QE9wAMf3tnEm1Szh3WvroVl6hRDIiNDiY2gySQWJB3HDP3UdTb1+vxARbQFKZzdvwfST01RAakhuLDpowuq+3k6Ah7L/FRrOvIUjJNjpuOuNb0oiJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GmeuiUAx; arc=none smtp.client-ip=45.254.49.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.149] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 27a23665c;
+	Wed, 29 Oct 2025 18:31:58 +0800 (GMT+08:00)
+Message-ID: <e0c5bda3-7428-49e0-9955-fa23f1e4f35d@rock-chips.com>
+Date: Wed, 29 Oct 2025 18:31:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
+ support for DisplayPort
+To: Peter Chen <hzpeterchen@gmail.com>, Chaoyi Chen <kernel@airkyi.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251029071435.88-1-kernel@airkyi.com>
+ <20251029071435.88-11-kernel@airkyi.com>
+ <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
+ <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <xhsmh3472qah4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+X-HM-Tid: 0a9a2f863f0e03abkunm89a9d527348c30
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU4eGlZKTh9OSx9CGk1PSBpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=GmeuiUAxP7J2yuWygBp95hV/mCOru5SA8EQF6k8V2qpQmRXW7S/ggyYk6FWN6PZ5seE3nppmtySOiZU0C0yx32P3CLk2gGfF+2QjP0ShL16frucKFSI9rXy8+y7T7ReuyXgssIptoyeDmznafg59sMOyB5abKFMpN1vtCMAK/P8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=x8PMAjpUzEpEObt1dire31F5Js78fV2X3/gBASmc8NM=;
+	h=date:mime-version:subject:message-id:from;
 
-Le Wed, Oct 29, 2025 at 11:16:23AM +0100, Valentin Schneider a �crit :
-> On 28/10/25 16:59, Frederic Weisbecker wrote:
-> > Le Fri, Oct 10, 2025 at 05:38:37PM +0200, Valentin Schneider a �crit :
-> >> @@ -171,8 +172,27 @@ For 32-bit we have the following conventions - kernel is built with
-> >>      andq    $(~PTI_USER_PGTABLE_AND_PCID_MASK), \reg
-> >>  .endm
-> >>
-> >> -.macro COALESCE_TLBI
-> >> +.macro COALESCE_TLBI scratch_reg:req
-> >>  #ifdef CONFIG_COALESCE_TLBI
-> >> +	/* No point in doing this for housekeeping CPUs */
-> >> +	movslq  PER_CPU_VAR(cpu_number), \scratch_reg
-> >> +	bt	\scratch_reg, tick_nohz_full_mask(%rip)
-> >> +	jnc	.Lend_tlbi_\@
-> >
-> > I assume it's not possible to have a static call/branch to
-> > take care of all this ?
-> >
-> 
-> I think technically yes, but that would have to be a per-cpu patchable
-> location, which would mean something like each CPU having its own copy of
-> that text page... Unless there's some existing way to statically optimize
-> 
->   if (cpumask_test_cpu(smp_processor_id(), mask))
-> 
-> where @mask is a boot-time constant (i.e. the nohz_full mask).
+On 10/29/2025 6:21 PM, Chaoyi Chen wrote:
 
-Or just check housekeeping_overriden static key before everything. This one is
-enabled only if either nohz_full, isolcpus or cpuset isolated partition (well,
-it's on the way for the last one) are running, but those are all niche, which
-means you spare 99.999% kernel usecases.
+> Hi Peter,
+>
+> On 10/29/2025 5:45 PM, Peter Chen wrote:
+>>> +&i2c4 {
+>>> +       i2c-scl-rising-time-ns = <475>;
+>>> +       i2c-scl-falling-time-ns = <26>;
+>>> +       status = "okay";
+>>> +
+>>> +       usbc0: typec-portc@22 {
+>>> +               compatible = "fcs,fusb302";
+>>> +               reg = <0x22>;
+>>> +               interrupt-parent = <&gpio1>;
+>>> +               interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+>>> +               pinctrl-names = "default";
+>>> +               pinctrl-0 = <&usbc0_int>;
+>>> +               vbus-supply = <&vbus_typec>;
+>>> +
+>>> +               usb_con: connector {
+>>> +                       compatible = "usb-c-connector";
+>>> +                       label = "USB-C";
+>>> +                       data-role = "dual";
+>>> +                       power-role = "dual";
+>>> +                       try-power-role = "sink";
+>>> +                       op-sink-microwatt = <1000000>;
+>>> +                       sink-pdos =
+>>> +                               <PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
+>>> +                       source-pdos =
+>>> +                               <PDO_FIXED(5000, 1500, PDO_FIXED_USB_COMM)>;
+>>> +
+>>> +                       altmodes {
+>>> +                               displayport {
+>>> +                                       svid = /bits/ 16 <0xff01>;
+>>> +                                       vdo = <0x00001c46>;
+>>> +                               };
+>>> +                       };
+>>> +
+>>> +                       ports {
+>>> +                               #address-cells = <1>;
+>>> +                               #size-cells = <0>;
+>>> +
+>>> +                               port@0 {
+>>> +                                       reg = <0>;
+>>> +
+>>> +                                       usbc_hs: endpoint {
+>>> + remote-endpoint = <&u2phy0_typec_hs>;
+>>> +                                       };
+>>> +                               };
+>>> +
+>> Why USB2 PHY needs to be notified for Type-C connection?
+>
+> I think the USB-connector binding require a port@0 for High Speed.  So I filled in USB2 PHY here. And I have looked up boards with the same usage, and some of the results are as follows:
+>
+> - rk3399-firefly.dts
+>
+> - rk3399-pinebook-pro.dts
+>
+> - rk3399-eaidk-610.dts
+>
+>
+>>
+>>> +                               port@1 {
+>>> +                                       reg = <1>;
+>>> +
+>>> +                                       usbc_ss: endpoint {
+>>> + remote-endpoint = <&tcphy0_typec_ss>;
+>>> +                                       };
+>>> +                               };
+>>> +
+>>> +                               port@2 {
+>>> +                                       reg = <2>;
+>>> +
+>>> +                                       usbc_dp: endpoint {
+>>> + remote-endpoint = <&tcphy0_typec_dp>;
+>>> +                                       };
+>>> +                               };
+>>> +                       };
+>>> +               };
+>>> +       };
+>>> +};
+>>> +
+>> .....
+>>>   &u2phy0 {
+>>>          status = "okay";
+>>> +
+>>> +       port {
+>>> +               u2phy0_typec_hs: endpoint {
+>>> +                       remote-endpoint = <&usbc_hs>;
+>>> +               };
+>>> +       };
+>>>   };
+>>>
+>> There is no switch and mux, how to co-work with Type-C?
+>
+> I checked the phy-rockchip-inno-usb2.c but did not find any switch or mux. Does this mean that we need to implement them? Thank you.
 
-Thanks.
+Wait a minute, actually we have multiple hardware interfaces, one of which is Type-C, eventually connected to USBDPPHY, and the other is micro-usb connected to U2PHY.
 
-> 
-> > Thanks.
-> >
-> > --
-> > Frederic Weisbecker
-> > SUSE Labs
-> 
-> 
 
+>
+>
+>>
+>> Best regards,
+>> Peter
+>>
+>>
 -- 
-Frederic Weisbecker
-SUSE Labs
+Best,
+Chaoyi
+
 
