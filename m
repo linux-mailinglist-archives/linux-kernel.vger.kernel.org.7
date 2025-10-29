@@ -1,186 +1,176 @@
-Return-Path: <linux-kernel+bounces-877264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6ECC1D9A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:41:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9C0C1D9B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96551404DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:41:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9ED3BD6C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975BF2D594F;
-	Wed, 29 Oct 2025 22:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D614F2DC78F;
+	Wed, 29 Oct 2025 22:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="aDAMqI1v"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11023125.outbound.protection.outlook.com [40.93.201.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVetzJTD"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340422D2398
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761777684; cv=fail; b=FUwm2+A27Crm5L67aw68p/raTYXYdq7ufpmY9qq/kDgoknnokNbpJidf277G0evA6lSS9InjyYfk/6GXuVBZVbi6CQ2wXrETmisEczUXis9X5nD+Zd/ddN2w8g/avzI/vzzFcvS1JfYXB0H3zpaVZgafZhvVwIFB6wRaTtPKjVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761777684; c=relaxed/simple;
-	bh=jLbuZ5+Bkzbj5HCSDVrPGe9/pwYHeGMWWMlG6eNWa+E=;
-	h=Message-ID:Date:To:Cc:From:Subject:Content-Type:MIME-Version; b=QPSDdmRs8Wu0GjwQQRlluuhiejwITlBFmkuBip/dcqphJn3Oj+pQ5yzGO6eozgEhnzHUWPjzZZ5wH9eHyJ045rSfHj/psNAw81xIflezexTyOYy0Zh25g6hXIZoXhZdKCljsdTAuJdwTDfgYoN2y7PtWOREbOlGV6v7FT3S1pe0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=aDAMqI1v; arc=fail smtp.client-ip=40.93.201.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JjXMI/PhafPBEIiLcJhssLOyTRmwUEvaftlcse7mFEbRKVQtxAo6TQ/ymah2/06rJ1j7FR72RqlM5CXjMIbtNPJ5ircXfl2/ls2H0E9HsgOdewogC2abt0nDzsLu2Ub15SNB9hkiX6Ibujmafvui7YJRLTCvblkcHA9gAQ0+Pr26A0KwvSA4Oq/fpTwUuBVxvvVXISKr8vT0Bj5RPLytfBr/1Wo7uyxWJtU8uKKoc6YFlIj5N+siTog2vmSuWa7lJXNn0eUGQxxdUcIEhoZwobvXAhXQjCpoUFxaHrO2RidENtDfa4eGyu74SE3UauY9a1fKjV0p58OxqwXbZkipow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DJGPn+FMTtF4FeUrnWxXjSwNYaxwSY6Ay44yIblDrtU=;
- b=Nq+5aS9INRDSkXZ24S3ukcxjVZZoxVpMNHhnPti83yKcT1KYplEVw+imdL4YF6oyM79UkAjSBdUxvHJPoSWnYrSwI8Xd6KEnwA2Qapd2uTnj2IbRArlHhMYzhGASTpCkRukjeeNgFPBULIjvy5l0RzFWxnDIaBAYs+/UM4tWLUq9v6uyIxsQq+54EOiY2QkKynkIlaWkBF3vo8WCBvzov6/JJ6kmZHaxocNbD+sn4aCOV7wJE4o5aIm26eok++zuK0V6sWXx6tguUzaCw8BYHOn8hGuv1I2rzQnye8xpoVrlI7+fqylpa6Fx7HPWZ13Z3Pg23vbbfjncFTZ1be5A6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAE82D3737
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761777834; cv=none; b=K2mQCE4VG0Vx3bhp+oKNk7H6PgOgiCcGQjT3le/tP5wkRU2mzHqCDjmR3qFSb439j7ch8wzy+TNhAaHRzrf8KDoH8CXNACCPy8jIqdKpm6Dg0w9teWyetij9qM/JWtJzKy0Yy/oQIdT7Om/C+WkL0xda3UkUR9yRAnYFoXzZO0Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761777834; c=relaxed/simple;
+	bh=wik67zmjPJSCJArpOPAfO/nO0IlbnlsMUwHITZGrZG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJn3ZrRD0lnT7H3PukAuiczE4FHrH8svAf9+wlSxYlvEkIqJkKTfWZFAdbEqKZSEkgS4JdNSRvwDhZg/ADHaMGDVgPu/bC6EATbayqyIeAnvwUi+FP7LXjJjTCnI4KlrEbauB9VsA8H6XGdLXcewwNK0ifSoLIKJJ1cdvn1hswc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVetzJTD; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47109187c32so1916775e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DJGPn+FMTtF4FeUrnWxXjSwNYaxwSY6Ay44yIblDrtU=;
- b=aDAMqI1v7b7ZDNyyeBA6/SYZhRR6O8HEuQNDUXjM4mJGOc/lKWgutpEWn4/oIBosgRZH8ZCqeJDOqJEet1uq2h5CrA3sAvAyzZ0xA21LkSuj+3hfa53JoGQ38Jj7+YpTYKkw4nTaCvFkCobpgGFyGI30OyGxhPWuyfTApBRNGD8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CH3PR01MB8340.prod.exchangelabs.com (2603:10b6:610:177::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.12; Wed, 29 Oct 2025 22:41:20 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 22:41:20 +0000
-Message-ID: <04ea9978-e6aa-4498-b899-76d56e19b084@os.amperecomputing.com>
-Date: Wed, 29 Oct 2025 15:41:17 -0700
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: LAK <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Yang Shi <yang@os.amperecomputing.com>
-Subject: [Question] mprotect() can't clear PROT_MTE
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR06CA0062.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::39) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+        d=gmail.com; s=20230601; t=1761777831; x=1762382631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wik67zmjPJSCJArpOPAfO/nO0IlbnlsMUwHITZGrZG0=;
+        b=mVetzJTDY0XFXAtlvcIJX5FAgxmXcYfXKlq4L9Wk41tl6eZE5gPwzN45+3JMagE4IA
+         izbJSFbKJbgFSjnGiW4xy36dC8VNK0AAD2WIKqPcYf1HfpPJ0M5HSZtUh2iqNJWeYdAI
+         lf34qx+wGlKR2+ty15cf39qU8F77q12LRh+xLftRL08FTHdALhPZM/bzugjF7arqheFE
+         nOHEcE3tWch2X12QFKWmZgRyJieoK4PS5BrbP4xX7U01SmV66sOwULwcLxoKVHN4kOWO
+         FjgUNp+LOP+M+IAeiB+EWYIWOy9uaoV+SE9KC3SC77voiSSh73Bh8DrMFUB2vKQuLja7
+         hVIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761777831; x=1762382631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wik67zmjPJSCJArpOPAfO/nO0IlbnlsMUwHITZGrZG0=;
+        b=OZaG+0bajmmNGx8p5vGk+OlI7+vqGgQWMuCpHXA1fEBipG5CJxiVYQ1mbSG8tg+3Xj
+         5/+B3jjy737xnjtT8MN2lRiB0ZCGhPHWXZhoZXUTm+T8N2T1YYr4wBzoufZsXvzTo8he
+         +pC0Irb/dlYBdhVS7z2/yxOfTEJ1Pn1oJxy6ig8yXzWPuaB3WdtSQ1terLPucxcEuBRZ
+         1WU4qxor5Kb4k4bDlGEzaZ+dHGh5R7ZqpsO+jrE64p4cItnnUKwknqxYn9jH/BgIO3m4
+         N+0WSdoN2b55eb+al80ghFg6aIAlA8GxMHmUpZoKTxLDcnrr2gBUJDzfYchyb1+gDEnQ
+         ZC4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXYsbAq0nQUYcGjUCD2DpSNM6V6B3V5E4pi88Ii/dgvFDiahWj023ReBmFKLHAGeqwUFxyeQchR+uKlLPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9T4TBzPFzB4n4W6dE/Tuj5Ho2l4adurIRC2HhctrG/oIivYba
+	FNwWQpQj8WuKvxFGLRyutTsJ3eqZP9ER83VvefVGIUh+Q5BrObmFO60yzMUccah3XXMYFD81TK8
+	A7nbVMvcRZXcbnhH5cOLvYhlrSMMnFN4=
+X-Gm-Gg: ASbGncsDWt22oRyQTAcnbbl6TT5vjiisKf5EOFu0+26L40lGR+1AlkeQblbzY1hzQHI
+	H5CrZ+cx5jkGBWmGjkYQoyL9Uwrsd8GfCZtsiIIVc6YgvZYB7m7OvxYKgsrLPcmXr8q4jjBi3BB
+	nOPuP7rMCKVoB6xMhrARXjH/65aHiq/NDHP6EYJuiGwkS1JLqKJ98Cnc3UPYFvDlytSH01N0cYX
+	JAua9vmjF7UiIgwoS9Mey4pf63DOn74oB/CDOMZCGcKGFVV3jKp7XWH8uP4qxik/XaFQKRAHqbt
+	0O4bK/TghJGXEyGWsaruzDEA/+rj
+X-Google-Smtp-Source: AGHT+IGgG3j4M2SQf3XFssiae2E5GaU0Oz0HOJLZDxtGjEKIMo/1gRVHcuNdOoC/ksGXyg/SfrIqUSHv9CMrDZOG1Sg=
+X-Received: by 2002:a05:600c:3e07:b0:46e:48fd:a1a9 with SMTP id
+ 5b1f17b1804b1-4771e3fbdcemr39702415e9.33.1761777830545; Wed, 29 Oct 2025
+ 15:43:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH3PR01MB8340:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0ac5ef4-8e7f-4f32-5024-08de173c47b5
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YU51TnUraHFXazdZT1BTSjhjeEZKWnJHS25TR1MraGhCUmlRMHVrU2I2TXVZ?=
- =?utf-8?B?SGp2ZUhFRmxJWEFCZHowSUdDcnUyWTRCWVBLWmI4TzUvQUZ5UTl3OTRGaHJH?=
- =?utf-8?B?ZnpJWG81eDBUa0YxN2xJaHE2QzAxQmRLelFZR1JzaGRHOWIwdy9UbXpOSVhz?=
- =?utf-8?B?YUZCZmlzSzlCaHVaSExVQmt2Q3lvenNIU0xuVjVUcDVNWFF4em9uRUxNVkZD?=
- =?utf-8?B?ak5PQklzazNVemFJTWUyMGppVVVwWHdtTlorMWFPdlhVN2doeVNIMDZ4elBa?=
- =?utf-8?B?eXIyZ2JXc3dWbmNSM3ZPb3lncEMxeHdBTFF5QnN0bVB1cG5aaTdJWkYwMnI4?=
- =?utf-8?B?Z3ZraDNkaG5LZThqd1VsaldRaHo3NDYyYUpJNnJyQVpnTVBQUTBhSlloTFpL?=
- =?utf-8?B?eFVwOUxkNTZEbVpOMlVFVGo1cWk5S3FnMWo5QW5UajVIUjlwdXl1NXllMHI0?=
- =?utf-8?B?OVIrRUxxQzQ3cXZxbmVVYStSS0kzaTNKeDY4bENOUHh1Wmt4RndFbmQ3eEVP?=
- =?utf-8?B?a0xYanB1QmpzU2dDSTBvc3hyKzFUMFZReGlpYTVISk5jSU5WYzk2ejA3cjRo?=
- =?utf-8?B?NC8xTmxFTmluaktFdUZZREJ3QzRzMXVJbGhKc2ZEOWRIcGErKzZxM2hEcDFD?=
- =?utf-8?B?NVQrMFNDSDVxSEs3REVmUXFHdE9PV0VmamxtUVRHbUNtaHplenNwY3haY0w1?=
- =?utf-8?B?eUhPZWZxZXExRytnNUh3SElnWDJqTS9KM3BzSUhmQnJYSkpXeFJNdmhvUlh5?=
- =?utf-8?B?Y3Urd1ArbC9OZEt6dCtMWlRoUW9VQjVxNGlUdCthQnBSR2VyQUdVV0NBVTVo?=
- =?utf-8?B?R1FXWVA0Rkozell1aDk1d2VwQm5uRVhSU2lGME55cklIanpoUldmUmZqOXp1?=
- =?utf-8?B?OGtMVVBCVnIxUnZtdlg1WTgvbmVpM3lFbjlnT1ZUSnYwSlE4a2dGaXFUNjZT?=
- =?utf-8?B?RzkyR0xZZTBPWDJDQkxBbFBrK2FKNDlTM1NFNkVyMTdIOThnN0JVUXA0L2g0?=
- =?utf-8?B?WCtpcnU2RmNCZk52Z2VHck41ZE5PREZPOHJSejFKR0dyZmVoRllPb2NXSGEx?=
- =?utf-8?B?L0RNOE1Bc20vVG9WOTBhOWxTd0d4SU95Q1FTeUkzMEpJUnk0RDJ3TlZmNzVv?=
- =?utf-8?B?bDlTTjlPdkh3SGE4dGlycTVBTUR3SlNVM2IxM3JXK2YwMzZtcG81cGtFbGEr?=
- =?utf-8?B?NVhWWGRZN3RLQmZyb0pQd3llWHRkQ0VRK1ZhUHdCLzJObzVDanVYbWxyN28w?=
- =?utf-8?B?K1B0UjRaUUsvYjZhVTc4RGZMV2cyTTU5T3dha2w0SVYvWEFNTVQ5SFNSUDBK?=
- =?utf-8?B?VzEzUGdGMU9SdC9USHhQRk9QOHhaZjRKcDNNSk5kT2l0Qm9IeVR4UmYzdTlV?=
- =?utf-8?B?dmJEZDdrWFVaaUJXUFpuMEFTZ1YzUU1EcXRFeEFiMWFPdmpMNmFLMkgxMWRZ?=
- =?utf-8?B?QWs1UlpwR2l0S0xPWWZnazNHUEVJTTNac1hlMHg5RzZVTHVXeVNtenhTMndF?=
- =?utf-8?B?cHdobTJ2R28wekRORUtrdUU4ODQ2TldRU003cGxNTlBhYnRqZEMzTDVwMmhQ?=
- =?utf-8?B?MFZ5SXRxKytDZDJDTWRSN3paUEpLdlJWN0tFOCtienc5bEFsbmFGbEZDV01W?=
- =?utf-8?B?aXZicUV2MjVTclpJR2pPYmdGL1dYakIwNHN6SW56bXM5cXp6MTdGZUJMR0I5?=
- =?utf-8?B?R1ZLY3FJamFYVUpVWmQxcEFQc1VSV0dUUGpHSGEyOUJkdmdFVjBiY2JZOVVp?=
- =?utf-8?B?VG10RHlnSUYrVVBST2N3cXRHK2dLSjhZSUJ5RERTdTVHbXZUOHlEZUhVMkZn?=
- =?utf-8?B?VlFvODVmY2tFbEw3YjBiSWFleUVia1FOWDVWRVRxN3BKOXdtSlFWc2Rqa21n?=
- =?utf-8?B?dlhNWmMxNGNuUUNwM01tTzdLd1pnWFcwYVArTXJKeGt1QmRwb3U1Y09oNWVw?=
- =?utf-8?Q?QexvflpR6t+LowKba/Hj2f/QnYz0u04u?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QzVDczh4OUlGSUY1a0E0VENYMTFTZzNQS1M3cFlIY0N3WFVQMkZMdEJPVkRk?=
- =?utf-8?B?bFkweGtuN3g3YnBNdTFiVHVLMHp2aEpKaFZVR3c1dlE3Zmwyd3llSW5WRWNj?=
- =?utf-8?B?bVR6dkhSbGdidWtDZkJnTEx1WXAzNHBPeXlGL1RHaHlmMmdNK3ZrMlJkaWtO?=
- =?utf-8?B?OVIyakJBNm1JVHZCYUpGdkxRYkpzWnFXeFZ5ZWllV0FScERNRDBrd0VoZ3VP?=
- =?utf-8?B?bE0xQXFRakEreEJFaHJ0RmM3dC9WLytGWGR0VHRsWk00NkFicHo5d1Y3cmt1?=
- =?utf-8?B?Z3h5STFzZGxndjdBOEpXVTlUcTBueVBjUDlyVTFXcUVRTldtbUJwa2hwWE1Q?=
- =?utf-8?B?MDZEVW8zQit1VVJCcHZ4OWFtWFhCUmZKQ2pQdzR0TWVybHVKaDNyVm9ZUjRV?=
- =?utf-8?B?QTZpMHRCbytKYlRzbWVWMU1FY01lRUJvdFRTcmdaOGFNRGNrRmVZcUJFRVYy?=
- =?utf-8?B?dG03WVBWSXVCWUExVlJFSE10VVlzRVdKNUx4a09PUWRSWWdoQ1VNMk1yRUpJ?=
- =?utf-8?B?TGNRWjhEd2lGTHpReVZaYmxzZUR5Ym9kZUFaZkRpN1VhbFNaWFZBQ2oyOGZS?=
- =?utf-8?B?SWFmaVhpNVJnNmtXLzU2L1BFR3ZHSDNhb0ZtQ1g5VmN4VzBkOVlrTFlPc2pK?=
- =?utf-8?B?UlYxM1hFZmFBbFZKQ1JqdjdxQnlXMFpBWWFPcjJGVEdUbWRFeUdtUzNwREIv?=
- =?utf-8?B?UUZnd0pOeUQrRlRmU1Z4ZDRjNGJaT2htc3VhZlczZE5mUjU5aHJrTkNLYzJt?=
- =?utf-8?B?c08yZ0lyNUM3UTNTdzl1K0FtdmJJbDlqNTAzT3ptc0w3TUpodTNnVEFFUHEv?=
- =?utf-8?B?aTAvYTErMUoyZ0xxTmtPMXhnY3lPcXpuNlhkWnpNOWRBemdWRTl3MXNnREEv?=
- =?utf-8?B?Y1pWWTViWkE5eVpxQTRCVVFMWURVdThicXpHdEpHdkpndFF1UEwrV1JoWnlL?=
- =?utf-8?B?V0ZLc3JXNGdKRkIyLzdTTldGZ05LSExJQnlvSFVJWU92Rk1SZzBLbi9YRlNJ?=
- =?utf-8?B?akloQkhIUCtUb2FoMWFBU2ZEZHlieEsySm52emZqaWNpUUZPMndnNXJLU3Bn?=
- =?utf-8?B?bk5ZaXNtL1FweFRpclZQZkhjRUw1Q0I2czNtenR6SlRLb0FvenkwTXZvZ0Vs?=
- =?utf-8?B?OXZMb1hWTXZXZ0hmSTFFc3NSWStJM2twM1RFQ1ZIUnBpckdXVk5lUHBEMkpT?=
- =?utf-8?B?cTdYZmw5TUFNWFNmMHRXcVlPYnpwdnZXRTVlTDRCblE5WUxRenZhcjk0ZmVU?=
- =?utf-8?B?TXRreUh4TmozNDI1TDM3d0doS1ZianYySmxWUzZKYVRtU2ZQbjdtTEl2OXhE?=
- =?utf-8?B?RDFNOEtPMVQrSGNIbjF5QXE0UUFnRlpkNmZIL3VuTWhjSjd3SDNvcGdmZ2VR?=
- =?utf-8?B?ajlJZWhqTHdGZUo0OEgza0hiSjFEeGdEcXpOeGUxRi9sSXBMWFJScnFZdmgw?=
- =?utf-8?B?c3I1ZmJMT2FDMTdTWnVqOG1UMUt4dWRxYzNDL3UvU0xyYnJ3WVlPVXZSVTB6?=
- =?utf-8?B?MzhHYlg3UDF3blkreTlZY1NWT2xxVEFwS0hCdVFjTS9MQVNYWTZFRXVzbEpK?=
- =?utf-8?B?aTdRcWprdDlxa2JEZ2dBV0FzZUJmdjNNV2JCUDFZVm5jOG5rM0hiSFVPNkV4?=
- =?utf-8?B?V1dFMnRKbHMxak5kNWQ4emRabkdqbHJMOEtGb016VG9qUkdqV0VkV3BXbWZz?=
- =?utf-8?B?b2JGOUl4bUpuY3BYN2VUNVlNcUxhM292ejllRytLNzJ0bWUwTzBoTVM3Ymt4?=
- =?utf-8?B?bUhOd2MzcHhBN1RQaCt2K01uQ0xIanppVzhsUGJmNVBNY1pJREJZMVk4R3Jt?=
- =?utf-8?B?cjhVQVdLZ2RyQ3ZMdWRiUFFWUXNhendvOHRzU3ZIKzdrODVXRU1tYlRqVk1I?=
- =?utf-8?B?ZGo4S3FpMXpITnVEVjB1ODBFb1Z2czExbitIRUl1TFZmbkw3QnpRY1B0MEVx?=
- =?utf-8?B?OUNSUmlsOG4rdnhKQllFd3JQWnVOTmkvcm52UnB5NkRmVit5U0VZdjhEeU1I?=
- =?utf-8?B?ZW93VVhNVmhOazNvUit5VjltVVF2V2dsRklwMVF2cXlaRTM4a2dTR21ZVEcy?=
- =?utf-8?B?Ti9Wa0xPQnYvSVJyNGNkMEladFlrbml2L3VneGhMOWF2bHlnSFhwM3dNRmhB?=
- =?utf-8?B?T1IzZjZDNXVMeXJDcndLVTJZOWxrZjk0YVlEUkFIUTR4QWkxdG1SYVZFb0tI?=
- =?utf-8?Q?wka9Anb5bcUuVqNQiMtdyvs=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0ac5ef4-8e7f-4f32-5024-08de173c47b5
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 22:41:20.3977
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jT86P1xEH6etSIGi8DDODsGY3QiMsY5F/vH4XW6eWpRMirUpPVkwPFIr1NnEzqYtXbADyd93QUkm8RQ4yr0GsHJlfMPkYQWJa8iZRm4SxLM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR01MB8340
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-3-roman.gushchin@linux.dev> <aQJZgd8-xXpK-Af8@slm.duckdns.org>
+ <87ldkte9pr.fsf@linux.dev> <aQJ61wC0mvzc7qIU@slm.duckdns.org>
+ <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com> <871pmle5ng.fsf@linux.dev>
+In-Reply-To: <871pmle5ng.fsf@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 29 Oct 2025 15:43:39 -0700
+X-Gm-Features: AWmQ_bklQRlCeWMvvDMXXjosBJpVWn26QkhuJgrczs1PBday5NsqxYLilK9uBkc
+Message-ID: <CAADnVQJ+4a97bp26BOpD5A9LOzfJ+XxyNt4bdG8n7jaO6+nV3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Song Liu <song@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+On Wed, Oct 29, 2025 at 2:53=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+>
+> Song Liu <song@kernel.org> writes:
+>
+> > Hi Tejun,
+> >
+> > On Wed, Oct 29, 2025 at 1:36=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote=
+:
+> >>
+> >> On Wed, Oct 29, 2025 at 01:25:52PM -0700, Roman Gushchin wrote:
+> >> > > BTW, for sched_ext sub-sched support, I'm just adding cgroup_id to
+> >> > > struct_ops, which seems to work fine. It'd be nice to align on the=
+ same
+> >> > > approach. What are the benefits of doing this through fd?
+> >> >
+> >> > Then you can attach a single struct ops to multiple cgroups (or Idk
+> >> > sockets or processes or some other objects in the future).
+> >> > And IMO it's just a more generic solution.
+> >>
+> >> I'm not very convinced that sharing a single struct_ops instance acros=
+s
+> >> multiple cgroups would be all that useful. If you map this to normal
+> >> userspace programs, a given struct_ops instance is package of code and=
+ all
+> >> the global data (maps). ie. it's not like running the same program mul=
+tiple
+> >> times against different targets. It's more akin to running a single pr=
+ogram
+> >> instance which can handle multiple targets.
+> >>
+> >> Maybe that's useful in some cases, but that program would have to expl=
+icitly
+> >> distinguish the cgroups that it's attached to. I have a hard time imag=
+ining
+> >> use cases where a single struct_ops has to service multiple disjoint c=
+groups
+> >> in the hierarchy and it ends up stepping outside of the usual operatio=
+n
+> >> model of cgroups - commonality being expressed through the hierarchica=
+l
+> >> structure.
+> >
+> > How about we pass a pointer to mem_cgroup (and/or related pointers)
+> > to all the callbacks in the struct_ops? AFAICT, in-kernel _ops structur=
+es like
+> > struct file_operations and struct tcp_congestion_ops use this method. A=
+nd
+> > we can actually implement struct tcp_congestion_ops in BPF. With the
+> > struct tcp_congestion_ops model, the struct_ops map and the struct_ops
+> > link are both shared among multiple instances (sockets).
+>
+> +1 to this.
+> I agree it might be debatable when it comes to cgroups, but when it comes=
+ to
+> sockets or similar objects, having a separate struct ops per object
+> isn't really an option.
 
-Our customers have usecase to untag memory w/o unmapping it, but 
-mprotect can't do it. It seems like an intended behavior because I saw 
-MTE doc explicitly says PROT_MTE flags can't be cleared by mprotect().
-But I don't see why mprotect() can't do it if I don't miss anything. So 
-I'd like to know why it behaves in this way.
+I think the general bpf philosophy that load and attach are two
+separate steps. For struct-ops it's almost there, but not quite.
+struct-ops shouldn't be an exception.
+The bpf infra should be able to load a set of progs (aka struct-ops)
+and attach it with a link to different entities. Like cgroups.
+I think sched-ext should do that too. Even if there is no use case
+today for the same sched-ext in two different cgroups.
+For bpf-oom I can imagine a use case where container management sw
+would pre-load struct-ops and then attach it later to different
+containers depending on container configs. These container might
+be peers in hierarchy, but attaching to their parent won't be
+equivalent, since other peers might not need that bpf-oom management.
+The "workaround" could be to create another cgroup layer
+between parent and container, but that becomes messy, since now
+there is a cgroup only for the purpose of attaching bpf-oom to it.
 
-unmap + mmap or mmap(MAP_FIXED) can do the trick, but it is not feasible 
-for anonymous mapping because unamp will wipe all the data.
-
-Thanks,
-Yang
-
+Whether struct-ops link attach is using cgroup_fd or cgroup_id
+is debatable. I think FD is cleaner.
 
