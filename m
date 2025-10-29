@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-876175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E72C1ABED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:35:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47EC6C1AF89
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D411A67AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:30:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85D4A585130
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BEC34B68F;
-	Wed, 29 Oct 2025 13:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A29E34405E;
+	Wed, 29 Oct 2025 13:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMqj0c6j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNOSdOAy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFDA2BEC42;
-	Wed, 29 Oct 2025 13:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2388426980B;
+	Wed, 29 Oct 2025 13:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744223; cv=none; b=b37VrzTsIKpAB/tt5uKqXSeuKBmyvnpXvIAYNiwBSkxdISaIJmr+3Tr2UgxhVaXjPKOlMJyVishY92VEoWQxupF5wbmwfzxE7HEV9kQs+pNtyECa8fhH1w61rRTS9eWTGHxlVmTDYrUNIcuGTiJF8a0MyxC1y4EuUG3bkcdzNb4=
+	t=1761744242; cv=none; b=jcSG4fBZnuzVCe8PvQZ86zf6SxWS7YVFx1LmPg4uAgJcOEnxshLmr/MoG7PhW58t/F6IpNGIIJhyCpF4g6tjfku5xuPv6X6Fd32unoT2dGtMOau/RLIDIkKCqUKve5AeRMa9ndbHBAPviJzHPR+Tre3xkgTvB29ueEroRWfWDHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744223; c=relaxed/simple;
-	bh=HCxiUT+UcTpmkTorfEO6P4LldSqqZM2AKFoTHcwUw1U=;
+	s=arc-20240116; t=1761744242; c=relaxed/simple;
+	bh=tnQ7CAQ/zrazskDouHnus3UXop3oRcNTaKyJpkol4Y4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GgrxDOR51lVOw0Hl+X8dg2wPKr1RvMaaA25Cw5yQSicRKko416DxiTD12x1bqcww30QENzxln/DOOArfl22eV9QDpqRvZztp1aiiYs/ToaDfCU5dn89qPe9hCjOKOL4mtm/JB1nRIgL3WVfaNv140VTl6JnDEPX1QRPqiRhS8PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMqj0c6j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E074AC4CEF7;
-	Wed, 29 Oct 2025 13:23:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmK0kP8LQU4GmWIZDJmzyevRGghMm7y8XwjMTPHmoX/1BtGj5X07LGW9/p0E/J+VjjHCSTZO7l5PuFhUlJgij5VQIopwx9ihQcbMyB8/DoabRbRvCDDksYlMU+cL6dsoNLOCIqMSowEB5hA8Hb5LnpbYjKlwdFYA4cp5ZcJ2R1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNOSdOAy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA982C4CEF7;
+	Wed, 29 Oct 2025 13:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761744223;
-	bh=HCxiUT+UcTpmkTorfEO6P4LldSqqZM2AKFoTHcwUw1U=;
+	s=k20201202; t=1761744240;
+	bh=tnQ7CAQ/zrazskDouHnus3UXop3oRcNTaKyJpkol4Y4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KMqj0c6jewONZQkpIMwhyBeLMDViDr3QUKhVRVzhdrsfVCO3Gsydgwfl/NIx9UiQK
-	 UPcAeGmU7A0+DmkovRG/vay07/+7pI09+58tGc2jfm7ZGChknuMqc1r4wcBvWEIX4u
-	 afiYaqkIdu/eVnN3Y21jr37h3qLit780N97PJOacyZs64E+VOKi8QMfPRNRYzUKs/5
-	 DCGWsTujAOVAjmNCxCgJBzwZo2e9SYbsHxBsXvYLdYp6Z/WDnQj0J2qClC8MvkKgP3
-	 Os1v/B2ap5qiZiC0Qd7q9laoYK0VdOo/9vBuwCmfZNMhEsuG8sB/1Y/jisM7HyucB0
-	 4prVIwCwUTQrA==
-Date: Wed, 29 Oct 2025 08:23:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: Re: [PATCH v2 6/7] dt-bindings: remoteproc: qcom,sm8550-pas:
- Document Glymur ADSP
-Message-ID: <20251029132340.GA668444-robh@kernel.org>
-References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
- <20251029-knp-remoteproc-v2-6-6c81993b52ea@oss.qualcomm.com>
+	b=mNOSdOAyHbR1VT/fF2/pkmXxetdEzzrKRuVqgkh1vAl0cw2TE7FbX9LXe+xQVy0Wd
+	 GHUxzdoNjbJ8DOnGyUjAHVcDWHzV0x/OQbJOcRGPBj/H6KHrK9wk8lKPRz3oRlA8yZ
+	 1iRW3c8Eg11hR3E1tPmdtpRpZUaIu4Fv1o+wPwlkTgoxO95Wmdr4m6yMNIY/mhk4SG
+	 Y1+B+pJfTPYKuUbD/AWB5VoYivRdvEKKcMYRrnYlFJ0djwF9QuFkIy5mVfS7+uWKjy
+	 EmYOnbWmT1O185HtStSd04ZYpyopo4on0Ta9FEFVGNQ8vvit3zJfVgXinV0wo0cEKZ
+	 5BCqVzBhaNuLQ==
+Date: Wed, 29 Oct 2025 14:23:49 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] vfs: make vfs_create break delegations on
+ parent directory
+Message-ID: <20251029-lenken-scham-0cf009d5a7dd@brauner>
+References: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
+ <20251021-dir-deleg-ro-v3-6-a08b1cde9f4c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251029-knp-remoteproc-v2-6-6c81993b52ea@oss.qualcomm.com>
+In-Reply-To: <20251021-dir-deleg-ro-v3-6-a08b1cde9f4c@kernel.org>
 
-On Wed, Oct 29, 2025 at 01:05:44AM -0700, Jingyi Wang wrote:
-> From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+On Tue, Oct 21, 2025 at 11:25:41AM -0400, Jeff Layton wrote:
+> In order to add directory delegation support, we need to break
+> delegations on the parent whenever there is going to be a change in the
+> directory.
 > 
-> Document compatible for Qualcomm Glymur SoC ADSP which is fully compatible
-> with SM8750 ADSP. Also with the Linux Host running on EL2, the remoteprocs
-> need to be hypervisor independent, the iommu property is mandatory to
-> ensure proper functionality.
+> Add a delegated_inode parameter to vfs_create. Most callers are
+> converted to pass in NULL, but do_mknodat() is changed to wait for a
+> delegation break if there is one.
 > 
-> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: NeilBrown <neil@brown.name>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml     | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  fs/ecryptfs/inode.c      |  2 +-
+>  fs/namei.c               | 26 +++++++++++++++++++-------
+>  fs/nfsd/nfs3proc.c       |  2 +-
+>  fs/nfsd/vfs.c            |  3 +--
+>  fs/open.c                |  2 +-
+>  fs/overlayfs/overlayfs.h |  2 +-
+>  fs/smb/server/vfs.c      |  2 +-
+>  include/linux/fs.h       |  2 +-
+>  8 files changed, 26 insertions(+), 15 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> index 3b66bd106737..8cb839ba1058 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> @@ -29,6 +29,7 @@ properties:
->            - qcom,x1e80100-cdsp-pas
->        - items:
->            - enum:
-> +              - qcom,glymur-adsp-pas
->                - qcom,kaanapali-adsp-pas
->                - qcom,sm8750-adsp-pas
->            - const: qcom,sm8550-adsp-pas
-> @@ -101,6 +102,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,glymur-adsp-pas
->                - qcom,kaanapali-adsp-pas
->                - qcom,kaanapali-cdsp-pas
->                - qcom,sm8750-adsp-pas
-> @@ -247,6 +249,17 @@ allOf:
->              - const: mxc
->              - const: nsp
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,glymur-adsp-pas
-> +    then:
-> +      properties:
-> +        iommus:
-> +          maxItems: 1
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index 88631291b32535f623a3fbe4ea9b6ed48a306ca0..661709b157ce854c3bfdfdb13f7c10435fad9756 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -189,7 +189,7 @@ ecryptfs_do_create(struct inode *directory_inode,
+>  	rc = lock_parent(ecryptfs_dentry, &lower_dentry, &lower_dir);
+>  	if (!rc)
+>  		rc = vfs_create(&nop_mnt_idmap, lower_dir,
+> -				lower_dentry, mode, true);
+> +				lower_dentry, mode, true, NULL);
 
-This doesn't make 'iommus' mandatory as the commit msg says.
-
-> +
->  unevaluatedProperties: false
->  
->  examples:
-> 
-> -- 
-> 2.25.1
-> 
+Starts to look like we should epxlore whether a struct create_args (or
+some other name) similar to struct renamedata I did some years ago would
+help make the code a bit more legible in the future.
 
