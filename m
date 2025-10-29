@@ -1,182 +1,166 @@
-Return-Path: <linux-kernel+bounces-875506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0EDC1948C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:05:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328B9C19241
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C1C74F26A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:36:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBF98502962
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB963126C1;
-	Wed, 29 Oct 2025 08:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B6B3128DA;
+	Wed, 29 Oct 2025 08:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dsbg2gGK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjrgF0fd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5452C1917F1;
-	Wed, 29 Oct 2025 08:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE6A1B3923;
+	Wed, 29 Oct 2025 08:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761726987; cv=none; b=Ou2b/G5Skei4vqyJavxkK8pyBqLqc2dfrEeKU0XHYMOFUcpp0uBcw7a7y7b48qWD1mPeMJim/g8Byx3paNL9hWC/jne/fXtVsJMPe+VsI0xEADcLT7Fj7lqdbjYdNPoO6tAYXtijfF7LJp8jXDjtY+tCId535AO1SP+oKv7jhp4=
+	t=1761726999; cv=none; b=puMt+t9rClxlaeirMvwI4DW38iW7/2UdTJeaPdxI7fPuslf6J45X4S/wHw0dSCNqjP8/wCp+3Rech2NXW++FwFjlVZerb4yFk5hBgMidN1psCJop+OsduO/Um3EsK+VxX+HhU721HOk+oslvJICkiUK9cHEyoUxtmkfndXqKK6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761726987; c=relaxed/simple;
-	bh=huIK+iwaXtZ6g/UnJVOko6NspswsXyUtdXvuesD5DJg=;
+	s=arc-20240116; t=1761726999; c=relaxed/simple;
+	bh=1rKtagzqCuyPPLrsSkpbDvAK+y4SdzCtc2efQBAaXAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoPw84/tNiBIkaSWnjQA5nD9nQtP0VwjQyxFok4hKRJvydWkAzVeI0rnXgyDYx1IOGXVebqiNT3PbJC1IodX1xdh/TuDD/Oix8ksooJXkDevaNI7oHJwWCIAbg8SrqnGb3T+eeXk7keeQRCXH30vcoXk5QHgHBTqWM8Q6BhmEx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dsbg2gGK; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761726986; x=1793262986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=huIK+iwaXtZ6g/UnJVOko6NspswsXyUtdXvuesD5DJg=;
-  b=dsbg2gGKhimEjq8sQfsG+2X8lpdR8ZEjRg34y+5v57bQ9YyxpBwR9j9N
-   5Hubb5mkZqh+u/6HlDzSQ9Y/Ri48IxAIXIWUmjg42UCdr8tOCjG+h7H0D
-   17DnC/+1eMp44ajmHVihA5rYD7Lez7x34X4Zdl9vKxgEb3vh2JllWvYZE
-   vw8sPEJmNm9zp46Wk9usKFJ7Z+r+r1NfaUkpu6dinGi/vlAHI0hO38Z2a
-   /RzO698UJFju114QmenbdLFZ6tpTjWxYgpvvR6/qlNkHkGCr9VH0HuTqA
-   9Qq4spcj80f6d4lZybO+FUabaEpoxB7xKQcQ0RUGfrkl1lukg4KU1yBC7
-   w==;
-X-CSE-ConnectionGUID: gfG9RZSnRDiXyhzcpyMrSg==
-X-CSE-MsgGUID: Q62JaQshRPm8Hscvn5tLtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63744528"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63744528"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 01:36:25 -0700
-X-CSE-ConnectionGUID: X//ub2ABSbWSUni2qFujxA==
-X-CSE-MsgGUID: Xa64sinjQyWcXJJhfXNm9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="185291251"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 01:36:23 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vE1fI-00000003YWb-08DS;
-	Wed, 29 Oct 2025 10:36:20 +0200
-Date: Wed, 29 Oct 2025 10:36:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
-	linus.walleij@linaro.org, brgl@bgdev.pl,
-	platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] platform/x86/intel: Introduce Intel Elkhart Lake
- PSE I/O
-Message-ID: <aQHSA6TtCAVGDRNo@smile.fi.intel.com>
-References: <20251029062050.4160517-1-raag.jadav@intel.com>
- <20251029062050.4160517-2-raag.jadav@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiwQ/4xsmHJv8gKlJ3voQWDYT0HbLlyz2Pc/mehaS3QnZ1IORTCFfPyFqTzsXwQPAxQQevmj9QrjMilDIxaXyOtL9CX8d33Y9HcPlRjkY83Yvrg7UUFhH8L11td+bli8jhAKvURZIhpZMp0WHA6JzAVVX6K8O9WN6k6swPxLurU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjrgF0fd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE9EC4CEF7;
+	Wed, 29 Oct 2025 08:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761726999;
+	bh=1rKtagzqCuyPPLrsSkpbDvAK+y4SdzCtc2efQBAaXAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pjrgF0fd1Kw6Rz/hY36Ug6cppaVasCKMFiUTxVsnD3ZwCCquW0JgNgsQDWQSn45OE
+	 Ka0U3KcchPWlwJIPDtlcSxauweiv26U0K2RSuHGHNvbSvVN3rPFhoJiw6En9H+vohz
+	 siC6P4OCbcdk8RO9aqg1erGf7NO7aAPETSdrJnptKWiRf7Yz6GwkEfk8fV46BeScQD
+	 /8nAN1DKNAPffKgftlEfRuZMKmg89xw5c0PgezIaPpF6FX5ef9sYeYzjB32cENm+fh
+	 1bhzcG8iM9dAI3va4KS8UeT2cE3RaCoQtuBs0QphWVLSSrITEEYgiXxEIq6Q+tuwcp
+	 6/yj+oZjlV1vA==
+Date: Wed, 29 Oct 2025 09:36:35 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Corbet <corbet@lwn.net>, Jocelyn Falempe <jfalempe@redhat.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-embedded@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+Message-ID: <4uknyhx7lshybin3qjdyh7oq6udtdw3lqagumg6w6qjre3pn55@23c5itmo55f5>
+References: <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
+ <93cbbaef-918f-4300-aa5b-11f098e217b2@amd.com>
+ <23clcxtgbzbsji2knwp47xdc5udj7lnhbvzsgqi3vklvmhdgjd@26ycx2ed77l4>
+ <4497733.UPlyArG6xL@fedora.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="escnxwlco7olhzqd"
 Content-Disposition: inline
-In-Reply-To: <20251029062050.4160517-2-raag.jadav@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Wed, Oct 29, 2025 at 11:50:49AM +0530, Raag Jadav wrote:
-> Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
-> devices that expose two different capabilities of GPIO and Timed I/O
-> as a single PCI function through shared MMIO with below layout.
-> 
-> GPIO: 0x0000 - 0x1000
-> TIO:  0x1000 - 0x2000
-> 
-> This driver enumerates the PCI parent device and creates auxiliary child
-> devices for these capabilities. The actual functionalities are provided
-> by their respective auxiliary drivers.
-
-...
-
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/device/devres.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/gfp_types.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/sizes.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-
-> +#define EHL_PSE_IO_DEV_OFFSET	SZ_4K
-> +#define EHL_PSE_IO_DEV_SIZE	SZ_4K
-
-Not sure if SZ_4K is a good idea for the _OFFSET, the _SIZE is fine. Also why
-do we need two? If the devices are of the same size, we don't need to have a
-separate offset.
-
-...
-
-> +static int ehl_pse_io_dev_add(struct pci_dev *pci, const char *name, int idx)
-> +{
-> +	struct auxiliary_device *aux_dev;
-> +	struct device *dev = &pci->dev;
-> +	struct ehl_pse_io_dev *io_dev;
-> +	resource_size_t start;
-> +	int ret;
-> +
-> +	io_dev = kzalloc(sizeof(*io_dev), GFP_KERNEL);
-> +	if (!io_dev)
-> +		return -ENOMEM;
-
-Why devm_kzalloc() can't be used? I don't see if the device lifetime is anyhow
-different to this object. Am I wrong?
-
-> +	start = pci_resource_start(pci, 0);
-> +	io_dev->irq = pci_irq_vector(pci, idx);
-> +	io_dev->mem = DEFINE_RES_MEM(start + (EHL_PSE_IO_DEV_OFFSET * idx), EHL_PSE_IO_DEV_SIZE);
-> +
-> +	aux_dev = &io_dev->aux_dev;
-> +	aux_dev->name = name;
-> +	aux_dev->id = (pci_domain_nr(pci->bus) << 16) | pci_dev_id(pci);
-> +	aux_dev->dev.parent = dev;
-> +	aux_dev->dev.release = ehl_pse_io_dev_release;
-> +
-> +	ret = auxiliary_device_init(aux_dev);
-> +	if (ret)
-> +		goto free_io_dev;
-> +
-> +	ret = __auxiliary_device_add(aux_dev, dev->driver->name);
-
-Hmm... Is it okay to use double underscored variant? Only a single driver uses
-this so far... Care to elaborate?
-
-> +	if (ret)
-> +		goto uninit_aux_dev;
-> +
-> +	return 0;
-> +
-> +uninit_aux_dev:
-> +	/* io_dev will be freed with the put_device() and .release sequence */
-
-Right...
-
-> +	auxiliary_device_uninit(aux_dev);
-> +free_io_dev:
-> +	kfree(io_dev);
-
-...and this is a double free, correct?
-
-> +	return ret;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <4497733.UPlyArG6xL@fedora.fritz.box>
 
 
+--escnxwlco7olhzqd
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+MIME-Version: 1.0
+
+On Tue, Oct 28, 2025 at 09:09:06AM +0100, Francesco Valla wrote:
+> Hi,
+>=20
+> On Monday, 27 October 2025 at 18:19:12 Maxime Ripard <mripard@kernel.org>=
+ wrote:
+> > On Mon, Oct 27, 2025 at 11:31:06AM -0500, Mario Limonciello wrote:
+> > > On 10/27/25 11:28 AM, Maxime Ripard wrote:
+> > > > On Mon, Oct 27, 2025 at 11:01:55AM -0500, Mario Limonciello wrote:
+> > > > > On 10/27/25 7:35 AM, Thomas Zimmermann wrote:
+> > > > > > > >     - a very simple progress bar, which can be driven throu=
+gh sysfs;
+> > > > > >=20
+> > > > > > Once you have options to control these settings from user space=
+, you
+> > > > > > should do it in user space entirely. As Maxime suggested, pleas=
+e improve
+> > > > > > plymouth for anything with animation.
+> > > > > >=20
+> > > > > > > >     - a static image (optional).
+> > > > > >=20
+> > > > > > Board vendors often provide an image, see /sys/firmware/acpi/bg=
+rt/. This
+> > > > > > is a candidate for display, or the penguin or a custom image. P=
+lease
+> > > > > > make it configurable by Kconfig. Again, if you need policy and
+> > > > > > heuristics for deciding what to display, you better do this in =
+user
+> > > > > > space.
+> > > > >=20
+> > > > > I'd actually argue that the static image from BGRT should be the =
+preferred
+> > > > > priority.  This can make for a nice hand off to Plymouth.
+> > > > >=20
+> > > > > The (UEFI) BIOS already will show this image as soon as the GOP d=
+river is
+> > > > > loaded.  Bootloaders like GRUB by default will avoid showing anyt=
+hing or
+> > > > > will overwrite with the exact same image in the same location.  T=
+his can let
+> > > > > the kernel do the same, and then the moment Plymouth takes over i=
+t could do
+> > > > > the same.
+> > > >=20
+> > > > And BGRT isn't typically found on embedded systems at all, so I'm n=
+ot
+> > > > sure it's a sensible default, let alone a priority. At most a possi=
+ble
+> > >=20
+> > > There are certainly embedded machines using UEFI and that have a BGRT.
+> >=20
+> > Yes, indeed, hence the "typically".
+> >=20
+> > > How about "Sensible default the top of the priority list if it exists"
+> >=20
+> > How about we don't tell contributors what their priorities must be?
+> >=20
+> > Maxime
+> >=20
+>=20
+> I'm not familiar at all with BGRT, I'll study a bit about it.
+>=20
+> A build-time configuration could then let the user select:
+>=20
+> - a plain solid color
+> - a custom static image
+> - the penguin logo (?)
+> - (on UEFI systems) BGRT source
+
+It wouldn't work for generic distros that would run with the same config
+on systems with and without BGRT.
+
+Again, that whole discussion around BGRT is very premature, I'd suggest
+to drop it for now.
+
+Maxime
+
+--escnxwlco7olhzqd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaQHSEgAKCRAnX84Zoj2+
+dpGIAX422nWOX75YY7H8/KLRytbQNW5Mc3R0yHeeBRF2Es62f2SWmkYJtpd604aL
+gPtkHr0Bf2dw31hWMOP/ppZ975jt6D0JUZCVXttO2ltAPk1jJbxLm0z0Oe2x2aIX
+RT783F5qdw==
+=onat
+-----END PGP SIGNATURE-----
+
+--escnxwlco7olhzqd--
 
