@@ -1,129 +1,214 @@
-Return-Path: <linux-kernel+bounces-876333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F347C1B79D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADB8C1B3A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E035823A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B811A62AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF01271454;
-	Wed, 29 Oct 2025 14:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F40267B89;
+	Wed, 29 Oct 2025 14:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPmuKBsz"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pT0a4RDi"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32E826A0DB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8807F2641FB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747710; cv=none; b=gglEFphmYLmbgtrabqjJ4HvD5btaOUj+W6KKKSQUJtfXzbyaHXdb/+UYN0dEQSiRD7r28DsXv34hBwNPhBggq8PMLSqhoCoT7Gma0QUzDpH0Md79ESAAiqV/0RzTxyf1X6i6B+pIiCz8txDGWfWl0okf6T0hmoWm9YoBTLJcI0g=
+	t=1761747783; cv=none; b=D3my1PEI9M3W39evYn3N2MrZoVnJLi4bvZob/nWE8+kW6EP4/B8o3rP6jlulhxxBW/3akky6i75YZnduc4DlWk87N6k3G1SF4+qcvoZaB9VnwAXbwMK6Q1oE6lgDy86R/ASH6MnUUWj6cB0AoVhQZ6HLWgIT84rRpaH3TZiTPMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747710; c=relaxed/simple;
-	bh=W2MmcX2vCweI9Q0W0BLZEPy3CkT01KpRkvvdhb0j4RU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZmVwMqNDK9PiG5q5QMCm7gWnr8zSw7Avcxn0l/XmrFRDN3CwDW686PbkqIKzB0EwUEYQ3buhXkftt0XGCYT8nSFWbP803BtH+6aqNKnvtjfDhdRuB1WjuHuqwOI4JTEE062lDRdvOrLCAogphmFJu/v49MuoWOUlvl9/KwwM8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iPmuKBsz; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57f0aa38aadso9232253e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:21:46 -0700 (PDT)
+	s=arc-20240116; t=1761747783; c=relaxed/simple;
+	bh=3r1XQRF8DDSRrKj9zbUnuUeGmXqakMD70QFkY1kuWkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZYIYXJU5RhK6XCfS7Lybnw8b4aGTpmicjOFoNxzUVQKuEKRdK1zswHgzQ66q3bFSQbkGTYE1Eq5uFUccA56T2Pac0dzFutqhywJv6KNBajKFzgv6pWys9yAuuKVB++MWOQTOb7p+yBIAYG8O2/EIhm/aIdmLvcTwJaT7uFxp8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pT0a4RDi; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-587bdad8919so10635e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761747705; x=1762352505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVuX2dWoAgb7QHLLOTB16BwhmwEzZ8jO6zQdan0Y+2I=;
-        b=iPmuKBszqzRuJQbXmV7ZqrHkGQ7zzFPI5fCiy2pzoDtPjlRPUxn/iBGENRd/ptR9K7
-         3VBKIZJP1O0yUFj7/fCcbOwJ6Jrfg+aPV8Qe6xEI+yJbt3zW5MFm2vbkHPWUEusZbsG9
-         9pDt6yHUt7It5usEE7V6f8zm2g/wPOsuVhT8wJtzZZCpNR5pe56ZlKHI8y6UiF8K+aW0
-         6QnQ2mRi0kkStXvJzZuY7GofiTxN0n9PLm4/uCs5Swf6Aq4grVIHoojnEHTsOwvkPK9h
-         byUFAKzmTHWTLC+KE+CJwCtlAzXP6ZbY547Jy05lqxEPqw1USDxJedUjrktORkWq++Nc
-         KPLw==
+        d=google.com; s=20230601; t=1761747780; x=1762352580; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3X8rEfNOS8L5ftWnixKzPLC44IltEKPSF05+QvLhNoU=;
+        b=pT0a4RDiIs6sKv5yKt8jxXLlZIZcuZKDgckMvNJ3+qU38g/fB1vquKksB0atwDNQNY
+         Fq1xfNiyfdqcp4yHkEXYVY6kPSqjUDFFZftUpNJzIHqCM2KRQz7xsSJUeCMB4WkE3hzL
+         ZSS7mYgN9ZE0ahx/aZKhg6orGeaAYmboJP6qVFka4nz4jB8Zpslm201HC2H2bOyL2ZYs
+         5prTdl7u4hh8iuWcDMdQD/PRWrbo2aDpfkHXcD2T09tZZ/3Lb1aPicBpFat7h6WcRSl4
+         t9CeWCSAR7r+vhFOvCbSDJtbblzPTSYO25ZU0V592loQ9iJCN8WzqDrS+6Oq5VEPuSz1
+         te8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761747705; x=1762352505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LVuX2dWoAgb7QHLLOTB16BwhmwEzZ8jO6zQdan0Y+2I=;
-        b=qs93a3f85h/57YqcQ5B8tfxM58kdksrK33SVfFO9S+nZJrXmm1h7GB5Q83cfBpC7Ee
-         b7EfD7yRryfMDSp43PUVyLAHTBV6gQ6WiP9l+nv9YlbkHp4gZPKEHJp+RVIK1KpACl7v
-         7TJ70IzjCKmDUSdERVYn8r5/N0wQz99bkGdJSeUVl3UFril26V6hRdh43Wm8CE1OFf+p
-         YG8K1b1DVrEprBk4mI72nx0kL/kn112dicAYn+sHviAlNrNFVXQ2o81dsfEfFcl90H/Z
-         Joo521OwX+F/7Cp+VTE1iZ11We3rc+psEjqFKWVUdp2ffu6Ie6MuhnLnjCKFBObYSxNn
-         2jaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEOrPiOk5OlYOu7kBsz87DLZf+RvgzpbefGyipdnssaRJGC9Jznt1t7MQsGT5OZgfOIPzPT24y+zlr0pI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwxETcD4joulVAMnK+3ajkZiOEkQ5h1Du7lR2g3qL8MzWQw+TW
-	aTtRF+PRvmGFYH+4TdMw/7hn6NKMRxThGnwz72/LkqEtJTDJLHmu0TvoY00Blvzc8x2Gcs+ueiq
-	Lex3EraGsMoGT4nqRsW+41euZSqFkmEE0EWxWXCU6bw==
-X-Gm-Gg: ASbGncvNQJ+zch+dj+Bl+TnF0Fzwgsmebj5TRA3VX3LcHZl3Ex8zudKgo/4l4GR5+CD
-	tkuGw1JuvxgWfi9yyNRGFGy+l3lhOMbJ95Ds8RYHlOjClxP3daH/AGowaiCryBtO/IuiToihfEi
-	uUJYS+3GfzBfvltfKfvkRX4kqKUQHqMN0C8iyGVPNofkE1jIbhnchV8AjZCTMLK8O0SvBsTKu4I
-	rXPjfRY80KP0lRAMlLTIfpr0J2QEoJ/NbYKBGPiuatBpsTyrwCupBdfAdpZ
-X-Google-Smtp-Source: AGHT+IH/WV9TTRDue/YlQPKqZJ/rOmSLCumqELYgQ//HXfU7luOPdKKEVQrj3vn51BUY/zZkRojEs9B5VMPxZwJpOnE=
-X-Received: by 2002:a05:6512:238f:b0:592:f814:3852 with SMTP id
- 2adb3069b0e04-594128b7bd8mr1157709e87.20.1761747703432; Wed, 29 Oct 2025
- 07:21:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761747780; x=1762352580;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3X8rEfNOS8L5ftWnixKzPLC44IltEKPSF05+QvLhNoU=;
+        b=MoiQJFRBsStwhTkXoboxE4KhflC0ee3vcic7WLdNS+kPIqFf3DxnhbRnFrzXD0J40M
+         zn7p92MXd+YbOCizdBIXpA7HvuGOu+lM/8GYSHbNRI7G+a9fQjntgWGZ3snVzgs/Nm1g
+         /sN8u3nj1MP4epHUQBIerY3zFW5++UQ/7Wqzqm2GWYIrT9ojFMWPdeGklvwcV+IOZGiX
+         +bCO1km2wCJhLEZ/yVtiC94+9W5nxHqpmeamQP2dUZe4nPC7xuHYp8FiERwKcJO/3tkJ
+         C6/PYr5uvSOebviwOqYVXFgXe4S+LknNv1Zw0Y42DbOx1W5bAFQDftXK12YY41gxBi8m
+         Vk+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX0n3lFP3LaS7R0bbJ916UjuPJoUdVyUl//E/yi7pmz3/42G5vRiAXjQtEQ7K6QwHERMMPQPOD1jqRPTvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyVivBEWTztqfQqW7Maz9+Rns0kBiC52OVriiPSR4rslXgz7aR
+	qsAE84+VcfdW/Sv7aIKFgQU4wyiEabLE76XOh+o1UJ6FQZ6RUyO+XqnUvzjxiXI+RQ==
+X-Gm-Gg: ASbGncuxAzAsd/9L9rH9coZ+cDZ1keRkOB+0QZRxDGXO/sUpnXVvvxJcYPnckkFb3CJ
+	H9HvaC3qqRBsz1dDbWgTMpJDMBLUzyoe4L5UTEmaAF15cw70BIYhiegQT/gKcgVt3T3jZGDusRg
+	Yrkzxr5vU2WaOn9MJAQzrgVD3RCQ/EcaENsJD4WVp/n628INBEBOUz0/wc1IZ0J/3fCInAdFWud
+	wViFHhNWLQy9ZFdRW80PAbz+OiHlL2ugIGhkngVdzHGU5dQMZ34XrqiLhRThpikHwLbMHn7Z305
+	MXcHbaZ4KyqyxQuCd0s991um7Mb+0aBXnutGiqTbknQr8iCOZ49mnNeQRYoRDzIfqYSEgu3/+Jf
+	RS0evGaPV1AHuw/aWHxLCY6/hQSys6sCiokAvf1/5J/8JCxDScC4Cs6RCIvCoH0DnO5bG5EjaPX
+	dURNGe0QgPoUskQip1+MsDTJlOad/eA/CZcvdmirU=
+X-Google-Smtp-Source: AGHT+IHqpmvhmNQeMUwlxSx22ePgHZKELB9fYGyYcpwDmvfoTwWjtRpntwXiEd4wY5k8KEzx24Mb0A==
+X-Received: by 2002:ac2:5fd0:0:b0:57e:b289:c64a with SMTP id 2adb3069b0e04-59412a39f9emr279787e87.6.1761747779360;
+        Wed, 29 Oct 2025 07:22:59 -0700 (PDT)
+Received: from google.com (54.140.140.34.bc.googleusercontent.com. [34.140.140.54])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d5678sm26187265f8f.22.2025.10.29.07.22.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 07:22:58 -0700 (PDT)
+Date: Wed, 29 Oct 2025 14:22:55 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: =?iso-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>
+Cc: linux-mm@kvack.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, corbet@lwn.net, will@kernel.org,
+	robin.murphy@arm.com, akpm@linux-foundation.org, vbabka@suse.cz,
+	surenb@google.com, mhocko@suse.com, jackmanb@google.com,
+	hannes@cmpxchg.org, ziy@nvidia.com, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org
+Subject: Re: [RFC PATCH 2/4] drivers/iommu: Add calls for iommu debug
+Message-ID: <aQIjP3jVigyz8t38@google.com>
+References: <20251003173229.1533640-1-smostafa@google.com>
+ <20251003173229.1533640-3-smostafa@google.com>
+ <hu7ozrdn6la24apa4pco5nkhow2dmthahjomjj6hy4nrefx6j4@lcdfbykoafw4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761588465.git.geert+renesas@glider.be> <ac3e718c5de6a23375055dd3c2e4ed6daf7542d5.1761588465.git.geert+renesas@glider.be>
-In-Reply-To: <ac3e718c5de6a23375055dd3c2e4ed6daf7542d5.1761588465.git.geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Oct 2025 15:21:32 +0100
-X-Gm-Features: AWmQ_bn0qj1HdhGI-E5owVSGvqmNxBgXc48MF5-9CHRtkVWKXcvNelNuCdps5kE
-Message-ID: <CACRpkdYMv+R-NJ5R4+UyhK1+DJia0z72kZgt45+0eubXMuGpEw@mail.gmail.com>
-Subject: Re: [PATCH v5 18/23] pinctrl: ma35: Convert to common
- field_{get,prep}() helpers
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
-	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <hu7ozrdn6la24apa4pco5nkhow2dmthahjomjj6hy4nrefx6j4@lcdfbykoafw4>
 
-On Mon, Oct 27, 2025 at 7:44=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, Oct 27, 2025 at 12:43:06PM +0100, Jörg Rödel wrote:
+> On Fri, Oct 03, 2025 at 05:32:27PM +0000, Mostafa Saleh wrote:
+> > Add calls for the new iommu debug config IOMMU_DEBUG_PAGEALLOC:
+> > - iommu_debug_init: Enable the debug mode if configured by the user.
+> > - iommu_debug_map: Track iommu pages mapped, using physical address.
+> > - iommu_debug_unmap: Track iommu pages unmapped, using IO virtual
+> >   address.
+> > - iommu_debug_remap: Track iommu pages, already mapped using IOVA.
+> > 
+> > We have to do the unmap/remap as once pages are unmapped we lose the
+> > information of the physical address.
+> > This is racy, but the API is racy by construction as it uses refcounts
+> > and doesn't attempt to lock/synchronize with the IOMMU API as that will
+> > be costly, meaning that possibility of false negative exists.
+> > 
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > ---
+> >  drivers/iommu/iommu-debug.c | 23 +++++++++++++++++++++++
+> >  drivers/iommu/iommu.c       | 21 +++++++++++++++++++--
+> >  include/linux/iommu-debug.h |  6 ++++++
+> >  3 files changed, 48 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/iommu-debug.c b/drivers/iommu/iommu-debug.c
+> > index 297a35137b38..607f1fcf2235 100644
+> > --- a/drivers/iommu/iommu-debug.c
+> > +++ b/drivers/iommu/iommu-debug.c
+> > @@ -5,11 +5,13 @@
+> >   * IOMMU API santaizers and debug
+> >   */
+> >  #include <linux/atomic.h>
+> > +#include <linux/iommu.h>
+> >  #include <linux/iommu-debug.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/page_ext.h>
+> >  
+> >  static bool needed;
+> > +static DEFINE_STATIC_KEY_FALSE(iommu_debug_initialized);
+> >  
+> >  struct iommu_debug_metadate {
+> >  	atomic_t ref;
+> > @@ -25,6 +27,27 @@ struct page_ext_operations page_iommu_debug_ops = {
+> >  	.need = need_iommu_debug,
+> >  };
+> >  
+> > +void iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size_t size)
+> > +{
+> > +}
+> > +
+> > +void iommu_debug_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
+> > +{
+> > +}
+> > +
+> > +void iommu_debug_remap(struct iommu_domain *domain, unsigned long iova, size_t size)
+> > +{
+> > +}
+> > +
+> > +void iommu_debug_init(void)
+> > +{
+> > +	if (!needed)
+> > +		return;
+> > +
+> > +	pr_info("iommu: Debugging page allocations, expect overhead or disable iommu.debug_pagealloc");
+> > +	static_branch_enable(&iommu_debug_initialized);
+> > +}
+> > +
+> >  static int __init iommu_debug_pagealloc(char *str)
+> >  {
+> >  	return kstrtobool(str, &needed);
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 060ebe330ee1..56c89636a33c 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/errno.h>
+> >  #include <linux/host1x_context_bus.h>
+> >  #include <linux/iommu.h>
+> > +#include <linux/iommu-debug.h>
+> >  #include <linux/iommufd.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/err.h>
+> > @@ -231,6 +232,9 @@ static int __init iommu_subsys_init(void)
+> >  	if (!nb)
+> >  		return -ENOMEM;
+> >  
+> > +#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
+> > +	iommu_debug_init();
+> > +#endif
+> >  	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++) {
+> >  		nb[i].notifier_call = iommu_bus_notifier;
+> >  		bus_register_notifier(iommu_buses[i], &nb[i]);
+> > @@ -2518,10 +2522,14 @@ int iommu_map_nosync(struct iommu_domain *domain, unsigned long iova,
+> >  	}
+> >  
+> >  	/* unroll mapping in case something went wrong */
+> > -	if (ret)
+> > +	if (ret) {
+> >  		iommu_unmap(domain, orig_iova, orig_size - size);
+> > -	else
+> > +	} else {
+> >  		trace_map(orig_iova, orig_paddr, orig_size);
+> > +#ifdef CONFIG_IOMMU_DEBUG_PAGEALLOC
+> > +		iommu_debug_map(domain, orig_paddr, orig_size);
+> > +#endif
+> 
+> These #ifdefs need to be in a header file, not the actual source code.
 
-> Drop the driver-specific field_get() and field_prep() macros, in favor
-> of the globally available variants from <linux/bitfield.h>.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v5:
->   - Extracted from "bitfield: Add non-constant field_{prep,get}()
->     helpers".
+I will fix it in v2.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
+Mostafa
 
-I guess this needs to go with the rest of the patches?
-
-Yours,
-Linus Walleij
+> 
 
