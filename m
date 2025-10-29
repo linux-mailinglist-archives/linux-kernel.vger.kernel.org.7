@@ -1,270 +1,232 @@
-Return-Path: <linux-kernel+bounces-875585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8DEC195FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:31:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E28EC19601
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:32:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8B51A22FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A18189C703
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231D4327790;
-	Wed, 29 Oct 2025 09:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB41232861D;
+	Wed, 29 Oct 2025 09:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hPVbiq53"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KqVUB7fv"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688CC2EDD4F;
-	Wed, 29 Oct 2025 09:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761730277; cv=none; b=iPRkvxLrfawnO9/Zjhr/wN/ohyhrO4aLtjpu/2YYdd9mki2UiZrF4EDqu2nQEI2JZmD/PA2LJe2hvLgL4+TNY/rxLyo/HS+MSVdHzLzo+nyNDze5iYyTeCzzi0rYgV466S4/RfbtNe/4+dBiXQavgdqtk9/eVplVopQrFNmtOTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761730277; c=relaxed/simple;
-	bh=67Yp8PRiSnVp+FNZtbZ8Czeko/T31Fa0nNmkzjc6WDc=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Luv45MdznSPbIKNJiVlwtLkzzppcJa4LdBwr2hSH3ES1mz0+DimYK8bKCijLgvFKKY2yrTFMEyaTli8OGIrSQ7g7v1nQPpq+POgot1XG0HD3gyHn8q3P/fZEJFRyNArQj7d3yiupUDPJVeenAycX6IT2JM20QF++11hJ0o9dQ1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hPVbiq53; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SJmE6u025849;
-	Wed, 29 Oct 2025 09:30:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=bRT40ueltCWeAHZZ/VVXOa8G9IRcy9elrB6Oz4afA/0=; b=hPVbiq536Dqj
-	3bArN6jkNL+/JVj5gXhK4+FFMuDeMDy7UGv4fJzFOogpXTQovrhk4ZAbwC1DnXS1
-	ujZHyQ6jIPKW5xc5ZSo2MnHpsN4eBV5Pg59Lmuav73Cwo7mD/qkLbluU7qW6mPta
-	/54XtEDdeKM/dnJuxOPsHc40YAlebjj7PeQUKGOr0jNgRVJAAHaKGpzby6P8dEbC
-	2mrsDIvdigsS2WZkDZn9Fa14X8NNEQaISdu8y0F1zVuiAqogkBJNe7w70LXiR99+
-	04/asJF0fRWdcHf/pH11UWx5g3cu2kD4egBKkEecTAadeemi28L27UXFmms7kyrN
-	zLagLpMbuw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34acjh3y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 09:30:42 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59T5L8EF027428;
-	Wed, 29 Oct 2025 09:30:41 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33w2jjng-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 09:30:41 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59T9UfLE26804918
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Oct 2025 09:30:41 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EE2258056;
-	Wed, 29 Oct 2025 09:30:41 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE30E5805A;
-	Wed, 29 Oct 2025 09:30:40 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 Oct 2025 09:30:40 +0000 (GMT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64BE326D4C;
+	Wed, 29 Oct 2025 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761730279; cv=fail; b=KiO2Cwf12LYO+AjqEZcE/5mu0Bdx4MTspfLOXbmqoC4BgZDkXI9bbZATzWgE7Xjfsrl1TEiVlTrH8o+Gijp+VYg6bswgXCLvm6n1Mb0Y12/aTJ2YDa2Cs7pMlVBQ20zsMM0+cws4xiJlcJOE1s+P2Q63Qkte2AYHDkIm9223W84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761730279; c=relaxed/simple;
+	bh=E2erK7i8zozn+ZJDPHPEnAD8eq/np2AK2eHGnKTHDX8=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uSU4i/OmgzdnrxPL1hxbsvkDHvq1yx2wutkCOnL9KwuXkg/9p8k86AjQN/vj7AuoIE8qxM6PxuO2l9Zm2SxtPL/4TlOu6FxSyPsKVzfiB8GpfxnLL2Zz8HvHxxpNpOnCXH3X5Ya8hX9ZIimK4uuA7gzkLUK9GJNxx7BtOpAweXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KqVUB7fv; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59T9Q0GS3058019;
+	Wed, 29 Oct 2025 10:30:51 +0100
+Received: from osppr02cu001.outbound.protection.outlook.com (mail-norwayeastazon11013067.outbound.protection.outlook.com [40.107.159.67])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4a3be3hfv4-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 29 Oct 2025 10:30:50 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yolgacaB+M1HUeCW3SwNP7DHU2TQKc0NqIu/3UNyqm5mkYYvDKr5lhis7fJ+dSmZcH+AU7MqL0k5A5Iu3Nm0XEdbvmm7bCz+JWL0RxuakEzy8ym6wQTvMkEafFGaZtfgFQynrjR/EWZgMgFvdjACNZw/T4Xwlf4wzJKZ6zU75PwJuVeo53jVUtZOkio9erFbUiRpR7TqVSoHN16sv5N/H9DGITJgS0mOTybaF/KhkbrqEtB5CgVcbIBp65HsKGBEL2TRL1MA13RMlN0jXgHsQzYJVoB89RTIC8KOiDcudS8ahM8JbxsNGZMpIxaz0CBLxQNRRddYTWI6/aTSb9msPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E2erK7i8zozn+ZJDPHPEnAD8eq/np2AK2eHGnKTHDX8=;
+ b=V0o5pnwEl3u9ZzPFAAZ4l6M14DbCtx3u7AG3ZnuzKS9A3uktwxZDP9BpZVX+xRgOJfKKzkhe22SVJiYwbjaXwCrjIT7HBIuxaEY/vDimVVPqq80/Hago0Rk/uqB8Qy0lYMLqyvlZXtnWDbu+Rfihi13mH098eAZWD3vhPqs3xlV5APUDVh0WOdp3xZ2Jr7MytUH7Tm9bNucdGM8o4A0uWxapSSh+7mKDvEll4L7vvUAi5CeqE1xt5UwQ00sHqEF1EEPuGChMK5N32tbgopTwuND4pTWVoZzEcdgdWhPQKflV1KMqrJLtwXqokIftm0sLzMbYKGEA1+ZS74R96WcOJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.43) smtp.rcpttodomain=iscas.ac.cn smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E2erK7i8zozn+ZJDPHPEnAD8eq/np2AK2eHGnKTHDX8=;
+ b=KqVUB7fvWk9S4YSyOUOUOSotCpztyOALIY1zROsjGxNWf9Amc3VxiH0zsgbsXFB8ApKlAKnTstPUFOyU/j/Pav3W1qFsYrYjZK7sxa/l4i4XReuh1Q5LBzIMgVHxGGPylyjhKFq/Akj9p/yvmlirqUTWp/z3Gne5vCfDkd6sV4veZljZyS74IyI8Zwtgxdc2hGRnn3MDoy9kab1erGPfpjOGOuShTefyozKQHUb+5Im3Lvmk+zMlGV/oq0Pck1arS9SvZ4rF7EIAPycnCvmFElqmFDGI/BITDubLl0cbbHEP0iWtE2qB1FJhXbAvTu/b9+mQMLTqgwBHFvr1g0PUgw==
+Received: from DUZPR01CA0009.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c3::16) by PRAPR10MB5156.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:27a::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 09:30:49 +0000
+Received: from DU2PEPF00028D0C.eurprd03.prod.outlook.com
+ (2603:10a6:10:3c3:cafe::51) by DUZPR01CA0009.outlook.office365.com
+ (2603:10a6:10:3c3::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.13 via Frontend Transport; Wed,
+ 29 Oct 2025 09:31:01 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.43)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.43 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.43; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.43) by
+ DU2PEPF00028D0C.mail.protection.outlook.com (10.167.242.20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 09:30:48 +0000
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
+ (10.250.44.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 29 Oct
+ 2025 10:28:32 +0100
+Received: from [192.168.8.15] (10.252.10.43) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 29 Oct
+ 2025 10:30:46 +0100
+Message-ID: <1ecb3859ae79fee2031e8aae5380f509629eae93.camel@foss.st.com>
+Subject: Re: [PATCH] pinctrl: stm32: fix hwspinlock resource leak in probe
+ function
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Haotian Zhang <vulab@iscas.ac.cn>, <linus.walleij@linaro.org>
+CC: <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Wed, 29 Oct 2025 10:30:44 +0100
+In-Reply-To: <20251029014252.178-1-vulab@iscas.ac.cn>
+References: <20251029014252.178-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 29 Oct 2025 10:30:40 +0100
-From: Harald Freudenberger <freude@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Ard
- Biesheuvel <ardb@kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Holger Dengler <dengler@linux.ibm.com>,
-        Herbert Xu
- <herbert@gondor.apana.org.au>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] SHA-3 library
-Reply-To: freude@linux.ibm.com
-Mail-Reply-To: freude@linux.ibm.com
-In-Reply-To: <20251026055032.1413733-1-ebiggers@kernel.org>
-References: <20251026055032.1413733-1-ebiggers@kernel.org>
-Message-ID: <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com>
-X-Sender: freude@linux.ibm.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=XbuEDY55 c=1 sm=1 tr=0 ts=6901dec2 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=0OBHIRt0DnuW_K4Yg-cA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: lPW4ZZ8WPxSI5DjsUIJxSoxD1Sb2aixA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX3g8vFV4TCTar
- BBnezYFrJ5i3rlVVYjzx73BF8sVp0LCWePV8QOg+97Gorw0IcieSreJg8loOWfKwGyWmpLFQeYK
- G95sOYMLk/xtNE4V4e7kBvaCm3HUu97hv1nvbivKHhDTcz+I5PT3Pkxbue9FycumrEals1ke8dY
- gajALPML41PC+5HkxsgX2xlDpp1sCrzA7x4N8mdIX8vLT7Ysy6QloapLrNTXYnUubJFo/yIkQWz
- sFWzFMR4DUDKgVQ7fGQ29xyFSMQu84mAa0aRIg1QXHTzn15sJwn9iZMxhhHhU8gEd2S09H8aujD
- jJMUJuWXUDIbU/QI1JW3i6rntsrEK4yw+OlgN/qGpdCOm5Dd4SH3PdQFSeZjzdujfu2gtyxGppG
- ZKfE81y/GLBXs7tm+I1MUJ1Y6f/rmA==
-X-Proofpoint-GUID: lPW4ZZ8WPxSI5DjsUIJxSoxD1Sb2aixA
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D0C:EE_|PRAPR10MB5156:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ee2212d-d625-440c-3dfe-08de16cdd800
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YkRHS2p3SHNEUnRUakNsV0UrRFlRTHdZYjNtZ2Q4QmVCMFdDZU9YeFRRQ2Z3?=
+ =?utf-8?B?TmFFM1FidzI1azJiWFF4Mm95NjRkcWNCdGhTUlpCcWg5ZkZLV2ZVVWYvVWND?=
+ =?utf-8?B?SjdkNmxnc0JicnlqMVk5cCs3QlRkR2V3bHZhWHdYSis3RTlUU2gzWHd4ZFEz?=
+ =?utf-8?B?RE9KdDdEb3llWUZzQmJubGJCUExVNml5TnQwSy9BSnAvdWFMbnlYcVhTaVg2?=
+ =?utf-8?B?enNxZklkZDI1aHpKVkVZeS9GWFluYmUzczd5VzJWNHp3OCtaRHdyTTR3YVVJ?=
+ =?utf-8?B?VzVCMjA3UWF1eXFqT0hCM0k2UzF5SHVncktXdGlvb0NITEtoQW1OVE52R2Er?=
+ =?utf-8?B?YmZIOG9OMVFiZWZHQ2pCMmxvRElieUxOWTI5bGViUlp1WEYyNFdYdCtRanhx?=
+ =?utf-8?B?YloySDRGV2c1dFpUU1o3RDVJeXRFWEtlRUcySnQ1eU1GaVJMYUJ0UzR6YnR6?=
+ =?utf-8?B?cWtScTJaVzkzM2dmU1R1YXZQZ1poaVpxYll4MnkxOHZYWjBpZmFiajFiSFBR?=
+ =?utf-8?B?SkJWQ0wrUnljUUlhc3dXWkt6RTYyWm5DOXVHS2hkd2VvMHljN2U1c0Z0Z25a?=
+ =?utf-8?B?cGVlc0hhNEhYRzhwbFpCWEhqYzh5dGE5WENjVUV0aVpkckNxd0RONnNpTm1j?=
+ =?utf-8?B?bllIT081RXhRc0tSNFFjS29GeHJCL2ZQK3l3WU4zWTZpbW0vUnBNVUp2ZGNY?=
+ =?utf-8?B?c2xvMDhjaXIrT2xLRlRRR0x6Zy9XNy9IY0M1NVhOSEh3dHIzQ1BqMkdIRTE1?=
+ =?utf-8?B?N0dWMzFsNnZ1MmM1VThzak9QQ1lQaEpEU3ZUMXJ1cUZsSC9YUWhURHFyT1E4?=
+ =?utf-8?B?dVdSNTJoVnBkcFJuQzBRNUZwRmNGNk4ra0FUL0RGMHdiUUc3aU9lRC9VNkhU?=
+ =?utf-8?B?TTNuUDVuUTNqNTltZzlma0N0WXhaMWFldzI2T1ZOUXF1WnNWZlRLRGRLazBo?=
+ =?utf-8?B?R2JTT29KaTVSeU0wMjhRYXM2S1Z1Vk5nVVNIckxPZHhrT0h2WUREOFE4RHcv?=
+ =?utf-8?B?bHhEZTBMVXVLNldpRjczYUVwbHdiM0c4amRmWGJxRmxxVHBTSGdFQkpLUHhs?=
+ =?utf-8?B?NkRWYXRmUmZES2F0L2Y4Mk1kN1RPZUY4Z3lHZkQyQTl6SW0vcmF6U1dwN2pw?=
+ =?utf-8?B?R29CZThTTzR0aWpFR0x2aXcxdzV6WkJ0YnBMdG80YWJjd1ZEdTU4eEVDeW92?=
+ =?utf-8?B?SEx3ODROay91TWwzV1NLRHQwZUpWdzVsUTNUOXpjMEFSVVl3Wi9BOWVpa1Ri?=
+ =?utf-8?B?ODZJRlVNZVcyeGxhUGhaRjd5SmEwWXZUYmovb1o2YkxIYmZKdUtqTDlBSVc0?=
+ =?utf-8?B?Y0I5TUdrcnJQUmJzdlA3NXFNQzFSQUVCSjFFNTVkZ1dKSmJINlhJcnlLTHFs?=
+ =?utf-8?B?bWNUK09FRWJtM0hzNTVBZnJRZUVmbG54NnRFRGVxYnBxTlpvaVBlWm5IUlpH?=
+ =?utf-8?B?ZnphcU1TZ0szUTNpRVh0aytyK2FrTFphUWg3b1hRTzhrNlNZU3dEdkVQdlBr?=
+ =?utf-8?B?K3BuVTEzS3JxK2ZSOWYvcXJmZ0k3Ukc0d2toTCtETElKWE1qK2NlSDlQSUE2?=
+ =?utf-8?B?Y3pxSnJNWTJlMCt2blcwL0NlblBVSGliMk83bDBKUEhtajZpeVdFN3AzMFJu?=
+ =?utf-8?B?TlE5MW9XSmtEZjlKcVNSVEw0bEdkU0lOOFF4RThWMVNMSDB3VnNqZS8rS3ZW?=
+ =?utf-8?B?ako0NllwOXFrUk5jUE05eW41ZlloREdvSUg0MjduUk1QaTdFdnRKRWRxd1gw?=
+ =?utf-8?B?Z3RHWEY5dndFYzhPc2tXU0tuUUh2amNGbkVNeEhmdWtUMkNGaWY2MHNhZmhI?=
+ =?utf-8?B?NHJzbG1hc3k1bUFoWUdlcVdQN2t4LzhudDFocVRaZGhiYnpRcnFyTHFvSmZT?=
+ =?utf-8?B?UklkMXYrd3Q4WjRrT3JmVjBnK1dUMHQ3c3VNUS9XVzNYZFdTTnh2Tm9pSEV1?=
+ =?utf-8?B?bmtmWDBaMDJaYmt4MS9OWVBOWXdiUkJ2UjBnS0NndHFZUVM4c055SWhUVno3?=
+ =?utf-8?B?S240QWNBMnlqd3JZSm14OUtnSHltSW11c2VXcXNiUUhxSHJDZWZCSXlrQUtu?=
+ =?utf-8?B?TEx1aWhWUEk3Ymg0S2pKbTJIYzRxbzJoaHErTm94c29kaDIwNnVBenJxeTF3?=
+ =?utf-8?Q?PUmc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.43;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 09:30:48.0069
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ee2212d-d625-440c-3dfe-08de16cdd800
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.43];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D0C.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5156
+X-Authority-Analysis: v=2.4 cv=JMU2csKb c=1 sm=1 tr=0 ts=6901deca cx=c_pps
+ a=cvaVg/4otPnPD7Zi6DglXA==:117 a=peP7VJn1Wk7OJvVWh4ABVQ==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=ALzHLXW1UqEA:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=8b9GpE9nAAAA:8 a=nUwpkMCGSNobtZIpiFoA:9
+ a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: -vFI1ErNwwSq5EhquIvK5WlndHr5K5YL
+X-Proofpoint-GUID: -vFI1ErNwwSq5EhquIvK5WlndHr5K5YL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDA3MSBTYWx0ZWRfX7oIzjong3MDc
+ OP+0gkIoQryNhQvLBqpB6K+iSL/oQBRX6LXxFGnLZFLvR5pJ8/vZenK+r/lHccpgpO0wtls/tn5
+ iO8MYbL2AlsNktMo29IVw7/JMGWPkpGs0qx6HRM/kWOIb0ZlZzgmtxg3C5TejVMPyMUBR/rrqTM
+ ggsUq/jSOLb24qXntVSSkyt0cBu7NIThpMHmfGKjJ7fbJWVGesEXIPaZxp+hWrmX2yHHq0kNSlM
+ FwGdET0FdI06+1393kAjAYgHPHjF/lFfikUs2C4mQLJyF7WaWbu0O4AURNFLcHDRdOKq8U8157F
+ FmJHymSjyrWuHBwZ4Kr7Odd4liEWmoPa4L38cSsudx0O2LzUzkTCpI0nR7C6mYFi5uhXi617oLk
+ LapriXyrjtbmS5D7MNBK1X1gAr6Fww==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-29_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 bulkscore=0 spamscore=0
- impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2510280166
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ adultscore=0 spamscore=0 clxscore=1011 malwarescore=0 phishscore=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290071
 
-On 2025-10-26 06:50, Eric Biggers wrote:
-> This series is targeting libcrypto-next.  It can also be retrieved 
-> from:
-> 
->     git fetch
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-> sha3-lib-v2
-> 
-> This series adds SHA-3 support to lib/crypto/.  This includes support
-> for the digest algorithms SHA3-224, SHA3-256, SHA3-384, and SHA3-512,
-> and also support for the extendable-output functions SHAKE128 and
-> SHAKE256.  The SHAKE128 and SHAKE256 support will be needed by ML-DSA.
-> 
-> The architecture-optimized SHA-3 code for arm64 and s390 is migrated
-> into lib/crypto/.  (The existing s390 code couldn't really be reused, 
-> so
-> really I rewrote it from scratch.)  This makes the SHA-3 library
-> functions be accelerated on these architectures.
-> 
-> Finally, the sha3-224, sha3-256, sha3-384, and sha3-512 crypto_shash
-> algorithms are reimplemented on top of the library API.
-> 
-> If the s390 folks could re-test the s390 optimized SHA-3 code (by
-> enabling CRYPTO_LIB_SHA3_KUNIT_TEST and CRYPTO_LIB_BENCHMARK), that
-> would be helpful.  QEMU doesn't support the instructions it uses.  
-> Also,
-> it would be helpful to provide the benchmark output from just before
-> "lib/crypto: s390/sha3: Add optimized Keccak function", just after it,
-> and after "lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest
-> functions".  Then we can verify that each change is useful.
-> 
-> Changed in v2:
->   - Added missing selection of CRYPTO_LIB_SHA3 from CRYPTO_SHA3.
->   - Fixed a bug where incorrect SHAKE output was produced if a
->     zero-length squeeze was followed by a nonzero-length squeeze.
->   - Improved the SHAKE tests.
->   - Utilized the one-shot SHA-3 digest instructions on s390.
->   - Split the s390 changes into several patches.
->   - Folded some of my patches into David's.
->   - Dropped some unnecessary changes from the first 2 patches.
->   - Lots more cleanups, mainly to "lib/crypto: sha3: Add SHA-3 
-> support".
-> 
-> Changed in v1 (vs. first 5 patches of David's v6 patchset):
->   - Migrated the arm64 and s390 code into lib/crypto/
->   - Simplified the library API
->   - Added FIPS test
->   - Many other fixes and improvements
-> 
-> The first 5 patches are derived from David's v6 patchset
-> (https://lore.kernel.org/linux-crypto/20251017144311.817771-1-dhowells@redhat.com/).
-> Earlier changelogs can be found there.
-> 
-> David Howells (5):
->   crypto: s390/sha3 - Rename conflicting functions
->   crypto: arm64/sha3 - Rename conflicting function
->   lib/crypto: sha3: Add SHA-3 support
->   lib/crypto: sha3: Move SHA3 Iota step mapping into round function
->   lib/crypto: tests: Add SHA3 kunit tests
-> 
-> Eric Biggers (10):
->   lib/crypto: tests: Add additional SHAKE tests
->   lib/crypto: sha3: Add FIPS cryptographic algorithm self-test
->   crypto: arm64/sha3 - Update sha3_ce_transform() to prepare for 
-> library
->   lib/crypto: arm64/sha3: Migrate optimized code into library
->   lib/crypto: s390/sha3: Add optimized Keccak functions
->   lib/crypto: sha3: Support arch overrides of one-shot digest functions
->   lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest functions
->   crypto: jitterentropy - Use default sha3 implementation
->   crypto: sha3 - Reimplement using library API
->   crypto: s390/sha3 - Remove superseded SHA-3 code
-> 
->  Documentation/crypto/index.rst                |   1 +
->  Documentation/crypto/sha3.rst                 | 130 ++++++
->  arch/arm64/configs/defconfig                  |   2 +-
->  arch/arm64/crypto/Kconfig                     |  11 -
->  arch/arm64/crypto/Makefile                    |   3 -
->  arch/arm64/crypto/sha3-ce-glue.c              | 151 -------
->  arch/s390/configs/debug_defconfig             |   3 +-
->  arch/s390/configs/defconfig                   |   3 +-
->  arch/s390/crypto/Kconfig                      |  20 -
->  arch/s390/crypto/Makefile                     |   2 -
->  arch/s390/crypto/sha.h                        |  51 ---
->  arch/s390/crypto/sha3_256_s390.c              | 157 -------
->  arch/s390/crypto/sha3_512_s390.c              | 157 -------
->  arch/s390/crypto/sha_common.c                 | 117 -----
->  crypto/Kconfig                                |   1 +
->  crypto/Makefile                               |   2 +-
->  crypto/jitterentropy-kcapi.c                  |  12 +-
->  crypto/sha3.c                                 | 166 +++++++
->  crypto/sha3_generic.c                         | 290 ------------
->  crypto/testmgr.c                              |   8 +
->  include/crypto/sha3.h                         | 306 ++++++++++++-
->  lib/crypto/Kconfig                            |  13 +
->  lib/crypto/Makefile                           |  10 +
->  .../crypto/arm64}/sha3-ce-core.S              |  67 +--
->  lib/crypto/arm64/sha3.h                       |  62 +++
->  lib/crypto/fips.h                             |   7 +
->  lib/crypto/s390/sha3.h                        | 151 +++++++
->  lib/crypto/sha3.c                             | 411 +++++++++++++++++
->  lib/crypto/tests/Kconfig                      |  11 +
->  lib/crypto/tests/Makefile                     |   1 +
->  lib/crypto/tests/sha3-testvecs.h              | 249 +++++++++++
->  lib/crypto/tests/sha3_kunit.c                 | 422 ++++++++++++++++++
->  scripts/crypto/gen-fips-testvecs.py           |   4 +
->  scripts/crypto/gen-hash-testvecs.py           |  27 +-
->  34 files changed, 2012 insertions(+), 1016 deletions(-)
->  create mode 100644 Documentation/crypto/sha3.rst
->  delete mode 100644 arch/arm64/crypto/sha3-ce-glue.c
->  delete mode 100644 arch/s390/crypto/sha.h
->  delete mode 100644 arch/s390/crypto/sha3_256_s390.c
->  delete mode 100644 arch/s390/crypto/sha3_512_s390.c
->  delete mode 100644 arch/s390/crypto/sha_common.c
->  create mode 100644 crypto/sha3.c
->  delete mode 100644 crypto/sha3_generic.c
->  rename {arch/arm64/crypto => lib/crypto/arm64}/sha3-ce-core.S (84%)
->  create mode 100644 lib/crypto/arm64/sha3.h
->  create mode 100644 lib/crypto/s390/sha3.h
->  create mode 100644 lib/crypto/sha3.c
->  create mode 100644 lib/crypto/tests/sha3-testvecs.h
->  create mode 100644 lib/crypto/tests/sha3_kunit.c
-> 
-> base-commit: e3068492d0016d0ea9a1ff07dbfa624d2ec773ca
+On Wed, 2025-10-29 at 09:42 +0800, Haotian Zhang wrote:
+> In stm32_pctl_probe(), hwspin_lock_request_specific() is called to
+> request a hwspinlock, but the acquired lock is not freed on multiple
+> error paths after this call. This causes resource leakage when the
+> function fails to initialize properly.
+>=20
+> Use devm_hwspin_lock_request_specific() instead of
+> hwspin_lock_request_specific() to automatically manage the hwspinlock
+> resource lifecycle.
+>=20
+> Fixes: 97cfb6cd34f2 ("pinctrl: stm32: protect configuration registers wit=
+h a hwspinlock")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+> =C2=A0drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm3=
+2/pinctrl-stm32.c
+> index 823c8fe758e2..d9a2d20a7e6b 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -1671,7 +1671,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (hwlock_id =3D=3D -EPROBE_DEFER)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
+urn hwlock_id;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0pctl->hwlock =3D hwspin_lock_request_specific(hwlock_id);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0pctl->hwlock =3D devm_hwspin_lock_request_specific(dev, h=
+wlock_id);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_lock_init(&pctl->irq=
+mux_lock);
 
-Picked this series from your ebiggers repo branch sha3-lib-v2.
-Build on s390 runs without any complains, no warnings.
-As recommended I enabled the KUNIT option and also 
-CRYPTO_SELFTESTS_FULL.
-With an "modprobe tcrypt" I enforced to run the selftests
-and in parallel I checked that the s390 specific CPACF instructions
-are really used (can be done with the pai command and check for
-the KIMD_SHA3_* counters). Also ran some AF-alg tests to verify
-all the the sha3 hashes and check for thread safety.
-All this ran without any findings. However there are NO performance
-related tests involved.
+Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-What's a little bit tricky here is that the sha3 lib is statically
-build into the kernel. So no chance to unload/load this as a module.
-For sha1 and the sha2 stuff I can understand the need to have this
-statically enabled in the kernel. Sha3 is only supposed to be available
-as backup in case of sha2 deficiencies. So I can't see why this is
-really statically needed.
-
-Tested-by: Harald Freudenberger <freude@linux.ibm.com>
-
-
+Thanks!
+Antonio
 
