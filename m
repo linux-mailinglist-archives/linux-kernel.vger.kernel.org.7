@@ -1,162 +1,268 @@
-Return-Path: <linux-kernel+bounces-875044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4DFC18122
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:38:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144EEC18134
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590513AABAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:38:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99B18500C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE592EA48F;
-	Wed, 29 Oct 2025 02:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774A42EC554;
+	Wed, 29 Oct 2025 02:37:54 +0000 (UTC)
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB0426B77D;
-	Wed, 29 Oct 2025 02:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D522E2DD4;
+	Wed, 29 Oct 2025 02:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761705471; cv=none; b=GVGf3pBYJrWsaYBIW5murIUwhVFZGoioQr8OcKB65LikoOHh1cSk5s8NXdG6pgDAaN852+siKK2CiGws8qqGua+dyP9ampVOMPEVICu+3JhNPi0QFm58bD2aab5aZ90lBW/wJu+bwQGM2FYjQqzDHm1L6GxPtoNRFK6R3BKovJs=
+	t=1761705473; cv=none; b=e7/mt3XDtkGtMJledctuOtC5fsJn4BLISAwmvlqBV800c3pDXmaZNXQu1Rhr0j36HMKVJbHxBGuPZTJxZ91DQ68NF1nhdC9eC/+Pz8qSaXwx1z/YenIQlwv1DhkELmTetlZ4fS5xLiv02ljMbgxmsp9GuP36IRkaOsjsB27Z92w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761705471; c=relaxed/simple;
-	bh=9YpRAqYF+SB0tzdtMEzMP6O2WGTVhNRPl9H+sSZku/I=;
+	s=arc-20240116; t=1761705473; c=relaxed/simple;
+	bh=s/0/p6BOCbNErGvHbgvIDpUUcxbDrA0SSOsdGNifWeg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iqx0CHEMIPkeOEZ1mkzf1OMNQs5c3c8B6dq1S6dYBNauTsgQTNWGI6gYw7AW+yx+mfcQf9WMp5aZN3Czqyi4tlaewvQDgugSSe9MISzV+3TW5I8JXPgxeYNrHFqzupwk5dIMu/UGLpJk8r1WW2i6q6dnMDg3PucyrahXOVkWXOU=
+	 In-Reply-To:Content-Type; b=LqL+YlLOlbIaI+ZdzzCMLVTnaHqOWH74LmE7Mlp9ndZUPeHOJuOIMaXlngc+Dt9sVkFgHtupd3BX1SGaQ3r1W3+4NEiPWXcWd/y4ngvco6kjk7+jCA+o8H8Sks6qHXA5A0w9NwFLcNDmNFVXQsEAC8Q83D/Iop5AL3GPqoAsMa0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cxBH96b5PzYQtm5;
-	Wed, 29 Oct 2025 10:37:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 5054C1A01A1;
-	Wed, 29 Oct 2025 10:37:46 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP2 (Coremail) with SMTP id Syh0CgCHK0T5fQFpWAjgBw--.19209S3;
-	Wed, 29 Oct 2025 10:37:46 +0800 (CST)
-Message-ID: <409b20e7-b030-2998-df66-b188b313f8f8@huaweicloud.com>
-Date: Wed, 29 Oct 2025 10:37:45 +0800
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cxBHF1wp7zYQtmy;
+	Wed, 29 Oct 2025 10:37:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 9FBA31A06DC;
+	Wed, 29 Oct 2025 10:37:49 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP1 (Coremail) with SMTP id cCh0CgBHt0r7fQFpx9LEBw--.51264S2;
+	Wed, 29 Oct 2025 10:37:49 +0800 (CST)
+Message-ID: <73663a65-8028-4294-8eaf-9c94dc4451ff@huaweicloud.com>
+Date: Wed, 29 Oct 2025 10:37:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v7 3/4] md/raid0: Move queue limit setup before r0conf
- initialization
-To: yukuai@fnnas.com, corbet@lwn.net, song@kernel.org, hare@suse.de,
- xni@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, linan666@huaweicloud.com, yangerkun@huawei.com,
- yi.zhang@huawei.com
-References: <20251027072915.3014463-1-linan122@huawei.com>
- <20251027072915.3014463-4-linan122@huawei.com>
- <effbcb62-9bf7-45ff-ad39-1e3be1e63650@fnnas.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <effbcb62-9bf7-45ff-ad39-1e3be1e63650@fnnas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
+ root domain when hot-unplug
+To: Pingfan Liu <piliu@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Cc: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+References: <20251028034357.11055-1-piliu@redhat.com>
+ <20251028034357.11055-2-piliu@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251028034357.11055-2-piliu@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCHK0T5fQFpWAjgBw--.19209S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr4rJrykJw47uFWUGFyUZFb_yoW8tr1rpr
-	4kKa1qgr48KFW3WayDXrWDCa4Fq3W8KrWDKFZxJa48XrnFyryrKFy3WFy5uFyay34fAF18
-	Xw15KrZ3urW3trJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
-	xhLUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:cCh0CgBHt0r7fQFpx9LEBw--.51264S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw43GF15Cr4kCF4xtF1xGrg_yoWxKFW7pF
+	yDCr43Xr4kJr1xCay3Xw4UuFyFg3ykJF17AFnxG3yrAF9IyF1vvr1v9Fn8AF97ur9xCr4U
+	ZrZFgrsI93WDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
 
-在 2025/10/28 20:12, Yu Kuai 写道:
-> Hi,
+On 2025/10/28 11:43, Pingfan Liu wrote:
+> *** Bug description ***
+> When testing kexec-reboot on a 144 cpus machine with
+> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
+> encounter the following bug:
 > 
-> 在 2025/10/27 15:29, linan122@huawei.com 写道:
->> From: Li Nan <linan122@huawei.com>
->>
->> Prepare for making logical blocksize configurable.
->>
->> Move raid0_set_limits() before create_strip_zones(). It is safe as fields
->> modified in create_strip_zones() do not involve mddev configuration, and
->> rdev modifications there are not used in raid0_set_limits().
->>
->> 'blksize' in create_strip_zones() fetches mddev's logical block size. This
->> change has no impact until logical block size becomes configurable.
->>
->> Signed-off-by: Li Nan <linan122@huawei.com>
->> ---
->>    drivers/md/raid0.c | 13 +++++++------
->>    1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
->> index e443e478645a..49477b560cc9 100644
->> --- a/drivers/md/raid0.c
->> +++ b/drivers/md/raid0.c
->> @@ -68,7 +68,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
->>    	struct strip_zone *zone;
->>    	int cnt;
->>    	struct r0conf *conf = kzalloc(sizeof(*conf), GFP_KERNEL);
->> -	unsigned blksize = 512;
->> +	unsigned int blksize = queue_logical_block_size(mddev->gendisk->queue);
->>    
->>    	*private_conf = ERR_PTR(-ENOMEM);
->>    	if (!conf)
+> [   97.114759] psci: CPU142 killed (polled 0 ms)
+> [   97.333236] Failed to offline CPU143 - error=-16
+> [   97.333246] ------------[ cut here ]------------
+> [   97.342682] kernel BUG at kernel/cpu.c:1569!
+> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+> [...]
 > 
-> I think the following setting of blksize can be removed as well.
+> In essence, the issue originates from the CPU hot-removal process, not
+> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
+> program that waits indefinitely on a semaphore, spawning multiple
+> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
+> one by one. When attempting this, CPU 143 failed to go offline.
+>   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
 > 
-> blksize = max(blksize, ...)
+> `
+> *** Issue ***
+> Tracking down this issue, I found that dl_bw_deactivate() returned
+> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
+> But that is not the fact, and contributed by the following factors:
+> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
+> blocked-state deadline task (in this case, "cppc_fie"), it was not
+> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
+> points to def_root_domain instead of the one shared with CPU0.  As a
+> result, its bandwidth is wrongly accounted into a wrong root domain
+> during domain rebuild.
 > 
-> Thanks,
-> Kuai
+> The key point is that root_domain is only tracked through active rq->rd.
+> To avoid using a global data structure to track all root_domains in the
+> system, there should be a method to locate an active CPU within the
+> corresponding root_domain.
 > 
+> *** Solution ***
+> To locate the active cpu, the following rules for deadline
+> sub-system is useful
+>   -1.any cpu belongs to a unique root domain at a given time
+>   -2.DL bandwidth checker ensures that the root domain has active cpus.
+> 
+> Now, let's examine the blocked-state task P.
+> If P is attached to a cpuset that is a partition root, it is
+> straightforward to find an active CPU.
+> If P is attached to a cpuset that has changed from 'root' to 'member',
+> the active CPUs are grouped into the parent root domain. Naturally, the
+> CPUs' capacity and reserved DL bandwidth are taken into account in the
+> ancestor root domain. (In practice, it may be unsafe to attach P to an
+> arbitrary root domain, since that domain may lack sufficient DL
+> bandwidth for P.) Again, it is straightforward to find an active CPU in
+> the ancestor root domain.
+> 
+> This patch groups CPUs into isolated and housekeeping sets. For the
+> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
+> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
+> 
+> Signed-off-by: Pingfan Liu <piliu@redhat.com>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: "Michal Koutný" <mkoutny@suse.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Pierre Gondois <pierre.gondois@arm.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> To: cgroups@vger.kernel.org
+> To: linux-kernel@vger.kernel.org
+> ---
+> v3 -> v4:
+> rename function with cpuset_ prefix
+> improve commit log
+> 
+>  include/linux/cpuset.h  | 18 ++++++++++++++++++
+>  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
+>  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
+>  3 files changed, 68 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+> index 2ddb256187b51..d4da93e51b37b 100644
+> --- a/include/linux/cpuset.h
+> +++ b/include/linux/cpuset.h
+> @@ -12,6 +12,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/sched/topology.h>
+>  #include <linux/sched/task.h>
+> +#include <linux/sched/housekeeping.h>
+>  #include <linux/cpumask.h>
+>  #include <linux/nodemask.h>
+>  #include <linux/mm.h>
+> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
+>  
+>  extern void cpuset_print_current_mems_allowed(void);
+>  extern void cpuset_reset_sched_domains(void);
+> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
+>  
+>  /*
+>   * read_mems_allowed_begin is required when making decisions involving
+> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
+>  	partition_sched_domains(1, NULL, NULL);
+>  }
+>  
+> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
+> +		struct cpumask *cpus)
+> +{
+> +	const struct cpumask *hk_msk;
+> +
+> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
+> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+> +			/* isolated cpus belong to a root domain */
+> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
+> +			return;
+> +		}
+> +	}
+> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
+> +}
+> +
+>  static inline void cpuset_print_current_mems_allowed(void)
+>  {
+>  }
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 27adb04df675d..6ad88018f1a4e 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
+>  	mutex_unlock(&cpuset_mutex);
+>  }
+>  
+> +/* caller hold RCU read lock */
+> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
+> +{
+> +	const struct cpumask *hk_msk;
+> +	struct cpuset *cs;
+> +
+> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
+> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+> +			/* isolated cpus belong to a root domain */
+> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
+> +			return;
+> +		}
+> +	}
+> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
+> +	cs = task_cs(p);
+> +	while (cs != &top_cpuset) {
+> +		if (is_sched_load_balance(cs))
+> +			break;
+> +		cs = parent_cs(cs);
+> +	}
+> +
+> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
+> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
+> +}
+> +
 
-Agree. I will remove it later. Thanks for your review.
+It seems you may have misunderstood what Longman intended to convey.
 
->> @@ -405,6 +405,12 @@ static int raid0_run(struct mddev *mddev)
->>    	if (md_check_no_bitmap(mddev))
->>    		return -EINVAL;
->>    
->> +	if (!mddev_is_dm(mddev)) {
->> +		ret = raid0_set_limits(mddev);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->>    	/* if private is not null, we are here after takeover */
->>    	if (mddev->private == NULL) {
->>    		ret = create_strip_zones(mddev, &conf);
->> @@ -413,11 +419,6 @@ static int raid0_run(struct mddev *mddev)
->>    		mddev->private = conf;
->>    	}
->>    	conf = mddev->private;
->> -	if (!mddev_is_dm(mddev)) {
->> -		ret = raid0_set_limits(mddev);
->> -		if (ret)
->> -			return ret;
->> -	}
->>    
->>    	/* calculate array device size */
->>    	md_set_array_sectors(mddev, raid0_size(mddev, 0, 0));
-> 
-> .
+First, you should add comments to this function because its purpose is not clear. When I first saw
+this function, I thought it was supposed to retrieve p->cpus_ptr excluding the offline CPU mask.
+However, I'm genuinely confused about the function's actual purpose.
+
+Regarding the isolated partition concept: isolated CPUs (isolcpus) can be included in cpusets. For
+example, if the system boots with isolcpus=9, and when process p is in a isolated partition that
+only contains CPU 9 (which is listed in isolcpus), will this function return all CPUs except CPU 9?
+Is that the behavior you intended?
 
 -- 
-Thanks,
-Nan
+Best regards,
+Ridong
 
 
