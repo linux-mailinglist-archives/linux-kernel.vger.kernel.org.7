@@ -1,141 +1,187 @@
-Return-Path: <linux-kernel+bounces-876084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF79C1A954
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC57EC1A95E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:17:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A65A56559F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:08:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C240588519
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFD8302CA2;
-	Wed, 29 Oct 2025 13:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A525D24679C;
+	Wed, 29 Oct 2025 13:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/02/VCQ"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="a32ahlzL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="H0xwOUXl"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3652D8391
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742863; cv=none; b=t8BARhuzhhJcAlTpUhH5e00G0STVd1HWtx/5OfDQXY7XXwQhyyErSFN6nFOCtLuLBhT1S//AEgBv3g84bngAJ8xsHDM2kbsETHq1yVXlPDzTBa6XpTzGW0KOoWqaPlBkiqGPMXEwY9B1pTEp3apNfVnsWPhwtdso7ZfRmnC8q1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742863; c=relaxed/simple;
-	bh=J0j9Fu1hpTGL+B/gSUeYs4SAcX3AxlY77L1M7JFd8p0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GbD5Ta96oYqcnCWFv502TtiDO2IkME8gmVYmI+EePr77fz6vRW3vTjl2tGDh4lmKqTNL2a/aFPNFOed2UmTfl9Rozo7dGYKGbX9rRBxLQJzfa1hhkNzDvHdweGfQnnOSLVS/QJvfsmM7UYRV6DHUeMYgjzahzNR5TRz00TYDF80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/02/VCQ; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4270a3464caso3604795f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761742860; x=1762347660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2ovjL+MYzVmXGq6CvAvmhX8k8P4mycC2CPxReUa6E4=;
-        b=T/02/VCQ2qc/Iry8InWzjSbPTrOnrPnomXRWijrhDbsyzvxoWoV5sHnEMwu6MfQeq/
-         DS6ZfpMXrkRRvizyaLnTsxKhqN+OlO+4MsLtut1T8r6g8Zox1U7x5MRDcfOt01Pv4uQ2
-         nnzVrfWV2kFXSZv1w0evGwyTW1K234exSMb4jh4GB8JxEHBQo6Q+UQu9zeW8UbMFF+lH
-         SnJjMSvdMRZCdt0PnTszcUAppNaEWXT6eGBf4TpggXK06HRroCGZdKdSTA8orIkSiWXE
-         28p1SA975SDuImJO7lF9avVyvSoZ9oJAnc+i2ALJaxfoEb9YbQHaZCPBkPTmLtiYbeEY
-         HmhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761742860; x=1762347660;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T2ovjL+MYzVmXGq6CvAvmhX8k8P4mycC2CPxReUa6E4=;
-        b=wLVT6azpPtkD0USMtri6LexZFAy43C6w7rvIraVdnnpkR7P0J3cbEiin0U8CfkBmIB
-         OOMBZH/qTTZ1Cy/NTVKOuMtu7C6FFerNcRlyhMW9FS9dXpV38UThaKmm23gEH32Q0iqZ
-         sljjjaJ1GxAX5Azw88sCUmXA04RqwosmdvVxoDDMMlGHnJ0VsKzESoFNRCC++GFBXDTh
-         vEAC0CwQ1c8D/GUm13/sYRNvpfCbEPmkxW2AGByNQyBRGClmMhcb/bTGiigkvn5pGgQP
-         g7U15mAUGGH2B7uzdmbcF+w1IOnptjW0HFAfweY8WocT39Q7xK26sk5SwDmGEjpY6n3E
-         z6Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Oyg27zXJ4GBEqYZzDtNNDW2eOWCtybZBFeBVujHou82ApIpSJPC5AJkZJkiztZKvx1fMNcJE3ZlRw50=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2ztpCBWkHecRt8Q/Br7Atpk6d+YilYCk2iUTEvNbsRi1fXYTt
-	0AcfYAYgF0H0wzyBlnFT/CT8iDFbWD0Y5CXbV8L0ySAfy6W/W2nUEAGd
-X-Gm-Gg: ASbGncudCW+YgNdH6LtDpzDBWkopYyRqJVqASDyTylq6HNmbzPSv6rsUWvUxIRoV4Ao
-	cwVx/78aJNvcKQCXMeDl0CwZky90dEZPk7K+z4MuccI9GsjqUacqpP2nVmnYnU5iInsXDXRgUJy
-	KjoSWZUKw8CmbHCrS6en9o+6erYej8AhKUEUz59XNw7YgDntORzrVPEWkjgsTomWnWDMCB9R+GX
-	SIp/5lhpp2Movg/lyVOKIbHFdyjrdxRefSB5pJZUVGRmffxK3o/2bPV5/GFWif/+IrljNbpDCN0
-	dGs2wLsik4rWl5tOars82iD183ccNBcOVJmZzWP6o3y1qzWo0ibOc7tP5OgWLkDWE+jMYWgjnul
-	96YL0OBKHYfsJEgh2yFBgltqMqnU64gYXGqD4YkPAS6U6y1bfgVlCxupStWqnGOVw4+Q4BKAp4m
-	PfDPDPY033E34z5KiVAa3749mxC3Awvjz/dDis6Qnbbw==
-X-Google-Smtp-Source: AGHT+IGqJlBrEpAy+D80nAwqaMFt+XjmQ9xBuEOWAMuScJNB3nO+jGrpfT4FhLOl1SIvEzsKPLCG/A==
-X-Received: by 2002:a05:6000:615:b0:3e7:4893:f9be with SMTP id ffacd0b85a97d-429aef71443mr2281897f8f.12.1761742859629;
-        Wed, 29 Oct 2025 06:00:59 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df5c9sm26292539f8f.41.2025.10.29.06.00.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:00:59 -0700 (PDT)
-Date: Wed, 29 Oct 2025 13:00:57 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: Re: odd objtool 'unreachable instruction' warning
-Message-ID: <20251029130057.70a8f487@pumpkin>
-In-Reply-To: <20251029100533.GF3419281@noisy.programming.kicks-ass.net>
-References: <CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com>
- <20251029095638.06cce7c7@pumpkin>
- <20251029100533.GF3419281@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B993B7262E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761742928; cv=pass; b=FTyYi3IuCn5b1LVTsGB03eyr5c+/qfVEEEwyDEP43kGvMnWvmi4zVKa/fumk10QtFDCvG9k8cpJcejSK1acsVWOjDWw6zq6hYmMU3ytzSV/UgkWAFOcVUp9DhFTHDAQSjvGDLYyNykjbUS0SV/EW3oI+BwQJnG3kehTBpgzNO8E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761742928; c=relaxed/simple;
+	bh=nxJ0l8pFIkUd1XOOatN08dN48GI7BMxEKiJskrqIjPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mRzQN9C/65aUrnon3tG0b/8OfkFeH+dIHZi3FGGvpeZHa0cwQK8LY+K8cSZ3gXPlP9a8iJHorMWzFx3yYlmSs6FxxtgoSp/BO1lK22b2/fEdAM6bV3cbBjM1EIkoso4T3AVr8jxazfITsfQedEqkawWjxc0zFSvzSmdjqfo5Kms=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=a32ahlzL; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=H0xwOUXl; arc=pass smtp.client-ip=185.56.87.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com; s=arckey; t=1761742926;
+	 b=l7+xDzQjNS20cZmGhfILUoYPakmS3KY4hG6U2K0l5lkSiq0AOc6TYrAjgJGyZejWucJ3h+GAD3
+	  0ISdUX6wMH6v3OPBJ/zdwVyO1sepIW3Z7ZNs37Gc6m/CW7+FEv1s9Lvzr0ZlcAsItWaxAlHBTu
+	  hi/N+IafGFt2R/ITnmA8gGKwGll1Dw3DsBz/sMqnA/+2kAU+gP+ACumYXrdVJV8MiBYNG70WGs
+	  vSUXiGK1GmhT9KcN+AdhpI06/vuWT6RHGa+Mcs2xC+4VDBQTq+1+y/v1O/ngJebELogZ+JSasJ
+	  vy9d1EthUwjyGPYxtuiiy11FuVPu10qKEof6w0MIr7VaoQ==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com; s=arckey; t=1761742926;
+	bh=nxJ0l8pFIkUd1XOOatN08dN48GI7BMxEKiJskrqIjPs=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
+	  To:From:DKIM-Signature:DKIM-Signature;
+	b=go+beyjVrs/ILnvfnz1UiCusO99vgEz/RnDM+oGY4SaQJRgC4hDmvuZJbx0ZasTWReHb1VYzMu
+	  Dw40hyHdmUvkkAmb629pKSZ04e75xf9KmXnHHYA+EdEqDoVYPJG3URsN8sUZY49KuQNI6NUL+O
+	  N4MqcjxPle5QC1y+9dbDrFO8BweXL759AYPBFiIkQQxSksYqceicGF4LHtE1JO1FWSOIPQIRec
+	  xfmzX0stU67r1MTApCJzpBtGo5scDKtilNrtzGyG/gGKgiXqRFkhgxt8Tr/NpiaVVBxighMRVq
+	  dP1EkxToddEgRzhKEdlottH8bj/gLeVVJ3uKCJxl6elwFA==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=3vbMUDHqHdbLF0JamSxILfazqzvKVxLGjQW/n+lyM2g=; b=a32ahlzLDhZr798KcQnJuvqvXb
+	SxO4q3IrVzv6hs4RHRZF0e/ESyxhUepTCf1UiHdf135q/JQi7g06aUNoVFNGmC9qYXxjAOW0yAztQ
+	kNtCOqyRyJDGC/dAlhZWSel5mor0CL7hNEIe8tDshFvwzZxmkB8koGHr1ruq7AafOXoM=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vE5oK-0000000AdmA-20QM
+	for linux-kernel@vger.kernel.org;
+	Wed, 29 Oct 2025 13:01:58 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=3vbMUDHqHdbLF0JamSxILfazqzvKVxLGjQW/n+lyM2g=; b=H0xwOUXlsVJKBjrSJwFCyxItJe
+	4q8UpJeUIFhDmIEzqQSDJzAaTmZ7QpfDX0WA2kzQTqHXmYrss0fEHSs8p5elLMVRAE2EVCoKfPlY0
+	xq3pn6P1tgyPf6bHega40w7ggju/lDPR8FmN0PA/eoddE+78s1XXruwK7Agajd3LsSaw=;
+Received: from [95.75.8.65] (port=19648 helo=fedora.localnet)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vE5nq-00000000FE6-0Uqj;
+	Wed, 29 Oct 2025 13:01:26 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Liu Ying <victor.liu@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Fabian Pflug <f.pflug@pengutronix.de>, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: ldb: add support for an external bridge
+Date: Wed, 29 Oct 2025 14:01:24 +0100
+Message-ID: <2756377.lGaqSPkdTl@fedora>
+In-Reply-To: <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
+References:
+ <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
+ <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart2568054.XAFRqVoOGU";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 85b3294b630697b80bfc44e07840fa05
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vE5oK-0000000AdmA-20QM-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-s0gl.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Wed, 29 Oct 2025 11:05:33 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+--nextPart2568054.XAFRqVoOGU
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Francesco Valla <francesco@valla.it>
+Date: Wed, 29 Oct 2025 14:01:24 +0100
+Message-ID: <2756377.lGaqSPkdTl@fedora>
+In-Reply-To: <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
+MIME-Version: 1.0
 
-> On Wed, Oct 29, 2025 at 09:56:38AM +0000, David Laight wrote:
-> > On Tue, 28 Oct 2025 12:29:11 -0700
-> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >   
-> > > Josh, Peter,
-> > >  due to another entirely unrelated discussion, I ended up resurrecting
-> > > my "make asm readable" patch that I have had in my local tree when I
-> > > want to look at the actual generated code for user accesses.
-> > > 
-> > > That is a local hack that just removes the alternative noise for the
-> > > common ops, so that I actually see the fences and clac/stac
-> > > instructions as such, instead of seeing them as nops in the object
-> > > file or as horrible noise in the assembler output.  
+Hi,
+
+On Wednesday, 29 October 2025 at 04:41:51 Liu Ying <victor.liu@nxp.com> wrote:
+> On 10/28/2025, Francesco Valla wrote:
+> > I was trying to add display support for the i.MX93 FRDM on top of the
+> > patch sent some time ago by Fabian Pflug [1], using some of the work
+> > already done by Alexander Stein but not yet merged [2], but then I
+> > noticed that the support for LVDS-HDMI converter bridges was missing
+> > from the LDB driver already present for the i.MX93.
 > > 
-> > I've toyed with using explicit nop sequences that would be identifiable
-> > as stac, clac and lfence.
-> > 
-> > At least that would tell you which is which.
-> > 
-> > Since the flags can be trashed there are plenty to choose from.
-> > (eg all the cmpb $n,%reg if you don't mind a false dependency.)  
+> > Not a fail of the driver itself, obviously, but I wonder if/how the
+> > existing i.MX8MP setups (e.g.: [3]), which use the same driver, work
+> > correclty. Unfortunately I don't have the i.MX8MP hardware to test them.
 > 
-> As long as you ensure that insn_is_nop() recognises it as such, they
-> won't actually ever get ran after alternative patching, since they'll be
-> rewritten in canonical nops by optimize_nops().
+> [3] was in my previous patch series[a].  Only patch 6&7 of [a] are applied,
+> so for now [3] doesn't actually work with i.MX8MP.
+> 
+> And, patch 3 of [a] supports the external bridge this patch tries to support.
+> 
+> [b] is another patch series which includes my patch.
+> 
+> [a] https://patchwork.freedesktop.org/series/139266/#rev7
+> [b] https://patchwork.freedesktop.org/series/154381/
+> 
 
-Ah - I've wondered about the 'nop; nop; nop' being slightly sub-optimal.
-But it is hard enough to see what happens to the alternative that is
-selected never mind the ones that aren't.
+Thank you for your answer, it's much clearer now.
 
-Instructions that change the flags can't be changed to nops.
-So possibly the best options are the 0f-1f-cx (for x 0..7).
-So 'long_nop %reg' rather than 0f-1f-00 'long_nop [%rax]'.
+I'll drop this one and wait for [b], then.
 
-(But I've not checked the full rules for the addressing modes of
-'long_nop'.)
 
-	David
+BR,
+Francesco
+
+
+--nextPart2568054.XAFRqVoOGU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRUrtjevJ039mawAeLir2xSXEi5AAUCaQIQJAAKCRDir2xSXEi5
+AH56APwKzsvlloyWlfPnMHnak/8E8bYBfPmKrRKeQQQedjSq8wEAg3BhwGYJnq5+
+NGhnp06M8E4EpL9w3NYZ4PZVND0UWQo=
+=PUAv
+-----END PGP SIGNATURE-----
+
+--nextPart2568054.XAFRqVoOGU--
+
 
 
 
