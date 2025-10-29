@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-875321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587C2C18AC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:24:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DD8C18B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 079E94E83BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A661C875B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1F3126D1;
-	Wed, 29 Oct 2025 07:21:56 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2E73115B5;
+	Wed, 29 Oct 2025 07:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zJRfXvsS"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED8030FC12;
-	Wed, 29 Oct 2025 07:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE28D312836
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722516; cv=none; b=hk39fhrFOYgdBkvWfYWNVhRn5e51GgVJAxLPGkxQe4249pJLny0RZmF/7pUZGgyTSfgM7riDXmtBMEdocULiDaBM5s7t/FBwvpMMdqOz92+oyoceF3wtkp7qvzY0QfInYN5Cbbx2JhWbhoM5bid3OZh5ddee6hg6pjozYpa2BIk=
+	t=1761722552; cv=none; b=FiQhYpp/4vbYuNM+iUeVj3pBn8+fTYV8YJdwo9IAB6980+3mF/urkXNcRSkvGTZMec/Ee6A082p3wVbkjpQPS2ZKJwZ0DFToUM6qmjMQnELMzowLyMBdQwT1OMfsQnBEJ/udXpeazJGsDoEWntQ4ypcUIw68BTl+xhhcdlgRG1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722516; c=relaxed/simple;
-	bh=sbpGRrS3bGxlkdNpjl2GSjJ8e9OBn9VI/Px/4Foe9do=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X09yV/Hw6XD0myOEtUCGcG9LRJJYC1UIEKzXE48zkwx3Lz0C/DCr744TH8K7Kw++ZUQhyQVsaCDUokVGbtjryta4ceno6+ZK7LZ4ziNPOv0rokS3nnmvUa3+EFzj06AKF7vpVP8KyzHDSGH2mWB+oHpEOFCau8YXADKq3+hgctI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201619.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202510291521419705;
-        Wed, 29 Oct 2025 15:21:41 +0800
-Received: from jtjnmail201626.home.langchao.com (10.100.2.36) by
- jtjnmail201619.home.langchao.com (10.100.2.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 15:21:39 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- jtjnmail201626.home.langchao.com (10.100.2.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 15:21:39 +0800
-Received: from inspur.com (10.100.2.113) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 29 Oct 2025 15:21:39 +0800
-Received: from localhost.localdomain.com (unknown [10.94.19.60])
-	by app9 (Coremail) with SMTP id cQJkCsDwlHiCwAFp5TgHAA--.5620S2;
-	Wed, 29 Oct 2025 15:21:39 +0800 (CST)
-From: Bo Liu <liubo03@inspur.com>
-To: <ecree.xilinx@gmail.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-net-drivers@amd.com>,
-	<linux-kernel@vger.kernel.org>, Bo Liu <liubo03@inspur.com>
-Subject: [PATCH] sfc: Fix double word in comments
-Date: Wed, 29 Oct 2025 15:21:31 +0800
-Message-ID: <20251029072131.17892-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1761722552; c=relaxed/simple;
+	bh=j5r+2odxBNbt80HcveVjT5JrM8/hnaZaeBH583rpYes=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WdRbvn3UbzGeTfwcsEgm0cH6gKw+vlGVjZT/JyrykwhFEe1AoozAsFNKV19W04jPGWqX3YO60W+Ht1m2HCjai6eyu3SPTJDreI4gVzhaE/2Re9+JUCQMgjHbIWzmvg104pmUV7XEk2d+n0zQsM5pET3jatxCD3kUEJ/4mMMthEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zJRfXvsS; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id C81304E413C1;
+	Wed, 29 Oct 2025 07:22:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9624B606E8;
+	Wed, 29 Oct 2025 07:22:27 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B51851031151A;
+	Wed, 29 Oct 2025 08:22:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761722546; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=u4h3/ci9xv/fDXcWHRVTbDKRAf2ZDqg3x6d4f6vmEcM=;
+	b=zJRfXvsSoLG9MLbS/ylKbO+UF+BakEXogiSfwquwWbKxUZzZptcSP2D5ryi09UcREH2tG4
+	E2Nq1OKynHJf25uNoquU62fBxXmo0eXUTHtMf/2NGhAIDNOXz5dTsy/Lr2L+QzGsiIgSIY
+	n4AW9DlBvKZVnxIel159tI72m1qVgEyYei5uRyE2m24fhOQpPbns/7QEM4Y+fTmVogBNcw
+	tva+m7cQD0JZp9WeQZ+t8pDT/CW1aRsxlMV3dp49nUtY8ynALTq0wpf+fdtJbJiOLXPy2e
+	xmbWL8xgH58pco+/ZGucr3LOA9APXuAAsa3MCKuksDdfWouRU21PMsaLR0eemw==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Wed, 29 Oct 2025 08:22:20 +0100
+Subject: [PATCH] of: Update license for MIPS GIC header
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: cQJkCsDwlHiCwAFp5TgHAA--.5620S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZF13Wr4DWrykAr15twb_yoWDGwc_C3
-	sYgF1vga1jyF9rt3y2grWUZw12vwn8Xrn3ZFW7t34ftr9rWF15Jrs7Cr4xGw1DWw4UAF92
-	9r17XF4fA34aqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGjg7UUUUU==
-X-CM-SenderInfo: xolxu0iqt6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?wGQPBmLVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
-	KIpXHRcRXlc8Cu07eTD/f+RnFgEhwHZY1GCVlt3dPFUTU3qnWib4AJttzNif5nUtmENQ/m
-	7GVnSw1ZoFM5AiCEqoM=
-Content-Type: text/plain
-tUid: 20251029152141f06600ee6afcf59d2a6780407597b773
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Message-Id: <20251029-fix_gic_dt_licence-v1-1-af70840c5e61@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAKvAAWkC/x2MQQqAIBAAvyJ7TlAhs74SIbFutRAWGhGEf086D
+ szMC5kSU4ZBvJDo5sxHrKAbAbjNcSXJoTIYZVqtjJMLP35l9OHyOyNFJImus0uwoVM9QQ3PRNX
+ 6p+NUygcwAmAdZAAAAA==
+X-Change-ID: 20251028-fix_gic_dt_licence-c876fd6d709e
+To: Andrew Bresticker <abrestic@rivosinc.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Remove the repeated word "the" in comments.
+According to Documentation/devicetree/bindings/submitting-patches.rst:
+"DT binding files should be dual-licensed." The second license should
+be a BSD-like license, allowing the use of the binding in projects
+other than Linux. Initially, this file was submitted without any
+license and was later automatically converted to the default Linux
+license. Let’s now update it to follow the preferred license for the
+binding.
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/net/ethernet/sfc/mcdi_pcol.h | 2 +-
+Hi Andrew,
+
+I’m assuming you are the same Andrew Bresticker who initially wrote
+this file. As the author, would you agree to update the license for
+the reasons I outlined in the commit log? If you’re okay with this
+change, I believe an Acked-by tag would suffice.
+
+Let me know your thoughts.
+
+Gregory
+---
+ include/dt-bindings/interrupt-controller/mips-gic.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sfc/mcdi_pcol.h b/drivers/net/ethernet/sfc/mcdi_pcol.h
-index b9866e389e6d..e0415d08d862 100644
---- a/drivers/net/ethernet/sfc/mcdi_pcol.h
-+++ b/drivers/net/ethernet/sfc/mcdi_pcol.h
-@@ -9560,7 +9560,7 @@
-  * DMA synchronizaion. Always the last entry in the DMA buffer and set to the
-  * same value as GENERATION_START. The host driver must compare the
-  * GENERATION_START and GENERATION_END values to verify that the DMA buffer is
-- * consistent upon copying the the DMA buffer. If they do not match, it means
-+ * consistent upon copying the DMA buffer. If they do not match, it means
-  * that new DMA transfer has started while the host driver was copying the DMA
-  * buffer. In this case, the host driver must repeat the copy operation.
-  */
+diff --git a/include/dt-bindings/interrupt-controller/mips-gic.h b/include/dt-bindings/interrupt-controller/mips-gic.h
+index bd45cee0c3f05..647f22d5f0622 100644
+--- a/include/dt-bindings/interrupt-controller/mips-gic.h
++++ b/include/dt-bindings/interrupt-controller/mips-gic.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
+ #ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_MIPS_GIC_H
+ #define _DT_BINDINGS_INTERRUPT_CONTROLLER_MIPS_GIC_H
+ 
+
+---
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+change-id: 20251028-fix_gic_dt_licence-c876fd6d709e
+
+Best regards,
 -- 
-2.31.1
+Grégory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
