@@ -1,155 +1,107 @@
-Return-Path: <linux-kernel+bounces-875752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78D0C19C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:33:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33B0C19C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:37:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 172DC4F991E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55D01A663CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2136347FE2;
-	Wed, 29 Oct 2025 10:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E9634DB53;
+	Wed, 29 Oct 2025 10:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xxoDhWHH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WtEVy7cd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DExvI5uZ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F2345753;
-	Wed, 29 Oct 2025 10:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B67C34AB12
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733444; cv=none; b=o+i0kzSpg5i59OeDueROyQuk0we/ov4F2/1OACqP3DhX47DL28+JpUjJA+mKa9fxJEuKYg6Cd+n0ina21RpBDzh84iHNTQduFMvfR3ocpC6ckxcCrvT+sPmuq9g051PXpZdbCFd8BxAtEdIzuxXChVxbSPh7xZzALNMCFJwSOSg=
+	t=1761733452; cv=none; b=ME3iPv/KVKjjSid37+1WDfIB2wCSGGgqGCveoGH8JZo0pKAVCVYzgSkQjcS+jgOxWjxVaz3iLxVGmer+K3A9rcwcoRjtoEyXFGy9loXK7bVNNSyoN1DOYJH/PmSVFt4J3tpCAlv2xb638l/muAd3RoYz6zDuTM+8x5LBHcBvl8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733444; c=relaxed/simple;
-	bh=ZUCh6RG8BEAIJUYwIvX4bTSVyyBbYcBrMXcnnafpfeA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=b/V8Fm3xFRaGd7KPoV8Yxf8hCigWfjQWR9i31pa5ZHnJRLStsRUFNFSU/bvZDMTeau3qhU57WFX8Otqq3X5nSvAYU5wKJwoXOixAUeBK+jCw6v74GmzRm3Y4Fhk/1c0pPc7zIjnu3XFgLvG0UC1S56oPFlMG7Py+WeUHDw+5V/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xxoDhWHH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WtEVy7cd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 29 Oct 2025 10:23:59 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761733440;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R8l5CMZTgbFpjP+N39/2E88BJhCF1EmbDnTbJeTrHOQ=;
-	b=xxoDhWHHdQZb4G8IqfUunMdPgDg0KP9reNZtCMpQryuyDVTy3f5gFH5D9RjmI55pftq1kN
-	GatcoPd7j43sTT+qIHWlys1mOGdb9O9nnHuEFZophmjQz1L13B5xzrVJIRDJ+eVni3GVgw
-	zDxNNr18bTcFfmUxY/GNchyzupAHFs7bgn7Z+8ELB+uw9UiGPdBHVt7Iw47KSBhDf61YN5
-	+V47DLWHIKhh+GLsOQBZu0p9VnMbQotKOJEt0kklLGN5G6vHWV1vv7qaVyQqdgh76UnQw/
-	rFBYuJ7YYubxGbZcSQrIkaG0JBowYkCqnvG2AyWD2BN8b0+rnqEzVa4jV11ukg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761733440;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R8l5CMZTgbFpjP+N39/2E88BJhCF1EmbDnTbJeTrHOQ=;
-	b=WtEVy7cd1Cyt4TIUVOExR00sq3eE73FX3/9mqFoj7rzj5lqJiVn1FJFLcZqX03aH5TEnp3
-	Hiy6xvYXoTjxUJBA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rseq] rseq: Remove the ksig argument from
- rseq_handle_notify_resume()
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251027084306.211520245@linutronix.de>
-References: <20251027084306.211520245@linutronix.de>
+	s=arc-20240116; t=1761733452; c=relaxed/simple;
+	bh=7FPIAlaSMQVMnw08rBMcPCE2W4qDvZkdq1QLYzST4CY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/FOws1RBs5uF8BjCP70FB2NPs1AuermfTjeA46n571p2IbE/MV4gvydSHlkTYZ3YLFW+OvBwXALv4GGjsSrTN514Dy9Z+Jo/cbZZm7nEZ+9gHl0LUOZmKt3UMFL5tqidbnimuGfiXYwcxNnN6OhEiARlhSO0gjkeGWYrcUNHS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DExvI5uZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7A0r7kNcXmywV0vSi5O47M2dCOMeNz2cGEoE+qzOrtI=; b=DExvI5uZaNlOi40HDGKpze0EXl
+	gOYgYVOlxhva7H7bEjUurPd86P2w5APwNso99dqvg2jPwTpJ2zxt2RISXqdQiz8uojPTCzahEhFhE
+	G2/hzeyH+qaiva/CmEzR7NgGXA/ZTznD8bumVH/vutFoH1l3kPur+jzFFO0qZxIcv7JCCxs6RV+oi
+	AdfjjjVYfqSmPGz+qGxwE8SOn/5L5vO953JoObHAenkyS/Jpc8sBjUbLKgNgHMH6QMav4cNluM3YV
+	epf11kKg6CuY0qUSFjOHuXzsGINdxTcx65J3h/7ajBJFHKbZy3AjwnBKQf/BLE2GwTS5IdeKXW7Wl
+	ExXw/JUg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE3LT-00000007GPU-32Fb;
+	Wed, 29 Oct 2025 10:24:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5265F302FD7; Wed, 29 Oct 2025 11:23:59 +0100 (CET)
+Date: Wed, 29 Oct 2025 11:23:59 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michael Jeanson <mjeanson@efficios.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Wei Liu <wei.liu@kernel.org>
+Subject: Re: [patch V6 00/31] rseq: Optimize exit to user space
+Message-ID: <20251029102359.GH988547@noisy.programming.kicks-ass.net>
+References: <20251027084220.785525188@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176173343931.2601451.5057970472600914752.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027084220.785525188@linutronix.de>
 
-The following commit has been merged into the core/rseq branch of tip:
+On Mon, Oct 27, 2025 at 09:44:14AM +0100, Thomas Gleixner wrote:
+> Thomas Gleixner (31):
+>       rseq: Avoid pointless evaluation in __rseq_notify_resume()
+>       rseq: Condense the inline stubs
+>       rseq: Move algorithm comment to top
+>       rseq: Remove the ksig argument from rseq_handle_notify_resume()
+>       rseq: Simplify registration
+>       rseq: Simplify the event notification
+>       rseq, virt: Retrigger RSEQ after vcpu_run()
+>       rseq: Avoid CPU/MM CID updates when no event pending
+>       rseq: Introduce struct rseq_data
+>       entry: Cleanup header
+>       entry: Remove syscall_enter_from_user_mode_prepare()
+>       entry: Inline irqentry_enter/exit_from/to_user_mode()
+>       sched: Move MM CID related functions to sched.h
+>       rseq: Cache CPU ID and MM CID values
+>       rseq: Record interrupt from user space
+>       rseq: Provide tracepoint wrappers for inline code
+>       rseq: Expose lightweight statistics in debugfs
+>       rseq: Provide static branch for runtime debugging
+>       rseq: Provide and use rseq_update_user_cs()
+>       rseq: Replace the original debug implementation
+>       rseq: Make exit debugging static branch based
+>       rseq: Use static branch for syscall exit debug when GENERIC_IRQ_ENTRY=y
+>       rseq: Provide and use rseq_set_ids()
+>       rseq: Separate the signal delivery path
+>       rseq: Rework the TIF_NOTIFY handler
+>       rseq: Optimize event setting
+>       rseq: Implement fast path for exit to user
+>       rseq: Switch to fast path processing on exit to user
+>       entry: Split up exit_to_user_mode_prepare()
+>       rseq: Split up rseq_exit_to_user_mode()
+>       rseq: Switch to TIF_RSEQ if supported
 
-Commit-ID:     dfd205204dd4c459d5911fd1cfb17f86cae80150
-Gitweb:        https://git.kernel.org/tip/dfd205204dd4c459d5911fd1cfb17f86cae=
-80150
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 27 Oct 2025 09:44:22 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 29 Oct 2025 11:07:12 +01:00
-
-rseq: Remove the ksig argument from rseq_handle_notify_resume()
-
-There is no point for this being visible in the resume_to_user_mode()
-handling.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://patch.msgid.link/20251027084306.211520245@linutronix.de
----
- include/linux/resume_user_mode.h |  2 +-
- include/linux/rseq.h             | 13 +++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/resume_user_mode.h b/include/linux/resume_user_mod=
-e.h
-index e0135e0..dd3bf7d 100644
---- a/include/linux/resume_user_mode.h
-+++ b/include/linux/resume_user_mode.h
-@@ -59,7 +59,7 @@ static inline void resume_user_mode_work(struct pt_regs *re=
-gs)
- 	mem_cgroup_handle_over_high(GFP_KERNEL);
- 	blkcg_maybe_throttle_current();
-=20
--	rseq_handle_notify_resume(NULL, regs);
-+	rseq_handle_notify_resume(regs);
- }
-=20
- #endif /* LINUX_RESUME_USER_MODE_H */
-diff --git a/include/linux/rseq.h b/include/linux/rseq.h
-index 21f875a..c06a8e5 100644
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -37,19 +37,20 @@ static inline void rseq_set_notify_resume(struct task_str=
-uct *t)
-=20
- void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
-=20
--static inline void rseq_handle_notify_resume(struct ksignal *ksig,
--					     struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct pt_regs *regs)
- {
- 	if (current->rseq)
--		__rseq_handle_notify_resume(ksig, regs);
-+		__rseq_handle_notify_resume(NULL, regs);
- }
-=20
- static inline void rseq_signal_deliver(struct ksignal *ksig,
- 				       struct pt_regs *regs)
- {
--	scoped_guard(RSEQ_EVENT_GUARD)
--		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
--	rseq_handle_notify_resume(ksig, regs);
-+	if (current->rseq) {
-+		scoped_guard(RSEQ_EVENT_GUARD)
-+			__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
-+		__rseq_handle_notify_resume(ksig, regs);
-+	}
- }
-=20
- /* rseq_preempt() requires preemption to be disabled. */
+Applied to tip/core/rseq.
 
