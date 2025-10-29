@@ -1,374 +1,100 @@
-Return-Path: <linux-kernel+bounces-877185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6C0C1D637
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:11:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73E2C1D63A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1681899BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D303189A538
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E230B533;
-	Wed, 29 Oct 2025 21:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E24318135;
+	Wed, 29 Oct 2025 21:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E76BLHf+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wyvq73tH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t33dfvAo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9573090CE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C783090CE
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761772254; cv=none; b=HkiHYKPF357cfqA3at4C9ydW9CvuzMOcrZWY54oDOg2OPHiLiknSHB7zM+YN4rgiL6Ih3wKfkIx/Lqy5O/FzlKwNksfwChDbFS/IRCmZxM+3pjIIiID8+W01DbRMu/vuHyUocGU9n8/s2PuJAlZFuuy3uVuRzWJnBXEqsx7dcZg=
+	t=1761772265; cv=none; b=N+4831k2/SS/zyIANkPZG9QQWt14KING7c5fs9Trb7sCz+EnYoVtCQyWjXYv3noXyo3XsZPl/VT23m8PvETFOpKAVfxogBInjmIVdXbNgQPTGrLbSm51hnanMkFPUQ5LFEKZkaMmUILvc9sQiHAWSyAO3iagBC3hawhjvC5p8U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761772254; c=relaxed/simple;
-	bh=DEqsM77RjN9n8i/CaQqgFXbPhwvjxKLUi4ap91xbIDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=szXQwN2esyvr+8RvylA1EjrbmGJveLvv5JwC4A7fvflOGHEVpBkrWtK9fP0svUMZC9mUMs0S8z6aN9WyoQz7MAFmZV7nx30LWSFtQraADRR6ZiiWW8cwwCJEb6fpdVmnwCxMsE8bYCSswSf7Hx4S0lb93KFpRiXoxmI+tgN5o1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E76BLHf+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761772251;
+	s=arc-20240116; t=1761772265; c=relaxed/simple;
+	bh=iJcSnDsFpy765tHPK5F0nZkpTYiOtmmQFaYBYpmqyxk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cRsh6VhaxcpuLBz1Jp6HBrK5QX79mjED3qGzAhcDmURuXf4fHGvXYQ5mNPRzfnTlU+hgdPeIjRi4T63lYvF1hXfSAgQ4IDwuwyxvrdPPlUdJDZO89Av8P+bA4AI9aFBLaBlfgp+K8732OIOUyIGKaSJNueuItOI4wZU7DheUmZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wyvq73tH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t33dfvAo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761772262;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=avdi1SDxRzcVG3w1/eurHaCf3/7WeJ6JAjuETAbD6Cs=;
-	b=E76BLHf+bvADBBBpVQsl0YdGwO3j4MBz3jN/bk9JtFc7898gnlQ/KWUDvxazY3CGlbHQ43
-	gvQFZuxj19C1X5sEWcBJYH7yK3W5ySLkGQNUOi23bOrFMU4YzNgNxvOl4a8qQFdM4dQL+v
-	aYmQsIlJcvtvvHVhAOIwNYFf8d1Wok8=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-530-uqc58IszN4OPUXu-A8ZIYA-1; Wed, 29 Oct 2025 17:10:49 -0400
-X-MC-Unique: uqc58IszN4OPUXu-A8ZIYA-1
-X-Mimecast-MFC-AGG-ID: uqc58IszN4OPUXu-A8ZIYA_1761772248
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-36d99707249so1027531fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:10:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761772247; x=1762377047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=avdi1SDxRzcVG3w1/eurHaCf3/7WeJ6JAjuETAbD6Cs=;
-        b=XScZsF5ivKpcX9MJdqdBzLX8RZ1AaAtGGn6rujVYRP+yFd9bKgrg1Jsi8BLh7But9A
-         baKOxXgJDiR/hrLBSRAmjEa86vfRnskDKUYc6QzNTlmDhNC304H3hQwOLJbDWPvsVGe9
-         0mNoDYCSCaweAKF+suPBHdvPpyi6CsszWOVOBTN9zAuPjtMDMczGC3IbpWMu93vSEP77
-         bz5LS/mTygmn3njj7lqADb4SSpfEBa5DH8900LJuwME7lZFiMUqnPOL+1XyMZVkZZbw4
-         PLJLkvq3Ma21HxD9EFTRx6kJHx1sazNSJBmTEvOA3E/WnGKISrhQ+CvOwLS/XUwMpTb4
-         aZLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRoSr1YX9u5RJLJdXLYVlNUH9tpyNGZQeUxPN9xWgfAt1uxVuRs/QVrR2iWFHO1Ol6xFbRmqayI476rwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0uXgbRMy9BGH1jtLkJoN08CVOh+wEUjB2sDHZ0bxPmkREERLi
-	KqbraKYnU0YY9vTACpSYVQPgiUyGCfPC29G1l4cJEY1SRhyJEpdciwvAdMZhtM1sOxdbtvAXrOe
-	Bjs67SDrjCXlpYeqy6zzaj3Df+OwCIeM8hvDMDaUuqGQNl/I7dSpXiLvaYwX2pG1YrsF7yG8SdE
-	zwf4Isp0u8wkDhaQhHxcWmoG8w1HK0SbaZUC47Cv5n
-X-Gm-Gg: ASbGncskCyHDfvXHKKx1PvMc71rvfFBVVI3VLfZS8K7Ssi4LM/JbR0qPbf10bdfr9AU
-	gRLYi2R1FHgVDOaAScrnY8XuTaKoDJJGVhyWI+9IWHyApocmYQq+o8CnwXeMeyboanboSJG0d4P
-	GNsT1RhE+TlsWtaF0kaEaTJhn3HywdHjtJ9yXgOVg/kqnrCNJJcmNaQF5ST2stX3nUKMDP4Q==
-X-Received: by 2002:a05:651c:1107:10b0:36f:4c94:b583 with SMTP id 38308e7fff4ca-37a052cfe5emr11314531fa.16.1761772247393;
-        Wed, 29 Oct 2025 14:10:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHx30FcSE7653NJNEG/awVid+z8H5190kU3yQFYjauIhANLUFAhYgtBHdEMhlV44DmBq+JFhA98wGc4dv9PI4Y=
-X-Received: by 2002:a05:651c:1107:10b0:36f:4c94:b583 with SMTP id
- 38308e7fff4ca-37a052cfe5emr11314031fa.16.1761772246842; Wed, 29 Oct 2025
- 14:10:46 -0700 (PDT)
+	bh=6hI0jZOz4lJhaD/6EGIsPdMTE5mL26BMHUv65jHq+Fc=;
+	b=Wyvq73tHRhxZ0K0zefrMw34F85Df0ErkNlm5cY0sAEsHv9iLa7PD5laRjQCZAOvfOFZA/W
+	ALZX5aELZWvesOp39Mr7FR4+H1bD1jkCQjvZMdTLJFQZKhhM8IdO9e6cEBi7p+l49ufvjQ
+	JGM6UvJa1GQq9nMjjTF7g3mKaBwDRLl1MJta0IbULJqycn/WoVFCMPIt6382YJQ/2rB3/T
+	UIL3b9YlJbi6DMYHr5Prw0xr3l+oa1VFk3wp59dG+XhtM9dMm8hLIvHYSapvOs56foacbS
+	0R7G+lKhbWxrfmvRwnATUHn3WNV4OV4sHEYFH3ZfnURXgw+zExJ1KfcWNczNDw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761772262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6hI0jZOz4lJhaD/6EGIsPdMTE5mL26BMHUv65jHq+Fc=;
+	b=t33dfvAoW0szJ3vb1qcPpvlG1PWLxzy7Q3c8yAuuq3hl8/hE3Cl9hZFKFo8j3NlgzRWq4l
+	D+fLnB0yCeBQsvDA==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Michael Jeanson <mjeanson@efficios.com>, Jens Axboe
+ <axboe@kernel.dk>, "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R.
+ Shenoy" <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim
+ Chen <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>, Shrikanth
+ Hegde <sshegde@linux.ibm.com>
+Subject: Re: [patch V3 04/20] sched: Fixup whitespace damage
+In-Reply-To: <e693a1dd-5507-410b-8e91-ac06990ff72e@efficios.com>
+References: <20251029123717.886619142@linutronix.de>
+ <20251029124515.529672945@linutronix.de>
+ <e693a1dd-5507-410b-8e91-ac06990ff72e@efficios.com>
+Date: Wed, 29 Oct 2025 22:11:01 +0100
+Message-ID: <87v7jxtnve.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022183717.70829-1-npache@redhat.com> <20251022183717.70829-7-npache@redhat.com>
- <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local> <063f8369-96c7-4345-ab28-7265ed7214cb@linux.alibaba.com>
- <9a3f2d8d-abd1-488c-8550-21cd12efff3e@lucifer.local> <e2a89e74-1533-4a83-8d0f-3f4821750e25@redhat.com>
- <64b9a6cd-d2e4-4142-bf41-abe80bf1f61a@lucifer.local> <dc002ef9-53ee-4466-b963-baadfd5162b7@redhat.com>
- <a97780ab-6256-43b7-8c0a-80ecbdc3d52d@lucifer.local> <2d8ed924-6d06-42e4-a876-381fb331f926@redhat.com>
- <3d6c013c-5592-4bb8-b438-e29787b1ab48@lucifer.local>
-In-Reply-To: <3d6c013c-5592-4bb8-b438-e29787b1ab48@lucifer.local>
-From: Nico Pache <npache@redhat.com>
-Date: Wed, 29 Oct 2025 15:10:19 -0600
-X-Gm-Features: AWmQ_bkZvIDA2jjMvnu1DvkEOw51bJxTkNORzbWV2_C6vMtJ7P55tMuec_GXDEA
-Message-ID: <CAA1CXcCtrgCqYg+WzJv9ZJs1FKcpRWLy3QL3T2E4_5m-CRT9zQ@mail.gmail.com>
-Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
- collapse_max_ptes_none helper function
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, ziy@nvidia.com, 
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
-	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
-	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, kas@kernel.org, 
-	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com, 
-	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, 
-	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, jglisse@google.com, 
-	surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
-	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, 
-	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Oct 29, 2025 at 12:42=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Wed, Oct 29 2025 at 11:42, Mathieu Desnoyers wrote:
+> On 2025-10-29 09:09, Thomas Gleixner wrote:
+>> With whitespace checks enabled in the editor this makes eyes bleed.
+>> 
+> [...]
+>> -	 *
+>> -	 * switch_mm_cid() needs to be updated if the barriers provided
+>> -	 * by context_switch() are modified.
 >
-> On Wed, Oct 29, 2025 at 04:04:06PM +0100, David Hildenbrand wrote:
-> > > >
-> > > > No creep, because you'll always collapse.
-> > >
-> > > OK so in the 511 scenario, do we simply immediately collapse to the l=
-argest
-> > > possible _mTHP_ page size if based on adjacent none/zero page entries=
- in the
-> > > PTE, and _never_ collapse to PMD on this basis even if we do have suf=
-ficient
-> > > none/zero PTE entries to do so?
-> >
-> > Right. And if we fail to allocate a PMD, we would collapse to smaller s=
-izes,
-> > and later, once a PMD is possible, collapse to a PMD.
-> >
-> > But there is no creep, as we would have collapsed a PMD right from the =
-start
-> > either way.
+> This is also removing a comment, but the patch subject and commit
+> message clearly state that the intent is to fix whitespaces only.
 >
-> Hmm, would this mean at 511 mTHP collapse _across zero entries_ would onl=
-y
-> ever collapse to PMD, except in cases where, for instance, PTE entries
-> belong to distinct VMAs and so you have to collapse to mTHP as a result?
+> This change should probably be moved to a different patch.
 
-There are a few failure cases, like exceeding thresholds, or
-allocations failures, but yes your assessment is correct.
+It was in a different patch and ended up here when reshuffling the
+queue. I'll move it to the patch which gets rid of this dependency,
+which is actually patch 1/N.
 
-At 511, the PMD collapse will be satisfied by a single PTE. If the
-collapse fails we will try both sides of the PMD (1024kb , 1024kb).
-the one that contains the non-none PTE will collapse
+Thanks,
 
-This is where the (HPAGE_PMD_ORDER - order) comes from.
-imagine the 511 case above
-511 >> HPAGE_PMD_ORDER - 9 =3D=3D 511 >> 0 =3D 511 max ptes none
-511 >> PMD_ORDER - 8 (1024kb) =3D=3D 511 >> 1 =3D 255 max_ptes_none
+        tglx
 
-both of these align to the orders size minus 1.
-
->
-> Or IOW 'always collapse to the largest size you can I don't care if it
-> takes up more memory'
->
-> And at 0, we'd never collapse anything across zero entries, and only when
-> adjacent present entries can be collapse to mTHP/PMD do we do so?
-
-Yep!
-
-max_pte_none =3D0 + all mTHP sizes enabled, gives you a really good
-distribution of mTHP sizes in the systems, as zero memory will be
-wasted and the most optimal size (space wise) will eb found. At least
-for the memory allocated through khugepaged. The Defer patchset I had
-on top of this series was exactly for that purpose-- Allow khugepaged
-to determine all the THP usage in the system (other than madvise), and
-allow granular control of memory waste.
-
->
-> >
-> > >
-> > > And only collapse to PMD size if we have sufficient adjacent PTE entr=
-ies that
-> > > are populated?
-> > >
-> > > Let's really nail this down actually so we can be super clear what th=
-e issue is
-> > > here.
-> > >
-> >
-> > I hope what I wrote above made sense.
->
-> Asking some q's still, probably more a me thing :)
->
-> >
-> > >
-> > > >
-> > > > Creep only happens if you wouldn't collapse a PMD without prior mTH=
-P
-> > > > collapse, but suddenly would in the same scenario simply because yo=
-u had
-> > > > prior mTHP collapse.
-> > > >
-> > > > At least that's my understanding.
-> > >
-> > > OK, that makes sense, is the logic (this may be part of the bit I hav=
-en't
-> > > reviewed yet tbh) then that for khugepaged mTHP we have the system wh=
-ere we
-> > > always require prior mTHP collapse _first_?
-> >
-> > So I would describe creep as
-> >
-> > "we would not collapse a PMD THP because max_ptes_none is violated, but
-> > because we collapsed smaller mTHP THPs before, we essentially suddenly =
-have
-> > more PTEs that are not none-or-zero, making us suddenly collapse a PMD =
-THP
-> > at the same place".
->
-> Yeah that makes sense.
->
-> >
-> > Assume the following: max_ptes_none =3D 256
-> >
-> > This means we would only collapse if at most half (256/512) of the PTEs=
- are
-> > none-or-zero.
-> >
-> > But imagine the (simplified) PTE layout with PMD =3D 8 entries to simpl=
-ify:
-> >
-> > [ P Z P Z P Z Z Z ]
-> >
-> > 3 Present vs. 5 Zero -> do not collapse a PMD (8)
->
-> OK I'm thinking this is more about /ratio/ than anything else.
->
-> PMD - <=3D50% - ok 5/8 =3D 62.5% no collapse.
-
-                < 50%*.
-
-At 50% it's 256 which is actually the worst case scenario. But I read
-further, and it seems like you grasped the issue.
-
->
-> >
-> > But sssume we collapse smaller mTHP (2 entries) first
-> >
-> > [ P P P P P P Z Z ]
->
-> ...512 KB mTHP (2 entries) - <=3D 50% means we can do...
->
-> >
-> > We collapsed 3x "P Z" into "P P" because the ratio allowed for it.
->
-> Yes so that's:
->
-> [ P Z P Z P Z Z Z ]
->
-> ->
->
-> [ P P P P P P Z Z ]
->
-> Right?
->
-> >
-> > Suddenly we have
-> >
-> > 6 Present vs 2 Zero and we collapse a PMD (8)
-> >
-> > [ P P P P P P P P ]
-> >
-> > That's the "creep" problem.
->
-> I guess we try PMD collapse first then mTHP, but the worry is another pas=
-s
-> will collapse to PMD right?
->
->
-> Whereas < 50% ratio means we never end up 'propagating' or 'creeping' lik=
-e
-> this because each collapse never provides enough reduction in zero entrie=
-s
-> to allow for higher order collapse.
->
-> Hence the idea of capping at 255
-
-Yep! We've discussed other solutions, like tracking collapsed pages,
-or the solutions brought up by David. But this seemed like the most
-logical to me, as it keeps some of the tunability. I now understand
-the concern wasnt so much the capping, but rather the silent nature of
-it, and the uAPI expectations surrounding enforcing such a limit (for
-both past and future behavioral expectations).
-
->
-> >
-> > >
-> > > >
-> > > > >
-> > > > > > max_ptes_none =3D=3D 0 -> collapse mTHP only if all non-none/ze=
-ro
-> > > > > >
-> > > > > > And for the intermediate values
-> > > > > >
-> > > > > > (1) pr_warn() when mTHPs are enabled, stating that mTHP collaps=
-e is not
-> > > > > > supported yet with other values
-> > > > >
-> > > > > It feels a bit much to issue a kernel warning every time somebody=
- twiddles that
-> > > > > value, and it's kind of against user expectation a bit.
-> > > >
-> > > > pr_warn_once() is what I meant.
-> > >
-> > > Right, but even then it feels a bit extreme, warnings are pretty seri=
-ous
-> > > things. Then again there's precedent for this, and it may be the leas=
-t worse
-> > > solution.
-> > >
-> > > I just picture a cloud provider turning this on with mTHP then gettin=
-g their
-> > > monitoring team reporting some urgent communication about warnings in=
- dmesg :)
-> >
-> > I mean, one could make the states mutually, maybe?
-> >
-> > Disallow enabling mTHP with max_ptes_none set to unsupported values and=
- the
-> > other way around.
-> >
-> > That would probably be cleanest, although the implementation might get =
-a bit
-> > more involved (but it's solvable).
-> >
-> > But the concern could be that there are configs that could suddenly bre=
-ak:
-> > someone that set max_ptes_none and enabled mTHP.
->
-> Yeah we could always return an error on setting to an unsupported value.
->
-> I mean pr_warn() is nasty but maybe necessary.
->
-> >
-> >
-> > I'll note that we could also consider only supporting "max_ptes_none =
-=3D 511"
-> > (default) to start with.
-> >
-> > The nice thing about that value is that it us fully supported with the
-> > underused shrinker, because max_ptes_none=3D511 -> never shrink.
->
-> It feels like =3D 0 would be useful though?
-
-I personally think the default of 511 is wrong and should be on the
-lower end of the scale. The exception being thp=3Dalways, where I
-believe the kernel should treat it as 511.
-
-But the second part of that would also violate the users max_ptes_none
-setting, so it's probably much harder in practice, and also not really
-part of this series, just my opinion.
-
-Cheers.
--- Nico
-
->
-> >
-> > --
-> > Cheers
-> >
-> > David / dhildenb
-> >
->
-> Thanks, Lorenzo
->
 
 
