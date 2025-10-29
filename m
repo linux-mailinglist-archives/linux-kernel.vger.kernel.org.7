@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-875108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1188C183A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:18:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB57C183AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54893B17B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26628420CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B922F5463;
-	Wed, 29 Oct 2025 04:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EC12F5478;
+	Wed, 29 Oct 2025 04:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pCJukJFH"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bk3CgiKM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A053170A11
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C632F5463
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761711515; cv=none; b=MShoWUHKXCytJUq4s8he9ug9xqAHPhIfRU6j93Jj7gozaZ40dd1WUc6QbuOAYMl9DyYKzkts0EsJCh5J2mudrJ1wBHHUzGQTD6hm8ScixVml+ZJbJ6YjYjyHLup9JPCpkktLqGFBiit0IOZ4lQnXrURA1FNn/yZG6mnbR1Xjeqw=
+	t=1761711673; cv=none; b=B78LV1VH+A1FkPfUBjjV4JeIUu8TJOB0KHLkrjEAAXnu54ktAN1nqps+MvZztfFqDvAo1iP2CZ/rzKwH6cjXOR0Vl0bonW2rrGHYIGzFB0ycf0CBpYTR/plnx3GRKPQF/tta1iSl6LIARi7eg6Nsv/aFHPJ6Zi0FZ4awXXrCTWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761711515; c=relaxed/simple;
-	bh=4/nq1Yc/w8AgBD4s7gi7GCe6fvRjhQOp/cXFBKm2WTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G9s7dvgeOgQVS+0VI4zpBjC82CpB12eSl6s0CeYdDPc7u1Nvgldkrucw0Bq98IXrzCiUh1fH0ATEfws2mJirtVYve1PrbCBBq3nPGTRII/PFvJL9HkD2HDgvjutTo8/gqFo4Dwhyh5FELdXVfpgvLKsqCe7lPny4bOQV6fpvrW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pCJukJFH; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <df5f5874-e073-4096-946d-1fa43717015c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761711510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=35RBDjl4MLy2XRbz/JLuZxA3xVHZDUvO4dVPTyfk/8w=;
-	b=pCJukJFHHTcE1F+gBVo3R4aYv0goiNyImS8DYHjCXMWWvsn+QyKL/h9Zd0HIzvu74zMM06
-	atsxldX3aen8JMLaamUAIQ6tvpoyim+GwgIkcUvIUo8D32nGTbm7c3i3zDTnKDwkl03UNA
-	JTzdcMLLmu7EYbPz7BVh4fCZOxW8DwQ=
-Date: Wed, 29 Oct 2025 12:17:33 +0800
+	s=arc-20240116; t=1761711673; c=relaxed/simple;
+	bh=k92QA5za9+f78U5qrvozAswYIELUsEv9BnnrIg10L/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nQj+BM+Vsq+Nfqb/C6EU2l32SARNPKTRQjxN+2/mUDTsE9JG+LsoGXtJ79tAJqdvchwuiX4yCx3Y43pHVRVQoM9NFRnBtz/Z3AC6GgXElz0LRkcdRbcP85+/CTUpqARsPucWTXszJYNbLLvuMgqvpw4Wxm7xYit6PGlMx4hbEtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bk3CgiKM; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761711671; x=1793247671;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=k92QA5za9+f78U5qrvozAswYIELUsEv9BnnrIg10L/I=;
+  b=Bk3CgiKMwjoa99bUAgFgjgF8QjYGqGi2DOgu1WkaqDZ2RNRQ83x5pinz
+   mMViTQPe36bKlORByGrVwsw5i79vCqcNVoEAmvFox+M1xg5PYeH5W77D0
+   Ww7+1mc+BcooNhHnJDAjnjBT25wzGJU/CvA7ORA/632dD+1xHOivPiR/2
+   L7orWmkat1cyCVckwfCJNprGd5U18x6gr2sR0UaSOQuA8F8tmRbV76apQ
+   u8ksTLWgo1kCOFHuxF2Qyhj1+Ua8O7c6xyN+uBLZ/dkWj7zLrmKrctbQJ
+   WPz0jl5L6uiAOPzdoUcLkWg412szdOqNjNTuyG1uLo5zeQH9t478YFS9b
+   w==;
+X-CSE-ConnectionGUID: O0XQlBPmSB2406ImViRCLQ==
+X-CSE-MsgGUID: xkYsjPM6TZ+u04Mw2uYKIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81243996"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="81243996"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 21:21:11 -0700
+X-CSE-ConnectionGUID: zkABTT1EQqWwOKetxsdjCA==
+X-CSE-MsgGUID: lHSFdfJrSdCTiq++m50U8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="185177781"
+Received: from igk-lkp-server01.igk.intel.com (HELO c2fcd27ee2f4) ([10.211.93.152])
+  by orviesa009.jf.intel.com with ESMTP; 28 Oct 2025 21:21:09 -0700
+Received: from kbuild by c2fcd27ee2f4 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vDxgJ-000000000s8-1a82;
+	Wed, 29 Oct 2025 04:21:07 +0000
+Date: Wed, 29 Oct 2025 05:20:58 +0100
+From: kernel test robot <lkp@intel.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0
+ (altr,pio-1.0): 'oneOf' conditional failed, one must be fixed:
+Message-ID: <202510290539.UPoG7YbJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 19/24] smb/server: remove create_durable_reconn_req
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org,
- christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251027072206.3468578-5-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd-KaTt1Y5gcsrWU9jrQNmyNcsmBy-XOht7L-xE=s8as7g@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <CAKYAXd-KaTt1Y5gcsrWU9jrQNmyNcsmBy-XOht7L-xE=s8as7g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-They are:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+commit: 695f375b2a881544d112edbb60a35a884c7604ae dt-bindings: gpio: Convert altr,pio-1.0 to DT schema
+date:   3 months ago
+config: nios2-randconfig-2052-20251024 (https://download.01.org/0day-ci/archive/20251029/202510290539.UPoG7YbJ-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+dtschema version: 2025.9.dev12+gd6be03029
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510290539.UPoG7YbJ-lkp@intel.com/reproduce)
 
-   - SMB2_CREATE_DURABLE_HANDLE_REQUEST   in MS-SMB2 2.2.13.2.3
-   - SMB2_CREATE_DURABLE_HANDLE_RECONNECT in MS-SMB2 2.2.13.2.4
-   - SMB2_FILEID in MS-SMB2 2.2.14.1
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510290539.UPoG7YbJ-lkp@intel.com/
 
-We can uniformly name them create_durable:
+dtcheck warnings: (new ones prefixed by >>)
+   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): reg-names:3: 's1' was expected
+   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
+   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): reg-names: ['control_port', 'rx_csr', 'rx_desc', 'rx_resp', 'tx_csr', 'tx_desc'] is too long
+   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
+   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): compatible: ['altr,tse-msgdma-1.0', 'altr,tse-1.0'] is too long
+   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
+   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): Unevaluated properties are not allowed ('altr,enable-hash', 'altr,enable-sup-addr' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
+   arch/nios2/boot/dts/10m50_devboard.dtb: /sopc@0/clock@0: failed to match any schema with compatible: ['altr,pll-1.0']
+   arch/nios2/boot/dts/10m50_devboard.dtb: /sopc@0/clock@1: failed to match any schema with compatible: ['altr,pll-1.0']
+>> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0 (altr,pio-1.0): 'oneOf' conditional failed, one must be fixed:
+   	'interrupts' is a required property
+   	'interrupts-extended' is a required property
+   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
+>> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0 (altr,pio-1.0): 'interrupt-controller' is a required property
+   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
+>> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0 (altr,pio-1.0): '#interrupt-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
+>> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014c0 (altr,pio-1.0): 'edge_type', 'level_trigger' do not match any of the regexes: '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
+>> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014c0 (altr,pio-1.0): 'interrupt-controller' is a required property
+   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
+>> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014c0 (altr,pio-1.0): '#interrupt-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
+   arch/nios2/boot/dts/10m50_devboard.dtb: leds (gpio-leds): 'fpga0', 'fpga1', 'fpga2', 'fpga3' do not match any of the regexes: '(^led-[0-9a-f]$|led)', '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml
 
-struct create_durable {
-         ...
-         union {
-                 __u8  Reserved[16]; // DurableRequest of 
-SMB2_CREATE_DURABLE_HANDLE_REQUEST, A 16-byte field that MUST NOT be 
-used and MUST be reserved. This value MUST be set to 0 by the client and 
-ignored by the server.
-                 struct {
-                         __u64 PersistentFileId; // See 2.2.14.1 SMB2_FILEID
-                         __u64 VolatileFileId;   // See 2.2.14.1 SMB2_FILEID
-                 } Fid; // Data of SMB2_CREATE_DURABLE_HANDLE_RECONNECT, 
-An SMB2_FILEID structure, as specified in section 2.2.14.1, for the open 
-that is being reestablished.
-         } Data;
-} __packed;
-
-Thanks,
-ChenXiaoSong.
-
-On 10/29/25 11:54 AM, Namjae Jeon wrote:
-> On Mon, Oct 27, 2025 at 4:23 PM <chenxiaosong.chenxiaosong@linux.dev> wrote:
->>
->> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->>
->> The fields in struct create_durable_reconn_req and struct create_durable
->> are exactly the same.
->>
->> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
->> ---
->>   fs/smb/server/smb2pdu.c |  6 +++---
->>   fs/smb/server/smb2pdu.h | 12 ------------
->>   2 files changed, 3 insertions(+), 15 deletions(-)
->>
->> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
->> index 6b3503c7bfaa..3e8344fa163b 100644
->> --- a/fs/smb/server/smb2pdu.c
->> +++ b/fs/smb/server/smb2pdu.c
->> @@ -2766,7 +2766,7 @@ static int parse_durable_handle_context(struct ksmbd_work *work,
->>                  }
->>                  case DURABLE_RECONN:
->>                  {
->> -                       struct create_durable_reconn_req *recon;
->> +                       struct create_durable *recon;
->>
->>                          if (dh_info->type == DURABLE_RECONN_V2 ||
->>                              dh_info->type == DURABLE_REQ_V2) {
->> @@ -2776,12 +2776,12 @@ static int parse_durable_handle_context(struct ksmbd_work *work,
->>
->>                          if (le16_to_cpu(context->DataOffset) +
->>                                  le32_to_cpu(context->DataLength) <
->> -                           sizeof(struct create_durable_reconn_req)) {
->> +                           sizeof(struct create_durable)) {
-> Please check the specification, Which structure name is correct?
-> thanks.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
