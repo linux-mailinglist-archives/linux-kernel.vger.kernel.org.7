@@ -1,184 +1,420 @@
-Return-Path: <linux-kernel+bounces-876080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93011C1A912
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:14:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF821C1A957
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B4DA586091
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6049A1B2036B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA001F0E39;
-	Wed, 29 Oct 2025 12:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255972D321D;
+	Wed, 29 Oct 2025 13:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bmrs+KJG"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qhp8JTqO"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5603228C99
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB40C2D12ED
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742785; cv=none; b=g1hRyRP60CHp+f5wGiP67ascx6ZYhXRnZvaA3zOb2aNCTpvej1Xp/d+l9OcvR8XIhfow4F1IsIt6YqVaEHqLIzHHDBj9Klex8jJPiosOt7ha3M+dAze0dv65vcx0+wRRsJJ3etFzkKwFHkc41RbNpX6R25FOzx+lz213nKq4his=
+	t=1761742828; cv=none; b=Dosr6Q82BK3PcIEpjm0iGz1+h6cqWBs1tPCIEQpthVEx4ZIJMfFRMQ2KUez/ESK1VgcdjYi/2zeBN1NxMA5+9OD82FY0TkIS7SoHT1hVwuZ8+6HnTWdSvx8zv+rVaDLuwEC+lFhaUA6Oci21n2I09W3sh1zWJSyYYcLHHnDdZ/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742785; c=relaxed/simple;
-	bh=cZUqEi7ArJBgqnrq/LGfj3bUXfY69RvPu1cvwBiVCak=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ww2DwFAFxxVdCEYK5HEprnPgOyFGpVQXdhLVkXSAFbpd89MJsYZStYbOoZshTk6DoX7PL/QzuU+pCRbX2D7OmjcCOtR47RbDcnFd86FrYbWYG5keQISDNVPRu98TOcJYqvRyOaEoBt3J0qEBXXBrdn8wzsz56kC1MEwJ8A9xDPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bmrs+KJG; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-4270a61ec48so5984530f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:59:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761742782; x=1762347582; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvcZ242I0xNV0Bj8P2kxRpXu3YYgCUlfHC5XSdPNaN0=;
-        b=Bmrs+KJGpZa4aRNYwF4tRU2pbINS1yxabO0L36mrLHRQcM7y823X047mv+4lH2uhIP
-         KpUyJGNS5SxrvRzQAs6AwdP8OKq5JwBtMwKtMD+KsBkakcp/GrU9ssK+8w9On1IJVI97
-         3qYTF4s5fRVPXFe85bNPVBTRxggroBVIxausqXfZGYbu8YkNjrTyzC2csBL/gFVQSxUh
-         YnLQAO2XVcKFVnOrccVADIob3k3A9pLF6T626b11yIxGnNzoMrkY6x+pFou35KjqmM9n
-         Teo6y/tNdpcn3DPBbIi2jj1KIcVuUY/mpowzuGEDHl2QRgNQyh5i54yoUt7KZ0TESpo+
-         kF7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761742782; x=1762347582;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvcZ242I0xNV0Bj8P2kxRpXu3YYgCUlfHC5XSdPNaN0=;
-        b=MC01+7UG5i3s2ek7JDvQf96D9VBZ9oR5+qv1OEWIY6Cd292NPZcLwj0fCgQOF47hOo
-         DcAnKi5qwAAH82tPjT5KMKZDm6tupAzmAxzImkx4riIcZiQW1zAUdvl7SLY8T8d64Che
-         l87XwYoCR7dFLDvr+Rh/bjNZyQPMQkUQ5wdKXi3qpl+NszIbmsk/jW8LmpV3Q0SkkrX5
-         Ncy29KgMix5FeLqzf7OneJLtAOQIylPZ8uyud8MykJVMwcrll4gMWqtGSPqz5eY/+AsH
-         fGfsWq/qKV/2OGzsFb+Ne2IvQn8Zcr1sCvHdevPQ1RsT0icGfMKAWdH2lrnleueFj7SK
-         2taA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmzgXNpRZe0h0SAxFglCJZc/g+GNPdSraVNVC3roiLND26O3ecNNt5x0KDQePFa6H6diX+hrYnL0YYkPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqkH/XoWyjSoQ11/ubCfabEyjh3OpweYF08Q9X2zSDW2xCZY3H
-	xB3O+bOBK0afeykCN5VDyX6z2qQ8DB/QPL0xRtNe8lBn4+gBVed1JqtLnL1GjmKW4n30UEBf6wf
-	s1hd/eq40EvlotfgUpg==
-X-Google-Smtp-Source: AGHT+IFnbvPlsvZotzy1WsN3Ocy8uT6OxjkU13FGbFqNo33aQaiOVG8eFJ1A1TVPzk6tojTsAQa4tCIT+M/iM9c=
-X-Received: from wmvz2.prod.google.com ([2002:a05:600d:6282:b0:477:d21:4a92])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:26d2:b0:429:91ca:70f1 with SMTP id ffacd0b85a97d-429aefccf44mr2238605f8f.57.1761742782357;
- Wed, 29 Oct 2025 05:59:42 -0700 (PDT)
-Date: Wed, 29 Oct 2025 12:59:41 +0000
-In-Reply-To: <20251020223516.241050-3-dakr@kernel.org>
+	s=arc-20240116; t=1761742828; c=relaxed/simple;
+	bh=9CHJ23Zg+sBNXS5mNHtK/8Ano1YH40WTma96aCtRgCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=ZPpvHkNIX74b8zfHd9W8WDlvO56UWLXvWE2LtC7KiJ1W+NnD/YmVx7lXCYQBaWe5oB42BdiQcAcw3Mnz2v+qb724blRsdaa+7mu8cEAGmNlJGCevrzUAlGSUJeTr7s+Fve/Iw1OmRw66wQlwDDedM7tvFJsRQlgqIOtYeKXddPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qhp8JTqO; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251029130024epoutp0219f60ecbf43c58901a22726e4e0d99fa~y98O7sQlo3007730077epoutp02w
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:00:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251029130024epoutp0219f60ecbf43c58901a22726e4e0d99fa~y98O7sQlo3007730077epoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761742824;
+	bh=fcXEPQyqf6GsKaleSSXSU+xfwkXDy5QAKjsevcvEoJ4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=qhp8JTqOv92BRwIE3t+q2dRg9qc8Fj/Pm42RGBQc2doaNYn3MwkODP3icYi/NspMk
+	 DfvOtIHIJsJ7gLYrh+NLLbewA1BLyTqWs7DEFfI/DmrOoqBbuLOI133/M8H51/9+Zc
+	 nugLIH3V2giInsORnV573U9qGOgayDv25alHPa/E=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251029130023epcas5p227575f348e206c5737265ada179e828a~y98OSjNaR1059410594epcas5p2x;
+	Wed, 29 Oct 2025 13:00:23 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cxS5f4TBYz2SSKZ; Wed, 29 Oct
+	2025 13:00:22 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251029130022epcas5p1a3c9af16e9d97b9a4e1bc4a861638dd0~y98M3ERFJ1702817028epcas5p1S;
+	Wed, 29 Oct 2025 13:00:22 +0000 (GMT)
+Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029130010epsmtip25f436badb3da4c42e94447d4951ecfb1~y98CUL2bF0646806468epsmtip2Y;
+	Wed, 29 Oct 2025 13:00:10 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
+	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+	cw00.choi@samsung.com
+Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
+	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
+	swathi.ks@samsung.com, kenkim@coasia.com
+Subject: [PATCH v2 2/4] clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+Date: Wed, 29 Oct 2025 18:30:00 +0530
+Message-Id: <20251029130000.41296-1-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-CMS-MailID: 20251029130022epcas5p1a3c9af16e9d97b9a4e1bc4a861638dd0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251029130022epcas5p1a3c9af16e9d97b9a4e1bc4a861638dd0
+References: <CGME20251029130022epcas5p1a3c9af16e9d97b9a4e1bc4a861638dd0@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020223516.241050-1-dakr@kernel.org> <20251020223516.241050-3-dakr@kernel.org>
-Message-ID: <aQIPvaFJIXySV-Q5@google.com>
-Subject: Re: [PATCH 2/8] rust: device: introduce Device::drvdata()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	kwilczynski@kernel.org, david.m.ertman@intel.com, ira.weiny@intel.com, 
-	leon@kernel.org, acourbot@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
-	pcolberg@redhat.com, rust-for-linux@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
 
-On Tue, Oct 21, 2025 at 12:34:24AM +0200, Danilo Krummrich wrote:
-> In C dev_get_drvdata() has specific requirements under which it is valid
-> to access the returned pointer. That is, drivers have to ensure that
-> 
->   (1) for the duration the returned pointer is accessed the driver is
->       bound and remains to be bound to the corresponding device,
-> 
->   (2) the returned void * is treated according to the driver's private
->       data type, i.e. according to what has been passed to
->       dev_set_drvdata().
-> 
-> In Rust, (1) can be ensured by simply requiring the Bound device
-> context, i.e. provide the drvdata() method for Device<Bound> only.
-> 
-> For (2) we would usually make the device type generic over the driver
-> type, e.g. Device<T: Driver>, where <T as Driver>::Data is the type of
-> the driver's private data.
-> 
-> However, a device does not have a driver type known at compile time and
-> may be bound to multiple drivers throughout its lifetime.
-> 
-> Hence, in order to be able to provide a safe accessor for the driver's
-> device private data, we have to do the type check on runtime.
-> 
-> This is achieved by letting a driver assert the expected type, which is
-> then compared to a type hash stored in struct device_private when
-> dev_set_drvdata() is called.
-> 
-> Example:
-> 
-> 	// `dev` is a `&Device<Bound>`.
-> 	let data = dev.drvdata::<SampleDriver>()?;
-> 
-> There are two aspects to note:
-> 
->   (1) Technically, the same check could be achieved by comparing the
->       struct device_driver pointer of struct device with the struct
->       device_driver pointer of the driver struct (e.g. struct
->       pci_driver).
-> 
->       However, this would - in addition the pointer comparison - require
->       to tie back the private driver data type to the struct
->       device_driver pointer of the driver struct to prove correctness.
-> 
->       Besides that, accessing the driver struct (stored in the module
->       structure) isn't trivial and would result into horrible code and
->       API ergonomics.
-> 
->   (2) Having a direct accessor to the driver's private data is not
->       commonly required (at least in Rust): Bus callback methods already
->       provide access to the driver's device private data through a &self
->       argument, while other driver entry points such as IRQs,
->       workqueues, timers, IOCTLs, etc. have their own private data with
->       separate ownership and lifetime.
-> 
->       In other words, a driver's device private data is only relevant
->       for driver model contexts (such a file private is only relevant
->       for file contexts).
-> 
-> Having that said, the motivation for accessing the driver's device
-> private data with Device<Bound>::drvdata() are interactions between
-> drivers. For instance, when an auxiliary driver calls back into its
-> parent, the parent has to be capable to derive its private data from the
-> corresponding device (i.e. the parent of the auxiliary device).
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+From: GyoungBo Min <mingyoungbo@coasia.com>
 
-Are you going to open that docs PR to the Rust compiler about the size
-of TypeID that we talked about? :)
+Add below clock PLL support for Axis ARTPEC-9 SoC platform:
+- pll_a9fracm: Integer PLL with mid frequency FVCO (800 to 6400 MHz)
+             This is used in ARTPEC-9 SoC for shared PLL
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+- pll_a9fraco: Integer/Fractional PLL with mid frequency FVCO
+             (600 to 2400 MHz)
+             This is used in ARTPEC-9 SoC for Audio PLL
 
-> +// Compile-time checks.
-> +const _: () = {
-> +    // Assert that we can `read()` / `write()` a `TypeId` instance from / into `struct driver_type`.
-> +    static_assert!(core::mem::size_of::<bindings::driver_type>() == core::mem::size_of::<TypeId>());
-> +};
+FOUT calculation for pll_a9fracm and pll_a9fraco:
+FOUT = (MDIV x FIN)/(PDIV x (SDIV + 1)) for integer PLL
+FOUT = (((MDIV + (KDIV/2^24)) x FIN)/(PDIV x (SDIV + 1)) for fractional PLL
 
-You don't need the "const _: ()" part. See the definition of
-static_assert! to see why.
+Signed-off-by: GyoungBo Min <mingyoungbo@coasia.com>
+Reviewed-by: Kyunghwan Kim <kenkim@coasia.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c | 185 ++++++++++++++++++++++++++++++++--
+ drivers/clk/samsung/clk-pll.h |  17 ++++
+ 2 files changed, 194 insertions(+), 8 deletions(-)
 
-Also, I would not require equality. The Rust team did not think that it
-would ever increase in size, but it may decrease.
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 0a8fc9649ae2..51e51ef48412 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -201,6 +201,9 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
+ #define PLL35XX_LOCK_STAT_SHIFT	(29)
+ #define PLL35XX_ENABLE_SHIFT	(31)
+ 
++/* A9FRACM is similar to PLL35xx, except that MDIV is bit different */
++#define PLLA9FRACM_MDIV_SHIFT	(14)
++
+ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+ {
+@@ -209,7 +212,12 @@ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 	u64 fvco = parent_rate;
+ 
+ 	pll_con = readl_relaxed(pll->con_reg);
+-	mdiv = (pll_con >> PLL35XX_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
++
++	if (pll->type == pll_a9fracm)
++		mdiv = (pll_con >> PLLA9FRACM_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
++	else
++		mdiv = (pll_con >> PLL35XX_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
++
+ 	pdiv = (pll_con >> PLL35XX_PDIV_SHIFT) & PLL35XX_PDIV_MASK;
+ 	sdiv = (pll_con >> PLL35XX_SDIV_SHIFT) & PLL35XX_SDIV_MASK;
+ 
+@@ -219,12 +227,15 @@ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 	return (unsigned long)fvco;
+ }
+ 
+-static inline bool samsung_pll35xx_mp_change(
+-		const struct samsung_pll_rate_table *rate, u32 pll_con)
++static inline bool samsung_pll35xx_mp_change(u32 pll_type,
++					     const struct samsung_pll_rate_table *rate, u32 pll_con)
+ {
+ 	u32 old_mdiv, old_pdiv;
+ 
+-	old_mdiv = (pll_con >> PLL35XX_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
++	if (pll_type == pll_a9fracm)
++		old_mdiv = (pll_con >> PLLA9FRACM_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
++	else
++		old_mdiv = (pll_con >> PLL35XX_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
+ 	old_pdiv = (pll_con >> PLL35XX_PDIV_SHIFT) & PLL35XX_PDIV_MASK;
+ 
+ 	return (rate->mdiv != old_mdiv || rate->pdiv != old_pdiv);
+@@ -236,6 +247,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	const struct samsung_pll_rate_table *rate;
+ 	u32 tmp;
++	u32 mdiv_shift;
++
++	if (pll->type == pll_a9fracm)
++		mdiv_shift = PLLA9FRACM_MDIV_SHIFT;
++	else
++		mdiv_shift = PLL35XX_MDIV_SHIFT;
+ 
+ 	/* Get required rate settings from table */
+ 	rate = samsung_get_pll_settings(pll, drate);
+@@ -247,7 +264,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 
+ 	tmp = readl_relaxed(pll->con_reg);
+ 
+-	if (!(samsung_pll35xx_mp_change(rate, tmp))) {
++	if (!(samsung_pll35xx_mp_change(pll->type, rate, tmp))) {
+ 		/* If only s change, change just s value only*/
+ 		tmp &= ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
+ 		tmp |= rate->sdiv << PLL35XX_SDIV_SHIFT;
+@@ -257,7 +274,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	}
+ 
+ 	/* Set PLL lock time. */
+-	if (pll->type == pll_142xx || pll->type == pll_1017x)
++	if (pll->type == pll_142xx || pll->type == pll_1017x || pll->type == pll_a9fracm)
+ 		writel_relaxed(rate->pdiv * PLL142XX_LOCK_FACTOR,
+ 			pll->lock_reg);
+ 	else
+@@ -265,10 +282,10 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 			pll->lock_reg);
+ 
+ 	/* Change PLL PMS values */
+-	tmp &= ~((PLL35XX_MDIV_MASK << PLL35XX_MDIV_SHIFT) |
++	tmp &= ~((PLL35XX_MDIV_MASK << mdiv_shift) |
+ 			(PLL35XX_PDIV_MASK << PLL35XX_PDIV_SHIFT) |
+ 			(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT));
+-	tmp |= (rate->mdiv << PLL35XX_MDIV_SHIFT) |
++	tmp |= (rate->mdiv << mdiv_shift) |
+ 			(rate->pdiv << PLL35XX_PDIV_SHIFT) |
+ 			(rate->sdiv << PLL35XX_SDIV_SHIFT);
+ 	writel_relaxed(tmp, pll->con_reg);
+@@ -1428,6 +1445,149 @@ static const struct clk_ops samsung_pll1031x_clk_min_ops = {
+ 	.recalc_rate = samsung_pll1031x_recalc_rate,
+ };
+ 
++/*
++ * PLLA9FRACO Clock Type
++ */
++#define PLLA9FRACO_LOCK_FACTOR		(500)
++
++#define PLLA9FRACO_MDIV_MASK		(0x3ff)
++#define PLLA9FRACO_PDIV_MASK		(0x3f)
++#define PLLA9FRACO_SDIV_MASK		(0x7)
++#define PLLA9FRACO_MDIV_SHIFT		(14)
++#define PLLA9FRACO_PDIV_SHIFT		(8)
++#define PLLA9FRACO_SDIV_SHIFT		(0)
++
++#define PLLA9FRACO_PLL_CON5_DIV_FRAC	(0x14)
++#define PLLA9FRACO_KDIV_MASK		(0xffffff)
++#define PLLA9FRACO_KDIV_SHIFT		(0)
++#define PLLA9FRACO_DAC_MODE		BIT(30)
++#define PLLA9FRACO_DSM_EN		BIT(31)
++#define PLLA9FRACO_FOUTPOSTDIVEN	BIT(3)
++#define PLLA9FRACO_MUX_SEL		BIT(4)
++#define PLLA9FRACO_ENABLE_SHIFT		(31)
++#define PLLA9FRACO_LOCK_STAT_SHIFT	(29)
++
++static unsigned long samsung_a9fraco_recalc_rate(struct clk_hw *hw,
++						 unsigned long parent_rate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 pll_con0, pll_con5;
++	u64 mdiv, pdiv, sdiv, kdiv;
++	u64 fvco = parent_rate;
++
++	pll_con0 = readl_relaxed(pll->con_reg);
++	pll_con5 = readl_relaxed(pll->con_reg + PLLA9FRACO_PLL_CON5_DIV_FRAC);
++	mdiv = (pll_con0 >> PLLA9FRACO_MDIV_SHIFT) & PLLA9FRACO_MDIV_MASK;
++	pdiv = (pll_con0 >> PLLA9FRACO_PDIV_SHIFT) & PLLA9FRACO_PDIV_MASK;
++	sdiv = (pll_con0 >> PLLA9FRACO_SDIV_SHIFT) & PLLA9FRACO_SDIV_MASK;
++	kdiv = (pll_con5 & PLLA9FRACO_KDIV_MASK);
++
++	/* fvco = fref * (M + K/2^24) / p * (S+1) */
++	fvco *= mdiv;
++	fvco = (fvco << 24) + kdiv;
++	do_div(fvco, ((pdiv * (sdiv + 1)) << 24));
++
++	return (unsigned long)fvco;
++}
++
++static bool samsung_a9fraco_mpk_change(u32 pll_con0, u32 pll_con5,
++				       const struct samsung_pll_rate_table *rate)
++{
++	u32 old_mdiv, old_pdiv, old_kdiv;
++
++	old_mdiv = (pll_con0 >> PLLA9FRACO_MDIV_SHIFT) & PLLA9FRACO_MDIV_MASK;
++	old_pdiv = (pll_con0 >> PLLA9FRACO_PDIV_SHIFT) & PLLA9FRACO_PDIV_MASK;
++	old_kdiv = (pll_con5 >> PLLA9FRACO_KDIV_SHIFT) & PLLA9FRACO_KDIV_MASK;
++
++	return (old_mdiv != rate->mdiv || old_pdiv != rate->pdiv || old_kdiv != rate->kdiv);
++}
++
++static int samsung_a9fraco_set_rate(struct clk_hw *hw, unsigned long drate, unsigned long prate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	const struct samsung_pll_rate_table *rate;
++	u32 con0, con5;
++	int ret;
++
++	/* Get required rate settings from table */
++	rate = samsung_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++		       drate, clk_hw_get_name(hw));
++		return -EINVAL;
++	}
++
++	con0 = readl_relaxed(pll->con_reg);
++	con5 = readl_relaxed(pll->con_reg + PLLA9FRACO_PLL_CON5_DIV_FRAC);
++
++	if (!(samsung_a9fraco_mpk_change(con0, con5, rate))) {
++		/* If only s change, change just s value only */
++		con0 &= ~(PLLA9FRACO_SDIV_MASK << PLLA9FRACO_SDIV_SHIFT);
++		con0 |= rate->sdiv << PLLA9FRACO_SDIV_SHIFT;
++		writel_relaxed(con0, pll->con_reg);
++
++		return 0;
++	}
++
++	/* Select OSCCLK (0) */
++	con0 = readl_relaxed(pll->con_reg);
++	con0 &= ~(PLLA9FRACO_MUX_SEL);
++	writel_relaxed(con0, pll->con_reg);
++
++	/* Disable PLL */
++	con0 &= ~BIT(PLLA9FRACO_ENABLE_SHIFT);
++	writel_relaxed(con0, pll->con_reg);
++
++	/* Set PLL lock time. */
++	writel_relaxed(rate->pdiv * PLLA9FRACO_LOCK_FACTOR, pll->lock_reg);
++
++	/* Set PLL M, P, and S values. */
++	con0 &= ~((PLLA9FRACO_MDIV_MASK << PLLA9FRACO_MDIV_SHIFT) |
++		  (PLLA9FRACO_PDIV_MASK << PLLA9FRACO_PDIV_SHIFT) |
++		  (PLLA9FRACO_SDIV_MASK << PLLA9FRACO_SDIV_SHIFT));
++
++	/* The field FOUTPOSTDIVEN should always be 1, else FOUT might be 0 Hz. */
++	con0 |= (rate->mdiv << PLLA9FRACO_MDIV_SHIFT) |
++		(rate->pdiv << PLLA9FRACO_PDIV_SHIFT) |
++		(rate->sdiv << PLLA9FRACO_SDIV_SHIFT) | (PLLA9FRACO_FOUTPOSTDIVEN);
++
++	/* Set PLL K, DSM_EN and DAC_MODE values. */
++	con5 = readl_relaxed(pll->con_reg + PLLA9FRACO_PLL_CON5_DIV_FRAC);
++	con5 &= ~((PLLA9FRACO_KDIV_MASK << PLLA9FRACO_KDIV_SHIFT) |
++		  PLLA9FRACO_DSM_EN | PLLA9FRACO_DAC_MODE);
++	con5 |= (rate->kdiv << PLLA9FRACO_KDIV_SHIFT) | PLLA9FRACO_DSM_EN | PLLA9FRACO_DAC_MODE;
++
++	/* Write configuration to PLL */
++	writel_relaxed(con0, pll->con_reg);
++	writel_relaxed(con5, pll->con_reg + PLLA9FRACO_PLL_CON5_DIV_FRAC);
++
++	/* Enable PLL */
++	con0 = readl_relaxed(pll->con_reg);
++	con0 |= BIT(PLLA9FRACO_ENABLE_SHIFT);
++	writel_relaxed(con0, pll->con_reg);
++
++	/* Wait for PLL lock if the PLL is enabled */
++	ret = samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
++	if (ret < 0)
++		return ret;
++
++	/* Select FOUT (1) */
++	con0 |= (PLLA9FRACO_MUX_SEL);
++	writel_relaxed(con0, pll->con_reg);
++
++	return 0;
++}
++
++static const struct clk_ops samsung_a9fraco_clk_ops = {
++	.recalc_rate = samsung_a9fraco_recalc_rate,
++	.determine_rate = samsung_pll_determine_rate,
++	.set_rate = samsung_a9fraco_set_rate,
++};
++
++static const struct clk_ops samsung_a9fraco_clk_min_ops = {
++	.recalc_rate = samsung_a9fraco_recalc_rate,
++};
++
+ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 				const struct samsung_pll_clock *pll_clk)
+ {
+@@ -1477,6 +1637,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	case pll_1452x:
+ 	case pll_142xx:
+ 	case pll_1017x:
++	case pll_a9fracm:
+ 		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
+ 		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
+ 		if (!pll->rate_table)
+@@ -1578,6 +1739,14 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		else
+ 			init.ops = &samsung_pll1031x_clk_ops;
+ 		break;
++	case pll_a9fraco:
++		pll->enable_offs = PLLA9FRACO_ENABLE_SHIFT;
++		pll->lock_offs = PLLA9FRACO_LOCK_STAT_SHIFT;
++		if (!pll->rate_table)
++			init.ops = &samsung_a9fraco_clk_min_ops;
++		else
++			init.ops = &samsung_a9fraco_clk_ops;
++		break;
+ 	default:
+ 		pr_warn("%s: Unknown pll type for pll clk %s\n",
+ 			__func__, pll_clk->name);
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index 6c8bb7f26da5..d6eb3246611b 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -51,6 +51,8 @@ enum samsung_pll_type {
+ 	pll_4311,
+ 	pll_1017x,
+ 	pll_1031x,
++	pll_a9fracm,
++	pll_a9fraco,
+ };
+ 
+ #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
+@@ -58,6 +60,11 @@ enum samsung_pll_type {
+ #define PLL_VALID_RATE(_fin, _fout, _m, _p, _s, _k, _ks) ((_fout) + \
+ 	BUILD_BUG_ON_ZERO(PLL_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
+ 
++#define PLL_FRACO_RATE(_fin, _m, _p, _s, _k, _ks) \
++	((u64)(_fin) * (BIT(_ks) * (_m) + (_k)) / BIT(_ks) / ((_p) * ((_s) + 1)))
++#define PLL_FRACO_VALID_RATE(_fin, _fout, _m, _p, _s, _k, _ks) ((_fout) + \
++	BUILD_BUG_ON_ZERO(PLL_FRACO_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
++
+ #define PLL_35XX_RATE(_fin, _rate, _m, _p, _s)			\
+ 	{							\
+ 		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+@@ -111,6 +118,16 @@ enum samsung_pll_type {
+ 		.vsel	=	(_vsel),			\
+ 	}
+ 
++#define PLL_A9FRACO_RATE(_fin, _rate, _m, _p, _s, _k)		\
++	{							\
++		.rate	=	PLL_FRACO_VALID_RATE(_fin, _rate, \
++				_m, _p, _s, _k, 24),		\
++		.mdiv	=	(_m),				\
++		.pdiv	=	(_p),				\
++		.sdiv	=	(_s),				\
++		.kdiv	=	(_k),				\
++	}
++
+ /* NOTE: Rate table should be kept sorted in descending order. */
+ 
+ struct samsung_pll_rate_table {
+-- 
+2.17.1
 
->  /// The core representation of a device in the kernel's driver model.
->  ///
->  /// This structure represents the Rust abstraction for a C `struct device`. A [`Device`] can either
-> @@ -198,12 +204,29 @@ pub unsafe fn as_bound(&self) -> &Device<Bound> {
->  }
->  
->  impl Device<CoreInternal> {
-> +    fn type_id_store<T: 'static>(&self) {
-
-This name isn't great. How about "set_type_id()" instead?
-
-Alice 
 
