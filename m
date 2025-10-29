@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-876227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DCAC1AF98
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F2DC1B42A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987751AA2893
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0A4587E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BBB3358B0;
-	Wed, 29 Oct 2025 13:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AB6337699;
+	Wed, 29 Oct 2025 13:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IlvV06IP"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZgGIWy+v"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AE3335091;
-	Wed, 29 Oct 2025 13:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910B03358DC;
+	Wed, 29 Oct 2025 13:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744855; cv=none; b=O+G699u/yPzi3HMJ74brY+af8nN3V3yYqweQZzu42TOMJM+nC/xFBDbbqI2/I6tXXnufWiDlB9J7xeXRNo2kAqr97fK+P3M8bEb/hXgRk4tcE7HY0WTrQTpMo2ZRsPdsMPGpIG3oSnZ/P83LHF7GB4gq90PuFmAimc1tW8dKhx8=
+	t=1761744868; cv=none; b=i0W9jSEdxswO/g6KKPF93HerGJ5vMfA2xM9QBy8oxT+D2AlJLr76wsQjYnvaSLNPKYLYi4dAM+d/3ceP7Alisnj9FB3IXJc2bBobGqCfZTiFSkX8HfekLhMiSTnxFzmrFt2oE1qj1t4jYoR4LYm7kuXDZOmlPi9WhQVFiN2FxJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744855; c=relaxed/simple;
-	bh=yYeetJE7nU39JRPQ2bAqGA8v27+L3KLdnP1omdhZg9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fjRBV7v0PsWCKnA6XW8Lrq9h7TS0IOzyrE8mpF2TY9/uJ4fhlyNTGqOyOlQcwEe0sWXgSYnpVH/r5lOjuCNCROQXmUqx76MZIqZBZDq0h1soKSJRgA3s9Ved+hSpOc/DiMsBb5RQpzo2NJC+ndbOanty/EuSRwPQWwys3ynJeL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IlvV06IP; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 6C7FB1A1747;
-	Wed, 29 Oct 2025 13:34:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3C4CB606E8;
-	Wed, 29 Oct 2025 13:34:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A5403117F80A7;
-	Wed, 29 Oct 2025 14:34:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761744849; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=wKk+FxFdhXoaDcRKRxsyJt9b/J7SbDXNlJUTNBILMfk=;
-	b=IlvV06IPxNV2S5cD3etgy/hG0vlnjV/OCq7pn1FljLu3y+j9LSE8lJ+s37shkWZW0mMdTk
-	eMWXv/Ppz0BCT8/zs8UuD+EDdLzvwEnPhHnKlk5bQNO5EsyUOnileffmhKTPKgfHHXd3R/
-	WxEHlJKZA8JGmH50riHR7E4iq6+ohacOWUHCtPz5Iam2AquOuVF+6uysOV1+ZW8cLz8c/z
-	QIMN1lgRw7C07B+283adVEJrTHS2iQcpxEtErsytiGX5WR0C7O89fvYuR2tyAHMIABCYtP
-	K8gHywFCOqvzhRqY3WUxcJsw8jeNI7TOi8tlzCFEYg5pQPBLkO5tIyOTPpuF/Q==
-Message-ID: <a871daac-364e-4c2c-8343-d458b373e1fd@bootlin.com>
-Date: Wed, 29 Oct 2025 14:34:00 +0100
+	s=arc-20240116; t=1761744868; c=relaxed/simple;
+	bh=CWDyNFI8nMbhJPs0QzY+/FWYQme6m8eY95YiHHBqRnY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kO9BegSv0BH/jDghDEZ1gZLFSgjJL5oTVQBeCLYOEa0ss7X8a0GRK509uy8YogzmXa67ncZEbZASSuChJhJs/Mhetg7yOl+i/b4VgjbocgQSOKdeVlbi7CZODw9X2rJNRtIe5bLxwOQBTBJ+rTjgUNegBt+HGCG/btnv48y3Zgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZgGIWy+v; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761744857; x=1762349657; i=markus.elfring@web.de;
+	bh=wEAfgf51VOuSgVGks4N/iAKgLhYobDrdtVv3uuxNDL4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ZgGIWy+vv6p1ZmkT9eHfENMvcZ9P+rilNYqTUSd/luRHl3KIfIS0y+3UATy6+Z/J
+	 Naog2M2/75J0T2oNvJT5VY3CuJe0V/PJ+mMhhTDvuTJmUJjSSUNernhU7eXtmNoBH
+	 TQLvG/W0oXmEd1St5Mkik0EFAqTonbt70+5Jcs6yAeET8yBxHoRL0Vb98QC6ogGh8
+	 Y0c4qjmxwmlAfNhyQyM/JcOaBoEwz0e6jSPkVJSyc6xOmeQySX9iJsXGxVIHpuejf
+	 pWey+8ZTQ2DUZEyXKPCP1wDKZvvuiGNb7UAtSzpas6++KhyhTtndhTpqNFhOBdqoI
+	 ZcEknci9DqHYK/J28Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwwJ-1w21Oe1nGP-00duMS; Wed, 29
+ Oct 2025 14:34:17 +0100
+Message-ID: <89af2621-7688-49ba-8246-22d79a2b8b20@web.de>
+Date: Wed, 29 Oct 2025 14:34:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,96 +56,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] net: stmmac: socfpga: Agilex5 EMAC platform
- configuration
-To: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251029-agilex5_ext-v1-0-1931132d77d6@altera.com>
- <20251029-agilex5_ext-v1-1-1931132d77d6@altera.com>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251029-agilex5_ext-v1-1-1931132d77d6@altera.com>
+To: vulab@iscas.ac.cn, linux-gpio@vger.kernel.org,
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20251028030509.835-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH v2] pinctrl: cirrus: Fix fwnode leak in
+ cs42l43_pin_probe()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251028030509.835-1-vulab@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+KG9Uzr9X0bRJU4t6VmbQWQqyoE4/O+2dVLUFquqGnKW2pKrwAs
+ JwHmCAzvMdmiNkHrVLVGZ9OEOHaN3uHLNFSwlCesd3TS9iVvr/sYV84vPOBWNvWnwa6xZ2H
+ Qhw3Lw+J9YqpUkirpXrhdGsMmUECUq/kZWaUaLZQO/1lA0jh3hPYN9v4PtI+lv8/qlfaAPx
+ 4ygZmlVxC4HMtX7VerJ6A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WuQnI244qWI=;QBJ5L4EqQZ4fBrI9ipd5fLHzsut
+ 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
 
-Hi Rohan,
+=E2=80=A6
+> +++ b/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
+=E2=80=A6
+> @@ -563,10 +568,20 @@ static int cs42l43_pin_probe(struct platform_devic=
+e *pdev)
+>  	priv->gpio_chip.ngpio =3D CS42L43_NUM_GPIOS;
+> =20
+>  	if (is_of_node(fwnode)) {
+=E2=80=A6
+> +		child =3D fwnode_get_named_child_node(fwnode, "pinctrl");
+> +		if (child) {
+> +			ret =3D devm_add_action_or_reset(&pdev->dev,
+> +				cs42l43_fwnode_put, child);
+> +			if (ret) {
+> +				fwnode_handle_put(child);
+> +				return ret;
+> +			}
+=E2=80=A6
 
-On 29/10/2025 09:06, Rohan G Thomas via B4 Relay wrote:
-> From: Rohan G Thomas <rohan.g.thomas@altera.com>
-> 
-> Agilex5 HPS EMAC uses the dwxgmac-3.10a IP, unlike previous socfpga
-> platforms which use dwmac1000 IP. Due to differences in platform
-> configuration, Agilex5 requires a distinct setup.
-> 
-> Introduce a setup_plat_dat() callback in socfpga_dwmac_ops to handle
-> platform-specific setup. This callback is invoked before
-> stmmac_dvr_probe() to ensure the platform data is correctly
-> configured. Also, implemented separate setup_plat_dat() callback for
-> current socfpga platforms and Agilex5.
-> 
-> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-> ---
->  .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    | 53 ++++++++++++++++++----
->  1 file changed, 43 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> index 2ff5db6d41ca08a1652d57f3eb73923b9a9558bf..3dae4f3c103802ed1c2cd390634bd5473192d4ee 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> @@ -44,6 +44,7 @@
->  struct socfpga_dwmac;
->  struct socfpga_dwmac_ops {
->  	int (*set_phy_mode)(struct socfpga_dwmac *dwmac_priv);
-> +	void (*setup_plat_dat)(struct socfpga_dwmac *dwmac_priv);
->  };
->  
->  struct socfpga_dwmac {
-> @@ -441,6 +442,39 @@ static int socfpga_dwmac_init(struct platform_device *pdev, void *bsp_priv)
->  	return dwmac->ops->set_phy_mode(dwmac);
->  }
->  
-> +static void socfpga_common_plat_dat(struct socfpga_dwmac *dwmac)
-> +{
-> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
-> +
-> +	plat_dat->bsp_priv = dwmac;
-> +	plat_dat->fix_mac_speed = socfpga_dwmac_fix_mac_speed;
-> +	plat_dat->init = socfpga_dwmac_init;
-> +	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
-> +	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
-> +	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
-> +}
-> +
-> +static void socfpga_gen5_setup_plat_dat(struct socfpga_dwmac *dwmac)
-> +{
-> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
-> +
-> +	socfpga_common_plat_dat(dwmac);
-> +
-> +	plat_dat->core_type = DWMAC_CORE_GMAC;
-> +
-> +	/* Rx watchdog timer in dwmac is buggy in this hw */
-> +	plat_dat->riwt_off = 1;
-> +}
-> +
-> +static void socfpga_agilex5_setup_plat_dat(struct socfpga_dwmac *dwmac)
-> +{
-> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
-> +
-> +	socfpga_common_plat_dat(dwmac);
+I doubt that such a function call is needed in this if branch.
+https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/device/dev=
+res.h#L152-L168
 
-I"m not familiar with this device (I only have a Cyclone V on hand), does
-it still make sense to try to instantiate a Lynx (i.e. Altera TSE) PCS
-for that IP ?
-
-Maxime
-
+Regards,
+Markus
 
