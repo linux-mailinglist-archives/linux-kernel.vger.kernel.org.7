@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-876818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1226C1C6E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:28:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1C3C1C6C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A4AA4E2C63
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988DF189D532
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A4F34EEEC;
-	Wed, 29 Oct 2025 17:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0234EEF4;
+	Wed, 29 Oct 2025 17:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaCvJ3fi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWuHWZJ+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED834DB44;
-	Wed, 29 Oct 2025 17:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68EB3112B7;
+	Wed, 29 Oct 2025 17:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761758700; cv=none; b=fO+OKncC6SdJiKIQEB450bh3rlsTNkORTzoQ3CDZtzwo/eRPNLsKw3HWSniuVv3ApwQok8fWXt6BrL1996SosApH6BE/qy5ExliYbMdfLMclOWQgIBmUx1tTtiofYFYV4xS3Uor7P7P3hWJoYH4mjvmJWqNY7Wera6Vbxym9BPI=
+	t=1761758756; cv=none; b=qLJzXNSVm7tsSdyKAMJjGxjQFKF+TlGRt56wiFmefa8YsO1a+NN02kBOlKUxs3CFrn7IHUUu+Qq7ukMcLlCVMiu05CQmRsOVtWPf3QjgP9GLNCroKk5UEgtA8v3QGS7lYt8tS1XXqoelvr+g18krpDnyLmGDv8ZFM9Qwwf8wzRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761758700; c=relaxed/simple;
-	bh=Y9eg+bqtuiBvhj27qPsEMgI3sW1YPbmbNenD0mtafaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvaDjIitzZ3T00JIxbypcLbByQ0W2VVPRzPktVc5/k3HIlvHp9oke8YcHlM/Ex0B3mUzzd53GT12QfWIr0xBdRW1qc6rmasnCFD165suUDl4ejAm4jjGrxchx8d82WxrkvuXYdqNB7AQUvaN3nML7O427RGEKjYhBNpvlEnLhf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaCvJ3fi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560EFC4CEF7;
-	Wed, 29 Oct 2025 17:24:57 +0000 (UTC)
+	s=arc-20240116; t=1761758756; c=relaxed/simple;
+	bh=UNCv/SLEKVdIM0/F5Qh+o3LkOisYzz/k4Ngw7LOuDtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=p0lugZHE2BIj377K/CMISoCk59TqCapBwoxAI1ezwql2M6k7brcMu6U885L74Xmx4HBZvuPkKtSziO3mIJp9LgNWf8V2vNEzeOPxuzuMycx8Ll7y17Lfl1/npkCbuLRbspg2bRiEa4L0cjqAG1GRVJA2jM8avcKC+lnaruCRw84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWuHWZJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4A8C4CEF7;
+	Wed, 29 Oct 2025 17:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761758699;
-	bh=Y9eg+bqtuiBvhj27qPsEMgI3sW1YPbmbNenD0mtafaU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EaCvJ3fiHxDt543+sjeDB8LsZ82ttPD7FQK0tI8+cvxbDcPE7liNpVCjbI6Bd3T5Y
-	 x+w4+dvepmDJXwiWd50kB95RLAM9dQRLbW3k60fPkivDBZVeYqxun0qWyark9akkKn
-	 MhL7NBjfLVhfH1d0eQY9xoeY68/dNDYU95kQuI9PURJVhVHno8mZ4PSGbBHoyAz4b6
-	 wQ3yxMXqOcUO/G7tU740cLgruD5pAF4FAaN+v+nqe/9gO7LDQaXab1TKVs8NJWeAZx
-	 qb3CCXhg5Fm7q365p30Cx5ETU4bXovasTXW64WcHN4Y0X5sqnBhh15ZCxj3k5vVek3
-	 vSWVve+SE470Q==
-Date: Wed, 29 Oct 2025 17:24:55 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Coia Prant <coiaprant@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add NineTripod
-Message-ID: <20251029-reseller-unsavory-5461fe7f6cce@spud>
-References: <20251028-semicolon-audacity-dd5bdd418207@spud>
- <CALj3r0hWzH+pmkbJe7DdqEzwqcpSQdkfPFtv3S7m-H8gZp0A6w@mail.gmail.com>
+	s=k20201202; t=1761758756;
+	bh=UNCv/SLEKVdIM0/F5Qh+o3LkOisYzz/k4Ngw7LOuDtI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=PWuHWZJ+oT416PmcdJeCl9fvjHCkJFvtKNX1frItmY4dqgCUDhAjz0oSZ9qODt2ef
+	 Io0O15PkPD/uyhqnbe/y9MiXW+KucYH9xYGU25wyKLDab0A3ELRwYUAHplXUIumVdO
+	 rg60yYQWUd/mefNR48m2K6ssxnsTARoDO0CREaMYhAARUKqxOwe1UMO0QEws9iAxai
+	 4VXTheLLFK1WBzjkyTWZiYk4EVK/ZqrBXYe63qdVM/xS0geger8Twg0mQvBB1ZwZKS
+	 dFAY9v4BQ9fbHFwx9W76Wrc0ho0S+1pglHvzoKxq8/sE+EVHKfhHGHBcgXvgxLqnGX
+	 STD/Opd53ruzQ==
+Date: Wed, 29 Oct 2025 12:25:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc: Johan Hovold <johan@kernel.org>, linux-pci@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Naoki FUKAUMI <naoki@radxa.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Diederik de Haas <diederik@cknow-tech.com>,
+	Dragan Simic <dsimic@manjaro.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>, Frank Li <Frank.li@nxp.com>,
+	"R.T.Dickinson" <rtd2@xtra.co.nz>,
+	mad skateman <madskateman@gmail.com>, hypexed@yahoo.com.au,
+	Christian Zigotzky <info@xenosoft.de>
+Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+Message-ID: <20251029172554.GA1571455@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bqqsbG4ObdDSRjQO"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CALj3r0hWzH+pmkbJe7DdqEzwqcpSQdkfPFtv3S7m-H8gZp0A6w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D6280EFB-08D7-41EC-BAC6-FD7793A98A16@xenosoft.de>
 
+On Wed, Oct 29, 2025 at 06:47:19AM +0100, Christian Zigotzky wrote:
+> > On 29 October 2025 at 00:33 am, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > ﻿On Mon, Oct 27, 2025 at 06:12:24PM +0100, Christian Zigotzky wrote:
+> >> Hi All,
+> >> 
+> >> I activated CONFIG_PCIEASPM and CONFIG_PCIEASPM_DEFAULT again for the RC3 of
+> >> kernel 6.18. Unfortunately my AMD Radeon HD6870 doesn't work with the latest
+> >> patches.
+> >> 
+> >> But that doesn't matter because we disable the above kernel options by
+> >> default. We don't need power management for PCI Express because of boot
+> >> issues and performance issues.
+> > 
+> > If you have a chance, could you try the patch below on top of
+> > v6.18-rc3 with CONFIG_PCIEASPM=y?
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 214ed060ca1b..2b6d4e0958aa 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -2524,6 +2524,7 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+> >  * disable both L0s and L1 for now to be safe.
+> >  */
+> > DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1);
+> > 
+> > /*
+> >  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
+> 
+> Thanks for the patch. 
+> 
+> I will test it on my FSL Cyrus+ board over the weekend.
+> BTW, I also tested my PASemi Nemo board with the RC3 of kernel 6.18
+> and with power management for PCI Express enabled. Unfortunately,
+> the installed AMD Radeon HD5870 does not work with power management
+> for PCI Express enabled either.
 
---bqqsbG4ObdDSRjQO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oops, I made that fixup run too late.  Instead of the patch above, can
+you test the one below?
 
-On Tue, Oct 28, 2025 at 01:04:32PM -0700, Coia Prant wrote:
-> There won't be any problems at the moment.
+You'll likely see something like this, which is a little misleading
+because even though we claim "default L1" for 01:00.0 (or whatever
+your Radeon is), the fact that L0s and L1 are disabled at the other
+end of the link (00:00.0) should prevent us from actually enabling it:
 
-Please stop top posting.
+  pci 0000:00:00.0: Disabling ASPM L0s/L1
+  pci 0000:01:00.0: ASPM: default states L1
 
-> Just out of habit (because when writing code, variable names cannot
-> begin with a number)
-> There may be some misimplemented parsers that cannot do this.
->=20
-> As a practical matter, the branch of openwrt has added support for
-> this board in advance, and openwrt uses the DTS name to initialize
-> some default settings such as LEDs and bridge
-
-That sounds like a problem with the WRT development process. This is a
-trivial change, there could be more disruptive things required to
-satisfy reviewers. Why was it submitted there in advance anyway?
-
-> I'm not sure if he will affect the version that has been released.
-> But maybe it's not a big problem.
->=20
-> If you feel that there is no problem, I can send a new set of patches
-> to fix this problem.
-
-Please do.
-
-> 2025-10-28 19:46 (GMT+00:00), Conor Dooley <conor@kernel.org> said:
-> > On Tue, Oct 28, 2025 at 12:38:10PM -0700, Coia Prant wrote:
-> > At first, it was to avoid problems with the beginning of numbers.
-> > What problems does starting with a number produce?
-> > Given that it is already used by downstream projects, we have retained
-> > this to ensure that users can seamlessly migrate to the mainline
-> > version.
-> > What's the actual impact of changing it from "nine" to "9" for
-> > downstream users? This is a board vendor, probably nothing is even
-> > interacting with the board-level compatible at all programmatically?
-> > Please don't top post.
-> > Thanks.
-> >
-> > 2025-10-28 19:35 (GMT+00:00), Conor Dooley  said:
-> > On Sun, Oct 26, 2025 at 10:36:44PM +0800, Coia Prant wrote:
-> > Add NineTripod to the vendor prefixes.
-> >
-> > Signed-off-by: Coia Prant
-> > ---
-> > Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
-> > 1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > index f1d188200..37687737e 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -1124,6 +1124,8 @@ patternProperties:
-> > description: National Instruments
-> > "^nicera,.*":
-> > description: Nippon Ceramic Co., Ltd.
-> > +  "^ninetripod,.*":
-> > Why ninetripod instead of 9tripod? That's what the company uses and in
-> > the marketing fluff for the boards.
-> > +    description: Shenzhen 9Tripod Innovation and Development CO., LTD.
-> > "^nintendo,.*":
-> > description: Nintendo
-> > "^nlt,.*":
-> > --
-> > 2.47.3
-> >
-
---bqqsbG4ObdDSRjQO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJN5gAKCRB4tDGHoIJi
-0jDdAPoClQkD6kyF0W8zdSBg6g+HBjeLj8bAkhQPXRv5HmS7DAD7B0sWK1QT34S4
-iTErDKBUfPq7GGimNUNj0cY2Mjo7tgI=
-=2YvP
------END PGP SIGNATURE-----
-
---bqqsbG4ObdDSRjQO--
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 214ed060ca1b..27777ded9a2c 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2524,6 +2524,7 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+  * disable both L0s and L1 for now to be safe.
+  */
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1);
+ 
+ /*
+  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
 
