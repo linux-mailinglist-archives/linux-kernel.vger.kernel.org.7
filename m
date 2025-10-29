@@ -1,106 +1,177 @@
-Return-Path: <linux-kernel+bounces-875080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A0BC182BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:26:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFA1C182F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 889554E9847
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 642994EAD7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24032E7F07;
-	Wed, 29 Oct 2025 03:26:48 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7262EBBB0;
+	Wed, 29 Oct 2025 03:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKsdSKIt"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F152D3750;
-	Wed, 29 Oct 2025 03:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7722D0C80
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761708408; cv=none; b=n/Xuca3txgTINKwozSLjbqlrhLA+fOTqXwhb7Sp3SEu6IcMUJ+S7dg0ACQa6XIcUD+673E4sQyBzt0ZUt0n/WlRQjSK2rYjGgCIfkzRXpr+Pqk6Lsoa9vurOv2ZWDqEtVLupbbMtVBnvXnDZzS1bpioCnmFvlEFTfaE4rUV0vmE=
+	t=1761708520; cv=none; b=WifiB1in0WrKgZwezpDDdbskjaWRJGJrCibnv/Gl+9Io+T2yWKhPcy9qf87ovKp/aNjf9UUtNkHw3j6J5OJ7HIGoGuXYNWzT2EoPTV2JpEzOxroPpCI8vineB/CT2oqC84J6RlxkkdsfQ/eQ8DUOtZprbJ0GC05jX5F9tzwKJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761708408; c=relaxed/simple;
-	bh=9w8hly9hZACzAJ9hezpSrzY3sdCMXJVStUSWe41MucQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l75RY0wCxn2zURbR9tZbSr88esvS+VJrieCnohpvh3CiXVmYgoYECROJ3V4qV1S6+qacc/mnotWVnjyhjGIWofOcwkdELo7vKzUaUPHqNKz5ybh/4E7aEWlKpu68eN+XMRduDrY4ywcXGlElFSsREPXUaywB2vMX1S1fAf/rvLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowABX3WFoiQFpBgIuBQ--.23035S2;
-	Wed, 29 Oct 2025 11:26:34 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] sim710: Fix resource leak by adding missing ioport_unmap calls
-Date: Wed, 29 Oct 2025 11:25:55 +0800
-Message-ID: <20251029032555.1476-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1761708520; c=relaxed/simple;
+	bh=uK0Ge79ImFTTS7GqiWcbUy+z6bqmI9L8dyHzWiVaw7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKY3n3zII0s/HMPV2lfrqqYCvbtnBUFyZMW9zpNwWAl5qbss3lgh6onOXpR3UVh4YKPqt8dNChPsbJ93DVqMy8wZbh6pywNqIx+hYLQsBFAMXqh91xCTDxUo1UGPu7IMfqqthFvR2UB2lh929swJmLjFTTw1lfIma7gZRH6iIyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKsdSKIt; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-290cd62acc3so75269635ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761708518; x=1762313318; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=myjSnTBkH1I5KQfjqAoij4FYA0X2tqCwC7K0bbUx6vM=;
+        b=WKsdSKItOP53AOipmLk4BlSvppjX4I1ti+kwl29Ll0ZLjREyLWKAlbRoJDldCxwzPA
+         xCxorqimDv4fMQbJguEz7Rrt1bDxeQyXfN1IuAGcFpr1oG4FAjnZMGmRORCwTqoFlIGs
+         l8N53hmJfLNsQJ/C/mAfb7GEjTK4ac1ugV9Q5YjIMEppyUxxUMZfUgcZsGB77VfsmrJK
+         0hsqQYLnOfWyQYYWDJzN2jvpgZRIV4KVAyXq9BmreDC/avh+3SEDenw5Ady+AQB9zeJV
+         QejGzaLytm2rKzUiQz26HMJNbZnQB0EX0vjgR+Mp25n8NEmCbDO4NTpF0vr4bHOSBCQB
+         3aBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761708518; x=1762313318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=myjSnTBkH1I5KQfjqAoij4FYA0X2tqCwC7K0bbUx6vM=;
+        b=SVyx7XeGJlg+R+rN3wgMpTdWxUZakFopLnfUhpKBkpdl4tGTzrrdp+upd+AZi0k4mJ
+         WIZgZdUEk40fNIiZcb4EvI+qNdO63cLYFs2w0la6cP9XWTs+CfqHNR6XQcGE+0G9KM8u
+         Y91klLeGaJo0rRUVkNPywxD609e+W8jOYcoYoyXRqlCSOJn3MN226u2yh7JWpRwavEX+
+         pz8hAI0zBHXqGVaddM4kyp1AdLmIY0ejdMTj7ZuclvF7ozsPoV9jDWd15T1CD/cCXo5e
+         ++5ePmk5OOcdT+/GZnoOC6n3y7icVXkzjSx7LsIAy1uBVinIoB+FkTHfBuf3TnDs73Ym
+         ymaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGtRD4taVqKBluCe2fUBUfqrTJzafCMY8fHMUcAqtVzAe07WA0oFxlajSRjsO2pcEYJnm/0Pdp2ytOI8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Tsn2MLg61Nnhykg5WrImRBG3/8qumTjNFKQ6HoY7i1QLENO3
+	rCeGP21ZfHDfdnJr18sFrRy1GhPiKRy/N0xQJyR3Mw59T0YtLNeNS6N9
+X-Gm-Gg: ASbGncuYLZ5s0YC9HMphMr2+3Oh1ILDG64lvtL+Hao2AL8t9zkBz+3MfXyLHdnfMZoL
+	/HO9G6d6dY0Wo+iURhEzXbcWP8FaORANLZ/Jvmmh3IfTvmczTHVMZUhQbtAynk6eq4VjUdceccQ
+	52rq6fS17wTQtGak+ZqeBe1xuUD32jd2ekDXEbVu98ISFM6AmTIkKAe6l/BNEjQWfhiv7IAzH8v
+	KthqF2SP/EjFohJiJC36lYhAh5yRa66jEQ7oomLCW0zZFJE4U2jrMlsUMDs9Lrwoc7jUpxCZ/Iy
+	/1NAXNzUu3p4yGhUCq1bL3EAK4gaauKt+mKbhgba/REGQNQQQU34oPArUZ3i4HJrHQByswThGon
+	Ejq9vi/oyVwwOm5yzn2BYgBSv0dtEEz6+gvvoN1bYujkPH9NUDxp75DMBVf3kpOINq++8NUbTxB
+	JDIsCsOpOlll/zuwP/Az27h6Fsh6emx79k4FjzrykBV5DoWw==
+X-Google-Smtp-Source: AGHT+IE+shhFrtBhmLuIBVFI3puPOu377u7uarNKu4E76VsuPFISVfuzPCA3UmXQVUS6K+bAe4aLCg==
+X-Received: by 2002:a17:902:da85:b0:262:cd8c:bfa8 with SMTP id d9443c01a7336-294deed21abmr17081115ad.34.1761708517614;
+        Tue, 28 Oct 2025 20:28:37 -0700 (PDT)
+Received: from brajesh ([2401:4900:16aa:e584:a673:aa72:32da:dbb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40a7esm135335605ad.70.2025.10.28.20.28.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 20:28:37 -0700 (PDT)
+Date: Wed, 29 Oct 2025 08:58:30 +0530
+From: Brajesh Patil <brajeshpatil11@gmail.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com, 
+	eperezma@redhat.com, virtualization@lists.linux.dev, virtio-fs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com, khalid@kernel.org
+Subject: Re: [PATCH] fuse: virtio_fs: add checks for FUSE protocol compliance
+Message-ID: <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
+References: <20251028200311.40372-1-brajeshpatil11@gmail.com>
+ <20251028200755.GJ6174@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABX3WFoiQFpBgIuBQ--.23035S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7urWfAr4xJFykJrWrJrW8Zwb_yoW8JFyfpF
-	4kW3y5u3y7Jr1xur18Zr1DWFyFvay5t34xW3yI9343uFn8ta4rZ390kFyjgF98Ja4fGFs8
-	X3WYy3yUAFWDJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjuHq7
-	UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAUKA2kBUMLd1gAAsx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028200755.GJ6174@frogsfrogsfrogs>
 
-The driver calls ioport_map() to map I/O ports in sim710_probe_common()
-but never calls ioport_unmap() to release the mapping. This causes
-resource leaks in both the error path when request_irq() fails and in
-the normal device removal path via sim710_device_remove().
+On Tue, Oct 28, 2025 at 01:07:55PM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 29, 2025 at 01:33:11AM +0530, Brajesh Patil wrote:
+> > Add validation in virtio-fs to ensure the server follows the FUSE
+> > protocol for response headers, addressing the existing TODO for
+> > verifying protocol compliance.
+> > 
+> > Add checks for fuse_out_header to verify:
+> >  - oh->unique matches req->in.h.unique
+> >  - FUSE_INT_REQ_BIT is not set
+> >  - error codes are valid
+> >  - oh->len does not exceed the expected size
+> > 
+> > Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
+> > ---
+> >  fs/fuse/virtio_fs.c | 30 +++++++++++++++++++++++++-----
+> >  1 file changed, 25 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > index 6bc7c97b017d..52e8338bf436 100644
+> > --- a/fs/fuse/virtio_fs.c
+> > +++ b/fs/fuse/virtio_fs.c
+> > @@ -764,14 +764,34 @@ static void virtio_fs_request_complete(struct fuse_req *req,
+> >  {
+> >  	struct fuse_args *args;
+> >  	struct fuse_args_pages *ap;
+> > -	unsigned int len, i, thislen;
+> > +	struct fuse_out_header *oh;
+> > +	unsigned int len, i, thislen, expected_len = 0;
+> >  	struct folio *folio;
+> >  
+> > -	/*
+> > -	 * TODO verify that server properly follows FUSE protocol
+> > -	 * (oh.uniq, oh.len)
+> > -	 */
+> > +	oh = &req->out.h;
+> > +
+> > +	if (oh->unique == 0)
+> > +		pr_warn_once("notify through fuse-virtio-fs not supported");
+> > +
+> > +	if ((oh->unique & ~FUSE_INT_REQ_BIT) != req->in.h.unique)
+> > +		pr_warn_ratelimited("virtio-fs: unique mismatch, expected: %llu got %llu\n",
+> > +				    req->in.h.unique, oh->unique & ~FUSE_INT_REQ_BIT);
+> 
+> Er... shouldn't these be rejecting the response somehow?  Instead of
+> warning that something's amiss but continuing with known bad data?
+> 
+> --D
+>
 
-Add ioport_unmap() calls in the out_release error path and in
-sim710_device_remove().
+Right, continuing here is unsafe.
 
-Fixes: 56fece20086e ("[PATCH] finally fix 53c700 to use the generic iomem infrastructure")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/scsi/sim710.c | 2 ++
- 1 file changed, 2 insertions(+)
+I plan to update the code so that in case of any header validation
+failure (e.g. unique mismatch, invalid error, length mismatch), it
+should skip copying data and jump directly to the section that marks
+request as complete
 
-diff --git a/drivers/scsi/sim710.c b/drivers/scsi/sim710.c
-index e519df68d603..70c75ab1453a 100644
---- a/drivers/scsi/sim710.c
-+++ b/drivers/scsi/sim710.c
-@@ -133,6 +133,7 @@ static int sim710_probe_common(struct device *dev, unsigned long base_addr,
-  out_put_host:
- 	scsi_host_put(host);
-  out_release:
-+	ioport_unmap(hostdata->base);
- 	release_region(base_addr, 64);
-  out_free:
- 	kfree(hostdata);
-@@ -148,6 +149,7 @@ static int sim710_device_remove(struct device *dev)
- 
- 	scsi_remove_host(host);
- 	NCR_700_release(host);
-+	ioport_unmap(hostdata->base);
- 	kfree(hostdata);
- 	free_irq(host->irq, host);
- 	release_region(host->base, 64);
--- 
-2.50.1.windows.1
+Does this seem like a feasible approach?
 
+> > +
+> > +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
+> > +
+> > +	if (oh->error <= -ERESTARTSYS || oh->error > 0)
+> > +		pr_warn_ratelimited("virtio-fs: invalid error code from server: %d\n",
+> > +				    oh->error);
+> > +
+> >  	args = req->args;
+> > +
+> > +	for (i = 0; i < args->out_numargs; i++)
+> > +		expected_len += args->out_args[i].size;
+> > +
+> > +	if (oh->len > sizeof(*oh) + expected_len)
+> > +		pr_warn("FUSE reply too long! got=%u expected<=%u\n",
+> > +			oh->len, (unsigned int)(sizeof(*oh) + expected_len));
+> > +
+> >  	copy_args_from_argbuf(args, req);
+> >  
+> >  	if (args->out_pages && args->page_zeroing) {
+> > -- 
+> > 2.43.0
+> > 
+> > 
 
