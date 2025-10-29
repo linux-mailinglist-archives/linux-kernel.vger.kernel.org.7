@@ -1,191 +1,176 @@
-Return-Path: <linux-kernel+bounces-875634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07810C197CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C22A2C197E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC82561CB2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79A0561CDF
 	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24531AF25;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818A93233F5;
 	Wed, 29 Oct 2025 09:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXvyNhLs"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTPyymV1"
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75A4225402
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5172DE1E0
 	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731159; cv=none; b=YXZYtmjUayAmyGTBQ2geSlBSxwSi82fzcd35VLd5WfVoCMYd903DsnLGgj1zFpO03yq8Le9V3zRwLQrK0bWEnfJYE1nwmGF0J5Wv1u+WlA1o3EynKdzm/aESiJCEEZxgN/f6jxJRtI27APeuPoO7Aiyc380uscGVf7mvtfxcToc=
+	t=1761731159; cv=none; b=qDQnTyfz41bqoJocdKBrFRWqoAHVJQwFSyEpBOvPrlqgS1D4ySVMoDN+rfEHG7zBfMSyeaHDktVHe5WpbJynbPj8+D6Uqsm/z6MmXYQiDhdCSn5wjANe+yidBfSS+fmrY7CeY8Y+IusBBXv1sGzy5n+K0m3LXwWzYvTsVokKyDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761731159; c=relaxed/simple;
-	bh=4o1P0z9zgAdcg3159+pZiazrU0J4QU5VpIS8Y7AdyTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KZ0OJixsTBDMCV3Z6jL3+aLM8P1kp/FCDPxwc7pBSssmsiXM4488g94i/6AVDCZNYMEQEQttPi8ziYGavKdK6pWZ1KTZc4rD3dp9/3AGTxHNMsMdKUyYUn+RTzwAqFX07GSDg3sfrbDsY6nrQxwRQRd3PzgHHsG3ussRgBN2NFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXvyNhLs; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7815092cd0bso83733857b3.2
+	bh=+eG+DZh4Mcc3z1uy4MNUctOCZyufRjLsNAdxEe98Jz8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ow1GK2HvWpFPV1ux9YJi2nar1Tah65L3gmZs7kUmhogYiROAbtW19kWrjmerXhQdkTZzyuKZQgnXMZ5zfIiiqmzAz+1HBKNrzErFLCZhSDOlansXpB0KLpW8POyvTYqBVXKtNUo4K0opSLCpYcs+1bhIbHrkeXVQ6PPghBCoPJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTPyymV1; arc=none smtp.client-ip=74.125.224.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-63e1e1bf882so6584914d50.1
         for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761731156; x=1762335956; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+0dV49Z0hZQvL1JwoyFgg+j9v/HxeFYx2d1Gt9wCQ4=;
-        b=nXvyNhLsiC4mm3n0m2EBak1+nEu0PBavqaH1RVnAxjtT9Y4SQwQ0hYXC37SaVdUqNq
-         cIzw+jBiAKZIXCA92prJliUZjArWgaLt0Nt4+1o0YL2R+WJqpei4kSS6yAuU8/Gn/vBY
-         376mH2ffCsHWRyeIqYfTt/RxvuYwGXKxCtg1myKYt67I8YyqZAC6X1nXEu+3kypt+a/0
-         oKLnv861ibTA1bQJ5wM3e7AC3fB8hYV/Nv3dL+82FUTZabk7s03AdRDhErCUtqhrLmZi
-         M9QVypEqxMx176JycHS7SybFT//ZAwRrmDQJzIXpjr8kE9hYY6DjYxQ5uza1QpcvGXV0
-         IH5A==
+        d=google.com; s=20230601; t=1761731157; x=1762335957; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/9ZZO0rhubaMghlPDWYbVAhM+q6Jydtc36d3XX5xX8=;
+        b=oTPyymV1cMSv99kCQqg/jKHU2+by0oW/w97dRRMHDohPhEWOZeFfe5d/Wi5lve69XN
+         cHV3X9/wNEFGYFg/dsMOUXLgmMk5yEimY0aD6nzV8RXg4uvdnsbEuHMZAeeo8dUutw+5
+         upTGuE/qPGQV2fgKmIdrM5SI+hD2TwMVTtrT24NlVlcYwktUrb0r1lwnU0nrfvIFHikX
+         Sg5s4KlEcO/GGUIHYvMvyw9Q0+af1lLobxIuNmS1aE48SDXVE9VNae7GmKg9TNpFGi+W
+         Zfzh8qDXE/AW9BJoQc/eAxbeW9V7/K/SQwGnGUEjLLFm5nRM3BhyqqAiZTaFk8NmrFrF
+         PTPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761731156; x=1762335956;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T+0dV49Z0hZQvL1JwoyFgg+j9v/HxeFYx2d1Gt9wCQ4=;
-        b=Kx0YeaDeQzpF/c0wKBZqKfEJCDmDMsEtCsgoMW6mJ1VAOygrXol5isht8tP4fl/L/d
-         coJinVZwWlVOmT4x1uiceAu1S6/nTMUJ/UyD5OylRh3l76jj+bzam3XALMk6XNDrPCnC
-         sGQCzpT65mxMDwkCOSd939uM/8krPQuz0vypGxjaab5aS6ecyvGuvWsA5kl6ptr5eOIx
-         hVa8VwIgfp0NX8gtv3qtuOZuffq9zmXSCfjmmVBxRAkOLKhzh2ZX9IzozYdRx4ZoKFnQ
-         iiokZ7PyzmHIAicdjiCMIQ+VrJoUo3gYprg5bvuZiyRfo4dniUCYD6h9SDEzHHIVU6AX
-         Gsew==
-X-Forwarded-Encrypted: i=1; AJvYcCVxDIh7wDH5C29MgpUYwzpqG45GQw2VXWIciXYdT+ZgH7y02jsYazcvGSjjcKQQDnFbPQxopUpGqQyevG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj3GdWl1Xou9KjXUBTB4mXgB22fLHjyPYZ5Icvb12Y9ZtKkeMN
-	ZX1gRgMUL6f4+SgRnS9uy9ToxDtP90eiAP1forCzMjbbMBCERF7uZAz7s71zdjTOhAGqLH37Om7
-	fFnGcwLVR8Lv6WWhlh+SmE0fIUZq0hLM=
-X-Gm-Gg: ASbGncuLn3Bex1cWMmvW8nFlBm2pIGxIdp72v7KO8Y7+EP2/RCAUSGjTZ9ksTqmhChC
-	6yJ9ksv8CYzOnjJpuDq9LGpgAosK8QjfErEs5oGAj075wanXOQo1zBLVG1jRx/vvifr2EGsmO6r
-	JjFkbdXoF7stu9iIvXqGnXNWGWj6uGciLpxA940QQ8tgHnV22+HDV4FhPKRGzHlkpTlnXhXLyce
-	sfV/fFw7tYVNENg77doYsdy7vr3buEU6tL+yMqG1beGJNJ197w0XCzxwTm61NN+zNEgLQ==
-X-Google-Smtp-Source: AGHT+IFXTGFBQZQCvoFTcD2XW69zJNvRv2jA1skYdjLaN3X9V8WOQAc0sJLs73yBIhsOL2y0JL1ybcsga9Zkjczkf4s=
-X-Received: by 2002:a05:690c:680d:b0:785:bfd8:c4ad with SMTP id
- 00721157ae682-78629298707mr36580707b3.3.1761731156514; Wed, 29 Oct 2025
- 02:45:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761731157; x=1762335957;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/9ZZO0rhubaMghlPDWYbVAhM+q6Jydtc36d3XX5xX8=;
+        b=sHPBo/XCywJgBM12hvQw4ZmQCPDn/Ew6ICZI/s5yefWWs/+H8FYLeh6swkqquYw2m1
+         omot9v+uYKEdxxRZViB+Ptld6dLbnKxn7U73Ep1z7Dyb/bakhk24VbPZp1Ov9dGZ5H81
+         OFLx+nGVxUlo2+ZG+DUnTIu7eWGkQn5YgswhA4RR4krFU+WJSQhAtkntIlYOkNQV2v1f
+         OYs7oS3mBMOOFonOUfIga0vysHkAjEvkc4BPoqThAJQGoBxB0dqrv2fWiLu0hU+6oZui
+         YoJooVk9e/hdOz5+VU8IvQPh7eYFxXv+kctLzDgkG6+quEEw1499nVAbXB9LEiX2VoUW
+         B9yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlVsRWv3hjq/2TWxAT43sHBRxkrw1A73+3O1sXDr1g949UmBVlqvNFFDeV4x4tk9iJgWgs8hDxA6uOMkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5CtalHndopIzim7sBvU7jb9kbX4CBqIbSTeprCWh+xk1WT+dd
+	vRpjIFy8Vl6fdx63nhs80vYyo7Cb295A12t+F4hisjuQXzPPV6HOnMMgGry8B4CDLA==
+X-Gm-Gg: ASbGnctqGBGcogvc3fRPiEQFiONHAJEVXjuSIqi7Sf7d0fBZ3sjqaxjaP5dsEIr+rfw
+	LMRLCqs9KqqM6pVNBXCWcy7VilEyPV1tJHVcJHmmKOiK1sccovl6ilcmgLD727wOlnc/mTy6si8
+	oAgQX8PYwSF4E5SI2lOwTE9IFg9xT6ycf6MwHlwvBYutlYHWx0E52d/OINGfpCwbVMucWUWfb9n
+	xNRZwDJz8R6EFAlAQgb6cioZ1OMwBTD5xu9xHzmsdDmOt3uDtrz7UdaZqovW7hUsEjmLOeNp9k9
+	wXH0BabfEmVap/MVH09QMlr13AZn081Ku6TBdZUtl289u5apWthCudjwGfe7xlZyR/ehURqyuDv
+	zlhZym9I554cI/KAEgn4Q54MEEyyNDfOQ9+DLz5UZxst+gUzZ2+dOzzFRAkRTf4UFIYLhsQWS6p
+	Z/VxztZHxoGdiMIf6mviSLofKl1GEoOEWgdizBbiF2ldVrF5d/5J6FiCFIwR43
+X-Google-Smtp-Source: AGHT+IEeP09fuX5a6/tVT4haAmvdF3K7vyTy354JjeQP1tfCemInfRx1yyo5g0HaztI92HwXX6vV3g==
+X-Received: by 2002:a05:690c:4a05:b0:783:7081:c479 with SMTP id 00721157ae682-786293b13admr37307107b3.65.1761731156381;
+        Wed, 29 Oct 2025 02:45:56 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed199f95sm34481207b3.28.2025.10.29.02.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 02:45:55 -0700 (PDT)
+Date: Wed, 29 Oct 2025 02:45:52 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+In-Reply-To: <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
+Message-ID: <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+References: <20251027115636.82382-1-kirill@shutemov.name> <20251027115636.82382-2-kirill@shutemov.name> <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org> <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029071435.88-1-kernel@airkyi.com> <20251029071435.88-11-kernel@airkyi.com>
-In-Reply-To: <20251029071435.88-11-kernel@airkyi.com>
-From: Peter Chen <hzpeterchen@gmail.com>
-Date: Wed, 29 Oct 2025 17:45:45 +0800
-X-Gm-Features: AWmQ_blYmsodv_vg4uKolYRe0NzpqIhwJ3rq0FrOe8J4voY-HqIG6eRi0roVBPc
-Message-ID: <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
-Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
- support for DisplayPort
-To: Chaoyi Chen <kernel@airkyi.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>, 
-	Andy Yan <andy.yan@rock-chips.com>, Yubing Zhang <yubing.zhang@rock-chips.com>, 
-	Frank Wang <frank.wang@rock-chips.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Amit Sunil Dhamne <amitsd@google.com>, Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
-	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>, 
-	Diederik de Haas <didi.debian@cknow.org>, Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-> +&i2c4 {
-> +       i2c-scl-rising-time-ns = <475>;
-> +       i2c-scl-falling-time-ns = <26>;
-> +       status = "okay";
-> +
-> +       usbc0: typec-portc@22 {
-> +               compatible = "fcs,fusb302";
-> +               reg = <0x22>;
-> +               interrupt-parent = <&gpio1>;
-> +               interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&usbc0_int>;
-> +               vbus-supply = <&vbus_typec>;
-> +
-> +               usb_con: connector {
-> +                       compatible = "usb-c-connector";
-> +                       label = "USB-C";
-> +                       data-role = "dual";
-> +                       power-role = "dual";
-> +                       try-power-role = "sink";
-> +                       op-sink-microwatt = <1000000>;
-> +                       sink-pdos =
-> +                               <PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
-> +                       source-pdos =
-> +                               <PDO_FIXED(5000, 1500, PDO_FIXED_USB_COMM)>;
-> +
-> +                       altmodes {
-> +                               displayport {
-> +                                       svid = /bits/ 16 <0xff01>;
-> +                                       vdo = <0x00001c46>;
-> +                               };
-> +                       };
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               port@0 {
-> +                                       reg = <0>;
-> +
-> +                                       usbc_hs: endpoint {
-> +                                               remote-endpoint = <&u2phy0_typec_hs>;
-> +                                       };
-> +                               };
-> +
+On Tue, 28 Oct 2025, Kiryl Shutsemau wrote:
+> On Mon, Oct 27, 2025 at 03:33:23PM -0700, Andrew Morton wrote:
+> > On Mon, 27 Oct 2025 11:56:35 +0000 Kiryl Shutsemau <kirill@shutemov.name> wrote:
+> > 
+> > > From: Kiryl Shutsemau <kas@kernel.org>
+> > > 
+> > > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> > > supposed to generate SIGBUS.
+> > > 
+> > > Recent changes attempted to fault in full folio where possible. They did
+> > > not respect i_size, which led to populating PTEs beyond i_size and
+> > > breaking SIGBUS semantics.
+> > > 
+> > > Darrick reported generic/749 breakage because of this.
+> > > 
+> > > However, the problem existed before the recent changes. With huge=always
+> > > tmpfs, any write to a file leads to PMD-size allocation. Following the
+> > > fault-in of the folio will install PMD mapping regardless of i_size.
+> > > 
+> > > Fix filemap_map_pages() and finish_fault() to not install:
+> > >   - PTEs beyond i_size;
+> > >   - PMD mappings across i_size;
+> > > 
+> > > Make an exception for shmem/tmpfs that for long time intentionally
+> > > mapped with PMDs across i_size.
 
-Why USB2 PHY needs to be notified for Type-C connection?
+Thanks for the v3 patches, which do now suit huge tmpfs.
+Not beautiful, but no longer regressing.
 
-> +                               port@1 {
-> +                                       reg = <1>;
-> +
-> +                                       usbc_ss: endpoint {
-> +                                               remote-endpoint = <&tcphy0_typec_ss>;
-> +                                       };
-> +                               };
-> +
-> +                               port@2 {
-> +                                       reg = <2>;
-> +
-> +                                       usbc_dp: endpoint {
-> +                                               remote-endpoint = <&tcphy0_typec_dp>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +};
-> +
+> > > 
+> > > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > > Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+> > > Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> > > Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
+> > 
+> > Multiple Fixes: are confusing.
+> > 
+> > We have two 6.18-rcX targets and one from 2020.  Are we asking people
+> > to backport this all the way back to 2020?  If so I'd suggest the
+> > removal of the more recent Fixes: targets.
+> 
+> Okay, fair enough.
+> 
+> > Also, is [2/2] to be backported?  The changelog makes it sound that way,
+> > but no Fixes: was identified?
+> 
+> Looking at split-on-truncate history, looks like this is the right
+> commit to point to:
+> 
+> Fixes: b9a8a4195c7d ("truncate,shmem: Handle truncates that split large folios")
 
-.....
->
->  &u2phy0 {
->         status = "okay";
-> +
-> +       port {
-> +               u2phy0_typec_hs: endpoint {
-> +                       remote-endpoint = <&usbc_hs>;
-> +               };
-> +       };
->  };
->
+I agree that's the right Fixee for 2/2: the one which introduced
+splitting a large folio to non-shmem filesystems in 5.17.
 
-There is no switch and mux, how to co-work with Type-C?
+But you're giving yourself too hard a time of backporting with your
+5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
+flag then was tmpfs, which you're now excepting.  The flag got
+renamed later (in 5.16) and then in 5.17 at last there was another
+filesystem to set it.  So, this 1/2 would be
 
-Best regards,
-Peter
+Fixes: 6795801366da ("xfs: Support large folios")
+
+> 
+> It moves split logic from shmem-specific to generic truncate.
+> 
+> As with the first patch, it will not be a trivial backport, but I am
+> around to help with this.
+> 
+> -- 
+>   Kiryl Shutsemau / Kirill A. Shutemov
 
