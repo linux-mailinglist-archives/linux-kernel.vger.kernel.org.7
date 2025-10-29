@@ -1,65 +1,54 @@
-Return-Path: <linux-kernel+bounces-875296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F34C18A4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:18:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9995C18A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A239C353BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:18:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8FE54E6CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0EC30EF81;
-	Wed, 29 Oct 2025 07:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="muQJMkz2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FE83112AD;
+	Wed, 29 Oct 2025 07:16:48 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5416130F939;
-	Wed, 29 Oct 2025 07:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCAA30E82B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722163; cv=none; b=dBL9SCj9Vfc0ubvlOVQ1/HYjgDkbcsqKkwi6RIhiWXjeLkopJo7QbMc7CSdjMzWy37DD0cIdcDT42j3urymdj2o2twfXOfEBnSlZ45qUJAbDRbalUJs6RJ2klVXOZbc6JKcFfCae+feTV4paijAOJArkYNEzZmLL6fXK0KbJG+M=
+	t=1761722208; cv=none; b=MnGMH/ZsfzQmcZy5AXYJcRykOPFKk9iOKq5smq43Jcbs0yGN9MXdUBxjD3IPLC9waPDHRVXOba9Z/hD56dgmU7gJwRhV3QfKdy1JKLNOvj+bGAuppY6Z+cnapu2WQIbX2QP82c1/r5QGTT34RIMlsKKq25+V9h6S79gwTRp2t7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722163; c=relaxed/simple;
-	bh=GOd3ui4Sf9Ms7Ml5Zi1YKzu0XpP9PoFd0kbwMQWteB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=atd6BuW1Imtwcz6X5Xqj3rjNBHLXFc5oZS1cg5Vycj6vPYSBj8WGC86Ig85ptKoio/Lt8/12n5UkzT08NA6mjeUFO2PGuuzUuXVY6+oDarxZ6JZZ8Kup84u2SZanFvrJE6nr5bRC/v3yo8OHZuvfdh6BNQP/R1lQdgemwsdQwlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=muQJMkz2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=WAeYAW13Gs4vIYQTjlchZDoChHw1dWJHa2N+94ZGEls=; b=muQJMkz2qngF5q7T3tuhioPi+n
-	M/kn6Nev2tt73F/FBlwgZfI+acxoUnpZ/U3zpUoVJpsllluH5+jbJTVfVUYgs0EWrE7i/jSVV9/jO
-	dukGvAcBqE95rwG/6JgJ4/FmXvQTpxVkLuoiWN7AkgiKTdQvqbxfPSPJzY/eWOZJFOZGL6xzIiCv1
-	YpdGcU6lIcfF+7uxHEaq5vtJCinza4QMhygS0aldydjvhRdOM0W+pt6GNPi96TZrsl8tYbfR6vZND
-	62iEeStfsyuU5tblDNYULrwCkxI0dN6zwR6sqd03VIG8Eh6CocdiT2DOCT/5z5nM7c10Gg3GvwE4t
-	37rJQApQ==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vE0PY-000000002fV-1w9R;
-	Wed, 29 Oct 2025 07:16:00 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when stable writes are required
-Date: Wed, 29 Oct 2025 08:15:05 +0100
-Message-ID: <20251029071537.1127397-5-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251029071537.1127397-1-hch@lst.de>
-References: <20251029071537.1127397-1-hch@lst.de>
+	s=arc-20240116; t=1761722208; c=relaxed/simple;
+	bh=mg9rW5YybuFCwFgED3s/yW/Cb0Tm4ADzukKVUuMGIQk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WF3GalgK4NEae13b157+3LmUUydVKhdkuoh7lNBvJuUPJKDWKzHETuhta7FzEirmuOMst6j1PgJ9OAdMFqzTaEtcqk3w86BeLiNlAL5gtffEZghmH0WQ+ONYthCM0zfFAewPIuCVIk/pYOVINozii2D+aGlWKucpiYftBcXOib0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201620.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202510291516302169;
+        Wed, 29 Oct 2025 15:16:30 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 29 Oct 2025 15:16:31 +0800
+Received: from inspur.com (10.100.2.113) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 29 Oct 2025 15:16:31 +0800
+Received: from localhost.localdomain.com (unknown [10.94.19.60])
+	by app9 (Coremail) with SMTP id cQJkCsDwSHlOvwFpVTgHAA--.5675S2;
+	Wed, 29 Oct 2025 15:16:31 +0800 (CST)
+From: Bo Liu <liubo03@inspur.com>
+To: <w.d.hubbs@gmail.com>, <chris@the-brannons.com>, <kirk@reisers.ca>,
+	<samuel.thibault@ens-lyon.org>
+CC: <speakup@linux-speakup.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH] Accessiblity: speakup_soft: Fix double word in comments
+Date: Wed, 29 Oct 2025 15:16:29 +0800
+Message-ID: <20251029071629.17705-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,161 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-CM-TRANSID: cQJkCsDwSHlOvwFpVTgHAA--.5675S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZF17WF18uw1fAw17GFg_yoWfXrb_Ca
+	47Can7Jw15CaykKFnru3WavFy3Kw409rn3ZFsagF93Cw1fXF45JF4kZr45urnrGw4xG3yS
+	yF1kt3ZxAw12qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUvg4fUUUUU=
+X-CM-SenderInfo: xolxu0iqt6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?lP6CiWLVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
+	KIpSUJw1l9uuIZu3aTmRbkRE1t64R219fJMxPZFuCSaG1Tie7FPIg2ZrFnj2byLPgBcgtG
+	3laTFx1GhazC5gRBQJk=
+Content-Type: text/plain
+tUid: 202510291516313e6a65ea56c1cafe5cf06482fd7a8bb8
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Inodes can be marked as requiring stable writes, which is a setting
-usually inherited from block devices that require stable writes.  Block
-devices require stable writes when the drivers have to sample the data
-more than once, e.g. to calculate a checksum or parity in one pass, and
-then send the data on to a hardware device, and modifying the data
-in-flight can lead to inconsistent checksums or parity.
+Remove the repeated word "the" in comments.
 
-For buffered I/O, the writeback code implements this by not allowing
-modifications while folios are marked as under writeback, but for
-direct I/O, the kernel currently does not have any way to prevent the
-user application from modifying the in-flight memory, so modifications
-can easily corrupt data despite the block driver setting the stable
-write flag.  Even worse, corruption can happen on reads as well,
-where concurrent modifications can cause checksum mismatches, or
-failures to rebuild parity.  One application known to trigger this
-behavior is Qemu when running Windows VMs, but there might be many
-others as well.  xfstests can also hit this behavior, not only in the
-specifically crafted patch for this (generic/761), but also in
-various other tests that mostly stress races between different I/O
-modes, which generic/095 being the most trivial and easy to hit
-one.
-
-Fix XFS to fall back to uncached buffered I/O when the block device
-requires stable writes to fix these races.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Bo Liu <liubo03@inspur.com>
 ---
- fs/xfs/xfs_file.c | 54 +++++++++++++++++++++++++++++++++++++++--------
- fs/xfs/xfs_iops.c |  6 ++++++
- 2 files changed, 51 insertions(+), 9 deletions(-)
+ drivers/accessibility/speakup/speakup_soft.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index e09ae86e118e..0668af07966a 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -230,6 +230,12 @@ xfs_file_dio_read(
- 	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
- 	ssize_t			ret;
+diff --git a/drivers/accessibility/speakup/speakup_soft.c b/drivers/accessibility/speakup/speakup_soft.c
+index 6d446824677b..6549bfb96e7f 100644
+--- a/drivers/accessibility/speakup/speakup_soft.c
++++ b/drivers/accessibility/speakup/speakup_soft.c
+@@ -446,7 +446,7 @@ static int softsynth_adjust(struct spk_synth *synth, struct st_var_header *var)
+ 	if (var->var_id != PUNC_LEVEL)
+ 		return 0;
  
-+	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
-+		xfs_info_once(ip->i_mount,
-+			"falling back from direct to buffered I/O for read");
-+		return -ENOTBLK;
-+	}
-+
- 	trace_xfs_file_direct_read(iocb, to);
- 
- 	if (!iov_iter_count(to))
-@@ -302,13 +308,22 @@ xfs_file_read_iter(
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
- 
--	if (IS_DAX(inode))
-+	if (IS_DAX(inode)) {
- 		ret = xfs_file_dax_read(iocb, to);
--	else if (iocb->ki_flags & IOCB_DIRECT)
-+		goto done;
-+	}
-+
-+	if (iocb->ki_flags & IOCB_DIRECT) {
- 		ret = xfs_file_dio_read(iocb, to);
--	else
--		ret = xfs_file_buffered_read(iocb, to);
-+		if (ret != -ENOTBLK)
-+			goto done;
-+
-+		iocb->ki_flags &= ~IOCB_DIRECT;
-+		iocb->ki_flags |= IOCB_DONTCACHE;
-+	}
- 
-+	ret = xfs_file_buffered_read(iocb, to);
-+done:
- 	if (ret > 0)
- 		XFS_STATS_ADD(mp, xs_read_bytes, ret);
- 	return ret;
-@@ -883,6 +898,7 @@ xfs_file_dio_write(
- 	struct iov_iter		*from)
- {
- 	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
- 	size_t			count = iov_iter_count(from);
- 
-@@ -890,15 +906,21 @@ xfs_file_dio_write(
- 	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
- 		return -EINVAL;
- 
-+	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
-+		xfs_info_once(mp,
-+			"falling back from direct to buffered I/O for write");
-+		return -ENOTBLK;
-+	}
-+
- 	/*
- 	 * For always COW inodes we also must check the alignment of each
- 	 * individual iovec segment, as they could end up with different
- 	 * I/Os due to the way bio_iov_iter_get_pages works, and we'd
- 	 * then overwrite an already written block.
- 	 */
--	if (((iocb->ki_pos | count) & ip->i_mount->m_blockmask) ||
-+	if (((iocb->ki_pos | count) & mp->m_blockmask) ||
- 	    (xfs_is_always_cow_inode(ip) &&
--	     (iov_iter_alignment(from) & ip->i_mount->m_blockmask)))
-+	     (iov_iter_alignment(from) & mp->m_blockmask)))
- 		return xfs_file_dio_write_unaligned(ip, iocb, from);
- 	if (xfs_is_zoned_inode(ip))
- 		return xfs_file_dio_write_zoned(ip, iocb, from);
-@@ -1555,10 +1577,24 @@ xfs_file_open(
- {
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
-+
-+	/*
-+	 * If the underlying devices requires stable writes, we have to fall
-+	 * back to (uncached) buffered I/O for direct I/O reads and writes, as
-+	 * the kernel can't prevent applications from modifying the memory under
-+	 * I/O.  We still claim to support O_DIRECT as we want opens for that to
-+	 * succeed and fall back.
-+	 *
-+	 * As atomic writes are only supported for direct I/O, they can't be
-+	 * supported either in this case.
-+	 */
- 	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
--	file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
--	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
--		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-+	if (!mapping_stable_writes(file->f_mapping)) {
-+		file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
-+		if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
-+			file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-+	}
-+
- 	return generic_file_open(inode, file);
- }
- 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index caff0125faea..bd49ac6b31de 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -672,6 +672,12 @@ xfs_report_atomic_write(
- 	struct xfs_inode	*ip,
- 	struct kstat		*stat)
- {
-+	/*
-+	 * If the stable writes flag is set, we have to fall back to buffered
-+	 * I/O, which doesn't support atomic writes.
-+	 */
-+	if (mapping_stable_writes(VFS_I(ip)->i_mapping))
-+		return;
- 	generic_fill_statx_atomic_writes(stat,
- 			xfs_get_atomic_write_min(ip),
- 			xfs_get_atomic_write_max(ip),
+-	/* We want to set the the speech synthesis punctuation level
++	/* We want to set the speech synthesis punctuation level
+ 	 * accordingly, so it properly tunes speaking A_PUNC characters */
+ 	var_data = var->data;
+ 	if (!var_data)
 -- 
-2.47.3
+2.31.1
 
 
