@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-876442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3115FC1B804
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D5FC1B72F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730EC188F3BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:56:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E520F349FC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156C2C234F;
-	Wed, 29 Oct 2025 14:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A7933A037;
+	Wed, 29 Oct 2025 14:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="idCc6kMJ"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/WSyaxN"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9652334C10
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E51C34F49B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749360; cv=none; b=ZZ5vHnx8fI9sA4HOhu6GOFECLaVlYyuF4FnJxMH+P7pWS105KQrIfOsQ6Hq88A4ucvkB2aM4aF023w035rD4oZd/Van6CAROgD3jKp6+Vi15xjMuuH0BIRTSm2Q0M4wi8C64+auUn6ZJAkAgsyedABBCWNoyE6D5yH3OnGYgrpQ=
+	t=1761749391; cv=none; b=APEHBaByw3ZTeYZMglbkacmEIh9/UO3Btlpogqfd4EzQ6VsrOntfHuwmk+XZ0StbANqXTxEsHSKWenA1yOAWVvoNLJyHDjzNj4fp63Y+xTm9rLJ/rlWqc36v0Ep6RToKLxEeCMiSBrbEx6bldPjzTcGMG5MJoBfrk/b+715h0IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749360; c=relaxed/simple;
-	bh=LVDOSOST8u4Nfu2BG/Iq7jmE5BNR05dhwuHtLdykbwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dE6U7jM8wsA47t3YUNp+aHFk/ez5uruYjYevuRxIg+hzvj9z/76DOe/CQnfsjv9ZKvoVo1Q/KzNrzn7qf2X20FPYFuzgEfagjnl2dxGOE/+RQXhwMR4EJYveDGx9YjcQ1n5FCZdkvTAoOw+mvcr1LGU/V6ltfKNolz8xOgfd2RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=idCc6kMJ; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4eba6e28d06so34074451cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:49:18 -0700 (PDT)
+	s=arc-20240116; t=1761749391; c=relaxed/simple;
+	bh=blmtGdraqZmNef4bdInUD56F+UCEYFIYeD4u5JV9gL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qhEizoqTJjyYK/Sh5gjCYQVsoiugteW9aj3pZhBnq6KglnNSPSDwwozMWpfp2L0hM1xVB56s4vK7Pm0XqMMB5rLmLW3P3NOfdrq0Ur9dSbB0qdBc1UIQQaUy8rxlQCBk3zKR3SDrgLg+Lbt/ETCtfvo66NFbc76r7tec/6t1Noc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/WSyaxN; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d78062424so73010666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761749358; x=1762354158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iISKP7x3UPKOETShrQK/0bkxS6KgyI1/wrp9P7Ly+SE=;
-        b=idCc6kMJ5OX2/loi33NjmQq+oQFKDCXy2peS591P3/xWxnLGHtK9i2J6d6lW+KSqrK
-         RZsz4Rs+LMwEmf3SwWFLRL4YAheXxt9wuF0Ev4J4r11OpITLaF/FvDzeVNR2eNYUxgnE
-         uPBlBdQH9wiGuV6lfnIhRY4qCBGILQlOYHd4BfSKPYS8vVmzm8mtYUT7XEZpEP7VfTUO
-         QhJNCLXTsLMCDhjQlcG1fL8FXEolxPeSGvR+uZvQNTvXz+u36Eejr6RHUP6OASuBt2Sn
-         Ynyg1MqvJ9tiT8lJtCiYMYc6iAQQuqX2u4GLa7Nm9uI9jQmLhxg8Up5ivZydC1SQ5R8P
-         BOpg==
+        d=gmail.com; s=20230601; t=1761749388; x=1762354188; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1+/I2yfPoWDJTBN37DUOvTovSE+HP8yoku6LrNjmVH0=;
+        b=O/WSyaxN1jPnwe9CaAkPCH1WWpqOse8xO9WAtBYvP80tlz5zRR7J5yKzTDCyjU6jko
+         6BveBnqu327q+x9FO1ANtrB0RuFhenMYvTfShdZEc/Sb0Ug8HRdmtENVpWHMNd8EJJu5
+         cDtQkSlYz3kbwXaeKmuMHGhqerTgVnvB9nyd7yP0aq1ExxnXOszYJmYTa45amAl6i4m4
+         bdKSFBzN71LnZiHUf8SFHX/wLqYlVwt3VLVBOhmzl9ZPoQMKy7bfeQoG7a/+5mpZpvIY
+         D9xmdoPqKJ/6+a+ivnXhQnem1bWiHdnq0YLm76KaDYxfvTslba5NXFvB6ejFkZiLtU1u
+         b0kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749358; x=1762354158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iISKP7x3UPKOETShrQK/0bkxS6KgyI1/wrp9P7Ly+SE=;
-        b=o2gLJ7qslQ/7zRncJE9U5gcY0Xo0PluOItTBBob20Uq3q9+FjzWg0Dk0dnOuAkYgQx
-         yAOvNz4DhWxBLr+vRfc8wkyPp2eS0OGdQazZr79bQXYTeNf42b1G7m7YU9lsHijJoHlB
-         xzp/Ee3VyxZwM6asjNpDbiZ8HjZitn65Ku9XMjtAnFPrV4ESw7ZXa23dJ9zDihNwcb3t
-         IvsOpAePpLXuf6/29re/nYhvmYlz59mQzV5sIuZFvBjcK3unTr6GAvnELLuO6NmQ7Z2Z
-         szx4XqS/V81xmjednmPs4jDiPCwlq73SrtDWYByCt+tWGpg2VKH6Ty0svNwCKqnTNLDu
-         R0Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUYqcLbAJz3aO9abX+xgqYWQHo0gmfHqw4b+dkB+Hp4EsbUOVCmHof9YkpDLWIT3PabnoNb6EMBYZACELo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoloEZyTfry3g9jRNzu1wW7GQPwcs9tQCe0l8EmwVjGBnNaJP3
-	90OwdQoSt4PMej02JVTR3hdfAzSw0pF4oeBN8FyZwEzo259WVqpjLafy7o8Q+drrCYg=
-X-Gm-Gg: ASbGncvJ4vcovmX757erkdiiLyIezDLIlJaq2vvBCqN9ZqKOP/JsA2VbphCiq00lpyU
-	GFhPRzeLok/GhRPFBlKQoPYR9L9P7DXJ6Ww0qwB/jyXWaSTN/4hr0x7Di/5LHtrLJvL62RDELT3
-	+DRmT0ApLGIGEBKJ8ZCJjvOAKqvG4rWnAFQbihhD5JZqab0zl0czaDQca5bQmuPxd58mvJAIrI1
-	WnCqfBkMCCWM7dRA+je2XNGo9V7jnOmNWF2VwcCrVgjxwzlarrsJcz1bZNzdo4gy8x0bgsaWN/6
-	Tuks5IQ/1PjaUgkv8nP+VuJRvCaS9SmKnSxvE1XUvC/l3yCXQ5MMEfYGfq/qr0ue8/OhV/AWtWH
-	PBnQXTyaZETvOmPcWfnAzijpoKQDHBJUbs6ZAuNgI9TVbCFN7DpgXVGHXEwcVWnyJd8NkgmmNdj
-	ssUsvlx1a6ULDJj7bhgEZL6Y1ZumrDGcTeNtD6H0AITyCrOg==
-X-Google-Smtp-Source: AGHT+IGAAbKXStPcrBPkR96V/nrI2ZGs71F29pgPwstoIUUELR36JYOQngJk/QufJryI6FDa/XMxXQ==
-X-Received: by 2002:ac8:7fd3:0:b0:4eb:a0aa:28e with SMTP id d75a77b69052e-4ed15c98020mr39171771cf.64.1761749357598;
-        Wed, 29 Oct 2025 07:49:17 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3830f16sm94694131cf.22.2025.10.29.07.49.16
+        d=1e100.net; s=20230601; t=1761749388; x=1762354188;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+/I2yfPoWDJTBN37DUOvTovSE+HP8yoku6LrNjmVH0=;
+        b=sQrijMQ0STTXWRgR6ZpIRiyO7TCXKnFKY2DwchJalNVD6LgilM7MgJABBMBZkHHVci
+         Ai+zk3wDoz4cZGCsJfYUkDJ1ObbrOvd+mloHeZpHoYF64/XyqvHKwlK74uSyneTnNks+
+         zvhbhOWEtLtp2T0KrQh524n2svg3amgfFenEmkwHS2tLH9R3kaq7INhFS0YydpD/Hlaa
+         qnoX8De4KawapDdGrKNfErx0o+Wi5qlac/4if+UdjqoLRYm67gxH8BIt5Mo7Q14hS6m7
+         GIrCySQeAZoYDQ2kGMNPzDP88ECOGFRNYh9ycVaVRl1q6EVtWh2gFn5ye5lsY5YfjyT4
+         w5jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7sp5xWio5NsRB54NzNTMBTCtAhDKYsDLfiEO/GNscK9GI3u/iOT5YBoyJXdKmAuaBTwEmIXDYEJXVGpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSwa/I8+hznq5TDfinOM7luJe+LupGrGTw9L3QY6xZRkeQE9kY
+	Z29a0bmSKwsiqibhJtHLMQYAQHkoAAbHtkYKkJKYAI1Ac3CzbkzxN/n5
+X-Gm-Gg: ASbGncvaOF4yNHy/mQiSr8v0YesMT6KS/s5sdFt5EsYRFcHnYZOlpLeyT4lPGCTBHFa
+	uT3y8JUYb2L0yEyAy/NROL3Sds3FulcWFqosLbKEW5zk0Y/NUcurA6N9zJuiehb4kpm1mildfCF
+	J7H0mfbt3JW8ANiS7fsO/x99+jcOno3jSB0/YByNfb0RMaULq/ECT0d+pxPB6FTC3qcf810hSXF
+	NxYioapEv9cbACDcIAvOO+ECPz008w1Yky4sSwWV07Xpv+u7OxS/LYH2Y2KhQHVmvsHx8JSkXE7
+	IuVE5vLgHmT16SJDhZmrLXQSVs7eIbkHPRaxRfKL8bqX+ch97qIvYlVqzAJCDPsO3CIm6vZdEea
+	P/oyv2Asojb3KM3bYkkDXxMCc9YtFrhMbS8zHYtCBzMIF0Sc9mhTXDJdT2KEjxbQtU/9kYbDk1+
+	+8cvOmhjiEkAwsBSWaf2mN4R9pOoqUW3Gw
+X-Google-Smtp-Source: AGHT+IH7Dg5hdlveNGeW6IpzIDCcpEZ/tZk4UbIRTBBgmJ7JsmueX6/YbGVE72Hk++yrO2YhhzUdTg==
+X-Received: by 2002:a17:907:7f0f:b0:b6d:95b3:7f11 with SMTP id a640c23a62f3a-b703d555a7amr325167466b.58.1761749387588;
+        Wed, 29 Oct 2025 07:49:47 -0700 (PDT)
+Received: from [10.25.210.164] ([128.77.115.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d854395absm1463176966b.62.2025.10.29.07.49.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 07:49:16 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vE7UC-00000004fDD-1zy2;
-	Wed, 29 Oct 2025 11:49:16 -0300
-Date: Wed, 29 Oct 2025 11:49:16 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: iommu@lists.linux.dev, kevin.tian@intel.com, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu: iommufd: Explicitly check for VM_PFNMAP in
- iommufd_ioas_map
-Message-ID: <20251029144916.GO760669@ziepe.ca>
-References: <20251029125226.81949-1-xueshuai@linux.alibaba.com>
- <20251029133434.GL760669@ziepe.ca>
- <a63db6a8-e9d8-4f79-8212-8710ce2e60f4@linux.alibaba.com>
+        Wed, 29 Oct 2025 07:49:47 -0700 (PDT)
+Message-ID: <b939e7f7-6be6-4f07-97f2-a3146682fbe7@gmail.com>
+Date: Wed, 29 Oct 2025 07:49:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a63db6a8-e9d8-4f79-8212-8710ce2e60f4@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: imx8mp: add aipstz-related definitions
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250821105634.1893-1-laurentiumihalcea111@gmail.com>
+ <20250821105634.1893-4-laurentiumihalcea111@gmail.com>
+ <cc465cae-a1b2-4116-82fa-ae42ad0706d3@kernel.org>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <cc465cae-a1b2-4116-82fa-ae42ad0706d3@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 10:44:31PM +0800, Shuai Xue wrote:
 
-> We run different VMMs (QEMU, Kata Containers) to meet diverse business
-> requirements, while our production environment deploys various evolving
-> kernel versions. Additionally, we are migrating from VFIO Type 1 to
-> IOMMUFD. Although IOMMUFD claims to provide compatible
-> iommufd_vfio_ioctl APIs, these APIs are not fully compatible in
-> practice. 
+On 8/24/2025 4:29 AM, Krzysztof Kozlowski wrote:
+> On 21/08/2025 12:56, Laurentiu Mihalcea wrote:
+>> +#endif /* __IMX8MP_AIPSTZ_H */
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>> index b62bb821cf61..afcd8c785cfd 100644
+>> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>> @@ -13,6 +13,7 @@
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  #include <dt-bindings/thermal/thermal.h>
+>>  
+>> +#include "imx8mp-aipstz.h"
+> Completely unused define. Your patchset is not organized in logical chunks.
 
-Well, it aims to, but we are not there yet. Hopefully in the coming
-months the MMIO to VFIO will be supported in type 1 emulation as well.
 
-But broadly the EFAULT return here always means the underlying VMA is
-incompatible with IOMMUFD, I'm not sure there is that much value in
-further determining why exactly it is incompatible.
+ACK, will squash this into patch 4.
 
-> Aha, I see. Thank you for pointing out this issue. The check indeed
-> needs to be more comprehensive. Do you mind use pin_user_pages() as a
-> precheck?
 
-I mean we already call pin_user_pages deep inside the mapping code and
-propogate whatever error code it gives back up to userspace. If it
-gives a more specific code then it will be returned naturally, no need
-to change iommufd at all.
-
-Jason
+>
+>>  #include "imx8mp-pinfunc.h"
+>>  
+>>  / {
+>
+> Best regards,
+> Krzysztof
 
