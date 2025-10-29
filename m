@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-877274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD854C1DA14
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1E9C1DA17
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF80188F986
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55991891D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D1E2E6122;
-	Wed, 29 Oct 2025 22:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B832E6CB4;
+	Wed, 29 Oct 2025 22:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="i9xG7JtT"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ln3Tvmi+"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82BB2DC78B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C072E54DE
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761778669; cv=none; b=oWdO7xDqUFv5vtJmt4ghk/+DdNk2SSyoEMBhyIgepJacJSF0wRf/QS2DaXpeacBEnlOihWIL0LFCY1mzSzxt4R2fNGEgXXmJkuxPBLxJfU61MfYtW+DobNVc9BB7k8peNubxfM4HvuG0QAsUIYe6i3Oqk2zSRZZV8osBLVjLRQk=
+	t=1761778690; cv=none; b=QFUebyIG3otd05j8oMEqwusZdRScaMa4tv6QKQXBiWVoO+X3yjbLdBPqhOItkNqKP4aII31i+PvEmb6qk6YTuXaoI8NzeBpmvpA/uvdHzK5EcHtKge3LWxExbmBGFfSHvnQCruKlLFAFUQvcNRn6WUpNrQy0AeVZTZw0dzSCnU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761778669; c=relaxed/simple;
-	bh=gNsvp11HCmdVamdNmDJq0mUxNvHbBQdm+wZRqQ05PYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdAJUjB2lI58pKiIYyRRds8D2roWs2GPgcL+sa70rQ9UYFUlP+gv7pqq54s2zCFoHzK7Ls8HLkX6SFFvsNNhO7pizERje1r8wrcw1nBaObtSO705jaFx5UhP0DbAmyeidNG+f4MZWSX8IIBlw1jBIJUG2OrH47owSzJDP0HNLL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=i9xG7JtT; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DD44C40E016E;
-	Wed, 29 Oct 2025 22:57:43 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CgoJpOv9t2OZ; Wed, 29 Oct 2025 22:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761778660; bh=yGi8oB3x6eaPWyZqlAg1aSVhthOKt0dYgRp5suIsMiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i9xG7JtTzTIMH+0L+VH1+dUYv2KyyT3avj/0+p9Xjsy7u2sY8njasttXNJ4JF/QvE
-	 hXhQPge9pgGOyrlUNmd7EU2+NdfR8shMpCKkUr5gqDw0ixj99E8rFZZtMWAMe+w5EJ
-	 Cx2Iq6hNXAGXYVq/do/gTO9vC5TBVigZhn0MLrGFgpwEVZeWmKftRgN3MSd07+HjeW
-	 wDSLnT8cVeOdB5LyBAMtBqL3WiPLfGauv1BGSuyUoQrTSJWOjN0q4zHVtnfD59p6Nx
-	 xfMln3auw9bY/TkJ7QqwpHm9aJHR4Lu5mrAFiwPASRj1rEe+VyWa8qr5PG7CRQgkGG
-	 hN7jhsMHgvr53xpri79mCQOexdffhwsY88WeLoK7MvqvAsnOsoMVnqMpCkZKtTsFTE
-	 8L7NqKweHjdVofADyvG7n3d4w33d/DVO+1XmupwbmE7f61CG09+wQ6FchHRlWdQaeN
-	 3FoBeAjRevTuGgzYLXRoVukGgyXk/iSMvgsTPJpB33no+Y2hdoBZpozWRoUbGUdj7J
-	 qCos2vcuz1p+UEPmczOFu/UrBXZnFATwfxV0yBxEmaSUQ+A1OzBQYp7+T17Z2NLNcP
-	 osoR+pO/e1kDfjpu4dH/uTt8RJZm9yE+n21CIzuSQk2Ndrpo+uQa+DT9VN1LiOaa/7
-	 naS3Mf9kob0taM78946kAS4Q=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C120A40E0200;
-	Wed, 29 Oct 2025 22:57:20 +0000 (UTC)
-Date: Wed, 29 Oct 2025 23:57:14 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	akpm@linux-foundation.org, david@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
-	acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
-	willy@infradead.org, raghavendra.kt@amd.com,
-	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 5/7] x86/clear_page: Introduce clear_pages()
-Message-ID: <20251029225714.GIaQKbytWNKuQC5TNu@fat_crate.local>
-References: <20251027202109.678022-1-ankur.a.arora@oracle.com>
- <20251027202109.678022-6-ankur.a.arora@oracle.com>
- <20251028135640.GBaQDLmHzCQDegBHd6@fat_crate.local>
- <874iriq2pw.fsf@oracle.com>
+	s=arc-20240116; t=1761778690; c=relaxed/simple;
+	bh=R35boBO97p0Y3sowS7PP3Y56OecWAH0OL9cqtC4OFZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2WFWlVICLX52nAqdaKWgd3C2ZzbyENfAD7/MM//TNzUgfa12P8TZbEztuTbHxq6++vfZ6SdQBCiOGWwcsUs4rbQNUxYOimModF3nRtx7lv8ZlkA3YHGOVAOZ5VeVJcHzJa8qEMgxOox3daB1w8CILQYPRJYNyVsHPuaKvVXZ4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ln3Tvmi+; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3c2c748bc8so56152766b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761778686; x=1762383486; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xYrvBEQFYhC2vv51UNS1Ho/nte1oyOBTb9uNU2WpKKM=;
+        b=Ln3Tvmi+rcFMT0Zlgaie9zQohn9ADtBg0EKc9Is8Vqjuh8XrvT3VfOfvyd/vgmr7rN
+         cjGI0iF4oiXuS6ryqkq0hu7j95BwRN/S2TdthDzXO5GhWfAkSr56jkH5gHxDUPBYpZ5t
+         diP0ZtRZ5v1xw5kUlDUV/yk2aeX55o/CBm6UjVISIADi3ZV1aqk0z5ypia97F/DQud+D
+         HapFWil3JkjA8B3GSgN1hUHj4JTA7KvNwusgSOelRjPnT1wf/bvCNu1+rzdyCK+5dG82
+         EUGz8kQvcr+FNW+9QZNMc7aKJxxCsSK5BRLEposn65sjK04ZUCmaHPsf2iBAxFAA2dNR
+         69LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761778686; x=1762383486;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xYrvBEQFYhC2vv51UNS1Ho/nte1oyOBTb9uNU2WpKKM=;
+        b=upmSRfAScE87E+vqPjyzpWtZpYcPVP9VB89XSI3hvtD8uuRU4Eu4VerlVqk8gSHni9
+         qmaa/M1SL2CEtuswJBlOrj4vLFjmK5V/kJOvz4qUOHSOfK9J/N4HQ3Pq9vpM8rV/cKSW
+         cAWfrilHGn7woU+Dzgfx40IB4szn8qsb0YXEcXwYCr0iOYiBCZiL6FOfByG0rHw2mre6
+         lQvHq9NUNMazrNBiRcBD9rOz5IiLInb7nqi/HhSUzw0PMmH/vq/GzrNOI+ZkfQqQ8epw
+         VQlURLo6hW2wov5AGzPdhHo4BTceUElzqSIlfCrmLirhgewZW61pYeAqdVeX+AHIagPW
+         3eig==
+X-Forwarded-Encrypted: i=1; AJvYcCWW9JlRKR0rvOAMApd9MBEg/ASHCvchE3NspxOJnWNKeirpkcMgUOa5P7CMA3Arh3bw3Rv8LgiiYlC0/A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+MvTPOVROgQX/B5+alHYbINxr1yucJdyLBd8m31LBMQQ5Z9cF
+	HxO8sKn/9AaQYBLeS/2i6dn1wUCP1KGB0k+b1fKvdHj+7O2W6j0+dF6xY7cpcvgU
+X-Gm-Gg: ASbGncvjr4dlmrEJCa82xyKjj/5UPDF8bltlSAsMo47cFlKMHETSQ55pEh4QKNI6uOY
+	0NgRGYkU3nqRMVBhVN9gurIEFFuLKuNyX87hFStVpr1Va+aNVJH+YtB834PtO+tmzsy+C21t/k3
+	2JMcHcP/SIkmFSU9yYzMH8fD0xEIXcgbS1/3HQ8DuLlnvyGKTMQsRMLdS2PbkGib2CKTiev/G5r
+	ZkiRD+gjKzsr1uwok5DjUhZLpAaSmAPJi1QaeqAtOpswnx0FWCUyoIBqE3vl+ii8N9yQBDuShyp
+	czC7Wox4onHk38dvY1or5J8m1U/oFEe7xd3fzMZ+NegW5MVm8AbpenyeS931Nn/HVifj7Ae7g/l
+	/AxN2YXJZWl77ddC9ZM4GO02wfeiawJ7G3TBjRwnKaV7vN5I/2XU+5UpZMqi3rKhepKuj/GbyTG
+	gU
+X-Google-Smtp-Source: AGHT+IG4M+TrFZ+WvBWMivsgusTfxTkskwi+ZZSO0k5cw5412piiRHZ3q1efPw/ibuWapgCjmuNcfg==
+X-Received: by 2002:a17:907:7211:b0:b40:6e13:1a7f with SMTP id a640c23a62f3a-b703d38ca50mr510498066b.27.1761778685725;
+        Wed, 29 Oct 2025 15:58:05 -0700 (PDT)
+Received: from eray-kasa.. ([2a02:4e0:2d02:232:b56b:334e:6279:ccaa])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85309074sm1559094666b.2.2025.10.29.15.58.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 15:58:05 -0700 (PDT)
+From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org,
+	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
+	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com,
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Subject: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure during read
+Date: Thu, 30 Oct 2025 01:57:49 +0300
+Message-ID: <20251029225748.11361-2-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <874iriq2pw.fsf@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 11:51:39AM -0700, Ankur Arora wrote:
-> The intent was to use a large enough value that enables uarchs which do
-> 'REP; STOS' optimizations, but not too large so we end up with high
-> preemption latency.
+Potentially triggered by sequences like buffered writes followed by
+open(O_DIRECT), can result in an invalid on-disk inode block 
+(e.g., bad signature). OCFS2 detects this corruption when reading the
+inode block via ocfs2_validate_inode_block(), logs "Invalid dinode",
+and often switches the filesystem to read-only mode.
 
-How is selecting that number tied to uarches which can do REP; STOSB? I assume
-you mean REP; STOSB where microcode magic glue aggregates larger moves than
-just u64 chunks but only under certain conditions and so on..., and not
-REP_GOOD where the microcode doesn't have problems with REP prefixes...
+Currently, the function reading the inode block (ocfs2_read_inode_block_full())
+fails to call make_bad_inode() upon detecting the validation error.
+Because the in-memory inode is not marked bad, subsequent operations
+(like ftruncate) proceed erroneously. They eventually reach code
+(e.g., ocfs2_truncate_file()) that compares the inconsistent
+in-memory size (38639) against the invalid/stale on-disk size (0), leading
+to kernel crashes via BUG_ON.
 
-> > Why isn't this thing determined dynamically during boot or so, instead of
-> > hardcoding it this way and then having to change it again later when bandwidth
-> > increases?
-> 
-> I thought of doing that but given that the precise value doesn't matter
-> very much (and there's enough slack in it in either direction) it seemed
-> unnecessary to do at this point.
-> 
-> Also, I'm not sure that a boot determined value would really help given
-> that the 'REP; STOS' bandwidth could be high or low based on how
-> saturated the bus is.
-> 
-> Clearly some of this detail should have been in my commit message.
+Fix this by calling make_bad_inode(inode) within the error handling path of
+ocfs2_read_inode_block_full() immediately after a block read or validation
+error occurs. This ensures VFS is properly notified about the
+corrupt inode at the point of detection. Marking the inode bad  allows VFS
+to correctly fail subsequent operations targeting this inode early,
+preventing kernel panics caused by operating on known inconsistent inode states.
 
-So you want to have, say, 8MB of contiguous range - if possible - and let the
-CPU do larger clears. And it depends on the scheduling model. And it depends
-on what the CPU can do wrt length aggregation. Close?
+[RFC]: While this patch prevents the kernel crash triggered by the reproducer,
+feedback is requested on whether ocfs2_read_inode_block_full() is the most
+appropriate layer to call make_bad_inode(). Should this check perhaps reside
+within the caller or should the error propagation be handled differently?:
+Input on the best practice for handling this specific VFS inconsistency
+within OCFS2 would be appreciated.
 
-Well, I would like, please, for this to be properly documented why it was
-selected this way and what *all* the aspects were to select it this way so
-that we can know why it is there and we can change it in the future if
-needed.
+Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
+Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+---
+ fs/ocfs2/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-It is very hard to do so if the reasoning behind it has disappeared in the
-bowels of lkml...
-
-Thx.
-
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index fcc89856ab95..415ad29ec758 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1690,6 +1690,8 @@ int ocfs2_read_inode_block_full(struct inode *inode, struct buffer_head **bh,
+ 	rc = ocfs2_read_blocks(INODE_CACHE(inode), OCFS2_I(inode)->ip_blkno,
+ 			       1, &tmp, flags, ocfs2_validate_inode_block);
+ 
++	if (rc < 0)
++		make_bad_inode(inode);
+ 	/* If ocfs2_read_blocks() got us a new bh, pass it up. */
+ 	if (!rc && !*bh)
+ 		*bh = tmp;
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
