@@ -1,93 +1,133 @@
-Return-Path: <linux-kernel+bounces-876269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4009C1B130
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:06:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F25C1B0CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D091C188E864
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:56:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7CF15A36DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EC82F657C;
-	Wed, 29 Oct 2025 13:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7352BE04C;
+	Wed, 29 Oct 2025 13:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="iokc/DQR"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DNx03Gt1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD42868A7;
-	Wed, 29 Oct 2025 13:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE2729D281
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745482; cv=none; b=loiiJJTVgsaT+waP83rtVAveINkyCpCbV4UH5tWG9REyNpaXoM4npHH2ZS1WAs7wnlRol6/nc1hq9qM6TL+6gcSe3iTBLFMJBy/RiDq7DM3hXyVwEmpG6dM7btY30r7FmRTMnhtdPpJg4O21Bl5Th65ypXqJ0yXGp5ojKcLBCPU=
+	t=1761745198; cv=none; b=BE6pexLjxnJz5ZoWvMJe+/9KpV71fFPSEB6Wv1qS3JfsU6cHwm4WtfE2nzRRZod3a7glraSWyGvqyZniXsQs0Pe2SDZCCb9hpJy5G+u+t7HLZbUgjJYlQnsmq2M+89wvazyiW+xhcO92HJQOeZuKPUwV7ukJ9F4weKVFDtSCIAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745482; c=relaxed/simple;
-	bh=KvrdxWAGh2gYjAr+RZLd1zfOYJ/NZSuVoSG6qU8tc4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G+zoL6PU3a7puMQYQqm1zmWL2oGHodvOx0D4Mgas4/ncfrR6s6rBjG5THuon2JTbNmo35L/EhmepSn739E8IH25CB+p9uXwiMtB92Wp9MarFl9i6YOiSu02BiOasO5kZ9946/MhKVeMv7n3g2AZfQ+T7EqIWghkPHAOriNM2Vco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=iokc/DQR; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 29BF56002984;
-	Wed, 29 Oct 2025 13:39:27 +0000 (WET)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id daCFBIXVt6n7; Wed, 29 Oct 2025 13:39:24 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 37E6E600299E;
-	Wed, 29 Oct 2025 13:39:24 +0000 (WET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail2; t=1761745164;
+	s=arc-20240116; t=1761745198; c=relaxed/simple;
+	bh=1FkKzTgPbLTlv6s4BQt1xaTgymEsbkipzI4UtqqlsTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ueaSn2gAUIu1a8SpHw6Z65UNZmlvUA2ETNk6QLy3qmoAV8RdzZWdwZmuJZ1cIHUSsvBSqtl8AtQFCOQi4MqJlFpber8suyCgKa3/H8/ootmzgzFJLlXPZ+2Cb1P7vvD8kudnVaMnv1fRnShpmMglLysNUmWYdgxICM4SxC77Sxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DNx03Gt1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761745194;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KvrdxWAGh2gYjAr+RZLd1zfOYJ/NZSuVoSG6qU8tc4I=;
-	b=iokc/DQRdh0la0ZBwziE2D3zfNahEuDw7OgVJ7s5cHldlZGVkXPwLnc5oyd8rbtAiKzZr2
-	U9FjOhoks0Z5veziX7dYn+dpFet3eUqklWfP0xYGD29lsoOzL2XfdgXk129uPpLn6QyUKn
-	auv3YXRVY5FS+oMN6tSk/vVTZ5eoQ9lWNRr9zVyG2FOIUtGr8+eTsBt4iDWJOKC2nyXH8A
-	osJcqREeOdktRBlUC3wJY8NUtsggs+UkfEJm+1q/x5e8cLQdq6eHTFJmREXp8pbyfyaiei
-	NvkH8jIwbJszdBdOA0ZxpmJDco7eZ4TI/a7YtefEADgRos0p2D6H5F9hqunoWw==
-Received: from diogo-gram (dial-b1-161-46.telepac.pt [194.65.161.46])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id D54C53600CF;
-	Wed, 29 Oct 2025 13:39:23 +0000 (WET)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: devnull+webgeek1234.gmail.com@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	jonathanh@nvidia.com,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	robh@kernel.org,
-	thierry.reding@gmail.com,
-	webgeek1234@gmail.com
-Subject: Re: [PATCH] arm64: tegra: Enable NVDEC and NVENC on Tegra210
-Date: Wed, 29 Oct 2025 13:39:16 +0000
-Message-ID: <20251029133916.569333-1-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
-References: <20250816-tegra210-media-enable-v1-1-bdb1c2554f0d@gmail.com>
+	bh=1FkKzTgPbLTlv6s4BQt1xaTgymEsbkipzI4UtqqlsTM=;
+	b=DNx03Gt1gjDapZU4uHIAHrQYW6E4AM/tJ+HXJAyp4dpK+G9a3lyxCbqUqS/qKAd7uVO2PZ
+	RFPipVPev1gZvNCIuHelWWk33CVXWyu0MGDzqdSNH8vydJLxWDwJLEqAAJbKnjBZqXyS9L
+	8oGgFBX0hRz+YbIdNURsmnv22ItFtzg=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-330-HyiXx_y8MMut2XW3zZjOCw-1; Wed, 29 Oct 2025 09:39:53 -0400
+X-MC-Unique: HyiXx_y8MMut2XW3zZjOCw-1
+X-Mimecast-MFC-AGG-ID: HyiXx_y8MMut2XW3zZjOCw_1761745192
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-294baa12981so11993165ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:39:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761745192; x=1762349992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1FkKzTgPbLTlv6s4BQt1xaTgymEsbkipzI4UtqqlsTM=;
+        b=ddqW9ONncIYW3g3fn8/Fc54b6ePkQNy9FEWNNoWwuJprIbseIXoTjyHT7ha7TMGodg
+         Y0UrouTA2KqjXSnkLP2gVVWIWeegcgP1VDm+GT3DLFJsHmly1yULarmrVhOGNb16eXcl
+         AUswUzgnk8TPeeIoitATX7qoAE3nGiO7mFlcABfjtFIso4S1dVNlen1uA+JATy9x7p0V
+         H594ntkiFkOiCv+yeZp6x8bRBxNZ1UtyUfMSyFLnJ9OMvAe75LIM+cJv+DWjWPf6Bac9
+         tS0f3eJ6/s8MZ13nN3FJ8YB4Q2aElYOJ4GZe4M1TIuugl1ZaUCbJ4AYFQuujCHyVclr4
+         7riA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYvCYf+B8VpX3kShIvWp/Y3MzbAKXq60h32U/UjHSRmQ5KxFD5mdSeaU0NPiGsOP5qBYZcOqndfMdUkRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM5OmZa3FQTuq7AHX1H+q5XGyhAnUIi0tOaslfRSkD1gwp1LeY
+	u2BJISSI2JtByl4m2PcEmvo1awSEJUypQOgqKpsnOLJ5WW8XAnAATEFD9IylukxWnZ1gkLzRZL4
+	gBEnxPy6ozXlTrYJvS5hLbgHLKizjwBvNBIzCtiDpSZxVMb+mblCf6QYPGjFK5Jen7oNW8X43YC
+	yMZEFZgJYdOsCk9xMqYNdFYsCu26jv9L4JuMRbfiHQ
+X-Gm-Gg: ASbGncsVKpFjtQYvMPYf+PjT++qhYPOJp+0HgCxAaIIXIV9tzBrPx/JP1jK8dp5ByMa
+	bVEDhxwKpkX3FLN2LP+eCgN0ypnvZN2zMIb5Di/X0+29d+XHQEQwC8PI543q/muegRvmdSU4w/C
+	vP/tDeqXwpVahn9J0peoOAgwunUCUDWI9jBTr99O3ncwZwRse9ESRlMSG+
+X-Received: by 2002:a17:903:11c6:b0:294:880e:7ab6 with SMTP id d9443c01a7336-294de7f3864mr32919965ad.1.1761745192059;
+        Wed, 29 Oct 2025 06:39:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwEsDwWs1QAFw7w9LWPCYgWqhftmnYlSsUlFDhkyGg4vLsy8BrHI0EufwcSwEAOD4boLDFwxuOLDJKRkApizI=
+X-Received: by 2002:a17:903:11c6:b0:294:880e:7ab6 with SMTP id
+ d9443c01a7336-294de7f3864mr32919675ad.1.1761745191695; Wed, 29 Oct 2025
+ 06:39:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251022121345.23496-1-piliu@redhat.com> <20251022121345.23496-3-piliu@redhat.com>
+ <877bwgw9yf.ffs@tglx> <aQAvnjVvJOUx78Nk@fedora> <87qzunuqqo.ffs@tglx>
+ <aQH8KJ8RsnzbLfN2@fedora> <874irhvrb9.ffs@tglx>
+In-Reply-To: <874irhvrb9.ffs@tglx>
+From: Pingfan Liu <piliu@redhat.com>
+Date: Wed, 29 Oct 2025 21:39:40 +0800
+X-Gm-Features: AWmQ_bmAiRNWzlkP5Zk2u2zmw0I5s4MaTOTKvx71kEq2S7NjKnYXwC0dF7kEhcA
+Message-ID: <CAF+s44SuXgZ4MD5z8m_q-m03j_p0u0RTGhH-VXF25iwQ=Jy-SA@mail.gmail.com>
+Subject: Re: [RFC 2/3] kernel/cpu: Mark nonboot cpus as inactive when shutting
+ down nonboot cpus
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Valentin Schneider <vschneid@redhat.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Joel Granados <joel.granados@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 29, 2025 at 8:13=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Wed, Oct 29 2025 at 19:36, Pingfan Liu wrote:
+> > On Tue, Oct 28, 2025 at 01:59:11PM +0100, Thomas Gleixner wrote:
+> >> If you freeze stuff there is nothing to do. Hibernation works exactly
+> >> that way without any magic hacks in a particular scheduling class, no?
+> >>
+> >
+> > There is a nuance: DL bandwidth represents a commitment, not necessaril=
+y
+> > the actual payload. Even a blocked DL task still occupies DL bandwidth.
+> > The system's DL bandwidth remains unchanged as long as the CPUs stay
+> > online, which is the case in hibernation.
+>
+> No. Hibernation brings the non-boot CPUs down in order to create the
+> disk image.
+>
 
-Jumping in this reminder to add a gentle ping about the related series [1]
-adding support for NVJPG.
+Oh, I see. Since there are no DL tasks in the runqueue, no migration
+occurs to activate the DL bandwidth. This approach, similar to PM, is
+perfect for addressing this issue.
 
-Thank you,
-Diogo
 
-[1]: https://lore.kernel.org/linux-tegra/20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt/
+Thanks,
+
+Pingfan
+
 
