@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-877085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C38C1D264
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:09:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2501C1D276
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555B01A2086E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:09:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69CA04E4235
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6C9314B85;
-	Wed, 29 Oct 2025 20:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="f2ixPvRO"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BCA3469F5;
+	Wed, 29 Oct 2025 20:08:26 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C8127A462;
-	Wed, 29 Oct 2025 20:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFA5331A6E;
+	Wed, 29 Oct 2025 20:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761768539; cv=none; b=bbmJ1inlZk6vNAe3nBIU+tXCXKGey3qfwVTp8m6gGSaqYPdX+oWyDGlgL/ikoV72XYKcqtqwwr4slLKy51bwJKv6Btsa6NxWrNNNJxzwnrAjSZNLoaATbHy7WWRIDmJrCqXYvWVgdV+6+Jz2ry5Fqj2PafUmRsVD6iHwlB47jxQ=
+	t=1761768506; cv=none; b=L4bCuOrtd15InXKbEe3XSf0IgaWmyLcJDZ3JTF39IAqewyuwVmLVm8CswcLoaTH4BMGQtIgErF9YxEyJBa2VA4OdwnVqFA9TPFDJnQQfq7M56OgWQZZ9PL7CwD8jCEnTNeY6iWU1qA04G0cmxQgX4cioysqONxodjJnmzX0j7Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761768539; c=relaxed/simple;
-	bh=Ih8wwv/hVIpNDdvgfkJCAuMYW2YA73jRDPxtzkA+aI4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VnvApwsTb/hrO6uZQMILsC20VnoECAimDIrP96qMvtNiMVtQQivRTW7uTsZ5Fi1LhrvIVzb32eBXHItDIl2eZkYMeJdXrnxtoy5b9PGOhECpsKXMm4N/rjeBkh37gFrXMYOdokclEYkB19GQM6cmdzDH+WxHyyGnKQUuq12IKQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=f2ixPvRO; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1761768530; x=1762027730;
-	bh=+vFEd2i7cGwKfB76083zqMnaJRzsau0IVtzvsF2hHkA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=f2ixPvROXBBe3oYcnt46ZpuoD3whpqDkx+uWuzdhIU+YPbduMbbLBUYy3V19N8DdT
-	 lJCQaItYc4V04frYC10Qp8vC4v6QealyZOWFQ9x+4qrE9lklIogwUqZ4H130zyymmQ
-	 QuU0Jp39WS7X0fe1Z0N55I/Nb2bcW5EMWiLI8MAIscT6weHJpTE4qsZY5FWESEyQBa
-	 XhAFbluJjDjJ4OVPWlAMCFRWCe1eIQ5pzDu9nHbw1L5wWjcHpVsCvn8VHSo6rvjAi8
-	 DZuZbhfARnsZ1Xh2scxFMiBarfrU81v14JAR7983upQVZyAIOMSBej2abjtKpLwF5M
-	 HwEJuccHvAyqQ==
-Date: Wed, 29 Oct 2025 20:08:43 +0000
-To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
-	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
-From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me
-Subject: [PATCH v6 13/18] x86/mm: LAM initialization
-Message-ID: <96559d5a8e897f97879259bad3117db617e21377.1761763681.git.m.wieczorretman@pm.me>
-In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
-References: <cover.1761763681.git.m.wieczorretman@pm.me>
-Feedback-ID: 164464600:user:proton
-X-Pm-Message-ID: 0e1842514ef97eaa33355f60d534577848d5c6b8
+	s=arc-20240116; t=1761768506; c=relaxed/simple;
+	bh=t4qkp4EXFCUwyQ0JKP8LwtscZvc6HXW6xS2JDZ8kjeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KTr9pfeNllDoC6oZjpw8e4fKavkA+IzVn75d0Ib6LJQj+sgHZ916VWicfXZfPTDj4BxbUk6lGQ8RbXIUyDQ6IrC5OIwVPlfi/7AFeRvb/V6fI6BSAbPJYxfLimBecYbb4i87XkNzhRFiK5f94KEGipWpWhw90JZKY4NlxoYNgWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 1A994160848;
+	Wed, 29 Oct 2025 20:08:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 65A3C3E;
+	Wed, 29 Oct 2025 20:08:18 +0000 (UTC)
+Date: Wed, 29 Oct 2025 16:08:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
+ <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
+ <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann
+ <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [patch V3 10/12] rseq: Implement rseq_grant_slice_extension()
+Message-ID: <20251029160859.22bb6eed@gandalf.local.home>
+In-Reply-To: <20251029130404.051555060@linutronix.de>
+References: <20251029125514.496134233@linutronix.de>
+	<20251029130404.051555060@linutronix.de>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 65A3C3E
+X-Stat-Signature: 1pbmnbxa6ha99bwb3sde7f73an68s98w
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18mzCRXSyzSXyTvEFHF8ygK8OlTYV1N8oM=
+X-HE-Tag: 1761768498-215151
+X-HE-Meta: U2FsdGVkX1+n/MPrQmom0gHqhc4MgYD2X4zaPJjjF61dcBqraHzAFiWVQYqnAbwzYqhPRsV2QFG/uFHl6lsmNsNI8BV5bTlle9Lf/YF67olBSvfYV8+x3mOKNsqKpsPiAsMTiOvrUepc8pD6RYDfdTD0MHnkZfawQYWK77RlPnL00qQc9nJQs5SnT9N0g71cOzbdWUtC7Ef0I5buq/WoYldUyoRTUVWveQOA+0jM9XQABajyKgimB7DZfRE8OBW58832jARDioVARgU1EiubA8pulcTS5A8MHZkuSsKhiX1dkgL4GlWsGPh6bD9lXBYP
 
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+On Wed, 29 Oct 2025 14:22:30 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-To make use of KASAN's tag based mode on x86, Linear Address Masking
-(LAM) needs to be enabled. To do that the 28th bit in CR4 has to be set.
+> +static __always_inline bool rseq_grant_slice_extension(bool work_pending)
+> +{
+> +	struct task_struct *curr = current;
+> +	struct rseq_slice_ctrl usr_ctrl;
+> +	union rseq_slice_state state;
+> +	struct rseq __user *rseq;
+> +
+> +	if (!rseq_slice_extension_enabled())
+> +		return false;
+> +
+> +	/* If not enabled or not a return from interrupt, nothing to do. */
+> +	state = curr->rseq.slice.state;
+> +	state.enabled &= curr->rseq.event.user_irq;
+> +	if (likely(!state.state))
+> +		return false;
+> +
+> +	rseq = curr->rseq.usrptr;
+> +	scoped_user_rw_access(rseq, efault) {
+> +
+> +		/*
+> +		 * Quick check conditions where a grant is not possible or
+> +		 * needs to be revoked.
+> +		 *
+> +		 *  1) Any TIF bit which needs to do extra work aside of
+> +		 *     rescheduling prevents a grant.
+> +		 *
 
-Set the bit in early memory initialization.
+I'm curious to why any other TIF bit causes this to refuse a grant?
 
-When launching secondary CPUs the LAM bit gets lost. To avoid this add
-it in a mask in head_64.S. The bitmask permits some bits of CR4 to pass
-from the primary CPU to the secondary CPUs without being cleared.
+If deferred unwinding gets implemented, and profiling is enabled, it uses
+task_work. From my understanding, task_work will set a TIF bit. Would this
+mean that we would not be able to profile this feature with the deferred
+unwinder? As profiling it will prevent it from being used?
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v6:
-- boot_cpu_has() -> cpu_feature_enabled()
-
- arch/x86/kernel/head_64.S | 3 +++
- arch/x86/mm/init.c        | 3 +++
- 2 files changed, 6 insertions(+)
-
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 21816b48537c..c5a0bfbe280d 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -209,6 +209,9 @@ SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)
- =09 *  there will be no global TLB entries after the execution."
- =09 */
- =09movl=09$(X86_CR4_PAE | X86_CR4_LA57), %edx
-+#ifdef CONFIG_ADDRESS_MASKING
-+=09orl=09$X86_CR4_LAM_SUP, %edx
-+#endif
- #ifdef CONFIG_X86_MCE
- =09/*
- =09 * Preserve CR4.MCE if the kernel will enable #MC support.
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 8bf6ad4b9400..a8442b255481 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -764,6 +764,9 @@ void __init init_mem_mapping(void)
- =09probe_page_size_mask();
- =09setup_pcid();
-=20
-+=09if (cpu_feature_enabled(X86_FEATURE_LAM) && IS_ENABLED(CONFIG_KASAN_SW_=
-TAGS))
-+=09=09cr4_set_bits_and_update_boot(X86_CR4_LAM_SUP);
-+
- #ifdef CONFIG_X86_64
- =09end =3D max_pfn << PAGE_SHIFT;
- #else
---=20
-2.51.0
+-- Steve
 
 
+> +		 *  2) A previous rescheduling request resulted in a slice
+> +		 *     extension grant.
+> +		 */
+> +		if (unlikely(work_pending || state.granted)) {
+> +			/* Clear user control unconditionally. No point for checking */
+> +			unsafe_put_user(0U, &rseq->slice_ctrl.all, efault);
+> +			rseq_slice_clear_grant(curr);
+> +			return false;
+> +		}
+> +
+> +		unsafe_get_user(usr_ctrl.all, &rseq->slice_ctrl.all, efault);
+> +		if (likely(!(usr_ctrl.request)))
+> +			return false;
+> +
+> +		/* Grant the slice extention */
+> +		usr_ctrl.request = 0;
+> +		usr_ctrl.granted = 1;
+> +		unsafe_put_user(usr_ctrl.all, &rseq->slice_ctrl.all, efault);
+> +	}
+> +
 
