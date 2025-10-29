@@ -1,113 +1,168 @@
-Return-Path: <linux-kernel+bounces-876663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5EAC1C02D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:19:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD0BC1C19B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05EE4661AF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:10:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 262B9588DE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E6D2C237F;
-	Wed, 29 Oct 2025 16:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afGpRvZ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE0734A76D;
+	Wed, 29 Oct 2025 16:08:23 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9E31DEFE0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393433375C3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754063; cv=none; b=hkybRnqjb5TtNV+fbKTFmoFvZV8E816N2MbWXMoBdFoXOu3VGmw3pAECItOslHIVGoaPw7j6atWEctoIP4jYoKvQscqu8Prh6BokbAAqFFTopwXHPjiXFIhl5EUxHIF7VDVetDV1xXoJQrBD1ibnHagNSN5hazqVaCDRhG/1BQE=
+	t=1761754103; cv=none; b=ithNrnvdg9EwBK9lN8EtIqT/7AjXmMNLTwwvhMxLaihKXEB7k0O5mGKBYIEInzm1iWXnBpA/OQhwzU7HZ194XeYpfXttZxaDrOAKMsiTRuTBsBbOmh+iYWa1DPtq/K4It5mroX03rPk53DJFFB00rO5sqL+wDvw+ThAMxLArKsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754063; c=relaxed/simple;
-	bh=F5+Hw1BLHdd/jOpifshQgHGM/MjPHsTkf301Hl25/QM=;
+	s=arc-20240116; t=1761754103; c=relaxed/simple;
+	bh=x7hF+/Cp6WC101sN6xlMTM+BgF2Pmoe9fIFD9LQyyDE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NbPtRIysF2gkYNi5t+8aSZGBUXEs285Z8KFq6hgKi2QK6GYd+0nmw0AqZECyYs3XcviN9m97jbbvJKakSIg2/k6ES9IPOf/0qZtO1efwKIk6x/WpklKnKhaqCi+vNyDmenp5mCh8qw18y90hfgLOgOBTVOtx38x3eU51Ww48DQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afGpRvZ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B173C116C6
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:07:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761754063;
-	bh=F5+Hw1BLHdd/jOpifshQgHGM/MjPHsTkf301Hl25/QM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=afGpRvZ+BUQkZZN4tAn6Zcb6yp4ha+EWuH1pLCq21d0CIqP0WvSHqBKMgs3gSN90C
-	 iy8GSuq1op3iwgoOo+mj3yoOsYkTZwNZeGW21ZH2Omw+hrppimrxKooIzMsgdUk1gi
-	 mE6BLNmdKG8y+Z7Gjxln6y6qWZfZvYyWlS4QKImEYKc6yj882iWelIUSG/QjHSdJQv
-	 8XAZtujQL7kCqLbBYe+YmESIwmhppcBWltjmj8fgLKzvaC4sL/RQ4hlYZe6rEmIyzu
-	 0xPu2m0xBa2whsslaK1p7JpGbN8pDSPJ2qfti5SjKyq/d7e5xS9aZ8gMdeotoOaIQ8
-	 GNMS22URwARsA==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-44d9d7aacc5so24696b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:07:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDndz+6oPjcAFb1KyV9hfVmoIzO/ntregs28aTRZAVVamPfI681lt3Te4KiJtVtEjiwdHHeJjFfCo+XfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKEyXLbIWqo4cN3QpJFmfIKFirhzj8Vz6MqVgkvEtR8ZQmya1q
-	CI39PpG8rNr0LQWqChLh0NPt5vj4dJ/GLMy92JNn9s/co6vcwHXIdRUSw3iCED3NafnblAwjyL1
-	uWHSkcapPpXoPIwYVEfXpx6G9yw3yS08=
-X-Google-Smtp-Source: AGHT+IEbzw7Oo24iBx/i5pLAvUOqV49daxyoxh0Zst0nRDhzzuj4dZSkbx+qzIQEpV908Ef4LcFLiMCpaQk0k3UlWJo=
-X-Received: by 2002:a05:6808:2225:b0:43b:426b:fbeb with SMTP id
- 5614622812f47-44f7a7a9e93mr1512151b6e.27.1761754062653; Wed, 29 Oct 2025
- 09:07:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=NJ8Pu6cAGREBo1MXCuS2o5nBhcOnvBIr5cb+k9hWoGEzcj/EUvV1hxEzZjWYF/UseSxuQBwkspxFWLf7lw4eCDKG19OqaOXXO+4RzwMAKTdL+FvjKdwLJFYVwWlj7avyP1/2kt4JAtrulRYzfSUmABIHwqNPUuauARLyINgs4bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-932e6d498b2so17053241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:08:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761754100; x=1762358900;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N/ipYGthC0MioeorbLHvDmgjrqF5uNCNGBSSRMGKMZ4=;
+        b=EWsgBmnbNVIhXdRbgyAzZg+GiliNgd2+1UxdApVqZIkqLbEfXHUFFpopr31giY3q4d
+         Tnvbjey/F94NKtoaBKerYhibzJSh6EYhGbWN5qLCdnnvLz0vR47q6LDLgibZSLKgd8Kr
+         pueF1EVWMvz4kPtYRUSMOEV+iDkQyvvrqw6Yfd1t6rQAYuE6gEaMAH+Fz9WI246vEBlJ
+         HkgBkYJDVrRPw2TfYJWcV7lLBfWLLd6GOSDq00jJoAjFZM9Tho1kWOWP6tLGY1mHfNwL
+         35i3hWa7w6GqYo0eYEKvg5RG156PD62oMa/oXncJAi7mo+johYBJPAVm745jVz1gDqpd
+         +qIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXr61arKzH1qBSfxIo1KkYQuGer1cqLYmxnLhl3qyGAZY3Mfx8KtLdFSw9NeRTOWd+iuvyTV3fk3XDks7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsJ6zEBlopRZ0wNzOxstl6UPaCx5UEIxKAyq4USJrIj4V2K72q
+	KHZZq9fueYiZKdxBGr9JS7IybFctm98MVt3YRZt3uWggD+DB+NsHyTlcH6SBryNS
+X-Gm-Gg: ASbGncv7nDbJnxM8WAqibh5MH3/+Vhs8EehtX26yul+RJekuE/tuAFIf4aV079fWaM2
+	VgtgCLw9Dr3Ec/ZG4quX8dvV9YAggMh96xHX+WCgXjDGX6Fzu81nIWw/uk4yGR8xw2bQP+CbBES
+	lcIwxv/kITr7pJOSBLwLjFMqlTshHRg14PBGskIBRuMdrUpYIC5S2othA0pI4dRwGscmYAQgofy
+	T+hNfK491Pn+kBumOsI7fxgjyAGVSc5xsI7RbIk/Z7YbBm3R1qoLG89riuuti5hiPC4dHvSSIMs
+	YldiLnmRVQRCt5s7hGByLZCJdE5sAr4mhSG5niYcDQRqFlXgHfMtMQRehkCR+G+T+7ip5m8PDuS
+	cgixruBr1ELUsLyPA/SwYaYDq/Adrf/B6f3Veyp1teP7Z6FnKJjtnKRoOPAZEdh51vk4GlZPW5U
+	2bUqX8s9YvpKve1SvwkoHtlrp7w29+py5kwShkB25ZFA==
+X-Google-Smtp-Source: AGHT+IHPCMFQHp+1a4YBpnT+qYh4Q1NRi+td/1NNIy8w/84dHSKD1WfD+W8YnSWHchQbWBcHnSw/5g==
+X-Received: by 2002:a05:6102:508a:b0:5d5:f40d:28cc with SMTP id ada2fe7eead31-5db906b7df3mr1443029137.34.1761754099752;
+        Wed, 29 Oct 2025 09:08:19 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db4e570631sm5108771137.11.2025.10.29.09.08.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 09:08:18 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-932c42aaf14so8409241.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:08:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXvbPxnDSPUUZcbTQE0fWoOhxQ1VG5f5zRB54T/IPeXPb3KdO4rsiNO4ua5zdj+gWWenlystXB1z1bUPI=@vger.kernel.org
+X-Received: by 2002:a05:6102:4a89:b0:5d6:1564:d7f1 with SMTP id
+ ada2fe7eead31-5db906b8f37mr1467931137.36.1761754098557; Wed, 29 Oct 2025
+ 09:08:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5935682.DvuYhMxLoT@rafael.j.wysocki> <4dd9d86f-7c20-40fa-838c-b7634bbebf9a@kernel.org>
-In-Reply-To: <4dd9d86f-7c20-40fa-838c-b7634bbebf9a@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 29 Oct 2025 17:07:31 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hXFtCcon6uBfjXVtst=zDQ6_o-O3aBt4-SH_auw0YBEg@mail.gmail.com>
-X-Gm-Features: AWmQ_blvJ_9P1rUGl3893iYEqZa5Dq74kJVWCTqPKMtbs9EWSV31Imp3LVTF2qc
-Message-ID: <CAJZ5v0hXFtCcon6uBfjXVtst=zDQ6_o-O3aBt4-SH_auw0YBEg@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: sleep: Allow pm_restrict_gfp_mask() stacking
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Askar Safin <safinaskar@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+References: <20251027004816.562965-1-den@valinux.co.jp>
+In-Reply-To: <20251027004816.562965-1-den@valinux.co.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Oct 2025 17:08:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVtR_8OZG2XrD5PHY+ybaH4dudya4VXNXD3iHktdDyF8w@mail.gmail.com>
+X-Gm-Features: AWmQ_blrV7P_F3R16HOIrRem1UqE4h3nEa2JhxUtyuN9Q8vEJnpLXJhqDTLYNJo
+Message-ID: <CAMuHMdVtR_8OZG2XrD5PHY+ybaH4dudya4VXNXD3iHktdDyF8w@mail.gmail.com>
+Subject: Re: [PATCH] iommu: ipmmu-vmsa: Add DMA controllers to devices_allowlist
+To: Koichiro Den <den@valinux.co.jp>
+Cc: iommu@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, joro@8bytes.org, will@kernel.org, 
+	robin.murphy@arm.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 4:22=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
-rg> wrote:
->
-> On 10/28/25 3:52 PM, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Allow pm_restrict_gfp_mask() to be called many times in a row to avoid
-> > issues with calling dpm_suspend_start() when the GFP mask has been
-> > already restricted.
-> >
-> > Only the first invocation of pm_restrict_gfp_mask() will actually
-> > restrict the GFP mask and the subsequent calls will warn if there is
-> > a mismatch between the expected allowed GFP mask and the actual one.
-> >
-> > Moreover, if pm_restrict_gfp_mask() is called many times in a row,
-> > pm_restore_gfp_mask() needs to be called matching number of times in
-> > a row to actually restore the GFP mask.  Calling it when the GFP mask
-> > has not been restricted will cause it to warn.
-> >
-> > This is necessary for the GFP mask restriction starting in
-> > hibernation_snapshot() to continue throughout the entire hibernation
-> > flow until it completes or it is aborted (either by a wakeup event or
-> > by an error).
-> >
-> > Fixes: 449c9c02537a1 ("PM: hibernate: Restrict GFP mask in hibernation_=
-snapshot()")
-> > Fixes: 469d80a3712c ("PM: hibernate: Fix hybrid-sleep")
-> > Reported-by: Askar Safin <safinaskar@gmail.com>
-> > Closes: https://lore.kernel.org/linux-pm/20251025050812.421905-1-safina=
-skar@gmail.com/
-> > Link: https://lore.kernel.org/linux-pm/20251028111730.2261404-1-safinas=
-kar@gmail.com/
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Great idea.  Looks good to me, and it passes the S4 tests on my side.
->
-> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
-> Tested-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Hi Den-san,
 
-Great, thanks!
+On Mon, 27 Oct 2025 at 02:26, Koichiro Den <den@valinux.co.jp> wrote:
+> Add Renesas DMA controller devices to the devices_allowlist to enable
+> their use with the IPMMU. This allows DMA channels to operate through
+> the IOMMU when enabled.
+>
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+
+Thanks for your patch!
+
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -741,7 +741,9 @@ static const char * const devices_allowlist[] = {
+>         "ee100000.mmc",
+>         "ee120000.mmc",
+>         "ee140000.mmc",
+> -       "ee160000.mmc"
+> +       "ee160000.mmc",
+> +       "e7350000.dma-controller",
+> +       "e7351000.dma-controller"
+
+While your change looks correct to me, it causes DMA mapping failures on
+Gray Hawk Single and Sparrow Hawk when IPMMU support is enabled
+(on renesas-drivers-2025-10-28-v6.18-rc3 with renesas_defconfig
++ CONFIG_IPMMU_VMSA=y):
+
+    rcar-dmac e7351000.dma-controller: chan1: failed to map 1@0x00000000e656000c
+    sh-sci e6560000.serial: Failed preparing Tx DMA descriptor
+
+0xe656000c = HSCIF2 Transmit FIFO data register.
+
+With "#define DEBUG" added to drivers/dma/sh/rcar-dmac.c:
+
+    rcar-dmac e7351000.dma-controller: chan1: failed to map 1@0x00000000e656000c
+    sh-sci e6560000.serial: Failed preparing Tx DMA descriptor
+    rcar-dmac e7351000.dma-controller: chan2: map 1@0x00000000e6560014
+to 0x00000000fff82014 dir: DMA_TO_DEVICE
+    rcar-dmac e7351000.dma-controller: chan2: chunk
+00000000e5110c20/000000005e0ede90 sgl 0@000000000d8c5440, 256/256
+0x00000000fff82014 -> 0x00000000ffed6000
+    rcar-dmac e7351000.dma-controller: chan2: submit #2@000000005e0ede90
+    rcar-dmac e7351000.dma-controller: chan2: chunk
+0000000025f2f66c/00000000e5f0dd15 sgl 0@0000000064f1067f, 256/256
+0x00000000fff82014 -> 0x00000000ffed6100
+    rcar-dmac e7351000.dma-controller: chan2: submit #3@00000000e5f0dd15
+    rcar-dmac e7351000.dma-controller: chan2: queue chunk
+00000000e5110c20: 256@0x00000000fff82014 -> 0x00000000ffed6000
+
+0xe6560014 = HSCIF2 Receive FIFO data register
+
+Comparing to the CONFIG_IPMMU_VMSA=n case:
+
+    rcar-dmac e7351000.dma-controller: chan1: map 1@0x00000000e656000c
+to 0x00000000e656000c dir: DMA_FROM_DEVICE
+    rcar-dmac e7351000.dma-controller: chan1: chunk
+0000000096396eb4/00000000f35357b6 sgl 0@0000000013546bf6, 74/74
+0x0000000489ab5000 -> 0x00000000e656000c
+    rcar-dmac e7351000.dma-controller: chan1: submit #2@00000000f35357b6
+    rcar-dmac e7351000.dma-controller: chan1: queue chunk
+0000000096396eb4: 74@0x0000000489ab5000 -> 0x00000000e656000c
+
+This confuses me even more: why no DMA_TO_DEVICE mapping in the
+latter case?
+
+>  };
+>
+>  static bool ipmmu_device_is_allowed(struct device *dev)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
