@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-876283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6D0C1B86B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:04:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249C5C1B1EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B5C584CCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:00:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B0CA5C07E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A6B348890;
-	Wed, 29 Oct 2025 13:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0415344035;
+	Wed, 29 Oct 2025 13:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gq+jSTUI"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jpkJTtEK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546E9348440;
-	Wed, 29 Oct 2025 13:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DB633F38B;
+	Wed, 29 Oct 2025 13:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745977; cv=none; b=LuYLi0CtqoJg4AU/uX1ifyEI1wR9UGNpbzOnu/lQJtlrv4LTxC5Mf7ADQSV9Txfv/3lADiHn4ZEAe3Xg05+Rv3UGu9agzFa5GmU+tjX1382eg5Jkbd4cYfDQjw4i6hwCg9EtrrjDAacoCpMB32Qz3CTxpQWFydT6CeD8dIBx9Zw=
+	t=1761745971; cv=none; b=FRnFKhuP6tSyyTTtfdfWGgncfrn4kt5H9j+1NVyaHUSUsnL8+lolkdnuTdXPpq9XDn+YubmuliXZOVRdeTXFHIrj8QA4/1l329YZfamRS42Ow3/wyEUvZZ4engeDywjBSazgdUzxL9aA1Fs+ZW5eKvgmd2LlzT/1mfxdZB8e/iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745977; c=relaxed/simple;
-	bh=15E47hyvmQPrJWkj4LYQAs5VLKJP00bGmfww35DXTcY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aM3yDVUUKwWtdMw+FNeiWLhbqMzGQa/40IiiFq2iWHSEZ+X+yimsD3WJ+rQ4wfcr577cWiDupUSkvDLapLqQ58CZ4V85ivxLYULZmdU3eIO+JTfa5DHawpWv6O18ekFle8eb+1y20FpdCBPjoeWOocL4NR46AkIxPNnWizbKQIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gq+jSTUI; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id CEA56C0DBC0;
-	Wed, 29 Oct 2025 13:52:34 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 31054606E8;
-	Wed, 29 Oct 2025 13:52:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 424AD117F80F6;
-	Wed, 29 Oct 2025 14:52:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761745973; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=nw7naf5mx2NiW6CLXgmCEx5KgfTcyto6pFTnj3WONc8=;
-	b=Gq+jSTUINZ6XlvlSrzSTxwqdQLzlsNjbS2OYxyl+ZIK8hc7aZGNKHS4lJ7Q12aUYlT9Cx8
-	gHj3X3KG8Au2wX7qZv+7lU1RGPkc/hWMBfKQy7jw60CpTyqCrd9n6RvQPFaP8AaVxKvr0U
-	5YuKlzUnuws8CricpWVrwz70NKzcyqrwYoEIqASM0Sv35X86Ypt3hiQFHhkCcduszVW8Le
-	bsF9YJ2dPYhc7vcMFa3pv5dNXUPcGLIoUWQH+gq/F1eCwInc0jpush/pkV7/H+299QbYBZ
-	DvmiyGjADjQrir41ek5APwAAI/9ufFwt1CvBC4DuqRtZgIKgzjN89MXfcHHo8A==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Wed, 29 Oct 2025 14:52:28 +0100
-Subject: [PATCH bpf-next v6 07/15] selftests/bpf: test_xsk: Release
- resources when swap fails
+	s=arc-20240116; t=1761745971; c=relaxed/simple;
+	bh=uEzEVMAmlZ1UdzJzRdCeu/dkCEkm209uPwJYmbUO1aM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MjP4ql4IF+5toGK1OLYFfU5+eMt/deqkTIMe1iVFhKdT40GNazeAisguMDtx7rb0Ch169PThMG5ANCC48JypAC+PumJLgClP2X55ccqJYEnSlXzpISDXO0J/z9mxe//laG7kp6KV0KuMnaW4RDpYxKI9dvjbChpi9pbK892ACHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jpkJTtEK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761745969; x=1793281969;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=uEzEVMAmlZ1UdzJzRdCeu/dkCEkm209uPwJYmbUO1aM=;
+  b=jpkJTtEKRrjv6H/rZqlKOzXu3MH6D37YTcrLroUU92iuy54pWG7t4Rbq
+   rF4f4iR4SXeDDvVQIqu6PC1izKg/elHpQHKvrapmdOiRxZ/PRfeoq2U6H
+   2SoKwzGUSJr6mr+xuqKg3veEj2M3r00oNfoENs2ssrYDcjfMOOCjGXgC3
+   eKYAVZx3ong0/bA3prDMHrY79YjeH5hIsCXCcLlSvb89Mnx+7EP+3wwj1
+   KxvQbwT7K8d06JMjNwX2zKeDKRFWbspc4YMJf6U69viD2sXA9uQjLN/CE
+   g68tNkSz4FvkNB2D+huItb5MkpXF4mTz5tF9IJVpbHQ5hTTMsS/0JzrG2
+   g==;
+X-CSE-ConnectionGUID: Ndb5QhUTTaCw6/LNJy2jvg==
+X-CSE-MsgGUID: wcckYlNlRaatf6ELQtbVog==
+X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="81496241"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="81496241"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 06:52:32 -0700
+X-CSE-ConnectionGUID: Gn0zPnNTRW61Baw4/cfMHg==
+X-CSE-MsgGUID: SMOIUL2yRIOvr/1nYT1qkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="185371315"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO [10.245.245.23]) ([10.245.245.23])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 06:52:30 -0700
+Message-ID: <094a2124-f6c9-4510-b7ec-8df872882a7d@intel.com>
+Date: Wed, 29 Oct 2025 15:52:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT PATCH v3] xhci: sideband: Fix race condition in sideband
+ unregister
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: uttkarsh.aggarwal@oss.qualcomm.com, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, wesley.cheng@oss.qualcomm.com
+References: <2025102948-trickery-creative-417e@gregkh>
+ <20251029122436.375009-1-mathias.nyman@linux.intel.com>
+ <2025102956-daunting-roping-a987@gregkh>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@intel.com>
+In-Reply-To: <2025102956-daunting-roping-a987@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-xsk-v6-7-5a63a64dff98@bootlin.com>
-References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-In-Reply-To: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Magnus Karlsson <magnus.karlsson@intel.com>, 
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
- Jonathan Lemon <jonathan.lemon@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
 
-testapp_validate_traffic() doesn't release the sockets and the umem
-created by the threads if the test isn't currently in its last step.
-Thus, if the swap_xsk_resources() fails before the last step, the
-created resources aren't cleaned up.
+On 10/29/25 14:51, Greg KH wrote:
+> On Wed, Oct 29, 2025 at 02:24:35PM +0200, Mathias Nyman wrote:
+>> Uttkarsh Aggarwal observed a kernel panic during sideband un-register
+>> and found it was caused by a race condition between sideband unregister,
+>> and creating sideband interrupters.
+>> The issue occurrs when thread T1 runs uaudio_disconnect() and released
+>> sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
+>> the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
+>> a crash.
+>>
+>> Ensure new endpoints or interrupter can't be added to a sidenband after
+>> xhci_sideband_unregister() cleared the existing ones, and unlocked the
+>> sideband mutex.
+>> Reorganize code so that mutex is only taken and released once in
+>> xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
+>>
+>> Use mutex guards to reduce human unlock errors in code
+>>
+>> Refuse to add endpoints or interrupter if sb->vdev is not set.
+>> sb->vdev is set when sideband is created and registered.
+>>
+>> Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
+>> Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
+>> Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
+>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>> ---
+> 
+> Looks good, thanks for respinning this.  I don't know if it fixes the
+> issue, but it looks sane :)
+> 
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Clean the sockets and the umem in case of swap_xsk_resources() failure.
+Thanks for reviewing this.
 
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/test_xsk.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I don't have the hardware to test this myself either
 
-diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
-index 84b724731e26d0c7e67131ec1bd562e223d3d09d..8fe75845d7a6aa5342229fa419fcbaa411ae9e70 100644
---- a/tools/testing/selftests/bpf/test_xsk.c
-+++ b/tools/testing/selftests/bpf/test_xsk.c
-@@ -1866,8 +1866,13 @@ int testapp_xdp_prog_cleanup(struct test_spec *test)
- 	if (testapp_validate_traffic(test))
- 		return TEST_FAILURE;
- 
--	if (swap_xsk_resources(test))
-+	if (swap_xsk_resources(test)) {
-+		clean_sockets(test, test->ifobj_rx);
-+		clean_sockets(test, test->ifobj_tx);
-+		clean_umem(test, test->ifobj_rx, test->ifobj_tx);
- 		return TEST_FAILURE;
-+	}
-+
- 	return testapp_validate_traffic(test);
- }
- 
-
--- 
-2.51.0
-
+Thanks
+Mathias
 
