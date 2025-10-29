@@ -1,83 +1,156 @@
-Return-Path: <linux-kernel+bounces-876352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E50C1B47C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:38:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32D7C1B44E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211F71894443
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C421A24839
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA629B8F8;
-	Wed, 29 Oct 2025 14:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EF33314C8;
+	Wed, 29 Oct 2025 14:26:57 +0000 (UTC)
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1530F27B353;
-	Wed, 29 Oct 2025 14:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6E332A3D8;
+	Wed, 29 Oct 2025 14:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748013; cv=none; b=ChuhmQA2AzG+6ZPzJTlqRL51LQkBlV2oHEDzStCLWXJr63Wywc92y3hAdIEIloYf9/KVLYKJ7WQhpSZx/cSjSEMFxBQWBJv/mvxo5yW3af5KJUISZSzJRunh+uNlb61Mcj8M4/2u4eTXOn6XctIW2g0IBMl/l4cUZy4sSMl2svk=
+	t=1761748016; cv=none; b=FsCr0Dq2tmqFUNmd4gAaliq5HYRdCn74xwABSMtMyzirKlA9PASUaiyzREZxWGxParyijdHkPmqqLVFZtD21U0QxvaLXTL0+jMmStgzjKzhMDcpo90igsDqQoFYlDsmBAf3926aCy1Hz2p+8E7dDKd9GSv/YnAHnt5p0xgIPxCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748013; c=relaxed/simple;
-	bh=NVqYGgr6qdo986oUW8Ip5NNWWkRzmFjH5+Nm6cQ701k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N5OGKWinUoIUZ+Cki01Hq1zMke3JEqmsnOxLV0OYBvF95tJ7vaCIq9RyKq4o2ldf6tuKDq+wkZ7jea57U1OjEx/3+QzWM5Y5gzHE+FPF2EZ7qCrSCRV/38qcNjKhqeAT6a5UAAj/cDKgqHwAb5F0Vjnt12XJ56ED/1ozdIbeTIY=
+	s=arc-20240116; t=1761748016; c=relaxed/simple;
+	bh=gjfvwBmM6WTCHadbPAzKhJOs5Dx0xvLh0oPHOjl1n4c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o6o+PvKojCM0lvL99G8r3CIAa1GlRwLvLKL2ZmD7cGnYQ+vzcYe2nzNWxUtew75iLuGY105sz4rMtiDUyRFXIFD6DP0+7R3Zy+tVL+fAu2AZanLwumvJjn+qCXTdTzgN6NOMUG16r6k2rBkPRS3WHGF6ydTTsXjzjJMJJ1oeJ6M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 59TEQUhB080378
+	by Atcsqr.andestech.com with ESMTPS id 59TEQW7W080421
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Wed, 29 Oct 2025 22:26:30 +0800 (+08)
+	Wed, 29 Oct 2025 22:26:33 +0800 (+08)
 	(envelope-from cl634@andestech.com)
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
  (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 29 Oct
- 2025 22:26:30 +0800
+ 2025 22:26:33 +0800
 From: CL Wang <cl634@andestech.com>
 To: <cl634@andestech.com>, <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
         <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <tim609@andestech.com>
-Subject: [PATCH V2 0/2] dmaengine: atcdmac300: Add Andes ATCDMAC300 DMA driver
-Date: Wed, 29 Oct 2025 22:26:19 +0800
-Message-ID: <20251029142621.4170368-1-cl634@andestech.com>
+Subject: [PATCH V2 1/2] dt-bindings: dmaengine: Add support for ATCDMAC300 DMA engine
+Date: Wed, 29 Oct 2025 22:26:20 +0800
+Message-ID: <20251029142621.4170368-2-cl634@andestech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251029142621.4170368-1-cl634@andestech.com>
+References: <20251029142621.4170368-1-cl634@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
  ATCPCS34.andestech.com (10.0.1.134)
 X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 59TEQUhB080378
+X-MAIL:Atcsqr.andestech.com 59TEQW7W080421
 
-This patch series adds support for the Andes ATCDMAC300 DMA controller. 
-Please kindly review.
+Document devicetree bindings for Andes ATCDMAC300 DMA engine
 
-CL Wang (2):
-  dt-bindings: dmaengine: Add support for ATCDMAC300 DMA engine
-  dmaengine: atcdmac300: Add driver for Andes ATCDMAC300 DMA controller
+Signed-off-by: CL Wang <cl634@andestech.com>
 
- .../bindings/dma/andestech,qilai-dma.yaml     |   51 +
- MAINTAINERS                                   |    6 +
- drivers/dma/Kconfig                           |   12 +
- drivers/dma/Makefile                          |    1 +
- drivers/dma/atcdmac300.c                      | 1556 +++++++++++++++++
- drivers/dma/atcdmac300.h                      |  276 +++
- 6 files changed, 1902 insertions(+)
+---
+Changes for v2:
+ - Add platform-specific compatible string "andestech,qilai-dma" and
+   remove "andestech,atcdmac300".
+---
+ .../bindings/dma/andestech,qilai-dma.yaml     | 51 +++++++++++++++++++
+ MAINTAINERS                                   |  6 +++
+ 2 files changed, 57 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/dma/andestech,qilai-dma.yaml
- create mode 100644 drivers/dma/atcdmac300.c
- create mode 100644 drivers/dma/atcdmac300.h
 
+diff --git a/Documentation/devicetree/bindings/dma/andestech,qilai-dma.yaml b/Documentation/devicetree/bindings/dma/andestech,qilai-dma.yaml
+new file mode 100644
+index 000000000000..c7158e4f4639
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/andestech,qilai-dma.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/andestech,qilai-dma.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Andes ATCDMAC300 DMA Controller
++
++maintainers:
++  - CL Wang <cl634@andestech.com>
++
++allOf:
++  - $ref: dma-controller.yaml#
++
++properties:
++  compatible:
++    const: andestech,qilai-dma
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  "#dma-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - "#dma-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        dma-controller@f0c00000 {
++            compatible = "andestech,qilai-dma";
++            reg = <0x0 0xf0c00000 0x0 0x1000>;
++            interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
++            #dma-cells = <1>;
++        };
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa4..e0b9ef522139 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1778,6 +1778,12 @@ S:	Supported
+ F:	drivers/clk/analogbits/*
+ F:	include/linux/clk/analogbits*
+ 
++ANDES DMA DRIVER
++M:	CL Wang <cl634@andestech.com>
++S:	Supported
++F:	Documentation/devicetree/bindings/dma/andestech,qilai-dma.yaml
++F:	drivers/dma/atcdmac300*
++
+ ANDROID DRIVERS
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ M:	Arve Hjønnevåg <arve@android.com>
 -- 
 2.34.1
 
