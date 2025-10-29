@@ -1,208 +1,247 @@
-Return-Path: <linux-kernel+bounces-875241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54C3C18822
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:42:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398FEC1880D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C83864F55B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE353B7F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096AA3002A2;
-	Wed, 29 Oct 2025 06:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE2C304BA6;
+	Wed, 29 Oct 2025 06:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mm1NGnvw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="aDgJWGIf";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="avNz6rCO"
+Received: from esa10.fujitsucc.c3s2.iphmx.com (esa10.fujitsucc.c3s2.iphmx.com [68.232.159.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD672DF150;
-	Wed, 29 Oct 2025 06:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761719789; cv=none; b=Nj4IMqMemJCNyBoW9kePkZ2J9bKUeWUcLDsNvKFkufBhV4bXELlpP3FwpHOz/gJiSmo/RwQlNp9O3zrrp4GNhMfw43GkIrFGMjty7p/aUO8Vl9bWjfGvuyo3iZU4xvsUf4BtxjJzaq1b7Gap4lXqXz4cr9cdAnT1aeGICCBoTEc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761719789; c=relaxed/simple;
-	bh=WNnAmhwlx40aNbjPNZczFIlXDgGStQn+ZMQ4hZlelHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGIBHNA05ANFPVCA02RqlI0ls21SE/gZEEuYpNAsN1EwUosEvpR6O7PoKGiI0lGuacRUFkAKJpgUJwu9xqxOl0F0xeq3g35JGzxm8NDwzTYz6CHcDcxAu34OdvJ5EzITn4t0XPEQqYd5jxRthjFEOdDVnkIx58yECoJcp9e6pbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mm1NGnvw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SJmbUO009639;
-	Wed, 29 Oct 2025 06:36:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=y+kv7cMQAg6KlRyaeg7zt8XhWeI/Fd
-	/0GhDkdgTi094=; b=Mm1NGnvwhugMYlqLQnWOIMULw5ECPTaU8bc79c8l/2k5KA
-	Vo7xOCmOgNJPUeB7zGvrPGjcmjGZTU1Fo8I3KBfq4W8rMyz1WWFuoIYYAEfjmGAN
-	IHWzuTPje3MElIjiNYGM1Govdmqogt17j2/GChMB1whoRlN1o7qZXaGJ4BRZoU00
-	23q+cPzwDPy6mpfmrZAIFdvsfo2R3Y71Hf15W/OGwDS3kyqeRxcqg2swIHPQ51Sj
-	ZShsbOQvmjmlfe8qaL44uM750AHS1MEbV7aeG1uqG/OwRWaZuZnZ/A1TgPRG/qOS
-	+mJunkeOA2V8GqG4Q+w78ANmUGENfI/tz+Pma0PA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34af9uxy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 06:36:08 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59T5EHLC030747;
-	Wed, 29 Oct 2025 06:36:07 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a33wwj0xd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 06:36:06 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59T6a2oG24641842
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Oct 2025 06:36:03 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C979320043;
-	Wed, 29 Oct 2025 06:36:02 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 029E520040;
-	Wed, 29 Oct 2025 06:36:02 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.0.181])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 29 Oct 2025 06:36:01 +0000 (GMT)
-Date: Wed, 29 Oct 2025 07:36:00 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Luiz Capitulino <luizcap@redhat.com>
-Cc: hca@linux.ibm.com, borntraeger@linux.ibm.com, joao.m.martins@oracle.com,
-        mike.kravetz@oracle.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-s390@vger.kernel.org, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, osalvador@suse.de,
-        akpm@linux-foundation.org, david@redhat.com, aneesh.kumar@kernel.org
-Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
-Message-ID: <41170067-dcb9-4aa1-a5fe-0cbee6af02df-agordeev@linux.ibm.com>
-References: <20251028211533.47694-1-luizcap@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47DD2857EF;
+	Wed, 29 Oct 2025 06:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.159.247
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761719933; cv=fail; b=p3YwxleOCpLtGdsXft8qJpjD691zaBZEqHF7ybdr0yVz2uc2v+vshtOGICOitSAeM69G77GwXmz9hZDDOrD9AUJaXAZxRO+K00SnR805+Fgid0dHliyrvg48E/5i6VrSnkyELmi5o15CxnCYMf1M4GtjMEJgsNLqPPLc0YUAkBw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761719933; c=relaxed/simple;
+	bh=28wuD96Swf/MV4rk7nhrAy0ztt3VM4aC/x32KeEkPxo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QoKmkHGTqw4iZsKwVNKUTR5ZORwmicrP+8f0eRdLxcmIwSRYBRXpiY0xiX9rfEI29R9N6d9Lumqgrj8dTP6SB8HxgAwd9KzGebEQ0eTC/RouwQ2l5Ezcqh5dByLOUWjZk3VctnHPE/jIjL1NdT2spp6PvVblMZWPIYGpuri6Qo0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=aDgJWGIf; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=avNz6rCO; arc=fail smtp.client-ip=68.232.159.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1761719931; x=1793255931;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=28wuD96Swf/MV4rk7nhrAy0ztt3VM4aC/x32KeEkPxo=;
+  b=aDgJWGIfgkbMO6cxZmhO6V6hwbLpDDRCMXRfDmtrcPdGEOqO4aMuy6eZ
+   yuuGxD9U+9FnN1fLiiG6P2pYmBWbI2kXSnUOTXEPxjCnU7OsvDlr4369X
+   MvEP83Kwml+wVq3IUnyxSdcMu7PBNTasyvMjObeLKkO/WOgqIpMD9fBBW
+   Ba2cRzNmd6bmqQUORyEIM3Z9+1H0uFtDjd/Eu0v4pfMb6D1JFJ3TRxCTf
+   91vWbUqhv4AKHx0lJ0x6eUWREvE4/edLLzyfLU2Zzxo6NhYEYNJwJwP2Q
+   k9xOql3ctmS5PQsJN+pJ7EV3BqtsLW38JBdjM5r96unuIKbp117IlDsgI
+   A==;
+X-CSE-ConnectionGUID: PoyctTlpSvC7g/9YD+WZZA==
+X-CSE-MsgGUID: bJDjjKwuQEiF2BoXGmO9Lg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="172272625"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754924400"; 
+   d="scan'208";a="172272625"
+Received: from mail-japaneastazon11011021.outbound.protection.outlook.com (HELO TYVP286CU001.outbound.protection.outlook.com) ([52.101.125.21])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 15:37:30 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W1ytG/FnLsfGk58jm1lbqwjUU3jH7CZTvhJk6h2bPk5vqIrPFoCfbdapH8hzxukCO9JUfsuocvGZ1bS0CiF82kE2KeiLSTzipWLv4wYFD1cEfBlKjkRi0TZ9Ungkbh17Wd960NyMXXnke4I2NNbcpNPtkuqQC2IeJ5YWs6zX0V5TW04ntJxtEIo4wryIAGcVKqvWnnF1dc32eXToUXSdVrbvtRs5dmwTjET//hf//EiWLlxsMvwhE+5/92FxLk7VErmu6yjjI8RihgV/moksqsGL4+sqJs47qaMF5Ulg3B/TGN2Z7QIfD695Lep5tq1EbHRr/7cYXIyhQhxasG7XVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=28wuD96Swf/MV4rk7nhrAy0ztt3VM4aC/x32KeEkPxo=;
+ b=BYdw1ZG9TuI5XYXUDXlmlY8KWTxll0E7AJF1wRZooPZo817nJZbDd+TwlWzGrZFmM6FGy2ZmDNKdUr7+NoO1kmZCctgodDafhthUD7c4Zhe8f/1m8I7ch7H4fwFo+ZZn4ohTbd0MMrUca6G4zgaifqqo++JyemY4ZnXPWW+Z47CodRytJ/ALbeDB3zkseIFfQi0plCHtX63paiAXOpe1AcuJh4ikB/R7kcPLCfCngiTV6RFu5jwvPk5pQ8ETpOx5W9b2g9W1+KNosGnAiQCN1VMxXh48JRT9ro3fsS2ELm0OfhSOnyDJ6jlWdwo9fxrcFHJTRYpJkZeoPxYxpA/UlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=28wuD96Swf/MV4rk7nhrAy0ztt3VM4aC/x32KeEkPxo=;
+ b=avNz6rCOyv4Zc8FCOHobA95kz/U/1khonWrObyVwdvwD6Pp9mX4wJk1eIxf5oYk6WCSfG/4IeHNVegh8bMyRTuXNPItwqEibmqEtjHzj2A+LjU5AZ6oRzC7a9HuFvKNes9ho4laujzTaAF1LhRFPisQnNAVl4tzTRkAvbsE7b2hUZj2ErTTgQU0Kcwszquq0ljdt7x3QGllYwPXzHKAVqEuQf2uI0C9jvG1+LV63ctZx35qFEEj0nqQAtIPIETSaqPwyaWIoYsC0S/sruN6I1GUgk7aNPhd9B9QMMQ6I9Gmmn5fw8FZUhIm+fgC5Vn7iTgdtATyu5naSr4t0CLn9Ww==
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
+ by TYRPR01MB15811.jpnprd01.prod.outlook.com (2603:1096:405:2c6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 06:37:27 +0000
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 06:37:26 +0000
+From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+To: 'James Morse' <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: D Scott Phillips OS <scott@os.amperecomputing.com>,
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+	"lcherian@marvell.com" <lcherian@marvell.com>, "bobo.shaobowang@huawei.com"
+	<bobo.shaobowang@huawei.com>, "baolin.wang@linux.alibaba.com"
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, "peternewman@google.com" <peternewman@google.com>,
+	"dfustini@baylibre.com" <dfustini@baylibre.com>, "amitsinght@marvell.com"
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Dave Martin
+	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
+	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, Rohit Mathew
+	<rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown
+	<lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Jeremy
+ Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>, Ben Horgan
+	<ben.horgan@arm.com>
+Subject: RE: [PATCH v3 09/29] arm_mpam: Add MPAM MSC register layout
+ definitions
+Thread-Topic: [PATCH v3 09/29] arm_mpam: Add MPAM MSC register layout
+ definitions
+Thread-Index: AQHcP5f2KprRKtAGMU2BCmMb3lXnDLTYvYbg
+Date: Wed, 29 Oct 2025 06:37:26 +0000
+Message-ID:
+ <OSZPR01MB879898BD78D9958439E8535B8BFAA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-10-james.morse@arm.com>
+In-Reply-To: <20251017185645.26604-10-james.morse@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=0cbe2321-afac-4095-8a5c-9e8016be78fb;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-10-29T06:36:28Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|TYRPR01MB15811:EE_
+x-ms-office365-filtering-correlation-id: 92bb300e-674a-4e65-7977-08de16b5a060
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|1580799027|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?VFBseVhyQ0Z1b2UrQnp2RVl4Y1RCTzJPZW9DNkpOTS9tbWR4c0lCbHN1?=
+ =?iso-2022-jp?B?OFAxaGZJYkxMK1k2bjVGVWVOTnduK1hsTlIzL0srZU5IdDZEc3FGS1gz?=
+ =?iso-2022-jp?B?SG4yYThXajRZdy9LK1hUbnJYbGszRHNjaHBRTzg3S1ZySVkyLzd2NHZn?=
+ =?iso-2022-jp?B?TVh2U2J5SHBUcFBjdWdidW94aGJhVFNKYVY3cmhONlBoaTlQQ0pMMnlM?=
+ =?iso-2022-jp?B?VTZSQmdwVVlITFNmRGxqQ3Q3VXh4a0VSSWVFeWw4RTUxOFc2aXl5WmJ3?=
+ =?iso-2022-jp?B?MVVQU014U0k0aFpEOUNLbURBMkxZR05mR1lxdkw3Z0tFVUlRamZ5TVhw?=
+ =?iso-2022-jp?B?WVNPR0pDMi9LY09jcVNUUVZlNFNLWVhjTHlUNTBsU09TU20wamtTbTJQ?=
+ =?iso-2022-jp?B?MTcvSXlvaXRMZ2ZGTEpkczFyR0RUOCtPZnpEVGsyMzlxa2xzV0Vna0Ev?=
+ =?iso-2022-jp?B?TkI1MGtZejlIUXBLQlIrV3N1QUh6QVBPZFYzeVhXQjNwdmVGY00zNzdW?=
+ =?iso-2022-jp?B?YU1RSUtCM3lQSGdzdW9nR3p1bEdUekVTc0I5M3dkb0NiaEk4R0Fsbmdk?=
+ =?iso-2022-jp?B?OGIyby9HVXpsUXBDS3dIeFIxRk4ySm5ZMi93TU1yUVlBWUJldTZFdmY0?=
+ =?iso-2022-jp?B?bDY2T2o3WmZUWWR5bGlKbHlqRVArRWJMU2VKWWtrVFlROVUxc2dzcW05?=
+ =?iso-2022-jp?B?cHRWYlkxWXhyU29jUkg2NXFXcXdGV25KSm1uNG9hZGV1NUZFWTNvY0lS?=
+ =?iso-2022-jp?B?bGlvS2w3UGxBZ3V0ZzAzNXVzV0hyUStWK0FpTGpDNURkMXR2TU5EL3ds?=
+ =?iso-2022-jp?B?OTE3R3ovT21MN3lkTm1McFpmcmU0L1lqYmZxY0FzaC9ja094WHlMckF4?=
+ =?iso-2022-jp?B?YkU2RkQydGtFanl3ZjRDZFNmVVFlck55WExtUnhTVGNGcWlWdVlmRytB?=
+ =?iso-2022-jp?B?TlBCWWZiRTFEdTBXb2FsNW1vMVlVSEZwejJNRDVYQ3E1Lzh1NFlxc0hO?=
+ =?iso-2022-jp?B?U2hVZkxpeHJwNkpBekswOURmQU5teXVJN1poSUpZaFMrdG54c0pFaCt6?=
+ =?iso-2022-jp?B?SFpjc25HMllDblJhdXZiRUVod0toYVdmUXNLeFRUWFJ3Uk5XQ0gzaGVn?=
+ =?iso-2022-jp?B?clpPM25RSVRtMjBsdm5NSFJtWTRmajJhdjhzUnJhVjdKTGNxd1NDOFNr?=
+ =?iso-2022-jp?B?SXhySUlHTVNNRFNod0tQcnRueHVxZk0xZUs1eTB4M09sTjhBNWRlMHRE?=
+ =?iso-2022-jp?B?OHlZOVhUckhJVzdGUUtWdWFUTU5tb3AwSWdMMFdtVWJuRGJTSzZ6bC9p?=
+ =?iso-2022-jp?B?a2VSUmVlSmFNRFA1SE5qQmJKMlJqdXE2cjk5U3ZMY29ma0o5aVc4UDdN?=
+ =?iso-2022-jp?B?RmhHT3hDWjdFQXo0cG5MSElVZXNNdk5WK0FubnMreElsR0dTWWxJeVdj?=
+ =?iso-2022-jp?B?K1lqa2h3cjY4TllFYnAvWTltVWV4VnBWOUIvMVAvRTV5TzZyVUlla3Fr?=
+ =?iso-2022-jp?B?VVVVR0EzL2p0ckRWY2xuK0laeTdXYzZLUkRzYW9YWElPS2c1b3NtclJw?=
+ =?iso-2022-jp?B?Mmh5YkMxWktpSzk3MEJyTExLbThIVlBsQUtQWDJNQTJBbGxWV1ZHSS9l?=
+ =?iso-2022-jp?B?eUs3RGhBZzZieE5CQ3RWcCtHUzF0MDNOeTJsZXRSMnV4V0xwN2pqejFX?=
+ =?iso-2022-jp?B?a2NadmYxNUFUSlNZcWtIaUJPNmI1RjRyNG9oYVJnR3RKOE1TUGF1WkR3?=
+ =?iso-2022-jp?B?QS9Xb3ZNR1J5aS81NFZXNTc0aGtJc2hsRDNKczN6YTM0dS91MGl2bHNH?=
+ =?iso-2022-jp?B?dnpDV1NkSXZPbVNtS09ra0lpRHd5VjAyeEY2U29EUStFVkUzSUNDcjJh?=
+ =?iso-2022-jp?B?L1NzNGZVSUNZTm1KSEhmMmhlS2hBelNOSURRZ2FkbFhUdWMzOFJFaUNZ?=
+ =?iso-2022-jp?B?UEM2NkFNd2FQUWZKTnVEdDVqSUN3RTVoZXJSNlFTMVNTTEtYemsyb3dK?=
+ =?iso-2022-jp?B?QkNOM3JOdVZIRVhidFhob1Z4clI1Z0xQN1RnRlZ5U0dUczYzOWpqbENl?=
+ =?iso-2022-jp?B?TUtQR3NrVjh0RlAxeG1CRGtkM2xjOWsrUUZ5NzZ0elRPdkozWmRzUE52?=
+ =?iso-2022-jp?B?ckJ3QjNhWnlaT0Q0TjNsOVVERnc5S1hDRlFXeXhWMG9UOFlpSnd3Ykdh?=
+ =?iso-2022-jp?B?L3crbXBwVnhTOTZ1UTBHVUZZUzlxYWVpT20ydVMzSllPM3RXcVhkL1Ny?=
+ =?iso-2022-jp?B?R3k5UT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(1580799027)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?aUV3KzZlb29hK1h1MmhVWmZ0Um5tcEQ2d2JnanFxdGM3MFZoendNQ1J1?=
+ =?iso-2022-jp?B?MlREd2ZjNW1xWmtkR3EyOUtnVjBObHRQNTJSOUN4dWdrdER0UkFaSmRI?=
+ =?iso-2022-jp?B?a280QzZxVi9WSytxWkNtY1hHU2x4b3FnTVI3eXdjOEVjQVAxWWlnYkpp?=
+ =?iso-2022-jp?B?VXlHMkEycXM1cHpwc3g0TlMvSzMwUVYyUTZ1S3dDT25RU2lFdlVYcUh4?=
+ =?iso-2022-jp?B?b0FtZUxqWkkzOWxoOVNRZ2FTNS91WEEvVTRhOFlDbGNtSGZlNks2T1Rp?=
+ =?iso-2022-jp?B?b0IxL3hETkdXN0EzRTI1SG8xeWtoZGF2RE5GR3FjdXVBbTI1V1lMRSt1?=
+ =?iso-2022-jp?B?UEUyTElvcmd1djN0aEplQkxMOFhuWVppSTV4cGIrZ2d1SXhyRXJMYjZT?=
+ =?iso-2022-jp?B?ekxxTnpmTUpMU1Jxd3QvWSsxMTVFaU92V25vdytoRjB0a3pxV09GaWhQ?=
+ =?iso-2022-jp?B?dDJRSEZTc3hUa2kxanJTaFVVSjVYQ1gzQkhwcFEvWW9YN1drSk5wZS9H?=
+ =?iso-2022-jp?B?Q2JkczRud3BiUVpvS252ODRlamFRbUEyT1NNU0tkV0RhbXJycURhV2Np?=
+ =?iso-2022-jp?B?VW56S1l5SjhESWNOc2RmQlR5TTFySUdwaU9sV1FIRDBocGVEOFNmQnow?=
+ =?iso-2022-jp?B?ZHUwOFNWbXRsWnlJbHhmeEtFRHJpdEpuRWxXQ3ArdkRYckFCeVEvaHBE?=
+ =?iso-2022-jp?B?NEtLVFAwa1RLK3lXUng5TFAzc21iR1VQMlFmWUV2azROclBJTkF6WHYx?=
+ =?iso-2022-jp?B?RGJQSy9EWEszcndUUzhMYVRhNzN3RGtUVXNUNFN0aDErdEhhM0k3UHJU?=
+ =?iso-2022-jp?B?ZGZ1ZGJJaWNCbFJLaytRbkxwb1lnaU1abU1WaTFXdGpNc2ttM1MrekM3?=
+ =?iso-2022-jp?B?SmNxRjdHTmNBaXJUUDRaN05qTkhrVW5wZmFBTG96RFRpL05NalZqRERI?=
+ =?iso-2022-jp?B?T3lDMjFwN2RiTDhNMFhtKy93RkUvbGJCMVBIQ0UwdXQ0M1RBWFpaRyta?=
+ =?iso-2022-jp?B?QVN2VXVnK0dxNXFYQ1g0cXVWUU9zYTJZUVpFYmswODlGUFhRMWJidWgz?=
+ =?iso-2022-jp?B?VkRMeFBHaUhRcUd5cTZaZmxYZlVGR011b3I5ejBBRit1dzhadXo1Tzd3?=
+ =?iso-2022-jp?B?dVJkOEJyK2ZvUXJ5YVdmcklhcHdnb0FSZWt2Zktnb1llR3l2UkRlYzJj?=
+ =?iso-2022-jp?B?dXJZOHFoRWFoWnRZU2xLeUwxWEpPZlFzUk5PbjdMWUwwNlNQYnVZNnVa?=
+ =?iso-2022-jp?B?U2NKZVRZckNHa0k4cURiZ2NmWnlZT0Ixa1NNaWZoYXZ4aUgwUW15c3RP?=
+ =?iso-2022-jp?B?dmpIZHR3NGg2Mm9IaUpHeWdLdGt1WDhmakJzVnpEUHJ5Q2ViL292M3dI?=
+ =?iso-2022-jp?B?a050Ykp0cVVwbmJYMCtHcERET0JRaSthaGhmSnlya2dxRitQczhzVkY5?=
+ =?iso-2022-jp?B?UlJDdjVZaTlOWU8zbmc2VlB6V21haTB5TEc3V3c2YUJtN1k4SEx2SFJH?=
+ =?iso-2022-jp?B?ajNPekV3S09VTXQ4S05QY2hLNnVzSjdjSXZoWjJCRXVLK0FRUGZUV1ZK?=
+ =?iso-2022-jp?B?RGFOSHgyak5oRXMyK1BVVXNVQmdBM2llQXJucUkxckhtT0xGZjdXMTIx?=
+ =?iso-2022-jp?B?cEZ1S3hqMjBvZTFLbVVOOUlJTzJMV28wKzY4T0dsVGhXQmRsaGk4L3V4?=
+ =?iso-2022-jp?B?S3hQa0QrNmRLbXB2SmRHeUJEcFlxYm9vRCtNUVhOR0R6dzBISkNPYXFG?=
+ =?iso-2022-jp?B?STZyeWNYT3d1YUVQc3pSckczb0pObmdJSGdJckVGd1p6eFpEakM5emJ6?=
+ =?iso-2022-jp?B?eVRRaGFERGhzdGdQdy80QzAvL0RncE81RUlJLzFGRzBCaEo5bEpWNXVx?=
+ =?iso-2022-jp?B?b0lWaUhHb3NQMmNqNytBOG9Jd2lmYUMyM083bHJMbFJ1SG9ERnBkM2M5?=
+ =?iso-2022-jp?B?ZlVYU1dhQWF1NmFiblhBRDdOS3laejV1VmpmRGFwWG1GSkovZ0svRG54?=
+ =?iso-2022-jp?B?djBXNHI3eGs2L2VzYUd6MENEeVpyandCMWlwQkVYR21TTVFMdXF2MXBn?=
+ =?iso-2022-jp?B?ejc1a1RkYVdObWlXYTBjeGw3M2tWLzdZOXh0dFVLL0FIdXZHYlpsd0pC?=
+ =?iso-2022-jp?B?YVYyVWdZVGhZcDg0QU5QZTZ6NEtUQmE1RUIxQ1Z6ZDh2QkRpOHF0VXBI?=
+ =?iso-2022-jp?B?OWhOd3JqMVhLWmhsRm40M2o0Rk9SdXlTRkw0R3F2TkNLOXJuY3lSNW9T?=
+ =?iso-2022-jp?B?T25tRzhPUEh6L2RCRHhxcDdPUlA0SzNBZXlhMkRwRnV5M2RWdy9WdkNQ?=
+ =?iso-2022-jp?B?R0UrMXAzdEJ4aVc2QWJkdTZ4RGN3a0pzMEE9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028211533.47694-1-luizcap@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: H1tkOJdO75dq6IDjjyfCWyVkNWCXkJp_
-X-Authority-Analysis: v=2.4 cv=WPhyn3sR c=1 sm=1 tr=0 ts=6901b5d8 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=QOFCb5y-8OGGi3Wmhr4A:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX/AZI6ijaduAs
- +5U6ZBXoqfyS4x93HHiv3PQg5nCh9jiZx//3QAerZYpMXH4xkFcOa/j1EGyKIsEs5Uwe7vZZ+t0
- A9ImGfIN8ktl9XlGoMKoKwg/Ce/lpo9BmNJq+YW98xnHDfPAE8QHV6whujMP85g7UUyi7ORhSUv
- LSmNLpC6DUxRRQkSq4nYt/Ei+5+UgCjS5ZOo1dfrXjcY4gcs+g3Koq+yN3FBQ6fvL4Dui2eReAs
- ZAH+OZ/MCGLx50MBDP34S3v6xRoPuQZvnnUsaq/qXV9DHOZVnD8M8PAugG+QXaM5d7qvSzc9nUO
- hP3ttyQPZWKIiRjZHbvAhEkwItiQVfeA+JmWg49sZ5DXO5tzn3Wc64/mCVY8JV8OvzbdAgZFwF8
- p6D7MrmjQEDytgxguEtgOtLcA8mApA==
-X-Proofpoint-ORIG-GUID: H1tkOJdO75dq6IDjjyfCWyVkNWCXkJp_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-29_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 malwarescore=0 suspectscore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2510280166
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	R1K+rfla+Yz0zH9FjNtT5RczHaVWnyYLOlUzpOx/Iw98Pp8EecTcbcP7P2jI6MOtvV0yfU4HOF75Z8gKk4JFbORt8i3Ey8MMLWDXSv9OhZ6aXJ8fFvx5EhHZuL+E+SmH3HdggrYO2+WynEk/iVaeUdZxIfLYtqcq5YlgrAvpv8KZw6JY+qty5A0XO0WP9sCNHv++LiTzATZzSMMOM0dcte8nhY8W71K4QG+PFxRYkgxAG9yAZvPuq69uh6imAwdgdAX8yXJ7AXlUbjK+9xQt3xCcm2YKKmBM5kRJeFTAI+NKcmZSK7zMtyldopbudCMjRmv9tKGDK1/VnUogW7OniZvyQfgbXaCtC1W0mG6E0n5dWX/NTZMpWe5e+UoBDkRK735IObIQJWfuWEzQNtjCKoG3IKYpMZXrC6Lk1yTw6v/tIWKCrEa/lrxSmngEEvEQPHp79lwcm0XAsMEyc1+ggmQjfVgp0Aa4OsXrc7Tg3ue8T33q61aY6+sqgVRAhfh41OmsV8Aivx9+H9J34NDWa01/3a0qlZgQ7I/XhrOdYDG3t3nqRIsBnM+Qs8qyiOn5OWlUENXT2Z3Reo40JKr95dyTD0AKbDHjqP8gaAPmF30P6VpWNFkaK6YTiOSeQomQ
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92bb300e-674a-4e65-7977-08de16b5a060
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2025 06:37:26.8034
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Su3eBFcgCk7N/H66te7xG66rk9Qu2Wzy9nZ8Q60CMvwx6gHXyySh6UrK85BOjjvtN8VcS8DRhmCU1PspboEgHpwVJmTZdlh0iUSxHW7DJ6k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB15811
 
-On Tue, Oct 28, 2025 at 05:15:33PM -0400, Luiz Capitulino wrote:
-> A reproducible crash occurs when enabling HugeTLB vmemmap optimization (HVO)
-> on s390. The crash and the proposed fix were worked on an s390 KVM guest
-> running on an older hypervisor, as I don't have access to an LPAR. However,
-> the same issue should occur on bare-metal.
-> 
-> Reproducer (it may take a few runs to trigger):
-> 
->  # sysctl vm.hugetlb_optimize_vmemmap=1
->  # echo 1 > /proc/sys/vm/nr_hugepages
->  # echo 0 > /proc/sys/vm/nr_hugepages
-> 
-> Crash log:
-> 
-> [   52.340369] list_del corruption. prev->next should be 000000d382110008, but was 000000d7116d3880. (prev=000000d7116d3910)
-> [   52.340420] ------------[ cut here ]------------
-> [   52.340424] kernel BUG at lib/list_debug.c:62!
-> [   52.340566] monitor event: 0040 ilc:2 [#1]SMP
-> [   52.340573] Modules linked in: ctcm fsm qeth ccwgroup zfcp scsi_transport_fc qdio dasd_fba_mod dasd_eckd_mod dasd_mod xfs ghash_s390 prng des_s390 libdes sha3_512_s390 sha3_256_s390 virtio_net virtio_blk net_failover sha_common failover dm_mirror dm_region_hash dm_log dm_mod paes_s390 crypto_engine pkey_cca pkey_ep11 zcrypt pkey_pckmo pkey aes_s390
-> [   52.340606] CPU: 1 UID: 0 PID: 1672 Comm: root-rep2 Kdump: loaded Not tainted 6.18.0-rc3 #1 NONE
-> [   52.340610] Hardware name: IBM 3931 LA1 400 (KVM/Linux)
-> [   52.340611] Krnl PSW : 0704c00180000000 0000015710cda7fe (__list_del_entry_valid_or_report+0xfe/0x128)
-> [   52.340619]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
-> [   52.340622] Krnl GPRS: c0000000ffffefff 0000000100000027 000000000000006d 0000000000000000
-> [   52.340623]            000000d7116d35d8 000000d7116d35d0 0000000000000002 000000d7116d39b0
-> [   52.340625]            000000d7116d3880 000000d7116d3910 000000d7116d3910 000000d382110008
-> [   52.340626]            000003ffac1ccd08 000000d7116d39b0 0000015710cda7fa 000000d7116d37d0
-> [   52.340632] Krnl Code: 0000015710cda7ee: c020003e496f	larl	%r2,00000157114a3acc
->            0000015710cda7f4: c0e5ffd5280e	brasl	%r14,000001571077f810
->           #0000015710cda7fa: af000000		mc	0,0
->           >0000015710cda7fe: b9040029		lgr	%r2,%r9
->            0000015710cda802: c0e5ffe5e193	brasl	%r14,0000015710996b28
->            0000015710cda808: e34090080004	lg	%r4,8(%r9)
->            0000015710cda80e: b9040059		lgr	%r5,%r9
->            0000015710cda812: b9040038		lgr	%r3,%r8
-> [   52.340643] Call Trace:
-> [   52.340645]  [<0000015710cda7fe>] __list_del_entry_valid_or_report+0xfe/0x128
-> [   52.340649] ([<0000015710cda7fa>] __list_del_entry_valid_or_report+0xfa/0x128)
-> [   52.340652]  [<0000015710a30b2e>] hugetlb_vmemmap_restore_folios+0x96/0x138
-> [   52.340655]  [<0000015710a268ac>] update_and_free_pages_bulk+0x64/0x150
-> [   52.340659]  [<0000015710a26f8a>] set_max_huge_pages+0x4ca/0x6f0
-> [   52.340662]  [<0000015710a273ba>] hugetlb_sysctl_handler_common+0xea/0x120
-> [   52.340665]  [<0000015710a27484>] hugetlb_sysctl_handler+0x44/0x50
-> [   52.340667]  [<0000015710b53ffa>] proc_sys_call_handler+0x17a/0x280
-> [   52.340672]  [<0000015710a90968>] vfs_write+0x2c8/0x3a0
-> [   52.340676]  [<0000015710a90bd2>] ksys_write+0x72/0x100
-> [   52.340679]  [<00000157111483a8>] __do_syscall+0x150/0x318
-> [   52.340682]  [<0000015711153a5e>] system_call+0x6e/0x90
-> [   52.340684] Last Breaking-Event-Address:
-> [   52.340684]  [<000001571077f85c>] _printk+0x4c/0x58
-> [   52.340690] Kernel panic - not syncing: Fatal exception: panic_on_oops
-> 
-> This issue was introduced by commit f13b83fdd996 ("hugetlb: batch TLB
-> flushes when freeing vmemmap"). Before that change, the HVO
-> implementation called flush_tlb_kernel_range() each time a vmemmap
-> PMD split and remapping was performed. The mentioned commit changed this
-> to issue a few flush_tlb_all() calls after performing all remappings.
-> 
-> However, on s390, flush_tlb_kernel_range() expands to
-> __tlb_flush_kernel() while flush_tlb_all() is not implemented. As a
-> result, we went from flushing the TLB for every remapping to no flushing
-> at all.
-> 
-> This commit fixes this by implementing flush_tlb_all() on s390 as an
-> alias to __tlb_flush_global(). This should cause a flush on all TLB
-> entries on all CPUs as expected by the flush_tlb_all() semantics.
-> 
-> Fixes: f13b83fdd996 ("hugetlb: batch TLB flushes when freeing vmemmap")
-> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
-> ---
->  arch/s390/include/asm/tlbflush.h | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/include/asm/tlbflush.h b/arch/s390/include/asm/tlbflush.h
-> index 75491baa21974..0d53993534840 100644
-> --- a/arch/s390/include/asm/tlbflush.h
-> +++ b/arch/s390/include/asm/tlbflush.h
-> @@ -103,9 +103,13 @@ static inline void __tlb_flush_mm_lazy(struct mm_struct * mm)
->   * flush_tlb_range functions need to do the flush.
->   */
->  #define flush_tlb()				do { } while (0)
-> -#define flush_tlb_all()				do { } while (0)
->  #define flush_tlb_page(vma, addr)		do { } while (0)
->  
-> +static inline void flush_tlb_all(void)
-> +{
-> +	__tlb_flush_global();
-> +}
-> +
->  static inline void flush_tlb_mm(struct mm_struct *mm)
->  {
->  	__tlb_flush_mm_lazy(mm);
 
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
+> (MSCs) with an identity/configuration page.
+>=20
+> Add the definitions for these registers as offset within the page(s).
+>=20
+> Link: https://developer.arm.com/documentation/ihi0099/latest/
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+
+Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 
