@@ -1,166 +1,180 @@
-Return-Path: <linux-kernel+bounces-878098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295C0C1FC9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:20:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA95AC1FC73
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:19:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050871892798
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673573B3059
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E252E762E;
-	Thu, 30 Oct 2025 11:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C87354714;
+	Thu, 30 Oct 2025 11:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rfCkCj1a"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="C79DrG0U"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B976D2E0915;
-	Thu, 30 Oct 2025 11:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8D52E6CC8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761823071; cv=none; b=YIwhHibRQdJg7Y1kkM+THqoFRbHIFET2VAAjSw4/LlaxIAsExEEtuCoA97wmSHT3hkQz/+d02x6LDlupgygvMKN3cQb0/GKLGqQHnSaHqdGs+B2YO6LYSjsL7T2mUB0vmdVHvdBxDyDtfKHl37vj0cX2qbjsTIbG2yn8kmc7y5Q=
+	t=1761823075; cv=none; b=STMJsGXNS0vfiQDATJpljOFEkGTeCXkYiBIohNlksqNj92Jlsp2qKsy5Ur+tZb0mNPRkN37OqyiGUyQ30icezanHNbQ6PZ/UE4Dd6V2b3uPA8l2klwY5HjfGorUU6vHBgy++CqtDlWLdSYMzJXKAdchX9TStLIOnAaNu8LTGQYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761823071; c=relaxed/simple;
-	bh=ef6IQ8G5fS30t07ddl2rgjhqXh3EABvzFi7I2xxCRiU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cK0naH3ZYE0nxLV5qAmuoVds+olDWlNgS+YxRe81NFQccAiNWQzF6ip5n81xwCgJG6XIpT3/wGiSzwcANBfZt6KqDMx+0olddv0sYRg0Lvj8DpNsPS30hL1J5NBjPf71uFlXtgROJSw9xuoJSAJndgPEElmXuGli3VxrLO0dr28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rfCkCj1a; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cy1mg3LK0z9spB;
-	Thu, 30 Oct 2025 12:17:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761823059; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=udQdI8kZ9HNR1T3YelubgV+z74XJhbul0irKljvsfkw=;
-	b=rfCkCj1aKP3gD9fOKRtgCEZm254WNjvqqyYCD1808//A8YhflHFiiKP/HJOpq9yq7jNCyk
-	hj7d/rUdifE+Wvb1dA6BhWHH++w6Rp/9RQv02E7vyrnCJQD87ql2VfxV8iNEz7ryyPJEB6
-	CdVBDsuHksvbjEZ7QsbTjPA3Fue3uZqqbuNtCh5dKSZNtEZFqiEOS22+l+Dw4Cb4MutmvD
-	CpP519yREgx3PQSsNMBmJY1IV9tKJY8+akQB8/CXqqMjO/kZfBn4ZqOTBcmch6fx+WE+oG
-	+fZ3LqaV8rbTc8Al9CqQZW/zaCGJvIMlEJqLF+8Da7WYsH5KdeRDJLj7qoC9mg==
-Message-ID: <fb2881006f843bd85dd02948c4467c81086effc8.camel@mailbox.org>
-Subject: Re: [PATCH v1] drm/sched: fix deadlock in
- drm_sched_entity_kill_jobs_cb
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, 
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
- <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,  Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>
-Cc: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Date: Thu, 30 Oct 2025 12:17:31 +0100
-In-Reply-To: <20251029091103.1159-1-pierre-eric.pelloux-prayer@amd.com>
-References: <20251029091103.1159-1-pierre-eric.pelloux-prayer@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761823075; c=relaxed/simple;
+	bh=I0ImYUO4Tto0dqVtSdohVygGzsAV8nAsPjZ3zZkTumI=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcRDtlkHDCxqdruUL384QI0hckOcanuw7OazkO7GpgDAvrJsjSw6b3EwFsA1ptji+avpevLbDHJdpGOb3qh5+u5iViTo7pB1L6Y2e/00t3gDrnKDiiCfDLwq1nGzpOajRTwPsEOfEHFD25+goOhCPlrnDsXXddbBYADWfejCtDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=C79DrG0U; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3717780ea70so9941361fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:17:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761823072; x=1762427872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0MNmIROD9DJ7O2nzFJad82kpZwiRt/s4niUpI4BhGGA=;
+        b=C79DrG0Ux1W/gcEarejLESWQHk8ATlYD52nvEDAp9OHWNIcql2qf6j3VgdpMTlDcZf
+         /bzUfAENKYqWVzzbF7pKr8Wupp6JYnTDsfqU9YNvCcFyMCJQuh1nzYkV7D41wIoLNXiu
+         GUk6Ep6cgT7cWucF8OVfm66zlhPMjnXxR5qRVLokGM43NMb7dFiCvqFAuQvGs4IobfQ+
+         4A1kA4LzLQu3aGtcQG/xXeBqymj0gooaQ7I4NmZ+Mu3pCYNEm1xmUHNakLf1lV2MMx3z
+         SYsZh3Z6GwN820rxy1t5OdrtmzaBDRMqCtjWl99cAlxkqi2nAzMxESGcB9H95WFkDsEp
+         sUIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761823072; x=1762427872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0MNmIROD9DJ7O2nzFJad82kpZwiRt/s4niUpI4BhGGA=;
+        b=sEg9dmCx40NWbnPH5CwHskxpnQUQ/IaVdG44howY4JMg1n6WezlmvIkK5J9x4hoGhy
+         uzkCHGODhnLSAwoWkKwERCYqbwYpJKHP7jHsnb3ZbTPBg4EXaWC+6UzR+1oJkIiLfBdQ
+         XaKdccYJuv/fxDDaUUPdr3jQVRZ+NmcT/rWokoFwFeEGRC04hA5C+A82FVv86931PE3a
+         L0kUoVnP2fy18DwX1SXwG8xHZkGWoNF8BdnU1XoMjbddXk9fZti3DpQOpd0e7k6KEE0x
+         GrIhJtAT9/MbttYJbjYAp0CPC9bxqLKGGcMPYPKiIdYemuw4Vq5liu6V4yF3RIr1B+J6
+         S37Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3zu67gfjoZV0aB/pWfDJpss73SsM+P2ln75qjChqwK8ScWjSh4uUwbXTNJdt+iXCyG6dNLZCmheLS4/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtF0huU62Cl3/0BhTQHkdBQjqWYvWXn1bBGjhBgUocD3M3AvU2
+	IggU7+9wZDzMOzaQPJ3dD2pWJRaBm5TE/Slz0t+G05hDnV1LVpfwiocDKIELUDG6s5IiHLw1dNy
+	1z57MqMhwVYMErxZt6eyGkTQ1Jp9bHdGZ5vU9B0l7hQ==
+X-Gm-Gg: ASbGncuL6LEGIC6V0SSRa/da5RFVkO3H9XdFnuzs/yCEoDzcpXDwNqYG7frf8Qmsad0
+	kI3+4VA5NR+uv5RARC1/WAW72SJrS/U9P80oH86hNwlvH5TrJzRzV6/6SsMImQtVuEgOaGAcB/f
+	S1mSlEHuWfzdgW3/C0FhIhglUEM7GtouIh+aKXcLeaHtwhk5szpyPG+KaafryKzMPSBoUD57hbJ
+	6ycGvax4uZw3sjAV60dimfrBv0Mgi1NuOvqMMWP9eeLln+KwhIVZ81zpnm+so2phWHD7s5jjxZ3
+	V4PBslckF6aS3ALY+GzB2P0uTA==
+X-Google-Smtp-Source: AGHT+IFX1hvDlr8E6u/3OJJAO015DhFeTkPn3N2RUsi5ZPul7fhDyUo0UEVvHpV8XwqIiZrtef+F6vF4DG9rHYHHj1w=
+X-Received: by 2002:a2e:a7cf:0:b0:335:44d4:161b with SMTP id
+ 38308e7fff4ca-37a023f626emr24946961fa.2.1761823071713; Thu, 30 Oct 2025
+ 04:17:51 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 30 Oct 2025 04:17:48 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 30 Oct 2025 04:17:48 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <aQMy00pxp7lrIrvh@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: uxkngmmbxwy4o97th7ytiop6e8nj697p
-X-MBO-RS-ID: ca1f3193d85e48195cb
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org> <aQMy00pxp7lrIrvh@smile.fi.intel.com>
+Date: Thu, 30 Oct 2025 04:17:48 -0700
+X-Gm-Features: AWmQ_bktnmdgURcHnkeHfqBkc9SoaiVf7POsXZokVkxDRgw_XRndf7_XJoV--44
+Message-ID: <CAMRc=MdP58d=o7ZL4bAdsaYwzrs6nJo3bhS7Jf1UkDNwPOnAsg@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] software node: allow referencing firmware nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-10-29 at 10:11 +0100, Pierre-Eric Pelloux-Prayer wrote:
-> https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908=C2=A0pointed out
+On Thu, 30 Oct 2025 10:41:39 +0100, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> said:
+> On Wed, Oct 29, 2025 at 01:28:37PM +0100, Bartosz Golaszewski wrote:
+>>
+>> At the moment software nodes can only reference other software nodes.
+>> This is a limitation for devices created, for instance, on the auxiliary
+>> bus with a dynamic software node attached which cannot reference devices
+>> the firmware node of which is "real" (as an OF node or otherwise).
+>>
+>> Make it possible for a software node to reference all firmware nodes in
+>> addition to static software nodes. To that end: add a second pointer to
+>> struct software_node_ref_args of type struct fwnode_handle. The core
+>> swnode code will first check the swnode pointer and if it's NULL, it
+>> will assume the fwnode pointer should be set. Rework the helper macros
+>> and deprecate the existing ones whose names don't indicate the reference
+>> type.
+>>
+>> Software node graphs remain the same, as in: the remote endpoints still
+>> have to be software nodes.
+>
+> ...
+>
+>> -#define SOFTWARE_NODE_REFERENCE(_ref_, ...)			\
+>> +#define __SOFTWARE_NODE_REF(_ref, _node, ...)			\
+>>  (const struct software_node_ref_args) {				\
+>> -	.node =3D _ref_,						\
+>> +	._node =3D _ref,						\
+>>  	.nargs =3D COUNT_ARGS(__VA_ARGS__),			\
+>>  	.args =3D { __VA_ARGS__ },				\
+>>  }
+>
+> Okay, looking at this again I think we don't need a new parameter.
+> We may check the type of _ref_
+> (actually why are the macro parameters got renamed here and elsewhere?)
+> and assign the correct one accordingly. I think this is what _Generic()
+> is good for.
+>
 
-This link should be moved to the tag section at the bottom at a Closes:
-tag. Optionally a Reported-by:, too.
+Oh, that's neat, I would love to use _Generic() here but I honest to god ha=
+ve
+no idea how to make it work. I tried something like:
 
-> a possible deadlock:
->=20
-> [ 1231.611031]=C2=A0 Possible interrupt unsafe locking scenario:
->=20
-> [ 1231.611033]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU1
-> [ 1231.611034]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ----=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 ----
-> [ 1231.611035]=C2=A0=C2=A0 lock(&xa->xa_lock#17);
-> [ 1231.611038]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 local_irq_disable();
-> [ 1231.611039]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock(&fence->lock);
-> [ 1231.611041]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock(&xa->xa_lock#17=
-);
-> [ 1231.611044]=C2=A0=C2=A0 <Interrupt>
-> [ 1231.611045]=C2=A0=C2=A0=C2=A0=C2=A0 lock(&fence->lock);
-> [ 1231.611047]
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 *** DEADLOCK ***
->=20
-
-The commit message is lacking an explanation as to _how_ and _when_ the
-deadlock comes to be. That's a prerequisite for understanding why the
-below is the proper fix and solution.
-
-The issue seems to be that you cannot perform certain tasks from within
-that work item?
-
-> My initial fix was to replace xa_erase by xa_erase_irq, but Christian
-> pointed out that calling dma_fence_add_callback from a callback can
-> also deadlock if the signalling fence and the one passed to
-> dma_fence_add_callback share the same lock.
->=20
-> To fix both issues, the code iterating on dependencies and re-arming them
-> is moved out to drm_sched_entity_kill_jobs_work.
->=20
-> Suggested-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd=
-.com>
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++++--------=
----
-> =C2=A01 file changed, 19 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/s=
-cheduler/sched_entity.c
-> index c8e949f4a568..fe174a4857be 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_entity =
-*entity)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL(drm_sched_entity_error);
-> =C2=A0
-> +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-> +					=C2=A0 struct dma_fence_cb *cb);
-> +
-> =C2=A0static void drm_sched_entity_kill_jobs_work(struct work_struct *wrk=
-)
-> =C2=A0{
-> =C2=A0	struct drm_sched_job *job =3D container_of(wrk, typeof(*job), work=
-);
-> -
-> -	drm_sched_fence_scheduled(job->s_fence, NULL);
-> -	drm_sched_fence_finished(job->s_fence, -ESRCH);
-> -	WARN_ON(job->s_fence->parent);
-> -	job->sched->ops->free_job(job);
-
-Can free_job() really not be called from within work item context?
+#define __SOFTWARE_NODE_REF(_ref, ...)                          \
+_Generic(_ref,                                                  \
+        const struct software_node *:                           \
+                (const struct software_node_ref_args) {         \
+                        .swnode =3D _ref,                         \
+                        .nargs =3D COUNT_ARGS(__VA_ARGS__),       \
+                        .args =3D { __VA_ARGS__ },                \
+                },                                              \
+        struct fwnode_handle *:                                 \
+                (const struct software_node_ref_args) {         \
+                        .fwnode =3D _ref,                         \
+                        .nargs =3D COUNT_ARGS(__VA_ARGS__),       \
+                        .args =3D { __VA_ARGS__ },                \
+                }                                               \
+        )
 
 
-P.
+But this fails like this:
+
+In file included from ./include/linux/acpi.h:16,
+                 from drivers/reset/core.c:8:
+drivers/reset/core.c: In function =E2=80=98__reset_add_reset_gpio_device=E2=
+=80=99:
+drivers/reset/core.c:958:52: error: initialization of =E2=80=98const struct
+software_node *=E2=80=99 from incompatible pointer type =E2=80=98struct fwn=
+ode_handle
+*=E2=80=99 [-Wincompatible-pointer-types]
+  958 |                                                    parent->fwnode,
+      |                                                    ^~~~~~
+./include/linux/property.h:374:35: note: in definition of macro
+=E2=80=98__SOFTWARE_NODE_REF=E2=80=99
+  374 |                         .swnode =3D _ref,                         \
+
+So the right branch is not selected. How exactly would you use it here?
+
+Bart
 
