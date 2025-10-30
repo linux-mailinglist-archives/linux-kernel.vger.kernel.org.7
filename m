@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-877716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F029CC1ED83
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:50:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11810C1ED86
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7043AB5A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E43223B5BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52789337BB8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19553385A5;
 	Thu, 30 Oct 2025 07:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8PUAp/7"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514B257AEC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B4833439D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761810630; cv=none; b=rrJwpR50kJ5j9MN88DoE6HxT5MRi0+zvzwWlMNfNOCfFY6uSAzdzULfA/Ck711uYzWgqa/c+wbgPsv4sFTrH7OfOgcxnZrhZbA55brABSyZUh2haJ/tSf0AzVJ6iqlp2c3JAeJJFyehlY5n8o48NWg0m6nE6kyqeOwZIyy8RORw=
+	t=1761810631; cv=none; b=DZyUHk/45Yoap3+hFXvRMfR2Pbl4+i0F5yZa7yA4DK0nYDJ0rQyWmP7q8jKQbdo1k2d1Vtfiel9VwW/woidoLlgAVWXSiXf5AI3J74G1XVgoIqRjKhbDb4iBeXWAqtVSYVB3NcZQJ5EMvqI0TmV5Awz92YFgW8wslX0dsaSi5yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761810630; c=relaxed/simple;
-	bh=JEl9GC42JmfajoHCarU2JPEtxV/Dvh3GNqFUPBkz8So=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P7hgZmgq1N2e/Rw2iYNj3+pjngQuUXt5JDaFq76eLnTK6R8wVtJgN0wGbLqo9kliQ2JTWtAvBCQbziHgnKRchyb2cUInXGlDXelSy4HkpIQq2iLLDNFr+XkDlYNovPZS/EECjhfPGLfoH/IttwdvELU3Clnh6Mn1ZDbRjS3rnKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8PUAp/7; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1761810631; c=relaxed/simple;
+	bh=CdfXVXdcEVWV8KxlMBFv8tqG6D/onHIHIshcEqcEa2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZzEJgU1m/+t3OvtRtLwbxPSL1t6MpLrH++m8tMBVZBwWbR6S/QoPL1mpKEkIUyR4ht+JVKQlczd+GK/9BC93WlzKazuepzhLzGmQo2RD01y6ZKFljGLwOqLXptjLcF5NO5l9KHK2C5aF9dZbWt3N/ZeGv5dPcLCBSClMPEpmJfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sourceware.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sourceware.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3307de086d8so726163a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761810628; x=1762415428; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vdDJYs2ftj9g3gsNmVUwfcn6X4b2n8l3NR5CnT8xsbU=;
-        b=d8PUAp/75/QKRXkvqcwfPDCm23XFiMmFSdAKkxyBcCJ4Ft/nxDzTzn/r5+ChTRoTXZ
-         CgIAfjk2mvYQlI9AD0GO50UDn4Uz4RQz+8d6Rtg/Y5PML8fxlrw2RRj42ZVZYviSFLC7
-         2TEh0w6GY7j7fuUCg247cD9wRmQFLycP2pwIRNP+mfZoApeOWHic09OLzYRZWZ50HVQn
-         cDe0/7YhpPTltn+2TnBtVrJ/kO5EPIFKD1xf8t+hZWwG/lDHJx02QHGOrKqREYrgZ31b
-         kMv2klfC+Za1Pj+TWsZVVt8q+cwjkrDK6zGFNucnfoYyYD+0z7E5lNb5sktlA+2w+Zmt
-         getQ==
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-556a2d6ff0cso2142e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:50:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761810628; x=1762415428;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vdDJYs2ftj9g3gsNmVUwfcn6X4b2n8l3NR5CnT8xsbU=;
-        b=t5RO00B1HqUQCnHsFbzLsccXafhAbFh9blkNXhsGPyXDts77zCFX5DxF8QX54HILHq
-         Us4MRWkH8z6Savr5iQeYMYGfNLcq5tw/wD39Tn2r9gTSCs1uLDA4i/RNXDv2JJYE6oqU
-         9bAx5eHzPfpu0tT8CiFLkt6tD6ayMLEEKKZr4oIm84Uc4VEjLMQRqhti7JlDPG2fyarC
-         4UaUHjx1nVYs2IM7W5Uxsz4PRMwLUGpbCoEyYTT/Xi1knl3Hp+yInY0IxYRBJsvRT6wc
-         Et+M9TdHbJsK42sLkiPvB3lNmlvB4lPPjrugkf6cVCsHwq2c99+ZISN52a6iCpa46V+R
-         8NcQ==
-X-Gm-Message-State: AOJu0Ywavq558y9XB6rz5g8gqrj+24lh91YSgXVDE7m2IXN6rq3btGXc
-	fOpzEPyTs3VMHyb1LEqj8waqyJvT4TzkEti+Na371dc9RLZG4QHTtrO2
-X-Gm-Gg: ASbGncte6b86K6u/NEf+vRIsGQm5beAPeaK1ikb50pNn7Phvf5Uql3XSXm2CbGf8BOp
-	gmDRd8YhMYMicQ/cZWkPJzlFt7z8rZ/jyvNLYnrvfEDi4q87cfROSPHwRkoopOFy+itbffZeoYK
-	AB0mZjpxzQgze3X6GAmrptTvsDq2Tb+cQewTSKOlUHLHAP0ALiPKaCDTFPiozVKiNziajV0tMJm
-	UpbqqXM2jxssl3+tbWAsWSpcBd8qFwRsbdOySQv8mCktsiBUvSEF6HV7wLq2CyefR9y7eM+Zg8G
-	my8XdDs/pcOvSK/CRFZIQrJVNZkqXGdaMI6I85w+2KWloxxaujE2A0HQ8UbF8Bamhu5YAVi4V6C
-	xpVszMUECgl8NWmxEUPB+arNW/h/apKmwTwzlbsr3hc0psiYahChZGcV1RyoWmmI70sGopeXr6e
-	ueyDi66Fr4R2w=
-X-Google-Smtp-Source: AGHT+IEnOW3OBrwdrAR2/T02/vIwASDH7t9uKYiCN2IyW2jPQ7gCDPSDpZfSRXEfWPjcVg3PiiwQKA==
-X-Received: by 2002:a17:90b:4c09:b0:32d:d408:e86 with SMTP id 98e67ed59e1d1-3404c3ff4b8mr2592187a91.7.1761810627892;
-        Thu, 30 Oct 2025 00:50:27 -0700 (PDT)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34050bb62casm1554574a91.20.2025.10.30.00.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 00:50:26 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7AD704209E4B; Thu, 30 Oct 2025 14:50:17 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>
-Cc: Breno Leitao <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH net-next v2] Documentation: netconsole: Separate literal code blocks for full and short netcat command name versions
-Date: Thu, 30 Oct 2025 14:50:13 +0700
-Message-ID: <20251030075013.40418-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.1
+        d=1e100.net; s=20230601; t=1761810629; x=1762415429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PKqtAUe6d6BWCG6Zj08y0hgYpvyRn/Yr9YKqc5tlCW8=;
+        b=S+mmMNd291nDEuaQHyrRkqu8xdu6RpYj8OLhssffhNnDAcTbyin9rCuGGrasiwFgWz
+         /yGWzODUJqYcNFqmlZPRAnvBZvwpFjmhBHSgrStiXJbMefEaXvOqnVFs3hx7KR77zOBF
+         +r+I2CRua1bibfzuGdyy9MvFiMy4oUq0KwHeW+0ek4l0Z8znWJ+mHJB5KFtZF2ufsC+T
+         p5vQP9qFEWYTfozt/c4Vjs5J1IWcdbDKoJJhpZjrxQQvaFGrnK/lasDuGF1LoDq4qHtm
+         hK2Y2MmAoNVjSGdwR9mK/H82HweeoM0TxLANvyfnPG6zt1JBOLXGQNaldgXFtrosxhJh
+         4YvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRfNXx6MjC0SwP//gjMTkzF2cwAqdA0PfopddX2hbucCXGuQ36Gt6DrEkg7pQII9r8DUqE7LWQdg/ZRPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfvuF+9e+fcCXf0mcDg/YSm8UiMB23tpaxLSxn4hU3GGsDj9Gy
+	Hohs44bQhwO6Cz5GVHDb2UpLiPtEJnE2PDwqfTeIs+jEpgYmNYCq8RYdtEXlGg==
+X-Gm-Gg: ASbGncvQGXyQfhdlxYZD8vMOVLMRi/B9ttGbbbSIkfO1dswbQQOu31nsr7iKD6grsQ+
+	3/NY8pWH9gzH3SvKzDASpY0P7BZ5+yhMftVxqPzyIQ1VVUlFqz/Hdf7hXrDS8oPV3/0w/ImLtD4
+	DWKAl1zC7Kt9gs6Bx2Z0t3HQv5r4lBeTe0joIrFNOedSGYmh8DbIoDb0hpHXMFcL+snaj5/ajlN
+	yFSx7SjUikCcG+1cancHLa7VX1fugypULOr7S59YJZ/QPewcTRo0nJbFR2BVbf7Scd4GSxJ5H5k
+	R4zwltQ0mXZQWSL115kuxgt5rLE/MSYe86WR09IyurbhctTgzk5Ts3WPjxUVRnslo0HCJxx65z1
+	963pGkgDMSe7UJhxV98eSd3QZ+NhGFbf/UBBNuwHiQGcVFLEoq+AG6+83gjhKWL6sikSZZE8UdC
+	Ud9f9ixPr7PhM87ueNwQ+FhnGRNFdLQITIZX87/RhlxK64
+X-Google-Smtp-Source: AGHT+IGduKInZ8yZK/REkEj47BGANFNONvxmxNZmJNqr+ZqIepemM5FUlempvz7maf9mDVH/tS8ubQ==
+X-Received: by 2002:a05:6122:46a5:b0:557:c86a:6065 with SMTP id 71dfb90a1353d-558140824cbmr1791442e0c.1.1761810628615;
+        Thu, 30 Oct 2025 00:50:28 -0700 (PDT)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557ddb5e29asm6503514e0c.16.2025.10.30.00.50.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 00:50:28 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-54a86cc950dso47577e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:50:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAc89dqPcaMr1jBj8X8X5UrbE1hOpiSs+QYzxF9EqstMXL970c0q2n9uhuavPlZlZjh11kU17cXpaZI4k=@vger.kernel.org
+X-Received: by 2002:a05:6122:1d9f:b0:556:4f4e:812a with SMTP id
+ 71dfb90a1353d-55814105b1cmr1922901e0c.7.1761810627957; Thu, 30 Oct 2025
+ 00:50:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1137; i=bagasdotme@gmail.com; h=from:subject; bh=JEl9GC42JmfajoHCarU2JPEtxV/Dvh3GNqFUPBkz8So=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJnMEpucuOR/GChNmvJz0qIJUgtObFj4kHXNrRd7Y3S/7 HO5+iZGv6OUhUGMi0FWTJFlUiJf0+ldRiIX2tc6wsxhZQIZwsDFKQAT2SvAyHB0dYPejlmlOdet 1/wKtCh4v+HUdsMvXz9+4uJlLd/LnnCBkeHxnq3C29++ajx83tl4/4u4vh0aSRHVUcyLbULmMCj t2MoLAA==
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr> <aQMUGvXv6sy75nKn@tucnak>
+In-Reply-To: <aQMUGvXv6sy75nKn@tucnak>
+From: Fangrui Song <maskray@sourceware.org>
+Date: Thu, 30 Oct 2025 00:50:42 -0700
+X-Gmail-Original-Message-ID: <CAN30aBHOw16Tzdn_Z0TZKie7Fyi39bmB2PQK4LB-rjU1vn3zQQ@mail.gmail.com>
+X-Gm-Features: AWmQ_blIh4FHNSYYQRBDu76pw1cN_M4hli274r6aO84F-zHC22yGF-j77KUjiOI
+Message-ID: <CAN30aBHOw16Tzdn_Z0TZKie7Fyi39bmB2PQK4LB-rjU1vn3zQQ@mail.gmail.com>
+Subject: Re: Concerns about SFrame viability for userspace stack walking
+To: Jakub Jelinek <jakub@redhat.com>
+Cc: Fangrui Song <maskray@sourceware.org>, linux-toolchains@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Both full and short (abbreviated) command name versions of netcat
-example are combined in single literal code block due to 'or::'
-paragraph being indented one more space than the preceding paragraph
-(before the short version example).
+On Thu, Oct 30, 2025 at 12:30=E2=80=AFAM Jakub Jelinek <jakub@redhat.com> w=
+rote:
+>
+> On Wed, Oct 29, 2025 at 11:53:32PM -0700, Fangrui Song wrote:
+> > I've been following the SFrame discussion and wanted to share some conc=
+erns about its viability for userspace adoption, based on concrete measurem=
+ents and comparison with existing compact unwind implementations in LLVM.
+> >
+> > **Size overhead concerns**
+> >
+> > Measurements on a x86-64 clang binary show that .sframe (8.87 MiB) is a=
+pproximately 10% larger than the combined size of .eh_frame and .eh_frame_h=
+dr (8.06 MiB total).
+> > This is problematic because .eh_frame cannot be eliminated - it contain=
+s essential information for restoring callee-saved registers, LSDA, and per=
+sonality information needed for debugging (e.g. reading local variables in =
+a coredump) and C++ exception handling.
+>
+> I believe .sframe only provides a subset of the .eh_frame information, so
+> can't be used for exception throwing, and you don't want to lose
+> .eh_frame_hdr either because then dlopen becomes very costly and it will
+> even slow down exception throwing.
 
-Unindent it to separate the versions.
+Right.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-Changes since v1 [1]:
+> If .eh_frame is considered too large, rather than inventing a new format =
+I'd
+> suggest to work in the DWARF committee and provide further size
+> optimizations for .dwarf_frame which can then be used in .eh_frame, or ag=
+ree
+> on .eh_frame extensions to make it smaller.
+>
+>         Jakub
 
-  - Apply proofreading suggestions on patch title and description (Randy)
-
-[1]: https://lore.kernel.org/linux-doc/20251029015940.10350-1-bagasdotme@gmail.com/
-
- Documentation/networking/netconsole.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/networking/netconsole.rst b/Documentation/networking/netconsole.rst
-index 59cb9982afe60a..0816ce64dcfd68 100644
---- a/Documentation/networking/netconsole.rst
-+++ b/Documentation/networking/netconsole.rst
-@@ -91,7 +91,7 @@ for example:
- 
- 	nc -u -l -p <port>' / 'nc -u -l <port>
- 
--    or::
-+   or::
- 
- 	netcat -u -l -p <port>' / 'netcat -u -l <port>
- 
-
-base-commit: 1bae0fd90077875b6c9c853245189032cbf019f7
--- 
-An old man doll... just what I always wanted! - Clara
-
+Thanks for the suggestion.
+An effective compact unwinding scheme needs to leverage ISA-specific proper=
+ties.
+This architecture-specific nature makes it likely fall outside the
+DWARF's scope.
+That said, input from the DWARF committee would certainly be valuable.
 
