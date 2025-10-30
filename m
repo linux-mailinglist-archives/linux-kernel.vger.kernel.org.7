@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-877442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C49C1E1F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:25:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778A2C1E205
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732CF3AF2E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06341893B99
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC18531DDBC;
-	Thu, 30 Oct 2025 02:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83172325725;
+	Thu, 30 Oct 2025 02:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WDT5Wp6y"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ey4KdRw1"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BA831B116
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2164B3254AD
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761791133; cv=none; b=Eq0lqniCOEGJ+KNS+0t8uBscNN6yksiFokino8wzvXAkd+woCeNEIIEeGRGnL/5m70ozPuSt+FeIvEd97l8bbeAi02oJoXAMdOBK1VOxOGPYvslW1P5wjiZVQFTLmTUvl+mEOBvH8jHiIrPXAufAxucy/adHPOBgOW37M/wGRes=
+	t=1761791390; cv=none; b=dFgwZ4eP2qVgIOLrtXXp0NyGMVdSVB2OKPuWz9nTmY7h7OPvbne40TVWxSVsTFuHoXzcWfBZRs8SMJoyr4/P+l9AGgbxoqTOFUVZ1tvpLsQqO64VSablZcWeoVS+8BQ2aoET8nZHClP/w8//UhH596e6WAHtap9iNGPrMtCOdXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761791133; c=relaxed/simple;
-	bh=/1eWmis339CcsmkDDuGnQyF6HgX2z2FodLnqAzdsuQQ=;
+	s=arc-20240116; t=1761791390; c=relaxed/simple;
+	bh=hHRxN5CiY7Gx4QWe8wmAeGr4/YKu9bFUbFH+1qPXlZo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g5t5hOeS7x7E2r0gBWA9j4jS7sgESVmx8gK972XG0Aqe6T7ho1eUq7aMhEZTx/GUl5+2jPMrPafWr0jpdZxtIxtHy1qMrBDZ1VFsTkCzYCkKEKW1bbnfnC7JwPq5QwiorCSSU/lvkMlMGKiDvQL/2GvAn44nigmay2772dhNAas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WDT5Wp6y; arc=none smtp.client-ip=95.215.58.176
+	 In-Reply-To:Content-Type; b=f/vUeOxv9bli565CbJOl4VFCMbqrot8lv8uFsp2rZ1if9vTiBmMc38ulBLk00ENNn+hO9Y8WRw7KTOvIOjQINWiDGx8W8di9G7EF8EJtolzVGPt2rNq1Rhal0ufEad5A4Ao9+bjo6AyJeSPU1p1t8lg/8oF3DXQX4wFiaki0U2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ey4KdRw1; arc=none smtp.client-ip=95.215.58.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4ff09b34-fc18-4dcd-91e7-2e199d88e133@linux.dev>
+Message-ID: <d2103b59-5cff-48a8-9eb8-ff9498dbde5e@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761791126;
+	t=1761791386;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3UyupsXh7QI3IpXLiJnSS9fzReGG9d97Eh4CpeWxH5k=;
-	b=WDT5Wp6y6jrOwkHrqHxb3NYddT6JMZE1rFl8MwLNhXWLePJcpelDdcmraCl1b6kADLrvP/
-	OmlCpTqqpTCiBugvw/8TnfH+ES4arI53JBx61JoEc7krBaxUolqIQxv49AWoGarxL2yDu8
-	qmci9hK83UaaotYBL78770tMoTbBpGg=
-Date: Thu, 30 Oct 2025 10:25:13 +0800
+	bh=V0oJwA47yZHkVimWM2fyRJ3wZQiGsiQFxNLLyULBfMc=;
+	b=ey4KdRw1uackh5jZSEHqNgwTXAarUS+0SAPTiqv/KcQLBg4KotGPjRf/1EkmmkTz2iObFv
+	hesUQa0gME5/gVXfROWM2yrGQBsjQJP45DO4uw8/+syG1ANQyRDi3FpTUdyOc2iOpbUEEY
+	PuJnRNLHVgG58H7igkVaOKV2JtwmF2c=
+Date: Thu, 30 Oct 2025 10:29:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 1/3] mm/huge_memory: add split_huge_page_to_order()
+Subject: Re: [PATCH v4 2/3] mm/memory-failure: improve large block size folio
+ handling.
+Content-Language: en-US
 To: Zi Yan <ziy@nvidia.com>
 Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
- nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- jane.chu@oracle.com, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ nao.horiguchi@gmail.com, jane.chu@oracle.com,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
  "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>,
- Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linmiaohe@huawei.com, linux-mm@kvack.org,
- david@redhat.com
+ linmiaohe@huawei.com, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, david@redhat.com
 References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030014020.475659-2-ziy@nvidia.com>
-Content-Language: en-US
+ <20251030014020.475659-3-ziy@nvidia.com>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251030014020.475659-2-ziy@nvidia.com>
+In-Reply-To: <20251030014020.475659-3-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
@@ -73,13 +75,94 @@ X-Migadu-Flow: FLOW_OUT
 
 
 On 2025/10/30 09:40, Zi Yan wrote:
-> When caller does not supply a list to split_huge_page_to_list_to_order(),
-> use split_huge_page_to_order() instead.
+> Large block size (LBS) folios cannot be split to order-0 folios but
+> min_order_for_folio(). Current split fails directly, but that is not
+> optimal. Split the folio to min_order_for_folio(), so that, after split,
+> only the folio containing the poisoned page becomes unusable instead.
 > 
+> For soft offline, do not split the large folio if its min_order_for_folio()
+> is not 0. Since the folio is still accessible from userspace and premature
+> split might lead to potential performance loss.
+> 
+> Suggested-by: Jane Chu <jane.chu@oracle.com>
 > Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
 
+LGTM! Feel free to add:
+
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
+
+>   mm/memory-failure.c | 31 +++++++++++++++++++++++++++----
+>   1 file changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index f698df156bf8..acc35c881547 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+>    * there is still more to do, hence the page refcount we took earlier
+>    * is still needed.
+>    */
+> -static int try_to_split_thp_page(struct page *page, bool release)
+> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
+> +		bool release)
+>   {
+>   	int ret;
+>   
+>   	lock_page(page);
+> -	ret = split_huge_page(page);
+> +	ret = split_huge_page_to_order(page, new_order);
+>   	unlock_page(page);
+>   
+>   	if (ret && release)
+> @@ -2280,6 +2281,9 @@ int memory_failure(unsigned long pfn, int flags)
+>   	folio_unlock(folio);
+>   
+>   	if (folio_test_large(folio)) {
+> +		const int new_order = min_order_for_split(folio);
+> +		int err;
+> +
+>   		/*
+>   		 * The flag must be set after the refcount is bumped
+>   		 * otherwise it may race with THP split.
+> @@ -2294,7 +2298,16 @@ int memory_failure(unsigned long pfn, int flags)
+>   		 * page is a valid handlable page.
+>   		 */
+>   		folio_set_has_hwpoisoned(folio);
+> -		if (try_to_split_thp_page(p, false) < 0) {
+> +		err = try_to_split_thp_page(p, new_order, /* release= */ false);
+> +		/*
+> +		 * If splitting a folio to order-0 fails, kill the process.
+> +		 * Split the folio regardless to minimize unusable pages.
+> +		 * Because the memory failure code cannot handle large
+> +		 * folios, this split is always treated as if it failed.
+> +		 */
+> +		if (err || new_order) {
+> +			/* get folio again in case the original one is split */
+> +			folio = page_folio(p);
+>   			res = -EHWPOISON;
+>   			kill_procs_now(p, pfn, flags, folio);
+>   			put_page(p);
+> @@ -2621,7 +2634,17 @@ static int soft_offline_in_use_page(struct page *page)
+>   	};
+>   
+>   	if (!huge && folio_test_large(folio)) {
+> -		if (try_to_split_thp_page(page, true)) {
+> +		const int new_order = min_order_for_split(folio);
+> +
+> +		/*
+> +		 * If new_order (target split order) is not 0, do not split the
+> +		 * folio at all to retain the still accessible large folio.
+> +		 * NOTE: if minimizing the number of soft offline pages is
+> +		 * preferred, split it to non-zero new_order like it is done in
+> +		 * memory_failure().
+> +		 */
+> +		if (new_order || try_to_split_thp_page(page, /* new_order= */ 0,
+> +						       /* release= */ true)) {
+>   			pr_info("%#lx: thp split failed\n", pfn);
+>   			return -EBUSY;
+>   		}
+
 
