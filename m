@@ -1,228 +1,194 @@
-Return-Path: <linux-kernel+bounces-877570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD09C1E750
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:47:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C6FC1E762
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C2D3AB6AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3799188B696
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42BE2C029F;
-	Thu, 30 Oct 2025 05:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CB02E54B9;
+	Thu, 30 Oct 2025 05:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCKsZOhs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o7EuA5PW"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBDB37A3BB;
-	Thu, 30 Oct 2025 05:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A928F246333;
+	Thu, 30 Oct 2025 05:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761803269; cv=none; b=gV6rJXeQpS+hFoAePeBKbJnvzZ5Io5c1K9SHXkDg/t9EwlnryXsFnPAtZ3hTHbj/45aSU9+MYZG6ihGp3QEl9StNqvhpyAdsSlbrAFH5p7Iia54BRVMyNYrQp4fNJMEdFF7h4jVxdD48oicbfajI+K9vSyoLmzKcyNgGL6jqa2Q=
+	t=1761803572; cv=none; b=tZHziNDlaKUEu/XFwunmoC83NLTwISkkvwBci1KpwKKNMCNlO7kvtB/U+PstOOj2Y+l9OQuH89TBRZrA5IJO4pPPDtR7nSrOjTPxKHmy9RJmH+A9lu31r1zJipv0z5ZGABGToVVGaRx5IAhKfHPSRWFHvuEtAByK6zMG5Cq1+lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761803269; c=relaxed/simple;
-	bh=M0L09TztyNjiCDc0Fb+g18Hn3UGbrQ0moZLvALPRArs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ByeahxkhFaxAdbbJGZ6q5EtZuO3Np04e1uNjzih9AyZjnzbPCVdfBXIKCYxFdXuW9QkJvnApZp72iDVXTwQUpxqogZaaly6f7TrnZAoTHd6UDVuHNvFxrv2qq+29zCBJGCPNmWy2cV8q7nNhW4NQdKieHczxIk2Osnyf3SLJnG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCKsZOhs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4806DC4CEF1;
-	Thu, 30 Oct 2025 05:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761803268;
-	bh=M0L09TztyNjiCDc0Fb+g18Hn3UGbrQ0moZLvALPRArs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UCKsZOhsyY1IhSirXHQDQstZCJkLbnus/ixxDFTWJBopPno78YIamfu11F2ZYTHeE
-	 j4hKn0TbDWKCquth7Q9IRZbw3o+aK/WT+eQN+A1ceicjqKy8Tnx5Ios2HHNOlNYEh0
-	 KgZTfhcE9RpjBMtrHogO363mF+I7l1HBS+ybg1GLjJZgskbYDJq+Foc13No4VcWFwm
-	 o71IW93b2TIweD2yCLvb3uno2HIibJSKVRkckg4d2NOhy5m0q5DCzIvYZ8dB/sEnlw
-	 Xcz3pnQE5U97HlPymLuaxeVMaQs6oL8VNkyb9p/nqUsSTrTjZqcXQaY0FKfRqQS5k9
-	 urWdccmHQqy7g==
-Message-ID: <da7ecb40-dbc2-4f6e-8026-d630e5b3bb52@kernel.org>
-Date: Thu, 30 Oct 2025 06:47:44 +0100
+	s=arc-20240116; t=1761803572; c=relaxed/simple;
+	bh=7vD8qLCkJC5WlKwzaKKQHY6iR0vXELPmA6r5MI6faOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ri1XH+oKS8l5oUsQzSx3Li4lGXkuFD8suTZGr+fDIOgwfr8Pq5dzbrGne3rOa9aK2wRDGF8nILmIA5vOVdg9UIDXU+JB4/4JWFSwZThVKyLq5xPUxX7FOs3aDCSoIVa5hkYSrseu4GgipOHi0zoacpOAT6vx+DXUVBlYMvxr+Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o7EuA5PW; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761803561; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=QbJW1oSoPB+S3wvl8vKFqXtFlLfT8YYkUewku8ErJqo=;
+	b=o7EuA5PWcvYpbzP0XSJoirBcNGoa7E0dHztJHl45PhrW8DtyUt+oF+A8dN+4cCdw7AnC3/kE32pOjXmsKNMp6bR1Bj47nGTfe2ZE3a3qS9J/G5NbZBDUzfwbgVdbf7iw1I+LsHm2OhaB9xa5Hi/oR4lFnWIjoqHCQbuJ3tj84lc=
+Received: from localhost(mailfrom:yaoyuan@linux.alibaba.com fp:SMTPD_---0WrIxGBP_1761803559 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 30 Oct 2025 13:52:40 +0800
+Date: Thu, 30 Oct 2025 13:52:39 +0800
+From: Yao Yuan <yaoyuan@linux.alibaba.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Tao Zhang <tao1.zhang@intel.com>, Jim Mattson <jmattson@google.com>, 
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH 3/3] x86/mmio: Unify VERW mitigation for guests
+Message-ID: <rntzk5ujevvnowhvr5ok2mqr6o3j3uwgei4523h7qiadjk6fq6@4mtnpe3hdixn>
+References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+ <20251029-verw-vm-v1-3-babf9b961519@linux.intel.com>
+ <20251030003346.5kmj5urppoex7gyd@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt: bindings: net: add bindings for QCN6122
-To: George Moussalem <george.moussalem@outlook.com>,
- Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
- <20251029-ath11k-qcn6122-v1-1-58ed68eba333@outlook.com>
- <3dc712ae-b51f-4142-bbab-1eadbc27e60a@kernel.org>
- <DS7PR19MB88836505C4CC48D3E62FBC0A9DFAA@DS7PR19MB8883.namprd19.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DS7PR19MB88836505C4CC48D3E62FBC0A9DFAA@DS7PR19MB8883.namprd19.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030003346.5kmj5urppoex7gyd@desk>
 
-On 29/10/2025 17:12, George Moussalem wrote:
-> 
-> 
-> On 10/29/25 18:32, Krzysztof Kozlowski wrote:
->> On 29/10/2025 15:26, George Moussalem via B4 Relay wrote:
->>> From: George Moussalem <george.moussalem@outlook.com>
->>>
->>> QCN6122 is a PCIe based solution that is attached to and enumerated
->>> by the WPSS (Wireless Processor SubSystem) Q6 processor.
->>
->> Please use subject prefixes matching the subsystem. You can get them for
->> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
->> your patch is touching. For bindings, the preferred subjects are
->> explained here:
->> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
->>
->> The prefix is never "dt:".
->>
-> Will do in next version, thanks.
-> 
->>
->> A nit, subject: drop second/last, redundant "bindings for". The
->> "dt-bindings" prefix is already stating that these are bindings.
->> See also:
->> https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->>
-> 
-> Will change accordingly.
-> 
->>>
->>> Though it is a PCIe device, since it is not attached to APSS processor
->>> (Application Processor SubSystem), APSS will be unaware of such a decice
->>> so it is registered to the APSS processor as a platform device(AHB).
->>> Because of this hybrid nature, it is called as a hybrid bus device as
->>> introduced by WCN6750. It has 5 CE and 8 DP rings.
->>>
->>> QCN6122 is similar to WCN6750 and follows the same codepath as for
->>> WCN6750.
->>>
->>> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
->>> ---
->>>  .../bindings/net/wireless/qcom,ath11k.yaml         | 57 +++++++++++++++++++++-
->>>  1 file changed, 56 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
->>> index c089677702cf17f3016b054d21494d2a7706ce5d..4b0b282bb9231c8bc496fed42e0917b9d7d106d2 100644
->>> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
->>> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
->>> @@ -21,12 +21,13 @@ properties:
->>>        - qcom,ipq6018-wifi
->>>        - qcom,wcn6750-wifi
->>>        - qcom,ipq5018-wifi
->>> +      - qcom,qcn6122-wifi
->>
->> Why people keep adding to the end... previously ipq5018 added by
->> qualcom, did not even get any review.
->>
->> Place it before wcn and let ipq5018 be outlier since this was broken
->> already.
->>
-> 
-> it was exactly ipq5018 which got me thinking I should add it to the end.
-> Will alphabetically insert qcn6122. I could reorder the entire list as
-> well if you'd like (ipq6018 is also misplaced)
-> 
->>>  
->>>    reg:
->>>      maxItems: 1
->>>  
->>>    interrupts:
->>> -    minItems: 32
->>> +    minItems: 13
->>>      maxItems: 52
->>>  
->>>    interrupt-names:
->>> @@ -87,6 +88,14 @@ properties:
->>>      items:
->>>        - const: wlan-smp2p-out
->>>  
->>> +  qcom,userpd:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    enum: [2, 3]
->>> +    description: instance ID of user PD (protection domain) in multi-PD
->>> +                 architectures to distinguish between multiple instances
->>> +                 of the same wifi chip used by QMI in its interface with
->>> +                 the firmware running on Q6.
->>
->> Broken indentation. It is supposed to be two spaces. Look at this file -
->> why are you doing this completely different?
->>
->> Anyway, please do not come with 2nd or 3rd property for this. We already
->> have such somewhere.
-> 
-> Would you mind pointing me to the property you're referring to? Do you
-> mean the QRTR ID as proposed in this RFC:
-> https://lore.kernel.org/linux-wireless/cover.1732506261.git.ionic@ionic.de/
-> 
-> if so, this wouldn't help this in this case. Although it's PCIe based,
-> PCI is not even enabled as the Q6 firmware itself takes care of that.
+On Wed, Oct 29, 2025 at 05:33:46PM +0800, Pawan Gupta wrote:
+> On Wed, Oct 29, 2025 at 02:27:00PM -0700, Pawan Gupta wrote:
+> > When a system is only affected by MMIO Stale Data, VERW mitigation is
+> > currently handled differently than other data sampling attacks like
+> > MDS/TAA/RFDS, that do the VERW in asm. This is because for MMIO Stale Data,
+> > VERW is needed only when the guest can access host MMIO, this was tricky to
+> > check in asm.
+> >
+> > Refactoring done by:
+> >
+> >   83ebe7157483 ("KVM: VMX: Apply MMIO Stale Data mitigation if KVM maps
+> >   MMIO into the guest")
+> >
+> > now makes it easier to execute VERW conditionally in asm based on
+> > VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO.
+> >
+> > Unify MMIO Stale Data mitigation with other VERW-based mitigations and only
+> > have single VERW callsite in __vmx_vcpu_run(). Remove the now unnecessary
+> > call to x86_clear_cpu_buffer() in vmx_vcpu_enter_exit().
+> >
+> > This also untangles L1D Flush and MMIO Stale Data mitigation. Earlier, an
+> > L1D Flush would skip the VERW for MMIO Stale Data. Now, both the
+> > mitigations are independent of each other. Although, this has little
+> > practical implication since there are no CPUs that are affected by L1TF and
+> > are *only* affected by MMIO Stale Data (i.e. not affected by MDS/TAA/RFDS).
+> > But, this makes the code cleaner and easier to maintain.
+> >
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > ---
+> >  arch/x86/kvm/vmx/run_flags.h | 12 ++++++------
+> >  arch/x86/kvm/vmx/vmenter.S   |  5 +++++
+> >  arch/x86/kvm/vmx/vmx.c       | 26 ++++++++++----------------
+> >  3 files changed, 21 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/arch/x86/kvm/vmx/run_flags.h b/arch/x86/kvm/vmx/run_flags.h
+> > index 2f20fb170def8b10c8c0c46f7ba751f845c19e2c..004fe1ca89f05524bf3986540056de2caf0abbad 100644
+> > --- a/arch/x86/kvm/vmx/run_flags.h
+> > +++ b/arch/x86/kvm/vmx/run_flags.h
+> > @@ -2,12 +2,12 @@
+> >  #ifndef __KVM_X86_VMX_RUN_FLAGS_H
+> >  #define __KVM_X86_VMX_RUN_FLAGS_H
+> >
+> > -#define VMX_RUN_VMRESUME_SHIFT				0
+> > -#define VMX_RUN_SAVE_SPEC_CTRL_SHIFT			1
+> > -#define VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO_SHIFT	2
+> > +#define VMX_RUN_VMRESUME_SHIFT			0
+> > +#define VMX_RUN_SAVE_SPEC_CTRL_SHIFT		1
+> > +#define VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT		2
+> >
+> > -#define VMX_RUN_VMRESUME			BIT(VMX_RUN_VMRESUME_SHIFT)
+> > -#define VMX_RUN_SAVE_SPEC_CTRL			BIT(VMX_RUN_SAVE_SPEC_CTRL_SHIFT)
+> > -#define VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO	BIT(VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO_SHIFT)
+> > +#define VMX_RUN_VMRESUME		BIT(VMX_RUN_VMRESUME_SHIFT)
+> > +#define VMX_RUN_SAVE_SPEC_CTRL		BIT(VMX_RUN_SAVE_SPEC_CTRL_SHIFT)
+> > +#define VMX_RUN_CLEAR_CPU_BUFFERS	BIT(VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT)
+> >
+> >  #endif /* __KVM_X86_VMX_RUN_FLAGS_H */
+> > diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> > index 0dd23beae207795484150698d1674dc4044cc520..ec91f4267eca319ffa8e6079887e8dfecc7f96d8 100644
+> > --- a/arch/x86/kvm/vmx/vmenter.S
+> > +++ b/arch/x86/kvm/vmx/vmenter.S
+> > @@ -137,6 +137,9 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >  	/* Load @regs to RAX. */
+> >  	mov (%_ASM_SP), %_ASM_AX
+> >
+> > +	/* jz .Lskip_clear_cpu_buffers below relies on this */
+> > +	test $VMX_RUN_CLEAR_CPU_BUFFERS, %ebx
+> > +
+> >  	/* Check if vmlaunch or vmresume is needed */
+> >  	bt   $VMX_RUN_VMRESUME_SHIFT, %ebx
+> >
+> > @@ -160,6 +163,8 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >  	/* Load guest RAX.  This kills the @regs pointer! */
+> >  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+> >
+> > +	/* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
+> > +	jz .Lskip_clear_cpu_buffers
+> >  	/* Clobbers EFLAGS.ZF */
+> >  	VM_CLEAR_CPU_BUFFERS
+> >  .Lskip_clear_cpu_buffers:
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 451be757b3d1b2fec6b2b79157f26dd43bc368b8..303935882a9f8d1d8f81a499cdce1fdc8dad62f0 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -903,9 +903,16 @@ unsigned int __vmx_vcpu_run_flags(struct vcpu_vmx *vmx)
+> >  	if (!msr_write_intercepted(vmx, MSR_IA32_SPEC_CTRL))
+> >  		flags |= VMX_RUN_SAVE_SPEC_CTRL;
+> >
+> > -	if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only) &&
+> > -	    kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+> > -		flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
+> > +	/*
+> > +	 * When affected by MMIO Stale Data only (and not other data sampling
+> > +	 * attacks) only clear for MMIO-capable guests.
+> > +	 */
+> > +	if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only)) {
+> > +		if (kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+> > +			flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+> > +	} else {
+> > +		flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+> > +	}
+>
+> Setting the flag here is harmless but not necessary when the CPU is not
+> affected by any of the data sampling attacks. VM_CLEAR_CPU_BUFFERS would be
+> a NOP in the case.
+>
+> However, me looking at this code in a year or two would be confused why the
+> flag is always set on unaffected CPUs. Below change to conditionally set
+> the flag would make it clearer.
+>
+> ---
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 303935882a9f..0eab59ab2698 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -910,7 +910,7 @@ unsigned int __vmx_vcpu_run_flags(struct vcpu_vmx *vmx)
+>  	if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only)) {
+>  		if (kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+>  			flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+> -	} else {
+> +	} else if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_VM)) {
+>  		flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+>  	}
+>
 
-
-I expect something covering all cases, so it must cover ipq5332 and
-ipq9574 from the other patchset you mentioned:
-https://lore.kernel.org/all/20231110091939.3025413-2-quic_mmanikan@quicinc.com/
-
-Same thing cannot be represented in two different ways.
-
-For APR and GPR we already have qcom,protection-domain as a service
-name. Linux drivers use it a bit differently than your code here, but
-unfortunately I focus on bindings and the binding sounds exactly the same.
-
-Anyway instance ID is not acceptable. Check my slides for possible
-workarounds, if you do not know the actual protection domain.
-
-Best regards,
-Krzysztof
+Oh, even no need a or two year later, I just feel confusion
+when look at this part first time. But this change anyway
+makes it more clear to me.
 
