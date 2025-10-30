@@ -1,237 +1,225 @@
-Return-Path: <linux-kernel+bounces-879036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE47BC22194
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:58:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CED3C221A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 502F9348F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61906189EC74
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C803346B0;
-	Thu, 30 Oct 2025 19:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE3233344F;
+	Thu, 30 Oct 2025 19:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HjUdxesy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TbHVe6//"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB7233468C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1842333440;
+	Thu, 30 Oct 2025 19:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761854263; cv=none; b=nwlYVNLlqcr6zAGYkn2huVkWKTyCRauwFPr0/kniLxYy1WrKOeaf2Rqzz2d4v1q9d4qxDx9f+XZ40OYf06CA+glrloCFotYCmCsT/2JAJ/EmtugBsMrY4I1o0K7Yz54DMYVjd7AH4uRgCKhU9hVwWfiDnLaCoJRPbbR9QNJ8IB0=
+	t=1761854325; cv=none; b=HumguV1m8a3lHfTl78em8A6PdDgV5YO6yhFnLTSbBwEQ2fuPQpJqHg04m4ClUFUumwZrLRiR0TrU9CIWWh9c3EdCtqjx81FzGn3Zuz3oo0tPA4Ir0sVSQi0ij3OSybWuSwxXyeeRMtiwpYj8pRbWo0tDFlE9IVKmmYyFhHbybb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761854263; c=relaxed/simple;
-	bh=2tPW5kS5oYSFrmUrNHC7X2sX8Zt+2D8tcaV7A/DfPsY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Jz0YNPQnd2D2oreHdjoZy7ofRy8R8NzlQ3Tckavl6nBZ+rjgMT7GG//zEYupixflK6pOpOYJuxKwGRpguD84desDfHjtzJYUnrX78pw2MYQ5fx9BVAgCt2DNGeQmxL0cbOCdSpGvditZ26ZRQEUBZfGOrmbQTuNx0Fp2LQ5Gj7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HjUdxesy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761854261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wHUvxh29plVfP0UDVNFA7MwNdgWEnsNAEpe26M+T+AM=;
-	b=HjUdxesydTtXh0zIXhcLeoOmrGBOrGtqM6Gow1vTd+CHq8bYhDwQy+lvRSfM37PhaNONaX
-	9jgZYgF/y5Eb1ArXCMyVys33NMatv5+dzNAztMHr14o/AaAARb91Ksv9k/Gvbnni3nX6YG
-	pmqQa3YIHAGXWU8xMOLlOLmhWmwAM0M=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-509-7ZYrk0FkMj65HGO0TvIe7Q-1; Thu, 30 Oct 2025 15:57:39 -0400
-X-MC-Unique: 7ZYrk0FkMj65HGO0TvIe7Q-1
-X-Mimecast-MFC-AGG-ID: 7ZYrk0FkMj65HGO0TvIe7Q_1761854259
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8a194ded475so164988285a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:57:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761854259; x=1762459059;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wHUvxh29plVfP0UDVNFA7MwNdgWEnsNAEpe26M+T+AM=;
-        b=PE2qJ8lrwMs6LdOb2Q+lAswsaQviDS2bJ8tHiQGBHza32ythJwZQQYY8KeltYSh93a
-         9Nl2rVyfEVH6JL2hf3bb49oteTE7nxGym+W109xgDPeEJERFNc8j5bupRKBOJkcFdZk2
-         q1aRx4QTk8r2bc2vCV2Jo3UTv2pmKk1FLoGj4fmrr3mwNR6LT0OozRHYjWsLp3cJ7apv
-         666J5U0PtzRKap57b9MbtkDYWAfpp1hDONBpwxbU1qoxE3cy0OTbNyvApKJKnbtFCSK7
-         S5yN5gY4TedV9UtRH9BhRSg80loB/py4sgfHJYevfcA+Q2cSTbk7jNRxz59BgQODCBBx
-         ic8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUClgiJUPiXEwvfsnS/GeOYgH5bUU+Iu5EqGQMnnN/LTSnrJ9CuDYlkikqU9ZHvCDAE/OvYJk0LYlot+bE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrEBhD5H4RmdxK13n+Xp11hnnJWIEDM1qx5l3xWDvpYd9BQfSo
-	/nMGewBc9qkpBUMr3xQloxUEjlqnTE+Yf07j3+ZZLGqn2kcNH6/xEm2t6bgTwnGJiFiIhNY0EMA
-	h0qXUZMfTPR3bm/tLVG5Y1jYe2qChXY3VYWx82pDX/yDHwl2Nb4EN3eXQAsM6DeP7P4NVbyx2gA
-	==
-X-Gm-Gg: ASbGncvACbWJNiHfINMvGVUVPDtQSAWhPJBhFyk79tiJGpagmG4f4YCWm9Q/4rCGdYS
-	A3g2bfR6O/otxQuU6BIr5jhVmEpOtg/FbKMp2wpl6OFaCuwPsEoMTdZEFB7dENqusN486rpwpny
-	pRfYqKKlLLb3QWFbwQretMz/IrchlUz7ZOvxEFCGpA/dtUpk6H7vcrZgIEZeksDBKIvJxwx/xXo
-	kWe4lUWnoqXOxd3aV7+Xp96HTOGhRA63lG71hqw0WcyTmt8qGyTVAjWILTEufavieptyoBrgS3j
-	ODeamqdVySpzZbQh09UhKU7CmCw0iBersrQPiDC2HmE3BEFpUNApI5KDE76OI2jRUuhZulBUnpz
-	0qz6ybHuc3X+/2Tc9NTkNRw9iFfbNlkjDq+D/N1x2rcOumw==
-X-Received: by 2002:a05:620a:4493:b0:892:ce2b:f869 with SMTP id af79cd13be357-8ab992a3e89mr91366485a.13.1761854258983;
-        Thu, 30 Oct 2025 12:57:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJRwI3hew+S/hBhXzDIhRfd47T9VKrIoMXn5a19Jfc4jmsisyXOlLOhkkpn0luwcThLRLceg==
-X-Received: by 2002:a05:620a:4493:b0:892:ce2b:f869 with SMTP id af79cd13be357-8ab992a3e89mr91364485a.13.1761854258578;
-        Thu, 30 Oct 2025 12:57:38 -0700 (PDT)
-Received: from ?IPv6:2607:fea8:fc01:8d8d:5c3d:ce6:f389:cd38? ([2607:fea8:fc01:8d8d:5c3d:ce6:f389:cd38])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba37d72ecsm121506711cf.9.2025.10.30.12.57.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 12:57:38 -0700 (PDT)
-Message-ID: <c9b893a643cea2ffd4324c25b9d169f920db1ad4.camel@redhat.com>
-Subject: Re: [PATCH 2/3] KVM: x86: Fix a semi theoretical bug in
- kvm_arch_async_page_present_queued
-From: mlevitsk@redhat.com
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, "H.
- Peter Anvin"
-	 <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner
-	 <tglx@linutronix.de>, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 30 Oct 2025 15:57:37 -0400
-In-Reply-To: <aP-JKkZ400TERMSy@google.com>
-References: <20250813192313.132431-1-mlevitsk@redhat.com>
-	 <20250813192313.132431-3-mlevitsk@redhat.com>
-	 <7c7a5a75-a786-4a05-a836-4368582ca4c2@redhat.com>
-	 <aNLtMC-k95pIYfeq@google.com>
-	 <23f11dc1-4fd1-4286-a69a-3892a869ed33@redhat.com>
-	 <aNMpz96c9JOtPh-w@google.com> <aP-JKkZ400TERMSy@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1761854325; c=relaxed/simple;
+	bh=gX0eYm6yHbhuq2jgqmTjz7o0HFpQFtUjRWVy79LpAqo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=orPVZ2PaCLcyl1BRRcyziBXBgFKH8oKiX5KfPyBXBnDMrKLKMt0AVINqjHDEJ14nVMqQdkwhwXwMnhZOQ8rI0C5vx7BF7f0rntY/KJAJpi29ztxc9G9A+LtOa5/k1cG9T2NYLp3UpPjKKwYwUdniFdBlVW+oaRt5TdgM/Ac7MtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TbHVe6//; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761854324; x=1793390324;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=gX0eYm6yHbhuq2jgqmTjz7o0HFpQFtUjRWVy79LpAqo=;
+  b=TbHVe6//3DnwIDhbDKpniNRaT16s79pRCVlSMKuPHuy+V3CBsN4iw6H1
+   rcU6PmJoFbX7fzddOP5y/OnISETyd67IYiCdXrVK2ArUyfDDK5ue6n0YZ
+   EQZpMJwy91SjrFbIkOHOKoEItUIpzgkF1HsT1t0YR2RQ7qxg+5FwNyMBF
+   h/xe4iZvJGjmo13df4YsO7vpd9eS2juHx2V9upqb2FUUf83xRf0TxJT3v
+   jHOHGTSByfn1jfxTCC0UyWGlauQqBcei7FHy5lEW2wRm10FPpW5QLlaPz
+   DgK853J1d7aqrY0vFrp2dQbtuAFj1iOqbAco+vxPY+YzJVJRS7S/NHIx2
+   A==;
+X-CSE-ConnectionGUID: yGeOpAgdS+OtxZXF0L54eg==
+X-CSE-MsgGUID: qnANKxWXSv6MuRVGrz+MzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64159368"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="64159368"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:58:43 -0700
+X-CSE-ConnectionGUID: sTbGkBz8SJaolOUPAMb6vg==
+X-CSE-MsgGUID: QcVpFbzCTJWRayLCOEXSXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="190390693"
+Received: from unknown (HELO orcnseosdtnuc.amr.corp.intel.com) ([10.166.241.20])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:58:44 -0700
+From: Jacob Keller <jacob.e.keller@intel.com>
+Date: Thu, 30 Oct 2025 12:58:32 -0700
+Subject: [PATCH v2] docs: kdoc: fix duplicate section warning message
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251030-jk-fix-kernel-doc-duplicate-return-warning-v2-1-ec4b5c662881@intel.com>
+X-B4-Tracking: v=1; b=H4sIAGfDA2kC/52NQQ6CMBBFr2K6dgwtouDKexgWpR1hBFsyLagh3
+ N3KEVy+n/z3FhGQCYO47BbBOFMg7xKo/U6YTrsWgWxioTJVyExV8OjhTm/okR0OYL0BO40DGR0
+ RGOPEDl6aHbkWGlucUeeVOalSJOHImK5b7FYn7ihEz5+tPcvf+ldmliBBlWiLskGTZ8cruYjDw
+ finqNd1/QJs8b7Z5AAAAA==
+X-Change-ID: 20251029-jk-fix-kernel-doc-duplicate-return-warning-bd57ea39c628
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>
+X-Mailer: b4 0.15-dev-782a1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5810;
+ i=jacob.e.keller@intel.com; h=from:subject:message-id;
+ bh=gX0eYm6yHbhuq2jgqmTjz7o0HFpQFtUjRWVy79LpAqo=;
+ b=owGbwMvMwCWWNS3WLp9f4wXjabUkhkzmw8XXVA9e+/v6pP5fbsUHB45UZy9fki0fH8If/UP3m
+ sD6Td/yO0pZGMS4GGTFFFkUHEJWXjeeEKb1xlkOZg4rE8gQBi5OAZhI7C6G/66NFe+qtly4dXhl
+ jYFWkb95x87XfxPik6PXKm7/8PTn+bMM/7PFl7+50TFH9rPeWi2pHJeKqy+805jaXgpeL1gYcaT
+ alQsA
+X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
+ fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
 
-On Mon, 2025-10-27 at 08:00 -0700, Sean Christopherson wrote:
-> On Tue, Sep 23, 2025, Sean Christopherson wrote:
-> > On Tue, Sep 23, 2025, Paolo Bonzini wrote:
-> > > On 9/23/25 20:55, Sean Christopherson wrote:
-> > > > On Tue, Sep 23, 2025, Paolo Bonzini wrote:
-> > > > > On 8/13/25 21:23, Maxim Levitsky wrote:
-> > > > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > > > > index 9018d56b4b0a..3d45a4cd08a4 100644
-> > > > > > --- a/arch/x86/kvm/x86.c
-> > > > > > +++ b/arch/x86/kvm/x86.c
-> > > > > > @@ -13459,9 +13459,14 @@ void kvm_arch_async_page_present(struc=
-t kvm_vcpu *vcpu,
-> > > > > > =C2=A0=C2=A0 void kvm_arch_async_page_present_queued(struct kvm=
-_vcpu *vcpu)
-> > > > > > =C2=A0=C2=A0 {
-> > > > > > -	kvm_make_request(KVM_REQ_APF_READY, vcpu);
-> > > > > > -	if (!vcpu->arch.apf.pageready_pending)
-> > > > > > +	/* Pairs with smp_store_release in vcpu_enter_guest. */
-> > > > > > +	bool in_guest_mode =3D (smp_load_acquire(&vcpu->mode) =3D=3D =
-IN_GUEST_MODE);
-> > > > > > +	bool page_ready_pending =3D READ_ONCE(vcpu->arch.apf.pageread=
-y_pending);
-> > > > > > +
-> > > > > > +	if (!in_guest_mode || !page_ready_pending) {
-> > > > > > +		kvm_make_request(KVM_REQ_APF_READY, vcpu);
-> > > > > > =C2=A0=C2=A0=C2=A0		kvm_vcpu_kick(vcpu);
-> > > > > > +	}
-> > > > >=20
-> > > > > Unlike Sean, I think the race exists in abstract and is not benig=
-n
-> > > >=20
-> > > > How is it not benign?=C2=A0 I never said the race doesn't exist, I =
-said that consuming
-> > > > a stale vcpu->arch.apf.pageready_pending in kvm_arch_async_page_pre=
-sent_queued()
-> > > > is benign.
-> > >=20
-> > > In principle there is a possibility that a KVM_REQ_APF_READY is misse=
-d.
-> >=20
-> > I think you mean a kick (wakeup or IPI), is missed, not that the APF_RE=
-ADY itself
-> > is missed.=C2=A0 I.e. KVM_REQ_APF_READY will never be lost, KVM just mi=
-ght enter the
-> > guest or schedule out the vCPU with the flag set.
-> >=20
-> > All in all, I think we're in violent agreement.=C2=A0 I agree that kvm_=
-vcpu_kick()
-> > could be missed (theoretically), but I'm saying that missing the kick w=
-ould be
-> > benign due to a myriad of other barriers and checks, i.e. that the vCPU=
- is
-> > guaranteed to see KVM_REQ_APF_READY anyways.
-> >=20
-> > E.g. my suggestion earlier regarding OUTSIDE_GUEST_MODE was to rely on =
-the
-> > smp_mb__after_srcu_read_{,un}lock() barriers in vcpu_enter_guest() to e=
-nsure
-> > KVM_REQ_APF_READY would be observed before trying VM-Enter, and that if=
- KVM might
-> > be in the process of emulating HLT (blocking), that either KVM_REQ_APF_=
-READY is
-> > visible to the vCPU or that kvm_arch_async_page_present() wakes the vCP=
-U.=C2=A0 Oh,
-> > hilarious, async_pf_execute() also does an unconditional __kvm_vcpu_wak=
-e_up().
-> >=20
-> > Huh.=C2=A0 But isn't that a real bug?=C2=A0 KVM doesn't consider KVM_RE=
-Q_APF_READY to be a
-> > wake event, so isn't this an actual race?
-> >=20
-> > =C2=A0 vCPU=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 async #PF
-> > =C2=A0 kvm_check_async_pf_completion()
-> > =C2=A0 pageready_pending =3D false
-> > =C2=A0 VM-Enter
-> > =C2=A0 HLT
-> > =C2=A0 VM-Exit
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 kvm_make_request(KVM_REQ_APF_READY, vcpu)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 kvm_vcpu_kick(vcpu)=C2=A0 // nop as the vCPU isn't blocking=
-, yet
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 __kvm_vcpu_wake_up() // nop for the same reason
-> > =C2=A0 vcpu_block()
-> > =C2=A0 <hang>
-> >=20
-> > On x86, the "page ready" IRQ is only injected from vCPU context, so AFA=
-ICT nothing
-> > is guarnateed wake the vCPU in the above sequence.
->=20
-> Gah, KVM checks async_pf.done instead of the request.=C2=A0 So I don't th=
-ink there's
-> a bug, just weird code.
+The python version of the kernel-doc parser emits some strange warnings
+with just a line number in certain cases:
 
-Hi!
+$ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
+Warning: 174
+Warning: 184
+Warning: 190
+Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
+Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
+Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
+Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
 
-Note that I posted a v2 of this patch series. Do I need to drop this patch =
-or its better to keep it
-(the patch should still be correct, but maybe an overkill I think).
+I eventually tracked this down to the lone call of emit_msg() in the
+KernelEntry class, which looks like:
 
-What do you think?=C2=A0
+  self.emit_msg(self.new_start_line, f"duplicate section name '{name}'\n")
 
-Can we have the patch 3 of the v2 merged as it fixes an real issue, which a=
-ctually
-causes random and hard to debug failures?
+This looks like all the other emit_msg calls. Unfortunately, the definition
+within the KernelEntry class takes only a message parameter and not a line
+number. The intended message is passed as the warning!
+
+Pass the filename to the KernelEntry class, and use this to build the log
+message in the same way as the KernelDoc class does.
+
+To avoid future errors, mark the warning parameter for both emit_msg
+definitions as a keyword-only argument. This will prevent accidentally
+passing a string as the warning parameter in the future.
+
+Also fix the call in dump_section to avoid an unnecessary additional
+newline.
+
+Fixes: e3b42e94cf10 ("scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class")
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+---
+We recently discovered this while working on some netdev text
+infrastructure. All of the duplicate section warnings are not being logged
+properly, which was confusing the warning comparison logic we have for
+testing patches in NIPA.
+
+This appears to have been caused by the optimizations in:
+https://lore.kernel.org/all/cover.1745564565.git.mchehab+huawei@kernel.org/
+
+Before this fix:
+$ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
+Warning: 174
+Warning: 184
+Warning: 190
+Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
+Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
+Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
+Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
+
+After this fix:
+$ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
+Warning: include/linux/virtio_config.h:174 duplicate section name 'Return'
+Warning: include/linux/virtio_config.h:184 duplicate section name 'Return'
+Warning: include/linux/virtio_config.h:190 duplicate section name 'Return'
+Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
+Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
+Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
+Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
+---
+Changes in v2:
+- Rebased onto docs-next from git://git.lwn.net/linux.git
+- Link to v1: https://patch.msgid.link/20251029-jk-fix-kernel-doc-duplicate-return-warning-v1-1-28ed58bec304@intel.com
+---
+ scripts/lib/kdoc/kdoc_parser.py | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+index 6e5c115cbdf3..ee1a4ea6e725 100644
+--- a/scripts/lib/kdoc/kdoc_parser.py
++++ b/scripts/lib/kdoc/kdoc_parser.py
+@@ -275,6 +275,8 @@ class KernelEntry:
+ 
+         self.leading_space = None
+ 
++        self.fname = fname
++
+         # State flags
+         self.brcount = 0
+         self.declaration_start_line = ln + 1
+@@ -289,9 +291,11 @@ class KernelEntry:
+         return '\n'.join(self._contents) + '\n'
+ 
+     # TODO: rename to emit_message after removal of kernel-doc.pl
+-    def emit_msg(self, log_msg, warning=True):
++    def emit_msg(self, ln, msg, *, warning=True):
+         """Emit a message"""
+ 
++        log_msg = f"{self.fname}:{ln} {msg}"
++
+         if not warning:
+             self.config.log.info(log_msg)
+             return
+@@ -337,7 +341,7 @@ class KernelEntry:
+                 # Only warn on user-specified duplicate section names
+                 if name != SECTION_DEFAULT:
+                     self.emit_msg(self.new_start_line,
+-                                  f"duplicate section name '{name}'\n")
++                                  f"duplicate section name '{name}'")
+                 # Treat as a new paragraph - add a blank line
+                 self.sections[name] += '\n' + contents
+             else:
+@@ -393,15 +397,15 @@ class KernelDoc:
+                           'Python 3.7 or later is required for correct results')
+             python_warning = True
+ 
+-    def emit_msg(self, ln, msg, warning=True):
++    def emit_msg(self, ln, msg, *, warning=True):
+         """Emit a message"""
+ 
+-        log_msg = f"{self.fname}:{ln} {msg}"
+-
+         if self.entry:
+-            self.entry.emit_msg(log_msg, warning)
++            self.entry.emit_msg(ln, msg, warning=warning)
+             return
+ 
++        log_msg = f"{self.fname}:{ln} {msg}"
++
+         if warning:
+             self.config.log.warning(log_msg)
+         else:
+
+---
+base-commit: b4ff1f611b00b94792988cff794124fa3c2ae8f8
+change-id: 20251029-jk-fix-kernel-doc-duplicate-return-warning-bd57ea39c628
 
 Best regards,
-	Maxim Levitsky
-
->=20
-> =C2=A0 bool kvm_vcpu_has_events(struct kvm_vcpu *vcpu)
-> =C2=A0 {
-> 	if (!list_empty_careful(&vcpu->async_pf.done))=C2=A0 <=3D=3D=3D
-> 		return true;
->=20
+--  
+Jacob Keller <jacob.e.keller@intel.com>
 
 
