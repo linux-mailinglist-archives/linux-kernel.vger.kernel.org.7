@@ -1,141 +1,201 @@
-Return-Path: <linux-kernel+bounces-878195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC21C1FFFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:26:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918B8C2000E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C045421761
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A21460695
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDAE31B822;
-	Thu, 30 Oct 2025 12:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1228324B22;
+	Thu, 30 Oct 2025 12:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyF4M2wk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vYHaRMpx"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B881C312834
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7563126DF;
+	Thu, 30 Oct 2025 12:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761827180; cv=none; b=p2E75A+RQ9GpHJiKZbKNcEi3f5i7Fn7l4pWsOPPnXYGz15QxCXmr8cQIntUpkn5eIx1mPbFJuUFawSg0CUI0e8GVaMeqCPTJhM5L08N0bpNAFLO9m3DRj/pN1RfQIGcrIlzAx5+vVeJKC6j6gXN93uoUtQjIHoj7twKz9p31M3c=
+	t=1761827189; cv=none; b=f9bAniDsQ1yqI8MhE2oSkpPTQbe7cZ8NJhKy6SdvwuV02Om4BWYDDQkhwLxZX4HVVYyLO4zdNWKeDwF+5wlrjVO66sXWXfcFlVzWl9n+RLIsIz9/JLo6l3PTQnWm7nZrPn+is/+7dag/CH+rgalecy1n/HoTK2vUDuVrvWwkwMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761827180; c=relaxed/simple;
-	bh=cbYd5mUObvWAq247RhDtBIy0RsBRceJxvBYCc/36UrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErbupALf0eu6IrXeMi6GaBKz7WTdFQ2bmhodLvmi+DVqF9fIUNz4gYr4ThymVImsgCqlWnJS0dKA9k86rH3E03yEGvBfMvVTwi3b1J4SMqhuswxZCZPAQkweDDAbhp33OsLbmSy+5z1pW/LWndn3ltTCb5Dbp+SpF1i+72X3uZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyF4M2wk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D12C2BC87
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761827180;
-	bh=cbYd5mUObvWAq247RhDtBIy0RsBRceJxvBYCc/36UrY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AyF4M2wkszEj8YzoRywKFKRFv0hK/plWl2XPzFbx/ZKhqEgb1/xP+SAZEUn+7/pQn
-	 ZJnnrmvL86XVytuLwGKIlHUPaGI3/Qb4HZxzH4SG2wK2gui6Z87q6AGdbGFmWXFD0t
-	 i6rqd2UTX1goP4WmZ1gJZKf1BcHXU5KRMEyUO8KUUNPIN1TWwaflsmNYkI9WNNs2k8
-	 GcT5wDRAYUlIiFn0dLJfX7buTDbAcxv2+nFrCE90YzDvU/uefIunmLPQH4+HZ6LK6Z
-	 u+TnvNpJNq/PlPhlvE43Nn2jX3JIatNpspVQA5QNF5Ycz3V/SigHhSQx+W9B2ihD76
-	 ol/Y58xgGcAvQ==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6504c33afb1so539879eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:26:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXYjZmfYRKgdf//cVAGxDEuTWyKeIG2blj11nXpcC0TlV1fBSacX9gloxw8dHZNfPt6EOyGg4hkTSE1XEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV/OSydxYNzi6K7R8aZ0O6ZEw1PQCDOENRu1WuFKaDu1N11Lxn
-	05gFcAq6IM4Oh71Dfg94gVSdao4hpNzT1+s6Dlg0CjGZkSnC3Dfmqfrv3t2QwtCwHjBMc7IUoCw
-	RAvUBT0EZmwQY6jTgL1F2yJcPSDEMQsI=
-X-Google-Smtp-Source: AGHT+IEwjr7Am+NaeHIS0C1w30ZZZ2Vn00gSsL4T/N1OBCD7rXt9dWVKHDNMrHClFaEPtO0E0Vlxm8uV7fo0uY8BUEI=
-X-Received: by 2002:a05:6820:168a:b0:654:f9ac:dd33 with SMTP id
- 006d021491bc7-65681bba481mr1288688eaf.4.1761827179860; Thu, 30 Oct 2025
- 05:26:19 -0700 (PDT)
+	s=arc-20240116; t=1761827189; c=relaxed/simple;
+	bh=zZDwFr4IyiT8vx7/wLRCFRIXbWSDTfwwP9NpmJNno9M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cBC3Zn5EuwcFGCcfaZii/YBG6L/U/BH+XdwvyGp/xWKWb6qgH4MIM92XLfGIRRKzfRwaqH9sxkd8NSaefFJmLoF/0XUySNaMQ7c7i5r3kj7JfTgNbFNzE+JTpjVHPES5ECra3SGYkeYj5OARo58mJeBb/0HrfsOehdieiSRd4Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vYHaRMpx; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cy3Hs1HYnz9vBj;
+	Thu, 30 Oct 2025 13:26:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761827177; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9DK/EsSrv/ZUc4X4MrgLDSTB0kWrjlTtTs1nlO5FmUg=;
+	b=vYHaRMpx01AqFN5eK8xNSNlujKnBCKhUWW+nXEEbLsTAXCQapvG+uBzxAT7/zTIq0Ocn4e
+	EkNumxB1SbEdozNM9GV4IhJZqNaYp0US2CWJUfA7OPVFsZo2mgHeFN/mEG1drwN6+qIQYN
+	tNqHw3eQgMfUbXto1Eu3Dcw6cSEUc9p5IDvdEviWqTSn7sVCqeEMRMyAPMC8mOxwkYYD4W
+	R2sdzkDzqMigZ+YFphSmFs2aza7IBYMxkgnuj2l5u9fbuCZZhNwr08A2Kj+AR7Y6ioSeVF
+	bRW6BQeov+jAFvcfaoKN/8AL5T0ShhlBcIyXaCPxACA21jk+LhcQQisqcPh2EA==
+Message-ID: <c51ea5a408ca6d404074be1df219077457ea76f6.camel@mailbox.org>
+Subject: Re: [PATCH v1] drm/sched: fix deadlock in
+ drm_sched_entity_kill_jobs_cb
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>, phasta@kernel.org, 
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Matthew
+ Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>
+Cc: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Date: Thu, 30 Oct 2025 13:26:10 +0100
+In-Reply-To: <442d0e70-c9e2-4bd6-a144-ea083dbf86d2@damsy.net>
+References: <20251029091103.1159-1-pierre-eric.pelloux-prayer@amd.com>
+	 <fb2881006f843bd85dd02948c4467c81086effc8.camel@mailbox.org>
+	 <442d0e70-c9e2-4bd6-a144-ea083dbf86d2@damsy.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com> <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
-In-Reply-To: <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 30 Oct 2025 13:26:08 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com>
-X-Gm-Features: AWmQ_blQnc1Hb5b5KgZH0kGZoqGgp1aF-U3Rc9_Ll2lxwa4enYfIkY8i9oGv1Pg
-Message-ID: <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
- for s2idle
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MBO-RS-META: t5i1pxoekhdn1m5qnn8hwnur5fmqbb8o
+X-MBO-RS-ID: 8afa6dd1f8f1b2c6dfd
 
-On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.org> wrote=
-:
-> >
-> > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
-.org> wrote:
-> > >
-> > > Changes in v2:
-> > >         - Limit the new QoS to CPUs  and make some corresponding rena=
-ming of the
-> > >         functions along with name of the device node for user space.
-> > >         - Make sure we deal with the failure/error path correctly whe=
-n there are
-> > >         no state available for s2idle.
-> > >         - Add documentation.
-> > >
-> > > Some platforms supports multiple low-power states for CPUs that can b=
-e used
-> > > when entering system-wide suspend and s2idle in particular. Currently=
- we are
-> > > always selecting the deepest possible state for the CPUs, which can b=
-reak the
-> > > system-wakeup latency constraint that may be required for some use-ca=
-ses.
-> > >
-> > > Therefore, this series suggests to introduce a new interface for user=
--space,
-> > > allowing us to specify the CPU system-wakeup QoS limit. The QoS limit=
- is then
-> > > taken into account when selecting a suitable low-power state for s2id=
-le.
-> >
-> > Last time we discussed this I said I would like the new limit to be
-> > taken into account by regular "runtime" cpuidle because the "s2idle"
-> > limit should not be less that the "runtime" limit (or at least it
-> > would be illogical if that happened).
->
-> Yes, we discussed this, but that was also before we concluded to add a
-> new file for user-space to operate on after all.
->
-> To me, it looks unnecessarily limiting to not allow them to be
-> orthogonal,
+On Thu, 2025-10-30 at 13:06 +0100, Pierre-Eric Pelloux-Prayer wrote:
+>=20
+>=20
+> Le 30/10/2025 =C3=A0 12:17, Philipp Stanner a =C3=A9crit=C2=A0:
+> > On Wed, 2025-10-29 at 10:11 +0100, Pierre-Eric Pelloux-Prayer wrote:
+> > > https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908=C2=A0pointed =
+out
+> >=20
+> > This link should be moved to the tag section at the bottom at a Closes:
+> > tag. Optionally a Reported-by:, too.
+>=20
+> The bug report is about a different issue. The potential deadlock being f=
+ixed by=20
+> this patch was discovered while investigating it.
+> I'll add a Reported-by tag though.
+>=20
+> >=20
+> > > a possible deadlock:
+> > >=20
+> > > [ 1231.611031]=C2=A0 Possible interrupt unsafe locking scenario:
+> > >=20
+> > > [ 1231.611033]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CPU1
+> > > [ 1231.611034]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ----=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ----
+> > > [ 1231.611035]=C2=A0=C2=A0 lock(&xa->xa_lock#17);
+> > > [ 1231.611038]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 local_irq_disable=
+();
+> > > [ 1231.611039]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock(&fence->lock=
+);
+> > > [ 1231.611041]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock(&xa->xa_lock=
+#17);
+> > > [ 1231.611044]=C2=A0=C2=A0 <Interrupt>
+> > > [ 1231.611045]=C2=A0=C2=A0=C2=A0=C2=A0 lock(&fence->lock);
+> > > [ 1231.611047]
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 *** DEADLOCK ***
+> > >=20
+> >=20
+> > The commit message is lacking an explanation as to _how_ and _when_ the
+> > deadlock comes to be. That's a prerequisite for understanding why the
+> > below is the proper fix and solution.
+>=20
+> I copy-pasted a small chunk of the full deadlock analysis report included=
+ in the=20
+> ticket because it's 300+ lines long. Copying the full log isn't useful IM=
+O, but=20
+> I can add more context.
 
-So what's the use case in which it makes sense to have a lower latency
-limit for s2idle than for runtime?
+The log wouldn't be useful, but a human-generated explanation as you
+detail it below.
 
-> but I am not insisting that it needs to be like this. I
-> was just thinking that we do not necessarily have to care about the
-> same use-case in runtime as in the system-suspend state. Moreover,
-> nothing would prevent user-space from applying the same constraint to
-> both of them, if that is needed.
->
-> >
-> > It looks like that could be implemented by making
-> > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limit()
-> > into account, couldn't it?
->
-> Right, but I am not sure we want that. See above.
+>=20
+> The problem is that a thread (CPU0 above) can lock the job's dependencies=
+=20
+> xa_array without disabling the interrupts.
 
-I do or I need to be convinced that this is a bad idea.
+Which drm_sched function would that be?
+
+> If a fence signals while CPU0 holds this lock and drm_sched_entity_kill_j=
+obs_cb=20
+> is called, it will try to grab the xa_array lock which is not possible be=
+cause=20
+> CPU0 holds it already.
+
+You mean an *interrupt* signals the fence? Shouldn't interrupt issues
+be solved with spin_lock_irqdisable() =E2=80=93 but we can't have that beca=
+use
+it's the xarray doing that internally?
+
+You don't have to explain that in this mail-thread, a v2 detailing that
+would be suficient.
+
+>=20
+>=20
+> >=20
+> > The issue seems to be that you cannot perform certain tasks from within
+> > that work item?
+
+[=E2=80=A6]
+
+> >=20
+> > > +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
+> > > +					=C2=A0 struct dma_fence_cb *cb);
+> > > +
+> > > =C2=A0=C2=A0static void drm_sched_entity_kill_jobs_work(struct work_s=
+truct *wrk)
+> > > =C2=A0=C2=A0{
+> > > =C2=A0=C2=A0	struct drm_sched_job *job =3D container_of(wrk, typeof(*=
+job), work);
+> > > -
+> > > -	drm_sched_fence_scheduled(job->s_fence, NULL);
+> > > -	drm_sched_fence_finished(job->s_fence, -ESRCH);
+> > > -	WARN_ON(job->s_fence->parent);
+> > > -	job->sched->ops->free_job(job);
+> >=20
+> > Can free_job() really not be called from within work item context?
+>=20
+> It's still called from drm_sched_entity_kill_jobs_work but the diff is sl=
+ightly=20
+> confusing.
+
+OK, probably my bad. But just asking, do you use
+git format-patch --histogram
+?
+
+histogram often produces better diffs than default.
+
+
+P.
 
