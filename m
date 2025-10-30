@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-878746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4845FC21665
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:12:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FAE1C21671
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C95C4EEFF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:09:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FDE94EFD15
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C7B3655E0;
-	Thu, 30 Oct 2025 17:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BFB3678BC;
+	Thu, 30 Oct 2025 17:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GT5OXzNk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="grbAu8AS";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="L7n8e600"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB383678A1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D41365D3B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844137; cv=none; b=qp+JmTs1hQbKo5eobmZtwmbC39V5t/hwGaP/oRJoPkqGbMzlUYU7oYhEjoPlTJxPJqeULd+SmTH7qgi7mG/WgLdP5+28L+D5BeoNNN8lK0ffoTbYvDdo0kEto6+WuY7vjpfud3Z4oXfXDJjAl+lsf/nY3TpKFBRyOPSm+KmPzNE=
+	t=1761844154; cv=none; b=gcr3wagqLqysi9diYeA5acQT7TMkBYu6RBVuEoJ3e4qBw2S0DwhGHClljEb5w69v90voZuhbibPS7BuWgWhzif6C4LBRzU/MNBdDn7X/thiCCeWRxJXMQ9q1oZW78rJg83/CNM9MC5j7EiH/6n5kzKW/bZ7oH7rKMHwnDNXGH0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844137; c=relaxed/simple;
-	bh=Kw/eTAu3T8JEYrBU4lbzvk6yhtsreAjtiErpX/o/1t0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=empPlWyltEXV9mX61DFF6Z+77VKfFY2/KHuKrMAGcemiyBU+Zr9aQ0UxqfN49koK+yc4+Nq+RuWHLBbRGPHE5sqAz1D5F7WG6sLtrqZqQ/7WzmCkv0O9mCO8D3agOel5Ll+fD/UssbvntCAemKgOg5bsljQc0DCAjsZaqtyLYV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GT5OXzNk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD55C4CEF8;
-	Thu, 30 Oct 2025 17:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761844137;
-	bh=Kw/eTAu3T8JEYrBU4lbzvk6yhtsreAjtiErpX/o/1t0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GT5OXzNkNf1L/PoochU0ZLDM6lfcVu31OWMGQNR+jf6ZxK3lbtDnx0eFMdb9Y+oqD
-	 T0hHgR38v+zM8hkxp5Dbd4NgGa58B23fy+Qv8GQ4GllueOtDGcKDL60N+o6Cav4N7Q
-	 xY2kAJD7dBzp09uFORSCtnfBgcdO1toLOh/hzkenmGoxB6+NQNpG8NIppPLoaV5kOp
-	 p3ijAfqhidsC3nS238l0Q9Iq9bkGM4evSkTKd3rneKkMuRpo14CfLbIKb+V4/AZka1
-	 xcFQ3hChJQgwezsUQfuUbLOcrkpUyzeryJkIvNXTCM6paEWeNXdk3lY+pja8XZAXUW
-	 2BLUj2w5F2Qzw==
-Date: Thu, 30 Oct 2025 18:08:54 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [RESEND PATCH v13 0/9] timers: Exclude isolated cpus from timer
- migration
-Message-ID: <aQObphtf6Vbc-XLJ@localhost.localdomain>
-References: <20251020112802.102451-1-gmonaco@redhat.com>
- <3c1e6b45-79b8-463a-8c41-565d9ed8f76d@redhat.com>
- <aQNySRvImq2yaUef@localhost.localdomain>
- <5457560d-f48a-4a99-8756-51b1017a6aab@redhat.com>
+	s=arc-20240116; t=1761844154; c=relaxed/simple;
+	bh=Iky1opZleo3Ag9ocUUqw9H0ccbMwe2ZQMmig7sL4bG0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OftgYZuIfYz1DTer8/YqcNWAeLvW4YqAhfxSJK++3LrClYInFTVm5Ag6zdA2/ON1heIbH4LezLUoMa1WK3Gzc18kFNfqdKOxtowj1AD3+5KapEQsSs889pubgmpMYO8EhFbD7evNTyHyjQaEOFCkJtxmWxdByWyfadDhWJytkzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=grbAu8AS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=L7n8e600; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59UAPKwi3281473
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:09:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pV0A1g/A4D3sZXswjBbm/Y
+	b1RvRv+HhWS69DFFGbS/Q=; b=grbAu8ASANjJR1nMZH5QHqSUz+7mEeorYqFjoT
+	h1huI7ZodZtr2Cd6FBgo2zI+qLBuuTNJxmmw8dhna5Gz5O0aHBtJeEfZlMTWiKDC
+	VlZOQ7E4x24c0z+7ommuj1QNwbCCzBC24ywnhXdOnnLHTwFmv3isTlNTnj/B3U7B
+	BoH68VFXR7GSOqXmlLk/YUc0Ntq2AzMw0p3+cr4/Bngo/lUFxIUjws7Wyg+jMvNE
+	JV+1iqr7oxzlyOgIUqLJBxspqrXJMJKzzBm4g4NBsctRbQz/DfBYTdEbBR8L/489
+	qckT2GuBlU04g40Mvl0vFrx3Cqg/vVg3GjmzmGHsaDrWb97g==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a468kh4fr-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:09:11 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-294df925293so12073755ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761844151; x=1762448951; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pV0A1g/A4D3sZXswjBbm/Yb1RvRv+HhWS69DFFGbS/Q=;
+        b=L7n8e60011OS7LrdIqc4XOtaxyUmlaUyo66TmtkFmxogL7NmF3ZkBhN8Ki55XhJgOR
+         K0ELrKZqopHdaItASV/WgXQ3fruEkGLK3HA93rULqrLVc1TiaxhgHq5liwz5D1RGYXUo
+         lkmAB9ZG8Jg+Z5gGEyXzaxBjo9wq0qqay4dTIL0tn7ASdxGqjjYAyIyOrKAt8cAG8V2c
+         PtbXHWn3w6ukJSRw8UWeHSxh1JaBQ9COvxV947zJucbLvSthLAfK0GYx+ZytU4V1lA2L
+         dDOC/IT5StMUZLWrc4eDy0HIhPNjK0Gy3eGOVyLWjhCIm5f3tyYvZ1Iygb+5FS+ay9Ob
+         9iJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761844151; x=1762448951;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pV0A1g/A4D3sZXswjBbm/Yb1RvRv+HhWS69DFFGbS/Q=;
+        b=PsLN0KjH9sheYg/mq+mmYurULyUBfgUuoEP0uSNhq1IAQenTao2d5SBfpmUFW5OXbT
+         2BLfrK+hzsdHpHaGInHCbxVSQ+MdCkstMAvTrL3yWp6JGDll5ynLLczi8GIT7rGhk8FG
+         ChXomhdIE7rdogQl67yv/iadRBSEv8UE+TKAGRwe7FgPYi9B2yUFOKuhCNymoohCVk4/
+         /VylvNRpAUhkga11A/i+mvhs/jmwfk8Zt7ii8OgxggDHrLP67B2raRGO3GTxV3wGp+br
+         j1dhbSSG5KKTDgRrRRWuPTOoOCDO3OqaDEL6Pa+04rIJ6ygktXne+Wm3fn5QeXz3/4GY
+         IVVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjXVsb//XzotNqOGy1mg1AnQB79+13sPeEBe/SjSx3DxDDdNrgSnVp1YqXO0j5o9WuDBA+MpMsV0TaL10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7mtUnLOjUcxezF30GcMLwbkAsSWiNL2aA1F0bsQH3u9S4VIjB
+	raaUOJR9J712BJYiVgU3r8aUN5nN720M9zveeT5ZZTdpMKEo/UHMSyS4lcFovXGoMlT5Z5zGOQM
+	vuoVsu7AE12i0ZLc54VhH3WNwm4wcmJFBVE4YIBvSJr1mDVJ0LNN76oE8zru+yVCqtEg=
+X-Gm-Gg: ASbGncsjD4D0aMMsWAKUvUmolctErdqmeck3nypCxcs69rvN9gL6Kf4R/miD+qymw3A
+	k0lSqVFl4IH2KwtKP/vVq2i2/2pJDgqpRtNZ8CP/To/f2xysjBH4okdri+EmyeDpuVGCw8GvbDN
+	5uzuHLbuNXXfdhgruxwkc+EeqaGQWl18ZbfeT20bd7gABxk9liSH29oCwc53QQiNmhuVJuMhKGE
+	MSw/1lU6KEU8kPg2IgLXkUu4vaiPpWVdOJFuCHrcTWPNJBa5Oi3UoLoncGxWyaNwgXLuHjTyydV
+	PVYc0esTR/GbeqTzwojCa+6AdrAzWLhLQE0y5uSopGyOsEN8t+3HGljfN7ov1DLs7yK193gAKSq
+	pAbqzwZ+c96cijXKL68+qaA==
+X-Received: by 2002:a17:902:f651:b0:295:1277:7920 with SMTP id d9443c01a7336-2951a43ebb3mr6088865ad.28.1761844150825;
+        Thu, 30 Oct 2025 10:09:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCt5+4I47/PW//spSrNAyC1wA4DEWUlJpdARziis74notfiDAaNW2TghCcihvgBW5XZscmbQ==
+X-Received: by 2002:a17:902:f651:b0:295:1277:7920 with SMTP id d9443c01a7336-2951a43ebb3mr6088255ad.28.1761844150255;
+        Thu, 30 Oct 2025 10:09:10 -0700 (PDT)
+Received: from [169.254.0.7] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d09855sm192828595ad.30.2025.10.30.10.09.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 10:09:09 -0700 (PDT)
+From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+Subject: [PATCH v3 0/2] Add interconnect support for Kaanapali SoC
+Date: Thu, 30 Oct 2025 17:09:01 +0000
+Message-Id: <20251030-knp-interconnect-v3-0-a084a4282715@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5457560d-f48a-4a99-8756-51b1017a6aab@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK2bA2kC/y2N0Q6CMAxFf4X02SUwIYK/YnzYaieNsWA3DQnh3
+ 62Gx5Oce+4KmZQpw7laQenDmScxOB4qwDHInRzfjMHXvquH5uQeMjuWQoqTCGFxbY8ehyam1PV
+ gs1kp8fJPXq7GMWRyUYPg+As9Q7bxLiq93nZZdnvbvmO934aQAAAA
+X-Change-ID: 20250917-knp-interconnect-48c2c91bff58
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
+        Mike Tipton <mike.tipton@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE0MSBTYWx0ZWRfX299FkHEIWfKt
+ XhSthDuBOAiAkGQGx358/tQWARqG5Umv2RTdJ/3Du7PvG44wpcfgnNooFQgu6zhcJ5tym8nCf1D
+ zdpz8X0WR9rY+hKUcJMUFAFGNCjhB6FCknjuBSTGiIJGwUkqzZVvenQ8YdYx1VmVcRhSbkLcuQT
+ as78CUCU/XEpdpxz+w6EB0BqRIZ3YnZKViCLmKnSsb5Agbbw3Qh74saSV+aaYM+ow3MK7bE5EK+
+ mqrscRGdiXe/5Ypjzocps57WjR7c8ATW24NmbFp8bVUxeXzuUjqA1PnRA6qSJUbjBsYUH6ajns8
+ /Mo0E5D2VCHMbA0Z/hjDXuYQPiqDsCQsdoyQ/hruch8ogz/m/Uz1T5aLJy7RUBSs+MgatY3ekiU
+ KAq6Ay7RGaQtWw6zuhuiRfhFT+5LzA==
+X-Proofpoint-ORIG-GUID: 06HAeCgSGcJSBKyJXZFKMNJv-QdYk0xw
+X-Authority-Analysis: v=2.4 cv=LoWfC3dc c=1 sm=1 tr=0 ts=69039bb8 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=axuxfZWt1NcpswWNhAIA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: 06HAeCgSGcJSBKyJXZFKMNJv-QdYk0xw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_05,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300141
 
-Le Thu, Oct 30, 2025 at 11:37:36AM -0400, Waiman Long a écrit :
-> On 10/30/25 10:12 AM, Frederic Weisbecker wrote:
-> > Hi Waiman,
-> > 
-> > Le Wed, Oct 29, 2025 at 10:56:06PM -0400, Waiman Long a écrit :
-> > > On 10/20/25 7:27 AM, Gabriele Monaco wrote:
-> > > > The timer migration mechanism allows active CPUs to pull timers from
-> > > > idle ones to improve the overall idle time. This is however undesired
-> > > > when CPU intensive workloads run on isolated cores, as the algorithm
-> > > > would move the timers from housekeeping to isolated cores, negatively
-> > > > affecting the isolation.
-> > > > 
-> > > > Exclude isolated cores from the timer migration algorithm, extend the
-> > > > concept of unavailable cores, currently used for offline ones, to
-> > > > isolated ones:
-> > > > * A core is unavailable if isolated or offline;
-> > > > * A core is available if non isolated and online;
-> > > > 
-> > > > A core is considered unavailable as isolated if it belongs to:
-> > > > * the isolcpus (domain) list
-> > > > * an isolated cpuset
-> > > > Except if it is:
-> > > > * in the nohz_full list (already idle for the hierarchy)
-> > > > * the nohz timekeeper core (must be available to handle global timers)
-> > > > 
-> > > > CPUs are added to the hierarchy during late boot, excluding isolated
-> > > > ones, the hierarchy is also adapted when the cpuset isolation changes.
-> > > > 
-> > > > Due to how the timer migration algorithm works, any CPU part of the
-> > > > hierarchy can have their global timers pulled by remote CPUs and have to
-> > > > pull remote timers, only skipping pulling remote timers would break the
-> > > > logic.
-> > > > For this reason, prevent isolated CPUs from pulling remote global
-> > > > timers, but also the other way around: any global timer started on an
-> > > > isolated CPU will run there. This does not break the concept of
-> > > > isolation (global timers don't come from outside the CPU) and, if
-> > > > considered inappropriate, can usually be mitigated with other isolation
-> > > > techniques (e.g. IRQ pinning).
-> > > > 
-> > > > This effect was noticed on a 128 cores machine running oslat on the
-> > > > isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
-> > > > and the CPU with lowest count in a timer migration hierarchy (here 1
-> > > > and 65) appears as always active and continuously pulls global timers,
-> > > > from the housekeeping CPUs. This ends up moving driver work (e.g.
-> > > > delayed work) to isolated CPUs and causes latency spikes:
-> > > > 
-> > > > before the change:
-> > > > 
-> > > >    # oslat -c 1-31,33-63,65-95,97-127 -D 62s
-> > > >    ...
-> > > >     Maximum:     1203 10 3 4 ... 5 (us)
-> > > > 
-> > > > after the change:
-> > > > 
-> > > >    # oslat -c 1-31,33-63,65-95,97-127 -D 62s
-> > > >    ...
-> > > >     Maximum:      10 4 3 4 3 ... 5 (us)
-> > > > 
-> > > > The same behaviour was observed on a machine with as few as 20 cores /
-> > > > 40 threads with isocpus set to: 1-9,11-39 with rtla-osnoise-top.
-> > > > 
-> > > > The first 5 patches are preparatory work to change the concept of
-> > > > online/offline to available/unavailable, keep track of those in a
-> > > > separate cpumask cleanup the setting/clearing functions and change a
-> > > > function name in cpuset code.
-> > > > 
-> > > > Patch 6 and 7 adapt isolation and cpuset to prevent domain isolated and
-> > > > nohz_full from covering all CPUs not leaving any housekeeping one. This
-> > > > can lead to problems with the changes introduced in this series because
-> > > > no CPU would remain to handle global timers.
-> > > > 
-> > > > Patch 9 extends the unavailable status to domain isolated CPUs, which
-> > > > is the main contribution of the series.
-> > > > 
-> > > > This series is equivalent to v13 but rebased on v6.18-rc2.
-> > > Thomas,
-> > > 
-> > > This patch series have undergone multiple round of reviews. Do you think it
-> > > is good enough to be merged into tip?
-> > > 
-> > > It does contain some cpuset code, but most of the changes are in the timer
-> > > code. So I think it is better to go through the tip tree. It does have some
-> > > minor conflicts with the current for-6.19 branch of the cgroup tree, but it
-> > > can be easily resolved during merge.
-> > > 
-> > > What do you think?
-> > Just wait a little, I realize I made a buggy suggestion to Gabriele and
-> > a detail needs to be fixed.
-> > 
-> > My bad...
-> 
-> OK, I thought you were OK with the timer changes.
+Add interconnect dt-bindings and driver support for Qualcomm Kaanapali SoC.
 
-I was ok until...just a few days ago, and I should have written about it right
-away but you know, being wrong is a process that takes time :o)
+Changes since V2:
+  - Removed the dependency on clock header in "qcom,kaanapali-rpmh.yaml"
+    bindings file [Krzysztof]
+  - Corrected the patch revision number.
 
-> I guess Gabriele will have to send out a new version to address your finding.
+Changes since V1:
+  - Added b4 dependency on the clock patch [Rob]
+  - Updated the Module Description to "Qualcomm Kaanapali NoC driver"
+    [Dmitry]
 
-Right.
+---
+Raviteja Laggyshetty (2):
+      dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in Kaanapali SoC
+      interconnect: qcom: add Kaanapali interconnect provider driver
 
-Thanks!
+ .../bindings/interconnect/qcom,kaanapali-rpmh.yaml |  125 ++
+ drivers/interconnect/qcom/Kconfig                  |    9 +
+ drivers/interconnect/qcom/Makefile                 |    2 +
+ drivers/interconnect/qcom/kaanapali.c              | 1868 ++++++++++++++++++++
+ .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h |  149 ++
+ 5 files changed, 2153 insertions(+)
+---
+base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+change-id: 20250917-knp-interconnect-48c2c91bff58
 
+Best regards,
 -- 
-Frederic Weisbecker
-SUSE Labs
+Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+
 
