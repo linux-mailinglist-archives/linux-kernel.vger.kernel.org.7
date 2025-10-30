@@ -1,139 +1,90 @@
-Return-Path: <linux-kernel+bounces-879122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EE1C224FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:43:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18B4C22543
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B3114F19DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2431AA2574
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7706033555C;
-	Thu, 30 Oct 2025 20:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73718329E7E;
+	Thu, 30 Oct 2025 20:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="eE9lQAyj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lYoe02Gx"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118C4329E76;
-	Thu, 30 Oct 2025 20:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761856532; cv=pass; b=G27TFIa/DIBtc5MpHr34Feapl65OM52nQezihjuFZjLxD21ap+o5FcpcuvdR8HeE+DHA+RRBvCUazbkimXaNteRPYrTGviAW0/XijmLhTk3yRAFCufck5a/WaYLwfb1fLsaxkNBw+7NuG4N2CY3WCEeP5wjJkMXrY9KCaTmdgtU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761856532; c=relaxed/simple;
-	bh=ORDHBq2wSgguhYiKPUgFjArpWqxxv043hPSpzGj95z8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oGNxEwDsnYIOtx5dI3dEea0jPVmX1qNZsg06NKbDqVn5g3MX4Dl4PPFLXtOeC/Xu/KKC6KnWXET/K9S/mqQH3hd2vGYmGIfH6YLYT5fAoxbwps3u1C7a/kgKdqp/7wD+W8wKTclKbAdoRdO9K4D/vjoEhXvMTtDTSmq0Iic8Bp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=eE9lQAyj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761856485; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gkFbZ213okCftKgeKgIIwNoz8BwA4nDP6MzCr0YARnjslWbS8bf914DjEU26RKsesu0i7gZx4BTfyz1xxAgNbQMZ+hOgVrrgyBtWW8VMvkD1hskA7r5/OPkLeophqY65m9j/4O4l1Y9P6SwMdoSy8qMjWiwQU/R+tvzDuY+qM+k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761856485; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+Wkm4p/uQ+Vqh1gCohypGhEVZ1/dwpzLDQlD8Bjlil8=; 
-	b=Gnr8xIhUAPzV2qfRb1oLqyxVo5sYZWiNHe+DDVUg/CHGOPZtjMxE9wPQmju6dCohAzktipJKP2YWvL5u9mW/WZSFsCaUWNk3l1EeVNWUSTxJB/E4oPJwqb0FZwBiY+h8vUyCgRnA6upcsdDuS10nEcP/oYKeYkbfFBQxcXmxQAc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
-	dmarc=pass header.from=<sjoerd@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761856485;
-	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=+Wkm4p/uQ+Vqh1gCohypGhEVZ1/dwpzLDQlD8Bjlil8=;
-	b=eE9lQAyjvcD+VsAFUGr3EGVzq1lb8anctgxPOFZUE+IyjqTE06JyDOHlv1dZWFZ+
-	GJu62lcDIBD5F/Za7yXXSFfmLJl7bfrpDY2VhzDNK66M909P75cdhk3qdwz/uSfrpMY
-	nlZLfK3BN7dj33lt0OVX5CDVbVQpWIkm0m886a44=
-Received: by mx.zohomail.com with SMTPS id 1761856481126419.9479106165559;
-	Thu, 30 Oct 2025 13:34:41 -0700 (PDT)
-Message-ID: <f2c3e18fe22284c4a5ab0ce085e2d17be844a0a8.camel@collabora.com>
-Subject: Re: [PATCH 10/15] arm64: dts: mediatek: mt7981b: Add Ethernet and
- WiFi offload support
-From: Sjoerd Simons <sjoerd@collabora.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Ryder Lee
- <ryder.lee@mediatek.com>,  Jianjun Wang <jianjun.wang@mediatek.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi	 <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	 <kwilczynski@kernel.org>, Manivannan
- Sadhasivam <mani@kernel.org>, Chunfeng Yun	 <chunfeng.yun@mediatek.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,  "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lorenzo
- Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
-	kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, 	linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, netdev@vger.kernel.org,  Bryan Hinton
- <bryan@bryanhinton.com>
-Date: Thu, 30 Oct 2025 21:34:28 +0100
-In-Reply-To: <aPEhiVdgkVLvF9Et@makrotopia.org>
-References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
-	 <20251016-openwrt-one-network-v1-10-de259719b6f2@collabora.com>
-	 <aPEhiVdgkVLvF9Et@makrotopia.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-5 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E70D34D3AA
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761856628; cv=none; b=HJUP1lw+fL/Kjw3jDDbiqVu8890mS+AprTDznVyKnmQsjj91pva3c0odIfeBUl7ugUsh56G2vjVdHdMc4Z4MmMH4A1HDL3OSMJjFnI9fwQnlpmeLU/+BMPzzwwBYMW8vHUNfb0g3KFZxPb+FjgzVdPaaYMdSq23Mg1Pvxu/SdNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761856628; c=relaxed/simple;
+	bh=WlVHMNsUypU1FXTI7RJeWUXKT9Vfcs+P0uVyWt1bTR0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PZ6HKjz4D3o56AxJcL3KwV2lADnLv8WIgzmtDQOC6w46cAbE1TKnM++gsbvZ+EBoRWVs51vcZT5dY3lKVD5nkbvh/U5Wn3D0EmPmbJqhR3PTtyKWioKTO9Y6yLwX5aHP5lY1iTh9FpzW/28NVrAIq+IUwQ8e8O8gunCLWJau0Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lYoe02Gx; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761856622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=X2UTRuI3d+ah0NP1XnZBknA6KIGKxvLTX6zevUgVI7o=;
+	b=lYoe02GxRGNGJ19ONWrtYqOOLcS7beZe5agFjJVoqFaKa8kZHHGpUuoiOFpbfeCs4gaBiy
+	9Q3mYgFZo4OjjIZQnLeyvMN8cGB9ZaWukPIfqF6H2LWYVr0cviIDsMx8hFv2/wOw/89aE7
+	qwGu2aMbySGTZxCIiLnWnDzyNbsSXAE=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org
+Cc: Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Simona Vetter <simona@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH v2 0/3] drm: zynqmp_dp: Retrain link after HPD if necessary
+Date: Thu, 30 Oct 2025 16:36:39 -0400
+Message-Id: <20251030203642.3076656-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 2025-10-16 at 17:47 +0100, Daniel Golle wrote:
-> On Thu, Oct 16, 2025 at 12:08:46PM +0200, Sjoerd Simons wrote:
-> > Add device tree nodes for the Ethernet subsystem on MT7981B SoC,
-> > including:
-> > - Ethernet MAC controller with dual GMAC support
-> > - Wireless Ethernet Dispatch (WED)
-> > - SGMII PHY controllers for high-speed Ethernet interfaces
-> > - Reserved memory regions for WiFi offload processor
-> >=20
-> > Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
-> > ---
-> > =C2=A0arch/arm64/boot/dts/mediatek/mt7981b.dtsi | 133 +++++++++++++++++=
-+++++++++++++
-> > =C2=A01 file changed, 133 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
-> > b/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
-> > index 13950fe6e8766..c85fa0ddf2da8 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+I noticed that after reconnecting a mini-displayport cable, the sink
+would not display an image. But if I forced the link to re-train, the
+image would come back.
 
-[snip]
-> > 			mdio_bus: mdio-bus {
-> > +				#address-cells =3D <1>;
-> > +				#size-cells =3D <0>;
-> > +
-> > +				int_gbe_phy: ethernet-phy@0 {
-> > +					compatible =3D "ethernet-phy-ieee802.3-c22";
-> > +					reg =3D <0>;
-> > +					phy-mode =3D "gmii";
-> > +					phy-is-integrated;
-> > +					nvmem-cells =3D <&phy_calibration>;
-> > +					nvmem-cell-names =3D "phy-cal-data";
->=20
-> Please also define the two LEDs here with their corresponding (only)
-> pinctrl options for each of them, with 'status =3D "disabled";'. This
-> makes it easier for boards to make use of the Ethernet PHY leds by just
-> referencing the LED and setting the status to 'okay'.
+Some digging revealed that the DP spec requires retraining after a HPD
+event if the sink syas the link has gone down. So implement that since
+it fixes my problem and it's required by spec.
 
-I left those out on purpose as i can't easily validate them. They're probab=
-ly better to be added once
-someone adds a board using the hw led control.
+Changes in v2:
+- needs_retain -> needs_retrain
+- Actually retrain the loop (accidentally removed while rebasing)
 
->=20
---=20
-Sjoerd Simons
-Collabora Ltd.
+Sean Anderson (3):
+  drm: zynqmp_dp: Update connector state before AUX transfers
+  drm: zynqmp_dp: Use smp_load/store for status
+  drm: zynqmp_dp: Retrain link after HPD if necessary
+
+ drivers/gpu/drm/xlnx/zynqmp_dp.c | 44 ++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
+
+-- 
+2.35.1.1320.gc452695387.dirty
+
 
