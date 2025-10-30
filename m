@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-877550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023E8C1E689
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:24:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3387C1E692
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:24:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B446C18925A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:24:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41AEA3BE7CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFAA32E13A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E273B32E151;
 	Thu, 30 Oct 2025 05:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba0sn1gg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVSYNWZP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283412D063D;
-	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD3C32C950;
+	Thu, 30 Oct 2025 05:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761801858; cv=none; b=Pdxm1phoufvKryhexvnZ8pjqddx165lpMyrp2N11j7nWSeFZCvtoeAh1RC3K/coclEpKclzIyTJr6+xccAvFIYn72PfMhoAlSz9EysOoGQL2O58Z8ECqLKk7NeiEZOOMqk/FDCNQy5s1ybFnRE8H5yuqMiZC75h+d3oFbEYjvtc=
+	t=1761801858; cv=none; b=jLNOYxRSRKBVdxmMF/wQAHm2maMiTZ9BBUB5/e0eaALTSuE4IHhf4lWwT6A/mu/H2mV/E39ZrQnypHm12xt8ClL2OeIKlf5iwVC6Y4XzLG4u8IegUsp/H55wO9SW9rAg3vSDn8LuDGjG5PIWPdUKKctOdyIp0ebecY7zp+suYUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761801858; c=relaxed/simple;
-	bh=7PrPtqlO+xwMN6puDCOh8Tf+yRQi8msCbeKY70lBqSA=;
+	bh=ITtznf4V3PEOG09w+PdAv94v0LkRnn8G5sFFZCmhyck=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ja56smi5MWd4WdUfKcEmZanPTXK39/ij/HAbcZk2ijYisFZuKlm4ZmKc23VbMqA4/wF7kD4w0JA+bVQOuTsuAnHEVV1ERlQ7GUb77knW0qhKJs2iAJ9OJzM7O+0rLTP6WlipFhR3MZkQP+fI4Sc8/lLmU5iNuHUbCOJtIaK6mt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba0sn1gg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CB1EEC113D0;
+	 In-Reply-To:To:Cc; b=D9zLM3gxUqdYU8MjTIEX9Hfe7j/jBaj0wcBWWIB4a9BI1Wb4I+mcV5eRpxY7HFk+M0SuBDe05AdRPvE7LXy4gRDX9Sm+Po4zInRvp0uu4Ut803QtAk1ETFwTdrzHNTIJAfRglNxsQ7LprrG9PtRwkViEu80Fjmi6cTTFvtaqBAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVSYNWZP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D7FC5C116D0;
 	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761801857;
-	bh=7PrPtqlO+xwMN6puDCOh8Tf+yRQi8msCbeKY70lBqSA=;
+	bh=ITtznf4V3PEOG09w+PdAv94v0LkRnn8G5sFFZCmhyck=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ba0sn1ggI/79H0CiA2KfZtb+PuJZfu0J6FUZhhW/kSpdorEYmTY5veZhUeycILUuB
-	 UcL7ghxSH9Epb5IloiBr/MklFdp5Dc12GnK0/7bAuhm7ZjGczYrhWeO3Xt/HPxnmfd
-	 OgqV7y8PG06UoOYdxabsXtfDTJ+3sVexvebrS0LyC3okbCUlt7QT9tBMnnwKMhBPgH
-	 hE88iu134EiV5UPHwVQiuTnjwRp1aOhS06jv5WhohA2F/ci+hHzUIxB47PqwG4H1Xi
-	 HIWxyzvEr1R9PtSWJQ7D5Rl3DHPqx7ta/BSd0yRBHWyY8UR2dFcGeaGlCPtvfTIhMK
-	 EWe7v5WzMD0kg==
+	b=ZVSYNWZPkLnDYVbMBDi9vqQ7BEnDOH5Xdx1ZOQaQln6Nu62mSuMvbRO1LuGPraB8E
+	 bhV8LVHREktlWtCPSAyukwhAQ48l0W8txy7SqyOSkf84xTn8EH3qBGYaq9m4WlO22W
+	 9HS/mzufrkEdWTX4JtrJ3T8FC1eqe2uXty/T4P5OSvo8tlnzN3X9SwxJm0bbiNCI4M
+	 oDHBhF78/5UnaJV4emf/FCMimW87bhsj24rQTjUEpkWgt7MvaKtaNnXUnTbfXHvkSU
+	 PAODCMtoFvaTG14g74vpbuBYBCO7tT/udVPAKKx0XfAbdn9YCWZuNdJzPqNRsMMIoZ
+	 27wFX4Ox0TFSQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE853CCF9F8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD02FCCF9F9;
 	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Thu, 30 Oct 2025 13:24:13 +0800
-Subject: [PATCH v2 3/5] clk: amlogic: Add handling for PLL lock failure
+Date: Thu, 30 Oct 2025 13:24:14 +0800
+Subject: [PATCH v2 4/5] clk: amlogic: Optimize PLL enable timing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,8 +53,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-optimize_pll_driver-v2-3-37273f5b25ab@amlogic.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251030-optimize_pll_driver-v2-4-37273f5b25ab@amlogic.com>
 References: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
 In-Reply-To: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -66,11 +66,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>, da@libre.computer
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761801855; l=2331;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761801855; l=2564;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=vrUlJ1HmRnCEyEkq2xDw1ggVFh4RddetWLmGLf94sV4=;
- b=cSkp9cTFFGr5sg6ASQ8L33zSJKDZR942ZJ8M8anl9qJse6qqWwezMYBS2WJrFMSpurm2Vpguh
- xbNHhPo/ZlBCEu/7QDJNyKvbgOsc82743NVagBbUZHSXjb5k+QBmYDc
+ bh=DjnEanujLZY4RuGc42rl8hj7g33ffwSvffDuoLJcxso=;
+ b=sTga/WVc91PpMaP5RpP+aJzcq1fHbdkptD2tzxJ/anIj6LHmeSDy9p2tUGqkohJmzO2ldf8Bk
+ OsA0vBqz2nqDsOLShEcZFUKNQw3jhmY3tuftag8o15yNCYsVdSJ+jvT
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -80,79 +80,79 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-If the PLL fails to lock, it should be disabled, This makes the logic
-more complete, and also helps save unnecessary power consumption when
-the PLL is malfunctioning.
+l_detect controls the enablement of the PLL lock detection module.
+It should remain disabled while the internal PLL circuits are
+reaching a steady state; otherwise, the lock signal may be falsely
+triggered high.
+
+Before enabling the internal power supply of the PLL, l_detect should
+be disabled. After the PLL’s internal circuits have stabilized,
+l_detect should be enabled to prevent false lock signal triggers.
+
+Currently, only A1 supports both l_detect and current_en, so this
+patch will only affect A1.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/meson/clk-pll.c | 41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ drivers/clk/meson/clk-pll.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index f81ebf6cc981..6c794adb8ccd 100644
+index 6c794adb8ccd..c6eebde1f516 100644
 --- a/drivers/clk/meson/clk-pll.c
 +++ b/drivers/clk/meson/clk-pll.c
-@@ -353,6 +353,23 @@ static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
- 	return -EIO;
- }
+@@ -383,36 +383,38 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 	if (MESON_PARM_APPLICABLE(&pll->rst))
+ 		meson_parm_write(clk->map, &pll->rst, 1);
  
-+static void meson_clk_pll_disable(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
++	/* Disable the PLL lock-detect module */
++	if (MESON_PARM_APPLICABLE(&pll->l_detect))
++		meson_parm_write(clk->map, &pll->l_detect, 1);
 +
-+	/* Put the pll is in reset */
-+	if (MESON_PARM_APPLICABLE(&pll->rst))
-+		meson_parm_write(clk->map, &pll->rst, 1);
-+
-+	/* Disable the pll */
-+	meson_parm_write(clk->map, &pll->en, 0);
-+
-+	/* Disable PLL internal self-adaption current module */
-+	if (MESON_PARM_APPLICABLE(&pll->current_en))
-+		meson_parm_write(clk->map, &pll->current_en, 0);
-+}
-+
- static int meson_clk_pll_enable(struct clk_hw *hw)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
-@@ -397,29 +414,17 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 		meson_parm_write(clk->map, &pll->l_detect, 0);
+ 	/* Enable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 1);
+ 	/* Wait for Bandgap and LDO to power up and stabilize */
+ 	udelay(20);
+ 
+-	/* Take the pll out reset */
+-	if (MESON_PARM_APPLICABLE(&pll->rst))
+-		meson_parm_write(clk->map, &pll->rst, 0);
+-
+-	/* Wait for PLL loop stabilization */
+-	udelay(20);
+-
+ 	/*
+ 	 * Compared with the previous SoCs, self-adaption current module
+ 	 * is newly added for A1, keep the new power-on sequence to enable the
+ 	 * PLL. The sequence is:
+-	 * 1. enable the pll, delay for 10us
++	 * 1. enable the pll, delay for 20us
+ 	 * 2. enable the pll self-adaption current module, delay for 40us
+ 	 * 3. enable the lock detect module
+ 	 */
+ 	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+-		udelay(10);
+ 		meson_parm_write(clk->map, &pll->current_en, 1);
+-		udelay(40);
++		udelay(20);
  	}
  
--	if (meson_clk_pll_wait_lock(hw))
-+	if (meson_clk_pll_wait_lock(hw)) {
-+		/* disable PLL when PLL lock failed. */
-+		meson_clk_pll_disable(hw);
-+		pr_warn("%s: PLL lock failed!!!\n", clk_hw_get_name(hw));
+-	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+-		meson_parm_write(clk->map, &pll->l_detect, 1);
++	/* Take the pll out reset */
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 0);
 +
- 		return -EIO;
-+	}
++	/* Wait for PLL loop stabilization */
++	udelay(20);
++
++	/* Enable the lock-detect module */
++	if (MESON_PARM_APPLICABLE(&pll->l_detect))
+ 		meson_parm_write(clk->map, &pll->l_detect, 0);
+-	}
  
- 	return 0;
- }
- 
--static void meson_clk_pll_disable(struct clk_hw *hw)
--{
--	struct clk_regmap *clk = to_clk_regmap(hw);
--	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
--
--	/* Put the pll is in reset */
--	if (MESON_PARM_APPLICABLE(&pll->rst))
--		meson_parm_write(clk->map, &pll->rst, 1);
--
--	/* Disable the pll */
--	meson_parm_write(clk->map, &pll->en, 0);
--
--	/* Disable PLL internal self-adaption current module */
--	if (MESON_PARM_APPLICABLE(&pll->current_en))
--		meson_parm_write(clk->map, &pll->current_en, 0);
--}
--
- static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long parent_rate)
- {
+ 	if (meson_clk_pll_wait_lock(hw)) {
+ 		/* disable PLL when PLL lock failed. */
 
 -- 
 2.42.0
