@@ -1,156 +1,209 @@
-Return-Path: <linux-kernel+bounces-879200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900A9C22845
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:09:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC568C22835
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8857B3A3A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:07:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7AD5934E59B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB5D2EFD9F;
-	Thu, 30 Oct 2025 22:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9266338900;
+	Thu, 30 Oct 2025 22:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XqcxcQzZ"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYxijps6"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B2232C943
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674EB3358A8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761862026; cv=none; b=sqAEBzIVu0OGdTeeZFBFHp+qQp1p7CrAXKV8YRcMe38wBNM0knXC2vhR/XY9cJEW5rYQgoIMHXNroxN33PqgdKbPCN2K6/cYotM6WH92LA8EOlxzOzYwijm6v/FDJkd/dIA4xU3Fiu6rfixXCO3Uz7S/IE4MVf5mctv9HexeVTc=
+	t=1761862093; cv=none; b=J/J7dcX1jS3K6j6i1tORuEuQpWx+DzPiIL+MZiVwD08kNg2+16kMUMEpcLi4gjMT1tv6WtLJYZPZamiMeRijPwhAWQ5ykz5T7W7gtkD5h6hrWlR5PveS6/7u8Yz0n3v58917cgkiO2pscjAkZYpntUGlTTLs/D/TDbOCBO7WQwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761862026; c=relaxed/simple;
-	bh=cM5UgoO7go2rE7T8BZEbNJTCGD0wetmJNdz4fRUhSBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ol41ENb/IXws+kh8Z7fKpzq3tLR8gxLwim3HLsDGxZcVPNfCiTrv+1C8PMbWR3zORav8KPHVVVdF1vd03eIFKWEWtWnzYkBfPpAX9vG+v2tCfston+j7pDqkpIXAzMPJ0m/whZmVUbnRgtL3rOo0DxhWHhiM7R2CM1qjhCoT2dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XqcxcQzZ; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b70406feed3so226646266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:07:03 -0700 (PDT)
+	s=arc-20240116; t=1761862093; c=relaxed/simple;
+	bh=7ru5F1kwzreOleQxP1/PtdtLEReJTNcVqATHU/+UTRY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O0TsrfRuWyNrhJYc+yDWh3gk6XGAEanlwN2alrneeNDDkKafBYxngBVVjQq3OfvbPdpWQcPX+ORZ739jn0tr8EDDXICqwxFuQ037BOLTVIqW3ymQU5rr/zD5HGqtY9EhoCZX8jHBOp+W5n7tPKPR4FuboLM1YcQI8fCoKsiDsI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYxijps6; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b6d4e44c54aso235483266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:08:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761862021; x=1762466821; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7VDAtmUsZqMlwI/PTPaPA8FAzUrtYhiM6kTYyXudhE=;
-        b=XqcxcQzZsIuF7Z9eY4vu6l/8cFSBnhsnRxUbbvAdHglPqdzjfa0UYrAKvQuHo5iSGn
-         bW3sA2LgtZUMQ2JXh989ZA7H/qo2pCKYEgmxtxnt9j5eEGS6UeTNnUYWlz6po54Q6oXN
-         wpSHUkPCwKxWio2aUryhQdncZgg/TlesguQxf0joioAuwNDQQCn2K08kmapjAuK29HH0
-         /8MTLGXZucXTyXXR/4BRbdxyhSS1tjKfefMaMCnMzcVfWu3UF8AnsmcMl7+JRwuuIXlJ
-         YSymN/MAHTbI3ma1ShhxWyyAhxwHRawP334oXYXsakp6m+I65NTLWdoKwypM2TkUSBnR
-         YaRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761862021; x=1762466821;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761862090; x=1762466890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R7VDAtmUsZqMlwI/PTPaPA8FAzUrtYhiM6kTYyXudhE=;
-        b=ZqeLzFD05xHkE6fKj6QFq0j1lx9WjGDmvbZ/86Kn2GUj4vzXPUPxcObYfrUcF0EdWl
-         wBgQwSLblZyJBa26YWgalWzzym6UtZ26as/VgfpcPrepuQcv27nswoi9/MTWqNhijGaq
-         Wve6D70ZiGEtzDDZORM2tW2sLa46ThQjcRqA8a3nl+G6Z0OnmBPa9cNDg43Bag1v3EAx
-         l2Ck9V+T0QC1VH2j5AuEwe7EM2ZKKtcGAwFMtNz4B2KCodydBokYwgLGp4kpGfY+ByS6
-         hYKuMFTFhllsmt9/1CIJykwAv/EK0lexyH2S4Czhae1A5kLE15nIS05NlWfpxiKUetgI
-         C4Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3gJmWkL4SVDPc1b+jG1NimC6EFmrlVClFTW6cXS0y+8Hm0Db3xrljMLd+pNqkk6SNHyB9Jm9FePmOTNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGUMWhVnfuzbN/OSVLrM2KbJg6LPsuw/P/9SSZ/rNncC40FIAM
-	2+auHMeKDkAsIueeY9Up92DQ10CrfU3AEKYFguTX0C8ln9FWWbwwI+1EVUZpX4o8K0M=
-X-Gm-Gg: ASbGnctWIWvrpTlUF1exERQ93GnmMzvo+ylHmRxsxqSWfdGoeMglNF8zAcM9ips8haZ
-	wDzM24XsuBpbpBjzoiZZNLNdJCCQt8JQX17YVSHQQQhvM1o165PIuiGQ2ekn7kZPIHQNwpc/l/M
-	55MRP2pDIMiU0vbCb4cStBsIefPMrcVOLcyUeMkxUZmXrFt3xX9zSHu3gSdu/t7TuxmPYx+kt4x
-	C9qrYytoiAX+zzSphvbQIQ+1jGdWumq9pd6+d0XIwQYrAUQxGOa54zq+zYfk+F+NnkyJLoNsmvq
-	ccesFEDQ8L7scErZuStv37rKbukl1WtmVrPXsC1upQXDrV+xcPNx3hx05c9cRrWojnuGnEh5oEM
-	QUyZ3b2yYYII9SODN+nHdCVIMQxfbYfu3mlHjsG+n985ufZ+BcemPbxG3f4zpbWsa0Ukc0eUQqU
-	hVt0T+pw==
-X-Google-Smtp-Source: AGHT+IH9eCQJTs+bhi7CI6SroWMhn/3mdEfGkB2E7DEbuVLquzoetKoSMx33oHVxd2NAWHRemdfmPQ==
-X-Received: by 2002:a17:907:8693:b0:b6d:2f32:844a with SMTP id a640c23a62f3a-b7070188912mr115508366b.22.1761862020683;
-        Thu, 30 Oct 2025 15:07:00 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-6407b427fb9sm41824a12.23.2025.10.30.15.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 15:06:59 -0700 (PDT)
-Date: Thu, 30 Oct 2025 23:06:55 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Subject: Re: [PATCH] pwm: fix broken intra-doc link
-Message-ID: <7e4oucjmnxaike4jnjmsdvwnc6hif4koww7al6cxeymccb3rn6@5blaoo4k5pfh>
-References: <20251029181940.780629-1-ojeda@kernel.org>
+        bh=0LxObTOLLtZ8xxLgeHDO09rzfBk1nZUK8QTcdiGvecg=;
+        b=KYxijps6ZrXHIMrZbZe/HM2yo7FAyNITZ7g/EszPD5J82HZ/WEqqN6xuXPrH/nX4A6
+         1R67ZAkQUnQQdgkvzkau09uxxENFoBurBooesKKxkQFim4XwCXfjpX8fJstTVyqHP1ji
+         RrBDFWhvmHfmvxC+2DEt8RknQZ4/4vEGXBawUsdxYZ6j01APRe+ICOo+8qCxGPad1rPK
+         jYTQiD/LRGSEej2KYibNitri6bm6bI+u5BfpCVxFTtHitxLX9V2vcAX25IEq2U4ph+iS
+         Cp0CAlWm2X6vI1X9UdEunGB52k4M3TbljQgxofp/FmI38mMG2yHRlSw6TYS35wYs02Oa
+         Y0Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761862090; x=1762466890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0LxObTOLLtZ8xxLgeHDO09rzfBk1nZUK8QTcdiGvecg=;
+        b=I7DmHozhWpQXmXpb3F8yB0mQ/EPGbWuXICdeDf6G03EqX+khCyPHIjti8Q3XKiZ2+/
+         DwCT4HzBGOeWixC2+Iu5zwG+gBNvTTILbEnBBl1KNcPsVSyVPK7VNPE5JAunBA3+kF7N
+         COf6AxI7RQr6Jbu9i0Uc8VD52lJKalHW6zGDezMc+LC18YrZn7ZSwVvt/d2gaNyz8hXK
+         Y9BdVuOAa01+RnV7D/23jQXYsBLNwREii9tK1M3A8fvZi/95UXPKm2BNjzi6Z24Sk8WH
+         HSAU9gLNmt4NDHQzCPau34TeY+4NF3MM4w7upt4dvwGczpexoiq5SUe1Czk8x9PdlS+S
+         VHaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUD4vp9cO6PbOFh1d1YPSLUo/x9vuV7rwOo6tE9O5BLzrb8N4TZ4tr6JCpRMuDcJ7nKR44BvZTM1ku7BM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgCmO4BvMNptBTnl6LCslW6STK30a/dzvpzFHvOPiXWzXmI/An
+	WxutjCzfsr8wMSZNKIw8j0itTV3WwcPizuSTgYmv8TCCBqzEOXlxszj5bvKNxtoO15gIZhYu7nP
+	30kQtyZqMUwupi6E1YFHoS6rimdzmit8=
+X-Gm-Gg: ASbGncvBIDJ8iD+HAqZ5/w1AXIoxd6PbAS5cdpLuQHLrrnM7uwLDvymlyqOgupDcyFv
+	dQTU9nnVo20tP7UGxVx60QFOMin8kU7+imEtV7+bvAv1TU6cAVft/QsspH+9VGA1Yt7Ow3uubNV
+	09Im8WWuetZmARXAO++qSdUUvIHvwTcNMvwNyZCWpMFSDlNwi2lABV2bQe1yL1YW1umkPg0snh/
+	CZVujMkRopp5tOGAFNT7xewZ0tZtGvZsmZQgwkFrWE5NE7GMjnuDKbDhQ6Si8NOaPxDOsGW1DQe
+	n5hGLZoEXBzk07syxJjAJFOCbSQ=
+X-Google-Smtp-Source: AGHT+IGR0wVutOFEKKEV5B5/riddaJS0BmFT14SEyFfKcUf47Pqu9r1kTsM350wF3kTvfvSWEdaPWWrc085FHNWrRC8=
+X-Received: by 2002:a05:6402:3512:b0:63b:f05d:b985 with SMTP id
+ 4fb4d7f45d1cf-64077068b44mr856508a12.35.1761862089107; Thu, 30 Oct 2025
+ 15:08:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hug6oxx7fhrrhezp"
-Content-Disposition: inline
-In-Reply-To: <20251029181940.780629-1-ojeda@kernel.org>
-
-
---hug6oxx7fhrrhezp
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20251029225748.11361-2-eraykrdg1@gmail.com> <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
+In-Reply-To: <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
+From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+Date: Fri, 31 Oct 2025 01:07:56 +0300
+X-Gm-Features: AWmQ_bl6GSQvlP8PEpYdfCdNwc9EbQga3YjgmFaSDoIhjzzpIF-Mu3RGnsKkrYM
+Message-ID: <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
+Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
+ during read
+To: Heming Zhao <heming.zhao@suse.com>
+Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	david.hunter.linux@gmail.com, skhan@linuxfoundation.org, 
+	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com, 
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pwm: fix broken intra-doc link
-MIME-Version: 1.0
 
-Hello Miguel,
+Hi Heming,
 
-On Wed, Oct 29, 2025 at 07:19:40PM +0100, Miguel Ojeda wrote:
-> `rustdoc` reports a broken intra-doc link:
->=20
->     error: unresolved link to `Devres::register`
->        --> rust/kernel/pwm.rs:722:11
->         |
->     722 | /// via [`Devres::register`]. This ties the lifetime of the PWM=
- chip registration
->         |           ^^^^^^^^^^^^^^^^ no item named `Devres` in scope
->         |
->         =3D note: `-D rustdoc::broken-intra-doc-links` implied by `-D war=
-nings`
->         =3D help: to override `-D warnings` add `#[allow(rustdoc::broken_=
-intra_doc_links)]`
->=20
-> Thus fix it.
->=20
-> Fixes: a3d5a2b8da94 ("rust: pwm: Add complete abstraction layer")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Thanks a lot for the review and comments.
 
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-=2E
+Regarding the placement of make_bad_inode(), our patch places it in
+ocfs2_read_inode_block_full() because
+ocfs2_validate_inode_block() itself doesn't have access
+to the inode object. I believe this (in the caller) is the
+correct layer, as it seems to match other patterns in OCFS2
+where the caller handles the make_bad_inode upon validation
+failure.
 
-I don't consider my tree stable, so if you still want to send review
-tags, I'll add them.
+I had one question about your proposal to combine this patch with
+Albin's [1]. When you mentioned, "We should forbid any write
+operations," were you referring to Albin's read-only check in
+ocfs2_setattr as the mechanism to "forbid" the operation? Or
+were you suggesting we should use the inode size sanity check
+itself (e.g., by converting the BUG_ON to an -EIO return)
+as that mechanism?
 
-Best regards and thanks,
-Uwe
+Thanks,
+Eray
 
---hug6oxx7fhrrhezp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkD4X0ACgkQj4D7WH0S
-/k4eFQf/ZjsorP2D+YGhhk8euCCluVFbuQEubtS0Z3Je2gFlkvzRE0D18hod09MU
-TwAYRoSCd2wfs2EEB2EKgUBhXF8pJS/19uXB6SaM8pMR3FSgd2QSB5ciZXB3qtH3
-edtBZAhbnVOXdT4bNRC/qUXXtXKFjZdJXTDkuREy8pA5NX6r5qRdOcgodUGXyCpA
-Jv4uUNhZnAlUsRgcHmg6bFmPFSlW2rEEpfEH5dTViBFp3SsdkLROP85EL+n0fX5W
-Mc3ETvq6/pbBddJH6IJ/lHj8BGryCPxlp88e4LGC0FD+X3utOfjZWt2IR0A3k4Ds
-+9crP6VCHVDWLH9EFTgTAUFRpjOy0A==
-=SgWV
------END PGP SIGNATURE-----
-
---hug6oxx7fhrrhezp--
+Heming Zhao <heming.zhao@suse.com>, 30 Eki 2025 Per, 10:59 tarihinde =C5=9F=
+unu yazd=C4=B1:
+>
+> Hi,
+>
+> In my view, combining this patch and another patch [1] is a complete
+> solution for this bug.
+>
+> According to the oops stack, the FS is already in read-only mode.
+> We should forbid any write operations and then perform the inode
+> sanity check.
+>
+> And I think ocfs2_validate_inode_block is a good place for make_bad_inode=
+().
+>
+> [1]:
+> https://syzkaller.appspot.com/text?tag=3DPatch&x=3D1287f614580000
+> - by albinbabuvarghese20@gmail.com from:
+>   https://syzkaller.appspot.com/bug?extid=3Db93b65ee321c97861072
+>
+> Thanks,
+> Heming
+>
+> On Thu, Oct 30, 2025 at 01:57:49AM +0300, Ahmet Eray Karadag wrote:
+> > Potentially triggered by sequences like buffered writes followed by
+> > open(O_DIRECT), can result in an invalid on-disk inode block
+> > (e.g., bad signature). OCFS2 detects this corruption when reading the
+> > inode block via ocfs2_validate_inode_block(), logs "Invalid dinode",
+> > and often switches the filesystem to read-only mode.
+> >
+> > Currently, the function reading the inode block (ocfs2_read_inode_block=
+_full())
+> > fails to call make_bad_inode() upon detecting the validation error.
+> > Because the in-memory inode is not marked bad, subsequent operations
+> > (like ftruncate) proceed erroneously. They eventually reach code
+> > (e.g., ocfs2_truncate_file()) that compares the inconsistent
+> > in-memory size (38639) against the invalid/stale on-disk size (0), lead=
+ing
+> > to kernel crashes via BUG_ON.
+> >
+> > Fix this by calling make_bad_inode(inode) within the error handling pat=
+h of
+> > ocfs2_read_inode_block_full() immediately after a block read or validat=
+ion
+> > error occurs. This ensures VFS is properly notified about the
+> > corrupt inode at the point of detection. Marking the inode bad  allows =
+VFS
+> > to correctly fail subsequent operations targeting this inode early,
+> > preventing kernel panics caused by operating on known inconsistent inod=
+e states.
+> >
+> > [RFC]: While this patch prevents the kernel crash triggered by the repr=
+oducer,
+> > feedback is requested on whether ocfs2_read_inode_block_full() is the m=
+ost
+> > appropriate layer to call make_bad_inode(). Should this check perhaps r=
+eside
+> > within the caller or should the error propagation be handled differentl=
+y?:
+> > Input on the best practice for handling this specific VFS inconsistency
+> > within OCFS2 would be appreciated.
+> >
+> > Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
+> > Link: https://syzkaller.appspot.com/bug?extid=3Db93b65ee321c97861072
+> > Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> > Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> > Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+> > ---
+> >  fs/ocfs2/inode.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> > index fcc89856ab95..415ad29ec758 100644
+> > --- a/fs/ocfs2/inode.c
+> > +++ b/fs/ocfs2/inode.c
+> > @@ -1690,6 +1690,8 @@ int ocfs2_read_inode_block_full(struct inode *ino=
+de, struct buffer_head **bh,
+> >       rc =3D ocfs2_read_blocks(INODE_CACHE(inode), OCFS2_I(inode)->ip_b=
+lkno,
+> >                              1, &tmp, flags, ocfs2_validate_inode_block=
+);
+> >
+> > +     if (rc < 0)
+> > +             make_bad_inode(inode);
+> >       /* If ocfs2_read_blocks() got us a new bh, pass it up. */
+> >       if (!rc && !*bh)
+> >               *bh =3D tmp;
+> > --
+> > 2.43.0
+> >
+> >
 
