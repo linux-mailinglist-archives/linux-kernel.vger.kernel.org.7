@@ -1,64 +1,51 @@
-Return-Path: <linux-kernel+bounces-877393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBD0C1E047
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:25:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD02C1E054
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:26:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E011895624
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49BB1898141
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480A2272E54;
-	Thu, 30 Oct 2025 01:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4CD273D8D;
+	Thu, 30 Oct 2025 01:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Acx1vqk9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hQJpEoua"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16963191F84;
-	Thu, 30 Oct 2025 01:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4541F270EC1;
+	Thu, 30 Oct 2025 01:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761787550; cv=none; b=Q9LAteYUscLv3h1j4YdrcwwBnTH3ndGKBB8TrfHlwCxUqhGGYHMJVujs1vdY8O0NPHeRIgR3IZmBaOubVAy2Y+rMkz/lMejr87b7YlZW14dXGjfghb0kiVJKQ4sly10tdPf1RV/KsGf98sPIALLYYwTunygzzgPsAsfrhbg8tjE=
+	t=1761787569; cv=none; b=YzWpl3Y+OjUMCdATNgWSRXvuvFzJxNS3dXy9m9rY6Q61qJOHKtdzuxEcG+TVAZmH3/nReJeK+DGSoGzLnY+TulJ61rqco8j2OVVmKB/Xx+jL8vaYjyP6bx1ytNHFQggwiea7vM7vamQHJYb56609wbFyS2bXwAIe2eZ2TMhE7Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761787550; c=relaxed/simple;
-	bh=N1XMjIY9XiIMspK3xF3I+zcw+mnUFCha7e56GhA53Hg=;
+	s=arc-20240116; t=1761787569; c=relaxed/simple;
+	bh=84kPkXhUTbe6LhLgk38kZ2juDmsQcTp5ZsiWx3+UrxA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZf12paByIyHdi5vOZGO0UdSC4s8ZU6gSkJ8Y00TC7ZK+eaXavZRUegcQa3ydyuWc47fJWAN58hOr7TZaz3IY1DrFYztRwOILdkDgeflYOi4kVzq3yahGrTIZnOJ9+EH3jE6qoI03E/mR8C+DPmqXjr5ZuoW1chIBfNaCBmimqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Acx1vqk9; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761787548; x=1793323548;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N1XMjIY9XiIMspK3xF3I+zcw+mnUFCha7e56GhA53Hg=;
-  b=Acx1vqk9c5UTZd+arWCUJNDfPNkGJ369XCGlyLQ6Fy4V63DLXUAoH/fb
-   aH3F+1GnsyTsq3q087DG23gQGIwq5dYru8Zi26i1BMRT4bhAsukOzvkkl
-   y9n6lBepZe7HVwCpDtNuPVEFyaAC9ThGM6IV6M0ecAicmwtqHe7CsQug7
-   lVR8sLgTecLJWTIwC3f0Gh3XhYwlipoInM88qpkP6ZFk0pPzMWXinyaej
-   ruVtEtAx+kZ5EdsscWEUAYruv8f0qjMYT+7qJqK7xWXiSvdD7QX7NITOl
-   BB7VF42CAF1D57ZU0cv5qnCw9ha1UAs145FJTqXJzfXHlmQ/s2QUIM5ja
-   Q==;
-X-CSE-ConnectionGUID: rr7kGRaBTTeoEMEC2apsaQ==
-X-CSE-MsgGUID: N7YGb5ELQuqot28qGq/hVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="51495012"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="51495012"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 18:25:46 -0700
-X-CSE-ConnectionGUID: iRxmnvCLQEyAbS4E5lKMjw==
-X-CSE-MsgGUID: XuLgyv3RSBKyCP7EZOxIeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="185073620"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 18:25:41 -0700
-Message-ID: <fc4360cd-ac5a-476e-8561-f6e3e990bd09@linux.intel.com>
-Date: Thu, 30 Oct 2025 09:25:39 +0800
+	 In-Reply-To:Content-Type; b=XMZ4aaqo1+nSujzztwbXzBCFY5d5b75vto1dmarzKrC8ozfnkoQrTN4JCq4h0WDzXvfVUUS+lVk2fr6VpzxEoQcc5scMuruOuj06KKKBEtTqTxcdM/rHHAfG9W4JPOSoULngVXsi9a6tOJn5kckUpQ7kkDlGKXDB/8LAiilLKEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hQJpEoua; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=DE4GUUSn7PS/fQa45gakfgN1Qyd0uWMtlpLL22+fJDs=; b=hQJpEouaCKg43OLB9uIUt5Si6r
+	LtknmQMFhhEP/mVrtGiYO1NoiHxI9p4Gf3BDkBxLfwv1ZTzvQvOycpYmpbSOsl/ChsST/5JMhAo8J
+	tV7jZPw6dPB1NS0ERA8r1xP6FvxC0NqZbvFZxGuAyar/yoAK//vfwz1DjBB+myOwODjXVP2/JFk5N
+	2sB5qCrtSHdrpU0VC1MC8ilNFJFomczGx6Z/gV1DoSY0rH/DxQZxr4GUbaF0WJdYmm9PxFplliaEY
+	9nhK/JbPV+gza/9FNZhrD9vS4MmgFzeUNEGHbOyALmrui/YC1zx0H/9gsSHVeeU3fUSc2YJtLe9Zx
+	iI/yLEFw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEHQR-00000003Ke3-1sDF;
+	Thu, 30 Oct 2025 01:26:03 +0000
+Message-ID: <b585fa87-b804-4f7c-844d-86645c61b2ca@infradead.org>
+Date: Wed, 29 Oct 2025 18:26:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,56 +53,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 12/23] KVM: selftests: Add helper to initialize TDX VM
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>
-References: <20251028212052.200523-1-sagis@google.com>
- <20251028212052.200523-13-sagis@google.com>
+Subject: Re: [PATCH net-next] net: Reorganize networking documentation toctree
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Networking <netdev@vger.kernel.org>, Linux BPF <bpf@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>
+References: <20251028113923.41932-2-bagasdotme@gmail.com>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251028212052.200523-13-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251028113923.41932-2-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 10/29/2025 5:20 AM, Sagi Shahar wrote:
-> KVM_TDX_INIT_VM needs to be called after KVM_CREATE_VM and before
-> creating any VCPUs, thus before KVM_SET_CPUID2. KVM_TDX_INIT_VM accepts
-> the CPUID values directly.
-This sentence seems not accurate.
-KVM_TDX_INIT_VM, i.e. the seamcall TDH.MNG.INIT, allows only directly
-configurable CPUID bits to be 1.
+On 10/28/25 4:39 AM, Bagas Sanjaya wrote:
+> Current netdev docs has one large, unorganized toctree that makes
+> finding relevant docs harder like a needle in a haystack. Split the
+> toctree into four categories: networking core; protocols; devices; and
+> assorted miscellaneous.
+> 
+> While at it, also sort the toctree entries and reduce toctree depth.
 
->
-> Since KVM_GET_CPUID2 can't be used at this point,
+Hm, I was going to ask how they are sorted, but I see that it's by
+file name -- chapter headings aren't sorted. E.g., under Protocols,
 
-I don't think this is relevant.
 
-As mentioned above, only directly configurable CPUID bits can be 1, so the
-CPUIDs input for KVM_TDX_INIT_VM should be filtered against the supported
-directly configurable CPUID bits.
+ARCnet
+AX.25
+Bare UDP Tunnelling Module Documentation
+CAIF
+SocketCAN - Controller Area Network
+The UCAN Protocol
+DCTCP (DataCenter TCP)
+The Linux kernel GTP tunneling module
+Identifier Locator Addressing (ILA)
+IPsec
+IPv6
 
->   calculate the CPUID
-> values manually by using kvm_get_supported_cpuid() and filter the
-> returned CPUIDs against the supported CPUID values read from the TDX
+These are sorted by file name. I'm not complaining, just
+making an observation.
 
-supported CPUID -> supported configurable CPUID
+Another observation: I find the heading
+  Softnet Driver Issues
+confusing, since I can't find anything in
+Documentation/networking/ that tells me what Softnet means.
+(and yes, I know, you didn't add this, just moved it)
 
-> module.
->
->
-[...]
+
+I like the organization. Someone might quibble over a few
+entries and which section heading they should be in, but
+that can be changed any time. (mostly items under
+Miscellaneous; e.g. RDS is a protocol)
+
+
+The size of the new index page is nice (about 3 screens on my
+laptop). But I miss seeing the next level of headings
+(:maxdepth: 2 instead of 1). And I don't see any way to find
+that. It would be nice if I could click on a hamburger menu
+somewhere to see finer detailed TOC/index. Or if the
+sidebar TOC could be expanded by clicking on a heading.
+
+
+And I don't think that the line "Contents:" at the top is doing
+any good.
+
+So I tried this patch with :maxdepth: 2. There is still too much
+TOC info there IMO, so using :maxdepth: 1 is good.
+I just wish there was a way to see individual (page) TOCs on demand.
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/networking/index.rst | 241 ++++++++++++++++-------------
+>  1 file changed, 136 insertions(+), 105 deletions(-)
+> 
+> diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
+> index c775cababc8c17..ca86e544c5c8e2 100644
+> --- a/Documentation/networking/index.rst
+> +++ b/Documentation/networking/index.rst
+> @@ -5,138 +5,169 @@ Refer to :ref:`netdev-FAQ` for a guide on netdev development process specifics.
+
+
+-- 
+~Randy
 
