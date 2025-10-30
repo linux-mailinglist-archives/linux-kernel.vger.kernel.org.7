@@ -1,216 +1,145 @@
-Return-Path: <linux-kernel+bounces-878838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF3AC2191B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:55:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985B6C2194F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075D64EC817
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2E11AA0843
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE5E36CA9C;
-	Thu, 30 Oct 2025 17:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2871536CDF4;
+	Thu, 30 Oct 2025 17:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGqmPt1R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRkeRV1T"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A0736C23B;
-	Thu, 30 Oct 2025 17:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154B236CA6A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846883; cv=none; b=CZN0wu20ofiyGlYJSO29UFSXc3XuuVm4lkyLbePvoE7OHzMovaCHZt7E+T3/O432+D/EmTa6raNT6H+qSHI6fI1nF6as5vzWxVWrEYoIJHmIbvmnhDSLxEr11Gm0Cm82dsQq/YpUBzGjfX/KMik4J4TUrZvS24pkPz9JrITYyL8=
+	t=1761846933; cv=none; b=cTq1kXqUxpn6C5eYIdcGGGmQYyHN/8D3SpJCf/6Wgs1bvLh2VABMjio3BYbUD/ssFLFvqQ7VDXX0wQShbn6lIMGgCm+QU1ZVv8ASqMM36Y1xsM2floibkcq7jQJhIT2bannSFrkgqv1E8Aks/KShI2ueyCj/NIpMmBx9wsD95CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846883; c=relaxed/simple;
-	bh=wN5w0ZpsmRedOFKta+0uAe6rukrpdbaeowWPDsV8m+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlvrIv6O6MZcDHzLCcZpFv1g5kWf17jkmSrPodknwJWGyRoMcuKnw1ehfTZOm19cBNqnLGrLn+on2zDZiIPW50EdvQo9lbKUgbotrT683oJqFXq+wQ0n/Pns3vgCTVid/1VlQGvJueWXzaPjYmxUSj6MgxlZl0L39X3/TEAWwPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGqmPt1R; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761846881; x=1793382881;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wN5w0ZpsmRedOFKta+0uAe6rukrpdbaeowWPDsV8m+E=;
-  b=gGqmPt1RDSdSMqpV0OaljqW58ziuQHTGP1xnNaDCumePfJqizLGFXm9B
-   +vLpXvDgztMnIf41OB2LbbGQyLKQWGyC46ida+x3eZgCmrHD36umDKORb
-   L25OKKC9Z+ngn7pJQzSOBAm4I0w+2klJ0+WV4VUuvWwdCfOkaB///u6ZZ
-   R3X+SgspUrEbdCeU5a3dmhH3VDdumuBOmXDG3b9F7IlmGufZnXN7Dhr/2
-   /ZRaGHt17v6fefO1W+BZeD0DKMOIgcEaLxbKFYIMhyi79im+3dVrp7Zbm
-   VedjfjUR+QTj0CqXuFygYlIFbxCy/twa7P+Lt24nwFT//+Cwkv++pmixZ
-   g==;
-X-CSE-ConnectionGUID: pnzb1urETSen4ryhYs0edQ==
-X-CSE-MsgGUID: dr3w+bz1TGqjgh4zOVlkzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="89465156"
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="89465156"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:54:41 -0700
-X-CSE-ConnectionGUID: 51Mc5goQQR+u5gOBMgShNA==
-X-CSE-MsgGUID: GQl1hD2jQhS8/oNgGh4rAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="185708781"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.223.240])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:54:40 -0700
-Date: Thu, 30 Oct 2025 10:54:35 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Brendan Jackman <jackmanb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
-	Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH 3/3] x86/mmio: Unify VERW mitigation for guests
-Message-ID: <20251030175435.afooenvymwpv5c2b@desk>
-References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
- <20251029-verw-vm-v1-3-babf9b961519@linux.intel.com>
- <DDVO5U7JZF4F.1WXXE8IYML140@google.com>
- <aQONEWlBwFCXx3o6@google.com>
+	s=arc-20240116; t=1761846933; c=relaxed/simple;
+	bh=E38nvu7KZl9ndawJz1k+ZLfO2UIk6shCOOTboPNO/UA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YDxliWoZZXIRUschJRlAIWiUARjskU5ze61QFRelbx+oxw2wXnI8LRujvHStuj4Y9S9DWhC4BJUHmBd8spuosLnNuz1SxN5Z27/6ly0M39FQyVA+cXzyGm/zKh3wrQSLJLxwfD93Y7g77VG0njG07iLSFWznyoEUHGd0kXOvolY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRkeRV1T; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee130237a8so915401f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:55:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761846929; x=1762451729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1gzjCSWSDa5dSUjUZXovzi8Fx64Uy71ap0+jFlPPV2w=;
+        b=cRkeRV1T5aFp6KPNiZh69cIJ8Kc8DTiNNNAn+YjTJlvGD82sQCnWquAAqvJUhUSWeq
+         /MPtMh+uCAzNi5lOgP3gwQMeXEX2tIb6u17t3a7iohPBJ2lsWPSBvqVpgAnV9jCDsOBI
+         VP0l+T6/MGrA4X8WCjop1uv9hctGon1gcYFUc8C1eyCS57AHo7Ewb+mNmA7+g2qExbbn
+         vcdI5wHLUtCd3Id1HvcXYB5As6or42bk57xIOjSPYoQdobpWiLmGNfq/gnQhlEis5NfO
+         ByX+onyrwszfNHaG3RXHb/2gNMPdjd/zpg2tEPH0wQs65oLZCNGBpwF8+qhTfddhBWcL
+         o7Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761846929; x=1762451729;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1gzjCSWSDa5dSUjUZXovzi8Fx64Uy71ap0+jFlPPV2w=;
+        b=xN8q7ywi7z5PB995rNaJMKtFX4beEyS0W5XZKCx4pTuVyLxkT2QG+lrGUunTS/k4xI
+         GDNEUcGv6iXuTQQwmWre1TkXGJM/zhdd3fx6o7ba24dFsHpsJidKu5HVqEkzheIzzam/
+         D9Jrn0+hwT/s9rMYtnsJJViYHUzbXeMBe7g3H35hFQuXiJQDPCpLs5JmMFVo2LGRNnOa
+         /ZBlmtDTy5yJ7bGTTj0W2+EeU6sqwavzwRCdF4iLgyHrFIwjW0hBEYeCajDlWTCHQSW6
+         CmHX0N7BnmVE8QBNVG+w7LCcp4u9K3xcT5O4muVU8N0hmJ3SArW9aO6Y0uW7XoLzCqfR
+         SCNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq2TWihteA1M4cOKzMybH4sXqWWtgv0Cu5GGePy/n7TnkziLiAVYOE4Thl1nx+nHeJA95vID8Lqt5G8rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrzZsYeef6vylMoRQjzI9Cpv3eNKL5/Ua9xO5MvhINP6p52Vm9
+	JYPYOsqrnAADGSlfAAwOU944jNE6B450u2uh21vKxDhhWJTnHl5Zc5Oq
+X-Gm-Gg: ASbGncsMEYTjfB9Z/m3mqBTbePxgTFZaFVSVYMrTB72GIoQwIo46DedA/QXf1V1jdtX
+	E2rpaBLB96Od9ISbRoRidyw9QaS+zhUbyCoMqctzN+9BhnZZMHZvN9ZygEs4+0N0aW3bJJVWA65
+	SUbQMHjpQz4FpLS/CbOXZGMSYd73WzsogCiSuGUQuZB0b2AtCwXMdMtmn12cc3ZG4l6iNPSCFts
+	C8t0U69rQAnw7jzbZ4s2I/izf2xfT271wskuSJSNdrQetWEXXj80m8hy0pyFX94zE/hAw5Oj0fm
+	CeexLmWm6x2kiBOUHNpzWOXlHMOpy4kPwW0dSh55E67ABpUkK3jdk9wTOwVvTxmj5n9Z/pUbcaL
+	IZ9h6/ZISbN7xrIutAeQKK5OYUbe83iCpmuXNhO7SN1AEnUiPhZYFa2AlI4bO5dG2Bc623TetoB
+	eWHhz/G76hDXJvxRU5Y2UTlpy/Lu3UEBTp7Taxkkhsq1VI/NuFtqDzHmqWBQWl
+X-Google-Smtp-Source: AGHT+IFvVMZpr26r2oMzIBqKA97uZXvamh5HEXytVmPS+yPwKWlEnWn5bt5lEiXlmDbS5Rh6odZSCA==
+X-Received: by 2002:a05:6000:1a8e:b0:429:8cda:dd4e with SMTP id ffacd0b85a97d-429bd6ada5cmr389977f8f.32.1761846928726;
+        Thu, 30 Oct 2025 10:55:28 -0700 (PDT)
+Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm33384041f8f.38.2025.10.30.10.55.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 10:55:28 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 00/13] Add RZ/G3E RSCI support
+Date: Thu, 30 Oct 2025 17:55:04 +0000
+Message-ID: <20251030175526.607006-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQONEWlBwFCXx3o6@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 09:06:41AM -0700, Sean Christopherson wrote:
-> On Thu, Oct 30, 2025, Brendan Jackman wrote:
-> > > @@ -160,6 +163,8 @@ SYM_FUNC_START(__vmx_vcpu_run)
-> > >  	/* Load guest RAX.  This kills the @regs pointer! */
-> > >  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
-> > >  
-> > > +	/* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
-> > > +	jz .Lskip_clear_cpu_buffers
-> > 
-> > Hm, it's a bit weird that we have the "alternative" inside
-> > VM_CLEAR_CPU_BUFFERS, but then we still keep the test+jz
-> > unconditionally. 
-> 
-> Yeah, I had the same reaction, but couldn't come up with a clean-ish solution
-> and so ignored it :-)
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Ya, it is tricky to handle per-guest mitigation for MMIO in a clean way.
+Add RZ/G3E RSCI support for FIFO and non-FIFO mode. RSCI IP found on
+RZ/G3E SoC is similar to one on RZ/T2H, but has 32-stage fifo. RZ/G3E has
+6 clocks (5 module clocks + 1 external clock) compared to 3 clocks
+(2 module clocks + 1 external clock) on RZ/T2H, and it has multiple
+resets. Add support for the hardware flow control.
 
-> > If we really want to super-optimise the no-mitigations-needed case,
-> > shouldn't we want to avoid the conditional in the asm if it never
-> > actually leads to a flush?
-> > 
-> > On the other hand, if we don't mind a couple of extra instructions,
-> > shouldn't we be fine with just having the whole asm code based solely
-> > on VMX_RUN_CLEAR_CPU_BUFFERS and leaving the
-> > X86_FEATURE_CLEAR_CPU_BUF_VM to the C code?
-> > 
-> > I guess the issue is that in the latter case we'd be back to having
-> > unnecessary inconsistency with AMD code while in the former case... well
-> > that would just be really annoying asm code - am I on the right
-> > wavelength there? So I'm not necessarily asking for changes here, just
-> > probing in case it prompts any interesting insights on your side.
-> > 
-> > (Also, maybe this test+jz has a similar cost to the nops that the
-> > "alternative" would inject anyway...?)
-> 
-> It's not at all expensive.  My bigger objection is that it's hard to follow what's
-> happening.
-> 
-> Aha!  Idea.  IIUC, only the MMIO Stale Data is conditional based on the properties
-> of the vCPU, so we should track _that_ in a KVM_RUN flag.  And then if we add yet
-> another X86_FEATURE for MMIO Stale Data flushing (instead of a static branch),
-> this path can use ALTERNATIVE_2.  The use of ALTERNATIVE_2 isn't exactly pretty,
-> but IMO this is much more intuitive.
-> 
-> diff --git a/arch/x86/kvm/vmx/run_flags.h b/arch/x86/kvm/vmx/run_flags.h
-> index 004fe1ca89f0..b9651960e069 100644
-> --- a/arch/x86/kvm/vmx/run_flags.h
-> +++ b/arch/x86/kvm/vmx/run_flags.h
-> @@ -4,10 +4,10 @@
->  
->  #define VMX_RUN_VMRESUME_SHIFT                 0
->  #define VMX_RUN_SAVE_SPEC_CTRL_SHIFT           1
-> -#define VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT                2
-> +#define VMX_RUN_CAN_ACCESS_HOST_MMIO_SHIT      2
->  
->  #define VMX_RUN_VMRESUME               BIT(VMX_RUN_VMRESUME_SHIFT)
->  #define VMX_RUN_SAVE_SPEC_CTRL         BIT(VMX_RUN_SAVE_SPEC_CTRL_SHIFT)
-> -#define VMX_RUN_CLEAR_CPU_BUFFERS      BIT(VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT)
-> +#define VMX_RUN_CAN_ACCESS_HOST_MMIO   BIT(VMX_RUN_CAN_ACCESS_HOST_MMIO_SHIT)
->  
->  #endif /* __KVM_X86_VMX_RUN_FLAGS_H */
-> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> index ec91f4267eca..50a748b489b4 100644
-> --- a/arch/x86/kvm/vmx/vmenter.S
-> +++ b/arch/x86/kvm/vmx/vmenter.S
-> @@ -137,8 +137,10 @@ SYM_FUNC_START(__vmx_vcpu_run)
->         /* Load @regs to RAX. */
->         mov (%_ASM_SP), %_ASM_AX
->  
-> -       /* jz .Lskip_clear_cpu_buffers below relies on this */
-> -       test $VMX_RUN_CLEAR_CPU_BUFFERS, %ebx
-> +       /* Check if jz .Lskip_clear_cpu_buffers below relies on this */
-> +       ALTERNATIVE_2 "",
-> +                     "", X86_FEATURE_CLEAR_CPU_BUF
-> +                     "test $VMX_RUN_CAN_ACCESS_HOST_MMIO, %ebx", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
+This patch series depend upon [1]
+[1] https://lore.kernel.org/all/20251029082101.92156-1-biju.das.jz@bp.renesas.com/
 
-This approach looks better. I think we will be fine without ALTERNATIVE_2:
+v1->v2:
+ * Updated commit message for patch#1,#3,#9
+ * Added resets:false for non RZ/G3E SoCs in bindings.
+ * Increased line limit for error messages to 100-column limit for patch#3
+ * Updated multiline comment to fit into single line.
+ * Updated set_termios() for getting baud_rate()
 
-       ALTERNATIVE "", "test $VMX_RUN_CAN_ACCESS_HOST_MMIO, %ebx", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
+Biju Das (13):
+  dt-bindings: serial: renesas,rsci: Document RZ/G3E support
+  serial: rsci: Drop rsci_clear_CFC()
+  serial: sh-sci: Drop extra lines
+  serial: rsci: Drop unused macro DCR
+  serial: rsci: Drop unused TDR register
+  serial: sh-sci: Use devm_reset_control_array_get_exclusive()
+  serial: sh-sci: Add RSCI_PORT_{SCI,SCIF} port IDs
+  serial: sh-sci: Add sci_is_rsci_type()
+  serial: sh-sci: Add support for RZ/G3E RSCI clks
+  serial: sh-sci: Make sci_scbrr_calc() public
+  serial: sh-sci: Add finish_console_write() callback
+  serial: sh-sci: Add support for RZ/G3E RSCI SCIF
+  serial: sh-sci: Add support for RZ/G3E RSCI SCI
 
->         /* Check if vmlaunch or vmresume is needed */
->         bt   $VMX_RUN_VMRESUME_SHIFT, %ebx
-> @@ -163,8 +165,9 @@ SYM_FUNC_START(__vmx_vcpu_run)
->         /* Load guest RAX.  This kills the @regs pointer! */
->         mov VCPU_RAX(%_ASM_AX), %_ASM_AX
->  
-> -       /* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
-> -       jz .Lskip_clear_cpu_buffers
-> +       ALTERNATIVE_2 "jmp .Lskip_clear_cpu_buffers",
-> +                     "", X86_FEATURE_CLEAR_CPU_BUF
-> +                     "jz .Lskip_clear_cpu_buffers", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
+ .../bindings/serial/renesas,rsci.yaml         |  85 +++-
+ drivers/tty/serial/rsci.c                     | 412 +++++++++++++++---
+ drivers/tty/serial/rsci.h                     |   2 +
+ drivers/tty/serial/sh-sci-common.h            |   9 +
+ drivers/tty/serial/sh-sci.c                   |  67 ++-
+ 5 files changed, 492 insertions(+), 83 deletions(-)
 
-I am not 100% sure, but I believe the _MMIO check needs to be before
-X86_FEATURE_CLEAR_CPU_BUF_VM, because MMIO mitigation also sets _VM:
+-- 
+2.43.0
 
-       ALTERNATIVE_2 "jmp .Lskip_clear_cpu_buffers",
-                     "jz .Lskip_clear_cpu_buffers", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
-                     "", X86_FEATURE_CLEAR_CPU_BUF_VM
-
->         /* Clobbers EFLAGS.ZF */
->         VM_CLEAR_CPU_BUFFERS
->  .Lskip_clear_cpu_buffers:
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 303935882a9f..b9e7247e6b9a 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -903,16 +903,9 @@ unsigned int __vmx_vcpu_run_flags(struct vcpu_vmx *vmx)
->         if (!msr_write_intercepted(vmx, MSR_IA32_SPEC_CTRL))
->                 flags |= VMX_RUN_SAVE_SPEC_CTRL;
->  
-> -       /*
-> -        * When affected by MMIO Stale Data only (and not other data sampling
-> -        * attacks) only clear for MMIO-capable guests.
-> -        */
-> -       if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only)) {
-> -               if (kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
-> -                       flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
-> -       } else {
-> -               flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
-> -       }
-> +       if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO) &&
-> +           kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
-> +               flags |= VMX_RUN_CAN_ACCESS_HOST_MMIO;
-
-Thanks Sean! This is much cleaner.
 
