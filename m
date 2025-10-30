@@ -1,276 +1,242 @@
-Return-Path: <linux-kernel+bounces-877971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCDABC1F780
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:12:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18353C1F774
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF7D4245AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82A74036CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5474B34F248;
-	Thu, 30 Oct 2025 10:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31EA34F254;
+	Thu, 30 Oct 2025 10:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HZ5pUGLA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gLnFPXdS";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IYoZ1UPv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4D41C69;
-	Thu, 30 Oct 2025 10:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C3E41C69
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761819075; cv=none; b=j995vF9Kb8XTilEJ7SoFpBY4M1D7v23kfsIdmKEAmymdQMl1fWQKmR6LDVczpA1dFc3j6GwmSe6DQIxLpWeuKeXbnd1+D64p6l0vSxp9TIdg3GqUhWln/JBDBJ/DKOZ/tAGYP1R6cIfP9lu6ap6FFEC1XZPshv1pjdMfHGutiHo=
+	t=1761819038; cv=none; b=RXvTtzIF6PnPrA4nZJgoYEBbCaVrkenB3M+U8+11+VWwjq3/UpemaDbjePEqEI1MLkQ32k6xuXs4doV+33+1KBLQZIjDMhFM4Uu3RBPCI36KcdCnIxymtxNBuwRs7axhlxmKimHANHoEYyzNVyJZ8xQabRoXZY3wwx0Ia3mUAhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761819075; c=relaxed/simple;
-	bh=3F5YlBlt+z0kzM8nCLqJkuqh3UPHp1fBawFYrP8ygjI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=DNFVK87e4OQki09y4+k3S0AytsVpdUbnd0NHwnmY2an4faVcjuiX1wBTp5Q3iFSnc8q+NEyEFPsNcR2brtZ3e3Q335iViKbL29R12QHzf4VlYSKKbo6NOvDO01+FXNTvRr+ki7mwqStHURiMgPMHOIar3N30/mwOQrrigrkEI6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HZ5pUGLA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59TKfqth026155;
-	Thu, 30 Oct 2025 10:10:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=b+9c//CqGqXs1EvYyaw9p4mfVGksibj40nFftwj0X2c=; b=HZ5pUGLAVosr
-	D4gJY0ZzWO1qUpd3FYVqOCF8utJoR3aEb/BDWGkwS/Afbg2zab+PQkt0RIGZ/hF2
-	kFXQAv4Z6IgNC854SpCnTgfaypHNn8COBdn+csFJrOouRbhhjGaDCku8Vo3JwxMy
-	wkiwweW9/VJ3IpTLZDYgz9IjafSQ6iJyX3dm9JEsrGIzX78bHIRWp8eXSfulal79
-	iTTR8viyJ1RkQ6+fPh9CETL3L26Uh2YM1CRPa5qX4mWMwLd4JdrEkxHF3Ne8I9cm
-	q4FXpvT4QRDvzV0Zz5L+f200NqxGKcF/7vAKiVjCMwrBlqouAocMTUneQ4vvHbqp
-	cisQz6jnvw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34aaqhjv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 10:10:25 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59U9exwE023919;
-	Thu, 30 Oct 2025 10:10:24 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a33vx849j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 10:10:24 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59UAANik6947366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 10:10:23 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8EE825805F;
-	Thu, 30 Oct 2025 10:10:23 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AB5705805B;
-	Thu, 30 Oct 2025 10:10:22 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 30 Oct 2025 10:10:22 +0000 (GMT)
+	s=arc-20240116; t=1761819038; c=relaxed/simple;
+	bh=gjnSCp4ErGtgQj+kyj3ZUfn8tTM3HyOSMBbh/HFVyZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OYhQzRq3p/mKRf7sKIXa1YsrdSzjmYr2ww+CA0Iflc+c0ds+eriM8X+xHH/O2VC4pt8lsdF81j3wRfDbP0rnHrSlpaaOHGqO+zgQssicxgGfvX9D3trDxLfUFiSaiP0VvbggW0xUs42froh4v9FDFKr9pKX00XnCraF3t7audms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gLnFPXdS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IYoZ1UPv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U7SXI01656060
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:10:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1Tk2wViz0AltOKov0bmJb8BdIdTqWdxh4mEaQnxEC6I=; b=gLnFPXdSWwkwwiQX
+	ITzByOKkfCISwdeJRVCp3CqTB6wV7P0TZ/xFIVSjGCLktLBzEbyHaLzcDB7Scw69
+	I8qck80SIUpsPYw27yfeVdq1Qvjajye/r9vOIT0OOoHlkAw4eqtlk6ZILBq6orW7
+	ugHFPpdjKGS7bcKm0BL28Yj7A5sOcBsyrxFjrNQae+wQxXEZxJ4mKyfrRpIC93ZS
+	+pm1FgDfXCVUSXH+z6iOeuM99Or9y2uHXZq5FiBsYl+OlIkS3FNOV0NghRAIWH2J
+	XgjmE1MZD5EdcGh8EhYWQ35rbCSy+RP0K2ZWiQqzhVp0jXwFNThY2Dcf6nMidcBz
+	NFAfWQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3tptsxa9-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:10:34 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4eb9f5d6a75so1354781cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761819034; x=1762423834; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Tk2wViz0AltOKov0bmJb8BdIdTqWdxh4mEaQnxEC6I=;
+        b=IYoZ1UPvcPSIK0l5xFy1EldVvi3Cb+8CCr42sav769vB2aFegLRavEROCxfxOZymQL
+         2c5YqX3THD+CSBtxqxfPWZCNnhQbLFzJ6O6csPDzPdpFIo1TfeQ/b0qeHAj4tnz3SWk9
+         Umamto7RlheK/5NM1PfJMbX5p8/8Vn9LLxoLZNSfoIYg4MnoxHmRB7yIR3EQBsmOq0Rk
+         g55uZ82tan6ynh4DpFR1NYjv+EHAhZtwab7fVqIMpguS2AaGOCmovIGVdHqYU2b+0U7g
+         vfEGIiUGg94xV9+7p0ZMSqf63LQuRdhekgw/fCzYMTcvHYkQDwf+WxcQuw6X8pdcevr6
+         XRyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761819034; x=1762423834;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Tk2wViz0AltOKov0bmJb8BdIdTqWdxh4mEaQnxEC6I=;
+        b=gGljGUtjeFE1+xnTm9NfJZNi8ZtKK44/eT8N/vDgKd5bzxplnW64v0MirmSBDguLBE
+         YYxYBJvI3jm18lWeAD2gNprFfBX+SrwpMy6PBvEfmyPzto/zBXvkFXcroNqbhn7ofbkG
+         XNZa+8Deuo3ql87dBFRV/oN0Abs2JvB1Rk9rz2D4mfo02xMotRscEm5pRfkoTInckuw3
+         GSE/ehsN4e6Mnd4hZPNoIqDG6JTRJiMKIlDzJIoN4t+lsdkbBCd12M+RJIZ3MBywlNZ7
+         Deo4E63Q4KvhOIdmvGA+A20SF+TByQttnS/l9rJihpQKhBYkI4EZiW1rU32IRHK6AY4c
+         sJgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEmx7y/pfE2svFQk7WkPvcjqkPe0lsMGtNZOibhs/e3vo1abryT5PIBKoJkcAU5eBv2YevmOR+QIqXEdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnep1lBW7II5Idx6eF2g0+TPNWOZiQ7F1oNlADJFtw9UfXz0oz
+	PMNg1n7V19+636ZJ/15iUmYEHzui55wn3U2R65nL/aN1m5iUx69kJge7RpGc+rIqfyC0Avy/lvM
+	WP15IVQ+k9L/Jonu75xyw4lF/YxhZ1eQQf3y6zQQZ/HIC3u266LQ4ZbhwDd6aV38PzC0=
+X-Gm-Gg: ASbGncuJUn+tNRgVGiMZTozU8zyIWq1Kzlymr+5AwwSWoWCz+1ZPLnixlXgT8GQUDHx
+	spUShpxPNXGnOVyUNUOOElUMwbhNh5IfYfoMyqyNix9ojDpp4MuceypqjVkMJIvyjRBvbA80ruR
+	lZ5thK1QaiPYqDeYu1P0OKD6Liq9lT6jiYzkEun6RTiw0nva4c4leDJhid0BKXb5eeuavrG/HcD
+	6k1pdWm0FgDafiwvyYtSzaa1JzBPch1fFSxf4v8guP1F8LxpAlPVDneB21xndvf9r671fxlsm0q
+	4mavZhYwExzPC/ddH7pmQWX6grR/tYaLkV39yfLsh0CjWzxdPkZ53WSjna2oueCrI3KNKHNNPd3
+	RM+uNU80/B+66uqM4yTVDMR5NbIWNlJVksi9GC9PzcOlH8FWQUdUS0AsF
+X-Received: by 2002:a05:622a:155:b0:4ec:f7e4:8a0e with SMTP id d75a77b69052e-4ed15c06266mr55893341cf.9.1761819033573;
+        Thu, 30 Oct 2025 03:10:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELF81IfIckZ963pva8kKMpBiIb1HN/EuzgABEmtwD7DsEXTHRgYJQc5q52Dl9jk2M9977eNw==
+X-Received: by 2002:a05:622a:155:b0:4ec:f7e4:8a0e with SMTP id d75a77b69052e-4ed15c06266mr55893041cf.9.1761819033073;
+        Thu, 30 Oct 2025 03:10:33 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64061a5b7b5sm1874821a12.1.2025.10.30.03.10.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 03:10:32 -0700 (PDT)
+Message-ID: <6d6f3981-af6b-4fb6-a379-dc72d08363d7@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 11:10:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 30 Oct 2025 11:10:22 +0100
-From: Harald Freudenberger <freude@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Ard
- Biesheuvel <ardb@kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Holger Dengler <dengler@linux.ibm.com>,
-        Herbert Xu
- <herbert@gondor.apana.org.au>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] SHA-3 library
-Reply-To: freude@linux.ibm.com
-Mail-Reply-To: freude@linux.ibm.com
-In-Reply-To: <20251029163216.GA1603@sol>
-References: <20251026055032.1413733-1-ebiggers@kernel.org>
- <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com> <20251029163216.GA1603@sol>
-Message-ID: <fa8bc10f36b1aeb9ffe1abf6350adbc1@linux.ibm.com>
-X-Sender: freude@linux.ibm.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: hamoa-iot-evk: enable pwm rg leds
+To: Tingguo Cheng <tingguoc@hu-tingguoc-lv.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>, kernel@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+        Rakesh Kota <rakesh.kota@oss.qualcomm.com>,
+        Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+References: <y>
+ <20251030-add-rgb-led-for-hamoa-iot-evk-v2-1-3b3326784d7b@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251030-add-rgb-led-for-hamoa-iot-evk-v2-1-3b3326784d7b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=ALkgKXG8 c=1 sm=1 tr=0 ts=69033991 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=WVmDiQGdFGOvvYNDNwwA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 1NTO-GqcrkTuq3zAPtgiiup9KtYe8xFC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX0VdIDefrEemR
- oyDicGdm8gl6OM91qy96lykDj0F3lXrv1kMFJVJAUdfu0jEUzASdRCCQM7SfwK1NE/rsG8Te3Q5
- JNzilqS6YwqXXpIwlBbVSIeg+tzYGxwC7w9a1tcMjLmQeer7HIF9SBVhYiCxKR2Ya4GqqVcsVEy
- j/2PkkhSMd77aXOTnuuc6d+Q5KJ26B9lX9vyevKa23naSUPGstkGRhIn4ililE+S8JI/+hJRMGy
- JGQsVG03xdEC3liLanplyG5a4d90DWOHxCGJbSOzlat6gFMkzyaRS3PjvhLgJD2MDJ1ro643trg
- NEhilKFA4uRJF33gnTQZv+DbJ0dNc8pnO5s9nut3kgssduKZWp/VI2wKxgCI+WomEC30IGB+15Y
- CMsz8wTp7kAtxx6K/vIvlAkT2fL8Kg==
-X-Proofpoint-GUID: 1NTO-GqcrkTuq3zAPtgiiup9KtYe8xFC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA4MiBTYWx0ZWRfXwxa+7dMmHNgd
+ ypWongsJo0id9u08At0rVn1a8edvTTMTOrSazR7auLDr7Fxz8C867YltzixZiEj3pHl2niSS6Jc
+ tYeTIwCG3sVRyvP6IY3kidth8x+gF1FFxtvdmSn6pN9Fp66Yl5pVcpURNCS6ulkOc8ZBFmBuf7Z
+ WXLjeul0Bcwv2/lUTxZpyWY6gWTKR+1OsyXK1grLToVx89nqsn/AeOiwfCMba7VK8suSUKhB2NS
+ jeaczOcFDB0eI2UzoBSiHwdctiLUIziDA1fbXQUkb81QsivPQu3izq7w7+2lrgnVoQWWn+XApRv
+ nLvQWt3WIeLyG48MznaUURLVpG7LsUt6ChD4XQ6ZuXPsF5pkotwkRau6UdgndUaXY+oW7+U5KGD
+ 5E56tCTWPGxlmPdyPOV1h4MQVaAdZw==
+X-Proofpoint-GUID: PzFm-HYxyz6_eHMzH8vDR3RjK194UHmU
+X-Authority-Analysis: v=2.4 cv=MuRfKmae c=1 sm=1 tr=0 ts=6903399a cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=2cCYZ7mipiWG3OMYrP4A:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: PzFm-HYxyz6_eHMzH8vDR3RjK194UHmU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2510280166
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300082
 
-On 2025-10-29 17:32, Eric Biggers wrote:
-> On Wed, Oct 29, 2025 at 10:30:40AM +0100, Harald Freudenberger wrote:
->> > If the s390 folks could re-test the s390 optimized SHA-3 code (by
->> > enabling CRYPTO_LIB_SHA3_KUNIT_TEST and CRYPTO_LIB_BENCHMARK), that
->> > would be helpful.  QEMU doesn't support the instructions it uses.  Also,
->> > it would be helpful to provide the benchmark output from just before
->> > "lib/crypto: s390/sha3: Add optimized Keccak function", just after it,
->> > and after "lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest
->> > functions".  Then we can verify that each change is useful.
-> [...]
->> 
->> Picked this series from your ebiggers repo branch sha3-lib-v2.
->> Build on s390 runs without any complains, no warnings.
->> As recommended I enabled the KUNIT option and also 
->> CRYPTO_SELFTESTS_FULL.
->> With an "modprobe tcrypt" I enforced to run the selftests
->> and in parallel I checked that the s390 specific CPACF instructions
->> are really used (can be done with the pai command and check for
->> the KIMD_SHA3_* counters). Also ran some AF-alg tests to verify
->> all the the sha3 hashes and check for thread safety.
->> All this ran without any findings. However there are NO performance
->> related tests involved.
+On 10/30/25 8:42 AM, 'Tingguo Cheng' via kernel wrote:
+> From: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>
 > 
-> Thanks!  Just to confirm, did you actually run the sha3 KUnit test and
-> verify that all its test cases passed?  That's the most important one.
-> It also includes a benchmark, if CONFIG_CRYPTO_LIB_BENCHMARK=y is
-> enabled, and I was hoping to see your results from that after each
-> change.  The results get printed to the kernel log when the test runs.
+> Add RED and GREEN LED channels for the RGB device connected to PMC8380C
+> PWM-LED pins. Omit BLUE channel to match default hardware setup where
+> it's tied to EDL indicator.
 > 
-
-Here it is - as this is a zVM system the benchmark values may show poor 
-performance.
-
-Oct 30 10:46:44 b3545008.lnxne.boe kernel: KTAP version 1
-Oct 30 10:46:44 b3545008.lnxne.boe kernel: 1..1
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     KTAP version 1
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # Subtest: sha3
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # module: sha3_kunit
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     1..21
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 1 
-test_hash_test_vectors
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 2 
-test_hash_all_lens_up_to_4096
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 3 
-test_hash_incremental_updates
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 4 
-test_hash_buffer_overruns
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 5 test_hash_overlaps
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 6 
-test_hash_alignment_consistency
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 7 
-test_hash_ctx_zeroization
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 8 
-test_hash_interrupt_context_1
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 9 
-test_hash_interrupt_context_2
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 10 test_sha3_224_basic
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 11 test_sha3_256_basic
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 12 test_sha3_384_basic
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 13 test_sha3_512_basic
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 14 test_shake128_basic
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 15 test_shake256_basic
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 16 test_shake128_nist
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 17 test_shake256_nist
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 18 
-test_shake_all_lens_up_to_4096
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 19 
-test_shake_multiple_squeezes
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 20 
-test_shake_with_guarded_bufs
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: len=1: 
-14 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: len=16: 
-109 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: len=64: 
-911 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=127: 1849 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=128: 1872 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=200: 2647 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=256: 3338 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=511: 5484 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=512: 5562 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=1024: 8297 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=3173: 12625 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=4096: 11242 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
-len=16384: 12853 MB/s
-Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 21 benchmark_hash
-Oct 30 10:46:44 b3545008.lnxne.boe kernel: # sha3: pass:21 fail:0 skip:0 
-total:21
-Oct 30 10:46:44 b3545008.lnxne.boe kernel: # Totals: pass:21 fail:0 
-skip:0 total:21
-Oct 30 10:46:44 b3545008.lnxne.boe kernel: ok 1 sha3
-
->> What's a little bit tricky here is that the sha3 lib is statically
->> build into the kernel. So no chance to unload/load this as a module.
->> For sha1 and the sha2 stuff I can understand the need to have this
->> statically enabled in the kernel. Sha3 is only supposed to be 
->> available
->> as backup in case of sha2 deficiencies. So I can't see why this is
->> really statically needed.
+> Signed-off-by: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Rebased on next-20251030.
+> - Remove BLUE led channel to align with the default hardware configuration.
+> - Link to v1: https://lore.kernel.org/r/20251017-add-rgb-led-for-hamoa-iot-evk-v1-1-6df8c109da57@oss.qualcomm.com
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> CONFIG_CRYPTO_LIB_SHA3 is a tristate option.  It can be either built-in
-> or a loadable module, depending on what other kconfig options select 
-> it.
-> Same as all the other crypto library modules.
+> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> index 36dd6599402b4650b7f8ad2c0cd22212116a25fe..ef59e5ff59f2cbe0ee60a020a5d2929c67ad511b 100644
+> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> @@ -5,6 +5,7 @@
+>  
+>  /dts-v1/;
+>  
+> +#include <dt-bindings/leds/common.h>
+>  #include "hamoa-iot-som.dtsi"
+>  
+>  / {
+> @@ -879,6 +880,28 @@ usb0_1p8_reg_en: usb0-1p8-reg-en-state {
+>  	};
+>  };
+>  
+> +&pm8550_pwm {
+> +	status = "okay";
+> +
+> +	multi-led {
+> +		color = <LED_COLOR_ID_RGB>;
 
-I know and see this. However, I am unable to switch this to 'm'. It 
-seems
-like the root cause is that CRYPTO_SHA3='y' and I can't change this to 
-'m'.
-And honestly I am unable to read these dependencies (forgive my 
-ignorance):
+This should be LED_COLOR_ID_MULTI (RGB suggests all three R/G/B
+channels are accessible)
 
-CONFIG_CRYPTO_SHA3:
-SHA-3 secure hash algorithms (FIPS 202, ISO/IEC 10118-3)
-  Symbol: CRYPTO_SHA3 [=y]
-   Type  : tristate
-   Defined at crypto/Kconfig:1006
-     Prompt: SHA-3
-     Depends on: CRYPTO [=y]
-     Location:
-       -> Cryptographic API (CRYPTO [=y])
-         -> Hashes, digests, and MACs
-           -> SHA-3 (CRYPTO_SHA3 [=y])
-   Selects: CRYPTO_HASH [=y] && CRYPTO_LIB_SHA3 [=y]
-   Selected by [y]:
-     - CRYPTO_JITTERENTROPY [=y] && CRYPTO [=y]
-   Selected by [n]:
-     - MODULE_SIG_SHA3_256 [=n] && MODULES [=y] && (MODULE_SIG [=y] || 
-IMA_APPRAISE_MODSIG [=n])
-     - MODULE_SIG_SHA3_384 [=n] && MODULES [=y] && (MODULE_SIG [=y] || 
-IMA_APPRAISE_MODSIG [=n])
-     - MODULE_SIG_SHA3_512 [=n] && MODULES [=y] && (MODULE_SIG [=y] || 
-IMA_APPRAISE_MODSIG [=n])
-     - CRYPTO_DEV_ZYNQMP_SHA3 [=n] && CRYPTO [=y] && CRYPTO_HW [=y] && 
-(ZYNQMP_FIRMWARE [=n] || COMPILE_TEST [=n])
-     - CRYPTO_DEV_STM32_HASH [=n] && CRYPTO [=y] && CRYPTO_HW [=y] && 
-(ARCH_STM32 || ARCH_U8500) && HAS_DMA [=y]
-     - CRYPTO_DEV_SAFEXCEL [=n] && CRYPTO [=y] && CRYPTO_HW [=y] && (OF 
-[=n] || PCI [=y] || COMPILE_TEST [=n]) && HAS_IOMEM [=y]
+Please try the attached patch.
 
-> 
-> - Eric
+Konrad
+
+From a13436fc3ee649b40efa8d0f21467b8534d7ebe2 Mon Sep 17 00:00:00 2001
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 11:08:44 +0100
+Subject: [PATCH] leds: rgb: leds-qcom-lpg: Allow LED_COLOR_ID_MULTI
+
+There's nothing special about RGB multi-led instances. Allow any color
+combinations by simply extending the "if _RGB" checks.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/leds/rgb/leds-qcom-lpg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index 4f2a178e3d26..c8afc68e442f 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -1382,7 +1382,7 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
+ 		return dev_err_probe(lpg->dev, ret,
+ 			      "failed to parse \"color\" of %pOF\n", np);
+ 
+-	if (color == LED_COLOR_ID_RGB)
++	if (color == LED_COLOR_ID_RGB || color == LED_COLOR_ID_MULTI)
+ 		num_channels = of_get_available_child_count(np);
+ 	else
+ 		num_channels = 1;
+@@ -1394,7 +1394,7 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
+ 	led->lpg = lpg;
+ 	led->num_channels = num_channels;
+ 
+-	if (color == LED_COLOR_ID_RGB) {
++	if (color == LED_COLOR_ID_RGB || color == LED_COLOR_ID_MULTI) {
+ 		info = devm_kcalloc(lpg->dev, num_channels, sizeof(*info), GFP_KERNEL);
+ 		if (!info)
+ 			return -ENOMEM;
+@@ -1454,7 +1454,7 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
+ 
+ 	init_data.fwnode = of_fwnode_handle(np);
+ 
+-	if (color == LED_COLOR_ID_RGB)
++	if (color == LED_COLOR_ID_RGB || color == LED_COLOR_ID_MULTI)
+ 		ret = devm_led_classdev_multicolor_register_ext(lpg->dev, &led->mcdev, &init_data);
+ 	else
+ 		ret = devm_led_classdev_register_ext(lpg->dev, &led->cdev, &init_data);
+-- 
+2.51.2
+
+
 
