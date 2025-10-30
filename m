@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-878129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085CAC1FD99
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:36:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E6CC1FDA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41F7188A27B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:37:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CB133476C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE51C33A02B;
-	Thu, 30 Oct 2025 11:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A655933B94A;
+	Thu, 30 Oct 2025 11:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+jggJLq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NNf8xRjI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB7F33509D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407F12DEA74
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761824192; cv=none; b=VHZ3YjlKoYBFcuXG25ik+FBo1xfSHFRG2B7brrKGv2Ifozyfwn9lpz0DFCoqevEfLl5vkwLXuO/FRNocPTNJaDJwt/TPOcX7lET27zT4mFM4kvdWZaJr1bOtd9GqdwOqWiD2rH1yMeQPu/upRIVcxglP2ElhuLxAkXcByDK/mgk=
+	t=1761824261; cv=none; b=rXH5GsIm4ru090EqJ4MXcWGRPTLdKzZnpUTlF5d8MEqcNifAdCSnIcb978ISWLNHAF513sR/IycTW0TePE1iS+odA9RMOyE1MF/Q0f1xX+jNzQrwHecew0ySGpJxwhkkSfOVVUdyLhyt7xGneoGTkLlnp5ojEjoqvrBNygd9u1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761824192; c=relaxed/simple;
-	bh=kGJsMqY6jwmXVuvCqeHnPicIh5I7M/4ABWD9iqi/WJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1EOUyaIFO53lMjcegCRkOH91h02KV+gNAUwjHIn23a4WWsRYHGYgGoJckfDrIsztiY8H1KkA2HoRcro6eHhoYoI8+EwXB4en2VZ/9X0b8otczw+pjow6QtPfO/e+XIPjxGlmolWNr7MV6LV7MxcUVtKURgLM5FdTDNqIuhTelg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+jggJLq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F59C4CEF1;
-	Thu, 30 Oct 2025 11:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761824191;
-	bh=kGJsMqY6jwmXVuvCqeHnPicIh5I7M/4ABWD9iqi/WJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i+jggJLqF96e1cKK1AaFp72YoJQbusuY9xn44ByUptCY9V6z0Q8DrWwLz/y9teK13
-	 3RkICPjFEq8X09t4DM7BEIl4RLY3PBwel35ptFESXmP0Q7DzOvstZm8H6day1t2BIH
-	 4tu/DElEUxtkdbhf5W08VQ8JWQjP5D3h1d9jZu0lwt4sTvJekY598O2p/tF2uGXm6a
-	 269hAss+OWJEjGred2DZ5J4B+S/2XDTLghUJsathJ0zf+aHVDN5q5dDj8R6OahFVLY
-	 +PBfppfqz1o9klNImeM+ISOMYnDsXLwEZQmlOqZ+M788bQJzAsYmLwUzN/HvXHzsdC
-	 1rwwMpZq/4Xtw==
-Date: Thu, 30 Oct 2025 11:36:27 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v1 0/4] regcache: Split out ->populate()
-Message-ID: <c33c5930-ad6e-4ff0-9a6f-4dfd15fcd352@sirena.org.uk>
-References: <20251029073131.3004660-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1761824261; c=relaxed/simple;
+	bh=7W1qZnO/sR0ECU4Mi/Uts9XJ0sXwDlx979UEUhJUMwU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cYzQY1Zp1N+/VSRrue/+hT0jPlozxBxS804zQlZSZUXcWY6tsZMNSs2vBmzDM7+lDZCVHp3TLlIJhxvmdN11NXNqYBG7rCiVntxUcsm78UCuQTPgk6khcC7Yh1lbLv3XFyZzuLYYKvrn2TPBMTRJd73mK+lXzClO9LA0/RLizIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NNf8xRjI; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761824259; x=1793360259;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7W1qZnO/sR0ECU4Mi/Uts9XJ0sXwDlx979UEUhJUMwU=;
+  b=NNf8xRjIHKYC6afHVLl4MSeLnJAduP+6IIqz5S9wBSN+9U3yRSURpUIb
+   T09VyUJdzjU9OC8RUqKOiHOkymr2ZgWmlpJXtjTCHAN3z6j7ts65yqZDm
+   QdZNLOnyHdWE2/MOHTITWkCFpC24huQI5+bb4R7PReP2frlAJLxTcXjKV
+   YsBjfHzpjhFmJRfaqf8tSLzbsS83Y+liK0wRUiwhuJgixFVAiNOqWJrsW
+   D0BA9K0uNTH7NmVRopq8CJC8NhJWYB8Y9MoDim2EfwZW+73EUkyyevOss
+   LeFTFkJc5v0OF/JsIJR9n8IFJbiXAvj+s3IiR6vQpbdzOWksclJr+knxF
+   w==;
+X-CSE-ConnectionGUID: 20TLUwTyTx2eHjY1tCqVcw==
+X-CSE-MsgGUID: 2A5Rgb8cQTuRqe60NZJC5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64002273"
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="64002273"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 04:37:39 -0700
+X-CSE-ConnectionGUID: KhbTRsytR6yzv3QXTGP1Tg==
+X-CSE-MsgGUID: I+5v9/FuSJmDuzCqImj6Aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="185129328"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa006.jf.intel.com with ESMTP; 30 Oct 2025 04:37:38 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id B5A8895; Thu, 30 Oct 2025 12:37:36 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Binbin Zhou <zhoubinbin@loongson.cn>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Chong Qiao <qiaochong@loongson.cn>,
+	Lee Jones <lee@kernel.org>
+Subject: [PATCH v1 0/2] mfd: ls2kbmc: A fix and a refactoring
+Date: Thu, 30 Oct 2025 12:36:32 +0100
+Message-ID: <20251030113735.3741913-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="e1bQXAt395XhYLwE"
-Content-Disposition: inline
-In-Reply-To: <20251029073131.3004660-1-andriy.shevchenko@linux.intel.com>
-X-Cookie: Is there life before breakfast?
+Content-Transfer-Encoding: 8bit
 
+Just an ad-hoc fix and refactoring as I have noticed the problematic fix.
 
---e1bQXAt395XhYLwE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Andy Shevchenko (2):
+  mfd: ls2kbmc: Fully convert to use managed resources
+  mfd: ls2kbmc: Use PCI API instead of direct accesses
 
-On Wed, Oct 29, 2025 at 08:28:57AM +0100, Andy Shevchenko wrote:
-> This is a refactoring series to decouple cache initialisation and population.
-> On its own it has no functional impact but will be used in the further
-> development. Besides that I found this split useful on its own (from the design
-> perspective). That's why I decided to send it out as is separately from a bigger
-> (and ongoing) work.
+ drivers/mfd/ls2k-bmc-core.c | 38 ++++++++++---------------------------
+ 1 file changed, 10 insertions(+), 28 deletions(-)
 
-This looks fine but needs a rebase onto the latest code.
+-- 
+2.50.1
 
---e1bQXAt395XhYLwE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDTboACgkQJNaLcl1U
-h9DQcAf/ZT5h318rjzlqarLcSaEPRM1H6WBn5/8EBFMgTaFW1d+YQ0zrg0xmlrLR
-1GXljn+uAkBigAxqmBkovvinhZm7zCjOK6B8hsObyENlHIOXaLOuXATXZnjnb3bH
-EZALFdCTx13sA7dtyozoFcVrDnApAYxB6dYQy1P3DrpZK1EyWPupehJNUm9WGyYQ
-eaPCn5ydKn7ruwIModBum5qoelft0iVdkqhFMJyjhNRIKOc0/X7N8Kca8VAaEMBa
-lmC90e60/i0M0uNElDyiNnZvf2BbDt1G13RMopjjbBGb51ru+kyYkxkpbemQCV3M
-zBUNzi3JEnWF2xMPu/ayn7KoERBAjw==
-=sS5X
------END PGP SIGNATURE-----
-
---e1bQXAt395XhYLwE--
 
