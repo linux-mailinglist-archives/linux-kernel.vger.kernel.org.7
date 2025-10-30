@@ -1,376 +1,171 @@
-Return-Path: <linux-kernel+bounces-878379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB4FC20724
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:04:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C88C20707
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7471892625
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:58:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 748A64EDE16
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BA42690D1;
-	Thu, 30 Oct 2025 13:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C769723D7C4;
+	Thu, 30 Oct 2025 13:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1JLT4tGW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ErFI8tFF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1JLT4tGW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ErFI8tFF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KQYIhZkp"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949B262FF3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9DB2236E1;
+	Thu, 30 Oct 2025 13:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832648; cv=none; b=IbSmfoEHrcM/KgmTQAC72B/gth99uQHI5wQ+O7AFJyg2y53ZGMPoIKaeIAX9c0RGvoGMI+6PH9w6ip94DMChRe4pZSmrd7yerBLK55JD0qzejUhBeI7Hcv11Ud/Cgu8qdtK1aEltlDtIa6Y00WAK3CLocespJR5M0TZ0X7EPu9Y=
+	t=1761832725; cv=none; b=Qoo7ZoHGLx38iIav9M3xoyw0u/EyH7vypHSPy7zmrO7g5qJbdU3jRam4pCbgbix1T/VT4qkvJleT9/4i4OD0s/Rb6zj01CWlwrB0TYD0ygL+MAVZbd2prDsw91LNC8tONOkXuOFJ/9py9wrML3WTulqDD9k+EhXbjXALPdoYM6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832648; c=relaxed/simple;
-	bh=w2S0YC520/Ikqb7PSHsQkT+j6NpKokCPg5VWSwFakNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdKdeol4wxc1Qj8cjJb02H6RTfLuZWFuOEw/niKeMomHP1kmml6H7TrGZrFLifGwHsGz+8H5o6AcsPG/eeNdGv2dvrUVrNVnCcLbn3olc16lwBwpgPpDykQD4PKGbYHcJTFaSYjHni019nSvNVRLVPeLLr8Gh4XujmUMAroeIXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1JLT4tGW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ErFI8tFF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1JLT4tGW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ErFI8tFF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0420D1F7CA;
-	Thu, 30 Oct 2025 13:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761832639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B69QgLXqST05IDNk9dcQ708rS7rtDUnV0OKvAp1AQDM=;
-	b=1JLT4tGW+LjVVnL8v2357BSNDG+hgo9VF7eP1kZ7c9iNXsAEDCjdl0i9MEivsxwPReyWTA
-	kVyG9VDOP3emjcLny2JTnkdmnMz8W9F6S/E97vjM/1/emGxJBWqgEhrEQKqDomQ2LvPhGa
-	8U32qTrnA2c6ol/XSXRarr9+TobEfkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761832639;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B69QgLXqST05IDNk9dcQ708rS7rtDUnV0OKvAp1AQDM=;
-	b=ErFI8tFFbO9UkJHKrdYaYhpzNOJLrwUBFqLjErh2Z3VtycF+eOzbvfE2CLHLODGwRENuYM
-	2j/3sLxsRRkgJFBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1JLT4tGW;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ErFI8tFF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761832639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B69QgLXqST05IDNk9dcQ708rS7rtDUnV0OKvAp1AQDM=;
-	b=1JLT4tGW+LjVVnL8v2357BSNDG+hgo9VF7eP1kZ7c9iNXsAEDCjdl0i9MEivsxwPReyWTA
-	kVyG9VDOP3emjcLny2JTnkdmnMz8W9F6S/E97vjM/1/emGxJBWqgEhrEQKqDomQ2LvPhGa
-	8U32qTrnA2c6ol/XSXRarr9+TobEfkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761832639;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B69QgLXqST05IDNk9dcQ708rS7rtDUnV0OKvAp1AQDM=;
-	b=ErFI8tFFbO9UkJHKrdYaYhpzNOJLrwUBFqLjErh2Z3VtycF+eOzbvfE2CLHLODGwRENuYM
-	2j/3sLxsRRkgJFBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EDAED1396A;
-	Thu, 30 Oct 2025 13:57:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1XoDOr5uA2mvAQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 13:57:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A7337A0AD6; Thu, 30 Oct 2025 14:57:18 +0100 (CET)
-Date: Thu, 30 Oct 2025 14:57:18 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] fs: cosmetic fixes to lru handling
-Message-ID: <wwx6x46p7gkrunyh6arukpy3fhh7jzgyy4f64khvgfmqa7husc@5d7sqtpuqwgx>
-References: <20251029131428.654761-1-mjguzik@gmail.com>
- <20251029131428.654761-2-mjguzik@gmail.com>
+	s=arc-20240116; t=1761832725; c=relaxed/simple;
+	bh=0BCh7TE3NxTYXcEaOAB9G89XeiCZmRlSqj8pjwfOcpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XvK3W4CAlzB8zHidKBbD5T2pJ506O0KKJdUu4tFTAbudQWTuECbjiH5GLGwCpYJX+7PCOjtONwDp8JiWfxL09Zy9mzcs0jYtjfkRuiQJFaRYiCW0WXPFe6ijLbnvSl2LcW1AOZIsknJ6D9juWCVX/pZfkOmfLW6Dy0e5rlf3yG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KQYIhZkp; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761832714; x=1762437514; i=markus.elfring@web.de;
+	bh=9X4nc7LqhbPCSkQ6M6wo8iFhNhlOAgdihW/7ns75Z6g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KQYIhZkpgUdvbos37+Ke8uXPK72MLjokzA8kvJ3kmdZme853XUnwX18td7xws/34
+	 lM9grfzSjc+NLC6aRMHdPisU+cbBAKvJ4jCsUjyf0OEoAINNCQXUHR0CJHXLjKx54
+	 YvKA6waTASW1fDxQZdpKfHEllis8ietz/FLwWb3CS2DJMiP1J9KVhKmJpG+8TJ/tU
+	 EwJX6LcFnKR2AJ3Uz+VURhthqXsQQtJ4kgMyMmoMVcMLvT7eaBMX/BSM4fGe5cyE5
+	 lHGgknKA+dUVBh0u0u3kexKwghrwMYFe6S5BlffHpqDQDYhWt55rpTPCHIkl2ffo2
+	 IHZDLdwV6EjWxceO9w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Md6tt-1vmydt0Eol-00lE3n; Thu, 30
+ Oct 2025 14:58:34 +0100
+Message-ID: <414793e8-6961-40b6-8721-cb1aab30bbd8@web.de>
+Date: Thu, 30 Oct 2025 14:58:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029131428.654761-2-mjguzik@gmail.com>
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments from
+ memcpy() calls with SmPL?
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Miaoqian Lin <linmq006@gmail.com>
+References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
+ <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
+ <60f881dc-979d-486b-95be-6b31e85d4041@web.de>
+ <aa99eded-be51-af3b-414-7c3bbaddea4a@inria.fr>
+ <aQNsecHJSO2U68Fc@stanley.mountain>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aQNsecHJSO2U68Fc@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:J2hSSGA3HEIAAJzQ4kq27hOw4yTlyx0MtxaC1dZwQb3TMS2g5Dx
+ VzpVydgGNJJBqXmY4NDZFdBPVg2qYTi+DTiks+MeIHNe1rmmhGFW2C55/KaCWluQ8Z1qjur
+ B/CgcBLjNK4qLMvKF5SbKXk6FvRmE6MlEa70WFtI7ojScoGYR4naFszH2AgQojNYuqpD+db
+ l9ju61B9CURYzXqaXp+sg==
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0420D1F7CA
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -4.01
+UI-OutboundReport: notjunk:1;M01:P0:eKfcuK35uEY=;InZEmrwqW3YLxPLwf203UzWBP95
+ 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
+ BMqMgu6Ag7jtrbmi0mGAPJl8S4=
 
-On Wed 29-10-25 14:14:28, Mateusz Guzik wrote:
-> 1. inode_bit_waitqueue() was somehow placed between __inode_add_lru() and
->    inode_add_lru(). move it up
-> 2. assert ->i_lock is held in __inode_add_lru instead of just claiming it is
->    needed
-> 3. s/__inode_add_lru/__inode_lru_list_add/ for consistency with itself
->    (inode_lru_list_del()) and similar routines for sb and io list
->    management
-> 4. push list presence check into inode_lru_list_del(), just like sb and
->    io list
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>> - target =3D object; memcpy(target, source, size);
++ target =3D memcpy(object, source, size);
 
-Looks good. Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> No one will thank you for making these changes...  =F0=9F=99=81
 
-								Honza
+Will any more contributors dare to try adjustments out at such source code=
+ places?
 
-> ---
-> 
-> rebased
-> 
->  fs/fs-writeback.c  |  2 +-
->  fs/inode.c         | 50 ++++++++++++++++++++++++----------------------
->  include/linux/fs.h |  2 +-
->  mm/filemap.c       |  4 ++--
->  mm/truncate.c      |  6 +++---
->  mm/vmscan.c        |  2 +-
->  mm/workingset.c    |  2 +-
->  7 files changed, 35 insertions(+), 33 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 5dccbe5fb09d..c81fffcb3648 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1455,7 +1455,7 @@ static void inode_sync_complete(struct inode *inode)
->  
->  	inode_state_clear(inode, I_SYNC);
->  	/* If inode is clean an unused, put it into LRU now... */
-> -	inode_add_lru(inode);
-> +	inode_lru_list_add(inode);
->  	/* Called with inode->i_lock which ensures memory ordering. */
->  	inode_wake_up_bit(inode, __I_SYNC);
->  }
-> diff --git a/fs/inode.c b/fs/inode.c
-> index b5c2efebaa18..faf99d916afc 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -530,23 +530,6 @@ void ihold(struct inode *inode)
->  }
->  EXPORT_SYMBOL(ihold);
->  
-> -static void __inode_add_lru(struct inode *inode, bool rotate)
-> -{
-> -	if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE))
-> -		return;
-> -	if (icount_read(inode))
-> -		return;
-> -	if (!(inode->i_sb->s_flags & SB_ACTIVE))
-> -		return;
-> -	if (!mapping_shrinkable(&inode->i_data))
-> -		return;
-> -
-> -	if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
-> -		this_cpu_inc(nr_unused);
-> -	else if (rotate)
-> -		inode_state_set(inode, I_REFERENCED);
-> -}
-> -
->  struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
->  					    struct inode *inode, u32 bit)
->  {
-> @@ -584,18 +567,38 @@ void wait_on_new_inode(struct inode *inode)
->  }
->  EXPORT_SYMBOL(wait_on_new_inode);
->  
-> +static void __inode_lru_list_add(struct inode *inode, bool rotate)
-> +{
-> +	lockdep_assert_held(&inode->i_lock);
-> +
-> +	if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE))
-> +		return;
-> +	if (icount_read(inode))
-> +		return;
-> +	if (!(inode->i_sb->s_flags & SB_ACTIVE))
-> +		return;
-> +	if (!mapping_shrinkable(&inode->i_data))
-> +		return;
-> +
-> +	if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
-> +		this_cpu_inc(nr_unused);
-> +	else if (rotate)
-> +		inode_state_set(inode, I_REFERENCED);
-> +}
-> +
->  /*
->   * Add inode to LRU if needed (inode is unused and clean).
-> - *
-> - * Needs inode->i_lock held.
->   */
-> -void inode_add_lru(struct inode *inode)
-> +void inode_lru_list_add(struct inode *inode)
->  {
-> -	__inode_add_lru(inode, false);
-> +	__inode_lru_list_add(inode, false);
->  }
->  
->  static void inode_lru_list_del(struct inode *inode)
->  {
-> +	if (list_empty(&inode->i_lru))
-> +		return;
-> +
->  	if (list_lru_del_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
->  		this_cpu_dec(nr_unused);
->  }
-> @@ -1924,7 +1927,7 @@ static void iput_final(struct inode *inode)
->  	if (!drop &&
->  	    !(inode_state_read(inode) & I_DONTCACHE) &&
->  	    (sb->s_flags & SB_ACTIVE)) {
-> -		__inode_add_lru(inode, true);
-> +		__inode_lru_list_add(inode, true);
->  		spin_unlock(&inode->i_lock);
->  		return;
->  	}
-> @@ -1948,8 +1951,7 @@ static void iput_final(struct inode *inode)
->  		inode_state_replace(inode, I_WILL_FREE, I_FREEING);
->  	}
->  
-> -	if (!list_empty(&inode->i_lru))
-> -		inode_lru_list_del(inode);
-> +	inode_lru_list_del(inode);
->  	spin_unlock(&inode->i_lock);
->  
->  	evict(inode);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index a813abdcf218..33129cda3a99 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3502,7 +3502,7 @@ static inline void remove_inode_hash(struct inode *inode)
->  }
->  
->  extern void inode_sb_list_add(struct inode *inode);
-> -extern void inode_add_lru(struct inode *inode);
-> +extern void inode_lru_list_add(struct inode *inode);
->  
->  extern int sb_set_blocksize(struct super_block *, int);
->  extern int sb_min_blocksize(struct super_block *, int);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 13f0259d993c..add5228a7d97 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -256,7 +256,7 @@ void filemap_remove_folio(struct folio *folio)
->  	__filemap_remove_folio(folio, NULL);
->  	xa_unlock_irq(&mapping->i_pages);
->  	if (mapping_shrinkable(mapping))
-> -		inode_add_lru(mapping->host);
-> +		inode_lru_list_add(mapping->host);
->  	spin_unlock(&mapping->host->i_lock);
->  
->  	filemap_free_folio(mapping, folio);
-> @@ -335,7 +335,7 @@ void delete_from_page_cache_batch(struct address_space *mapping,
->  	page_cache_delete_batch(mapping, fbatch);
->  	xa_unlock_irq(&mapping->i_pages);
->  	if (mapping_shrinkable(mapping))
-> -		inode_add_lru(mapping->host);
-> +		inode_lru_list_add(mapping->host);
->  	spin_unlock(&mapping->host->i_lock);
->  
->  	for (i = 0; i < folio_batch_count(fbatch); i++)
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 91eb92a5ce4f..ad9c0fa29d94 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -46,7 +46,7 @@ static void clear_shadow_entries(struct address_space *mapping,
->  
->  	xas_unlock_irq(&xas);
->  	if (mapping_shrinkable(mapping))
-> -		inode_add_lru(mapping->host);
-> +		inode_lru_list_add(mapping->host);
->  	spin_unlock(&mapping->host->i_lock);
->  }
->  
-> @@ -111,7 +111,7 @@ static void truncate_folio_batch_exceptionals(struct address_space *mapping,
->  
->  	xas_unlock_irq(&xas);
->  	if (mapping_shrinkable(mapping))
-> -		inode_add_lru(mapping->host);
-> +		inode_lru_list_add(mapping->host);
->  	spin_unlock(&mapping->host->i_lock);
->  out:
->  	folio_batch_remove_exceptionals(fbatch);
-> @@ -622,7 +622,7 @@ int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
->  	__filemap_remove_folio(folio, NULL);
->  	xa_unlock_irq(&mapping->i_pages);
->  	if (mapping_shrinkable(mapping))
-> -		inode_add_lru(mapping->host);
-> +		inode_lru_list_add(mapping->host);
->  	spin_unlock(&mapping->host->i_lock);
->  
->  	filemap_free_folio(mapping, folio);
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index b2fc8b626d3d..bb4a96c7b682 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -811,7 +811,7 @@ static int __remove_mapping(struct address_space *mapping, struct folio *folio,
->  		__filemap_remove_folio(folio, shadow);
->  		xa_unlock_irq(&mapping->i_pages);
->  		if (mapping_shrinkable(mapping))
-> -			inode_add_lru(mapping->host);
-> +			inode_lru_list_add(mapping->host);
->  		spin_unlock(&mapping->host->i_lock);
->  
->  		if (free_folio)
-> diff --git a/mm/workingset.c b/mm/workingset.c
-> index 68a76a91111f..d32dc2e02a61 100644
-> --- a/mm/workingset.c
-> +++ b/mm/workingset.c
-> @@ -755,7 +755,7 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
->  	xa_unlock_irq(&mapping->i_pages);
->  	if (mapping->host != NULL) {
->  		if (mapping_shrinkable(mapping))
-> -			inode_add_lru(mapping->host);
-> +			inode_lru_list_add(mapping->host);
->  		spin_unlock(&mapping->host->i_lock);
->  	}
->  	ret = LRU_REMOVED_RETRY;
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+>                                                        Please don't do i=
+t.
+
+How will change tolerance evolve further?
+
+Regards,
+Markus
 
