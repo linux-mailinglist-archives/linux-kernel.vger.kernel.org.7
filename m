@@ -1,395 +1,206 @@
-Return-Path: <linux-kernel+bounces-879067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45ADBC22309
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 003FCC22287
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 211514F1A69
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:15:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B88504F0E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A948393DFD;
-	Thu, 30 Oct 2025 20:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39C837FC55;
+	Thu, 30 Oct 2025 20:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C+gCfhRh"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EoYk+m5t"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012000.outbound.protection.outlook.com [40.93.195.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DDF393DCF
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761855048; cv=none; b=Wdzu8M00d0vxDs1EW68cb9uqxKX9kqub8DX/yEjUIqh6kNuOdhaE8cpGWwDqKHxO7b1CHLbR2tjFxkw4dDo2CF3rJdC/Lni41bCXjMMvnHfm6mhanqOHE8uIe2qKw5uDFOEqofmkaD7UsYk38e2KTKRnSHVMCexIlk2qmXlrGGA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761855048; c=relaxed/simple;
-	bh=YzrAcOy4kMGvZnv8LvvV5Xf4Ed5dS9yiBLT7BTZP694=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WMDXuP3ThHKDQZ7kRdDXBRYqScpFl00E1ySpTAs2ksSmqzAkT/B0wW6dJvFzfCBDZi7iOIuOl6NCGW22r7wexVHuMwoZXO2AHovaKtEDTF2StCjTXMeQEpYr70NUtqjsXe2Eo84BvIyb/NEilrYtXxlIYPBa2fPStyHuWdethg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C+gCfhRh; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-290bd7c835dso15688975ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761855046; x=1762459846; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=HvkYP5K0H7bzidqYh2GUowDdUiZwtqWzbaGK7ATegJ0=;
-        b=C+gCfhRhfMaUbe/qu8MiC2e8Nf40nf/ouA7X9hpRiI+86we8eLyErfsa7/lc0f6MC6
-         zkOIK8RXVvKngO0fZJNc4dmIUNwhv1IFc7tOiIn752k5JX+gggJEnOgH37epTbZGYPfo
-         sEGZFdn4V091DVO5CsDyV3a7kGBfBe5nKnHxatAytIXt6lZnYVAhR8tD8yCl8sIib4i1
-         mgOiFDyEvFdpeBg5PXqPLlDu+mkKyaA1mLMcd8P4fYabEfv+8jkoeEF1IRiEmeJs8od6
-         oebl02lCTWYFkCjIesXI65RfbieFgAjkRAT9CzChJM5vp5zNxYIL7dlkXkYmLT5DTib2
-         s/nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761855046; x=1762459846;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HvkYP5K0H7bzidqYh2GUowDdUiZwtqWzbaGK7ATegJ0=;
-        b=VZHUkkkblhUdSP/pUr+me5j/M3cJ8xUv53iVCPaWmTIP+LMtfMfRJ/GcwOJImhprGA
-         RtvdvCMduu5xp/bRef5M5ie1khjByH9Oz4zEzLUtU850R34P90UWsR+rHbKwbDSQc2PE
-         paOPuAzGsTr9htokk87TmJBTVTFq7QqVyo2NTvI9gcGBS83IZUhVzr6ejU9qdVfshkTn
-         sI/cFsyZAFMiCGCOMU5PGBb1npKsGuE+w9uHX3WnpVsyvjx/D4FQm0u7gqlfyfRfYJ/i
-         Q6DMlyS+BkwiCKvVYXiuztTEwKYBCci1dwnMV436l8t5mtjiqSjdSeVlgyRBdo6NXkE1
-         +B3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmJypb0Yuw6C7XsjfeLtVSjNsvasskIfEWu94XiXAZVqJspKf2F9893hLJkxQhCv2yrkfaW6IPQrf8lAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+cd7d20cDrqphbwibwNVHaLp9nHKbq1LspSNEmf4c2YhOBqsY
-	jqiFyiLRQ0kEWHdmfNaR4fu/OKuNZTjgX/1j2ukGp+GsFymcY4Zzqq+UHJevh4AijpExxe6beW+
-	8LIJ16Q==
-X-Google-Smtp-Source: AGHT+IHb++2Z/KelxH0n+uChReZvIH66SFbrsagpgu5Hbz52plhdUUxmf4i41V+1yu1qPk273gNABB2ooWc=
-X-Received: from plmm17.prod.google.com ([2002:a17:902:c451:b0:294:fdb9:5c0a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc85:b0:24c:ed95:2725
- with SMTP id d9443c01a7336-2951a3712f9mr11351465ad.4.1761855045661; Thu, 30
- Oct 2025 13:10:45 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 30 Oct 2025 13:09:41 -0700
-In-Reply-To: <20251030200951.3402865-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6E437EE0E;
+	Thu, 30 Oct 2025 20:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761855015; cv=fail; b=t+emSvBzZmgYaMHHQhhP0fV24dILDrFTo4IVs15rk3mDdgRXViVCcWVJ7gDMvNt3W/4kqilryP5i/kDd6YnEK4VE89uKsoeIYYF50fS1JxWHy6+hCRnC32oEDkblsG0gl+iHCVFNekWjIVyOS5R6Rgob3IRHSjZp/M8viCQhSLk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761855015; c=relaxed/simple;
+	bh=cmFBwFYKCZhbUs2yPgZkmcVDuHdJw6fiqH6Q0KDOB8o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hdDPycqAimEkp6Bwd+MQW0TbuvB1DL0AenCSRSAzpP1h+00eZEqNz1A4xv87vdm1by+uF+4QkFlL+PZ+i6eZH078D1hTtCnMMVZMyFO7dqmW788kajJmVBfj4rBZcSNzt1Z01fcgNZPkqQyLZmLGfdPWjSZ+cTQ1z0Qf1IHA3eA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EoYk+m5t; arc=fail smtp.client-ip=40.93.195.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sZY/dBR0KiX5u1BEnspMQYXxMC5rgmqIElD5cXlKxdVdBBxn8BtvJgwoJcTCEdOkaxyg0IwXtOzOhJyIJeHAEJLpPqvsiQELUH9BYKPm4gSEshzojieiA45byJxdc6yTIiNweL8zT4yk4PuBaXFmNJKlxrLeC5h7cTDc4OMD29fQbuwXj1BtpIBFJ2fIfmO7ZHPbW1R7O+ksBjClHcAPvjt0IBBTPGyuqTgFv6dguxREEHEmKdnaH3M7oiM4R26WkVM5xgcDetOUFvsjiyw//iqZx4aKlGpywES/O+Y21FERroSytnBiZkoaFsKrPAD1HE4faQtmJVGmXvhB6+X0KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iS3J+KZUcF5VWfxAeoZeaqGJDZ/Ytfnne3VCVb+E55k=;
+ b=uMNeX2IPhI0B5CRgfeEpLYWzGPwJ2gUK5g6jFqgLryxG4bp/1U5wQUyvr/VlBtBSkTMRWvo+qmApLIu7VyYqqS/8E914FSCsD8NG1k1C5ho6Q0XdxzgCqdq1C11h2vgZj2B1OO+b808N18uWURdVgpdk0XC/hlLFnRN9KzVF9yUsRv/CmG/I5WYCAp6+RwD78aPYa3KrThV6Kcf9pOoTeIDM4yCq1cNVkQ+mAUFqVO/ARNUGv+UzSuHl5ep1wIIT+bvgffyUHJFGNsQhd7ONKtsO2v2OqETct0HXvYud6HvZGOE0em+OPhpr5ZbyNDauAvhRn0yFMfutX7ro8cLwzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iS3J+KZUcF5VWfxAeoZeaqGJDZ/Ytfnne3VCVb+E55k=;
+ b=EoYk+m5tVTL+ghKHubObKONj0mbMwC104e1+tKWXntY9i9BDP04ek+4Wdf5nBUS8X62g7q/eO0ynZEd69DnE8k79SygPofU2ht6DRr8Yp4Nf5am3JQ7Bp+lSL6srdrhHF7fxYsOrE0sZP7ut5Q0wC4NjM8KkPeZtMSrc4c4dDcxskWORS82JJC9kegLrGNVrbEP+7/hic7wXZq3utDG/O+wn/WNu3lv11Q+P7pj0zplbdjig52u96imyoFgLLEcXcBtORZyQ9zTDHQQQ6KCjz9E3BsU3JybB5GQINmyVInJTikg3FRD+mGOTfR5CDaGaZlBl129LcDGsuSXvBkKAag==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by CY8PR12MB7364.namprd12.prod.outlook.com (2603:10b6:930:50::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Thu, 30 Oct
+ 2025 20:10:08 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
+ 20:10:08 +0000
+Message-ID: <0d591052-9c85-47a3-abf3-02a8fa9c4dae@nvidia.com>
+Date: Thu, 30 Oct 2025 13:09:42 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nova-core: Ada: basic GPU identification
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
+ Zhi Wang <zhiw@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20251025012017.573078-1-jhubbard@nvidia.com>
+ <7c8ab212-3905-4652-baa4-b422e69fea0c@kernel.org>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <7c8ab212-3905-4652-baa4-b422e69fea0c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0106.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::21) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251030200951.3402865-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251030200951.3402865-19-seanjc@google.com>
-Subject: [PATCH v4 18/28] KVM: TDX: Combine KVM_BUG_ON + pr_tdx_error() into TDX_BUG_ON()
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CY8PR12MB7364:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82a0a895-b092-4865-f754-08de17f052a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2RVblgyMXVkTzNIenUzOGFXTEUrajdOQzVqMU5SaWViMEpEU1haRzNiaGFm?=
+ =?utf-8?B?eUJ1QWtGNGxiZEpQRFlEM1NyVk5MMEFuQlRvMmdFNm5ZZE9rUWpMdjZUTTAv?=
+ =?utf-8?B?KzY5Y25SM2RFdlVGSEFVMkozdUNybkVlRk9lWjhZdTZGS2JIbkpzRWJrNWdJ?=
+ =?utf-8?B?S3JJeWF1MHgrV0t1OHZ4R0ZhZ2F4aGNEOEVxcitNRis4d0h3ekRva1RFOWRn?=
+ =?utf-8?B?Zlc0UmhJc0dXTSt1S2dDQjVDRDRETm1aRm1SMEpRMVBJUE5WcmsreUk1MGdh?=
+ =?utf-8?B?QlJpWHJYNjNpUHRBQjNpQUEvYzZzdk9WeWN4U0N4SUwrRmJvQm5BcXBIY0NS?=
+ =?utf-8?B?VUQ2WFZ6Y2VBTEFPSGdSMlBsZzhidEJ6TUorZTU0em9CT3E3bVQrWW9RdjBr?=
+ =?utf-8?B?VkVBTXdVU0RXTFpKb2o2VnFNQ21jQzlOQ2E1d1lnWUxzSkxldk9LWTFYOHZV?=
+ =?utf-8?B?RzVYMERwVDBSS25YeDJJT05aRG1aZUFuaHgwZTdMV3N3bmc2aENCRk1aVkFz?=
+ =?utf-8?B?RXBXV3hjbTkxYTA3Tm9ZRk5FcGk1Y05mL25ObXVMdUFLZXdBRHVDNG5jMXdM?=
+ =?utf-8?B?Wnp4djBRMkQvTXd1dy9hNTIxd2xjbmxsNlFZdHd1VFUwTUp3alc0N09adkZM?=
+ =?utf-8?B?cm5rZ3o1S3ZWZkl6V1JyL0x6emZiWGpXWGoxbllzVXFvemdQdm5nb2E4bktq?=
+ =?utf-8?B?eHdJY3NSRWJyd3lydzNmNnY5L3lTYmhaSVZFNlJaV09JL2xMWjhXQittcDhx?=
+ =?utf-8?B?TEZuMGtmMzcvR1MyL1ZkbE41NFhZMG54alo1eDJrME9iODZoUU1sR3dVT2hk?=
+ =?utf-8?B?eDlFQVQwNlhXNTQ2YjlvNGNrWEtUeXZ1RWorQ09kUDhtbUhaeGtzMXpUZkNO?=
+ =?utf-8?B?SFY4a1ZPbEsyTU03N1lldzlmdGxrQjNrakF2N1Z2YVNkWXRpNk0xN1k0S2k3?=
+ =?utf-8?B?bDNYWUZhMm1TcnlLMmYrMGdicmhZUTd0YXVWY0E4OXpSMWhQNTlTMFkvTDFL?=
+ =?utf-8?B?dk9IaGpLbHNGRHJ1Z3ZVWjVBN2hZUUM0QWRxWnlTMDVFTnZLOFE5YUZrd2NG?=
+ =?utf-8?B?N0x0M3graVg3MElLb1lrck1Fd1kwWnBrK2I1ejJUaUxSQjB0ajlsVDhseXFU?=
+ =?utf-8?B?c3pKMTV2V0ZCM2djRGQ5Tk1qYlZWR1JCdElxUTBFVWJKQ2JkMnVpeWFKREQw?=
+ =?utf-8?B?eWYvOCtESURpVkhGdEtWdTFHUkt4ZWpncE5wS0lmajVoRTFwWHRQZVpqUE9F?=
+ =?utf-8?B?cDZqOVdkTUxWSkRUOEhPSG84MEtRZ1FWU281RmIzanVueGx5K0t1aVprMCtx?=
+ =?utf-8?B?UUs1aitSeThQVnVEazlsMVo3VVdQREhoTktpbXkyUFluMUY4UFZzVk9mR2hT?=
+ =?utf-8?B?T0drSmI0LzZYVGYrQ3lrUExiK294SXJaaUFWVHM0LzJLMUxnaFQyb3FYWFYx?=
+ =?utf-8?B?eUNTK2JqOVN3K0ZhaEk1cEhXeDAxOWw2ZldkcmFjNlExYy9ReXBjTnB2WHZs?=
+ =?utf-8?B?ejFpem14Zzc1K0MyVnRnSlgxU3ltckV6Q3BBc21ZbjFGeG1zbFdaRXNjY2RZ?=
+ =?utf-8?B?SUNGWmFuRll1bDdvUlNnWVR4bndmQWxsWE1NVDUvRU5PcmQ4N0RuWld4YVB4?=
+ =?utf-8?B?Rzl3ZFZCZGp1U0pqMlhhTGUycFpaMUtkWlQ3SSsyZ3YvRVU3blhidXlNOWFR?=
+ =?utf-8?B?YS9JTzhST2V3MDRleWREdktaUkErdU9sbDVvN1duRWszbXZhb0J3YW9oQ2cy?=
+ =?utf-8?B?NlFqNGU2cEZpb2lTMG5ueU45c1cxU0h2ZDFHdHZTck82YnU1SVlUcnV5Wm8y?=
+ =?utf-8?B?M3FMNUMwdnZVVzdCd3luK1NoaUs1OThkZU5SdjRIYUxDQTBQcmFzTXB3bXJE?=
+ =?utf-8?B?Vk9SUEdVditLSDI4NW5wUk52cWdRMjBKR01XMGNZQXpiZXJxQ29xOHo1bm1M?=
+ =?utf-8?Q?YIoMX7IP1W21iWiAuCZvOWluLwj7mnXl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ymc3ZWJhVnFJbEQvNGdCTWU3cXlCQ3VuTHE3ZUhkbUVJaVlQUEVLR2pGWTZ0?=
+ =?utf-8?B?bVhuRlBZcHJBb0Q2ZFl6cUpGOThlQVcvSHhOb1ZZdk5MMmx3a21JNjYzZ29Y?=
+ =?utf-8?B?Q0ZRWUxFZFJCRHlUZUNZNFlDZ0hyOVgvYXFXd1dyZjNVN3RsQXZhS05pbHpn?=
+ =?utf-8?B?OGk2ckRvTEF1N0JldVIzaXBmUDNsK29QRUZqMSt4SzVLZlczWG4zNWFWSWc0?=
+ =?utf-8?B?eERweUx5MHJKTkNPQzFadURwVkk3aVFuaEVLUFBVbDVKTTNoWkpkQXRNWFRn?=
+ =?utf-8?B?WU1ydGlxd0FYVlQvNS82T0JLajFNK3NGOE51Q1FaZ0VrZ0xOL0FWbmE4WEVv?=
+ =?utf-8?B?UXJ2RHplTzhTNnlIZDJZREpyYnFEalA1VXV4Y01FdzhlUXhpd0g4RjhXeHJI?=
+ =?utf-8?B?SzNpSlRnZmtsUVZ2R0ZZczI4V1hEc2Jac0kxSFlsU2xtWHk5dFNCbWszMVNW?=
+ =?utf-8?B?d2wrWmNIdWZ4NWNhaUM3MWhUNEtFLzdJa2ZMU2lWK2lNQjVSK2pQQVU0c3A1?=
+ =?utf-8?B?dnlocHVvS3ZnSTVRL0RsUkpubE1hZnNOMjV1bXdZNENubnF3YVArK3VqZ1cv?=
+ =?utf-8?B?RXhib0Z6OVpOR2VnU1R1YUxIWFRseTVPck5peFVpR3hWWUNpVStaK2hWQWlv?=
+ =?utf-8?B?ZkM0T3NDZFI3dC9oWnBuOFFKcGFjZzdCVHRnN3dLTEEzWFdDb25ENG9sMURJ?=
+ =?utf-8?B?R0djMUdJSktrQmpxNEpVdmVFajgxSTA5cmFrUHpkaEhMRDNZdXI2Znh4RWNx?=
+ =?utf-8?B?ZnE5NnQvZFZ3VG4vMkMxM2I0RjFkS016N1gzS3FnQ0w5cll5T2s1NXJDV3cx?=
+ =?utf-8?B?aitBb3JqYXR5NURSR3EzUEtRRGtYUU40VWhpdThkZWp1S2pXWG5CV2xrZWlI?=
+ =?utf-8?B?MVhTcnRtRHRiTmIvVEh6SzBKNkk2aDZZR3JtRko1UkVXbWFtYk52eTR6UExk?=
+ =?utf-8?B?a1piclFvM1NNQ2doc2VNMlovSHQzdy90VWprSFVZcjNCcFk3YjU5eVptWTFx?=
+ =?utf-8?B?VVJMRndhbEwrY2NyM0lwQ29aaVNBYnBMVHJFN3JtTHVRdktBd0FIMWE3cDc5?=
+ =?utf-8?B?WlR2Qm44cExXSFBwQThSa1RKdWhwMkQ0dTZ6Q0NMb2tiSllRbEJiMk44NTZM?=
+ =?utf-8?B?aUpGVGtMZEpKUnkrcE9zZ2JqTGUyaFBsM21Fb0VDTm94SmFpTE5uNnhiVjZU?=
+ =?utf-8?B?bWhWeVh1citsVU9aQVhQRHdrcDVlYTk2YnVUTXd3eDA4bFZleE0zSnB6aitM?=
+ =?utf-8?B?K2RtMGZpUzNnc2RYa3NUWVoramhoOTB0enBwZlYzSVZWR3Y5VlgyamJINGla?=
+ =?utf-8?B?dk04OTgyOHg0UkhsazhaK0grU2RlQXUwS21Db3ZHN3BwalN2OW5BSmNNMk5P?=
+ =?utf-8?B?SUg2VUJMSmdhd3prZHY1c0ZnUnJQckkzL2lFVjhXeWg0c3hadGJHYUh0cU80?=
+ =?utf-8?B?b05qTHAxSmFvcXFpZlMxNmNUTzZKamdFNFY2ZHE1ZmlqWXB2OHg2T0pKd3ZK?=
+ =?utf-8?B?NSttLzlYalNwVTlCenBFS3AvNFJnT2V3cC9RRU53N1lHVlovNGU2REJHOVpH?=
+ =?utf-8?B?TVQ4cnFTZnpURmM1MVE3SHU4SFNXNUdiTVQ5WW9iSDhlZDFwcHVES2EwKzNU?=
+ =?utf-8?B?b2pRRnZHWjJTYlNPSjdaUDIyK3ZPQTg3Wll2R1hXTys0eXk5QmN6Szl1dmVs?=
+ =?utf-8?B?ZE1VbWE3Y0h6UlVkcXgzeTdqVWFsYnpwUDdEajZkWm1EN2JQVkE3ZUVDclFR?=
+ =?utf-8?B?eWdEcFQvMHBHRGZ3RXY2TGZ5S1ZPSjlIdHROZGZ4d2Z2YUNocUttTXgxa05p?=
+ =?utf-8?B?OTlDQVZFMFJUU0NiK080RmJBYlE1Mm5ZYk9RNXBlakp4bmszSVpyWVlKZ3Fj?=
+ =?utf-8?B?MGJTTGNZNHBydTRMMDZXdjZIczFqTXJ3RWwvVUdYVGJOOWdWUmRlVXBJMm9D?=
+ =?utf-8?B?Zll4VG9kY1BCMmErWWJMZkgwRittOThJNkdNanMyd2dRTUdzcTg3RTZwZkJ6?=
+ =?utf-8?B?QWIxalBKRkNSRm9tTmhKNHJlbEJiL0dkVGxOZnRsMURUWkRqbW9LNm5WbTlr?=
+ =?utf-8?B?U1YvME96RVVJU2ErdHZLbUZmR1RtMVczS21Kend3Z2YzN1h6Y1JZN01SbGkz?=
+ =?utf-8?Q?lQAnHrLus/No1sVZ3381o60gm?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82a0a895-b092-4865-f754-08de17f052a8
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 20:10:08.2055
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7+e1I49g/B3KmWw/n2SDtiT+OszbBFRrgKoa60lEtOqkk2ErREWUEvHAuvoC2qXXN8dOM6E5DbrigA+OK8vBoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7364
 
-Add TDX_BUG_ON() macros (with varying numbers of arguments) to deduplicate
-the myriad flows that do KVM_BUG_ON()/WARN_ON_ONCE() followed by a call to
-pr_tdx_error().  In addition to reducing boilerplate copy+paste code, this
-also helps ensure that KVM provides consistent handling of SEAMCALL errors.
+On 10/30/25 4:15 AM, Danilo Krummrich wrote:
+> On 10/25/25 3:20 AM, John Hubbard wrote:
+>> ...which is sufficient to make Ada GPUs work, because they use the
+>> pre-existing Ampere GPU code, unmodified.
+>>
+>> Tested on AD102 (RTX 6000 Ada).
+>>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> 
+> Acked-by: Danilo Krummrich <dakr@kernel.org>
+> 
+> You may want to consider requesting committer access for the drm-rust tree [1].
+> 
 
-Opportunistically convert a handful of bare WARN_ON_ONCE() paths to the
-equivalent of KVM_BUG_ON(), i.e. have them terminate the VM.  If a SEAMCALL
-error is fatal enough to WARN on, it's fatal enough to terminate the TD.
+I really appreciate the vote of confidence here! :)
 
-Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/vmx/tdx.c | 110 +++++++++++++++++------------------------
- 1 file changed, 46 insertions(+), 64 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 260b569309cf..5e6f2d8b6014 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -24,20 +24,32 @@
- #undef pr_fmt
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
--#define pr_tdx_error(__fn, __err)	\
--	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx\n", #__fn, __err)
-+#define __TDX_BUG_ON(__err, __f, __kvm, __fmt, __args...)			\
-+({										\
-+	struct kvm *_kvm = (__kvm);						\
-+	bool __ret = !!(__err);							\
-+										\
-+	if (WARN_ON_ONCE(__ret && (!_kvm || !_kvm->vm_bugged))) {		\
-+		if (_kvm)							\
-+			kvm_vm_bugged(_kvm);					\
-+		pr_err_ratelimited("SEAMCALL " __f " failed: 0x%llx" __fmt "\n",\
-+				   __err,  __args);				\
-+	}									\
-+	unlikely(__ret);							\
-+})
- 
--#define __pr_tdx_error_N(__fn_str, __err, __fmt, ...)		\
--	pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx, " __fmt,  __err,  __VA_ARGS__)
-+#define TDX_BUG_ON(__err, __fn, __kvm)				\
-+	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
- 
--#define pr_tdx_error_1(__fn, __err, __rcx)		\
--	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx\n", __rcx)
-+#define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
-+	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
- 
--#define pr_tdx_error_2(__fn, __err, __rcx, __rdx)	\
--	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx\n", __rcx, __rdx)
-+#define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
-+	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, __rdx)
-+
-+#define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
-+	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%llx", __rcx, __rdx, __r8)
- 
--#define pr_tdx_error_3(__fn, __err, __rcx, __rdx, __r8)	\
--	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx, r8 0x%llx\n", __rcx, __rdx, __r8)
- 
- bool enable_tdx __ro_after_init;
- module_param_named(tdx, enable_tdx, bool, 0444);
-@@ -313,10 +325,9 @@ static int __tdx_reclaim_page(struct page *page)
- 	 * before the HKID is released and control pages have also been
- 	 * released at this point, so there is no possibility of contention.
- 	 */
--	if (WARN_ON_ONCE(err)) {
--		pr_tdx_error_3(TDH_PHYMEM_PAGE_RECLAIM, err, rcx, rdx, r8);
-+	if (TDX_BUG_ON_3(err, TDH_PHYMEM_PAGE_RECLAIM, rcx, rdx, r8, NULL))
- 		return -EIO;
--	}
-+
- 	return 0;
- }
- 
-@@ -404,8 +415,8 @@ static void tdx_flush_vp_on_cpu(struct kvm_vcpu *vcpu)
- 		return;
- 
- 	smp_call_function_single(cpu, tdx_flush_vp, &arg, 1);
--	if (KVM_BUG_ON(arg.err, vcpu->kvm))
--		pr_tdx_error(TDH_VP_FLUSH, arg.err);
-+
-+	TDX_BUG_ON(arg.err, TDH_VP_FLUSH, vcpu->kvm);
- }
- 
- void tdx_disable_virtualization_cpu(void)
-@@ -464,8 +475,7 @@ static void smp_func_do_phymem_cache_wb(void *unused)
- 	}
- 
- out:
--	if (WARN_ON_ONCE(err))
--		pr_tdx_error(TDH_PHYMEM_CACHE_WB, err);
-+	TDX_BUG_ON(err, TDH_PHYMEM_CACHE_WB, NULL);
- }
- 
- void tdx_mmu_release_hkid(struct kvm *kvm)
-@@ -504,8 +514,7 @@ void tdx_mmu_release_hkid(struct kvm *kvm)
- 	err = tdh_mng_vpflushdone(&kvm_tdx->td);
- 	if (err == TDX_FLUSHVP_NOT_DONE)
- 		goto out;
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error(TDH_MNG_VPFLUSHDONE, err);
-+	if (TDX_BUG_ON(err, TDH_MNG_VPFLUSHDONE, kvm)) {
- 		pr_err("tdh_mng_vpflushdone() failed. HKID %d is leaked.\n",
- 		       kvm_tdx->hkid);
- 		goto out;
-@@ -528,8 +537,7 @@ void tdx_mmu_release_hkid(struct kvm *kvm)
- 	 * tdh_mng_key_freeid() will fail.
- 	 */
- 	err = tdh_mng_key_freeid(&kvm_tdx->td);
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error(TDH_MNG_KEY_FREEID, err);
-+	if (TDX_BUG_ON(err, TDH_MNG_KEY_FREEID, kvm)) {
- 		pr_err("tdh_mng_key_freeid() failed. HKID %d is leaked.\n",
- 		       kvm_tdx->hkid);
- 	} else {
-@@ -580,10 +588,9 @@ static void tdx_reclaim_td_control_pages(struct kvm *kvm)
- 	 * when it is reclaiming TDCS).
- 	 */
- 	err = tdh_phymem_page_wbinvd_tdr(&kvm_tdx->td);
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
-+	if (TDX_BUG_ON(err, TDH_PHYMEM_PAGE_WBINVD, kvm))
- 		return;
--	}
-+
- 	tdx_quirk_reset_page(kvm_tdx->td.tdr_page);
- 
- 	__free_page(kvm_tdx->td.tdr_page);
-@@ -606,11 +613,8 @@ static int tdx_do_tdh_mng_key_config(void *param)
- 
- 	/* TDX_RND_NO_ENTROPY related retries are handled by sc_retry() */
- 	err = tdh_mng_key_config(&kvm_tdx->td);
--
--	if (KVM_BUG_ON(err, &kvm_tdx->kvm)) {
--		pr_tdx_error(TDH_MNG_KEY_CONFIG, err);
-+	if (TDX_BUG_ON(err, TDH_MNG_KEY_CONFIG, &kvm_tdx->kvm))
- 		return -EIO;
--	}
- 
- 	return 0;
- }
-@@ -1601,10 +1605,8 @@ static int tdx_mem_page_add(struct kvm *kvm, gfn_t gfn, enum pg_level level,
- 	if (unlikely(tdx_operand_busy(err)))
- 		return -EBUSY;
- 
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error_2(TDH_MEM_PAGE_ADD, err, entry, level_state);
-+	if (TDX_BUG_ON_2(err, TDH_MEM_PAGE_ADD, entry, level_state, kvm))
- 		return -EIO;
--	}
- 
- 	return 0;
- }
-@@ -1623,10 +1625,8 @@ static int tdx_mem_page_aug(struct kvm *kvm, gfn_t gfn,
- 	if (unlikely(tdx_operand_busy(err)))
- 		return -EBUSY;
- 
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error_2(TDH_MEM_PAGE_AUG, err, entry, level_state);
-+	if (TDX_BUG_ON_2(err, TDH_MEM_PAGE_AUG, entry, level_state, kvm))
- 		return -EIO;
--	}
- 
- 	return 0;
- }
-@@ -1675,10 +1675,8 @@ static int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
- 	if (unlikely(tdx_operand_busy(err)))
- 		return -EBUSY;
- 
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error_2(TDH_MEM_SEPT_ADD, err, entry, level_state);
-+	if (TDX_BUG_ON_2(err, TDH_MEM_SEPT_ADD, entry, level_state, kvm))
- 		return -EIO;
--	}
- 
- 	return 0;
- }
-@@ -1726,8 +1724,7 @@ static void tdx_track(struct kvm *kvm)
- 		tdx_no_vcpus_enter_stop(kvm);
- 	}
- 
--	if (KVM_BUG_ON(err, kvm))
--		pr_tdx_error(TDH_MEM_TRACK, err);
-+	TDX_BUG_ON(err, TDH_MEM_TRACK, kvm);
- 
- 	kvm_make_all_cpus_request(kvm, KVM_REQ_OUTSIDE_GUEST_MODE);
- }
-@@ -1784,10 +1781,8 @@ static void tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 		tdx_no_vcpus_enter_stop(kvm);
- 	}
- 
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error_2(TDH_MEM_RANGE_BLOCK, err, entry, level_state);
-+	if (TDX_BUG_ON_2(err, TDH_MEM_RANGE_BLOCK, entry, level_state, kvm))
- 		return;
--	}
- 
- 	/*
- 	 * TDX requires TLB tracking before dropping private page.  Do
-@@ -1814,16 +1809,12 @@ static void tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 		tdx_no_vcpus_enter_stop(kvm);
- 	}
- 
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error_2(TDH_MEM_PAGE_REMOVE, err, entry, level_state);
-+	if (TDX_BUG_ON_2(err, TDH_MEM_PAGE_REMOVE, entry, level_state, kvm))
- 		return;
--	}
- 
- 	err = tdh_phymem_page_wbinvd_hkid((u16)kvm_tdx->hkid, page);
--	if (KVM_BUG_ON(err, kvm)) {
--		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
-+	if (TDX_BUG_ON(err, TDH_PHYMEM_PAGE_WBINVD, kvm))
- 		return;
--	}
- 
- 	tdx_quirk_reset_page(page);
- }
-@@ -2463,8 +2454,7 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 		goto free_packages;
- 	}
- 
--	if (WARN_ON_ONCE(err)) {
--		pr_tdx_error(TDH_MNG_CREATE, err);
-+	if (TDX_BUG_ON(err, TDH_MNG_CREATE, kvm)) {
- 		ret = -EIO;
- 		goto free_packages;
- 	}
-@@ -2505,8 +2495,7 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 			ret = -EAGAIN;
- 			goto teardown;
- 		}
--		if (WARN_ON_ONCE(err)) {
--			pr_tdx_error(TDH_MNG_ADDCX, err);
-+		if (TDX_BUG_ON(err, TDH_MNG_ADDCX, kvm)) {
- 			ret = -EIO;
- 			goto teardown;
- 		}
-@@ -2523,8 +2512,7 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 		*seamcall_err = err;
- 		ret = -EINVAL;
- 		goto teardown;
--	} else if (WARN_ON_ONCE(err)) {
--		pr_tdx_error_1(TDH_MNG_INIT, err, rcx);
-+	} else if (TDX_BUG_ON_1(err, TDH_MNG_INIT, rcx, kvm)) {
- 		ret = -EIO;
- 		goto teardown;
- 	}
-@@ -2792,10 +2780,8 @@ static int tdx_td_finalize(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- 	cmd->hw_error = tdh_mr_finalize(&kvm_tdx->td);
- 	if (tdx_operand_busy(cmd->hw_error))
- 		return -EBUSY;
--	if (KVM_BUG_ON(cmd->hw_error, kvm)) {
--		pr_tdx_error(TDH_MR_FINALIZE, cmd->hw_error);
-+	if (TDX_BUG_ON(cmd->hw_error, TDH_MR_FINALIZE, kvm))
- 		return -EIO;
--	}
- 
- 	kvm_tdx->state = TD_STATE_RUNNABLE;
- 	/* TD_STATE_RUNNABLE must be set before 'pre_fault_allowed' */
-@@ -2882,16 +2868,14 @@ static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64 vcpu_rcx)
- 	}
- 
- 	err = tdh_vp_create(&kvm_tdx->td, &tdx->vp);
--	if (KVM_BUG_ON(err, vcpu->kvm)) {
-+	if (TDX_BUG_ON(err, TDH_VP_CREATE, vcpu->kvm)) {
- 		ret = -EIO;
--		pr_tdx_error(TDH_VP_CREATE, err);
- 		goto free_tdcx;
- 	}
- 
- 	for (i = 0; i < kvm_tdx->td.tdcx_nr_pages; i++) {
- 		err = tdh_vp_addcx(&tdx->vp, tdx->vp.tdcx_pages[i]);
--		if (KVM_BUG_ON(err, vcpu->kvm)) {
--			pr_tdx_error(TDH_VP_ADDCX, err);
-+		if (TDX_BUG_ON(err, TDH_VP_ADDCX, vcpu->kvm)) {
- 			/*
- 			 * Pages already added are reclaimed by the vcpu_free
- 			 * method, but the rest are freed here.
-@@ -2905,10 +2889,8 @@ static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64 vcpu_rcx)
- 	}
- 
- 	err = tdh_vp_init(&tdx->vp, vcpu_rcx, vcpu->vcpu_id);
--	if (KVM_BUG_ON(err, vcpu->kvm)) {
--		pr_tdx_error(TDH_VP_INIT, err);
-+	if (TDX_BUG_ON(err, TDH_VP_INIT, vcpu->kvm))
- 		return -EIO;
--	}
- 
- 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
- 
+thanks,
 -- 
-2.51.1.930.gacf6e81ea2-goog
+John Hubbard
 
 
