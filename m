@@ -1,83 +1,67 @@
-Return-Path: <linux-kernel+bounces-878973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACC7C21E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE944C21E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31B6F422371
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE15426BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0338F36E364;
-	Thu, 30 Oct 2025 19:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1372436E35B;
+	Thu, 30 Oct 2025 19:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NioRrMjL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnZw6Uc4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9F636CA8E;
-	Thu, 30 Oct 2025 19:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF063168E0;
+	Thu, 30 Oct 2025 19:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761851522; cv=none; b=jghjmYu+pLw+gUAqojOYwrEY9Z1q4OuBKNve1Vsmzl0rcXlhCE/HMaoI63Wie3ajh9aCOEuAQqXtHMJZHJCgMzLMB5eUt+x6+gPfkoPgwUeAWSjMpvqMe6aYvKTHmjKG+PjOL57AD06VdDuC4YmYPsWaloi11ZuSTJZwsdHAwLE=
+	t=1761851668; cv=none; b=QkZd4VjbEEMH3kU+UBXdhPXFqv556xlxLZrs98j0mTKFvpDhjhnu1SidrPBXMMINbLeEc+hfCShMOs8BVUGh2gmAYkqovtD8D6HpVPjFsLZycWhl9jEYKCNGzD+NmSOSwDfjgsfySnvGKx9I8cjz/r6WgGep28N8zwrnFJT+34A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761851522; c=relaxed/simple;
-	bh=8LWb+XOQ0h78d+RRyH2hMk1hikrUZlS83DgOhbqo360=;
+	s=arc-20240116; t=1761851668; c=relaxed/simple;
+	bh=o2SN2zjrswOtJi3dLC6TZZ6AulJzzG+lj6v/WztOym4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/QajkKEgxKms0crNzox8XVd1MVdyd7WBVB25G2+qs9OVjbTAk36oQ89+nukfSNL8Mtsb+8eOwiZRULaioNj9I0vfYjQsILNFQuq+WAGq9vsQ+T4S7PjrWlvtvDqgwSEOnxPXEad1Me1/FdOSTH6SzxKdLv4Pw7zTcRWcVuarD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NioRrMjL; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761851520; x=1793387520;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8LWb+XOQ0h78d+RRyH2hMk1hikrUZlS83DgOhbqo360=;
-  b=NioRrMjLTkkcHYkQM5RxrJ09iu6hB3tK5N/wf7SS/YG+4/6AtEsetE9j
-   WAOcGsZDcnPccHRb4AnJOK1S6bZ5LnyuMns/Ca+4af8F1LWDo9YCgWRLr
-   FCNFl3/zQG90exDh49wRGSWxoPF0n3bycm3JjkasLZKT4aHixLulhFBAP
-   9oC1JhbraXdGyiJXx615aFfja09Qhn6VOEORRovFnOk06bP9kT/06ckPH
-   HmLXhF5ocb/b7gaWdIW0Wb3aJLIJeAvyXL5qOdpTg/1yZZ1bRAmhal2+A
-   Rdt4627LZzVvmtblvCoud+uLDa7jF+ehf6tyiblKWaa/IuDjgdiL2b4ro
-   Q==;
-X-CSE-ConnectionGUID: 9UCS597NTuOajkH3uDjTrg==
-X-CSE-MsgGUID: gsqu4XFkTqqSbagMlr3Feg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="74605173"
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="74605173"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:11:59 -0700
-X-CSE-ConnectionGUID: 9g2FiWVTQnqWjnq+hVBQiQ==
-X-CSE-MsgGUID: FfmGX+12SGupSKbuWfDtzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="185972243"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.223.240])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:11:59 -0700
-Date: Thu, 30 Oct 2025 12:11:52 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Brendan Jackman <jackmanb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
-	Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH 3/3] x86/mmio: Unify VERW mitigation for guests
-Message-ID: <20251030191152.uqvjxmgy2y5f4lb7@desk>
-References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
- <20251029-verw-vm-v1-3-babf9b961519@linux.intel.com>
- <DDVO5U7JZF4F.1WXXE8IYML140@google.com>
- <20251030172836.5ys2wag3dax5fmwk@desk>
- <aQOswAMVciBXu1ud@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9Z8xI73y2FXeMuuXW1e780asOvuKs3OHYIir603IIvNyaELNU1XDR1SiUldbiwk0WrUjGqr2CWRSMhUPHia9TJ1/7M+QHl1BYFaGtP8TANdIUjodzmUnk9iy8dGCYxoVJKML9eUvDNnHiq/AskdnCcuhtErjJ9cVcLvTk4zGC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnZw6Uc4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E70FC4CEF1;
+	Thu, 30 Oct 2025 19:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761851668;
+	bh=o2SN2zjrswOtJi3dLC6TZZ6AulJzzG+lj6v/WztOym4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TnZw6Uc4QrAv4IZFXnvNcgUX5U1R++tDJSyUVpzl8NPX/Lfc92gK8ylGeXEncdlvk
+	 CUp8UkIZI9fHLuceSmkYlYjT9JOQwvXEP+S7a7jXZBwVVhuAuvADxArQoZdyE1nHyd
+	 mtlTs7w7gD1GMJlEZpF2QsTHuRiGXAg8zDAOa3Y8suvoEObg4OvnY7q/p+y0j9taEM
+	 bj3CMQbgLSIV6MwwrHrRXJUFMMi9aJlqAKygdQwZBJMYH+pF953apxxkm4GcxungAW
+	 mMJ1fOEpFQHUL4sq30O8/a4bs5EEyYDpo0fO8toWq492nvYGBxhwS2TxWg9SZLR5so
+	 XklBRPsLFR9CQ==
+Date: Thu, 30 Oct 2025 14:14:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Peter Rosin <peda@axentia.se>,
+	in file <patches@opensource.cirrus.com>,
+	"open list:ANALOG DEVICES INC ASOC CODEC DRIVERS" <linux-sound@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ARM/APPLE MACHINE SOUND DRIVERS" <asahi@lists.linux.dev>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] ASoC: dt-bindings: consolidate simple audio codec to
+ trivial-codec.yaml
+Message-ID: <20251030191423.GA270802-robh@kernel.org>
+References: <20251029214018.3969034-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,109 +70,144 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQOswAMVciBXu1ud@google.com>
+In-Reply-To: <20251029214018.3969034-1-Frank.Li@nxp.com>
 
-On Thu, Oct 30, 2025 at 11:21:52AM -0700, Sean Christopherson wrote:
-> On Thu, Oct 30, 2025, Pawan Gupta wrote:
-> > On Thu, Oct 30, 2025 at 12:52:12PM +0000, Brendan Jackman wrote:
-> > > On Wed Oct 29, 2025 at 9:26 PM UTC, Pawan Gupta wrote:
-> > > > +	/* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
-> > > > +	jz .Lskip_clear_cpu_buffers
-> > > 
-> > > Hm, it's a bit weird that we have the "alternative" inside
-> > > VM_CLEAR_CPU_BUFFERS, but then we still keep the test+jz
-> > > unconditionally. 
-> > 
-> > Exactly, but it is tricky to handle the below 2 cases in asm:
-> > 
-> > 1. MDS -> Always do VM_CLEAR_CPU_BUFFERS
-> > 
-> > 2. MMIO -> Do VM_CLEAR_CPU_BUFFERS only if guest can access host MMIO
-> 
-> Overloading VM_CLEAR_CPU_BUFFERS for MMIO is all kinds of confusing, e.g. my
-> pseudo-patch messed things.  It's impossible to understand
+On Wed, Oct 29, 2025 at 05:40:15PM -0400, Frank Li wrote:
+> Consolidate simple audio codec (one compatible string, one reg and
+> '#sound-dai-cells' 0) to a trivial-codec.yaml.
 
-Agree.
+I feel like we're going to be moving things back out when/if supplies 
+are added. I imagine there's not much alignment there. OTOH, if this is 
+all older stuff, then that may never happen.
 
-> > In th MMIO case, one guest may have access to host MMIO while another may
-> > not. Alternatives alone can't handle this case as they patch code at boot
-> > which is then set in stone. One way is to move the conditional inside
-> > VM_CLEAR_CPU_BUFFERS that gets a flag as an arguement.
-> > 
-> > > If we really want to super-optimise the no-mitigations-needed case,
-> > > shouldn't we want to avoid the conditional in the asm if it never
-> > > actually leads to a flush?
-> > 
-> > Ya, so effectively, have VM_CLEAR_CPU_BUFFERS alternative spit out
-> > conditional VERW when affected by MMIO_only, otherwise an unconditional
-> > VERW.
-> > 
-> > > On the other hand, if we don't mind a couple of extra instructions,
-> > > shouldn't we be fine with just having the whole asm code based solely
-> > > on VMX_RUN_CLEAR_CPU_BUFFERS and leaving the
-> > > X86_FEATURE_CLEAR_CPU_BUF_VM to the C code?
-> > 
-> > That's also an option.
-> > 
-> > > I guess the issue is that in the latter case we'd be back to having
-> > > unnecessary inconsistency with AMD code while in the former case... well
-> > > that would just be really annoying asm code - am I on the right
-> > > wavelength there? So I'm not necessarily asking for changes here, just
-> > > probing in case it prompts any interesting insights on your side.
-> > > 
-> > > (Also, maybe this test+jz has a similar cost to the nops that the
-> > > "alternative" would inject anyway...?)
-> > 
-> > Likely yes. test+jz is a necessary evil that is needed for MMIO Stale Data
-> > for different per-guest handling.
-> 
-> I don't like any of those options :-)
-> 
-> I again vote to add X86_FEATURE_CLEAR_CPU_BUF_MMIO, and then have it be mutually
-> exlusive with X86_FEATURE_CLEAR_CPU_BUF_VM, i.e. be an alterantive, not a subset.
-> Because as proposed, the MMIO case _isn't_ a strict subset, it's a subset iff
-> the MMIO mitigation is enabled, otherwise it's something else entirely.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/sound/adi,max98363.yaml          | 60 -----------------
+>  .../bindings/sound/adi,ssm3515.yaml           | 49 --------------
+>  .../devicetree/bindings/sound/da9055.txt      | 22 -------
+>  .../bindings/sound/nuvoton,nau8540.yaml       | 40 ------------
+>  .../bindings/sound/nuvoton,nau8810.yaml       | 45 -------------
+>  .../bindings/sound/nxp,tfa9879.yaml           | 44 -------------
+>  .../bindings/sound/nxp,uda1342.yaml           | 42 ------------
+>  .../bindings/sound/trivial-codec.yaml         | 65 +++++++++++++++++++
+>  .../devicetree/bindings/sound/wlf,wm8510.yaml | 41 ------------
+>  .../devicetree/bindings/sound/wlf,wm8523.yaml | 40 ------------
+>  .../devicetree/bindings/sound/wlf,wm8580.yaml | 42 ------------
+>  .../devicetree/bindings/sound/wlf,wm8711.yaml | 40 ------------
+>  .../devicetree/bindings/sound/wlf,wm8728.yaml | 40 ------------
+>  .../devicetree/bindings/sound/wlf,wm8737.yaml | 40 ------------
+>  .../devicetree/bindings/sound/wlf,wm8750.yaml | 42 ------------
+>  .../devicetree/bindings/sound/wlf,wm8753.yaml | 62 ------------------
+>  .../devicetree/bindings/sound/wlf,wm8776.yaml | 41 ------------
+>  .../devicetree/bindings/sound/wlf,wm8961.yaml | 43 ------------
+>  .../devicetree/bindings/sound/wlf,wm8974.yaml | 41 ------------
+>  .../devicetree/bindings/sound/wm8770.txt      | 16 -----
 
-I don't see a problem with that.
+Also, these can be added I think:
 
-> After half an hour of debugging godawful assembler errors because I used stringify()
-> instead of __stringify(),
+cirrus,cs4349
+cirrus,cs4341a
+cirrus,cs4265
+"adi,ssm2602", "adi,ssm2603", "adi,ssm2604"
+ti,pcm1792a
+ti,pcm1789 (Add reset-gpios)
+ti,pcm5102a
+dlg,da9055-codec
 
-Not surprised at all :-)
+>  20 files changed, 65 insertions(+), 790 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/adi,max98363.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/adi,ssm3515.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/da9055.txt
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nuvoton,nau8540.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nuvoton,nau8810.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nxp,tfa9879.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nxp,uda1342.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/trivial-codec.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8510.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8523.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8580.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8711.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8728.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8737.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8750.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8753.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8776.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8961.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8974.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/wm8770.txt
 
-> I was able to get to this, which IMO is readable and intuitive.
-> 
-> 	/* Clobbers EFLAGS.ZF */
-> 	ALTERNATIVE_2 "",							\
-> 		      __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF_VM,	\
-> 		      __stringify(jz .Lskip_clear_cpu_buffers;			\
-> 				  CLEAR_CPU_BUFFERS_SEQ;			\
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/trivial-codec.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/trivial-codec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: collect trivial audio codec
 
-Curious what this is doing, I will wait for your patches.
+Just 'Trivial Audio Codecs'
 
-> 				  .Lskip_clear_cpu_buffers:),			\
-> 		      X86_FEATURE_CLEAR_CPU_BUF_MMIO
-> 
-> Without overloading X86_FEATURE_CLEAR_CPU_BUF_VM, e.g. the conversion from a
-> static branch to X86_FEATURE_CLEAR_CPU_BUF_MMIO is a pure conversion and yields:
-> 
-> 	if (verw_clear_cpu_buf_mitigation_selected) {
-> 		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
-> 		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_VM);
-> 	} else {
-> 		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_MMIO);
-> 	}
-> 
-> Give me a few hours to test, and I'll post a v2.  The patches are:
-> 
-> Pawan Gupta (1):
->   x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
-> 
-> Sean Christopherson (4):
->   x86/bugs: Decouple ALTERNATIVE usage from VERW macro definition
->   x86/bugs: Use an X86_FEATURE_xxx flag for the MMIO Stale Data mitigation
->   KVM: VMX: Handle MMIO Stale Data in VM-Enter assembly via ALTERNATIVES_2
->   x86/bugs: KVM: Move VM_CLEAR_CPU_BUFFERS into SVM as SVM_CLEAR_CPU_BUFFERS
+> +
+> +maintainers:
+> +  - patches@opensource.cirrus.com
 
-Ok, sounds good to me.
+You can put me.
+
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ssm3515
+> +      - dlg,da9055-codec
+> +      # Nuvoton Technology Corporation NAU85L40 Audio CODEC
+> +      - nuvoton,nau8540
+> +      - nuvoton,nau8810
+> +      - nuvoton,nau8812
+> +      - nuvoton,nau8814
+> +      # NXP TFA9879 class-D audio amplifier
+> +      - nxp,tfa9879
+> +      - nxp,uda1342
+> +      - sdw3019f836300
+> +      - wlf,wm8510
+> +      - wlf,wm8523
+> +      - wlf,wm8580
+> +      - wlf,wm8581
+> +      - wlf,wm8711
+> +      - wlf,wm8728
+> +      - wlf,wm8737
+> +      - wlf,wm8750
+> +      - wlf,wm8753
+> +      - wlf,wm8770
+> +      - wlf,wm8776
+> +      - wlf,wm8961
+> +      - wlf,wm8974
+> +      - wlf,wm8987
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#sound-dai-cells":
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        codec@1a {
+> +            compatible = "wlf,wm8523";
+> +            reg = <0x1a>;
+> +        };
+> +    };
 
