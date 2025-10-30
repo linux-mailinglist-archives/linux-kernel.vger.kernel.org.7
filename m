@@ -1,214 +1,217 @@
-Return-Path: <linux-kernel+bounces-879045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD610C221FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276F3C22200
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 254D7188DA05
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883F7189251B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554A36E357;
-	Thu, 30 Oct 2025 20:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC44636E357;
+	Thu, 30 Oct 2025 20:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFE0Xpwz"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VovJ++th"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CB7331A74
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6F31D39F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761854849; cv=none; b=rNrH7zbbJEsljWXTgx4Y0xXhNOOAhyvm6Sg5QZQLs76cSdLArdGGGwWYS5L5+ftgesfWX35wh23FpDkcTSiEBwTo2JF7XwVW9vCG95Uut2R6YorJrVvcl9EeF5+MpC+/IUVkAuZJ/lllGUF5rbmS5UzwYMvBh7Ek1kdFQmrzCFc=
+	t=1761854861; cv=none; b=pieE4qT1aG59aZYUH54bYPL5rJWYbJbbjSG49IToT/4azu56aq3SMFX6KS1/p6ra0ZadPbUpyc2Rd0I7biNUMCRMqEwQhKmdUatByJFiL3SozAO38oAt4S0CU4GzVlYNh7j98LeXTtqWsS9kQQNWkV6VycHava756579nnUguE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761854849; c=relaxed/simple;
-	bh=3Js0uYAIC0bd6EOohKenbxNO7P8/ananC7e9waGafnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EnWkF+OoDVcdAsu+wB4ZsmnvA6MTi71yUgEuSU4iJUFc5midSIUJdH4mB/f/htGQDEAXtDRkV/F5wDHLDwuYP+lD8GN11ds3kZXLFF72EUgCOV4J2I0ZiraqgdDfmV0b7AMm0kRqSMs2cPfi5D5ehL5N67JDwz+6VXvq7ai9GBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFE0Xpwz; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so15696225e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761854846; x=1762459646; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IK5/MD5jQaHlgmEIIClreHp/khBkythuO8kivjpFv+4=;
-        b=KFE0XpwzNcs9lQNbtUayZtpNSa60PdYVEsKDpy7alo/b1kWdo/5Hcl120BQL9O6qCZ
-         QAmATvB2ECh4P1UxuL38vmZOwRPoo7hjBVIdawUKfmES7VEhNwZbhhGYUuDAMmSW5NvP
-         5852hBUxPiE55bHSvB36OziSGqZ+avTyWW2NBFjGTiG7aLsPEXe7RmKahPRsKJ3COX1t
-         u963RNbtEizc6MjYCN9IqTg6aGAJSnOjbi9I29Wi3wVQ8aoGHJD0+UzEb4n1minN5ChY
-         eaBOvJm3mcx4cuaLaXqKLiolXxQKAsHfqnFIiG9k3TTL4FO5ybSfCqckxGEc/9xbS+qa
-         N8Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761854846; x=1762459646;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IK5/MD5jQaHlgmEIIClreHp/khBkythuO8kivjpFv+4=;
-        b=HIzRs0MIgXIHhORgmcF7IxtUfpnln1LS+OBY1Ixp7A9f4BtghoGKVpJbAYdOG5Y1TT
-         RW6YXdSdjdVnAKluIHexCvSp32Be6+W3n0a5B7A+uwGJDGPQffyES3/EX/b3u70CVr21
-         CaJX5YluMNOTJa3OA+/xlDQN9LatsSpd+SZX9FT0oY9F9CAzxc867pxRcyUrNBU0NBN9
-         pqzfBilV3ICf4fw2wuukzBKwYodIXbEAZRFUIFECF2U66bAndhpgyzEp4IE1/ni5k5xR
-         oup78zjXA2o1frZx+xeBLJB5ooIfTt5xi7T6q6lUgaTuqJchwZxydVyQwYbUm2YnJ4GS
-         u/ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUWKOO6bhngpaP5mIu79YFcF4mNq0Gzmh3j8PE/ZNM4LYv2RsJ42vA6NKzx/4+XuwvopmkUsPumcJJTeeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKZDdurmwrCM6JUWDEOgQXYa4+uAKLXdlrox3zBCK9KESezSc5
-	WKb2UMpPWVMGq/RZLjqmjcTz78Tz8cy4+MaQHNVCTlP18AVOyep+0vRO
-X-Gm-Gg: ASbGnctrFsJGQ59HRtg/qHeYywbTr3e5aiGxCQLm9aX11PVNMMfs7ikK1iI77MzGl26
-	ohvO/a4XnkMOjvhEmiGjpWwPSFx2APH/Hpk5l7RphE4tlcmUOy1+nyJUpZ/Upzotmv5QzBF6IX0
-	ckmd+Vu46QorbXAoeP3BvWfMTHbssWiGoaNXNvEP9mXLTmuXA8NQCgXmd6f1VAEN5Is4QOczJ0I
-	HdKQxLUS2mi2g2O+Ddr4oUTb85D249Z6VjnuONPitaYwCXy/Rc2qZHswFXYj/yv35UjWmZm0rdg
-	cUI5Ge2l02UVHG7rY8RsdAG0Usmbti++X7tizW+w+nsladrULfC4Vitx2afIwKIjt6O4KynxnyK
-	W7DO5M1JbuC7lOu3CQgvUYHfxrQK+CRMPnNmzXqF8JctZ+gyTlQZDolxE2KkU83+u9fbc3wjXV4
-	iCROyI6oYv1Ud7jbPypdLwOZb+7MJKZtLFSY+srmzTRnPG0lZ7zhPXfZAa9uw=
-X-Google-Smtp-Source: AGHT+IEKK73PbMSHf6dhhfOw/8d7gi7F8JIqgvvWZVKIGfNyOVCe87Tf3SMiH0lxF2XB6hun78s0fA==
-X-Received: by 2002:a05:600c:1c93:b0:46e:37d5:dbed with SMTP id 5b1f17b1804b1-4773010414fmr11136175e9.12.1761854845631;
-        Thu, 30 Oct 2025 13:07:25 -0700 (PDT)
-Received: from dell (229.red-88-1-12.dynamicip.rima-tde.net. [88.1.12.229])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952da645sm32485309f8f.30.2025.10.30.13.07.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 13:07:25 -0700 (PDT)
-From: Javier Garcia <rampxxxx@gmail.com>
-To: deller@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Javier Garcia <rampxxxx@gmail.com>
-Subject: [PATCH v2] fbdev/vesafb: Use dev_* fn's instead printk.
-Date: Thu, 30 Oct 2025 21:07:23 +0100
-Message-ID: <20251030200723.2788931-1-rampxxxx@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251028185021.2758401-1-rampxxxx@gmail.com>
-References: <20251028185021.2758401-1-rampxxxx@gmail.com>
+	s=arc-20240116; t=1761854861; c=relaxed/simple;
+	bh=LcYMdAA5QAJffUL5Dg8odGZGOYwV5gcq2K9N4gApDzM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kYslEFmOQi7/lmLiE1p47+DMkcyY4d8RYI+T6Q39/nYyZJo2HhVIRXnRZ+STz7JvXZQj+LbKT8ATAV/O47EH7zswcIRk2CUIqlEu7I/SqnnbjAS45v046fxkY+dwRGAt8XyumoL0wT4fFoq9LDU1RgUGf38xpRREX56i8rMdFvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VovJ++th; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761854860; x=1793390860;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=LcYMdAA5QAJffUL5Dg8odGZGOYwV5gcq2K9N4gApDzM=;
+  b=VovJ++thFox1g4f4GLt9yZ8yJlYn2U6T6PpybTiyNZ/aTGOiPn8gdcG8
+   1G0GO3iZW4SUse7vtDK06lyqNc0KelRE1UqtAn5w+z5BXKatYakmOWAVf
+   84QkCVUlr4IxaOJY+XvK5PxBLWZCCbSE+e1+2C0hM89ikoEwrOpgtjXca
+   FGtDaDRE2X7PY4O2pgxKiKOvZ8KbcbGRARYStWvLX2SzviVkYzVkJuk2H
+   gzZPTRVvmzByxvU0SEKxEUgeENASEJi7SfLBP2pHmSIuGCKP2WLJjOnec
+   rhHYiMfTtOqhs8IQrx4/V0Nyp4CD4SCp6idhnajDq0iiwJJGCehVoq67D
+   Q==;
+X-CSE-ConnectionGUID: pWmq/VhwQMm4mRjpqJVs1g==
+X-CSE-MsgGUID: WVgJ3oCAR4GzyNliu2Ie4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="74686617"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="74686617"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 13:07:39 -0700
+X-CSE-ConnectionGUID: CwP6epySSxyKGH/byFMLuQ==
+X-CSE-MsgGUID: bZbxLd5QS3Ctxq8mFp4vLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="190392879"
+Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 13:07:38 -0700
+Message-ID: <c85e242d55da1f12419e2c2dc2bfa3fc942a848e.camel@linux.intel.com>
+Subject: Re: [PATCH 15/19] sched/fair: Respect LLC preference in task
+ migration and detach
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>, "Chen, Yu C"
+ <yu.c.chen@intel.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
+ <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
+ <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
+ <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
+ <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
+ <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Adam Li	
+ <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar
+ <mingo@redhat.com>
+Date: Thu, 30 Oct 2025 13:07:38 -0700
+In-Reply-To: <53f9a8dc-c215-405b-958b-9cdd326dbfe3@amd.com>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+	 <d3afcff5622222523c843f5c1b023bfe43f9c67c.1760206683.git.tim.c.chen@linux.intel.com>
+	 <5cdf379c-b663-424d-8505-d91046e63c20@amd.com>
+	 <0a81b5be-6edd-4231-859b-0c6d06c61595@intel.com>
+	 <2c57d76f-fb31-4e1b-a3ce-ca13713e1b86@amd.com>
+	 <ebe994addb5624089db71df8fee402a664f8800a.camel@linux.intel.com>
+	 <53f9a8dc-c215-405b-958b-9cdd326dbfe3@amd.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-- Family dev_* fn's will show device name, giving extra info to logs.
-- Delete the prefix `vesafb:` from msg strings, not needed now.
+On Thu, 2025-10-30 at 09:49 +0530, K Prateek Nayak wrote:
+> Hello Tim,
+>=20
+> On 10/30/2025 2:39 AM, Tim Chen wrote:
+> > > > I suppose you are suggesting that the threshold for stopping task d=
+etachment
+> > > > should be higher. With the above can_migrate_llc() check, I suppose=
+ we have
+> > > > raised the threshold for stopping "task detachment"?
+> > >=20
+> > > Say the LLC is under heavy load and we only have overloaded groups.
+> > > can_migrate_llc() would return "mig_unrestricted" since
+> > > fits_llc_capacity() would return false.
+> > >=20
+> > > Since we are under "migrate_load", sched_balance_find_src_rq() has
+> > > returned the CPU with the highest load which could very well be the
+> > > CPU with with a large number of preferred LLC tasks.
+> > >=20
+> > > sched_cache_enabled() is still true and when detach_tasks() reaches
+> > > one of these preferred llc tasks (which comes at the very end of the
+> > > tasks list),=C2=A0
+> > > we break out even if env->imbalance > 0 leaving
+> >=20
+> > Yes, but at least one task has been removed to even the load (making fo=
+rward progress) and
+> > the remaining tasks all wish to stay in the current LLC and will
+> > preferred not to be moved. My thought was to not even all the load out
+> > in one shot and pull more tasks out of their preferred LLC.
+> > If the imbalance still remain, we'll come to that in the next load bala=
+nce.
+>=20
+> In that case, can we spoof a LBF_ALL_PINNED for the case where we start
 
-[    0.981825] vesa-framebuffer vesa-framebuffer.0: scrolling: redraw
+In the code chunk (with fix I mentioned in last reply):
 
-Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
----
-v1 -> v2:
-      * Fix checkpatch.pl messages, thanks Helge Deller.
-      * v1 https://lore.kernel.org/lkml/20251028185021.2758401-1-rampxxxx@gmail.com/
++#ifdef CONFIG_SCHED_CACHE
++		/*
++		 * Don't detach more tasks if the remaining tasks want
++		 * to stay. We know the remaining tasks all prefer the
++		 * current LLC, because after order_tasks_by_llc(), the
++		 * tasks that prefer the current LLC are at the tail of
++		 * the list. The inhibition of detachment is to avoid too
++		 * many tasks being migrated out of the preferred LLC.
++		 */
++		if (sched_cache_enabled() && detached && p->preferred_llc !=3D -1 &&
++		    llc_id(env->src_cpu) =3D=3D p->preferred_llc &&
+		    llc_id(env->dst_cpu) !=3D p->preferred_llc)
++			break;
 
- drivers/video/fbdev/vesafb.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+We have already pulled at least one task when we stop detaching because we
+know that all the remaining tasks want to stay in it current LLC.
+"detached" is non zero when we break. So LBF_ALL_PINNED would be cleared.
+We will only exit the detach_tasks loop when there are truly no tasks
+that can be moved and it is truly a LBF_ALL_PINNED case.
 
-diff --git a/drivers/video/fbdev/vesafb.c b/drivers/video/fbdev/vesafb.c
-index a81df8865143..f135033c22fb 100644
---- a/drivers/video/fbdev/vesafb.c
-+++ b/drivers/video/fbdev/vesafb.c
-@@ -314,8 +314,8 @@ static int vesafb_probe(struct platform_device *dev)
- #endif
- 
- 	if (!request_mem_region(vesafb_fix.smem_start, size_total, "vesafb")) {
--		printk(KERN_WARNING
--		       "vesafb: cannot reserve video memory at 0x%lx\n",
-+		dev_warn(&dev->dev,
-+		       "cannot reserve video memory at 0x%lx\n",
- 			vesafb_fix.smem_start);
- 		/* We cannot make this fatal. Sometimes this comes from magic
- 		   spaces our resource handlers simply don't know about */
-@@ -333,12 +333,12 @@ static int vesafb_probe(struct platform_device *dev)
- 	par->base = si->lfb_base;
- 	par->size = size_total;
- 
--	printk(KERN_INFO "vesafb: mode is %dx%dx%d, linelength=%d, pages=%d\n",
-+	dev_info(&dev->dev, "mode is %dx%dx%d, linelength=%d, pages=%d\n",
- 	       vesafb_defined.xres, vesafb_defined.yres, vesafb_defined.bits_per_pixel,
- 	       vesafb_fix.line_length, si->pages);
- 
- 	if (si->vesapm_seg) {
--		printk(KERN_INFO "vesafb: protected mode interface info at %04x:%04x\n",
-+		dev_info(&dev->dev, "protected mode interface info at %04x:%04x\n",
- 		       si->vesapm_seg, si->vesapm_off);
- 	}
- 
-@@ -352,9 +352,10 @@ static int vesafb_probe(struct platform_device *dev)
- 		pmi_base  = (unsigned short *)phys_to_virt(pmi_phys);
- 		pmi_start = (void*)((char*)pmi_base + pmi_base[1]);
- 		pmi_pal   = (void*)((char*)pmi_base + pmi_base[2]);
--		printk(KERN_INFO "vesafb: pmi: set display start = %p, set palette = %p\n",pmi_start,pmi_pal);
-+		dev_info(&dev->dev, "pmi: set display start = %p, set palette = %p\n",
-+			 pmi_start, pmi_pal);
- 		if (pmi_base[3]) {
--			printk(KERN_INFO "vesafb: pmi: ports = ");
-+			dev_info(&dev->dev, "pmi: ports = ");
- 			for (i = pmi_base[3]/2; pmi_base[i] != 0xffff; i++)
- 				printk("%x ", pmi_base[i]);
- 			printk("\n");
-@@ -365,14 +366,14 @@ static int vesafb_probe(struct platform_device *dev)
- 				 * Rules are: we have to set up a descriptor for the requested
- 				 * memory area and pass it in the ES register to the BIOS function.
- 				 */
--				printk(KERN_INFO "vesafb: can't handle memory requests, pmi disabled\n");
-+				dev_info(&dev->dev, "can't handle memory requests, pmi disabled\n");
- 				ypan = pmi_setpal = 0;
- 			}
- 		}
- 	}
- 
- 	if (vesafb_defined.bits_per_pixel == 8 && !pmi_setpal && !vga_compat) {
--		printk(KERN_WARNING "vesafb: hardware palette is unchangeable,\n"
-+		dev_warn(&dev->dev, "hardware palette is unchangeable,\n"
- 		                    "        colors may be incorrect\n");
- 		vesafb_fix.visual = FB_VISUAL_STATIC_PSEUDOCOLOR;
- 	}
-@@ -380,10 +381,10 @@ static int vesafb_probe(struct platform_device *dev)
- 	vesafb_defined.xres_virtual = vesafb_defined.xres;
- 	vesafb_defined.yres_virtual = vesafb_fix.smem_len / vesafb_fix.line_length;
- 	if (ypan && vesafb_defined.yres_virtual > vesafb_defined.yres) {
--		printk(KERN_INFO "vesafb: scrolling: %s using protected mode interface, yres_virtual=%d\n",
-+		dev_info(&dev->dev, "scrolling: %s using protected mode interface, yres_virtual=%d\n",
- 		       (ypan > 1) ? "ywrap" : "ypan",vesafb_defined.yres_virtual);
- 	} else {
--		printk(KERN_INFO "vesafb: scrolling: redraw\n");
-+		dev_info(&dev->dev, "scrolling: redraw\n");
- 		vesafb_defined.yres_virtual = vesafb_defined.yres;
- 		ypan = 0;
- 	}
-@@ -410,7 +411,7 @@ static int vesafb_probe(struct platform_device *dev)
- 		vesafb_defined.bits_per_pixel;
- 	}
- 
--	printk(KERN_INFO "vesafb: %s: "
-+	dev_info(&dev->dev, "%s: "
- 	       "size=%d:%d:%d:%d, shift=%d:%d:%d:%d\n",
- 	       (vesafb_defined.bits_per_pixel > 8) ?
- 	       "Truecolor" : (vga_compat || pmi_setpal) ?
-@@ -453,14 +454,14 @@ static int vesafb_probe(struct platform_device *dev)
- 	}
- 
- 	if (!info->screen_base) {
--		printk(KERN_ERR
--		       "vesafb: abort, cannot ioremap video memory 0x%x @ 0x%lx\n",
-+		dev_err(&dev->dev,
-+		       "abort, cannot ioremap video memory 0x%x @ 0x%lx\n",
- 			vesafb_fix.smem_len, vesafb_fix.smem_start);
- 		err = -EIO;
- 		goto err_release_region;
- 	}
- 
--	printk(KERN_INFO "vesafb: framebuffer at 0x%lx, mapped to 0x%p, "
-+	dev_info(&dev->dev, "framebuffer at 0x%lx, mapped to 0x%p, "
- 	       "using %dk, total %dk\n",
- 	       vesafb_fix.smem_start, info->screen_base,
- 	       size_remap/1024, size_total/1024);
--- 
-2.50.1
+We should not be causing problem with the LBF_ALL_PINNED.
 
+Tim
+> hitting preferred task. That way, the main lb loop will goto redo and
+> try to find another busy CPU to pull tasks from.
+>=20
+> >=20
+> > Pulling tasks more slowly when we come to tasks that preferred to stay =
+(if possible)
+> > would also help to prevent tasks bouncing between LLC.
+> >=20
+> > Tim
+> >=20
 
