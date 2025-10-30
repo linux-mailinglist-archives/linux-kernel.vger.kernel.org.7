@@ -1,105 +1,173 @@
-Return-Path: <linux-kernel+bounces-878759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E604AC216B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7766EC216BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBC484E6D39
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:13:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3C754F085C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4263678BB;
-	Thu, 30 Oct 2025 17:13:42 +0000 (UTC)
-Received: from trent.utfs.org (trent.utfs.org [94.185.90.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1994C20F08C;
+	Thu, 30 Oct 2025 17:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pof1RBvX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4256C3678B1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.185.90.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571EA3678B1;
+	Thu, 30 Oct 2025 17:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844421; cv=none; b=sB8BKzJFQTc8POuaTWsU/lmPur6sDgj8eY99SaoOGtBhbfyFfcuNaER+xNuZ/qROKax7UMraNZlpOf/iVqWe2p5xLH4jc0SGy6OK1wWAhszbRZ6PWv2GMnb6DjSfmnM/yAKi4KsiOGRdg9IZGVt2GTyvww7Rckj0AKxD4YTPrKI=
+	t=1761844425; cv=none; b=LH4WFE658RqJf00rtiUq6Vt/hAImuLfPi9prMn841P79DajdPJfgQt8f0eIkJ/lJPuyRdvm7awtL7NIuz1EssWJtTZG+PBJL4PwP/1p34ORDomI091G+C4xz/gVqJ+no1+J83Bck8PAmvM34HnI07jClpZXpgT+Jm/81E3t+TJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844421; c=relaxed/simple;
-	bh=TJBWMd3b9/ACqchgqVTWy1HQQX8bklc6M+GQDjjC1LA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TJji8exXLU7NATehF57dhL64TQlHn+FaHUvBLyHk2Qv4A0nGd19vEt6wZPR4fbNqk5tyMJoS/FQbrCSnATZSb0C/jLGyzRNNs7ZyOX5rM19IqELuc8DAOG8T7ynAj2oSzKtZ9fZIkZBjz+5HHyfYClYUls3eC8GPZj+j0XccWUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de; spf=pass smtp.mailfrom=nerdbynature.de; arc=none smtp.client-ip=94.185.90.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nerdbynature.de
-Authentication-Results: mail.nerdbynature.de; dmarc=fail (p=none dis=none) header.from=nerdbynature.de
-Received: from localhost (localhost [IPv6:::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by trent.utfs.org (Postfix) with ESMTPS id 78B195F95F;
-	Thu, 30 Oct 2025 18:13:33 +0100 (CET)
-Date: Thu, 30 Oct 2025 18:13:33 +0100 (CET)
-From: Christian Kujau <lists@nerdbynature.de>
-To: David Laight <david.laight.linux@gmail.com>
-cc: linux-kernel@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Arnd Bergmann <arnd@arndb.de>
-Subject: Re: maple_tree.c:3738:1: error: the frame size of 1040 bytes is
- larger than 1024 bytes
-In-Reply-To: <20251030165137.56eb618f@pumpkin>
-Message-ID: <aee90be9-4816-592e-632b-21cbea4bb3dd@nerdbynature.de>
-References: <769dc761-3ea6-76b9-d6a3-cd64a3fddfe3@nerdbynature.de> <20251030143400.09fc0a89@pumpkin> <bb105b91-1f11-0a2b-a666-6ee72f86d989@nerdbynature.de> <20251030165137.56eb618f@pumpkin>
+	s=arc-20240116; t=1761844425; c=relaxed/simple;
+	bh=Ga2UaOapRGo+y9uUOsUqRMoBHpskEFYaGzTydEs8NIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qGyVlTDYxJLEIZulj8d/psg/1I4CuIKgCi1YSYi3SfXpUcTCjy3cjKuvGW6vpMu9efD4IqS03+dXMU1hGeZIVhkqRJOuQF6DHMPK4JxEvMmx+Jf/G4K4vVT8dmzwZduqduqj6RjGgBh0lx+ZpKJpsmOo8LFai6EKVfNiyF0thgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pof1RBvX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73BBCC4CEF8;
+	Thu, 30 Oct 2025 17:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761844424;
+	bh=Ga2UaOapRGo+y9uUOsUqRMoBHpskEFYaGzTydEs8NIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pof1RBvX5cRsFJAezLFcWBGDW7rsV1c4M1J99/r3DGwmimwg3GbksGk7NgCOg0FBk
+	 iIjzXjj2IJqkdeh2yPQXViNw4vKw3zw5lR44jG429gASfmNYXq+TSE5znGPRdwy0YY
+	 ddmqdSyr+vgV/cyHD1fNoSjy59FI9zxVlYyKL5146W0qonhiNsUFCRLS9l/JiJTsdu
+	 /d4rzHomrmqMJY85laR34wIR4qKUP2WJ444aShGkavHd2HyGHCPs9YzvnXD3qcoztv
+	 Cq2vtvl4aFD2escxUpJ8WYFVlQC9MwZG2UmwTd5GRN6cftyQ6ufd71f2QyDXhZKD7B
+	 2meEhwL/lg2eQ==
+Date: Thu, 30 Oct 2025 18:13:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: "Krebs, Olaf" <Olaf.Krebs@emh-metering.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Fix IMX PWM period setting
+Message-ID: <qsc5hl22l4bxs6jzqbc43r4wxvmbwz6rpcfsiv4hcp2uzrsscy@ogjzgesvy2wl>
+References: <20251030114641.4109598-1-user@jenkins>
+ <548dfa909f984868a62e04efc0c51bdf@emh-metering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="34swrrw2zoqfjyya"
+Content-Disposition: inline
+In-Reply-To: <548dfa909f984868a62e04efc0c51bdf@emh-metering.com>
 
-On Thu, 30 Oct 2025, David Laight wrote:
-> It is horrendous - best part of 4k code, the stack frame is 0x408.
-> Which means I must be building with a larger stack frame limit.
-> Is one of your debug options reducing it?
 
-No that I know of. I've attached the config to my initial posting.
+--34swrrw2zoqfjyya
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] Fix IMX PWM period setting
+MIME-Version: 1.0
 
-> OTOH it looks as though the actual place to force a stack frame 'break' is to
-> stop mas_rebalance() and mas_split() being inlined into mas_commit_b_node().
-> (Probably instead of all the current noinline_for_kasan.)
-> Both those functions are large and don't have many parameters.
+Hello,
 
-Cool, that helped! Leaving mas_wr_bnode() as it was, and only changed:
+please version your patch revision, i.e. you should have put "v2" in the
+subject. The easiest way to achieve that is by passing -v2 to `git
+format-patch` (or `git send-email` if you use that directly). So for the
+next revision use -v3.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 39bb779cb311..949fd2a0554b 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -2746,7 +2746,7 @@ static void mas_spanning_rebalance(struct ma_state *mas,
-  * Rebalance two nodes into a single node or two new nodes that are sufficient.
-  * Continue upwards until tree is sufficient.
-  */
--static inline void mas_rebalance(struct ma_state *mas,
-+static noinline void mas_rebalance(struct ma_state *mas,
- 				struct maple_big_node *b_node)
- {
- 	char empty_count = mas_mt_height(mas);
-@@ -2967,7 +2967,7 @@ static inline bool mas_push_data(struct ma_state *mas,
-  * @mas: The maple state
-  * @b_node: The maple big node
-  */
--static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
-+static noinline void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- {
- 	struct maple_subtree_state mast;
- 	int height = 0;
+On Thu, Oct 30, 2025 at 11:53:27AM +0000, Krebs, Olaf wrote:
+> From: Olaf Krebs <okr@smgw.emh-meter.de>
+>=20
+> We use 3 PWM channels to control an RGB LED. Without this patch, an BUSY-=
+error message is generated during initialization.
+>=20
+> [    7.395326] leds_pwm_multicolor led-controller: error -EBUSY: failed t=
+o set led PWM value for (null)
+> [    7.405167] leds_pwm_multicolor led-controller: probe with driver leds=
+_pwm_multicolor failed with error -16
+>=20
+> Our DTS-Config for an imx93-Board:
+> 	...
+> 	led-controller {
+> 		compatible =3D "pwm-leds-multicolor";
+> 		multi-led {
+> 			label =3D "RGBled";
+> 			color =3D <LED_COLOR_ID_RGB>;
+> 			function =3D LED_FUNCTION_INDICATOR;
+> 			max-brightness =3D <255>;
+> 			led-red {
+> 				pwms =3D <&tpm5 0 1000000 PWM_POLARITY_INVERTED>;
+> 				color =3D <LED_COLOR_ID_RED>;
+> 			};
+> 			led-green {
+> 				pwms =3D <&tpm6 2 1000000 PWM_POLARITY_INVERTED>;
+> 				color =3D <LED_COLOR_ID_GREEN>;
+> 			};
+> 			led-blue {
+> 				pwms =3D <&tpm5 1 1000000 PWM_POLARITY_INVERTED>;
+> 				color =3D <LED_COLOR_ID_BLUE>;
+> 			};
+> 		};
+> 	};
+> 	...
 
-> Oh, and the WARN_ON_ONCE() in there is all wrong.
-> A WARN_ON_ONCE(type != wr_split_store) after the call to mas_rebalance()
-> might make sense.
+I would prefer something like the following text here:
 
-I'll leave that for someone else to fix :-)
+	If a second PWM is requested by a driver before the first is
+	configured, trying to configure any of these results in
+	.user_count > 1 and thus the configuration fails.=20
+	Fix that by only erroring out by additionally checking if the
+	period is actually configured.
 
-Thanks,
-Christian.
--- 
-BOFH excuse #135:
+> Signed-off-by: Olaf krebs <olaf.krebs@emh-metering.com>
 
-You put the disk in upside down.
+S-o-b missmatch. Do you know checkpatch? That one also wails:
+WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit desc=
+ription?)
+
+> ---
+>  drivers/pwm/pwm-imx-tpm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c index =
+5b399de16d60..411daa7711f1 100644
+> --- a/drivers/pwm/pwm-imx-tpm.c
+> +++ b/drivers/pwm/pwm-imx-tpm.c
+> @@ -190,7 +190,7 @@ static int pwm_imx_tpm_apply_hw(struct pwm_chip *chip,
+>  		 * there are multiple channels in use with different
+>  		 * period settings.
+>  		 */
+> -		if (tpm->user_count > 1)
+> +		if ((tpm->user_count > 1) && (tpm->real_period !=3D 0))
+>  			return -EBUSY;
+
+Please drop the added parenthesis.
+
+Thinking about the error here, I wonder if a saner check would involve
+enable_count instead of user_count.
+
+>  		val =3D readl(tpm->base + PWM_IMX_TPM_SC);
+
+Best regards
+Uwe
+
+--34swrrw2zoqfjyya
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkDnMMACgkQj4D7WH0S
+/k75IwgApdc2XPIDEyp+ZQcUeA+W1RUlQqraSjno8l3UnToMwlCt+ChVq19ThmyM
+EdsIvUZnM0/5QjS856KJzxLKsFHa+KCYEi2I8Y7El/rEUU1BZkH0/HXR/QZ/SLc5
++Sal0xhUXIfxtSPWVH2BU1BX/h4yXmuysgSqfgbyuhxjiLPd6BNq03rNVP0uQJd/
++DhPiRYWxtVJJf8uxLYFu55POjiLDzlHWaJLz6x+umtjlrX5I3wdvr7MxvYk4Gjp
+dPkrAqdKCXHkc+cr9CceupLqqPShhTmd0njU2kdKkYsLccd1chdfTBS7UXF9Ydkb
+JM68cr+6yiYfx/cbCPLXx+xsDk2idA==
+=2+ej
+-----END PGP SIGNATURE-----
+
+--34swrrw2zoqfjyya--
 
