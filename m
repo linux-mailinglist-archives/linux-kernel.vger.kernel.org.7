@@ -1,213 +1,143 @@
-Return-Path: <linux-kernel+bounces-877537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA734C1E615
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:51:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB70C1E630
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:59:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8F0402FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:51:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E232D4E5439
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EC5324B3E;
-	Thu, 30 Oct 2025 04:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ED332B99A;
+	Thu, 30 Oct 2025 04:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VfMQHKRm"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013057.outbound.protection.outlook.com [40.107.201.57])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kGZ0FWUV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700242F39B1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761799879; cv=fail; b=L2IOdfriNw4/1srvonTuQ4kM/+DBrlQ9HrMsseRVK7dsExYNO0JFXBw2GtvIlCV4t23BxLfm6nIv9dIs+3Va0FgQXrEAJy3FUp1TLtcp+EagY131SNMLMn60YP2IZLKxWLKIawDMsTiPWJJKKIEpi/XM9ZiTFwWGT+NcL12QLxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761799879; c=relaxed/simple;
-	bh=YgaqHbryVch79AuZZmTqJefnkePBw/gOMsKLOI+qcps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CzmMKqEJE6Xnv3XxBiB4AUtXJZa64f09aLbRfGrpgekIHbttQijAHXu8rFZACLnE/bncSG47UMxKKXG7cAbaJAbLC9gcm8PZlBWBjlJKsokQBSY9lJujPrOts86m/0jhpp/WuRJOUqjjP0LNqBaQSOBOAAM2zJYFVmsb5TLkWVA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VfMQHKRm; arc=fail smtp.client-ip=40.107.201.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K2SpUFvxOTRaxuTXg7uhwH5agskQBKh26EJGSPpD5nar4O7qnaBrfJHFYRMRoi1L4Xda8oU7gJnxGVxP6MGVekoBkncW3lm1NDRN1CsHHpHWIL8tUvTTmHE2Nz/uzHJjo5Mr0caTA86KIhVwpG5N2EgHcSVs6FR68AKhhaqRGBN3nKa6OJh+9l034pcc6y7ut4y0NRYbyxuq11iWvKN5UUOtWtEVdxoAGilMKB3Wr77zSqQTvAikKhPI6B3tJaAiKE6iXEKKUDy2buVa7JGWs4wlM5rSfL+mLk/9jb9sM/7/ZZeYPOihTOMxwzrc30RkdQzATy10Ds+lo64xvWo+ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bSalK4J4lizrNO2Rzk0VC7T8RyK27EhF9iwWM5uT0Ns=;
- b=FAeu95ZaQrOuHIAOY/WVP4qzBC93o6kE7WW/YdIPs+l31C1sqFcjlgFukSIb97lewz0quaDMf5Qf6eDMkOWDkpSiReuzzBLCpZu2fyhAQjsEcLzptXD7/gewdPxWS4fsl9uaAqdAirz2sqWY8rq+QbPQSexnVF6nKzG2SjmenfN2c/Rf5ecLgRMR58S1BA0HTXkk5FuVFkejZ3Q6mtrp5zxGf4pG0zjRSVBeb/tysjEIf0ySWPo0JUz/0520iD+mLAIIdum+ZbbhlVESlqfNdLscVva6F1BZzw7xYJeOTs8tn/X9kqnHSRmiDgPLZSShIF2p1hIJPMvRvhreATRTVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bSalK4J4lizrNO2Rzk0VC7T8RyK27EhF9iwWM5uT0Ns=;
- b=VfMQHKRm0NdOAcTtCuTL2KywRNvpYmrwl4rAnNIPfYCJgfHRoRXVR02D0MJ+awkt7ZWd0S5s+OcVozbz9H86FuMLtYHTN9JsX5F6GAKX9O/BpUzrF7/JqVMTQ0M6mv0MxwKNs0M1Awno+bKJxXwG1CrW0uEGsNUd3gKOpym5QQM=
-Received: from DS7PR06CA0007.namprd06.prod.outlook.com (2603:10b6:8:2a::25) by
- CYYPR12MB8961.namprd12.prod.outlook.com (2603:10b6:930:bf::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.13; Thu, 30 Oct 2025 04:51:14 +0000
-Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
- (2603:10b6:8:2a:cafe::a0) by DS7PR06CA0007.outlook.office365.com
- (2603:10b6:8:2a::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
- 30 Oct 2025 04:51:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 04:51:13 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 29 Oct
- 2025 21:51:13 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 29 Oct
- 2025 23:51:13 -0500
-Received: from [10.136.32.170] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 29 Oct 2025 21:51:07 -0700
-Message-ID: <84c4aa9d-9094-4b12-8912-63a338a43351@amd.com>
-Date: Thu, 30 Oct 2025 10:21:00 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652F2329C53;
+	Thu, 30 Oct 2025 04:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761800376; cv=none; b=R3tB8VSSvu0khMIS0SOzvC9mQ6Llt/yzkLbsLFD04ScBoyedSU10n8WrXfrc7dS294CavnEtl3ITsnHzr9gcfXC5QNt4TYic1QlKLeDyzO6Cl0GVnHMRmM+J1aLXQMcnhpWgZgPJs1BKsGw6rzd123SuyV8CSwAQEFbW3D54gIs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761800376; c=relaxed/simple;
+	bh=XrSWWjKUo7m9rj5cc4tuAtsaIQt7tpo1lwMllKwYVkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TG+SqjiNzjaFH7vDxPV8aZ7qu4Wki9x7AgVXiNNcB6nNUL1PxgD8n9Llzso05jtVuDBS6eizBbsVzlGh1A/PZhtB2iAnEZpyt+HpbUzo8jZ+BBBpSL77Ty6fvS8Vi+N6862Ctpa9+HMKUzkT95bCoXRX3oWP/GanAYDxa7w5LTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kGZ0FWUV; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761800375; x=1793336375;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XrSWWjKUo7m9rj5cc4tuAtsaIQt7tpo1lwMllKwYVkE=;
+  b=kGZ0FWUVqGlr/a7mkdO6JEW2FQQPnJVlOJENyU1f1Mu0691Cdu8gNhxi
+   jN0lDgxWVYQ/4HVymEQjQSF46bLWdXtppRvIbNM4DlwtvWzRcgTpFE1pU
+   yJHJA54WHyXHFsb6SisWgOKLCsp6ehJp8l852QEm15/kqnFC8P4GYU7Xc
+   ScGnbieJMXcgnCuwswP8QkbYI+wpLHr7GaJuBCthZYzVLk6ugtx6TQdLh
+   p2QQNSTWQESgPjaOVtesKg4ARfWmZ+5lZ3YDqqtmTCWGaIRR+2I8krMa8
+   hLenuesmqtUcFiLtk+K2x1SL/OMw6S74fgIOf/KUl+RMMRY0jWMOHQz6r
+   A==;
+X-CSE-ConnectionGUID: LST+datSTeOwkFCegHvyMQ==
+X-CSE-MsgGUID: Mg9ugy55SaqpG6cxHSRUog==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64030004"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="64030004"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 21:59:34 -0700
+X-CSE-ConnectionGUID: bQZdnZDLReSi76ExYndiCg==
+X-CSE-MsgGUID: SQ5nwnfASfK/7dgA9AJjIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="223075256"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 29 Oct 2025 21:59:29 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEKkx-000LTs-0r;
+	Thu, 30 Oct 2025 04:59:27 +0000
+Date: Thu, 30 Oct 2025 12:58:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrei Botila <andrei.botila@oss.nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Sabrina Dubroca <sd@queasysnail.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Andrei Botila <andrei.botila@oss.nxp.com>
+Subject: Re: [PATCH net-next] net: phy: nxp-c45-tja11xx: config_init restore
+ macsec config
+Message-ID: <202510301246.x4ua5CJ6-lkp@intel.com>
+References: <20251029104258.1499069-1-andrei.botila@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 2/9] sched: Fix modifying donor->blocked on without
- proper locking
-To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
-CC: Joel Fernandes <joelagnelf@nvidia.com>, Qais Yousef <qyousef@layalina.io>,
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, "Juri
- Lelli" <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider
-	<vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
-	<bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman
-	<mgorman@suse.de>, Will Deacon <will@kernel.org>, Waiman Long
-	<longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney"
-	<paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan
-	<xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "Daniel
- Lezcano" <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	<kernel-team@android.com>
-References: <20251030001857.681432-1-jstultz@google.com>
- <20251030001857.681432-3-jstultz@google.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20251030001857.681432-3-jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB04.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|CYYPR12MB8961:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a289ff8-5df6-45ed-1924-08de176ff419
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M3hkS1FNbDRZMjJiaTBsRW5pUFNUY1k1R09iY2NCR21wakFRSlQwM3FwZHNK?=
- =?utf-8?B?Z2htY09uOUg0RVMra2hoUE5CZFF6MUZLNmtUVHJyd0hjRmkvTjRpbkpQWHow?=
- =?utf-8?B?TzEzSHNnMlpseEt6OFJKKzIvQjRUT0RvUkNIL1hMMWtPWWxPVmNYbkxJbVd5?=
- =?utf-8?B?UWV0YWxYOG5tdkRKR1I0VHZJTWpWL1BjM1Y5RExDSWpTMzk0N3NsQzhJVmEr?=
- =?utf-8?B?QkhnSjMvOWJUYi9KQlpYVG9nbmtIeG15RmdCenVzRVZTZ242eEtuT2dCUTFi?=
- =?utf-8?B?T0VzRHJDVm5pR21mcjd0WEZPR1RhemFqbmlMdXBpR214eXptdVpnSDdKeEY5?=
- =?utf-8?B?dzFmYXAvRnFJYldxcVFaM0I0VlJnOENvMzU3ejBhT2MzL0d2SnF6Z2F4cnVK?=
- =?utf-8?B?dkt0L2haV3hTUTJZcXVCVytBM0lacWN6bnpiV1k3a1FmeGNqSkhsdGgwaDlO?=
- =?utf-8?B?NVRlZlJZZnNVRnpYSFBuQVo2bCthTk1wK21CYjFnRnQwTTJTSUF5MUxCQnl4?=
- =?utf-8?B?Y3luOHJmeWIvWGxyc0J0WGlidWIreWlzSVZ3Yms5Wmp3Znk3dkF1MnB4aG9y?=
- =?utf-8?B?M1N2c3QzUkJtclZNaDJHT2F0U05oR1FEbkFNdFl3b3UxZlE0U3AvbjF4MExr?=
- =?utf-8?B?aGNydDQ2V1V4dlNGd2hpOXBhbHpJejFkWkd0bGc2S1RVRlUzQzZ4U0ZlSnJn?=
- =?utf-8?B?TVRNc1AvNU9kcDZnd21TdUQ3MzZJUkFkVjloVFd3dmJxKzRrMVY0RXJRRE1P?=
- =?utf-8?B?SzhwUWxPaElQWkhrRS9xUnQ4VkU2OHdaQWg4TnlmdUIzay9tTHhESzNWTTNa?=
- =?utf-8?B?L2piV3pQUU1JeDQvWC9aMlFjMDc1dWw1WFZXVm0vbTltOFRhUm9ZNEVjUGsx?=
- =?utf-8?B?MVNRQmtIaFlJVEFGMkxpajVObDcvdGlHRVZqT2lNenZlR2ZoUDR0VVdyTTJr?=
- =?utf-8?B?VEhhTGYwM2ltYW9QNnQ4NnpaM1I3bXdvM2RMUmJSUVl2ZjFnSU9lQ1EzSExx?=
- =?utf-8?B?ZHpyQUQwUXhTMUh4QWFoTTNBWURUaW1yMEUrdkhzVk1DZWVwVk5TN1ZqNCto?=
- =?utf-8?B?N0EwL29IM0JWb1lCcFlLdVNpbUNNZWltdGNFUW1ZV3U2K0t6THpCQlRjd1JN?=
- =?utf-8?B?ZU1Ub2RPTXZMaXhjYzdsOTdQb0tJSVEycnlpbmFLeC9LVElMKzR1S2FwSEkx?=
- =?utf-8?B?dEJiN2hUcTZlOEU2UkVLRGRQYU5CbFZXaDVQVFp4MGpjY2I0d1lyN1YzWUJx?=
- =?utf-8?B?MGQ0RnhtNXhOZ1ZyRGxETWRZQnZwdUtTQVljUkdnU3pLd0FuTzZFOVFoTks4?=
- =?utf-8?B?OGwxdEdJaDQvV1hob3lTZE42YzlTWFA4TldSdmRlcXIvMXpxZHU0YWpSV1Br?=
- =?utf-8?B?MEpZQzFGYUQwLzIxVjlCVjdpZi9lUitWakI0UTJqSnVlOHJuQW1BR0dMdVVu?=
- =?utf-8?B?RE9LNVJQR04zaUI2R2lIcVJnNUhBaVNpRDBXYjhOVXFDbmZjdjRrWjduMXhL?=
- =?utf-8?B?NnJRcWoxeWR5NHZoNEZVRklIeDZaOXpPQU9ZSzlKUXQ0NG1rYTY4ckw5dlBn?=
- =?utf-8?B?azcxcy92MERubmZNenNMcS80SVFjLzFBTFZSNlZqOVgwT054R0xkWFdyYVcy?=
- =?utf-8?B?MnVpUWJXVmJVOUVHa09KZ2RtalRUYkQveHNZYjF2L0ZPUnpnMW1ySGV5alht?=
- =?utf-8?B?eHRQMk11TWs0S0pxaHJHK3hRaSs1cDhOQXd1MFBsRjBraDRyeCtpdGsrTFlC?=
- =?utf-8?B?TWRlNFgwcHVXNVZXZndIZ1RmRzJxQWVRcXVLSmE5eGdnb2VMcDAzWlVNTUJG?=
- =?utf-8?B?WC9yRHR5QjZuMHJlRjYyNlMzNUQxcVZYY3MrWVpITlAzWXVlOU13aC9kUW1m?=
- =?utf-8?B?NExWR2EwT3Qzd1h0VkE1Uy8raUlld2o5YkFTdzlBbDVVeVg0b3NoRFhKbjE4?=
- =?utf-8?B?Q2x6T1A2S2U1SFpFRjZCZ0k2WXYxWVBBNUFjNUJ6c0pQRkdabmgrbjdsVHNs?=
- =?utf-8?B?Tk9OdFltK2V5Q0hzd1IrUU1BazRCMHJwY1hQTUVOR0Z2SUdkUG5oTjFqdWxk?=
- =?utf-8?B?K29VOWU3a1BaL1ZZd3JyTFRaNHY2ZlpDSmcyaytoQmRHckZpNFR3ODBYaGM0?=
- =?utf-8?Q?sIAs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 04:51:13.6808
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a289ff8-5df6-45ed-1924-08de176ff419
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8961
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029104258.1499069-1-andrei.botila@oss.nxp.com>
 
-Hello John,
+Hi Andrei,
 
-On 10/30/2025 5:48 AM, John Stultz wrote:
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 517b26c515bc5..0533a14ce5935 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -6591,7 +6591,7 @@ static struct task_struct *proxy_deactivate(struct rq *rq, struct task_struct *d
->  		 * as unblocked, as we aren't doing proxy-migrations
->  		 * yet (more logic will be needed then).
->  		 */
-> -		donor->blocked_on = NULL;
-> +		clear_task_blocked_on(donor, NULL);
+kernel test robot noticed the following build warnings:
 
-nit. You can probably switch this to use __clear_task_blocked_on() in
-the previous patch and then to the clear_task_blocked_on() variant here.
-It makes it more clear that proxy_deactivate() is now out of the
-"donor->blocked_lock" critical section.
+[auto build test WARNING on net-next/main]
 
-Either way, no strong feelings.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Botila/net-phy-nxp-c45-tja11xx-config_init-restore-macsec-config/20251029-185313
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20251029104258.1499069-1-andrei.botila%40oss.nxp.com
+patch subject: [PATCH net-next] net: phy: nxp-c45-tja11xx: config_init restore macsec config
+config: x86_64-randconfig-076-20251030 (https://download.01.org/0day-ci/archive/20251030/202510301246.x4ua5CJ6-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510301246.x4ua5CJ6-lkp@intel.com/reproduce)
 
->  	}
->  	return NULL;
->  }
-> @@ -6619,6 +6619,7 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
->  	int this_cpu = cpu_of(rq);
->  	struct task_struct *p;
->  	struct mutex *mutex;
-> +	enum { FOUND, DEACTIVATE_DONOR } action = FOUND;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510301246.x4ua5CJ6-lkp@intel.com/
 
-nit. If you move that declaration to the top, you can preserve the nice
-reverse xmas arrangement ;)
+All warnings (new ones prefixed by >>):
 
-Apart from those couple of nits, feel free to include:
+   In file included from drivers/net/phy/nxp-c45-tja11xx.c:20:
+>> drivers/net/phy/nxp-c45-tja11xx.h:42:6: warning: no previous prototype for function 'nxp_c45_macsec_link_change_notify' [-Wmissing-prototypes]
+      42 | void nxp_c45_macsec_link_change_notify(struct phy_device *phydev)
+         |      ^
+   drivers/net/phy/nxp-c45-tja11xx.h:42:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      42 | void nxp_c45_macsec_link_change_notify(struct phy_device *phydev)
+         | ^
+         | static 
+   1 warning generated.
 
-Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
+vim +/nxp_c45_macsec_link_change_notify +42 drivers/net/phy/nxp-c45-tja11xx.h
+
+    33	
+    34	#if IS_ENABLED(CONFIG_MACSEC)
+    35	void nxp_c45_macsec_link_change_notify(struct phy_device *phydev);
+    36	int nxp_c45_macsec_config_init(struct phy_device *phydev);
+    37	int nxp_c45_macsec_probe(struct phy_device *phydev);
+    38	void nxp_c45_macsec_remove(struct phy_device *phydev);
+    39	void nxp_c45_handle_macsec_interrupt(struct phy_device *phydev,
+    40					     irqreturn_t *ret);
+    41	#else
+  > 42	void nxp_c45_macsec_link_change_notify(struct phy_device *phydev)
+    43	{
+    44	}
+    45	
 
 -- 
-Thanks and Regards,
-Prateek
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
