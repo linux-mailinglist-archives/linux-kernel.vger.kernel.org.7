@@ -1,312 +1,185 @@
-Return-Path: <linux-kernel+bounces-877534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72AFC1E5FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:40:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511D7C1E600
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73EA24034A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1788D188D502
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9692311976;
-	Thu, 30 Oct 2025 04:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722A030CDA2;
+	Thu, 30 Oct 2025 04:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bikLm5pD"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R2IiS5gf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DD0309F12
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C045622A4F8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761799235; cv=none; b=U81NSH2f+6i3wZmXY1pWW9aRnoiAaUO+Tgmzhb5H4wjzOuBxlz9cY8FIfKiaOqok4/TPuauOSPrRQHuNVzAecdXtzd98+2+o/WyafM4sINv84D68otrqrQvGyoWZ776imhANTwDEQB9kA+d2IrFyPcFVAWi/1stz+np4sUwit0c=
+	t=1761799381; cv=none; b=arqg/Ezub+aSBjpiLY/MSdKrUgW0am6m/SdastSueGm5joB+bFPle8Ippbu0tDp5CjCdN0K/13U0f853rSmgVRLN0pXbhVG0/bGVC1EYSzk3gvBIDRwFOOABpfJnt8Xc3qIDJIVxGgjtGhzNvqlF1Y5sgnsT/tR2qhqGDhSa8yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761799235; c=relaxed/simple;
-	bh=y/Np7fA5qgpmYmsQXNaY/VIJLvPs0XEv4eWAJTcrQ+4=;
+	s=arc-20240116; t=1761799381; c=relaxed/simple;
+	bh=MM/27vDFOENHfbbDXz2+qgipNjDt7Jas94SoYZixPRU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pYzWcHPSaahN0YWkpTCzlc9KIgFQGVy1k7MTRyXrMtizIiz5x33swPgrPrJBO2JwcstDMSX3XD6RSvifBRvV28v+twcX/j6Lr+1IbktVhB4VZqk15N+j1mg9jEUEynzep4rjod4F3er7GkmsdFk1Kr7W2qvbCUH5oAO8EHJj85I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bikLm5pD; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ea12242d2eso133961cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761799231; x=1762404031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XQ/blAUtd3RJvFkaQNVmmQwc7XQHf3yHIB6Jvobdagw=;
-        b=bikLm5pDK2Ro1WCJJRxxCd5s61D6L7+z0m8SzBwEntjMuDjjaOCL0vI4ljLlAxU5O2
-         drpmE78HNpCYMi1J5cSgwaR2c6xLZNsT1wDr4NOnfEHq2ABnhNjESSwsIZbBXeuNBQy1
-         NU41iO5JPD/mE1+bT3cZcCaiMuKNu86ywyDix6fAESEhODq142jRas4POI86D2qdOR/J
-         q49on8Hugrkfpy98vDZbQVeMbKnioo7jtkYmL4kknsHLH/JLne7vJMSdE4lohSZtJWm4
-         Ai7el0c2qIyJc/RgMMweJSYNItjqDtCZik51J1RqX1QkHw78NW6Y9j4/QCR7G2j9lwlf
-         0nFA==
+	 To:Cc:Content-Type; b=UEpWPwl/mT+LI4GK4UTAdNweJLa6SlQrO1Z4RfsupJwebrH1V96c/KErhHXKzovql0WwJqihEIbH7/PwdIHxJzDnwsqFWGxJJhMxc22DJfs0mMCf6N09NMuwiUNVd56CtQ8IiwWt6LxLiR5mZCvWi6p/xKlLWOs9SXvVLSB95mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R2IiS5gf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761799377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T/YCYJ0gKE2kVZG+zLywOGB+upmVtVXPpgC1uB4xQIk=;
+	b=R2IiS5gf3jk+4t9FVaatRPOH7QmgzUyksdQDg1mRcwOVunyN6R50bkHgohR1T/31G9Fc59
+	47WoZiWkuPPZFLm2f7pGloLUqD7V0GE+K7CNPx6cIGJhDoSKLozga/AAV4stmXBH4xX7lb
+	KDVukE2MWljTRCKCCoOsZwcebTCdSO4=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-182-MSWXv0kYNgWQMBI5VVaVzA-1; Thu, 30 Oct 2025 00:42:55 -0400
+X-MC-Unique: MSWXv0kYNgWQMBI5VVaVzA-1
+X-Mimecast-MFC-AGG-ID: MSWXv0kYNgWQMBI5VVaVzA_1761799375
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430e67e2427so8446465ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:42:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761799231; x=1762404031;
+        d=1e100.net; s=20230601; t=1761799374; x=1762404174;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XQ/blAUtd3RJvFkaQNVmmQwc7XQHf3yHIB6Jvobdagw=;
-        b=BwdK01CI94lZQqXL4tIEDt5VbggAyjAGmkovtwoAfy6+facLTYrkFglJgF50jshlKl
-         mkGCZppwnqZotPfcWS2YPK7XHPKp9yENN5P3Guluxjz1cwRI84qodsv3+4KZoD2zlYlt
-         kllEAT+1ojr6zTP8t/BcZMlEq/NePwyWqL5cf+Tc3DUvth2vqqebFpj3eEb/WBNVs9qh
-         RW3/7P9r3VfFyZYx5kx2kdQqDxTEMc+Xr3og9H5i3itUDlafF6bsXvbvn1MLZ+smrnkZ
-         fQu8K/6k267ebM1aqYqJvs8Ip0mhlDde1rLdIGkKoPcUOHmBDMeQVf59Xx/PNk6MtxE/
-         PQtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNATYDNR9JfDbH2EjywIKY6s34zOS9aQ9jhgB/AsJAS3DgF/N9xdwcBPCzN/81FVAiIR6oQvw5aAiUOWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQxGchWzie/RjBuDGmjAntfxi+D47Fq0tLEmN8EFHV5ZpGBwQ8
-	F+g0l49D+eIae112VLtmia6vG9ZG2bn6ehojNctLaIV3tegtFAeOAE1yWog8W5EiF6/i0jKSAzB
-	rbth9eHdVG+tqrKht9MBFi326gxME6fz7eLijN5cL
-X-Gm-Gg: ASbGnctfRlhi+ug8AwobPl3/L9rIAIYW+TQAtFKHXRgsBOCughq+QWWEoCxrgvreiQH
-	Z6QhZmHQiJgQqsF2JPaLfIjsl2DpvcH01JJJlHAatHvElfddl0g8JUjYj25LaOPhuLJ1psf0Xla
-	NPq2OvDg4LELfgw8TxlQhBd4qJ9lWzKQGQmQXDdXGkQFVJN6xHEGzHMXri/KUGZ6upzrb45WnHj
-	2bVmt4WFPPwUVfeGUOfUKaUMeCE2z3cLTjCHYocd/PhN5Hl3J4Y8aDiWo6gnuqfEU+ZLg==
-X-Google-Smtp-Source: AGHT+IHUTVIoMGgym7Rl26g/BilUAT4CgTBJK8bytma8Yytb4fFlVaJbZIP7eL03YRO77BOZ2/iZU2Eddn/9UG3dHtw=
-X-Received: by 2002:a05:622a:1790:b0:4b7:9a9e:833f with SMTP id
- d75a77b69052e-4ed240d674amr2436531cf.7.1761799230462; Wed, 29 Oct 2025
- 21:40:30 -0700 (PDT)
+        bh=T/YCYJ0gKE2kVZG+zLywOGB+upmVtVXPpgC1uB4xQIk=;
+        b=PBoKhtCk+QxUmzzoilN5RF/elvn4AY3yLI1qwsjiAatD+8i4FP56F2AKMoYWZCXXUg
+         bIQqyO9TG5np0ID3kxJV3rlkaaD65KMrBTtx9lSz8YlBtgYaIp/kFDV9qgERQ0XJcHkr
+         ZwVRs0AFoi+mSg7JmcFxY7b7wFdf7qPK3siWm0QOqjtECEPlg8BguUVkYGENpGFms1JV
+         n/f4iDhxDo6LigPE7R8VGHxvrhvx8jt36x5q+6G9iXYGi/Hbyw7gJBhTJ7F0RJniJGb3
+         9I6n4fEFpNiATbqwHET83fHLruh75I/HPYrsc/pPaTfwqd982xXkyvtleJNBxzMOFXtQ
+         pgoA==
+X-Gm-Message-State: AOJu0YwCEz6CRownMxhijpWUzy+ffO8KPNubfYCZLUmyAF+vvH31O50L
+	4u/SnJVE6RL/5Gg2Bbm6LtnvvslgEni1TnMs3JuE8qJKUuqoAlYXo1fUH/0LeUl7DKBK8+6oXKV
+	56vcGVuRf0hxur/yzOp1QZqW9wj8vJ5W2D5quYtfx+Twn+1O9KN9a/8kS5Uwe8xvknqX1nATB+I
+	ohRTgJCT4Ywz/9YIp6mJqxj7I1q2G/iwctIISI0K+T
+X-Gm-Gg: ASbGnctYsPDlIoHRIm6DhzzdLY8ox8eVanawyo14Q5jqq3q8AoemldLSUGdtPKxWtvA
+	DjtS1923C2oNWB2qWBiRjyj+J6IqjNHpfHZBaKPi+e+G4kCKua0e2ykG8oI+nQUctSEwwLM6AVO
+	zdH6bF8UXfLZQb7WsamQHEqNrf5jtLP+WKQCH5ntMbvZ1DYr5OcydWeRZoX2LoULzMTgEBRdX0w
+	z10qnYOMuu9dTXq
+X-Received: by 2002:a05:6e02:4702:b0:433:517:12d1 with SMTP id e9e14a558f8ab-4330517154bmr5696735ab.20.1761799374510;
+        Wed, 29 Oct 2025 21:42:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHt9jvD8/UAD4YNIQ8lvjCok/GXMTyKA3mEFewCXTrRjEo+XhUWMv41Yv0j4yl3O+ilY/8iIHy4AfBtMKIYF60=
+X-Received: by 2002:a05:6e02:4702:b0:433:517:12d1 with SMTP id
+ e9e14a558f8ab-4330517154bmr5696645ab.20.1761799374152; Wed, 29 Oct 2025
+ 21:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com> <9e5ef2bedbff6498d7e5122421f0ea5ff02236b7.1761756437.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <9e5ef2bedbff6498d7e5122421f0ea5ff02236b7.1761756437.git.lorenzo.stoakes@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 29 Oct 2025 21:40:19 -0700
-X-Gm-Features: AWmQ_bk_ynX9lneWpHBfJJexvgQjPhSl6AaFwMQbkIx85JwpdO8ydosQokMaIkg
-Message-ID: <CAJuCfpGFAv9DizXOzCn1Qi5=NDyHh6XyxpmsQr0K45LS6x4igg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] selftests/mm/guard-regions: add smaps visibility test
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Andrei Vagin <avagin@gmail.com>
+References: <20251029191414.410442-1-desnesn@redhat.com> <20251029191414.410442-2-desnesn@redhat.com>
+ <2ecf4eac-8a8b-4aef-a307-5217726ea3d4@rowland.harvard.edu> <CACaw+ez+bUOx_J4uywLKd8cxU2yzE4napZ6_fpVbk1VqNhdrxg@mail.gmail.com>
+In-Reply-To: <CACaw+ez+bUOx_J4uywLKd8cxU2yzE4napZ6_fpVbk1VqNhdrxg@mail.gmail.com>
+From: Desnes Nunes <desnesn@redhat.com>
+Date: Thu, 30 Oct 2025 01:42:43 -0300
+X-Gm-Features: AWmQ_bkkDA92_gNFS16WGMU6T-0gOF17VIutMjEeo_EgJSLjGrzLyts6m5W-l-0
+Message-ID: <CACaw+exbuvEom3i_KHqhgEwvoMoDarKKR8eqG1GH=_TGkxNpGA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] usb: storage: Fix memory leak in USB bulk transport
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	gregkh@linuxfoundation.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 9:51=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Assert that we observe guard regions appearing in /proc/$pid/smaps as
-> expected, and when split/merge is performed too (with expected sticky
-> behaviour).
->
-> Also add handling for file systems which don't sanely handle mmap() VMA
-> merging so we don't incorrectly encounter a test failure in this situatio=
-n.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hello Alan,
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+On Wed, Oct 29, 2025 at 9:36=E2=80=AFPM Desnes Nunes <desnesn@redhat.com> w=
+rote:
+>
+> Hello Alan,
+>
+> On Wed, Oct 29, 2025 at 6:49=E2=80=AFPM Alan Stern <stern@rowland.harvard=
+.edu> wrote:
+> >
+> > On Wed, Oct 29, 2025 at 04:14:13PM -0300, Desnes Nunes wrote:
+> > > A kernel memory leak was identified by the 'ioctl_sg01' test from Lin=
+ux
+> > > Test Project (LTP). The following bytes were maily observed: 0x534253=
+55.
+> > >
+> > > When USB storage devices incorrectly skip the data phase with status =
+data,
+> > > the code extracts/validates the CSW from the sg buffer, but fails to =
+clear
+> > > it afterwards. This leaves status protocol data in srb's transfer buf=
+fer,
+> > > such as the US_BULK_CS_SIGN 'USBS' signature observed here. Thus, thi=
+s
+> > > leads to USB protocols leaks to user space through SCSI generic (/dev=
+/sg*)
+> > > interfaces, such as the one seen here when the LTP test requested 512=
+ KiB.
+> > >
+> > > Fix the leak by zeroing the CSW data in srb's transfer buffer immedia=
+tely
+> > > after the validation of devices that skip data phase.
+> > >
+> > > Note: Differently from CVE-2018-1000204, which fixed a big leak by ze=
+ro-
+> > > ing pages at allocation time, this leak occurs after allocation, when=
+ USB
+> > > protocol data is written to already-allocated sg pages.
+> > >
+> > > Fixes: a45b599ad808 ("scsi: sg: allocate with __GFP_ZERO in sg_build_=
+indirect()")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+> > > ---
+> > >  drivers/usb/storage/transport.c | 10 ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > >
+> > > diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/tr=
+ansport.c
+> > > index 1aa1bd26c81f..8e9f6459e197 100644
+> > > --- a/drivers/usb/storage/transport.c
+> > > +++ b/drivers/usb/storage/transport.c
+> > > @@ -1200,7 +1200,17 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *=
+srb, struct us_data *us)
+> > >                                               US_BULK_CS_WRAP_LEN &&
+> > >                                       bcs->Signature =3D=3D
+> > >                                               cpu_to_le32(US_BULK_CS_=
+SIGN)) {
+> > > +                             unsigned char buf[US_BULK_CS_WRAP_LEN];
+> >
+> > You don't have to define another buffer here.  bcs is still available
+> > and it is exactly the right size.
+> >
+> > Alan Stern
+>
+> Sure - will send a v2 using bcs instead of the new buffer.
 
-> ---
->  tools/testing/selftests/mm/guard-regions.c | 120 +++++++++++++++++++++
->  tools/testing/selftests/mm/vm_util.c       |   5 +
->  tools/testing/selftests/mm/vm_util.h       |   1 +
->  3 files changed, 126 insertions(+)
->
-> diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/s=
-elftests/mm/guard-regions.c
-> index 8dd81c0a4a5a..a9be11e03a6a 100644
-> --- a/tools/testing/selftests/mm/guard-regions.c
-> +++ b/tools/testing/selftests/mm/guard-regions.c
-> @@ -94,6 +94,7 @@ static void *mmap_(FIXTURE_DATA(guard_regions) * self,
->         case ANON_BACKED:
->                 flags |=3D MAP_PRIVATE | MAP_ANON;
->                 fd =3D -1;
-> +               offset =3D 0;
->                 break;
->         case SHMEM_BACKED:
->         case LOCAL_FILE_BACKED:
-> @@ -260,6 +261,54 @@ static bool is_buf_eq(char *buf, size_t size, char c=
-hr)
->         return true;
->  }
->
-> +/*
-> + * Some file systems have issues with merging due to changing merge-sens=
-itive
-> + * parameters in the .mmap callback, and prior to .mmap_prepare being
-> + * implemented everywhere this will now result in an unexpected failure =
-to
-> + * merge (e.g. - overlayfs).
-> + *
-> + * Perform a simple test to see if the local file system suffers from th=
-is, if
-> + * it does then we can skip test logic that assumes local file system me=
-rging is
-> + * sane.
-> + */
-> +static bool local_fs_has_sane_mmap(FIXTURE_DATA(guard_regions) * self,
-> +                                  const FIXTURE_VARIANT(guard_regions) *=
- variant)
-> +{
-> +       const unsigned long page_size =3D self->page_size;
-> +       char *ptr, *ptr2;
-> +       struct procmap_fd procmap;
-> +
-> +       if (variant->backing !=3D LOCAL_FILE_BACKED)
-> +               return true;
-> +
-> +       /* Map 10 pages. */
-> +       ptr =3D mmap_(self, variant, NULL, 10 * page_size, PROT_READ | PR=
-OT_WRITE, 0, 0);
-> +       if (ptr =3D=3D MAP_FAILED)
-> +               return false;
-> +       /* Unmap the middle. */
-> +       munmap(&ptr[5 * page_size], page_size);
-> +
-> +       /* Map again. */
-> +       ptr2 =3D mmap_(self, variant, &ptr[5 * page_size], page_size, PRO=
-T_READ | PROT_WRITE,
-> +                    MAP_FIXED, 5 * page_size);
-> +
-> +       if (ptr2 =3D=3D MAP_FAILED)
-> +               return false;
-> +
-> +       /* Now make sure they all merged. */
-> +       if (open_self_procmap(&procmap) !=3D 0)
-> +               return false;
-> +       if (!find_vma_procmap(&procmap, ptr))
-> +               return false;
-> +       if (procmap.query.vma_start !=3D (unsigned long)ptr)
-> +               return false;
-> +       if (procmap.query.vma_end !=3D (unsigned long)ptr + 10 * page_siz=
-e)
-> +               return false;
-> +       close_procmap(&procmap);
-> +
-> +       return true;
-> +}
-> +
->  FIXTURE_SETUP(guard_regions)
->  {
->         self->page_size =3D (unsigned long)sysconf(_SC_PAGESIZE);
-> @@ -2138,4 +2187,75 @@ TEST_F(guard_regions, pagemap_scan)
->         ASSERT_EQ(munmap(ptr, 10 * page_size), 0);
->  }
->
-> +TEST_F(guard_regions, smaps)
-> +{
-> +       const unsigned long page_size =3D self->page_size;
-> +       struct procmap_fd procmap;
-> +       char *ptr, *ptr2;
-> +       int i;
-> +
-> +       /* Map a region. */
-> +       ptr =3D mmap_(self, variant, NULL, 10 * page_size, PROT_READ | PR=
-OT_WRITE, 0, 0);
-> +       ASSERT_NE(ptr, MAP_FAILED);
-> +
-> +       /* We shouldn't yet see a guard flag. */
-> +       ASSERT_FALSE(check_vmflag_guard(ptr));
-> +
-> +       /* Install a single guard region. */
-> +       ASSERT_EQ(madvise(ptr, page_size, MADV_GUARD_INSTALL), 0);
-> +
-> +       /* Now we should see a guard flag. */
-> +       ASSERT_TRUE(check_vmflag_guard(ptr));
-> +
-> +       /*
-> +        * Removing the guard region should not change things because we =
-simply
-> +        * cannot accurately track whether a given VMA has had all of its=
- guard
-> +        * regions removed.
-> +        */
-> +       ASSERT_EQ(madvise(ptr, page_size, MADV_GUARD_REMOVE), 0);
-> +       ASSERT_TRUE(check_vmflag_guard(ptr));
-> +
-> +       /* Install guard regions throughout. */
-> +       for (i =3D 0; i < 10; i++) {
-> +               ASSERT_EQ(madvise(&ptr[i * page_size], page_size, MADV_GU=
-ARD_INSTALL), 0);
-> +               /* We should always see the guard region flag. */
-> +               ASSERT_TRUE(check_vmflag_guard(ptr));
-> +       }
-> +
-> +       /* Split into two VMAs. */
-> +       ASSERT_EQ(munmap(&ptr[4 * page_size], page_size), 0);
-> +
-> +       /* Both VMAs should have the guard flag set. */
-> +       ASSERT_TRUE(check_vmflag_guard(ptr));
-> +       ASSERT_TRUE(check_vmflag_guard(&ptr[5 * page_size]));
-> +
-> +       /*
-> +        * If the local file system is unable to merge VMAs due to having
-> +        * unusual characteristics, there is no point in asserting merge
-> +        * behaviour.
-> +        */
-> +       if (!local_fs_has_sane_mmap(self, variant)) {
-> +               TH_LOG("local filesystem does not support sane merging sk=
-ipping merge test");
-> +               return;
-> +       }
-> +
-> +       /* Map a fresh VMA between the two split VMAs. */
-> +       ptr2 =3D mmap_(self, variant, &ptr[4 * page_size], page_size,
-> +                    PROT_READ | PROT_WRITE, MAP_FIXED, 4 * page_size);
-> +       ASSERT_NE(ptr2, MAP_FAILED);
-> +
-> +       /*
-> +        * Check the procmap to ensure that this VMA merged with the adja=
-cent
-> +        * two. The guard region flag is 'sticky' so should not preclude
-> +        * merging.
-> +        */
-> +       ASSERT_EQ(open_self_procmap(&procmap), 0);
-> +       ASSERT_TRUE(find_vma_procmap(&procmap, ptr));
-> +       ASSERT_EQ(procmap.query.vma_start, (unsigned long)ptr);
-> +       ASSERT_EQ(procmap.query.vma_end, (unsigned long)ptr + 10 * page_s=
-ize);
-> +       ASSERT_EQ(close_procmap(&procmap), 0);
-> +       /* And, of course, this VMA should have the guard flag set. */
-> +       ASSERT_TRUE(check_vmflag_guard(ptr));
-> +}
-> +
->  TEST_HARNESS_MAIN
-> diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftes=
-ts/mm/vm_util.c
-> index e33cda301dad..605cb58ea5c3 100644
-> --- a/tools/testing/selftests/mm/vm_util.c
-> +++ b/tools/testing/selftests/mm/vm_util.c
-> @@ -449,6 +449,11 @@ bool check_vmflag_pfnmap(void *addr)
->         return check_vmflag(addr, "pf");
->  }
->
-> +bool check_vmflag_guard(void *addr)
-> +{
-> +       return check_vmflag(addr, "gu");
-> +}
-> +
->  bool softdirty_supported(void)
->  {
->         char *addr;
-> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftes=
-ts/mm/vm_util.h
-> index 26c30fdc0241..a8abdf414d46 100644
-> --- a/tools/testing/selftests/mm/vm_util.h
-> +++ b/tools/testing/selftests/mm/vm_util.h
-> @@ -98,6 +98,7 @@ int uffd_register_with_ioctls(int uffd, void *addr, uin=
-t64_t len,
->  unsigned long get_free_hugepages(void);
->  bool check_vmflag_io(void *addr);
->  bool check_vmflag_pfnmap(void *addr);
-> +bool check_vmflag_guard(void *addr);
->  int open_procmap(pid_t pid, struct procmap_fd *procmap_out);
->  int query_procmap(struct procmap_fd *procmap);
->  bool find_vma_procmap(struct procmap_fd *procmap, void *address);
-> --
-> 2.51.0
->
+Actually, my original strategy to avoid the leak was copying a new
+zeroed buf over srb's transfer_buffer, as soon as the skipped data
+phase was identified.
+
+It is true that the cs wrapper is the right size, but bcs at this
+point contains validated CSW data, which is needed later in the code
+when handling the skipped_data_phase of the device.
+
+I think zeroing 13 bytes of bcs at this point, instead of creating a
+new buffer, would delete USB protocol information that is necessary
+later in usb_stor_Bulk_transport().
+
+Can you please elaborate on how I can zero srb's transfer buffer using
+bcs, but without zeroing bcs?
+I may be missing something.
+
+Thanks & Regards,
+
+--=20
+Desnes Nunes
+
 
