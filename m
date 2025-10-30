@@ -1,225 +1,205 @@
-Return-Path: <linux-kernel+bounces-877432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E00AC1E18B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:09:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA44C1E198
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C814040D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E6A1894FF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378372F999A;
-	Thu, 30 Oct 2025 02:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F672FD661;
+	Thu, 30 Oct 2025 02:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e/aiOE48";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DMh1lVT9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d2T51kls";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hSrP6yRB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE2A2E0405
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9959A2FB97F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761790127; cv=none; b=faC/WcHZxT9wpi0KKYuU+XFpzs8kb6nSshKaxdBqc1y2uk9lX3/RtbaZiPMu+KbRR0ybmosQ0wHe10mE7O3ztojHtDgCj0wOconr66dAbFIgyGPMExsmnprxrDn3qbDiD8kLMKyfynbIQVcH4FOIf0w4BmhIyM7tXI+Fkm6b0l8=
+	t=1761790265; cv=none; b=NEtmIJSh6xENBavbWdSqsKUe1pY6t75tFZfbErYpaGuEXbMb8JUVhy1FuUNMayxm8dt8cVnbKb7aT2KLspRq8rZ9BieBJKZdJYxTkeVjmegq5m//hPd8dumG5yGBP6a+GRqOgm18kun+BsFQl7xZlE7yH6PVCErFrw+n11dUM+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761790127; c=relaxed/simple;
-	bh=cHfHWUPdId3+SUm4bJWQGwD0CYTnsns3EJRZnEVwD6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6q0xiWkZRWAew4HKx2mAALdf3O94uIr7gIf4LFp+MqW3XBh1mr6PMp9+HXFL395DuOck1fGWLHqt1s/wE/XURkpQotRIQ3JugJDH43F0rG7/zVHl88SqximqQ9X52NNTaG17b4msuw3SOdeKtbIJQWSb4v+tzFqrj0NASClWrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e/aiOE48; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DMh1lVT9; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1761790265; c=relaxed/simple;
+	bh=shYbqVkuLNtiI53CreU8QZTbiYYqgXW7xVc9VY9PI0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=no6fZf8Lgt8Po015fZdBotIjNw95OE5L370G6cqxeIpuhtTC0Qw+N5w3ShfqUNDAwzrYSN+0ewOVh50qrJtpcZQaf+hbkPpQAWhJrimM0KsHC4NdMXnhZEL5KVZK+8n1+mxK2ZFJva2IHE4nKmian3oWGBtgxRgkWWZHxhc8USk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d2T51kls; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hSrP6yRB; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TLGteC1655983
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:08:44 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TKngOC1598492
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:11:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=O/baTxXJPCHgYea9og1wAW8N
-	5bDqCLQ1vuQ5vgT1fIE=; b=e/aiOE48Z02ig1rIP7e4M6lp3d/MqYESQvmoQSI9
-	QaJY8pHe1TiXXHq5VR0Hg3XfPI3ChmFEPOOlFQuGVGLa3ub5hYq66WQkDw3abiZt
-	PTU/BjYftESI6i8BshQQ6y8RPODxJYMWvf0ClKjSFlcxbg8+GIcOTUKjGioOOZqX
-	3M8h556CSw8R/pKBMtzN50ibyg/dQ1S0a16sst31GrI/e5IN8C4GT6SktVOShrMc
-	jOLbTqwjfwLh4yk7O5tBIEh+zynp4yXpBE0jFbuIsRNaL932f7g1KE2y1FYf0i6i
-	eoOIRdVS/WnSyxnTUdbrFJrAUVPuIIX4uM6TAedVLoZaTQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3tptrq6n-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Z3iJpVuXX3j99GeKbgFiZof6JOIHOivPLoo01x4NiCM=; b=d2T51klsW1sj5z92
+	5vDcJNzrei0myoE3xHRF9OrvueJ57LQAAOnmXz9kGQPf/3DbLFkwDmlkdBkkqut9
+	+0/WjCJYPz8n5Ve82PAwrmjqajc+aSbgfVBXLW96J1KyAMw3NJ92iSjskyz64Lbd
+	AgCclwGE6dKK/W7TqKspLtFNfUyjYROBUj3a/Ge6ELacnebRIjqT2R6MKxQ3xgGM
+	mY1Hib6h6ZjuDjRy9VXDD6grfTUNtfO9gAcFZDmf1ro2yFazMwfpfV7zFOkSX6jV
+	Wdw88J/H+95qf1OL6sXDH73xDwRRxdAz6DrfQjribFsS6fa6ZpxM0hOvj0T5lyQL
+	4JoPIw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3ta7rsd3-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:08:44 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-89ee646359cso150630585a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:08:44 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:11:02 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33bb4d11f5eso567136a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:11:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761790123; x=1762394923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/baTxXJPCHgYea9og1wAW8N5bDqCLQ1vuQ5vgT1fIE=;
-        b=DMh1lVT9q/xHBTrtxc0WjZ2OZMzuIaKx5BJ4wgY4B6FDQfn8bkfuOGmqodjGG9bd+t
-         LVyKt7/RUR23QUJHpoMXPK4c/5UkaCqrrKs/hv9bXM/va2HtW0cq+ZoO6wcKX0V/tlCY
-         R68bB9dm2R2W03Rz3GV0QlRsZsGt6fxTliFE9SKk5oHXTl6L4zkY8Ko3kyrc8a1zupsA
-         RRVPkcT3u+SCmP04qSiWBPmG5hCEhlZ59tDDAw3PElUI+qigzXoUQhyvh/Ig87GkWQrS
-         dgwETSiEYP/UACyKXeYBYfBXuSUas2gSO8vK39fVwOPD/x1wo+/DptPoI6PnRwZGCu0o
-         WW1Q==
+        d=oss.qualcomm.com; s=google; t=1761790261; x=1762395061; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3iJpVuXX3j99GeKbgFiZof6JOIHOivPLoo01x4NiCM=;
+        b=hSrP6yRBzkNa6kX7MtjIvb3jboRa9uJ6KlhfWHW/9sdvfhBcvCgKL5yQPcM8QKUN3T
+         hS/mLqSeoYVHhwbiSMhm2w0VjR5cHOFct1yt2hn5GLGJ/ezPfJkromjxcTxGzpmpG/WU
+         Y2CrOp9X90YYtCtWo/9EdfbFQf80xtNgss/ZQR2aZyjaDj60HFYdvwYKF4GWGatJepzy
+         BEHHMpsT8q13uRJ4miLJYMUN0wT9qjU8WUNA3TAt58TfZAy2i64zciv31vxkXlxBdT/3
+         0XadKS4WJWGFK0nK+301af2ACpz6PdTUBQBGckZPIi2gbMv6vUYLYfKSSfh1aR295tTS
+         EKog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761790123; x=1762394923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/baTxXJPCHgYea9og1wAW8N5bDqCLQ1vuQ5vgT1fIE=;
-        b=c3bcVCHaa51vWwwxwGKOxXn8FRi2ET3amJ5nMM53eChTb4tdepzBk85xWzxT5/kFwk
-         vSm94B/zK9V8pdWIO6cLCp4eRXBzZpOCF6rN1CWMUY1ya594DbP0FC3obvjlmOyH/+vM
-         mspE8jM6pEjJ+rTaY23DFTztEDHVy/YA7lAaGoCArQkhb/k2d/eWiQb5FPllb2PDq7LQ
-         zCwxjGdzGiazROpy0DfUZ1b3CrEzaGOW2krGZfjtET7ziZtZMGn01NxR9f8EzNX4imXq
-         r7HDpJx4eV7DC83/nHNZxnZS59KOOsrBFGr5Ti1h/Wb0+wm8cIvOnAe1WJgyreNr/b8v
-         8i+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEz6gjCFhXsvR3CkybjJkWpKAmnSDkxm256cKJ02m6tr2bpGDPYGQ7f5OIKyCaSyowTTH4r4wfalRbn6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw86D9FcV9EQCvMHQDMDNMEkGdV0yiooejALIm+Ig0rh5YaeYFP
-	hpYyeMeNPy+wNwSU2q5jnNrrmf/FpdFAER5+TCISdWqJR4kg9p7z7/axfQDHqOS99zSCrFzmQ9I
-	POZ3RWDH7s9FPzaf3l7dnhiLRxynKXXMHiK0Jr0zGaf/+RF+jCxvl+p0ERMSgQ3fB7nQ=
-X-Gm-Gg: ASbGncuKH9dxNGTdo2S8c6D29BPPASRPZus9LlM40QMTk38OgwsShRVpxCv0eTABSOH
-	p6DHhkEXSVOlSKnuswA/GRgXG+XkX0w/TCCJBXEdDkYxl8X7+zVpMgClSCCuxSBBC0CHMAS1VqA
-	5f4BAdpGS2pTOEMH5ViTNli/m0x5eNWZ5bfhGrkWEU1F4+ffQJEashoPf1wMfjRJQqaEWM8RDzc
-	Ei/Zk14LWJhvz24bd8i+sPKYbBZkw8yPvmOSFOu/lQbeqqnj6dzvjxVJgeaHTn2mxIX+Zk4IayG
-	g/Jshe4DtBp1EnAImTixYi9C9v2SDh7hTOS6PTI8vr6qmSz8TkSJtQIsbGRwrEvnH9MVk0oHDwg
-	tD8c8zxJiAIcSNuYt6QTRJKqHc+LoBa8hZVrnqf1IpCDhlA+RVho1WQZ8s9am
-X-Received: by 2002:a05:620a:45a3:b0:7e7:12c7:57d with SMTP id af79cd13be357-8aa2de73b12mr257837485a.44.1761790123382;
-        Wed, 29 Oct 2025 19:08:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfgmXNfYz7FjFrXiMMcOt/IAAGlLFbwsCSB3+3x8FbOF3Ov9Sbc6o7BWOw3LDDSUkHLl+H0A==
-X-Received: by 2002:a05:620a:45a3:b0:7e7:12c7:57d with SMTP id af79cd13be357-8aa2de73b12mr257833485a.44.1761790122795;
-        Wed, 29 Oct 2025 19:08:42 -0700 (PDT)
-Received: from yuanjiey.ap.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25798afesm1161546485a.37.2025.10.29.19.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 19:08:41 -0700 (PDT)
-Date: Thu, 30 Oct 2025 10:08:30 +0800
-From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 07/12] drm/panel: Set sufficient voltage for panel nt37801
-Message-ID: <aQLInjBCbeNJVanK@yuanjiey.ap.qualcomm.com>
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-2-yuanjie.yang@oss.qualcomm.com>
- <zxofh6bwee3vjjlntlfqy7yg2iu2mipjvl7s5bcm6gbh233cjq@nuicjojawd2d>
- <aPsWEhM7i+gDjXE0@yuanjiey.ap.qualcomm.com>
- <4bnvh2ydtrmejknzpsxoalxoyjpq5g5cjbrico5ezbek24r52s@u5zy6ekh6lps>
- <aQF0zzUpLeUu4lrC@yuanjiey.ap.qualcomm.com>
- <5hftxsuqz745mxxk2hjpwfxwrm73p2l3dxn2mb2uqb2c44fd2w@l5xvadj7gvvg>
+        d=1e100.net; s=20230601; t=1761790261; x=1762395061;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3iJpVuXX3j99GeKbgFiZof6JOIHOivPLoo01x4NiCM=;
+        b=oiWV2WRm14209Ec7vjtSVEmm02xWHrvdn15/bOUM2QvqVCdOME+IuU0MjIsHpH/yee
+         FTwI1zlgJSEoetCbtEwBcF5jB7zvFS0JXMtwdWZEuh/lmFyqfV377+euqxzynZHK24Mk
+         CAETBhzlGwzEndqsWDNB4mV5sKDgVzVxRgqY4rA1x/kMAypW4Y2yQmrxLfEE+epvgS02
+         7m9ZiBZtG3+JuqASlYnVdMuP/KNuk+2CsKPPjY7RT7Fjzz7XBggSBj9hwcF6wF4ZSNfe
+         daE6K/0QKQNdVSrVliQGS3uceRYgP56BC4v/3nUWMP5ttBAw1aJV71r1+uvd7+ima82K
+         AeZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSrShDBzcsG0DZeyAnwquySAeus+ee2t4W/Lijrv0zjFud7rD6fX99ljarC7+BNWixNk2u1mJa5krPRVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN4y6oJzDDLqRUZPLxpCzV0eRbxrKn72M382yAsnHEntWMyBRe
+	iV/Dm7xzHlYUN7SzGBK7PYTpilrZzKJLD0ratPedNnvnnt0ea2ayfpzU1+L0IGK/AS6BnvECVZ2
+	iAV5vZZC+uiuyqSVZ0HKWuReCzEmtiOwifONKnNJrUTaBArDXnsJ5UHXzz5eLqD89gdw=
+X-Gm-Gg: ASbGncvsLvqbnzSipQwrfKXjakO13Z8eExGasfPGEGIeLrqB67apGLlbQqQnn5GW3bn
+	vSitqq0pzy6LKNogrrkxqP4cUSK7dR/ncJmooowM37QSaxiXIdAwcfI3ks8bZSO0KK6wD17EU2T
+	VPCKFUv0qgHOD5gDsUDfo6rG+wP95XDl8am0azPSzTEK6zoiZ22ds1PtC0PqUFs27uYFBq02XP9
+	8YT36y5iO4LxOTIJNZyV+7kVrlQ3TwWQli6oQt7MteNvucapCISgg3emSg1fkN92OBzXwIUwgDg
+	aJdfc/STTWpoEIdfCEiXtfKDkfYxniy93F3OlOXAjhUwonoeSCaYlZDkjEAiiz8QsUNZpccf5hp
+	rtBgg2jkeKlpCNA2Kx6fNd8SUIzXUD3nWZDISsBUvsaVygLSHT7HygPCOjTJGJaG07vrT
+X-Received: by 2002:a17:90b:3907:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-3404c41c74bmr1567843a91.13.1761790261369;
+        Wed, 29 Oct 2025 19:11:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHj+R3WSmUGG6kffdX4nhUtyKII1fP8kB2aIG3NI3dVQuvVgPVLuOXt0D6O52gUK2tjrBHApw==
+X-Received: by 2002:a17:90b:3907:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-3404c41c74bmr1567808a91.13.1761790260667;
+        Wed, 29 Oct 2025 19:11:00 -0700 (PDT)
+Received: from [10.133.33.37] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3402a528e81sm3939736a91.4.2025.10.29.19.10.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 19:11:00 -0700 (PDT)
+Message-ID: <554b2053-db21-46fa-b5b0-3d548c1e182d@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 10:10:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5hftxsuqz745mxxk2hjpwfxwrm73p2l3dxn2mb2uqb2c44fd2w@l5xvadj7gvvg>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDAxNSBTYWx0ZWRfX94j+XqfzpyCz
- HCvtWiS6KXoVDAUemtQX4KTdryWI/4mlJ2AkSCbdUVo8m8hTiEMYmj6bi8ZBml1nCDpRGD58gDx
- h2Kh5AvpsGTQpZzR+sD3QrPzlN8JhqqTbfeAoRPlkJW2v0X6zB3zHDujbw+Uwg5jSAlNo7eOghF
- qRbf7on8KKHspirZzQ3trB59C+mW88yv9htQGZ9VYukbkE6P2rOihmLPdPuwzxV+IkbQ9X0sgw1
- iBPU9zOvj/ncXDpPLlQiT7Iz1NYUWkbxt/yqs5xiGN8QjoZF906lCZ3L+N4z0/nKrIl0E+rjDVT
- dj1Gp5J8KN7/LbIsaJwlgIwGWRiFsjSxp3rIkrTvibaVQ9+yBrcy+t8ozc2b9KeLaK7N/RCX4L7
- C36tnFABJ1vSoBzsDtVDVmmkd1EdYw==
-X-Proofpoint-GUID: VL03ff6xmFYH7ajTmrBZmraC3s7zHcZJ
-X-Authority-Analysis: v=2.4 cv=MuRfKmae c=1 sm=1 tr=0 ts=6902c8ac cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
- a=Glo02QtyTbYzxwwq8ScA:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
- a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-ORIG-GUID: VL03ff6xmFYH7ajTmrBZmraC3s7zHcZJ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom,pas: Document pas
+ for SoCCP on Kaanapali and Glymur platforms
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, trilok.soni@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>, yijie.yang@oss.qualcomm.com,
+        linux-kernel@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
+ <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
+ <176173731073.226348.14173297054891268954.robh@kernel.org>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <176173731073.226348.14173297054891268954.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=aaVsXBot c=1 sm=1 tr=0 ts=6902c936 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=voM4FWlXAAAA:8 a=EUspDBNiAAAA:8
+ a=VXIIVhnlSoNZEwAaSBwA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-ORIG-GUID: BbX-OBfXDu1RFurA3rKk-zN4FETGqjNs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDAxNSBTYWx0ZWRfX+tFwZ8LHeKgV
+ Roc7mypUcuRQ60DVaDF77O6+UmUELSwExrQpwehVXROCojsGOzyeCmRzYdVVc8EI6EgNF0Lkt7H
+ 3JB3tQWPHf7/5Zc33YYgZbkZIsAJws4TaR3Cg/dQiMT76LHztjantH4O/cH7edgMwk7Ag5pbh/3
+ 6mJT6ichxMOIGesaMrp1NQHgOUgoYtszGU4W2l98IXVoPFiOeF0cTVAFLgxBKpxCFrZK2CCHOYT
+ S2V7zy9pkS8QEW85C0RAfC1c+IUUm/6j7a8f2ynWjhCWFJA4N1O/5I4UiDzybSHbkhfy7olR/zw
+ DCbP/HkGpX+LhrCv9h+D+I+UYfCfE+bx2W3H/hNQBuDC/Ui/dWCKvGfFwAaz3guGtOv7iOdU3x7
+ PvSfQs3hsthAcbZcYW6SrkocYH8OLw==
+X-Proofpoint-GUID: BbX-OBfXDu1RFurA3rKk-zN4FETGqjNs
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510300015
+ adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 impostorscore=0
+ suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300015
 
-On Wed, Oct 29, 2025 at 02:20:13PM +0200, Dmitry Baryshkov wrote:
-> On Wed, Oct 29, 2025 at 09:58:39AM +0800, yuanjiey wrote:
-> > On Mon, Oct 27, 2025 at 02:22:04PM +0200, Dmitry Baryshkov wrote:
-> > > On Fri, Oct 24, 2025 at 02:00:50PM +0800, yuanjiey wrote:
-> > > > On Thu, Oct 23, 2025 at 03:14:38PM +0300, Dmitry Baryshkov wrote:
-> > > > > On Thu, Oct 23, 2025 at 04:06:04PM +0800, yuanjie yang wrote:
-> > > > > > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > > > > > 
-> > > > > > The NT37801 Sepc V1.0 chapter "5.7.1 Power On Sequence" states
-> > > > > > VDDI=1.65V~1.95V, so set sufficient voltage for panel nt37801.
-> > > > > > 
-> > > > > > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > > > > > Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/panel/panel-novatek-nt37801.c | 5 +++++
-> > > > > >  1 file changed, 5 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/drivers/gpu/drm/panel/panel-novatek-nt37801.c b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
-> > > > > > index d6a37d7e0cc6..7eda16e0c1f9 100644
-> > > > > > --- a/drivers/gpu/drm/panel/panel-novatek-nt37801.c
-> > > > > > +++ b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
-> > > > > > @@ -267,6 +267,11 @@ static int novatek_nt37801_probe(struct mipi_dsi_device *dsi)
-> > > > > >  	if (ret < 0)
-> > > > > >  		return ret;
-> > > > > >  
-> > > > > > +	ret = regulator_set_voltage(ctx->supplies[0].consumer,
-> > > > > > +				    1650000, 1950000);
-> > > > > 
-> > > > > This should be done in the DT. Limit the voltage per the user.
-> > > > Two reason:
-> > > > 1.
-> > > > I see https://patchwork.freedesktop.org/patch/354612/
-> > > > 
-> > > > panel panel-novatek-nt35510.c also use regulator_set_voltage set right voltage,
-> > > > so I do the same work.
-> > > 
-> > > Please look for the majority rather than the exceptions. Out of all
-> > > panel drivers only two set the voltage directly.
-> > > 
-> > > > 
-> > > > 2.     Kaanapali vddio regulator:
-> > > > 
-> > > > 		vreg_l12b_1p8: ldo12 {
-> > > > 			regulator-name = "vreg_l12b_1p8";
-> > > > 			regulator-min-microvolt = <1200000>;
-> > > > 			regulator-max-microvolt = <1800000>;
-> > > > 
-> > > > 	Voltage is from 1.2~.1.8 V , So I can not set it 1.65~1.95 V from DT(1.95V is beyond the allowed range).
-> > > > 	So I use regulator_set_voltage to set voltage, and regulator_set_voltage will choose the appropriate voltage.
-> > > 
-> > > DT has to list the voltage values that work for the devices on that
-> > > particular platform. So, ldo12 should be listing 1.64 - 1.8 V.
-> > get it. I check downstream DT,
-> >   dosnstream DT:
-> >    regulator-min-microvolt = <1800000>;
-> >    regulator-max-microvolt = <1800000>;
-> > 
-> >   I test 1.8V works, So I will add 1.8V in next patch, do you think it is ok?
+
+
+On 10/29/2025 7:28 PM, Rob Herring (Arm) wrote:
 > 
-> What does panel's datasheet say?
+> On Wed, 29 Oct 2025 01:05:41 -0700, Jingyi Wang wrote:
+>> Document the component used to boot SoCCP on Kaanapali SoC and add
+>> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
+>> the "qcom,smem-states" and "qcom,smem-state-names" properties and
+>> add conditions for the "interrupts" and "interrupt-names" properties
+>> in the pas-common.
+>>
+>> Co-developed-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+>> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 134 +++++++++++++++++++++
+>>  .../bindings/remoteproc/qcom,pas-common.yaml       |  83 +++++++++----
+>>  2 files changed, 194 insertions(+), 23 deletions(-)
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:67.46-62 Unexpected 'IPCC_MPROC_SOCCP'
+> Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:70.33-49 Unexpected 'IPCC_MPROC_SOCCP'
+> FATAL ERROR: Syntax error parsing input tree
+> make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dtb] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1547: dt_binding_check] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
-The NT37801 Sepc V1.0 chapter "5.7.1 Power On Sequence" states 
-VDDI=1.65V~1.95V.
-
-So I should follow datasheet to set DT ldo12: 1.64 - 1.8V ?
-
-if you think it is ture, I will fix it in next patch.
+Will add dependency in next version for the include files in example.
 
 Thanks,
-Yuanjie
- 
-> -- 
-> With best wishes
-> Dmitry
+Jingyi
+
 
