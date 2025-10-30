@@ -1,207 +1,163 @@
-Return-Path: <linux-kernel+bounces-877445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BC8C1E217
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:31:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1079C1E21D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:32:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC38401017
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:31:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EE614E5DCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33394329C6C;
-	Thu, 30 Oct 2025 02:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EEE329C5B;
+	Thu, 30 Oct 2025 02:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oj/IxwZx"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="rc77yqUA"
+Received: from sg-1-11.ptr.blmpb.com (sg-1-11.ptr.blmpb.com [118.26.132.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88832314B8F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897302FF171
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761791488; cv=none; b=JvPzxt46yBJL/c3nTNud0WxRm/HzGtT8aH/u9bsBN7sXFL6veA/Y56TwfFS3Vzpof2YPuq0LL/SkR1c6HhaK2hcJe9GJk8pfdcFXLAPmRs3/usvX9E/AwYkJbWyhD9LqHQmKdEV62up6+WiAQbN4PMuvCzyGzjo4MK0YyDYGW7Q=
+	t=1761791511; cv=none; b=c1DqHOZeRjJg+cJQCHdZnddn7795JxS3dS7yfwvxXKQ6j+UkXmaNalN+8Vj88GI1RuBbtdvKVsY3W6tg8wQEIwrlmGdvfVQyYVLl8DOP96dPa+azqFFM830zP9gltFsI1KMEMMEoN5KpFst7hVnC63Je9nvxkqaJXSPnHxDyEqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761791488; c=relaxed/simple;
-	bh=HYCWhzkmmxHErBQ1GkwvcVFu94mXGWZn/YZIGdqpS4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iJSanWdDmBB0sUKv1VAEUoa2cvYDhQHwG7NzQILLkHd8kLMsBguQuQTHou4S5Qxwtmw2ymlByDy43LibMIW9zdCsFa3UbGOSDcWpk3GhQbYaGac+W57fb/KHR1zI3xbFaNFe9K8Wj13SdEQntq0BLvdCsnTGvQa64g0ZH9+Psjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oj/IxwZx; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <17dea8a6-b473-44da-82d2-d84223b7cdf1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761791484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gg4L5oAgYBz25YzLH6kOdzXmTMAfYlJEqOAX4aq55Yw=;
-	b=oj/IxwZxyaupSvCLMQpNxLfuw7iq585mKCxt6iInm0NvZqxAaK8/HNxYFqEw9lvOX+MYbV
-	NsbYr5c5G7phrIlLb6EihUTZUI01NJBIzVYe+4bW4MhClIsxGEw9uX1IkzVx7LCNH566dB
-	+B0rDKkAh6TBO9Oprm8pAr6FeFFLIIY=
-Date: Thu, 30 Oct 2025 10:31:12 +0800
+	s=arc-20240116; t=1761791511; c=relaxed/simple;
+	bh=HnOcmMp6g+DAOtp5gH56m8gVUubhi0chyyWQzyAsI+Y=;
+	h=Mime-Version:From:Message-Id:In-Reply-To:References:Cc:Subject:
+	 Date:To:Content-Type; b=tRDtxdGrGSOxdD/YwiUfEs3c44YGVRAe3FYyjOUGzVcFOPoSR6AKl0LVKUN+rlm4YPDYmiSMaW2Wslbz+mui1v7VXzwWoFEosSRNXbN/6eWfMaNvx1XXfP+b0speyMeZNYkjegfJIqcMufuovrZ7ifE81l56zzh0FCWU2oKwXi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=rc77yqUA; arc=none smtp.client-ip=118.26.132.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761791497;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=Wss5dHJesro920Q2af4wKlNPPfjjqJ7ieraUu5LPXP4=;
+ b=rc77yqUAjlGmatLoU3vOO8Qds7zvyYEUnF4neCLQXgyQUKs9vCCKxP+keHrTb7FWRBQq29
+ kyhj4RtDGPPZpABOKW0RStvMSkVLlr+F/SfJaZORJ81WBTcByxpRA7SotmOIuNEJ4tj4Ds
+ rrfWfR/PUmS9Zn3jA98n5YP8WatsyCC3+/ixHxSKgm+j3ZqiYYJcgkRsUwa6G9+JRxiMaO
+ mTsp/teirEbpErwplMpQaeMM4mC8kOK4Lij3P32xa4TnzJcVMg4bMD/GjcL305QwNU2lxO
+ ufSqW2vLJkYjCURNb/2BSLArZTB6rPMJeM6lbM/ko9FjQXm0IoXDG/YSXwp+8A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v4 3/3] mm/huge_memory: fix kernel-doc comments for
- folio_split() and related.
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-Cc: kernel@pankajraghav.com, jane.chu@oracle.com, akpm@linux-foundation.org,
- mcgrof@kernel.org, nao.horiguchi@gmail.com, david@redhat.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- linmiaohe@huawei.com, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030014020.475659-4-ziy@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251030014020.475659-4-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+From: "Yu Kuai" <yukuai@fnnas.com>
+Message-Id: <10e48729-ce2e-4a00-a5e7-a469631ccc99@fnnas.com>
+In-Reply-To: <20251027150433.18193-6-k@mgml.me>
+User-Agent: Mozilla Thunderbird
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 10:31:34 +0800
+References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-6-k@mgml.me>
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<yukuai@fnnas.com>
+Subject: Re: [PATCH v5 05/16] md/raid1: implement pers->should_error()
+Date: Thu, 30 Oct 2025 10:31:32 +0800
+Content-Transfer-Encoding: quoted-printable
+To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
+	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>, 
+	"Guoqing Jiang" <jgq516@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+X-Lms-Return-Path: <lba+26902ce07+bc3b44+vger.kernel.org+yukuai@fnnas.com>
+Reply-To: yukuai@fnnas.com
 
+Hi,
 
-
-On 2025/10/30 09:40, Zi Yan wrote:
-> try_folio_split_to_order(), folio_split, __folio_split(), and
-> __split_unmapped_folio() do not have correct kernel-doc comment format.
-> Fix them.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
+=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
+> The failfast feature in RAID1 and RAID10 assumes that when md_error() is
+> called, the array remains functional because the last rdev neither fails
+> nor sets MD_BROKEN.
+>
+> However, the current implementation can cause the array to lose
+> its last in-sync device or be marked as MD_BROKEN, which breaks the
+> assumption and can lead to array failure.
+>
+> To address this issue, introduce a new handler, md_cond_error(), to
+> ensure that failfast I/O does not mark the array as broken.
+>
+> md_cond_error() checks whether a device should be faulted based on
+> pers->should_error().  This commit implements should_error() callback
+> for raid1 personality, which returns true if faulting the specified rdev
+> would cause the mddev to become non-functional.
+>
+> Signed-off-by: Kenta Akagi <k@mgml.me>
 > ---
-
-LGTM.
-
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
-
->   include/linux/huge_mm.h | 10 ++++++----
->   mm/huge_memory.c        | 27 +++++++++++++++------------
->   2 files changed, 21 insertions(+), 16 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 34f8d8453bf3..cbb2243f8e56 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -386,9 +386,9 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
->   	return split_huge_page_to_list_to_order(page, NULL, new_order);
+>   drivers/md/raid1.c | 35 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 35 insertions(+)
+>
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 202e510f73a4..69b7730f3875 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1732,6 +1732,40 @@ static void raid1_status(struct seq_file *seq, str=
+uct mddev *mddev)
+>   	seq_printf(seq, "]");
 >   }
->   
-> -/*
-> - * try_folio_split_to_order - try to split a @folio at @page to @new_order using
-> - * non uniform split.
+>  =20
 > +/**
-> + * try_folio_split_to_order() - try to split a @folio at @page to @new_order
-> + * using non uniform split.
->    * @folio: folio to be split
->    * @page: split to @new_order at the given page
->    * @new_order: the target split order
-> @@ -398,7 +398,7 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
->    * folios are put back to LRU list. Use min_order_for_split() to get the lower
->    * bound of @new_order.
->    *
-> - * Return: 0: split is successful, otherwise split failed.
-> + * Return: 0 - split is successful, otherwise split failed.
->    */
->   static inline int try_folio_split_to_order(struct folio *folio,
->   		struct page *page, unsigned int new_order)
-> @@ -486,6 +486,8 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
+> + * raid1_should_error() - Determine if this rdev should be failed
+> + * @mddev: affected md device
+> + * @rdev: member device to check
+> + * @bio: the bio that caused the failure
+> + *
+> + * When failfast bios failure, rdev can fail, but the mddev must not fai=
+l.
+> + * This function tells md_cond_error() not to fail rdev if bio is failfa=
+st
+> + * and last rdev.
+> + *
+> + * Returns: %false if bio is failfast and rdev is the last in-sync devic=
+e.
+> + *	     Otherwise %true - should fail this rdev.
+> + */
+> +static bool raid1_should_error(struct mddev *mddev, struct md_rdev *rdev=
+, struct bio *bio)
+> +{
+> +	int i;
+> +	struct r1conf *conf =3D mddev->private;
+> +
+> +	if (!(bio->bi_opf & MD_FAILFAST) ||
+> +	    !test_bit(FailFast, &rdev->flags) ||
+> +	    test_bit(Faulty, &rdev->flags))
+> +		return true;
+
+The above checking is the same for raid1 and raid10, so I think it should g=
+o to
+the caller, and you don't need to pass in bio.
+
+> +
+> +	for (i =3D 0; i < conf->raid_disks; i++) {
+> +		struct md_rdev *rdev2 =3D conf->mirrors[i].rdev;
+> +
+> +		if (rdev2 && rdev2 !=3D rdev &&
+> +		    test_bit(In_sync, &rdev2->flags) &&
+> +		    !test_bit(Faulty, &rdev2->flags))
+> +			return true;
+> +	}
+
+Why not use the same checking from raid1_error()? You can factor out a
+helper for this. And BTW, now I feel it's better to name the new method
+like rdev_last_in_sync().
+
+Thanks,
+Kuai
+
+> +	return false;
+> +}
+> +
 >   /**
->    * folio_test_pmd_mappable - Can we map this folio with a PMD?
->    * @folio: The folio to test
-> + *
-> + * Return: true - @folio can be mapped, false - @folio cannot be mapped.
->    */
->   static inline bool folio_test_pmd_mappable(struct folio *folio)
->   {
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0e24bb7e90d0..381a49c5ac3f 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3567,8 +3567,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
->   		ClearPageCompound(&folio->page);
->   }
->   
-> -/*
-> - * It splits an unmapped @folio to lower order smaller folios in two ways.
-> +/**
-> + * __split_unmapped_folio() - splits an unmapped @folio to lower order folios in
-> + * two ways: uniform split or non-uniform split.
->    * @folio: the to-be-split folio
->    * @new_order: the smallest order of the after split folios (since buddy
->    *             allocator like split generates folios with orders from @folio's
-> @@ -3603,8 +3604,8 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
->    * folio containing @page. The caller needs to unlock and/or free after-split
->    * folios if necessary.
->    *
-> - * For !uniform_split, when -ENOMEM is returned, the original folio might be
-> - * split. The caller needs to check the input folio.
-> + * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
-> + * split but not to @new_order, the caller needs to check)
->    */
->   static int __split_unmapped_folio(struct folio *folio, int new_order,
->   		struct page *split_at, struct xa_state *xas,
-> @@ -3722,8 +3723,8 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
->   	return true;
->   }
->   
-> -/*
-> - * __folio_split: split a folio at @split_at to a @new_order folio
-> +/**
-> + * __folio_split() - split a folio at @split_at to a @new_order folio
->    * @folio: folio to split
->    * @new_order: the order of the new folio
->    * @split_at: a page within the new folio
-> @@ -3741,7 +3742,7 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
->    * 1. for uniform split, @lock_at points to one of @folio's subpages;
->    * 2. for buddy allocator like (non-uniform) split, @lock_at points to @folio.
->    *
-> - * return: 0: successful, <0 failed (if -ENOMEM is returned, @folio might be
-> + * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
->    * split but not to @new_order, the caller needs to check)
->    */
->   static int __folio_split(struct folio *folio, unsigned int new_order,
-> @@ -4130,14 +4131,13 @@ int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list
->   				unmapped);
->   }
->   
-> -/*
-> - * folio_split: split a folio at @split_at to a @new_order folio
-> +/**
-> + * folio_split() - split a folio at @split_at to a @new_order folio
->    * @folio: folio to split
->    * @new_order: the order of the new folio
->    * @split_at: a page within the new folio
-> - *
-> - * return: 0: successful, <0 failed (if -ENOMEM is returned, @folio might be
-> - * split but not to @new_order, the caller needs to check)
-> + * @list: after-split folios are added to @list if not null, otherwise to LRU
-> + *        list
->    *
->    * It has the same prerequisites and returns as
->    * split_huge_page_to_list_to_order().
-> @@ -4151,6 +4151,9 @@ int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list
->    * [order-4, {order-3}, order-3, order-5, order-6, order-7, order-8].
->    *
->    * After split, folio is left locked for caller.
-> + *
-> + * Return: 0 - successful, <0 - failed (if -ENOMEM is returned, @folio might be
-> + * split but not to @new_order, the caller needs to check)
->    */
->   int folio_split(struct folio *folio, unsigned int new_order,
->   		struct page *split_at, struct list_head *list)
-
+>    * raid1_error() - RAID1 error handler.
+>    * @mddev: affected md device.
+> @@ -3486,6 +3520,7 @@ static struct md_personality raid1_personality =3D
+>   	.free		=3D raid1_free,
+>   	.status		=3D raid1_status,
+>   	.error_handler	=3D raid1_error,
+> +	.should_error	=3D raid1_should_error,
+>   	.hot_add_disk	=3D raid1_add_disk,
+>   	.hot_remove_disk=3D raid1_remove_disk,
+>   	.spare_active	=3D raid1_spare_active,
 
