@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-877964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95D2C1F726
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:07:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56315C1F714
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAF414E9C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F8A4220F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDC2350A25;
-	Thu, 30 Oct 2025 10:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890CD350D6D;
+	Thu, 30 Oct 2025 10:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="et4SFdyI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNgKP3CL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A7C34F48D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92FC350D5A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761818753; cv=none; b=XL3kymEqb/wyDhyFsEWO9cGGM+nZseTiHQ13erT2RFnOeLD7DBmxD8wKZ/9bg4ubu8krEcXdj2oOdS3tW8dNIaFzMShnSau2JbVYculUe+dujZdGmX/m8BXK8gOGZb+3F64cA+WKXFKOOAgSMQY26j1VeXpCGJWowwGfiOmQXBc=
+	t=1761818755; cv=none; b=t9V+4LnEDU01xpXiGAvXw4c49F3jxazdJMrCPf6npO2e7D7X+JIu3Ondm0rHovMLCtGoaG9bDkWnqX9p2y3U2cPxsM6XCXRGKtdUxpi7fpaUz0wmGWusDRZ3kbcOvxmmVOk5hnPvv1W4kXParFDR5B+0DO//+tVwxWUCR2fnbYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761818753; c=relaxed/simple;
-	bh=SP1ioKSaDdMcidA7eYCAEjoEi4/LMlq8R1no50L2IRg=;
+	s=arc-20240116; t=1761818755; c=relaxed/simple;
+	bh=pD88QTQwhCsd1dD9Fb+TDQoClhSOHeNyLN7H0zQpYAM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kLWrzasDzq28IHEmXQI6HdDCTKOzp2cPJXcvEUYPRn/oxS5HJ6CmykdLSWUtFNwkwVb3fMxjJhWbhn8saG4Kbozl60PpNhQHZJIxbNLWuOPesi/uNHEpOxezM+GWM8o1ruE1+N4+PEnBLOI48cqZMLdd0/BP+Lsr++3sqjjPSUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=et4SFdyI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7862EC4CEFD;
-	Thu, 30 Oct 2025 10:05:52 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=pNOga1c1kwW1DJdidpypGOvpUzSNDehPfpiP2KTIzIwYjKtdf8s6YDuB9R9hMeT1D1nkg+qJWEO5ovT85YZfsNTBIB1VKsXg/HHd8nQQyLGa4rZ6Ow9MXjUUqVLJpTw6p/xRYL9BtzZ9xeaSVrUKEA7hqjUng+RM4BDfIullmOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uNgKP3CL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56797C4CEFD;
+	Thu, 30 Oct 2025 10:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761818752;
-	bh=SP1ioKSaDdMcidA7eYCAEjoEi4/LMlq8R1no50L2IRg=;
+	s=k20201202; t=1761818755;
+	bh=pD88QTQwhCsd1dD9Fb+TDQoClhSOHeNyLN7H0zQpYAM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=et4SFdyIawUd5x6LQxcCM6jCvAN/uXHLEyMWIlaC4VyTGkZRcaPeeDLbkXNfw5dLH
-	 Bby/g7oU0w5wQEoOUG0snaFyx65o/GXWYDCwpbEt+muwXO6r55NCBpPxSKzMSMBODn
-	 1wEgn5gz+QowarVYi0wyR2SCXPs8flL52iw38RPCPy2O7pH6yoqxVsyp6kGhOHivJF
-	 NeHvL/coZjmUAe+iuVI/UI2gLxfkc7NqnT02tAXO0sBVMVaeelr9f+lAjupUhqdMDZ
-	 p3drvSxZksygoVw62F/4rTgcR14aWIUmxkvfzQ3HKFJURvWfpf7MwpfFy4SIFmrzpp
-	 JqGJU/wahqrsA==
+	b=uNgKP3CL1kYsUxeqYTrEnq8RP3483/KZhRisETibvx1WZM1//MV+Q6vTCRpDsjsw3
+	 A7LfthB4qyHNZ3WQrux/XIqPxSqz32rNzgt+yukr9r3/rWMiVA39XitblrgFtHaULm
+	 wXnjTAxb4/kX7kW0/7H4T/ogGMIAfmnKKp9CrRRNxiVlrWhQJR3SsMHPhvYbFG9IkB
+	 VJt5MRaTMlcPfKRZJKfPsLEJv4E8TnhT+bihoBJfF94CwQMap316KxEhWbo6+I2rSJ
+	 vdhJ39nKBVQa2lqmnVFDv3a5ipuDXZtMtjl/psErTlzgp5r0ZqT7eqrY3hiF5JcNTN
+	 XrE9QuOxMYqhA==
 From: Daniel Wagner <wagi@kernel.org>
-Date: Thu, 30 Oct 2025 11:05:45 +0100
-Subject: [PATCH v2 1/5] nvme-fc: don't hold rport lock when putting ctrl
+Date: Thu, 30 Oct 2025 11:05:46 +0100
+Subject: [PATCH v2 2/5] nvme-fc: check all request and response have been
+ processed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-nvmet-fcloop-fixes-v2-1-b8d66a322c51@kernel.org>
+Message-Id: <20251030-nvmet-fcloop-fixes-v2-2-b8d66a322c51@kernel.org>
 References: <20251030-nvmet-fcloop-fixes-v2-0-b8d66a322c51@kernel.org>
 In-Reply-To: <20251030-nvmet-fcloop-fixes-v2-0-b8d66a322c51@kernel.org>
 To: Justin Tee <justin.tee@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
@@ -61,56 +62,28 @@ Cc: James Smart <james.smart@broadcom.com>, Jens Axboe <axboe@kernel.dk>,
  Daniel Wagner <wagi@kernel.org>
 X-Mailer: b4 0.14.3
 
-nvme_fc_ctrl_put can acquire the rport lock when freeing the
-ctrl object:
+When the rport is removed there shouldn't be any in flight request or
+responses.
 
-nvme_fc_ctrl_put
-  nvme_fc_ctrl_free
-    spin_lock_irqsave(rport->lock)
-
-Thus we can't hold the rport lock when calling nvme_fc_ctrl_put.
-
-Justin suggested use the safe list iterator variant because
-nvme_fc_ctrl_put will also modify the rport->list.
-
-Cc: Justin Tee <justin.tee@broadcom.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
- drivers/nvme/host/fc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/nvme/host/fc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 03987f497a5b..3ff70e6e8131 100644
+index 3ff70e6e8131..b613fc5966a7 100644
 --- a/drivers/nvme/host/fc.c
 +++ b/drivers/nvme/host/fc.c
-@@ -1468,14 +1468,14 @@ nvme_fc_match_disconn_ls(struct nvme_fc_rport *rport,
- {
- 	struct fcnvme_ls_disconnect_assoc_rqst *rqst =
- 					&lsop->rqstbuf->rq_dis_assoc;
--	struct nvme_fc_ctrl *ctrl, *ret = NULL;
-+	struct nvme_fc_ctrl *ctrl, *tmp, *ret = NULL;
- 	struct nvmefc_ls_rcv_op *oldls = NULL;
- 	u64 association_id = be64_to_cpu(rqst->associd.association_id);
- 	unsigned long flags;
+@@ -520,6 +520,8 @@ nvme_fc_free_rport(struct kref *ref)
  
- 	spin_lock_irqsave(&rport->lock, flags);
+ 	WARN_ON(rport->remoteport.port_state != FC_OBJSTATE_DELETED);
+ 	WARN_ON(!list_empty(&rport->ctrl_list));
++	WARN_ON(!list_empty(&rport->ls_req_list));
++	WARN_ON(!list_empty(&rport->ls_rcv_list));
  
--	list_for_each_entry(ctrl, &rport->ctrl_list, ctrl_list) {
-+	list_for_each_entry_safe(ctrl, tmp, &rport->ctrl_list, ctrl_list) {
- 		if (!nvme_fc_ctrl_get(ctrl))
- 			continue;
- 		spin_lock(&ctrl->lock);
-@@ -1488,7 +1488,9 @@ nvme_fc_match_disconn_ls(struct nvme_fc_rport *rport,
- 		if (ret)
- 			/* leave the ctrl get reference */
- 			break;
-+		spin_unlock_irqrestore(&rport->lock, flags);
- 		nvme_fc_ctrl_put(ctrl);
-+		spin_lock_irqsave(&rport->lock, flags);
- 	}
- 
- 	spin_unlock_irqrestore(&rport->lock, flags);
+ 	/* remove from lport list */
+ 	spin_lock_irqsave(&nvme_fc_lock, flags);
 
 -- 
 2.51.1
