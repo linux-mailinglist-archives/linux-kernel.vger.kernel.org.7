@@ -1,95 +1,106 @@
-Return-Path: <linux-kernel+bounces-877984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390D9C1F80F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:23:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB22C1F81D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E343BB29B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979B34225DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F091351FCC;
-	Thu, 30 Oct 2025 10:22:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE98A351FCF
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6578350D75;
+	Thu, 30 Oct 2025 10:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CXz6YxhC"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE71A251795;
+	Thu, 30 Oct 2025 10:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761819777; cv=none; b=cPMRoSpLOCYtSkW+3bfVdM4n/By2nWTIFTCnTXMLOxD76d1guc+MuPGQlFR+B7WqNb79WQSaUw1FwAwRS1hFFDa1uvOvcR/Dwq6UF/1WFaaO/xbj+hdAx1t/8qVMdrK02Gh49h0YCEhRv3vBs95CbsrxU+wm6S4ECejQnhudmtg=
+	t=1761819818; cv=none; b=AMlkHBAnB8+BfzFmPw+oeGhMimXmHTL9zKFIBUGsCpuoegExXtvV1uflKy/mprR/JA86XHIHP7eM/eluKQsJYdMLKDMouiKxodRGgqv/O1J1vTf52teFDDrLPlXubm1HZKa6GnB1TRguLalA4FOiYo+EsV4V+oXWKnydFtoqlGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761819777; c=relaxed/simple;
-	bh=DcnX957JuOPks+rDX8maDPbDJIJHIws9n5FXx0tfNS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fo3rhF24ELMHA1+1OnXb/8pLoU4YvHHZ0FmM28Jfx71QaGDvlJrqp8r4micuSftGviqu6v2puGu4oOQzJ2Oz/qduB4MAUybJ8mJLfTG2VMd5sgQkFdN5WnxfqMQiKeh3UrsSLFVc3McHcYJMO+xpwuC0S7kGBBajTam9WnvxqmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A50F2C42;
-	Thu, 30 Oct 2025 03:22:47 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 01BEE3F66E;
-	Thu, 30 Oct 2025 03:22:52 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: maz@kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	perlarsen@google.com,
-	ayrton@google.com,
-	ben.horgan@arm.com,
-	sudeep.holla@arm.com,
-	stuart.yoder@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v2 2/2] KVM: arm64: support some optional calls of FF-A v1.2
-Date: Thu, 30 Oct 2025 10:22:45 +0000
-Message-Id: <20251030102245.2313898-3-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1761819818; c=relaxed/simple;
+	bh=fuo8mVB1LJ1UJcAcfHOwfE0IREKq+lDaZM6IoRG/b40=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nmkcABpncMt3nMcIWT47peIJwWkfdUCsrHUk2uGqjzInOL9WxNEtL2E1Isp9HrlAflOQiZqE5GlicEEqzl9f3AwSNJJ9dNo0+bo2HdTSes0vyynys6v6NlWolsJx0r0MTqHxWJlahPp78CjfJRv2kx5tan2QT4yuHl/BGbHtEhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CXz6YxhC; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761819817; x=1793355817;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fuo8mVB1LJ1UJcAcfHOwfE0IREKq+lDaZM6IoRG/b40=;
+  b=CXz6YxhCXUTCXYCgkF8cXVYmNN+X4bkEOdKj9fdPntPPJOYJe74v+QId
+   XINNM3rVjNQNjNAxRspJtEQwhmGjojnT2k4EUxFa9R9qlDB9NoR9FJIlt
+   VXNSGyvC+z1AOFlg/N1x0uOFNCQ9bDW093hMGftkqxIcXzlN+xedRczTV
+   QQcFV4d2X3MQyadKfRV1kEllubmiehWLvgoPueTA9RmZHxM7xLshN1hUb
+   lyBlqg6m5/DFJqxOWJURjSGJp6tVzVORanrNa/kWj6MuFY+sA4Ec6Uk19
+   c5KI+hrVga1F0CFalAVszThXiu4Uii+CrD4qAUQlNH6RKBmhfwFjfhBE8
+   g==;
+X-CSE-ConnectionGUID: moOtIzkOTD2Ia0UYYeMXcg==
+X-CSE-MsgGUID: mLpJK8PnQRONTeoUR90LeQ==
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="48460657"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Oct 2025 03:23:36 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 30 Oct 2025 03:23:05 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 30 Oct 2025 03:23:02 -0700
+From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+To: <Parthiban.Veerasooran@microchip.com>, <andrew@lunn.ch>,
+	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
+ Veerasooran" <parthiban.veerasooran@microchip.com>
+Subject: [PATCH net-next 0/2] net: phy: microchip_t1s: Add support for LAN867x Rev.D0 PHY
+Date: Thu, 30 Oct 2025 15:52:56 +0530
+Message-ID: <20251030102258.180061-1-parthiban.veerasooran@microchip.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251030102245.2313898-1-yeoreum.yun@arm.com>
-References: <20251030102245.2313898-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 
-To support drivers or components that implement their services using
-FFA_DIRECT_REQ2/FFA_DIRECT_RESP2 (e.g., the TPM driver using CRB over FF-A)
-and obtain related partition information via FFA_PARTITION_INFO_GET_REG,
-enable pKVM to support both FFA_DIRECT_REQ2/FFA_DIRECT_RESP2
-and FFA_PARTITION_INFO_GET_REG.
+This patch series adds support for the latest Microchip LAN8670/1/2 Rev.D0
+10BASE-T1S PHYs to the microchip_t1s driver.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 3 ---
- 1 file changed, 3 deletions(-)
+The new Rev.D0 silicon introduces updated initialization requirements and
+link status handling behavior compared to earlier revisions (Rev.C2 and
+below). These updates are necessary for full compliance with the OPEN
+Alliance 10BASE-T1S specification and are documented in Microchip
+Application Note AN1699 Revision G (DS60001699G – October 2025).
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 0ae87ff61758..81e8b33bbdd3 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -679,10 +679,7 @@ static bool ffa_call_supported(u64 func_id)
- 	case FFA_NOTIFICATION_GET:
- 	case FFA_NOTIFICATION_INFO_GET:
- 	/* Optional interfaces added in FF-A 1.2 */
--	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
--	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
- 	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
--	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
- 		return false;
- 	}
- 
+Summary of changes:
+- Implements Rev.D0-specific configuration sequence as described in AN1699
+  Rev.G.
+- Introduces link status control configuration for LAN867x Rev.D0.
+
+Parthiban Veerasooran (2):
+  net: phy: microchip_t1s: add support for Microchip LAN867X Rev.D0 PHY
+  net: phy: microchip_t1s: configure link status control for LAN867x
+    Rev.D0
+
+ drivers/net/phy/Kconfig         |  2 +-
+ drivers/net/phy/microchip_t1s.c | 96 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 96 insertions(+), 2 deletions(-)
+
+
+base-commit: 1bae0fd90077875b6c9c853245189032cbf019f7
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+2.34.1
 
 
