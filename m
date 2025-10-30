@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-878303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F82C2038E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:24:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1E6C20397
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 383534EC23B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:23:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCC4C4E9F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEF1330313;
-	Thu, 30 Oct 2025 13:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC0F2EBBA1;
+	Thu, 30 Oct 2025 13:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CYRaGkUU"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGAySM9w"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E796332D450
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3565828643C
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761830607; cv=none; b=G88krygfcHeO2XT9M7C8k4B39Vz73fpUfJ05Ikbz3lhYxWUtQVc33W10qr/QdnngIlmDrrTK1DQXFUWhxlFuDJXfFeD1DjteXMJdtnYmMmYKC93/CZRKZ0wgevPOGzF69oRg66dK5PP25oSVBRs0mWOrSKf4RngIzjrjw+x4eDY=
+	t=1761830629; cv=none; b=ZYQM4GtaKk/itXQQ9T1030Eo3iS6kjxmzUoA/gQSiq6B/jIFYJbA7BoRuqP1UNVyVcMPWQ9YDNamjpx0YurgzInWm2nLwQhBsrJHGZVB/zoMHMyPupSRx/fTIeilFQyumiY4cGMz0hUbvyUddScmL7ijwJJBhe78Lx957NgvGto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761830607; c=relaxed/simple;
-	bh=+T++m0bCn8dzwoPtOBPiuLFJik8gkAN7Y5AmR5ssufM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3D03HX2ivxEr4P77n+OickN/5m5gJqKvkkk2vgvrXCc9NOIfQn3yBjGsd+GDN5VZX8JrGHuZbVGPOOBl/GpxKFPiOnFYPvX6e9bSKHFCC/cU4GPSfn+OWEVG5buldV6tbkf7LLq1mjhif08rwLDxikDIRkYJUN2HlBiJsWrBI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CYRaGkUU; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 51AC040E016E;
-	Thu, 30 Oct 2025 13:23:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id b6qXmKjPN26J; Thu, 30 Oct 2025 13:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761830596; bh=S0wCq4n1Evlh9ciLUjnAnI8tlm8vCuNNCRWLJx15CQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CYRaGkUUJDECVox/nHGmHdMkmrsEqIZu12D0j6E5BTdPYoZ8ZE5zIIxGlh2g+Zkt4
-	 2FRT1l6k6+mWo5+YQNKd0hPiAOoNps0VEvsfyWRc1tDUoMvhq3fUGTMA+YbXeslKFl
-	 4Xiv8XfaTUBcQUePrnns/iqp0vzitEPfLBaxf2zv0U+G7OzZUAV0EoTvjC8XrmkzT8
-	 szSYDhaZrLqq8KuEo6gPBeK2dwQyi/6DzesTAc3A/o8VzIRloacZyBqOfoIrGCTFi5
-	 OvpVAw+8bzAkv+4/jMLoKFoQDvcndsfcO60MedRhW6AqLAoT8XdoaFsC5Iin5mzE4i
-	 REUkf0ySZOLyaMdBx3C0NNdZ8BSf8aHyhoh0WtGNtu/rfwcyDY1qD+VmGovR+RO47M
-	 cJx5IC7bOPYS8Iy38Od0EFoan/+8+QPXhp54ZMdPrIh0vjMyzXTk0rL2ecOSJrzR3n
-	 kq2/taTL8M1ca3YoLKIUeMZE6Vm5lZKrbQ8OYRQ0vCiUan7rP2GNgSVyDZVwJHvkXW
-	 6q+NKbuDrjIzS75HX9guNPdfeynqrUlMqaLhm4UsDyXibXHI1N88gL4SsH+zD7YH4e
-	 vuuikXBnKR0cDsg3xsoVll5IiuYoNnqpwDGwxFt3kEOWtO1kYaCtf9YI3PdDhbZzAj
-	 53CLAU+TPt/RpvgdjwEzE0SI=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8838D40E021B;
-	Thu, 30 Oct 2025 13:23:08 +0000 (UTC)
-Date: Thu, 30 Oct 2025 14:23:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yu Peng <pengyu@kylinos.cn>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-	Yu Peng <pengyu@kylinos.com>
-Subject: Re: [PATCH v2] arch/x86/microcode: Mark early_parse_cmdline() as
- __init
-Message-ID: <20251030132302.GBaQNmtgzFeZ8798t1@fat_crate.local>
-References: <20251029081644.4082219-1-pengyu@kylinos.cn>
- <20251029123823.GAaQIKvz4gUk3Nsaj4@fat_crate.local>
- <2d33a48f-a43a-4ed6-a903-aff8184eebf3@kylinos.cn>
+	s=arc-20240116; t=1761830629; c=relaxed/simple;
+	bh=FgE5WiJ8IHbwreJzl7GefWLHITMyWjRwgsHmbfomSag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u+nEfzU7X3edZHO2q89itMyksOvXD8bQM3PwNMTKSv4ePoWoWSaSgDGbMQwl3SyXcDO83BpmCNn7XRgblM8kqRN1H+18LW0N5BCdLMYIHYiJ3QPH3M+VKV2DmAjEcxQSRPGrLXz45UGDJ5eTooW4Xgfi+5RZOmTPYdf6CnINmcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DGAySM9w; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4eceef055fbso16389581cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761830627; x=1762435427; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eRVxqyYvS81StttYLRvMy97wGwnAqgu36t0qY6Aptgk=;
+        b=DGAySM9wxyaxVBLROt+NKA1MM1vXWQse28hMIRVNrfOMLwV01yYIik8rU+zhJiktBV
+         3A67I4Y4tED28SeSxMI6s0HvA2hhGI0soDnhUVFM9O/0wCIQ5UrqL0ZwspXBt2c0Diw9
+         R5J2uJq05Zl84U4TunfmQHJhjnDctTnRkDFz4WUNEK/K5hpUM8ud/ZzktECVfBxUokpZ
+         BbOGV6wse7OXfm2utUCB5uMB8mfatjcmAmPQ0luBmtq0G2K/9HRBu7Pq680g36QNVP7G
+         dp1ZN6Yg07rFOp+yMM8uon4o/E796If7CtgpDOsAQeof4IFdfhGgjLU/GJb4hLTmNdzY
+         3xXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761830627; x=1762435427;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eRVxqyYvS81StttYLRvMy97wGwnAqgu36t0qY6Aptgk=;
+        b=ry83K8G6KaCU4nZOx5lKjXIgsnWedfQSWopB2KxX2fLCtMoRPIr+1JgNBv1mc62Q6M
+         YjYV+C99a+OvJ2gUiYTgJ1FHiXxPowu/HwvkUscocuQXAnP46XOyhMDViZjgA0OcFEC+
+         VyIlgeL8ptmnxQoqaRJgo18+c784UvODEGFvShTVL348EqUYf2X+Sw5/CkMeUNqk72v6
+         +WByM2flfJcVqww5ggB+qIpunFEj8obyepN1Bx5PT6hKuS2svR6UPt7qmyFG5Ho8xUkP
+         jnP8zedckdqgXJBHiybAcXWXTozN2Ys8i2zP95XGwZ5reb23Pw5EM1N2QxyRIc7T/Z2Q
+         zang==
+X-Forwarded-Encrypted: i=1; AJvYcCUnOGUGXpaXyb23aaMDFm+zXFvxn/Hn4AT7OLLgZc2E85ucWv7PRKzjkFPW8tsyiJG0BO3skII6de75qGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyijhqSwncoBFCRJ8nnVYFmpyhQ+GH6QkCvOpQ8SZDvOwUWdtKE
+	kGf3lz8NAtLirsBRP2YE+DhVgMjO+otEt5d/TxkKh4X0dYd9/+F9Wh+6
+X-Gm-Gg: ASbGncvP6mFp4dqR91wqPiHMW+ETV4+/DtdAKoeaicTclakXLX0B91umWpo0ZERyItU
+	65+MdZLs132ybnAKnhiUhTdn5Nn/8lSIuVj28O/81+KzowAEeOK/Dm0fQvoCfTC++cl2TuQi6BY
+	F3KHw0y9zEQB7JZmsZ07dfRu3ldfbEHYN/HZwcBmEZM/obpz9oDSPi5sfwCHozs8e/4HuScoycx
+	rljuNbfaCHXnbRPwnkjQGY0ixMwT/jls36wqDvjda/uxbXv2JnlJ5YfqtD9TbeTwHs06PU/Y0N3
+	RklZ02mw9DXuv/XfewiXMZsL6Am6ZPUlRU0pQ+f+872ZxclWB5bl0qkq1bLBJdlrfCaqEuJkS8Z
+	1myCHqfrq9JHYCbu4lVlLHAmOBj/W6QpGUHI9vzzYDUAB6aFYJYD75s8AJOL5zpS2LGryaOLBGh
+	VZ0b52p0hjcMI59LGdEbVFRg==
+X-Google-Smtp-Source: AGHT+IFscXJpdlCTxUmH19tcqISM366o7hFmwLuDaT+vypmSgu6IsKCqKIeWKa5nG/GQ0W/P+3pf6Q==
+X-Received: by 2002:ac8:5e13:0:b0:4b3:3b2:2b4b with SMTP id d75a77b69052e-4ed15a23867mr72684561cf.0.1761830627001;
+        Thu, 30 Oct 2025 06:23:47 -0700 (PDT)
+Received: from [10.174.68.124] ([216.11.121.174])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba37b96d0sm111387781cf.6.2025.10.30.06.23.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 06:23:46 -0700 (PDT)
+Message-ID: <df04d358-f144-47a8-930f-47ccf7cb105a@gmail.com>
+Date: Thu, 30 Oct 2025 09:23:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2d33a48f-a43a-4ed6-a903-aff8184eebf3@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/chrome: cros_ec_lightbar: Check if ec supports
+ suspend commands
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
+References: <20251023234239.23882-2-bradynorander@gmail.com>
+ <aP7s2ib_nUIZ3X5O@google.com>
+Content-Language: en-US
+From: Brady Norander <bradynorander@gmail.com>
+In-Reply-To: <aP7s2ib_nUIZ3X5O@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 01:03:52PM +0800, Yu Peng wrote:
-> I found a minimal reproducer: i386_defconfig enable these two options:
+On 10/26/25 23:54, Tzung-Bi Shih wrote:
+> On Thu, Oct 23, 2025 at 07:42:40PM -0400, Brady Norander wrote:
+>> @@ -550,7 +557,7 @@ static int cros_ec_lightbar_probe(struct platform_device *pd)
+>>   		return -ENODEV;
+>>   
+>>   	/* Take control of the lightbar from the EC. */
+>> -	lb_manual_suspend_ctrl(ec_dev, 1);
+>> +	has_manual_suspend = (lb_manual_suspend_ctrl(ec_dev, 1) >= 0);
 > 
-> CONFIG_GCOV_KERNEL=y
-> CONFIG_GCOV_PROFILE_ALL=y
+> The driver doesn't emit an error if lb_manual_suspend_ctrl() returns an
+> error in the first place.  However, I think `has_manual_suspend` should
+> only check for -22.  E.g.:
 > 
-> On my toolchain (GCC 13.2), this combination instruments the function and
-> prevents it from being inlined, which then triggers the modpost error.
+> has_manual_suspend = lb_manual_suspend_ctrl(...) != -EINVAL;
 
-Nah, this doesn't help. Anyway, I'll take the patch as it is obvious.
-
-Btw, please do not send your patch so many times - you can simply say what
-needs to be fixed and I'll fix it up before applying. Maintainers are not in
-a shooting gallery for patches.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks for the review.
+I originally decided to catch all errors to be on the safe side. After 
+thinking about it some more, I agree that it should only check for
+-EINVAL. Will send a v2.
 
