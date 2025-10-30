@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-878806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5B4C21843
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D9DC21831
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887713B5BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27289401D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9990236B976;
-	Thu, 30 Oct 2025 17:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuFB/+08"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A93C36A605;
+	Thu, 30 Oct 2025 17:32:53 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375236999D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2013A30C635;
+	Thu, 30 Oct 2025 17:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761845611; cv=none; b=rzqk/clQg5L4oTL9xgK7Rvzn95y70vphQueqnD/AU0QR/FsmtuHB6iYsPeNyNsuHTuHIH+PqvHkcBSx9oN1oSGYqRPSKZHTbvlEpanhPVCxuiVW7RYB5MYNAje13iowGJoMpf2aPTYXh6p55u/CZyPkb0C+8ECnH4uxl1qcbMUY=
+	t=1761845573; cv=none; b=cQfISzv6T5W4nVznkzwY8WS6eVRxP2puHdrz19VwrYGSrSMx2ObIeUnBOwdgDaiWwDc5PDDkAmpa9EgqP3ecC9xPUJjGL4ySKzeFYk2cEWkhl0amCQ1fHCFgkP9Wjm6rCZDPdrXgotYkmieoHvm97pBvbTo+Hsqsn4a4yVeooaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761845611; c=relaxed/simple;
-	bh=H4oxfW8LlpZdjRUq6Ea0t/3CAVHgSecFYn9aaImDYe4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BcyXJ57dkKlI+Fh4NbiAZFS3919Ojb/fEoGGD5CYHQXZquwhm/F31fimtyqNuEmJwL3HlBlP5/sczz9ZgDFik1w5fKqhdXH0yLq4CpSGVf/xecufcpVUooKtCwdjgZmxrazaVLVlDYuX5kfSGlIIVIkE5VT1ni98vQ3avMplw7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuFB/+08; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b63e5da0fdeso183441a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761845609; x=1762450409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H4oxfW8LlpZdjRUq6Ea0t/3CAVHgSecFYn9aaImDYe4=;
-        b=VuFB/+08pdYeJA78Eo4ssiG2X1KkwUEaqAoi6f+Mc5ll6SexgbAFJ3AdmuOYDeBTKG
-         5FaKeMQoWNfnPnePO+0mRpdfVxmhm7qAIVhhA88NgEpkEB0u2yEegWSQhwqtGE1MYf+e
-         Wz4+biaRNXGmftZgd6AfXdfC4Jgpa8Ik8yGL0i8Al48v0RsDI+NfU9/vsC6wkPDYVvEV
-         iDPhLaqrrorm81+00WSFevjLbxwZwI7gzeRL1Xw4xmtpNeZP1cgjPLzH0vfLyNNWg9nq
-         QgzXghDXWXbwkjsWr+CPWf3nbATZbfWv90NV2myUcWpOQ1HuHmsQ1QF9WeDlIaeGI7cX
-         zDQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761845609; x=1762450409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H4oxfW8LlpZdjRUq6Ea0t/3CAVHgSecFYn9aaImDYe4=;
-        b=olw98yuwNutSbc9vY7CzPIRc6k2IrF/eCNKTUyn18Sp4QLP8hdSz62ZZK7gJEC55nX
-         QLAMdyXQrv3uM6s+kE+FXE8aLYFSwTpUmhslUpKiiTt8i3b1Sn/NpkIzmNdBhP1Ku/Tc
-         T9x6rRazwM69Ktcd9LSIxcgzOzvHetnIZTzd31UpM5toODrwrCNyqV4DhJDuoTaaUd1u
-         rQsE87rh8xnBzWdCavtIyThN+Jmq5zmvHNYyt6IwDGitWJKa7mdAz07GCJkPjMmRJJ/7
-         g54952S08OnNkSsvbNFaaPUQSvOZMDnz8agvUpk5EjsGDg3liouRsLWBE3KF57xnCsfM
-         wVmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpEBeGHwcaMnsEIcaD5J51swDCf4LjfF+D+NTo2hTYMAYP+gQpWPyFT+HCOukhKPyQjMiu4boY8YGZT08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4ggZNhvpYm/HOLo6RaKUcyYuRGnu2GYRKMDpzHK1V28sogfKI
-	J6PUK3E5x0EXKHecKKBDuILTurcuRqKG0mXRgodkIgo/xJG0dEaR7dp/8s2X9grOrTacfb8EDmZ
-	ndd0736q0wx+0IlbXJOSHilFNSfayVwE=
-X-Gm-Gg: ASbGncuk4aWRQddb6SHuC3ki5qiImFIXvBdvAH5GVmoNWErPKQaZTaPrHD0NZOTfygX
-	jSAKlxlbaRefHSJAQ42uiH2lA9DxOjFsLHb2cwdXzlwXT5kaTl+PjTwoQN/wSuWkKnrrsOE+KlH
-	tSe4u22bTfOxBF1yGXScnwNg0VKyg7/X8iG6hZgF8VSMXkmALV40znogP085J2wktvPTuaaZBDh
-	A5/wV2TZA0G69NwlgSOyuDO6uCZrK14+5aIeIfO5ZfJ8b6gtQQaq6yTgN4M+3YnNnXotOucL8DN
-	vQbjcuVncck5AvGxp/tKNzKwIyFZT5Dcg5oVlHz0jp06gHkCSID65ulTDhbjj9WVEPIrQf6Aww7
-	69oA=
-X-Google-Smtp-Source: AGHT+IEnjYjBApvEV2QGoZHHyDXa+qaKI8ES/te5I3LkfLBQaNi5vi9/OL65b9UrrS/ffKZv8Lj0Yn/P4npQa66AoQ8=
-X-Received: by 2002:a17:902:ecc1:b0:290:ccf2:9371 with SMTP id
- d9443c01a7336-29519a8e2c3mr4051765ad.0.1761845608672; Thu, 30 Oct 2025
- 10:33:28 -0700 (PDT)
+	s=arc-20240116; t=1761845573; c=relaxed/simple;
+	bh=KIjAWd5bTmTxiZT0LrGzbix+8eJ4XPaP0KPaWk4ZMcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bQDa7S7zdG4Vpdj9+TkAVKnelqqqmL/8me313HexWm86OGouG9s/9OnxVkkl2CCKWtq1I/pRA5gT3Wwxe0MGgLI+VSYLG53SNZTT9aGw1iGpKuTsIa59HciclSOKUlbQ2a0+L5rNyFzdHCfBviY4wJpR81o7t6sEXk+SzQkNwLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id C2ED3160153;
+	Thu, 30 Oct 2025 17:32:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 0860F20028;
+	Thu, 30 Oct 2025 17:32:40 +0000 (UTC)
+Date: Thu, 30 Oct 2025 13:33:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Fangrui Song <maskray@sourceware.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-toolchains@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Concerns about SFrame viability for userspace stack walking
+Message-ID: <20251030133323.3a81c02c@gandalf.local.home>
+In-Reply-To: <CAN30aBF3MofmVTjTZ9KFq9OBM0nA16amP5VFv+VAEJfFkLx0qw@mail.gmail.com>
+References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
+	<20251030102626.GR3245006@noisy.programming.kicks-ass.net>
+	<CAN30aBF3MofmVTjTZ9KFq9OBM0nA16amP5VFv+VAEJfFkLx0qw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030-zeroed-of-rs-v1-1-1c46d025128e@gmail.com>
-In-Reply-To: <20251030-zeroed-of-rs-v1-1-1c46d025128e@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 30 Oct 2025 18:33:15 +0100
-X-Gm-Features: AWmQ_bl1pEXbFGijSDZoaUSFwxjZwY7dR_OCs0R-sUe03E0zMHx4JxOi_bitJAg
-Message-ID: <CANiq72k1dEHK3f-5RxkAKL185Zx8dtUz8X_V2Pk7eALeyAzZ0w@mail.gmail.com>
-Subject: Re: [PATCH] rust: of: replace `core::mem::zeroed` with `pin_init::zeroed`
-To: moritz.zielke@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
-	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Stat-Signature: 4p48o1owhpks8jbbpor1tt1qxy33puem
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 0860F20028
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18MBl85QywLhxDsOHEJp0r6hNFHraA59G4=
+X-HE-Tag: 1761845560-798367
+X-HE-Meta: U2FsdGVkX197tdFE8k6yvJDR6OnwjBxcHP0TNAczSUS9WbroVPiRedvtEKfy5GxhI+CeuqwExj3h7WZOpoHAcpjO2bH9QtkYWnYafr3ci3+AJYXCLDvJfJPxn2rUuTOrDcUDOWTuAyW5Bl8A0fL0Ixbpc77F/TOpragKsmrupD9umWapOTMJF23ZD8VsNzWdbavnfkd6R3ZscV5arXc4LL6daHD3SxH8qCELr7+vc4US3dWosWdQjNx/uceKvmCDn01GlH0X60b2Q74VMOUym+dKNa+gXpp50ElyX7bj52wR4QerK+R9RDsejXtBnhSYtrkT0O7O9PRmmqOXpESuQXRNwO6phTk5nzJK2+lXaAb9dRxvJiPFxV8fjaOzRByY
 
-On Thu, Oct 30, 2025 at 5:45=E2=80=AFPM Moritz Zielke via B4 Relay
-<devnull+moritz.zielke.gmail.com@kernel.org> wrote:
->
-> ---
-> This patch was suggested in the linked issue. It's my first attempt
-> of sending a patch to the kernel mailing list.
+On Thu, 30 Oct 2025 09:48:50 -0700
+Fangrui Song <maskray@sourceware.org> wrote:
 
-Looks good -- welcome!
+> If SFrame is exclusively a kernel-space feature, it could be
+> implemented entirely within objtool =E2=80=93 similar to how objtool --li=
+nk
+> --orc generates ORC info for vmlinux.o. This approach would eliminate
+> the need for any modifications to assemblers and linkers, while
+> allowing SFrame to evolve in any incompatible way.
 
-One nit: this sentence above would go below the tags and the `---`
-below (the `---` here, above the sentence, should not be here).
-Otherwise, when applying the patch, the tags will be lost.
+I'm not sure what you mean here. Yes, it is implemented in the kernel, but
+it is reading user space applications to get the sframes from them.
 
-Cheers,
-Miguel
+Every running application would need this information for its executable.
+The kernel is dependent on user space having this.
+
+The only thing the kernel is doing is reading the sframe tables associated
+with the running applications to be able to walk their stacks at runtime to
+do profiling. As Peter asked, the kernel cares extensively on that walking
+being simple. If something goes wrong, you compromise the entire machine.
+
+-- Steve
 
