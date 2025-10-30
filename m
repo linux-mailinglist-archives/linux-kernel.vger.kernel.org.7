@@ -1,184 +1,281 @@
-Return-Path: <linux-kernel+bounces-877838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FAEC1F2A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:00:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8F4C1F2AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACC93A84E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:00:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 982B234D1F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0C133B955;
-	Thu, 30 Oct 2025 09:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0E1170A37;
+	Thu, 30 Oct 2025 09:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpfrmsiV"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NRAc3mGT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1061C311944
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8093338939;
+	Thu, 30 Oct 2025 09:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761814808; cv=none; b=rNbLAVD1VpAFjr4vJXyfWzWgYIu2js1+HIC3HdId1XndH03uiUo22mzzBjwxiaKRC+FxxfmFii4AGwh2XAb0MsmqK/7OYXFCVdUQ7Dl1XEbymU1HAP33Smr00kswYSv1zCjnWjZXt86RKDXOJBkjpyYqMX1iPX+K1RASxphogVI=
+	t=1761814821; cv=none; b=Tt6yQfICCdWXbJ3iHvNQZwmsy6zVhqFq3rl4Xj+b2/BSyfPxvitbGdaeEwGBzoSYeCipWXPK7VOpiJI8bbSh+H6fJaQMqzLz9LUjH3kng+1SW2bLPL97wjgn/xeCqzhUyp9HO6WSARs72mErI6AbzFobb8VJRBem451gjS5ib+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761814808; c=relaxed/simple;
-	bh=L4OqF4veqjJRfD75vtvwH0IaU1PIwn/jrpz4y/4KfdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qTZR+ycs1RvCCXp9SWrtDLXtX4K1JvFFfWQordL8tGiZgveSJWzKQteEOflg7OdIT5hNh935ebn3QggJLCGyB17Hs8pB6VS6myVGjM9stDwkTpkHaXxom5xLiNjirVtWNfOaejgbzmWfxllVWqq6ECsQMlMilY7m03O9xf8fVik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpfrmsiV; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3c2c748bc8so105284866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761814805; x=1762419605; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P0+8fO05/PuCO9OoMUOz5f65CPRV2XshMkV8o8v782M=;
-        b=ZpfrmsiVYEZe/B8rJhOqd6EVay/zlhXos4vc6N6XM2sSSvHpCI2B019oyZTRY8TkNx
-         m1F65vzXxyPPKkNn6eUUKljL68qFSubXliQ7WmiJZG9MgVmW1onJPxijZG1wbDiTCG42
-         Q5A0no7rh3Qmxyh1t8alY5z2Dh27Pu8tSKl6qrUxIgmm6/TAu2dyvWeG6apm71vO4vZ5
-         Ympj0/k74JSRqXIRbtZSOc19qs9UVlCmd8G0lSVag7oZjHYGIh6n4rp/R9NXhPhZKo56
-         kwkoKab/F8FrQF/Jm1/uzksbcE5fBiwW5PZParfh+bYLOTHK64aad2l6qcqtrkPbrvxR
-         obZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761814805; x=1762419605;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P0+8fO05/PuCO9OoMUOz5f65CPRV2XshMkV8o8v782M=;
-        b=qqkvngNGoLS8H5qZmdgHFTss57EbdAy0y+96ez8RHdNCgSVhyyICo4YBbz75vg7QN7
-         UdVZWW5hERLKJTTI5r1YeHkOznIM2F9mo7z+HEqHRwCrMoRyqbbhqoaQP1o5+Rz/keli
-         1LKm67C5hmOANtbzvkkxNkU2qCUOxN5RxIi8iZLDnmYe5DpgV0r7nBOQFVlCgSC41FbX
-         2PPi5zegXLrqyG1E9YJnJ2yTTTuUGUJDx9G2+zwpTyquYR+KU9jqn8etyPx+mLVdC8KW
-         jApKW1/ovLDjz2jvaRFuhutFPEdIcmSuCB6wSIQFO4iYiN5HBWGLOBKtEq3SAij1cdBO
-         Hclg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwc7opb6R/zTvUicieeV81EjeL7IUCv4nNtPFgSaxBMF2BBHU8+MJ//EjHFju2XOU0MD6Y59zYIeqgnEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/xIo4UouaopCYH6ZBDkgo0h5KFdN9hmHKRlEo44Tyjc/59E6Y
-	Z+3IAZmjTqz8hJefSm7bUJ7xxVsMw2JJrznVZw3W3wWHXhJJyrjV7TBt
-X-Gm-Gg: ASbGncuMWdN2pKMIKRZIJ3YTZqCzRyzwC1VNbra6vaXeCSw4+fBFI24X7tQ4RUuRrRj
-	7kKAptM3zV6P1PaHqpLJLG01cZ5uFLkZT3qQEZy8hj+VSU/uhwuv8JtjO00Q2lkWy1MXkVyAkhV
-	ihdw7IL3/PA2IHl6L33I14a+vLGb6UES8x2xO86Y/hh6RvEvMHLO4BuJ7lBCe3B2t3dGGL2YLWA
-	mIxD71eooMkrVQ+3SdfXe9ybrPCUmn9LBz+XUQ84YEYqARFjP01Rqa47P0cPe7TmbzWhsNZAPXr
-	GAyHJWydkdXsk6VjIyNIUjSP5g35dp/SfeBIGLCR/jDJ+OAWzqoV5Gu16cP8Uoj6E5QoY9I71AB
-	0a+9iOwBIpQLkML/lZEZKbPbXbjlRj+fRQFvOb/qins7kb9fCGqx8CDOR7yYYrINCsEuDguUB7H
-	vrUkavWGmyMDsZFHF8Wt9WCOxKhFXLS3QpnCjPwmBdCKktKrVF
-X-Google-Smtp-Source: AGHT+IETnbn5ZI7bAOkJG2PqIFf3VbumGaZSxqD4BZrdpxfKUgB6mVZK6e1kKPBpYaEUFcyabzCN/w==
-X-Received: by 2002:a17:907:7211:b0:b40:6e13:1a7f with SMTP id a640c23a62f3a-b703d38ca50mr669744566b.27.1761814804969;
-        Thu, 30 Oct 2025 02:00:04 -0700 (PDT)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d854430dbsm1676234666b.63.2025.10.30.02.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 02:00:04 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+	s=arc-20240116; t=1761814821; c=relaxed/simple;
+	bh=ai41Jj4Xl6lRV/HU9xvnUaP6ftQHoXPpEmIqxKoyHJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HopzkDNs+nbL1e9yHMhJV1yDgvxqOJCEfPkrERy4A1vCmr89S5+6M0hWY9l3t39oe84QZIAvWhor+k6cDIbA4zi/yQ1ph0jEzWUO5XKKfFa1nafogLaDiIFVgeuUCs2Xqu735jRtt+UzZex9CllLmm71BHovljuxCvUCpF4EV2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NRAc3mGT; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761814820; x=1793350820;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ai41Jj4Xl6lRV/HU9xvnUaP6ftQHoXPpEmIqxKoyHJA=;
+  b=NRAc3mGTk7ckcEO1e6kH8QVGeaC02LOx9bnd55PtN6EXdsLiVQJArBL8
+   HF2k5MpvNksJFo1xvhTOLVU26DImjr+qoR9Xp38FlIFHd+QtycQrlH1L1
+   qAuKHpVCBpSlmOSKRYMhNQjZIz8PaZzOpLdVOPIukWC5xcp7ZL72SVCz3
+   rQqPKJio3ywnDdkQLHhdkO7ypfVEDmPqdci7Y2Giv7QUQhSxjqbq4gS/R
+   zhNUGyEMDMXvF8CPDU2O87f7LSLO9EyjCEwvk3nOBPWAsPpsYTHDwzlii
+   ClwFRI6hCMSDjfKtsKQMdGSUOOOdRdG1KSN+hkVDqiJ1nt6SA+tTs2CmO
+   g==;
+X-CSE-ConnectionGUID: 8grLYYtHTU+WYfbHWppb0Q==
+X-CSE-MsgGUID: xEJvB6USQ9SOLnKdhW5BZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63834735"
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="63834735"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:00:19 -0700
+X-CSE-ConnectionGUID: LlAPZNzKRUKocnZDa90K9w==
+X-CSE-MsgGUID: Ewza8RhnSqGbuaZCQhbgrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="186344479"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:00:15 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vEOVw-00000003qtu-1deL;
+	Thu, 30 Oct 2025 11:00:12 +0200
+Date: Thu, 30 Oct 2025 11:00:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	pfalcato@suse.de,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: hide names_cachep behind runtime access machinery
-Date: Thu, 30 Oct 2025 09:59:45 +0100
-Message-ID: <20251030085949.787504-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+Message-ID: <aQMpHDwCqcrNrnT9@smile.fi.intel.com>
+References: <20251029144644.667561-1-herve.codina@bootlin.com>
+ <20251029144644.667561-3-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029144644.667561-3-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The var is used twice for every path lookup, while the cache is
-initialized early and stays valid for the duration.
+On Wed, Oct 29, 2025 at 03:46:42PM +0100, Herve Codina (Schneider Electric) wrote:
+> The Renesas RZ/N1 ADC controller is the ADC controller available in the
+> Renesas RZ/N1 SoCs family. It can use up to two internal ADC cores (ADC1
+> and ADC2) those internal cores are not directly accessed but are handled
+> through ADC controller virtual channels.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Looks much better, thanks! My comments below.
 
-ACHTUNG WARNING POZOR UWAGA Блять: I did some testing and ifdef MODULE
-seems to work, but perhaps someone with build-fu could chime in? I
-verified with a hello world module that this fine, but maybe I missed a
-case.
+...
 
-v2:
-- ifdef on module usage -- the runtime thing does *not* work with modules
-- patch up the section warn, thanks to Pedro for spotting what's up with
-  the problem
++ array_size,h
 
-Linus cc'ed as he added the runtime thing + dcache usage in the first place.
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/clk.h>
 
-The machinery does not support kernel modules and I have no interest in
-spending time to extend it.
++ dev_printk.h
++ err.h
 
-I tried to add a compilation time warn should someone compile a module
-with it, but there is no shared header so I decided to forego doing it.
+> +#include <linux/iio/iio.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
 
-Should someone(tm) make this work for modules I'm not going to protest.
++ mutex.h
 
-Absent that, vast majority of actual usage is coming from core kernel,
-which *is* getting the new treatment and I don't think the ifdef is
-particularly nasty.
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regulator/consumer.h>
 
- fs/dcache.c                       |  1 +
- include/asm-generic/vmlinux.lds.h |  3 ++-
- include/linux/fs.h                | 13 +++++++++++--
- 3 files changed, 14 insertions(+), 3 deletions(-)
++ types.h
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 035cccbc9276..786d09798313 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3265,6 +3265,7 @@ void __init vfs_caches_init(void)
- {
- 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
-+	runtime_const_init(ptr, names_cachep);
- 
- 	dcache_init();
- 	inode_init();
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index dcdbd962abd6..c7d85c80111c 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -939,7 +939,8 @@
- 
- #define RUNTIME_CONST_VARIABLES						\
- 		RUNTIME_CONST(shift, d_hash_shift)			\
--		RUNTIME_CONST(ptr, dentry_hashtable)
-+		RUNTIME_CONST(ptr, dentry_hashtable)			\
-+		RUNTIME_CONST(ptr, names_cachep)
- 
- /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
- #define KUNIT_TABLE()							\
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 68c4a59ec8fb..1095aff77a89 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2960,8 +2960,17 @@ extern void __init vfs_caches_init(void);
- 
- extern struct kmem_cache *names_cachep;
- 
--#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
--#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
-+/*
-+ * XXX The runtime_const machinery does not support modules at the moment.
-+ */
-+#ifdef MODULE
-+#define __names_cachep		names_cachep
-+#else
-+#define __names_cachep		runtime_const_ptr(names_cachep)
-+#endif
-+
-+#define __getname()		kmem_cache_alloc(__names_cachep, GFP_KERNEL)
-+#define __putname(name)		kmem_cache_free(__names_cachep, (void *)(name))
- 
- extern struct super_block *blockdev_superblock;
- static inline bool sb_is_blkdev_sb(struct super_block *sb)
+...
+
+> +#define RZN1_ADC_CONTROL_REG			0x2c
+
+I would go with fixed-width values, e.g., 0x02c for the register definitions.
+
+> +#define RZN1_ADC_CONTROL_ADC_BUSY		BIT(6)
+> +
+> +#define RZN1_ADC_FORCE_REG			0x30
+> +#define RZN1_ADC_SET_FORCE_REG			0x34
+> +#define RZN1_ADC_CLEAR_FORCE_REG		0x38
+
+> +#define RZN1_ADC_CONFIG_REG			0x40
+
+> +
+> +#define RZN1_ADC_VC_REG(_n)			(0xc0 + 4 * (_n))
+
+> +#define RZN1_ADC_ADC1_DATA_REG(_n)		(0x100 + 4 * (_n))
+> +#define RZN1_ADC_ADC2_DATA_REG(_n)		(0x140 + 4 * (_n))
+
+...
+
+> +static int rzn1_adc_get_vref_mv(struct rzn1_adc *rzn1_adc, unsigned int chan)
+> +{
+> +	/*
+> +	 * chan 0..7 use ADC1 ch 0..7. Vref related to ADC1 core
+> +	 * chan 8..15 use ADC2 ch 0..7. Vref related to ADC2 core
+> +	 */
+
+Split it to two one line comments per each conditional.
+
+> +	if (chan < 8)
+> +		return rzn1_adc->adc1_vref_mv;
+> +	else if (chan < 16)
+
+Redundant 'else'.
+
+> +		return rzn1_adc->adc2_vref_mv;
+> +
+> +	return -EINVAL;
+> +}
+
+...
+
+> +static int rzn1_adc_read_raw(struct iio_dev *indio_dev, struct iio_chan_spec const *chan,
+> +			     int *val, int *val2, long mask)
+> +{
+> +	struct rzn1_adc *rzn1_adc = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = rzn1_adc_read_raw_ch(rzn1_adc, chan->channel, val);
+> +		if (ret)
+> +			return ret;
+> +		return IIO_VAL_INT;
+> +
+> +	case IIO_CHAN_INFO_SCALE:
+> +		ret = rzn1_adc_get_vref_mv(rzn1_adc, chan->channel);
+> +		if (ret < 0)
+> +			return ret;
+> +		*val = ret;
+> +		*val2 = 12;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -EINVAL;
+
+	default:
+		return -EINVAL;
+
+> +}
+
+...
+
+> +static const struct iio_info rzn1_adc_info = {
+> +	.read_raw = &rzn1_adc_read_raw
+
+Leave trailing comma, this is not a terminator entry.
+
+> +};
+
+...
+
+> +	if (rzn1_adc->adc1_vref_mv >= 0) {
+
+Can we call it _mV?
+
+...
+
+> +	if (rzn1_adc->adc2_vref_mv >= 0) {
+
+Ditto.
+
+
+...
+
+> +	ret = devm_regulator_get_enable_optional(dev, avdd_name);
+> +	if (ret < 0) {
+> +		if (ret != -ENODEV)
+> +			return dev_err_probe(dev, ret,
+> +					     "Failed to get '%s' regulator\n",
+> +					     avdd_name);
+> +		return 0;
+> +	}
+
+	if (ret == -ENODEV)
+		return dev_err_probe(); // takes less LoCs
+	if (ret < 0) // do we need ' < 0' part?
+		return 0;
+
+> +	ret = devm_regulator_get_enable_read_voltage(dev, vref_name);
+> +	if (ret < 0) {
+> +		if (ret != -ENODEV)
+> +			return dev_err_probe(dev, ret,
+> +					     "Failed to get '%s' regulator\n",
+> +					     vref_name);
+> +		return 0;
+> +	}
+
+In the same way as above.
+
+...
+
+> +static DEFINE_RUNTIME_DEV_PM_OPS(rzn1_adc_pm_ops,
+> +				 rzn1_adc_pm_runtime_suspend,
+> +				 rzn1_adc_pm_runtime_resume, NULL);
+
+Please, split it based on logic:
+
+static DEFINE_RUNTIME_DEV_PM_OPS(rzn1_adc_pm_ops,
+				 rzn1_adc_pm_runtime_suspend, rzn1_adc_pm_runtime_resume, NULL);
+
+OR
+
+static DEFINE_RUNTIME_DEV_PM_OPS(rzn1_adc_pm_ops,
+				 rzn1_adc_pm_runtime_suspend,
+				 rzn1_adc_pm_runtime_resume,
+				 NULL);
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
