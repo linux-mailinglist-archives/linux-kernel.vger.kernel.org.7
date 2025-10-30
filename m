@@ -1,317 +1,211 @@
-Return-Path: <linux-kernel+bounces-877382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58996C1DFBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:06:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30A5C1DFD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9BA407058
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:06:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD6404E1C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584AA23E334;
-	Thu, 30 Oct 2025 01:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A243E23E32D;
+	Thu, 30 Oct 2025 01:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OiDXEoao"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="otRf0Qiu"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011055.outbound.protection.outlook.com [52.101.62.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E703D238C0F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761786369; cv=none; b=aFFYQ64xIUwLL3y6JupysyCc36SuhBH6SWjY79a7tY49kE6e/og+o+beuVRUR81a8IxsM8VKwhukd5dTNnWaM4TxB+v9nRcYcOb7r5Esw0cxev+gVWpQqOd0/sOYSeSZ5zT9N+8lK4mgka61mq6s6+Fg4UdJzcNDVth5JefJVb0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761786369; c=relaxed/simple;
-	bh=adiu93DlzwcW02RQQQEztmqHCSRUMOCuSZmyc7Gnwl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HVAHEYYE9H0VAm1ohaGvrsrqfPiwmoCCKjlRj+7fE3YWYficXbMRyun0z5sVSxtYS+QrZGrvzLwOVoWrwyAu4J6PXYNK0xQejke24OVt1Qrw83Zg54lA1PFSJ2pDUa5lWLlcLAdQXVHC3cvwukK0BsCVS/EuNWj47ITlEeqCvCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OiDXEoao; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4eccff716f4so94831cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761786366; x=1762391166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YeisVXfwZ0KrQFCLeQpidsEhsQ07SALEwA1Kf0DOiTM=;
-        b=OiDXEoaonjoGJBDJoWeeDFCs+MtiNfuycoVOgA9ir0+Vk822TS+TQuK0Hrxje4EJ8q
-         mumRov7VBe2W2hNJmQ+kqdQUsoxPzFbTVTD5Q/N+mNb6cpJeyqXwjOndqvLv7z7lScOO
-         FJg281QPUdQ0+Jb7UHqnrK6xoZZhulgXfR6eowbNDyJqmEHgSt9EsKM9Rsix8mjyhIHn
-         yetMKF9PxhvR6s8r5tfuPepy/nxaUJhj28Up6ocGDin1GYYHywV/HQVc5gvmlUItqNz/
-         fs2ILuyvNr5s7K3XfjJjuyPqm8mztFLDwz3hpW3EmShg2XF0OeYNMo6VTBzQTc6JBf8x
-         bMKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761786366; x=1762391166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YeisVXfwZ0KrQFCLeQpidsEhsQ07SALEwA1Kf0DOiTM=;
-        b=nSG+sIwxtvbvlEfi7hmY8gnuT91tylNiLW0r3w+el/ttCy7Jp6Mb8XvXxMcq3vRQim
-         DdexTIhGcywChF5xiKVoHeaTHyUAvcxnhH8kllJ8itCBxV0Vc5lrbyh0h0B3U6GO37l/
-         ANrBAvbj+4+5w51C6Vo6pEe7WOSVUoXEE5WP1r/VHKnIibfO5EkRTIpMUlMNSt00v5GA
-         N4SF12FqqCDfKo996YYyafaiac+VwM0j5UM5WuosQXC2vb+CPMXMl8oROj6zPQ6CgqLr
-         DuTRK95FJqYbQ9hZ77MfNmSJhHzROCsW+cHyIEbnRzJg7pK8PqIU5lJjnQlhCKUwatjo
-         hlbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqkXXHL5Ay6QbrfoFPFOBvi2GG3Y7Fld9fZw79Kt5NUuD2XOPeiJLrKyvNtkJ2nomvaYxGq/j6G7q/AC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxam5MYvl6b5JSnmEtN2wUa3lxagTBs5dklxm3aFEiKaR28onZy
-	hDP4pycodkGhV0WhBJfCFZ4yiVET715zu8JyScJ51rTFymTLpn5tJMO34kmneX8H5NG48f0l0oN
-	ndp9JvQpLpLNm1ikRwnnITA3UdH9k0VsVH9Iy+NAC
-X-Gm-Gg: ASbGncuQEJrOVwRfmbHYdtrea1wbjIsX6Y8l6OLiSR7SPE6W335/cgl81+NwbFpLLJU
-	BT3h6XsAjJypYYXA6RaAU0S9xtBa9EzVqqyj6tqmjsQOjiMFNSScf/+3oz+C7dX7vGPjkaagbHM
-	D+l/SeAgtqp+qx7/zqXsnjV0lXHKs3UFixBWiuwgx55kW/HE8zBzYBtou+uh1R3nPPbxCPjIh5D
-	OutiFXdIyJC6knzNhq7bzAGg2yLshnakLe47Cbu74YPZBydxCgiEBSP/Bo=
-X-Google-Smtp-Source: AGHT+IEXE/t7QfqvUm8ZaTuQf2esMJpzDPElyDqBGV0RGdjV360thSADyS4N9hyRQjOYV3uhrbmzYlXY5QHiRxHN85o=
-X-Received: by 2002:ac8:59cd:0:b0:4e8:85ac:f7a7 with SMTP id
- d75a77b69052e-4ed23bf1436mr1717491cf.9.1761786365282; Wed, 29 Oct 2025
- 18:06:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBB123C4F9;
+	Thu, 30 Oct 2025 01:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761786452; cv=fail; b=bD1b91mQLL3QorLpDGsEexN0p4h9nBugzWDlMCiPF2tHW/aqoO9rOQCxWSFbyCQDos6+dQ41niBOlEQ5V/LpgUyNBZkb9XCfUe7yQkAycREbDASxCxyl81wnJOXjVhMys7O+2POeMxorgHyfQEYoSsfS91iRtu5qyDzKx7wP3A0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761786452; c=relaxed/simple;
+	bh=f1PWPjrR0hssQnCpf+61rtqV+0/iiaQ4RlJjB5mBWqQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KoQco65Rgnp4Diok8/9eDpFw9+LtJetr5fnL4QxPULY/XKg86MIv9U54p3vctIB8eQhNzei5QJEiTlI4H/oWqeVoZfmPkFAUKZUr0GTG4wl+bWqCYO+6Tc6qzv1kIQmk558MGLdg7sePCjOfHnPdhODgPFkCPhYM3df9A9wy4aE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=otRf0Qiu; arc=fail smtp.client-ip=52.101.62.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xtBp6PwYCNvY5YgrgnysQNPPWobN+j8AG9QDCfw+rsMIdZTt2WeW5hXZNYLWidOlobJmgFMfvntWCtSI6vgVgoYadxiyGc+ctgKDu4ftBGY9C1U9SKEcQyFTJ4YgDsXXefHi6QWnUOq/9ZsI3REVMO7UK6dPP+nMdAGo3AhRNHRdgaxu9UYLTzu2A24ofDDwCBlY2GcEjtkplUOAcFj5t4ZAz6MHY4dza4RLF9YhX3Qp+6s2DyQfBrlMrF5k+BT//EGi+RsVAidCFhxj7+Tc5/E/NG0FXgo6UwiuvFylL5jB6CWz7DZhPlQp7/oRxfjEQIKJ2nxlo3rJ/g+Qns3HJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HZ/Wolv/CVDmryPuz2FVyFGd+z4rUuPt3EadGff8G/Q=;
+ b=Lt1UdXKNeIRVd+133lqCGjRorMYDolKX1YuOVOWo54qrw8fzk/wvjAupK3Rn5eAhm48Oy8p07qni6nEfJFxWQnxacaQQApJVH0F/4S6+c0CMdjyEujYipwIlGEJ58NLhfWeBziy4qRVedz29aSuCtDC61LBRwY+RvBgLUhGV5U12WYx3LI26ukQpgNguvxg5ota5kkgCi8ya+ojCFLWVac1Tg9rH9VPwUyIEBwV2zDyzxO0GFQLl7uLUHDxMdSNk7iY7EcbAj9HJ9YGMFxNOuiXFpZSSgMmfUm/8gyRSa/oW3MQHsiLwTsL1FkH06G7/JqR8tqIbmth5A+SDBs6Ccg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HZ/Wolv/CVDmryPuz2FVyFGd+z4rUuPt3EadGff8G/Q=;
+ b=otRf0QiuGhQoszb7CCpdE9m/3YjQ0Kx3QE6m/xRV11bu1iX5O8fx+dVqvcf5IBsX/AkPtI22/zmkBa+YtGcoykfHzdQqp4YIuSscT27ngKYEHOft4Y3Kh8cqhExTb01Ay9vep2Y4ew5EEZ/3D40DkKI/GaEvrXYGYZJWArjZ6JhAXe9KJCpP67YTX6DC/GRZjzQGiA7FL7xoeoB2PKbtHyNpm6DcBWjTMZMjCNdTIZZpTYqXRqEa+tX5TCeWfsi3/AjUQGv2lg2LAMFazVMRsF4TWxCW9ROsPoBI+d6h9/iEb5i/je+23YXheg2XnJwAcQL2X9GeKOUSIoib7tHR5A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by DS0PR12MB8526.namprd12.prod.outlook.com (2603:10b6:8:163::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
+ 2025 01:07:28 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.011; Thu, 30 Oct 2025
+ 01:07:28 +0000
+Message-ID: <b8796ee0-05fc-48e1-a075-2bad99b938d2@nvidia.com>
+Date: Wed, 29 Oct 2025 18:07:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen
+ GPUs
+To: Timur Tabi <ttabi@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>
+Cc: "lossin@kernel.org" <lossin@kernel.org>,
+ "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
+ "boqun.feng@gmail.com" <boqun.feng@gmail.com>, Zhi Wang <zhiw@nvidia.com>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "tmgross@umich.edu"
+ <tmgross@umich.edu>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "ojeda@kernel.org" <ojeda@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+ Edwin Peer <epeer@nvidia.com>, "airlied@gmail.com" <airlied@gmail.com>,
+ "aliceryhl@google.com" <aliceryhl@google.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>,
+ Alexandre Courbot <acourbot@nvidia.com>, "gary@garyguo.net"
+ <gary@garyguo.net>, Alistair Popple <apopple@nvidia.com>
+References: <20251029030332.514358-1-jhubbard@nvidia.com>
+ <20251029030332.514358-3-jhubbard@nvidia.com>
+ <DDURPPIWWIA7.27RFSM7KRLN7I@kernel.org>
+ <a24876cd-1a41-488f-968f-38d2ebebdd39@nvidia.com>
+ <72be0fbab026191152154b1f04a45b32dfeb402d.camel@nvidia.com>
+ <b9686644-e2dd-4abf-9dd7-fc12081f400f@nvidia.com>
+ <479ae6b7fb05376d21bdfe1fcde9e3705c11ecc4.camel@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <479ae6b7fb05376d21bdfe1fcde9e3705c11ecc4.camel@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BY5PR17CA0032.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::45) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com> <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 29 Oct 2025 18:05:54 -0700
-X-Gm-Features: AWmQ_blocebJr4y0y6DBwQJ-I85ZwTlE3oPMzhX8CLpjz_qVxCW5kze5g7B-HN8
-Message-ID: <CAJuCfpEefC1nAQ6TgKcq7osX4Zyr_dLhiR5W0So=CReed+LSuw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
- guard regions
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Andrei Vagin <avagin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|DS0PR12MB8526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c47fde2-ce3c-46d7-f97e-08de1750b1a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MHB1bEpMNElmWFhYWjkzQWF0UDlBTkovVlBqS3g0MnVzUGlVNE01Q1dzUmFH?=
+ =?utf-8?B?dlMvSHJnUnNxWVJOOHN0cFdWOUhYdEMrSEE4bjRmZjNrd3hNbXZYWkEvUHNq?=
+ =?utf-8?B?R3RWdWJSWGs4dStIRzFZdzNNS01ucStiOGt1SFlvYlJxcWF1N0JRUGFIbXJZ?=
+ =?utf-8?B?RlR1NnZhT1pjQWR2cDRudkNPUnFvVUdLNzBSUm1kc0NVK2NVSU5VNjAwZzRk?=
+ =?utf-8?B?UWJLSUlGN0poclVPK1VqVmU2WHZjd2NNUjFEbkxDRFhvclpzQ285SHlweCt5?=
+ =?utf-8?B?WWMwcXhUZmdldmp2amZJc05RSWw4R0R0cVljaVAyTzZhLzV3Rm02dUI3b3RO?=
+ =?utf-8?B?NFE4R3VQQ1VCdDdIMmV0UWV5V0ZOOHErbGRIL1YzcnFvKzhCY1ZuSnliNTF0?=
+ =?utf-8?B?ZElhNlJJdlVaL2xicUJzR21UVjc0eDJQVWdSUGY1QkxreEhNUkc0NEs5ckx3?=
+ =?utf-8?B?eVdVaGJlUHhWTS9TZ2RHTCtlbXYzTldMR2NLaXNVL1UyK3R4TURaYzZLNEJm?=
+ =?utf-8?B?VDFQVUVoTk9DQlh3b1ZQazI3d3E1ckhKekZlUWVSamE4dFV2eExWdTZkdkRw?=
+ =?utf-8?B?ai8xMzduaGhTb2U0N2NkZXN0V2lYRWt4MGFCcEdXczNxdkRiYWRpeTlIYjVN?=
+ =?utf-8?B?MkdRRDYwZTR3REM3SkQ5WHh3ZUwzbEdXRlg0b21la29VMHJrcGt0QWVrZ1lQ?=
+ =?utf-8?B?bytYYS9uekdkYUZtQmZaOGZjVE5qMS9EVFFpTFJtSzEvMTBldjhqM295aHdI?=
+ =?utf-8?B?eUhUZDgybmFIdVppdTFZZ2dmVVE3aVJUYXQyU2dHZldnNzgyaDdVdWJHMmhS?=
+ =?utf-8?B?TWt6MFovY1JCYlJZdmxBdkVNZ2I3K1BSa2dmYjg0TTQvOUk2VndCZnltMHBR?=
+ =?utf-8?B?ZG1mZ3JJeGhVMVZFYjlPSG0vczIwYlg5alhmSFBMV010bnZGNVB5ckFtMGdP?=
+ =?utf-8?B?YTRSTXNZc3pmcnEyNGRuNGs2QkNVOWpuT3c1ZzVXNHNXTWVPYWNVUVNkWkJw?=
+ =?utf-8?B?OHVpeCt5eHNwT0RtZGtzLzdDVEN3WjUwY3pacm1RdWJXR3N1blBEbGl0Y2R2?=
+ =?utf-8?B?ZS9FbHNKdHVmSHd6SExnS2JkTVBIeE9wK3RwUW51M01sTVpxWFFtdmsxMDFX?=
+ =?utf-8?B?cHNZSkkyZVBJMlREdGVSaDJuT0NndzF5UHhiVWZuRWVoWGdaQ2NOcjN1NnZi?=
+ =?utf-8?B?N3M4TGUrM1Q1Vldnek9jZGJPV2FZQW01RWFvQW1hZDY1U3NCNlJKNG4wOEtI?=
+ =?utf-8?B?NzYwNnh4Z2JZZ1hvMDZxL3BFazRqTi9EU3lpSllLQ2ZqM3FmdWNGZm1EZXlu?=
+ =?utf-8?B?R0wrZ2ZBVkplSnVlbGZ3aGR6U2dsUXY2KzBRODNhWVNRTVVlZ242YjZGOXY1?=
+ =?utf-8?B?Z1NnYnZObkRSblFXZzVTUFBHM0NQR1lDVzM0NmMrREllTTQ3OFhSbnpKb3pP?=
+ =?utf-8?B?SGpOSUhmdU5lQjZMajhibkl0L1A0Y3RlU3R3Wnd3SW9EQXFxUVcraDZRajVw?=
+ =?utf-8?B?elRKeHZwYUpLVlcrZmNnN0p0K1JROVB0OU9PRFVkdmVyeFh5bldZT0VsWSt2?=
+ =?utf-8?B?dDNScXBrZUh0NGNObXNTb3d0T1JweTFHaDVhVTh1V29MalJKdWltbmJqWmpS?=
+ =?utf-8?B?OWYzZnYyZk8yUkVHTkEzbDllRHQxNEJmazgvcDJVZUg3VGRLYm1OWlFtSlJn?=
+ =?utf-8?B?dlF1dG1ub0MydGIxRFlCbGxZbUd6OW41Umo3KzZYTXNsNVhhdkpzaDlhUU8r?=
+ =?utf-8?B?dUx1MjJpeEJ0TWkxQVZDV01GOUxHZ0EraG9XY21TVjJTSUhKbjBBWngxMm0r?=
+ =?utf-8?B?UCtIQUYxRjFXVHZsSGVkaFR1Q3hjN0M3SFVqVGozRmg3Qmp4clM2QWI4WXY2?=
+ =?utf-8?B?MFlRTk5KYW44SkRTTjVTNDU5SzhVUXppQXlqeit1Y0RIQUh4dit0eE12VWNC?=
+ =?utf-8?Q?ayGoeG+XTHEb+uq7PFLS9Oc1F9UtxYks?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SHN4c1F2T2lwWGlUSHVQc3NBQlR3RUZja3NORUU1MDY2N1k0Z25SRVdKRkx4?=
+ =?utf-8?B?cmxFWTJTNVdmcGFTN052N0tUY0p3UjNSUVNVOG5HaTdiRWpQSU5kOERWdWxo?=
+ =?utf-8?B?cE5Lbmd0ZHBFZjJ2WWhsbWlmUml3cG5XaE10ZHZQWlR6eXRtME5lRzFrRGMx?=
+ =?utf-8?B?Y1R0aFpGeGJZL214TGpSLzMzMFJISzBNWllEaEwwOG5TcU1BN1htZDlUTHRt?=
+ =?utf-8?B?b1dTdm9xVUlqb3E4VlRBb1lIenY3NWFBVjUrVy9nMVNMeG9ITlN6Y1NpOURh?=
+ =?utf-8?B?MWkzM3YyRHg2MkR1OFNQa3hFQUdFQ3ZsSVZodG9PNnRZV3g0M2pRbVZSM3A5?=
+ =?utf-8?B?Z3N5cFI4am9JeEpFSVFBbDZFWTVGRGR4SlBKek9RYTlhdjVtTURQTk9CNnNJ?=
+ =?utf-8?B?RDFERGhJMEkvb0dZclVKT2FreDJ5cjE5Y2ZqanM1dVladnpadGpZUEtZMlRR?=
+ =?utf-8?B?cWZDZkdPY3ZzelRKZVp4M1YxSTZkelhNUnNjUFNaU0xaQ2hDUjNOTTlKbE5h?=
+ =?utf-8?B?dUh2R01DQWp0TGxTbHAxVmp3SXJqZEZabjZ6VHVvSjFTcWt4TjdYYWdOMW1w?=
+ =?utf-8?B?RHFpb3VPMGFaQmlTdHM0b2prcEdQMTFjVWVwRHZ1Ti9QOFMvYmZZRDU2bmJi?=
+ =?utf-8?B?cEllSXhuL2JmTENCdVlrclY3M2M0Mm9FT0N6MlFudmk1ZVBNb0wwTmw2enVY?=
+ =?utf-8?B?Q1kwa1VMMVd6ZWlQeEk4N0lUY21FenNBa0lWUUQ1c2tYQ0xnMjJwTUo4N2o4?=
+ =?utf-8?B?V1dkNUY5N0JVTzFKVHVGbUpZY052TEpqdG1JbXUzQXFsQ256djRjL2RMVTZO?=
+ =?utf-8?B?K3FOMlRxS2gvbVVOWW9FN3ozOEVPdjlUY2dvNEtkUEw0bThuVkVwVGQxRHR6?=
+ =?utf-8?B?VjRhK05Kbm1SYTNvd0pWVkRRQjFSa0QwS1lTYXp3bmJjSlM2anJ0NW51V05M?=
+ =?utf-8?B?ZnNXd3lGRDUzRjVYa2FiZ1dkd1lTUndpRklYeHpkZDIySS9OL1FXMkl3SHRw?=
+ =?utf-8?B?Skk0cTVZdk1ockVIVXRObmxPc2M0V1d0aEpLbVZoREhVaTlyekRXVGZSbUgw?=
+ =?utf-8?B?Y0JEeEFUNjdtaTczZUF6RHZFb0dYVTB1K3lGUUw4dDZwYkFYdzM3VGpLRVhB?=
+ =?utf-8?B?V3A5TVVBQnRWYjBkbk0yaTJ4RDBwd2dBZlhkbWd5Yndadm5kRkVYaElXT0dn?=
+ =?utf-8?B?QzhORU5pZXdpMTVpb3JrYTNNQUl4UUN2ZFVlUVY1OUhOVHhoL2dzaFVVU0Rl?=
+ =?utf-8?B?Zk5aRUc4M3pIM3FCb2F4M25CS3dhK2FGYkhTRldFWUQ1UWJNQW1Pc0poQTV4?=
+ =?utf-8?B?TXFieVFaTGQxV2tqVXl0WnRWSTBCOFlBMXY1a2phOGFLVmdNVHhXZ1hpSHBr?=
+ =?utf-8?B?Wlovenl1eEhibnlkdCtaM0xUVkErNkVtd0E0ODhLRTcrbjVzMHkwa0lUZXdX?=
+ =?utf-8?B?ci92bUpzVVk1U1hBKzlZSGRKMmlCVk12SmlyNUt2dFc2L3ZTUWZSbVJqVTlk?=
+ =?utf-8?B?WkVMTWo2dG14ek93QWNURGZqWVllYzJOaVNzSTQ1NEptSWtzNTFuNGtrSFdF?=
+ =?utf-8?B?Q2tJTEFNY3RGcVgrYnpoRXlxbVZHcFVhQlZMUy9kb3BjY2grOUZiRHNlSldt?=
+ =?utf-8?B?czdSMHl5T3RHb1pQUXRnbCs3TEZYalZBTUdRUGkzUlN3YTFZSWlZTjBZNWR2?=
+ =?utf-8?B?UE94SkpZMDgwM0ltVkZRamIzM1NMeGJMQmwwME1rM3Q1QXE4RTl2b3dSeElF?=
+ =?utf-8?B?QjhKanB0ckttZm1EMVpTV1E2anNoaGM0d0lmQ09jZit2SXBOQWduUEhYbEJO?=
+ =?utf-8?B?dlhweHFtWVQ4RzVIMXorb0hMcmVsYXJVcldXOFI5NGt6bWdxR2liQU5CRnFG?=
+ =?utf-8?B?cGY4MExsWG5UcmtxQzNQTzJXbXhLSjdOM3NtYmw4dE8wcjEzanArVHBsdTNO?=
+ =?utf-8?B?c3BzZERVNUQ5cTZZVkk1ZXh4RTJDZG9xaVV1aEVBY1BuTlc2Z2lHRUhlVmhC?=
+ =?utf-8?B?djBVaVVVdERtNnhhZkVSNC9oR0NuYzQ3VFdOaStGTkRlMDNaa2hWbGJmTGdE?=
+ =?utf-8?B?T01nVk5aS2dtWWw4bGJYanJnZ3lWRmVidDgyeWx3bnNUakRqMFRnNEtzNGQy?=
+ =?utf-8?Q?65FXueuj3Nd8fsje3+j7zoN/0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c47fde2-ce3c-46d7-f97e-08de1750b1a0
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 01:07:27.9663
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xQYF1IfFfI/yBZOwyAKszqSYEt6/SuibyTOwXIVo7wqY8FkZBly+2JOjQlc6tyKRDoJ+YA9pigJ8JdvzTfEdXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8526
 
-On Wed, Oct 29, 2025 at 9:51=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Currently, if a user needs to determine if guard regions are present in a
-> range, they have to scan all VMAs (or have knowledge of which ones might
-> have guard regions).
->
-> Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
-> pagemap") and the related commit a516403787e0 ("fs/proc: extend the
-> PAGEMAP_SCAN ioctl to report guard regions"), users can use either
-> /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
-> operation at a virtual address level.
->
-> This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
-> that guard regions exist in ranges.
->
-> This patch remedies the situation by establishing a new VMA flag,
-> VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
-> uncertain because we cannot reasonably determine whether a
-> MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
-> additionally VMAs may change across merge/split).
+On 10/29/25 6:01 PM, Timur Tabi wrote:
+> On Wed, 2025-10-29 at 17:35 -0700, John Hubbard wrote:
+>>          // "Future" GPUs (some time after Rubin) will set `architecture_0`
+>>          // to 0, and `architecture_1` to 1, and put the architecture details in
+>>          // boot42 instead.
+> 
+> I don't want to kick a dead horse here, but aren't the architecture details already in boot42
+> for Turing?  I thought the whole point was that we don't need boot0 any more, and only Nouveau
+> has to worry about boot0 vs boot42.
 
-nit: I know I suck at naming but I think VM_MAY_HAVE_GUARDS would
-better represent the meaning.
+Yes, but someone can still plug in a pre-Turing GPU and try to
+boot up with nova-core.ko on the system.
 
->
-> We utilise 0x800 for this flag which makes it available to 32-bit
-> architectures also, a flag that was previously used by VM_DENYWRITE, whic=
-h
-> was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
-> bee reused yet.
+So it's important to avoid getting into trouble in that case.
 
-s/bee/been
-but I'm not even sure the above paragraph has to be included in the
-changelog. It's a technical detail IMHO.
-
->
-> The MADV_GUARD_INSTALL madvise() operation now must take an mmap write
-> lock (and also VMA write lock) whereas previously it did not, but this
-> seems a reasonable overhead.
-
-I guess this is because it is modifying vm_flags now?
-
->
-> We also update the smaps logic and documentation to identify these VMAs.
->
-> Another major use of this functionality is that we can use it to identify
-> that we ought to copy page tables on fork.
->
-> For anonymous mappings this is inherent, however since commit f807123d578=
-d
->  ("mm: allow guard regions in file-backed and read-only mappings") which
->  allowed file-backed guard regions, we have unfortunately had to enforce
-> this behaviour by settings vma->anon_vma to force page table copying.
->
-> The existence of this flag removes the need for this, so we simply update
-> vma_needs_copy() to check for this flag instead.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Overall, makes sense to me and I think we could use it.
-
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-
-It would be nice to have a way for userspace to reset this flag if it
-confirms that the VMA does not really have any guards (using say
-PAGEMAP_SCAN) but I think such an API can be abused.
-
-> ---
->  Documentation/filesystems/proc.rst |  1 +
->  fs/proc/task_mmu.c                 |  1 +
->  include/linux/mm.h                 |  1 +
->  include/trace/events/mmflags.h     |  1 +
->  mm/madvise.c                       | 22 ++++++++++++++--------
->  mm/memory.c                        |  4 ++++
->  tools/testing/vma/vma_internal.h   |  1 +
->  7 files changed, 23 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
-ms/proc.rst
-> index 0b86a8022fa1..b8a423ca590a 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
->      sl    sealed
->      lf    lock on fault pages
->      dp    always lazily freeable mapping
-> +    gu    maybe contains guard regions (if not set, definitely doesn't)
->      =3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  Note that there is no guarantee that every flag and associated mnemonic =
-will
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index fc35a0543f01..db16ed91c269 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1146,6 +1146,7 @@ static void show_smap_vma_flags(struct seq_file *m,=
- struct vm_area_struct *vma)
->                 [ilog2(VM_MAYSHARE)]    =3D "ms",
->                 [ilog2(VM_GROWSDOWN)]   =3D "gd",
->                 [ilog2(VM_PFNMAP)]      =3D "pf",
-> +               [ilog2(VM_MAYBE_GUARD)] =3D "gu",
->                 [ilog2(VM_LOCKED)]      =3D "lo",
->                 [ilog2(VM_IO)]          =3D "io",
->                 [ilog2(VM_SEQ_READ)]    =3D "sr",
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index aada935c4950..f963afa1b9de 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -296,6 +296,7 @@ extern unsigned int kobjsize(const void *objp);
->  #define VM_UFFD_MISSING        0
->  #endif /* CONFIG_MMU */
->  #define VM_PFNMAP      0x00000400      /* Page-ranges managed without "s=
-truct page", just pure PFN */
-> +#define VM_MAYBE_GUARD 0x00000800      /* The VMA maybe contains guard r=
-egions. */
->  #define VM_UFFD_WP     0x00001000      /* wrprotect pages tracking */
->
->  #define VM_LOCKED      0x00002000
-> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflag=
-s.h
-> index aa441f593e9a..a6e5a44c9b42 100644
-> --- a/include/trace/events/mmflags.h
-> +++ b/include/trace/events/mmflags.h
-> @@ -213,6 +213,7 @@ IF_HAVE_PG_ARCH_3(arch_3)
->         {VM_UFFD_MISSING,               "uffd_missing"  },              \
->  IF_HAVE_UFFD_MINOR(VM_UFFD_MINOR,      "uffd_minor"    )               \
->         {VM_PFNMAP,                     "pfnmap"        },              \
-> +       {VM_MAYBE_GUARD,                "maybe_guard"   },              \
->         {VM_UFFD_WP,                    "uffd_wp"       },              \
->         {VM_LOCKED,                     "locked"        },              \
->         {VM_IO,                         "io"            },              \
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index fb1c86e630b6..216ae6ed344e 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1141,15 +1141,22 @@ static long madvise_guard_install(struct madvise_=
-behavior *madv_behavior)
->                 return -EINVAL;
->
->         /*
-> -        * If we install guard markers, then the range is no longer
-> -        * empty from a page table perspective and therefore it's
-> -        * appropriate to have an anon_vma.
-> +        * It would be confusing for anonymous mappings to have page tabl=
-e
-> +        * entries but no anon_vma established, so ensure that it is.
-> +        */
-> +       if (vma_is_anonymous(vma))
-> +               anon_vma_prepare(vma);
-> +
-> +       /*
-> +        * Indicate that the VMA may contain guard regions, making it vis=
-ible to
-> +        * the user that a VMA may contain these, narrowing down the rang=
-e which
-> +        * must be scanned in order to detect them.
->          *
-> -        * This ensures that on fork, we copy page tables correctly.
-> +        * This additionally causes page tables to be copied on fork rega=
-rdless
-> +        * of whether the VMA is anonymous or not, correctly preserving t=
-he
-> +        * guard region page table entries.
->          */
-> -       err =3D anon_vma_prepare(vma);
-> -       if (err)
-> -               return err;
-> +       vm_flags_set(vma, VM_MAYBE_GUARD);
->
->         /*
->          * Optimistically try to install the guard marker pages first. If=
- any
-> @@ -1709,7 +1716,6 @@ static enum madvise_lock_mode get_lock_mode(struct =
-madvise_behavior *madv_behavi
->         case MADV_POPULATE_READ:
->         case MADV_POPULATE_WRITE:
->         case MADV_COLLAPSE:
-> -       case MADV_GUARD_INSTALL:
->         case MADV_GUARD_REMOVE:
->                 return MADVISE_MMAP_READ_LOCK;
->         case MADV_DONTNEED:
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 4c3a7e09a159..a2c79ee43d68 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1478,6 +1478,10 @@ vma_needs_copy(struct vm_area_struct *dst_vma, str=
-uct vm_area_struct *src_vma)
->         if (src_vma->anon_vma)
->                 return true;
->
-> +       /* Guard regions have momdified page tables that require copying.=
- */
-> +       if (src_vma->vm_flags & VM_MAYBE_GUARD)
-> +               return true;
-> +
->         /*
->          * Don't copy ptes where a page fault will fill them correctly.  =
-Fork
->          * becomes much lighter when there are big shared or private read=
-only
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_int=
-ernal.h
-> index d873667704e8..e40c93edc5a7 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -56,6 +56,7 @@ extern unsigned long dac_mmap_min_addr;
->  #define VM_MAYEXEC     0x00000040
->  #define VM_GROWSDOWN   0x00000100
->  #define VM_PFNMAP      0x00000400
-> +#define VM_MAYBE_GUARD 0x00000800
->  #define VM_LOCKED      0x00002000
->  #define VM_IO           0x00004000
->  #define VM_SEQ_READ    0x00008000      /* App will access data sequentia=
-lly */
-> --
-> 2.51.0
->
+thanks,
+John Hubbard
 
