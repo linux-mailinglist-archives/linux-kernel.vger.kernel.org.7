@@ -1,50 +1,57 @@
-Return-Path: <linux-kernel+bounces-878137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFCAC1FDE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:44:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1861AC1FDF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 48C70349BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:44:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 453D04E519A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225DC336EEC;
-	Thu, 30 Oct 2025 11:44:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6CF23D2B2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAE6301494;
+	Thu, 30 Oct 2025 11:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hz2a8B2n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6AF232395;
+	Thu, 30 Oct 2025 11:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761824666; cv=none; b=YNptu76rTqDHi+fRts3zs3R0ckH8KXNfCymiqcE+Qpudj4jsrWv1ZMWNinlF3zo0jCCDcWpiG4y92PsTOfroyxFPeooeFt+viub9VgkJjeZZNdkzGbLIrCrBlS7uThCvS52hkLMqmjPbJg5olRHb5C8+WVSwwCDL8aO0tMEyQ2A=
+	t=1761824783; cv=none; b=UOujD9zDONhv9nv8RoI6cs8FzrznOJr9+KeMefh603jyWVe9HIRXrEmpJ0ZEVWawCz8CgfIthQqoRn7blrdc+fnRIjbVGp3enHCGYiVSncP6rST0btrZ7wF0GZfYDuUDDxgJyJQGRwNerqhGkct3Vuz6AHAwS4hEpbjjQFZfKto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761824666; c=relaxed/simple;
-	bh=N+YAL6XpnAh4+ncUptXbSh7wbry6o0CPhA56NXZwAeA=;
+	s=arc-20240116; t=1761824783; c=relaxed/simple;
+	bh=reiNpeqTPEeJU6gOHFXRhPO54XWsRkqnewY5o9KMMDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svrGVzdvDCFgQfZqPzIQ8EXI08j76iSWHQOQjIbYc+v8wY+Id6ZYiVpnipopuVZxiw4Rn42y/Z6e5Tjv/HFOOMqTWngTfaxk4t9m3tLKuH4R5Hf9x0B5qazNYpsOLw8F/iMu4TrkWaXgz1I3ITbRT7EkbxyK/+nX/lOM4pusQA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D81252C40
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:44:15 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 794653F673
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:44:23 -0700 (PDT)
-Date: Thu, 30 Oct 2025 11:44:13 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Ketil Johnsen <ketil.johnsen@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: disable async work during unplug
-Message-ID: <aQNPjYdp4XOlk0Ej@e110455-lin.cambridge.arm.com>
-References: <20251029111412.924104-1-ketil.johnsen@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dL7e/6eBiGw95pClgiyXxbCLgUJUI7NiLHlas/bI+YbMxXuLunJr03XPoo6fXyRFGMpoTiFqOfWyxQ6ut+G70PhJVwK6DhIPgucSDXB+mq8eezZ4CDqIoLdsf1Ed9myXxYJitxbfnuvQX9NpbZ/BhzIilq/xL12OBHpZsFcjHTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hz2a8B2n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D92BC4CEFF;
+	Thu, 30 Oct 2025 11:46:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761824783;
+	bh=reiNpeqTPEeJU6gOHFXRhPO54XWsRkqnewY5o9KMMDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hz2a8B2nAz+J+MqNj3XJWzeVhFnHgmnKxDMGrxgKNJHwV9Zt0Sl2LJYbw9jTJzwcq
+	 j5Vdd/3qwXooUYn4PtiKS0USib3p1lY1QHAj0r4TRFxThcAqyO+1RozVogiGKS+wav
+	 M4/63umk7L2ayO8Yh4Vn++Xy++tM3wZxFu3TaNkwSytRL19wlvdxh5iuXQFkfGeomq
+	 oy4rnPAOceDk63XM1KYxjtqJokm1wqgTwfp1vDT33eZeCc2yh9flgYvvVobw4r9cU6
+	 mr9hswKxc9hAvcyd6aHovQaIdCs9zVQ8Ka1KiXWX+49qARSBxpQyXh3x0BksTJrXl2
+	 CrqTV588Bt/lQ==
+Date: Thu, 30 Oct 2025 11:47:26 +0000
+From: Daniel Thompson <danielt@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 1/2] leds: Drop duplicate LEDS_EXPRESSWIRE config
+Message-ID: <aQNQTlGed2XCY0lH@aspen.lan>
+References: <20250729-expresswire-dep-fix-v1-0-635cd4cc746b@dujemihanovic.xyz>
+ <20250729-expresswire-dep-fix-v1-1-635cd4cc746b@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,90 +61,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251029111412.924104-1-ketil.johnsen@arm.com>
+In-Reply-To: <20250729-expresswire-dep-fix-v1-1-635cd4cc746b@dujemihanovic.xyz>
 
-On Wed, Oct 29, 2025 at 12:14:10PM +0100, Ketil Johnsen wrote:
-> A previous change, "drm/panthor: Fix UAF race between device unplug and
-> FW event processing", fixes a real issue where new work was unexpectedly
-> queued after cancellation. This was fixed by a disable instead.
-> 
-> Apply the same disable logic to other device level async work on device
-> unplug as a precaution.
-> 
-> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+On Tue, Jul 29, 2025 at 07:18:29PM +0200, Duje Mihanović wrote:
+> While moving said config symbol out of the "if NEW_LEDS" block, I
+> accidentally left a copy inside that block. Remove it.
+>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Link: https://lore.kernel.org/all/b6c481bb-e854-405e-a428-90301789fe20@infradead.org/
+> Fixes: 2cd0d1db31e7 ("leds: expresswire: Don't depend on NEW_LEDS")
+> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
 
-Best regards,
-Liviu
 
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c | 2 +-
->  drivers/gpu/drm/panthor/panthor_fw.c     | 2 +-
->  drivers/gpu/drm/panthor/panthor_sched.c  | 5 ++---
->  3 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index 962a10e00848e..c4ae78545ef03 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -120,7 +120,7 @@ static void panthor_device_reset_cleanup(struct drm_device *ddev, void *data)
->  {
->  	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
->  
-> -	cancel_work_sync(&ptdev->reset.work);
-> +	disable_work_sync(&ptdev->reset.work);
->  	destroy_workqueue(ptdev->reset.wq);
->  }
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index 9bf06e55eaeea..ceb249da8b336 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1162,7 +1162,7 @@ void panthor_fw_unplug(struct panthor_device *ptdev)
->  {
->  	struct panthor_fw_section *section;
->  
-> -	cancel_delayed_work_sync(&ptdev->fw->watchdog.ping_work);
-> +	disable_delayed_work_sync(&ptdev->fw->watchdog.ping_work);
->  
->  	if (!IS_ENABLED(CONFIG_PM) || pm_runtime_active(ptdev->base.dev)) {
->  		/* Make sure the IRQ handler cannot be called after that point. */
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index b7595beaa0205..278434da8926d 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -3879,8 +3879,9 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
->  {
->  	struct panthor_scheduler *sched = ptdev->scheduler;
->  
-> -	cancel_delayed_work_sync(&sched->tick_work);
-> +	disable_delayed_work_sync(&sched->tick_work);
->  	disable_work_sync(&sched->fw_events_work);
-> +	disable_work_sync(&sched->sync_upd_work);
->  
->  	mutex_lock(&sched->lock);
->  	if (sched->pm.has_ref) {
-> @@ -3898,8 +3899,6 @@ static void panthor_sched_fini(struct drm_device *ddev, void *res)
->  	if (!sched || !sched->csg_slot_count)
->  		return;
->  
-> -	cancel_delayed_work_sync(&sched->tick_work);
-> -
->  	if (sched->wq)
->  		destroy_workqueue(sched->wq);
->  
-> -- 
-> 2.47.2
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Daniel.
 
