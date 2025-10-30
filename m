@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-878221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454D9C200C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:39:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E834C200D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFDE464DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9EC43B4099
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA72321F48;
-	Thu, 30 Oct 2025 12:37:34 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A43631D375;
+	Thu, 30 Oct 2025 12:38:07 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288AF2FFDEB
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2A631BC96
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761827853; cv=none; b=nSp0/RuTtiat7rGu2gNPv+cyj2jhh2TGg+1EaVCOsa4q89PxmTq1KvStGcg9N5WonIKY8y8LgYBUFvCp/ZJnD6ygo1Ad2ttPDnWtfqUqEzRrveR+U8zbhtpSE8vjBqwuIOuty3KMynhCz3o07R6h2p6EEy7xNtIcaXcA18dn1us=
+	t=1761827886; cv=none; b=o/eqixtQLxvRTmTsBfIrxozu+c16ToLDp+bvDddoNv304VvyhTeKIEWlpvBuqTn8jcYJIbq45Ihtknm2qNKbYjsIRTgjpcD9L2uWJWfyImerYkO6Le1v/TnBU+CvCifMhWD9lfKxxuTCzYf6iImolpN9qDeFQvGLLN+1sXpKrsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761827853; c=relaxed/simple;
-	bh=+BEb5A3FVsu+J3Ry977bg1bez4uF76Mqs/ReUtil/A8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kRlBx4qvZOVOvT0b2ywPBTpXBoJcEgHpe6RJo7/cNTwfJ4Sgzh/XAAbBFnX0v1gibxuSFuZWX0IpDQDc6RjcE69W+aBIiCDxlPTDOCEvtJAo9nhTYDC/e38ZytKd/ntOP4cLgLfZTMO+P2molHpswdBQ3WzxuDZS7i8tuxxSptA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-430db6d36c6so32136695ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:37:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761827851; x=1762432651;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8cwPAlKZVSjF+/N6Fi1I5B5KzPONFRHbaCRMS20ttE=;
-        b=NqImJ3pKp/ve5S26rdr1Oz38r45+gTu4xe/apy8Krse74jxf28TA4eGcz5P1sNTKXQ
-         pSpZ3PsklQ8wz8L6qbs9n90V7erHGzwRT/nPxGgBm5NPU9Evi8pKvxAkSsDqGAZZLYhr
-         9cFvn0rlL30ebEFNnkc30fO5vAOKVQuwa5Yn0ZjZMxMGMgW3osE5dGIZ5X9bswLxLdjE
-         GY1JxLb4QB5xYZ7lbtIXoaAqBAMJDfQ/skttSCvBRfam1i4id6Bk4mN3GNrs5YBYcmm6
-         QZr9LoO6ulMyVMXERz0tAlGptbmfnuP1Gg2t8/+rP+g6j3e3oNsYRyJ1Qua/hWunEC8J
-         d+ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUo+N7SI2f6fw8vIsmw+xiS7eBOvDCu3g4gE5OTPEseaZfvRVDiyPVECUz0P7ZphY/5/AIFZ+bRwRufywA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZZhexfP+QgdAm1B34f3HHgUSiYplWrEYINFU5iThnpCUsZmZE
-	CzkjL5sRDuX1tVosCVcDE3Q8OFwOEicDK/pApyGhSmDCtHFfL/wiqHBbo8FQXmIEMbXUvm0OQuR
-	C0dnXkiZ4obT8W5HIkUP3Ma+NW8u6i7r9vBAfWW+EuTjapG0B5B/EQrj7l3Q=
-X-Google-Smtp-Source: AGHT+IHAL/7dLlSaaFS1lZzxZx7lwZe6fajDitXF2Ab8bmEqN6QMZo9ihZqPzBCwhcK3YS2VoWwHGmnITEWkc0+3wYOdFjhvw3P5
+	s=arc-20240116; t=1761827886; c=relaxed/simple;
+	bh=wkC1PUt+I4W2r+dg4QBQFr+2AyRtCZt70S43hTUbEZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QIRsTVGkxZM/Rb60dKXUtEFgJfeaF3xjqtft8Hza8QRgs66AVDjhOAgw/+SCU2ULqoJ8cF8bPnrFtRDCZDLWj/Lw3mN1ZgXmxK1ogyWeOW1hGADLD9qiVpbzmXofe4ZhjMlyxohQRCq1RMAI1RjL/aBYXY0yC/jfJ9/BXFVuDdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 44eb6260b58d11f0a38c85956e01ac42-20251030
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:0b462e32-9ca4-491f-9d6c-602029dc235c,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:20
+X-CID-META: VersionHash:a9d874c,CLOUDID:f6a1a6658ce3373ee6fb7feb40b98371,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|15|50,EDM
+	:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 44eb6260b58d11f0a38c85956e01ac42-20251030
+Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <pengyu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 791922154; Thu, 30 Oct 2025 20:37:59 +0800
+From: Yu Peng <pengyu@kylinos.cn>
+To: bp@alien8.de,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org
+Cc: hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Yu Peng <pengyu@kylinos.cn>
+Subject: [PATCH v4] arch/x86/microcode: Mark early_parse_cmdline() as __init
+Date: Thu, 30 Oct 2025 20:37:57 +0800
+Message-Id: <20251030123757.1410904-1-pengyu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251029081644.4082219-1-pengyu@kylinos.cn>
+References: <20251029081644.4082219-1-pengyu@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:74a:b0:42f:983e:e54d with SMTP id
- e9e14a558f8ab-432f8f81cc3mr94139635ab.4.1761827851395; Thu, 30 Oct 2025
- 05:37:31 -0700 (PDT)
-Date: Thu, 30 Oct 2025 05:37:31 -0700
-In-Reply-To: <6889adf3.050a0220.5d226.0002.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69035c0b.050a0220.3344a1.0441.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook (9)
-From: syzbot <syzbot+78ac1e46d2966eb70fda@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	phil@nwl.cc, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+Fix section mismatch warning reported by modpost:
+  .text:early_parse_cmdline() -> .init.data:boot_command_line
 
-HEAD commit:    efd3e30e651d Merge branch 'net-stmmac-hwif-c-cleanups'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ea1704580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5683686a5f7ee53f
-dashboard link: https://syzkaller.appspot.com/bug?extid=78ac1e46d2966eb70fda
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12afbc92580000
+The function early_parse_cmdline() is only called during init and
+accesses init data, so mark it __init to match its usage.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a6eb09423004/disk-efd3e30e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f8a2fb326497/vmlinux-efd3e30e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a8cdcb8113e1/bzImage-efd3e30e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+78ac1e46d2966eb70fda@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-hook not found, pf 5 num 0
-WARNING: CPU: 1 PID: 9032 at net/netfilter/core.c:514 __nf_unregister_net_hook+0x30a/0x700 net/netfilter/core.c:514
-Modules linked in:
-CPU: 1 UID: 0 PID: 9032 Comm: syz.0.994 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__nf_unregister_net_hook+0x30a/0x700 net/netfilter/core.c:514
-Code: d5 18 f8 05 01 90 48 8b 44 24 10 0f b6 04 28 84 c0 0f 85 e3 03 00 00 41 8b 17 48 c7 c7 00 72 72 8c 44 89 ee e8 67 4f 14 f8 90 <0f> 0b 90 90 e9 d8 01 00 00 e8 a8 17 d7 01 89 c3 31 ff 89 c6 e8 fd
-RSP: 0018:ffffc9000c396938 EFLAGS: 00010246
-RAX: a02a0e56549ab800 RBX: ffff8880583d1480 RCX: ffff888059800000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: dffffc0000000000 R08: ffff8880b8924293 R09: 1ffff11017124852
-R10: dffffc0000000000 R11: ffffed1017124853 R12: ffff88807acf2480
-R13: 0000000000000005 R14: ffff88802701a488 R15: ffff88807796ae3c
-FS:  00007fba157656c0(0000) GS:ffff888126240000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555576f79808 CR3: 000000007f6c4000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- nft_unregister_flowtable_ops net/netfilter/nf_tables_api.c:8979 [inline]
- nft_flowtable_event net/netfilter/nf_tables_api.c:9758 [inline]
- __nf_tables_flowtable_event+0x5bf/0x8c0 net/netfilter/nf_tables_api.c:9803
- nf_tables_flowtable_event+0x103/0x160 net/netfilter/nf_tables_api.c:9834
- notifier_call_chain+0x1b6/0x3e0 kernel/notifier.c:85
- call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
- call_netdevice_notifiers net/core/dev.c:2281 [inline]
- unregister_netdevice_many_notify+0x1860/0x2390 net/core/dev.c:12333
- unregister_netdevice_many net/core/dev.c:12396 [inline]
- unregister_netdevice_queue+0x33c/0x380 net/core/dev.c:12210
- unregister_netdevice include/linux/netdevice.h:3390 [inline]
- hsr_dev_finalize+0x707/0xaa0 net/hsr/hsr_device.c:800
- hsr_newlink+0x8ad/0x9f0 net/hsr/hsr_netlink.c:128
- rtnl_newlink_create+0x310/0xb00 net/core/rtnetlink.c:3833
- __rtnl_newlink net/core/rtnetlink.c:3950 [inline]
- rtnl_newlink+0x16e4/0x1c80 net/core/rtnetlink.c:4065
- rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6951
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1318 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1344
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1894
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:742
- ____sys_sendmsg+0x505/0x830 net/socket.c:2630
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fba1498efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fba15765038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fba14be5fa0 RCX: 00007fba1498efc9
-RDX: 0000000000000000 RSI: 00002000000000c0 RDI: 0000000000000005
-RBP: 00007fba14a11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fba14be6038 R14: 00007fba14be5fa0 R15: 00007ffcbfaff8c8
- </TASK>
-
-
+Signed-off-by: Yu Peng <pengyu@kylinos.cn>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ arch/x86/kernel/cpu/microcode/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Changes in v4:
+  - Resend to fix broken mail thread (v3 was not sent as a reply).
+
+Changes in v3:
+  - Fix Signed-off-by email address.
+
+Changes in v2:
+  - Resend to add correct email.
+  - No code changes.
+  
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index d7baec8ec0b4..ccc83b0bf63c 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -136,7 +136,7 @@ bool __init microcode_loader_disabled(void)
+ 	return dis_ucode_ldr;
+ }
+ 
+-static void early_parse_cmdline(void)
++static void __init early_parse_cmdline(void)
+ {
+ 	char cmd_buf[64] = {};
+ 	char *s, *p = cmd_buf;
+-- 
+2.43.0
+
 
