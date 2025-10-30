@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-878817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60123C21879
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:41:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10262C21882
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3785D1A6808F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 217313B0620
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770A36B986;
-	Thu, 30 Oct 2025 17:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E9036C23B;
+	Thu, 30 Oct 2025 17:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="KeQETYzR"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlUUoCja"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85593368F4F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C836A5F6
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846057; cv=none; b=NHmpkV9NWblLKjJkVMKz11QhtFMrNFHbOxOsWFCIDcKlrPA22stEJI5rUtZFsAUIvulXHlEPgbMDcCQM4TN2nCvqqpabILfEvtVF4pjo1AwjnsCBvftKSoQlGGI6iBhA07wSe8UpxMAzoPLnE6f8+nDxX2b8x4zdCwE41Owrixg=
+	t=1761846107; cv=none; b=bNYH/dCUHdWKcpS5zZRoxdCzIwRyrk5Ays9q1LF7gkVxbYGvDtQXll9lfJerQODBhTQ+MZoXLWfB0+RAMCD7NgKMSweh3+kh4SF2NVrcKw5sewPFo40e6fr8Kg6/NnNdkX9yWUDJemlIVr1DGhh7R9CiryP757dRt07lGiXAiys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846057; c=relaxed/simple;
-	bh=m/ntmb/Nr5XTaAoFpnI3XGWj4UVbw7mUq1L0Jecd/Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XuRhCEao9TkbSJmlTwP3fPXQ/2APmsRbPumJnQu8Bt8ZNOCFNigk1qfCzE4+m5v5Wh1rYrTSC1YQkC81Oj0rsD+HwhuBm6LnRW5IRmlPa+rHkXyBNNokJlHuC38RZdFE+B/4LRPQ8kv7WcQVjyDu2/QXWjHDUFl5h5YZe6blzAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=KeQETYzR; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-940f8a73275so140019739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:40:55 -0700 (PDT)
+	s=arc-20240116; t=1761846107; c=relaxed/simple;
+	bh=oo4IkdW7sLnrYxIJRobVdkvu7rD5V1EssVx2JDkDEEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ecB1JGafjIbOhdaWRorIBa7YtmqEutsBQF0V+agne5cyljvgLjE3yjy3Ytfa9MZ40s/AUDSw6StpcYSnEQEaws4b0yFTuB3SgUpjWmKkgYBzUPgCaTzG9xMfBTbPKHtvsK0Eb/6/Qn13C+ydFlD1Ic4uBDG6Bdnp2LVJNhaboIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlUUoCja; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-594144059ecso124096e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:41:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761846054; x=1762450854; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/22pqQ5hwp4Fzi994om9q5KGyGnCNdWdbuYVMsnFBOM=;
-        b=KeQETYzRUj/5F25ISREZW79vifauKna9hMNIBP8Pud3YRglQxMs8o8vEwONSJFZwVw
-         OHdQjZ1Ne+i0p+7BKavxShwvwGqTyor4DByWO4iDIpN9ONz6vfxbdAzcO7fZsqfdj3SW
-         t89/1kMGSBY+H35j6UV+K0MAqY0gn+hvQTNOVFKY3pE6swZLiFiq90hlhctzGKv/Gzs7
-         plvQuaKgXuNtnK3WzeO8t/YCcEnUzc4S5mc6mm32OXLSGN4r4tQHXsVZ5fNDr8+3+NGX
-         oIOgd0HO8cl8H0dfBgXhciDTGJIzxQSnjo+aJSJoXByUJcf6wXDbgrCQNuPV61u0zeNj
-         vHmg==
+        d=gmail.com; s=20230601; t=1761846103; x=1762450903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WaanMAXhNGpoOdRMiFzSWcxFY46ssv0pr1eWhXJPXZU=;
+        b=hlUUoCjaC6/ZOat/ou5ynH/uFaiukPxEXbt/e3GuajnxAIkVdcI1kd0oM/rNNMNlo0
+         2zjXe2QO02UgWqju6ZNTFEdSdOrKRxGhZBVZXFmVd3QHU56MhT87CSGxvEosAUtokJSl
+         vQAIrCZf7CiRoKLxRE+Oc8ZnL7Cr/6DXixaJStbTsGkoUHqaPAPCQEL/g1U73EBZaXP1
+         8eAGeazXaPo5BQpXZ7H3/FmEnez3zM9fsw2h/Ypf66vXPncnjpajqiPyAExHV1RIm+2I
+         029pFv15yjlFSn/ZRLfPFbFxnp8fNN6dDgfZF1LSluaREJ8xzCz9NXfxyGhs5cdqGlM2
+         iOfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761846054; x=1762450854;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/22pqQ5hwp4Fzi994om9q5KGyGnCNdWdbuYVMsnFBOM=;
-        b=OK9S1iBL6FZF53wPZaqRTqq33oG3/6D71ix2KWnrMxQ1IIulNy/WSzCJ8ECROmzCKC
-         oxK/NHok77ftmqNGZPeOzdQ/Ih+JSlIK6UsygkJnljf7/Gs9EPQp2kP/jIqkzNbIt6U7
-         vuPSHtjNNDSB596HlZ9v0Ro/dyqCh0tNlT4KMSyhEukd9lSbXHVQZ+yLYbpIMzSec+tN
-         5BNEBSmXQYKPXEZmP+Uf+wHK8Sp7oYyJbVPqVvDVXRWa9B5p606OhlcInS9ppl/GB6ti
-         deemHJAp6/Fpn1HJ4BM03BguFIBj4PX41ALBvEOotDSIK4oTxvfw+vUpcwGFyanKp68f
-         Xpqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvNjq7rJBqNqfJXaB8dHpYGGINR6K+YFqXK46nqT8y4Namyuz5Wy8AFvg4BqCVu+94r95WlG7QFFFpjCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7LLWzBGc/EuUzF4HBV5QabrNw9nC0uodhrh5htZEa5wfe6dtB
-	7EN7ncZwB4faOFcqMa6pvLycWjg+YuqA9WoDQjQth+rrDELf26iYVcMyuu22x15zFn4=
-X-Gm-Gg: ASbGncv5Czxy24d1V/i3rkFJYm4jGPjtI+2UTZiaeKosFaf/3CvGMEr7IQHLsf0b5/r
-	B3we+PiSi+ORET33k4xx+h9omRB29zJm/uvnJ+dnAPEKPJe4CUAnbiMkowQYEF/BhQsIMjsbXkL
-	4/W+UTVovIMVXetMuU+xXhNEqxCuq3ciWFCUVcparVwcXAZ17YCCzVbnVot26jaw5d+Bnh4yLpm
-	uKFXYMy0jXSNqonauQwFQ+MwW9GRt8F3Bj5HTSdNkEFsQmO0y7/2NHgEDs0QZvvn5A0qMjFTt+J
-	G8YiOSKW52FAu7Blu7a9/yoeM3fgJ+JY709ru9KUNCi1HE7jca1XxbyYaXK+bQulTQu78q0JTJZ
-	PjTeDRz7kPb/bXbn93ssJbxAJdO0C2aqMhY6L6CxNd5UCmriurApD7jf4Ok0zqeml6qXSaN5wg8
-	4HhqZaU0m/Hz3bC1gLAnZzYF6z/Ii7Lxe9qWXmjfxG
-X-Google-Smtp-Source: AGHT+IG0aVGPP4r/NKWIuJVfbyDvqDCX0k5Xe21gfoqAbmkB04rb+6Q12tuONUjEXsT6ELB2rdCzfA==
-X-Received: by 2002:a05:6e02:1a28:b0:432:fbe2:35f2 with SMTP id e9e14a558f8ab-4330d125b9dmr9455495ab.4.1761846054513;
-        Thu, 30 Oct 2025 10:40:54 -0700 (PDT)
-Received: from [172.22.22.234] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4330a6ffddesm2802175ab.27.2025.10.30.10.40.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 10:40:53 -0700 (PDT)
-Message-ID: <43333e1f-dcc2-4691-9551-3c35ba04bf7b@riscstar.com>
-Date: Thu, 30 Oct 2025 12:40:52 -0500
+        d=1e100.net; s=20230601; t=1761846103; x=1762450903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WaanMAXhNGpoOdRMiFzSWcxFY46ssv0pr1eWhXJPXZU=;
+        b=to2nF6KTsrqjCGoOG70KbZpGzSYARV3dj/aE7sGnhFyOxBytPtwjitB5OnLf+pQ7ky
+         OHDIsOHLhQJ2sTiTfEGNUbo2rZASdZQRkq8YywFqK2mF8HAeeHRaCOKSPua8AyYmBFGh
+         mtXxk5nWpenZ/sDd66K2G6O8MnmQvCjjEMTv5PlcKFps+R5x1ohMumbBev1BkXHxx2su
+         lnsbohIqX/2WQXFJjIcLnD885FcmV6OlwjEvZZgvWSAbPh+0SDp9WzmdnZ/zAozXLpX7
+         ENwO+cbnEbNiO7kkVMybmoL52oCJiVs1FZp9fRgRGXM7ipri87VaSPp3alPDNFA/GCCT
+         YVQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZRC2gef964CwhjGeY5bqAU7kh+Ux/I1XX+xULTFdxtlRW11L88mwnbAZxzOEj6s94K7aZfzw1J8RSENw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1ZrMbrACgGt9b4CsJhztnzflbmW/kwKODZINh/idzhLuRh9PR
+	0PXgfsUVvxexQEm32zQMJS7pOzPj22+NTu1rszvsYvGJkzbkn4sypqLngcLaLXB3UPMSIhd8n3B
+	rAMz9uxZg7xsNqaPP5ToqzTWnh8CKV3Q=
+X-Gm-Gg: ASbGncuOQBOVx6v3sbsFpeEa+aPIqsZHngDkUhxlydjAdvLVZq6Mm9EXgB9HhX0kYRy
+	GVE5lB405rexBIGD8/WmMyqy3pVLHMMOxv/ynyi7E600NFh6ufjA3cBJsY+fQukUfKZk8d2t+Hg
+	d4cDSB5i7E76EyjsJBtPlmm9r1lbomyGoTk7OHXHv//GM/Qc3Lj4P9F4WypxR5foA06RHkus74M
+	zco6HwCCX5Yced4CB7eKM5Y8a+ej86oKrQauCgm+iTiYHY1fqQ7HiBCBPnd/8Dt/oDRc4SbYosJ
+	i8e+lqOq8P1ffle6mPuaSbGBkx2/0opolpwCQ9PfWb1j3D+kRsRcOTCGm0pOjKW4ZBFxbTWpFI7
+	nqYA=
+X-Google-Smtp-Source: AGHT+IG7bvo7ccWBD1MNUKXWUtpG4DmMsqI3BeTQWcJW82J1oN69RUHhnzVjzLexuETgdTaPCXgEfAvcK8gw70Ld9NM=
+X-Received: by 2002:a05:6512:3c92:b0:57f:5f3e:84bd with SMTP id
+ 2adb3069b0e04-5941d543c09mr124070e87.8.1761846103123; Thu, 30 Oct 2025
+ 10:41:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: dwc: Warn if the MSI ctrl doesn't have an associated
- platform IRQ in DT
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
- jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org
-Cc: robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251030171346.5129-1-manivannan.sadhasivam@oss.qualcomm.com>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20251030171346.5129-1-manivannan.sadhasivam@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <9500284ff72ad4e4dc4799fa5392a7bbfdd34f3b.1761814593.git.chenmiao@openatom.club>
+In-Reply-To: <9500284ff72ad4e4dc4799fa5392a7bbfdd34f3b.1761814593.git.chenmiao@openatom.club>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 30 Oct 2025 18:41:26 +0100
+X-Gm-Features: AWmQ_blmvl6wAJZ-Wsp9J5gdoKOtpBYl-Hhfx8cKJvUKCFPDb5C1gcb1nwusukA
+Message-ID: <CANiq72n3uB+sgkak=2JrPD4iY4pFidDe=TbvF8h2idGKCwedFQ@mail.gmail.com>
+Subject: Re: [PATCH] Makefile: Remove the product of pin_init cleanly in mrporper
+To: chenmiao <chenmiao@openatom.club>, Tamir Duberstein <tamird@gmail.com>, 
+	Daniel Gomez <da.gomez@samsung.com>
+Cc: lossin@kernel.org, nathan@kernel.org, 
+	hust-os-kernel-patches@googlegroups.com, Dongliang Mu <dzm91@hust.edu.cn>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/25 12:13 PM, Manivannan Sadhasivam wrote:
-> The internal MSI controller in DWC IPs supports multiple MSI ctrls, each
-> capable of receiving 32 MSI vectors per ctrl. And each MSI ctrl requires a
-> dedicated MSI platform IRQ in devicetree to function. Otherwise, MSIs won't
-> be received from the endpoints.
-> 
-> Currently, dw_pcie_msi_host_init() only registers the IRQ handler if the
-> MSI ctrl has the associated MSI platform IRQ in DT. But it doesn't warn if
-> the IRQ is not available. This may cause developers/users to believe that
-> the platform supports MSI vectors from all MSI ctrls, but it doesn't.
-> 
-> This discrepancy can happen due to two reasons:
-> 
-> 1. Controller driver incorrectly set the dw_pcie_rp::num_vectors field.
-> 2. DT missed specifying the MSI IRQs
-> 
-> To catch these, add a warning so that the above mentioned discrepancies
-> could be reported and fixed accordingly.
-> 
-> Fixes: db388348acff ("PCI: dwc: Convert struct pcie_port.msi_irq to an array")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+On Thu, Oct 30, 2025 at 10:08=E2=80=AFAM chenmiao <chenmiao@openatom.club> =
+wrote:
+>
+> -                 rust/libmacros.so rust/libmacros.dylib
+> +                 rust/libmacros.so rust/libmacros.dylib rust/libpin_init=
+_internal.so
 
+I think we will need the `.dylib` too, given the other one is there
+(for the macOS builds some people do -- Cc'ing Daniel and Tamir). Or
+did you avoid it for some reason?
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
-Tested-by: Alex Elder <elder@riscstar.com>
+Thanks!
 
-
-> ---
->   drivers/pci/controller/dwc/pcie-designware-host.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 20c9333bcb1c..f163f5b6ad3d 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -357,6 +357,8 @@ int dw_pcie_msi_host_init(struct dw_pcie_rp *pp)
->   		if (pp->msi_irq[ctrl] > 0)
->   			irq_set_chained_handler_and_data(pp->msi_irq[ctrl],
->   						    dw_chained_msi_isr, pp);
-> +		else
-> +			dev_warn(dev, "MSI ctrl %d doesn't have platform IRQ in DT", ctrl);
->   	}
->   
->   	/*
-
+Cheers,
+Miguel
 
