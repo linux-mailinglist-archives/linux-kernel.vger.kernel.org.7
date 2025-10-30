@@ -1,146 +1,152 @@
-Return-Path: <linux-kernel+bounces-877597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05730C1E898
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:22:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB308C1E8A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E4034E6B8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDCC1898A16
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D48D3126C5;
-	Thu, 30 Oct 2025 06:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3982F5A37;
+	Thu, 30 Oct 2025 06:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WnkiTq6p"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UCaQy/8c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1720C001;
-	Thu, 30 Oct 2025 06:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2BD20C001;
+	Thu, 30 Oct 2025 06:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761805340; cv=none; b=FBAzSIJ7cbUmN/G8DcPbhYiixvR8E1eQgCmx84eWbzi+bKIwiMjmBrtjhnb0/M8jt5G5Sgy7rj4jQy4KbhR7+w2P+vROXB+8tWnNfHnsmcPcAWSjWa5dJaLNu1rSQo3Gsf3N/HubaPt2mSqzGDO1RVh9xNVoirj1cdJSMVgqDVg=
+	t=1761805398; cv=none; b=EQGg0J+9QbMPME+KEEvY3eOUjmhKdYt9CALwuVOtf4BCYiYPhn27Jq6DXZYllltN41qCfb53TgkN/vJ7c2ayn9DAMuvpNXTfVpiDUL2O/yJjytRNMbPmwSVkXGR6wC/FJ/jFVAUk3vCu08b/MM3ygMdMa4idsP43AwjHMGkQ9p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761805340; c=relaxed/simple;
-	bh=H7w9rChCeFQhpDhI5O6avDItW2h4+IeSwyuf+KYa2S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGBfzcsCurJdgKuevnhw+wq6XDohBiFkX/COj9nyroxbQwxtgUuMHGSjm/ep0JTPfSIL17VHD+v3RqAvQDTYnLGZhQ6fUrX0LmRPfIqhrGC6nVd20grm2232Ka70XgA1w12WEUjfWhoFAFgN83j9xsA3KKvq3LiaenRKTWnm6Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WnkiTq6p; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=azjiGcIYmmF6n03ei+Xo/vEfAhUKiS2vQVDPHjb0ew4=; b=WnkiTq6pz7Uq+OV+DsiIUevN2v
-	i4+1c+tR3Dcm17P/LaJSarjfL1Ugsvl96B4DrMx4AF+Lf2EbLJPA9Z219Zt8heh32e+kriF1tpzK/
-	ic5t92bpfL26TrynBB3H1Dkiv2CaNMiGj2l5UcXxTdzm8P4TAiTSWeMuVHy6aYs+KxZ0qOiCGuGZu
-	x+LN+vLHwa5HFUMGcsuHAUi8LRqGYkE75CwT+/qIMNR+qnqmzzQu3rDFK4NQq8wt6Ajt1teqJvyUD
-	BMeKZDuHoqipMl6gzKBGBP2AbBjRKNHiqqwA2AWP7rI6OkYdM838pXi+YMpM/1Fotug43yVl9A53g
-	TxKypknw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEM34-00000008yCG-1FE4;
-	Thu, 30 Oct 2025 06:22:14 +0000
-Date: Thu, 30 Oct 2025 06:22:14 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [PATCH v4 11/14] Add start_renaming_two_dentries()
-Message-ID: <20251030062214.GW2441659@ZenIV>
-References: <20251029234353.1321957-1-neilb@ownmail.net>
- <20251029234353.1321957-12-neilb@ownmail.net>
+	s=arc-20240116; t=1761805398; c=relaxed/simple;
+	bh=8JEvfJznp6jGS3DzFu1jptEDBsT3mI082oE29zkbrJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z+OS3IxIG/lnTt5Ax5Gaiw7pbGfX2jYvtnWwoaQ8aAud9KQBEjFkxe1iQKCoWUEj0VukKvFAN00eS3FOuwKWo02vWQpOyu/syX/XXiSjBXqfbaBD9Uxv2ITtDyVoQ1O9FENHSiJvBJq9dPOSA5s2zXtJH9iYIZd1QZ5dFNBWDyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UCaQy/8c; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761805396; x=1793341396;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8JEvfJznp6jGS3DzFu1jptEDBsT3mI082oE29zkbrJo=;
+  b=UCaQy/8cN8s1IHyIxRik2R5+zvrhcmWlDELieXzUwCiGyEvDxzDorTib
+   a2vbh2fhLBS+ktTSo1nb/8RNo5EVHSXdEJiQpe0hkarCwZZvdjnxjNA2D
+   pj3zTI7T8lDQ9WF1MvBvpx7BgB1AQ8SepMqTsXN1wcy54rmqq0o/tEsmY
+   jE+xy00F1lrdCKydlVd+U6+V1b3OM/jk0dFYePs0reHPtSwwpnfG2lXJf
+   +woJt3EcZr4Ek7Y8xFaL/w4VOS77G45AkhIcIS93DapziyJ3owAX33dgs
+   pd9orufy+StHNu9bftgasO3VY8iOZRa/5HWV2E+nAJX7B3fSFjkC6aUvk
+   g==;
+X-CSE-ConnectionGUID: UvJughhSSI6GpjRe7n+gog==
+X-CSE-MsgGUID: DnN4MseDRdiM0wmHPRvYjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63637520"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="63637520"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 23:23:15 -0700
+X-CSE-ConnectionGUID: 8Qw0+HVuRrG4/FaLyl+1dA==
+X-CSE-MsgGUID: DwV7meWpTEyxh9YB/uvt1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="216528980"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.250]) ([10.124.233.250])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 23:23:12 -0700
+Message-ID: <2d5456ec-b799-4a90-ac7a-f49deafa110d@linux.intel.com>
+Date: Thu, 30 Oct 2025 14:23:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029234353.1321957-12-neilb@ownmail.net>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf/x86/intel/uncore: Skip discovery table for
+ offline dies
+To: "Chen, Zide" <zide.chen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Xudong Hao <xudong.hao@intel.com>, Falcon Thomas <thomas.falcon@intel.com>,
+ Steve Wahl <steve.wahl@hpe.com>
+References: <20251029220711.57909-1-zide.chen@intel.com>
+ <8b53854e-f407-4c58-badc-01327d2d4be0@linux.intel.com>
+ <189f3475-81e3-4353-8f7e-f7a5933143a5@intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <189f3475-81e3-4353-8f7e-f7a5933143a5@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 10:31:11AM +1100, NeilBrown wrote:
 
-> +++ b/fs/debugfs/inode.c
+On 10/30/2025 12:38 PM, Chen, Zide wrote:
+> On 10/29/2025 6:37 PM, Mi, Dapeng wrote:
+>> On 10/30/2025 6:07 AM, Zide Chen wrote:
+>>> This warning can be triggered if NUMA is disabled and the system
+>>> boots with fewer CPUs than the number of CPUs in die 0.
+>>>
+>>> WARNING: CPU: 9 PID: 7257 at uncore.c:1157 uncore_pci_pmu_register+0x136/0x160 [intel_uncore]
+>>>
+>>> Currently, the discovery table continues to be parsed even if all CPUs
+>>> in the associated die are offline. This can lead to an array overflow
+>>> at "pmu->boxes[die] = box" in uncore_pci_pmu_register(), which may
+>>> trigger the warning above or cause other issues.
+>>>
+>>> Reported-by: Steve Wahl <steve.wahl@hpe.com>
+>>> Fixes: edae1f06c2cd ("perf/x86/intel/uncore: Parse uncore discovery tables")
+>>> Signed-off-by: Zide Chen <zide.chen@intel.com>
+>>> ---
+>>>  arch/x86/events/intel/uncore.c           | 4 ++++
+>>>  arch/x86/events/intel/uncore_discovery.c | 2 +-
+>>>  2 files changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+>>> index ee586eb714ec..5c3aeea5c78d 100644
+>>> --- a/arch/x86/events/intel/uncore.c
+>>> +++ b/arch/x86/events/intel/uncore.c
+>>> @@ -1380,6 +1380,10 @@ static void uncore_pci_pmus_register(void)
+>>>  
+>>>  		for (node = rb_first(type->boxes); node; node = rb_next(node)) {
+>>>  			unit = rb_entry(node, struct intel_uncore_discovery_unit, node);
+>>> +
+>>> +			if (WARN_ON(unit->die >= uncore_max_dies()))
+>> Base on my understanding, it seems an valid situation which could happen.
+>> If so, we'd better remove the WARN_on to avoid it mislead users. Thanks.
+> Now, for invalid or offline die IDs, we skip parsing the discovery
+> table, and no PMON units are expected to be inserted into the RB tree.
+> Therefore, using WARN_ON() here seems appropriate.
+>
+> I put a WARN_ON() here because invalid die ID could cause array overflow.
 
-Why does debugfs_change_name() need any of that horror?  Seriously, WTF?
-This is strictly a name change on a filesystem that never, ever moves
-anything from one directory to another.
+Ok, it's good then. Thanks.
 
-IMO struct renamedata is a fucking eyesore, but that aside, this:
 
-> @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
->  	if (ret)
->  		goto out;
->  
-> -	lock_rename(tmp_parent, fsi->sb->s_root);
-> +	rd.old_parent = tmp_parent;
-> +	rd.new_parent = fsi->sb->s_root;
->  
->  	/* booleans */
-> -	d_exchange(tmp_bool_dir, fsi->bool_dir);
-> +	ret = start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_dir);
-> +	if (!ret) {
-> +		d_exchange(tmp_bool_dir, fsi->bool_dir);
->  
-> -	swap(fsi->bool_num, bool_num);
-> -	swap(fsi->bool_pending_names, bool_names);
-> -	swap(fsi->bool_pending_values, bool_values);
-> +		swap(fsi->bool_num, bool_num);
-> +		swap(fsi->bool_pending_names, bool_names);
-> +		swap(fsi->bool_pending_values, bool_values);
->  
-> -	fsi->bool_dir = tmp_bool_dir;
-> +		fsi->bool_dir = tmp_bool_dir;
-> +		end_renaming(&rd);
-> +	}
->  
->  	/* classes */
-> -	d_exchange(tmp_class_dir, fsi->class_dir);
-> -	fsi->class_dir = tmp_class_dir;
-> +	ret = start_renaming_two_dentries(&rd, tmp_class_dir, fsi->class_dir);
-> +	if (ret == 0) {
-> +		d_exchange(tmp_class_dir, fsi->class_dir);
-> +		fsi->class_dir = tmp_class_dir;
->  
-> -	unlock_rename(tmp_parent, fsi->sb->s_root);
-> +		end_renaming(&rd);
-> +	}
->  
->  out:
->  	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
-
-is very interesting - suddenly you get two non-overlapping scopes instead of one.
-Why is that OK?
+>
+>  >> +				continue;
+>>> +
+>>>  			pdev = pci_get_domain_bus_and_slot(UNCORE_DISCOVERY_PCI_DOMAIN(unit->addr),
+>>>  							   UNCORE_DISCOVERY_PCI_BUS(unit->addr),
+>>>  							   UNCORE_DISCOVERY_PCI_DEVFN(unit->addr));
+>>> diff --git a/arch/x86/events/intel/uncore_discovery.c b/arch/x86/events/intel/uncore_discovery.c
+>>> index 1bf6e4288577..d6aee12139f1 100644
+>>> --- a/arch/x86/events/intel/uncore_discovery.c
+>>> +++ b/arch/x86/events/intel/uncore_discovery.c
+>>> @@ -388,7 +388,7 @@ static bool intel_uncore_has_discovery_tables_pci(int *ignore)
+>>>  				     (val & UNCORE_DISCOVERY_DVSEC2_BIR_MASK) * UNCORE_DISCOVERY_BIR_STEP;
+>>>  
+>>>  			die = get_device_die_id(dev);
+>>> -			if (die < 0)
+>>> +			if ((die < 0) || (die >= uncore_max_dies()))
+>>>  				continue;
+>>>  
+>>>  			parse_discovery_table(dev, die, bar_offset, &parsed, ignore);
 
