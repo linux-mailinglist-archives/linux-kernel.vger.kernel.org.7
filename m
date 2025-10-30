@@ -1,105 +1,83 @@
-Return-Path: <linux-kernel+bounces-877511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3A2C1E542
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:11:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A92C1E54E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 740E64E63D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0498A3B7D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A902EBB83;
-	Thu, 30 Oct 2025 04:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150B42EC09D;
+	Thu, 30 Oct 2025 04:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="tZNuh1hb"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="mbQNOEcM"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C30F29AB11
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6188723F42D;
+	Thu, 30 Oct 2025 04:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761797484; cv=none; b=Um56cywuIxmiVejdrevQP1xoz5+xS0yAOHikZpOYnpCspfiJ2qoJyGRjp4OtybVz6vDCSFdPWy9TGarPqEQpG0DNeCqI2AufiPrHMNSyHoKQ8q5wWViasq/RL1BkmKY9qRbIVXv1bF36BEjNNf/eGYtviysKpWTVSrtVkzv0XU4=
+	t=1761797608; cv=none; b=uM76EXOmG/pJODFmWZVP4IqQc5ZMOnspcR++qZAp2fxEIRPAjthLE/N8qaU2GvaFHrAdD/94Kd7hCvGXyRsf/+L0kniAxcm/ht7remc2RB113HmdaNxss0bhMsZJpGBt1K71VKI/ZhRAeV4miLF6mcBfSV8R0ToNx2BQbdRMwi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761797484; c=relaxed/simple;
-	bh=wOQEOC2HPRhz/xfy7DQRDA+xMnWo/M0q/ZztPLo/IbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m53EAYnIsD5i3WSWDZMVpN1Zum8QoS7DsD82Gp269eNZhiOqQBWq5vPzoqTw0Sco826q3n4lXyomntDDfezKpXtdlQIO7VmlYRM6lmoJYyfkdWBNtKL9uaDmEBVO6i0S4YX0Y9XDv42YQcxVVq+Fn8Qx+/ph5opG8AE8WHmICxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=tZNuh1hb; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3405f03fe2fso82923a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:11:21 -0700 (PDT)
+	s=arc-20240116; t=1761797608; c=relaxed/simple;
+	bh=cJeYb9u6VkHP5W7lpdpCnObrTqkT19FaCQNUI3AOvxM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CdQ1es/FqRiHVXUny6V4ZZBXRvEgnJO+FJ/yw8MxdHD5XHJJhdi6mExT97D5FZEr5/vw2vuHvmhedLZzfc8pHuQqy0KNDaZg16DO3stTTLevTUoXr9H5NPuTeMD6gTGlPH4YSCNmxfJsxfnYHLrj/F1XDvBLbtGfJ2PSe5LV5pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=mbQNOEcM; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1761797480; x=1762402280; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOHF4yRzSI+pLeEyJamn8iNJEDjHjhmR5/cKOdpaYa0=;
-        b=tZNuh1hb5VCnPNxSC3QG4xYcew5TnIk7LFjiCof9CMrqv+vPMLka7CpawXX16KzvTW
-         VkdF+qiMoVJcq/U5N9ruxFSjq722Ov6PHEv5v0w8Jwu9wDuxe89BrrJddNwAutGjFZQr
-         j0adHus8AmittBgluIGKyFP+PCcDcT5SEJaNSHYOfuf2tttajmV7x6cZYw1RJFEgAc0D
-         /MfeyszOMTR4q3H0zvKtydEcamTlCrftfZKzinYwgC77rdWIq/ybtpDeo1Qc/8tqZk5M
-         cIeGhpo5Gch+Y5LHZdgTwGvgxG+BcKm3PQX/31kMwfePMUJbpK9PNswz0ZgSzjp/YYEX
-         P2Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761797480; x=1762402280;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOHF4yRzSI+pLeEyJamn8iNJEDjHjhmR5/cKOdpaYa0=;
-        b=bwyaJ6BJHEe0bNay3aiLjiZ1CE/7GnyjeZ9ud1l9drZJTgy3xoZolCB14DOcOQVkjb
-         DzHfjiePrX6it3+kC6ftKqUvFMcF3ePnoai4qY9NJqGTLn1q6wmKtBZuNveA/CsSZQ7K
-         CKbeR2ItgYeAIXpLruwXaJEBjdVhsvYmoKq0ahOoHiOsaOIATSyBvBEYCRXxhbGUyqws
-         gt2Q2zKgdskd3ICRG2EWG997Mo0IDx9K5hB/DEbmuKx855GLqILdkI5JGtJVKxNlQSjE
-         FGfDs769Qpr4h5AopS4EEIKtdq59+oo4lt4DRuuAOxsr4s9el2vb2p4rr9vRRFT/NzSb
-         W/5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXUYbJP0bJa4bCcAYcFHnj+QvyTfE2R9VMLz53NdMMDmKZjwDqwEBXY1FUgVIxisVwSgDwQ20JnYM/EC98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfRQwfUiplZ6LCcf/nyeZq5TnI4WAiR+/hxSG+8N7gTG2a/q5Y
-	J0c40HJTr35Jf4SCVFYojfHSSkhR2AxnxIlUCea10tx+B2cda13AfTDdqKSbY2OZWJ0hBf6qvnV
-	sI7jU
-X-Gm-Gg: ASbGnctagfTNWU7WPGiRAaEU7MmcLLoEzXnHsdVpiYOj0pI+0TZnLM/2qXOcxD1IjP2
-	UI9+5f2ENQLmSaTYTCUxEFrweDIx5iOU3KQT/cJxkN/hKyvKMa6S6+JgY03OvVSYB9ufNp9dSOD
-	auATOUW69jPhK/ZZZQ9WJop17XCpedpXJ6hiHpMw2+0IY6TsQ2JRHNTrQ+JfkC4Zw2yP+JK8OBY
-	+NNLL/3UR2/fLyvPBD96VHzq9gCKaamnFGBmU6oWj2DKuWue/HuWbre6GV3k41eSmkQGB6n4oXN
-	JengqrbrHa6lH2AQPzNS7ZsDnU6NUh2v1KYXkALYoG8Rr1V3eG5cW3IhwYHIgms4N6UACCjRD+2
-	5dnBYIYFmKOKJvUtvsMU+IuVImpE15AZg9AJ4ERTaY5FqFKrSRIXbUYPsaN+OXh2HsoGTrLDyhS
-	IENA==
-X-Google-Smtp-Source: AGHT+IHDYUaQ5wuoTh+R9kqhNVBSoFU5/rnF4NGTpW+M2cfiF1Fjd2rEX75+a3Vq2Fq7YGx3Gi2ewQ==
-X-Received: by 2002:a17:90b:1f8e:b0:33b:ba64:8a2c with SMTP id 98e67ed59e1d1-3403a295ad4mr5980624a91.25.1761797480492;
-        Wed, 29 Oct 2025 21:11:20 -0700 (PDT)
-Received: from essd ([103.158.43.22])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34050b57a0csm835253a91.10.2025.10.29.21.11.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 21:11:19 -0700 (PDT)
-Date: Thu, 30 Oct 2025 09:41:14 +0530
-From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-To: Simon Horman <horms@kernel.org>
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] isdn: mISDN: hfcsusb: fix memory leak in
- hfcsusb_probe()
-Message-ID: <2vx2us6bw6vo2oyhu7dzcg2fesaflxz7ndgif7dvyceu6322wz@2g6pmg4jqyjd>
-References: <20251024173458.283837-1-nihaal@cse.iitm.ac.in>
- <aQC333bzOkMNOFAG@horms.kernel.org>
- <f2xnihnjrvh6qqqqtqev6zx47pjhxd5kpgdahibdsgtg7ran2d@z6yerx5rddsr>
- <aQJEkvtfmG-sEA3v@horms.kernel.org>
+	d=codeconstruct.com.au; s=2022a; t=1761797602;
+	bh=cJeYb9u6VkHP5W7lpdpCnObrTqkT19FaCQNUI3AOvxM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=mbQNOEcMEYOr6a714d8/0UHWK2Tfp5+09uBZCVyu5LFe4X5BZhiiWRh1UOmoPlzW0
+	 OXKQMr1hdEB2PwpHTjlZ+PrZ26hfEKYeKW2pYF1HvOlCXaMT03zgsbkPa2Q6XBuUE4
+	 o+EfwnZa/zTHjgCCwwWNQFUWf2Fc2JpYSyV3XJKUD0JUWyTwsaYkJ5e+2A0qL9xnb1
+	 y9c8+Wg4soZ9ekdXzUkaJCyUkjq8n8m4nvI8jDfjdwAoEuWQeHk4BwE7K9mECvSZr7
+	 xZHjNOOSt1b3sV10tSLB2pSqZHNhEgr6h65zYc37TpK5f9l5N1q0wu+H8odWhw5+yv
+	 MDNVxrZ/P+DTQ==
+Received: from [192.168.14.220] (unknown [144.6.157.237])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id D4C8A79118;
+	Thu, 30 Oct 2025 12:13:20 +0800 (AWST)
+Message-ID: <3b38dd392e06dc7d187c5bb247418bf189180a1e.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 2/4] net: mctp i3c: switch to use i3c_xfer from
+ i3c_priv_xfer
+From: Matt Johnston <matt@codeconstruct.com.au>
+To: Frank Li <Frank.Li@nxp.com>, Guenter Roeck <linux@roeck-us.net>, Jeremy
+ Kerr <jk@codeconstruct.com.au>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mark Brown
+ <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich
+ <dakr@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-i3c@lists.infradead.org
+Date: Thu, 30 Oct 2025 12:13:20 +0800
+In-Reply-To: <20251028-lm75-v1-2-9bf88989c49c@nxp.com>
+References: <20251028-lm75-v1-0-9bf88989c49c@nxp.com>
+	 <20251028-lm75-v1-2-9bf88989c49c@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQJEkvtfmG-sEA3v@horms.kernel.org>
 
-On Wed, Oct 29, 2025 at 04:45:06PM +0000, Simon Horman wrote:
-> 
-> Insist is a strong word. But that is my preference.
-> Because even for two allocations this is the preferred style
-> for Networking code.
+On Tue, 2025-10-28 at 10:57 -0400, Frank Li wrote:
+> Switch to use i3c_xfer instead of i3c_priv_xfer because framework will
+> update to support HDR mode. i3c_priv_xfer is now an alias of i3c_xfer.
+>=20
+> Replace i3c_device_do_priv_xfers() with i3c_device_do_xfers(..., I3C_SDR)
+> to align with the new API.
+>=20
+> Prepare for removal of i3c_priv_xfer and i3c_device_do_priv_xfers().
 
-Sure I'll update and send a v2.
+Acked-by: Matt Johnston <matt@codeconstruct.com.au>
 
