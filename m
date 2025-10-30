@@ -1,187 +1,104 @@
-Return-Path: <linux-kernel+bounces-878501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BC1C20D19
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:05:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42E8C2153E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAF23B0C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:04:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7DD6C35041E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C22E719D;
-	Thu, 30 Oct 2025 15:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8D02750E6;
+	Thu, 30 Oct 2025 16:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xgf8RqFK"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="feigzhIk"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5472E1C6F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE0B2153EA;
+	Thu, 30 Oct 2025 16:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836687; cv=none; b=VLpgMqbO6h25cmoSKJukme5PzpEo5cezHc+LYhOeE/vAA0IsJ5acMPdXOQVsXUhaTdpb9r+i/uYrZs3dfNCqSnp1K1JWFT5cA1CLQzBUcfqYeDwOuP9BwgJyltVcWgdleNFK/SFdUsUToAmhG7ncKEbbsmBxG+Ilqr5P/vMkMRA=
+	t=1761843421; cv=none; b=sd0Y/e2TQNixPFjdNAXhT1KBD/HcSgru5DO0DAnroYAYIY+n4H3Nf7NFDxC3QkV/Zj/H6wzjzYkCmBndApo9ZbsntAnK1vwLXb2HLw5zI71vRz2CwBpLLuyQSMhL9tNv5fHHywGJk5HP3iPRLmIuQtNR26Z4EwXpg+e3ch0fxuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836687; c=relaxed/simple;
-	bh=Hx/6mYoSWYm/lCYjDEINiT1xceIqhQwtdQfsRPnNRJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZypYXk3vRLbglfmIbwswOW76Ov6hdArtjFDz3iuxXg9TFVrO1onj4dIcli334tQ89S2gO6ZgtJM+uWwCxfsIMxeuW0/SRSA605xQDfyKBjyQwWetFHbpw8cUKBJPt4vow0N56T7efl3Az6ua3Ynpns62LN/b+migT8q7yYSR+r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xgf8RqFK; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b8aa14e5ed9so919944a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761836685; x=1762441485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f00VBxUENVeblbXPvhKCpxOm0snkMJ7cmP2mPUW0kL4=;
-        b=Xgf8RqFK4ZGQ/3ah55J2x4BvjiccS7qhEvcnTNB1piOpF1ol5B/5gKkExprAuqoZQf
-         RWOfF2NdV6ldoIjYhmDRtijcRb6e4WB/LyU+dxTa3HZXVg1/cQ9kLFRB37lPZejiqdWb
-         l8Hibp5qzbq9Xy4XUqSu7MBU3BUdHaBiaRsJ0x2fMYstQlYYQO64aj3Suy/XUAAyrJjb
-         4VQrYZDy/1Ylc1O9hoQkendeMhNU1TpI6p68hZKoIffKC6NfiTYMuX7oZ8ld3yDTBIYs
-         UTeg1morm56W2MMUojsMqeX+mkHhPUKqjdtjSv3YPhGl2xqjkfr6ug+MCmFYt+va0OUy
-         z+Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761836685; x=1762441485;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f00VBxUENVeblbXPvhKCpxOm0snkMJ7cmP2mPUW0kL4=;
-        b=LVd4ws+biITW9OaqDyD6n30izYWw9wXDDeXZlpBZSOBC0hMpUrdfw1iyyPLJYOXU1/
-         9gBoaFt2IQ11nyS/RGFGSsI26DeX0jdVriI0GhJH9W+mVSweFP8IdtVRBl55MA5ub7/r
-         gc4nRtZ9gqxnxekbxkyyw2lMLLQtgvmxxSApvk7nMuQPgLMHzw9TeChOVZ7elt/wO0Rz
-         0BTbSOp2925YAAgyIoHHwW63JuQeRdJ6QrkfFW4G6SdOZTMdI7kapzsc/xm5b8rrItnF
-         Xny0zL2mETrsJSmzxpQlcMc1kjne7B86ARXztGRNeypB3SHQ3C1ygvxXFbHqdTUVk3HP
-         rQNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkHu/WgWlecqMTvVrXtUE1zEToH9hBIaLtJkyFtQrkklfQMLxC2JkdybCw31d9ffysVy6XwHkzPzYVv3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+M5X1hlRl+oelCXitcxm3s0DHvsjmFIz3pYgCZ4fXE6cjlxQE
-	Z/JITxGklwXTakUSPFq0DwBjPXIKHkHoFkPaNZ7+L6jEx6WYXe/0OvdV
-X-Gm-Gg: ASbGncvjpohwVMdeZG5oXCsh0h3POOUUxcebu71uFNXjZLRTrcQJyG74njlf4KvI7Ov
-	q4akmzkHqTmFAw3dkGFZiPcxrwsELdjGvIie22J+xo4oY16GKLT7PjnuzP0DIG0JEjzFese3wbr
-	1FxpKDZPETEmfl4WNCPnAyx9HR8U2nZ3hPK3yfib6n0C5GT2HYBf+XLex+6L/bOqig/BocsluWX
-	q2H6rtfF23Ti6Z3n5Wgup6bxIt/cuN1hn7RRPg1j+VlkexflKccsy662XpZYdSEhtiRtla3NRb4
-	jOGQNE2EFzXT3bfuCW5Ph1yhI0RsNDtUjH7Tumyqca/aZVq+6Shn3EfzE2aji13ODwFP+PizaJU
-	tVNs/ZQtkniwBM0+IV0mrXNVSHoEJmvfC8wBqxDaQu1CKACrXd9A93YWgop9pyo8bB4R+fpHXQH
-	zh5PucRdEGZFBJGGkCGAAaKIOq4d3IuYuLHRSKwxftmK8ahw==
-X-Google-Smtp-Source: AGHT+IFxuPu5wcyDPeg3Kdk0JRjahgJ17UoLRDSJTEQ1u/yQOEaCGqjms2tHqaizN3DYh1M8w79Hqg==
-X-Received: by 2002:a17:902:db10:b0:290:dc5d:c0d0 with SMTP id d9443c01a7336-2951a50c96amr102885ad.49.1761836684991;
-        Thu, 30 Oct 2025 08:04:44 -0700 (PDT)
-Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d274b6sm188234395ad.59.2025.10.30.08.04.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 08:04:44 -0700 (PDT)
-From: Xie Yuanbin <qq570070308@gmail.com>
-To: david@redhat.com
-Cc: acme@kernel.org,
-	adrian.hunter@intel.com,
-	agordeev@linux.ibm.com,
-	akpm@linux-foundation.org,
-	alex@ghiti.fr,
-	alexander.shishkin@linux.intel.com,
-	andreas@gaisler.com,
-	anna-maria@linutronix.de,
-	aou@eecs.berkeley.edu,
-	borntraeger@linux.ibm.com,
-	bp@alien8.de,
-	bsegall@google.com,
-	dave.hansen@linux.intel.com,
-	davem@davemloft.net,
-	dietmar.eggemann@arm.com,
-	frederic@kernel.org,
-	gor@linux.ibm.com,
-	hca@linux.ibm.com,
-	hpa@zytor.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	juri.lelli@redhat.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux@armlinux.org.uk,
-	lorenzo.stoakes@oracle.com,
-	luto@kernel.org,
-	mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com,
-	max.kellermann@ionos.com,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	namhyung@kernel.org,
-	nysal@linux.ibm.com,
-	palmer@dabbelt.com,
-	paulmck@kernel.org,
-	peterz@infradead.org,
-	pjw@kernel.org,
-	qq570070308@gmail.com,
-	riel@surriel.com,
-	rostedt@goodmis.org,
-	ryan.roberts@arm.com,
-	segher@kernel.crashing.org,
-	sparclinux@vger.kernel.org,
-	svens@linux.ibm.com,
-	tglx@linutronix.de,
-	thuth@redhat.com,
-	urezki@gmail.com,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com,
-	will@kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH 0/3] Optimize code generation during context
-Date: Thu, 30 Oct 2025 23:04:17 +0800
-Message-ID: <20251030150417.684-1-qq570070308@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <c6f8871a-5118-4947-9801-43b2a7a42993@redhat.com>
-References: <c6f8871a-5118-4947-9801-43b2a7a42993@redhat.com>
+	s=arc-20240116; t=1761843421; c=relaxed/simple;
+	bh=ObCCgXAh3hKBEDn3O9+rFUOfycQWl5QhnD3UMAg9k0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=edQHSnXceSTJVghqa7VgvheKYe0vv1Nj4dYtHXUIx229XUoNulwTKXalNNmeHg2AlJHsDcgf6mHobvcwnw2+2/Xg2m7rkHbPxaq4dfn8BDaDgohyx8+FqIKhxeYeKXjJDPib8654RYgavIhQb9z2AWw1XTpwUSzznQdy6ncluo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=feigzhIk; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cy9J662Stz9trP;
+	Thu, 30 Oct 2025 17:56:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761843414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/Ttz6snmnsibBpd8X+iGhr07gb4gBMz15P5Dl1gpIdA=;
+	b=feigzhIknOmJCiqSJntXwgtVUgYp+r3hUJ4AiIcY0POzP7JnwQo9z2DLGjw01rPIMDmfFK
+	WQXhIu7xz9Sg+FveiulwNoogOsngd6yh4zDNYteFIXTt3Vs5CLlwhnOQybhKmR5Mp3GI0j
+	c7ehmYIMRkvxCnTGqnRriLbZlgzzh80fD1rG8stC4qCwiAHVBzpySjOJEiRhMxAaqOAeZU
+	emAuLGoGDmRc9nwFhYiqQ75JnHT1HzqSanwNkB4k4OwT222oicJM7SMvrxD2nnC8N6Pk03
+	AVPsEiSlpZFo3lMXdFVmKUVAY+dvArxQSgl/uD9m4Lb4x4TcvOTlXEaExIryeQ==
+Message-ID: <bff8815c-e708-4573-a6f8-7fdec160a78f@mailbox.org>
+Date: Thu, 30 Oct 2025 14:51:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] dt-bindings: gpu: img,powervr-rogue: Drop duplicate
+ newline
+To: Matt Coster <Matt.Coster@imgtec.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
+ Frank Binns <Frank.Binns@imgtec.com>,
+ Alessio Belle <Alessio.Belle@imgtec.com>,
+ Alexandru Dadu <Alexandru.Dadu@imgtec.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251029194210.129326-1-marek.vasut+renesas@mailbox.org>
+ <50c29b53-64b5-4ad4-a502-286248cbedfd@imgtec.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <50c29b53-64b5-4ad4-a502-286248cbedfd@imgtec.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 05f1c39c062893a7db8
+X-MBO-RS-META: h7kpnyktco16tquosm7bezq1bnxciiwo
 
-On Wed, 29 Oct 2025 11:26:39 +0100, David Hildenbrand wrote:
->> I did some testing using my devices,
->> and the testing logic is as follows:
->> ```
->> -	return finish_task_switch(prev);
->> +	start_time = rdtsc();
->> +	barrier();
->> +	rq = finish_task_switch(prev);
->> +	barrier();
->> +	end_time = rdtsc;
->> +	return rq;
->> ```
+On 10/30/25 1:08 PM, Matt Coster wrote:
+
+Hello Matt,
+
+> On 29/10/2025 19:42, Marek Vasut wrote:
+>> Fix the following DT schema check warning:
 >>
->> The test data is as follows:
->> 1. mitigations Off, without patches: 13.5 - 13.7
->> 2. mitigations Off, with patches: 13.5 - 13.7
->> 3. mitigations On, without patches: 23.3 - 23.6
->> 4. mitigations On, with patches: 16.6 - 16.8
->
-> Such numbers absolutely have to be part of the relevant patches / cover
-> letter to show that the compiler is not actually smart enough to make a
-> good decision.
+>> ./Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml:103:1: [warning] too many blank lines (2 > 1) (empty-lines)
+>>
+>> One newline is enough. No functional change.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> 
+> Good catch! Thanks for sending a fix. Does this also need:
 
-This was indeed my oversight; I did not read the submitting-patches
-documentation carefully, thank you for your pointing it out, and I deeply
-apologize for this.
+Got a hint from Rob how to better scan bindings before sending patches, 
+so the credit really goes there.
 
-Do I need to send the V2 version patches to supplement the relevant data?
-
-By the way, the above data was tested in WSL. I did a more detailed test
-on a physical machine. If possible, this data may be more appropriate:
-Link: https://lore.kernel.org/20251027152100.62906-1-qq570070308@gmail.com
-
-> Cheers
->
-> David / dhildenb
-
-Thanks very much.
-
-Xie Yuanbin
+> Fixes: 18ff1dc462ef ("dt-bindings: gpu: img,powervr-rogue: Document GX6250 GPU in Renesas R-Car M3-W/M3-W+")
+I am not sure about this one, I would say no because it has no 
+functional impact on the kernel and/or does not fix any functional bug.
 
