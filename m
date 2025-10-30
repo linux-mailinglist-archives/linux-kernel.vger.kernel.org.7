@@ -1,180 +1,87 @@
-Return-Path: <linux-kernel+bounces-879285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9EEC22BE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:55:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49455C22BEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 489DE34EF67
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE11A61632
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EAE335567;
-	Thu, 30 Oct 2025 23:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HYuRVYaI"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEF132C93D;
+	Thu, 30 Oct 2025 23:56:10 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2092E62A6
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3A32EB878
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761868546; cv=none; b=BIsVAkOp6iyywEOfLGqJLRlgvCi/o9p3lXHhIu11jFcCPICu6tUXIBX4fjSWHLa9/ic5U+CWGMvcXsqMWlB2x0MagWxnop8DtfqNzeS/ddw4S77pkrGBbeqZ2IxlMkBhlG1F/CQtpxjU3EIy9+uK2P2Av/lf+v+1eOdUOTlmPVk=
+	t=1761868570; cv=none; b=ERZk78qMBd26+30H9brp2ktUoyapozb/bYsLFdsxWLslc+KwnelV4LbwK49wBzhNlQpo3uwESOfBXfPNyUOgn/bHaakifRb1rK1cIk9fzoIHvXU19sAHOs2WB255R/mykFtbKCWmZahWJXIAnYJY/ywU0t/DMbcmaxnYl8+ejbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761868546; c=relaxed/simple;
-	bh=9N4BK/XLcE+ggWQSPh2OE6B/kuSx/xAv/EPxSXN1nTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOeOy0uCpKK9iZj5IqABUolMP6snVOVLVvHj1gwmZ6nn2EpB0xkSqrm2w269XE6oeDecQubAfzDygV+/3IB9tZ9TRNvRZ+nl6jXIzNKzAjgtHfpeegDCpmmgKVU104ayUkJNXCWbD+qmwd9PAeb1RL3c2pb/6H1GlwQAOkSe56I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HYuRVYaI; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7a2852819a8so1610451b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761868544; x=1762473344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EaAYwU29hsaKuSwildYHugSsHqA30wW10v1jS2K4RlI=;
-        b=HYuRVYaIth3ycVvaHO/Zo+Mi7/2njsR3ycu3o20P32DgNNGOnJaXzuw1P9MIxmW4qj
-         XQRKWuF9OZZNSq8A0Zczks3gpfWRkA8CMmbr30IqiqQXY3VyYLkK87hD84TaLm/495mG
-         yShHCbBr9sFa+raw67xgaTnw4oblBrSPvxOZ0mgJDupVZfmoM8RijasEz0l2nHqF7G45
-         OacVnzW5MHtlvmGp9XXz5DQGPdmP/C13BZ15xnuAoTkO0PkTMU8pfYlCwsPIRorFk8ti
-         tXeKAxGn9be4vEWIBlaCatOhEe4y9Z71mdoRqkBtQci1YXdvfkZ/47J9GIG/dgYN70TJ
-         wytg==
+	s=arc-20240116; t=1761868570; c=relaxed/simple;
+	bh=o/OZIeDeXH8K1U+tFWTSwF6pEz06nnG1mnkwjBolS64=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JdatPk5qm/5tNsp87XQgcWpv7so/+GKf2w72zkpDpHjgQHlHnI9XxKR3Q9ybKH4enQpttml6FO/rvg4n8vxQ3DwU1rBTb0Y7CtIhaERue6vyYq4iTHs4hT5Hs/cPV+UtyVmKJUYqlVzIuRtjhsbBGG33E/9bVTCE3ddn+KdcsjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4330ead8432so2904395ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:56:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761868544; x=1762473344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EaAYwU29hsaKuSwildYHugSsHqA30wW10v1jS2K4RlI=;
-        b=s5cxhJcaZ1PsLqYrCHVau85Gdwy55EkCNq5iNPtHTl+V+6SVH6r9ox1BSq1AYAKg+/
-         stTALbOErYHSwWchDAhDuIMAbg5KIjq/cN5O8MTD7zLLklHj70ASn2C2mQ+tQycOeNOC
-         /fgtrRyKLCAOHPPQdqssEiff9+/Xaxnt4B8cKJYhz7BiSGjvlA0nq7wm3ZH3wMU/yxly
-         cPFWc8ZxzQzvzZfiju/xWpKiNh2iI6ySYcV+hI2/UGP/9pOE+80O57YY/E3wGQPFFV3v
-         uUQexGby94UFvccnkvYf4YLX/H4OTXEQq0YGLQSlCEwmdbisMTrhywbn/vo8GhbsOr2Z
-         ck5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVwMcL6JfzEZlx7HOJQHqIZxVIfzqF6KhiMoJbAKbtwm4Da8huDnEnWirtOoM9DC252q2JIxMAkRo0ZO7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqkTJHCzvJtBhUmUs9ADW68Ra4O1ggce6yae1cN736ks/Tokso
-	H0Goxfka9iwjSQ9GbiaKOGfL4YOMmcGn0jWdV9DmbRFtrl2effDQj3OJo4BcXJBgWw==
-X-Gm-Gg: ASbGnctLJp2NeDloJ8Y0frpTycUBFFiizdQqZRcV2r28nmFnX/qrfXregdH4gbsmXzf
-	FxHH5YZeJ+0VMB9itDrknpMAmhnD/IHC5rYdNGth1tdKf8HiisMgHxIA6APO5IJX6EI/vJQZAF1
-	NCG35lh7gTupcsLWL+rpTySbxUQaetFLkP+eNafGodLe8uDN+Y7fqIDfYFzn7QtWX5uY4Aop26l
-	JdRgZvD0F1QsDhjBk/B6E/uO8zAtsypComxh2bJe4xbMGgIHxqmihfVjNIUZaVPLKXciIqhuM35
-	6nU6mgo9/cWQdndlB9EW0Xw4GlydBTgjYybSUT9mVh5nQsJOG51yjJUYV5s2DoM04y2HhGvqsoe
-	5qGgmQA798Xvuwp1GXSVfwVAnm3aV35qazqfunfSgyF7XxMSIWtszb3/vHj2eWe5OBPqSb523L/
-	SUk+Ey8wyat84K4swDiAEx+msxjdAM4HsakKFG7+PQ+g==
-X-Google-Smtp-Source: AGHT+IG56aLk8yrGeGgCtbaq6Yw6OAF6BI/qwUu0DvvYH8sY78VAIY7D5Q0G9DiuTt9gFFUJZqenoA==
-X-Received: by 2002:a05:6a20:12c5:b0:347:63e4:770f with SMTP id adf61e73a8af0-348cbda97bemr1956015637.30.1761868544009;
-        Thu, 30 Oct 2025 16:55:44 -0700 (PDT)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db09f362sm28679b3a.38.2025.10.30.16.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 16:55:43 -0700 (PDT)
-Date: Thu, 30 Oct 2025 23:55:39 +0000
-From: David Matlack <dmatlack@google.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Vipin Sharma <vipinsh@google.com>, bhelgaas@google.com,
-	alex.williamson@redhat.com, pasha.tatashin@soleen.com, jgg@ziepe.ca,
-	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
-	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com,
-	parav@nvidia.com, saeedm@nvidia.com, kevin.tian@intel.com,
-	jrhilke@google.com, david@redhat.com, jgowans@amazon.com,
-	dwmw2@infradead.org, epetron@amazon.de, junaids@google.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 15/21] PCI: Make PCI saved state and capability
- structs public
-Message-ID: <aQP6-49_FeB2nNEm@google.com>
-References: <20251018000713.677779-1-vipinsh@google.com>
- <20251018000713.677779-16-vipinsh@google.com>
- <aPM_DUyyH1KaOerU@wunner.de>
- <20251018223620.GD1034710.vipinsh@google.com>
- <aPSeF_QiUWnhKIma@wunner.de>
+        d=1e100.net; s=20230601; t=1761868567; x=1762473367;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AWFFh2AXjRlq7SHpupGD3VhFF3GWWQYUnN0po0lMdKg=;
+        b=I8GbmiZLO6f41UGOaqYweM2J+H2UxG1mjW8mScEKGiRpumsEUCdCq+soxPZlakRPf+
+         C/ep+u17bixqKrQRrQbIUjfAJegIQkyvhOLlQ+E6V/5doCELyemYjx/d5D8+U+y5ZCV0
+         /R0ALe9GR9O6KdEf+N0oVU/Ju+PSwQcX5xK8ERXYA8dwWCXlIRHY9M+MPWQyQ5cDj/nR
+         DRD3amfB1SZ91QmqGSfCDqem2kxGAtE2h+Pia3UVtsGWdX45vJz/RSgowO5/m3TWVw05
+         Vv3lcVXj6g8YtEHp8dr76zyrBcULHCEFe/0uPUAvFq4gX3oc4RCW6SiKAOzAs5P3Bxpq
+         3KUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1d3NBCXPluAjcGGZHiJPrOb8A9AIPdD9/mrr1jGFuVNdXLCHpIAHnXLcyVXlad3eA471bPxyUDVLrDyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyrXpwKoDiy90F6YyDvs14gifGx2hEmlXcuVOGz/9D1ImalE0c
+	ANzxzfV5768kd8ZoP88hVZ476wD9N2fta4nMx66XVgEZxKrALu9vOpYs0g899H/Qz8YJHQJ9qGL
+	PUdI/T9F3TAVf+Jj4rGVxIy+dxFVxdnc07dReJRQz5vkSZUFvfIsEeOIRhhA=
+X-Google-Smtp-Source: AGHT+IHqiMcWp7EqPrUBWuBLmjvttYI4FjxzoJg7ua+iAbHyuBvbfyJP0CEj9c2u6CJn7uZASV5/amkI/1bY3RWJbeK8Y2qM9vT3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPSeF_QiUWnhKIma@wunner.de>
+X-Received: by 2002:a05:6e02:214a:b0:431:d726:9efd with SMTP id
+ e9e14a558f8ab-4330d138fccmr27431235ab.12.1761868567707; Thu, 30 Oct 2025
+ 16:56:07 -0700 (PDT)
+Date: Thu, 30 Oct 2025 16:56:07 -0700
+In-Reply-To: <132ed630-d885-4fb7-9f85-0d8ce8f25fbb@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6903fb17.050a0220.32483.0231.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] KASAN: global-out-of-bounds Read in io_uring_show_fdinfo
+From: syzbot <syzbot+b883b008a0b1067d5833@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, kbusch@kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-10-19 10:15 AM, Lukas Wunner wrote:
-> On Sat, Oct 18, 2025 at 03:36:20PM -0700, Vipin Sharma wrote:
-> > On 2025-10-18 09:17:33, Lukas Wunner wrote:
-> > > On Fri, Oct 17, 2025 at 05:07:07PM -0700, Vipin Sharma wrote:
-> > > > Move struct pci_saved_state{} and struct pci_cap_saved_data{} to
-> > > > linux/pci.h so that they are available to code outside of the PCI core.
-> > > > 
-> > > > These structs will be used in subsequent commits to serialize and
-> > > > deserialize PCI state across Live Update.
-> > > 
-> > > That's not sufficient as a justification to make these public in my view.
-> > > 
-> > > There are already pci_store_saved_state() and pci_load_saved_state()
-> > > helpers to serialize PCI state.  Why do you need anything more?
-> > > (Honest question.)
-> > 
-> > In LUO ecosystem, currently,  we do not have a solid solution to do
-> > proper serialization/deserialization of structs along with versioning
-> > between different kernel versions. This work is still being discussed.
-> > 
-> > Here, I created separate structs (exactly same as the original one) to
-> > have little bit control on what gets saved in serialized state and
-> > correctly gets deserialized after kexec.
-> > 
-> > For example, if I am using existing structs and not creating my own
-> > structs then I cannot just do a blind memcpy() between whole of the PCI state
-> > prior to kexec to PCI state after the kexec. In the new kernel
-> > layout might have changed like addition or removal of a field.
-> 
-> The last time we changed those structs was in 2013 by fd0f7f73ca96.
-> So changes are extremely rare.
-> 
-> What could change in theory is the layout of the individual
-> capabilities (the data[] in struct pci_cap_saved_data).
-> E.g. maybe we decide that we need to save an additional register.
-> But that's also rare.  Normally we add all the mutable registers
-> when a new capability is supported and have no need to amend that
-> afterwards.
+Hello,
 
-Yeah that has me worried. A totally innocuous commit that adds, removes,
-or reorders a register stashed in data[] could lead a broken device when
-VFIO does pci_restore_state() after a Live Update.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Turing pci_save_state into an actual ABI would require adding the
-registers into the save state probably, rather than assuming their
-order.
+Reported-by: syzbot+b883b008a0b1067d5833@syzkaller.appspotmail.com
+Tested-by: syzbot+b883b008a0b1067d5833@syzkaller.appspotmail.com
 
-But... I wonder if we truly need to preserve the PCI save state
-across Live Update.
+Tested on:
 
-Based on this comment in drivers/vfio/pci/vfio_pci_core.c, the PCI
-save/restore stuff in VFIO is for cleaning up devices that do not
-support resets:
+commit:         0b447e53 Merge branch 'for-6.19/io_uring' into for-next
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15d34e14580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7c3bc5e43bf487cd
+dashboard link: https://syzkaller.appspot.com/bug?extid=b883b008a0b1067d5833
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
- 648         /*
- 649          * If we have saved state, restore it.  If we can reset the device,
- 650          * even better.  Resetting with current state seems better than
- 651          * nothing, but saving and restoring current state without reset
- 652          * is just busy work.
- 653          */
- 654         if (pci_load_and_free_saved_state(pdev, &vdev->pci_saved_state)) {
- 655                 pci_info(pdev, "%s: Couldn't reload saved state\n", __func__);
- 656
- 657                 if (!vdev->reset_works)
- 658                         goto out;
- 659
- 660                 pci_save_state(pdev);
- 661         }
-
-So if we just limit Live Update support to devices with reset_works,
-then we don't have to deal with preserving the save state.
-
-I will have to double check that reset_works is true for all the devices
-we care about supporting for Live Update, but I imagine it will be.
-They're all relatively modern PCIe devices.
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
