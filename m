@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-878558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A6F2C2100C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:44:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DB8C21063
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A16E4EF11F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:43:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516C6463DDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227DD3655C3;
-	Thu, 30 Oct 2025 15:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994772F6939;
+	Thu, 30 Oct 2025 15:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eZMiwTie"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18F023D289
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSCvkpnW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A7273F9;
+	Thu, 30 Oct 2025 15:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761838962; cv=none; b=Vfmc8aWT2qSUlH4COcDfe7dXLPej22JSuKGf0FA2YhpK9JLfT7jE/GjiEPT4dLFZLaDe50fhrZ/wtr0xOm2gDVFG/0OxaU7UG1pl3wj5fz2kNSjO/s3Y46OfXLGzVGsMiw/3cDVShC+CT3LLfSqKkpdYauc799rgAfXBxMvFwCo=
+	t=1761839243; cv=none; b=pMQR916WhsmriBBnV7NFaAeOLGwSN3D8IOYzdjcTWDsRN++ojxC7RLF2fD386HiJG3XqvM9Eqi49gAzIY2VgFC1IPJZh0D3iEW4LEDeolnTB/6e+BaZv7DMCRHKj46LL8so4NgShXG1XB81kDvkfa9YaejLsVNqBpagarpFDe20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761838962; c=relaxed/simple;
-	bh=eSpRBIQFx2Fm+8Fj1pvi3qgMO08RKixTmOFPmRvr3QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DZA8c+9dJTef/NmYckl0emlnpBm5WxS6NqtKrT5TF5rwL0HhMvle+32t8ZznlaQcmNxLDRvb5xKCvHJAihRryplo/kqMJrFL+sXKolIs46CfwpixT0xCsLqzZrhbXuCQpAt1/rYur7azIqVmkle7/SoDexbiL8aG2M5Eo2Xw/MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=eZMiwTie; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [20.191.74.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C78EF211D8D7;
-	Thu, 30 Oct 2025 08:42:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C78EF211D8D7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761838960;
-	bh=ysPZrd0ypANag9xbIeXXFA7XUkCdWdZgyvKIS/nwA/o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eZMiwTie9BYM8QHnCmOHnVQpzEmwXnPppJ/+gxLd1tL0NDnIZjWlBlA14zBEM2yYK
-	 fzuE0NoPqBtH+HZs8xBWB9n3TmDMCnP2gjYQ+slASQFirdWKoM+xhrUcbDlbjUl/16
-	 qlLNRUk8/3HFn6Btj/ZyVu8Xbt3bAZshCUSxpru4=
-Date: Thu, 30 Oct 2025 08:42:38 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: linux-kernel@vger.kernel.org, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
- <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Nicolin Chen
- <nicolinc@nvidia.com>
-Cc: Zhang Yu <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
- <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH v2 0/2] SMMU v3 CMDQ fix and improvement
-Message-ID: <20251030084238.00003fbf@linux.microsoft.com>
-In-Reply-To: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
-References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761839243; c=relaxed/simple;
+	bh=+700ZoH9beBUCGWPdpdtRrHrZpBqINFzjki0JlY+WIM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WHKO0TWjTdYxzrFY396tbnpKttkJCC2CN/SDmotzIjD7REW/NMAeQ+9+UcPj1fH//HwTtOFY/1qzRugmxWJA7jgUQa7RaFKsd1EIVazlduuLXX4i46S3LBwTzZpi7MEUmm7jfLxDawfp25iOblOCGE7tpNnVRu95o31cQh3ys4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSCvkpnW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F12C4CEF8;
+	Thu, 30 Oct 2025 15:47:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761839242;
+	bh=+700ZoH9beBUCGWPdpdtRrHrZpBqINFzjki0JlY+WIM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kSCvkpnWAFvxXim34lW/0VaSlUE+r7nA0g/2z6xu6EtrFLL2Vxbht1Nc94nIfPg6m
+	 NyciTW/5MsbXMhB3A7mZMnwA1M9GMswJqHnSt6XRBMqzD0R5QdHMaP1pIjbYVEWpTj
+	 SJDTOCYT8XrpFDTaHV9/BtROFkuBVIf3HKrlj/GpRm9vkH54ivvWSv2X0YQNlhtt8q
+	 /Wo6Tzoa1TMzPNJyJQBnjNfILkKvE5wYcyzFUEvR+nnLsSjMvmeyEt90HbJjQTbg3a
+	 nG61vRJaWR/jsQ1FlIDwoOyeA134/gRjPDZrS9jdMYQJQy8gTM12t7sPWYlTRkY+Vp
+	 Ox4Pc/WR4heZg==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/3] KVM: selftests: arm64: Improve diagnostics from
+ set_id_regs
+Date: Thu, 30 Oct 2025 15:42:46 +0000
+Message-Id: <20251030-kvm-arm64-set-id-regs-aarch64-v1-0-96fe0d2b178e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHaHA2kC/x2M0QqDMAwAf0XybKAtrs79iuyh1kyDqCMRGUj/f
+ cHHu4O7QEmYFF7VBUInK++bga8ryHPaJkIejSG48PAuPHE5V0yyxgaVDosoNCmmJHk2R8PQtl3
+ sGucz2OMr9OHf/e/fpfwBox+vQW8AAAA=
+X-Change-ID: 20251028-kvm-arm64-set-id-regs-aarch64-ebb77969401c
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-88d78
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1252; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=+700ZoH9beBUCGWPdpdtRrHrZpBqINFzjki0JlY+WIM=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpA4iFRz9aKzGShuvRtfEbfX3NhTm+GpE7qdJVU
+ 9mLWnT7HAiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaQOIhQAKCRAk1otyXVSH
+ 0MiEB/4gsZLaeP176xWNHCFoMI210dAWo/OxnDFWqQuSDbWvV74qEFThEfGIMWBjS79ZkCwZ9Hb
+ +nG4LaTF85FPUVWs262tIEV/DtYiltFySzXW3sINV83pWZYijjNBr5x9jOtJZ9NCPJBObvWzC8g
+ +e+8Odemr4DbLuKbuWcYZHgA9Ff/36CmqLOlzKXhxPaJgEj17A6wxRkY+ICqWTAAFScujFVyqHu
+ CWKPM8IB5HlWx2qv6sHeJfRXun2NVXW91pxyiQTWBkhiuslmMvFhHGOptK/rGqf3DhK9f7cA28Q
+ 8Fr/NqxlzjWe7J8/TJsLN2MwKuu0TyPvvcVJcJ3vAB6rDh5c
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hi Will,
+While debugging issues related to aarch64 only systems I ran into
+speedbumps due to the lack of detail in the results reported when the
+guest register read and reset value preservation tests were run, they
+generated an immediately fatal assert without indicating which register
+was being tested. Update these tests to report a result per register,
+making it much easier to see what the problem being reported is.
 
-Just a gentle reminder, appreciated.
+A similar, though less severe, issue exists with the validation of the
+individual bitfields in registers due to the use of immediately fatal
+asserts. Update those asserts to be standard kselftest reports.
 
-@Nicolin, were you able to evaluate these?
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Mark Brown (3):
+      KVM: selftests: arm64: Report set_id_reg reads of test registers as tests
+      KVM: selftests: arm64: Report register reset tests individually
+      KVM: selftests: arm64: Make set_id_regs bitfield validatity checks non-fatal
 
-By the way, I incorporated your review comments in v2, except for
-extracting the function arm_smmu_cmdq_poll_until_enough_space(),
-primarily due to concerns with the IRQ flags.
+ tools/testing/selftests/kvm/arm64/set_id_regs.c | 108 ++++++++++++++++++------
+ 1 file changed, 82 insertions(+), 26 deletions(-)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251028-kvm-arm64-set-id-regs-aarch64-ebb77969401c
 
-Thanks,
-
-Jacob
-
- On Mon, 20 Oct 2025 15:43:51 -0700 Jacob
-Pan <jacob.pan@linux.microsoft.com> wrote:
-
-> Hi Will et al,
-> 
-> These two patches are derived from testing SMMU driver with smaller
-> CMDQ sizes where we see soft lockups.
-> 
-> This happens on HyperV emulated SMMU v3 as well as baremetal ARM
-> servers with artificially reduced queue size and microbenchmark to
-> stress test concurrency.
-> 
-> Thanks,
-> 
-> Jacob 
-> 
-> Alexander Grest (1):
->   iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
-> 
-> Jacob Pan (1):
->   iommu/arm-smmu-v3: Fix CMDQ timeout warning
-> 
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 97
-> ++++++++++----------- 1 file changed, 47 insertions(+), 50
-> deletions(-)
-> 
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
