@@ -1,64 +1,95 @@
-Return-Path: <linux-kernel+bounces-878450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35C9C20A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:38:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B91C20AE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8AE403859
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:36:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63C574F097B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3DB2877DC;
-	Thu, 30 Oct 2025 14:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D02F1AF0AF;
+	Thu, 30 Oct 2025 14:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BfITBlv/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W+zzT/UB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yo26M07j";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W+zzT/UB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yo26M07j"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725F0283FF1;
-	Thu, 30 Oct 2025 14:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B30D2701CB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834900; cv=none; b=CjwmDHG3TcAqdb9k4FYrh0/tznPMT/tNQsLBc7Q34EmkBf0bwWwjQ5WhiFXxmMPyT6MkA/Bidw/FBpm7yrkgtnntDGduNq4bRo301QYSZU1Wn+aYagzbKenLA058f94To1aTZ7kcpkHbmqrHBKQ5f5TMdOICvap71YQUALv3Uig=
+	t=1761834951; cv=none; b=JigpXUrxqJUpzWrQF4SDW+s73oe32TnohRNOvwZM3M/IP7VenBhCDHE1+AkLX8BTqaZSqwqszKlBBlVcgKgfzP2ib7OTfXPH6qzGKMURvY3IBHhxr8bJYLwJsQ08I5M9YqP41s2zFoofNrtBQcB3sB8N+61vPdhrT6z/hx79Fhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834900; c=relaxed/simple;
-	bh=kzKBgV8r5q8edgixyS3j7wmuBEdehQSVMTJBgW7xz6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CsX7yIZIaXJQW9rTFplDbCam8XnMif61TnMxD/Ny+jhIITUSOv+LfdRmHqDtwGXYOPOr9fLZ/t1gJYsnbiIVCShzxlTBrEmoNnKKB84hskLG/eVMAs6XZVCJQFk8EDzqnRhXXy3GXjN7qIGTypbQkv+al7cNFz1lYoOU/2NU2o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BfITBlv/; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761834899; x=1793370899;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kzKBgV8r5q8edgixyS3j7wmuBEdehQSVMTJBgW7xz6E=;
-  b=BfITBlv/T80CUadRIPGXDf6mSx5WZNa3ncao3fpK6ClgGI3cO9M3RlEA
-   MFgdiIrOaQVzFx9NqmKZDtLGS/+/WDzZgD3u5GLcv7Ntd8erYQvcjr1l+
-   U1hIVU5is5s24wN3DCJsjnW5wc3uk6N9J1k+06YhJyXYRrzLDvQLvaJVN
-   0DxeDPSMHiaNExODKpxpt2CtJEPYxZMBk9k4zr/hCWEjVBKSuiPbSVy89
-   wyNKguMB+HNqN+7XgrYGbDbeQUtE19035Pkz9OSB6Nblb1mN6taDuYxmd
-   +HLRDheHmoVe0HopG0OXqPk2DvdATRc5iSiPa+Q24OUltxDMKEIuiBZHP
-   A==;
-X-CSE-ConnectionGUID: iP8P+z7SToStG8EktGUkkw==
-X-CSE-MsgGUID: hH6D5D30RymrOV/Z5QwJMQ==
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="48472823"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:34:57 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Thu, 30 Oct 2025 07:34:51 -0700
-Received: from [10.171.248.18] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 30 Oct 2025 07:34:45 -0700
-Message-ID: <cd0ae7c8-0df7-443f-a5d3-da2c3aa88582@microchip.com>
-Date: Thu, 30 Oct 2025 15:34:44 +0100
+	s=arc-20240116; t=1761834951; c=relaxed/simple;
+	bh=1b6TBstDDekRQobMI1Biy75gq1GMDUBiEBSC6Z4b5Ns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YXqlXoSv2alVnwpNzz5QuMyAvk1tPuar1TG14Pdu2oxdJPRLs9sqxquB7VObRT1cJ0+Wcm/5460SHSxbRylXUkhcZmwZ5TOVTybjgCXnA5AVpbh65jQ2shcuNSByPwp0jpg9wfhF1Zg3wldZTotGd6sKv3nUeAkTLyJaomMnunw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W+zzT/UB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yo26M07j; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W+zzT/UB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yo26M07j; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7E1EA1F88A;
+	Thu, 30 Oct 2025 14:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761834947; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WJBY+7WN8pUZ7BL5b9TfJ0orEZ9d/pc565rFs0g1Cf0=;
+	b=W+zzT/UBbEvDTjbKFqd2EcQDFGmk7FKNscdPOv1I/4wT5dDK1USXSu/0ESRIckmgVnNijo
+	WRoJWIYG3lfWmG46tBxUT5i+hl/ZRyg+0YQpP5Kjqd5ZdPCE6Q1/r601U4+kSmRqUEHiHL
+	oFLJYPFHS1mVRbThl1mjnVS4/RhwZRI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761834947;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WJBY+7WN8pUZ7BL5b9TfJ0orEZ9d/pc565rFs0g1Cf0=;
+	b=Yo26M07jw1OLhnqf0Pa8mezu3jEDm6K7dmtSK8p3SUM0BJgGM9ZUbRtmbspS43/+DBBF59
+	ckX/H+bSSaUs1ECA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="W+zzT/UB";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Yo26M07j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761834947; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WJBY+7WN8pUZ7BL5b9TfJ0orEZ9d/pc565rFs0g1Cf0=;
+	b=W+zzT/UBbEvDTjbKFqd2EcQDFGmk7FKNscdPOv1I/4wT5dDK1USXSu/0ESRIckmgVnNijo
+	WRoJWIYG3lfWmG46tBxUT5i+hl/ZRyg+0YQpP5Kjqd5ZdPCE6Q1/r601U4+kSmRqUEHiHL
+	oFLJYPFHS1mVRbThl1mjnVS4/RhwZRI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761834947;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WJBY+7WN8pUZ7BL5b9TfJ0orEZ9d/pc565rFs0g1Cf0=;
+	b=Yo26M07jw1OLhnqf0Pa8mezu3jEDm6K7dmtSK8p3SUM0BJgGM9ZUbRtmbspS43/+DBBF59
+	ckX/H+bSSaUs1ECA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5053813393;
+	Thu, 30 Oct 2025 14:35:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MNgvE8N3A2mqKAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 30 Oct 2025 14:35:47 +0000
+Message-ID: <48170d2a-04ef-41be-97d2-f4927d04b046@suse.cz>
+Date: Thu, 30 Oct 2025 15:35:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,172 +97,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 4/5] net: macb: rename bp->sgmii_phy field to
- bp->phy
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Russell King <linux@armlinux.org.uk>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?=
-	<benoit.monin@bootlin.com>, =?UTF-8?Q?Gr=C3=A9gory_Clement?=
-	<gregory.clement@bootlin.com>, Maxime Chevallier
-	<maxime.chevallier@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Vladimir Kondratiev
-	<vladimir.kondratiev@mobileye.com>, Andrew Lunn <andrew@lunn.ch>
-References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
- <20251023-macb-eyeq5-v3-4-af509422c204@bootlin.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20251023-macb-eyeq5-v3-4-af509422c204@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [RFC PATCH V3 1/7] mm/slab: allow specifying freepointer offset
+ when using constructor
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, cl@linux.com,
+ dvyukov@google.com, glider@google.com, hannes@cmpxchg.org,
+ linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev,
+ rientjes@google.com, roman.gushchin@linux.dev, ryabinin.a.a@gmail.com,
+ shakeel.butt@linux.dev, vincenzo.frascino@arm.com, yeoreum.yun@arm.com,
+ tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251027122847.320924-1-harry.yoo@oracle.com>
+ <20251027122847.320924-2-harry.yoo@oracle.com>
+ <CAJuCfpF5gG63njY436vctG-Tzbco8X9a1w3YA=u1AGrRqxVshg@mail.gmail.com>
+ <aQG97ocbfd0T-clN@hyeyoo>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aQG97ocbfd0T-clN@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 7E1EA1F88A
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,linux.com,google.com,cmpxchg.org,kvack.org,kernel.org,linux.dev,arm.com,mit.edu,dilger.ca,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.cz:dkim,suse.cz:mid,oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 
-On 23/10/2025 at 18:22, Théo Lebrun wrote:
-> The bp->sgmii_phy field is initialised at probe by init_reset_optional()
-> if bp->phy_interface == PHY_INTERFACE_MODE_SGMII. It gets used by:
->   - zynqmp_config: "cdns,zynqmp-gem" or "xlnx,zynqmp-gem" compatibles.
->   - mpfs_config: "microchip,mpfs-macb" compatible.
->   - versal_config: "xlnx,versal-gem" compatible.
+On 10/29/25 08:10, Harry Yoo wrote:
+> On Tue, Oct 28, 2025 at 10:43:16AM -0700, Suren Baghdasaryan wrote:
+>> On Mon, Oct 27, 2025 at 5:29 AM Harry Yoo <harry.yoo@oracle.com> wrote:
+>> >
+>> > When a slab cache has a constructor, the free pointer is placed after the
+>> > object because certain fields must not be overwritten even after the
+>> > object is freed.
+>> >
+>> > However, some fields that the constructor does not care can safely be
+>> > overwritten. Allow specifying the free pointer offset within the object,
+>> > reducing the overall object size when some fields can be reused for the
+>> > free pointer.
 > 
-> Make name more generic as EyeQ5 requires the PHY in SGMII & RGMII cases.
+> Hi Suren, really appreciate you looking into it!
 > 
-> Drop "for ZynqMP SGMII mode" comment that is already a lie, as it gets
-> used on Microchip platforms as well. And soon it won't be SGMII-only.
+>> Documentation explicitly says that ctor currently isn't supported with
+>> custom free pointers:
+>> https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/slab.h*L318
+>> It obviously needs to be updated but I suspect there was a reason for
+>> this limitation. Have you investigated why it's not supported?
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> commit 879fb3c274c12 ("mm: add kmem_cache_create_rcu()") says:
+>> When a kmem cache is created with SLAB_TYPESAFE_BY_RCU the free pointer
+>> must be located outside of the object because we don't know what part of
+>> the memory can safely be overwritten as it may be needed to prevent
+>> object recycling.
+> 
+> The reason the slab allocator requires the free pointer to be
+> outside the object is the same: we don't know which fields
+> should not be overwritten, since users may assume a certain state
+> for specific fields in newly allocated objects.
+> 
+> If users don't initialize certain fields in the constructor, they
+> should not assume any particular state for those fields, and they may
+> therefore be overwritten.
+> 
+>> That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
+>> new cacheline. This is the case for e.g., struct file. After having it
+>> shrunk down by 40 bytes and having it fit in three cachelines we still
+>> have SLAB_TYPESAFE_BY_RCU adding a fourth cacheline because it needs to
+>> accommodate the free pointer.
+>> 
+>> Add a new kmem_cache_create_rcu() function that allows the caller to
+>> specify an offset where the free pointer is supposed to be placed.
+> 
+> I'm not sure why Christian added support only for SLAB_TYPESAFE_BY_RCU
+> and not for constructors, but I don't see anything that would prevent
+> extending it to support constructors as well.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
-> ---
->   drivers/net/ethernet/cadence/macb.h      |  2 +-
->   drivers/net/ethernet/cadence/macb_main.c | 26 +++++++++++++-------------
->   2 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 05bfa9bd4782..87414a2ddf6e 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -1341,7 +1341,7 @@ struct macb {
-> 
->          struct macb_ptp_info    *ptp_info;      /* macb-ptp interface */
-> 
-> -       struct phy              *sgmii_phy;     /* for ZynqMP SGMII mode */
-> +       struct phy              *phy;
-> 
->          spinlock_t tsu_clk_lock; /* gem tsu clock locking */
->          unsigned int tsu_rate;
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 8b688a6cb2f9..44188e7eee56 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -2965,7 +2965,7 @@ static int macb_open(struct net_device *dev)
-> 
->          macb_init_hw(bp);
-> 
-> -       err = phy_power_on(bp->sgmii_phy);
-> +       err = phy_power_on(bp->phy);
->          if (err)
->                  goto reset_hw;
-> 
-> @@ -2981,7 +2981,7 @@ static int macb_open(struct net_device *dev)
->          return 0;
-> 
->   phy_off:
-> -       phy_power_off(bp->sgmii_phy);
-> +       phy_power_off(bp->phy);
-> 
->   reset_hw:
->          macb_reset_hw(bp);
-> @@ -3013,7 +3013,7 @@ static int macb_close(struct net_device *dev)
->          phylink_stop(bp->phylink);
->          phylink_disconnect_phy(bp->phylink);
-> 
-> -       phy_power_off(bp->sgmii_phy);
-> +       phy_power_off(bp->phy);
-> 
->          spin_lock_irqsave(&bp->lock, flags);
->          macb_reset_hw(bp);
-> @@ -5141,13 +5141,13 @@ static int init_reset_optional(struct platform_device *pdev)
-> 
->          if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII) {
->                  /* Ensure PHY device used in SGMII mode is ready */
-> -               bp->sgmii_phy = devm_phy_optional_get(&pdev->dev, NULL);
-> +               bp->phy = devm_phy_optional_get(&pdev->dev, NULL);
-> 
-> -               if (IS_ERR(bp->sgmii_phy))
-> -                       return dev_err_probe(&pdev->dev, PTR_ERR(bp->sgmii_phy),
-> +               if (IS_ERR(bp->phy))
-> +                       return dev_err_probe(&pdev->dev, PTR_ERR(bp->phy),
->                                               "failed to get SGMII PHY\n");
-> 
-> -               ret = phy_init(bp->sgmii_phy);
-> +               ret = phy_init(bp->phy);
->                  if (ret)
->                          return dev_err_probe(&pdev->dev, ret,
->                                               "failed to init SGMII PHY\n");
-> @@ -5176,7 +5176,7 @@ static int init_reset_optional(struct platform_device *pdev)
->          /* Fully reset controller at hardware level if mapped in device tree */
->          ret = device_reset_optional(&pdev->dev);
->          if (ret) {
-> -               phy_exit(bp->sgmii_phy);
-> +               phy_exit(bp->phy);
->                  return dev_err_probe(&pdev->dev, ret, "failed to reset controller");
->          }
-> 
-> @@ -5184,7 +5184,7 @@ static int init_reset_optional(struct platform_device *pdev)
-> 
->   err_out_phy_exit:
->          if (ret)
-> -               phy_exit(bp->sgmii_phy);
-> +               phy_exit(bp->phy);
-> 
->          return ret;
->   }
-> @@ -5594,7 +5594,7 @@ static int macb_probe(struct platform_device *pdev)
->          mdiobus_free(bp->mii_bus);
-> 
->   err_out_phy_exit:
-> -       phy_exit(bp->sgmii_phy);
-> +       phy_exit(bp->phy);
-> 
->   err_out_free_netdev:
->          free_netdev(dev);
-> @@ -5618,7 +5618,7 @@ static void macb_remove(struct platform_device *pdev)
->          if (dev) {
->                  bp = netdev_priv(dev);
->                  unregister_netdev(dev);
-> -               phy_exit(bp->sgmii_phy);
-> +               phy_exit(bp->phy);
->                  mdiobus_unregister(bp->mii_bus);
->                  mdiobus_free(bp->mii_bus);
-> 
-> @@ -5645,7 +5645,7 @@ static int __maybe_unused macb_suspend(struct device *dev)
->          u32 tmp;
-> 
->          if (!device_may_wakeup(&bp->dev->dev))
-> -               phy_exit(bp->sgmii_phy);
-> +               phy_exit(bp->phy);
-> 
->          if (!netif_running(netdev))
->                  return 0;
-> @@ -5774,7 +5774,7 @@ static int __maybe_unused macb_resume(struct device *dev)
->          int err;
-> 
->          if (!device_may_wakeup(&bp->dev->dev))
-> -               phy_init(bp->sgmii_phy);
-> +               phy_init(bp->phy);
-> 
->          if (!netif_running(netdev))
->                  return 0;
-> 
-> --
-> 2.51.1
+IIRC we considered it and only left it for later because there was no user
+yet, so we wouldn't have a proof that it works and we're not missing
+something. If you have a user now, it's legit to do it, and there are no
+known theoretical obstacles to it. Obviously docs should be updated at the
+same time then.
+>> I remember looking into it when I was converting vm_area_struct cache to
+>> use SLAB_TYPESAFE_BY_RCU but I can't recall the details now...
 > 
 
 
