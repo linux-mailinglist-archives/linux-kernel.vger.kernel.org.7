@@ -1,86 +1,189 @@
-Return-Path: <linux-kernel+bounces-877706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA989C1ED17
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F94C1ED25
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441C118848EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909F2188B7B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10837337B96;
-	Thu, 30 Oct 2025 07:42:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41D2337BA1;
+	Thu, 30 Oct 2025 07:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bdz06F7d"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4BA3370F3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B284E337B85;
+	Thu, 30 Oct 2025 07:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761810125; cv=none; b=Mzvcy2QBgfTGmPkzLvs390iXVij9SxsPyLXxFKTcKBHTGQhszIaaxGwEL3q+oK0B/PlK9hpxILXmT2Md3rc8pEMvHeVnBJs2oa7eCQMFetMs+v4qekQWcwZfcfNLhLpBwqqHQyGikmmQM2D2XrmHqxpBlIYudoCPbOm51OOdicI=
+	t=1761810190; cv=none; b=fDmRtIkuqmDgMXx3BRYSaf/QL25QV2g8lXAudz0wtW7x9Hbo6lW782MBmKjTiiesb7SrwzIGsQp9wOHxKguSlHwcxhEjtufnt69z18bsW4WiFpve9Qv5+laE2G/lJditm2BQgHTY7pA9LUNmgJmQHAew5f4BZF1fYKysz/His68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761810125; c=relaxed/simple;
-	bh=lCojzIsTFGl1TVJIPtjeU7f+5UW+iwMFJ+6iUln5nXE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ti2BAfahejNJRXF4ljwrcAWQaukO0pHtYR/bQd4UsTZfIcTfD5H6pjO8wgWSR+lOqDH4r9NgztvRpnpzSIBg7IUAcgAJwv6ojnxxGWs3gBOAUztxb9S2RrFZ/tYaoq5nu63XFcLyQlOlT31x2KM5o1plkaQx+MD15dvXrRuXqak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430db6d358bso26760275ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:42:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761810123; x=1762414923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSmf8987BpTQJqzmW0Dxhs15YbQGxphnSa8IuxRBHno=;
-        b=PByCLuI/0bv9t/cyTdkeMECYBAGUiQQ86tWCod8lul5m12nk5X6/ar6EzyY7B2gpR5
-         XmLMsRqYvhbE34T2fgBrXA4ZtBMO9DlkKqYLmaHX+mxVWf45M3yH5pxZze7PgZ5klUsE
-         VArnVk2JgczArycTSMxjHaesz+zAzqjRO1o15ChI9D8USMTVRd/kLi3rfK2JBeP0ZlyQ
-         eoIlswU5ujhWSRLXDcnamwajod2xDjVXbEDJ0QE087HHPXJ9GLbRGhA2t5oPLhXgnd7l
-         nDP6sNR3tk0HZpbyXEBIsn2/I9jRFwQbq8mGuuJGIbWAGjGOdsSRicT2Kb90gYgrfzCs
-         fxKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj00njrun2l+owCnhttOX6nVy2wVadC7K0wZCY4ueoUwzOVzf5CY3wTjE6udBQ7ojTbhnAtbayNuzy8vQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXS3uSQkfiV6U/JDzN+qV6esB+wOrwEmff9f22f2mTd/mf+y9V
-	WYwpcbD8IBvyqQEAKz20ewLm8uRGiYDK/lDUHYUF1xy/lereISmUXq5aPx05s/EXFqufskSpd09
-	ZI9KEFFchzdFGFLSgcDKckh4hOxxqxbjplBp0s9z7fj6QmBJRVzu+npmaPTE=
-X-Google-Smtp-Source: AGHT+IGVSmseTcLwLx0sUVIor4xbNG/ZXWrT6/VOsNCt/mE4ld9elES5xUBU7Ha9LNxul3PwAA6NfCUeY/19kjw5xT/P5YzGhDRL
+	s=arc-20240116; t=1761810190; c=relaxed/simple;
+	bh=KGD5nB20HVdhe2mTVoU+xDv/Az5ut52P+4tvJfuK3rA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kuAW87PreEPuB+zrfOFIrs9RM6t9o/gr8z1ITRbcTQSUq/acMzez7YcUhxbGMgekd/35BVYenMzmNx9u8QCfyFTKIqQWj91QRnWA6bRB0qapX78kVqKx68GU1b2AHLAlxtzMU6144nlNADqk0FYTyXpAq5iwOpAbaB3wYAdIN3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hu-tingguoc-lv.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bdz06F7d; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hu-tingguoc-lv.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TLGhtJ1655543;
+	Thu, 30 Oct 2025 07:43:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yxZoxMDbEiIA3AxADME7vRDlDBpKP/DUWYQZ8YPNipA=; b=bdz06F7djvW5oj0q
+	Bfra9Nb5AFA0tMCQoUjmXoVhpCmkl19+qiZmJgc3+StYzbnHKTfJFa4QU0gpE8fQ
+	E5NN1cv4Z5AYTmDudNLfeMCd483bWX+qlisTEb3MIvnqWOCS6CTZlRNF4PT2cUMk
+	+BiRgJQwzUwH4ZzHETr+4wLCs4ne/HdWDoZS409m3t52T5JaalYeOwejZTu2xYmH
+	Tox+CLBHMZJ0pBWVse8abhV9xS66kBpa96s3xlcjSxGR5j2xGPTz+0CtbZe8iyqH
+	xEUGJ7I8ld90aMVOfKJR5pztKBMLNdAR5/Df1DyyKB8coZP3qC5GnoDgQVnkSAL8
+	KiFrGw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3tptsfsc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 07:43:03 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59U7h2S4004586;
+	Thu, 30 Oct 2025 07:43:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a42a396uq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 07:43:02 +0000
+Received: from NALASPPMTA01.qualcomm.com (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59U7gVFs002508;
+	Thu, 30 Oct 2025 07:43:02 GMT
+Received: from hu-devc-lv-u24-a.qualcomm.com (hu-tingguoc-lv.qualcomm.com [10.81.95.108])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 59U7h2m7004562
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 07:43:02 +0000
+Received: by hu-devc-lv-u24-a.qualcomm.com (Postfix, from userid 2370279)
+	id 0001521805; Thu, 30 Oct 2025 00:43:01 -0700 (PDT)
+From: Tingguo Cheng <tingguoc@hu-tingguoc-lv.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>, kernel@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+        Rakesh Kota <rakesh.kota@oss.qualcomm.com>,
+        Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Subject: [PATCH v2] arm64: dts: qcom: hamoa-iot-evk: enable pwm rg leds
+Date: Thu, 30 Oct 2025 00:42:14 -0700
+Message-ID: <20251030-add-rgb-led-for-hamoa-iot-evk-v2-1-3b3326784d7b@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <y>
+References: <y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e02:b0:425:7534:ab09 with SMTP id
- e9e14a558f8ab-432f8f81afdmr76672795ab.7.1761810123398; Thu, 30 Oct 2025
- 00:42:03 -0700 (PDT)
-Date: Thu, 30 Oct 2025 00:42:03 -0700
-In-Reply-To: <aQMPqDAxyM3i3pQk@infradead.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690316cb.050a0220.32483.0228.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_buf_rele (4)
-From: syzbot <syzbot+0391d34e801643e2809b@syzkaller.appspotmail.com>
-To: hch@infradead.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251017-add-rgb-led-for-hamoa-iot-evk-43ed6bda73a5
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761809973; l=1710; i=tingguo.cheng@oss.qualcomm.com; s=20240917; h=from:subject:message-id; bh=PAucMdJsakoDIrmnfPwibuCKPBaBNtbeP4z5DbseUYk=; b=AKG59P863Ki6XefEtuBh/XRoaeClb7eJQKU+/PhnbMrAKhRgaYNfLQqKXz1NJBLRSvSa2YL+d Za1DZYrePkJBQwEc8X/FzMKJtJ6ytZSeQECBvbIVE0JZYQ2rU76kzxz
+X-Developer-Key: i=tingguo.cheng@oss.qualcomm.com; a=ed25519; pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA2MiBTYWx0ZWRfX8xyZOMn7QuxO
+ DOWVIBFZjHf0vrQiuQXGaIZ8OMg+0gY54XCk914vlPCG4p8o+tKUF0iM+IJE0mKzxOQjZmGGsPR
+ zWHCgaMpyycz0P9mWGlBaO5EcolWqU7hEmjV5cLI+1KkslvLqCFHhWeYlKmv+DcTdGvGocVdzIP
+ gF3HDFPV86G+hHyQ19sDs/fKo8mSBdUXle0nkZ63Hax2cGhvp7Tg2R15Hroo1/DrKr2GcQis9ED
+ bUXGgOVcOBaKNiPEez8XyBAJuYqNQzXh2TJH5nwrC8VR8fPBtBGysrxtnesnu+B4ysKvShgw093
+ jpi0HFtgZRxF2Y5s7VcQ4em5SF0n7gCIDtXDTq8Mb97R9mPDZ6aJS1+7ROxq4StuEDXWPWKm+uE
+ yg8mrGukuEDA962JgEwHsPZKL2s+Bg==
+X-Proofpoint-GUID: jXljtTkCW2zgUPBPIVakjZCai8cIOGwq
+X-Authority-Analysis: v=2.4 cv=MuRfKmae c=1 sm=1 tr=0 ts=69031707 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=F6_ufdXwtoZMk_li76YA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: jXljtTkCW2zgUPBPIVakjZCai8cIOGwq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1034 bulkscore=0 phishscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300062
 
-Hello,
+From: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Add RED and GREEN LED channels for the RGB device connected to PMC8380C
+PWM-LED pins. Omit BLUE channel to match default hardware setup where
+it's tied to EDL indicator.
 
-failed to checkout kernel repo git://git.infradead.org/users/hch/xfs.git/xfs-buf-hash: failed to run ["git" "fetch" "--force" "679bdfc056221ae86d16104d6de6223afaafa4b7" "xfs-buf-hash"]: exit status 128
+Signed-off-by: Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>
+---
+Changes in v2:
+- Rebased on next-20251030.
+- Remove BLUE led channel to align with the default hardware configuration.
+- Link to v1: https://lore.kernel.org/r/20251017-add-rgb-led-for-hamoa-iot-evk-v1-1-6df8c109da57@oss.qualcomm.com
+---
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+index 36dd6599402b4650b7f8ad2c0cd22212116a25fe..ef59e5ff59f2cbe0ee60a020a5d2929c67ad511b 100644
+--- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
++++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+@@ -5,6 +5,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/common.h>
+ #include "hamoa-iot-som.dtsi"
+ 
+ / {
+@@ -879,6 +880,28 @@ usb0_1p8_reg_en: usb0-1p8-reg-en-state {
+ 	};
+ };
+ 
++&pm8550_pwm {
++	status = "okay";
++
++	multi-led {
++		color = <LED_COLOR_ID_RGB>;
++		function = LED_FUNCTION_STATUS;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		led@1 {
++			reg = <1>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@2 {
++			reg = <2>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++	};
++};
++
+ &pmc8380_5_gpios {
+ 	usb0_pwr_1p15_reg_en: usb0-pwr-1p15-reg-en-state {
+ 		pins = "gpio8";
 
-Tested on:
+---
+base-commit: d78b0fee454c25d292fb6343253eca06d7634fd9
+change-id: 20251017-add-rgb-led-for-hamoa-iot-evk-43ed6bda73a5
 
-commit:         [unknown 
-git tree:       git://git.infradead.org/users/hch/xfs.git xfs-buf-hash
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=0391d34e801643e2809b
-compiler:       
-userspace arch: arm64
+Best regards,
+-- 
+Tingguo Cheng <tingguo.cheng@oss.qualcomm.com>
 
-Note: no patches were applied.
 
