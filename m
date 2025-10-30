@@ -1,160 +1,187 @@
-Return-Path: <linux-kernel+bounces-878508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC73C20DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F72C20DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84AF1A2399A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A971A268DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4023271E1;
-	Thu, 30 Oct 2025 15:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC9B328624;
+	Thu, 30 Oct 2025 15:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IeHc4XkC"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1QOds3t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C549F31DDB7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739B9327208
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837037; cv=none; b=MK1Tz7VAhoqG17Olq3e6XWMzF/Hn1yrmM6qBQ0Ld80VfO7iGIZhDWjHv87FF+RCSMSZA9JZuy6uIgPvStBptDIiPFvLBnJH2utpGYoLVj2BvwaoxvEqxe/xd6BIjA1RvYuwyML5+HlLvEGgAWgCEqfd9ZUpCfA3g2o2v6OjGlhM=
+	t=1761837045; cv=none; b=EXaT2PU73547/Ffgf5t6gjXRz1hY0/8S3heVVj+/FZVGiMPGWLI1FrQclsQ8lnKx+CNU9YKPy9vk9BOOpLIxFcdBMLAu7ZvSaCxu6pBKt1Kk4qBDD2Jru4fCHhcvWLgwiqwFGBMEEIniIjiKmnuI3hvENIsKd/OahGCtxoS8eFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837037; c=relaxed/simple;
-	bh=jr7wOno/Ia9wUunoGjpcuP2yL0+uRPnaoSdEgJfE9Xg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IBDpbye0KkUQ3gGnQZoq7gJe8GMadxwopAiNUSLKgrO9axzb/+DkzY9qOsFal3a/Giv9mQ+J24Q3mMXArBYNeNqshG1kSf9NfDuCmIn0maIhxRtLaQI1vN4t/bT2jdCGCjILXuyORJuXsZlzRto9cnXsEXWLRu0N9QWqpQHd9ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IeHc4XkC; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso250205266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761837028; x=1762441828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qQGJPENlwCBSnocB8Fdfhdqupe2Icc+kg91PRDHOC+s=;
-        b=IeHc4XkClza5UMtw1c7x7fPcn3w4BpUFu6ouF4Y/D97v8JdGSw5Ee76B0Y3sTZzXKA
-         L+sGH4bgDjXNBrxDLkCEH7wGp0SARqs8CH6T9Kvs1YUEey0kOrbJhGN3N2upt3yZItm3
-         5qZizMg9B/x4LGqXRb9wmoY3G4WdSyP4HJWTI=
+	s=arc-20240116; t=1761837045; c=relaxed/simple;
+	bh=iDmEJBVp46fcT0CkdrnVmOa5uOg5MoMhiqO85juqzGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lCX+BSzkICm6oqqBrZIXezMT/WZgOWVZ1DdKpoUTylQN78KNTlVf5MHwHJ99Fz3E0urGlXcm8Ew4SwckHYNPLX91El5I/jS+Z4206WmVjqlDa5UlWVzPIHFj+qDgnA5HOxcmQVsg9k6LG14Gj5KBo4rrP0ewnmjFTukLgPUuwGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1QOds3t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761837040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pDCQK9hlLE+TETBGIIHqM4Q6IjU8KzujqNQtOJ112xA=;
+	b=N1QOds3t5J3TKBZ/SfCUpWiFnRxLhr85AGvfZRFXVrCuhGTN3zaAdeOK6DXJcA4h28x4Em
+	rkFIz2+ogxHu3eSmgzuvQa9gdZwmNmv5/jGtkPFHVXiCC4SxLTyiuBnMXVw00Fcsq1Za17
+	HEAKWoYjO1DkiDxz5nWCTNQUmPru9GQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-547-KR53n9QeN-aMkV-0O5K6OA-1; Thu, 30 Oct 2025 11:10:37 -0400
+X-MC-Unique: KR53n9QeN-aMkV-0O5K6OA-1
+X-Mimecast-MFC-AGG-ID: KR53n9QeN-aMkV-0O5K6OA_1761837036
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-475dd9906e1so7184515e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:10:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761837028; x=1762441828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qQGJPENlwCBSnocB8Fdfhdqupe2Icc+kg91PRDHOC+s=;
-        b=wKUdnUA9dLYAi3aLnBPhYRd5MvQp5o9WuTe8yO0oRP2T/Gcr8QhYwnRT/4r+TSYkox
-         k1f0FxBeiFeDAYp3QCfG48jb8XiG0quf/+5WYwIYFh1o8JlfYjdKHuDcd0NhGr4JZ8ct
-         fmip5eEEePJCAmfjBS9ppH0zv3Cu7bzRvvL4E9/eA5Ez9WZDDwCTZvd9uVVHEyRFVwtN
-         BHcG/lu9wcRznZkErCr+7uiAxBN+jdtER5U8PrdfhfYkNIjLjwDoPGCUj1nb5td65EzY
-         K5taxfVe45HJ4Fs2Oqc+7FY44FAturUCJieZ9o7JymssanzbZfNs57C9mPXI2mP9563L
-         7MJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJzvxQmeBw+w3SpNw0gYKU0C97MO/93rGwj8YYnAZpA4e53eBb5QmQLR/yGMpF0+97RofrQXUQExM3KKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0l/7X5Kf03cnAxCIUw2grU34vYogNtmOfc5395oGjxKuy91SH
-	gGpaR/ZjsGbMnL7cXgIdW85qckg3mRQ71hoX6+zWT3T3rp3WBpGjRJa5nglTRWQ9SoyqOUxhmKT
-	wpF6AmPFs
-X-Gm-Gg: ASbGncsmol8HIsyqlgmqBph2PnGP67NzzQaBYPYraxAI90s94P8X/JSq8BI5h0J3zpM
-	2ZUknWjQPHd0RO/aHyP9XUjevpgwQWLmEWmoEziedNrT9E3nd5B8O78A8XtyAB6UXRAv69EZLf8
-	zmiQSPUpMbCdtd7DSnov1NSlZ6/6u2mEXkLfQGOW6UvwK3orF1qdP7QMRwIQS1p1xAreJEW7/EE
-	uy02YrhOzeeF1C7EP1eJdIFXdU9pLf1Fjzj7RYlqu0dOWD9yYRVWtSLTnPAgZeJBqV96YlIIpvY
-	793poc33K36IcZEhzC0FUYbEKt7cKseLob3hzWJdgySICWO8oyguQlvWIiNA+na4u87F4Ln3+eU
-	eEzYuQFYpBSVCFQyd3bOY31htHHMmCKQ+ePzUBwGkfLPgVEscM+3326ih8KWINkZAmiE/aAtJWk
-	RcKgcINmT9gIm9gv+6bGYXjWynhBIJlpSFblckF+c=
-X-Google-Smtp-Source: AGHT+IFHH+uUxvDhhTgd0TwVsh8ZSENRGoAda5dusiVZIbx/V4RrjoLDFVWG5h0Mlpf3tHf46NNJ+Q==
-X-Received: by 2002:a17:907:7286:b0:b3a:7af8:c4a2 with SMTP id a640c23a62f3a-b703d2e2094mr833035566b.10.1761837028556;
-        Thu, 30 Oct 2025 08:10:28 -0700 (PDT)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8541fb2esm1777102866b.59.2025.10.30.08.10.26
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1761837036; x=1762441836;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pDCQK9hlLE+TETBGIIHqM4Q6IjU8KzujqNQtOJ112xA=;
+        b=dzb6BxzKiCkiM9D6gIF2Lq/1gsxuKi/TI5cRJgDzh0a0jKjyIJgAfqJrQDc+T48XvT
+         LgLZVLlQ1pqiSltiGWGK42CXyeoClNfEUZRIZQSaJTBz82TIKaxYDa7Rj1SynwluWYmQ
+         LDSK18GSSLa8vteSJRGX7pC8l6HtYZoIrY3MRpi6zFmZH+n5y8i3C7y0BKi6CDBEeX+1
+         95m5AwvczdZQxumogg5kP7r2iQsNgwiIWMQALlHaA8/fZXsezu+LYYDIjUcLPXk4zirR
+         HLQp+N9HFGxqCPOYNj8M+vMNr1wbSsEccjmQ47bfl6aEtEJFc038CSeRIUkIWS8DaugL
+         onrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqEv5Bo+ZLT+kJ3iZXs7iaNDpkUy4AjsLVLeSwD1cNu4/6hbo4AhRY9upjdcqFMS+cYxcd+rvSIjTg26k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/b3I3EurHRiuzcxOz0t8la8+CXEDYXlJSg8eDI+cC0vZUbFnn
+	ggDH8Ft9W0oBHUMwPYg1C1SRwxf3MfZMxUhjLHx+XWdOR24puAjvdCvzOKeXWRbwX7jswJ73p/U
+	H8RyL+U0kW+h12wC+0iwIlW3uBxEKGc+13U0X5K+yzO7Iey01BhBWyeZpoUJctI27Mw==
+X-Gm-Gg: ASbGnctFJowtpiXA9fCzj66pb8iRxVmwuj5THdxBSp5slla076zoKykifs7Zw4+wZoi
+	ZQw2a7AH+MbLlqab5xe3Emz6FgK0H7MyeeZ0HOyT3Wd7a74UaFxXik426HGdqOvpNop9tGaEdjh
+	8Ci+nGE9T2yqKsAIPdbIzjCIR0qyRDYe+tHkoWKw53gDNn1+OIldByKgxrcaAiw3qUpPW4Y2dHD
+	7YtkCydQjVIBOKQOxQVGxPnzL/vKSP6L4VyR2hWLVa2CXRiZYPPGuxwRYT3oJAYVXxo0TSjvZP7
+	g/Xuwv6xqL4QpPY2rXTHMZDRws7io8Kq7+kKdz9YSIXzWkGcOuByYBtk8ncMwSem9FPsA4xFqrg
+	gGF4rVArRn4uF4krr505Br/aJ3/1t+JxRYHJ6wEmVw9e8mysjLu2kd1R4J2z9dgWXpx6za7wxgA
+	H5qiJw4tTr0EJH0EBvIHL35cMKDOM=
+X-Received: by 2002:a05:600c:6389:b0:477:da4:364c with SMTP id 5b1f17b1804b1-47730797bcamr672115e9.4.1761837035740;
+        Thu, 30 Oct 2025 08:10:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4KUGeZbzNKm7MNGtt8D6Fso8lLniBFswbKsZjSsZ0KgGlb6Xh2MXwXuc5z8HUy7nMGWyBeQ==
+X-Received: by 2002:a05:600c:6389:b0:477:da4:364c with SMTP id 5b1f17b1804b1-47730797bcamr671735e9.4.1761837035238;
+        Thu, 30 Oct 2025 08:10:35 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429bb752b49sm1353322f8f.9.2025.10.30.08.10.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 08:10:27 -0700 (PDT)
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429b895458cso578743f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:10:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRIeqs+K0GZDf6l9XZj1vtd7LUpvUtYJCOLvtVuDLqEISJ+ZTRdJAUq+IxoGQ/dbRcSs1zFbhXVNtqS5Y=@vger.kernel.org
-X-Received: by 2002:a05:6000:2282:b0:427:8c85:a4b0 with SMTP id
- ffacd0b85a97d-429aefcd9ecmr5434709f8f.56.1761837026324; Thu, 30 Oct 2025
- 08:10:26 -0700 (PDT)
+        Thu, 30 Oct 2025 08:10:34 -0700 (PDT)
+Message-ID: <4f68e609-a40c-4844-ad40-9ed31c88adb4@redhat.com>
+Date: Thu, 30 Oct 2025 16:10:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
- <20251029081048.162374-2-ajye_huang@compal.corp-partner.google.com> <d6fe55b210888b9279c776b2bbfeaf38bfc44dcb@intel.com>
-In-Reply-To: <d6fe55b210888b9279c776b2bbfeaf38bfc44dcb@intel.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 30 Oct 2025 08:10:15 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UTP-kdjp2DD0YYnwmQ7ppLKXSHLRybPbyPeSqE_FEQMA@mail.gmail.com>
-X-Gm-Features: AWmQ_bke1tjou5F_4-QfM_8iUzksOVca3RFZUdxwYykUtaSqGBlpmT8eCCU_9jE
-Message-ID: <CAD=FV=UTP-kdjp2DD0YYnwmQ7ppLKXSHLRybPbyPeSqE_FEQMA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] drm/panel-edp: Add override bpc quirk for generic edp
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Ajye Huang <ajye_huang@compal.corp-partner.google.com>, linux-kernel@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, jazhan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390: Disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+To: Heiko Carstens <hca@linux.ibm.com>, Luiz Capitulino <luizcap@redhat.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Joao Martins <joao.m.martins@oracle.com>, osalvador@suse.de,
+ aneesh.kumar@kernel.org, akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org
+References: <20251030145505.2764038-1-hca@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251030145505.2764038-1-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 30.10.25 15:55, Heiko Carstens wrote:
+> As reported by Luiz Capitulino enabling HVO on s390 leads to reproducible
+> crashes. The problem is that kernel page tables are modified without
+> flushing corresponding TLB entries.
+> 
+> Even if it looks like the empty flush_tlb_all() implementation on s390 is
+> the problem, it is actually a different problem: on s390 it is not allowed
+> to replace an active/valid page table entry with another valid page table
+> entry without the detour over an invalid entry. A direct replacement may
+> lead to random crashes and/or data corruption.
+> 
+> In order to invalidate an entry special instructions have to be used
+> (e.g. ipte or idte). Alternatively there are also special instructions
+> available which allow to replace a valid entry with a different valid
+> entry (e.g. crdte or cspg).
+> 
+> Given that the HVO code currently does not provide the hooks to allow for
+> an implementation which is compliant with the s390 architecture
+> requirements, disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP again, which is
+> basically a revert of the original patch which enabled it.
+> 
+> Reported-by: Luiz Capitulino <luizcap@redhat.com>
+> Closes: https://lore.kernel.org/all/20251028153930.37107-1-luizcap@redhat.com/
+> Fixes: 00a34d5a99c0 ("s390: select ARCH_WANT_HUGETLB_PAGE_OPTIMIZE_VMEMMAP")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+> ---
 
-On Thu, Oct 30, 2025 at 2:44=E2=80=AFAM Jani Nikula <jani.nikula@linux.inte=
-l.com> wrote:
->
-> On Wed, 29 Oct 2025, Ajye Huang <ajye_huang@compal.corp-partner.google.co=
-m> wrote:
-> > Adding override bpc to EDP_PANEL_ENTRY3 quirk.
-> >
-> > Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-> > ---
-> >  drivers/gpu/drm/panel/panel-edp.c | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/=
-panel-edp.c
-> > index 944c7c70de55..da3e8f223ec3 100644
-> > --- a/drivers/gpu/drm/panel/panel-edp.c
-> > +++ b/drivers/gpu/drm/panel/panel-edp.c
-> > @@ -218,6 +218,9 @@ struct edp_panel_entry {
-> >
-> >       /** @override_edid_mode: Override the mode obtained by edid. */
-> >       const struct drm_display_mode *override_edid_mode;
-> > +
-> > +     /** @override_bpc: Override the Bits per color obtained by edid. =
-*/
-> > +     unsigned int override_bpc;
-> >  };
-> >
-> >  struct panel_edp {
-> > @@ -586,6 +589,9 @@ static int panel_edp_get_modes(struct drm_panel *pa=
-nel,
-> >       bool has_override_edid_mode =3D p->detected_panel &&
-> >                                     p->detected_panel !=3D ERR_PTR(-EIN=
-VAL) &&
-> >                                     p->detected_panel->override_edid_mo=
-de;
->
-> Unrelated to the patch at hand, since the pattern is there already, but
-> something like this should be more reliable:
->
-> bool has_override_edid_mode =3D !IS_ERR_OR_NULL(p->detected_panel) &&
->         p->detected_panel->override_edid_mode;
->
-> It does not look like p->detected_panel could have other error pointer
-> values than -EINVAL, but it looks awkward to check for NULL and one
-> error pointer value, and then go on to dereference it.
->
-> I guess even better would be to always use either NULL *or* error
-> pointers, not a mix, but I digress.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Yeah, that makes sense. If someone wants to send a patch cleaning this
-up, I'd be happy to review it! :-)
+-- 
+Cheers
 
--Doug
+David / dhildenb
+
 
