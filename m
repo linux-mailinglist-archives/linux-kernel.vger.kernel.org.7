@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-878620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129DEC211AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:11:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868E9C211B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A30774E2E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30870424870
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B72E366FA5;
-	Thu, 30 Oct 2025 16:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A984366FC5;
+	Thu, 30 Oct 2025 16:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VI/EtZmQ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O1yScdwW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069ED365D21
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E1C365D34
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761840628; cv=none; b=RcXe3sNH7INxfQdyfQZATVKflpSeXoMdD7oq1OhkWvaSUqVtlbSmEkRU4XemKub5TK8UP8ZJH7JL+SRm1GYUKqhFZBB4j+R/Le9diXJWlj7UvYqRhEZfthzEiUedgcS5qH/OhsL85D2BfwTLOE7maGJs3Z65KyLI79dR/+avuRE=
+	t=1761840629; cv=none; b=ZsGv0ZlC2VPBa4pYni2DDRb9uWWYcDZg/8lPfqvIArqGYJ19VSuaD3FCsHFG65n4Zrxc7AmcQxYiL9Y2KzoHOJvT6Idv0is/WbGcMWzDY4hopjLMgzXjRz3gVcIJ5lDHf9KOdGXaQPK1TegVbFMI2Mv1PoalkucfQNURnEs+MSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761840628; c=relaxed/simple;
-	bh=pitwEdfA3nrBdh1BiRCp4D3Z4tLTcR3JkelahY7Hs9M=;
+	s=arc-20240116; t=1761840629; c=relaxed/simple;
+	bh=lKjDJt4O/H35TLYg6iUN24lXu3yise5Gp9iVcTWfvgM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oAij+AbE7qjT1W5VaFfOyOmDQRfXsTHm8jS47fTfvtv/CHnx+t310s/gorTnSK+tIqX6OBN1RcV1OB+6z8XkOdm+JVzQWYMswDiVEfJxv0MGwdyIBHv1L8rycJLuGncgbUm0yELXnnF33za08I1l9P16u6H3S4mnAfl1puwi24g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VI/EtZmQ; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version:Content-Type; b=hhKd8UnNjD8JxPBD1HIgEvwxsl/v9RExa6e/6swAjiqYG87qbVQQmkrsk1ICBciQ2XGhu2jBl0MOXtBal/qCUj7fDjnU0QB47mwt9uZhr8AcQ0BcXA0tAPoNsuqAg+ZQ20+RocMzK6r55iDCjeLgAwdRphDdgXcgFPiBWmyosj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O1yScdwW; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-475d9de970eso8922265e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:25 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-475dd559b0bso16485585e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761840624; x=1762445424; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761840625; x=1762445425; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1mzPZhnW69Ma46xdkUZL4rvYZEGa/gCP35bg1gX0aRM=;
-        b=VI/EtZmQNv4WDwD8Lg1bJSRScPipTIbBHpNrFa9j6ndey5bnhmxQSC75pREDZ+NjhG
-         35qUD/F64FFb1QYV7oqMuFFH5otLWObPxBTitNFne2lkYCBwaomgzsJqNSBe6K7872Ye
-         INKuy7asXRPuBTpfJMrJzWMHN2O3F9An/L3NN8RmYQWv+MnBXv/eQMAPalCUZpeR6tA/
-         w64/t9TXwjB9kb/ZgtP5KXOG6JTG2WLrfeaVK6gQJ2kLFYVaTvn7uKcTbt4xvtxSJVrI
-         WDrsY7vcgHe6ZeOS5sqR7eV0zs93brw02oWyPuz1n1HkWQr6Vb9M5GlXLstg8aTA7SCa
-         VjaQ==
+        bh=qUyLe55hA4hNh5avFZjcyEPUTCpSS8nAfdCLlggpt5s=;
+        b=O1yScdwWRkFyK01BvoWW2eHOq7RKpb46MK0bs8HQ/53EgwcRG+VxJRicmJaSfbtsUg
+         uoL0ifO3Wmf6J/70Os997kJ1g3QDxyEVaTnPzc8mpIjANBfRODraM+yuNaAD/pzIhTeR
+         EnepzWUuu2HGk/FDdbNDSsja0N56qc0pXCDYicOXS51vu0JwhqR4HO3sUu5Suq8e6DEq
+         o2grTxPMftopfFTslZoUbwihpZTrbe1GpT6+z4QhedzmXWL8N+RBMVRN/Od/JfUKvrO+
+         /ofGGdeuJWf0yWng5iNWbHWCqE6DAMhRujeczX7wzz9TxmMmwxBPgaM75h0JJJIeKiFJ
+         YBDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761840624; x=1762445424;
+        d=1e100.net; s=20230601; t=1761840625; x=1762445425;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1mzPZhnW69Ma46xdkUZL4rvYZEGa/gCP35bg1gX0aRM=;
-        b=LmopvlW7CyfLpRCcteTIYhL1NK3gZbHJis5HU2kMs1oGNeuYDhTp3/yYSnrAhty5qP
-         XxK3s4Kl0iO8875gFQU2yp9u7Ai7U8Xsib3bGuXd/agUxSdgvuNU5bSWtrwgDaXTPcTH
-         63B9ASyHCCdxnTaE7v/PH7Mv1Z4ossSZxQC0V/g2FXiIWVj1fmOpRy9v1nAMwbVTkfHD
-         SYQXgunV6EgqV65BnOybaHm/c5X/8oyVtFSY124f7gjbveM6qsggUR+A/BEIByTnkUuR
-         Odh2dpOm5Oi2Q5KBUwiXsGS8FH02hBztpHyiqMmV3Eh6i5nKPa9/1lBjL+Xytt/xnae1
-         8T0g==
-X-Gm-Message-State: AOJu0YxBgEzkqk/sItQG8z4YmMQFpIx36tEDPZ64Stj8Q0r+xJdDvdyU
-	ZtuYg4HJh7oirvcpTHmx4EDPLjZ4CnQXm5lQqZAM4+bAqtZ+ZDyL+Jsy0nzvaV7ZHggiQCGqcrh
-	2+1S4
-X-Gm-Gg: ASbGncv8lGqXJVFQ4WpCxf9GBfp6vudFX+ZADDuG+7fy3UL80K9lMogjEkeFe7kJaOw
-	oWXIVZEFIkgIXvrPzO4J0MtrGPyXOQoh34gSJTfUL0JvQdkn8XakvFC5HmXHb+kJDlaQHplBOof
-	kXy3x+4NrQBKJ1B3ieg37rvZ15o90Xc63fr3rlUnWGiJrWLKEuO/tOSU8GWshWNIIAzmyfEPTXs
-	/GvmJRE/bDP96nssfCLaiOwt27kw1f0EqRfI6/X2zpE2WnmBP4zIe0zY/E9U7DRGAXEzSz07jDI
-	HYioxtlj2IFkqMhjV06zyV03JJPvSe3y5x2rRBLxwhMUFX/1kJZb6/FEZO6aZMasA+hloEK7SWR
-	zCRKLcOgov55jlVlD105I99w7k867EX0Bl7IZlEMr0ySa4n+hPczEgEtGGJvT6snjyll+LZppA7
-	yyNwz7vt/51E0UrfA=
-X-Google-Smtp-Source: AGHT+IFroBmfAiCGL5XJxbZgL6hgq0wEFDb+ooauLfTFeIekjVl2CAAel/J5c/moOLtcfk84yd6I0g==
-X-Received: by 2002:a05:600c:4e43:b0:477:e66:406e with SMTP id 5b1f17b1804b1-4773088be60mr3082305e9.29.1761840624032;
-        Thu, 30 Oct 2025 09:10:24 -0700 (PDT)
+        bh=qUyLe55hA4hNh5avFZjcyEPUTCpSS8nAfdCLlggpt5s=;
+        b=tWqJmBBFvjoAbcRc/mGlcFUt4zifYI/nus2AHP+LuhT/X7mIaZwBWCX1wpPO/QGQVy
+         RL3Mk78YXZbnP+CWJ0xzb2fnMAEXSDOWrJuznutAgWfZjzPEFjeNUfEgGgXXKm5EGyxF
+         MhMQ6PctNjxTS8yNgkgM9BPHomAbdp0xnoscKsxeuwotpOB/6WAHc9t7b4xgEWzcrAri
+         3yCQBOYchO0MV4CevwVBgHg3FSCkOelkpZbiuX1yrOGsUWsnueWUyhXCqQx9zxwMjlRT
+         cVqLdFAwbYrHrWlzPQRpxQgK3aaz4nGK1X22pmsC40K9+x8zPiuM0aE50jxmoS//9MyF
+         g5ag==
+X-Gm-Message-State: AOJu0YxqWejnZUQH9T3+Zdt/lGqOo5OotAOqMaHcYtd7kFDeDQbCNUps
+	TiJ0dgE+dfXLD6QKPADPT7u7tYpcJaB83W9ggTVQuBNICkbeH71BDc8lnr4ekACxjlxrpk1OhZY
+	vyoDr
+X-Gm-Gg: ASbGncu1UgbLmI3Vot+fk91tcOJ7DkbfoEFZmPE0j98UnpXtzOU04SZngA7vGVMdisx
+	/8s2iMmNSpZfA3bTbugOmGzgfO/1xMrfggNEh5PphOzwhwL9w5KtBnfArEhu9MelTXFiZL2XIgv
+	4uHcegySnnSVoVd4w6vpb6KnAlDt+cmVyz9Jb6pO+NhPUbNKbRkQxpEP7kalH349ie0W9wuMmND
+	0gN6qzLYXvThkaF2IXBnUnVyrONrmEP4Sq1/wKuZyXHbpNDO+kc2J3TenFQF8jMXy6XL4lBNE5+
+	+HI7YlEv/BgTCNqZChuGWjNdB6HEbwZsI8ApGSEh9JkPWgWrWTnDd6EQB5682Ht9iU12lEoDXls
+	41OpGnAnVcquBZUJz6xVPFZLcnj4oL9V8GraT3caNzaHleAfg/cEcNCkk/4STKLrCyx+NdmXDuC
+	Nu1ODM9tbwjO0Zu9A=
+X-Google-Smtp-Source: AGHT+IFyE5J11xUKBnyXYND4mxJaazGINsyI2NsqELziu7PEPOdM/yL8Wk6KNj6+t9t3bygj4S8Ayw==
+X-Received: by 2002:a05:600c:6986:b0:46e:7247:cbc0 with SMTP id 5b1f17b1804b1-47730859cefmr2359355e9.18.1761840625061;
+        Thu, 30 Oct 2025 09:10:25 -0700 (PDT)
 Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a7csm33124857f8f.8.2025.10.30.09.10.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a7csm33124857f8f.8.2025.10.30.09.10.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 09:10:23 -0700 (PDT)
+        Thu, 30 Oct 2025 09:10:24 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	amd-gfx@lists.freedesktop.org,
@@ -87,9 +87,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH 3/4] amd/amdkfd: WQ_PERCPU added to alloc_workqueue users
-Date: Thu, 30 Oct 2025 17:10:10 +0100
-Message-ID: <20251030161011.282924-4-marco.crivellari@suse.com>
+Subject: [PATCH 4/4] drm/radeon: WQ_PERCPU added to alloc_workqueue users
+Date: Thu, 30 Oct 2025 17:10:11 +0100
+Message-ID: <20251030161011.282924-5-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251030161011.282924-1-marco.crivellari@suse.com>
 References: <20251030161011.282924-1-marco.crivellari@suse.com>
@@ -129,23 +129,23 @@ become the implicit default.
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 ++-
+ drivers/gpu/drm/radeon/radeon_display.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-index ddfe30c13e9d..ebc9925f4e66 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-@@ -690,7 +690,8 @@ void kfd_procfs_del_queue(struct queue *q)
- int kfd_process_create_wq(void)
- {
- 	if (!kfd_process_wq)
--		kfd_process_wq = alloc_workqueue("kfd_process_wq", 0, 0);
-+		kfd_process_wq = alloc_workqueue("kfd_process_wq", WQ_PERCPU,
-+						 0);
- 	if (!kfd_restore_wq)
- 		kfd_restore_wq = alloc_ordered_workqueue("kfd_restore_wq",
- 							 WQ_FREEZABLE);
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index 351b9dfcdad8..3c8aa5274c51 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -687,7 +687,8 @@ static void radeon_crtc_init(struct drm_device *dev, int index)
+ 	if (radeon_crtc == NULL)
+ 		return;
+ 
+-	radeon_crtc->flip_queue = alloc_workqueue("radeon-crtc", WQ_HIGHPRI, 0);
++	radeon_crtc->flip_queue = alloc_workqueue("radeon-crtc",
++						  WQ_HIGHPRI | WQ_PERCPU, 0);
+ 	if (!radeon_crtc->flip_queue) {
+ 		kfree(radeon_crtc);
+ 		return;
 -- 
 2.51.0
 
