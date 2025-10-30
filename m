@@ -1,124 +1,121 @@
-Return-Path: <linux-kernel+bounces-879023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F171CC22107
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:49:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88DA2C2210F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE50B189C404
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BC341A2598E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498E031282D;
-	Thu, 30 Oct 2025 19:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19BA31618F;
+	Thu, 30 Oct 2025 19:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYp5ELpB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lu/eBFP5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857FC2F12BE;
-	Thu, 30 Oct 2025 19:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5ED283FD9;
+	Thu, 30 Oct 2025 19:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761853732; cv=none; b=EvKWxi+3uVwnODGZn4ZMl+b5KZlWOHx/EuhIOPaFm3VNorjz9M/gPtpyqKbYS60BI4IYT8qx0d+GvrDFglkDhpVJEDhFwQhjrk5e6ugr2dBoy0gHcGeYFZbPy1ZtqhX2UF+48gGF25bqMrqZH4hP0SSk1YhhkwHBJbz6vG3B2sA=
+	t=1761853757; cv=none; b=hMq4fBIUOENJIOEtFceTUwXsLSB3lQs114mv140jqJ2ymXV/ZN8jNoo8prezPz4xXrsHyqLxeVz0n0g7qpi7ays6VkITJ0LAjwl94EAC+ShQDjrOKsg2h5TIcGhdx1MlU0MqHQSCjx54g4i/IKr6iuv2JMP04Opt5vNcs3FKF7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761853732; c=relaxed/simple;
-	bh=qJI3qZM5Optf4G27KYbsSkQh+ZgBIoA6cNh4wNL8nB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogLOs6xqpBWl4cFXdkK3V9L2FzkguYXZdm5ZocDDR3sWnZ34jzPy7koiElAW1f2oruoYV8PnHUBz7zzUhD3I65f9oG84z1GxvYmTfda3r2vpR58RuYtP0ffHef3sQZnXiWzh59/3fieJVTGHM0QGu/yDOuW4F1PtNNEBQdbJ9QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYp5ELpB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E669C4CEF1;
-	Thu, 30 Oct 2025 19:48:50 +0000 (UTC)
+	s=arc-20240116; t=1761853757; c=relaxed/simple;
+	bh=lgyDLafQE8DiQDUiJtyJ9+bt7JmcvlRaYp0Kn6urakc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdwTESd6chY1SR85q5DDsB9Matu5aDUFh885jMMyn9HlnfF/NicyndfJ8a9QE05jjuP2E0AOJVOQw6aMACfTl0BO+iH1UJahWptylKjyKzeqE+XLhXm2x7rltNtWcGtVJAvto7I1Xlgq/j0xPvJYntVUS35E7RcVlM9HL8dz5Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lu/eBFP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084B2C4CEF8;
+	Thu, 30 Oct 2025 19:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761853732;
-	bh=qJI3qZM5Optf4G27KYbsSkQh+ZgBIoA6cNh4wNL8nB4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lYp5ELpBCDuXDH8cs6ghtaJi1QFuzvgHZZykqjSi5qJRcRbioiclNvnPVgIAGadPS
-	 2pmy5iACbIra530AnvwkxX3hcli05TtA49xBpzqnEerD3JjTgaF7v+lJzqJSWG9wvZ
-	 OXJCuSG6c91ZMcZcRRFoyHN0suAoxXBSo+scnDfEVsnvF64DgFx47yXTpC1TpD81/+
-	 vt0+GLlca1dmaDA7MyfxhDAE/Li7a1tJ0VAg3aXknMUWQVb7qEzOc2+N2m77m91rnA
-	 utkV85jL66wITa4TtoKcnliYr95PwIZ4PAc92aO/EPUGv2Zxi7Sa7xXGqsyAMmjurG
-	 02oJ9pSG6C5xA==
-Message-ID: <27841a96-b8a5-44aa-b0ef-d8bab9ba3477@kernel.org>
-Date: Thu, 30 Oct 2025 20:48:48 +0100
+	s=k20201202; t=1761853754;
+	bh=lgyDLafQE8DiQDUiJtyJ9+bt7JmcvlRaYp0Kn6urakc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lu/eBFP5oLDumMFhEBp06aze9McYEFE1zeHtLyHf/sA/wPzcnlWHWr09lV/qIkPX+
+	 qxMfJ+aT4WdooF22hWKVeSJDTJV6i6+YSHaGVbFY5JHMOo6NHj+iHKqq5W/iibB16l
+	 mEoKxOuSC5iS1FlIvtkIDOHLWKl7agqhk3pGa6rzO9pHeNO7cSfhkZvtjJVd1Dr4il
+	 LPLVA/244xMmWW93aRCOtXxClp2npsrzYGq1QhADfpsS1Zy60rOiWYHkHWFHOyvZZ7
+	 dHpqz/YoHkoaGWp4aMuK6O2/ahC2M4Jtd8mifw4McZg4uUv2C44rNMKg729jbC7gNq
+	 aFKX3OVv10sew==
+Date: Thu, 30 Oct 2025 19:49:07 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jack Hsu <jh.hsu@mediatek.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, srini@kernel.org,
+	ukleinek@kernel.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+	chunfeng.yun@mediatek.com, wim@linux-watchdog.org,
+	linux@roeck-us.net, sean.wang@mediatek.com,
+	zhiyong.tao@mediatek.com, andrew-ct.chen@mediatek.com,
+	lala.lin@mediatek.com, jitao.shi@mediatek.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v6 00/11] Add mt8189 dts evaluation board and Makefile
+Message-ID: <20251030-deodorant-unglazed-190cbfb4a69b@spud>
+References: <20251030134541.784011-1-jh.hsu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] arm64: defconfig: Enable SCSI UFS Crypto and Block
- Inline encryption drivers
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
- bjorn.andersson@oss.qualcomm.com, arnd@arndb.de
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Manivannan Sadhasivam <mani@kernel.org>
-References: <20251030095509.5877-1-manivannan.sadhasivam@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251030095509.5877-1-manivannan.sadhasivam@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yaNJtXhYGM5K609h"
+Content-Disposition: inline
+In-Reply-To: <20251030134541.784011-1-jh.hsu@mediatek.com>
 
-On 30/10/2025 10:55, Manivannan Sadhasivam wrote:
-> These drivers will allow using the crypto functionalities of the UFS
-> device, like Inline Crypto Encryption. Both of these drivers are of type
-> 'bool', so they cannot be built as modules.
 
-Is there any device benefiting from these? Which board?
+--yaNJtXhYGM5K609h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
+On Thu, Oct 30, 2025 at 09:44:32PM +0800, Jack Hsu wrote:
+> In this patch series,=20
+> we add Mediatek MT8189 evaluation board dts, dtsi and Makefile,
+> and also related dt-binding documents.
+> Jack Hsu (11):
+>   dt-bindings: arm: Add compatible for MediaTek MT8189
+>   dt-bindings: iio: adc: Support MediaTek MT8189 evb board auxadc
+>   dt-bindings: nvmem: Support MediaTek MT8189 evb board efuse
+>   dt-bindings: pwm: Support MediaTek MT8189 evb board disp-pwm
+>   dt-bindings: serial: Support MediaTek MT8189 evb board uart
+>   dt-bindings: timer: Support MediaTek MT8189 evb board timer
+>   dt-bindings: usb: Support MediaTek MT8189 evb board xhci
+>   dt-bindings: watchdog: Support MediaTek MT8189 evb board wdt
 
-You do not need the second tag. You send it via oss.qualcomm.com which
-is still valid.
+Please drop mention of the evb from all of these commit messages. The
+compatible has nothing to do with the evb board, it's going to be common
+across all boards using an mt8189.
 
-Best regards,
-Krzysztof
+>   arm64: dts: mediatek: Add MT6319 PMIC Support
+>   arm64: dts: mediatek: add properties for MT6359
+
+Wait a minute, what are these two patches even doing in this series in
+the first place, when it is otherwise about the mt8189?
+
+>   arm64: dts: mediatek: Add mt8189 evaluation board dts
+
+
+--yaNJtXhYGM5K609h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQPBMgAKCRB4tDGHoIJi
+0lPkAQCRU09Z6yjkHdytWu2mAy2u6tRSvE2qwbIcuk80eZ/k7wD/UgxmnNEGR8HM
+8eS3jGJAmBHKHjZ6iiVHXynJ+4bEdwg=
+=YIMa
+-----END PGP SIGNATURE-----
+
+--yaNJtXhYGM5K609h--
 
