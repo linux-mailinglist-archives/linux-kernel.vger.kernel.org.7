@@ -1,119 +1,209 @@
-Return-Path: <linux-kernel+bounces-878291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83384C20316
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:17:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9848DC2031F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 452B84E1E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF2E1894810
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DCD2367CF;
-	Thu, 30 Oct 2025 13:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679A8239072;
+	Thu, 30 Oct 2025 13:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="HC7j2p0A"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kX0etpTo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZUhI6lNy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kX0etpTo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZUhI6lNy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DBB22B8CB;
-	Thu, 30 Oct 2025 13:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761830264; cv=pass; b=j9MftS4U/j/8h/Q+zxs8seW7gUtZKz1L+duvAiLCfaHqSR1sdCEOmF7Qc4ftABJRcFGfZukHNEQeJ+R7Dlk3n8WFZ7hYcY4hT+7+JhxrfYytaY0HAtj0eIBqUkTjJdYJqzRv6J1jiL+NpmXYZkYPwCP/wlVVyjh9nqJei+9Txrg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761830264; c=relaxed/simple;
-	bh=TpvipFPL4XszV9vrC4IN6hE59uSeRT6tFNh3013ZQNk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GTP7E+aEcMAyObfjpY/XEF+c//bk/gTdzB/OwktK5UNPQ4szOY40DQ+5QFv04DPW9PGdUO3MvM3YI7WlQIy9TQQUaz+F9Bl44p+bHNbPuu5Q0XpnDz7O4tZprpuXUID180XpLzKVazd/iDLyggesF15yJT1iJR7kn2lP6qw/doc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=HC7j2p0A; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761830243; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bykFlocPyOEv6VJ8hGJ+2SlM+xv5ccun8eDeb4CYDlJ4o5ga5Un/K8leZovV9noOiAjw5Uvj5SiLsrRDkQBi3iNgnn4eiiq+NzpPfPBHqfb21Z7TJmCFREStXPu87hZl0wfYt0K/xs8oeUG2So3YXKnoqyPVdnwf3Vle+uJZ74c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761830243; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=X8vmjhEGyAb9Q+g3zprM6UMlHqaEvwlEm446UF+Fb5E=; 
-	b=TWYhI7IamV4ShVe5DfQv8czH5tnOKVadQeBdwRkjabBS6oV7ddLysULY//VHCn9xurf7/xkOqB+7ABr42PROAjtZ5uLe9LUqvpD80fQFu1054K1+wk0yO61EaWIJBPDlKB8isOH8WQLOOAnVgYjqZ40qc8xoPpjSeAJBIV5QMvk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761830243;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=X8vmjhEGyAb9Q+g3zprM6UMlHqaEvwlEm446UF+Fb5E=;
-	b=HC7j2p0ATKIKWHZ46ymqF+vJrTlNWIOnCOOYqQO0MMDfr6lfyrD0Z80kqZhYZVSV
-	lWO+hfdud/gLWlY2kAE83UVYj+aKhjGkSl0yKAtdO49d2EavR4alyJvyx6l1clowSsp
-	A8gD2CwNk2qC14FSAv3NvKOgIVOHYmGIr1uEBE40=
-Received: by mx.zohomail.com with SMTPS id 1761830240160609.6007241076173;
-	Thu, 30 Oct 2025 06:17:20 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Thu, 30 Oct 2025 14:17:10 +0100
-Subject: [PATCH] pmdomain: mediatek: mtk-mfg: select MAILBOX in Kconfig
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB6323183C
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761830330; cv=none; b=SYHkNQXma/y+tC3tYEqSY3PyRSJKNlvYGzmCMesyER3BfxUPQIRH9xaxssibemXyqcpW++eCENqmpF6OQw6xonBBF+smjwryWeUFAqtsaJrjNSEPTDwl5foprrp7li8fjDHjzmuFZNMYTxo9GiWRsVfY6Z1TaHAiQMHoaQkptJg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761830330; c=relaxed/simple;
+	bh=ndZjkRltjIWMIZQTZXqFH8q+092Arxeecw4S8L2kLLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X+BV1/knn303+cZXJ2uCTvyHsg7qxWFbSxm/1aljJnaHjVnwS/ikr6C6dScB35nerQCtSgX+4xBUNuoHj0/rKU7ygq7brnQ5PctC/6xyezYi9rJse30/uC40qN3RP3a9bC+z1dP4H2UrgBSbWsPvE79nKn6nsV2uEC28ntC44kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kX0etpTo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZUhI6lNy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kX0etpTo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZUhI6lNy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 06C7A1F6E6;
+	Thu, 30 Oct 2025 13:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761830327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CgjcxRthmM6PCoG1BiMHfp5HdQ/ejgbzHCetCjaVfDk=;
+	b=kX0etpToU/L1+noHFXojTL4kScufLYFcskoWFzx2mIARRWUpb1JTr2uEeS1Jq3qi3aQpcH
+	pllhyT66jYnhEtyhJY6RYXzB4apxxL0kk7Rv3Bx+YAejbWtYMPhTvS4NqSJH1YTDqcne4Q
+	smkbzkAsq1IuPsAPcGL9zOSPVogWHyY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761830327;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CgjcxRthmM6PCoG1BiMHfp5HdQ/ejgbzHCetCjaVfDk=;
+	b=ZUhI6lNyYmBAkIoA2bbz6dL8p3QR/xEiF+UmKTMvPWT1WlevTqrz8tw5zNggFYZzGLinNK
+	mDLwhnkExICvJIDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kX0etpTo;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZUhI6lNy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761830327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CgjcxRthmM6PCoG1BiMHfp5HdQ/ejgbzHCetCjaVfDk=;
+	b=kX0etpToU/L1+noHFXojTL4kScufLYFcskoWFzx2mIARRWUpb1JTr2uEeS1Jq3qi3aQpcH
+	pllhyT66jYnhEtyhJY6RYXzB4apxxL0kk7Rv3Bx+YAejbWtYMPhTvS4NqSJH1YTDqcne4Q
+	smkbzkAsq1IuPsAPcGL9zOSPVogWHyY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761830327;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CgjcxRthmM6PCoG1BiMHfp5HdQ/ejgbzHCetCjaVfDk=;
+	b=ZUhI6lNyYmBAkIoA2bbz6dL8p3QR/xEiF+UmKTMvPWT1WlevTqrz8tw5zNggFYZzGLinNK
+	mDLwhnkExICvJIDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DCE5913393;
+	Thu, 30 Oct 2025 13:18:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ovyeNbZlA2kjWgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 30 Oct 2025 13:18:46 +0000
+Message-ID: <2a95b2db-c487-440c-b95c-35549c8f5ba6@suse.cz>
+Date: Thu, 30 Oct 2025 14:18:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 09/19] slab: add optimized sheaf refill from partial
+ list
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ bpf@vger.kernel.org, kasan-dev@googlegroups.com
+References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
+ <20251023-sheaves-for-all-v1-9-6ffa2c9941c0@suse.cz>
+ <aP8dWDNiHVpAe7ak@hyeyoo> <113a75f7-6846-48e4-9709-880602d44229@suse.cz>
+ <aQKsNPQe--6QMOg0@hyeyoo>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aQKsNPQe--6QMOg0@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-mfg-mailbox-dep-v1-1-8a8c591aff27@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAFVlA2kC/zWMQQrDIBRErxL+uh+MoV3kKiULY8b0Q9VUbRFC7
- l5p6PLN8N5OGUmQaex2SvhIlhga9JeO7MOEFSxLY9JKX3s1KPZuZW/kOcfKCzaGHTRc+3Az1Kw
- twUn9Fe/TyQmvdwuXc6TZZLCN3ksZu4Ba+B+n6Ti+3kVVl5IAAAA=
-X-Change-ID: 20251030-mfg-mailbox-dep-ec32ef510e6a
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- kernel@collabora.com, kernel test robot <lkp@intel.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.3
+X-Rspamd-Queue-Id: 06C7A1F6E6
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,gmail.com,oracle.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-The mtk-mfg pmdomain driver calls common mailbox framework functions. If
-the common mailbox framework is not selected in the kernel's
-configuration, the build runs into a linker error, as the symbols are
-absent.
+On 10/30/25 01:07, Harry Yoo wrote:
+> On Wed, Oct 29, 2025 at 09:48:27PM +0100, Vlastimil Babka wrote:
+>> (side note: gfpflags_allow_blocking() might be too conservative now that
+>> sheafs will be the only caching layer, that condition could be perhaps
+>> changed to gfpflags_allow_spinning() to allow some cheap refill).
+> 
+> Sounds good to me.
 
-The hardware mailbox Kconfig system, MAILBOX, has no dependencies of its
-own. It's therefore safe to "select" it rather than use "depend on".
+Hm now I realized the gfpflags_allow_blocking() check is there to make sure
+we can take the local lock without trylock after obtaining a full sheaf, so
+we can install it - because it should mean we're not in an interrupt
+context. The fact we already succeeded trylock earlier should be enough, but
+we'd run again into inventing ugly tricks to make lockdep happy.
 
-Declare this "select" dependency in the Kconfig for the driver.
-
-Fixes: 1ff1f0db6aec ("pmdomain: mediatek: Add support for MFlexGraphics")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510301311.TcOCnZ1s-lkp@intel.com/
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
-I assume this can be squashed into the mtk-mfg driver addition commit of
-the maintainer that merged it.
----
- drivers/pmdomain/mediatek/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pmdomain/mediatek/Kconfig b/drivers/pmdomain/mediatek/Kconfig
-index b06aaa9690f0..8923e6516441 100644
---- a/drivers/pmdomain/mediatek/Kconfig
-+++ b/drivers/pmdomain/mediatek/Kconfig
-@@ -32,6 +32,7 @@ config MTK_MFG_PM_DOMAIN
- 	depends on PM
- 	depends on OF
- 	depends on COMMON_CLK
-+	select MAILBOX
- 	select PM_GENERIC_DOMAINS
- 	imply MTK_GPUEB_MBOX
- 	help
-
----
-base-commit: d78b0fee454c25d292fb6343253eca06d7634fd9
-change-id: 20251030-mfg-mailbox-dep-ec32ef510e6a
-
-Best regards,
--- 
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-
+Or we use trylock and have failure paths that are only possible to hit on RT
+in practice...
 
