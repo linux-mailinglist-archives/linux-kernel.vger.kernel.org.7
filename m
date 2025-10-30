@@ -1,139 +1,183 @@
-Return-Path: <linux-kernel+bounces-878396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC820C2086E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:15:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DD5C2083E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E01D14EC465
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F75F189D52F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EC31FDE39;
-	Thu, 30 Oct 2025 14:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B945024BD0C;
+	Thu, 30 Oct 2025 14:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A89erkzp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChvhmA3H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3CC126BF1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203323EA8A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833181; cv=none; b=rvW6ePZLFEhjQo6LvxwNNcwaUe09c3G+oHDrKw52Rl68X24ulufV4t4x+OuA+VttK1rxV45ezOCnmo2DAt65FHRrrDo+84Pm/qfnGty0S8sYPRfYvdvnvSdSlW1sGPNYGtSSuyZ4FHn/ioxxadO2drB/F1SKrmY1JyNGShl7fNA=
+	t=1761833211; cv=none; b=a92D1zHVUFcAqqtVZsJTbVfHxO40MT7tt1gG9umDiGwlT62agYK811+YmwtwXSnorY7MJtMibZvpXYuEoiBpgO91u6EOLv0acdBY0JHqJAorJ34JjSUxy4/fQH2N2TiXMD78IpZkbTDWJ4z8Rlk8dioxTQF7hQ4MlcnARTfbBzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833181; c=relaxed/simple;
-	bh=4fpQvQLAvy45wN1LShQwKGzOvmvppBJjTWW+1FEd13Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwJBDSAPrQR4al8SBU/VwGEwox3Z2KmeAmMNKNvBmq4kiNZzNsDzZ1h74n2WXU8M3s144yHa9Aw/pJrDU45i2HhwSp7VVWXGVeCeoZBLPsYaucvPLRhNi5NH3RpRxhWzz/aamX66j5tKppmiLLeKga9tWUuvjr3eJqdEhitC5VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A89erkzp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6828C4CEF1;
-	Thu, 30 Oct 2025 14:06:20 +0000 (UTC)
+	s=arc-20240116; t=1761833211; c=relaxed/simple;
+	bh=Dz4xOhrMTNX+wcfa5hYkqJx2E8dqowAvq+/zwJDFp1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jgo8wYdtvj+Y+UBZbUawaas/33vd54yYaAbrSlUoWOV15oYMXJSY//B47hueeAmlJFIWbeS7Ad3HPboODc/7hkf0ANNcUifw4zXrJt+vrtQR8gjACQczfpjg+O10SOZIu20udnybrywbk+Tnmu4VQLrhZC5n75zIC5cuhQlkm6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChvhmA3H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D28C4CEF8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761833180;
-	bh=4fpQvQLAvy45wN1LShQwKGzOvmvppBJjTWW+1FEd13Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A89erkzpjSlD09K1Omuwu52VNRfQi6xWM6FpgpQhiDUR3zB6JUEhGkyCezse7E2tN
-	 caoJk1xo4NZ8QXZEzCUsmFyrlSPQvCNL5yxhSwbmAvYK85fVWa6W2UQbJgPa4DmFF+
-	 imR43jde2A4BWIlzsUnH0xqi9DeSVKrwx63s7KawdUikTs/e/0ltRPIoyASAzCKoiX
-	 drajFvvVTwfmLiub+J8xTEl48Ef8NwvQUgv2uaNXUTpUf2cAsp3ikpKAGHWOT+K182
-	 V7tT9peJNODmGRj7ZZCo0dqYNZdYEjBjvJ1eXF1s5PU3IIqJAKcd3n1QSCwGc5EtpQ
-	 tbCu3XZvZkXJw==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vETIK-000000002uX-2T5Z;
-	Thu, 30 Oct 2025 15:06:28 +0100
-Date: Thu, 30 Oct 2025 15:06:28 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Gal Pressman <gal@nvidia.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Jakub Kicinski <kuba@kernel.org>, Alexei Lazar <alazar@nvidia.com>,
-	Simon Horman <horms@kernel.org>, cocci@inria.fr,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "scripts/coccinelle: Find PTR_ERR() to %pe
- candidates"
-Message-ID: <aQNw5NqZSZk5JNxn@hovoldconsulting.com>
-References: <20251029132922.17329-1-johan@kernel.org>
- <826f2fdb-bad8-44f4-8c8e-9353c3de73cd@nvidia.com>
- <aQJDIz-8Ow0OmczH@hovoldconsulting.com>
- <3b04f763-aaba-41ee-a81f-94195043fd4b@nvidia.com>
+	s=k20201202; t=1761833210;
+	bh=Dz4xOhrMTNX+wcfa5hYkqJx2E8dqowAvq+/zwJDFp1s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ChvhmA3HVwxXvtRjAM89eYP3Yb3LXnrhCtNPgMzFWCS0962UBDr+Qil1L+St/GaBj
+	 Qmh13HJZ3CZi4JpNgTqGEb3s+3WMAPB02suprra1bT6sZn4r9PZRymzyQmpX5Tnpww
+	 JWgysqNdddIUzxgj4G6ngzHKxy1aGh6svtB6MNMCnVzEmg9cJwfJzQYTMIIEBdWEI2
+	 MonZ8KFWfhPiKdF3nMoe4UrWzkLM/KmxA8J8qQZpxboSQQ5zyscIX8k7lmeKpmRRQB
+	 niTYoeLRgnAGFJjhylXNt/wqo/7DIy2ihYQ9nuW+uOlRRL7q/QlQAKX1Lv2c8SwRmX
+	 Kf3SexViRV7iQ==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-44f783add60so661043b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:06:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVyo+5gzYEYr2kzRnfj6ogun6/El7Kx8dqYb+NIy1bCZ2UY4RDOIodU/+72DBsXG+Wi/VE9n28GCiXjZmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymZFr+SiWAbkO/0NrtOMVNM4m4fglSiEIuCBjGMXaTP4YwZwfw
+	v8HekuJTt+GiAeOgBClflkKeCi97p38TVJtUiO/fVQymau55qpQAA1enmBaoqoKPQeLolBP6GTB
+	97vGiAaOB8CtfCY5nbV/dnnoG586bhZc=
+X-Google-Smtp-Source: AGHT+IEMTQb+aUa2x3zxR9LsPUgyIaqCB158ba+He4+AFp1L349tjtBQ6XJuvZoqEQzHR4+LGS6E4/e9RiKA/m5Mx9k=
+X-Received: by 2002:a05:6808:4443:b0:443:9ee4:3656 with SMTP id
+ 5614622812f47-44f7a4daf3cmr3088791b6e.38.1761833209875; Thu, 30 Oct 2025
+ 07:06:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b04f763-aaba-41ee-a81f-94195043fd4b@nvidia.com>
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
+ <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
+ <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com>
+ <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com> <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
+In-Reply-To: <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 30 Oct 2025 15:06:38 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bk8CDtp7hapBF11SwzM_-NwA6URJrRlEKbJpTpP-57E_VrWkAAgZGTqVgk
+Message-ID: <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
+ for s2idle
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 07:35:25PM +0200, Gal Pressman wrote:
-> On 29/10/2025 18:38, Johan Hovold wrote:
-> > On Wed, Oct 29, 2025 at 03:59:50PM +0200, Gal Pressman wrote:
+On Thu, Oct 30, 2025 at 1:44=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> On Thu, 30 Oct 2025 at 13:29, Rafael J. Wysocki <rafael@kernel.org> wrote=
+:
+> >
+> > On Thu, Oct 30, 2025 at 1:26=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> > >
+> > > On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
+ro.org> wrote:
+> > > >
+> > > > On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.org>=
+ wrote:
+> > > > >
+> > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansson@=
+linaro.org> wrote:
+> > > > > >
+> > > > > > Changes in v2:
+> > > > > >         - Limit the new QoS to CPUs  and make some correspondin=
+g renaming of the
+> > > > > >         functions along with name of the device node for user s=
+pace.
+> > > > > >         - Make sure we deal with the failure/error path correct=
+ly when there are
+> > > > > >         no state available for s2idle.
+> > > > > >         - Add documentation.
+> > > > > >
+> > > > > > Some platforms supports multiple low-power states for CPUs that=
+ can be used
+> > > > > > when entering system-wide suspend and s2idle in particular. Cur=
+rently we are
+> > > > > > always selecting the deepest possible state for the CPUs, which=
+ can break the
+> > > > > > system-wakeup latency constraint that may be required for some =
+use-cases.
+> > > > > >
+> > > > > > Therefore, this series suggests to introduce a new interface fo=
+r user-space,
+> > > > > > allowing us to specify the CPU system-wakeup QoS limit. The QoS=
+ limit is then
+> > > > > > taken into account when selecting a suitable low-power state fo=
+r s2idle.
+> > > > >
+> > > > > Last time we discussed this I said I would like the new limit to =
+be
+> > > > > taken into account by regular "runtime" cpuidle because the "s2id=
+le"
+> > > > > limit should not be less that the "runtime" limit (or at least it
+> > > > > would be illogical if that happened).
+> > > >
+> > > > Yes, we discussed this, but that was also before we concluded to ad=
+d a
+> > > > new file for user-space to operate on after all.
+> > > >
+> > > > To me, it looks unnecessarily limiting to not allow them to be
+> > > > orthogonal,
+> > >
+> > > So what's the use case in which it makes sense to have a lower latenc=
+y
+> > > limit for s2idle than for runtime?
+>
+> Honestly, I don't know, but I just wanted to keep things more flexible.
+>
+> > >
+> > > > but I am not insisting that it needs to be like this. I
+> > > > was just thinking that we do not necessarily have to care about the
+> > > > same use-case in runtime as in the system-suspend state. Moreover,
+> > > > nothing would prevent user-space from applying the same constraint =
+to
+> > > > both of them, if that is needed.
+> > > >
+> > > > >
+> > > > > It looks like that could be implemented by making
+> > > > > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limit(=
+)
+> > > > > into account, couldn't it?
+> > > >
+> > > > Right, but I am not sure we want that. See above.
+> > >
+> > > I do or I need to be convinced that this is a bad idea.
+> >
+> > And there is a specific reason why I want that.
+> >
+> > Namely, say somebody wants to set the same limit for both s2idle and
+> > "runtime" cpuidle.  If the s2idle limit did not affect "runtime", they
+> > would need to open two device special files and write the same value
+> > to both of them.  Otherwise, they just need to use the s2idle limit
+> > and it will work for "runtime" automatically.
+>
+> Right. User-space would need to open two files instead of one, but is
+> that really a problem?
 
-> > Unlike the rest of the misc cocci scripts I skimmed, this one does not
-> > guard against any bugs. Instead it's pushing for a subjective style
-> > preference, which is just going to result in churn when the clean up
-> > crew starts sending mindless conversions of individual printks.
-> 
-> Not all cocci scripts are used for fixing bugs:
-> err_cast.cocci
-> memdup.cocci
-> minmax.cocci
-> string_choices.cocci
-> 
-> They are used to improve the code.
+It is potentially confusing and error-prone.
 
-I only skimmed the misc ones, but I still things there's a difference
-here since "%pe" is changing the output (e.g. unlike err_cast.cocci) and
-is essentially a subjective preference.
+> What if user-space doesn't want to affect the runtime state-selection,
+> but cares only about a use-case that requires a cpu-wakeup constraint
+> when resuming from s2idle.
 
-> We can probably agree that for new code %pe is preferable, but I
-> understand your concerns about the churn of conversions.
-
-I'm not even convinced about new drivers. For consistency you'd need to
-add *ERR_PTR()* to more or less every dev_err() in the driver (which
-becomes ugly):
-
-	if (ret)
-		dev_err(dev, "failed to ...: %pe\n", ERR_PTR(ret));
-
-And by now many of us recognise (or can easily lookup) the errnos used
-in the occasional error message if at all needed.
-
-Note that in most cases you have ret variable that holds the errno,
-which would not be caught by this cocci script either:
-
-	ret = PTR_ERR(p);
-	dev_err(dev, "failed to ...: %d\n", ret);
-	return ret; // or goto out;
-
-> >> If the issue is with automatic build bots, then maybe this test should
-> >> be excluded from them, rather than deleted?
-> > 
-> > It's both; it's the noise the new warnings generate but also the coming
-> > flood up patches to "fix" them. There are already some 40 commits or so
-> > in linux-next referencing this script.
-> 
-> It's OK to not like these conversion patches, it's up to the maintainer
-> to accept/reject them.
-> 
-> For example, I know Jakub dislikes the string_choices.cocci script and
-> rejects conversion patches. But the script still exists and can be used
-> in other places in the kernel who might have a different opinion.
-
-It still generates noise and extra work for already overworked
-maintainers that would need to explain over and over again why they are
-rejecting patches that appears to fix "warnings". Some will just take
-the patches, which leads to inconsistencies (as only a handful of
-printks will be converted) and a push for a style which again only some
-people prefer.
-
-So I still think this script should be dropped. And you still need to
-review drivers manually if you really want to use %pe consistently (e.g.
-for all the cases where there is no error pointer to begin with).
-
-Johan
+Well, I'm not sure if this use case exists at all, which is key here.
+If it doesn't exist, why make provisions for it?
 
