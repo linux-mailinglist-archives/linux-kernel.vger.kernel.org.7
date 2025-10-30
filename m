@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-878725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA41BC21568
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:59:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3582C2156F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4A404EE0E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:56:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 381344F0A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185032FA0F2;
-	Thu, 30 Oct 2025 16:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBAE30FC01;
+	Thu, 30 Oct 2025 16:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLZNmM5s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BjBfTlHI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8F22EBB81;
-	Thu, 30 Oct 2025 16:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687A61D618C;
+	Thu, 30 Oct 2025 16:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843362; cv=none; b=IV9tJqofVzz4RudvRhba/Ev4yqHy3+GkI4TswXCECGA+kb5IdaYqEKJSghjQf+IxbTFQEJqRcmR+sFsQuHEi/sOir3z4nrESwwkylZhhmrT+m/yn21N/8KPZJwrX/+JeO9UB8NZfn0xg7VtnSqJHQEJKtGZ4xc46hhhspL+GOtI=
+	t=1761843383; cv=none; b=o8tv4F/3gus9fwCVoRD3vtRUAFTPk5hqrBuUmkU7wcybNdFFVQlsLFSauBhqILiEMmukA6Petxy6GcRqL3l2A/GE0MiaV4BSAEQLGB0JV/l6zX9loCjKH02UtV2w7luaaiTIGiWu/0dN3OzVqx9UB/IYmzRAfEYeyoplHc3Vqic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843362; c=relaxed/simple;
-	bh=TSkKPAea4VwmtNaIMxByl43L8U9cQGcR3r6GSkUPrnE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c9SKDhjDJol3eZsas/EvM+oYInPYpFL/3h+YDl8etagL4GjUsEEqQ228XuTe/D8rsC1gR7qjrCP2C7FXHiK09z7KrjFTeLnn/YrswLhf3XCyf8lWDk7oQL3Gj7w/PpeZHYhBWf6fxnFk6HBe+77gJ3GTHbpGVdktZFI1n2jlicU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLZNmM5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF046C4CEF1;
-	Thu, 30 Oct 2025 16:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761843362;
-	bh=TSkKPAea4VwmtNaIMxByl43L8U9cQGcR3r6GSkUPrnE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OLZNmM5so9aVLzC+KrJnz9ti13IloyA41Zyc1qR+ig2tvg5jr51nm2rZAWAeYVr7l
-	 2VPUuL3Q1TlIpfskHooe3MfuICA6hdqnd58416e3/wpTLIXHi954/bnh8cUO/w1HgL
-	 V0U3hcRsWd6W5v1JGvtIEHZVK9AeY8i/l5vSfLIOOOksWPuz8wLDWVOVYAQ5XWSCtJ
-	 ZNG+vcB3kbYkNo1BM/vLF41dmQg0nB6kHsJak4UA+nQ82bTRqT+dR1a5wTEFkrPDsH
-	 6fqQjIdEhwVAe4qEt9RwpPT4nudhZox+LMC+vAlOVmVsvt2jeAytkikFJuEH48WZhM
-	 7oC/es6HGM86A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vEVwN-000000013xM-3dZz;
-	Thu, 30 Oct 2025 16:55:59 +0000
-Date: Thu, 30 Oct 2025 16:55:59 +0000
-Message-ID: <86pla4uy5c.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH v2 3/4] clocksource/drivers/arm_arch_timer_mmio: Switch over to standalone driver
-In-Reply-To: <aQOTv3VnOCTjSj46@lpieralisi>
-References: <20250814154622.10193-1-maz@kernel.org>
-	<20250814154622.10193-4-maz@kernel.org>
-	<aQOTv3VnOCTjSj46@lpieralisi>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1761843383; c=relaxed/simple;
+	bh=Z7sOU0bbDMmS+MjdgUDB2NUz/zjHubwdouBstkH1zHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMKMYjdupZLgVHZW+K5wyWhZBXekclD1NK7bKWK5VgKu1+wP3FhjCwKsbgJYD6kLx8d+TgswK+AUr4LlwkrjrI/rU/F5mWaroEB25viaTJXV4rUMlHCCoML7MDJKfePIulehGRFxF5nN811BzJ6LYJqtz8nqlhAG9eWy0VhuCDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BjBfTlHI; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761843381; x=1793379381;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Z7sOU0bbDMmS+MjdgUDB2NUz/zjHubwdouBstkH1zHI=;
+  b=BjBfTlHIFo81kZI07ZNUQJZlO+Xv1wCpF0v4fx6ZYB1h017ja3CwhA60
+   cwd53q38l35MQPbU8I5aKuRVd/uGD1mjOZ1aT35kZ7JYoun3cJlVui3Ri
+   Ykox43B2Wn2fMo9Y9x/EH8UvGxKVfKP7o/d6TvOQSeKvWwkngNJjcE0js
+   z82o3QKtaCXSebflD6fKldMGJXfVanYHSuq3zms6gmCcyI5NZyoVEtXCb
+   YDzlKE9QOPK/JXj4f4Y6hG4mHbtS2k+y1g34MepZNfGm0VZOmkVenIHBb
+   wfF3Wg58HM4F51HtxchpZWZZIw0FaXMSX8pLMlSnExoObqDuWO1O7i1Hq
+   w==;
+X-CSE-ConnectionGUID: gJXKP5+QRaCiH9iZhfvbrA==
+X-CSE-MsgGUID: eWPqo+5fS2+e6ZQ1bRZ1IA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64142949"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="64142949"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 09:56:21 -0700
+X-CSE-ConnectionGUID: THjspqanTAqkPD84sDVyug==
+X-CSE-MsgGUID: I0pdvgYXSCuF8LZtURSo9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="186448828"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.125.110.3]) ([10.125.110.3])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 09:56:19 -0700
+Message-ID: <8d7e51d5-ab51-442a-a015-77653d0fb684@intel.com>
+Date: Thu, 30 Oct 2025 09:56:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, guohanjun@huawei.com, sudeep.holla@arm.com, rafael@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com, alexandru.elisei@arm.com, steven.price@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl/pci: replace use of system_wq with system_percpu_wq
+To: Marco Crivellari <marco.crivellari@suse.com>,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Michal Hocko <mhocko@suse.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>
+References: <20251030163839.307752-1-marco.crivellari@suse.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251030163839.307752-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 30 Oct 2025 16:35:11 +0000,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> 
-> On Thu, Aug 14, 2025 at 04:46:21PM +0100, Marc Zyngier wrote:
-> 
-> [...]
-> 
-> > diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> 
-> [...]
-> 
-> >  #ifdef CONFIG_ACPI_GTDT
-> > -static int __init
-> > -arch_timer_mem_verify_cntfrq(struct arch_timer_mem *timer_mem)
-> > -{
-> > -	struct arch_timer_mem_frame *frame;
-> > -	u32 rate;
-> > -	int i;
-> > -
-> > -	for (i = 0; i < ARCH_TIMER_MEM_MAX_FRAMES; i++) {
-> > -		frame = &timer_mem->frame[i];
-> > -
-> > -		if (!frame->valid)
-> > -			continue;
-> > -
-> > -		rate = arch_timer_mem_frame_get_cntfrq(frame);
-> > -		if (rate == arch_timer_rate)
-> > -			continue;
-> > -
-> > -		pr_err(FW_BUG "CNTFRQ mismatch: frame @ %pa: (0x%08lx), CPU: (0x%08lx)\n",
-> > -			&frame->cntbase,
-> > -			(unsigned long)rate, (unsigned long)arch_timer_rate);
-> > -
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	return 0;
-> > -}
-> > -
-> > -static int __init arch_timer_mem_acpi_init(int platform_timer_count)
-> > -{
-> > -	struct arch_timer_mem *timers, *timer;
-> > -	struct arch_timer_mem_frame *frame, *best_frame = NULL;
-> > -	int timer_count, i, ret = 0;
-> > -
-> > -	timers = kcalloc(platform_timer_count, sizeof(*timers),
-> > -			    GFP_KERNEL);
-> > -	if (!timers)
-> > -		return -ENOMEM;
-> > -
-> > -	ret = acpi_arch_timer_mem_init(timers, &timer_count);
-> 
-> You probably already noticed (I was checking the initcall level in
-> drivers/acpi/arm64/gtdt.c to start sorting out GICv5 IWB dependencies),
-> AFAICS acpi_arch_timer_mem_init() is now unused so it can be removed.
 
-See https://lore.kernel.org/r/20251030110137.1843007-1-maz@kernel.org
 
-Thanks,
+On 10/30/25 9:38 AM, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> 
+> This lack of consistency cannot be addressed without refactoring the API.
+> 
+> system_wq should be the per-cpu workqueue, yet in this name nothing makes
+> that clear, so replace system_wq with system_percpu_wq.
+> 
+> The old wq (system_wq) will be kept for a few release cycles.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-	M.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
+>  drivers/cxl/pci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index bd100ac31672..0be4e508affe 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -136,7 +136,7 @@ static irqreturn_t cxl_pci_mbox_irq(int irq, void *id)
+>  	if (opcode == CXL_MBOX_OP_SANITIZE) {
+>  		mutex_lock(&cxl_mbox->mbox_mutex);
+>  		if (mds->security.sanitize_node)
+> -			mod_delayed_work(system_wq, &mds->security.poll_dwork, 0);
+> +			mod_delayed_work(system_percpu_wq, &mds->security.poll_dwork, 0);
+>  		mutex_unlock(&cxl_mbox->mbox_mutex);
+>  	} else {
+>  		/* short-circuit the wait in __cxl_pci_mbox_send_cmd() */
 
--- 
-Without deviation from the norm, progress is not possible.
 
