@@ -1,121 +1,420 @@
-Return-Path: <linux-kernel+bounces-879235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC574C2299B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:49:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544B8C229A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38E504ED174
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EBD1A604C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFDD33B969;
-	Thu, 30 Oct 2025 22:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B392F7457;
+	Thu, 30 Oct 2025 22:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nn3zP5yO"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oOWKS09S"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6768F34D395;
-	Thu, 30 Oct 2025 22:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D1D34D395;
+	Thu, 30 Oct 2025 22:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761864570; cv=none; b=Ff8PigWkYlU2dYp4cI6R27gi2rv1SXXRh64HA3Hv+BfbxxpV5iN4MkBojXN76FTlyWT7nYq+HwaXWKRcWVFePbrw/a4I5aM0Onuhpio/29ElAC4QR4xJ0yoiKpzGDxMM0zl0LFXI1SXt62TQpzDkY6DgUelX7jDME7y187RYH90=
+	t=1761864606; cv=none; b=TLPXFKKdA+zGK+Y8sxnrJALOC+ItZYPmBM+PuG5CEODy4nPZxdxuHnRh+a+B1vexIIu+TFNmcimg0bMOVz2lWWjRZYKcxguGZu42Y0DVg/K4EvUmbs1KwOAHDnBXUXnUg4KuEzgwtldSIDubEJkaIJiDVugUfVpw0718rezbvIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761864570; c=relaxed/simple;
-	bh=UgGB97gFfkBMFKeQUH3mcQQ+pc+E2qEDyTSQDbCoFik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qNVB0OA660f+yRnM+2/7J8BItAuknrcfvRnV8OKv/fayPauGqFtwmCJC+hwVOi0nSzvBDQB9GcoLlvGjR0AV2G+u8C+yReWJBQdHokonkkM95tr6bsY4jKcrQmrWLrESr57CseafZEV9lKSH3FCaycPjSD8LXQuqAQUyDVXxHAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nn3zP5yO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=W39D1CHVnz5ftoUtLOXhSfT0d9vFvzHtYZUvOQ5CQgk=; b=nn3zP5yOZotkrkB2k4BgnxAfmk
-	UlFWyoo4RmBgRnjD5M62q2lTBaT5DK0CwAbfVauIadDlI/jg/HV2vOCQoqTFnWoc82uzLJ/AjuK6/
-	2E6ZbTDnC9/LFOkmo8JDQ1nI5HLB5PQROT66Z+x3se5Ui/n/mCJ0w8Rvc0tnpRllW/QVi3++gqBm3
-	gyhgh3zE+HjqFiXrnQGuxSW7r50+2FibVfnAXDNnbi5i9tQ+vkq2KaFGVXZouvxkVRb4iX7+9aDpn
-	C2qcj6QzMoNl9OsTovabmdxa/SzOx/sGuWCM1FJ+P0EqsfGU1YRHXEGjWromyJ2OlNM8jHCy6Ecre
-	telx9loQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEbSQ-000000055Ov-28yJ;
-	Thu, 30 Oct 2025 22:49:26 +0000
-Message-ID: <574473a2-e86a-4a4c-875a-cb3013acf4d0@infradead.org>
-Date: Thu, 30 Oct 2025 15:49:25 -0700
+	s=arc-20240116; t=1761864606; c=relaxed/simple;
+	bh=j5wPZ8+ERBdNdG9CMOExProJbgaIIm5eD8iSlmP6vzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CtMCVXsU30RRe0kAvf3vQnY0Rg/o1sQQE10UfmnZ2pY/yYrDq/Mv3/IYobgPjlx+KVeG/ujDMkJMEFdahCMzk16LYAI3U/6D+xgMLNFVsl9AS+qAKPMdTgNk1RWA26mUdaM+ZaaghVmcPySOgDb4RMwisF6r/+aFCsHRVnQWVWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oOWKS09S; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761864599;
+	bh=CX/oS2j3KSk8Re/z+JeKLdaK/THAT2mTCSIYzdysAqw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oOWKS09S0JED3jOLXKlXLQTlyFXpjprGLPOktMbOZOjpN4zTGnUF9+o8aXUiyZkoJ
+	 cLXnY7bbHlWsCVdOGjcaqYCiYO1D4/I6tWeWmzlqrQDUwjEgeOMZI30ggGOGj7GdB4
+	 iI2mEr19Qc0WbZm/PwRiuNHfZF3YW/xhDNO1FP/qiaRWMMh5mowl2ErOGmDGATbRP3
+	 sej/HYa28/rjs3ZS7OffP0CPWlHuDvAx6d+ZqvTnt9L7CSAeesgKdTGdjrDysv7I1J
+	 ktTYFzappvnOtpi37CVaIwdpm99+jJ1pDKI75j4Ij1cbBLn/0IcDa6WVl2fVdEOta1
+	 F97V8ZshunCFA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyK7W2BKFz4xGn;
+	Fri, 31 Oct 2025 09:49:59 +1100 (AEDT)
+Date: Fri, 31 Oct 2025 09:49:58 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
+ Granados <joel.granados@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the sysctl tree
+Message-ID: <20251031094958.432f4e44@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: kdoc: fix duplicate section warning message
-To: Jonathan Corbet <corbet@lwn.net>, Jacob Keller
- <jacob.e.keller@intel.com>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251030-jk-fix-kernel-doc-duplicate-return-warning-v2-1-ec4b5c662881@intel.com>
- <873470m5wd.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <873470m5wd.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/ugcez0LDOfR71uKEWMnofAu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/ugcez0LDOfR71uKEWMnofAu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 10/30/25 2:33 PM, Jonathan Corbet wrote:
-> Jacob Keller <jacob.e.keller@intel.com> writes:
-> 
->> The python version of the kernel-doc parser emits some strange warnings
->> with just a line number in certain cases:
->>
->> $ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
->> Warning: 174
->> Warning: 184
->> Warning: 190
->> Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
->> Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
->> Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
->> Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
->>
->> I eventually tracked this down to the lone call of emit_msg() in the
->> KernelEntry class, which looks like:
->>
->>   self.emit_msg(self.new_start_line, f"duplicate section name '{name}'\n")
->>
->> This looks like all the other emit_msg calls. Unfortunately, the definition
->> within the KernelEntry class takes only a message parameter and not a line
->> number. The intended message is passed as the warning!
->>
->> Pass the filename to the KernelEntry class, and use this to build the log
->> message in the same way as the KernelDoc class does.
->>
->> To avoid future errors, mark the warning parameter for both emit_msg
->> definitions as a keyword-only argument. This will prevent accidentally
->> passing a string as the warning parameter in the future.
->>
->> Also fix the call in dump_section to avoid an unnecessary additional
->> newline.
->>
->> Fixes: e3b42e94cf10 ("scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class")
->> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+After merging the sysctl tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+In file included from drivers/tty/n_tty.c:38:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+In file included from arch/powerpc/kvm/emulate_loadstore.c:10:
+include/linux/jiffies.h:614:40: error: 'struct ctl_table' declared inside p=
+arameter list will not be visible outside of this definition or declaration=
+ [-Werror]
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: error: 'struct ctl_table' declared inside p=
+arameter list will not be visible outside of this definition or declaration=
+ [-Werror]
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: error: 'struct ctl_table' declared inside p=
+arameter list will not be visible outside of this definition or declaration=
+ [-Werror]
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: error: 'struct ctl_table' declared inside p=
+arameter list will not be visible outside of this definition or declaration=
+ [-Werror]
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: error: 'struct ctl_table' declared inside p=
+arameter list will not be visible outside of this definition or declaration=
+ [-Werror]
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+cc1: all warnings being treated as errors
+make[5]: *** [scripts/Makefile.build:287: arch/powerpc/kvm/emulate_loadstor=
+e.o] Error 1
+make[5]: *** Waiting for unfinished jobs....
+In file included from drivers/infiniband/hw/mthca/mthca_catas.c:33:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+make[4]: *** [scripts/Makefile.build:556: arch/powerpc/kvm] Error 2
+make[4]: *** Waiting for unfinished jobs....
+In file included from drivers/scsi/scsi_netlink.c:8:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+In file included from kernel/irq/spurious.c:8:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+In file included from net/sunrpc/auth_gss/gss_krb5_unseal.c:61:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+In file included from net/netfilter/nf_conntrack_proto_generic.c:7:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+In file included from net/sunrpc/auth_gss/gss_krb5_seal.c:62:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+In file included from net/core/hotdata.c:3:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
+make[3]: *** [scripts/Makefile.build:556: arch/powerpc] Error 2
+make[3]: *** Waiting for unfinished jobs....
+In file included from fs/btrfs/discard.c:3:
+include/linux/jiffies.h:614:40: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  614 | int proc_dointvec_jiffies(const struct ctl_table *table, int dir, v=
+oid *buffer,
+      |                                        ^~~~~~~~~
+include/linux/jiffies.h:616:50: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  616 | int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, =
+int dir,
+      |                                                  ^~~~~~~~~
+include/linux/jiffies.h:618:47: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  618 | int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int=
+ dir,
+      |                                               ^~~~~~~~~
+include/linux/jiffies.h:620:43: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  620 | int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir=
+, void *buffer,
+      |                                           ^~~~~~~~~
+include/linux/jiffies.h:622:52: warning: 'struct ctl_table' declared inside=
+ parameter list will not be visible outside of this definition or declarati=
+on
+  622 | int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table=
+, int dir,
+      |                                                    ^~~~~~~~~
 
-Thanks.
+Caused by commit
 
-> 
-> This one applies, thanks.
-> 
-> jon
-> 
+  44df6a7821ed ("sysctl: Move jiffies converters to kernel/time/jiffies.c")
 
--- 
-~Randy
+I have used the sysctl tree from next-20251030 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ugcez0LDOfR71uKEWMnofAu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkD65YACgkQAVBC80lX
+0Gwjnwf/bXoNKqEFAQ8ln9srrO5lYQ130F3KWGtLW8mbAlMbduscSfINCsOMCHSQ
+L8TGAURi0guRJToGMJ9Qylkf5/PEEQebwPIPrjJbkrdvkZMMvZC5gzlHytPplM7Q
+RkRe3QTLgl8rFgiriwN8sm5YVyVdnFECgYx6rp+mX7uFLcdw5ZrRxK+OvSgqhg3g
+Ny66phDzQg77hCg3tBVQOUN3OWRWeYZ1r5PasG6AfP3yYnQOnX5LMqRNEcU2sTXq
+MjCch9f3nO2Hfa5oicsTwb7AD1IJA5HTUpG5qP0aGGyBJFBtxxlM6l37pcUNiY8k
+flHV8pD++fG260/Mk/iVs4/hP9AT0g==
+=JZfa
+-----END PGP SIGNATURE-----
+
+--Sig_/ugcez0LDOfR71uKEWMnofAu--
 
