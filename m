@@ -1,64 +1,75 @@
-Return-Path: <linux-kernel+bounces-877857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393BFC1F35C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:13:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54948C1F347
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17ACC188B5A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:12:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 851574E249E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB71341AC7;
-	Thu, 30 Oct 2025 09:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D803F34027D;
+	Thu, 30 Oct 2025 09:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="isDN+2yc"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="lR5S88n4"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2711341AA0
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3B733FE27;
+	Thu, 30 Oct 2025 09:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815467; cv=none; b=epOLQn8wpr5b4O2jLK/xZQ6zcavhrFgCraA3d/hMS3ZSEMYhuLH+Hy2FilC99R7Nq+vO1QN9fS2FOg6cZRWrYKSk88QyEzt6qbpItcBFOT37E+cFXXytnjoUNAEvHqpJqs4bAQeAmmHE5YnE8aRSXjOwuh3KKOvUzutjZM7wLq4=
+	t=1761815494; cv=none; b=EBjKR9Fqm84RBp6vtRwOnwRdW4m1c40CkzHJIvf/FVfcrQkCsjz85f8vIMEYWlZX+CnaeJwGPEi70+LzGwNRyQy6YqEJuLYTDZ4gkFqMousCRpJ/ueIGVkIwS2XTmIVj0EYRHJnynTdbg8fC2ngiO5sckY6JgII/3qQ7Q3fSgHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815467; c=relaxed/simple;
-	bh=6/QX07MYzXkytcH97ORf+VAW2W3Hrv4Q9mInZ97sScg=;
+	s=arc-20240116; t=1761815494; c=relaxed/simple;
+	bh=+p7QX+1Fxivh+GGtkO/iA2WDLefIcx8OcOSH8umZaLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwdNUx04ZcZgHdb/vbMwBlsvc5PKyg4ZXueDGsrT2B7AHKQb2F5JZJdi/BLd0zcLjMhojowvUT+Vmmp761GO/6QUK8if5pX0ZJiy0IUMNzNcPpbdjt5XVp/4e6ib3DW0ifUJi+zyslCvrvdMdOeapJsxTvMr8uPtC8mYkyOOiRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=isDN+2yc; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tEDxOOjEBH1pDitKdsOoKQB+3NU54CLqTj+EUDuC0vU=; b=isDN+2ycvFWdXuWFiDv2icNpbq
-	6KMS6hH4cak9qZYTpLwyIeIyUyqs83ef5FrIu6rvqBFskf4Jr/fE9pNJJ3OWI/huDkKwLU6iRTeUO
-	5kVJiaJggMty+Pv4GCZSApy7Y1KuJP8a9j1jd078v9KUY4aGJwK54DVVV+6KS1hIjI1oZPLRdHvek
-	nyKSXkOoOWSgOak83hqZOH6pLbOo53CwoQVypnfW1rDeRD8tQHwZZj0xuP7+Dpg5WFKjvpf8thuMY
-	b9Q1HkDpfaQ69A7bJbURiUXyGwnLwS+Um6WbcddF2d5zs25wP6m1uyUPii5uhZhdyIFGMmwpNbwVK
-	hiK8NRow==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vENoe-00000008k2q-1RHl;
-	Thu, 30 Oct 2025 08:15:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E8C3B3001D4; Thu, 30 Oct 2025 10:10:58 +0100 (CET)
-Date: Thu, 30 Oct 2025 10:10:58 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Chris Mason <clm@meta.com>
-Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
- EEVDF goals
-Message-ID: <20251030091058.GG4067720@noisy.programming.kicks-ass.net>
-References: <20251027133915.4103633-1-mgorman@techsingularity.net>
- <20251027133915.4103633-3-mgorman@techsingularity.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WsRKTppqiUH93NK52NCOdOCGTp23lU0y5sCWij4hrWxriCMD+sPremyILpBX1pnvgAwsIg2ZU3UErf3bdXH/HtG4TNZRwZc2r82Mrvcfdxte4VhhMEPaEfcjbkqUBq0+/QMCY2U3T6Gfn6GZiWkg7DVOMOQqsA7p/F6wLETZ4L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=lR5S88n4; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id E8800207A3;
+	Thu, 30 Oct 2025 10:11:28 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id WTUjHjMOi7IM; Thu, 30 Oct 2025 10:11:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1761815488; bh=+p7QX+1Fxivh+GGtkO/iA2WDLefIcx8OcOSH8umZaLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lR5S88n4SVMn9pwP5OJfglP4e35ow5RXutjJtiuhzGELA+x1mzsJch7qCdLr4jMzF
+	 DCLiWekb3DnTiv6C51Z4rItjfTXVcgTkpm/wbj7qNzdqF6vi68tY5F+lAARe+o6VGp
+	 gasGiUlNG2IHp4LiEvCBkLDYRkXaU2Xz1Xaut4Kq2R3OKVnlOA6DzNj0SG+WX1MiGv
+	 d4H8TD2ZeAqLukNERlTzbuwY/vtr2LjRedShHMqE7DjXRQ9mtuZa73JxxwyndnU8iY
+	 8j7ayGLbXpeSIy6by4RiDKaERkyBBBkQ9KGQPhF2USFR845Ij8w0oA5zKDdjmDABcY
+	 TnBGD4lHNgkVA==
+Date: Thu, 30 Oct 2025 09:11:00 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Philipp Stanner <phasta@kernel.org>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Jacob Keller <jacob.e.keller@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] net: stmmac: loongson: Use generic PCI
+ suspend/resume routines
+Message-ID: <aQMrpB2jJhh3iDo3@pie>
+References: <20251030041916.19905-1-ziyao@disroot.org>
+ <20251030041916.19905-3-ziyao@disroot.org>
+ <da8d9585-d464-4611-98c0-a10d84874297@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,103 +78,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027133915.4103633-3-mgorman@techsingularity.net>
+In-Reply-To: <da8d9585-d464-4611-98c0-a10d84874297@bootlin.com>
 
-On Mon, Oct 27, 2025 at 01:39:15PM +0000, Mel Gorman wrote:
-> +static inline enum preempt_wakeup_action
-> +__do_preempt_buddy(struct rq *rq, struct cfs_rq *cfs_rq, int wake_flags,
-> +		 struct sched_entity *pse, struct sched_entity *se)
-> +{
-> +	bool pse_before;
-> +
-> +	/*
-> +	 * Ignore wakee preemption on WF_WORK as it is less likely that
-> +	 * there is shared data as exec often follow fork. Do not
-> +	 * preempt for tasks that are sched_delayed as it would violate
-> +	 * EEVDF to forcibly queue an ineligible task.
-> +	 */
-> +	if (!sched_feat(NEXT_BUDDY) ||
+On Thu, Oct 30, 2025 at 08:38:12AM +0100, Maxime Chevallier wrote:
+> Hi,
+> 
+> On 30/10/2025 05:19, Yao Zi wrote:
+> > Convert glue driver for Loongson DWMAC controller to use the generic
+> > platform suspend/resume routines for PCI controllers, instead of
+> > implementing its own one.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  1 +
+> >  .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 36 ++-----------------
+> >  2 files changed, 4 insertions(+), 33 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > index 598bc56edd8d..4b6911c62e6f 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > @@ -373,6 +373,7 @@ config DWMAC_LOONGSON
+> >  	default MACH_LOONGSON64
+> >  	depends on (MACH_LOONGSON64 || COMPILE_TEST) && STMMAC_ETH && PCI
+> >  	depends on COMMON_CLK
+> > +	depends on STMMAC_LIBPCI
+> 
+> If we go with a dedicated module for this, "select STMMAC_LIBPCI" would
+> make more sense here I think. The same applies for the next patch.
 
-This seems wrong, that would mean wakeup preemption gets killed the
-moment you disable NEXT_BUDDY, that can't be right.
+Thanks, it's a reasonable point. I worried about possible unmet
+dependencies caused by a select, but STMMAC_LIBPCI only depends on PCI
+and STMMAC_ETH, which are necessary for DWMAC_LOONGSON and STMMAC_PCI
+to show up.
 
-> +	    (wake_flags & WF_FORK) ||
-> +	    (pse->sched_delayed)) {
-> +		return PREEMPT_WAKEUP_NONE;
-> +	}
-> +
-> +	/* Reschedule if waker is no longer eligible. */
-> +	if (!entity_eligible(cfs_rq, se))
-> +		return PREEMPT_WAKEUP_RESCHED;
+I will change it to "select STMMAC_LIBPCI" in v3.
 
-That comment isn't accurate, unless you add: && in_task(). That is, if
-this is an interrupt doing the wakeup, it has nothing to do with
-current.
+> Maxime
+> 
 
-> +	/*
-> +	 * Keep existing buddy if the deadline is sooner than pse.
-> +	 * The downside is that the older buddy may be cache cold
-> +	 * but that is unpredictable where as an earlier deadline
-> +	 * is absolute.
-> +	 */
-> +	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
-> +		return PREEMPT_WAKEUP_NONE;
-
-But if previously we set next and didn't preempt, we should try again,
-maybe it has more success now. That is, should this not be _NEXT?
-
-> +
-> +	set_next_buddy(pse);
-> +
-> +	/*
-> +	 * WF_SYNC|WF_TTWU indicates the waker expects to sleep but it is not
-> +	 * strictly enforced because the hint is either misunderstood or
-> +	 * multiple tasks must be woken up.
-> +	 */
-> +	pse_before = entity_before(pse, se);
-> +	if (wake_flags & WF_SYNC) {
-> +		u64 delta = rq_clock_task(rq) - se->exec_start;
-> +		u64 threshold = sysctl_sched_migration_cost;
-> +
-> +		/*
-> +		 * WF_SYNC without WF_TTWU is not expected so warn if it
-> +		 * happens even though it is likely harmless.
-> +		 */
-> +		WARN_ON_ONCE(!(wake_flags | WF_TTWU));
-
-s/|/&/ ?
-
-> +		if ((s64)delta < 0)
-> +			delta = 0;
-> +
-> +		/*
-> +		 * WF_RQ_SELECTED implies the tasks are stacking on a
-> +		 * CPU when they could run on other CPUs. Reduce the
-> +		 * threshold before preemption is allowed to an
-> +		 * arbitrary lower value as it is more likely (but not
-> +		 * guaranteed) the waker requires the wakee to finish.
-> +		 */
-> +		if (wake_flags & WF_RQ_SELECTED)
-> +			threshold >>= 2;
-> +
-> +		/*
-> +		 * As WF_SYNC is not strictly obeyed, allow some runtime for
-> +		 * batch wakeups to be issued.
-> +		 */
-> +		if (pse_before && delta >= threshold)
-> +			return PREEMPT_WAKEUP_RESCHED;
-> +
-> +		return PREEMPT_WAKEUP_NONE;
-> +	}
-> +
-> +	return PREEMPT_WAKEUP_NEXT;
-> +}
-
-Add to this that AFAICT your patch ends up doing:
-
-	__pick_eevdf(.protect = false) == pse
-
-which unconditionally disables the slice protection feature.
-
-
+Best regards,
+Yao Zi
 
