@@ -1,100 +1,45 @@
-Return-Path: <linux-kernel+bounces-877388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCAFC1E00D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:15:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505AEC1E016
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C61718857D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F77B3B6159
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E127256C89;
-	Thu, 30 Oct 2025 01:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B93D6BFCE;
+	Thu, 30 Oct 2025 01:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UNhLPD3i";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ykna3OBK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lODCdK6r"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210EC22576E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6082037A3A1;
+	Thu, 30 Oct 2025 01:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761786901; cv=none; b=WYpCqN27EEjCNmCubZruzLQkUDjKZ3Qn1NqcnJ4+JLiDXXBa4KcqvHGTY/GzHKpBLNHmB7eiuATAxB1VtuCSPwbtntJfko3+bwXA7WChH9FDR11inCOxQLvGTVBRJrxGsj9tTojZdtJe6xP+SG+sQSuV6TRJqgsmH5Ji538DOpM=
+	t=1761786967; cv=none; b=hWqgSRdjMm7aPInxw7x96MBlWq5+7NcNqI3er9cB3a8jLZSBhg9pRW5s/2vT+kVYwA8y1YZeaK5V+/Jp20U06D3aXRU4KQbjbRzMIQi9CmXM9TDrX07OXtqGlREpcX3b/678fyFK0HHadUs5A1BbqqkaJKcWFcHLI89M66b8/XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761786901; c=relaxed/simple;
-	bh=JcdsJObsCPxTej1TgcKSkDEbSvqlt1gBALjn2o4FudM=;
+	s=arc-20240116; t=1761786967; c=relaxed/simple;
+	bh=IthoGz4qJUG6GlLBMePghn2RRVGOaSQuMKeuAbQyz6U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cGx7p4uPYPi3FLsZj14F2yJXOm8CawShg1lFKOCI2snygMtKT8F91rrZEt4oM8mpKzX7m5emTSK5Apvb+b6cwqhYrDgoz5dnNjxRMbl5SIURljxWs9rH/brd6pEtUP8GkvHjKTJgUmseAL9vOQIBqDvPWDERv6Xa1NyGzjAFLck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UNhLPD3i; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ykna3OBK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TIrcdB1324771
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:14:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uplEjRjXn6n3hOHodOMA23ldjJzjv7AtZodGTNnhxNU=; b=UNhLPD3ifF4rVwn0
-	U14gbgxpacljiEatqxFgv7arZ1DtzgLkh+a772vfZu4Do0s/WPan7dRUGMxSNIWn
-	kFahZe39OKUl+e4t6CUcctsUdzjEAWcmK+vUjR/wSvCCFPFMAWOr25/UtwSu1aDI
-	Ty/eCetrIlJ1wsF+NRhkJekDfb6Cv114Y8Akrqa7mKAvsHKIsV/rhDYBH8d+0cnt
-	n9sTvpyejez7NVUkmYgitTPYWGmC3nvB3A/aemlTfHulZhfyZxILkLKHsvBrmQC8
-	/kroevwpUQMeisdshqJ97Akby2ITYjQWOuouHrEzRO5gZpRYqOCQF5hRIHRneTfU
-	jCkLug==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3rkus0e0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:14:58 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-781253de15aso1134008b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761786898; x=1762391698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uplEjRjXn6n3hOHodOMA23ldjJzjv7AtZodGTNnhxNU=;
-        b=Ykna3OBKtRI8fP5DNtJdHCVMNnfOyngWPVGRsPF9mQasS4OJJcM7/Q+VuCKiAT5mtL
-         7RF3Pm7So3CUKgrdLLKGt4rh38UXuvXvwiBhvp3mJ0iS2DvE5z6AjsQqQ15Fe1xsR2qA
-         9rTOvTJDYRDxxbPF6pFDsR+lR6NHcYye1kQiG6MqveEjM7gIVE+g7zF23YEsX5drSi/B
-         XowQaRMcl+UVqsyJU23+ecFR6ApJqg6u2diMTH5M9QsqnTOkn81pU7jRJ+kalxf5N/Ae
-         xewLA3WZAl7yQd/BbKQg9uEGcmrTJ4+a6l2ELPnTbIGjiO+aBmfk/YIUksbNmTm4J0d9
-         Fmgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761786898; x=1762391698;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uplEjRjXn6n3hOHodOMA23ldjJzjv7AtZodGTNnhxNU=;
-        b=DHiADgJovmg479GaTPzDY3G6lOZ/8KEnnTbyhI7CZpPiV7lHeJZ7nfRo3S66HxvYWu
-         NoJjlOiDSnk8ZgD/WnA332a6mlo6IGDf6Z3RdmOobXVP2tpRxJo1hKxrL+wMnDOxOzv3
-         uOy5g20C/xRK9UyUDA/mkOn7oS9wIcwKAuO9QZ+Qaqbpud8oc6b+j7h75NRRQE47eaZm
-         Zz+Le2s6SjHue3ADqrDaWtOxeuCrHnSNyFK1bvjaZ3V9T65oxACRkh7BdClcLMSH/Gxd
-         UGwJZv1hLbVUFnEJHMSq5CMUR1M2nnYhaaIvuVCVmGuGd/mPZEQ+z30BaoswZi0wbDax
-         IN1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVWFgegvPCzYQQ29In3EZrj8S420umSwyydgiSre68b7paXP2BPS8LVvSQbEeclRiPnhFpwF1t/NXi+poU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS7+B9Kq2x7turDN+JivIKb7cB+oJvzhUDQW0vHarZV6jkzzQK
-	H9gHhksOqzTZw0Dlb8pGGF1AEYBv8gM9HoYnzDU7bRFQmxg1V0AfdLcs+H0CflumWxaTsdJlX/q
-	kNCBgiAF6sSBZn5hY0TDgZjPQ1X4ZyIJOCvgAFVVITxbhm/AflsnJlrjt/GW5XEZffxs=
-X-Gm-Gg: ASbGnctFamOwWtdbUhiaW954IaXLZyz2/shEfag3U2YGBg/CM80GmjGzNp5tfHiXEqy
-	JwnpGwBuS0DQhuEs4EUCpIYHRwCRhX/emmdVI/cja9C0DjDaJXoMnCTN2fyNjKKHASdKxCFvwIG
-	qqmE1Qjp3qPtCtpPQHeTmi7VKGIdqLMZFXUbJk6Tg/moDkh999AbVBgNB5wriFtgdBFWLLkrf90
-	IUPhy0eVhjEyiveXyiM+LX0aEIztnHTBP9UqNdVmMLTUZcI6Jgez7m63BS+MJDUamMKGXhYIe25
-	sAKIbtBRQXgmbWYirBewZmfLxf/eRuYgUpUh831RweOoYNjeh5bMSJi8EoK+FtPi33zmUT/FUx2
-	/JtHJBsNW3frLpgSO1rlXsf08sUoZTx/OLx9KXuRvHJQBlEt8a9/jLaothZ0uSJZB3oCVa2Y=
-X-Received: by 2002:a05:6a00:4f8b:b0:7a4:f552:b507 with SMTP id d2e1a72fcca58-7a62c6948aemr1423131b3a.25.1761786897946;
-        Wed, 29 Oct 2025 18:14:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxg/gaMbHhmdQxq/ivXimd6Kc2sCy+uCcSh3cAwCWaFK2lzCgf5JPs9bcpzB5W6omR/iGAbQ==
-X-Received: by 2002:a05:6a00:4f8b:b0:7a4:f552:b507 with SMTP id d2e1a72fcca58-7a62c6948aemr1423099b3a.25.1761786897435;
-        Wed, 29 Oct 2025 18:14:57 -0700 (PDT)
-Received: from [192.168.1.118] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a41409e456sm16519817b3a.71.2025.10.29.18.14.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 18:14:57 -0700 (PDT)
-Message-ID: <83c8504d-3159-4a87-a1ea-0fef46bf6762@oss.qualcomm.com>
-Date: Wed, 29 Oct 2025 18:14:55 -0700
+	 In-Reply-To:Content-Type; b=dvweliQNDn1hpPcPBSFA8TpOLYdb/ybtwl5Jj1RQsqTYMe5+JwoQJSFgWKijit9qj/JfaaFLGfDXHbA8u8q1Bhgpwq6YWggC+Co+jwN648DcQpUmGedKLxVRLZSTAzHhBCKXI5jRILp0nHsxN3KF/yB5e9a1XLmA/2/H1Uae6AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lODCdK6r; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761786960; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hfAAEiDXRtzE+NZ05S48S2bdZE0MaHUuFgXbP1Eu81w=;
+	b=lODCdK6rAqnJOB9e1m8k0f5JG9uIpabFNBYRWMeBJ4ahlhC/XQgfr3hAqRj2b1NZX3Qm+Agow/0d1OX6XKrm7jnDIKbI5/KFSPdbzRFshclqHAZMEit6Sh0JWuTWgJBnjYvOHJoEDauDDhDe7WdUaHaDsYsFhQm1q9sl1uuGjn4=
+Received: from 30.74.144.140(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WrHfwfa_1761786955 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 30 Oct 2025 09:15:56 +0800
+Message-ID: <5c7aaf9b-a6c0-4670-a244-67948ca86727@linux.alibaba.com>
+Date: Thu, 30 Oct 2025 09:15:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,84 +47,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the ath-next tree with the ath tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
-        Ath10k List <ath10k@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Maharaja Kennadyrajan <maharaja.kennadyrajan@oss.qualcomm.com>,
-        Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
-References: <20251030113037.1932c6d2@canb.auug.org.au>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20251030113037.1932c6d2@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 2UFstf8XQGKaloNK45dgPhsXxc3nRDwr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDAwNyBTYWx0ZWRfXyojKWOm8VxYX
- yf5qvCetJqhHUZZBx2/0BPqZYbKRT83lYpe37FnWsG6bbtXQQmOdtTdhgjgPLA80XeUig59/f2/
- JRpQmXBn46+G6RKH5KfMCUryZPkSA3fLubnu4nRNcwQHnBATOV2Tfi0TeAzf6EshXnzzlT3Ei6o
- yZP9oSsx7RayfSxmuXDFmLhBxr9088S4TYZO8XuF8RQB7hvB9sm8Zi0Sbk16k5B7YqS0rPYhs9b
- ofZ7/MMRQTPXGPbNuhL/Lr9l+7A4L14ErPgIsw9HRt3B9Yql/jDor7iyEM8qyi40D6WUbjQdO08
- PIp79tnE0elRcLqbejXsupCpwF8VOC8GOj9oBFxkp2EGLI/hrqC5XjQ0y/fSiAPBTToTvKpfv+E
- P1pARpLQl01B7msZDWG1jn3vKN3NiA==
-X-Proofpoint-GUID: 2UFstf8XQGKaloNK45dgPhsXxc3nRDwr
-X-Authority-Analysis: v=2.4 cv=adZsXBot c=1 sm=1 tr=0 ts=6902bc13 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=e70TP3dOR9hTogukJ0528Q==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=3sE9uRzZUefYBai0eU4A:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 clxscore=1015 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300007
+Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
+ collapse_max_ptes_none helper function
+To: Nico Pache <npache@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
+ lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
+ pfalcato@suse.de
+References: <20251022183717.70829-1-npache@redhat.com>
+ <20251022183717.70829-7-npache@redhat.com>
+ <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local>
+ <CAA1CXcA4AcHrw18JfAoVygRgUZW3EzsN6RPZVrC=OJwSNu_9HA@mail.gmail.com>
+ <e69acbc5-0824-4b07-8744-8d5145e2580b@redhat.com>
+ <e66b671f-c6df-48c1-8045-903631a8eb85@lucifer.local>
+ <74583699-bd9e-496c-904c-ce6a8e1b42d9@redhat.com>
+ <3dc6b17f-a3e0-4b2c-9348-c75257b0e7f6@lucifer.local>
+ <b1f8c5e3-0849-4c04-9ee3-5a0183d3af9b@linux.alibaba.com>
+ <2ab547d2-584b-48fe-9f43-7c14caa7ab05@lucifer.local>
+ <CAA1CXcA1nqt_f+zSOF66eTNWJACCE84hSQn4uNF8CjcBUZ_1oA@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAA1CXcA1nqt_f+zSOF66eTNWJACCE84hSQn4uNF8CjcBUZ_1oA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/29/2025 5:30 PM, Stephen Rothwell wrote:
-> Hi all,
+
+
+On 2025/10/30 05:14, Nico Pache wrote:
+> On Wed, Oct 29, 2025 at 12:56 PM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+>>
+>> On Wed, Oct 29, 2025 at 10:09:43AM +0800, Baolin Wang wrote:
+>>> I finally finished reading through the discussions across multiple
+>>> threads:), and it looks like we've reached a preliminary consensus (make
+>>> 0/511 work). Great and thanks!
+>>
+>> Yes we're getting there :) it's a sincere effort to try to find a way to move
+>> forwards.
+>>
+>>>
+>>> IIUC, the strategy is, configuring it to 511 means always enabling mTHP
+>>> collapse, configuring it to 0 means collapsing mTHP only if all PTEs are
+>>> non-none/zero, and for other values, we issue a warning and prohibit mTHP
+>>> collapse (avoid Lorenzo's concern about silently changing max_ptes_none).
+>>> Then the implementation for collapse_max_ptes_none() should be as follows:
+>>>
+>>> static int collapse_max_ptes_none(unsigned int order, bool full_scan)
+>>> {
+>>>          /* ignore max_ptes_none limits */
+>>>          if (full_scan)
+>>>                  return HPAGE_PMD_NR - 1;
+>>>
+>>>          if (order == HPAGE_PMD_ORDER)
+>>>                  return khugepaged_max_ptes_none;
+>>>
+>>>          /*
+>>>           * To prevent creeping towards larger order collapses for mTHP
+>>> collapse,
+>>>           * we restrict khugepaged_max_ptes_none to only 511 or 0,
+>>> simplifying the
+>>>           * logic. This means:
+>>>           * max_ptes_none == 511 -> collapse mTHP always
+>>>           * max_ptes_none == 0 -> collapse mTHP only if we all PTEs are
+>>> non-none/zero
+>>>           */
+>>>          if (!khugepaged_max_ptes_none || khugepaged_max_ptes_none ==
+>>> HPAGE_PMD_NR - 1)
+>>>                  return khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER -
+>>> order);
+>>>
+>>>          pr_warn_once("mTHP collapse only supports khugepaged_max_ptes_none
+>>> configured as 0 or %d\n", HPAGE_PMD_NR - 1);
+>>>          return -EINVAL;
+>>> }
+>>>
+>>> So what do you think?
+>>
+>> Yeah I think something like this.
+>>
+>> Though I'd implement it more explicitly like:
+>>
+>>          /* Zero/non-present collapse disabled. */
+>>          if (!khugepaged_max_ptes_none)
+>>             return 0;
+>>
+>>          /* Collapse the maximum number of zero/non-present PTEs. */
+>>          if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
+>>                  return (1 << order) - 1;
+>>
+>> Then we can do away with this confusing (HPAGE_PMD_ORDER - order) stuff.
 > 
-> Today's linux-next merge of the ath-next tree got a conflict in:
+> This looks cleaner/more explicit given the limits we are enforcing!
 > 
->   drivers/net/wireless/ath/ath12k/mac.c
+> I'll go for something like that.
 > 
-> between commit:
+>>
+>> A quick check in google sheets suggests my maths is ok here but do correct me if
+>> I'm wrong :)
 > 
->   9222582ec524 ("Revert "wifi: ath12k: Fix missing station power save configuration"")
-> 
-> from the ath tree and commit:
-> 
->   6917e268c433 ("wifi: ath12k: Defer vdev bring-up until CSA finalize to avoid stale beacon")
-> 
-> from the ath-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> LGTM!
 
-Thanks, Stephen
-
-That resolution matches the text I've prepared for my upcoming pull request:
-
-Note to maintainers:
-
-There is a trivial conflict between two patches:
-
-In ath/ath-current:
-9222582ec524 ("Revert "wifi: ath12k: Fix missing station power save configuration"")
-
-In ath/ath-next:
-6917e268c433 ("wifi: ath12k: Defer vdev bring-up until CSA finalize to avoid stale beacon")
-
-The resolution is to take both hunks, ordering them in reverse xmas tree style.
-
-
+LGTM. Thanks.
 
