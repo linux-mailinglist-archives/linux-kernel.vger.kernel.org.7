@@ -1,167 +1,106 @@
-Return-Path: <linux-kernel+bounces-877594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2D8C1E86A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:15:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA16C1E877
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:17:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC6D3B803D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33FB8188ED4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5442EA731;
-	Thu, 30 Oct 2025 06:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TIs8y6JU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AE02D6621;
+	Thu, 30 Oct 2025 06:16:53 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C182EA48F;
-	Thu, 30 Oct 2025 06:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CF68462;
+	Thu, 30 Oct 2025 06:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761804911; cv=none; b=gpEm1ZePjKIL2PgEjtByARj4Yvdp1uHvaGxAgK2Nd1cNhAUP0P+qE/w5l5TbT1AixSwaoib2uBkCr2iYradvgACdStdcd4tkpFsyiZiCkag/3npbjE5w9YPpcd+CiswBImNxHhMNydwIjcH3rM5/LOk2A81N30FNEdA/dGyhX+Q=
+	t=1761805013; cv=none; b=PmAlsY0JjfHrDqf7eRB2r8RNqeUJo1A3xVgo3RbfVD9dv5g2fJ8EYPcZvuFhElNzWnyft4Bk2pg+lqsXhlYl3M89WSU7FSPdCm5lPM6IXympb+aWLRR5aLtRxpeAZDBcKJZnVOFbLqjpORYwOHFBmaqBiL9colmzN6UlmtP6v7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761804911; c=relaxed/simple;
-	bh=krbFrkVMXm7p51EYFhLIkyy0cwGkTFQDJkzyAdJkSb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hJtVkk4pHL4XkIIoxGd4kluoUc7DDkiikiuJmk8glNLxd2ZyD6MGi2GAf7DIFCkgxBIFQ7DokWdVsEtiIKXjP2sZQPGyOjVxU0xU3r4kGQO5NQt9J5ZA98Tjx7KQYz8EIQ7dTBhgBf/9fcD9m+JtWYF/3uTe9qag7Ih5j9C0te0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TIs8y6JU; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761804910; x=1793340910;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=krbFrkVMXm7p51EYFhLIkyy0cwGkTFQDJkzyAdJkSb8=;
-  b=TIs8y6JU3alIS1oQYr5IqODYSKw/Toxr385fuaY9zjtznfSx8uhs+k8S
-   iK2RjFauc4re/hiLH2mHy3BsoI1jvdpws2xRkgHGl9nJBrkkO0Tsqwhra
-   nEqJKTSipWBK9ldpfGBxBrVi0sAr/b9CRJyWGwIecXyO5CVckYmA8HaUZ
-   2nOcfM0laf4EdeqWvvXvvNUpFTDo/2CesRuz9oMnWTUVwH+/9b8x+cIax
-   PCl/HAWCot8nz07XgrHof0x/+X3Dc+AkvVJRlzOI0VofjjQoStAXfwQDj
-   PtVFL99HC1cw/hu8BG0IS5UnYnMhCqGQHfAX5gUfYlpDv0cqZ7kQOY2NA
-   w==;
-X-CSE-ConnectionGUID: PxLYFthzTBe7BfQY1jeX9g==
-X-CSE-MsgGUID: 5iWuXWTwQgu2I64/n+UJlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63822406"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="63822406"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 23:15:08 -0700
-X-CSE-ConnectionGUID: hYvlWN5XTwuMZgnhYyqUWw==
-X-CSE-MsgGUID: NhhmkBpUQdK0Alu9/p/HKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="185123938"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 23:15:03 -0700
-Message-ID: <f55516ea-b8de-4d77-a2c5-dffef2f66d7c@linux.intel.com>
-Date: Thu, 30 Oct 2025 14:15:01 +0800
+	s=arc-20240116; t=1761805013; c=relaxed/simple;
+	bh=ygtg1j5dzLlWrtmXM3o9ySTcesraAzD8Z1P8WjXgFpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gj0VFkoEO6JuNkP+pU8vw7DjVscqRQf7Qb4rFvsSpUn2G1rF9sd7NiMu8sELoeanYA6Rez02Z+odQK3/OkI7E1WI35PTQJ4ROHXhHOZ4zQHyODDETT3eSmaSD+kjbVRHsfLhwcKIVeHOuA4JE4DLe6xnPIEN0khVRCS8xaVo/Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAD3fWLCAgNplyJ7Bg--.30340S2;
+	Thu, 30 Oct 2025 14:16:35 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] clk: renesas: r9a06g032: Fix memory leak in error path
+Date: Thu, 30 Oct 2025 14:16:03 +0800
+Message-ID: <20251030061603.1954-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 17/23] KVM: selftests: Call KVM_TDX_INIT_VCPU when
- creating a new TDX vcpu
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20251028212052.200523-1-sagis@google.com>
- <20251028212052.200523-18-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251028212052.200523-18-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3fWLCAgNplyJ7Bg--.30340S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF18AFy8uFWfCw47uFWxJFb_yoW8GrW3pF
+	srXFy5AFnYqayUX3W0va4kuFZYyasrKa48ury8C3Z3urnxJFy8JF4xWFWvkFy5JrZ3Zw1j
+	qan5Cay8CF1DZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1lc2xSY4AK67AK6r47MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUj_HUPUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRELA2kC7AZEewAAsu
 
+The current code uses of_iomap() to map registers but never calls
+iounmap() on any error path after the mapping. This causes a memory
+leak when probe fails after successful ioremap, for example when
+of_clk_add_provider() or r9a06g032_add_clk_domain() fails.
 
+Replace of_iomap() with devm_of_iomap() to automatically unmap the
+region on probe failure. Update the error check accordingly to use
+IS_ERR() and PTR_ERR() since devm_of_iomap() returns ERR_PTR on error.
 
-On 10/29/2025 5:20 AM, Sagi Shahar wrote:
-> TDX VMs need to issue the KVM_TDX_INIT_VCPU ioctl for each vcpu after
-> vcpu creation.
->
-> Since the cpuids for TD are managed by the TDX module, read the values
-> virtualized for the TD using KVM_TDX_GET_CPUID and set them in kvm using
-> KVM_SET_CPUID2 so that kvm has an accurate view of the VM cpuid values.
->
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->   .../testing/selftests/kvm/lib/x86/processor.c | 35 ++++++++++++++-----
->   1 file changed, 27 insertions(+), 8 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index 990f2769c5d8..036875fe140f 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -722,6 +722,19 @@ vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm)
->   	return stack_vaddr;
->   }
->   
-> +static void vm_tdx_vcpu_add(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_cpuid2 *cpuid;
-> +
-> +	cpuid = allocate_kvm_cpuid2(MAX_NR_CPUID_ENTRIES);
-> +	vm_tdx_vcpu_ioctl(vcpu, KVM_TDX_GET_CPUID, 0, cpuid);
-> +	vcpu_init_cpuid(vcpu, cpuid);
-> +	free(cpuid);
-> +	vm_tdx_vcpu_ioctl(vcpu, KVM_TDX_INIT_VCPU, 0, NULL);
-> +
-> +	vm_tdx_load_vcpu_boot_parameters(vm, vcpu);
-> +}
-> +
->   struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
->   {
->   	struct kvm_mp_state mp_state;
-> @@ -729,15 +742,21 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
->   	struct kvm_vcpu *vcpu;
->   
->   	vcpu = __vm_vcpu_add(vm, vcpu_id);
-> -	vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
-> -	vcpu_init_sregs(vm, vcpu);
-> -	vcpu_init_xcrs(vm, vcpu);
->   
-> -	/* Setup guest general purpose registers */
-> -	vcpu_regs_get(vcpu, &regs);
-> -	regs.rflags = regs.rflags | 0x2;
-> -	regs.rsp = kvm_allocate_vcpu_stack(vm);
-> -	vcpu_regs_set(vcpu, &regs);
-> +	if (is_tdx_vm(vm)) {
-> +		vm_tdx_vcpu_add(vm, vcpu);
-Nit:
-Since vcpu is added by  __vm_vcpu_add() above, using 'init' instead of 'add' in
-the function name makes it more clear.
+Fixes: 4c3d88526eba ("clk: renesas: Renesas R9A06G032 clock driver")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> +	} else {
-> +		vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
-> +
-> +		vcpu_init_sregs(vm, vcpu);
-> +		vcpu_init_xcrs(vm, vcpu);
-> +
-> +		/* Setup guest general purpose registers */
-> +		vcpu_regs_get(vcpu, &regs);
-> +		regs.rflags = regs.rflags | 0x2;
-> +		regs.rsp = kvm_allocate_vcpu_stack(vm);
-> +		vcpu_regs_set(vcpu, &regs);
-> +	}
->   
->   	/* Setup the MP state */
->   	mp_state.mp_state = 0;
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index dcda19318b2a..0f5c91b5dfa9 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -1333,9 +1333,9 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (IS_ERR(mclk))
+ 		return PTR_ERR(mclk);
+ 
+-	clocks->reg = of_iomap(np, 0);
+-	if (WARN_ON(!clocks->reg))
+-		return -ENOMEM;
++	clocks->reg = devm_of_iomap(dev, np, 0, NULL);
++	if (IS_ERR(clocks->reg))
++		return PTR_ERR(clocks->reg);
+ 
+ 	r9a06g032_init_h2mode(clocks);
+ 
+-- 
+2.50.1.windows.1
 
 
