@@ -1,44 +1,53 @@
-Return-Path: <linux-kernel+bounces-878167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FB4C1FEC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:05:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CC0C1FEEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC7B423CF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BE41889806
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2584731C567;
-	Thu, 30 Oct 2025 12:03:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAD8315D4E;
+	Thu, 30 Oct 2025 12:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="f+VYncrc"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8461831D377;
-	Thu, 30 Oct 2025 12:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1297F2C2340;
+	Thu, 30 Oct 2025 12:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761825803; cv=none; b=pSAEbGUG7FTZbLWPSWRVprkXBL1C3etSLWZ6ERK/bEJ5I8ERqd+utLW/61aWvLRkVxm727l0bKRozkvKpaR5R08k0XugDlRmqAE6buzxM0+Fpuo6YjP1+Ww2q6HVnywtXhm5smNet4Jp/Lo8HJSNRqEQX16IlmI5uThSvo2H23c=
+	t=1761825842; cv=none; b=TyFy1aWQd7WXgQWSyizeHFMYOnPOzv2g9v0noycvCtnDdz4ObKoDZh1RNnL98Sf8Mxs3alrFatnbSAUyErzljhsaPvrBo1bRJOADLAuRvk6DVfJ533NVqBSQ6ndc0Mn4NBpPCpmDlmeTU7etnUsrcpSQ4cfwlbxpSDBc/c3RUIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761825803; c=relaxed/simple;
-	bh=YTZHOtTHA/gNt2NqNII9StP3tPvo/XXImIK2lbKGRvk=;
+	s=arc-20240116; t=1761825842; c=relaxed/simple;
+	bh=IL/RAuYRylzgjtXa31MWhQno7cUBCpBvvbUXdwM/9GI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ARqKmLHc8DBtrWe7y/PO15567F72521yodo28ybBh2C8okCwlDNT9PZkTg1An0n7QZcYLHb+uRuTGKk/LLxFKLayqUIBIPoWCfOV/Faf6aT4PPPlL0pLsLMzufh4SKJ9VxKXO3SobKdeLvFHtsE7m0LVB2wsbddoyr8n719wpJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cy2m52xpBzKHMlw;
-	Thu, 30 Oct 2025 20:02:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id EB0A31A0847;
-	Thu, 30 Oct 2025 20:03:12 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP2 (Coremail) with SMTP id Syh0CgBH6UH6UwNpQHx+CA--.42489S3;
-	Thu, 30 Oct 2025 20:03:12 +0800 (CST)
-Message-ID: <5dab3b98-9134-4ee9-8cd1-2498c3eab49e@huaweicloud.com>
-Date: Thu, 30 Oct 2025 20:03:12 +0800
+	 In-Reply-To:Content-Type; b=dI6TA6ZqXdhmTHKKoOJeGHIxitFmNoGcp6jnWuG59VPT6AE+Z7URkI5D7OeyP9DJmCtQtSQFJggrMqeFOGVvb6yWBmFv8Jv6YTn5J2UUG24Dhbrn96iP9lnovjeGH6kl9udBsuQS0qNgt2JJb5u9hPopNAPd4r1U3rN764dQG5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=f+VYncrc; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.4.92] (unknown [213.235.133.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 5E075534126F;
+	Thu, 30 Oct 2025 13:03:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1761825829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HCDJvVTDJefJzOa6Phkvo+tZTLtMHzdY0G2wDk5jBLI=;
+	b=f+VYncrcbQzJTnkYgXqJE4t8guaTGUVwLz/1Fghih8F9r9C4oZZAHhpH4BPlmbLxNu8fIc
+	uyAAp9z1F5ANkcbJiZniA8U0X42j8G3m4uCtREOK6mPw0m81zYphkeUCO4GL6f/T8ot4Rc
+	41LFF+iKCr+9IfgdxmxtqYHR3zyXEHY=
+Message-ID: <7f686f1b-7cc7-428d-941d-82883decee49@ixit.cz>
+Date: Thu, 30 Oct 2025 13:03:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,116 +55,224 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 2/3] selftests/bpf: Add overwrite mode test
- for BPF ring buffer
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Add support for Pixel 3 and
+ Pixel 3 XL
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: phodina@protonmail.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+ Casey Connolly <casey@connolly.tech>, Joel Selvaraj <foss@joelselvaraj.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <20251030-pixel-3-v2-0-8caddbe072c9@ixit.cz>
+ <20251030-pixel-3-v2-2-8caddbe072c9@ixit.cz>
+ <8d32460d-894b-472a-a262-4c6a60fbcef1@oss.qualcomm.com>
 Content-Language: en-US
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Yonghong Song <yhs@fb.com>, Song Liu <song@kernel.org>
-References: <20251018035738.4039621-1-xukuohai@huaweicloud.com>
- <20251018035738.4039621-3-xukuohai@huaweicloud.com>
- <CAEf4BzZQfSBTqPwHE7fMTO1CbuoCYkFthUkCGvq3qT5CnT3-Eg@mail.gmail.com>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <CAEf4BzZQfSBTqPwHE7fMTO1CbuoCYkFthUkCGvq3qT5CnT3-Eg@mail.gmail.com>
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ xsFNBF5v1x4BEADS3EddwsNsvVAI1XF8uQKbdYPY/GhjaSLziwVnbwv5BGwqB1tfXoHnccoA
+ 9kTgKAbiXG/CiZFhD6l4WCIskQDKzyQN3JhCUIxh16Xyw0lECI7iqoW9LmMoN1dNKcUmCO9g
+ lZxQaOl+1bY/7ttd7DapLh9rmBXJ2lKiMEaIpUwb/Nw0d7Enp4Jy2TpkhPywIpUn8CoJCv3/
+ 61qbvI9y5utB/UhfMAUXsaAgwEJyGPAqHlC0YZjaTwOu+YQUE3AFzhCbksq95CwDz4U4gdls
+ dmv9tkATfu2OmzERZQ6vJTehK0Pu4l5KmCAzYg42I9Dy4E6b17x6NncKbcByQFOXMtG0qVUk
+ F1yeeOQUHwu+8t3ZDMBUhCkRL/juuoqLmyDWKMc0hKNNeZ9BNXgB8fXkRLWEUfgDXsFyEkKp
+ NxUy5bDRlivf6XfExnikk5kj9l2gGlNQwqROti/46bfbmlmc/a2GM4k8ZyalHNEAdwtXYSpP
+ 8JJmlbQ7hNTLkc3HQLRsIocN5th/ur7pPMz1Beyp0gbE9GcOceqmdZQB80vJ01XDyCAihf6l
+ AMnzwpXZsjqIqH9r7T7tM6tVEVbPSwPt4eZYXSoJijEBC/43TBbmxDX+5+3txRaSCRQrG9dY
+ k3mMGM3xJLCps2KnaqMcgUnvb1KdTgEFUZQaItw7HyRd6RppewARAQABzSBEYXZpZCBIZWlk
+ ZWxiZXJnIDxkYXZpZEBpeGl0LmN6PsLBlAQTAQgAPgIbAwULCQgHAgYVCgkICwIEFgIDAQIe
+ AQIXgBYhBNd6Cc/u3Cu9U6cEdGACP8TTSSByBQJl+KksBQkPDaAOAAoJEGACP8TTSSBy6IAQ
+ AMqFqVi9LLxCEcUWBn82ssQGiVSDniKpFE/tp7lMXflwhjD5xoftoWOmMYkiWE86t5x5Fsp7
+ afALx7SEDz599F1K1bLnaga+budu55JEAYGudD2WwpLJ0kPzRhqBwGFIx8k6F+goZJzxPDsf
+ loAtXQE62UvEKa4KRRcZmF0GGoRsgA7vE7OnV8LMeocdD3eb2CuXLzauHAfdvqF50IfPH/sE
+ jbzROiAZU+WgrwU946aOzrN8jVU+Cy8XAccGAZxsmPBfhTY5f2VN1IqvfaRdkKKlmWVJWGw+
+ ycFpAEJKFRdfcc5PSjUJcALn5C+hxzL2hBpIZJdfdfStn+DWHXNgBeRDiZj1x6vvyaC43RAb
+ VXvRzOQfG4EaMVMIOvBjBA/FtIpb1gtXA42ewhvPnd5RVCqD9YYUxsVpJ9d+XsAy7uib3BsV
+ W2idAEsPtoqhVhq8bCUs/G4sC2DdyGZK8MRFDJqciJSUbqA+5z1ZCuE8UOPDpZKiW6H/OuOM
+ zDcjh0lOzr4p+/1TSg1PbUh7fQ+nbMuiT044sC1lLtJK0+Zyn0GwhR82oNM4fldNsaHRW42w
+ QGD35+eNo5Pvb3We5XRMlBdhFnj7Siggp4J8/PJ6MJvRyC+RIJPGtbdMB2/RxWunFLn87e5w
+ UgwR9jPMHAstuTR1yR23c4SIYoQ2fzkrRzuazsFNBF5v1x4BEADnlrbta2WL87BlEOotZUh0
+ zXANMrNV15WxexsirLetfqbs0AGCaTRNj+uWlTUDJRXOVIwzmF76Us3I2796+Od2ocNpLheZ
+ 7EIkq8budtLVd1c06qJ+GMraz51zfgSIazVInNMPk9T6fz0lembji5yEcNPNNBA4sHiFmXfo
+ IhepHFOBApjS0CiOPqowYxSTPe/DLcJ/LDwWpTi37doKPhBwlHev1BwVCbrLEIFjY0MLM0aT
+ jiBBlyLJaTqvE48gblonu2SGaNmGtkC3VoQUQFcVYDXtlL9CVbNo7BAt5gwPcNqEqkUL60Jh
+ FtvVSKyQh6gn7HHsyMtgltjZ3NKjv8S3yQd7zxvCn79tCKwoeNevsvoMq/bzlKxc9QiKaRPO
+ aDj3FtW7R/3XoKJBY8Hckyug6uc2qYWRpnuXc0as6S0wfek6gauExUttBKrtSbPPHiuTeNHt
+ NsT4+dyvaJtQKPBTbPHkXpTO8e1+YAg7kPj3aKFToE/dakIh8iqUHLNxywDAamRVn8Ha67WO
+ AEAA3iklJ49QQk2ZyS1RJ2Ul28ePFDZ3QSr9LoJiOBZv9XkbhXS164iRB7rBZk6ZRVgCz3V6
+ hhhjkipYvpJ/fpjXNsVL8jvel1mYNf0a46T4QQDQx4KQj0zXJbC2fFikAtu1AULktF4iEXEI
+ rSjFoqhd4euZ+QARAQABwsF8BBgBCAAmAhsMFiEE13oJz+7cK71TpwR0YAI/xNNJIHIFAmX4
+ qVAFCQ8NoDIACgkQYAI/xNNJIHKN4A/+Ine2Ii7JiuGITjJkcV6pgKlfwYdEs4eFD1pTRb/K
+ 5dprUz3QSLP41u9OJQ23HnESMvn31UENk9ffebNoW7WxZ/8cTQY0JY/cgTTrlNXtyAlGbR3/
+ 3Q/VBJptf04Er7I6TaKAmqWzdVeKTw33LljpkHp02vrbOdylb4JQG/SginLV9purGAFptYRO
+ 8JNa2J4FAQtQTrfOUjulOWMxy7XRkqK3QqLcPW79/CFn7q1yxamPkpoXUJq9/fVjlhk7P+da
+ NYQpe4WQQnktBY29SkFnvfIAwqIVU8ix5Oz8rghuCcAdR7lEJ7hCX9bR0EE05FOXdZy5FWL9
+ GHvFa/Opkq3DPmFl/0nt4HJqq1Nwrr+WR6d0414oo1n2hPEllge/6iD3ZYwptTvOFKEw/v0A
+ yqOoYSiKX9F7Ko7QO+VnYeVDsDDevKic2T/4GDpcSVd9ipiKxCQvUAzKUH7RUpqDTa+rYurm
+ zRKcgRumz2Tc1ouHj6qINlzEe3a5ldctIn/dvR1l2Ko7GBTG+VGp9U5NOAEkGpxHG9yg6eeY
+ fFYnMme51H/HKiyUlFiE3yd5LSmv8Dhbf+vsI4x6BOOOq4Iyop/Exavj1owGxW0hpdUGcCl1
+ ovlwVPO/6l/XLAmSGwdnGqok5eGZQzSst0tj9RC9O0dXO1TZocOsf0tJ8dR2egX4kxM=
+In-Reply-To: <8d32460d-894b-472a-a262-4c6a60fbcef1@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBH6UH6UwNpQHx+CA--.42489S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry5JF1fWFW5tF1fCFWfZrb_yoW5Aw15pa
-	yrKFyYkrn2yFy2gr1fuFy2qFW09r1kArWFkr4xtw1rZr1UCFWxJryI9F4UKan3JrWFvr1F
-	y34jgF93u3WUKFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw
-	0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2uyIUUUU
-	U
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 7bit
 
-On 10/28/2025 10:47 AM, Andrii Nakryiko wrote:
-> On Fri, Oct 17, 2025 at 9:04 PM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+On 30/10/2025 12:32, Konrad Dybcio wrote:
+> On 10/30/25 8:24 AM, David Heidelberg via B4 Relay wrote:
+>> From: David Heidelberg <david@ixit.cz>
 >>
->> From: Xu Kuohai <xukuohai@huawei.com>
+>> This adds initial device tree support for the following phones:
 >>
->> Add overwrite mode test for BPF ring buffer. The test creates a BPF ring
->> buffer in overwrite mode, then repeatedly reserves and commits records
->> to check if the ring buffer works as expected both before and after
->> overwriting occurs.
->>
->> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
->> ---
->>   tools/testing/selftests/bpf/Makefile          |  3 +-
->>   .../selftests/bpf/prog_tests/ringbuf.c        | 64 ++++++++++++
->>   .../bpf/progs/test_ringbuf_overwrite.c        | 98 +++++++++++++++++++
->>   3 files changed, 164 insertions(+), 1 deletion(-)
->>   create mode 100644 tools/testing/selftests/bpf/progs/test_ringbuf_overwrite.c
->>
->> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
->> index f00587d4ede6..43d133bf514d 100644
->> --- a/tools/testing/selftests/bpf/Makefile
->> +++ b/tools/testing/selftests/bpf/Makefile
->> @@ -498,7 +498,8 @@ LINKED_SKELS := test_static_linked.skel.h linked_funcs.skel.h               \
->>
->>   LSKELS := fexit_sleep.c trace_printk.c trace_vprintk.c map_ptr_kern.c  \
->>          core_kern.c core_kern_overflow.c test_ringbuf.c                 \
->> -       test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c
->> +       test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c    \
->> +       test_ringbuf_overwrite.c
->>
->>   LSKELS_SIGNED := fentry_test.c fexit_test.c atomics.c
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/ringbuf.c b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
->> index d1e4cb28a72c..5264af1dc768 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/ringbuf.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
->> @@ -17,6 +17,7 @@
->>   #include "test_ringbuf_n.lskel.h"
->>   #include "test_ringbuf_map_key.lskel.h"
->>   #include "test_ringbuf_write.lskel.h"
->> +#include "test_ringbuf_overwrite.lskel.h"
->>
->>   #define EDONE 7777
->>
->> @@ -497,6 +498,67 @@ static void ringbuf_map_key_subtest(void)
->>          test_ringbuf_map_key_lskel__destroy(skel_map_key);
->>   }
->>
->> +static void ringbuf_overwrite_mode_subtest(void)
->> +{
->> +       unsigned long size, len1, len2, len3, len4, len5;
->> +       unsigned long expect_avail_data, expect_prod_pos, expect_over_pos;
->> +       struct test_ringbuf_overwrite_lskel *skel;
->> +       int err;
->> +
->> +       skel = test_ringbuf_overwrite_lskel__open();
->> +       if (!ASSERT_OK_PTR(skel, "skel_open"))
->> +               return;
->> +
->> +       size = 0x1000;
-> 
-> this will fail on architecture with page size != 4KB, I adjusted this
-> to use page_size, len1 to page_size / 2 and len2 to page_size / 4
->
-
-Ah, good catch, thanks for fixing it!
-
->> +       len1 = 0x800;
->> +       len2 = 0x400;
->> +       len3 = size - len1 - len2 - BPF_RINGBUF_HDR_SZ * 3; /* 0x3e8 */
->> +       len4 = len3 - 8; /* 0x3e0 */
->> +       len5 = len3; /* retry with len3 */
->> +
+>>   - Google Pixel 3 (blueline)
+>>   - Google Pixel 3 XL (crosshatch)
 > 
 > [...]
+> 
+>> +#include <dt-bindings/arm/qcom,ids.h>
+>> +#include <dt-bindings/dma/qcom-gpi.h>
+>> +#include <dt-bindings/input/linux-event-codes.h>
+>> +#include <dt-bindings/interrupt-controller/irq.h>
+>> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>> +
+>> +#include "sdm845.dtsi"
+>> +#include "pm8998.dtsi"
+>> +#include "pmi8998.dtsi"
+>> +
+>> +/delete-node/ &mpss_region;
+>> +/delete-node/ &venus_mem;
+>> +/delete-node/ &cdsp_mem;
+>> +/delete-node/ &mba_region;
+>> +/delete-node/ &slpi_mem;
+>> +/delete-node/ &spss_mem;
+>> +/delete-node/ &rmtfs_mem;
+>> +
+>> +/ {
+>> +	chassis-type = "handset";
+>> +	qcom,board-id = <0x00021505 0>;
+>> +	qcom,msm-id = <QCOM_ID_SDM845 0x20001>;
+>> +
+>> +	aliases {
+>> +		serial0 = &uart9;
+>> +		serial1 = &uart6;
+>> +	};
+>> +
+>> +	battery: battery {
+>> +		compatible = "simple-battery";
+>> +
+>> +		status = "disabled";
+> 
+> You added support for both non-proto boards based on this platform,
+> there is no usecase for you to disable the battery, remove this line
+
+Should I keep the status = "okay" in the board files or drop it too?
+
+> 
+> [...]
+> 
+>> +	reserved-memory {
+>> +		cont_splash_mem: splash@9d400000 {
+>> +			/* size to be updated by actual board */
+>> +			reg = <0x0 0x9d400000 0x0>;
+> 
+> Don't define it here then
+> 
+> Normally the bootloader allocates a bigger buffer here BTW
+> (although it shooould be reclaimable without issues)
+
+Ok, I'll drop reg in next revision. Thou the reg is defined in the board 
+files.
+
+> 
+>> +			no-map;
+>> +
+>> +			status = "disabled";
+> 
+> ditto
+> 
+> [...]
+> 
+>> +	gpio-keys {
+>> +		compatible = "gpio-keys";
+>> +		label = "Volume keys";
+>> +		autorepeat;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&volume_up_gpio>;
+> 
+> property-n
+> property-names
+> 
+> in this order, please
+> 
+> [...]
+> 
+>> +&tlmm {
+>> +	gpio-reserved-ranges = <0 4>, <81 4>;
+> 
+> Could you add a comment (like in x1-crd.dtsi) mentioning what these
+> pins correspond to? Usually it's a fingerprint scanner or things like
+> that
+
+Sure, I looked into it, but I haven't found (so far) information about 
+the assigned blocks. In next revision it'll be addressed :)>
+>> +
+>> +	touchscreen_reset: ts-reset-state {
+>> +		pins = "gpio99";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-pull-up;
+>> +	};
+>> +
+>> +	touchscreen_pins: ts-pins-gpio-state {
+>> +		pins = "gpio125";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	touchscreen_i2c_pins: qup-i2c2-gpio-state {
+>> +		pins = "gpio27", "gpio28";
+>> +		function = "gpio";
+>> +
+>> +		drive-strength = <2>;
+> 
+> stray \n above
+> 
+>> +		bias-disable;
+>> +	};
+>> +};
+>> +
+>> +&uart6 {
+>> +	pinctrl-0 = <&qup_uart6_4pin>;
+>> +
+>> +	status = "okay";
+>> +	bluetooth {
+> 
+> Please add a \n above, to separate the properties from subnodes
+> 
+> [...]
+> 
+>> +&mdss {
+>> +	/* until the panel is prepared */
+>> +	status = "disabled";
+>> +};
+> 
+> Is it not the same as on the little boy, except the resolution?
+> (don't know, just asking)
+It's completely different DDIC and panel. Generally, the DDIC has driver 
+mainlined already (due being same as Samsung S9 DDIC), but I must extend 
+support for the relevant panel.
+
+Thanks for the review
+WIP to v3 is here: https://gitlab.com/dhxx/linux/-/commits/b4/pixel-3
+
+David
+
+> 
+> Konrad
+
+-- 
+David Heidelberg
 
 
