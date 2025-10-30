@@ -1,171 +1,128 @@
-Return-Path: <linux-kernel+bounces-877586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF58C1E81F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:07:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4CAC1E825
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C734C64A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:07:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CA484E62E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3A62F60B3;
-	Thu, 30 Oct 2025 06:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51553115AF;
+	Thu, 30 Oct 2025 06:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="0gwxhhNO"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="utU8PCoz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE03D2D3EF8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FA42F12DA;
+	Thu, 30 Oct 2025 06:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761804436; cv=none; b=Q4jqekK6XuFewI1RVKdyPzaD7IyJ5D7NoVBhDoV2wSUREwjjqJQufDAO4u3feQzmh7fQqiC0muBQKWkeJWyH600ENHA9t92vcGw06gxNsHzt1Ad65RqD6+r7JBdDR633hQ3D9o5VB7XSuAH6JUmpGhaXVyIBF1j9wA8UaQ0U4YA=
+	t=1761804480; cv=none; b=kxtVI4FW9pbq0K6ZAwK+P9NcS1e8PuLSANxctkBWqfbkbszw8Lp2zhmIBtEUPmHSXuLFkFi5md1rqHJxBgHPGF+w+UltLNa0Gbh/xMsiTTERIdfxxnHfiMBTmBJEO1pRodv5PzuNQ8CFskZOsjk7pzH9IufTBCr+MtrB1LJaTi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761804436; c=relaxed/simple;
-	bh=/6eS1rSrp3y277Vz4B3Abj/WQzCqBSEwZwUivQ53yoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHsQOO0dyalBpWw5W5YaHJ13a1SSp73AEqwa/y8+tus0C4TQuXAEIxgc74B8HmgXmltZSFoe7Kq/HskLxVI477GG0EmMW1rOPuVLzFGbnuPyqGsBw7uBiKy80xWPdySUcNh8JuVmWXjxbsLZZOW/HcwpOD05DQl2Y8yH+VhbsOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=0gwxhhNO; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-93e2d42d9b4so29178939f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1761804434; x=1762409234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B2oOVPuOCfFeYpVN2DHmuplgz6ll1JdAv6+U3SGE1nM=;
-        b=0gwxhhNORdYniZZzPck6P6fKpoDTfcj3OLogXg33XBkk33c8zK5zJhtMl1n+6otqDt
-         yTu3G0fbMleUYBhjYnMlUzO8UocbTcYKPS2nzoBLCYNDAyQmvhA/ae26MsXwn3gPzcVm
-         i8VABokHVHtIYunV9QVnLnzozs/ByraB6OjOU+9rv9swrn+HFjsXAjD5qei1icnoh85N
-         5lZaM/a8sN8UQcs3hfE3ZKCMtSd0fY7WxG2lrgCyS+vbwKcBrVL6AQ4wb88fmA5KLVcK
-         xBBzuzZDNsxC7T+21KNMzpi95JwiXdyGvT22jajZ1B6dTAPVH8eht6awMlBSBRc9xa0C
-         ileg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761804434; x=1762409234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B2oOVPuOCfFeYpVN2DHmuplgz6ll1JdAv6+U3SGE1nM=;
-        b=NNvWVJDE3qMhwjGIwCL3mzEm4nunkZJnzsX6noLbDsCqma4eYshxeZsbj4hfs7vkAZ
-         xRQ9robq9aX0AZBgpobokBjF/6de/HVPnAjDf9Igpg7a88IE48kWF2ckFAxiG5kPhlRS
-         WDzuy/3/fIyNYaBE+9i7/xcASXlEZAivPLNgXepPs3kkJKNdPIRe+W9B/rr9X/OcKXPg
-         sVDvIe/xP4PNV88pOwTkdcGv5yM7YnxNyORSRhCHOpYZ5qLmxDntdqUreaqq3DAohJAJ
-         jdBr/VQZ3zOGfW51Pu0xCC41eO1LmpeAU5pvNNi7ZtQrsLQLEchmXr8H6Bm1wZo3RWXV
-         Lq8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVd+NXpM3/MXPm0J9GlHtAviTs9XUtXBTwtw4wZQCDFz16peBJadloSn1VVNV4xAYz/COv0K2VU9eZT4kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO90eRtrCXAMovX7v/EGF2z1UcXSyvN5dXQPC5Qmhv64K9VwPP
-	e1b7Wb0QzUfwhuy8HpgZIW4szHYtAF3El9prDm7wCqgboa3vZhuIjsfoRkA7RfNcsIprf3vtol0
-	CPA6+J+Iz6fXirpiKeFOKl/XwubfsyB0dbPPWjoEccw==
-X-Gm-Gg: ASbGncu5CYo+cyLUL4XU0zltCn5FuAdqB7UO3VvrZWWt98hOryQoqDLIcS20opclRVX
-	oY8olibHIEyqN4gBqfatxo6hMJxrtKWDobOlicSsX4wFLk5N6lCt37UGM7Yep2ZaeTNxgjvK8Qx
-	/OdSnvNB7t/nVziZTv74nZw1BhafE4FCdkWt/kKGdUpTFHaivckWdx6YUSiwINfSQIS6nmwVI0y
-	w10urdmn8ksHX3YxpsqmDsJpOto9xsQyUukDIOO9knNfzmrVeRsvPlJj7RbBjbv4KtUzs3g1dOL
-	W3LuN68AGTbb92iSOLYNsvAYCP2T
-X-Google-Smtp-Source: AGHT+IF2w8g1ojnDyGQLFzRzdE61uNp4FTHmi/dw+D9zx9iGIJ1bDIJjlMRj6txF7f56YSZyhxHtxSGceOGnH7lmkQU=
-X-Received: by 2002:a05:6e02:4714:b0:432:fbe2:3605 with SMTP id
- e9e14a558f8ab-432fbe23809mr44060065ab.11.1761804433543; Wed, 29 Oct 2025
- 23:07:13 -0700 (PDT)
+	s=arc-20240116; t=1761804480; c=relaxed/simple;
+	bh=zczIPpc0KWPLn9zXQ3ZoaFjpPTnJbDtjuzfwpUxJB5g=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=f2oAMJqPk43to7ruwInIRO7GNZouAVgtpFDfVh1SH2DlqriBav616GkGsFOu8FbI8tbe+cuCp8//pLkMIQ3BCdTE8j1qAImeXIr6tbjxR26q0rJUJpkWCtpsSFpECws5S83YerVhiSO/+hGdw/w7jrxK41u8aEuHVB43lahaZ/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=utU8PCoz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 288606F3;
+	Thu, 30 Oct 2025 07:06:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761804365;
+	bh=zczIPpc0KWPLn9zXQ3ZoaFjpPTnJbDtjuzfwpUxJB5g=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=utU8PCozLh0qFegg5Nivf//IQXFEM+4PC1QnaSa/h+a6JbDTaYTYLxGu0Q3DGXyyv
+	 5PGAPDv54VigbM7G5oo95YrpViI3Esw5yrv5AlmdiprhtjmsExFtl5gkDhNebvvf1f
+	 SQUhgj6Rc/X9mlyVqim1fr2K5p+HsTQeoc8p4hSA=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014132106.181155-1-apatel@ventanamicro.com>
- <20251014132106.181155-2-apatel@ventanamicro.com> <012aaa39-a37b-e682-0e34-9b7d7cd87f75@kernel.org>
-In-Reply-To: <012aaa39-a37b-e682-0e34-9b7d7cd87f75@kernel.org>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 30 Oct 2025 11:37:00 +0530
-X-Gm-Features: AWmQ_bmMf5OoHFiUJY6zI6JVVcFsxCAmo8ACbrb1vAID1QwfAgdvKVsJ-cC2OvY
-Message-ID: <CAAhSdy0iwq_ZPzFY5_x_wsbM_H+npSDVv1F=wP=O-_25VChh6Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] RISC-V: Add common csr_read_num() and
- csr_write_num() functions
-To: Paul Walmsley <pjw@kernel.org>
-Cc: Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Nutty Liu <nutty.liu@hotmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202510290816.8EQhDjD8-lkp@intel.com>
+References: <20251028-b4-rpi-ov5647-v1-4-098413454f5e@ideasonboard.com> <202510290816.8EQhDjD8-lkp@intel.com>
+Subject: Re: [PATCH 04/13] media: i2c: ov5647: Fix v4l2-compliance failure subscribing to events
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Kieran Bingham <kieran.bingham@ideasonboard.com>, David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, Ivan T. Ivanov <iivanov@suse.de>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, kernel test robot <lkp@intel.com>
+Date: Thu, 30 Oct 2025 11:37:49 +0530
+Message-ID: <176180446968.8690.15499732608328141859@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-On Thu, Oct 30, 2025 at 12:35=E2=80=AFAM Paul Walmsley <pjw@kernel.org> wro=
-te:
->
-> Hi Anup,
->
-> On Tue, 14 Oct 2025, Anup Patel wrote:
->
-> > In RISC-V, there is no CSR read/write instruction which takes CSR
-> > number via register so add common csr_read_num() and csr_write_num()
-> > functions which allow accessing certain CSRs by passing CSR number
-> > as parameter. These common functions will be first used by the
-> > ACPI CPPC driver and RISC-V PMU driver.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> > Reviewed-by: Atish Patra <atishp@rivosinc.com>
-> > Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
->
-> This patch also (silently) removes the CSR number filtering, e.g.
->
-> > diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> > index 42c1a9052470..fe491937ed25 100644
-> > --- a/drivers/acpi/riscv/cppc.c
-> > +++ b/drivers/acpi/riscv/cppc.c
-> > @@ -65,24 +65,19 @@ static void sbi_cppc_write(void *write_data)
-> >  static void cppc_ffh_csr_read(void *read_data)
-> >  {
-> >       struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read_data;
-> > +     int err;
-> >
-> > -     switch (data->reg) {
-> > -     /* Support only TIME CSR for now */
-> > -     case CSR_TIME:
-> > -             data->ret.value =3D csr_read(CSR_TIME);
-> > -             data->ret.error =3D 0;
-> > -             break;
-> > -     default:
-> > -             data->ret.error =3D -EINVAL;
-> > -             break;
-> > -     }
->
-> ... the above code, and:
+Quoting kernel test robot (2025-10-29 06:27:53)
+> Hi Jai,
+>=20
+> kernel test robot noticed the following build warnings:
+>=20
+> [auto build test WARNING on 3a8660878839faadb4f1a6dd72c3179c1df56787]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jai-Luthra/media-i=
+2c-ov5647-Parse-and-register-properties/20251028-153619
+> base:   3a8660878839faadb4f1a6dd72c3179c1df56787
+> patch link:    https://lore.kernel.org/r/20251028-b4-rpi-ov5647-v1-4-0984=
+13454f5e%40ideasonboard.com
+> patch subject: [PATCH 04/13] media: i2c: ov5647: Fix v4l2-compliance fail=
+ure subscribing to events
+> config: sparc64-randconfig-r134-20251029 (https://download.01.org/0day-ci=
+/archive/20251029/202510290816.8EQhDjD8-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d=
+1c086e82af239b245fe8d7832f2753436634990)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251029/202510290816.8EQhDjD8-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510290816.8EQhDjD8-lkp=
+@intel.com/
+>=20
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/media/i2c/ov5647.c:870:10: sparse: sparse: Initializer entry d=
+efined twice
+>    drivers/media/i2c/ov5647.c:876:10: sparse:   also defined here
 
-The switch case is incomplete for cppc_ffh_csr_read().
-Also, csr_read_num() already does appropriate filtering
-so the switch case over here is now redundant.
+My bad, this patch is already mainlined. I will drop it in next iteration.
 
->
-> >  /*
-> >   * Read the CSR of a corresponding counter.
-> >   */
-> >  unsigned long riscv_pmu_ctr_read_csr(unsigned long csr)
-> >  {
-> > -     if (csr < CSR_CYCLE || csr > CSR_HPMCOUNTER31H ||
-> > -        (csr > CSR_HPMCOUNTER31 && csr < CSR_CYCLEH)) {
-> > -             pr_err("Invalid performance counter csr %lx\n", csr);
-> > -             return -EINVAL;
->
-> ... the above code.
->
-> I'm thinking that we probably want to keep the CSR number filtering code
-> in; at least, I can't think of a good reason to remove it.  Care to add i=
-t
-> back in?
+>=20
+> vim +870 drivers/media/i2c/ov5647.c
+>=20
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  867 =20
+> c9a05cece64c60 Jacopo Mondi    2020-11-19  868  /* Subdev core operations=
+ registration */
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  869  static const struct v4l2_=
+subdev_core_ops ov5647_subdev_core_ops =3D {
+> dc3373081396f5 Jacopo Mondi    2020-11-19 @870          .subscribe_event =
+       =3D v4l2_ctrl_subdev_subscribe_event,
+> dc3373081396f5 Jacopo Mondi    2020-11-19  871          .unsubscribe_even=
+t      =3D v4l2_event_subdev_unsubscribe,
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  872  #ifdef CONFIG_VIDEO_ADV_D=
+EBUG
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  873          .g_register      =
+       =3D ov5647_sensor_get_register,
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  874          .s_register      =
+       =3D ov5647_sensor_set_register,
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  875  #endif
+> d812c6225cf5be David Plowman   2025-10-28  876          .subscribe_event =
+=3D v4l2_ctrl_subdev_subscribe_event,
+> d812c6225cf5be David Plowman   2025-10-28  877          .unsubscribe_even=
+t =3D v4l2_event_subdev_unsubscribe,
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  878  };
+> 3c2472a3c54895 Ramiro Oliveira 2017-03-22  879 =20
+>=20
+> --=20
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-We can potentially have custom CSRs as hardware counters
-hence the CSR filtering over here is already incomplete. Plus,
-csr_read_num() already does the CSR filtering and returns
-failure for inappropriate CSR number.
-
-Regards,
-Anup
+Thanks,
+    Jai
 
