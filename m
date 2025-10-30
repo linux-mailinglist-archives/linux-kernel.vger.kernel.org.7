@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-877481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAE3C1E332
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:28:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220D9C1E335
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E06A4E3919
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:28:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF314043B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E845829D291;
-	Thu, 30 Oct 2025 03:28:22 +0000 (UTC)
-Received: from out28-173.mail.aliyun.com (out28-173.mail.aliyun.com [115.124.28.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CA92620D2;
+	Thu, 30 Oct 2025 03:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuFLiSEx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3A52264DC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2930F23E33D;
+	Thu, 30 Oct 2025 03:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761794902; cv=none; b=VGf+zjMdWfHwmtdLtKRfHjJIhmjGdmd+20P1+35xtHRJ9e8J7h4CO9rojnAzguqoAGddxmAorkqRsIPfP+ZcaxLxosDq5BG6mA6yljozE0L9EKaeaK7ylX9j0l1Qao0FoRAx1De+Eypw6cBQ7B1JDHho54oqPkLTDbXCulaqVO4=
+	t=1761794949; cv=none; b=tbbhg8MbMbxZSly9colIB8bb/5ArJJVQVplBASo2RFb1dj8qWifcxpYJs4LGYrtIvM8TqXt+5IO3tW8+hHpEbM9BqoxY0sRZ3iP7+3K1Cd1Qa47xug1zvZ6waT3XmN0h5ypgpwSqKq3QMrORKGAT/U4nxNZ03Gl2L5Axk8LPc/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761794902; c=relaxed/simple;
-	bh=ZRwsoDODDDkoyUVw9jZogJ+/+K8HHSV4Lf9blPtqaGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OfhmWn2wYrUiYLq0uAVViHWGvK4tK9n6IexFhWzlR0+ekIqcjShFnAs2fhIi0PdhZBRSPNLvbKMdqS66LfaZs9Cr+a2nHWWq8znCNTwOtHg6L70JqawPaFYpNWl51A0P7QEUUYd4nhIEcIBPdp9FeLIAk6rZ1X4y3uWouvFVlNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn; spf=pass smtp.mailfrom=bosc.ac.cn; arc=none smtp.client-ip=115.124.28.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bosc.ac.cn
-Received: from 172.38.11.120(mailfrom:zhangzhijie@bosc.ac.cn fp:SMTPD_---.fAeuCRr_1761794886 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 30 Oct 2025 11:28:07 +0800
-Message-ID: <889561a0-cf44-4a17-a7c2-095408006bf3@bosc.ac.cn>
-Date: Thu, 30 Oct 2025 11:28:06 +0800
+	s=arc-20240116; t=1761794949; c=relaxed/simple;
+	bh=9YGk7nC5zxruIR9JOvTtGAvEO338uvKvfB3Fx9gx+u0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=be9vKYQkw429JHhJ0iR5uRdFw0sxULFBpLOkLUaoWyW1e+itplQp/xyckyxFluoBEF0VU2xGCeyz3KcDfN0gZ69maEgqVl4z2YjHG/teP7QY7FXEdfDnBseZLC2w1vX7T/1FFsJCe6tqiaIx/Q8OuSOlFVq5l84buTDmhzqbPcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuFLiSEx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A58C4CEF7;
+	Thu, 30 Oct 2025 03:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761794945;
+	bh=9YGk7nC5zxruIR9JOvTtGAvEO338uvKvfB3Fx9gx+u0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cuFLiSExx29MvGAti99VsaK1b3zwEUsWh7/BrMy3PqWxZFHV0QgNq4maFTWVa5JI0
+	 U/ylEeqZezYCjMSCEwUYS6VrZkTRHVipWhUOFr5PWRJC003wPQIdl7frKiVRxjHA7Y
+	 zitqtjrxrzgEXW4ZXbrhtz+ukriSSt0ovR6rbSZW21H58T+8b1GGoQb1GaQuxCRWvf
+	 RPpxoS+tVWc80LVRhX5/wTDNKFp8O1YbuWsYDvMNi6xlSf7u/1S8f4FAvgp/AWcRTJ
+	 5DeZ9QTpUkPLppnzAY4fT74tIQGEps6a+StVIxC4Wswcey2DnYIOjrw0gsZWKBOb5D
+	 tnM+Zkz5Z9XGQ==
+Date: Thu, 30 Oct 2025 12:29:01 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] tracing: Add an option to show symbols in
+ _text+offset for function profiler
+Message-Id: <20251030122901.46a51bfe643daa9910ad4110@kernel.org>
+In-Reply-To: <176179330871.957820.2367690308433599462.stgit@devnote2>
+References: <176179330871.957820.2367690308433599462.stgit@devnote2>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Support Intel Xe GPU dirver Porting on RISC-V
- Architecture
-To: Jeff Geerling <jeff@jeffgeerling.com>
-Cc: wangran@bosc.ac.cn, zhangjian@bosc.ac.cn, daniel@ffwll.ch,
- jani.nikula@linux.intel.com, rodrigo.vivi@intel.com,
- joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250715061837.2144388-1-zhangzhijie@bosc.ac.cn>
- <C67D4EC2-649C-4E46-A55D-8B48A31E8928@jeffgeerling.com>
-Content-Language: en-US
-From: ZhangZhiJie <zhangzhijie@bosc.ac.cn>
-In-Reply-To: <C67D4EC2-649C-4E46-A55D-8B48A31E8928@jeffgeerling.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Oops, I missed to update the version in the subject. Let me update it.
+
+On Thu, 30 Oct 2025 12:01:48 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> Hi,
+> 
+> This series implements an option to show symbols in _text+OFFSET
+> format instead of symbol name in the function profiler.
+> This is the 6th version, the previous one is here;
+> 
+> https://lore.kernel.org/all/176114747153.315239.6863821259073466010.stgit@devnote2/
+> 
+> This version is rebased on top of linux-trace/for-next branch
+> and modify offset format to hex.
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (Google) (2):
+>       tracing: Allow tracer to add more than 32 options
+>       tracing: Add an option to show symbols in _text+offset for function profiler
+> 
+> 
+>  kernel/trace/blktrace.c              |    6 +
+>  kernel/trace/ftrace.c                |   26 ++++++
+>  kernel/trace/trace.c                 |  154 +++++++++++++++++-----------------
+>  kernel/trace/trace.h                 |   40 +++++----
+>  kernel/trace/trace_events.c          |    4 -
+>  kernel/trace/trace_events_synth.c    |    2 
+>  kernel/trace/trace_fprobe.c          |    6 +
+>  kernel/trace/trace_functions_graph.c |   18 ++--
+>  kernel/trace/trace_irqsoff.c         |   30 +++----
+>  kernel/trace/trace_kdb.c             |    2 
+>  kernel/trace/trace_kprobe.c          |    6 +
+>  kernel/trace/trace_output.c          |   18 ++--
+>  kernel/trace/trace_sched_wakeup.c    |   24 +++--
+>  kernel/trace/trace_syscalls.c        |    4 -
+>  kernel/trace/trace_wprobe.c          |    2 
+>  15 files changed, 187 insertions(+), 155 deletions(-)
+> 
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
 
-
-On 2025/10/30 09:55, Jeff Geerling wrote:
-> +1 for this patch, as it would enable Xe on any non-x86 system.
-> 
-> I've successfully tested this change on Ampere and Broadcom (Raspberry Pi) systems.
-> 
-> We've been using the flag `CONFIG_VGA_CONSOLE` instead of `CONFIG_X86` but either should achieve the same goal. See: https://github.com/6by9/linux/commit/6bd4cfe79b5111986dd11a5c6e48d4a963fd7740
-> 
-> With some OSes a later Mesa version needs to be compiled to support newer Xe/Xe2 cards, however I've successfully tested a number of Intel dGPUs at this point. Sometimes setting force probe to '*' (or the particular GPU ID) is required, but otherwise stability is good.
-> 
-> For example, the A750: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/510#issuecomment-3383284831
-> 
->> On Jul 15, 2025, at 1:18 AM, zhangzhijie <zhangzhijie@bosc.ac.cn> wrote:
->>
->>     inb/outb speccial wire not support on other ARCH.
->> Should detect whether arch platform support or not.
->>
->> Signed-off-by: zhangzhijie <zhangzhijie@bosc.ac.cn>
->> ---
->> drivers/gpu/drm/i915/display/intel_vga.c | 4 ++++
->> 1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/i915/display/intel_vga.c b/drivers/gpu/drm/i915/display/intel_vga.c
->> index 4b98833bfa8c..5e48e3282670 100644
->> --- a/drivers/gpu/drm/i915/display/intel_vga.c
->> +++ b/drivers/gpu/drm/i915/display/intel_vga.c
->> @@ -33,6 +33,7 @@ void intel_vga_disable(struct drm_i915_private *dev_priv)
->> if (intel_de_read(dev_priv, vga_reg) & VGA_DISP_DISABLE)
->> return;
->>
->> +#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
->> /* WaEnableVGAAccessThroughIOPort:ctg,elk,ilk,snb,ivb,vlv,hsw */
->> vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
->> outb(0x01, VGA_SEQ_I);
->> @@ -40,6 +41,7 @@ void intel_vga_disable(struct drm_i915_private *dev_priv)
->> outb(sr1 | VGA_SR01_SCREEN_OFF, VGA_SEQ_D);
->> vga_put(pdev, VGA_RSRC_LEGACY_IO);
->> udelay(300);
->> +#endif
->>
->> intel_de_write(dev_priv, vga_reg, VGA_DISP_DISABLE);
->> intel_de_posting_read(dev_priv, vga_reg);
->> @@ -80,6 +82,7 @@ void intel_vga_redisable(struct drm_i915_private *i915)
->>
->> void intel_vga_reset_io_mem(struct drm_i915_private *i915)
->> {
->> +#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
->> struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
->>
->> /*
->> @@ -95,6 +98,7 @@ void intel_vga_reset_io_mem(struct drm_i915_private *i915)
->> vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
->> outb(inb(VGA_MIS_R), VGA_MIS_W);
->> vga_put(pdev, VGA_RSRC_LEGACY_IO);
->> +#endif
->> }
->>
->> int intel_vga_register(struct drm_i915_private *i915)
->> -- 
->> 2.34.1
->>
->>
-Congratulation! . So I think shoule be disable this ops or take other 
-ways to instead this code， Like None IO soc/ARCH
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
