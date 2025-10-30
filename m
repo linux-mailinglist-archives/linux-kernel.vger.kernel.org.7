@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-877853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DA0C1F326
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:10:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5A0C1F32F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9431E3A3EF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:10:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66ED14E7EED
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB50733F387;
-	Thu, 30 Oct 2025 09:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AFF337BB0;
+	Thu, 30 Oct 2025 09:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUEwHxGO"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNhhqVtp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED84F2848B2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DCB340294
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815413; cv=none; b=YDoNCkju+cQWDO8BqD/RVH3OSl9qUz1H2MPap4u40QoFdQokTbWQYJh820Y+aQjiAJCByf5K1IlOCj4rG0TDSRrf2uwSxPaWeE7nmyD2HyIz9sgkhkfQFvLH2xzVZiwuW9dyjWrYHxsjsKsOo6sBG8NPhFmyooqPYzdQBCI0wyo=
+	t=1761815454; cv=none; b=PPWpULYslc3goyw9SPONWUkkhJOSDnhdeATAmW5XPkD+U1pUDOePnnk7ia2yst9zh0I8jbENNmctJDt2CvOJlW+rUKQO+T09XYCNQiRxqvpS9c8LgfNLjM6vETX/Zz3eN3qL/pAp9mOEqmZwT68N1y6h7xP63dZ6oOtIPYyhYZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815413; c=relaxed/simple;
-	bh=ixhG+PRVCdRnZp3Hg/4I8LgGvCEzE7KLm5I/e839XBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJ7xElGmgHMYa0C9Hdh76UrWdXvt3/IvAht2DFfK1INuwb1E9YjpsctpLqFcCi1pnpmwwpL6PFisfLm7Kc36hUP5ucG9TpISe+zbEuWn/fRoGQteO3ggORbmxUwRBE+2jyGV8Tf5ovLkZ8Z1fYjTBTY3lN6eXhizs8Uis2PnVNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUEwHxGO; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a2852819a8so793054b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:10:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761815408; x=1762420208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QzW+i3uSQPTIyj+Ag6YFq0ylKZC2QeNYLUsRfJSSEWg=;
-        b=OUEwHxGOE+VcJYoTJVsuhun6pGo/WJkN6FlzIVGw/v1/YEtfwHStXgeayO6PYVdRBH
-         oI9SUZtKRz7xo9uasNukQpjGXidxJcXAqb1EaX1K1tF8bD+yBNBSYpiBNFnAI7Tc1M/p
-         YfcSTx91NXbTlHLC07MxsIYpIBAK3YF0/1NVAUapEsfGdRe0GaTjOdqE9Gp7R5g1tkD9
-         lUrkKuBqYQxdUznQkLkI5leI+biJ1OPmAMTYKxTiqkyaFTYxxxRVELo8gxj/sCGIfGMf
-         WT5oi1SZgi6LZGZiqJLZwm3GGE5MA0TlAV6MbmavRoQNbN6kwr1WPcOhyVLjyDmICDd5
-         IrCA==
+	s=arc-20240116; t=1761815454; c=relaxed/simple;
+	bh=troghh+EtnIk9h397iUL1P5hBgqhBFYUDWJNFG20LX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U/Iq9y1dYexEiWBw92o/dJ2+E8rgObVFnof/f5H7OJ1Wbcq5Qwh5NgvByOI6mBv1gz4tU1hYP8Yvd+Lpfd6frs37CDxkF/bKSM9DFObqbxvnaIkGJapCte+++xfGhmKWTF6ct413GD06uHv+19NLQ+DQ3p1qIpM7uRB7VfScfYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNhhqVtp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761815452;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oMeWelBTpKLjORlzb8BUx/v9zk9wij4ZcdP7B2QI6to=;
+	b=VNhhqVtpsy/NaL30NDrJ+l5e4fqBN016dnr6d4ko1YNW1PWRXS+vESXX4gDo7I1v9j46JJ
+	kSXohI4q3xqBCOKvPOaJZ6IeAPFsvtemrXT6NhklqrYGTCXXvc+Bc8A4nqyhrZHlEez851
+	h+Ub4ypKBvrj4qz2bhKVIVEXiDRHJyc=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-471-CEN90px5Ncih6GfFXvRcxg-1; Thu, 30 Oct 2025 05:10:50 -0400
+X-MC-Unique: CEN90px5Ncih6GfFXvRcxg-1
+X-Mimecast-MFC-AGG-ID: CEN90px5Ncih6GfFXvRcxg_1761815449
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-37a0cc22ec1so3464611fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:10:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761815408; x=1762420208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QzW+i3uSQPTIyj+Ag6YFq0ylKZC2QeNYLUsRfJSSEWg=;
-        b=wBVLXVHuGshSMO3GP3sRcpdYWFM8hLxLeJffteHqBNoeVsqq/Y37QWHrSWJwf8v+cj
-         rypRM73knphFox/pecJSqSxayqupcVAj/gruV8DjfqC8JlDZhkJ4wuQPNmbmOov1lG/a
-         As1HhWREF6gFL//50lqd/7mj9O+Igw2kIIXmKqlGbN52z5GOY0kV7Kkrocr+2BvMAXgt
-         psEqTCmFCbZh6tG/NUkac7DXvfUJ0wHv3ibgWNFwHZzOayX33YbJiLQ4LxtzszmyqU4V
-         WoVtnvPDXlfsmUOKC401yhVQ375phYLrMjtt+RIqsoG5NOJdY3hOfqiFYQRbq3QTHj5z
-         9IiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiZwTo9+4Z2K+du9VmZ8eDh2qm8wO+HW7H26U3Pq4Tcjbpv1DjHoy+r7EXyeXJFVYf79cC331t40oFNPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTae9QjJI1rOOb7BIL7Fe1hAKMXCeRp/RgqAR1Nx5nW94VlmHK
-	LcUUiY/g9iebTOo9wvY/aZjok8MiCRFlfTtMQwuPNuj9yEt8c/VGzwPI
-X-Gm-Gg: ASbGnctv6bz6mTourc0e7cQ8FrZDJmFkvyYjeAdlsYWLe9VuSZjXKu10w3DXKDybghU
-	zrgGXqhD2T5KEjLTTr803NMyaQmubzwxjaU14nv7P8rxX5kXYUZ/7/e8PRQD87Vrt0RWNbWx7HT
-	9kyJ5ibYzJBZ/R/yzhTNMoidBWADaW7hw53W4M9xWj6qSYVdIS1XQyo7kNc3qqDb8Tsh0eAXYzl
-	Smi9G0IGEPaavR+rBb8l6Hvjpm2DO3h5KHzWa1e6PvMCl7DaOjwcLQMGIgwIXmam9V25UAbsuad
-	RfFO4KSEt3iRnK1bOoM3P0t6g6XWY9sGjcVkI2ENnh+8Mk3DGWtbGgC13Wc8uLuyxdgBBfKccqQ
-	nkMVYdEc7NITzWV2ogrHtUbfnrNiMSzgF3/9NMZ7HXKqN2XC8tO7BqWSGq4zBjRY/WSHwEKpTTv
-	xDNXEp1mFNbUjA
-X-Google-Smtp-Source: AGHT+IEg4g4gEZCGcb4tXOH2lPJfVirKyqlOxOw3/QY2ei5Z6cCi9UsIX0h19mA8E8I4kU4y19rifQ==
-X-Received: by 2002:a17:902:ced2:b0:290:dc5d:c0d0 with SMTP id d9443c01a7336-294def36255mr75467535ad.49.1761815407715;
-        Thu, 30 Oct 2025 02:10:07 -0700 (PDT)
-Received: from fedora ([2401:4900:1f32:68ad:2e67:289c:5dac:46fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0827fsm177414165ad.31.2025.10.30.02.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 02:10:07 -0700 (PDT)
-Date: Thu, 30 Oct 2025 14:39:59 +0530
-From: ShiHao <i.shihao.999@gmail.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: hpa@zytor.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	david.kaplan@amd.com, i.shihao.999@gmail.com, james.morse@arm.com,
-	linux-kernel@vger.kernel.org, mingo@redhat.com,
-	peterz@infradead.org, reinette.chatre@intel.com, tglx@linutronix.de
-Subject: Re: [PATCH] x86 :kernel :rethook: fix possbile memory corruption
-Message-ID: <aQMrZyDxb09R8KPl@fedora>
-References: <20251025114830.295042-1-i.shihao.999@gmail.com>
- <6D2E5C3A-451C-40B6-9A03-3FBD552B933F@zytor.com>
+        d=1e100.net; s=20230601; t=1761815448; x=1762420248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oMeWelBTpKLjORlzb8BUx/v9zk9wij4ZcdP7B2QI6to=;
+        b=fa7/Ql9PAy2ELKeLWDGdKa3J1XhFvPEFm0g50aP8z3vBGHka7RFxD/JDO6hTgEwPxN
+         ZGR4a41Dof8cHvXD5QzZM6W+uBDBNoIRW7oylWlUzpWFrfVEczjeRE6uuFmmeUTyruTx
+         4NFq6S4mXIW+S+y9GNJTVZC/f1OtIa0XMWdNz9+x/xrQ5MkSfVvAUShpONf0aryK8bHj
+         jS8HYoXWoq7tR3Ey1d4SXmmc0MJjz3qRlP/ZCd00LfnHoqfAn2liMHGWyJFzLE8TI79O
+         Q+0FuUqD4oo+SzgA7JrF4p3JFEXltD681cVVR0RTQu2l+LrDGkk+jxP0xzuOGAxhzFvf
+         gC1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU5tSSPU2X2fNRTOnao3fZ6IUJ3IfMJKPDjAt5hdXbDRytu7c4mK2YmJYCdFs3Z25pbKJ4xoHJxMvYOAMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmkq/OgqJVN3up2E97R1dtyRdb3KoyUAqG3y/MpsFKtScEDcvp
+	pZUabLICyrNpijF+w+sW+BO8x6Nv2qxyWmC3fO0EbVD4ZiDs7XYWKTHRL8bKCeY0kaoS3072dne
+	cUIBWEiv6WXivI2bSeaGngSAAH6RbyFlEIuJ3bCXIOe0/jV3ETOrOHz00T4TzDbGwCorJYZncX+
+	F0hbgOWCVe/wDjgTqyEsB9skQmvu/a/5qd4SRxp/NvsxR1FV3J
+X-Gm-Gg: ASbGncuLSsosw8Lws9b7Vw7Q3xrZr7kZmbSZvebEnOXbA8lekfHGtHNZriVTNsLc+iP
+	NMgfxCxLhdjjgSTTcomKo3sjCKghNtEZQbPDlv2syqO76559ZjTOkNgFJhh1aYFxylHaDPRNPJI
+	P8yMaGHVDawlNxxbGTD6Pg8ElmSz61poeev1jZXX02oCH7i+tuxbSEYQ==
+X-Received: by 2002:a05:6512:2391:b0:591:d7e1:7859 with SMTP id 2adb3069b0e04-59416ef3b0dmr833633e87.56.1761815448063;
+        Thu, 30 Oct 2025 02:10:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGP/kQzE0RNM76fJcR4JF1n9agyalrVPw4P+d/1DyMASGn27+BCcr/ZMHo4k0Nu5jckBVa+UTheLuwKQaCsORU=
+X-Received: by 2002:a05:6512:2391:b0:591:d7e1:7859 with SMTP id
+ 2adb3069b0e04-59416ef3b0dmr833623e87.56.1761815447591; Thu, 30 Oct 2025
+ 02:10:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6D2E5C3A-451C-40B6-9A03-3FBD552B933F@zytor.com>
+References: <20251002170846.437888-1-costa.shul@redhat.com>
+In-Reply-To: <20251002170846.437888-1-costa.shul@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Thu, 30 Oct 2025 10:10:36 +0100
+X-Gm-Features: AWmQ_bmQbxEjDPYY78CtDBSW88IHSLgudrACU9vS2dpfYk6ZJl9LPEG1O4-mr68
+Message-ID: <CAP4=nvTZP+=_hALnW2VB35KWwu5TNJ9m4FS8pLfk3hxFLTTtGg@mail.gmail.com>
+Subject: Re: [PATCH v1] tools/rtla: Fix unassigned nr_cpus
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
+	John Kacur <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Steven,
 
-> Please don't submit a patch where you are explicitly saying you are blindly following a tool and don't actually understand the code.
+=C4=8Dt 2. 10. 2025 v 19:09 odes=C3=ADlatel Costa Shulyupin
+<costa.shul@redhat.com> napsal:
 >
-> If you did understand the code, or the architecture, you would know that the ss field is embedded in a larger pointer-sized field.
+> In recently introduced timerlat_free(),
+> the variable 'nr_cpus' is not assigned.
+>
+> Assign it with sysconf(_SC_NPROCESSORS_CONF) as done elsewhere.
+> Remove the culprit: -Wno-maybe-uninitialized. The rest of the
+> code is clean.
+>
+> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+> ---
+>  tools/tracing/rtla/Makefile.rtla  | 2 +-
+>  tools/tracing/rtla/src/timerlat.c | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+>
 
-Hi Peter
+This is another fix of a bug introduced in the 6.18-v1 RTLA code
+consolidation [1], this time affecting the resetting of idle states
+set through --deepest-idle-state. Could you please also add it to your
+RTLA fix queue?
 
-Well thanks for correcting me .Thank you so much for your time.
-I regret not thoroughly investigating this matter.appreciate your
-feedback and if there is anything  i could do please let me know i am
-ready to improve and also sorry for the late response .
+Also, this should have:
 
-best regards,
-shi hao
+Fixes: 2f3172f9dd58 ("tools/rtla: Consolidate code between
+osnoise/timerlat and hist/top")
+
+[1] https://lore.kernel.org/linux-trace-kernel/20250907022325.243930-1-crwo=
+od@redhat.com/T/
+
+Thanks,
+Tomas
 
 
