@@ -1,161 +1,223 @@
-Return-Path: <linux-kernel+bounces-877565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CD2C1E70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:38:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EA4C1E735
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2362C189807C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75F53188E434
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596CB2DAFD2;
-	Thu, 30 Oct 2025 05:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D13E3019A2;
+	Thu, 30 Oct 2025 05:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mw0YlVCP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S75W2zJi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A89286419;
-	Thu, 30 Oct 2025 05:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0E82DAFD2;
+	Thu, 30 Oct 2025 05:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761802669; cv=none; b=LKrMOKZY7P3i6/Sk0RvJlNlOV5pYxyEbDvi5S/XAiudU1qVxaGwrkOxA+Yxgz8UM4qDhAd8xPn7qn8I24PByeGKBHa9Tvkhtj5Z+FhwGLIttw6eX4egHRYKS/kHOR8i43apo+lTvuMz1TTWQ4t3SyeyI1Pdom/koa+jD5xvzpXk=
+	t=1761802915; cv=none; b=bV/UyGuFY269xN+0VWmv7Nz8RhTbvUK96TR/jTIPkOANcI+CCJQ97zVnKI3I5Jjg2hSo34eCZrCa15oV8UMiImTwIyvD8BYR2GDqNYMn5N8/qtSG/AyEAE3HJ7g6pHCSn97sieL6ZjgB16HTAVHIna4eMyyOKxWcgo9GA5uRHI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761802669; c=relaxed/simple;
-	bh=2Ql6M2oEHS7vNgrk7s8vVaKzAoHkuVoLhaBtq6nZqNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7AYkgZ6u+mrdVsXGVAt7t8kHmZlEOJBnnaMMxZGTj0lBV1KcGB0wZzxgcII03zVij9CSkEhwWekUng43L+PAzV/TOHISBbq2cWRxC5rBSJZhT9kbfC4t7GdxiKdy+jm2csBznE5CA351NfgkkpZ8avHK7H397LQ5G9xyWHySSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mw0YlVCP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4C7C4CEF1;
-	Thu, 30 Oct 2025 05:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761802668;
-	bh=2Ql6M2oEHS7vNgrk7s8vVaKzAoHkuVoLhaBtq6nZqNQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mw0YlVCPET7ndopNNr9hB7Re4x9WJIosMTGc0wbFHbfpjO3sIEor75y1+KYOPJGEK
-	 fBBnxkL+Cf+AVzk7EzlqCcnRHWnB4XJ1fyR/zrk1xVP0hFLXJRFVcKzOF3wll/F6eB
-	 2em8BRX45O0hHq8ozDzmHfGXOzt+P9jhiCzG3/8bW7KBT+SxixONMZTFGlf0ExV6VD
-	 ydCqfmtUBSx21kbCpQ2GaCIV95p5G3wmrosXkTd9YOvsIKc4u2MEOQGaxS/im3RVLD
-	 Z/Tt5eaEczxahwnvBN4Plu/6xl2BZui3hBMQQUUsl6EETPs0OAIbafkrJgSWz1W9Tf
-	 MPa0YcySif4LQ==
-Message-ID: <7c1e0cb5-2483-4efa-be52-84cbe5d1a4b2@kernel.org>
-Date: Thu, 30 Oct 2025 06:37:40 +0100
+	s=arc-20240116; t=1761802915; c=relaxed/simple;
+	bh=nU18lsAq/OyPRT69o4sqp39RtOZX0AOAyhYhm0ktUQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pq5plqB9h0jAxGcPvtasbjnqxAfu3+eT0aCfFDLlEhcF97RTp98B5bSnKgKFKxxhuiP42ekYHSSEY57UF7mS+F9yqlldBUFfY8XhWtVyGwWNd0FagwSbjl9YCyf4GYasve/fLd+MTTtgK/UdRkGM+yJOasL5/0s1XfSFOsedKUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S75W2zJi; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761802914; x=1793338914;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nU18lsAq/OyPRT69o4sqp39RtOZX0AOAyhYhm0ktUQg=;
+  b=S75W2zJiOujoBwXD5cM0RuLkFzYbyv1n4302XeukHAEgB7gvPnxCF8oe
+   XDpu6XHiM/gGcucozJucY4qT8PolneZJXeCP0pjLq8N/mAFdoNy0sO7Ij
+   gliVB/UDf31h3WiPQ/vyOVqkWetaxBDgNIHk2ClCnoojPb0fGb0Wwp66i
+   XPfcoSnnX/xTEzVDOkclF9C5f7T8Re13t/pcnc/3/W86kw7Nq7DPVY+6c
+   Jyvz0kA4rMb6v9HWo7JhWdNQZZkcXeY4VOwOrtx7NJ0/cGTNznBHbOG4y
+   GfH9ks4GROlUZGzX5OLYV9nW6YRjV7LXwP8/TTRUqUU9MKzp2/u0uIbsC
+   Q==;
+X-CSE-ConnectionGUID: enApA4umQp+A3hirY8JgFA==
+X-CSE-MsgGUID: lHGfe/I9QLSEGuyPQ0uz8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63845648"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="63845648"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:41:53 -0700
+X-CSE-ConnectionGUID: gBwJdAhDSdSXnuXl5d1Qjg==
+X-CSE-MsgGUID: C4N+2GgQRb6xQS3KdzVsmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="189934326"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 29 Oct 2025 22:41:49 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vELPu-000LVA-0J;
+	Thu, 30 Oct 2025 05:41:46 +0000
+Date: Thu, 30 Oct 2025 13:40:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Rohan G Thomas <rohan.g.thomas@altera.com>
+Subject: Re: [PATCH net-next 4/4] net: stmmac: socfpga: Add hardware
+ supported cross-timestamp
+Message-ID: <202510301322.f0J41mwI-lkp@intel.com>
+References: <20251029-agilex5_ext-v1-4-1931132d77d6@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/12] arm64: defconfig: Enable NT37801 DSI panel driver
-To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, robin.clark@oss.qualcomm.com,
- lumag@kernel.org, abhinav.kumar@linux.dev, sean@poorly.run,
- marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_mkrishn@quicinc.com, jonathan@marek.ca, quic_khsieh@quicinc.com,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- tingwei.zhang@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com,
- yongxing.mou@oss.qualcomm.com
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-3-yuanjie.yang@oss.qualcomm.com>
- <wuh7agcgg6spghilnx4amqukaaydj25u7kbdiod7fl6pu2ulvm@pmosyuo43cyw>
- <aQF98RvLuOlJZlFi@yuanjiey.ap.qualcomm.com>
- <38c8e26c-08a4-42d9-8f6d-93969af90d50@kernel.org>
- <aQLOaI3ngjswi7kd@yuanjiey.ap.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aQLOaI3ngjswi7kd@yuanjiey.ap.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-agilex5_ext-v1-4-1931132d77d6@altera.com>
 
-On 30/10/2025 03:33, yuanjiey wrote:
-> On Wed, Oct 29, 2025 at 02:05:20PM +0100, Krzysztof Kozlowski wrote:
->> On 29/10/2025 03:37, yuanjiey wrote:
->>> On Mon, Oct 27, 2025 at 10:51:23PM -0500, Bjorn Andersson wrote:
->>>> On Thu, Oct 23, 2025 at 04:06:05PM +0800, yuanjie yang wrote:
->>>>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->>>>>
->>>>> Build the NT37801 DSI panel driver as module.
->>>>>
->>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
->>>>> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->>>>
->>>> You (Yuanjie) authored the patch, but forgot to sign-off, then Yongxing
->>>> provided certificate of origin, then you provide certificate of origin
->>>> and send it to list?
->>>>
->>>> Please correct.
->>>
->>> All the display patches were jointly developed by Yongxing and me.
->>> So every patch 
->>
->>
->> So two people were working on this absolutely trivial defconfig change?
->> I have troubles believing this.
-> I want to say these patches I am first author and yongxing give me support, so
-> I think yongxing is second author.
-> 
-> I want to express my gratitude for Yongxing's support in every patch, so I included
-> both our names in the sign-off for each one.
-> 
-> However, if my intention causes any trouble for maintainer, I can remove Yongxing's
-> sign-off from this patch.
+Hi Rohan,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on a8abe8e210c175b1d5a7e53df069e107b65c13cb]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Rohan-G-Thomas-via-B4-Relay/net-stmmac-socfpga-Agilex5-EMAC-platform-configuration/20251029-162502
+base:   a8abe8e210c175b1d5a7e53df069e107b65c13cb
+patch link:    https://lore.kernel.org/r/20251029-agilex5_ext-v1-4-1931132d77d6%40altera.com
+patch subject: [PATCH net-next 4/4] net: stmmac: socfpga: Add hardware supported cross-timestamp
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20251030/202510301322.f0J41mwI-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510301322.f0J41mwI-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510301322.f0J41mwI-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c:390:9: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+     390 |         return ret;
+         |                ^~~
+   drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c:312:12: note: initialize the variable 'ret' to silence this warning
+     312 |         int i, ret;
+         |                   ^
+         |                    = 0
+   1 warning generated.
 
 
-Please read submitting patches to understand what Signed-off-by means.
-Otherwise I have doubts we can accept your patches - you simply do not
-understand what you are certifying.
+vim +/ret +390 drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
 
-Best regards,
-Krzysztof
+   301	
+   302	static int smtg_crosststamp(ktime_t *device, struct system_counterval_t *system,
+   303				    void *ctx)
+   304	{
+   305		struct stmmac_priv *priv = (struct stmmac_priv *)ctx;
+   306		u32 num_snapshot, gpio_value, acr_value;
+   307		void __iomem *ptpaddr = priv->ptpaddr;
+   308		void __iomem *ioaddr = priv->hw->pcsr;
+   309		unsigned long flags;
+   310		u64 smtg_time = 0;
+   311		u64 ptp_time = 0;
+   312		int i, ret;
+   313	
+   314		/* Both internal crosstimestamping and external triggered event
+   315		 * timestamping cannot be run concurrently.
+   316		 */
+   317		if (priv->plat->flags & STMMAC_FLAG_EXT_SNAPSHOT_EN)
+   318			return -EBUSY;
+   319	
+   320		mutex_lock(&priv->aux_ts_lock);
+   321		/* Enable Internal snapshot trigger */
+   322		acr_value = readl(ptpaddr + PTP_ACR);
+   323		acr_value &= ~PTP_ACR_MASK;
+   324		switch (priv->plat->int_snapshot_num) {
+   325		case AUX_SNAPSHOT0:
+   326			acr_value |= PTP_ACR_ATSEN0;
+   327			break;
+   328		case AUX_SNAPSHOT1:
+   329			acr_value |= PTP_ACR_ATSEN1;
+   330			break;
+   331		case AUX_SNAPSHOT2:
+   332			acr_value |= PTP_ACR_ATSEN2;
+   333			break;
+   334		case AUX_SNAPSHOT3:
+   335			acr_value |= PTP_ACR_ATSEN3;
+   336			break;
+   337		default:
+   338			mutex_unlock(&priv->aux_ts_lock);
+   339			return -EINVAL;
+   340		}
+   341		writel(acr_value, ptpaddr + PTP_ACR);
+   342	
+   343		/* Clear FIFO */
+   344		acr_value = readl(ptpaddr + PTP_ACR);
+   345		acr_value |= PTP_ACR_ATSFC;
+   346		writel(acr_value, ptpaddr + PTP_ACR);
+   347		/* Release the mutex */
+   348		mutex_unlock(&priv->aux_ts_lock);
+   349	
+   350		/* Trigger Internal snapshot signal. Create a rising edge by just toggle
+   351		 * the GPO0 to low and back to high.
+   352		 */
+   353		gpio_value = readl(ioaddr + XGMAC_GPIO_STATUS);
+   354		gpio_value &= ~XGMAC_GPIO_GPO0;
+   355		writel(gpio_value, ioaddr + XGMAC_GPIO_STATUS);
+   356		gpio_value |= XGMAC_GPIO_GPO0;
+   357		writel(gpio_value, ioaddr + XGMAC_GPIO_STATUS);
+   358	
+   359		/* Time sync done Indication - Interrupt method */
+   360		if (!wait_event_interruptible_timeout(priv->tstamp_busy_wait,
+   361						      dwxgmac_cross_ts_isr(priv),
+   362						      HZ / 100)) {
+   363			priv->plat->flags &= ~STMMAC_FLAG_INT_SNAPSHOT_EN;
+   364			return -ETIMEDOUT;
+   365		}
+   366	
+   367		*system = (struct system_counterval_t) {
+   368			.cycles = 0,
+   369			.cs_id = CSID_ARM_ARCH_COUNTER,
+   370			.use_nsecs = true,
+   371		};
+   372	
+   373		num_snapshot = (readl(ioaddr + XGMAC_TIMESTAMP_STATUS) &
+   374				XGMAC_TIMESTAMP_ATSNS_MASK) >>
+   375				XGMAC_TIMESTAMP_ATSNS_SHIFT;
+   376	
+   377		/* Repeat until the timestamps are from the FIFO last segment */
+   378		for (i = 0; i < num_snapshot; i++) {
+   379			read_lock_irqsave(&priv->ptp_lock, flags);
+   380			stmmac_get_ptptime(priv, ptpaddr, &ptp_time);
+   381			*device = ns_to_ktime(ptp_time);
+   382			read_unlock_irqrestore(&priv->ptp_lock, flags);
+   383		}
+   384	
+   385		get_smtgtime(priv->mii, SMTG_MDIO_ADDR, &smtg_time);
+   386		system->cycles = smtg_time;
+   387	
+   388		priv->plat->flags &= ~STMMAC_FLAG_INT_SNAPSHOT_EN;
+   389	
+ > 390		return ret;
+   391	}
+   392	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
