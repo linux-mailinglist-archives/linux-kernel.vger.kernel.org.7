@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-877855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5A0C1F32F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:11:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD08C1F34D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66ED14E7EED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9C919C105B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AFF337BB0;
-	Thu, 30 Oct 2025 09:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5BF340DB1;
+	Thu, 30 Oct 2025 09:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNhhqVtp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="G2IQJO95";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L3ey6p+1"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DCB340294
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD719340294;
+	Thu, 30 Oct 2025 09:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815454; cv=none; b=PPWpULYslc3goyw9SPONWUkkhJOSDnhdeATAmW5XPkD+U1pUDOePnnk7ia2yst9zh0I8jbENNmctJDt2CvOJlW+rUKQO+T09XYCNQiRxqvpS9c8LgfNLjM6vETX/Zz3eN3qL/pAp9mOEqmZwT68N1y6h7xP63dZ6oOtIPYyhYZE=
+	t=1761815460; cv=none; b=TIx8nvunqNFDnpaLtxqKrTaTD4NfaSodU2rpJXKIHD/OJfSxo37rBnuVxyjVrorPZ3pe7qGHzSmJCTdF2qDoHIAX786IrH2po9JKOChR/HCzy/GOTL58p9FLgPPn9nAMgFurCMwhydnPn+gimvZZyTDYAE39o2Re+6n9xW7Ray0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815454; c=relaxed/simple;
-	bh=troghh+EtnIk9h397iUL1P5hBgqhBFYUDWJNFG20LX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/Iq9y1dYexEiWBw92o/dJ2+E8rgObVFnof/f5H7OJ1Wbcq5Qwh5NgvByOI6mBv1gz4tU1hYP8Yvd+Lpfd6frs37CDxkF/bKSM9DFObqbxvnaIkGJapCte+++xfGhmKWTF6ct413GD06uHv+19NLQ+DQ3p1qIpM7uRB7VfScfYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNhhqVtp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761815452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oMeWelBTpKLjORlzb8BUx/v9zk9wij4ZcdP7B2QI6to=;
-	b=VNhhqVtpsy/NaL30NDrJ+l5e4fqBN016dnr6d4ko1YNW1PWRXS+vESXX4gDo7I1v9j46JJ
-	kSXohI4q3xqBCOKvPOaJZ6IeAPFsvtemrXT6NhklqrYGTCXXvc+Bc8A4nqyhrZHlEez851
-	h+Ub4ypKBvrj4qz2bhKVIVEXiDRHJyc=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-471-CEN90px5Ncih6GfFXvRcxg-1; Thu, 30 Oct 2025 05:10:50 -0400
-X-MC-Unique: CEN90px5Ncih6GfFXvRcxg-1
-X-Mimecast-MFC-AGG-ID: CEN90px5Ncih6GfFXvRcxg_1761815449
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-37a0cc22ec1so3464611fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:10:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761815448; x=1762420248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oMeWelBTpKLjORlzb8BUx/v9zk9wij4ZcdP7B2QI6to=;
-        b=fa7/Ql9PAy2ELKeLWDGdKa3J1XhFvPEFm0g50aP8z3vBGHka7RFxD/JDO6hTgEwPxN
-         ZGR4a41Dof8cHvXD5QzZM6W+uBDBNoIRW7oylWlUzpWFrfVEczjeRE6uuFmmeUTyruTx
-         4NFq6S4mXIW+S+y9GNJTVZC/f1OtIa0XMWdNz9+x/xrQ5MkSfVvAUShpONf0aryK8bHj
-         jS8HYoXWoq7tR3Ey1d4SXmmc0MJjz3qRlP/ZCd00LfnHoqfAn2liMHGWyJFzLE8TI79O
-         Q+0FuUqD4oo+SzgA7JrF4p3JFEXltD681cVVR0RTQu2l+LrDGkk+jxP0xzuOGAxhzFvf
-         gC1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5tSSPU2X2fNRTOnao3fZ6IUJ3IfMJKPDjAt5hdXbDRytu7c4mK2YmJYCdFs3Z25pbKJ4xoHJxMvYOAMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmkq/OgqJVN3up2E97R1dtyRdb3KoyUAqG3y/MpsFKtScEDcvp
-	pZUabLICyrNpijF+w+sW+BO8x6Nv2qxyWmC3fO0EbVD4ZiDs7XYWKTHRL8bKCeY0kaoS3072dne
-	cUIBWEiv6WXivI2bSeaGngSAAH6RbyFlEIuJ3bCXIOe0/jV3ETOrOHz00T4TzDbGwCorJYZncX+
-	F0hbgOWCVe/wDjgTqyEsB9skQmvu/a/5qd4SRxp/NvsxR1FV3J
-X-Gm-Gg: ASbGncuLSsosw8Lws9b7Vw7Q3xrZr7kZmbSZvebEnOXbA8lekfHGtHNZriVTNsLc+iP
-	NMgfxCxLhdjjgSTTcomKo3sjCKghNtEZQbPDlv2syqO76559ZjTOkNgFJhh1aYFxylHaDPRNPJI
-	P8yMaGHVDawlNxxbGTD6Pg8ElmSz61poeev1jZXX02oCH7i+tuxbSEYQ==
-X-Received: by 2002:a05:6512:2391:b0:591:d7e1:7859 with SMTP id 2adb3069b0e04-59416ef3b0dmr833633e87.56.1761815448063;
-        Thu, 30 Oct 2025 02:10:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGP/kQzE0RNM76fJcR4JF1n9agyalrVPw4P+d/1DyMASGn27+BCcr/ZMHo4k0Nu5jckBVa+UTheLuwKQaCsORU=
-X-Received: by 2002:a05:6512:2391:b0:591:d7e1:7859 with SMTP id
- 2adb3069b0e04-59416ef3b0dmr833623e87.56.1761815447591; Thu, 30 Oct 2025
- 02:10:47 -0700 (PDT)
+	s=arc-20240116; t=1761815460; c=relaxed/simple;
+	bh=LwImtIic5S4WdFUw4zvNryLJBfpSk1GZjFAPdn+xADs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=uZCTL5ti0ChsrJIpszVnQUQn/Hho5HrkWRIDOABM+iZt7I8LBsv/YdZ45r3ZXuFCM5+4zze1h/cCJsyWgQUuLwAD5KvJVex7yjPbcIIswaJ7Cen/GQPYtfvyn7JP2xpZ3GLXKIcnCGDtdW9RagNvI/0a/iru7ZP9zYFPDQmJ7LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=G2IQJO95; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L3ey6p+1; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CA3CE14001B2;
+	Thu, 30 Oct 2025 05:10:57 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 05:10:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761815457;
+	 x=1761901857; bh=tb0V2rWF8eK5noQCPf0SL+1neAJPUMgNFsms4dB+ol0=; b=
+	G2IQJO95adkPHgL2RfFliPL7gFRAaAg5OtYxLBIfNxL6pb8jgmaQw5iHi+PTwB/1
+	Vi0uKCr977vPjTQ5eQ4qqW1gQlZBDUAtKVlJEu/CdokvPpZxyMRbp5ohwnR6J3bN
+	lCwwR1em5n16nPrx89XEHmqlYZTjfjwyeOZfFrSnaf2XZ4lkfFgTqIESaXbVP6iL
+	lZnkQEdOYgwEmOtRp6M3EK+XQpl76EOw1wFbyqQoxVGkXl9QdnRZveW0R2NGkxVS
+	oxTWMXsysOGEFS6PyZytYeuzEo/9QolWjNItIF+d7Q7XJNbcTLHN3Pzqbftn+b1e
+	qqg+I7u0ra2vaQPawxyx0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761815457; x=
+	1761901857; bh=tb0V2rWF8eK5noQCPf0SL+1neAJPUMgNFsms4dB+ol0=; b=L
+	3ey6p+1i2RRBrNpVwE/AI9rUWRHZasfr2ezQxr6UwMWVWrMlmyMjPCvGSTsAWo+W
+	1/b09Ug3Z7mEfj50zKmxvpGFyPXF3B8+t8Rwj1gsZ+M6kGB/DP4aJKcxur3PgyIp
+	fWE29kr1BMADTO1SxOe0gxbI+V+812cQ7CxzXgKYwDIKdFrmgDMON3TqFf3qVM5p
+	QI2Vb94WY+I35hMl9LS7EfI81Ak9i3VSFKKTStL2YrXEYYggb6mGjWumNMo/OUTm
+	7dZl/pBOF3XZGSb2uq2pK7RgMNCqATH3ujTezCWXvykz7EZhgmeoGmu1v76MvcWi
+	wV0awuTuES7+yi0gxgtDw==
+X-ME-Sender: <xms:oSsDabVPrIrTAdK_m5JigryzDqTJVooQbuI_XrkyLlusjclGGdAepg>
+    <xme:oSsDaeZhZSc4TnJ35k38hvg0zJnRQMaRNOPI2tBhQ2gjO25sWUwvzMLKtYjcFNNys
+    8Gk9nD9s6HFSZq-_vHpiXqbotvqiOS29gvLA40TiakvO9T5cdnVIveb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeivddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopeifvghnshhtsegthhhrohhmihhumhdrohhrghdprhgtphhtthhope
+    grnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgr
+    rdgtohhmpdhrtghpthhtohepkhgvrhhnvghlsegtohhllhgrsghorhgrrdgtohhmpdhrtg
+    hpthhtohepmhgrthhthhhirghsrdgsghhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    rghnuggvrhhsshhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrthhhihgvuh
+    drphhoihhrihgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
+    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqmhgvughirghtvghksehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hg
+X-ME-Proxy: <xmx:oSsDaWB9qRfihMri8moXwHla_MkZk0GCsxLCxQ2gXBbQ0Mr5TvNOIA>
+    <xmx:oSsDaewnx5C0FXH3B4xhDmLLOfzFlFDuMJ6zbBvYV-nIzWbxsiOXqw>
+    <xmx:oSsDaS5LiP9Tuuc7OO14BJkDjhsLQyWVBzY56kbZ6v3vKgNerK1j3w>
+    <xmx:oSsDaXwp4GkDZ5eFt32DUXgSKHuva78C0j57vuM2rhTuQ06fUCQ97g>
+    <xmx:oSsDaSnin9clfra-86r2dbBeGWJnhtq8OAB7muA_mrNh8B9qgws6CvnM>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 65CD5700054; Thu, 30 Oct 2025 05:10:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002170846.437888-1-costa.shul@redhat.com>
-In-Reply-To: <20251002170846.437888-1-costa.shul@redhat.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Thu, 30 Oct 2025 10:10:36 +0100
-X-Gm-Features: AWmQ_bmQbxEjDPYY78CtDBSW88IHSLgudrACU9vS2dpfYk6ZJl9LPEG1O4-mr68
-Message-ID: <CAP4=nvTZP+=_hALnW2VB35KWwu5TNJ9m4FS8pLfk3hxFLTTtGg@mail.gmail.com>
-Subject: Re: [PATCH v1] tools/rtla: Fix unassigned nr_cpus
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	John Kacur <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: A1uT7sOefpDB
+Date: Thu, 30 Oct 2025 10:10:37 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Chen-Yu Tsai" <wenst@chromium.org>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
+Cc: "Mathieu Poirier" <mathieu.poirier@linaro.org>,
+ linux-remoteproc@vger.kernel.org, "Bjorn Andersson" <andersson@kernel.org>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+Message-Id: <f434165f-1717-41ff-93e4-9be5b7fca929@app.fastmail.com>
+In-Reply-To: 
+ <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
+References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
+ <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
+ <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if firmware-name not
+ present
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steven,
-
-=C4=8Dt 2. 10. 2025 v 19:09 odes=C3=ADlatel Costa Shulyupin
-<costa.shul@redhat.com> napsal:
+On Thu, Oct 30, 2025, at 09:21, Chen-Yu Tsai wrote:
+> On Wed, Oct 29, 2025 at 7:05=E2=80=AFPM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> >
+>> > I guess I can send a followup patch?
+>>
+>> The only followup patch that I deem to be necessary is one adding a s=
+ymlink
+>> or renaming for MT8188's SCP and nothing else.
 >
-> In recently introduced timerlat_free(),
-> the variable 'nr_cpus' is not assigned.
+> The firmware was uploaded in March of 2025, and is packaged in Debian
+> Trixie, and was also backported to Bookworm. Either adding a symlink or
+> renaming it won't trickle down to users for some time. So this seems
+> like a possible ABI break, where the ABI is the file name.
 >
-> Assign it with sysconf(_SC_NPROCESSORS_CONF) as done elsewhere.
-> Remove the culprit: -Wno-maybe-uninitialized. The rest of the
-> code is clean.
->
-> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-> ---
->  tools/tracing/rtla/Makefile.rtla  | 2 +-
->  tools/tracing/rtla/src/timerlat.c | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
+> Or maybe you don't consider it as such because SCP hasn't been enabled
+> in the kernel in any release yet?
 
-This is another fix of a bug introduced in the 6.18-v1 RTLA code
-consolidation [1], this time affecting the resetting of idle states
-set through --deepest-idle-state. Could you please also add it to your
-RTLA fix queue?
+It's normally up to the kernel driver to know about the firmware
+file names and the order of trying the possible fallbacks, which
+is exactly why I originally asked to not rely on the property
+from dtb.
 
-Also, this should have:
+If you want a symlink in linux-firmware, that would go the other
+way, pointing the old filename to the new location.
 
-Fixes: 2f3172f9dd58 ("tools/rtla: Consolidate code between
-osnoise/timerlat and hist/top")
-
-[1] https://lore.kernel.org/linux-trace-kernel/20250907022325.243930-1-crwo=
-od@redhat.com/T/
-
-Thanks,
-Tomas
-
+    Arnd
 
