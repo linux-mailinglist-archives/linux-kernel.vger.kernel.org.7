@@ -1,178 +1,213 @@
-Return-Path: <linux-kernel+bounces-879188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E689C227E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:03:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77CFC227D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F703AC34A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2ED3188C8DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4E92EC09F;
-	Thu, 30 Oct 2025 22:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FDE2F0C62;
+	Thu, 30 Oct 2025 22:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YW+HpKG9"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="hq6LxwAB"
+Received: from mail-io1-f66.google.com (mail-io1-f66.google.com [209.85.166.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2897271467
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C720F2E9722
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761861768; cv=none; b=jeq2/CMthbT5CacmA6Z8YmsQVjKVZwcuDIwiGIBBhshcBF/ukEzaBnaNUxzyi77BoAMcgbnpU8b7tynioYurh3T9BJY8EmYK3RTSaXNV8SJR0xILvurf78AN1Hg/EPYrRla11K/Z0XKa9uammp8tEhHdvpYk2/ACgSB/eQ3Ot3E=
+	t=1761861787; cv=none; b=TlelYQsAhoXnQu4Psealbk3Bk5SoXO3Dru5DrylFx5KaNYNPqfYrdz+5ypqAebLv+VMW1mpe+TFrKObxjcCJfjxWzeB+tHcNjTpvoMlPOG2bQjTw3NayMitSOBcyppHIezQ4dZggmHuAFjkBWQgB1TMJmlS7Z/M93V/fF21fvcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761861768; c=relaxed/simple;
-	bh=UvRyiZNqMNUKokDlWDsbCD3weBxD2oq5vMb44qnepsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIPqc2QzDuxJ1ZH6zsB8Q3HjM8foCKpk+nNAkP3IyLOWWzogyZ60SHMcn/0XcGi0por0s+QZuxBeqd39b/xq404hpQyNVUUtjnP3BBCoDVJ2JA9bHGqIIew68XCbwZwtOBteYEQ/uCc0cA93OZYEWiVTCUKp7mxH7OZv9bBiFSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YW+HpKG9; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2698384978dso12830355ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:02:46 -0700 (PDT)
+	s=arc-20240116; t=1761861787; c=relaxed/simple;
+	bh=QOIcc2+l6slkkak/Opq+CJtKjU3NIDV1tx4AeEAkKKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RxwVvg9CVyJIJZGOJvMVZ51gR/D+rwnHKD2scm4VMuHtCUeRWjbbL5MltTTyl0wrM7TubakxjV4xfHsA0xuKzZjeWkVg9vW++xtxcYocrwUVak02rdhqIlZvgaqzpMyR/jCtFo4ykHw00nhuYhOINrf8rFDTPyhm2e1FLVjFLGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=hq6LxwAB; arc=none smtp.client-ip=209.85.166.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f66.google.com with SMTP id ca18e2360f4ac-93e2d42d9b4so70027939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1761861766; x=1762466566; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e5LA5B446ZeXEQHrU7Ra5D5BiNT5+4vY/ARHOc1M/cs=;
-        b=YW+HpKG9ayD6GegW6NezJzkN0SqzwrSxdvOG4apPJFCam0i29cg6u7OEmBHmVMSo2m
-         cw5WLbdYG5mbAfwc0d1f5Xy1bwdOlzt4WlWBwP4ITVf8/Ak3y4z9Rraa7vRLhoKSZALd
-         0A/nlP1HKNhGW1hdFfr+fXnFb52FUNUNOkEZAi8tMw7ALeCyP5+adoXlVQxLKpFGNpv7
-         WBTmq36FHtV9zCeSArzoi+0SqPZflrlyiE20uaF/RMRjoUoHHIBOQAx3M26Ulg+ku69m
-         5Zg7PBRph9+HTG/HiDyAYoI2IExdn2859P4c+ueP9MnWc1OmXg109rVGCee5U321jzDd
-         tCeg==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761861785; x=1762466585; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Phq3DSvAibN+39Xx+hszp3gQ0pcRpusIMooyNw/JXGg=;
+        b=hq6LxwABKQGj79VzwpC3ILMrIvEQotDvfVQRmijlLee66+gmJN9oSHdn9Nd+ZFkiQz
+         Ao+NzN7hw2jr3RRTfxOcN9vB4Ze4HV0sqifbeLTaZrZt5oCUaIedCFiSIhgcvPiMoRlD
+         qAYW+H/2QB2mIgeuj7UJkkLSsOQh5Uc61Oi9k+8cIFP6kxvlkKqIWcCWL+ffQzUoYOMv
+         AjWY5aVVbvrCywFJ334MdA0CWvYhpPHZ6FU+t8vzDa6RBuAHyLnOxCHP2LqJ+58t08Qa
+         IoB7Mg4bz7/xv6yR9fBFgFgKrdSQEzpRegRxM+NtSmGwIVVHwtzE7LgOsKP/oKjIDtCD
+         ht6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761861766; x=1762466566;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5LA5B446ZeXEQHrU7Ra5D5BiNT5+4vY/ARHOc1M/cs=;
-        b=kFG2i+GIiU7DAiQmpwO+oBLQrArE/7GGzyT9F0BRafGQYPRT6l6qIaNAhjmmTjRagk
-         3NzqVCy1Jywa9Eqfnx1rRZ6W4VvaQgYGMmtb6ixz0tQKdmQckPgmaAl7GmSkJ55FYsti
-         TnBbyDGhX7QUpBlrC4uMbBelqbFf3LZgNS+Keb63Wr2JIFAusNMOIS2X7HjUo04USZPb
-         IzxgvJFmmKDapkECuarSweHet8NmOlQwv9b4BWsME1SeT75x5WZk+2KqvSQhaXRPN2AP
-         FmvnPOLrb+ILx7ehE9A7hSdQ+Eq0/Nnl641p661KVSkrYTGjkkvpftQcolmOsamfPpc1
-         9l2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJkmGbCYcPFgJH9jl+X0ua/umn/KTJqYN1NnU96Y1yn8gg7koqo51ifGU0DYriUaMRKwDTgUKMnZZsxc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzPUkvaAmj2umKxf9mLx6OdMk35nRJIl+V4lTiyLmE6bkE2p24
-	kJxSjzrATR0HfIIKXohRcFoetiRTnx/edsXsu1+17whHXQvs7gaTQ7QidJQDL4vat7w=
-X-Gm-Gg: ASbGncvcczNUDwmnbjK6tFlze0RtgB6GiRl/9u3Ntr12+s5wxoyytWoEUEeGQQIOrMz
-	Dcy9ZPSZQJu/ozkko+lwu2jilObIKRGBQenXK4VjOY785LmCeqGNrcsNvTsuUqNQcr8InOpt/Gj
-	jSvO/FjPKXnZJiDnqTXvy64KCPWuSPkU4LaUQRl0qG5lcT5N6byju55M+EPDr849Ke6t/G2/kPw
-	Yy5HofZd5sbvnZGm1AXAaPeA7+HDe0YTQ5Z60oto4vktEiTgItJHZ2XHI5dcWGBDA4hxxtVUlg5
-	MeAutVYplAem1ElaTNThvkmEKHOdziemy40ZhgqhAxT6jW0vaSVEs/6M7Ln8izF7hJg2rFBlt64
-	DWxSuRVUw9uD0LrjwgQ4Qeiq2TqSrgGBqk5zllLaDehRQQTOO9DrTFVgK0Kb07azHXhoNIxkbik
-	OnSld8jK7CI7nYtE8cFjMCX47k9eIUfVtuE0Jq413dWj8gs7lOyEc=
-X-Google-Smtp-Source: AGHT+IEUK4VY3vlv2EG4ggLi7rfSvrtgNznZMJVA1McqV5dhVhLohhKpNsIroL+zzWYFGo32TwDWLg==
-X-Received: by 2002:a17:903:2312:b0:24c:7b94:2f53 with SMTP id d9443c01a7336-2951a420e44mr15402805ad.6.1761861765826;
-        Thu, 30 Oct 2025 15:02:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2951ab8c1dfsm6755835ad.75.2025.10.30.15.02.45
+        d=1e100.net; s=20230601; t=1761861785; x=1762466585;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Phq3DSvAibN+39Xx+hszp3gQ0pcRpusIMooyNw/JXGg=;
+        b=HyorkiROziEc0ZW+TguG/YQWsRSCsHBRxA6c+IZEivgmaj0PfqwAWa2E6lGi516TnL
+         yYHkXc97iWoShLuYsezx3jHKnOOJAQFz3/nhsQi2kFZ96Szm7gL7dNa64+eLiRvOoBUp
+         sk9iN7hwKr7HmWhxVi/D0u/lKvxxwL9xDVTZsiHyClF0YVwdxMde8+wJYN8MeaRRcKI6
+         dTpicgF4vRDQJ/oZoPhCsGOuYy+r7dHKae3deG9xni2IeEmqtTH7pAzvUrAiTl8GzRdD
+         uY3S6k1Ja2rQbedCiHPCgVu+Roogj+KPUlhYh3MEq3/LwIRZXhfrO6h4cEgJH54vFxLx
+         48zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViWrm9pop8eZnYh/7WZBq/2xx47Qm0clizIr9Bsi4dVKVx/S8VzPUKB78/De5hCvcnC4NDa/8Thf3A/E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAF8V7c+zwvJqokwRJJtvyAwkXJQv/Mkmzln9WzDMKjKBA1PcW
+	7/MqoM3ELCO4cTwnqqOOmVt0vpJkNTIs4uHoFTmrjVSJmEQP41lJclEPEnE2CfMvLVU=
+X-Gm-Gg: ASbGncsPVgvkQzo54JDQGnBkeOoWGNBBvPvDAfIuwzMxN/nRoWrjaTAXwbrhG8//Ogb
+	xhS/0XVw6ZNSS+R8cXvk9kr3S70V7rJ45glJXqMxccgmbevYYmDH4LTjvZg7wb6KaFODLrhFFBH
+	O9l/vitRRrgvk1VQ/X+ajrBXSR6i/4YsU7tfZYvbvC2lZpun/k2Dvm9ySJJciWu5Ecv+EGiKrZF
+	NKEUe9Njr0wwaPMzWGEeRZVYTDzj0NQiT0QuXfdZ3e7wnbo0U6FhYrbrl3ZFRTyTSPSBNW8GRVC
+	oO55hrlHpRupOHw9IkpT2HZ5qIyxkbKayXPRVPmstFUPJU8Kj0MCOzWkmzAkAmd8YVn+13g/STM
+	MV4LWn0/JPCpmtYj1/N5Ake7NwmmNthMKbh1WhlvblbXh7/SgVLM78UJ9/ZMk8EEyLIT5S9hu1W
+	0UCvrKZe3uY3NnLlqiQWpnfWRSd3UwNVRC5D+uZLZ8WTrBUdiEYUxv/A==
+X-Google-Smtp-Source: AGHT+IHIfi5HvcZFQEMsBLWU40iLrdbD6dtXflle6FkJVnDeQEPilinICeuX7JKqnLgG58PEKCRkEQ==
+X-Received: by 2002:a05:6602:1606:b0:944:f050:65d6 with SMTP id ca18e2360f4ac-948229ca479mr236508039f.10.1761861784511;
+        Thu, 30 Oct 2025 15:03:04 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-94359efe149sm604118039f.13.2025.10.30.15.03.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 15:02:45 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1vEajC-00000004HIE-0S7o;
-	Fri, 31 Oct 2025 09:02:42 +1100
-Date: Fri, 31 Oct 2025 09:02:42 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Geoff Back <geoff@demonlair.co.uk>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <aQPggv2LK4kkXj3L@dread.disaster.area>
-References: <20251029071537.1127397-1-hch@lst.de>
- <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
- <5ac7fb86-07a2-4fc6-959e-524ff54afebf@demonlair.co.uk>
+        Thu, 30 Oct 2025 15:03:03 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: dlan@gentoo.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org
+Cc: ziyao@disroot.org,
+	aurelien@aurel32.net,
+	johannes@erdfelt.com,
+	mayank.rana@oss.qualcomm.com,
+	qiang.yu@oss.qualcomm.com,
+	shradha.t@samsung.com,
+	inochiama@gmail.com,
+	pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	christian.bruel@foss.st.com,
+	thippeswamy.havalige@amd.com,
+	krishna.chundru@oss.qualcomm.com,
+	guodong@riscstar.com,
+	devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/7] Introduce SpacemiT K1 PCIe phy and host controller
+Date: Thu, 30 Oct 2025 17:02:51 -0500
+Message-ID: <20251030220259.1063792-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ac7fb86-07a2-4fc6-959e-524ff54afebf@demonlair.co.uk>
 
-On Thu, Oct 30, 2025 at 12:00:26PM +0000, Geoff Back wrote:
-> On 30/10/2025 11:20, Dave Chinner wrote:
-> > On Wed, Oct 29, 2025 at 08:15:01AM +0100, Christoph Hellwig wrote:
-> >> Hi all,
-> >>
-> >> we've had a long standing issue that direct I/O to and from devices that
-> >> require stable writes can corrupt data because the user memory can be
-> >> modified while in flight.  This series tries to address this by falling
-> >> back to uncached buffered I/O.  Given that this requires an extra copy it
-> >> is usually going to be a slow down, especially for very high bandwith
-> >> use cases, so I'm not exactly happy about.
-> > How many applications actually have this problem? I've not heard of
-> > anyone encoutnering such RAID corruption problems on production
-> > XFS filesystems -ever-, so it cannot be a common thing.
-> >
-> > So, what applications are actually tripping over this, and why can't
-> > these rare instances be fixed instead of penalising the vast
-> > majority of users who -don't have a problem to begin with-?
-> I don't claim to have deep knowledge of what's going on here, but if I
-> understand correctly the problem occurs only if the process submitting
-> the direct I/O is breaking the semantic "contract" by modifying the page
-> after submitting the I/O but before it completes.  Since the page
-> referenced by the I/O is supposed to be immutable until the I/O
-> completes, what about marking the page read only at time of submission
-> and restoring the original page permissions after the I/O completes? 
-> Then if the process writes to the page (triggering a fault) make a copy
-> of the page that can be mapped back as writeable for the process - i.e.
-> normal copy-on-write behaviour
+This series introduces a PHY driver and a PCIe driver to support PCIe
+on the SpacemiT K1 SoC.  The PCIe implementation is derived from a
+Synopsys DesignWare PCIe IP.  The PHY driver supports one combination
+PCIe/USB PHY as well as two PCIe-only PHYs.  The combo PHY port uses
+one PCIe lane, and the other two ports each have two lanes.  All PCIe
+ports operate at 5 GT/second.
 
-There's nothing new in this world - this is pretty much how the IO
-paths in Irix worked back in the mid 1990s. The transparent
-zero-copy buffered read and zero-copy network send paths that this
-enabled was one of the reasons why Irix was always at the top of the
-IO performance charts, even though the CPUs were underpowered
-compared to the competition...
+The PCIe PHYs must be configured using a value that can only be
+determined using the combo PHY, operating in PCIe mode.  To allow
+that PHY to be used for USB, the calibration step is performed by
+the PHY driver automatically at probe time.  Once this step is done,
+the PHY can be used for either PCIe or USB.
 
-> - and write a once-per-process dmesg
-> warning that the process broke the direct I/O "contract". 
+Version 3 of this series incorporates suggestions made during the
+review of version 2, and based on some error reports from Aurelien
+Jarno and Johannes Erdfelt, disabled ASPM L1.  Specific highlights
+are detailed below.
 
-Yes, there was occasionally an application that tried to re-use
-buffers before the kernel was finished with them and triggered the
-COW path.  However, these were easily identified and generally fixed
-pretty quickly by the application vendors because performance was
-the very reason they were deploying IO intensive applications on
-SGI/Irix platforms in the first place....
+					-Alex
 
-> And maybe tag
-> the process with a flag that forces all future "direct I/O" requests
-> made by that process to be automatically made buffered?
->
-> That way, processes that behave correctly still get direct I/O, and
-> those that do break the rules get degraded to buffered I/O.
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/pcie-v4
 
-Why? The cost of the COW for the user page is the same as copying
-the data in the first place. However, if COW faults are rare, then
-allowing DIO to continue will result in better performance overall.
+Between version 3 and version 4:
+  - In the DT binding for the PCIe host controlloller, add a new
+    sub-node representing the root port
+  - Move the phys and supply properties out of the PCIe host controller
+    and into the root port node
+  - Define the spacemit,apmu property later in the binding and DTS files
+  - Define the device_type property first in the binding examples and
+    DTS files
+  - Add root port sub-nodes in the examples and the DTS files
+  - Select the PCI_PWRCTRL_SLOT config option when PCIE_SPACEMIT_K1 is
+    enabled
+  - Parse the root port node in the driver, and get the PHY
+  - Leverage the PCI pwrctrl slot driver to get and enable the regulator
+  - Don't set num_vectors to 256; just use the default (32)
+  - Cleaned up some comments, white space, and symbol names based on
+    feedback from Mani
+  - Add some runtime PM calls to ensure it works propertly
+  - Add a new post_init callback, which disables ASPM L1 for the link
 
-The other side of this is that falling back to buffered IO for AIO
-is an -awful thing to do-. You no longer get AIO behaviour - reads
-will block on IO, and writes will block on reads and other writes...
+Here is version 3 of this series:
+  https://lore.kernel.org/lkml/20251017190740.306780-1-elder@riscstar.com/
 
-> Unfortunately I don't know enough to know what the performance impact of
-> changing the page permissions for every direct I/O would be.
+Between version 2 and version 3:
+  - Reviewed-by from Rob added to the first two patches
+  - The "num-viewport" property has been removed
+  - The "phy" reset is listed first in the combo PHY binding
+  - The PHY now requires a resets property to specify the "phy" reset
+  - The PCIe driver no longer requires a "phy" reset
+  - The PHY driver now gets and deasserts the reset for all PHYs
+  - Error handling and "put" of clocks in the PHY driver has been
+    corrected (for clk_bulk_get() rather than clk_bulk_get_all())
 
-On high performance storage, it will almost certainly be less of an
-impact than forcing all IO to be bounce buffered through the page
-cache.
+Here is version 2 of this series:
+  https://lore.kernel.org/lkml/20251013153526.2276556-1-elder@riscstar.com/
 
--Dave.
+Full details of changes made for version 2 are available there.
+
+
+Alex Elder (7):
+  dt-bindings: phy: spacemit: add SpacemiT PCIe/combo PHY
+  dt-bindings: phy: spacemit: introduce PCIe PHY
+  dt-bindings: pci: spacemit: introduce PCIe host controller
+  phy: spacemit: introduce PCIe/combo PHY
+  PCI: spacemit: introduce SpacemiT PCIe host driver
+  riscv: dts: spacemit: add a PCIe regulator
+  riscv: dts: spacemit: PCIe and PHY-related updates
+
+ .../bindings/pci/spacemit,k1-pcie-host.yaml   | 157 ++++
+ .../bindings/phy/spacemit,k1-combo-phy.yaml   | 114 +++
+ .../bindings/phy/spacemit,k1-pcie-phy.yaml    |  71 ++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |  44 ++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  33 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 176 +++++
+ drivers/pci/controller/dwc/Kconfig            |  11 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-spacemit-k1.c | 349 +++++++++
+ drivers/phy/Kconfig                           |  11 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/phy-spacemit-k1-pcie.c            | 670 ++++++++++++++++++
+ 12 files changed, 1638 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-pcie-phy.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-spacemit-k1.c
+ create mode 100644 drivers/phy/phy-spacemit-k1-pcie.c
+
+
+base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
 -- 
-Dave Chinner
-david@fromorbit.com
+2.48.1
+
 
