@@ -1,334 +1,116 @@
-Return-Path: <linux-kernel+bounces-878801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3CEC217EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:29:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6C7C2181F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E02B1A62811
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA45A3AB54A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E3C369986;
-	Thu, 30 Oct 2025 17:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1244B36998F;
+	Thu, 30 Oct 2025 17:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAvHhO3+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGQZF3ak"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA2368F51;
-	Thu, 30 Oct 2025 17:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32FA32A3D8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761845364; cv=none; b=Hac+7bmlHqkuNx/PbLy/heddZTUjoR3eNQ4PmwS1YKtXoM/Zbm5nXrM5JYb/cD3An5vvB7P2YiGhyz7XQDBTR0eYXdBcExlIuXOV85xB9mRUIwCfSFIQfj09/5f7NHvks0RzEjQNknLlxAgsnjjYoixOhwS6A2gBnJfGVkvQf24=
+	t=1761845497; cv=none; b=ZtOfhe2gdRveg5ZLaxU/b4VZBrqv7tH6qvZa7mAiEg9ZnRj4M4T1E+VS0izMXzs6QmI7qeIfB88KqBdhRi7FkBSJHT1RR63O2spUW87mZRpg9EaYtXXzUjgNn9pM9T7eAyydZ6yeg7Sm8/ZALcBSoF+wiLhbnNoKguz82YCWbi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761845364; c=relaxed/simple;
-	bh=JZbgrkNQp6Lvz5LbyNwQ6Fa9oQMMJ0T8nPCypf+eP/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLIW8lu96NJGyOhFnjvQ/Y7ePBZuzRYezKK65AqxQTtyoU53+cJs17G05ovJgU55L8kRXSthxYLW0h/U492e7nh2lTbWqrZ+ihFWE4W0XIhZH0CGk/RgWJQWQRMggs695k1l9JPAZFlAsfgyVoQN0Kw/s1/dKVIne4e8jU0QpVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAvHhO3+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F36FC4CEFB;
-	Thu, 30 Oct 2025 17:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761845363;
-	bh=JZbgrkNQp6Lvz5LbyNwQ6Fa9oQMMJ0T8nPCypf+eP/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PAvHhO3+o1R9MHctUYpNnC8X578L5FGh2plr1OxdHMg+v8IsGVZfaLazW/OWBy8ku
-	 2On5iCJbmCvpRSOcC4ADRSSA5HyaVtNuFQEjKqH3VsyoHuOJHW5iLg93WzHHIr0Wbc
-	 zcPwb3MMcIV2Fwzs1/Zm+Aj4vTcl9dkrcttB0v+4os1oEfv5AMTeKFRHa1T93kr4hU
-	 PlHo5QwxOiH2c/BiIS/01gWvNqqlfUXibQucQI6b/dnp1lMi2m7CDOLwj95AstKBp7
-	 yjsN47J1oNT2/wB94Sd7ZXR/SHbf3esD2qy/5G17rTaVUa1l/VGSqvn1qVHx1PKLQp
-	 039tz5/NWgzMA==
-Date: Thu, 30 Oct 2025 10:29:18 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-efi@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, David Sterba <dsterba@suse.com>
-Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
- pipe_index declaration)
-Message-ID: <20251030172918.GA417112@ax162>
-References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
- <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
- <20251029173828.GA1669504@ax162>
- <20251029-wobei-rezept-bd53e76bb05b@brauner>
- <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
- <20251030-zuruf-linken-d20795719609@brauner>
- <20251029233057.GA3441561@ax162>
- <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
- <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
+	s=arc-20240116; t=1761845497; c=relaxed/simple;
+	bh=91kxninMOJuDZGlQ785bNKkAwCmu72JTeQOT5NZzEjU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cXym9irm+LDR7z4VMRx00jNftKK/FcQ7bX4ii9EQbX+8h63p3EaKsxNGvXgy0BJ+RXs+OFQPFXsXpx+MaukPVKN7djMAC+eOcB9oJrNtI5dBW3mI1+b+KFGPoYjgDLfjnpPjh3Yg7Jjk/Sq8GoFLB6ZB9suB056btNCPMYKLaYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGQZF3ak; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-59303607a3aso1602196e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761845493; x=1762450293; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FX+GUEAbTZu0XdxLl+sLP6JXHQTyzMeCDlR6Th/SyyQ=;
+        b=AGQZF3akLb6iMAgp94IHhTuXhKLsnKp+GMlwP4z8HfN8nZk9Jaz7Yut1Nov19frSSe
+         28p6/Gfhy6zE3s1QE1687C3nqBG3vWoSG4N4Xaft/EUtzEOkEl/wa8DIKCr1eR542m+U
+         y8ihFJh+WXbID5NLpvB2ER6lerGL2Wi2Lujkk/UOEEti2AZ/57qq0eWil+nvKFEesMKx
+         OQNTEIxoM2h6YDQp8SDG2lXg9HQ7D7+uGsRbs4Kqy1l7GgEQxjxtGQma/kHo7CfMkDqn
+         k8J2G0FGtP0vpVVwbi0xWx4ltRJDOiv+RzVcsFJjCBsSBUc8u6aF9kEBlAkSeAWvtbzE
+         4B3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761845493; x=1762450293;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FX+GUEAbTZu0XdxLl+sLP6JXHQTyzMeCDlR6Th/SyyQ=;
+        b=PenbvKrHTssQCXGvhZCLBBWxZxi8G/VgdyLy7/ydrpp/yT/Pec9u7lmYdNB12g7u9r
+         8reZzUOKk6VslMn1Y9X3I9nJso7AVCqRhYWRrZGekfHj0Iit0fy1xYF9d8rENRaqHVHx
+         J8YPkQn0YGofd162Rc8KckFFf7RdDxwyvEGWthuoSWabTunk/oa2WFgmadKkEWPvHp4Z
+         Ez8P5wb5dsL/71AR7DArzDeXPbs423s6FrWLEXy0Oeh2Tswy1DXaD9145i+Pa8kJvs6X
+         BCXPcwKyg4WE5tS8OxH8ys0Cf2GD32TbPdGrXBvKUH0aOAq6KnDAor0vEZVcNFoX2FX1
+         CxTA==
+X-Gm-Message-State: AOJu0YxePqm0Y0YKtZ79oZWYCc7WwBvU94wAIzTS+/f46RjcMoGeNi2/
+	EuZ/j0GIHK9g6ygcCqjzvCkPZxSgSwgKoImVHpa0g3+qq1pvZW5n5ukHA+leONkZ
+X-Gm-Gg: ASbGncv2Na5LSoqQD13Dmkn9uw5Hv6Zk2far+vWRADhuUWp/ID3LjkeDmA4AcWafKGG
+	jZYjO1SLmDRIWqweHvwabztmVGK1nnt/Oy7nHExwp1DbnSUMlpsMvHB/nblqalhaZjAaTd4RRvt
+	homcwFzLj8IJzlE1AIlpOZOj5G9xACGoSSTdxEEO8D69qteLQsxpiU2GV3vBrccqAMaFEpae66t
+	SyBmAvhWobK7fdR7SuuM222sz2hJrMDqFCz+uX+Oy1IaD7rR7iHr63rURqMKyKjmpmEJzjR35bS
+	9X/PRsgLIyGLDVVglHIY2r35I1KHByvNEZp/j6z369BME9pIU8RUonZMIYtin/tEmv1pwnoAIyv
+	BfDXaKulUaLWt1Y58+BQzM2VCG+50VY1sm2xeej02ZXO2oI/IYRikR0/WMsey2KVoHGvVslg1pQ
+	==
+X-Google-Smtp-Source: AGHT+IFbmjT0o8ZBMKZZVnXGZ+nvoyPS75FxtrDSYxxUTEmQliAFW1a+zq2H8GHf5bj3BmT0Ipidpg==
+X-Received: by 2002:a05:6512:b17:b0:592:eeaa:7b7d with SMTP id 2adb3069b0e04-5941d5209ecmr197904e87.22.1761845493057;
+        Thu, 30 Oct 2025 10:31:33 -0700 (PDT)
+Received: from archlinux ([109.234.31.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f41cddsm4673392e87.17.2025.10.30.10.31.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 10:31:31 -0700 (PDT)
+From: pgnmirror <vacacax16@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: pgnmirror <vacacax16@gmail.com>,
+	zntsproj <vseokaktusah7@gmail.com>
+Subject: [PATCH] tools/perf/tests/make: use IS_64_BIT for generic lib dir
+Date: Thu, 30 Oct 2025 20:30:58 +0300
+Message-ID: <20251030173058.27713-1-vacacax16@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 02:38:50PM +0100, Ard Biesheuvel wrote:
-> On Thu, 30 Oct 2025 at 14:23, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Wed, Oct 29, 2025 at 04:30:57PM -0700, Nathan Chancellor wrote:
-> > > On Thu, Oct 30, 2025 at 12:13:11AM +0100, Christian Brauner wrote:
-> > > > I'm fine either way. @Nathan, if you just want to give Linus the patch
-> > > > if it's small enough or just want to give me a stable branch I can pull
-> > > > I'll be content. Thanks!
-> > >
-> > > I do not care either way but I created a shared branch/tag since it was
-> > > easy enough to do. If Linus wants to take these directly for -rc4, I am
-> > > fine with that as well.
-> > >
-> > > Cheers,
-> > > Nathan
-> > >
-> > > The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
-> > >
-> > >   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-ms-extensions-6.19
-> >
-> > Thanks, I pulled this and placed it into a branch that I can base other
-> > branches on.
-> >
-> > _But_, I'm already running into problems. :)
-> >
-> ...
-> >
-> > Because struct cgroup_namespace embeddds struct ns_common and it
-> > proliferates via mm stuff into the efi code.
-> >
-> > So the EFI cod has it's own KBUILD_CFLAGS. It does:
-> >
-> > # non-x86 reuses KBUILD_CFLAGS, x86 does not
-> > cflags-y                        := $(KBUILD_CFLAGS)
-> >
-> > <snip>
-> >
-> > KBUILD_CFLAGS                   := $(subst $(CC_FLAGS_FTRACE),,$(cflags-y)) \
-> >                                    -Os -DDISABLE_BRANCH_PROFILING \
-> >                                    -include $(srctree)/include/linux/hidden.h \
-> >                                    -D__NO_FORTIFY \
-> >                                    -ffreestanding \
-> >                                    -fno-stack-protector \
-> >                                    $(call cc-option,-fno-addrsig) \
-> >                                    -D__DISABLE_EXPORTS
-> >
-> > which means x86 doesn't get -fms-extension breaking the build. If I
-> > manually insert:
-> >
-> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> > index 94b05e4451dd..4ad2f8f42134 100644
-> > --- a/drivers/firmware/efi/libstub/Makefile
-> > +++ b/drivers/firmware/efi/libstub/Makefile
-> > @@ -42,6 +42,8 @@ KBUILD_CFLAGS                 := $(subst $(CC_FLAGS_FTRACE),,$(cflags-y)) \
-> >                                    -ffreestanding \
-> >                                    -fno-stack-protector \
-> >                                    $(call cc-option,-fno-addrsig) \
-> > +                                  -fms-extensions \
-> > +                                  -Wno-microsoft-anon-tag \
-> >                                    -D__DISABLE_EXPORTS
-> >
-> > The build works...
-> >
-> > I think we need to decide how to fix this now because as soon as someone
-> > makes use of the extension that is indirectly included by that libstub
-> > thing we're fscked.
-> 
-> Unless anyone is feeling brave and wants to untangle the x86 command
-> line delta between the stub and core kernel, I suggest we just add
-> these flags just like you proposed (assuming all supported compilers
-> tolerate their presence)
+Use the IS_64_BIT flag to set the lib directory generically for all architectures.
+Previously, this logic was hardcoded for x86/x86_64 only.
 
-There are several other places in the kernel that blow away
-KBUILD_CFLAGS like this that will need the same fix (I went off of
-searching for -std=gnu11, as that was needed in many places to fix GCC
-15). It is possible that we might want to take the opportunity to unify
-these flags into something like KBUILD_DIALECT_CFLAGS but for now, I
-just bothered with adding the flags in the existing places.
+Signed-off-by: zntsproj <vseokaktusah7@gmail.com>
+---
+ tools/perf/tests/make | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
-index ffa3536581f6..9d0efed91414 100644
---- a/arch/arm64/kernel/vdso32/Makefile
-+++ b/arch/arm64/kernel/vdso32/Makefile
-@@ -63,7 +63,7 @@ VDSO_CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-                $(filter -Werror,$(KBUILD_CPPFLAGS)) \
-                -Werror-implicit-function-declaration \
-                -Wno-format-security \
--               -std=gnu11
-+               -std=gnu11 -fms-extensions
- VDSO_CFLAGS  += -O2
- # Some useful compiler-dependent flags from top-level Makefile
- VDSO_CFLAGS += $(call cc32-option,-Wno-pointer-sign)
-@@ -71,6 +71,7 @@ VDSO_CFLAGS += -fno-strict-overflow
- VDSO_CFLAGS += $(call cc32-option,-Werror=strict-prototypes)
- VDSO_CFLAGS += -Werror=date-time
- VDSO_CFLAGS += $(call cc32-option,-Werror=incompatible-pointer-types)
-+VDSO_CFLAGS += $(if $(CONFIG_CC_IS_CLANG),-Wno-microsoft-anon-tag)
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index b650ce886..64066e011 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -53,9 +53,8 @@ endif
  
- # Compile as THUMB2 or ARM. Unwinding via frame-pointers in THUMB2 is
- # unreliable.
-diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
-index d8316f993482..c0cc3ca5da9f 100644
---- a/arch/loongarch/vdso/Makefile
-+++ b/arch/loongarch/vdso/Makefile
-@@ -19,7 +19,7 @@ ccflags-vdso := \
- cflags-vdso := $(ccflags-vdso) \
- 	-isystem $(shell $(CC) -print-file-name=include) \
- 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
--	-std=gnu11 -O2 -g -fno-strict-aliasing -fno-common -fno-builtin \
-+	-std=gnu11 -fms-extensions -O2 -g -fno-strict-aliasing -fno-common -fno-builtin \
- 	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
- 	$(call cc-option, -fno-asynchronous-unwind-tables) \
- 	$(call cc-option, -fno-stack-protector)
-diff --git a/arch/parisc/boot/compressed/Makefile b/arch/parisc/boot/compressed/Makefile
-index 17c42d718eb3..f8481e4e9d21 100644
---- a/arch/parisc/boot/compressed/Makefile
-+++ b/arch/parisc/boot/compressed/Makefile
-@@ -18,7 +18,7 @@ KBUILD_CFLAGS += -fno-PIE -mno-space-regs -mdisable-fpregs -Os
- ifndef CONFIG_64BIT
- KBUILD_CFLAGS += -mfast-indirect-calls
- endif
--KBUILD_CFLAGS += -std=gnu11
-+KBUILD_CFLAGS += -std=gnu11 -fms-extensions
+ include $(srctree)/tools/scripts/Makefile.arch
  
- LDFLAGS_vmlinux := -X -e startup --as-needed -T
- $(obj)/vmlinux: $(obj)/vmlinux.lds $(addprefix $(obj)/, $(OBJECTS)) $(LIBGCC) FORCE
-diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-index c47b78c1d3e7..f1a4761ebd44 100644
---- a/arch/powerpc/boot/Makefile
-+++ b/arch/powerpc/boot/Makefile
-@@ -70,7 +70,7 @@ BOOTCPPFLAGS	:= -nostdinc $(LINUXINCLUDE)
- BOOTCPPFLAGS	+= -isystem $(shell $(BOOTCC) -print-file-name=include)
- 
- BOOTCFLAGS	:= $(BOOTTARGETFLAGS) \
--		   -std=gnu11 \
-+		   -std=gnu11 -fms-extensions \
- 		   -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
- 		   -fno-strict-aliasing -O2 \
- 		   -msoft-float -mno-altivec -mno-vsx \
-@@ -86,6 +86,7 @@ BOOTARFLAGS	:= -crD
- 
- ifdef CONFIG_CC_IS_CLANG
- BOOTCFLAGS += $(CLANG_FLAGS)
-+BOOTCFLAGS += -Wno-microsoft-anon-tag
- BOOTAFLAGS += $(CLANG_FLAGS)
- endif
- 
-diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-index b4769241332b..8578361133a4 100644
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@ -22,7 +22,7 @@ KBUILD_AFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -D__ASSEMBLY__
- ifndef CONFIG_AS_IS_LLVM
- KBUILD_AFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),$(aflags_dwarf))
- endif
--KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -O2 -mpacked-stack -std=gnu11
-+KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -O2 -mpacked-stack -std=gnu11 -fms-extensions
- KBUILD_CFLAGS_DECOMPRESSOR += -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY
- KBUILD_CFLAGS_DECOMPRESSOR += -D__DECOMPRESSOR
- KBUILD_CFLAGS_DECOMPRESSOR += -Wno-pointer-sign
-@@ -35,6 +35,7 @@ KBUILD_CFLAGS_DECOMPRESSOR += $(call cc-disable-warning, address-of-packed-membe
- KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),-g)
- KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO_DWARF4), $(call cc-option, -gdwarf-4,))
- KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_CC_NO_ARRAY_BOUNDS),-Wno-array-bounds)
-+KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_CC_IS_CLANG),-Wno-microsoft-anon-tag)
- 
- UTS_MACHINE	:= s390x
- STACK_SIZE	:= $(if $(CONFIG_KASAN),65536,$(if $(CONFIG_KMSAN),65536,16384))
-diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-index bd39b36e7bd6..0c196a5b194a 100644
---- a/arch/s390/purgatory/Makefile
-+++ b/arch/s390/purgatory/Makefile
-@@ -13,7 +13,7 @@ CFLAGS_sha256.o := -D__NO_FORTIFY
- $(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S FORCE
- 	$(call if_changed_rule,as_o_S)
- 
--KBUILD_CFLAGS := -std=gnu11 -fno-strict-aliasing -Wall -Wstrict-prototypes
-+KBUILD_CFLAGS := -std=gnu11 -fms-extensions -fno-strict-aliasing -Wall -Wstrict-prototypes
- KBUILD_CFLAGS += -Wno-pointer-sign -Wno-sign-compare
- KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
- KBUILD_CFLAGS += -Os -m64 -msoft-float -fno-common
-@@ -21,6 +21,7 @@ KBUILD_CFLAGS += -fno-stack-protector
- KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
- KBUILD_CFLAGS += -D__DISABLE_EXPORTS
- KBUILD_CFLAGS += $(CLANG_FLAGS)
-+KBUILD_CFLAGS += $(if $(CONFIG_CC_IS_CLANG),-Wno-microsoft-anon-tag)
- KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
- KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
- KBUILD_AFLAGS += -D__DISABLE_EXPORTS
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 4db7e4bf69f5..e20e25b8b16c 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -48,7 +48,8 @@ endif
- 
- # How to compile the 16-bit code.  Note we always compile for -march=i386;
- # that way we can complain to the user if the CPU is insufficient.
--REALMODE_CFLAGS	:= -std=gnu11 -m16 -g -Os -DDISABLE_BRANCH_PROFILING -D__DISABLE_EXPORTS \
-+REALMODE_CFLAGS	:= -std=gnu11 -fms-extensions -m16 -g -Os \
-+		   -DDISABLE_BRANCH_PROFILING -D__DISABLE_EXPORTS \
- 		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
- 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
- 		   -mno-mmx -mno-sse $(call cc-option,-fcf-protection=none)
-@@ -60,6 +61,7 @@ REALMODE_CFLAGS += $(cc_stack_align4)
- REALMODE_CFLAGS += $(CLANG_FLAGS)
- ifdef CONFIG_CC_IS_CLANG
- REALMODE_CFLAGS += -Wno-gnu
-+REALMODE_CFLAGS += -Wno-microsoft-anon-tag
- endif
- export REALMODE_CFLAGS
- 
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 74657589264d..68f9d7a1683b 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -25,7 +25,7 @@ targets := vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma \
- # avoid errors with '-march=i386', and future flags may depend on the target to
- # be valid.
- KBUILD_CFLAGS := -m$(BITS) -O2 $(CLANG_FLAGS)
--KBUILD_CFLAGS += -std=gnu11
-+KBUILD_CFLAGS += -std=gnu11 -fms-extensions
- KBUILD_CFLAGS += -fno-strict-aliasing -fPIE
- KBUILD_CFLAGS += -Wundef
- KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
-@@ -36,7 +36,10 @@ KBUILD_CFLAGS += -mno-mmx -mno-sse
- KBUILD_CFLAGS += -ffreestanding -fshort-wchar
- KBUILD_CFLAGS += -fno-stack-protector
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
--KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
-+ifdef CONFIG_CC_IS_CLANG
-+KBUILD_CFLAGS += -Wno-gnu
-+KBUILD_CFLAGS += -Wno-microsoft-anon-tag
-+endif
- KBUILD_CFLAGS += -Wno-pointer-sign
- KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
- KBUILD_CFLAGS += -D__DISABLE_EXPORTS
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index 94b05e4451dd..7d15a85d579f 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -11,12 +11,12 @@ cflags-y			:= $(KBUILD_CFLAGS)
- 
- cflags-$(CONFIG_X86_32)		:= -march=i386
- cflags-$(CONFIG_X86_64)		:= -mcmodel=small
--cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -std=gnu11 \
-+cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -std=gnu11 -fms-extensions \
- 				   -fPIC -fno-strict-aliasing -mno-red-zone \
- 				   -mno-mmx -mno-sse -fshort-wchar \
- 				   -Wno-pointer-sign \
- 				   $(call cc-disable-warning, address-of-packed-member) \
--				   $(call cc-disable-warning, gnu) \
-+				   $(if $(CONFIG_CC_IS_CLANG),-Wno-gnu -Wno-microsoft-anon-tag) \
- 				   -fno-asynchronous-unwind-tables \
- 				   $(CLANG_FLAGS)
- 
+-# FIXME looks like x86 is the only arch running tests ;-)
+-# we need some IS_(32/64) flag to make this generic
+-ifeq ($(ARCH)$(IS_64_BIT), x861)
++# use IS_64_BIT to select lib/lib64 generically for all architectures
++ifeq ($(IS_64_BIT), 1)
+ lib = lib64
+ else
+ lib = lib
+-- 
+2.51.2
+
 
