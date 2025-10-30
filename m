@@ -1,102 +1,72 @@
-Return-Path: <linux-kernel+bounces-879264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A326C22AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADADC22AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 738CC4F09AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:14:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 122164EE50C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4843333BBCD;
-	Thu, 30 Oct 2025 23:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5D9218AA0;
+	Thu, 30 Oct 2025 23:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="vVqEII+U";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F212ZySe"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BqYnhxem"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20369335548;
-	Thu, 30 Oct 2025 23:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C432343C0
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761866051; cv=none; b=W88eWzYjnku7jVdVb9LBSvQlPZfeLRjbcrXK6Kuxd4xMnlCPRZOiDoRUM5OupfIYGmxhDzgeFlOc3pvYOXq9j8u9gBfS5doisYCCCLdcKZXvdYIyBKAHbK86xbVcBzfqxhsNxztU3JnPVAL/h973sIyyFOvA0eVXEyKOg9h1xWI=
+	t=1761866122; cv=none; b=MSUfLTvH56r4l560Jhavp9Jcj+IYppPQC717dzgwU2gbin2jGXzqEWTeqLoyOXOTYTVryFkUJs3uQb7KM75rLLzpx1ZGBdZUj0nUxvYZ/qTw2v4W5piVUoU/BfDGVmEolQxJi6iunNjjf858UmWZbI8QfK/R/r9t/rv2cokIFVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761866051; c=relaxed/simple;
-	bh=VkpxH/aNZJ1sWs1dcWM4kxr74o7MohPGI95zg3LCaRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uMGpd9F87+DSFutZ85096Pl450yt35w3s0BfRLeK5Ghlv33gfiJvEdY1pj+WcpRRpTTkcCPnUiSFYCJLPu8p55173JoDA8cSRJl/Z0LbfwwIbhY+hBmOB53JDAWLGiUhjKHwp6byYi0BFPAd6TgevSthp0evu/j+ES2JspxxdPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=vVqEII+U; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F212ZySe; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id AEB091D0011B;
-	Thu, 30 Oct 2025 19:14:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 30 Oct 2025 19:14:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761866043; x=
-	1761952443; bh=yCCSB16VttoS39Nva4lOmpiC3bm0XNohLUOlFJO11uc=; b=v
-	VqEII+UkVaange1yXPJod3u3SCq4TkpCmxpSjXyr8fUkjoYc33Ckkpij0S6NOi3b
-	1FnkrTtNkZcdZEpUSpzCCjngKAY2nnoMUOJmACN+HgmxYsaPP35qq9Em5ga1jEfI
-	2RaxQ2zLM+MokgrXuJcQBZZcodQi927F8N0BarccwO6u1ETSezU7k04SrA2BORJL
-	ChNxHRpWdfp6JlmlKJbEL0NxCk4E86V0Ls3UiL8n4Fk6p0gOD7KgpdyCXzgyjEzf
-	EQaI3ausqGGpvDLdXmV3VrHQWL6cuMYNkmKgeH1Zhr9AH+W4IxV8wBpYR1Qtn5bG
-	HVxYKvowOXVoGkMaum04w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1761866043; x=1761952443; bh=yCCSB16VttoS39Nva4lOmpiC3bm0XNohLUO
-	lFJO11uc=; b=F212ZySe1fxsV5NS78RynNsQd8lF99m2QJTMzidAV+ybY0rmPPX
-	M3A8l2UGsCaqerK1UFeySElYxURB8xx1dzKxilygDFjQlFF6PYoCceSoQW9YYPXP
-	nE3lViO2uIZ7FbJcSVLyesDEcicALxOmU2L4kOESbCZxJnpQloxmlSS2xZr/yheg
-	FVaz00ZzgYiKgFr61LDrMygfJwf6uZ8+0V0wnd9JCXTfZBs/FGxuzKk8ApLPavMg
-	F6rRxhl3Vx4cHtSkmfc2JS/HrYOreUjckk9Zqr4vrA9o44+mtOJsbNQOwPg3qnAP
-	ekZ3Oe3Q0DFg0QMHfUP4l6pii8NWW3ayZHQ==
-X-ME-Sender: <xms:OvEDaYTAuCHWJ1ZMEGonFI62jYmZW7SIOqXNkUSEVj-rAUicGb91yw>
-    <xme:OvEDaSfc-ldbm0Qg5FmDBPqQhKSguqE8MvYgwudX5YNEHqxNvUoQA7qtIyM85Pq1Q
-    xZopL77nlNma3X7vHTK4AnS82Gg6ZAekR3xuXEACQxWCBgTqf5lEpki>
-X-ME-Received: <xmr:OvEDaZupfBfyJBwCA9cC9UiDDsRunj4Lx7VgKj-8Nkd1uHYj88jUiKIMXj6I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejkeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
-    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
-    grthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfekgeetheegheeifffguedvueff
-    fefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedufedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrnhhglhhirghnghejgeeshhhurgifvg
-    hirdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlh
-    hofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepshhhuh
-    grhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:OvEDaWJsH2Ne-QNfE4uLKS2w312pqnvLlhpsmVn-Y2hYAIxLPXRNAw>
-    <xmx:OvEDaVZ_kB3OlRHoEAOHJgeSyQ2zhzJTNzskoPu4thBSTiaKU3EA_Q>
-    <xmx:OvEDaRnDtZB01j-udHSNbR7Orasn8KDZsLpso5HvQ6ioRFbMCWciiQ>
-    <xmx:OvEDabUPI5MpA8glbmKKrhEFZ1YKXecs5D3AKTS0J_nEVfTt3VJ6fQ>
-    <xmx:O_EDaQWGGJCLfQYRyXuezN9vKSaegQO0oNTiawj_PQX6U9otquMnba70>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 19:14:01 -0400 (EDT)
-Date: Fri, 31 Oct 2025 00:13:59 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: kuba@kernel.org, andrew@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, shuah@kernel.org,
-	horms@kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
-Message-ID: <aQPxN5lQui5j8nK8@krikkit>
-References: <20251030032203.442961-1-wangliang74@huawei.com>
+	s=arc-20240116; t=1761866122; c=relaxed/simple;
+	bh=Dn7XJpP4rtwOB8NIOvQUmEMjKhFFZhahMNdfR72i7xQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=m4dNy31jRpJKqP2RMH3ySoXRDiurhdsMoxMpdfradKOcInmrzkrpDzkSLT+846v+9+Z4LKZ6muZSqzFZ7ZcgcSEvOxR3xBCk8ZZloZQpqZ+2vrYyZoW4KppuP0CbFKdI5+shA1nVDi38HHDkaibx9gYnRkaM+iB/BP35as4PmPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BqYnhxem; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761866108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nbsSEZaCMc7K7Atlywq1UA86pTshfXfbD+JgyxyXRuw=;
+	b=BqYnhxemjKDpfH7eW6N6jRHjYMwxVKsjcN/cG4hJ/T6pdPe4keRlC9cXgEVIkTtv5p+oKQ
+	GnmPbl0/rkAOQXBte6goaO5WKU8xpmSSgoKdLnR8zZsR2QT+6Mz336obgwm5/+sF49C/wu
+	lUk4ZnQnJUDPb4AYlGp8YqKaJXOl8rk=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Song Liu <song@kernel.org>,  Amery Hung <ameryhung@gmail.com>,  Andrew
+ Morton <akpm@linux-foundation.org>,  linux-kernel@vger.kernel.org,  Alexei
+ Starovoitov <ast@kernel.org>,  Suren Baghdasaryan <surenb@google.com>,
+  Michal Hocko <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,
+  Johannes Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko
+ <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
+  Martin KaFai Lau <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi
+ <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
+ to cgroups
+In-Reply-To: <e027a330-8d51-44e5-badc-7c3ec4d41e23@linux.dev> (Martin KaFai
+	Lau's message of "Thu, 30 Oct 2025 15:42:12 -0700")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-3-roman.gushchin@linux.dev>
+	<CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
+	<87zf98xq20.fsf@linux.dev>
+	<CAHzjS_tnmSPy_cqCUHiLGt8Ouf079wQBQkostqJqfyKcJZPXLA@mail.gmail.com>
+	<CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com>
+	<877bwcus3h.fsf@linux.dev>
+	<CAHzjS_u5oqD3Dsk9JjK942QBL8UOMkqdM23xP0yTEb+MMuOoLw@mail.gmail.com>
+	<e027a330-8d51-44e5-badc-7c3ec4d41e23@linux.dev>
+Date: Thu, 30 Oct 2025 16:14:59 -0700
+Message-ID: <87bjloj824.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,27 +74,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251030032203.442961-1-wangliang74@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-2025-10-30, 11:22:03 +0800, Wang Liang wrote:
-> This patch adds executable permission to script 'ethtool-features.sh', and
-> check 'ethtool --json -k' support. 
+Martin KaFai Lau <martin.lau@linux.dev> writes:
 
-Those are two separate things, probably should be two separate patches.
+> On 10/30/25 2:34 PM, Song Liu wrote:
+>> Hi Roman,
+>> On Thu, Oct 30, 2025 at 12:07=E2=80=AFPM Roman Gushchin
+>> <roman.gushchin@linux.dev> wrote:
+>> [...]
+>>>> In TCP congestion control and BPF qdisc's model:
+>>>>
+>>>> During link_create, both adds the struct_ops to a list, and the
+>>>> struct_ops can be indexed by name. The struct_ops are not "active" by
+>>>> this time.
+>>>> Then, each has their own interface to 'apply' the struct_ops to a
+>>>> socket or queue: setsockopt() or netlink.
+>>>>
+>>>> But maybe cgroup-related struct_ops are different.
+>>>
+>>> Both tcp congestion and qdisk cases are somewhat different because
+>>> there already is a way to select between multiple implementations, bpf
+>>> just adds another one. In the oom case, it's not true. As of today,
+>>> there is only one (global) oom killer. Of course we can create
+>>> interfaces to allow a user make a choice. But the question is do we want
+>>> to create such interface for the oom case specifically (and later for
+>>> each new case separately), or there is a place for some generalization?
+>> Agreed that this approach requires a separate mechanism to attach
+>> the struct_ops to an entity.
+>>=20
+>>> Ok, let me summarize the options we discussed here:
+>> Thanks for the summary!
+>>=20
+>>>
+>>> 1) Make the attachment details (e.g. cgroup_id) the part of struct ops
+>>> itself. The attachment is happening at the reg() time.
+>>>
+>>>    +: It's convenient for complex stateful struct ops'es, because a
+>>>        single entity represents a combination of code and data.
+>>>    -: No way to attach a single struct ops to multiple entities.
+>>>
+>>> This approach is used by Tejun for per-cgroup sched_ext prototype.
+>>>
+>>> 2) Make the attachment details a part of bpf_link creation. The
+>>> attachment is still happening at the reg() time.
+>>>
+>>>    +: A single struct ops can be attached to multiple entities.
+>>>    -: Implementing stateful struct ops'es is harder and requires passing
+>>>       an additional argument (some sort of "self") to all callbacks.
+>>> I'm using this approach in the bpf oom proposal.
+>>>
+>> I think both 1) and 2) have the following issue. With cgroup_id in
+>> struct_ops or the link, the cgroup_id works more like a filter. The
+>> cgroup doesn't hold any reference to the struct_ops. The bpf link
+>> holds the reference to the struct_ops, so we need to keep the
+>> the link alive, either by keeping an active fd, or by pinning the
+>> link to bpffs. When the cgroup is removed, we need to clean up
+>> the bpf link separately.
+>
+> The link can be detached (struct_ops's unreg) by the user space.
+>
+> The link can also be detached from the subsystem (cgroup) here.
+> It was requested by scx:
+> https://lore.kernel.org/all/20240530065946.979330-7-thinker.li@gmail.com/
+>
+> Not sure if scx has started using it.
+>
+>>=20
+>>> 3) Move the attachment out of .reg() scope entirely. reg() will register
+>>> the implementation system-wide and then some 3rd-party interface
+>>> (e.g. cgroupfs) should be used to select the implementation.
+>>>
+>>>    +: ?
+>>>    -: New hard-coded interfaces might be required to enable bpf-driven
+>>>       kernel customization. The "attachment" code is not shared between
+>>>       various struct ops cases.
+>>>       Implementing stateful struct ops'es is harder and requires passing
+>>>       an additional argument (some sort of "self") to all callbacks.
+>>>
+>>> This approach works well for cases when there is already a selection
+>>> of implementations (e.g. tcp congestion mechanisms), and bpf is adding
+>>> another one.
+>> Another benefit of 3) is that it allows loading an OOM controller in
+>> a
+>> kernel module, just like loading a file system in a kernel module. This
+>> is possible with 3) because we paid the cost of adding a new select
+>> attach interface.
+>> A semi-separate topic, option 2) enables attaching a BPF program
+>> to a kernel object (a cgroup here, but could be something else). This
+>> is an interesting idea, and we may find it useful in other cases (attach
+>> a BPF program to a task_struct, etc.).
 
-[...]
-> @@ -7,6 +7,11 @@ NSIM_NETDEV=$(make_netdev)
->  
->  set -o pipefail
->  
-> +if ! ethtool --json -k $NSIM_NETDEV > /dev/null 2>&1; then
+Yep, task_struct is an attractive target for something like mm-related
+policies (THP, NUMA, memory tiers etc).
 
-I guess it's improving the situation, but I've got a system with an
-ethtool that accepts the --json argument, but silently ignores it for
- -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
-output), which will still cause the test to fail later.
+>
+> Does it have plan for a pure kernel module oom implementation?
 
--- 
-Sabrina
+I highly doubt.
+
+> I think the link-to-cgrp support here does not necessary stop the
+> later write to cgroupfs support if a kernel module oom is indeed needed
+> in the future.
+>
+> imo, cgroup-bpf has a eco-system around it, so it is sort of special. bpf=
+ user
+> has expectation on how a bpf prog is attached to a cgroup. The introspect=
+ion,
+> auto detachment from the cgroup when the link is gone...etc.
+>
+> If link-to-cgrp is used, I prefer (2). Stay with one way to attach
+> to a cgrp. It is also consistent with the current way of attaching a sing=
+le
+> bpf prog to a cgroup. It is now attaching a map/set of bpf prog to a cgro=
+up.
+> The individual struct_ops implementation can decide if it should
+> allow a struct_ops be attached multiple times.
+
++1
 
