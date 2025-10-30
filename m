@@ -1,323 +1,185 @@
-Return-Path: <linux-kernel+bounces-877893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20222C1F482
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:28:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7D5C1F476
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09D914E9900
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:27:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 558104E4858
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE32342C95;
-	Thu, 30 Oct 2025 09:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA8F34027D;
+	Thu, 30 Oct 2025 09:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q/XGFwAV"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WXvFdDly";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PiAhaXjP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E21A33EAE3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F70630E857
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816428; cv=none; b=uB8bjXZSVDwbDa2kO0r1weONsPRVHMHfMpTRLRMarN8B226W5ThMGlfUPbxIpLi8r2LziOj+jM+9lPTj6saGgSxuoEqRDSOPq4neoRUNe54UfgfxDC04glPXRd61DzqevJlNUiY3LyNXNhhRHk0SKiJK/KyzpWu30iK2HAdgr4o=
+	t=1761816409; cv=none; b=pJ4UlRkOxy4VOjkBZxAkFnPgD5sLhDvG1E5lE9Gby49bPXhicKGAKk5eZbuXsbqUZYvCDCeeGOE8PGSiftdW885FDhlQ9wXPW2Kmv7MzBWM1rJi+IC+HacvnBGJauwVD4w/gsg2e+JtfiyBIpIILiRXxPGGvK49/Wxgct1mY9uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816428; c=relaxed/simple;
-	bh=26F0Bvu56G754C2jeroEex8fImMoz0+Y7BY0qxomFcU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h3R5TZHmt0na3NPUjlUkuvF93X0/RKVPJDxZxt0NvYdc8bBUonbh99cp/JNX4wTVYdUAyVlf4Q96TtO2E85ixNxMbbT9SLF4cfLI7x1f7mf2smQ6DwEf4u24UrrRPkmeFxHqvLWYVoaIQs61T0otyizD1xVgWCnjKLmm4n6ZTCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q/XGFwAV; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47710acf715so4144255e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:27:05 -0700 (PDT)
+	s=arc-20240116; t=1761816409; c=relaxed/simple;
+	bh=UGkzncBmFT0Z8Xgx3vo5n6ftCbyEbJOpxTeyYrpQGd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vpvkby1uie8bAMUqRcURUgr6Bjljb8jRZT4SgUgHCwZf+HV7AUocHvfhJUWmL6UUAOX1TDyPSJDkDaTKmhJRZaXFWu/2j2eMJbA9q1gb5gW25/cLALzbyFS7iuhC3x/DOoc7ydSCFwo6DnkiD2/Pe0L1S5wubYx/jzHATwmbfXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WXvFdDly; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PiAhaXjP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U4xuUm2623261
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MkhXCfGdSQcDvTlbYDPsW7XCU2SBVMl9E+b0/qNR+YA=; b=WXvFdDlyVDlLgs24
+	hRq6p+6qK8CV9lic9QlCuUfaa0N8G3YCqYN7vRhVoRwikaXnrxpBvPouyJN9TthI
+	Rvvxg6gHR2/83eMMhgIKHaF/2gzjTsd0/pwzyo1HiT7DJWdmxw4zXGOxJzj75wPv
+	MxIqgQRwirpvHbcGxz6Uh5x1NIHXK1NA5mM+EXNEXSpNYv+ArFuWKkIbnB6TyN+z
+	J+Mh2nk3LYfSRxD1D/R5R5tkklf9An488gzGNuxoue23wlQwz+TJGmjzPZzFtIfl
+	Ecw7mI8ytS+6TnUauCSxQKMRKMdlm9JUK7i5oHYuEdiLkBsiOgfN0108MZ76Nj9P
+	ZeiYXQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a41fxgr1s-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:47 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87bd2dececeso3249106d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761816424; x=1762421224; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SJU/7pOy6k5Otq6sscIBJ2rwBspnn6iIa72yddH68yU=;
-        b=q/XGFwAVSheVbui53IHDUS4ePMMwFdglHYj/04KlgOjzY2Ga5NEbi7Lh+8MPnQ3AFY
-         jaNLobCYijonQy3UMGensxysdSvp+f6ohL2u+CoPUDQHHPlEhn63reiTa9lGtuF9AOWd
-         rp/+mM15gx8cCm1aS/9Kl79ZLa8BUQ1KRpUWiGhkvk4EXJoqNKpDGTxWwgN3dJxfubBU
-         qHthqgISKqwhRF2Wvy3sjvNEUb92PE8kQOCKCYl3yTqp1NUooxSVT/cEVKnevWXyze3f
-         VNYIV5hNkEVmn3TtqHRCirlNo8ObV9wmSJqkMsNrjmdG5Ic2V0K987KGWy2MBgeT3H1t
-         ykZQ==
+        d=oss.qualcomm.com; s=google; t=1761816406; x=1762421206; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MkhXCfGdSQcDvTlbYDPsW7XCU2SBVMl9E+b0/qNR+YA=;
+        b=PiAhaXjPWbcM5m3DHUxh22vE63xOb9Je4/o+jQaTPkL1zeZ+LZVjnXGc0SSvjW7DYl
+         xEL1oFqsFclsRFWNeBTyDvSA5MLA+zCkr9LLko9g1YbPfF8Y7j8n3KZ11/VwlfQSHDfc
+         abaXySNacFkDoT/XZun2x97BI9L/EaSKr+jK2fF2qBuL5+v9hzrCURvvEpJyFc+jxhKG
+         45Gqdpvzb25AGF6MXx5ftxjMjxTYyE4Haap+kH5ENJ1ej4d9phR634vcUEMBZ92NrTqM
+         HmspI1p49ShYQJWMo+bA/R0H5Mwft5nhPNobUu3Ydn+xmynPXeNsf6ECxVc8RPnZWfJb
+         s0ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761816424; x=1762421224;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJU/7pOy6k5Otq6sscIBJ2rwBspnn6iIa72yddH68yU=;
-        b=L029NYzPj4nKJkJrlM40P8q0UOLLjj4VJBIhsqlYpArMeHA7WPFjuc0C95ShosKWjm
-         1gevY4kRJG7qDw+R7mQeEbz4l0xFwUcwxt5Ir900iBGE/ZDVl2xnK7ZBYQEvdNY5lbjr
-         Zi3DYni/D3TOPCyCbECgVErE78djLElMZb5nurmQCDN/f1bYkgyOepIHjfNi/pbaljdW
-         jtdNCRRoq6Up7gRuh9jZ9eEijw2DArO5WRJ8UmxYqXKJAg4EPa/mWkUxrh5QYclp1SvJ
-         08j6mB2bzd7C91Hel3q8TejzRaSGXsh1Lvo20EqE6/jls3H7+F9tQf7I023py93KoBNs
-         zqDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWH51XmL05TDRUebOS3KCnkqktAOyJu9mGye91zjeutKNnl3UizZaFT178qsWimHYlDlTUNhOhYBKgQlxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtRwT6oKV0AxFb0CjOi213CPEtYd2psEXLYalwtMSOqmCSdsut
-	KjAQxAE3T+wkETtIiOOrs//zjqdhRQ+xgw6GGQXkHjTa9FqAsC9cfj8VC3sm0daGDRY=
-X-Gm-Gg: ASbGncuDoNQnbSBCeXuvbVLxln0KyDKaqAsz41psbOxgHFbOTQ7Mbz/1nr3uWklE9ku
-	AiSSjeNRT7LvRU3PCPWfU7U9pxQZ2RLi+2TfTgdyf6vYNM18WrA+TT9enLJW+QX9EcYAntlJ4Jk
-	iEJEtln3ScaK80NGIdOpowvHy2sc0uKJHbJtAvBxGGrOHUsoKviY/Im9cwdaYXR4kBZ5oWO/qj6
-	2i8W+3wTij10CFeS9/fM/FOpFjzrCqPF47eC5vU7xgJeqXPc+ew4t6dw6t9onnSeRz31Ft2xidz
-	rGAUYt0LiwAVhco/2/HI4PuN0AxAKAq2nsCbUwNQR52rzv6HYK17W5xGwPNUXEhXz6QqXhKJRtS
-	R61paEMv3fvbWrNVuzMgJxs34X0fsjk+wmIegQdsWGpTBIUaiOBaVb7+cjYSvJPXkLlUHHUEKpA
-	==
-X-Google-Smtp-Source: AGHT+IGiKMp7FmmJWvCzcPKsR4nFMCkOPRvUXCQdoKXYcyEIZ/3Nl23pSGaG1drR1Wm1x82x0LhDRQ==
-X-Received: by 2002:a05:600c:6303:b0:46e:4329:a4d1 with SMTP id 5b1f17b1804b1-4772675fffdmr19910835e9.4.1761816424323;
-        Thu, 30 Oct 2025 02:27:04 -0700 (PDT)
-Received: from localhost ([2001:4090:a245:8496:49da:2c07:5e9a:7fb9])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952b79cbsm31002262f8f.4.2025.10.30.02.27.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 02:27:03 -0700 (PDT)
-From: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
-Date: Thu, 30 Oct 2025 10:26:10 +0100
-Subject: [PATCH v9 3/3] firmware: ti_sci: Partial-IO support
+        d=1e100.net; s=20230601; t=1761816406; x=1762421206;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MkhXCfGdSQcDvTlbYDPsW7XCU2SBVMl9E+b0/qNR+YA=;
+        b=SE6O8mcLrT06N1Sp4AYZcvg0vYdyCRf9uNkCS8lJUiQZ+R1ILcCEzlKya1ZgfZL8Va
+         9uOHR4YRXNC/IGORxatWajbDp+mYZzc6mItrzvSxK7OC+dvopYiVVKIJdcAdQxab6kxx
+         wb1lG5u7EZ53c+M7e06uU0Q7pxCEGd6hj0KniCmptDODSLR3OIjPlHo7rnE1Cz62eizF
+         wJXS7JA5JV/0OAGj0jWf6Kyxv2iHofGWElGUKvWHRfsVAZ4WRZ+G6i+xUtSY3IA1TYOq
+         wl390LukEbamTwrIjwQ2gt/n76jbtHPGPI8y/yc6monyEWYL7z3LC8KlydfThs7S4W3n
+         4TZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnPt7o2yqQOTaQAqd0/PVE8Hcelpx7HGQetl32FJaXiHSYAFZ2Mz9qamiCQKNpSCxMR0wurYAl3Jye5j4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtM5AxSGm0EzWv/1j+3tEy0VGsAt22m9JP5FxQR/IG6/8XkVCF
+	JbUyLyLdYL33UgZNC6+evX5qNVdcDKzbPGchoQNvLysAdct1/1KJrw/nhk+PcEM6Ubq332++gUp
+	SqxZ10RJRKl5P7TCS7su5HwpQRyFdev96FPILPeLy+c6jhZV/scSkkYOSWq/uKBY4CZlXX7YEDQ
+	A=
+X-Gm-Gg: ASbGnctXNxDAvNXiFFs6SiSl9FgS7ArgxUO4r9hGeoEJL1vOW8n555jxB3ifPENJz8g
+	kVQleisKaPhNVKIWmsFYoimcyVEBqstS4Ny2uqqjcSW7t0nqNuEJI9Ud4blvrFybtJWZgBqMMkO
+	zUJz7BXwTe3nENX/I15QUIjqqmxsUNse2QOjpaNBKVtSthWvKtFTp5H5cy1MxVNhYMWzWAPP7h2
+	pQtzj6CUHPjLgV3vTy9OWAkjSlavg58HpwrZ3zvt/MAXgCsb720ZFUYG5FVnmiIoj7SzHYVrEJd
+	jdn42TlbNk5PVLLFNJxcAC7g1W+tmA3Fgz6Dd1an/pLDUv9r8f4eOtw2Q/18ya5UxbvJS45+l8E
+	A6p8sFkPmY7CvFucFNsdpbQLA3KKXE8V/6f9R8QeVNO+ZBI8LxYGetD3f
+X-Received: by 2002:a05:6214:487:b0:84f:81b4:4440 with SMTP id 6a1803df08f44-88009c059damr57947676d6.7.1761816406130;
+        Thu, 30 Oct 2025 02:26:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENOdltg392rpt/C6P2DXClkaCW6AuvtVnIkahf+FfBy++WBa3yu6xR0D9iLMYKtJjowkMGMg==
+X-Received: by 2002:a05:6214:487:b0:84f:81b4:4440 with SMTP id 6a1803df08f44-88009c059damr57947516d6.7.1761816405687;
+        Thu, 30 Oct 2025 02:26:45 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853f9a0fsm1679780866b.50.2025.10.30.02.26.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 02:26:45 -0700 (PDT)
+Message-ID: <49f067c0-20d3-4039-95e6-fc19ce48881d@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 10:26:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: qcom-geni: make sure I2C hub controllers can't use
+ SE DMA
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Wolfram Sang <wsa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <20251029-topic-sm8x50-geni-i2c-hub-no-dma-v1-1-5e264258a5bd@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251029-topic-sm8x50-geni-i2c-hub-no-dma-v1-1-5e264258a5bd@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-topic-am62-partialio-v6-12-b4-v9-3-074f55d9c16b@baylibre.com>
-References: <20251030-topic-am62-partialio-v6-12-b4-v9-0-074f55d9c16b@baylibre.com>
-In-Reply-To: <20251030-topic-am62-partialio-v6-12-b4-v9-0-074f55d9c16b@baylibre.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
- Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
- Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7001; i=msp@baylibre.com;
- h=from:subject:message-id; bh=26F0Bvu56G754C2jeroEex8fImMoz0+Y7BY0qxomFcU=;
- b=owGbwMvMwCXWejAsc4KoVzDjabUkhkxmfR/5LunG1oM/Zvep7WJM4vz1fIqe7/y9kefYt956N
- FNosdrcjlIWBjEuBlkxRZbOxNC0//I7jyUvWrYZZg4rE8gQBi5OAZjI/m6Gf8Y/D854mCh9wMBS
- NOW4C+e5u6Km5uEtPfl8L5t7FsQ0BTMydMRfOZx8Pm5NlLbHIk/VQ4L6C8+vzzcOO2P5+oX7h6M
- r2QA=
-X-Developer-Key: i=msp@baylibre.com; a=openpgp;
- fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
+X-Proofpoint-GUID: 7sfuBlcSYeTyfItGigzjhxtsacDO5dnD
+X-Authority-Analysis: v=2.4 cv=UJrQ3Sfy c=1 sm=1 tr=0 ts=69032f57 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=7QP1INNbtZu8WugdpZMA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: 7sfuBlcSYeTyfItGigzjhxtsacDO5dnD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA3NiBTYWx0ZWRfXwgF+zL2IlwQG
+ QD7100h09Gw0/EsUM01kbx4O7illjbu/vU830qZ5gXrl8DWQeI7m6H60WSu4mpCamdjXDZ/j3ci
+ +vKzFwqI5ToXjY6QpRyBGvyOnX97JGVkLeMbzO5I+teXeASpGH+GiVD0m/gDcs9CfJPa9ewaUwr
+ xGt2cv7EKQwJOMpnj8cbwJ4Y+bWC5e2T7zkwOZ/DuPj6L5b868+NxNHvBMzWL9Hfq0CVlyz5pTX
+ i3oS/HCrCP401KZnQeX6O/ST99WXc/CdJa99eRv/q2iKualUPQAiHKwLku6jyRdSb7+TPQN/POo
+ Pkl6+GMA4KsoHDhE1McqPXt6ou4eoA2f5ev8NLkPO+oUwh97y34L6rXDJpQ6eLbU9pt2ZywZMod
+ pUIMiKmptD4JpKAFWUKx3EbMZw5WfA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300076
 
-Add support for Partial-IO poweroff. In Partial-IO pins of a few
-hardware units can generate system wakeups while DDR memory is not
-powered resulting in a fresh boot of the system. These hardware units in
-the SoC are always powered so that some logic can detect pin activity.
+On 10/29/25 7:07 PM, Neil Armstrong wrote:
+> The I2C Hub controller is a simpler GENI I2C variant that doesn't
+> support DMA at all, add a no_dma flag to make sure it nevers selects
+> the SE DMA mode with mappable 32bytes long transfers.
+> 
+> Fixes: cacd9643eca7 ("i2c: qcom-geni: add support for I2C Master Hub variant")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/i2c/busses/i2c-qcom-geni.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 43fdd89b8beb..bfb352b04902 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -97,6 +97,7 @@ struct geni_i2c_dev {
+>  	dma_addr_t dma_addr;
+>  	struct dma_chan *tx_c;
+>  	struct dma_chan *rx_c;
+> +	bool no_dma;
+>  	bool gpi_mode;
+>  	bool abort_done;
+>  };
+> @@ -425,7 +426,7 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+>  	size_t len = msg->len;
+>  	struct i2c_msg *cur;
+>  
+> -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
+> +	dma_buf = gi2c->no_dma ? NULL : i2c_get_dma_safe_msg_buf(msg, 32);
 
-If the system supports Partial-IO as described in the fw capabilities, a
-sys_off handler is added. This sys_off handler decides if the poweroff
-is executed by entering normal poweroff or Partial-IO instead. The
-decision is made by checking if wakeup is enabled on all devices that
-may wake up the SoC from Partial-IO.
+Not a huge fan of putting the ternary operator here, but I don't
+mind that much either
 
-The possible wakeup devices are found by checking which devices
-reference a "Partial-IO" system state in the list of wakeup-source
-system states. Only devices that are actually enabled by the user will
-be considered as an active wakeup source. If none of the wakeup sources
-is enabled the system will do a normal poweroff. If at least one wakeup
-source is enabled it will instead send a TI_SCI_MSG_PREPARE_SLEEP
-message from the sys_off handler. Sending this message will result in an
-immediate shutdown of the system. No execution is expected after this
-point. The code will wait for 5s and do an emergency_restart afterwards
-if Partial-IO wasn't entered at that point.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-A short documentation about Partial-IO can be found in section 6.2.4.5
-of the TRM at
-  https://www.ti.com/lit/pdf/spruiv7
-
-Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
----
- drivers/firmware/ti_sci.c | 132 +++++++++++++++++++++++++++++++++++++++++++++-
- drivers/firmware/ti_sci.h |   5 ++
- 2 files changed, 136 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 4db84a92a517b0aa7bb8d47e809d9848a16e2cc4..f2922fccfbe748a436cb9aa0a8c8e5f48db02ef9 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -6,6 +6,7 @@
-  *	Nishanth Menon
-  */
- 
-+#include "linux/dev_printk.h"
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
- #include <linux/bitmap.h>
-@@ -3663,6 +3664,116 @@ devm_ti_sci_get_resource(const struct ti_sci_handle *handle, struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_ti_sci_get_resource);
- 
-+/*
-+ * Enter Partial-IO, which disables everything including DDR with only a small
-+ * logic being active for wakeup.
-+ */
-+static int ti_sci_enter_partial_io(struct ti_sci_info *info)
-+{
-+	struct ti_sci_msg_req_prepare_sleep *req;
-+	struct ti_sci_xfer *xfer;
-+	struct device *dev = info->dev;
-+	int ret = 0;
-+
-+	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_PREPARE_SLEEP,
-+				   TI_SCI_FLAG_REQ_GENERIC_NORESPONSE,
-+				   sizeof(*req), sizeof(struct ti_sci_msg_hdr));
-+	if (IS_ERR(xfer)) {
-+		ret = PTR_ERR(xfer);
-+		dev_err(dev, "Message alloc failed(%d)\n", ret);
-+		return ret;
-+	}
-+
-+	req = (struct ti_sci_msg_req_prepare_sleep *)xfer->xfer_buf;
-+	req->mode = TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO;
-+	req->ctx_lo = 0;
-+	req->ctx_hi = 0;
-+	req->debug_flags = 0;
-+
-+	ret = ti_sci_do_xfer(info, xfer);
-+	if (ret) {
-+		dev_err(dev, "Mbox send fail %d\n", ret);
-+		goto fail;
-+	}
-+
-+fail:
-+	ti_sci_put_one_xfer(&info->minfo, xfer);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Iterate all device nodes that have a wakeup-source property and check if one
-+ * of the possible phandles points to a Partial-IO system state. If it
-+ * does resolve the device node to an actual device and check if wakeup is
-+ * enabled.
-+ */
-+static bool ti_sci_partial_io_wakeup_enabled(struct ti_sci_info *info)
-+{
-+	struct device_node *wakeup_node = NULL;
-+
-+	for_each_node_with_property(wakeup_node, "wakeup-source") {
-+		struct of_phandle_iterator it;
-+		int err;
-+
-+		of_for_each_phandle(&it, err, wakeup_node, "wakeup-source", NULL, 0) {
-+			struct platform_device *pdev;
-+			bool may_wakeup;
-+
-+			/*
-+			 * Continue if idle-state-name is not off-wake. Return
-+			 * value is the index of the string which should be 0 if
-+			 * off-wake is present.
-+			 */
-+			if (of_property_match_string(it.node, "idle-state-name", "off-wake"))
-+				continue;
-+
-+			pdev = of_find_device_by_node(wakeup_node);
-+			if (!pdev)
-+				continue;
-+
-+			may_wakeup = device_may_wakeup(&pdev->dev);
-+			put_device(&pdev->dev);
-+
-+			if (may_wakeup) {
-+				dev_dbg(info->dev, "%pOF identified as wakeup source for Partial-IO\n",
-+					wakeup_node);
-+				of_node_put(it.node);
-+				of_node_put(wakeup_node);
-+				return true;
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static int ti_sci_sys_off_handler(struct sys_off_data *data)
-+{
-+	struct ti_sci_info *info = data->cb_data;
-+	bool enter_partial_io = ti_sci_partial_io_wakeup_enabled(info);
-+	int ret;
-+
-+	if (!enter_partial_io)
-+		return NOTIFY_DONE;
-+
-+	dev_info(info->dev, "Entering Partial-IO because a powered wakeup-enabled device was found.\n");
-+
-+	ret = ti_sci_enter_partial_io(info);
-+
-+	if (ret) {
-+		dev_err(info->dev,
-+			"Failed to enter Partial-IO %pe, trying to do an emergency restart\n",
-+			ERR_PTR(ret));
-+		emergency_restart();
-+	}
-+
-+	mdelay(5000);
-+	emergency_restart();
-+
-+	return NOTIFY_DONE;
-+}
-+
- static int tisci_reboot_handler(struct sys_off_data *data)
- {
- 	struct ti_sci_info *info = data->cb_data;
-@@ -3941,6 +4052,19 @@ static int ti_sci_probe(struct platform_device *pdev)
- 		goto out;
- 	}
- 
-+	if (info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO) {
-+		ret = devm_register_sys_off_handler(dev,
-+						    SYS_OFF_MODE_POWER_OFF,
-+						    SYS_OFF_PRIO_FIRMWARE,
-+						    ti_sci_sys_off_handler,
-+						    info);
-+		if (ret) {
-+			dev_err(dev, "Failed to register sys_off_handler %pe\n",
-+				ERR_PTR(ret));
-+			goto out;
-+		}
-+	}
-+
- 	dev_info(dev, "ABI: %d.%d (firmware rev 0x%04x '%s')\n",
- 		 info->handle.version.abi_major, info->handle.version.abi_minor,
- 		 info->handle.version.firmware_revision,
-@@ -3950,7 +4074,13 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	list_add_tail(&info->node, &ti_sci_list);
- 	mutex_unlock(&ti_sci_list_mutex);
- 
--	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	if (ret) {
-+		dev_err(dev, "platform_populate failed %pe\n", ERR_PTR(ret));
-+		goto out;
-+	}
-+	return 0;
-+
- out:
- 	if (!IS_ERR(info->chan_tx))
- 		mbox_free_channel(info->chan_tx);
-diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-index 701c416b2e78f8ef20ce6741a88ffa6fd4853b2d..09eaea54dd5cabce72dd1652c9603e3ab446b60c 100644
---- a/drivers/firmware/ti_sci.h
-+++ b/drivers/firmware/ti_sci.h
-@@ -595,6 +595,11 @@ struct ti_sci_msg_resp_get_clock_freq {
- struct ti_sci_msg_req_prepare_sleep {
- 	struct ti_sci_msg_hdr	hdr;
- 
-+/*
-+ * When sending prepare_sleep with MODE_PARTIAL_IO no response will be sent,
-+ * no further steps are required.
-+ */
-+#define TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO				0x03
- #define TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED				0xfd
- 	u8			mode;
- 	u32			ctx_lo;
-
--- 
-2.51.0
-
+Konrad
 
