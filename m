@@ -1,112 +1,144 @@
-Return-Path: <linux-kernel+bounces-878402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19E2C2089B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:17:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3382CC208A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44B2B4EFCEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:07:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87C784ECE47
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B634C18A93F;
-	Thu, 30 Oct 2025 14:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FBE239E9E;
+	Thu, 30 Oct 2025 14:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZjbq4bS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2VzhgQu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846BB126BF1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F94223DE8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833274; cv=none; b=sh/n+gNtR1YzhKVOxFn2j9qd5UsXSDIK0QcuMNdcSoRguSdt7o8FxNy7eTBCPb+r2xMSQtQMUn8s8gFh251XpFO+Zr2DKbBi7Qer8TVkT5e8xax2rCveme0UAWqYBimgLpfxgBaloirue1Ymo+TewJZ67oM58PdCP/U/FB0PR3g=
+	t=1761833336; cv=none; b=pSQIRTtrztn6FxjP4xhWGTCn27etArTl+n1l+vHBmTJLsS9+FXeDm2rccUgND1f6XQeM8lyyFwBbdRWrfUCpXhLG4yzUK1KeeeCtZLx06qbz8H0l4ELPVslKXfABoMk58gzObR/eA/huUnfvkYPEywU7Ad78W/i0VASF7v9zQik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833274; c=relaxed/simple;
-	bh=4CPVv7hFL30viS0SHHkXvcnbsKyga8NM8ZRxzp4WpYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjNWt42HHoZBYpa1VRl01I3QWFTvmJOOXHqOM3DTKDoSoO3ukjxnu7QmKpWSC/e6/xQ4CR2CkBcNIQFMrkfVeRKlR5WMinLDNuI7gdbmwAoTlS609eCk5OXrPoNwBTnUauydoDWKyKTj9fyIdj9vK+DqahSWgoAJy+8MHPCkUR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZjbq4bS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761833272; x=1793369272;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4CPVv7hFL30viS0SHHkXvcnbsKyga8NM8ZRxzp4WpYM=;
-  b=ZZjbq4bSw+9a65fTzKUKxtUpqT8p4nUXZHrjL7VbqxqcMvCY1TpcgvPf
-   geGBB8NFu70dU4o7ednESAdeAXH37wGMH0VGVXQwlGt3/VDDBo3RhMATz
-   5zSeeBr7OIQkZoVMrFuOl1BCSnoBJy9pe+V1WNHCUdzaHDvyXBFKRDatw
-   bfwTYjdek/74U1dSK+wS2MTk/DQBj0WOYmjgkQG1fO9clWfQBrjDwcCzN
-   BliRbNSkmD6QJarHhOMSOsmFDX1AYyQDoRRCueOI1y8j4icHFknyOYvM/
-   +c9qY+8VFrEkjE9lCIpCVtwsOcZ4DYi/G0dttIUjit3aqvPZthDis6LP6
-   A==;
-X-CSE-ConnectionGUID: /BINTJpLRqChpR9C4FuvjQ==
-X-CSE-MsgGUID: Uap+jviXRhmmL5VBWY2RfA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67809979"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67809979"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:07:52 -0700
-X-CSE-ConnectionGUID: A3Dw8L3KREWjhLL5v/ETfQ==
-X-CSE-MsgGUID: iecUXrMdQwSrEmw4K8Yo9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="185843818"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:07:50 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vETJc-00000003vrh-0mwX;
-	Thu, 30 Oct 2025 16:07:48 +0200
-Date: Thu, 30 Oct 2025 16:07:47 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH v3 0/6] panic: sys_info: Refactor and fix a potential
- issue
-Message-ID: <aQNxM40aDIrpfE0K@smile.fi.intel.com>
-References: <20251030132007.3742368-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1761833336; c=relaxed/simple;
+	bh=rGp1JBYK1mL0otpAztrc7nUrgT5FS8nLHRGVxjQo6Uk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gt3UlCfwYlNH+Ut9CTRGJtW9dMCpzV+druuHQocIGe/qRLxcUMjpR8iXvNoTmLZxMbLdDqqBx2C1AlQdgeVpy6eltArTY2s+UPcohE4USDZbE7EsjnmfmBNi+Q3T46K7rc6JicUKFKLCaCWL5sJ0AHxKSysJ0KmY0sbDOkToOKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2VzhgQu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61B1C116B1
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761833335;
+	bh=rGp1JBYK1mL0otpAztrc7nUrgT5FS8nLHRGVxjQo6Uk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=g2VzhgQuAetX4UqLApCRMz10hkDQCEIqCvlkYoYReeBjGRLeD5LLhTCz4nvy6JhuP
+	 IMMTQCRsf2xT2ePf9bu/3HjjzfGHqYoetvgd+Dn/Mvb2X2V7ShlaKElXqLihuUmfeK
+	 5dxszIYQMptoJHSlFziZ6/zKLZuPugn81vj9uI/Yj32oDqEJY2Q9K1iDKhwUT+3X5u
+	 TKuyVKZ/6d0AhcGcbdu9HvgBT2oGZsid4YszYACOGNqR2Gk/VoVlogmYZARr5aQJEz
+	 VmWKfsVWuWj5z43aCi9oDkcwih0Y1BTW0NoBsytI6RG7fnz2O0krWZDuM45Kxn/GrS
+	 IHpxlAo5+Ilrg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59310014b8eso1138085e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:08:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUT9ycmMt/fPzWc/JK+HGh7e2YqyMROXOmU85CcnQAEgmwtBO1Q84T6UD/1wJU40NmdGE8+JWhTRn9QFc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy8B3PcCQj7sFOV6DQcxBNwslizmv9Efcgn5BcMDbg3kpOMei7
+	NDdX38zU8ddaz7Kvog36yP/Kzjp8GW/s+3f40gPs43pT/eU9+Rf0GELmstQwx5mTDmq7CRrFBds
+	B0mccd4+/WytJXDzIAchB8N70RTOG5T0=
+X-Google-Smtp-Source: AGHT+IHHbF/WjBxeq1E6VyXB5fSpfqArMxEc2iIkFLjyxdwV0+rh9GbWGUYmuc+y1VNP2dUtRDQQdQyMkTV5CrGpyPw=
+X-Received: by 2002:a05:6512:15a0:b0:592:f40f:a39b with SMTP id
+ 2adb3069b0e04-594128cdef0mr2510717e87.47.1761833334300; Thu, 30 Oct 2025
+ 07:08:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030132007.3742368-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
+In-Reply-To: <20251026055032.1413733-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 30 Oct 2025 15:08:42 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEi7FMANDmdXhL5w5HFs_Kbf--BvOn1D1QU1axFTrHn3w@mail.gmail.com>
+X-Gm-Features: AWmQ_bkg3z1jPhxoXgHvPJUcxMYHgojNY5flDtxcrxvUxkgwYwbnfThirTljmPc
+Message-ID: <CAMj1kXEi7FMANDmdXhL5w5HFs_Kbf--BvOn1D1QU1axFTrHn3w@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, Holger Dengler <dengler@linux.ibm.com>, 
+	Harald Freudenberger <freude@linux.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 30, 2025 at 12:44:16PM +0100, Andy Shevchenko wrote:
+On Sun, 26 Oct 2025 at 06:53, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> This series is targeting libcrypto-next.  It can also be retrieved from:
+>
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha3-lib-v2
+>
+> This series adds SHA-3 support to lib/crypto/.  This includes support
+> for the digest algorithms SHA3-224, SHA3-256, SHA3-384, and SHA3-512,
+> and also support for the extendable-output functions SHAKE128 and
+> SHAKE256.  The SHAKE128 and SHAKE256 support will be needed by ML-DSA.
+>
+> The architecture-optimized SHA-3 code for arm64 and s390 is migrated
+> into lib/crypto/.  (The existing s390 code couldn't really be reused, so
+> really I rewrote it from scratch.)  This makes the SHA-3 library
+> functions be accelerated on these architectures.
+>
+> Finally, the sha3-224, sha3-256, sha3-384, and sha3-512 crypto_shash
+> algorithms are reimplemented on top of the library API.
+>
+> If the s390 folks could re-test the s390 optimized SHA-3 code (by
+> enabling CRYPTO_LIB_SHA3_KUNIT_TEST and CRYPTO_LIB_BENCHMARK), that
+> would be helpful.  QEMU doesn't support the instructions it uses.  Also,
+> it would be helpful to provide the benchmark output from just before
+> "lib/crypto: s390/sha3: Add optimized Keccak function", just after it,
+> and after "lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest
+> functions".  Then we can verify that each change is useful.
+>
+> Changed in v2:
+>   - Added missing selection of CRYPTO_LIB_SHA3 from CRYPTO_SHA3.
+>   - Fixed a bug where incorrect SHAKE output was produced if a
+>     zero-length squeeze was followed by a nonzero-length squeeze.
+>   - Improved the SHAKE tests.
+>   - Utilized the one-shot SHA-3 digest instructions on s390.
+>   - Split the s390 changes into several patches.
+>   - Folded some of my patches into David's.
+>   - Dropped some unnecessary changes from the first 2 patches.
+>   - Lots more cleanups, mainly to "lib/crypto: sha3: Add SHA-3 support".
+>
+> Changed in v1 (vs. first 5 patches of David's v6 patchset):
+>   - Migrated the arm64 and s390 code into lib/crypto/
+>   - Simplified the library API
+>   - Added FIPS test
+>   - Many other fixes and improvements
+>
+> The first 5 patches are derived from David's v6 patchset
+> (https://lore.kernel.org/linux-crypto/20251017144311.817771-1-dhowells@redhat.com/).
+> Earlier changelogs can be found there.
+>
+> David Howells (5):
+>   crypto: s390/sha3 - Rename conflicting functions
+>   crypto: arm64/sha3 - Rename conflicting function
+>   lib/crypto: sha3: Add SHA-3 support
+>   lib/crypto: sha3: Move SHA3 Iota step mapping into round function
+>   lib/crypto: tests: Add SHA3 kunit tests
+>
+> Eric Biggers (10):
+>   lib/crypto: tests: Add additional SHAKE tests
+>   lib/crypto: sha3: Add FIPS cryptographic algorithm self-test
+>   crypto: arm64/sha3 - Update sha3_ce_transform() to prepare for library
+>   lib/crypto: arm64/sha3: Migrate optimized code into library
+>   lib/crypto: s390/sha3: Add optimized Keccak functions
+>   lib/crypto: sha3: Support arch overrides of one-shot digest functions
+>   lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest functions
+>   crypto: jitterentropy - Use default sha3 implementation
+>   crypto: sha3 - Reimplement using library API
+>   crypto: s390/sha3 - Remove superseded SHA-3 code
+>
 
-+Cc: Petr, sorry, forgot to add you to the Cc list.
-
-> While targeting the compilation issue due to dangling variable,
-> I have noticed more opportunities for refactoring that helps to
-> avoid above mentioned compilation issue in a cleaner way and
-> also fixes a potential problem with global variable access.
-> Please, give it a try.
-> 
-> Changelog v3:
-> - addressed an issue with empty parameter returned (Feng)
-> - gathered tags (Feng)
-> 
-> Changelog v2:
-> v2: https://lore.kernel.org/r/20251029111202.3217870-2-andriy.shevchenko@linux.intel.com
-> - rebased on top of the current codebase
-> - addressed an issue when converting to match_string() (Feng)
-> - Cc'ed to Petr (requested by Feng)
-> 
-> v1: https://lore.kernel.org/r/20250711095413.1472448-1-andriy.shevchenko@linux.intel.com
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
