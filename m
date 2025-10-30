@@ -1,111 +1,173 @@
-Return-Path: <linux-kernel+bounces-878786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31424C21735
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:20:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B9AC2177D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 600B33503F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:20:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE1C4F0130
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E3F3678DF;
-	Thu, 30 Oct 2025 17:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786D13678BB;
+	Thu, 30 Oct 2025 17:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkjBz/+e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkosZtNO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B622F60A3;
-	Thu, 30 Oct 2025 17:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC15F264F96;
+	Thu, 30 Oct 2025 17:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844844; cv=none; b=opN3ZQ69G9iQjN4yB0fPVpQ4jv3tlAzEQu2klowQ8RUsQG+taql9/ks8sMFuUMcl9EYywarZiIgng3AgaeKW9mrxxsHW5LoXAWcO6Atfrn2tDE4PGQJ50jjRomS3DUFGhp8KbUwINuT7aPKqkj5Bw4aNP4ZubJCvT5F44sko2sY=
+	t=1761844874; cv=none; b=N2GFiXLbG8OomUTFd9azN7wIrdVRHcHzxxYaNA1yS8VH90iPG/Yh1xDju63DZL4sipvFN/kpFNePUnORUxlEIMx2Szcuh1FEBCQEeAhafVzqqQcn7f/Yv00b9EA4minqogGIp3sUd+76Plw6PQrfLj4HMyq2rcsYosno2t3OEqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844844; c=relaxed/simple;
-	bh=u1y3B+8RUYFHKy7C4XHtKEXlhSgIPJIedO3quTvmsnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRFw5puCpyCA0Bi7KTXHVSgcuyrfOKFCONLCblz/B3j+mgWxDzXXmyn0WJ+aobHrNtW7Vk1UaD09WFZVhs1ur9WCz0RFTMLTPyvuqXklKV8GowlmK/CvLOE4qyzqiOfMyTm2C7XRPl2JmwEuYExV/J9jjGigIVBORqv6febHFWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkjBz/+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15760C4CEF8;
-	Thu, 30 Oct 2025 17:20:43 +0000 (UTC)
+	s=arc-20240116; t=1761844874; c=relaxed/simple;
+	bh=JCo5HIQRDgriwfHeMxFo07QUdYzeoGeZvmZg3jK3Ktg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=qFbKVSr31rfqPffi0akDUnI+T4kY+LvPJZbUQA+0lJcQjD/jiPSaumcsIU9tWQXt4mz56RCupahjMMCXXzMFMpXKUrNHEsxe/MOh117T8/xpT/l4Poc18UtKTdJ45hEnQsYO+P7GKXPdOSii4VLtwi9xP4iOeSQMB7fmzSus1uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkosZtNO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FFDC4CEF8;
+	Thu, 30 Oct 2025 17:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761844843;
-	bh=u1y3B+8RUYFHKy7C4XHtKEXlhSgIPJIedO3quTvmsnw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TkjBz/+eMf9gwnuS/btR8gNRi5Y9H5T1/MvDgOETJ01Dlf7POOO8RpU31DJXRWkz0
-	 2sg5vdBqJj8Ph6kWnzFnjJqOVHS0p9qIdVvuTwEQdEkbWnKfitwI60rwv1R0RaXOIM
-	 SllKsLbXxhoU+lYjc5zZSCwVSFAaxUBYQb1pw/L2dvWot+q9EEwCz01cn454THCbNq
-	 eW15Oz+PjCT/eyWSex7gJkIKAg9STU6JMZ93zoBM4JW6g3PVmElPdab0CgaA3lJY0S
-	 V180/yFR9pgQdRK2zMgvjebt/1nWBiFL0eYyUUTKzuqEz6PjDvxKLTfQ4gaxsmO29o
-	 dKSoOx1QelBig==
-Date: Thu, 30 Oct 2025 18:20:40 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Jack Hsu <jh.hsu@mediatek.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, srini@kernel.org, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, daniel.lezcano@linaro.org, 
-	tglx@linutronix.de, chunfeng.yun@mediatek.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, sean.wang@mediatek.com, zhiyong.tao@mediatek.com, 
-	andrew-ct.chen@mediatek.com, lala.lin@mediatek.com, jitao.shi@mediatek.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6 04/11] dt-bindings: pwm: Support MediaTek MT8189 evb
- board disp-pwm
-Message-ID: <fqceagmqxbix4bnpacimf2lwpnwrw3gpwzknh3a7pt7sfmccm2@4jnh4ynkwwcg>
-References: <20251030134541.784011-1-jh.hsu@mediatek.com>
- <20251030134541.784011-5-jh.hsu@mediatek.com>
+	s=k20201202; t=1761844873;
+	bh=JCo5HIQRDgriwfHeMxFo07QUdYzeoGeZvmZg3jK3Ktg=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=RkosZtNOsm+vtoYvhZKOlYIMuXQi5jZj8S1y8yOPpfZLQBPtieRRq5wpIbSjc671s
+	 VSHS3aTFj0Fv6amYPZqUbrZzSg1xzQfPZIZ1J3vk1o8nnFo9tag/NNnGW8ccgZkvnK
+	 TIrqyrhtZljFBJyDwAl9RCFBjxKlQd711ofIBrJ5FT/Rkv+yhvZaSEtlRMxhN16D8X
+	 qfgpdTyxWx0Sbi3a8ZfRO5QeGLX7sumxLs8n7LLDFpQDT808OWkwDTPTWkE1hC7Tj0
+	 Ze5caPGHJEMqRytOgBCWpXtVsvIuaefKYz1nmRtghCH7yc/+Epl28ZWhy8hKQ6MmZl
+	 qsbGvxJ39H5/Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tnp73246a7ax7u7v"
-Content-Disposition: inline
-In-Reply-To: <20251030134541.784011-5-jh.hsu@mediatek.com>
-
-
---tnp73246a7ax7u7v
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 04/11] dt-bindings: pwm: Support MediaTek MT8189 evb
- board disp-pwm
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 30 Oct 2025 18:21:06 +0100
+Message-Id: <DDVTVQ54W7FM.1XS6MIH4ALW8U@kernel.org>
+Subject: Re: [RFC 1/2] rust: introduce abstractions for fwctl
+Cc: "Zhi Wang" <zhiw@nvidia.com>, <rust-for-linux@vger.kernel.org>,
+ <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+ <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+ <targupta@nvidia.com>, <zhiwang@kernel.org>, <alwilliamson@nvidia.com>,
+ <acourbot@nvidia.com>, <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251030160315.451841-1-zhiw@nvidia.com>
+ <20251030160315.451841-2-zhiw@nvidia.com>
+ <20251030162207.GS1018328@nvidia.com>
+In-Reply-To: <20251030162207.GS1018328@nvidia.com>
 
-On Thu, Oct 30, 2025 at 09:44:36PM +0800, Jack Hsu wrote:
-> add compatible string for mt8189 evb board dts node of disp-pwm
->=20
-> Signed-off-by: Jack Hsu <jh.hsu@mediatek.com>
+On Thu Oct 30, 2025 at 5:22 PM CET, Jason Gunthorpe wrote:
+> On Thu, Oct 30, 2025 at 04:03:12PM +0000, Zhi Wang wrote:
+>> +impl<T: FwCtlOps> Registration<T> {
+>> +    /// Allocate and register a new fwctl device under the given parent=
+ device.
+>> +    pub fn new(parent: &device::Device) -> Result<Self> {
+>> +        let ops =3D &FwCtlVTable::<T>::VTABLE as *const _ as *mut _;
+>> +
+>> +        // SAFETY: `_fwctl_alloc_device()` allocates a new `fwctl_devic=
+e`
+>> +        // and initializes its embedded `struct device`.
+>> +        let dev =3D unsafe {
+>> +            bindings::_fwctl_alloc_device(
+>> +                parent.as_raw(),
+>> +                ops,
+>> +                core::mem::size_of::<bindings::fwctl_device>(),
+>> +            )
+>> +        };
+>> +
+>> +        let dev =3D NonNull::new(dev).ok_or(ENOMEM)?;
+>> +
+>> +        // SAFETY: `fwctl_register()` expects a valid device from `_fwc=
+tl_alloc_device()`.
+>> +        let ret =3D unsafe { bindings::fwctl_register(dev.as_ptr()) };
+>
+> This is a Bound device, not just any device.
 
-LGTM. Assuming this patch will go in together with the other patches
-=66rom this series via arm-soc:
+Indeed, the safety comment should mention this. And if it would it could no=
+t
+justify it with the current code, since the function takes a &Device instea=
+d of
+the required &Device<Bound> argument.
 
-Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
+>> +        if ret !=3D 0 {
+>> +            // SAFETY: If registration fails, release the allocated fwc=
+tl_device().
+>> +            unsafe {
+>> +                bindings::put_device(core::ptr::addr_of_mut!((*dev.as_p=
+tr()).dev));
+>
+> ?? Don't open code fwctl_put() - it should be called directly?
+>
+>> +            }
+>> +            return Err(Error::from_errno(ret));
+>> +        }
+>> +
+>> +        Ok(Self {
+>> +            fwctl_dev: dev,
+>> +            _marker: PhantomData,
+>> +        })
+>> +    }
+>> +
+>> +    fn as_raw(&self) -> *mut bindings::fwctl_device {
+>> +        self.fwctl_dev.as_ptr()
+>> +    }
+>> +}
+>> +
+>> +impl<T: FwCtlOps> Drop for Registration<T> {
+>> +    fn drop(&mut self) {
+>> +        // SAFETY: `fwctl_unregister()` expects a valid device from `_f=
+wctl_alloc_device()`.
+>
+> Incomplete safety statement, the device passed to fwctl_alloc_device must
+> still be bound prior to calling fwctl_unregister
+>
+>> +        unsafe {
+>> +            bindings::fwctl_unregister(self.as_raw());
+>> +            bindings::put_device(core::ptr::addr_of_mut!((*self.as_raw(=
+)).dev));
+>
+> There for Drop can only do fwctl_put() since otherwise there is no way
+> to guarantee a Bound device.
+>
+> unregister has to happen before remove() completes, Danilo had some
+> approach to this I think he told me?
 
-Best regards
-Uwe
+Yeah, such Registration structures of (class) devices should be wrapped int=
+o a
+Devres container (i.e. Devres<fwctl::Registration>)to be able to provide th=
+is
+guarantee. See also my other reply to this patch [1].
 
---tnp73246a7ax7u7v
-Content-Type: application/pgp-signature; name="signature.asc"
+While not a class device, the auxiliary bus with its auxiliary::Registratio=
+n
+[2], is a good example.
 
------BEGIN PGP SIGNATURE-----
+Alternatively (or additionally), it can also be implemented in a way that t=
+he
+driver does not get control over a Registration object at all, but once cre=
+ated
+it is not accessible anymore and automatically dropped on parent device unb=
+ind.
+This approach is used by cpufreq [3].
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkDnmYACgkQj4D7WH0S
-/k6ntAgAmefAEgqrCjLWiUHmGcabEITjr9SAE4YojmK2oq78HLZC4n0T3P19U5zm
-VFVFw+gARsZVw2CQ2ANeQiQBXWVDyT8BQ9Vh0PZZvVvE7fqMZM3FfIQ9bU2OgdWE
-vmSpfUBeyu1Fm95OZrMi475gX0v9ej4Tj6uLesaLywvcW0l8JZRPpRHDwpARP7rL
-fXgtxa69IAvwq1YGDcJfHXe3M+Z4t7OIJpE8qbAVkTpAqH438a26TzlQEgxHsXzi
-4C26RMlvhfSb/Ajn1ZU+y1SYyskpUOyGNUKMVYYoRUQEN9D/o3Mrx1T8BAhzpu5A
-XXCuNcZ2Tx5Mz3amOjApNarZkQVZhw==
-=Yaxj
------END PGP SIGNATURE-----
+It always depends on whether a driver might want to drop the Registration
+manually before device unbind.
 
---tnp73246a7ax7u7v--
+[1] https://lore.kernel.org/lkml/DDVT5YA564C6.3HN9WCMQX49PC@kernel.org/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core=
+.git/tree/rust/kernel/auxiliary.rs?id=3Db0b7301b004301afe920b3d08caa6171dd3=
+f4011#n304
+[3] https://rust.docs.kernel.org/kernel/cpufreq/struct.Registration.html#me=
+thod.new_foreign_owned
 
