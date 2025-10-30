@@ -1,153 +1,114 @@
-Return-Path: <linux-kernel+bounces-878385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E91C207D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:07:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A624C207DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F0B04EE912
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F48A1A21620
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197671F5847;
-	Thu, 30 Oct 2025 14:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F2A1E885A;
+	Thu, 30 Oct 2025 14:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hBwl913C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rnhuFmPz"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE051E5B9E;
-	Thu, 30 Oct 2025 14:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3838A1A3029
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832855; cv=none; b=bMHnxBmzcl9YqA08njq40qYj7/YEdu5MdhqAkVjVRDKPJ0gAWRzqq192QO9Uh6gB3hRPByPXtka4K5fQLNWfZvkcMmUKLhRwf1qajVdbW2PMYP3RnycfHB9Tq8jt6gPIsu5o2PI89ojBBMB3uuNevMndieJgYUsvHDBsNO3zkP0=
+	t=1761832862; cv=none; b=nmEfmaIJa9x6X1pwOg3cgShmmhVg03kZAjiPO+f6MDBh3u66kYe2ObwNdY9kcMORtyDapdiJDO6JgisC90Z11jT09VpymolQ4q9SXdzFr+Y21rsPjw9gV/twiqIcs4QeyasNZ6OM18jWhHufO2POZtSdD2OEdZq1xdUftp/ogz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832855; c=relaxed/simple;
-	bh=XUYybZu/Tr9eOAMQaOaQ+Fw4SF+ZmMyMy7iua1evwH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZU+rT3Uo5Q4Axv4NMiayWcfuIlhnodD5WAHd3wU+AiYDBrATJ+u4YYfttQkm2CkWXLapysZBKTTcgcAdRI5BXLD1g6Uq8vnvalGrVywtnnWO784ek3Y9ngXCYPDoLZ4D53r0mace+xVYsx1CeZE1hgrp0tqiAmVY3d7kDKGWJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hBwl913C; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761832853; x=1793368853;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XUYybZu/Tr9eOAMQaOaQ+Fw4SF+ZmMyMy7iua1evwH8=;
-  b=hBwl913Cr6lZDpiQi0gxbtS78cf5ZCPADvez3v7JFDYquY8RvhK/3QB/
-   I+6b3uTXIVD3ZV6B8sf6wDIwKvl3Hr9mnDxKYmeAVy/2pqEaL3UV3ACCu
-   8p30d6U4ANbcjdgk588j4YsuO85gJvOdI9Z3j/1OYhOTp2l2BQkO2NyzV
-   G5zTlxIc8TL2dtM1NORgnAjcD1B2alpRELKRJnvb8oE6In+1f+JpPshU0
-   YFNMsmbK4mnmNfd9bg2aC7aIvBU6QT+X9O7rPof73LnBzsGOdiudhK/7w
-   IoCgbOwDO+KBRnA6MWEqqwCL9mywynMjslmn3ue6BxGylgzz8hIhU93y/
-   A==;
-X-CSE-ConnectionGUID: +udlj2gyTfKE+kKyJg6mcw==
-X-CSE-MsgGUID: vFuypyS5T3qNj1P6iP7X6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63883650"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="63883650"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:00:53 -0700
-X-CSE-ConnectionGUID: U5k5Az+fQ6aj/IlFtAtMUA==
-X-CSE-MsgGUID: +cuqg9vjRzuNBlSxwz0xqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="223182374"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:00:50 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vETCp-00000003vky-0vbP;
-	Thu, 30 Oct 2025 16:00:47 +0200
-Date: Thu, 30 Oct 2025 16:00:46 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Raag Jadav <raag.jadav@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] err.h: add ERR_PTR_CONST macro
-Message-ID: <aQNvjqJGqFO30JTx@smile.fi.intel.com>
-References: <20251029133323.24565-1-ansuelsmth@gmail.com>
- <aQIzoGnvZWYuHuoQ@smile.fi.intel.com>
- <69023512.5d0a0220.3cccb7.8e65@mx.google.com>
- <aQMheocySykpTFDN@smile.fi.intel.com>
- <69033c55.df0a0220.1a33d7.49ff@mx.google.com>
+	s=arc-20240116; t=1761832862; c=relaxed/simple;
+	bh=o8WfBNrywvxmcPzlntg/9HC4HIIWsNpEBRr1GX6catQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Px6EavDkK1UKIgrYX1wgbcKnkTsznFr7dr48heWrgEeqY8sW68CP0V7Si0KEw/u2AC8KgDQJspXGC2fMrZp7P+dAYje7mJ63Am9I9L8Q70p9YA2Pgoyfp3LYlNyMJzcjgUFGjU3Z3br5vtEzhYEnF9VhjnKj53vOJL8NCfO2LS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rnhuFmPz; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47496b3c1dcso11781335e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761832859; x=1762437659; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MhOsA8UHsD+kgHnQG5bj7evQvukJJELHnuX+mjowyF8=;
+        b=rnhuFmPzIqStykreU9h7nBkfcdbyGRbwErU9YwP7NdVU4Xnnq3tQVROMDgO+0X+ZeR
+         tEmNY6jJDih8E3aK2cyke7IxLe+nxQGgf3CUMR0dlJaxEdLc7Ovs/zjBD9Y3T+F8ISYU
+         KYpk4zekB0uR3bDTpMYBmPnwSQbuRPtzlh4RXJ63fkabWn8CLSKVWBhjzTySwRWZb90X
+         me/edQhAkh5Yx6xqcF4p0SwdZUZV2VUMymJmL8SFvkqkjFCHwUPTZPTduEUtIwputTHx
+         vLyGs/0vbylFloAsK0CfUl1DrApjavGdqT3Co82CYBTxyUEzBVcY33wr+aVNY6W0/AFb
+         qnFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761832859; x=1762437659;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MhOsA8UHsD+kgHnQG5bj7evQvukJJELHnuX+mjowyF8=;
+        b=apjvmZTdodq8dP3cBp7xsozhjdinsowg/VorXkw3kXum3cHtb7Do5hOtBUVHN6tnje
+         bZo+ctPKEn3t+lyj6id6Ew+MyQO9n7PJihc5XcdMiXXBOyNxR2F7n4KOXWMctZq1zdzx
+         zfHAfxmJMbowf8ULWhetOupIkbofcUmN/66pYIsrF+l1PPH1FtnYfO3fwSuD58LsMv6v
+         LnjUgeg/LSSyuNxn4gwXMkkESG0scrY7fGLM7MgN/udHsGNKUwPBVNu9RUnuI1K2HRfW
+         ZnocdTe0PYBdBy4pfpAWzBwVZkncjZ7GYWoFlw87HZqpyKTxGpYVRx5Ijf3YtEVuJZST
+         0XzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQqH1Oq43F2PSTIXlK9HDwA6nkqRWq3VuKCHwaErTvv4dc2SwKKA8Hf/ecmxRGcQWtQdJKTBM2Wrg8ZoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu/6JhZdbcHnxmwKyqp1BGEremFjSVe3xWWHizSuXnxJq/s8Wy
+	GKaql6UeckjY0gWvxG2N94yPljYd2hv5Sy+EUoijx38MdkkBz3+vYIyzAH+ItX2Hug/HJXGu3Qf
+	0NNH6Gtj1E1YB5Q==
+X-Google-Smtp-Source: AGHT+IFDaUTBibrp5YvovgZGztDFvYuBR6JcNr//76jIUfw4OooUFlcB/OZZF5LYyqq7RIE/k/er0tNN/R4SlQ==
+X-Received: from wmco28.prod.google.com ([2002:a05:600c:a31c:b0:46e:2f78:5910])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600d:8306:b0:471:c72:c7f8 with SMTP id 5b1f17b1804b1-477222fe0bfmr35058585e9.21.1761832859652;
+ Thu, 30 Oct 2025 07:00:59 -0700 (PDT)
+Date: Thu, 30 Oct 2025 14:00:59 +0000
+In-Reply-To: <DDJU0415JEBQ.H2SD942NMDWX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69033c55.df0a0220.1a33d7.49ff@mx.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+References: <20251015-l1d-flush-doc-v1-0-f8cefea3f2f2@google.com> <DDJU0415JEBQ.H2SD942NMDWX@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDVPMHX51EZE.1UIA8HYYQZKQT@google.com>
+Subject: Re: [PATCH 0/2] Documentation: fixups for L1D flushing
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Balbir Singh <sblbir@amazon.com>
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 30, 2025 at 11:22:11AM +0100, Christian Marangi wrote:
-> On Thu, Oct 30, 2025 at 10:27:38AM +0200, Andy Shevchenko wrote:
-> > On Wed, Oct 29, 2025 at 04:38:53PM +0100, Christian Marangi wrote:
-> > > On Wed, Oct 29, 2025 at 05:32:48PM +0200, Andy Shevchenko wrote:
-> > > > On Wed, Oct 29, 2025 at 02:33:19PM +0100, Christian Marangi wrote:
-> > > > > Add ERR_PTR_CONST macro to initialize global variables with error
-> > > > 
-> > > > ERR_PTR_CONST()
-> > > > 
-> > > > > pointers. This might be useful for specific case where there is a global
-> > > > > variables initialized to an error condition and then later set to the
-> > > > > real handle once probe finish/completes.
-> > > > 
-> > > > Okay, this has two caveats:
-> > > > 
-> > > > 1) naming is bad as it suggests something about const qualifier (and not, it's
-> > > > not about that at all);
-> > > > 
-> > > > 2) it doesn't explain what's wrong with ERR_PTR().
-> > > >
-> > > 
-> > > It can't be used for global variables as it does cause compilation
-> > > error.
-> > 
-> > Can you show an example, please?
-> 
-> drivers/soc/qcom/smem.c:361:35: error: initializer element is not constant
->   361 | static struct qcom_smem *__smem = ERR_PTR(-EPROBE_DEFER);
->       |                                   ^~~~~~~
-> make[9]: *** [scripts/Makefile.build:229: drivers/soc/qcom/smem.o] Error 1
-> 
-> You want me to add this to the commit? Or any hint to better reword this
-> so it's more understandable?
+On Thu Oct 16, 2025 at 2:54 PM UTC, Brendan Jackman wrote:
+> On Wed Oct 15, 2025 at 5:02 PM UTC, Brendan Jackman wrote:
+>> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+>> ---
+>> Brendan Jackman (2):
+>>       Documentation: clarify PR_SPEC_L1D_FLUSH
+>>       Documentation: fix reference to PR_SPEC_L1D_FLUSH
+>>
+>>  Documentation/admin-guide/hw-vuln/l1d_flush.rst | 2 +-
+>>  Documentation/userspace-api/spec_ctrl.rst       | 6 +++++-
+>>  2 files changed, 6 insertions(+), 2 deletions(-)
+>> ---
+>> base-commit: 0292ef418ce08aad597fc0bba65b6dbb841808ba
+>> change-id: 20251015-l1d-flush-doc-029f64d2b0d3
+>>
+>> Best regards,
+>
+> I just noticed another issue - the docs say you get -ENXIO if control
+> isn't possible, but for L1D_FLUSH and INDIR_BRANCH you get -EPERM.
+>
+> TBH I think this is a bug but it seems like it's still better to just
+> document it than change the behaviour.
 
-Just the first line would be enough.
-And perhaps better naming for the macro, but I have no ideas from top of my
-head right now. Ah, actually I do. We call those either INIT_*() or DEFINE_*()
-with the difference that INIT_*() works like your proposed idea. i.e. returns
-a suitable value, but DEFINE_*() incorporates a variable and a type.
+Since I didn't have to respin this series I sent a separate one for this
+issue:
 
-I think the INIT_ERR_PTR() is what we want as a name.
-
-> > > I wanted to use ERR_PTR to set the __smem handle instead of freecode
-> > > (void *) -EPROBE_DEFER and notice the compiler doesn't like using
-> > > ERR_PTR().
-> > > 
-> > > Then the problem is clear as static declaration require constant value
-> > > for initialization and ERR_PTR is a inline function.
-> > > 
-> > > This is why ERR_PTR_CONST following the pattern that was used for
-> > > FIELD_PREP -> FIELD_PREP_CONST that was also introduced for similar
-> > > case.
-> > > 
-> > > So yes this is specific for case of static global variables.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+https://lore.kernel.org/all/DDJU0415JEBQ.H2SD942NMDWX@google.com/T/#t
 
