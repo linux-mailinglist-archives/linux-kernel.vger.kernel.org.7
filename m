@@ -1,231 +1,281 @@
-Return-Path: <linux-kernel+bounces-879232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A59C22983
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:46:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E04C3C2298A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8D81A62AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D081A65BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E443451C9;
-	Thu, 30 Oct 2025 22:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C0533BBB4;
+	Thu, 30 Oct 2025 22:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nShJ65Ur"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eaek7Rbr"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010055.outbound.protection.outlook.com [52.101.85.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BEE342158
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761864180; cv=none; b=fckZ83FH9kAeeeEUinKv1Z794yIUgKV4AAawJxtUlX8EP2Cs0Vnod0TPD4ihqlEDuUt+Q1crkMhak0GGwybWSjsxNqbSXXFTR4ruaE1D9hfyPFdBsmwWw1MUYYDYWMDUpk4t2HYSYoTZgaHoc5MBLu92JrxjnNWBa2Dtd/ZdTdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761864180; c=relaxed/simple;
-	bh=pnN9mployMBMoTRfIb3auiGgxnEIQ28TLJ5kLq76KJQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VNjXEmCcgfTpaw7BAwpP/RZV992LNEj64AGhS1jUdxVhtA4n0/AZsibsU0bYHJJKHx6iOINF7+/fY/L4d8oOAGANqkUXld5WweTmhNOEZdveksIkNMr1i/juu/WFUPwpV1PylKb8XHeB9e4FwhIWFqEqyc9U53STNw1RhOnpGBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nShJ65Ur; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so1173745a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761864178; x=1762468978; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=JbG+s/sLpThc2/7Wf3lfU0jWrU3IfpW9/OXc8vG/48E=;
-        b=nShJ65UrcU/2kLbvHDwppt9VPKT+bSs9K+AyPDGEE7wIfC1C6jUcvSgu5Ipu3Ioc88
-         CVN6H1smvfOBYoDy5teLQpIjr0jA7j5mrZWeV/fF2FS6Ep/g3eCspN2Bbe8VHX6T39x0
-         BCnjs+RiB27MQby3ELXw7Y3GOJZPrfK+lDrdYxUBGuyywjUiR8RikPQF2XGWxG7jdBTn
-         XmAa4GChjzg3fvJFcKTAQK2cUzLWwprxOvDRdl8cy4OhWaJwfKNQw2EqNKR/A1eHk400
-         tnUfgsj8MyiYc4BMxAMVQ4frDwuCfr+rWNVEFmxG0xODwQVJNEQkrA7bD6fVOHvoRkKs
-         fSCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761864178; x=1762468978;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JbG+s/sLpThc2/7Wf3lfU0jWrU3IfpW9/OXc8vG/48E=;
-        b=vSW1fUtrKf4SG3Tp/KY2JG04i0E1p9xwY5KxhPE48AtqnfLqGh6ksxF6FyMCiKropB
-         AJGGyb0/7YA86aq6edC/7iJmgYLicc0+Nmf58jEmDWp3k46wc71KgH76NqhcBXLWw5DE
-         /KKQ7aXGFQmOfSB2WjQwQnxr+winzh5T0niC/rUF5AhMFynrrSuUZft4ANEMK0b4f8Sp
-         XsDBYuXHO9t7xzogUSOlHvfK71JV0k7gdNR3a2TYv2J4GW+n+P0et1hncRkA7/fjgKwV
-         Omk6urP4ItzMcoIscRs3oeFwOIkeMwtWQcA+cbSuPsd+z0jOV4gFCcAguhvGjRMFJ3+Q
-         7QMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWy4xgQkPDuWhcsfB3a51Go5pl0lEE9TgWrzJqVgxzc6k35x+ng80Kiu6Z6u3MMUdjNvZ9NCZbwN8/V+Sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTH2fEDAudpeWg7oftXt1poTrLtCeFF/K1mcAs8tGxGPKjj1H8
-	bsm0DWkL1PlKDa7voOQz0OgHtGNQ1zFV+yzICRg1RZpM7izuFjuyzXgOf2EFRJMBRclOsPPmBgt
-	NsUYIGw==
-X-Google-Smtp-Source: AGHT+IHLm4f+mWF3cKWxOGvjZ76CQa6Tp0Tcm9iwmBRdzVYSXwqZs5hMFFKgfSepLdoa5h+ksYOCRWY39rk=
-X-Received: from pjbkl13.prod.google.com ([2002:a17:90b:498d:b0:33b:a0cd:53ed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1812:b0:340:299e:dbc
- with SMTP id 98e67ed59e1d1-34082fd608emr2123417a91.16.1761864177764; Thu, 30
- Oct 2025 15:42:57 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 30 Oct 2025 15:42:46 -0700
-In-Reply-To: <20251030224246.3456492-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505AD19309E;
+	Thu, 30 Oct 2025 22:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761864279; cv=fail; b=bDjl4EFbhu+IcNMnzJkn5jPV4z+xdslyjmRDi2D5kmj5FbJ/L9qlxwrwqPa6aC4K5alTBtBZy7fT/4cxy58MU7ziTMrRynJDuGinL+LAn5+bukB3TkDxNGN2CAlSkR5wJ8Hlrt9s/piq42dKEbJELOfLd4bfd96DfZNnYfmjTag=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761864279; c=relaxed/simple;
+	bh=JNJQ9kTRzRft46bjkH5L3VfUS2ixgDve5GGs1cZWqmA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Okx63LA39pu7esPck2iOq2LraxH6FOEUBi6gPtCYlnvekFj4V3UqmSKRMCR/EFo/Jii+IS6pUJYqPUksbzz3FCDF1hDrnho++nTYxGt3potpJe9U6e3YIj7Hh9bFQ9LAAtP4pvb2qPhfaSacWcKY6FVde4aGAYOj7pZ8eengkS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eaek7Rbr; arc=fail smtp.client-ip=52.101.85.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=isEjJmbHvnGxN8T8cDGYDUNHV8qN79TpwVyq1mivYfYeCYF7+lqa0UkqYOHKGGjHunDSrFNF9HIDJ9975gyorcsVMN3esK2EfWg8m2rtEqaYjoXy/YtlGJAN5zVyRRm6Epm+XFvxZC+PaerU6F0iA4+zUwqwlbw6klss/ZYMu89+zU67VkNLQb9SEeDnMT9SX5Kn4hOPoYUs/UDBdYIHMvZXWe8ivDLZEBL0JIFzfXUOgFKT3jgqMRAC5Y8JlnWc0c07JpzJQ0PrKWSNF0zIGg0ylOohfLYsnRY5jjlAcEbzQLI2Rwxe+tCwtUv0vAEn+zezWI3gkKBocZ/D2EVm0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fzzu73OctFVkOGhQXtE86SPOf0QzozY28kC0JYpxNzA=;
+ b=vN1h7PB71COMBzDNH/yYRiU2bgOWkyaZ8T7jsvn9jhdVVu7QqMyRJeA/di88zIAcvkWPPTEA9+/2ErjYCF7d1RXZYDfO0y6cymjqsHUADfu1Qs/sO3qBv6d5xk2V3DNrPhSooO/4EK42YOefvsmYLf1y5l+VgS7mkrrbJNyEzSDzKoxxKUJTjnixTaYAzzMMztohHG3WQY7SglzPGb9+Hxn3ltLzzxgUxL8N6lb8XmyChlWGlgLCKOUGq9pPQ7y5wuYbUl9UYVxk2JdSn4KA5xrDK0x2CrfSD/pgg9i7+XZiQiXlaDL/olXnhPmH+hoYVMeNyKP+ref6CG/2/iSuPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fzzu73OctFVkOGhQXtE86SPOf0QzozY28kC0JYpxNzA=;
+ b=eaek7RbrF32B8k5GbeTl+dO1c8u0gupg0EPz5Shagrm07+ARL6eGpiJsrIZv1g4LskYrwFNUw8JOILe7I88+CWv8ZWxPPmgZhrq7jT3UjU40PtI2g7Qb6wTJVb4e5AXii4ivkG4vEyeCq97aO1Ir7AhHRneqnJ2gkCtbJC9Joyh7xvIXAJSwkS9/k8Nui5VuHAzThN/1IohspMigzIjqdzR4rPRs6+ykIilbSxZb8+mKh6jJRKfcACQyDl92QxTACF91c1o6gCj3L451rN0mXOEZFEp2T/rmKYpSXz/PiFFqEwYkVHjDmYfj/B6PbgWLHvAZ73zhgGCbC5FSj6UDpA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CY8PR12MB8242.namprd12.prod.outlook.com (2603:10b6:930:77::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
+ 2025 22:44:33 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Thu, 30 Oct 2025
+ 22:44:33 +0000
+Message-ID: <e07eeda0-1dee-4292-86dc-d8fe532353ae@nvidia.com>
+Date: Thu, 30 Oct 2025 18:44:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/4] rust: clist: Add abstraction for iterating over C
+ linked lists
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+ acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
+ nouveau@lists.freedesktop.org
+References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
+ <20251030190613.1224287-2-joelagnelf@nvidia.com>
+ <DDVYV1VT441A.11L5C11F8R7C9@kernel.org>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DDVYV1VT441A.11L5C11F8R7C9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR20CA0041.namprd20.prod.outlook.com
+ (2603:10b6:208:235::10) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251030224246.3456492-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251030224246.3456492-5-seanjc@google.com>
-Subject: [PATCH 4/4] KVM: x86: Load guest/host PKRU outside of the fastpath
- run loop
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jon Kohler <jon@nutanix.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CY8PR12MB8242:EE_
+X-MS-Office365-Filtering-Correlation-Id: afba99fc-5971-4cdc-e3a9-08de1805e4f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVloRFBIcC9pcVAzc1pZcDdnWUIwWmwxQ09EVVk0M3J5VEtEYjhORCtKNjVY?=
+ =?utf-8?B?SlA2dG1mNGxTMlpNeEp2YjYxakYwci9pWjcrNU1ZNjlNdHFTRzRNMnhWQzBs?=
+ =?utf-8?B?aTlDZS9oV3FtNUVzcDJYTlRPYm02MVZYWnN1dEx6RFJnT1E4WURMZko5THI3?=
+ =?utf-8?B?MzJmM1lJQU1mOEY2R0VaejUwanlwVU1pY2o0L1ZhODdscXRRV2pTUXpGUTcw?=
+ =?utf-8?B?WTVKUFptR2dsV1F1Z2VRZVpqeVBSKzU1VEZhNGFzUHhuSmtpZ1pxdW94S2Vp?=
+ =?utf-8?B?UzBoazNHQTUrT2JGK3Rrb21IR3hNVVg1b2oyNjUxSUhoQXJQWEd3cEEwMVJO?=
+ =?utf-8?B?eHo0dm1EeXQzRjcvbFpvN1pzcFMyaEVYeDUxbVNqeXJ3eFhtaU4yQ2d0MmVi?=
+ =?utf-8?B?R25TcUhlaDVndTNpUS9qZnYzTENXaXBPM25DaVFWc2xsZUhhK2ZMNmVON1JU?=
+ =?utf-8?B?VVYxYlhMb3NoZ2ZVbGk2czE4V2JabGcxT1pxSEV3RTEyR2RFTlNkTlM3dWkx?=
+ =?utf-8?B?SGswNC9aK0dJTDZoeDJucW9ENUFoa1ZBSzk0REtsak1nc3lPb25Nb2hmR0NT?=
+ =?utf-8?B?R3hFNWZkWDVWRlIrR2NCbmpSOEx1eGhvTGgzUzdBd0hJc1VTK2FaTmQwcXJ0?=
+ =?utf-8?B?V1E5S3ZwYWdnVENzdXZDdHNXQnpLQ0kxdkNRL2FJWUF4N3BVMW5TemU1Z3l0?=
+ =?utf-8?B?N0NxaGF3akovRjFqL0pkeCsvK0k0dGZMQnpiai9sV3psQjF1ckpCSk4remFP?=
+ =?utf-8?B?OWVoZHRzUktQZFRLV01LcWlOMFJMVDNzWCtzaXB1dWdsYkJJMEVzZWd5aVpt?=
+ =?utf-8?B?L0JTU3RnQnV2cGVsUTJTTm5WRnFoelY2LzFsdEJrbmY3U3paeVRWNXVrU2lN?=
+ =?utf-8?B?VEhjRUtnNWhyOEZHblFETFB1WUU2b2ppZTU3TEM4c2JtT0R6cGFpR21hSFI4?=
+ =?utf-8?B?SVRVdk5ubktoRUI2UzkzbnBRMHV3a0dLZnNIaEE5eGx0WWg3V3gyTVU4TTJL?=
+ =?utf-8?B?d1dnWGdFTDcreG5VUEhyZUxwaExyZGdDd2JxUTQ0VWdiTDBkQkNwVm5rRGht?=
+ =?utf-8?B?aFpWeGdZYTZmcGkxQ3pMazhqTTBhY2FCVGdlWkhsd1RwRWZ5MG1yZXZHSk0x?=
+ =?utf-8?B?NUxHV1JBUURsS2lRenZ0aEtSTzB6dTJTL3ZlSTh2Z3F3MS9Fd0FXWWNORzlG?=
+ =?utf-8?B?Szh5S0NvK1QvQ05oRzhVWnBFN29UTmhVbnhocWNSMnZraURWdnhpRWtYNlNC?=
+ =?utf-8?B?b28xVUt6a1Fvb214L01HL1RLbExZNlBMbVB2SisrQUg3QlBmNmdXZG1lZ2hY?=
+ =?utf-8?B?QWI4Ym8wQjNjNkJrN28zTjM3TnRlQlJ0S3dDbW5tSVNQTHVNcXU4cWNJWm5R?=
+ =?utf-8?B?NTQrcVBCZUZPT1cyNzVKaXh4VDNFdWZuZHdGT3RpeGhFM2dzNXlLcEp5U2Jy?=
+ =?utf-8?B?ejBvOTBBdU5YK1RPSkg4WEp6K0EyVm1KcE1FeDR1Z0xKa0V4QndCRnVkWFd5?=
+ =?utf-8?B?RGVKai84dGlQaytJS1JMOXhOaUlMTzVzcGhPdU8wOEFzdytLTTdWdDNEMFg1?=
+ =?utf-8?B?dWJieWF0anQ1ak9FZG9sK3JsWFBnd2c2ajZ1SlpIZjdEWVRRM0lUMXBTWktv?=
+ =?utf-8?B?K204cTA0bTBCSjQ0NmNNSy9uV2Q4VkNpQTJlL3c1cmFhQWwyT0JhZi9zTUti?=
+ =?utf-8?B?Tk9PZGNaZVpPSVFxZUcxckJ3WWREcUp5MGhudUpxdWNQWlN6RzY4VzNSMmxm?=
+ =?utf-8?B?a1AwRGtSSjF5eGFod0l2ekhaTGgvUkc1bjgwVHJSM3RjVlVQTUxXTkpqT01S?=
+ =?utf-8?B?M1hRbjl0U2NTZ2VsWk5IanprQVN1SWR2WTJVSmI2MVlwUTVNaVBGdG4yQ2to?=
+ =?utf-8?B?Z3dqWnExMlVqVHJXQkZmRFR6U0Z2K0N0Y0hLV0t5VHg3WFU3d2lPN29kditX?=
+ =?utf-8?Q?3EUl8e6FeP3eBJiwIZHIUUiz3iWSk7Dl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MVd1RTJFR0IyOWhNczlORU1ucTcwK2dsbXplUzZ5d3h1R0s4MDFKNkNsZ2ZZ?=
+ =?utf-8?B?d2ZIZDhDU2UrNkx1WVBWT3FmeWpaOHRUanRPUnNNU28vam00cmdxNzRIWDF1?=
+ =?utf-8?B?aFY2QUJobG56TzR3OVl3Z1dBRXFoVWtjRHFrR2tIYll3RWZHQzBEZEZxTDdw?=
+ =?utf-8?B?UnVTNzVocDdUa0hiVEpNMjBLSldSWUlIamIvTnBEdUtkTjB2ZEovdWZLMXlz?=
+ =?utf-8?B?dVQ2dmtVMFg3Y21LWmxOMU9UOVFKeUduK1lKcjhWZ2dvVVA1Y2dycHRTQUxn?=
+ =?utf-8?B?YlZXRkxXaG9HQ2Fnb3dDdy9ielVCMDFuV1JraUZGaEZXQjE2YlRQSnB0bko1?=
+ =?utf-8?B?QTdpc1k1UzYwYTVqTzdBZ1ZFV2drT2RqejdTLzRrTnRkcEhvei9ZaGdsbzFC?=
+ =?utf-8?B?YitxbnFBWTZEVkhjNS9IUXZaLzlwV0QxVnJmdzVFemoxcG12cUhiL1NkQ3o1?=
+ =?utf-8?B?R1FjUzd1b1BNNW1BdmxiQ0IwSHlIdm96S3NidHFyUlV0OW5XblVUMmpIU0lY?=
+ =?utf-8?B?bm1EUkFnL1diempPR3dnL1gzYVRCTjNDMmRTb252eHkxN0NEYzlzVlN4U1hu?=
+ =?utf-8?B?WmxsWmxyT3FPbFUwWm1ocklOK1M3RGxiNy84YkNGZWxjL3hwUUlOd0ttQnNV?=
+ =?utf-8?B?bWs2V0JoTjNNK3VCWUwwRVliNldHclhtT2lmaTgwdzgvL29nL0dDejU5dkRQ?=
+ =?utf-8?B?WVBOS2VaczFET2QyQ2o0bU1TTUp5OHhnSUtubW5NMzNRSXpNMWZ0RGhTNmc5?=
+ =?utf-8?B?ZTFtR3VlbVlDZ1I0RUJkejBCNHBhU0huR1RBd2grcUluSzdvUkh2N1gyWks5?=
+ =?utf-8?B?SHUwRG1zdWY0a1ZldW5DblU0WXlIWVhlRWhiMVdxMUVuS2Jkb1lJUmFLeENR?=
+ =?utf-8?B?RUpkUnBaN1ZmMXlBSmRUVU9HRUF2Nm1Ebk92TEp4M216ZDNQdlVQYVZmek9S?=
+ =?utf-8?B?ejNlMWxhQWpnRTNIQm5SZUFCbDVkdUtpem1JMUdxTExpeFRDQUd5anZHUWdD?=
+ =?utf-8?B?dGVhNGdEcTlYVFMvaUVjeXdlWGlQSlk4alZHM3hLK0RldHdNd0NOK2laQ3By?=
+ =?utf-8?B?RGZrQlkvSEtDajhQNHlGQ0F3RmU5emhMTkhvK0FEcDc0ZFBVaVROdHpuY0dz?=
+ =?utf-8?B?aktwUXRha0ZWeXN1V2JtRUF2VWs2YWMrcW1qRFdOOTRZMVl5WlJxRW1EanQy?=
+ =?utf-8?B?WlNheGp4VkxUMWZ0V3dBUVd6em9yVlNrd0hnN1VPZ21Yb3I4RE5RUldRNVlB?=
+ =?utf-8?B?ODFxZWpaRnJQVXVJV2pBQlJlOUlSNURrK210Q2F2b3k4ZTN5LzBEWHBTblpu?=
+ =?utf-8?B?dkdDMEx3VjVMU0N0MmR2b0J4dUhWT1UyQkpwSllqclBlT1E3VVFUUnlacEVq?=
+ =?utf-8?B?T3o5eldRZ1dKRGFhcXFZeEVDVkIrVG5xV3V4S0ZiU3pQWm05eE5nL2V6dEtW?=
+ =?utf-8?B?T1V3Nk9HT1g0L3VTdWJ2Q25teDNJN2RBdVY5bzNnaGxJRzVzQnBMVEUzQTJ0?=
+ =?utf-8?B?aSt4QmlmSDF2N2NESGN4SCtDby9uOTlIY09SbHVucXI1ZWdnbkVzTnJvUUpr?=
+ =?utf-8?B?Tjh2aUtrYWFUbVFBdEk2QWF4RGFuRXI2dDY4VENSZDVNeFh4SkVVb25iRDM5?=
+ =?utf-8?B?c3Y4bHJKVUNLd3FvNjVmV1hONDlwL2NQOXFocko4dm1BNVI1akt4WVFYOEk5?=
+ =?utf-8?B?emFmeHd1YzE4RXNIb2c4NHdaNHN2a0FOcy92YnNETGhCZFN0N2pFVVZ5MmhX?=
+ =?utf-8?B?ZjBYTFRBTGl6Y0t3YVRoTlFzd0NHdDRnUDBidVZLYk1jTVhuVGVhd3N5MVBR?=
+ =?utf-8?B?T3RMcE1xQTZCb21XWTYzSmJMb3ZPVkFmdXlxalZHRDZhOFpySnlYZTNsWnFl?=
+ =?utf-8?B?OVNCeFRISFJjSTk1VVB4THRoemNpWWNabVRVS3R2WUtCZ29DdzNsdWFkampq?=
+ =?utf-8?B?a0h4ZDI2a3pseHUrTkc0bWdDT2xBUzQ1ME5ZbDdGTk5iTHRuU1NrdmFvRXMx?=
+ =?utf-8?B?cEw0dnBBVXI2Qyt5dnd5cW5lVjhna3RKRzhxODkwVi9yd2RjQXZKT0lyVFV0?=
+ =?utf-8?B?YVJRSUJxbzRBVllJNkZVYmhpNXNQRks2QTcyMkV2anMyampsODRsYytvcnor?=
+ =?utf-8?Q?htL+nbC4OD8laX85aIB6p/QSM?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: afba99fc-5971-4cdc-e3a9-08de1805e4f7
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 22:44:32.9940
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +JqMIQCZKc44fL9/5gX/njlKknTH8OSCqBGvaU/zfjQ5TXKmrAXHHdGMEWhVW46MVBLaDyH8GS4wNwElZkBgYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8242
 
-Move KVM's swapping of PKRU outside of the fastpath loop, as there is no
-KVM code anywhere in the fastpath that accesses guest/userspace memory,
-i.e. that can consume protection keys.
+Hi Danilo,
 
-As documented by commit 1be0e61c1f25 ("KVM, pkeys: save/restore PKRU when
-guest/host switches"), KVM just needs to ensure the host's PKRU is loaded
-when KVM (or the kernel at-large) may access userspace memory.  And at the
-time of commit 1be0e61c1f25, KVM didn't have a fastpath, and PKU was
-strictly contained to VMX, i.e. there was no reason to swap PKRU outside
-of vmx_vcpu_run().
+On 10/30/2025 5:15 PM, Danilo Krummrich wrote:
+> On Thu Oct 30, 2025 at 8:06 PM CET, Joel Fernandes wrote:
+>> Provides a safe interface for iterating over C's intrusive
+> 
+> I'm not sure we're there just yet, I count eight unsafe blocks in the subsequent
+> sample code.
+> 
+> Don't get me wrong, there is no way to make the API safe entirely, but "safe
+> interface" is clearly a wrong promise. :)
 
-Over time, the "need" to swap PKRU close to VM-Enter was likely falsely
-solidified by the association with XFEATUREs in commit 37486135d3a7
-("KVM: x86: Fix pkru save/restore when guest CR4.PKE=0, move it to x86.c"),
-and XFEATURE swapping was in turn moved close to VM-Enter/VM-Exit as a
-KVM hack-a-fix ution for an #MC handler bug by commit 1811d979c716
-("x86/kvm: move kvm_load/put_guest_xcr0 into atomic context").
+Well, to be fair most of the unsafe statements are related to bindings, not
+clist per-se. There are 8 unsafe references in the sample, of these 3 are
+related to clist.  The remaining 5 are bindings/ffi related. However, I am Ok
+with removing the mention of 'safe' from this comment.
 
-Deferring the PKRU loads shaves ~40 cycles off the fastpath for Intel,
-and ~60 cycles for AMD.  E.g. using INVD in KVM-Unit-Test's vmexit.c,
-with extra hacks to enable CR4.PKE and PKRU=(-1u & ~0x3), latency numbers
-for AMD Turin go from ~1560 => ~1500, and for Intel Emerald Rapids, go
-from ~810 => ~770.
+> 
+> Some more high level comments below.
+> 
+>> +//! // Rust-side struct to hold pointer to C-side struct.
+>> +//! struct Item {
+>> +//!     ptr: NonNull<bindings::c_item>,
+>> +//! }
+>> +//!
+>> +//! impl clist::FromListHead for Item {
+>> +//!     unsafe fn from_list_head(link: *const bindings::list_head) -> Self {
+>> +//!         let item_ptr = container_of!(link, bindings::c_item, link) as *mut _;
+>> +//!         Item { ptr: NonNull::new_unchecked(item_ptr) }
+>> +//!     }
+>> +//! }
+> 
+> If you just embedd a pointer to the C struct in a struct Item you don't cover
+> the lifetime relationship.
+> 
+> Instead this should be something like
+> 
+> 	#[repr(transparent)]
+> 	struct Entry<T>(Opaque<T>);
+> 
+> or
+> 
+> 	struct Entry<'a, T>(NonNull<T>, PhantomData<&'a T>);
+> 
+> where T is the C list entry type.
+> 
+> You can then have a setup where an &Entry borrows from a &CListHead, which
+> borrows from a Clist.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/svm.c |  2 --
- arch/x86/kvm/vmx/vmx.c |  4 ----
- arch/x86/kvm/x86.c     | 14 ++++++++++----
- arch/x86/kvm/x86.h     |  2 --
- 4 files changed, 10 insertions(+), 12 deletions(-)
+Yes, in my implementation my iterator creates a new value on in iterator's
+next() function without lifetime relationships:
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index e8b158f73c79..e1fb853c263c 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4260,7 +4260,6 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
- 		svm_set_dr6(vcpu, DR6_ACTIVE_LOW);
- 
- 	clgi();
--	kvm_load_guest_xsave_state(vcpu);
- 
- 	/*
- 	 * Hardware only context switches DEBUGCTL if LBR virtualization is
-@@ -4303,7 +4302,6 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
- 	    vcpu->arch.host_debugctl != svm->vmcb->save.dbgctl)
- 		update_debugctlmsr(vcpu->arch.host_debugctl);
- 
--	kvm_load_host_xsave_state(vcpu);
- 	stgi();
- 
- 	/* Any pending NMI will happen here */
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 123dae8cf46b..55d637cea84a 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7465,8 +7465,6 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
- 	if (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)
- 		vmx_set_interrupt_shadow(vcpu, 0);
- 
--	kvm_load_guest_xsave_state(vcpu);
--
- 	pt_guest_enter(vmx);
- 
- 	atomic_switch_perf_msrs(vmx);
-@@ -7510,8 +7508,6 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
- 
- 	pt_guest_exit(vmx);
- 
--	kvm_load_host_xsave_state(vcpu);
--
- 	if (is_guest_mode(vcpu)) {
- 		/*
- 		 * Track VMLAUNCH/VMRESUME that have made past guest state
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b5c2879e3330..6924006f0796 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1233,7 +1233,7 @@ static void kvm_load_host_xfeatures(struct kvm_vcpu *vcpu)
- 	}
- }
- 
--void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
-+static void kvm_load_guest_pkru(struct kvm_vcpu *vcpu)
- {
- 	if (vcpu->arch.guest_state_protected)
- 		return;
-@@ -1244,9 +1244,8 @@ void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
- 	     kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE)))
- 		wrpkru(vcpu->arch.pkru);
- }
--EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_load_guest_xsave_state);
- 
--void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu)
-+static void kvm_load_host_pkru(struct kvm_vcpu *vcpu)
- {
- 	if (vcpu->arch.guest_state_protected)
- 		return;
-@@ -1259,7 +1258,6 @@ void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu)
- 			wrpkru(vcpu->arch.host_pkru);
- 	}
- }
--EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_load_host_xsave_state);
- 
- #ifdef CONFIG_X86_64
- static inline u64 kvm_guest_supported_xfd(struct kvm_vcpu *vcpu)
-@@ -11331,6 +11329,12 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 
- 	guest_timing_enter_irqoff();
- 
-+	/*
-+	 * Swap PKRU with hardware breakpoints disabled to minimize the number
-+	 * of flows where non-KVM code can run with guest state loaded.
-+	 */
-+	kvm_load_guest_pkru(vcpu);
-+
- 	for (;;) {
- 		/*
- 		 * Assert that vCPU vs. VM APICv state is consistent.  An APICv
-@@ -11359,6 +11363,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		++vcpu->stat.exits;
- 	}
- 
-+	kvm_load_host_pkru(vcpu);
-+
- 	/*
- 	 * Do this here before restoring debug registers on the host.  And
- 	 * since we do this before handling the vmexit, a DR access vmexit
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index f3dc77f006f9..24c754b0db2e 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -622,8 +622,6 @@ static inline void kvm_machine_check(void)
- #endif
- }
- 
--void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu);
--void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu);
- int kvm_spec_ctrl_test_value(u64 value);
- int kvm_handle_memory_failure(struct kvm_vcpu *vcpu, int r,
- 			      struct x86_exception *e);
--- 
-2.51.1.930.gacf6e81ea2-goog
+            // Use the trait to convert list_head to T.
+            Some(T::from_list_head(self.current))
+
+I think you're saying that we should have a lifetime relationship between the
+rust Clist and the rust entry (item) returned by from_list_head() right?
+
+Your suggestion makes sense for cases where a rust Item/Entry has a Drop
+implementation that then makes the C side free the object and its list_head. DRM
+Buddy does not have this requirement, however your suggestion makes the code
+future proof and better. Basically, the rust item wrapper must outlive the clist
+view is what you're saying, I think. That can be achieved by making the rust
+item borrow from the clist. I will work on this accordingly then.
+
+> I'd also provide a macro for users to generate this structure as well as the
+> corresponding FromListHead impl.
+> 
+>> +//! // Rust wraps and iterates over the list.
+>> +//! let list = unsafe { clist::Clist::<Item>::new(c_list_head) };
+> 
+> This function has a lot of safety requirements that need to be covered.
+
+Sure, I can add those to the example as well.
+
+> 
+> It also should be, besides the unsafe FromListHead trait, the only unsafe
+> function needed.
+> 
+> The Clist should ideally have methods for all kinds of list iterators, e.g.
+> list_for_each_entry_{safe,reverse,continue}() etc.
+> 
+> Of course you don't need to provide all of them in an initial implementation,
+> but we should set the direction.
+
+Yes, initially I am trying to only provide most common thinks, especially what
+the DRM Buddy usecase needs. Happy to improve it over time.
+
+thanks,
+
+ - Joel
 
 
