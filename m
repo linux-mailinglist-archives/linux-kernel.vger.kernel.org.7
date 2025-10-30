@@ -1,317 +1,160 @@
-Return-Path: <linux-kernel+bounces-878041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBB7C1FA0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:45:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD89C1FA31
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:50:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6773BD8DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:45:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 876CD4E18E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA2C2E173B;
-	Thu, 30 Oct 2025 10:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53855345CB4;
+	Thu, 30 Oct 2025 10:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CKs/qYLY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVn6MkF5"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C012D2390
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527FB307AC4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761821147; cv=none; b=tZdAGe3W7A13wA9wePM19U9TqdQ5ikyv1ZE1PSpRMJbioEGJXd5VC1q+8tpTnSzWfF/X1WrFWN/LuM719K8T5XVMfKt3xVoIhtpAWLC1d2K4RxMv3JyinjwmcdSLpWhNsROxFVJAfl+bplIq6W/XyeXVkztjp/Y/3TfDuRRgUmo=
+	t=1761821393; cv=none; b=g8T9cqPPaPd96sAuhULlAlgH6Db5UC1P1V+TySdlsUTR1uZ+1kyMT0ZhkLPja6RYwvM/491Agu76B6zqRpd7UWeDkBSFahckNDBanIDdO98rR+R4uj090pR8vLU+MxRUTHEVpEADos/3Ce+NxM9kS+s3rH6W09kXqNWjUh2Z248=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761821147; c=relaxed/simple;
-	bh=VEbM/uDC1cpokeZ7ZgXBcMnIHx8S/nCGS1d+ZYqfjE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/Bl9MgkkdH1Rp5Gl0Stt/F8dccZewHgk++ZeLTiCXa8u31P3VTtxGBZedPlALerMcgg6VpBOMgjGQM4Y1g4h+rI80bhHEVtleYG0MD8dXwCGLcldJ9wWBYqouynGZ4CgrkZl2eq5jthxn9bMwl/9KxwWuJtXkc9GjiMnhEw1io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CKs/qYLY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761821144;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sQh8DCjA9kd5WppZwx0+LyhcJ83Y7FauvVOFjDr+/RI=;
-	b=CKs/qYLYG3idBJ/FMoehTRePaxnmBpg+uiv1WBTF2/obmYSI7sTzhrDomeMwAamSL3UkS8
-	c/x218jPtvVEs4lkAEZEZWb4G3r9wRqAnfd9Q2qWjcfgjnom8P1ExAyDoepRkCqTdxvmsz
-	0jTO3ZgyMEt7oGsDGRw2FM/oyYxaf2I=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-lpjtSDpaPhKlUf6zK_dj1w-1; Thu,
- 30 Oct 2025 06:45:40 -0400
-X-MC-Unique: lpjtSDpaPhKlUf6zK_dj1w-1
-X-Mimecast-MFC-AGG-ID: lpjtSDpaPhKlUf6zK_dj1w_1761821138
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2447D195606F;
-	Thu, 30 Oct 2025 10:45:38 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.70])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B1CB219560B7;
-	Thu, 30 Oct 2025 10:45:34 +0000 (UTC)
-Date: Thu, 30 Oct 2025 18:45:29 +0800
-From: Pingfan Liu <piliu@redhat.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-Message-ID: <aQNBydr4geMWXebC@fedora>
-References: <20251028034357.11055-1-piliu@redhat.com>
- <20251028034357.11055-2-piliu@redhat.com>
- <73663a65-8028-4294-8eaf-9c94dc4451ff@huaweicloud.com>
- <aQH3-_YmqAq9aE67@fedora>
- <44130515-725a-4f44-b064-3b396ed26159@huaweicloud.com>
+	s=arc-20240116; t=1761821393; c=relaxed/simple;
+	bh=VTIGLJoqL09T3qdqKCWT95vPfPOyfhp3sKIJURo8kec=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jb2KWDrFyPbt3yLBwlsLDB2Z3FAdz2mA1QI3ARDURc9TzVv+FGFZJrhG2NQuZcKgi1c9RC/6fXrnk3EbyolICyROlwxtAsNk1h9+GKOvuT2A1NeTwmsa2+ddRg5HR7u7QqJYO7fq0DVVUFS9mP2wsFlnD3cnilMdFRAPdpn5yAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVn6MkF5; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-780fc3b181aso694379b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:49:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761821392; x=1762426192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I3p2yqAWOCqYWEXlmFTpGQJoAadTNkNOwJpC5qXOYbs=;
+        b=PVn6MkF5bwbrksfoO7vlX8x/1JzAkAOf/4MbPNeeb3558hEBSyEstX7WP+fuyy8dGe
+         +lSt2nL4K36uzzbfMWgbrv9n2A/JuSyJ+rrG+l0YILSmP6BUTV1z9JY9gPRZie6C/1p8
+         BmP2O0k2d+2GcPKXFKBLdH4C0JIWrt/EBtC7tEf8EHWFzCLR/fF7BYchlMBtmWf0JKSH
+         GjSgLXwRVbD9WqSX7ERxzw0ivWQTpK8oW5H1mo8urSVbxPDuKlwh5DlgEMNXKyhuuFjs
+         Y970H5fbV13iScc4HnGtM+kBCzJK3dmEZwC/suGQskNntYQCWlg/WW3xmFEOr2Im+ybz
+         UT7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761821392; x=1762426192;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I3p2yqAWOCqYWEXlmFTpGQJoAadTNkNOwJpC5qXOYbs=;
+        b=AYcIN/H3h1tdLw0BSvgknSigr/P/cs7phZylJv+FppwPUkqNY7RANj6o7RNJ5KSIIi
+         KhTWlxnwaQBhI4/re9qyYu1K8wTqzlDgXjd6uMORFIq0hBajwNNcTAgxCqUWOSXBPyU7
+         pfraoCsQx/SBBQ/QrXbDwdaKyhKUYV36zvX69f8YX3PDAuXQrg9X7qR7HklOxqHyardw
+         nBSop/xt+n6o+TnRn5nJ0uhCyJIEDWzUR9UUNvPKpWK2AfO0DdQyYvr3u4KldOPX4LqR
+         odU4JesCsoMWtmp0EgwMkbH9wJkmxgbJI5pcbev+9ghyfuEeKGrFwnU/noCzwotRBbpl
+         AqZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWF+l6ZAIkHFeSoTNrnlJOxjzD9Gvru4mf8j4Cm633Y6W1q2YXfn3wKXaTQXoIqsnjvWMq2lo3L3fM73J4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMnCd9xJKZUdYyhGolnirXIoTFf3PvWOj97KY7Xs3cUqI181Qk
+	REtcgrQaSWki1g1TpTjbQD5yBYarm2obBp7+80SVxobDY6/Tw2WWAomx
+X-Gm-Gg: ASbGnctQIzNHGOmD7x/j3THBrPuZsk4OQDHdF7IY+dI6v3dqsxv/n/aTVEz9wKhqhKr
+	SP990rQJVWWOn2Tj1mJZNcHG09nbd53xN7GlweH7LRHrcUXCZsxsus1r7Jg34cC3NPdFuWn2ZiY
+	uWm3YPbNmkGY2y6olRrB+1ljI1rCAfQsn67ny5zcUaEwYKNGVYVLhosi70YGKGlKuszC34b/xOk
+	TTW69zfNLcL6HWXkEpo5k0wWD3tbfJ2RclV9O3Jm0LabFyz0GJ7DAML773auJiCUNkAZCz4a4uY
+	4/EZarzdq+qfsrmPMQeaHMGPXrUz9cIDiidQ1lnqxpJWN+7bbmQmFMTmsWOwQze847bIoYQcygX
+	5nW49N0mPbi6Z+znB9iAiVmfiZQ6Z/pzQLC/QJ1AeJmWdwZJ+af0Lspd/Xsdvm1o6XItAJo4tsK
+	T4XJGZykS6KJUSMdWVnKSHvg==
+X-Google-Smtp-Source: AGHT+IGU7fXKMPGFniTXJxT+Y1B4SNOc8ney/kiF1ZfNDyydbRHCeKanSDnjrz8dd8tokm2NLVK8SQ==
+X-Received: by 2002:a17:902:d512:b0:294:ccc6:cd2c with SMTP id d9443c01a7336-294dee491f3mr72004445ad.22.1761821390964;
+        Thu, 30 Oct 2025 03:49:50 -0700 (PDT)
+Received: from ustb520lab-MS-7E07.. ([115.25.44.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d273cdsm181053915ad.55.2025.10.30.03.49.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 03:49:50 -0700 (PDT)
+From: Jiaming Zhang <r772577952@gmail.com>
+To: kory.maincent@bootlin.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	kuniyu@google.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	r772577952@gmail.com,
+	sdf@fomichev.me,
+	stable@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	vladimir.oltean@nxp.com
+Subject: [PATCH v2] net: core: prevent NULL deref in generic_hwtstamp_ioctl_lower()
+Date: Thu, 30 Oct 2025 10:49:42 +0000
+Message-Id: <20251030104942.18561-1-r772577952@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251030111445.0fe0b313@kmaincent-XPS-13-7390>
+References: <20251030111445.0fe0b313@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <44130515-725a-4f44-b064-3b396ed26159@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Oct 30, 2025 at 02:44:43PM +0800, Chen Ridong wrote:
-> 
-> 
-> On 2025/10/29 19:18, Pingfan Liu wrote:
-> > Hi Ridong,
-> > 
-> > Thank you for your review, please see the comment below.
-> > 
-> > On Wed, Oct 29, 2025 at 10:37:47AM +0800, Chen Ridong wrote:
-> >>
-> >>
-> >> On 2025/10/28 11:43, Pingfan Liu wrote:
-> >>> *** Bug description ***
-> >>> When testing kexec-reboot on a 144 cpus machine with
-> >>> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
-> >>> encounter the following bug:
-> >>>
-> >>> [   97.114759] psci: CPU142 killed (polled 0 ms)
-> >>> [   97.333236] Failed to offline CPU143 - error=-16
-> >>> [   97.333246] ------------[ cut here ]------------
-> >>> [   97.342682] kernel BUG at kernel/cpu.c:1569!
-> >>> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> >>> [...]
-> >>>
-> >>> In essence, the issue originates from the CPU hot-removal process, not
-> >>> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
-> >>> program that waits indefinitely on a semaphore, spawning multiple
-> >>> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
-> >>> one by one. When attempting this, CPU 143 failed to go offline.
-> >>>   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
-> >>>
-> >>> `
-> >>> *** Issue ***
-> >>> Tracking down this issue, I found that dl_bw_deactivate() returned
-> >>> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> >>> But that is not the fact, and contributed by the following factors:
-> >>> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
-> >>> blocked-state deadline task (in this case, "cppc_fie"), it was not
-> >>> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
-> >>> points to def_root_domain instead of the one shared with CPU0.  As a
-> >>> result, its bandwidth is wrongly accounted into a wrong root domain
-> >>> during domain rebuild.
-> >>>
-> >>> The key point is that root_domain is only tracked through active rq->rd.
-> >>> To avoid using a global data structure to track all root_domains in the
-> >>> system, there should be a method to locate an active CPU within the
-> >>> corresponding root_domain.
-> >>>
-> >>> *** Solution ***
-> >>> To locate the active cpu, the following rules for deadline
-> >>> sub-system is useful
-> >>>   -1.any cpu belongs to a unique root domain at a given time
-> >>>   -2.DL bandwidth checker ensures that the root domain has active cpus.
-> >>>
-> >>> Now, let's examine the blocked-state task P.
-> >>> If P is attached to a cpuset that is a partition root, it is
-> >>> straightforward to find an active CPU.
-> >>> If P is attached to a cpuset that has changed from 'root' to 'member',
-> >>> the active CPUs are grouped into the parent root domain. Naturally, the
-> >>> CPUs' capacity and reserved DL bandwidth are taken into account in the
-> >>> ancestor root domain. (In practice, it may be unsafe to attach P to an
-> >>> arbitrary root domain, since that domain may lack sufficient DL
-> >>> bandwidth for P.) Again, it is straightforward to find an active CPU in
-> >>> the ancestor root domain.
-> >>>
-> >>> This patch groups CPUs into isolated and housekeeping sets. For the
-> >>> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
-> >>> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
-> >>>
-> >>> Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> >>> Cc: Waiman Long <longman@redhat.com>
-> >>> Cc: Tejun Heo <tj@kernel.org>
-> >>> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> >>> Cc: "Michal Koutný" <mkoutny@suse.com>
-> >>> Cc: Ingo Molnar <mingo@redhat.com>
-> >>> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: Juri Lelli <juri.lelli@redhat.com>
-> >>> Cc: Pierre Gondois <pierre.gondois@arm.com>
-> >>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> >>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> >>> Cc: Steven Rostedt <rostedt@goodmis.org>
-> >>> Cc: Ben Segall <bsegall@google.com>
-> >>> Cc: Mel Gorman <mgorman@suse.de>
-> >>> Cc: Valentin Schneider <vschneid@redhat.com>
-> >>> To: cgroups@vger.kernel.org
-> >>> To: linux-kernel@vger.kernel.org
-> >>> ---
-> >>> v3 -> v4:
-> >>> rename function with cpuset_ prefix
-> >>> improve commit log
-> >>>
-> >>>  include/linux/cpuset.h  | 18 ++++++++++++++++++
-> >>>  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
-> >>>  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
-> >>>  3 files changed, 68 insertions(+), 6 deletions(-)
-> >>>
-> >>> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> >>> index 2ddb256187b51..d4da93e51b37b 100644
-> >>> --- a/include/linux/cpuset.h
-> >>> +++ b/include/linux/cpuset.h
-> >>> @@ -12,6 +12,7 @@
-> >>>  #include <linux/sched.h>
-> >>>  #include <linux/sched/topology.h>
-> >>>  #include <linux/sched/task.h>
-> >>> +#include <linux/sched/housekeeping.h>
-> >>>  #include <linux/cpumask.h>
-> >>>  #include <linux/nodemask.h>
-> >>>  #include <linux/mm.h>
-> >>> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
-> >>>  
-> >>>  extern void cpuset_print_current_mems_allowed(void);
-> >>>  extern void cpuset_reset_sched_domains(void);
-> >>> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
-> >>>  
-> >>>  /*
-> >>>   * read_mems_allowed_begin is required when making decisions involving
-> >>> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
-> >>>  	partition_sched_domains(1, NULL, NULL);
-> >>>  }
-> >>>  
-> >>> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
-> >>> +		struct cpumask *cpus)
-> >>> +{
-> >>> +	const struct cpumask *hk_msk;
-> >>> +
-> >>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> >>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> >>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> >>> +			/* isolated cpus belong to a root domain */
-> >>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> >>> +			return;
-> >>> +		}
-> >>> +	}
-> >>> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
-> >>> +}
-> >>> +
-> >>>  static inline void cpuset_print_current_mems_allowed(void)
-> >>>  {
-> >>>  }
-> >>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> >>> index 27adb04df675d..6ad88018f1a4e 100644
-> >>> --- a/kernel/cgroup/cpuset.c
-> >>> +++ b/kernel/cgroup/cpuset.c
-> >>> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
-> >>>  	mutex_unlock(&cpuset_mutex);
-> >>>  }
-> >>>  
-> >>> +/* caller hold RCU read lock */
-> >>> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
-> >>> +{
-> >>> +	const struct cpumask *hk_msk;
-> >>> +	struct cpuset *cs;
-> >>> +
-> >>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> >>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> >>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> >>> +			/* isolated cpus belong to a root domain */
-> >>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> >>> +			return;
-> >>> +		}
-> >>> +	}
-> >>> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
-> >>> +	cs = task_cs(p);
-> >>> +	while (cs != &top_cpuset) {
-> >>> +		if (is_sched_load_balance(cs))
-> >>> +			break;
-> >>> +		cs = parent_cs(cs);
-> >>> +	}
-> >>> +
-> >>> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
-> >>> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
-> >>> +}
-> >>> +
-> >>
-> >> It seems you may have misunderstood what Longman intended to convey.
-> >>
-> > 
-> > Thanks for pointing that out. That is possible and please let me address
-> > your concern.
-> > 
-> >> First, you should add comments to this function because its purpose is not clear. When I first saw
-> > 
-> > OK, I will.
-> > 
-> >> this function, I thought it was supposed to retrieve p->cpus_ptr excluding the offline CPU mask.
-> >> However, I'm genuinely confused about the function's actual purpose.
-> >>
-> > 
-> > This function retrieves the active CPUs within the root domain where a specified task resides.
-> > 
-> 
-> Thank you for the further clarification.
-> 
-> 	+	/*
-> 	+	 * If @p is in blocked state, task_cpu() may be not active. In that
-> 	+	 * case, rq->rd does not trace a correct root_domain. On the other hand,
-> 	+	 * @p must belong to an root_domain at any given time, which must have
-> 	+	 * active rq, whose rq->rd traces the valid root domain.
-> 	+	 */
-> 
-> Is it necessary to walk up to the root partition (is_sched_load_balance(cs))?
-> 
-> The effective_cpus of the cpuset where @p resides should contain active CPUs.
-> If all CPUs in cpuset.cpus are offline, it would inherit the parent's effective_cpus for v2, and it
-> would move the task to the parent for v1.
-> 
+The ethtool tsconfig Netlink path can trigger a null pointer
+dereference. A call chain such as:
 
-Suppose that the parent cpuset has no active CPUs too.
-But for a root_domain, deadline bandwidth validation can guard there are
-active CPUs remaining.
+  tsconfig_prepare_data() ->
+  dev_get_hwtstamp_phylib() ->
+  vlan_hwtstamp_get() ->
+  generic_hwtstamp_get_lower() ->
+  generic_hwtstamp_ioctl_lower()
 
-> Could the effective_cpus of @p's current cpuset be sufficient?
-> What we really need is to find active CPUs that task P can be affine to, correct?
-> 
+results in generic_hwtstamp_ioctl_lower() being called with
+kernel_cfg->ifr as NULL.
 
-Yes, that is the purpose.
+The generic_hwtstamp_ioctl_lower() function does not expect a
+NULL ifr and dereferences it, leading to a system crash.
 
-Best Regards,
+Fix this by adding a NULL check for kernel_cfg->ifr in
+generic_hwtstamp_get/set_lower(). If ifr is NULL, return
+-EOPNOTSUPP to prevent the call to the legacy IOCTL helper.
 
-Pingfan
+Fixes: 6e9e2eed4f39 ("net: ethtool: Add support for tsconfig command to get/set hwtstamp config")
+Closes: https://lore.kernel.org/lkml/cd6a7056-fa6d-43f8-b78a-f5e811247ba8@linux.dev/T/#mf5df538e21753e3045de98f25aa18d948be07df3
+Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
+---
+ net/core/dev_ioctl.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
+index ad54b12d4b4c..a32e1036f12a 100644
+--- a/net/core/dev_ioctl.c
++++ b/net/core/dev_ioctl.c
+@@ -474,6 +474,10 @@ int generic_hwtstamp_get_lower(struct net_device *dev,
+ 		return err;
+ 	}
+ 
++	/* Netlink path with unconverted lower driver */
++	if (!kernel_cfg->ifr)
++		return -EOPNOTSUPP;
++
+ 	/* Legacy path: unconverted lower driver */
+ 	return generic_hwtstamp_ioctl_lower(dev, SIOCGHWTSTAMP, kernel_cfg);
+ }
+@@ -498,6 +502,10 @@ int generic_hwtstamp_set_lower(struct net_device *dev,
+ 		return err;
+ 	}
+ 
++	/* Netlink path with unconverted lower driver */
++	if (!kernel_cfg->ifr)
++		return -EOPNOTSUPP;
++
+ 	/* Legacy path: unconverted lower driver */
+ 	return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cfg);
+ }
+-- 
+2.34.1
 
 
