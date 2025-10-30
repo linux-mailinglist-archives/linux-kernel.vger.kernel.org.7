@@ -1,144 +1,186 @@
-Return-Path: <linux-kernel+bounces-879278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF154C22B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:40:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB757C22BB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B1CF14EA859
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DA5420A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35E33E358;
-	Thu, 30 Oct 2025 23:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A89E340A4C;
+	Thu, 30 Oct 2025 23:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LNWX650V"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Pc73YfLW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KWbkt+uk"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B304633E353
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F142C11CB;
+	Thu, 30 Oct 2025 23:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761867645; cv=none; b=GxBrjzC6JTwp7grU14lzCqAyFJ4sgrT6RmxgRw2o2Q8b5FDaUTlUzgs/9omfoHgiqx+cUkTPgpEain5b/lq8egmiF3HMfNcv+EIoiDqlnZ24S9zTfLYs+ePeRN6jeaze6kO6W/GBt2XU7iHCnMNZg2LrxBpLjwIFCtnhbJfzc8M=
+	t=1761867696; cv=none; b=VkriFrzvPO8LC3mJ3OQZWev3XTaK3dV8ifqaWrD3Zrn3s2GtGro79qBmw8lPMgI/mJ3BG/2eqmL4fxp2uAzx5DOb2bahuJz8J47t1lZ8TdMb8snbpHsVgoVhC75EkjP2KdfWc82DsrGAFzBPipqdEqZybtFVL/hobtQ52IDccos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761867645; c=relaxed/simple;
-	bh=eUlRvGsTDsOghmrMBild//Vvtgn5Z9S+p8wIvknhN0Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QJrhs9rwyc449XSRAHjeb17mlufcCz7l1ByVpgKS9EyN0iKEE+Eoyd4eq0YqV5W2U3ie+EjwGXjOi2JpI/ggI+GM/CX0HamWFtTV/L1Me2BJvZ22SGgBrHpX6j3mWXSBLUlBJFGc1eZt5qYs/SI77hgL/cQO3z+cyz4sUxikwMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LNWX650V; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7a26c0c057eso1533116b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761867642; x=1762472442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hANv7xEJBy7S5lh8h/UQF87h23G6mY0gbFBLav72O2Q=;
-        b=LNWX650VW7tHQNQnj4IWOW6VMCQLlPemGs7QajRKIzNpaKp0vl3fEWZcdp4Ls+MH74
-         tBfSq73CaaIgj+dNyGgZKtOtiacb2G5/40vQwjw+rmkhRFZ92QI4Jo5HuzuaQLp/CMGE
-         B9IXAIyxgPcPCwaNoX7UMi6Sl9C8AXP/tlgaxoFJfgYrvout7QvNnliiBvx7NVq85Rcq
-         R0cziLkrvm6GwOiC77h70HwpBMeLTW8loNJWZernZqoQDjXB6NmmqasFoJLz+SNAJESI
-         5l1TNl5dIQ/cUzczfTfM6SQL1kX5vVo8oEH33LpBmICpVHvaWyK77vzr2A9nl8HQ7heE
-         faFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761867642; x=1762472442;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hANv7xEJBy7S5lh8h/UQF87h23G6mY0gbFBLav72O2Q=;
-        b=XvWlGr/XFXzpIYT8x4OuwBB4b7C/glFiOw3lm8QdcJEd/9/S6X6UABOyZWHtFoFf4S
-         MNJseknahA8hjKbowPRSEx7bj9qT+ffs9G6wDK5lbfxi3rexwoL5XQMcrWunylNwK0oR
-         8t91qsovKzkvBsDNWeqJODhl7TGC12KmyFilDZesfS+6nqHMlR5rec3Qc8gT2ykW68Be
-         4EMHumzLr1VNZdM1hbM8zoyKxGZjHp/wWCSq2MQDwzZu+aFSTj40GVuZisVBFu9zMQbE
-         bdFWIux4vBUY5tiVrKDHqZj2IH/SjDRioc54JYyBmmZWBsaafyceDDebKBBW99YIMLjJ
-         tvnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWs7NBmNGmYiD3lFR3mspJw5ncJh0iFKASmwwHSf2iExR/rgpkR9bsIlWvOeLjNZSQbQCNiVsRU7q22eew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfhQV1gsVOLD1dyXOi3n6hQiC+MNpKvpbSfq8l9SD+IEfw8ub3
-	T6hd47fcTnDOwlO8DuddlgYsBUNkT1FUpXrgeiyW6XP2V+q117Tj6Bq/D+oMhNownHGySXmzlrW
-	+nKZ1aQ==
-X-Google-Smtp-Source: AGHT+IH6kktSpJB8uW8dOccHej0bRJlF9t4mdGsOdXoLRdKSPbgGpCfMdKkfH5SPES5/Onbr9IfT7/Ky4i8=
-X-Received: from pfbhm7.prod.google.com ([2002:a05:6a00:6707:b0:77e:40c7:d12e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3996:b0:7a4:460e:f86a
- with SMTP id d2e1a72fcca58-7a7796c8a99mr1645968b3a.25.1761867642073; Thu, 30
- Oct 2025 16:40:42 -0700 (PDT)
-Date: Thu, 30 Oct 2025 16:40:40 -0700
-In-Reply-To: <6572689b28a76bd95bc653b1fc1131fa57ed7669.camel@intel.com>
+	s=arc-20240116; t=1761867696; c=relaxed/simple;
+	bh=s8qJUitOPA47j/+WNL0JxWMSGHgP2Ys3toCWUcFEg8w=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=jBGzbEnyx7JcwPkR/GnWVNVO/fFiDaiarDmS0GMkYa+nTLOjTRbG6+AmFwpUpthQnXw2pYTzFTJblHCpXcd6E1pdoYgLGigno57+kxXso8FhUX3MsGDp1NJZq534Djh01hDHKlR4Asdwq0R32cO7BDmO0cJmfhGdpKYiTt//YuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Pc73YfLW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KWbkt+uk; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 5577013000CC;
+	Thu, 30 Oct 2025 19:41:33 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 30 Oct 2025 19:41:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1761867693; x=1761874893; bh=YJ19THsgVSpeJzD7ckpZErclcEybeF1XkFe
+	eDx68jLs=; b=Pc73YfLWNJ3JZUpAFftBu85kxypozmP3ZD5/OjTIW4+78wVgHrd
+	APjipNv1sLLaH83N9CHHyy0YUsn+ICUZ8366jLzMiaCndf/ZhTomsa5n1s9d6Sx2
+	lYsvb7wfgqbkIVJuAe1dBNKfCb5GOJ67VWz2SLmSPeKDyfdXFu+FqA3YKI1/DesJ
+	Z6JFLw0AL8cUm4vpkhv/9eKmgu5/NPfq1a1t/7uQOJ+9taGLDFExAZxNvYM0Pu/p
+	nEM0vIT2wO5ddSYbSoswgRyAp9USqLc1l03EAeQ5kAo7VStg502Gz9bAKsLaWFEy
+	XR9a+RjpomdVL30ntbZj9FLNztubWKwwDNA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761867693; x=
+	1761874893; bh=YJ19THsgVSpeJzD7ckpZErclcEybeF1XkFeeDx68jLs=; b=K
+	Wbkt+ukMftFT8/uCW0USbi5pG4WHh6mJfTHeCqce3pv0oFhjHpCPue1rZ7m6jpGK
+	kDIQc87wInw1uQS67C9fn6tSIfa9dvZS0lf1ZUuvTRQC3fMrWiUZTSTB/gaoiNYp
+	eMXdNg/C3Gs1SGhHB91KSi53z6Bt9umyjijt0poClQlNoQFep71J8UB5U0pUPgZk
+	l9/crQcz5MBp95fjC4FaOHBqvqxU2qe+uS5um8Wcbem+YxI5OKo3xoZMxKyD9tz3
+	0ccbyuRHaKP9IPF4ReakWchgno7XrttHF2+6FA1RiM6e2LmHEnzzb7kWTkAe6DQ4
+	exJ6EyGKjlKNkD4sY+H2Q==
+X-ME-Sender: <xms:rPcDaZ8fz2PV7rMm0ZSYArsKSJ75ceExcgCJ6QGyjQRKO5KBTq8nPQ>
+    <xme:rPcDaQmzuIyO28wxwNQwfudDj_CV47r-uovIjzlv4bUJkjMusrInjlEArZ7k-UwLI
+    HAc48WwcRI1vfCPp3MElGN-CErojabz0OZDD46_wQzL8799Zw>
+X-ME-Received: <xmr:rPcDaX3wPZf_7EgJjGns4r24abu2VRs0WJIogDD88n5dRmdBmesekvHkBU1FVszWCB6vmtuXogZ7a40oqlM_9oHkO0wg6GQDgpt5pOJAwPuz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejleeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:rPcDafSIaFYl-RgHoqcs0t7YrKDZ2gioLPgi-mlU48SQlKTTMBJOIA>
+    <xmx:rPcDacK6aitOy-K4GZOFYzD9IizJlaKR_2q4A8eMNjCKjpMIUTwCHA>
+    <xmx:rPcDaSnTe9Z_0l91HNTze7DZRYuxwKs7F3DOvRPNBgkt8xRriYRBIQ>
+    <xmx:rPcDaVj1apibW2cs8riW6YdfSEBfeA_ytKnNM-17ym5kitOJlMeFcg>
+    <xmx:rfcDaZmZWSefDAP2LqnLmEPokPLWMSLY_fExqU3FZVX4WsNL0DMUw6Zo>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 Oct 2025 19:41:22 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251030200951.3402865-1-seanjc@google.com> <20251030200951.3402865-13-seanjc@google.com>
- <6572689b28a76bd95bc653b1fc1131fa57ed7669.camel@intel.com>
-Message-ID: <aQP3eJmLTHscDoI4@google.com>
-Subject: Re: [PATCH v4 12/28] KVM: TDX: WARN if mirror SPTE doesn't have full
- RWX when creating S-EPT mapping
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
-	"pjw@kernel.org" <pjw@kernel.org>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	"kas@kernel.org" <kas@kernel.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, 
-	"zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, Vishal Annapurve <vannapurve@google.com>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From: NeilBrown <neilb@ownmail.net>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
+ "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
+ "David Howells" <dhowells@redhat.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ "Ondrej Mosnacek" <omosnace@redhat.com>,
+ "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Stefan Berger" <stefanb@linux.ibm.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+Subject:
+ Re: [PATCH v4 12/14] ecryptfs: use new start_creating/start_removing APIs
+In-reply-to: <20251030062420.GX2441659@ZenIV>
+References: <20251029234353.1321957-1-neilb@ownmail.net>,
+ <20251029234353.1321957-13-neilb@ownmail.net>,
+ <20251030062420.GX2441659@ZenIV>
+Date: Fri, 31 Oct 2025 10:41:20 +1100
+Message-id: <176186768028.1793333.3200874180667501034@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Thu, Oct 30, 2025, Kai Huang wrote:
-> On Thu, 2025-10-30 at 13:09 -0700, Sean Christopherson wrote:
-> > Pass in the mirror_spte to kvm_x86_ops.set_external_spte() to provide
-> > symmetry with .remove_external_spte(), and assert in TDX that the mirro=
-r
-> > SPTE is shadow-present with full RWX permissions (the TDX-Module doesn'=
-t
-> > allow the hypervisor to control protections).
-> >=20
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Thu, 30 Oct 2025, Al Viro wrote:
+> On Thu, Oct 30, 2025 at 10:31:12AM +1100, NeilBrown wrote:
 >=20
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
->=20
-> [...]
->=20
-> >  static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
-> > -				     enum pg_level level, kvm_pfn_t pfn)
-> > +				     enum pg_level level, u64 mirror_spte)
+> > +static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dent=
+ry)
 > >  {
-> >  	struct kvm_tdx *kvm_tdx =3D to_kvm_tdx(kvm);
-> > +	kvm_pfn_t pfn =3D spte_to_pfn(mirror_spte);
-> > =20
-> >  	/* TODO: handle large pages. */
-> >  	if (KVM_BUG_ON(level !=3D PG_LEVEL_4K, kvm))
-> >  		return -EIO;
-> > =20
-> > +	WARN_ON_ONCE(!is_shadow_present_pte(mirror_spte) ||
-> > +		     (mirror_spte & VMX_EPT_RWX_MASK) !=3D VMX_EPT_RWX_MASK);
-> > +
+> > -	struct dentry *lower_dir_dentry;
+> > +	struct dentry *parent =3D dget_parent(dentry->d_parent);
 >=20
-> Nit:=C2=A0
+> "Grab the reference to grandparent"?
 >=20
-> I am a little bit confused about when to use WARN_ON_ONCE() and
-> KVM_BUG_ON(). :-)
 
-Very loosely: WARN if there's a decent chance carrying on might be fine,
-KVM_BUG_ON() if there's a good chance carrying on will crash the host and/o=
-r
-corrupt the guest, e.g. if KVM suspects a hardware/TDX-Module issue.
+That's somewhat embarrassing :-(
+
+Fixed as below.
+Thanks a lot!
+
+NeilBrown
+
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index b3702105d236..6a5bca89e752 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -26,7 +26,7 @@
+=20
+ static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dentry)
+ {
+-	struct dentry *parent =3D dget_parent(dentry->d_parent);
++	struct dentry *parent =3D dget_parent(dentry);
+ 	struct dentry *ret;
+=20
+ 	ret =3D start_creating_dentry(ecryptfs_dentry_to_lower(parent),
+@@ -37,7 +37,7 @@ static struct dentry *ecryptfs_start_creating_dentry(struct=
+ dentry *dentry)
+=20
+ static struct dentry *ecryptfs_start_removing_dentry(struct dentry *dentry)
+ {
+-	struct dentry *parent =3D dget_parent(dentry->d_parent);
++	struct dentry *parent =3D dget_parent(dentry);
+ 	struct dentry *ret;
+=20
+ 	ret =3D start_removing_dentry(ecryptfs_dentry_to_lower(parent),
+
+
 
