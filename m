@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-878441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5C0C209B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD915C209BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:34:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA5BF4EC8C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:31:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C888A4ECF55
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2616C1A9FBF;
-	Thu, 30 Oct 2025 14:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59848272E56;
+	Thu, 30 Oct 2025 14:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lKkCLsvy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zmmw5/Dx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7C337A3C2;
-	Thu, 30 Oct 2025 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2409272811;
+	Thu, 30 Oct 2025 14:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834681; cv=none; b=ZDc9e3cK77FWaKd3QzqBODUAIqvXTI7puKyORKAkICQ5Oi++2BIslJ5IEy61qXAID3WWVty2i0po+QvLjhVE4vBi65hhYKZY36djbKThqQMijMpP4ruBGUh1llQE+zHfCIDvmVNXpMp6GMYYlBo+wuIYP8DCjp255NJVggYVjmE=
+	t=1761834684; cv=none; b=IwkyNvqlAoiqs/pl0McQ2904eE598dcuUPMJLY46lAeDYi6FImprySEUKgEG4q7Ythoa9WoJMHSkrcS75LQWZOXZqUKXSMbfnOhhTPms4hNsAP80960/fQt45ea8rhDoq7MKxycjQuUIUhagLCjFhfVYFeUV0Zn81X75tjeZsCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834681; c=relaxed/simple;
-	bh=e6HAsM8qCwruXaBbFHe8xlN7IjIUIii5LrVM8vD/1n0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJopixrYxnwijdGjSUdotu+TTHgMvxqgd94MqASpToC3ooOkH6hmMf5OvOYefeapoUUyeKKreog59v45MlDMLViZmmJrIOzol6EQflXfCzbrqpfXprogJXbfoc9i+wGoTDUFo9i9M7mR0i+viTa1v0DpBWx+VcIPLI7/0p5Ng1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lKkCLsvy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5AD4240E021B;
-	Thu, 30 Oct 2025 14:31:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4-6kVergOxGE; Thu, 30 Oct 2025 14:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761834669; bh=Q0yjiK17p1Kzsm/19BErWjeOR//w7QftLf38LWxDPaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lKkCLsvyS1/EDdP8fmRTByBuywq8Kdmdv+npiQtzHoa6C4bDksJ+aEU0siALQL8n+
-	 pJNLxu9zEIBpWKAAjN71OPOkLoFyQ8UpOYeRKCYGWpGS2sEUNYgwk9hxLObaVcfJ5+
-	 khYPUZWNR1m8S5qXR0ZMHWF1fZFOojenbOmWPsalWESfy9uWP2j2P9RqVFZLtl3lzR
-	 CJviH8O5yBGOGx/cIALP5kj8UPln1h+nPgY/awVIO5QtsjLnHMdJV2iJBaJjq3EiNl
-	 crbi4viDSXzKmlvvVtsjdDZw5KnNCIIg7cCPznShoXnigZLrzImQIalpzVLVOG5AET
-	 jkLTvFDi4kTL0hRJnsugAQ6W9uMM8Z5ggBXIOb6LX6jypVEO/5nNOYFgKpKkLc5ml4
-	 S8FJL/hnaq+vLhbuqNPggAmK0u6HCiTVDnky/f/07Ekg+LezO9SdPCDWQyF/69HunX
-	 m8hMIV9ExWoXwb4pM5v+mW45V+G4i1PfXNJ0h2ZIEJERluNFQbh4wmwTf/k+PbdMZ9
-	 BawenmeLsa4eb23q+3CL72ure8jxreniIdHIvTwbkDjCItGDE1V+N06ccODjRsX445
-	 Y7CBrH2puuLYQOanlk9vsDVItN2X7fJlWcjNWnGCAcGRXi4Ec4b65dUxdoVvtbjPFT
-	 Szb7Ln7n0vKrwshn+xc56T5I=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 571A740E015B;
-	Thu, 30 Oct 2025 14:30:59 +0000 (UTC)
-Date: Thu, 30 Oct 2025 15:30:51 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: niravkumarlaxmidas.rabara@altera.com
-Cc: dinguyen@kernel.org, matthew.gerlach@altera.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, tony.luck@intel.com,
-	linux-edac@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] EDAC/altera: Add IO96B ECC support for Agilex5
- SoCFPGA
-Message-ID: <20251030143051.GJaQN2m2fniYVRtBxn@fat_crate.local>
-References: <20251028092232.773991-1-niravkumarlaxmidas.rabara@altera.com>
- <20251028092232.773991-5-niravkumarlaxmidas.rabara@altera.com>
+	s=arc-20240116; t=1761834684; c=relaxed/simple;
+	bh=wVeI2bnXMnl1w241QzL6qX0vCpn21BM863M6E2kLIP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ANDBHG3ZlJpXH0X71ELV2UHbXtGpgHinLJJKGf97VMyoK1v0u6uWHWx0SXzxFSmw5tu8wUveq3FNNq04hqlsdInliS2Ucg8cmiCZzRrnNv2TYE7gZr5+ejMoBNz7sa3tBEfsTm/5Qs/ENwT/3lxSsLqGfXyZfdcvw27iKkD7WrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zmmw5/Dx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BEAC4CEF8;
+	Thu, 30 Oct 2025 14:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761834684;
+	bh=wVeI2bnXMnl1w241QzL6qX0vCpn21BM863M6E2kLIP8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Zmmw5/DxF/Q7Hn3z5GWlK4KKI+8xA4rJZuQbGWiaovZxVH59927YB0QXzb74DAoRe
+	 +ns92p7RyrWSP6aTuFeb37I6lJ5inAlGAvzQuDpibr6DDp+Ak8dLCt6vqtusQohnOv
+	 YTxZLxLo20oI6dAhGO+tIz9P0jIcdBnHWmLhAWgoHarexv43JujzLGCai58myLDssS
+	 my4arN+0SUr9abOWKzoD3lSV/7FTPxXb9PDSeGt5aYs4nlDlizX387iJGHMxGW+p1J
+	 zukfGgVZ524yqGT6oad3PhLYHQKiPUIerTI7m+Nvp41d0d0I2gSDVqDz/0AlfMI1p5
+	 FFv55IqYizoZQ==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [PATCH v2 1/2] mm/damon/stat: change last_refresh_jiffies to a global variable
+Date: Thu, 30 Oct 2025 07:31:15 -0700
+Message-ID: <20251030143116.46746-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251030020746.967174-2-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251028092232.773991-5-niravkumarlaxmidas.rabara@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 05:22:30PM +0800, niravkumarlaxmidas.rabara@altera.com wrote:
-> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-> index 39352b9b7a7e..33a9fccde2fe 100644
-> --- a/drivers/edac/Kconfig
-> +++ b/drivers/edac/Kconfig
-> @@ -410,6 +410,16 @@ config EDAC_ALTERA_SDRAM
->  	  preloader must initialize the SDRAM before loading
->  	  the kernel.
->  
-> +config EDAC_ALTERA_IO96B
-> +	bool "Altera I096B ECC"
+On Thu, 30 Oct 2025 10:07:45 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-Is this and the other new Kconfig symbols you're adding absolutely needed?
+> In DAMON_STAT's damon_stat_damon_call_fn(), time_before_eq() is used to
+> avoid unnecessarily frequent stat update.
+> 
+> On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
+> jiffies wrap bugs appear earlier. However, this causes time_before_eq()
+> in DAMON_STAT to unexpectedly return true during the first 5 minutes
+> after boot on 32-bit systems (see [1] for more explanation, which fixes
+> another jiffies-related issue before). As a result, DAMON_STAT does not
+> update any monitoring results during that period, which becomes more
+> confusing when DAMON_STAT_ENABLED_DEFAULT is enabled.
+> 
+> There is also an issue unrelated to the system’s word size[2]: if the
+> user stops DAMON_STAT just after last_refresh_jiffies is updated and
+> restarts it after 5 seconds or a longer delay, last_refresh_jiffies will
+> retain an older value, causing time_before_eq() to return false and the
+> update to happen earlier than expected.
+> 
+> Fix these issues by making last_refresh_jiffies a global variable and
+> initializing it each time DAMON_STAT is started.
+> 
+> [1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
+> [2] https://lore.kernel.org/all/20251028143250.50144-1-sj@kernel.org/
 
-IOW, why can't the driver simply load on that new hw without needing Kconfig
-symbols at all?
+Thank you for finding and fixing these!
 
-What are they really saving?
+> 
+> Fixes: fabdd1e911da ("mm/damon/stat: calculate and expose estimated memory bandwidth")
+> Suggested-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 
-Thx.
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+SJ
+
+[...]
 
