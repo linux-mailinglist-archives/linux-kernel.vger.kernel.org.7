@@ -1,90 +1,132 @@
-Return-Path: <linux-kernel+bounces-877888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA57C1F470
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:26:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A27EC1F46A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88EA74035C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B8340117D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0431A805;
-	Thu, 30 Oct 2025 09:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mebfPC6+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B0832D7F3;
+	Thu, 30 Oct 2025 09:25:13 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E882F12A0;
-	Thu, 30 Oct 2025 09:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25052F12A0;
+	Thu, 30 Oct 2025 09:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816324; cv=none; b=AxhaVO5rQeE12S8jUfc7tADs2hdtjP1f7om9fZ0peEJZ2qdUseIJYq0qkHkkgViakFZzu2TfnjvknsS/Qs6vHkt96KP5R6uN3IPoGpPLLHMD2iFZ+ZxU/QFT2f6fGiKi47lptGOFCnqQ8DdO3xCefU12eHDm5vdP2xcUu8aBrF0=
+	t=1761816312; cv=none; b=Ttdo6yOPmzciCp+c6iBLkCsv0CFT/WcIWGrs3pNIg7nD7E8pF01yIlg8ibyGJzo0pzqTNk76qtHLFNRZsFiyoqQ02/0BAA2uVjuy4EgNvsmeFtah5JWcssY428e1RVjb1yqHbYksOqeWxKh8D7SA7WRhGdxD8dzLoetV8lVUTbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816324; c=relaxed/simple;
-	bh=oyf7HAZO8RhL2RYtja/zt16B8f/+ajKY5V1IZi5p/7c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lqIczT3n9mXmz5Cdin965zB2QPfwnM2IT2X+dg1taig0mr8xgn5AVOsqXh1HjBN2y31r5lIKEJLvRBTXyzbpJEK9ucn52PjviGNMEg6jg9tez5DUHFAijp8ATWQA62Z+kVN1cRMYdiFyQ+LwfjVrCJkrGQQMS4hC9HHZBzGPA2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mebfPC6+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761816321;
-	bh=oyf7HAZO8RhL2RYtja/zt16B8f/+ajKY5V1IZi5p/7c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mebfPC6+ymHZgokou0mpiUmD8p686JTQjEDu75rd+pL+LpKCWjd48Ch2AAA950haV
-	 TWOfzi/K4glYJ1oQ1TvxGNLUaHEOP6QeWjt9ZkB5tw2ovvaa25lx3vuqLtofUWPf3A
-	 P1t4Tbt8yFmDPyTf19i8OeMaljQJRqCYdBCvOIleSmYMCKPFpJg5oh5cSVfTmEha9Y
-	 dje1pBQkscbg8C4IyJuhU/E+jGYq0JZNNiK08nlZsYQCfi/nG4+VU3uYDmq4wq5FeK
-	 SoDpTtPyZl3MujcNxuUZyQVpyiM0U/M6vp827NqrfrawngPW++4gU8CckiSrU0gMtD
-	 7LCpu2jN9Zl+g==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 148AB17E009B;
-	Thu, 30 Oct 2025 10:25:21 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, Flora Fu <flora.fu@mediatek.com>, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <20251029-mt8189-dt-bindings-pwrap-v1-1-d52b1aa5f5a4@collabora.com>
-References: <20251029-mt8189-dt-bindings-pwrap-v1-1-d52b1aa5f5a4@collabora.com>
-Subject: Re: [PATCH] dt-bindings: soc: mediatek: pwrap: Add compatible for
- MT8189 SoC
-Message-Id: <176181632103.13078.15754462536677524202.b4-ty@collabora.com>
-Date: Thu, 30 Oct 2025 10:25:21 +0100
+	s=arc-20240116; t=1761816312; c=relaxed/simple;
+	bh=DpFpHz03fndgc3c3a2wxOlEQygIJTifzb1pJ8dcuoEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OskIxO2Gf2q0qsSQ6QLL74s0R6oCk60b6lGN2IeKKr0rk1jRYPTIDloQ6TisBdlJ1SXmkdbG64d7cDxRn7LiRQOZGzqXkyhGXA0ZFEfGJF5sX6CzV2+Nl6cUIUVXM/Je4dD8RznvKG9sCP/zhe2knzl3Kkjf7QSaCMSXfDCD6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 6014213C065;
+	Thu, 30 Oct 2025 09:25:08 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 5D1D62D;
+	Thu, 30 Oct 2025 09:25:06 +0000 (UTC)
+Date: Thu, 30 Oct 2025 05:25:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] tracing: Add an option to show symbols in
+ _text+offset for function profiler
+Message-ID: <20251030052548.31130e33@gandalf.local.home>
+In-Reply-To: <176179500583.960652.5730113001091388258.stgit@devnote2>
+References: <176179500583.960652.5730113001091388258.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+X-Stat-Signature: hew37fn8857yrgqumogco8a64jydhi4p
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 5D1D62D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+XngP3+g5kU6Rih6QlNW7S74dhrSuOaYs=
+X-HE-Tag: 1761816306-243772
+X-HE-Meta: U2FsdGVkX18qE+Zdxv77pGAyBq4Y81FS+xkgunEdYQ5p1sEoqtM67K36eNvyLryb8eE8v3+Oo13xGcUL1xObQsqCF58zKZRXkjNK2Ispz6Nv2Azbjj877sxIxG8e2GD9++UsM6xyGxAq8Zd1s/1puqNTs6PAUo19UXrl69m5cpMenJ9ZSeabKLewqsjzr3898Vs1hj6MTZemvFZ92jCnlX9Er3PlkX+JaY8CfvYtMb9uFChJ8bY9/zeDxVOeUNHA4ZVVdKuVg8BOI2UQNCMMqSHyKGdmxA23HVQ/+dbSNBMgDqvtJ+Jtn8ldcPjcJtHXrLXMVAbC/bOIgStMfkjkeEgzSKwLdWpx
 
-On Wed, 29 Oct 2025 14:25:57 +0100, Louis-Alexis Eyraud wrote:
-> Add compatible string for the PWRAP block on MT8189 SoC, which is
-> compatible with the one used on MT8195.
-> 
-> 
+On Thu, 30 Oct 2025 12:30:05 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Applied to v6.18-next/soc, thanks!
+>  kernel/trace/blktrace.c              |    6 +
+>  kernel/trace/ftrace.c                |   26 ++++++
+>  kernel/trace/trace.c                 |  154 +++++++++++++++++-----------------
+>  kernel/trace/trace.h                 |   40 +++++----
+>  kernel/trace/trace_events.c          |    4 -
+>  kernel/trace/trace_events_synth.c    |    2 
+>  kernel/trace/trace_fprobe.c          |    6 +
+>  kernel/trace/trace_functions_graph.c |   18 ++--
+>  kernel/trace/trace_irqsoff.c         |   30 +++----
+>  kernel/trace/trace_kdb.c             |    2 
+>  kernel/trace/trace_kprobe.c          |    6 +
+>  kernel/trace/trace_output.c          |   18 ++--
+>  kernel/trace/trace_sched_wakeup.c    |   24 +++--
+>  kernel/trace/trace_syscalls.c        |    4 -
+>  kernel/trace/trace_wprobe.c          |    2 
 
-[1/1] dt-bindings: soc: mediatek: pwrap: Add compatible for MT8189 SoC
-      commit: 4459d667a3d7001d1c1703dc79c87db1808cdde2
+I didn't realize this affected your branch too. Which means I can't apply
+this to any branch.
 
-Cheers,
-Angelo
+Also, could you make a helper function...
+
++++ b/kernel/trace/trace_wprobe.c
+@@ -260,7 +260,7 @@ print_wprobe_event(struct trace_iterator *iter, int flags,
+ 
+        trace_seq_printf(s, "%s: (", trace_probe_name(tp));
+ 
+-       if (!seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET))
++       if (!seq_print_ip_sym(s, field->ip, flags | TRACE_ITER(SYM_OFFSET)))
+                goto out;
+ 
+        trace_seq_putc(s, ')');
+
+that both fprobe and wprobe use? And then you don't need to have this open
+coded everywhere.
+
+That is, add this patch:
+
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 591adc9bb1e9..bd26004cc320 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -598,3 +598,9 @@ struct uprobe_dispatch_data {
+ 	struct trace_uprobe	*tu;
+ 	unsigned long		bp_addr;
+ };
++
++static inline int probe_print_ip_sym(struct trace_seq *s, unsigned long ip,
++				     int flags)
++{
++	retun seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET);
++}
+
+And use that instead.
+
+So, new plan. Base this patch on top of v6.18-rc3 and send that.
+
+Then what we can do is merge this branch into your branch and my branch and
+add on top of it.
+
+Note, you should have rebased your probe branch on top of one of the
+v6.18-rc releases. It's still based on top of 6.17-rc6, which can cause
+other issues.
 
 
+-- Steve
 
