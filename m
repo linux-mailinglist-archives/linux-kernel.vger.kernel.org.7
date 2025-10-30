@@ -1,151 +1,202 @@
-Return-Path: <linux-kernel+bounces-878051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C42C1FA97
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:55:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A882C1FA91
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33418188D523
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C295D188C625
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A33B3546F0;
-	Thu, 30 Oct 2025 10:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495AE351FB5;
+	Thu, 30 Oct 2025 10:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+gFiaHP"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rL4jWveE"
+Received: from mx-relay50-hz3.antispameurope.com (mx-relay50-hz3.antispameurope.com [94.100.134.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077F6350D42
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761821745; cv=none; b=qQ+VhTsgz0QRrt3Wmi6lAYNo+OLJTC3yztJtwUApDjV2OrC5StDT9EcqwfdIKifreYoq0WIXm6lsbgP3zF8LvYIZwPJLkwxWGUdkHMi6G8085nvew/h2nzT6vGS04V01wbbZSws9VTEVLOMtFn2oE41u9vuoXYrLOB9v3DrD+ko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761821745; c=relaxed/simple;
-	bh=Hs4hTUzQ6BSYyYqkQGWYwzMV6aX4ms6lWAYNhzovJs8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O5DwgTqvoj0U7R1E8WDLXFnj5agNNsrUCISj3954GWHrofzAbgSxaHzmG90YqsfvyiOE+et27Ev6w9hm6G/q/uOyImkJ2vnih7lg3sQZsmiKOkycffFyfU2uYXLJ5K7K/tFC6L52JhzyrvmvaIMdQAdlvvtgQrkB80/36CkrTfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+gFiaHP; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7a2754a7f6aso1311299b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761821743; x=1762426543; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OdbZeLQdr2GndyflsV+Dqob/8hVKHQK+9QLhrbLboBM=;
-        b=g+gFiaHPw4ahn+0h8Iwm3zpWIWdT3gdRf/eblhYcybAyuZq0sG4rZXdJK6qKutEoz/
-         6UFh0yXg6rtBySDNXkaY3fIuUHrZ83hz2MKcwgft7AVe0hmB+gy79GJG3ZPEbhjd2hn5
-         GedunSi0FE+HNpW528a5B/2Cynpsvx+pRmHEL8npyHfHO1EsgvlNtCZAgGyLp2a7wmzV
-         MfLeankB+/4YWLjtvaMRByDt0CnNaXAS1AJ8kdINY07LfMxXw/5EfkDzEX+mH2zAp/2+
-         EB++Q+Aq5YkSilFd/z3Y0M6Yukw5SkgBwC+PsjKB/A8jX3Atzso+lHkeKSRhkUQYe7SD
-         vF4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761821743; x=1762426543;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OdbZeLQdr2GndyflsV+Dqob/8hVKHQK+9QLhrbLboBM=;
-        b=DEK0mWXi9b7fKB/y3hWOWj7ZTsrAkcKycGuTHhmwXeFFY3iyh4Mynn0rbxpoaKNPX+
-         QSTYFfclIMKOqL25MhDKNCh9DggockCgiyWVVcrdH8/DNHiGnAODrkcgNPcDywsoOKgj
-         R0rpn3cu7TJdngB6C6/V2eX1D0i5ml8XH0vWyWKIoF3kOxaQ+VP28VTVfuuNJX6YPDqZ
-         HziZZwDupa1vJt524OzL93TgnJd7wfanblVkuBjASvwV69qVtFx4uDqbtmui7Ikthgr+
-         rGUr4iUh5ABreDx3QW9IIYqFEIdulLNcMYbB8G4VppYVI4n6QtXJ9GnHBJVHYpZXiU5B
-         lfrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLJLoUi5A1HvSRixqh0Fm06u2zuFFZi9MzHh5mYAgYB0MAOHLJ184uJ0uTYMMipdQ0BrNUzO/KayXRCdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXiCGAM9UqTr9bf/O9bnR8xjU9B29hWS8WMPXDxQqmCxEEwURu
-	DsEbl7ADFEbZu/F+LBKoNsXd0WwpQ/wfk6aTJU05kvMXsit1BO/F0kMy
-X-Gm-Gg: ASbGncvL0TVWMwUTT+0fgvk3OZ14gIGL0vMWwF9ozf8X49jlY/4uK6orJM7tjH2r5yH
-	qP97/CObbrGndL6Wj8swZyHsWRwb+L4qKvkWKXfH6iNO2UXv8NfWctT1tCfrXSmtBEUXTUu+UHn
-	cT8i5D/CccK0r5c+6IObh/JsiuKPnRFEqxb1YN1I8FU7JipuyAZh74vw9GC04sHDIE7GZ3D4pxW
-	BLucLqeAnRPfYFQgPRuAW8l36ZCLRd9Fp9A1YXZagMaNRHsIh5bLvVFpY0bt0rMKwSUWi2lcNCJ
-	iuDZW5lN5GhyrZFRXBWGBn3LZU0IGEHK8z+f7hvKtFVtsJ95U24j0GQc2gpKBGb6FZ1rTk4m2fF
-	xRlXlZCzDRzqfID+k9lOh6G9Ht60JSjxes2gD5fRtxebz5jQ0rLuqggzx9zKg4HHnYRyWwf9kVg
-	mLpjT4
-X-Google-Smtp-Source: AGHT+IHFHTgPiy6LdfKjy1W3MoUmDrMxQLVFdcBtTtfjMOw7wO5m5u9VK5UDUVwyvZbo3B6KYA7cnw==
-X-Received: by 2002:a17:902:d2d1:b0:274:746c:b09 with SMTP id d9443c01a7336-294deef46f6mr82782085ad.55.1761821743235;
-        Thu, 30 Oct 2025 03:55:43 -0700 (PDT)
-Received: from gmail.com ([152.57.106.74])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3b64sm187367135ad.3.2025.10.30.03.55.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 03:55:42 -0700 (PDT)
-From: hariconscious@gmail.com
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: khalid@kernel.org,
-	shuah@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	HariKrishna Sagala <hariconscious@gmail.com>
-Subject: [PATCH] ASoC: soc-core: check ops & auto_selectable_formats in snd_soc_dai_get_fmt() to prevent dereference error
-Date: Thu, 30 Oct 2025 16:23:14 +0530
-Message-ID: <20251030105313.32199-2-hariconscious@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3602E3546F0
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.239
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761821706; cv=pass; b=KhhLo2A+E4985FXBMGWjpmgk7dzfEscVMgqFgmmTtvi2dRvFpKpnZRC/6qyg/JI2qGWtm/ee4G/YurJT3AiAo4RjPFdw0ERfxqSoAhYRhBqRmM5u4TWOjOQ7UoZjl4rqitkjN1boKAYaGDMrPe8mMVwOdNfPQj2F8ObCLYsFQ6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761821706; c=relaxed/simple;
+	bh=vDit2WSKvXsPyuyNqgDJsL23mSpwqoWbEjwmAU0lRtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y/N1TPmy2TNqaDMybRZMwql+zYkbpwvg+mnK8GdrSNptklT2omH/jB53+Sr3hOt1pI1UKh+CBqr+Ju3+TEGaVBSdlrkhN3grEypvFFhpQPHJcC+tyULaNPDvXF+HNZuSO6LJWpFw0J8dgi+NpTA5oqy/MJw1G3I6qEn/WTJ7xyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rL4jWveE; arc=pass smtp.client-ip=94.100.134.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate50-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=Oz0ZhBQQWSFQZWJgTI1NfCDVGIjRIKKmdygZqOMsjqk=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1761821672;
+ b=SkaPm/CGXIkDTxNPZlR32PoyUsUKzjfU1RUmRkEXN5y8e6rFphsw5wNbiRmFE19WKGgrd47a
+ YW1ig+IM053NwvjunBdsBnGeBXcO5i3cvHlDxK+rJLxrRjYJJj7i5243bvOS9/e1jUY8AsWMiPo
+ o6OKMRW/njcoj/mxr7Y4U3AWFsaKPeV193wFMYf+rPFAu6N9cl7rA5ynZlJzuWFaClm9HuogMHN
+ qSDhSFwoqcth4W7dYOQjNsSJImP1UB6eMXhnCuctHfzqHxSc7VCHuIlaTmdWeX6uOB9wjGXN/Jp
+ wfgpieH20eVwIwHFcwjg0iTNdpV+h9S5OjQK3QOXpdpHw==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1761821672;
+ b=gkXufaU85LRLDfR19IlroKdf9ERqHSJWXtqR80pV8Nb14s97f/n+UfIibWOrHR3Z4InHD8EB
+ om9X5g6ef49C1Yj8FB9TjsCWT0VC6IoBzaBD4p2KnFy8C4IvO4bvqEL8nhzy9c3aG2kaCQ5ZPEp
+ u6OCCF/4Y8n3IOSCf2/vTNxCtS5BBRnxrXkB7gXYgWSCp7C8rKg4WaRE8/wCVhZMqStUQicGqO7
+ eVPj4H0FlS/qKoEDqRWU/waDZ7YVlMfBpf1kZmqvxxXKJjQFdCfNU0cNmnN1oLhPpLKeEzhOtJh
+ RcTLg7TYrr/RhzHoQY8uLCBCDHd6f69hteFY6ZeKV8d6g==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay50-hz3.antispameurope.com;
+ Thu, 30 Oct 2025 11:54:32 +0100
+Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 257195A0A3E;
+	Thu, 30 Oct 2025 11:54:12 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+ kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Richard Zhu <hongxing.zhu@nxp.com>,
+ Richard Zhu <hongxing.zhu@nxp.com>
+Subject:
+ Re: [PATCH v6 10/11] PCI: imx6: Add CLKREQ# override to enable REFCLK for
+ i.MX95 PCIe
+Date: Thu, 30 Oct 2025 11:54:11 +0100
+Message-ID: <3022129.e9J7NaK4W3@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20251015030428.2980427-11-hongxing.zhu@nxp.com>
+References:
+ <20251015030428.2980427-1-hongxing.zhu@nxp.com>
+ <20251015030428.2980427-11-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay50-hz3.antispameurope.com with 4cy1Fd1F7pz2nGYZ
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:868febba0787f9587ee8ceef14de3c14
+X-cloud-security:scantime:1.954
+DKIM-Signature: a=rsa-sha256;
+ bh=Oz0ZhBQQWSFQZWJgTI1NfCDVGIjRIKKmdygZqOMsjqk=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1761821671; v=1;
+ b=rL4jWveES2ytjK3gUmqvSpDLrOBd5wuJw9WR6P7mywvnvexOfQlcC3wntE++jl3qpr6hzEnA
+ E/VYgkaeUC2krP7c6xsRy6iW9XMHgR7/YL7AZZ9eXmHUsaeNHRXU8UBZQgPhLpTwSW8acnBo9Ug
+ QXyPhal+mCrXxwWZP4uQAx0AfdVw1mAOw0xK0zVXfufwHzSnUuylSbhUAa3CtYq2Fl2onZce39N
+ h7+G1StSELkmA6LMY1M+tbznpDVSFc4TSQFEae3oZq+BIyZNj1vkYFI0YSHBduq/lANwmuuoVD2
+ oL+qTYlXYTddIUeYnI6CAaEdxcByuT63BnU5aa2bx74HQ==
 
-From: HariKrishna Sagala <hariconscious@gmail.com>
-
-Smatch reported an issue that "ops" could be null (see
-line 174) where later "ops" is dereferenced to extract
-the dai fmts, also auto_selectable_formats can also be
-null.
-
-Add a proper null check before accessing both the ptrs
-to ensure a safe execution.
-
-Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
----
 Hi,
 
-Smatch flagged a null-pointer check in the function "snd_soc_dai_get_fmt". 
-But the same validation is already performed in the earlier function call
-"snd_soc_dai_get_fmt_max_priority" before calling into "snd_soc_dai_get_fmt".
-While Smatch flags this, seeing it as a false positive, redundant null check 
-added to make "snd_soc_dai_get_fmt" safe for independent reuse (if).
+Am Mittwoch, 15. Oktober 2025, 05:04:27 CET schrieb Richard Zhu:
+> The CLKREQ# is an open drain, active low signal that is driven low by
+> the card to request reference clock. It's an optional signal added in
+> PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be driven low if it's
+> reserved.
+>=20
+> On i.MX95 EVK board, the PCIe slot connected to the second PCIe
+> controller is one standard PCIe slot. The default voltage of CLKREQ# is
+> not active low, and may not be driven to active low due to the potential
+> scenario listed above (e.x INTEL e1000e network card).
+>=20
+> Since the reference clock controlled by CLKREQ# is required by i.MX95
+> PCIe host too. To make sure this clock is ready even when the CLKREQ#
+> isn't driven low by the card(e.x the scenario described above), force
+> CLKREQ# override active low for i.MX95 PCIe host to enable reference
+> clock.
+>=20
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
 
-one way:
-redundancy can also be removed in the line no.174
+Thanks, this is actually required on TQMa95xxSA.
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-another way:
-to have a null check considering independent functions
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>=20
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controll=
+er/dwc/pci-imx6.c
+> index a60fe7c337e08..aa5a4900d0eb6 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -52,6 +52,8 @@
+>  #define IMX95_PCIE_REF_CLKEN			BIT(23)
+>  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
+>  #define IMX95_PCIE_SS_RW_REG_1			0xf4
+> +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
+> +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
+>  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
+> =20
+>  #define IMX95_PE0_GEN_CTRL_1			0x1050
+> @@ -711,6 +713,22 @@ static int imx7d_pcie_enable_ref_clk(struct imx_pcie=
+ *imx_pcie, bool enable)
+>  	return 0;
+>  }
+> =20
+> +static void  imx95_pcie_clkreq_override(struct imx_pcie *imx_pcie, bool =
+enable)
+> +{
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN,
+> +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_EN : 0);
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
+> +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_VAL : 0);
+> +}
+> +
+> +static int imx95_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool ena=
+ble)
+> +{
+> +	imx95_pcie_clkreq_override(imx_pcie, enable);
+> +	return 0;
+> +}
+> +
+>  static int imx_pcie_clk_enable(struct imx_pcie *imx_pcie)
+>  {
+>  	struct dw_pcie *pci =3D imx_pcie->pci;
+> @@ -1918,6 +1936,7 @@ static const struct imx_pcie_drvdata drvdata[] =3D {
+>  		.core_reset =3D imx95_pcie_core_reset,
+>  		.init_phy =3D imx95_pcie_init_phy,
+>  		.wait_pll_lock =3D imx95_pcie_wait_for_phy_pll_lock,
+> +		.enable_ref_clk =3D imx95_pcie_enable_ref_clk,
+>  	},
+>  	[IMX8MQ_EP] =3D {
+>  		.variant =3D IMX8MQ_EP,
+> @@ -1974,6 +1993,7 @@ static const struct imx_pcie_drvdata drvdata[] =3D {
+>  		.core_reset =3D imx95_pcie_core_reset,
+>  		.wait_pll_lock =3D imx95_pcie_wait_for_phy_pll_lock,
+>  		.epc_features =3D &imx95_pcie_epc_features,
+> +		.enable_ref_clk =3D imx95_pcie_enable_ref_clk,
+>  		.mode =3D DW_PCIE_EP_TYPE,
+>  	},
+>  };
+>=20
 
-Please let me know.
 
-Thanks.
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
- sound/soc/soc-dai.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/soc-dai.c b/sound/soc/soc-dai.c
-index f231b4174b5f..a1e05307067d 100644
---- a/sound/soc/soc-dai.c
-+++ b/sound/soc/soc-dai.c
-@@ -177,8 +177,9 @@ u64 snd_soc_dai_get_fmt(const struct snd_soc_dai *dai, int priority)
- 	if (max < until)
- 		until = max;
- 
--	for (i = 0; i < until; i++)
--		fmt |= ops->auto_selectable_formats[i];
-+	if (ops && ops->auto_selectable_formats)
-+		for (i = 0; i < until; i++)
-+			fmt |= ops->auto_selectable_formats[i];
- 
- 	return fmt;
- }
-
-base-commit: 6548d364a3e850326831799d7e3ea2d7bb97ba08
--- 
-2.43.0
 
 
