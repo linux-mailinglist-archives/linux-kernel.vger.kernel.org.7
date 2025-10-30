@@ -1,97 +1,111 @@
-Return-Path: <linux-kernel+bounces-878950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FADC21D70
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:54:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B40C21D7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BC63BFF65
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:54:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF190402BE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385A436E354;
-	Thu, 30 Oct 2025 18:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048DF36E351;
+	Thu, 30 Oct 2025 18:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMvJZHce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0GC2ax02"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5761F4289;
-	Thu, 30 Oct 2025 18:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E192C20013A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761850464; cv=none; b=qBpMi2Scnh7LBj6MzUiokOHIC7WV+liay97s4AZ4la0A6rBD6WkCOK1CXKTO0eVp0hUrwZ1xCQyVtJPTjuSC24GdxwK0gsMJ9nLv8dtbRFaQWpu5uJOt/kaNTl3BuCRjQmC0+ArZKOdPgKTsJYFxby80o7J7/Yvyq/iP0ElI74w=
+	t=1761850687; cv=none; b=Z2aLvD1z9EVuIHGl6j/rQKxmMBCL8Sjm/srJHwIdwOG7vlJ4BF5ar4/2mKepVRSR4Ab++b1KFO8+VuA9G600qMPXTYBqxvm5WieycKM0a8wCMRWihQE61BLmlqm7B29AHQgKiWnNtALVaC7oCqQb8ybODbIoPEa32k76gBZj23I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761850464; c=relaxed/simple;
-	bh=LcXInhdYM4JhzkE2rlpVp4so9C1DZXUfbRAwtPpGjyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYaD6daztu8LdiHwc1qCbUojpACPkxv9R1i46NgNWOLxDQ9r4oi6S8gm7gbWYoBoVmSOEQs5ezemfUGvVCRdTaQG1S0yIp5CpzNWQ7COZg2H55Mtjb2aPlVNNHnSTMNsPDuGHpgj0zJX5nMt/f8UL+q1Kd3dq0N8IHI4h/LLBYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMvJZHce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C554C4CEF8;
-	Thu, 30 Oct 2025 18:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761850464;
-	bh=LcXInhdYM4JhzkE2rlpVp4so9C1DZXUfbRAwtPpGjyE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RMvJZHced0xe0SYXEBdqUWtrj5+Ios4HX4RT21t3HJdbVrs/SSLPGy6v3bd5R2S1O
-	 lLtM9oyfvDaN2Y4SYcIqlcf93wW+8/lwvWenvC6Oo6BZgzziIqhW37ygVMI0XI7E6k
-	 xwwWsxGhq2owrbwZ35/N9nSqStSSzxHJbYobCl47SWFV4sD5SWoK1/EAmXphB6EqUp
-	 uLB9wEnsS+Fjwi+HIXhgD76KbPyQy80G+U7XUIkXhF2vlOZTUEWDocY0CX9BC+Qx9Y
-	 eCFgNVKXpZPG3dFOPBzLPm+TPR4UfP9f87qGcNYP0+FzRgCM1+M0i/5T0v1GuDaHRr
-	 N/nOau3BEixkQ==
-Date: Thu, 30 Oct 2025 13:57:33 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mike Tipton <mike.tipton@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: interconnect: document the RPMh
- Network-On-Chip interconnect in Kaanapali SoC
-Message-ID: <g6fxmbakdpfuzg3yhxx6dciii7fwcnphrwdeyiubmaasjwrh4u@hvyx2eru7ail>
-References: <20251030-knp-interconnect-v3-0-a084a4282715@oss.qualcomm.com>
- <20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com>
+	s=arc-20240116; t=1761850687; c=relaxed/simple;
+	bh=1ldPacxy7lpN2FFTvlH5HJr3OKosyTZU7xugA7xY/74=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R/2JOXmaVC/+Cs162E6ZtYaIXoWCWBAzafD8fU6oGcBV+i4Imf5TCcIiMtkk4feZXvBpNUq6DinjEfHE3sYJcQ8PXPf+WQRZ2dWsIbGkP8OfF04aVgznUiRMFfRBgj3pekFCGGFkvflx/THUQOBAcVEAAD7/Wq63X5op3jacV1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0GC2ax02; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-792722e4ebeso1398764b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761850684; x=1762455484; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mffRtvPyK2ohMcs5gOIENlcL3RR2rGSXli0PgTsR1yM=;
+        b=0GC2ax02v3M4qQvpLmh0KAm1JoJRm8NlYM8oNMFl8191LUSe9sEQk9YvRqcdpMva1m
+         Q4Gj0wmPu/Npe+xQ0iG70xYGAD5H1ZaORsuFh2xFEMNnG6ytucLaKZW4xl0/yaDiOs+F
+         GeJIICH68zaGhztO1oRGwFy2b6PNq+h7zIDpS3mTxPd/rgU+yjLQp+zXTpfmUx6tvnWE
+         l++BA1A3B6W/3fj3NgJXbrG4Nv6CeHDLohjZ1G43nS77WAPiQPbyT6guLdNqab5YJtiA
+         cg1lLB5GkjlN6kVU8M+x8krbekn9P6GcJ7KqfnEYswd1UlkaWvB0QVt6/00hn+7n9r8m
+         gg2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761850684; x=1762455484;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mffRtvPyK2ohMcs5gOIENlcL3RR2rGSXli0PgTsR1yM=;
+        b=XKVdj6fkica6OzcTinIenKd3/NQcr2x/o8GipTznwswdB2IUh93sR05OPkesWrCrV+
+         gt4h460ZGG7K/7Qe+bQ/jEtEyCzkjzbvG1I5HJLKXml4lxxApeJvg0ggHV6uSCXOMVyO
+         93ya/n/73IDmY7PJCUpbZzjHCOJVCM50tBbspOKufJWGwVIkyjsP8GP0TCvjQN5bpbMJ
+         fv5NaYuFY4RedhS1W804HwVgqMMIawmreQApNgD1X4jcHpfWNhMafv7imtIiVsGG7xgW
+         AoKJgYBAgQAkf33cTZ1+Dw0xfmcVG12Ej90gCmYGElPH+Y/+EiEF7lWcJlEraB+a6IVL
+         3AIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ1k8posrU17ZAZNJ/4BaK9w+zyBjiu0ViT0OskI2S7OEIIg4XD72sAL4OkhMAQ5Ui27Kuak4O+qcpTeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4tqgsCGKftFxIAzZHvDSCw57iE/xtpgkGbOakHRDQX8ncN681
+	VJKLNkyTnVERqoaRwTwKqAnstDeMvFI2CO0gJK2aGR9xHstiyJeCX/Qexl3rx/Jk4a42jLaetLs
+	TdXJODw==
+X-Google-Smtp-Source: AGHT+IETfkGG2l69qUNqrmL0Zk9TdfHjZDfxqQmlHM933IQU/Cfltl9oAz1PMF0AfqGsmZ1sTDPLnFtBXEU=
+X-Received: from pfbfm1.prod.google.com ([2002:a05:6a00:2f81:b0:77f:efc:1431])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1815:b0:780:f6db:b1af
+ with SMTP id d2e1a72fcca58-7a7792c5703mr558199b3a.16.1761850683901; Thu, 30
+ Oct 2025 11:58:03 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 30 Oct 2025 11:58:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251030185802.3375059-1-seanjc@google.com>
+Subject: [PATCH 0/2] KVM: x86: Fix an FPU+CET splat
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 30, 2025 at 05:09:02PM +0000, Raviteja Laggyshetty wrote:
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml
-[..]
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
+Fix a explosion found via syzkaller+KASAN where KVM attempts to "put" an
+FPU without first having loading the FPU.  The underlying problem is the
+ugly hack for dealing with INIT being processed during MP_STATE.
 
-What is this used for?
+KVM needs to ensure the FPU state is resident in memory in order to clear
+MPX and CET state.  In most cases, INIT is emulated during KVM_RUN, and so
+KVM needs to put the FPU.  But for MP_STATE, the FPU doesn't need to be
+loaded, and so isn't.  Except when KVM predicts that the FPU will be
+unloaded.  CET enabling updated the "put" path but missed the prediction
+logic in MP_STATE.
 
-> +    clk_virt: interconnect-0 {
-> +      compatible = "qcom,kaanapali-clk-virt";
-> +      #interconnect-cells = <2>;
-> +      qcom,bcm-voters = <&apps_bcm_voter>;
-> +    };
-> +
-> +    aggre_noc: interconnect@16e0000 {
-> +      compatible = "qcom,kaanapali-aggre-noc";
-> +      reg = <0x016e0000 0x42400>;
-> +      #interconnect-cells = <2>;
-> +      clocks = <&gcc_aggre_ufs_phy_axi_clk>,
-> +               <&gcc_aggre_usb3_prim_axi_clk>
+Rip out the ugly hack and instead do the obvious-in-hindsight thing of
+checking if the FPU is loaded (or not).  To retain a sanity check, e.g.
+that the FPU is loaded as expected during KVM_RUN, WARN if the FPU being
+loaded and the vCPU wanting to run aren't equal.
 
-make dt_binding_check
+Sean Christopherson (2):
+  KVM: x86: Unload "FPU" state on INIT if and only if its currently
+    in-use
+  KVM: x86: Harden KVM against imbalanced load/put of guest FPU state
 
-> +               <&rpmhcc_ipa_clk>;
-> +      qcom,bcm-voters = <&apps_bcm_voter>;
-> +    };
+ arch/x86/kvm/x86.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-Regards,
-Bjorn
+
+base-commit: 4361f5aa8bfcecbab3fc8db987482b9e08115a6a
+-- 
+2.51.1.930.gacf6e81ea2-goog
+
 
