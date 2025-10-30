@@ -1,149 +1,70 @@
-Return-Path: <linux-kernel+bounces-877993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33ACC1F833
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:25:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1BAC1F83B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DCE34E8819
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96981A211FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429F535505D;
-	Thu, 30 Oct 2025 10:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11E2350D43;
+	Thu, 30 Oct 2025 10:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gZxe+zAT"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnafdktC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A552D8DB9
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A5326B77B;
+	Thu, 30 Oct 2025 10:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761819874; cv=none; b=K4gr+7wZk0p5WTAXyscx1fcK9hpOCWj5plgg5LbirOoJYs0GQxj2X1x1OWoQE6oL2Q53wANZ7mPzhWRT+SYyFnHi3/x5UqPWXWKsqFQttF18mlS8WMUH/fXDrltBxV+nb00yOyjTciOsqhPweSs8eBCx1r4ta4gHBL7mk54FIlc=
+	t=1761819891; cv=none; b=PTfrSvrrphIDxvMPELQpLge+nbcQMraho5UXpFzqmMSnkj6MYwoIzEwRmrs3j3Qays7Dqd9hmtudp1+GTbtEGibCfqoIFCRQm5EO410n5Ysqkd7wSaxi08I704kuvndYOJW1CXevbKZd1LIxdfpwQARoNapfLwz0+caZYIcba1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761819874; c=relaxed/simple;
-	bh=/+Ud9HruVze393NyT1qzp2ulTBCT/YDFMljaKM2s+v8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MoRCG953Kxwep6Nj5hlCHaHaKW7qfTXEoItuAYra0bVNSNBaLZUtyWGrSqZAIbjRPyqoVZbnsrIbjcI9gu7HsBnYgFtWLesSMg/jQ8sJJd413lBrrGvXTjRohwE8ghX+nHsBkeZtuSUxSNuUx+TUzUMLsQZI7buwMktgN/Pm92Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gZxe+zAT; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id EF8BE4E413F2;
-	Thu, 30 Oct 2025 10:24:30 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C66136068C;
-	Thu, 30 Oct 2025 10:24:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A67E0102F2500;
-	Thu, 30 Oct 2025 11:24:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761819870; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=pYQO/J8iwjLT+7v/VfTgDA/2MnHjgHlcPgf4jpQ3AXs=;
-	b=gZxe+zATPo1ZUR444y2TlDGvsM9lETqMy7I/JWzjj9wQNzpOdcT1fm+2wN4cCzHxZBj6WP
-	cVF0v/YOfw0Feab6GlIKGwKAdIw9yNFLaU29abStuieUIn/eHDigSsmZAhvD34iB7yrmWM
-	/kIko9F7NQHox/3C8nu/WQsXfsIB7evmNNfK5Fuf7Brl/Upabt0QOBZhNWGCeViOifPb2Z
-	belpWKJXlcvvksH/XuoZd5wuzVgF6OrnfBHHebYgjnQMxDSz2nKfin85LD4N7oblPEgmnf
-	fpsHuxEYvNduINWzIRxEfUSZ1u+8HoFj+4QeL3/0IOK6kD8BTRI+BfpEuxw+oA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Boon Khai Ng <boon.khai.ng@altera.com>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 4/4] net: altera-tse: Init PCS and phylink before registering netdev
-Date: Thu, 30 Oct 2025 11:24:17 +0100
-Message-ID: <20251030102418.114518-5-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251030102418.114518-1-maxime.chevallier@bootlin.com>
-References: <20251030102418.114518-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1761819891; c=relaxed/simple;
+	bh=ETYSiml/z1HOmlp+he3h/ynUR9yvw1f1RZj4bLOXvBw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kHcjmi8eGqZy8wu/+uqATBaO1NDSfRzN/CKKByzMa01d7xCw3r7oj2OPi7i0TBvQ1SptyQsUDmXWdE5iswuj+xp3NdoRJkwzv5F4KZgIZnNJNL5mhf5qHsHq7mcSjo3xikkNkL/ih6h99VrslwXF71I34QQnwBWtVpj8/DfD4oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnafdktC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62690C4CEFF;
+	Thu, 30 Oct 2025 10:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761819890;
+	bh=ETYSiml/z1HOmlp+he3h/ynUR9yvw1f1RZj4bLOXvBw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=qnafdktC6D8rrnY+7I+f1TwJ3X/5Pl/B5eqWiislzPlOvVNo1wNeaNzMKkF6LnFNA
+	 NG++0MD75+1USuOadEzsjnFxyvQiHTp8hNshHXGh51cBGlQbDC0NLSvBR/wAfAQPK1
+	 lGNyb+8C2jfKFyU83am2rfmdgZFnavQQkf2qM9SY87G6mGd5dEAN1QK50iPyZIh4gc
+	 P/GPmM4zL8Vfiq44DimYolgWIUTVd346NU0ss2tqW3XJn3TPvb8VDulsFsGHzhBZ/Q
+	 9v2rLQqnbgWQpPS7UDI8yKpq1ZViBCYLH6exr6hneWsVhOJKv/dKjIPGJ4ZAqEjH3e
+	 RoKmS/Sfhv/dQ==
+Date: Thu, 30 Oct 2025 11:24:47 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: zhangheng <zhangheng@kylinos.cn>
+cc: Terry Junge <linuxhid@cosmicgizmosystems.com>, bentiss@kernel.org, 
+    staffan.melin@oscillator.se, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 1114557@bugs.debian.org, 
+    stable@vger.kernel.org
+Subject: Re: [PATCH v4] HID: quirks: Change manufacturer for 4c4a:4155
+In-Reply-To: <e765d91f-3c00-4dc5-ac24-68a5512a0c12@kylinos.cn>
+Message-ID: <r995o7q5-s2nq-9p8p-6r35-7491qs1584r7@xreary.bet>
+References: <20250923022445.3276026-1-zhangheng@kylinos.cn> <e0dde746-3761-414e-8df1-eb8557cadbf8@cosmicgizmosystems.com> <e605f642-c967-4d41-8145-a10e8f48fb1b@kylinos.cn> <365f9f8e-549e-42e1-ac8c-7ff1f42c6977@cosmicgizmosystems.com>
+ <8f0155d4-72a7-45ec-a272-7892e783bbed@kylinos.cn> <c7aab08b-52fa-41ef-a7fb-118298bb93aa@cosmicgizmosystems.com> <e765d91f-3c00-4dc5-ac24-68a5512a0c12@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
 
-register_netdev() must be done only once all resources are ready, as
-they may be used in .ndo_open() immediately upon registration.
+I have updated the shortlog to be a little bit more descriptive and 
+applied, thanks.
 
-Move the lynx PCS and phylink initialisation before registerng the
-netdevice. We also remove the call to netif_carrier_off(), as phylink
-takes care of that.
-
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/ethernet/altera/altera_tse_main.c | 32 +++++++++----------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index a601ba57190e..4ffa3edf1d0c 100644
---- a/drivers/net/ethernet/altera/altera_tse_main.c
-+++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -1390,20 +1390,6 @@ static int altera_tse_probe(struct platform_device *pdev)
- 
- 	priv->revision = ioread32(&priv->mac_dev->megacore_revision);
- 
--	netif_carrier_off(ndev);
--	ret = register_netdev(ndev);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to register TSE net device\n");
--		goto err_register_netdev;
--	}
--
--	if (netif_msg_probe(priv))
--		dev_info(&pdev->dev, "Altera TSE MAC version %d.%d at 0x%08lx irq %d/%d\n",
--			 (priv->revision >> 8) & 0xff,
--			 priv->revision & 0xff,
--			 (unsigned long) control_port->start, priv->rx_irq,
--			 priv->tx_irq);
--
- 	snprintf(mrc.name, MII_BUS_ID_SIZE, "%s-pcs-mii", dev_name(&pdev->dev));
- 	pcs_bus = devm_mdio_regmap_register(&pdev->dev, &mrc);
- 	if (IS_ERR(pcs_bus)) {
-@@ -1441,12 +1427,26 @@ static int altera_tse_probe(struct platform_device *pdev)
- 		goto err_init_phylink;
- 	}
- 
-+	ret = register_netdev(ndev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register TSE net device\n");
-+		goto err_register_netdev;
-+	}
-+
-+	if (netif_msg_probe(priv))
-+		dev_info(&pdev->dev, "Altera TSE MAC version %d.%d at 0x%08lx irq %d/%d\n",
-+			 (priv->revision >> 8) & 0xff,
-+			 priv->revision & 0xff,
-+			 (unsigned long)control_port->start, priv->rx_irq,
-+			 priv->tx_irq);
-+
- 	return 0;
-+
-+err_register_netdev:
-+	phylink_destroy(priv->phylink);
- err_init_phylink:
- 	lynx_pcs_destroy(priv->pcs);
- err_init_pcs:
--	unregister_netdev(ndev);
--err_register_netdev:
- 	netif_napi_del(&priv->napi);
- 	altera_tse_mdio_destroy(ndev);
- err_free_netdev:
 -- 
-2.49.0
+Jiri Kosina
+SUSE Labs
 
 
