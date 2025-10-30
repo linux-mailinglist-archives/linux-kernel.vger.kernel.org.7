@@ -1,191 +1,214 @@
-Return-Path: <linux-kernel+bounces-879043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7768DC221E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:05:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD610C221FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5573B1A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 254D7188DA05
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392D536CE0E;
-	Thu, 30 Oct 2025 20:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554A36E357;
+	Thu, 30 Oct 2025 20:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OCcvECLQ"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFE0Xpwz"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AF53678DC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CB7331A74
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761854696; cv=none; b=fzS4H2P5ssJUtdhkLXo7R0XfTithBu3pC1VQe6BisSy4MQo6phFLuTlQ9N338nVw+aABaDD+4P6Wl5t4tkAGa2w6vmgk/TdW63i8E7gXFqkhFSeHUOF2s4DsSXECtAAwvcVEU+nc2MNUAwo43+6aKV4ylZYvp+oQbgXVcbP7iyM=
+	t=1761854849; cv=none; b=rNrH7zbbJEsljWXTgx4Y0xXhNOOAhyvm6Sg5QZQLs76cSdLArdGGGwWYS5L5+ftgesfWX35wh23FpDkcTSiEBwTo2JF7XwVW9vCG95Uut2R6YorJrVvcl9EeF5+MpC+/IUVkAuZJ/lllGUF5rbmS5UzwYMvBh7Ek1kdFQmrzCFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761854696; c=relaxed/simple;
-	bh=pqR2twSqOGM4sGtKUKqSOw/m20SLXlt0O+4cajvhO3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4B2uCI66MkWMtSIcj5u7ZlVYDAoNpYmjlNaVxG2qur6ezjmD0+SH4uGfudDpb1ZonnGTjp90SV2yH9MDSE++iOBCTRdktIh3wdhoCzUXoNiaUGv7XrFVT5fw8D/41KK6PUCnZfdUearnP224IZVJMDsKxwxeSZk9GvWRmUm21o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OCcvECLQ; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c281c649ccso1030264a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:04:54 -0700 (PDT)
+	s=arc-20240116; t=1761854849; c=relaxed/simple;
+	bh=3Js0uYAIC0bd6EOohKenbxNO7P8/ananC7e9waGafnY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EnWkF+OoDVcdAsu+wB4ZsmnvA6MTi71yUgEuSU4iJUFc5midSIUJdH4mB/f/htGQDEAXtDRkV/F5wDHLDwuYP+lD8GN11ds3kZXLFF72EUgCOV4J2I0ZiraqgdDfmV0b7AMm0kRqSMs2cPfi5D5ehL5N67JDwz+6VXvq7ai9GBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFE0Xpwz; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so15696225e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:07:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761854693; x=1762459493; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6Hd6daBLsyD7x4GoT4BnZnJBmthb0n09ST/82FiiXUI=;
-        b=OCcvECLQMz2S0mvhvUVEdOZDtYWS++nPr/AfB2DsUV4mbWU6aXuSgKfRCN/OtXFPK+
-         OFeSIAYqJ4K0hhHrVhwpbhWuFf/ywm5oxS21IBetIMWOOdMcpjpguiRIhy5ucRteCKVi
-         O/B5HdpfT0c3YK9tenf4mJkH+oUcG0+Vo9GAATFw1DWuQwVRsXC56QEXO3DU2o4Rdc3m
-         4ZObWuy9VgV1OvOlZCoxzLsEkGeNnxhgx/jpY1zXGrcgTbYj3hC26RhkSI5hMqMOZ6di
-         22hravu2nNzGoHEsk3Ic0Zd/nm65TvAu99OQsdDed9Pu3qP9hFLsUTHx0P1tgpnbcYs7
-         MQUw==
+        d=gmail.com; s=20230601; t=1761854846; x=1762459646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IK5/MD5jQaHlgmEIIClreHp/khBkythuO8kivjpFv+4=;
+        b=KFE0XpwzNcs9lQNbtUayZtpNSa60PdYVEsKDpy7alo/b1kWdo/5Hcl120BQL9O6qCZ
+         QAmATvB2ECh4P1UxuL38vmZOwRPoo7hjBVIdawUKfmES7VEhNwZbhhGYUuDAMmSW5NvP
+         5852hBUxPiE55bHSvB36OziSGqZ+avTyWW2NBFjGTiG7aLsPEXe7RmKahPRsKJ3COX1t
+         u963RNbtEizc6MjYCN9IqTg6aGAJSnOjbi9I29Wi3wVQ8aoGHJD0+UzEb4n1minN5ChY
+         eaBOvJm3mcx4cuaLaXqKLiolXxQKAsHfqnFIiG9k3TTL4FO5ybSfCqckxGEc/9xbS+qa
+         N8Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761854693; x=1762459493;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Hd6daBLsyD7x4GoT4BnZnJBmthb0n09ST/82FiiXUI=;
-        b=QOmO5ZrKgBDjRJl2hWkdjA3W0OBv4NzIM6sZ8vpN1vWB0wRL7rxqlqagCmX/DZhXnm
-         fP2YXgGVFoBwaH+Y7YqZbV8CtNHx6E7HsKCPCmsNwQggriKCYGtiy+jm9+w2JvZHBxOP
-         ScDe+IJvSGJ7ymUasVUxclrc9lWwYfS6TJQ8KBej8iI0j60YTui2u9TwoiEfn6cSjgaN
-         C70DyEtn+jKQKKAVA85OE1+SS5n6jkEqmubIxsGzVKQjuIBHbEllv408bb/zoJtSj8Tn
-         lJlszZDqdRnJLy+eW7CRQ0/4r8RZjxQPC0zwhm7zzmU21Gz/qzsv2/zShUOSSYnxWaQB
-         f/Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCaZlwvVnTyt7Prljq4YfQxZrxzoak3E6JfDjUD92Q1gSuNB0yFsvVCjCkaSEP5Bd9RjD1vDs8oFGEJM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXB5EZKm0GSAY3ILWNWIPoHYMqQHHUL+uIfnuw1XF1cjvaajIU
-	6CC3Vc/olK2kwjGnFydWIIZJhCDpdiOGoupXh4BcWu8LyF/v2/APIOzR5ljp+58STlw=
-X-Gm-Gg: ASbGncvujSxoo2wjFXhPG0SS+EvmPlDIbuwHrFbDy7NOrhklzWHel7KO0Jvk91jXL8g
-	mrLXoA2UzjXITyFM5VY8XP27hsJhGRpPkRXPGMVmlw/WjBeHg5xeSLLmyqdxLUgtx/0UL8HI7gC
-	ArH0R1qHbiDRvE3NAuJc25/YtX7E3Dw4ESS44/XXrA+GHOu0l8YBsZkvEa3oQV/RxwlNuxJwHVj
-	PGhk65ETgKPV+tcxsL9W1EWI2nOKIpvoZKIp5GjL2ni7oL72Hhmd3EilpiENfygQMvt7AMEwvtv
-	xdRpmeJzWrPH7OI/VCyPbvDvk2TVBoDXoxHYGTte5mh1CUjBvQIXg/7kWR8XkUxjGbfj4dwnECY
-	wymEf3QiE93tUFybZQcExpHyuVhI2e/OwK/4Hqz8G4DswtUvaD30Xm8b4ZUvpX2o6Whl5rZmflO
-	FNk5qowr6HBM1dCNVDqkFVo5+fP6elnasvWVKMeGwgBy4l7B3CBw==
-X-Google-Smtp-Source: AGHT+IF3d0tBzTvmcS+/xfeWwxQ6Lq0czWZ+p8zE1S8eYr96+SbUGR6bnT4WG1sWseccttHI7KklFQ==
-X-Received: by 2002:a05:6808:4489:b0:43f:21bb:32ae with SMTP id 5614622812f47-44f95ff5dfdmr403347b6e.50.1761854693378;
-        Thu, 30 Oct 2025 13:04:53 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:aa90:4f8c:bf59:360a? ([2600:8803:e7e4:500:aa90:4f8c:bf59:360a])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-44da3e80083sm4501853b6e.14.2025.10.30.13.04.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 13:04:52 -0700 (PDT)
-Message-ID: <31d3d3f9-c9e2-4ad9-a3c6-e85fab4520d6@baylibre.com>
-Date: Thu, 30 Oct 2025 15:04:51 -0500
+        d=1e100.net; s=20230601; t=1761854846; x=1762459646;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IK5/MD5jQaHlgmEIIClreHp/khBkythuO8kivjpFv+4=;
+        b=HIzRs0MIgXIHhORgmcF7IxtUfpnln1LS+OBY1Ixp7A9f4BtghoGKVpJbAYdOG5Y1TT
+         RW6YXdSdjdVnAKluIHexCvSp32Be6+W3n0a5B7A+uwGJDGPQffyES3/EX/b3u70CVr21
+         CaJX5YluMNOTJa3OA+/xlDQN9LatsSpd+SZX9FT0oY9F9CAzxc867pxRcyUrNBU0NBN9
+         pqzfBilV3ICf4fw2wuukzBKwYodIXbEAZRFUIFECF2U66bAndhpgyzEp4IE1/ni5k5xR
+         oup78zjXA2o1frZx+xeBLJB5ooIfTt5xi7T6q6lUgaTuqJchwZxydVyQwYbUm2YnJ4GS
+         u/ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKOO6bhngpaP5mIu79YFcF4mNq0Gzmh3j8PE/ZNM4LYv2RsJ42vA6NKzx/4+XuwvopmkUsPumcJJTeeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKZDdurmwrCM6JUWDEOgQXYa4+uAKLXdlrox3zBCK9KESezSc5
+	WKb2UMpPWVMGq/RZLjqmjcTz78Tz8cy4+MaQHNVCTlP18AVOyep+0vRO
+X-Gm-Gg: ASbGnctrFsJGQ59HRtg/qHeYywbTr3e5aiGxCQLm9aX11PVNMMfs7ikK1iI77MzGl26
+	ohvO/a4XnkMOjvhEmiGjpWwPSFx2APH/Hpk5l7RphE4tlcmUOy1+nyJUpZ/Upzotmv5QzBF6IX0
+	ckmd+Vu46QorbXAoeP3BvWfMTHbssWiGoaNXNvEP9mXLTmuXA8NQCgXmd6f1VAEN5Is4QOczJ0I
+	HdKQxLUS2mi2g2O+Ddr4oUTb85D249Z6VjnuONPitaYwCXy/Rc2qZHswFXYj/yv35UjWmZm0rdg
+	cUI5Ge2l02UVHG7rY8RsdAG0Usmbti++X7tizW+w+nsladrULfC4Vitx2afIwKIjt6O4KynxnyK
+	W7DO5M1JbuC7lOu3CQgvUYHfxrQK+CRMPnNmzXqF8JctZ+gyTlQZDolxE2KkU83+u9fbc3wjXV4
+	iCROyI6oYv1Ud7jbPypdLwOZb+7MJKZtLFSY+srmzTRnPG0lZ7zhPXfZAa9uw=
+X-Google-Smtp-Source: AGHT+IEKK73PbMSHf6dhhfOw/8d7gi7F8JIqgvvWZVKIGfNyOVCe87Tf3SMiH0lxF2XB6hun78s0fA==
+X-Received: by 2002:a05:600c:1c93:b0:46e:37d5:dbed with SMTP id 5b1f17b1804b1-4773010414fmr11136175e9.12.1761854845631;
+        Thu, 30 Oct 2025 13:07:25 -0700 (PDT)
+Received: from dell (229.red-88-1-12.dynamicip.rima-tde.net. [88.1.12.229])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952da645sm32485309f8f.30.2025.10.30.13.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 13:07:25 -0700 (PDT)
+From: Javier Garcia <rampxxxx@gmail.com>
+To: deller@gmx.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	Javier Garcia <rampxxxx@gmail.com>
+Subject: [PATCH v2] fbdev/vesafb: Use dev_* fn's instead printk.
+Date: Thu, 30 Oct 2025 21:07:23 +0100
+Message-ID: <20251030200723.2788931-1-rampxxxx@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251028185021.2758401-1-rampxxxx@gmail.com>
+References: <20251028185021.2758401-1-rampxxxx@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] dt-bindings: iio: adc: Add TI ADS1120 binding
-To: Jonathan Cameron <jonathan.cameron@huawei.com>,
- Ajith Anandhan <ajithanandhan0406@gmail.com>
-Cc: linux-iio@vger.kernel.org, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
- <20251030163411.236672-2-ajithanandhan0406@gmail.com>
- <20251030171212.00004069@huawei.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20251030171212.00004069@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/30/25 12:12 PM, Jonathan Cameron wrote:
-> On Thu, 30 Oct 2025 22:04:09 +0530
-> Ajith Anandhan <ajithanandhan0406@gmail.com> wrote:
-> 
->> Add device tree binding documentation for the Texas Instruments
->> ADS1120.
->>
->> The binding defines required properties like compatible, reg, and
->> SPI configuration parameters.
->>
->> Link: https://www.ti.com/lit/gpn/ads1120
-> Datasheet: https://www.ti.com/lit/gpn/ads1120
-> 
-> Is a somewhat official tag for these. Though better to put it in the dt-binding
-> doc itself as well or instead of here.
-> 
->> Signed-off-by: Ajith Anandhan <ajithanandhan0406@gmail.com>
->> ---
->>  .../bindings/iio/adc/ti,ads1120.yaml          | 50 +++++++++++++++++++
->>  1 file changed, 50 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
->> new file mode 100644
->> index 000000000..09285c981
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
->> @@ -0,0 +1,50 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/ti,ads1120.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Texas Instruments ADS1120 4-channel, 16-bit, 2kSPS ADC
->> +
->> +maintainers:
->> +  - Ajith Anandhan <ajithanandhan0406@gmail.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: ti,ads1120
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  spi-max-frequency:
->> +    maximum: 4000000
->> +
->> +  spi-cpha: true
->> +
->> +  "#io-channel-cells":
->> +    const: 1
-> 
-> Power supplies should be here and required (even if real boards
-> rely on stub regulators). 
-> 
-> Looks like there is an optional reference as well - so include that
-> but not as required (use internal ref if not supplied).
+- Family dev_* fn's will show device name, giving extra info to logs.
+- Delete the prefix `vesafb:` from msg strings, not needed now.
 
-Actually, there are two. REF{P,N}1 is an alternative function of
-the AIN{0,3} pins.
+[    0.981825] vesa-framebuffer vesa-framebuffer.0: scrolling: redraw
 
-It is also possible that the analog power supply can be used as
-a reference source instead of the internal one.
+Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+---
+v1 -> v2:
+      * Fix checkpatch.pl messages, thanks Helge Deller.
+      * v1 https://lore.kernel.org/lkml/20251028185021.2758401-1-rampxxxx@gmail.com/
 
-This came up recently and we glossed over it. However, I think
-it would make sense to have a flag property that means "the
-AVSS supply is of sufficient quality that it is better than 
-the internal reference supply", e.g. ti,avdss-is-ref. And
-drivers can use this info to decide if they want to select it
-as the reference voltage or not.
+ drivers/video/fbdev/vesafb.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-> 
-> There is a data ready pin as well so I'd expect an interrupt.
+diff --git a/drivers/video/fbdev/vesafb.c b/drivers/video/fbdev/vesafb.c
+index a81df8865143..f135033c22fb 100644
+--- a/drivers/video/fbdev/vesafb.c
++++ b/drivers/video/fbdev/vesafb.c
+@@ -314,8 +314,8 @@ static int vesafb_probe(struct platform_device *dev)
+ #endif
+ 
+ 	if (!request_mem_region(vesafb_fix.smem_start, size_total, "vesafb")) {
+-		printk(KERN_WARNING
+-		       "vesafb: cannot reserve video memory at 0x%lx\n",
++		dev_warn(&dev->dev,
++		       "cannot reserve video memory at 0x%lx\n",
+ 			vesafb_fix.smem_start);
+ 		/* We cannot make this fatal. Sometimes this comes from magic
+ 		   spaces our resource handlers simply don't know about */
+@@ -333,12 +333,12 @@ static int vesafb_probe(struct platform_device *dev)
+ 	par->base = si->lfb_base;
+ 	par->size = size_total;
+ 
+-	printk(KERN_INFO "vesafb: mode is %dx%dx%d, linelength=%d, pages=%d\n",
++	dev_info(&dev->dev, "mode is %dx%dx%d, linelength=%d, pages=%d\n",
+ 	       vesafb_defined.xres, vesafb_defined.yres, vesafb_defined.bits_per_pixel,
+ 	       vesafb_fix.line_length, si->pages);
+ 
+ 	if (si->vesapm_seg) {
+-		printk(KERN_INFO "vesafb: protected mode interface info at %04x:%04x\n",
++		dev_info(&dev->dev, "protected mode interface info at %04x:%04x\n",
+ 		       si->vesapm_seg, si->vesapm_off);
+ 	}
+ 
+@@ -352,9 +352,10 @@ static int vesafb_probe(struct platform_device *dev)
+ 		pmi_base  = (unsigned short *)phys_to_virt(pmi_phys);
+ 		pmi_start = (void*)((char*)pmi_base + pmi_base[1]);
+ 		pmi_pal   = (void*)((char*)pmi_base + pmi_base[2]);
+-		printk(KERN_INFO "vesafb: pmi: set display start = %p, set palette = %p\n",pmi_start,pmi_pal);
++		dev_info(&dev->dev, "pmi: set display start = %p, set palette = %p\n",
++			 pmi_start, pmi_pal);
+ 		if (pmi_base[3]) {
+-			printk(KERN_INFO "vesafb: pmi: ports = ");
++			dev_info(&dev->dev, "pmi: ports = ");
+ 			for (i = pmi_base[3]/2; pmi_base[i] != 0xffff; i++)
+ 				printk("%x ", pmi_base[i]);
+ 			printk("\n");
+@@ -365,14 +366,14 @@ static int vesafb_probe(struct platform_device *dev)
+ 				 * Rules are: we have to set up a descriptor for the requested
+ 				 * memory area and pass it in the ES register to the BIOS function.
+ 				 */
+-				printk(KERN_INFO "vesafb: can't handle memory requests, pmi disabled\n");
++				dev_info(&dev->dev, "can't handle memory requests, pmi disabled\n");
+ 				ypan = pmi_setpal = 0;
+ 			}
+ 		}
+ 	}
+ 
+ 	if (vesafb_defined.bits_per_pixel == 8 && !pmi_setpal && !vga_compat) {
+-		printk(KERN_WARNING "vesafb: hardware palette is unchangeable,\n"
++		dev_warn(&dev->dev, "hardware palette is unchangeable,\n"
+ 		                    "        colors may be incorrect\n");
+ 		vesafb_fix.visual = FB_VISUAL_STATIC_PSEUDOCOLOR;
+ 	}
+@@ -380,10 +381,10 @@ static int vesafb_probe(struct platform_device *dev)
+ 	vesafb_defined.xres_virtual = vesafb_defined.xres;
+ 	vesafb_defined.yres_virtual = vesafb_fix.smem_len / vesafb_fix.line_length;
+ 	if (ypan && vesafb_defined.yres_virtual > vesafb_defined.yres) {
+-		printk(KERN_INFO "vesafb: scrolling: %s using protected mode interface, yres_virtual=%d\n",
++		dev_info(&dev->dev, "scrolling: %s using protected mode interface, yres_virtual=%d\n",
+ 		       (ypan > 1) ? "ywrap" : "ypan",vesafb_defined.yres_virtual);
+ 	} else {
+-		printk(KERN_INFO "vesafb: scrolling: redraw\n");
++		dev_info(&dev->dev, "scrolling: redraw\n");
+ 		vesafb_defined.yres_virtual = vesafb_defined.yres;
+ 		ypan = 0;
+ 	}
+@@ -410,7 +411,7 @@ static int vesafb_probe(struct platform_device *dev)
+ 		vesafb_defined.bits_per_pixel;
+ 	}
+ 
+-	printk(KERN_INFO "vesafb: %s: "
++	dev_info(&dev->dev, "%s: "
+ 	       "size=%d:%d:%d:%d, shift=%d:%d:%d:%d\n",
+ 	       (vesafb_defined.bits_per_pixel > 8) ?
+ 	       "Truecolor" : (vga_compat || pmi_setpal) ?
+@@ -453,14 +454,14 @@ static int vesafb_probe(struct platform_device *dev)
+ 	}
+ 
+ 	if (!info->screen_base) {
+-		printk(KERN_ERR
+-		       "vesafb: abort, cannot ioremap video memory 0x%x @ 0x%lx\n",
++		dev_err(&dev->dev,
++		       "abort, cannot ioremap video memory 0x%x @ 0x%lx\n",
+ 			vesafb_fix.smem_len, vesafb_fix.smem_start);
+ 		err = -EIO;
+ 		goto err_release_region;
+ 	}
+ 
+-	printk(KERN_INFO "vesafb: framebuffer at 0x%lx, mapped to 0x%p, "
++	dev_info(&dev->dev, "framebuffer at 0x%lx, mapped to 0x%p, "
+ 	       "using %dk, total %dk\n",
+ 	       vesafb_fix.smem_start, info->screen_base,
+ 	       size_remap/1024, size_total/1024);
+-- 
+2.50.1
 
-There is actually two DRDY pins. One is shared with DOUT, so we
-should have two interrupts and interrupt-names so we know which
-pin is actually wired up.
-
-> 
-> All these should be in the binding from the start as we want it
-> to be as complete as possible.  The driver doesn't have to use everything
-> the binding supplies.
-> 
-Another trivial one is an optional clocks property for the external
-clock. It doesn't need clock-names since there is only one.
-
-Additional bindings needed when this is used with temperature sensors
-are not so trivial though, so we don't need to add those until someone
-actually needs them.
 
