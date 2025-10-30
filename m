@@ -1,144 +1,87 @@
-Return-Path: <linux-kernel+bounces-878447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD999C209F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:36:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0041C20A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DC844EC678
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:33:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EBC34ECC65
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC024274B3C;
-	Thu, 30 Oct 2025 14:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="c0frDGXY"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFA3275105;
+	Thu, 30 Oct 2025 14:33:33 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919AE1F0E39;
-	Thu, 30 Oct 2025 14:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EDC1DDC2C;
+	Thu, 30 Oct 2025 14:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834777; cv=none; b=bA1AGyG2bX8q3SFU9387F7GBOnaYYciMPbyUqYR0cqTMgQmSkrBFCR+ruNeOOwuRS2APoFKe4SaUJsm6c4Z70oc/JokQYFmBvDOTsE2aFDTmY9E0OjA8PDcZYTrrWGhVNq2JDRE6/T+pM4BJQhp1uGiiXs3g8qyPd6h0oMeSi1k=
+	t=1761834813; cv=none; b=PZhx/Q/ux1/Xq7kKWBfjcK69YSbIOi7oHBBx3n5zrSnkKH14UGudoMQCYSUT2b2sNjUt4CuSnO4hjcR0VzRjj91zPE6WizXbjIuQQiXU45UgeOy4n8GJLVPStYy9dQJudUHy4yumcyeQ9PJ5HS7N3H9vposSWHhNVtBXihpJNdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834777; c=relaxed/simple;
-	bh=D62bdTPTtRN3AVB5FJdx5lqUZgowJjCwSpNZ7p2tbBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oq08BJ30RFZwEgRXsiqQO5YuJf+CSPrdLsNmNGJAxcyldB+/yieLRu4RBwCZ8itIctevxiqgo9I8/HMhGswXfrnUda3sPZ62M2le3b1w3UmVKTp+zq4ChLPZeL6VuYw0wyuahY3ElBSrZJtOPlGAy4XeivbgZSMTUcxi0QCd2A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=c0frDGXY; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761834776; x=1793370776;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=D62bdTPTtRN3AVB5FJdx5lqUZgowJjCwSpNZ7p2tbBQ=;
-  b=c0frDGXY4mr5bp5ucbHh5rxAMnnNH1fGGCo7N/yNDewjJyryHfC9ZTZp
-   99CqSw+1dSPpDByl/YjEmdVCHXD6M4C7skDjNGiUriHMBaKs9I8jU+nny
-   MYjvkZyTwOU6yXEULPgnhPbiM6Atg3T6IfCZRwom8GCaojJtSYzJmvTet
-   nAyQ2imByPY8ETjrdR1bW4oBoz2SMomesk0v2f+12qrTKHt0cwK9gl16f
-   35hR/CEdEoXURyemCcJ5x1yOTCtjrNWhvPqwz81TJsIhJ6Cb02GXxsfKO
-   S1lzHq3M3NWmEn6ahHvzK5Xnuq5kmFCoTwtJUwgGaQ6LH8Q0nYnklw9lA
-   g==;
-X-CSE-ConnectionGUID: dL1EgsYfRVKQ49uqN4PuEg==
-X-CSE-MsgGUID: LcgAnV1xSRm3PROQENaW/Q==
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="48976230"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:32:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Thu, 30 Oct 2025 07:32:41 -0700
-Received: from [10.171.248.18] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 30 Oct 2025 07:32:36 -0700
-Message-ID: <f777c7d5-346d-42d3-b328-45320b22aacc@microchip.com>
-Date: Thu, 30 Oct 2025 15:32:35 +0100
+	s=arc-20240116; t=1761834813; c=relaxed/simple;
+	bh=ExT2RxRHFPo7qmOs4C0UVaeDUgLlKh+axm1xCnP7fkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxsB8bN4ZsDZeP/Ao4j++6yy6mk0A059bzrEsZz/pqtQDu9fqhCY+FziUwb7smQ6kZ4T2RODhT25uCfMxu6uFs+lBT1TtqXAWlXVbuwayNobYfGZcJDyPQ6is6UgFK76/e2DBUfvmqJ/ejpOdY+fAf6GfeyUFGXwkwo/mTNWNL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 330D7227A88; Thu, 30 Oct 2025 15:33:25 +0100 (CET)
+Date: Thu, 30 Oct 2025 15:33:24 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <20251030143324.GA31550@lst.de>
+References: <20251029071537.1127397-1-hch@lst.de> <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/5] net: macb: add no LSO capability
- (MACB_CAPS_NO_LSO)
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Russell King <linux@armlinux.org.uk>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?=
-	<benoit.monin@bootlin.com>, =?UTF-8?Q?Gr=C3=A9gory_Clement?=
-	<gregory.clement@bootlin.com>, Maxime Chevallier
-	<maxime.chevallier@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Vladimir Kondratiev
-	<vladimir.kondratiev@mobileye.com>, Andrew Lunn <andrew@lunn.ch>
-References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
- <20251023-macb-eyeq5-v3-3-af509422c204@bootlin.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20251023-macb-eyeq5-v3-3-af509422c204@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 23/10/2025 at 18:22, Théo Lebrun wrote:
-> LSO is runtime-detected using the PBUF_LSO field inside register DCFG6.
-> Allow disabling that feature if it is broken by using bp->caps coming
-> from match data.
+On Thu, Oct 30, 2025 at 10:20:02PM +1100, Dave Chinner wrote:
+> > use cases, so I'm not exactly happy about.
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> How many applications actually have this problem? I've not heard of
+> anyone encoutnering such RAID corruption problems on production
+> XFS filesystems -ever-, so it cannot be a common thing.
 
-Even if already applied:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+The most common application to hit this is probably the most common
+use of O_DIRECT: qemu.  Look up for btrfs errors with PI, caused by
+the interaction of checksumming.  Btrfs finally fixed this a short
+while ago, and there are reports for other applications a swell.
 
-> ---
->   drivers/net/ethernet/cadence/macb.h      | 1 +
->   drivers/net/ethernet/cadence/macb_main.c | 7 +++++--
->   2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 93e8dd092313..05bfa9bd4782 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -778,6 +778,7 @@
->   #define MACB_CAPS_DMA_64B                      BIT(21)
->   #define MACB_CAPS_DMA_PTP                      BIT(22)
->   #define MACB_CAPS_RSC                          BIT(23)
-> +#define MACB_CAPS_NO_LSO                       BIT(24)
-> 
->   /* LSO settings */
->   #define MACB_LSO_UFO_ENABLE                    0x01
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index be3d0c2313a1..8b688a6cb2f9 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -4564,8 +4564,11 @@ static int macb_init(struct platform_device *pdev)
->          /* Set features */
->          dev->hw_features = NETIF_F_SG;
-> 
-> -       /* Check LSO capability */
-> -       if (GEM_BFEXT(PBUF_LSO, gem_readl(bp, DCFG6)))
-> +       /* Check LSO capability; runtime detection can be overridden by a cap
-> +        * flag if the hardware is known to be buggy
-> +        */
-> +       if (!(bp->caps & MACB_CAPS_NO_LSO) &&
-> +           GEM_BFEXT(PBUF_LSO, gem_readl(bp, DCFG6)))
->                  dev->hw_features |= MACB_NETIF_LSO;
-> 
->          /* Checksum offload is only available on gem with packet buffer */
-> 
-> --
-> 2.51.1
-> 
+For RAID you probably won't see too many reports, as with RAID the
+problem will only show up as silent corruption long after a rebuild
+rebuild happened that made use of the racy data.  With checksums
+it is much easier to reproduce and trivially shown by various xfstests.
+With increasing storage capacities checksums are becoming more and
+more important, and I'm trying to get Linux in general and XFS
+specifically to use them well.  Right now I don't think anyone is
+using PI with XFS or any Linux file system given the amount of work
+I had to put in to make it work well, and how often I see regressions
+with it.
+
+> Forcing a performance regression on users, then telling them "you
+> need to work around the performance regression" is a pretty horrible
+> thing to do in the first place.
+
+I disagree.  Not corruption user data for applications that use the
+interface correctly per all documentation is a prime priority.
 
 
