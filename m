@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-878892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06854C21ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:07:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2F2C21B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CB04624FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:07:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F32BC4F2E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58AB2DAFD2;
-	Thu, 30 Oct 2025 18:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E382DCF44;
+	Thu, 30 Oct 2025 18:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpCNCqbA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7fU4zUK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD372868B0;
-	Thu, 30 Oct 2025 18:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE8F225761;
+	Thu, 30 Oct 2025 18:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847649; cv=none; b=YBuaQxQHEZAVoAbx7pR31LC+/dj9PjkOfofteMju48vMuh++mLDBqSumVp14SRmnyO1BN9YKqmk+LujCAFquFocWAmvYbHMUWc1EYxpvOf9hUlbGjx/xnVH4kJsSbDKwduf4BYnuBzy20NbZar2CqMO3tM9OCXDcKFCewq8hjAk=
+	t=1761847674; cv=none; b=F3mwyx2+dwJ4Xz07L171wm0y2GJKL2oYy48nI4TVPIFpSSsovgvMZ/qPEXJBfD2no0vCBX9VAdNP+eOkKe/IeARkf6fOKBmBsN2MrLK9tVlcFTQiDvfuW4jZkBC0f0faNP1lZzDcojM01LQcxbO6iqTfNMA5HXCIOWTbFEaa0qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847649; c=relaxed/simple;
-	bh=sRQqD17ahn+kzZRYxFkDmApRJ9iKc38vVieFyY53S8Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rtI/Ro6uWBmWReMD/5OoX2FahqU9KMI00Lq2HABHdd5tjKLTjV4VbJM6YdZ2WUGZBjSJdrbJW2yWw2Y+lOk2SMJnfSXwPXWbH8b3J0bmp8sHGvdDwRq2ozk2n95PHBOuPKQEFXT7uIkJAHFI7LXHBnZQY6p3yIo2MLDjhZePLWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpCNCqbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 962C0C19423;
-	Thu, 30 Oct 2025 18:07:28 +0000 (UTC)
+	s=arc-20240116; t=1761847674; c=relaxed/simple;
+	bh=d4YBjSediQsxkiPhR4oIzNv3wOxsjTnymXN3KVEOxoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCrcvE5xUubNTCNLarzDCAsPvWT4SI9g3Nl5BnuV7TLk3MJiGLJ9byIbwv1lAfiA2bwVCCC0hfMzgYAwi9e4eX1zvCoy5D1imHopI5xBtN0b4lry1umFTqq/t+CQ3+NDOB2BlJhQFt+AdasYdPvNic90vJciAxq8+CU4jaSGrVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7fU4zUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416B0C4CEF8;
+	Thu, 30 Oct 2025 18:07:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761847648;
-	bh=sRQqD17ahn+kzZRYxFkDmApRJ9iKc38vVieFyY53S8Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CpCNCqbA4a4j8mKlyZlwnNktYacA2ZxPIrdQ2Q/UZ/+gorskwm1G8Jx0KYF46y3pK
-	 Rrp/vwuXr2oI/aGvKyK8JicqSrMnvy9NOuEUnDvNPQuW6VEoh5QCT9FUdSYY4VrpkA
-	 3tO5zrlyJ/90umHZ0iyyjZ+CmaR64giYcJePFLAD9+g0FLXCu+dIhI0u7Kv+drIB29
-	 nwLDUcWCsDb2RNZO5oRiy4En8Unpx23XjNmHIzs3YkbRMfo+8JhOnz/3v3mAYycpTe
-	 2+DeBR7V1j2HpAVet/vPrMPhZCy/NdwCsDq0E+QtMU+ZL4Zmld+EZ3DMCo26H8/KnG
-	 Fp6Ghcb9+dkzA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vEX3W-000000015F6-0bSG;
-	Thu, 30 Oct 2025 18:07:26 +0000
-Date: Thu, 30 Oct 2025 18:07:25 +0000
-Message-ID: <86o6pouuua.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Walbran <qwandor@google.com>,
-	Ayrton Munoz <ayrton@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Per Larsen <perlarsen@google.com>,
-	Quentin Perret <qperret@google.com>,
-	Suzuki Poulouse <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] KVM: arm64: FFA: Use pointers from memcpy() calls for assignments in three functions
-In-Reply-To: <cb3bd42f-4fec-4300-8875-b6861716f274@web.de>
-References: <cb3bd42f-4fec-4300-8875-b6861716f274@web.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1761847673;
+	bh=d4YBjSediQsxkiPhR4oIzNv3wOxsjTnymXN3KVEOxoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B7fU4zUKWaJ3miGs8cpUJJbqcB3At+7D9FJDVUKgaSoQkOwU7n8FTb9XJNl6tqX3x
+	 zHm/DG0EYk4029sPp6bwtP3eBtmm3Fa8/1Czzm1xbolvsd8ne/syWt003sV5YA44rs
+	 5jxAsXRMsANGXz9m8fIG8BsOQ5HOfdE9wRHCYLt6ULFJGQfdPgEDu7bf5uMJnsrns5
+	 6tM1s1wsFLol8C3x1/zvFUWSrTHuiBTfvaJgf2/R4fYM1FzRdfNdnqPJODIcd+W1gZ
+	 rxozXQ5UUH2EQtZWiDtrKOQaSrbJFS4fFY93eZNJVHHF7vDKOtn3JBxQ7wPAH0pr2L
+	 Pt7x5TNWy4lTg==
+Date: Thu, 30 Oct 2025 18:07:49 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Fangrui Song <maskray@sourceware.org>,
+	linux-toolchains@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Concerns about SFrame viability for userspace stack walking
+Message-ID: <bdda89a7-ff60-46b0-8ce3-28ffec1fac2a@sirena.org.uk>
+References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
+ <20251030102626.GR3245006@noisy.programming.kicks-ass.net>
+ <87zf982s52.fsf@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Markus.Elfring@web.de, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, qwandor@google.com, ayrton@google.com, catalin.marinas@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev, perlarsen@google.com, qperret@google.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linmq006@gmail.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GoW7l/VHTumaJv7Z"
+Content-Disposition: inline
+In-Reply-To: <87zf982s52.fsf@linux.intel.com>
+X-Cookie: Be different: conform.
 
-On Thu, 30 Oct 2025 17:40:39 +0000,
-Markus Elfring <Markus.Elfring@web.de> wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 30 Oct 2025 18:25:55 +0100
-> 
-> A pointer was assigned to a variable in three function implementations.
-> The same pointer was used for the destination parameter of a memcpy() call.
-> This function is documented in the way that the same value is returned.
-> Thus convert separate statements into direct variable assignments for
-> the return values from memory copy actions.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 4e16f9b96f63..4820a9e96f80 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -431,8 +431,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_1_2_regs *res,
->  	if (!host_buffers.tx)
->  		goto out_unlock;
->  
-> -	buf = hyp_buffers.tx;
-> -	memcpy(buf, host_buffers.tx, fraglen);
-> +	buf = memcpy(hyp_buffers.tx, host_buffers.tx, fraglen);
->  	nr_ranges = fraglen / sizeof(*buf);
 
-This is unreadable. And even if memcpy() behaves has you describe, you
-are breaking a pattern that people are relying on.
+--GoW7l/VHTumaJv7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm not planning to take anything of the sort.
+On Thu, Oct 30, 2025 at 10:53:13AM -0700, Andi Kleen wrote:
 
-Thanks,
+> IMNSHO the whole sframe effort is misguided because all the major ISAs do=
+ have
+> shadow stack hardware support now which is generally a better option.=20
+> It would be better to invest effort in deploying that widely.
 
-	M.
+It's going to take a *considerable* time for the hardware support to
+become standard.
 
--- 
-Without deviation from the norm, progress is not possible.
+--GoW7l/VHTumaJv7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDqXQACgkQJNaLcl1U
+h9AA6wf/fPlJ3ZZiRfquQVNzY+ew+cYxeWDCikXzsRlhgaI9QtgyOYuqap9kP6Zm
+Q4GtCiSdQlhesTLSCDYlzA47oPaU/kIsqMM2oWFLQpG86P42wcU50nK1pM2xDd03
+CTIKCwXaPg9g85BBDJImlUNR4AObyB+aWrVm5zY+ryjFjxgwTWJq+c4Z4BBqvgwq
+rBnJIqGYd4gBOSqEq+YoCER52rFc4/o1w5M3huTTXOGDewIOPhEhIIvcUxfk59T5
+X+vYoD6cShQP3g4Av2eXzkvp6gaEtql6rlQfwd1sXRRBHpWzVxTlWJlOL8udq2iV
+h2fPSgo3sJ/5rwWlavKPjnCpFCN3xg==
+=8uFa
+-----END PGP SIGNATURE-----
+
+--GoW7l/VHTumaJv7Z--
 
