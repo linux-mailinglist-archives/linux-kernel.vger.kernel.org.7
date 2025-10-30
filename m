@@ -1,278 +1,190 @@
-Return-Path: <linux-kernel+bounces-878168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CC0C1FEEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:07:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D47D4C1FEE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BE41889806
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:04:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F7A14EB92E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAD8315D4E;
-	Thu, 30 Oct 2025 12:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50631579B;
+	Thu, 30 Oct 2025 12:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="f+VYncrc"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+c0wQjG"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1297F2C2340;
-	Thu, 30 Oct 2025 12:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA472F1FC5
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761825842; cv=none; b=TyFy1aWQd7WXgQWSyizeHFMYOnPOzv2g9v0noycvCtnDdz4ObKoDZh1RNnL98Sf8Mxs3alrFatnbSAUyErzljhsaPvrBo1bRJOADLAuRvk6DVfJ533NVqBSQ6ndc0Mn4NBpPCpmDlmeTU7etnUsrcpSQ4cfwlbxpSDBc/c3RUIA=
+	t=1761825914; cv=none; b=DPfUSYrgyBxzyV/fiw+rvuwfL4yrwrU3W0ljMLA1rd7rkF6HjNOwbFFni110ISJrrTsSG82IZV+t3PKy2O990NnaFHxePaIQ1vQwYplQo0R4URzgapwrFkOQ+hiy2L1/Q8Veupl6cyS5mSO3OVHFDpZ9rAGeYaF6hRopyEhgm1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761825842; c=relaxed/simple;
-	bh=IL/RAuYRylzgjtXa31MWhQno7cUBCpBvvbUXdwM/9GI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dI6TA6ZqXdhmTHKKoOJeGHIxitFmNoGcp6jnWuG59VPT6AE+Z7URkI5D7OeyP9DJmCtQtSQFJggrMqeFOGVvb6yWBmFv8Jv6YTn5J2UUG24Dhbrn96iP9lnovjeGH6kl9udBsuQS0qNgt2JJb5u9hPopNAPd4r1U3rN764dQG5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=f+VYncrc; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.4.92] (unknown [213.235.133.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 5E075534126F;
-	Thu, 30 Oct 2025 13:03:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1761825829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HCDJvVTDJefJzOa6Phkvo+tZTLtMHzdY0G2wDk5jBLI=;
-	b=f+VYncrcbQzJTnkYgXqJE4t8guaTGUVwLz/1Fghih8F9r9C4oZZAHhpH4BPlmbLxNu8fIc
-	uyAAp9z1F5ANkcbJiZniA8U0X42j8G3m4uCtREOK6mPw0m81zYphkeUCO4GL6f/T8ot4Rc
-	41LFF+iKCr+9IfgdxmxtqYHR3zyXEHY=
-Message-ID: <7f686f1b-7cc7-428d-941d-82883decee49@ixit.cz>
-Date: Thu, 30 Oct 2025 13:03:42 +0100
+	s=arc-20240116; t=1761825914; c=relaxed/simple;
+	bh=Nnmy/nhRXy1Jb2EolZDFX082PZeZ22LYX0yNSq8ROCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cu3iCzEL+byHQ4s3OQuSuEYtu/JZI1enNl+wEn8Gb1mbw8916Bma+6Vn6TDXXWAMAVOjHcQf22rGTK+WFQfhp8yTWKkkH9EOfYeDX5VVuAYmoREcSI3WVCUAUSSx4xs7kAabeaDnvkm7QnXOj+BHlOlL8aTGpcom/tQsM0MUMDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+c0wQjG; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-474975af41dso7193825e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761825910; x=1762430710; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OCpWVCeFoXMs1/EyJIuFGqtdg2vmYZ9/7tM7s70z/qU=;
+        b=H+c0wQjGAMRqI3BM58JSCWRYsnmL6RELy9aBlGdO+v9a2eUJku4z08/XkbAGVY26j+
+         8JVFUQ7Z9qOncEzCGwXN/tYAv0vhW28YkqFGNBwbqBYmlpo+3UNIxlEFn95diBkGnKfU
+         IjmIFasmTsktL++A+MamH8kynWkPEu4Orp6colEwN10japUSkzvYYXyq4WHk1hQABosL
+         4ZU7dgNI6kxuUVjsTPm2qwLOMtCPBteJ7/gIH1Z9AbXtHBaoqPkagiPgfPni2BjycveW
+         8KwFFJxfNeToyWvhJa9IMSj2tUQ2xzRkKum1OJg20BBfdN/SkJBPWTewzBKLkZeCwn2e
+         49vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761825910; x=1762430710;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OCpWVCeFoXMs1/EyJIuFGqtdg2vmYZ9/7tM7s70z/qU=;
+        b=lypr/B2F357AmFUex5/MlqWH3nMD7i4XXQn1PxMtTP0joTg99oBYD5f3RTa9lDVSEI
+         a8bIjYz9RsZCVyfyvx9mejPWuAMeK0kP3XHCJjP2DYKoxUZql2JhpKdUw38DiQYsvtpz
+         fXK8lY95DtLZfebUdelYyG+DjIVlOAN0nkyWSR1JCSzaJ5A/8yvn2CFyw5RQ0025RooG
+         ci49vDlUgFT2nR+V5+CKYQq46+xp7YCzoFE7d1dBw1PjMY3bReJ8XBVBbnNx0h07NM6y
+         rRWnWBV2mAbYBQcoDgUwl7sLEY+Prf3Ea5+I49l7tj3urjS8Q2q0k88QwZygxcih03Fx
+         /ygA==
+X-Forwarded-Encrypted: i=1; AJvYcCWszwdTGGmq7ZL2s7LNI6uQ6ltaWRZXec9Ha/5t4TfOUjKrOJJcpzDAfFj6WBhFRP6J4WVNiQIcekFtiP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjtTYjJykeXPWX+pIyNSYMEaVbZ6Lvsc6ORi2CHG1p4W7ag00o
+	y1H1HRBXlBc6PnKZKTOY3AKsiExNWpZ+wEKrvVcxhUBmQpWMI0VIFgbH
+X-Gm-Gg: ASbGncuGPewugDLXFVwoec0qoVavqtAiKOAug1sR/gN8NTz/qLkscA+c3cfn3q7Rfm0
+	WhJjh2zZ8xK3cwV3uNjIYah4sVA8D7IzmJSdVfUmL0WD9zGQnl3YG+KyFinhFZwxEhoHRJIaYbc
+	5rUYonujB1eCFk5AV7H9stbrrFz8yDdp77SVnaX6yyMWbocm3U0znDUDK8/EBhQLQgkg4rlMpL6
+	arNn3wwc4SxWDP1fmuZ71PPdb+ylifoCnPVFrsrStIl9ReT+8IoU91iaZ5y6rRisXH10YQPXcYW
+	xqiSDxwGTlbDQUtvMcHqcGGMCkLttpzH1lqIvXMjmcacyr6m8llP0UV2bjBwHxms+e4Y/MDhfsQ
+	cilluI5QALfpsOQ6A1UW0/+h0BNBCcIer3Ehw98/12wILROrW0Lg2Yh7bUvtXwiBLVe5H8FvxIt
+	+K1wNfspolVo63qaRAsd9bLLbHLH39wuCiHbztMa+cLoHYjfpcpXJh2AzZfajF
+X-Google-Smtp-Source: AGHT+IFu0rRxNzi3BvOKL1lXRDq2cHd03YnzoBoOPePE4rUTNG1zrE1V3xFacaBHpTSekptbKXeGkw==
+X-Received: by 2002:a05:600d:6355:b0:477:28c1:26ce with SMTP id 5b1f17b1804b1-47728c12b10mr14305245e9.7.1761825910183;
+        Thu, 30 Oct 2025 05:05:10 -0700 (PDT)
+Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952ca569sm31018677f8f.12.2025.10.30.05.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 05:05:09 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Tranh Ha <tranh.ha.xb@renesas.com>,
+	Duy Nguyen <duy.nguyen.rh@renesas.com>,
+	linux-can@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] can: rcar_canfd: Fix controller mode setting for RZ/G2L SoCs
+Date: Thu, 30 Oct 2025 12:05:04 +0000
+Message-ID: <20251030120508.420377-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Add support for Pixel 3 and
- Pixel 3 XL
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: phodina@protonmail.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
- Casey Connolly <casey@connolly.tech>, Joel Selvaraj <foss@joelselvaraj.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
-References: <20251030-pixel-3-v2-0-8caddbe072c9@ixit.cz>
- <20251030-pixel-3-v2-2-8caddbe072c9@ixit.cz>
- <8d32460d-894b-472a-a262-4c6a60fbcef1@oss.qualcomm.com>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <8d32460d-894b-472a-a262-4c6a60fbcef1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 30/10/2025 12:32, Konrad Dybcio wrote:
-> On 10/30/25 8:24 AM, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> This adds initial device tree support for the following phones:
->>
->>   - Google Pixel 3 (blueline)
->>   - Google Pixel 3 XL (crosshatch)
-> 
-> [...]
-> 
->> +#include <dt-bindings/arm/qcom,ids.h>
->> +#include <dt-bindings/dma/qcom-gpi.h>
->> +#include <dt-bindings/input/linux-event-codes.h>
->> +#include <dt-bindings/interrupt-controller/irq.h>
->> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->> +
->> +#include "sdm845.dtsi"
->> +#include "pm8998.dtsi"
->> +#include "pmi8998.dtsi"
->> +
->> +/delete-node/ &mpss_region;
->> +/delete-node/ &venus_mem;
->> +/delete-node/ &cdsp_mem;
->> +/delete-node/ &mba_region;
->> +/delete-node/ &slpi_mem;
->> +/delete-node/ &spss_mem;
->> +/delete-node/ &rmtfs_mem;
->> +
->> +/ {
->> +	chassis-type = "handset";
->> +	qcom,board-id = <0x00021505 0>;
->> +	qcom,msm-id = <QCOM_ID_SDM845 0x20001>;
->> +
->> +	aliases {
->> +		serial0 = &uart9;
->> +		serial1 = &uart6;
->> +	};
->> +
->> +	battery: battery {
->> +		compatible = "simple-battery";
->> +
->> +		status = "disabled";
-> 
-> You added support for both non-proto boards based on this platform,
-> there is no usecase for you to disable the battery, remove this line
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Should I keep the status = "okay" in the board files or drop it too?
+The commit 5cff263606a1 ("can: rcar_canfd: Fix controller mode setting")
+applies to all SoCs except the RZ/G2L family of SoCs. As per RZ/G2L
+hardware manual "Figure 28.16 CAN Setting Procedure after the MCU is
+Reset" CAN mode needs to be set before channel reset. Add the
+mode_before_ch_rst variable to struct rcar_canfd_hw_info to handle
+this difference.
 
-> 
-> [...]
-> 
->> +	reserved-memory {
->> +		cont_splash_mem: splash@9d400000 {
->> +			/* size to be updated by actual board */
->> +			reg = <0x0 0x9d400000 0x0>;
-> 
-> Don't define it here then
-> 
-> Normally the bootloader allocates a bigger buffer here BTW
-> (although it shooould be reclaimable without issues)
+The above commit also breaks CANFD functionality on RZ/G3E. Adapt this
+change to RZ/G3E, as well as it works ok by following the initialisation
+sequence of RZ/G2L.
 
-Ok, I'll drop reg in next revision. Thou the reg is defined in the board 
-files.
+Fixes: 5cff263606a1 ("can: rcar_canfd: Fix controller mode setting")
+Cc: stable@vger.kernel.org
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/net/can/rcar/rcar_canfd.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-> 
->> +			no-map;
->> +
->> +			status = "disabled";
-> 
-> ditto
-> 
-> [...]
-> 
->> +	gpio-keys {
->> +		compatible = "gpio-keys";
->> +		label = "Volume keys";
->> +		autorepeat;
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&volume_up_gpio>;
-> 
-> property-n
-> property-names
-> 
-> in this order, please
-> 
-> [...]
-> 
->> +&tlmm {
->> +	gpio-reserved-ranges = <0 4>, <81 4>;
-> 
-> Could you add a comment (like in x1-crd.dtsi) mentioning what these
-> pins correspond to? Usually it's a fingerprint scanner or things like
-> that
-
-Sure, I looked into it, but I haven't found (so far) information about 
-the assigned blocks. In next revision it'll be addressed :)>
->> +
->> +	touchscreen_reset: ts-reset-state {
->> +		pins = "gpio99";
->> +		function = "gpio";
->> +		drive-strength = <8>;
->> +		bias-pull-up;
->> +	};
->> +
->> +	touchscreen_pins: ts-pins-gpio-state {
->> +		pins = "gpio125";
->> +		function = "gpio";
->> +		drive-strength = <2>;
->> +		bias-disable;
->> +	};
->> +
->> +	touchscreen_i2c_pins: qup-i2c2-gpio-state {
->> +		pins = "gpio27", "gpio28";
->> +		function = "gpio";
->> +
->> +		drive-strength = <2>;
-> 
-> stray \n above
-> 
->> +		bias-disable;
->> +	};
->> +};
->> +
->> +&uart6 {
->> +	pinctrl-0 = <&qup_uart6_4pin>;
->> +
->> +	status = "okay";
->> +	bluetooth {
-> 
-> Please add a \n above, to separate the properties from subnodes
-> 
-> [...]
-> 
->> +&mdss {
->> +	/* until the panel is prepared */
->> +	status = "disabled";
->> +};
-> 
-> Is it not the same as on the little boy, except the resolution?
-> (don't know, just asking)
-It's completely different DDIC and panel. Generally, the DDIC has driver 
-mainlined already (due being same as Samsung S9 DDIC), but I must extend 
-support for the relevant panel.
-
-Thanks for the review
-WIP to v3 is here: https://gitlab.com/dhxx/linux/-/commits/b4/pixel-3
-
-David
-
-> 
-> Konrad
-
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 49ab65274b51..1724fa5dace6 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -444,6 +444,7 @@ struct rcar_canfd_hw_info {
+ 	unsigned ch_interface_mode:1;	/* Has channel interface mode */
+ 	unsigned shared_can_regs:1;	/* Has shared classical can registers */
+ 	unsigned external_clk:1;	/* Has external clock */
++	unsigned mode_before_ch_rst:1;	/* Has set mode before channel reset */
+ };
+ 
+ /* Channel priv data */
+@@ -615,6 +616,7 @@ static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
+ 	.ch_interface_mode = 0,
+ 	.shared_can_regs = 0,
+ 	.external_clk = 1,
++	.mode_before_ch_rst = 0,
+ };
+ 
+ static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
+@@ -632,6 +634,7 @@ static const struct rcar_canfd_hw_info rcar_gen4_hw_info = {
+ 	.ch_interface_mode = 1,
+ 	.shared_can_regs = 1,
+ 	.external_clk = 1,
++	.mode_before_ch_rst = 0,
+ };
+ 
+ static const struct rcar_canfd_hw_info rzg2l_hw_info = {
+@@ -649,6 +652,7 @@ static const struct rcar_canfd_hw_info rzg2l_hw_info = {
+ 	.ch_interface_mode = 0,
+ 	.shared_can_regs = 0,
+ 	.external_clk = 1,
++	.mode_before_ch_rst = 1,
+ };
+ 
+ static const struct rcar_canfd_hw_info r9a09g047_hw_info = {
+@@ -666,6 +670,7 @@ static const struct rcar_canfd_hw_info r9a09g047_hw_info = {
+ 	.ch_interface_mode = 1,
+ 	.shared_can_regs = 1,
+ 	.external_clk = 0,
++	.mode_before_ch_rst = 1,
+ };
+ 
+ /* Helper functions */
+@@ -806,6 +811,10 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 	/* Reset Global error flags */
+ 	rcar_canfd_write(gpriv->base, RCANFD_GERFL, 0x0);
+ 
++	/* RZ/G2L SoC needs setting the mode before channel reset */
++	if (gpriv->info->mode_before_ch_rst)
++		rcar_canfd_set_mode(gpriv);
++
+ 	/* Transition all Channels to reset mode */
+ 	for_each_set_bit(ch, &gpriv->channels_mask, gpriv->info->max_channels) {
+ 		rcar_canfd_clear_bit(gpriv->base,
+@@ -826,7 +835,8 @@ static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
+ 	}
+ 
+ 	/* Set the controller into appropriate mode */
+-	rcar_canfd_set_mode(gpriv);
++	if (!gpriv->info->mode_before_ch_rst)
++		rcar_canfd_set_mode(gpriv);
+ 
+ 	return 0;
+ }
 -- 
-David Heidelberg
+2.43.0
 
 
