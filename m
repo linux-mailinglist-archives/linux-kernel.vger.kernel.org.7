@@ -1,379 +1,349 @@
-Return-Path: <linux-kernel+bounces-877623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACE1C1E99A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:40:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D33C1E8FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC453B6C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41A8188A9C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA7232E6B0;
-	Thu, 30 Oct 2025 06:36:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47642FA0EF;
+	Thu, 30 Oct 2025 06:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aKe97EaI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90712330B17;
-	Thu, 30 Oct 2025 06:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E071288D0
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761806176; cv=none; b=FYq1EyMcYdJfRaWM+x4PyS5m+4rCYmf/yw8UwNbpEGSTxsCcY+V21CL5LtziHJ0HdXLM/Q1wA5Ra68UMGZAykAi49NDgG2eTiBit4N1fmX1JKDUa8C0HZVvJ3Hu4mXx9RvM0GsHOZtVjRPZZ6Wsd0SC9OEj9LtQcx1GFBoptwFY=
+	t=1761805773; cv=none; b=OKgqVmJh8f0SOFKctiacXcJCHkMx+ZZmyBhEUyEm9xOCcC2dgDXmGEHIsm1hes5imNB0t+Fi1eIJufzlcUbsvrmBksy5VCif2FG0p4KQSPJ7W9TxnCbNUUjJtd7BZsoVr2m9LTQD0fCXEjiz0Z9kQraJMz/ey0mUfT9no971mXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761806176; c=relaxed/simple;
-	bh=xs2F9fxVvLG/qQ5mJxgm0N9iI4xOG2W2EsUERAS4tSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kmhJ3Kiihxca2QgcIMNFnr4kl+WbnEN80JV/gwiqhu4v/mZeUSY1RA1zUOKVoENftJ6p+sLhRX+987+57yXc93EfcDEUG/qOCw0bx9ZtJjnUmkOfLv4MzPvoT9p+iJVQUJ+0qfCtAYbi9hQkho1dLa/V5fxu8U8NhSPOUmmfnoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cxvWh2F2fzYQtlM;
-	Thu, 30 Oct 2025 14:36:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 99C6D1A0C5C;
-	Thu, 30 Oct 2025 14:36:06 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.87.129])
-	by APP2 (Coremail) with SMTP id Syh0CgDnPUZUBwNpEqJkCA--.9906S8;
-	Thu, 30 Oct 2025 14:36:06 +0800 (CST)
-From: linan666@huaweicloud.com
-To: corbet@lwn.net,
-	song@kernel.org,
-	yukuai@fnnas.com,
-	linan122@huawei.com,
-	hare@suse.de,
-	xni@redhat.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com
-Subject: [PATCH v8 4/4] md: allow configuring logical block size
-Date: Thu, 30 Oct 2025 14:28:07 +0800
-Message-Id: <20251030062807.1515356-5-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20251030062807.1515356-1-linan666@huaweicloud.com>
-References: <20251030062807.1515356-1-linan666@huaweicloud.com>
+	s=arc-20240116; t=1761805773; c=relaxed/simple;
+	bh=QeY8oRsFf+zBKsAzSQjuUVo8girw2XosEoALf26olAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ct0kAP04Ocr2BB1VOrEJv4+DQL43tkZrx9WuOsKn91vPbU0yPzgo1+EahS1kR7W4CibXWf4SseX73PdvgxojiPeCTp3NJ09VFy3pVt7jQVIslZkiXyynVAsVXX8tnU76AvTgsX0dBdn16Dbhar44bh2iCrdg7/qf6s0ei4Bo3yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aKe97EaI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59TNJ9k0025875;
+	Thu, 30 Oct 2025 06:29:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=bKzt1J
+	GeJe432FaMpv3O3KT3GPVkoToAnqMqF9aDlJ8=; b=aKe97EaIO80mDxPH+FySpz
+	tt3AjgpDZhOrpW4QHNosmRksvJKume2h83OgY8gDc6Zmhi1nt77wM83y8235pS3q
+	92oTbZYuo+uS+tu+4UHZol8msiSiFKmH/KHuoq256DsvpQgK88wYvmwYoOQ+OhLh
+	DjId/q2jy3zX9jGt4+1JNDQSHrO5YFMJxZyv41nOyYfXI10eiI04rOAKex9PUm2w
+	hZQgFsuR7yPJrVHlF9WgTN8L+QIDLMp0M0jgEZt5lvHxTvD9yWg9cckpAloVyINs
+	hAuWi73XTFigl4TCFCMf30EQRecCyMKKrAc0Vx6eyXTKNL7unfr/ggxGznH3RxyQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34aapqk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 06:29:17 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59U6PqC6023068;
+	Thu, 30 Oct 2025 06:29:17 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34aapqk2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 06:29:17 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59U63jgs018748;
+	Thu, 30 Oct 2025 06:29:16 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xwf5jt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 06:29:16 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59U6TFvT2425596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 06:29:15 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B6BE758059;
+	Thu, 30 Oct 2025 06:29:15 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2017F58058;
+	Thu, 30 Oct 2025 06:29:11 +0000 (GMT)
+Received: from [9.98.110.226] (unknown [9.98.110.226])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 30 Oct 2025 06:29:10 +0000 (GMT)
+Message-ID: <be48760d-b705-424e-b6b7-b75205e83567@linux.ibm.com>
+Date: Thu, 30 Oct 2025 11:59:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDnPUZUBwNpEqJkCA--.9906S8
-X-Coremail-Antispam: 1UD129KBjvJXoWfGF4Dtw43ur45tr15KF4kWFg_yoWDKrW5pa
-	97ZFyfZ34UXayYyan7AFykuF15X348GFWDKry7W3y0vr9xZr17WF4fGFy5Xryjqwn8AwnF
-	q3WDKrWDu3Z2gF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUHa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0V
-	AKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4U
-	JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20V
-	AGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWU
-	tVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOPfHDU
-	UUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] sched: reorder some fields in struct rq
+To: Blake Jones <blakejones@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Josh Don <joshdon@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20251029185458.3040228-1-blakejones@google.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20251029185458.3040228-1-blakejones@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=ALkgKXG8 c=1 sm=1 tr=0 ts=690305bd cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8 a=p2StPhpDymKLoomlExIA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: poXPgD6XHVciQysXGnKVlmzZpEmaQo7b
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX25RjPZlUCcLl
+ QKPvd/KnTheLc8Z6uW5vNQWTJukMfzO80JaOL2JkYoIQ5UBV+onJezrDQFknAJkHO80HgHWZxD1
+ k+Fwgz92VbTcvCdSOVS/66y9B27sPVJYS2VMiDH/W/uZqOb3ySgS9YQVgc7o74+yujee1HYvwJw
+ RHBW081+yickVMrhVhggeUQV6pAUUBiMDvkRk+UebZ9ctSO+y7/Oni0WJgmqokOWkRh5t49Ute8
+ sPQAOxPeJju4muOpJ5URAilT8DIUckJ7RiJfd6pJDTMKKsNE3eTSJhnQ/00t7w5FlxBSe9l81n3
+ iIrrHJv+rfSZ1HZ/Ebx1zUHqPaT2YTyTvr6oZxBR4bF4LknJniY96dyAK+CpP2LMLYjEom5mDaE
+ BZrD8UCiHKDUvmcZ9xpeg5JYoshbNw==
+X-Proofpoint-GUID: XA9CFMcidyrEySjxnUsrXpxRC43HwQdU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1011 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-From: Li Nan <linan122@huawei.com>
+Hi Blake,
 
-Previously, raid array used the maximum logical block size (LBS)
-of all member disks. Adding a larger LBS disk at runtime could
-unexpectedly increase RAID's LBS, risking corruption of existing
-partitions. This can be reproduced by:
+On 30/10/25 00:24, Blake Jones wrote:
+> This colocates some hot fields in "struct rq" to be on the same cache line
+> as others that are often accessed at the same time or in similar ways.
+> 
+> Using data from a Google-internal fleet-scale profiler, I found three
+> distinct groups of hot fields in struct rq:
+> 
+> - (1) The runqueue lock: __lock.
+> 
+> - (2) Those accessed from hot code in pick_next_task_fair():
+>       nr_running, nr_numa_running, nr_preferred_running,
+>       ttwu_pending, cpu_capacity, curr, idle.
+> 
+> - (3) Those accessed from some other hot codepaths, e.g.
+>       update_curr(), update_rq_clock(), and scheduler_tick():
+>       clock_task, clock_pelt, clock, lost_idle_time,
+>       clock_update_flags, clock_pelt_idle, clock_idle.
+> 
+> The cycles spent on accessing these different groups of fields broke down
+> roughly as follows:
+> 
+> - 50% on group (1) (the runqueue lock, always read-write)
+> - 39% on group (2) (load:store ratio around 38:1)
+> -  8% on group (3) (load:store ratio around 5:1)
+> -  3% on all the other fields
+> 
 
-```
-  # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
-  mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+Thanks for the patch.
 
-  # LBS is 512
-  cat /sys/block/md0/queue/logical_block_size
+Quick question about the lock placement: Did you test Peter's suggestion of
+co-locating __lock with the clock fields? If so, how did it compare to keeping
+them separate?
 
-  # create partition md0p1
-  parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
-  lsblk | grep md0p1
+Thanks,
+Madadi Vineeth Reddy
 
-  # LBS becomes 4096 after adding sdf
-  mdadm --add -q /dev/md0 /dev/sdf
-  cat /sys/block/md0/queue/logical_block_size
-
-  # partition lost
-  partprobe /dev/md0
-  lsblk | grep md0p1
-```
-
-Simply restricting larger-LBS disks is inflexible. In some scenarios,
-only disks with 512 bytes LBS are available currently, but later, disks
-with 4KB LBS may be added to the array.
-
-Making LBS configurable is the best way to solve this scenario.
-After this patch, the raid will:
-  - store LBS in disk metadata
-  - add a read-write sysfs 'mdX/logical_block_size'
-
-Future mdadm should support setting LBS via metadata field during RAID
-creation and the new sysfs. Though the kernel allows runtime LBS changes,
-users should avoid modifying it after creating partitions or filesystems
-to prevent compatibility issues.
-
-Only 1.x metadata supports configurable LBS. 0.90 metadata inits all
-fields to default values at auto-detect. Supporting 0.90 would require
-more extensive changes and no such use case has been observed.
-
-Note that many RAID paths rely on PAGE_SIZE alignment, including for
-metadata I/O. A larger LBS than PAGE_SIZE will result in metadata
-read/write failures. So this config should be prevented.
-
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- Documentation/admin-guide/md.rst |  7 +++
- drivers/md/md.h                  |  1 +
- include/uapi/linux/raid/md_p.h   |  3 +-
- drivers/md/md-linear.c           |  1 +
- drivers/md/md.c                  | 77 ++++++++++++++++++++++++++++++++
- drivers/md/raid0.c               |  1 +
- drivers/md/raid1.c               |  1 +
- drivers/md/raid10.c              |  1 +
- drivers/md/raid5.c               |  1 +
- 9 files changed, 92 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide/md.rst
-index 1c2eacc94758..0f143acd2db7 100644
---- a/Documentation/admin-guide/md.rst
-+++ b/Documentation/admin-guide/md.rst
-@@ -238,6 +238,13 @@ All md devices contain:
-      the number of devices in a raid4/5/6, or to support external
-      metadata formats which mandate such clipping.
- 
-+  logical_block_size
-+     Configure the array's logical block size in bytes. This attribute
-+     is only supported for 1.x meta. The value should be written before
-+     starting the array. The final array LBS will use the max value
-+     between this configuration and all combined device's LBS. Note that
-+     LBS cannot exceed PAGE_SIZE before RAID supports folio.
-+
-   reshape_position
-      This is either ``none`` or a sector number within the devices of
-      the array where ``reshape`` is up to.  If this is set, the three
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 38a7c2fab150..a6b3cb69c28c 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -432,6 +432,7 @@ struct mddev {
- 	sector_t			array_sectors; /* exported array size */
- 	int				external_size; /* size managed
- 							* externally */
-+	unsigned int			logical_block_size;
- 	__u64				events;
- 	/* If the last 'event' was simply a clean->dirty transition, and
- 	 * we didn't write it to the spares, then it is safe and simple
-diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
-index ac74133a4768..310068bb2a1d 100644
---- a/include/uapi/linux/raid/md_p.h
-+++ b/include/uapi/linux/raid/md_p.h
-@@ -291,7 +291,8 @@ struct mdp_superblock_1 {
- 	__le64	resync_offset;	/* data before this offset (from data_offset) known to be in sync */
- 	__le32	sb_csum;	/* checksum up to devs[max_dev] */
- 	__le32	max_dev;	/* size of devs[] array to consider */
--	__u8	pad3[64-32];	/* set to 0 when writing */
-+	__le32  logical_block_size;	/* same as q->limits->logical_block_size */
-+	__u8	pad3[64-36];	/* set to 0 when writing */
- 
- 	/* device state information. Indexed by dev_number.
- 	 * 2 bytes per device
-diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
-index 7033d982d377..50d4a419a16e 100644
---- a/drivers/md/md-linear.c
-+++ b/drivers/md/md-linear.c
-@@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
- 
- 	md_init_stacking_limits(&lim);
- 	lim.max_hw_sectors = mddev->chunk_sectors;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
- 	lim.max_hw_wzeroes_unmap_sectors = mddev->chunk_sectors;
- 	lim.io_min = mddev->chunk_sectors << 9;
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index dffc6a482181..d78e9e52c951 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1993,6 +1993,7 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *freshest, struc
- 		mddev->layout = le32_to_cpu(sb->layout);
- 		mddev->raid_disks = le32_to_cpu(sb->raid_disks);
- 		mddev->dev_sectors = le64_to_cpu(sb->size);
-+		mddev->logical_block_size = le32_to_cpu(sb->logical_block_size);
- 		mddev->events = ev1;
- 		mddev->bitmap_info.offset = 0;
- 		mddev->bitmap_info.space = 0;
-@@ -2202,6 +2203,7 @@ static void super_1_sync(struct mddev *mddev, struct md_rdev *rdev)
- 	sb->chunksize = cpu_to_le32(mddev->chunk_sectors);
- 	sb->level = cpu_to_le32(mddev->level);
- 	sb->layout = cpu_to_le32(mddev->layout);
-+	sb->logical_block_size = cpu_to_le32(mddev->logical_block_size);
- 	if (test_bit(FailFast, &rdev->flags))
- 		sb->devflags |= FailFast1;
- 	else
-@@ -5930,6 +5932,68 @@ static struct md_sysfs_entry md_serialize_policy =
- __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
-        serialize_policy_store);
- 
-+static int mddev_set_logical_block_size(struct mddev *mddev,
-+				unsigned int lbs)
-+{
-+	int err = 0;
-+	struct queue_limits lim;
-+
-+	if (queue_logical_block_size(mddev->gendisk->queue) >= lbs) {
-+		pr_err("%s: Cannot set LBS smaller than mddev LBS %u\n",
-+		       mdname(mddev), lbs);
-+		return -EINVAL;
-+	}
-+
-+	lim = queue_limits_start_update(mddev->gendisk->queue);
-+	lim.logical_block_size = lbs;
-+	pr_info("%s: logical_block_size is changed, data may be lost\n",
-+		mdname(mddev));
-+	err = queue_limits_commit_update(mddev->gendisk->queue, &lim);
-+	if (err)
-+		return err;
-+
-+	mddev->logical_block_size = lbs;
-+	/* New lbs will be written to superblock after array is running */
-+	set_bit(MD_SB_CHANGE_DEVS, &mddev->sb_flags);
-+	return 0;
-+}
-+
-+static ssize_t
-+lbs_show(struct mddev *mddev, char *page)
-+{
-+	return sprintf(page, "%u\n", mddev->logical_block_size);
-+}
-+
-+static ssize_t
-+lbs_store(struct mddev *mddev, const char *buf, size_t len)
-+{
-+	unsigned int lbs;
-+	int err = -EBUSY;
-+
-+	/* Only 1.x meta supports configurable LBS */
-+	if (mddev->major_version == 0)
-+		return -EINVAL;
-+
-+	if (mddev->pers)
-+		return -EBUSY;
-+
-+	err = kstrtouint(buf, 10, &lbs);
-+	if (err < 0)
-+		return -EINVAL;
-+
-+	err = mddev_lock(mddev);
-+	if (err)
-+		goto unlock;
-+
-+	err = mddev_set_logical_block_size(mddev, lbs);
-+
-+unlock:
-+	mddev_unlock(mddev);
-+	return err ?: len;
-+}
-+
-+static struct md_sysfs_entry md_logical_block_size =
-+__ATTR(logical_block_size, 0644, lbs_show, lbs_store);
- 
- static struct attribute *md_default_attrs[] = {
- 	&md_level.attr,
-@@ -5952,6 +6016,7 @@ static struct attribute *md_default_attrs[] = {
- 	&md_consistency_policy.attr,
- 	&md_fail_last_dev.attr,
- 	&md_serialize_policy.attr,
-+	&md_logical_block_size.attr,
- 	NULL,
- };
- 
-@@ -6082,6 +6147,17 @@ int mddev_stack_rdev_limits(struct mddev *mddev, struct queue_limits *lim,
- 			return -EINVAL;
- 	}
- 
-+	/*
-+	 * Before RAID adding folio support, the logical_block_size
-+	 * should be smaller than the page size.
-+	 */
-+	if (lim->logical_block_size > PAGE_SIZE) {
-+		pr_err("%s: logical_block_size must not larger than PAGE_SIZE\n",
-+			mdname(mddev));
-+		return -EINVAL;
-+	}
-+	mddev->logical_block_size = lim->logical_block_size;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
-@@ -6693,6 +6769,7 @@ static void md_clean(struct mddev *mddev)
- 	mddev->chunk_sectors = 0;
- 	mddev->ctime = mddev->utime = 0;
- 	mddev->layout = 0;
-+	mddev->logical_block_size = 0;
- 	mddev->max_disks = 0;
- 	mddev->events = 0;
- 	mddev->can_decrease_events = 0;
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index fbf763401521..47aee1b1d4d1 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -380,6 +380,7 @@ static int raid0_set_limits(struct mddev *mddev)
- 	lim.max_hw_sectors = mddev->chunk_sectors;
- 	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
- 	lim.max_hw_wzeroes_unmap_sectors = mddev->chunk_sectors;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.io_opt = lim.io_min * mddev->raid_disks;
- 	lim.chunk_sectors = mddev->chunk_sectors;
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 64bfe8ca5b38..167768edaec1 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3212,6 +3212,7 @@ static int raid1_set_limits(struct mddev *mddev)
- 	md_init_stacking_limits(&lim);
- 	lim.max_write_zeroes_sectors = 0;
- 	lim.max_hw_wzeroes_unmap_sectors = 0;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.features |= BLK_FEAT_ATOMIC_WRITES;
- 	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
- 	if (err)
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 6b2d4b7057ae..71bfed3b798d 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4000,6 +4000,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
- 	md_init_stacking_limits(&lim);
- 	lim.max_write_zeroes_sectors = 0;
- 	lim.max_hw_wzeroes_unmap_sectors = 0;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.chunk_sectors = mddev->chunk_sectors;
- 	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index aa404abf5d17..92473850f381 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7747,6 +7747,7 @@ static int raid5_set_limits(struct mddev *mddev)
- 	stripe = roundup_pow_of_two(data_disks * (mddev->chunk_sectors << 9));
- 
- 	md_init_stacking_limits(&lim);
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.io_opt = lim.io_min * (conf->raid_disks - conf->max_degraded);
- 	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
--- 
-2.39.2
+> Most of the fields in group (3) are already in a cache line grouping; this
+> patch just adds "clock" and "clock_update_flags" to that group. The fields
+> in group (2) are scattered across several cache lines; the main effect of
+> this patch is to group them together, on a single line at the beginning of
+> the structure. A few other less performance-critical fields (nr_switches,
+> numa_migrate_on, has_blocked_load, nohz_csd, last_blocked_load_update_tick)
+> were also reordered to reduce holes in the data structure.
+> 
+> Since the runqueue lock is acquired from so many different contexts, and is
+> basically always accessed using an atomic operation, putting it on either
+> of the cache lines for groups (2) or (3) would slow down accesses to those
+> fields dramatically, since those groups are read-mostly accesses.
+> 
+> This patch does not change the size of "struct rq" on machines with 64-byte
+> cache lines. The additional "____cacheline_aligned" to put the runqueue
+> lock on the next cache line will add an additional 64 bytes of padding on
+> machines with 128-byte cache lines; although this is unfortunate, it seemed
+> more likely to lead to stably good performance than e.g. by just putting
+> the runqueue lock somewhere in the middle of the structure and hoping it
+> wasn't on an otherwise busy cache line.
+> 
+> The "__no_randomize_layout" was added to reflect the fact that performance
+> of this data structure is unusually sensitive to placement of its members.
+> 
+> Signed-off-by: Blake Jones <blakejones@google.com>
+> Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> ---
+>  kernel/sched/sched.h | 77 +++++++++++++++++++++++++++-----------------
+>  1 file changed, 47 insertions(+), 30 deletions(-)
+> 
+> v3 -> v4 changes:
+> - Updated comment, moved "nr_iowait" to the end of the structure, and added
+>   "__no_randomize_layout" tag to the structure.
+>   Link to v3: https://lore.kernel.org/lkml/20251028080348.2177469-1-blakejones@google.com/T/#u
+>   (v3 includes details of previous perf testing)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index e7718f12bc55..e1c3fefb14b7 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1114,28 +1114,50 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
+>   * acquire operations must be ordered by ascending &runqueue.
+>   */
+>  struct rq {
+> -	/* runqueue lock: */
+> -	raw_spinlock_t		__lock;
+> -
+> -	/* Per class runqueue modification mask; bits in class order. */
+> -	unsigned int		queue_mask;
+> +	/*
+> +	 * The following members are loaded together, without holding the
+> +	 * rq->lock, in an extremely hot loop in update_sg_lb_stats()
+> +	 * (called from pick_next_task()). To reduce cache pollution from
+> +	 * this operation, they are placed together on this dedicated cache
+> +	 * line. Even though some of them are frequently modified, they are
+> +	 * loaded much more frequently than they are stored.
+> +	 */
+>  	unsigned int		nr_running;
+>  #ifdef CONFIG_NUMA_BALANCING
+>  	unsigned int		nr_numa_running;
+>  	unsigned int		nr_preferred_running;
+> -	unsigned int		numa_migrate_on;
+>  #endif
+> +	unsigned int		ttwu_pending;
+> +	unsigned long		cpu_capacity;
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +	struct task_struct __rcu	*donor;  /* Scheduling context */
+> +	struct task_struct __rcu	*curr;   /* Execution context */
+> +#else
+> +	union {
+> +		struct task_struct __rcu *donor; /* Scheduler context */
+> +		struct task_struct __rcu *curr;  /* Execution context */
+> +	};
+> +#endif
+> +	struct task_struct	*idle;
+> +	/* padding left here deliberately */
+> +
+> +	/*
+> +	 * The next cacheline holds the (hot) runqueue lock, as well as
+> +	 * some other less performance-critical fields.
+> +	 */
+> +	u64			nr_switches	____cacheline_aligned;
+> +
+> +	/* runqueue lock: */
+> +	raw_spinlock_t		__lock;
+> +
+>  #ifdef CONFIG_NO_HZ_COMMON
+> -	unsigned long		last_blocked_load_update_tick;
+> -	unsigned int		has_blocked_load;
+> -	call_single_data_t	nohz_csd;
+>  	unsigned int		nohz_tick_stopped;
+>  	atomic_t		nohz_flags;
+> +	unsigned int		has_blocked_load;
+> +	unsigned long		last_blocked_load_update_tick;
+> +	call_single_data_t	nohz_csd;
+>  #endif /* CONFIG_NO_HZ_COMMON */
+>  
+> -	unsigned int		ttwu_pending;
+> -	u64			nr_switches;
+> -
+>  #ifdef CONFIG_UCLAMP_TASK
+>  	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+>  	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+> @@ -1158,6 +1180,9 @@ struct rq {
+>  	struct list_head	*tmp_alone_branch;
+>  #endif /* CONFIG_FAIR_GROUP_SCHED */
+>  
+> +#ifdef CONFIG_NUMA_BALANCING
+> +	unsigned int		numa_migrate_on;
+> +#endif
+>  	/*
+>  	 * This is part of a global counter where only the total sum
+>  	 * over all CPUs matters. A task can increase this counter on
+> @@ -1166,36 +1191,31 @@ struct rq {
+>  	 */
+>  	unsigned long 		nr_uninterruptible;
+>  
+> -#ifdef CONFIG_SCHED_PROXY_EXEC
+> -	struct task_struct __rcu	*donor;  /* Scheduling context */
+> -	struct task_struct __rcu	*curr;   /* Execution context */
+> -#else
+> -	union {
+> -		struct task_struct __rcu *donor; /* Scheduler context */
+> -		struct task_struct __rcu *curr;  /* Execution context */
+> -	};
+> -#endif
+>  	struct sched_dl_entity	*dl_server;
+> -	struct task_struct	*idle;
+>  	struct task_struct	*stop;
+>  	unsigned long		next_balance;
+>  	struct mm_struct	*prev_mm;
+>  
+> -	unsigned int		clock_update_flags;
+> -	u64			clock;
+> -	/* Ensure that all clocks are in the same cache line */
+> +	/* Per class runqueue modification mask; bits in class order. */
+> +	unsigned int		queue_mask;
+> +
+> +	/*
+> +	 * The following fields of clock data are frequently referenced
+> +	 * and updated together, and should go on their own cache line.
+> +	 */
+>  	u64			clock_task ____cacheline_aligned;
+>  	u64			clock_pelt;
+> +	u64			clock;
+>  	unsigned long		lost_idle_time;
+> +	unsigned int		clock_update_flags;
+>  	u64			clock_pelt_idle;
+>  	u64			clock_idle;
+> +
+>  #ifndef CONFIG_64BIT
+>  	u64			clock_pelt_idle_copy;
+>  	u64			clock_idle_copy;
+>  #endif
+>  
+> -	atomic_t		nr_iowait;
+> -
+>  	u64 last_seen_need_resched_ns;
+>  	int ticks_without_resched;
+>  
+> @@ -1206,8 +1226,6 @@ struct rq {
+>  	struct root_domain		*rd;
+>  	struct sched_domain __rcu	*sd;
+>  
+> -	unsigned long		cpu_capacity;
+> -
+>  	struct balance_callback *balance_callback;
+>  
+>  	unsigned char		nohz_idle_balance;
+> @@ -1317,7 +1335,9 @@ struct rq {
+>  	call_single_data_t	cfsb_csd;
+>  	struct list_head	cfsb_csd_list;
+>  #endif
+> -};
+> +
+> +	atomic_t		nr_iowait;
+> +} __no_randomize_layout;
+>  
+>  #ifdef CONFIG_FAIR_GROUP_SCHED
+>  
 
 
