@@ -1,91 +1,93 @@
-Return-Path: <linux-kernel+bounces-879041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE5CC221CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:02:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF32C221D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD80E18935CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:02:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A3E84E7340
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BCE337BA7;
-	Thu, 30 Oct 2025 20:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A857365D52;
+	Thu, 30 Oct 2025 20:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="SA+dwgu9"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Col8Tj6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45AD3328F1;
-	Thu, 30 Oct 2025 20:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA8832F777;
+	Thu, 30 Oct 2025 20:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761854515; cv=none; b=RkVdJALwAjrsyARdSt+jWA+MVqzySdv8pAG+kNMA0ZXfaChQvGQB0SLoUM+vRiWzEOC8/3wHTFQKGOArOM2S+obJxJf24ceXoHJ0kvNdQWnF7amqA5qpbCdNaQty+fvH8LVLTbRQzHfanegbz6B15wbWm/QO4Q//QvF7pmSA3hE=
+	t=1761854563; cv=none; b=gRy9nFQaC/O6DKYlrx0qJTe2h2HiLtPZXElrCa5dj74VwZrO9s9U4EFVUsh6sBKWt0FG9gP+Qg2sU5aFtENWCjzi5M9AM897CRU+4E5nVI5HWG9kd4EbubW6i8/lTlo6UDaDbsDH614aErXZWRrT4Zu3O9HOVqwhOboHpr0tfYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761854515; c=relaxed/simple;
-	bh=HVg1JjuEIl2ZtyXthNVNE0xyixvCrCltCUszdJpTUrE=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=VSzhFZFWkFc/HrB8zBD6qVrfmKtwvvk+M8bio9KuwsYrzuH4yHWqR95hbW29HfB++xEUiGwX9PsRInrIMuOwoxutl0HyPtKb776TO77oaMP3LI+HwFFFDcmOYkL8Yr9/96VjhfebW0R4/5RfV/wrHP/7o54N2Ubo34LQKcaDagA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=SA+dwgu9; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=VWspoIGJ+J2dFkXu8DhQ+OCtXbfe73pkNJPKHONBNxc=; b=SA+dwgu91w+y9okuQ+yehHmkum
-	UDMKx61Sr1Enf3DDYiRyOzfEN2xVIAbbDYmgSox9UesJh0umKDiBOZzMGmMVge6xb+autZ+Nktwdb
-	ssBtZYRdrMx5KddCbq9FydKpb3FHvHrx+iZMXD1ZXr76tClUPbUIuS0BGdq5gtI6OsV8=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:35546 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vEYq7-0004jm-Nk; Thu, 30 Oct 2025 16:01:44 -0400
-Date: Thu, 30 Oct 2025 16:01:42 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>
-Message-Id: <20251030160142.e1ae7b158216b8101582cd49@hugovil.com>
-In-Reply-To: <aQM_VBg_7JwyGGLG@black.igk.intel.com>
-References: <20251027142957.1032073-1-hugo@hugovil.com>
-	<20251027142957.1032073-12-hugo@hugovil.com>
-	<aQM_VBg_7JwyGGLG@black.igk.intel.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761854563; c=relaxed/simple;
+	bh=r9g1+QBPnAwiLvwl2Y4ihxuJibESLERl8N7u/1HES3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=na0UVpLKHhALwK4zFYScWppYVkn02o/BPqZEVJbG5Q8TixKMBmqJkir9X/tzRyN03JjwlAvNxYUcfb5rHgzFEOSOrDwtnaNPvqoqXPI+sDpqpy6SpwAEi0xiCoZ+3tU8RU0U4FbaSATrPIMxHjpkd/V/jmNM3wEZOjo+jDrUqMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Col8Tj6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B96C8C4CEF1;
+	Thu, 30 Oct 2025 20:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761854562;
+	bh=r9g1+QBPnAwiLvwl2Y4ihxuJibESLERl8N7u/1HES3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Col8Tj6XUNGhXonaQskRLt2WlVen1XF5dChCHC7F9BBf/J7mLDrv2ON+5gKCVEG85
+	 YFOrLOQlNEf7fCXS1pEyBQJWrEsEsTpv4NffN+JLp/VJ75/HdFU+7Xq4Y9ufoi/m9I
+	 pZWpzdM5EAYxQqblD6RHZnDcqCBnocEZAAmRe4HGPDZsX6Od5SoVfvO80yfef8PpLl
+	 6yYDk+VfTGClwMISRLmVB76n+NylFvbHTdGEDaC+7E3mA8cZBK74ih7yo6ZhvBxGLQ
+	 nF7t75CP4LIte5QqX4Cyk9VpMRwP3B6kCGhqEr5IJ3200y4Cti78ipZEdjpb+Wt6DS
+	 qnH4jDf6Jflsw==
+Date: Thu, 30 Oct 2025 20:02:38 +0000
+From: Conor Dooley <conor@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: Drop db8500-thermal.txt
+Message-ID: <20251030-twins-cornhusk-0b2ea4d039bc@spud>
+References: <20251030195234.439141-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -3.6 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v3 11/14] serial: sc16is7xx: use KBUILD_MODNAME
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="de59hFfPK3GXyBtd"
+Content-Disposition: inline
+In-Reply-To: <20251030195234.439141-1-robh@kernel.org>
 
-On Thu, 30 Oct 2025 11:35:00 +0100
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-> On Mon, Oct 27, 2025 at 10:29:53AM -0400, Hugo Villeneuve wrote:
-> > 
-> > There is no need to redefine the driver name. Use KBUILD_MODNAME and get
-> > rid of DRV_NAME altogether.
-> 
-> Actually I am slightly against this change. The modname (and hence modalias)
-> are parts of an ABI (visible via sysfs). Changing the module name (file name
-> in this case) may inadvertently break this. Yes, it most likely not critical
-> in this case, but should be taken into account.
+--de59hFfPK3GXyBtd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
-thank you for pointing that out. It didn't occur to me that this could
-impact the sysfs ABI.
+On Thu, Oct 30, 2025 at 02:52:33PM -0500, Rob Herring (Arm) wrote:
+> The binding is already defined in mfd/stericsson,db8500-prcmu.yaml and no=
+ne
+> of 'the tripN.*' properties appear to be in use.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Hugo.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--de59hFfPK3GXyBtd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQPEXgAKCRB4tDGHoIJi
+0lIcAP97f8tvjZE6V6uEXoHA+6k+pp5fimpgVm4xY+mid3ZneQEA6O/07u5q8+o+
+bowZo9WiYP188GzbGNFEHij8DgF6aw8=
+=O8F4
+-----END PGP SIGNATURE-----
+
+--de59hFfPK3GXyBtd--
 
