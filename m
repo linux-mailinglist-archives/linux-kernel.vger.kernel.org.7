@@ -1,90 +1,114 @@
-Return-Path: <linux-kernel+bounces-877456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60522C1E276
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:42:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75982C1E282
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231AA3A7F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7413AAFAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5796832ABE0;
-	Thu, 30 Oct 2025 02:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F53832ABE8;
+	Thu, 30 Oct 2025 02:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="3eyi3/5p"
-Received: from sg-1-11.ptr.blmpb.com (sg-1-11.ptr.blmpb.com [118.26.132.11])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kj/BVcaw"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C0C524D1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27802EB859
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761792127; cv=none; b=I1H5zRLgPXfwicNAuA/rvbafJF7eBBKWTIYnmyodL+251lsz2JqekjcJrG2RZuxYU+UviD4wTfEYrvMAX+N3Ga6CdPEURc0UNeaBhuUvKxKBxOiMfwWmUp12DutwVkW0Re1SEVj38Xd1GCB6welrSIHLgMReS7pMfYcUYmY0HvY=
+	t=1761792215; cv=none; b=slG7cwbZab0Qv5PPn4AzDmaiEhzjOEi2IiPJrvsMuQdHiDXRK+xe6f0pJvHLaUlB20IP4HAgcEChBC9aeKRMpBbAejQ/iPF+CvpKiJhZ1Icjvp9nIWrDbclIcllf+ZP8COrx8hFGvrJ+qzI4gE9/5Weczh5cAWu42V0HJYIFzd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761792127; c=relaxed/simple;
-	bh=TcyUSbo80Jx0DmY6uBc8ZIvIg0DwakU3w7Y1gSrDpVw=;
-	h=References:From:Subject:Mime-Version:In-Reply-To:Date:Message-Id:
-	 Content-Type:To:Cc; b=uAJjlfcQ64SqWJYhpG3pm7TGf488zfOrb/La5KEqH/eJj+5LyHQjBLbpztj3bp0QllVe3lpncdMiBP1xF5M//6+2dHGasyGoGLybKJprMvhXWLIRb3xPVz4xWCvSbai0LQEBD05Q6+DK0USt5RiCI9bPocRKZ0vRIdSVUc/tWlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=3eyi3/5p; arc=none smtp.client-ip=118.26.132.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761792117;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=yh8djo7Nd21BgC+Yx2aUSeybVAkoleHM0MeaAP2URjo=;
- b=3eyi3/5pRMbR0mK6qLLwl5wwNN22NJn6h/53GYsFO3ggtlTRnxZOLi+ZrtKvyqQepMHU+v
- 2AsFOu3DJVwa7qgEKMLJEbD1SLaDYVWzQTc1OUD77IcsD5uGNFu2l4z9RkNZfRJE3FkJUg
- kP2YLTpL4B7YfxCETosBD92zhSmWHYBeJfGJGf4XpO+MARVf3x9K66L6n0Sw0Mr1wuTK3D
- 9jZ5Y1Z8JzGp+PeNCo3KPcfr4wDdIPnEIsRuPgca18py3WctDPy7qDwIVQQ1nqna/m9AWL
- 5Umgo6LceXya2LfSRsseufRC+4qWUtmQzSmddg83gSE2BPQpgm5cHob2zX37ew==
-X-Original-From: Yu Kuai <yukuai@fnnas.com>
-Reply-To: yukuai@fnnas.com
-References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-10-k@mgml.me>
-X-Lms-Return-Path: <lba+26902d073+40b84b+vger.kernel.org+yukuai@fnnas.com>
-User-Agent: Mozilla Thunderbird
-From: "Yu Kuai" <yukuai@fnnas.com>
-Subject: Re: [PATCH v5 09/16] md/raid10: fix failfast read error not rescheduled
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761792215; c=relaxed/simple;
+	bh=yMlK83sRn+VhWWIH2W0HcuZUd6ezZqUJ2SDuOnakwiw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jero3iQMm8FCIyjxHTKprG8h6yZ2m/ObFFl1Nok3U4TPqRJezSUeXIMXRZ5uu2T71pO6JRbZYgc9GgOTstNUZGsb+R5xAV64iWWfUYPSkqfqwch6aaRLNfKa9kdrJ5Tv7j/weFDRUGk7ZsR6QOEM9bpqIiJgY34tbEvYFah5v3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kj/BVcaw; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33d463e79ddso671988a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761792213; x=1762397013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yMlK83sRn+VhWWIH2W0HcuZUd6ezZqUJ2SDuOnakwiw=;
+        b=Kj/BVcawSehyhmrzcNAQiDuW20c+KMwM2So/pWQg0iLfi28MT3m68+4zB66i2BsR+Q
+         dOm4ezL+Q/Fdxj3FROK2JWbJe3mfL+eB/7i9bIv3DCzR8mV03YAW3ymjmPy+/eagDtcA
+         vHzVa0B6nic9HubPoRmpBKAb8nY9Yklt+gTnZYaJOyMr+rJWtxfSHB5xDIOnl3VkQxeq
+         nUE2wAtydEVHe1ftex7cwo1xvZAMyyxjB/gAmu4lbRPTLvtV/jnBbSJ2aYjruZ89f6MJ
+         wrrSxHIrF/gCxpg/5y0nVD+rweuR/YvgnyGWNl4Ykzq92bTsw+fuYvTWDL7OY+FKvfxQ
+         ihgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761792213; x=1762397013;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yMlK83sRn+VhWWIH2W0HcuZUd6ezZqUJ2SDuOnakwiw=;
+        b=FcfrLYltYNyq34apto9QWl1CPtGx5pb5N2trCh0H8HBsk1/6y/Aty5FqlF/++kkJ09
+         MUrh3HXu74DhKtJC0VXcOb6J6lJ/hBAQmmAg4vj7o03G1BHbpUhLFELMgcS0ev1nwShL
+         35mURLzXwTqdiHLbGyIHByIqVHeHtc5D1rEfbJAQPF1eB7TjNX83ug1vKqXNVljdnT0F
+         xYMtwnVlVQCIrCGZreuhyOOSzVow/qOptkIyF7rCrT620hRnPlWWKQveorR0l8xJhRjA
+         kTa4o1urjln75+7nGxoABpUi6GOJprzFIMWXkr94okLbdXMiNbSLEWGtDmpllKoFfVbi
+         Oafw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlhAy+lhDpBfCjR6x+y5GNDcdA1KVGczZHgKYvdRy1oWQaoYoCtYg4+p6grT1MksVSd6YBDG+6nI8Z7BI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvZKFfzf5mc1A7dxK0VO3xnhgBhzihOJmWL5Y9+Hn+wJTntC+0
+	I0rBaUTYxzKDHt0jLOVWHJXmc2mvE7lDp2fFHDNeN51IY+yhO1v9fB3fQJU8E7Dj
+X-Gm-Gg: ASbGnctVHkpKz+z2XVNKZmzmpOLkt72Xt5xm5nFxpHwMz/A++EwCTPkmM2TnOcjDdMM
+	AdbXkjuUqLk1yePWLKhYpgIFIAhRCKAt3L9Sc9fN1l4uz6e1C/B66X6gLwzjR+IVuTRzIIzxjfl
+	/rT+vB4SFEVVpUqHZ+Z3KBBsp4ezughQ5GBzr5zovsYEN/O9c1olqUUB3xajxADZzr+KA/nRhiU
+	kXnISr/5VnDBlx3AfhDLN9RiHa/whAVLy+DsH0mONmVWd2JbRCkOgWTYmysd+UGjXaH6n2542N7
+	tHU2qUTg+nKOp1Sf0yaO7fM7tzWnRtqWv4j8du9WYOGJJ8z/q0C2fdEtDTrnWi/n3J848uSxTCG
+	5R+y1xHRm1QfkkJakYTwCvYcDVNnqfmwuFchPc4+HpflAQkr17iWsZvnl0c77MXCHDe2Vfr59C0
+	5X+c/TSC2DD7yV06JSuGmCRC7KAWt9h8rCM4Bm3fZzEPb5goZloEThZQ==
+X-Google-Smtp-Source: AGHT+IExv/DfyFEe0/KnqocTMb0QEh7+FjTlnoU1+P9V8ugsonVuZLZLwQLITUfoXbaYEdE8xwJO/A==
+X-Received: by 2002:a17:90b:57ee:b0:340:2a16:9b4a with SMTP id 98e67ed59e1d1-3403a25bc09mr5824732a91.6.1761792212976;
+        Wed, 29 Oct 2025 19:43:32 -0700 (PDT)
+Received: from lcwang-Precision-3630-Tower.. (211-23-39-77.hinet-ip.hinet.net. [211.23.39.77])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3405c363205sm143686a91.2.2025.10.29.19.43.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 19:43:32 -0700 (PDT)
+From: lcwang <zaq14760@gmail.com>
+X-Google-Original-From: lcwang <lcwang@ieiworld.com>
+To: tzimmermann@suse.de
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tiny: pixpaper: add explicit dependency on MMU
+Date: Thu, 30 Oct 2025 10:43:29 +0800
+Message-Id: <20251030024329.482105-1-lcwang@ieiworld.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <bd93498e-749c-4e85-9c63-918aa8f2d6f3@suse.de>
+References: <bd93498e-749c-4e85-9c63-918aa8f2d6f3@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-In-Reply-To: <20251027150433.18193-10-k@mgml.me>
-Date: Thu, 30 Oct 2025 10:41:51 +0800
-Message-Id: <daefef14-c1de-48f1-992d-f8dbe1c7504e@fnnas.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 10:41:54 +0800
-To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
-	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>
-Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	"Li Nan" <linan122@huawei.com>, <yukuai@fnnas.com>
+Content-Transfer-Encoding: 8bit
 
-=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
+Hi Thomas,
 
-> raid10_end_read_request lacks a path to retry when a FailFast IO fails.
-> As a result, when Failfast Read IOs fail on all rdevs, the upper layer
-> receives EIO, without read rescheduled.
->
-> Looking at the two commits below, it seems only raid10_end_read_request
-> lacks the failfast read retry handling, while raid1_end_read_request has
-> it. In RAID1, the retry works as expected.
-> * commit 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
-> * commit 2e52d449bcec ("md/raid1: add failfast handling for reads.")
->
-> This commit will make the failfast read bio for the last rdev in raid10
-> retry if it fails.
->
-> Fixes: 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
-> Signed-off-by: Kenta Akagi<k@mgml.me>
-> Reviewed-by: Li Nan<linan122@huawei.com>
-> ---
->   drivers/md/raid10.c | 7 +++++++
->   1 file changed, 7 insertions(+)
+Thanks for the clarification.
 
-Reviewed-by: Yu Kuai <yukuai@fnnas.com>
+Just to confirm my understanding — are you suggesting that this issue
+should ideally be fixed in the RISC-V Kconfig (specifically the PORTABLE
+logic that ensures MMU is selected), rather than adding a local
+"depends on MMU" here in DRM_PIXPAPER?
+
+If that’s the case and the root cause will be addressed in the RISC-V
+side, I’m happy to drop this patch to avoid redundant dependencies.
+
+Best regards,
+LiangCheng
 
