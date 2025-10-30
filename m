@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-877627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54747C1E9CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:42:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00948C1E9D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E0B44E725F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:42:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D8D64E4F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B5730BB8F;
-	Thu, 30 Oct 2025 06:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tabvp9PK"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4A131A056;
+	Thu, 30 Oct 2025 06:44:52 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FA0FC1D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9F32EA48F;
+	Thu, 30 Oct 2025 06:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761806537; cv=none; b=XPKnJ/qdEsoPrfdLVKm0g3v9iBW2YY4r+cKLwbyUbzYAalL6JdBqPGsmLNA4ZMdB2QtjG49tUcI9IAmgr6zCSlr5y2jdDe0krA+Dv6hleBe9AWIOb4tw53vMSBCcxK0ASEf2QohTs7hEhG+nPnANjRQsmOWZGvBjPAQUN8oEsww=
+	t=1761806692; cv=none; b=Y155dzXMMwNT1XqUEyhJoAnoVVIMWcqcqZmBbj0IZdetwB7nBcE601BRGMEmr1QGDJAPNTbpw+Zm9/JbsFfRnnpUTvYHDjck0SpdvU2A5j0PyVGjbaNlTXQMlTM+XLowHmKU2Nyu5Qc6zeV6BxSUhS6PqhGXZ6ITJ1gRLAfGRGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761806537; c=relaxed/simple;
-	bh=KFL6e2ujHzlwRceia8Vws/XVx5/XFIOpDBRlOGYMYe4=;
+	s=arc-20240116; t=1761806692; c=relaxed/simple;
+	bh=N8uQpTx35qGf+8HtWT0HgBEIRDkqz7WeZ6VMPFmmSEc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=afiHH4TRHtyrnpGkFKtjBq29wL5tyjjHzqRPGJs1h5hSMqK+c7kp1Defg8eF1wWuIhDXDKXvmu4joaSPiANIo/lhbvfSY7UtptdGLd1XrfdGxHJkOnp0RJQAT7UQSV+tmDZfLQH0Fw66PO8T0sg9zMKr1G8z8zOWZV8KRQ84Iro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tabvp9PK; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-782e93932ffso706333b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761806535; x=1762411335; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XRjmjhwgFo6DAjuANvJLlsLw1oA4anFVQb7lf99MW8g=;
-        b=Tabvp9PKtWQvryaOGEEYvBaI90/gC6E87uEb5y2HZWeqdnDrsFIgpTv5LoyB+i9/qb
-         0JIJDtkO+VIP7pEnSA6jRdfrXkt5dHPZxXgDH1MVn6YivNdc/c2yK2kFmf3YmNANIW54
-         0AI7N2JLBgOiqGDnY4JTdtzvoW25TG7nUAHSdRN2eb8HnQpxcBwddycMxcBYUeViy0rY
-         Jknf6mlXgbkOlyMgOT/MuiG6oYvg/IxIk0nqeII3t40BRk5XC2HqqZHxrwZBbwJBysd9
-         GUxmz5cPpLY8FHOhgy/z4mlhav0uolUW6N2CX+aeaTwatmSROCUqwmwgmthpxEJYhA+9
-         wJ7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761806535; x=1762411335;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XRjmjhwgFo6DAjuANvJLlsLw1oA4anFVQb7lf99MW8g=;
-        b=R25t/JVsufJnKZjwF4FS24wrPJOxKurGolpwSQ3uKL29gi6eyecYyXYCl6xqoBYbO8
-         FwsegnyWLuMcIBBK5Wz7Foxx/yrbPKcpNTZ8pbPLQU/AgECz8oISDXvbuPuCb26IJKxH
-         WTAkyUpmGOdBzzKjK+sbnahquzUu5qBSZ/e1Lg1OZ7kltyqWgIa1js03ZXhEoUDIVSyR
-         ZaJ98OvlAw2ZuqRMjhq15VsMwTQq+mBTEdgiIm7kLRDVSUhbT29kLyi+/0aexfso44Dn
-         tEQLCE3CCFoBwxDezTAECWQpNB8fydnX4UEM3osarVCAnWpYB7GjgG4t369lEUu00cgB
-         h5UQ==
-X-Gm-Message-State: AOJu0YxemXeewJAvsQsM2id6jtHFlZd6rxLwx2DFy3a6Sa31bFF6wUNr
-	nDHHJpcFpBmyD14kFwCtL/cgJ6tchTlNbR8wZTB/Ehf305EveOAvdRj3
-X-Gm-Gg: ASbGncshakvyaGUQLBmgl3wyDbckGig9CMmy8e/znMRqlBg7ZKvm6+8rPKoPgGA3eL2
-	sz501D5prPRcE8vr8TZGTWeOsiiGiWyJsxByC3Nt8g/DLkUkQY47JBiOloKBdsajRJjl6FRkz4X
-	1rYjTt2bFicqLXPpInGGconjPoJFJ8q+XIGyzubQRMW2U4vt3M9WU6WsFg3X0q8kyIfg8cVlTxv
-	uDTxzBONqnaf1sKgha/l28aHZ9NcIAwLaiHAZfgWNseFV1B33g2OyYJKIeGILZhOYgSmCS9jGTX
-	QO5kDmalvBdu1UHK3dbsMMOH5mfOsoQ4YZddheaCHFjOK+2b/Pt2loAjrcvCqz801CjzRM/8QLG
-	wcaESFvGtmnO+Q0yrw0hgd2zkjqKqVfp2PPzs0opwiJ62DL09PyEZXbUDi7bAcwWedhMEladCJW
-	gSqYkTRCqu18qhRsNOodUUmIck+VsLnQ1Qc1HBC7IPEbExUE9uW/y77w==
-X-Google-Smtp-Source: AGHT+IHhNxsrwPO8GFNjwbeDLO66xSVyMs6+J042HgogOYR3N9tX6avqO0/30+zi499pUFsIKhHa2g==
-X-Received: by 2002:a05:6a21:3287:b0:334:9649:4754 with SMTP id adf61e73a8af0-3465293bf63mr7104225637.13.1761806534844;
-        Wed, 29 Oct 2025 23:42:14 -0700 (PDT)
-Received: from ?IPV6:2600:8802:702:7400:90ae:1623:a8e:9839? ([2600:8802:702:7400:90ae:1623:a8e:9839])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a4140168f7sm17329517b3a.11.2025.10.29.23.42.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 23:42:14 -0700 (PDT)
-Message-ID: <89dbc85f-631e-4402-aca6-128e2cce399b@gmail.com>
-Date: Wed, 29 Oct 2025 23:42:13 -0700
+	 In-Reply-To:Content-Type; b=AQ/1lmyChs1jHtEw8685OtaxSWDwOvZ802I64ukLOAcTCNJ2vZdF5+/c5xtY1y/O9VPsWDxvAaDb4Ry+pj936bXjGPijqRZgyzuCemE/ANGCNqM0Ha4yjLIffu+K1AvJs47eH2VI5GwHOsvuCFVuJ5Hn+KppXatb4ntr7Y10Viw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cxvhd586WzKHMMW;
+	Thu, 30 Oct 2025 14:43:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id EBD301A1902;
+	Thu, 30 Oct 2025 14:44:44 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP3 (Coremail) with SMTP id _Ch0CgDHWt9bCQNpdiI4CA--.3908S2;
+	Thu, 30 Oct 2025 14:44:44 +0800 (CST)
+Message-ID: <44130515-725a-4f44-b064-3b396ed26159@huaweicloud.com>
+Date: Thu, 30 Oct 2025 14:44:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,80 +46,259 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Update Jessica Zhang's email address
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20251002-quit-qcom-v1-1-0898a63ffddd@oss.qualcomm.com>
- <6eedef19-5473-4c09-bae5-04490f711d9e@linaro.org>
+Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
+ root domain when hot-unplug
+To: Pingfan Liu <piliu@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+References: <20251028034357.11055-1-piliu@redhat.com>
+ <20251028034357.11055-2-piliu@redhat.com>
+ <73663a65-8028-4294-8eaf-9c94dc4451ff@huaweicloud.com>
+ <aQH3-_YmqAq9aE67@fedora>
 Content-Language: en-US
-From: Jessica Zhang <jesszhan0024@gmail.com>
-In-Reply-To: <6eedef19-5473-4c09-bae5-04490f711d9e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <aQH3-_YmqAq9aE67@fedora>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDHWt9bCQNpdiI4CA--.3908S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JFWkGw43tr4ftFy5XrW8JFb_yoWfJr1DpF
+	yDCF43tr4DJr1xC3yaq3Wj9FyFq3ykJF17ZFnxG3yrAF9IkFn7CF109Fn8CF97ur9xCr4j
+	yrWqkrsI93Z0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 10/15/2025 12:26 AM, Neil Armstrong wrote:
-> Hi,
+
+
+On 2025/10/29 19:18, Pingfan Liu wrote:
+> Hi Ridong,
 > 
-> On 10/3/25 01:57, Jessica Zhang wrote:
->> My current email will stop working soon. Update my email address to
->> jesszhan0024@gmail.com
->>
->> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->> ---
->>   MAINTAINERS | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 7e7515a412e9..7a712ded8f9f 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -7652,7 +7652,7 @@ DRM DRIVER for Qualcomm display hardware
->>   M:    Rob Clark <robin.clark@oss.qualcomm.com>
->>   M:    Dmitry Baryshkov <lumag@kernel.org>
->>   R:    Abhinav Kumar <abhinav.kumar@linux.dev>
->> -R:    Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->> +R:    Jessica Zhang <jesszhan0024@gmail.com>
->>   R:    Sean Paul <sean@poorly.run>
->>   R:    Marijn Suijten <marijn.suijten@somainline.org>
->>   L:    linux-arm-msm@vger.kernel.org
->> @@ -8325,7 +8325,7 @@ F:    drivers/gpu/drm/clients/drm_log.c
->>   DRM PANEL DRIVERS
->>   M:    Neil Armstrong <neil.armstrong@linaro.org>
->> -R:    Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->> +R:    Jessica Zhang <jesszhan0024@gmail.com>
->>   L:    dri-devel@lists.freedesktop.org
->>   S:    Maintained
->>   T:    git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> Thank you for your review, please see the comment below.
 > 
-> Could you also update .mailmap in a follow-up patch ?
-
-Hey Neil,
-
-Sorry for missing this earlier -- I've posted the follow-up here [1].
-
-Thanks,
-
-Jessica Zhang
-
-[1] 
-https://lists.freedesktop.org/archives/freedreno/2025-October/041998.html
-
-> 
-> Thanks,
-> Neil
-> 
+> On Wed, Oct 29, 2025 at 10:37:47AM +0800, Chen Ridong wrote:
 >>
->> ---
->> base-commit: b5bad77e1e3c7249e4c0c88f98477e1ee7669b63
->> change-id: 20251002-quit-qcom-5125b64a86aa
 >>
->> Best regards,
->> -- 
->> Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+>> On 2025/10/28 11:43, Pingfan Liu wrote:
+>>> *** Bug description ***
+>>> When testing kexec-reboot on a 144 cpus machine with
+>>> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
+>>> encounter the following bug:
+>>>
+>>> [   97.114759] psci: CPU142 killed (polled 0 ms)
+>>> [   97.333236] Failed to offline CPU143 - error=-16
+>>> [   97.333246] ------------[ cut here ]------------
+>>> [   97.342682] kernel BUG at kernel/cpu.c:1569!
+>>> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+>>> [...]
+>>>
+>>> In essence, the issue originates from the CPU hot-removal process, not
+>>> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
+>>> program that waits indefinitely on a semaphore, spawning multiple
+>>> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
+>>> one by one. When attempting this, CPU 143 failed to go offline.
+>>>   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
+>>>
+>>> `
+>>> *** Issue ***
+>>> Tracking down this issue, I found that dl_bw_deactivate() returned
+>>> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
+>>> But that is not the fact, and contributed by the following factors:
+>>> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
+>>> blocked-state deadline task (in this case, "cppc_fie"), it was not
+>>> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
+>>> points to def_root_domain instead of the one shared with CPU0.  As a
+>>> result, its bandwidth is wrongly accounted into a wrong root domain
+>>> during domain rebuild.
+>>>
+>>> The key point is that root_domain is only tracked through active rq->rd.
+>>> To avoid using a global data structure to track all root_domains in the
+>>> system, there should be a method to locate an active CPU within the
+>>> corresponding root_domain.
+>>>
+>>> *** Solution ***
+>>> To locate the active cpu, the following rules for deadline
+>>> sub-system is useful
+>>>   -1.any cpu belongs to a unique root domain at a given time
+>>>   -2.DL bandwidth checker ensures that the root domain has active cpus.
+>>>
+>>> Now, let's examine the blocked-state task P.
+>>> If P is attached to a cpuset that is a partition root, it is
+>>> straightforward to find an active CPU.
+>>> If P is attached to a cpuset that has changed from 'root' to 'member',
+>>> the active CPUs are grouped into the parent root domain. Naturally, the
+>>> CPUs' capacity and reserved DL bandwidth are taken into account in the
+>>> ancestor root domain. (In practice, it may be unsafe to attach P to an
+>>> arbitrary root domain, since that domain may lack sufficient DL
+>>> bandwidth for P.) Again, it is straightforward to find an active CPU in
+>>> the ancestor root domain.
+>>>
+>>> This patch groups CPUs into isolated and housekeeping sets. For the
+>>> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
+>>> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
+>>>
+>>> Signed-off-by: Pingfan Liu <piliu@redhat.com>
+>>> Cc: Waiman Long <longman@redhat.com>
+>>> Cc: Tejun Heo <tj@kernel.org>
+>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>>> Cc: "Michal Koutný" <mkoutny@suse.com>
+>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>> Cc: Juri Lelli <juri.lelli@redhat.com>
+>>> Cc: Pierre Gondois <pierre.gondois@arm.com>
+>>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+>>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>>> Cc: Ben Segall <bsegall@google.com>
+>>> Cc: Mel Gorman <mgorman@suse.de>
+>>> Cc: Valentin Schneider <vschneid@redhat.com>
+>>> To: cgroups@vger.kernel.org
+>>> To: linux-kernel@vger.kernel.org
+>>> ---
+>>> v3 -> v4:
+>>> rename function with cpuset_ prefix
+>>> improve commit log
+>>>
+>>>  include/linux/cpuset.h  | 18 ++++++++++++++++++
+>>>  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
+>>>  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
+>>>  3 files changed, 68 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+>>> index 2ddb256187b51..d4da93e51b37b 100644
+>>> --- a/include/linux/cpuset.h
+>>> +++ b/include/linux/cpuset.h
+>>> @@ -12,6 +12,7 @@
+>>>  #include <linux/sched.h>
+>>>  #include <linux/sched/topology.h>
+>>>  #include <linux/sched/task.h>
+>>> +#include <linux/sched/housekeeping.h>
+>>>  #include <linux/cpumask.h>
+>>>  #include <linux/nodemask.h>
+>>>  #include <linux/mm.h>
+>>> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
+>>>  
+>>>  extern void cpuset_print_current_mems_allowed(void);
+>>>  extern void cpuset_reset_sched_domains(void);
+>>> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
+>>>  
+>>>  /*
+>>>   * read_mems_allowed_begin is required when making decisions involving
+>>> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
+>>>  	partition_sched_domains(1, NULL, NULL);
+>>>  }
+>>>  
+>>> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
+>>> +		struct cpumask *cpus)
+>>> +{
+>>> +	const struct cpumask *hk_msk;
+>>> +
+>>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
+>>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+>>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+>>> +			/* isolated cpus belong to a root domain */
+>>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
+>>> +			return;
+>>> +		}
+>>> +	}
+>>> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
+>>> +}
+>>> +
+>>>  static inline void cpuset_print_current_mems_allowed(void)
+>>>  {
+>>>  }
+>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>> index 27adb04df675d..6ad88018f1a4e 100644
+>>> --- a/kernel/cgroup/cpuset.c
+>>> +++ b/kernel/cgroup/cpuset.c
+>>> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
+>>>  	mutex_unlock(&cpuset_mutex);
+>>>  }
+>>>  
+>>> +/* caller hold RCU read lock */
+>>> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
+>>> +{
+>>> +	const struct cpumask *hk_msk;
+>>> +	struct cpuset *cs;
+>>> +
+>>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
+>>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+>>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+>>> +			/* isolated cpus belong to a root domain */
+>>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
+>>> +			return;
+>>> +		}
+>>> +	}
+>>> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
+>>> +	cs = task_cs(p);
+>>> +	while (cs != &top_cpuset) {
+>>> +		if (is_sched_load_balance(cs))
+>>> +			break;
+>>> +		cs = parent_cs(cs);
+>>> +	}
+>>> +
+>>> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
+>>> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
+>>> +}
+>>> +
+>>
+>> It seems you may have misunderstood what Longman intended to convey.
 >>
 > 
+> Thanks for pointing that out. That is possible and please let me address
+> your concern.
+> 
+>> First, you should add comments to this function because its purpose is not clear. When I first saw
+> 
+> OK, I will.
+> 
+>> this function, I thought it was supposed to retrieve p->cpus_ptr excluding the offline CPU mask.
+>> However, I'm genuinely confused about the function's actual purpose.
+>>
+> 
+> This function retrieves the active CPUs within the root domain where a specified task resides.
+> 
+
+Thank you for the further clarification.
+
+	+	/*
+	+	 * If @p is in blocked state, task_cpu() may be not active. In that
+	+	 * case, rq->rd does not trace a correct root_domain. On the other hand,
+	+	 * @p must belong to an root_domain at any given time, which must have
+	+	 * active rq, whose rq->rd traces the valid root domain.
+	+	 */
+
+Is it necessary to walk up to the root partition (is_sched_load_balance(cs))?
+
+The effective_cpus of the cpuset where @p resides should contain active CPUs.
+If all CPUs in cpuset.cpus are offline, it would inherit the parent's effective_cpus for v2, and it
+would move the task to the parent for v1.
+
+Could the effective_cpus of @p's current cpuset be sufficient?
+What we really need is to find active CPUs that task P can be affine to, correct?
+
+Hope I didn't miss something.
+
+-- 
+Best regards,
+Ridong
 
 
