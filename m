@@ -1,119 +1,76 @@
-Return-Path: <linux-kernel+bounces-877736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68143C1EE46
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:01:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5963C1EE52
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:02:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4133E4E857E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521BB1886E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2F833890A;
-	Thu, 30 Oct 2025 07:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mxVfkB/v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427C82E8E06;
+	Thu, 30 Oct 2025 08:01:46 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A71338584;
-	Thu, 30 Oct 2025 07:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8587C285CB6
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811172; cv=none; b=pN+ZdDKe3L2rirtxZE5tsCOKOG9EyZucRX7fCoGv3zOS3wYnND+eLlCEoXrl0vPInsJMLo3Ju0ich8ZPtFAaTbaJjXDlAUdwdXqueRxKZ3INMFZfyA/QV2Y1xAJCuUscrokJhYPjawSyYkf+Wpzpt58wzttyQskkbxms4ww+SXc=
+	t=1761811305; cv=none; b=YNoJWXmls6PCCTztbzMcD+I85gNfJSQng9Jeman/W0DWVhH9E1jx7qMgdd9Nh2IL4mmXOQmqKexiRLSC4Il8SD1DfMVOKbeQDrGm4cfRnJgcFjYW/I3+z+/7nZQ2zTusrPLHePQanbOSDG8SQwB2cpSaJRyHAzVlhPw4ksUvUiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761811172; c=relaxed/simple;
-	bh=VFIMq42hgnA3UBCToJHx/z7x/0ECwRTKZSe78uPjBfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRS1uxBalxWP0cc7KMaR1mh1xP9AcdmOQYWOb2wijXO3y8PxR/+THitqe9MLSpehN4rAxKvxTdj4VC2qqcZR5f1w8avmhqNDXb+8ZyozB2KMxuMb7e0pVad70cSYlUFmH2/asplCzG6G+WZTq/Ans4Rr5hOZt8EgOvSZxtTtFy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mxVfkB/v; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761811171; x=1793347171;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VFIMq42hgnA3UBCToJHx/z7x/0ECwRTKZSe78uPjBfQ=;
-  b=mxVfkB/vE5gygiNmVUv9dHCoXAmTSbet0PhvJBc3d4wYp+zBysYD3epq
-   6Mn2ClCNgciOASxI3jIRQVQZ6PeT2YtK9lGa9rDy554Y8On0zDGLnd6ou
-   3Q6nop9NgUP33+B7r13DooWeGQ6r/VzKmV0CAUPCgvzsPuiy0aJrqvnuV
-   fBxPX1BZCgRaZQ3kleRowXBNiCdRTLEC0AFu2xbfITcJ2cOPO5vR9Ezku
-   3aBYvf5fC85IB3B9M9qFjfZHqlV45wEk2KJlbPyOs/y60COyc08SCe4Xh
-   u/BOZd1Xxk0eOXqfx0fLvXbP37gTJKktdGSKfWFAH/Ci4y2i/+Nqkymd/
-   Q==;
-X-CSE-ConnectionGUID: BvsXFAycTOiug8DPBy5GbA==
-X-CSE-MsgGUID: vjPjvKVGReOGMFnbVAv8gg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63830216"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="63830216"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 00:59:30 -0700
-X-CSE-ConnectionGUID: TXRNuK61Sh+DUshxd3zBSQ==
-X-CSE-MsgGUID: vsDc7rypSkC9lb4kIiu1+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="223107607"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 00:59:28 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vENZ7-00000003pxz-48al;
-	Thu, 30 Oct 2025 09:59:25 +0200
-Date: Thu, 30 Oct 2025 09:59:25 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/9] iio: imu: st_lsm6dsx: move wakeup event enable mask
- to event_src
-Message-ID: <aQMa3cwHfMt-NC13@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
- <20251030072752.349633-4-flavra@baylibre.com>
+	s=arc-20240116; t=1761811305; c=relaxed/simple;
+	bh=CHSzWa6Pgo9DFqoH8kX4q+/Rql4q+Xu7xj9xIRz96vY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eF8NYwpY7nEKhsVXzXwMZaUYyK5noF4/tUmM4XCTpdpYnG/7iLoC0IQ9wYmxJc2DJyGPXFTgoa4X6Sz8SMMKtNo1Cf6YfWSB0uQKFzT8rHQn10OmcfuU6yegLfwCaW4/V5v3xsQEzKZFWlAb9F8kXh41pb5l+XjeU66xpYXCpNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-940e33d65b8so216467039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:01:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761811303; x=1762416103;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CHSzWa6Pgo9DFqoH8kX4q+/Rql4q+Xu7xj9xIRz96vY=;
+        b=prHn3ZQ/jtqOjHdBDsayJUOXrmt2B8n238U/SpTJhHDJLUV1TOI3EjpSwg6RrNDDG5
+         jOpiTnet1+8L1LaO/Zs+x9kLJs6dZQg2klz+N6a1a7J6ZKFP6bbv/TBjAGZRagBw0MlM
+         D0Bqzi1eDH0VvpQEgdGKZ0dRltrGZWm3mzhaFnRjkOjwM1ami41ORoYUBEwyBbt6ISh7
+         2qcyaZ9V3cohlA5eoyTyY0m/YrM3cYFXG4ReMNMo59pD12RApWp3vjjjz1FJK+/28OxG
+         UaicfqJE0kiX8h4d7WPeoW088ohYv5UfpMUC8XdBtTX5URHCHjarO8j2gko211ORWTnv
+         iGbA==
+X-Gm-Message-State: AOJu0YyDHUSE+atdY8iIdoIqaPx2GNzEbaBSCHskqR63hYDq0Vpbs9cX
+	AkPAKVKQ/7YCz1llMPcrN84+zqk1FY24Jpsck9CMUSKWTvwdoIxYOzp12p/OzzT6CvvSOon7/ZS
+	D8cgaykcFdI8I3m9D4BvIzJvTzNEgLjxygyZ/Tl45KmzdDEdPZt0wQwtXQYM=
+X-Google-Smtp-Source: AGHT+IHy5fcY4hFFGpUaRzgkenCVD7seitQbCa/LmuIwV4I0yXeRRSfaEwqwjr+494Va9M1FMP4y/8ZIGeprePBWspiPCPLsESgF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030072752.349633-4-flavra@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6e02:74a:b0:42f:983e:e54d with SMTP id
+ e9e14a558f8ab-432f8f81cc3mr82294705ab.4.1761811303817; Thu, 30 Oct 2025
+ 01:01:43 -0700 (PDT)
+Date: Thu, 30 Oct 2025 01:01:43 -0700
+In-Reply-To: <68b6d7b3.050a0220.3db4df.01cf.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69031b67.050a0220.3344a1.043c.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] Monthly xfs report (Oct 2025)
+From: syzbot <syzbot+0391d34e801643e2809b@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 30, 2025 at 08:27:46AM +0100, Francesco Lavra wrote:
-> The mask value being assigned to the irq1_func and irq2_func fields
-> of the irq_config struct is specific to a single event source (i.e.
-> the wakeup event), and as such it should be separate from the
-> definition of the interrupt function registers, which cover
-> multiple event sources.
-> In preparation for adding support for more event types, change the
-> irq1_func and irq2_func type from an {address, mask} pair to an
-> address, and move the mask value to a new field of struct
-> st_lsm6dsx_event_src. No functional changes.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-...
+***
 
->  	/* Enable wakeup interrupt */
-> -	data = ST_LSM6DSX_SHIFT_VAL(state, hw->irq_routing->mask);
-> -	return st_lsm6dsx_update_bits_locked(hw, hw->irq_routing->addr,
-> -					     hw->irq_routing->mask, data);
-> +	enable_mask = hw->settings->event_settings.sources[ST_LSM6DSX_EVENT_WAKEUP].enable_mask;
-> +	data = ST_LSM6DSX_SHIFT_VAL(state, enable_mask);
-> +	return st_lsm6dsx_update_bits_locked(hw, hw->irq_routing,
-> +					     enable_mask, data);
+Subject: Re: [syzbot] Monthly xfs report (Oct 2025)
+Author: hch@infradead.org
 
-I would go with one line here (despite on having it 85 characters long).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+#syz test git://git.infradead.org/users/hch/misc.git xfs-buf-hash
 
