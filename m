@@ -1,169 +1,118 @@
-Return-Path: <linux-kernel+bounces-877895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C3FC1F4BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:30:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B33DC1F4AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA88B406038
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBB9404F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2031EC018;
-	Thu, 30 Oct 2025 09:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14E34028F;
+	Thu, 30 Oct 2025 09:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NduRzxun"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F6hQ3jA6"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E464F340A59;
-	Thu, 30 Oct 2025 09:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA1D327219
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816497; cv=none; b=Rnf0HeZjNzDER0xySpB/bvbj/Yb0qiHlJUezfNP/0C++BXj/mcQagRcO5ioF3OteNCuqF1SKFI5OFpSZZUPO70XZC/dLy74CjdjbEDXIsnh7RDyUwbLRjo1TOsREvp4XdKiej0dHlh5rGIlEloV0PNhVv2ikFxvp3ucpyUE94UE=
+	t=1761816528; cv=none; b=NTRmWyfDCU11llY/VpR+6WWPyLdmew4ZbVdZAccmFm6wtwcysFG1yrPDq02g7vyHwI8KLjoC282mCyZqoASoPRWT1s1MZytiinJr1MnL4UgLM0bb/X/cqGToc5sLO/3URmFagBHZt3RhoZiGShjFPbbjuVsxY7TvTgBKfquWQTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816497; c=relaxed/simple;
-	bh=3uKpmZcVcyDfgPeokSA3YXGsdGowE+EW6/E6D4PyU6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwcW6B3bzlPwZjV0B3pGHTjEPGyib+W3BwRtwxHJvsA32e1FecnF+Nx+8X4E2DC6KsWVIbTO2xZrA4+V+8dJwnzU5KBnmfBx0hu8JmZVLse6VBA1QpIJFxVT+R2Sh0k5B1jrm3GZVbrd5Mewy7kbqDXT8EsReGgr0/fR3f+x9Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NduRzxun; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761816496; x=1793352496;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3uKpmZcVcyDfgPeokSA3YXGsdGowE+EW6/E6D4PyU6k=;
-  b=NduRzxunVzYiFYnC/67wGf1mpqpv9KPI7B7G1dlArazhsaXULNrb305P
-   YwnlZyfUS/gP0PLOF3z7QsY/hfvrTubN7zkxmkAYvoxGAbzDJXW1TfMSC
-   oEiRMSzOL+U4M17zxW6kAwqE3T4YTiFJVglrdQCtvwzNuHz+NKrNTnhVJ
-   b5JhE/FxWaX1bCjfjbXOYR6sNjb9zKuZxRgzSS9GQ8hgTuu9NL50zgARY
-   J/x3dO/d9Q0uWGSAkFNJr8Hz3C2T7kguuaW6mFhgSFNVPVpqFV7g0GAB0
-   FqifbuSp7ooOjpvckmLklpyzrPbVEpZR6ClGfRu0c1zWt6P4V7dAmBAqd
-   A==;
-X-CSE-ConnectionGUID: Dt7OVbVDQaKZURNbk5QLtw==
-X-CSE-MsgGUID: 1CVglTfSRd+4mpjnuwRC0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64048391"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="64048391"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:28:15 -0700
-X-CSE-ConnectionGUID: c3zb3I3eRieOVLLjc3wNiw==
-X-CSE-MsgGUID: 63dfAW39RvORT7FEd1j5og==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="190239957"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:28:12 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vEOwy-00000003rFz-3nKg;
-	Thu, 30 Oct 2025 11:28:08 +0200
-Date: Thu, 30 Oct 2025 11:28:08 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	krzk+dt@kernel.org, linux-iio@vger.kernel.org, s32@nxp.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	chester62515@gmail.com, mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com
-Subject: Re: [PATCH v5 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-Message-ID: <aQMvqHGN7r6babgw@smile.fi.intel.com>
-References: <20251017164238.1908585-1-daniel.lezcano@linaro.org>
- <20251017164238.1908585-3-daniel.lezcano@linaro.org>
- <aPP0uVZu1T7tTQGo@ashevche-desk.local>
- <050f96d5-e60c-4b33-b6d2-24fb3925e378@linaro.org>
+	s=arc-20240116; t=1761816528; c=relaxed/simple;
+	bh=vIAW4Zwu/W6Q8q359FT7FGmmqecIKjR30/9fruhsdh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uKhLsQoO3fFcD/abQF7WGkTgWGTLRSjuEd2fsxrpGp0Mid0oQFbubnJ36+3gVzwSAiSSMbfFhrCbFU5U1RCuM6lRDA9RXjFQyJmE8sCDSECM9PCboPvMm1OgWYa405l1ljIofU7b/iVUe34OpTSTtsU3hJi7GOR/Xoti37zUzMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F6hQ3jA6; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee64bc6b90so639120f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761816523; x=1762421323; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QlMCS8zFdkhzxHQpidU95re9+f+f/wicSl76SjrRjFY=;
+        b=F6hQ3jA6hRpSwkwQ74K5DvPM5Y48+KqU/4HmnzwujGbZw4nmoxU4DCxYKzIuRHidnY
+         pDMIhF5n4I0h7deP32V1pWbEh2oZ9PC/9H1xy4Jhr4hYGQ31r904C88t+F7n7MA8ifCU
+         xmeN+gM+j2AOmVIb1iXsN6U5bXcQ807wU/rMKcFoEKHQnKDwOphEBaYJQBN0uuzEN2yq
+         cLl/t7qxrkg02QN6c5Jq7uOrVpDhjtIEdTsxkfW83enklwSqi426S7zH8dIeq1UOJF81
+         dJ5tfW40vWg2cw8h4MP4vhKmGN0s60Aiqa6zYI8JBb91FccSF6+yw0v3AA6gF64bSCGk
+         tq9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761816523; x=1762421323;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QlMCS8zFdkhzxHQpidU95re9+f+f/wicSl76SjrRjFY=;
+        b=wnCswH4JiibIGc3fUyTplt5z/1l11/OcbLY+JYLYhLVjp9HD7R7owVEtYgk1qvb4el
+         wvy+5xO8lHUmiYqbmrCIvtF6WxwU7ZDegRZtTPPeDfCOoLzUSjOXJuZsGBRX+qzqbEvJ
+         v0ntmib4xNUDfYq5OYOvMDjhOrK0WL7Prdhmd2t1ylTeSBFu3+66Mc7LnqO339s6L5PH
+         5oyDvDzIKY/EOMqdlJbr+pCjW4Cm6/O/zie50/35jF9gS9xQvjHHjc5nSqgsqneb0suW
+         1rfwVPxZIWdsx36YDMsgzRpzXSOjkzWcibmGoz/vEoCpR1tjhsiNGguHt3wVcEU/b35Z
+         GCZw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1X8niF7GgxymionBSK90No+VWFNRFM3KouTb4XcjuRPGi0bM8AFg8/u61d2ZS3CESNDUwcFGBY+4XzC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz89DTjW8Lpkh3IvomR2KKJYIOG+FJLU2/gfAipI3mZcQXbd7c
+	lWaTfhujJxyMbuJYn0WB/7kpA6nqRcbxCKRTQBeV9wf+E53V0KBKqVEZ0+WEn5ohcFCcCnnAFRh
+	4YWcKCvk=
+X-Gm-Gg: ASbGncuTCSXtzKebsL3NteKIYbI1f+g9FY6+ysjOiA0iqjMmSQQGL9IHCuhvHQHgQCc
+	gTFtYT2JJJYCwZb37+79CM2BloVP8yhMj4FmcZT/dr7fctsI/1ztIqcHu9Wt2bX6oWwuS5/ZNDO
+	wJaZs3557Ytu7a1yWIEHHwRDGpi2hWP5UKl4xM9DHYFbfo9PwCztxX1KH4Saf920DXBMJCjrauO
+	2wbatw4NXs8/SCj3WNcvF36s/X8QW+l2iN6rzCPoJe09bTtrNwbaLA/TMKk2aNw2iQ3G8KlMyZv
+	6vxIzIpGL/+RFIljXFRqUpx/jWqYi5y8VexxQLxMzuUpUSzQbsOr/9biP9XzPvwHxYyOmixmGKP
+	l+U0sSj1Ieogdt6Z/EHeQ6QCdK1msUJNYC5NNQdJNslEZtp9vlC+AcXK/e9GDolFKy3EVSumnHB
+	Xmhm87
+X-Google-Smtp-Source: AGHT+IGlvzC6Q1tht+J5f7b6Br8g6viF2wvjUGhpKtoD8qbOydQjRzdpkyGa16FvgoLIO8huegHYQA==
+X-Received: by 2002:a05:6000:178c:b0:3ee:1233:4681 with SMTP id ffacd0b85a97d-429aef828edmr4959897f8f.23.1761816523017;
+        Thu, 30 Oct 2025 02:28:43 -0700 (PDT)
+Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:4de0:1456:94e9:3a3b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d4494sm31524134f8f.21.2025.10.30.02.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 02:28:42 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] gpio: mmio: further refactoring
+Date: Thu, 30 Oct 2025 10:28:37 +0100
+Message-ID: <176181651569.78037.7678074832123587651.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251027-gpio-mmio-refactor-v1-0-b0de7cd5a4b9@linaro.org>
+References: <20251027-gpio-mmio-refactor-v1-0-b0de7cd5a4b9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <050f96d5-e60c-4b33-b6d2-24fb3925e378@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 09:27:21AM +0100, Daniel Lezcano wrote:
-> On 10/18/25 22:12, Andy Shevchenko wrote:
-> > On Fri, Oct 17, 2025 at 06:42:38PM +0200, Daniel Lezcano wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...
 
-> > > +#include <linux/circ_buf.h>
-> > 
-> > Why not kfifo?
+On Mon, 27 Oct 2025 14:48:01 +0100, Bartosz Golaszewski wrote:
+> After the big conversion to the new generic GPIO chip API, let's further
+> refactor the gpio-mmio module by using lock-guards and dropping the -
+> now obsolete - "bgpio" prefix.
 > 
-> I'm sorry but I don't get your comment.
 > 
-> Do you mean why not use kfifo.h or use kfifo API and change all the code
-> using the circ_buf by the kfifo ?
 
-Yes, I mean why use circ_buf API and not kfifo API.
+Applied, thanks!
 
-...
+[1/2] gpio: mmio: use lock guards
+      https://git.kernel.org/brgl/linux/c/7e061b462b3d43a1f85519f5aebdc77cbbe648c0
+[2/2] gpio: mmio: drop the "bgpio" prefix
+      https://git.kernel.org/brgl/linux/c/13172171f5c44df67e8882d983fb50d9b27477ad
 
-> > > +#define NXP_SAR_ADC_IIO_BUFF_SZ		(NXP_SAR_ADC_NR_CHANNELS + (sizeof(u64) / sizeof(u16)))
-> > 
-> > Hmm... Don't we have some macros so we can avoid this kind of hard coding?
-> 
-> I don't find such a macro, do you have a pointer ?
-
-If I got the use case correctly, I was thinking of IIO_DECLARE_BUFFER_WITH_TS().
-
-...
-
-> > > +	ndelay(div64_u64(NSEC_PER_SEC, clk_get_rate(info->clk)) * 80U);
-> > 
-> > Do you need those 'U':s? clk_get_rate() already returns unsigned value of the
-> > same or higher rank than int. No?
-> 
-> May be not needed, but harmless. I can remove them if you want
-
-I think using them in cases that have no side-effects are not needed.
-
-...
-
-> > > +	dma_samples = (u32 *)dma_buf->buf;
-> > 
-> > Is it aligned properly for this type of casting?
-> 
-> TBH, I don't know the answer :/
-> 
-> How can I check that ?
-
-Is buf defined as a pointer to u32 / int or bigger? or is it just byte buffer?
-If the latter, how does the address of it being formed? Does it come from a heap
-(memory allocator)? If yes, we are fine, as this is usually the case for all
-(k)malloc'ed memory.
-
-...
-
-> > > +	dmaengine_tx_status(info->dma_chan, info->cookie, &state);
-> > 
-> > No return value check?
-> 
-> The return value is not necessary here because the caller of the callback
-> will check with dma_submit_error() in case of error which covers the
-> DMA_ERROR case and the other cases are not useful because the residue is
-> taken into account right after.
-
-In some cases it might return DMA_PAUSE (and actually this is the correct way
-to get residue, one needs to pause the channel to read it, otherwise it will
-give outdated / incorrect information).
-
-> It could be written differently with the DMA_COMPLETE check but the result
-> will be the same. I prefer to keep the current implementation which has been
-> tested.
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
