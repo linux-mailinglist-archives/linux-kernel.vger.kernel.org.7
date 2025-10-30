@@ -1,427 +1,126 @@
-Return-Path: <linux-kernel+bounces-878659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C66BC21319
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:31:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA0CC212EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A9B188F2C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:27:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 995794EF13C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8E5368392;
-	Thu, 30 Oct 2025 16:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C9B3678B0;
+	Thu, 30 Oct 2025 16:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="JVZmG7mS"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013004.outbound.protection.outlook.com [52.101.72.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PSfXjPME"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2165366FC5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761841597; cv=fail; b=gjjlAHckenFqvIHnJq3Sfg+MmrPtDQJWJF31kTvSPL5SxphhaG2t3EEBAgaUL2itbepFZlM746V+qOzTDuwxXGH5T7iChCl5wiXe7qwojWleMO6O6p35IVRGaOyPxowckpQFhsl11Gu8kfYxdaMuiGtzsy4ZFbU8KCKBba6hA4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761841597; c=relaxed/simple;
-	bh=W8GdXfzIU7Mv1q5HiA3Lrbk3NtDFg5y3/N5/Uis9hcg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jsaY2pHFAcgvh4yInZ1NjWaUtsq8jnjJNIfhtMdOOXKo+7ARCr7a7jAiaCujh/7NmuEc8KvVrpf6Bxx8HazHEmRFYXoWJnRSB8EQMQQchFCjaWaZDCRYxRk/2VGcsrKhMTxMxGIxRUqfXiGcXI2dlq6t07CbZtzqWAQ4Ft+epf4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=JVZmG7mS; arc=fail smtp.client-ip=52.101.72.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l0SETN7q3tu8i++19rtonnVM0KgaYig01MQPxok/9/Iz8OTncpCB7Vs1AIGzgCjqMtHiYt/agCYRiGmGPxR1jV1N6PlBHKqKVqOSTu9SbmRsVWgNLvX3daQ0bfgWPS5Q5ov85Kc1pfdv9EUZQ1ky79hyv9xcrwVLKl3IcSdEGzxUjnrmtc23kVAtFDpPl8sQz2V3fezSpiyDbaSRHLXE87/42ly9+jaEvp+uYK+HBNJWfo+ZH+0nyFWy1HucyQ4o0+o88pgP4gzn2CAYu/sPsPCu3oqK+Qo7CCAZTPRpctVrmsKTrpHb1RTMMOMU75GpuSO7MtnRdkyPUhe8h8PUfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5telhZSLNsB9r9gpHc+JJCdhN38mD6orT3clR1Vt4Gc=;
- b=jCSbuxE1cqJMppMMEqO/ZvMuyTZHYLkVr2vEbbdNo/qXve3eI/S1SS9YQsp2nNxG3IZeHxdUeXosmVMQJ+4KUrHbascpiMBhJ4H1bzPDFkEgmOdOKNfYyqFwk+tqZPhKy2zJag7a81qkyUwQ3ELIntM30Td1S7L9uoiXOQE6/N0KJ8eLLoOookqEBdoynfLOPZRCx5V9+YryY0CuE+e5/wND8qMmhxE3vUXuol//YyHlfEMeRJbmQgQaQnllgViwtRF8hrBfJWRqJvZukdjYh4tE5dwJ1tmtgTrBtdeiS85975JP29co7Wb25Wo1r3pRDkEFX+io90G874qfII+Eow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5telhZSLNsB9r9gpHc+JJCdhN38mD6orT3clR1Vt4Gc=;
- b=JVZmG7mSt2zpgfE4sC0ug/RrQM4d5Qfo1S2OCxShOWF/X2BV+m2KB/2B85eoXM8VeU7vCU6vVYmkhX7v/poQ/ruGR5GpOyeMtOW1mQ6z3gHzzn+l3+iDyhPtnGIwe30JTU6rvKo6BucYQwqlOvyMM70m83yOCZqQMJp9HKoK08m7oDmQb997T+kiXONDXb4eDe6TdVaKdI8uO6ygkeGLQ8JDAPFNEmT3EozgnHdJVwfHUWMEiI3lW2C/K5x2zXSrBOIor2JZasrzH36O0VqafAIKDgr0RH+VhEOr62H3SFMmXcqbiBCnW6Tk6uvWgiD0GuuVb+2zc8jGJOzyibsUbA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GVXPR10MB8782.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d9::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Thu, 30 Oct
- 2025 16:26:30 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
- 16:26:30 +0000
-Message-ID: <6f931a16-6d62-4002-938b-bd366715f602@siemens.com>
-Date: Thu, 30 Oct 2025 17:26:28 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/02] scripts/gdb/mm: Add support for powerpc book3s64
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- Kieran Bingham <kbingham@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cc4af3fa0fcda2a52cbbab05463e0ad0561fd017.1756521755.git.ritesh.list@gmail.com>
- <9da03d8e78cd895666deb1aec7ec8318833f1b6a.1756521755.git.ritesh.list@gmail.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <9da03d8e78cd895666deb1aec7ec8318833f1b6a.1756521755.git.ritesh.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0168.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a0::20) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8540523BD02
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761841633; cv=none; b=VtS4KpbrUzYWgLul2MYT5hcY+tSMmRJ2/cJfZBhDp/5CPJL+Yhj9/+WR1fmRwFygjbVZL99aidn71IVkB2E7PYo78ZFSMpAbe/B3iTNKrgvoqkRs7WnNieeM9dNyu9oHlqO4YC5c0DPc6JNaUDjVeMv7OSJjitZTY35VOhWIqQ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761841633; c=relaxed/simple;
+	bh=X8CIPBVv77pC1c5MspqiZdzd3lFev3oupZ96gyIju70=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
+	 References:In-Reply-To; b=gD10tqfzTkhyDh4g8Iq0N+8/8PMIKY/BOLXsLcf3WS9D55bgqa0Le2Nt7/9JcZ/1J0WRH7ALjPCR71Wjek8etJDY24AF+3SXHmXmRQIzFf+tYRdQrdOcv4p+Ssk8X0FQOMufp2lhCSjs2mSILNJSzRNrQ7xpve/9KP4WLWtkd8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PSfXjPME; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id ECF681A1782;
+	Thu, 30 Oct 2025 16:27:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BC02560331;
+	Thu, 30 Oct 2025 16:27:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FE7311808BEA;
+	Thu, 30 Oct 2025 17:27:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761841627; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=lBi0Ye0OKMfCGldRnjSwq59CUYQYeOwgXqoWKNOC9sc=;
+	b=PSfXjPMETKW9F8bO8zUpxrANeYPbUILC+FMpzbLL5xoGDKcrR6yFMp+xk2eKdCSaJcBbAv
+	8a/PRmNlPVwH1EauDjmRQpmdQmpt/icwgLa/pWRQKVI+JRqbX7QQEtfYkHZholWfoJA2o9
+	AtwRKeVGP4wkcP6FfNoxb9F5LbjUADOOXjiVQL4mh2zyroRihO0tZ/M9Cmxzb2B/LSI5Ag
+	1FSpwy55lVL4a2z1JRd0uIRjmWlHbYPI4EH5ynClgRaoaQPZZdUgyFUyKwS6QPbaoDx5XK
+	NtI9+r0iEm9olhmqiU6LpI761/PAQtRxTS9yHoZJ0X7Lid+pzWJDdRAnQC/pQw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GVXPR10MB8782:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b99bf4f-8e0d-4772-07f1-08de17d114f3
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?clIrNGpkTTZBUk12VDdCNDNJdU1GTkRZdjB4eFF5SUpCZm1ZckZyYUNPa1Jo?=
- =?utf-8?B?eFRsZFI5TlZVVjhNUnNHYzhDRHVpYmVwV1pjVjlVM1hhQUhva2xCWHhnSG94?=
- =?utf-8?B?dUNwU2s3NGdmZlpHczd5T1JyYWowbHJtd2lGOUtQSW90VmVMRng1SDVWRkhz?=
- =?utf-8?B?Rlh1L1Iza2lwYWF3SUw0SzhkQitKMzZjRkp5WTFPeGh1WGNTLzZiRHI0M09j?=
- =?utf-8?B?S1ZKVjV3Sm9Uc3pUeTJxb2xEK2sxWThzM2krSHR4TGdETklUM3cxSjRjcGkz?=
- =?utf-8?B?R2dtdXVyREs5NHB6eVRiZ0VGejlhZjJqaVhpN25zQzJxajFLbFFmNmUyL2d4?=
- =?utf-8?B?cjRKdnVrRE02OE56MUVjZVAycEpwYndtcnF6SHUxdm8zMVdvZnI3TDdKd2RP?=
- =?utf-8?B?SXNWTFF6TnJZMFdVTGFPWTE4NWVTcXA5VnlxUWttYm93S1E4SGc2UHk0VS9H?=
- =?utf-8?B?SVlYb2dhRi91Rkh1K0NBazN0MkNlSTRFbHBzaVdLcWlFWVhCWnN1V3ZldEtv?=
- =?utf-8?B?citnSHdIa2NzUHE1YzZyS0F3WW51dy92SDV2cXl5S0lHRTJrTVVRTTR0dFpL?=
- =?utf-8?B?MzhYQ1M1YlVFRThydGtieGlqT21HdHozNGV0ZVFqL2N5VWhWeEdxN2QxU2tJ?=
- =?utf-8?B?Y3Rzd0xWM0ZLc0o1NGViQUNRdTNMdDloc2xHVW1HcEI1SFF3ZUxJRkJJZzl5?=
- =?utf-8?B?MEtiL0xhS1hWYUVkbE0wdzVsVWZlbmJnMUEzc1A3NVJ2UzcxaUFQenpuMWZS?=
- =?utf-8?B?QmduY21yR0RKYlZKVzZ0RHNTY2hQVWlaejV4S1NwT2FleUZ3YXhSNUE4aWdM?=
- =?utf-8?B?MG5jVkdKcHFpVmVlRFh5Q0RncVB0VFpodzIrQjNVa2hVbGlvd0tTenRrVEl3?=
- =?utf-8?B?Nm1TYVZ1bzRkWlhMT20reGJtSUxLUFZzRW1LblI4dFpuVElxWE4vbkQyTlkw?=
- =?utf-8?B?U0xNWWNFYXJYR0l4ZVFzMndoelZzRWpGcGZTUmwyaUNCRGhqaHBEajdLOGRZ?=
- =?utf-8?B?QzZSZm5mM2dSWXBPekdzWjR3cEp0U1laakdwazV6djhHZGpTbGhaQmJPQXln?=
- =?utf-8?B?WUpnUlhyS3QrVUpFZGIwdDNhcm5nRXgxdXdVL0lPcWs5VWJxWldHZ2szYlZh?=
- =?utf-8?B?Qkk5MEF1d2pTa2Z0TTRuN3RENm5tdHovc2RSOWhIV20zR1lvZ2lKOGhhU05r?=
- =?utf-8?B?d1dYSUJZYkZCbE54bHhRYUkwTERwOVkyMVZJSXFmV1VLVDJueXpoQ3o4aUhD?=
- =?utf-8?B?bGNKSzNYNHVPMTZVdzlrcWR6ZnRMZjE4NFo2TUNWZGJ5N0dBYkFkODZ0NFcz?=
- =?utf-8?B?OGZtdjhra3k5ekFndWg5WWpGT0hmdGpFS0xqN0MxQW9MbXpqRGxNYUJDNzNO?=
- =?utf-8?B?c2g5V25KM2VrODZyb1FrZnhQdDRTbHpzL2dWTFF3TUFqeC9NKzljQmtZdFlq?=
- =?utf-8?B?R3RZV2dlbmR4SVE1SmZDSkEybEFrT0RPaUtsSUtRelRXT3ZRcG04cjl0VjFk?=
- =?utf-8?B?RjZ5Vk1DbG5KM1J2MjJsTy92bEFrTWY2dm52dVM0dlB1c0t4RExMK3dEV3cv?=
- =?utf-8?B?T1JyZnhIOXR5SGExa2kwRDRvZTdXL1ptMGs5cHdQZ2RYN1M4bitiZ1l4dUo5?=
- =?utf-8?B?M0ZSYlJvbVlBQVNXTUFVRUdSWWFSaURQeTJVQlBNL2g1SHpNMHlHYjZsMmRI?=
- =?utf-8?B?NFpTMVBxeDlVRzF0VlpiaFl6WGtGQWFSNStLTDF5bWdyUFNxUFFIYkdzU3BD?=
- =?utf-8?B?U2RBbkNGTW1RV3IxK2wrZHNQM3hUVDd1a09BZVFSZHRQKzdlVEZKcXNpWUhR?=
- =?utf-8?B?UHc5QzU3YUJ4M2drTnFqcVBCeTlBSWUzNzNwWWE5K01QczFxbkZYdmZaM1p1?=
- =?utf-8?B?Y3gxYWgrRlZsSE1PV3NQQzNEdHdGTlhZOWpGQ1cvSmR6eHBNN0FLWDUxMTlQ?=
- =?utf-8?Q?cPyIR3mhSgd32WzDJ3n3gxHQRzTECKKq?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VTU1ajVEU2F4ak5ianJlTElVL0JuQnV4aXRMZ2thYjdNTEx5T1paaCt3NTNz?=
- =?utf-8?B?clRieTZRVXpnZ2wvZ0h5K3hKQTIzQ0hLR0RUd0ZxWWFabzArN25ZR0RJUG9Z?=
- =?utf-8?B?OGs0QmVmQmMyenZlY0FCR0tOS1A4S1NUc3NUSmZxWVY3Yy8zV2RSUElCcHpq?=
- =?utf-8?B?T3c0dWlOL0EzMzdpZ1BkVUdrZmdoQ2YveVRZS0pkc1BjSkN0Y0VCeGR6dGJP?=
- =?utf-8?B?bFJFMmJNcWZvWFFJdnoyMGFTZ0xRb0lyMmx6T09UbmZ2SjZoSzVWa0JvWGYv?=
- =?utf-8?B?K0gyck5ONDk0VUZ6YldBTjZYQ2ZXcjFYYTBtODhPdFQveUZDV2RkbUJIUVBD?=
- =?utf-8?B?Q0JkRUd6aWNQcnltN2t6K2xBT3paNENjcmNqK1VnNzdxbFhFSjRTYzVrTStk?=
- =?utf-8?B?Y1pwMXpGMS9rd2RrbndkeWcvd1VKSlNldnZ6Y1dydDhQa21oWDhtSDEzU3RZ?=
- =?utf-8?B?aGRaSldVWVk1SXg2L2JQSldqY3ZvbTE5aVVnOVNENHpldWJseVFoeDgyTjlV?=
- =?utf-8?B?SU50Ukgydi9TMTJPUXRIYXV5UkFlQnJ4Q0FHUjBWalJiWUJKSjY3Q1laTGpw?=
- =?utf-8?B?R2R1QkNEc1VjZUpOdzhnM1FIcm5NNHp2Q00xdnAxL0NodTB2N1N5NW10djgy?=
- =?utf-8?B?RWJvM0wzRmlzTCtvTTBNSUdWdjJsUHNzOVhYdTl5SkRkLzZDN0p6TUkvTTFq?=
- =?utf-8?B?dk83Qk05aFROVTlYKzBHUEJ6RUxVMFQ0OWRUYmhuWitzL2c2WmluU2NMTzIz?=
- =?utf-8?B?dVNESzZLSUxpaGFESU5IZWU5SE54dDN3VGJNaXZWTlFIQWxRTTVIYWdLS1hG?=
- =?utf-8?B?L1pyMDNIdW01dWNTaThJVjZyd0s3YXprWTc0TnM4S0FBRVBtZ2swOUVQWFl1?=
- =?utf-8?B?UDZvK3RaenZTbTRsR1U3YmIreFdncGZROERTVXhHTURjaTlOcFU0cFgrNktR?=
- =?utf-8?B?UDlqM3ZTYyt1aGdtc3R2SWRWc1J1endpTDdQVlA5dUpQMS9JRnA1RGlsMHc4?=
- =?utf-8?B?UVoyT3dxZjh4aGtCaVVIazFmQmJiblZOUEc0UXV0NHl1dHFXQldiemhSUUdJ?=
- =?utf-8?B?Z0RPTWFHRE1aYUorclNyYWJJb1R1VU5CZmQ4aXN2ZDVLOWllbjI5bEpwSFJJ?=
- =?utf-8?B?NVhkcys1aFV6Z1BVaEYwMnB1Y1ZMc0VzZGhxZWlUZEhjZXhQOHlTNlBKNWl3?=
- =?utf-8?B?TkFqQ25tcFd1RnFhcUs2YTBVZEdqMFM5YTQxdExyb0p6R2xtZWdycDFyUFkw?=
- =?utf-8?B?QWczM3REYThGSWVrQjc5OHZUODRKM1ovYXVXb1pGYVJaL3VjaWlTd2psTXc4?=
- =?utf-8?B?MzhuWWM1bi92YjdPOFJBWVZFRGdQS09iWksxTjRLQ1ZjNG4yM0RpODRqQW5j?=
- =?utf-8?B?WmMyVjljL25LN3BmeTk3ZkdTZG0xZ3RWUFRjR0x3T3A0MGVmZCtxckxSZ0xV?=
- =?utf-8?B?WHFVdWdxL1B0aVNvMGZWd1IwNEJpZjdjWDU1M3VNbWJhdkFKcnd2TzFpMjF6?=
- =?utf-8?B?Rlo0VUYyS1ZEUUd3TGlMMUFMRytBQlN5Um1zdDV1R0picE85UFlMeUNmcTZJ?=
- =?utf-8?B?a29rKy9wemJERVFHSkFzZ25uTkhGczUyMzNINjduL2gxQ2Z0Z2ttNVd2SHdF?=
- =?utf-8?B?SWEzTzcza1UvQ0pXS21RYXBGZWwrUjhRd2I5NFB3RWFKK2pVS3lVSG9oQXM0?=
- =?utf-8?B?cDB6eGdKRUd4NHQ3TFVZelp4cVFmclhaeWVxcVprMWQ4eUFvOUxaY1pvTmx0?=
- =?utf-8?B?Q0daeEJycFVyeXFNemhLNkJ6ckxWbTdRZ0tNL1JRNnpYdUFSeTdGc2R4eTd0?=
- =?utf-8?B?V3RPY3UvZ05UOHJLMVVSUTdMbmRORUI3TCtOck9xdlZSMTVsSU04MjFVM2Nl?=
- =?utf-8?B?STdzbHpodzRyenRNSjk1R0cwbC9EYnlXSnVUV0srU2d5bGllZDBQakY4YkZk?=
- =?utf-8?B?MlZ3ZGNmNFhEaUdiVk9tZzlVYmhJTDBKdVVLeXhuTmo2RllSNzFsU2NHMThm?=
- =?utf-8?B?YVo1bDJBczdDN0FpR1g3N1Qvby9IWU53ZWJpeFB3UlcyVHdHTnlmdnYyS0Rn?=
- =?utf-8?B?dlBtSVZvcnJxcmxzVUhtWnd5R3JCaTUyNXBtTEFYdWt0bFJYYkZUaHo1TlJN?=
- =?utf-8?B?ZE5UZjdXeXc3MTdVVnU5UVV2K3hNRmlpZFJkTHdDWUlXNUZMd2lXZ3RFb0cz?=
- =?utf-8?B?K1E9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b99bf4f-8e0d-4772-07f1-08de17d114f3
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 16:26:30.2356
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oUUdCZD2POkxgjoqSkg87Wd8TZkI13KQoDKt6+847VrWUT+kOwSb1vvapOQufctfPpy4gpXT8ec2KgLfVPaExA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8782
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 30 Oct 2025 17:27:03 +0100
+Message-Id: <DDVSQC84SOHH.2R3VKM1MF6RMG@bootlin.com>
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Martin KaFai Lau" <martin.lau@linux.dev>,
+ =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH bpf-next v3 3/4] selftests/bpf: integrate
+ test_tc_tunnel.sh tests into test_progs
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Eduard
+ Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
+ Song" <yonghong.song@linux.dev>, "John Fastabend"
+ <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
+ <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
+ <bastien.curutchet@bootlin.com>, <bpf@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
+ <20251027-tc_tunnel-v3-3-505c12019f9d@bootlin.com>
+ <1ac9d14e-4250-480c-b863-410be78ac6c6@linux.dev>
+ <DDVPPGIO5P1F.E3DWINA74BJ6@bootlin.com>
+ <efa3540a-1f52-46ca-9f49-e631a5e3e48c@linux.dev>
+In-Reply-To: <efa3540a-1f52-46ca-9f49-e631a5e3e48c@linux.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 30.08.25 05:45, Ritesh Harjani (IBM) wrote:
-> This adds page ops support to powerpc book3s64. Following operations are
-> now supported:
-> 
-> lx-pfn_to_kaddr -- PFN to kernel address
-> lx-pfn_to_page -- PFN to struct page
-> lx-page_address -- struct page to linear mapping address
-> lx-page_to_pfn -- struct page to PFN
-> lx-page_to_phys -- struct page to physical address
-> lx-virt_to_page -- virtual address to struct page
-> lx-virt_to_phys -- virtual address to physical address
-> 
-> lx-vmallocinfo -- Show vmallocinfo
-> lx-slabinfo -- Show slabinfo
-> 
-> e.g. Below showing lx-mmu_info command i.e.
-> On Radix:
-> (gdb) lx-mmu_info
-> MMU: Radix
-> 
-> On Hash:
-> (gdb) lx-mmu_info
-> MMU: Hash
-> 
-> e.g. Below shows that struct page pointers coming from vmemmap area i.e.
-> (gdb) p vmemmap
-> $5 = (struct page *) 0xc00c000000000000
-> 
-> (gdb) lx-pfn_to_page 0
-> pfn_to_page(0x0) = 0xc00c000000000000
-> 
-> (gdb) lx-pfn_to_page 1
-> pfn_to_page(0x0) = 0xc00c000000000040
-> 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
->  scripts/gdb/linux/constants.py.in |   4 ++
->  scripts/gdb/linux/mm.py           | 114 +++++++++++++++++++++++++++++-
->  2 files changed, 116 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
-> index 154db10fe94a..97a731db6e89 100644
-> --- a/scripts/gdb/linux/constants.py.in
-> +++ b/scripts/gdb/linux/constants.py.in
-> @@ -153,6 +153,10 @@ if IS_BUILTIN(CONFIG_ARM64):
->      LX_VALUE(CONFIG_PAGE_SHIFT)
->      LX_VALUE(CONFIG_ARCH_FORCE_MAX_ORDER)
->  LX_CONFIG(CONFIG_PPC_BOOK3S_64)
-> +if IS_BUILTIN(CONFIG_PPC_BOOK3S_64):
-> +    LX_VALUE(CONFIG_PAGE_OFFSET)
-> +    LX_VALUE(CONFIG_PAGE_SHIFT)
-> +    LX_VALUE(CONFIG_KERNEL_START)
->  LX_CONFIG(CONFIG_SPARSEMEM)
->  LX_CONFIG(CONFIG_SPARSEMEM_EXTREME)
->  LX_CONFIG(CONFIG_SPARSEMEM_VMEMMAP)
-> diff --git a/scripts/gdb/linux/mm.py b/scripts/gdb/linux/mm.py
-> index 7571aebbe650..9e5b1632f910 100644
-> --- a/scripts/gdb/linux/mm.py
-> +++ b/scripts/gdb/linux/mm.py
-> @@ -24,10 +24,17 @@ class page_ops():
->      def __init__(self):
->          if not constants.LX_CONFIG_SPARSEMEM_VMEMMAP:
->              raise gdb.GdbError('Only support CONFIG_SPARSEMEM_VMEMMAP now')
-> -        if constants.LX_CONFIG_ARM64 and utils.is_target_arch('aarch64'):
-> +
-> +        if utils.is_target_arch('aarch64'):
-> +            if not constants.LX_CONFIG_ARM64:
+On Thu Oct 30, 2025 at 5:21 PM CET, Martin KaFai Lau wrote:
+> On 10/30/25 7:04 AM, Alexis Lothor=C3=A9 wrote:
+>>>> +	int family =3D cfg->ipproto =3D=3D 6 ? AF_INET6 : AF_INET;
+>>>> +
+>>>> +	cfg->server_fd =3D start_reuseport_server(family, SOCK_STREAM,
+>>>> +						cfg->server_addr, TEST_PORT,
+>>>> +						TIMEOUT_MS, 1);
+>>>
+>>> Why reuseport is needed? Does it have issue in bind() to the same
+>>> ip/port in the later sub-test?
+>>=20
+>> Yes, I observed that is I use the bare start_server, I systematically ha=
+ve
+>> the first test passing, an all the others failing on the server startup
+>> with errno 98 (Address already in use). I have been assuming that it is =
+due
+>> to some TIME_WAIT state on the freshly closed socket, but I may be missi=
+ng
+>> something ?
+>
+> Thanks for confirming. You are right. It should be the TIME_WAIT. Using=
+=20
+> SO_REUSEPORT works but become confusing on what the test is trying to do=
+=20
+> by starting only 1 reuseport server. reuseport is usually used with >1=20
+> server listening on the same address. A better thing to do is to always=
+=20
+> setsockopt(SO_REUSEADDR) in start_server_addr for TCP.
 
-This reorders the check, pulling the dynamic part before the static one
-- why? Not that this is run on every command, but at least
-initialization could slow down by some cycles (or more...).
+Sure, I can go for start_server_addr + SO_REUSEADDR :) I'll add it as well
+in the incoming follow-up series, next to the missing open_netns checks.
 
-> +                raise gdb.GdbError('ARM64 page ops require CONFIG_ARM64')
->              self.ops = aarch64_page_ops()
-> +        elif utils.is_target_arch('powerpc'):
-> +            if not constants.LX_CONFIG_PPC_BOOK3S_64:
-> +                raise gdb.GdbError('Only supported for Book3s_64')
-> +            self.ops = powerpc64_page_ops()
->          else:
-> -            raise gdb.GdbError('Only support aarch64 now')
-> +            raise gdb.GdbError('Unsupported arch for page ops')
-> 
->  class aarch64_page_ops():
->      def __init__(self):
-> @@ -287,6 +294,109 @@ class aarch64_page_ops():
->      def folio_address(self, folio):
->          return self.page_address(folio['page'].address)
-> 
-> +
-> +class powerpc64_page_ops():
-> +    """powerpc64 minimal Virtual Memory operations
-> +    """
-> +
-> +    def __init__(self):
-> +        vmemmap_sym = gdb.parse_and_eval('vmemmap')
-> +        self.vmemmap = vmemmap_sym.cast(utils.get_page_type().pointer())
-> +
-> +        self.PAGE_SHIFT = constants.LX_CONFIG_PAGE_SHIFT
-> +        self.PAGE_OFFSET = constants.LX_CONFIG_PAGE_OFFSET
-> +        self.KERNEL_START = constants.LX_CONFIG_KERNEL_START
-> +
-> +        # These variables are common for both Hash and Radix so no
-> +        # need to explicitely check for MMU mode.
-> +        self.KERNEL_VIRT_START = gdb.parse_and_eval("__kernel_virt_start")
-> +        self.VMALLOC_START = gdb.parse_and_eval("__vmalloc_start")
-> +        self.VMALLOC_END = gdb.parse_and_eval("__vmalloc_end")
-> +        self.KERNEL_IO_START = gdb.parse_and_eval("__kernel_io_start")
-> +        self.KERNEL_IO_END = gdb.parse_and_eval("__kernel_io_end")
-> +        # KERN_MAP_SIZE can be calculated from below trick to avoid
-> +        # checking Hash 4k/64k pagesize
-> +        self.KERN_MAP_SIZE = self.KERNEL_IO_END - self.KERNEL_IO_START
-> +        self.VMEMMAP_START = gdb.parse_and_eval("vmemmap")
-> +        self.VMEMMAP_SIZE = self.KERN_MAP_SIZE
-> +        self.VMEMMAP_END = self.VMEMMAP_START + self.VMEMMAP_SIZE
-> +
-> +        if constants.LX_CONFIG_NUMA and constants.LX_CONFIG_NODES_SHIFT:
-> +            self.NODE_SHIFT = constants.LX_CONFIG_NODES_SHIFT
-> +        else:
-> +            self.NODE_SHIFT = 0
-> +        self.MAX_NUMNODES = 1 << self.NODE_SHIFT
-> +
-> +    def PFN_PHYS(self, pfn):
-> +        return pfn << self.PAGE_SHIFT
-> +
-> +    def PHYS_PFN(self, pfn):
-> +        return pfn >> self.PAGE_SHIFT
-> +
-> +    def __va(self, pa):
-> +        return pa | self.PAGE_OFFSET
-> +
-> +    def __pa(self, va):
-> +        return va & 0x0fffffffffffffff;
-> +
-> +    def pfn_to_page(self, pfn):
-> +        return (self.vmemmap + int(pfn)).cast(utils.get_page_type().pointer())
-> +
-> +    def page_to_pfn(self, page):
-> +        pagep = page.cast(utils.get_page_type().pointer())
-> +        return int(pagep - self.vmemmap)
-> +
-> +    def page_address(self, page):
-> +        pfn = self.page_to_pfn(page)
-> +        va = self.PAGE_OFFSET + (pfn << self.PAGE_SHIFT)
-> +        return va
-> +
-> +    def page_to_phys(self, page):
-> +        pfn = self.page_to_pfn(page)
-> +        return self.PFN_PHYS(pfn)
-> +
-> +    def phys_to_page(self, pa):
-> +        pfn = self.PHYS_PFN(pa)
-> +        return self.pfn_to_page(pfn)
-> +
-> +    def phys_to_virt(self, pa):
-> +        return self.__va(pa)
-> +
-> +    def virt_to_phys(self, va):
-> +        return self.__pa(va)
-> +
-> +    def virt_to_pfn(self, va):
-> +        return self.__pa(va) >> self.PAGE_SHIFT
-> +
-> +    def virt_to_page(self, va):
-> +        return self.pfn_to_page(self.virt_to_pfn(va))
-> +
-> +    def pfn_to_kaddr(self, pfn):
-> +        return self.__va(pfn << self.PAGE_SHIFT)
-> +
-> +    # powerpc does not use tags for KASAN. So simply return addr
-> +    def kasan_reset_tag(self, addr):
-> +        return addr
-> +
-> +class LxMmuInfo(gdb.Command):
-> +    """MMU Type for PowerPC Book3s64"""
-> +
-> +    def __init__(self):
-> +        super(LxMmuInfo, self).__init__("lx-mmu_info", gdb.COMMAND_USER)
-> +
-> +    def invoke(self, arg, from_tty):
-> +        if not constants.LX_CONFIG_PPC_BOOK3S_64:
-> +            raise gdb.GdbError("Only supported for Book3s_64")
-> +
-> +        lpcr = gdb.parse_and_eval("(unsigned long)$lpcr")
-> +        # Host Radix bit should be 1 in LPCR for Radix MMU
-> +        if (lpcr & 0x0000000000100000):
-> +            gdb.write("MMU: Radix\n")
-> +        else:
-> +            gdb.write("MMU: Hash\n")
-> +
-> +LxMmuInfo()
-> +
->  class LxPFN2Page(gdb.Command):
->      """PFN to struct page"""
-> 
-> --
-> 2.50.1
-> 
+Thanks,
 
-Rest (including patch 1) looks good to me, though not looking deep into
-the architectural bits.
+Alexis
 
-Jan
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-PS: Sorry for the late feedback.
-
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
 
