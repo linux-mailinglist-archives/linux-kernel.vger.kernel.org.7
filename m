@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-878790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3158AC2176E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:22:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1B5C217A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CEC673504B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:22:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E85D74EE841
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E7324678E;
-	Thu, 30 Oct 2025 17:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D513683B8;
+	Thu, 30 Oct 2025 17:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fRYib/kM"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekDPxfxb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5EC24677C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D09837A3C0;
+	Thu, 30 Oct 2025 17:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844964; cv=none; b=TFHA4PhCqh37hqa5/sFnCjr7ln1mvexeSyquCDEiD3nv2lTI8wju8UYje7rlTTdETxfxHpDHtqDVpy/8tIbGwBL8njvwdZnWpn7bLJWNeXOOWLuBRKEToQnUSOJcLk0B8qpqEIEz7Uwd6KyZ6053fNf58uuT1R5m1WWG6r1tqkY=
+	t=1761844981; cv=none; b=FxdRC7l0gKammsm0HAqPGljlKym9rFXrNjbguo/gzLf7m0ePZ5rzMtAS5PKSmdtc6WlSpKAxN7NHWvCjVzUXj6NTrTn8eK83Get0JxlgLkyEq+3ehztQlwWvlUahQQa8ZIVvQr7JG7LAnd9UTTDS1r7Rp7ZFNELBBxlGc/4k2Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844964; c=relaxed/simple;
-	bh=BCoHEyyxZKYrrU4Ot3G1OWMRdoW/WRM++mtFk8nDG6U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Hg0+XJVbkIw85kPK0HAqlR7wK/Vexy16GDIB/VnpOtpiSVRdLIjsIbc/6GUJ4vcOz+6sieGoXT579iDdLsr4MKImF86GhiOqSSPjM2RyWLFS9AxqFX2EbcJ9X9KpfZkjLN97/QL0uTXkPKqQhMinbCne+F+is1CuBA4+tLr4d2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fRYib/kM; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761844959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1yKUVg2QX7KLyptUjcVniVMmwZzulWf6rl33AVF5l/o=;
-	b=fRYib/kMeIDOH90ZS1ch2yNi5D8QUkaH4tedw7Z/hSbGGXrRmdrIpZ8M9Y/J8qtzjFwMqj
-	yOKKjjMwh9zn0bUKfvhmXdxn7jOOZaENuw1uvt38qHMAoafwoGb86QAtAWCbFkqIJfFVC+
-	6SEitYt7Mlk0NycoOGJBAnM9Rn6cvbE=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Song Liu <song@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
- Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-  Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
- to cgroups
-In-Reply-To: <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
-	(Song Liu's message of "Wed, 29 Oct 2025 11:01:00 -0700")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-3-roman.gushchin@linux.dev>
-	<CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
-Date: Thu, 30 Oct 2025 10:22:31 -0700
-Message-ID: <87zf98xq20.fsf@linux.dev>
+	s=arc-20240116; t=1761844981; c=relaxed/simple;
+	bh=5JXVFNlMTvdINtFW0DXyg4zvly79j27nW9MHNXzH3gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWzjISrXHDM56AXnvNVzWtKBXyhJfQHsEut2sHKztnVRrjeBOm3zn4cAcRl5BoCnvjZJ4AvLP72BgPyoyKFPADBYeSUrF0SDXc8FweIdH1rudLrAij57/hl6HSBC/+8rpokbQhFG65YdVHfzbNfPwo+DTAyaKFgTjKoA7ZAhaJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekDPxfxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B953C4CEF1;
+	Thu, 30 Oct 2025 17:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761844980;
+	bh=5JXVFNlMTvdINtFW0DXyg4zvly79j27nW9MHNXzH3gQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ekDPxfxbY8/F3xn0eGyDZwX+LhpUsp96t2p5jcHv1VOrbWltNqYe1hJrPE46ST+iw
+	 Fx5A9ppwTBXR+5mLjA/A4D8WxPeK9U2qQJvY1T0OL/nY1Dgf5v5JX+6GPaQRRqFpKH
+	 WXYA/cKfVrQBgsjk2/+ZmfRpm/huKtlIAA/RMvv3d4rcusu5kyJc9OtIf01wvdbDhH
+	 kVIoKCdXCHedQdewx9Ywq1phFxb2Tw5gxZ+7xcf2UgDeRPorrTNynn4GqiKnAu3SDS
+	 66ba9TAx60jfWo33JecrjVZVxQo9qx8UfPmFkxUHqimhotZKzKD29ootdbv6+v89Tn
+	 l0kqj64jsj9AQ==
+Date: Thu, 30 Oct 2025 12:22:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+	Rocky Liao <quic_rjliao@quicinc.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] Bluetooth: dt-bindings: qualcomm: Split binding
+Message-ID: <20251030172253.GA4166743-robh@kernel.org>
+References: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
 
-Song Liu <song@kernel.org> writes:
+On Wed, Oct 29, 2025 at 08:43:50AM +0100, Krzysztof Kozlowski wrote:
+> Changes in v2:
+> - Drop in few commits the properties (supplies) from
+>   qualcomm-bluetooth.yaml which are not used by devices left there,
+>   instead of removing them in final patch (qcom,wcn7850-bt).
+> - Fix dt_binding_check error - missing gpio.h header in the example.
+> - Drop maintainers update - split into separate patch.
+> - Add also Bartosz as maintainer of two bindings because he was working
+>   with these in the past.
+> - Link to v1: https://patch.msgid.link/20251028-dt-bindings-qcom-bluetooth-v1-0-524a978e3cda@linaro.org
+> 
+> One big Qualcomm Bluetooth schema is hardly manageable: it lists all
+> possible properties (19 supplies).  Split qcom,qca6390-bt to separate
+> bindings, so device schema will be easier to read/maintain and list only
+> relevant properties.
+> 
+> What's more it messes up old (pre-PMU) and new (post-PMU) description in
+> one place adding to the total mess.
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (11):
+>       dt-bindings: bluetooth: qcom,qca2066-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,qca9377-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,qca6390-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,wcn3950-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,wcn3990-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,wcn6750-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,wcn6750-bt: Deprecate old supplies
+>       dt-bindings: bluetooth: qcom,wcn6855-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,wcn6855-bt: Deprecate old supplies
+>       dt-bindings: bluetooth: qcom,wcn7850-bt: Split to separate schema
+>       dt-bindings: bluetooth: qcom,wcn7850-bt: Deprecate old supplies
+> 
+>  .../net/bluetooth/qcom,bluetooth-common.yaml       |  25 ++
+>  .../bindings/net/bluetooth/qcom,qca2066-bt.yaml    |  49 ++++
+>  .../bindings/net/bluetooth/qcom,qca6390-bt.yaml    |  64 +++++
+>  .../bindings/net/bluetooth/qcom,qca9377-bt.yaml    |  58 +++++
+>  .../bindings/net/bluetooth/qcom,wcn3950-bt.yaml    |  67 ++++++
+>  .../bindings/net/bluetooth/qcom,wcn3990-bt.yaml    |  66 ++++++
+>  .../bindings/net/bluetooth/qcom,wcn6750-bt.yaml    |  91 ++++++++
+>  .../bindings/net/bluetooth/qcom,wcn6855-bt.yaml    |  99 ++++++++
+>  .../bindings/net/bluetooth/qcom,wcn7850-bt.yaml    |  94 ++++++++
+>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml | 259 ---------------------
+>  MAINTAINERS                                        |   1 +
+>  11 files changed, 614 insertions(+), 259 deletions(-)
 
-> On Mon, Oct 27, 2025 at 4:17=E2=80=AFPM Roman Gushchin <roman.gushchin@li=
-nux.dev> wrote:
-> [...]
->>  struct bpf_struct_ops_value {
->>         struct bpf_struct_ops_common_value common;
->> @@ -1359,6 +1360,18 @@ int bpf_struct_ops_link_create(union bpf_attr *at=
-tr)
->>         }
->>         bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct=
-_ops_map_lops, NULL,
->>                       attr->link_create.attach_type);
->> +#ifdef CONFIG_CGROUPS
->> +       if (attr->link_create.cgroup.relative_fd) {
->> +               struct cgroup *cgrp;
->> +
->> +               cgrp =3D cgroup_get_from_fd(attr->link_create.cgroup.rel=
-ative_fd);
->
-> We should use "target_fd" here, not relative_fd.
->
-> Also, 0 is a valid fd, so we cannot use target_fd =3D=3D 0 to attach to
-> global memcg.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Yep, but then we need somehow signal there is a cgroup fd passed,
-so that struct ops'es which are not attached to cgroups keep working
-as previously. And we can't use link_create.attach_type.
-
-Should I use link_create.flags? E.g. something like add new flag
-
-@@ -1224,6 +1224,7 @@ enum bpf_perf_event_type {
- #define BPF_F_AFTER		(1U << 4)
- #define BPF_F_ID		(1U << 5)
- #define BPF_F_PREORDER		(1U << 6)
-+#define BPF_F_CGROUP		(1U << 7)
- #define BPF_F_LINK		BPF_F_LINK /* 1 << 13 */
-=20
- /* If BPF_F_STRICT_ALIGNMENT is used in BPF_PROG_LOAD command, the
-
-and then do something like this:
-
-int bpf_struct_ops_link_create(union bpf_attr *attr)
-{
-	<...>
-	if (attr->link_create.flags & BPF_F_CGROUP) {
-		struct cgroup *cgrp;
-
-		cgrp =3D cgroup_get_from_fd(attr->link_create.target_fd);
-		if (IS_ERR(cgrp)) {
-			err =3D PTR_ERR(cgrp);
-			goto err_out;
-		}
-
-		link->cgroup_id =3D cgroup_id(cgrp);
-		cgroup_put(cgrp);
-	}
-
-Does it sound right?
-
-Thanks
 
