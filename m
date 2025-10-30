@@ -1,77 +1,100 @@
-Return-Path: <linux-kernel+bounces-877665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727D9C1EB2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DFDC1EB39
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18CEE3B398D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5233A402769
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704C6334C2B;
-	Thu, 30 Oct 2025 07:11:40 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFDE3358BF;
+	Thu, 30 Oct 2025 07:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFaWNMqi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5607286897
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40643328E5;
+	Thu, 30 Oct 2025 07:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761808300; cv=none; b=kArcX9kKZej8OQcLeW3P0q+p8wMKNL53cshjy+3JGoKqDoi8bNrmoVbZESbrNgF0Ch5xki50zZ6lFT0Ju/KsIBgdEY6txBXIUYCY7bAwqMzb2AfN2J8iXz9AAM1DRUUDu1Me7dUTxBYbvKkYEBEpvZBlveql0K+8M+91E4eRXw0=
+	t=1761808347; cv=none; b=Ss38rm18i2iYy3FEROyOYtuy9ZWmQKw9Sx6qfhJrA7s8fnR2BV+LUszbHIWOlEsvbLfahC2oF0maqiz6gOPkdRNTvwoIGxZ64nekLCTZ+/ow5cGf1xcmvFcEvtki02pULg2DgVBsP2Y1AXSCEc5lDcw2ecxPDqVOsB+sItS6Tvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761808300; c=relaxed/simple;
-	bh=Ere+qvdUOcj2o7IUQg1mdM1BYQ4FXgURpWZjQ17EUUk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Z5vRGA5tU5mNomnUgkhUFaUJ8i/g+NUdDwURoUsVRn78kaV2bF9rWUFEY4u27C85X/xoQWvQMpvC/MVwMS37sqSVXk0wejvvEN65How+1CQCMWcveAdJwkwkIWsYpmb1yc/xGWM/jtDE12HEZAGoUTacibkgNQjOfVwDnpVDpRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-945a5690cb4so234933939f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:11:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761808298; x=1762413098;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ere+qvdUOcj2o7IUQg1mdM1BYQ4FXgURpWZjQ17EUUk=;
-        b=CQWlSRFjiSU/lDe1eeep1yiC+nQ0G0HX4k6p/1E66kq7eL7ciksw5frb/KDEYb9d90
-         mIbCTe40ddyhFwLqMnt9rwp9PTRV94omxApYcNCHwHt7MEUpFjkL0Ajj+70Ic/W6iBiY
-         gtn6ueq1m7+xbTd6ej+LfuXS1jNTY+jErjHAdHuwJAhh+DRUqHYHWQaOlkm+pE6a6eXo
-         8V5rmrXKU6VOFC8kBtwWqJGJtxaCna326o0Daw/wAKGTdmgNDrP56S8FRu+ZZcpsQVEo
-         SWnAePPLum+dhK7P5zd1Gcq3JOW+XuJAviAq8ffEycXz/KXCI2wnVEPJA4/3l3yvXXx1
-         3tnQ==
-X-Gm-Message-State: AOJu0YyiULlsetfqC0Mh8t/p/U40GZ4AfRUBRxRRsJmYPXg8I3YW9nne
-	QFeMqYRE2cdAtB6WeiytQ1R+z7pAohYHDrYWg+Yt74I1ZQi39rqqUkqKRAmNQu2Ee4VgNJjS14y
-	ndsakRhS7+Fk0wmxhK0hVPcDhWOPHADdKZgNoAq4qxKh94aRo4RrMKxg7joE=
-X-Google-Smtp-Source: AGHT+IGUlCPvV0BmtdbW3irFg1zw12q/y1X4XiOKSaxZ5LDqUq9orIBAyUcxzUKUAPrbDSFdQf7f7nUeJZ8mvW8VJ3x8aSBdaKXP
+	s=arc-20240116; t=1761808347; c=relaxed/simple;
+	bh=1hY8bOD1IiZ/4yqtsa1oXjj3u5rqpHnBjbS4wEQe1tE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9UQA8Tb5vxNVX5/BG6U5EjkdoJptsp7xb+XA/K9ZPl9kNOXqrJuXfYGd2/M4sa53R98qJIyjuF4C1ul5PuSjN66u58XthYkvSeIOafoyN07kz88PQBzWr7Ab5HVvb6Xi7APhpcFLvTT9SNvEmtA7P98LEaYyQRXFSSj50xQ28Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFaWNMqi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F67C4CEF1;
+	Thu, 30 Oct 2025 07:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761808347;
+	bh=1hY8bOD1IiZ/4yqtsa1oXjj3u5rqpHnBjbS4wEQe1tE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YFaWNMqiVtEwj3KcXWBJDwBiOcL+ZgLMsi3V3JArK16kHhRts9gNHwLfrVuBEDWTh
+	 UPBG8bFKX9WPOxdFwbCZNmQybLMYABdikxd8HvdrMiiTrZ6VqVY3bn9W4Pne7Hv8ra
+	 xyJQuEobSCVd3yHX/HfQwIc6PV8LcBSUchPZqhNCDvo9H5SNqMhRaMS4FncHBxgvE9
+	 TJ0oSXOmdNhUKmbN9pmBArBEfW8/bS8h06eT+bn/vP2QHIEcdlrPw2UOF2aF/CguRe
+	 3f3cBq0T+zYxjLiVA55BXqTn44Qcg5ZpmWFg7Rs1iEYLKr6sOOEZ4huDp/ip8jPDuL
+	 k2I2A+OPsBDnw==
+Date: Thu, 30 Oct 2025 08:12:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, 
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+Subject: Re: [PATCH v4 1/6] dt-bindings: i2c: qcom-cci: Document Kaanapali
+ compatible
+Message-ID: <20251030-masterful-daring-lorikeet-ae45b0@kuoka>
+References: <20251028-add-support-for-camss-on-kaanapali-v4-0-7eb484c89585@oss.qualcomm.com>
+ <20251028-add-support-for-camss-on-kaanapali-v4-1-7eb484c89585@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17c9:b0:42f:8d40:6c4b with SMTP id
- e9e14a558f8ab-432f8faca17mr72858865ab.11.1761808297793; Thu, 30 Oct 2025
- 00:11:37 -0700 (PDT)
-Date: Thu, 30 Oct 2025 00:11:37 -0700
-In-Reply-To: <68b6d7b3.050a0220.3db4df.01cf.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69030fa9.050a0220.32483.0227.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] Monthly xfs report (Oct 2025)
-From: syzbot <syzbot+0391d34e801643e2809b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251028-add-support-for-camss-on-kaanapali-v4-1-7eb484c89585@oss.qualcomm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Tue, Oct 28, 2025 at 10:44:10PM -0700, Hangxiang Ma wrote:
+> Add Kaanapali compatible consistent with CAMSS CCI interfaces.
+> 
 
-***
+You are using b4 so I don't understand why you still ignore our review.
 
-Subject: Re: [syzbot] Monthly xfs report (Oct 2025)
-Author: hch@infradead.org
+<form letter>
+This is a friendly reminder during the review process.
 
-#syz test git://git.infradead.org/users/hch/xfs.git xfs-buf-hash
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
 
