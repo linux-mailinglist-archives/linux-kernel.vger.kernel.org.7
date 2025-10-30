@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-877601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C656C1E8D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:25:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62546C1E8DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80DB63BC909
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:25:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A766A189E504
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981992F5465;
-	Thu, 30 Oct 2025 06:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09832F7AC6;
+	Thu, 30 Oct 2025 06:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AP8ryppx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eyO89ghm"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1522BE7CD;
-	Thu, 30 Oct 2025 06:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5182BE7CD;
+	Thu, 30 Oct 2025 06:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761805496; cv=none; b=EmLIO3pIVMuY1qHJLQ/BCHJP8wP1fOvb5LRJHhZP5Nl3eNa9j9UD4O621jPB8WrKiuq9wmA4kOhTxr5qzbV1wGZsn0e6bWq5B0Jw7dKYh1Y60C3XZpUqRltPMCmmPYS41Z2pQstDXZKs3kfKa0IgmusM27bkMLEc46ltYLyy/JE=
+	t=1761805550; cv=none; b=an+6cS+7Cn+JeMpreU9ftTsr6LQ627U8OHDr2J0O3kjIUHVcARUY1ddVMQdBA2VovKqNhdG1zHTfwTE1lp/zbKyvBjtbGLNQIf10be9dLVl7EY79G5iaGD2bGaOUzP1n4imIRkqoeWXG8gLQRB0MSsgQpCiJT+SzF4LZqLZE6ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761805496; c=relaxed/simple;
-	bh=uYPDTyqQ6bRTWr1TYUkiW27uTR568Vaw7ChoeCMRHWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oa2/GsiJGW9m6aNYOxF3kwUTHgI4jziV1zomOlGMsj3Qe6JrxI73A6dy0YAkl8ENjyQOxyqG0wfKPHJmhqg3YvQbld4LvmI5hMiQmq8WsPcg/UyjpbJzjEFCV3kypqvZE+bUuBW0gvXBwGJRCg8JNrg52XSB01xU58Kk1LcnKY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AP8ryppx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6748C4CEF1;
-	Thu, 30 Oct 2025 06:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761805495;
-	bh=uYPDTyqQ6bRTWr1TYUkiW27uTR568Vaw7ChoeCMRHWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AP8ryppxF8+p+ZI7dP0yth+6WBqk7Sm/5EE3z8AtLYEhkPbgjodOfPR16fQO0e8ZD
-	 FFpvcuA9XeC+kko3K35UAOIHTFv/Pq9Mm1dLzH7OW6lxOehF5G+ZIgDiwkz9CbnOrd
-	 rDAfti3elF9xosqqI3BqcFuVLCFQCaaEp4m/R51odOtCGXGnY2dYSOr8FplN9+p+XC
-	 WUC5gKs6fUU+Ti9s3T31OLNBb4XnKpopcH8V1bppwbDDNndWCDi1ej0J4qMBF4TMlE
-	 myoIeyG5pVoXxhbN1/hBRG+OOKTB1V+jgnxESOJPLyO3lIf81hfHQ99dbA1nEUHaRZ
-	 skT4leqYYAMzQ==
-Date: Thu, 30 Oct 2025 07:24:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, trilok.soni@oss.qualcomm.com, 
-	Bjorn Andersson <andersson@kernel.org>, yijie.yang@oss.qualcomm.com, linux-kernel@vger.kernel.org, 
-	Manivannan Sadhasivam <mani@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom,pas: Document pas
- for SoCCP on Kaanapali and Glymur platforms
-Message-ID: <20251030-innocent-wildebeest-of-persistence-f79aa7@kuoka>
-References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
- <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
- <176173731073.226348.14173297054891268954.robh@kernel.org>
- <554b2053-db21-46fa-b5b0-3d548c1e182d@oss.qualcomm.com>
+	s=arc-20240116; t=1761805550; c=relaxed/simple;
+	bh=bn5A/m1OsgUKHJhhjxySUo4eK7TU9DdBJ75InA0kzsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtC5Zet/kRYxZsSlzuKa8ZicJ9yqBv5S5FRDkFC41lng3rmaxuMxrUvJSBBGYQwb9LMmSyfAIBrmoz2dxxPSChYyHXDNnSKqkRPeRXlnPXst+C/YCWjmNW//y40Fr2nctq479B85gXepdXyJvBx9mV8KIY98gbz862yvIl9bKtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eyO89ghm; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=mHpQwxRchZle7itzYGWAIJeSghjL379Sw36+lqWAIS4=; b=eyO89ghmZUjgAbspEFqpCh+LLF
+	Kx/+IrtC6tTyglEAWbtCz15JdwlT6Pv1X37LjkKkbq7Jz9v9G9mi1tEiKLMvjonzODzjecpWx3e4q
+	gO8ob/eSsUai1UdzddOkRkauSox9DLIXnpPJbK0BSOht/kKG6MK4FqExsCS9GT2kgfWpDwHuB8DJn
+	7X8ykwMzQtea2lKIGn3YBCAlZe/on0zEYUZ7QM2DJwey0fcsZFjfxq5CJUncvauNDUFB+LNzyLRrx
+	FpttQiGedd/lssOL2KeAtifTa2zmCZm8U/jMfSz7ZNVbXfrRXyFZkXxq7FN0oN1/K2sNyV0JUS0Sa
+	rLY87LzQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEM6S-00000003YqA-1ESN;
+	Thu, 30 Oct 2025 06:25:44 +0000
+Message-ID: <6553266e-aa0e-4ca7-b83c-cf6df2764f3c@infradead.org>
+Date: Wed, 29 Oct 2025 23:25:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <554b2053-db21-46fa-b5b0-3d548c1e182d@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] kernel-chktaint: add reporting for tainted modules
+To: Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <20251029043901.10755-1-rdunlap@infradead.org>
+ <16cd7071-3c19-4e32-ba11-ce0856a6f2f8@leemhuis.info>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <16cd7071-3c19-4e32-ba11-ce0856a6f2f8@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 10:10:55AM +0800, Jingyi Wang wrote:
-> 
-> 
-> On 10/29/2025 7:28 PM, Rob Herring (Arm) wrote:
-> > 
-> > On Wed, 29 Oct 2025 01:05:41 -0700, Jingyi Wang wrote:
-> >> Document the component used to boot SoCCP on Kaanapali SoC and add
-> >> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
-> >> the "qcom,smem-states" and "qcom,smem-state-names" properties and
-> >> add conditions for the "interrupts" and "interrupt-names" properties
-> >> in the pas-common.
-> >>
-> >> Co-developed-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> >> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >> ---
-> >>  .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 134 +++++++++++++++++++++
-> >>  .../bindings/remoteproc/qcom,pas-common.yaml       |  83 +++++++++----
-> >>  2 files changed, 194 insertions(+), 23 deletions(-)
-> >>
-> > 
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:67.46-62 Unexpected 'IPCC_MPROC_SOCCP'
-> > Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:70.33-49 Unexpected 'IPCC_MPROC_SOCCP'
-> > FATAL ERROR: Syntax error parsing input tree
-> > make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dtb] Error 1
-> > make[2]: *** Waiting for unfinished jobs....
-> > make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1547: dt_binding_check] Error 2
-> > make: *** [Makefile:248: __sub-make] Error 2
-> > 
-> > doc reference errors (make refcheckdocs):
-> > 
-> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com
-> > 
-> > The base for the series is generally the latest rc1. A different dependency
-> > should be noted in *this* patch.
-> > 
-> > If you already ran 'make dt_binding_check' and didn't see the above
-> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> > date:
-> > 
-> > pip3 install dtschema --upgrade
-> > 
-> > Please check and re-submit after running the above command yourself. Note
-> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> > your schema. However, it must be unset to test all examples with your schema.
-> > 
-> 
-> Will add dependency in next version for the include files in example.
 
-Which would make it impossible to merge. Please read internal guideline
-because this problem happened multiple times and was already explained
-that many times, so for sure it is documented internally.
 
-Best regards,
-Krzysztof
+On 10/29/25 6:56 AM, Thorsten Leemhuis wrote:
+> On 10/29/25 05:39, Randy Dunlap wrote:
+>> Check all loaded modules and report any that have their 'taint'
+>> flags set along with a count of all tainted modules.
+>> The tainted module output format is:
+>>  * <module_name> (<taint_flags>)
+>>
+>> Example output:
+>>
+>> Kernel is "tainted" for the following reasons:
+>>  * externally-built ('out-of-tree') module was loaded  (#12)
+>>  * unsigned module was loaded (#13)
+>> Raw taint value as int/string: 12288/'G           OE      '
+>>
+>> Modules tainted: 1
+>>  * dump_test (OE)
+> 
+> Great. Now I wonder if the "1" really is needed, but whatever. I only
+> mentioned that because something else came to my mind:
+
+Agreed. Will drop that line.
+
+> The script can be called with a positive integer as parameter to decode
+> a value you retrieved from /proc/sys/kernel/tainted on another system.
+> Then the module check likely should be omitted. 
+> 
+> [...] 
+>> +echo "Raw taint value as int/string: $taint/'$out'"
+>> +
+>> +# report on any tainted loadable modules
+>> +[ -r /sys/module/ ] && cnt=`grep [A-Z] /sys/module/*/taint | wc -l` || cnt=0
+> 
+> Maybe by replacing that line with something like this (untested;
+> not even sure if the foo && bar && baz || foobar really works):
+> 
+> [ $1 -eq 0 ] && [ -r /sys/module/ ] && cnt=`grep [A-Z] /sys/module/*/taint | wc -l` || cnt=0  
+Looks good. I'll test that and send v3.Thanks.
+-- 
+~Randy
 
 
