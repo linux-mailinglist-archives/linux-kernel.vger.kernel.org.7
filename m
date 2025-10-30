@@ -1,173 +1,206 @@
-Return-Path: <linux-kernel+bounces-878787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B9AC2177D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 563A8C21789
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE1C4F0130
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:21:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAE954E64D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786D13678BB;
-	Thu, 30 Oct 2025 17:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04883678D5;
+	Thu, 30 Oct 2025 17:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkosZtNO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vi7jXVev"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC15F264F96;
-	Thu, 30 Oct 2025 17:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75902E339B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844874; cv=none; b=N2GFiXLbG8OomUTFd9azN7wIrdVRHcHzxxYaNA1yS8VH90iPG/Yh1xDju63DZL4sipvFN/kpFNePUnORUxlEIMx2Szcuh1FEBCQEeAhafVzqqQcn7f/Yv00b9EA4minqogGIp3sUd+76Plw6PQrfLj4HMyq2rcsYosno2t3OEqI=
+	t=1761844906; cv=none; b=sTkZeoJGGLCwZsIYVmi9VB4hw/FONeIggqhEle44YXxDZDGn5XTxkrFRNRzqn7FOS6CjF9B/xa2MaKdaWHS6BCoG8Q9iyl7ts5k74fUcjnKCb+Yzl7GeJJIo1HLdwpTyHgtR+HvS2UaoO0ztQczzhmKy8X32SMpMQAvs4Q6Rn+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844874; c=relaxed/simple;
-	bh=JCo5HIQRDgriwfHeMxFo07QUdYzeoGeZvmZg3jK3Ktg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=qFbKVSr31rfqPffi0akDUnI+T4kY+LvPJZbUQA+0lJcQjD/jiPSaumcsIU9tWQXt4mz56RCupahjMMCXXzMFMpXKUrNHEsxe/MOh117T8/xpT/l4Poc18UtKTdJ45hEnQsYO+P7GKXPdOSii4VLtwi9xP4iOeSQMB7fmzSus1uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkosZtNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FFDC4CEF8;
-	Thu, 30 Oct 2025 17:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761844873;
-	bh=JCo5HIQRDgriwfHeMxFo07QUdYzeoGeZvmZg3jK3Ktg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=RkosZtNOsm+vtoYvhZKOlYIMuXQi5jZj8S1y8yOPpfZLQBPtieRRq5wpIbSjc671s
-	 VSHS3aTFj0Fv6amYPZqUbrZzSg1xzQfPZIZ1J3vk1o8nnFo9tag/NNnGW8ccgZkvnK
-	 TIrqyrhtZljFBJyDwAl9RCFBjxKlQd711ofIBrJ5FT/Rkv+yhvZaSEtlRMxhN16D8X
-	 qfgpdTyxWx0Sbi3a8ZfRO5QeGLX7sumxLs8n7LLDFpQDT808OWkwDTPTWkE1hC7Tj0
-	 Ze5caPGHJEMqRytOgBCWpXtVsvIuaefKYz1nmRtghCH7yc/+Epl28ZWhy8hKQ6MmZl
-	 qsbGvxJ39H5/Q==
+	s=arc-20240116; t=1761844906; c=relaxed/simple;
+	bh=M+lkD0z2101EZTsNHSvQtIO2IpVhP4TmImyUnZxYJlQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=XCA+tsJrQ1GRJsvPBgcRyJObSFCV7XhExS5xW6jPg5ptukoSIwVqFBjDZv6g4hYy+3VSEbrA5sXbThXuHVNcTrKfbPAa2xZDJ8EgG6lT1rchZoSINn8pD8TZQ3fOrMddrcwhKwwJXJHNd8fS6bPnmdHpG41GH1Np/Y8hGhgrn4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vi7jXVev; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bbbb41a84so2865692a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:21:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761844904; x=1762449704; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1PEydywGHVT2WukPesarSlbXobm+ff+b++EOi4BTyU8=;
+        b=vi7jXVevZSYwu8yma4nYdS0WzksLMTwUE9Xhi2rM8JugnJkjky4Q0bpahAU33QPdo2
+         T7bZ3aDqOcxbQRHOuaAecmHevdGH5z2n/2gZy9w6jHrtSgE07hh5kxbexIl6AvYRjST4
+         nJmImpzX3BEzJFm4UW/IXAoXstSFRUT09TtxxKmQBv7nal7EsklH7ps6mxhgy+E9sKiO
+         BQcCd/Wsbys6TNK2OFL4/fLiYfLHSC/6dITqL0UDECzPx7O8jl1KNrF8tNv5qr4ei1X4
+         38pb7CehW/SqGuEpa4FHbMZJUf5SWxvNSEyma1pqQS8qiRshxZjouklVMFmtOajNBtQ3
+         s/FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761844904; x=1762449704;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1PEydywGHVT2WukPesarSlbXobm+ff+b++EOi4BTyU8=;
+        b=vLMT/2ffdXnQGz3wDzhhtSgmZ/Y8+eVh+R7iCO+Xl3MrWWEk19TRTm+Hzk8qSe/TmU
+         Cluy3tV8rmqoxYGNJFyeb1p28wOJCfObyEfLlpjyjW6U//pcz5Y9+T5DX5F/6gUkBins
+         gHNvtfU8BicTlq041pkt6Cpi4MaxP9f5nDoCJcyyuvmaUx0muND2AUHuWSYifKuEZPr1
+         d4kVWNhEod+zjzpW5/GkHzNvm7jqf5Z57MrnKDFicoaivJoadFV9980p+qzEckDdKm+o
+         QUPBMMS2DidmkUFtSkH+q8F00DJtHNCP/JU90hyeYbtgtxrRwVFZrAb3is1pE+Y71REy
+         PARg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyvFxxaI4YlrOttNqU/j7UwqCeJVDWwVlwsm20wxPbB4bXlQBgdWHELCIYfTv6peczFISV9OeCHqN/4fU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCEUqz7Wdxit3eHaW5lB7xKTPMhf5HQXLnJXftE5hub32J5mee
+	NoKd1JwSji1AwZFolHjdziKseeS7x0WzGZxSXbJVtdsjlHrV0jh1EjcZWPpOSVxOyFABo+g34SX
+	p/3DR8Dyztg==
+X-Google-Smtp-Source: AGHT+IGUU15B7H38ssSxFVgrFeKI92IY5bfaTIKG3VRo7CD4WQ2pJO8GQ1DIaBrFloEwYObPEcH0tuSm3K9v
+X-Received: from pjzb21.prod.google.com ([2002:a17:90a:e395:b0:332:4129:51b2])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d40c:b0:32b:623d:ee91
+ with SMTP id 98e67ed59e1d1-34083070e35mr580511a91.27.1761844904010; Thu, 30
+ Oct 2025 10:21:44 -0700 (PDT)
+Date: Thu, 30 Oct 2025 10:21:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 Oct 2025 18:21:06 +0100
-Message-Id: <DDVTVQ54W7FM.1XS6MIH4ALW8U@kernel.org>
-Subject: Re: [RFC 1/2] rust: introduce abstractions for fwctl
-Cc: "Zhi Wang" <zhiw@nvidia.com>, <rust-for-linux@vger.kernel.org>,
- <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>,
- <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
- <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
- <targupta@nvidia.com>, <zhiwang@kernel.org>, <alwilliamson@nvidia.com>,
- <acourbot@nvidia.com>, <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251030160315.451841-1-zhiw@nvidia.com>
- <20251030160315.451841-2-zhiw@nvidia.com>
- <20251030162207.GS1018328@nvidia.com>
-In-Reply-To: <20251030162207.GS1018328@nvidia.com>
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251030172140.1113556-1-irogers@google.com>
+Subject: [PATCH v2] perf s390-sample-raw: Cache counter names
+From: Ian Rogers <irogers@google.com>
+To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu Oct 30, 2025 at 5:22 PM CET, Jason Gunthorpe wrote:
-> On Thu, Oct 30, 2025 at 04:03:12PM +0000, Zhi Wang wrote:
->> +impl<T: FwCtlOps> Registration<T> {
->> +    /// Allocate and register a new fwctl device under the given parent=
- device.
->> +    pub fn new(parent: &device::Device) -> Result<Self> {
->> +        let ops =3D &FwCtlVTable::<T>::VTABLE as *const _ as *mut _;
->> +
->> +        // SAFETY: `_fwctl_alloc_device()` allocates a new `fwctl_devic=
-e`
->> +        // and initializes its embedded `struct device`.
->> +        let dev =3D unsafe {
->> +            bindings::_fwctl_alloc_device(
->> +                parent.as_raw(),
->> +                ops,
->> +                core::mem::size_of::<bindings::fwctl_device>(),
->> +            )
->> +        };
->> +
->> +        let dev =3D NonNull::new(dev).ok_or(ENOMEM)?;
->> +
->> +        // SAFETY: `fwctl_register()` expects a valid device from `_fwc=
-tl_alloc_device()`.
->> +        let ret =3D unsafe { bindings::fwctl_register(dev.as_ptr()) };
->
-> This is a Bound device, not just any device.
+Searching all event names is slower now that legacy names are
+included. Add a cache to avoid long iterative searches.
 
-Indeed, the safety comment should mention this. And if it would it could no=
-t
-justify it with the current code, since the function takes a &Device instea=
-d of
-the required &Device<Bound> argument.
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-e4a64ed61d38@linux.ibm.com/
+Signed-off-by: Ian Rogers <irogers@google.com>
+--
+v2: Small tweak to the cache_key, just make it match the wanted event value.
+---
+ tools/perf/util/s390-sample-raw.c | 56 ++++++++++++++++++++++++++++---
+ 1 file changed, 51 insertions(+), 5 deletions(-)
 
->> +        if ret !=3D 0 {
->> +            // SAFETY: If registration fails, release the allocated fwc=
-tl_device().
->> +            unsafe {
->> +                bindings::put_device(core::ptr::addr_of_mut!((*dev.as_p=
-tr()).dev));
->
-> ?? Don't open code fwctl_put() - it should be called directly?
->
->> +            }
->> +            return Err(Error::from_errno(ret));
->> +        }
->> +
->> +        Ok(Self {
->> +            fwctl_dev: dev,
->> +            _marker: PhantomData,
->> +        })
->> +    }
->> +
->> +    fn as_raw(&self) -> *mut bindings::fwctl_device {
->> +        self.fwctl_dev.as_ptr()
->> +    }
->> +}
->> +
->> +impl<T: FwCtlOps> Drop for Registration<T> {
->> +    fn drop(&mut self) {
->> +        // SAFETY: `fwctl_unregister()` expects a valid device from `_f=
-wctl_alloc_device()`.
->
-> Incomplete safety statement, the device passed to fwctl_alloc_device must
-> still be bound prior to calling fwctl_unregister
->
->> +        unsafe {
->> +            bindings::fwctl_unregister(self.as_raw());
->> +            bindings::put_device(core::ptr::addr_of_mut!((*self.as_raw(=
-)).dev));
->
-> There for Drop can only do fwctl_put() since otherwise there is no way
-> to guarantee a Bound device.
->
-> unregister has to happen before remove() completes, Danilo had some
-> approach to this I think he told me?
+diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
+index 335217bb532b..f5acf6dfa8d0 100644
+--- a/tools/perf/util/s390-sample-raw.c
++++ b/tools/perf/util/s390-sample-raw.c
+@@ -19,12 +19,14 @@
+ 
+ #include <sys/stat.h>
+ #include <linux/compiler.h>
++#include <linux/err.h>
+ #include <asm/byteorder.h>
+ 
+ #include "debug.h"
+ #include "session.h"
+ #include "evlist.h"
+ #include "color.h"
++#include "hashmap.h"
+ #include "sample-raw.h"
+ #include "s390-cpumcf-kernel.h"
+ #include "util/pmu.h"
+@@ -132,8 +134,8 @@ static int get_counterset_start(int setnr)
+ }
+ 
+ struct get_counter_name_data {
+-	int wanted;
+-	char *result;
++	long wanted;
++	const char *result;
+ };
+ 
+ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+@@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+ 
+ 	rc = sscanf(event_str, "event=%x", &event_nr);
+ 	if (rc == 1 && event_nr == data->wanted) {
+-		data->result = strdup(info->name);
++		data->result = info->name;
+ 		return 1; /* Terminate the search. */
+ 	}
+ 	return 0;
+ }
+ 
++static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unused)
++{
++	return key;
++}
++
++static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void *ctx __maybe_unused)
++{
++	return key1 == key2;
++}
++
+ /* Scan the PMU and extract the logical name of a counter from the event. Input
+  * is the counter set and counter number with in the set. Construct the event
+  * number and use this as key. If they match return the name of this counter.
+@@ -164,17 +176,51 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+  */
+ static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
+ {
++	static struct hashmap *cache;
++	static struct perf_pmu *cache_pmu;
++	long cache_key = get_counterset_start(set) + nr;
+ 	struct get_counter_name_data data = {
+-		.wanted = get_counterset_start(set) + nr,
++		.wanted = cache_key,
+ 		.result = NULL,
+ 	};
++	char *result = NULL;
+ 
+ 	if (!pmu)
+ 		return NULL;
+ 
++	if (cache_pmu == pmu && hashmap__find(cache, cache_key, &result))
++		return strdup(result);
++
+ 	perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/ true,
+ 				 &data, get_counter_name_callback);
+-	return data.result;
++
++	if (data.result)
++		result = strdup(data.result);
++
++	if (cache_pmu == NULL) {
++		struct hashmap *tmp = hashmap__new(get_counter_name_hash_fn,
++						   get_counter_name_hashmap_equal_fn,
++						   /*ctx=*/NULL);
++
++		if (!IS_ERR(cache)) {
++			cache = tmp;
++			cache_pmu = pmu;
++		}
++	}
++
++	if (cache_pmu == pmu) {
++		char *old_value = NULL, *new_value = strdup(result);
++
++		if (new_value) {
++			hashmap__set(cache, cache_key, new_value, /*old_key=*/NULL, &old_value);
++			 /*
++			  * Free in case of a race, but resizing would be broken
++			f  * in that case.
++			  */
++			free(old_value);
++		}
++	}
++	return result;
+ }
+ 
+ static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
+-- 
+2.51.1.930.gacf6e81ea2-goog
 
-Yeah, such Registration structures of (class) devices should be wrapped int=
-o a
-Devres container (i.e. Devres<fwctl::Registration>)to be able to provide th=
-is
-guarantee. See also my other reply to this patch [1].
-
-While not a class device, the auxiliary bus with its auxiliary::Registratio=
-n
-[2], is a good example.
-
-Alternatively (or additionally), it can also be implemented in a way that t=
-he
-driver does not get control over a Registration object at all, but once cre=
-ated
-it is not accessible anymore and automatically dropped on parent device unb=
-ind.
-This approach is used by cpufreq [3].
-
-It always depends on whether a driver might want to drop the Registration
-manually before device unbind.
-
-[1] https://lore.kernel.org/lkml/DDVT5YA564C6.3HN9WCMQX49PC@kernel.org/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core=
-.git/tree/rust/kernel/auxiliary.rs?id=3Db0b7301b004301afe920b3d08caa6171dd3=
-f4011#n304
-[3] https://rust.docs.kernel.org/kernel/cpufreq/struct.Registration.html#me=
-thod.new_foreign_owned
 
