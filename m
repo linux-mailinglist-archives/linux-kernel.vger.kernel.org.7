@@ -1,133 +1,112 @@
-Return-Path: <linux-kernel+bounces-879152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2036C2264B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:16:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147DEC22667
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57013401BCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC4A188BC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA9B29C33F;
-	Thu, 30 Oct 2025 21:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0A62EBBB3;
+	Thu, 30 Oct 2025 21:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="LThl9Pbr"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="or7uHJAn"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1C71C84A2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EB0248891
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761858999; cv=none; b=SXsNtIxWuhqCp8baWNzGnVaek+6IpP4sDxsv53o7ktLWTYKBKuwn6KuTMAsyR3J3hmoQyQKc/4dhrr4EDEPBh0/Ub+j7iRGTONLSxF3MD0Md5CIRYg1v2y7ZaIv1G9shvrMDZ7q5gHi/oagsUpaBgq3NHvGO7FqdTLPXCpApuqg=
+	t=1761859020; cv=none; b=Q70Srxxvzvf2NKFsjjryOZAhJu/Mhqxpha+gcVYmgHjk0bOqIx6f6XU++GeT5wIFI2ol9/B0xCU6xWxi9mfnWwPTNYa8EUBlJW5/SC6cvz0iyF4w5bMSkrQKrOHh4OABR/HgT0H/O82XvSMQFi1JxQ7aVkTuwafKzRldvJWu8Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761858999; c=relaxed/simple;
-	bh=wbc8GWEN44VpU76HtfVO0TmGiof5cWv4oS+Oz0cnAN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mn0tRM9iD5bvln7oDNGR8MkzKUEmc+njq5Z5immLY9hCaIB98iJMu2v7YeXqLBQJA7tdwrXcBxVyZgb6sYJ+X69rVzN2y8tDCcKWyNJXxQzAWs9hnaZi1V18hthlMQWA55MTbdPZL85m2SW4Bunz1FLIWfHObtT25HTu93yzehg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=LThl9Pbr; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-431da4fa224so12880935ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:16:37 -0700 (PDT)
+	s=arc-20240116; t=1761859020; c=relaxed/simple;
+	bh=z6375WTq4Yvi4ovxduQFOHZwxvwgNlfEn5b74zi9Rbg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=ansq7RC2z4wuh1JEaGoUzh4ezMSY9nSjwG0KP87oZKzQsEaPHgkK7tSNjWT4aDIFutX40liYbbCHaj5Tqalmn7KXt3plH3gX6d6UHZaZ/6Gu27KU9258REO+C4+T8WNie8mvxvulrSQ4U9FwqcH695kZEYDOi4FmrnSV3dx0C8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=or7uHJAn; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42421b1514fso980402f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1761858996; x=1762463796; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=n046el6sn/MYU05rldbKheOWhX/l2k6l2dudBMXzrMQ=;
-        b=LThl9PbrgmuLP8U1jS1l/3MeymFaDjPZu9y6S+dIoKPKhyf6ly2H4gYOBy0ngDowsJ
-         zXzt4pVmiffHV+durdNT4elmol8DmUt2rTCCfOPPkFWltM9fPszXh/GNgJOU2dR99Dxw
-         rYyn9KuIv/AQPwYYQ+SAuHB2gnOjuyTxrPrpvlHhPxvFCDf0yheER6NRN8d2q3W/PgBp
-         ApQ38kyObKJl9ozQGKj4DjUk0GlUFnJqFzeSKzu4cmKidV+zEtqIcTol0hRqTa7MjrGg
-         RSozG824Gv+SawO4RXJYWnDxnmvHGcZk1/LWUVQwKJV+6SEwvT2MrsTVn6sIM7c/XpEv
-         HEUA==
+        d=linaro.org; s=google; t=1761859016; x=1762463816; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z6375WTq4Yvi4ovxduQFOHZwxvwgNlfEn5b74zi9Rbg=;
+        b=or7uHJAne3M168VW5hkOAZiNpBMKOY/XL62YNrIOzzKli99+ZiKYNPGbBTTqHhJAcC
+         h8BaAR/XjfhU0KG8oOpSV2rWvK5zON3ddOhOUG94cz6m7Nsivhma0lfflIr4zWBf9OMC
+         LkmZa7csBbFQxKFaqTU+y4pz0Q/K44e4M1YycNmryoUWcT8RPV8mhIBw6E6LZz3Nklz1
+         e/H1DL38CV1fDfXkd5Se7aElLvaxurMsqbRvB3KRDXdz8ibIlVDeOQQ0YCF2hZE6MUTR
+         7ZO95od0DmaVP9INcPeH1fagbYP03duxKLGtFPFtpzWE4k2LsnztzQ891E7KyX/y+n82
+         AgSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761858996; x=1762463796;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n046el6sn/MYU05rldbKheOWhX/l2k6l2dudBMXzrMQ=;
-        b=kK6yfJk2r6sJpZx4diUVJ7Vw32JwB6G+dMki2tjB0pSP4PIHMY1GPonBYdqnBU3C6C
-         VgubsJHUWWGVmg7zyFzvQOEF6Dk4PKQGoXDrmJTUVPpTBSeP7brqwrrGPnu9OTePgXHW
-         eAkDYiHINvlCNcVF6teYP/P3yKvyrF+bgYd0vmERhcB+8WJLo1TqN22AcxVtqabMtijD
-         6ziNOHj8gayUjSwvMGwrohvSTAuaIE8ofK+QSF7ylLTB90MAkfR63/b6uzo96JILmyAN
-         kzeKOFfvIcvv/Ca6OPyaKd6ye6zPH3H8i7KFImIoRJR5eclPxLulfil90IAccbJmHmsg
-         BcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Ncc/e7yg41xNEkw602nyMi+Vt3JPAmVx+KUCWGIBtDgHYmTf4tGcR6G6P+PJfZUquOpBNIHE026umQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp1m4ZAIkRA9JsmwZibFbUZIXK0y8RBAqq0cEvy0J1+OL8EsCM
-	yYtNm2F2jdpvmknNv46bwFj65ng79d59QauxoI44V1mufRlPI4+j7w2skOeZlUyS/Rw=
-X-Gm-Gg: ASbGnct2tgTWY+CiII8flYm+NwlhW88v/MXXptzFK8eP5Rb+1CVMNVI9cOA8woOHSeG
-	e9IYg9aZyVJaEbKt3nMYWULXLBAkSNjU4c3EpKUH5N1Y+Bqq+lLZUp0fF9JLUDDSjprwknfVvAv
-	ZMF4kQ0O9QF+143iUi5Ew91Ghfk1oDkaFSo3tN5xPj3LzQQ3eCdlp0T79Pyltbfs2YDjNxeOSR4
-	C7267zaVxNTHK94XTZ4gLLtxAQHWBBVHK3AyL7H07J4qx355wryK9vIig+mVLRI3voLLW3X9Qql
-	5+zSO4CxBbrnfz7wTmWvxxeni4FuNhwWAb7j0rJaAIG46ZvcRtfo42zQJvDQG0NNE2TiKCymlb9
-	fmYXbIVSL/vHGrCxQgY7E8IfjxgyDJYsIz6ibnGsuNbe5/pSEDjG7w+SpHygvaW1xNtNVkBJL2n
-	tGPg==
-X-Google-Smtp-Source: AGHT+IGcDmB7cMvg4ddm9ByxIP9HsB/n5kBYe0Lh8poaDBazZPyPmATszhVqnQa6SFc0vrwo+UWsdw==
-X-Received: by 2002:a92:ca46:0:b0:430:a183:7b with SMTP id e9e14a558f8ab-4330d12268emr20926665ab.3.1761858996489;
-        Thu, 30 Oct 2025 14:16:36 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea9e38418sm7130598173.61.2025.10.30.14.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 14:16:35 -0700 (PDT)
-Date: Thu, 30 Oct 2025 16:16:35 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
-Cc: alex@ghiti.fr, alexghiti@rivosinc.com, aou@eecs.berkeley.edu, 
-	cleger@rivosinc.com, evan@rivosinc.com, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, palmer@dabbelt.com, pjw@kernel.org, samuel.holland@sifive.com, 
-	shuah@kernel.org, zhangyin2018@iscas.ac.cn, zihongyao@outlook.com
-Subject: Re: [PATCH v3 2/2] selftests/riscv: Add Zicbop prefetch test
-Message-ID: <20251030-3c0cafb066281de4dacd4000@orel>
-References: <20251021-01a9b77e3d88543581f1a7fb@orel>
- <20251023154841.36007-1-zihong.plct@isrc.iscas.ac.cn>
+        d=1e100.net; s=20230601; t=1761859016; x=1762463816;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=z6375WTq4Yvi4ovxduQFOHZwxvwgNlfEn5b74zi9Rbg=;
+        b=plTO0pxMDeDP6VuK5mavwuWBFXPcPKB0+SEWu9YzLlxZBpyNdl4pWqejM91hBL+kF1
+         OOfgrw8eno5lQYG8oDas2xTYTk9PeLGqnY/rEP6nq1P0OOgprz9IuEiSIpQh4UJ6x/2I
+         KYX56cD2qz8s3VYbNgNEbciGcvL/qXlJYBgYdpuhYRHCuYUHzdYtEXSGCSEJtIyKTfRS
+         zguqu3SS7Ky5ZM35KNeyVZwcnSapCkuR2WL5VsgWSk0Hck8FOX15er0u1hJB8mBFx0s5
+         ecMOSnVYDavarraQdab4d1PQEp5EXwrW+DKqF71IxXEzDF7IWZBBk1kn/LqZh0ZaFsD3
+         kSoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgfbyitLpMEJzT6NDvqZjo1WG1lcQg2o52fUy3Pn5Q+CESJ/xHQ4SNrC6GS0Bbhhm/ldxLMHVyCrDxIRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFUoMTNkmq2RYO8CpRmyyj+o0zhQ8PScvjQIjDepmQgEyxsqfO
+	MojfHi7DWXpaFHmQv42e9TKlT3PxELMb48O8TLRX0gYBmH97Dmia84MW7g2skGR9uMY=
+X-Gm-Gg: ASbGncvXV9q8C5bZX5CP9dC80x0Odu6jvwU87mM0OgiVQh00yEH6wVRfwKt8zCBt1T1
+	l/woPRYsI4W5MNKjzwEiLsN45hshqa3rLh88xFM9JQoZQ6YAs2kZVga9iBlZGBtHr+eN3ZH0DrO
+	TUs4eE01hMWkPW+F+Jsu2JhawcInVr89XdlYBin9SW20OdlfQXE1/j0a4YTftguzvZ7eMpM5NVL
+	TGMkHqh9e7eK3H4KpZMTCCxJyAxxuiNneGuJqo4zT1xpwDkKbnZOlF/1mlbVqOYJ3KryoUFzCIR
+	2uZW2s5Q+BJgDM9k3aHHzIufbQXF+Pzm8zBaDdWlYVabqLlAD6Bp6wvQloTFftVUK3gBcK68ntr
+	4kJhLRzqFcolu+OcMuYixZMCoeH5LmMruz3o2ujTuik03xBGLjGe0FCJg7N0cdPc53ir6Dch1kZ
+	PvTexX+Xu3W92lwE5oA0BFcJLUJA==
+X-Google-Smtp-Source: AGHT+IER+NlrHMyAE87dwI1tkEn0iN9IkW6YNIezVtY3mnKy8AByh4iQATc1QapWcTKE5yrO18mcDQ==
+X-Received: by 2002:a5d:588e:0:b0:428:5674:7a13 with SMTP id ffacd0b85a97d-429bd6adccamr865686f8f.36.1761859016075;
+        Thu, 30 Oct 2025 14:16:56 -0700 (PDT)
+Received: from localhost (054722ac.skybroadband.com. [5.71.34.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429bf19c53csm626241f8f.34.2025.10.30.14.16.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 14:16:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251023154841.36007-1-zihong.plct@isrc.iscas.ac.cn>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 30 Oct 2025 21:16:54 +0000
+Message-Id: <DDVYW9DO3Y24.36V1557ZYB2XI@linaro.org>
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: rename qcm2290 to agatti
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Bjorn
+ Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <cros-qcom-dts-watchers@chromium.org>
+Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20251030-rename-dts-2-v1-0-80c0b81c4d77@oss.qualcomm.com>
+ <20251030-rename-dts-2-v1-1-80c0b81c4d77@oss.qualcomm.com>
+In-Reply-To: <20251030-rename-dts-2-v1-1-80c0b81c4d77@oss.qualcomm.com>
 
-On Thu, Oct 23, 2025 at 11:48:18PM +0800, Yao Zihong wrote:
-> > Undesired reformatting
-> My bad. It will be fixed in the next version.
-> 
-> > Should we just unconditionally register handlers for SIGSEGV and SIGBUS?
-> I think it depends on what the flags --sig{segv,ill,bus} are intended to mean:
-> 
->   a) We intend to handle these faults that might be raised inside the test
->      (i.e., catch and convert them into pass/fail results without crashing the
->      test binary, rather than letting something else handle them externally).
->   b) We expect these signals to be raised as part of the test scenario and
->      handle them within the test program accordingly.
-> 
-> I'm not sure if (a) is appropriate, since it might mess up someone’s CI
-> or other automation setups.
+On Thu Oct 30, 2025 at 6:20 PM GMT, Dmitry Baryshkov wrote:
+> QCM2290 and QRB2210 are two names for the same die, collectively known
+> as 'agatti'. Follow the example of other platforms and rename QCM2290 to
+> agatti.dtsi.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-The intention of --sigill is to tell the test that a SIGILL is expected
-and tests should be run to ensure they are raised. We should probably
-allow that expectation to be extension specific though, i.e. have both a
---zicbom-raises-sigill and a --zicboz-raises-sigill
+Reviewed-by: Alexey Klimov <alexey.klimov@linaro.org>
 
-> 
-> If we’re going with (b), then registering handlers for SIGSEGV and SIGBUS
-> based on flags would be inconsistent with that semantics, since prefetch.*
-> should never legitimately raise them. In that case, this design probably
-> doesn’t make sense. Would it also make sense to rename the '--sigill' flag
-> to make this clearer?
-
-Since SIGSEGV and SIGBUS are never expected, then we could always handle
-those in order to report failures, but we should narrow the time the
-handlers are registered to be just around the use of instructions under
-test.
 
 Thanks,
-drew
+Alexey
 
