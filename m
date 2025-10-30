@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-877399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0C0C1E089
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:35:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B557FC1E098
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B2C2634C1CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:35:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DC644E45BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52322874E9;
-	Thu, 30 Oct 2025 01:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08B428BAAC;
+	Thu, 30 Oct 2025 01:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VZnkMGZA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jpeMWmtz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14758126BF1;
-	Thu, 30 Oct 2025 01:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E93230BCB;
+	Thu, 30 Oct 2025 01:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761788135; cv=none; b=aEJMJ0A8geqfMvo2DWyU/3vz0Ec0MopXrt2EJ9FfkegBrbOcrJ0cT7Vkn8xrywRoI4VcNrARS99wjP3C7EE8Ldmk/h0A5eynj1/316YEIkcvEH/2gic50wNxkM7lsNMSgRSbIYUNWA/Kv5/qWj1Klb/sNg4uakWI2YV/c7taVOo=
+	t=1761788285; cv=none; b=q9ttNXBLjIgam09GDPRZ4tNgmLCnBQs4JHQ5pcR7DbYsiG3YD96VgMAxuKmJ4l8pYVodo8EVqUqsjdUEZH1rQDsL6/VfHQWOgxDZaXJB99Zsfh8q/H+tVtYQeS5MBxZ883SowIpJ3E1ZIZmekxr9AoPTMj8/A9cZZv9fzrdwUgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761788135; c=relaxed/simple;
-	bh=3ZvXNTRQF9vLAa2yTsTcBzleKVLlMdappktmXpqMvQ0=;
+	s=arc-20240116; t=1761788285; c=relaxed/simple;
+	bh=8CXfEmdN7+qbIHv8ZgbRK4KEOPrzqAYXFfVFVXNHKCo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d2w4jEzWsiukOH4Gi+Dc0jwAir5cy/IpQaP4Gsin1MWmSQ/Ujfay3yj219apflR/ZoMw33XvvSnY2MVzaIyS2Qs2UAVOBYNOri3r2qk7w4qTvdTmNePZzAAKNPqUyz7iOVlhCdPjYUwXNENGY1nCblDn/+BSbsY4HRt6yvLW30c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VZnkMGZA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=I+p3nAqMLI/zIhtuMxwdpUBm1FGCJ5lAvlvbU+1uuPs=; b=VZnkMGZASX46dSzZ4+Aa2XTbnx
-	/OWYan8yk1buG1vgVHhr/TWJmxbT9qp2iybS9Py93MXZk8g+sf7wHNytAHoC+4CVR0TZW8NYjzbOZ
-	+VsdTTk2BxIgg4fy7F1akRJFj5Kf54X9likzxEizVlq1ihm8bnrHvSc0EMRULPhmvHkidLFcliBHh
-	8iuRB1wHwc9XeTrIkRPvTttjg25CdqGAOsVN0A3zRt/usjbfvyrgXEUdTxBd/qy/HF3ONspuN/W8f
-	ZNRt7UqVllZz5r6Pua4CpkoP/xVJDWxQVvcYjsgNs4qn8hYYplBUCzvdnIlaWvD/aOtLt993H5vH+
-	gnEUqhLg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEHZZ-00000003KxJ-20Gu;
-	Thu, 30 Oct 2025 01:35:29 +0000
-Message-ID: <01992fa4-c982-49e8-9152-e6a716552a3b@infradead.org>
-Date: Wed, 29 Oct 2025 18:35:28 -0700
+	 In-Reply-To:Content-Type; b=Z36XAqut4KRH8JHGiASnJ5ZdtNDMYndh16sua7ckccLj+hE8Pe3SmI+42sAuGULrM3b7fLAWBfpMkxpcA0HXe1mlKsaKJy9QSAOm0VaHxjGm0dysjRFtYUTadajel8XJaSYGXh/Y1ojqs2gwXqzdpklvvLJdhoOtePi5AIWQ5SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jpeMWmtz; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761788282; x=1793324282;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8CXfEmdN7+qbIHv8ZgbRK4KEOPrzqAYXFfVFVXNHKCo=;
+  b=jpeMWmtzGRm0aoL0Y5Kn4ojzxcCm25O9jRlLUWUq2dfzLs9ZxX163biZ
+   tjKsTP4hj7tNJWxVgrog9lIlK5VBlSODaLyZRDX90UGVoeouA4Zw+v9hW
+   eZ1MGW8dulrWhqq+WFwlnD3RWCGTs0YPQBdyzYeLADuUMIE1sbbFA49en
+   JYZeraTbR0aVhaHzTsH0SdiP5ljAf3b+s/z8FiozDKZ2KK8fx934/PrTI
+   l4bwIIZnuHPhHI7JcPyx3OFoKN6kJpgRsilca650wry232RICm2e6deTu
+   EK6A3o7BVGe9clESEOKUPcmvMxBHHCH5KWklXr8Q8mBmHDQbLG+hKJ+pW
+   A==;
+X-CSE-ConnectionGUID: GqFjvIw1TyCzT8jiPNo3MA==
+X-CSE-MsgGUID: ti5p83lcQgaMsunPKEdYzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="62946809"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="62946809"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 18:38:01 -0700
+X-CSE-ConnectionGUID: WyGLG1SGRci4D4Kk5FReCw==
+X-CSE-MsgGUID: ADaadpWjRrin+SsKlbWaOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="185910309"
+Received: from haochenw-mobl1.ccr.corp.intel.com (HELO [10.238.3.228]) ([10.238.3.228])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 18:37:57 -0700
+Message-ID: <8b53854e-f407-4c58-badc-01327d2d4be0@linux.intel.com>
+Date: Thu, 30 Oct 2025 09:37:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,119 +66,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: input: expand INPUT_PROP_HAPTIC_TOUCHPAD
- to all pressure pads
-To: Peter Hutterer <peter.hutterer@who-t.net>,
- Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
- Sean O'Brien <seobrien@google.com>
-References: <20251030011735.GA969565@quokka>
+Subject: Re: [PATCH 1/2] perf/x86/intel/uncore: Skip discovery table for
+ offline dies
+To: Zide Chen <zide.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Xudong Hao <xudong.hao@intel.com>, Falcon Thomas <thomas.falcon@intel.com>,
+ Steve Wahl <steve.wahl@hpe.com>
+References: <20251029220711.57909-1-zide.chen@intel.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251030011735.GA969565@quokka>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251029220711.57909-1-zide.chen@intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
 
-On 10/29/25 6:17 PM, Peter Hutterer wrote:
-> Definition: "pressure pad" used here as all touchpads that use physical
-> pressure to convert to click without physical hinges. Also called haptic
-> touchpads in general parlance, Synaptics calls them ForcePads.
-> 
-> Most (all?) pressure pads are currently advertised as
-> INPUT_PROP_BUTTONPAD. The suggestion to identify them as pressure pads
-> by defining the resolution on ABS_MT_PRESSURE has been in the docs since
-> commit 20ccc8dd38a3 ("Documentation: input: define
-> ABS_PRESSURE/ABS_MT_PRESSURE resolution as grams") but few devices
-> provide this information.
-> 
-> In userspace it's thus impossible to determine whether a device is a
-> true pressure pad (pressure equals pressure) or a normal clickpad with
-> (pressure equals finger size).
-> 
-> Commit 7075ae4ac9db ("Input: add INPUT_PROP_HAPTIC_TOUCHPAD") introduces
-> INPUT_PROP_HAPTIC_TOUCHPAD but restricted it to those touchpads that
-> have support for userspace-controlled effects. Let's expand that
-> definition to include all haptic touchpads (pressure pads) since those
-> that do support FF effects can be identified by the presence of the
-> FF_HAPTIC bit.
-> 
-> This means:
-> - clickpad: INPUT_PROP_BUTTONPAD
-> - pressurepad: INPUT_PROP_BUTTONPAD + INPUT_PROP_HAPTIC_TOUCHPAD
-> - pressurepad with haptics:
->   INPUT_PROP_BUTTONPAD + INPUT_PROP_HAPTIC_TOUCHPAD + FF_HAPTIC
-> 
-> Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+On 10/30/2025 6:07 AM, Zide Chen wrote:
+> This warning can be triggered if NUMA is disabled and the system
+> boots with fewer CPUs than the number of CPUs in die 0.
+>
+> WARNING: CPU: 9 PID: 7257 at uncore.c:1157 uncore_pci_pmu_register+0x136/0x160 [intel_uncore]
+>
+> Currently, the discovery table continues to be parsed even if all CPUs
+> in the associated die are offline. This can lead to an array overflow
+> at "pmu->boxes[die] = box" in uncore_pci_pmu_register(), which may
+> trigger the warning above or cause other issues.
+>
+> Reported-by: Steve Wahl <steve.wahl@hpe.com>
+> Fixes: edae1f06c2cd ("perf/x86/intel/uncore: Parse uncore discovery tables")
+> Signed-off-by: Zide Chen <zide.chen@intel.com>
 > ---
-> 
-> Original patch series: https://lore.kernel.org/linux-input/20251024033045.GA48918@quokka/T/#m20ec992705f449f9d9758e0080622cfae1c90660
-> See my comment there: https://lore.kernel.org/linux-input/20251024033045.GA48918@quokka/T/#u
-> 
-> My motivation is that we need something to identify pressurepads that
-> do not expose actual haptic feedback configuration. Right now we're
-> adding quirks for each device in libinput but that doesn't scale and
-> HID defines Usage Page 0x0D Usage 0x55 [1] to tell us whether the form
-> factor is a pressurepad, we're just not using it (yet).
-> 
-> I don't think adding a separate INPUT_PROP_PRESSUREPAD is the right
-> thing to do - HAPTIC_TOUCHPAD is good enough since presence of the
-> FF_HAPTICS bit indicates that it is controllable.
-> 
-> [1] https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection#device-capabilities-feature-report
-> 
-> 
->  Documentation/input/event-codes.rst | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
-> 
-> diff --git ./Documentation/input/event-codes.rst ../Documentation/input/event-codes.rst
-> index 1ead9bb8d9c6..304d11297d3f 100644
-> --- a/Documentation/input/event-codes.rst
-> +++ b/Documentation/input/event-codes.rst
-> @@ -403,16 +403,25 @@ regular directional axes and accelerometer axes on the same event node.
->  INPUT_PROP_HAPTIC_TOUCHPAD
->  --------------------------
+>  arch/x86/events/intel/uncore.c           | 4 ++++
+>  arch/x86/events/intel/uncore_discovery.c | 2 +-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+> index ee586eb714ec..5c3aeea5c78d 100644
+> --- a/arch/x86/events/intel/uncore.c
+> +++ b/arch/x86/events/intel/uncore.c
+> @@ -1380,6 +1380,10 @@ static void uncore_pci_pmus_register(void)
 >  
-> -The INPUT_PROP_HAPTIC_TOUCHPAD property indicates that device:
-> -- supports simple haptic auto and manual triggering
-> +The INPUT_PROP_HAPTIC_TOUCHPAD property indicates that the device provides
-> +simulated haptic feedback (e.g. a vibrator motor situated below the surface)
-> +instead of physical haptic feedback (e.g. a hinge). This property is only set
-> +if the device:
->  - can differentiate between at least 5 fingers
->  - uses correct resolution for the X/Y (units and value)
-> -- reports correct force per touch, and correct units for them (newtons or grams)
->  - follows the MT protocol type B
-
-Looks reasonable to me. But the list above and the one below
-are not rendered as lists in html. It would be nice to convert
-them to lists.
-
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
->  
-> +If the simulated haptic feedback is controllable by userspace the device must:
-> +- support simple haptic auto and manual triggering, and
-> +- report correct force per touch, and correct units for them (newtons or grams), and
-> +- provide the EV_FF FF_HAPTIC force feedback effect.
+>  		for (node = rb_first(type->boxes); node; node = rb_next(node)) {
+>  			unit = rb_entry(node, struct intel_uncore_discovery_unit, node);
 > +
->  Summing up, such devices follow the MS spec for input devices in
-> -Win8 and Win8.1, and in addition support the Simple haptic controller HID table,
-> -and report correct units for the pressure.
-> +Win8 and Win8.1, and in addition may support the Simple haptic controller HID
-> +table, and report correct units for the pressure.
-> +
-> +Where applicable, this property is set in addition to INPUT_PROP_BUTTONPAD, it
-> +does not replace that property.
->  
->  Guidelines
->  ==========
+> +			if (WARN_ON(unit->die >= uncore_max_dies()))
 
--- 
-~Randy
+Base on my understanding, it seems an valid situation which could happen.
+If so, we'd better remove the WARN_on to avoid it mislead users. Thanks.
+
+
+
+> +				continue;
+> +
+>  			pdev = pci_get_domain_bus_and_slot(UNCORE_DISCOVERY_PCI_DOMAIN(unit->addr),
+>  							   UNCORE_DISCOVERY_PCI_BUS(unit->addr),
+>  							   UNCORE_DISCOVERY_PCI_DEVFN(unit->addr));
+> diff --git a/arch/x86/events/intel/uncore_discovery.c b/arch/x86/events/intel/uncore_discovery.c
+> index 1bf6e4288577..d6aee12139f1 100644
+> --- a/arch/x86/events/intel/uncore_discovery.c
+> +++ b/arch/x86/events/intel/uncore_discovery.c
+> @@ -388,7 +388,7 @@ static bool intel_uncore_has_discovery_tables_pci(int *ignore)
+>  				     (val & UNCORE_DISCOVERY_DVSEC2_BIR_MASK) * UNCORE_DISCOVERY_BIR_STEP;
+>  
+>  			die = get_device_die_id(dev);
+> -			if (die < 0)
+> +			if ((die < 0) || (die >= uncore_max_dies()))
+>  				continue;
+>  
+>  			parse_discovery_table(dev, die, bar_offset, &parsed, ignore);
 
