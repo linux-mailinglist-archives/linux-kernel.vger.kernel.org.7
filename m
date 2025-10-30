@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-877809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD65C1F111
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:49:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11D1C1F23C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF183B6F98
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:47:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D6C424FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC4732C930;
-	Thu, 30 Oct 2025 08:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EAF339B4E;
+	Thu, 30 Oct 2025 08:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nmzpqbDj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ITFmpGqq"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n658eDyt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1A72DC76F;
-	Thu, 30 Oct 2025 08:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6096531E0F7;
+	Thu, 30 Oct 2025 08:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761814066; cv=none; b=QeoOTzMX5dP0uffAcf7RrbNtwdbRC1oqlXX2yl9W31hcI9t/dBgAiVcvC8QIRCtfOB+y+THwckFnGmWTnr6UbaTSlHPDfbV1kIAM25oF5LvTwFcaToao9f4eSUMeXJIuHDrd/SCW/dk+nk8JFSkvRRXFoormczsMNf3tsRN7Fl4=
+	t=1761814408; cv=none; b=NGlpgh8snqPub5XGY+Zru80QOlkIo9fcm9gEeT4D2iCsrtP7PQ3c19vx5CEnXbipVpmKnlzhGq8EVoyUM4QS/eGZGXtEcjO2TqUZXBk6F+jH4K/KiZL8MCvFYFpBFKnt5P6bdIeqT9lsdU4b18VIl1cP2LDBXUw2IAgFnqv2eGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761814066; c=relaxed/simple;
-	bh=YnGa9DkQdvPRdDeqi8ahGPx9h1DVPHnC6LaywWx0p5w=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=UYYv0YLF6duPmsdEeWWg/2FXENoaIVj0Le8ne3Ci9ka2wHJ486DQySPoULBj3I2UYorIOwWolmfslrPY/reXGmoETf4NEYJFxGaz3f5pm+Eq1bmqf/mfIL6dg9ZFLGdk55YNopQHqAZEjv3ZE2HsGpRsZALPmpuN/l7UZ7ZGUdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nmzpqbDj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ITFmpGqq; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id C5E52EC011B;
-	Thu, 30 Oct 2025 04:47:43 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 04:47:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761814063;
-	 x=1761900463; bh=+LlsZk9yFd6QOpKTkvqKXGcbGnaMjw3ZltDuDEqH3fk=; b=
-	nmzpqbDjw6y1CJqAbTLfcl+bxSs+xEkjNtDm5rU77iQqfJLfO+y1qbb3bfDastaX
-	CM16o79l9/V4AoiDN5ls7SUfDozOXPFHnMRKRKlkJG+9WoRlUvXbb1z8SPZ+NOTt
-	iHaIGJxmmybz3MDM/l3+Zx7rTpIlqftg4WNwOXY7Fu1P3SNscpRKMP0NDu1VzZC0
-	f8zNDFTUWPHtJHv30RGxfGA1yoBdk1+7E68Kr4K9V5falvg7AbexERdlhNstHhZc
-	5g8JIqXpb1Oy/qpAv6w26MgukVHf/6fzPPxRMEn+Wt8w1cjwUmhDvAxwsWfqxaw0
-	P1Vs6Gy2to83ml357+oajA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761814063; x=
-	1761900463; bh=+LlsZk9yFd6QOpKTkvqKXGcbGnaMjw3ZltDuDEqH3fk=; b=I
-	TFmpGqqqCDBrWBwD3VwC6HHTzkdDyviLySPXNhMJvS3ZL7oplYuwPzEKOXqOwIXw
-	+bBM2TWbMzPeOucTcA2fyKtxmUyVeKvIQF4wy6eh9ycj14QzK6NhR8Sjp8uutVWX
-	s1Nc3MpTlFGcwy2eiOkmEKsC+NjdiYnkzJeF7gxAE0HFUW1s0WWijMtsO4zuMorC
-	hIwIa7BC2xpeC8ENhAddY1vHbGkL2hqbCw87bOED6Q/ukIvw3Q0EZJzfGifawoSR
-	Jzv6JS+ObBQEgxw8HW6jNUzdrN4ApF5o9Ot5wvZlPbZJQIIws2AAxMQwPMbT6V6/
-	Bw7Ihdo+CSc1bPJnj8gCA==
-X-ME-Sender: <xms:LiYDacEeXc7JF8wx4TqL_9BPZBkL55-Dn0NwhJr8TnjQnhzTtv5G5Q>
-    <xme:LiYDaQJSwho8UWHqENe-n48LwapOKkHD1m2kK3xMPcEs_f-jR-Jha_6eCO3ptNaVc
-    YyK5pM_2Js7Cev4haA4Dbdmffqfi_04_NK6VPtqkd2yFRHOqC31c2w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeiudejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprh
-    gtphhtthhopehlihhnmhhqtddtieesghhmrghilhdrtghomhdprhgtphhtthhopehruhgr
-    nhhjihhnjhhivgeshhhurgifvghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlih
-    hnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgr
-    shesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggs
-    lhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugiesfigvih
-    hsshhstghhuhhhrdhnvght
-X-ME-Proxy: <xmx:LiYDaUkRvCSMRRNT4vjLTd07Fb7CqufoXLvxIKjfZ8lKTTB-a3Zhfg>
-    <xmx:LiYDaf3vnrmPs16wiUlzsUR2gD7OzVBbth80GnRrDjgs09zjkP0WDg>
-    <xmx:LiYDaU3NSPpiLtb2RhnEqqO573m5yXalPjKMfHIyT31jxiLS3ZxRKg>
-    <xmx:LiYDaRp4IjX6-rCSRwKJkVPqYx1gV50TQR4dTQvQu-3epsqHtm5Trw>
-    <xmx:LyYDaRcJIvBGtSwUcuxluN6jYgSq8hixEOjoY0QPoKV6iRq3f5a0aiy9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B4B48700054; Thu, 30 Oct 2025 04:47:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761814408; c=relaxed/simple;
+	bh=6j5vgNwBIXH6gvDl5iq2317NlBXDxKTvEoExIEpwNlA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FGveI6LG1NflDVTUXWbu1bkv3+qa0RbCEPp3rK/871CtYaYwIYlIKDtULgojPbAaH7kliBKbPLfvIZcouejLQaumyPTCdXmjerB8nt2sdr3SHo7q4+BG89UOpN6XtP//aiZZx3J845oxsIYBkuPoiK0/hUAjfqLKyqjtuAXDbis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n658eDyt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U7Yjkj1598878;
+	Thu, 30 Oct 2025 08:53:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=6t+6uWhyy591iuiYgwhisW/rL2lpx2ayTva
+	AMRuLfGQ=; b=n658eDytvOrCoDSW6MnyEvIJzRN+uXMsTsuh5oNSW3EO25wS3dx
+	gWiEofUmVWV1PSQFjj2IJ378kviy+joJ+EHTH2XW0+J+O+08RjqwTkJ0CZrDYDbK
+	tU0pi57EDAizxJSJj0LJxReeTwVTH8s0mgI/xCj91YGtC9W5I8FwnphHzH60BCFT
+	7qRmcIxmnPntS7hXzO+oxIwKDM3PVw68adB8g6lQJkiA9ICh2wr/S7YgO74IqCJl
+	5w+cnk/2AwnFmzJ2fJez9ppR5RgFijW0ZAluWHYGf396VvWTBxbzqAqEon8djhzJ
+	3p3a0POkj64UvORHsIdBrC3GOQ6kgBH13ZQ==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3ta7ss5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 08:53:15 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59U8m8Mq027982;
+	Thu, 30 Oct 2025 08:48:08 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a0qmmec4j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 08:48:08 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59U8m8wP027967;
+	Thu, 30 Oct 2025 08:48:08 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 59U8m7Ie027964
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 08:48:07 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 10F42780; Thu, 30 Oct 2025 16:48:06 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Subject: [PATCH v2 0/4] Add PCIe3 and PCIe5 support for HAMOA-IOT-EVK board
+Date: Thu, 30 Oct 2025 16:48:00 +0800
+Message-Id: <20251030084804.1682744-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AIIjj2dROt1-
-Date: Thu, 30 Oct 2025 09:47:22 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Miaoqian Lin" <linmq006@gmail.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Ruan Jinjie" <ruanjinjie@huawei.com>,
- "Luca Ceresoli" <luca.ceresoli@bootlin.com>, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Message-Id: <0f712780-8af0-4894-b75c-44fd7390dc3e@app.fastmail.com>
-In-Reply-To: <20251030052834.97991-1-linmq006@gmail.com>
-References: <20251030052834.97991-1-linmq006@gmail.com>
-Subject: Re: [PATCH] misc: eeprom/idt_89hpesx: prevent bad user input in
- idt_dbgfs_csr_write()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=aaVsXBot c=1 sm=1 tr=0 ts=6903277b cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=QeMu0tCiC60fgC08giYA:9 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
+ a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: tBEy9dmEZO1fn0qvzrmEOK2lB2d4RNi3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA3MiBTYWx0ZWRfXzGkp6NWNom4O
+ nvtiEmS3Ngw3+ASEh1F9sPh1InDUYpdXEIB9xBT6jOLVSfmbYVgY/k8K3fQXZ/1GA/k5eZN9a8z
+ V70bLwJnsM5U5t5kuXQmtVgiiduizkCWVrqfqL5TE5yuasMtvGOqJ+VN1tekISc2Kx35OaJuVwZ
+ +o48vRx7rMXhi2bKStoo1IXm/DFGwAZsJw8QnETL7FgIim9LJiVwumWLttNZR6qZc4h+k0j3FUL
+ W14uR0BEeUhCZUc9UFYRm782r6MzwLmprd9N+/MISbtkh/OS5jUIhhLYBnBvOw838T1vlJ4p0L3
+ 8SGg7ER3IDpG02iDRL26Cqs5k7wt3T+OzMyA7OPElkxL8ausfOwV3KVeXVBmyzNdM4yZ+n6ZkA9
+ n9Louvn3xK7HveEM1svXIs0Hgh3UOQ==
+X-Proofpoint-GUID: tBEy9dmEZO1fn0qvzrmEOK2lB2d4RNi3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 impostorscore=0
+ suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300072
 
-On Thu, Oct 30, 2025, at 06:28, Miaoqian Lin wrote:
-> A malicious user could pass an arbitrarily bad value
-> to memdup_user_nul(), potentially causing kernel crash.
+This patch series adds support for PCIe3 and PCIe5 on the HAMOA-IOT-EVK
+board.
 
-I think you should be more specific than 'kernel crash' here.
-As far as I can tell, the worst case would be temporarily
-consuming a MAX_ORDER_NR_PAGES allocation, leading to out-of-memory.
+PCIe3 is a Gen4 x8 slot intended for external GPU.
+PCIe5 is a Gen3 x2 slot designed for external modem connectivity.
 
-> Fixes: 183238ffb886 ("misc: eeprom/idt_89hpesx: Switch to 
-> memdup_user_nul() helper")
+To enable these interfaces, the series introduces the necessary device
+tree nodes and associated regulator definitions to ensure proper power
+sequencing and functionality.
 
-I don't think that patch changed anything, the same thing
-would have happened with kmalloc()+copy_from_user().
-Am I missing something?
+---
+Changes in v2:
+- Move PMIC gpio pins to patch set 4 (Krishna)
+- Link to v1: https://lore.kernel.org/all/20250922075509.3288419-1-ziyue.zhang@oss.qualcomm.com/
 
-> +	if (count == 0 || count > PAGE_SIZE)
-> +		return -EINVAL;
-> +
+Ziyue Zhang (4):
+  arm64: dts: qcom: Add PCIe 5 support for HAMOA-IOT-SOM platform
+  arm64: dts: qcom: Add PCIe 5 wwan regulator for HAMOA-IOT-EVK board
+  arm64: dts: qcom: Add PCIe 3 support for HAMOA-IOT-SOM platform
+  arm64: dts: qcom: Add PCIe 3 regulators for HAMOA-IOT-EVK board
 
-How did you pick PAGE_SIZE as the maximum here?
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts  | 83 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 79 ++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
 
-       Arnd
+
+base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
+-- 
+2.34.1
+
 
