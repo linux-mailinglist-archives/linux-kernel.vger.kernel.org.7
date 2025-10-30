@@ -1,188 +1,110 @@
-Return-Path: <linux-kernel+bounces-878991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659F3C21EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:24:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B207EC21EC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA526188E64C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57304188627E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD3330F934;
-	Thu, 30 Oct 2025 19:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C0E301004;
+	Thu, 30 Oct 2025 19:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZzGEyjyA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fS++9y9M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C9E28727B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778082F83B0;
+	Thu, 30 Oct 2025 19:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761852076; cv=none; b=siGWvDRFyDE/SNAwocyGrQveKW/vWS+Mt4e68IYhnZ1D/y7Kmnc+m6uFaf2ZnaTkM/YQswutQHNKDwkKXAkuoQ6PsNayFmQXT5jqNWSLtNTJGFITW8yoNJv3D4ULBX7WtXZbMazFjm5knsfL57ACs1t67jPdJ2KzdTitOPv4e8g=
+	t=1761852061; cv=none; b=NsX+0n8kQV3YRCR+QAA2pKWOJwBeZViJdoKTmNzzm6UhzsCw2h6hlgZOl2FdHTDntmdS3BqD2okJ4bswYLszShHz/VsgKNyBpf5smLrtkJ6r6uTwB2qidq8JcPDVC6mXw2VFhnDSvluZZ0lQ2vtnToRLLwbhYoYI4+QHtuJ26S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761852076; c=relaxed/simple;
-	bh=2hocMCYlkJ7vaHYBTlrKNpsTpQLXpL7Xf2mz6194Rbw=;
+	s=arc-20240116; t=1761852061; c=relaxed/simple;
+	bh=0JkqsqS5tCb85gDbvwjqHeyedU+RjUbJ8rLIGtE2kmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1s1tHs6HreFgSLL7uI+F7hUNYiQBOzboy1eXLU5QUcmIYPv797jzizCqdY2vVUmsHX01gQfHpJCr3DSoUDh+RQmK8w14nRwHvTO9OhdC/YU4r36db0EPdjtm2qOkEguJkRG4Nx3Z0MrNFPT2jI3+MmMkbH+LZ4wAxT8KjuiQfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZzGEyjyA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761852075; x=1793388075;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2hocMCYlkJ7vaHYBTlrKNpsTpQLXpL7Xf2mz6194Rbw=;
-  b=ZzGEyjyApkMaEvTjUZKQVt7icMogaX7781GSwXwJqY4eS0wh6JYa1HAo
-   fSvKgcMjdM7ROgZW/2/0IC1u6i6Ah1BVF++oS68oLQCktmRDuVJm8ESt2
-   FkCgGuukss/7fTOfMf3n7YE9O4UpG7qyKncSNHX4t+lWwHE8HwzmP5FKF
-   JdBpwfSyemyuCwc3R5M1rYFjXboAfJDdQaqwlSSy8jQStptap49mIaYXO
-   xdzlydH9E9fZEmS9rG8K+CAVgSeFHQKYSwERXSN+VOSrTgd0GVtiCcUrs
-   hNHNm4x9q37xQnKTK9YrYd1jyUhoyjX9kgcQ6VCbblM0gCv1sa2waio7D
-   g==;
-X-CSE-ConnectionGUID: rGKfFlkcT7akW5x32iXWIg==
-X-CSE-MsgGUID: 0wEvD+z1Qqq8jZC01pWzXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="67659537"
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="67659537"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:21:14 -0700
-X-CSE-ConnectionGUID: t8XJXzNkRM+8zkg6Ha6a5Q==
-X-CSE-MsgGUID: 9XWg6FwWRmiFZOFHWR4AtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="191191981"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 30 Oct 2025 12:21:12 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEYCr-000MRI-2r;
-	Thu, 30 Oct 2025 19:21:09 +0000
-Date: Fri, 31 Oct 2025 03:20:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Qiang Ma <maqianga@uniontech.com>, akpm@linux-foundation.org,
-	bhe@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Qiang Ma <maqianga@uniontech.com>
-Subject: Re: [PATCH] kexec: print out debugging message if required for
- kexec_load
-Message-ID: <202510310332.6XrLe70K-lkp@intel.com>
-References: <20251030073316.529106-1-maqianga@uniontech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DGhLKyrSbqyr31Xk/BfwaUTnk5tKXQcpiTj0tk390UVNfyQFBhLeKKoCn/5JyGdvNXn0y+7T3vh/Dg/3ZmWKGNAER6rHeasa1bwhs+nw85q+H7c+LUtLiUqoH0ksVsvWLdAumugKM3Jn7XsnVkA6DvS7eKNzUTMZBXCBu3bLw9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fS++9y9M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78458C4CEFB;
+	Thu, 30 Oct 2025 19:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761852061;
+	bh=0JkqsqS5tCb85gDbvwjqHeyedU+RjUbJ8rLIGtE2kmw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fS++9y9MCF0ZiskBXTARq1lIm1HeM+e/3U8/QJfmn2XcKwOMoofX5P6ymKVAjS02F
+	 2m9+5HqpYDLBS1l2PN9iq/lbOpNxjwvAHA4MIeQx/u8hoqoYPu+EEB+AHRPFeFDugt
+	 s0g2w6zFLWu6ZN3jSBbXTtsPmV0XeMX843zaD4pCBfzgBe3HKgJL5AyFIbbQigOJ8S
+	 4rFMNsdC6koU5YgJZ4xG6jd5FCREJhIU/6g2mCfAkWBcenxF+151cGUYu9p5S+nxFW
+	 +1SpI4esnayb+/1WasIDYuQ9gt4jlyMkUblTBEm9DT9yYBOm5vkgEA6ININn7K4/Cr
+	 Y/STOIT4slusQ==
+Date: Thu, 30 Oct 2025 19:20:56 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 01/13] dt-bindings: serial: renesas,rsci: Document
+ RZ/G3E support
+Message-ID: <20251030-regroup-garter-c70c7fc6a71a@spud>
+References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
+ <20251030175811.607137-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="96gbhf6HoQd777Ic"
+Content-Disposition: inline
+In-Reply-To: <20251030175811.607137-2-biju.das.jz@bp.renesas.com>
+
+
+--96gbhf6HoQd777Ic
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251030073316.529106-1-maqianga@uniontech.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Qiang,
+On Thu, Oct 30, 2025 at 05:57:49PM +0000, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> Add documentation for the serial communication interface (RSCI) found on
+> the Renesas RZ/G3E (R9A09G047) SoC. The RSCI IP on this SoC is identical
+> to that on the RZ/T2H (R9A09G077) SoC, but it has a 32-stage FIFO compared
+> to 16 on RZ/T2H. It supports both FIFO and non-FIFO mode operation. RZ/G3E
+> has 6 clocks(5 module clocks + 1 external clock) compared to 3 clocks
+> (2 module clocks + 1 external clock) on RZ/T2H, and it has multiple reset=
+s.
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Updated commit message
+>  * Added resets:false for non RZ/G3E SoCs.
 
-kernel test robot noticed the following build warnings:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master v6.18-rc3 next-20251030]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+--96gbhf6HoQd777Ic
+Content-Type: application/pgp-signature; name="signature.asc"
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Qiang-Ma/kexec-print-out-debugging-message-if-required-for-kexec_load/20251030-153807
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251030073316.529106-1-maqianga%40uniontech.com
-patch subject: [PATCH] kexec: print out debugging message if required for kexec_load
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251031/202510310332.6XrLe70K-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310332.6XrLe70K-lkp@intel.com/reproduce)
+-----BEGIN PGP SIGNATURE-----
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510310332.6XrLe70K-lkp@intel.com/
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQO6mAAKCRB4tDGHoIJi
+0laSAP9pxMHyRXQYIgGpl3r62oKbo516FSvvC/GfT1XA/uhp9wEA+Q49sIHYp/5+
+X+jJ+g5f4+/Fb8F2w0YxcF8RoaFMrA4=
+=NK8g
+-----END PGP SIGNATURE-----
 
-All warnings (new ones prefixed by >>):
-
->> kernel/kexec.c:160:10: warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
-     159 |                 kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
-         |                                        ~~
-         |                                        %lu
-     160 |                               i, ksegment->buf, ksegment->bufsz, ksegment->mem,
-         |                               ^
-   include/linux/kexec.h:531:55: note: expanded from macro 'kexec_dprintk'
-     531 |         do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
-         |                                                ~~~    ^~~
-   include/linux/printk.h:585:34: note: expanded from macro 'pr_info'
-     585 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
-         |                                 ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:512:60: note: expanded from macro 'printk'
-     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
-     484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   1 warning generated.
-
-
-vim +160 kernel/kexec.c
-
-   141	
-   142		ret = machine_kexec_prepare(image);
-   143		if (ret)
-   144			goto out;
-   145	
-   146		/*
-   147		 * Some architecture(like S390) may touch the crash memory before
-   148		 * machine_kexec_prepare(), we must copy vmcoreinfo data after it.
-   149		 */
-   150		ret = kimage_crash_copy_vmcoreinfo(image);
-   151		if (ret)
-   152			goto out;
-   153	
-   154		kexec_dprintk("nr_segments = %lu\n", image->nr_segments);
-   155		for (i = 0; i < nr_segments; i++) {
-   156			struct kexec_segment *ksegment;
-   157	
-   158			ksegment = &image->segment[i];
-   159			kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
- > 160				      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
-   161				      ksegment->memsz);
-   162	
-   163			ret = kimage_load_segment(image, i);
-   164			if (ret)
-   165				goto out;
-   166		}
-   167	
-   168		kimage_terminate(image);
-   169	
-   170		ret = machine_kexec_post_load(image);
-   171		if (ret)
-   172			goto out;
-   173	
-   174		kexec_dprintk("kexec_file_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
-   175			      image->type, image->start, image->head, flags);
-   176	
-   177		/* Install the new kernel and uninstall the old */
-   178		image = xchg(dest_image, image);
-   179	
-   180	out:
-   181	#ifdef CONFIG_CRASH_DUMP
-   182		if ((flags & KEXEC_ON_CRASH) && kexec_crash_image)
-   183			arch_kexec_protect_crashkres();
-   184	#endif
-   185	
-   186		kimage_free(image);
-   187	out_unlock:
-   188		kexec_unlock();
-   189		return ret;
-   190	}
-   191	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--96gbhf6HoQd777Ic--
 
