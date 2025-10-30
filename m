@@ -1,65 +1,55 @@
-Return-Path: <linux-kernel+bounces-878713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C702C2151A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:55:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919B6C2152C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2127561C47
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4A93BF722
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81842741AC;
-	Thu, 30 Oct 2025 16:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8142A2F3C19;
+	Thu, 30 Oct 2025 16:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6qVH5W5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPWo7jGB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080B9264F9C;
-	Thu, 30 Oct 2025 16:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48B72EDD50;
+	Thu, 30 Oct 2025 16:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843012; cv=none; b=PamIKfj9MGeQce/QwPaSa897Ykh0w1GyIXaqo8k8MM59DfEbzFuRefHPK2wd3VN0DRbk1L3/uA09moLS7t3/0Ch2cwESS5FQMj6FXvHE1VPboqCeptvcz9IVMxlEra3BR5olq/2oQ5nrmIEpy8FqhTMPhQolvWeOpgzqB0hi1Ww=
+	t=1761843013; cv=none; b=qZwF5X9bzSN2fFgpontRKWAS7r1sauwPZ9+EXkCqleao9Y2b3MqEknCwSgLzfFUCCFWJZ81zW9LICjONfDxRm+Q0uaXfW0rw0CYgDDneZxwsz9YAxwORbhzx0IGUArVv0vlQyLWmdjMGdhxMrLyf9cyT/GPZlRfv1l0i85t60tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843012; c=relaxed/simple;
-	bh=2AgScSgFG6KmiHrgMKTGpPXiiYnevIIc9U4Q25rTP9E=;
+	s=arc-20240116; t=1761843013; c=relaxed/simple;
+	bh=wM6l7e3Nf4LcvVJrb3Xhd7nnE+R01eov2qbOdpkRQbk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=o38tCV3LUkoh2fVVIzbFjJNaFgT8eOOu1pomX+RjpCNtXVWWVJtsNFvP8n33VoKQ17WgINGo+E2DFNvh7BX4qFJxqAtB1Ylzo18tPvgUAzQyL4yz8xwyW58ULwKVs3/hyEcmsbrO3b3SUg1g1UbOBw6Yq/kgu5R28s1fk4IqpEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6qVH5W5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B0DC4CEF1;
-	Thu, 30 Oct 2025 16:50:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=mWuQcvHtykDd4AWjw6Fjtj3Lba4AK1gHhgML44m7H5IVAmUTZt028CPcJZt3SOgB608wcLV2UtMTjwIyErlLXgvKoWNlzyOdfz+Z3sdQ4h0kW+cQx8vUVXwQajx7cmV4u5yWrHpo9MnsxI5irsSeSPxlo6BDd51iByPU0YV/MRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPWo7jGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E90C4CEF8;
+	Thu, 30 Oct 2025 16:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761843011;
-	bh=2AgScSgFG6KmiHrgMKTGpPXiiYnevIIc9U4Q25rTP9E=;
+	s=k20201202; t=1761843013;
+	bh=wM6l7e3Nf4LcvVJrb3Xhd7nnE+R01eov2qbOdpkRQbk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=h6qVH5W5vYLUQDpex+WP8aa3elxFOZ/pMFQRACcr8YqVvfQF42fTV+kZRY2GtQTbG
-	 2HsODoHVhydin98rNGobOTPkyt/cQGCgjxhkfDD83QTbmzNfEII83SKUw4dV6eE0Ky
-	 mmaZ87HWaRpqp+wHeZxLfP6AyE4V18YJwkw/06/iJZf71ylXS47VLy7cbHdIfZKg8z
-	 y/VAcr3H7QgU3NTXHdoUmDJvmqN5LYWPwbNdEv+/XVySnh0Fyulf54SrHBjDvvOsEg
-	 RR0Z0MTQCpcolhN1aAWUkLFk47wbn/ipemYmrDdJRz73jFDAiVuzs3IFqRyubWo9zq
-	 BCyVIhaPypN2Q==
+	b=mPWo7jGB0+RCc2HY/paQ5LkzfNA8fPPqZFC4DhvcTadifV1BuymYXSTATrSNgjjXI
+	 bRPltFREqJEH/cSnaEzu1c2VpNa1pboTkxFmQTqAI5I4UAwt03pMAKvuUpXu50PbWj
+	 Ghqr/ODrKHVUqQAR5TP/qBvRFqOUg48UhW70n3TO3fzrGClzwrTkszKqjdhi/wvbnb
+	 zs4tzSiHxICMKqD2JIVAi+4z4l4fWo01tw/Kml5lTqA+K4C5q3r4FBLMzZTdXVIeIH
+	 QnbZgkDuYolGufDsZwCqcSE5wI42N/wv3nVhTdLjUEjKm58UnsmqFb89uV2Zrv4umJ
+	 pS0k3xo4SAgLw==
 From: Mark Brown <broonie@kernel.org>
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
- Nikita Shubin <nikita.shubin@maquefel.me>, Axel Lin <axel.lin@ingics.com>, 
- Brian Austin <brian.austin@cirrus.com>, 
- Herve Codina <herve.codina@bootlin.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-In-Reply-To: <20251029093921.624088-1-herve.codina@bootlin.com>
-References: <20251029093921.624088-1-herve.codina@bootlin.com>
-Subject: Re: (subset) [PATCH v2 0/4] Add support for an external Master
- Clock in the Cirrus CS4271 codec
-Message-Id: <176184300823.119935.16469243761262240818.b4-ty@kernel.org>
-Date: Thu, 30 Oct 2025 16:50:08 +0000
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, 
+ alexey.klimov@linaro.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+In-Reply-To: <20251022143349.1081513-1-srinivas.kandagatla@oss.qualcomm.com>
+References: <20251022143349.1081513-1-srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/4] ASoC: qcom: sdw: fix memory leak
+Message-Id: <176184301177.119935.14003591741907115293.b4-ty@kernel.org>
+Date: Thu, 30 Oct 2025 16:50:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,15 +60,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Wed, 29 Oct 2025 10:39:16 +0100, Herve Codina wrote:
-> The Cirrus CS4271 codec can have its Master Clock provided by an
-> external clock when no crystal is used.
-> 
-> This series adds support for this external Master clock.
-> 
-> The first patch in the series is not related to the clock but fixes an
-> issue related to module loading and MODULE_DEVICE_TABLE() due to a
-> driver split between i2c part and spi part.
+On Wed, 22 Oct 2025 15:33:45 +0100, Srinivas Kandagatla wrote:
+> For some reason we endedup allocating sdw_stream_runtime for every cpu dai,
+> this has two issues.
+>     1. we never set snd_soc_dai_set_stream for non soundwire dai, which
+>        means there is no way that we can free this, resulting in memory leak
+>     2. startup and shutdown callbacks can be called without
+>        hw_params callback called. This combination results in memory leak
+>     because machine driver sruntime array pointer is only set in hw_params
+>     callback.
 > 
 > [...]
 
@@ -88,12 +78,14 @@ Applied to
 
 Thanks!
 
-[2/4] ASoC: cs4271: Disable regulators in component_probe() error path
-      commit: 1e5351ba60f5355809f30c61bbd27e97611d2be9
-[3/4] ASoC: dt-bindings: cirrus,cs4271: Document mclk clock
-      commit: 3cd523ba270665861647304aa30500f238ebf26e
-[4/4] ASoC: cs4271: Add support for the external mclk
-      commit: cf6bf51b53252284bafc7377a4d8dbf10f048b4d
+[1/4] ASoC: qcom: sdw: fix memory leak for sdw_stream_runtime
+      commit: bcba17279327c6e85dee6a97014dc642e2dc93cc
+[2/4] ASoC: qcom: sdw: remove redundant code
+      commit: d02460317ed9c95aa2c5f6ff1c70e22e1857d95d
+[3/4] ASoC: qcom: sdm845: make use of common helpers
+      commit: 5fa671232f703a404caa05c581411ea858c4cf16
+[4/4] ASoC: qcom: sc7280: make use of common helpers
+      commit: 8fdb030fe283c84fd8d378c97ad0f32d6cdec6ce
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
