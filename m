@@ -1,89 +1,138 @@
-Return-Path: <linux-kernel+bounces-878880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77AFC21B0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:09:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A64C21B34
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A9904F696A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4B984F3F6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E4537DBCE;
-	Thu, 30 Oct 2025 18:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EA236CA6F;
+	Thu, 30 Oct 2025 18:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcY7RJLI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nmfm7qtR"
+Received: from sinmsgout02.his.huawei.com (sinmsgout02.his.huawei.com [119.8.177.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD5237575A;
-	Thu, 30 Oct 2025 18:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76C3315D4E;
+	Thu, 30 Oct 2025 18:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847342; cv=none; b=s+VWnj7tp8vmHGo9+g/TRLjYEk14kQ4Cpa4eXschdxcCwhG/qbcx3jmh33CgaPk8GKFq9HOARirbjFeO3VfQUR8d7Q2mQx41kbZr1Emea6YMNA16F/RJo6xdDynOSfAsrHB2wO4juJgmaYt6j3dwvz7nbo2EiTcdodK9xQTx+GM=
+	t=1761847381; cv=none; b=NiRpbleb9Pvm2tZEM1FYb/3t+ZS0EQSGIho1qKbJzxRVO1y0sRMFf/wZPgpopAYxIKwZxkNIIaZwnXCs+gWDm1kxkhJ0uGmn58RCrTa1tTFt5ZbGD5uXXdOOhhqaySjp0VSjnVxoJSJ40qSg22X1YkR8WRoMvCAUUDVtyLBz5Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847342; c=relaxed/simple;
-	bh=xBFviO3lUiCIiSk8WGyCe12z+4knQ8Rp0VUfyCMMyAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8cITgu3+MWTKnnFW6ajiZb6BOMYM8oDuByNpg8UqPDbCIoVAqQJA1O4uEGpSawKCxlUNtmtgxJCV2bxzMRZKE6/2xKxgz9J6mLBXkYaxxyUdxixa+5MZ8Dcp4R8FVJm5OUeUWWWNJrE5rqmoqSxwfFh7c71hjhq0vGla4JBpcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcY7RJLI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06D8C4CEF8;
-	Thu, 30 Oct 2025 18:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761847342;
-	bh=xBFviO3lUiCIiSk8WGyCe12z+4knQ8Rp0VUfyCMMyAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hcY7RJLIB4tR5C++Q3CFQcQmEKNYPVxwcAjhC5//4ej/Qv7Mg5Q8O1ts8FZG5Sgm8
-	 BYy1N++yozXCF9mMwwNKRc4r757tWEIjBv6+Hmgwkj1cltdMM7obLBypS2sm6Dlmr8
-	 RENX/nSw6pPLOm/3SMA+N0sjRYHjmY0RjvPVCDd3+3DYgmdQMBXYboCISTO6E01PIC
-	 dmW9GAAi0TEwmmy1e7/rr/FIo0caR+B/wkv2Z++TV2T7l6dCFiLmrbeReD3poOfRHQ
-	 63ZMki+helEvqohPejcliJSx0HKZrEVpZurg5QpABWy5QgDTgtug744z1dV6R95QQt
-	 xnvpYHlgyv80Q==
-Date: Thu, 30 Oct 2025 13:02:20 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Mark Brown <broonie@kernel.org>,
-	devicetree@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
-Message-ID: <176184733915.110506.880834344127076775.robh@kernel.org>
-References: <20251029144644.667561-1-herve.codina@bootlin.com>
- <20251029144644.667561-2-herve.codina@bootlin.com>
+	s=arc-20240116; t=1761847381; c=relaxed/simple;
+	bh=vDwlv2wIxuifa4WMIkW8aM4STmw9u47pct+PmwEZY+4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qInwuOr9Cq66g96GkDwwZej5MC4jEjh3gyPsRFAZ84549h4GDhVY948tRhk2DG6Csm0c2otrvN6Bcm8XpvFtu+nV+ZKGjRgLjV/YESrR0pHP6EyV8cinObLWydUOtrWOcu404WCSS/LDrgqzvMrwr4SXnI4g9wv8+MDrFhh2gq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nmfm7qtR; arc=none smtp.client-ip=119.8.177.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=iVJW4ud2NJIGSMWzm7QTw7Epgh70TDeonMG9NVC7r2Y=;
+	b=nmfm7qtRgkgqZWSA0nyj2JrIW6MH4mgXSef0YuL7xH+InTFo8F5qFOnOM9rYTyDebXqOspdIg
+	t5lhsgFIsuR7azpzwNEUy4uDutjC3BQDhk1w4SBx2akG1GyGKu+Uiu8ZAdaulCoc3hy3q7gSpqm
+	RAVZxmP8SFzDA7PTqRVU0yU=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
+	by sinmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4cyBlD2WbQz1vnvZ;
+	Fri, 31 Oct 2025 02:02:00 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cyBgd1kHkz6M4qd;
+	Fri, 31 Oct 2025 01:58:53 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id C9E841402F5;
+	Fri, 31 Oct 2025 02:02:45 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 Oct
+ 2025 18:02:44 +0000
+Date: Thu, 30 Oct 2025 18:02:43 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dan.j.williams@intel.com>, <aik@amd.com>, <lukas@wunner.de>, Samuel Ortiz
+	<sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe
+	<jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven Price
+	<steven.price@arm.com>, Bjorn Helgaas <helgaas@kernel.org>, Catalin Marinas
+	<catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
+	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH RESEND v2 06/12] coco: host: arm64: Add RMM device
+ communication helpers
+Message-ID: <20251030180243.0000751b@huawei.com>
+In-Reply-To: <yq5asef0cwos.fsf@kernel.org>
+References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
+	<20251027095602.1154418-7-aneesh.kumar@kernel.org>
+	<20251029183306.0000485c@huawei.com>
+	<yq5asef0cwos.fsf@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029144644.667561-2-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
+On Thu, 30 Oct 2025 19:34:51 +0530
+"Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
 
-On Wed, 29 Oct 2025 15:46:41 +0100, Herve Codina (Schneider Electric) wrote:
-> The Renesas RZ/N1 ADC controller is the ADC controller available in the
-> Renesas RZ/N1 SoCs family.
+> Jonathan Cameron <jonathan.cameron@huawei.com> writes:
 > 
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> ---
->  .../bindings/iio/adc/renesas,rzn1-adc.yaml    | 111 ++++++++++++++++++
->  1 file changed, 111 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
+> > On Mon, 27 Oct 2025 15:25:56 +0530
+> > "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+> >  
 > 
+> ...
+> 
+> >> +void pdev_communicate_work(struct work_struct *work)
+> >> +{
+> >> +	unsigned long state;
+> >> +	struct pci_tsm *tsm;
+> >> +	struct dev_comm_work *setup_work;
+> >> +	struct cca_host_pf0_dsc *pf0_dsc;
+> >> +
+> >> +	setup_work = container_of(work, struct dev_comm_work, work);
+> >> +	tsm = setup_work->tsm;
+> >> +	pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);  
+> > Could combine these 3 with declarations for shorter code without much
+> > change to readability.
+> >  
+> 
+> Not sure about this.
+> 
+>  static void pdev_communicate_work(struct work_struct *work)
+>  {
+>  	unsigned long state;
+> -	struct pci_tsm *tsm;
+> -	struct dev_comm_work *setup_work;
+> -	struct cca_host_pf0_dsc *pf0_dsc;
+> -
+> -	setup_work = container_of(work, struct dev_comm_work, work);
+> -	tsm = setup_work->tsm;
+> -	pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
+> +	struct dev_comm_work *setup_work = container_of(work,
+> +							struct dev_comm_work,
+> +							work);
+> +	struct pci_tsm *tsm = setup_work->tsm;
+> +	struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
+I'd wrap it a bit differently.  
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+	struct dev_comm_work *setup_work =
+		container_of(work, struct dev_comm_work, work);
+	struct pci_tsm *tsm = setup_work->tsm;
+	struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
+
+Entirely up to you. Hence the could part of the comment.
+
+Jonathan
+
 
 
