@@ -1,151 +1,131 @@
-Return-Path: <linux-kernel+bounces-878280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5506C202B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:09:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA54EC202C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFCFE4E8A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:09:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34E774E72E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCC835471E;
-	Thu, 30 Oct 2025 13:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979223557EE;
+	Thu, 30 Oct 2025 13:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jS1gYyNu"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNbbo1TN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E782E2DDD
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E017735504F;
+	Thu, 30 Oct 2025 13:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761829784; cv=none; b=iLQ/Y1pj3Twb/wjCfYZd+hPVp4ZMBkQdFR5vbmoswJvjEtpu3Z0pGDqVHE+yvYx21VWDN2Y3WoIBpW2mibzDfTYvdGT4hl4pt/rcW+HMQp8UlPSVg/+Bk/hwHzBN9vJKGLXb4MTAHVQHRqdGpdjrIEFobdKFLybmwwDwwIPIYNI=
+	t=1761829788; cv=none; b=uKNCbIFa5HcrC0JiOMuugvB2eXHT19rRGwHR2sG3+UTWxP50W13nla0BiUT44E6LCXTfd9QddL8RRpBePhzXREPmIbWjae9EVg5+UPMUYR1s6CepwNxHlyX9pFmUU/BZ0+4Uu9vmiFD7SsJkWR4oh59KNwK4tsZDV+iOH7ny81M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761829784; c=relaxed/simple;
-	bh=plJUa7lFoTCGcsfOcpff0Mmv8iijDqb9eglwUue1zUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QCLLpq0lchi2IO1hJkR84BD8Lmt4ElaBycRe/XtWHB9tD0jxZKGP6ins7McspYFeRnbrf9Ytp9e4Ali36B6gUsXN19ButSldP89UOx8wGVgH8MsoLn74gO3SeIFtAc8B/e9hj6GTHQ49dDGx9kzke5e8p4iuPOMlaUBo5F1nDdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jS1gYyNu; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4270a3464bcso792522f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761829781; x=1762434581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2FvrWgtYM1o1H3GtR4yRdUrofDJ3VZExWe4rEvgf3XU=;
-        b=jS1gYyNu1dhNyr7TrmrQC3YxaNzV/ACi7UqJs4TAkzRp2qcSXwdL3beFw0rCsnyabg
-         CYBGGDy0FcZzUkibSNNztC4vjV1b6khmSSoDGSg9dluNwu75J+NxNPFucRqCEZjGAEeB
-         mGG+6rIoDj+3tUPkmxl3SGsnLePoX8Vd+9sNjrJ2Dm0AyxcMsgHXRKHSlHpB9c8T/ua1
-         MrWXktOGoL/ynxarz6tjDnM3FQQ6XRIQV9l54Jb5hFDKBCm/30aGbmmPP6TKeW5qvyqm
-         tC8qHGlECpgQJSOAnRv2xqKXFJtXqLofuhTk2tMJwCtL1D9FG0lq1rn2wyPkjv+sLC7Q
-         GpDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761829781; x=1762434581;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2FvrWgtYM1o1H3GtR4yRdUrofDJ3VZExWe4rEvgf3XU=;
-        b=SHLjjkwKnYGRMlz7L6dYHyz4EJQWpy5o/qmwba++vo1WssrEZD03YN32dU+c311+kq
-         Kwoi/hfUdYyKMAE5W3tS2ZEgQROEhnOMTVjkfAfIbRf6sEjBRU6cXnjjezQGqia9T9ey
-         DbOqoQNLXWeeyUZvqzFEysncbFUntCmm+Di4C6ASJRbC32pBfdm4WHs6iVuVwGd7YcH/
-         s6e+4DdZfHHjyD2U7LF0UsSGmNqcNA2xss6ufY36o57iZGYoupSU0kxcAxCshc48I3D+
-         raSBCon9m2/lqung9VwrTcGwK5H3vw76RzKh1ZoInfveN6fFuxnuLQdrPKxhGActhM5b
-         DZXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMbvpa3ZRQRndw3Xkrwx2FLdpGyChSRz2/kCY7R4c+dWNIlY8Gs/93NRY4qAgOU2Y2f/+T9Dfc/MPbLY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+AqRNE6otXAemv7d7kioF/RdbstV15DgxGoRUd9Rk7jRJ4WCl
-	xrSReVm4xpo/A7XaNEZ9+WIhg62jqsihYSyni2xO+5aTJCIlcpST6rBF
-X-Gm-Gg: ASbGncvOlOdjZRiud1N0wfO9ImGZHpK86h3eCAiOFR30+j3IBFuGbbaGqaKBt85CQWh
-	cjqEOPRQt81h5Ie7yTIiso5X7Kl3Pwmkj5pPmrmZf0c23adYrBM3i4gK6xS3j4NkYTafplfAIZ/
-	Gq4s2hrtE+hyaI6GYyVEnyFOVTttUVewOBJPe+41aSTMsJjgZkdNQ4/ZGgSW+evo64G/kZrFnFg
-	19XqX5hT926MXmCXvIDR1gXEdpZ3urBThGV97gsbaKiJLI3N4NKqG4cBNTwUaLnEtP/ypA7KGVT
-	IQ4W9u3cLfB/ovxod27j1EL5YBItvfn5IXCUgcVD5VkoZE5oPSmx1yO/ms/yhEOT/hU9EGEpA2N
-	A+h2qOcXq6nMBwAN43im2rvBoMzGpa/8k9v/JCBXfN8ByePev1Y+I+uTY62nq9+UUXs+je7Nm5+
-	BSJbzlDTv4peshlt04gT37QI6Dstz2M/h4Qy/2FPtwTaexh6ZeYTgpDfwi1/Cdgae9zMFqNxhYT
-	KqYLio4xSNQvPL4D+aZqjuHcgDju7E3L3Fwl5JAEcLcl/U=
-X-Google-Smtp-Source: AGHT+IHt0qZj97JBfhSm3bU2Z3jejv68CgVJx0PCPzKZeY8wdWN+4MGQv4dUD3at1v6e8mwpzpu6rQ==
-X-Received: by 2002:a5d:5f96:0:b0:429:8d0a:8108 with SMTP id ffacd0b85a97d-429b4c8a0acmr2867282f8f.24.1761829780332;
-        Thu, 30 Oct 2025 06:09:40 -0700 (PDT)
-Received: from ?IPV6:2a02:8440:750a:26fd:c3f7:5627:ab4b:232f? (2a02-8440-750a-26fd-c3f7-5627-ab4b-232f.rev.sfr.net. [2a02:8440:750a:26fd:c3f7:5627:ab4b:232f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952ca979sm33491156f8f.14.2025.10.30.06.09.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 06:09:39 -0700 (PDT)
-Message-ID: <287da4e3-0a28-42a3-8f59-7e41dde4d20c@gmail.com>
-Date: Thu, 30 Oct 2025 14:09:38 +0100
+	s=arc-20240116; t=1761829788; c=relaxed/simple;
+	bh=SUrknLG6QL1vQeKkYQ9LgNsZWR2AlazjvKoTTCaah5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQXirzIltLE9vaduRx7MESU/1dUshzbFVMWWAROvsljsQOutWtQs8bQaEcUz/ApbFGoQjkNJPzNy3O4yUGVsF0erGyEZN/RAbIKy1rFJOlUG2qp+j+aIEucq9/sVvTpvuMW0inub3+vZVml7UACNsX8sp0D3fMGox2r4yIs36fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNbbo1TN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B796AC116C6;
+	Thu, 30 Oct 2025 13:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761829787;
+	bh=SUrknLG6QL1vQeKkYQ9LgNsZWR2AlazjvKoTTCaah5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NNbbo1TNVYrGDJMyIf32j6DBUmdBhPNsSdrOSV5SUrhahDUEescR04yjH5RFV2e6t
+	 x82u6S9t/s8K/GdbKNbq5hxjFgK2NgkEH/22IsycijNKYYbfoMA/WyCyC/wz+irwDH
+	 QNagLe62maPjlla9DDEP5BWBKZ/zGw1Mad066mC+Nfg/6gxzVU5UGDwIxUP2+rCeqX
+	 QNejnQwqVVz0JVZWFri83rQYt3tlC+qlOUb8Usw7xEtt6YjLaM08aDba7emI+1s7wK
+	 Pr/BaD8lqA+rpD50JZ9n60iQWAvQZUDs2gRxrNetylBqhMHnhr2bPCDbEg/RE9FA0Z
+	 i91DMj5owhaAg==
+Date: Thu, 30 Oct 2025 10:09:44 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>, Song Liu <song@kernel.org>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Levi Yun <yeoreum.yun@arm.com>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>,
+	Blake Jones <blakejones@google.com>,
+	Anubhav Shelat <ashelat@redhat.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+	Weilin Wang <weilin.wang@intel.com>
+Subject: Re: [RFC PATCH v1 12/15] perf evlist: Add reference count
+Message-ID: <aQNjmD6hh8rhaACb@x1>
+References: <20251029053413.355154-1-irogers@google.com>
+ <20251029053413.355154-13-irogers@google.com>
+ <aQI_OJziRPMRqzM9@x1>
+ <CAP-5=fXz+tG-6q54FNY2OrKcz4zjncRXEWzV8E2suXmOA4MzEw@mail.gmail.com>
+ <aQJeEFKHUfevLB50@x1>
+ <CAP-5=fX=oDBeJ4aLW4ARB3x_=UJ7zSYQWjJf28E2jgTc_rxJyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: stm32-mdma: initialize m2m_hw_period and ccr
- to fix warnings
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>,
- Vinod Koul <vkoul@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: dmaengine@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-References: <20251030-mdma_warnings_fix-v1-1-987f67c75794@foss.st.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-In-Reply-To: <20251030-mdma_warnings_fix-v1-1-987f67c75794@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fX=oDBeJ4aLW4ARB3x_=UJ7zSYQWjJf28E2jgTc_rxJyg@mail.gmail.com>
 
-On 10/30/25 13:26, Amelie Delaunay wrote:
-> From: Clément Le Goffic <clement.legoffic@foss.st.com>
-> 
-> m2m_hw_period is initialized only when chan_config->m2m_hw is true. This
-> triggers a warning:
-> ‘m2m_hw_period’ may be used uninitialized [-Wmaybe-uninitialized]
-> Although m2m_hw_period is only used when chan_config->m2m_hw is true and
-> ignored otherwise, initialize it unconditionally to 0.
-> 
-> ccr is initialized by stm32_mdma_set_xfer_param() when the sg list is not
-> empty. This triggers a warning:
-> ‘ccr’ may be used uninitialized [-Wmaybe-uninitialized]
-> Indeed, it could be used uninitialized if the sg list is empty. Initialize
-> it to 0.
-> 
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> ---
->   drivers/dma/stm32/stm32-mdma.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/stm32/stm32-mdma.c b/drivers/dma/stm32/stm32-mdma.c
-> index 080c1c725216..b87d41b234df 100644
-> --- a/drivers/dma/stm32/stm32-mdma.c
-> +++ b/drivers/dma/stm32/stm32-mdma.c
-> @@ -731,7 +731,7 @@ static int stm32_mdma_setup_xfer(struct stm32_mdma_chan *chan,
->   	struct stm32_mdma_chan_config *chan_config = &chan->chan_config;
->   	struct scatterlist *sg;
->   	dma_addr_t src_addr, dst_addr;
-> -	u32 m2m_hw_period, ccr, ctcr, ctbr;
-> +	u32 m2m_hw_period = 0, ccr = 0, ctcr, ctbr;
->   	int i, ret = 0;
->   
->   	if (chan_config->m2m_hw)
-> 
-> ---
-> base-commit: 398035178503bf662281bbffb4bebce1460a4bc5
-> change-id: 20251030-mdma_warnings_fix-df4b3d1405ed
-> 
-> Best regards,
+On Wed, Oct 29, 2025 at 02:12:11PM -0700, Ian Rogers wrote:
+> On Wed, Oct 29, 2025 at 11:33 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Hi Amélie,
+> > On Wed, Oct 29, 2025 at 09:56:50AM -0700, Ian Rogers wrote:
+> > > On Wed, Oct 29, 2025 at 9:22 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Thank you for upstreaming this patch.
-You can add my reviewed-by tag:
+> > > > On Tue, Oct 28, 2025 at 10:34:10PM -0700, Ian Rogers wrote:
+> > > > > This a no-op for most of the perf tool. The reference count is set to
+> > > > > 1 at allocation, the put will see the 1, decrement it and perform the
+> > > > > delete. The purpose for adding the reference count is for the python
+> > > > > code. Prior to this change the python code would clone evlists, but
+> > > > > this has issues if events are opened, etc. This change adds a
+> > > > > reference count for the evlists and a later change will add it to
+> > > > > evsels. The combination is needed for the python code to operate
+> > > > > correctly (not hit asserts in the evsel clone), but the changes are
+> > > > > broken apart for the sake of smaller patches.
 
-Reviewed-by: Clément Le Goffic <legoffic.clement@gmail.com>
+> > > > Looks ok, noisy for all the s/delete/put/ but that is ok, but then you
+> > > > are not using the RC_CHK_ACCESS stuff from the get go, why not?
 
-Best regards,
-Clément
+> > > So if I did RC_CHK_ACCESS then every evsel access would need updating,
+
+> > Fair enough, I think it would be informative to have a comment
+> > mentioning this near the refcount_t to avoid this question popping up
+> > again.
+ 
+> Sgtm. I think we can also add the RC_CHK_ACCESS to evlist as that is a
+> boring blob of a thing to pass around.
+ 
+> How are things outside of this? The python changes, how to do the
+> process_events callbacks, etc. Any thoughts on the tool API vs the
+> script API (stat vs stat_round) ?
+
+I'll try and resume reviewing at that point, but I don't antecipate
+problems and like the direction of this work.
+
+- Arnaldo
 
