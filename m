@@ -1,126 +1,134 @@
-Return-Path: <linux-kernel+bounces-878373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8500C206D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:00:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA54C206D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5BA401D24
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:56:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C33FE4EBDAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED322688C;
-	Thu, 30 Oct 2025 13:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95771233721;
+	Thu, 30 Oct 2025 13:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UMl6jC/A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MdzhP0dt"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0311EF39E;
-	Thu, 30 Oct 2025 13:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE221DEFF5
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832577; cv=none; b=sKp4Z9H1REZ4onEdTl+EAee2JjyB+dmM3Yq/r7xADdPX/NcmjyjKpuwyC4hKtUkzaqyuKjBr+MGpxxR3fbBSoS6XK2XbMcGTc44X6Aeal2Jmaelgke/7Hs4fgDCUvmxDkiBv2n/VXzGTG+yFlqMChmdiL5ATRocT5tIcOrAvpTA=
+	t=1761832624; cv=none; b=RnqENbGcqo5AZo4+sceDfbiEHkh0mRb6Z7VXects2mx6S99GfUmu6C8LBSD2uL+FgyFLzcMyDAA+L82TwIO5JVS2a3598vY+DHCVAFjzMisfQhcZJ/1hJM4cLCa1BDs7bOhVSehuZq8MKEe0sHp6dD40GaSmDyd6ZRJYB0VYZa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832577; c=relaxed/simple;
-	bh=JxiAItqGkjd++MYOaOMi3nNa/YOuw3UezW8CeaQ1LpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d72+jYP3FO1gIbzGknxs3rXHgM34zWDXzOAu6XhGXZy1uI3x8nurW8Sw++RznsyHV6xO2sbb3XG7hZsRkUsS+X7BA//V5I2uFONyL1LsbEAUgoVJXrTd+nIqtysgFvarG1NDAZxW97BsoG/0Yd68xkFR4HKJQCoZnjvjAPyTqj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UMl6jC/A; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761832577; x=1793368577;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JxiAItqGkjd++MYOaOMi3nNa/YOuw3UezW8CeaQ1LpU=;
-  b=UMl6jC/AO6DXSg/pOPGPKqIp4TpaRglL7mfKnWXK+jatSpJFYujVt3ix
-   wRQT5pxPia0EC73E3scPRq0YX5UadS3Eml1PnjCfN7l+LZndz8aAbEOSf
-   /TFEOsb7oqTDnd1n8vto5DiCVHSB6yZkmSFuWjRL8zqVHVeyTtNZ5l4Uj
-   Z1CIwrQiNTsDGqHt70aJ3fcdocxQbRN0KJ0kYcYAAQG5nYbM9BVGobMmf
-   ECHqUfg7Yg0cC3G8H71BKf7HQvsTqWEu9wMtbodPy1qFqGMAX+h6bF7G1
-   IrjIA7WFTjOPaRYIPqtLwp+wG4UFA/5awNQim3LGxlcJe32IatYTFI4ci
-   g==;
-X-CSE-ConnectionGUID: qcjQq77ZQeOkPwEZC8ZXhA==
-X-CSE-MsgGUID: xR4tsuHkRlGN/PtW0VgepQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64006064"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="64006064"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 06:56:15 -0700
-X-CSE-ConnectionGUID: 2UqlAQ35TquFj8rcUW6PuQ==
-X-CSE-MsgGUID: TeUppLPcQ6CKxbmnS9HyQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="185619224"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 06:56:13 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vET8M-00000003vgI-01m9;
-	Thu, 30 Oct 2025 15:56:10 +0200
-Date: Thu, 30 Oct 2025 15:56:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] iio: imu: st_lsm6dsx: add event configurability on a
- per axis basis
-Message-ID: <aQNueWesrf_vXO06@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
- <20251030072752.349633-9-flavra@baylibre.com>
- <aQMgxUNA8XNhPZdG@smile.fi.intel.com>
- <c1c7222b35a0a7bcddc5d88c92f64d2f2a75fdfd.camel@baylibre.com>
+	s=arc-20240116; t=1761832624; c=relaxed/simple;
+	bh=L6ZolACIi45vTvGhv5t69evXDSyHLYBaK7rVKfVns+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hzMSMtch8MMgmSYjTCG8DDRmgVNsKU87ZdYFQq0Pu+5bru6NOM0boRC8bx1bCa1xrmXvzb/YHle9QzIfVMW7HDLRwmJwc1kQmb1K45hGY3lSWeHNnfonyW6G9F/PFgIOLOpACDdK0fyz3J7KVv20YLZPWz5CC9Z4teMaHb3A/X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MdzhP0dt; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-294cc96d187so13639595ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761832622; x=1762437422; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jk8TnzOxyuLBQtldVmhC9Imz006gRUGHy0jLbQTIeSg=;
+        b=MdzhP0dtigPeBFhTddi1IfSgLqanq1wz+K+3zz77y7mLml4QwmOrjwHnnSHNhV1fxL
+         9qN7vEAdjI2rkb4UrFgn/xqsBOeyPPthv/KR4Bf73fqLWsmsBPZEgiLqBIRW6/if8qxe
+         A1u6044Y0bhQBO7DOTM2wNmsXxkm35NuXBXV0EegE4PqDs1koGrjvlqT3UMpq1zFwjag
+         Pu02cyYeNlB9ZPFzEAs7ZZthf/Tb0Onog8LChiwJb3Yz1brc2B1KzyuCuvTuqN16fhwe
+         eNp82Ly0vqaXcRjCGCmmzbKGOpHyDtT1RKDFkJvd1BjrxIVcWOmKMkKfLERLUETsELlg
+         zo3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761832622; x=1762437422;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jk8TnzOxyuLBQtldVmhC9Imz006gRUGHy0jLbQTIeSg=;
+        b=Uth/ns0Wh7N2gf6naZOjC/M8rfUz4gOX6xL4Shr3NU9NJfmFcft7QBwQTeIlVNnMTz
+         f0LfuOnkJNTO9qo1fE4oC21mncHrm7Isq4/YlM0XDe0g9ZiGrQG39IsKN0XW4voPcwU4
+         SNfi+wbXGrCazd/SW5upf/uLEKzOLX63p/L+ITULKiw+3k2jc/KOwAqAN3NL+NEhcJ7k
+         XC84Tes2UkmBPEXkBdlZLZd7wQzHZNNPZJl40Qf2SwQTFlOmYwNfPstf/7bq2g8LpmqH
+         HHaofp8qhPM/iIp1YkT5g7XE3NdQGK5t+FFcGwPM+SXzCnJriednGfZjAmSbmh/+tWqz
+         FKoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnpCbTSYdyftMCOVqbg2P7i1L4JomuH6m764Zbdtuw+vcBhl3fZlKWy6zSQJso5uK3ciEK+pi1Gohahlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBF1jERqAGW5aAxRqxRYu0Cjr4zgaYDQhRCTL7IfAhmJXJUzck
+	um8iwUYbOq74p5P5SaFP5r3RJZwajkscUVKYi8uqfqOoke/CR0PohxJoFxpqnJYwVyQ=
+X-Gm-Gg: ASbGncvmIxwGJwLMKJ9bzemRqX5kBhYXXF0DDnH4HF2ctjLHzpCXmdJ4OF2ca808R7f
+	7oMb2P5wP3dKMZc/D61y3E0Xr0XueR8if8GJqNRr/MiW4hYf2GqDpS6tUd5x2HLlPZecnhSy3RR
+	hetjqVLiMzbVm81h+LWOR44uv98hriL65eJHwgVLlx3CZ5lvj6ezS7AS81QgrjDL5MXTBLJxKAz
+	h2496R4Hyng8q3z1jUOmuIMoaP7AnjKW85Ffq+F6BiiYihFyH/64pGBG4Pjbz9Kg50V9Xc41k/r
+	7qpVFGd/A1fg0OAiulUNdLQ2oIcz0jK6iFh0PD9hKFjtEwKm+fSWpYFpDBRpPPIlZuSLp9ZnRQo
+	s8FMHJhtWBz/MMhlFdKUnkLC9fBtCToZWKo5ddgLjM2emeHzUkutHldiodeX4IbULH/cQ0j1uKs
+	h9U0ce0XR1NzDV08PawEPcIUVPL45MaVh3/jcHnxJ22w9kXGhh73yo+LCbBY8fQZen7UcDD8hZA
+	A==
+X-Google-Smtp-Source: AGHT+IGpaSpfBxlrthCicNKtIDC5somDGkkgwjpvULUEKqRhdtcWOa61ZR+A4h5HiaDX2of1Cz4ySw==
+X-Received: by 2002:a17:902:c402:b0:294:e8a0:382b with SMTP id d9443c01a7336-294ee477f04mr37227085ad.54.1761832622332;
+        Thu, 30 Oct 2025 06:57:02 -0700 (PDT)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e495e8sm187071905ad.110.2025.10.30.06.56.58
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 30 Oct 2025 06:57:02 -0700 (PDT)
+From: Xu Lu <luxu.kernel@bytedance.com>
+To: pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	apatel@ventanamicro.com,
+	guoren@kernel.org
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Xu Lu <luxu.kernel@bytedance.com>
+Subject: [RFC PATCH v1 0/4] riscv: mm: Defer tlb flush to context_switch
+Date: Thu, 30 Oct 2025 21:56:48 +0800
+Message-ID: <20251030135652.63837-1-luxu.kernel@bytedance.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c1c7222b35a0a7bcddc5d88c92f64d2f2a75fdfd.camel@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 30, 2025 at 12:23:19PM +0100, Francesco Lavra wrote:
-> On Thu, 2025-10-30 at 10:24 +0200, Andy Shevchenko wrote:
-> > On Thu, Oct 30, 2025 at 08:27:51AM +0100, Francesco Lavra wrote:
+When need to flush tlb of a remote cpu, there is no need to send an IPI
+if the target cpu is not using the asid we want to flush. Instead, we
+can cache the tlb flush info in percpu buffer, and defer the tlb flush
+to the next context_switch.
 
-...
+This reduces the number of IPI due to tlb flush:
 
-> > > +       old_enable = hw->enable_event[event];
-> > > +       new_enable = state ? (old_enable | BIT(axis)) : (old_enable &
-> > > ~BIT(axis));
-> > > +       if (!!old_enable == !!new_enable)
-> > 
-> > This is an interesting check. So, old_enable and new_enable are _not_
-> > booleans, right?
-> > So, this means the check test if _any_ of the bit was set and kept set or
-> > none were set
-> > and non is going to be set. Correct? I think a short comment would be
-> > good to have.
-> 
-> old_enable and new_enable are bit masks, but we are only interested in
-> whether any bit is set, to catch the cases where the bit mask goes from
-> zero to non-zero and vice versa. Will add a comment.
+* ltp - mmapstress01
+Before: ~108k
+After: ~46k
 
-If it's a true bitmask (assuming unsigned long type) then all this can be done
-via bitmap API calls. Otherwise you can also compare a Hamming weights of them
-(probably that gives even the same size of the object file, but !! instructions
- will be changed to hweight() calls (still a single assembly instr on modern
- architectures).
+Future plan in the next version:
+
+- This patch series reduces IPI by deferring tlb flush to
+context_switch. It does not clear the mm_cpumask of target mm_struct. In
+the next version, I will apply a threshold to the number of ASIDs
+maintained by each cpu's tlb. Once the threshold is exceeded, ASID that
+has not been used for the longest time will be flushed out. And current
+cpu will be cleared in the mm_cpumask.
+
+Thanks in advance for your comments.
+
+Xu Lu (4):
+  riscv: mm: Introduce percpu loaded_asid
+  riscv: mm: Introduce percpu tlb flush queue
+  riscv: mm: Enqueue tlbflush info if task is not running on target cpu
+  riscv: mm: Perform tlb flush during context_switch
+
+ arch/riscv/include/asm/mmu_context.h |  1 +
+ arch/riscv/include/asm/tlbflush.h    |  4 ++
+ arch/riscv/mm/context.c              | 10 ++++
+ arch/riscv/mm/tlbflush.c             | 76 +++++++++++++++++++++++++++-
+ 4 files changed, 90 insertions(+), 1 deletion(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.20.1
 
 
