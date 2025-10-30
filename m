@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-879273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8FDC22B4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:24:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B78C22B61
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF03D4E2967
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1BF5189C392
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D334733BBBD;
-	Thu, 30 Oct 2025 23:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4DD2C0263;
+	Thu, 30 Oct 2025 23:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mfyFjY+x"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FgqyeCU4"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CBD33BBC4
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424173358D5
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761866666; cv=none; b=SkCzR/zCaIIfwn9d1aCHSMpmzNz2cEeK1njxfBye/gS3sgT3rmvfQLlb9GRe9UydZuOEGJWu+CsuOttP6bgnmXyo99RTjW89zMw9XNGVT/s9QOYagLBARu4V+VXyWFl6BPpUPEx2EUp+BqxVH5N/p5bQGKzN74NetmeEwVRWQJw=
+	t=1761867118; cv=none; b=q6BjAzivhnitkFOWlBLIhhLCSCdX6+YvEs6mbj3ZS/n25gPiVAdyBkvYIHZHSPgTgCKiMOHXDvg3n6h9b/Q8ZuDGndA2+7e1DSebIb5XbUAME4+01VmifuYU9GKGr1LqBpIpVIzYTG8LRlWIRVV9PnoFlNFjxjnbGDccyNCEgbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761866666; c=relaxed/simple;
-	bh=U5mVOjOKselIrEKZtoh+wWmjWaAqnt6aq/qkVMVT11c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=INDmDRq5Fjezvf6ROviht1SRS2yoi+cIV7v3Naoai7yLhK+gdXlFnuzCErV/T5X0aEataYlIdIhZ6IRME/c111QaptnN0r96cY06+qHrMuW8M+yC80xWOQr1PaPtFvCVrxomxVBCh+gadYoo4T5Mc+2pDhvb8uLrpGbo5ie2RiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mfyFjY+x; arc=none smtp.client-ip=95.215.58.179
+	s=arc-20240116; t=1761867118; c=relaxed/simple;
+	bh=wZGUEpuERP9jo2ib1CCeVZd5fHSDqJlokC1xt033SO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMsejiZxegN1bKDUhoIPzx/LwDMpivrj8rlzJCWGQvfOtYQI7dx0TUhhc9UOYNC9zUHjwURq3B5TC/rnAl9VPcb2sdQa6GCQdS1FiUTJ5/E9p8Yok/JSO7s3rpNx2W3U9hywuqvtsqyZj8gMLYKaH2PRbP++pNVuD8aVcm7JLjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FgqyeCU4; arc=none smtp.client-ip=95.215.58.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+Date: Thu, 30 Oct 2025 23:31:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761866662;
+	t=1761867103;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vFcFfa21Y8J0EvYjz5FYEa4biOxuGL1h90UpSLZ/vN0=;
-	b=mfyFjY+xuK5o/5m3QmAXgABGIwfeRaMj8f5cMWUmw2pAzfQT8LIKXkkjjjHK/fKnYyBZ7k
-	81yKYEXTIfVNFD686cdiGUOIO4/FODITODwT1oQm33mRZNioDP2jq5kO1hi2ljt7DmY/+x
-	d+7pG1L9EuwIC5HQqNbCGpdPnpfZspg=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Amery Hung <ameryhung@gmail.com>,  Song Liu <song@kernel.org>,  Andrew
- Morton <akpm@linux-foundation.org>,  LKML <linux-kernel@vger.kernel.org>,
-  Alexei Starovoitov <ast@kernel.org>,  Suren Baghdasaryan
- <surenb@google.com>,  Michal Hocko <mhocko@kernel.org>,  Shakeel Butt
- <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
- Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
-  linux-mm <linux-mm@kvack.org>,  "open list:CONTROL GROUP (CGROUP)"
- <cgroups@vger.kernel.org>,  bpf <bpf@vger.kernel.org>,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-  Tejun Heo <tj@kernel.org>
-Subject: Re: bpf_st_ops and cgroups. Was: [PATCH v2 02/23] bpf: initial
- support for attaching struct ops to cgroups
-In-Reply-To: <CAADnVQJGiH_yF=AoFSRy4zh20uneJgBfqGshubLM6aVq069Fhg@mail.gmail.com>
-	(Alexei Starovoitov's message of "Thu, 30 Oct 2025 15:19:11 -0700")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-3-roman.gushchin@linux.dev>
-	<CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
-	<87zf98xq20.fsf@linux.dev>
-	<CAHzjS_tnmSPy_cqCUHiLGt8Ouf079wQBQkostqJqfyKcJZPXLA@mail.gmail.com>
-	<CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com>
-	<877bwcus3h.fsf@linux.dev>
-	<CAADnVQJGiH_yF=AoFSRy4zh20uneJgBfqGshubLM6aVq069Fhg@mail.gmail.com>
-Date: Thu, 30 Oct 2025 16:24:15 -0700
-Message-ID: <87bjloht28.fsf@linux.dev>
+	bh=BExVFUIUpRdWKD7+fEUnEF0cjVXk1DLPAhBHJri0zLw=;
+	b=FgqyeCU4g0l+CXIy4Mv1bibfHWBCB6Nue42CqQYiypR1hVB7S3JK03MGIfqUWNuXyaK2J3
+	EO7OYtnIj8BgbO6aDGTopZeJKub00Jy59PIFEoCuP4gPK8bNO2RXBeIBAqW+JvP0HkaGlT
+	Fu8ZCazmuasJMtvefgtjbCnhHPvg7Os=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	James Houghton <jthoughton@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 1/4] KVM: selftests: Use a loop to create guest page
+ tables
+Message-ID: <47efy3puookj6nl44p3wiajw3pfsj6nwaff7pokdirxhuensv3@bfoqm6cetjav>
+References: <20251028225827.2269128-1-jmattson@google.com>
+ <20251028225827.2269128-2-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028225827.2269128-2-jmattson@google.com>
 X-Migadu-Flow: FLOW_OUT
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On Tue, Oct 28, 2025 at 03:30:39PM -0700, Jim Mattson wrote:
+> Walk the guest page tables via a loop when creating new mappings,
+> instead of using unique variables for each level of the page tables.
+> 
+> This simplifies the code and makes it easier to support 5-level paging
+> in the future.
+> 
+> Signed-off-by: Jim Mattson <jmattson@google.com>
 
-> On Thu, Oct 30, 2025 at 12:06=E2=80=AFPM Roman Gushchin
-> <roman.gushchin@linux.dev> wrote:
->>
->> Ok, let me summarize the options we discussed here:
->>
->> 1) Make the attachment details (e.g. cgroup_id) the part of struct ops
->> itself. The attachment is happening at the reg() time.
->>
->>   +: It's convenient for complex stateful struct ops'es, because a
->>       single entity represents a combination of code and data.
->>   -: No way to attach a single struct ops to multiple entities.
->>
->> This approach is used by Tejun for per-cgroup sched_ext prototype.
->
-> It's wrong. It should adopt bpf_struct_ops_link_create() approach
-> and use attr->link_create.cgroup.relative_fd to attach.
+Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-This is basically what I have in v2, but Andrii and Song suggested that
-I should use attr->link_create.target_fd instead.
-
-I have a slight preference towards attr->link_create.cgroup.relative_fd
-because it makes it clear that fd is a cgroup fd and potentially opens
-a possibility to e.g. attach struct_ops to individual tasks and
-cgroups, but I'm fine with both options.
-
-Also, as Song pointed out, fd=3D=3D0 is in theory a valid target, so instea=
-d of
-using the "if (fd) {...}" check we might need a new flag. Idk if it
-really makes sense to complicate the code for it.
-
-Can we, please, decide on what's best here?
+> ---
+>  .../testing/selftests/kvm/lib/x86/processor.c | 25 ++++++++-----------
+>  1 file changed, 11 insertions(+), 14 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
+> index b418502c5ecc..738f2a44083f 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> @@ -218,8 +218,8 @@ static uint64_t *virt_create_upper_pte(struct kvm_vm *vm,
+>  void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
+>  {
+>  	const uint64_t pg_size = PG_LEVEL_SIZE(level);
+> -	uint64_t *pml4e, *pdpe, *pde;
+> -	uint64_t *pte;
+> +	uint64_t *pte = &vm->pgd;
+> +	int current_level;
+>  
+>  	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K,
+>  		    "Unknown or unsupported guest mode, mode: 0x%x", vm->mode);
+> @@ -243,20 +243,17 @@ void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
+>  	 * Allocate upper level page tables, if not already present.  Return
+>  	 * early if a hugepage was created.
+>  	 */
+> -	pml4e = virt_create_upper_pte(vm, &vm->pgd, vaddr, paddr, PG_LEVEL_512G, level);
+> -	if (*pml4e & PTE_LARGE_MASK)
+> -		return;
+> -
+> -	pdpe = virt_create_upper_pte(vm, pml4e, vaddr, paddr, PG_LEVEL_1G, level);
+> -	if (*pdpe & PTE_LARGE_MASK)
+> -		return;
+> -
+> -	pde = virt_create_upper_pte(vm, pdpe, vaddr, paddr, PG_LEVEL_2M, level);
+> -	if (*pde & PTE_LARGE_MASK)
+> -		return;
+> +	for (current_level = vm->pgtable_levels;
+> +	     current_level > PG_LEVEL_4K;
+> +	     current_level--) {
+> +		pte = virt_create_upper_pte(vm, pte, vaddr, paddr,
+> +					    current_level, level);
+> +		if (*pte & PTE_LARGE_MASK)
+> +			return;
+> +	}
+>  
+>  	/* Fill in page table entry. */
+> -	pte = virt_get_pte(vm, pde, vaddr, PG_LEVEL_4K);
+> +	pte = virt_get_pte(vm, pte, vaddr, PG_LEVEL_4K);
+>  	TEST_ASSERT(!(*pte & PTE_PRESENT_MASK),
+>  		    "PTE already present for 4k page at vaddr: 0x%lx", vaddr);
+>  	*pte = PTE_PRESENT_MASK | PTE_WRITABLE_MASK | (paddr & PHYSICAL_PAGE_MASK);
+> -- 
+> 2.51.1.851.g4ebd6896fd-goog
+> 
 
