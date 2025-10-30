@@ -1,239 +1,238 @@
-Return-Path: <linux-kernel+bounces-878196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F9DC20011
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:27:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA350C2000B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66CB64EA998
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:26:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5F1E934E676
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE9B320CCA;
-	Thu, 30 Oct 2025 12:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B3A31BC91;
+	Thu, 30 Oct 2025 12:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QmLj2K1r"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DeGtoW2G"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8340431E11D;
-	Thu, 30 Oct 2025 12:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761827185; cv=none; b=RiVPmHu5X4rTlz5GiHuPWMPR8GIoRUlXV0pwK8+DHZV8CvzH0FZR1L2fPN8c1zJ/zNiCDCMcSi5ydEKhufD48dTp28+LC4Yg2rV6XqS+2obcQt5QR1DsIVpvnfF6seOIrGDJPiWINTqrVAvkP0xx4F6aZHVVKcIqc3LcKmG0SS4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761827185; c=relaxed/simple;
-	bh=jP0A3P/RsWKTWV1WIWX8B6eAavrOI2ou0sMjmqcEYP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BVXRJgbUCgx+HoIwuqvmlb5k3wdIysuvnYZe6l8Mfjhd1VCWPMzVlEsx8wyhQ81IAnkKACv/EWro+ra6es63YlGy7pdIXUn37DXrCxhhlzsaJc2qijG3cjKs/mnqdR7hHFy5Vfqxcu6UofslqKBd9NcBdRmdfyYecyTSOWsPlDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QmLj2K1r; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761827180; x=1762431980; i=markus.elfring@web.de;
-	bh=wKRq6Ju1skhSe8iFmdeF8ZRGsydXVNDSbV0PmfELvbQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=QmLj2K1rc02+Van8hHM7jt2OsJzq+A+mom/MwJ8gPxVJ/mLeGVZO92P6p/4XULuL
-	 OEz4HrdBmX6Jb/vurG0UQgRz8FuiqFjjn5uyl9XjklW1Y6SZKffqLZUQYt8hmRCHE
-	 wEQBfuuBPBU7DlrXM+7IaCzD6+lDSrSXBsq0xxWrpRR8Th85VO3hUf/JWEHXmfS3P
-	 D1lxXPeOPl03zK8ku/FKTic5Z+k+wBaAICSNRkCLmfmYUAyrRODAdkphQujmSscPS
-	 138VQVBc9Mygc93Y++4UJBxJ0yHAPUAM62kbIIUbKk0RWVYiTxDL44Nrcmyq4AX34
-	 olFkdR0LvyIiRTn2FQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M5j1c-1vKTLN3TiM-00HCVZ; Thu, 30
- Oct 2025 13:26:19 +0100
-Message-ID: <60f881dc-979d-486b-95be-6b31e85d4041@web.de>
-Date: Thu, 30 Oct 2025 13:26:18 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBE831062C;
+	Thu, 30 Oct 2025 12:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761827219; cv=fail; b=TyLSu6xAnrl0MImVF/HHHZXPWpJJpBra1sCOasN0sRE1kIGM2XFqpy0/ELFNKU/6FlR+im93sJxsqoYlB9eQc2S7oQRRqZl4KH8vjfQkBiCqLyEVW6UGVjUhClD2sM15TNDNz/6QAMHy4P+P8MU3/KaNleaaYpzYuLS4R9O67Ws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761827219; c=relaxed/simple;
+	bh=KM+i6xEJoOCH8eBmTIt5MhjFVMuvsiapE/3gFaXXw3Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=JP0/BHMmRnwVMBp8rLN5Xv4cjgX52605ahXcNqqd5QMdBROOlSBQkDKisaBSYMzoxT4Lszctm647fTGH3GP/y4GgDNm2SsPCaFop2oi3U78FZ9n9Rb41B0kX+U0TyRSX3/fIf+psiXeBw/yiVaIHzj40fXEFUrLbNLSG1V6KZjQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DeGtoW2G; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59UC8BVh1825044;
+	Thu, 30 Oct 2025 13:26:45 +0100
+Received: from mrwpr03cu001.outbound.protection.outlook.com (mail-francesouthazon11011013.outbound.protection.outlook.com [40.107.130.13])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4a3be3qh67-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 13:26:45 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GU3LvOoTF1JkxPiArUe2E+8FvMpV8QE4uvImi8OOtlQwRHt2oh/JRW3bSA8LuPvjHlLbvLRM2covrVXe8KHZz6EauxiJqtHsP5l62R8kvc2SkeSHvlUXqgR+myqY5ZxeMML5sdMiyJxFoBe3AVyy/5XNV+S4PHDxoN85q47dGBrddKz/eovjLuzLQuRSAn+It0vfxpaDng9945VJbspc/0HEVazOGL2MzL/RQcZUZqzr/Ye9dj41V6KHAH/csTpMuAJsllTZrjMI99gS3rx1MGsdWa+YSCjdXDs+kGlYSN7TJgMuc6h9Dla3iqjI2hU7vx4xV3uTPfaY7P3OCrYs+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wsQoCx8oTUPHeqax0ODr9uNjGbyB7JvqMYpIw+LvLAk=;
+ b=y4AB298WnQgvHRvwDEb3+DiCbQpMlfk2J/Vrq00RMVAlE1L4r96tqgMm7Mwa71q+t1WGzv+DAkfMgdiCNnQLOrwtKeFGRoEj8kekwjxX87nyB0Huy69Vwq9Jf3cV7I71xqPAVdYcIW3MbL3Vz2h4r8TU8WOeeIWF+BSTlC6ocNHm7Tmww+3i1vsBTcx65eK2JoNEHFMqGJUcDO/WzBbNA7JM8eZp6aB7HTaRCJZemO7aqVRcHw+kORikJOC5gIt0uLV5TZWyuGw0/CqhDFOgDByNNIPFm+8IUr4eLg+q/v8TUY6ne5WYTSmJlHlcOko+rqriI0KDuhdhftFrPrq2RA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.43) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wsQoCx8oTUPHeqax0ODr9uNjGbyB7JvqMYpIw+LvLAk=;
+ b=DeGtoW2GEMtwm1NszIDurIDigcqmYN/0lep3yDfYOmWvaGRd2Rx6bmEbmPtvdp6GnvdgdnL5mPtW2U5vdM3xsAJJMiY2iG7PjD9/t6dIHb+TNoU8tL6lAeN1YjY5ZdbkKXFexJoLxjHojx6yBrOjoYW7YF5AB4mFpvW98Oq9JT/w8sjjpwTCnDEzPUJ4+uawNFQq6o48URfasn/OvHuyOGWsx3wUC2z9Ew2CFr2sZQmHvT7VLx84EuVabduP5112TrG55zutxUs+Y60V1ZpoH9BBkzy1APsqOyywOKJB5w3gEJdq9k1y48KNSS56CmM37RfxptRTPmrw8pZBGCDUVg==
+Received: from AS4P251CA0025.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:5d3::12)
+ by GVXPR10MB8613.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1e5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
+ 2025 12:26:41 +0000
+Received: from AM3PEPF0000A793.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5d3:cafe::8f) by AS4P251CA0025.outlook.office365.com
+ (2603:10a6:20b:5d3::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
+ 30 Oct 2025 12:26:37 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.43)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.43 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.43; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.43) by
+ AM3PEPF0000A793.mail.protection.outlook.com (10.167.16.122) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 12:26:41 +0000
+Received: from SHFDAG1NODE3.st.com (10.75.129.71) by smtpO365.st.com
+ (10.250.44.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Thu, 30 Oct
+ 2025 13:24:25 +0100
+Received: from localhost (10.48.86.127) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Thu, 30 Oct
+ 2025 13:26:41 +0100
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Date: Thu, 30 Oct 2025 13:26:38 +0100
+Subject: [PATCH] dmaengine: stm32-mdma: initialize m2m_hw_period and ccr to
+ fix warnings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments from
- memcpy() calls with SmPL?
-To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Miaoqian Lin <linmq006@gmail.com>
-References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
- <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bz1ahwt8PKujpvFw+axgHQjxI/y34qeztIKDsshP/5jj4yqxJIN
- MrV/2Q+fofAth6RwA2yPXkCAAKu7e10pQfbTAbdiwWVguUJclSdgMrD9QKw3uwHr6tbNfW0
- bGwIeMDqDgzcfgKQME2/Nt1fuebSzMi4o1WSQXpfGoAKO0T8tPYpfF29RJvhRX2u5ZkmeZa
- qRIclI5LOttQuQD4z1s1g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Yuy3p+mWVqs=;uJZegLi1wAsQ8tyOHJ/w7UXw37I
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20251030-mdma_warnings_fix-v1-1-987f67c75794@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAH1ZA2kC/x2MQQqAIBAAvxJ7TtDSS1+JCGtX24MWChWIf086z
+ sBMgUyJKcPUFUh0c+YzNlB9B/thoyfB2BgGORglRykCBrs+NkWOPq+OX4FObyMqLQ0htO5K1PT
+ /nJdaPySRE/ZjAAAA
+X-Change-ID: 20251030-mdma_warnings_fix-df4b3d1405ed
+To: Vinod Koul <vkoul@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+CC: <dmaengine@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+        "Amelie
+ Delaunay" <amelie.delaunay@foss.st.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A793:EE_|GVXPR10MB8613:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a01f23a-52e0-4b7f-dc89-08de17af94f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WFdFSHhmWFI0TWpQczRtOTgvSUNpL25LUjNtcnZuSEhJcGlTSnRzSE9tb2Jl?=
+ =?utf-8?B?VWhURmVJaTN1RFZNVXJZL0lYV3dWdS9iY3Q1Zm5vdU5ZZU5OUCtrZWwrZDZv?=
+ =?utf-8?B?Z0xONSswcVIvOGdQVGRqWTRKdWt2UzRIU3lENXplYjJiREN1U2g2Um9hSWZI?=
+ =?utf-8?B?V3pNZ1h2ejJQYk9ZNng1Mk5nWGFtZ2NPcXdKOWRKb3VCQkI4ZEF6ejlRalBs?=
+ =?utf-8?B?M00yU1A3b3BoL2dQdGFNUXNFODFaZDg3SDJsMklxbmU2ZjlnZi9vUC8vZVcz?=
+ =?utf-8?B?cUQ5bnltWHFRSDE0R1hkU1hjTWR5cktWNkF4TUh3eXRsL05XK29vQjEzMzdk?=
+ =?utf-8?B?YUY3TVdiYVhUbkZ3WjFHREJVZ2FJdzUwKzV4aStkRTJnRTNuRmtvVDhLdi8w?=
+ =?utf-8?B?dDFOY2VUQTBxSENhWHhKMWFsMGRERFRjMW1SWVNob0N0MHdYemt1aWREYk5P?=
+ =?utf-8?B?SXVaQWpCSTMzYXpza3NvakxNNU1rL0RBRm1tbVMwN1JVckV6a0syR3UwaHB5?=
+ =?utf-8?B?NGJKa1BzeTZxTXFkd1g2dzNWcSt6c08wS0VSU1k4L293cGs3aUpOclNZSHhY?=
+ =?utf-8?B?b1pKRk9ZWDRwMGNDYmtROGpsVXRwczNuOTlOamI3SWQyd1ZiSlVqd0tTOCtO?=
+ =?utf-8?B?QmVJZUJkZUJGR1ZWcjJpNnhBZ3MxWjQ1eUxHeXIrQlp4LzRwSEtTemVJNk1h?=
+ =?utf-8?B?UkFmMGpBTmEyNUtEZXlndTQrVDYyQ0RRQnc2ajB6TkEyWXNJVjV2Tk1ET051?=
+ =?utf-8?B?eXN5L1VpTFhsQmJMWnNXV3dkR2pDczJzUWNTdVMyNjNrSmhNM1JmSEZnVk11?=
+ =?utf-8?B?c3ZLWm82WmI0TUEraE1RSGNQUlJlSFpYc0RqVUhqUnFML1pUd3ZxNit4U1dv?=
+ =?utf-8?B?UEFIRTdCSjliRTFmb1BMalpSSUVFRlhIMjl1S3RzcllhaWFvcGZ5VWRJUXdL?=
+ =?utf-8?B?Z29EbjMrS0ErREVTV2tiY1dNRFM2UlNrMUdTdnBkNENMYjJJUmhDZWtSTHBp?=
+ =?utf-8?B?ejNpWEplaEhjR3AzZDM5SnFNMmljOHgzVHZxMHNIZnI0N1BweGZzWjd2Q1Vm?=
+ =?utf-8?B?clZqSUl4R2tvQjBiUlJVQ0VIUGgwRlh5NXJDdkd4U0xuMHcrSUJLalFtNkZ4?=
+ =?utf-8?B?NUlMbXZtQ1U3YXI1V3JxVW9OT0FrdGVqeWJFdy85cmhqNGhVQS9aS0ZnM3Ns?=
+ =?utf-8?B?bGFONUVQanJZTmx2U21tT1VsOFJCUEVRWWI1NXlsb2l4dTRHeERJbTNwSkJJ?=
+ =?utf-8?B?cEZmTklORHlGNHgzaGZRSjhac0dIVU8xUzFzTXhZbzRvWnNwNWZlZTVITksy?=
+ =?utf-8?B?Um9jRXE1Z3BlbUw2UHp3NjQzQzgwTU9lUVdGZnJER0FmZCt0aE0rUlZVMUZx?=
+ =?utf-8?B?Qzk3eDdrc2dNZjIzSkRvZFBuV2NWQ21jaU1GcGRzdktCYUZhSGViTUViMmxH?=
+ =?utf-8?B?aWxjalFHWWIrRjI4ZmtQRFd4eW1IT3dDYmV5emtYeHM1RHozYzJwbjVZb2FN?=
+ =?utf-8?B?ZFFGTkRjSkhPcktyT0lrbEQxU3NySEtaNlJTNXhXV2dVUTJucTZxanRwa1Fo?=
+ =?utf-8?B?QmJHMXE4eGZBNGgrQzBhc2RPSnoyV25UQjVRM2lpSTQwZnkyWkFVMXRFNk5w?=
+ =?utf-8?B?T0xyNVQrV0xVdUtvWkF6VGtCZzFxMWdJNGtXQ3o4NjErUkZoSDNCanUyQ0JW?=
+ =?utf-8?B?dDdyT0tLeHR3b0grNGFlaXlBcHE1MnYvbG42RitjcWsvemxheHovL3NQajRU?=
+ =?utf-8?B?RitEN2lOZnBaOTlMRDBSSkd0MVFQK3Jxb3MyZHJidU11QlJCMGpBb0cxUkhY?=
+ =?utf-8?B?akdteGNzRmRCZHRKL3Jvc1FvWUNqU1BSNlhydkxKZjg3VERTTTIzdi9HL3My?=
+ =?utf-8?B?OU9ndjdjWmFFMnJXWXdkcFpMc3V0MGVlU080a1ZpaVh2a2dyNEsyZm9aZTd2?=
+ =?utf-8?B?WTlzQ1o3Nm9KREw5RGowRFRxMDBmK21EZjkzdXVib04xSm5WRTlDOUFaTzRu?=
+ =?utf-8?B?dEFCS0ZEc3ZZM0xHUklRTUtyankxUjFQQXZENVFNVXFRc05ISUhnL1JlVjFV?=
+ =?utf-8?B?bmh3UEFBQUJnMlpORjBSbjdhbGE5aVRTOGhBdVk5UVlpQUFoWW9JNkxWdkFI?=
+ =?utf-8?Q?8oMc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.43;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 12:26:41.7746
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a01f23a-52e0-4b7f-dc89-08de17af94f2
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.43];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A793.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8613
+X-Authority-Analysis: v=2.4 cv=JMU2csKb c=1 sm=1 tr=0 ts=69035985 cx=c_pps
+ a=g4uZeTjY1y1IQa6Zs0r4CQ==:117 a=peP7VJn1Wk7OJvVWh4ABVQ==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=iPq3YwKX0LwA:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=8b9GpE9nAAAA:8 a=-EtSkIF3whHXnZY0vQ8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 1Kow1_-CRHzvGoQU3nGgmbAZrF5C2rqi
+X-Proofpoint-GUID: 1Kow1_-CRHzvGoQU3nGgmbAZrF5C2rqi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDEwMSBTYWx0ZWRfX87hLxVksLBRH
+ 3+UFMddiD7/miCI3vxYUtXChkNQHWi/xMTgovCDQ4G5e7RdG3lY35+NxSb4Wuy+ArGHrJcoDXJl
+ yJYoYgeTsm57Y/MsjWvpP9lQYr+mJyuEp/sBsDLk3x0bRy26y0ZhvoCaYASzbVUcB2M3Gv5C40V
+ 4iofTWCItph1QRDUPR3vvmhi6xBWJ3xN6uP44psDrolS8EZ162wrPrkmMBDhEi2PUULRE43lNBl
+ 0K9erFcel8JAHteMe17Ymy28GnR0iykM9T6Rct2XIzGzI57o7yNUPGy0yvFXAh0nb+i9sazDnPA
+ 0vpwN7Gwr8m1rLV3ALQw/FpuxEbIkh8T34I6F0K+cE+BahCXwdzsvBk267vhuU2Nysds3PHSrLr
+ CdAWpruBL8spPAh66Ri+Ia3RsL7spw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_03,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ adultscore=0 spamscore=0 clxscore=1011 malwarescore=0 phishscore=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300101
 
-> If you have a concern, you have to say what it is.  It doesn't seem it i=
-s
-> about the running time, so why do you include that information?
+From: Clément Le Goffic <clement.legoffic@foss.st.com>
 
-How will remaining open issues be resolved?
+m2m_hw_period is initialized only when chan_config->m2m_hw is true. This
+triggers a warning:
+‘m2m_hw_period’ may be used uninitialized [-Wmaybe-uninitialized]
+Although m2m_hw_period is only used when chan_config->m2m_hw is true and
+ignored otherwise, initialize it unconditionally to 0.
 
+ccr is initialized by stm32_mdma_set_xfer_param() when the sg list is not
+empty. This triggers a warning:
+‘ccr’ may be used uninitialized [-Wmaybe-uninitialized]
+Indeed, it could be used uninitialized if the sg list is empty. Initialize
+it to 0.
 
-> I should not have to repeat your experiment
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+---
+ drivers/dma/stm32/stm32-mdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It would be nice if further software users would occasionally reproduce
-presented data processing possibilities.
+diff --git a/drivers/dma/stm32/stm32-mdma.c b/drivers/dma/stm32/stm32-mdma.c
+index 080c1c725216..b87d41b234df 100644
+--- a/drivers/dma/stm32/stm32-mdma.c
++++ b/drivers/dma/stm32/stm32-mdma.c
+@@ -731,7 +731,7 @@ static int stm32_mdma_setup_xfer(struct stm32_mdma_chan *chan,
+ 	struct stm32_mdma_chan_config *chan_config = &chan->chan_config;
+ 	struct scatterlist *sg;
+ 	dma_addr_t src_addr, dst_addr;
+-	u32 m2m_hw_period, ccr, ctcr, ctbr;
++	u32 m2m_hw_period = 0, ccr = 0, ctcr, ctbr;
+ 	int i, ret = 0;
+ 
+ 	if (chan_config->m2m_hw)
 
+---
+base-commit: 398035178503bf662281bbffb4bebce1460a4bc5
+change-id: 20251030-mdma_warnings_fix-df4b3d1405ed
 
->                                             to figure out what you are
-> asking about.
+Best regards,
+-- 
+Amelie Delaunay <amelie.delaunay@foss.st.com>
 
-I =E2=80=9Caccidentally=E2=80=9D tried also the following SmPL script vari=
-ants out.
-
-A)
-@replacement3@
-expression object, size, source, target;
-@@
- target =3D
--object; memcpy(target, source, size)
-+object; memcpy(object, source, size)
- ;
-
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> time /usr/bin=
-/spatch --max-width 100 --no-loops =E2=80=A6/Projekte/Coccinelle/janitor/u=
-se_memcpy_assignment3.cocci arch/arm64/kvm/arm.c
-=E2=80=A6
-@@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
-                        goto out_err;
-                }
-=20
--               page_addr =3D page_address(page);
--               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_p=
-ercpu_size());
-+               page_addr =3Dmemcpy(page_address(page), CHOOSE_NVHE_SYM(__=
-per_cpu_start),
-+                                 nvhe_percpu_size());page_address(page);
-                kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] =3D (unsigned l=
-ong)page_addr;
-        }
-=20
-
-real    0m0,578s
-user    0m0,524s
-sys     0m0,047s
-
-
-
-B)
-@replacement4@
-expression object, size, source, target;
-@@
--target =3D object; memcpy(target, source, size)
-+target =3D object; memcpy(object, source, size)
- ;
-
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> time /usr/bin=
-/spatch --max-width 100 --no-loops =E2=80=A6/Projekte/Coccinelle/janitor/u=
-se_memcpy_assignment4.cocci arch/arm64/kvm/arm.c
-=E2=80=A6
-@@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
-                        goto out_err;
-                }
-=20
-+               memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start=
-), nvhe_percpu_size());
-                page_addr =3D page_address(page);
--               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_p=
-ercpu_size());
-                kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] =3D (unsigned l=
-ong)page_addr;
-        }
-=20
-
-real    0m0,565s
-user    0m0,533s
-sys     0m0,032s
-
-
-
-Would you like to reconsider implementation details accordingly?
-
-Regards,
-Markus
 
