@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-877501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942ABC1E46D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:51:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED45C1E470
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908C13BA859
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA60188E330
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63459293C4E;
-	Thu, 30 Oct 2025 03:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552B0285071;
+	Thu, 30 Oct 2025 03:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOCZ9BxT"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ii33pclx"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC62243376
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5095429B8F8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761796292; cv=none; b=I8qA42vCoCricCwlvW+LFBNgo4By0vy1+lVEe2BDPsc25opeO43bvTqNOhB1moNaK8X8pgtI4iaiElDyzBmryl6p+swcjzxJ6Iyyb5j/6SUC2HZib8YV/BwYMyKIc7emBQe1MZ+TfLa3tgnszGaF/l7s7thSdzZKIeseQriyiQY=
+	t=1761796296; cv=none; b=D/kjAxOkbZoJp4pzM0daZDjrY9zp1QLiOzU0fCMsJ44y8vKj0dnRq8qkstFcL10J4qpWUQODDmVWvCLbunnaO0xvwx7G7awim7i5CBDyU35lNNtRlvB1mq0Ds7/qUd8lbPxCoeyILdw11n1P/ybADD81HnkXd2R/QDTOfYghnXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761796292; c=relaxed/simple;
-	bh=pBeeBWRYeKafQMod5bIA+zGCastuNewJmZBzcV88qr8=;
+	s=arc-20240116; t=1761796296; c=relaxed/simple;
+	bh=IsJxZQkO57xF953K5xHhWXR0z2NymjzNWHGtiMrLTDg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AV+f2EwNFRlMWcE6IvMFSBXvJXQr9nyeoey1/KzN6nXAshhS0kXoTR3pSOkQLrsSfHHkNz0jSTAxNEz1HAXWKxcrL2gXI1zFboGMb3ygmsr7pc3/VA+qeRVwTq5FNdpyhApjtgy784ua6Az2D3DZ3OJ3ZBf+dxj+5YCMCYgRorc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOCZ9BxT; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=TJh2KuPgs8SNpzJHv8C6T19WViyoTCVvLljFLosqKweHhGhkmAcQAeVcAofvh/qdel3yKzVjkOj8pdUqemgT9hw9I8s0jtEp0RqMThbZnGiLIAH2uCYi+26G+Ep7CUo7ZhFb6RFZHTEOjTbpqDyVZ6XmJOa2l9F5H6rNGK8ouPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ii33pclx; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-292fd52d527so5430705ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:51:30 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-294fb21b160so1428345ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761796290; x=1762401090; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761796295; x=1762401095; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yV4KJ/itlJFLRca3pmyjvPn6JyCSXSOLPe2auNiZSzY=;
-        b=ZOCZ9BxTpiznMXLHAKsI7TMLdtdrs6ishH7KzubxOBRJoYP0s2B78O0ErgJ6iGlXgz
-         N6VvlndPY1FJPO2hPuoMZwZV3keEh7GFpJFEuMHWrUz96+wdiKEMgQIaohtTUzpYETjz
-         w44/YbGG46M8snPKpLIPPuv5nWhoewKjO7CSyyKuH3RYOx9ZDfQAykEVEdqnMJiUO26X
-         l20dO8IePKmvHbGiKS8QjGZThmy4tDCTq32CU4xTSHTL4diZTubsxOPxIF5NbT0MMxQt
-         9TXnPeGaaw4CuBporcAzJowOOfn0aB+e66JJa4YxHCcOEzUprjupPBzi6cXnwubWrf1U
-         SXXw==
+        bh=MN0fRpH/PCnIiX5ASSuQg4IoluSNnvJUR3iBGHC2JFI=;
+        b=ii33pclxTNLvQFHHngkm6pLnwD37UPg1AGKSMvHVGhkisZD+rIDHKhhTpZS5qrEOZ6
+         5i9bTFP1UhviHFfJLewzkWt+Kc2Xd7IRtyuhIFog8UKJk/QV0W93CMN6Y9SeRSmD1YNd
+         AKVri7L0QXDipGrAnEA+He0+C/pLh7bxprdIA3QwZrRHha4+QmqKG8lHw+Rg8Hkrh0yK
+         Kd+DluB2ClC2ZO3+frJl/wXV4pdRTR3OOJO3x9kDl94ckHVuY9HBNh7NryZUVhKPLkm8
+         m2p2GEwzlUQm+fv24ic8ouV0Q2kk7kraomYwxRnRsZmIvk/kxtbe+SelEWREW1kkl1ej
+         O99Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761796290; x=1762401090;
+        d=1e100.net; s=20230601; t=1761796295; x=1762401095;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yV4KJ/itlJFLRca3pmyjvPn6JyCSXSOLPe2auNiZSzY=;
-        b=Uxv4JzgZm1jPcgFJxUnP6iwB0FcoS6M/Ru+O/8ViL4nKBxckJCOv3ha/RzNc4GhCDb
-         CHCUkivQHX3vq4mV7kU7eGQSed9D7YklzJ4++6yLeZEU8aZVuTzpyH7jIUo0/GFIG6J0
-         OBTwXTGWiyvzuPjx4w2dxd/4b3p0oBZPCLc8NzKd7hVtEq3q/2XbjS4Y5I7DFBU4V+MI
-         B4cYCXTOzvrUR5J5jmWAYnDp6T4wW9c/+esAborjZ+6f2uZkAMAGZ6FLv66Cvx5TyUzQ
-         y7AL/SSgREVhF+Y4QEKm797EBx6Z2Ih7pPVgeq/CNXzjhhI/02bIaaBAlzlUC0RM2XeQ
-         19pw==
-X-Gm-Message-State: AOJu0YzxeIhW4CzQDuG2WK/RtwodCxEfs2gatA70PbTUqBg59dwYwgzg
-	L5zRuJmZCF5vJNF+AxZLf4qk8rfutftykrqWg005fhD6kFN/GnmIbv69
-X-Gm-Gg: ASbGnctal2LXjL9+2gntgupin5TdsRWj0uHLIfWGAXGei2ilrGzRU4gWU0mAZ4N5Fb3
-	t3w4PXsOOsM/FVug5TIvKDyKnswqWyVKpmKLIFHq+w/4aluzNWxXkVBfrsPeUcXyXJXgJ+yBwA+
-	RoGxnCb6Cy1wf96RYFN3VXy0gOB9+If9g4mqiaE8EWuiQNnfC8MiG4ZDPxnNogHnGQDp78hX9x4
-	AtdNuQfc2yCvDZk0eptqZ+naE+BpNfXx6Pc/NBtADQUg82VlVICFJbKKd18wG8pdsABeVFWx3MM
-	Fk1nugRAPK2qp1Gj7PCaOZ2n5ffIHL+B3QL6b4k+7ts8OdbcfrOiYVpPSwt9SKQgHJwjoSyZ/1N
-	Yx4GhIdkG8scE2UijJViwL4+y2vl6DvSRvzOufbBSnThA25JtPA9lDx82EkrkRcUhyBGhXRlk7k
-	Y5yg99G0Hy79tsZ0y1AuZD+T8iz5SyByaG4CJ7Ys2An+xa4VJqSEOUixKJ8zmeGuuuNmJPjkhK0
-	UisCL624GLf9u2qDnff
-X-Google-Smtp-Source: AGHT+IFPBdMt0Uqk3RC4Q5N98p917B/ethKWmCVg0XTxRxMZNghvClcvOMeLv6v7oMLApmWNNYOqWw==
-X-Received: by 2002:a17:902:f68a:b0:294:fc1d:9d0 with SMTP id d9443c01a7336-294fc1d0db8mr8265645ad.40.1761796290208;
-        Wed, 29 Oct 2025 20:51:30 -0700 (PDT)
+        bh=MN0fRpH/PCnIiX5ASSuQg4IoluSNnvJUR3iBGHC2JFI=;
+        b=Rv1nKUuHTSM6o+cj6KHEnyJ6UUKKR67jBSTWs7nuqMNcK3sBa9boHsB9ahrPd5SIpL
+         oJtyFWuNxXBAvrlYjXLxmSJljUFMun2N1XPL33qi7kIy8o/1D3KGaqy0d//mMUobCNdd
+         4L43f1oHeg+X+9wf6+DtwEPkLAfKWwOmG1yoN3wxRNYUetn9AMS/5ZkEr9TgZxRHTz9y
+         IT4pMiILBdiouLYkGERpsdn/bkGdbw9znE3r62hcAgDPG2IkSF1RqSOzgg+uP4yaPUE3
+         Nhpe7RJB3dnEUyV3K1KVHS86nUp0qNHgifviXAfXchfR9Uppy64gXxDU4a6fH1l4J9wU
+         H01Q==
+X-Gm-Message-State: AOJu0YzdjZM1+unMxLxK3j6sbLoiF8nSt9elH/BabTeO1nIh+0uaQz7d
+	C/H046rYaXMxhICCpW3Lo01q1PV/MkfsZIKda1JUVbcrUUBQ8/qzSg5T
+X-Gm-Gg: ASbGncsAi1bgIm8Ot+1QPOnRxPdvyz+DB2m2TsXZVRBVGMyfkJbpRQP+812P0U0v3fF
+	eVarnEAdv5sN/ioeqArMZG/ZsGPQcVvb7vvt7bab+nh1Y/9SUyw6NBNCpY/mvTctLMKIqxd0hlc
+	+h/+v++M/MfSWEE7OMCjslxmtFXY/wM9TDgGuFWNehFBMxpr/3YwXqEGjRyVIkvYAWamEGHNr6e
+	M4/+cjrnMU0iyf0ztDSJaiLq037q3Visx1s3NM9zNMrCTwohS98ux6DAERYtHXfTmlq5/I4n/eC
+	/oNmqjstUamKyy53FS9qPn6V+FFQ7++43aOkKVmK5HUH5mMB87GMEWjXBv2abL2asAIzCZ6U8GO
+	DAXlcrwRUrzcq8twPgzCGR/hmLrFl63uPAO9i+uQIQVWwIJidhdV2lM/yQu0FGrCUXGzxWLUelt
+	iH5Jlo9lYXDWiQfSDaLjgwVuCLmLODGEdVvyeXAv21SoFQO8bCGwDzVfQ7T9tFSHRKkL8DWLrvk
+	IZu3ikZwA==
+X-Google-Smtp-Source: AGHT+IFDmCt6OxS1lG5usvyxQO/ayx75zbEn+wDdcRO8migbMEW884MG+r2fTQz9vUZXdmTRBF86sg==
+X-Received: by 2002:a17:903:2344:b0:24c:d0b3:3b20 with SMTP id d9443c01a7336-294ede8b3d5mr19471615ad.37.1761796294581;
+        Wed, 29 Oct 2025 20:51:34 -0700 (PDT)
 Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3381sm167953225ad.16.2025.10.29.20.51.26
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3381sm167953225ad.16.2025.10.29.20.51.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 20:51:29 -0700 (PDT)
+        Wed, 29 Oct 2025 20:51:34 -0700 (PDT)
 From: alistair23@gmail.com
 X-Google-Original-From: alistair.francis@wdc.com
 To: kbusch@kernel.org,
@@ -85,9 +85,9 @@ To: kbusch@kernel.org,
 Cc: linux-kernel@vger.kernel.org,
 	alistair23@gmail.com,
 	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH 1/3] nvmet-tcp: Don't error if TLS is enabed on a reset
-Date: Thu, 30 Oct 2025 13:51:12 +1000
-Message-ID: <20251030035114.16840-2-alistair.francis@wdc.com>
+Subject: [PATCH 2/3] nvmet-tcp: Don't free SQ on authentication success
+Date: Thu, 30 Oct 2025 13:51:13 +1000
+Message-ID: <20251030035114.16840-3-alistair.francis@wdc.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251030035114.16840-1-alistair.francis@wdc.com>
 References: <20251030035114.16840-1-alistair.francis@wdc.com>
@@ -101,91 +101,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Alistair Francis <alistair.francis@wdc.com>
 
-If the host sends a AUTH_Negotiate Message on the admin queue with
-REPLACETLSPSK set then we expect and require a TLS connection and
-shouldn't report an error if TLS is enabled.
+Curently after the host sends a REPLACETLSPSK we free the TLS keys as
+part of calling nvmet_auth_sq_free() on success. This means when the
+host sends a follow up REPLACETLSPSK we return CONCAT_MISMATCH as the
+check for !nvmet_queue_tls_keyid(req->sq) fails.
 
-This change only enforces the nvmet_queue_tls_keyid() check if we aren't
-resetting the negotiation.
+This patch ensures we don't free the TLS key on success as we might need
+it again in the future.
 
 Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 ---
- drivers/nvme/target/auth.c             | 4 ++--
- drivers/nvme/target/core.c             | 2 +-
- drivers/nvme/target/fabrics-cmd-auth.c | 2 +-
- drivers/nvme/target/nvmet.h            | 4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/nvme/target/fabrics-cmd-auth.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/target/auth.c b/drivers/nvme/target/auth.c
-index f3cf7236e080..3e7024899608 100644
---- a/drivers/nvme/target/auth.c
-+++ b/drivers/nvme/target/auth.c
-@@ -140,7 +140,7 @@ int nvmet_setup_dhgroup(struct nvmet_ctrl *ctrl, u8 dhgroup_id)
- 	return ret;
- }
- 
--u8 nvmet_setup_auth(struct nvmet_ctrl *ctrl, struct nvmet_sq *sq)
-+u8 nvmet_setup_auth(struct nvmet_ctrl *ctrl, struct nvmet_sq *sq, bool reset)
- {
- 	int ret = 0;
- 	struct nvmet_host_link *p;
-@@ -166,7 +166,7 @@ u8 nvmet_setup_auth(struct nvmet_ctrl *ctrl, struct nvmet_sq *sq)
- 		goto out_unlock;
- 	}
- 
--	if (nvmet_queue_tls_keyid(sq)) {
-+	if (!reset && nvmet_queue_tls_keyid(sq)) {
- 		pr_debug("host %s tls enabled\n", ctrl->hostnqn);
- 		goto out_unlock;
- 	}
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 5d7d483bfbe3..bd9746715ffc 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -1689,7 +1689,7 @@ struct nvmet_ctrl *nvmet_alloc_ctrl(struct nvmet_alloc_ctrl_args *args)
- 	if (args->hostid)
- 		uuid_copy(&ctrl->hostid, args->hostid);
- 
--	dhchap_status = nvmet_setup_auth(ctrl, args->sq);
-+	dhchap_status = nvmet_setup_auth(ctrl, args->sq, false);
- 	if (dhchap_status) {
- 		pr_err("Failed to setup authentication, dhchap status %u\n",
- 		       dhchap_status);
 diff --git a/drivers/nvme/target/fabrics-cmd-auth.c b/drivers/nvme/target/fabrics-cmd-auth.c
-index 50639e6e31eb..f71456a94b66 100644
+index f71456a94b66..5cb857d21dfd 100644
 --- a/drivers/nvme/target/fabrics-cmd-auth.c
 +++ b/drivers/nvme/target/fabrics-cmd-auth.c
-@@ -293,7 +293,7 @@ void nvmet_execute_auth_send(struct nvmet_req *req)
- 			pr_debug("%s: ctrl %d qid %d reset negotiation\n",
- 				 __func__, ctrl->cntlid, req->sq->qid);
- 			if (!req->sq->qid) {
--				dhchap_status = nvmet_setup_auth(ctrl, req->sq);
-+				dhchap_status = nvmet_setup_auth(ctrl, req->sq, true);
- 				if (dhchap_status) {
- 					pr_err("ctrl %d qid 0 failed to setup re-authentication\n",
- 					       ctrl->cntlid);
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index f3b09f4099f0..20be2fe43307 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -896,7 +896,7 @@ void nvmet_execute_auth_receive(struct nvmet_req *req);
- int nvmet_auth_set_key(struct nvmet_host *host, const char *secret,
- 		       bool set_ctrl);
- int nvmet_auth_set_host_hash(struct nvmet_host *host, const char *hash);
--u8 nvmet_setup_auth(struct nvmet_ctrl *ctrl, struct nvmet_sq *sq);
-+u8 nvmet_setup_auth(struct nvmet_ctrl *ctrl, struct nvmet_sq *sq, bool reset);
- void nvmet_auth_sq_init(struct nvmet_sq *sq);
- void nvmet_destroy_auth(struct nvmet_ctrl *ctrl);
- void nvmet_auth_sq_free(struct nvmet_sq *sq);
-@@ -917,7 +917,7 @@ int nvmet_auth_ctrl_sesskey(struct nvmet_req *req,
- void nvmet_auth_insert_psk(struct nvmet_sq *sq);
- #else
- static inline u8 nvmet_setup_auth(struct nvmet_ctrl *ctrl,
--				  struct nvmet_sq *sq)
-+				  struct nvmet_sq *sq, bool reset)
- {
- 	return 0;
- }
+@@ -574,9 +574,7 @@ void nvmet_execute_auth_receive(struct nvmet_req *req)
+ 	status = nvmet_copy_to_sgl(req, 0, d, al);
+ 	kfree(d);
+ done:
+-	if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_SUCCESS2)
+-		nvmet_auth_sq_free(req->sq);
+-	else if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_FAILURE1) {
++	if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_FAILURE1) {
+ 		nvmet_auth_sq_free(req->sq);
+ 		nvmet_ctrl_fatal_error(ctrl);
+ 	}
 -- 
 2.51.0
 
