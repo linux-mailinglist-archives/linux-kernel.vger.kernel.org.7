@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-879052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E678FC22293
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:13:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F3DC2226F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7371881412
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521343BE64B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A91336E35F;
-	Thu, 30 Oct 2025 20:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5490337FC6A;
+	Thu, 30 Oct 2025 20:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gz7K7LCI"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MsirBJuK"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5302137DBCF
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3832F37EE1F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761855014; cv=none; b=thf4kMjU3t759En2iUOHzhbIDQvjEBoHGBl+pB9E8V++56ypnMRDbrIzVS2F7B7XDq6/sE5X8iR8C2pfhd+E4R66/9BjxTCigIXr98wjbDJ03KA1hA7Tg2pmRLGBFeKdn5aOD4O2blyYObjZkSVwGJavCIRvmgKm0xvhNf5h7eA=
+	t=1761855016; cv=none; b=ZQg9tVBM+VAxQmyJZeV3083zkqwR0uEa2Ot0KpPhGb+gWCsa+TDJLai6coBjZUH0PMAyYPCO8piRA0ElD2dsOMD1bRIHbWTTft5h9dUYRw4cQRCNKKR926mi3ZFSwJPLkiv6VR8VXUBIs93lbt83AJFVI/geyAouLuY7Xl/HwFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761855014; c=relaxed/simple;
-	bh=Q2c6cNYSKoGYP4CYOI8nHGq0kI85fWBL8NZOIPZmdhU=;
+	s=arc-20240116; t=1761855016; c=relaxed/simple;
+	bh=iL9gs/36+Vag8cN5PVoyBc4UOU0u8h8j4kVKzBjrjFc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DUzb8xlCEkunOIuLuWZqTcr9tjuJ8n6iDsXYkjkhlyJ0QezVu83kQWaiPzFTmUVrGQA00wq/K7pygx86sSPKIo8tjAkX0oELLI7SjRB+UPHNoBNgyuvPQAGixlzI7FToOmfCECF4AkqBcoDeKa3vMCETR314jiFtpI3pYrO9zoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gz7K7LCI; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=QkGW/Eu02b18pKZvPfO5KZA7j5wPiA5zC1NbI9Laj+rcn/dpGBNQwaJW4gG606H5xoNNUbBweLY7dQhQMPAHx9f8MoNN6Kvs41w2C3tnlHt+QTnlvP3Ul346ggClVnWx+/8g0ldoq2bcRn7YvVqXrplAZ8KVQTk3jRW0QMxBVpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MsirBJuK; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5535902495so987236a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:10:11 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33d8970ae47so1738707a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:10:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761855011; x=1762459811; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761855014; x=1762459814; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=pr+88J8V2FFjpoCz/RKjLuOTT6WQDejtYqs45iSU51c=;
-        b=gz7K7LCIaED4skeuMQNZUqP4NIJ3bX8PQX7dV1566hqiO8b+/xoA1fJs2faKHA5s6K
-         UYNXrO8Du5eb91L7nSf/+bG0YCwXt3xfDAJGZG7rIg9tfnKBGSY+3wmDO/YTfoHgGo+8
-         WZINsmqtOq8GGvfVvCf4pRALkAuA7NHbuyDsQReEVv0gW2aeKgp1xiULY3W/CSx3mnN5
-         u3CShr1dkTerZL99tpypYYiKfQa/P0Xqo88tSHukNKBoMXDk2Q+goD6i4ldmD0x0ly1r
-         JxiSsW92L1xw+KJjE+ukd+MSLBIBfjIFTYzt2zielD2sUYUA1fLnHn+JPcrP0TSZZDJ5
-         kQEw==
+        bh=LWKZ6GH7M+zzFa/XrLh2XF2IHEzo52dgkoqprkhASvM=;
+        b=MsirBJuKh4wk6WxKJhf9T34e25umxoo+8Xch5azN52aMkF+b3lFYen0WPVFp5lO7ga
+         d0gFR/xWqb3Q4mDKuQUVnyhIBID1tVNhvabb+xQ5++2QGzaVvYdlaNltYpxHoeAN9zhY
+         D9vhl/4hpzVRrVy4kZ43Ff5/BC5GJNrZLFP8NesDX8PcJH5vSvFF9Wv6DJ2taPF2zxWZ
+         IeaoKpLk8kpAzHIH7ZGzMuEqC21uCFJMUY75GBMzKACXmLpt7I/Qo4kUcfnjx7dChdgp
+         lSWu+GNNzhimtNMQnYmFQHDREIhRqRKuk5+HQqhhuD4+jPRNmkRDK12Qc6XZ7Llv/8Gz
+         XzSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761855011; x=1762459811;
+        d=1e100.net; s=20230601; t=1761855014; x=1762459814;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pr+88J8V2FFjpoCz/RKjLuOTT6WQDejtYqs45iSU51c=;
-        b=RxjP/Wwd+cZ/OKrmL1YAb0wIve1LTBu2ppvJQ/YWETizbs8VDg8CqdwH50MwHUA9yM
-         wMzRJD3gFSAwjdF1bQXFtCL+HjqoOScwQuNbSxdB9WizkVfPoJ3rKeO8EJ003PaeL85L
-         VxoTONmrHqxhhATy3Z+5vpOzKO2HuG8kiIsEUNVZAn4Or/YDCJ8QS7zKFP9xgIWzPV6s
-         v6YmS3U6opElg/H47qIbx8S/KOnvDNjbaTMB14bFaOnmWKH1jvCO6N6gWvMMyt7OjJcp
-         w3k5WftRfRhhUJZUGb5mR6CxEYdDMMthF5yge4xq3jO3F35IHdPCzEGwB+WhKFPPhATl
-         MSng==
-X-Forwarded-Encrypted: i=1; AJvYcCWgjsVgsGB3elkp0qPUwQyxiVFGvpVfH3fyRRyfTLDM4qIkvpNcqExeRhU+BMZgbVKIISCbcSGO7a0cMQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpygTiSK/oOcStcXdCLHu6eFBfraLYcztMeQ9aQwvOEWPdU7vH
-	DyzqjrE8V1AOjkHEy6fybVdpP7bUyCid9/YQ9cmqYu/cWIPozUHaw9qw5ygvPe6svznUQdnPHAx
-	XosGZGg==
-X-Google-Smtp-Source: AGHT+IHqKKH3jALoT7jRe2OHIQ2mXXV+pELYiJKGwKEjf4ZIM+twJ+5jG3TjV8eGRlfpIUNYgujs+bg0n4E=
-X-Received: from pjji4.prod.google.com ([2002:a17:90a:6504:b0:33b:dccb:b328])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c8d:b0:33f:ebc2:63a
- with SMTP id 98e67ed59e1d1-34082fc2cb0mr1192488a91.14.1761855011296; Thu, 30
- Oct 2025 13:10:11 -0700 (PDT)
+        bh=LWKZ6GH7M+zzFa/XrLh2XF2IHEzo52dgkoqprkhASvM=;
+        b=NE6F2qEPswhRYZlgi8QEeVdCrfTYQDgdwFMzECzZQCFpHi0Etx/ycJpfyAofrdxqAH
+         aWQMMiF6YUYi8SP6ADWbsrAPpS6nZDhaatzSiRsqnO1s27JBNn8OwSj+cTAqSTbUpxDj
+         8G2toSrP7/GqB02pGkcLUAvUXfin/TlSGbAgk8Jr6V7niTUWit8d86o1ws2WXIExfTNz
+         +yTOYpJZ3Wq+HWuy2nzOPTjgmMDDGG9Uc3bzqlss+2r+VoKsGGsU9RoVuLjsVxgmlEx3
+         ApzkQ/Bt3JqGdC9YKHxlViTfI65T+2hUYe4h0fwQsZPxGE2xByl7pxFeGI8vouNcD+0v
+         95Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+4YEHlqBxIsuQQNP1GDP4DpW2aLDgVPdEYiDrZ5VsswT3aahvNDl728TedTkd3nmbYApqr/vkZKdc5og=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGWW7wF/MHj3lBqe1YmXAAiygdtDKSrSDOp0OrxPw3hXZA1ckp
+	mQX9Ipqy4Tjbwvipbrrqi5PrOuc1b7GdHXXwjXFuqniqHD5fQZen5d3Dzv3/QVHrHWPzjrNhLF0
+	+yHOEkA==
+X-Google-Smtp-Source: AGHT+IG7uuixnfesLu6aOkm8lY1M0UiQHdZ1syGC1fH0ExXdaI9kZ+0pX4GRNJah3kEFWI4QtyuhY8kfLfE=
+X-Received: from pjrx14.prod.google.com ([2002:a17:90a:bc8e:b0:332:7fae:e138])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:530d:b0:330:797a:f4ea
+ with SMTP id 98e67ed59e1d1-3408308b46emr1245875a91.29.1761855013586; Thu, 30
+ Oct 2025 13:10:13 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 30 Oct 2025 13:09:28 -0700
+Date: Thu, 30 Oct 2025 13:09:29 -0700
 In-Reply-To: <20251030200951.3402865-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251030200951.3402865-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251030200951.3402865-6-seanjc@google.com>
-Subject: [PATCH v4 05/28] KVM: x86/mmu: WARN if KVM attempts to map into an
- invalid TDP MMU root
+Message-ID: <20251030200951.3402865-7-seanjc@google.com>
+Subject: [PATCH v4 06/28] Revert "KVM: x86/tdp_mmu: Add a helper function to
+ walk down the TDP MMU"
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
@@ -98,28 +98,117 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Ackerley Tng <ackerleytng@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When mapping into the TDP MMU, WARN (if KVM_PROVE_MMU=y) if the root is
-invalid, e.g. if KVM is attempting to insert a mapping without checking if
-the information and MMU context is fresh.
+Remove the helper and exports that were added to allow TDX code to reuse
+kvm_tdp_map_page() for its gmem post-populate flow now that a dedicated
+TDP MMU API is provided to install a mapping given a gfn+pfn pair.
 
+This reverts commit 2608f105760115e94a03efd9f12f8fbfd1f9af4b.
+
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/tdp_mmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kvm/mmu.h         |  2 --
+ arch/x86/kvm/mmu/mmu.c     |  4 ++--
+ arch/x86/kvm/mmu/tdp_mmu.c | 37 +++++--------------------------------
+ 3 files changed, 7 insertions(+), 36 deletions(-)
 
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index 2f108e381959..9e5045a60d8b 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -257,8 +257,6 @@ extern bool tdp_mmu_enabled;
+ #define tdp_mmu_enabled false
+ #endif
+ 
+-bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa);
+-int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level);
+ int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn);
+ 
+ static inline bool kvm_memslots_have_rmaps(struct kvm *kvm)
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index bad0480bdb0d..3a5104e4127a 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4924,7 +4924,8 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ 	return direct_page_fault(vcpu, fault);
+ }
+ 
+-int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
++static int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code,
++			    u8 *level)
+ {
+ 	int r;
+ 
+@@ -4966,7 +4967,6 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
+ 		return -EIO;
+ 	}
+ }
+-EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_tdp_map_page);
+ 
+ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+ 				    struct kvm_pre_fault_memory *range)
 diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index c5734ca5c17d..440fd8f80397 100644
+index 440fd8f80397..e735d2f8367b 100644
 --- a/arch/x86/kvm/mmu/tdp_mmu.c
 +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1273,6 +1273,8 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- 	struct kvm_mmu_page *sp;
- 	int ret = RET_PF_RETRY;
+@@ -1941,13 +1941,16 @@ bool kvm_tdp_mmu_write_protect_gfn(struct kvm *kvm,
+  *
+  * Must be called between kvm_tdp_mmu_walk_lockless_{begin,end}.
+  */
+-static int __kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
+-				  struct kvm_mmu_page *root)
++int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
++			 int *root_level)
+ {
++	struct kvm_mmu_page *root = root_to_sp(vcpu->arch.mmu->root.hpa);
+ 	struct tdp_iter iter;
+ 	gfn_t gfn = addr >> PAGE_SHIFT;
+ 	int leaf = -1;
  
-+	KVM_MMU_WARN_ON(!root || root->role.invalid);
++	*root_level = vcpu->arch.mmu->root_role.level;
 +
- 	kvm_mmu_hugepage_adjust(vcpu, fault);
+ 	for_each_tdp_pte(iter, vcpu->kvm, root, gfn, gfn + 1) {
+ 		leaf = iter.level;
+ 		sptes[leaf] = iter.old_spte;
+@@ -1956,36 +1959,6 @@ static int __kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
+ 	return leaf;
+ }
  
- 	trace_kvm_mmu_spte_requested(fault);
+-int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
+-			 int *root_level)
+-{
+-	struct kvm_mmu_page *root = root_to_sp(vcpu->arch.mmu->root.hpa);
+-	*root_level = vcpu->arch.mmu->root_role.level;
+-
+-	return __kvm_tdp_mmu_get_walk(vcpu, addr, sptes, root);
+-}
+-
+-bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa)
+-{
+-	struct kvm *kvm = vcpu->kvm;
+-	bool is_direct = kvm_is_addr_direct(kvm, gpa);
+-	hpa_t root = is_direct ? vcpu->arch.mmu->root.hpa :
+-				 vcpu->arch.mmu->mirror_root_hpa;
+-	u64 sptes[PT64_ROOT_MAX_LEVEL + 1], spte;
+-	int leaf;
+-
+-	lockdep_assert_held(&kvm->mmu_lock);
+-	rcu_read_lock();
+-	leaf = __kvm_tdp_mmu_get_walk(vcpu, gpa, sptes, root_to_sp(root));
+-	rcu_read_unlock();
+-	if (leaf < 0)
+-		return false;
+-
+-	spte = sptes[leaf];
+-	return is_shadow_present_pte(spte) && is_last_spte(spte, leaf);
+-}
+-EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_tdp_mmu_gpa_is_mapped);
+-
+ /*
+  * Returns the last level spte pointer of the shadow page walk for the given
+  * gpa, and sets *spte to the spte value. This spte may be non-preset. If no
 -- 
 2.51.1.930.gacf6e81ea2-goog
 
