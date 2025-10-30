@@ -1,121 +1,148 @@
-Return-Path: <linux-kernel+bounces-878493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905F4C20D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:04:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F8EC20C99
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:59:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0F4C4ED618
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95B246137F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8AD285C96;
-	Thu, 30 Oct 2025 14:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B433528314E;
+	Thu, 30 Oct 2025 14:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JvDKIzsX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e2tAE22I"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xg4Syogi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E46266EFC;
-	Thu, 30 Oct 2025 14:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F903253F3A;
+	Thu, 30 Oct 2025 14:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836327; cv=none; b=mFFdQNgSXhj59UsepNRbACdMHhciLi2kJKxKxMzOQJdi1oi2wR187+o7JWgYceqV142+LhQu/QQisSR0G6ky+U+RqstfdXNMNcIMoCu5qLa+j/jR8Xyims0ucHaduDiVXY5QKFYswP+v4V1+0pP/s6lb/VI9HMy8N4nBKng/UYI=
+	t=1761836365; cv=none; b=V3IDFQAdc31NWnRatGJM453yxdDol+gCNF1g1V8ID9CvCUKqgNtDaej2I/sTnTfv6JwVqXUcMdXWVx0idJmrGH4knE4/LgBvnicEdu6dU7ObrmhGN8C+tvxi++2YOcrKT8i9UiiQ6AVx/q+J9SWRB3PqdaYa52WrZkX3lbXWL3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836327; c=relaxed/simple;
-	bh=7ESt1MCF7MRc1rVytZMWxxG28VDhI4fvWiMmCXF/PIw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GzgquPkIxO1fn9kV5BJmGdFhkPrgK8ZHvX49oTuXJpaEYq/4egejktgMs0rrxHYqkmc2JCjFfYJpQH4/rDYTw1svOXfaQoo34pZWQYUZkXdt/kxqU5hVU0E6MSWnb1pBaFEm56FXJGmImFtdV3zLDbG3vy5C5BuI2JWPYjg9jB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JvDKIzsX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e2tAE22I; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 912101D00112;
-	Thu, 30 Oct 2025 10:58:45 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 10:58:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761836325;
-	 x=1761922725; bh=7ESt1MCF7MRc1rVytZMWxxG28VDhI4fvWiMmCXF/PIw=; b=
-	JvDKIzsXGMtuIWF+Ar5slqDzTVdhcl+J9ImEfijl3IlIRHIq82fuR1FQEymC8g8P
-	3srF1JsA9HCaE68eCR7Hw+JTJsgDwIud3saJDxSwnjbZRoKFVAvg1ZHWqS/kTizj
-	G++0kiJvG5kWzOXZu6JFiY9+cCTZusBzDqMPcsn2xQPxx9GIMnn3NZ6Fgo7NJR6b
-	me4B61AeJzP7Ys9RrK9h4Y9vP8i4X2luGaGdZHXgtvAyhAy8hBSpLW8bjS5Cao/w
-	OQ+KaKPisFpDWL0BBJh+T1CtPgEU3UAnEB0TVEyUAOW6Tgox9ynL9K+leRU5JqBp
-	5v6iKY75X/A66l1OnSG0IA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761836325; x=
-	1761922725; bh=7ESt1MCF7MRc1rVytZMWxxG28VDhI4fvWiMmCXF/PIw=; b=e
-	2tAE22IdLybYkXNBg5qw95+rS8J+Q/DuUJhbDLD5fbnAt2ShLVJxj50y/7T12NSl
-	DroiIhRIBuIJKSazTfWjYaAdZJgORbsqZkPCiVnIaljUJArAzpcA7zRer4fBAkyV
-	qJyuSTKpXnmAEORZjfP4W5NHO4sloQI0B70uG+/6xlsidgeBwbdhhlHRle+ZQzwn
-	QiU5375Zn7WL4mTNSlBC4mMZ86gtCD9uCLCwsJrSkNmbO2+X6WHAzCEK5VmW2jNE
-	M9bYgC8CRrKsvehO4PvUi0aLk4IFt4ZtXT1kWm+oeGIiNjREwc92BldP31bks54g
-	fZltNSWEoMvq4Mq+qqyIQ==
-X-ME-Sender: <xms:JX0DaaCJdIm-PGSKJB-Ktsrc_88wp8g9TxIksn8ELhwWlWZTAPoxyg>
-    <xme:JX0DafUsU7UvG9UaJPJCy9ttmhocKiOlz2W-bSWd7do3KfxUaLzGWX3TAa2uBPERM
-    QAsMn7X2qbtSdQS9ZbGzhIFAq8zsJR61kltE0dxvDT7Ik7kKrhGdg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeileduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthhqre
-    dtredtjeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghr
-    nhgusgdruggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvle
-    ehvddvgeejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedvnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtth
-    hopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifsedufihtrdgvuhdprhgt
-    phhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugiesfigvihhsshhstghhuhhhrdhnvght
-X-ME-Proxy: <xmx:JX0DaRM18pY4ydP8LP-tdFtQRuS_i1IbMKpbFNCVmxHy4YaAzNtYiA>
-    <xmx:JX0Dac4EUEyloeBTrhtAVwaEiNLIW6dt_wbauw0heVA04m7KSi6JwQ>
-    <xmx:JX0Dab1nhMr-UcsPaWso9WY4aY6XmN5BwyDBmOgTEvFyeMprKGHuVQ>
-    <xmx:JX0Dadw6Qa829wEEVxmYIBCGaS_1oUx5JvTMyuKARdu7n75lHLHbUw>
-    <xmx:JX0DaWzhlv0lHSZ_B9fS5wS9ZP6hxaIOci5qm2ocvFBYSKkuw0rbgTOc>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1F38B700063; Thu, 30 Oct 2025 10:58:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761836365; c=relaxed/simple;
+	bh=TBkQ7jlW78onLhbg+CwKbnwsG8iZdKr/vA/pDUxvOvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubby2mFdoAxPwcDYvAvTnunI5CxI/coC1JpdvSOuEnMK0QG3mni3qCdKyJotU/ZjhA6ppXqhZFwA/IMQPtzMhLwVNq+4FShTxrqcFZrkNm/fKoos4jfw0dLuTjqliI30WHwSgCnxWejIhaBq1VRAlryK9mOGTiR1+B/+xDItc6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xg4Syogi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDEP1F026053;
+	Thu, 30 Oct 2025 14:59:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=szkv1VBsV5AZDTc7OasVlkTIQXnkgG
+	gqPoYbWRPezv0=; b=Xg4SyogiVAXKcG6w/Yr3MNFxIaNM8G6rw3Ge3SywIpdnEL
+	aX0YjKId0XAa6ZWEQCn87N/R+akWktPlvn+mBYF3je+YleQx0xY+Kn9rsMfg7una
+	lDHteG7oCjMWeTHJRm7Mlj9afFzdgHK5UDu1LdsFuk9CqazvIUtv9hrsX7CxyS3q
+	uzpCRaIeLnlf6abatyDEgDtI7dwL9i4jM2fduO0sTlFJ8KqdPxxRc96IhU5Jcyam
+	ykX4WNcdoJuZjlRKA6uHLtQM9Z43W1UQcj+oPu+aFY7gIjjYeHCy2Vp63S+Z9U7g
+	o1vaLXkczpvUm56OGkWMfWUoYNgoPgvX0aPjuHbA==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34aartm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 14:59:09 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDJQLC019555;
+	Thu, 30 Oct 2025 14:59:08 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xy99gw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 14:59:08 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59UEx5Vs39256572
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 14:59:05 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F313C20043;
+	Thu, 30 Oct 2025 14:59:04 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F94B20040;
+	Thu, 30 Oct 2025 14:59:04 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 30 Oct 2025 14:59:04 +0000 (GMT)
+Date: Thu, 30 Oct 2025 15:59:02 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Luiz Capitulino <luizcap@redhat.com>, borntraeger@linux.ibm.com,
+        joao.m.martins@oracle.com, mike.kravetz@oracle.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, gor@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, agordeev@linux.ibm.com,
+        osalvador@suse.de, david@redhat.com, aneesh.kumar@kernel.org
+Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
+Message-ID: <20251030145902.16837C8a-hca@linux.ibm.com>
+References: <20251028211533.47694-1-luizcap@redhat.com>
+ <20251028145334.5a97211e0e46ca42fe2fa0d0@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AHaCJvvWUCWF
-Date: Thu, 30 Oct 2025 15:58:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Willy Tarreau" <w@1wt.eu>, shuah <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Message-Id: <567fcbb3-1be7-449e-ad55-1aa2c095f03e@app.fastmail.com>
-In-Reply-To: <20251029-nolibc-uapi-types-v1-12-e79de3b215d8@weissschuh.net>
-References: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
- <20251029-nolibc-uapi-types-v1-12-e79de3b215d8@weissschuh.net>
-Subject: Re: [PATCH 12/12] tools/nolibc: remove time conversions
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028145334.5a97211e0e46ca42fe2fa0d0@linux-foundation.org>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=ALkgKXG8 c=1 sm=1 tr=0 ts=69037d3d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=20KFwNOVAAAA:8 a=pnrwH9RaTRmhQM8EeXAA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: oHpYfSrcI6OOpyeOQezm9Vb57hP5iAPn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX0Ksmz6rT4f+q
+ kKyfEFKwabEfiC76idkfmav3QtBTrTLlVq5CPl9EZJLL1FRpZjcwgIyZ/yCe5U7Tz52SMmHfxvs
+ YywqnUnsfXy8K0JqE6CBFyvlIinM89AFPwrY+0cjDh3SRvvqqDBxhbLfPSnGd7617H49qpE1uwy
+ WhPC5TLsd0k/nz73nTw+0+mqM0DR6nTBN7W8WOWGC8g3obWq74rYKlBlBIiCGqeIGRu1VH8Xplg
+ XaGQiYx67SNpwNU2NMqyI2cUYFFj4ykOj7EJ1cn45xum+NF+NzEkQpW4fLKgk9hN/1anE3Vx0Ue
+ seuv1applaZsC13GGepco+QQJNalq0VIZrZ+ht4xkz14OcRznwioLr4+4Zw5LHGXFeBmmMezlfd
+ Dq/vHqbe+afSWyr+75yIH/nqXqmPVw==
+X-Proofpoint-GUID: oHpYfSrcI6OOpyeOQezm9Vb57hP5iAPn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-On Wed, Oct 29, 2025, at 17:03, Thomas Wei=C3=9Fschuh wrote:
-> Now that 'struct timespec' and 'struct __kernel_timespec' are
-> compatible, the conversions are not necessary anymore.
-> The same holds true for 'struct itimerspec' and 'struct
-> __kernel_itimerspec'.
->
-> Remove the conversions.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+On Tue, Oct 28, 2025 at 02:53:34PM -0700, Andrew Morton wrote:
+> On Tue, 28 Oct 2025 17:15:33 -0400 Luiz Capitulino <luizcap@redhat.com> wrote:
+> > A reproducible crash occurs when enabling HugeTLB vmemmap optimization (HVO)
+> > on s390. The crash and the proposed fix were worked on an s390 KVM guest
+> > running on an older hypervisor, as I don't have access to an LPAR. However,
+> > the same issue should occur on bare-metal.
+> > 
+> > Reproducer (it may take a few runs to trigger):
+> > 
+> >  # sysctl vm.hugetlb_optimize_vmemmap=1
+> >  # echo 1 > /proc/sys/vm/nr_hugepages
+> >  # echo 0 > /proc/sys/vm/nr_hugepages
+> > 
+> > ...
+> > 
+> > This commit fixes this by implementing flush_tlb_all() on s390 as an
+> > alias to __tlb_flush_global(). This should cause a flush on all TLB
+> > entries on all CPUs as expected by the flush_tlb_all() semantics.
+> > 
+> > ...
+> >
+> >  arch/s390/include/asm/tlbflush.h | 6 +++++-
+> 
+> Thanks, I'll add this to mm.git.  If s390 people prefer to merge it
+> (or nack it!) then please do so and I'll drop the mm.git copy.
 
-Ah, I started commenting before I got to the end of the
-series. This looks good,
+Andrew, could you drop this one please? After looking a bit deeper
+into the real problem, this patch would just paper over the real bug
+(and it could still happen).
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+I added you on Cc for the bug fix, but that is supposed to go via the
+s390 tree - just in case you are wondering :)
 
