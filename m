@@ -1,68 +1,62 @@
-Return-Path: <linux-kernel+bounces-878642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89975C21247
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:23:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD15C212BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDF434EAC9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:23:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD5F426411
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A574936839F;
-	Thu, 30 Oct 2025 16:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860D8368F2E;
+	Thu, 30 Oct 2025 16:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lm2DIopT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiuCEOt3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DD0368383;
-	Thu, 30 Oct 2025 16:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36563683B6;
+	Thu, 30 Oct 2025 16:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761841364; cv=none; b=eOr0f7hc2KFKvc6MJ1twtsIkBqyn1SjRR+xJNC4XyhAoqUjcc7urc0wrQa9sY9D/SEs90OQKdk/3TMQlhN+FaqtuuRK8xnIR4FMd9RML9r61a0yTzrb0bSuIZze07Y6UwlfxoHdI7rzk4nj7LztRso8mqLm6Fm/LBjoK2HDZVRA=
+	t=1761841365; cv=none; b=fUNQPgYZRidHb8ysJcAALHNk1684uryXnlG1uk2vYFdcrhPPShtz7iyKuOarSTUwc+qvXpht4j7tCaZjWoja7ERdsfnIBdMaUH/rNGUlgb3R9NmdZTR1A/4NAiLZr0AFRAZKjRT0SapZBfpFlcE60U8od6GZceUrPsjYsZ6Snnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761841364; c=relaxed/simple;
-	bh=mufiysJvjZh/Si7EgRf1BTJFlisWd4q4BAHM4Beh1g0=;
+	s=arc-20240116; t=1761841365; c=relaxed/simple;
+	bh=EQZAj2GMcVYoD5SLhB4WtzRfQrbee7MPNcE6HaYCKlU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t9og7lxyhGmhSOuJZYtcKG2PxO2mGVRDKQ9j41jN13VA+Y+lt9Ayvorr7mJFbANZHlz4iCUrXhb1mHsU/e2Wqhvk+XlUFHmwoQgHMiXP1PvNjAcuM0iQubqRqCkeQQ93j2g5W15cRN3Z/xmZ4EKPEq8TqpsN9fM75XFwqKXYMG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lm2DIopT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F65C4CEFB;
-	Thu, 30 Oct 2025 16:22:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CFeNqO06nLPjH9cSrFVESrqjpBGj40NWd7FQyB536aDhjNsQR13xTGtyAL+7cy0pD0Xg7xQ5tR6z2IuBYBaQgPrX5mZ6Lf0xDdP5ohhTdgg1wRPq9NddayzRH+7PpKYFykSiLXxDQrojDl+fe4lmHKRzr7LvCco41dKBJ2X8y/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiuCEOt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F0EC4CEFB;
+	Thu, 30 Oct 2025 16:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761841363;
-	bh=mufiysJvjZh/Si7EgRf1BTJFlisWd4q4BAHM4Beh1g0=;
+	s=k20201202; t=1761841365;
+	bh=EQZAj2GMcVYoD5SLhB4WtzRfQrbee7MPNcE6HaYCKlU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lm2DIopTxVcPaGVfLuWVFJvBdyl6Yeci5sSpx6LylAZ63bcIymsHDqr+bSXBX/0tE
-	 7ewrO88brx9bF8/Ff7tMyHxwvLQry2VYc1Ik4p03ntt21Mfq4RPzVcqijsq+X4HZRD
-	 fpiaMdgLtPiPilOojCbPG7UAbAVNmlHqYCfH9FMQMojg5C8xBQbfESKEgNMwgCwWXH
-	 bsSh3+dpvk4yh7pMbh36hzFjp0LQPSwzdCzxEV2v1kjDdqyTYaUToJ4Mle9HzB003T
-	 dCb3yfxdaDtFLfPFqLh/t9ERSGw+4aVvyaswMDt3qSAOB5d/OABgkLf+t8JJgaOP7K
-	 3EOuHdd8dw9Dg==
+	b=BiuCEOt3QdfC7TxEnLCXm6Xn1uFXrQZ0cQ2BbjvJjUmhS7TSwUKS/+NDaERhgFTRW
+	 a2EYsBHtN9p0ra87+2PwH7BY8Eos5yRRIraWntmgywXWTAsDXp3goCwaGrqi9OTaHS
+	 bQsiqil81xb7+O6m3vZghRWLw99hQy+REEW7C0Qt506cBQNChBAC1hccIo5pfbbfAL
+	 VhhnJr8f+yeheJ5EYTYLtznhCMYqWRPMM78C7MulFbwmf9lVWB51EV8/LCjm+rWAtb
+	 +k3OskErTMCpeHBp4F+pRapqw09h+H83pQmTT+SDT8TfbYG/XoUYq7XodX8Bpfqcuq
+	 zkD7zFI9PeDRg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: aiqun.yu@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com,
-	trilok.soni@oss.qualcomm.com,
-	yijie.yang@oss.qualcomm.com,
-	linux-arm-msm@vger.kernel.org,
+To: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robimarko@gmail.com,
+	quic_gurus@quicinc.com,
+	Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/4] dt-bindings: soc: qcom: Add soc related bindings for Kaanapali and Glymur
-Date: Thu, 30 Oct 2025 11:25:36 -0500
-Message-ID: <176184154229.475875.1577854234314562353.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: firmware: qcom,scm: Document Glymur scm
+Date: Thu, 30 Oct 2025 11:25:38 -0500
+Message-ID: <176184154201.475875.5941007730959686549.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251022-knp-soc-binding-v2-0-3cd3f390f3e2@oss.qualcomm.com>
-References: <20251022-knp-soc-binding-v2-0-3cd3f390f3e2@oss.qualcomm.com>
+In-Reply-To: <20250918141738.2524269-1-pankaj.patil@oss.qualcomm.com>
+References: <20250918141738.2524269-1-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,16 +67,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 22 Oct 2025 00:28:40 -0700, Jingyi Wang wrote:
-> Add soc related bindings for Kaanapali Platform including aoss_qmp,
-> imem and scm. And add aoss_qmp for Glymur.
+On Thu, 18 Sep 2025 19:47:38 +0530, Pankaj Patil wrote:
+> Document the SCM compatible for Qualcomm Glymur SoC.
+> Secure Channel Manager(SCM) is used to communicate
+> with secure firmware.
 > 
 > 
 
 Applied, thanks!
 
-[4/4] dt-bindings: soc: qcom,aoss-qmp: Document the Glymur AOSS side channel
-      commit: df8764c2cbfeae63c4fa42c9d4ce926e412fa53c
+[1/1] dt-bindings: firmware: qcom,scm: Document Glymur scm
+      commit: 6d49c6ede81516121b7dbf840040775f8da9333f
 
 Best regards,
 -- 
