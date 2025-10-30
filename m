@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-879011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D74C22056
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:40:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFE1C22044
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6675A425497
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB551885595
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B6A304972;
-	Thu, 30 Oct 2025 19:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048983016F6;
+	Thu, 30 Oct 2025 19:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="EhYA9uLo"
+	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="g1YTeHtq"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B954F1482F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95CE2DFA3B;
 	Thu, 30 Oct 2025 19:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761853232; cv=pass; b=M4TpdAB0mYbdtTHqvUoFoxsKI1f3y30U7698x/dBykp6+Kt8F7BP+KHuhV/UZ98vaSySAZJOdj/AH4+o4VrH1V8SApvPVFczqMd6aGr9Ca0HztbNcNx2IGSNpevk/gygn+bvwZTmRsIW1jhItAVi7H/vtETQso7jIMdRdOz22R0=
+	t=1761853231; cv=pass; b=c269ceP+MoqStI/Y17HByomqv30Y3L8F/lBMvJlBQIsLGNQ+8kPbisCoz/u3WlT4wM116so52SZQlXvJYyFY8pNflmQU2RN64GfmzsEXPyY9UyPrWpT8WlDyIB8v+Q3Kyf6KBwFvwOJsuGEQxkvfB2eAzTT3MQnykVHxCES0n34=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761853232; c=relaxed/simple;
-	bh=7wLw7yl8rmJxjWVphNvol11i7UM/EQCncXGNn+g3ZlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rVzNMlOEXc6aZV6sCyh79Oc//KzBHZPwR6PbKhJj3rMIilnNj8Yooc5UCYwLBPsqJiNL/63wo0MCsae5NzWtdvylgpkEg49SLdQaeWffEBO/pw0a2tEYFZy8MRZMvd1NWFjw/xcV+kwehlqSb2t5dz5KHSXbxgstHkIXj6KoVSA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=EhYA9uLo; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1761853231; c=relaxed/simple;
+	bh=cv1ft3PGhct9I9WBvgDbAmqB37eNL740sjipSv70E6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TU7Imq9iOltD94bgsDHaA1pbt+iw77XJ5tmAOYRudnDF0znhpLn9ZzYDsOaIeFof3V0mKAoIcDcLxMSkpFnJrJWIzRwnZhX/u8/XpM69jWRmLUoJt261VzX6Gzd4GAzPe3V85WBJ3+y3Bo8yqGnzaOkUa9ZPuB5BQJ9fRxiSLV4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=g1YTeHtq; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1761853205; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1761853209; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=j9DgssJsyqR4sAyI+OlOWrKt/u3OEQM7J+EbDxLIeqBR7Ky+t5q9Vt7BaUNxOz4Fs1a2Syhnh8TMLSp/0J6l4naaDs5jRnoJUSQblHRRNGuLQKXhtEso4RU8540GKGSrtRpw6xRyfcRJiUS/gOgkbGMvb/wA9f0JVVRnqawSsEE=
+	b=PrTuov8G3SZg+tCWd5Y4rTGXq1p/Yu8iFJR9M/nM2Xhne8GuSO6E9HMzBWBzqm6riknQXqXghG8Vi/BzKy/C+bsjMNxNCXnfr4gSi7l/jfUSCRLH6ilk1CgEPv8NjuVvC4cyghgYFP2sy1hQOwljKM/0TQfVpMH6j2PFrqYteDE=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761853205; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Vf1+b7ZFrKHvQ9zYLjvBiyT8s38khTHCITEmiI6nY+I=; 
-	b=FGYAJ1vb9KxY86hTY33W9ZMJF9xyzyK4bnMUwjKrmDsaSkA1Zs34qKfbqGf8QKaEhYnLP9phgHns2rXcK1d8YOfjLr/xA2eS8AJPFxF/vy+0gJArHoTsrZUxjVLugizzddBtaTFA28V5Rb2FtKuqL8Sh1vhOeZKbXYf1PZTQXVE=
+	t=1761853209; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xHAE4Kgqjxf5Eh/f0+uiZ3AjA3NIwnCEMp2CLTXX03Q=; 
+	b=fgGtgrUbf4lDEljaS7P7qrG3mavYbL/oKm0tm6diMSuk3zX/J6xpX3uZHVqd9nNoHarmsNviqjGLjhpAfMTxAIu9WD1kCkkLao1ozTk4RHjLLdaFwmm7tpOj9xcyd8MQQPVCJH/1y+zlc1m1YOAqaFwXNUQJw34IVMLhhKp27LM=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761853205;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761853209;
 	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Vf1+b7ZFrKHvQ9zYLjvBiyT8s38khTHCITEmiI6nY+I=;
-	b=EhYA9uLozIRDr/e2Kj+mk58cokFjt9kPFcrQs+cWTNf0AYrzjY/ls6+HMx+ISx/l
-	DFdILfSGQ0qCZ5vzDq9tzP8NA3dXWQp/F3JUwpngXz2f9f3/42qnfhg3hMqp64z9ihb
-	1Knl7lphUQLS/duzs/mMSP3UxNTc40ti6X9fD7so=
-Received: by mx.zohomail.com with SMTPS id 1761853203772271.72787016946097;
-	Thu, 30 Oct 2025 12:40:03 -0700 (PDT)
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=xHAE4Kgqjxf5Eh/f0+uiZ3AjA3NIwnCEMp2CLTXX03Q=;
+	b=g1YTeHtqC8kMYP7zOkIm+vC3psC66u2EGmlNauhaEQzzemxghMwWKRhAb9Oda55E
+	8ds6m2k5w2H1zs19GIDGIZ9Vc1rIKN/C+km2HrH0TC8/JdP4xMsEXnSVpDZSa5DZ/GC
+	QXS8mH0sUIZEKzu0EfC0JEXxVMGIn+V8gvPmmtTM=
+Received: by mx.zohomail.com with SMTPS id 1761853206712163.04637737631458;
+	Thu, 30 Oct 2025 12:40:06 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
 To: Mark Pearson <mpearson-lenovo@squebb.ca>,
 	"Derek J. Clark" <derekjohn.clark@gmail.com>,
@@ -60,10 +61,12 @@ Cc: Rong Zhang <i@rong.moe>,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-hwmon@vger.kernel.org
-Subject: [PATCH v2 0/6] platform/x86: lenovo-wmi-{capdata,other}: Add HWMON for fan speed
-Date: Fri, 31 Oct 2025 03:39:38 +0800
-Message-ID: <20251030193955.107148-1-i@rong.moe>
+Subject: [PATCH v2 1/6] platform/x86: lenovo-wmi-helpers: convert returned 4B buffer into u32
+Date: Fri, 31 Oct 2025 03:39:39 +0800
+Message-ID: <20251030193955.107148-2-i@rong.moe>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251030193955.107148-1-i@rong.moe>
+References: <20251030193955.107148-1-i@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,71 +76,58 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-Lenovo WMI Other Mode interface also supports querying or setting fan
-speed RPM. This capability is decribed by LENOVO_CAPABILITY_DATA_00.
-Besides, LENOVO_FAN_TEST_DATA provides reference data for self-test of
-cooling fans, including minimum and maximum fan speed RPM.
+The Windows WMI-ACPI driver converts all ACPI objects into a common
+buffer format, so returning a buffer with four bytes will look like an
+integer for WMI consumers under Windows.
 
-This patchset turns lenovo-wmi-capdata01 into a unified driver (now
-named lenovo-wmi-capdata) for LENOVO_CAPABILITY_DATA_{00,01} and
-LENOVO_FAN_TEST_DATA; then adds HWMON support for lenovo-wmi-other:
+Therefore, some devices may simply implement the corresponding ACPI
+methods to always return a buffer. While lwmi_dev_evaluate_int() expects
+an integer (u32), convert returned 4-byte buffer into u32 to support
+these devices.
 
- - fanX_enable: enable/disable the fan (tunable)
- - fanX_input: current RPM
- - fanX_max: maximum RPM
- - fanX_min: minimum RPM
- - fanX_target: target RPM (tunable)
-
-This implementation doesn't require all capability data to be available,
-and is capable to expose interfaces accordingly:
-
- - Having LENOVO_CAPABILITY_DATA_00: exposes fanX_{enable,input,target}
- - Having LENOVO_CAPABILITY_DATA_01: exposes firmware_attributes
- - Having LENOVO_FAN_TEST_DATA: exposes fanX_{max,min}
-
+Suggested-by: Armin Wolf <W_Armin@gmx.de>
+Link: https://lore.kernel.org/r/f1787927-b655-4321-b9d9-bc12353c72db@gmx.de/
+Signed-off-by: Rong Zhang <i@rong.moe>
+---
 Changes in v2:
-- Add a workaround for ACPI methods that return a 4B buffer for u32
-  (thanks Armin Wolf)
-- Fix function documentation (thanks kernel test bot)
-- Reword documentation (thanks Derek J. Clark)
-- Squash min/max reporting patch into the initial HWMON one (ditto)
-- Query 0x04050000 for interface availability (ditto)
-  - New parameter "expose_all_fans" to skip this check
-- Enforce min/max RPM constraint on set (ditto)
-  - New parameter "relax_fan_constraint" to disable this behavior
-  - Drop parameter "ignore_fan_cap", superseded by the next one
-  - New parameter "expose_all_fans" to expose fans w/o such data
-- Assume auto mode on probe (ditto)
-- Do not register HWMON device if no fan can be exposed
-- fanX_target: Return -EBUSY instead of raw target value when fan stops
-- Link to v1: https://lore.kernel.org/r/20251019210450.88830-1-i@rong.moe/
+- New patch (thanks Armin Wolf)
+---
+ drivers/platform/x86/lenovo/wmi-helpers.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-Rong Zhang (6):
-  platform/x86: lenovo-wmi-helpers: convert returned 4B buffer into u32
-  platform/x86: Rename lenovo-wmi-capdata01 to lenovo-wmi-capdata
-  platform/x86: lenovo-wmi-{capdata,other}: Support multiple Capability
-    Data
-  platform/x86: lenovo-wmi-capdata: Add support for Capability Data 00
-  platform/x86: lenovo-wmi-capdata: Add support for Fan Test Data
-  platform/x86: lenovo-wmi-other: Add HWMON for fan speed RPM
-
- .../wmi/devices/lenovo-wmi-other.rst          |  43 +-
- drivers/platform/x86/lenovo/Kconfig           |   5 +-
- drivers/platform/x86/lenovo/Makefile          |   2 +-
- drivers/platform/x86/lenovo/wmi-capdata.c     | 545 ++++++++++++++++++
- drivers/platform/x86/lenovo/wmi-capdata.h     |  46 ++
- drivers/platform/x86/lenovo/wmi-capdata01.c   | 302 ----------
- drivers/platform/x86/lenovo/wmi-capdata01.h   |  25 -
- drivers/platform/x86/lenovo/wmi-helpers.c     |  21 +-
- drivers/platform/x86/lenovo/wmi-other.c       | 501 +++++++++++++++-
- 9 files changed, 1134 insertions(+), 356 deletions(-)
- create mode 100644 drivers/platform/x86/lenovo/wmi-capdata.c
- create mode 100644 drivers/platform/x86/lenovo/wmi-capdata.h
- delete mode 100644 drivers/platform/x86/lenovo/wmi-capdata01.c
- delete mode 100644 drivers/platform/x86/lenovo/wmi-capdata01.h
-
-
-base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+diff --git a/drivers/platform/x86/lenovo/wmi-helpers.c b/drivers/platform/x86/lenovo/wmi-helpers.c
+index f6fef6296251e..f3bc92ac505ac 100644
+--- a/drivers/platform/x86/lenovo/wmi-helpers.c
++++ b/drivers/platform/x86/lenovo/wmi-helpers.c
+@@ -59,10 +59,25 @@ int lwmi_dev_evaluate_int(struct wmi_device *wdev, u8 instance, u32 method_id,
+ 		if (!ret_obj)
+ 			return -ENODATA;
+ 
+-		if (ret_obj->type != ACPI_TYPE_INTEGER)
+-			return -ENXIO;
++		switch (ret_obj->type) {
++		/*
++		 * The ACPI method may simply return a 4-byte buffer when a u32
++		 * integer is expected. This is valid on Windows as its WMI-ACPI
++		 * driver converts everything to a common buffer.
++		 */
++		case ACPI_TYPE_BUFFER: {
++			if (ret_obj->buffer.length != 4)
++				return -ENXIO;
+ 
+-		*retval = (u32)ret_obj->integer.value;
++			*retval = *((u32 *)ret_obj->buffer.pointer);
++			return 0;
++		}
++		case ACPI_TYPE_INTEGER:
++			*retval = (u32)ret_obj->integer.value;
++			return 0;
++		default:
++			return -ENXIO;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.51.0
 
