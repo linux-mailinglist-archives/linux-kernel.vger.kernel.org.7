@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-878948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9567C21D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:51:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CA2C21D39
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2960E1882AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B287C1893C05
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F9136CE1E;
-	Thu, 30 Oct 2025 18:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E4A36E349;
+	Thu, 30 Oct 2025 18:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppahJgI3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLS6lk95"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFA323BD17;
-	Thu, 30 Oct 2025 18:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A6623BD17;
+	Thu, 30 Oct 2025 18:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761850284; cv=none; b=eMSibZLMVTDt+Cw1UwaPHSSKt+9sEg9nw20UWwDL6JBSzY/QPRMp3MW1sXzmxUjv6YP/Gz/cvqd9U9R10pmGtryZCzfJv17NbQw6NkYAAwL1RkEABRbGIo9XiGynZJdKnhkg/qNbbCOswl11gDd5VIHp0piPpKE4SYmL6b+f574=
+	t=1761850165; cv=none; b=anNF7MWk6BJ7OYKI3BEN0WECRQbpCWohslvgu0a1/vHaINusBhPJTkxTyaBPz0aZDSEKucQ++J1tRiv5gzyg2a8QyKCtcMdLn0Gj1q8gyWXSoNNxM7wdD6WTbhA+8BXwVJs6PJNacxk3bjJPemtG313UFQmWOlbqAwKXuzNA0kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761850284; c=relaxed/simple;
-	bh=FBCCR/Suue4f/BvtdNxzoMBDqCveM6h0dVOlYqgroZM=;
+	s=arc-20240116; t=1761850165; c=relaxed/simple;
+	bh=4oXOhHBxwdbDeXzDYmyJ+caQW71LMaPdRWRu40QvJUE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mbJv1WLrtxUOfn/65EC4xHlMZDNhYTqZWfnNJvHlA0OaeHYoWJ9Xd3lxbovRMmeeJ8ySSwRqnjuSjJDP5TkUXI3OTGMjB4d7Gtf5co/k04W3qBHUo9NJQcECAf9CqWWw73T7tEVL+BFh0w2OS/wrzXpBx7mNYEIIxKngBvtQnX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppahJgI3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9089C4CEF1;
-	Thu, 30 Oct 2025 18:51:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3vy490nSenm/w9G674XvkMZ7952aphNjYwhvCLpy0f/h14OkCkqowa0R7Gmn5hYahJr32hB8RdY/+FOS78xnn6xW/ixUcAZ8VgvGpBn5Nx5kQMGG51vgpa6L9miiRDqZjU4QbhxxgTyxNfL9yHj20Fs/bsQSfL8E9DSGkWwxIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLS6lk95; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84457C4CEF1;
+	Thu, 30 Oct 2025 18:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761850284;
-	bh=FBCCR/Suue4f/BvtdNxzoMBDqCveM6h0dVOlYqgroZM=;
+	s=k20201202; t=1761850164;
+	bh=4oXOhHBxwdbDeXzDYmyJ+caQW71LMaPdRWRu40QvJUE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ppahJgI3Xpdl1cneURrtsR7KIjC+5T47cH07+HkmD4gKk5zbtBbcJ7WlO5RtFoDGB
-	 Agf3/JtDIpzT0bS9yvmQmQxyN6MEBMVjerBSWgqL7LqLflyyi0dPVIn1J4kE4PG/nK
-	 q6EAr0bkeofrSkl4D7UdD/TRn1xSWZFL1xIptv+Xv53fOu5x+4LIQ5w9sg9O4QfYGJ
-	 NrWp2HIU+xkwZmrtcL3sAtuDnpFkugmTDZMWKykXc5JTuelFgbnUz2heyaxVB6hgat
-	 6t/Bnpm073zqJY11MUlgRPwAkRGaNeLHmm5w9AABv+WHTMAeO+v3+QTSzn9kYAxZFs
-	 3RzUr4Zp4XgRA==
-Date: Thu, 30 Oct 2025 13:51:22 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: phy: Add documentation for Airoha
- AN7581 USB PHY
-Message-ID: <20251030185122.GA236742-robh@kernel.org>
-References: <20251029173713.7670-1-ansuelsmth@gmail.com>
- <20251029173713.7670-3-ansuelsmth@gmail.com>
- <20251029-mutual-scotch-7ca52e17da69@spud>
- <69025bc9.5d0a0220.1f0440.deb9@mx.google.com>
- <20251029-henna-easily-227513366e90@spud>
- <690266d4.050a0220.3a144c.eef7@mx.google.com>
+	b=BLS6lk95NeWvb6iL++I8ubzTuVcjuAn4fF3OzeUkxke+62H2uzg7AaQSaNk8psWct
+	 8wI6QElBI+nfKa7qWbo1q8wZhf34Gqd5EeLPFgqDOOjR5/rcDnF3MReP/GHxXvP0Uc
+	 yZTBqTEnZFFa6WmQV8TckJtCCyUDmauyI8dlWz0R5/tLkRzB1YSt/2Xar512C76ULg
+	 MlMHksnx0bstGbFPSwfWhO3FzPUKUwnD+F+Axg/a0x3lswUa5JeDl4/lCvhb0B9YBR
+	 qxSfRrC46+wPeTNyfZNNXz6k/Y4XDvLv7W7Ipwrf0CIbcKva6g9JmkVN/xqnxHUOEz
+	 FmQodTlLw/phA==
+Date: Thu, 30 Oct 2025 13:52:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Georgi Djakov <djakov@kernel.org>, Yassine Oudjana <y.oudjana@protonmail.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: msm8996: add interconnect paths to
+ USB2 controller
+Message-ID: <siil3r5vj4afnwvo4pp53kj2gjontwb6q7jvl3vixceydhxwlf@vx7mqqd6hyji>
+References: <20251002-fix-msm8996-icc-v1-0-a36a05d1f869@oss.qualcomm.com>
+ <20251002-fix-msm8996-icc-v1-2-a36a05d1f869@oss.qualcomm.com>
+ <7ef8ba74-4e9e-4b19-998e-40917d997ca8@oss.qualcomm.com>
+ <hlj6cyeybsct4flwvm22t4u5coeyrlwcwfol2cuzab2fjkluwi@frs6m2sjyksp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,56 +64,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <690266d4.050a0220.3a144c.eef7@mx.google.com>
+In-Reply-To: <hlj6cyeybsct4flwvm22t4u5coeyrlwcwfol2cuzab2fjkluwi@frs6m2sjyksp>
 
-On Wed, Oct 29, 2025 at 08:11:10PM +0100, Christian Marangi wrote:
-> On Wed, Oct 29, 2025 at 06:35:51PM +0000, Conor Dooley wrote:
-> > On Wed, Oct 29, 2025 at 07:24:04PM +0100, Christian Marangi wrote:
-> > > On Wed, Oct 29, 2025 at 06:07:22PM +0000, Conor Dooley wrote:
-> > > > On Wed, Oct 29, 2025 at 06:37:10PM +0100, Christian Marangi wrote:
-> > > > > Add documentation for Airoha AN7581 USB PHY that describe the USB PHY
-> > > > > for the USB controller.
-> > > > > 
-> > > > > Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
-> > > > > always supported. The USB 3.0 mode is optional and depends on the Serdes
-> > > > > mode currently configured on the system for the relevant USB port.
-> > > > > 
-> > > > > The first USB port on the SoC can be both used for USB 3.0 operation or
-> > > > > Ethernet (HSGMII).
-> > > > > The second USB port on the SoC can be both used for USB 3.0 operation or
-> > > > > for an additional PCIe line.
-> > > > > 
-> > > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > > > ---
-
-
-> > > > > +  '#phy-cells':
-> > > > > +    description: Describe if the referred PHY is the USB 2.0 PHY or USB 3.0 PHY.
-> > > > > +    const: 1
-> > > > 
-> > > > Which is which here?
-> > > >
+On Thu, Oct 30, 2025 at 08:24:29PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Oct 06, 2025 at 11:30:52AM +0200, Konrad Dybcio wrote:
+> > On 10/2/25 10:53 AM, Dmitry Baryshkov wrote:
+> > > Add the missing interconnects to the USB2 host. The Fixes tag points to
+> > > the commit which broke probing of the USB host on that platform.
 > > > 
-> > > Mhh I think I didn't understand here. #phy-cells describe the
-> > > parameters to be used for phys property in a different node.
+> > > Fixes: 130733a10079 ("interconnect: qcom: msm8996: Promote to core_initcall")
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > > > 
-> > > The current usage would be
-> > > 
-> > > <&usb0_phy PHY_TYPE_USB2> for USB 2.0
-> > > or <&usb0_phy PHY_TYPE_USB3> for USB 3.0
-> > > 
-> > > This node expose 2 PHY that can be referenced by the single parameters.
+> > > ---
+> > > Note: without the previous patch applying this one can result in the
+> > > kernel stuck at booting because of the EPROBE_DEFER loop. I suggest
+> > > applying them through the same tree in order to make sure that the tree
+> > > is not broken (or using an immutable tag for the icc commit).
+> > > ---
 > > 
-> > Ah, I didn't know that the 1 cell variant here was type not index.
+> > There seems to be syntax for this, at least for stable patches
+> > (which we should probably either use or add +noautosel):
 > > 
+> > * Specify any additional patch prerequisites for cherry picking::
+> > 
+> >     xCxc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+> >     xCxc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
+> >     xCxc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
+> >     xCxc: <stable@vger.kernel.org> # 3.3.x
+> >     xSxixgxxnxexd-oxfxf-xbxy: Ingo Molnar <mingo@elte.hu>
+> > 
+> > (deliberatelly added a bunch of 'x'-es to not interrupt the maintainers'
+> > b4 workflow)
 > 
-> Yes in the driver I'm maching for type not index as it's very confusing.
-> Any hint on better describe it on the schema? Maybe I can reword with
+> Bjorn, Georgi, Konrad, how should we proceed with this series?
 > 
-> "Describe if the referred PHY is PHY_TYPE_USB2 or PHY_TYPE_USB3"
 
-"The cell contains the mode, PHY_TYPE_USB2 or PHY_TYPE_USB3, as defined 
-in dt-bindings/phy/phy.h."
+I agree with you on the Cc part, that doesn't affect how these patches
+shows up in torvalds/master during the merge window. So merging them in
+the same branch would be the way.
 
-Rob
+@Georgi, I'm fine with doing this in either tree, if you prefer to pick
+the two patches:
+
+Acked-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+> -- 
+> With best wishes
+> Dmitry
 
