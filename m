@@ -1,103 +1,103 @@
-Return-Path: <linux-kernel+bounces-878188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E75C1FFB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:21:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A57C1FFAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3E1F34E21B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:21:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 431E634E1AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386F2EBBB2;
-	Thu, 30 Oct 2025 12:21:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397F62EC54A;
+	Thu, 30 Oct 2025 12:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Loym6yJk"
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4326B3F9C5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E5019539F;
+	Thu, 30 Oct 2025 12:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761826902; cv=none; b=jhOYC/X+IWjfDILgVK8L4mAFpJbZnDyI4OeNTW5uO6To9Fr13DW9J2sEnT0SwrHw3XODIGB9OQh9KuJF4tsrK7W/94J18GKnF2eust460W6BpQja8IBq/gXfKwCl8Qbx7wV3znwWMdEJZF/YrhutlcohA/SVCUEW+ce3eOnyUj0=
+	t=1761826856; cv=none; b=d0PKPlmdczLqgsM0F/pb1dxMzP/OS5iGzEvrdRYzFgj+qDr9f+q9yuTgdA/fT/50gMMWwTXwv3ydB7bjHjOWdEWSQi3Tbr/mSd0bpHjaTIAQJ5je8MqmGaDnVEh1in98aRreF5GL2VzfqfK/NLi6PXgv2l3O//YUTHsBZowfTTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761826902; c=relaxed/simple;
-	bh=V4xzQhAJ9xAGNxC/CzElAQ3qSL4KygnQMpAzX8Gfg7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kIUYbAPFPurbKsXPRtMtRXKMwr5EbHF9AGfryI6jlverEEcujKh1kKOzkJ8dsY2VG9DwpxHrUPFLEX0IqHMtWByPIvWhp2v4VFJffj5KkHJULtgcyIbP+TgBIHhu3EgMSlkwyVdijPVFmaINbPxp+/OT4we8KXMDyTxErP7NXY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f5869fcab58a11f0a38c85956e01ac42-20251030
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:55fd8289-df6b-4af7-8330-c5fa5204d938,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:20
-X-CID-META: VersionHash:a9d874c,CLOUDID:15497eaa1c29a836e773eb15bd369132,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|15|50,EDM:5,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: f5869fcab58a11f0a38c85956e01ac42-20251030
-Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <pengyu@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1484032101; Thu, 30 Oct 2025 20:21:27 +0800
-From: Yu Peng <pengyu@kylinos.cn>
-To: bp@alien8.de,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Cc: hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	Yu Peng <pengyu@kylinos.cn>
-Subject: [PATCH v3] arch/x86/microcode: Mark early_parse_cmdline() as __init
-Date: Thu, 30 Oct 2025 20:19:48 +0800
-Message-Id: <20251030121948.1395870-1-pengyu@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761826856; c=relaxed/simple;
+	bh=Imp3joBphQSl0gVCnQkLo0WLss+wyejJ8hPTZtm/5tw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NTWZx6xIBQk4YgLProcSQZS605XVAHXcLVFvRrXgX78cOFnVmTg3DYFBqZTqB9HeODx96n8n33Wn+aFta2qDc8kBCYD0vEQJ2WmdK0I84RE3Rg1Pa3biNwH09V7CBxQCSme78NxSyyDvTvY2uT/B3ou8E2CGXuMvw4zMzfQe3gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Loym6yJk; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from canpmsgout04.his.huawei.com (unknown [172.19.92.133])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cy33q45WJzJsWd;
+	Thu, 30 Oct 2025 20:15:51 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=bcOo5smro3BBVFhgM9fw1MzLtV1oJ1QG7H2cNzOgLhc=;
+	b=Loym6yJk7E7apAwTDq/cnmFCKi+7Jb4uT2TVtKOjlmsrJyP9tyJSz4yEQw0QP9sAlkwrp18lL
+	t3Fb4d/oSlol584j72OZJkje6xQ1qTXYvzVK1p4DDCjhIXrr1tMTus3UalpvnJeq49hNLQCAiE6
+	+B/Ytf1nRgBV+7Ct6r9W4Ug=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cy38l739Lz1prQR;
+	Thu, 30 Oct 2025 20:20:07 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id F0D9318007F;
+	Thu, 30 Oct 2025 20:20:37 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 30 Oct 2025 20:20:37 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 30 Oct 2025 20:20:36 +0800
+Subject: Re: [PATCH v4 3/3] mm/huge_memory: fix kernel-doc comments for
+ folio_split() and related.
+To: Zi Yan <ziy@nvidia.com>
+CC: <kernel@pankajraghav.com>, <akpm@linux-foundation.org>,
+	<mcgrof@kernel.org>, <nao.horiguchi@gmail.com>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+	<baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox
+ (Oracle)" <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, "Yang
+ Shi" <shy828301@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <david@redhat.com>,
+	<jane.chu@oracle.com>
+References: <20251030014020.475659-1-ziy@nvidia.com>
+ <20251030014020.475659-4-ziy@nvidia.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <6e2c1fb1-8a22-d300-5b49-ed908e032a61@huawei.com>
+Date: Thu, 30 Oct 2025 20:20:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251030014020.475659-4-ziy@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-Fix section mismatch warning reported by modpost:
-  .text:early_parse_cmdline() -> .init.data:boot_command_line
+On 2025/10/30 9:40, Zi Yan wrote:
+> try_folio_split_to_order(), folio_split, __folio_split(), and
+> __split_unmapped_folio() do not have correct kernel-doc comment format.
+> Fix them.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-The function early_parse_cmdline() is only called during init and
-accesses init data, so mark it __init to match its usage.
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 
-Signed-off-by: Yu Peng <pengyu@kylinos.cn>
----
- arch/x86/kernel/cpu/microcode/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Changes in v3:
-  - Fix Signed-off-by email address.
-
-Changes in v2:
-  - Resend to add correct email.
-  - No code changes.
-  
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index d7baec8ec0b4..ccc83b0bf63c 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -136,7 +136,7 @@ bool __init microcode_loader_disabled(void)
- 	return dis_ucode_ldr;
- }
- 
--static void early_parse_cmdline(void)
-+static void __init early_parse_cmdline(void)
- {
- 	char cmd_buf[64] = {};
- 	char *s, *p = cmd_buf;
--- 
-2.43.0
-
+Thanks.
+.
 
