@@ -1,272 +1,155 @@
-Return-Path: <linux-kernel+bounces-879184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37258C227A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A38C227C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 687B34EF72B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:54:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E4114F10D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D83335569;
-	Thu, 30 Oct 2025 21:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A683370EA;
+	Thu, 30 Oct 2025 21:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dKFHXyRF"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="igCpRbFi";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WsXX72MA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4544D2F4A06
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64732335564
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761861261; cv=none; b=En0fjWQnAQfMZgkxpb4Zsra8xzoZIbzE3//uru6Z+CtwTME9O9p7Jf/ohTV7BzA9InfXlpj5aA41SP6cbE9pMzRQxo7m1Gr7fAkaSMYRKLjZPKIgcYIY1h/p01MAgt0AcKc6n8UcZxSH5nuk0j4LXWwYHABnMZmY/yEHnFbdpEc=
+	t=1761861464; cv=none; b=RrTOGQxjmeYQn64X3IKjWJRUGS4rxEtjZAbr8KwdXmTvH+qNO+dKiPaPbpuQcj6cLJfYLEZ0pgHQi2F5qwpXBVEG4ZBexWB9it49tCiu1xazvNN+9OZ4vdqyQx1cuOwZc3H6VxzTmPbbUfW57l+unDTr7lhdmQhuzqXigM+L/FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761861261; c=relaxed/simple;
-	bh=dgOAIVkg73rBGz7X8OjJx0bSkqxgjS0ueDHpni13T8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KmhmDxGuE6XhZj93CiXAWbpQBsYU9xhpGdp4mfMAuS8vcHDKJvqrsI2e+GakLzw/q09Feo1tRqIM1CYQ0OcaDyyPOZZ3LKiIMe+I0v7BswnAOewzbfLbsJpF6DX/JruExhdWCVTyFvOjWKxA42dfhGluuw/Te4g9IkMXqMB9BSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dKFHXyRF; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ed0c8e4dbcso90311cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:54:19 -0700 (PDT)
+	s=arc-20240116; t=1761861464; c=relaxed/simple;
+	bh=VLfCFD+uvrBkmpJd/1V5M/PEUjAGoI3I7b5T8SfcbFg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=erZKKAvQoDGGpavysLzIUH2fWuFiNZOpL9CxOuSe2TiCEODG94YZKfqhorfBsdKCvYNzaAyxh4cI495e+4QlJaByc5SqzvigKk9449/if30g7PjZpBEQC5Rta9uXUSC7VIY0wBiNOc2GT4gelNEbkjv0JRZhLXZiSzjX2vTDETE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=igCpRbFi; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WsXX72MA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59ULrMFC898088
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:57:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hbxlqnkWJKv72MnwB+3LG1JlDumthqKLFTiHBb/B/wc=; b=igCpRbFiLpUf0N/w
+	Icz0TjWojhTRRO09YZ4ZKZy5sY1Y7fS/WxzVKImdxQW0DL6oUvgTx3btchE+sfTR
+	vSp46K9xoDy5AEhsvgwgWmNn0nfTHplgbWXLmqPtSiBpL0f+yUIq5vNJ5x8OgeLW
+	nhkBBizuOxkeftSp4aZYS8nBdLC2+kNRxU57r+KCvP9nwCWDRHf55FwIc1yhHq3q
+	2wCbggK5oABqN6/p49jKODc943k9lSliNAh4ALQTRhRZpET3ziDK/IDEw24Z46MM
+	SQmNRmv2y4oWgHhO2mEshkL0n5sjI12OO/PKW5J+mRTCgtPZPHXOBVOlHflMh/xn
+	/NgPLw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4gb20070-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:57:41 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-286a252bfbfso36135035ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761861258; x=1762466058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=oss.qualcomm.com; s=google; t=1761861461; x=1762466261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=35vVAhAO0Iu5hFw32iZ9ZyKkb+r3lw2pw/7HAAL4uSo=;
-        b=dKFHXyRFMnltfEjvRNwNSbVX6Nl0mQr341s008igw6vd8iTarmqJSGIhi+G/U8QgRO
-         rX7M7IW25zjuSG/xautALhcbtkgYKtB1Iz9IfFpaFbFMyX+RjLfRt2rJ3v/WQUnWRIJp
-         hicdDudtwy4InjvJ+8PDl7uybZIfnDqDp1uw4EnV5f2iNM562/oS5f10lsIarZjnJ5KE
-         UGcvrRPbtr26slO/kPQ2u+tGOA/Qc5GMIwJOLjoLltRxGBx7DxGtuhh/HPalrIz/F3MC
-         aL3F95JdYjfXjeMvW1pgNGqEmOVcYUguu1QgqEt6aIAlgBmFLNBSGoX30JpvDLDOo/3V
-         32vw==
+        bh=hbxlqnkWJKv72MnwB+3LG1JlDumthqKLFTiHBb/B/wc=;
+        b=WsXX72MAFhSeGgz25vlVOEGeGD4WmBxRqF02wJE/GS3c7UT3D++ufcJ8Z0IJml7iMm
+         bD7mKDDEWfnQCyQ27Lylna3aDVhRgKvIP7GzZOuOYDd6/Ai+xOZ6zr/3gZ0ji3hiYEga
+         u8292iBLveQaMDBq6MeS16KmkFa97irm7i2i24/4tJKv2LWbTfgprF487tsrzY7K8wk9
+         TDYNm0v125KAbMj8T/A+fdI/OldV3iOQRjGQA2D+MDQiwx6taAPat/oUokkd9U+pS1gT
+         QnbAru7u7umBDRg9z+DEv6eYVhN6DvBl7Y+0VkSYM+dw2JsWbgGDvTdivgbJRsn7Ihuj
+         79Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761861258; x=1762466058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761861461; x=1762466261;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=35vVAhAO0Iu5hFw32iZ9ZyKkb+r3lw2pw/7HAAL4uSo=;
-        b=SOjRQORv97IHFhqoWRjaKKMI3QkdF0CKFwKrAKynxALFPf4dR8v8UCkPdBTknKeNYS
-         vYdNJ14Za9IcV+U/u3b8y5x5aOsOL6jwwA4CpZByZlwj5zmGHKyZtEkf6/PN5bN+s3/1
-         ErlxmMwGRlFzSsOWhQO7pXbztQwnXnwufjTN9qHa1nhGmAOWGPvL1U3yFUrodfFDGD9u
-         sHmfRfZkD0NxcrZ4V5CNVou8kBNcra3AGzaKGuzPIKyTkOYQ9HWCcky+a+OaCFBcHWwf
-         /4SrlTTkJeeTdFd5fP/AukSUsfcDoSYLDcKXKCodPJfM6kbopTqcBa/5S0npHd4Qc9Nu
-         K/Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXjddivrjrdiIVvmxvYcqZbKpwrAJtBWU59B5nsQwMiu+unsGNq6HW3k7AzVfD7rZHYKAAIld/Wxe+yCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Owur21ltz6H3Zx7dXQaavG7KsAshXhmWW+7I1o0/ucMKqX7H
-	RYx2SGrWHvINc+9yviG6SupExzdWo8zcWHAS+MFyTfAa2OJ/WFJRsL3+noTavAqubFfm1bfBvHL
-	TRDvOWyOP5NlxavA2PgudSX/KcWqcG/qiPI2gADdGOtiUpV5YiH30IKEu/oM=
-X-Gm-Gg: ASbGncsdaVdKohMvyb+yLXYBWFgXuLLzKlEyE+NU+enWuFgehT9j2BrArTbvBF7vLRg
-	Wt+22WZJna5mnZWmWjiaIdpS+VNLM5FMB8hBXgsusq+ZQtZvj3Wy1hVN/NLGPLUxro8WMmO6iE+
-	7sJR8DjqYJR/H2fOY/Cnfl2Lryvrc9HrwABFtsc44zV3K5rIbZV8CCYbruB2NRIoDpAT5vY6DUi
-	fuuEVA5FU3RRB+XJfmKno1BDc7EmGRFGYtFfBtwutPgLPuQqekim9QXaim8lGUAQ9FgjZxo+TXI
-	/EQugwc2UYRuFAphBUBH8Sg/Ov76
-X-Google-Smtp-Source: AGHT+IG21DQ+5I5E1Vup/98IJXJ8X3qN5qILfX5b/aeVHFpxaQi7Cel4HW1rzykBPe/dmDJsMrBjJEgd3AIEsBg1/PA=
-X-Received: by 2002:ac8:5781:0:b0:4e6:eaea:af3f with SMTP id
- d75a77b69052e-4ed3385d22dmr839811cf.3.1761861257860; Thu, 30 Oct 2025
- 14:54:17 -0700 (PDT)
+        bh=hbxlqnkWJKv72MnwB+3LG1JlDumthqKLFTiHBb/B/wc=;
+        b=NeJpDfJv1pI7fkgyIpvswBYY+R7502NlP1m43PKcMG4+nednE77vRvb3xM1yLA3nhU
+         20gHodDEW53sgDAoUck9p+Mnqvr1BQM/O85NQGvOMQZAO5t9vXQ+V7Xqrg7PQSuJI4Jf
+         53f5StHL9zZAawtFg89s/vVlvpTBEwns5O+IjkV6poc4UfeOMP9Y2lYParIkY9POcq0s
+         qKrxirAjGbsqmbq4D8vQCXkcYKAjfFVE6gkrYv/8XDraBe7yxehgxdy4NxerPwCiMthG
+         uziZdI7CnXufqSCzREhL/bT4goZoYrtBaKo4dobezU3Ewj951sWtzHCgzuyEMtHZ0BBD
+         TjwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ldEKcgdsRfWTvKYD6Cxanex1g9b7MIwFh+WgHbrDeMtTcNEyu5a0IiA9XR5Ftyk20lNbHBTxps+knnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhB04DFw5CNLeMPs5am5iQxnLgBI910mWSaXMwwWZ35gmIxuLo
+	jgOaWxC8hkHu2RKa2pukq8sQ/sShwQ8snd+Qp/B22wuPvubSZySCQdIaBbJk4vn93NSz4GozwZ6
+	B0XkeibeFk7Fiohv6MTfpkj3AvLWrZp3XsHAQzsRliIroZAGWBt9enLY5SCh6TMqhlqI=
+X-Gm-Gg: ASbGncvBS00WkStJWmO79kOAKHwRE30uatepKdUHQaZ5j5ZXObto5wagaCPY6f3R6zR
+	z8LF4/muAofdBAb0uJGKVfPi2J2bsNSGAXUAqdVnsYGmA61yYGqImATy/14b9Lzg/5kA2WQpfdG
+	WfItJv91Po0TvPeMlpY03vrKKD/QK01zvXMKUz4cnNTfYzNIXeL1tRsqe/D/XEBeBle/+t7LuqV
+	ovvKsa22LtCrFLh30YkWDM64MHgbzoaK+PypBe/9OJjRzPpKRsyUEY+ft67PH+JJYDEp0ttAWfB
+	Fs+PL1AGCh5hInYSkvq1PAj2fp4JtBtK9Qr0xMMqJp2DKudLllu6/rHG4HYNq+7o4Z93qsc51w5
+	sTpW6rlS0S0KDsMVit/YP8h/rLpudSjLUe9I=
+X-Received: by 2002:a17:903:38c5:b0:269:d978:7ec0 with SMTP id d9443c01a7336-2951a45a15emr18108565ad.28.1761861461224;
+        Thu, 30 Oct 2025 14:57:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxZJ3rUOeLoZ5JdbU31KxAXQDa+g3r+fwNG5gM0aI6wgEv2sSZ9CXBSV2RLCpCXzMfrc1egw==
+X-Received: by 2002:a17:903:38c5:b0:269:d978:7ec0 with SMTP id d9443c01a7336-2951a45a15emr18107955ad.28.1761861460134;
+        Thu, 30 Oct 2025 14:57:40 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf4a53sm201868405ad.6.2025.10.30.14.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 14:57:39 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: jjohnson@kernel.org, Abdun Nihaal <nihaal@cse.iitm.ac.in>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20251028170457.134608-1-nihaal@cse.iitm.ac.in>
+References: <20251028170457.134608-1-nihaal@cse.iitm.ac.in>
+Subject: Re: [PATCH] wifi: ath12k: fix potential memory leak in
+ ath12k_wow_arp_ns_offload()
+Message-Id: <176186145939.3489476.17111380584676068402.b4-ty@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 14:57:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001025442.427697-1-chao.gao@intel.com> <20251001025442.427697-8-chao.gao@intel.com>
-In-Reply-To: <20251001025442.427697-8-chao.gao@intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Thu, 30 Oct 2025 16:54:06 -0500
-X-Gm-Features: AWmQ_blHaLmHKSZ6svRmbWXB6vejSifxbRnl-DMk68VdnViiFLwmY1_O8QThzVo
-Message-ID: <CAAhR5DEQw9eMVJ_mWRP3G=XqmsR4_46xh030_Vtyx3HzWXn3wA@mail.gmail.com>
-Subject: Re: [PATCH v2 07/21] coco/tdx-host: Expose P-SEAMLDR information via sysfs
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	reinette.chatre@intel.com, ira.weiny@intel.com, kai.huang@intel.com, 
-	dan.j.williams@intel.com, yilun.xu@linux.intel.com, vannapurve@google.com, 
-	paulmck@kernel.org, nik.borisov@suse.com, Farrah Chen <farrah.chen@intel.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Authority-Analysis: v=2.4 cv=efswvrEH c=1 sm=1 tr=0 ts=6903df56 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=WD2RVSGR4ZOmZR8fVjQA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE4NiBTYWx0ZWRfX9+tgvIxkyhRe
+ TfFybOqTHI6zRd9jHgCkbvvEa4MuplnEg6jrZgGNxjz+0w95/6O2vXY8WDWRDTwIECOXOAywkKU
+ TJXLPsvNpTLzRynWwlPeNxunZg41J2/39JQNGl9XMQuJqwfifU14i008lzK4xAccCG2I5tCLXgF
+ lHUO2GXBLrQlF6WTx6XffhBy7rPZ8/IWwfUg8DpEDpvJD1CL+ZGy/Nz4vDzEXkFJZM2ICYGm0ke
+ KNRDtGv82ZytFX25nI20lwS9hhhNTJpBSczuE+QhHCmUF6Lzmh+tP0fE09cdJzWyAyWqnMv+u/w
+ ePcpseDl55x7u1/R6JeN9jIdEebew2uxLoOcdtjY7+SywfHQWB7z5QDT1TqpxTo3Hb7XDwuaIUd
+ Tb/lZc2uU7RilsHIRryqhS5/uMKL1g==
+X-Proofpoint-GUID: lRxmdjwKu3gxEqjo_hsPmQhO3X76fMBi
+X-Proofpoint-ORIG-GUID: lRxmdjwKu3gxEqjo_hsPmQhO3X76fMBi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_07,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300186
 
-On Tue, Sep 30, 2025 at 9:55=E2=80=AFPM Chao Gao <chao.gao@intel.com> wrote=
-:
->
-> TDX Module updates require userspace to select the appropriate module
-> to load. Expose necessary information to facilitate this decision. Two
-> values are needed:
->
-> - P-SEAMLDR version: for compatibility checks between TDX Module and
->                      P-SEAMLDR
-> - num_remaining_updates: indicates how many updates can be performed
->
-> Expose them as tdx-host device attributes.
->
-> Note that P-SEAMLDR sysfs nodes are hidden when INTEL_TDX_MODULE_UPDATE
-> isn't enabled or when P-SEAMLDR isn't loaded by BIOS, both of which
-> cause seamldr_get_info() to return NULL.
->
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Tested-by: Farrah Chen <farrah.chen@intel.com>
-> ---
->  .../ABI/testing/sysfs-devices-faux-tdx-host   | 25 ++++++++
->  drivers/virt/coco/tdx-host/tdx-host.c         | 63 ++++++++++++++++++-
->  2 files changed, 87 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-devices-faux-tdx-host b/Docu=
-mentation/ABI/testing/sysfs-devices-faux-tdx-host
 
-Trying to apply this patch locally fails because
-sysfs-devices-faux-tdx-host does not exist. There are also conflicts
-around drivers/virt/coco/tdx-host/tdx-host.c.
+On Tue, 28 Oct 2025 22:34:55 +0530, Abdun Nihaal wrote:
+> When the call to ath12k_wmi_arp_ns_offload() fails, the temporary memory
+> allocation for offload is not freed before returning. Fix that by
+> freeing offload in the error path.
+> 
+> 
 
-I'm looking at the base commit specified in the cover letter [1] but
-even the current head of the tsm/tdx tree [2] doesn't have the
-sysfs-devices-faux-tdx-host file. Are there any other dependencies for
-this series?
+Applied, thanks!
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/devsec/tsm.git/commit/?=
-h=3Dtdx&id=3D9332e088937f
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/devsec/tsm.git/tree/Doc=
-umentation/ABI/testing?h=3Dtdx
+[1/1] wifi: ath12k: fix potential memory leak in ath12k_wow_arp_ns_offload()
+      commit: be5febd51c478bc8e24ad3480435f2754a403b14
 
-> index 18d4a4a71b80..13c1f4f9909c 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-faux-tdx-host
-> +++ b/Documentation/ABI/testing/sysfs-devices-faux-tdx-host
-> @@ -4,3 +4,28 @@ Description:   (RO) Report the version of the loaded TDX=
- module. The TDX module
->                 version is formatted as x.y.z, where "x" is the major ver=
-sion,
->                 "y" is the minor version and "z" is the update version. V=
-ersions
->                 are used for bug reporting, TD-Preserving updates and etc=
-.
-> +
-> +What:          /sys/devices/faux/tdx_host/seamldr/version
-> +Contact:       linux-coco@lists.linux.dev
-> +Description:   (RO) Report the version of the loaded SEAM loader. The SE=
-AM
-> +               loader version is formatted as x.y.z, where "x" is the ma=
-jor
-> +               version, "y" is the minor version and "z" is the update v=
-ersion.
-> +               Versions are used for bug reporting and compatibility che=
-ck.
-> +
-> +What:          /sys/devices/faux/tdx_host/seamldr/num_remaining_updates
-> +Contact:       linux-coco@lists.linux.dev
-> +Description:   (RO) Report the number of remaining updates that can be p=
-erformed.
-> +               The CPU keeps track of TCB versions for each TDX Module t=
-hat
-> +               has been loaded. Since this tracking database has finite
-> +               capacity, there's a maximum number of module updates that=
- can
-> +               be performed.
-> +
-> +               After each successful update, the number reduces by one. =
-Once it
-> +               reaches zero, further updates will fail until next reboot=
-. The
-> +               number is always zero if P-SEAMLDR doesn't support update=
-s.
-> +
-> +               See Intel=C2=AE Trust Domain Extensions - SEAM Loader (SE=
-AMLDR)
-> +               Interface Specification Chapter 3.3 "SEAMLDR_INFO" and Ch=
-apter
-> +               4.2 "SEAMLDR.INSTALL" for more information. The documenta=
-tion is
-> +               available at:
-> +               https://cdrdv2-public.intel.com/739045/intel-tdx-seamldr-=
-interface-specification.pdf
-> diff --git a/drivers/virt/coco/tdx-host/tdx-host.c b/drivers/virt/coco/td=
-x-host/tdx-host.c
-> index 968a19f4e01a..42570c5b221b 100644
-> --- a/drivers/virt/coco/tdx-host/tdx-host.c
-> +++ b/drivers/virt/coco/tdx-host/tdx-host.c
-> @@ -11,6 +11,7 @@
->  #include <linux/sysfs.h>
->  #include <linux/device/faux.h>
->  #include <asm/cpu_device_id.h>
-> +#include <asm/seamldr.h>
->  #include <asm/tdx.h>
->  #include <asm/tdx_global_metadata.h>
->
-> @@ -43,7 +44,67 @@ static struct attribute *tdx_host_attrs[] =3D {
->         &dev_attr_version.attr,
->         NULL,
->  };
-> -ATTRIBUTE_GROUPS(tdx_host);
-> +
-> +struct attribute_group tdx_host_group =3D {
-> +       .attrs =3D tdx_host_attrs,
-> +};
-> +
-> +static ssize_t seamldr_version_show(struct device *dev, struct device_at=
-tribute *attr,
-> +                                   char *buf)
-> +{
-> +       const struct seamldr_info *info =3D seamldr_get_info();
-> +
-> +       if (!info)
-> +               return -ENXIO;
-> +
-> +       return sysfs_emit(buf, "%u.%u.%u\n", info->major_version,
-> +                                            info->minor_version,
-> +                                            info->update_version);
-> +}
-> +
-> +static ssize_t num_remaining_updates_show(struct device *dev,
-> +                                         struct device_attribute *attr,
-> +                                         char *buf)
-> +{
-> +       const struct seamldr_info *info =3D seamldr_get_info();
-> +
-> +       if (!info)
-> +               return -ENXIO;
-> +
-> +       return sysfs_emit(buf, "%u\n", info->num_remaining_updates);
-> +}
-> +
-> +/*
-> + * Open-code DEVICE_ATTR_RO to specify a different 'show' function for
-> + * P-SEAMLDR version as version_show() is used for the TDX Module versio=
-n.
-> + */
-> +static struct device_attribute dev_attr_seamldr_version =3D
-> +       __ATTR(version, 0444, seamldr_version_show, NULL);
-> +static DEVICE_ATTR_RO(num_remaining_updates);
-> +
-> +static struct attribute *seamldr_attrs[] =3D {
-> +       &dev_attr_seamldr_version.attr,
-> +       &dev_attr_num_remaining_updates.attr,
-> +       NULL,
-> +};
-> +
-> +static umode_t seamldr_group_is_visible(struct kobject *kobj,
-> +                                       struct attribute *attr, int n)
-> +{
-> +       return seamldr_get_info() ? attr->mode : 0;
-> +}
-> +
-> +static struct attribute_group seamldr_group =3D {
-> +       .name =3D "seamldr",
-> +       .attrs =3D seamldr_attrs,
-> +       .is_visible =3D seamldr_group_is_visible,
-> +};
-> +
-> +static const struct attribute_group *tdx_host_groups[] =3D {
-> +       &tdx_host_group,
-> +       &seamldr_group,
-> +       NULL,
-> +};
->
->  static int __init tdx_host_init(void)
->  {
-> --
-> 2.47.3
->
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+
 
