@@ -1,204 +1,146 @@
-Return-Path: <linux-kernel+bounces-877745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED71C1EEA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3800DC1EEAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A561883641
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F4840109B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F12132E13E;
-	Thu, 30 Oct 2025 08:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7E1337699;
+	Thu, 30 Oct 2025 08:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N7ohO6MZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2ZajF13U";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N7ohO6MZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2ZajF13U"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cuJG1pZs"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F932C93C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A472F8462;
+	Thu, 30 Oct 2025 08:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811877; cv=none; b=PjeCslj9y8IXPRTOcMhDlkkFpVWe//de4XWEDR8M6BNUfp/sMkcomkMs6JE+vEeVBFvjqqWmAfxPGUu+EwAxwknNSa6oco6/NUEJiMuyMKCzOWbEFAJ2CI1XpCkck9rwyDqdlRVrTGMeAWmopizNSyxIpWJPNNEfpt8RxjgMzx4=
+	t=1761811898; cv=none; b=jwoShaCbHVJwKwwVvlbALi4/yzd0F2eZ/CKxFWgvpgciQEP1tyQP0LWCDnON92hN2QrQZqtY0g6hD+WNwQoPgY2m/QpuZGX67Tu4Xzf1bSBNhMvqO5SVNQJZGJCf3XQpDobFewgGoDyoZNNLd2HCwmPVRebY/PGVkEj2seNNlNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761811877; c=relaxed/simple;
-	bh=pBRPXArAkJ18pXe8TZOBA0mDjudAGzGMJbPtkMciOWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcJmrf7bHF12Gcq6bjNHaC9hFswap4Qqg5jH+LjdgEuDIasqDlYdqTa777F67+EPXfCjorSvRasRzLDjXxOJXtQsfoEruUYWvCy4yTHCm1Cw6Ux7//aLXv+ROgclYik1O4Zz+mLW+9GbDp3zeKB2BNWbzgp8/spcOlXs7/Y7vt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N7ohO6MZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2ZajF13U; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N7ohO6MZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2ZajF13U; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 372DD337BD;
-	Thu, 30 Oct 2025 08:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761811866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OUFQxKIwJE9+ow9obO/rVxKGbmf+OfaQoKOPvRQJ9xk=;
-	b=N7ohO6MZrc9R4CDnlKlndrXQROr/a5gCiUKWMBiHr1yAuaVC120UM5WF7zRxjOvgoo9Urd
-	hrWxGRq0RuY8pDBevRGx2D49/TgHuHVgJCAcclM8ZHzGNz+DK8HMz8PEYyS/TGBDds7ioX
-	JpuMtm4MqqktdgDG+2tdQdVR7OG+zSE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761811866;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OUFQxKIwJE9+ow9obO/rVxKGbmf+OfaQoKOPvRQJ9xk=;
-	b=2ZajF13Uqf1A4ndNQuQKVgdacQ1+Ab2iwIQNtwm4WSoPXU70AdUXBPGdsgXHOyK76JgSO6
-	CzeCHCtbF0TwBEBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=N7ohO6MZ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2ZajF13U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761811866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OUFQxKIwJE9+ow9obO/rVxKGbmf+OfaQoKOPvRQJ9xk=;
-	b=N7ohO6MZrc9R4CDnlKlndrXQROr/a5gCiUKWMBiHr1yAuaVC120UM5WF7zRxjOvgoo9Urd
-	hrWxGRq0RuY8pDBevRGx2D49/TgHuHVgJCAcclM8ZHzGNz+DK8HMz8PEYyS/TGBDds7ioX
-	JpuMtm4MqqktdgDG+2tdQdVR7OG+zSE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761811866;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OUFQxKIwJE9+ow9obO/rVxKGbmf+OfaQoKOPvRQJ9xk=;
-	b=2ZajF13Uqf1A4ndNQuQKVgdacQ1+Ab2iwIQNtwm4WSoPXU70AdUXBPGdsgXHOyK76JgSO6
-	CzeCHCtbF0TwBEBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E97F13393;
-	Thu, 30 Oct 2025 08:11:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hMPkBpodA2nsJAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 30 Oct 2025 08:11:06 +0000
-Message-ID: <9be201bd-977e-48df-bb57-7ef1f532b26f@suse.de>
-Date: Thu, 30 Oct 2025 09:10:57 +0100
+	s=arc-20240116; t=1761811898; c=relaxed/simple;
+	bh=iYhsNsND7qDO+YoBKABPFaj6i6RQQLg9em+341lxC0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA3aWeejk3S8j78t0YKqP+HUTuqUncFbUzNqIPc1alMqJsRp8qtasDk+CNxvEvgTRxyh3ndzEMc6o0nP2oi/8+YxloldypMzZcr5ifU7rKPOQ3QaSpmFvDwaLlE95uPZC3/T2Jbv7Z9fDWTvtByafsqS0DixDG6MT5ViLATT9FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cuJG1pZs; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59TLn0RC025885;
+	Thu, 30 Oct 2025 08:11:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=/eQjJmYkYH6SFeE+16nCc7H9e+jNOC
+	Rg1nbgStXINRw=; b=cuJG1pZsfaDqquxCGrOzfAhNCTQ2ugViPxgZAEFflsoUC5
+	dRVTCZoXoiNUjAM/QbiZIVkkXwJgCun0g33n8FboORMftxUjhON5UKvbkm9fn+g7
+	4u3Z4rTgmQ75v+Pa9dLJ9AXhXofu7HyTLkZHoDXOKbKc3ghfOfzVcIfu2I4iBR4i
+	hQLTwCE/xVOq5ufKUT84DQFKGICO4vF5uZ+LmljvCX/n6LIX4ukdbMWtIO/bT/+S
+	antjD7qTt3JUxAeWP8tHw+l5ANqrvw5XwYsUO9UjLUNIeYTzVA10B9PjurDwNyOe
+	bhZzp60OECuRQgEhgtCxz5qP6mt+dVQj8MDjWO7g==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34acq8tw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 08:11:21 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59U5qPIP027495;
+	Thu, 30 Oct 2025 08:11:20 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33w2qgcn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 08:11:20 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59U8BGfP60686592
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 08:11:16 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9644A2004B;
+	Thu, 30 Oct 2025 08:11:16 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4775F20049;
+	Thu, 30 Oct 2025 08:11:16 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 30 Oct 2025 08:11:16 +0000 (GMT)
+Date: Thu, 30 Oct 2025 09:11:14 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Harald Freudenberger <freude@linux.ibm.com>, linux-crypto@vger.kernel.org,
+        David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Holger Dengler <dengler@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+Message-ID: <20251030081114.16837A86-hca@linux.ibm.com>
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
+ <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com>
+ <20251029163216.GA1603@sol>
+ <20251029203345.GA3750798@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tiny: pixpaper: add explicit dependency on MMU
-To: lcwang <zaq14760@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <bd93498e-749c-4e85-9c63-918aa8f2d6f3@suse.de>
- <20251030024329.482105-1-lcwang@ieiworld.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251030024329.482105-1-lcwang@ieiworld.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 372DD337BD
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029203345.GA3750798@google.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=XbuEDY55 c=1 sm=1 tr=0 ts=69031da9 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=QzQn2ZgXezoNSR50NVEA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: YSIgbfw2sRFgOkhpdpHl13KDpANc36eI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfXx99/Np7suF0D
+ LdNjxw8CMpQUQfWr5ceWx67gWngQfx6OwZL8VGJyQUoL7dj2TK82msPvqeMbboIBXSRD/hfHP5y
+ CoByoCwcC0w3YSttYeDzqxehe1u3h3gypxQ/bh+vdb8OvyC7f72xwj+kNy0PQhdb6RB5Z61j6WL
+ PzQwDYALi+yVz1E6maJcezSCOu+Jkm9Gby5uGlnF3vXFD58/R34oNDXwEW6+pSeCLJkvMAVKDqZ
+ KiGrmSmTJel7FpX5dAewlh+98nvWv4EDR0ukEPAWQpo5G4zEKBMajDv+T6t//8lvJS7xWoqrIBb
+ 9/pg7l5aSGVgAOeLHkApb161ER2khS8yF9xp9nS1tcWdrPlVZ/6peqLtoJV6rpFFLVxvBfUGODB
+ 2uMVMMvEQ76KhoyBqJbaS82w/BUk5g==
+X-Proofpoint-GUID: YSIgbfw2sRFgOkhpdpHl13KDpANc36eI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1011
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-Hi
+On Wed, Oct 29, 2025 at 08:33:45PM +0000, Eric Biggers wrote:
+> (By the way, I recommend defining named constants somewhere in
+> arch/s390/ for the different facilities.  I borrowed the
+> "test_facility(86)" from the existing code, which does not say what 86
+> means.  After doing some research, it looks like it means MSA12.)
 
-Am 30.10.25 um 03:43 schrieb lcwang:
-> Hi Thomas,
->
-> Thanks for the clarification.
->
-> Just to confirm my understanding — are you suggesting that this issue
-> should ideally be fixed in the RISC-V Kconfig (specifically the PORTABLE
-> logic that ensures MMU is selected), rather than adding a local
-> "depends on MMU" here in DRM_PIXPAPER?
->
-> If that’s the case and the root cause will be addressed in the RISC-V
-> side, I’m happy to drop this patch to avoid redundant dependencies.
+Not so surpringly this has been discussed several times in the
+past. It would have been easy if each of those bits would represent
+exactly one facility, but then there is e.g. bit 46 which means:
 
-After reconsidering, we can merge your patch. Here's probably no easier 
-solution to the problem.
+the distinct-operands, fast-BCR-serialization, high-word, and
+population-count facilities, the interlocked-access facility 1, and
+the load/store-on- condition facility 1 are installed in the
+z/Architecture architectural mode
 
-Best regards
-Thomas
+Some proposed to add defines like "FACILITY_MULTI_46", which is of
+course pointless, since there is added benefit for just using plain
+46. Alternatively it would be possible to have a define for each of
+them. But if you need two or three of them for your code, then there
+would be several tests needed - all for the same bit, and each one
+generating a static branch - which also doesn't make too much sense.
 
->
-> Best regards,
-> LiangCheng
+So in the end we ended up with the conclusion to stick with the plain
+numbers.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+That said, users are still free to add aliases like e.g. cpu_has_vx(),
+see arch/s390/include/asm/cpufeature.h. It is just not an all or
+nothing approach.
 
