@@ -1,95 +1,213 @@
-Return-Path: <linux-kernel+bounces-878887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFE1C21A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:06:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDAAC21B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033193A5EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D79189CE11
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0801629617D;
-	Thu, 30 Oct 2025 18:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C95D225761;
+	Thu, 30 Oct 2025 18:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzUWPoR8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="knQpMdJI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6562D225761
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565C81548C;
+	Thu, 30 Oct 2025 18:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847544; cv=none; b=cQls/0Qj1Td9xpqa6NEAIbkouRM6A+YZoo8MgiwS1cGftujWtzE0MmfeUqPQkN2MRCeIsJ6Q/60NB0gPCPasCbeH3BXyX28p+hfjJD6xIi/7ZEcdA2xLaCmYp/gWazuhHeRKaBtFYy2SyEEnkSbHW1fMoNBn+JTksNF4513qeQA=
+	t=1761847590; cv=none; b=YKVp6MyygMHgRXyrzE0HlLGUJ0B3jNw/UcMhT99neNuZmkkr6otUtl83Mp5F2w3f5M8za17pEcmZITNQzCLaZELlsHmimVQ4ONtAybG3vpZsDwqj7sw88C+TI1r5BH4b1+BQbIVMV2xHjfrdkVqX5yeAvGrquXubc8mGP+RCna0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847544; c=relaxed/simple;
-	bh=QXQd/V/Vlbw0idVzBVo7q09TXOAULlsIy2rv//pAqu8=;
+	s=arc-20240116; t=1761847590; c=relaxed/simple;
+	bh=R0oxsLJx4ixavniiS9gYg/wzhW0HB/vdjk4EsiPZ7i0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMooIcifLj+T+nNy52Rh21LxlLQtxZS4TSUkitnEiv79UzodRmzpRJZovLCU19LShY6Tgv6kSG9E/kHHSgNO4HQGj9tOZ3GmOW6rS7WC2DxqEe8XDSDbMhPUTopkUvBwHczwbaBtElvmh1fEXdBHEjud/EvyUm6bZ67trdvG08E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzUWPoR8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AB2C4CEF1;
-	Thu, 30 Oct 2025 18:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761847544;
-	bh=QXQd/V/Vlbw0idVzBVo7q09TXOAULlsIy2rv//pAqu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzUWPoR8TtRwYmmgmFqSRVqVdiHdm+FBha7lhR7Z0EHN7xXw0mSRaOdr2oqzDhutb
-	 GTJ9SdWrl4WbCk7pI/s8o0iWos/c9GAuErkc1/QnJ7AKMia3f8YMxcY29I2LUJsypT
-	 agQg2TWkW9XILI9TZll9iExvzs/kM80sGrV/yeI2yy0RdG4R6n+vQkhIq0pnULBLuf
-	 jzY3hmYluw64l+7bHNDITZj5UFKARpjjmaWwK96cOmfGCEimBO7zQWQQft5qrCaCQN
-	 1t2qzwJlpjkG3XuHQS7vT0Hf8plmEJb7+rUtQtHKgsQ2vnJe/WJnr1kLX0pUlsFBot
-	 ogbMT5B+hHtPA==
-Date: Thu, 30 Oct 2025 18:05:39 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sander Vanheule <sander@svanheule.net>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 2/5] regcache: rbtree: Split ->populate() from ->init()
-Message-ID: <16d462b1-3ea5-40a3-99a9-ef3c2f5015cb@sirena.org.uk>
-References: <20251030173915.3886882-1-andriy.shevchenko@linux.intel.com>
- <20251030173915.3886882-3-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AxbNDy3gVE0NqUN1wdXXgVOKKjB3dfCpswdgIsMEZS/bRyWqiofaOiRdg9atiNYVlub8I6mzscpwriiiC5TzAeFsv2WL0VHmzSyfocvx18BRLWnHxf9JNnv/CnmkxPELP6yzHg6NTRLh+l6Ee5DXDVCY+bwLsXQdQRa+goskNeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=knQpMdJI; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761847588; x=1793383588;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R0oxsLJx4ixavniiS9gYg/wzhW0HB/vdjk4EsiPZ7i0=;
+  b=knQpMdJId/rhRBt4kRxy5ciEeQpQbVOqfYU8T3epJlIE3Rkj0HCioxJI
+   O7illsiErfQ2OqZ2j8aDedxIbA17jniVnEZHeXpZgdKVSc3OXC8zcJB1O
+   dVIYk+S3rH84uLA/qvWer+h1YmR9WDn+TqvP78ygarX51LRZKCt2Tlohc
+   XCQMJjSRJJ9MgacKJFl3/OL+GUTsx6IA3MhqD6e2/G0c4WbjGcoqF7vVN
+   h4qL8z4ROZCu9hEB2L8zlx6eyS4lsQZLYKwNXaF0YNIAfZDogr4xfBXh4
+   8vh62pjLkC+4m9njsPZL1oz0eRN2BdAoCyoIkBRqf3jdI2t0rcgNJrNoA
+   A==;
+X-CSE-ConnectionGUID: qI6hgpREQ1uf2zB7QVK1QA==
+X-CSE-MsgGUID: lPOxcmFDQ0SLAxgIl1ASmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64041135"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="64041135"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 11:06:27 -0700
+X-CSE-ConnectionGUID: O5F3iM/KTK68PhXAonJdGQ==
+X-CSE-MsgGUID: ZsP3IUyNT8iaR8iDN348ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="190379074"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.223.240])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 11:06:27 -0700
+Date: Thu, 30 Oct 2025 11:06:21 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
+	Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH 3/3] x86/mmio: Unify VERW mitigation for guests
+Message-ID: <20251030180621.c4jk3isi3pmzeolw@desk>
+References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+ <20251029-verw-vm-v1-3-babf9b961519@linux.intel.com>
+ <DDVO5U7JZF4F.1WXXE8IYML140@google.com>
+ <aQONEWlBwFCXx3o6@google.com>
+ <DDVSPNXCG4HY.1B7OBAPDZ97CX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8vGnX+o7LSlrFAUU"
-Content-Disposition: inline
-In-Reply-To: <20251030173915.3886882-3-andriy.shevchenko@linux.intel.com>
-X-Cookie: !07/11 PDP a ni deppart m'I  !pleH
-
-
---8vGnX+o7LSlrFAUU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <DDVSPNXCG4HY.1B7OBAPDZ97CX@google.com>
 
-On Thu, Oct 30, 2025 at 06:37:02PM +0100, Andy Shevchenko wrote:
+On Thu, Oct 30, 2025 at 04:26:10PM +0000, Brendan Jackman wrote:
+> On Thu Oct 30, 2025 at 4:06 PM UTC, Sean Christopherson wrote:
+> > On Thu, Oct 30, 2025, Brendan Jackman wrote:
+> >> > @@ -160,6 +163,8 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >> >  	/* Load guest RAX.  This kills the @regs pointer! */
+> >> >  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+> >> >  
+> >> > +	/* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
+> >> > +	jz .Lskip_clear_cpu_buffers
+> >> 
+> >> Hm, it's a bit weird that we have the "alternative" inside
+> >> VM_CLEAR_CPU_BUFFERS, but then we still keep the test+jz
+> >> unconditionally. 
+> >
+> > Yeah, I had the same reaction, but couldn't come up with a clean-ish solution
+> > and so ignored it :-)
+> >
+> >> If we really want to super-optimise the no-mitigations-needed case,
+> >> shouldn't we want to avoid the conditional in the asm if it never
+> >> actually leads to a flush?
+> >> 
+> >> On the other hand, if we don't mind a couple of extra instructions,
+> >> shouldn't we be fine with just having the whole asm code based solely
+> >> on VMX_RUN_CLEAR_CPU_BUFFERS and leaving the
+> >> X86_FEATURE_CLEAR_CPU_BUF_VM to the C code?
+> >> 
+> >> I guess the issue is that in the latter case we'd be back to having
+> >> unnecessary inconsistency with AMD code while in the former case... well
+> >> that would just be really annoying asm code - am I on the right
+> >> wavelength there? So I'm not necessarily asking for changes here, just
+> >> probing in case it prompts any interesting insights on your side.
+> >> 
+> >> (Also, maybe this test+jz has a similar cost to the nops that the
+> >> "alternative" would inject anyway...?)
+> >
+> > It's not at all expensive.  My bigger objection is that it's hard to follow what's
+> > happening.
+> >
+> > Aha!  Idea.  IIUC, only the MMIO Stale Data is conditional based on the properties
+> > of the vCPU, so we should track _that_ in a KVM_RUN flag.  And then if we add yet
+> > another X86_FEATURE for MMIO Stale Data flushing (instead of a static branch),
+> > this path can use ALTERNATIVE_2.  The use of ALTERNATIVE_2 isn't exactly pretty,
+> > but IMO this is much more intuitive.
+> >
+> > diff --git a/arch/x86/kvm/vmx/run_flags.h b/arch/x86/kvm/vmx/run_flags.h
+> > index 004fe1ca89f0..b9651960e069 100644
+> > --- a/arch/x86/kvm/vmx/run_flags.h
+> > +++ b/arch/x86/kvm/vmx/run_flags.h
+> > @@ -4,10 +4,10 @@
+> >  
+> >  #define VMX_RUN_VMRESUME_SHIFT                 0
+> >  #define VMX_RUN_SAVE_SPEC_CTRL_SHIFT           1
+> > -#define VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT                2
+> > +#define VMX_RUN_CAN_ACCESS_HOST_MMIO_SHIT      2
+> >  
+> >  #define VMX_RUN_VMRESUME               BIT(VMX_RUN_VMRESUME_SHIFT)
+> >  #define VMX_RUN_SAVE_SPEC_CTRL         BIT(VMX_RUN_SAVE_SPEC_CTRL_SHIFT)
+> > -#define VMX_RUN_CLEAR_CPU_BUFFERS      BIT(VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT)
+> > +#define VMX_RUN_CAN_ACCESS_HOST_MMIO   BIT(VMX_RUN_CAN_ACCESS_HOST_MMIO_SHIT)
+> >  
+> >  #endif /* __KVM_X86_VMX_RUN_FLAGS_H */
+> > diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> > index ec91f4267eca..50a748b489b4 100644
+> > --- a/arch/x86/kvm/vmx/vmenter.S
+> > +++ b/arch/x86/kvm/vmx/vmenter.S
+> > @@ -137,8 +137,10 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >         /* Load @regs to RAX. */
+> >         mov (%_ASM_SP), %_ASM_AX
+> >  
+> > -       /* jz .Lskip_clear_cpu_buffers below relies on this */
+> > -       test $VMX_RUN_CLEAR_CPU_BUFFERS, %ebx
+> > +       /* Check if jz .Lskip_clear_cpu_buffers below relies on this */
+> > +       ALTERNATIVE_2 "",
+> > +                     "", X86_FEATURE_CLEAR_CPU_BUF
+> > +                     "test $VMX_RUN_CAN_ACCESS_HOST_MMIO, %ebx", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
+> 
+> Er, I don't understand the ALTERNATIVE_2 here, don't we just need this?
+> 
+> ALTERNATIVE "" "test $VMX_RUN_CAN_ACCESS_HOST_MMIO, %ebx", 
+> 	    X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
 
-> +	.populate= regcache_rbtree_populate,
+Yeah, right.
 
-Missing space.
+> >         /* Check if vmlaunch or vmresume is needed */
+> >         bt   $VMX_RUN_VMRESUME_SHIFT, %ebx
+> > @@ -163,8 +165,9 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >         /* Load guest RAX.  This kills the @regs pointer! */
+> >         mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+> >  
+> > -       /* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
+> > -       jz .Lskip_clear_cpu_buffers
+> > +       ALTERNATIVE_2 "jmp .Lskip_clear_cpu_buffers",
+> > +                     "", X86_FEATURE_CLEAR_CPU_BUF
+> > +                     "jz .Lskip_clear_cpu_buffers", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
+> 
+> To fit with the rest of Pawan's code this would need
+> s/X86_FEATURE_CLEAR_CPU_BUF/X86_FEATURE_CLEAR_CPU_BUF_VM/, right?
 
---8vGnX+o7LSlrFAUU
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes.
 
------BEGIN PGP SIGNATURE-----
+> In case it reveals that I just don't understand ALTERNATIVE_2 at all,
+> I'm reading this second one as saying:
+> 
+> if cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO)
+>    "jz .Lskip_clear_cpu_buffers "
+> else if !cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_VM)
+>    "jmp .Lskip_clear_cpu_buffers"
+>
+> I.e. I'm understanding X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO as mutually
+> exclusive with X86_FEATURE_CLEAR_CPU_BUF_VM, it means "you _only_ need
+> to verw MMIO".
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDqPMACgkQJNaLcl1U
-h9BiUwf/cnexQLqFmKAoaZB5I9DNKbjt7XeX1wUejxMBUhy6Nw8lKsKcuoBesWhC
-aXpVgMhNP7st3Rli8q7Yfmx5pjJ8zBRt/sY0EpAXudFafVOCxQH1eDKU0M4gN4X+
-5kp0Ut/9u6nrBiwCDrOiC9rbFaabWOoSg9vsf1pEbS2ESjTsT5AKfruTtj2DpE9s
-iLNSB8ADocHzA5/Y9PZ7w0R44txME+beSOvDcVET/UEdJyySezmfm52eDRbuVBfE
-ZoCvYoY28TsVhyNa1SdFOyIVlf5tOs494ds4jJB0qmKW9uTFqvYrTFz2k6ssDSVj
-L3qCmzJM0ppXal8+vr+W2bXjK+N/5A==
-=1rgy
------END PGP SIGNATURE-----
+Yes, that's also my understanding.
 
---8vGnX+o7LSlrFAUU--
+> So basically we moved cpu_buf_vm_clear_mmio_only into a
+> CPU feature to make it accessible from asm?
+
+Essentially, yes.
+
+> (Also let's use BUF instead of BUFFERS in the name, for consistency)
+
+Agree.
 
