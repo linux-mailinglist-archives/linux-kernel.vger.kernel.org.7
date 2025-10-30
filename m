@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-877502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED45C1E470
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:51:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A756C1E479
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:52:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA60188E330
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679D8188F875
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552B0285071;
-	Thu, 30 Oct 2025 03:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B51293C4E;
+	Thu, 30 Oct 2025 03:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ii33pclx"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOKaaXU3"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5095429B8F8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79E8248F4D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761796296; cv=none; b=D/kjAxOkbZoJp4pzM0daZDjrY9zp1QLiOzU0fCMsJ44y8vKj0dnRq8qkstFcL10J4qpWUQODDmVWvCLbunnaO0xvwx7G7awim7i5CBDyU35lNNtRlvB1mq0Ds7/qUd8lbPxCoeyILdw11n1P/ybADD81HnkXd2R/QDTOfYghnXA=
+	t=1761796301; cv=none; b=h9bYHiWnlvWR8aghmiANuHcVw7c3XA1TGr9MVRl0fuqUdNkjmczNsbx1sY53BKqjU9oKla+L69GeLJELctE8GdJs8IhwzYmCsl1qNL3kmodbbRA0z/+/kxLPj0hicyc/ykBhBuHa0OLb643d+TRM2N59vVsw2e2OgXc0w8UkxA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761796296; c=relaxed/simple;
-	bh=IsJxZQkO57xF953K5xHhWXR0z2NymjzNWHGtiMrLTDg=;
+	s=arc-20240116; t=1761796301; c=relaxed/simple;
+	bh=RiFvMaVv/sJhCAnOCv6KXAlMvQC9pAvjdW7FnhsUUv4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TJh2KuPgs8SNpzJHv8C6T19WViyoTCVvLljFLosqKweHhGhkmAcQAeVcAofvh/qdel3yKzVjkOj8pdUqemgT9hw9I8s0jtEp0RqMThbZnGiLIAH2uCYi+26G+Ep7CUo7ZhFb6RFZHTEOjTbpqDyVZ6XmJOa2l9F5H6rNGK8ouPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ii33pclx; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=scMnFsqiDfdiAla0m8Ggtd3bJl/o71ACQP5tSH7B7Fdh+cIJHY3Uvlh+W5+SBLaHvQamdzosS0D9jG7z2qm5CH7MolbrR1OrKs59FQZXBsz6HM4ZkkEiAr6CUmiHG8CTx6XMjFfR9nmKnfR61ySUQsX6rWjJL1gK4K93/oux1H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOKaaXU3; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-294fb21b160so1428345ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:51:35 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b5579235200so354672a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761796295; x=1762401095; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761796299; x=1762401099; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MN0fRpH/PCnIiX5ASSuQg4IoluSNnvJUR3iBGHC2JFI=;
-        b=ii33pclxTNLvQFHHngkm6pLnwD37UPg1AGKSMvHVGhkisZD+rIDHKhhTpZS5qrEOZ6
-         5i9bTFP1UhviHFfJLewzkWt+Kc2Xd7IRtyuhIFog8UKJk/QV0W93CMN6Y9SeRSmD1YNd
-         AKVri7L0QXDipGrAnEA+He0+C/pLh7bxprdIA3QwZrRHha4+QmqKG8lHw+Rg8Hkrh0yK
-         Kd+DluB2ClC2ZO3+frJl/wXV4pdRTR3OOJO3x9kDl94ckHVuY9HBNh7NryZUVhKPLkm8
-         m2p2GEwzlUQm+fv24ic8ouV0Q2kk7kraomYwxRnRsZmIvk/kxtbe+SelEWREW1kkl1ej
-         O99Q==
+        bh=Gg57DbX152h+KFFdXgeP517P3SWQLEL3rJ/w0rVMxsg=;
+        b=DOKaaXU3YXnSGtA4HvMwDaTjSAPxp/IkqhvOQnu97ybZ/9eOZBlNtCHpxR2SkkKnig
+         kd7jCSXHq09i0dAU5Dh3015YBO4A5wI+jHGJIIGLY1DFmaMrfEpp+EnVHnf0YRju31oL
+         cQuGV8YXzHS/7k52Wzf8OdiYPxFlIxBLJTwDAqG3ZSYYwlk0fUIUpQeb+ydozkTdhirf
+         V0v/kgYMzNlQ9kzLu7iyQqpqhzI+7xVmBRRKY9ZDRk31rwuQWMhY2VD9aeJt+IwtOCIw
+         bX2gUvqR1N2rhvYGSmH1uBwrViaihb4i6c5u2cya8SVF4f5Yl/zg64MQhBKyDZ5No250
+         eJxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761796295; x=1762401095;
+        d=1e100.net; s=20230601; t=1761796299; x=1762401099;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MN0fRpH/PCnIiX5ASSuQg4IoluSNnvJUR3iBGHC2JFI=;
-        b=Rv1nKUuHTSM6o+cj6KHEnyJ6UUKKR67jBSTWs7nuqMNcK3sBa9boHsB9ahrPd5SIpL
-         oJtyFWuNxXBAvrlYjXLxmSJljUFMun2N1XPL33qi7kIy8o/1D3KGaqy0d//mMUobCNdd
-         4L43f1oHeg+X+9wf6+DtwEPkLAfKWwOmG1yoN3wxRNYUetn9AMS/5ZkEr9TgZxRHTz9y
-         IT4pMiILBdiouLYkGERpsdn/bkGdbw9znE3r62hcAgDPG2IkSF1RqSOzgg+uP4yaPUE3
-         Nhpe7RJB3dnEUyV3K1KVHS86nUp0qNHgifviXAfXchfR9Uppy64gXxDU4a6fH1l4J9wU
-         H01Q==
-X-Gm-Message-State: AOJu0YzdjZM1+unMxLxK3j6sbLoiF8nSt9elH/BabTeO1nIh+0uaQz7d
-	C/H046rYaXMxhICCpW3Lo01q1PV/MkfsZIKda1JUVbcrUUBQ8/qzSg5T
-X-Gm-Gg: ASbGncsAi1bgIm8Ot+1QPOnRxPdvyz+DB2m2TsXZVRBVGMyfkJbpRQP+812P0U0v3fF
-	eVarnEAdv5sN/ioeqArMZG/ZsGPQcVvb7vvt7bab+nh1Y/9SUyw6NBNCpY/mvTctLMKIqxd0hlc
-	+h/+v++M/MfSWEE7OMCjslxmtFXY/wM9TDgGuFWNehFBMxpr/3YwXqEGjRyVIkvYAWamEGHNr6e
-	M4/+cjrnMU0iyf0ztDSJaiLq037q3Visx1s3NM9zNMrCTwohS98ux6DAERYtHXfTmlq5/I4n/eC
-	/oNmqjstUamKyy53FS9qPn6V+FFQ7++43aOkKVmK5HUH5mMB87GMEWjXBv2abL2asAIzCZ6U8GO
-	DAXlcrwRUrzcq8twPgzCGR/hmLrFl63uPAO9i+uQIQVWwIJidhdV2lM/yQu0FGrCUXGzxWLUelt
-	iH5Jlo9lYXDWiQfSDaLjgwVuCLmLODGEdVvyeXAv21SoFQO8bCGwDzVfQ7T9tFSHRKkL8DWLrvk
-	IZu3ikZwA==
-X-Google-Smtp-Source: AGHT+IFDmCt6OxS1lG5usvyxQO/ayx75zbEn+wDdcRO8migbMEW884MG+r2fTQz9vUZXdmTRBF86sg==
-X-Received: by 2002:a17:903:2344:b0:24c:d0b3:3b20 with SMTP id d9443c01a7336-294ede8b3d5mr19471615ad.37.1761796294581;
-        Wed, 29 Oct 2025 20:51:34 -0700 (PDT)
+        bh=Gg57DbX152h+KFFdXgeP517P3SWQLEL3rJ/w0rVMxsg=;
+        b=NZi9TjyBuHuX66Qy8T1d/Pvqh3aPL6IFszt6VUzXcFNG/pF9GWaeUBk5RZiAnn7aky
+         IwA1YH2tRwXSiwNDodikCHc3Y/i/ztTbzQSkPzbMIyqfckSK44GPfuTRp+YLFR5zL9cY
+         QmAULE8gXuFbKLPz+zbRf01QmmlpwqCQO8f1URepCLHdhLOk1qUThClPNKpsxzNeyatx
+         akW3yMiOa9tg9K21UjyrcyJnSxLCEAn46VOs/eZcQfKXS1KE2M4kRmPFyT0qIIWxCFan
+         5jT5HtTLaiFwG8bCidlwEpZDl+zM73BBPzQmKXwtFeWMbseYDJulSosL7ZnTPQX35RZk
+         HIKQ==
+X-Gm-Message-State: AOJu0YxTdhrLbO5dBrakihGEtHNBv8I2QF8If/+n//coQEvrecdkohcB
+	ve1Yxff4jtdm91sa8uiIT09MqY9F9pR5M1A3Ty7xl1HhMDkoJrPKQxZu
+X-Gm-Gg: ASbGnct/fQLQ1715rb8HHtDaO4KQ9Zw7qCm6M6ofFe3FXKp0j0ddyUPs0+yIARLk83i
+	u7Hgge1xmQO+n+dfrYHFyXUK0SUdn/Re5AvcNxAOEx4VdFpv+CtZ4fKaLfR4I/BDcV9wubzjUjR
+	A7sHdqdkwogyikSCyHVktcwgITUbfmPPZzYMuaCTEYGzAuro3/9esCmOmfzi5puGv0Z+OH0S1QH
+	2dywhXWeUsdS4Xi0z6rxovDdK0xAR+zz4qlx01lQnNlZMQIoMaOIWDqctvvlNE23HJSSc3fbeMb
+	RTfZkNLFEj6K2R2g14h86+4sdr9wRNbgGQPDKMWtsrdY5cxNz9LLkJm1Xgg3ZzaYbxbLdLJNoOK
+	nMfSYp86hcZr76z+DT5ovAgu8FZfgSWa0rY4M1+SeIuopIXLk0vnBoXy/eWRPnrB7SzfRn6sa0S
+	fwFJcpDI5qxI/cdsJvDWtgqZ9qc4gOjTt0KhWll6ajrdMNTDtlIn/GPYY6sfx5UZi0iMOnkxIFW
+	XAlyByBIb5rzi/v1pOQ
+X-Google-Smtp-Source: AGHT+IECB4TP3ESqGiKQRZGuWO+zfnfT3ZOQklY1c2ma3P3YZVJziVDmG63qsEJkvCKs8lpqrnfA3w==
+X-Received: by 2002:a17:903:2284:b0:294:90cf:699c with SMTP id d9443c01a7336-294dee209f0mr60182985ad.16.1761796299023;
+        Wed, 29 Oct 2025 20:51:39 -0700 (PDT)
 Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3381sm167953225ad.16.2025.10.29.20.51.30
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3381sm167953225ad.16.2025.10.29.20.51.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 20:51:34 -0700 (PDT)
+        Wed, 29 Oct 2025 20:51:38 -0700 (PDT)
 From: alistair23@gmail.com
 X-Google-Original-From: alistair.francis@wdc.com
 To: kbusch@kernel.org,
@@ -85,9 +85,9 @@ To: kbusch@kernel.org,
 Cc: linux-kernel@vger.kernel.org,
 	alistair23@gmail.com,
 	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH 2/3] nvmet-tcp: Don't free SQ on authentication success
-Date: Thu, 30 Oct 2025 13:51:13 +1000
-Message-ID: <20251030035114.16840-3-alistair.francis@wdc.com>
+Subject: [PATCH 3/3] nvme: Allow reauth from sysfs
+Date: Thu, 30 Oct 2025 13:51:14 +1000
+Message-ID: <20251030035114.16840-4-alistair.francis@wdc.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251030035114.16840-1-alistair.francis@wdc.com>
 References: <20251030035114.16840-1-alistair.francis@wdc.com>
@@ -101,34 +101,74 @@ Content-Transfer-Encoding: 8bit
 
 From: Alistair Francis <alistair.francis@wdc.com>
 
-Curently after the host sends a REPLACETLSPSK we free the TLS keys as
-part of calling nvmet_auth_sq_free() on success. This means when the
-host sends a follow up REPLACETLSPSK we return CONCAT_MISMATCH as the
-check for !nvmet_queue_tls_keyid(req->sq) fails.
+Allow userspace to trigger a reauth (REPLACETLSPSK) from sysfs.
+This can be done by writing the queue ID to te sysfs file.
 
-This patch ensures we don't free the TLS key on success as we might need
-it again in the future.
+echo 0 > /sys/devices/virtual/nvme-fabrics/ctl/nvme0/replace_psk
+
+Note that only QID 0 (admin queue) is supported.
 
 Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 ---
- drivers/nvme/target/fabrics-cmd-auth.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/nvme/host/sysfs.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/nvme/target/fabrics-cmd-auth.c b/drivers/nvme/target/fabrics-cmd-auth.c
-index f71456a94b66..5cb857d21dfd 100644
---- a/drivers/nvme/target/fabrics-cmd-auth.c
-+++ b/drivers/nvme/target/fabrics-cmd-auth.c
-@@ -574,9 +574,7 @@ void nvmet_execute_auth_receive(struct nvmet_req *req)
- 	status = nvmet_copy_to_sgl(req, 0, d, al);
- 	kfree(d);
- done:
--	if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_SUCCESS2)
--		nvmet_auth_sq_free(req->sq);
--	else if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_FAILURE1) {
-+	if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_FAILURE1) {
- 		nvmet_auth_sq_free(req->sq);
- 		nvmet_ctrl_fatal_error(ctrl);
- 	}
+diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+index 29430949ce2f..f6994f35324f 100644
+--- a/drivers/nvme/host/sysfs.c
++++ b/drivers/nvme/host/sysfs.c
+@@ -246,6 +246,32 @@ static ssize_t nuse_show(struct device *dev, struct device_attribute *attr,
+ }
+ static DEVICE_ATTR_RO(nuse);
+ 
++static ssize_t nvme_sysfs_replace_psk(struct device *dev,
++				      struct device_attribute *attr, const char *buf,
++				      size_t count)
++{
++	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
++	int qid, rc;
++
++	rc = kstrtoint(buf, 10, &qid);
++	if (rc)
++		return rc;
++
++	if (qid >= ctrl->queue_count)
++		return -EINVAL;
++
++	rc = nvme_auth_negotiate(ctrl, qid);
++	if (rc < 0)
++		return rc;
++
++	rc = nvme_auth_wait(ctrl, qid);
++	if (rc < 0)
++		return rc;
++
++	return count;
++}
++static DEVICE_ATTR(replace_psk, S_IWUSR, NULL, nvme_sysfs_replace_psk);
++
+ static struct attribute *nvme_ns_attrs[] = {
+ 	&dev_attr_wwid.attr,
+ 	&dev_attr_uuid.attr,
+@@ -747,6 +773,7 @@ static struct attribute *nvme_dev_attrs[] = {
+ 	&dev_attr_dhchap_ctrl_secret.attr,
+ #endif
+ 	&dev_attr_adm_passthru_err_log_enabled.attr,
++	&dev_attr_replace_psk.attr,
+ 	NULL
+ };
+ 
+@@ -776,6 +803,10 @@ static umode_t nvme_dev_attrs_are_visible(struct kobject *kobj,
+ 	if (a == &dev_attr_dhchap_ctrl_secret.attr && !ctrl->opts)
+ 		return 0;
+ #endif
++	if (a == &dev_attr_replace_psk.attr) {
++		if (!ctrl->opts || !ctrl->opts->concat)
++			return 0;
++	}
+ 
+ 	return a->mode;
+ }
 -- 
 2.51.0
 
