@@ -1,115 +1,179 @@
-Return-Path: <linux-kernel+bounces-879206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3040BC2286B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:14:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5FDC22874
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A382934C8F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B892189EA28
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E9A338592;
-	Thu, 30 Oct 2025 22:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2l+45Fv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3263C3385A7;
+	Thu, 30 Oct 2025 22:14:31 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371D3101D4;
-	Thu, 30 Oct 2025 22:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F011E335570
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761862445; cv=none; b=OOns/qWkEL/cXXgnegkpIIJMASjsLNu6ZrO1pMTNELRQIoXhPgzUDeKE/Sa40ZgrZvcR9Nb6BLXGYu+UsfNPYgHtpKtYILY1DWPdZo0BmbUEK/TTYm3UlWwdDFEkrQJdAaw98cJ3K1D4kjCeGPQRE78HHwtyTCvXOyb86iUlqRM=
+	t=1761862470; cv=none; b=hkNL2igSO32kDmysolDZ9jqCIxUp05X8sEo/QEmJJuM0HunYti9JcCyiVUW3aLQVmTf8XebQsPf7JL/ZTDMZD/XAfJ/kGQ7Ekls1Y9zi424/o26yfPbY3Jq1pd2jOeHPPF8Vn086T3DTxtGsSWVEu8OHxLDiWACOXHzXoRwgzJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761862445; c=relaxed/simple;
-	bh=zYBfnEawIKxh7h1Pgru4AwSGlaZ86c7T3y9TiPo3iOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WscZhW2wfp5crhoJL5lb2V2gKf7Z6RgQoFKff7A4+ZjmfBpDXfcj/fCiQRlvcV3So7cMhVvo+r4gUx+f+5B9UdBL6ov8dn+GM0K+9zIuZhrtYAYi+iWodSFyPS0Ms6guI0rvBg5iJ5r8+ybUH81S4YGdEwZPOtjZIwK2OkEm97A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2l+45Fv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C703C4CEF8;
-	Thu, 30 Oct 2025 22:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761862445;
-	bh=zYBfnEawIKxh7h1Pgru4AwSGlaZ86c7T3y9TiPo3iOc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=b2l+45Fv9Wd6dCv89WSzh8Knzl45x1PCcR5w5ICcK1Tcl6Xels5VtjhBiNlK08dZF
-	 er+UpbieoNSkorCxXAi94mqi3t0q7cmc073k0j7XW5QduEXU4TiPHpkF/qbvo7WKNL
-	 a8zTw/dQoeF+YUwq8P4FUJz2YHmSPGuiXiA5mNrb9VcAVO0kK8cTqiEIOi3+eG77BE
-	 KlvbkFhtLnpPT2P6SDpJdLag/prKSgPbT3jrc85WxNZ9euBqPzWuVSF+tNL+z2F/hr
-	 a9x1vH5lirMo1nkOgPLduEisfh88ufAo08zVw3O4TDcpkkajZMrklTzoMEd3RiuBDQ
-	 +luCWIsYcaGVA==
-Date: Thu, 30 Oct 2025 17:14:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: FUKAUMI Naoki <naoki@radxa.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <20251030221404.GA1656495@bhelgaas>
+	s=arc-20240116; t=1761862470; c=relaxed/simple;
+	bh=6fYhdpG1Ub6R9qOagykrSkOktoB2nv95+eCVFHUdUDA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E1D44tmwTKbsVcDTkZdMfGKhESGRN+YPV0ASIPEULskl1O6kvEuB4yE2mExw5tXmQCpYbHme/yVq5JJQBYTnoA3FNr9+Q5LZsHC2UW0Zuqd0jkm+0O7bvkCM0oWrPVQyMR1ajerclQ2TCgxPrt/nIi06TwmiWciFfDry6GB/D/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-945c705df24so324711939f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:14:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761862468; x=1762467268;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HjmADPwuhiKknh1al6I//g5+o5h7/YHoGsWoDdA3Xik=;
+        b=v85O0mCt1ULndBWafLyif5Nc6CTvALZRIA8CdettgTDsts+5vnw430zanh0l6ia+h0
+         BX7DaVpfpn88efvHjqJrnItt8r2WBpnKakANRrV4gr0IJIGtlEODO5voOsbDPVol+M89
+         VK18qZnOipJQ7plVi2RHBUi1NdaNm5mEEUpo5HQImqeiNrgLgLLQG7GXdllIe1dTD5X3
+         i7ymnAab9vHF/5M/fuZPfLLYWQz+hdOhhoeccSQws6XShq8Jyh8AVJD+F1BKN4Mzr+1I
+         jgpYqAhvtKdFo4xu/lM0CGZR+T6VOJWFgX0LJBv6pMR3S1zzzinFA2k3QULBCerLQVsx
+         wQcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVASjv/Eiojr51xqT+EoKNyh3H7AG7WBSNDmvd6+vZV/Q7nY0mSvIdhlt3RQXWn7CrW6FX3l2extmLYrP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUAWwXtgwi2/GrjQEyzDUh8FA6WGaBEaU6x0u8At9t2MwpUo6x
+	j9Z8qsFpgWjUhInCeKXDYtMI7IC8F4/X/XmyMDtSCWoZ2/7mWElLjFy6kS4dxJX0nod4IHMLDaa
+	po5w5ILKrAWk/cDNOaDVZCYbuwXTPFu1qaf1dSVcuv1twuuZYq3tBWbV1IS8=
+X-Google-Smtp-Source: AGHT+IGAQ2hv/3RdL9/kZOY1zexofp89sFzf/nb96X1J0QOY8Q6zTb5XyloQXj89LQY1BlLeIVqIvTewXF86vR9c7m43HfKNRZYV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014184905.GA896847@bhelgaas>
+X-Received: by 2002:a05:6e02:1aab:b0:42f:a4d7:ebac with SMTP id
+ e9e14a558f8ab-4330bd94293mr25707765ab.4.1761862468057; Thu, 30 Oct 2025
+ 15:14:28 -0700 (PDT)
+Date: Thu, 30 Oct 2025 15:14:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6903e344.050a0220.32483.022d.GAE@google.com>
+Subject: [syzbot] [net?] BUG: corrupted list in team_priority_option_set (6)
+From: syzbot <syzbot+422806e5f4cce722a71f@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 01:49:05PM -0500, Bjorn Helgaas wrote:
-> On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
-> > Hi Manivannan Sadhasivam,
-> > 
-> > I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on the
-> > Rockchip RK3588(S) SoC.
-> > 
-> > When running Linux v6.18-rc1 or linux-next since 20250924, the kernel either
-> > freezes or fails to probe M.2 Wi-Fi modules. This happens with several
-> > different modules I've tested, including the Realtek RTL8852BE, MediaTek
-> > MT7921E, and Intel AX210.
-> > 
-> > I've found that reverting the following commit (i.e., the patch I'm replying
-> > to) resolves the problem:
-> > commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
-> 
-> Thanks for the report, and sorry for the regression.
-> 
-> Since this affects several devices from different manufacturers and (I
-> assume) different drivers, it seems likely that there's some issue
-> with the Rockchip end, since ASPM probably works on these devices in
-> other systems.  So we should figure out if there's something wrong
-> with the way we configure ASPM, which we could potentially fix, or if
-> there's a hardware issue and we need some king of quirk to prevent
-> usage of ASPM on the affected platforms.
-> 
-> Can you collect a complete dmesg log when booting with
-> 
->   ignore_loglevel pci=earlydump dyndbg="file drivers/pci/* +p"
-> 
-> and the output of "sudo lspci -vv"?
-> 
-> When the kernel freezes, can you give us any information about where,
-> e.g., a log or screenshot?
-> 
-> Do you know if any platforms other than Radxa ROCK 5A/5B have this
-> problem?
-> 
-> #regzbot introduced: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
-> #regzbot dup-of: https://github.com/chzigotzky/kernels/issues/17
+Hello,
 
-#regzbot report: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com
+syzbot found the following issue on:
+
+HEAD commit:    dcb6fa37fd7b Linux 6.18-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1596ac92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=609c87dcb0628493
+dashboard link: https://syzkaller.appspot.com/bug?extid=422806e5f4cce722a71f
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-dcb6fa37.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/61176fd888a1/vmlinux-dcb6fa37.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/84e7e9924c22/bzImage-dcb6fa37.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+422806e5f4cce722a71f@syzkaller.appspotmail.com
+
+futex_wake_op: syz.0.2928 tries to shift op by -1; fix this program
+ non-paged memory
+list_del corruption, ffff888058bea080->prev is LIST_POISON2 (dead000000000122)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:59!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 3 UID: 0 PID: 21246 Comm: syz.0.2928 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__list_del_entry_valid_or_report+0x13e/0x200 lib/list_debug.c:59
+Code: 48 c7 c7 e0 71 f0 8b e8 30 08 ef fc 90 0f 0b 48 89 ef e8 a5 02 55 fd 48 89 ea 48 89 de 48 c7 c7 40 72 f0 8b e8 13 08 ef fc 90 <0f> 0b 48 89 ef e8 88 02 55 fd 48 89 ea 48 b8 00 00 00 00 00 fc ff
+RSP: 0018:ffffc9000d49f370 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffff888058bea080 RCX: ffffc9002817d000
+RDX: 0000000000000000 RSI: ffffffff819becc6 RDI: 0000000000000005
+RBP: dead000000000122 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000001 R12: ffff888039e9c230
+R13: ffff888058bea088 R14: ffff888058bea080 R15: ffff888055461480
+FS:  00007fbbcfe6f6c0(0000) GS:ffff8880d6d0a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c3afcb0 CR3: 00000000382c7000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:132 [inline]
+ __list_del_entry include/linux/list.h:223 [inline]
+ list_del_rcu include/linux/rculist.h:178 [inline]
+ __team_queue_override_port_del drivers/net/team/team_core.c:826 [inline]
+ __team_queue_override_port_del drivers/net/team/team_core.c:821 [inline]
+ team_queue_override_port_prio_changed drivers/net/team/team_core.c:883 [inline]
+ team_priority_option_set+0x171/0x2f0 drivers/net/team/team_core.c:1534
+ team_option_set drivers/net/team/team_core.c:376 [inline]
+ team_nl_options_set_doit+0x8ae/0xe60 drivers/net/team/team_core.c:2653
+ genl_family_rcv_msg_doit+0x209/0x2f0 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x55c/0x800 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x8c8/0xdd0 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg net/socket.c:742 [inline]
+ ____sys_sendmsg+0xa98/0xc70 net/socket.c:2630
+ ___sys_sendmsg+0x134/0x1d0 net/socket.c:2684
+ __sys_sendmsg+0x16d/0x220 net/socket.c:2716
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbbcef8efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbbcfe6f038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fbbcf1e5fa0 RCX: 00007fbbcef8efc9
+RDX: 0000000000040000 RSI: 0000200000000200 RDI: 0000000000000004
+RBP: 00007fbbcf011f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fbbcf1e6038 R14: 00007fbbcf1e5fa0 R15: 00007fffa3594408
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x13e/0x200 lib/list_debug.c:59
+Code: 48 c7 c7 e0 71 f0 8b e8 30 08 ef fc 90 0f 0b 48 89 ef e8 a5 02 55 fd 48 89 ea 48 89 de 48 c7 c7 40 72 f0 8b e8 13 08 ef fc 90 <0f> 0b 48 89 ef e8 88 02 55 fd 48 89 ea 48 b8 00 00 00 00 00 fc ff
+RSP: 0018:ffffc9000d49f370 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffff888058bea080 RCX: ffffc9002817d000
+RDX: 0000000000000000 RSI: ffffffff819becc6 RDI: 0000000000000005
+RBP: dead000000000122 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000001 R12: ffff888039e9c230
+R13: ffff888058bea088 R14: ffff888058bea080 R15: ffff888055461480
+FS:  00007fbbcfe6f6c0(0000) GS:ffff8880d6a0a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffcb8535e5c CR3: 00000000382c7000 CR4: 0000000000352ef0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
