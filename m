@@ -1,250 +1,239 @@
-Return-Path: <linux-kernel+bounces-878903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0598C21B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:18:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAC5C21B21
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:10:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D1254F6B30
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB24189FB07
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED123655E4;
-	Thu, 30 Oct 2025 18:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8FB262FED;
+	Thu, 30 Oct 2025 18:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sl6Je7xU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lX1PGOHl"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010046.outbound.protection.outlook.com [52.101.193.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9287C1C695
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847876; cv=none; b=H6D5Oo5X6ys9dCMwhhxFTdMsX7vEmPF4TumAMn1t8Qd8G62i7/5dLRfyd5sT4JvD6tpfBKYNAuSPOM+nbu+hMSHbRYLIC8BJRS+K2oBxO/4e19AreXw7IjAnusBOdVAaiaxSJj2ukkATYzx+t+81riwLtREFb1ghHpOiA9YYHKs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847876; c=relaxed/simple;
-	bh=uUizPZKluk7Jwn3HpmewDS0Fy2cfvBUvG9HSQEUfK4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b04NrghcVjZ3fnZmqoiQlcJYNbsbfrZAYTuSlHRsR0R+6Ff6DePAkIrOnkOsjNqqWB0wYh0yVEu+EzoaH/2EC7yEP/euYQQc+Kt6/+Ze5UPc9fdAlkWEtG/tGYDbd0RkAgEYjO2q0qyTAQBEgfsS76lSowbtN68Kyg6E+6Kssuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sl6Je7xU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444EBC19425
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761847876;
-	bh=uUizPZKluk7Jwn3HpmewDS0Fy2cfvBUvG9HSQEUfK4o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sl6Je7xUwBhTrJqbH4Zqa7uVjdz8vDZ4/W6UsoybPqgR29GjGQzhoV+upQWv6vV7f
-	 0RIAnAxQk89PdojrLXBEkSrpPU6ekHpvfQJKGSgUdVHOvghkacCa/dcoMa6WksRhIM
-	 ppBmnNTaDObXIHQuFmpdWhAbFa0V0dkUTmOJlGB6YcsBPqXd1HLEsWXRM4KbmikwmA
-	 0PHYJ9R3rniP+uoOFd7qPjQjiHi0aVI22tseIpEs+8vfkm1UnyHb6NuVBXHgRBsbLF
-	 EwHUh8BAsaHT3iCtmE8V+WE2Figt1PGOEx1Sr59tN1gZqnW6BrquPuQITMpyInXCEE
-	 cPaPzkZdyjy9w==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-654ecd8afafso340567eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:11:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4GXkrZE412H2mUeaK9YwD+8NhqvFx/TyGXfKHGJl93gad/YNE+Ng4QnOMR9jD+Ea2MtWfY6wDKilwC+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8PwuQrhGnNG4+e3os7WDo/vd8BYM5ZvuBVQq5AwjnFmY/H5U6
-	mmC+4nu37zJQSVDphexzo6u002PlT15ZEJhNvzHlFIMzvNOrB/32JQT14J3p8GCnv7H0VrlJupI
-	EDiu1qgI+TQDJnk9vnt+crgU4uS7au3E=
-X-Google-Smtp-Source: AGHT+IHW0nlsfsQxxGRyJgN07O4vnJjHufNj/PwIMwcNbkhmcasizwXLwJVkiitD3Ek49r3QecRqAhv+R7Y03Q/iMc0=
-X-Received: by 2002:a05:6808:189e:b0:44f:8f02:8a50 with SMTP id
- 5614622812f47-44f95e19ca9mr316111b6e.12.1761847875470; Thu, 30 Oct 2025
- 11:11:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE68023B607
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761847636; cv=fail; b=IEYOlpZH784jqcyuVCfV1ARnEipwmmbblk1FFhf1hB9HAjxvdeHj4gn/A/fR0Ksqpgcp7oQlLO9/U7mpT8SdC9KbOVHQBDVnLm/R/VEy2evN0OGKKfesJm0EqDobTluOYoMG8w0V/m8NhZqURqzhUlBmgKaW7avna06ZeHvsBfY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761847636; c=relaxed/simple;
+	bh=w362Oaw4IgH+4QoNvUl/W2lRFAXf/+9GyDIJJ6PfTiI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cvj9/lt9uHGaAL+/90nq4LxBLEzRhOVWo7jl9Me4wZalDXXPY6mSfCHl+7lGLu3fcXRvJgtBKI4g4rGYhf2tbdRHfRZ8JUA94ipJrKYhS33yxyWOWawM6FGE7gNBdrDkCfKcAP3OeF2r4gS1iBi6ZCap5BqbVpcEFkogP3pJtyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lX1PGOHl; arc=fail smtp.client-ip=52.101.193.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ga71JtwhkGN61j2+k2EVjFbUAsKSxz0kZCA+9ZRjOhgZhPn/aMcMj7oYAEvaj0BXsrO/pGIh0nzH+PZulbuUsb0ejFcHByvAfQ5nHgoZDYw+X+s+JIgoZDFfep4Q6SY0Oe3jb0Am4U3B0cW33t56Adc665KDp8LrfiEDsbbVxgPTFyXFBZ9iwR+7JhPKTElTQci4JTwjrIsm2+TEH237ohwMBJXMC1VJREmesRb9cYCdkgAqCrMbHZflNEaGRziDMoEB2Th5cKojPTU+cWEiEm8GpyDZKugAJkk29DVLgI5XBKeA8npKjoH9qI/bgpiUh6BMJzU3uJ2PZa3FY9wVzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qydi9IrCfjOBSImRAzHWJPpyRoK+OmBCEhbEDrgH/0E=;
+ b=hPNTKeYkUdxG5OSfHrRUv7Y0gebKfdyqPYYaCPAb3AhwS8K/zwjGyNBw6jSgeDuFq3LfDzM/3qZGCErRmnrUkbRmbFBlrZO6OEt/q5xH4g26yoIizWQLO13i6aumueLy3imKaG5ZZDfBRAb5twWtABZmOVNGCG5rKybFwsKy4v+EF+MGfkR3Wss5ZhTSCB7VR+XdIDUkGBhjZ7rduLGXLkk5dEf3pYBBBepNnEnU3OxB3GPOZpo68ClxpR4ZxYm8AbEceWn7rwibR1wHnd0TVTgfV44WgB9JRaWMV7OyxAub3j1zfXJr4WJKyuKIinffB5RhixT7pzUUQKs7sNEo9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qydi9IrCfjOBSImRAzHWJPpyRoK+OmBCEhbEDrgH/0E=;
+ b=lX1PGOHlAu3qUcvPmLzntx33VzhCkeXRY1hd7rCauGkXodsiD4sQLZ3zbSmmV6nAKoXxVeu28esX5Oxdv+YBfM0hGLfixZR4vPdUMTxYmYXNdYAyJ9l8LpCsfOKpg4U6AAhlJ3guaQl6TeFm8q+/DihOujugAuPhf+Exn4X2UoyVx0OHoNhe/SW78DIUpVtVUUncGAA/HX8AIo7huS58VBlHKnO1JadDGBvHjJldoseob6SBd5SGwwva7ToSurQoiCBC+FxC7FGp++BnvZW1adRKo4DLZKizlG0E6oXsbs6VEhbuf+UKOqbi/pOQ52CXEld5pfFNcwqYbDdJp3XKEA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA1PR12MB6701.namprd12.prod.outlook.com (2603:10b6:806:251::18)
+ by SA0PR12MB7479.namprd12.prod.outlook.com (2603:10b6:806:24b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Thu, 30 Oct
+ 2025 18:07:12 +0000
+Received: from SA1PR12MB6701.namprd12.prod.outlook.com
+ ([fe80::2be0:c316:443d:da3a]) by SA1PR12MB6701.namprd12.prod.outlook.com
+ ([fe80::2be0:c316:443d:da3a%5]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
+ 18:07:12 +0000
+From: James Jones <jajones@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Faith Ekstrand <faith.ekstrand@collabora.com>
+Cc: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	James Jones <jajones@nvidia.com>
+Subject: [PATCH v2 0/2] drm/nouveau: Advertise correct modifiers on GB20x
+Date: Thu, 30 Oct 2025 11:11:51 -0700
+Message-ID: <20251030181153.1208-1-jajones@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR02CA0053.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::30) To SA1PR12MB6701.namprd12.prod.outlook.com
+ (2603:10b6:806:251::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-3-ulf.hansson@linaro.org> <CAJZ5v0hPUYoLFs=jZ10a1cX6TE1bmRF7CkBH1Ebejao9Hdfhnw@mail.gmail.com>
- <CAPDyKFrrhw5vMYLEWJ5LRphVzwPwjiU-n=tdbgOtOmFSXGd0GQ@mail.gmail.com>
- <CAJZ5v0g5p-8WrmNQ6-tvTEy50gVjfEMsmXxTK8bmLqafe30jKw@mail.gmail.com>
- <CAPDyKFo+U=oJVxXCDBN_WZLBpkwPgv_=qw96hauAttFnAQuPtw@mail.gmail.com>
- <CAJZ5v0h_OFzmhcKohS3SNWwz_vwpq6frymXSSgFjk_K27ncSTg@mail.gmail.com> <CAPDyKFqs_Mn57SxPNy5_e56LuFxx3KkfJfHqgg9_wp77rpn7Pw@mail.gmail.com>
-In-Reply-To: <CAPDyKFqs_Mn57SxPNy5_e56LuFxx3KkfJfHqgg9_wp77rpn7Pw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 30 Oct 2025 19:11:03 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jTVZtyV2yeFNpGo4TnZY79CH_fpaSbVq1T9BJ0BohZsg@mail.gmail.com>
-X-Gm-Features: AWmQ_bn8g4XPjHgN-vPCtJtXbq8yiQaaFqzBPArGiQe8U_U8Qc85RIkrxzmOK1A
-Message-ID: <CAJZ5v0jTVZtyV2yeFNpGo4TnZY79CH_fpaSbVq1T9BJ0BohZsg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pmdomain: Respect the CPU system-wakeup QoS limit
- during s2idle
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR12MB6701:EE_|SA0PR12MB7479:EE_
+X-MS-Office365-Filtering-Correlation-Id: 008f1971-fb3b-4a92-0a75-08de17df2636
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UjBLR4sMUIK1qUJSlBs5UqquRE0TfjEo6AOMgHZCl8D35kwZOm+tmIEM20/o?=
+ =?us-ascii?Q?CofA0bcj5BQLpLZJgnC3I0vHHWsOQQ4qRJVwOzbPl6YQY1LhLBOv3Y6basAy?=
+ =?us-ascii?Q?+LOpxjsPVX9TSNyPNMHY3ZthZngu38HpVDMTP0VOoBLLqFzGbeGUMZ7weIzj?=
+ =?us-ascii?Q?Cj1VjwGK2xAgYtd3F5ICtXTRhgUeSa5yrAPvBM5yOB/+Cm20witPV6hvICAJ?=
+ =?us-ascii?Q?m6+wDu6mFhj95HlWwtxkXAMqg8WQConwDQ9rRsfmrz5uiF/DMgWyJ7Q+6jdl?=
+ =?us-ascii?Q?8buquT43Osses1pbOQ4McShBwXNe4gLRfUWBMelt83+1vAibj7c9SnbkGp9p?=
+ =?us-ascii?Q?kxYIgwf+BMLtviKwGnJj57/JpDLg1OA0cai87n8knNnmoCjTqZnnyO1OMDj1?=
+ =?us-ascii?Q?109hCdbIfoGqOAT2RGc/lFXZei2IH3zpFBKkqtTPC0tkBTOsqC7uRXzqhjcF?=
+ =?us-ascii?Q?bk5RuFNiou22oZYzTkY84iNyLTulqgsSgHTvAjOWXc6x9CgFrBlittttqWOT?=
+ =?us-ascii?Q?fhQTasoAxnh8yvr2sCGyE2vMQikoYAd9eOc9Nkf+HdVRkTVG/aLyUlSEtNnN?=
+ =?us-ascii?Q?cT650Jf/x15N1xH6JNAiprYd9DkivH/nBuE+sjKvn5vTbejsQrtuDdPyVNAS?=
+ =?us-ascii?Q?EjrkYt70u8xyyNnFIOaFGZTc2QXoHyANeadsxlFCpjE0vFrKrqKXZck/k9y+?=
+ =?us-ascii?Q?DDX+ctgwyzdcfeUhW8I5ICVfJiVnPmjs0Z2v8JHTUO8vNXg2qXwws/YOjh2K?=
+ =?us-ascii?Q?XBVH4FR0Z8tzbG3wwrGvZc4Z1ommA7LH/LdWf2SPHONK6Qr1YKaDVVWFCvng?=
+ =?us-ascii?Q?/7sWudBA8mWvGVzjcs6UmBiO4oPH7dRePJTAT4bM2B5uRdSWhR1/Qd6d+n4/?=
+ =?us-ascii?Q?bfpHYiAxrdJ0FC7WAyOqJx/nSdOaqDMj5exM3QfLiY/3BQwV/b7ybOrmcs0a?=
+ =?us-ascii?Q?oNa4STzRN0LbUP+2xxb0RDoy+PP+6mEX0CcFL9XCsYzuhpTSDLQEgjBkkxo1?=
+ =?us-ascii?Q?sWpfGTcDrQFCBuz1dInOG1ttUNHWZPMqbmO8eWxfrTlqyvw+bArkRO5oR3qt?=
+ =?us-ascii?Q?KM2V6iavIGQP4+TcETvmPfOMxRpfgVAVdykWtDABrrdfQvdaUKggdUvkIG9F?=
+ =?us-ascii?Q?It+bqEUVijYi7ZpNL4tVDnkNjSurH6NcqyqVUTuo8BQqwYIWENWy+IkG8kFa?=
+ =?us-ascii?Q?z4BxQ2kIoSlmZ31pKT+jZlwqWB/l+JxZZNIJVxvuoY49f26Oe72eJqpa/hUO?=
+ =?us-ascii?Q?axSlNhcljYvzQMSVUl3pFfmrMqXEakhyoMXV74M7vnCXhpW7+0CONSteRRFj?=
+ =?us-ascii?Q?QQXFdz0vofBPEvVGbhPmu+X8wholLYf6BQbEY55/spN4fBUA7UOZvisENQPU?=
+ =?us-ascii?Q?2SXeqqcels+1YlOWAHQmJ0HB7lz2fcoam/n0Luxo2EJiCwC9PstCQA8vjPtZ?=
+ =?us-ascii?Q?tWzIzbYqvEic6sV9pA9wL9l1/ZDX9gwKXUAmCQLFao+KJ66N69e8tQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB6701.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Sn6Y4M0ZfX39QlKGOOqfhORXu3P0oNVTDTSp4/SZog2vtsTIkJa/dp9zsnUN?=
+ =?us-ascii?Q?GkE1cPx+5UOCQYADPdpGl87r5g2kVRHyPSp7/EjM68a82g8S+n13SO3hXnBz?=
+ =?us-ascii?Q?Wj1V+XVymJ5OP1T1deFCxtYNOJXiJg7DqMbtzQKYZW0YIh1vkUYs3TGTpWKQ?=
+ =?us-ascii?Q?FdZ13wEKNSY/7+a7gppeOvdBFo9NUJwxhJ8Z+xzRUAwYVarBbdEXjJRwaV8T?=
+ =?us-ascii?Q?PeyXGTACpUs4blAZGUOi41OVBiBaIR0ICKgXwGJiN+Omag/vdw5lR5HRqLuK?=
+ =?us-ascii?Q?YchbV0gep+qeuitCUvxMSZ3tta+apwk/hDGnoZFY2ZtSN6JwRfop3s0IlYc5?=
+ =?us-ascii?Q?okYI33yxeAZ3XsfMJw461kCtDo9BtNlYn4v+fzNljJ/MDGV3HIF6VAVgMDg+?=
+ =?us-ascii?Q?h0NKaSCarNW+Wsc4YUitkLk+BC1fhpscpP80OeLZy+kJOp5gwtiXflh6lzpM?=
+ =?us-ascii?Q?uHRgLbqRtduY2PQmaZXzGAixfydfVseVuTc2zsfrjVRn+7Nix6H08oO+UsRm?=
+ =?us-ascii?Q?vrSnrNG/W3R+do4RjsvbWFFga2V6CfWLQT5doC/h3dBtJ1ahaoode84G5vrT?=
+ =?us-ascii?Q?9aoQIpwBQ0K/8gz3enSKWrwqKBAgOstOTAQNm/hg37s61OChRq4tA4cTe5uI?=
+ =?us-ascii?Q?hTJ/YPftMK0bwsmnRemtktHbAmVyAuiDGkX4Np28hRy+2+FLD0iSmwBB04Mt?=
+ =?us-ascii?Q?dtMod4MMx0iBkTQmWrAOWbHCdgHcGt578UCSqeoHqdxkBE7VvT1eT0nPV6Wk?=
+ =?us-ascii?Q?pnrcc4jh7F5tbnWQ/DkReUqZhfKwg332XKuCSpB0jsY3PUTsq5VdXIV55jYW?=
+ =?us-ascii?Q?9w1ZMyHRw6blKVS3RrtAy5/trzEG+0iN/LryEkBDocmjJG9lUrs8c8jdy13/?=
+ =?us-ascii?Q?HSe03fSSFboMtXQBGknmQnPugrtrzAEr8G5x9Cc1uf4TIOMdxVik48yOnbSz?=
+ =?us-ascii?Q?qE3wJRQvK75xaP8Xwztk8fLOrSr610VznM8sWGl5/9QoCqwC7MblwN7NsjV+?=
+ =?us-ascii?Q?Y2ghOqOGqFUoW17aKOyUFeyIVOW44OHrQlUKkJUiY5qeX6TKaTwePnNedc5e?=
+ =?us-ascii?Q?dS7JCkx0qb1sx0eg9EffOAd7QTgF4eZLpBauJnarVE0eABWpk+KaIavKgNol?=
+ =?us-ascii?Q?OpZ7PnTIdgij3WKQMNMDAiInUS4NSI7cPdGF//1zJyO8CYGRZ8UHx/gb2Idq?=
+ =?us-ascii?Q?9TemB45hUZmw8eKPnnLaR4foYVNBfPjxJFPh0DbD+W0o/+sJmjoVNxHuTJoq?=
+ =?us-ascii?Q?RM5aFPDSqXobyh+QonzjfnlMWSBPYBc6JTGeybEKLb4Sg+o3U3qfFxcJ3qom?=
+ =?us-ascii?Q?E8anTlbS3zFEQsQt9+wS7r2uxyXA98loVD6iXDPPhl7QvgvYzV7fgMTm2UXa?=
+ =?us-ascii?Q?jEQk2zYEEZa+cxiUwB88fXqG8sJ6o9sgG/wo8NF4wkRkaOa336tFLvWaYPig?=
+ =?us-ascii?Q?HjDMm9P64hb0iGVSSCutuOTaRwb/1qQj+L94MT3yOL5bJaL5kThsMmbMF0OY?=
+ =?us-ascii?Q?upmp+Rg+3xPP5jX7qORS8vTQtF2sf2qJYc+fZZ7TJWujr3CIR6SSfYjHicEX?=
+ =?us-ascii?Q?OOze4UlmsbtM4QBZPmt39Ix6H9uSaXPzfcORLcxv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 008f1971-fb3b-4a92-0a75-08de17df2636
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB6701.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 18:07:12.0783
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GLW4KcWhEr8/+0VxW/zRMQn0P9kOomSvAemtfwq/PvPVNAHpVxI911/MdDtCj0c7OaNxETftCHi+kJBj+o3S6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7479
 
-On Thu, Oct 30, 2025 at 4:07=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> On Thu, 30 Oct 2025 at 15:02, Rafael J. Wysocki <rafael@kernel.org> wrote=
-:
-> >
-> > On Thu, Oct 30, 2025 at 1:32=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
-.org> wrote:
-> > >
-> > > On Thu, 30 Oct 2025 at 13:23, Rafael J. Wysocki <rafael@kernel.org> w=
-rote:
-> > > >
-> > > > On Thu, Oct 30, 2025 at 1:00=E2=80=AFPM Ulf Hansson <ulf.hansson@li=
-naro.org> wrote:
-> > > > >
-> > > > > On Thu, 30 Oct 2025 at 11:45, Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
-> > > > > >
-> > > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansso=
-n@linaro.org> wrote:
-> > > > > > >
-> > > > > > > A CPU system-wakeup QoS limit may have been requested by user=
--space. To
-> > > > > > > avoid breaking this constraint when entering a low-power stat=
-e during
-> > > > > > > s2idle through genpd, let's extend the corresponding genpd go=
-vernor for
-> > > > > > > CPUs. More precisely, during s2idle let the genpd governor se=
-lect a
-> > > > > > > suitable low-power state, by taking into account the QoS limi=
-t.
-> > > > > > >
-> > > > > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > > > ---
-> > > > > > >
-> > > > > > > Changes in v2:
-> > > > > > >         - Limite the change to the genpd governor for CPUs.
-> > > > > > >
-> > > > > > > ---
-> > > > > > >  drivers/pmdomain/core.c     | 10 ++++++++--
-> > > > > > >  drivers/pmdomain/governor.c | 27 +++++++++++++++++++++++++++
-> > > > > > >  include/linux/pm_domain.h   |  1 +
-> > > > > > >  3 files changed, 36 insertions(+), 2 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.=
-c
-> > > > > > > index 61c2277c9ce3..4fd546ef0448 100644
-> > > > > > > --- a/drivers/pmdomain/core.c
-> > > > > > > +++ b/drivers/pmdomain/core.c
-> > > > > > > @@ -1425,8 +1425,14 @@ static void genpd_sync_power_off(struc=
-t generic_pm_domain *genpd, bool use_lock,
-> > > > > > >                         return;
-> > > > > > >         }
-> > > > > > >
-> > > > > > > -       /* Choose the deepest state when suspending */
-> > > > > > > -       genpd->state_idx =3D genpd->state_count - 1;
-> > > > > > > +       if (genpd->gov && genpd->gov->system_power_down_ok) {
-> > > > > > > +               if (!genpd->gov->system_power_down_ok(&genpd-=
->domain))
-> > > > > > > +                       return;
-> > > > > > > +       } else {
-> > > > > > > +               /* Default to the deepest state. */
-> > > > > > > +               genpd->state_idx =3D genpd->state_count - 1;
-> > > > > > > +       }
-> > > > > > > +
-> > > > > > >         if (_genpd_power_off(genpd, false)) {
-> > > > > > >                 genpd->states[genpd->state_idx].rejected++;
-> > > > > > >                 return;
-> > > > > > > diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain/g=
-overnor.c
-> > > > > > > index 39359811a930..bd1b9d66d4a5 100644
-> > > > > > > --- a/drivers/pmdomain/governor.c
-> > > > > > > +++ b/drivers/pmdomain/governor.c
-> > > > > > > @@ -415,9 +415,36 @@ static bool cpu_power_down_ok(struct dev=
-_pm_domain *pd)
-> > > > > > >         return false;
-> > > > > > >  }
-> > > > > > >
-> > > > > > > +static bool cpu_system_power_down_ok(struct dev_pm_domain *p=
-d)
-> > > > > > > +{
-> > > > > > > +       s64 constraint_ns =3D cpu_wakeup_latency_qos_limit() =
-* NSEC_PER_USEC;
-> > > > > >
-> > > > > > I'm not sure why genpd needs to take cpu_wakeup_latency_qos_lim=
-it()
-> > > > > > into account directly.
-> > > > > >
-> > > > > > It should be told by cpuidle which state has been selected on t=
-he CPU
-> > > > > > side and it should not go any deeper than that anyway.
-> > > > >
-> > > > > For PSCI OS-initiated mode, cpuidle doesn't know about the states=
- that
-> > > > > may be shared among a group of CPUs.
-> > > > >
-> > > > > Instead, those states are controlled through the PM domain topolo=
-gy by
-> > > > > genpd and its governor, hence this is needed too.
-> > > >
-> > > > All right, but I'd like to understand how all of that works.
-> > > >
-> > > > So cpuidle selects a state to enter for the given CPU and then genp=
-d
-> > > > is invoked.  It has to take the exit latency of that state into
-> > > > account, so it doesn't go too deep.  How does it do that?
-> > >
-> > > Depending on the state selected, in cpuidle-psci.c we may end up
-> > > calling __psci_enter_domain_idle_state() (only for the deepest
-> > > CPU-state).
-> > >
-> > > For s2idle this means we call dev_pm_genpd_suspend|resume(), to manag=
-e
-> > > the reference counting of the PM domains via genpd. This then may lea=
-d
-> > > to that genpd_sync_power_off() tries to select a state by calling the
-> > > new governor function above.
-> > >
-> > > Did that make sense?
-> >
-> > So IIUC this will only happen if the deepest idle state is selected in
-> > which case the cpu_wakeup_latency_qos_limit() value is greater than
-> > the exit latency of that state, but it may still need to be taken into
-> > account when selecting the domain state.  However, this means that the
->
-> Correct.
->
-> > exit latency number for the deepest idle state is too low (it should
-> > represent the worst-case exit latency which means the maximum domain
-> > exit latency in this particular case).
->
-> Yes, from the cpuidle state-selection point of view, but how is that a pr=
-oblem?
+This series adds new format modifiers for 8 and 16-bit formats on GB20x
+GPUs, preventing them from mistakenly sharing block-linear surfaces
+using these formats with prior GPUs that use a different layout.
 
-It is confusing.  Otherwise, for s2idle, I guess it is not a big deal.
+There are a few ways the parameteric format modifier definition
+could have been altered to handle the new layouts:
 
-I guess what happens is that genpd has a range of states with
-different latency values to choose from and it is not practical to
-expose all of them as CPU idle states, so you end up exposing just one
-of them with the lowest latency value to allow cpuidle to involve
-genpd often enough.
+-The GOB Height and Page Kind field has a reserved value that could
+ have been used. However, the GOB height and page kind enums did
+ not change relative to prior chips, so this is sort of a lie.
+ However, this is the least-invasive change.
 
-If that's the case, I'd make a note of that somewhere if I were you,
-or people will routinely get confused by it.
+-An entirely new field could have been added. This seems
+ inappropriate given the presence of an existing appropriate field.
+ The advantage here is it avoids splitting the sector layout field
+ across two bitfields.
 
-> If the genpd-governor doesn't find a suitable "domain-idle-state", we
-> fallback to using the one cpuidle selected.
->
-> >
-> > Moreover, it looks like the "runtime" cpuidle has the same problem, doe=
-sn't it?
->
-> It works in a very similar way, but I fail to understand why you think
-> there is a problem.
+The chosen approach is the logically consistent one, but has the
+downside of being the most complex, and that it causes the
+DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D() macro to evaluate its 's'
+parameter twice. However, utilizing simple helper functions in
+client code when accessing the parameteric format modifier fields
+easily addresses the complexity, and I have audited the relevant code
+and do not believe the double evaluation should cause any problems in
+practice.
 
-There is a problem because it may violate a "runtime" latency constraint.
+Tested on GB20x and TU10x cards using the following:
 
-Say you expose 2 CPU idle states, a shallow one and a genpd one.  The
-advertised exit latency of the genpd state is X and the current
-latency constraint is Y > X.  The genpd state is selected and genpd
-doesn't look at the cpuidle_governor_latency_req() return value, so it
-chooses a real state with exit latency Z > Y.
+-kmscube w/NVK+Zink built with these patches applied:
 
-To a minimum, genpd should be made aware of
-cpuidle_governor_latency_req(), but even then cpuidle governors take
-exit latency into consideration in their computations, so things may
-get confused somewhat.
+   https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36336
+
+ with various manually specified formats
+ and both manually specified and automatically
+ selected modifiers.
+
+-drmfmtmods, a tiny test program that lists modifiers:
+
+   https://github.com/cubanismo/drmfmtmods
+
+Changes in v2:
+
+-Added "Fixes: 6cc6e08d4542" line since this can be considered a bug
+ fix for the initial blackwell KMS support in nouveau.
+
+-Dropped the second patch from the v1 series as it has been merged.
+
+Changes since the RFC version here:
+
+  https://lore.kernel.org/nouveau/20250703223658.1457-1-jajones@nvidia.com/
+
+-Dropped the helper macros & static inlines in
+ drm_fourcc.h as requested by Faith Ekstrand,
+ who noted these aren't helpful for UMD code,
+ which is all written in rust now. I may re-
+ introduce some of these in a subsequent series,
+ but we both agreed we do not want to delay
+ progress on the modifiers themselves while we
+ debate the details of those cometic details.
+
+-Reserved an extra bit for future sector
+ layouts.
+
+-Fixed handling of linear modifiers on GB20x
+ and NV5x/G8x/G9x/GT2xx chips.
+
+James Jones (2):
+  drm: define NVIDIA DRM format modifiers for GB20x
+  drm/nouveau: Advertise correct modifiers on GB20x
+
+ drivers/gpu/drm/nouveau/dispnv50/disp.c     |  4 ++-
+ drivers/gpu/drm/nouveau/dispnv50/disp.h     |  1 +
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c     | 24 +++++++++++++--
+ drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c | 33 +++++++++++++++++++++
+ include/uapi/drm/drm_fourcc.h               | 25 ++++++++++------
+ 5 files changed, 75 insertions(+), 12 deletions(-)
+
+-- 
+2.50.1
+
 
