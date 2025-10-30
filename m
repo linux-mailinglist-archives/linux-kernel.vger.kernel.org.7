@@ -1,333 +1,188 @@
-Return-Path: <linux-kernel+bounces-878949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753B5C21D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C275C21D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BD63BDA23
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A680400EA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5622536E34D;
-	Thu, 30 Oct 2025 18:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ABF36E351;
+	Thu, 30 Oct 2025 18:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pB1n7yzy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jicUab6N"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6646A23BD17;
-	Thu, 30 Oct 2025 18:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822B520013A;
+	Thu, 30 Oct 2025 18:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761850296; cv=none; b=o8Mu1z30KWmKGGuCKyxrIRB5ctnCwNc6eCvg7bGcOi/SZL+5JLkgFXjiZKOWADmrCrnP5SZHjV652pepltUq8rqUhFK4lOO75fz2Wr5/iuA/p+CW5PhpsYoOX8xJGYXmjDhi6CqOO4LTtDOuhXgFLu438eTE1O0magFaasyvAGQ=
+	t=1761850630; cv=none; b=npe0rxY9UgPNSWvhmiJ1c7xgc1/8et/6WpZozcaG6lwwkvbgwM0wjFRYToy80CLIrwyHtgP7JEFQies/teuxvu0GxBXdJSjL/s2Zm1vqA+RXdrhdwixQCeMFl/aMDfmyYEvE5WTL0yQmXeal3XPEY5zi8AkpdHISALMZ4D5tTdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761850296; c=relaxed/simple;
-	bh=or+V+SumNH0gU2c9duwiNTP+SlKS5gb5NwFmTGAPpz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1vsrwwR17VLUBbRDyZu4ttTVxk1WseV6XuDrdB3lcrK4GJoQHEapKRXKzEz4rD/O46eLCdnJ42XBymOI0oRyvrrZ1WPK9M2OwsIJAA4c9hYR7b+vX/xf0BCcsmbwKH4wGC0725j+ndNz/8AE/DiIzVOLGGJFcYjxoaChtWlFiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pB1n7yzy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 777CBC4CEFB;
-	Thu, 30 Oct 2025 18:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761850296;
-	bh=or+V+SumNH0gU2c9duwiNTP+SlKS5gb5NwFmTGAPpz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pB1n7yzyDshO3wPHpDZKp24AhL46Yn2wpnRz4jzIWqiqTz7J4p/ZajhrM77ZkqzbQ
-	 XXCM/US1uP26Ylt/tYF0Rp2N6fTv6WlN+v2M2e+0SPvdbEWZEptNBUxicMeKXOHhxN
-	 d72CUD7gWR8XgzAyOcqM7gWWAuRQqQ+AsoxHds7tVkzPA3Sk0Kdb6mMNZYYBlhohKK
-	 cDrQHG/AcZgZrZc1yRr0Yia20WTZ2dY0OutfkJvxmXXYKyGdpdOYhPOEeuGZ7c04Nd
-	 +phL9qvFGWzlGycDtf2nJgZgsIWLnn7GlHFfNZLPZCWOM8dKMUc6MWlZ4797JRsQkr
-	 LlFJU0EfHzwQQ==
-Date: Thu, 30 Oct 2025 13:54:45 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Robie Basak <robibasa@qti.qualcomm.com>
-Subject: Re: [PATCH RESEND v2] devfreq: move governor.h to a public header
- location
-Message-ID: <us5vhy57yq7ktklgpsfr262sgquo5yuwau2yn7kefaipmj37ur@tzi5a2czke7m>
-References: <20251030-governor-public-v2-1-432a11a9975a@oss.qualcomm.com>
+	s=arc-20240116; t=1761850630; c=relaxed/simple;
+	bh=9RLZj76bWU7BoQNsZJ7og6ajkVKPA/JV10KI7G5ABSo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=usqw6uRVqIEawXkw7wisMsGkytCnhXiQHEgpra2RGZ9Qc+d/bx0E5M9gUTs2+A41GfqQWJS/6WRABo2g2DnuUqNfJufpLMRkY6K6Ne0BQImVrhzewiPJSvtc8ttE3kUF35omn9PVlo4DjYvK3ktDmtW7VijF7yNy7Pl/6mmtp2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jicUab6N; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761850616; x=1762455416; i=markus.elfring@web.de;
+	bh=ZIPqfelEadpMh/VTbESTkPNkzTQIpzKWSq/pJET2Tnc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jicUab6NiB450e7E5DEqm5csPNXHNzTe69auVyJ8gQs9DfEvKzcJ6YF5X/Ti/QP8
+	 JuC/QovtXDhqrX97/x1cQU+CoTY+myKxHG4rR/ldDdIsuXFTYIyT0Qej4NIdZUo5I
+	 C6nMIy7682p7Sg9QDV7iVfif8X44ASq7pzGFNqQF+LjSfK8KMLx32FRe7mzUeDCE6
+	 qJjVH3Z6cObHK56NLb09mD0u/U33oDoGOZ/nCUNZKZo4AXrpGj1Mx65sDIUpOEYAA
+	 gHC3A6SDV0Pp3Bo68ubywp6fBN2zcmAtNUdcijU7miRJsW9OACuMESb531Xr94Dga
+	 epfvEDx6OItyJUEwnA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MxHU2-1wBrXc0G2S-017NTA; Thu, 30
+ Oct 2025 19:56:56 +0100
+Message-ID: <17d0ecdc-9dbc-4f9f-9da1-eb37199060f5@web.de>
+Date: Thu, 30 Oct 2025 19:56:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030-governor-public-v2-1-432a11a9975a@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+To: linux-arm-kernel@lists.infradead.org, Russell King <linux@armlinux.org.uk>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Miaoqian Lin <linmq006@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] ARM: ecard: Use pointers from memcpy() calls for assignments
+ in ecard_init_pgtables()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MgVIDqVC8lq9N/VlWOboI3Y+tkqiCujOOFiyHgeqPxAmJ6FiDBn
+ YAf2NrTFCBjGPxA6jqIafBspbcuf6ZzVNHZI6hM3XA2hFJZOFmqGyGG0LI8CIbGIXZ0/v1H
+ BuT/lffjSTR96d1IN1OyUkQ36yB6jdgSio1HUtmMoavySd8c7UNSK5J4ZUL4Bsx2iJEC8hw
+ YfTWkip6O+mRlnvBam9LQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iViZqzMUTQc=;rlGnofOkQXkTxYKi+R/ezpQ+bR2
+ 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
 
-On Thu, Oct 30, 2025 at 08:26:28PM +0200, Dmitry Baryshkov wrote:
-> Some device drivers (and out-of-tree modules) might want to define
-> device-specific device governors. Rather than restricting all of them to
-> be a part of drivers/devfreq/ (which is not possible for out-of-tree
-> drivers anyway) move governor.h to include/linux/devfreq-governor.h and
-> update all drivers to use it.
-> 
-> The devfreq_cpu_data is only used internally, by the passive governor,
-> so it is moved to the driver source rather than being a part of the
-> public interface.
-> 
-> Reported-by: Robie Basak <robibasa@qti.qualcomm.com>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 30 Oct 2025 19:50:08 +0100
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Pointers were assigned to a variable. The same pointer was used for
+the destination parameter of two memcpy() calls.
+This function is documented in the way that the same value is returned.
+Thus convert separate statements into direct variable assignments for
+the return values from memory copy actions.
 
-Regards,
-Bjorn
+The source code was transformed by using the Coccinelle software.
 
-> ---
-> Changes in v2:
-> - Fixed typo in commit subject (Mikko Perttunen)
-> - Link to v1: https://lore.kernel.org/r/20250903-governor-public-v1-1-111abd89a89a@oss.qualcomm.com
-> ---
->  drivers/devfreq/devfreq.c                          |  2 +-
->  drivers/devfreq/governor_passive.c                 | 27 +++++++++++++++++-
->  drivers/devfreq/governor_performance.c             |  2 +-
->  drivers/devfreq/governor_powersave.c               |  2 +-
->  drivers/devfreq/governor_simpleondemand.c          |  2 +-
->  drivers/devfreq/governor_userspace.c               |  2 +-
->  drivers/devfreq/hisi_uncore_freq.c                 |  3 +-
->  drivers/devfreq/tegra30-devfreq.c                  |  3 +-
->  .../governor.h => include/linux/devfreq-governor.h | 33 +++-------------------
->  9 files changed, 37 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 2e8d01d47f6996a634a8ad5ddf20c5a68d1a299d..00979f2e0e276a05ee073dcf5cd8e930bdd539fb 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -20,6 +20,7 @@
->  #include <linux/stat.h>
->  #include <linux/pm_opp.h>
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/workqueue.h>
->  #include <linux/platform_device.h>
->  #include <linux/list.h>
-> @@ -28,7 +29,6 @@
->  #include <linux/of.h>
->  #include <linux/pm_qos.h>
->  #include <linux/units.h>
-> -#include "governor.h"
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/devfreq.h>
-> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-> index 953cf9a1e9f7f93804cc889db38883bf97ae005d..8cd6f9a59f6422ccd138ff4b264dc8a547ad574f 100644
-> --- a/drivers/devfreq/governor_passive.c
-> +++ b/drivers/devfreq/governor_passive.c
-> @@ -14,8 +14,33 @@
->  #include <linux/slab.h>
->  #include <linux/device.h>
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/units.h>
-> -#include "governor.h"
-> +
-> +/**
-> + * struct devfreq_cpu_data - Hold the per-cpu data
-> + * @node:	list node
-> + * @dev:	reference to cpu device.
-> + * @first_cpu:	the cpumask of the first cpu of a policy.
-> + * @opp_table:	reference to cpu opp table.
-> + * @cur_freq:	the current frequency of the cpu.
-> + * @min_freq:	the min frequency of the cpu.
-> + * @max_freq:	the max frequency of the cpu.
-> + *
-> + * This structure stores the required cpu_data of a cpu.
-> + * This is auto-populated by the governor.
-> + */
-> +struct devfreq_cpu_data {
-> +	struct list_head node;
-> +
-> +	struct device *dev;
-> +	unsigned int first_cpu;
-> +
-> +	struct opp_table *opp_table;
-> +	unsigned int cur_freq;
-> +	unsigned int min_freq;
-> +	unsigned int max_freq;
-> +};
->  
->  static struct devfreq_cpu_data *
->  get_parent_cpu_data(struct devfreq_passive_data *p_data,
-> diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-> index 2e4e981446fa8ea39f65b09dddff198c0b8e3338..fdb22bf512cf134d75f1eaf3edb80e562dd28bec 100644
-> --- a/drivers/devfreq/governor_performance.c
-> +++ b/drivers/devfreq/governor_performance.c
-> @@ -7,8 +7,8 @@
->   */
->  
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/module.h>
-> -#include "governor.h"
->  
->  static int devfreq_performance_func(struct devfreq *df,
->  				    unsigned long *freq)
-> diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-> index f059e881480465b051f27d740348adaf779aebf0..ee2d6ec8a512248f070b2c5bee8146320b7be312 100644
-> --- a/drivers/devfreq/governor_powersave.c
-> +++ b/drivers/devfreq/governor_powersave.c
-> @@ -7,8 +7,8 @@
->   */
->  
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/module.h>
-> -#include "governor.h"
->  
->  static int devfreq_powersave_func(struct devfreq *df,
->  				  unsigned long *freq)
-> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-> index c234357363675508c12732a08c1cd26c349039d1..9c69b96df5f97306e9be46aa6bb1d9d2f8e58490 100644
-> --- a/drivers/devfreq/governor_simpleondemand.c
-> +++ b/drivers/devfreq/governor_simpleondemand.c
-> @@ -9,8 +9,8 @@
->  #include <linux/errno.h>
->  #include <linux/module.h>
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/math64.h>
-> -#include "governor.h"
->  
->  /* Default constants for DevFreq-Simple-Ondemand (DFSO) */
->  #define DFSO_UPTHRESHOLD	(90)
-> diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-> index 175de0c0b50e087861313060eab70a35b757fd20..395174f93960d0762456238654f4d356e21cf57c 100644
-> --- a/drivers/devfreq/governor_userspace.c
-> +++ b/drivers/devfreq/governor_userspace.c
-> @@ -9,11 +9,11 @@
->  #include <linux/slab.h>
->  #include <linux/device.h>
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/kstrtox.h>
->  #include <linux/pm.h>
->  #include <linux/mutex.h>
->  #include <linux/module.h>
-> -#include "governor.h"
->  
->  struct userspace_data {
->  	unsigned long user_frequency;
-> diff --git a/drivers/devfreq/hisi_uncore_freq.c b/drivers/devfreq/hisi_uncore_freq.c
-> index 96d1815059e32c4e70a1d3c257655cc6b162f745..b8e4621c57ebc76513e4eba978aa54f2b884e210 100644
-> --- a/drivers/devfreq/hisi_uncore_freq.c
-> +++ b/drivers/devfreq/hisi_uncore_freq.c
-> @@ -9,6 +9,7 @@
->  #include <linux/bits.h>
->  #include <linux/cleanup.h>
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/device.h>
->  #include <linux/dev_printk.h>
->  #include <linux/errno.h>
-> @@ -26,8 +27,6 @@
->  #include <linux/units.h>
->  #include <acpi/pcc.h>
->  
-> -#include "governor.h"
-> -
->  struct hisi_uncore_pcc_data {
->  	u16 status;
->  	u16 resv;
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 4a4f0106ab9ddcfb106a1860370cbf8a3579322a..77cbb204087c970c1fec0c1597b1e76c1a11b390 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -9,6 +9,7 @@
->  #include <linux/clk.h>
->  #include <linux/cpufreq.h>
->  #include <linux/devfreq.h>
-> +#include <linux/devfreq-governor.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/irq.h>
-> @@ -21,8 +22,6 @@
->  
->  #include <soc/tegra/fuse.h>
->  
-> -#include "governor.h"
-> -
->  #define ACTMON_GLB_STATUS					0x0
->  #define ACTMON_GLB_PERIOD_CTRL					0x4
->  
-> diff --git a/drivers/devfreq/governor.h b/include/linux/devfreq-governor.h
-> similarity index 80%
-> rename from drivers/devfreq/governor.h
-> rename to include/linux/devfreq-governor.h
-> index 0adfebc0467a3db39278814fa66d2b1f25d61f7a..dfdd0160a29f35f5608575b07b450cf5157420ff 100644
-> --- a/drivers/devfreq/governor.h
-> +++ b/include/linux/devfreq-governor.h
-> @@ -5,11 +5,11 @@
->   * Copyright (C) 2011 Samsung Electronics
->   *	MyungJoo Ham <myungjoo.ham@samsung.com>
->   *
-> - * This header is for devfreq governors in drivers/devfreq/
-> + * This header is for devfreq governors
->   */
->  
-> -#ifndef _GOVERNOR_H
-> -#define _GOVERNOR_H
-> +#ifndef __LINUX_DEVFREQ_DEVFREQ_H__
-> +#define __LINUX_DEVFREQ_DEVFREQ_H__
->  
->  #include <linux/devfreq.h>
->  
-> @@ -47,31 +47,6 @@
->  #define DEVFREQ_GOV_ATTR_POLLING_INTERVAL		BIT(0)
->  #define DEVFREQ_GOV_ATTR_TIMER				BIT(1)
->  
-> -/**
-> - * struct devfreq_cpu_data - Hold the per-cpu data
-> - * @node:	list node
-> - * @dev:	reference to cpu device.
-> - * @first_cpu:	the cpumask of the first cpu of a policy.
-> - * @opp_table:	reference to cpu opp table.
-> - * @cur_freq:	the current frequency of the cpu.
-> - * @min_freq:	the min frequency of the cpu.
-> - * @max_freq:	the max frequency of the cpu.
-> - *
-> - * This structure stores the required cpu_data of a cpu.
-> - * This is auto-populated by the governor.
-> - */
-> -struct devfreq_cpu_data {
-> -	struct list_head node;
-> -
-> -	struct device *dev;
-> -	unsigned int first_cpu;
-> -
-> -	struct opp_table *opp_table;
-> -	unsigned int cur_freq;
-> -	unsigned int min_freq;
-> -	unsigned int max_freq;
-> -};
-> -
->  /**
->   * struct devfreq_governor - Devfreq policy governor
->   * @node:		list node - contains registered devfreq governors
-> @@ -124,4 +99,4 @@ static inline int devfreq_update_stats(struct devfreq *df)
->  
->  	return df->profile->get_dev_status(df->dev.parent, &df->last_status);
->  }
-> -#endif /* _GOVERNOR_H */
-> +#endif /* __LINUX_DEVFREQ_DEVFREQ_H__ */
-> 
-> ---
-> base-commit: 8cd53fb40a304576fa86ba985f3045d5c55b0ae3
-> change-id: 20250903-governor-public-d9cd4198f858
-> 
-> Best regards,
-> -- 
-> With best wishes
-> Dmitry
-> 
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ arch/arm/mach-rpc/ecard.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-rpc/ecard.c b/arch/arm/mach-rpc/ecard.c
+index 2cde4c83b7f9..879c201b754e 100644
+=2D-- a/arch/arm/mach-rpc/ecard.c
++++ b/arch/arm/mach-rpc/ecard.c
+@@ -229,14 +229,12 @@ static void ecard_init_pgtables(struct mm_struct *mm=
+)
+ 	pgd_t *src_pgd, *dst_pgd;
+=20
+ 	src_pgd =3D pgd_offset(mm, (unsigned long)IO_BASE);
+-	dst_pgd =3D pgd_offset(mm, IO_START);
+-
+-	memcpy(dst_pgd, src_pgd, sizeof(pgd_t) * (IO_SIZE / PGDIR_SIZE));
++	dst_pgd =3D memcpy(pgd_offset(mm, IO_START), src_pgd,
++			 sizeof(pgd_t) * (IO_SIZE / PGDIR_SIZE));
+=20
+ 	src_pgd =3D pgd_offset(mm, (unsigned long)EASI_BASE);
+-	dst_pgd =3D pgd_offset(mm, EASI_START);
+-
+-	memcpy(dst_pgd, src_pgd, sizeof(pgd_t) * (EASI_SIZE / PGDIR_SIZE));
++	dst_pgd =3D memcpy(pgd_offset(mm, EASI_START), src_pgd,
++			 sizeof(pgd_t) * (EASI_SIZE / PGDIR_SIZE));
+=20
+ 	flush_tlb_range(&vma, IO_START, IO_START + IO_SIZE);
+ 	flush_tlb_range(&vma, EASI_START, EASI_START + EASI_SIZE);
+=2D-=20
+2.51.1
+
 
