@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-877870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5D6C1F3B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:18:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8027C1F3EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BC33AD554
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7910B18912C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ACA32B9AB;
-	Thu, 30 Oct 2025 09:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F423340D98;
+	Thu, 30 Oct 2025 09:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="STcxgVNt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9YhZlXH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906612D0C9D;
-	Thu, 30 Oct 2025 09:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E0331986E;
+	Thu, 30 Oct 2025 09:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815904; cv=none; b=eLIlESYyFWXiw8WXErhC7BOrQxSzioIsSUKR/UFCqt7cot+99+sOV19lN10CiPDBUyNxH3EvefJSzq3fGG20hzhB1rYn8s3diJYHgzxGldS4b7K0oUXioCRrCAZE8TLyqJxclncZ96I73X9BcOie/yAMB0lkia7qsOLfTQwiW4I=
+	t=1761815909; cv=none; b=FVRhsod5JdXylQXIS1KIejXZuIDDHDfw2pxWk4NcErBGKLHrrBYlZxD4VrjwdikkMVKDox7WS2GsKuINUaYoIkichftzKVIJSNhnj8ycB6TCnt/fLhkRvCb396WK9rvRQ5rmmXcTtlXGfZb1P+mDfg/c+8eL6A4yeeot2/zrqEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815904; c=relaxed/simple;
-	bh=zHCqDJZUfYLD2C0sOWZh7SsMj50sJuSbJFBamQ1EwHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DagrDwwNqDpHqESWqOSjuNbXuthJ9l+5hBo7cHGohtxYPupRvwIDzSTKjlycaZrNC9Df/WBK2nc+ed3XLUsFSvGpCNS0pNZPvk/1T+H8EQyYjbeCwXK7e9SUsfE56TROtSOgnpngkjDRW/Z3HEHrKO2An2seOwwWJbVPX9ab5Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=STcxgVNt; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761815902; x=1793351902;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zHCqDJZUfYLD2C0sOWZh7SsMj50sJuSbJFBamQ1EwHw=;
-  b=STcxgVNtjkYIvuTKUEyPqXDJeTh4ALnetru4D+inoODnDOHeX6dbIfw2
-   WVJHTSFqjfSBhD1a3EEq//dj3XXwkI2nXNplQkkRBSzpTcd17lJxuoRcy
-   sgdGptgI1hDGG8p/tF3WtvMTmvlzd/G+yTKmiKaHYRXlTltjy30k9dU2G
-   AAT9znUU9ODI3I0hvGGzqOi6XbQxkYBUktvl11/dkZoUYUQ0N8M+qqPSo
-   hwVZCoDONzLypgCM1gcDt0NLI7jGbA+7WYX+kvvW1GTtfMT8YiVYXRSSN
-   GHljNlhpPs6Pug8PgfnE57gx1Ia+UCxaElQbr2DvufL00Kfwem+QWGkik
-   Q==;
-X-CSE-ConnectionGUID: WeilZlqdS2yH84gO2TtYRw==
-X-CSE-MsgGUID: cCb5jPvQRGKIgt6C0fA4IQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="67812050"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="67812050"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:18:14 -0700
-X-CSE-ConnectionGUID: 18ap4ge9So6E8UWbDzdDcQ==
-X-CSE-MsgGUID: DdF1Q12oRgOwaTsGiEd3tQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="186646242"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:18:12 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vEOnK-00000003r8q-0kjR;
-	Thu, 30 Oct 2025 11:18:10 +0200
-Date: Thu, 30 Oct 2025 11:18:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Antoni Pokusinski <apokusinski01@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: mpl3115: add threshold events support
-Message-ID: <aQMtUUp_QoR4l3nd@smile.fi.intel.com>
-References: <20251028213351.77368-1-apokusinski01@gmail.com>
- <20251028213351.77368-3-apokusinski01@gmail.com>
- <aQHPUQ5bU7sFojul@smile.fi.intel.com>
- <20251029224605.3ixkvmmkm36iwh22@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+	s=arc-20240116; t=1761815909; c=relaxed/simple;
+	bh=BWDl6zwh+JeTjjhMFmNzjglL13HrWxeKiSTcarPYJbk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B/othhh6JlhxUEJKa4WRn2fvziH+cJH56waLgbXWYzAzmCIqQzC1+Z4yVtfb344YQEk6I2R1WKjmpUnwKMcuXFRjvCQDnKZ+0WYZFGJT/hDtncTLEJN/XXQqMlcTYVItOgWR0356ABcGqXsIzxWsRrDPRkZD0wGjQcYidCQznbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9YhZlXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C5A2C4CEF1;
+	Thu, 30 Oct 2025 09:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761815908;
+	bh=BWDl6zwh+JeTjjhMFmNzjglL13HrWxeKiSTcarPYJbk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=p9YhZlXHAzUmuRgBC3pmUlvKv5niPfDuihXrKLhWfk7CS1xKlnvFY6wLGquwfS/i4
+	 l8CvZNR4zDONFmzmN7zTB/gM8GOltY9aO9qn5W9kp/+F5tau3eckXdu5G8SoIei+l8
+	 OpHvFtQsVeyv05AEDICks0NRC0Phw9zlCGRFbmR9fyu3ZOcJ/0B+9myOYuiiXinRa8
+	 EOCsDKZCIWkH+92fuwJ3OuuI4A08ocQ8VUtwLyeWSiigtbaXYFn25yNNR7z8kIVh97
+	 DO4yT3spzQAJxcGIgSCGxHNhHUEICIeVNLeoY2KWTIQeAhrWDg1H8EOYYdU4R3Ef6P
+	 C+9lvXd+yhx6w==
+X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dan.j.williams@intel.com, aik@amd.com, lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH RESEND v2 06/12] coco: host: arm64: Add RMM device
+ communication helpers
+In-Reply-To: <20251029183306.0000485c@huawei.com>
+References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
+ <20251027095602.1154418-7-aneesh.kumar@kernel.org>
+ <20251029183306.0000485c@huawei.com>
+Date: Thu, 30 Oct 2025 14:48:20 +0530
+Message-ID: <yq5ay0osd9yb.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029224605.3ixkvmmkm36iwh22@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Wed, Oct 29, 2025 at 11:46:05PM +0100, Antoni Pokusinski wrote:
-> On Wed, Oct 29, 2025 at 10:24:49AM +0200, Andy Shevchenko wrote:
-> > On Tue, Oct 28, 2025 at 10:33:52PM +0100, Antoni Pokusinski wrote:
-
-Please, remove context you are agree with!
-Otherwise raise your point(s).
-
+Jonathan Cameron <jonathan.cameron@huawei.com> writes:
 ...
 
+>> +		/*
+>> +		 * Some device communication error will transition the
+>> +		 * device to error state. Report that.
+>> +		 */
+>> +		if (type == PDEV_COMMUNICATE)
+>> +			ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
+>> +						 (enum rmi_pdev_state *)&state);
+>> +		if (ret)
+>> +			state = error_state;
+> Whilst not strictly needed I'd do this as:
+>
+> 		if (type == PDEV_COMMUNICATE) {
+> 			ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
+> 						 (enum rmi_pdev_state *)&state);
+> 			if (ret)
+> 				state = error_state;
+> 		}
+>
+> Just to make it clear that reg check is just on the output of the call above.
+> If we didn't make that call it is definitely zero but nice not to have
+> to reason about it.
+>
 
-> > > -	u8 ctrl_reg1 = data->ctrl_reg1;
-> > > -	u8 ctrl_reg4 = data->ctrl_reg4;
-> > > +	u8 ctrl_reg1, ctrl_reg4;
-> > 
-> > > +	guard(mutex)(&data->lock);
-> > 
-> > Why this is moved? Before the access to the data->ctrl* was done without
-> > locking. Is it an existing bug?
-> > 
-> Since this patchset adds `write_event_config()` in which CTRL_REG1.ACTIVE
-> and CTRL_REG4 are modified, the lock now needs to guard the read of
-> data->ctrl_regX as well. Otherwise, we could have e.g. 2 concurrent
-> threads executing `set_trigger_state()` and `write_event_config()` that
-> would read data->ctrl_regX at the same time and then one would overwrite
-> the other's values in `config_interrupt()`.
-> 
-> In the current driver I don't think there is any bug in here. The only
-> place (except probe) where the data->ctrl_regX is modified is
-> `config_interrupt()`, called from `set_trigger_state()`. If we had
-> concurrent calls to this function, then the final values of CTRL_REG1
-> and CTRL_REG4 would simply depend on which thread is scheduled as the last one.
-> With the `guard(mutex)` before accessing data->ctrl_reg1, the situation
-> would be exactly the same.
+Some of this is because follow up patch adds more details there. In this case.
 
-I see, can you summarize this in the commit message as well?
-And/or in the code near to the lock description.
-
-> > > +	ctrl_reg1 = data->ctrl_reg1;
-> > > +	ctrl_reg4 = data->ctrl_reg4;
-> > >  
-> > >  	if (state) {
-> > >  		ctrl_reg1 |= MPL3115_CTRL1_ACTIVE;
-> > >  		ctrl_reg4 |= MPL3115_CTRL4_INT_EN_DRDY;
-> > >  	} else {
-> > > -		ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
-> > >  		ctrl_reg4 &= ~MPL3115_CTRL4_INT_EN_DRDY;
-> > > -	}
-> > >  
-> > > -	guard(mutex)(&data->lock);
-> > > +		if (!ctrl_reg4)
-> > > +			ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
-> > > +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
+		/*
+		 * Some device communication error will transition the
+		 * device to error state. Report that.
+		 */
+		if (type == PDEV_COMMUNICATE)
+			ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
+						 (enum rmi_pdev_state *)&state);
+		else
+			ret = rmi_vdev_get_state(virt_to_phys(host_tdi->rmm_vdev),
+						 (enum rmi_vdev_state *)&state);
+		if (ret)
+			state = error_state;
 
 
+
+>
+>> +	}
+>> +
+>> +	if (state == error_state)
+>> +		pci_err(tsm->pdev, "device communication error\n");
+>> +
+>> +	return state;
+>> +}
+>> +
+
+-aneesh
 
