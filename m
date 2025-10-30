@@ -1,152 +1,105 @@
-Return-Path: <linux-kernel+bounces-878134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26E1C1FDCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A94C8C1FDD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A292188EDC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AD41895707
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D546333DEC4;
-	Thu, 30 Oct 2025 11:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0655D33F370;
+	Thu, 30 Oct 2025 11:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="jNlULWf8"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WjnkiH/e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198B62E0418
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7EC632
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761824558; cv=none; b=J1FqHIlMG1TBlzhJtA0L50lFQtq+reDAYEWmnixCdboOMHN3ZnirFE9CQpChdSLnOqBvjy57cUYwK/rzoJTU42mqGKSwx1Xc6AL1R7pdh6IXvtf0Hh5qQdgTfEuHvMC+t+RiExMLE1+DBK4jgQeQGpSqQEYmm2zodqDiiGjefe0=
+	t=1761824604; cv=none; b=mqbL9EJho9d9xI2+z8cGFuvYz/hr3mv3iSkWP3zDasvkXkXfGX/KiLHEFbACEKAk0I2xIdZ1jIF+HWRB+RiymdeNldxy44s6tE0LL7k09Mwp1pmTDnEcOqIvMdz+TMzkMSGDE2MHFfvX4P6wGMVTVIvWTvBWg2zzhCQjNoHwaDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761824558; c=relaxed/simple;
-	bh=xM2z0+7QTLL6PUozQ01LvcYcbApsIcaCqpNpg+dKg6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eW2GHRa1LqPYl0RkFxtRSHBt6scZcqDCrxNYiMxvXPffqymekzrlbMDHIST6nQoYfJxK7lDnzciLA3SZRnh47jWxWermgrVYKSBjMbTNmeKWNwTNssCFrjrM8kqhmA4f5779CcazURYOrBPvtoebitM3sVi+IZi9s14udMc1m+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=jNlULWf8; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1761824497;
-	bh=ik0Dn6yoIaOsn0IBZHf2Z40Y5QF2XOwk9Yc8uDtsDqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=jNlULWf8s3rVMsXUtMVjqfY3V/r6moayXcXzV8n8bmIzeh+SIhnaD3rzhspYg5Wh+
-	 mfognda4c8anoziMnfTjou+BtMh728k3QJdpxGg2xuzEUgx8Os9uyogWZn5ODMynj2
-	 yWfCScHy4KeY/1JSHpz+heI0ViFQPGumtJE/ZStw=
-X-QQ-mid: zesmtpsz6t1761824494tf6ab64b2
-X-QQ-Originating-IP: QXnFLkcs8cNnZkKau4C6E+YnpRJf3CGmtKZQ0dBfhww=
-Received: from [10.10.74.117] ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 30 Oct 2025 19:41:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10291608667741570973
-Message-ID: <C798DAB0066FD66B+590e2398-b667-40dd-abfb-99dcd728b573@uniontech.com>
-Date: Thu, 30 Oct 2025 19:41:32 +0800
+	s=arc-20240116; t=1761824604; c=relaxed/simple;
+	bh=qL4WTWUtGMXK40xu62G2cTfK76OTgkRteM7b56dx2J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHJX1yHk+e1L6CX90iOA68X2BxaxRFrBe+XvRW0atmf2jVCmWdKdFW0btB5z2P+UGMn5xqMV5/uUdlMwgIuvYgIc6LSw15eEVCOcgDl7q3CEqn2BI+2I6zNbxI4B3oppVmEQIwTx+ntjjHfT7OMPfkpDrsbR9e+EKCv6hzQl8C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WjnkiH/e; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761824603; x=1793360603;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qL4WTWUtGMXK40xu62G2cTfK76OTgkRteM7b56dx2J4=;
+  b=WjnkiH/eTUbQtuOUKqIWg4AoWJjiecEe6Q43wK7gMpmo7ysAdWTmwXXp
+   2W+00OlX/T0W9BAnSAPuZ7IxftV/TUBAV6iE36C2PKrQqAtfq+4oB6MIt
+   K/sjDAITwNNfPskCk0YjAyBo6PBYlUR0oFvsgcQJBSKX71eEFA64tu5Ye
+   OVDs9cauyfgUL54P3jI8aoZwfC6RKWRk8e0rLtFI5ZiJGe46YIDx5sfUv
+   aRx8tbSuon+p0L8PsNsPrlobFdNtEUEX2AJ3E05R5mwbt1vG99SFPgxpD
+   Xe81crBRzjHUAnnKo6L4w9JYrYFaDwBmHLaNkgfkchQoKUbr12dv8wZSi
+   A==;
+X-CSE-ConnectionGUID: DPvt9VBFQp+EgdRdX3c/+Q==
+X-CSE-MsgGUID: GUOL+/6UQOCNRD6dvnnh1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="51534730"
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="51534730"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 04:43:22 -0700
+X-CSE-ConnectionGUID: 7Bac7wG1QQWQdo2o6/jcuA==
+X-CSE-MsgGUID: HM8QJxeSTimBe/hXkVy/3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="186675144"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 04:43:20 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vER3m-00000003tmJ-0vX4;
+	Thu, 30 Oct 2025 13:43:18 +0200
+Date: Thu, 30 Oct 2025 13:43:17 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v1 0/4] regcache: Split out ->populate()
+Message-ID: <aQNPVUSKeg9odlRF@smile.fi.intel.com>
+References: <20251029073131.3004660-1-andriy.shevchenko@linux.intel.com>
+ <c33c5930-ad6e-4ff0-9a6f-4dfd15fcd352@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kexec: print out debugging message if required for
- kexec_load
-To: Baoquan He <bhe@redhat.com>
-Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251030073316.529106-1-maqianga@uniontech.com>
- <aQMzFnqMC0MnLZFO@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Qiang Ma <maqianga@uniontech.com>
-In-Reply-To: <aQMzFnqMC0MnLZFO@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: MmGwrenOE7FGs/rAUmOa2nkG4+s0TV4xml3w6J0CRi7e5DdnD4qXg2ZH
-	6N+TEiz939magCHvZyvrwZuVSoCByVm6hVRo4UsbNG8x100kNzSJRbU3euLMWQMprL/WjOg
-	t0mdG5gQa57BfZni7gdxZmUp4O+dRIH6yzeZoHhAZYQwriC2Cns6nvd7beyr77kzlLAdUB9
-	7bcYe7OSyDayyz0lMCqqZZkxx/MTP2R+O11TY+WepY8EIMycEHWEm029jms15YgbgUXJ0M/
-	Wv/2dDhdoNw/z76Tnggn/jU3wE5b0EH6QQpDCaVjuxRRmCCN98UrtCRShQfkHruvLQVEoyD
-	XjQy1H02aENA8j4fhRPHtJcjjyBG5oonvNMa4w3LwugHogboqdTb1MD8FAI5USm6jTiUOnn
-	uhC73Lmsvqa8mSG9NlYOcQt86uWNvwfxw7IKb1wmPJ/LYmZALxPtEcLjV4PFGcMXH5cm5RJ
-	tarRCdxzoMxqLhMDVCvQitK/dFI7xVrfnZyMnOA66nE0H7S0WarwhF6jXTn1CY1FeIrHZpz
-	e9yVoKwWn3Zslizvri5y/O5yf34XpFl9PEkoYlsudpOl4DSmtEgQ9YaSgkBOa0JMTnJxOiA
-	tH4tPEMbH1qIbnDDknuRiu8jGvNxUeeusC9SPyIoVgBUoNxHmGcaOMRhzBmF0qBn8EPgWHz
-	ktveVZDV8ozE1mUq4WOaNIoqHn6x8NMZdAedR5D7d1kK3WqMy302IfUXMOsMZSKe7mBENYr
-	2JcqyXHIDQjyq1D0Gc7mMjClpIJlD/tqKL7ndV8FxmBlwCgBrTONe+ej3W93v/9LAV19Q3t
-	SPTYD5r/SbqcPf5xH09X4VR6z3r3M2b+CPbVkg1H+kz/IGdmY/FFRhrdn1TIg5a8ahdFLbE
-	WnCI5I913qesJhtwYJwzQmzHh9eD+LdMCD2JZYBxBbF/DfMirickCDcPq3VLpDV2EdYAZR3
-	ArRI+w+6WmeXACWv0EXAofrbCN84X7gycjgRDLQHqYYyF9L1B1eSwMsffXw0P8CxkLnkqPY
-	q7Cm0YVi2Zbpb1eMRC
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c33c5930-ad6e-4ff0-9a6f-4dfd15fcd352@sirena.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Thu, Oct 30, 2025 at 11:36:27AM +0000, Mark Brown wrote:
+> On Wed, Oct 29, 2025 at 08:28:57AM +0100, Andy Shevchenko wrote:
+> > This is a refactoring series to decouple cache initialisation and population.
+> > On its own it has no functional impact but will be used in the further
+> > development. Besides that I found this split useful on its own (from the design
+> > perspective). That's why I decided to send it out as is separately from a bigger
+> > (and ongoing) work.
+> 
+> This looks fine but needs a rebase onto the latest code.
+
+Will do, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-在 2025/10/30 17:42, Baoquan He 写道:
-> On 10/30/25 at 03:33pm, Qiang Ma wrote:
->> The commit a85ee18c7900 ("kexec_file: print out debugging message
->> if required") has added general code printing in kexec_file_load(),
->> but not in kexec_load().
->>
->> Especially in the RISC-V architecture, kexec_image_info() has been
->> removed(commit eb7622d908a0 ("kexec_file, riscv: print out debugging
->> message if required")). As a result, when using '-d' for the kexec_load
->> interface, print nothing in the kernel space. This might be helpful for
->> verifying the accuracy of the data passed to the kernel. Therefore, refer to
->> this commit a85ee18c7900 ("kexec_file: print out debugging message
->> if required"), debug print information has been added.
-> kexec_file_dbg_print setting when CONFIG_KEXEC_FILE is set. I doubt it
-> doesn't work when you unset CONFIG_KEXEC_FILE.
-
-Yes, I just actually tested it and it really doesn't work when unset 
-CONFIG_KEXEC_FILE.
-
-In the next version, I can add a KEXEC_DEBUG for the kernel and kexec-tools.
-
->> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
->> ---
->>   kernel/kexec.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/kernel/kexec.c b/kernel/kexec.c
->> index 28008e3d462e..02845a7499e9 100644
->> --- a/kernel/kexec.c
->> +++ b/kernel/kexec.c
->> @@ -151,7 +151,15 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
->>   	if (ret)
->>   		goto out;
->>   
->> +	kexec_dprintk("nr_segments = %lu\n", image->nr_segments);
->>   	for (i = 0; i < nr_segments; i++) {
->> +		struct kexec_segment *ksegment;
->> +
->> +		ksegment = &image->segment[i];
->> +		kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
->> +			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
->> +			      ksegment->memsz);
->> +
->>   		ret = kimage_load_segment(image, i);
->>   		if (ret)
->>   			goto out;
->> @@ -163,6 +171,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
->>   	if (ret)
->>   		goto out;
->>   
->> +	kexec_dprintk("kexec_file_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
->> +		      image->type, image->start, image->head, flags);
->> +
->>   	/* Install the new kernel and uninstall the old */
->>   	image = xchg(dest_image, image);
->>   
->> -- 
->> 2.20.1
->>
->>
->
 
