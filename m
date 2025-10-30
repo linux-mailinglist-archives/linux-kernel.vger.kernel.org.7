@@ -1,203 +1,114 @@
-Return-Path: <linux-kernel+bounces-877470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B45C1E2E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:02:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264D8C1E2EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8614E5B00
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C338C3BC270
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1CE327215;
-	Thu, 30 Oct 2025 03:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488392E8B78;
+	Thu, 30 Oct 2025 03:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftLJssEm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZaDyQxg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732C42E8B78;
-	Thu, 30 Oct 2025 03:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947581E86E;
+	Thu, 30 Oct 2025 03:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761793332; cv=none; b=udSE+Iw2pg/GsN0RE7w1Q1szXND7/Q7gTsYU5lLRpbG1ggRsXzFHeo1DtWFxqISFqV/PD04VFbuHAlVBfr0T1PfpwaDSoD82Ft6+guHE0LjTwPuTBhZPnew2DiZI6CBS1VK64fELq13tRrNZCS5imc7Rec1rSIuDdXZSY2dOYPU=
+	t=1761793448; cv=none; b=SbqBUUW1NPg8DcUSPSXpdkRaW/mjI0epX9ZOMqGaYNSCkz9ggyWppRdmEFWMUjI/gQN81rZ7+ThQLxd+/Fj/ncpyThtyNkhAFLJsnLBcXJLzvjx1WW7J8UjH78aqorGS0pgsJjWD6p3X4aYjcK7yjwof2K3gd0L7bAxEB8XqXc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761793332; c=relaxed/simple;
-	bh=N8ZPqAHpBjPLFwerKKxyTm227ZJH3a57nKRfFjYQSE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fXjYWcrnvPajuI6K9VinbUTEjJayvafDu8uryjTEDlOGnkq/YVKVtdMlX/9/3J8ydw8BNvzxUnDeed2dr175tSLoAHbtV3SwHo82qMhWm0ruEALXJZJJgNGUSgGV1x2009NgOS46/27EloJXDEWMZwSp589hDE44I2pQ2Ayrdac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftLJssEm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D71C4CEF7;
-	Thu, 30 Oct 2025 03:02:10 +0000 (UTC)
+	s=arc-20240116; t=1761793448; c=relaxed/simple;
+	bh=AxveStPh2elBDvaO3K+y6I5FgqDnSBSlQMj0Px3/aIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRL/xa7ZLAe1C0jOqgCClgKjZvuAWaNzyNUUh30/ndO7PaSoG8ugWW/fCiacNj2aSIOS+E8nR7/a05zgtFKUDazlRJy5OQdcKVfXtssyswXWc7ueWFQCkfnY5yHWEy8/t0tKaN/jIzbaFK+7o0Sim3DkKHkDt6EpS4zjfp8Ng0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZaDyQxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68BDC4CEF7;
+	Thu, 30 Oct 2025 03:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761793332;
-	bh=N8ZPqAHpBjPLFwerKKxyTm227ZJH3a57nKRfFjYQSE8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ftLJssEmEXna7RSFH67pe3bNtp5LeWAkBDivVciQ5Y9SF3TVsDwHTz2oj3ZgPP5ux
-	 jiAHNI1bvyC50VoRNBd8ZtB2ttAbhWEg/X3srs1OK4Awet5xwxpa9x4m3Ss33fpwEx
-	 xLSVFg5RDefRNAfzx97DH44RPezcYKptbGx1Lge+VVmBv1JcWP1DnSAiso9GKidnS6
-	 /aBosBnBUIxw9fdtqN0pI7bd5kRkCmBhvO4ShntTRE2drvxCyoUT+q75cj31iA+UNf
-	 1iScq5KlbTMAPYYMGxQ3eJYVdSib5q1+Wv3G3LhRuFnPRklmZxqzhh7KHi33rilpPd
-	 kGKw8/PSFqUMg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] tracing: Add an option to show symbols in _text+offset for function profiler
-Date: Thu, 30 Oct 2025 12:02:08 +0900
-Message-ID: <176179332795.957820.5129394881616306002.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <176179330871.957820.2367690308433599462.stgit@devnote2>
-References: <176179330871.957820.2367690308433599462.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=k20201202; t=1761793446;
+	bh=AxveStPh2elBDvaO3K+y6I5FgqDnSBSlQMj0Px3/aIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EZaDyQxgEBdxypDayV4zGIOC0hSpv/dimzVnZC6eD32j8HcYuLqXdqpfemFhJ/qjE
+	 fSS1UN28q2IgsCqqxMq6EZaVJTO2Xom8IuurL5aVSJ0D+E4E+9p2M8S4oyHxH0tVbc
+	 sCU/iAKPoST3uSPQc9greA1oCzdhXml2aOWtEpuNmUko0B61sesPBShgY8+NWmSOn/
+	 cTjD20hRAUKrV8tlMd6uLlS5oeMvsLW2W06i4CZDEamhbPZ1ZoEJo0lUJbriX9rnhF
+	 yCOTw0XExmFAp14LIcsxAiAElyXWgreXbAg7nwlZIhQd5qxGigk62k+ULsEsw3a2qu
+	 BvjswhKmGmznw==
+Date: Wed, 29 Oct 2025 20:04:05 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH 2/3] ARM: Select ARCH_USES_CFI_GENERIC_LLVM_PASS
+Message-ID: <202510292002.10FDB135C3@keescook>
+References: <20251025-idpf-fix-arm-kcfi-build-error-v1-0-ec57221153ae@kernel.org>
+ <20251025-idpf-fix-arm-kcfi-build-error-v1-2-ec57221153ae@kernel.org>
+ <CABCJKuesdSH2xhm_NZOjxHWpt5M866EL_RUBdQNZ54ov7ObH-Q@mail.gmail.com>
+ <CACRpkdaeOYEcK9w1oy59WBqjNrK7q5zT2rzg8pHgDdZdKWVKZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdaeOYEcK9w1oy59WBqjNrK7q5zT2rzg8pHgDdZdKWVKZg@mail.gmail.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon, Oct 27, 2025 at 11:56:21PM +0100, Linus Walleij wrote:
+> On Mon, Oct 27, 2025 at 4:54 PM Sami Tolvanen <samitolvanen@google.com> wrote:
+> > On Sat, Oct 25, 2025 at 1:53 PM Nathan Chancellor <nathan@kernel.org> wrote:
+> > >
+> > > Prior to clang 22.0.0 [1], ARM did not have an architecture specific
+> > > kCFI bundle lowering in the backend, which may cause issues. Select
+> > > CONFIG_ARCH_USES_CFI_GENERIC_LLVM_PASS to enable use of __nocfi_generic.
+> > >
+> > > Link: https://github.com/llvm/llvm-project/commit/d130f402642fba3d065aacb506cb061c899558de [1]
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/2124
+> > > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> 
+> I didn't know Kees stepped in and fixed this, christmas comes
+> early this year! I had it on my TODO to do this or get someone to
+> do this, but now it turns out I don't have to.
+> 
+> > > +       # https://github.com/llvm/llvm-project/commit/d130f402642fba3d065aacb506cb061c899558de
+> > > +       select ARCH_USES_CFI_GENERIC_LLVM_PASS if CLANG_VERSION < 220000
+> >
+> > Instead of working around issues with the generic pass, would it make
+> > more sense to just disable arm32 CFI with older Clang versions
+> > entirely? Linus, any thoughts?
+> 
+> We have people using this with the default compilers that come with
+> Debiand and Fedora. I would say as soon as the latest release of
+> the major distributions supports this, we can drop support for older
+> compilers.
 
-Function profiler shows the hit count of each function using its symbol
-name. However, there are some same-name local symbols, which we can not
-distinguish.
-To solve this issue, this introduces an option to show the symbols
-in "_text+OFFSET" format. This can avoid exposing the random shift of
-KASLR. The functions in modules are shown as "MODNAME+OFFSET" where the
-offset is from ".text".
+Okay, it seems like the consensus is to take this series so we don't
+break existing users, even if they are rare.
 
-E.g. for the kernel text symbols, specify vmlinux and the output to
- addr2line, you can find the actual function and source info;
+Unless someone screams, I'll take this via the hardening tree...
 
-  $ addr2line -fie vmlinux _text+3078208
-  __balance_callbacks
-  kernel/sched/core.c:5064
-
-for modules, specify the module file and .text+OFFSET;
-
-  $ addr2line -fie samples/trace_events/trace-events-sample.ko .text+8224
-  do_simple_thread_func
-  samples/trace_events/trace-events-sample.c:23
-
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v6:
-  - Show offset in hex.
-  - Make offset unsigned long.
- Changes in v5:
-  - Update dummy flag according to new macros.
- Changes in v2:
-  - Define a dummy TRACE_ITER_PROF_TEXT_OFFSET if CONFIG_FUNCTION_PROFILER=n.
----
- kernel/trace/ftrace.c |   26 +++++++++++++++++++++++++-
- kernel/trace/trace.c  |    5 +++--
- kernel/trace/trace.h  |   11 ++++++++++-
- 3 files changed, 38 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 42bd2ba68a82..ab601cd9638b 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -534,7 +534,9 @@ static int function_stat_headers(struct seq_file *m)
- 
- static int function_stat_show(struct seq_file *m, void *v)
- {
-+	struct trace_array *tr = trace_get_global_array();
- 	struct ftrace_profile *rec = v;
-+	const char *refsymbol = NULL;
- 	char str[KSYM_SYMBOL_LEN];
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	static struct trace_seq s;
-@@ -554,7 +556,29 @@ static int function_stat_show(struct seq_file *m, void *v)
- 		return 0;
- #endif
- 
--	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-+	if (tr->trace_flags & TRACE_ITER(PROF_TEXT_OFFSET)) {
-+		unsigned long offset;
-+
-+		if (core_kernel_text(rec->ip)) {
-+			refsymbol = "_text";
-+			offset = rec->ip - (unsigned long)_text;
-+		} else {
-+			struct module *mod;
-+
-+			guard(rcu)();
-+			mod = __module_text_address(rec->ip);
-+			if (mod) {
-+				refsymbol = mod->name;
-+				/* Calculate offset from module's text entry address. */
-+				offset = rec->ip - (unsigned long)mod->mem[MOD_TEXT].base;
-+			}
-+		}
-+		if (refsymbol)
-+			snprintf(str, sizeof(str), "  %s+%#lx", refsymbol, offset);
-+	}
-+	if (!refsymbol)
-+		kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-+
- 	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 70e30d615f72..61aa57c5f0d8 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -523,7 +523,8 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
- 
- /* trace_options that are only supported by global_trace */
- #define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER(PRINTK) |			\
--	       TRACE_ITER(PRINTK_MSGONLY) | TRACE_ITER(RECORD_CMD))
-+	       TRACE_ITER(PRINTK_MSGONLY) | TRACE_ITER(RECORD_CMD) |	\
-+	       TRACE_ITER(PROF_TEXT_OFFSET))
- 
- /* trace_flags that are default zero for instances */
- #define ZEROED_TRACE_FLAGS \
-@@ -11495,7 +11496,7 @@ __init static int tracer_alloc_buffers(void)
- 
- #ifdef CONFIG_FUNCTION_TRACER
- /* Used to set module cached ftrace filtering at boot up */
--__init struct trace_array *trace_get_global_array(void)
-+struct trace_array *trace_get_global_array(void)
- {
- 	return &global_trace;
- }
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 12716fe227bf..a3a15cfabacd 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1367,6 +1367,14 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- # define STACK_FLAGS
- #endif
- 
-+#ifdef CONFIG_FUNCTION_PROFILER
-+# define PROFILER_FLAGS					\
-+		C(PROF_TEXT_OFFSET,	"prof-text-offset"),
-+#else
-+# define PROFILER_FLAGS
-+# define TRACE_ITER_PROF_TEXT_OFFSET_BIT	-1
-+#endif
-+
- /*
-  * trace_iterator_flags is an enumeration that defines bit
-  * positions into trace_flags that controls the output.
-@@ -1405,7 +1413,8 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		FUNCTION_FLAGS					\
- 		FGRAPH_FLAGS					\
- 		STACK_FLAGS					\
--		BRANCH_FLAGS
-+		BRANCH_FLAGS					\
-+		PROFILER_FLAGS
- 
- /*
-  * By defining C, we can make TRACE_FLAGS a list of bit names
-
+-- 
+Kees Cook
 
