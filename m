@@ -1,199 +1,139 @@
-Return-Path: <linux-kernel+bounces-878330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2048C204D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2FBC204BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C131E467904
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBF1463A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E56252917;
-	Thu, 30 Oct 2025 13:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA552475CF;
+	Thu, 30 Oct 2025 13:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UnYjXgRA"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013051.outbound.protection.outlook.com [40.93.201.51])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ds0HgokC"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE2E240611;
-	Thu, 30 Oct 2025 13:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831551; cv=fail; b=UbM7k497c4FNZtOkpiKM+xooz1XAW1zO89z/P0fMM1UrVe3WEugl/NMrm8kyfavEFh2UtmApMxeX3BMZbex6G/HX/xbhhGeE9OPjx5fkPkYYLUQQrnd+X2ObtzDyknDeLuwBSAPPKVwWhKhrqzamopB0f7yTQjVfprLEq7AvgKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831551; c=relaxed/simple;
-	bh=npvt7FNdoPY0AQWQ/2h3CeY5O1lekU4BWTwkVCQAOWw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uKccFxcgqXGOoPamrFugA16Z80Y3dkG6zhRYB7eADLLWUSr1P4+epZqsOMrf/+OJjHP8fdatvMAZb9pk6EpQDer8ehQpJedT552qrbDufnNWGRlU7Y69g5mr8WOZfzrVblj7IrM1vXqLnOLfavYOhnbENChwwFNcg2ITMmaZlNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UnYjXgRA; arc=fail smtp.client-ip=40.93.201.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yUqaWgHxwnHz9PTGNcNOeJpVxH3n1w2p6JQKOQYP3/HQA8pmF+jktHpP7tCLQATXzU7wT7tIYXZgAQZcA0Dqho2+hy226ocncj1Ba1kHMjrFQunFL3tXa4Wopbg7UjR1hNoBJlzaidXi9Vpo0z97f0VgZ9HNN/JAh+umQDsnUnHMr5KLGZj9hPsCIS/UjWFAyKoQBWEnEWBaRjrWmsPzT7Csrmcf7rKd7wvCvcDQtV/m9vpx/p/m7R+NjGHceOJsfgWaPo1CkJwkjmg8LEs9Oclz7C+is7vWSpMSxVdTuzhjpZ8RTUjFFY3OS7d2phF+S+6nJyvvuGQNeDHUAvg7dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7I23mlbCEWa6JxjZEYBLPvkSaPBmEz9swJiLToIAUsg=;
- b=eFCSuHlkUkaDRrj8VZp0Iu8qMxrhZTp2lGrmbd1Jbpqluw6VqoIX2AY88T1nTfnWtmTcUBrn53znICpFqUVFN9xHJGPWRjCkTcf+OmXXGhnvNfHAQpMXtRJ+CDIWODp6b2sUlIRWbtWcTT6NZat82LplN95CnVuJdkwaMVXVDZJu3ichfIj17R5ASbMWsrZMvhh6wfuEuv2Y0sw1UV7IOeYAV0kmPv5NGig8lc2pbDapnPe4jKl+O0dSDOkw+l5+/d7FVCGGqPdOwqunrdI4Vkw0Xn6KIuweY8bV9YVSw0WST33Zk5l4toEJ3PzYktPUGwfdTX8SrhJw62DE7GRuLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7I23mlbCEWa6JxjZEYBLPvkSaPBmEz9swJiLToIAUsg=;
- b=UnYjXgRAnW+fDlzJ/Aq7VkFAS9/uN+9TGrsV0R3Qme6twWNbNdJkAE5swkWvRIwdaN9R8VYIV5nJG6t5xzxK8R9CJ81/XaKFwHJ+pkS1AP/7faTLXtWu6LhTxbrwhaDy2oP3uBtr4dmjPXWNepmVQaKiuAYYUUndX7LaTkBi+Ng=
-Received: from PH0PR07CA0034.namprd07.prod.outlook.com (2603:10b6:510:e::9) by
- PH0PR10MB5846.namprd10.prod.outlook.com (2603:10b6:510:14c::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
- 2025 13:39:01 +0000
-Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
- (2603:10b6:510:e:cafe::53) by PH0PR07CA0034.outlook.office365.com
- (2603:10b6:510:e::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.12 via Frontend Transport; Thu,
- 30 Oct 2025 13:39:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 13:39:00 +0000
-Received: from DLEE204.ent.ti.com (157.170.170.84) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 08:38:56 -0500
-Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 08:38:56 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
- (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 30 Oct 2025 08:38:56 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.233.103])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59UDcpcM2241222;
-	Thu, 30 Oct 2025 08:38:52 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <mwalle@kernel.org>, <afd@ti.com>, <conor+dt@kernel.org>,
-	<frank.binns@imgtec.com>, <kristo@kernel.org>, <krzk+dt@kernel.org>,
-	<matt.coster@imgtec.com>, <nm@ti.com>, <robh@kernel.org>, <rs@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <devicetree@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <detheridge@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62p: Fix memory ranges for GPU
-Date: Thu, 30 Oct 2025 19:07:18 +0530
-Message-ID: <176183141857.2766610.13135514120305603944.b4-ty@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250919193341.707660-2-rs@ti.com>
-References: <20250919193341.707660-2-rs@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DA1D5CD1;
+	Thu, 30 Oct 2025 13:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761831533; cv=none; b=iNeyKeE7ANixo+QLMVuCLDG2OgdD1xeaOA+klBP4UKt7eJLr9SaknT3yoLwb0B8eul/JkZxBDSbdpnk78Hq7wN6AILU6zNyQI1gSX0/czcGMeJ+gdTqa71KvZ6/tWFawglZ66SK/hKoLWfADS5Qq4Xc4PDtPtpn4SWvxelsbaus=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761831533; c=relaxed/simple;
+	bh=mGQztEN4S0/G6ld3AnwbjjruYNq/oG+QRisOk6Khj4s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K1c9Hctd3aRdXeqx01viawqUciYqL0gF+MqkebpGyXVZWuwBjQLHSimDd+sHSHtk7hIwTCV2aqZ3cAMR8hsmvlfxIhk+HhVfBcEUBhlQSZMZjSjjQ3Xq4YZwnWaWYF2myT0OaZfNmMop2z9Vj+OYXBTpvpj+M+sRS8B9ruBs5s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ds0HgokC; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=+9GCbyx0nM5jk0KxizZbCcB0mtfNvPzaCv7oLfJtX+4=;
+  b=ds0HgokCCDoDNlvWPIfPEeuATpkKsCozTlFlALg91YSlAxw6Scunw9jb
+   lmE0o+UviiFrrbcti9BgNG9ckY7t/TBDwxu90W9gJxJ4iTni4bh0tOjqo
+   tFn7doJjgXI3FZ43z2m2sXvrKWVoAkKInrWdEMN7GrnVIwfPNHjc25jjN
+   0=;
+X-CSE-ConnectionGUID: 7cxw7crpQmi9x+ULw5pwKg==
+X-CSE-MsgGUID: H4kwkNjnS0K6wtUy73fXGw==
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.19,266,1754949600"; 
+   d="scan'208";a="129502388"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 14:38:49 +0100
+Date: Thu, 30 Oct 2025 14:38:47 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Markus Elfring <Markus.Elfring@web.de>
+cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments
+ from memcpy() calls with SmPL?
+In-Reply-To: <abda1fe0-af59-4fa9-a1ec-efda0f63b3f1@web.de>
+Message-ID: <75a9224f-8c8a-da15-3ad7-f49fe3c36cf@inria.fr>
+References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de> <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr> <60f881dc-979d-486b-95be-6b31e85d4041@web.de> <aa99eded-be51-af3b-414-7c3bbaddea4a@inria.fr> <abda1fe0-af59-4fa9-a1ec-efda0f63b3f1@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|PH0PR10MB5846:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f0506d0-2263-4da7-f37e-08de17b9af4a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|34020700016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UEJYNDlrOVFCSVIvalNMbTIxN1R5NGtFbytXZTQ0TDloSVJlYUh1NVZlMWFZ?=
- =?utf-8?B?ZnlEUC8rSy96UmR1aTNYTHU3RnUzUjZqSXRzZnNxRGpBZjFiVDVSdWR6bm1D?=
- =?utf-8?B?N2UxTHhJc2s5Zm9LQmsrQkVTTW5uTHRyeXVtWFVZelpGMGlyK1JsWE1HU2Er?=
- =?utf-8?B?eGlja0hnRnhjaWFsb3ErR21neGp5ZmYyRjY2NnN0cHl1dDR3NmE3Z01EcWVu?=
- =?utf-8?B?WmZmaE5ldzVZWmEwVXZGUXFIMVBpeHcvMUpBMDJSMjVHaHRFcGtzL09LM1JJ?=
- =?utf-8?B?NDUwcm9janRvbTcyYVF5U1U1cHdkMk82OGJ6N0RNalBhZzNiTkJNZjhSNUJo?=
- =?utf-8?B?bXBGM3NZSHpCUmtqaTVaUHozTHFzNkpVem5aaldDRzVOYkJZcGswNUNrZkFa?=
- =?utf-8?B?SnZvVW1rTzE2bzc4dWFMQnZvdTMzS3dMVlFmVmpWaVFTY2tLaE9rTkxUdm1Q?=
- =?utf-8?B?a2dnbXRrZjYxWWl2eDNwdWdDT1FiSytCYy95WnpNcVpNMUxzTDVmYmFldEdv?=
- =?utf-8?B?dFltSnV3WW5QWURzY1hMeEtuMFlwb0tGTjl4TmdJM2R6Ym54bEdnNmJ4NDlq?=
- =?utf-8?B?RUpTWTlYVy9PYzVyMDY0V0Y1aCtpa2NQZ1JzUnJYVXA3akVvS21iT2hFeU16?=
- =?utf-8?B?bXVpVmYxT05GdWdEUnJQMzZWMXk5RHdnZkdEMXNBTU13R2tHc3Vob2VKc0JO?=
- =?utf-8?B?NW8vd2U0K0FJdDd6dWwya3BUS3JSWVhCWW5BMWw0NHFDUjJBY0xQdGZtaG5N?=
- =?utf-8?B?cFFrZVJ3QXFSM0lXN3RrcW5keXBsSlpnSXJ0ZWgzSWZzWkllYTcwWjlPVnUz?=
- =?utf-8?B?UTl3MHE0UGt4RGY4SFlNU2RSQm1HZENVdWs3ejdCK3NhQmJ6TFFoeEl3WGtC?=
- =?utf-8?B?Ry9kbk8wS2M0MGdCYTdtTkg5MHVjeGNNQzU1UXhsRDlvZ0c0c24xTzRHSmdz?=
- =?utf-8?B?U1k0Q1k0SUlzTWt6UDF6RVJIRmh0SSt6cnFMa1NQWFVReG1iR0J2M1M2dTdz?=
- =?utf-8?B?Nlo2dUE2dlBpZkljTGJBR2U3ZVVuRnZTYVhFS3JxSml4bERXakd3am5DT2VO?=
- =?utf-8?B?MGtIWDJPeUZvWUtpZUc3N1hYUjFDNjVrcm5RcDNsaHVBbFpJWmt0RFFFRUgz?=
- =?utf-8?B?UlJxb3BIenZ2ZlJqSzlxSmprRTRBcUxsYTRFTDhSdTdjK01hQytmWXQ1aGEz?=
- =?utf-8?B?UmVSWHk4YVpmV2V1MjRQOSs3QlNPWUdTeTZIekErSjZoNzdlQ2YvV0dnQ25G?=
- =?utf-8?B?aFh6VENuVGZ4MTlqQ3F3Rk1MNURCd2JiQUJvVUV2SGc4ZGdVcWh2U1phZzJr?=
- =?utf-8?B?eS9nQmVvTHRSRmsrazJDYjQ0VnVMa2NzeUgyblhBd21wWjZZaVE2bWN2SVdT?=
- =?utf-8?B?NEZPL0luT2picWZmYzB0eHV3YzQ4K0lVSldpTnhxMTZJb1RQTTYyTnVjaHdK?=
- =?utf-8?B?ckc5YzlxZWdyd1p2ZnRIK0VUNzlsSVYwYXJKaUpRRmN2NHRUOHkvRXFidEpO?=
- =?utf-8?B?dzZpdjhQZnZHVGFnUFJrUFpBZjdlZklhbVlCQkVkbWtkMmFCbmxVT3ZwZE4r?=
- =?utf-8?B?MEpJR1NDY2ljbkdGQWhWemNrOWc4ekJWaWdoam01ekxFTE5ZcXNndUNqNFFn?=
- =?utf-8?B?T3VVR1lEenhJTHpZQ082aC90eUNVNjZONGtFKy9jZ0pXUEMvUlNOMWRybytn?=
- =?utf-8?B?Wk1RNG1TWXZlekhFNE95NE9INHBEN0RPNGw0cUVKeTRIMlUzRmhIZEg5U3M4?=
- =?utf-8?B?cUhURXV1M2tIUlk5MkhQZnNLRmVSOUlnRDRkU2ZrUTlxVnNqTjJaRmFBL2V2?=
- =?utf-8?B?ZmQvTGdIWlVpbjhqQVBGczg3WmZZZnFmaEx1cVBDVE1xSE83Q0Z2dlZzaFlN?=
- =?utf-8?B?TmdOSFBiNmt1Y1pCSjVFT1NzVVZpdnkrT3lVWVN3YjhRQXpDd1lWMU45dmxH?=
- =?utf-8?B?S0RkVW53a3NLU2FkUTEyQVRPSnpCelhYcWpRR1RsWFJtakJueFNGTXFOQkNt?=
- =?utf-8?B?L01QL3BpbWQvTmljV094UjlRdk1ORE80U3cvOSszRElVZG1HWnRQNHRrSzZL?=
- =?utf-8?Q?fR0TLs?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(34020700016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 13:39:00.9753
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f0506d0-2263-4da7-f37e-08de17b9af4a
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE30.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5846
+Content-Type: multipart/mixed; boundary="8323329-1183597951-1761831528=:11598"
 
-Hi rs@ti.com,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Fri, 19 Sep 2025 14:33:42 -0500, rs@ti.com wrote:
-> Update the memory region listed in the k3-am62p.dtsi for the BXS-4-64
-> GPU to match the Main Memory Map described in the TRM [1].
-> 
-> [1] https://www.ti.com/lit/ug/spruj83b/spruj83b.pdf
-> 
-> 
+--8323329-1183597951-1761831528=:11598
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
 
-[1/1] arm64: dts: ti: k3-am62p: Fix memory ranges for GPU
-      commit: 76546090b1726118cd6fb3db7159fc2a3fdda8a0
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+On Thu, 30 Oct 2025, Markus Elfring wrote:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> >> I “accidentally” tried also the following SmPL script variants out.
+> >>
+> >> A)
+> >> @replacement3@
+> >> expression object, size, source, target;
+> >> @@
+> >>  target =
+> >> -object; memcpy(target, source, size)
+> >> +object; memcpy(object, source, size)
+> >>  ;
+> >>
+> >> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --no-loops …/Projekte/Coccinelle/janitor/use_memcpy_assignment3.cocci arch/arm64/kvm/arm.c
+> >> …
+> >> @@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
+> >>                         goto out_err;
+> >>                 }
+> >>
+> >> -               page_addr = page_address(page);
+> >> -               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
+> >> +               page_addr =memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start),
+> >> +                                 nvhe_percpu_size());page_address(page);
+> >>                 kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] = (unsigned long)page_addr;
+> >>         }
+> …>> B)
+> >> @replacement4@
+> >> expression object, size, source, target;
+> >> @@
+> >> -target = object; memcpy(target, source, size)
+> >> +target = object; memcpy(object, source, size)
+> >>  ;
+> >>
+> >> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --no-loops …/Projekte/Coccinelle/janitor/use_memcpy_assignment4.cocci arch/arm64/kvm/arm.c
+> >> …
+> >> @@ -2600,8 +2600,8 @@ static int __init init_hyp_mode(void)
+> >>                         goto out_err;
+> >>                 }
+> >>
+> >> +               memcpy(page_address(page), CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
+> >>                 page_addr = page_address(page);
+> >> -               memcpy(page_addr, CHOOSE_NVHE_SYM(__per_cpu_start), nvhe_percpu_size());
+> >>                 kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu] = (unsigned long)page_addr;
+> >>         }
+> >
+> > Not sure what is the point of all this.  Try:
+> …
+>
+> Would you like to acknowledge that undesirable difference displays were generated anyhow
+> for these test cases?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Sure.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+>
+>
+> >> Would you like to reconsider implementation details accordingly?
+>
+> Are we looking for corresponding software improvements?
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+If time permits.
 
+julia
+--8323329-1183597951-1761831528=:11598--
 
