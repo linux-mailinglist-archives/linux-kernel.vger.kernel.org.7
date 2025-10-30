@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-878529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC7AC20E71
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:24:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2AFC20EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4618C34F601
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5B01A669A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35B2363378;
-	Thu, 30 Oct 2025 15:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F9836337C;
+	Thu, 30 Oct 2025 15:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XsRvY6ir"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="huPOTtWk"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44A63208;
-	Thu, 30 Oct 2025 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD0F36337A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837835; cv=none; b=IthFLXBFNZQ5LuaIaV906FCitUB0vlA/g3HMT6Zne9bs7wwC16zbfFUC6z4MiXSFn2Q/kGNKAlr8d+68opyq519zMhwX4PfzRxhOR9UOwBDi8mzEGqUGsSsXiLvlKFSdQiSGFfP6DvPaPqcjet/KYzP4VcfA03bcTauzelUk7YY=
+	t=1761837931; cv=none; b=JXoc2tTjOiJGt6/RAI3YJ2rLNbeha4X4LTHZLCWizEiQ1YJ3/zE82+WkQ3m7UnWtRpwVsdNf9I5OWealrlTMBUSiNho8MV6GY4B0HD0Q2gFl9ayOaKrRBEeK2hxqG1Ay5EIrs4CekAJPo+4W37x6SkJvA52oa4JxfA28z3WSquo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837835; c=relaxed/simple;
-	bh=+70wsxsUKt4UILi1sS3Hkbru1yirfCe5Hv9sXg1ElVc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nVQLsxB+F8IaSOaXklQ1yF55UgtbRSrWThlaKWLnEOuC2/YIZcjttcFdOmbWgAxiNTiG9AMUhmouZ+kZZbCLTrY7G6LnBejrU2IFTKBT4h6VlZAhdkf5apMuYDpWapbk9s/0+MUiO8uRk1dXnOqYCRE4aE/Cu3KxZlET+6arf2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XsRvY6ir; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cy7Dg6lDvz9t3b;
-	Thu, 30 Oct 2025 16:23:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761837828; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u5e1e008gbO1/zsprlDyPBCZ7fdZFhj66DGzzytqzuQ=;
-	b=XsRvY6irrdPrD8d9dBP1MABjFGs0HiyFQN9u9P6b0Gjz/HyMS39KS4Q93VFvX5Kj+D7Yy4
-	Xc05edZos7ptFMRZx2iiwIx+HzLNpHAlGyJg8UDpJ0ECb3AibH4JzU/8nG5KDWOJOMXGe/
-	fZDPS/bM9b3z+0cZM6UDSCKIiqOA3Cen7w/QXZJIBBqAOijyyAKPi1zVwbyZmtaK21lFCl
-	/LxVJEeSTn3SvyPYlmxYmmRb1ktth1teMz9ct2Gc3YU3TVzg5ZewN5XQwuTbQ8nL0ev+4x
-	glEHsar9iCtFJqSg0P0VtbV/ZuqPSiQIGrK9s2DP2TQALstbLTgLktb1rXAbzg==
-Message-ID: <015c204472811734b1e2a12d044ac3b13926c617.camel@mailbox.org>
-Subject: Re: [PATCH v3] drm/sched: Add warning for removing hack in
- drm_sched_fini()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Philipp Stanner <phasta@kernel.org>, Matthew Brost
- <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
- <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org
-Date: Thu, 30 Oct 2025 16:23:44 +0100
-In-Reply-To: <20251023123429.139848-2-phasta@kernel.org>
-References: <20251023123429.139848-2-phasta@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761837931; c=relaxed/simple;
+	bh=Me7vbqKDPfCUEl9uOwEbXFhN7y1z8OPplh80PGtMN9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ethce7DrAcHPEc70QCUduj/hkHX/TvdomsN3tBh3CYVFcXUQm0Fe6dS8ctkzaeBx4vvMz04TBql7WXKUrZUZ1lb3ZJ0AZNoneYJ5Eq/SA8kiqhG5AyWSMn5EoVaH1KjzCiziwcHD9BenQ3ZxnfiQZuhoX4quSXtAZxux+7MzE4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=huPOTtWk; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761837927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZN3VhvADL3RotNT5kk7tKn1b8A+dl8RVEWaMrQxD5DE=;
+	b=huPOTtWkq//K7tz8xCxSy8W0UcxxGNLpgyOQ/ZNeadOXKk0t+cQrLaKt2oo46+KVlKBmg7
+	yBI3lEWEBtfCqfvZ8LkLtwtP3n52/sZqg5M//m+/GLcb8jRFXv5pkEqwbnkRKFk4G/FHAC
+	5hIDfB+MbfhsXjvIOU8k7QY1IGKY7Ms=
+From: Leon Hwang <leon.hwang@linux.dev>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	andrii@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	ameryhung@gmail.com,
+	linux-kernel@vger.kernel.org,
+	kernel-patches-bot@fb.com,
+	Leon Hwang <leon.hwang@linux.dev>
+Subject: [PATCH bpf-next v4 0/4] bpf: Free special fields when update hash and local storage maps
+Date: Thu, 30 Oct 2025 23:24:47 +0800
+Message-ID: <20251030152451.62778-1-leon.hwang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 50bb01bfe4d79271fe0
-X-MBO-RS-META: wd5awe31de8g61xfb6fczuxkck9e7365
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 2025-10-23 at 14:34 +0200, Philipp Stanner wrote:
-> The assembled developers agreed at the X.Org Developers Conference 2025
-> that the hack added for amdgpu in drm_sched_fini() shall be removed. It
-> shouldn't be needed by amdgpu anymore.
->=20
-> As it's unclear whether all drivers really follow the life time rule of
-> entities having to be torn down before their scheduler, it is reasonable
-> to warn for a while before removing the hack.
->=20
-> Add a warning in drm_sched_fini() that fires if an entity is still
-> active.
->=20
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+In the discussion thread
+"[PATCH bpf-next v9 0/7] bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS flags for percpu maps"[1],
+it was pointed out that missing calls to bpf_obj_free_fields() could
+lead to memory leaks.
 
-Can someone review this?
+A selftest was added to confirm that this is indeed a real issue - the
+refcount of BPF_KPTR_REF field is not decremented when
+bpf_obj_free_fields() is missing after copy_map_value[,_long]().
 
-At XDC we agreed on removing the hack, but wanted to add a warning
-print first for a few releases, to really catch if there are no users
-anymore.
+Further inspection of copy_map_value[,_long]() call sites revealed two
+locations affected by this issue:
 
-Thx
-P.
+1. pcpu_copy_value()
+2. htab_map_update_elem() when used with BPF_F_LOCK
 
-> ---
-> Changes in v3:
-> =C2=A0 - Add a READ_ONCE() + comment to make the warning slightly less
-> =C2=A0=C2=A0=C2=A0 horrible.
->=20
-> Changes in v2:
-> =C2=A0 - Fix broken brackets.
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 9 ++++++++-
-> =C2=A01 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
-eduler/sched_main.c
-> index 46119aacb809..31039b08c7b9 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1419,7 +1419,7 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched=
-)
-> =C2=A0		struct drm_sched_rq *rq =3D sched->sched_rq[i];
-> =C2=A0
-> =C2=A0		spin_lock(&rq->lock);
-> -		list_for_each_entry(s_entity, &rq->entities, list)
-> +		list_for_each_entry(s_entity, &rq->entities, list) {
-> =C2=A0			/*
-> =C2=A0			 * Prevents reinsertion and marks job_queue as idle,
-> =C2=A0			 * it will be removed from the rq in drm_sched_entity_fini()
-> @@ -1440,8 +1440,15 @@ void drm_sched_fini(struct drm_gpu_scheduler *sche=
-d)
-> =C2=A0			 * For now, this remains a potential race in all
-> =C2=A0			 * drivers that keep entities alive for longer than
-> =C2=A0			 * the scheduler.
-> +			 *
-> +			 * The READ_ONCE() is there to make the lockless read
-> +			 * (warning about the lockless write below) slightly
-> +			 * less broken...
-> =C2=A0			 */
-> +			if (!READ_ONCE(s_entity->stopped))
-> +				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n=
-");
-> =C2=A0			s_entity->stopped =3D true;
-> +		}
-> =C2=A0		spin_unlock(&rq->lock);
-> =C2=A0		kfree(sched->sched_rq[i]);
-> =C2=A0	}
+Similar case happens when update local storage maps with BPF_F_LOCK.
+
+This series fixes the issues by properly calling bpf_obj_free_fields()
+(or check_and_free_fields()) after copy_map_value[,_long]() and adds
+selftests to verify the fix.
+
+Changes:
+v3 -> v4:
+* Target bpf-next tree.
+* Address comments from Amery:
+  * Drop 'bpf_obj_free_fields()' in the path of updating local storage
+    maps without BPF_F_LOCK.
+  * Drop the corresponding self test.
+  * Respin the other test of local storage maps using syscall BPF
+    programs.
+
+v2 -> v3:
+* Free special fields when update local storage maps without BPF_F_LOCK.
+* Add test to verify decrementing refcount when update cgroup local
+  storage maps without BPF_F_LOCK.
+* Address review from AI bot:
+  * Slow path with BPF_F_LOCK (around line 642-646) in
+    'bpf_local_storage.c'.
+* https://lore.kernel.org/bpf/20251020164608.20536-1-leon.hwang@linux.dev/
+
+v1 -> v2:
+* Add test to verify decrementing refcount when update cgroup local
+  storage maps with BPF_F_LOCK.
+* Address review from AI bot:
+  * Fast path without bucket lock (around line 610) in
+    'bpf_local_storage.c'.
+* https://lore.kernel.org/bpf/20251016145801.47552-1-leon.hwang@linux.dev/
+
+Leon Hwang (4):
+  bpf: Free special fields when update [lru_,]percpu_hash maps
+  bpf: Free special fields when update hash maps with BPF_F_LOCK
+  bpf: Free special fields when update local storage maps with
+    BPF_F_LOCK
+  selftests/bpf: Add tests to verify freeing the special fields when
+    update hash and local storage maps
+
+ kernel/bpf/bpf_local_storage.c                |   2 +
+ kernel/bpf/hashtab.c                          |   4 +
+ .../bpf/prog_tests/refcounted_kptr.c          | 134 +++++++++++++++++-
+ .../selftests/bpf/progs/refcounted_kptr.c     | 129 +++++++++++++++++
+ 4 files changed, 268 insertions(+), 1 deletion(-)
+
+--
+2.51.1
 
 
