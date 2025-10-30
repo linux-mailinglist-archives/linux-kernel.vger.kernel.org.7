@@ -1,226 +1,213 @@
-Return-Path: <linux-kernel+bounces-878597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDCDC210E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:54:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCFAC21307
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 87690349732
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:54:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 461D04ED3D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53A1321F48;
-	Thu, 30 Oct 2025 15:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gbseZkNa"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C1F366FDE;
+	Thu, 30 Oct 2025 16:27:46 +0000 (UTC)
+Received: from akranes.kaiser.cx (akranes.kaiser.cx [152.53.16.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C653BBF2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4C233C530
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.16.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761839669; cv=none; b=DzJWHPzBa1L1HmKq+ry3H71PA2BH3RIU7wjU/qlIQmjk+pA+R8ilpsr59uh+7fSA9Do/RkHBGD7StmmD9EbMuT4LKr0Uhh+96MhuxnEdxOv44d9nBMOxoWvYw3gepVusAThiaKtkxZSSnKQskSbD/m42A7chzKfCDO4jGgxtxU4=
+	t=1761841666; cv=none; b=tYGKSDFPiBnRjaKznytmsBXjyEae7+P+bJc+uw24StSy5PWGzr4zkiscwxXuMP2UFj+VJorieOXGGpY6VAyHC05rm7tL66RaVy1EMSmcn5UUnnbzR3WrLk9dk4WLBsyxK2crHp+eh7IRAeexmcC+KkzxCqUvb/r7PIv7JGpM5iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761839669; c=relaxed/simple;
-	bh=gvQ8rMV/nb8TfMKY/OICnkCcrY8IEDx2ni4D9u6xW5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ivBsIEk/BGdWF4p7XJwXQ2MiTC/xh3iSEb7SDKTfnmEEEIK5U/VxRyJzDkVhvazWhIfvhCPQ5ufJ4rXb5FKug8hbUoNGvnKwuDqOw41nP7AcRvDiQ9pkjXGt0hlATfQiqvvNdI57R5XdHTLP3SkJ0QmP7uge/+eDiue2//imgNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gbseZkNa; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so757188f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761839665; x=1762444465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7c6+XrmoyFowwhGbEiLq66X/torWpHDQ+1RsFmcHlWE=;
-        b=gbseZkNas6nYIRR27KwsRKMpEMa8WaeNdWDg3JkojUaSd8nVVBfjbHsz0DuYpX/AuU
-         AsvW8Y61yY4/7lBlgeGKnE/pEMm1aUF8pY58xg35Dq6xB0ZwRSyuFVu9lW+btzDxzSsj
-         9iDDtt7a9IIDSlOOnHhfXc1CWxRfOjFfzWvrsgRfcsEcLTDZbFwouGcw0XH+9gISUgT5
-         nESd6QHOMSL7rv60B44HaDlmoI3yHxrbO0OvXwv4jNmuQiId0xaGtIgmoJBiE3qPUfJf
-         Vo/YjMKXhhNI7RfwqgowgMjm3XmuNCyNaFstMkW5YZEMN5THi5ytOdoUiHDUfTGEYXqx
-         aGAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761839665; x=1762444465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7c6+XrmoyFowwhGbEiLq66X/torWpHDQ+1RsFmcHlWE=;
-        b=bJQZa6LbtXq1bNL0I46nEGuDVwJofsh3uwex1pBF96icHqJcd8QfLjKM+mAnvRqXlm
-         tbMyZV8ibnN3RitBPqzSP6FIHMLaRi5Yp6I/UGlSEJeV96kxbzxx+a+MPyhScQXN3FsO
-         lfRmR7EKVRyfyOJcejVs7/wxcR0h8JhxK3spl5DByBVKg+4FD6/Dn+f78ij4yqikjRIK
-         +BxavUMfi/xz8363KntwIYfbvPnprjUxun4gLGENaSFTMnh+ERUuuhf/r1H6YzNGXnGL
-         eEEud+V4t9rUUdLNviRVj8+ew6P1XxJpMqx5zq8cK5CCUbeUTjmADoz1I6e+tOpT6Lqx
-         kC/g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+70Yd6NHFRLcAft7DiSgkloX6c6BA7BCMQSvuWuivPoy4jOZeCDaZB27jloHBa3F1RPLBv7y2veHA/ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnpoJ7ew7B5qAWJcqHLXhuTVrM78YEMFIe4GHBnPPa7B606lan
-	6zUIqC4g7k/WG/xdnw1ttRSO6swdToQ9R4SI4S707GFoIMY865EAYfOJm3ch/+BcRg==
-X-Gm-Gg: ASbGnct/y9PcYrV6JzW2mUpLn2YjOMUKLW1CQRG7geffZQ+uM5d546MQJIQOkbSVyvF
-	pEl78GttVAKzwAvB1uyVeNCA4FeSTd/KgDj32XaKYUIU3pssbKrh8eOgDQ4f9c9qMm3bCDtDMTu
-	HvOj3Bxy4Maq6uKk2lFqAsVAItJ3SS70N+aUA32M954uPmfhkI7dcWtMVxxdMXBhHLoIjGkXJM8
-	IAeSLZfDFM+6PkOTghStM5C98Usa5n64BV74K1BBLX0Hxhp761Ea02l/dtg3ERTtyvA/IbbpGJd
-	7zZupjih6ztn0hOoV+kUDzkhyh2BZFYE01mgCa8HGPFybB2cJtuNlc9FdxLxER8oUSfAwmCGq9m
-	QY4wrQKlJFykaibeSH6rynTOAuYsjjXLT+au0CKD5sLAPBoGq/fuCkkZGqD5YehMD8RKmERkDST
-	uxfeiYlPG1ASIC/Y8q3yKcRQavKT7f1eYXx5W5OuiYl5GFdCCC6XY=
-X-Google-Smtp-Source: AGHT+IFcl4Bo2iRnn9SQ4R5pthHC8V2HygnH866pn1+ULEALSY6EUZm9nBo5CT91dKPigulLVZJWlg==
-X-Received: by 2002:a05:6000:2485:b0:426:d82f:889e with SMTP id ffacd0b85a97d-429bd67c45dmr79155f8f.14.1761839665373;
-        Thu, 30 Oct 2025 08:54:25 -0700 (PDT)
-Received: from google.com (218.131.22.34.bc.googleusercontent.com. [34.22.131.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db9c6sm33378016f8f.36.2025.10.30.08.54.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 08:54:24 -0700 (PDT)
-Date: Thu, 30 Oct 2025 15:54:21 +0000
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, qperret@google.com,
-	keirf@google.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3] KVM: arm64: Check range args for pKVM mem transitions
-Message-ID: <aQOKLaCKUDcqIZeM@google.com>
-References: <20251016164541.3771235-1-vdonnefort@google.com>
- <aQMBG0SUlNWuQQFZ@google.com>
+	s=arc-20240116; t=1761841666; c=relaxed/simple;
+	bh=1ccQmgxn/vAxgMJ9+nggkKFFieiequeiwNJtJCogTEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o55zM3XctOx4iMMa54RAMkhtalhPGxYRsZWKSWNKCemctqlLQItNBe2H0N0dDCztnvbRlmP96Lh+NSjpeaA2JOTswfjFTw7NuUmP+1/zi+CNGtf0r+RSZx9eWuTyvIjA5hen1M8CvhQ5aGZXQad532jdGOIJpbSyldFYaxc8Sw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx; spf=pass smtp.mailfrom=kaiser.cx; arc=none smtp.client-ip=152.53.16.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaiser.cx
+Received: from ipservice-092-210-203-096.092.210.pools.vodafone-ip.de ([92.210.203.96] helo=martin-debian-3.kaiser.cx)
+	by akranes.kaiser.cx with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <martin@kaiser.cx>)
+	id 1vEV0H-005zMp-2O;
+	Thu, 30 Oct 2025 16:55:57 +0100
+From: Martin Kaiser <martin@kaiser.cx>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>
+Cc: maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH] maple_tree: fix tracepoint string pointers
+Date: Thu, 30 Oct 2025 16:55:05 +0100
+Message-ID: <20251030155537.87972-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQMBG0SUlNWuQQFZ@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 06:09:31AM +0000, Sebastian Ene wrote:
-> On Thu, Oct 16, 2025 at 05:45:41PM +0100, Vincent Donnefort wrote:
-> > There's currently no verification for host issued ranges in most of the
-> > pKVM memory transitions. The end boundary might therefore be subject to
-> > overflow and later checks could be evaded.
-> > 
-> > Close this loophole with an additional pfn_range_is_valid() check on a
-> > per public function basis. Once this check has passed, it is safe to
-> > convert pfn and nr_pages into a phys_addr_t and a size.
-> > 
-> > host_unshare_guest transition is already protected via
-> > __check_host_shared_guest(), while assert_host_shared_guest() callers
-> > are already ignoring host checks.
-> > 
-> > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> > 
-> > ---
-> > 
-> > v2 -> v3: 
-> >    * Test range against PA-range and make the func phys specific.
-> > 
-> > v1 -> v2:
-> >    * Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
-> >    * Rename to check_range_args().
-> > 
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > index ddc8beb55eee..49db32f3ddf7 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > @@ -367,6 +367,19 @@ static int host_stage2_unmap_dev_all(void)
-> >  	return kvm_pgtable_stage2_unmap(pgt, addr, BIT(pgt->ia_bits) - addr);
-> >  }
-> 
-> Hello Vincent,
-> 
-> >  
-> > +/*
-> > + * Ensure the PFN range is contained within PA-range.
-> > + *
-> > + * This check is also robust to overflows and is therefore a requirement before
-> > + * using a pfn/nr_pages pair from an untrusted source.
-> > + */
-> > +static bool pfn_range_is_valid(u64 pfn, u64 nr_pages)
-> > +{
-> > +	u64 limit = BIT(kvm_phys_shift(&host_mmu.arch.mmu) - PAGE_SHIFT);
-> > +
-> > +	return pfn < limit && ((limit - pfn) >= nr_pages);
-> > +}
-> > +
-> 
-> This newly introduced function is probably fine to be called without the host lock held as long
-> as no one modifies the vtcr field from the host.mmu structure. While
-> searching I couldn't find a place where this is directly modified so
-> this is probably fine. 
-> 
-> >  struct kvm_mem_range {
-> >  	u64 start;
-> >  	u64 end;
-> > @@ -776,6 +789,9 @@ int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
-> >  	void *virt = __hyp_va(phys);
-> >  	int ret;
-> >  
-> > +	if (!pfn_range_is_valid(pfn, nr_pages))
-> > +		return -EINVAL;
-> > +
-> >  	host_lock_component();
-> >  	hyp_lock_component();
-> >  
-> > @@ -804,6 +820,9 @@ int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages)
-> >  	u64 virt = (u64)__hyp_va(phys);
-> >  	int ret;
-> >  
-> > +	if (!pfn_range_is_valid(pfn, nr_pages))
-> > +		return -EINVAL;
-> > +
-> >  	host_lock_component();
-> >  	hyp_lock_component();
-> >  
-> > @@ -887,6 +906,9 @@ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages)
-> >  	u64 size = PAGE_SIZE * nr_pages;
-> >  	int ret;
-> >  
-> > +	if (!pfn_range_is_valid(pfn, nr_pages))
-> > +		return -EINVAL;
-> > +
-> >  	host_lock_component();
-> >  	ret = __host_check_page_state_range(phys, size, PKVM_PAGE_OWNED);
-> >  	if (!ret)
-> > @@ -902,6 +924,9 @@ int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages)
-> >  	u64 size = PAGE_SIZE * nr_pages;
-> >  	int ret;
-> >  
-> > +	if (!pfn_range_is_valid(pfn, nr_pages))
-> > +		return -EINVAL;
-> > +
-> >  	host_lock_component();
-> >  	ret = __host_check_page_state_range(phys, size, PKVM_PAGE_SHARED_OWNED);
-> >  	if (!ret)
-> > @@ -945,6 +970,9 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu
-> >  	if (prot & ~KVM_PGTABLE_PROT_RWX)
-> >  		return -EINVAL;
-> >  
-> > +	if (!pfn_range_is_valid(pfn, nr_pages))
-> > +		return -EINVAL;
-> > +
-> 
-> I think we don't need it here because __pkvm_host_share_guest has the
-> __guest_check_transition_size verification in place which limits
-> nr_pages.  
+maple_tree tracepoints contain pointers to function names. Such a pointer
+is saved when a tracepoint logs an event. There's no guarantee that it's
+still valid when the event is parsed later and the pointer is dereferenced.
 
-__guest_check_transition size will only limit to PMD_SIZE, which can be quite a
-big number if you consider > 4KiB pages systems. So I believe this is still a loophole
-worth fixing.
+The kernel warns about these unsafe pointers.
 
-> 
-> >  	ret = __guest_check_transition_size(phys, ipa, nr_pages, &size);
-> >  	if (ret)
-> >  		return ret;
-> > 
-> > base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
-> > -- 
-> > 2.51.0.869.ge66316f041-goog
-> >
-> 
-> Other than that this looks good, thanks
-> Sebastian
+	event 'ma_read' has unsafe pointer field 'fn'
+	WARNING: kernel/trace/trace.c:3779 at ignore_event+0x1da/0x1e4
 
-Thanks for having a look at the patch.
+Mark the function names as tracepoint_string() to fix the events.
+
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+ lib/maple_tree.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 39bb779cb311..5aa4c9500018 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -64,6 +64,8 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/maple_tree.h>
+ 
++#define TP_FCT tracepoint_string(__func__)
++
+ /*
+  * Kernel pointer hashing renders much of the maple tree dump useless as tagged
+  * pointers get hashed to arbitrary values.
+@@ -2756,7 +2758,7 @@ static inline void mas_rebalance(struct ma_state *mas,
+ 	MA_STATE(l_mas, mas->tree, mas->index, mas->last);
+ 	MA_STATE(r_mas, mas->tree, mas->index, mas->last);
+ 
+-	trace_ma_op(__func__, mas);
++	trace_ma_op(TP_FCT, mas);
+ 
+ 	/*
+ 	 * Rebalancing occurs if a node is insufficient.  Data is rebalanced
+@@ -2997,7 +2999,7 @@ static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
+ 	MA_STATE(prev_l_mas, mas->tree, mas->index, mas->last);
+ 	MA_STATE(prev_r_mas, mas->tree, mas->index, mas->last);
+ 
+-	trace_ma_op(__func__, mas);
++	trace_ma_op(TP_FCT, mas);
+ 
+ 	mast.l = &l_mas;
+ 	mast.r = &r_mas;
+@@ -3172,7 +3174,7 @@ static bool mas_is_span_wr(struct ma_wr_state *wr_mas)
+ 			return false;
+ 	}
+ 
+-	trace_ma_write(__func__, wr_mas->mas, wr_mas->r_max, entry);
++	trace_ma_write(TP_FCT, wr_mas->mas, wr_mas->r_max, entry);
+ 	return true;
+ }
+ 
+@@ -3416,7 +3418,7 @@ static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+ 	 * of data may happen.
+ 	 */
+ 	mas = wr_mas->mas;
+-	trace_ma_op(__func__, mas);
++	trace_ma_op(TP_FCT, mas);
+ 
+ 	if (unlikely(!mas->index && mas->last == ULONG_MAX))
+ 		return mas_new_root(mas, wr_mas->entry);
+@@ -3552,7 +3554,7 @@ static inline void mas_wr_node_store(struct ma_wr_state *wr_mas,
+ 	} else {
+ 		memcpy(wr_mas->node, newnode, sizeof(struct maple_node));
+ 	}
+-	trace_ma_write(__func__, mas, 0, wr_mas->entry);
++	trace_ma_write(TP_FCT, mas, 0, wr_mas->entry);
+ 	mas_update_gap(mas);
+ 	mas->end = new_end;
+ 	return;
+@@ -3596,7 +3598,7 @@ static inline void mas_wr_slot_store(struct ma_wr_state *wr_mas)
+ 		mas->offset++; /* Keep mas accurate. */
+ 	}
+ 
+-	trace_ma_write(__func__, mas, 0, wr_mas->entry);
++	trace_ma_write(TP_FCT, mas, 0, wr_mas->entry);
+ 	/*
+ 	 * Only update gap when the new entry is empty or there is an empty
+ 	 * entry in the original two ranges.
+@@ -3717,7 +3719,7 @@ static inline void mas_wr_append(struct ma_wr_state *wr_mas,
+ 		mas_update_gap(mas);
+ 
+ 	mas->end = new_end;
+-	trace_ma_write(__func__, mas, new_end, wr_mas->entry);
++	trace_ma_write(TP_FCT, mas, new_end, wr_mas->entry);
+ 	return;
+ }
+ 
+@@ -3731,7 +3733,7 @@ static void mas_wr_bnode(struct ma_wr_state *wr_mas)
+ {
+ 	struct maple_big_node b_node;
+ 
+-	trace_ma_write(__func__, wr_mas->mas, 0, wr_mas->entry);
++	trace_ma_write(TP_FCT, wr_mas->mas, 0, wr_mas->entry);
+ 	memset(&b_node, 0, sizeof(struct maple_big_node));
+ 	mas_store_b_node(wr_mas, &b_node, wr_mas->offset_end);
+ 	mas_commit_b_node(wr_mas, &b_node);
+@@ -5062,7 +5064,7 @@ void *mas_store(struct ma_state *mas, void *entry)
+ {
+ 	MA_WR_STATE(wr_mas, mas, entry);
+ 
+-	trace_ma_write(__func__, mas, 0, entry);
++	trace_ma_write(TP_FCT, mas, 0, entry);
+ #ifdef CONFIG_DEBUG_MAPLE_TREE
+ 	if (MAS_WARN_ON(mas, mas->index > mas->last))
+ 		pr_err("Error %lX > %lX " PTR_FMT "\n", mas->index, mas->last,
+@@ -5163,7 +5165,7 @@ void mas_store_prealloc(struct ma_state *mas, void *entry)
+ 	}
+ 
+ store:
+-	trace_ma_write(__func__, mas, 0, entry);
++	trace_ma_write(TP_FCT, mas, 0, entry);
+ 	mas_wr_store_entry(&wr_mas);
+ 	MAS_WR_BUG_ON(&wr_mas, mas_is_err(mas));
+ 	mas_destroy(mas);
+@@ -5882,7 +5884,7 @@ void *mtree_load(struct maple_tree *mt, unsigned long index)
+ 	MA_STATE(mas, mt, index, index);
+ 	void *entry;
+ 
+-	trace_ma_read(__func__, &mas);
++	trace_ma_read(TP_FCT, &mas);
+ 	rcu_read_lock();
+ retry:
+ 	entry = mas_start(&mas);
+@@ -5925,7 +5927,7 @@ int mtree_store_range(struct maple_tree *mt, unsigned long index,
+ 	MA_STATE(mas, mt, index, last);
+ 	int ret = 0;
+ 
+-	trace_ma_write(__func__, &mas, 0, entry);
++	trace_ma_write(TP_FCT, &mas, 0, entry);
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+ 		return -EINVAL;
+ 
+@@ -6148,7 +6150,7 @@ void *mtree_erase(struct maple_tree *mt, unsigned long index)
+ 	void *entry = NULL;
+ 
+ 	MA_STATE(mas, mt, index, index);
+-	trace_ma_op(__func__, &mas);
++	trace_ma_op(TP_FCT, &mas);
+ 
+ 	mtree_lock(mt);
+ 	entry = mas_erase(&mas);
+@@ -6485,7 +6487,7 @@ void *mt_find(struct maple_tree *mt, unsigned long *index, unsigned long max)
+ 	unsigned long copy = *index;
+ #endif
+ 
+-	trace_ma_read(__func__, &mas);
++	trace_ma_read(TP_FCT, &mas);
+ 
+ 	if ((*index) > max)
+ 		return NULL;
+-- 
+2.43.7
+
 
