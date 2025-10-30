@@ -1,126 +1,226 @@
-Return-Path: <linux-kernel+bounces-879058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E13C222C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:15:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA94C2220C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C981A20831
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:13:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 39C7634E79A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0BE380F26;
-	Thu, 30 Oct 2025 20:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A73A36E377;
+	Thu, 30 Oct 2025 20:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgOdRmjn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qd+iX+HR"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BA6381E40
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141736CE1D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761855024; cv=none; b=YuYdkqB8adQNhSCJ/fsIeeh/GfsuAkSWbmRq1lx/k1K6JM/GsZgQcBO7F02rlfdCfuZzSuXpwEoJeeisqjgMIUFrP6FRhkI4slY756MDZK5JGdWz0/mYwjW8FV4wWRzflES4bNDYapDgBf4DewTq6QXJJuVGQ9xaVyWaib5VDJw=
+	t=1761855001; cv=none; b=lnFzPvW79jWGifoLbYHmIT1Y87STDbNG7jYTeiAB4/PFBfvlLKeSq2XfX7SsCG3jBDy6Ck/JWMfKmkJf9lRQWj3F/ZHhtR7PJ69qNYUdPNMRj3K/owil5F0kqbMDpMkuOAzS1UpuR8ojq39pGH82a0MvUcc81vkxamXXjWEVaWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761855024; c=relaxed/simple;
-	bh=nTifo0zFDHu6FVLLGMm4PK4AB5FvqMdbXF3A+DZOb5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HS1Tg0T3No+GpjCR0pqxdVJhCBaSMSdVZMlkO8Ich0n9Rj4tcIiZTcQZukAYGdiKBglHK4E0eJsKa6hTAepDYvVhPGAUedRh3NnQmA/+YyHjBIrGMmVnwFhv5+VcZJrOxc0MBv9foO7f9fQ2GYAkIpQ5CufmCXQiX/xWf4u0uNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgOdRmjn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1168CC4CEF8;
-	Thu, 30 Oct 2025 20:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761855023;
-	bh=nTifo0zFDHu6FVLLGMm4PK4AB5FvqMdbXF3A+DZOb5c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OgOdRmjnuBT8pWj2I7IR47H0LlNnqD7An+c+ruARmiUEb+fol/2nJgFJCJya+irbK
-	 J8IXBV1fyia0df0lLEq27WzkoE1aeVeCdUS6LJ0chnFgOufpc+LMhtZ5ASyc+RibtD
-	 67Sdb1PAYvHl7BOF0frKmkGbQcbNH1F5DQI0gCpv8ViEJ2kDONHGF/WUVkZGuNU/BB
-	 Me/jd5Pi+2OxN5kcM6j2SGJAIg77Ge/9UB68CBP/dqHnZ8McdHA850KN93Lfn5B1oI
-	 uVOh7KUc1LTmvCouOrw0z/0AH6IOBHgXLdLXbzYaDbkk7rxdyplc62qu1EIt6Nz+2Z
-	 9qPJhJvCvZ2Tw==
-Date: Thu, 30 Oct 2025 17:09:22 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Lauri Vasama <git@vasama.org>, Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1] tools headers uapi: Update fs.h with the kernel sources
-Message-ID: <aQPF8gVMhK7JHIRV@x1>
+	s=arc-20240116; t=1761855001; c=relaxed/simple;
+	bh=iWqK9o5Q9lSs0dNS4loIwGhdjpS9qDnFS67Z8kLa5ZY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=u3GVurx5bJGzj/MLC0qL5u2BXLkg9SQCEhgzHKpl/VKTwy9FJez2Wc6g1/buAtyUuT0Pj8F2T80ncGcepO+v+WnHbtqKx3NANZqXKeAxb9TF4dl0nOwq3TmyGag5vAZtJmVF6PHdSnaIasQ0GouUgnzNazyldixzv1Rv9O/LNbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qd+iX+HR; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33d8970ae47so1738449a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761854999; x=1762459799; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zrcNX0WZe6UQQAW+Y1acRpaDavildHCqqfp5zf8UBT8=;
+        b=qd+iX+HRguzV8RHinP+d64sx44ccYmm2BMsrzhS4vENzeN1SWeqaQgPgtyV/DWAvKj
+         jTwUwkJdsnBsZbSb/qeJSqq6GedxUJxf1SRgeUh//DgC5OL5iSMRGngr4uPB3KngiC9E
+         5C7xYqTKnnCeqWDxTEW0d4YPSujcz7B17Z40W4rPGyS7uNVgp+MHXyFP9WOJrMbujgRk
+         dNLYzzVOVd/6/WrCNM9aiUVmouZm3NQAZhl9ODa8LaWBivC4+1JMOXpfFO1R5VHRoK18
+         4/K0HRXfJ+8Mb2nVbRUq0sxgOndVg5T3n+0/BerK58U7Wl1jzTICoL9pLv4J3G59RXjX
+         KCAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761854999; x=1762459799;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrcNX0WZe6UQQAW+Y1acRpaDavildHCqqfp5zf8UBT8=;
+        b=S5dksFN6utgnMUQMM38kvPYoFp8gDcbNdkmnptP7FMfELcOx4XkpLpuq8O+ITJWodl
+         iZV03dK9at7Kxyz6WKQo7gQQtvC0dR0I9e9vivpWTRfxRQ+7VPwAD974QzfBpbbgZDy8
+         wvYVRGzCG8EsFwBKiBdC0NzBrcNARvYCg0kyr6ucsVHLIuZ+a2m0AuiwWq1EnDy2dW/w
+         u5jIeY9bklGB6p6Yp1pLPXJHJOp50Luk+GxZwq44v+2tp/8UTKlmFLDUksIoCNvG8lsO
+         TkEtWsC6aFQRiIpDPKEwYVSgV9DodvbEDJqVsR94vX9M8PuCU4f0Y1JvOtBeWrhee70w
+         AF9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVcZHVRMUnfXA/CA39O394Y8C4qCKVNmbNhPRSd492QhctPCgUrLpEEgZh9EAXIqh2gBofrVOGMQ0jrtKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5qiRjWZ3ZzBUVw9VH7zpwaomQtF/pCjrP6CqXjI9GGDlCS41M
+	45MH63PxryAR4qdfSTrMrYlBG6b4AdQBe775HKqabG3T3Tjqjj7oT3cGCr0+zXnMdOXZUs8fTj3
+	2EXNkQA==
+X-Google-Smtp-Source: AGHT+IHHZpNGbgjLGw+ZYpoCrFPTV304XH1EL6WE9wIH48O/1tSukWUG1dLDd7KIv/LOoUL3Sr92aGNZzYE=
+X-Received: from pjvp23.prod.google.com ([2002:a17:90a:df97:b0:339:e59f:e26])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d40c:b0:33b:b020:5968
+ with SMTP id 98e67ed59e1d1-34083071b1emr1223925a91.21.1761854998946; Thu, 30
+ Oct 2025 13:09:58 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 30 Oct 2025 13:09:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251030200951.3402865-1-seanjc@google.com>
+Subject: [PATCH v4 00/28] KVM: x86/mmu: TDX post-populate cleanups
+From: Sean Christopherson <seanjc@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Ackerley Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+Non-x86 folks, as with v3, patches 1 and 2 are likely the only thing of
+interest here.  They make kvm_arch_vcpu_async_ioctl() mandatory and then
+rename it to kvm_arch_vcpu_unlocked_ioctl().
 
-Full explanation:
+As for the x86 side...
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+Clean up the TDX post-populate paths (and many tangentially related paths) to
+address locking issues between gmem and TDX's post-populate hook[*], and
+within KVM itself (KVM doesn't ensure full mutual exclusivity between paths
+that for all intents and purposes the TDX-Module requires to be serialized).
 
-See further details at:
+I apologize if I missed any trailers or feedback, I think I got everything...
 
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+[*] http://lore.kernel.org/all/aG_pLUlHdYIZ2luh@google.com
 
-To pick up changes from:
+v4:
+ - Collect reviews/acks.
+ - Add a lockdep assertion in kvm_tdp_mmu_map_private_pfn(). [Yan]
+ - Wrap kvm_tdp_mmu_map_private_pfn() with CONFIG_KVM_GUEST_MEMFD=y. [test bot]
+ - Improve (or add) comments. [Kai, and probably others]
+ - s/spte/mirror_spte to make it clear what's being passed in
+ - Update set_external_spte() to take @mirror_spte as well. [Yan]
+ - Move the KVM_BUG_ON() on tdh_mr_extend() failure to the end. [Rick]
+ - Take "all" the locks in tdx_vm_ioctl(). [Kai]
+ - WARN if KVM attempts to map SPTEs into an invalid root. [Yan]
+ - Use tdx_flush_vp_on_cpu() instead of tdx_disassociate_vp() when freeing
+   a vCPU in VCPU_TD_STATE_UNINITIALIZED state. [Yan]
 
-  db2ab24a341ce893 ("Add RWF_NOSIGNAL flag for pwritev2")
+v3:
+ - https://lore.kernel.org/all/20251017003244.186495-1-seanjc@google.com
+ - Collect more reviews.
+ - Add the async_ioctl() => unlocked_ioctl() patches, and use the "unlocked"
+   variant in the TDX vCPU sub-ioctls so they can take kvm->lock outside of
+   vcpu->mutex.
+ - Add a patch to document that vcpu->mutex is taken *outside* kvm->slots_lock.
+ - Add the tdx_vm_state_guard CLASS() to take kvm->lock, all vcpu->mutex locks,
+   and kvm->slots_lock, in order to make tdx_td_init(), tdx_td_finalize(),
+   tdx_vcpu_init_mem_region(), and tdx_vcpu_init() mutually exclusive with
+   each other, and mutually exclusvie with basically anything that can result
+   in contending one of the TDX-Module locks (can't remember which one).
+ - Refine the changelog for the "Drop PROVE_MMU=y" patch. [Binbin]
 
-These are used to beautify fs syscall arguments, albeit the changes in
-this update are not affecting those beautifiers.
+v2:
+ - Collect a few reviews (and ignore some because the patches went away).
+   [Rick, Kai, Ira]
+ - Move TDH_MEM_PAGE_ADD under mmu_lock and drop nr_premapped. [Yan, Rick]
+ - Force max_level = PG_LEVEL_4K straightaway. [Yan]
+ - s/kvm_tdp_prefault_page/kvm_tdp_page_prefault. [Rick]
+ - Use Yan's version of "Say no to pinning!".  [Yan, Rick]
+ - Tidy up helpers and macros to reduce boilerplate and copy+pate code, and
+   to eliminate redundant/dead code (e.g. KVM_BUG_ON() the same error
+   multiple times).
+ - KVM_BUG_ON() if TDH_MR_EXTEND fails (I convinced myself it can't).
 
-This addresses these tools/ build warnings:
+v1: https://lore.kernel.org/all/20250827000522.4022426-1-seanjc@google.com
 
-  Warning: Kernel ABI header differences:
-  diff -u tools/perf/trace/beauty/include/uapi/linux/fs.h include/uapi/linux/fs.h
 
-Please see tools/include/uapi/README for details (it's in the first patch
-of this series).
+Sean Christopherson (26):
+  KVM: Make support for kvm_arch_vcpu_async_ioctl() mandatory
+  KVM: Rename kvm_arch_vcpu_async_ioctl() to
+    kvm_arch_vcpu_unlocked_ioctl()
+  KVM: TDX: Drop PROVE_MMU=y sanity check on to-be-populated mappings
+  KVM: x86/mmu: Add dedicated API to map guest_memfd pfn into TDP MMU
+  KVM: x86/mmu: WARN if KVM attempts to map into an invalid TDP MMU root
+  Revert "KVM: x86/tdp_mmu: Add a helper function to walk down the TDP
+    MMU"
+  KVM: x86/mmu: Rename kvm_tdp_map_page() to kvm_tdp_page_prefault()
+  KVM: TDX: Return -EIO, not -EINVAL, on a KVM_BUG_ON() condition
+  KVM: TDX: Fold tdx_sept_drop_private_spte() into
+    tdx_sept_remove_private_spte()
+  KVM: x86/mmu: Drop the return code from
+    kvm_x86_ops.remove_external_spte()
+  KVM: TDX: WARN if mirror SPTE doesn't have full RWX when creating
+    S-EPT mapping
+  KVM: TDX: Avoid a double-KVM_BUG_ON() in tdx_sept_zap_private_spte()
+  KVM: TDX: Use atomic64_dec_return() instead of a poor equivalent
+  KVM: TDX: Fold tdx_mem_page_record_premap_cnt() into its sole caller
+  KVM: TDX: ADD pages to the TD image while populating mirror EPT
+    entries
+  KVM: TDX: Fold tdx_sept_zap_private_spte() into
+    tdx_sept_remove_private_spte()
+  KVM: TDX: Combine KVM_BUG_ON + pr_tdx_error() into TDX_BUG_ON()
+  KVM: TDX: Derive error argument names from the local variable names
+  KVM: TDX: Assert that mmu_lock is held for write when removing S-EPT
+    entries
+  KVM: TDX: Add macro to retry SEAMCALLs when forcing vCPUs out of guest
+  KVM: TDX: Add tdx_get_cmd() helper to get and validate sub-ioctl
+    command
+  KVM: TDX: Convert INIT_MEM_REGION and INIT_VCPU to "unlocked" vCPU
+    ioctl
+  KVM: TDX: Use guard() to acquire kvm->lock in tdx_vm_ioctl()
+  KVM: TDX: Don't copy "cmd" back to userspace for KVM_TDX_CAPABILITIES
+  KVM: TDX: Guard VM state transitions with "all" the locks
+  KVM: TDX: Bug the VM if extending the initial measurement fails
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Lauri Vasama <git@vasama.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/include/uapi/linux/fs.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Yan Zhao (2):
+  KVM: TDX: Drop superfluous page pinning in S-EPT management
+  KVM: TDX: Fix list_add corruption during vcpu_load()
 
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/fs.h b/tools/perf/trace/beauty/include/uapi/linux/fs.h
-index 0bd678a4a10ef854..beb4c2d1e41cb1bb 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/fs.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/fs.h
-@@ -430,10 +430,13 @@ typedef int __bitwise __kernel_rwf_t;
- /* buffered IO that drops the cache after reading or writing data */
- #define RWF_DONTCACHE	((__force __kernel_rwf_t)0x00000080)
- 
-+/* prevent pipe and socket writes from raising SIGPIPE */
-+#define RWF_NOSIGNAL	((__force __kernel_rwf_t)0x00000100)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
- 			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
--			 RWF_DONTCACHE)
-+			 RWF_DONTCACHE | RWF_NOSIGNAL)
- 
- #define PROCFS_IOCTL_MAGIC 'f'
- 
+ arch/arm64/kvm/arm.c               |   6 +
+ arch/loongarch/kvm/Kconfig         |   1 -
+ arch/loongarch/kvm/vcpu.c          |   4 +-
+ arch/mips/kvm/Kconfig              |   1 -
+ arch/mips/kvm/mips.c               |   4 +-
+ arch/powerpc/kvm/Kconfig           |   1 -
+ arch/powerpc/kvm/powerpc.c         |   4 +-
+ arch/riscv/kvm/Kconfig             |   1 -
+ arch/riscv/kvm/vcpu.c              |   4 +-
+ arch/s390/kvm/Kconfig              |   1 -
+ arch/s390/kvm/kvm-s390.c           |   4 +-
+ arch/x86/include/asm/kvm-x86-ops.h |   1 +
+ arch/x86/include/asm/kvm_host.h    |   7 +-
+ arch/x86/kvm/mmu.h                 |   3 +-
+ arch/x86/kvm/mmu/mmu.c             |  87 +++-
+ arch/x86/kvm/mmu/tdp_mmu.c         |  50 +--
+ arch/x86/kvm/vmx/main.c            |   9 +
+ arch/x86/kvm/vmx/tdx.c             | 659 ++++++++++++++---------------
+ arch/x86/kvm/vmx/tdx.h             |   8 +-
+ arch/x86/kvm/vmx/x86_ops.h         |   1 +
+ arch/x86/kvm/x86.c                 |  13 +
+ include/linux/kvm_host.h           |  14 +-
+ virt/kvm/Kconfig                   |   3 -
+ virt/kvm/kvm_main.c                |   6 +-
+ 24 files changed, 468 insertions(+), 424 deletions(-)
+
+
+base-commit: 4cc167c50eb19d44ac7e204938724e685e3d8057
 -- 
-2.51.0
+2.51.1.930.gacf6e81ea2-goog
 
 
