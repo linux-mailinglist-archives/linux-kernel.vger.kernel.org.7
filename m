@@ -1,397 +1,177 @@
-Return-Path: <linux-kernel+bounces-878870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40092C21AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:07:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CB6C21A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF72B4EEACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:01:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831501885631
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE5E380F26;
-	Thu, 30 Oct 2025 17:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C8F36C248;
+	Thu, 30 Oct 2025 17:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EypW9XRP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VWetDbam";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JG650cJM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FB137DBF1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10361F4CB7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847106; cv=none; b=oisdSnJEg6XPcxYtc0Bxpazy5cGRZ+eU91f8MjN3wAlZaMi8f7TyHI38ZT2PN/aBxaAHox3wnhURlDu3eouoO0d2pJqcEACqOZLXhF7HB9861G49NEMDKl/NQyl+PbnzlcA5sLRxUxaIy9p8v07DRCsuwTe93P7uw1llch1QejA=
+	t=1761847134; cv=none; b=ZsmV5GlyfhYmlK+4CrkyRT1gOhgnM5ueWXhDsmCgacFoY1+3XgyP1F2aV2VbEzWn8zKfFqAwCG43It61yD9JqEL9XLwx/lkuxDpnRXUzk3Q88IuXzK1S10RMHUopIEwEhblEmfIn34/nH4IkTXPiYcIhgVnjSBdEBVKG/BlGSG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847106; c=relaxed/simple;
-	bh=l69I5xmyhHro4KhUO/PVpo4RcLcYevtDC9A8q7K0wyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IOWXRM/YOr0mBmo2zlOvoGib9wAx2nRz3wEOSDgf0a6q4MBkRI0WekIfT+cZmkGupptZ/TRC/AwADGjh0v7Y+z6vJOIMxMa2mmW9JW2ofR0EPSBrjt8XciEqvWZ6RCMCCOoU+VIRzIvkVYVrIrH7jkgG+l1yIz/81BCFrvuQ1E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EypW9XRP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so13290075e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:58:22 -0700 (PDT)
+	s=arc-20240116; t=1761847134; c=relaxed/simple;
+	bh=Q52OrGfLDGta4QWoGq5iz5GAVO2sT37KfMJDoKNIZe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQN9xc/InWW7vwaOjYp+YKcvbB+UThJQnuVCD7I8U707zmkDaC3fanyZfZDalbmcFYH0krY4SeSmg5V620phuJqViAPqj+PJ8BwNANLDZcVtZ+nTFdDBja75rTqoKKBaOTPjsM8n7RxOVktEBCmG0Hq3RrE0ryQWQbnkSRXzxVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VWetDbam; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JG650cJM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59UHZhM83115666
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:58:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=1Q0deErh+I54GhIS1z7OGdth
+	5B/KTJBRbE+7iTB3hcw=; b=VWetDbameGekInwSnlRyNh7GOnjGcynxubTf4xBC
+	maKc1jX6pXd6QtsZunBVwz88enhEIpfl12MyLKasK7LnZ6Nv9BMDzxL4SUYVIW5U
+	qh3AJoydlaZStSkExjf1XvMfAFaE/lwYgWE7Ns/n26BsY9MVh8IasnkJ26kV0pJ4
+	vNii05aQ/eOoZI8XIoawFzX224h+fusm2TvXDawh3+HkEF15Xl1s3D5e1+iS5Dmp
+	WdVXaWqkY4tovjYlTdT5xCS11TQRCRoCPq7VubjJG6pk7KmGlVTznSJwqm45TT3w
+	VJUFR32zqVP4EYgiI4RQy2r4PKtEPCaRzBzxEKMRfJBhMg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a45b41g23-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:58:50 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4eb7853480dso35154571cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:58:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761847101; x=1762451901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Edvdlqy9JPFDf6Wc3Jobmq+A9++TT7Am/KBqXa8adZg=;
-        b=EypW9XRPOjXY/BwTMmufm01QyPpSWGmXwGJociTQ25Jl/FZTsXefmtvkwsACw/UEqA
-         DLTcqoHNxeYGj1Y2MtDb4aQM3U/aJ03+UTHP1a+fQrcBeAqOrAT6UNfYv3m2aEc9UwxQ
-         nVDvkSC9OxQmrE3oq3DfgGJLJZ8hG7udOrdqY9qgvD9Dp6PbCssOe340m3fp+kmDNDU8
-         RzGCyGNhAcLQo0Jk+Hz/9nmdbvbeZqWqeFOknFWr2DyrmhuLkBF6dwGksXMJPLOIw71e
-         iBpK9vHi7waQi9M17Mx5FCEco3yDYa4jvTLppDWF5UOdEyY7C2M38RJA0/E0TZHW2jI6
-         33uA==
+        d=oss.qualcomm.com; s=google; t=1761847130; x=1762451930; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Q0deErh+I54GhIS1z7OGdth5B/KTJBRbE+7iTB3hcw=;
+        b=JG650cJMpJHPpCZEXRwGWABGl02ZR7WQmIih+EMW1cjdzGL1jwOcR+Z75mJf+actTl
+         d9a/dIGNyZM1TQo4eSGPX2PTWcfRMt3tlAzIyNOm8zGOwonx59ubVTTqEkrO5sqEO7TR
+         Xgvmpo54X4DQsHZsapo5iX7BgWY+aBfKyLSLAVxUG12C6qT6yPY70Top0PtfdQ3LLVN9
+         We7b//RJL0jYCFCTfB9Uu2CAM/Nx1EjN1gy7eF8sBQy5FtbZHLOF7wz/04MarnF4Zg+H
+         PiJ6ZebK6e0Y8/bPwmTosqqSECNaP9ML3gazSVqe0aJ+P7wKkARyEYFsCXGaqlCBFVgg
+         GPvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761847101; x=1762451901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Edvdlqy9JPFDf6Wc3Jobmq+A9++TT7Am/KBqXa8adZg=;
-        b=S8A+fmPQkwjHLhgLNj1P71YAYQ0AR4LBNjW+/s859BjXt0Sof8DrYjOt7GMlxbZmNM
-         YVSC9w/MI9rTP4t5VtrEqJtOgOY56LhTfT8vVxm6/ZQJel48KeYERPwHApUq9rfMpzm3
-         HIorcjmHOsOEQhv26ntqi7tZV4PZY2K3+JdTduLFXe7n5rUvPxxtqAuRqtXG1K+OI1Uh
-         /LrvJ3oKHlhoUvfg1gFoXQ/X04oCWJLXckTLloLttSN6PY5G8+HI+C3LuuNm8GdizOQS
-         KDnvSG+cjP9v8lEm25e6l/C3NDQzo11c6/uJl5sG9PH1MfLA/gJVDVINfCNzyfrMI4W2
-         c6MA==
-X-Forwarded-Encrypted: i=1; AJvYcCVx+kQVLSI5OGXAxb6dIZmhlmuNT4dc23l/ct2WpmonGF5J67ajYn0p5aPM75SbYsPZk084MEKEywVAzKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIUOQ2qDq4lIcDS2FGHzrBYrEdhFE9O2XQjgxGdE92NdEaikax
-	9L6MQ1qYzmICInuxEqjCbPPZQms+lxqL20jYJzIlq/0y5VWj3Q+GFST/
-X-Gm-Gg: ASbGnctQnu2dsQpY64sH3m55CFQkOZjMYokXbsFt+/KSTXtv3XiMR2dLhoxVtcrI38m
-	1ITMlw5GeVVrUf579ctLBu1CJ++y9ehuoHw9uBgrWXkyMyahrMQJ5PXMJi3Bn8mI95Fm9+G/mJg
-	mPXkdFkHorh3cMrPUQaQwu2dh8aQl0oE5DjlhFbW6zFT/RMY0n2f8PNCDSwkxABKhFLtfvYh2db
-	7prxO+tuhRKIq3JL+LOydk4qGJL5xpArXfdGOsx09/Lr2FNFFTwfutOkiwnhWr1+JfEXYdalVeP
-	EojJxJQimXwD3t39KAL+z8Wk2pXQ+QSXAb4yYdQdayvYFoXuAMv9VlO0QFXGeW5Rwb3VUkSe+re
-	KTNj6FV934EW1GtqWfqj6K4Eb+Pgui3F8GyVIXTkuD2ppX343lXylIEot3quFz03njxwNsYRKxX
-	sMwZfXKy13MAr6V3lqc5dwgq/rzOnTnLHnz9QTNMuYwTGVzyunoorbdEZ/MENjJiBcgj2LLs4=
-X-Google-Smtp-Source: AGHT+IFqbrKQ5/jJ201fuWsP+20Nw8T/bQElSs8vE0JryTvXYNgKbYIgvVDd+hZC3bnGBXBweaE/kA==
-X-Received: by 2002:a05:600c:3548:b0:477:171f:65f with SMTP id 5b1f17b1804b1-477308aa6a1mr5784485e9.38.1761847100893;
-        Thu, 30 Oct 2025 10:58:20 -0700 (PDT)
-Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772f53aad6sm15098055e9.13.2025.10.30.10.58.20
+        d=1e100.net; s=20230601; t=1761847130; x=1762451930;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Q0deErh+I54GhIS1z7OGdth5B/KTJBRbE+7iTB3hcw=;
+        b=pz1vcUwLJVF+OTMN7/BZ9mgzFXh+i4JO5lfj0cxv2nFSXRM409oPnWKCvB8//6q6Ld
+         rHe7TolHJGEgZbnQtJCNxgF7z4/rYvGOfeJ8JMm3zcmA4Um5ZELBdT57+SPc8RBB6gzq
+         mm08yu5XQvp0MO2cvyjuXs+EjzwEC5BZ4hhabyi21J4I7dIHZSpThjQ9t+JySah6B6ex
+         D4qsuIHnYRSPSRTbyJvkYFpLoUeeuaOJT41TJ8akoGDUTOeyLefVZbufN8npfIb4fhXa
+         n5+8zpQQ8iVSwQiXhsggXtyY+3zMglcb9PNl1qCcdIBC77Pk/RQefDarYoqTk14KMi9L
+         nI6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUhWUs5yrD3e1Bpz2tuVm4clKFBrbD/2YqeVQy1cyMGMp9xobB5k3D815vc7Zbktu9vtqYnGpYC5OVhCk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztDbZ//6HHIaZ3t5wzocCjYHtCaGD/VdsxWxXhYT8xxxMfm7OA
+	cVIKpXqCBTiE1RqCW2GGY3vawfYGu+UUFY3DrmLn+f3VESHf0xxaQAnFuwZtRIbyvU2CsjFlvLU
+	Ut6N0cKxbwPoSs78LfTYx92UwMYwaza+TNhhsLZRNcsTvutCkTe8g3ttPz3W+ML+2ByA=
+X-Gm-Gg: ASbGncsYZ0Z0P3f7tPFSWrFDfrG+ZbpFVRRkhYyKbGCqNZ5emWp18ayalEiEuobURjl
+	UvAkRCssGCVKImwn4UWjJK+s3LD7+Z8kZAhpkRjEYK9ElKxDkUEp+hdHbHYJLucbeIPaIHkZ223
+	aaY1e3DuQ0zWDVItp1A3F5cYSzWfvXGji+gYAGnV2zVBMKQPlG7nvpBzyQnzh06USGAuwlDLmLD
+	gLMNJ+BOKEkEKGLrN7HDOWNT7q2ryEbpRVe/CS5ZJ2l0JzR9UrBFn7TzqGFs8roasLCXe2UYfiG
+	gk0bXMO/vNamkxwwgIc3aJZQ9vTcd49DMUFogxUFsAuPir1hgs6FGFl7dQ8iSNe3WeC9hTVSBnO
+	E/vxNJq0rO+CmH+7H3nVkNYT4m1p99cSNWd13Fh9qB61vOHoYktnpHHskuhM4nm3VDliP4sbUX3
+	O0cqSWrsCQrxF/
+X-Received: by 2002:a05:622a:1886:b0:4e8:aad2:391c with SMTP id d75a77b69052e-4ed30da2680mr6941111cf.1.1761847129689;
+        Thu, 30 Oct 2025 10:58:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnEyIEQZlV9AL9hQo39GA8tkdTMFXooFYwSJ4HzSOksJTmwx0/qrIgEOylTfOt9zo+f+r2yA==
+X-Received: by 2002:a05:622a:1886:b0:4e8:aad2:391c with SMTP id d75a77b69052e-4ed30da2680mr6940501cf.1.1761847128768;
+        Thu, 30 Oct 2025 10:58:48 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f5bba2sm4718168e87.52.2025.10.30.10.58.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 10:58:20 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 13/13] serial: sh-sci: Add support for RZ/G3E RSCI SCI
-Date: Thu, 30 Oct 2025 17:58:01 +0000
-Message-ID: <20251030175811.607137-14-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
-References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
+        Thu, 30 Oct 2025 10:58:48 -0700 (PDT)
+Date: Thu, 30 Oct 2025 19:58:46 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] arm64: dts: qcom: sc8180x: create common zap-shader
+ node
+Message-ID: <p5apfg5cbwcdmilfr3omoncvuj7z7zbj6dkex2eicjdubkyxwj@h42bzzhx4amt>
+References: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
+ <20251028-dt-zap-shader-v1-3-7eccb823b986@oss.qualcomm.com>
+ <c90b917e-b3bc-42fb-a127-ab47d5154d0d@oss.qualcomm.com>
+ <c62a7f9d-6984-41c0-88c5-1d6c40d411dd@oss.qualcomm.com>
+ <weyze7a2pqmt2klt763lbwyvpezqndm5rjnitexalru7hy3xhh@tdqx6xeqp3qu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <weyze7a2pqmt2klt763lbwyvpezqndm5rjnitexalru7hy3xhh@tdqx6xeqp3qu>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE0OCBTYWx0ZWRfX3x9SSiTM/GhJ
+ 7U0ClwW19OQn/vWiHXOoo0ZARApNI3Dor7fLtAwU5fkMHHJHLGY/FOE1JMdOY/kLdOc9k+g4QpL
+ yd/+UqDUjBBMMFzEYY6T/jFvQeeJp2LXjywKvSC5hWxlEka1gDaN+YjC/GQnUU1nwkw9eG49wxT
+ G51ODCluVtn2RWlj4g57CuxKozsc4qvaVBQZ6YVdK15EznyZzeP486ZHBfULsBU3E+UAxLzQp8W
+ PJqWseW9czAtMYReJJOB4KjzXUg9wLY/TwIOpgYRLJJPMXXZ2mBJboGod0+2EQx2LcQTd9pqK8v
+ tIUWgSCdXEKARSlQoGlFbHcc5yOKT4cf7Y1DfTZPRPBtzAAKtLip1Ld017Ag4V309uYAD5pcKNi
+ DAHPlhUeWglghW/BMMQJ7f9FeyqaUA==
+X-Authority-Analysis: v=2.4 cv=KePfcAYD c=1 sm=1 tr=0 ts=6903a75a cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=76FKqnuqe-XMp3VuG3UA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: BEVfSFJRUr3odWWKRuV-jmpeqxbUSE_Q
+X-Proofpoint-GUID: BEVfSFJRUr3odWWKRuV-jmpeqxbUSE_Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_06,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300148
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Thu, Oct 30, 2025 at 12:28:31PM -0500, Bjorn Andersson wrote:
+> On Thu, Oct 30, 2025 at 11:59:00AM +0100, Konrad Dybcio wrote:
+> > On 10/30/25 11:58 AM, Konrad Dybcio wrote:
+> > > On 10/28/25 10:00 PM, Dmitry Baryshkov wrote:
+> > >> In order to reduce duplication, move common GPU memory configuration
+> > >> from individual board files to sc8180x.dtsi.
+> > >>
+> > >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > >> ---
+> > > 
+> > > [...]
+> > > 
+> > >> diff --git a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > >> index 93de9fe918ebdadf239832db647b84ac9d5a33f6..069953dcad378448800d45e14931efe1fe1a69fc 100644
+> > >> --- a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > >> +++ b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > >> @@ -14,6 +14,8 @@
+> > >>  #include "sc8180x.dtsi"
+> > >>  #include "sc8180x-pmics.dtsi"
+> > >>  
+> > >> +/delete-node/ &gpu_mem;
+> 
+> I agree with your hmm, seems this line should be dropped(?)
+> 
+> Dmitry, please confirm and I can fix it up as I'm applying the series.
 
-Add support for RZ/G3E RSCI SCI(a.k.a non FIFO mode).
+Oh, and this line is necessary, because sc8180x-primus has its own
+location for the gpu_mem.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change.
----
- drivers/tty/serial/rsci.c   | 138 +++++++++++++++++++++++++-----------
- drivers/tty/serial/rsci.h   |   1 +
- drivers/tty/serial/sh-sci.c |   4 ++
- 3 files changed, 103 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
-index a3e216c05b76..43a381e5eace 100644
---- a/drivers/tty/serial/rsci.c
-+++ b/drivers/tty/serial/rsci.c
-@@ -161,8 +161,11 @@ static void rsci_serial_out(struct uart_port *p, int offset, int value)
- 
- static void rsci_clear_DRxC(struct uart_port *port)
- {
-+	struct sci_port *s = to_sci_port(port);
-+
- 	rsci_serial_out(port, CFCLR, CFCLR_RDRFC);
--	rsci_serial_out(port, FFCLR, FFCLR_DRC);
-+	if (s->type != RSCI_PORT_SCI)
-+		rsci_serial_out(port, FFCLR, FFCLR_DRC);
- }
- 
- static void rsci_clear_SCxSR(struct uart_port *port, unsigned int mask)
-@@ -229,7 +232,6 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
- 	unsigned long max_freq = 0;
- 	unsigned int baud, i;
- 	unsigned long flags;
--	unsigned int ctrl;
- 	int best_clk = -1;
- 
- 	if ((termios->c_cflag & CSIZE) == CS7) {
-@@ -294,7 +296,11 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
- 
- 	rsci_serial_out(port, CCR0, ccr0_val);
- 
--	ccr3_val |= CCR3_FM;
-+	if (s->type == RSCI_PORT_SCI)
-+		ccr3_val |= CCR3_RXDESEL;
-+	else
-+		ccr3_val |= CCR3_FM;
-+
- 	rsci_serial_out(port, CCR3, ccr3_val);
- 
- 	ccr2_val |= (cks << 20) | (brr << 8);
-@@ -303,12 +309,16 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
- 	rsci_serial_out(port, CCR1, ccr1_val);
- 	rsci_serial_out(port, CCR4, ccr4_val);
- 
--	ctrl = rsci_serial_in(port, FCR);
--	ctrl |= (FCR_RFRST | FCR_TFRST);
--	rsci_serial_out(port, FCR, ctrl);
-+	if (s->type != RSCI_PORT_SCI) {
-+		unsigned int ctrl;
- 
--	if (s->rx_trigger > 1)
--		rsci_scif_set_rtrg(port, s->rx_trigger);
-+		ctrl = rsci_serial_in(port, FCR);
-+		ctrl |= (FCR_RFRST | FCR_TFRST);
-+		rsci_serial_out(port, FCR, ctrl);
-+
-+		if (s->rx_trigger > 1)
-+			rsci_scif_set_rtrg(port, s->rx_trigger);
-+	}
- 
- 	port->status &= ~UPSTAT_AUTOCTS;
- 	s->autorts = false;
-@@ -320,7 +330,8 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
- 
- 	rsci_init_pins(port, termios->c_cflag);
- 	rsci_serial_out(port, CFCLR, CFCLR_CLRFLAG);
--	rsci_serial_out(port, FFCLR, FFCLR_DRC);
-+	if (s->type != RSCI_PORT_SCI)
-+		rsci_serial_out(port, FFCLR, FFCLR_DRC);
- 
- 	ccr0_val |= CCR0_RE;
- 	rsci_serial_out(port, CCR0, ccr0_val);
-@@ -337,12 +348,23 @@ static void rsci_set_termios(struct uart_port *port, struct ktermios *termios,
- 
- static int rsci_txfill(struct uart_port *port)
- {
--	return rsci_serial_in(port, FTSR);
-+	struct sci_port *s = to_sci_port(port);
-+
-+	if (s->type == RSCI_PORT_SCI)
-+		return !(rsci_serial_in(port, CSR) & CSR_TDRE);
-+	else
-+		return rsci_serial_in(port, FTSR);
- }
- 
- static int rsci_rxfill(struct uart_port *port)
- {
--	u32 val = rsci_serial_in(port, FRSR);
-+	struct sci_port *s = to_sci_port(port);
-+	u32 val;
-+
-+	if (s->type == RSCI_PORT_SCI)
-+		return (rsci_serial_in(port, CSR) & CSR_RDRF) != 0;
-+
-+	val = rsci_serial_in(port, FRSR);
- 
- 	return FIELD_GET(FRSR_R5_0, val);
- }
-@@ -357,7 +379,9 @@ static unsigned int rsci_tx_empty(struct uart_port *port)
- 
- static void rsci_set_mctrl(struct uart_port *port, unsigned int mctrl)
- {
--	if (mctrl & TIOCM_LOOP) {
-+	struct sci_port *s = to_sci_port(port);
-+
-+	if ((mctrl & TIOCM_LOOP) && s->type != RSCI_PORT_SCI) {
- 		/* Standard loopback mode */
- 		rsci_serial_out(port, CCR1, rsci_serial_in(port, CCR1) | CCR1_SPLP);
- 	}
-@@ -478,12 +502,13 @@ static void rsci_transmit_chars(struct uart_port *port)
- static void rsci_receive_chars(struct uart_port *port)
- {
- 	struct tty_port *tport = &port->state->port;
-+	struct sci_port *s = to_sci_port(port);
- 	u32 rdat, status, frsr_status = 0;
- 	int i, count, copied = 0;
- 	unsigned char flag;
- 
- 	status = rsci_serial_in(port, CSR);
--	frsr_status = rsci_serial_in(port, FRSR);
-+	frsr_status = (s->type == RSCI_PORT_SCI) ? 0 : rsci_serial_in(port, FRSR);
- 
- 	if (!(status & CSR_RDRF) && !(frsr_status & FRSR_DR))
- 		return;
-@@ -496,34 +521,40 @@ static void rsci_receive_chars(struct uart_port *port)
- 		if (count == 0)
- 			break;
- 
--		for (i = 0; i < count; i++) {
--			char c;
--
--			rdat = rsci_serial_in(port, RDR);
--			/* 9-bits data is not supported yet */
--			c = rdat & RDR_RDAT_MSK;
--
--			if (uart_handle_sysrq_char(port, c)) {
--				count--;
--				i--;
--				continue;
--			}
--
--			/*
--			 * Store data and status.
--			 * Non FIFO mode is not supported
--			 */
--			if (rdat & RDR_FFER) {
--				flag = TTY_FRAME;
--				port->icount.frame++;
--			} else if (rdat & RDR_FPER) {
--				flag = TTY_PARITY;
--				port->icount.parity++;
--			} else {
--				flag = TTY_NORMAL;
-+		if (s->type == RSCI_PORT_SCI) {
-+			char c = rsci_serial_in(port, RDR) & RDR_RDAT_MSK;
-+
-+			if (uart_handle_sysrq_char(port, c))
-+				count = 0;
-+			else
-+				tty_insert_flip_char(tport, c, TTY_NORMAL);
-+		} else {
-+			for (i = 0; i < count; i++) {
-+				char c;
-+
-+				rdat = rsci_serial_in(port, RDR);
-+				/* 9-bits data is not supported yet */
-+				c = rdat & RDR_RDAT_MSK;
-+
-+				if (uart_handle_sysrq_char(port, c)) {
-+					count--;
-+					i--;
-+					continue;
-+				}
-+
-+				/* Store data and status */
-+				if (rdat & RDR_FFER) {
-+					flag = TTY_FRAME;
-+					port->icount.frame++;
-+				} else if (rdat & RDR_FPER) {
-+					flag = TTY_PARITY;
-+					port->icount.parity++;
-+				} else {
-+					flag = TTY_NORMAL;
-+				}
-+
-+				tty_insert_flip_char(tport, c, flag);
- 			}
--
--			tty_insert_flip_char(tport, c, flag);
- 		}
- 
- 		rsci_serial_in(port, CSR); /* dummy read */
-@@ -607,6 +638,8 @@ static const char *rsci_type(struct uart_port *port)
- 	struct sci_port *s = to_sci_port(port);
- 
- 	switch (s->type) {
-+	case RSCI_PORT_SCI:
-+		return "sci";
- 	case RSCI_PORT_SCIF:
- 		return "scif";
- 	}
-@@ -650,6 +683,17 @@ static const struct sci_port_params rsci_port_params = {
- 	.common_regs = &rsci_common_regs,
- };
- 
-+static const struct sci_port_params rsci_rzg3e_sci_port_params = {
-+	.fifosize = 1,
-+	.overrun_reg = CSR,
-+	.overrun_mask = CSR_ORER,
-+	.sampling_rate_mask = SCI_SR(32),
-+	.error_mask = RSCI_DEFAULT_ERROR_MASK,
-+	.error_clear = RSCI_ERROR_CLEAR,
-+	.param_bits = &rsci_port_param_bits,
-+	.common_regs = &rsci_common_regs,
-+};
-+
- static const struct sci_port_params rsci_rzg3e_scif_port_params = {
- 	.fifosize = 32,
- 	.overrun_reg = CSR,
-@@ -701,6 +745,13 @@ struct sci_of_data of_sci_rsci_data = {
- 	.params = &rsci_port_params,
- };
- 
-+struct sci_of_data of_rsci_sci_data = {
-+	.type = RSCI_PORT_SCI,
-+	.ops = &rsci_port_ops,
-+	.uart_ops = &rsci_uart_ops,
-+	.params = &rsci_rzg3e_sci_port_params,
-+};
-+
- struct sci_of_data of_rsci_scif_data = {
- 	.type = RSCI_PORT_SCIF,
- 	.ops = &rsci_port_ops,
-@@ -716,12 +767,19 @@ static int __init rsci_early_console_setup(struct earlycon_device *device,
- 	return scix_early_console_setup(device, &of_sci_rsci_data);
- }
- 
-+static int __init rsci_rzg3e_sci_early_console_setup(struct earlycon_device *device,
-+						     const char *opt)
-+{
-+	return scix_early_console_setup(device, &of_rsci_sci_data);
-+}
-+
- static int __init rsci_rzg3e_scif_early_console_setup(struct earlycon_device *device,
- 						      const char *opt)
- {
- 	return scix_early_console_setup(device, &of_rsci_scif_data);
- }
- 
-+OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g047-rsci", rsci_rzg3e_sci_early_console_setup);
- OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g047-rscif", rsci_rzg3e_scif_early_console_setup);
- OF_EARLYCON_DECLARE(rsci, "renesas,r9a09g077-rsci", rsci_early_console_setup);
- 
-diff --git a/drivers/tty/serial/rsci.h b/drivers/tty/serial/rsci.h
-index ba255f58c088..df7a7edad7d4 100644
---- a/drivers/tty/serial/rsci.h
-+++ b/drivers/tty/serial/rsci.h
-@@ -6,6 +6,7 @@
- #include "sh-sci-common.h"
- 
- extern struct sci_of_data of_sci_rsci_data;
-+extern struct sci_of_data of_rsci_sci_data;
- extern struct sci_of_data of_rsci_scif_data;
- 
- #endif /* __RSCI_H__ */
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 85b89c1ebf15..b7d9ea4091d2 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3492,6 +3492,10 @@ static const struct of_device_id of_sci_match[] __maybe_unused = {
- 		.data = &of_sci_scif_rzv2h,
- 	},
- #ifdef CONFIG_SERIAL_RSCI
-+	{
-+		.compatible = "renesas,r9a09g047-rsci",
-+		.data = &of_rsci_sci_data,
-+	},
- 	{
- 		.compatible = "renesas,r9a09g047-rscif",
- 		.data = &of_rsci_scif_data,
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
