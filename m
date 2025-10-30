@@ -1,644 +1,156 @@
-Return-Path: <linux-kernel+bounces-878060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654A2C1FAD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:00:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE0FC1FB0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3EB594E4349
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC9B41A23D0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBB13546F5;
-	Thu, 30 Oct 2025 10:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C316354AFC;
+	Thu, 30 Oct 2025 11:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mg5Vt52C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OmK0hhJj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mg5Vt52C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OmK0hhJj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZIX6zeQg";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ThQLHN9t"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A66351FCA
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B2A35471E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761821995; cv=none; b=BOXBQau05EFhURaYbBTgGN/yxj1qX04S3SeoV+qJZu+J7XJKTZaAvjxNP7kKj2UtuPTxOxdCqLyo5lgypoba0MW6fIlFzMf6i0fXB4e383oeXs04K676aAo07RfWWpxmd3BRqY1vA/IZ1GQj6G2SXrXYiDt3rFXmgMLQ5Za5oSY=
+	t=1761821999; cv=none; b=QBzr8S318Jil6X3q+ztaGwsTKXQxFvbWzX3cEYVZqk+eI/Wuf0ZO24LjlQnVGyJ+cpQVpivb7bywdYyjk3IPpguPDYPEfyQsyHgi0mPCwt3hVb8P1RUdM/XWiRB9rTLoF38snvRA27pR9NrnQEJVSJ2dBSg3rD5omt6ocOsip4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761821995; c=relaxed/simple;
-	bh=PJ0R5manhiG99ym3DYYie1q+oBQdGrvpp0ihMW6t9P8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=icyqwK4ngPWZmhMtniqihkE8MzBINrzUJsJGPoJx8t7C1B8WuidXkWubTKJpoGuHYicdCEgqTF+xplMaUdIs6rv8yNgXFvk/F46s+j1Kkm4WgHOL8MO3YT7antf864qCCFj7wOWlcl/V4HNJZEyU/MDcue6dbb+XXcOK9Afwc48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mg5Vt52C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OmK0hhJj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mg5Vt52C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OmK0hhJj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 219051F449;
-	Thu, 30 Oct 2025 10:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761821990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T5JQT7R6S5L4aum/QGXl3cOLlsN72wGcdFj1+JHCzvs=;
-	b=mg5Vt52CuN+frtiQp3fgT7Uyqx1vLLO0sm1ysEgpwQCchfDA+ivvefIL4ipi7fzKLqs2+c
-	AWOAGpTHI8C7JxJ60QeIxTSJPXZnMwRx84m6hLWJjraVoTYX4yvCeU1+/6IwIe4Pj8Kghz
-	N20mB12ztConbLaLXWiNndyyayEeXrk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761821990;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T5JQT7R6S5L4aum/QGXl3cOLlsN72wGcdFj1+JHCzvs=;
-	b=OmK0hhJjHtvtiyKE3Wo9qBlwcwJVGU1RHJrpEe86eJ+1mhakbKCI0ItDWu2drMdeATDL+8
-	76yWDFmftoPI2HDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mg5Vt52C;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OmK0hhJj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761821990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T5JQT7R6S5L4aum/QGXl3cOLlsN72wGcdFj1+JHCzvs=;
-	b=mg5Vt52CuN+frtiQp3fgT7Uyqx1vLLO0sm1ysEgpwQCchfDA+ivvefIL4ipi7fzKLqs2+c
-	AWOAGpTHI8C7JxJ60QeIxTSJPXZnMwRx84m6hLWJjraVoTYX4yvCeU1+/6IwIe4Pj8Kghz
-	N20mB12ztConbLaLXWiNndyyayEeXrk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761821990;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T5JQT7R6S5L4aum/QGXl3cOLlsN72wGcdFj1+JHCzvs=;
-	b=OmK0hhJjHtvtiyKE3Wo9qBlwcwJVGU1RHJrpEe86eJ+1mhakbKCI0ItDWu2drMdeATDL+8
-	76yWDFmftoPI2HDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E00B13393;
-	Thu, 30 Oct 2025 10:59:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vyZmAyZFA2kITgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 10:59:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B4E52A0AD6; Thu, 30 Oct 2025 11:59:49 +0100 (CET)
-Date: Thu, 30 Oct 2025 11:59:49 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Taotao Chen <chentaotao@didiglobal.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>, 
-	linux-kernel@vger.kernel.org, syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
-Message-ID: <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
+	s=arc-20240116; t=1761821999; c=relaxed/simple;
+	bh=goIcOyK65O4TgDX8/vKQnKMbI1joFOw1m9UymKJdhsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VCybSIIIqzIeMqALrcPV05Kxcd/mVv+OJWyGf4yPjAvEpF0lGIsEHHoQW0paaimn1Sz4Y3nbn4mPSGFTOKkNR3/gORbYr/fYDoOMcKUQEA0iVu7Efc0CgRixh8qXCVyX97iZzetVvNOHaWYXiNxJU0JTM/8G0rIRUPHksHau75s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZIX6zeQg; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ThQLHN9t; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U9MXOd3115524
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:59:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u4Li80aTvp/g1w+wUXqfMhurwLUlh+lPbBgOPzmRuh0=; b=ZIX6zeQgyJ2gorIw
+	ATy/MgBGFHO/mwzXZJGzcs4CMUYAxUe9f+GPwAuT1kY5FXKBD7POXDuErLZjlInw
+	+ZjLMZfm4x7GZN2p2WevCjF8LvEC09C/a3Ud2/0zgkFJ67bZul7JkKlyOfsDuEUe
+	R7f3w3Nh5jm5M1xAl9u8/xNn+T/GFN0FOIAbf6YnPM+xPjDxTVXTXn8yBE2HsbPH
+	8TPHaCm3eINx17J0YP2ascCUEksQ2ayt4ETLfcHkHNf5P09UOXNfr7d3/n2aa6Vt
+	hp8PNvRC+n/aLoaAsnZMz8tuc5ebMtqqZ5/+XuiivnDTfqNhLAF7i2pNXGIH+gVA
+	e8PXKQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a45b409k2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:59:56 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8934ae68aso2153911cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761821996; x=1762426796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u4Li80aTvp/g1w+wUXqfMhurwLUlh+lPbBgOPzmRuh0=;
+        b=ThQLHN9t2mKjd0/cvjD5eBb2xMTQx1Nmruif4G1Qn9GBWyMw4/Wp9Z+tec5Sgqqmy5
+         bEnbGM/JGNJzQNZVk7Jp1e580sfnS8S3VHelNyAvovLC6PGpwA399sIHIIqD9R28uwvG
+         rCmHiGoA105Ab9XvrxvexepCvA8KDoWLGyx/wpBRuDzokoDTdFBinFaY3Z39x8eEBlS0
+         rqiNQ88c8p6b9WHeYSBEukXmdXunfOw5ZLQe5HaCS3+iFFN1nOgu2m4h25AurZK0UOJL
+         6DwzIIiq4WsoOg7fpTKAtq4dlY1cvTh4WpvoenSDfpeEOzvwULWG3OFtXmbzqRGgGRL9
+         wlxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761821996; x=1762426796;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4Li80aTvp/g1w+wUXqfMhurwLUlh+lPbBgOPzmRuh0=;
+        b=LAFCI2IsoYD/hppo4Fcwi9N29mMA/KFwsxmwT+5XQaOFvMoDKEQJVAdyYTuCWVtsGN
+         GFHCZCkqjmlDGOZsuQRJfT8EqwELYhkjhvBxOt5tuuKJ0COhJTkgV5TcJT/kd4HXFbeP
+         Kkd/H098aOiWjqI2HCZ0x/XpJE4Yqoj4r/BBdUEbGUT34E5dqtrVQ1bI5+36X2XMPLX1
+         5IJ4nll4L3SJbWMDTPhLPD3CFI0TSQejRAX0VKTvB2dWw1C4QqC3fw2+EIi54NWbYk+i
+         8/f5Lc66svqGOJmChadCFYB7tnotSE4+/VSazpgpdZQXZ2CkT/k0UXQST1DiTxeKqObU
+         HmAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVng5/+K2Xxr/PLTFu7/sRhlotyh7S3F4jiS2LjZpm72CRECNTl/R2TDd78usHLaTASWtus2jUGnBMoA+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7uox0PhRu8b6mBjYkE5ucco+/S315V2vev34j7/lGyyF0IkZu
+	N2ERUY+qQw5RvPYoLRYrbWIug0/iQpt6OYeglXIbpjqkhjPSLk5wgVNKYN85VZOv17FzdcFMumm
+	F1oj12hJ2nYToLQHdwGx8OcJvc0sFL7Vt7YIfeW4SBNWKsih/YVXAjwiuUpbKZn2zroc=
+X-Gm-Gg: ASbGnct2GTSIZml8aqLK1gj5FhL2OmfmoVK2L2UnQ8NGIEPiFe0dGLpsuEYb45sLn38
+	jXSS9Y/m8HFZIj95mR3QlJ/KF29TbVfbqchu6dTvaE2wrc1xgvyl0FSCUPimX4M1bSzhnM7pOdj
+	ZQPQaxMKurxpa0Bt+1+hWMtmoywxVYXjTClJ85lUp8vhMtnEbviSydU2pDj5ikhwPMt8Q6cG7xH
+	T2cSEeHwgP6L1JCYCAKPU99gHZ98IoD25eNDRM/o+wDcscv8llukuzaWzveC7o0FA29r6J8PLta
+	yB0Pci5BTdiJH5N896pfxvEIzGXRdRW5h8hlbfsEuPdNHXgCw+eu0XgGrf8iTVSHsJ30tYGg3wc
+	SJm55rrnhhAqJZOCwg64j7NNFapxG9VT6soh/GqjOffMH30clZQdDZYSm
+X-Received: by 2002:a05:622a:8e:b0:4e8:90f4:c3aa with SMTP id d75a77b69052e-4ed15c0e6fdmr49741611cf.8.1761821996097;
+        Thu, 30 Oct 2025 03:59:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGm09HK/SLe5Y3f9LFh1BN+NjQibrJjNIWqbjAP7w16cB/HL9cTyvykV9a0BC9Cdc9C0OuxdA==
+X-Received: by 2002:a05:622a:8e:b0:4e8:90f4:c3aa with SMTP id d75a77b69052e-4ed15c0e6fdmr49741411cf.8.1761821995667;
+        Thu, 30 Oct 2025 03:59:55 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e8036cdd4sm14478512a12.22.2025.10.30.03.59.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 03:59:55 -0700 (PDT)
+Message-ID: <7f807543-35d3-4101-8b39-fdb255b64f2f@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 11:59:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028205857.386719-1-jkoolstra@xs4all.nl>
-X-Rspamd-Queue-Id: 219051F449
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[xs4all.nl];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[xs4all.nl];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[4e49728ec1cbaf3b91d2];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] arm64: dts: qcom: sm8250: drop duplicate
+ memory-region defs
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
+ <20251028-dt-zap-shader-v1-5-7eccb823b986@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251028-dt-zap-shader-v1-5-7eccb823b986@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA4OSBTYWx0ZWRfX+WKrGlHsd/w5
+ Y8Q+AfrRvssfB6P7a+TIqAngK4tJoEZ9pAxwlkTGqBL2wNYAgB2qZG9fKRj9Pd3njuRzCrTgDyE
+ yiGkiOGSwHTpBv5XwLrKrp9zA9cVrc6+Xuck6J0KfUDaodzesZ5FjaT9NR2qvr2K+gWs0KaRAgS
+ hVwr+euK4HdBFyWowQbZZxrlDKGClLg5eUwTk8I1ufJaP71rdO43GCpTX4thyq4BNeDBjiD3GUM
+ E92wZqHo2kBtSUU6etF66CHmwAapKO2SCwAquYopsv/65M16CIinEvB19Q9YiBHVHRVwp0Zbjdn
+ R6jmlRHqGikx/p1q01hw50gQKEXBEqdEAJH1M20Zbh17hjqdSY4+craP5W9pHS1Q48hTl6SqwjS
+ CxCiN2sDivph/YHBCZIVrK3tuXf4uA==
+X-Authority-Analysis: v=2.4 cv=KePfcAYD c=1 sm=1 tr=0 ts=6903452c cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=mq5k8ySLyEHK5IPdJK8A:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: QYCiju5ETwc6L6nIO7ZowFz48DX8wcem
+X-Proofpoint-GUID: QYCiju5ETwc6L6nIO7ZowFz48DX8wcem
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_03,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300089
 
-On Tue 28-10-25 21:58:57, Jori Koolstra wrote:
-> This patch sets up generic handling of errors such as filesystem
-> corruption which are frequently raised by syzbot. Towards this aim it
-> adds the following mount options to the minix filesystem: errors=
-> continue/panic/remount-ro and (no)warn-on-error, with semantics
-> similar to ext4fs. When a minix_error() or minix_error_inode() is
-> raised, the error is reported and action is taken according to which of
-> these mount options is set (errors=continue,nowarn-on-error are the
-> default).
+On 10/28/25 10:00 PM, Dmitry Baryshkov wrote:
+> The base file, sm8250.dtsi, alread includes memory-region under the
+> GPU's zap-shader node. Drop duplicates from the individual board files.
 > 
-> As an examle, this patch fixes a drop_nlink warning in rmdir exposed by
-> syzbot, originating from a corrupted nlink field of a directory.
-> 
-> The changes were tested using the syzbot reproducer with the various new
-> mount options. I also handcrafted a similar corrupted fs but with the
-> minix v3 format (the reproducer uses v1).
-> 
-> Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
-> Reported-by: syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-> Closes: https://syzbot.org/bug?extid=4e49728ec1cbaf3b91d2
-
-The patch looks ok to me but since minix filesystem driver is in the kernel
-mostly to allow mounting ancient unix filesystems I don't quite understand
-the motivation for adding the new mount options. Why not just fixup
-minix_rmdir() to better handle corrupted filesystems?
-
-								Honza
-
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  fs/minix/inode.c        | 237 ++++++++++++++++++++++++++++++++++++----
->  fs/minix/itree_common.c |   2 +-
->  fs/minix/minix.h        |  43 ++++++++
->  fs/minix/namei.c        |  25 +++--
->  4 files changed, 275 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-> index 32db676127a9..62159b7526a2 100644
-> --- a/fs/minix/inode.c
-> +++ b/fs/minix/inode.c
-> @@ -21,10 +21,16 @@
->  #include <linux/vfs.h>
->  #include <linux/writeback.h>
->  #include <linux/fs_context.h>
-> +#include <linux/fs_parser.h>
-> +#include <linux/fsnotify.h>
->  
->  static int minix_write_inode(struct inode *inode,
-> -		struct writeback_control *wbc);
-> +			     struct writeback_control *wbc);
->  static int minix_statfs(struct dentry *dentry, struct kstatfs *buf);
-> +static int minix_init_fs_context(struct fs_context *fc);
-> +static void minix_handle_error(struct super_block *sb, int error,
-> +			       const char *func, unsigned int line);
-> +static bool system_going_down(void);
->  
->  static void minix_evict_inode(struct inode *inode)
->  {
-> @@ -113,17 +119,121 @@ static const struct super_operations minix_sops = {
->  	.statfs		= minix_statfs,
->  };
->  
-> +void __minix_error(struct super_block *sb, const char *function,
-> +		   unsigned int line, int error, const char *fmt, ...)
-> +{
-> +	struct va_format vaf;
-> +	va_list args;
-> +
-> +	va_start(args, fmt);
-> +	vaf.fmt = fmt;
-> +	vaf.va = &args;
-> +	printk(KERN_CRIT "minix-fs error (device %s): %s:%d: comm %s: %pV\n",
-> +	       sb->s_id, function, line, current->comm, &vaf);
-> +	va_end(args);
-> +
-> +	fsnotify_sb_error(sb, NULL, error ? error : EFSCORRUPTED);
-> +
-> +	minix_handle_error(sb, error, function, line);
-> +}
-> +
-> +void __minix_error_inode(struct inode *inode, const char *function,
-> +			 unsigned int line, int error, u32 block,
-> +			 const char *fmt, ...)
-> +{
-> +	struct va_format vaf;
-> +	va_list args;
-> +
-> +	va_start(args, fmt);
-> +	vaf.fmt = fmt;
-> +	vaf.va = &args;
-> +	if (block)
-> +		printk(KERN_CRIT "minix-fs error (device %s): %s:%d: "
-> +		       "inode #%lu: block %du: comm %s: %pV\n",
-> +		       inode->i_sb->s_id, function, line, inode->i_ino,
-> +		       block, current->comm, &vaf);
-> +	else
-> +		printk(KERN_CRIT "minix-fs error (device %s): %s:%d: "
-> +		       "inode #%lu: comm %s: %pV\n",
-> +		       inode->i_sb->s_id, function, line, inode->i_ino,
-> +		       current->comm, &vaf);
-> +	va_end(args);
-> +
-> +	fsnotify_sb_error(inode->i_sb, NULL, error ? error : EFSCORRUPTED);
-> +
-> +	minix_handle_error(inode->i_sb, error, function, line);
-> +}
-> +
-> +static void minix_handle_error(struct super_block *sb, int error,
-> +			       const char *func, unsigned int line)
-> +{
-> +	struct minix_sb_info *sbi = minix_sb(sb);
-> +
-> +	if (sbi->s_version != MINIX_V3) {
-> +		sbi->s_mount_state |= MINIX_ERROR_FS;
-> +		mark_buffer_dirty(sbi->s_sbh);
-> +	}
-> +
-> +	if (test_opt(sb, WARN_ON_ERROR))
-> +		WARN_ON_ONCE(1);
-> +
-> +	/* Do not panic during 'reboot -f' */
-> +	if (test_opt(sb, ERRORS_PANIC) && !system_going_down()) {
-> +		panic("minix-fs (device %s): panic forced after error\n",
-> +		      sb->s_id);
-> +	}
-> +
-> +	if (test_opt(sb, ERRORS_CONT) || sb_rdonly(sb))
-> +		return;
-> +
-> +	minix_msg(sb, KERN_CRIT, "Remounting filesystem read-only");
-> +
-> +	sb->s_flags |= SB_RDONLY;
-> +}
-> +
-> +void __minix_msg(struct super_block *sb,
-> +		 const char *prefix, const char *fmt, ...)
-> +{
-> +	struct va_format vaf;
-> +	va_list args;
-> +
-> +	va_start(args, fmt);
-> +	vaf.fmt = fmt;
-> +	vaf.va = &args;
-> +	if (sb)
-> +		printk("%sminix-fs (%s): %pV\n", prefix, sb->s_id, &vaf);
-> +	else
-> +		printk("%sminix-fs: %pV\n", prefix, &vaf);
-> +	va_end(args);
-> +}
-> +
-> +static bool system_going_down(void)
-> +{
-> +	return system_state == SYSTEM_HALT || system_state == SYSTEM_POWER_OFF
-> +		|| system_state == SYSTEM_RESTART;
-> +}
-> +
-> +struct minix_fs_context {
-> +	unsigned int s_mount_opt;
-> +	unsigned int s_def_mount_opt;
-> +};
-> +
->  static int minix_reconfigure(struct fs_context *fc)
->  {
-> -	struct minix_super_block * ms;
-> +	struct minix_fs_context *ctx = fc->fs_private;
->  	struct super_block *sb = fc->root->d_sb;
-> -	struct minix_sb_info * sbi = sb->s_fs_info;
-> +	unsigned int flags = fc->sb_flags;
-> +	struct minix_sb_info *sbi = minix_sb(sb);
-> +	struct minix_super_block *ms;
-> +
-> +	sbi->s_mount_opt = ctx->s_mount_opt;
->  
->  	sync_filesystem(sb);
->  	ms = sbi->s_ms;
-> -	if ((bool)(fc->sb_flags & SB_RDONLY) == sb_rdonly(sb))
-> +
-> +	if ((bool)(flags & SB_RDONLY) == sb_rdonly(sb))
->  		return 0;
-> -	if (fc->sb_flags & SB_RDONLY) {
-> +	if (flags & SB_RDONLY) {
->  		if (ms->s_state & MINIX_VALID_FS ||
->  		    !(sbi->s_mount_state & MINIX_VALID_FS))
->  			return 0;
-> @@ -172,6 +282,7 @@ static bool minix_check_superblock(struct super_block *sb)
->  
->  static int minix_fill_super(struct super_block *s, struct fs_context *fc)
->  {
-> +	struct minix_fs_context *ctx = fc->fs_private;
->  	struct buffer_head *bh;
->  	struct buffer_head **map;
->  	struct minix_super_block *ms;
-> @@ -198,6 +309,8 @@ static int minix_fill_super(struct super_block *s, struct fs_context *fc)
->  
->  	ms = (struct minix_super_block *) bh->b_data;
->  	sbi->s_ms = ms;
-> +	sbi->s_mount_opt = ctx->s_mount_opt;
-> +	sbi->s_def_mount_opt = ctx->s_def_mount_opt;
->  	sbi->s_sbh = bh;
->  	sbi->s_mount_state = ms->s_state;
->  	sbi->s_ninodes = ms->s_ninodes;
-> @@ -226,7 +339,7 @@ static int minix_fill_super(struct super_block *s, struct fs_context *fc)
->  		s->s_max_links = MINIX2_LINK_MAX;
->  	} else if (s->s_magic == MINIX2_SUPER_MAGIC2) {
->  		sbi->s_version = MINIX_V2;
-> -		sbi->s_nzones = ms->s_zones;
-> +	sbi->s_nzones = ms->s_zones;
->  		sbi->s_dirsize = 32;
->  		sbi->s_namelen = 30;
->  		s->s_max_links = MINIX2_LINK_MAX;
-> @@ -367,8 +480,8 @@ static int minix_fill_super(struct super_block *s, struct fs_context *fc)
->  out_bad_sb:
->  	printk("MINIX-fs: unable to read superblock\n");
->  out:
-> -	s->s_fs_info = NULL;
->  	kfree(sbi);
-> +	fc->s_fs_info = NULL;
->  	return ret;
->  }
->  
-> @@ -377,18 +490,6 @@ static int minix_get_tree(struct fs_context *fc)
->  	 return get_tree_bdev(fc, minix_fill_super);
->  }
->  
-> -static const struct fs_context_operations minix_context_ops = {
-> -	.get_tree	= minix_get_tree,
-> -	.reconfigure	= minix_reconfigure,
-> -};
-> -
-> -static int minix_init_fs_context(struct fs_context *fc)
-> -{
-> -	fc->ops = &minix_context_ops;
-> -
-> -	return 0;
-> -}
-> -
->  static int minix_statfs(struct dentry *dentry, struct kstatfs *buf)
->  {
->  	struct super_block *sb = dentry->d_sb;
-> @@ -518,11 +619,15 @@ static struct inode *V1_minix_iget(struct inode *inode)
->  		return ERR_PTR(-EIO);
->  	}
->  	if (raw_inode->i_nlinks == 0) {
-> -		printk("MINIX-fs: deleted inode referenced: %lu\n",
-> -		       inode->i_ino);
-> +		minix_error_inode(inode, "deleted inode referenced");
->  		brelse(bh);
->  		iget_failed(inode);
->  		return ERR_PTR(-ESTALE);
-> +	} else if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks == 1) {
-> +		minix_error_inode(inode, "directory inode has corrupted nlink");
-> +		brelse(bh);
-> +		iget_failed(inode);
-> +		return ERR_PTR(-EFSCORRUPTED);
->  	}
->  	inode->i_mode = raw_inode->i_mode;
->  	i_uid_write(inode, raw_inode->i_uid);
-> @@ -556,11 +661,15 @@ static struct inode *V2_minix_iget(struct inode *inode)
->  		return ERR_PTR(-EIO);
->  	}
->  	if (raw_inode->i_nlinks == 0) {
-> -		printk("MINIX-fs: deleted inode referenced: %lu\n",
-> -		       inode->i_ino);
-> +		minix_error_inode(inode, "deleted inode referenced");
->  		brelse(bh);
->  		iget_failed(inode);
->  		return ERR_PTR(-ESTALE);
-> +	} else if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks == 1) {
-> +		minix_error_inode(inode, "directory inode has corrupted nlink");
-> +		brelse(bh);
-> +		iget_failed(inode);
-> +		return ERR_PTR(-EFSCORRUPTED);
->  	}
->  	inode->i_mode = raw_inode->i_mode;
->  	i_uid_write(inode, raw_inode->i_uid);
-> @@ -705,13 +814,95 @@ void minix_truncate(struct inode * inode)
->  		V2_minix_truncate(inode);
->  }
->  
-> +enum {
-> +	Opt_errors, Opt_warn_on_error, Opt_nowarn_on_error
-> +};
-> +
-> +static const struct constant_table minix_param_errors[] = {
-> +	{"continue",	MINIX_MOUNT_ERRORS_CONT},
-> +	{"panic",	MINIX_MOUNT_ERRORS_PANIC},
-> +	{"remount-ro",	MINIX_MOUNT_ERRORS_RO},
-> +	{}
-> +};
-> +
-> +/*
-> + * Mount option specification
-> + */
-> +static const struct fs_parameter_spec minix_param_specs[] = {
-> +	fsparam_enum	("errors",		Opt_errors, minix_param_errors),
-> +	fsparam_flag	("warn-on-error",	Opt_warn_on_error),
-> +	fsparam_flag	("nowarn-on-error",	Opt_nowarn_on_error),
-> +	{}
-> +};
-> +
-> +static int minix_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> +{
-> +	struct minix_fs_context *ctx = fc->fs_private;
-> +	struct fs_parse_result result;
-> +
-> +	int token;
-> +
-> +	token = fs_parse(fc, minix_param_specs, param, &result);
-> +	if (token < 0)
-> +		return token;
-> +
-> +	switch (token) {
-> +	case Opt_errors:
-> +		ctx->s_mount_opt &= ~MINIX_MOUNT_ERRORS_MASK;
-> +		ctx->s_mount_opt |= result.uint_32;
-> +		break;
-> +	case Opt_warn_on_error:
-> +		ctx->s_mount_opt |= MINIX_MOUNT_WARN_ON_ERROR;
-> +		break;
-> +	case Opt_nowarn_on_error:
-> +		ctx->s_mount_opt &= ~MINIX_MOUNT_WARN_ON_ERROR;
-> +		break;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void minix_fc_free(struct fs_context *fc)
-> +{
-> +	struct minix_fs_context *ctx = fc->fs_private;
-> +
-> +	if (!ctx)
-> +		return;
-> +	kfree(ctx);
-> +}
-> +
-> +static const struct fs_context_operations minix_context_ops = {
-> +	.get_tree	= minix_get_tree,
-> +	.reconfigure	= minix_reconfigure,
-> +	.parse_param	= minix_parse_param,
-> +	.free		= minix_fc_free,
-> +};
-> +
-> +int minix_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct minix_fs_context *ctx;
-> +
-> +	ctx = kzalloc(sizeof(struct minix_fs_context), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	fc->fs_private = ctx;
-> +	fc->ops = &minix_context_ops;
-> +
-> +	ctx->s_def_mount_opt |= MINIX_MOUNT_ERRORS_DEF;
-> +	ctx->s_mount_opt = ctx->s_def_mount_opt;
-> +
-> +	return 0;
-> +}
-> +
->  static struct file_system_type minix_fs_type = {
->  	.owner			= THIS_MODULE,
->  	.name			= "minix",
->  	.kill_sb		= kill_block_super,
->  	.fs_flags		= FS_REQUIRES_DEV,
->  	.init_fs_context	= minix_init_fs_context,
-> +	.parameters		= minix_param_specs,
->  };
-> +
->  MODULE_ALIAS_FS("minix");
->  
->  static int __init init_minix_fs(void)
-> diff --git a/fs/minix/itree_common.c b/fs/minix/itree_common.c
-> index dad131e30c05..6832c671125e 100644
-> --- a/fs/minix/itree_common.c
-> +++ b/fs/minix/itree_common.c
-> @@ -188,7 +188,7 @@ static int get_block(struct inode * inode, sector_t block,
->  	/*
->  	 * Indirect block might be removed by truncate while we were
->  	 * reading it. Handling of that case (forget what we've got and
-> -	 * reread) is taken out of the main path.
-> +	 * reread) is taken out of the msb_breadain path.
->  	 */
->  	if (err == -EAGAIN)
->  		goto changed;
-> diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-> index d54273c3c9ff..254220ffbf39 100644
-> --- a/fs/minix/minix.h
-> +++ b/fs/minix/minix.h
-> @@ -11,6 +11,22 @@
->  #define MINIX_V2		0x0002		/* minix V2 fs */
->  #define MINIX_V3		0x0003		/* minix V3 fs */
->  
-> +#define MINIX_MOUNT_ERRORS_CONT		0x00001	/* Continue on errors */
-> +#define MINIX_MOUNT_ERRORS_RO		0x00002	/* Remount fs ro on errors */
-> +#define MINIX_MOUNT_ERRORS_PANIC	0x00004	/* Panic on errors */
-> +#define MINIX_MOUNT_WARN_ON_ERROR	0x00008 /* Trigger WARN_ON on error */
-> +
-> +#define MINIX_MOUNT_ERRORS_MASK		0x00007
-> +
-> +#define MINIX_MOUNT_ERRORS_DEF		MINIX_MOUNT_ERRORS_CONT
-> +
-> +#define clear_opt(sb, opt)		minix_sb(sb)->s_mount_opt &= \
-> +						~MINIX_MOUNT_##opt
-> +#define set_opt(sb, opt)		minix_sb(sb)->s_mount_opt |= \
-> +						MINIX_MOUNT_##opt
-> +#define test_opt(sb, opt)		(minix_sb(sb)->s_mount_opt & \
-> +						MINIX_MOUNT_##opt)
-> +
->  /*
->   * minix fs inode data in memory
->   */
-> @@ -39,6 +55,8 @@ struct minix_sb_info {
->  	struct buffer_head * s_sbh;
->  	struct minix_super_block * s_ms;
->  	unsigned short s_mount_state;
-> +	unsigned short s_mount_opt;
-> +	unsigned short s_def_mount_opt;
->  	unsigned short s_version;
->  };
->  
-> @@ -55,6 +73,13 @@ int minix_getattr(struct mnt_idmap *, const struct path *,
->  		struct kstat *, u32, unsigned int);
->  int minix_prepare_chunk(struct folio *folio, loff_t pos, unsigned len);
->  
-> +extern __printf(3, 4)
-> +void __minix_msg(struct super_block *, const char *, const char *, ...);
-> +void __minix_error(struct super_block *, const char *, unsigned int, int,
-> +		   const char *, ...);
-> +void __minix_error_inode(struct inode *, const char *, unsigned int, int, u32,
-> +			 const char *, ...);
-> +
->  extern void V1_minix_truncate(struct inode *);
->  extern void V2_minix_truncate(struct inode *);
->  extern void minix_truncate(struct inode *);
-> @@ -168,4 +193,22 @@ static inline int minix_test_bit(int nr, const void *vaddr)
->  
->  #endif
->  
-> +#define minix_error(sb, fmt, ...)						\
-> +	__minix_error((sb), __func__, __LINE__, 0, (fmt), ##__VA_ARGS__)
-> +#define minix_error_err(sb, err, fmt, ...)					\
-> +	__minix_error((sb), __func__, __LINE__, (err), (fmt), ##__VA_ARGS__)
-> +#define minix_error_inode(inode, fmt, ...)					\
-> +	__minix_error_inode((inode), __func__, __LINE__, 0, 0,			\
-> +			    (fmt), ##__VA_ARGS__)
-> +#define minix_error_inode_err(inode, err, fmt, ...)				\
-> +	__minix_error_inode((inode), __func__, __LINE__, (err), 0,		\
-> +			    (fmt), ##__VA_ARGS__)
-> +#define minix_error_inode_block(inode, block, err, fmt, ...)			\
-> +	__minix_error_inode((inode), __func__, __LINE__, (err), (block),	\
-> +			    (fmt), ##__VA_ARGS__)
-> +#define minix_msg(sb, level, fmt, ...)				\
-> +	__minix_msg(sb, level, fmt, ##__VA_ARGS__)
-> +
-> +#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> +
->  #endif /* FS_MINIX_H */
-> diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-> index 8938536d8d3c..23f98f44e262 100644
-> --- a/fs/minix/namei.c
-> +++ b/fs/minix/namei.c
-> @@ -161,15 +161,24 @@ static int minix_unlink(struct inode * dir, struct dentry *dentry)
->  static int minix_rmdir(struct inode * dir, struct dentry *dentry)
->  {
->  	struct inode * inode = d_inode(dentry);
-> -	int err = -ENOTEMPTY;
-> -
-> -	if (minix_empty_dir(inode)) {
-> -		err = minix_unlink(dir, dentry);
-> -		if (!err) {
-> -			inode_dec_link_count(dir);
-> -			inode_dec_link_count(inode);
-> -		}
-> +	int err = -EFSCORRUPTED;
-> +
-> +	if (dir->i_nlink <= 2) {
-> +		minix_error_inode(inode, "directory inode has corrupted nlink");
-> +		goto out;
->  	}
-> +
-> +	err = -ENOTEMPTY;
-> +	if (!minix_empty_dir(inode))
-> +		goto out;
-> +
-> +	err = minix_unlink(dir, dentry);
-> +	if (!err) {
-> +		inode_dec_link_count(dir);
-> +		inode_dec_link_count(inode);
-> + 	}
-> +
-> +out:
->  	return err;
->  }
->  
-> -- 
-> 2.51.1.dirty
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
