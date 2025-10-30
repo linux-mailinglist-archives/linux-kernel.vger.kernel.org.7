@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-878183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C77C1FF7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:18:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3CFC1FF8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67C3234AFF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:18:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C83304E9190
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F082D6605;
-	Thu, 30 Oct 2025 12:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601D62D5C97;
+	Thu, 30 Oct 2025 12:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqwvNwZ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="IKeyBXMA"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F72F2BD5BF;
-	Thu, 30 Oct 2025 12:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C3F2D6409
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761826687; cv=none; b=gWhyCgYApW1XYo/mvErtWZ/43QXj2BlK+GMMYmkfmbhv59/rZe16Xp0g88ZjHTKtUOd9kj5YZME4sFwleXrvbq5l3bFnPjLESIYmpE13Udo8ou2AmTRNUYR39YbkXbHk71piJKv7ozS1379Q4LHo6TL50gaIUskTnfqM3966cUE=
+	t=1761826730; cv=none; b=PgoqjOEGflgibMZEgN9i8JW4FrA3pYLzoZN2YV3/P8BsoVIyxbOtKRDl8W6rx0t58+qYFsuMn5F87FNzd24h4lmIUT1AF4igIrF2o5l51vjTvt+n6QiTm71qUHLTS6dsCoUh7eNzQdaBKteVWQRaN96YEglLtZNL1v/guY7udMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761826687; c=relaxed/simple;
-	bh=c/5NhRaDMZ/kbf4ALWp9C3bkG4NzH2gCZR2gh2BS+5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jljr+d8amLThR7jFEp90n9bCzYdnwq2Mq0cJ9wTp+6ICFiFh5iQqcj+Zn79DUDZjfcGsxRaKP0KfKceQoMD31Hc75WGW8nCHQKaiB+O/mc0Z3+nFakfEE/nBNpAZ8GffU7WyAXd9jIVU63i5H3qdaypcBfUL1Dhj+D7egqBj/TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqwvNwZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDE6C4CEF1;
-	Thu, 30 Oct 2025 12:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761826686;
-	bh=c/5NhRaDMZ/kbf4ALWp9C3bkG4NzH2gCZR2gh2BS+5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eqwvNwZ6OXvD0PLLo9oKFlOauS0KB9w85q0SZ3Xda7sQevCZ+PF82wJOLsJwYVa8J
-	 1876w8uLPUw/grmthVZBX1OwHBWnWfh/zmDlS2ZyeNUGt17A6GXXqYHgyC01Wg4nP9
-	 lyC1pnN2cdKNa069kddROOPKTXz8sdfvgbqsp2K5m5AbGGI5cMnoBqIk7nkTXWGD7B
-	 qHg3KdbmcIwJKg+nCcKhbU70mhjWFFaHX+gynoFm2YmmwmXNcwEZLAY7PdGfXh+Brl
-	 udhaAHnl3jScbhaAQdPhAsXaix37XODTzGa5lfTJa6icjLK7SVb1kCjZgZhgvxT/XD
-	 pzVl8j7N89Y0w==
-Date: Thu, 30 Oct 2025 12:17:58 +0000
-From: Drew Fustini <fustini@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org,
-	Han Gao <gaohan@iscas.ac.cn>, Han Gao <rabenda.cn@gmail.com>,
-	linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, Fu Wei <wefu@redhat.com>
-Subject: Re: [PATCH v3 3/5] reset: th1520: Prepare for supporting multiple
- controllers
-Message-ID: <aQNXdmH_sA6hgOKC@gen8>
-References: <20251014131032.49616-1-ziyao@disroot.org>
- <20251014131032.49616-4-ziyao@disroot.org>
- <aQIOgbUf2IHoWCf2@gen8>
- <aQIvH4jbj9Ifd7Av@pie>
+	s=arc-20240116; t=1761826730; c=relaxed/simple;
+	bh=wnhbQmh4ahC8PKdCzcYNoFOto08zipbrJDQpVkPseTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OJ6zLjots2+yXMPVb7KAgJTE/30d+N3LLuNZ+6b4qJ7W3gBb9H17w6q/BS4JXl733LLPD2VX8P4BzN49wk6OucZbkRDGQ9JPZc4ZXr3lEC+1LyuOC6cYOkI7awCg+GQJYNsFTKPcFIbGsZiSJA6mhZ6YGww2CYqMoo6RYalo7VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=IKeyBXMA; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3402942e79cso1369215a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:18:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761826728; x=1762431528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SV3Wyms5GctmoxFgrHuylYNeXPRM7QEqyLlsa9U1RVE=;
+        b=IKeyBXMANtoC2kDVWMWzblpfbBCCKWAtm5X3/oeXJT3LQe/ZK20nfjoC/RFWAXsRML
+         L/DuDwrB7bC5m/J1FlN9I6dVfskzy6xJXnZsZaAQYUuWiFEqwRrom2jfyx+p5qEsvXAt
+         mHe9VfSiID6WhiCx1DBab/uQL9UCo54Cl6U9XfOsHEfx+soCGWOfoO81v4An3HRaDYan
+         3Y/vq1LZ1qZLl+zcVzkUa74WpefYc6SPdrhbzzjlEIgPFDq0LOTJEkHL/VyPfJIrBnZv
+         +yEGoJxh4wFSbSXLUihOkTRNqNAM9c3rmYwj4BQ/ieWeF5SiMqcx8XJ60RyeeZgXFHF1
+         KlaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761826728; x=1762431528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SV3Wyms5GctmoxFgrHuylYNeXPRM7QEqyLlsa9U1RVE=;
+        b=wzZjz3dAkRpTBFEkjzrHudLl6uHY3lvDZSa9Ucgr9OTJknZNUoZnQYiYLNt0q5RUeO
+         SzxuawccIBn30U4iuMSSAIgtLSf875tHeSWPKGYKEXmq+exZIHRWz1nC9mnZxu3gNYV9
+         WbV18RxkO7KkugN9XR+ZBNZf0axA6X3bvn0yyz7flFYc9EpfO2Q7yEftUWiR6GH3vjOI
+         qS4rxKUusZIKTbc11M7zzkec17Q6w+AGGannNeHhHL+iGcK1lJzA7DzxJ+yBRDm704R5
+         3pWxKI/L6cY3+tInAJlNjClJuZ9QfYNIqftb9+KT2vboln8Y+5b6+9P3EjZneWQKAEDw
+         okdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUVoWu2n0Be6UN97DNEASEo4cbckaCCAoxLi7ndMXU07DBDCGzDjbOwJsg+CI2WTdqcxdWudaOjGcTQIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6+VOdtiCOtMeg1YZSi3/4joIQ8P+wOLoz3op0Y6lnZY8TuOmo
+	A0qb0zxWCf2FoW9fy8NHOTkwonxOJ5zxLVFotN0oAebXyuvZYIQH3Qi8mRL6k8h3ZyKELggQL7e
+	LaS8MEilmElLuagx9FuWUIL4Xwq1v687atOLm8MPJ
+X-Gm-Gg: ASbGncskEaEi/sUtqrPtOptu00yxGMvAoYpggckAcjxfBL+LTCNtc2FfvTLUlvF8SXZ
+	KFqikjm+4HP3oAZFd3TbdmjgVcW19XB63RsL7kRFM1bUQLTCcBwPVbRRLHX4/Yc7TkcedGVSEnP
+	cU/EVZMnpZUQ2iG9ejG+2pp9aeQ4VYYiiPVJmitjCdhbjKJAymKwFVfoVg1qMjeChhgPxfvKPxS
+	Uv4RtME4Keja/ZBmT4ls0/g/HQ9saSt2G2oVdYJ9uvZpBADLyH5H2XEbklMRCHwwsgZbp5VLRV9
+	nDN9nEs=
+X-Google-Smtp-Source: AGHT+IEAOTMFK3D5taJ3KPSJjji4K5xecEJyo6FAdbfI1bayrytkxTVqsVBKlawrgvajLnMKq8BLOieel/imjS8/7jA=
+X-Received: by 2002:a17:90b:1c87:b0:33f:ee05:56e7 with SMTP id
+ 98e67ed59e1d1-3404c404985mr3892931a91.16.1761826727860; Thu, 30 Oct 2025
+ 05:18:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQIvH4jbj9Ifd7Av@pie>
+References: <20251030100025.95113-1-eperezma@redhat.com> <20251030100025.95113-3-eperezma@redhat.com>
+In-Reply-To: <20251030100025.95113-3-eperezma@redhat.com>
+From: Yongji Xie <xieyongji@bytedance.com>
+Date: Thu, 30 Oct 2025 20:18:36 +0800
+X-Gm-Features: AWmQ_bmiKDcTTVrpLtfWQHLoVOAgkHmCC4dbaQET0qDlzDFIGwHDaLhNbSek-Lo
+Message-ID: <CACycT3tUQuQLgxE1-++izeKZLbdzKWUt9a5ukRW52HCjm3V1ZQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] vduse: add vq group support
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Laurent Vivier <lvivier@redhat.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev, 
+	Stefano Garzarella <sgarzare@redhat.com>, Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 03:13:46PM +0000, Yao Zi wrote:
-> On Wed, Oct 29, 2025 at 12:54:25PM +0000, Drew Fustini wrote:
-> > On Tue, Oct 14, 2025 at 01:10:30PM +0000, Yao Zi wrote:
-> > > TH1520 SoC is divided into several subsystems, shipping distinct reset
-> > > controllers with similar control logic. Let's make reset signal mapping
-> > > a data structure specific to one compatible to prepare for introduction
-> > > of more reset controllers in the future.
-> > > 
-> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > > ---
-> > >  drivers/reset/reset-th1520.c | 42 +++++++++++++++++++++++++-----------
-> > >  1 file changed, 30 insertions(+), 12 deletions(-)
-> > > 
-> > > diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-> > > index 14d964a9c6b6..2b65a95ed021 100644
-> > > --- a/drivers/reset/reset-th1520.c
-> > > +++ b/drivers/reset/reset-th1520.c
-> > [snip]
-> > > @@ -138,22 +147,31 @@ static int th1520_reset_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(priv->map))
-> > >  		return PTR_ERR(priv->map);
-> > >  
-> > > -	/* Initialize GPU resets to asserted state */
-> > > -	ret = regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
-> > > -				 TH1520_GPU_RST_CFG_MASK, 0);
-> > > -	if (ret)
-> > > -		return ret;
-> > > +	if (of_device_is_compatible(dev->of_node, "thead,th1520-reset")) {
-> > 
-> > Is there a reason that there is a now a conditional check for the
-> > compatible here?
-> 
-> Yes, this regmap operation is for initializing GPU resets and thus
-> modifies TH1520_GPU_RST_CFG, which only applies for the VO reset
-> controller (with compatible "thead,th1520-reset") but not others, or
-> other unrelated resets could be unexpectedly asserted.
+On Thu, Oct 30, 2025 at 6:01=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redhat=
+.com> wrote:
+>
+> This allows separate the different virtqueues in groups that shares the
+> same address space.  Asking the VDUSE device for the groups of the vq at
+> the beginning as they're needed for the DMA API.
+>
+> Allocating 3 vq groups as net is the device that need the most groups:
+> * Dataplane (guest passthrough)
+> * CVQ
+> * Shadowed vrings.
+>
+> Future versions of the series can include dynamic allocation of the
+> groups array so VDUSE can declare more groups.
+>
+> Acked-by: Jason Wang <jasowang@redhat.com>
+> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-Thanks for the explanation.
+Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+Thanks,
+Yongji
 
