@@ -1,63 +1,76 @@
-Return-Path: <linux-kernel+bounces-878301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF71C2035B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:23:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F82C2038E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 29A18342D0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:23:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 383534EC23B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B502C283FF1;
-	Thu, 30 Oct 2025 13:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEF1330313;
+	Thu, 30 Oct 2025 13:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGGLPi0y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CYRaGkUU"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054E82DE71A;
-	Thu, 30 Oct 2025 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E796332D450
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761830587; cv=none; b=gw3LwRvoR+G2qsb1xRr3YhqQuV/7IP1A5saxCdy8K0nkPWzxy9iGdY3H2+1oZdfRHTnjsi6wJZvfMGutOA0tS5NWDTZK2u+DSIHgAFou+Gm3J2oHBZAXjK63+ccaKH7NK4b4oeRv4W8/r5eM0Hya8rAQBw9hYTEAP+x2hyobIWc=
+	t=1761830607; cv=none; b=G88krygfcHeO2XT9M7C8k4B39Vz73fpUfJ05Ikbz3lhYxWUtQVc33W10qr/QdnngIlmDrrTK1DQXFUWhxlFuDJXfFeD1DjteXMJdtnYmMmYKC93/CZRKZ0wgevPOGzF69oRg66dK5PP25oSVBRs0mWOrSKf4RngIzjrjw+x4eDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761830587; c=relaxed/simple;
-	bh=Gwj/eP0Azj/+Fhb2IdX59uBZbrbTocsS6hJCH0RirAs=;
+	s=arc-20240116; t=1761830607; c=relaxed/simple;
+	bh=+T++m0bCn8dzwoPtOBPiuLFJik8gkAN7Y5AmR5ssufM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOlqoj6tPrKEBFUTSrnkj5dx3OWVf41swy6z3FGSQSEMUtdiGG9Alj8739ntIEXz736WDwhZ4KBjnBIhA5ip5pmW2g8reVCrAV+jUQzo4r6i1oxeSFZfypgqQ+PO2fiHF7lY1S0p7q0BccxFiPWkjtLqdJDUkwl4YvjsqmdHVm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGGLPi0y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32136C4CEFF;
-	Thu, 30 Oct 2025 13:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761830586;
-	bh=Gwj/eP0Azj/+Fhb2IdX59uBZbrbTocsS6hJCH0RirAs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3D03HX2ivxEr4P77n+OickN/5m5gJqKvkkk2vgvrXCc9NOIfQn3yBjGsd+GDN5VZX8JrGHuZbVGPOOBl/GpxKFPiOnFYPvX6e9bSKHFCC/cU4GPSfn+OWEVG5buldV6tbkf7LLq1mjhif08rwLDxikDIRkYJUN2HlBiJsWrBI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CYRaGkUU; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 51AC040E016E;
+	Thu, 30 Oct 2025 13:23:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id b6qXmKjPN26J; Thu, 30 Oct 2025 13:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761830596; bh=S0wCq4n1Evlh9ciLUjnAnI8tlm8vCuNNCRWLJx15CQQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eGGLPi0yM5LWkgN61LGvqflN1Mt1ZMc6YtT+w7e+khB4MrY2AtjBA7AiuJQem6s5K
-	 c2ZCeC9XKlGWNV4HHx8T9/yYoRQDUS65erYeky9iASxJWenGJmsyrSN33+S+0UQnUU
-	 0mnN4VC2Q0EJ2LMJ2rHLEPu9CKJ3xXgALhiF/qJ8iKl75XLsmdNjaKunSFdm1P3o7q
-	 R7pSnaEMdnaCplNGSyho1BDAfEPI3+sJCLXutitnKYpZUkj03I/SWjF27yexBZd0sg
-	 TKvDoBoc509Ko20+Ry59YzgrXQjRosKg5IPKaPuPOWirG7s/yJ6UAd9Lcq1ejQxm3n
-	 e0xp5Ep3V2X1w==
-Date: Thu, 30 Oct 2025 14:23:01 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	David Sterba <dsterba@suse.com>
-Subject: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
- pipe_index declaration)
-Message-ID: <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
-References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
- <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
- <20251029173828.GA1669504@ax162>
- <20251029-wobei-rezept-bd53e76bb05b@brauner>
- <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
- <20251030-zuruf-linken-d20795719609@brauner>
- <20251029233057.GA3441561@ax162>
+	b=CYRaGkUUJDECVox/nHGmHdMkmrsEqIZu12D0j6E5BTdPYoZ8ZE5zIIxGlh2g+Zkt4
+	 2FRT1l6k6+mWo5+YQNKd0hPiAOoNps0VEvsfyWRc1tDUoMvhq3fUGTMA+YbXeslKFl
+	 4Xiv8XfaTUBcQUePrnns/iqp0vzitEPfLBaxf2zv0U+G7OzZUAV0EoTvjC8XrmkzT8
+	 szSYDhaZrLqq8KuEo6gPBeK2dwQyi/6DzesTAc3A/o8VzIRloacZyBqOfoIrGCTFi5
+	 OvpVAw+8bzAkv+4/jMLoKFoQDvcndsfcO60MedRhW6AqLAoT8XdoaFsC5Iin5mzE4i
+	 REUkf0ySZOLyaMdBx3C0NNdZ8BSf8aHyhoh0WtGNtu/rfwcyDY1qD+VmGovR+RO47M
+	 cJx5IC7bOPYS8Iy38Od0EFoan/+8+QPXhp54ZMdPrIh0vjMyzXTk0rL2ecOSJrzR3n
+	 kq2/taTL8M1ca3YoLKIUeMZE6Vm5lZKrbQ8OYRQ0vCiUan7rP2GNgSVyDZVwJHvkXW
+	 6q+NKbuDrjIzS75HX9guNPdfeynqrUlMqaLhm4UsDyXibXHI1N88gL4SsH+zD7YH4e
+	 vuuikXBnKR0cDsg3xsoVll5IiuYoNnqpwDGwxFt3kEOWtO1kYaCtf9YI3PdDhbZzAj
+	 53CLAU+TPt/RpvgdjwEzE0SI=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8838D40E021B;
+	Thu, 30 Oct 2025 13:23:08 +0000 (UTC)
+Date: Thu, 30 Oct 2025 14:23:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yu Peng <pengyu@kylinos.cn>
+Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+	Yu Peng <pengyu@kylinos.com>
+Subject: Re: [PATCH v2] arch/x86/microcode: Mark early_parse_cmdline() as
+ __init
+Message-ID: <20251030132302.GBaQNmtgzFeZ8798t1@fat_crate.local>
+References: <20251029081644.4082219-1-pengyu@kylinos.cn>
+ <20251029123823.GAaQIKvz4gUk3Nsaj4@fat_crate.local>
+ <2d33a48f-a43a-4ed6-a903-aff8184eebf3@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,103 +79,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251029233057.GA3441561@ax162>
+In-Reply-To: <2d33a48f-a43a-4ed6-a903-aff8184eebf3@kylinos.cn>
 
-On Wed, Oct 29, 2025 at 04:30:57PM -0700, Nathan Chancellor wrote:
-> On Thu, Oct 30, 2025 at 12:13:11AM +0100, Christian Brauner wrote:
-> > I'm fine either way. @Nathan, if you just want to give Linus the patch
-> > if it's small enough or just want to give me a stable branch I can pull
-> > I'll be content. Thanks!
+On Thu, Oct 30, 2025 at 01:03:52PM +0800, Yu Peng wrote:
+> I found a minimal reproducer: i386_defconfig enable these two options:
 > 
-> I do not care either way but I created a shared branch/tag since it was
-> easy enough to do. If Linus wants to take these directly for -rc4, I am
-> fine with that as well.
+> CONFIG_GCOV_KERNEL=y
+> CONFIG_GCOV_PROFILE_ALL=y
 > 
-> Cheers,
-> Nathan
-> 
-> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
-> 
->   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-ms-extensions-6.19
+> On my toolchain (GCC 13.2), this combination instruments the function and
+> prevents it from being inlined, which then triggers the modpost error.
 
-Thanks, I pulled this and placed it into a branch that I can base other
-branches on.
+Nah, this doesn't help. Anyway, I'll take the patch as it is obvious.
 
-_But_, I'm already running into problems. :)
+Btw, please do not send your patch so many times - you can simply say what
+needs to be fixed and I'll fix it up before applying. Maintainers are not in
+a shooting gallery for patches.
 
-I'm changing a struct ns_common in ns_common.h (struct ns_common) and
-wanted to make use of the fms extensions. ns_common.h is heavily
-included by virtue of the namespace stuff. So we get an include chain
-like the following:
+Thx.
 
-In file included from ./include/linux/cgroup.h:23,
-                 from ./include/linux/memcontrol.h:13,
-                 from ./include/linux/swap.h:9,
-                 from ./include/asm-generic/tlb.h:15,
-                 from ./arch/x86/include/asm/tlb.h:8,
-                 from ./arch/x86/include/asm/efi.h:7,
-                 from drivers/firmware/efi/libstub/x86-stub.c:13:
-./include/linux/ns_common.h:132:31: error: declaration does not declare anything [-Werror]
-  132 |                 struct ns_tree;
-      |                               ^
-./include/linux/ns_common.h: In function '__ns_ref_active_read':
-./include/linux/ns_common.h:228:31: error: 'const struct ns_common' has no member named '__ns_ref_active'
-  228 |         return atomic_read(&ns->__ns_ref_active);
-      |                               ^~
-In file included from ./arch/x86/include/asm/bug.h:108,
-                 from ./arch/x86/include/asm/alternative.h:9,
-                 from ./arch/x86/include/asm/segment.h:6,
-                 from ./arch/x86/include/asm/ptrace.h:5,
-                 from ./arch/x86/include/asm/math_emu.h:5,
-                 from ./arch/x86/include/asm/processor.h:13,
-                 from ./arch/x86/include/asm/timex.h:5,
-                 from ./include/linux/timex.h:67,
-                 from ./include/linux/time32.h:13,
-                 from ./include/linux/time.h:60,
-                 from ./include/linux/efi.h:17,
-                 from drivers/firmware/efi/libstub/x86-stub.c:9:
+-- 
+Regards/Gruss,
+    Boris.
 
-Because struct cgroup_namespace embeddds struct ns_common and it
-proliferates via mm stuff into the efi code.
-
-So the EFI cod has it's own KBUILD_CFLAGS. It does:
-
-# non-x86 reuses KBUILD_CFLAGS, x86 does not
-cflags-y			:= $(KBUILD_CFLAGS)
-
-<snip>
-
-KBUILD_CFLAGS			:= $(subst $(CC_FLAGS_FTRACE),,$(cflags-y)) \
-				   -Os -DDISABLE_BRANCH_PROFILING \
-				   -include $(srctree)/include/linux/hidden.h \
-				   -D__NO_FORTIFY \
-				   -ffreestanding \
-				   -fno-stack-protector \
-				   $(call cc-option,-fno-addrsig) \
-				   -D__DISABLE_EXPORTS
-
-which means x86 doesn't get -fms-extension breaking the build. If I
-manually insert:
-
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index 94b05e4451dd..4ad2f8f42134 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -42,6 +42,8 @@ KBUILD_CFLAGS                 := $(subst $(CC_FLAGS_FTRACE),,$(cflags-y)) \
-                                   -ffreestanding \
-                                   -fno-stack-protector \
-                                   $(call cc-option,-fno-addrsig) \
-+                                  -fms-extensions \
-+                                  -Wno-microsoft-anon-tag \
-                                   -D__DISABLE_EXPORTS
-
-The build works...
-
-I think we need to decide how to fix this now because as soon as someone
-makes use of the extension that is indirectly included by that libstub
-thing we're fscked.
+https://people.kernel.org/tglx/notes-about-netiquette
 
