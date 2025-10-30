@@ -1,183 +1,204 @@
-Return-Path: <linux-kernel+bounces-879155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F8DC22664
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:18:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F6DC22676
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A128634BE35
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:18:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86DC64E1831
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366E630F534;
-	Thu, 30 Oct 2025 21:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61983128CE;
+	Thu, 30 Oct 2025 21:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FhFs/8Cw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wajr1gIA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C7D2EC09E;
-	Thu, 30 Oct 2025 21:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B26734D39F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761859094; cv=none; b=QNigrptVYZQIL2YuHyeMRuBU5H8ETAErA1xQAQaQgXlza9YAlOR39c5qO2PILb4LtgdAxf9jwaLkKeeVL9tr2VD91DB9V5Vv5nUc/6J57I1/Bi6/gkqI23y97bF+5+AUD7s1Z9IJwY2WNlSvGHVaBf1BZSeggG4vJ5o5UJc3IvY=
+	t=1761859257; cv=none; b=h3uVyjsqTWc98qgY/Gu0UoySbbKtUbFXN2Xf0SR0AmA4genxNtSu5ImgyoP0Ed9XPJeTpXaumvSAYuTcd9+xl54B3+rt4AX/Yqc1BZR43LoeVTDxNvmeGqdtJdVEI97thWrKlfbBU0s9/qqvXQXr0V9tYnSMbkSgDIbszgO66qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761859094; c=relaxed/simple;
-	bh=W+0SK1qT8n+0l/533/lRHWF9H99SYMZQ9sU3yINs8Rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eN0U85BKDwUb6/c8Rpz5zREXVNR1BsOH3gSowj6Vk/guHzIhlnZ2aBkpn6/HDXxs2gS9istAOjAVfwZZZhiUrCeI9jjdTkplgEi9J1O8f8DRNH7ib0bCZwd7mqMIWV+GrUQTD76djklgQqciBL9IaKlAIh2IOkgbEKTTZcL2ci8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FhFs/8Cw; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761859094; x=1793395094;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W+0SK1qT8n+0l/533/lRHWF9H99SYMZQ9sU3yINs8Rg=;
-  b=FhFs/8CwhwMU9DSK/b1WULGKSo7ekilo57+zBjNbUvvPjDfoRc2a25+r
-   FhDsyJvRuXgotW0u+TlaWbCsI6Cp0pcHcpE8ZVUIqmiYGJ33E7G3qldwi
-   Z8lZgmsW6UHr4LowVjD77EyrWlLrx1m0E9G0FvMM3nx3RYmkM1fPXEh62
-   4+cizn2ZYaSukjimADRCIkDBBrcac84AE/hWpSdswLxaZimUiBUmiV6eE
-   wQPRkjk4D6V5bv/f7y1ywe2FRwgTDSVQhJCrQlaFnEwpdlPSuRo8k6kJU
-   5e1GuzGf2vf9K/w2mIKWyg4C4HGegLuSd0B9RkT01SBANFVDTc6M60GWc
-   A==;
-X-CSE-ConnectionGUID: hIOzH4pDRPCU3bCs0/8zYw==
-X-CSE-MsgGUID: dlzO9D3xQn6sJXJfT60F2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75465042"
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="75465042"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 14:18:13 -0700
-X-CSE-ConnectionGUID: VZ8phKHuQCi8K6y+EhBKow==
-X-CSE-MsgGUID: U9alOzekQ3u0J76f6RP/5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="186399100"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 30 Oct 2025 14:18:10 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEa23-000MXg-2S;
-	Thu, 30 Oct 2025 21:18:07 +0000
-Date: Fri, 31 Oct 2025 05:17:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: cy_huang@richtek.com, Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	ChiYuan Huang <cy_huang@richtek.com>, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] power: supply: rt9756: Add Richtek RT9756 smart
- cap divider charger
-Message-ID: <202510310457.iAWJdDLC-lkp@intel.com>
-References: <5eab51e111b092329519dd2c200858a522780626.1761699952.git.cy_huang@richtek.com>
+	s=arc-20240116; t=1761859257; c=relaxed/simple;
+	bh=CGZsPh7Qbfn/nNuOdzcx2n/7MLAO9wVoGxHMiJBblc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MR/7ccmAw/wS+o+58XI5HaQL8Hhf9ivmZzzxJVDHO/AUs+ZE83NG/LnG4cniEQCI+zuyadLB3UpS3Ejw2uAt243bBwpffHBbE4p6HIuoOejN5qIRU4Q1E6M6qqbsjdyVjNZTVSYRQJg+7rroQD7TruPeV+DNwzLbsuh7KJOZC20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wajr1gIA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761859254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=64JB+UtpAImWAb0wR7Piq/8S0upZ5fXa3L3mE9A1Ajo=;
+	b=Wajr1gIAo9puMC3Hn6zPTOMJHpVqDHePlh3Bsk1jW+f+hix2lrSgB2YLK35WDffksaC0ux
+	BG76YWKRb1lO7RIQf2GS6cO8RX68yNbOhrXtm87ef8hovIhIGe9D0i2+MV2HCTwzgHF2Sy
+	itSviEoA485sogjJK4rOsk2z6Vuwzwo=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-37-t_yyEcMJP2W1hTAyNwiFuw-1; Thu, 30 Oct 2025 17:20:52 -0400
+X-MC-Unique: t_yyEcMJP2W1hTAyNwiFuw-1
+X-Mimecast-MFC-AGG-ID: t_yyEcMJP2W1hTAyNwiFuw_1761859252
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so20544335ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:20:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761859252; x=1762464052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=64JB+UtpAImWAb0wR7Piq/8S0upZ5fXa3L3mE9A1Ajo=;
+        b=MVMxqm3Tmxx0169dipUx/OuFuzu2QAab2oX2Rsk0zEwv/2+2YnG9CFsw8OAJmevyw9
+         O+09NPkJBT7kDlSDi2gJmIFO3a+w4VrYqd16d81p9A6f35X57gqeC/4yFBxf6A3dulXH
+         IQqdaA9qro4A6hnb4CAZ4H/i7ag5DnDoocO1hgyUTXsTQG7E85mnJsNRuTZ7NoiECFeh
+         aA9fbPtcVJibYReJ71bPyUTp+f3sytihT01l2sUqDhRJ0YgCVqxAAq+VZVioWtsd9VBT
+         CrA7+xx8LJC5Dn+5yKWXXyLgsR7JMqou2ZrysDP6Qsl/axZmR5mCiJ1EZz6tmf7EH0xf
+         gPNw==
+X-Gm-Message-State: AOJu0YwBx7OuzQziPO3gwyi2YSH2HpJCdLmRrqaXMqM93BzqvpUI0nRS
+	KoyvkNEQxUxVFS86MUbALvhlW9P3tt5k2RQZiBmDseCvBI4zzP+zQg+9o3dCarEKANu2/ug0JOm
+	t9LSauNoeLxodLKx7VZOTPP7lvnOrbg3HLLaZZQO+4i6aVu1Iy+v4fnGTXbtA7veVVIVWKkpZRw
+	pXq1a0HnLu6GM7RyCP6U1igoSfdW8xzReXsWZr35XV
+X-Gm-Gg: ASbGnctJUViTQlk6soeqlzro0Rt3Sp4ehuaP3NKA4UPElJ9leNlxiqm1Ogmu2cD4BI4
+	U9aqT7jLZv4RMEUS7SfQJJdmx85ObsmGMYXhSg5k7w/7FRW7cDdKn2+HBJFCRo+q3kq0xv9Kdcm
+	+rT0km5Zy7xb6tM2gAyhjnGr3U16Z6+w6hsBuh8CuNgTmL3jmU+5eQOMzh2eSZwDJlGYVEAUE7/
+	2qJzwHVBwtMIfw=
+X-Received: by 2002:a05:6e02:330a:b0:431:d73b:ea9c with SMTP id e9e14a558f8ab-4330d10a41bmr23034705ab.6.1761859252032;
+        Thu, 30 Oct 2025 14:20:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgN2U5chlBfiWKlG6X8J0EwHZ36gcvfxX2xxWqpWDjQF/r2VlBL6lzYmiTHqCc/oyWbjNAh0fm35qStli7sTo=
+X-Received: by 2002:a05:6e02:330a:b0:431:d73b:ea9c with SMTP id
+ e9e14a558f8ab-4330d10a41bmr23034315ab.6.1761859251559; Thu, 30 Oct 2025
+ 14:20:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5eab51e111b092329519dd2c200858a522780626.1761699952.git.cy_huang@richtek.com>
+References: <20251029191414.410442-1-desnesn@redhat.com> <20251029191414.410442-2-desnesn@redhat.com>
+ <2ecf4eac-8a8b-4aef-a307-5217726ea3d4@rowland.harvard.edu>
+ <CACaw+ez+bUOx_J4uywLKd8cxU2yzE4napZ6_fpVbk1VqNhdrxg@mail.gmail.com>
+ <CACaw+exbuvEom3i_KHqhgEwvoMoDarKKR8eqG1GH=_TGkxNpGA@mail.gmail.com> <808ef203-528f-480b-8049-8e3ca4687867@rowland.harvard.edu>
+In-Reply-To: <808ef203-528f-480b-8049-8e3ca4687867@rowland.harvard.edu>
+From: Desnes Nunes <desnesn@redhat.com>
+Date: Thu, 30 Oct 2025 18:20:40 -0300
+X-Gm-Features: AWmQ_bl1wn3R3GndEnSFQiIw3Wd6SkEV3lEJ3AdQr91tni6FAUp7Z-tdPipamCw
+Message-ID: <CACaw+eyU8jDVibLk4QQX54D6y_-owByXpo9w0p_dk7Wv7hE4iQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] usb: storage: Fix memory leak in USB bulk transport
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	gregkh@linuxfoundation.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hello Alan,
 
-kernel test robot noticed the following build warnings:
+On Thu, Oct 30, 2025 at 10:52=E2=80=AFAM Alan Stern <stern@rowland.harvard.=
+edu> wrote:
+>
+> On Thu, Oct 30, 2025 at 01:42:43AM -0300, Desnes Nunes wrote:
+> > Hello Alan,
+> >
+> > On Wed, Oct 29, 2025 at 9:36=E2=80=AFPM Desnes Nunes <desnesn@redhat.co=
+m> wrote:
+> > >
+> > > Hello Alan,
+> > >
+> > > On Wed, Oct 29, 2025 at 6:49=E2=80=AFPM Alan Stern <stern@rowland.har=
+vard.edu> wrote:
+> > > >
+> > > > On Wed, Oct 29, 2025 at 04:14:13PM -0300, Desnes Nunes wrote:
+> > > > > A kernel memory leak was identified by the 'ioctl_sg01' test from=
+ Linux
+> > > > > Test Project (LTP). The following bytes were maily observed: 0x53=
+425355.
+> > > > >
+> > > > > When USB storage devices incorrectly skip the data phase with sta=
+tus data,
+> > > > > the code extracts/validates the CSW from the sg buffer, but fails=
+ to clear
+> > > > > it afterwards. This leaves status protocol data in srb's transfer=
+ buffer,
+> > > > > such as the US_BULK_CS_SIGN 'USBS' signature observed here. Thus,=
+ this
+> > > > > leads to USB protocols leaks to user space through SCSI generic (=
+/dev/sg*)
+> > > > > interfaces, such as the one seen here when the LTP test requested=
+ 512 KiB.
+> > > > >
+> > > > > Fix the leak by zeroing the CSW data in srb's transfer buffer imm=
+ediately
+> > > > > after the validation of devices that skip data phase.
+> > > > >
+> > > > > Note: Differently from CVE-2018-1000204, which fixed a big leak b=
+y zero-
+> > > > > ing pages at allocation time, this leak occurs after allocation, =
+when USB
+> > > > > protocol data is written to already-allocated sg pages.
+> > > > >
+> > > > > Fixes: a45b599ad808 ("scsi: sg: allocate with __GFP_ZERO in sg_bu=
+ild_indirect()")
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+> > > > > ---
+> > > > >  drivers/usb/storage/transport.c | 10 ++++++++++
+> > > > >  1 file changed, 10 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storag=
+e/transport.c
+> > > > > index 1aa1bd26c81f..8e9f6459e197 100644
+> > > > > --- a/drivers/usb/storage/transport.c
+> > > > > +++ b/drivers/usb/storage/transport.c
+> > > > > @@ -1200,7 +1200,17 @@ int usb_stor_Bulk_transport(struct scsi_cm=
+nd *srb, struct us_data *us)
+> > > > >                                               US_BULK_CS_WRAP_LEN=
+ &&
+> > > > >                                       bcs->Signature =3D=3D
+> > > > >                                               cpu_to_le32(US_BULK=
+_CS_SIGN)) {
+> > > > > +                             unsigned char buf[US_BULK_CS_WRAP_L=
+EN];
+> > > >
+> > > > You don't have to define another buffer here.  bcs is still availab=
+le
+> > > > and it is exactly the right size.
+> > > >
+> > > > Alan Stern
+> > >
+> > > Sure - will send a v2 using bcs instead of the new buffer.
+> >
+> > Actually, my original strategy to avoid the leak was copying a new
+> > zeroed buf over srb's transfer_buffer, as soon as the skipped data
+> > phase was identified.
+> >
+> > It is true that the cs wrapper is the right size, but bcs at this
+> > point contains validated CSW data, which is needed later in the code
+> > when handling the skipped_data_phase of the device.
+> >
+> > I think zeroing 13 bytes of bcs at this point, instead of creating a
+> > new buffer, would delete USB protocol information that is necessary
+> > later in usb_stor_Bulk_transport().
+> >
+> > Can you please elaborate on how I can zero srb's transfer buffer using
+> > bcs, but without zeroing bcs?
+> > I may be missing something.
+>
+> You're right -- I completely missed the fact that bcs gets used later.
+> All right, ignore that criticism; the patch is fine.
+>
+> Alan Stern
 
-[auto build test WARNING on sre-power-supply/for-next]
-[also build test WARNING on krzk-dt/for-next robh/for-next linus/master v6.18-rc3 next-20251030]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for taking the time to review my concerns.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/cy_huang-richtek-com/dt-bindings-power-supply-Add-Richtek-RT9756-smart-cap-divider-charger/20251029-091554
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
-patch link:    https://lore.kernel.org/r/5eab51e111b092329519dd2c200858a522780626.1761699952.git.cy_huang%40richtek.com
-patch subject: [PATCH v3 2/3] power: supply: rt9756: Add Richtek RT9756 smart cap divider charger
-config: nios2-randconfig-r112-20251031 (https://download.01.org/0day-ci/archive/20251031/202510310457.iAWJdDLC-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310457.iAWJdDLC-lkp@intel.com/reproduce)
+Since this patch is using the style of the patch 2/2 patch of this
+series, which I'll drop, I'll send a v2 of this patch using the
+current code style.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510310457.iAWJdDLC-lkp@intel.com/
+Desnes Nunes
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/power/supply/rt9756.c:645:41: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned int [usertype] size @@     got restricted gfp_t @@
-   drivers/power/supply/rt9756.c:645:41: sparse:     expected unsigned int [usertype] size
-   drivers/power/supply/rt9756.c:645:41: sparse:     got restricted gfp_t
->> drivers/power/supply/rt9756.c:645:53: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted gfp_t [usertype] gfp @@     got unsigned int @@
-   drivers/power/supply/rt9756.c:645:53: sparse:     expected restricted gfp_t [usertype] gfp
-   drivers/power/supply/rt9756.c:645:53: sparse:     got unsigned int
-   drivers/power/supply/rt9756.c: note: in included file (through include/uapi/linux/swab.h, include/linux/swab.h, include/uapi/linux/byteorder/little_endian.h, ...):
-   arch/nios2/include/uapi/asm/swab.h:25:24: sparse: sparse: too many arguments for function __builtin_custom_ini
-
-vim +645 drivers/power/supply/rt9756.c
-
-   619	
-   620	static int rt9756_register_psy(struct rt9756_data *data)
-   621	{
-   622		struct power_supply_desc *desc = &data->psy_desc;
-   623		struct power_supply_desc *bat_desc = &data->bat_psy_desc;
-   624		struct power_supply_config cfg = {}, bat_cfg = {};
-   625		struct device *dev = data->dev;
-   626		char *psy_name, *bat_psy_name, **supplied_to;
-   627	
-   628		bat_cfg.drv_data = data;
-   629		bat_cfg.fwnode = dev_fwnode(dev);
-   630	
-   631		bat_psy_name = devm_kasprintf(dev, GFP_KERNEL, "rt9756-%s-battery", dev_name(dev));
-   632		if (!bat_psy_name)
-   633			return -ENOMEM;
-   634	
-   635		bat_desc->name = bat_psy_name;
-   636		bat_desc->type = POWER_SUPPLY_TYPE_BATTERY;
-   637		bat_desc->properties = rt9756_bat_psy_properties;
-   638		bat_desc->num_properties = ARRAY_SIZE(rt9756_bat_psy_properties);
-   639		bat_desc->get_property = rt9756_bat_psy_get_property;
-   640	
-   641		data->bat_psy = devm_power_supply_register(dev, bat_desc, &bat_cfg);
-   642		if (IS_ERR(data->bat_psy))
-   643			return dev_err_probe(dev, PTR_ERR(data->bat_psy), "Failed to register battery\n");
-   644	
- > 645		supplied_to = devm_kzalloc(dev, GFP_KERNEL, sizeof(*supplied_to));
-   646		if (!supplied_to)
-   647			return -ENOMEM;
-   648	
-   649		/* Link charger psy to battery psy */
-   650		supplied_to[0] = bat_psy_name;
-   651	
-   652		cfg.drv_data = data;
-   653		cfg.fwnode = dev_fwnode(dev);
-   654		cfg.attr_grp = rt9756_sysfs_groups;
-   655		cfg.supplied_to = supplied_to;
-   656		cfg.num_supplicants = 1;
-   657	
-   658		psy_name = devm_kasprintf(dev, GFP_KERNEL, "rt9756-%s", dev_name(dev));
-   659		if (!psy_name)
-   660			return -ENOMEM;
-   661	
-   662		desc->name = psy_name;
-   663		desc->type = POWER_SUPPLY_TYPE_USB;
-   664		desc->usb_types = BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN) | BIT(POWER_SUPPLY_USB_TYPE_SDP) |
-   665				  BIT(POWER_SUPPLY_USB_TYPE_DCP) | BIT(POWER_SUPPLY_USB_TYPE_CDP);
-   666		desc->properties = rt9756_psy_properties;
-   667		desc->num_properties = ARRAY_SIZE(rt9756_psy_properties);
-   668		desc->property_is_writeable = rt9756_psy_property_is_writeable;
-   669		desc->get_property = rt9756_psy_get_property;
-   670		desc->set_property = rt9756_psy_set_property;
-   671	
-   672		data->psy = devm_power_supply_register(dev, desc, &cfg);
-   673	
-   674		return PTR_ERR_OR_ZERO(data->psy);
-   675	}
-   676	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
