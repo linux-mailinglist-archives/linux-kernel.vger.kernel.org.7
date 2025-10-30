@@ -1,245 +1,155 @@
-Return-Path: <linux-kernel+bounces-877668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99801C1EB54
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11452C1EB69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D19404C5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2D719C1844
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178B3358D7;
-	Thu, 30 Oct 2025 07:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044113358A5;
+	Thu, 30 Oct 2025 07:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqpvzfwg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dESBZqrb"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9643595D;
-	Thu, 30 Oct 2025 07:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5952EACE9
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761808436; cv=none; b=ko+6xWBQIrW0Hv3RemccrvzH2Dzow4M1kRNjwM3Fxp7/U23/QMdtlZ1jYRb7EsPWo7skIayVMNe0fUI8fIt4HMSj/eKAxPD4yOINjwgSr+Bs7JgA/5Q4XTcXHQrLK2FmSDFnPFhvsu3Kuob9AJUulI8wi7MN3wrz4pcMODoXYtY=
+	t=1761808473; cv=none; b=Tr6h4cZ5qGzhimQfCid9sXWn2B0YD5pdvF/GNlDkg1yHMqrVh/CIhjp0NJm8fdT1mRFEpO53LMIm5+pyOWhrtJO1ary8gbIWtooVCAQ4vzn28l5NlmDOruzsQj0WkEltOwerc2Sw98DLAMyxoOU2MdN8dLVfNRs+s1KJlLrKjFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761808436; c=relaxed/simple;
-	bh=i4qoGz45579V+KbtJf0iwqqB3h2HP7kNYK5YfKjoej0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WSOHbXepeO2hgMkLknaEoFvWOJ0ztAsyj90Q9/Q1XoSJXG3j4OeHf0zrOLPoQlQV9yp2AmY+GMgd13b1bF0tQncE5WWgoKTFzb41HoyYsxOygHCPOhSTbhNmBTREfb3SkTs3Oir/BdUaiTDJcxsK12s0RaWOmhJFJVtsZE8DUFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqpvzfwg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A2A8C4CEF1;
-	Thu, 30 Oct 2025 07:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761808435;
-	bh=i4qoGz45579V+KbtJf0iwqqB3h2HP7kNYK5YfKjoej0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqpvzfwghUxjvuEkB4yLGsb22Bc7a3WUFkTlq8+6mZao2OEc0W4vLUxWv2a6OhuCb
-	 v7spgFtr/Ub4VAR23CRMwJTkMimigijPdYZW4cntInIuimfZvttZZIe26xdy9+K7oF
-	 PQxxJxELZBigWI0f4IJBrkHtyiRMiapW61QJpn1T/9xz6deyMS/SaZ8EpBt7fHkHHV
-	 pHMJS3+O1okUyC0WYWgiIdmGkhj16mMQsMHH44MjHbKfQ9Ni+qXK0i/55hd2RGWcQc
-	 WlJ941piYOqGxpLaQGRktFyOdgtX3B3JgY71RqYrsMEK+Cj0MNQeRgs/uESbaSqtJi
-	 xqH1sDAQt9/sg==
-Date: Thu, 30 Oct 2025 08:13:53 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, 
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-Subject: Re: [PATCH v4 2/6] media: dt-bindings: Add CAMSS device for Kaanapali
-Message-ID: <20251030-elastic-chupacabra-of-downpour-dbecfb@kuoka>
-References: <20251028-add-support-for-camss-on-kaanapali-v4-0-7eb484c89585@oss.qualcomm.com>
- <20251028-add-support-for-camss-on-kaanapali-v4-2-7eb484c89585@oss.qualcomm.com>
+	s=arc-20240116; t=1761808473; c=relaxed/simple;
+	bh=XMlrJEWTdkAKXDcZVo3PSrnFRhI521tu4gKbZ0l7fQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rQD7Zc7qEkKwg2bHyQuej1ul1QTOzWl297RanxkwbvHLsE2Yj5PTpFDstHPovBHddpsaebC2VIGQW5fZOHK0Ogp6b6AkgnsB+LiQTf07cSEcyULWFqX7cMihulfq2QS/UwmMUtNlD5sQfm9/rpsNGJ2YKy7cw3z/18dhalkgPXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dESBZqrb; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-426fc536b5dso420349f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761808470; x=1762413270; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aH6T32Cb7TYi8VumYlF/21u6CEuW0X6v+ipNrECbl3c=;
+        b=dESBZqrbJr9m7OWaPAwMJ95tYkFIOS+NwWaX9JNkA9HUJCHaX7GCOWGG5hXziKdzE2
+         1TAXx65D1LUwmIR0gu45LUHth75+7K9tCEErn+8KTRy12ryjSVruj64pcqKKyDv4UCes
+         Tuq5t6YZwU6DYZFXXKsfhnIrTqB/9Aity/Gelie/uB6OydNiugpotdXyxMmSs07XVsMI
+         YxUB8VGaD2Cc5eLrax3ZzKXs0iRncIkshZtw6FJWDv27YBB8SIgQZoBg7zH4XHWmpQtm
+         tfWvINqsrB2zEIDo/Ql0ABnGkOKTDnE5W8sGgfGj6t49J8t3M8Hd4mP6IKxKKPAgLIPR
+         KHfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761808470; x=1762413270;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aH6T32Cb7TYi8VumYlF/21u6CEuW0X6v+ipNrECbl3c=;
+        b=bdIe7WP3W/nvXxokvAIc9+8qFhB31QLEqv26MKrg5oXjkCiTW76IKN8VUvlhQAKEAY
+         BWeM0QAcruPQRVpTA7KgRL/0wSvJrqLT2FagkjH4muNvbNZN8o3hkSMfIaJnA6pWclSj
+         MzGMztoCHFFCeBWd2jOxIWYDlqEGYsJklF4PvVJaKv9QiTqpBOsdvV7Wkk2RxqZhJCa7
+         i2vzjMMN7fyqVwKpBxTYdnFY79MSGE2Ch4jBAiqxwoi2OfQlRa/hMuySM0r56oiUz6rw
+         AjQC0IMbHewapFdp+2tTbfpNjU9KDf/WL8dGG0S8g2y4+GaXmsrPDgtsFAnx0gIQrptx
+         Ex3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5dr9KnY9ADMx0AnGnJq0dgw2RbP2iko9XLV6u12e3FtVcUXTMND9Ei3VstDY75DV+pq8FKrlqhZ9nbXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhDd/f8kwlg/cwH7V/6bJnEIdJpBZB678kN4rW3U9ozeJ2hC2M
+	uqtZqG7+ImDbAleIeXcwtyRtqVu5Z7vxDPf4vYyjY1XV5XV3KzvqNxv9f7ZcJ6Z1sSI=
+X-Gm-Gg: ASbGncu8StBauI9OIberNyALTMPMeu6AfD9Ts7fcQGdIGLUKqSx0laQNjbdc7PuSadi
+	E6YFkBychzF0Xsoe2zzA7oGrDSZLIjpMxc9GCAbper5k2tpHmnjwf+2S1NqI1xU3hZHoyQVpSCl
+	X0DS7MLP5mj/Gbj1qyLFLIoJDIfXTkgJVESOlBpvuFzr3ulqwFsQrN68lg3JkB+PvBG6gGexI83
+	JQnb7joOSdC6UHR7x9ygVOnFIL1G4DCrcTSsH7usgp1UW7UKvy7EKrh4dlNyODj/+4xUPpcHQXw
+	O9sPiT1j+hgaUPln8QNQjTy+9euoTZGvgPA6nSTh1kLMbrDRSOA150SKOZHJ7XDcDdtGCRHzdWv
+	bYixpgcJtdzBzdmOgIqt5H4f+0VTXVGN0eSd3SM0DmJRB8HqG7FbDT9RDHzzfSlgaQtf4NK74po
+	6WAX5nbinErIkcPPL8WpRzQ10hSSaB+Rv4z2YDsZU=
+X-Google-Smtp-Source: AGHT+IHn7MtTON5++FHTniNKg/4xSWijqk1ryDdUxKxT7I/HueMz7ChV39hFowYXxw84gLxbWRyTuQ==
+X-Received: by 2002:a05:6000:43d6:10b0:429:b8e2:1064 with SMTP id ffacd0b85a97d-429b8e211e5mr534668f8f.47.1761808469621;
+        Thu, 30 Oct 2025 00:14:29 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0c414sm175434765ad.44.2025.10.30.00.14.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 00:14:29 -0700 (PDT)
+Message-ID: <c3512f2a-f995-4642-8eb9-a227890ba856@suse.com>
+Date: Thu, 30 Oct 2025 17:44:22 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251028-add-support-for-camss-on-kaanapali-v4-2-7eb484c89585@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when
+ stable writes are required
+To: Christoph Hellwig <hch@lst.de>, Qu Wenruo <wqu@suse.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org
+References: <20251029071537.1127397-1-hch@lst.de>
+ <20251029071537.1127397-5-hch@lst.de>
+ <20251029155306.GC3356773@frogsfrogsfrogs> <20251029163555.GB26985@lst.de>
+ <8f384c85-e432-445e-afbf-0d9953584b05@suse.com>
+ <20251030055851.GA12703@lst.de>
+ <04db952d-2319-4ef9-8986-50e744b00b62@gmx.com>
+ <20251030064917.GA13549@lst.de>
+ <a44566d9-4fef-43cc-b53e-bd102724344a@suse.com>
+ <20251030065504.GB13617@lst.de>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20251030065504.GB13617@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 10:44:11PM -0700, Hangxiang Ma wrote:
-> Add the compatible string "qcom,kaanapali-camss" to support the Camera
-> Subsystem (CAMSS) on the Qualcomm Kaanapali platform.
+
+
+在 2025/10/30 17:25, Christoph Hellwig 写道:
+> On Thu, Oct 30, 2025 at 05:23:32PM +1030, Qu Wenruo wrote:
+>>> So what is your application going to do if the open fails?
+>>
+>> If it can not accept buffered fallback, error out.
 > 
-> The Kaanapali (SM8550) platform provides:
-
-SM8550 is not Kaanapali, AFAIK. Looks like typo.
-
-> - 3 x VFE, 5 RDI per VFE
-> - 2 x VFE Lite, 4 RDI per VFE Lite
-> - 3 x CSID
-> - 2 x CSID Lite
-> - 6 x CSIPHY
+> Why would it not be able to accept that?
 > 
-> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> ---
->  .../bindings/media/qcom,kaanapali-camss.yaml       | 406 +++++++++++++++++++++
->  1 file changed, 406 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
-> new file mode 100644
-> index 000000000000..c34867022fd1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
-> @@ -0,0 +1,406 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-camss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Kaanapali Camera Subsystem (CAMSS)
-> +
-> +maintainers:
-> +  - Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> +
-> +description:
-> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,kaanapali-camss
-> +
-> +  reg:
-> +    maxItems: 16
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: csiphy5
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  clocks:
-> +    maxItems: 34
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camnoc_nrt_axi
-> +      - const: camnoc_rt_axi
-> +      - const: camnoc_rt_vfe0
-> +      - const: camnoc_rt_vfe1
-> +      - const: camnoc_rt_vfe2
-> +      - const: camnoc_rt_vfe_lite
-> +      - const: cam_top_ahb
-> +      - const: cam_top_fast_ahb
-> +      - const: csid
-> +      - const: csid_csiphy_rx
-> +      - const: csiphy0
-> +      - const: csiphy0_timer
-> +      - const: csiphy1
-> +      - const: csiphy1_timer
-> +      - const: csiphy2
-> +      - const: csiphy2_timer
-> +      - const: csiphy3
-> +      - const: csiphy3_timer
-> +      - const: csiphy4
-> +      - const: csiphy4_timer
-> +      - const: csiphy5
-> +      - const: csiphy5_timer
-> +      - const: gcc_hf_axi
-> +      - const: vfe0
-> +      - const: vfe0_fast_ahb
-> +      - const: vfe1
-> +      - const: vfe1_fast_ahb
-> +      - const: vfe2
-> +      - const: vfe2_fast_ahb
-> +      - const: vfe_lite
-> +      - const: vfe_lite_ahb
-> +      - const: vfe_lite_cphy_rx
-> +      - const: vfe_lite_csid
-> +      - const: qdss_debug_xo
-> +
-> +  interrupts:
-> +    maxItems: 16
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: csiphy5
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  interconnects:
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: ahb
-> +      - const: hf_mnoc
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    items:
-> +      - description:
-> +          IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description:
-> +          IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description:
-> +          IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description:
-> +          Titan GDSC - Titan ISP Block Global Distributed Switch Controller.
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: ife0
-> +      - const: ife1
-> +      - const: ife2
-> +      - const: top
-> +
-> +  vdd-csiphy0-0p8-supply:
-> +    description:
-> +      Phandle to a 0.8V regulator supply to CSIPHY0 core block.
-> +
-> +  vdd-csiphy0-1p2-supply:
-> +    description:
-> +      Phandle to a 1.2V regulator supply to CSIPHY0 pll block.
-> +
-> +  vdd-csiphy1-0p8-supply:
-> +    description:
-> +      Phandle to a 0.8V regulator supply to CSIPHY1 core block.
 
-Nothing in changelog explained why suddently 8 new supplies appeared.
+Because for whatever reasons, although the only reason I can come up 
+with is performance.
 
-What exactly changed here?
+I thought the old kernel principle is, providing the mechanism not the 
+policy.
+But the fallback-to-buffered looks more like a policy, and if that's the 
+case user space should be more suitable.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Qu
 
