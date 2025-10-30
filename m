@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-878527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E3EC20E3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 559D7C20E60
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 450B04E3FD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:22:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43CF54E2776
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A318B363364;
-	Thu, 30 Oct 2025 15:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9CD363B9B;
+	Thu, 30 Oct 2025 15:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WaXCZTz7"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FA88wTSO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAC52F3636
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D13208;
+	Thu, 30 Oct 2025 15:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837748; cv=none; b=TrG87B3NOC6FOH36KBGHZrWVbu3iEaORZj5T6bk2zde5z0HyofHv6EzPBSSfWpsOnnrBE2cI/dNCJvqvI0cGk1MH4kHyEjHPuL3Z5VA+vYZ6EeMbfOmt4dSZ4/6AxuNd/YLf55L6Zk1Qt6h4lBalOyzVSlw5maLwskpGcB4VKt8=
+	t=1761837809; cv=none; b=msH1U8Wiv43KG00Vlox/h8wdYLuoyBZ0g4jSEbVEKdf/oir0sVf6hHgXNd9M7c2kn1tG0sMx7oH8FoYZrw6ljF9R1WenDEtms1qXLIwMHg+zh9WTjyepD6Y2uNdPkvhJtkXfD2hCmA45lv00jnC4YONaaNxHLzrlMAbV0WS+kAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837748; c=relaxed/simple;
-	bh=6d/OVmKJJb7OlddG1Bh9+D9lD7AVNsH/e/F/SKjKcKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h6bDP7Tb+jtm8B2NqQqQoV5d86SSCqhJtST/PkHGftWh5s1Lw6WVsJPrFkpJDow2mzRjvgrIA58Shd4rtDPlo19cowwSA8sXsJbe8GdgQPeDgNh9qsEFmmOwnPBcUxVaTEnWFHjq+kqTuCNikNyYAygpJIkWiMkXeC0WxUF1txc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WaXCZTz7; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b27b50090so199982266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761837743; x=1762442543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6d/OVmKJJb7OlddG1Bh9+D9lD7AVNsH/e/F/SKjKcKo=;
-        b=WaXCZTz7tePSRgNv7Pkvrf/u4Vg91E0+C2q5cVsPZ5NtpUYyLca24nqxplAXYClEm3
-         abJV2YrT2cVObZw55Wfao8eAV5KCvJeTwzgfP7HIFAnzbgkcbDSjt62ZR7Tc8X8ZO69U
-         tPGfZepsczbGnO1oPomGObBguiGWG4KozFDzI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761837743; x=1762442543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6d/OVmKJJb7OlddG1Bh9+D9lD7AVNsH/e/F/SKjKcKo=;
-        b=fcWKUeTKD9j5YK2JEBM0FAdhKTCAOyW4ZzgAFJa8vGzbd7zILyjzHfWDSZC2UJrnY6
-         6o2DjprWjo16U3SkXRT4/+CKxRj+W+siWZMaCOBorKinfjPKV9nmyvecIgMdWl0U2/zf
-         NPyN9S+FwtgxZZv3HDf6ANf36UHdAEBOlVSYt89m2sK+TLEW2WmqYV3ud0X9IYisWiLN
-         bsAdzhumXoyKnAyiHHOCSekVWIJvGtF+38mUMyqXOJ/xD8Y5kLZy2lQ49E41leo5pL69
-         rceplrZSPBs4azgkHDZlQJWNEpWNwBzWMovT3uNhY1mtmhb6S097FgHtBELd8zN+wC97
-         +QuA==
-X-Gm-Message-State: AOJu0Yw1p8QO6WqPnmW0HwIDBpyqLlNsQGgjgwpWZr7AXVJyPBcmDTnJ
-	gTVRhKGTVidNfvgG2eao0Vt0YFiA9LYZv1IhODrvOY4FIhmUdb5lNIbAg+4ECC12gBDK37l4IiQ
-	FAxGjOO0a
-X-Gm-Gg: ASbGncvj1C5Fre6xYcdaUWJm5MwlC+2rFM/nBFI8kEgQJW/T1X6E/DPkRlO3eW/6hHl
-	dB7oYmX7nnC9t2Hp9nDMrHHy7NnsKHlIajR6RjrbXOHnMtNpK5XpC69kzvPw0Y3VZcdz1kt2Btl
-	fg6go8MjBPN/6vQlYQuUt1BbRMFBUwKCpOePimjeZlC/iD1ZDLLOrgBMQjjrrVc6GrOs/2hIn2A
-	r1S0SCK95ak46r554AVkVdnDkFw9Ro2IVZ7dsHTykcBYGYkj05JpQViToxrdZUHMaj6rTuG2ClP
-	7na8zFugcshfQJvNHOqEb12WKUaJQ+QEpF+wScoYSt1BwwQeAYm2gbSQNBGJI3Oo2NYs2eMwz9k
-	LsbP2yBYCIQ2KLrPXothaHpcTLHarlzS5NiymPUNg8Lozc7DfD0Zr66G/4Kb5glzTtxn+Y+lMXT
-	XaPWh6hZM2h2u/Q9eMyey2uWNfAb2ZdLX2xomLHsY=
-X-Google-Smtp-Source: AGHT+IG4PHSG5nJUS0ovVVsUE7XDsMJxAyteqbV0t5OT84EHLu9IeOTSUpEuvlu0ETjxAV2SlHbsOQ==
-X-Received: by 2002:a17:907:970e:b0:b5d:7a22:ae41 with SMTP id a640c23a62f3a-b7053c1571dmr367230766b.24.1761837743358;
-        Thu, 30 Oct 2025 08:22:23 -0700 (PDT)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7044d00de6sm495632766b.74.2025.10.30.08.22.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 08:22:22 -0700 (PDT)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710022571cso13972705e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:22:22 -0700 (PDT)
-X-Received: by 2002:a05:600c:190e:b0:46e:42aa:75b5 with SMTP id
- 5b1f17b1804b1-47730793c04mr1042045e9.4.1761837741749; Thu, 30 Oct 2025
- 08:22:21 -0700 (PDT)
+	s=arc-20240116; t=1761837809; c=relaxed/simple;
+	bh=DeegVoD/FpDij0JSaJoj94TY1CnINwyeRhD2sowD2hk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k58NVCGFyXDVYu5QuoBciH7Ee0wQ1kdG5tD6QZ+FFiEGiaR4SjHeNJ4EpRl03jWvgIzp2cwfoJxYWWCJ+AywEVzBXsnpLtoZbMS8asZyfstI6u9WDs3Hhcip6gQqXiCTmOhP9uAKVPHLTd2fmSCjvICvJ7cRitAcg29Bt7Z+vko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FA88wTSO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6FDC4CEFF;
+	Thu, 30 Oct 2025 15:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761837809;
+	bh=DeegVoD/FpDij0JSaJoj94TY1CnINwyeRhD2sowD2hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FA88wTSOrmHFd7V1HulHrQjr6P3mVPZ7KY4wbyBFaC5Dsk5ivyms3bifB3pOi9rIS
+	 gpKLD607l/e92oCqdYMmcKT8rQQKkIlwuB63YBXi9fLchTTT8GMo0h/rcSM/1DmRI+
+	 d2mLYU7KBwbnmnCxAsP5ZA0HjE1VXoMpIQ0/QtIDO6QZb0GP1hiOxiOGKoqnfgL1CW
+	 Ribgl8/BtOC04OBJ+7wBHSIwZFWxHZk2sMvoWne2PbU+3xoNfSmRuvaGcpeEeZGGGB
+	 7k4WQxwIVOTVVQb6tGuJfqRcCtJ7/15gA70oDA/D5eB+c4LlmyQ0feVtknRcYafCZJ
+	 GIS6Cw4DP8+ug==
+Date: Thu, 30 Oct 2025 16:23:24 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
+	David Rhodes <david.rhodes@cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund <steen.hegelund@microchip.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 18/29] i2c: mux: Create missing devlink between mux
+ and adapter physical device
+Message-ID: <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-19-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
- <20251029081048.162374-3-ajye_huang@compal.corp-partner.google.com>
- <CAD=FV=WbR0u_a7S1pcL-6C+sj9Kt=GOLUwJmwt8ANJbyV4JYFQ@mail.gmail.com> <CALprXBb=_HuwskwFP0nRKH=3zwoGbig4fWY+Q4g53Jhn985TsA@mail.gmail.com>
-In-Reply-To: <CALprXBb=_HuwskwFP0nRKH=3zwoGbig4fWY+Q4g53Jhn985TsA@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 30 Oct 2025 08:22:09 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UXRpk=O7zC4B9hRE4oTNHJLosm_bhhNUgVur0csChMhQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bnhb78qdonzJKwyTXBrXsT_c1_8-ezmVyvceIjunYMg8V3tseIDtx918nA
-Message-ID: <CAD=FV=UXRpk=O7zC4B9hRE4oTNHJLosm_bhhNUgVur0csChMhQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] drm/panel-edp: Modify LQ116M1JW10 panel's bpc to 6
-To: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, jazhan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015071420.1173068-19-herve.codina@bootlin.com>
 
-Hi,
+Hi Herve,
 
-On Thu, Oct 30, 2025 at 2:58=E2=80=AFAM Ajye Huang
-<ajye_huang@compal.corp-partner.google.com> wrote:
->
-> Hi Doug,
->
-> On Thu, Oct 30, 2025 at 7:25=E2=80=AFAM Doug Anderson <dianders@chromium.=
-org> wrote:
->
-> >
-> > Unless folks end up preferring EDID_QUIRK_FORCE_6BPC:
-> >
-> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
->
-> After following your suggestion with the following, the issue goes
-> away during YouTube playback.
-> I will send a new patch for drm_edid.c, thank you so much
+...
 
-FWIW, it is a bit baffling to me that you report link training seems
-to be failing yet then talk about the symptom of noise during youtube
-playback. If link training is failing I'd expect nothing to ever show
-up on the screen...
+> When an i2c mux is involved in an i2c path, the struct dev topology is
+> the following:
 
--Doug
+supernitpick: I'd leave blank line here.
+
+>     +----------------+                +-------------------+
+>     | i2c controller |                |      i2c mux      |
+>     |     device     |                |      device       |
+>     |       ^        |                |                   |
+>     |       |        |                |                   |
+>     |  dev's parent  |                |                   |
+>     |       |        |                |                   |
+>     |   i2c adapter  |                | i2c adapter chanX |
+>     |     device  <---- dev's parent ------  device       |
+>     |   (no driver)  |                |    (no driver)    |
+>     +----------------+                +-------------------+
+> 
+
+...
+
+> No relationship exists between the i2c mux device itself and the i2c
+> controller device (physical device) in order to have the i2c mux device
+> calling i2c_del_adapter() to remove its downtream adapters and so,
+
+/downtream/downstream/
+
+> release references taken to the upstream adapter.
+
+...
+
+> +	/*
+> +	 * There is no relationship set between the mux device and the physical
+> +	 * device handling the parent adapter. Create this missing relationship
+> +	 * in order to remove the i2c mux device (consumer) and so the dowstream
+> +	 * channel adapters before removing the physical device (supplier) which
+> +	 * handles the i2c mux upstream adapter.
+> +	 */
+> +	parent_physdev = i2c_get_adapter_physdev(parent);
+> +	if (!parent_physdev) {
+> +		dev_err(muxc->dev, "failed to get the parent physical device\n");
+> +		ret = -EINVAL;
+
+-ENODEV?
+
+> +		goto err_free_priv;
+> +	}
+> +	dl = device_link_add(muxc->dev, parent_physdev, DL_FLAG_AUTOREMOVE_CONSUMER);
+
+Not to call twice put_device, I would add it once here and then
+check for !dl.
+
+> +	if (!dl) {
+> +		dev_err(muxc->dev, "failed to create device link to %s\n",
+> +			dev_name(parent_physdev));
+> +		put_device(parent_physdev);
+> +		ret = -EINVAL;
+
+same here, should this be -ENODEV?
+
+Andi
+
+> +		goto err_free_priv;
+> +	}
+> +	put_device(parent_physdev);
+> +
+>  	if (force_nr) {
+>  		priv->adap.nr = force_nr;
+>  		ret = i2c_add_numbered_adapter(&priv->adap);
+> -- 
+> 2.51.0
+> 
 
