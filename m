@@ -1,166 +1,203 @@
-Return-Path: <linux-kernel+bounces-878159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F69C1FE8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:01:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D00C1FE86
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1542734DDF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D713F1887CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F412F1FC5;
-	Thu, 30 Oct 2025 12:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBB72FF677;
+	Thu, 30 Oct 2025 12:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCAtMkz9"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=karo-electronics.de header.i=@karo-electronics.de header.b="TJzJ511K"
+Received: from dd54918.kasserver.com (dd54918.kasserver.com [85.13.167.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DAD248898
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1BC313E2B;
+	Thu, 30 Oct 2025 12:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.167.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761825692; cv=none; b=YdJ0zdV+dct6psye76elVoc0QqMkWCl7A1o5u8hR+sds8nv57BdA3Bdz8tUiULqQDN6ICAIyI11hil1FxD7PLQx/kg51NJWfhwjL1rRlvWWS7TwnSK3zrpPddL2pA08rNbUZsu2E3OVMz8tMRb2C9ZNUD9JDtyuTyIVaHRkOJ/w=
+	t=1761825617; cv=none; b=qy4T2zfpJ58D0QCoFltOb10UAMXuHa15VgsTRMSEzFI6RpcAeLVPy9YJxr4U1b0uWdgY1xtnlDQuwBURSak573L1XWqD2FLmir85GIxoBMUjSIimNAh9vuRhOLBU7U+faUjW/Y/LS07jvK9z9a6Wt2yAHzrA13kwz8VuWljhNxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761825692; c=relaxed/simple;
-	bh=a0Vb08GsJsiZX8VXASxn6F/tULBS2QnSkG6NcZz0f7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYMFPvAEWTc0UOUJ5la9kXesv6dr6ct7cIYUFg1npQ82T2GZWfKhrO0GxD53+/VFMk34ibHIFcLnEQGkb//taVAR9KNvhuFMSyzQYHlr0nzrjwgTCKYkx8tfhpbCMIYx01s7nlpXQwo4PFWVcwGWQjWkzGyhuphbte2X+ke7IlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCAtMkz9; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so1882738a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761825690; x=1762430490; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hCqsTP6WO8xa6bcu1HyLOprfOOc/QQz4vxykmNqr+x4=;
-        b=gCAtMkz959EnoCs7GvsVLEUPl0wMsKZe4+RpVDMok1HN7O8DgoagRvsYcRyyFHLoni
-         2WU7lDG9J/d4BgysQjb62dGY8Hn+mef1M7FrRJJyybAxRlvC5w66Ow1razQ4/ftAJ67K
-         Ty5u8SJbH9uwYLwOtlXyvGCLPO0zOBhNUOYetQv9l/qsd4rP7nDpvXO3bJ0/BgI8eKLE
-         IosFYOXuV5D52gNxQk+nIeH1ZDzOIWqDFGJVMVB53mA+WKAj6km5Tu5+LUil3ScxT9Wb
-         0JlvWXdJTEiFDFLe7Pw0coxEYak3LFOud+zjzFYNu1MyWzpuDf+GCGGcNQwVmWXrfZEQ
-         bn7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761825690; x=1762430490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hCqsTP6WO8xa6bcu1HyLOprfOOc/QQz4vxykmNqr+x4=;
-        b=IFuR5bCdZ1a5jTMSLUKarOUqhdfolrAna3wGkJPiyGrvc+LTqnzK6yQSfRpVYWZShR
-         WJyEaP3iT/DpuSFt264Dr38RgZkgiEyUpA1n5+JrQv/m/mQCD2g/CZRJA4cn6rYqm8eS
-         6lWhXmLE+nUbvc9uJLYdlV4llY2rknzbWneUHamNGCnPWjLfLDM5gqIGi/jcgHC35i/x
-         Dc/A4OqgiLNb20PuAHO0K4hvdvXtuQWVlZwOR0T/iHzp2ApEcD423tmqH0TIWgqjFS7d
-         qgRsu6Kx/ijCoulT0MbAJmaQn2PC7Xjvrzyju6SytW4Io9sab0UbIQJAC15m8f4WtZtn
-         /4bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzjGsYTRLusf348g/02XXy9MdztfH4JJ2KvKGxH9LQYl2hOCASBcfp8ViMZYZqwWcCvX9pQbHPuKAI2OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPBtkHa3pFichXTOVMKwAPDloq0b8TD23d8IviJ+Yl9KSPTiCa
-	81hd+1WnLl7kRUYUr1E5IwQHSGpIV7qFtZ7wDGdovT4TfNM6jEr1T/HD
-X-Gm-Gg: ASbGncuGDcBZC5v8BF1xOO0+39lYEzgeW457EN7UnJiLunNTDAZi6kRn7GirZmxlDyA
-	PUshD+GHbAdWst/2OADcZw3CVxhss8DAb3fV8nYM0zlWoMgMAtNHAlHC81dh1M2yvWG7NWsaOFb
-	1rOUu/6LdZP7SLKMKZ4G+AiBw9PYL9D/6bJwdQsMR4WQeUJXLmt08Xg3Mw6XY6x5csvwRiJuxaj
-	ESiD9rl/3yhZcDvAnBiGLq7gB1jrfIK4R7QrXPz17MW3YK2Sq0qirHvN8Bln1ZKwR1JfMpdnV8U
-	j7fX/LA7lcXRoICCxE+Swb2L/OVjSVcAhWu/3jx9OiJvb80C613KGifel+RkbGBJezABCVswMMp
-	5iZBowY8+xVg6bPFkAf+3amnyFNUm8ckiVu02dQl0RKrFuaS3tD5/sb71UUs9mOl1UokE97SYGb
-	qROYHBxKO+oYP6klktePY33UmMylCtK3O7
-X-Google-Smtp-Source: AGHT+IFQonX24JTyLfZWsxFGjgrZZNRr20CiGs3KUyL71nd3BmA5oWK9NNDrPOive4p1cvJyGQN5mw==
-X-Received: by 2002:a17:90a:ec83:b0:340:68ee:ae5e with SMTP id 98e67ed59e1d1-34068eeb00fmr1335110a91.4.1761825689493;
-        Thu, 30 Oct 2025 05:01:29 -0700 (PDT)
-Received: from weg-ThinkPad-P16v-Gen-2 ([177.73.136.69])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-340509e940bsm2419685a91.17.2025.10.30.05.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 05:01:28 -0700 (PDT)
-Date: Thu, 30 Oct 2025 08:59:37 -0300
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] Revert "mm/ksm: convert break_ksm() from
- walk_page_range_vma() to folio_walk"
-Message-ID: <4ft4r4sh7gercwpmurgjpovzv6komoknbwvenzbxugx37ozrdp@x3i4vnacabyh>
-References: <20251028131945.26445-1-pedrodemargomes@gmail.com>
- <20251028131945.26445-2-pedrodemargomes@gmail.com>
- <57b83fd3-8a6c-4d98-bd6d-1c97c71b91a3@redhat.com>
+	s=arc-20240116; t=1761825617; c=relaxed/simple;
+	bh=sUglKoVc/VLXRM9p0grmAN5nbBQlsBeZ6PJ7XKIOx40=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V1wGT3y+Zq9rf4t22Kujy+XFpudesGmBnL8XQNUos9J87ypEGi19gXiojRNk2ouCIG3Z0vvd5EtuL3korkS/7IpaIE3BNVoY592NFsUGT+6AsC3wQHTr8doiotVsw2y6phvl40k5d5R0JjHPcCBcQxDCuVydckMtOPaOzu0lKW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=KARO-electronics.de; spf=pass smtp.mailfrom=KARO-electronics.de; dkim=pass (2048-bit key) header.d=karo-electronics.de header.i=@karo-electronics.de header.b=TJzJ511K; arc=none smtp.client-ip=85.13.167.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=KARO-electronics.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=KARO-electronics.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=karo-electronics.de;
+	s=kas202509031142; t=1761825608;
+	bh=KoSpIHesXav88BpAbWZAt/l5Rnoii11g5rgxnEXc2kk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TJzJ511Kau45mJR/ckFCA6l46qxr2CBDpYPyYYz1OOpWhPc020ANMEuudO8sjC08G
+	 sM9XS3m5lGQ3xQfyCiiGSX5oSe5TQ2vjth86959tI4HZk9+d3HvaVHAx6Hj5nAvK9v
+	 dJX/coXRd4466/s0/mW4KrTYGl/jViyWqeGdJnTUuwM5krD+q8aL3fJWURaOv0Gqsm
+	 gajocVQfdWpacLTtC62WNP0lKarL4Aag6vDPFaQO9gGu+/YiBBBt4aSF9qzX12cgmZ
+	 1L/xK8IMiIbABbkK6L7S/Z9JVT9PjWNR00XTIghNyFX5ruaLOcvtWad1vV6GNF3wJA
+	 ZvTEQs1n8pzXw==
+Received: from karo-electronics.de (unknown [89.1.81.74])
+	by dd54918.kasserver.com (Postfix) with ESMTPSA id E53F9772C542;
+	Thu, 30 Oct 2025 13:00:07 +0100 (CET)
+Date: Thu, 30 Oct 2025 13:00:06 +0100
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Maud Spierings <maudspierings@gocontroll.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] arm64: dts: freescale: add Ka-Ro Electronics
+ tx8m-1610 COM
+Message-ID: <20251030130006.0221957a@karo-electronics.de>
+In-Reply-To: <26fc62bb-3484-4812-b576-6640eef72c49@gmail.com>
+References: <20251022-mini_iv-v2-0-20af8f9aac14@gocontroll.com>
+	<20251022-mini_iv-v2-3-20af8f9aac14@gocontroll.com>
+	<a7012995-c2a8-48a3-abe1-5c227272f21c@gmail.com>
+	<65202d1f-6c4f-4d4e-9fef-85cfb74ec768@gocontroll.com>
+	<938f85b0-4c9b-463a-960a-f5f4e4092480@gocontroll.com>
+	<20251029081138.2161a92a@karo-electronics.de>
+	<4a47b9b5-f482-41b6-a441-7728572c5a0c@gmail.com>
+	<20251029104838.44c5adcf@karo-electronics.de>
+	<d05c62c9-7ed7-46e4-aa4d-27172741b5ee@gmail.com>
+	<0667e026-99f3-4233-b3f6-e38273961d49@gocontroll.com>
+	<20251030095434.1dc06df2@karo-electronics.de>
+	<26fc62bb-3484-4812-b576-6640eef72c49@gmail.com>
+Organization: Ka-Ro electronics GmbH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57b83fd3-8a6c-4d98-bd6d-1c97c71b91a3@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Bar: /
 
-On Wed, Oct 29, 2025 at 03:34:23PM +0100, David Hildenbrand wrote:
-> On 28.10.25 14:19, Pedro Demarchi Gomes wrote:
-> > This reverts commit e317a8d8b4f600fc7ec9725e26417030ee594f52 and changes
-> > PageKsm(page) to folio_test_ksm(page_folio(page)).
-> > 
-> > This reverts break_ksm() to use walk_page_range_vma() instead of
-> > folio_walk_start().
-> > This will make it easier to later modify break_ksm() to perform a proper
-> > range walk.
-> > 
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-> > ---
-> >   mm/ksm.c | 63 ++++++++++++++++++++++++++++++++++++++++++--------------
-> >   1 file changed, 47 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/mm/ksm.c b/mm/ksm.c
-> > index 4f672f4f2140..2a9a7fd4c777 100644
-> > --- a/mm/ksm.c
-> > +++ b/mm/ksm.c
-> > @@ -607,6 +607,47 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
-> >   	return atomic_read(&mm->mm_users) == 0;
-> >   }
-> > +static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long next,
-> > +			struct mm_walk *walk)
-> > +{
-> > +	struct page *page = NULL;
-> > +	spinlock_t *ptl;
-> > +	pte_t *pte;
-> > +	pte_t ptent;
-> > +	int ret;
-> > +
-> > +	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> > +	if (!pte)
-> > +		return 0;
-> > +	ptent = ptep_get(pte);
-> > +	if (pte_present(ptent)) {
-> > +		page = vm_normal_page(walk->vma, addr, ptent);
-> 
-> folio = vm_normal_folio()
-> 
-> > +	} else if (!pte_none(ptent)) {
-> > +		swp_entry_t entry = pte_to_swp_entry(ptent);
-> > +
-> > +		/*
-> > +		 * As KSM pages remain KSM pages until freed, no need to wait
-> > +		 * here for migration to end.
-> > +		 */
-> > +		if (is_migration_entry(entry))
-> > +			page = pfn_swap_entry_to_page(entry);
-> 
-> folio = pfn_swap_entry_folio()
-> 
-> > +	}
-> > +	/* return 1 if the page is an normal ksm page or KSM-placed zero page */
-> > +	ret = (page && folio_test_ksm(page_folio(page))) || is_ksm_zero_pte(ptent);
-> 
-> 
-> The you can directly work with folios here.
-> 
+Hi,
 
-Ack, will do.
+On Thu, 30 Oct 2025 13:01:52 +0200 Matti Vaittinen wrote:
+> On 30/10/2025 10:54, Lothar Wa=C3=9Fmann wrote:
+> > Hi,
+> >=20
+> > On Wed, 29 Oct 2025 16:35:25 +0100 Maud Spierings wrote: =20
+> >> Hi Matti,
+> >>
+> >> On 10/29/25 11:05, Matti Vaittinen wrote: =20
+> >>> On 29/10/2025 11:48, Lothar Wa=C3=9Fmann wrote: =20
+> >>>> Hi,
+> >>>>
+> >>>> On Wed, 29 Oct 2025 10:42:17 +0200 Matti Vaittinen wrote: =20
+> >>>>> On 29/10/2025 09:11, Lothar Wa=C3=9Fmann wrote: =20
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> On Tue, 28 Oct 2025 14:10:04 +0100 Maud Spierings wrote: =20
+> >>>>>>> On 10/28/25 13:42, Maud Spierings wrote: =20
+> >>>>>>>> On 10/28/25 13:15, Matti Vaittinen wrote: =20
+> >>>>>> [...] =20
+> >>>>>>>>> Could/Should this be described using the:
+> >>>>>>>>> 'rohm,feedback-pull-up-r1-ohms' and
+> >>>>>>>>> 'rohm,feedback-pull-up-r2-ohms'? If I understand the comment
+> >>>>>>>>> correctly, that might allow the driver to be able to use correc=
+tly
+> >>>>>>>>> scaled voltages.
+> >>>>>>>>>
+> >>>>>>>>> https://elixir.bootlin.com/linux/v6.18-rc1/source/Documentation/
+> >>>>>>>>> devicetree/bindings/regulator/rohm,bd71837-regulator.yaml#L108 =
+=20
+> >>>>>>>> =20
+>=20
+> // snip
+>=20
+> >>>>>
+> >>>>> If real voltages aren't matching what is calculated by the driver, =
+then
+> >>>>> the voltages requested by regulator consumers will cause wrong volt=
+ages
+> >>>>> to be applied. Debug interfaces will also show wrong voltages, and =
+the
+> >>>>> safety limits set in the device-tree will not be really respected.
+> >>>>>
+> >>>>> I think this would be well worth fixing.
+> >>>>>    =20
+> >>>> Before doing the real-life test I did the same calculation that's do=
+ne
+> >>>> in the driver to be sure that it will generate the correct values:
+> >>>> bc 1.07.1
+> >>>> Copyright 1991-1994, 1997, 1998, 2000, 2004, 2006, 2008, 2012-2017
+> >>>> Free Software Foundation, Inc.
+> >>>> This is free software with ABSOLUTELY NO WARRANTY.
+> >>>> For details type `warranty'.
+> >>>> fb_uv=3D0
+> >>>> r1=3D2200
+> >>>> r2=3D499
+> >>>> min=3D800000
+> >>>> step=3D10000
+> >>>> # default voltage without divider
+> >>>> min+30*step
+> >>>> 1100000
+> >>>> min=3Dmin-(fb_uv-min)*r2/r1
+> >>>> step=3Dstep*(r1+r2)/r1
+> >>>> min
+> >>>> 981454
+> >>>> step
+> >>>> 12268
+> >>>> # default voltage with divider
+> >>>> min+30*step
+> >>>> 1349494
+> >>>>
+> >>>> Probably we need to use this value rather than the nominal 135000 as
+> >>>> the target voltage in the DTB. =20
+> >>>
+> >>> Yes. When the driver calculates the voltages which match the actual
+> >>> voltages, then you should also use the actual voltages in the device-=
+tree.
+> >>>     =20
+> >> =20
+>=20
+> // snip
+>=20
+> >>
+> >> Then setting 1349494 as the actual voltage makes it fully work.
+> >> Otherwise it complains:
+> >> buck6: failed to apply 1350000-1350000uV constraint: -EINVAL
+> >>
+> >> Final debug output now:
+> >> [    0.327807] rohm-bd718x7 0-004b: buck6: old range min 800000, step =
+10000
+> >> [    0.327813] rohm-bd718x7 0-004b: new range min 981454, step 12268
+> >> [    0.327819] rohm-bd718x7 0-004b: regulator 'buck6' has FB pull-up
+> >> configured
+> >>
+> >> I will add this fix to the next version of this patchset and include
+> >> your requested change in the dts.
+> >> =20
+> > Does it also work with min/max settings in the DTS that are taken from
+> > the designated value +/- 5% tolerance margin, so that the DTS contains
+> > reasonable values determined by the HW requirements, rather than some
+> > artificial number that is enforced by the SW behaviour? =20
+>=20
+> I am unsure what you mean by "artificial number that is enforced by the=20
+> SW behaviour"?
+>=20
+The nominal voltage that is required by the consumer is 1.35 V. That's
+the voltage I would expect to set as target for the regulator.
+If that voltage cannot be achieved exactly, I would prefer to have the
+intended voltage listed explicitly rather than listing a value that
+accidentally can be achieved by the regulator but has nothing to do with
+the requirements of the consumer.
 
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
-> 
+> I don't know why there should be two different min values? Assuming the=20
+> latter should be max - I have no problem seeing a range of allowed=20
+>
+My copypaste is obviously spoiled... ;)
+
+
+Lothar Wa=C3=9Fmann
 
