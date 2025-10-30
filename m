@@ -1,224 +1,457 @@
-Return-Path: <linux-kernel+bounces-879276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCD5C22B82
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:38:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CACC22B89
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68C9B4E3DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC011A24DA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B26F33E36C;
-	Thu, 30 Oct 2025 23:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE2133E357;
+	Thu, 30 Oct 2025 23:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Ox4MPwGj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hEN6xMm3"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIv7OXs3"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA5F30F95A;
-	Thu, 30 Oct 2025 23:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30492DF153
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761867483; cv=none; b=gGNdEzgZSaSKv4ZIHfAUDFhERv77A1lokAqTaJfHkX2yCQC//yl59ttEMAl+BSGbtC7km1+z3WymlNw4Aiaql7o62x99XJnRcohk1xtkzQrJ2FJDKqhoLz9vdvBMfByZ8fcSz221v9G2q8bdDEBI5LdQvgxaQJ0eh23hRH7OBjk=
+	t=1761867540; cv=none; b=ZzjAO1nNDV0Pg/RdIt7jbAB272jjizxjeJa82eJuALLxxfIKDi+NuVnIYN+ke6T4OsRjGXBqzAKN4S5qdBRDupMSGOAJf9H1dBoGuJ1DZ0k8EMmIvOyZAUCKnv0EZzWeN3HCHhTg7MwnSEfBKhJTsftHlEQsuHMjxItbL/56k6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761867483; c=relaxed/simple;
-	bh=1JFznHwJ9SmoMKBcNVs4nFsIbrQIPYx/MgpAl4L7FeE=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=liWDuDSzQAW2jyLizSbx2d98u7gpcw0hjF/DTDenn6F2u/GfUAH7+WfAEjWRFlWD96IuYkdl4oeCMlFzW21QSpCl4F2BKoGWJBs74/nMCd+/W5BtnECBaCw3zQPOQ1HjqQFeH/TFnQTYsRPaRqzff51FUdfTYhprDq9pTFe9fls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Ox4MPwGj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hEN6xMm3; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailflow.stl.internal (Postfix) with ESMTP id 661A61300302;
-	Thu, 30 Oct 2025 19:37:59 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Thu, 30 Oct 2025 19:38:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1761867479; x=1761874679; bh=ARXwRWPRXeSKN/a2GX42QMZWqyYh6A4I7nh
-	hSoUQkaA=; b=Ox4MPwGjPlU7Jlj9LlcQHN5imiEuc2ynryxgmpyWdO9AP2GCH+R
-	Ph1E/ZCQWxDX+zS3gkmj968ICezZUL5iUXVYOa92K5R8JK9SxFuJajrw9BEus8vu
-	aYC320qfxLOrmDrt69pRh6it4iX/g0+3kPqCNTfNu7eH/OVortH3sHVcfTOtiM2p
-	dIYJwgZyMhDpA4zqryLJshkZz3stXt/gFhsbYTXtPUhCD4/dJeZqOfZ38X60aStf
-	RjSQAfCKs3YwhBx4JrBfRPuIIDBk7hqgQxSxcj9zSZ+6fSh+evUr6KKlst0VwHXU
-	yWVypFKp6izNluJDDVz5+9JgWBB+DpKPZxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761867479; x=
-	1761874679; bh=ARXwRWPRXeSKN/a2GX42QMZWqyYh6A4I7nhhSoUQkaA=; b=h
-	EN6xMm3YCBXxlazAcYuvL9ksO67U4EaE05UPUSkIDkxcR103gn6B4NW6RIbdke7d
-	KRmJv65M7ixo5BCvipseLsEQveJUlN/h2yS6BtBKniOya/PdkvMEwXLyLrlkP552
-	+3Jg7g8K/FKHwG00gXwelqzzir6QF79i2nFmly56TRaMq/J32k64kG5+oeNxvsz9
-	mK10xF1caEsIRvleuQpTSRyPJ5p/QEzGcl9I/sZII+doXn4a1H0djy3LWtuDmvAr
-	TDmYW3tqaw1hGK7hkngNP+rNbdUvLusHQH7mxOsye/cAhLNGCqLhzuPNbVILbLVT
-	6L30TBF6xwUv5c5Uy2OaQ==
-X-ME-Sender: <xms:1PYDaUL3uN_ZYS5DyOozVcOf0w2OrQqbxc-4QWbx1bN9L-wzAX5fCQ>
-    <xme:1PYDaXD1SYvuISc6YaixLM10IEYXN2KIrCSQs1A1ClNyiRazCd19f093favA5c40M
-    7-GoGTkXglLhNP2wygqo_IMPU_LnRCTLyHeWXPNtpEDtSq92Ik>
-X-ME-Received: <xmr:1PYDaVjAswXVecq4gQBB7tBXRAXS9uKaQM3AJIJWpLFVLitLTqK0YV4vkp04YsFF7HY-Tyt-_42MD1WfmnTd_UutGUpms5WF5ukAHv0sREF3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejleehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:1fYDaTPLNL_ZEx6UpYyzZGqNns6xiAnXEaWnIZ-9kiMvQ5TwdxKZYg>
-    <xmx:1fYDaZWJ-wE55i1JUYw1GO0K8brT1sqaUxavUZGGa6qqQxvthHQaxA>
-    <xmx:1fYDaQB1efCWq9QdJbyUhsAVgatruja8Z9S4VftpC7YwW4emP6XvQQ>
-    <xmx:1fYDaeMHBC1QLhzVp0K3e_aClaQU--eFsbH2gQSnpE7T81tLe4kikw>
-    <xmx:1_YDaVuNHJi2PkRkaZXi_thHraFG9qYrLgP6Q09afVQ-wZchIw1OZNeh>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 19:37:46 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761867540; c=relaxed/simple;
+	bh=9K3g1fCDQB00UZtMahu41xV/73v3J4bRn59WZiFPp0s=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=bHsplhZNuYkDSEWgHo+nwQH38+ghaKcOZ7LG5oiLUyZok9YQVrmVk++pN/KTk26zur8IjAUjnz0oY/6sMg5aJwI46LyamZQeo8RuTzcNom2CmmVJJmNrDOm4p235S7NHI7kMuYe0h/ZsO4Qz4wCr+HwoZN02I6mkr6h1+s6wMRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIv7OXs3; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b404a8be3f1so31282566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761867537; x=1762472337; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QW/G35MOi1nbpenKn0jGc/i9ZxGqUMDCw5SmHmcN3xo=;
+        b=AIv7OXs3jIaoA1ELEKzQBBso9E50TXsIF8n66R+00B/b90uKTfCxXqbq8jmIcH0r/E
+         g+4RTRMQqoJMH6FZyNks/tkvrUDETxFBVEUpOVsJ/bBRF+Mul638jCfomoqdxEP3OIwb
+         q/yawL/Tj70i6aKfzEcUQtq0yFKgtV54ra/c6NfmQ1WYjIUX0uYUB1HX1XHHzzwKdD0t
+         ar9iRoZCblQK9LgSrBDXfQYViAYaKHPZUalfd7xZknO3M1vwwKtqOeSfxo1vJcCk6cmO
+         fZl6KigArMaSCpa2VUl7RHKp2KBtrAgNQGEAj2i2SXZ+JN7aaSfLaENqIgNVviRnid42
+         jY1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761867537; x=1762472337;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QW/G35MOi1nbpenKn0jGc/i9ZxGqUMDCw5SmHmcN3xo=;
+        b=gnflIHfMp5gwXpdlVLSi3l79Odz/GCnM/SseIcNSO226OV7oloVp9IA9T3LA4uKjae
+         U2Y6l757pEPiuYGMcnzewBAurzmZYdnRqhS/Hw5vZw6JITt8Lm31KRJ/fr6Be/TVxUW4
+         cOjR+QD88wpR1kgn6TOoHbNzI8xl4nfme1MZi7w1XBx0tQ8kd6TGrk+rCQfk1Smser8e
+         hd0cShI/t0FHLwc6qnN93b26J9mnjM6WR0BYwt4vReHFwT5bVXZObJukeQnI3/5q6ujZ
+         Lzf4rEfxVD4yj72pXiG1H7m9yxgMxAdIxoMa1Jks9Dy2jKFRTB+YIW+CtnI7GKkOPGr0
+         VAOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWgDhi1/TmkC9FnVDLEBq0NbOgkxIexI+wxU8w5LwYZCyJN4P4ffZQDrOwJPAg8ZGoHrWe2XIYiEbTzxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPTm5OFF2R5KC/LE19SmzZn5fBKQVsDcxdaOSQbFBa+MyMWv+J
+	zes4LCDOwj+bMd1Fb2BzCaGLM8zlNtqyDEkux+QR+ORhgKbFDjAoxU8m
+X-Gm-Gg: ASbGncs7XBEwxFy274Tz4PdMqc+cYW073bOAJ35B017VQAIcs8sntVOC+ZwKhthFqhh
+	xPjbxX5THVNjvMdw9Kp7b1M8gw0gbx81dARxOxTQOwDnl7Y9ozmaF3H4Pe7UFsP9ASOMl6/w4Y9
+	SMHXdIFtlCwM0ALrA32MUVbBJAcxjZ+bcQTWts0sZxSu726fwzbHQH4r1buVDickvQglRICwxt0
+	YoeVxajB9uoDxsKG+U9XrUHnlVQbr74aWgZPh7i4tWqEDO04CwiQzlITh0WZyAvdX/1HcYSE/rc
+	XPgbY0bhTzSg7PKN2YnzI2ITTQgce5n0X8ZXwHjyBQFw0xQ18oLSZwJ/0knRtmEghhGtFZrKyQ5
+	6j1YOpTEFFk3PP4AZwBF3AKyKTdFKZ9MfRQIolALYeWRQ66ymS8eIbIql9rhShCTTnyx52dM96X
+	blFJArtBPwLqb6hjgB7ipjdGyKdD3H7ZEwgF0C4aUXBzTBuR8yig==
+X-Google-Smtp-Source: AGHT+IFu52Lv7EHZGXKUGlAUADqfNrD4YHhFGg0CHcltbEW9aIgyfK1tlwF8IrE/Dn5an5+ltyyBEw==
+X-Received: by 2002:a17:907:3c8c:b0:b4e:e4c4:4245 with SMTP id a640c23a62f3a-b70701891d9mr74782666b.3.1761867536930;
+        Thu, 30 Oct 2025 16:38:56 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:0:32d0:42ff:fe10:6983? ([2a02:a449:4071:0:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077c3dbeesm11779266b.44.2025.10.30.16.38.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 16:38:56 -0700 (PDT)
+Message-ID: <b3d05df4-a916-48e1-8d9e-590782806bd5@gmail.com>
+Date: Fri, 31 Oct 2025 00:38:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
- "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
- "David Howells" <dhowells@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Ondrej Mosnacek" <omosnace@redhat.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Stefan Berger" <stefanb@linux.ibm.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Subject: Re: [PATCH v4 11/14] Add start_renaming_two_dentries()
-In-reply-to: <20251030062214.GW2441659@ZenIV>
-References: <20251029234353.1321957-1-neilb@ownmail.net>,
- <20251029234353.1321957-12-neilb@ownmail.net>,
- <20251030062214.GW2441659@ZenIV>
-Date: Fri, 31 Oct 2025 10:37:44 +1100
-Message-id: <176186746483.1793333.1130347070516464496@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+User-Agent: Mozilla Thunderbird
+From: Johan Jonker <jbx6244@gmail.com>
+Subject: [PATCH v1] arm: dts: rockchip: fix tps65910 nodes
+To: heiko@sntech.de
+Cc: robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 30 Oct 2025, Al Viro wrote:
-> On Thu, Oct 30, 2025 at 10:31:11AM +1100, NeilBrown wrote:
->=20
-> > +++ b/fs/debugfs/inode.c
->=20
-> Why does debugfs_change_name() need any of that horror?  Seriously, WTF?
-> This is strictly a name change on a filesystem that never, ever moves
-> anything from one directory to another.
+The binding for tps65910 is converted to yaml and they have
+changed the regulator nodename layout and added some required
+properties. Fix the tps65910 nodes on Rockchip boards.
 
-"horror" is clearly in the eye of the beholder, and not a helpful
-description...
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../boot/dts/rockchip/rk3066a-bqcurie2.dts    | 34 ++++++++++--------
+ .../boot/dts/rockchip/rk3066a-marsboard.dts   | 34 ++++++++++--------
+ .../boot/dts/rockchip/rk3066a-rayeager.dts    | 35 +++++++++++--------
+ 3 files changed, 59 insertions(+), 44 deletions(-)
 
-Is there anything in this use of start_renaming_two_dentries() which is
-harmful?  I agree that not all of the functionality is needed in this
-case, but some of it is.
+diff --git a/arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dts b/arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dts
+index c227691013ea..65f8bc804d21 100644
+--- a/arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dts
++++ b/arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dts
+@@ -80,26 +80,33 @@ &i2c1 {
+ 	clock-frequency = <400000>;
 
-Would you prefer we also add
-   start_renaming_two_dentries_with_same_parent()
-or similar?
+ 	tps: tps@2d {
++		compatible = "ti,tps65910";
+ 		reg = <0x2d>;
 
->=20
-> IMO struct renamedata is a fucking eyesore, but that aside, this:
->=20
-> > @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
-info *fsi,
-> >  	if (ret)
-> >  		goto out;
-> > =20
-> > -	lock_rename(tmp_parent, fsi->sb->s_root);
-> > +	rd.old_parent =3D tmp_parent;
-> > +	rd.new_parent =3D fsi->sb->s_root;
-> > =20
-> >  	/* booleans */
-> > -	d_exchange(tmp_bool_dir, fsi->bool_dir);
-> > +	ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_dir);
-> > +	if (!ret) {
-> > +		d_exchange(tmp_bool_dir, fsi->bool_dir);
-> > =20
-> > -	swap(fsi->bool_num, bool_num);
-> > -	swap(fsi->bool_pending_names, bool_names);
-> > -	swap(fsi->bool_pending_values, bool_values);
-> > +		swap(fsi->bool_num, bool_num);
-> > +		swap(fsi->bool_pending_names, bool_names);
-> > +		swap(fsi->bool_pending_values, bool_values);
-> > =20
-> > -	fsi->bool_dir =3D tmp_bool_dir;
-> > +		fsi->bool_dir =3D tmp_bool_dir;
-> > +		end_renaming(&rd);
-> > +	}
-> > =20
-> >  	/* classes */
-> > -	d_exchange(tmp_class_dir, fsi->class_dir);
-> > -	fsi->class_dir =3D tmp_class_dir;
-> > +	ret =3D start_renaming_two_dentries(&rd, tmp_class_dir, fsi->class_dir);
-> > +	if (ret =3D=3D 0) {
-> > +		d_exchange(tmp_class_dir, fsi->class_dir);
-> > +		fsi->class_dir =3D tmp_class_dir;
-> > =20
-> > -	unlock_rename(tmp_parent, fsi->sb->s_root);
-> > +		end_renaming(&rd);
-> > +	}
-> > =20
-> >  out:
-> >  	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
->=20
-> is very interesting - suddenly you get two non-overlapping scopes instead o=
-f one.
-> Why is that OK?
->=20
++		gpio-controller;
++		#gpio-cells = <2>;
++
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <RK_PA6 IRQ_TYPE_LEVEL_LOW>;
 
-From the perspective of code performing lookup of these names, two
-consecutive lookups would not be locked so they could see
-inconsistencies anyway.
-From the perspective of code changing these names, that is protected by
-selinux_state.policy_mutex which is held across the combined operation.
-A readdir could possibly see the old inum for one name and the new inum
-for the other name.  I don't imagine this would be a problem.
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
+ 		vcc5-supply = <&vcc_io>;
+ 		vcc6-supply = <&vcc_io>;
 
-I have added a comment to the commit message to highlight this.
+ 		regulators {
+-			vcc_rtc: regulator@0 {
++			vcc_rtc: vrtc {
+ 				regulator-name = "vcc_rtc";
+ 				regulator-always-on;
+ 			};
 
-Thanks,
-NeilBrown
+-			vcc_io: regulator@1 {
++			vcc_io: vio {
+ 				regulator-name = "vcc_io";
+ 				regulator-always-on;
+ 			};
+
+-			vdd_arm: regulator@2 {
++			vdd_arm: vdd1 {
+ 				regulator-name = "vdd_arm";
+ 				regulator-min-microvolt = <600000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -107,7 +114,7 @@ vdd_arm: regulator@2 {
+ 				regulator-always-on;
+ 			};
+
+-			vcc_ddr: regulator@3 {
++			vcc_ddr: vdd2 {
+ 				regulator-name = "vcc_ddr";
+ 				regulator-min-microvolt = <600000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -115,42 +122,42 @@ vcc_ddr: regulator@3 {
+ 				regulator-always-on;
+ 			};
+
+-			vcc18_cif: regulator@5 {
++			vcc18_cif: vdig1 {
+ 				regulator-name = "vcc18_cif";
+ 				regulator-always-on;
+ 			};
+
+-			vdd_11: regulator@6 {
++			vdd_11: vdig2 {
+ 				regulator-name = "vdd_11";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_25: regulator@7 {
++			vcc_25: vpll {
+ 				regulator-name = "vcc_25";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_18: regulator@8 {
++			vcc_18: vdac {
+ 				regulator-name = "vcc_18";
+ 				regulator-always-on;
+ 			};
+
+-			vcc25_hdmi: regulator@9 {
++			vcc25_hdmi: vaux1 {
+ 				regulator-name = "vcc25_hdmi";
+ 				regulator-always-on;
+ 			};
+
+-			vcca_33: regulator@10 {
++			vcca_33: vaux2 {
+ 				regulator-name = "vcca_33";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_tp: regulator@11 {
++			vcc_tp: vaux33 {
+ 				regulator-name = "vcc_tp";
+ 				regulator-always-on;
+ 			};
+
+-			vcc28_cif: regulator@12 {
++			vcc28_cif: vmmc {
+ 				regulator-name = "vcc28_cif";
+ 				regulator-always-on;
+ 			};
+@@ -158,9 +165,6 @@ vcc28_cif: regulator@12 {
+ 	};
+ };
+
+-/* must be included after &tps gets defined */
+-#include "../tps65910.dtsi"
+-
+ &mmc0 { /* sdmmc */
+ 	status = "okay";
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/rockchip/rk3066a-marsboard.dts b/arch/arm/boot/dts/rockchip/rk3066a-marsboard.dts
+index de42d1855121..15dbe1677e30 100644
+--- a/arch/arm/boot/dts/rockchip/rk3066a-marsboard.dts
++++ b/arch/arm/boot/dts/rockchip/rk3066a-marsboard.dts
+@@ -96,11 +96,18 @@ &i2c1 {
+ 	clock-frequency = <400000>;
+
+ 	tps: tps@2d {
++		compatible = "ti,tps65910";
+ 		reg = <0x2d>;
+
++		gpio-controller;
++		#gpio-cells = <2>;
++
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <RK_PA4 IRQ_TYPE_LEVEL_LOW>;
+
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
+ 		vcc1-supply = <&vsys>;
+ 		vcc2-supply = <&vsys>;
+ 		vcc3-supply = <&vsys>;
+@@ -111,17 +118,17 @@ tps: tps@2d {
+ 		vccio-supply = <&vsys>;
+
+ 		regulators {
+-			vcc_rtc: regulator@0 {
++			vcc_rtc: vrtc {
+ 				regulator-name = "vcc_rtc";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_io: regulator@1 {
++			vcc_io: vio {
+ 				regulator-name = "vcc_io";
+ 				regulator-always-on;
+ 			};
+
+-			vdd_arm: regulator@2 {
++			vdd_arm: vdd1 {
+ 				regulator-name = "vdd_arm";
+ 				regulator-min-microvolt = <600000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -129,7 +136,7 @@ vdd_arm: regulator@2 {
+ 				regulator-always-on;
+ 			};
+
+-			vcc_ddr: regulator@3 {
++			vcc_ddr: vdd2 {
+ 				regulator-name = "vcc_ddr";
+ 				regulator-min-microvolt = <600000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -137,41 +144,41 @@ vcc_ddr: regulator@3 {
+ 				regulator-always-on;
+ 			};
+
+-			vcc18_cif: regulator@5 {
++			vcc18_cif: vdig1 {
+ 				regulator-name = "vcc18_cif";
+ 				regulator-always-on;
+ 			};
+
+-			vdd_11: regulator@6 {
++			vdd_11: vdig2 {
+ 				regulator-name = "vdd_11";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_25: regulator@7 {
++			vcc_25: vpll {
+ 				regulator-name = "vcc_25";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_18: regulator@8 {
++			vcc_18: vdac {
+ 				regulator-name = "vcc_18";
+ 				regulator-always-on;
+ 			};
+
+-			vcc25_hdmi: regulator@9 {
++			vcc25_hdmi: vaux1 {
+ 				regulator-name = "vcc25_hdmi";
+ 				regulator-always-on;
+ 			};
+
+-			vcca_33: regulator@10 {
++			vcca_33: vaux2 {
+ 				regulator-name = "vcca_33";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_rmii: regulator@11 {
++			vcc_rmii: vaux33 {
+ 				regulator-name = "vcc_rmii";
+ 			};
+
+-			vcc28_cif: regulator@12 {
++			vcc28_cif: vmmc {
+ 				regulator-name = "vcc28_cif";
+ 				regulator-always-on;
+ 			};
+@@ -179,9 +186,6 @@ vcc28_cif: regulator@12 {
+ 	};
+ };
+
+-/* must be included after &tps gets defined */
+-#include "../tps65910.dtsi"
+-
+ &emac {
+ 	phy = <&phy0>;
+ 	phy-supply = <&vcc_rmii>;
+diff --git a/arch/arm/boot/dts/rockchip/rk3066a-rayeager.dts b/arch/arm/boot/dts/rockchip/rk3066a-rayeager.dts
+index b0b029f14643..07c03ed6fac6 100644
+--- a/arch/arm/boot/dts/rockchip/rk3066a-rayeager.dts
++++ b/arch/arm/boot/dts/rockchip/rk3066a-rayeager.dts
+@@ -198,9 +198,18 @@ &i2c1 {
+ 	status = "okay";
+
+ 	tps: tps@2d {
++		compatible = "ti,tps65910";
+ 		reg = <0x2d>;
++
++		gpio-controller;
++		#gpio-cells = <2>;
++
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <RK_PA4 IRQ_TYPE_EDGE_RISING>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pmic_int>, <&pwr_hold>;
+
+@@ -214,19 +223,19 @@ tps: tps@2d {
+ 		vccio-supply = <&vsys>;
+
+ 		regulators {
+-			vcc_rtc: regulator@0 {
++			vcc_rtc: vrtc {
+ 				regulator-name = "vcc_rtc";
+ 				regulator-always-on;
+ 			};
+
+-			vcc_io: regulator@1 {
++			vcc_io: vio {
+ 				regulator-name = "vcc_io";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 			};
+
+-			vdd_arm: regulator@2 {
++			vdd_arm: vdd1 {
+ 				regulator-name = "vdd_arm";
+ 				regulator-min-microvolt = <600000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -234,7 +243,7 @@ vdd_arm: regulator@2 {
+ 				regulator-boot-on;
+ 			};
+
+-			vcc_ddr: regulator@3 {
++			vcc_ddr: vdd2 {
+ 				regulator-name = "vcc_ddr";
+ 				regulator-min-microvolt = <600000>;
+ 				regulator-max-microvolt = <1500000>;
+@@ -242,52 +251,52 @@ vcc_ddr: regulator@3 {
+ 				regulator-boot-on;
+ 			};
+
+-			vcc18: regulator@5 {
++			vcc18: vdig1 {
+ 				regulator-name = "vcc18";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 			};
+
+-			vdd_11: regulator@6 {
++			vdd_11: vdig2 {
+ 				regulator-name = "vdd_11";
+ 				regulator-min-microvolt = <1100000>;
+ 				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
+ 			};
+
+-			vcc_25: regulator@7 {
++			vcc_25: vpll {
+ 				regulator-name = "vcc_25";
+ 				regulator-min-microvolt = <2500000>;
+ 				regulator-max-microvolt = <2500000>;
+ 				regulator-always-on;
+ 			};
+
+-			vccio_wl: regulator@8 {
++			vccio_wl: vdac {
+ 				regulator-name = "vccio_wl";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 			};
+
+-			vcc25_hdmi: regulator@9 {
++			vcc25_hdmi: vaux1 {
+ 				regulator-name = "vcc25_hdmi";
+ 				regulator-min-microvolt = <2500000>;
+ 				regulator-max-microvolt = <2500000>;
+ 			};
+
+-			vcca_33: regulator@10 {
++			vcca_33: vaux2 {
+ 				regulator-name = "vcca_33";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 			};
+
+-			vcc_rmii: regulator@11 {
++			vcc_rmii: vaux33 {
+ 				regulator-name = "vcc_rmii";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
+ 			};
+
+-			vcc28_cif: regulator@12 {
++			vcc28_cif: vmmc {
+ 				regulator-name = "vcc28_cif";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
+@@ -296,8 +305,6 @@ vcc28_cif: regulator@12 {
+ 	};
+ };
+
+-#include "../tps65910.dtsi"
+-
+ &i2c2 {
+ 	status = "okay";
+ };
+--
+2.39.5
 
 
