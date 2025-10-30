@@ -1,97 +1,65 @@
-Return-Path: <linux-kernel+bounces-878674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77503C2139D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:36:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10073C213A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B2B44EEB9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A461A65EEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EB7366FD9;
-	Thu, 30 Oct 2025 16:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7E53590D2;
+	Thu, 30 Oct 2025 16:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtXl7teC"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRagolsW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF1E365D37
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF52F2EB859;
+	Thu, 30 Oct 2025 16:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842110; cv=none; b=YSJ1x/6GhbKmY4Esd4WctagFTNHGjiZBrp3mqfjNmqWIF/cKoR9dDDuLq0yvNbK6esBAufocHeghkcx2mHZsRgoOPvwOcRyDyS5Lug8hbTLvmSdk8m5lOCsiMjoNovq1OKJWv0i4SQehbycp//F7G+t6gt8I185JyTDWm/8IsJ8=
+	t=1761842106; cv=none; b=tKE670J2+avMTOiaI6S8knyEBGMeJfZ+nf+k+S02uY2xoUbFLH6qDVW0sp3z0N9O8vt3yz36uGFKbeFnere9ZyjyxC9eDjCl/RLojvSg/O/uNveNz2YV6CW2xVWzqEXecar7+GXff4UNiRQ/jDMMHnMfUSzl4eCSzddNPAKdFII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842110; c=relaxed/simple;
-	bh=KJhi7r1IxwKr2jceL8YpXI0OH3nQqefJ5FVtqYdua5A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=od1gUIEavchsKuBQNT6fftR1whPXK24spCmlBGBTv5m4NiWeHa+L6c5ZsIfm/qgVCVoTXlWpf3le9b4PLe8bJ2LVnHTCb5dvuEjTN5qIDmOkD1E2kL++ZusbOTH9M3+BZAcVgGrABAFkpDNOgZ4T6KbVnzG6Hhcv/BXdT8ZqxKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RtXl7teC; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7a435a3fc57so1359357b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761842108; x=1762446908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jGxSll59pDGaTOq1wz4y9sLfdgQmv4t8Ak/F6aB1JEE=;
-        b=RtXl7teCAhVeKP6/PyY54VoDUTJsdL4qEgzfduQcdLicZXxhKzc5IR8FyYCIzxEOxB
-         bKc8yxg7YXAR54SK57pSjsNf5r7MRX7YElNQh6IVl+IF8Mmbe9KiQJyUVOEXqSsdwVOp
-         NQMYHxH0tPGP0o+KtxXzih/4/S4ARFUiXPMxD5R0xPBG6s6jx0YWzuANpHM41yg1TRSm
-         BOwa9B0c/QFKtjSsPS4c8YtIcYctGGalgbQqtIGjvvNH2lm+aNyWhRBigKv8rHIk5cu+
-         J884vJfMfZ6fxscpY3YZ+j8HeOZUXRI1bVbvqJBATGm/IjFeP3VYS1tGmmJ8dZyrUpL4
-         tgkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761842108; x=1762446908;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jGxSll59pDGaTOq1wz4y9sLfdgQmv4t8Ak/F6aB1JEE=;
-        b=It1JWJj4OslXWMvC0fptt+UDx09B7XpARnuAG4Vlcr70Xphdw6Ou04ySsENWM0epV4
-         OxZS8ygzoQEwxS4+2ql4naUiUlhP5Wa779DY7kDYS6EEKy5NoMvMmO0AfdU+8kMR8XqY
-         1nysHbrD/WlNwoqN/wjylB1gTa5yFWRd0d9zcN3SYo9/CS+jk4jaupXRonyFtS/NgP0N
-         FhmEbo5A0HNCQhClWKsh535fo4DAllzu11NnlNUEhsfa7AKwdfiPTD5NnYpQ3mDPjlun
-         eKBATUFtSkt0n3VKkdLtgwDmTHl2iMp8yTj3gS48YlOaEZI2M33+RHxAywSsGwVYcFCf
-         VTXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWF6aKOtq1lskvXt8wRz5UDGz+2d7JtP0IbohZfB/hjfMJBrYwuxHtjnqzb9wW964qo3t0W0S7DMPiJef4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyflj+CXnO7kSJhGW5UXoA7O21kNxMsYEJeQNQIaTaywokUYY6N
-	iqPgDx58KToOkMjMRs2VE7mwoU5aXyYA1W/Q1mCCDuaXQBJiI9LP5ogM
-X-Gm-Gg: ASbGncuFXBZSjkwSX7UBZwV/U5gb5L8KUaz5RO6jSolCFnJCXd0gdT35uUR2sjm5O+/
-	xjk+61963U4eKoTMwuuObUvc4R7eLvnf87YLHKkIuqq9/1w6wqYAwLNWeR2n6HrjkyJ2cE+ITU1
-	hdfj1rXbPubNacanWxvyHZuU8xjFLr0azLJbG0z1kG/zLS1mPA1/Xm6mwZlHVFeop7FI6f4YKht
-	mM9d/bTVif7IuQrg7C0wa+VKZyeoLwIYlJXzkHm2pZvnuLCyxlitXsHmAb7KUlJO1TRBbXJdq6T
-	ydHslnfgst1bOBSlAZA70qHqQoHkJBAzyGRTx4qBvT1gvYq26YQNxDbbINVVdfSv9f5JlAav1x8
-	nWUN6+QzWm46p3RBrQ9jPoDoZRMzsvL6HrCATpJq8rktUsanyLAGPcRx3LX8xU+H4DDvUBxC+Xs
-	6Xrr6cG1SMnMijdimV6NaiXbGb00BEBpNN2rKGlZaYJEIal67pQ8dXZeO7S+AN6qzQE61sphP84
-	nRT0iQWkkESrwleUqQO5xjNdjDy4Ggxjvg0ZFM7SYr6QfE=
-X-Google-Smtp-Source: AGHT+IEVgKwJVYk3LLzSGMiiVO2pd0zD6q0iNRm3NjG4WchOau35P7hbFf8JKXrswaA2JhS14jL/xA==
-X-Received: by 2002:a17:903:2348:b0:290:7e29:f59f with SMTP id d9443c01a7336-2951a3c366cmr5308655ad.27.1761842107861;
-        Thu, 30 Oct 2025 09:35:07 -0700 (PDT)
-Received: from ajianan-Latitude-5591.. ([2402:e280:21d3:2:339d:c9c4:e069:47f7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e429d9sm190932845ad.100.2025.10.30.09.35.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 09:35:07 -0700 (PDT)
-From: Ajith Anandhan <ajithanandhan0406@gmail.com>
-To: linux-iio@vger.kernel.org
-Cc: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1761842106; c=relaxed/simple;
+	bh=HdDzBszjRT1bjtGdY7rWYwp2aMVoUkReGlxOWh0bxh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VjZD4EoVLNA80jzv9dr46sL0TIb8cI7rUIOg2S+C0A5sA08S12xP7RFSQ9hn8y/CQteQTfuIhCEDohXIJNQHfUIPPkDBf0wrA/gNrNNAx9yru1yuiyHqeZyWbHjFyL7i7poQV+DN8NuBjC1C70KY+3D0hMZ+9ePvdXS6IadH+jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRagolsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88974C4CEFB;
+	Thu, 30 Oct 2025 16:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761842106;
+	bh=HdDzBszjRT1bjtGdY7rWYwp2aMVoUkReGlxOWh0bxh4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kRagolsWLCR0E/AtgHrrngcBHOH1aVkzgGg2k9G2AXliMsHK2pnRhICuB+64f7pJs
+	 eEJbkxjveKUSGSADFl8aLj4YK3XZ2gXatdyIoufEMRtkXIGHkNPfRVsMWljFd3FcmA
+	 0gERd3kK1D0r/wW3qpxRBqVuUBfWs6gRWi2INFZnMjLh98qbEtNQ4l7Jw9PU5HHBI6
+	 Kk3oWqAUnl1Jno55agbNT/X+lrdL7M79j+iToYZpFhCvxt3EeyrZcnS1vvPXJMVmui
+	 UmEWfNOYhgwTek+aCj7uwD6n5gCK7elmKe2prS8NRjRfHVom9hq5Z8mIqrVUZWjLXR
+	 xCtLERFmWeMig==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vEVcI-0000000047N-15xn;
+	Thu, 30 Oct 2025 17:35:14 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Ajith Anandhan <ajithanandhan0406@gmail.com>
-Subject: [RFC PATCH 3/3] MAINTAINERS: Add entry for TI ADS1120 ADC driver
-Date: Thu, 30 Oct 2025 22:04:11 +0530
-Message-Id: <20251030163411.236672-4-ajithanandhan0406@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
-References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v2] drm/imx/tve: fix probe device leak
+Date: Thu, 30 Oct 2025 17:34:56 +0100
+Message-ID: <20251030163456.15807-1-johan@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,32 +68,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new MAINTAINERS entry for the Texas Instruments ADS1120
-ADC driver and its device tree binding.
-Signed-off-by: Ajith Anandhan <ajithanandhan0406@gmail.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Make sure to drop the reference taken to the DDC device during probe on
+probe failure (e.g. probe deferral) and on driver unbind.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3da2c26a7..1efe88fc9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25613,6 +25613,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
- F:	drivers/iio/adc/ti-ads1119.c
+Fixes: fcbc51e54d2a ("staging: drm/imx: Add support for Television Encoder (TVEv2)")
+Cc: stable@vger.kernel.org	# 3.10
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+
+Changes in v2:
+ - add missing NULL ddc check
+
+
+ drivers/gpu/drm/imx/ipuv3/imx-tve.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/gpu/drm/imx/ipuv3/imx-tve.c b/drivers/gpu/drm/imx/ipuv3/imx-tve.c
+index fd1e617e171e..68bbbdbd347b 100644
+--- a/drivers/gpu/drm/imx/ipuv3/imx-tve.c
++++ b/drivers/gpu/drm/imx/ipuv3/imx-tve.c
+@@ -525,6 +525,13 @@ static const struct component_ops imx_tve_ops = {
+ 	.bind	= imx_tve_bind,
+ };
  
-+TI ADS1120 ADC DRIVER
-+M:	Ajith Anandhan <ajithanandhan0406@gmail.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
-+F:	drivers/iio/adc/ti-ads1120.c
++static void imx_tve_put_device(void *_dev)
++{
++	struct device *dev = _dev;
 +
- TI ADS7924 ADC DRIVER
- M:	Hugo Villeneuve <hvilleneuve@dimonoff.com>
- L:	linux-iio@vger.kernel.org
++	put_device(dev);
++}
++
+ static int imx_tve_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -546,6 +553,12 @@ static int imx_tve_probe(struct platform_device *pdev)
+ 	if (ddc_node) {
+ 		tve->ddc = of_find_i2c_adapter_by_node(ddc_node);
+ 		of_node_put(ddc_node);
++		if (tve->ddc) {
++			ret = devm_add_action_or_reset(dev, imx_tve_put_device,
++						       &tve->ddc->dev);
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	tve->mode = of_get_tve_mode(np);
 -- 
-2.34.1
+2.51.0
 
 
