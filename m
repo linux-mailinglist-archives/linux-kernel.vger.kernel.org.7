@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-878941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88BDC21D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:46:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACC1C21CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE1D11A608BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32DD18923B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F21A36CDFF;
-	Thu, 30 Oct 2025 18:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E1D36CDFC;
+	Thu, 30 Oct 2025 18:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksC+4ICD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnnaRgLM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09B0235045;
-	Thu, 30 Oct 2025 18:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4871A1F37DA;
+	Thu, 30 Oct 2025 18:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761849925; cv=none; b=epkbxJOJN7EjdpAq7hnoe0q/2zak2HAea9EpL5eOii+lWDk+xM7J/PZHFgP5NEbcc0yfxXbi0X9oOTAlarKlxje+I092H1RN45SGa6pHpORBfMej++MYPdmdRFNpcYkO53VxMz/iueAVeEEfhSPoOELV+t0hHDL0EtCk22HL2IE=
+	t=1761849764; cv=none; b=cbJ/i+Y1CxVu01YTsicgIm3l2Tz/cs5NAG99t7qR83sfF5UpEhcO2ouhienRCeQ9kSYfNfPW9PUdl4o2P36G1Tw0GP+eaLTnzeEmUQUISuHLq+9e4AQAVZ1lzy0/DTxj+5EoOGaRumkVB9T+axa3j8wNt2Sabpw7kQ0nsnuWW94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761849925; c=relaxed/simple;
-	bh=BbMYj1xZMJWLc6sE0DW/ebo8EtBBBZO43DKONzeNGt4=;
+	s=arc-20240116; t=1761849764; c=relaxed/simple;
+	bh=g8c9ksy/OAeO6urz6065KVI1tuzfZbmQ1YkPXetQw7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDK1Uzwp0cQb7sVsPtMTic3hf6t4HzWuzFbzRI1yWjSkCuDUBEp7MYDgCw23swGeB6dsQyuuegH2+Inu0iK7Z8BGuKD5XYwgIU5j0IuOOp8AN8iRJY+unJbOOSkVtKHPb4TxwZkuOCOfUu0W9tkFLTvsi/27GoE+C5/KLVRUBQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksC+4ICD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE39DC4CEF1;
-	Thu, 30 Oct 2025 18:45:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RV3MwVqZl+l63les1SKs5sTDD380/GdkrX+HerT0ebE6IAYD1xXSDpIYmJ3f7ctURf3Rc3hX/rdJAdl7WBQ781PZa3DoU+UbdP61xucm2Nkje3N3Q+PlVo/AUIFsGdyMA03kzxFdR9l3kML6wjec0b9fNKycqYCpgKcA15h8ofA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnnaRgLM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDECBC4CEF8;
+	Thu, 30 Oct 2025 18:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761849925;
-	bh=BbMYj1xZMJWLc6sE0DW/ebo8EtBBBZO43DKONzeNGt4=;
+	s=k20201202; t=1761849763;
+	bh=g8c9ksy/OAeO6urz6065KVI1tuzfZbmQ1YkPXetQw7w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ksC+4ICDIR8me8naoquP6mG7gjKi8nXs2IKIwVEWnagaZa1z+wVhuhE7n26ip61+v
-	 lfFY32Q+ktjLEkXXaaZ4RDHJU7kdrjiA6gd/WqUDrXWlcnlwu/dB86dzsdyP1lbzMJ
-	 W+RRPF3VAtUlIPUIDE36H0ATgUkNPDs7DnZT0Qho/lAR+mQl7b6nXgGB4w0jfsuMS/
-	 bWJyLe7G35+Cmz9HdajDzuTCyLaWsNkA+hYlg23xYojIUhF9c5VhZ2zar5+oX1P7BG
-	 W/VNspGWMYbRbwXganCqCvjV7AJlnSG0kvGuQxHeKbqKhmWMkbwsXTDuifUHH3Pxr5
-	 DVgObX2L42/Xw==
-Date: Thu, 30 Oct 2025 18:45:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Fangrui Song <maskray@sourceware.org>,
-	linux-toolchains@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	b=GnnaRgLM0XBnXnd18GqV1BfHkH11uAYX/cBUbs8FC0a6mIEw4Dj4WV6L6Sg1DVHN2
+	 C7VYVl+yOARGHQTQPIG9CVvSPKPNGVPOyth5X16s368FKWE3oTmCANyql1kjEcVHOL
+	 ObvFZK20B8kIOyv8i05fFVZcAazeT4p4FdlHA3pKjJjkw0d9Aih+fyhg2nPBfKeO59
+	 byT8VE+hZ3k6a37bXmRM4kTRycaQxjzLLYlSro9XchPRTtdVotPEQnSt9JjxXfKziN
+	 bH4Dx8SOYB/tiXAehHYn6NOXDRRwRRBV0F8LuB/q5h2+2N0koAhHK9jGSJ5QLALVtS
+	 zFS76UvBhZmLg==
+Date: Thu, 30 Oct 2025 13:45:53 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: Concerns about SFrame viability for userspace stack walking
-Message-ID: <baf2665c-49aa-4b8a-be26-69dc23876bee@sirena.org.uk>
-References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
- <20251030102626.GR3245006@noisy.programming.kicks-ass.net>
- <87zf982s52.fsf@linux.intel.com>
- <bdda89a7-ff60-46b0-8ce3-28ffec1fac2a@sirena.org.uk>
- <aQOvCugzYe/2DcNW@firstfloor.org>
+Subject: Re: [PATCH 3/7] arm64: dts: qcom: sc8180x: create common zap-shader
+ node
+Message-ID: <fuach44wl236rfm57itxmcvj376vr3m7idi4byge6mbbxcrr3h@4uzjnuefh2y5>
+References: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
+ <20251028-dt-zap-shader-v1-3-7eccb823b986@oss.qualcomm.com>
+ <c90b917e-b3bc-42fb-a127-ab47d5154d0d@oss.qualcomm.com>
+ <c62a7f9d-6984-41c0-88c5-1d6c40d411dd@oss.qualcomm.com>
+ <weyze7a2pqmt2klt763lbwyvpezqndm5rjnitexalru7hy3xhh@tdqx6xeqp3qu>
+ <p5apfg5cbwcdmilfr3omoncvuj7z7zbj6dkex2eicjdubkyxwj@h42bzzhx4amt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DKdy9nJaHxHxbOQ7"
-Content-Disposition: inline
-In-Reply-To: <aQOvCugzYe/2DcNW@firstfloor.org>
-X-Cookie: Be different: conform.
-
-
---DKdy9nJaHxHxbOQ7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <p5apfg5cbwcdmilfr3omoncvuj7z7zbj6dkex2eicjdubkyxwj@h42bzzhx4amt>
 
-On Thu, Oct 30, 2025 at 11:31:38AM -0700, Andi Kleen wrote:
-> On Thu, Oct 30, 2025 at 06:07:49PM +0000, Mark Brown wrote:
+On Thu, Oct 30, 2025 at 07:58:46PM +0200, Dmitry Baryshkov wrote:
+> On Thu, Oct 30, 2025 at 12:28:31PM -0500, Bjorn Andersson wrote:
+> > On Thu, Oct 30, 2025 at 11:59:00AM +0100, Konrad Dybcio wrote:
+> > > On 10/30/25 11:58 AM, Konrad Dybcio wrote:
+> > > > On 10/28/25 10:00 PM, Dmitry Baryshkov wrote:
+> > > >> In order to reduce duplication, move common GPU memory configuration
+> > > >> from individual board files to sc8180x.dtsi.
+> > > >>
+> > > >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > > >> ---
+> > > > 
+> > > > [...]
+> > > > 
+> > > >> diff --git a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > > >> index 93de9fe918ebdadf239832db647b84ac9d5a33f6..069953dcad378448800d45e14931efe1fe1a69fc 100644
+> > > >> --- a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > > >> +++ b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > > >> @@ -14,6 +14,8 @@
+> > > >>  #include "sc8180x.dtsi"
+> > > >>  #include "sc8180x-pmics.dtsi"
+> > > >>  
+> > > >> +/delete-node/ &gpu_mem;
+> > 
+> > I agree with your hmm, seems this line should be dropped(?)
+> > 
+> > Dmitry, please confirm and I can fix it up as I'm applying the series.
+> 
+> Oh, and this line is necessary, because sc8180x-primus has its own
+> location for the gpu_mem.
+> 
 
-> > It's going to take a *considerable* time for the hardware support to
-> > become standard.
+Hmm, you're right, not sure why the memory map differs... But this looks
+good then.
 
-> Optimizing for the past instead of the future?
+Regards,
+Bjorn
 
-On arm64 no currently available hardware has shadow stack support, and
-once systems start becoming available it'll take a very long time for
-that to filter down to even being all newly shipping systems, let alone
-all systems that people care about running new software on.
-
-> Not on x86 at least. All my x86 systems have it, except for a few old
-> skylakes.
-
-My experience trying to find a system to test changes on was somewhat
-different :(  I did eventually get something.
-
---DKdy9nJaHxHxbOQ7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDsj8ACgkQJNaLcl1U
-h9A/ngf9H0X/BPRKtJc8r+4OmY18k4MVtcGwXACHC+6euBouQpz5bE253JhOn59w
-bIvP5jCXHURZNPCXbWpxY+4h+Rj9fH3b89S29xHoepg36yfoNzP4OaIb2Ut6hnkM
-eUyml6sRI+en1KyKBtTQmoKfau65V1H/UEwRX6sjxF/gVVv2YhE+0BSyZJIWLvug
-wU9nfwJGLpAQRMXuavkCRtX0ddROWfwr7uN+DXD/eURoJUleCwDegxuKMUfumyG0
-kTD8HO6eYEmW0i4hSWvaVr18Hk1DW+zGMisdIP68kzSth28U/P/fPgwkuNuSnS7E
-1qht8Kw5xym1QN74qgIn/GihnBR1mw==
-=eZn6
------END PGP SIGNATURE-----
-
---DKdy9nJaHxHxbOQ7--
+> 
+> -- 
+> With best wishes
+> Dmitry
 
