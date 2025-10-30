@@ -1,114 +1,184 @@
-Return-Path: <linux-kernel+bounces-878386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A624C207DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:07:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AE6C207C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F48A1A21620
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01C63B4039
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F2A1E885A;
-	Thu, 30 Oct 2025 14:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8ED288A2;
+	Thu, 30 Oct 2025 14:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rnhuFmPz"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jms7JtIN"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3838A1A3029
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A9D625
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832862; cv=none; b=nmEfmaIJa9x6X1pwOg3cgShmmhVg03kZAjiPO+f6MDBh3u66kYe2ObwNdY9kcMORtyDapdiJDO6JgisC90Z11jT09VpymolQ4q9SXdzFr+Y21rsPjw9gV/twiqIcs4QeyasNZ6OM18jWhHufO2POZtSdD2OEdZq1xdUftp/ogz4=
+	t=1761832914; cv=none; b=UdMUIcdmkJaCThEgqN3uxZ5Gsfu2bxt/EIwp8Zwe+xG/A16YBZHJZesmTEF7qENzxZef4k4LHr7sa1mL6ZC4HF/rqAh+L/EM8GXC6p+m2vw6lgGqnaD3CbyFo0Kq5IY3rVTnI9pXZAuhP8jfd6m9vIyCJlDZ6XGn9G4zK0WbIOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832862; c=relaxed/simple;
-	bh=o8WfBNrywvxmcPzlntg/9HC4HIIWsNpEBRr1GX6catQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Px6EavDkK1UKIgrYX1wgbcKnkTsznFr7dr48heWrgEeqY8sW68CP0V7Si0KEw/u2AC8KgDQJspXGC2fMrZp7P+dAYje7mJ63Am9I9L8Q70p9YA2Pgoyfp3LYlNyMJzcjgUFGjU3Z3br5vtEzhYEnF9VhjnKj53vOJL8NCfO2LS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rnhuFmPz; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47496b3c1dcso11781335e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:01:00 -0700 (PDT)
+	s=arc-20240116; t=1761832914; c=relaxed/simple;
+	bh=Ez9Ck8a0vFDjWaFW7yQc/XxQm/vx9CpdxqOM5+Cz0DU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D0lJuGm9xorS4SezOzQlwZUxojqUcaIzqbvkJ+qu0x7MR0WPOywGMq1LWOGuOHilmMUAFE6CsC+xsK7Zs3p4yh82ercSwvULoI4QA+yNagQO681pVJBC6Kc9CWbIUciOVRQ6M2Eu3/Q9GXTTAltVRzzJiKES4ctuxQDy4pXVcHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jms7JtIN; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64071184811so722286a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761832859; x=1762437659; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MhOsA8UHsD+kgHnQG5bj7evQvukJJELHnuX+mjowyF8=;
-        b=rnhuFmPzIqStykreU9h7nBkfcdbyGRbwErU9YwP7NdVU4Xnnq3tQVROMDgO+0X+ZeR
-         tEmNY6jJDih8E3aK2cyke7IxLe+nxQGgf3CUMR0dlJaxEdLc7Ovs/zjBD9Y3T+F8ISYU
-         KYpk4zekB0uR3bDTpMYBmPnwSQbuRPtzlh4RXJ63fkabWn8CLSKVWBhjzTySwRWZb90X
-         me/edQhAkh5Yx6xqcF4p0SwdZUZV2VUMymJmL8SFvkqkjFCHwUPTZPTduEUtIwputTHx
-         vLyGs/0vbylFloAsK0CfUl1DrApjavGdqT3Co82CYBTxyUEzBVcY33wr+aVNY6W0/AFb
-         qnFw==
+        d=gmail.com; s=20230601; t=1761832910; x=1762437710; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=K9kue/PqLi5iz0mudeRJtK6kDoEwYvI49bfICJqSOLY=;
+        b=Jms7JtINpEnpM2KL+r2rkWvGR7suYMqKapTpToxRmDchXnuqRhIjtgPbmR4RRY+H1k
+         f8ijmHmiEc7C16BHAgjUbWhf4SjAk5FHG1851QvaIDKsuN2cphBALltJJZStKqEtSiq7
+         /UBRaPUAQlbBLe0s1msxy6shrXuCfB5xNpaVBHDEAA2n5zdFj6cJqBFOG0WDxnfajv47
+         mn9aw3QGg86a2L1j67FReB4ffXlncjQtH7rwpqEftTudeUbT1qggkfz6yUzt8uaDR/17
+         VFqx6amdBil+tnez4r6ZlOemHQju738fQGtXpD4zy+IEeFUQ2Tqp/q5EpO0x3TpOrfts
+         uR1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761832859; x=1762437659;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MhOsA8UHsD+kgHnQG5bj7evQvukJJELHnuX+mjowyF8=;
-        b=apjvmZTdodq8dP3cBp7xsozhjdinsowg/VorXkw3kXum3cHtb7Do5hOtBUVHN6tnje
-         bZo+ctPKEn3t+lyj6id6Ew+MyQO9n7PJihc5XcdMiXXBOyNxR2F7n4KOXWMctZq1zdzx
-         zfHAfxmJMbowf8ULWhetOupIkbofcUmN/66pYIsrF+l1PPH1FtnYfO3fwSuD58LsMv6v
-         LnjUgeg/LSSyuNxn4gwXMkkESG0scrY7fGLM7MgN/udHsGNKUwPBVNu9RUnuI1K2HRfW
-         ZnocdTe0PYBdBy4pfpAWzBwVZkncjZ7GYWoFlw87HZqpyKTxGpYVRx5Ijf3YtEVuJZST
-         0XzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQqH1Oq43F2PSTIXlK9HDwA6nkqRWq3VuKCHwaErTvv4dc2SwKKA8Hf/ecmxRGcQWtQdJKTBM2Wrg8ZoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu/6JhZdbcHnxmwKyqp1BGEremFjSVe3xWWHizSuXnxJq/s8Wy
-	GKaql6UeckjY0gWvxG2N94yPljYd2hv5Sy+EUoijx38MdkkBz3+vYIyzAH+ItX2Hug/HJXGu3Qf
-	0NNH6Gtj1E1YB5Q==
-X-Google-Smtp-Source: AGHT+IFDaUTBibrp5YvovgZGztDFvYuBR6JcNr//76jIUfw4OooUFlcB/OZZF5LYyqq7RIE/k/er0tNN/R4SlQ==
-X-Received: from wmco28.prod.google.com ([2002:a05:600c:a31c:b0:46e:2f78:5910])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600d:8306:b0:471:c72:c7f8 with SMTP id 5b1f17b1804b1-477222fe0bfmr35058585e9.21.1761832859652;
- Thu, 30 Oct 2025 07:00:59 -0700 (PDT)
-Date: Thu, 30 Oct 2025 14:00:59 +0000
-In-Reply-To: <DDJU0415JEBQ.H2SD942NMDWX@google.com>
+        d=1e100.net; s=20230601; t=1761832911; x=1762437711;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K9kue/PqLi5iz0mudeRJtK6kDoEwYvI49bfICJqSOLY=;
+        b=uk0gpN5vLuAzxLoOkwOLCthe1fop+43UGxDyAzdBWClmXtbUe1nQLZsKVCsjqxdvj1
+         6tfyC+FtPneeS9UgfZYgHGVZk81QgjvomxAGavPy/o/5pMEPNL5QRE6FwVMzLUy8tAj7
+         CXfP2n/RVzchalFo3uOiU6PnN8pFMtUxFGQBGMiI7sGxnJhtCIbvxk4YSXn7gz7obo3R
+         aJdMpVek/Fixtva//rhUSJ3im0fgqWYzQIOp2+Y1zDVk/wX3BZtnA/m8S21j31EdOIFu
+         /aPBOKJ0vldzmmzd0HpFVeyE66oXyOmHeP2uY7HkRNRLlRK2dTbNkN9g3uiKeZ3y6nQE
+         xfxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKqexYWcZ5udnLCTak3R4CY5vBK6dqIZupFzv7THhnR2grEH9vvxpv9KwnGrKcadLD9L2z/A8nJlHtGTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVIc4bBC1bg4c7WDVudjnNoMJ2jvG+MLKzPwyfOfA6g4PdhOD5
+	Z9zk+CTN5ugtfO9njkulIPm0pDjnpHj+LI+608lVEobMbKTqvaahxrjo
+X-Gm-Gg: ASbGncsBN/COnhUn5NAMj6zh1SY3YEZR5+//GEqkIp9M4bzMxPTaH70HXr/d4DsctMM
+	3ozc4CAsDIPZRMSxLT+t7YCAlXZmtqtgxPdDeUBZcDn/T6E58ZvoULfLR0QlRr/RIQlnVSflIVJ
+	DH5iQVgVUMvcmTPtgIZH1OoFvDctRfaByeCfn0zv7so9uPPTCaIzfhZ7vcMKn9FqDv/Ty2+6VO1
+	32+VwQIQ5YiZRMlqznXUUIz/IzYJZ5QeGulL0P/wmb2aiMER3HehkHCaASzqBnl2sUG7RU8+F5v
+	hM+JkpKrQM3VNxB88a/D2v6QBAx/USW9jBRXNsfh/oWF0iwKmms3ZZ2XUaZv7E1IJ7hTNcgZayh
+	nBLK54vSw4R+KtlD8yGpXG+Ic8Fry00LVsUOIKicpeb/xC4KC3Ccr0bBiOGAsSg28vqeC903UzW
+	0+wtDNfEEhv6ZTHChI32WelB2TpzpyMVAJvUxo1WEEN9Um5oosPulv9sCJFlQCwqkhyelyG3I7o
+	3rqDA==
+X-Google-Smtp-Source: AGHT+IEm/43E4DI3T9Mp95lEihYPBVcNw0U7rk31oqk75XSv6jtyEKE8zvqZTUVdwgKohlYmGEoTqA==
+X-Received: by 2002:a17:906:6a2a:b0:b0a:aa7e:a191 with SMTP id a640c23a62f3a-b703d5fa89dmr803764766b.57.1761832910405;
+        Thu, 30 Oct 2025 07:01:50 -0700 (PDT)
+Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85398439sm1769963966b.36.2025.10.30.07.01.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 07:01:50 -0700 (PDT)
+Message-ID: <40cf6de07208cdc624f71e276bfbff1e00079aef.camel@gmail.com>
+Subject: Re: [PATCH v2 1/4] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>, Mark Brown <broonie@kernel.org>
+Cc: David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald	
+ <rf@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai	 <tiwai@suse.com>, Nikita Shubin <nikita.shubin@maquefel.me>, Axel Lin
+	 <axel.lin@ingics.com>, Brian Austin <brian.austin@cirrus.com>, 
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni	
+ <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org
+Date: Thu, 30 Oct 2025 15:01:48 +0100
+In-Reply-To: <1ae385ba6000fc5e90adadc6dcdc2fa8b19d5783.camel@gmail.com>
+References: <20251029093921.624088-1-herve.codina@bootlin.com>
+			<20251029093921.624088-2-herve.codina@bootlin.com>
+			<06766cfb10fd6b7f4f606429f13432fe8b933d83.camel@gmail.com>
+		 <20251030144319.671368a2@bootlin.com>
+	 <1ae385ba6000fc5e90adadc6dcdc2fa8b19d5783.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-l1d-flush-doc-v1-0-f8cefea3f2f2@google.com> <DDJU0415JEBQ.H2SD942NMDWX@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDVPMHX51EZE.1UIA8HYYQZKQT@google.com>
-Subject: Re: [PATCH 0/2] Documentation: fixups for L1D flushing
-From: Brendan Jackman <jackmanb@google.com>
-To: Brendan Jackman <jackmanb@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Balbir Singh <sblbir@amazon.com>
-Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 
-On Thu Oct 16, 2025 at 2:54 PM UTC, Brendan Jackman wrote:
-> On Wed Oct 15, 2025 at 5:02 PM UTC, Brendan Jackman wrote:
->> Signed-off-by: Brendan Jackman <jackmanb@google.com>
->> ---
->> Brendan Jackman (2):
->>       Documentation: clarify PR_SPEC_L1D_FLUSH
->>       Documentation: fix reference to PR_SPEC_L1D_FLUSH
->>
->>  Documentation/admin-guide/hw-vuln/l1d_flush.rst | 2 +-
->>  Documentation/userspace-api/spec_ctrl.rst       | 6 +++++-
->>  2 files changed, 6 insertions(+), 2 deletions(-)
->> ---
->> base-commit: 0292ef418ce08aad597fc0bba65b6dbb841808ba
->> change-id: 20251015-l1d-flush-doc-029f64d2b0d3
->>
->> Best regards,
->
-> I just noticed another issue - the docs say you get -ENXIO if control
-> isn't possible, but for L1D_FLUSH and INDIR_BRANCH you get -EPERM.
->
-> TBH I think this is a bug but it seems like it's still better to just
-> document it than change the behaviour.
+Hi Herve,
 
-Since I didn't have to respin this series I sent a separate one for this
-issue:
+On Thu, 2025-10-30 at 14:54 +0100, Alexander Sverdlin wrote:
+> > > > --- a/sound/soc/codecs/cs4271-spi.c
+> > > > +++ b/sound/soc/codecs/cs4271-spi.c
+> > > > @@ -23,11 +23,24 @@ static int cs4271_spi_probe(struct spi_device *=
+spi)
+> > > > =C2=A0	return cs4271_probe(&spi->dev, devm_regmap_init_spi(spi, &co=
+nfig));
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > +static const struct spi_device_id cs4271_id_spi[] =3D {
+> > > > +	{ "cs4271", 0 },
+> > > > +	{}
+> > > > +};
+> > > > +MODULE_DEVICE_TABLE(spi, cs4271_id_spi);
+> > > > +
+> > > > +static const struct of_device_id cs4271_dt_ids[] =3D {
+> > > > +	{ .compatible =3D "cirrus,cs4271", },
+> > > > +	{ }
+> > > > +};
+> > > > +MODULE_DEVICE_TABLE(of, cs4271_dt_ids);=C2=A0=20
+> > >=20
+> > > So currently SPI core doesn't generate "of:" prefixed uevents, theref=
+ore this
+> > > currently doesn't help? However, imagine, you'd have both backends en=
+abled
+> > > as modules, -spi and -i2c. udev/modprobe currently load just one modu=
+le it
+> > > finds first. What is the guarantee that the loaded module for the "of=
+:"
+> > > prefixed I2C uevent would be the -i2c module?
+> > >=20
+> >=20
+> > I hesitate to fully remove cs4271_dt_ids in the SPI part.
+> >=20
+> > I understood having it could lead to issues if both SPI and I2C parts
+> > are compiled as modules but this is the pattern used in quite a lot of
+> > drivers.
+> >=20
+> > Maybe this could be handle globally out of this series instead of intro=
+ducing
+> > a specific pattern in this series.
+> >=20
+> > But well, if you and Mark are ok to fully remove the cs4271_dt_ids from=
+ the
+> > SPI part and so unset the of_match_table from the cs4271_spi_driver, I =
+can
+> > do the modification.
+> >=20
+> > Let me know if I should send a new iteration with cs4271_dt_ids fully r=
+emoved
+> > from the SPI part.
+> >=20
+> > Also, last point, I don't have any cs4271 connected to a SPI bus.
+> > I use only the I2C version and will not be able to check for correct
+> > modifications on the SPI part.
+>=20
+> I'd propose to drop SPI modifications in this case, because by doing this
+> you actually introduce yet another problem for the I2C case you are inter=
+ested
+> in (namely if you'd enable both modules).
 
-https://lore.kernel.org/all/DDJU0415JEBQ.H2SD942NMDWX@google.com/T/#t
+sorry again for the confusion, I meant only to drop "MODULE_DEVICE_TABLE(of=
+, "
+from SPI...
+
+But seems that Mark actually has different opinion... Indeed=20
+
+$ grep -F "MODULE_DEVICE_TABLE(of, " *spi*.c | wc -l
+
+currently reports "17" out of 23 SPI-capable CODECs. I just don't see how
+you are helping the I2C use case by doing this...
+
+--=20
+Alexander Sverdlin.
 
