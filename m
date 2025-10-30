@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-877342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1F4C1DE4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:22:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1150FC1DE35
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D484F420D2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348841892CE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3E32135CE;
-	Thu, 30 Oct 2025 00:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B5422172E;
+	Thu, 30 Oct 2025 00:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a8hCsi6K"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eVpfHkP5"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA6F20966B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773C32153D4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761783557; cv=none; b=CptJ16YmdFZ/A5EiqTsdHgQONkj8UQsN3i46heT3vbVdxdWqBuwQ5FfOG8vFoAW3SbQYpdFinkXcxwR3TiXfo+gNZBYKCOo15AkgeY80NMNYrYIPyByONrAbSCbbCwvcohVTcaUngELLTkiWsTlATUXhztNi9Rzjv0BB5F55E00=
+	t=1761783559; cv=none; b=Cd/5+xxAQ3prqC+zkqN+iN0OzULHzmCg93rQHQCgfF02mZ7cNQrAL0v/hILohp2MJEy3QcFagRBXOg3N/vF5Wev3uaL5vMKUtwRiCeQYz+Mu9aZKHtjSa7O9VbbIhT4vl4LiRWgSpGXFp8HGqJKFQndwJYHJYusubhqakraqBj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761783557; c=relaxed/simple;
-	bh=qpAmwOBro6PUgwngh4ae2foe7ySJHkWnO7JmWVaVG60=;
+	s=arc-20240116; t=1761783559; c=relaxed/simple;
+	bh=+P7TO7VmrWMaR93SB6+alsEe+0z91aq0cUv1BeYykA8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ONNyRqoqswDPcCk6MzOeDMhXmsRCZTVIe/ErbvkdXDNC7X+zqfBi9bcmGJfQxjP5xTCnH/DxOxLz5pefXfNJv9Ve6mGWyvSwq6gUML05rTGAOLwENmBR+aMIIU7SyNKJrONvIZ7UhDjlOV0W5E/AJJFJowitgHah8ZAozNBuAVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a8hCsi6K; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=stUvHiehhrgtK/Jgu21AvmErqrThXCB4f3r64h0Ahl334jdmGiM1rqYDiEZU8nYg0TM9stZep6EFjMgC2vVQ7RUcYEAlQbLITYbNdT0/aCVYhafGq0Z2sNi78NPFoF40N4cc618spO+U0K9jMgknMjuAq0dOTV03Ho8zlmB4OG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eVpfHkP5; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso814733a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:19:15 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7a267606fe8so364082b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761783555; x=1762388355; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761783557; x=1762388357; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qSSB7/BOiNVYjUnc+XFldXow4eNja4ZY/hysYvDURk8=;
-        b=a8hCsi6KcnJrwLSNyHMqHJYmZl1MoPEps9bOUSsCgPgo5kMgELrNLB/+P8/yfFiBu6
-         l58GDojlqr+LyDhT3QHdnPNlRdk+VFfbMqquC9XHfJdQKF1xQmeizs4wX43KdIwLc6lL
-         oyoMV1Pq5s8KnfGLu/RoTzNJqvNQXJ7lr3SxzAIgP1XdpCKPwyxktex/vaFvNCbjxfeg
-         nd14BMEYtDdXvpMOAf7sa86BA6JAaxOQzENvVyq6qrY9YhS9vLJa+EzXjmngWsy6BlHB
-         vMSCPyXQHn0hVgN96bX3CE3q2LDZrBON1/eG9400p0UCe1xkUagrRxVUPDG3ZkF6DCPA
-         xYsw==
+        bh=YymTN7ZjNyXDosetoCN8yrsEVJlaareKAWv54RWXCuc=;
+        b=eVpfHkP5lUtd3nRjYfBN3sH1PKZE0DR5VoOMfcJYJtLtjPuyRWP5o7e5akbSgeeYeW
+         xPPQfHbb1GpSOEgW+0uG1hxwI7n05uWQmyaSdsEJj/MAJ5dks5aozCFhELaJ7sGMbgxz
+         sbSSujFVbEOV8IsYdtXf7C8iAi+wGovVu+pgBBvyKXSHW9shOEzXUF+ZSE2KVq/rskPi
+         cgAiVqdRKQumZbr4Pe5mONo7XAii0JKYv69hpL2Qy325CMLl/Ob2MyoLCZmcZnd2FnSn
+         t0KSLZPMGq0oca5VV+RAxKodGe5Omej84QeGXnOZOSQSWfXV4rH+cGWbqGV7xDth2ZRY
+         0kjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761783555; x=1762388355;
+        d=1e100.net; s=20230601; t=1761783557; x=1762388357;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qSSB7/BOiNVYjUnc+XFldXow4eNja4ZY/hysYvDURk8=;
-        b=eqAZhVPZGHpvjTPWmmXk8CjN9ecPAMYWfLzaDUu+L63oQwJEf2np8O41xJ7o3n/7yM
-         2OVMdfe3+yjgISulZpwflkdzHsR4LCyM59JGwAj9Z+abKihcGbQJQAGbUCYHGdl3yKiZ
-         gFlj7PM5pOrheu0VCRB+wKPGNUhZkvamSjw8Y9qTRjU8Y8CFISrBY4BlHFn0HzFctFVG
-         JYKskkkII7351sXCLk/iivpyOyaitg6WEP5zlw8DDE0LrZPG54zu3kMCzhzQFr++45fm
-         CHBcgyd+itvuQufJKNZR26ZiRJsCNtc0pnrWKRrUyW3qgJBWP7uLOP1TXpC4I49huQ5P
-         g/Gw==
-X-Gm-Message-State: AOJu0YyGMtVUl82KY96Ausz9o36LHRBX+nMEu0u7NjcGo2LgnxiTvBkb
-	cVOb8NNVFr9E7H0gyCaMfTwNuKrhsG+sInHpNqCVdKbf8jKqPAOtoPesqgjT/WFI3FUaOZ3iktY
-	s5PqjGUMGqR6BP/yxR0C5uyYgNP8sXLVYLmoiL4V3UuNGVVaZVGXgaWaDaxg9os2O2+0ytMaqfi
-	dxavSICpKbqC4Pa01wrb46Hw+D4oaTnd0W44e995eoJoflLqLt
-X-Google-Smtp-Source: AGHT+IHgiJ+FdCV9mTPk+HjaCkPwZkf2U8A55Ke+u6eraRc1ISfkRFMASsh9TnqzSY4mLRNMk2mL6Mb4byd4
-X-Received: from pjbfa21.prod.google.com ([2002:a17:90a:f0d5:b0:33b:ab61:4f71])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:53c7:b0:335:28e3:81cd
- with SMTP id 98e67ed59e1d1-3403a281e06mr5179161a91.18.1761783554727; Wed, 29
- Oct 2025 17:19:14 -0700 (PDT)
-Date: Thu, 30 Oct 2025 00:18:49 +0000
+        bh=YymTN7ZjNyXDosetoCN8yrsEVJlaareKAWv54RWXCuc=;
+        b=WJ8adJWCizb6KW7USTD6QhpJy9i4HJbBrgrlhyu1IQglXhsR79Vt6dxsuisi9G3dDK
+         IKgV3mpP4c+NTLqA4+FjIPO1RjqbnB2zKebBTeDjcJPF9t/r7GJz3DTwUq/VJRFXKxqg
+         A/8mz1D16xjXluUC8Jjs4Kq2vP5b16oc60rpAgp6FTwwKHnNmvoflYimKX35VbIhv/mX
+         9h/BPzJag4Zcz04TD5cA/Nwrth/I0FqRo/w2ebHEAOnEHLplF8UugJox3Riilf2daz+b
+         tgo0IaiNiryoPwjolNQgdXedF7sXtFa2LvFqUQ3MvkznLysB9gT1uFV4iGqo0RuGsf86
+         H2BA==
+X-Gm-Message-State: AOJu0YyKkBBk38wF79hA7faVajebxAVzRbxZc2r76HzYj0eHYwMTJJar
+	5+Q+vowsctMjXqqBDPjHQndGg0zNmSgdT5Jd1lT1sKZ//+g7sl6OL0+FGE8hheehXpyRG7ppiXh
+	qWTBG9KM+MHPaOlOIK6NsK1U3b0nmqzfsvQ+zR0yLVcFK8BghuPz4PYVU16FC/fUmY+Qe+JIfJR
+	/7kacYxCBKOd3VIyoEd8B2/+W2PeQDAxy3DC0eHLt8IrKSqBxW
+X-Google-Smtp-Source: AGHT+IFk2/AWGfZxxb6gdiIvh+Df7R9aqsGY/uHdrrZa3UadLjMeSn9i1dBQj4UmMFvInh97o2zW4yZ0e22Z
+X-Received: from pjbfh4.prod.google.com ([2002:a17:90b:344:b0:33b:a383:f4df])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3289:b0:340:c6cd:545b
+ with SMTP id adf61e73a8af0-34787078c60mr1550958637.44.1761783556400; Wed, 29
+ Oct 2025 17:19:16 -0700 (PDT)
+Date: Thu, 30 Oct 2025 00:18:50 +0000
 In-Reply-To: <20251030001857.681432-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,15 +73,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251030001857.681432-1-jstultz@google.com>
 X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251030001857.681432-9-jstultz@google.com>
-Subject: [PATCH v23 8/9] sched: Add blocked_donor link to task for smarter
- mutex handoffs
+Message-ID: <20251030001857.681432-10-jstultz@google.com>
+Subject: [PATCH v23 9/9] sched: Migrate whole chain in proxy_migrate_task()
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <valentin.schneider@arm.com>, "Connor O'Brien" <connoro@google.com>, 
-	John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
 	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
 	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
 	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
 	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
@@ -93,43 +91,25 @@ Cc: Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
 	kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-From: Peter Zijlstra <peterz@infradead.org>
+Instead of migrating one task each time through find_proxy_task(),
+we can walk up the blocked_donor ptrs and migrate the entire
+current chain in one go.
 
-Add link to the task this task is proxying for, and use it so
-the mutex owner can do an intelligent hand-off of the mutex to
-the task that the owner is running on behalf.
+This was broken out of earlier patches and held back while the
+series was being stabilized, but I wanted to re-introduce it.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Signed-off-by: Connor O'Brien <connoro@google.com>
-[jstultz: This patch was split out from larger proxy patch]
 Signed-off-by: John Stultz <jstultz@google.com>
 ---
-v5:
-* Split out from larger proxy patch
-v6:
-* Moved proxied value from earlier patch to this one where it
-  is actually used
-* Rework logic to check sched_proxy_exec() instead of using ifdefs
-* Moved comment change to this patch where it makes sense
-v7:
-* Use more descriptive term then "us" in comments, as suggested
-  by Metin Kaya.
-* Minor typo fixup from Metin Kaya
-* Reworked proxied variable to prev_not_proxied to simplify usage
-v8:
-* Use helper for donor blocked_on_state transition
-v9:
-* Re-add mutex lock handoff in the unlock path, but only when we
-  have a blocked donor
-* Slight reword of commit message suggested by Metin
+v12:
+* Earlier this was re-using blocked_node, but I hit
+  a race with activating blocked entities, and to
+  avoid it introduced a new migration_node listhead
 v18:
-* Add task_init initialization for blocked_donor, suggested by
-  Suleiman
-v23:
-* Reworks for PROXY_WAKING approach suggested by PeterZ
-
+* Add init_task initialization of migration_node as suggested
+  by Suleiman
+v22:
+* Move migration_node under CONFIG_SCHED_PROXY_EXEC as suggested
+  by K Prateek
 Cc: Joel Fernandes <joelagnelf@nvidia.com>
 Cc: Qais Yousef <qyousef@layalina.io>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -156,193 +136,105 @@ Cc: kuyo chang <kuyo.chang@mediatek.com>
 Cc: hupu <hupu.gm@gmail.com>
 Cc: kernel-team@android.com
 ---
- include/linux/sched.h  |  1 +
- init/init_task.c       |  1 +
- kernel/fork.c          |  1 +
- kernel/locking/mutex.c | 44 +++++++++++++++++++++++++++++++++++++++---
- kernel/sched/core.c    | 18 +++++++++++++++--
- 5 files changed, 60 insertions(+), 5 deletions(-)
+ include/linux/sched.h |  3 +++
+ init/init_task.c      |  3 +++
+ kernel/fork.c         |  3 +++
+ kernel/sched/core.c   | 25 +++++++++++++++++--------
+ 4 files changed, 26 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 863c54685684c..bac1b956027e2 100644
+index bac1b956027e2..cd2453c2085c1 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -1241,6 +1241,7 @@ struct task_struct {
- #endif
- 
+@@ -1243,6 +1243,9 @@ struct task_struct {
  	struct mutex			*blocked_on;	/* lock we're blocked on */
-+	struct task_struct		*blocked_donor;	/* task that is boosting this task */
+ 	struct task_struct		*blocked_donor;	/* task that is boosting this task */
  	raw_spinlock_t			blocked_lock;
++#ifdef CONFIG_SCHED_PROXY_EXEC
++	struct list_head		migration_node;
++#endif
  
  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ 	/*
 diff --git a/init/init_task.c b/init/init_task.c
-index 60477d74546e0..34853a511b4d8 100644
+index 34853a511b4d8..78fb7cb83fa5d 100644
 --- a/init/init_task.c
 +++ b/init/init_task.c
-@@ -177,6 +177,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
- 	.mems_allowed_seq = SEQCNT_SPINLOCK_ZERO(init_task.mems_allowed_seq,
+@@ -178,6 +178,9 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
  						 &init_task.alloc_lock),
  #endif
-+	.blocked_donor = NULL,
+ 	.blocked_donor = NULL,
++#ifdef CONFIG_SCHED_PROXY_EXEC
++	.migration_node = LIST_HEAD_INIT(init_task.migration_node),
++#endif
  #ifdef CONFIG_RT_MUTEXES
  	.pi_waiters	= RB_ROOT_CACHED,
  	.pi_top_task	= NULL,
 diff --git a/kernel/fork.c b/kernel/fork.c
-index 0697084be202f..0a9a17e25b85d 100644
+index 0a9a17e25b85d..a7561480e879e 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -2136,6 +2136,7 @@ __latent_entropy struct task_struct *copy_process(
- 	lockdep_init_task(p);
+@@ -2137,6 +2137,9 @@ __latent_entropy struct task_struct *copy_process(
  
  	p->blocked_on = NULL; /* not blocked yet */
-+	p->blocked_donor = NULL; /* nobody is boosting p yet */
+ 	p->blocked_donor = NULL; /* nobody is boosting p yet */
++#ifdef CONFIG_SCHED_PROXY_EXEC
++	INIT_LIST_HEAD(&p->migration_node);
++#endif
  
  #ifdef CONFIG_BCACHE
  	p->sequential_io	= 0;
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index 3cb9001d15119..08f438a54f56f 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -926,7 +926,7 @@ EXPORT_SYMBOL_GPL(ww_mutex_lock_interruptible);
-  */
- static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigned long ip)
- {
--	struct task_struct *next = NULL;
-+	struct task_struct *donor, *next = NULL;
- 	DEFINE_WAKE_Q(wake_q);
- 	unsigned long owner;
- 	unsigned long flags;
-@@ -945,6 +945,12 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
- 		MUTEX_WARN_ON(__owner_task(owner) != current);
- 		MUTEX_WARN_ON(owner & MUTEX_FLAG_PICKUP);
- 
-+		if (sched_proxy_exec() && current->blocked_donor) {
-+			/* force handoff if we have a blocked_donor */
-+			owner = MUTEX_FLAG_HANDOFF;
-+			break;
-+		}
-+
- 		if (owner & MUTEX_FLAG_HANDOFF)
- 			break;
- 
-@@ -958,7 +964,34 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
- 
- 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
- 	debug_mutex_unlock(lock);
--	if (!list_empty(&lock->wait_list)) {
-+
-+	if (sched_proxy_exec()) {
-+		raw_spin_lock(&current->blocked_lock);
-+		/*
-+		 * If we have a task boosting current, and that task was boosting
-+		 * current through this lock, hand the lock to that task, as that
-+		 * is the highest waiter, as selected by the scheduling function.
-+		 */
-+		donor = current->blocked_donor;
-+		if (donor) {
-+			struct mutex *next_lock;
-+
-+			raw_spin_lock_nested(&donor->blocked_lock, SINGLE_DEPTH_NESTING);
-+			next_lock = __get_task_blocked_on(donor);
-+			if (next_lock == lock) {
-+				next = donor;
-+				__set_task_blocked_on_waking(donor, next_lock);
-+				wake_q_add(&wake_q, donor);
-+				current->blocked_donor = NULL;
-+			}
-+			raw_spin_unlock(&donor->blocked_lock);
-+		}
-+	}
-+
-+	/*
-+	 * Failing that, pick any on the wait list.
-+	 */
-+	if (!next && !list_empty(&lock->wait_list)) {
- 		/* get the first entry from the wait-list: */
- 		struct mutex_waiter *waiter =
- 			list_first_entry(&lock->wait_list,
-@@ -966,14 +999,19 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
- 
- 		next = waiter->task;
- 
-+		raw_spin_lock_nested(&next->blocked_lock, SINGLE_DEPTH_NESTING);
- 		debug_mutex_wake_waiter(lock, waiter);
--		set_task_blocked_on_waking(next, lock);
-+		__set_task_blocked_on_waking(next, lock);
-+		raw_spin_unlock(&next->blocked_lock);
- 		wake_q_add(&wake_q, next);
-+
- 	}
- 
- 	if (owner & MUTEX_FLAG_HANDOFF)
- 		__mutex_handoff(lock, next);
- 
-+	if (sched_proxy_exec())
-+		raw_spin_unlock(&current->blocked_lock);
- 	raw_spin_unlock_irqrestore_wake(&lock->wait_lock, flags, &wake_q);
- }
- 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4546ceb8eae56..eabde9706981a 100644
+index eabde9706981a..c202ae19b4ac8 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -6846,7 +6846,17 @@ static void proxy_force_return(struct rq *rq, struct rq_flags *rf,
-  * Find runnable lock owner to proxy for mutex blocked donor
-  *
-  * Follow the blocked-on relation:
-- *   task->blocked_on -> mutex->owner -> task...
-+ *
-+ *                ,-> task
-+ *                |     | blocked-on
-+ *                |     v
-+ *  blocked_donor |   mutex
-+ *                |     | owner
-+ *                |     v
-+ *                `-- task
-+ *
-+ * and set the blocked_donor relation, this latter is used by the mutex
-+ * code to find which (blocked) task to hand-off to.
-  *
-  * Lock order:
-  *
-@@ -6995,6 +7005,7 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
- 		 * rq, therefore holding @rq->lock is sufficient to
- 		 * guarantee its existence, as per ttwu_remote().
- 		 */
-+		owner->blocked_donor = p;
- 	}
+@@ -6718,6 +6718,7 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
+ 			       struct task_struct *p, int target_cpu)
+ {
+ 	struct rq *target_rq = cpu_rq(target_cpu);
++	LIST_HEAD(migrate_list);
  
- 	/* Handle actions we need to do outside of the guard() scope */
-@@ -7095,6 +7106,7 @@ static void __sched notrace __schedule(int sched_mode)
- 	unsigned long prev_state;
- 	struct rq_flags rf;
- 	struct rq *rq;
-+	bool prev_not_proxied;
- 	int cpu;
+ 	lockdep_assert_rq_held(rq);
  
- 	/* Trace preemptions consistently with task switches */
-@@ -7167,10 +7179,12 @@ static void __sched notrace __schedule(int sched_mode)
- 		switch_count = &prev->nvcsw;
- 	}
+@@ -6734,11 +6735,16 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
+ 	 */
+ 	proxy_resched_idle(rq);
  
-+	prev_not_proxied = !prev->blocked_donor;
- pick_again:
- 	assert_balance_callbacks_empty(rq);
- 	next = pick_next_task(rq, rq->donor, &rf);
- 	rq_set_donor(rq, next);
-+	next->blocked_donor = NULL;
- 	if (unlikely(task_is_blocked(next))) {
- 		next = find_proxy_task(rq, next, &rf);
- 		if (!next) {
-@@ -7236,7 +7250,7 @@ static void __sched notrace __schedule(int sched_mode)
- 		rq = context_switch(rq, prev, next, &rf);
- 	} else {
- 		/* In case next was already curr but just got blocked_donor */
--		if (!task_current_donor(rq, next))
-+		if (prev_not_proxied && next->blocked_donor)
- 			proxy_tag_curr(rq, next);
+-	WARN_ON(p == rq->curr);
+-
+-	deactivate_task(rq, p, 0);
+-	proxy_set_task_cpu(p, target_cpu);
+-
++	for (; p; p = p->blocked_donor) {
++		WARN_ON(p == rq->curr);
++		deactivate_task(rq, p, 0);
++		proxy_set_task_cpu(p, target_cpu);
++		/*
++		 * We can abuse blocked_node to migrate the thing,
++		 * because @p was still on the rq.
++		 */
++		list_add(&p->migration_node, &migrate_list);
++	}
+ 	/*
+ 	 * We have to zap callbacks before unlocking the rq
+ 	 * as another CPU may jump in and call sched_balance_rq
+@@ -6749,10 +6755,13 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
+ 	rq_unpin_lock(rq, rf);
+ 	raw_spin_rq_unlock(rq);
+ 	raw_spin_rq_lock(target_rq);
++	while (!list_empty(&migrate_list)) {
++		p = list_first_entry(&migrate_list, struct task_struct, migration_node);
++		list_del_init(&p->migration_node);
  
- 		rq_unpin_lock(rq, &rf);
+-	activate_task(target_rq, p, 0);
+-	wakeup_preempt(target_rq, p, 0);
+-
++		activate_task(target_rq, p, 0);
++		wakeup_preempt(target_rq, p, 0);
++	}
+ 	raw_spin_rq_unlock(target_rq);
+ 	raw_spin_rq_lock(rq);
+ 	rq_repin_lock(rq, rf);
 -- 
 2.51.1.930.gacf6e81ea2-goog
 
