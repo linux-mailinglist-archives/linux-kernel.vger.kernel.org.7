@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-878535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AE9C20EFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:31:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B8BC20F28
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B926018816E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5B141894690
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA80364497;
-	Thu, 30 Oct 2025 15:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F40F363B98;
+	Thu, 30 Oct 2025 15:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xRciWGok"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ykS5ibOb"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B30363B84
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA46363BAA
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837964; cv=none; b=MzmODDt+tTaU0FPzmRgx6iZgzY/bT2Ky66fz4M+2k7Wu0Mk276Sd0Vp2RA8IHgVljFV8vHStyvi63qz/1tv0W3wYh0b6vZc3o/OOa7sVrFNiAT+0Qc1zRyit7oHlhri/A9Es0vdae8gMFIBNn9B2bDgwCQsZlHF9/hj+vTGl7zA=
+	t=1761838090; cv=none; b=hMQvP7euiFDyuFKOBjEPG8t1SsredHfOjZOwVxzVs2ikyetKemuuiQ1Wek5EZO/r1j0zg2W573hcJb9bSHbWJWb3C68OVA7S9VmRTJlC7uLnvgAkN5MUdvAYof+Ere1Uy0VEAhbiowkfziQUw2sU/ip0dHcHsFwOKpDk+r0hqO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837964; c=relaxed/simple;
-	bh=D/Cv1jL1+Qyuz0NbEOBRkb7tIoJRn0C1VG2dKBbrzHw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=bOdj1Ny+6lFhGX2rgiv+Nz0Gxlnzo1VhrRA2+59mgID7qCUw4hmCPtRVtGspf6n1+1xbbJ6tWVv9MqOZZ4T0z4rW0FHDXrLgpfaNkoclPO1zGgeRCNlkSiXzKRo6GKxhiohaje+Yx5Oii4OjYZgfonMnXjFhEeqvjdj7eijSieY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xRciWGok; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D96C31A178F;
-	Thu, 30 Oct 2025 15:25:58 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A4A646068C;
-	Thu, 30 Oct 2025 15:25:58 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 65B6311808BF6;
-	Thu, 30 Oct 2025 16:25:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761837957; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9TyfVTtmiB0HqF3wvvWDiUMZGtwH3+ueA2qzLuORFuo=;
-	b=xRciWGok4j1T3/882LJemGiLsaiRP7bgsC3acWGBUnYAjwwn9uV7C7r+GYs8nMOWImik3Q
-	TX9ppbvdV5kv0LI3PM1Gv8/njfbyWVJW/8eiDBith5VpQSn0yEpYNVINJPYfRXtUffawgc
-	x0sw2iz5X9TxWq1GzSi7KOE5a2e2dntoEPgYoLFwqgstXAxKEXOXc5wHUEcYNIjL9ujipy
-	+Qmt3SFl1ZjA+Dv6SXL4CXLU2FcPjVglD+qUpVwpjJboiRWtfZ+w3wkrQ7IdLgWP1XEJDH
-	dhFXZUGFDc1/o8/g+04XlUyAbkeB50IgOQwh8rbGlMENhOJCtUbtAlY6mlKWdg==
+	s=arc-20240116; t=1761838090; c=relaxed/simple;
+	bh=XB11xGL63R2dsjBDo1xzLACnAhYwocbX+tplDz8muzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sVOsE01LCZJyKJhDK6+JzNUweoAdSCwJpOE83/qTm5YpOwx7ysSl5KmJYFde5At2POGpdH34skfGvLxeZCHts6h5eZetlfQWtiHh3VUQjG78CHyDS8TQaFx4RZdqWRwlQ1DGhamAX+DxRCLG4RZe01neI1axHC1LDi6ns5Ya/Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ykS5ibOb; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7849c889ac8so43449837b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761838086; x=1762442886; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ycPp8pZgEFoeQMpyGYzVQ4IFRsCoJ2aRuKd6SDWpxA=;
+        b=ykS5ibObCHGvrPxm47c2x4Tgtx5sQC4UoKIvNO7OMDUehzP4BnEMVQkpkKQMHyJfMu
+         OJguViaGuEn09tgLRmkfhc+UopKSJnmrEQQI9hmX53/HR/IOrVjZAQhrC9L3EQSA86r8
+         3hDhQqcV6BACvSEomev/mTYOydrmgFfwbIJ/rp9IUw9fqWUf+pxzl53H+UbcbZRhQhGh
+         6dqkMnOW181DaQSjDzc29KuBoUrAYGRBC58kIZ/CvFaTokkA6qdm9qVJHGHRKapoAWif
+         0hWj/hnjCn21GUuBPdm5CF6vPWO7QzbCoIxj+gUGzFyQAqTsKRBP8sqRUwvUHwehcVsP
+         nCNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761838086; x=1762442886;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2ycPp8pZgEFoeQMpyGYzVQ4IFRsCoJ2aRuKd6SDWpxA=;
+        b=Z1P8ztQ6gJm8Hsg7kyBZ6/KG/GhXm5ZuMXUJpHcNf9ZMVP8l233veiMZJW7Hi+4AMB
+         eKzveSw6Bh+f9u2nGW3MsB7/QRtfFgCmHRk9VjfcNY99CCzdTTCorCVN+v8ENxr5EHU5
+         L3i9NflKWrCdYV2gJVZ17b2zmudQXy9xSPDWSKRZy5Ip94Yh6Xdx1ahFcQSvl29s8ryl
+         RJxTJZofEv4JBTcncz8PjNJsZEO4fGhiih83fhX7aHW9Y1Nju57Kxc1s4I0KAnW1xltG
+         yJnlYuU+YQqa2nODDoELQjT/HjkUJ72qFTw4XaxnOoZcydPmg9X2ueNNQ+/rESCKiKiQ
+         3KoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6+2MoAiGg0frc2zpmlQdQuK8TMVe2u87ognfLeuNrm0ubw777cZ7lVFmS0WtnBfBoqanBSkJFhL+5uSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvnDhSfCzmu+4kQxvLNO8L/KwTmmSaZoaYl7ycaz4t+QNJJ4Xk
+	dmsCMMG1lcVtPiCoJhrJb7aRIsaicB6HdiHwBHeiidSt2HkWhzLNe+C4/x52TZnwdAectRrZcl9
+	PZnpeMGmhbEQJBS1oTsvjCgWedUdOZdYtxypecCcytQ==
+X-Gm-Gg: ASbGnctojmEeRoQeTpq92mZeiHyd2EgwZ+yvHY906qPGwi78mT1wzDJJWWFMF1d2DR7
+	8/YcQt0wMzFjTv/RFYZnpEdT1JGcQpdTTHnDeZqVlKscQn5F60XdI8/pahHVLPjWlFP/3ioU5g+
+	0XFyVY3Dz2UBI8fAiOWkPOmsduUR2y0BRO3QWGjvKbxd4flVQl0PyUjDdy06Poz3ipatXK9JkCy
+	9p5PjqCgihUr411YTlGhqlohl9R/hOWvhb2HJh9bHvyu+vJshEbHP/W8huVtA==
+X-Google-Smtp-Source: AGHT+IE7cHjINSkLMQTgzs6w+5tGJD0Nm4hSDWwJhVubSFRkYHz6tUwfvq/JjfaEUpptZLodo7e/iRO8bn4zeLZcNk8=
+X-Received: by 2002:a05:690c:c34a:b0:730:8858:827 with SMTP id
+ 00721157ae682-78638e15c6cmr28491297b3.19.1761838086224; Thu, 30 Oct 2025
+ 08:28:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 Oct 2025 16:25:50 +0100
-Message-Id: <DDVRFGWCDRGT.2IR33ALXLVJ2U@bootlin.com>
-To: "Mark Brown" <broonie@kernel.org>
-Cc: "Marek Szyprowski" <m.szyprowski@samsung.com>, "Naresh Kamboju"
- <naresh.kamboju@linaro.org>, "Andrzej Hajda" <andrzej.hajda@intel.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert Foss"
- <rfoss@kernel.org>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
- "Jonas Karlman" <jonas@kwiboo.se>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] Revert "drm/display: bridge_connector: get/put
- the stored bridges"
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com> <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-1-667abf6d47c0@bootlin.com> <7873e2ab-a8ea-4fdc-8534-746f91c8368b@sirena.org.uk>
-In-Reply-To: <7873e2ab-a8ea-4fdc-8534-746f91c8368b@sirena.org.uk>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+References: <20250917063233.1270-1-svarbanov@suse.de> <CAPDyKFpus05RAkYAoG7zjyvgAJiuXwRt3=z-JB5Kb7mo0AK4vw@mail.gmail.com>
+ <c379087c-1702-44b7-a890-beb5b77d794b@broadcom.com>
+In-Reply-To: <c379087c-1702-44b7-a890-beb5b77d794b@broadcom.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Oct 2025 16:27:30 +0100
+X-Gm-Features: AWmQ_bnaXJddKoSJGHltKVC2FCgxq7fO5V7a69ZXCIkr6_3dvFmm3LKqD_YY314
+Message-ID: <CAPDyKFowo7+-C4YLLw4XoWz4fU3ykEP1UVEEneCJXBuDjGTStw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add watchdog support for bcm2712
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Lee Jones <lee@kernel.org>, 
+	Willow Cunningham <willow.e.cunningham@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
+	Saenz Julienne <nsaenz@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, 
+	Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Mark,
-
-On Thu Oct 30, 2025 at 2:11 PM CET, Mark Brown wrote:
-> On Fri, Oct 17, 2025 at 06:15:04PM +0200, Luca Ceresoli wrote:
->> This reverts commit 2be300f9a0b6f6b0ae2a90be97e558ec0535be54.
->>
->> The commit being reverted moved all the bridge_connector->bridge_*
->> assignments to just before the final successful return in order to handl=
-e
->> the bridge refcounting in a clean way.
+On Sun, 26 Oct 2025 at 21:23, Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
 >
-> Is there any news on getting this series merged - the currently broken
-> code in -next is causing boot issues on several affected platforms (eg,
-> Rock5B) which is disrupting other testing?  If the other patches are
-> somehow causing issues could we perhaps get the revert in to fix the
-> boot issue while those issues are resolved?
+>
+>
+> On 10/13/2025 4:08 AM, Ulf Hansson wrote:
+> > On Wed, 17 Sept 2025 at 08:33, Stanimir Varbanov <svarbanov@suse.de> wrote:
+> >>
+> >> Hello,
+> >>
+> >> The following patch-set aims to:
+> >>
+> >>   * allow probe of bcm2835-wdt watchdog driver for bcm2712.
+> >>   * prepare bcm2835-power driver for enabling of v3d for bcm2712.
+> >>
+> >>   - patch 1/4 is preparing bcm2835-power driver to be able to
+> >> control GRAFX_V3D pm-domain. This is a prerequisite for the follow-up
+> >> patch-set which will add a v3d DT node for bcm2712 (RPi5).
+> >>
+> >>   - patches 2/4 and 3/4 are adding bcm2712-pm compatible in MFD driver
+> >> and update the dt-bindings accordingly.
+> >>
+> >>   - patch 4/4 is adding a watchdog DT node for bcm2712.
+> >>
+> >> Comments are welcome!
+> >
+> > This looks good to me!
+>
+> How do you want to proceed with merging those patches? I would assume
+> you would take patches 1-3 and I would take patch 4.
 
-Thanks for pinging, I must agree the regression is out since quite a few
-weeks. Despite having four Tested-by, this series was lacking Reviewed- and
-Tested-by entirely.
+Yep, that works for me. Awaiting a new version of the series to get
+the comments on DT patch addressed.
 
-Now Louis reviewed the whole series (thanks!), so my understanding of the
-drm-misc policy is that I can apply the series, which I plan to do in a few
-days to let anybody else comment.
-
-Best regards,
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kind regards
+Uffe
 
