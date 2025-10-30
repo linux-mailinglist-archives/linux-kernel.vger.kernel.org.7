@@ -1,197 +1,387 @@
-Return-Path: <linux-kernel+bounces-877643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A13BC1EA66
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:59:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D74C1EA89
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CD019C1C2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4C5A1882C63
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B58233290E;
-	Thu, 30 Oct 2025 06:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE51334363;
+	Thu, 30 Oct 2025 07:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kge+qA/p"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BT69XzCc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MtV8mZtW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344252F5A31
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4942C11F4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761807550; cv=none; b=M7It7ek8byou8cl+mbIXvhZPmyRVM6FQuQyWR9kL/KVQH/aUIbeOkWS9baCoOCsrRdmuzjPAE8VHiAImDYJclFBQgzxV64ldZl1BEU1YyH+hxewwbnQ+7dzT3RFI9Uwd2mLM7mhaFhJNvMlvk0ysUrIXUzxCEnU6tF/h8ovHlLY=
+	t=1761807635; cv=none; b=myYsSmsXgDmsHZHNCMhCjhua1K9qh8mePyvxNT5Hr4IzALbSZ1NT4vV1V3ZP2PzCRER0lLVPmwOaxJab76+c3ns0UBtap+zgfLhtuafjlHNeKO0gNk6O83bpukYQ4O8hXiat/FzQXlcSEjLtNcWJHoatkUQxurwpKGTI/MlNIQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761807550; c=relaxed/simple;
-	bh=+BXNpvMSYXQ5gkRV1Igb+qGK/PD3CybD10G8Lpfk3ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ATybQMTfJ9RdcwlY5oBpIiW5zz9iET6QDONOK10pKvz/WSsMkWibAaiu5FnwOOq+vCbYHsansC4If6tLZw58orxWCO5eeaH9MNAhe8rv1ED2azm0JgITpAX6zOd8C6DOiYtryaWg79d81ZDy/i9ukYgyyFE2DXfXoH5G+8/6Mog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kge+qA/p; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-b6cea7c527bso535934a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:59:08 -0700 (PDT)
+	s=arc-20240116; t=1761807635; c=relaxed/simple;
+	bh=GapKOE4+busiV714F9uFp5ab/JEw0dio+e1KPd8/k0c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BTNqmrrzZLLvLUEadAf0V+ZygpVttfxKtNgVduXcaZ6aajHBh/JsOF7vYibbusU0CkG2HdtS/viaeU/C9BFsD0wr93OCMOHjENMLu7cRtVFJsrCWPqHdQN0osB6s3Gf9RR/UM4GVVxgK298GlUJvyZkt8J0Lg6j38fVSSx3MOt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BT69XzCc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MtV8mZtW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TLH1oR1656060
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:00:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Zmr4ABqTmT0fflvPe/g1GS
+	ogr/M5FHC7W2ETmw+4eNI=; b=BT69XzCc7xbtHtKbVZgQuDkAXG1bUK//s1bO1t
+	LoxxIeLbwzwl7nmvKMiklW+Q1QceGIlm80lSLll28Gi90S4xPzVezt3JFiTEISXT
+	gx/9u/UFyEfW79dwCF1HAuS9LDrXScvNoWVvrEu/5Q9lO2YJnFrY5/NC/C1PuMSz
+	yHlubqgrep7it6eLexj/HXiBWeNHBDgzQDMSNpLya6soVxF73q9oKxpxktHCJmQw
+	XLZr3oZvVJyIlYYO5QBagUefu/PiVogGaTHl5RMdG8V/pYpSiWbDlsom0g98nvGX
+	dneEhCfvAOAHpNrRmSR0CukYTCczdBlwpCfJx3Jw7JTcnbxw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3tptsc4t-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:00:25 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-293058097c4so1757235ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761807548; x=1762412348; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O2On5/uZ00EsAWd87Xl9UGDQOXgXaq8KavS45zELduk=;
-        b=Kge+qA/pOMCaxqH7lK3oJGhfvVmRIb/otUk36KQpWVzdRX/tK1sOEZozNe+9CPOs6+
-         QgJNuuikkYWVUVX2weUTlA3+MXmFhnlwhi2TFiDLlm0p4jFOaYxiB8ubc4ImS/Lm2HtL
-         9mEu5hM/GvdRcqNAEyaGOk/gsHe9XDGVRMlrQX0xKTh0eJ1nbzJ9ylUI2sGMxmeuoF+N
-         otLrY7tu9aFT/YFc/3mjCV7oWayhgfuFHatG+kjXP4ZiHTs9Z22rF03TJteFMoNBhRPa
-         FK6hXTjxjfBX5rcK5FMar7Vwh4XgIlzVZLBgh5dxFJzrvHzjYcAmPnJSD9aEWo9kCqOw
-         4ofA==
+        d=oss.qualcomm.com; s=google; t=1761807625; x=1762412425; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zmr4ABqTmT0fflvPe/g1GSogr/M5FHC7W2ETmw+4eNI=;
+        b=MtV8mZtWKKljyBI1pzVI7QRN7XpjryFbHdxqMxhzLrI3RRmsS7+q1vvUZ5lApYgNYA
+         DrFjBYFtVPBdxq5GHE1A2gWbhdq0LfYsouAXnamNIlzgxue8xhX/R78TK1OgfHDPFJEj
+         9LCPkeo7e9mJuYVN3EjU+3wVRM/wmOzi+tBBCdbGsJSz4nbivk3wQawGnsHHz6MjrWph
+         41kZ7YLZJktMSOgAIPU4luzYZw/m+az3Mt9axxaG+V9kHO3JpvU9kzGNNv/1/Fnp2+Ld
+         AhLAPEercqSwdQIEee3BAyGg7QBgMtHtBa9QMvD2AwDKbj9SGC1UfqCS/A+vukM58q30
+         XZhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761807548; x=1762412348;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2On5/uZ00EsAWd87Xl9UGDQOXgXaq8KavS45zELduk=;
-        b=lZCmRgKaDowYLXLhvQ9hQF4v6tXLolMScafpgXp41Dl3TIikKoQiRTEWXFrMcK9++f
-         X1ztANYNSe7NdKun1sOYUix4PYjqlSoyi/cWF+TEtNgvBNuKtJlwdKvWhtNoQPYzrx1a
-         LLgGmrEKE+/abAVrn38y5zmjBKhX/bzy20Wf9OYvpRg1n3yvkXZ7G0txFn1DpmYgXfYg
-         Wgm+xlXhZeEDdgZurQtoHTtCQeoiE4kPPbSjvpp/bWVMPqyNpRuXpAMz/ntjDZaAkbtD
-         DKvFsaHPfiAFpBxQf3Ni9BUU3TjOPv0YQDx2KZURO/uQIeinWbOeLyMrHZ7lKIfWMhZZ
-         UaUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvh1vUwIwasHt8rEb8GqYYIC5qfqHrjR5SALIfxLq118EoaWslX0S6zU2msTvnaddXqnpnfYooMv5igf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMHkDtACcFoKQwQ/jRzpKmwiXtZTIDQ0DkfBi71g46j8L1DVXu
-	dnI4iZVCIYT4hJzwkNitJ+kyHIayArc5GJbFhCF0pmo5aj1MTvBevvDp
-X-Gm-Gg: ASbGnctmzVfAJMSPX8WdFgqXjvTf/QeTDeWoiofu5qhUO/bR5BX9nPUB3TYJsTO+WsI
-	C5ROkfFCC1k5hnmd2o/faDuyUpawhESZsKlzvv/5JIy1Oh8k9Cpsje4x86IDKIcDB3EZ5DPt4KV
-	Zo90LIslUGLRqA+BafZ9sb0W6C6n2UQUCgrdrddtOU3vAtoyEUHgYPA3TXAep5cgN33QPPS0pRq
-	Ezz5Ybg8pt4GUZvM7hT/JKtda90dQGDHsHDSOfBrmLehXFjhzCe6ZSElx06fZ2ROSvI3UkqfxsP
-	WuEWn9Q6+g/dfWCi6qwbLDonpOauaXJ/C/7a94xW/7Qn0a0CHeSfDgU9RD5ADvw1x3tWisr/Yo/
-	AcSy1vuMs//hKk838D6L1i2gwQSOVGNcQ5Bj2soiMgilHix/G4T9AGO8WmzlyePtw/syuoK3I4O
-	nKe4SG77D1bT+QKPd8Wa/Ze2Igg/I5D/BiFKsX0cJG8vQmRwV9uCYQQA==
-X-Google-Smtp-Source: AGHT+IEZNLk5umwmBOUCw1YoD3/cw2kbTnO1hk91vhVghFo2XMH5JsrjRDL7YnUDlM53qfRU+p5zXA==
-X-Received: by 2002:a17:902:d503:b0:26f:f489:bba6 with SMTP id d9443c01a7336-294ee46ac8cmr24375645ad.50.1761807548302;
-        Wed, 29 Oct 2025 23:59:08 -0700 (PDT)
-Received: from ?IPV6:2600:8802:702:7400:90ae:1623:a8e:9839? ([2600:8802:702:7400:90ae:1623:a8e:9839])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b7128b63b05sm15663848a12.20.2025.10.29.23.59.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 23:59:07 -0700 (PDT)
-Message-ID: <59cd28f3-f2a4-435d-9b13-3d56b1d1299c@gmail.com>
-Date: Wed, 29 Oct 2025 23:59:07 -0700
+        d=1e100.net; s=20230601; t=1761807625; x=1762412425;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zmr4ABqTmT0fflvPe/g1GSogr/M5FHC7W2ETmw+4eNI=;
+        b=HtRtI+tubm687Z0R0w38/Zlq9ny7UXYpYFRGbqkR/pSmSYixjjFRKVv9A84Ok5OEyw
+         YToI0ZO4uWH2JnnWIUCWfOdLf4eCErJjVPnbcNGS12jcU0Ue5jaHhhltuSU6i1dq1OVP
+         jDgQHJyoksoE/fUexMnAEe238TIlUmySJeD6UJmEC5/PgpHXwRo1MZehzqdu6ElwUu/o
+         ZYvVnHG6TA3MqNcyEh1gPoZKi+OmIplTVV31N6/45eLKS48OyrnCFnWC3NQdY50ACmUa
+         v9t7VsbOpemjD7VpW1E7msqaIQTUqz8HF8rSOYNiHwAJ3yZ8wsjw4HhsuQUhh0zIHKrw
+         UlFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSLVuWMNmpC6g3R4LoGD5FZmfGYBPFAkRGMpQ5rvJJ/vdcgJtzdxVN1WIaSn6eOTfWniaJd7Xrc1ejXmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVouQWtklywXwkXjkz5+z8kel+9taaBpa5kN+4aIQRYDaZ0x0z
+	1yGHDCZ3CyHr1dQOVgpFjMCfiQ2O7lkLvwGGItG4G3hCph5qOjN4zRnNFBe6PbBy7oseiIpx8Y3
+	5YFFkXaRa3xZbE2+pzYIhSJ6HyCowDbxjG3UqJuL5aM+twvCQBUEu/M/K4kuyVjSWdoM=
+X-Gm-Gg: ASbGncuDMCiThBxPhkACoy7fkkTw8G5psJ5weIhk5nf8X9iWhmQieSzSt6JKAdOzkvY
+	aWtzLfPGnncP1NqPDCx9GoTe8HRRs2G7Dmwm9ZFA5g6czoc5skpGoayd/tbJkaGBIRufXTpDYfw
+	bJEk4/99r9SxFei3LMaa9qvcuHNN9zG5n3dAonp4soYDkc2JSS/CoC/IvVwb1bZ4MIZECQ/LBnj
+	mq/+f3sp4jV/q0oWGtpJTuHX3Fk/b3CcaUlaqlrWF8HlJ5YIIoexV+1aQJlZczKS/o+VbRM7aBL
+	ZlnVboY+KmIA+yC0e56lpipV5WTa7Q2hzDZqrBLqa4hRsXh2Psl+Y69sX1iUathxn4k6hNTzV2z
+	53jyt4BKRrv11wr978pXUFSFZLNU20j5/hH+0DWGxPYpCeFb6a4lusNLNH4I=
+X-Received: by 2002:a17:903:2f8d:b0:269:80e2:c5a8 with SMTP id d9443c01a7336-294deeedda7mr38933885ad.7.1761807624780;
+        Thu, 30 Oct 2025 00:00:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFxON84t/qbpslipPCnA9dvN0NK5l7PBdah00jerzc6zVXjQlMFnp0Q/202nkv4xeS+F98Vg==
+X-Received: by 2002:a17:903:2f8d:b0:269:80e2:c5a8 with SMTP id d9443c01a7336-294deeedda7mr38933315ad.7.1761807624017;
+        Thu, 30 Oct 2025 00:00:24 -0700 (PDT)
+Received: from gu-dmadival-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40a73sm177671325ad.74.2025.10.30.00.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 00:00:23 -0700 (PDT)
+From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+Subject: [PATCH v3 0/5] Enable support for AV1 stateful decoder
+Date: Thu, 30 Oct 2025 00:00:05 -0700
+Message-Id: <20251030-av1d_stateful_v3-v3-0-a1184de52fc4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/WIP 0/4] arm64: dts: qcom: sm8750: Enable display
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Mahadevan P <mahadevan.p@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- quic_rajeevny@quicinc.com
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Abhinav Kumar <abhinavk@quicinc.com>,
- Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
- <w6f3s56gx7psqgweuntqvkzrot7elhc5pdrxhvenukzwyt5eys@fndmaszfbo5k>
- <921afe20-42b1-4999-b5c4-035669dc831e@linaro.org>
- <32eb3b4f-b2c4-4895-8b48-ade319fd83de@oss.qualcomm.com>
- <2db06bcc-f04b-4a57-afd2-1d0c665d376a@kernel.org>
-Content-Language: en-US
-From: Jessica Zhang <jesszhan0024@gmail.com>
-In-Reply-To: <2db06bcc-f04b-4a57-afd2-1d0c665d376a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPYMA2kC/0XMQW7DIBCF4atErDsSAzEYX6WKogFmWqTETsGml
+ aLcvU6z6PJ/0vvuqnEt3NR0uKvKvbSyzHvYt4NKnzR/MJS8tzLaDKhNAOqYz22llWW7nLuFFCU
+ IZ0TKSe23W2UpP3/k++nVlb+2XV5f4z88PVUdcIReMi9Qammwxe8EPFO8MIyeKTk5otBx6ubJR
+ 2oMableyzqhswH9aEPSzGRjFrbOaDFeHHoaBsneWW3U6fH4BfYjwlTqAAAA
+X-Change-ID: 20251029-av1d_stateful_v3-cbf9fed11adc
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761807623; l=8380;
+ i=deepa.madivalara@oss.qualcomm.com; s=20250814; h=from:subject:message-id;
+ bh=GapKOE4+busiV714F9uFp5ab/JEw0dio+e1KPd8/k0c=;
+ b=cbGJjSXSFdFxqeyrjIBOnvmadQVbRnj9MropCQ5BfM1R7vjg8+xJmYxyRDBzF1Oj7e9Ly4EFr
+ yCTRQeFS//bDfrMEdNDEmWRT8ehF5THlZCNLKW81fwdy2vRv0lPh3Fu
+X-Developer-Key: i=deepa.madivalara@oss.qualcomm.com; a=ed25519;
+ pk=MOEXgyokievn+bgpHdS6Ixh/KQYyS90z2mqIbQ822FQ=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA1NSBTYWx0ZWRfX6xCEwa8Qo/+d
+ o/hnSSYkZF09+hRsKKy589xd5OkUxbXoYkcu+aHesSTqjlgcAUcJhgJOB2wvSqJ59VuaYn1jetG
+ 8F1690ZlHztlkMovJ1ku4Tu7+wyuNKctVugvH0t8KvWGbj+vUz+VbSlwPav1GgCNv/HQTf1PEfw
+ wyh9V5FyLXVxZNCcsd0SKgGVt0K8rYMjWeP+TJbVSrGJf3wGa7s2O5KYypSkklH7r3jYPzWC4PI
+ Xrew2L715so2fpQfxEibm7dhpU2ZlVZ3SvJAO5NyoBev5IeiezpXqp6qUyaCXdnicUIL9wOcdjd
+ q4eu3L1MiLVxSWuLOsD3TEFBRMb1iemla7Xz3zsPHOErgsHKzkQaWcL84fKDySp3PY1j6R5OpwP
+ ATW3IpL77wK9N7XDIvkcn/3Q3Kc/uA==
+X-Proofpoint-GUID: vxAkR1wh6lFCQTuwZSmzHcW3rfTxSbKd
+X-Authority-Analysis: v=2.4 cv=MuRfKmae c=1 sm=1 tr=0 ts=69030d09 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8
+ a=e5mUnYsNAAAA:8 a=rSFLfVtXdW1OZ3NksNsA:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-ORIG-GUID: vxAkR1wh6lFCQTuwZSmzHcW3rfTxSbKd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300055
 
-On 10/28/2025 11:27 PM, Krzysztof Kozlowski wrote:
-> On 29/10/2025 07:20, Mahadevan P wrote:
->> Hi Krzysztof,
->>
->> On 4/26/2025 1:24 AM, Krzysztof Kozlowski wrote:
->>> On 25/04/2025 21:34, Dmitry Baryshkov wrote:
->>>> On Thu, Apr 24, 2025 at 03:04:24PM +0200, Krzysztof Kozlowski wrote:
->>>>> DTS is ready and I consider it ready for review, but still RFC because:
->>>>> 1. Display has unresolved issues which might result in change in
->>>>>      bindings (clock parents),
->>>>> 2. I did not test it since some time on my board...
->>>>> 3. Just want to share it fast to unblock any dependent work.
->>>>>
->>>>> DTS build dependencies - as in b4 deps, so:
->>>>> https://lore.kernel.org/r/20250421-sm8750_usb_master-v5-0-25c79ed01d02@oss.qualcomm.com/
->>>>> https://lore.kernel.org/r/20250424-sm8750-audio-part-2-v1-0-50133a0ec35f@linaro.org/
->>>>> https://lore.kernel.org/r/20250113-sm8750_gpmic_master-v1-2-ef45cf206979@quicinc.com/
->>>>>
->>>>> Bindings:
->>>>> 1. Panel:https://github.com/krzk/linux/tree/b4/sm8750-display-panel
->>>>> 2. MDSS:https://lore.kernel.org/r/20250311-b4-sm8750-display-v4-0-da6b3e959c76@linaro.org/
->>>>>
->>>>> Patchset based on next-20250424.
->>>> If the DisplayPort works on this platform, I'd kindly ask to send
->>>> separate DP+DPU only series (both driver and arm64/dts). It would make
->>>> it much easier (at least for me) to land the series, while you and
->>>> Qualcomm engineers are working on the DSI issues.
->>> DP has also issues - link training failures, although it feels as
->>> different one, because DSI issue Jessica narrowed to DSI PHY PLL VCO
->>> rate and I have a working display (just don't know how to actually solve
->>> this).
->>
->> We at Qualcomm are currently working on bringing up the DSI display on
->> MTP. For this, I’ve picked the following patches on top of |v6.18-rc2|:
-> 
-> Display on MTP8750 was fully brought already. I don't understand why you
-> are doing the same.
-> 
->>
->>   1. All the DT changes mentioned in this series
->>   2. [PATCH v2] drm/msm/dpu: Fix adjusted mode clock check for 3d merge
->>      https://lore.kernel.org/all/1154f275-f934-46ae-950a-209d31463525@kernel.org/
->>   3. [PATCH v2 0/2] drm/panel: Add Novatek NT37801 panel driver
->>      https://lore.kernel.org/all/20250508-sm8750-display-panel-v2-0-3ca072e3d1fa@linaro.org/
->>
->> However, when testing with |modetest|, the panel appears blank. I wanted
->> to check if there are any additional patches already posted that I might
->> have missed and should be included.
-> 
-> Many patches are missing because Qualcomm did not send them for months.
-> I was pinging multiple times and I gave up - my job is not ping Qualcomm
-> to send their patches.
-> 
-> I have no clue what you have already, what is your base, what errors you
-> have and I will not be guessing this. For convenience, you can use my
-> integration WIP branch from my github. I already shared that tree with
-> Qualcomm more than once. Please reach internally first, instead of
-> poking community.
-> 
-> 
->>
->> Also, I’m curious to understand more about the DSI PHY PLL VCO rate
->> issue that Jessica had narrowed down—could you please share some details?
-> 
-> Sorry, I am not going to repeat stuff done year ago. Please reach to the
-> archives.
+Hi all,
 
-I don't have my notes on me, but IIRC this was the byte/pixel clk RCG 
-failed to update issue that was causing the clocks to default to a bad 
-rate (despite driver requesting the correct rate). It was fixed by this 
-patch [1].
+This patch series adds initial support for the AV1 stateful decoder
+codecs in iris decoder. Also it adds support for AV1 stateful decoder
+in V4l2. The objective of this work is to extend the Iris decoder's
+capabilities to handle AV1 format codec streams, including necessary
+format handling and buffer management.
+
+These patches also address the comments and feedback received from the
+patches previously sent. I have made the necessary improvements
+based on the community's suggestions.
+
+Changes in v3:
+- Updated fourcc could be to match the ISO specification (Nicolas)
+- Addressed comments and rebased changes to resolve potential merge
+  conflicts (Dikshita)
+- Updated GST MR
+- Link to v2:
+  https://lore.kernel.org/r/20251017-av1_irisdecoder-v2-0-964a5478139e@oss.qualcomm.com
+
+Changes in v2:
+- Updated documentation to target AV1 codec, not just AV1 decoder
+  (Nicolas)
+- Updated description for V4L2_PIX_FMT_AV1 (Nicolas)
+- Simplified buffer calculations and replaced numbers with relevant
+  enums (Bryan, Nicolas)
+- Improved commit text for patch 5/5
+- Fix for kernel test robot failure
+  Reported-by: kernel test robot <lkp@intel.com>
+  Closes:
+  https://lore.kernel.org/oe-kbuild-all/202510021620.4BVCZwgf-lkp@intel.com/
+- Link to v1:
+  https://lore.kernel.org/r/20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com
+
+Changes since RFC:
+- Addressed CRC issues seen during fluster testing which
+  are fixed with firmware fix [1]
+- Added Documentation for AV1 stateful uapi [Nicholas]
+- Resolved issues reported by static tool analyzers
+- RFC:
+  https://lore.kernel.org/linux-media/20250902-rfc_split-v1-0-47307a70c061@oss.qualcomm.com/
+
+[1]:
+https://lore.kernel.org/linux-firmware/ff27f712-a96e-4fa6-7572-a0091537d8ac@oss.qualcomm.com/
+
+These patches are tested on SM8550 for AV1 decoder while
+ensuring other codecs are not affected.
+
+Gstreamer testing:
+Gstreamer MR for enabling AV1 stateful decoder:
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9892
+
+Fluster testing:
+Test suite: AV1-TEST-VECTORS
+The result of fluster test on SM8550:
+135/242 testcases passed while testing AV1-TEST-VECTORS with
+GStreamer-AV1-V4L2-Gst1.0
+
+failing tests:
+unsupported content with bitdepth 10 (66 tests)
+Iris decoder supports only 8bit NV12
+av1-1-b10-00-quantizer-*
+
+Unsupported resolution (36 tests).
+Iris hardware decoder supports min resolution of 96x96
+av1-1-b8-01-size-*
+
+Unsupported colorformat (1 test)
+av1-1-b8-24-monochrome
+
+Unsupported SVC tests (2tests)
+av1-1-b8-22-svc-L2T1
+av1-1-b8-22-svc-L2T2
+
+Bitstream corruption issue: (2tests)
+av1-1-b8-03-sizeup
+av1-1-b8-03-sizedown
+
+Testsuite: CHROMIUM-8bit-AV1-TEST-VECTORS
+13/13 testcases passed while testing CHROMIUM-8bit-AV1-TEST-VECTORS with
+GStreamer-AV1-V4L2-Gst1.0
+
+Following the RFC feedback, focused on only IVF/MKV content
+as AV1 parser lacks support for below content
+AV1-ARGON-PROFILE0-CORE-ANNEX-B
+AV1-ARGON-PROFILE0-NON-ANNEX-B
+AV1-ARGON-PROFILE0-NON-ANNEX-B
+
+Unsupported test suites:
+Iris Decoder supports only PROFILE0/V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN
+and 8 bit, 420 only
+AV1-ARGON-PROFILE1-CORE-ANNEX-B
+AV1-ARGON-PROFILE1-NON-ANNEX-B
+AV1-ARGON-PROFILE1-STRESS-ANNEX-B
+AV1-ARGON-PROFILE2-CORE-ANNEX-B
+AV1-ARGON-PROFILE2-NON-ANNEX-B
+AV1-ARGON-PROFILE2-STRESS-ANNEX-B
+CHROMIUM-10bit-AV1-TEST-VECTORS
+
+Compliance test for iris_driver device /dev/video0:
+
+Driver Info:
+		Driver name      : iris_driver
+		Card type        : Iris Decoder
+		Bus info         : platform:aa00000.video-codec
+		Driver version   : 6.17.0
+		Capabilities     : 0x84204000
+				Video Memory-to-Memory Multiplanar
+				Streaming
+				Extended Pix Format
+				Device Capabilities
+		Device Caps      : 0x04204000
+				Video Memory-to-Memory Multiplanar
+				Streaming
+				Extended Pix Format
+		Detected Stateful Decoder
+
+Required ioctls:
+		test VIDIOC_QUERYCAP: OK
+		test invalid ioctls: OK
+
+Allow for multiple opens:
+		test second /dev/video0 open: OK
+		test VIDIOC_QUERYCAP: OK
+		test VIDIOC_G/S_PRIORITY: OK
+		test for unlimited opens: OK
+
+Debug ioctls:
+		test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+		test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+		test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not
+Supported)
+		test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+		test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+		test VIDIOC_ENUMAUDIO: OK (Not Supported)
+		test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+		test VIDIOC_G/S_AUDIO: OK (Not Supported)
+		Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+		test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+		test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+		test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+		test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+		test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+		Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+		test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+		test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not
+Supported)
+		test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+		test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+		test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+		test VIDIOC_QUERYCTRL: OK
+		test VIDIOC_G/S_CTRL: OK
+		test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+		test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+		test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+		Standard Controls: 12 Private Controls: 0
+
+Format ioctls:
+		test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+		test VIDIOC_G/S_PARM: OK (Not Supported)
+		test VIDIOC_G_FBUF: OK (Not Supported)
+		test VIDIOC_G_FMT: OK
+		test VIDIOC_TRY_FMT: OK
+		test VIDIOC_S_FMT: OK
+		test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+		test Cropping: OK
+		test Composing: OK
+		test Scaling: OK (Not Supported)
+
+Codec ioctls:
+		test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+		test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+		test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+		test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+		test CREATE_BUFS maximum buffers: OK
+		test VIDIOC_REMOVE_BUFS: OK
+		test VIDIOC_EXPBUF: OK
+		test Requests: OK (Not Supported)
+		test blocking wait: OK
+
+Total for iris_driver device /dev/video0: 48, Succeeded: 48, Failed: 0,
+Warnings: 0
 
 Thanks,
+Deepa
 
-Jessica Zhang
+Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+---
+Deepa Guthyappa Madivalara (5):
+      media: uapi: videodev2: Add support for AV1 stateful decoder
+      media: v4l2: Add description for V4L2_PIX_FMT_AV1 in v4l_fill_fmtdesc()
+      media: iris: Add support for AV1 format in iris decoder
+      media: iris: Define AV1-specific platform capabilities and properties
+      media: iris: Add internal buffer calculation for AV1 decoder
 
-[1] 
-https://patchwork.kernel.org/project/linux-arm-msm/patch/20250520090741.45820-2-krzysztof.kozlowski@linaro.org/
+ .../userspace-api/media/v4l/pixfmt-compressed.rst  |   8 +
+ drivers/media/platform/qcom/iris/iris_buffer.h     |   2 +
+ drivers/media/platform/qcom/iris/iris_ctrls.c      |   8 +
+ drivers/media/platform/qcom/iris/iris_hfi_common.h |   3 +
+ .../platform/qcom/iris/iris_hfi_gen2_command.c     |  94 ++++++-
+ .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  11 +-
+ .../platform/qcom/iris/iris_hfi_gen2_response.c    |  22 ++
+ drivers/media/platform/qcom/iris/iris_instance.h   |   1 +
+ .../platform/qcom/iris/iris_platform_common.h      |  15 ++
+ .../media/platform/qcom/iris/iris_platform_gen2.c  | 156 ++++++++++-
+ .../platform/qcom/iris/iris_platform_sm8250.c      |  17 ++
+ drivers/media/platform/qcom/iris/iris_vdec.c       |  23 +-
+ drivers/media/platform/qcom/iris/iris_vidc.c       |   1 +
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 297 ++++++++++++++++++++-
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 116 ++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+ include/uapi/linux/videodev2.h                     |   1 +
+ 17 files changed, 748 insertions(+), 28 deletions(-)
+---
+base-commit: 163917839c0eea3bdfe3620f27f617a55fd76302
+change-id: 20251029-av1d_stateful_v3-cbf9fed11adc
+prerequisite-change-id:20250918-video-iris-ubwc-enable-87eac6f41fa4:v2
+prerequisite-patch-id: 11fd97eabf65d22120ff89985be5510599eb4159
+prerequisite-patch-id: aea5a497f31db23a05424fe2cddedec613571f2a
+prerequisite-patch-id: e3b10c34426c33432208e120a3e1239630893d88
 
-> 
->>
->> Lastly, I’d appreciate it if you could share the plan for merging these
->> changes upstream.
-> I don't understand what you ask me. Process of contributing to Linux
-> kernel is well documented.
-> 
-> Best regards,
-> Krzysztof
+Best regards,
+-- 
+Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
 
 
