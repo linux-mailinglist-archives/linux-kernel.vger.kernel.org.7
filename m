@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-878632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B011BC2121D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:21:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EEBDC21241
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B511887A0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EEC63B82AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED233678A0;
-	Thu, 30 Oct 2025 16:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB60366FB3;
+	Thu, 30 Oct 2025 16:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="g1FrLXZa"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XYH/8ZfE"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF893366FB8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C3B366FC7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761841256; cv=none; b=KbR5PAXEqQxSyCr72VskvZ6XF8if8ZIgKUfXdZPyTfJBGnsmBrQgte497xXEARpqAWrur2h7dFDsdNA0ILqxLE5sNr8PCVQhOadUZmjyF9rwKRXAYwqq/ncJTjZEtvJntzw4Oqyw473s6NemMEpenEyxW0ESzlU+WDTvRQo1S+4=
+	t=1761841257; cv=none; b=OUimVRPY+TsRK6YIUmlnEMA1bQsSAfY9RNSm9RtcCVqQU7GPhcVk5CVN4TBX9RrWSIYJfIrc2wQ9wIoLsnPVoGDmxhCz5xTr7Qc5OO0lZ1VYAnnTYKPJifw4otCGgnbz9PbsV7Lv7eNDxFicsI8tl/YgjQWuYlN1OSbv8Qx9xyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761841256; c=relaxed/simple;
-	bh=HOlsI1WL2pUOj3jiIjlUBv5xuoHSBj4TCt/MQZBxo4U=;
+	s=arc-20240116; t=1761841257; c=relaxed/simple;
+	bh=DqxuCxEqpt0tUYNo6pQRu8flyrSjUpL5JZq0bQeakKk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SXjzqSsB/3OMoNw+YDgGXuBi11q6djKE2/um3ZI6ykJx1OACW8Eaj/DBvAQIdGbbTODXMGe1T0vxY7e1+XQuU2nKd4i6+CY1Ek5AJKPpPM6R9uIpNBNfbgtdzOQfX0bUOXbiAngGS8x8x+dAfFnm23gu5yiZ79To901vQ4dJVUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=g1FrLXZa; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=TCxEivGPHV6dd4Nxtp2nbM47jn+odU1Ou61EBHuR8jf5X9CRnoaWmPR783KqzyzZy43pGIjRnUxIwTY9eLH6ZLBcJ5r4MRKO+7Ik+7peVCLEIaXM4TpkDIQwt4WBPGzvmVU6Yf39/AMprRXQuhfWBAl+vW2V6ZuTHRUIQUexazI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XYH/8ZfE; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so774710f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:20:54 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47112a73785so9985855e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:20:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761841253; x=1762446053; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761841254; x=1762446054; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OxksKMOC0fIZKUeOpeJVdapuRlnKQu02ijU5lY2UL60=;
-        b=g1FrLXZaR67nv2uj45/vFz4SiaNRhA9ybLeGDvwit7L8yTiBsPMQhbnR7jdET7sh7Z
-         oeKxnrBD4dDGRHQ19s/jPTIemqSAFMJy5J5l8btEsD5xCFNQNYw9StFxHf6+1MGJ02u2
-         ydJr5HBDUBC0VknkGcYi0/N5Z2nGxFF/XiXBvgHmZdS1HX8Y2BnfPGF5zjSbmMA2H6xF
-         U1SdckkDt5mUh5me5YGGXLf5jZLKiuZidF6EEVWUFIQp3pcrNY3jjRUvamKx4HHMUm1T
-         iiym5ic/busJHjTGMFs5r2BS26suIYAXVLY1FCBdguxPSHGZEiPdMQNf/8a7FQavKIpg
-         o6zA==
+        bh=wvhoZDKhlKXBJ8oco1eRo37f/o37YxZDGMLsPeNe3VU=;
+        b=XYH/8ZfEmgz9hg8474Ffa/QeVcEXs6cvKFfglH2kKX4nGRmnRm9XTrEfvogbUul34b
+         EysUpI2LSwSdhjDMInTe3ZM1useNsaHrsJT9TDEWhMg93n3LhpX2KSnVidfInL03Adki
+         LG+N1UYs5uMf5WxzxRt4QCOFPtZE40smciuU70gI556xAbc8ReDppaLjbJxsD6dym0gH
+         dfkooDSqGz+p4hjngmxkl9RUkVWZFZVPuBq2n0C7fw7oy7lz4Fp0Gs/T/ZWdeR/4CazM
+         wIzoIZ0L0X1pogykWurJUiJpDJG31QHBXwZ+1Zh19RgKoB2nF43vby4UyXlmrV7flSPv
+         iTFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761841253; x=1762446053;
+        d=1e100.net; s=20230601; t=1761841254; x=1762446054;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OxksKMOC0fIZKUeOpeJVdapuRlnKQu02ijU5lY2UL60=;
-        b=fDkjW5VnXAE9iHk6sNlScff/nqZjQUdM0lbiYPohPyA89frk0gb4Pnw84BB8zL+OYG
-         2Z72EWwJiRXeZyYcYgjSmpPGfZvqwozfp0J0QQc/7NcwySczJh3S/MC7ho2SANYl6NpU
-         C5lLH9jxZ6shepm6wY+pttRGVJ8z8cDD/Oh/MsnMFTCKYEvdl47dLJnvlUs2ygpsae/n
-         sPfeyf5HOjxNmk5JTcLLjx01ghP20Zw1XDrzrgdPB/rpSiuowGghBG2v2FOmq7bT8jkE
-         9gHCEfNeiHs/R87Hm0VpBig+1+/D06iFBYRpbpYFwFo0m7pW2S+NJG5VWPSscRX149NT
-         SoJg==
-X-Gm-Message-State: AOJu0Yxh5V+TPcS60bH3Fvv1DconWP4X9dJADwyOMaiWsZMQoAA6OoaO
-	3yf+Pl+egqZ+ocfZ0ututiM84lgYe1uwTW+V1uTdn4FnDfmI2zsH6Tof2RWsvsY0hW5co4oYD1T
-	ESnwO
-X-Gm-Gg: ASbGnctvHzEB5E7iJitecb772w48DYnZ1A4D2NAqAnb9/cYOQxymMAeb9/37dWufW05
-	r4eI5pvOsUb/6/agC1lDpcUfaV1xe2g0MS9Imy1eBkRS1U5GnwINIB517X5ieoyaWkPieiMiQRf
-	YpHKoSNhPGLYMcmlpIc2hQARE5ghXEESbC/BybY/ue5cCaO3Qd/VnN4cPnEP582KJ8JZzPtVBzB
-	/9cDrXGx+fRw9C46+6VieY4zEroYCxlrTpu4IHhdyvk0DrnVriPXD7V2nT1ljSrXolK/ZZkVYDy
-	qSSRjzaP/ZO4HlIkcTQOEKQ8u911oZg9c4z0UthIba9t4tnvxOiAAKgKEMH3MmdlKvul4cKz286
-	PemQ97wEa+2iWnc69urhz9HI8tgMp5CfmfcEvriABGs4B8tUBtyP3VnBw2hPOaEiK5cJ9tY/rR8
-	yIYJ8DIBegXN5adhI=
-X-Google-Smtp-Source: AGHT+IGUorMh3PHS7NpCSCwVDESBgHpWURsMbI8izhP27/wehUJo+fPmCOzel6gZtahb2PzgMGlW5g==
-X-Received: by 2002:a05:6000:2006:b0:427:526:16a3 with SMTP id ffacd0b85a97d-429bd6adc66mr153018f8f.29.1761841252702;
-        Thu, 30 Oct 2025 09:20:52 -0700 (PDT)
+        bh=wvhoZDKhlKXBJ8oco1eRo37f/o37YxZDGMLsPeNe3VU=;
+        b=o9Cb3eNV/+89VswKhoVBERT0eIv4NfpGmXtxZKgHEWtPTRa++2z+uUwOAmYBftXeps
+         kLF+EbzZQU5c3FQUpIVjGNcTRSBoFmoUi+CwlBJxXbmh6+cMcmh9Pv/zlmIzOt02Fwy2
+         kzKr6Q6v7MW5Lu6H1EzDeZho22KmaRfwlrxI+KGFA/C0Usw52ueJhVF6RLKGevfNRQGq
+         YRhhGgXtatNpwjOph74Fvl1aarIdYGJtyrFlMHA8W/3Mj1moJBeuwKNCcjNPLQXxEcvy
+         8oWM7w+gvkFwRxCH7LyU8e0vffRWUdhw8V8N+oMCRGTiJm2eZno5/PNvtkyx4tfrMGan
+         i7OA==
+X-Gm-Message-State: AOJu0YyL4SuTBl8Z29B8q8hdneoH8NkbtqTLg5P97HwGQ7C6BdAXZp8r
+	6IonNRhH+nqw78pGAOIDI3Aw8bQ1WFGcL86IJbL33VBnCK+3yXotttlUcTf4g5kcDOhGoN7tgW9
+	3dWCa
+X-Gm-Gg: ASbGnctDYiax8AAoFzI/b61lXuwrPxCBOBlmlWi7Gz6WyG8Qt1fK64c1Rbi+pDoy5ZS
+	yLCnVdOkXpQO1Jv7n9TsGxTDr8awJCat5gZnveYX+YM3H2cfXk3Ip851ChJlBYka1jwqGO5wkeM
+	q/W4/xnuXWFG6jh8yBJxpQEjQ3ReQlbrKwF7K5vKiWpKLhyU4oxWGI5slacay5dNaqQa4+gON0i
+	hzimh1zrYtc7fuDJAI7Cf4IiOOBwYcizvHuIou5GtUBHTJcVDGTUWHtsj6+D/QtD2TSxYhtiB/1
+	/gD49aoaPZGC5/3z1nZtdbDrLcrTGX4Hu1SGcDa9ap9eiMixXyS5lihhFISLiBYFFz7jqlw0Ns2
+	fSXCNHbtp6PaOREnrkAmo/tcJjo6gz1FVw9Ab2nH91tRQUNA/MTGYahWOLfxj4N0KM3mn5Nd2+w
+	SPTO2UweGJS83Hoh8=
+X-Google-Smtp-Source: AGHT+IEiv28lW9KdmmMYgI75WgkeZBBbz1nTgj9Te/yi69S/DrP4tP6IvUe22f7NgxzNcoh3q9LxsQ==
+X-Received: by 2002:a05:6000:2507:b0:429:91ca:70eb with SMTP id ffacd0b85a97d-429bd6f0952mr131737f8f.61.1761841253788;
+        Thu, 30 Oct 2025 09:20:53 -0700 (PDT)
 Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df473sm32758678f8f.42.2025.10.30.09.20.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df473sm32758678f8f.42.2025.10.30.09.20.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 09:20:52 -0700 (PDT)
+        Thu, 30 Oct 2025 09:20:53 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
@@ -87,9 +87,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH 1/3] drm/atomic-helper: replace use of system_unbound_wq with system_dfl_wq
-Date: Thu, 30 Oct 2025 17:20:41 +0100
-Message-ID: <20251030162043.292468-2-marco.crivellari@suse.com>
+Subject: [PATCH 2/3] drm/probe-helper: replace use of system_wq with system_percpu_wq
+Date: Thu, 30 Oct 2025 17:20:42 +0100
+Message-ID: <20251030162043.292468-3-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251030162043.292468-1-marco.crivellari@suse.com>
 References: <20251030162043.292468-1-marco.crivellari@suse.com>
@@ -109,48 +109,30 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistency cannot be addressed without refactoring the API.
 
-system_unbound_wq should be the default workqueue so as not to enforce
-locality constraints for random work whenever it's not required.
+system_wq should be the per-cpu workqueue, yet in this name nothing makes
+that clear, so replace system_wq with system_percpu_wq.
 
-Adding system_dfl_wq to encourage its use when unbound work should be used.
-
-The old system_unbound_wq will be kept for a few release cycles.
+The old wq (system_wq) will be kept for a few release cycles.
 
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_probe_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index d5ebe6ea0acb..166085a7e681 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2222,13 +2222,13 @@ int drm_atomic_helper_commit(struct drm_device *dev,
- 	 * current layout.
- 	 *
- 	 * NOTE: Commit work has multiple phases, first hardware commit, then
--	 * cleanup. We want them to overlap, hence need system_unbound_wq to
-+	 * cleanup. We want them to overlap, hence need system_dfl_wq to
- 	 * make sure work items don't artificially stall on each another.
- 	 */
- 
- 	drm_atomic_state_get(state);
- 	if (nonblock)
--		queue_work(system_unbound_wq, &state->commit_work);
-+		queue_work(system_dfl_wq, &state->commit_work);
- 	else
- 		commit_tail(state);
- 
-@@ -2261,7 +2261,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
-  *
-  * Asynchronous workers need to have sufficient parallelism to be able to run
-  * different atomic commits on different CRTCs in parallel. The simplest way to
-- * achieve this is by running them on the &system_unbound_wq work queue. Note
-+ * achieve this is by running them on the &system_dfl_wq work queue. Note
-  * that drivers are not required to split up atomic commits and run an
-  * individual commit in parallel - userspace is supposed to do that if it cares.
-  * But it might be beneficial to do that for modesets, since those necessarily
+diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
+index 09b12c30df69..d4dc8cb45bce 100644
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -626,7 +626,7 @@ int drm_helper_probe_single_connector_modes(struct drm_connector *connector,
+ 		 */
+ 		dev->mode_config.delayed_event = true;
+ 		if (dev->mode_config.poll_enabled)
+-			mod_delayed_work(system_wq,
++			mod_delayed_work(system_percpu_wq,
+ 					 &dev->mode_config.output_poll_work,
+ 					 0);
+ 	}
 -- 
 2.51.0
 
