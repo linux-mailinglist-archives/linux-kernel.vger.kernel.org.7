@@ -1,143 +1,170 @@
-Return-Path: <linux-kernel+bounces-877381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E62C1DFB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0729C1E0BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677F4189B28E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532B6188F2B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B7E238C0F;
-	Thu, 30 Oct 2025 01:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1x9FWZip"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF8829B77E;
+	Thu, 30 Oct 2025 01:42:48 +0000 (UTC)
+Received: from sptxd.sgr.oneoffice.jp (sptxd.sgr.oneoffice.jp [211.7.82.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D4E17A318
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24AF131E49
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.7.82.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761786234; cv=none; b=n/fvozr7tMqyrR/4jw7+o1oA7I6Aa2FkPATC/T0qHHFBQ/9YKqTCwMKVdntKgxI8BFgDf/UWa9nKoLY9wEUc2v7ZbtB+D8j8+VKSOZXLDTItgYfHC4/KDNcV6K9I1oGUpBe50mZuPYQP9Ksxga6qxspxu/3oTVcZbveSoR2wQsw=
+	t=1761788567; cv=none; b=IJoDjYjAmhIdGCSCmqQNvRCpUTHMhdiJgvVrXOQPlmvMfWmn3dwX2ZEuHqx9gk6Kzz8JgxsP1EI5gSaeE+nGKyeb3MOHi5Ab6swfzK4oRpNRBBJeh2Wq2EbvoQuKQQwo5HbQJ20DQDWpY7OQ8cLUgNG3eMgknrWL1RSwi8tbHOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761786234; c=relaxed/simple;
-	bh=vNCSoAMNWuJCTQJR1KfBsytl5MDFWTI8Dj8pLkRDTgA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=r2p5Hv9PsZjnEqDiqWZ3NurHXe4F8C5Osm4wVPvhmyAMMi7ZnOyIFIwEiUmnSX+B2nedhxicJDqeP9SFtaeUxIO7S5OdVIO54BnJa3R3ov7EApoTtaeIhPt8s6L/ctF4wQShguu/iryV50lPmyf++GBRNYJq8R7637bRRDn+iZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1x9FWZip; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3405e02ff45so2426a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761786231; x=1762391031; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0KlJNGgynhgZfuiSx925fMjE0dT236FJrdb3tjO33xE=;
-        b=1x9FWZip1aMDi9dJTY2SIxC0MCStt5WC342MfJeJsDKM9IDEVJcMPLzVhSYr5Dk5e3
-         SbJ9P5NOBUU4BkDlP/BZzr3k2sU7l+SRXAkunlcs3yNQMCqYcPP3SyUWF47CkM/OuRvw
-         AlW3baYn0XBgbZTHTD5Pl34YjULX/jjFeFTxiWEPOXiLj0UV/AtX+iKW66suzFDol9BD
-         d5eP5qOnw4MpalrnjuaEUnpmaDX64KDXWHlUnFFeM+bT/RXJimuCG+OPomK40irF4blZ
-         oYKotB+0CqIZ40cX8M0TW0oycaQuwaFGwle135Vwlokms7o2dnKqw6oITzAJ4AOoMLpR
-         JRtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761786231; x=1762391031;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0KlJNGgynhgZfuiSx925fMjE0dT236FJrdb3tjO33xE=;
-        b=FOEvsdibORaqWsV83Hn3JTTbF7jsShB3IhfVFy+qAVm3jL2A7cGw5gd4+CfslwFkU/
-         yb5AWpi/Z/eajn08J6wN8pd8/rNf8fjcXNaMP1lt+LwjJhrx5O4VlMQzEPtLb+X7MqMo
-         FEi2Epbq0GJJ+fQXw74YLwUELAxvelT8nu05ILbaOfVep/SIcyQ/Yx9T2J/gnnnwn0xx
-         ZlHmY4irkKrmchf1mZiXD2m9JpTbsetGzm6Ci8DwBSDioicb5Xz8/puSO6i5F7cjwV7H
-         9kEWFsWqXQim/cA6HEcVKlhtLGWBFy6y8gE6YDmIOHf02ppkw1NgZcbIKJiUADYe9s+3
-         blQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFaW4Ybd/N+CjMdit5T6r8EPcPo63A5grOkjW0nL/78jDu+B2uJdNiUjoPb96/jEXAOLH7y1WeMVCUSQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR6DNGcL9YaUiPFZT7+FlPxHnY3fKaLU1uuFmoS/guH3o+cEds
-	or5cGfFHkKwLIR5Lo7zbfNp/p0Pm13r/jBIFkdIypCw7sE7R0O9RMYs072eWwquWfxD8O21y7zj
-	WAuYj69FI1jrrDw==
-X-Google-Smtp-Source: AGHT+IH1c1zNELOJE3UON7A2LKtXUC/SQSkxzmN5Dgsn+k+KuzEVk+mbODJVZ0d5XeRTYfZQHH3nVXxazD8pTg==
-X-Received: from pjbbh20.prod.google.com ([2002:a17:90b:494:b0:33e:287b:a4a6])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2e10:b0:32e:a54a:be53 with SMTP id 98e67ed59e1d1-3403a260b03mr6277528a91.16.1761786231012;
- Wed, 29 Oct 2025 18:03:51 -0700 (PDT)
-Date: Thu, 30 Oct 2025 01:03:33 +0000
+	s=arc-20240116; t=1761788567; c=relaxed/simple;
+	bh=vPL9rG/nBNEvUEvnHhBIqWvs1aTGeNpJFJZ4rJ0TJFc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sv1u+bxcSE+NY8/3zFc10hUakGWJPoTSGoPjFnzU2ivBLeuJ/v8nWPctnzMIPggWmp7PkG+9Typ3rAoDz1Y3yRQvGiV7pNsayeqwl0x6RgCVeHxORsJ89mMdsKx8Mr0ezjTEXkJ5UPgLBjM1b234azkV1eDZHI4KD9LroWcEKT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sakatapro.co.jp; spf=pass smtp.mailfrom=sakatapro.co.jp; arc=none smtp.client-ip=211.7.82.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sakatapro.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakatapro.co.jp
+Received: from sptxd.sgr.oneoffice.jp (localhost [127.0.0.1])
+	by sptxd.sgr.oneoffice.jp (Postfix) with ESMTP id 92873382E5B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:34:08 +0900 (JST)
+Received: from oumg-avde14.sgr.oneoffice.jp (unknown [172.16.67.228])
+	by pre.oumg-derl.sgr.oneoffice.jp (Postfix) with ESMTP id 9B129382E6B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:34:07 +0900 (JST)
+X-CSE-ConnectionGUID: HFI3i3toSLmKG3mYAysVLw==
+X-CSE-MsgGUID: kTgAmpSLTR+Y0IoWZueK/g==
+X-IronPort-AV: E=Sophos;i="6.19,265,1754924400"; 
+   d="scan'208";a="50697833"
+Received: from p225.net133186039.broadline.ne.jp (HELO sptxb.scorpio.oneoffice.jp) ([133.186.39.225])
+  by oumg-avma14.sgr.oneoffice.jp with SMTP; 30 Oct 2025 10:34:03 +0900
+Received: from 133.18.164.74
+	by cmspw63.cybermail.jp with Mail 3.0(13362:0:AUTH_LOGIN)
+	(envelope-from <info@sakatapro.co.jp>); Thu, 30 Oct 2025 09:49:59 +0900 (JST)
+From: "vger.kernel.org"<info@sakatapro.co.jp>
+To: linux-kernel@vger.kernel.org
+Subject: =?UTF-8?B?44Ki44Kr44Km44Oz44OI5oOF5aCx44GU56K66KqN44Gu44GK6aGY44GE77yI6YeN6KaB77yJ?=
+Date: 30 Oct 2025 09:49:58 +0900
+Message-ID: <20251030094958.A87666DCA24439B8@sakatapro.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251030010347.2731925-1-cmllamas@google.com>
-Subject: [PATCH] scripts/decode_stacktrace.sh: fix build ID and PC source parsing
-From: Carlos Llamas <cmllamas@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
-	Breno Leitao <leitao@debian.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Miroslav Benes <mbenes@suse.cz>, Mark Brown <broonie@kernel.org>, 
-	Puranjay Mohan <puranjay@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Support for parsing PC source info in stacktraces (e.g. '(P)') was
-added in commit 2bff77c665ed ("scripts/decode_stacktrace.sh: fix
-decoding of lines with an additional info"). However, this logic was
-placed after the build ID processing. This incorrect order fails to
-parse lines containing both elements, e.g.:
+linux-kernel@vger.kernel.org =E6=A7=98
 
-  drm_gem_mmap_obj+0x114/0x200 [drm 03d0564e0529947d67bb2008c3548be77279fd27] (P)
+=E5=B9=B3=E7=B4=A0=E3=82=88=E3=82=8A vger.kernel.org =E3=81=AE=E3=82=B5=E3=
+=83=BC=E3=83=93=E3=82=B9=E3=82=92=E3=81=94=E5=88=A9=E7=94=A8=E3=81=84=E3=81=
+=9F=E3=81=A0=E3=81=8D=E3=80=81=E8=AA=A0=E3=81=AB=E3=81=82=E3=82=8A=E3=81=8C=
+=E3=81=A8=E3=81=86=E3=81=94=E3=81=96=E3=81=84=E3=81=BE=E3=81=99=E3=80=82
 
-This patch fixes the problem by extracting the PC source info first and
-then processing the module build ID. With this change, the line above is
-now properly parsed as such:
+=E3=81=93=E3=81=AE=E3=81=9F=E3=81=B3=E3=80=81=E3=82=BB=E3=82=AD=E3=83=A5=E3=
+=83=AA=E3=83=86=E3=82=A3=E3=81=AE=E7=B6=AD=E6=8C=81=E3=81=8A=E3=82=88=E3=81=
+=B3=E3=81=8A=E5=AE=A2=E6=A7=98=E6=83=85=E5=A0=B1=E4=BF=9D=E8=AD=B7=E3=81=AE=
+=E4=B8=80=E7=92=B0=E3=81=A8=E3=81=97=E3=81=A6=E3=80=81
+=E3=81=8A=E5=AE=A2=E6=A7=98=E3=81=AE=E3=82=A2=E3=82=AB=E3=82=A6=E3=83=B3=E3=
+=83=88=EF=BC=88linux-kernel@vger.kernel.org=EF=BC=89=E3=81=AB=E3=81=A4=E3=
+=81=84=E3=81=A6=E5=AE=9A=E6=9C=9F=E7=9A=84=E3=81=AA=E7=A2=BA=E8=AA=8D=E3=82=
+=92=E3=81=8A=E9=A1=98=E3=81=84=E3=81=97=E3=81=A6=E3=81=8A=E3=82=8A=E3=81=BE=
+=E3=81=99=E3=80=82
 
-  drm_gem_mmap_obj (./include/linux/mmap_lock.h:212 ./include/linux/mm.h:811 drivers/gpu/drm/drm_gem.c:1177) drm (P)
+=E3=82=B7=E3=82=B9=E3=83=86=E3=83=A0=E3=81=AE=E5=AE=89=E5=AE=9A=E9=81=8B=E7=
+=94=A8=E3=81=A8=E5=AE=89=E5=85=A8=E6=80=A7=E5=90=91=E4=B8=8A=E3=81=AE=E3=81=
+=9F=E3=82=81=E3=80=81
+=E4=B8=80=E5=AE=9A=E6=9C=9F=E9=96=93=E3=81=94=E3=81=A8=E3=81=AB=E3=82=A2=E3=
+=82=AB=E3=82=A6=E3=83=B3=E3=83=88=E6=83=85=E5=A0=B1=E3=81=AE=E5=86=8D=E7=A2=
+=BA=E8=AA=8D=E3=82=92=E5=AE=9F=E6=96=BD=E3=81=97=E3=81=A6=E3=81=8A=E3=82=8A=
+=E3=81=BE=E3=81=99=E3=80=82
+=E3=81=8A=E6=89=8B=E6=95=B0=E3=82=92=E3=81=8A=E3=81=8B=E3=81=91=E3=81=84=E3=
+=81=9F=E3=81=97=E3=81=BE=E3=81=99=E3=81=8C=E3=80=81=E4=B8=8B=E8=A8=98=E3=82=
+=88=E3=82=8A=E8=A8=AD=E5=AE=9A=E5=86=85=E5=AE=B9=E3=82=92=E3=81=94=E7=A2=BA=
+=E8=AA=8D=E3=81=8F=E3=81=A0=E3=81=95=E3=81=84=E3=80=82
 
-While here, also add a brief explanation the build ID section.
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80
+=E2=96=A0 =E3=81=94=E7=A2=BA=E8=AA=8D=E3=81=AF=E3=81=93=E3=81=A1=E3=82=89=
+=20=20
+https://chongkio.innovnational.com/wp-admin/masif/anai/gamiflyf/?zonealldom=
+=3Dlinux-kernel@vger.kernel.org
+=F0=9F=94=97 =E3=82=A2=E3=82=AB=E3=82=A6=E3=83=B3=E3=83=88=E6=83=85=E5=A0=
+=B1=E3=82=92=E7=A2=BA=E8=AA=8D=E3=81=99=E3=82=8B=20=20
+=EF=BC=88=E2=80=BB=E4=B8=8A=E8=A8=98=E3=81=AF vger.kernel.org =E5=85=AC=E5=
+=BC=8F=E3=82=B5=E3=82=A4=E3=83=88=E3=81=AE=E3=82=BB=E3=82=AD=E3=83=A5=E3=83=
+=AA=E3=83=86=E3=82=A3=E3=83=9A=E3=83=BC=E3=82=B8=E3=81=A7=E3=81=99=EF=BC=89=
 
-Fixes: bdf8eafbf7f5 ("arm64: stacktrace: report source of unwind data")
-Fixes: 2bff77c665ed ("scripts/decode_stacktrace.sh: fix decoding of lines with an additional info")
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- scripts/decode_stacktrace.sh | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index c73cb802a0a3..8d01b741de62 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -277,12 +277,6 @@ handle_line() {
- 		fi
- 	done
- 
--	if [[ ${words[$last]} =~ ^[0-9a-f]+\] ]]; then
--		words[$last-1]="${words[$last-1]} ${words[$last]}"
--		unset words[$last] spaces[$last]
--		last=$(( $last - 1 ))
--	fi
--
- 	# Extract info after the symbol if present. E.g.:
- 	# func_name+0x54/0x80 (P)
- 	#                     ^^^
-@@ -295,6 +289,14 @@ handle_line() {
- 		last=$(( $last - 1 ))
- 	fi
- 
-+	# Join module name with its build id if present, as these were
-+	# split during tokenization (e.g. "[module" and "modbuildid]").
-+	if [[ ${words[$last]} =~ ^[0-9a-f]+\] ]]; then
-+		words[$last-1]="${words[$last-1]} ${words[$last]}"
-+		unset words[$last] spaces[$last]
-+		last=$(( $last - 1 ))
-+	fi
-+
- 	if [[ ${words[$last]} =~ \[([^]]+)\] ]]; then
- 		module=${words[$last]}
- 		# some traces format is "(%pS)", which like "(foo+0x0/0x1 [bar])"
--- 
-2.51.1.851.g4ebd6896fd-goog
+=E3=80=90=E7=A2=BA=E8=AA=8D=E5=86=85=E5=AE=B9=E3=80=91=20=20
+=E5=AF=BE=E8=B1=A1=E3=82=A2=E3=82=AB=E3=82=A6=E3=83=B3=E3=83=88=EF=BC=9Alin=
+ux-kernel@vger.kernel.org=20=20
+=E5=AE=9F=E6=96=BD=E6=9C=9F=E9=99=90=EF=BC=9A=E6=9C=AC=E3=83=A1=E3=83=BC=E3=
+=83=AB=E5=8F=97=E4=BF=A1=E5=BE=8C 24 =E6=99=82=E9=96=93=E4=BB=A5=E5=86=85=
+=20=20
+=E5=AE=9F=E6=96=BD=E6=97=A5=E6=99=82=EF=BC=9A2025=E5=B9=B49=E6=9C=8824=E6=
+=97=A5=EF=BC=88=E6=B0=B4=EF=BC=8912:38  
 
+=E2=80=BB=E3=81=8A=E5=BF=83=E5=BD=93=E3=81=9F=E3=82=8A=E3=81=AE=E3=81=AA=E3=
+=81=84=E5=A0=B4=E5=90=88=E3=80=81=E3=81=BE=E3=81=9F=E3=81=AF=E7=AC=AC=E4=B8=
+=89=E8=80=85=E3=81=AB=E3=82=88=E3=82=8B=E6=93=8D=E4=BD=9C=E3=81=AE=E5=8F=AF=
+=E8=83=BD=E6=80=A7=E3=81=8C=E3=81=82=E3=82=8B=E5=A0=B4=E5=90=88=E3=81=AF=E3=
+=80=81=20=20
+=E6=9C=AC=E3=83=A1=E3=83=BC=E3=83=AB=E3=82=92=E5=89=8A=E9=99=A4=E3=81=AE=E3=
+=81=86=E3=81=88=E3=80=81=E3=82=B5=E3=83=9D=E3=83=BC=E3=83=88=E7=AA=93=E5=8F=
+=A3=E3=81=BE=E3=81=A7=E3=81=94=E9=80=A3=E7=B5=A1=E3=81=8F=E3=81=A0=E3=81=95=
+=E3=81=84=E3=80=82
+
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80
+=E3=80=90=E3=81=8A=E5=95=8F=E3=81=84=E5=90=88=E3=82=8F=E3=81=9B=E5=85=88=E3=
+=80=91=20=20
+vger.kernel.org =E3=82=AB=E3=82=B9=E3=82=BF=E3=83=9E=E3=83=BC=E3=82=B5=E3=
+=83=9D=E3=83=BC=E3=83=88=E3=82=BB=E3=83=B3=E3=82=BF=E3=83=BC=20=20
+=E5=8F=97=E4=BB=98=E6=99=82=E9=96=93=EF=BC=9A9:00=E3=80=9C18:00=EF=BC=88=E5=
+=B9=B4=E4=B8=AD=E7=84=A1=E4=BC=91=EF=BC=89=20=20
+=E9=9B=BB=E8=A9=B1=EF=BC=9A0120-86-0000=EF=BC=88=E3=83=95=E3=83=AA=E3=83=BC=
+=E3=83=80=E3=82=A4=E3=83=A4=E3=83=AB=EF=BC=89=20=20
+=E3=83=A1=E3=83=BC=E3=83=AB=EF=BC=9Asupport@vger.kernel.org
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80
+
+=E2=80=BB=E6=9C=AC=E3=83=A1=E3=83=BC=E3=83=AB=E3=81=AF=E9=80=81=E4=BF=A1=E5=
+=B0=82=E7=94=A8=E3=82=A2=E3=83=89=E3=83=AC=E3=82=B9=E3=81=8B=E3=82=89=E8=87=
+=AA=E5=8B=95=E9=85=8D=E4=BF=A1=E3=81=97=E3=81=A6=E3=81=8A=E3=82=8A=E3=81=BE=
+=E3=81=99=E3=80=82=20=20
+=E3=81=94=E8=BF=94=E4=BF=A1=E3=81=84=E3=81=9F=E3=81=A0=E3=81=84=E3=81=A6=E3=
+=82=82=E5=AF=BE=E5=BF=9C=E3=81=84=E3=81=9F=E3=81=97=E3=81=8B=E3=81=AD=E3=81=
+=BE=E3=81=99=E3=81=AE=E3=81=A7=E3=80=81=E3=81=82=E3=82=89=E3=81=8B=E3=81=98=
+=E3=82=81=E3=81=94=E4=BA=86=E6=89=BF=E3=81=8F=E3=81=A0=E3=81=95=E3=81=84=E3=
+=80=82
+
+=E4=BB=8A=E5=BE=8C=E3=81=A8=E3=82=82 vger.kernel.org =E3=82=92=E3=81=94=E6=
+=84=9B=E9=A1=A7=E8=B3=9C=E3=82=8A=E3=81=BE=E3=81=99=E3=82=88=E3=81=86=E3=81=
+=8A=E9=A1=98=E3=81=84=E7=94=B3=E3=81=97=E4=B8=8A=E3=81=92=E3=81=BE=E3=81=99=
+=E3=80=82
+
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80
+=C2=A9 2025 vger.kernel.org =E3=82=B7=E3=82=B9=E3=83=86=E3=83=A0=E7=AE=A1=
+=E7=90=86=E9=83=A8
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80
 
