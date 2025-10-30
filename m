@@ -1,80 +1,101 @@
-Return-Path: <linux-kernel+bounces-878477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804BBC20C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:56:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF10C20C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816191A64D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13ED51A201FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A0227F015;
-	Thu, 30 Oct 2025 14:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01F4280023;
+	Thu, 30 Oct 2025 14:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4/5bWrIe"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQk1KEPL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19FC2773F9;
-	Thu, 30 Oct 2025 14:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333522773F9;
+	Thu, 30 Oct 2025 14:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761835887; cv=none; b=eqQyqPKy0l7/Q7scl98nbw6adXM6ocW+Dr3xvdtkUT6ZrcybajwZSywnsFS5i/y+bY1wLi5zzPmVUXWQY3OsHzt56nqPb6I7SufC0d0brESm+NLuFTYRV+ImGBGEw93afoNMWdmDyEGDHI5S3ey13IyOQIbCvm9pKs09ckWEFzE=
+	t=1761835913; cv=none; b=eAWSo8Xv0PV/xgGVFZzKrCZF3o6uGBDotSNMBscJ5aMQ0tAZVKhVbSN4vNhZ70pX7TUdd2MrxNGztVadJVQn1dXn09JBGPxumyJxIjPnrjWtdLC4xYQ0eEjSjED82r0il5epMHmsZuY/IzN+yUZzdcE08PbtPLiMQr1qNJMngck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761835887; c=relaxed/simple;
-	bh=LoETMS1c+topmi7wnFkE+p5PlZ5sDBSw+/LMhXUamEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lrg+CIJJSeYIy5PEGE2t5ohkuqJmCMatTghBEJNEvaSaQtmMH6goBmdkDhPO10NLGFAbFJuokWFQnozqtntjLMkVf107P4u/HfuISjcm8A9OifDn3M1XO0cHWsy3veQ6TyTFArwu+xjFP5PeR8y69ffGdfUbr2Xhk4GeBI3XwMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4/5bWrIe; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=AH18Mr74uKXqYaFCZnuFiBSqwNz2NyASq4NwYKMGLh4=; b=4/
-	5bWrIek94NXeEWR0JdwJgJkLEdJqS0J7J0iTabzDVXIJdfjS7lZExbNpSG9kcUfEP+hDQITQ5wfzh
-	dRRHHxTpHqmKInRosziK1torC1IIiyq/yljXh17BuB5tOhvIeH5qof5ooXGfcZrDwVwzsJFMDgy86
-	uCOAubQNFWBwHBo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vETzc-00CWH1-RQ; Thu, 30 Oct 2025 15:51:12 +0100
-Date: Thu, 30 Oct 2025 15:51:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net: phy: microchip_t1s: add support for
- Microchip LAN867X Rev.D0 PHY
-Message-ID: <cde45605-f942-4404-8764-727ed5a22d2c@lunn.ch>
-References: <20251030102258.180061-1-parthiban.veerasooran@microchip.com>
- <20251030102258.180061-2-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1761835913; c=relaxed/simple;
+	bh=WKwjBQEqXFPKO+WzYJAtU397ptDKk7qO+md5aDf4qeI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g+lImkSjRg8fBNcIP8qM82K+9mGVlSGppCxwkE4CF3mUanGenAw5nvcjRnk4wEcldle+q6ctZ3RBFQgM/sKEtSVJGVaf/d8PkM/MpIoGcMSTl/H+ZfrqwiHqRGLiMLMUaxeT+orle5NrxPtznXLI5Y8S4iEtyrS672Q+UByCSeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQk1KEPL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A797C4CEF1;
+	Thu, 30 Oct 2025 14:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761835912;
+	bh=WKwjBQEqXFPKO+WzYJAtU397ptDKk7qO+md5aDf4qeI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=eQk1KEPLZSr8AEWd/EU8u+Rrrky9aVBOpC7OJb24MtNAy8lk0RV3tvhMD4m4ACHgr
+	 fMlATft9Er2BS36a8xMX9gPc8K4bBTSuSpOK5p3EBHonicaJ4mGIeI7f3kztqcEmTe
+	 SRD8UsdgXC55zByvBL2GPf9BGZR+5Z6bCWvWJ48Guof+RmgX8uZh/na2+7gRavwx5/
+	 5rqNlDqOvtDtHZ7DFY/4iS63rM4nUKvfa0DBlZL9xCA/LxOOXy0Wuh1dST1pH8CTe/
+	 Ds9vTfVN/js3WH8pZd2wSp+qSUJy5qicslENSC1jFjvj8vnfDDjb5Z40aSUNg9UkYL
+	 AfUfkjCtX7Bqg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno
+ Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
+ <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
+ Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
+ <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
+ <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Asahi Lina
+ <lina+kernel@asahilina.net>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Oliver Mangold
+ <oliver.mangold@pm.me>
+Subject: Re: [PATCH v12 0/4] New trait OwnableRefCounted for ARef<->Owned
+ conversion.
+In-Reply-To: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
+References: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
+Date: Thu, 30 Oct 2025 15:51:38 +0100
+Message-ID: <87v7jw8mth.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251030102258.180061-2-parthiban.veerasooran@microchip.com>
+Content-Type: text/plain
 
-On Thu, Oct 30, 2025 at 03:52:57PM +0530, Parthiban Veerasooran wrote:
-> Add support for the LAN8670/1/2 Rev.D0 10BASE-T1S PHYs from Microchip.
-> The new Rev.D0 silicon requires a specific set of initialization
-> settings to be configured for optimal performance and compliance with
-> OPEN Alliance specifications, as described in Microchip Application Note
-> AN1699 (Revision G, DS60001699G – October 2025).
-> https://www.microchip.com/en-us/application-notes/an1699
-> 
-> Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+Hi Oliver,
+Oliver Mangold <oliver.mangold@pm.me> writes:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> This allows to convert between ARef<T> and Owned<T> by
+> implementing the new trait OwnedRefCounted.
+>
+> This way we will have a shared/unique reference counting scheme
+> for types with built-in refcounts in analogy to Arc/UniqueArc.
+>
+> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
 
-    Andrew
+I rebased your series on top of v6.18-rc3 and pushed it here [1]. I also
+added some commits with review feedback.
+
+Best regards,
+Andreas Hindborg
+
+[1] https://github.com/metaspace/linux/tree/ownable-v12
+
 
