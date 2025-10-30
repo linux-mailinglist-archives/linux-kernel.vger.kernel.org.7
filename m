@@ -1,179 +1,116 @@
-Return-Path: <linux-kernel+bounces-878024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99793C1F983
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:38:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6BFAC1F989
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BAC46191B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3A61884088
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8523546E4;
-	Thu, 30 Oct 2025 10:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667D9354AC2;
+	Thu, 30 Oct 2025 10:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSGT/15K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jml/em/O"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFE34DB57
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A1625A322
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820586; cv=none; b=rTJZX1thvh5uV3sNTYjPCZQHRVsDvFsCoX3yGY5whWjUg61KGuFXcCgXZLlZMVaPKD90mp0sxmDKFroa+/VwNqP/ijzSvFuI2fkosJSFJADj4TePcpfaIxn0XQxFo6aAEOB4m96wBK1d9ugBKpRN79LAbxvB2PRBWaEJyR+FaZE=
+	t=1761820587; cv=none; b=DgkghHdusv1KnuZ9vLM7Npaqif3IPb03Luw0lwALhxen2BjLFr5rRfY6OnZKK9mCng6ARkPok4t0hcWXRGVYSEOktx3J7VWNv0+llqalgI7X0ryI77Ow/cFlHaCfQS/w14BaBG9/D4awuyTYurQyH2ydAaEys9h1o9ed9Z+HUUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820586; c=relaxed/simple;
-	bh=EWFesmgztVELijrKVyAIw58RaW5qiWVySUAVHUAu/+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uITXp5k3grki2qjYtMXqwo8SFcn+wNp5YibsHWKJHP17a4eSt6I+4oSJK9vHrbD2TyL3rXLn2GBWxbt60duFxfwejnQJeWEzhi1WXVYNRpkbYOLLkXv/0Xuy5lexj8aXpc1B77P0PWziKqPpw9kr9+pRQRlxR5Ps0p7GbT5th80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSGT/15K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06135C4CEFD
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761820586;
-	bh=EWFesmgztVELijrKVyAIw58RaW5qiWVySUAVHUAu/+U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dSGT/15Kfa4OjyCbAC3SF32XVKb7iNe5i2e4rxYDvK+/9ZzBSpT0ZAMJfDHB1bcP2
-	 hp5kUsmaBwE0hUemzCE8xVONjhfFtAVrRoKKP13YBZa7NSi8axpICuho4I7H7pyOXn
-	 jdM+sxNM2/bMtwb/8zTeW1KCgChee/4k78ddKWL5YKaucYtJvcIMlwzOhYUO7mPGey
-	 9i/5Nf9FD59c14UP/zd1Kar2xylXV8dSZNyLvDNGacgpUNIjWv8EmRHggYRoep7d3a
-	 cC2Z6yFL0DTwcMRBC0hqJqNbd74O1SUUL2lp4zC10zY5eFpCTEe1YISaoNMaN+mcRb
-	 csZ/MUE3SsF4Q==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-58d29830058so983289e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:36:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXj6IgKJf0H/MpFoxJMObygotQrKTnKLpYosK70ikfMtygz+9r8SF/eo3w2O2jxyK/4dXvuMB3UwSot1FA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWAy4UJSRWHTDFPWqVArYq03/Lqoh7OiBqnCuGxjAl2pWkx40V
-	H8DpcO7snVcrTMgsxpoHvshOvGE1AQMIvseIljD8dfIEi62bm4gYbOPJP7riojrAdFVnRMF9rf3
-	lwVGpqFqlkJ8dXpxEsO5Q1Qstjjdk8Z8=
-X-Google-Smtp-Source: AGHT+IHR/19RmctxNKLqKlIM6A9WMpVSviX3cRXYR7NP88oXpyxxA4MhRkufffXBTnPae5fME9y34v1H81TPMSh2mxo=
-X-Received: by 2002:a05:6512:39c5:b0:592:fa97:e167 with SMTP id
- 2adb3069b0e04-59412a07650mr2713264e87.51.1761820584347; Thu, 30 Oct 2025
- 03:36:24 -0700 (PDT)
+	s=arc-20240116; t=1761820587; c=relaxed/simple;
+	bh=mffLHxksDJb1tDLV2b9r1iQZf5P8vukn1uPN41l42Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JhoduLXh2I34hjD8CszfNnJnJZuSlEP9U9OW0GrDXB8oga1VIKdYHQaPvTnCub4gEEJ/smbaSAjBS5zGDDmHQVFi+IfLLGFkdqEZoZffjrYKrr3OlYom6VPYSRge+0lwp5NK/Ddbh0m8oeR2uGn3VXWwKjf+4vMLWPeWlixTxYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jml/em/O; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761820575; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=QiuUxJD/XTpYtVc6d3NlCZbEDROxJ84ewEp3018iv1M=;
+	b=jml/em/OlBUF15ObINZSWfBDWVkTFCwwPYbPp8tIDBvtpdGJP+kjKNXiYkKxg8TmLQ0k9Jr9p7pZ+o0iw+WqqOWsFEMQWk/N/sCvd6FsWaGSx/OmmVdHhIj/95xgCFE1XL4P4Reghb53zquKjNOo0kBDKnYpRxsTLM48yVEQJWE=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WrK3-N3_1761820574 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 30 Oct 2025 18:36:15 +0800
+Date: Thu, 30 Oct 2025 18:36:14 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH v2 3/6] panic: sys_info: Replace struct sys_info_name
+ with plain array of strings
+Message-ID: <aQM_nrp4gQzxGixr@U-2FWC9VHC-2323.local>
+References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
+ <20251029111202.3217870-5-andriy.shevchenko@linux.intel.com>
+ <aQLHDaIqkMQTJHTT@U-2FWC9VHC-2323.local>
+ <aQMVivr15od8Mpct@smile.fi.intel.com>
+ <aQMlpFoLuPhVwijR@U-2FWC9VHC-2323.local>
+ <aQMqdyh9n7h8Wedm@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023082129.75612-1-maqianga@uniontech.com>
- <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
- <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
- <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com>
- <9F7F632B7963434F+abad2548-a90d-4448-ae79-dd4bf637ee6e@uniontech.com>
- <CAMj1kXHu5ABgxKsc_gg1j=pWMz6DbWoqv=qAAjx-5CiSF2PAiQ@mail.gmail.com>
- <BD93A8DBE27154B0+22bf4a83-a850-4f78-8e0d-84cc93fe2715@uniontech.com>
- <CAMj1kXFUUCoE=gZ0kTMKx87qnJMU9J9skT75STTKjjakXb8kmw@mail.gmail.com> <89364700AD0CD6E1+dd8d745f-5a72-4b0a-80db-eaa1d00c4e64@uniontech.com>
-In-Reply-To: <89364700AD0CD6E1+dd8d745f-5a72-4b0a-80db-eaa1d00c4e64@uniontech.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 30 Oct 2025 11:36:13 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHpJ3gz=+Keswx0MZ8v6YQENR2pjeS_CE6g4cXML2LQhA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmO2T77I4AkXqTFCl7Na2UIDeYUBNoQV7BXje2VupPA54kyxqhBixnA39k
-Message-ID: <CAMj1kXHpJ3gz=+Keswx0MZ8v6YQENR2pjeS_CE6g4cXML2LQhA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
-To: Qiang Ma <maqianga@uniontech.com>
-Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aQMqdyh9n7h8Wedm@smile.fi.intel.com>
 
-On Thu, 30 Oct 2025 at 11:25, Qiang Ma <maqianga@uniontech.com> wrote:
->
->
-> =E5=9C=A8 2025/10/30 18:02, Ard Biesheuvel =E5=86=99=E9=81=93:
-> > On Thu, 30 Oct 2025 at 08:37, Qiang Ma <maqianga@uniontech.com> wrote:
-> >>
-> >> =E5=9C=A8 2025/10/29 22:15, Ard Biesheuvel =E5=86=99=E9=81=93:
-> >>> On Wed, 29 Oct 2025 at 10:55, Qiang Ma <maqianga@uniontech.com> wrote=
-:
-> >>>> =E5=9C=A8 2025/10/28 21:42, Ard Biesheuvel =E5=86=99=E9=81=93:
-> >>>>> On Mon, 27 Oct 2025 at 04:46, Qiang Ma <maqianga@uniontech.com> wro=
-te:
-> >>>>>> =E5=9C=A8 2025/10/23 16:30, Ard Biesheuvel =E5=86=99=E9=81=93:
-> >>>>>>> On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> w=
-rote:
-> >>>>>>>> In the efi_virtmap_init(), permission settings have been applied=
-:
-> >>>>>>>>
-> >>>>>>>> static bool __init efi_virtmap_init(void)
-> >>>>>>>> {
-> >>>>>>>>             ...
-> >>>>>>>>             for_each_efi_memory_desc(md)
-> >>>>>>>>                     ...
-> >>>>>>>>                     efi_create_mapping(&efi_mm, md);
-> >>>>>>>>             ...
-> >>>>>>>>             efi_memattr_apply_permissions(&efi_mm, efi_set_mappi=
-ng_permissions);
-> >>>>>>>>             ...
-> >>>>>>>> }
-> >>>>>>>>
-> >>>>>>>> Therefore, there is no need to apply it again in the efi_create_=
-mapping().
-> >>>>>>>>
-> >>>>>>>> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI=
- Runtime Services regions")
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
-> >>>>>>> No, efi_memattr_apply_permissions() uses the /optional/ memory
-> >>>>>>> attributes table, whereas efi_create_mapping() uses the permissio=
-n
-> >>>>>>> attributes in the EFI memory map. The memory attributes table is
-> >>>>>>> optional, in which case any RO/XP attributes from the memory map
-> >>>>>>> should be used.
-> >>>>>>>
-> >>>>>> I see.
-> >>>>>>
-> >>>>>> Then, can it be modified like this?
-> >>>>> No
-> >>>>>
-> >>>>>> --- a/arch/arm/kernel/efi.c
-> >>>>>> +++ b/arch/arm/kernel/efi.c
-> >>>>>> @@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct=
- *mm,
-> >>>>>> efi_memory_desc_t *md)
-> >>>>>>                     desc.type =3D MT_MEMORY_RWX_NONCACHED;
-> >>>>>>             else if (md->attribute & EFI_MEMORY_WC)
-> >>>>>>                     desc.type =3D MT_DEVICE_WC;
-> >>>>>> +       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
-> >>>>> This will be true for RO, XP or RO+XP.
-> >>>>>
-> >>>>>> +               desc.type =3D MT_MEMORY_RO;
-> >>>>> This will apply RO permissions even to XP regions, which need to be=
- writable.
-> >>>>>
-> >>>> Thanks for your review.
-> >>>> I see.
-> >>>>
-> >>>> I can introduce a new type MT_MEMORY_RO_XP, to describe RO+XP,
-> >>>> and then we can use the RO+XP attribute to implement memory mapping.
-> >>>>
-> >>> Why? The current code is working fine, no?
-> >>>
-> >> Yes, the current code is running normally.
-> >>
-> >> The reasons for the modification are as follows:
-> >> I noticed that the arm64/RISC-V efi_create_mapping() always return 0,
-> >> but in the code where efi_virtmap_init() calls it, it is as follows:
-> >>
-> >> ret =3D efi_create_mapping(&efi_mm, md);
-> >> if (ret) {
-> >>       pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
-> >>           &phys, ret);
-> >>       return false;
-> >> }
-> >>
-> >> This return error print is unnecessary, so I want to remove it.
-> > So what is preventing you from removing this from the RISC-V version?
-> >
-> The current idea is to first remove the unnecessary return print from
-> arm/arm64,
+On Thu, Oct 30, 2025 at 11:05:59AM +0200, Andy Shevchenko wrote:
+> On Thu, Oct 30, 2025 at 04:45:24PM +0800, Feng Tang wrote:
+> > On Thu, Oct 30, 2025 at 09:36:42AM +0200, Andy Shevchenko wrote:
+> > > On Thu, Oct 30, 2025 at 10:01:49AM +0800, Feng Tang wrote:
+> > > > On Wed, Oct 29, 2025 at 12:07:38PM +0100, Andy Shevchenko wrote:
+> > > > > There is no need to keep a custom structure just for the need of
+> > > > > a plain array of strings. Replace struct sys_info_name with plain
+> > > > > array of strings.
+> > > > > 
+> > > > > With that done, simplify the code, in particular, naturally use
+> > > > > for_each_set_bit() when iterating over si_bits_global bitmap.
+> 
+> ...
+> 
+> > > > >  		names[0] = '\0';
+> > > > > -		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
+> > > > > -			if (si_bits & si_names[i].bit) {
+> > > > > -				len += scnprintf(names + len, sizeof(names) - len,
+> > > > > -					"%s%s", delim, si_names[i].name);
+> > > > > -				delim = ",";
+> > > > > -			}
+> > > > > +		for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
+> > > > > +			len += scnprintf(names + len, sizeof(names) - len,
+> > > > > +					 "%s%s", delim, si_names[i]);
+> > > > > +			delim = ",";
+> > > > 
+> > > > For SYS_INFO_PANIC_CONSOLE_REPLAY bit, it is a NULL string, no need for
+> > > > an extra ','?
+> > > 
+> > > If you look closer to the original code, the behaviour is the same. Feel free
+> > > to update behaviour separately as I tried to keep the functionality to be not
+> > > changed with my series (with the exceptions of the fetching issue).
+> > 
+> > I gave the comment by code-reading.
+> > 
+> > And to double check it, I just run a simple test by adding "panic_print=0xff"
+> > to cmdline, with the current kernel, by running "sysctl  kernel.panic_sys_info"
+> > on current kernel, it will get:
+> > 
+> > 	'kernel.panic_sys_info = tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks'
+> > 
+> > And after applying your first 3 patches, it will show:
+> > 	
+> > 	'kernel.panic_sys_info = tasks,mem,timers,locks,ftrace,,all_bt,blocked_task'
+> 
+> Thanks for the test, now I see the issue! Before si_names has no entry for that bit.
+> I will address this in next version. Sorry for the confusion.
 
-Please leave the ARM code alone.
+No problem. Thanks for helping to improve the code!
 
-> and then remove RISC-V later, as this RISC-V code is also adapted based
-> on arm64.
->
-
-RISC-V copied the ARM code and used it as a starting point. That does
-not mean it has to remain that way.
+- Feng
 
