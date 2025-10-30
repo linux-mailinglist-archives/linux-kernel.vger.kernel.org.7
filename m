@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-878930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4657C21CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:33:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BE3C21CB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01CCB4EE54A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:33:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1D2E4E1CAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71233678AD;
-	Thu, 30 Oct 2025 18:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542E366FCB;
+	Thu, 30 Oct 2025 18:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uc3n00xc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVJes9xZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0355F277026;
-	Thu, 30 Oct 2025 18:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C9F2D8779;
+	Thu, 30 Oct 2025 18:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761849194; cv=none; b=K33IyFvNne3kg0XNVWB/RrqSqztv3htmCfT9WK9VZCLN93qjxdBKbWFQNGqtIxwBM6JtYZA5gPmCAMaZ8UUSgenaRxe0DvK4a1Tmw3bw7F3xkVud+YshCsec/CnPYXZppjYSWpbfTjt8hTxF5ms0FJdJy8Z7dW9quhe/NOwpP8A=
+	t=1761849295; cv=none; b=Uq25sSXKeMy2tEpesXn133e/ONpOy5qw2tErwRMIqcqG34aWZCKX6jJafAAQwbCSxXTQkqH7iZPUKPwQn3U3Qj2wzFSSKJzRegbBnEttAAM0RcB7pzVEG/aEHuncuV/dy/tEtp+yKhPX/KnC33A01BPlPgHdn8L1WY1k0d1ZRBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761849194; c=relaxed/simple;
-	bh=JvqCJgn8JrvX/wqRcJdBnCeJJvGQqO6u4dEBjS3ynJU=;
+	s=arc-20240116; t=1761849295; c=relaxed/simple;
+	bh=19dZGN/2hByWH5OvB7rCwr9tGLgsitN6UUruD1+2W6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnfE4mjUTJxZLPO/mdOODq1O87AKx7GAsk+Mufgczq5KZakOSH8Lf6JOinV4px9tylmRzDrMcpt8OmhipmN8HiG3e8VgBKo28+EBfwhcnOgroazNQBJVRNHIHi7RMNACvEyN08IOprW6dVsR05tX/e31p1nxy6gx1r2VU4cSVe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uc3n00xc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5346EC4CEF1;
-	Thu, 30 Oct 2025 18:33:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=crDb5GI6Ri+bd/FsREaXEArmI9/3b/ttZtY/mq6i6n6TR0iGqowNA3xZWqkGBpXhJqWmOau78ZXbrp7db5qnRBOO3toUoOLaRtsQ46Av6YIllIM+yim93hqgxxrDjWoJDzP8EsQNw4espVyJQC8wUUs1fkKpkIj0rPpfyycpWVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVJes9xZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E40C4CEF8;
+	Thu, 30 Oct 2025 18:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761849191;
-	bh=JvqCJgn8JrvX/wqRcJdBnCeJJvGQqO6u4dEBjS3ynJU=;
+	s=k20201202; t=1761849294;
+	bh=19dZGN/2hByWH5OvB7rCwr9tGLgsitN6UUruD1+2W6c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uc3n00xcX2apahvQe+vOAxBTIP7QlaGSOysJWttTvoz8CF5WhCm4Inx7CKbgcsyvp
-	 FMHQ8uvIu1k2j3aWsbR0vFulwKd54VbMtPwe1wc1YvMd/syHapKHw5QRy1dIE31aNP
-	 pp5PXeHLaAudnWWG59ST7SoU6KMOJYjz2DWBHaMeF2GJmfrs4K/Bmg95XX2A7kXIWw
-	 p9iirwk3LlZ+6FOQKkaLKjamzAroKf4MgfCFUR+G4gn6tfbfswOXaZxR+r8OvGdGrY
-	 v1PkUebQysUlEZcYHVXYzEX3cCErawNt1JtrqkeJ8C05e7wosQ3j19rYB74Rk8y9yp
-	 oigdXlMNfZEmg==
-Date: Thu, 30 Oct 2025 18:33:07 +0000
+	b=EVJes9xZb67Y/8dNTIGJXu0HMKXdhgIVp91UY55fqScatzuvHuRVHU2rd5SOqqCso
+	 KOiZQIADVLXJA7xmAGib3APWenetswqPARw+ZXduYiDdU0oMABqkRMsmdPKqiBWg7N
+	 t9eRSZpu03Pm+u/fpkJiQ1A1nNqH6uFOdIc8P08zu5YNsUZeSH3xqe9ywXVHI5CtPK
+	 gXx6JWTZg1SEN9Aevqu+ZjpovE3fm0ve0kQd5Hq5fWvvL+o8F9Zd+4SM6WcG2QTgk3
+	 2bBZ0vjtLs19JJeQ0Yf97l5Mppsn6F7I1yE/wbwevsYoF6Nu20vZy9XN+EPe2yi1Bp
+	 HN5B+vJ7HpPqw==
+Date: Thu, 30 Oct 2025 18:34:49 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	kernel@collabora.com, linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: watchdog: mediatek,mtk-wdt: Add compatible
- for MT8189 SoC
-Message-ID: <20251030-smooth-agony-bea253b919fa@spud>
-References: <20251030-mt8189-dt-bindings-wdt-v1-1-975971ba29e5@collabora.com>
+To: maudspierings@gocontroll.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: arm: fsl: Add GOcontroll Moduline
+ IV/Mini
+Message-ID: <20251030-unfailing-venue-e27a74ebab2d@spud>
+References: <20251030-mini_iv-v3-0-ef56c4d9f219@gocontroll.com>
+ <20251030-mini_iv-v3-1-ef56c4d9f219@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,35 +65,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hd7qwYh7dn279Ibw"
+	protocol="application/pgp-signature"; boundary="M5nFIgRaiFYSCzu6"
 Content-Disposition: inline
-In-Reply-To: <20251030-mt8189-dt-bindings-wdt-v1-1-975971ba29e5@collabora.com>
+In-Reply-To: <20251030-mini_iv-v3-1-ef56c4d9f219@gocontroll.com>
 
 
---hd7qwYh7dn279Ibw
+--M5nFIgRaiFYSCzu6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 08:40:07AM +0100, Louis-Alexis Eyraud wrote:
-> Add compatible string for the watchdog block on MT8189 SoC, which is
-> compatible with the one used on MT6589.
+On Thu, Oct 30, 2025 at 07:35:37AM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
 >=20
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> Document the compatible strings for the Moduline IV and Mini.
 
+> Also add a compatible for the Ka-Ro Electronics TX8M-1610
+
+This is not very helpful to say, makes what you've done seem accidental.
+I assumed this was wrong, until I looked up this device and found out it
+was a SoM. Please put that in the commit message.
+With that info,
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+pw-bot: changes-requested
 
---hd7qwYh7dn279Ibw
+>=20
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentati=
+on/devicetree/bindings/arm/fsl.yaml
+> index 00cdf490b0620..15000923b648a 100644
+> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> @@ -996,6 +996,14 @@ properties:
+>            - const: engicam,icore-mx8mm             # i.MX8MM Engicam i.C=
+ore MX8M Mini SoM
+>            - const: fsl,imx8mm
+> =20
+> +      - description: Ka-Ro Electronics TX8M-1610 based boards
+> +        items:
+> +          - enum:
+> +              - gocontroll,moduline-iv-306-d
+> +              - gocontroll,moduline-mini-111
+> +          - const: karo,imx8mm-tx8m-1610
+> +          - const: fsl,imx8mm
+> +
+>        - description: Kontron BL i.MX8MM (N801X S) Board
+>          items:
+>            - const: kontron,imx8mm-bl
+>=20
+> --=20
+> 2.51.2
+>=20
+>=20
+>=20
+
+--M5nFIgRaiFYSCzu6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQOvYgAKCRB4tDGHoIJi
-0oimAP9o2MEl59jifVvyPGLCWbSwGzDMmbIfyk1LRXRhAcGMcQD+MdAmHKkHucGO
-9XwvmdiZ/DSlgirQirhb+GL9vuMRdQY=
-=Qv/D
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQOvyQAKCRB4tDGHoIJi
+0pftAP4qv3RuQCQkYDQWrTB8t2YEBbGDaVO1XJqQOOzX/ElfLwD+O39KNZYTtmns
+P40SiHPh/Xz+FOwiwDya6Zu/qAtzKQo=
+=leRe
 -----END PGP SIGNATURE-----
 
---hd7qwYh7dn279Ibw--
+--M5nFIgRaiFYSCzu6--
 
