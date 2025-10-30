@@ -1,82 +1,117 @@
-Return-Path: <linux-kernel+bounces-878518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD3AC20DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:16:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB276C20E44
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE4F334FB01
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB3B1A61E55
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534EF363357;
-	Thu, 30 Oct 2025 15:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6D636334B;
+	Thu, 30 Oct 2025 15:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb8ML0A0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="G0rzQevx"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AD12475CF;
-	Thu, 30 Oct 2025 15:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DAF31985C;
+	Thu, 30 Oct 2025 15:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837402; cv=none; b=dX6zHkw+8YAveNPbO5xMyITf3Guc+IyNGadpCX5QevdhWwwNv5QnbMAYTadiGsTfWoHhAlmF1UOSF2IEE+1CcJU9R9GMqtEunaz3s9nTgcMsOsSUaqiNKRBMXWo+CuDXnTcFUGk4Q8RQ1FoASP6y38yVtzk4lv+sAFBD9+yCk90=
+	t=1761837474; cv=none; b=N0LyZXpvUqGUb9FAxmvGehmFxi1wFz1jp/AuGuyAiJZKNGvlW2INKR92np7Nq+fwJoqc3z77m8t9Z7rtl8Fa3VqxbnpZESBiNYcffyPJpgke/tHJ9B6zL6c4odkff+Q2jo2RZw9ELvW2Zh5nB7P9Hxa2cli+dSR8F1qGhoYC50E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837402; c=relaxed/simple;
-	bh=4+yxJdVWRUpvLUb8dzyxv1tQWFiB2p7Ngn9oUHSppMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ya3RZvPtoy5sn65lDBMkAmAHQjvMR3omMymTS30I3/mkM3MMe0cB8uKx6qp/C4Kw4X0GKunfO2IpN1wZ+zTR9q2XaiFRuzK3a667YkgFh1WP142bMAfoMnEZAgV9GRNLi2eYXjB0iUjcaehA2p5HSUPaiamhFKd36HIT6EE1YAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lb8ML0A0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E04C4CEFF;
-	Thu, 30 Oct 2025 15:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761837402;
-	bh=4+yxJdVWRUpvLUb8dzyxv1tQWFiB2p7Ngn9oUHSppMQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lb8ML0A0VPc6tdgaSOSAfHmeIMSbxoDBxBwe5SoA4e/L4MmxWSoepXJizQT+H10gA
-	 n5YJZfoyt8mklixtKo19fFt3x3/b0exacYD0A74wlVanDSu3i79dzz5fcl06iqNSLB
-	 ehir8yadLlhCFgw9+R9r+g/AsDF2gu0eq7fjNAgw3v8Kx8fG1dVQZF+5Iw3u0p6Z7G
-	 FGbxLf9pRpKEIO7ajJ4Fa2/7thXte654YlTZ20gCP47MC0iMLTkgBAo5hqQ6i/cFLM
-	 Wlz/NbmidGJ67zAqJSb9l1ZftHCjfe4yHXcikALDqRBN6MkSpSnCRmMg8lW0iD0SZ+
-	 SToer1BlmeBeA==
-Date: Thu, 30 Oct 2025 08:16:40 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yibo Dong <dong100@mucse.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, corbet@lwn.net, andrew+netdev@lunn.ch,
- danishanwar@ti.com, vadim.fedorenko@linux.dev, geert+renesas@glider.be,
- mpe@ellerman.id.au, lorenzo@kernel.org, lukas.bulwahn@redhat.com,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v16 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <20251030081640.694aff44@kernel.org>
-In-Reply-To: <24FCCB72DBB477C9+20251030023838.GA2730@nic-Precision-5820-Tower>
-References: <20251027032905.94147-1-dong100@mucse.com>
-	<20251027032905.94147-6-dong100@mucse.com>
-	<20251029192135.0bada779@kernel.org>
-	<24FCCB72DBB477C9+20251030023838.GA2730@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1761837474; c=relaxed/simple;
+	bh=OkBtFod+Tw0J/EkbQDgJVycQMKZFAL/9AmKvf27eyg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iZ+pK/9F2jtYV5D/lN0jFjT2w79crnocMAy6NbvS9J3LEIHEdqp3ZwaTOmA75OFr9CpHeivOEw/AtxqULMx50Qbtb69WmGpzmRG/j/LDacbtVQKJnPRPq8+BmhKAaF6yOVQKk1J9fKTCLvhA2YBqLNBjyKOkWJhUxM89a2exGWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=G0rzQevx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761837464;
+	bh=OkBtFod+Tw0J/EkbQDgJVycQMKZFAL/9AmKvf27eyg8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G0rzQevxahouYSbAnsFKcmY9qMDD2v5jiXTeXGJ9pY6DtjXeGV6itkx3RqHhVlxVT
+	 mHL5WLF18etfuWzQnk8fyECy6Gz/7zynkfXUDq1xY6DjcA6JhA/EyRGshK1GHDYmTO
+	 kxfnv/ETUwEqeJupWm9EUNdivZbM7Mc+FkpdzN+lmkyHrb+kWlrXGfjdrVXhH1lzEV
+	 MjIVEQZOVmhtMTosdJcGF/r406zB0kjN/mtxY5nzsDRR+CF2x4O/SXulXMXkP0K5Lp
+	 Ku4LKQw9oPXQ5AjMk9b2H/oQ6ypkM3U3TchHzVv9s/Rq6PFxNDy2fQuLMXWCJCM/x0
+	 ppNY+VrAHiVcg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CA7A217E1315;
+	Thu, 30 Oct 2025 16:17:43 +0100 (CET)
+Message-ID: <480e1177-1be1-44ab-b20f-a6840b6fb564@collabora.com>
+Date: Thu, 30 Oct 2025 16:17:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pmdomain: mediatek: mtk-mfg: select MAILBOX in Kconfig
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com, kernel test robot <lkp@intel.com>
+References: <20251030-mfg-mailbox-dep-v1-1-8a8c591aff27@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251030-mfg-mailbox-dep-v1-1-8a8c591aff27@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 30 Oct 2025 10:38:38 +0800 Yibo Dong wrote:
-> > >  #include <linux/types.h>
-> > >  #include <linux/mutex.h>
-> > > +#include <linux/netdevice.h>  
-> > 
-> > Why do you need to include netdevice.h here now?
-> > This patch doesn't add anything that'd need it to the header.
-> >   
+Il 30/10/25 14:17, Nicolas Frattaroli ha scritto:
+> The mtk-mfg pmdomain driver calls common mailbox framework functions. If
+> the common mailbox framework is not selected in the kernel's
+> configuration, the build runs into a linker error, as the symbols are
+> absent.
 > 
-> It is for 'u8 perm_addr[ETH_ALEN];'
-> Maybe I should just "#include <linux/if_ether.h>" for this patch. 
+> The hardware mailbox Kconfig system, MAILBOX, has no dependencies of its
+> own. It's therefore safe to "select" it rather than use "depend on".
+> 
+> Declare this "select" dependency in the Kconfig for the driver.
+> 
+> Fixes: 1ff1f0db6aec ("pmdomain: mediatek: Add support for MFlexGraphics")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510301311.TcOCnZ1s-lkp@intel.com/
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-I see, that's fine. Then again, I'm not sure why you store the perm
-addr in the struct in the first place. It's already stored in netdevice.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> ---
+> I assume this can be squashed into the mtk-mfg driver addition commit of
+> the maintainer that merged it.
+> ---
+>   drivers/pmdomain/mediatek/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pmdomain/mediatek/Kconfig b/drivers/pmdomain/mediatek/Kconfig
+> index b06aaa9690f0..8923e6516441 100644
+> --- a/drivers/pmdomain/mediatek/Kconfig
+> +++ b/drivers/pmdomain/mediatek/Kconfig
+> @@ -32,6 +32,7 @@ config MTK_MFG_PM_DOMAIN
+>   	depends on PM
+>   	depends on OF
+>   	depends on COMMON_CLK
+> +	select MAILBOX
+>   	select PM_GENERIC_DOMAINS
+>   	imply MTK_GPUEB_MBOX
+>   	help
+> 
+> ---
+> base-commit: d78b0fee454c25d292fb6343253eca06d7634fd9
+> change-id: 20251030-mfg-mailbox-dep-ec32ef510e6a
+> 
+> Best regards,
+
 
