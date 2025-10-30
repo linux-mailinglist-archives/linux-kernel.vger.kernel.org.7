@@ -1,151 +1,237 @@
-Return-Path: <linux-kernel+bounces-878449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB75CC20A07
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:37:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35C9C20A43
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D30B84EEEDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8AE403859
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A3226E6F5;
-	Thu, 30 Oct 2025 14:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3DB2877DC;
+	Thu, 30 Oct 2025 14:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TM3mZNsw"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BfITBlv/"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2C2258EF0
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725F0283FF1;
+	Thu, 30 Oct 2025 14:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834847; cv=none; b=JR5dNTeZT1r//L4/kPBxuNAlvQ95hkcRHml/6AmS4W8zl/eGXJW6DPNXG+7FuSpy2acEam6mFmj0IQXibGs3I8igYe8BZQMmvMv1TaecYWHhluYmxyVQMGUTzvZS0I0c/EzNTpF3fNZ9JZ6Pam+ahOkI2KEq1mbrA3SAU5qeCGw=
+	t=1761834900; cv=none; b=CjwmDHG3TcAqdb9k4FYrh0/tznPMT/tNQsLBc7Q34EmkBf0bwWwjQ5WhiFXxmMPyT6MkA/Bidw/FBpm7yrkgtnntDGduNq4bRo301QYSZU1Wn+aYagzbKenLA058f94To1aTZ7kcpkHbmqrHBKQ5f5TMdOICvap71YQUALv3Uig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834847; c=relaxed/simple;
-	bh=odh9ZxKKeGxYrq3EK8kPdZn1pd8MMFHTauQdcNpIKh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oMDf8FwnhV3NL189+lp0RUjVsMG2Wb0D417p2uL7tl+hH/v4JoiJqwi2boBygYrdZ4fHEuwO5QKUKqQ/av8QoI4AnHHb0aJxJUMTBD8p/5PD3YK38TQcYvwsdm1wF7Nia876mkkVz1GvK2kJWBCTMGh2ON/u8B7ByhxGlf88mpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TM3mZNsw; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-427084a641aso935775f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761834843; x=1762439643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J38IhobkxaN2Gk5WbXyUkF8oPumsLrjm7BrbGyCEjLc=;
-        b=TM3mZNswH/pguQZkn8ioHHVODnxw9hlcW0bTOG0Ir/PuozJXsbTBb7sdsIIYd0Z2Z9
-         6cDa26SRGmLaD6e35tkey1gK5I5qQ/GybF/IMzjwsQ+Iwr/BliHMCFzIOkuZzdmZP1Rw
-         aRQ8B1dgpr1hchPCWGUzpEDBPGar9NvjN7s16Pm11/vugOH1J8mAbmdNwU+TzKPPbSEr
-         McuYcHvh/2JYC8SmimPX6Iwo6ucA69V4rL0Y6qFdDX3UE+XssoPOeKojrBM8RZmsx/5H
-         oDhJvxzFraVnENGSwuTz2EPxQrvfbjSxvajI1jES5rJEqjTarpApaCpQEWUU5h4OX0++
-         ZiqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761834843; x=1762439643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J38IhobkxaN2Gk5WbXyUkF8oPumsLrjm7BrbGyCEjLc=;
-        b=XiHX5onr6uH8n8xjbOekC90iPNMPbb0UsurD9cjDcv/tR35H9GR23D8+IjNsnvpJ14
-         s1DMXEr70oDzy2R8TnIWrN4PkWKVQjr1Ybyqa6Gj1pjvrEv41ABfw7Ynu55sQsyYMHS6
-         AWVRmqLGvGykzClzid7cWWvkrbzwD9Anb7pBGz5XDGnwY+NTSTAhMeGG7GvA5FP7162F
-         fcahIjOo46MeCUBg4aTutysGPQ6KFWDxYJIZEfCq7oWCE2ERzhNjXWZY+jtZVYPurV5I
-         9BLZFeqdZxjd1uA7QF+KUZ1RSV4EmSRAS00Wmrg8JTnk3V6PEdGtatV7ZOQ4V4HlyXBM
-         IEAg==
-X-Gm-Message-State: AOJu0Yw0W9pcK6tKC5GBsSnBa0LjA3MGs7d52w8rI5nrvOxFM3NeZPuL
-	3J5bIMDzaX3bTilVwVA9Goylvq8iYRJXECjv1gW+qCdDHLaV/aAgTV/qiCYn1Q==
-X-Gm-Gg: ASbGncsl24Y0K/NjXaPEOYUwNvMaRGPGdTAPMa2Dea9zTmbtYcOj5TTdFM5uYQez1Fa
-	zqGXYntlyyGy6XKx1bCmkErjAZKU5xBjlGsL4+EJ4fwsCKTkZca+ZZcVvOQvWincR3TkQS97+36
-	ZRbsn6P3YgyQKE6D9G1sPG6aCtOrsLJOL7tq+xVxaM0qKXPMaOvkWFHEm38zFz+4c0B7Gu1ax6e
-	UGfNR9dAdGA+JYk5C4cTW4TTvez82J7qsoGasJJVVnNKXkR70ELzaOkjacED52un7TyxevudHK6
-	6AfQ69gcUkqvJDR2rZhbsIf+RMPgdHxGmWD54ezpVM2ugZ79X3yDPC9B8aFntTgc5MnUTMSWVtK
-	3YQOVe6z0frrcRoaaUwfL2nSeb48S6V5OCN1uQnssOW3/2DCY0DGwbpxrpivkPwyZ14YOURPdvs
-	1hvNwEmP9SeXn422GebuUwIsBlLHzHtyA5GFVm5C3KDH6XfUIjj1kJ
-X-Google-Smtp-Source: AGHT+IHI8r6Y5Qu6MmO0KTWK+ZhlblvTiwEj554fnahrKlI6MqsZ0iz5RT8A1I2OMGLDjALtaKdYTw==
-X-Received: by 2002:a05:6000:480f:b0:429:b958:218a with SMTP id ffacd0b85a97d-429b9582382mr1643853f8f.28.1761834842625;
-        Thu, 30 Oct 2025 07:34:02 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb7e8sm32732992f8f.19.2025.10.30.07.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 07:34:02 -0700 (PDT)
-Date: Thu, 30 Oct 2025 14:34:00 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Christian Kujau <lists@nerdbynature.de>
-Cc: linux-kernel@vger.kernel.org, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: maple_tree.c:3738:1: error: the frame size of 1040 bytes is
- larger than 1024 bytes
-Message-ID: <20251030143400.09fc0a89@pumpkin>
-In-Reply-To: <769dc761-3ea6-76b9-d6a3-cd64a3fddfe3@nerdbynature.de>
-References: <769dc761-3ea6-76b9-d6a3-cd64a3fddfe3@nerdbynature.de>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1761834900; c=relaxed/simple;
+	bh=kzKBgV8r5q8edgixyS3j7wmuBEdehQSVMTJBgW7xz6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CsX7yIZIaXJQW9rTFplDbCam8XnMif61TnMxD/Ny+jhIITUSOv+LfdRmHqDtwGXYOPOr9fLZ/t1gJYsnbiIVCShzxlTBrEmoNnKKB84hskLG/eVMAs6XZVCJQFk8EDzqnRhXXy3GXjN7qIGTypbQkv+al7cNFz1lYoOU/2NU2o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BfITBlv/; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761834899; x=1793370899;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kzKBgV8r5q8edgixyS3j7wmuBEdehQSVMTJBgW7xz6E=;
+  b=BfITBlv/T80CUadRIPGXDf6mSx5WZNa3ncao3fpK6ClgGI3cO9M3RlEA
+   MFgdiIrOaQVzFx9NqmKZDtLGS/+/WDzZgD3u5GLcv7Ntd8erYQvcjr1l+
+   U1hIVU5is5s24wN3DCJsjnW5wc3uk6N9J1k+06YhJyXYRrzLDvQLvaJVN
+   0DxeDPSMHiaNExODKpxpt2CtJEPYxZMBk9k4zr/hCWEjVBKSuiPbSVy89
+   wyNKguMB+HNqN+7XgrYGbDbeQUtE19035Pkz9OSB6Nblb1mN6taDuYxmd
+   +HLRDheHmoVe0HopG0OXqPk2DvdATRc5iSiPa+Q24OUltxDMKEIuiBZHP
+   A==;
+X-CSE-ConnectionGUID: iP8P+z7SToStG8EktGUkkw==
+X-CSE-MsgGUID: hH6D5D30RymrOV/Z5QwJMQ==
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="48472823"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:34:57 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Thu, 30 Oct 2025 07:34:51 -0700
+Received: from [10.171.248.18] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Thu, 30 Oct 2025 07:34:45 -0700
+Message-ID: <cd0ae7c8-0df7-443f-a5d3-da2c3aa88582@microchip.com>
+Date: Thu, 30 Oct 2025 15:34:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 4/5] net: macb: rename bp->sgmii_phy field to
+ bp->phy
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Russell King <linux@armlinux.org.uk>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?=
+	<benoit.monin@bootlin.com>, =?UTF-8?Q?Gr=C3=A9gory_Clement?=
+	<gregory.clement@bootlin.com>, Maxime Chevallier
+	<maxime.chevallier@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Vladimir Kondratiev
+	<vladimir.kondratiev@mobileye.com>, Andrew Lunn <andrew@lunn.ch>
+References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
+ <20251023-macb-eyeq5-v3-4-af509422c204@bootlin.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20251023-macb-eyeq5-v3-4-af509422c204@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 30 Oct 2025 14:35:12 +0100 (CET)
-Christian Kujau <lists@nerdbynature.de> wrote:
+On 23/10/2025 at 18:22, Théo Lebrun wrote:
+> The bp->sgmii_phy field is initialised at probe by init_reset_optional()
+> if bp->phy_interface == PHY_INTERFACE_MODE_SGMII. It gets used by:
+>   - zynqmp_config: "cdns,zynqmp-gem" or "xlnx,zynqmp-gem" compatibles.
+>   - mpfs_config: "microchip,mpfs-macb" compatible.
+>   - versal_config: "xlnx,versal-gem" compatible.
+> 
+> Make name more generic as EyeQ5 requires the PHY in SGMII & RGMII cases.
+> 
+> Drop "for ZynqMP SGMII mode" comment that is already a lie, as it gets
+> used on Microchip platforms as well. And soon it won't be SGMII-only.
+> 
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 
-> Hi,
->=20
-> while cross-compiling the latest mainline checkout for x86_64, this=20
-> happened:
->=20
-> ------------------
-> $ make -j24 O=3D${DIR} ARCH=3Dx86 CROSS_COMPILE=3Dx86_64-linux-gnu- \
->             CC=3D"x86_64-linux-gnu-gcc" bzImage
-> [...]
->   CC      lib/maple_tree.o
-> lib/maple_tree.c: In function =E2=80=98mas_wr_bnode=E2=80=99:
-> lib/maple_tree.c:3738:1: error: the frame size of 1040 bytes is larger th=
-an 1024 bytes [-Werror=3Dframe-larger-than=3D]
->  3738 | }
->       | ^
-> cc1: all warnings being treated as errors
-> ------------------
->=20
-> This is basically "allnoconfig" with CONFIG_WERROR and some debugging=20
-> options enabled. I found 44081c77e8a4 ("maple_tree: reduce stack usage=20
-> with gcc-9 and earlier") where a similar issue has been reported before,=
-=20
-> but this was 2023. I'm trying to build this on a Debian/13 arm64 system:
->=20
-> $ x86_64-linux-gnu-gcc --version | head -1
-> x86_64-linux-gnu-gcc (Debian 14.2.0-19) 14.2.0
->=20
-> Git bisect pointed to:
->=20
-> ------------------
->  commit 9b05890a25d9197e39fcf5b2298f0b911c323306
->  Author: Liam R. Howlett <Liam.Howlett@oracle.com>
->  Date:   Wed Sep 3 15:00:01 2025 +0200
->=20
->     maple_tree: Prefilled sheaf conversion and testing
-> ------------------
->=20
-> This looks related, but I was unable to revert only this commit. I can tr=
-y=20
-> harder, but maybe someone has an idea how to tackle this.
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Does marking mas_wr_bnode() 'noinline' help?
-Some functions are marked noinline for KASAN builds, the comment suggests
-mas_wr_bnode() is one of them - but it isn't marked at all.
-
-I'd try an unconditional noinline first.
-
-	David
-
->=20
-> Thanks,
-> Christian.
+> ---
+>   drivers/net/ethernet/cadence/macb.h      |  2 +-
+>   drivers/net/ethernet/cadence/macb_main.c | 26 +++++++++++++-------------
+>   2 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+> index 05bfa9bd4782..87414a2ddf6e 100644
+> --- a/drivers/net/ethernet/cadence/macb.h
+> +++ b/drivers/net/ethernet/cadence/macb.h
+> @@ -1341,7 +1341,7 @@ struct macb {
+> 
+>          struct macb_ptp_info    *ptp_info;      /* macb-ptp interface */
+> 
+> -       struct phy              *sgmii_phy;     /* for ZynqMP SGMII mode */
+> +       struct phy              *phy;
+> 
+>          spinlock_t tsu_clk_lock; /* gem tsu clock locking */
+>          unsigned int tsu_rate;
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 8b688a6cb2f9..44188e7eee56 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -2965,7 +2965,7 @@ static int macb_open(struct net_device *dev)
+> 
+>          macb_init_hw(bp);
+> 
+> -       err = phy_power_on(bp->sgmii_phy);
+> +       err = phy_power_on(bp->phy);
+>          if (err)
+>                  goto reset_hw;
+> 
+> @@ -2981,7 +2981,7 @@ static int macb_open(struct net_device *dev)
+>          return 0;
+> 
+>   phy_off:
+> -       phy_power_off(bp->sgmii_phy);
+> +       phy_power_off(bp->phy);
+> 
+>   reset_hw:
+>          macb_reset_hw(bp);
+> @@ -3013,7 +3013,7 @@ static int macb_close(struct net_device *dev)
+>          phylink_stop(bp->phylink);
+>          phylink_disconnect_phy(bp->phylink);
+> 
+> -       phy_power_off(bp->sgmii_phy);
+> +       phy_power_off(bp->phy);
+> 
+>          spin_lock_irqsave(&bp->lock, flags);
+>          macb_reset_hw(bp);
+> @@ -5141,13 +5141,13 @@ static int init_reset_optional(struct platform_device *pdev)
+> 
+>          if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII) {
+>                  /* Ensure PHY device used in SGMII mode is ready */
+> -               bp->sgmii_phy = devm_phy_optional_get(&pdev->dev, NULL);
+> +               bp->phy = devm_phy_optional_get(&pdev->dev, NULL);
+> 
+> -               if (IS_ERR(bp->sgmii_phy))
+> -                       return dev_err_probe(&pdev->dev, PTR_ERR(bp->sgmii_phy),
+> +               if (IS_ERR(bp->phy))
+> +                       return dev_err_probe(&pdev->dev, PTR_ERR(bp->phy),
+>                                               "failed to get SGMII PHY\n");
+> 
+> -               ret = phy_init(bp->sgmii_phy);
+> +               ret = phy_init(bp->phy);
+>                  if (ret)
+>                          return dev_err_probe(&pdev->dev, ret,
+>                                               "failed to init SGMII PHY\n");
+> @@ -5176,7 +5176,7 @@ static int init_reset_optional(struct platform_device *pdev)
+>          /* Fully reset controller at hardware level if mapped in device tree */
+>          ret = device_reset_optional(&pdev->dev);
+>          if (ret) {
+> -               phy_exit(bp->sgmii_phy);
+> +               phy_exit(bp->phy);
+>                  return dev_err_probe(&pdev->dev, ret, "failed to reset controller");
+>          }
+> 
+> @@ -5184,7 +5184,7 @@ static int init_reset_optional(struct platform_device *pdev)
+> 
+>   err_out_phy_exit:
+>          if (ret)
+> -               phy_exit(bp->sgmii_phy);
+> +               phy_exit(bp->phy);
+> 
+>          return ret;
+>   }
+> @@ -5594,7 +5594,7 @@ static int macb_probe(struct platform_device *pdev)
+>          mdiobus_free(bp->mii_bus);
+> 
+>   err_out_phy_exit:
+> -       phy_exit(bp->sgmii_phy);
+> +       phy_exit(bp->phy);
+> 
+>   err_out_free_netdev:
+>          free_netdev(dev);
+> @@ -5618,7 +5618,7 @@ static void macb_remove(struct platform_device *pdev)
+>          if (dev) {
+>                  bp = netdev_priv(dev);
+>                  unregister_netdev(dev);
+> -               phy_exit(bp->sgmii_phy);
+> +               phy_exit(bp->phy);
+>                  mdiobus_unregister(bp->mii_bus);
+>                  mdiobus_free(bp->mii_bus);
+> 
+> @@ -5645,7 +5645,7 @@ static int __maybe_unused macb_suspend(struct device *dev)
+>          u32 tmp;
+> 
+>          if (!device_may_wakeup(&bp->dev->dev))
+> -               phy_exit(bp->sgmii_phy);
+> +               phy_exit(bp->phy);
+> 
+>          if (!netif_running(netdev))
+>                  return 0;
+> @@ -5774,7 +5774,7 @@ static int __maybe_unused macb_resume(struct device *dev)
+>          int err;
+> 
+>          if (!device_may_wakeup(&bp->dev->dev))
+> -               phy_init(bp->sgmii_phy);
+> +               phy_init(bp->phy);
+> 
+>          if (!netif_running(netdev))
+>                  return 0;
+> 
+> --
+> 2.51.1
+> 
 
 
