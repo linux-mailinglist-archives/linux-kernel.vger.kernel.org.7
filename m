@@ -1,191 +1,185 @@
-Return-Path: <linux-kernel+bounces-878229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C643C20119
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:44:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD5FC20128
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:46:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B451889988
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:44:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D4064E17F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C22430FF1C;
-	Thu, 30 Oct 2025 12:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A8033FE0D;
+	Thu, 30 Oct 2025 12:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yc8whvFa"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QquZYOSQ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FC423D7D4
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869EB1A23AC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761828246; cv=none; b=G62MJ6uck24ltbzhOvG8Vo0VYd+RItu0f64GSVm0P1/giOG9IfniZo08WYe+SQLqRfMxRO35Qo4FKQP0kixH19pbNh4LXzUURHBinHuSCPpIZq9BkeQ226STmoVt1OOGdO7qkTyfNdUPGml6erBfxUh2xY1cQglFAlsPAKZGM/s=
+	t=1761828380; cv=none; b=Wg7szWKSR0O9OJnU6maZ06xE9n296gQvC8w+xMclay+3gWO3FzMt9pkv9SSJktmaOx+ISenFKmXIIoVzQUwlhvSrqWaphVY73kO3yBUC0pkYpuAQ7IheSQDUDnki+JIGvWNJe4k5elJr9iRLM0zLhdn7hiyESz7N/97blHMzuoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761828246; c=relaxed/simple;
-	bh=Vsg6pHABg0QNnlZoDT/EUBC2xV1JRoFDH/4oiFVdKOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oBImT2byZSkcS5tbl775ozwp6RnDUxEHc3Wi1UrpQrtMococ7HfqR/kb0qxLZSaQ9gZ+2RWY0M3uvs76gRLwz0ac1NqldGW9vSiW+pzkmyAqH7oChkrNDL63BbCDToCuxt9ajwTuvDJXh0n+j76mQVt43NgAlxLi6eaAufEqzwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yc8whvFa; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7815092cd22so16116177b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:44:04 -0700 (PDT)
+	s=arc-20240116; t=1761828380; c=relaxed/simple;
+	bh=+HeyH+uBEjWpGdKmwcRMviD1ZBOfa4A/QaKdR76xW4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/N4h1Oa1wJNaPJc1Eo+FT+1AxgvesmYn/i4HQTXwHn32/E/7cVTMJ1BDV4aOlELRP9q2QEs3h6dvQV+LJHo09rTMl+yJsemAKKb+MuElxlXa+jkO8sQx9ANWz0+8ZT0ckeLOx+pxMI0dJ5cqakJjUXX8OfUz3jdPR+cx/1uHQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QquZYOSQ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-294fb21b160so4726595ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:46:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761828244; x=1762433044; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zDjyf2YcWAcYN9vEkqn7UbYwTq6TCYnnMJLBk0aUuPQ=;
-        b=yc8whvFa1Tmpuzr3K+A5YOFo3An4OohDN+/8+Aq+94D8QKXtIktbbHGBaRGFOwq6dG
-         2ySUQ9a4NL6UQkbOjQF+Ec5AeiHdKw4kCRP+fonQnVnUWOvTLfYl3zQmN+b5Q33MKASq
-         8USEHcWLNmwzKo1KBPuGZzpd4+459kHbecapQfiiU9ZhlO9OmbCgDjqeaj7JVHNDHCqf
-         kjQtdF/cSVSNEqZ+H1xNCxVulUTBt9b9H+GjgqfUDYfeWcFBi/riLImY80picPVK6evB
-         6KGOrGvOOXXKpseNkNyZUyGvnWvdyfFi/7ZmdhhNG9c+CkHn2+dyfF3md8GOFYMi8VVe
-         Aw5g==
+        d=gmail.com; s=20230601; t=1761828378; x=1762433178; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aywFaym5MviV8j+hBaTBsO7fPrPlzSx1wz2Rl5oeL3s=;
+        b=QquZYOSQ4h6pjUKbEIsgeSvtsIU6RjhAE/juhSICYCryCnNcKFQl5hFqRrwWFaDelY
+         WsVpiW4c/IvWNuha6xsFLfa4NiKxWFF0++aBYK43i3yK0qKIVns2sF3JfpU0zdNHz9qV
+         h/+s3fe5qaSpgb795hN+lmbL40EeHk9jpvwhcBc2awMYtK9rshU3XSBHof/i60uISAVu
+         LwAzV1nrhxHd+smPWlLUyFICD/ABf2688E8EWFpG9MU6EHjBwYCkiIynH0FGCyqflfNO
+         rLl5y11E+EHwRSFs1FuGpeVKl1MbIKCZoc3hJAlU4GNPwftVf+hTZpTvZcMD1eGYtAYj
+         t/rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761828244; x=1762433044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zDjyf2YcWAcYN9vEkqn7UbYwTq6TCYnnMJLBk0aUuPQ=;
-        b=A1ulY5h25q0bjfb79X63+FqEaSOPEbMjwRDLcDgJgR//9vFSQrLWwPta0lnIBmQeoL
-         b9381XEhiHNwxfNiR9SzVntk/ZPDon8EuxOdY9E9fMPir7dlt8ZG9u7eWwuDWUv4Orn+
-         QKuYnEL8GU0UUTei4I2GPnSc7mgcL8ewAn3FCnzlXmLb4lPwfv0FVCuRiRs+dnm40hnC
-         JA+akVYXX9nI0d9xldyplDjePAgqk/vv9Rjyj0qP3pEl/DzN6oM9LPYpD15eQXwKzpNP
-         17frKFGO22lhYOxCd53MS7q+wA836HBBCiNVPwHWH0O1OPdO2QAOV3cRuRrwyy5fTpfA
-         GeUg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3BajUzd4UTAmnrRIRL7jnGgRJhGd+SNDnj4+vfquDHzaer5zt8YY+FK9tdvwW+3nnddEZYRVVVsWrq/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3jWjI/uwbJbI0H9wTlWgjUpGdkAu8QGBZLkTxwoT3KwoWNHTd
-	F+6pPKFnuvT389VqaDokvODnitOCfqbuLXmsEUhccLbFioIauZo4Ioq3i5FEH+hIfCxLWDjAGlM
-	gcGQbcKo6+Qxu0wcVMF49NhmUoFUlXha/+UPhZb3Nnw==
-X-Gm-Gg: ASbGncssn6ZGY7UwyKnAiAjnSJnhT6K8RvDYQdxC4grThHr1QGOgcCr5sBOT5yWvCX7
-	QL8zcqNOlHLeaWx0gPUDefjCnvrEGtokPVYInHcPnmBCyx7dUoOCmQEf7SRSFRoiBQV/feZDQ5L
-	bQEFsi1aB/hlhMGZPZfvIcaD3e1R8myowmHmOsv+assZptwCe/5hBKxUfGcnwjsIgt8+3d05UXv
-	dOEmX/0Jyy6GTf98WT3PxH+1deWQFubudfJCvxIb+Hasow0KAQAinXnMawDOA==
-X-Google-Smtp-Source: AGHT+IHoJ3bGFdVpESH8uyHHz88xUNMEBC8Fu5HjAXHiNMtBHIYJ/tKO/aZSWr4m+lV+8zQnl1zuKQVq+qW0clPbizU=
-X-Received: by 2002:a05:690c:b89:b0:785:c7ab:97e6 with SMTP id
- 00721157ae682-78628e82e1amr62754117b3.12.1761828244016; Thu, 30 Oct 2025
- 05:44:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761828378; x=1762433178;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aywFaym5MviV8j+hBaTBsO7fPrPlzSx1wz2Rl5oeL3s=;
+        b=IBFA5ChdPJzh8J1ccXwhAJrw/43/noSkhCVwU1jEtlxrcME68lMKrYxJelAAwzCU2q
+         xbcoOLBUQV+QT4vhC/N11cZqdfRPnJnWpP7cqAGMFaRMEEqUrVbkkt+EqDpZ751dFfXW
+         fn6JHnrHcTf/8T8pOaRCP1qX+ldEx66T82qCFAdXIvTzIWd6kXvq6PxkJbXtgIew349O
+         APyJhQAk0HhCTcq3h7BUTrEN07JS2qFJ9mVv8U6WDcfh5V1t700FZbHmNJ/wX6Vtox3N
+         WRFXc2CaM3TQ+Q7j1cUVh9T60R2tItFVSPbeEdBb93OsZ9CoQNPBBNxW2XGHU/1DmC6K
+         5Yhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH4tISg3/4P++US6MCiGoXBomqmrR0AMiBepIJtkZu2/MiOSTdbzC/h6sFF/2/wpV+qBOBDNSzj0O68uU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz5wSKioYzqJ84SU6gY+sDzX4F3dhRogd/eXAhwYttqvi5zthP
+	BeQJK4R9wv4ngoK73IssZt9HGgWp2s/cimEgfsXoMKlxWHFt5Tw+fIdB
+X-Gm-Gg: ASbGncuQa4+/hk+DvDEY7SINg0DeLHEFBGAY7wRlUOwnJEv+tQeG3ysG5HyjvZwi5BB
+	rm9w9RXCOGMj8s6ilqpux/3gYGH3plDiWBj5YCtK1ncG3yF3SWfQt1Hf4t7QqK6bDo1YWlR6yXq
+	ePVdc1lgzPTddbdynqdYKAcS1y40MpAZzflEOJFeYTdSNyZAWeSsndnPG0o7S+Sb6YPURaeJTbt
+	UGp5bTGULfXCBIxTHLK/UyceOxme4316MZXSmoGrmCVlpc5vpEnfHcWrZ6uLGQC6GRsNy7jciGb
+	Wz8d+EPhlJi94/hn5yZpXnPhnXx0W14fTTknZ1N5oQaXR5NOqbHLIr6cViHQiwYR7sfGvzacwwh
+	huR1zaGsele6xO4bADABIqJMFmis8FxkPrZWpqwztAGPQEzhCHALUcYTVzTOKxFiRNXdA6sAEU1
+	jSHWnOSj19JQjQwkGokQ7EoA==
+X-Google-Smtp-Source: AGHT+IF8NS6uwddW95Ca4xNktUaEfkbRjObW0ncpiYiEzKkJbcnmXQc940NhU/wMgWqGrjJSyPjeDA==
+X-Received: by 2002:a17:903:32d1:b0:269:8edf:67f8 with SMTP id d9443c01a7336-294ee0a300emr32024455ad.52.1761828377626;
+        Thu, 30 Oct 2025 05:46:17 -0700 (PDT)
+Received: from weg-ThinkPad-P16v-Gen-2 ([177.73.136.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e41159sm185118455ad.91.2025.10.30.05.46.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 05:46:17 -0700 (PDT)
+Date: Thu, 30 Oct 2025 09:44:26 -0300
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ksm: replace function unmerge_ksm_pages with
+ break_ksm
+Message-ID: <udw3ecuflmfmjvfwubtss6ky2kx2g3d4hlhfyl6xlxjkk76asz@x4byag532ooc>
+References: <20251028131945.26445-1-pedrodemargomes@gmail.com>
+ <20251028131945.26445-4-pedrodemargomes@gmail.com>
+ <bf832253-0052-4ab2-b664-33bec3837c23@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
- <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
- <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com> <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 30 Oct 2025 13:43:28 +0100
-X-Gm-Features: AWmQ_blgVg55or3EyJ2go7j43VTMSM_CtPJYz4izL2KNF_jSNbaJ7DwH95vB6ks
-Message-ID: <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
- for s2idle
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf832253-0052-4ab2-b664-33bec3837c23@redhat.com>
 
-On Thu, 30 Oct 2025 at 13:29, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Oct 30, 2025 at 1:26=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
-.org> wrote:
-> > >
-> > > On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.org> w=
-rote:
-> > > >
-> > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansson@li=
-naro.org> wrote:
-> > > > >
-> > > > > Changes in v2:
-> > > > >         - Limit the new QoS to CPUs  and make some corresponding =
-renaming of the
-> > > > >         functions along with name of the device node for user spa=
-ce.
-> > > > >         - Make sure we deal with the failure/error path correctly=
- when there are
-> > > > >         no state available for s2idle.
-> > > > >         - Add documentation.
-> > > > >
-> > > > > Some platforms supports multiple low-power states for CPUs that c=
-an be used
-> > > > > when entering system-wide suspend and s2idle in particular. Curre=
-ntly we are
-> > > > > always selecting the deepest possible state for the CPUs, which c=
-an break the
-> > > > > system-wakeup latency constraint that may be required for some us=
-e-cases.
-> > > > >
-> > > > > Therefore, this series suggests to introduce a new interface for =
-user-space,
-> > > > > allowing us to specify the CPU system-wakeup QoS limit. The QoS l=
-imit is then
-> > > > > taken into account when selecting a suitable low-power state for =
-s2idle.
-> > > >
-> > > > Last time we discussed this I said I would like the new limit to be
-> > > > taken into account by regular "runtime" cpuidle because the "s2idle=
-"
-> > > > limit should not be less that the "runtime" limit (or at least it
-> > > > would be illogical if that happened).
-> > >
-> > > Yes, we discussed this, but that was also before we concluded to add =
-a
-> > > new file for user-space to operate on after all.
-> > >
-> > > To me, it looks unnecessarily limiting to not allow them to be
-> > > orthogonal,
-> >
-> > So what's the use case in which it makes sense to have a lower latency
-> > limit for s2idle than for runtime?
+On Wed, Oct 29, 2025 at 03:46:36PM +0100, David Hildenbrand wrote:
+> On 28.10.25 14:19, Pedro Demarchi Gomes wrote:
+> > Function unmerge_ksm_pages() is unnecessary since now break_ksm() walks
+> > an address range. So replace it with break_ksm().
+> > 
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+> > ---
+> >   mm/ksm.c | 39 ++++++++++++++++-----------------------
+> >   1 file changed, 16 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/mm/ksm.c b/mm/ksm.c
+> > index 1d1ef0554c7c..18c9e3bda285 100644
+> > --- a/mm/ksm.c
+> > +++ b/mm/ksm.c
+> > @@ -669,6 +669,18 @@ static const struct mm_walk_ops break_ksm_lock_vma_ops = {
+> >   };
+> >   /*
+> > + * Though it's very tempting to unmerge rmap_items from stable tree rather
+> > + * than check every pte of a given vma, the locking doesn't quite work for
+> > + * that - an rmap_item is assigned to the stable tree after inserting ksm
+> > + * page and upping mmap_lock.  Nor does it fit with the way we skip dup'ing
+> > + * rmap_items from parent to child at fork time (so as not to waste time
+> > + * if exit comes before the next scan reaches it).
+> > + *
+> > + * Similarly, although we'd like to remove rmap_items (so updating counts
+> > + * and freeing memory) when unmerging an area, it's easier to leave that
+> > + * to the next pass of ksmd - consider, for example, how ksmd might be
+> > + * in cmp_and_merge_page on one of the rmap_items we would be removing.
+> > + *
+> >    * We use break_ksm to break COW on a ksm page by triggering unsharing,
+> >    * such that the ksm page will get replaced by an exclusive anonymous page.
+> >    *
+> > @@ -1077,25 +1089,6 @@ static void remove_trailing_rmap_items(struct ksm_rmap_item **rmap_list)
+> >   	}
+> >   }
+> > -/*
+> > - * Though it's very tempting to unmerge rmap_items from stable tree rather
+> > - * than check every pte of a given vma, the locking doesn't quite work for
+> > - * that - an rmap_item is assigned to the stable tree after inserting ksm
+> > - * page and upping mmap_lock.  Nor does it fit with the way we skip dup'ing
+> > - * rmap_items from parent to child at fork time (so as not to waste time
+> > - * if exit comes before the next scan reaches it).
+> > - *
+> > - * Similarly, although we'd like to remove rmap_items (so updating counts
+> > - * and freeing memory) when unmerging an area, it's easier to leave that
+> > - * to the next pass of ksmd - consider, for example, how ksmd might be
+> > - * in cmp_and_merge_page on one of the rmap_items we would be removing.
+> > - */
+> > -static int unmerge_ksm_pages(struct vm_area_struct *vma,
+> > -			     unsigned long start, unsigned long end, bool lock_vma)
+> > -{
+> > -	return break_ksm(vma, start, end, lock_vma);
+> > -}
+> > -
+> >   static inline
+> >   struct ksm_stable_node *folio_stable_node(const struct folio *folio)
+> >   {
+> > @@ -1233,7 +1226,7 @@ static int unmerge_and_remove_all_rmap_items(void)
+> >   		for_each_vma(vmi, vma) {
+> >   			if (!(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
+> >   				continue;
+> > -			err = unmerge_ksm_pages(vma,
+> > +			err = break_ksm(vma,
+> >   						vma->vm_start, vma->vm_end, false);
+> 
+> Move that all into a single line.
+> 
 
-Honestly, I don't know, but I just wanted to keep things more flexible.
+Ok.
 
-> >
-> > > but I am not insisting that it needs to be like this. I
-> > > was just thinking that we do not necessarily have to care about the
-> > > same use-case in runtime as in the system-suspend state. Moreover,
-> > > nothing would prevent user-space from applying the same constraint to
-> > > both of them, if that is needed.
-> > >
-> > > >
-> > > > It looks like that could be implemented by making
-> > > > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limit()
-> > > > into account, couldn't it?
-> > >
-> > > Right, but I am not sure we want that. See above.
-> >
-> > I do or I need to be convinced that this is a bad idea.
->
-> And there is a specific reason why I want that.
->
-> Namely, say somebody wants to set the same limit for both s2idle and
-> "runtime" cpuidle.  If the s2idle limit did not affect "runtime", they
-> would need to open two device special files and write the same value
-> to both of them.  Otherwise, they just need to use the s2idle limit
-> and it will work for "runtime" automatically.
+> 
+> With that
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> Thanks for tackling this!
+> 
 
-Right. User-space would need to open two files instead of one, but is
-that really a problem?
+Thanks for your comments!
+I will send a v2 soon with the corrections.
 
-What if user-space doesn't want to affect the runtime state-selection,
-but cares only about a use-case that requires a cpu-wakeup constraint
-when resuming from s2idle.
-
-It's your call, I can change if you prefer, np!
-
-Kind regards
-Uffe
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
+> 
 
