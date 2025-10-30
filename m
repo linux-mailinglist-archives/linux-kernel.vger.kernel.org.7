@@ -1,95 +1,140 @@
-Return-Path: <linux-kernel+bounces-878150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B81BC1FE47
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:55:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDB9C1FDBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0D334E9223
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:55:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 86933342AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6173F342170;
-	Thu, 30 Oct 2025 11:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="gPnL0vVa"
-Received: from mail-m49244.qiye.163.com (mail-m49244.qiye.163.com [45.254.49.244])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DABD33C530;
+	Thu, 30 Oct 2025 11:41:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9546341674;
-	Thu, 30 Oct 2025 11:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.244
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731EA5695
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761825337; cv=none; b=sIrJD7BX1LjdESNFb+JZuRJpqeKzFnP3m7PVabTXKqgTeQbgdd6c4/JGx5fdKNamfsaBW07CsaRPan0NdCr5uL0Sr1r+t1EniJ1YfLXNDxfOM8t16BwU81Vs1e4XbsmaycDLjSco2StZ4j8TnCUBgxqqOwXBLjobirgUdZt9ML4=
+	t=1761824465; cv=none; b=WSCQiWo21FvWMl54prGUjNxqm1Mdm020mQmz7M4DbgPcaVg9nSDKmVDB+K+McE2AosFJ+WT7JCQ64Znb9iacXi7pLv6qtkSfczlH/r6dqb1g7egWwik6JW2vAgotGcbHEhJmjtJ4OsbEXdWh6NuRzJ05hCruFxW5sLYsiKU4lh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761825337; c=relaxed/simple;
-	bh=faQlt4wzpzeq/vBlzcvlciv94cb4w4oobEarKxLngy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UixZqqj1UpknDQz90gJ+ibSngUAHlNbH/DAT80wQLlMk40XGtOXj64UY8KyPt75vOMq0wq8t06F/ZlfNqo0PWFbYt0bP0qN7rAZwKAYUyFZy8NmD5t31W6WeguODgCiNxcU5i8Jy5QgC/cwPyxQ9LpNQ1fVMb0xXOFHFFVWqLdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=gPnL0vVa; arc=none smtp.client-ip=45.254.49.244
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 27c991459;
-	Thu, 30 Oct 2025 19:40:09 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: krzk@kernel.org
-Cc: krzysztof.kozlowski@linaro.org,
-	krzk+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	gordon.ge@bst.ai,
-	bst-upstream@bstai.top,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	ulf.hansson@linaro.org
-Subject: Re: [PATCH v5 0/6] arm64: introduce Black Sesame Technologies C1200 SoC and CDCU1.0 board
-Date: Thu, 30 Oct 2025 19:40:07 +0800
-Message-ID: <20251030114007.302401-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251016120558.2390960-1-yangzh0906@thundersoft.com>
-References: <20251016120558.2390960-1-yangzh0906@thundersoft.com>
+	s=arc-20240116; t=1761824465; c=relaxed/simple;
+	bh=lZKo9fp4728vlExsBM5BJnKwNB7fqUa1ufmGk3S8KXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCRu7WG02jvziy9JS29vsSSP571BLMdY6BudKyBqgG66cvrswUZMWfzZ/6upx3/DhLgV+mXxRSZtk4zCX5O4OQgLaAIymdp4ta4EMcE7tYY35fkplsE0ciyhwv3LMac7xXtlWrQv6H430ZYr4iJFbY+y2RBcFNnmTqxU4eTbUis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vER1M-0004mR-8i; Thu, 30 Oct 2025 12:40:48 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vER1J-006CfY-2A;
+	Thu, 30 Oct 2025 12:40:45 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vER1J-008sMp-1j;
+	Thu, 30 Oct 2025 12:40:45 +0100
+Date: Thu, 30 Oct 2025 12:40:45 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
+	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
+Subject: Re: [PATCH net-next v8 2/4] ethtool: netlink: add
+ ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+Message-ID: <aQNOvYzUH8OEbw8d@pengutronix.de>
+References: <20251027122801.982364-1-o.rempel@pengutronix.de>
+ <20251027122801.982364-3-o.rempel@pengutronix.de>
+ <4dc6ca34-d6c5-4eec-87b3-31a6b7fba2f8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a34eb076a09cckunmfa5af3e9529ec2
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQh1LVh9OSUxIQk8dTBhJSFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=gPnL0vVagk/5UFB+p/JNDJiKvhJ1wzpnY2+li5CQGpu3IxOchi4ILmP6HFrfxtGcPUFVGo5jn+Yw1c8MBi91Eu9I58aflsvqzcGqDubg4L/XHPJDr0ScMhhjnrXt9mzgaS04BHNzH9DYufY2VDhci19hGulxYzMkSuhHlTu0SDo=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=faQlt4wzpzeq/vBlzcvlciv94cb4w4oobEarKxLngy4=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4dc6ca34-d6c5-4eec-87b3-31a6b7fba2f8@redhat.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+On Thu, Oct 30, 2025 at 12:04:11PM +0100, Paolo Abeni wrote:
+> On 10/27/25 1:27 PM, Oleksij Rempel wrote:
+> > Introduce the userspace entry point for PHY MSE diagnostics via
+> > ethtool netlink. This exposes the core API added previously and
+> > returns both capability information and one or more snapshots.
+> > 
+> > Userspace sends ETHTOOL_MSG_MSE_GET. The reply carries:
+> > - ETHTOOL_A_MSE_CAPABILITIES: scale limits and timing information
+> > - ETHTOOL_A_MSE_CHANNEL_* nests: one or more snapshots (per-channel
+> >   if available, otherwise WORST, otherwise LINK)
+> > 
+> > Link down returns -ENETDOWN.
+> > 
+> > Changes:
+> >   - YAML: add attribute sets (mse, mse-capabilities, mse-snapshot)
+> >     and the mse-get operation
+> >   - UAPI (generated): add ETHTOOL_A_MSE_* enums and message IDs,
+> >     ETHTOOL_MSG_MSE_GET/REPLY
+> >   - ethtool core: add net/ethtool/mse.c implementing the request,
+> >     register genl op, and hook into ethnl dispatch
+> >   - docs: document MSE_GET in ethtool-netlink.rst
+> > 
+> > The include/uapi/linux/ethtool_netlink_generated.h is generated
+> > from Documentation/netlink/specs/ethtool.yaml.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> > changes v8:
+> > - drop user-space channel selector; kernel always returns available selectors
+> 
+> Overall LGTM, but it's unclear why you dropped the above. I understand
+> one of the goal here is to achieve fast data retrival. I _guess_ most of
+> the overhead is possibly due to phy regs access. Explicitly selecting a
+> single/limited number of channels could/should reduce the number of
+> registers access; it looks like a worthy option. What am I missing?
 
-Gentle ping on this series. It's been two weeks since v5 was posted.
+Yes the goal was fast data retrieval. However, I realized the initial
+channel selector was just a guess at the right optimization.
 
-This version addresses the DTS coding style and property ordering issues
-from our previous discussion [1]. Following Arnd's suggestion [2], the MMC
-patches have been removed and will be submitted separately.
+My concern is that the channel selector do not fully achieve the goal.
+While reading metrics from just one channel is an advantage, the
+optimization could be much better if we also allowed reading only one
+metric from that channel, instead of all of them.
 
-Patch 2/6 (arm bindings) already has your Reviewed-by. The remaining
-patches (Kconfig, DTS, defconfig, and MAINTAINERS) are ready for review
-when you have time.
+So, rather than push another half-guess, I decided it is safer to
+remove this part of the interface entirely for now. Once we have data on
+where the actual performance bottlenecks are, we can design and add a
+filter that solves the right problem.
 
-Series: https://lore.kernel.org/lkml/20251016120558.2390960-1-yangzh0906@thundersoft.com/
-
-[1] https://lore.kernel.org/lkml/179f19c0-d9fc-4efb-bc78-8dc1e7505b13@kernel.org/
-[2] https://lore.kernel.org/lkml/09b1318e-21dc-4354-8733-866b70696295@app.fastmail.com/
-
-Thanks,
-Albert
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
