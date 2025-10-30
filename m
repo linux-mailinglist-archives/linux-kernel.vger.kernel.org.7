@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-877683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21C2C1EBEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:28:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130AFC1EBF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 414324E76C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:28:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E23404990
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12002337B9C;
-	Thu, 30 Oct 2025 07:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D857338598;
+	Thu, 30 Oct 2025 07:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jvT92i5h"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vM7oIt6H"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFF93370EE
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35AE3375CB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761809281; cv=none; b=kneEm9KfeLb934wrLYMe74NMMWCLAVv94pACSmfUS0o/v9Ir00H8j8490uHJYz9KHdVLkZoC0dBOm1PfOassX0lMBEykBDQJcMSoMnWSCB+Z+bw6y0NdVo7YySQMx1nkfD0s7FN4gZu3sutlW8Bm+mb2wQb+ph0+ETYOR0Y11n8=
+	t=1761809282; cv=none; b=lv3vehRqRfwjC3bokxkxIyGysMWnNWmiMK1ZOCchV0OUcRHJnUKLtXDo4AgZ8Qu8UwqW3VkJYs4bb3zKiDjwuZgBuma/w1V0a9XaiIwMyvJTivHO5M9nG1VFcmKz4qND0LuTrWYjda/lLoU1/KnNkCdk1ujdz1eVYK0m13FGzEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761809281; c=relaxed/simple;
-	bh=5udrDdlPMpudCr1yZSepm0qaGnwL+JdHE+fbHDma8IU=;
+	s=arc-20240116; t=1761809282; c=relaxed/simple;
+	bh=x+eFJ5CRKeqdWM1Y7tN74EI8+EOeuEga+N/lyxWUhz8=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VqFRb3rUb7JUTWU3CSZFPy6qZ39WIuB8PdnQfKy4DpwX/F5w6/m1DJAYo6f+/bwVzZY3gDvrYsMWY95P9Rlol3vEqz/VX/MrC4p9RXZPmzQwS16TJgW3tcHGn20aHbv2zQjhl8XpIYtySZY0ujYxq8ttITLm+B39glcobIkVLzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jvT92i5h; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version; b=LkfiwlmiIIqkTPLxpsd7RVtzQkgjm1+5sy1dFiYrJ4WsFi52XSyq6e6vX+jU7C5DicSd9ulGW+YlrBwybI6qHONUPOXBN7C4HZDfjx3P6DFuiNbqBGf+JUaEFXB/rn0kWZSTkfiRS1eF0kjE/uBRF4uZLg7/zNbxWKt1ieaQd38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vM7oIt6H; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b6d3effe106so141440866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:27:58 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63bf76fc9faso1449625a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761809277; x=1762414077; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761809278; x=1762414078; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ehIJ73lPnu+6O4xgnu4sQPXRj/ZPgaqQ3z7fCTL7zhE=;
-        b=jvT92i5hOIrKpmdg1Ur3ABKHHYr+LhqnfdYQthcg7iC3t6XGRh6DmNJ9n93US2Ff+0
-         GOoVpQwosskQLScZ/8p+2VNGlctKDEheEuvH9aguzdlZmB5o9tP/pAtuOXOdAndfYeJH
-         VNyTJiGN0wjX++MfdlXvwUXNU8yJTBQYlRHd8MFekdVr8+W1lq4Im3z+TPlL41biz+aP
-         yoiynGW5rqOrqwMfTF2+UC9sCLdta3od9FReX1lIgXbOP8LsD19DPHTJlgxLOS1WVmYm
-         ws37t9PhXv95Yn2nznx9gzoKaG2tJJu2GDFIs0ufN89lnCFkFzotIPjzwsescr2JgnAd
-         b/Dw==
+        bh=eLXdhud06hc1AMj54Ir7llR8segcukDw5Qg88c3Ij68=;
+        b=vM7oIt6HpcWdxg+KLQO5HZNpYkQkGWu5lr0fi6/zoNQ1Yk2QG+AkqDvIEE5lTfPBnp
+         xJw0I9b6ezM25XE2Uuch8HrsUely1ZhqXPjqsne5dOTIbkplyNlJ6RfrtCK2Hw9vjGri
+         B0m3ftlSOdwIhENKir4tuBQNYil/1sJF/Qdc+mMBmWKeoPMFvqv/n+Sw6/um0/EUoBuX
+         gBkAVo/UOWFOJ0HRgIwHnFFnxRfzQJ3xvlSmYKWpL7TuSXCJpE+w6PMXQ9lvYBxH6dh/
+         C75/9QYem8zWcCEuK4LI/KTYmfrz0+QIFB8qiRCKcNNVDoPxbC3LyYHpOiz+fKEhpgHQ
+         GYVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761809277; x=1762414077;
+        d=1e100.net; s=20230601; t=1761809278; x=1762414078;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ehIJ73lPnu+6O4xgnu4sQPXRj/ZPgaqQ3z7fCTL7zhE=;
-        b=rcLyPq8EY+rYtdPYOK41l3hOYpbrK1W3OcwdPqNiUWXXXad5oUAsdJnqAPuoJuf6Vz
-         j5J2x3oqnN3T3eUuXde0GaFzL3MJiam1pjm4m8LjUdT/NjqAgkZVQ3cRv8mh0O3KKuPI
-         gqVt/gR/GTjhGVaT1S3fJlpBFciAFBis24GcnPylLBceH44DhdDZUVG7lYBCvUbTFOkZ
-         FBjxWLbuq5ADR+6lBTfigUYCR9bjinmf+cCrkztYwsPtiLZaQyp31iTT5UlFEXtkmPsp
-         L2xMts+lMRZ4RfiqID5BRK5xAt2PwGuClmOam53tVAljOTqIFiNeT8Prb4PvUjit3STI
-         lWeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT5UjMtCAjcMZAhosaR5UGDiOz1WzyFzKhJrpyxmw/Z5hE04UNLdMJyerYa9rKPyWwG58HsO2v24xe8J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWiVoJaT9sfHagGkTJr2KK2w6utQe4wQTk907giX90zSRuuHl1
-	XvTxtyZWRfuTEiu1tpHeKHnh1aBKAaoMfi3rO8aWT9uhMXpPrfqsf2Q+pj8rlpZenVc=
-X-Gm-Gg: ASbGncvs/ljoHYw8rdSwsVk3WOjvI+eou8Kl2OU7K2sfVDvdeE7ivksEtRhHhHi07tB
-	4yJCrYlHo0wbqPBX8hgrMx5eqg2gbh/M+l1tZcP2sDJW/V5+7plya7G2+vTHb4M9o1SUpvFGieh
-	JIks07k+V6FYSbKCHGZv++DvXCiAKeQeCoYMZYtKUdG4t3nQplFKQq9BH42nnwUK1Kq/gdb4Gml
-	qq2cJ2TkBLw6Yn1TnhwS9/Z8+6E0e4PhHtsK3St4P97syRnc5aiGiCg/IMWIHBY8Sr3bGoYVFUH
-	K3JALE/A3p9+67wVHqiStdgk+OQM71zEkolcsSoLKyDrdg+dSFaUX5cfNvMa85pq30M8i/aweUq
-	mkBt7Q1HPNOLTg9nXYFiWIBwRcLgbIuLRN/LtZLY+BBE2tAOFr5vuh/qBBrAQpi/jnRqIPgHYk1
-	sFv/D04rHW5VI8jzKxGsVE/4nseg==
-X-Google-Smtp-Source: AGHT+IEbm+Ph/BHY3X6rf2/ObAk9FRxDe/dtnkcM68DCMfwtCwzw/eavt2N/8WTvTK0XroSzL0OvUQ==
-X-Received: by 2002:a17:907:3fa1:b0:b6d:6ae2:b66 with SMTP id a640c23a62f3a-b703d2f62d4mr544570666b.20.1761809277192;
-        Thu, 30 Oct 2025 00:27:57 -0700 (PDT)
+        bh=eLXdhud06hc1AMj54Ir7llR8segcukDw5Qg88c3Ij68=;
+        b=Y+0EubvBJ7QrI1gOInkavmaHgIriLqFL19G70qVHz79RWNjRtTCLeJtvHo1yGkBKyA
+         3pvEsU7uEO4YB0Voxm4KLxdpccMvRaujIH6TZPfIMDHtAp6MecbSaIdi4OGtOJiqPYFr
+         Cg8eEE5ZSt+Ij2zZxVvql/gXDf+NRiUGsfcd5ECpRCkb5XpCh186A7/Chgnrg4/CZeUx
+         nL48srwlsuyfSgFTLozZUOOtS6iwO02eTWzJps5YYBJ9NCfaSTycBEa+z/CDiIZ8kfwR
+         bvgWHbc0XX3KUr12JDV6A0Dnl+qB6TpHsqcEXh0ObwVSoTQuFq3VeKG5rslLKz8mloIo
+         AKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL2owcwQqX5zq/sBnXzNqdFXHbjh6x/SsOY8dBTwK8Lp2j4rMSrEQM8Fd5T1UintO14QEmU8L6Z1b+dH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl/pXf3B7SstTJR3Ln8HgLnzl4atuyoZ75sZOfkwNNkHSljypV
+	kRkGkch0i2xnnhFJfHnAMX+kDxsHjrmLFnsA97dm33S4LcESQByZNavd5xrxCtgB9SE=
+X-Gm-Gg: ASbGncvOvgu/9i+WLICufSxN7V8D0cm/pdru6WZh3xY8FleBHuwvp4wPslonofmC6Th
+	gofWuYYS4dw1wb3S3erJEaBi9TXM12aFZ0GkKAohMZNe1Bz9vb8l5brg1iwt/OQ0PxZEY5n7nkI
+	+zbGS2S3g1sz1zkI7SnIK4S4RRtJI0MVgwMe28eavqiRm6bH3wSRACB8ZCqyHsyGl92i7QaejNe
+	iqiBLpEEoY+RZV+LTuXKT7F4U66GBSlFVCajEUIin7gd96Emv3GE6HG13BatM+FclP8UKV+dl2k
+	X5Gm62qPjI5ewVIhgB9VFjufwrqaBO9f4gFfcbZLHbdbzImfqfBhRg76PNubYhG+urEU9nkfOPr
+	2S74KTfcWTRiuxfCIS8TMZHo6YiTVSQtks8iB3K9Jx+g9ILVF177vw6OBaxjOqGsNoqeKDui4DI
+	ztDrg1V2PcSQzAoYzMv+77MM7GRA==
+X-Google-Smtp-Source: AGHT+IFr6vPTfwZdxgBXVeICFNNLmr7TeiCI1sGmzOnlC9S5yEfJX851jXjNAaip4xMKi8WpCjfeLw==
+X-Received: by 2002:a05:6402:2711:b0:637:ee5f:d89e with SMTP id 4fb4d7f45d1cf-640443990b3mr4556099a12.20.1761809278219;
+        Thu, 30 Oct 2025 00:27:58 -0700 (PDT)
 Received: from localhost (mob-176-247-57-96.net.vodafone.it. [176.247.57.96])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85398439sm1682670866b.36.2025.10.30.00.27.56
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63ecf3686c5sm8034374a12.36.2025.10.30.00.27.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 00:27:57 -0700 (PDT)
+        Thu, 30 Oct 2025 00:27:58 -0700 (PDT)
 From: Francesco Lavra <flavra@baylibre.com>
 To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Jonathan Cameron <jic23@kernel.org>,
@@ -81,9 +81,9 @@ To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Andy Shevchenko <andy@kernel.org>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] iio: imu: st_lsm6dsx: move wakeup event enable mask to event_src
-Date: Thu, 30 Oct 2025 08:27:46 +0100
-Message-Id: <20251030072752.349633-4-flavra@baylibre.com>
+Subject: [PATCH 4/9] iio: imu: st_lsm6dsx: dynamically allocate iio_event_spec structs
+Date: Thu, 30 Oct 2025 08:27:47 +0100
+Message-Id: <20251030072752.349633-5-flavra@baylibre.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251030072752.349633-1-flavra@baylibre.com>
 References: <20251030072752.349633-1-flavra@baylibre.com>
@@ -93,253 +93,81 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7477; i=flavra@baylibre.com; h=from:subject; bh=5udrDdlPMpudCr1yZSepm0qaGnwL+JdHE+fbHDma8IU=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBpAxNJUqwdeZd2hE7bzBsdS7ZsaGVJIXj6S1gwW zjdQ38hhwaJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaQMTSQAKCRDt8TtzzpQ2 X4seC/0YTo0aLdkslaQoGRrOIQuzRI+uwzb2ayKLfNeD6SWwEZtlcTvAVmMwFsk4TYnU6DrKrcF yrPe/XiYDq+NYjgM43qBOxdUoIrdyd6lRmc7kpw3YuVdbi0MlFYtn1nb+eF8q4c8EKIxaywxi+d kE/349O5UhcRji18ZQvhdChVDR2DoqXKhHMek2ro7JxGxu5azF9Pk+Fnq6Gqtw/IGB+4R9lNj3F /PI88/j9Gl80stNv8Z2fKavy5ISg36zevNUAgEQU+j8+0EfscDUnNHKtx5PKfuSmbavb9lGfize 8kOTPAH92QSLdI2yLUJri+VdQ2Hd8TRUJfpuSqGZotZWrBLWPLoVUMnwbURcjaXtC7hS8VC9vyS zVyWSvl84WgtAIhFbgt+/zVezCWEN3LWLZDoBULPWqpMMfelgmkeSg+dEdCDYXXKSpLy65OjF9r qG10M91YleUlgyNRJzL2M2qVBtO8syciMVNF5v2CgRYBOG2eQqMucAGdWjLFTqZPKxha4=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2725; i=flavra@baylibre.com; h=from:subject; bh=x+eFJ5CRKeqdWM1Y7tN74EI8+EOeuEga+N/lyxWUhz8=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBpAxNJIJY8+sB5pNRhti3rWg61By1DSPqWWm4su tU6e1YEkpSJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaQMTSQAKCRDt8TtzzpQ2 X9hyC/4t/k98okusX9PWyJbekqmq7Ihh/vhHJ2mPraEdj5pJoETotg7VEaxgirOPCPrfpqa7H+X EnR5PzveLRB7A1ULLZSVtp20fN0a59g6q3JPPfHcqzS/F1DFaKxTcE/pmo8oDvyPzWxV/oBa93s lbAjXmKSIkJ6TgwxgygyYIt58TmQDxA+VZTAEeQlmh/ln+LYrNsCxS9XlKCiOe8lZ0UioZirPP1 rKiPXZypu1SBPZqzsTKQaBwZlgeuK6/+/xYzOeA0rzvrIKTiL1mHUl0ipIoT9rYAE3BgNL6fIFF ma3qsZVkP5YucRy7OHc/ujcPo735DZPfkw2CVKksWpf0VZ4AAyK4rLuYPisP2i3bdhXkg1rCG0/ GFAb8SXS/Nt7Zn0qasQJ4GUkBxD8htBSb8OKOI2SRzw46Bsa4rjSb9yryeSECY8TgZqstIVSG0m OptwKSrsD9yLrnpuE74eyueH+ogA+FKZM2bmCQCkVO6E+kdtY5wRb/0Ec02RUzA5FRbqY=
 X-Developer-Key: i=flavra@baylibre.com; a=openpgp; fpr=8657854F953BDCA31EC314E6EDF13B73CE94365F
 Content-Transfer-Encoding: 8bit
 
-The mask value being assigned to the irq1_func and irq2_func fields
-of the irq_config struct is specific to a single event source (i.e.
-the wakeup event), and as such it should be separate from the
-definition of the interrupt function registers, which cover
-multiple event sources.
-In preparation for adding support for more event types, change the
-irq1_func and irq2_func type from an {address, mask} pair to an
-address, and move the mask value to a new field of struct
-st_lsm6dsx_event_src. No functional changes.
+In preparation for adding support for more event types, drop the
+static declaration of a single struct iio_event_spec variable, in
+favor of allocating and initializing the iio_event_spec array
+dynamically, so that it can contain more than one entry if a given
+sensor supports more than one event source.
 
 Signed-off-by: Francesco Lavra <flavra@baylibre.com>
 ---
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h      |  7 +-
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 80 +++++++-------------
- 2 files changed, 30 insertions(+), 57 deletions(-)
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h      |  7 -----
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 30 ++++++++++++++++++--
+ 2 files changed, 27 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-index 05689887f7ec..5c73156b714a 100644
+index 5c73156b714a..ec4efb29c4cc 100644
 --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
 +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-@@ -228,6 +228,7 @@ enum st_lsm6dsx_event_id {
+@@ -439,13 +439,6 @@ struct st_lsm6dsx_hw {
+ 	} scan[ST_LSM6DSX_ID_MAX];
+ };
  
- struct st_lsm6dsx_event_src {
- 	struct st_lsm6dsx_reg value;
-+	u8 enable_mask;
- 	u8 status_reg;
- 	u8 status_mask;
- 	u8 status_x_mask;
-@@ -320,8 +321,8 @@ struct st_lsm6dsx_settings {
- 	struct {
- 		struct st_lsm6dsx_reg irq1;
- 		struct st_lsm6dsx_reg irq2;
--		struct st_lsm6dsx_reg irq1_func;
--		struct st_lsm6dsx_reg irq2_func;
-+		u8 irq1_func;
-+		u8 irq2_func;
- 		struct st_lsm6dsx_reg lir;
- 		struct st_lsm6dsx_reg clear_on_read;
- 		struct st_lsm6dsx_reg hla;
-@@ -420,7 +421,7 @@ struct st_lsm6dsx_hw {
- 	u8 ts_sip;
- 	u8 sip;
- 
--	const struct st_lsm6dsx_reg *irq_routing;
-+	u8 irq_routing;
- 	u8 event_threshold;
- 	u8 enable_event;
- 
+-static __maybe_unused const struct iio_event_spec st_lsm6dsx_event = {
+-	.type = IIO_EV_TYPE_THRESH,
+-	.dir = IIO_EV_DIR_EITHER,
+-	.mask_separate = BIT(IIO_EV_INFO_VALUE) |
+-			 BIT(IIO_EV_INFO_ENABLE)
+-};
+-
+ static __maybe_unused const unsigned long st_lsm6dsx_available_scan_masks[] = {
+ 	0x7, 0x0,
+ };
 diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-index bb4c4c531128..4bae5da8910e 100644
+index 4bae5da8910e..76025971c05d 100644
 --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
 +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -290,14 +290,8 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 				.addr = 0x58,
- 				.mask = BIT(0),
- 			},
--			.irq1_func = {
--				.addr = 0x5e,
--				.mask = BIT(5),
--			},
--			.irq2_func = {
--				.addr = 0x5f,
--				.mask = BIT(5),
--			},
-+			.irq1_func = 0x5e,
-+			.irq2_func = 0x5f,
- 			.hla = {
- 				.addr = 0x12,
- 				.mask = BIT(5),
-@@ -356,6 +350,7 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 						.addr = 0x5b,
- 						.mask = GENMASK(5, 0),
- 					},
-+					.enable_mask = BIT(5),
- 					.status_reg = 0x1b,
- 					.status_mask = BIT(3),
- 					.status_z_mask = BIT(0),
-@@ -454,14 +449,8 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 				.addr = 0x58,
- 				.mask = BIT(0),
- 			},
--			.irq1_func = {
--				.addr = 0x5e,
--				.mask = BIT(5),
--			},
--			.irq2_func = {
--				.addr = 0x5f,
--				.mask = BIT(5),
--			},
-+			.irq1_func = 0x5e,
-+			.irq2_func = 0x5f,
- 			.hla = {
- 				.addr = 0x12,
- 				.mask = BIT(5),
-@@ -520,6 +509,7 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 						.addr = 0x5b,
- 						.mask = GENMASK(5, 0),
- 					},
-+					.enable_mask = BIT(5),
- 					.status_reg = 0x1b,
- 					.status_mask = BIT(3),
- 					.status_z_mask = BIT(0),
-@@ -648,14 +638,8 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 				.addr = 0x58,
- 				.mask = BIT(0),
- 			},
--			.irq1_func = {
--				.addr = 0x5e,
--				.mask = BIT(5),
--			},
--			.irq2_func = {
--				.addr = 0x5f,
--				.mask = BIT(5),
--			},
-+			.irq1_func = 0x5e,
-+			.irq2_func = 0x5f,
- 			.hla = {
- 				.addr = 0x12,
- 				.mask = BIT(5),
-@@ -755,6 +739,7 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 						.addr = 0x5b,
- 						.mask = GENMASK(5, 0),
- 					},
-+					.enable_mask = BIT(5),
- 					.status_reg = 0x1b,
- 					.status_mask = BIT(3),
- 					.status_z_mask = BIT(0),
-@@ -895,14 +880,8 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 				.addr = 0x56,
- 				.mask = BIT(6),
- 			},
--			.irq1_func = {
--				.addr = 0x5e,
--				.mask = BIT(5),
--			},
--			.irq2_func = {
--				.addr = 0x5f,
--				.mask = BIT(5),
--			},
-+			.irq1_func = 0x5e,
-+			.irq2_func = 0x5f,
- 			.hla = {
- 				.addr = 0x12,
- 				.mask = BIT(5),
-@@ -990,6 +969,7 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 						.addr = 0x5b,
- 						.mask = GENMASK(5, 0),
- 					},
-+					.enable_mask = BIT(5),
- 					.status_reg = 0x1b,
- 					.status_mask = BIT(3),
- 					.status_z_mask = BIT(0),
-@@ -1106,14 +1086,8 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 				.addr = 0x56,
- 				.mask = BIT(6),
- 			},
--			.irq1_func = {
--				.addr = 0x5e,
--				.mask = BIT(5),
--			},
--			.irq2_func = {
--				.addr = 0x5f,
--				.mask = BIT(5),
--			},
-+			.irq1_func = 0x5e,
-+			.irq2_func = 0x5f,
- 			.hla = {
- 				.addr = 0x12,
- 				.mask = BIT(5),
-@@ -1169,6 +1143,7 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 						.addr = 0x5b,
- 						.mask = GENMASK(5, 0),
- 					},
-+					.enable_mask = BIT(5),
- 					.status_reg = 0x1b,
- 					.status_mask = BIT(3),
- 					.status_z_mask = BIT(0),
-@@ -1279,14 +1254,8 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 				.addr = 0x56,
- 				.mask = BIT(0),
- 			},
--			.irq1_func = {
--				.addr = 0x5e,
--				.mask = BIT(5),
--			},
--			.irq2_func = {
--				.addr = 0x5f,
--				.mask = BIT(5),
--			},
-+			.irq1_func = 0x5e,
-+			.irq2_func = 0x5f,
- 			.hla = {
- 				.addr = 0x03,
- 				.mask = BIT(4),
-@@ -1373,6 +1342,7 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
- 						.addr = 0x5b,
- 						.mask = GENMASK(5, 0),
- 					},
-+					.enable_mask = BIT(5),
- 					.status_reg = 0x45,
- 					.status_mask = BIT(3),
- 					.status_z_mask = BIT(0),
-@@ -1825,10 +1795,11 @@ static int st_lsm6dsx_write_raw(struct iio_dev *iio_dev,
- static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, bool state)
- {
- 	const struct st_lsm6dsx_reg *reg;
-+	u8 enable_mask;
- 	unsigned int data;
- 	int err;
- 
--	if (!hw->settings->irq_config.irq1_func.addr)
-+	if (!hw->irq_routing)
- 		return -ENOTSUPP;
- 
- 	reg = &hw->settings->event_settings.enable_reg;
-@@ -1841,9 +1812,10 @@ static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, bool state)
+@@ -2314,9 +2314,33 @@ static int st_lsm6dsx_chan_init(struct iio_chan_spec *channels, struct st_lsm6ds
+ 	chan->scan_type.endianness = IIO_LE;
+ 	chan->ext_info = st_lsm6dsx_ext_info;
+ 	if (id == ST_LSM6DSX_ID_ACC) {
+-		if (hw->settings->event_settings.sources[ST_LSM6DSX_EVENT_WAKEUP].value.addr) {
+-			chan->event_spec = &st_lsm6dsx_event;
+-			chan->num_event_specs = 1;
++		const struct st_lsm6dsx_event_src *event_src;
++		unsigned int event_sources;
++		int event;
++
++		event_src = hw->settings->event_settings.sources;
++		event_sources = 0;
++		for (event = 0; event < ST_LSM6DSX_EVENT_MAX; event++) {
++			if (event_src[event].status_reg) {
++				event_sources |= BIT(event);
++				chan->num_event_specs++;
++			}
++		}
++		if (event_sources) {
++			struct iio_event_spec *event_spec;
++
++			event_spec = devm_kzalloc(hw->dev,
++						  chan->num_event_specs * sizeof(*event_spec),
++						  GFP_KERNEL);
++			if (!event_spec)
++				return -ENOMEM;
++			chan->event_spec = event_spec;
++			if (event_sources & BIT(ST_LSM6DSX_EVENT_WAKEUP)) {
++				event_spec->type = IIO_EV_TYPE_THRESH;
++				event_spec->dir = IIO_EV_DIR_EITHER;
++				event_spec->mask_separate = BIT(IIO_EV_INFO_VALUE) |
++							    BIT(IIO_EV_INFO_ENABLE);
++			}
+ 		}
  	}
- 
- 	/* Enable wakeup interrupt */
--	data = ST_LSM6DSX_SHIFT_VAL(state, hw->irq_routing->mask);
--	return st_lsm6dsx_update_bits_locked(hw, hw->irq_routing->addr,
--					     hw->irq_routing->mask, data);
-+	enable_mask = hw->settings->event_settings.sources[ST_LSM6DSX_EVENT_WAKEUP].enable_mask;
-+	data = ST_LSM6DSX_SHIFT_VAL(state, enable_mask);
-+	return st_lsm6dsx_update_bits_locked(hw, hw->irq_routing,
-+					     enable_mask, data);
- }
- 
- static int st_lsm6dsx_read_event(struct iio_dev *iio_dev,
-@@ -2097,11 +2069,11 @@ st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
- 
- 	switch (drdy_pin) {
- 	case 1:
--		hw->irq_routing = &hw->settings->irq_config.irq1_func;
-+		hw->irq_routing = hw->settings->irq_config.irq1_func;
- 		*drdy_reg = &hw->settings->irq_config.irq1;
- 		break;
- 	case 2:
--		hw->irq_routing = &hw->settings->irq_config.irq2_func;
-+		hw->irq_routing = hw->settings->irq_config.irq2_func;
- 		*drdy_reg = &hw->settings->irq_config.irq2;
- 		break;
- 	default:
+ 	return 0;
 -- 
 2.39.5
 
