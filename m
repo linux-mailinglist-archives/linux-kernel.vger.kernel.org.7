@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-877584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5092C1E7FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:04:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71F8C1E80E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9A23B2B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E214F188D260
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606C92D4B57;
-	Thu, 30 Oct 2025 06:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D6B2F60DA;
+	Thu, 30 Oct 2025 06:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0Vljlh0"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VNcTJt4c"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E40B2405E7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB88246333;
+	Thu, 30 Oct 2025 06:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761804213; cv=none; b=jkzrK0EqTZJP1dR+ZbT1gu+LSuUloGeY48ye63in9oKw9GeOhs5Ug0oY8DTiJmQnUwXEsMjzfqvbfQ9gzxzIoC2Sb/Bu+hskIEQmJ+K3dBjjuK4bAODEK7VKa5v5B58AbmwivydkeqPc43pISo7pcm+ftt4+ehjiTrnmN27vFz8=
+	t=1761804265; cv=none; b=VgIEAppPZ9OC1//t4DuIhJEQcBkhgwBXD7XjMJZoCAE0lu9VJAdBrcZmQ0IyOItCMShnf5Mnw/1Sj08TR665uJCU9epWJZSfj/WOLrC7vA9GLag+4vlx1jqUObf1Jtx7NF6ye5csfZUcXhWrs5RXGgAc4k8FxVpG/H6d2KJfWJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761804213; c=relaxed/simple;
-	bh=uY8PBstVl8AOna1CjFYpDGnZdWH4OsqJouBCNU5dVx4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t6KiMqdWsJNY0dD2WA1buBg0XgkzfLPSrUod5g9iD2vilQ2lVNhAnrGsOk9/UPoc2WzzvADbUfKP5W2PEg7DOFUV27PoPQymX4aT0QQq8KlGnOQ+beV4t9DFoL0jOcQp7hhlPPlJy7PSS/roE37rC7sf96NoZGP2C2wUBu4fW9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z0Vljlh0; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-292fd52d527so6250385ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:03:32 -0700 (PDT)
+	s=arc-20240116; t=1761804265; c=relaxed/simple;
+	bh=FUv49txHvrAzjdgWs80ani5/jiFVnH1I1J/VQnA/JbY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=twuTuVtB+LQNfDgYWNurZ72nrYcnUry+JdCX+NLvuZoVeWgF+3fNAX84D7n1k3DMYoiZtaHmGhLEjD0Ds1YPaPZ+geU77Y3U+h3Ai6Zq7hDmehAHsBJl0igvl4CsYnCDYBlb94FF876e0Y/Si8OVN2WX5IhNhqWRAJl4/yYsy04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VNcTJt4c; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761804211; x=1762409011; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hWunyfOPqPyrT/9j+N72PTU1meMr+xcuMvbrFqo+DIU=;
-        b=Z0Vljlh0v/Gc6wrPj1WMfOjr6r6vo5yXdHx/sznzWE75qnYeY4KqA7cdtX9R+yQwIQ
-         Vnzu5CbS3ypXv9IobYs8IIzsPSglI1hATfI53v4Eh37YvbJLwscELHa/oBIqOJ0n3qX7
-         qmmWQebHXaFAka+UVaz77AhmGjoKdhn01sXvIYc8+Kw3Mzr85IQaUZGgWqG12Hz0dV1M
-         K9tnkD2kyUfymzY91uokdudtF7FAPYDKjQPzuTJDzKREABKOCKU57J27NA1l4fP4vYn3
-         qtuBuL+X5InOawrgGTtbTLpso9BTnsjzOzL6s62VM3adGy7+cHGG7s4/t9SkpkTxlJwR
-         PiHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761804211; x=1762409011;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hWunyfOPqPyrT/9j+N72PTU1meMr+xcuMvbrFqo+DIU=;
-        b=c2+EE4XYpa25sZ3Y1yyOiFPupXNwV6qzNC2ba4xB4YvsALCTe/h9uBWnNSwwr0SXSY
-         Th2sYJ/29zAjCcuwG6g8pUrW1ShNMEUqYteb+zqeuknV2my1uRDU4WPVmDMeH+e1lSHU
-         mC4B1alMs8uA3N0x8b/MDXRjUiQFByrknxlAA0F8/bTZNoU0PA9FhqPZfyylWs4A21BQ
-         nHtXWBK3cIYxYhNvixIjwUrjipm5VZs9r7Rou41BkrDSEfCmI4mG8H4V/sxJ32/l6fTW
-         UyzTDdbjY+ndS5EIIKeTtkJkJSwebQEiNMYHfrYM3Kcd2QGqYnof/QI0b9cExPJnl1lr
-         eFQw==
-X-Gm-Message-State: AOJu0Yxw7FiIH2STLTshWk1CeYbtfnWAKKSbOiOnvnIMuvUcl8C76PaQ
-	ZODTywW4kQk2hEVtEwpmCKmYgv8gKTKX9qsK+31E1UchFljlhchWqOSxYga2Bye0
-X-Gm-Gg: ASbGncucGUAmubQ5qQoKUf8dIrD05cQ3ypL2DRb1C4SW5jhFYFoIwapitfG7JTJx0+4
-	NmqcZE7KOTMJQ7fG+JYd7XzNwVMSnu0HcKeDm0wAdYlyZ8Zvoa0wGjJEFQi9TdKGiQEJ8I63HTc
-	J8v24pI0TIw2RYwDyfBTKUfzM+4oDme9hlCQeLJjOzIZeFG/f8/w7w4kD00pQvf2xWDSyzEctIJ
-	+soq8r+dGTIJN4qcEtrZj+9hpugAMIlhUDU/IC6ICvcTt2xada8haURiTW9twriQnO7+5zjQayD
-	pLY5kxOyfaKUxfxsiU9sMqf7N9dWRamJzNSMbFPp2IHXSGEbmKJtFeJVhCkFzL/V7s4APhYDbw9
-	XRmKapqAKpg9yQU8OEAMTT5V3kubMfFGUx4GxQ6jKzJHRbhS3dHM11/X/xzDXtAo56ceEU1hFCo
-	cJdDBBs/dHFVOivraS5Q==
-X-Google-Smtp-Source: AGHT+IFaNi8UKPhzHGI61mtzigpk9LsnKA69RlwPmz6ucy7Dt0QzqkSl5dPcEVVwYWUQEnfME/lUQg==
-X-Received: by 2002:a17:903:ad0:b0:269:96db:939 with SMTP id d9443c01a7336-294def33bffmr69639195ad.58.1761804211514;
-        Wed, 29 Oct 2025 23:03:31 -0700 (PDT)
-Received: from E07P150077.ecarx.com.cn ([103.52.189.23])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e42ea7sm171456825ad.101.2025.10.29.23.03.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 23:03:30 -0700 (PDT)
-From: Jianyun Gao <jianyungao89@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jianyun Gao <jianyungao89@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools))
-Subject: [PATCH v3] libbpf: update the comment to remove the reference to the deprecated interface bpf_program__load().
-Date: Thu, 30 Oct 2025 14:03:22 +0800
-Message-Id: <20251030060322.1192839-1-jianyungao89@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	d=codeconstruct.com.au; s=2022a; t=1761804259;
+	bh=FUv49txHvrAzjdgWs80ani5/jiFVnH1I1J/VQnA/JbY=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=VNcTJt4cIN2/f4WEgxABC6Id7AAblH/HICBg+PaRPVG+ji+iJv43te7VZKyYtZMc0
+	 pAo0haH4Uqg1V7ki/IASKd0f6fTmhAjTQPBaRdNvvhiPp4SKWK2/Wtef+/9tCi/bpu
+	 SAuz5YgVaLZUs8McGlWx9QY8lGAcCZbEKXtiJgFs9kLQx8d91MOSSTe20kKbNvG8Gz
+	 ORlORw1Rl+GSloNCrshWXebTlQd4lb6hWFM8dpxutMHVJivq0uBOvyemIq2DTUI/wy
+	 c14EsHCY/aQmvBRPlJ1UqMfYHPCxTPgn3AR9FUKjEKg8TdbuHO+GEtWmqQTIUeidhm
+	 IMbhNU3/dSQYQ==
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 59CA379118;
+	Thu, 30 Oct 2025 14:04:18 +0800 (AWST)
+Message-ID: <0b9abd87b877595c13011a3d8b4e80e05488effc.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v21 1/4] dt-bindings: i2c: Split AST2600 binding into a
+ new YAML
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Ryan Chen
+ <ryan_chen@aspeedtech.com>,  bmc-sw@aspeedtech.com,
+ benh@kernel.crashing.org, joel@jms.id.au,  andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
+ andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
+ linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
+Date: Thu, 30 Oct 2025 14:04:18 +0800
+In-Reply-To: <59d4d107-4f35-4906-8524-f45b9b85f0ff@kernel.org>
+References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
+	 <20251027061240.3427875-2-ryan_chen@aspeedtech.com>
+	 <59d4d107-4f35-4906-8524-f45b9b85f0ff@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Commit be2f2d1680df ("libbpf: Deprecate bpf_program__load() API") marked
-bpf_program__load() as deprecated starting with libbpf v0.6. And later
-in commit 146bf811f5ac ("libbpf: remove most other deprecated high-level
-APIs") actually removed the bpf_program__load() implementation and
-related old high-level APIs.
+Hi Kyzysztof,
 
-This patch update the comment in bpf_program__set_attach_target() to
-remove the reference to the deprecated interface bpf_program__load().
+> > +++ b/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
+> > @@ -0,0 +1,66 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/i2c/ast2600-i2c.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: ASPEED I2C on the AST26XX SoCs
+> > +
+> > +maintainers:
+> > +=C2=A0 - Ryan Chen <ryan_chen@aspeedtech.com>
+> > +
+> > +allOf:
+> > +=C2=A0 - $ref: /schemas/i2c/i2c-controller.yaml#
+> > +
+> > +properties:
+> > +=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0 enum:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - aspeed,ast2600-i2c-bus
+> > +
+> > +=C2=A0 reg:
+> > +=C2=A0=C2=A0=C2=A0 minItems: 1
+>=20
+> <form letter>
+> This is a friendly reminder during the review process.
+>=20
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion
+> and
+> either implement all requested changes or keep discussing them.
+>=20
+> Thank you.
+> </form letter>
+>=20
+> > +=C2=A0=C2=A0=C2=A0 items:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: address offset and range=
+ of bus
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: address offset and range=
+ of bus buffer
+> > +
+> > +=C2=A0 interrupts:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +
+> > +=C2=A0 clocks:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+>=20
+> Nothing improved
 
-Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
----
-v2->v3:
-Try to fix the CI FAILURE issue by rebasing the local code to the latest
-version. The v2 version is here:
+That was mostly the point - this first patch just splits out the 2600
+definitions to the new file, with zero change.
 
-https://lore.kernel.org/lkml/20251030041457.1172744-1-jianyungao89@gmail.com/
+That means the *actual* changes to the binding are visible via the diff
+in 2/4, and not hidden by the copy.
 
- tools/lib/bpf/libbpf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This was mentioned on v20, and you replied saying it was irrelevant to
+the separate discussion around the rationale for the change, but didn't
+object to the split-patches approach.
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index fbe74686c97d..27a07782bd72 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -13858,8 +13858,8 @@ int bpf_program__set_attach_target(struct bpf_program *prog,
- 		return libbpf_err(-EINVAL);
- 
- 	if (attach_prog_fd && !attach_func_name) {
--		/* remember attach_prog_fd and let bpf_program__load() find
--		 * BTF ID during the program load
-+		/* Store attach_prog_fd. The BTF ID will be resolved later during
-+		 * the normal object/program load phase.
- 		 */
- 		prog->attach_prog_fd = attach_prog_fd;
- 		return 0;
--- 
-2.34.1
+If your preference is to *not* do this via a verbatim copy as an initial
+step (and essentially squash with 2/4), that's also fine, but I'm sure
+that knowing your preference would help Ryan out here.
 
+Cheers,
+
+
+Jeremy
 
