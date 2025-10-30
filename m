@@ -1,53 +1,90 @@
-Return-Path: <linux-kernel+bounces-877422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0346C1E140
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:59:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA26FC1E143
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5D6C034D1A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6055940530D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64902E6CAD;
-	Thu, 30 Oct 2025 01:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EFD2E7BB2;
+	Thu, 30 Oct 2025 02:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s+0oU0Ni"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="K1r43AMb"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13532E4274
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA6C2E4274
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761789591; cv=none; b=Lbn9QaCjRMxmQAi7vIFxCCNhVCQAQs+fFVeK2KMlT6n1JDa261OwlbT9Ap9JoshBDGjyc5xx96uxXgvM94K5hR2d0pSkXREbXgvgZz0pHvDC8rVDbMMJT68DdlQGalkGEEm6Eod+zT93E/jd5TQjUtIhCH190QQtbRzI7GXt+n4=
+	t=1761789601; cv=none; b=bke1ipnRTBeFhACJxit6iARX5OO1imeaYJh8KG86irGLvxj2RP9U0hd0gcKJH/NDvlW+FF4LsnHTn0mI08NVWTAYS5crWAZhzNY4Y2ELATLadtqnHgJPHI8ecd6UeRyx5IFaevLoqQAQAaeP0m0QDoODJRhA6ShAR58HXgYPnZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761789591; c=relaxed/simple;
-	bh=qHgkJEoo9vKbt8bJwNliKNRAJvcjE4nFUuPvCoiouPo=;
+	s=arc-20240116; t=1761789601; c=relaxed/simple;
+	bh=WCn19iM1Z0MfIjW+rItRIGL8bdfe6BgzVs9U3AbCLZg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yzhg8Uklr2baU3VHCS1vV870C4MjjdhJ9YVHR3ePHERUYIq7kCBv5lgl2o5TKgwdunirMkm1941NYTsdljkJrp6Vqcd8y7WmXgMaiv52A5HUw8/rVXcCWJMX0uxRJt+WrkZCAP5opSJYYcI6/bp+mAfgJfLFy7W4RyMW2V/3lc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s+0oU0Ni; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761789579; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=Ml0yY3472o5Ybqsrj9t3E0TSOTI/vlBi/P/JSeFDAKM=;
-	b=s+0oU0Nixi/HcIk9vSsY5SkgR/uuklpkF5xsKtur5gs376QMpIKmMrNM4msYOFggstJ/1GyeEjh17sOYfJOr4RM42vNwdV67l1BrfcAl6gyYeUOiBhorf29aC3FpcgSWoVx4h9NN/gQoU/IhOFtDiqxeEWq7mNQV4ykd2w7xOpc=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WrHtajt_1761789578 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 30 Oct 2025 09:59:38 +0800
-Date: Thu, 30 Oct 2025 09:59:35 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH v2 2/6] panic: sys_info: Align constant definition names
- with parameters
-Message-ID: <aQLGhzh9UOYNM-V7@U-2FWC9VHC-2323.local>
-References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
- <20251029111202.3217870-4-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4XRSGMKw1H88HLmQRrJcJoyP2atc3hDP7CdI7LxKyVlPDf3g+OkPuZd74bwXOkKgT99RTN3auzYpEwiKtScTED2i4I0Fs9yAfykZZynrIhFo5Jp8TlZSyqKNZopwyFTul6VvMSQwugTTtl7A4RFj6dBuKoJIzw4+H7vKF4bggk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=K1r43AMb; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ecf30c734eso4417881cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1761789598; x=1762394398; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Z2NHI+JKle61/F1K6gTmohpSB527P/h9U8G3EyLfGXc=;
+        b=K1r43AMby/1As3GK2ps2Xm/J69G2GdXWhudnC9HEO4vbDDsuChofFnnnK42Iw8TfoQ
+         cYdxHf986wyLX5UuPB5u9Zo2THUkoWbNF2F3LX6Xy9zu4L6Rx888L8h5SKRSPwXMWGtQ
+         LNa7t3BVMWCQSydPGsTaQ8kL2ryXyWuBMlHkbWgVKoPawY6D/Rb7F8qfCdVpEurKxM9N
+         hm7ODu8erjm1ePtiH6zDPfQAgkrUxfMpZ/+6UySX6/jJZ+zZUjMfxB2gDfNiDbKnaUH3
+         aVwryOnUnhI8krFad+XBiubyFA+9DgPEb7wDNJ1gUmRBtRR5IdHoE2RkusrwiW7PjKBa
+         fnSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761789598; x=1762394398;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z2NHI+JKle61/F1K6gTmohpSB527P/h9U8G3EyLfGXc=;
+        b=C8EsYQd9kYaZZI6MlpgbUfsk66k0bllCmgs9HRgW476agP7hmD4R1Ffm1CGE1djS0F
+         vBEoKftVV1lYoU2YQt8pI57R8qwZ0y92GupDlfxpdS5U0dQ2kcgiQz9VZY7HB5WCK++D
+         BeJDcnuA9e4r2B3oRQxb9kL3Kgh9vyclKbgIIc/cuxk2+r9B0+OCbSTlfSY5UJ/yr0dg
+         v7Jx2GrZHUCnEDkdxkBnggumfjDz/v0cZzq3gTaPWaxEhYMtXuJZbhN4UTzZpmiqIfzO
+         OAcvzVKDEeSZ56pDy6bOSSiEjtaX7fRP388YbtGLZ7yTCM7n16Rl5xnA4vVkZTZioh6H
+         n3JA==
+X-Gm-Message-State: AOJu0YxBeEndjAbL831d8UAizstpRNLadMlItve7MvVYJT+mdNrd+dIR
+	4W0VzhXwffPuja1AKpWxExnPA+Ige+PBLviLQluO4Pbxy9YB270x90bnUJiDnJ83Po1TxFqVnII
+	NdfY=
+X-Gm-Gg: ASbGncsFrdqJ+CRpad40sOdI9VVetF6klXwz8Q1hf1svFJAr4BnnR4bXaVFJ1uuDpNK
+	ra4gestCE+WiiMH2rkNRhA5WDsYtR+FgA4q7IAlTv8O3wKT/by5QTeD2Lya0Nn73/iZ2yHDr1D9
+	UWreClyOciLs93AN2as+EJrw6+sYG5AwEKV+N5xMz5qaMJmqmKdDmIp/jddQfCEYd11ktOcMYG8
+	Ch322gGu7iNSlpcI2MYvdPFl8rZq6VaVpg4a8P0oVsOx9/O/xgsDTmJKTiDqouW5GV4wRfosPsL
+	KZc5855nPu20rYkf1xKim3bjsiffEqRI+Z/ZqDtjFVhS0WM+T+7S/nMQYkOTLObI10Nrb9W6dEX
+	H04zFGAe95PpNJ5QpT1MhH8G+d/9/gl2aMx6McCvS/ztyf0wTOkl4cklTzMNiLwqsoJtiYCz7BZ
+	9oIw==
+X-Google-Smtp-Source: AGHT+IH+TV6RMeAIWWxN5dWDK8nDnwa8KRVgo55fY3RxQYJF0+8j4+ggyy4srfUSmRt7u00GArjcJg==
+X-Received: by 2002:a05:622a:22aa:b0:4ec:fafd:7605 with SMTP id d75a77b69052e-4ed2236368amr17970891cf.60.1761789598508;
+        Wed, 29 Oct 2025 18:59:58 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:d03:1700::db9a])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3858f1esm105935391cf.29.2025.10.29.18.59.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 18:59:57 -0700 (PDT)
+Date: Wed, 29 Oct 2025 21:59:55 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Desnes Nunes <desnesn@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Subject: Re: [PATCH 2/2] usb: storage: rearrange triple nested CSW data phase
+ check
+Message-ID: <a8f5302d-ed93-4b2f-a706-e7e2646986a3@rowland.harvard.edu>
+References: <20251029191414.410442-1-desnesn@redhat.com>
+ <20251029191414.410442-3-desnesn@redhat.com>
+ <27c07b90-f4ef-462b-8b6d-46afd4301912@rowland.harvard.edu>
+ <CACaw+eyo4Yc0=Ak=RWsozDVMzGHaZhW6SBHJUWFqRb6gPzWS8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,75 +93,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251029111202.3217870-4-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACaw+eyo4Yc0=Ak=RWsozDVMzGHaZhW6SBHJUWFqRb6gPzWS8Q@mail.gmail.com>
 
-On Wed, Oct 29, 2025 at 12:07:37PM +0100, Andy Shevchenko wrote:
-> Align constant definition names with parameters to make it easier
-> to map. It's also better to maintain and extend the names while
-> keeping their uniqueness.
+On Wed, Oct 29, 2025 at 09:39:36PM -0300, Desnes Nunes wrote:
+> Hello Alan,
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Reviewed-by: Feng Tang <feng.tang@linux.alibaba.com>
-
-Thanks,
-Feng
-
->
-> ---
->  include/linux/sys_info.h | 2 +-
->  kernel/panic.c           | 2 +-
->  lib/sys_info.c           | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
+> On Wed, Oct 29, 2025 at 6:54 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> >
+> > On Wed, Oct 29, 2025 at 04:14:14PM -0300, Desnes Nunes wrote:
+> > > This rearranges the triple nested CSW data phase if clause, in order to
+> > > make usb_stor_Bulk_transport() code more readlable. No functional change.
+> > >
+> > > Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+> > > ---
+> > >  drivers/usb/storage/transport.c | 21 ++++++++++-----------
+> > >  1 file changed, 10 insertions(+), 11 deletions(-)
+> > >
+> > > diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
+> > > index 96b81cf6adc7..3f2e1df5ad1e 100644
+> > > --- a/drivers/usb/storage/transport.c
+> > > +++ b/drivers/usb/storage/transport.c
+> > > @@ -1188,18 +1188,17 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *srb, struct us_data *us)
+> > >                * check whether it really is a CSW.
+> > >                */
+> > >               if (result == USB_STOR_XFER_SHORT &&
+> > > -                             srb->sc_data_direction == DMA_FROM_DEVICE &&
+> > > -                             transfer_length - scsi_get_resid(srb) ==
+> > > -                                     US_BULK_CS_WRAP_LEN) {
+> > > +                 srb->sc_data_direction == DMA_FROM_DEVICE &&
+> > > +                 transfer_length - scsi_get_resid(srb) == US_BULK_CS_WRAP_LEN) {
+> >
+> > This change has nothing to do with the subject of the patch.  Please
+> > leave the code the way it was.
+> >
+> > >                       struct scatterlist *sg = NULL;
+> > > -                     unsigned int offset = 0;
+> > > -
+> > > -                     if (usb_stor_access_xfer_buf((unsigned char *) bcs,
+> > > -                                     US_BULK_CS_WRAP_LEN, srb, &sg,
+> > > -                                     &offset, FROM_XFER_BUF) ==
+> > > -                                             US_BULK_CS_WRAP_LEN &&
+> > > -                                     bcs->Signature ==
+> > > -                                             cpu_to_le32(US_BULK_CS_SIGN)) {
+> > > +                     unsigned int offset = 0, buflen = 0;
+> >
+> > It seems silly to initialize buflen to 0 when the very next statement is
+> > going to overwrite that value.
+> >
+> > Also, "buflen" is not a good name for this variable, because the
+> > variable does not contain the length of a buffer.  Rather, it will
+> > contain the amount of data that got transferred by the
+> > usb_stor_access_xfer_buf() routine.  The following "if" statement then
+> > tests whether that amount is equal to the buffer length.
+> >
+> > Alan Stern
 > 
-> diff --git a/include/linux/sys_info.h b/include/linux/sys_info.h
-> index 89d77dc4f2ed..a5bc3ea3d44b 100644
-> --- a/include/linux/sys_info.h
-> +++ b/include/linux/sys_info.h
-> @@ -14,7 +14,7 @@
->  #define SYS_INFO_LOCKS			0x00000008
->  #define SYS_INFO_FTRACE			0x00000010
->  #define SYS_INFO_PANIC_CONSOLE_REPLAY	0x00000020
-> -#define SYS_INFO_ALL_CPU_BT		0x00000040
-> +#define SYS_INFO_ALL_BT			0x00000040
->  #define SYS_INFO_BLOCKED_TASKS		0x00000080
->  
->  void sys_info(unsigned long si_mask);
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 341c66948dcb..0d52210a9e2b 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -401,7 +401,7 @@ static void panic_trigger_all_cpu_backtrace(void)
->   */
->  static void panic_other_cpus_shutdown(bool crash_kexec)
->  {
-> -	if (panic_print & SYS_INFO_ALL_CPU_BT)
-> +	if (panic_print & SYS_INFO_ALL_BT)
->  		panic_trigger_all_cpu_backtrace();
->  
->  	/*
-> diff --git a/lib/sys_info.c b/lib/sys_info.c
-> index d542a024406a..6b0188b30227 100644
-> --- a/lib/sys_info.c
-> +++ b/lib/sys_info.c
-> @@ -23,7 +23,7 @@ static const struct sys_info_name  si_names[] = {
->  	{ SYS_INFO_TIMERS,		"timers" },
->  	{ SYS_INFO_LOCKS,		"locks" },
->  	{ SYS_INFO_FTRACE,		"ftrace" },
-> -	{ SYS_INFO_ALL_CPU_BT,		"all_bt" },
-> +	{ SYS_INFO_ALL_BT,		"all_bt" },
->  	{ SYS_INFO_BLOCKED_TASKS,	"blocked_tasks" },
->  };
->  
-> @@ -118,7 +118,7 @@ void sys_info(unsigned long si_mask)
->  	if (si_mask & SYS_INFO_FTRACE)
->  		ftrace_dump(DUMP_ALL);
->  
-> -	if (si_mask & SYS_INFO_ALL_CPU_BT)
-> +	if (si_mask & SYS_INFO_ALL_BT)
->  		trigger_all_cpu_backtrace();
->  
->  	if (si_mask & SYS_INFO_BLOCKED_TASKS)
-> -- 
-> 2.50.1
+> I tried to borrow some code from usb storage protocol, but after these
+> observations I do agree it is not a good name here.
+> Nonetheless, I will drop this patch from v2 as requested.
+
+I didn't mean that the entire patch should be dropped, just the changes 
+to the indentation of the first few lines.
+
+As for the variable name, num_written or something like that would be 
+preferable to buflen.  You can make up something better, or you can drop 
+the entire patch -- your choice.
+
+Alan Stern
 
