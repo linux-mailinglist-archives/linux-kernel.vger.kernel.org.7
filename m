@@ -1,106 +1,193 @@
-Return-Path: <linux-kernel+bounces-879266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151B6C22AF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:17:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8491C22AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B55B034F328
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:17:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 647DF4E6060
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323702C11CB;
-	Thu, 30 Oct 2025 23:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8939931328D;
+	Thu, 30 Oct 2025 23:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="IAaauqAS"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="MjkRN0eU"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0B918626
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494E526A0F8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761866215; cv=none; b=fCIkzHcqmzeGEsMVh+CrIjrwA/16y0vALauCVFy86h14V/PGTD8VeotdtksLzVE84vtWwbN9Xuz3lMMGVhJblONixV79ssH+OGVCc3FV0zdlLh2oSasQXpqc4pvqI0MAOMwOHdwEbx5EVPPCmg2/klMmWAcNRPSk6t9kJTI+ClY=
+	t=1761866331; cv=none; b=eqhgkuO8CNFS3ABJc7l0qwcynxqzvNNTW2uwPzf8KkGQ/Mx8jIAcVmCffi6DUwOBSmi9hIyEtoK4/TwVnkPCICASYV0II6sO20erAaXv2FHswJMewNIsKK/dPKCMVN23blBNhtQqVwNO3yBLRE0ZwC3tLVy1ai/DGZOD4ZjSeqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761866215; c=relaxed/simple;
-	bh=y/pMhtAY6aDI+qio1HW/3c1HsYOCGlxTJmkqJ+SXXJg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Tlse0SkTYJBYgJ7ANgvtRFfrrwxYDMMOvzFip4P7NzWL0VeQG09TkqculL7D3+ZMNaZtrvxSZmq2N8AO6iL6rn4XpaFB7/JTvx/+NcrUg6w//o/imPAAJbzCzPNbBjk2XBAUJq9wSKi7vnlI/PzqGN/q3ExOHrOfHYP3jgsxG5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=IAaauqAS; arc=none smtp.client-ip=195.121.94.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: 85701c09-b5e6-11f0-ad1a-005056999439
-Received: from mta.kpnmail.nl (unknown [10.31.161.188])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id 85701c09-b5e6-11f0-ad1a-005056999439;
-	Fri, 31 Oct 2025 00:16:53 +0100 (CET)
-Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
-	by mta.kpnmail.nl (Halon) with ESMTP
-	id 82d3e8f0-b5e6-11f0-80d9-00505699693e;
-	Fri, 31 Oct 2025 00:16:49 +0100 (CET)
+	s=arc-20240116; t=1761866331; c=relaxed/simple;
+	bh=uyIXTX283OC1kScJiq1BmNvAstOmpxdr5HCMuNHi0fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uh+26xgvEcb2R0WA+YfgUzu6lkTlyynDQuVyqYqhyj19UCj2MT1d3oLcD3qyaqY0ltBAyN3eqHceYT29iEQ3FyBZjcL8SL+f97uIa/rT0wnz74PyzEvTjNGtKT7J+vthvmUGJKeEHK6p7nUHIOeU/CM9J3NtHzNdeVs7luTPGuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=MjkRN0eU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2951a817541so5628085ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:18:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=content-type:mime-version:subject:message-id:to:from:date;
-	bh=Gy4xuVB7w4pGiyyG/lYc5237rSMjBJld3aDWEdwUJQY=;
-	b=IAaauqASu0lHCi94kRX492ATERYPMYcjbnaWg0aeTVZapm9gupXO1ohzfiUPSaAa4NOChenZ95ylu
-	 +9OLZaBsMoGAl3kalYX+JOyZqy+BFpp865tpQjmJTO13kS/slYu/uila6H70wN3n4mNtPZVRRWxErl
-	 +V7dr3iK8+1qc6aTkGBqDCZVLbyMqdX2XxAJ+cz+Vrq8WiACt4FvtR9PZKIMtIQBBy2F+clsqH/XP6
-	 esxul9KuOUPZVRj4JYME2CTUsVo7dv4DERRZEdzq+zX3qrRbV0CXfs2lodCutGB5L/CMJ0K2DJznGr
-	 LQ1YH9NWtXNDA37VuHBDIsUJe8kH5Jg==
-X-KPN-MID: 33|r74kNLLGbwWQ1nJhuSb0Zll1AsjR7RPiUa3q+IklmQ4HLbfB7X9FOZdQuFIqLbn
- WniAch+RFgG/ReZyINkWzsw==
-X-CMASSUN: 33|+2p858qcRq6PC3aNuxP7FW9krUcvDJ8/QakZzivxnbPMyH8hDVmDGUxSIOGjsiB
- h0BieK78A3/RczEQk7SQoug==
-X-KPN-VerifiedSender: Yes
-Received: from cpxoxapps-mh08 (cpxoxapps-mh08.personalcloud.so.kpn.org [10.128.135.214])
-	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
-	id 82cc2ca6-b5e6-11f0-b8d7-005056995d6c;
-	Fri, 31 Oct 2025 00:16:49 +0100 (CET)
-Date: Fri, 31 Oct 2025 00:16:48 +0100 (CET)
-From: Jori Koolstra <jkoolstra@xs4all.nl>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-	Khalid Aziz <khalid@kernel.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Taotao Chen <chentaotao@didiglobal.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	linux-kernel@vger.kernel.org,
-	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Message-ID: <37767163.3215767.1761866208997@kpc.webmail.kpnmail.nl>
-In-Reply-To: <aoppzgcsml33slovgn2cz4ntmdxczk3yu5zlajh7d5bnsdav7o@lhszynfelx4b>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
- <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
- <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
- <aoppzgcsml33slovgn2cz4ntmdxczk3yu5zlajh7d5bnsdav7o@lhszynfelx4b>
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1761866329; x=1762471129; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qCbSBxSr0lLm7sBF21gLzNw2k4fWMvq9RhDFJxnnKCU=;
+        b=MjkRN0eUQYCY+pow13wzfHTyaRtLTZMsgpaIePm6uu+qnhlXj3rR535w+YrIxQ28h7
+         TLI5cmdgr/ZDpm14ymS20tSuC2us1e0xaVwtFBCYnm2wanpXzlgo/OFSvPN4teLcf/YE
+         /of6Mz40YLKckhLZ6V1NxZvGPGN5ttbCAeYsIGHIArq10p+wOOcOJGa9oTeeT4daqwyt
+         G2Qhg7IzpEOUwQzT0V+09gZkgduXmCV+IJtrC/hkwYITTCbvwysP79wJFSbNg8Y2Rnh3
+         fSFG8tN9e/wjgtIKjQDlK6Y4HzBOyQ8yMLQmL3Cn660PUQx7xKStnYKvtvqDpNB7oC37
+         /waQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761866329; x=1762471129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qCbSBxSr0lLm7sBF21gLzNw2k4fWMvq9RhDFJxnnKCU=;
+        b=xSRXFYd+n7BSJA61J3U32ooRmP0lV07CFIBusF5oxEPdX42if4US8MOzDW+FIzCTs1
+         9GpJ9Twx4hgYqqq93RmGm0hEBPN5vJck36E7bJfzId7exz2i/QTDuplLESki0RjG3qDm
+         GYR485GKKxJllMM2SUeITg68o1phsZ5yOIwsvsuk+ZqqSZ0hyHPlVzO6cGzknpjNkg6S
+         G2axNEwJXx5ipTepfAUrnGArZn8ahZu1AhnD3wK/8NKpT3K+Htwqzmrv2x+XVnnPf21i
+         iXVKpUk4Cll/o3DRK7um2rKN7Xq4/FPWFXcDICFYmSW01OxfPYbDkobvgwTAsoeT0m9a
+         pt7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcr8Ad4Yn9WkkooZk59SAieDcaVip74EAAgIV4OSxukmmZRC6+9A57mMfSOt7Y/aMN0OW1rwvvDaYZo3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIfhYQxtcyAOvJjaNkC9wDOEEwyiEwikB9ZcEA5+XMy4a+vYFC
+	lWRmf8PODVRx5v89SkTXJ7ICUI41WPLZNuVJxELBRpzE7FFyyWppreVvCjpCnKG0ac4=
+X-Gm-Gg: ASbGncsOWXqrjMFo3Ti2b0Em1Q/vh0atn3aeUCU5TzyBGIRfpdg0vLjGlU1Mgi4sQAY
+	wDHuvEmOUujl1nucGpXEiPGtcV6B1vJxIpqAPEzdp2gUaooConXJx0zY6aZw+agWTeV8Zp/u0Hj
+	LfFtTVj49L11Pu3fAbkfrCR9z5bOzAchwqtJaDTnj9PXQJvlAHiQ/yIIbwLHO1Kkcz9832PEK3t
+	IrQN9DIV5XvQ3TgLuuBIpcoM7MkJgcMbAriWFVXeGSiNhRLZKtLGNXMo0T/nnhvD8MDlp5Xy6Jh
+	i4Hp6QhJ58h9eKhjeRr/62hzUsKVDDPczvNOPNxCx7lXGYKEgx7sdW5760+N0b5M0cwY50fiuwD
+	E4VNmiQic6p2GmkiJ06tvYOSxjnubya5pwOeLwgexpN2udpBZWFOmrkiL+94qooKFHIWXOPNksC
+	kfp86jv5FWhZ+TrqtYYRT4B4EUqibZd+MNMzvnaxHtIH5mC49VM6M=
+X-Google-Smtp-Source: AGHT+IGCGfP0IWbXjpKpFiO2EIcl6d55MTKqgA8ReFs8GKHUG4igFi9rEAY/xEAVF+O7aUhdVIl2Ew==
+X-Received: by 2002:a17:902:fc45:b0:295:73f:90db with SMTP id d9443c01a7336-2951a524b7bmr20673395ad.41.1761866329403;
+        Thu, 30 Oct 2025 16:18:49 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699cd48sm982535ad.83.2025.10.30.16.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 16:18:48 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1vEbuo-00000004Ia1-0Gmg;
+	Fri, 31 Oct 2025 10:18:46 +1100
+Date: Fri, 31 Oct 2025 10:18:46 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <aQPyVtkvTg4W1nyz@dread.disaster.area>
+References: <20251029071537.1127397-1-hch@lst.de>
+ <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+ <20251030143324.GA31550@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030143324.GA31550@lst.de>
 
-
->  
-> Hi Jori!
->
-
-Hi Jan, thank you for your encouraging reply, I appreciate it.
-
+On Thu, Oct 30, 2025 at 03:33:24PM +0100, Christoph Hellwig wrote:
+> On Thu, Oct 30, 2025 at 10:20:02PM +1100, Dave Chinner wrote:
+> > > use cases, so I'm not exactly happy about.
+> > 
+> > How many applications actually have this problem? I've not heard of
+> > anyone encoutnering such RAID corruption problems on production
+> > XFS filesystems -ever-, so it cannot be a common thing.
 > 
-> Well, one thing is handling corruption well - that part of your patch was
-> fine and I think it is still useful - another thing are the mount options
-> that allow to configure what happens when we find a corruption - and that
-> is the part I don't think really makes a lot of sense for minix.
->
+> The most common application to hit this is probably the most common
+> use of O_DIRECT: qemu.  Look up for btrfs errors with PI, caused by
+> the interaction of checksumming.  Btrfs finally fixed this a short
+> while ago, and there are reports for other applications a swell.
 
-I already had a patch for this specific syzbot bug, and tested with the
-reproducer, but without the new mount options. What I could do is submit this
-and see if the community will accept it. Is that reasonable?
+I'm not asking about btrfs - I'm asking about actual, real world
+problems reported in production XFS environments.
+
+> For RAID you probably won't see too many reports, as with RAID the
+> problem will only show up as silent corruption long after a rebuild
+> rebuild happened that made use of the racy data.
+
+Yet we are not hearing about this, either. Nobody is reporting that
+their data is being found to be corrupt days/weeks/months/years down
+the track.
+
+This is important, because software RAID5 is pretty much the -only-
+common usage of BLK_FEAT_STABLE_WRITES that users are exposed to.
+This patch set is effectively disallowing direct IO for anyone
+using software RAID5.
+
+That is simply not an acceptible outcome here.
+
+> With checksums
+> it is much easier to reproduce and trivially shown by various xfstests.
+
+Such as? 
+
+> With increasing storage capacities checksums are becoming more and
+> more important, and I'm trying to get Linux in general and XFS
+> specifically to use them well.
+
+So when XFS implements checksums and that implementation is
+incompatible with Direct IO, then we can talk about disabling Direct
+IO on XFS when that feature is enabled. But right now, that feature
+does not exist, and ....
+
+> Right now I don't think anyone is
+> using PI with XFS or any Linux file system given the amount of work
+> I had to put in to make it work well, and how often I see regressions
+> with it.
+
+.... as you say, "nobody is using PI with XFS".
+
+So patchset is a "fix" for a problem that no-one is actually having
+right now.
+
+> > Forcing a performance regression on users, then telling them "you
+> > need to work around the performance regression" is a pretty horrible
+> > thing to do in the first place.
+> 
+> I disagree.  Not corruption user data for applications that use the
+> interface correctly per all documentation is a prime priority.
+
+Modifying an IO buffer whilst a DIO is in flight on that buffer has
+-always- been an application bug.  It is a vector for torn writes
+that don't get detected until the next read. It is a vector for
+in-memory data corruption of read buffers.
+
+Indeed, it does not matter if the underlying storage asserts
+BLK_FEAT_STABLE_WRITES or not, modifying DIO buffers that are under
+IO will (eventually) result in data corruption.  Hence, by your
+logic, we should disable Direct IO for everyone.
+
+That's just .... insane.
+
+Remember: O_DIRECT means the application takes full responsibility
+for ensuring IO concurrency semantics are correctly implemented.
+Modifying IO buffers whilst the IO buffer is being read from or
+written to by the hardware has always been an IO concurrency bug in
+the application.
+
+The behaviour being talked about here is, and always has been, an
+application IO concurrency bug, regardless of PI, stable writes,
+etc. Such an application bug existing is *not a valid reason for the
+kernel or filesystem to disable Direct IO*.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
