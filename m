@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-878189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A83C1FFCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:23:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73932C1FFDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 014774E6946
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F0619C5969
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59881F4631;
-	Thu, 30 Oct 2025 12:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2CE2F83CC;
+	Thu, 30 Oct 2025 12:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUd4Tq2Z"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="na+pFh2S"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631A2BEC20
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C181F4631
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761827002; cv=none; b=LZxQFnhaElsgwNQ8AaEz8LAuWt0/alv0AtjRRDUpolCiVqUCFsCIESCO42bU6NqttiiW19wTYLYlLu5/EcVX1AfRvcxrRN4u0oxudyTJIUoiY0SfiecC81MQY/OXQjJ41r5L/4c22Z8ZDXhyU0GxiylSHRc9i+5gwgM6dJo+dK0=
+	t=1761827045; cv=none; b=JcquolQFvsNKyILUngTU2aCQ2W/IXjgFb3qkAhdp3Jx0JwejNLdx6LG1IvZuJPQlifnKfjm3rSVIfkgjuU2dP4jo3LYx1Zw9evG3GXgl4JBfYnMaOaCsGU/kHbD1KEXmY6ztggc9wfMvlXYvSDzMgDMM3Hwep1bbfqOOjtkkX2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761827002; c=relaxed/simple;
-	bh=bqOlW2oWI7RdtQm/N15Vuwk/lchf4mj5RPORlezgpKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJ5rr+RvJRwLrW+cZ/YYOTI9XyaqBUTOqbNf21m2xMt80agbiLxXfqtWokFURNdyXeMr8oYsUTOgkuw7sWNvRh57vkgoP9GM0QEiXEkIXSHrDjojbJRfKiAx2hUj6bLgDz+zJ1OgSYrmrA5jXwzRsdU5Rs7QDxtwAucS4I3Azz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUd4Tq2Z; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-785d3a5f641so11232477b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:23:20 -0700 (PDT)
+	s=arc-20240116; t=1761827045; c=relaxed/simple;
+	bh=brCK5tMNj3yFo9Tm+NXeTbfAWOsVC0hNn45lh4GGU2w=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=fn2NtyZelqlVRSXfMm+Qzgr2RQ10Mrg4BwuOqfhrUt5Gn6YJ2TzWFrK+LBGjMJlLHPW7tR/npUO02ET8Isv7BsLR4TUFNjRx8MNNl/Nm+O8Djod5nuYxI6t2zjK1sdshfxCOGDlqhksxVPzRUw4jX52IcXmJ1i016mZgmVt3SCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=na+pFh2S; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 55da0dd0-b58b-11f0-9e68-005056994fde
+Received: from mta.kpnmail.nl (unknown [10.31.161.191])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 55da0dd0-b58b-11f0-9e68-005056994fde;
+	Thu, 30 Oct 2025 13:24:09 +0100 (CET)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 2889fedf-b58b-11f0-83be-00505699891e;
+	Thu, 30 Oct 2025 13:22:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761826999; x=1762431799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KWFtfYb05SOq83bboDg32uBQSLrzGUIx7jAl5366nJ4=;
-        b=iUd4Tq2ZQPLsCOdMp69QAEfdDY+jL6pzAmOiBIHXBAXtz5z/vHVGGb+GMciV3h8lT9
-         1xvJo5S1qnqHl21/0CaxGaxxvhJCnmzZnBuRUnmhoQuwJxw4tXiyTT6HW2ip2nWZd8kT
-         6gk1N7xtHcJJvwDXabrtnehDpm74IO6GvDQ+CNnM/O+3sfiTIQL4A0EjoTpsB5BuDt3Q
-         z7gpQ3N1ueYa8QefJghd790hHXLJLaxt0rwxuJaynXF0bKSQvEZRoWVj/nszy0ACwM44
-         tJLsuhyC5D8n3eLkw40dmvEyyrKtGhuYp6b5JXNFhz/rTdbFCeHFM8YqdeRvwo2ES5Kr
-         swpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761826999; x=1762431799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KWFtfYb05SOq83bboDg32uBQSLrzGUIx7jAl5366nJ4=;
-        b=TD+AkDe16N4Vej2UzQp+z0tQ6PHcY6TT4FdbNanIXE+iUVf9h+kk8xVPY9VFupeGbN
-         LdBMhOxe9+xT8o3RHztFsmM18m8ktyhO6R0mhKLK3rsdJOiT+EuLJQfQGmzxSdz0ynzA
-         6pDw5Oa5u1d688mNDs42BUI9JBQFwWuoaSZF53JK2iA4Pl98JO1wNBUjycz4/7D6rL94
-         9vpvnz6LemgoITdhuysO8RlBoXiu+NK2jxQOdWBMCMPKwiUZkteKxOL939GsUhiAAwo2
-         Dn0Zm6sGlTgYVeddaKpaJ0fZTxoiKHdFOhmP7mwMpHmdGdSoEwCH7LambcMPyNPnZvVN
-         hJ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxMREY7jnvdCm8meA2zR/4uYZh/iwuKWBJ9jbX286/cLuBFc+ZeLmqqpnFZB/OjByNfVJCfB1LZ4Ahk2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9HQBEjACYAqgN5MGvrTG1JIBz4lRzcJbcmhb9eXuCaiNe0P68
-	qcwoW6pTvqXt9kbmQDEQoVtHyF1kvfIaFfVSbdLX9A/9DdgmZPQI2pfv4pSZ3Cm2XphS5v5DrAD
-	c7FQfdBybzABiSjKqjtg5OEgFwpeW43tGSOWMVW/qiQ==
-X-Gm-Gg: ASbGncsnlqtWlrCCAt41SsmFxSLuW4wWVyBisRDtvf+xlrJJ7IHe5i39nkkG8SgaVsX
-	8aFwxg+WwXkJEl127KkE5RS845FrX9CN/Kdjizx7PvojP7W1s3qJHc9wKXZpDmGJFhmfEZRjUyp
-	WDCeacb+v5oPyhulcuLHapwAk84anjrjCsIdbfCZp8FjGtDyEt+WegKkf64AdlqcdCL0WcBpOy0
-	NW722omzOwXLKBdH3TIYtxhL7QCNuyZySD1VcqRk22A5gBe9AoQ5dCWUq8OCrT7JQBoTJWW
-X-Google-Smtp-Source: AGHT+IHT9zocseeovUel6KQS/8tgyAhacJN5zXZoo2RiIByIVZXze4S+TL+MF8zrXEeVGop1sApCJVnU5MEid9zjmZA=
-X-Received: by 2002:a05:690c:610b:b0:786:4459:cb5a with SMTP id
- 00721157ae682-7864459cff1mr5156577b3.65.1761826999581; Thu, 30 Oct 2025
- 05:23:19 -0700 (PDT)
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=TweaoBplodlVdxsoJvbnrw8dG9VhGVy4IBPuwkFtA4w=;
+	b=na+pFh2SAXn53+El5NKC6JTwHXPdQ0s0qL4Hw36fPaiVrxe6Tbb+JRAmCHerBcupxMINmux5xX6PW
+	 xoedI+o6lrP3hrl82HG9yt3z/w3K7Bv0eFy0TDz2fpUARj0XT9n0XCBHi9jJ/UV0Va06TQEWvEF6hz
+	 NEb6IwRwbj/Ysl5zYBohnD/+qmETgJWaQhqhp88FteJPwkKGktl2Rte6moSEPG32fgFfLwOp+uT0Iv
+	 9ymJw4fI/J0wKRxeAZyE8NsWB67SlNROIeud389EAnoj+cqI8JXIdRXeF0VBy2w+b1dvwPP8e2I54s
+	 YQpiKjx8/2QgYdAXZL8uUXEviJ5G8dw==
+X-KPN-MID: 33|siE5HIY6JarvfY98K0xoGPPK/p30dpPuEVCR8saV2W/Ms2kI5ezRaP3t7oqOTz+
+ cL64LA0Qewzv3csud18uvadi7k+24a1y4tGq8bw5hsB8=
+X-CMASSUN: 33|PhRa11lWUxe5ynUPN2POeMvXUOvjPXXG2Xswc5ny+OdIqo1JMttOc5NXO3mrkom
+ 9v1dVygRJtHP/5LeFYXGKSw==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh03 (cpxoxapps-mh03.personalcloud.so.kpn.org [10.128.135.209])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 2882cf03-b58b-11f0-b8d7-005056995d6c;
+	Thu, 30 Oct 2025 13:22:53 +0100 (CET)
+Date: Thu, 30 Oct 2025 13:22:53 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	Khalid Aziz <khalid@kernel.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Taotao Chen <chentaotao@didiglobal.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	linux-kernel@vger.kernel.org,
+	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
+Message-ID: <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
+In-Reply-To: <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
+References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
+ <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
+Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org> <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 30 Oct 2025 13:22:43 +0100
-X-Gm-Features: AWmQ_bmZlYP-vMQKR-I5oY2UwXbMGNHaD98nubyYKhsx7HdNG9dPpE2bV5NB1-4
-Message-ID: <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
- for s2idle
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
-On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > Changes in v2:
-> >         - Limit the new QoS to CPUs  and make some corresponding renami=
-ng of the
-> >         functions along with name of the device node for user space.
-> >         - Make sure we deal with the failure/error path correctly when =
-there are
-> >         no state available for s2idle.
-> >         - Add documentation.
-> >
-> > Some platforms supports multiple low-power states for CPUs that can be =
-used
-> > when entering system-wide suspend and s2idle in particular. Currently w=
-e are
-> > always selecting the deepest possible state for the CPUs, which can bre=
-ak the
-> > system-wakeup latency constraint that may be required for some use-case=
-s.
-> >
-> > Therefore, this series suggests to introduce a new interface for user-s=
-pace,
-> > allowing us to specify the CPU system-wakeup QoS limit. The QoS limit i=
-s then
-> > taken into account when selecting a suitable low-power state for s2idle=
-.
->
-> Last time we discussed this I said I would like the new limit to be
-> taken into account by regular "runtime" cpuidle because the "s2idle"
-> limit should not be less that the "runtime" limit (or at least it
-> would be illogical if that happened).
+Hi Jan,
 
-Yes, we discussed this, but that was also before we concluded to add a
-new file for user-space to operate on after all.
+> 
+> The patch looks ok to me but since minix filesystem driver is in the kernel
+> mostly to allow mounting ancient unix filesystems I don't quite understand
+> the motivation for adding the new mount options. Why not just fixup
+> minix_rmdir() to better handle corrupted filesystems?
+> 
+> 								Honza
 
-To me, it looks unnecessarily limiting to not allow them to be
-orthogonal, but I am not insisting that it needs to be like this. I
-was just thinking that we do not necessarily have to care about the
-same use-case in runtime as in the system-suspend state. Moreover,
-nothing would prevent user-space from applying the same constraint to
-both of them, if that is needed.
+I am doing the Linux kernel mentorship program, and was looking to contribute
+to fs. Since I saw a lot bugs on syzbot related to minix (and jfs too) not
+handling corruptions well (yielding warnings in drop_nlink e.g.) I figured
+it was a low stakes project, not completely trivial, yet within my scope, to
+attempt to implement what ext4 does for these kind of problems (and jfs
+implements the same opts too).
 
->
-> It looks like that could be implemented by making
-> cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limit()
-> into account, couldn't it?
+I would have asked about the exact status of minix, but was told not to
+bother maintainers without a patch. I would be open with trying to improve
+minix further, but of course if there are better options to get it out of
+the kernel altogether that may be better. Sad for me, since that means still
+zero patches, but that is not your problem :)
 
-Right, but I am not sure we want that. See above.
-
-Kind regards
-Uffe
+Anyway, I hope this clarifies why I submitted this patch.
 
