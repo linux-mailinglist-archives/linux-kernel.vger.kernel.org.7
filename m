@@ -1,54 +1,86 @@
-Return-Path: <linux-kernel+bounces-878485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C36C20C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:54:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9023EC20CE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 78BB834F7F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EAE1A60451
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1F227FB3C;
-	Thu, 30 Oct 2025 14:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088E8280CFC;
+	Thu, 30 Oct 2025 14:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YLyBq7ZV"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eDtade+B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF72B27FB0E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50EF27F759
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836086; cv=none; b=eR7l2mgcmFs8QM6E4StgFM7hl5VSB/4Q+C21F7xAXcHh5ILOpJLgt7i6EqZ3I821uJNM0vJo7RfwwHHypYeK7sq1T26uQ4IxhaKLd3bJf8y/AotmfysX5eaZiyFxbkofU/jGci+ukXU1MOefuIMyaKd2VQifji5jIfFldNfQqjA=
+	t=1761836104; cv=none; b=N7rwxyeIH8QgOT5uRZ6rm6GdPZYb4qsbMgDMzDdwcU6mge3msZepoZUvieI12oncdMkPpWj9vJIkvgYiwzxW/4R6WbfdsSpBtMZO+504grxkiJsi+EzuN9gevN2jJQTq1/DZIelxhwzsQoTjR/PkuHyvuHORR6l9wmefP7jv1Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836086; c=relaxed/simple;
-	bh=mvmrbsBG//C4HKLIMxe99Kxrt2KW4+cqcozZBnR0rUs=;
+	s=arc-20240116; t=1761836104; c=relaxed/simple;
+	bh=6lxVUIxaRRatI3B3ucLOQH6Kg/459cGXOT+RzzrcHYI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFfHvz3jdXHaOWdo82tZ+azl/UpeBHxlhJ+mfA4t0xNt3bvg25ZCqxDuBh3xQBOS7Y4tSLcLl0Usg19Hd55PcvROl0/4j5lFz2hU7+GW0FfojRW/+f0hNQ45jF8rdomug7dbdDYrtUjMHTyBhe5MfYyVAgCscHetpG37g7RvOi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YLyBq7ZV; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 5F67BC0DABA;
-	Thu, 30 Oct 2025 14:54:22 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C7A846068C;
-	Thu, 30 Oct 2025 14:54:42 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13CF1118080E2;
-	Thu, 30 Oct 2025 15:54:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761836081; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=jJ76TtYiUacoq5HrWzXg1ucBLVjx6zmnX1RJS69c9wI=;
-	b=YLyBq7ZVSCxrOz9I4Wm6G6sYyeY4yoO9GjAaclMLekpQLKWrY6QwkHxs+rQewkchnztuqy
-	sfE6vesaEcDqMn/KclRkcg4/c0JFe3iku/O1hNHr3hF0YGe4QhdWcYly0VsDLAApnV+D9T
-	47NzoT6TpR76k2PjNgx4/ZJo6MFlC0d7tdUc/2hhpsfPJUQGRiHKTFpv52jHMRpvJHJlTW
-	mUmHDSOBcRnNKjHSvBwcg8LpgFaYvWOvK4SN8oLJUBvz6LN5DGU4pjh6x/HLJEg5P4uoPT
-	8xayKuURX1z/ouuB+l9S1kS3Z4gHBnNyQzrQogDSXTP2tiua/ubauTct0MpKUQ==
-Message-ID: <8725fc5b-4d29-4fa5-9227-6755fdd9a2e0@bootlin.com>
-Date: Thu, 30 Oct 2025 15:54:38 +0100
+	 In-Reply-To:Content-Type; b=CelMRBwCqxkCsbOKydqrE7Ha9a18B5aTX5OtYG5RrI1LXN8idCaSaGZ5+NTDn6rHFfwc4f98uE2KHkYKoQPs2gVDWIKs7ut1TJ6l4d8AxtM3eRVJtbJJ1rUXYEP4+XEYg9ZOFvmeqjHMMCM1znuh984GlsuqS55xXliUHJKdQHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eDtade+B; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761836101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2W3chW7pcnMqJOQDxC26D0D4sbrWuL2m2Kca3x2i3PY=;
+	b=eDtade+B/E64nMgCvXxsrcwB16yBsINB0LnGgWpYnK9zyeoyTEd5v18RzJCfM/a+CNE877
+	KjusIIl5kdHWOud71q3n541Ndk7m8S9B4psby13eK70/PwD2SXcLQYytAiwJZdqFd2wMpi
+	CTg4PnE2q4HO+JFZLo9eKnticU116aU=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-20-sG5HtqL6OYOVst63XdZEmw-1; Thu, 30 Oct 2025 10:55:00 -0400
+X-MC-Unique: sG5HtqL6OYOVst63XdZEmw-1
+X-Mimecast-MFC-AGG-ID: sG5HtqL6OYOVst63XdZEmw_1761836100
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ecfa212e61so66587991cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:55:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761836100; x=1762440900;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2W3chW7pcnMqJOQDxC26D0D4sbrWuL2m2Kca3x2i3PY=;
+        b=aoB2UAwgNnmVRysTry+XNwM1+CSayJ2VqrgVBCCKstOsy3dqrZUx1ECWNs08FODzd7
+         kFzptqtyEUlustAVYGIbPNg2UquNut7rhYdu0l2M/zUqUF9CQAnt34SsyiCWfDs6M9xP
+         uD+RQRBVHTm8ozqJT3NGJHLtR4snrDXi98Q5QvQlu93fRpheAYwf6mJyUmgVXDIceTos
+         tfKFOBrBd1TJzIDdS5OcLlzcXgR6kXZtNCtT5Y5vjBwLhHtDGtkwYhLKKN4lCFHRtTkn
+         xAJqoEs7EnUu8UOApGSBQlyzjO991dNpu/vhADX0p8Giq/OQHNJjtCFD4uDHZ0lJabXU
+         xxKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUooO+w5QRZb/NjdU7tCKih0TCSO/WoBFaClNe+h8NAJ67sV72Nyas2SV6ZQzA2rHEFcv1B+kcH7HhnHq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrtC3GWJ5sjkdKEQYf3FukJNT/20JzGmtZcylrYup78BS4qZv3
+	oKbIsvvccVfUPNuOjwAAq2TXh/2j4+PF5G5tAk7pKpCn85Bx/gqQh8NqDMaaJpgeYyC6Oeh4w9M
+	IZ2owN3cCrrWG9RQVVYCFODbMS8ThU2Vp5+syh5bsjCr5syHQbnwYqKG5iaJWpSnyxw==
+X-Gm-Gg: ASbGncu8IeJH9BoAkVarCZ3e+B5Lk7yN1OIMsH4J8d9Y3/TPls6eUCnf0v4wOdp2WIC
+	Vmj5XIK19oWzgBgca31O65A0z+s1tY36hSO52oKuD+S58+b5CjdffehHHyA8G03g7AOhF3khDQd
+	FCeXuM2+Wo+Gmas8hflddTGHE+gzUA41mrRnns1H7F6ovqWbitkTNl75z+iMr7VJp04nOBEXLKL
+	Fij3VFIZlpA4mo6EP5+ONVULz2mIKr2D7IEfOjUfmJl/DfpPxwaEc/SZrEs6uwpNKyoOWvl0WcY
+	fuVuY0zZgj/hiEAFu2l0eFu2MDjCX4H9eDm7ULRI/6mW54nGMQnn+4JdK68Ncr+HNyhgftE3Hz7
+	W8Q==
+X-Received: by 2002:a05:622a:155:b0:4eb:a094:9711 with SMTP id d75a77b69052e-4ed30329abbmr840371cf.29.1761836099669;
+        Thu, 30 Oct 2025 07:54:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDZb2Jtln8mUUIX/hROLSOtY5G4JrM/X3Ba6JkpA3dXWxKYmihpqbJsP81IQR1GIA8Uox8Og==
+X-Received: by 2002:a05:622a:155:b0:4eb:a094:9711 with SMTP id d75a77b69052e-4ed30329abbmr839911cf.29.1761836099092;
+        Thu, 30 Oct 2025 07:54:59 -0700 (PDT)
+Received: from [192.168.2.110] ([70.49.125.126])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba386b695sm110232221cf.34.2025.10.30.07.54.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 07:54:58 -0700 (PDT)
+Message-ID: <bdd4ea3a-f326-4eb8-866a-52b1ea2bdc5a@redhat.com>
+Date: Thu, 30 Oct 2025 10:54:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,145 +88,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] drm/display: bridge_connector: get/put the
- panel_bridge
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Naresh Kamboju <naresh.kamboju@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
- <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-3-667abf6d47c0@bootlin.com>
-Content-Language: en-US, fr
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-3-667abf6d47c0@bootlin.com>
+Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
+To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>, borntraeger@linux.ibm.com,
+ joao.m.martins@oracle.com, mike.kravetz@oracle.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ osalvador@suse.de, akpm@linux-foundation.org, aneesh.kumar@kernel.org
+References: <20251028211533.47694-1-luizcap@redhat.com>
+ <6bbdf4ce-10e3-429b-89fc-ef000f118fec@redhat.com>
+ <20251029104457.8393B96-hca@linux.ibm.com>
+ <9a8254b9-92f8-4530-88e8-fca3b7465908@redhat.com>
+ <20251029124953.8393Cc7-hca@linux.ibm.com>
+ <20251030153807.0a835fee@thinkpad-T15>
+Content-Language: en-US, en-CA
+From: Luiz Capitulino <luizcap@redhat.com>
+In-Reply-To: <20251030153807.0a835fee@thinkpad-T15>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-
-
-Le 17/10/2025 à 18:15, Luca Ceresoli a écrit :
-> The panel_bridge pointer is taken inside the loop and used after the
-> loop. Being a local variable, use a cleanup action to ensure it is put on
-> return.
+On 2025-10-30 10:38, Gerald Schaefer wrote:
+> On Wed, 29 Oct 2025 13:49:53 +0100
+> Heiko Carstens <hca@linux.ibm.com> wrote:
 > 
-> Based on the code structure the panel_bridge pointer might be assigned
-> during multiple loop iterations. Even though this is probably not possible
-> in the practice, ensure there is no reference leak by putting the reference
-> to the old value before overwriting with the new value.
+>> On Wed, Oct 29, 2025 at 01:15:44PM +0100, David Hildenbrand wrote:
+>>> BTW, I'm staring at s390x's flush_tlb() function and wonder why that one is
+>>> defined. I'm sure there is a good reason ;)
+>>
+>> Yes, I stumbled across that yesterday evening as well. I think its only
+>> purpose is that it wants to be deleted :). I just didn't do it yet since I
+>> don't want to see a merge conflict with this patch.
+>>
+>> I also need to check if the only usage of flush_tlb_page(), which is also a
+>> no-op for s390, in mm/memory.c is not indicating a problem too.
+>>
+>>>> Changing active entries without the detour over an invalid entry or using
+>>>> proper instructions like crdte or cspg is not allowed on s390. This was solved
+>>>> for other parts that change active entries of the kernel mapping in an
+>>>> architecture compliant way for s390 (see arch/s390/mm/pageattr.c).
+>>>
+>>> Good point. I recall ARM64 has similar break-before-make requirements
+>>> because they cannot tolerate two different TLB entries (small vs. large) for
+>>> the same virtual address.
+>>>
+>>> And if I rememebr correctly, that's the reason why arm64 does not enable
+>>> ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP just yet.
+>>
+>> Ok, let's wait for Gerald. Maybe there is a non-obvious reason why this works
+>> anyway.
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> No, using pmd_populate_kernel() on an active/valid PMD in vmemmap_split_pmd()
+> should violate the architecture, as you described. So this would not work
+> with current code, and also should not have worked when I did the change,
+> or only by chance.
+> 
+> Therefore, we should disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP again, for
+> now. Doing it right would most likely require common code changes and
+> CRDTE / CSPG usage on s390. Not sure if this feature is really worth the
+> hassle, reading all the drawbacks that I mentioned in my commit 00a34d5a99c0
+> ("s390: select ARCH_WANT_HUGETLB_PAGE_OPTIMIZE_VMEMMAP").
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-> ---
-> 
-> This patch was added in v2:
-> - taking the panel_bridge specific code from the original (buggy) patch,
->    and split it for clarity from the larger patch covering stored bridge
->    pointers
-> - comapred to the original code, added drm_bridge_put() for extra safety
->    even though likely not necessary
-> ---
->   drivers/gpu/drm/display/drm_bridge_connector.c | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-> index 95ccf86527129edaa6fcc75c6202985e73c46da8..a2d30cf9e06df44b89456b5aba8198ee1e5d5601 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -652,7 +652,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->   	struct drm_bridge_connector *bridge_connector;
->   	struct drm_connector *connector;
->   	struct i2c_adapter *ddc = NULL;
-> -	struct drm_bridge *panel_bridge = NULL;
-> +	struct drm_bridge *panel_bridge __free(drm_bridge_put) = NULL;
->   	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
->   	unsigned int max_bpc = 8;
->   	bool support_hdcp = false;
-> @@ -787,8 +787,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->   		if (bridge->ddc)
->   			ddc = bridge->ddc;
->   
-> -		if (drm_bridge_is_panel(bridge))
-> -			panel_bridge = bridge;
-> +		if (drm_bridge_is_panel(bridge)) {
-> +			drm_bridge_put(panel_bridge);
-> +			panel_bridge = drm_bridge_get(bridge);
-> +		}
->   
->   		if (bridge->support_hdcp)
->   			support_hdcp = true;
-> 
-
--- 
---
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+OK, let's do the right thing. Do you plan to post a patch? I can do it
+if you would like.
 
 
