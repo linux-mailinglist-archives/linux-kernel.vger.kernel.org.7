@@ -1,176 +1,103 @@
-Return-Path: <linux-kernel+bounces-878007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E36C1F91A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6385C1F841
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D05427F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14B34004BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76BC3587C8;
-	Thu, 30 Oct 2025 10:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9779350D7B;
+	Thu, 30 Oct 2025 10:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="oFN7PsxS"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S21umYqA"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24863357716;
-	Thu, 30 Oct 2025 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91342D8DB9
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761819999; cv=none; b=QRJM2DdvzORMx7rMxY8371I2HWKzi5flQ/KPErD2yfepqvFRLtqOAQqPZVvoSJXOtSBJfnnJrtxQz1IjicoFxLDx/j/qSqA1aZbTxVa4gIhoyLZHTbOjE07U4LVY+pf8G3sBhGY5u6TTJbYeFf5empZ6M2Od48M5CQg49/sfNP0=
+	t=1761819869; cv=none; b=sKOcK8Hcnz+eYGYwjfwVWI9EkpDNAnJPbgp6URF/aUGcQmR2F7F7151I0CvMtXfa+Fo56izuL02Oj6xUvEdFV3k+SX2RGDDvNzINzqTWV1zc2XMEm8k0CUxCd6pC/2qVg1gh6BMRb1lsHCVcIAZEFVbNUQg5nQf1Fr7av1ImkdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761819999; c=relaxed/simple;
-	bh=vvZQPp6EYrtMWK7Xie71R/nS4riQmKtoLGLX9XgmSyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diWaRjVNZN7ZhcY1agPUvbWItY0nU0E2M7mDj3veRkWhwP+/x6dO0Z9QCcyaKKW7Y+00b31m4isOlUo4mWpWAtUTJ99+9pLOi5WZhjEVcFjssehMpiADqQXnLo6YSbYflp0VPsIN2Xy5GUKKUISIJxbii1LeRGpuyWY/aZ+G8BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=oFN7PsxS; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1761819857;
-	bh=cIY7WYUzuDGkFE+k2rXKzr0YSMDo3kE1Fa0cpFNPx+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=oFN7PsxSJWikcUx0u2QyxVradtO/densF9NrZY9+bpF6uWoad2IQJ4Gr7XaG6y8xP
-	 SNyKwdF+JkVG9gVUXdAFS7f0fOey9m8WLsKqLQQQegt5GOS3zogPR5C/qksj+iUUPu
-	 ZZLtLZZw2benOmTuu2C5AM+M8Piag9q8Da91y8nk=
-X-QQ-mid: esmtpsz17t1761819849t112d1f9c
-X-QQ-Originating-IP: XVhXU0kHJRbd+UVQvK+5/J0kiHqJAAeeCHRDMvlf5xk=
-Received: from [10.10.74.117] ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 30 Oct 2025 18:24:08 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2889926651659397346
-Message-ID: <89364700AD0CD6E1+dd8d745f-5a72-4b0a-80db-eaa1d00c4e64@uniontech.com>
-Date: Thu, 30 Oct 2025 18:24:08 +0800
+	s=arc-20240116; t=1761819869; c=relaxed/simple;
+	bh=OFh3fZEUD1SVfUw9nvkO/V7lCvvDQ2UdEyrKIHxkccI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bUusJ4KSKxw65931gOd0wU8Joi5g8zzox8vCs6azVaxeVr+ywjjhsHUFgT7OxvnpNV/ixCxFDYASktfTFPPz8crSA7R1pXEaCjoHnVQvuBsnzJ7Kz2TYYB3Uwx1L1hwQ+aHgOWhbUiklk6vI4AxmeWSuLEQdQrAY16hIeEDua0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S21umYqA; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 65086C0DAA4;
+	Thu, 30 Oct 2025 10:24:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C6AB36068C;
+	Thu, 30 Oct 2025 10:24:24 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 944B711808821;
+	Thu, 30 Oct 2025 11:24:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761819864; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=zdVtCVfiDUJY2QRSa6ubd540pBgj+UbwTkasKdXjGc8=;
+	b=S21umYqAgjNff5fVFSM/v0k2+VI/p7qqt8SqvBrP5KdXmvpQGUEwmAtuPBbsu5r+Sq0a1e
+	3cxNaDteFBBQPzfDirBNcPSRuBZuZYv7CQ6EqAKkvN97YulSQqvBEnCS/JNH1eeY49Qm1h
+	GNvP6azosIBNgJUi/IIUwwuBD248G9koy3EIJ9jp1ohGjVuZqDTZlNUvm8El+VL2la6I7n
+	66wCdKhH5D7SS6oATjBhyWUeQf/QkYdFVld/tr4n82dCx+4TZe38i2X9UkMB4EuChDVm4I
+	/Y+BnL3kfrnTY++CJQjAdDyVSq9thL1Uo+Jjzd5eYABIPe5ztSVjr9s6IX2G/A==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Boon Khai Ng <boon.khai.ng@altera.com>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/4] net: altera-tse: Cleanup init sequence
+Date: Thu, 30 Oct 2025 11:24:13 +0100
+Message-ID: <20251030102418.114518-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20251023082129.75612-1-maqianga@uniontech.com>
- <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
- <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
- <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com>
- <9F7F632B7963434F+abad2548-a90d-4448-ae79-dd4bf637ee6e@uniontech.com>
- <CAMj1kXHu5ABgxKsc_gg1j=pWMz6DbWoqv=qAAjx-5CiSF2PAiQ@mail.gmail.com>
- <BD93A8DBE27154B0+22bf4a83-a850-4f78-8e0d-84cc93fe2715@uniontech.com>
- <CAMj1kXFUUCoE=gZ0kTMKx87qnJMU9J9skT75STTKjjakXb8kmw@mail.gmail.com>
-Content-Language: en-US
-From: Qiang Ma <maqianga@uniontech.com>
-In-Reply-To: <CAMj1kXFUUCoE=gZ0kTMKx87qnJMU9J9skT75STTKjjakXb8kmw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: NBjdfkqVynM2LzNdcPHTpqy83qJFwYM2EghexspTMIyRZih0xJE/kUI6
-	CU2n2Ez7r8E6wKPNXIOrfx07ea6c9br3UH1SvDIgpRF8wCvserHPG3pGEI8bcntmQXYs5Ha
-	bMCF3VcxxzcrPZIaSA6/gBv8Rs06pgRf9jettx40PzlZB1O8a8KlOwVkY22nMiy9r1uUFbx
-	368C10lpoNy3+Trhadg7eP70Vgkq3JBV2wdD9FVI8xgkax2keMmAoUwqyKFkGq9tR4nGNmZ
-	5MZgMCV3kRkv6x4pHW0tNTlP7tcml2nfA1jRZKmQPmfF/1l3dNYwKt6/otaxYEJykHrsKP4
-	8+LqQQ3pVUwtG7ahIt+emFNA5EcZXNqzv+NUhR6dMETU8nFh+OnwWRrcRM5usQNamtVRRCk
-	7uFqgzcixtj2nYtxdfiHdO6hfHdzhUJFJZsqYFmp2llyJkjG7qDW3tu/2kAUW64FcPhNj0r
-	u9wRhsWgUJIpzcozYMApuf0u8x5dQRWThnTKNAvlD0jfCHxt2gbZ61Jtsj07eXwJtpuknJe
-	MitSMayueG15Xj+xsZmK+ZeCyDuNDig8ffxD84zny60ydHi6LVRd7LPLyGFSVK78DMwdIC+
-	Kqwt9AF75omxruj81Py0uC3zH6rpUOv151MnZxB8cLz8W9DILYPG5QDwcwr/4bUCcpAcoi8
-	DvPC8fxUjL8PU9lSxRBF4RfRevDF99mCBdoin24iEwxqb+cVzV9ZlZPb1m1EWVQfUg1NFUI
-	q4FForLJTuNI7BrWi0WiJFYHRmDSlcNGdav3R+ukBqlu/UUufu1OplkqOp4a6wnGHjShZMj
-	hWZFMm5d+8Gr8+kH2NZJZDK/ZBY42prIcOqrcc3nCZjkDwbEW6DfnO8aOKnPqFfK8iQtlXq
-	UdgUso7wle6ET6pRFk9wm+W/basxqMzh35IZN7PNjqz+9r4EUb4gYFXLDK76jGOVvT7yfcE
-	jdE09YNZgEYtnu2a0JvFoflolYeGtgSh0HztFnpf9ayiVqsoZ83pxBoU9Z5gTOL6F9OtTv7
-	yuTqZQcnjvsbYJUOSmO1o+8uUhATw=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+X-Last-TLS-Session-Version: TLSv1.3
 
+When Altera TSE was converted to phylink, the PCS and phylink creation
+were added after register_netdev(), which is wrong as this may race
+with .ndo_open() once the netdev is registered.
 
-在 2025/10/30 18:02, Ard Biesheuvel 写道:
-> On Thu, 30 Oct 2025 at 08:37, Qiang Ma <maqianga@uniontech.com> wrote:
->>
->> 在 2025/10/29 22:15, Ard Biesheuvel 写道:
->>> On Wed, 29 Oct 2025 at 10:55, Qiang Ma <maqianga@uniontech.com> wrote:
->>>> 在 2025/10/28 21:42, Ard Biesheuvel 写道:
->>>>> On Mon, 27 Oct 2025 at 04:46, Qiang Ma <maqianga@uniontech.com> wrote:
->>>>>> 在 2025/10/23 16:30, Ard Biesheuvel 写道:
->>>>>>> On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> wrote:
->>>>>>>> In the efi_virtmap_init(), permission settings have been applied:
->>>>>>>>
->>>>>>>> static bool __init efi_virtmap_init(void)
->>>>>>>> {
->>>>>>>>             ...
->>>>>>>>             for_each_efi_memory_desc(md)
->>>>>>>>                     ...
->>>>>>>>                     efi_create_mapping(&efi_mm, md);
->>>>>>>>             ...
->>>>>>>>             efi_memattr_apply_permissions(&efi_mm, efi_set_mapping_permissions);
->>>>>>>>             ...
->>>>>>>> }
->>>>>>>>
->>>>>>>> Therefore, there is no need to apply it again in the efi_create_mapping().
->>>>>>>>
->>>>>>>> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI Runtime Services regions")
->>>>>>>>
->>>>>>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
->>>>>>> No, efi_memattr_apply_permissions() uses the /optional/ memory
->>>>>>> attributes table, whereas efi_create_mapping() uses the permission
->>>>>>> attributes in the EFI memory map. The memory attributes table is
->>>>>>> optional, in which case any RO/XP attributes from the memory map
->>>>>>> should be used.
->>>>>>>
->>>>>> I see.
->>>>>>
->>>>>> Then, can it be modified like this?
->>>>> No
->>>>>
->>>>>> --- a/arch/arm/kernel/efi.c
->>>>>> +++ b/arch/arm/kernel/efi.c
->>>>>> @@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct *mm,
->>>>>> efi_memory_desc_t *md)
->>>>>>                     desc.type = MT_MEMORY_RWX_NONCACHED;
->>>>>>             else if (md->attribute & EFI_MEMORY_WC)
->>>>>>                     desc.type = MT_DEVICE_WC;
->>>>>> +       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
->>>>> This will be true for RO, XP or RO+XP.
->>>>>
->>>>>> +               desc.type = MT_MEMORY_RO;
->>>>> This will apply RO permissions even to XP regions, which need to be writable.
->>>>>
->>>> Thanks for your review.
->>>> I see.
->>>>
->>>> I can introduce a new type MT_MEMORY_RO_XP, to describe RO+XP,
->>>> and then we can use the RO+XP attribute to implement memory mapping.
->>>>
->>> Why? The current code is working fine, no?
->>>
->> Yes, the current code is running normally.
->>
->> The reasons for the modification are as follows:
->> I noticed that the arm64/RISC-V efi_create_mapping() always return 0,
->> but in the code where efi_virtmap_init() calls it, it is as follows:
->>
->> ret = efi_create_mapping(&efi_mm, md);
->> if (ret) {
->>       pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
->>           &phys, ret);
->>       return false;
->> }
->>
->> This return error print is unnecessary, so I want to remove it.
-> So what is preventing you from removing this from the RISC-V version?
->
-The current idea is to first remove the unnecessary return print from 
-arm/arm64,
-and then remove RISC-V later, as this RISC-V code is also adapted based 
-on arm64.
+This series makes so that we register the netdev once all resources are
+cleanly initialised, that includes PCS and phylink creation as well as a
+few other operations such as reading the IP version.
+
+No errors were found in the wild, so this series doesn't target net, but
+given that we fix some racy-ness, a point could be made to send that to
+net.
+
+This series doesn't introduce functional changes, however the internal
+mii_bus for PCS configuration is renamed.
+
+Maxime Chevallier (4):
+  net: altera-tse: Set platform drvdata before registering netdev
+  net: altera-tse: Read core revision before registering netdev
+  net: altera-tse: Don't use netdev name for the PCS mdio bus
+  net: altera-tse: Init PCS and phylink before registering netdev
+
+ drivers/net/ethernet/altera/altera_tse_main.c | 37 +++++++++----------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
+
+-- 
+2.49.0
 
 
