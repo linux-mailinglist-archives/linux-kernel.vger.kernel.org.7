@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-878073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1896DC1FB5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:09:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73463C1FB61
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482A83ADB53
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:09:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C34F4E90E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD67D337BAE;
-	Thu, 30 Oct 2025 11:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D603546F0;
+	Thu, 30 Oct 2025 11:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdrthlms"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jT+p3rrv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ACC2E0B5D;
-	Thu, 30 Oct 2025 11:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C83451CE;
+	Thu, 30 Oct 2025 11:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761822543; cv=none; b=EhPYQBAdc5TiSCNMgO/O+Pi9DZaUNAaCf5z2wD5UQvDIqwezL0spujzps6BWwdCked881XpDp20oDSMZihcqVxTYgUkeuFWY/L6Wzs50Mwc355c2O3HOOA3SZotJUxOua7Ro8AMsg5RdIXYV+fR5PFuKwFBuBrddzvd/h4t3T58=
+	t=1761822546; cv=none; b=V3ni9lQZIEaH88zxPYsNKt4lTANwyg+PGEzIzXqgt+zuVcHpqLCAOGI7UXYUxuAbNSnZX/jOiZKHmbWxIPcBuJQz2qh/SSI7eiW++q7AmfR7jk5NUhrw7P/NaXCDJtS0+lljrpt/mGz0NYoZdCNAQ9AKRqcGvduSJiiFZcHUD84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761822543; c=relaxed/simple;
-	bh=LdRb7dIwGQ8g4MbOV0cQSZTSbAi7GxFs7VxhE+9JaSw=;
+	s=arc-20240116; t=1761822546; c=relaxed/simple;
+	bh=FCX7kNsLtyLNRubAudMV6rykTX7imV/sp3uCo7Q9xcw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tRrdANnOBDoLUshzOHiRzyVqicA13aYJamr7FpKZ5HGC2Kvbc5+AFdU9yeYShzZwf4LwkISlgnv1DcMXYBX1cdElfvJftQXVPkZA3w/dY15T3UkRm658ANtL3LGau/vKbOMRRa+K/ZkmSrXqJwyk1Gb2trFa9vpZJ3hfiFNafN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdrthlms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA55C4CEF1;
-	Thu, 30 Oct 2025 11:09:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=uWffV/4lNIfWFaenAZKS3saujt/Wb8FbeyMObSPUjWUbZzSbJ2aE02oC+MucKCM6xLBhJjFRrZWb6t32Afk+Rx5I81oY1mDrF1AELlJVrry6XDVM7Id6FrDwn2X/Ei2354kZEtoeSLgCMBHZCEpMar1PBbSOO6mVMD5nulqQBk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jT+p3rrv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F935C4CEF8;
+	Thu, 30 Oct 2025 11:09:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761822542;
-	bh=LdRb7dIwGQ8g4MbOV0cQSZTSbAi7GxFs7VxhE+9JaSw=;
+	s=k20201202; t=1761822545;
+	bh=FCX7kNsLtyLNRubAudMV6rykTX7imV/sp3uCo7Q9xcw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mdrthlmsBjCWKYF3UigvX2apk8OcQJN9OreG5B6ZbS5ABSgB/efG8HSlE8/03S9Ic
-	 pzIvKQfetSkMe99DJMcRgGXtKZDb1LWqs9DLoj5WjxC7TQ6k+1eFXPoq6YB+ZlF3ak
-	 rKVM1421Pus21DPMmXv0LIngC7ScQDTpf/Ej47NnXeB6XCftyQyu4fQq9GnZR2Kv+E
-	 0vOlusOBBDIMp2fHad+1BUZIZnn8W5IyfIK7NoTwdsA7yteecAftLO9m+RgQFfjSDI
-	 ZCFdh4Z/foY+PerZSwJczf3vMtiML8pcXZ2KajywP4fE+p/+vFU13uaCp6SefmrN0+
-	 SaqJOmY5yTnFg==
+	b=jT+p3rrvueaTyZ+BHjB/QHqFfsKtnfxdsnxKbDRU8JxqFhdUvkwVANSu8JeCoU5yu
+	 pBi5lWLRF38b7M/RTVlPR8tgLkulLgexFG7bHDTqXSHRIoNO4Eyy8loQzglD4Z6/zv
+	 ZNkxQ9qZOr++5Mj01AP0pm/+4S56bqTc5spjUN4Wvj/dJqoQv9nH75tz01/EcAJmN1
+	 65fE0JPttKhH8GTuhUW8xF2U0WV6nfm2FeVZSgmUBJzDUlgMp/9dPubRVnswroxU65
+	 SXw7ORSxCXkQoMgWWiQGmQJ2PKo1bqKxf9uIPcOJ24E/aM35SGPqPykYRX+kUbVvJM
+	 kTSooJYfbE8vQ==
 From: Mark Brown <broonie@kernel.org>
-To: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, biju.das.jz@bp.renesas.com, 
- prabhakar.mahadev-lad.rj@bp.renesas.com, Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: (subset) [PATCH 0/2] ASoC: renesas: Fix clip sounds
-Message-Id: <176182254030.10093.1174073238934583094.b4-ty@kernel.org>
-Date: Thu, 30 Oct 2025 11:09:00 +0000
+To: robh@kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ perex@perex.cz, tiwai@suse.com, srini@kernel.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org
+In-Reply-To: <20251029144636.357203-1-srinivas.kandagatla@oss.qualcomm.com>
+References: <20251029144636.357203-1-srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: pm4125-sdw: correct number of
+ soundwire ports
+Message-Id: <176182254287.10093.1638379572271955116.b4-ty@kernel.org>
+Date: Thu, 30 Oct 2025 11:09:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,18 +63,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Wed, 29 Oct 2025 16:11:32 +0200, Claudiu wrote:
-> Series fixes clip sounds that are reproduced on suspend/resume, from time
-> to time, on the Renesas RZ/G3S SMARC Module + Renesas RZ Carrier II board.
+On Wed, 29 Oct 2025 14:46:36 +0000, Srinivas Kandagatla wrote:
+> For some reason we ended up limiting the number of soundwire ports to 2
+> in the bindings, the actual codec supports 4 rx and 5 tx ports.
 > 
-> Thank you,
-> Claudiu
 > 
-> Claudiu Beznea (2):
->   ASoC: codecs: Use component driver suspend/resume
->   ASoC: renesas: rz-ssi: Use proper dma_buffer_pos after resume
-> 
-> [...]
 
 Applied to
 
@@ -81,8 +75,8 @@ Applied to
 
 Thanks!
 
-[2/2] ASoC: renesas: rz-ssi: Use proper dma_buffer_pos after resume
-      commit: 22897e568646de5907d4981eae6cc895be2978d1
+[1/1] ASoC: dt-bindings: pm4125-sdw: correct number of soundwire ports
+      commit: 5e5c8aa73d99f1daa9f2ec1474b7fc1a6952764b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
