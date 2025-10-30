@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-877589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9ECCC1E834
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:09:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9F7C1E83A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B8F6347968
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:09:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 724AA34C786
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087553043D1;
-	Thu, 30 Oct 2025 06:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37B63168E0;
+	Thu, 30 Oct 2025 06:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ugu+9tB/"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mkgTH2yq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D51272E45
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E628E272E45;
+	Thu, 30 Oct 2025 06:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761804579; cv=none; b=CiDNneJHgCX8q6FyHoFAbmrkkmQjVLjRN4kRwY4QvlTa3m5X4XaNf+tyuwpEyxYsgxeSnzETpUvM44GRv2Qel8g/tSKb6J2d6r3BO3m+MzlUqRBae7Zp4dsONYNTDRCPovZgocHd3tSwOC6YpYl0FhvEN9vTYteJyCCUQkizlZQ=
+	t=1761804728; cv=none; b=RF7/El7ba8xpshMSXXEKvofzv7BmQGfjl3NscE86HkPo1FQiL5KoRa6RwKbQt+evN2Ep+2/EMNDt70h10nIL5gURB+LJ+tASGDZMcKjHT5a+FNM7jyWIkx5w6YJW4fIn/ijnAVezoOqMk5megRn4FmqFew2+NNWAJNdNMxx+ao4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761804579; c=relaxed/simple;
-	bh=ye3AvcYv/DjDgZmRS42tFjm/DIKFHiOhTeTHpnujgfw=;
+	s=arc-20240116; t=1761804728; c=relaxed/simple;
+	bh=dJhfa6YLnRZl0M5BbAbdBVW/xbsE1/BirraX7BLXA7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rS3VzrAsGEvGeZ0GO4uqYlVxoLoZS44YFJPS6ozQtLEp6hHhc7iXTn86Ifv2uzMyk1ol24h6JPY6stHVOyAEnFoXj86EYCKJ4ir/pISFLx+LrOTdTkTQSB26OqzUq9/D0lk35xI2jkUGKs3vewWecV292hP5PnTU0Z9cNXnu1C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ugu+9tB/; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-470ff2f6e56so40175e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761804576; x=1762409376; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DLithzThx8pxlXaz1qEgue0vbFKuTuLtSl9y/H9uBGw=;
-        b=ugu+9tB/2MDHuIJjM6afdtIrxMLodxxR/gN+33Va4BauIS1DgMpa2aqZmxLmMGMG4L
-         tisd1dcJ1zZfbm+G/ahZlHG98asSLGoLA0+NT71fZY184uC619L06j9Wl4WGODDM7DGY
-         7iecL8O0STPp9YE1wQ+NKeX8SxS2Pune3VDrnDTi3rbidb9VaGuTMci3kNK/N3Wr+WkJ
-         5FgomzssGHIOqDUCWhlSop42CM670iFn45OXC3kON0OKUYd0l1HGhhcoVSq9mNj9RPrb
-         9pohaDXXnKHaJBlQx7OOxy2DeIJbTvHciXzG5ITG4AI0PBdjYfceN44l6mMocDmyGGlQ
-         i3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761804576; x=1762409376;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DLithzThx8pxlXaz1qEgue0vbFKuTuLtSl9y/H9uBGw=;
-        b=TNbzxEgcqONXW8mroq7fl0urQnyJ59vTn49+LwBKeI/mzpAwhkeZAWxhbz0tzhu9CJ
-         y9Rs9gIC+Gv6qykIl8QZT6ceLzLnnxEoWIxJY7UqdktZLEQWTWbkaC31pQqRLa7gfHEB
-         lfm8wVqfxJAsjuNfDv9F7eopvxpXbynaBVZgNviHiA4W6Xa5MqhB5SOYpRURcC61iI2/
-         zZ+VXFGJKvJSHFqlQTSgCZMquLfgSWRTxCyFfMCbIiwxgkSbD0qnuVG+CIqHVxm2XRL1
-         Uv7vjQmLaKWU3fB1ZM2jV44ke62xVBgIvzCteV+vv2UsIXYjCHp8uIQS10OVpcaPo5on
-         gthg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/ChTYFB+u2ETwyriybSmxHe2qY+3MiV0IpKKOe5sUp4/JYNfZ53Prma5idjdTjJs4326Q916PwiWAPAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTGGEdZjDhRQFVO/a9K/y9no5aQr55tf7ElxXbOWUhZHZvLIX8
-	1bUKiQZ8uOHmb5RfEBQ7gTOkJjhcipiOrE4VN1R3eEcF/UgMjMx+TfMrvXCecssSIQ==
-X-Gm-Gg: ASbGncvtyOLl2cJ6hz6U053eO8CRjyuu+IiboNKJbKwH8zYN1Ifia8mAL5XG6lgJOL4
-	IrCaAbLW5eM25LiRmgfGNPPOYoUWJ395PIsoj3Q5SNhAtxFPBMojbZ9gJ7Z2QelBZvsUsofSeiJ
-	Sx5zzvsgDBAHN6EvxE/DRwBcORguWZRUgwph6C4vIOTdag+5qsRCdhkdZ21DeXS2cTODl6nFjg4
-	2VHodAtCIvUzwU9CXZBvws4ZGi53OhtIKQctYQ/aao+ND/mQ9hgu2v7jWrLv3QYKpUUwckL7ED5
-	ctKwW63PHhdN2aSplDxn9/Jt+pwvES7jMsYvf2fVqpaqFkxdyLHCxjbxCMiH6USMeFB8UKK99Yh
-	lKYaHKqER6faqLQ/aa0a0Ts3KcpLieXBkN70VqoeJiyXRVru1KefGbFcJlf907dOFEL3E8BlUUQ
-	BT4tAReOdo/UaEcej1HWsPCqDNbXTIlnibDXvJdyUfsaCRZwBJJ1kN4Y1Gyg==
-X-Google-Smtp-Source: AGHT+IGeJspzX9tfUeAx5eQ3UCzknbWkBSs575JdAgz7ivV6hKq3b/O79zgLFOS7QUNGGU3V+/JhTA==
-X-Received: by 2002:a05:600c:d2:b0:477:255c:bea8 with SMTP id 5b1f17b1804b1-47728a06de2mr733935e9.7.1761804575641;
-        Wed, 29 Oct 2025 23:09:35 -0700 (PDT)
-Received: from google.com (177.112.205.35.bc.googleusercontent.com. [35.205.112.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477289b0bb3sm20742205e9.8.2025.10.29.23.09.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 23:09:35 -0700 (PDT)
-Date: Thu, 30 Oct 2025 06:09:31 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, qperret@google.com,
-	keirf@google.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3] KVM: arm64: Check range args for pKVM mem transitions
-Message-ID: <aQMBG0SUlNWuQQFZ@google.com>
-References: <20251016164541.3771235-1-vdonnefort@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=INTjo+OaN7Up98qlLV9HozMAJJuTKjBYypFhpflt/2SX/p+ERM/Fy31TZTEUcp+UffmqazZlZCB0OwjwoDyNGjWJIdTMd0z/atvOy7IoaX4mQeGG5CBBpbqHjLWPEtym6wMaEBCbe4dH9UVJ3r2q9TwSSF8I75k8H8+Hv/qhUBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mkgTH2yq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761804726; x=1793340726;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dJhfa6YLnRZl0M5BbAbdBVW/xbsE1/BirraX7BLXA7c=;
+  b=mkgTH2yqJRmVsh09byYIRE9AnIwI8B35S4cbszkAUpX6JOl/QkoMN4tK
+   MOy8euSCQ/1743i7g1uWQtPe8JlNrtHhkSdYCEjSXBpOxLS70D7cqT+Or
+   CjSjOTTEjZMlOxAYnM/N7yw+yP0c/vhwxnAFYl4YcXImEbyJdEGKR4lwA
+   +P3Sg3iMQqGeKDTZhJdCmR7TYQSj6iQomZ6KzrLUIWarsduQitp/vCFXa
+   tRKd2ymZPWKeZfGPXQvJBiImM/epKYJlGdfUHCYwt0DNu8NBNfVXGDGtz
+   3VjDw5TuQw3yaB5brZHhRxmQyE/6E4cKBxv0ClGzI/Qpz5sVcqQ+TFDvB
+   g==;
+X-CSE-ConnectionGUID: wSvcbmhiSmmCXcwR8ZjoZg==
+X-CSE-MsgGUID: YbriIRPLTyiNEx8u4TyIEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63142913"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="63142913"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 23:12:05 -0700
+X-CSE-ConnectionGUID: Rzr7SW12Qmu1Kd8bdPyBGA==
+X-CSE-MsgGUID: uZKC00H2RTG8r5ESjWmyPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="216720502"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.223.240])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 23:12:04 -0700
+Date: Wed, 29 Oct 2025 23:11:50 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
+	Jim Mattson <jmattson@google.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH 3/3] x86/mmio: Unify VERW mitigation for guests
+Message-ID: <20251030061012.hkt2wsbxo5vh55ub@desk>
+References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+ <20251029-verw-vm-v1-3-babf9b961519@linux.intel.com>
+ <aQKw-a73mo1nLiJw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,126 +83,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016164541.3771235-1-vdonnefort@google.com>
+In-Reply-To: <aQKw-a73mo1nLiJw@google.com>
 
-On Thu, Oct 16, 2025 at 05:45:41PM +0100, Vincent Donnefort wrote:
-> There's currently no verification for host issued ranges in most of the
-> pKVM memory transitions. The end boundary might therefore be subject to
-> overflow and later checks could be evaded.
+On Wed, Oct 29, 2025 at 05:27:37PM -0700, Sean Christopherson wrote:
+> On Wed, Oct 29, 2025, Pawan Gupta wrote:
+> > When a system is only affected by MMIO Stale Data, VERW mitigation is
+> > currently handled differently than other data sampling attacks like
+> > MDS/TAA/RFDS, that do the VERW in asm. This is because for MMIO Stale Data,
+> > VERW is needed only when the guest can access host MMIO, this was tricky to
+> > check in asm.
+> > 
+> > Refactoring done by:
+> > 
+> >   83ebe7157483 ("KVM: VMX: Apply MMIO Stale Data mitigation if KVM maps
+> >   MMIO into the guest")
+> > 
+> > now makes it easier to execute VERW conditionally in asm based on
+> > VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO.
+> > 
+> > Unify MMIO Stale Data mitigation with other VERW-based mitigations and only
+> > have single VERW callsite in __vmx_vcpu_run(). Remove the now unnecessary
+> > call to x86_clear_cpu_buffer() in vmx_vcpu_enter_exit().
+> > 
+> > This also untangles L1D Flush and MMIO Stale Data mitigation. Earlier, an
+> > L1D Flush would skip the VERW for MMIO Stale Data. Now, both the
+> > mitigations are independent of each other. Although, this has little
+> > practical implication since there are no CPUs that are affected by L1TF and
+> > are *only* affected by MMIO Stale Data (i.e. not affected by MDS/TAA/RFDS).
+> > But, this makes the code cleaner and easier to maintain.
 > 
-> Close this loophole with an additional pfn_range_is_valid() check on a
-> per public function basis. Once this check has passed, it is safe to
-> convert pfn and nr_pages into a phys_addr_t and a size.
-> 
-> host_unshare_guest transition is already protected via
-> __check_host_shared_guest(), while assert_host_shared_guest() callers
-> are already ignoring host checks.
-> 
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> 
-> ---
-> 
-> v2 -> v3: 
->    * Test range against PA-range and make the func phys specific.
-> 
-> v1 -> v2:
->    * Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
->    * Rename to check_range_args().
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index ddc8beb55eee..49db32f3ddf7 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -367,6 +367,19 @@ static int host_stage2_unmap_dev_all(void)
->  	return kvm_pgtable_stage2_unmap(pgt, addr, BIT(pgt->ia_bits) - addr);
->  }
+> Heh, and largely makes our discussion on the L1TF cleanup moot :-)
 
-Hello Vincent,
+Well, this series is largely a result of that discussion :-)
 
->  
-> +/*
-> + * Ensure the PFN range is contained within PA-range.
-> + *
-> + * This check is also robust to overflows and is therefore a requirement before
-> + * using a pfn/nr_pages pair from an untrusted source.
-> + */
-> +static bool pfn_range_is_valid(u64 pfn, u64 nr_pages)
-> +{
-> +	u64 limit = BIT(kvm_phys_shift(&host_mmu.arch.mmu) - PAGE_SHIFT);
-> +
-> +	return pfn < limit && ((limit - pfn) >= nr_pages);
-> +}
-> +
-
-This newly introduced function is probably fine to be called without the host lock held as long
-as no one modifies the vtcr field from the host.mmu structure. While
-searching I couldn't find a place where this is directly modified so
-this is probably fine. 
-
->  struct kvm_mem_range {
->  	u64 start;
->  	u64 end;
-> @@ -776,6 +789,9 @@ int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
->  	void *virt = __hyp_va(phys);
->  	int ret;
->  
-> +	if (!pfn_range_is_valid(pfn, nr_pages))
-> +		return -EINVAL;
-> +
->  	host_lock_component();
->  	hyp_lock_component();
->  
-> @@ -804,6 +820,9 @@ int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages)
->  	u64 virt = (u64)__hyp_va(phys);
->  	int ret;
->  
-> +	if (!pfn_range_is_valid(pfn, nr_pages))
-> +		return -EINVAL;
-> +
->  	host_lock_component();
->  	hyp_lock_component();
->  
-> @@ -887,6 +906,9 @@ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages)
->  	u64 size = PAGE_SIZE * nr_pages;
->  	int ret;
->  
-> +	if (!pfn_range_is_valid(pfn, nr_pages))
-> +		return -EINVAL;
-> +
->  	host_lock_component();
->  	ret = __host_check_page_state_range(phys, size, PKVM_PAGE_OWNED);
->  	if (!ret)
-> @@ -902,6 +924,9 @@ int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages)
->  	u64 size = PAGE_SIZE * nr_pages;
->  	int ret;
->  
-> +	if (!pfn_range_is_valid(pfn, nr_pages))
-> +		return -EINVAL;
-> +
->  	host_lock_component();
->  	ret = __host_check_page_state_range(phys, size, PKVM_PAGE_SHARED_OWNED);
->  	if (!ret)
-> @@ -945,6 +970,9 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu
->  	if (prot & ~KVM_PGTABLE_PROT_RWX)
->  		return -EINVAL;
->  
-> +	if (!pfn_range_is_valid(pfn, nr_pages))
-> +		return -EINVAL;
-> +
-
-I think we don't need it here because __pkvm_host_share_guest has the
-__guest_check_transition_size verification in place which limits
-nr_pages.  
-
->  	ret = __guest_check_transition_size(phys, ipa, nr_pages, &size);
->  	if (ret)
->  		return ret;
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > ---
 > 
-> base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
-> -- 
-> 2.51.0.869.ge66316f041-goog
->
+> ...
+> 
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 451be757b3d1b2fec6b2b79157f26dd43bc368b8..303935882a9f8d1d8f81a499cdce1fdc8dad62f0 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -903,9 +903,16 @@ unsigned int __vmx_vcpu_run_flags(struct vcpu_vmx *vmx)
+> >  	if (!msr_write_intercepted(vmx, MSR_IA32_SPEC_CTRL))
+> >  		flags |= VMX_RUN_SAVE_SPEC_CTRL;
+> >  
+> > -	if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only) &&
+> > -	    kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+> > -		flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
+> > +	/*
+> > +	 * When affected by MMIO Stale Data only (and not other data sampling
+> > +	 * attacks) only clear for MMIO-capable guests.
+> > +	 */
+> > +	if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only)) {
+> > +		if (kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+> > +			flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+> > +	} else {
+> > +		flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+> > +	}
+> 
+> This is quire confusing and subtle.
 
-Other than that this looks good, thanks
-Sebastian
+I realized that and sent the below follow-up almost at the same time:
+
+	Setting the flag here is harmless but not necessary when the CPU is not
+	affected by any of the data sampling attacks. VM_CLEAR_CPU_BUFFERS would be
+	a NOP in the case.
+
+	However, me looking at this code in a year or two would be confused why the
+	flag is always set on unaffected CPUs. Below change to conditionally set
+	the flag would make it clearer.
+
+	---
+	diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+	index 303935882a9f..0eab59ab2698 100644
+	--- a/arch/x86/kvm/vmx/vmx.c
+	+++ b/arch/x86/kvm/vmx/vmx.c
+	@@ -910,7 +910,7 @@ unsigned int __vmx_vcpu_run_flags(struct vcpu_vmx *vmx)
+		if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only)) {
+			if (kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+				flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+	-	} else {
+	+	} else if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_VM)) {
+			flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+		}
+
+
+> E.g. it requires the reader to know that cpu_buf_vm_clear_mmio_only is
+> mutually exlusive with X86_FEATURE_CLEAR_CPU_BUF, and that
+> VMX_RUN_CLEAR_CPU_BUFFERS is ignored if X86_FEATURE_CLEAR_CPU_BUF=n.
+> 
+> At least, I think that's how it works :-)
+
+That is right, only thing is instead of X86_FEATURE_CLEAR_CPU_BUF,
+VM_CLEAR_CPU_BUFFERS depends on KVM specific X86_FEATURE_CLEAR_CPU_BUF_VM.
+
+> Isn't the above equivalent to this when all is said and done?
+> 
+> 	if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF) ||
+
+For the above reason, it might be better to to use
+X86_FEATURE_CLEAR_CPU_BUF_VM (as in the diff I pasted above).
+
+> 	    (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only) &&
+> 	     kvm_vcpu_can_access_host_mmio(&vmx->vcpu)))
+> 		flags |= VMX_RUN_CLEAR_CPU_BUFFERS;
+> 
 
