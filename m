@@ -1,81 +1,99 @@
-Return-Path: <linux-kernel+bounces-878933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19713C21CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:38:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0F8C21C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:32:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C44E1898DD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54BB21A217BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A836C247;
-	Thu, 30 Oct 2025 18:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CC53546E6;
+	Thu, 30 Oct 2025 18:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="TeCb4RzO"
-Received: from one.firstfloor.org (one.firstfloor.org [65.21.254.221])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dChJkHGi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCD524678E;
-	Thu, 30 Oct 2025 18:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.254.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629E2277026;
+	Thu, 30 Oct 2025 18:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761849479; cv=none; b=ceUdL4zZEmfkzeeLJ6RuL0TVpucNJTjQq/WdOIl7yXCeEMBEow9oPBAIgrsSpT95qNigj2Q4CCvZr3UJLZoTZti9pT5JJuFyFUTa72FW+uZmBY/n29O/vX82VEwfadLZVNsMqtUPytdibqU4nzF4dzyy4K1L0uyXIBPmleokV2w=
+	t=1761849163; cv=none; b=G2i3MpB7Bfr7c/+MwxrE13hLubLlsQXaLSsBvUmHxA1fcZ9sLfqcykRcx8YFfQBgHd37GCvyXZYMCRrYLCY9JNZ5PfPgmGz7lEFzJJ4/r9piwk++ZwFkUBByG0Wd+A2yu4LEFVErK5BSDSOKyPCkW0u2dRt6CShOH2r+04yEoG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761849479; c=relaxed/simple;
-	bh=hFkhO06aqkw8K60d6/UG3E86xtwlqbxjvDfNit9wy6I=;
+	s=arc-20240116; t=1761849163; c=relaxed/simple;
+	bh=CyMqvVzmILxJbVYS3TwbJAWt9vwMiFU9moEhJwXvZoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pa7pSWbWBVkidiwAmNee+76MnWxbtRqQ5NwWslVw8Q1zQ0wQzsLQ+eYwLmxQ7XYxKpK3TkxD+oO1Y+KypjdQbJ16IAhKOmqObOL/std/EBJtMqb50JCWG4UWeftFF1Zla+FA3grdDPL/NmPBf4t68/7CPHEuYq8T3NUUJyiEdaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org; spf=pass smtp.mailfrom=firstfloor.org; dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b=TeCb4RzO; arc=none smtp.client-ip=65.21.254.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=firstfloor.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-	s=mail; t=1761849098;
-	bh=hFkhO06aqkw8K60d6/UG3E86xtwlqbxjvDfNit9wy6I=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFnSuaiXvSDUjY3KfsA0I4I92ojsS4k/ZfyCP0Wmfh/JdRmF0GlyTgaK4f4Pljk/q0eogfae1hjPoqTg9KXSvl7IZA74ZTet7gvNIbXw29UuUbc0ojEmdLS9lNCeeguu9MAGnOXi10hJhZ60Bsx6c7JL1Gk3bDjMAcYDonxvIu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dChJkHGi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C0FCC4CEF8;
+	Thu, 30 Oct 2025 18:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761849162;
+	bh=CyMqvVzmILxJbVYS3TwbJAWt9vwMiFU9moEhJwXvZoU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TeCb4RzOKcGP7cM8RYMc0f9RQcWsvPgS0tXACgPo2+vfkpmqNlVoD45DtI7kp90Ir
-	 nEKhYEA8w7WFCnH54mRTxIPAk6oYdcjkdon08GFcBig7ndDwMkFshoKVMd0vs3Rw1t
-	 qWSevAL3Up236pHR4urYnfO5+FM0TNnRGuML2jVc=
-Received: by one.firstfloor.org (Postfix, from userid 503)
-	id A436D5F6E7; Thu, 30 Oct 2025 19:31:38 +0100 (CET)
-Date: Thu, 30 Oct 2025 11:31:38 -0700
-From: Andi Kleen <andi@firstfloor.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Fangrui Song <maskray@sourceware.org>,
-	linux-toolchains@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Concerns about SFrame viability for userspace stack walking
-Message-ID: <aQOvCugzYe/2DcNW@firstfloor.org>
-References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
- <20251030102626.GR3245006@noisy.programming.kicks-ass.net>
- <87zf982s52.fsf@linux.intel.com>
- <bdda89a7-ff60-46b0-8ce3-28ffec1fac2a@sirena.org.uk>
+	b=dChJkHGi9P0T/5JCYP6jMztthAdoYUB6mpdAM8dtp3GAzo0MLc3WKBwN9Z6Fuk6dU
+	 JGx51adtuWLaIWm60DXn5JujV5qza2Ab8KQbzCGvIw4MGMYCSfmYwu0MWCb6YkfJKV
+	 j/CW9bCrUam1iOCBIxLtDZlTPiBnwLABCp2B5g5nM29PUUWQpwAdHu7clPw6wGwWCB
+	 wsufbohSRSjXhDpZz8e7V8KOaLbe6PiClajK1T1leU7RC9UIdwf++vr/aV4z2QmXhK
+	 2V6OZBWMI5T0M3uxtOsX2oIG7j5i+RJmuvXh0V7uksjHDxeHY9/eDH51hwb+tsqlTr
+	 tziFEGVj+RTpg==
+Date: Thu, 30 Oct 2025 18:32:38 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: Qii Wang <qii.wang@mediatek.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	kernel@collabora.com, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: i2c: i2c-mt65xx: Add compatible for MT8189
+ SoC
+Message-ID: <20251030-profound-afloat-f3bd79b111d5@spud>
+References: <20251030-mt8189-dt-bindings-i2c-v1-1-5b60914c6453@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="szHEQ6Sx+ZZv/65v"
+Content-Disposition: inline
+In-Reply-To: <20251030-mt8189-dt-bindings-i2c-v1-1-5b60914c6453@collabora.com>
+
+
+--szHEQ6Sx+ZZv/65v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bdda89a7-ff60-46b0-8ce3-28ffec1fac2a@sirena.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 06:07:49PM +0000, Mark Brown wrote:
-> On Thu, Oct 30, 2025 at 10:53:13AM -0700, Andi Kleen wrote:
-> 
-> > IMNSHO the whole sframe effort is misguided because all the major ISAs do have
-> > shadow stack hardware support now which is generally a better option. 
-> > It would be better to invest effort in deploying that widely.
-> 
-> It's going to take a *considerable* time for the hardware support to
-> become standard.
+On Thu, Oct 30, 2025 at 08:56:29AM +0100, Louis-Alexis Eyraud wrote:
+> Add compatible string for MT8189 SoC.
+> Its multiple I2C controller instances are compatible with the ones
+> found in the MT8188 SoC.
+>=20
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-Optimizing for the past instead of the future?
+pw-bot: not-applicable
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Not on x86 at least. All my x86 systems have it, except for a few old
-skylakes.
+--szHEQ6Sx+ZZv/65v
+Content-Type: application/pgp-signature; name="signature.asc"
 
--Andi
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQOvRgAKCRB4tDGHoIJi
+0l/dAP9QPRUrWv16mVU4Ly4FWBzgIeEhsVfpsE4qCySvMSQ1RAEAnbotESMjb6UY
+LD7A78dpT+4iygPrnuzENkZIUiF2Nwk=
+=U++K
+-----END PGP SIGNATURE-----
+
+--szHEQ6Sx+ZZv/65v--
 
