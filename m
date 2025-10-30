@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-878120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C86DC1FD7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E9C1FD5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC7C189A926
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE7A640666C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5E332BF48;
-	Thu, 30 Oct 2025 11:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8FB2882AA;
+	Thu, 30 Oct 2025 11:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAvo1abI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXJhVcJs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27A332B9A4
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40CB33890A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761823888; cv=none; b=qatKJ0I9RRtYD0XqJy6Bf5CFgmKwZbUubo5Mxi5bYH/u8Pv/AzYxExr/FSk/LFOU+u2KtUbYFVVwYQrPub/ZZy8P3VOA46aiYIPExmHy/1VjyvEx0jO0aKay4ozm+1Q7XdwRB8yQTm2tDZNDHzWVUfohqpjE1fKHl6NmASqCVDg=
+	t=1761823891; cv=none; b=kf5D/nmipRukyoJs1zUWy5KRvmqmxpib+/uwR/jJ033dWCYfUEqNalCMVyQY/JXKa5GJQ8GkKEo4jDPDRuVXWIdAhcNaOJZ9i6UrWfF5mkkYEdCVAPsfO6dH2zS1ZZ/uyqDI0cw3ZLv/WJfU+HYp4V+DUW6cG3f+9vXu1dXdNtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761823888; c=relaxed/simple;
-	bh=j5oQ3lLxC9Dm0umVWw54qOjcuRvRlhiFSTBCxiaT7DI=;
+	s=arc-20240116; t=1761823891; c=relaxed/simple;
+	bh=oS4B1f0cm9DjI/AVSEQ6VEtA5EjpVx7Of/OoeKvHCSE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fYex3vHL+JVjmHR6cll3fimsuWMhewUS3UGXh30p9d25XFFeWt78Bp022LPvUZAL5olJ7UKf9X4kHF6Qz5WAyY2HQ/t0B1myePVwGBw0sGc4xqRaKV/62X7oZwlc0zSx7EWo3rHmjgviyix3csr0NcZifd8bse/uqH4iawdafZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAvo1abI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E95FC4CEF8;
-	Thu, 30 Oct 2025 11:31:27 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RTFqshNv+qT0PvcjeS3lVYTM0lafM4VQqrAOfmRbGcw/fPA2i72zhWrWzOBxpNJfxX3+dI2LgTnFxWClH4W3wtS1ZpYBYNicF6p3rK5FuxXsFULTJ+jeMYALb/mMutUYfEkzMmdepJnFNzjElqs8a0TDRMuHJ5NZU2U9xNaC1BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXJhVcJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3447AC4CEF1;
+	Thu, 30 Oct 2025 11:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761823888;
-	bh=j5oQ3lLxC9Dm0umVWw54qOjcuRvRlhiFSTBCxiaT7DI=;
+	s=k20201202; t=1761823890;
+	bh=oS4B1f0cm9DjI/AVSEQ6VEtA5EjpVx7Of/OoeKvHCSE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rAvo1abIVquX0H5zWHjmKOEC/0Yinv9oyu4cczPMwsIpfasM/mwOaKZCF9MxOEJ1/
-	 bPRMhs0HDL0G6fIclnrNwxRNsYmFr35y1Zk8EJ+50mUKHQ1EPdr/6TbPo8l3NsGXBk
-	 lidy4MbgJsQ9VbTezqrj8vdClZ0ajTR9so5eLXvAZVfsf4xC41OJdVoYl54weA1EDi
-	 ko89dMuwaKvHMk6bouiALrUjEcJ5h7Y5Po1xM8M87KROUuvhmrWZgSPNKQLeSQ8Fk3
-	 uUQysxlZr1fG4+6cF418Weoqwq9b7OBo4AgQk83zB1HHSEqkNuoenhVIweBQwVx64D
-	 tnOTH1+DQ6aQQ==
+	b=DXJhVcJsoyBLfe4Z2bHijtpHxR4ImnOD3s3Sugkrggqd8WVnbLEqmwlH/S1vfYQpw
+	 B5EahsPbIaEENk8c8qfb6E5T75AmQei2CqMIK03WWz96z+cpc6arMYAlS2+UrtAR8p
+	 2Vowa4ecoN/R4zshzZ8Nti3JP/iWHYXNMMRDwQJnE07aof8nuQx871iziG8eeQ6KIr
+	 eUfINAbKm/s4ZKCDkg174eCgRjkyQ+LW1/VTSHdkGTDhMoli2ALmTmCt7qh62NejPZ
+	 bF1R7RGTBijD+cDmU21JaHNdj8tHtH+0pdzkE6ncpvYuo1oE0oZ8rJ3hV84Xo+kB73
+	 u9t0Y/2MWGZwg==
 From: Mark Brown <broonie@kernel.org>
 To: linux-kernel@vger.kernel.org, Sander Vanheule <sander@svanheule.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J . Wysocki" <rafael@kernel.org>, 
  Danilo Krummrich <dakr@kernel.org>
-In-Reply-To: <20251023135032.229511-1-sander@svanheule.net>
-References: <20251023135032.229511-1-sander@svanheule.net>
-Subject: Re: [PATCH v5 0/2] regmap: Introduce validity info for flat cache
-Message-Id: <176182388709.31025.7042684531624049579.b4-ty@kernel.org>
-Date: Thu, 30 Oct 2025 11:31:27 +0000
+In-Reply-To: <20251029081248.52607-1-sander@svanheule.net>
+References: <20251029081248.52607-1-sander@svanheule.net>
+Subject: Re: [PATCH v6 0/2] regmap: Introduce validity info for flat cache
+Message-Id: <176182388892.31025.5838334092689511987.b4-ty@kernel.org>
+Date: Thu, 30 Oct 2025 11:31:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Thu, 23 Oct 2025 15:50:30 +0200, Sander Vanheule wrote:
+On Wed, 29 Oct 2025 09:12:46 +0100, Sander Vanheule wrote:
 > The flat cache behaves differently from the other caches, in that it has
 > no way of knowing if a cache entry is valid. Initialization has to
 > happen either by providing defaults, by loading defaults from hardware
