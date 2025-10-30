@@ -1,145 +1,161 @@
-Return-Path: <linux-kernel+bounces-877958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F68FC1F6FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:03:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49CDC1F6E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18EFA4EBEFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B109B3B97FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2042F354ACE;
-	Thu, 30 Oct 2025 10:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CD834E74C;
+	Thu, 30 Oct 2025 10:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="D7faxU3P"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIcPugs3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF20350D74;
-	Thu, 30 Oct 2025 10:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3410921FF55
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761818464; cv=none; b=d10pNxRh2TfMoNO9A20WXvX8Fdob+TXIPS4IPypeh/HfqgYRrFCK8s9XtpAOd84DF+hQj83UhTBzIXpPaoD36ikMZJus4Mmkf5+wHeHBiUm6kbOV+8dVtI74ifMZaxKBCnNFcvZ/L+/QPSw/32D9oo4hzPI6Vxbo0iidN8kMuVw=
+	t=1761818569; cv=none; b=fRShesPc8ugjaO8yLyGNvuBERPHCTBqsp+IQ2qAyG4WUq3wYQwpsRk4Tph1sLC/7YVYyislF5Xcm0U+OmIkitCljx20IcWRguBRC/pUN30I75kxvZQVjlmotvPLYVzwfJQ9DJuzAM/AesLhuxQ0W2f2sJagte7gRNAUYG7HwHc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761818464; c=relaxed/simple;
-	bh=8z2DPsxRfU7/x/3wxyDVReRDq9qq0yZeP1k+PdqwnXg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=URonLUTnUjYPKhYfWOq2r6648DYaILB7h+QbUdg55SAkzqbRLFxDCshVKW50mGNiB3869dQ2mxJcyZ0O/Dgil1imvOH/ByxM1ZTMNcHbobzGyIblr+B6ZlBJ+I/9wUkhOUE8ejmfaNG8j4fZVwSA51PI0VSEbTYguXJNL9FnqLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=D7faxU3P; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=juOtsw+XKXPdwDGMXWQfaBt8GPcPrObp5r2IzcEKJAs=;
-	b=D7faxU3P5QktFdurjwp3E0G4X2lKyA6nan83uV2enABhH3xdLSRVWKnyiEsUmyjSpxDPi/gAu
-	5US+NpL5CPAQopObhEVmxCjSHAjeLBl0mq7xwHJQWGEClmUDZXVC9pDBe7TfgMllEvJ1ff1XJSt
-	pS2MUj+RAS3uwLidb0hpONk=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cy0414f4cz1P6gW;
-	Thu, 30 Oct 2025 18:00:49 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cxzzf4KlBz6M4p0;
-	Thu, 30 Oct 2025 17:57:02 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id A6BEC14038F;
-	Thu, 30 Oct 2025 18:00:54 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 Oct
- 2025 10:00:53 +0000
-Date: Thu, 30 Oct 2025 10:00:52 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dan.j.williams@intel.com>, <aik@amd.com>, <lukas@wunner.de>, Samuel Ortiz
-	<sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe
-	<jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven Price
-	<steven.price@arm.com>, Bjorn Helgaas <helgaas@kernel.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
-	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH RESEND v2 06/12] coco: host: arm64: Add RMM device
- communication helpers
-Message-ID: <20251030100052.00005c65@huawei.com>
-In-Reply-To: <yq5ay0osd9yb.fsf@kernel.org>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
-	<20251027095602.1154418-7-aneesh.kumar@kernel.org>
-	<20251029183306.0000485c@huawei.com>
-	<yq5ay0osd9yb.fsf@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761818569; c=relaxed/simple;
+	bh=r5xiql/CWLoKOljyLg2/QtrdaB9yqJsCMTZbhNIakUo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=frYvVoGZ2OOo0BuT1mzYGgDn4LvnT1JsxakSnyhLYBw44aukFopZPphPGGvaD1rESsgyKO1xY/RoOdbfthhDunhKxH7UCzl0gNZ+NPDIBZbOk661tQbTCfLLsX2qK0N6ChoJDPb+8gyXikltjvA62HuYDiienBaORjamiEOhkXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIcPugs3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D574FC4CEFF
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761818568;
+	bh=r5xiql/CWLoKOljyLg2/QtrdaB9yqJsCMTZbhNIakUo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EIcPugs30KHp2oN6mGnWO5R5GzlIB6xW5eoCAJ4MOPlPLrSXwaLhXrJblMRprR9aE
+	 QdVaoLFBWMtbOfqcgqdvWKf714XGEVo52AwmfsAF/XLBJRU1X0qCcgQLyB741xpYst
+	 Bvb0sp/uiUa2FyqNtgKl+1uM/aw66NPNI7tTLaVi6UCZMGnqsqcqYKZfG//A479eCx
+	 xWiWqbzK3qhlm1MghWY9R1/rlr6NwA0tOvxWWfqRQQ1hVhNWo+xtiT0HWLXUqvR2zd
+	 BSTrIsQzM84Wior5sP8wqfA9xR4THb9jhUAzjW40ierljUBJaeh5lqS+llpF+9VwgS
+	 VcDUrTyhMoS8Q==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-591c9934e0cso1459585e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:02:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXD5QXH3eM9f8lqtdgFWQmN5IyzUUcj3V2Hx9LV+s9DESANVWEGkT6xNMyrBrWSQ7QLaA0nFnzDI4eTXd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvLp2ai8qV3kmIYzV5D1LsPRDM/NZrDD79wQCT9ah6vCDOY72F
+	KlO/64Flew4JeGxFxOOyQK25xtIOYO+PUW0x2p13E8yFOB8J+Z+jFz1yTAYX8JJ/jKAnFHhb8T/
+	cCBaeqi1003QQVMbyGEsUd+WV0tfGmfw=
+X-Google-Smtp-Source: AGHT+IEWtHRJgfzesZIicoiwBsGNiijy1Cz9bSwYEQl6Xwgwlj+lutUH1oxJWo6qzPvnRFAwdMfybG0k46nq2737U4E=
+X-Received: by 2002:a05:651c:12c8:b0:372:9505:7256 with SMTP id
+ 38308e7fff4ca-37a05316e43mr17170601fa.30.1761818567165; Thu, 30 Oct 2025
+ 03:02:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+References: <20251023082129.75612-1-maqianga@uniontech.com>
+ <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
+ <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
+ <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com>
+ <9F7F632B7963434F+abad2548-a90d-4448-ae79-dd4bf637ee6e@uniontech.com>
+ <CAMj1kXHu5ABgxKsc_gg1j=pWMz6DbWoqv=qAAjx-5CiSF2PAiQ@mail.gmail.com> <BD93A8DBE27154B0+22bf4a83-a850-4f78-8e0d-84cc93fe2715@uniontech.com>
+In-Reply-To: <BD93A8DBE27154B0+22bf4a83-a850-4f78-8e0d-84cc93fe2715@uniontech.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 30 Oct 2025 11:02:34 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFUUCoE=gZ0kTMKx87qnJMU9J9skT75STTKjjakXb8kmw@mail.gmail.com>
+X-Gm-Features: AWmQ_bmbipMpTfTSvyFPuGPK5qsmoZKz2m5xvqfsOsmZI7s9lak8SdW6KJRsPRA
+Message-ID: <CAMj1kXFUUCoE=gZ0kTMKx87qnJMU9J9skT75STTKjjakXb8kmw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 30 Oct 2025 14:48:20 +0530
-Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
-
-> Jonathan Cameron <jonathan.cameron@huawei.com> writes:
-> ...
-> 
-> >> +		/*
-> >> +		 * Some device communication error will transition the
-> >> +		 * device to error state. Report that.
-> >> +		 */
-> >> +		if (type == PDEV_COMMUNICATE)
-> >> +			ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
-> >> +						 (enum rmi_pdev_state *)&state);
-> >> +		if (ret)
-> >> +			state = error_state;  
-> > Whilst not strictly needed I'd do this as:
+On Thu, 30 Oct 2025 at 08:37, Qiang Ma <maqianga@uniontech.com> wrote:
+>
+>
+> =E5=9C=A8 2025/10/29 22:15, Ard Biesheuvel =E5=86=99=E9=81=93:
+> > On Wed, 29 Oct 2025 at 10:55, Qiang Ma <maqianga@uniontech.com> wrote:
+> >>
+> >> =E5=9C=A8 2025/10/28 21:42, Ard Biesheuvel =E5=86=99=E9=81=93:
+> >>> On Mon, 27 Oct 2025 at 04:46, Qiang Ma <maqianga@uniontech.com> wrote=
+:
+> >>>> =E5=9C=A8 2025/10/23 16:30, Ard Biesheuvel =E5=86=99=E9=81=93:
+> >>>>> On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> wro=
+te:
+> >>>>>> In the efi_virtmap_init(), permission settings have been applied:
+> >>>>>>
+> >>>>>> static bool __init efi_virtmap_init(void)
+> >>>>>> {
+> >>>>>>            ...
+> >>>>>>            for_each_efi_memory_desc(md)
+> >>>>>>                    ...
+> >>>>>>                    efi_create_mapping(&efi_mm, md);
+> >>>>>>            ...
+> >>>>>>            efi_memattr_apply_permissions(&efi_mm, efi_set_mapping_=
+permissions);
+> >>>>>>            ...
+> >>>>>> }
+> >>>>>>
+> >>>>>> Therefore, there is no need to apply it again in the efi_create_ma=
+pping().
+> >>>>>>
+> >>>>>> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI R=
+untime Services regions")
+> >>>>>>
+> >>>>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> >>>>> No, efi_memattr_apply_permissions() uses the /optional/ memory
+> >>>>> attributes table, whereas efi_create_mapping() uses the permission
+> >>>>> attributes in the EFI memory map. The memory attributes table is
+> >>>>> optional, in which case any RO/XP attributes from the memory map
+> >>>>> should be used.
+> >>>>>
+> >>>> I see.
+> >>>>
+> >>>> Then, can it be modified like this?
+> >>> No
+> >>>
+> >>>> --- a/arch/arm/kernel/efi.c
+> >>>> +++ b/arch/arm/kernel/efi.c
+> >>>> @@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct *=
+mm,
+> >>>> efi_memory_desc_t *md)
+> >>>>                    desc.type =3D MT_MEMORY_RWX_NONCACHED;
+> >>>>            else if (md->attribute & EFI_MEMORY_WC)
+> >>>>                    desc.type =3D MT_DEVICE_WC;
+> >>>> +       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
+> >>> This will be true for RO, XP or RO+XP.
+> >>>
+> >>>> +               desc.type =3D MT_MEMORY_RO;
+> >>> This will apply RO permissions even to XP regions, which need to be w=
+ritable.
+> >>>
+> >> Thanks for your review.
+> >> I see.
+> >>
+> >> I can introduce a new type MT_MEMORY_RO_XP, to describe RO+XP,
+> >> and then we can use the RO+XP attribute to implement memory mapping.
+> >>
+> > Why? The current code is working fine, no?
 > >
-> > 		if (type == PDEV_COMMUNICATE) {
-> > 			ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
-> > 						 (enum rmi_pdev_state *)&state);
-> > 			if (ret)
-> > 				state = error_state;
-> > 		}
-> >
-> > Just to make it clear that reg check is just on the output of the call above.
-> > If we didn't make that call it is definitely zero but nice not to have
-> > to reason about it.
-> >  
-> 
-> Some of this is because follow up patch adds more details there. In this case.
-> 
-> 		/*
-> 		 * Some device communication error will transition the
-> 		 * device to error state. Report that.
-> 		 */
-> 		if (type == PDEV_COMMUNICATE)
-> 			ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
-> 						 (enum rmi_pdev_state *)&state);
-> 		else
-> 			ret = rmi_vdev_get_state(virt_to_phys(host_tdi->rmm_vdev),
-> 						 (enum rmi_vdev_state *)&state);
-> 		if (ret)
-> 			state = error_state;
-> 
-Ah fair enough I missed that.
+> Yes, the current code is running normally.
+>
+> The reasons for the modification are as follows:
+> I noticed that the arm64/RISC-V efi_create_mapping() always return 0,
+> but in the code where efi_virtmap_init() calls it, it is as follows:
+>
+> ret =3D efi_create_mapping(&efi_mm, md);
+> if (ret) {
+>      pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
+>          &phys, ret);
+>      return false;
+> }
+>
+> This return error print is unnecessary, so I want to remove it.
 
-J
-> 
-> 
-> >  
-> >> +	}
-> >> +
-> >> +	if (state == error_state)
-> >> +		pci_err(tsm->pdev, "device communication error\n");
-> >> +
-> >> +	return state;
-> >> +}
-> >> +  
-> 
-> -aneesh
-
+So what is preventing you from removing this from the RISC-V version?
 
