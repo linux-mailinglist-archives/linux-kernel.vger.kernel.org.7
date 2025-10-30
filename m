@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-878675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB5AC213A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:37:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FF7C213D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D27D4EDD89
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8763B3791
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B64A2E339B;
-	Thu, 30 Oct 2025 16:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55832ED869;
+	Thu, 30 Oct 2025 16:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmBVhbsr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="eY0dsQe1"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D57C133;
-	Thu, 30 Oct 2025 16:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30BC2E3B08
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842118; cv=none; b=Gqm6OqwR5q8xTd9eWHqxAkOYBiqQk2xNT4qermO7RaJMXQHg3RwLpL1FtaGmtGMaKrFuxFYjuWbhviXmj51JrsU9FIfuDVHkcKNuyo/n6qfpilekGsTOBn24N9jNvS4uOFdIjLxjGLZ6E9G7T6hx6FBSt58zLGkMlr/NjdORh9E=
+	t=1761842132; cv=none; b=BIQWez+la0dtxxqWKKNAxY1v2i3zRyN8hzofyokMrycqKnj37Z+gUszItRhBjvjq1WUBPwMaNVpOEKfowBWhgnWEOz5IIw4LHZB6q+E08V2RpJds4XOKKaeP/VG/2IglqbQsyGahGx2mCzJ/0vivsZOPNGGzrV1jpPm94v4B0ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842118; c=relaxed/simple;
-	bh=hN0a1nBdKiMFiaSD/0G7lwpKVl2foow4E6pO4Pcw4F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8arAwF79b1uFMJMr/2OucwkM2PI0rVUjQD+OowoUox5u2w4/KlbcZd74DtpF0lp+QZpUY1XJYD4oatLNGSqNq9ieDEwGD2SJLf0LsLDFnSzGVkjMznESpInaOf8k0bsrN7RjoR41BDNBnSQsz7rsX7K3ZfHIpXS9ZMY8eoaEnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmBVhbsr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38906C4CEF1;
-	Thu, 30 Oct 2025 16:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761842118;
-	bh=hN0a1nBdKiMFiaSD/0G7lwpKVl2foow4E6pO4Pcw4F0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UmBVhbsrQtd2KdUoHIzwQgLRpap1mnzaevw6pXbKZmMsNw4YgKVexPHNc+DCZY7rz
-	 ELtQbSCDRehuO8RYNFosVNUPCBYaIU7Kfd9n4dxOTyTSs8BHnBv5my6P065L8BsEt4
-	 DP+yxEOUtptvkZ5QS15jYpGGlNjqohyoPfI5I244Ur7FUZRrXWL332j/G568pykAXF
-	 UKqH00JIBeGIN2C2A4CJSccwnDSoh9TCGnUvIiYeJbipWvnATN7/NkFzSosiKKPsmn
-	 iF1Hsc6UmyIjWRbE6V0KclKFYW7SD35wb1hzt9rZ7wSKxzRmsCh9W9aWQqgfQl9iHM
-	 vYREVSeY9+4CQ==
-Date: Thu, 30 Oct 2025 17:35:11 +0100
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH v2 3/4] clocksource/drivers/arm_arch_timer_mmio: Switch
- over to standalone driver
-Message-ID: <aQOTv3VnOCTjSj46@lpieralisi>
-References: <20250814154622.10193-1-maz@kernel.org>
- <20250814154622.10193-4-maz@kernel.org>
+	s=arc-20240116; t=1761842132; c=relaxed/simple;
+	bh=SxmpJPhXHW/j28p9iOyotODBxk5VEWCNDG5cJr+XPYc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sipY4Iheo1UiVrR1r0lMOExdu1YC5KBZD52YWVeYp8QPtsFA0JQbTNlXQpROenmjlvWk/2AgLdzNMPdh8KxD7xPTTees1RLwzTguz5Hk519wjZZxHplp6gHJuJGiZbp6BlONWoMQo7SQ7E6lLzvB4FczlcAUyDoGj5eKCZb2Uhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=eY0dsQe1; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1761842123;
+	bh=SxmpJPhXHW/j28p9iOyotODBxk5VEWCNDG5cJr+XPYc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=eY0dsQe11vVBtyY8DLbKSsqyIWgOQlEFuj28Pwv7t4I/GiAkBTtSQ0KqJ+VLeEhUK
+	 AB1YCbEdKXym9rLUrz8BqTHi3lt/syb3PScgP8hQOaSLXPlyA6kM7X1HPFr2SnWm4e
+	 R0zdfikkgM0t7XVUitkZnjDYZv5Bzl/dkHjifGAI=
+Received: by gentwo.org (Postfix, from userid 1007)
+	id D344E402BB; Thu, 30 Oct 2025 09:35:23 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id D106C400CA;
+	Thu, 30 Oct 2025 09:35:23 -0700 (PDT)
+Date: Thu, 30 Oct 2025 09:35:23 -0700 (PDT)
+From: Shubhang <sh@gentwo.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+    shubhang@os.amperecomputing.com, Ingo Molnar <mingo@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+    Vincent Guittot <vincent.guittot@linaro.org>, 
+    Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+    Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+    Shijie Huang <Shijie.Huang@amperecomputing.com>, 
+    Frank Wang <zwang@amperecomputing.com>
+cc: Christopher Lameter <cl@gentwo.org>, Adam Li <adam.li@amperecomputing.com>, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Prefer cache-hot prev_cpu for wakeup
+In-Reply-To: <c22de852-f2f6-48d7-831f-ca2a06365783@arm.com>
+Message-ID: <d1cbc53d-d4cf-bc5a-6468-89e9a1d86f33@gentwo.org>
+References: <20251017-b4-sched-cfs-refactor-propagate-v1-1-1eb0dc5b19b3@os.amperecomputing.com> <c22de852-f2f6-48d7-831f-ca2a06365783@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814154622.10193-4-maz@kernel.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Thu, Aug 14, 2025 at 04:46:21PM +0100, Marc Zyngier wrote:
+The system is an 80 core Ampere Altra with a two-level
+sched domain topology. The MC domain contains all 80 cores.
 
-[...]
+I agree that placing the condition earlier in `select_idle_sibling()` 
+aligns better with convention. I will move the check (EAS Aware) to the 
+top of the function and submit a v2 patch.
 
-> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+Best,
+Shubhang Kaushik
 
-[...]
+On Thu, 30 Oct 2025, Dietmar Eggemann wrote:
 
->  #ifdef CONFIG_ACPI_GTDT
-> -static int __init
-> -arch_timer_mem_verify_cntfrq(struct arch_timer_mem *timer_mem)
-> -{
-> -	struct arch_timer_mem_frame *frame;
-> -	u32 rate;
-> -	int i;
-> -
-> -	for (i = 0; i < ARCH_TIMER_MEM_MAX_FRAMES; i++) {
-> -		frame = &timer_mem->frame[i];
-> -
-> -		if (!frame->valid)
-> -			continue;
-> -
-> -		rate = arch_timer_mem_frame_get_cntfrq(frame);
-> -		if (rate == arch_timer_rate)
-> -			continue;
-> -
-> -		pr_err(FW_BUG "CNTFRQ mismatch: frame @ %pa: (0x%08lx), CPU: (0x%08lx)\n",
-> -			&frame->cntbase,
-> -			(unsigned long)rate, (unsigned long)arch_timer_rate);
-> -
-> -		return -EINVAL;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int __init arch_timer_mem_acpi_init(int platform_timer_count)
-> -{
-> -	struct arch_timer_mem *timers, *timer;
-> -	struct arch_timer_mem_frame *frame, *best_frame = NULL;
-> -	int timer_count, i, ret = 0;
-> -
-> -	timers = kcalloc(platform_timer_count, sizeof(*timers),
-> -			    GFP_KERNEL);
-> -	if (!timers)
-> -		return -ENOMEM;
-> -
-> -	ret = acpi_arch_timer_mem_init(timers, &timer_count);
-
-You probably already noticed (I was checking the initcall level in
-drivers/acpi/arm64/gtdt.c to start sorting out GICv5 IWB dependencies),
-AFAICS acpi_arch_timer_mem_init() is now unused so it can be removed.
-
-Thanks,
-Lorenzo
+> On 18.10.25 01:00, Shubhang Kaushik via B4 Relay wrote:
+>> From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+>>
+>> Modify the wakeup path in `select_task_rq_fair()` to prioritize cache
+>> locality for waking tasks. The previous fast path always attempted to
+>> find an idle sibling, even if the task's prev CPU was not truly busy.
+>>
+>> The original problem was that under some circumstances, this could lead
+>> to unnecessary task migrations away from a cache-hot core, even when
+>> the task's prev CPU was a suitable candidate. The scheduler's internal
+>> mechanism `cpu_overutilized()` provide an evaluation of CPU load.
+>>
+>> To address this, the wakeup heuristic is updated to check the status of
+>> the task's `prev_cpu` first:
+>> - If the `prev_cpu` is  not overutilized (as determined by
+>>   `cpu_overutilized()`, via PELT), the task is woken up on
+>>   its previous CPU. This leverages cache locality and avoids
+>>   a potentially unnecessary migration.
+>> - If the `prev_cpu` is considered busy or overutilized, the scheduler
+>>   falls back to the existing behavior of searching for an idle sibling.
+>
+> How does you sched domain topology look like? How many CPUs do you have
+> in your MC domain?
+>
+>>
+>> Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+>> ---
+>> This patch optimizes the scheduler's wakeup path to prioritize cache
+>> locality by keeping a task on its previous CPU if it is not overutilized,
+>> falling back to a sibling search only when necessary.
+>> ---
+>>  kernel/sched/fair.c | 11 ++++++++++-
+>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index bc0b7ce8a65d6bbe616953f530f7a02bb619537c..bb0d28d7d9872642cb5a4076caeb3ac9d8fe7bcd 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -8618,7 +8618,16 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+>>  		new_cpu = sched_balance_find_dst_cpu(sd, p, cpu, prev_cpu, sd_flag);
+>>  	} else if (wake_flags & WF_TTWU) { /* XXX always ? */
+>>  		/* Fast path */
+>> -		new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
+>> +
+>> +		/*
+>> +		 * Avoid wakeup on an overutilized CPU.
+>> +		 * If the previous CPU is not overloaded, retain the same for cache locality.
+>> +		 * Otherwise, search for an idle sibling.
+>> +		 */
+>> +		if (!cpu_overutilized(prev_cpu))
+>> +			new_cpu = prev_cpu;
+>
+> IMHO, special conditions like this one are normally coded at the
+> beginning of select_idle_sibling().
+>
+> [...]
+>
 
