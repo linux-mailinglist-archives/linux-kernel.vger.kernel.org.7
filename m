@@ -1,196 +1,138 @@
-Return-Path: <linux-kernel+bounces-877610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA18BC1E92E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E38C1E958
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD72E4036CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A1A3B4BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CDB2F9DA7;
-	Thu, 30 Oct 2025 06:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B3C32D0F2;
+	Thu, 30 Oct 2025 06:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="TWQR3CW0"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlDL1fkO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B48226B2C8;
-	Thu, 30 Oct 2025 06:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428E52DC76C;
+	Thu, 30 Oct 2025 06:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761806047; cv=none; b=GIIKUbsYDNKrdys0tvNJ6QxIZxh0DgeS0TnD5Z9iAMb8mNmhRFEAikXeIV39fmjNyrvPGfuvpW/QYt1UW7vJZ+xT5ygF05KoSzW0BbCJt/qUt4wfTLvzQ1oE5pMGHUwAbzdlftPg/1082lrZmMDyvWc4EFpE/MeQet0Qgc/Gcwk=
+	t=1761806142; cv=none; b=fLOKJtmuiV4LAl6CzCwIW9kPZpNPc8590mnZiw+8yS6l6+x173uEYkqQpqAzukygrR1AR7L0NLT+aaEMuEIWYmrwi0UggU8yfsEETSGFJdhN5lQftpFWkZqPeBZOBwoCz8e9ehKFL3OQ/mYs1g1fw7otbXvxf/o0B/0u0msoAM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761806047; c=relaxed/simple;
-	bh=+SJTBy93OQZkNa5+ywB13QewJssAEqdr321BINBmN58=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULmSlO0jGHysyk0U2Cr/40FQYYyn1wr1gmMh5LW6roBuD5J22QUus8BIKOHJFtPJMfjfVxowwX6ArB/yI1Gx39s/GAwq/0W2ZIj1l6qYndYAd5IhFuIjvd6ZR3K5mkUz8AWR+DZfI4tc3LZeU7KiucSX/MwbfaeTgedlWA326Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=TWQR3CW0; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4392AA06E0;
-	Thu, 30 Oct 2025 07:33:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-type:content-type:date:from:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=mail; bh=M6ImSmlEdVq6gYsAfzdGGfn6z0LGqhFlIH7lgrJV1hU=; b=
-	TWQR3CW0WeseO8PBp42ROXDB16WYCL+prcMIJ8D6uKDCtY5LJsfrSU2UfFZCBbtE
-	g5YEaUNDd8RaDJ5PIF4VtOF7N+fuakK2OH0/IrsI3kqG/R72jeuLCeZuYyF4y+pm
-	jqZ4yz826Z36Y7hbLoaxq7oT1Ljnqr2Cg9r4cIi+D6SOrPBhxAGJKHDob9NTNnsF
-	2RYnSyyp6eEm66TlRkfNU3WmyNTAfsc6zdIcWxrh5hzV7FJxwWy3KKDUX67iaaP2
-	FBI9wKlYUZXdGXMtLjmME5fQBWASJPoBDAD1dZaCVHNskvIisda8cOEOoQZ5MDew
-	lkUvYAmZ3zqX84WFuN93PURFgaIzwniD6ckyCmL6su0/T6FxGdmDRdn8k9QLQrDf
-	00zv+Yg+ApQKOp/xPUUsTfBUPJBZQI+2YxWRkk5MytE+zAgts/AV6O2IJEBT16mL
-	zUbqscrPuZVk4rZnWnXcafgz6LL/kMhfjnMeuqbJt7OnDdTXUoPx0/5xM5db51Lc
-	+3MqkUy2h2zH46Dm92GN3KgTO2IKlDEfiOwqYb6r0ni2BQcykMo0aRSU7KLI5A20
-	EEY2jzqmrGTKvREC8skRYPlJF1Tl4H7o36dP1D5j8B9gYgovscVa09XrrzkQ0RXi
-	BIaX4T43FMzRaWN5zuj1X5sy+RfkZA3cK4jtH7XRNZI=
-Date: Thu, 30 Oct 2025 07:33:56 +0100
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Heiner Kallweit <hkallweit1@gmail.com>, Russell King
-	<linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 3/4] net: mdio: reset PHY before attempting
- to access registers in fwnode_mdiobus_register_phy
-Message-ID: <aQMG1A7nPzpoaShr@debianbuilder>
-References: <cover.1761732347.git.buday.csaba@prolan.hu>
- <5f8d93021a7aa6eeb4fb67ab27ddc7de9101c59f.1761732347.git.buday.csaba@prolan.hu>
- <e61e1c1c-083b-472f-8edd-b16832ca578e@lunn.ch>
- <aQIhf3dXOxS4vd2W@debianbuilder>
- <c01fc3d0-050e-4ea7-970f-393268430824@lunn.ch>
+	s=arc-20240116; t=1761806142; c=relaxed/simple;
+	bh=U7srSnWzfH6yj+mfSTGf2OP0Gg/vZlzbpPNFl8Dk7XQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CnxMnWCLX/t83bHvqxJBD/24uCN773YJm/AUEx0/xJRIZpZOx+VA853HsfRHCsyzJEgWh8CS/i75O9nha+TLWPjqfjPoXFLIZG2J53iGuCef12x+ZeP/chPDvRdd8FGMwQBz0Il22zZhxtKWE9ALVcudU+GpFdCDupCdUBTVNqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlDL1fkO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CE418C4CEF1;
+	Thu, 30 Oct 2025 06:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761806141;
+	bh=U7srSnWzfH6yj+mfSTGf2OP0Gg/vZlzbpPNFl8Dk7XQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=NlDL1fkOcAvWdTiWh1qtupEVkylVn1RCIvJ+Ecjz5Oz1PDX6y8bXubduJuudCf07i
+	 LCmJxNofOQoRyt3bMHI4qEr0Xt6n0oJjHCMpCeBX+V/6+tuQiSNkTdXeow1yIUTSv2
+	 PgbOCoRVkPwNfrZhWtr7vHionZGSVsLxEOCG/zMN9XufSTj5LKgLOLuY37HeBY3ICr
+	 /vrSwoXJjPpPMwxIeoHAcfNWaRJDtgnbgl63QX53xtCfVIxVSFyODmSwVCxPURc+x5
+	 fC9+x1NZOa5BOfCtR6HyoEO2sTjD+y2GBdkiZXtsuHBQaEc9TShNMEoWnywD8BB2Kr
+	 1coGiCDQUhPDg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B982CCCF9F0;
+	Thu, 30 Oct 2025 06:35:41 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Subject: [PATCH v3 0/6] arm64: dts: freescale: add support for the
+ GOcontroll Moduline IV/Mini
+Date: Thu, 30 Oct 2025 07:35:36 +0100
+Message-Id: <20251030-mini_iv-v3-0-ef56c4d9f219@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c01fc3d0-050e-4ea7-970f-393268430824@lunn.ch>
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761806037;VERSION=8001;MC=2613030632;ID=168085;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155F67736A
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADgHA2kC/2WMwQqDMBAFf0X23JRkNdT01P8opYQ00QVNJJHQI
+ v57o5cWPM7jzSyQbCSb4FotEG2mRMEXqE8VmF77zjJ6FQbkKAXnio3k6UmZaS6tNGgEYg3lPUX
+ r6L2X7o/CPaU5xM8ezmJbj40sGGeubltlGoWNvNy6YIKfYxiGswkjbKGMfzLiT8YiI9eudUprI
+ 5qDvK7rF7GCyXHgAAAA
+X-Change-ID: 20251009-mini_iv-a05e5c2c1223
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761806140; l=2171;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=U7srSnWzfH6yj+mfSTGf2OP0Gg/vZlzbpPNFl8Dk7XQ=;
+ b=dUk+8sCZB3oHVtlOsJveFBg7XJlVdMloMj3tLjhulGXp3ipCK3pKsZ3y9+/ItK5lwGpdeSH5w
+ w8ba6dfY5LSB1w1EJjYBMGOe9hQZkJEhiH4z1nI3D8f52VgHf6f8MpU
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-On Wed, Oct 29, 2025 at 04:15:27PM +0100, Andrew Lunn wrote:
-> On Wed, Oct 29, 2025 at 03:15:27PM +0100, Buday Csaba wrote:
-> > On Wed, Oct 29, 2025 at 02:20:14PM +0100, Andrew Lunn wrote:
-> > > > +/* Hard-reset a PHY before registration */
-> > > > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-> > > > +			    struct fwnode_handle *phy_node)
-> > > > +{
-> > > > +	struct mdio_device *tmpdev;
-> > > > +	int rc;
-> > > > +
-> > > > +	tmpdev = mdio_device_create(bus, addr);
-> > > > +	if (IS_ERR(tmpdev))
-> > > > +		return PTR_ERR(tmpdev);
-> > > > +
-> > > > +	fwnode_handle_get(phy_node);
-> > > 
-> > > You add a _get() here. Where is the corresponding _put()?
-> > 
-> > When mdio_device_free() is called, it eventually invokes
-> > mdio_device_release(). There is the corresponding _put(), that will
-> > release the reference. I also verified this with a stack trace.
-> > 
-> > > 
-> > > Also, fwnode_handle_get() returns a handle. Why do you throw it away?
-> > > What is the point of this get?
-> > >
-> > 
-> > I copied this initialization stub from of_mdiobus_register_device()
-> > in of_mdio.c. The same pattern is used there:
-> > 
-> > 	fwnode_handle_get(fwnode);
-> > 	device_set_node(&mdiodev->dev, fwnode);
-> 
-> This looks broken, but i'm not sure...
-> 
-> static int of_mdiobus_register_device(struct mii_bus *mdio,
-> 				      struct device_node *child, u32 addr)
-> {
-> 	struct fwnode_handle *fwnode = of_fwnode_handle(child);
-> 	struct mdio_device *mdiodev;
-> 	int rc;
-> 
-> 	mdiodev = mdio_device_create(mdio, addr);
-> 	if (IS_ERR(mdiodev))
-> 		return PTR_ERR(mdiodev);
-> 
-> 	/* Associate the OF node with the device structure so it
-> 	 * can be looked up later.
-> 	 */
-> 	fwnode_handle_get(fwnode);
-> 	device_set_node(&mdiodev->dev, fwnode);
-> 
-> 	/* All data is now stored in the mdiodev struct; register it. */
-> 	rc = mdio_device_register(mdiodev);
-> 	if (rc) {
-> 		device_set_node(&mdiodev->dev, NULL);
-> 		fwnode_handle_put(fwnode);
-> 		mdio_device_free(mdiodev);
-> 
-> In this error handling, it appears the fwnode is put() and then the
-> mdiodev freed. I assume that results in a call to
-> mdio_device_release() which does a second put() on fwnode.
-> 
-> That is why code like this should look symmetric. If the put() is in
-> free, the get() should be in the create.
+Add initial support for the Moduline IV and Moduline Mini embedded
+controllers.
 
-I totally agree with that, but I have nothing to do with that code.
-It did also confuse me at first, that is why my earlier versions also had
-a put(), just not in the error handling path.
+These systems are powered by the Ka-Ro Electronics tx8m-1610 COM, which
+features an imx8mm SoC.
 
-> 
-> > It is kind of awkward that we need to half-establish a device, just
-> > to assert the reset, but I could not think of any better solution, that
-> > does not lead to a large amount of code duplication.
-> 
-> And this is another argument against this approach. What does the
-> documentation say about what you can do with a half-established
-> device?
-> 
-> 	Andrew
-> 
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+Changes in v3:
+- Add patch fixing the pmic driver
+- Use the proper feedback properties for BUCK6
+- Slightly rework the compatibles, acked by conor dropped
+- Add missing CAN interface supplies, remove the leftover comment
+- Add missing vled-supply
+- Add missing ethernet phy interrupt (doesn't work)
+- Fix the cs-gpios properties in all spi interfaces
+- Fix the order of properties in all spi interfaces
+- Remove unused labels for regulators of the PMIC
+- Link to v2: https://lore.kernel.org/r/20251022-mini_iv-v2-0-20af8f9aac14@gocontroll.com
 
-But that device never actually leaves fwnode_reset_phy(). It is contained.
-That was the whole point of the first patch: to avoid code duplication
-as much as possible.
-In order to assert and deassert the reset, you have many things to set up:
-read DT properties, claim the GPIO or the reset controller (which is only
-possible for a device, is it not?), then perform the actual
-assertion/deassertion.
-These functions currently exist for an mdio device, why not use them?
+Changes in v2:
+- Fix allignment issue in imx8mm-tx8m-1610.dtsi (fec1)
+- Move phy-reset into fec (works better in barebox)
+- Make the gpio-line-names groups of four on every line
+- Link to v1: https://lore.kernel.org/r/20251009-mini_iv-v1-0-f3889c492457@gocontroll.com
 
-After these patches fwnode_reset_phy() is reasonably structured, at least
-I think so. The temporary device is created, reset properties initialized,
-reset performed, then cleaned up on exit.
+---
+Maud Spierings (6):
+      dt-bindings: arm: fsl: Add GOcontroll Moduline IV/Mini
+      regulator: bd718x7: Fix voltages scaled by resistor divider
+      arm64: dts: imx8mm: Add pinctrl config definitions
+      arm64: dts: freescale: add Ka-Ro Electronics tx8m-1610 COM
+      arm64: dts: freescale: Add the GOcontroll Moduline IV
+      arm64: dts: freescale: Add the GOcontroll Moduline Mini
 
-I understand your concerns about the functionality itself. Yes, it may be
-better handled by the driver, and it is just to gain a little convenience.
-But that is more of a philosophical argument. If I send a next version,
-I can not address that. I can only address technical concerns. If your
-opinion is, that this feature is not wanted, then there is no point in
-sending a next version.
-I personally think that autodetection works reasonably well for most of the
-devices, so expanding this set a little bit is a nice thing.
-But that decision is ultimately for you -maintainers- to make.
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   8 +
+ arch/arm64/boot/dts/freescale/Makefile             |   3 +
+ arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h     |  33 +
+ .../imx8mm-tx8m-1610-moduline-iv-306-d.dts         | 800 +++++++++++++++++++++
+ .../imx8mm-tx8m-1610-moduline-mini-111.dts         | 688 ++++++++++++++++++
+ .../arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi | 444 ++++++++++++
+ drivers/regulator/bd718x7-regulator.c              |   2 +
+ 7 files changed, 1978 insertions(+)
+---
+base-commit: 7c3ba4249a3604477ea9c077e10089ba7ddcaa03
+change-id: 20251009-mini_iv-a05e5c2c1223
 
-I also think that the documentation should reflect clearly when and why
-specifying the PHY ID in the DT is necessary, and wheter it is preferred
-or not. I would be happy to make such a patch, once the decision is made.
+Best regards,
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
 
-That would have have saved us a lot of development time, and I imagine
-there are others in the same shoes.
-
-Thank you for the thorough review!
-Csaba
 
 
