@@ -1,144 +1,171 @@
-Return-Path: <linux-kernel+bounces-877585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71F8C1E80E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:04:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF58C1E81F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:07:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E214F188D260
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:04:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C734C64A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D6B2F60DA;
-	Thu, 30 Oct 2025 06:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3A62F60B3;
+	Thu, 30 Oct 2025 06:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VNcTJt4c"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="0gwxhhNO"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB88246333;
-	Thu, 30 Oct 2025 06:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE03D2D3EF8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761804265; cv=none; b=VgIEAppPZ9OC1//t4DuIhJEQcBkhgwBXD7XjMJZoCAE0lu9VJAdBrcZmQ0IyOItCMShnf5Mnw/1Sj08TR665uJCU9epWJZSfj/WOLrC7vA9GLag+4vlx1jqUObf1Jtx7NF6ye5csfZUcXhWrs5RXGgAc4k8FxVpG/H6d2KJfWJY=
+	t=1761804436; cv=none; b=Q4jqekK6XuFewI1RVKdyPzaD7IyJ5D7NoVBhDoV2wSUREwjjqJQufDAO4u3feQzmh7fQqiC0muBQKWkeJWyH600ENHA9t92vcGw06gxNsHzt1Ad65RqD6+r7JBdDR633hQ3D9o5VB7XSuAH6JUmpGhaXVyIBF1j9wA8UaQ0U4YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761804265; c=relaxed/simple;
-	bh=FUv49txHvrAzjdgWs80ani5/jiFVnH1I1J/VQnA/JbY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=twuTuVtB+LQNfDgYWNurZ72nrYcnUry+JdCX+NLvuZoVeWgF+3fNAX84D7n1k3DMYoiZtaHmGhLEjD0Ds1YPaPZ+geU77Y3U+h3Ai6Zq7hDmehAHsBJl0igvl4CsYnCDYBlb94FF876e0Y/Si8OVN2WX5IhNhqWRAJl4/yYsy04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VNcTJt4c; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1761804436; c=relaxed/simple;
+	bh=/6eS1rSrp3y277Vz4B3Abj/WQzCqBSEwZwUivQ53yoA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RHsQOO0dyalBpWw5W5YaHJ13a1SSp73AEqwa/y8+tus0C4TQuXAEIxgc74B8HmgXmltZSFoe7Kq/HskLxVI477GG0EmMW1rOPuVLzFGbnuPyqGsBw7uBiKy80xWPdySUcNh8JuVmWXjxbsLZZOW/HcwpOD05DQl2Y8yH+VhbsOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=0gwxhhNO; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-93e2d42d9b4so29178939f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1761804259;
-	bh=FUv49txHvrAzjdgWs80ani5/jiFVnH1I1J/VQnA/JbY=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=VNcTJt4cIN2/f4WEgxABC6Id7AAblH/HICBg+PaRPVG+ji+iJv43te7VZKyYtZMc0
-	 pAo0haH4Uqg1V7ki/IASKd0f6fTmhAjTQPBaRdNvvhiPp4SKWK2/Wtef+/9tCi/bpu
-	 SAuz5YgVaLZUs8McGlWx9QY8lGAcCZbEKXtiJgFs9kLQx8d91MOSSTe20kKbNvG8Gz
-	 ORlORw1Rl+GSloNCrshWXebTlQd4lb6hWFM8dpxutMHVJivq0uBOvyemIq2DTUI/wy
-	 c14EsHCY/aQmvBRPlJ1UqMfYHPCxTPgn3AR9FUKjEKg8TdbuHO+GEtWmqQTIUeidhm
-	 IMbhNU3/dSQYQ==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 59CA379118;
-	Thu, 30 Oct 2025 14:04:18 +0800 (AWST)
-Message-ID: <0b9abd87b877595c13011a3d8b4e80e05488effc.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v21 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Ryan Chen
- <ryan_chen@aspeedtech.com>,  bmc-sw@aspeedtech.com,
- benh@kernel.crashing.org, joel@jms.id.au,  andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
- linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
-Date: Thu, 30 Oct 2025 14:04:18 +0800
-In-Reply-To: <59d4d107-4f35-4906-8524-f45b9b85f0ff@kernel.org>
-References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
-	 <20251027061240.3427875-2-ryan_chen@aspeedtech.com>
-	 <59d4d107-4f35-4906-8524-f45b9b85f0ff@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1761804434; x=1762409234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B2oOVPuOCfFeYpVN2DHmuplgz6ll1JdAv6+U3SGE1nM=;
+        b=0gwxhhNORdYniZZzPck6P6fKpoDTfcj3OLogXg33XBkk33c8zK5zJhtMl1n+6otqDt
+         yTu3G0fbMleUYBhjYnMlUzO8UocbTcYKPS2nzoBLCYNDAyQmvhA/ae26MsXwn3gPzcVm
+         i8VABokHVHtIYunV9QVnLnzozs/ByraB6OjOU+9rv9swrn+HFjsXAjD5qei1icnoh85N
+         5lZaM/a8sN8UQcs3hfE3ZKCMtSd0fY7WxG2lrgCyS+vbwKcBrVL6AQ4wb88fmA5KLVcK
+         xBBzuzZDNsxC7T+21KNMzpi95JwiXdyGvT22jajZ1B6dTAPVH8eht6awMlBSBRc9xa0C
+         ileg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761804434; x=1762409234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B2oOVPuOCfFeYpVN2DHmuplgz6ll1JdAv6+U3SGE1nM=;
+        b=NNvWVJDE3qMhwjGIwCL3mzEm4nunkZJnzsX6noLbDsCqma4eYshxeZsbj4hfs7vkAZ
+         xRQ9robq9aX0AZBgpobokBjF/6de/HVPnAjDf9Igpg7a88IE48kWF2ckFAxiG5kPhlRS
+         WDzuy/3/fIyNYaBE+9i7/xcASXlEZAivPLNgXepPs3kkJKNdPIRe+W9B/rr9X/OcKXPg
+         sVDvIe/xP4PNV88pOwTkdcGv5yM7YnxNyORSRhCHOpYZ5qLmxDntdqUreaqq3DAohJAJ
+         jdBr/VQZ3zOGfW51Pu0xCC41eO1LmpeAU5pvNNi7ZtQrsLQLEchmXr8H6Bm1wZo3RWXV
+         Lq8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVd+NXpM3/MXPm0J9GlHtAviTs9XUtXBTwtw4wZQCDFz16peBJadloSn1VVNV4xAYz/COv0K2VU9eZT4kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO90eRtrCXAMovX7v/EGF2z1UcXSyvN5dXQPC5Qmhv64K9VwPP
+	e1b7Wb0QzUfwhuy8HpgZIW4szHYtAF3El9prDm7wCqgboa3vZhuIjsfoRkA7RfNcsIprf3vtol0
+	CPA6+J+Iz6fXirpiKeFOKl/XwubfsyB0dbPPWjoEccw==
+X-Gm-Gg: ASbGncu5CYo+cyLUL4XU0zltCn5FuAdqB7UO3VvrZWWt98hOryQoqDLIcS20opclRVX
+	oY8olibHIEyqN4gBqfatxo6hMJxrtKWDobOlicSsX4wFLk5N6lCt37UGM7Yep2ZaeTNxgjvK8Qx
+	/OdSnvNB7t/nVziZTv74nZw1BhafE4FCdkWt/kKGdUpTFHaivckWdx6YUSiwINfSQIS6nmwVI0y
+	w10urdmn8ksHX3YxpsqmDsJpOto9xsQyUukDIOO9knNfzmrVeRsvPlJj7RbBjbv4KtUzs3g1dOL
+	W3LuN68AGTbb92iSOLYNsvAYCP2T
+X-Google-Smtp-Source: AGHT+IF2w8g1ojnDyGQLFzRzdE61uNp4FTHmi/dw+D9zx9iGIJ1bDIJjlMRj6txF7f56YSZyhxHtxSGceOGnH7lmkQU=
+X-Received: by 2002:a05:6e02:4714:b0:432:fbe2:3605 with SMTP id
+ e9e14a558f8ab-432fbe23809mr44060065ab.11.1761804433543; Wed, 29 Oct 2025
+ 23:07:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251014132106.181155-1-apatel@ventanamicro.com>
+ <20251014132106.181155-2-apatel@ventanamicro.com> <012aaa39-a37b-e682-0e34-9b7d7cd87f75@kernel.org>
+In-Reply-To: <012aaa39-a37b-e682-0e34-9b7d7cd87f75@kernel.org>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 30 Oct 2025 11:37:00 +0530
+X-Gm-Features: AWmQ_bmMf5OoHFiUJY6zI6JVVcFsxCAmo8ACbrb1vAID1QwfAgdvKVsJ-cC2OvY
+Message-ID: <CAAhSdy0iwq_ZPzFY5_x_wsbM_H+npSDVv1F=wP=O-_25VChh6Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] RISC-V: Add common csr_read_num() and
+ csr_write_num() functions
+To: Paul Walmsley <pjw@kernel.org>
+Cc: Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Nutty Liu <nutty.liu@hotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kyzysztof,
+On Thu, Oct 30, 2025 at 12:35=E2=80=AFAM Paul Walmsley <pjw@kernel.org> wro=
+te:
+>
+> Hi Anup,
+>
+> On Tue, 14 Oct 2025, Anup Patel wrote:
+>
+> > In RISC-V, there is no CSR read/write instruction which takes CSR
+> > number via register so add common csr_read_num() and csr_write_num()
+> > functions which allow accessing certain CSRs by passing CSR number
+> > as parameter. These common functions will be first used by the
+> > ACPI CPPC driver and RISC-V PMU driver.
+> >
+> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+> > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> > Reviewed-by: Atish Patra <atishp@rivosinc.com>
+> > Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
+>
+> This patch also (silently) removes the CSR number filtering, e.g.
+>
+> > diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
+> > index 42c1a9052470..fe491937ed25 100644
+> > --- a/drivers/acpi/riscv/cppc.c
+> > +++ b/drivers/acpi/riscv/cppc.c
+> > @@ -65,24 +65,19 @@ static void sbi_cppc_write(void *write_data)
+> >  static void cppc_ffh_csr_read(void *read_data)
+> >  {
+> >       struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read_data;
+> > +     int err;
+> >
+> > -     switch (data->reg) {
+> > -     /* Support only TIME CSR for now */
+> > -     case CSR_TIME:
+> > -             data->ret.value =3D csr_read(CSR_TIME);
+> > -             data->ret.error =3D 0;
+> > -             break;
+> > -     default:
+> > -             data->ret.error =3D -EINVAL;
+> > -             break;
+> > -     }
+>
+> ... the above code, and:
 
-> > +++ b/Documentation/devicetree/bindings/i2c/ast2600-i2c.yaml
-> > @@ -0,0 +1,66 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/i2c/ast2600-i2c.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: ASPEED I2C on the AST26XX SoCs
-> > +
-> > +maintainers:
-> > +=C2=A0 - Ryan Chen <ryan_chen@aspeedtech.com>
-> > +
-> > +allOf:
-> > +=C2=A0 - $ref: /schemas/i2c/i2c-controller.yaml#
-> > +
-> > +properties:
-> > +=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0 enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - aspeed,ast2600-i2c-bus
-> > +
-> > +=C2=A0 reg:
-> > +=C2=A0=C2=A0=C2=A0 minItems: 1
->=20
-> <form letter>
-> This is a friendly reminder during the review process.
->=20
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion
-> and
-> either implement all requested changes or keep discussing them.
->=20
-> Thank you.
-> </form letter>
->=20
-> > +=C2=A0=C2=A0=C2=A0 items:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: address offset and range=
- of bus
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: address offset and range=
- of bus buffer
-> > +
-> > +=C2=A0 interrupts:
-> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > +
-> > +=C2=A0 clocks:
-> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
->=20
-> Nothing improved
+The switch case is incomplete for cppc_ffh_csr_read().
+Also, csr_read_num() already does appropriate filtering
+so the switch case over here is now redundant.
 
-That was mostly the point - this first patch just splits out the 2600
-definitions to the new file, with zero change.
+>
+> >  /*
+> >   * Read the CSR of a corresponding counter.
+> >   */
+> >  unsigned long riscv_pmu_ctr_read_csr(unsigned long csr)
+> >  {
+> > -     if (csr < CSR_CYCLE || csr > CSR_HPMCOUNTER31H ||
+> > -        (csr > CSR_HPMCOUNTER31 && csr < CSR_CYCLEH)) {
+> > -             pr_err("Invalid performance counter csr %lx\n", csr);
+> > -             return -EINVAL;
+>
+> ... the above code.
+>
+> I'm thinking that we probably want to keep the CSR number filtering code
+> in; at least, I can't think of a good reason to remove it.  Care to add i=
+t
+> back in?
 
-That means the *actual* changes to the binding are visible via the diff
-in 2/4, and not hidden by the copy.
+We can potentially have custom CSRs as hardware counters
+hence the CSR filtering over here is already incomplete. Plus,
+csr_read_num() already does the CSR filtering and returns
+failure for inappropriate CSR number.
 
-This was mentioned on v20, and you replied saying it was irrelevant to
-the separate discussion around the rationale for the change, but didn't
-object to the split-patches approach.
-
-If your preference is to *not* do this via a verbatim copy as an initial
-step (and essentially squash with 2/4), that's also fine, but I'm sure
-that knowing your preference would help Ryan out here.
-
-Cheers,
-
-
-Jeremy
+Regards,
+Anup
 
