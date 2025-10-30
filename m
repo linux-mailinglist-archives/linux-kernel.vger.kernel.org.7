@@ -1,165 +1,184 @@
-Return-Path: <linux-kernel+bounces-879222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B13C2293B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:38:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56703C2294A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6153BCE6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:38:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BF2B34EA97
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B9633BBB6;
-	Thu, 30 Oct 2025 22:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A783233BBA8;
+	Thu, 30 Oct 2025 22:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kO+UIa4o"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PzWUFnNl"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010017.outbound.protection.outlook.com [52.101.46.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12CD2D5C6C
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761863901; cv=none; b=V9MRcMV6k2JKhiOtncvChQ4dyhF7KwOmhUwje2vGLtytRKUEUabm8Xt8tgZ5tiwkuuaSr6VKGlMDKjjSsykIypUCfJPt6rbOb867vGzMGAqOO/ewgeDqfyGzCb5ZLTioC+DHkciqcYL933YDYR2YPUKZhSbkuUcIzq3ZAmX7m6k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761863901; c=relaxed/simple;
-	bh=rJQAWq+XjRqxja76Aq+TSm1F0DMkRb0mJTNn7fYmTXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I/j+YzNYAjOqeBfVOEto0rQMn2AoTgnCO0QUlZiYqna/FstgSBGEoUAxdxy+drhtm/RWvOpM+oB/II7R849ZbDaVVZF2NiQt7Mya4D4naLCVavmzSgZdnSePvDVdEPp1iTmn18d1/c6ULhek5VUNIeHnRwHjwara6Xg2dbNeXus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kO+UIa4o; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429be5d31c9so166063f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761863897; x=1762468697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wegkSekqGGUT4XWQzMNJtqpWRUXHy7Tf0VKql4UkVGc=;
-        b=kO+UIa4oll1W3PmQnEPUrq9tq3NHR+xCBnoZIiUHA+vB5QfdM7cML8gZB4380FVFWk
-         6fJj6Ci58+XYcH6+PDANksMjuRo9jeLgy1P7vH3H5uJp1zxtCVmODEa2ugVG1oSSrnV5
-         qiqP0coFL5EMvmK+YdextWkm9pauocq+Ri4ZpxALJmigv/2TPLHOkPMunOsjcmWlSz6+
-         Tr3Wdm9wGgQcX5KgeSlLwfb0f0GJA0UQ2CIR/x3KhMfEuLXQb9Xu20f8u8xp6XlFixeb
-         MDXwECnHUJFtrMcOe0QvUyjnpPJzRKFoqJzsIrV8llyH/qNsO2bU1KN3BgGM3K+fOOow
-         iHig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761863897; x=1762468697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wegkSekqGGUT4XWQzMNJtqpWRUXHy7Tf0VKql4UkVGc=;
-        b=CucGxNL/qEml3zneE5QIZXIRfJWaQYYTuT6iF2zH9HWv3ty+4MSq2CkuVPNAaTUYNT
-         bz90W82vIpnbQn4D61s9RQsOIUrKtg6pvJysPbJxagZxoutazmoG4Mrzv6UllLUfpsrd
-         1RAG6XPq0+GDgRdMOMNayLMsnjNdcSSe2qnV7FqklG7AVwCm5xkMVe65zd8CyUcGKA4G
-         mnI+xYFbkLcbWndQsV5hGi8vaxyqXx61Eho9urkVIsulY0Zl1EuKO9FDNOQNPXtB1R9q
-         ecqjIkkXISdI/3kABY8HaRc8dqYHSo7XGB8spilWlW2hIOjwOT3wNef8ptRYryDEerJq
-         Galg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgKFl/3tTmKqk5FeDnVqjvSDD2NeEz+A67a+nvYiqDjLsOxSZRl75XoYbq0NaR2bt22OYJYLcmR0j80yM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1PDZJ14lVnvBbQuXF9DDdg0KRIfNkrR8Rc11TCgM8E4IOzSu4
-	A9U8SxdR+3nA81haYxEulFvNLfsR6USB3J4Zm02yft+9EjgG2/ZHcAd9IVpMS2e4d0AbGOG8k79
-	NjcFrJWGzcKecc6+KGaSC+vCc2I7+7OI=
-X-Gm-Gg: ASbGncsuujQxVEsWTaitSEI8/+dIfK1ZA1bFTluLm84BgZgINMwW1HFFE/tKaiSNdR6
-	XG/RLlWCmrVw42aNq1K/6ysNZBw1cOU/mD4IR2rUU22jZNTIbnT5LVduedc+xBZXLq5djfyF+/o
-	+ZAJyMXHwgylxIRuV4hgai2HWnue27CXh53MfNit/S57Lp2qpKEMQkiNvuixPNTxjNH6S6PMioZ
-	19LpRQ5jetTKEv8/uiz0ySM/eOT6oUHziUhsu/V5/k42lDX4O05bggnvtE9nT4mmFCF5r15FQQ2
-	uNB4y5KU+mManu/CtA==
-X-Google-Smtp-Source: AGHT+IFscxFW2ggLMAed0mcLjS+lTPXX/IYypIrwnI23PlvXCQXGwz8zeMmX8xN1ppTvvvdFYTwUzBStVAqGAO5MNc4=
-X-Received: by 2002:a05:6000:430d:b0:428:3d1d:6d19 with SMTP id
- ffacd0b85a97d-429bd6e3c35mr975711f8f.47.1761863896907; Thu, 30 Oct 2025
- 15:38:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3B033BBA7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761864148; cv=fail; b=oSVBGMRCmGX5G0+RNklSixN8mbZNBgVp0d6hCMn8uTvfgA4nEkqPzYLXBQLlOyJz8U215io3aNdj7+7AO8FLeEQ7Yl/FcKcfFNz8EOdhjS04Ta1jaWTDc9O1MVCi8ODz9y2POWdAkgIRIIynLZ3o1gFKRDal3UICqdv2mC9gejg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761864148; c=relaxed/simple;
+	bh=PrvEagOX0Q0SMtl+TZqqObIDO+wqZM3F6zKzKDU6uHY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTcnq25ogp5oObeJtzW/WSMAeCIlrcP20/hoLmWfjNVQFns4pt3wIynZpvNCk8VkRcS3OPxdH1P1EaY0gmWRdCSVMU6xk0W/5lR/458hQc4JC23brq5/NJLey/lppHbwKMePv2ml8IZOpUFnMfAxYjTYa+F5Unxb7tyxu3qAlto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PzWUFnNl; arc=fail smtp.client-ip=52.101.46.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YPgmbzXQhUuGzjA/Ac3HwCVRdSNvnxRaekaS8Qh855X925QBrzx4+NwfqvC1ZTqYsOEhhAqdnji/2U76nF0TNIgBJCxDQvtffKuXGiD7gTd6KlY0FVuCV92/PclqQf8knPloijcZFdtBxSaloLoJonTia8mUMqKjbG734xTqrz13lLOM2R8+LdHXNwp/AGfjHhm942oYZDup3t3YQWvpXqN5R+s3eUCryKo+sbQM+nsmiiDI8aozMMvBAQAdIKkGZoDvwWev9hIWe9zPQckJaQUIn3yDFjQwmA+IyY9jcLl36L6BCI0/muOZDo5Ta+oGFcIXz/dCSQ6C4DUpO9sclQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7kv4Te56pCH7l+oXEc4rZPyB3bnBlm29xro+k4MES4s=;
+ b=Sz6nzWJQUri3fS3xTLyUsKZ1RUpdubrK3FefN9HRENS/lJR1vhdlEyhl41aCRwx1VLL+0uiGm7zsnsIeVu/amaKWtxx28g+6Gj508JfAYvX03YTG+xeYFUi/iP0Df73QdHPFctr2WcJHT1lHv8ULfGeUQ7xp40uIwn8yMon7wdqXDuM1CmXiKfqhT5b6jXe+YGOnLqwjoeGk/Xcq4s8gx2SRvUtrNB7N98njBkdpK9aCwxr3B6nDv4o0rSATwsXsHX5nO8hgBgR8fwQG+5TcE2FlW9EUWG9R+nWH/w91hTpz8jUMliAYwRU07DZC1TZaGghVlIC9fCif9nB07pcvhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linux.microsoft.com
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7kv4Te56pCH7l+oXEc4rZPyB3bnBlm29xro+k4MES4s=;
+ b=PzWUFnNlGMb5W5y33DpqzZUyW1QizYzEtObZ2SoYbQxETBEqCB4UjQ1vhNnS1beo67NRdtDulnXeH/Ifp9EI4FKgVNpwxCnonznLXJ+NRI9LJzXlq5zOulxYlr2PXDIm0Om8PBUiwwdehFlpmSBIAaQCqQj0AJjHItaZfGJ29wMrG5XvolSl5S9ZGBOlt+HaPaugFuSV5MioXn7IQX4GmCpfpx5TexZkDV4rO9DDT0ovUXdY06U8ppzkPybPfiCnxfqEl7jI8tjxAP+kZ7Th4ZO/gx81DHTDOYOGbVdaf+EI2j5bT2gG3Dr9Y7dHgjp8Bklm4grmPQ074xlkspaH+A==
+Received: from SJ0PR03CA0009.namprd03.prod.outlook.com (2603:10b6:a03:33a::14)
+ by DS5PPFF2923D4C1.namprd12.prod.outlook.com (2603:10b6:f:fc00::669) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
+ 2025 22:42:20 +0000
+Received: from MWH0EPF000A6730.namprd04.prod.outlook.com
+ (2603:10b6:a03:33a:cafe::91) by SJ0PR03CA0009.outlook.office365.com
+ (2603:10b6:a03:33a::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
+ 30 Oct 2025 22:42:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MWH0EPF000A6730.mail.protection.outlook.com (10.167.249.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 22:42:19 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
+ 2025 15:41:59 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
+ 2025 15:41:59 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 30 Oct 2025 15:41:58 -0700
+Date: Thu, 30 Oct 2025 15:41:57 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jacob Pan <jacob.pan@linux.microsoft.com>
+CC: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
+	<joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
+	<jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+	<zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+	<jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
+Message-ID: <aQPptXsqzt6kJS7f@Asurada-Nvidia>
+References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
+ <20251020224353.1408-2-jacob.pan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030030010.95352-2-dongml2@chinatelecom.cn> <18b6f2c755710330b0c7399d17606a46c977f1ba3de4f37319aa1783638b1d2f@mail.kernel.org>
-In-Reply-To: <18b6f2c755710330b0c7399d17606a46c977f1ba3de4f37319aa1783638b1d2f@mail.kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 30 Oct 2025 15:38:05 -0700
-X-Gm-Features: AWmQ_bmL7lntft1GBOHR2IcVkzf9liFe42SBURFh4tzSUjIC9KTBL9QL13tu4yM
-Message-ID: <CAADnVQKaUqRMvbno2RKo+kfK98377hkUjxSGMBV5qzgHOvkoMg@mail.gmail.com>
-Subject: Re: [PATCH bpf 1/2] bpf: use rqspinlock for lru map
-To: bot+bpf-ci@kernel.org
-Cc: Menglong Dong <menglong8.dong@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Leon Hwang <leon.hwang@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, jiang.biao@linux.dev, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	Chris Mason <clm@meta.com>, Ihor Solodrai <ihor.solodrai@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251020224353.1408-2-jacob.pan@linux.microsoft.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6730:EE_|DS5PPFF2923D4C1:EE_
+X-MS-Office365-Filtering-Correlation-Id: d39d856b-5eab-4231-532d-08de180595b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5V8qEhRfUCsgnXInCD51ILWAdInzbkgcuvRsVbOOkcEwYV3MJvhyTSNsxART?=
+ =?us-ascii?Q?yZlWEJcyPj3w0JmLJHwmJ4RUR3mbCn9YljGObSD1vKCCVgkX0a2xD6++nxCK?=
+ =?us-ascii?Q?3if6PFV7qXylLZfb4RG0xJU3GJVDNx3aYC9hT/ZM8OQ5SEOUelAa3YeFG8Qz?=
+ =?us-ascii?Q?I67xLBC+owyyxe9dWmIyOf2npnTH2RGrVCoXKu+C6ihVq90M2kMYHWqdfMhi?=
+ =?us-ascii?Q?Pke0Q84t62yncdFG4ldXuqmNPzCQh2Nydp6wnMxHnMXwUwp1lUc3UR45ZxcD?=
+ =?us-ascii?Q?SK7eGTjvdOzN4GDcFHA5fWvdOMwAjLXcWDbt/ZS8pg3yvwZqxLP5bPxksF7f?=
+ =?us-ascii?Q?HRQ6VKlUee+/g+6Kj2dVP+h7H4bBby688v1BaBCBq59iu8XCluh6xhb1xNiO?=
+ =?us-ascii?Q?D59BEkDjzMxENbD97sEkD4r8WKzmvzzMb9RLnT4faQhSulbCFzXpebYDCZPA?=
+ =?us-ascii?Q?A+Ws504zVDjLyPZ+VBDsqzLMHUapq2klHcA2bZw2AYFi7YLK6v7QMAOnbUwF?=
+ =?us-ascii?Q?YgYFOfjDRCXx74shNKUj6aLkwXObsYbVRGHUxKTFbDzRd8PoJi8lKemP/ghE?=
+ =?us-ascii?Q?5n/Psz2oOtrp4JlNoT3JSZ+Xxw7qk4T2YlV0mtvlimLlPBBbU9qLdWGfVSd4?=
+ =?us-ascii?Q?6KwPjTurDu9DDOuOvhN7YZPjJn/BXRFX3VQ6o+oV+wOI3dx7zdZxddVxcegn?=
+ =?us-ascii?Q?tiUDATVThS7u2Z1wI0GjJXsgfQ//HTD4L0WpDMGfz0JTSKW4vWDa+djy6sqE?=
+ =?us-ascii?Q?CpT16rSV2xLzezC19MiVmvz6xi/k23bPwYjg/1rVxZkERL0+fJ5yR81wlPYf?=
+ =?us-ascii?Q?Rb1a+Esp0RenC6sbjgVBFkq23mmpCp+EEzn1Pa+oKapcUyJq2CAC88IJmg1e?=
+ =?us-ascii?Q?ZzmNcEEVIsIPjyF72oWoVIhAsLYVVd+w07wNjTpiKdAgo2zyCvSbzo+k7Kto?=
+ =?us-ascii?Q?motPTuBJjrkEJ/CVfIlY7BJq1JDA4yft0t/LVc0D7usOElp2OSsPC8oHmjhf?=
+ =?us-ascii?Q?aOcdjKdt9tPCnQRvtIDgAZ7K9eG+lMbRv3n+QkQCff1v/+7IaU1v2+G36H7w?=
+ =?us-ascii?Q?71/pudZzx5LNv9NpNUr59JpedB17K4AV6lQONO414V2PgHmj1Pf1fGWAmAU1?=
+ =?us-ascii?Q?B+o0UdiQEbt2Cx3SN2+W94q93ZFbYmwCOXOtIQmBRGUHdxAEEv6RqW2QZHB/?=
+ =?us-ascii?Q?vgReu3Gfj8pLGCb3s9aIINrEToPih6QK9L/8QR6/OLVOKSaOHqoY4WrJsz73?=
+ =?us-ascii?Q?l1sGxWYMJSBentASTZPj5RAEqbk2AOicDEkTfh2kwPRwF4ou0IXnLxPu7BkP?=
+ =?us-ascii?Q?DoDLz5yAbnoAdYOh/yzpZPFnzRE3odJogs2AE2iq9GKWi8ck/2D0m0UUfv7B?=
+ =?us-ascii?Q?5hGcBrvraWdJrxFwVhQAvhOiRC9VagbYXejOcU5Y8Flig5arLgqkTJJY82tl?=
+ =?us-ascii?Q?d7SCWHE4JIpA2ef23o2FKK6s+dy1GynU/LiGS+pzn13V9Ljjhxw4kPH0F0df?=
+ =?us-ascii?Q?bJ3TAKdAprpJ/2PftxGaLUPjC+7lyfc8eR4QbF0F7TsyaUbX774G25tVtUsy?=
+ =?us-ascii?Q?RvYdNstcY0RxXYUZ4wE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 22:42:19.8061
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d39d856b-5eab-4231-532d-08de180595b8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6730.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFF2923D4C1
 
-On Wed, Oct 29, 2025 at 8:38=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
->
->
-> ```
-> commit 8ae9fd98fe53c45a1a89adf6d254c2db90d26544
-> Author: Menglong Dong <menglong8.dong@gmail.com>
->
-> bpf: use rqspinlock for lru map
->
-> This patch converts raw_spinlock_t to rqspinlock_t in BPF LRU maps to
-> prevent NMI context deadlocks. The new lock API can fail gracefully
-> instead of deadlocking, returning an error code.
->
-> Link: https://lore.kernel.org/bpf/CAEf4BzbTJCUx0D=3Dzjx6+5m5iiGhwLzaP94hn=
-w36ZMDHAf4-U_w@mail.gmail.com/
->
-> > diff --git a/kernel/bpf/bpf_lru_list.c b/kernel/bpf/bpf_lru_list.c
-> > index e7a2fc605..38fddcb1e 100644
-> > --- a/kernel/bpf/bpf_lru_list.c
-> > +++ b/kernel/bpf/bpf_lru_list.c
->
-> [ ... ]
->
-> > @@ -466,23 +470,26 @@ static struct bpf_lru_node *bpf_common_lru_pop_fr=
-ee(struct bpf_lru *lru,
-> >       do {
-> >               steal_loc_l =3D per_cpu_ptr(clru->local_list, steal);
-> >
-> > -             raw_spin_lock_irqsave(&steal_loc_l->lock, flags);
-> > +             if (raw_res_spin_lock_irqsave(&steal_loc_l->lock, flags))
-> > +                     goto out_next;
-> >
-> >               node =3D __local_list_pop_free(steal_loc_l);
-> >               if (!node)
-> >                       node =3D __local_list_pop_pending(lru, steal_loc_=
-l);
-> >
-> > -             raw_spin_unlock_irqrestore(&steal_loc_l->lock, flags);
-> > +             raw_res_spin_unlock_irqrestore(&steal_loc_l->lock, flags)=
-;
-> >
-> > +out_next:
-> >               steal =3D cpumask_next_wrap(steal, cpu_possible_mask);
-> >       } while (!node && steal !=3D first_steal);
-> >
-> >       loc_l->next_steal =3D steal;
-> >
-> >       if (node) {
-> > -             raw_spin_lock_irqsave(&loc_l->lock, flags);
-> > +             if (raw_res_spin_lock_irqsave(&loc_l->lock, flags))
-> > +                     return NULL;
->                         ^^^^^^^^^^^
->
-> Can this leak the node? At this point in bpf_common_lru_pop_free(),
-> a node was successfully stolen from another CPU's list. The
-> __local_list_pop_free() or __local_list_pop_pending() call removed
-> the node from steal_loc_l, and steal_loc_l was unlocked. The node
-> now exists but is not in any list.
->
-> When raw_res_spin_lock_irqsave() fails here, the function returns
-> NULL, but the stolen node is never added to the local pending list
-> and never returned to any list. The node becomes orphaned.
+On Mon, Oct 20, 2025 at 03:43:52PM -0700, Jacob Pan wrote:
+> @@ -785,10 +748,33 @@ static int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
+>  	do {
+>  		u64 old;
+>  
+> +		queue_poll_init(smmu, &qp);
+>  		while (!queue_has_space(&llq, n + sync)) {
+> +			unsigned long iflags;
+> +
+>  			local_irq_restore(flags);
+> -			if (arm_smmu_cmdq_poll_until_not_full(smmu, cmdq, &llq))
+> -				dev_err_ratelimited(smmu->dev, "CMDQ timeout\n");
+> +			/*
+> +			 * Try to update our copy of cons by grabbing exclusive cmdq access. If
+> +			 * that fails, spin until somebody else updates it for us.
+> +			 */
+> +			if (arm_smmu_cmdq_exclusive_trylock_irqsave(cmdq, iflags)) {
+> +				WRITE_ONCE(cmdq->q.llq.cons, readl_relaxed(cmdq->q.cons_reg));
+> +				arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, iflags);
+> +				llq.val = READ_ONCE(cmdq->q.llq.val);
+> +				local_irq_save(flags);
 
-AI is right. Here and in other places you can just leak the objects.
-res_spin_lock() is not a drop-in replacement.
-The whole thing needs to be thought through.
+I don't quite get the reason why it moves queue_poll_init() and
+add local_irq_save(). It's quite different than what the driver
+has, so it's nicer to explain in the commit message at least.
+
+I still feel that we could just replace the _until_not_full()
+with a _until_has_space()?
+
+Nicolin
 
