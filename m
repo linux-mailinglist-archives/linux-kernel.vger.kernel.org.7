@@ -1,128 +1,199 @@
-Return-Path: <linux-kernel+bounces-878326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D967EC204A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:42:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2048C204D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D63D404CC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C131E467904
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C55246BD5;
-	Thu, 30 Oct 2025 13:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E56252917;
+	Thu, 30 Oct 2025 13:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DcQ3x62v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UnYjXgRA"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013051.outbound.protection.outlook.com [40.93.201.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859041D5CD1;
-	Thu, 30 Oct 2025 13:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831391; cv=none; b=qSXYtwehgv6KybUwgVVYRY5i/K+ftwiOMGcNNOQFP8pVR/P7fV4aG8yBtm20h7pBlXXIxgmFhM6wqy/6dFSeDC2oEjPO0BqLs6Pcn3BFy50yfYM0Iwp2iKVqCThvo3YEe/Bb5zd8afiRbc41JYmWzAO2N1K4xgFmae6VBBc3pBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831391; c=relaxed/simple;
-	bh=XMTd1vz8r8FTmG8WfrXnU0vXL0LciQPKNsaUofKuV9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GpMUF0gQrkFxvLYH7C7acE8zwYPaD73lLzTq4rPy+VNv5JUewhw02Q2U9pA+HPkTAFpvUC9qB506qVTCUsmziMXgJVJ2qK6UzkaXlAW9a2LzTC28HdSmUY4GwvV7C8+pqXzDQ0BFm6AW5pGPPjFHOcnE1YiLzZsIqFAa6t27moM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DcQ3x62v; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761831389; x=1793367389;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=XMTd1vz8r8FTmG8WfrXnU0vXL0LciQPKNsaUofKuV9I=;
-  b=DcQ3x62vIpKPVCCZbME1Sqy5GARqdUOss/Qm0eYj7p+ilp9GavlB8QdV
-   eC79ZuOD8UTFsEuXZEMLV6sbqNs/p/idHWNjnI6dtZ0oByP+nyFlFSPo3
-   zuMFHmFAZMRLbDF7MZThqy0NGrOhfwQm/8/EV7J+xHKFvSVhLjBpxDPne
-   7k4gsj6QvOYM/V0nkEDalupRPFBW6v3PijjS8QXwl3+TMNsLRaWzQqsy/
-   PPDvx6Y1O8b0wkdKZdTrgBkxY/89CERBHN0QNgkgSEhB53uXUVmu9wzpi
-   jheK1ghTrAowmeOWTP9S2julIIKmqczzvPGa28uJMRofPTArkBUK8+IYd
-   Q==;
-X-CSE-ConnectionGUID: tPfARKEDSzeYiy3f1gFk5w==
-X-CSE-MsgGUID: f3HPySQcQOqDNGJf4UXtzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64121946"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="64121946"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 06:36:29 -0700
-X-CSE-ConnectionGUID: PqLlZC5uTx2fazNvMvvPtg==
-X-CSE-MsgGUID: G6ODadslQ0W9CqCG/PladA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="191096245"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 06:36:27 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vESpE-00000003vGs-2HJq;
-	Thu, 30 Oct 2025 15:36:24 +0200
-Date: Thu, 30 Oct 2025 15:36:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] iio: imu: st_lsm6dsx: make event management
- functions generic
-Message-ID: <aQNp2PrS8BpFtGa0@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
- <20251030072752.349633-8-flavra@baylibre.com>
- <aQMerfm6peHvHAz2@smile.fi.intel.com>
- <78f1502c131a7f5bd6dc24c364aceff154501ece.camel@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE2E240611;
+	Thu, 30 Oct 2025 13:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761831551; cv=fail; b=UbM7k497c4FNZtOkpiKM+xooz1XAW1zO89z/P0fMM1UrVe3WEugl/NMrm8kyfavEFh2UtmApMxeX3BMZbex6G/HX/xbhhGeE9OPjx5fkPkYYLUQQrnd+X2ObtzDyknDeLuwBSAPPKVwWhKhrqzamopB0f7yTQjVfprLEq7AvgKM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761831551; c=relaxed/simple;
+	bh=npvt7FNdoPY0AQWQ/2h3CeY5O1lekU4BWTwkVCQAOWw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uKccFxcgqXGOoPamrFugA16Z80Y3dkG6zhRYB7eADLLWUSr1P4+epZqsOMrf/+OJjHP8fdatvMAZb9pk6EpQDer8ehQpJedT552qrbDufnNWGRlU7Y69g5mr8WOZfzrVblj7IrM1vXqLnOLfavYOhnbENChwwFNcg2ITMmaZlNE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UnYjXgRA; arc=fail smtp.client-ip=40.93.201.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yUqaWgHxwnHz9PTGNcNOeJpVxH3n1w2p6JQKOQYP3/HQA8pmF+jktHpP7tCLQATXzU7wT7tIYXZgAQZcA0Dqho2+hy226ocncj1Ba1kHMjrFQunFL3tXa4Wopbg7UjR1hNoBJlzaidXi9Vpo0z97f0VgZ9HNN/JAh+umQDsnUnHMr5KLGZj9hPsCIS/UjWFAyKoQBWEnEWBaRjrWmsPzT7Csrmcf7rKd7wvCvcDQtV/m9vpx/p/m7R+NjGHceOJsfgWaPo1CkJwkjmg8LEs9Oclz7C+is7vWSpMSxVdTuzhjpZ8RTUjFFY3OS7d2phF+S+6nJyvvuGQNeDHUAvg7dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7I23mlbCEWa6JxjZEYBLPvkSaPBmEz9swJiLToIAUsg=;
+ b=eFCSuHlkUkaDRrj8VZp0Iu8qMxrhZTp2lGrmbd1Jbpqluw6VqoIX2AY88T1nTfnWtmTcUBrn53znICpFqUVFN9xHJGPWRjCkTcf+OmXXGhnvNfHAQpMXtRJ+CDIWODp6b2sUlIRWbtWcTT6NZat82LplN95CnVuJdkwaMVXVDZJu3ichfIj17R5ASbMWsrZMvhh6wfuEuv2Y0sw1UV7IOeYAV0kmPv5NGig8lc2pbDapnPe4jKl+O0dSDOkw+l5+/d7FVCGGqPdOwqunrdI4Vkw0Xn6KIuweY8bV9YVSw0WST33Zk5l4toEJ3PzYktPUGwfdTX8SrhJw62DE7GRuLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7I23mlbCEWa6JxjZEYBLPvkSaPBmEz9swJiLToIAUsg=;
+ b=UnYjXgRAnW+fDlzJ/Aq7VkFAS9/uN+9TGrsV0R3Qme6twWNbNdJkAE5swkWvRIwdaN9R8VYIV5nJG6t5xzxK8R9CJ81/XaKFwHJ+pkS1AP/7faTLXtWu6LhTxbrwhaDy2oP3uBtr4dmjPXWNepmVQaKiuAYYUUndX7LaTkBi+Ng=
+Received: from PH0PR07CA0034.namprd07.prod.outlook.com (2603:10b6:510:e::9) by
+ PH0PR10MB5846.namprd10.prod.outlook.com (2603:10b6:510:14c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
+ 2025 13:39:01 +0000
+Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
+ (2603:10b6:510:e:cafe::53) by PH0PR07CA0034.outlook.office365.com
+ (2603:10b6:510:e::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.12 via Frontend Transport; Thu,
+ 30 Oct 2025 13:39:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 13:39:00 +0000
+Received: from DLEE204.ent.ti.com (157.170.170.84) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
+ 2025 08:38:56 -0500
+Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE204.ent.ti.com
+ (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
+ 2025 08:38:56 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 30 Oct 2025 08:38:56 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.233.103])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59UDcpcM2241222;
+	Thu, 30 Oct 2025 08:38:52 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <mwalle@kernel.org>, <afd@ti.com>, <conor+dt@kernel.org>,
+	<frank.binns@imgtec.com>, <kristo@kernel.org>, <krzk+dt@kernel.org>,
+	<matt.coster@imgtec.com>, <nm@ti.com>, <robh@kernel.org>, <rs@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <devicetree@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <detheridge@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62p: Fix memory ranges for GPU
+Date: Thu, 30 Oct 2025 19:07:18 +0530
+Message-ID: <176183141857.2766610.13135514120305603944.b4-ty@ti.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250919193341.707660-2-rs@ti.com>
+References: <20250919193341.707660-2-rs@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <78f1502c131a7f5bd6dc24c364aceff154501ece.camel@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|PH0PR10MB5846:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f0506d0-2263-4da7-f37e-08de17b9af4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|34020700016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UEJYNDlrOVFCSVIvalNMbTIxN1R5NGtFbytXZTQ0TDloSVJlYUh1NVZlMWFZ?=
+ =?utf-8?B?ZnlEUC8rSy96UmR1aTNYTHU3RnUzUjZqSXRzZnNxRGpBZjFiVDVSdWR6bm1D?=
+ =?utf-8?B?N2UxTHhJc2s5Zm9LQmsrQkVTTW5uTHRyeXVtWFVZelpGMGlyK1JsWE1HU2Er?=
+ =?utf-8?B?eGlja0hnRnhjaWFsb3ErR21neGp5ZmYyRjY2NnN0cHl1dDR3NmE3Z01EcWVu?=
+ =?utf-8?B?WmZmaE5ldzVZWmEwVXZGUXFIMVBpeHcvMUpBMDJSMjVHaHRFcGtzL09LM1JJ?=
+ =?utf-8?B?NDUwcm9janRvbTcyYVF5U1U1cHdkMk82OGJ6N0RNalBhZzNiTkJNZjhSNUJo?=
+ =?utf-8?B?bXBGM3NZSHpCUmtqaTVaUHozTHFzNkpVem5aaldDRzVOYkJZcGswNUNrZkFa?=
+ =?utf-8?B?SnZvVW1rTzE2bzc4dWFMQnZvdTMzS3dMVlFmVmpWaVFTY2tLaE9rTkxUdm1Q?=
+ =?utf-8?B?a2dnbXRrZjYxWWl2eDNwdWdDT1FiSytCYy95WnpNcVpNMUxzTDVmYmFldEdv?=
+ =?utf-8?B?dFltSnV3WW5QWURzY1hMeEtuMFlwb0tGTjl4TmdJM2R6Ym54bEdnNmJ4NDlq?=
+ =?utf-8?B?RUpTWTlYVy9PYzVyMDY0V0Y1aCtpa2NQZ1JzUnJYVXA3akVvS21iT2hFeU16?=
+ =?utf-8?B?bXVpVmYxT05GdWdEUnJQMzZWMXk5RHdnZkdEMXNBTU13R2tHc3Vob2VKc0JO?=
+ =?utf-8?B?NW8vd2U0K0FJdDd6dWwya3BUS3JSWVhCWW5BMWw0NHFDUjJBY0xQdGZtaG5N?=
+ =?utf-8?B?cFFrZVJ3QXFSM0lXN3RrcW5keXBsSlpnSXJ0ZWgzSWZzWkllYTcwWjlPVnUz?=
+ =?utf-8?B?UTl3MHE0UGt4RGY4SFlNU2RSQm1HZENVdWs3ejdCK3NhQmJ6TFFoeEl3WGtC?=
+ =?utf-8?B?Ry9kbk8wS2M0MGdCYTdtTkg5MHVjeGNNQzU1UXhsRDlvZ0c0c24xTzRHSmdz?=
+ =?utf-8?B?U1k0Q1k0SUlzTWt6UDF6RVJIRmh0SSt6cnFMa1NQWFVReG1iR0J2M1M2dTdz?=
+ =?utf-8?B?Nlo2dUE2dlBpZkljTGJBR2U3ZVVuRnZTYVhFS3JxSml4bERXakd3am5DT2VO?=
+ =?utf-8?B?MGtIWDJPeUZvWUtpZUc3N1hYUjFDNjVrcm5RcDNsaHVBbFpJWmt0RFFFRUgz?=
+ =?utf-8?B?UlJxb3BIenZ2ZlJqSzlxSmprRTRBcUxsYTRFTDhSdTdjK01hQytmWXQ1aGEz?=
+ =?utf-8?B?UmVSWHk4YVpmV2V1MjRQOSs3QlNPWUdTeTZIekErSjZoNzdlQ2YvV0dnQ25G?=
+ =?utf-8?B?aFh6VENuVGZ4MTlqQ3F3Rk1MNURCd2JiQUJvVUV2SGc4ZGdVcWh2U1phZzJr?=
+ =?utf-8?B?eS9nQmVvTHRSRmsrazJDYjQ0VnVMa2NzeUgyblhBd21wWjZZaVE2bWN2SVdT?=
+ =?utf-8?B?NEZPL0luT2picWZmYzB0eHV3YzQ4K0lVSldpTnhxMTZJb1RQTTYyTnVjaHdK?=
+ =?utf-8?B?ckc5YzlxZWdyd1p2ZnRIK0VUNzlsSVYwYXJKaUpRRmN2NHRUOHkvRXFidEpO?=
+ =?utf-8?B?dzZpdjhQZnZHVGFnUFJrUFpBZjdlZklhbVlCQkVkbWtkMmFCbmxVT3ZwZE4r?=
+ =?utf-8?B?MEpJR1NDY2ljbkdGQWhWemNrOWc4ekJWaWdoam01ekxFTE5ZcXNndUNqNFFn?=
+ =?utf-8?B?T3VVR1lEenhJTHpZQ082aC90eUNVNjZONGtFKy9jZ0pXUEMvUlNOMWRybytn?=
+ =?utf-8?B?Wk1RNG1TWXZlekhFNE95NE9INHBEN0RPNGw0cUVKeTRIMlUzRmhIZEg5U3M4?=
+ =?utf-8?B?cUhURXV1M2tIUlk5MkhQZnNLRmVSOUlnRDRkU2ZrUTlxVnNqTjJaRmFBL2V2?=
+ =?utf-8?B?ZmQvTGdIWlVpbjhqQVBGczg3WmZZZnFmaEx1cVBDVE1xSE83Q0Z2dlZzaFlN?=
+ =?utf-8?B?TmdOSFBiNmt1Y1pCSjVFT1NzVVZpdnkrT3lVWVN3YjhRQXpDd1lWMU45dmxH?=
+ =?utf-8?B?S0RkVW53a3NLU2FkUTEyQVRPSnpCelhYcWpRR1RsWFJtakJueFNGTXFOQkNt?=
+ =?utf-8?B?L01QL3BpbWQvTmljV094UjlRdk1ORE80U3cvOSszRElVZG1HWnRQNHRrSzZL?=
+ =?utf-8?Q?fR0TLs?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(34020700016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 13:39:00.9753
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f0506d0-2263-4da7-f37e-08de17b9af4a
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE30.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5846
 
-On Thu, Oct 30, 2025 at 12:17:52PM +0100, Francesco Lavra wrote:
-> On Thu, 2025-10-30 at 10:15 +0200, Andy Shevchenko wrote:
-> > On Thu, Oct 30, 2025 at 08:27:50AM +0100, Francesco Lavra wrote:
+Hi rs@ti.com,
 
-...
-
-> > > +static bool
-> > > +st_lsm6dsx_report_motion_event(struct st_lsm6dsx_hw *hw)
-> > 
-> > Why not one line?
+On Fri, 19 Sep 2025 14:33:42 -0500, rs@ti.com wrote:
+> Update the memory region listed in the k3-am62p.dtsi for the BXS-4-64
+> GPU to match the Main Memory Map described in the TRM [1].
 > 
-> This function was already there as is, even though the diff makes it appear
-> as a new function. Will make it one line.
-
-Do you use --histogram diff algo when preparing patches? Perhaps that helps
-without modifying the code?
-
-...
-
-> > > +       events_found = st_lsm6dsx_report_events(hw,
-> > > ST_LSM6DSX_EVENT_WAKEUP, IIO_EV_TYPE_THRESH,
-> > > +                                               IIO_EV_DIR_EITHER);
-> > 
-> > Indentation.
+> [1] https://www.ti.com/lit/ug/spruj83b/spruj83b.pdf
 > 
-> Seems good to me, what should I change?
+> 
 
-First line is way too long for IIO which tries to keep 80 limit.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
+[1/1] arm64: dts: ti: k3-am62p: Fix memory ranges for GPU
+      commit: 76546090b1726118cd6fb3db7159fc2a3fdda8a0
 
--- 
-With Best Regards,
-Andy Shevchenko
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
