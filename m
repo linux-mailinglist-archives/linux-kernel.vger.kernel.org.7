@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-878025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BFAC1F989
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:38:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B071C1F98C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3A61884088
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBCA425F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667D9354AC2;
-	Thu, 30 Oct 2025 10:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755D134D936;
+	Thu, 30 Oct 2025 10:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jml/em/O"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4zwVFR3k";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dEYaFVL1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A1625A322
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B842313260;
+	Thu, 30 Oct 2025 10:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820587; cv=none; b=DgkghHdusv1KnuZ9vLM7Npaqif3IPb03Luw0lwALhxen2BjLFr5rRfY6OnZKK9mCng6ARkPok4t0hcWXRGVYSEOktx3J7VWNv0+llqalgI7X0ryI77Ow/cFlHaCfQS/w14BaBG9/D4awuyTYurQyH2ydAaEys9h1o9ed9Z+HUUI=
+	t=1761820619; cv=none; b=ehNhyRcmeTACyj5zAfiEXGdAJ2U4aURuVrmhapGIwd2dR8h2vJ4DQzWtCA47IccTdVOzxtZOKkSsgkQho/5y06pFdo8lY/penJOk21+uJUXX5QwXX5FEbF3Er0QuFCakCwC3sxWiBNPWR+Z1a+5hq4eAOZZ1YoB4fMmegIBgKhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820587; c=relaxed/simple;
-	bh=mffLHxksDJb1tDLV2b9r1iQZf5P8vukn1uPN41l42Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JhoduLXh2I34hjD8CszfNnJnJZuSlEP9U9OW0GrDXB8oga1VIKdYHQaPvTnCub4gEEJ/smbaSAjBS5zGDDmHQVFi+IfLLGFkdqEZoZffjrYKrr3OlYom6VPYSRge+0lwp5NK/Ddbh0m8oeR2uGn3VXWwKjf+4vMLWPeWlixTxYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jml/em/O; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761820575; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=QiuUxJD/XTpYtVc6d3NlCZbEDROxJ84ewEp3018iv1M=;
-	b=jml/em/OlBUF15ObINZSWfBDWVkTFCwwPYbPp8tIDBvtpdGJP+kjKNXiYkKxg8TmLQ0k9Jr9p7pZ+o0iw+WqqOWsFEMQWk/N/sCvd6FsWaGSx/OmmVdHhIj/95xgCFE1XL4P4Reghb53zquKjNOo0kBDKnYpRxsTLM48yVEQJWE=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WrK3-N3_1761820574 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 30 Oct 2025 18:36:15 +0800
-Date: Thu, 30 Oct 2025 18:36:14 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH v2 3/6] panic: sys_info: Replace struct sys_info_name
- with plain array of strings
-Message-ID: <aQM_nrp4gQzxGixr@U-2FWC9VHC-2323.local>
-References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
- <20251029111202.3217870-5-andriy.shevchenko@linux.intel.com>
- <aQLHDaIqkMQTJHTT@U-2FWC9VHC-2323.local>
- <aQMVivr15od8Mpct@smile.fi.intel.com>
- <aQMlpFoLuPhVwijR@U-2FWC9VHC-2323.local>
- <aQMqdyh9n7h8Wedm@smile.fi.intel.com>
+	s=arc-20240116; t=1761820619; c=relaxed/simple;
+	bh=xlnMqdDYJqNY3h5zR3/wCtKJy4pVMiF+mNZCSmfpZtU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=XkAgwsjpC4iBZnkyvaxpt2On0+UkL8t0mzocDsbqIoNJUC4MInCh6urnOlep1zMoWSioYRfkb67RrKWAnaXAdEX/ZT1c9ok4lzbIveYLwBMmIRbzhY3PiI7z1HkaFpP5z7YGB/RrdXGK5y6lGCLEhlCXhB0U4wtROMlTSsfQNJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4zwVFR3k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dEYaFVL1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 30 Oct 2025 10:36:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761820616;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pEwvNl97byWImvDt2SfpzRBOLi1GVPRwuafyc5dlkvI=;
+	b=4zwVFR3kPXK4gnl66ISZ4U1Xthf6sdwGFYPV1MQrpb6pN6BBwzOhlFdMqd1MWO6QA08OCK
+	NpesO0b/wvQT7lihBCQ2EkNxHneArevjuLsRnwrJ7dGrZYtcvZL1js/u3fLKmak1GaNOfG
+	JrG8Dk7+m2GmA+Juj91++02CLJPfz2cnkw/TQe20oMo9oU+u17KQlOcuVzFskjgrvDMoMd
+	of4XYtnNIjhqMXsfMJ1pLsTXezT8YTvceqkLisdtJ7j8YtM4K9NVtEIWp1F+6mSOMxw/tt
+	hRUkRnrqEhgUjPp7RemGc0RR2jpnFF+Q9WRX7g5NFCsvoENwueBdD+cYrJlrOA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761820616;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pEwvNl97byWImvDt2SfpzRBOLi1GVPRwuafyc5dlkvI=;
+	b=dEYaFVL1uyWWU9FALHSCXG/eWrHjXQtHSxZ5pwD6DoIyNF72pcoIQxRMvvWFy19uW6yYr7
+	1YsB5hf/uYlp/DAw==
+From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/cpu: Add/fix core comments for {Panther,Nova} Lake
+Cc: Tony Luck <tony.luck@intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251028172948.6721-1-tony.luck@intel.com>
+References: <20251028172948.6721-1-tony.luck@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aQMqdyh9n7h8Wedm@smile.fi.intel.com>
+Message-ID: <176182061499.2601451.4425909907523958058.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 11:05:59AM +0200, Andy Shevchenko wrote:
-> On Thu, Oct 30, 2025 at 04:45:24PM +0800, Feng Tang wrote:
-> > On Thu, Oct 30, 2025 at 09:36:42AM +0200, Andy Shevchenko wrote:
-> > > On Thu, Oct 30, 2025 at 10:01:49AM +0800, Feng Tang wrote:
-> > > > On Wed, Oct 29, 2025 at 12:07:38PM +0100, Andy Shevchenko wrote:
-> > > > > There is no need to keep a custom structure just for the need of
-> > > > > a plain array of strings. Replace struct sys_info_name with plain
-> > > > > array of strings.
-> > > > > 
-> > > > > With that done, simplify the code, in particular, naturally use
-> > > > > for_each_set_bit() when iterating over si_bits_global bitmap.
-> 
-> ...
-> 
-> > > > >  		names[0] = '\0';
-> > > > > -		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
-> > > > > -			if (si_bits & si_names[i].bit) {
-> > > > > -				len += scnprintf(names + len, sizeof(names) - len,
-> > > > > -					"%s%s", delim, si_names[i].name);
-> > > > > -				delim = ",";
-> > > > > -			}
-> > > > > +		for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
-> > > > > +			len += scnprintf(names + len, sizeof(names) - len,
-> > > > > +					 "%s%s", delim, si_names[i]);
-> > > > > +			delim = ",";
-> > > > 
-> > > > For SYS_INFO_PANIC_CONSOLE_REPLAY bit, it is a NULL string, no need for
-> > > > an extra ','?
-> > > 
-> > > If you look closer to the original code, the behaviour is the same. Feel free
-> > > to update behaviour separately as I tried to keep the functionality to be not
-> > > changed with my series (with the exceptions of the fetching issue).
-> > 
-> > I gave the comment by code-reading.
-> > 
-> > And to double check it, I just run a simple test by adding "panic_print=0xff"
-> > to cmdline, with the current kernel, by running "sysctl  kernel.panic_sys_info"
-> > on current kernel, it will get:
-> > 
-> > 	'kernel.panic_sys_info = tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks'
-> > 
-> > And after applying your first 3 patches, it will show:
-> > 	
-> > 	'kernel.panic_sys_info = tasks,mem,timers,locks,ftrace,,all_bt,blocked_task'
-> 
-> Thanks for the test, now I see the issue! Before si_names has no entry for that bit.
-> I will address this in next version. Sorry for the confusion.
+The following commit has been merged into the x86/urgent branch of tip:
 
-No problem. Thanks for helping to improve the code!
+Commit-ID:     89216c9051ef6635f1514f8e0d2f9cd63b37a3b6
+Gitweb:        https://git.kernel.org/tip/89216c9051ef6635f1514f8e0d2f9cd63b3=
+7a3b6
+Author:        Tony Luck <tony.luck@intel.com>
+AuthorDate:    Tue, 28 Oct 2025 10:29:48 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 30 Oct 2025 11:34:02 +01:00
 
-- Feng
+x86/cpu: Add/fix core comments for {Panther,Nova} Lake
+
+The E-core in Panther Lake is Darkmont, not Crestmont.
+
+Nova Lake is built from Coyote Cove (P-core) and Arctic Wolf (E-core).
+
+Fixes: 43bb700cff6b ("x86/cpu: Update Intel Family comments")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://patch.msgid.link/20251028172948.6721-1-tony.luck@intel.com
+---
+ arch/x86/include/asm/intel-family.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel=
+-family.h
+index f32a0ec..950bfd0 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -150,12 +150,12 @@
+=20
+ #define INTEL_LUNARLAKE_M		IFM(6, 0xBD) /* Lion Cove / Skymont */
+=20
+-#define INTEL_PANTHERLAKE_L		IFM(6, 0xCC) /* Cougar Cove / Crestmont */
++#define INTEL_PANTHERLAKE_L		IFM(6, 0xCC) /* Cougar Cove / Darkmont */
+=20
+ #define INTEL_WILDCATLAKE_L		IFM(6, 0xD5)
+=20
+-#define INTEL_NOVALAKE			IFM(18, 0x01)
+-#define INTEL_NOVALAKE_L		IFM(18, 0x03)
++#define INTEL_NOVALAKE			IFM(18, 0x01) /* Coyote Cove / Arctic Wolf */
++#define INTEL_NOVALAKE_L		IFM(18, 0x03) /* Coyote Cove / Arctic Wolf */
+=20
+ /* "Small Core" Processors (Atom/E-Core) */
+=20
 
