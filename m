@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-879181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2592DC22781
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:49:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6AAC22787
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE94400109
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06D91894252
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9421330B1E;
-	Thu, 30 Oct 2025 21:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDB433555B;
+	Thu, 30 Oct 2025 21:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A8Xp2nD+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NirNdlqB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84F9335541
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72043329E4A;
+	Thu, 30 Oct 2025 21:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761860937; cv=none; b=N3M3fZNuoripoDOJpwICU+F5qwr1X6Ql80g/z2urFsfpPQirjvrAMEgRDsxZwGl1L4E4yb6XQM0/ZvCDn3jTLf74wh6Cjbv88U/Tnn+OB2SpANPbdYaiT8yshh2p/U8ofmAqB428CifZfV3eXB7EhMD8CIwt+UmBgbRHhlimqpU=
+	t=1761861018; cv=none; b=K5ccAiZAIwkAjtGDt/r/ER2H0yGcKCmG0mqsQ4w2YWl+TSos9VhpaSPPSWPzBR3rwXLnk8LMlYqXEzMQ7qbQ+Q05ybmI6wJT4FjpQxocPPgMf1yga5o1RqMI+rjjPrTPd2YkGDXn3yMLvosbvf/gfSyd5fr0UplBcLa05ejqHrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761860937; c=relaxed/simple;
-	bh=RjxZGrfsfCvc5Bg8rwRRAdtccZ1YoZqKvvDa+D53Uw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nc+GPHpa26Y6sRqWGRM7KWL30sKiy2we0XAdv5SnMCSH8dSqaqX4KG19bCKhTo1Q1LCfBJTeuh/irlrPt4OTrYbPAkZMXeXOHUyu1IC+ylc8SMo60Gk8ps1plOxS2ZOmIWuTmBaIruNmYjYFAdpxFTpVFLngw+8uzDYM2VIgT48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A8Xp2nD+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761860934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9LjL0vS/hX9NBhAzvP1BiBjPYdiWFiLByshADcjU7L0=;
-	b=A8Xp2nD+S2Tze5uLkGp+vX9bTWYNdbZ7daGZ1aTABIO065E+snvSvNIRMLbu5IvBt4XeJg
-	x0NY35JV68YgspFuzSgQvz1fw1bympS7oeUslqjm3XMhPn3xUkLu+lGrT3JMec1zkerTm+
-	hoWSP0v6cGzfwd+PtdNwcoUkRtdy6qE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-44B3hZqLOIedjftmPMMjJw-1; Thu,
- 30 Oct 2025 17:48:51 -0400
-X-MC-Unique: 44B3hZqLOIedjftmPMMjJw-1
-X-Mimecast-MFC-AGG-ID: 44B3hZqLOIedjftmPMMjJw_1761860930
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3D921955E8F;
-	Thu, 30 Oct 2025 21:48:49 +0000 (UTC)
-Received: from desnesn-thinkpadp16vgen1.rmtbr.csb (unknown [10.96.134.41])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C5E1019560A2;
-	Thu, 30 Oct 2025 21:48:47 +0000 (UTC)
-From: Desnes Nunes <desnesn@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu,
-	Desnes Nunes <desnesn@redhat.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] usb: storage: Fix memory leak in USB bulk transport
-Date: Thu, 30 Oct 2025 18:48:33 -0300
-Message-ID: <20251030214833.44904-1-desnesn@redhat.com>
+	s=arc-20240116; t=1761861018; c=relaxed/simple;
+	bh=uhsBi6jPYk4r7zoS0KFwjGrcAihOvbPQ1OZl8wiwXVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PU4A1+dpMJeZKV9e3vCe3ABMOxItvjRpkrLXSPAuW+isULpJKHL2IRLqj7kXO3+vtVDScmx+s+cspRG/IhGt+utA8BGJt6Js7Rh7SPsMlx3lVi2jvfVkAU7TxMx6b2IMssAS8ZHC+J6zEbkUgKX5uKscB8xiEIfwe+Sp3YbmDos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NirNdlqB; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761861017; x=1793397017;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uhsBi6jPYk4r7zoS0KFwjGrcAihOvbPQ1OZl8wiwXVg=;
+  b=NirNdlqBNGALsSY5tvWHP7ihPKPACmJLmbR+O5ZCxbHSuoxjWhK5b8wp
+   dZOJp7sv0/sbzd+Vf78+Wty3cc407unGjlPcTt403EPIeRXaDV90/sWS2
+   0jD+pcTZAroWTTXMUN/2g/uGr+L2cuyh5XwQqFeYPpMvpFs7/o3gIBf48
+   UzhNqHcmZHfN2Ocy1lgbn9K4h5X3QuBxI+nXSuzfY6BBQig6rhOx4tW//
+   mRTPhDljfIWf9VrYn/fRTt46kQ++bt3Ryz0etKdMIIeTzrmETeiUmgB1S
+   nOlA2aJqPBAt2R2/vh7hywGXRRmEEQnReaheEhZYwF/cLhdTGqkVgsE+B
+   Q==;
+X-CSE-ConnectionGUID: ocCmyAlwTpaIpxDxqTN/AQ==
+X-CSE-MsgGUID: gErP2+VxSfynECRDutQSMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="81431809"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="81431809"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 14:50:15 -0700
+X-CSE-ConnectionGUID: mqKL0/XMRAu6LM36rYEPAQ==
+X-CSE-MsgGUID: UsRHOMzSR5SIqQrleSv+Ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="186404807"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 30 Oct 2025 14:50:12 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEaX4-000MYi-28;
+	Thu, 30 Oct 2025 21:50:10 +0000
+Date: Fri, 31 Oct 2025 05:49:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Elder <elder@riscstar.com>, broonie@kernel.org, dlan@gentoo.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	p.zabel@pengutronix.de, linux-spi@vger.kernel.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+Message-ID: <202510310505.d7e7kzCk-lkp@intel.com>
+References: <20251027125504.297033-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027125504.297033-3-elder@riscstar.com>
 
-A kernel memory leak was identified by the 'ioctl_sg01' test from Linux
-Test Project (LTP). The following bytes were mainly observed: 0x53425355.
+Hi Alex,
 
-When USB storage devices incorrectly skip the data phase with status data,
-the code extracts/validates the CSW from the sg buffer, but fails to clear
-it afterwards. This leaves status protocol data in srb's transfer buffer,
-such as the US_BULK_CS_SIGN 'USBS' signature observed here. Thus, this can
-lead to USB protocols leaks to user space through SCSI generic (/dev/sg*)
-interfaces, such as the one seen here when the LTP test requested 512 KiB.
+kernel test robot noticed the following build errors:
 
-Fix the leak by zeroing the CSW data in srb's transfer buffer immediately
-after the validation of devices that skip data phase.
+[auto build test ERROR on 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87]
 
-Note: Differently from CVE-2018-1000204, which fixed a big leak by zero-
-ing pages at allocation time, this leak occurs after allocation, when USB
-protocol data is written to already-allocated sg pages.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Elder/dt-bindings-spi-add-SpacemiT-K1-SPI-support/20251027-211246
+base:   8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
+patch link:    https://lore.kernel.org/r/20251027125504.297033-3-elder%40riscstar.com
+patch subject: [PATCH v6 2/3] spi: spacemit: introduce SpacemiT K1 SPI controller driver
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20251031/202510310505.d7e7kzCk-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310505.d7e7kzCk-lkp@intel.com/reproduce)
 
-v2: Use the same code style found on usb_stor_Bulk_transport()
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510310505.d7e7kzCk-lkp@intel.com/
 
-Fixes: a45b599ad808 ("scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Desnes Nunes <desnesn@redhat.com>
----
- drivers/usb/storage/transport.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
-index 1aa1bd26c81f..ee6b89f7f9ac 100644
---- a/drivers/usb/storage/transport.c
-+++ b/drivers/usb/storage/transport.c
-@@ -1200,7 +1200,19 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *srb, struct us_data *us)
- 						US_BULK_CS_WRAP_LEN &&
- 					bcs->Signature ==
- 						cpu_to_le32(US_BULK_CS_SIGN)) {
-+				unsigned char buf[US_BULK_CS_WRAP_LEN];
-+
-+				sg = NULL;
-+				offset = 0;
-+				memset(buf, 0, US_BULK_CS_WRAP_LEN);
- 				usb_stor_dbg(us, "Device skipped data phase\n");
-+
-+				if (usb_stor_access_xfer_buf(buf,
-+						US_BULK_CS_WRAP_LEN, srb, &sg,
-+						&offset, TO_XFER_BUF) !=
-+							US_BULK_CS_WRAP_LEN)
-+					usb_stor_dbg(us, "Failed to clear CSW data\n");
-+
- 				scsi_set_resid(srb, transfer_length);
- 				goto skipped_data_phase;
- 			}
+>> ERROR: modpost: "__hexagon_udivdi3" [drivers/spi/spi-spacemit-k1.ko] undefined!
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for DMA_CMA
+   Depends on [n]: HAVE_DMA_CONTIGUOUS [=n] && CMA [=y]
+   Selected by [m]:
+   - SND_SOC_K1_I2S [=m] && SOUND [=m] && SND [=m] && SND_SOC [=m] && (COMPILE_TEST [=y] || ARCH_SPACEMIT) && HAVE_CLK [=y]
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
