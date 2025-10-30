@@ -1,90 +1,134 @@
-Return-Path: <linux-kernel+bounces-877801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804FFC1F0D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:47:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BC9C1F159
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EA274E8D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27F818945B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA45B330338;
-	Thu, 30 Oct 2025 08:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl3YINTB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A70233A036;
+	Thu, 30 Oct 2025 08:46:31 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F4C329381;
-	Thu, 30 Oct 2025 08:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A5D33891D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761813892; cv=none; b=AqQsyCabaPY7wyU5ThmnHgo/omVtz9EBn5pykocWwQ9MO3+BMO8opUJhdewvnbAzjoZ55bgSquN1+EVcU5ZNflcb385OCsN6coRx8I40rXQSV3fw7JHPgCHmemRtpaw0yrMbfOxB26iK668WrDIR0w4DthG133UVDR5bcPnPKYA=
+	t=1761813991; cv=none; b=nHyknipqCfPFnWJzE+bvuAMhU5VgGPhwwkZAUamxXtAftwoCEBcknOzKFeTT1qWuME3RuUeUczAvLQ7O8HQv26yytTbazKJOMFZCBBA/glmCbaSV8AcrvIUF50OYPdsBNUJf6ksv5B0Lqm3YDQuOJDLFGjqTziKRoU63HjOJP2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761813892; c=relaxed/simple;
-	bh=6dybDKX7+8hY8anqIxc/y/vMKgfpFG/JnzMwdU4JUOU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=b3jvNpgwoOvMMepPMOI6pVUQl6BIVJDRaeI3EJc+1sve1tnFyEcbpmJPJGka9xx8jUP+LNJg9LA7JCrZOqXlVdaQiY0tMdu0JilevjrPZ9fdSB9BiXgn45TJ2wvC3Gt0yeiQL1b3TncYF5dBXqKzUEofD5e9opdUcQNNceIDrJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl3YINTB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98F7C4CEF1;
-	Thu, 30 Oct 2025 08:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761813891;
-	bh=6dybDKX7+8hY8anqIxc/y/vMKgfpFG/JnzMwdU4JUOU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tl3YINTBCky5gPU7q3VpgRownmw4sMgXMIb2LK5ZwSqU5X941nZo/d/8kXncj0GTJ
-	 yaYH796cLicsWvjv9/v1lfIeqf3xdkxFXNiQVo+DXm/ujU/zHVn452RZezpRCA+hhl
-	 8ZH498Je9gE+6t8cuyiG8/Y6UQgKXQKbPOFyH3AftHaCoS/RASEhNCSkmxj3d1ex6b
-	 4AWEe9CwKeEcPQqJZ6QYK9JyPp4PcX5QdFhL3W552iAOHutDdBcClRnrl9qVX5B7/6
-	 tMIiZNCipVRcRz79gKpP0aP2o1kzFhHbWsFrso7IRDVILAd0o0dthaXZsBjx0d2sqI
-	 kbSlj2FsIFrHA==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.j.williams@intel.com, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH RESEND v2 05/12] coco: host: arm64: Build and register
- RMM pdev descriptors
-In-Reply-To: <20251029173743.00006d48@huawei.com>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
- <20251027095602.1154418-6-aneesh.kumar@kernel.org>
- <20251029173743.00006d48@huawei.com>
-Date: Thu, 30 Oct 2025 14:14:43 +0530
-Message-ID: <yq5a3470eq2s.fsf@kernel.org>
+	s=arc-20240116; t=1761813991; c=relaxed/simple;
+	bh=dDyVShFKKx2f2vVwijS5AYePbVsj8lnQ7TDJ2r9dOdY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uilEtd/qSOEwA3xo82upln+M1k0dFSMSeK8BkvcUfQudxKMCgiMtXFSLXKXDcNTjknIPNtlsNH0HhwPqd5gH0z5l7a0WI24MyFSI3rK/xaYsOzbplwVBSLDDwGgRjY/J265yXNm3aEoslIkFTO/b1xLLWdTIysKuKFkuGosZcB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 59U8j0Ca025288
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Thu, 30 Oct 2025 16:45:00 +0800 (+08)
+	(envelope-from minachou@andestech.com)
+Received: from atcsi01.andestech.com (10.0.15.32) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 30 Oct
+ 2025 16:45:00 +0800
+Date: Thu, 30 Oct 2025 16:44:56 +0800
+From: Mina Chou <minachou@andestech.com>
+To: Anup Patel <apatel@ventanamicro.com>
+CC: <anup@brainfault.org>, <atish.patra@linux.dev>, <pjw@kernel.org>,
+        <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
+        <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <tim609@andestech.com>, <ben717@andestech.com>, <az70021@gmail.com>
+Subject: Re: [PATCH v2] RISC-V: KVM: flush VS-stage TLB after VCPU migration
+ to prevent stale entries
+Message-ID: <aQMliHDRpejqwOro@atcsi01.andestech.com>
+References: <20251021083105.4029305-1-minachou@andestech.com>
+ <CAK9=C2XjygELuUnQErbpVzh6-4wc4HHypf91aKUtUzMYGJwmtw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAK9=C2XjygELuUnQErbpVzh6-4wc4HHypf91aKUtUzMYGJwmtw@mail.gmail.com>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59U8j0Ca025288
 
-Jonathan Cameron <jonathan.cameron@huawei.com> writes:
+Hi Anup,
 
-> On Mon, 27 Oct 2025 15:25:55 +0530
-> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+> 
+> Here's what the non-normative text says about HFENCE.GVMA ...
+> 
+> "Conceptually, an implementation might contain two address-translation
+> caches: one that
+> maps guest virtual addresses to guest physical addresses, and another
+> that maps guest
+> physical addresses to supervisor physical addresses. HFENCE.GVMA need
+> not flush the
+> former cache, but it must flush entries from the latter cache that
+> match the HFENCE.GVMA???s
+> address and VMID arguments."
+> "More commonly, implementations contain address-translation caches
+> that map guest virtual
+> addresses directly to supervisor physical addresses, removing a level
+> of indirection. For such
+> implementations, any entry whose guest virtual address maps to a guest
+> physical address that
+> matches the HFENCE.GVMA???s address and VMID arguments must be flushed.
+> Selectively
+> flushing entries in this fashion requires tagging them with the guest
+> physical address, which is
+> costly, and so a common technique is to flush all entries that match
+> the HFENCE.GVMA???s
+> VMID argument, regardless of the address argument."
+> 
+> This means ...
+> 
+> For implementations (most common) which have TLBs caching
+> guest virtual address to supervisor physical address, the
+> kvm_riscv_local_hfence_gvma_vmid_all() is sufficient upon
+> VCPU migrating to a different host CPU.
+> 
+> For implementations (relatively uncommon) which have TLBs
+> caching guest virtual address to guest physical address, the
+> HFENCE.GVMA will not touch guest virtual address to guest
+> physical address mapping and KVM must explicitly sanitize
+> VS-stage mappings using HFENCE.VVMA (like this patch)
+> when migrating VCPU to a different host CPU.
+> 
+> We should not penalize all implementations by explicitly calling
+> kvm_riscv_local_hfence_vvma_all()  rather this should be only
+> done on implementations where it is required using a static jump.
+> One possible way of detecting whether the underlying implementation
+> needs explicit HFENCE.VVMA upon VCPU is to use marchid,
+> mimpid, and mvendorid. Another way is to use implementation
+> specific CPU compatible strings.
+> 
+> Regards,
+> Anup
+> 
+> 
+> 
 
-...
+Thanks for the detailed explanation! Our implementation does require the
+extra hfence.vvma, so we'll add a check to make sure it only runs on
+the platforms that actually need it.
 
->>  
->> +int pdev_create(struct pci_dev *pdev);
-> That is a very generic name to find in a header, even one buried deep in drivers.
-> I'd prefix it with somethin more specific rmi_pdev_create() or something like that.
+Thanks again for your feedback.
 
-May be I can call this cca_pdev_create, because rmi_pdev_create()
-already exist.
-
--aneesh
+Best regards,
+Mina
 
