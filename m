@@ -1,190 +1,190 @@
-Return-Path: <linux-kernel+bounces-878740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE37BC215E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:06:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1A7C215DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019381A22D62
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:06:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2ACD4EC73B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC1B365D3B;
-	Thu, 30 Oct 2025 17:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E810032B99E;
+	Thu, 30 Oct 2025 17:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="FxQcLMjS"
-Received: from poodle.tulip.relay.mailchannels.net (poodle.tulip.relay.mailchannels.net [23.83.218.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dBqLKVYx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MVVFTNIb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Rz5q53+t";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c7qefiys"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872D71C8616;
-	Thu, 30 Oct 2025 17:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.249
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843933; cv=pass; b=IN2xyW4+RUb2r6cf1c9te7Lfx+2ztZnpcPpvHRh/106g3XlZnpoiugM9+Ud/v8vYUx44oa8Dl58knmdoaYMONdNythe4SjrmwZX0bYLSLZNx1xAwlupdR+Pq2vEhzzPYTRJyl5PtZXnu1iNeFuj+M7LPRIgsYPj93hHZ0OVgJ2s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843933; c=relaxed/simple;
-	bh=hg/95hEUFBThe3H+ibVwxlOjMXwtSvokvXgvdVPz/ac=;
-	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Date; b=LeWOBVO35SeM8iqxcbVJcRBb7/fGW3HsaBuZij4LT0uop9tw/zMsF424CQK0l4/zgCkUuYwhuYi8CiIsxNRfyWcKlIHLHlbBLVR3tNukquyHJMte0UHHzyhetWi0Ojo5ERdDuyXsRvI/juJE8tp/gHriYERR7rvq1rIp+nJPaPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=FxQcLMjS; arc=pass smtp.client-ip=23.83.218.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id EBB016C2DA8;
-	Thu, 30 Oct 2025 16:57:49 +0000 (UTC)
-Received: from fr-int-smtpout21.hostinger.io (trex-green-2.trex.outbound.svc.cluster.local [100.124.159.62])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 5243B6C278E;
-	Thu, 30 Oct 2025 16:57:44 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1761843466; a=rsa-sha256;
-	cv=none;
-	b=Z0UCplVB+eSdVGhtkzD65nFS5cI7vE7/Za3LWPTC0LG9rGaYu3W3U+dcUlh64gIXP8yQBk
-	gtNkMbmbDLlG2lmOnEi631NMINLXsnvcjrXndxTB64rTNt2cwxajlGh3kUKjq+vO9Zw0a5
-	Tb8jbwOkrRg/auaqkTyx+QJU8m4x0fpVXp4EvyByu4CbMC1CvpVPnwrylj4CH47TDpFRP4
-	eGlpKr1HPuXBAOzyRxr2x/7+Cg5dPX0DINS1BrtlWJ8yyW5BK/aPEbk2TUZKbsBIgpzFYn
-	bjDPEsd8wK8KejxuP43LQAdVrYarcM84gbnMQvkHJwS/ShQCwfeqzQ8xm0qGwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1761843466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=llSNrpdxHG9NnwU1enTHpQTssCJw0Xi5+BHkeVKaDQ0=;
-	b=WjBqSHD07j7aAfjf+c1V7cBAgbe4/5Vs2g4mxaYNwgRwCYgdZXKy98CzP8PSC4q52Edy2j
-	D+QQpaO+kOAoS/ToM1eCcGC6nSoz6AIY7bZCdDwj5qW+VFuqueO9XD+fA+8xNv5GHP7UsS
-	DpholT/jYiQQsQBEOtyI58/mfHeNk5JMyQ94NNz6Bt4zIp7e0CanBA54LBecabUt2RWlLJ
-	DJ/wbfpWS7k+mu5qbH0yAnNPF/F9mzb2dkP4/BFdOawy6eTFTWcSqCgBKcRtdOs8udq4v6
-	+Fs4vD62kUC4oNfGW1VEJ/fJdpxBA7aUHGveEK45ynkQNYhvKAaD3ryS6d00kw==
-ARC-Authentication-Results: i=1;
-	rspamd-77bb85d8d5-cbz7w;
-	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Spot-Occur: 203d5329002b97d4_1761843468479_438798023
-X-MC-Loop-Signature: 1761843468479:3186618478
-X-MC-Ingress-Time: 1761843468479
-Received: from fr-int-smtpout21.hostinger.io (fr-int-smtpout21.hostinger.io
- [148.222.54.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.124.159.62 (trex/7.1.3);
-	Thu, 30 Oct 2025 16:57:48 +0000
-Received: from [192.168.1.100] (unknown [36.79.115.179])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cy9K04ZZzz1xq1;
-	Thu, 30 Oct 2025 16:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1761843462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81EC32ABC6
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761843676; cv=none; b=rzWSARUr+shPN1UmvJzFnp5aShdEyZ34v+IwpAaGR5DlX0CFUrjz9VFyapR9/WPn7Ou21tMPaxkq2sc8s+OXi5d0uN5e4taWJtvodN4SCePYeGu+bDjaNSa0HPAj7/qZd5/8Ob4a6y4Qd2R/n9QWG1wcRskCoKWbRHehk9oMtpk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761843676; c=relaxed/simple;
+	bh=PSye66wWOjMXhKU+7k5mhGd78LfzAw3FDCCAYS6py+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CHAwynqLMUJP4iGb3Hh6a4jfm1qEd5YbaqOjXgLeDNfXMwrGAu0pvnrzcFpnSfa9/RkMZmyZ3m3uyHK4ZEJIRgkuoVaGEKPwiL8k9r3LWB5Vi4t++CCdN9EQN94Hu5upFTzFalP+7u7sa8ZPOI8q3TLfCwi9+9N0Sxoig8fWJLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dBqLKVYx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MVVFTNIb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Rz5q53+t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c7qefiys; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 51E093377F;
+	Thu, 30 Oct 2025 17:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761843668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=llSNrpdxHG9NnwU1enTHpQTssCJw0Xi5+BHkeVKaDQ0=;
-	b=FxQcLMjSW1FrrAdMnBYOxrLNbUUlSUIJJMxzucJGsa2aYUGuqN/l76CBecQmD7AQPsctm+
-	atynGvxhfq8S6Vj6XS6bjdhplJRHitn74PX6Lri3khh12byEz/U7CyqHGzZRevlGY43Zmd
-	iKg09uOk7y/drjogSWr2hqzy3bpIdmJVh9hczCKRaMziTJV50/kJyeykNLiYYd/sDAE9IP
-	rz2ZFatUSZLfu8vEzWTCPIr/urJ6U8KThjtjn7jZdgqsAIMqE1YGht8zI1HAsSbEh4q1J/
-	WiXaFrPffAMyjI1OdO+Ew5TDPrbFzNaPwF4mdFChfnWXttO6GsWTaKBw0vDGgA==
-Message-ID: <6f68327c-73b2-4684-bc8a-156714b6e3fc@smankusors.com>
+	bh=I5KYMrsAUlY7tK1JPq23V+c+Q4pgMVZhaN9ptPIEGho=;
+	b=dBqLKVYxrnLo875NuD3gHXKq1OlrhO2Y9ARnsSs6X9z1xoyat8tvsTDKsQwp0ZZmPJlVPK
+	jWac5ODZoGQgKS/CnFJ2dDFqxt2mZWmQQOhnaUMxCHZxeGSCeZS1CFSbK5fOJEpY5QsnQt
+	P5+a687BFSPGmAx1mgnTTuKeaR/74XE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761843668;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5KYMrsAUlY7tK1JPq23V+c+Q4pgMVZhaN9ptPIEGho=;
+	b=MVVFTNIbSOh6ZXQWFhmcIruRCqdg4+1LJ7D8R3kVSMpYwKqbOylPrAkKXVNYMsKSwgLtjs
+	WJ+ATJE3D6CUZEDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Rz5q53+t;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=c7qefiys
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761843667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5KYMrsAUlY7tK1JPq23V+c+Q4pgMVZhaN9ptPIEGho=;
+	b=Rz5q53+tG2UpOujCwji9h8vOsS1TZTaF7aDiEqIcKUPjGsctT+/h5GIU5dz6vBq4OMTtWW
+	L9iK8e3WctOvOBRxoUCFAwmqerJDYFnQakSYfuupv12tQ2OtxBXuq6WJ+YI01YL2UPSWai
+	LU5UK30zHooUK5LxVQX/DBWRiezxlM4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761843667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5KYMrsAUlY7tK1JPq23V+c+Q4pgMVZhaN9ptPIEGho=;
+	b=c7qefiysdJPAJwbECsjLBQai2ZCuK2dbDi0y2U57z6N0Chdah/yqbURwDjI4SVmDQUihjM
+	OPkS4llmpE7RbSCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3359713393;
+	Thu, 30 Oct 2025 17:01:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JjCHDNOZA2mWOQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 17:01:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E59D6A0AD6; Thu, 30 Oct 2025 18:01:05 +0100 (CET)
+Date: Thu, 30 Oct 2025 18:01:05 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jori Koolstra <jkoolstra@xs4all.nl>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>, Khalid Aziz <khalid@kernel.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Taotao Chen <chentaotao@didiglobal.com>, 
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, linux-kernel@vger.kernel.org, 
+	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
+Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
+Message-ID: <aoppzgcsml33slovgn2cz4ntmdxczk3yu5zlajh7d5bnsdav7o@lhszynfelx4b>
+References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
+ <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
+ <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: adc: qcom-pm8xxx-xoadc: fix incorrect
- calibration values
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251028-pm8xxx-xoadc-fix-v1-0-b000e1036e41@smankusors.com>
- <20251028-pm8xxx-xoadc-fix-v1-2-b000e1036e41@smankusors.com>
- <7558d070-762c-4c81-aed7-1b087d131483@oss.qualcomm.com>
-Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <7558d070-762c-4c81-aed7-1b087d131483@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 30 Oct 2025 16:57:40 +0000 (UTC)
-X-CM-Envelope: MS4xfLHiMq5rjbjKJw5ofKWoM2Dkx4FtDaY4k08WQvmYqHQZLK8o87JlAoyAhrZS8sReutLKp63IqrA2L7ww+KJSjYUbChaSYEOomUKisyMKQv28VjmLmMrJ Gu/CVu9SyRZovqsNZAn+ILFHUv51x0CGBYShyPIOpKfLoaPxH6CBoPqadpCdR3lOL0D8ko0aEFyWH3I+OpTZpHb9TYFzIqyrFLj/D42vdXejDG3MPFb62P/r a0uMwtpLfoZtGoxmFojqEy8dACm+6ywcNFd3lr0GT89s8mz6nkkBJ5Sbwi+VeTpUPcA7KkD9CvLFnaFG4eG7/OioCcWsiReEByDQalc2QepORA8WEw68bs2i R2rXtlxBu3+rvUQeUpEYkLgvsRmmtx33relSpRCKHRXjg8F/4I/JG31nT68V+D3nZJfyg5VQCMwMfurHCEizX/4VLdVH2A==
-X-CM-Analysis: v=2.4 cv=NuiDcNdJ c=1 sm=1 tr=0 ts=69039906 a=zvY53+tUHMHsMQrS9yrnQg==:117 a=zvY53+tUHMHsMQrS9yrnQg==:17 a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=wxLWbCv9AAAA:8 a=tahBNpKbuAaPwjICECgA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
-X-AuthUser: linux@smankusors.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 51E093377F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[xs4all.nl];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[xs4all.nl];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[4e49728ec1cbaf3b91d2];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.51
 
-On 10/28/2025 4:44 PM, Konrad Dybcio wrote:
-> On 10/27/25 6:29 PM, Antony Kurniawan Soemardi wrote:
->> On msm8960 phones, the XOADC driver was using incorrect calibration
->> values:
->> absolute calibration dx = 625000 uV, dy = 4 units
->> ratiometric calibration dx = 1800, dy = -29041 units
->>
->> As a result, reading from the IIO bus returned unexpected results:
->> in_voltage_7 (USB_VBUS): 0
->> in_voltage_10 (125V): 0
->>
->> The issue was caused by not setting the ratiometric scale (amux_ip_rsv)
->> from the predefined channels. Additionally, the downstream code always
->> set the ADC_ARB_USRP_DIG_PARAM register to PM8XXX_ADC_ARB_ANA_DIG [1].
->> That value does not include the SEL_SHIFT0 and SEL_SHIFT1 bits. Enabling
->> those bits caused calibration errors too, so they were removed.
->>
->> With these fixes, calibration now uses the correct values:
->> absolute calibration dx = 625000 uV, dy = 6307 units
->> ratiometric calibration dx = 1800, dy = 18249 units
->>
->> Reading from the IIO bus now returns expected results:
->> in_voltage_7 (USB_VBUS): 4973836
->> in_voltage_10 (125V): 1249405
->>
->> [1] https://github.com/LineageOS/android_kernel_sony_msm8960t/blob/93319b1e5aa343ec1c1aabcb028c5e88c7df7c01/drivers/hwmon/pm8xxx-adc.c#L407-L408
->>
->> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
->> ---
->>   drivers/iio/adc/qcom-pm8xxx-xoadc.c | 10 ++++++----
->>   1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/iio/adc/qcom-pm8xxx-xoadc.c b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
->> index 8555f34036fb13c41ac720dc02c1dc39876e9198..a53d361456ec36b66d258041877bd96ab37838c4 100644
->> --- a/drivers/iio/adc/qcom-pm8xxx-xoadc.c
->> +++ b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
->> @@ -503,10 +503,11 @@ static int pm8xxx_read_channel_rsv(struct pm8xxx_xoadc *adc,
->>   		goto unlock;
->>   
->>   	/* Decimation factor */
->> -	ret = regmap_write(adc->map, ADC_ARB_USRP_DIG_PARAM,
->> -			   ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT0 |
->> -			   ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT1 |
->> -			   ch->decimation << ADC_DIG_PARAM_DEC_SHIFT);
->> +	ret = regmap_update_bits(adc->map,
->> +				 ADC_ARB_USRP_DIG_PARAM,
->> +				 ADC_ARB_USRP_DIG_PARAM_DEC_RATE0 |
->> +				 ADC_ARB_USRP_DIG_PARAM_DEC_RATE1,
-> The PM8921 datasheet suggests a single valid value of BIT(5)=1, BIT(6)=0
-> for a "1K" (1/1024?) ratio, although a comment in this file suggests
-> BIT(5)|BIT(6) is also valid and corresponds to 1/4096.. I wouldn't be
-> surprised if that is the case
->
-> The previously set bits are a field called DECI_SEL but are otherwise left
-> undescribed
+Hi Jori!
 
-So, do you think we can leave the BIT(0) and BIT(1) as is? I have a feeling
-that if they aren't set, these changes might prevent the APQ8060 Dragonboard
-from reading the cm3605 sensor? or maybe not?
+On Thu 30-10-25 13:22:53, Jori Koolstra wrote:
+> > The patch looks ok to me but since minix filesystem driver is in the kernel
+> > mostly to allow mounting ancient unix filesystems I don't quite understand
+> > the motivation for adding the new mount options. Why not just fixup
+> > minix_rmdir() to better handle corrupted filesystems?
+> > 
+> > 								Honza
+> 
+> I am doing the Linux kernel mentorship program, and was looking to contribute
+> to fs. Since I saw a lot bugs on syzbot related to minix (and jfs too) not
+> handling corruptions well (yielding warnings in drop_nlink e.g.) I figured
+> it was a low stakes project, not completely trivial, yet within my scope, to
+> attempt to implement what ext4 does for these kind of problems (and jfs
+> implements the same opts too).
 
-I mean this one, since the driver was originally tested on that board
-https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts#L67-L79
+Well, one thing is handling corruption well - that part of your patch was
+fine and I think it is still useful - another thing are the mount options
+that allow to configure what happens when we find a corruption - and that
+is the part I don't think really makes a lot of sense for minix.
 
-> Hope this is useful
->
-> Konrad
+> I would have asked about the exact status of minix, but was told not to
+> bother maintainers without a patch. I would be open with trying to improve
+> minix further, but of course if there are better options to get it out of
+> the kernel altogether that may be better. Sad for me, since that means still
+> zero patches, but that is not your problem :)
 
-Thanks,
-Antony K. S.
+Your fix for minix_rmdir() is needed. If minix is going out of the kernel
+is uncertain and even if that happens it will certainly need some
+deprecation period so functional fixes are still wanted in that period.
+
+> Anyway, I hope this clarifies why I submitted this patch.
+
+Fully, thanks for the clarification and your work on Linux :)
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
