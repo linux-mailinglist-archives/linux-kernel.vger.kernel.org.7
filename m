@@ -1,177 +1,201 @@
-Return-Path: <linux-kernel+bounces-878755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8BBC2169B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:14:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18AF3C216B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 490E04E4C7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA923B84BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E9F3678AF;
-	Thu, 30 Oct 2025 17:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D867C36838C;
+	Thu, 30 Oct 2025 17:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X7WPgHHU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28BpU0yh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X7WPgHHU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28BpU0yh"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PLxGrbSz"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17659365D39
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641A53678A7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844335; cv=none; b=bM0cHtUwgGQ4Q3MNu3t8iih2MpcZvUtoni1zg88k3BT5FXtDNA6goeENjFbs1Smi/jQ6H1vlfw6SflTfiFBjBXh/xrJgd8HAyo6+yVrSuxds8SE5QaI9J6OMUXKUiH2/CVajIJTIsq7iNDzKOaWBZ/Nq8icNUrYDQYJtrijOGco=
+	t=1761844338; cv=none; b=lhvRO4eM2QtPLWPvhDml3laq1TcAx00+14Jdw7R/PEPD95Q8cPt+wwglfh89ghn8NkHqtiO12sg31MkIF/pqsPpEc9ybHqCGdqejef8G8sSdPTH5klBn31sJQE4FLLrliXq9P9JcIij26PcMrUrL+jKsQa8QimeY2AKd/g5Sp3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844335; c=relaxed/simple;
-	bh=aoDtgqAWWRj/Q3h43cUnmcGM3TqMuuZIB6/agtBIPEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WSWi0YtJ+ASl6KdRIblHa2pwdDupG6zHD0lEaQj7d7Dqd2yQN00dJVK5uO92lZpoiLcaM492HNdTyKDgOGwy27S1vP0UsJk7Pd+ztFTZl2fBkZVWuyPv63Rg6wdU/iqBaw0cbgrKGbo4jpn9RbNEEXLZRVoTtbC4nqngffw2MMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X7WPgHHU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28BpU0yh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X7WPgHHU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28BpU0yh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4C9E13377F;
-	Thu, 30 Oct 2025 17:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761844332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7APiWB86J5LdAWvCynjBAwtYTioxBi9PybozZ0j8HaI=;
-	b=X7WPgHHU64PihJRF7Etx21qZzGeWeieMXduEkQxhUo6ySPPGgymGv9PYXs9ITNjdDh7qjL
-	wN/SngyZdAnQitcX+tcOqKIx9f6NfKDp7xZQxQCS7G8bYd0m1fxnQIwRIygt7f2CXAqdCq
-	E0dzMEq7ceB4kj/xQU5inLsZAC6StzE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761844332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7APiWB86J5LdAWvCynjBAwtYTioxBi9PybozZ0j8HaI=;
-	b=28BpU0yhpCFkle+SVxM1432AnhNAFqK/OLI3mqH+pNYW77B5g1EQITD4BgStRdhQYAtpik
-	9V288LNCjAIw9RAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761844332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7APiWB86J5LdAWvCynjBAwtYTioxBi9PybozZ0j8HaI=;
-	b=X7WPgHHU64PihJRF7Etx21qZzGeWeieMXduEkQxhUo6ySPPGgymGv9PYXs9ITNjdDh7qjL
-	wN/SngyZdAnQitcX+tcOqKIx9f6NfKDp7xZQxQCS7G8bYd0m1fxnQIwRIygt7f2CXAqdCq
-	E0dzMEq7ceB4kj/xQU5inLsZAC6StzE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761844332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7APiWB86J5LdAWvCynjBAwtYTioxBi9PybozZ0j8HaI=;
-	b=28BpU0yhpCFkle+SVxM1432AnhNAFqK/OLI3mqH+pNYW77B5g1EQITD4BgStRdhQYAtpik
-	9V288LNCjAIw9RAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 349A013393;
-	Thu, 30 Oct 2025 17:12:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZpblDGycA2mTQwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 17:12:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7DA81A0AD6; Thu, 30 Oct 2025 18:12:11 +0100 (CET)
-Date: Thu, 30 Oct 2025 18:12:11 +0100
-From: Jan Kara <jack@suse.cz>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Jori Koolstra <jkoolstra@xs4all.nl>, 
-	Christian Brauner <brauner@kernel.org>, Khalid Aziz <khalid@kernel.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Jan Kara <jack@suse.cz>, Taotao Chen <chentaotao@didiglobal.com>, 
-	NeilBrown <neil@brown.name>, linux-kernel@vger.kernel.org, 
-	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
-Message-ID: <4ebc2e6ptdbfqrd4vwgswmqzuzm5joztd2jfg2cvq7wdxhtnjb@f52arbgipszs>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
- <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
- <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
- <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
- <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
- <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
- <90143686.3161766.1761833369803@kpc.webmail.kpnmail.nl>
- <1ed30710481dd6739e6e9b4bd6f57c7c9d7e7de3.camel@kernel.org>
- <dceefe7e-4cd3-464d-b5b4-f80c02b4331d@linuxfoundation.org>
+	s=arc-20240116; t=1761844338; c=relaxed/simple;
+	bh=btQzL2ZL/PLD+psnQSivSO5arjE2jQOSxVQpDVtS2L8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=YANyUtv9Ot3+SDZMaNRyZgxL1PVErLsgfLLVNScQf5ZiO/KHRmUGcPu6CuTPYgXMF4CdaNfEsggAM4hdMKfD8jFf7EOKeJeiR0jnuwMIa/cNyxHpkR7KxvD52JykBUJhFkv9BwH/GgQqYQ3sCiSC9qHt1NF3nkE8E4lRbpRw+Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PLxGrbSz; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-294df925293so12097825ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761844336; x=1762449136; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zdgUIWhxFpBO1eWPwkXjelAIvbaSYwWWLU1wd9xgw1s=;
+        b=PLxGrbSzB4T5dYv8UKRjNJcEOfkDhhqXCaXJskItooFAn8q0FuRyJTjzU2cJcYn6VH
+         exFiCvhGz8SN49fyANE7RQEm/gqG6sCzW1jixObmi2UdqTvn36GfLTql/0+a6wE92FT9
+         UxhNGocEU0EDLM2mBhWMLPhc46NFKsRKG7ItoUSbdGrSsDj93gjJXgdDw1PVgi0YefPC
+         /FKSulSPwzSEDbZ9WgbkxTKoeV30eYCQUD7JsAPW7v7KBcUPGjVk1XNE7bIzrBZMyJLN
+         lgweQpRLNk9uT3Mi8mdWXeh8b00Nz53VMhdXV3L7YVeS0CJK3qOdJLbulxXe9gN3mnzq
+         4fng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761844336; x=1762449136;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zdgUIWhxFpBO1eWPwkXjelAIvbaSYwWWLU1wd9xgw1s=;
+        b=vUBnyq+HQV0Q5jNPwyM7lsSnTZxDfi3+Xv8xsUH5Ki/ibSRe4yqlrnn4+b/deAV42l
+         vHq+I428OfsqUzj0/fskx+LmYvOzXHx+CU29mZ7o7CtT2wgfiV0hnPtAXs4HDho8yvqS
+         H5LJmVLEfrVisa0dbnzIWiceGjTdGRxmzINK3+YOnbvswHSX/sreLiTExz924yYcqu9p
+         SR8Yjs573riwrU8VKFjwS7T4i9IV9xpQEn0CN5JRlpEGhsiMkLwOanRQoQcz/AGvSc0s
+         9iY62QZCmsU+DHIzNd8VWQRamWS6Mc/a3zk+XKz0cBYgIuaNklK8U9VcQ80DMbu2KnLh
+         7AXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK+E5acrC7/bysM+5xB1Xp5DGf62SfUCZ+8CvxffXYadvEvSjcbXCNna3ceF8YFZ4Iwn0gfylzkAZOeYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylqqepWhDi8yPRuzU6/kHdsluw0g/eGAZK72CkowkjLHFtWf4a
+	iX0g3D32wyqerHxjbcllLwTdAeIzxYYMvp7+V/3i/5HHAB9lE53j6B70wATbtl5MatU6Vxht4ZJ
+	qfCRBJSiONw==
+X-Google-Smtp-Source: AGHT+IFqOe63wYQO+7Jrsp5fFjA9y7kyFxhqMfIHUQGb1bFWI5ah1MbT82aHXilcNfQcq6K8OX3UbTQ0w9Sd
+X-Received: from pjsd13.prod.google.com ([2002:a17:90a:bf8d:b0:33b:c327:1273])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2c10:b0:294:ccc6:ccfd
+ with SMTP id d9443c01a7336-2951a3a2fcbmr5902745ad.24.1761844335727; Thu, 30
+ Oct 2025 10:12:15 -0700 (PDT)
+Date: Thu, 30 Oct 2025 10:12:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dceefe7e-4cd3-464d-b5b4-f80c02b4331d@linuxfoundation.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	TAGGED_RCPT(0.00)[4e49728ec1cbaf3b91d2];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_ENVRCPT(0.00)[xs4all.nl];
-	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,xs4all.nl,i-love.sakura.ne.jp,suse.cz,didiglobal.com,brown.name,vger.kernel.org,syzkaller.appspotmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251030171211.1109480-1-irogers@google.com>
+Subject: [PATCH v1] perf s390-sample-raw: Cache counter names
+From: Ian Rogers <irogers@google.com>
+To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 30-10-25 09:44:40, Shuah Khan wrote:
-> On 10/30/25 09:12, Jeff Layton wrote:
-> > On Thu, 2025-10-30 at 15:09 +0100, Jori Koolstra wrote:
-> > > And there is still the issue of what we do for the syzbot bugs until a
-> > > more permanent solution is achieved.
-> > > 
-> > 
-> > Yeah, that's a different issue.  Most likely we'll need to fix those in
-> > the near term. Replacing minix.ko with a FUSE fs will take time
-> > (years), even once we have a new driver in hand.
-> Does this mean Jori can work on fixing these while replacing minix.ko
-> with fuse progresses?
+Searching all event names is slower now that legacy names are
+included. Add a cache to avoid long iterative searches.
 
-Yes, we generally accept fixes to syzbot bugs even for old filesystems.
-It's just that for these old filesystems there's limited enthusiasm to
-accept large-scale changes just to fix some odd syzbot issue. But luckily
-most of the syzbot bugs are usually fixed just by proper input validation
-which isn't usually very intrusive.
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-e4a64ed61d38@linux.ibm.com/
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/s390-sample-raw.c | 52 +++++++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 3 deletions(-)
 
-> > We'll need to mark the old driver deprecated and then wait a few
-> > releases before we can rip it out.
-> Jori could work on patches for deprecating perhaps?
-
-He could but deprecation is pretty easy - just print a notice about
-deprecation to the kernel log on mount, update MAINTAINERS file etc. But
-more interesting is making sure the userspace driver has feature parity
-with the kernel driver before we start the kernel driver deprecation.
-
-								Honza
+diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
+index 335217bb532b..2d0a0c4360e4 100644
+--- a/tools/perf/util/s390-sample-raw.c
++++ b/tools/perf/util/s390-sample-raw.c
+@@ -19,12 +19,14 @@
+ 
+ #include <sys/stat.h>
+ #include <linux/compiler.h>
++#include <linux/err.h>
+ #include <asm/byteorder.h>
+ 
+ #include "debug.h"
+ #include "session.h"
+ #include "evlist.h"
+ #include "color.h"
++#include "hashmap.h"
+ #include "sample-raw.h"
+ #include "s390-cpumcf-kernel.h"
+ #include "util/pmu.h"
+@@ -133,7 +135,7 @@ static int get_counterset_start(int setnr)
+ 
+ struct get_counter_name_data {
+ 	int wanted;
+-	char *result;
++	const char *result;
+ };
+ 
+ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+@@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+ 
+ 	rc = sscanf(event_str, "event=%x", &event_nr);
+ 	if (rc == 1 && event_nr == data->wanted) {
+-		data->result = strdup(info->name);
++		data->result = info->name;
+ 		return 1; /* Terminate the search. */
+ 	}
+ 	return 0;
+ }
+ 
++static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unused)
++{
++	return key;
++}
++
++static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void *ctx __maybe_unused)
++{
++	return key1 == key2;
++}
++
+ /* Scan the PMU and extract the logical name of a counter from the event. Input
+  * is the counter set and counter number with in the set. Construct the event
+  * number and use this as key. If they match return the name of this counter.
+@@ -164,17 +176,51 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+  */
+ static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
+ {
++	static struct hashmap *cache;
++	static struct perf_pmu *cache_pmu;
+ 	struct get_counter_name_data data = {
+ 		.wanted = get_counterset_start(set) + nr,
+ 		.result = NULL,
+ 	};
++	long cache_key = (set << 16) | nr;
++	char *result = NULL;
+ 
+ 	if (!pmu)
+ 		return NULL;
+ 
++	if (cache_pmu == pmu && hashmap__find(cache, cache_key, &result))
++		return strdup(result);
++
+ 	perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/ true,
+ 				 &data, get_counter_name_callback);
+-	return data.result;
++
++	if (data.result)
++		result = strdup(data.result);
++
++	if (cache_pmu == NULL) {
++		struct hashmap *tmp = hashmap__new(get_counter_name_hash_fn,
++						   get_counter_name_hashmap_equal_fn,
++						   /*ctx=*/NULL);
++
++		if (!IS_ERR(cache)) {
++			cache = tmp;
++			cache_pmu = pmu;
++		}
++	}
++
++	if (cache_pmu == pmu) {
++		char *old_value = NULL, *new_value = strdup(result);
++
++		if (new_value) {
++			hashmap__set(cache, cache_key, new_value, /*old_key=*/NULL, &old_value);
++			 /*
++			  * Free in case of a race, but resizing would be broken
++			  * in that case.
++			  */
++			free(old_value);
++		}
++	}
++	return result;
+ }
+ 
+ static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.1.930.gacf6e81ea2-goog
+
 
