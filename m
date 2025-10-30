@@ -1,85 +1,96 @@
-Return-Path: <linux-kernel+bounces-878483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8938C20CC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:01:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2B9C20C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED251A24375
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:54:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67D244EDD5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B219280A56;
-	Thu, 30 Oct 2025 14:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D880B27FD75;
+	Thu, 30 Oct 2025 14:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qvNcPDRh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snP6zaDJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182427F195;
-	Thu, 30 Oct 2025 14:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CF727F015;
+	Thu, 30 Oct 2025 14:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836036; cv=none; b=aGmoRbXLmc5jTJimxddfYda6nBU8Iw26wXsQDBEUUYm9TNPysFGQa9CwmHiCi8nBIKM2yeOcewhdznk/tXsvnjC8gTSOEo5Fj7aSxYHNyNJfvZ7rtcXRGtya5ZJuTriWxmhNUUDWYIkP9HqGpN12dVT6cSrETibsAVFb9NUhkV4=
+	t=1761836069; cv=none; b=l98pb4r0JmThJnOxof84EAHJNYDiNElzNBDh9DDciOgULAwYT61JdyFvYHCW8sNKTHu9xCcCZoJmPO/1FOYSBw0iYe1GtAHyZu81QRy7DmY181XL5E8b4Y8JXva5YK6MP+8XMitmMngvPf1QlQYk+OwiWY+OwgsyuYLeVI4rn1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836036; c=relaxed/simple;
-	bh=nb8d7w8la803yo5UP2oJCicx+U4WvvvQT7Uug6wtgmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLTFytLnh43JwQk0zpauQcVDOzo6FnU7B7+C3kB8kXc8ghF7P4Q4zIAX0mJa5vY6ENo8Tqobml7BXrMpT2w3DxtIXcWh1Z2Em/mYBLTogVWtBIc9fdy0iaQzykJjnaOyCZZzYq8bi/h7b2hbkjLL9DjpvY/fv3zszYzOObFny/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qvNcPDRh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Kj7qOkOQBYxTY25+TU8TMzDFc8CdJqCAS3UHxTj/Oeg=; b=qvNcPDRha2U/HuBozi6InB/chZ
-	gNOFo+/oeujtyI0ZobhIQLf0+hJXc7tXWfMuUgxc8dFeSqhuU1XY7qFwHCWoSj+HtVJ+zDYBZ8NbS
-	XGQBk1ZDgudSv+IVQjZ/I3B7Zkmz6VJUJvXzbdgxNqqHEo7EDU5/ngKjhCx7FQpGC4oA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vEU27-00CWHk-5r; Thu, 30 Oct 2025 15:53:47 +0100
-Date: Thu, 30 Oct 2025 15:53:47 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: phy: microchip_t1s: configure link
- status control for LAN867x Rev.D0
-Message-ID: <3ecf0e2a-37ea-4d2c-96a5-b83a03cc77c2@lunn.ch>
-References: <20251030102258.180061-1-parthiban.veerasooran@microchip.com>
- <20251030102258.180061-3-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1761836069; c=relaxed/simple;
+	bh=wtaOLqUufjz7lib9iMWLB8MFo/leqWUABYZrBbdtKmQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=X2WKhwKJKzt3Ga9JgjJ6ib77829ymq4107ZOuXr12Mj3JNvESAqhrfxrNLvy2dlDCrXHrIrY3Z5iItP8EyLb5vld05aYTIhgmVOUpIvp1o5JvRdrs6lC6HfBLPUmAspdYVQnKw4V+nLdLFWQrtq9BY/+9hsK935NZPFhoDNQCOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snP6zaDJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0BF0C4CEFF;
+	Thu, 30 Oct 2025 14:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761836068;
+	bh=wtaOLqUufjz7lib9iMWLB8MFo/leqWUABYZrBbdtKmQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=snP6zaDJBWor1jlhfqKdV7GdrgEaHZPKMolO2zHO7kSyEWuVBS3q40AHnVDLBJ3Qw
+	 4GkCRHFghJmMgopa+P3t6O5XiUZKuK6mC3kissCrzRNBleseSxPXg7WJtDc6qAORMP
+	 PUt/Gu3lUguWvGI1mN65xk4XYmC2YzjSPqbJwoxcmWiwK6uAohZekvulhIeDk3AOYd
+	 bH22D1yWNA5OVDL1jOtc7F9xdrPdcJmLPgpngrj/E5uvL1bmkEYyrZmgYFE0j5KwTa
+	 mWJ1vUXsyYLNVMpnajhbEGg7lDguemVNH3fiCyM+kblEI5ye8fkD5Xk4kLvdJq4yPD
+	 rLi4boefa3Uzw==
+From: Mark Brown <broonie@kernel.org>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251030124755.1828434-1-zhongqiu.han@oss.qualcomm.com>
+References: <20251030124755.1828434-1-zhongqiu.han@oss.qualcomm.com>
+Subject: Re: [PATCH] spi: tle62x0: Add newline to sysfs attribute output
+Message-Id: <176183606744.67987.12357488709998439720.b4-ty@kernel.org>
+Date: Thu, 30 Oct 2025 14:54:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030102258.180061-3-parthiban.veerasooran@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-On Thu, Oct 30, 2025 at 03:52:58PM +0530, Parthiban Veerasooran wrote:
-> Configure the link status in the Link Status Control register for
-> LAN8670/1/2 Rev.D0 PHYs, depending on whether PLCA or CSMA/CD mode
-> is enabled. When PLCA is enabled, the link status reflects the PLCA
-> status. When PLCA is disabled (CSMA/CD mode), the PHY does not support
-> autonegotiation, so the link status is forced active by setting
-> the LINK_STATUS_SEMAPHORE bit.
+On Thu, 30 Oct 2025 20:47:55 +0800, Zhongqiu Han wrote:
+> Append a newline to the sysfs_emit() output in tle62x0_gpio_show. This
+> aligns with common kernel conventions and improves readability for
+> userspace tools that expect newline-terminated values.
 > 
-> The link status control is configured:
-> - During PHY initialization, for default CSMA/CD mode.
-> - Whenever PLCA configuration is updated.
 > 
-> This ensures correct link reporting and consistent behavior for
-> LAN867x Rev.D0 devices.
-> 
-> Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Applied to
 
-    Andrew
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: tle62x0: Add newline to sysfs attribute output
+      commit: ecd0de438c1f0ee86cf8f6d5047965a2a181444b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
