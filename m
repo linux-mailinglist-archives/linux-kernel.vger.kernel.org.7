@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-878010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01921C1F917
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9035AC1F90E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3A7462F96
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:30:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3CDD4EBA0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2D2355810;
-	Thu, 30 Oct 2025 10:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hzmzDqAZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C781C350D79;
-	Thu, 30 Oct 2025 10:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792933563C3;
+	Thu, 30 Oct 2025 10:29:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751743559F1;
+	Thu, 30 Oct 2025 10:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820139; cv=none; b=glWoAQUHFzXxNGHb9RL4Pn3XRGZPjI4hsigQrfY4LLOWThWZieOojnrxQWBB8Di2ygMeoxDnRDLVDM+YtsBbS5PqHkQLfx5L43FJuVHisq7it8QmwMVYx4VqrxkcW6HKdP6cZQAx2+Y7aqJlLmYhcblnXlc3kwjA1v3Y/bvy/Ms=
+	t=1761820146; cv=none; b=QOrJAv/64VPdYrVcjotrggQY51E+O5lAmm3mD9xm7p7rVtU/EtrhOh9p7XqyrZZC+oB+KrtOGXCzkPN7hFKSwMohr/87HttISkE9ty2xd2GdOaexycrIC/Ffm767s1X4FTaJ/sh+sBbJ0X829NEyJWIIJZxVBCal/p6dJR6jDFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820139; c=relaxed/simple;
-	bh=AifIUuNwhTe15u6vhAo7fW9AvS5TadottclufhTDVFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNvcCdABwEDE1ly3oEabSoXwbDSn8q++prBPKqbkF2bdG6mCid7+1nvY7RYwX40G8nc3fl/Lmikm4EpMcH4IScQSN/GWhOgik/Tdr+Mn7+cJdXXmA91WnsEScVew38gcen+TxjpCarEjhr2Y6Y3vzAWzyy7jQeisriGSWHm37As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hzmzDqAZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2E9CC40E021B;
-	Thu, 30 Oct 2025 10:28:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UymOqoxP1A1F; Thu, 30 Oct 2025 10:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761820129; bh=WZZ6N+wcXa37HBzA5ts6flFieqWk4sP4JA+15EAS45U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hzmzDqAZcDuVVdcb/zrFbu80QwFEgGX4v5eZRvHiSEmvpa45Ciu5FGZzZtHPexp7a
-	 yLP8XMmG4L3tDQgeNfI+jQv/+DI1ilDPEhPuzPlpSWXn4zVXGpkKb1gfwhMWjv0+67
-	 Fjv0RuEQEysYiqkl8FkmTZndM+B5pvlLDvJ4AQ7RnqIDmkrnc80D03NyUauqJHf6jv
-	 4FLURMd39H5SAsYB8/F4bps8aVtv4X0Yt72zsfEqNFU3mV+FzTN6UNmhUM9Z6JvJ55
-	 ZqTcdheAk/cTUHWJzx/opM/IGN2uuFqlaeiKlGYSs9K8PvfPhhPVWgS05IrOC8U3tu
-	 hOvbvT0p7AxmX61qfgl9w1XzgfOtUOdSYOK32iTR+qtaZMrA9FguevLwQQWp9644l5
-	 V+690Bj7iltdneXdDS79cgRuC5fTgBNgxLURKZpq56oDI/TBLxajEnuJXLxedi6lY8
-	 ljDOUkKo5t/kFDCd0Za6ZrCd40ODw/nHBdJKr3ulDZfUlV/0qWIP5QJkzYucbP0DQe
-	 CZfLmyAUI50X8aiKj2H9ok2ONspMDtLqid3pAaTadGzVPnLP0X3EGK0KyHmdgUU/Ij
-	 NTYYNCI42eEBkjHr4//ZWpIdoCj28hT8lK4vYH899nKArqPZYics89IATtNG06WXKX
-	 isYNjdM7JaLaz5vNi6QWAUnA=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B831140E015B;
-	Thu, 30 Oct 2025 10:28:33 +0000 (UTC)
-Date: Thu, 30 Oct 2025 11:28:26 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
-	Jim Mattson <jmattson@google.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH 0/3] Unify VERW mitigation for guests
-Message-ID: <20251030102826.GAaQM9ykytR9Dm3yEb@fat_crate.local>
-References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
- <aQKxVLoS2MzBiSIm@google.com>
+	s=arc-20240116; t=1761820146; c=relaxed/simple;
+	bh=maF/DPCYKH1qQebZ70bvPd7/+vjsfX9IrKP3XL5VGvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Aa/XZAXKvPDNiEPe25TmPh2eylnE2SHzUeRS+JzsZuYVvp9DZIBynkvgMU8hjQ0STsXCH9POV3oMJv8RWm/ldcgOZUdZFXtqB7VK2Bks+uPOjN6QHozFGFnUeltPLxpOeQXk6CRnw+9sDwkBoKdjAigKE85dppEhXN4HEPwgsS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E08BE1EDB;
+	Thu, 30 Oct 2025 03:28:56 -0700 (PDT)
+Received: from [10.57.69.77] (unknown [10.57.69.77])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8D363F66E;
+	Thu, 30 Oct 2025 03:28:56 -0700 (PDT)
+Message-ID: <d0767b70-5686-4f6e-8ca4-10b3f3ff3991@arm.com>
+Date: Thu, 30 Oct 2025 11:28:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aQKxVLoS2MzBiSIm@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-8-kevin.brodsky@arm.com>
+ <ef0cd4bc-1a37-4755-8957-d8a7e5c4564e-agordeev@linux.ibm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <ef0cd4bc-1a37-4755-8957-d8a7e5c4564e-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 05:29:08PM -0700, Sean Christopherson wrote:
-> Any objection to taking these through the KVM tree when they're ready?  There
-> will be a conflict in vmx.c with an L1TF related cleanup, and that conflict is
-> actually helpful in that the two series feed off each other a little bit.
+On 29/10/2025 17:41, Alexander Gordeev wrote:
+> On Wed, Oct 29, 2025 at 10:09:04AM +0000, Kevin Brodsky wrote:
+>
+> Hi Kevin,
+>
+>> +#ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>> +static inline bool in_lazy_mmu_mode(void)
+>> +{
+>> +	return current->lazy_mmu_state.active;
+> Whether (nesting_level > 0) is more correct check?
+> Otherwise, it returns false while in paused mode.
 
-I don't see why not.
+That's exactly the intention. Lazy MMU is disabled while paused. The
+users of that helper want to know if lazy MMU is currently enabled (to
+decide whether to batch updates for instance); whether this is because
+we are paused or not in any lazy_mmu section (nesting_level == 0) makes
+no difference.
 
-At the moment, we don't have a whole lot in tip touching that area and if it
-ends up appearing, I'd ping you for an immutable branch I could use.
+> May be check both nesting_level and active and also introduce
+> in_lazy_mmu_paused_mode() right away to avoid any confusion?
 
-Thx.
+Can you think of any situation where a caller would specifically want to
+know that lazy MMU is paused?
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+- Kevin
 
