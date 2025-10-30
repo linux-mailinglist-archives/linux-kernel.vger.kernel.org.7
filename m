@@ -1,229 +1,160 @@
-Return-Path: <linux-kernel+bounces-878412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8EDC20847
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:13:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4E0C2086B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2872E34DEC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA8F3AB183
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC50239E9E;
-	Thu, 30 Oct 2025 14:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE3824C076;
+	Thu, 30 Oct 2025 14:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DRzlAd3G"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010028.outbound.protection.outlook.com [40.93.198.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7VHHOUy"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DD313777E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833616; cv=fail; b=M/Nww1EtQsBekH8JT8cAQgHGiWoFaOtSo/lNssO/R0xUAaQRMaSpUkGCl+r5WigNw/J5RiiyIxdgzkOkPs3ePb3J+0NjAbEqe4FmZX3ovlJGFHU871B5ZAUtwWnruynGi6uGhR/DYXisV+a9Wk3TOycxgy5c3Uczklle2G483DY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833616; c=relaxed/simple;
-	bh=48svMyJoUrSw2XefD79S+FypdASe7bhxo+UzPS7sEYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZBIjV4XnFftHwDwtZJHZx4hpYySi/rl4mJYhOpB7gSc1rNuhRtvuHyGV2DbGnibuPHZO2lRfqF4cTb12O+8CzgaKLIFhNSEtAmE5VCQ9TSFy/5LwvvruYpBYWDHc6WYyoOi6LsO7wtodvdez05FmuUQtkHUOOArJp9pTc6wuxpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DRzlAd3G; arc=fail smtp.client-ip=40.93.198.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c0kdQ7uboS4QSemWete+ZkijtMhFfVKswQC25krKYJQUuPjccYSjBH+VemysaVuiP1pgqq5Xdo7AY8wI0Vx7LhObokE7VaLc6dxINRL/722myd9yOEn+TlJDlNkax0RglMusW++vlBBOGoB/uGCMwcn3VINd9IrVPmbv6xcrph+aPy7ELbBiBUHoKHla9kfzjbAGBcGOQ+H0FJMbdOwwwJNAG09my50s5pBhfIuMeFBE4gN1K12vsvE3NrjZS8uLZU5NgybIJlWIjYwP6uQjZhzQkb5PS2dQg+YcN/A9kPR8OgeR9F4y0siAHZQwJp4Du7X9q9uWV00aMHITzcJXhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WKsaxM2GUd9lvdVEJbVZJt40DtvVXuqRSgyg2lBDz/0=;
- b=xiDxPuoVH3riwmSagvBKLDm0k3rPnleun9WbjD21VP4hW8FKwz3ZP3Am9erWLuJT6U4NP8jsTXe4ERJ1dD528Sef3OFODByDMhE1l1gn2jjPVApD22rI/btEOx5PfiB5vDdtp2kzZZR3UgTyGPMIK+hXOE9fOmg5kJJwoFirv9efkTr0hNk/6xFOqomYei7R4y/ORfrAPC7FShYMXAm5omCLnA/D47qqgsF3rJ+kgCuKLaslqqH81DJrG/4RlGRT1kuayEBxqx8NNqo1RXjSSo0W8epDBI5cssnyVullSXwBGL5yyJunKGKYUvj+dPwqDp+s/zBFh1h8hVkmKd2wcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WKsaxM2GUd9lvdVEJbVZJt40DtvVXuqRSgyg2lBDz/0=;
- b=DRzlAd3GGncsclt29LVvTz85tuW4qDH8e9EMsv6U8cCYn0ulXHDDLYOS5mN5Jp75ygBUIWHVre5cu4lPpcQTlqHghkE+ddjcKRiB9ooWdYEwXT8nbQK0lzwQI1oCIRuTlBce+LKv8y06b4nWgInnL+UUwo0w6qi1ubrUEef17xQ=
-Received: from SA9P223CA0015.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::20)
- by IA1PR10MB6121.namprd10.prod.outlook.com (2603:10b6:208:3ab::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
- 2025 14:13:31 +0000
-Received: from SA2PEPF00003F66.namprd04.prod.outlook.com
- (2603:10b6:806:26:cafe::21) by SA9P223CA0015.outlook.office365.com
- (2603:10b6:806:26::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
- 30 Oct 2025 14:13:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- SA2PEPF00003F66.mail.protection.outlook.com (10.167.248.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 14:13:30 +0000
-Received: from DFLE209.ent.ti.com (10.64.6.67) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 09:13:20 -0500
-Received: from DFLE212.ent.ti.com (10.64.6.70) by DFLE209.ent.ti.com
- (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 09:13:19 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE212.ent.ti.com
- (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 30 Oct 2025 09:13:19 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59UEDJ5M2313837;
-	Thu, 30 Oct 2025 09:13:19 -0500
-Message-ID: <1b3f183f-3923-4183-a237-861e4f886958@ti.com>
-Date: Thu, 30 Oct 2025 09:13:19 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A47230BCB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761833637; cv=none; b=PBa28XZcDEtrrpBoKPBGGPM+uuee75r5CAXty2XJ3wCpi+5PwO8HHh/SP2+1cjDxBkbfsOXWwh87dhtCBHAXpQ1VlF+h+YMEvhqZLARCSpZWUM7F8RSc9/SZoRAvVXp8ayXP1S+5A7FPAE5n8Z9Vw7EFlrUFUD59uySWyR4Id8E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761833637; c=relaxed/simple;
+	bh=94nDq8zBh97mffHHJCaEGopUfRCzcjVIRb5EcN4m/EY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4sQC8AQhgDoiUdbKCsZFXUezUGhC0plvuF1ewXM4GDRxLU+ymsrxWKaR0OkGByoak4GaMM47mlFhqBrx2Pz6EXtheC4MqG+MirWHceSo8hAAxboObXbxokdAR5/SkaySroSmassEw9YCqA/QkyBZMPQnYT+5gBM/pdkz2NwrJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7VHHOUy; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64074f01a6eso132280a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761833634; x=1762438434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tOC9DCoI/J/8bu8rwIJ0BqF4IPlr7KAf52CibhE5rhU=;
+        b=O7VHHOUy4Y+X2t4LqR7Q3shM0D+MZEgB2ZenQg9mRTVdyQf8zbim8m39gaabue3uvI
+         wd9r9osTkueechVgHqRrmanq/KOr8VtUB3AWXX4jcf5OhRLC2dlvMTjTUhH0ICZupj2+
+         SzX/O+vWc6FGBHBUr50hI1a50XZBW0WVNMyH18lFGF0YOXX9baz49fC9DD41ZY2OP9A5
+         z4taTY1dQ+eS0V12FkFS9Ju2W8I6D229VmyM2VCiNi8HFSaTNzmS+UiH0LUFnLu22pgQ
+         Oq9usp4mLK70qPzt6OvMfYa3AyU1CpOCJV/ufRtr5OKIobZe2inrKXtwJUX/LAXxW19v
+         /OYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761833634; x=1762438434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tOC9DCoI/J/8bu8rwIJ0BqF4IPlr7KAf52CibhE5rhU=;
+        b=mqjzmXqUFGOzfG66dPfyihoCS9HJsboPFdPRVrogf57FeI/Lha0j2SE8Lb51+9FYCw
+         GrRXG46P2CghKGC+eXBa62O/ENBSaIMYgUN4Xgkl5cukaTuT44v6eKc0ptinQu0JskfS
+         NGBf3f67FTXyUk4fkymOltbT98b1UA/ru5e7luM0qUrwxlHafvsV5/a6t61yGXWgh3Cm
+         1QrMu9AZcqprUqpEi+c/a7auHO9S9g3pnOtdjHIitMycw1uDUTRownD2nRmV/Ywtp3i2
+         DHCPA2Uk/hFiLnWFcCs5BpEH3kbOLb/upIiKWrPX5FwQUERoC+gUbhiKkt2ZxLPRrTSq
+         TPlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXACSBjj9+ocVJLHGal4sy94juuUcxmFiUZfe+yxEYmWE5lTgdXqsTMZKAyHObtJNZpndtlv91VmysIFQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZTGx6ZOviriw+8HAAnHXTmjajNimRrzIvBy+Dtqo945XCpBJU
+	qNwxRGtEhNRjuIiNw9wRJcoPMAflL2Yo1ENGcyrGa+vlTx1frsAoHH84U1xTnFgRMUyu+mfLgBs
+	jrz6wpRxdwCHc59EVvFRXOZF6/RZmykE=
+X-Gm-Gg: ASbGnctFPC1ts3lmnIJ+xtaEqz7oNiQpXV+AsHPBJUtS76gHjlr4ubFLRcThpmmGJis
+	hXAsCzut2vvNj083xjTcDDMqMUGuhjvt2CEIUJnVKXx+ZiaoSPOfGvd0KQBhvoujI5e4KyTgJek
+	lUf21H5EP4zXAF5Vm9LD2QBlCBa6PODj23EVOj81G2QOn571nNCqFELXitjVuiTQ/zF9io/y25c
+	2R4Xm5bTGjdTnsQvSmAtRAjzQPsXX3edRNzqFWRVgJXBNAhCK8v4Srp09zC9oU+N2vX3v/goQqA
+	3lmwNT6ZtJftw06n01AMZ8pvtw==
+X-Google-Smtp-Source: AGHT+IHHiFU7O4X2/IErWSfBx1kH/lPRHPmhsiq+izBQRCkA7d5xQXqg6CS0MeVhAebPeWBMpKqtWUmkxAZqrttEmnY=
+X-Received: by 2002:a05:6402:35d4:b0:637:ab6d:71c0 with SMTP id
+ 4fb4d7f45d1cf-640441cde44mr5940503a12.7.1761833633789; Thu, 30 Oct 2025
+ 07:13:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/3] firmware: ti_sci: Remove constant 0 function
- arguments
-To: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>, Nishanth Menon
-	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
-	<ssantosh@kernel.org>
-CC: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-	Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, "Kendall
- Willis" <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20251030-topic-am62-partialio-v6-12-b4-v9-0-074f55d9c16b@baylibre.com>
- <20251030-topic-am62-partialio-v6-12-b4-v9-1-074f55d9c16b@baylibre.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20251030-topic-am62-partialio-v6-12-b4-v9-1-074f55d9c16b@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F66:EE_|IA1PR10MB6121:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c4e0c41-336e-46ba-93f2-08de17be80ce
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|34020700016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VmUvSlZrNEtHamdJZThIeHdOTlY2bXhWakhubHNReStNUmZPTm96a1NqR3I2?=
- =?utf-8?B?cmtMbWRIbzVQMERGWkRjUnJVdXFTVFdMWWpqUWwxb2tPZ29hdm5BZmZ2d0do?=
- =?utf-8?B?bHVCbW1tZ3RHMCtBeXBjL053cXFLRnh3LzJlUEs2THpXak0wUVRqVnAreVpF?=
- =?utf-8?B?NzVmMWcxNzE3ODhnYkJ1KzBzS1pjQ1RkZGJlODc5L2RIQ2dtb1FuZTBHZEpB?=
- =?utf-8?B?c0MyelhrSlpVTUU4VHA2UTJTN2lWL3hHOU80cmUyeFdWR0xYelBHMVRoRzAx?=
- =?utf-8?B?NVU5eGhxdWtXdmNOUGtOSnByYWNOcFZmanRzazdTSENsbGtOMGl0MHRPRXk2?=
- =?utf-8?B?Y05sL3Z2K3BVZzg1Yk1TZG95VlYxODczb1ZyZkNCeDQyZUdHc2VYYUFYZy9M?=
- =?utf-8?B?aGt5MEVhQjF3ODVvTkN2bDVGTkF6Z0xvQ3ZHUGRrcU5ZamhJQmhCMWgrRE1R?=
- =?utf-8?B?MzZDR01rZmt4bC8zZnBmNDNielpsREMxTkFZWlJPL24vSXpWL2FHZFI5cUY2?=
- =?utf-8?B?MGp4Mm13NURtZHhSQmZaRzlUVjFvYkZ3K1JpZDJOWllsdktCa2FydE02NUU3?=
- =?utf-8?B?c3pUcEI1Y1ZYVHBnVWd3MStJOFdpb0lWaDNUaW0zeldzYWtRdThKNXlBdkd0?=
- =?utf-8?B?cS9FckIyYmprRGxSUTl6UUU5bVM0eDY3c3JRNXFxTFpHckFia1QwSnZvNHJp?=
- =?utf-8?B?TitJa2dmaEluOHM4RzBKSkdyMjJEZWJnY29yTTB5M0Q0RDZ3R2xCRTN5aFE3?=
- =?utf-8?B?WjBHY1M0ZGI3d0hsK0ZWNW9maXpTdjZNTDFQWW0zOGx2Zmw2akd2OWx4MVBn?=
- =?utf-8?B?dklyc2RRL0ZZajdHTDFyT3NSTTZHbUZ0R3lKSkYvUllvVGxhK3lWMzZLRGto?=
- =?utf-8?B?aUtPYlVZakg2bzl1MTZTTXRYRkMyNlJMeFBBVVZ6WjZWcjdpMURGUTExWDRi?=
- =?utf-8?B?ZC8vcDV5ajE1YlRFUUVmVVQ0djIwUmxMakEwVXBRMUR2UjNYZTM1ZHN1UkRO?=
- =?utf-8?B?Q3R0WUhDTUROZjVuc1FxM05XWWhlL1pjVnJVOG45TzdVMFYzelJabXkzVFAw?=
- =?utf-8?B?V2RtcmRSemZnSzRMZFF4ZUdBd2RCOG5wVU16Q1lWQkg5QSsydGZNYUIvamgw?=
- =?utf-8?B?MHMyNzRDU2Z4QjFhMnI5MnptR1JNTzBkdUxjTVpaM1hqS3ZCa0g0NFczaXRL?=
- =?utf-8?B?eThMNWx2RkZpVWtNWSsvU2d6YnR6R0JtVXlHbjBLV1VFaFkyTi9VcUMxdGZC?=
- =?utf-8?B?M0xJbFJQUlNaMUJieEpVWWZPWTJhRVZpUENTdnNnNDRpYnVxdnJHNlEyQVdz?=
- =?utf-8?B?THp0RThHS2g2TGsrb25ZOEQ0K01XZG43K1pkMS92eFNBU0FHVmJxREJKRjBF?=
- =?utf-8?B?NGtKV0ZTS0J0QVlTZnYzOU1wVk1QUmhTaERrcjdTaWJ4bkNzUE9MWjdLNjFi?=
- =?utf-8?B?QVFHelhqSnp1MDI0UTJVczd1akFkS3FuV2c2aGpQR2FybmZhRDkrU2ZXTElx?=
- =?utf-8?B?QUdRRDRHN2xxUVBvbGV5M24yZHEvcFpXZ2lvNjVPUldLVjBaTDdmYXdOWUUz?=
- =?utf-8?B?WmprQjNKcm1IWG00S0JuZUdTVVY5RWhNK1kxS09mNnZIemgrM1phalpzdklG?=
- =?utf-8?B?Y1NHT1VZMzdqOGQyT25tU1hZVHBmMXZqMStPSElycU9xNC9nRUNaQ2FieGlv?=
- =?utf-8?B?MitiTDE2NkJsOStoVXhyTjRSOWxMM0drdFdwNFlNeUJxOEIxSWMxNDVjbkY2?=
- =?utf-8?B?cVljcysvVnVYcGxaZ01YdCtCRmxTZTVESkpNS2lYdldwYjBGNnZvQkgzVDlW?=
- =?utf-8?B?UjNRVms1cXk1SU1hcU1zOVdnSUZqaGhWa2ZxNTVlSC9HMW9kUmRLTUxjdEVB?=
- =?utf-8?B?NVdhQ0JGZ3hFM2JHZnBLR1l0NzhQYWhIWjRoRnlqYWFkTnRtZlllNlFFMVhT?=
- =?utf-8?B?TWpsUDRtSDl4b0RWQVNheEFlSWlqeFJsTXdCT0dMUG5iWFNzT2NHbElkSmhN?=
- =?utf-8?B?T3QrcHNsd3hkaWorMDl5a3hQbmlaSm5MQlMyOXZFV0RlOHhnMDBDVDVNKy9y?=
- =?utf-8?B?a3cwQTNERkN3bmdFdU84cENwNU55UTJYMTBHTVNOMCtKSWN0TGNSMEpxem9i?=
- =?utf-8?Q?xh/E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(34020700016)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 14:13:30.4711
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c4e0c41-336e-46ba-93f2-08de17be80ce
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F66.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6121
+References: <20251029131428.654761-1-mjguzik@gmail.com> <pzstmkemz36aecf7ckphbcz3ph55cn6si3ca2nm6sku444365m@pntnbgblgxuf>
+In-Reply-To: <pzstmkemz36aecf7ckphbcz3ph55cn6si3ca2nm6sku444365m@pntnbgblgxuf>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 30 Oct 2025 15:13:40 +0100
+X-Gm-Features: AWmQ_bkA9dBRMVR-2VtG6VNKL-gCT_mzVoOQ03lsjs4LdqZ-PeopA_KO9V5L_2k
+Message-ID: <CAGudoHHsV5oyOnKNuQNwQXTeS4ZQp2pTnbrQ3B9+_dvFkmA3bQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fs: push list presence check into inode_io_list_del()
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/25 4:26 AM, Markus Schneider-Pargmann (TI.com) wrote:
-> ti_sci_cmd_prepare_sleep takes three arguments ctx_lo, ctx_hi and
-> debug_flags which are always 0 for the caller. Remove these arguments as
-> they are basically unused.
-> 
+On Thu, Oct 30, 2025 at 2:54=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 29-10-25 14:14:27, Mateusz Guzik wrote:
+> > For consistency with sb routines.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>
+> Not sure if you've noticed but inode_io_list_del() is also called from
+> ext4_evict_inode() (for annoying reasons but that's besides this thread).
+> So there you have another list_empty() check to deduplicate. Plus ext4
+> actually uses list_empty_careful() for the unlocked check which kind of
+> makes sense because in theory these checks could race with someone removi=
+ng
+> the inode from writeback lists.
+>
 
-They might not be used today, but the TI-SCI command does support
-passing them, so why remove that ability from the wrapper function?
+huh, gotta say this is pretty bad.
 
-Andrew
+i'm going to the updates later for the sake of the clean up, but long
+term if ext4 has to do this, the evict func should postpone
+inode_io_list_del instead. there is related mess in interaction with
+writeback as is though, so this is for some indeterminate point in the
+future.
 
-> Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
-> ---
->   drivers/firmware/ti_sci.c | 15 +++++----------
->   1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 49fd2ae01055d0f425062147422471f0fd49e4bd..24ab392b4a5d0460153de76fe382371e319d8f2e 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -1661,14 +1661,10 @@ static int ti_sci_cmd_clk_get_freq(const struct ti_sci_handle *handle,
->    * ti_sci_cmd_prepare_sleep() - Prepare system for system suspend
->    * @handle:		pointer to TI SCI handle
->    * @mode:		Device identifier
-> - * @ctx_lo:		Low part of address for context save
-> - * @ctx_hi:		High part of address for context save
-> - * @debug_flags:	Debug flags to pass to firmware
->    *
->    * Return: 0 if all went well, else returns appropriate error value.
->    */
-> -static int ti_sci_cmd_prepare_sleep(const struct ti_sci_handle *handle, u8 mode,
-> -				    u32 ctx_lo, u32 ctx_hi, u32 debug_flags)
-> +static int ti_sci_cmd_prepare_sleep(const struct ti_sci_handle *handle, u8 mode)
->   {
->   	struct ti_sci_info *info;
->   	struct ti_sci_msg_req_prepare_sleep *req;
-> @@ -1696,9 +1692,9 @@ static int ti_sci_cmd_prepare_sleep(const struct ti_sci_handle *handle, u8 mode,
->   
->   	req = (struct ti_sci_msg_req_prepare_sleep *)xfer->xfer_buf;
->   	req->mode = mode;
-> -	req->ctx_lo = ctx_lo;
-> -	req->ctx_hi = ctx_hi;
-> -	req->debug_flags = debug_flags;
-> +	req->ctx_lo = 0;
-> +	req->ctx_hi = 0;
-> +	req->debug_flags = 0;
->   
->   	ret = ti_sci_do_xfer(info, xfer);
->   	if (ret) {
-> @@ -3689,8 +3685,7 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
->   			 * internal use and can be 0
->   			 */
->   			return ti_sci_cmd_prepare_sleep(&info->handle,
-> -							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED,
-> -							0, 0, 0);
-> +							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED);
->   		} else {
->   			/* DM Managed is not supported by the firmware. */
->   			dev_err(info->dev, "Suspend to memory is not supported by the firmware\n");
-> 
-
+>                                                                 Honza
+>
+> > ---
+> >
+> > rebased
+> >
+> >  fs/fs-writeback.c | 3 +++
+> >  fs/inode.c        | 4 +---
+> >  2 files changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > index f784d8b09b04..5dccbe5fb09d 100644
+> > --- a/fs/fs-writeback.c
+> > +++ b/fs/fs-writeback.c
+> > @@ -1349,6 +1349,9 @@ void inode_io_list_del(struct inode *inode)
+> >  {
+> >       struct bdi_writeback *wb;
+> >
+> > +     if (list_empty(&inode->i_io_list))
+> > +             return;
+> > +
+> >       wb =3D inode_to_wb_and_lock_list(inode);
+> >       spin_lock(&inode->i_lock);
+> >
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 1396f79b2551..b5c2efebaa18 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -815,9 +815,7 @@ static void evict(struct inode *inode)
+> >       BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
+> >       BUG_ON(!list_empty(&inode->i_lru));
+> >
+> > -     if (!list_empty(&inode->i_io_list))
+> > -             inode_io_list_del(inode);
+> > -
+> > +     inode_io_list_del(inode);
+> >       inode_sb_list_del(inode);
+> >
+> >       spin_lock(&inode->i_lock);
+> > --
+> > 2.34.1
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
