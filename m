@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-878377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78721C206F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:01:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE09CC2071B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9000F4EC605
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9409718909F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19FA25A35F;
-	Thu, 30 Oct 2025 13:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B767239072;
+	Thu, 30 Oct 2025 13:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="igSpNwBS"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DGOCRQIC"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA20524337B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3056225C804
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832638; cv=none; b=ECMAVrb41e7oWYjRPMUoBdfSx1UmFvy+AG1lT+xhV55T2wh9hvD5/ZUNFz6G5m9+lCPfE96yg63shGz+lyVLcAX+OIAf+73etgptF+XYGa0snxjseLVbtzlolMhy4yow2sX56njmE2xrGPQsPNY0km8eFMtxsdgKEnGZ9lXZZ/A=
+	t=1761832642; cv=none; b=NV2zHi+769AuWC+7fOKj1r1xmgmbSDlLNLhNkGKCd0eMFb49ZAt+sJw4kT15Kvaiv95NWuIehDr0gAJdJ0C5Yp6QUJqCpsnO7+0KWZl6K+6t8Pcc8xiLLTuu8S0mDiWxqjvNn2N7TrqeHjNuwkQYVz35Gomja72A5PewrsAWrvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832638; c=relaxed/simple;
-	bh=GZ13kGXVZV3MWjVjkglZlasmL+TOxO9NJy2cnrIsr0Y=;
+	s=arc-20240116; t=1761832642; c=relaxed/simple;
+	bh=ouiSQ/bYXMLTEPf/wq+/mgBpKqBW2VXDy5s0N6Y96sM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h0eMzuLmlYQdNmnivKXTIu8qASzSuUefsuhN5vYosnc5alnNjHUOYA8NTsy91LmklkdNDf/gY1juixYB7h2qKWj/0AeDw6FQi/TAE3J9/RHQOyZO2bK6XylNbJaLQLhdmquj8nAN5duabQrKi2/y63B45OpjDoPy2/2lq58pKLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=igSpNwBS; arc=none smtp.client-ip=209.85.215.171
+	 MIME-Version; b=lMNaN4iW0W6CDyAxlYKl69b5doNAyguG2uXbt9eMr6nzVb1WLRW+bVQglZMmqeL57mBK9AHVc3e0ISVq4W3ULxNJof7/O363wj3HqCFLRJM8LwfzwZYm/GhxGSUhQfEli9I1hSWguLAtc8/X9P6yGh8yFt85Q2ZMmeUj6XKorKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DGOCRQIC; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b6cf1a95273so707787a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:57:16 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290ac2ef203so10568075ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761832636; x=1762437436; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1761832640; x=1762437440; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JicIE58FwjHecYxgU5U3fS7oy4Wdsaoyxg9pwk2jRzo=;
-        b=igSpNwBSUXipUq2scagJG7G94aFT5zQ6DedpRagacRC0PjCy9Ax+IKZUq+FCOrHD7i
-         NV8iY2iGSDp9wecDQoQNLNXKRzADlFN3/rsi+LWZ6xkNdgiC06p7Y4529myY8Vkg3DGo
-         P8MdTZzGk7HIFMPBTQ61kIJS8a6M3C2wvpYCY0yMAzB9csh3DJTFbYKdYGS8vXgnJqJr
-         o45tb4l6v7AUFbcM+Jh8Ee9JDcVwlTOCX+S9H3lRZQCzky1jb8ZbBXiPMzvGwGJWoXq1
-         txecwcaK56V7VoRRFxmRmXKI1e0XKZLFVd2WEwGjcsNIhWjE511wDSoCCsSUh7jCiyB7
-         mEew==
+        bh=bBFEkcQ8xUvhwX9gDA9IWLN2BELZaEr5a/ByZItGkVU=;
+        b=DGOCRQICoMScUp8gvg2m/OxCOWchI6aWx0Ui/q1Qj5IeWzP/ZvaQD/2GJg6VVeqdDO
+         3Zp4mNk49HxK4jgGZh3zIWNFk32oLnIuHukL0VwhbzhoVcpHO01YJaafI7RRGCz+wUOA
+         KtlNfd0LXloVdeKaBxUV00p6i/i3PW4of+t9B4Ekji+WPFUmoQNQpXgZIOuRwfGIN1hI
+         dzbhwvEtEdzoxxJ6rKQWkuKh0e2gJMdkAJZNiO0I2xk7wmSFo0GNyPi8494x8LsoVZCQ
+         l0Qk8VpQAdItGlebgccftyy5yy179fMckZYPL8W5IyGPI/v7RbXUCB7SCxkrdFiMXjfq
+         dmdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761832636; x=1762437436;
+        d=1e100.net; s=20230601; t=1761832640; x=1762437440;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JicIE58FwjHecYxgU5U3fS7oy4Wdsaoyxg9pwk2jRzo=;
-        b=nCxme8gtAwhsrljT83G9C7TXFmbh7bnbnSE9/DtSez9S375Rk8NQVgdufYhn1npGlp
-         mPEgYynLMp1UteVhLDHfOoGInm9xihWDrcMHx8DUNx9ZfFun1OrtVkJN7QFbUZzMsmWL
-         Zvjy+PX+PGWPn8h8Y/OI8vxCbWg0+J/h7FFSlz+UxPk+zKTBeq48yS/K143Fb5c0nG4t
-         E4uQ+BYm2ynBd4WcDUI+/Xou5Y1LpmqO8GCCaERw2umqQyBddCTk4DZrJHfZ1w0cJe3D
-         05XQx7b2MHbwVGqvadu5p5Dd/+mhA35NOQrAkPqtqDlxnZTYOOgvRKOq2tQ8oL+U1iNH
-         306A==
-X-Forwarded-Encrypted: i=1; AJvYcCXy9rWlTDflUmStqVtGxsdxOisQKsyi4u2aO6pWKg27VOl1jwFtudBSj3o8oSgCm2yrb+JZWuP/ZMFn79E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxttenLXxmj2LVdzMM4uomq3bi2POEpbkF7swRd7LPoTTOuzCuo
-	0aoIGUm0VtsSQ1qAw/gtERcfXTDWXjoSdtzPgsoCZD5y55mWskU6k2OFK4D7ZLMoA7M=
-X-Gm-Gg: ASbGnct4ulmqQhhFIYPXQBtDdOKiZ3CdCe7Hw2JR+Sru4yvi9ueUXYJyBgbs9vZAdad
-	MzdumQTXPOeR7IvLWXpi8SbrMU27SusNQOKhezobddadhImeA44phO3n8/jJvMfJfpWIvugd2W+
-	kkcNhgYThz0g12Bjxp9qqs7+TgEcigCa1C08B1Is/w0xQby0N7w/xMvPaIWxV10565MXBkhJCpj
-	NbTqqkpdODxZWZeQqPk+liWIDSYuZLyyXrsCvMne2/1DQTW6kYB+NCxLUHS7VtuoLYgvIdNbM8Q
-	CxUkMw04YwPSG+kxFk6KIiQHxH58tkvsj5fSXOtIfe65Us6495mrul/Cemd881B01jO3N1iRVQl
-	X4IGdnatMjNRO+/ojyaT6XEUw2vDc5dxYYtyTkpbSYD/n4/MwwPldlgtTgVdgE8C5n7DnjZmQ3/
-	jMRrFzNKFoSLvkUw8W8f0S1EuWhMDyO65W7pHQlf2nRjd0VxQgyULpQ30irLeuidc=
-X-Google-Smtp-Source: AGHT+IHEJ20/piBU7YOuFAuDIHAXabWarffYfeSdFbAZ/TJ7BVINPJu9h3FE6SZpYUveWoSWx2Tx3Q==
-X-Received: by 2002:a17:902:db11:b0:294:f1fa:9097 with SMTP id d9443c01a7336-294f1fa9228mr37402885ad.34.1761832635722;
-        Thu, 30 Oct 2025 06:57:15 -0700 (PDT)
+        bh=bBFEkcQ8xUvhwX9gDA9IWLN2BELZaEr5a/ByZItGkVU=;
+        b=WN81BhQ556eIHk647TTuHgL2sP/xMcIm9yDid8QbQGsZCLbV++ogDPaOHI50oF4oHw
+         0UbXOQ4ylsPFh0dP4dMZXaVBB5+zN0r9FjrsYfdU62iwMPADoZKigST5v9EAe74dXVFT
+         /qFKWoDi6/FGqR5xGZ5jnLpo9WrACx5H8kFdD1rWw+T8dxCMB/vsMehgTL05e5qKk4Jp
+         TN2TqEIf/1q0kE85+7rnfd6XazaSwtjJC1LDmKNtiFchsWsXPNphbwoZvjEO8frKo+Ik
+         FiKP9wlePJkdej6T+sIgmp0rw+ImXG6VDW3OUHQlTdZZIpDcZJcfAqbBdCTG4FDTF5pO
+         1Ipg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBfirexukN6Iw+8w5r0zAal9BNqJ7pPGroVJfyAbjjBwxSKTidmVwCsrpAjZo4HDG/n3p82Q72KSHBRHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSbNfol0/i82MSUjZUirgHIgnJsmXsY/TJQitOLzcEnJo6/Jwj
+	KeVFz9zQghjwELX8biXZQQ+UsKu8vKHrDibvm9Gaeo8SjvSYF2yTUpCdw0/FQEaJMRI=
+X-Gm-Gg: ASbGncve3RlR2Xl9ZV7RGxp0Sj/GztMZCVv2J8AQtiicEz8a4/E7Z/QdptMYXWU+siT
+	yIqIj7ebVJSeREYjJfOm3eBuj196ScAXBGuYTGak7Q7TW49LeaEiL2OFVso0LSXOgK2XMDHTVkG
+	XUg6aJ5mQeHeE2519j4Q9V3hRWkxK1xElwYvwzmDMIhndGbSRgINxVCkOaKX4soR/WJ8rzFS4D1
+	7w2vk66wwkj6LMVVJd6tZjiJnX9IgxvBNcz54XUWy+BT/Gq0F39bB8lL+h9UIRJEf31YFuSaRmd
+	er86xYHsDBZBsrXN032NDpeZlYa+Ou1RyaBEoD84JFn4SNrGF0B7CTZbtJqg67T7AqbzwNccu/F
+	jVJs3IUqieBX6QV5fKt6i5WAgggO1qKJgP/jHlT9p1js4UIqLB2nYDRe5S7RJoect+VFyIe9Jzt
+	FnLCanz0y0fyS9mC6Swvy9WpEKCcJgq5hV09uvcocxF7KCBXzq40MUzUWK8f+kF70=
+X-Google-Smtp-Source: AGHT+IEBVtXylNQASrr2YyG7D2Tj2EPDKv83suTEKGHYLNZD/7uPvsZga5WS/d7dp2LV6KOpbcdbCg==
+X-Received: by 2002:a17:903:11d1:b0:294:e095:3d3a with SMTP id d9443c01a7336-294e0953f16mr72086945ad.24.1761832640241;
+        Thu, 30 Oct 2025 06:57:20 -0700 (PDT)
 Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e495e8sm187071905ad.110.2025.10.30.06.57.11
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e495e8sm187071905ad.110.2025.10.30.06.57.16
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 30 Oct 2025 06:57:15 -0700 (PDT)
+        Thu, 30 Oct 2025 06:57:19 -0700 (PDT)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: pjw@kernel.org,
 	palmer@dabbelt.com,
@@ -83,9 +83,9 @@ To: pjw@kernel.org,
 Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH v1 3/4] riscv: mm: Enqueue tlbflush info if task is not running on target cpu
-Date: Thu, 30 Oct 2025 21:56:51 +0800
-Message-ID: <20251030135652.63837-4-luxu.kernel@bytedance.com>
+Subject: [RFC PATCH v1 4/4] riscv: mm: Perform tlb flush during context_switch
+Date: Thu, 30 Oct 2025 21:56:52 +0800
+Message-ID: <20251030135652.63837-5-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251030135652.63837-1-luxu.kernel@bytedance.com>
 References: <20251030135652.63837-1-luxu.kernel@bytedance.com>
@@ -97,63 +97,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When need to flush tlb of a remote cpu, we only send ipi to the target
-cpu if the task is currently running on it. Otherwise, we only enqueue
-the tlb flush info in target cpu's tlb flush queue.
+During context_switch, check the percpu tlb flush queue and lazily
+perform tlb flush.
 
 Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 ---
- arch/riscv/mm/tlbflush.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ arch/riscv/include/asm/tlbflush.h |  4 ++++
+ arch/riscv/mm/context.c           |  6 ++++++
+ arch/riscv/mm/tlbflush.c          | 34 +++++++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
 
+diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
+index eed0abc405143..7735c36f13d9f 100644
+--- a/arch/riscv/include/asm/tlbflush.h
++++ b/arch/riscv/include/asm/tlbflush.h
+@@ -66,6 +66,10 @@ void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
+ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
+ 
+ extern unsigned long tlb_flush_all_threshold;
++
++DECLARE_PER_CPU(bool, need_tlb_flush);
++void local_tlb_flush_queue_drain(void);
++
+ #else /* CONFIG_MMU */
+ #define local_flush_tlb_all()			do { } while (0)
+ #endif /* CONFIG_MMU */
+diff --git a/arch/riscv/mm/context.c b/arch/riscv/mm/context.c
+index 4d5792c3a8c19..82b743bc81e4c 100644
+--- a/arch/riscv/mm/context.c
++++ b/arch/riscv/mm/context.c
+@@ -199,6 +199,12 @@ static void set_mm_asid(struct mm_struct *mm, unsigned int cpu)
+ 
+ 	if (need_flush_tlb)
+ 		local_flush_tlb_all();
++
++	/* Paired with RISCV_FENCE in should_ipi_flush() */
++	RISCV_FENCE(w, r);
++
++	if (this_cpu_read(need_tlb_flush))
++		local_tlb_flush_queue_drain();
+ }
+ 
+ static void set_mm_noasid(struct mm_struct *mm)
 diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index aa8f1304ae5c4..f4333c3a6d251 100644
+index f4333c3a6d251..6592f72354df9 100644
 --- a/arch/riscv/mm/tlbflush.c
 +++ b/arch/riscv/mm/tlbflush.c
-@@ -115,6 +115,32 @@ DEFINE_PER_CPU(struct tlb_flush_queue, tlb_flush_queue) = {
+@@ -115,6 +115,8 @@ DEFINE_PER_CPU(struct tlb_flush_queue, tlb_flush_queue) = {
  	.len = 0,
  };
  
-+static bool should_ipi_flush(int cpu, void *info)
-+{
-+	struct tlb_flush_queue *queue = per_cpu_ptr(&tlb_flush_queue, cpu);
-+	struct flush_tlb_range_data *d = info;
-+	unsigned long flags;
++DEFINE_PER_CPU(bool, need_tlb_flush) = false;
 +
-+	if (per_cpu(loaded_asid, cpu) == d->asid)
-+		return true;
-+
-+	raw_spin_lock_irqsave(&queue->lock, flags);
-+	if (queue->len < TLB_FLUSH_QUEUE_SIZE) {
-+		queue->tasks[queue->len] = *d;
-+		queue->len++;
-+	} else {
-+		raw_spin_unlock_irqrestore(&queue->lock, flags);
-+		return true;
-+	}
-+	raw_spin_unlock_irqrestore(&queue->lock, flags);
-+
-+	/* Recheck whether loaded_asid changed during enqueueing task */
-+	if (per_cpu(loaded_asid, cpu) == d->asid)
-+		return true;
-+
-+	return false;
-+}
-+
- static void __ipi_flush_tlb_range_asid(void *info)
+ static bool should_ipi_flush(int cpu, void *info)
  {
- 	struct flush_tlb_range_data *d = info;
-@@ -152,7 +178,9 @@ static void __flush_tlb_range(struct mm_struct *mm,
- 		ftd.start = start;
- 		ftd.size = size;
- 		ftd.stride = stride;
--		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_asid, &ftd, 1);
-+		on_each_cpu_cond_mask(should_ipi_flush,
-+				      __ipi_flush_tlb_range_asid,
-+				      &ftd, 1, cmask);
+ 	struct tlb_flush_queue *queue = per_cpu_ptr(&tlb_flush_queue, cpu);
+@@ -134,6 +136,14 @@ static bool should_ipi_flush(int cpu, void *info)
  	}
+ 	raw_spin_unlock_irqrestore(&queue->lock, flags);
  
- 	put_cpu();
++	/* Ensure tlb flush info is queued before setting need_tlb_flush flag */
++	smp_wmb();
++
++	per_cpu(need_tlb_flush, cpu) = true;
++
++	/* Paired with RISCV_FENCE in set_mm_asid() */
++	RISCV_FENCE(w, r);
++
+ 	/* Recheck whether loaded_asid changed during enqueueing task */
+ 	if (per_cpu(loaded_asid, cpu) == d->asid)
+ 		return true;
+@@ -146,6 +156,9 @@ static void __ipi_flush_tlb_range_asid(void *info)
+ 	struct flush_tlb_range_data *d = info;
+ 
+ 	local_flush_tlb_range_asid(d->start, d->size, d->stride, d->asid);
++
++	if (this_cpu_read(need_tlb_flush))
++		local_tlb_flush_queue_drain();
+ }
+ 
+ static inline unsigned long get_mm_asid(struct mm_struct *mm)
+@@ -280,3 +293,24 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+ 			  0, FLUSH_TLB_MAX_SIZE, PAGE_SIZE);
+ 	cpumask_clear(&batch->cpumask);
+ }
++
++void local_tlb_flush_queue_drain(void)
++{
++	struct tlb_flush_queue *queue = this_cpu_ptr(&tlb_flush_queue);
++	struct flush_tlb_range_data *d;
++	unsigned int i;
++
++	this_cpu_write(need_tlb_flush, false);
++
++	/* Ensure clearing the need_tlb_flush flags before real tlb flush */
++	smp_wmb();
++
++	raw_spin_lock(&queue->lock);
++	for (i = 0; i < queue->len; i++) {
++		d = &queue->tasks[i];
++		local_flush_tlb_range_asid(d->start, d->size, d->stride,
++					   d->asid);
++	}
++	queue->len = 0;
++	raw_spin_unlock(&queue->lock);
++}
 -- 
 2.20.1
 
