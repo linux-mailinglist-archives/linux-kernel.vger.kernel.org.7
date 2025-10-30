@@ -1,173 +1,274 @@
-Return-Path: <linux-kernel+bounces-878708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B173C21496
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:49:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FAC0C2155F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8641E189C303
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D933B5291
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833B92ED858;
-	Thu, 30 Oct 2025 16:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A632ED858;
+	Thu, 30 Oct 2025 16:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRs1iSXd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="fhJn7h8l";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="fhJn7h8l"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013039.outbound.protection.outlook.com [52.101.83.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9B32DF3D1;
-	Thu, 30 Oct 2025 16:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842921; cv=none; b=qp1V53ncNKqgvTOyVrOdBJ8KbnxyFML/Tia/DUnOMPTaqK6Z4TwQM/FXXMPne1B9c2fMwSB0BEppe/xXA/JxBjy1IdQ5PcDmV2/3w9Lz6jVLUy6cy2EFuZXUpFofFs3EJ8xUAKlUumI1cTzXlZIKai7Xb+Bt9PnusJ4QHte6fow=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842921; c=relaxed/simple;
-	bh=mE2i8vtjXVe5g8p46lMpJSXGqVaorQH13q7kfthvNcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4tSuV/+EWgS2zQ8g23hJ/ChI99s9UeTaq/68g+uHrIY9k/GGK2Hw04+eL5FM8QCS9a+cx9xBdponXWV2pqGcpsxHAEVb5poTj+WZWZ/Z+e6tNjBGhO5bDBeqCByMERfQ9yCFgtcC+6xa8hx99H0sna5S4C7QqqGj+J/uN0t0q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRs1iSXd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF49C4CEF1;
-	Thu, 30 Oct 2025 16:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761842921;
-	bh=mE2i8vtjXVe5g8p46lMpJSXGqVaorQH13q7kfthvNcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cRs1iSXdibrabdaOHDV5i+aEg/PdYXQoDpj8QWXzXgr6tmpy0mtzO2pwEOSMSNoSJ
-	 og3kRwZV7LuMU9bXp6JJiJR6ogLKxEr62qYO7VmiqTn34LLAoJLJRynPUo2ItGrmiT
-	 mdZbdE+wnT82+ipVsSvwH59Y5DTkMWCu57NtxI0oq8ytEXWmFgqtkPfUBlIk09qfDG
-	 URGw+VDAonFY5SkyjXvVkwKylMyaHmskTlrcSpyPgj/vpkiRa+6H43P+Qcrh/GsNb+
-	 mJ5ucwdWgC4Nr06FWclX9r+Sqmqoevf+b8+C9EsmGmUKvVYO2fXi9EZn2G8pGn8H1B
-	 D9d5RDyFZgg3Q==
-Date: Thu, 30 Oct 2025 11:51:50 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, 
-	Chris Lew <chris.lew@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688312EB87E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.39
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761843202; cv=fail; b=TvmjivrLGE8ARI/jPiP12TOvuD6JS23abEqRszPw5gxvT/ZWkddl8KaneqpIMer58BmqaxlLy8H5sY8Pd22vasAd7aq1Q3n4jW7TmyWH0GbNUN4BCfHexplDya1q5GcKNaXzGoN6jdi246V9U1DLxF/qT6DAnjUq1OOeOq0Xz9I=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761843202; c=relaxed/simple;
+	bh=Rn+It3U6fDbfs1AbCpsM0h3HFLOotGI89DVukEhGVt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EecuyQLyenR2kEgZ1xAoB9VMKlsQj/Z8gKgm/FyWIGHiAt+BIwMz+/o3yQUaGV3vcYGMZYKgUSmJUjdXcOBbnLRYTJkTUyOKIMc9YGSstBRZG/ZoNmHOaanO5oJqxwzvMgGKvP7nmFJbmWKOmYMaoQK8r7P7sOzK0eSm23mFYWQ=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=fhJn7h8l; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=fhJn7h8l; arc=fail smtp.client-ip=52.101.83.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=lMzAem0VyeBBRZaqtUCzG5mR9w7vc/isRR67PYM2HdnyJnuzL62Kgeo+oga79LdNtouMz+9cAa7VELWvqIuqJgAFFVsBzGvXi/L2yvKGQw1YM1Zi8CtYkqrCr+a8tXH8xQ0TaOH75sYOSwlPWtvqRHx/xjwYFyab8WtPzrwtXYzkLE1nlDubrUyL93KiZvuaJ7fg7dngoaXJF8wGmbC2StYRwM9kLgbVRBX6mzuc0vwGoCm3wYkVxMhGOxA6UgkTvmX+XKmQhybkz83PZvuUrabnVHdoeMfevoswOikIdvnHAwGNKWufytzdq7t9dCs/BIMdyHUL7WXcKnxYsey8kw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3k+P3HtTFx6TKudEOBGfXZcHZsz9nCMkJLENvkQhY68=;
+ b=w61yDcH0/k3oKWpgQeQPPqtnrB8Y2IBYXy06d1N7rzpq0PxBlgvi4bZkC3unDhl477Ak7+XjdiRvzlwYcvW2BTFm/gvDXMAOlFg4bfSg8SZtQpqBrl8QcEZh8Cy4BLRHzKh5j463ZNHw7llfOuwo5KXa1KL42CXzLzgOidQR9ZeP6Pb+Q4KsVh48g2s5tw3rmRCThb+zWK5FclcjVQi5SRuiqp6iL2LwZBM3a+HEzvg6FY89w3Sv9vzFd0OTJ7SGcSaQ19NRC03IHkfz5LzN1sGPKJtxJHeWL9/2Q2foMDsCZZ9+6rhs0nGq44Gtd/mu3q+4uttpMrDRPETfb1OPgg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=immunant.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3k+P3HtTFx6TKudEOBGfXZcHZsz9nCMkJLENvkQhY68=;
+ b=fhJn7h8lECDpWGcpX2y/EJbtca3nUv9+1yzRQdM02nMnsOY0fq/hc+yqAYtnyuwt2Pi79MNKLBI80GpFawT5kOKmRIrmN0NvH2qAC0ufFx75HSbBo7GRMv3Wr5NK/FSICY6lkJv6QO8buMCnLgst1L+wU5YrlQQZDr5a3Qufm04=
+Received: from DUZPR01CA0178.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b3::20) by AS2PR08MB9497.eurprd08.prod.outlook.com
+ (2603:10a6:20b:60f::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Thu, 30 Oct
+ 2025 16:53:13 +0000
+Received: from DB1PEPF000509F1.eurprd03.prod.outlook.com
+ (2603:10a6:10:4b3:cafe::9d) by DUZPR01CA0178.outlook.office365.com
+ (2603:10a6:10:4b3::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
+ 30 Oct 2025 16:53:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF000509F1.mail.protection.outlook.com (10.167.242.75) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.10
+ via Frontend Transport; Thu, 30 Oct 2025 16:53:12 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mxZKzvpQ++wHjzFHUPc/F3wv/KOH/gzma8/j5Ft32aQgxp5H7zcza65aWndxiHy/rfapGnRG/eUOgiC+O8SdTnDGszSUKK55AALNVo5Okzr8KNj/tWot4SCNd/1IorOIJg4pSCPUApnGEy34CrPcxKgtvP4LG8ie2wVw3gAds0fz3Z0qVSOOHRTMdz3SPvRrF5V0IxxLyIcCWMnu+Qrk52u1wdOD9Yucqak6rnLd1WcKQfYwt500RMIS6yWMtgIv+QX7NEUPD6I+fB4tOnmPVUtVG8LAVil341FoUabO2m983iDnRrZcrgiSTkdXT/ealpsy+APnagCArx10O9297w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3k+P3HtTFx6TKudEOBGfXZcHZsz9nCMkJLENvkQhY68=;
+ b=GJzX9qUz6OWrRzvEgvdQs10v+uXvTaJx4Fll5ZTrcn1s4I8mpnTSHvOPDPi0EPdCkUEHOhEE9cj5WpY79byEAViyA+znrg3d/1rJextPFahfgpz8OaknS1VjCeplFpL+3FCeY4MOD9fZqWPlbkxf7LUp9EnjX5Yt0Jp2N0Lip9b6wIOzFZjdYaWnqNiWLLLpQSKOJZFR9ddwI78Nv4NrRkkXrQ6Srq7qxbFF1X1q2pu0H/yCzycxmr+TCmYbPALLnv4ppnZUNGDDrvtaI52x2wsF4FjrLiD15dB3/v3qfLG1LLFmnOOd/bSp2ouDMuWIs+XnoBxzPN/vZAPCx5cWvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3k+P3HtTFx6TKudEOBGfXZcHZsz9nCMkJLENvkQhY68=;
+ b=fhJn7h8lECDpWGcpX2y/EJbtca3nUv9+1yzRQdM02nMnsOY0fq/hc+yqAYtnyuwt2Pi79MNKLBI80GpFawT5kOKmRIrmN0NvH2qAC0ufFx75HSbBo7GRMv3Wr5NK/FSICY6lkJv6QO8buMCnLgst1L+wU5YrlQQZDr5a3Qufm04=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by DU0PR08MB8044.eurprd08.prod.outlook.com
+ (2603:10a6:10:3e8::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Thu, 30 Oct
+ 2025 16:52:39 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9275.011; Thu, 30 Oct 2025
+ 16:52:38 +0000
+Date: Thu, 30 Oct 2025 16:52:35 +0000
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Per Larsen <perl@immunant.com>
+Cc: perlarsen@google.com, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
+	Armelle Laine <armellel@google.com>,
+	Sebastien Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] soc: qcom: smem: introduce qcom_smem_validate_item
- API
-Message-ID: <b46wt76zmlms5h6zkner2rr22hwmsz422jy44qziqe6a2c4qrt@i5x7j6vgrzqo>
-References: <20251030-image-crm-part2-v1-0-676305a652c6@oss.qualcomm.com>
- <20251030-image-crm-part2-v1-1-676305a652c6@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ in host
+ handler
+Message-ID: <aQOX06LzMlMm9o67@e129823.arm.com>
+References: <20251030-host-direct-messages-v1-0-463e57871c8f@google.com>
+ <20251030-host-direct-messages-v1-1-463e57871c8f@google.com>
+ <aQNsrjceYM3RvY0e@e129823.arm.com>
+ <fb69e006-8460-4a5d-a19e-28bdec10434d@immunant.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb69e006-8460-4a5d-a19e-28bdec10434d@immunant.com>
+X-ClientProxiedBy: LO4P123CA0068.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:153::19) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030-image-crm-part2-v1-1-676305a652c6@oss.qualcomm.com>
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|DU0PR08MB8044:EE_|DB1PEPF000509F1:EE_|AS2PR08MB9497:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc8c7249-2012-478a-3817-08de17d4d029
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?W0AW4Q9ILE3wN89G0RXv/aC0afQ0RR9braNZCLDJ6wiFX/YhmBRDEXL48b0g?=
+ =?us-ascii?Q?DZ/PWhrOvtSSifUUvJiKJkfZ1I2VaxzTykXM6HuOSx7KqKi8SHhjaeCxVC1k?=
+ =?us-ascii?Q?YyhD4PA7sU4jYRkKR7nPXFYLOktPV8Mdq3dYtBu4Z/aFjs/2Wc8HNY3ywrW0?=
+ =?us-ascii?Q?zDhEJEWRkh1tqg31o60Ta4p5pzXAOsBZHkSyjMKz5IUUxNlVRPdpeMnkJGN+?=
+ =?us-ascii?Q?i663juX/swVJpc3RdythVAnhQmjAtwVMO7u9ibr56ibRtj1P4n0p8oIzE7RM?=
+ =?us-ascii?Q?+yN5DVecl7Zz8FWtXWzDoKtG4ENePU6DuV0gBEBFCUM3SPzgiFnKVRBrXgiM?=
+ =?us-ascii?Q?YvtC1gJpy3n39L4PzqwMeGW8cxxuJDlZEtitUvsqeXn48QgWumNA71OrAr+p?=
+ =?us-ascii?Q?DdyI/O+5h0PvYrMX5wXlC2f2MB8ECJqp+qvL7PkbN2kZaC9mu64s8cUlfUcr?=
+ =?us-ascii?Q?5AtVAwgZakXrcChk69Vgp2bArzpRKmkMD0S7CDEcfBjTHDmCIrFjz8gWCVSO?=
+ =?us-ascii?Q?7aSJvRpYK9KuPTLBBVs7470HyW676KH6/CMrrnIfRMoKkwZlZkQh1OUW4Qtf?=
+ =?us-ascii?Q?zrEmXYHn2EOWUJR33vmDNLJFWaMd78C540V+4l6ZyKdJm3WSJrTv0G7DWrgD?=
+ =?us-ascii?Q?/W+sVNaLhWpSN0fGGCgLWekxbIsueA5u5uyERWLv1mcTGcxhI5BQkMjHTRHj?=
+ =?us-ascii?Q?dqJiVm8SHd/wdbKzdcPmEBVlJgJUzKiEw/vWOj/LxrFIREPzZCQb8z9Oonfo?=
+ =?us-ascii?Q?sQoscaDNc6nVcbcJs02RY0rB+8VpI5xLMH4bhQhOJtyioxx3sqHU0+Xi9XsV?=
+ =?us-ascii?Q?w7fqGTYATD+crwAlokGexx3CpN5L1sGKuGUibXNQDqBPlfDp2gw+ZykmG1C6?=
+ =?us-ascii?Q?RcX5zPjVdIkKmf8GeWe14H8yoFkCt8oxfp1vmzCz2H+Pn7tFOTgmvno6bHKN?=
+ =?us-ascii?Q?BWZkYh2X+25ZM/J1CLFw5nD1WT6UwHegiBqWMBA6P/6k9YH+6hEuYWjaUWFd?=
+ =?us-ascii?Q?k2ddBadypJz8er5f0tuqihOuqgMQLPk7a325lcqxjEi66Qk2JpjjymNho+RA?=
+ =?us-ascii?Q?aUXnotYdYA0GqSsCXQxb6qAnQh8p7IsVHipjxB3Tm2iGSepcj3Z6VsXXkEYw?=
+ =?us-ascii?Q?oieI2wH0nAkKDUjrwQv8B9cHAq2f875TI9eOgn/bQOiVHkR8N1Af3lsrkzlC?=
+ =?us-ascii?Q?EjBRGP03Qs3eFcKDkqy82Yxjb9KJv/sOIBpLNDZ6l/w0lUqOYwpjBYKBWX2/?=
+ =?us-ascii?Q?/4unEAx5HCm3NWn7hGSZ86MeILigZw9MbZztAYXSoj66G6NtEi5YChW6yiC5?=
+ =?us-ascii?Q?3IJVrnxsFQ7j1G6KZsXvRPYXv7vd5xxZH+Mt0bnPhdHllB6x+lkev+wnSN4u?=
+ =?us-ascii?Q?WiR1+DaJ+m6hlSxpFiz6msb3q8HV4CLJHTUtk7WUIyLcHqZWnQ=3D=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB8044
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF000509F1.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	84546348-5b73-42bc-9279-08de17d4bbd0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|35042699022|14060799003|376014|82310400026|7416014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WMtd+cCqANDH7+XpzcktLIZ8AZ2Txkxov5NkEtCQGT3K41JO+lageXFE9RXx?=
+ =?us-ascii?Q?nvCymM2BAaf5dsFjHX9J10SuIE/7nrd5zT62++QcEqfD4/DLN/cShaq/r1JR?=
+ =?us-ascii?Q?7idikZMl4W57aMq91gqS14WDEFhOT5WbAz4RIv2DQCjK7cLAPfO7Z99yHPoi?=
+ =?us-ascii?Q?Ng5BlmH+bfNnjj6TzP6DFGq7pRZRX5UHnMVLAOHqiRgln1gCGr7tm18qAj0g?=
+ =?us-ascii?Q?WEH5prTP66zFNgybr8gtIQwLQXD3nOniGxHomGCZHyPaZTWkOBZYlvyetI2w?=
+ =?us-ascii?Q?xnYYPKX29oo5Dzrh/lhM/SmFTuwuGX7B6Nwb7y0QxFDWxacPRPZTOy/DmYrW?=
+ =?us-ascii?Q?Q6hpGjoutN6NC8HQoT2pnGI46rdlacJqUyHs2lx5ka9vlpW/4TCa4CcG0wqf?=
+ =?us-ascii?Q?geSoRJ2TOc17KBMOcL/IKn7y0s3F0m3T8NQn67Bqq4FUnNJxFnGuFhrYkq8R?=
+ =?us-ascii?Q?mv31PimeTKkZyCM1yFI/rYNZbFhlRl2AQrNfVKXqXBm5NqdTnLi7SlfbU7o9?=
+ =?us-ascii?Q?wBSKp9vl6avFXBLIhiXc0Wp49Nf1eQ8NbRdzjgajpcru1ZsTjHjyBy6hPKxx?=
+ =?us-ascii?Q?p6IZOCOOK2V6Q19wUjwQX1yoiivHm1ifzjDBqeAD/9+jiKTF/NfHFKuYwEzw?=
+ =?us-ascii?Q?hOYEvVAwzgexjpZ7qURNrzaNZQS6Ct8CBwd+SGkaBcy67DVhxtn0mZm1G093?=
+ =?us-ascii?Q?D9ZrKI8ML9o2XG6mo4SX8xHGJjGuzNuBmQO3MokZKRUwGz34aY7AF/vKz+VS?=
+ =?us-ascii?Q?oNx48qZOSO6u3a6gyH/c1heRCqpc6up/Qcj9v+Jcq2Rj6Qgoc+RkoahFpr1B?=
+ =?us-ascii?Q?wCHtz2/IOkaYO2upbXjcIiOSMw+sTPERSAoCEPUoxJYqACAr5QR7syzSnNuF?=
+ =?us-ascii?Q?g7JvNqMUo6L5carMgU880LPTReFhpYvlX7ZmTw8DtUsxwa6MDGyQxxRwKfba?=
+ =?us-ascii?Q?OJFVXfKTROqi+IGDjR/gR/+OkcB/PNCjn3JXsFEBEFgKKJG4SiB8A0B6f5/K?=
+ =?us-ascii?Q?rqeJxhhGnVIeSGtw1D2NcoMp3M873ROLynMUYKd6xdkmyu2cyAWupyWiznI/?=
+ =?us-ascii?Q?odYJ8/bpqUATBPgHYQO1fuq+xvVsfP1aXIfaflal8phEgZt+XAcr8uZmVua7?=
+ =?us-ascii?Q?DfcV4BLOnDPqn6he2+gy9r7spLA6j41bm/UjtCZ9XpedGp9LoD3VHr6kjO4Z?=
+ =?us-ascii?Q?HQ8DmiCfDipu/GSgDNAxLA0jNA6uvXU+ywW983VX+GdUHnag/1aMohbScMp3?=
+ =?us-ascii?Q?LGlg6HhDxC2mLsHJh4bJggVCAgFt4Z4Gx+wMQzH9Ku1GSNF9QVtv4dxy787X?=
+ =?us-ascii?Q?DVG6Ble68lCgwNjUkFO4l+R6vc/gWMLITouqWmzivihjVUNbYuCvAYJgQ/jo?=
+ =?us-ascii?Q?o1mU5llkiyqjDVbKuaJTE1Q235wEj1OepNSOZsJYStuJUhYQrlHooa5q3VVp?=
+ =?us-ascii?Q?6AhCoCaG1OHKLK9IAh1C4OGufwh6bjvXW8soIJjK3zKqidxffy4x1bMqWRRJ?=
+ =?us-ascii?Q?z1a+yOSAzP2zHWiH93fU7/PKmFou8NqNbiv/?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(35042699022)(14060799003)(376014)(82310400026)(7416014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 16:53:12.4808
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc8c7249-2012-478a-3817-08de17d4d029
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509F1.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB9497
 
-On Thu, Oct 30, 2025 at 03:07:48PM +0530, Kathiravan Thirumoorthy wrote:
-> When a SMEM item is allocated or retrieved, sanity check on the SMEM item
-> is performed and backtrace is printed if the SMEM item is invalid.
-> 
+Hi,
 
-That sounds overly defensive...
+> >
+> > >
+> > > Allow direct messages to be forwarded from the host.
+> > >
+> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > > Signed-off-by: Per Larsen <perlarsen@google.com>
+> > > ---
+> > >   arch/arm64/kvm/hyp/nvhe/ffa.c | 16 ++++++++++++++++
+> > >   1 file changed, 16 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > index 4e16f9b96f637599873b16148c6e40cf1210aa3e..191dcb301cca3986758fb6a49f15f1799de9f1d1 100644
+> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > @@ -857,6 +857,15 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *res,
+> > >   	hyp_spin_unlock(&host_buffers.lock);
+> > >   }
+> > >
+> > > +static void do_ffa_direct_msg(struct arm_smccc_1_2_regs *res,
+> > > +			      struct kvm_cpu_context *ctxt,
+> > > +			      u64 vm_handle)
+> > > +{
+> > > +	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
+> > > +
+> > > +	arm_smccc_1_2_smc(args, res);
+> > > +}
+> > > +
+> >
+> > TBH, I don't have a strong comment for this but, I'm not sure why
+> > it is necessary.
+> > Since it calls just "smc" with the passed argments,
+> > I think it can be handled by default_smc_handler() without adding this
+> > function but return the ture for DIRECT MSG2 in ffa_call_support().
+> >
+> > Am I missing something?
+> Calling `do_ffa_direct_msg` from the host ffa proxy ensures that the caller
+> has negotiated a FF-A version with the hypervisor first. In turn,
+> this means that `ffa_call_support` can use the negotiated version to decide
+> whether to proxy this interface or not.
+>
+> Moreover, `kvm_host_ffa_handler` currently proxies host FF-A calls. Android
+> also proxies FF-A calls from guest VMs via a similar function:
+> `kvm_guest_ffa_handler` so this function avoids duplication if/when adding a
+> guest proxy. This function is also where one would check FFA IDs before
+> forwarding messages (to prevent spoofing). You can see the downstream
+> implementation here
+> https://android-review.googlesource.com/c/kernel/common/+/3422040.
 
-> Image version table in SMEM contains version details for the first 32
-> images. Beyond that, another SMEM item 667 is being used, which may not
-> be defined in all the platforms. So directly retrieving the SMEM item 667,
-> throws the warning as invalid item number.
-> 
-> To handle such cases, introduce a new API to validate the SMEM item before
-> processing it. While at it, make use of this API in the SMEM driver where
-> possible.
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/smem.c       | 16 ++++++++++++++--
->  include/linux/soc/qcom/smem.h |  1 +
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-> index c4c45f15dca4fb14f97df4ad494c1189e4f098bd..8a0a832f1e9915b2177a0fe08298ffe8a779e516 100644
-> --- a/drivers/soc/qcom/smem.c
-> +++ b/drivers/soc/qcom/smem.c
-> @@ -396,6 +396,18 @@ bool qcom_smem_is_available(void)
->  }
->  EXPORT_SYMBOL_GPL(qcom_smem_is_available);
->  
-> +/**
-> + * qcom_smem_validate_item() - Check if SMEM item is within the limit
+Thanks for sharing and clarification.
 
-If nothing else, this contradicts the comment by SMEM_ITEM_COUNT.
+[...]
 
-> + * @item:	SMEM item to validate
-> + *
-> + * Return: true if SMEM item is valid, false otherwise.
-> + */
-> +bool qcom_smem_validate_item(unsigned item)
-> +{
-> +	return item < __smem->item_count;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_smem_validate_item);
-> +
->  static int qcom_smem_alloc_private(struct qcom_smem *smem,
->  				   struct smem_partition *part,
->  				   unsigned item,
-> @@ -517,7 +529,7 @@ int qcom_smem_alloc(unsigned host, unsigned item, size_t size)
->  		return -EINVAL;
->  	}
->  
-> -	if (WARN_ON(item >= __smem->item_count))
-> +	if (WARN_ON(!qcom_smem_validate_item(item)))
+Thanks.
 
-When we're using a version 11 (global heap, with toc indexed by the item
-number) the SMEM_ITEM_COUNT actually matters, but when we use version 12
-the items are stored in linked lists, so the only limit I can see is
-that the item needs to be max 16 bit.
-
-I think we should push this check down to qcom_smem_alloc_global().
-
-And have a sanity check for item in qcom_smem_alloc_private() and
-qcom_smem_get_private() to avoid truncation errors.
-
->  		return -EINVAL;
->  
->  	ret = hwspin_lock_timeout_irqsave(__smem->hwlock,
-> @@ -690,7 +702,7 @@ void *qcom_smem_get(unsigned host, unsigned item, size_t *size)
->  	if (!__smem)
->  		return ptr;
->  
-> -	if (WARN_ON(item >= __smem->item_count))
-> +	if (WARN_ON(!qcom_smem_validate_item(item)))
-
-I think we should push this check down to qcom_smem_get_global()
-
-I guess we'd still hit your problem on version 11 platforms if we keep
-the WARN_ON(), but I don't know why that's reason for throwing a splat
-in the log. Let's drop the WARN_ON() as well.
-
->  		return ERR_PTR(-EINVAL);
->  
->  	if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
-> diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
-> index f946e3beca215548ac56dbf779138d05479712f5..05891532d530a25747afb8dc96ad4ba668598197 100644
-> --- a/include/linux/soc/qcom/smem.h
-> +++ b/include/linux/soc/qcom/smem.h
-> @@ -5,6 +5,7 @@
->  #define QCOM_SMEM_HOST_ANY -1
->  
->  bool qcom_smem_is_available(void);
-> +bool qcom_smem_validate_item(unsigned item);
-
-This makes the API clunky for no real reason, let's avoid that.
-
-
-Adding Chris, in case I'm overlooking something here.
-
-Regards,
-Bjorn
-
->  int qcom_smem_alloc(unsigned host, unsigned item, size_t size);
->  void *qcom_smem_get(unsigned host, unsigned item, size_t *size);
->  
-> 
-> -- 
-> 2.34.1
-> 
+--
+Sincerely,
+Yeoreum Yun
 
