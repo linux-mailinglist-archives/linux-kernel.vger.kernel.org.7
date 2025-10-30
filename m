@@ -1,106 +1,152 @@
-Return-Path: <linux-kernel+bounces-878234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628F2C2013D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:48:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FC3C20188
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0DCFA341C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:48:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01C054E806E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9046F34028E;
-	Thu, 30 Oct 2025 12:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D39F3570AE;
+	Thu, 30 Oct 2025 12:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXQIkmhJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="NSEISNFa"
+Received: from mx-relay16-hz2.antispameurope.com (mx-relay16-hz2.antispameurope.com [83.246.65.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E88340281;
-	Thu, 30 Oct 2025 12:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761828485; cv=none; b=T55JNC6UAlEGZGkM0VrnQGoMlee2dwvVOctNj7IdFILpOzeldrGPlTE0VWm5bAS6fRRiTU/mAjmtNPmmPQmq+SHhVQqUJrfmdyF7FkNzf9DWvmkGYRw971eJwAEF/va0goKa05+flNUR+L5FQOgyGf6Lv1A2rIEz0SQATt5VH9k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761828485; c=relaxed/simple;
-	bh=z/TmCLUEKXNCbQR2FR3bsCd/PFGIFQxm5MYX5nhHiYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxzBX34g2+JITfj3ljZpglP5zNiTIfhqxiV0Icm32IYz7K5i0lfPObwBlH5UFKzYRbCYCwk6F8KBeAJYK2AejHq1fvKWs9I7fnwHZ5DkEeKhd2ek3i8W6URo4pmEhtbsCpojwIZDo5Ex952ADRDJrD6zF8Os/EG4Du86GslB8Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXQIkmhJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A024C4CEF1;
-	Thu, 30 Oct 2025 12:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761828484;
-	bh=z/TmCLUEKXNCbQR2FR3bsCd/PFGIFQxm5MYX5nhHiYk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bXQIkmhJhyNbHD/vH4ojMOBpjiEHIEsGq7axLac9Wfb5ZzMNyyjBmdmK+OVZwrdrj
-	 TGN+DYg5JF3BRx+lxG1z+rLLo3yEUnY41Br7up8Wni/NKj4eb9/MtEQC5ZWkY9+liQ
-	 ROwe8TrtFAxbGJOpCwWfCevQSEIyA33BfEEeJ9BNvN9aYWg12cLyBrCpo5ywF21IS2
-	 OY+ZJ88YupWL6/9YDnUVO9VmbEmL6JRz1I6uKEhHgT4y8bfytlizs2ahdACWJpLcCy
-	 XXFGkyXRjTKYJaf6VqSnDOQOT2WnrAWmIQrsuWTXpHJJ99vzjXfN+vdnHS3kJguPkq
-	 6NoaDauw5FL6A==
-Date: Thu, 30 Oct 2025 12:47:57 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
-	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
-	arighi@nvidia.com, changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 07/14] sched: Fix do_set_cpus_allowed() locking
-Message-ID: <990f3ce9-d7df-4344-863a-e4b71fe957c9@sirena.org.uk>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.103475671@infradead.org>
- <29d7b92b-594e-4835-9dd3-3c9e2b02ada3@sirena.org.uk>
- <20251030090715.GQ3245006@noisy.programming.kicks-ass.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B39B340A51
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=83.246.65.158
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761828668; cv=pass; b=aXK55xvDHzz2wcRLBywE50TVC5ksut7A+0ALvxRABNrbFRtq6Nl2gJNbvV1sHYgZBahfYdt59sYyXzQ01PFpfBh/Uhs5j8Cz1iGFgkQ7TRocbxmyF+hXONqVnddEu0hXnrtcmfMr18lfHsI8neiVLXG67+MoslgnjoRORZMXuHw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761828668; c=relaxed/simple;
+	bh=f+RxHNX/PkgtqpUObsVvi3CaeeKjaEaIpLrIKPlMWiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvpnVWv7e+Ubq9Q6XpCsYd1b+SmXvIp3IketIeLdBGLVCrliL6jC+2m+xSCTWMbS9nhdx0DxjiHEpPNua3/SVisbcAXbQozq7QqQI2bEGVc+Yz5yqn3wIixFGvXwM+OFtzWxsjOJQTk9plJiq+lopj3bVM4XBJAB5hnYIsuSMvs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=NSEISNFa; arc=pass smtp.client-ip=83.246.65.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate16-hz2.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=hEveejQ5LezW2cXHJne2TGfo1ZNO0O+jmUKcv/3d1g8=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1761828606;
+ b=kdQWN08XaRD3MhdEuWMzPVbwzKHwve5Sp5TSdcNW9Fd6uHiaVR12Vkvy3tYoUkdK5TVcHMkn
+ 1KtWvfUKi47G86LtP1FxsemYvB/I5BS3B96zhHi1Bs0z4ZboPJ40Atgd7uhS9beaca2/G7sivqL
+ m5pxTnxbyS2N+UXh0yvPECkbPQEtII3J+PnJ8G175BqV50q3IbXOVgJdGJr+uyHMn7atBUUAEiv
+ ucN0Ll0gyf84FggwuDC6cmP0G96BPFMnYC8RX868JKkxW39CnzEPsZIZtLlme5fFf2IxP1x4crc
+ Pmocz4I08x1OrV/yD/QW3Ku+nF0KYhjhSbSiwFCCqEpUg==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1761828606;
+ b=UBfO61kj1HG+nmDV8SettLQwfsZbwp+kijMkqxb/qz8fyzzERGDhTmZerHHZTwQnAASfyuLQ
+ DIPtcB65Z/g2p8W/JrvfdHQJNX0zcn0eW2ZIhP6OhJoh6dFI0M/whJhX2VxHj04+tt0JVNPxkqH
+ AjTPzZ9lELeVWsNMpvMJb1lA7ej20zNTxZ9bM3v3KHjdnnToesOxRnhQNyky1/nVYshd6pQjfGe
+ l/SOCN5rVI/ukd8k2ayJS1y1l8UI9LtTouqeUzpu2yy/mKIW+LgHt8gyX+EfgUX4bR70OjAUaKu
+ gnAdTcN6w9JEuktElQsoObh+6sivFHCNdGZsWDDCl2gMg==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay16-hz2.antispameurope.com;
+ Thu, 30 Oct 2025 13:50:06 +0100
+Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 1D6A7220C5A;
+	Thu, 30 Oct 2025 13:49:50 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/19] TQMa95xxSA DT fixes and cleanup
+Date: Thu, 30 Oct 2025 13:49:07 +0100
+Message-ID: <20251030124936.1408152-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w7/3MAhEllohHjTX"
-Content-Disposition: inline
-In-Reply-To: <20251030090715.GQ3245006@noisy.programming.kicks-ass.net>
-X-Cookie: Is there life before breakfast?
+Content-Transfer-Encoding: 8bit
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay16-hz2.antispameurope.com with 4cy3q25g17z29yQ2
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:4af8d990a1c9f7c4fdb1574041f6d9a2
+X-cloud-security:scantime:1.686
+DKIM-Signature: a=rsa-sha256;
+ bh=hEveejQ5LezW2cXHJne2TGfo1ZNO0O+jmUKcv/3d1g8=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1761828605; v=1;
+ b=NSEISNFafWbLfQgXLjKM5zTCT7kgZot/zLGhdFVrXoUBLPb/1IFoWzDk2sCtxbOIafZ7B31u
+ Np7KUTeS8tgnyRJidQDFNaxRnd9KMNuPGXJuvsiH7LA2s4GCHgbC5IFP1NVRGlsJ+CuewguhQfJ
+ DN8QwIlsQIUv7AD4mJP+cTCHCgCJT92fae29ctcerZ8iP+ut4GzoW6IQhKbBCtmpTdhHLHXTWyJ
+ Kwnl8CZKssXSAtWxsC1FUGUa+zP84qry/To5ONgCiU3++fBORQ429JbnoKQpVPm7Vn+UFyvOLul
+ 9YULeBc2vH/meKf/MjXO5Ky2uXpNEeWhaSE+YZFkZB6aw==
 
+Hi everyone,
 
---w7/3MAhEllohHjTX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+this series includes two fixes for TQMa95xxSA. Having a Fixes-tag I put them
+at the beginning. Following patches are DT cleanups:
+* move pinctrl/config to module .dtsi as SMARC-2 already defines the pinout
+  the mux is fixed already.
+* Remove 'sleep' pinctrl settings as they are identical to 'default'
+* Add I2C bus recovery
+* EERPOM page size is increased to 32
+* Whitespace fix
+* Add MicIn routing
+* Mark LPUART1 reserved. Unique control of syste manager (SM)
 
-On Thu, Oct 30, 2025 at 10:07:15AM +0100, Peter Zijlstra wrote:
-> On Thu, Oct 30, 2025 at 12:12:01AM +0000, Mark Brown wrote:
+Best regards,
+Alexander
 
-> > We're seeing lockups on some arm64 platforms in -next with the LTP
-> > cpuhotplug02 test, the machine sits there repeatedly complaining that
-> > RCU is stalled on IPIs:
+Alexander Stein (14):
+  arm64: dts: imx95-tqma9596sa: reduce maximum FlexSPI frequency to
+    66MHz
+  arm64: dts: imx95-tqma9596sa: increase flexspi slew rate
+  arm64: dts: imx95-tqma9596sa: move flexcan pinctrl to SOM
+  arm64: dts: imx95-tqma9596sa: move lpspi3 pinctrl to SOM
+  arm64: dts: imx95-tqma9596sa: move sai config to SOM
+  arm64: dts: imx95-tqma9596sa: move pcie config to SOM
+  arm64: dts: imx95-tqma9596sa: update pcie config
+  arm64: dts: imx95-tqma9596sa: remove superfluous pinmux for flexspi
+  arm64: dts: imx95-tqma9596sa: remove superfluous pinmux for i2c
+  arm64: dts: imx95-tqma9596sa: remove superfluous pinmux for usdhci
+  arm64: dts: imx95-tqma9596sa: add gpio bus recovery for i2c
+  arm64: dts: imx95-tqma9596sa: whitespace fixes
+  arm64: dts: imx95-tqma9596sa-mb-smarc-2: Add MicIn routing
+  arm64: dts: imx95-tqma9596sa-mb-smarc-2: mark LPUART1 as reserved
 
-> Did not this help?
+Markus Niebel (5):
+  arm64: dts: imx95-tqma9596sa: fix TPM5 pinctrl node name
+  arm64: dts: imx95-tqma9596sa: move USDHC2 config to SOM
+  arm64: dts: imx95-tqma9596sa: add EEPROM pagesize
+  arm64: dts: imx95-tqma9596sa-mb-smarc-2: remove superfluous line
+  arm64: dts: imx95-tqma9596sa-mb-smarc-2: add aliases for SPI
 
->   https://lkml.kernel.org/r/20251027110133.GI3245006@noisy.programming.kicks-ass.net
+ .../freescale/imx95-tqma9596sa-mb-smarc-2.dts |  75 ++-------
+ .../boot/dts/freescale/imx95-tqma9596sa.dtsi  | 153 +++++++++++++++---
+ 2 files changed, 139 insertions(+), 89 deletions(-)
 
-It looks like that hadn't landed in yesterday's -next - it showed up
-today and things do indeed look a lot happier, thanks!
+-- 
+2.43.0
 
---w7/3MAhEllohHjTX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDXnwACgkQJNaLcl1U
-h9CkSgf+MBexVKsLYF9KOOfxlRxNgU3VjK+zpctbbqvVj7cgaBu15pdOgguhX8pY
-FMsAWORE70ktq7z/M5Q63I9bSZ6ecqvMHqfz3co4IxWJn0f0P+iK+PMsqfvJOU8z
-wIEe7xfFY0PzYX58ZaO3MQXUMkQxhipaLUO97mPLgdB4Y8f0EJxuJbpSuHkVHBX5
-GBoBl/HbkJGvOeGCDF3hRY7wa72ww+8LDNPqzdxiM4avg2fXtsFmiTYBq/pyKkuh
-Htd5JrkeJKcZLb3zx/+m/J+LnLsxOpuTc5J0vZ/7Q2mn+1CWCAGEWm5xEBm8ygWm
-iEQ4Ne7Ac5+qb0AsbyIztfUFOWZ9DA==
-=G62n
------END PGP SIGNATURE-----
-
---w7/3MAhEllohHjTX--
 
