@@ -1,165 +1,157 @@
-Return-Path: <linux-kernel+bounces-879218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B4AC2291D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:34:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC45C22929
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65603B58B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB82F3BBEB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0458F33BBAB;
-	Thu, 30 Oct 2025 22:34:34 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40C133BBA3;
+	Thu, 30 Oct 2025 22:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUuXGCYc"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D532BAF7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDA52BAF7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761863673; cv=none; b=bIKEbxXFpnpGtsddfDDOqQkzhNEfL24HKpDhkIYBXLv/ZSuxrOKml4tBPmXqTb69mE3u4TTlkE2OYk/B716ctH0OU1qnDPLK3kmGYPQ4IvnKcUWlfhbR4dH3NiSWV9PDFJgBHEkhkprk2ocuO9s8HlxC66qmAmUPOxhFk96kpcc=
+	t=1761863722; cv=none; b=iSJScmiXo5NRle5wkAIWRblOSMdPgajhtHxdGPRi0lOZoQZCXy3qgLCCgwp3Tv9tIAVCgdbHM8mQObhOQxLxLkzovklAP9uqFG04WIxVi/ak3At22hUdtznnh++l4yM/mTBmRjCHKrS2qos91Db7VdtVbREW83KnkYBpiSnzKKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761863673; c=relaxed/simple;
-	bh=PDG+4R0bR+zUy5rnRXrobvWRNhVRznZikV2XejgbQgQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TIR6fpw7cum9scGvwrY6IxthwhZE4MyoBb7zgVkB4ZD1epYBuMzthe8Hv6fW3VXVx8OnWR47i8SY1cVwlHVYN0PavPRYiKWwGT2b9yaEVBXIS1pTwxHeNBHvE5CERSFkP1sVlKNTHdh5ZV6IZm4K1VfVrHbpg3jrYkJXTayorLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-93e8db8badeso186473539f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:34:31 -0700 (PDT)
+	s=arc-20240116; t=1761863722; c=relaxed/simple;
+	bh=zLn/caSgsK1UHkcN+BLUKD1qS2XUazFMSmih5z8SILk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NEZiash+mYte/z+shbJIrQuawIUuMtYZAa+2Ev0XUD+drbVqa7wOOLF83gy/8Mu7x1v4LoH+BD0CJizrT2QJqwimWgo4ialXhrIPrShG5v16ykr8NvnlRyA/DnUJ/NpvMfqkqiq7WkQFDOKbpOq5HeVZtixu0b/zvk8vSK40EJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUuXGCYc; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so981266f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761863719; x=1762468519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b2Kd7J+q6FDvOoPfI5A3gvP81dJS9CMda+auiDLSkyg=;
+        b=BUuXGCYcE4eBqyC9jkeW7vWdpEl9d4X0rRBSWG8d6oUYV0QT1ScRn41N/JIUGiobp2
+         BxV0x5nAuCpAomUGVE3hH5NprtqynDmsW7ZinbzrzZshdTppA3TPaNKJYzX+1a8Edc7O
+         ZkutwTMy3xbC0EqiG34M4bQS8aFiKcfilAUzIRqAzGytcjKW2CUAeuJktbp7LL1xGUZG
+         zf/7ZxF5OG6ApDD3B05NWecdi1KmQYJRvmQ6z3v1u755Jc14wWL6GfgjMXO7IEfcwvWY
+         nSdI2KvDtrUITXpUDNGsKJ+QUo1DzmB1747a3cTq5mKLKznqAkPBpFxywEkxSF6300Oy
+         /bxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761863671; x=1762468471;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NIZ0Uu9MMshqp8xzh1+njbzcONq0p2voF8lI6LDP9wQ=;
-        b=qehuggLcWvWlI0UyPVD4zScVeDYrpsc2UmnLet6YLOU2gxXbREUAKtnkMRkYZW0mc8
-         jJW84wPTDAw1jQJSgfbU1KkU1LR77+W3aliCYeiKHq3ta0BU1DwW2mue3aehbkgUvwn3
-         U0/v8ZrM3LSCOPgtA9i29af15m2PgnL329GeObixkMpOjU9UCEv5LX7H/eGkBDTFLCXD
-         3Uimff7Ha8oIw6Y62Lqsa9HrO7GlwvhkNaAqKBCYy3YNYYSk2ckAAUPdATTxJYTMtFrl
-         ghTZ5i1cDHAznL+oyniYsI4pucHtUtIHQlua8cXWPAe+ndCzcJqX96VLotD45bRsNJeB
-         CICQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVC9S3ceBRl9YfoWJHRLxUuo2yAqUTG08v7MfsZjEx+0I+jWptVJsz1iyuUfa6+b/n+NUrGWB4PfnFau1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCz2pI8NJ7E0qeL0gTJjmmGQD6hnS3jfBtWh+jVh2LoiCr2YJQ
-	yMYcq5e/Qhsc31MFV7VBO4+GxIfb41WQnY3a+Up6KjG44YAE3qt1emWxFiTGh9owvuTSUix+nUO
-	ZF12jRThkajYUyLTu1nMwrenpgmuVT2xqHHn73MvQV/4CO4MGr9e70O0em4M=
-X-Google-Smtp-Source: AGHT+IH8rbugZWseHZZude7SAZ+heAK7OUOj2rQDiXnDpnCyUA5qZGMVwJZAbrfFjmu+Ri0uTlGgSp3G2WYaQNW18sOVlKyezB3A
+        d=1e100.net; s=20230601; t=1761863719; x=1762468519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b2Kd7J+q6FDvOoPfI5A3gvP81dJS9CMda+auiDLSkyg=;
+        b=EQNXeva9bJF8oHX1TEBFHV0XpsOwLbycZBG9FAYOkv4Uz+3W43FqLJhzFgwwbk7igT
+         S/N25HNTGhLRJ1MYQNeM565vuChVvST6gcDkiElCiYOq5fqY91FMPly2A1Mx3DlUGy8q
+         40QGAcMuR+RG54+ZKg7ZwN9bhZm1QEBjL350eAdDt9BvfrgpStCfjbVolTbgdH74eHZ4
+         vZKuFkWIc7yIzfN6WxQbQvmLSjougrbueRy3rZkWMQVL4Fbw7k3Yz4cqi6FOm3qhLz/h
+         eZPLB3ld7IPwdLfs/Vm1dLljJUAp+Thok0gDGovf8hKp3cVergJie8lsL1o1BeYUMJ3Z
+         TvOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+EEBcnIcBqRqiIymkBk5P3LjyQJNNVI3EyVbuXyw+Vu8jAOJmxwUKS5BnpH4/+l8JGRXnDCgFzmfgJRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbLgoQREIkmIwQ4Cyw2iau4Vk3zzF4OnEqVlpvCAPJ8jNYIQ7X
+	GJ8n2obPIsYThYt5b3pigou3/l+DN4SeU6MZ9bcW1iPUaggKAWRMZc7SrN7wrnP229juZXMZ6DQ
+	ujwHhAfnHAn6kSIk7ctinpsN4baq0ihI=
+X-Gm-Gg: ASbGncsS/HEUMup7899cZUVN9UbxAdTzwzjpXV5jsdxoIln7I2fpYaKanc4fLcso3M1
+	t16w5X0jyyRW7HibRe/boy1IqQLeroy55RYAu6JbDeW3tl9rgE8HV93Y+7Z1g3jkrkMdXj8v9hM
+	y8ncTS47jRVNpkZwEtyWWHNQgkkWLXhya9OYasVX/50feXfdzH3PotIwI+4XVjrCxXKTax/IvUm
+	8nDzEFOu3vyd43AkMVHhfSrml+/+YeelEGWXZyEh9KPxRdeTMBV8NH/0O+llTnRB7NQI8cEUVpB
+	pkKRzFHHefg/BkrSwFu/3e6o7xCy
+X-Google-Smtp-Source: AGHT+IHZCU0gTn2L+Kp3B9B3JGAYVk5CsdKbo+O31NvkyuOempOCQnQ6EAdMvfyCUL7LeYh5rvujR6k1Uu36Xz1gFFI=
+X-Received: by 2002:a5d:588b:0:b0:429:a81a:a77b with SMTP id
+ ffacd0b85a97d-429bd69d876mr969395f8f.31.1761863718764; Thu, 30 Oct 2025
+ 15:35:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1447:b0:430:b59b:5f2b with SMTP id
- e9e14a558f8ab-4330d1bec10mr20376375ab.16.1761863671070; Thu, 30 Oct 2025
- 15:34:31 -0700 (PDT)
-Date: Thu, 30 Oct 2025 15:34:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6903e7f7.050a0220.3344a1.044c.GAE@google.com>
-Subject: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref (2)
-From: syzbot <syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <20251030152451.62778-1-leon.hwang@linux.dev> <20251030152451.62778-4-leon.hwang@linux.dev>
+In-Reply-To: <20251030152451.62778-4-leon.hwang@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 30 Oct 2025 15:35:07 -0700
+X-Gm-Features: AWmQ_blKfB4pxXMdDnXXUorw9Ocz1_SHHY4LgAN_jPLmqmk4HBIDWWtoYD5-r84
+Message-ID: <CAADnVQLib8ebe8cmGRj98YZiArendX8u=dSKNUrUFz6NGq7LRg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 3/4] bpf: Free special fields when update
+ local storage maps with BPF_F_LOCK
+To: Leon Hwang <leon.hwang@linux.dev>
+Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Amery Hung <ameryhung@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-patches-bot@fb.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Oct 30, 2025 at 8:25=E2=80=AFAM Leon Hwang <leon.hwang@linux.dev> w=
+rote:
+>
+> When updating local storage maps with BPF_F_LOCK on the fast path, the
+> special fields were not freed after being replaced. This could cause
+> memory referenced by BPF_KPTR_{REF,PERCPU} fields to be held until the
+> map gets freed.
+>
+> Similarly, on the other path, the old sdata's special fields were never
+> freed when BPF_F_LOCK was specified, causing the same issue.
+>
+> Fix this by calling 'bpf_obj_free_fields()' after
+> 'copy_map_value_locked()' to properly release the old fields.
+>
+> Fixes: 9db44fdd8105 ("bpf: Support kptrs in local storage maps")
+> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+> ---
+>  kernel/bpf/bpf_local_storage.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storag=
+e.c
+> index b931fbceb54da..9f447530f9564 100644
+> --- a/kernel/bpf/bpf_local_storage.c
+> +++ b/kernel/bpf/bpf_local_storage.c
+> @@ -609,6 +609,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
+l_storage_map *smap,
+>                 if (old_sdata && selem_linked_to_storage_lockless(SELEM(o=
+ld_sdata))) {
+>                         copy_map_value_locked(&smap->map, old_sdata->data=
+,
+>                                               value, false);
+> +                       bpf_obj_free_fields(smap->map.record, old_sdata->=
+data);
+>                         return old_sdata;
+>                 }
+>         }
+> @@ -641,6 +642,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
+l_storage_map *smap,
+>         if (old_sdata && (map_flags & BPF_F_LOCK)) {
+>                 copy_map_value_locked(&smap->map, old_sdata->data, value,
+>                                       false);
+> +               bpf_obj_free_fields(smap->map.record, old_sdata->data);
+>                 selem =3D SELEM(old_sdata);
+>                 goto unlock;
+>         }
 
-syzbot found the following issue on:
+Even with rqspinlock I feel this is a can of worms and
+recursion issues.
 
-HEAD commit:    e53642b87a4f Merge tag 'v6.18-rc3-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=150aa32f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=929790bc044e87d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=76916a45d2294b551fd9
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101f5f34580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121dbe7c580000
+I think it's better to disallow special fields and BPF_F_LOCK combination.
+We already do that for uptr:
+        if ((map_flags & BPF_F_LOCK) &&
+btf_record_has_field(map->record, BPF_UPTR))
+                return -EOPNOTSUPP;
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-e53642b8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bb13d82854da/vmlinux-e53642b8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f3a72d29f243/bzImage-e53642b8.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fb4c6b817064/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16191fe2580000)
+let's do it for all special types.
+So patches 2 and 3 will change to -EOPNOTSUPP.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com
-
-EXT4-fs warning (device loop0): ext4_xattr_inode_get:546: inode #11: comm syz.0.17: ea_inode file size=0 entry size=6
-EXT4-fs warning (device loop0): ext4_expand_extra_isize_ea:2853: Unable to expand inode 15. Delete some EAs or run e2fsck.
-------------[ cut here ]------------
-EA inode 11 i_nlink=2
-WARNING: CPU: 0 PID: 5496 at fs/ext4/xattr.c:1058 ext4_xattr_inode_update_ref+0x51a/0x5b0 fs/ext4/xattr.c:1056
-Modules linked in:
-CPU: 0 UID: 0 PID: 5496 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ext4_xattr_inode_update_ref+0x51a/0x5b0 fs/ext4/xattr.c:1056
-Code: 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 06 84 c0 0f 85 80 00 00 00 41 8b 17 48 c7 c7 80 1f 80 8b 4c 89 e6 e8 a7 1b f8 fe 90 <0f> 0b 90 90 4c 8b 6c 24 28 e9 59 fe ff ff e8 f3 0b bd 08 44 89 f9
-RSP: 0018:ffffc90002847240 EFLAGS: 00010246
-RAX: 96417f00249f1400 RBX: 0000000000000001 RCX: ffff88801f648000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: ffffc90002847330 R08: ffff88801fe24293 R09: 1ffff11003fc4852
-R10: dffffc0000000000 R11: ffffed1003fc4853 R12: 000000000000000b
-R13: ffff8880121df630 R14: 1ffff1100243beb4 R15: ffff8880121df5a0
-FS:  000055557b2d3500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd0e033d000 CR3: 000000004bac3000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- ext4_xattr_inode_dec_ref fs/ext4/xattr.c:1081 [inline]
- ext4_xattr_inode_dec_ref_all+0x867/0xda0 fs/ext4/xattr.c:1223
- ext4_xattr_delete_inode+0xa4c/0xc10 fs/ext4/xattr.c:2947
- ext4_evict_inode+0xac9/0xee0 fs/ext4/inode.c:271
- evict+0x504/0x9c0 fs/inode.c:810
- ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
- __ext4_fill_super fs/ext4/super.c:5617 [inline]
- ext4_fill_super+0x5920/0x61e0 fs/ext4/super.c:5736
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
- vfs_get_tree+0x92/0x2b0 fs/super.c:1751
- fc_mount fs/namespace.c:1208 [inline]
- do_new_mount_fc fs/namespace.c:3651 [inline]
- do_new_mount+0x302/0xa10 fs/namespace.c:3727
- do_mount fs/namespace.c:4050 [inline]
- __do_sys_mount fs/namespace.c:4238 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4215
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9e5239076a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd45601928 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd456019b0 RCX: 00007f9e5239076a
-RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007ffd45601970
-RBP: 0000200000000180 R08: 00007ffd456019b0 R09: 0000000000800700
-R10: 0000000000800700 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007ffd45601970 R14: 000000000000046c R15: 0000200000000680
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+pw-bot: cr
 
