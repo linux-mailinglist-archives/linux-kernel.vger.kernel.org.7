@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-878456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1DDC20AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:45:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE14FC20B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:46:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27CA44EF806
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E721A1AA1BDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65062765C3;
-	Thu, 30 Oct 2025 14:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CFA274B35;
+	Thu, 30 Oct 2025 14:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9btayFM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XDF97jDZ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D86274FF5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775F42417E6;
+	Thu, 30 Oct 2025 14:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761835071; cv=none; b=BZEbqyCd4OlNn6/CtS/3p09YW+r05lJ72EUpl/FEO/iuBKmjWgl/UIG4z7QpHlrZD1TMnwEeKNzT5Vtyv4AG7K8ZuHITDdeU651UAan3ff2oW+1pd701hwlkR9dC1zG9Hv+RFkFLwo5xNyA7lYWNRBjepGdUy56fSY4r5sdjoBo=
+	t=1761835108; cv=none; b=MRXtrw5Lt1nn0IY5O1YzBoa6xCvJc1pUYlerudRI0yut+ko6iXKierWDkHClF2staPsmxMgQJC4Q+WNTIX7fhZBC2lmfl7/RKzi+VYET+Nd5/2iXpF/eAYh+Ee8cz3A78xqQmxlC+Wy82/NpjLLvcJWBFTTZw1z0ezH4k4L95mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761835071; c=relaxed/simple;
-	bh=uiL/+HWIqkPDhLYnB+bmPpKcGNU/horgbRhtuBxsmro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rZILrJMzpVGzMaG6+x1UOoxwSiL0gN8PTGEa5AMwtQl+0V1mbThU83THi2VmUE4DzvlfMtDQHOg895q1rQMnQdbkmaFDfE+6OwX2FTUzQo2+9CeED/yrT433doonjJqP4ptWdx4cE/WLfafKYsjsCC7b7RSbVYbtUrnnW9MZESo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9btayFM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761835066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nkks9IPPTiRjudJKz2fy8ztuwHSVrBIwR6A4uWG3RWI=;
-	b=T9btayFM6OTU3QzLpfDQvLHmgt6HpCK5NBJwNRu+iSvTsvqzWjUqA2UDxbPQ8XpoyMCo6x
-	HfdukYCh9q5fkMiSHvGj46tHiBqaiRXv0zp9Msvs1EJKewkF8VvwiTo7VVxe060QihcGK+
-	aVAo7A17OaeY8n6bpel1ThXiJ5bR35M=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-310-RtprW2XSMy2w8Q9cn_6Ikg-1; Thu, 30 Oct 2025 10:37:44 -0400
-X-MC-Unique: RtprW2XSMy2w8Q9cn_6Ikg-1
-X-Mimecast-MFC-AGG-ID: RtprW2XSMy2w8Q9cn_6Ikg_1761835063
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-40cfb98eddbso1051747f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:37:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761835063; x=1762439863;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nkks9IPPTiRjudJKz2fy8ztuwHSVrBIwR6A4uWG3RWI=;
-        b=oKNFhNLd1yW8IiFPjxjVEjUcoyaAdOd0fOzWe0qCYx/pxgNjmpyHe8SbNJoZus0dak
-         0M2OxEXBHTgxh9DzKAgfuaFzwi41KgMMcXU+uEsn745EQkvoNCgc2/WxbK04v2n3lChf
-         EUcvokw5tpX60VH307ue7YsGxKW90IFeNchmulroosUaiw7Utg7cLbyv9tSmXDYtJJlq
-         +270uX7lKj4bAumM43kqaeRAwdJL+cIZNNi9A5CEm1+Jgv1JR93JOd3BjXAH3zcnk9MD
-         h0jV2Ct25UPTv3X7AV21Jd1zuw/J0t/7iOSUvd5wDwfCxD7nQJN5fe8/K0Fobq+LYGoa
-         5Rsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFux0usJr/08Kj8b8Zvjnvk0i8uEfYrCv9ZJnfDkp9nRhYZz7kjZC7XsO5P7QvTkqkjLjnSfWfxtsOXug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNZFMHlh9RmqYfSaJ1TICTbZT9y/HkOXSJoRj9rk1AJDLPC8rl
-	M+9sHNLfVzJHIujZjQCxUadNOX1+1s1+YOiroCYPkowY/r0x4FaHVVpXgdVGsMdSosnFepHRaIz
-	hI7dTogC5+5Wb1NBcVKJkBATJUDhmnyq1vSPXMjqVRwxDV9WItgNKZm+4YPmEzr8+pQ==
-X-Gm-Gg: ASbGncuHDEQHneRfbC7w1E9a9O8N/CBvGLJJBn8vofG3AAqfl/CCaHnQgHHId2+db1y
-	294QwRhTOG9AefNLQhnQWF0a03vp6/OEVryc2qa0FOukp1HtJKQA9ykAUBzl24TQhz3fSS7IY5A
-	TZK76WcgXZEIAzr5a07FhJzoh9U305DoS9fWm94vZJnZyyZec2h0mvWVLpSUaUTsK6XaaEyi51R
-	pscLYlCHSu1atEiytv+yOfJTuUz2herQR9C1xG31eK/gZaWIp2x+gSLFt4UE0uSJNUS2AM1tsd1
-	hi6+eZK8zA8kjwmHX5NAZxKN4FwjTkgwqaNQjCQ04kv88VSP60Y2bspY4FK5br7vTBnaQkEQ1GM
-	OSsmbfF52kqeiOoTp4qQhPv3ptN/AhHi+7Uyc1aqJ0kX0LI7k
-X-Received: by 2002:a05:6000:1449:b0:429:b963:cdd5 with SMTP id ffacd0b85a97d-429bcccf0aamr87213f8f.5.1761835062918;
-        Thu, 30 Oct 2025 07:37:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4Hb1Zr2+1H9F1aQQVjn8swQhMlyoOrBtrdyyo6F0SLZbU4syUP2hFz8P5UzKpetZ1C9iD6A==
-X-Received: by 2002:a05:6000:1449:b0:429:b963:cdd5 with SMTP id ffacd0b85a97d-429bcccf0aamr87184f8f.5.1761835062481;
-        Thu, 30 Oct 2025 07:37:42 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a94sm38472105f8f.5.2025.10.30.07.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 07:37:41 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Austin Zheng <austin.zheng@amd.com>,
-	Dillon Varone <dillon.varone@amd.com>,
-	waynelin <Wayne.Lin@amd.com>,
-	Dan Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: Jun Lei <jun.lei@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in AMD DISPLAY CORE - DML
-Date: Thu, 30 Oct 2025 15:37:37 +0100
-Message-ID: <20251030143737.136120-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761835108; c=relaxed/simple;
+	bh=K52ErklFjBj4qbC4hiI/KoUnnVcqEJ916KNtIbTUSCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZA3PbQRkfUd6P8FIyR/MVpvtM9PiFGI8E0J9WlfaZEhQ0J3b9gHYMierdLBa8ET/b4YGoD2UbvWTJ+zu0YKSG4HT681kqVSTlwd23WxntlrkxbnEd5VD1dn6XXsCRoFN5a0WKmbiML7EK78b8sDLliAnMX2Gxj7JVDp6Szg2QMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XDF97jDZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UD7Q7u019602;
+	Thu, 30 Oct 2025 14:38:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=X3wOm+
+	XTaMSSFq9MM5FtbFGRRF1GOZhVG/2eB+BlBK8=; b=XDF97jDZqAs0jU5ZPp2VFb
+	4wCpLp3dk830RGUD7kRk4p0FAmaadOWY7yJNuzbwSiDLqwBlWDn6HJb1hnvhghVR
+	h83RU33yi7UWrhDk1eOFr09C6PeYscI4GH7vWe3o0rzP1+PslqMVzXtiYFO5EK25
+	7ZBsiev4TFwmOyr67G864OQwEW/ZQZid5b0UsdreuDlcltyWN4VtbjJ+k0LWhfhJ
+	CzUYuAaZs7sz2qE0qZKCsARFlk3/HXw/uTdMR4fvGUX6GwMDmo7O9sgWka82bQrq
+	AN7JWVBGDp42Sgjj0LRLbuoy2wFEqGeUHaNVSrmlKNvCSb99Qc6VEAuBjl8x56Ow
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34agrpqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 14:38:13 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDJ4iX027428;
+	Thu, 30 Oct 2025 14:38:12 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33w2s5rv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 14:38:12 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59UEc8gX59769240
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 14:38:09 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D88632004B;
+	Thu, 30 Oct 2025 14:38:08 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A1ECC20043;
+	Thu, 30 Oct 2025 14:38:08 +0000 (GMT)
+Received: from thinkpad-T15 (unknown [9.152.212.238])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 30 Oct 2025 14:38:08 +0000 (GMT)
+Date: Thu, 30 Oct 2025 15:38:07 +0100
+From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>,
+        Luiz Capitulino
+ <luizcap@redhat.com>, borntraeger@linux.ibm.com,
+        joao.m.martins@oracle.com, mike.kravetz@oracle.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        osalvador@suse.de, akpm@linux-foundation.org, aneesh.kumar@kernel.org
+Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
+Message-ID: <20251030153807.0a835fee@thinkpad-T15>
+In-Reply-To: <20251029124953.8393Cc7-hca@linux.ibm.com>
+References: <20251028211533.47694-1-luizcap@redhat.com>
+	<6bbdf4ce-10e3-429b-89fc-ef000f118fec@redhat.com>
+	<20251029104457.8393B96-hca@linux.ibm.com>
+	<9a8254b9-92f8-4530-88e8-fca3b7465908@redhat.com>
+	<20251029124953.8393Cc7-hca@linux.ibm.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=K+gv3iWI c=1 sm=1 tr=0 ts=69037855 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=7V4s7PEeRJvMkV0XkP4A:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: QuWdHNzaLPBwAGTt0znk4k51e_rz3lle
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX8bMHmkGR/4De
+ HYE1Z9xyBUD1Oj5iuMbBMNf4z5tHxtlTJgnaIzfPvHsa5JdD0dih2UUsIdBQBzC/2SMsTnAvQhg
+ 6wEGVcjU9RRAQ044mvBwjir1bRub+rqfExF39fj4/LGt2bKX1a2i1BdxIJjR0BDVYiXT1/qdwps
+ sEmf0mQZ4Ub9Z+BJNJOPwy5LLxN2jOrPniXGmLPPt50qBRe+2PFgtuG0Wyy9XX0mvYo6JLzCU/X
+ uMi9fdc0PBQnDYrDf3/Ds7viihOOpm+SPBiX3j4FG4PU2ZzzOF3Bz0t0Hnmjlq0n5+Im8t+Hc1V
+ 5NrSDR0m2KXgWcJ9UhOWdoCyEsSr7QXtcOzsctqol5ReplG+qCjcBedOGuXc/y6S+GOz+xA3orZ
+ b1OFaHEQVkYs5Mlo+X5mu3vVxD0sag==
+X-Proofpoint-GUID: QuWdHNzaLPBwAGTt0znk4k51e_rz3lle
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ adultscore=0 clxscore=1011 malwarescore=0 phishscore=0 spamscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Wed, 29 Oct 2025 13:49:53 +0100
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-Commit e6a8a000cfe6 ("drm/amd/display: Rename dml2 to dml2_0 folder")
-renames the directory dml2 to dml2_0 in ./drivers/gpu/drm/amd/display/dc,
-but misses to adjust the file entry in AMD DISPLAY CORE - DML.
+> On Wed, Oct 29, 2025 at 01:15:44PM +0100, David Hildenbrand wrote:
+> > BTW, I'm staring at s390x's flush_tlb() function and wonder why that one is
+> > defined. I'm sure there is a good reason ;)
+> 
+> Yes, I stumbled across that yesterday evening as well. I think its only
+> purpose is that it wants to be deleted :). I just didn't do it yet since I
+> don't want to see a merge conflict with this patch.
+> 
+> I also need to check if the only usage of flush_tlb_page(), which is also a
+> no-op for s390, in mm/memory.c is not indicating a problem too.
+> 
+> > > Changing active entries without the detour over an invalid entry or using
+> > > proper instructions like crdte or cspg is not allowed on s390. This was solved
+> > > for other parts that change active entries of the kernel mapping in an
+> > > architecture compliant way for s390 (see arch/s390/mm/pageattr.c).
+> > 
+> > Good point. I recall ARM64 has similar break-before-make requirements
+> > because they cannot tolerate two different TLB entries (small vs. large) for
+> > the same virtual address.
+> > 
+> > And if I rememebr correctly, that's the reason why arm64 does not enable
+> > ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP just yet.
+> 
+> Ok, let's wait for Gerald. Maybe there is a non-obvious reason why this works
+> anyway.
 
-Adjust the file entry after this directory renaming.
+No, using pmd_populate_kernel() on an active/valid PMD in vmemmap_split_pmd()
+should violate the architecture, as you described. So this would not work
+with current code, and also should not have worked when I did the change,
+or only by chance.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4d739e18aab6..7031ee1e7cff 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1080,7 +1080,7 @@ M:	Austin Zheng <austin.zheng@amd.com>
- M:	Jun Lei <jun.lei@amd.com>
- S:	Supported
- F:	drivers/gpu/drm/amd/display/dc/dml/
--F:	drivers/gpu/drm/amd/display/dc/dml2/
-+F:	drivers/gpu/drm/amd/display/dc/dml2_0/
- 
- AMD FAM15H PROCESSOR POWER MONITORING DRIVER
- M:	Huang Rui <ray.huang@amd.com>
--- 
-2.51.0
-
+Therefore, we should disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP again, for
+now. Doing it right would most likely require common code changes and
+CRDTE / CSPG usage on s390. Not sure if this feature is really worth the
+hassle, reading all the drawbacks that I mentioned in my commit 00a34d5a99c0
+("s390: select ARCH_WANT_HUGETLB_PAGE_OPTIMIZE_VMEMMAP").
 
