@@ -1,187 +1,130 @@
-Return-Path: <linux-kernel+bounces-877556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35475C1E699
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:25:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F512C1E6A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A97D4E6380
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE9C189A913
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E78832D0CF;
-	Thu, 30 Oct 2025 05:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8324260587;
+	Thu, 30 Oct 2025 05:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiprPBMP"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljlp6zzo"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8182D063D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED89B32D0CF
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761801943; cv=none; b=ZlvBjPBO6VERnrq9pO8wG3WaCoX5FVy33OEjkmhkYQB2O8oGcvCVNpc6xsDhjRpCmFXaEcH7WGeWlxa0bRkG8ev3pebB85VxIhuMFKVejer6mddTXDFr9PdTtNxX8mgX3pCiO332UMrvEn4D0FOAZ2MYT/vl0uQcm1N93D8P954=
+	t=1761802133; cv=none; b=XxF8+YH/N7t/e4WQw9OM7x/7KP5ntff6mF5vXjXaevPEB9FaRuoCtEXriLoKxre9V7SjLeOhHmz3SDCvRaWhgB3Mhj6dhXyZoV6ktngH2QFiZwcNMhpi2IYGeSlJCDbPc8YN1K3J1CPrSXmYt8aHhUla2uDQOeeb8l2ejdlK9No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761801943; c=relaxed/simple;
-	bh=GpxJRWhQ3eXHwdU9ZgpR7Yuo3ekC6UL+YpfvAE70JCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOLLbrPHxqJcIdqqR4elTsGg37+DJYGVH++n1QKW1F+8W5IS0dM3nCKbM/hSGa94jh4109BdTPtjXk8ExAntY9JqW5nbtfikw3e5KFaimk8d9gRvggRn2V0a79sZFN70Xaxw3fAnDU8L1XqKYtuAoqknChCxumqYbq5nmQ3GEcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GiprPBMP; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1761802133; c=relaxed/simple;
+	bh=f1kCG5TcAfbrPxtCZoUNFHaApQsksHuvWbM7GauKnp8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dQ9sJ/zRV4uv+7ZTKFn/QaFTX55KdY986S+7eTnS/OwmyFCrkE8pEyd44lnVRMDenb8J107gvyvvS6nHyj5YO6AJ6FdprH+Gur2cQ9fkjub0EIbZnAFxx8CwKsU95R06i13LT56WG+mKaWfbgqYZcgU7e1L5j085G3Ghnzuk60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljlp6zzo; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3e9d633b78so164438466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:25:41 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-78125ed4052so1035889b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761801940; x=1762406740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TfysZUiKw0ccehvHsLCa5x6Zv8Uvqd+yTXJjIb1Wj5Q=;
-        b=GiprPBMPH5ViuOxtgy2QVuTr2Zg1sun5vbn4JuGRq0XqSCIjxLnxZ4GjaEoqxp1XqQ
-         W29bIKPvwHcOwl5h4nuCQSmq2fhYNH3BQlu7xJYWUK+yChmx1CYW5A0JwhWSWI+4+1/b
-         3pq+G7AXw4TWw5rjcTIJUtT9lsrDifu1zLvCshQQIAy7AvtmODAEoN5gf9hTaTxZblub
-         zL8UYPdNEXHAk5oiWG40JKXFCH6nyXQaw+F+0cuz59Av4A6vHdl/lrtwde1PH76iDXRv
-         TpWMh2VsZXdRNCcqMfUCtdCwcIjyQbGTWo+kRuHThFBD7kVvMiNWeq12lQC7MYg3d1H3
-         ddLg==
+        d=gmail.com; s=20230601; t=1761802131; x=1762406931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FSKUHSinYJjKvjZWn7Ylkm232SOv2kasPBkc5nSYgqk=;
+        b=ljlp6zzo/P5KFGBvyInGtKCmUS98ZmUtLqjFpX929KKyy0jI409obG/VNv1gdyNDZ0
+         YuMjN+x+aMQ33vgWtUPeR0zVStbYyQWyqC5E80af3T/UaiMjRSSuQHTTN3dowIiV6ryd
+         wp81olkl+oQfAsQJLO9kvluxMmiY/5jzdjAd0XjWFfvaBRnYvFE3f2+9uvAplw9h1gkP
+         shvA5NbFbT0BGaZfwL7eDNRiujLfJyAh6YpLsfOowLYCFnAN+JZo3tDhv01Zgtn0dSpw
+         mRlrqAQl/uMRrS2txkL3YKVeqEZ+9vN0frU6dt5qsREk0XyqO65ZCuEfcne46p1TtWKF
+         8TBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761801940; x=1762406740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TfysZUiKw0ccehvHsLCa5x6Zv8Uvqd+yTXJjIb1Wj5Q=;
-        b=eoffFk5CbllCWFnbJMaewv2XlNUBYr9xL36/KBLlTZAU+Zov5cStHiFxLE5Y01tB3v
-         2qyRLbfSXsynuWyA6nxmG7OCYftgbWgR8+lD91V3aFDKT1SZWPZBDe4J3Ul0fK25cyFp
-         Jr/tbatlf7yLsodmc2ZmRbvM7WYNgOC6G0oSeU6l7wMbCmh/lpdnIvzyYfHTYd9MAbyx
-         o4Gp493EyYwM2gsuQTDrALuLuSzTfjc6ehnTElDF0j8IgTNAk9I5AD3lH0kVvjshf5Af
-         NTURuiooZRTzSUVcV26KCRjq/beabEDsZ63TEePz2gMW1MumG/eve5cwenNfv3qPb3Ns
-         kATg==
-X-Forwarded-Encrypted: i=1; AJvYcCXE/weUcwDpmnAUZcloqN64XXHf8lGbgf/5bDGCNAZPRxGPGcl4zlEeYjal0S6yqTwdsBzsYX+RTgr77nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0fML2RlG23KPtCHAPbg47pByeZ/IpyuLk5Y+ItY7b3q/15s21
-	noKvkQpi4YaC7+r0Gh0R3kyR5V+mGmL3ExAzRqZzG44Vp9gh5ModMP3lTruzxAsvQIdRfMw8Fi7
-	L9IpMatz8p+9chz/eQM8QHd90AcLkHoo=
-X-Gm-Gg: ASbGncugBIEdl6t4SbLeAID2Ekel6o+TdpZ2/5P7Ene56feKMHft90yWKH2aZiTVEKB
-	Wiwj8D2D2HL+jjRoOedXhtox8kllF7t1HUkfGqyx0t9jkyGbco/rHtd19vQlGSdAu4HzAT4gfOa
-	K+VzacuucvHBvHh5LMCAeVeGowLVbKjqbGtWoX0SVvNxbVdAxwRidCwuVA9PaJE7VTgJ+wApA8x
-	n9WV1bFgUj9kzL3j0X+7PxBdhT8fhA4czPUQCLK3MW1TCuhQgfRAACJq5pGf9dW
-X-Google-Smtp-Source: AGHT+IHNyXHD9tuJVWmX0HGoxsmgdCXdnVfsLSRiQVKCm3qLDQttk267xLovDM2ICaKjf/7vxbQtpUFH3F3g94OPSSs=
-X-Received: by 2002:a17:907:7f94:b0:b3d:e757:8c36 with SMTP id
- a640c23a62f3a-b7051f28d17mr219852766b.3.1761801940298; Wed, 29 Oct 2025
- 22:25:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761802131; x=1762406931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FSKUHSinYJjKvjZWn7Ylkm232SOv2kasPBkc5nSYgqk=;
+        b=v2c2fg62WgkOsPleM1B3D5m8X56NTyO0JqpnJwMSy1jHJicWY+GpEdVSQQIpA6TBtb
+         pSXORnbugmCiuwaC7uqGaA94Lri2enlSUBP1cGYJtNRdgwi3iZ5cmyncawbMcDNZ2oMj
+         WZPBP1BS3SRH/He3+wIkV6We8ZQV/vm8X++b/G4dF45qG7vrllW+PTbTMH++FPQAOWWx
+         jyW43Li0He+IDMrN46GVbRpgU5Q2EU34h8EqaWpmMmRty8g/I6xkdBlQAXaux6zx4wZr
+         3lpRgPXiP7sUS5bgVrm5Bu666xARt7LnaP587tjcfXvsLap8IzfCk2j+p5xJvcNzOQfy
+         1YcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWu4UZB+WfdUYj6tbgSt5vn9j/tjXuug2cSWGXDh2L8xpZOguWwmpmpEizLIU3gUZD5fqm2fvzaY23+DdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPE25bf7wpK6Y55Hj0zW58tiPDDdyME/8pPIODc904+R7kcImz
+	ocLrr73i/TKcmQAiu2qKpwouhrERf7A8ZbtTmcx0zvt+8AnGBK24hDd0
+X-Gm-Gg: ASbGncsbjjRM92kfwRnXCw9GKPWvKYei2pdtf9/CXw0TJU9UtBRAC4FegrJUA6MNwlt
+	/zIUA08qiAod9y51Nsd8Xe2OO7pqU1sH/K7c0weorfr+ABZDe5LDhrOWoArKZ0amF1glAi6cf1Y
+	bSc6paBIwHGUQzBYsGgDy26cVOqa6qEKPrX8zoKjLhWqx0vZa5/bVQA+yR/FzI6T/PGc+EHYWg2
+	CU5Ccwf+5d0VMF+IONMtNM+lS8D8VDAQzf0yelWc7jtO4Bcm1/BVRC+xKKDmYO7ZjvVJinc3ahv
+	pxtCG52W/uiafvyysTHKvCYTicydfNueVuVc5zTe19awoIJDB2C7sjwMEJcy79FaysWhbt44W+a
+	GpiKURLKKEwmmgzP/YZkgfQX0UrSJD4FYhuYvGlqqvk4woYvh2hOhpLEL29turrVTthC/9tZER5
+	XyiZzPlFb9648IgFFKQEESKArMzf0Pz3Pt8BaCHJyQ1VY=
+X-Google-Smtp-Source: AGHT+IHX4O7EKdx50iJVWLjggzkcWZLDrobpQhA0LDtO34kiExl+IAjGVhwdQR+ULIc3k6u6F/FiaA==
+X-Received: by 2002:a05:6a00:244e:b0:781:19e1:c4c8 with SMTP id d2e1a72fcca58-7a62a940ab5mr1870941b3a.9.1761802131220;
+        Wed, 29 Oct 2025 22:28:51 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a414066d0esm17479391b3a.43.2025.10.29.22.28.47
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 29 Oct 2025 22:28:50 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ruan Jinjie <ruanjinjie@huawei.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] misc: eeprom/idt_89hpesx: prevent bad user input in idt_dbgfs_csr_write()
+Date: Thu, 30 Oct 2025 13:28:30 +0800
+Message-Id: <20251030052834.97991-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-swap-table-p2-v1-14-3d43f3b6ec32@tencent.com> <202510300316.UL4gxAlC-lkp@intel.com>
-In-Reply-To: <202510300316.UL4gxAlC-lkp@intel.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 30 Oct 2025 13:25:03 +0800
-X-Gm-Features: AWmQ_bn7Lyv0bXlIQEUl3x-IuvN0KJgIKA5RqyN4TyJ6a-kvBKh6n54oDVlmgZo
-Message-ID: <CAMgjq7DcxG_8q9Kzwg-4kLBXw8eN8DvwmSR0gRUjYWPoFH8xsw@mail.gmail.com>
-Subject: Re: [PATCH 14/19] mm, swap: sanitize swap entry management workflow
-To: kernel test robot <lkp@intel.com>
-Cc: linux-mm@kvack.org, oe-kbuild-all@lists.linux.dev, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 3:30=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Kairui,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on f30d294530d939fa4b77d61bc60f25c4284841fa]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Kairui-Song/mm-swa=
-p-rename-__read_swap_cache_async-to-swap_cache_alloc_folio/20251030-000506
-> base:   f30d294530d939fa4b77d61bc60f25c4284841fa
-> patch link:    https://lore.kernel.org/r/20251029-swap-table-p2-v1-14-3d4=
-3f3b6ec32%40tencent.com
-> patch subject: [PATCH 14/19] mm, swap: sanitize swap entry management wor=
-kflow
-> config: i386-allnoconfig (https://download.01.org/0day-ci/archive/2025103=
-0/202510300316.UL4gxAlC-lkp@intel.com/config)
-> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251030/202510300316.UL4gxAlC-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510300316.UL4gxAlC-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->    In file included from mm/vmscan.c:70:
->    mm/swap.h: In function 'swap_cache_add_folio':
->    mm/swap.h:465:1: warning: no return statement in function returning no=
-n-void [-Wreturn-type]
->      465 | }
->          | ^
->    mm/vmscan.c: In function 'shrink_folio_list':
-> >> mm/vmscan.c:1298:37: error: too few arguments to function 'folio_alloc=
-_swap'
->     1298 |                                 if (folio_alloc_swap(folio)) {
->          |                                     ^~~~~~~~~~~~~~~~
->    mm/swap.h:388:19: note: declared here
->      388 | static inline int folio_alloc_swap(struct folio *folio, gfp_t =
-gfp)
->          |                   ^~~~~~~~~~~~~~~~
->    mm/vmscan.c:1314:45: error: too few arguments to function 'folio_alloc=
-_swap'
->     1314 |                                         if (folio_alloc_swap(f=
-olio))
->          |                                             ^~~~~~~~~~~~~~~~
->    mm/swap.h:388:19: note: declared here
->      388 | static inline int folio_alloc_swap(struct folio *folio, gfp_t =
-gfp)
->          |                   ^~~~~~~~~~~~~~~~
-> --
->    In file included from mm/shmem.c:44:
->    mm/swap.h: In function 'swap_cache_add_folio':
->    mm/swap.h:465:1: warning: no return statement in function returning no=
-n-void [-Wreturn-type]
->      465 | }
->          | ^
->    mm/shmem.c: In function 'shmem_writeout':
-> >> mm/shmem.c:1649:14: error: too few arguments to function 'folio_alloc_=
-swap'
->     1649 |         if (!folio_alloc_swap(folio)) {
->          |              ^~~~~~~~~~~~~~~~
->    mm/swap.h:388:19: note: declared here
->      388 | static inline int folio_alloc_swap(struct folio *folio, gfp_t =
-gfp)
->          |                   ^~~~~~~~~~~~~~~~
->
+A malicious user could pass an arbitrarily bad value
+to memdup_user_nul(), potentially causing kernel crash.
 
-Thanks, I forgot to update the empty place holder for folio_alloc_swap
-during rebase:
+This follows the same pattern as commit ee76746387f6
+("netdevsim: prevent bad user input in nsim_dev_health_break_write()")
+and commit 7ef4c19d245f
+("smackfs: restrict bytes count in smackfs write functions")
 
-diff --git a/mm/swap.h b/mm/swap.h
-index 74c61129d7b7..9aa99061573a 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -385,7 +385,7 @@ static inline struct swap_info_struct
-*__swap_entry_to_info(swp_entry_t entry)
-        return NULL;
- }
+Found via static analysis and code review.
 
--static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp)
-+static inline int folio_alloc_swap(struct folio *folio)
- {
-        return -EINVAL;
- }
+Fixes: 183238ffb886 ("misc: eeprom/idt_89hpesx: Switch to memdup_user_nul() helper")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/misc/eeprom/idt_89hpesx.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 60c42170d147..b2e771bfc6da 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -907,6 +907,9 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
+ 	if (*offp)
+ 		return 0;
+ 
++	if (count == 0 || count > PAGE_SIZE)
++		return -EINVAL;
++
+ 	/* Copy data from User-space */
+ 	buf = memdup_user_nul(ubuf, count);
+ 	if (IS_ERR(buf))
+-- 
+2.39.5 (Apple Git-154)
+
 
