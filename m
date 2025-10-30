@@ -1,107 +1,186 @@
-Return-Path: <linux-kernel+bounces-878830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D441CC218EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC99C218EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100481A21F71
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ECD51A20A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33E536CA8D;
-	Thu, 30 Oct 2025 17:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D2336C23D;
+	Thu, 30 Oct 2025 17:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BvN84mmA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OvAph+aX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aRZlJdZd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF74B36CA85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B4936CA8B
 	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846620; cv=none; b=PxaPWfUm5spSFMkttMH4PIY587hEE458GHz8Vh2EZIKmHHts6JMWPCl2s/g54oPeN19lNbXXVB8IQLIr8NArih59F07PqqIBwE7a4SiM66g5vnoy0KUd9hf1H3HZkktQr33z9P4hZer8n76dgSo4LF63r/cW7PRn1W6dW5TMifs=
+	t=1761846622; cv=none; b=m8cPPlzghWiW223zg9hUvda1D00kGjRRbAvDEcCSRR7oII8l8CRZnOPkKo8kl3h3jh2Xr9RY+Dzy9jtDwlCYWnwPIDyNfdgTvbh0I7GSCjGwQLJktjYrzM4C7AGa/TktVpVu7a7UpBzolTpHOCp43kyRnC1REggJiWDE3wvXqBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846620; c=relaxed/simple;
-	bh=cnfOiHcXorptPrl8VAK8ofA4Qt/qiW2XlLxz5RTznp0=;
+	s=arc-20240116; t=1761846622; c=relaxed/simple;
+	bh=BBwmYcE6lrUKjOADEk35uGUEgj3XI4g56oalPV+E+IM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DJEkg18VigeledvBjkqM+UF48JztehCD4Q5Z3Jmx+zI0QAUeEX7Avd5m79689dQyoUgDwNmonxK5drAGJDFQEzMxIkxLGiUxZwyZpCsAV4scHTyAHukci5znd+dAgAlhMszylfTt5ImLedAx0Xi1mRd4ulb4XWefTpZqJux6abI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=BvN84mmA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3893C4CEF1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:50:19 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BvN84mmA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1761846616;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cnfOiHcXorptPrl8VAK8ofA4Qt/qiW2XlLxz5RTznp0=;
-	b=BvN84mmABqzhgqKBgBRxGe7J6EA28A/3p+AOybRDs2xqIjEVww6I/mbC54SRXgMjyRc1FQ
-	JiEyaOeR8Uicd2yvz/ztmbEg63QFJFN2v4xooct5/9s5rT7OswO1fsC9SlD7NipWA/VBGO
-	1QNcHa3rEtNA/MiZpCNDEE03EOPj4u4=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 70d067b9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-kernel@vger.kernel.org>;
-	Thu, 30 Oct 2025 17:50:16 +0000 (UTC)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3d220c5a16aso921505fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:50:16 -0700 (PDT)
-X-Gm-Message-State: AOJu0Ywv2dDxD3subA69VJOnHod8phpTgDnIOdHB6sd7LowTulDsamFw
-	FxnuXvWZxYTqcWN054dMV/0U1C4t5rx5pIo1iA7pV8jS+ijCfYjbRbOsz7UD/EE8yVk7MTpDu3M
-	FppiWZn6yCp+FK4RV9Evr9/VsZzn1/go=
-X-Google-Smtp-Source: AGHT+IHfwenBU4lNCBXi4ppH1xPcBv5mtzVX9Omz1UWcQnKdsaBto9k2ZRPkB0qReNCeYL+CQb5Cc5gsEfuylUoHPvM=
-X-Received: by 2002:a05:6870:970a:b0:344:34e3:5143 with SMTP id
- 586e51a60fabf-3dacbfabd05mr289136fac.28.1761846614778; Thu, 30 Oct 2025
- 10:50:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=mrFaZ8wCbKC5hK7kto7AOEb6PzK3sSDk9hwPoJq2auhpnV7JYSt6L7L25/Xd1L6sfE5OCXiuI/L+QIA9nayz+aprgcsVZ6s9iioSr/4jyLybS1j9d20MkTql83B1b35nRuHyljDW1j96LfdBvr5WROCF/E7L8tXV+vhOFXoKuKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OvAph+aX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aRZlJdZd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59UB8c9b3808775
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:50:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7ezPQpssYxyOHH4y5fHepA/I
+	5LlR8cmJLHAcThG9/RU=; b=OvAph+aXhYotPcfswPTd5BPs/pUaFw8MpFv/Z5qL
+	KE0zovfq3OTWxj0yRajECWf76m9IGnPrcctKxuzP/kBIOL8FxobpRot0dgL3CLRy
+	caE484UWNJTTAYOHL6WHS2pmq4isTnfcjxaS77/4C2woOhVS8PQw1mMqDy6J77hr
+	nGwuJFqwPvVKg7liHtpTi3agNItRwCPP5QCJykCqS5ATIKCcPI+N8vCLG+BOQgHa
+	gkQ1fDf5NyCbOeUw9CIv3AZoCzjbSGUgQBqBnZiTgR+CVEILNu9MPFTtTlxrWHzT
+	CsP9ec5Jf8AdwjmNLkck6Gytnhr0V4+jFr2wE54f7y5DIg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a46vv94wm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:50:19 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a28ccb4c8aso1261578b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761846619; x=1762451419; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ezPQpssYxyOHH4y5fHepA/I5LlR8cmJLHAcThG9/RU=;
+        b=aRZlJdZd+lxxLJf8UZLX8jxEOpptZy6yq/mbfQ3w061Ak67AWSpS38qh29cuz80Ey/
+         W5Nsg3sXoctJuFhb6ocUpU3I231DtxdQJfLM51T/hnl+xT2FG2UjrrvjnIjoWr7envrT
+         c9zy6Uy8ePmYPucRN8DbZVzwWhwUMgY5Cb8CBR/BwpFvTVbh2lQ5GDGPmbeumsg2tP/S
+         ffm+SB2bXRwIJ0NyiHYDcxHw5aykxTeKlayXzISQYmM6dC1hSiw7dMnKBgUO6BLCu6o6
+         12hJuVuZR4WlLHz9geNS3YCcit7c+rotCxR39+V/qg40slU0XUW1ZpXIs+cn5Cof5IOB
+         az2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761846619; x=1762451419;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ezPQpssYxyOHH4y5fHepA/I5LlR8cmJLHAcThG9/RU=;
+        b=uvRsurU0I/c1m0RUmiPnpPxyfEDc8dNdt85JXNu4j4vkiTBmM0Rrf+TMZO+1cRFHRr
+         qc/Qz//BFFrYiDhHWQM9Tdp+h2lX2xoovnsAxNID+H5Yx5ua7v5JfLf7QVwP0qRlYfnj
+         TsCTlDl2DftR/McdKlcC6kCsYVPW219xUzUAKK29AT2UdxNhK1317Onafyt/ro+4SQzS
+         hcOREs842t/WrABt0xWp6Yj91AEITQcHFvHLsD6XPGdYDMCqXGNxf3h6nb8AkRVrb891
+         5GbtHyMUk/FunSc+47rwaA6Hs/7dlaHGHFXavQbYSQ2NhB1Q55Jwoa0b2nArmAUK6aKk
+         z4qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCGgwob+SFTKcrkopF4AwmkaT+LZqgIPCi6lb684SqP7pST6z0bSNEiU66zPZ+m7ITGGtcLkG18/SaImk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3nEeWMvNGncnfQxj1bzxWouIKwdonhC5Qx5KKUUZwctrEc7HC
+	uudGLkUJfqpGroG6XO4CLDcf1jdb2KtjcbPJkaimBRc7PLrf3sK2GJXDsVHRzVdEvn6Eumha9cL
+	7BDPAjAAXNsToC/rKvBG6Jzf8WzS9JuWbD34Caphdlsia2pk/g/i0OeTfZtL3laDrwiC5vJQ+Gw
+	qQaMWOERWa2SIMbBbeOF7FmQDdLvsB1IBzvlNCbzVQeg==
+X-Gm-Gg: ASbGncsfXVColvDm97VmWdrLkTFhZUAXNCslPx1k4Ri7F0cJwST534fm2qu85OWQrMY
+	tLz1/szVt6v0nyP8AJJJ88PtiyrLW9QizgyVYmtbTyiqgvA5ILXYXlDNyTkGL+oXUicCc661l3l
+	PmLvbEdZeQAKOJtXcdXjQbUAJyCUo+5iXqR/SawhZlEgsEPTmKuO9G3AA=
+X-Received: by 2002:a05:6a20:7348:b0:341:4dc7:6ac7 with SMTP id adf61e73a8af0-348caf8cab4mr681342637.17.1761846619172;
+        Thu, 30 Oct 2025 10:50:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZVI06S4NV1AhlDGUGc28g3ZM86FSIkF5MLIdL5O79ZyEHgj8yschDJ9u8J8K5yPmghV3pkF3oXrKpgJ/gx8g=
+X-Received: by 2002:a05:6a20:7348:b0:341:4dc7:6ac7 with SMTP id
+ adf61e73a8af0-348caf8cab4mr681289637.17.1761846618570; Thu, 30 Oct 2025
+ 10:50:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030155728.271373-1-marco.crivellari@suse.com>
-In-Reply-To: <20251030155728.271373-1-marco.crivellari@suse.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Thu, 30 Oct 2025 18:50:02 +0100
-X-Gmail-Original-Message-ID: <CAHmME9re7wh16pfqwyJm5EYbwjKZDkzKLL4EZRLN0WG0bZ=Lcw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnBcpXFjJobDvvwjX6jX4AbG6DQazDAqjO5cGEjP0P1rxjFaas2dAc5LZc
-Message-ID: <CAHmME9re7wh16pfqwyJm5EYbwjKZDkzKLL4EZRLN0WG0bZ=Lcw@mail.gmail.com>
-Subject: Re: [PATCH] random: replace use of system_unbound_wq with system_dfl_wq
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, "Theodore Ts'o" <tytso@mit.edu>
+References: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
+ <20251028-dt-zap-shader-v1-3-7eccb823b986@oss.qualcomm.com>
+ <c90b917e-b3bc-42fb-a127-ab47d5154d0d@oss.qualcomm.com> <c62a7f9d-6984-41c0-88c5-1d6c40d411dd@oss.qualcomm.com>
+ <weyze7a2pqmt2klt763lbwyvpezqndm5rjnitexalru7hy3xhh@tdqx6xeqp3qu>
+In-Reply-To: <weyze7a2pqmt2klt763lbwyvpezqndm5rjnitexalru7hy3xhh@tdqx6xeqp3qu>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 19:50:07 +0200
+X-Gm-Features: AWmQ_blhkZbCEn5LRbI2zVnuSxWh0T1Gf5fIw3eGcfqcHuAD4DHCvVBIEZ5kS9E
+Message-ID: <CAO9ioeVQe5spxRWBr8sC1xHKktRD-Z9NJS1VDPSTKbWiZRirpA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] arm64: dts: qcom: sc8180x: create common zap-shader node
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: 3lCVyFhDwHXaq7PrPfVmYkQJcMjA2kfS
+X-Authority-Analysis: v=2.4 cv=dK6rWeZb c=1 sm=1 tr=0 ts=6903a55b cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=tsDWIgHn-TVwDr9MEvwA:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: 3lCVyFhDwHXaq7PrPfVmYkQJcMjA2kfS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE0NyBTYWx0ZWRfX0t5yxvtcXTW6
+ Kf75foU8sO+BvqsfdeKX8q4uLr5Mu9snFhqMlUHnZIbOT73s6gyD05wIFtey3R5OjlaNq4h1r7a
+ IiqZBVKa5LxwPlkN7Fz9FqqyDkUnKQt4t3l1FYQdvxNXhuZGLEomSHHyUJss5PtY/hFO1wkp+XE
+ KeSNa4pdAlTtHgqCo850FUUP7JBQefjve4LqYfvCbH/iFdcs54y4Kw61KwNAKQi1/4GA/BFmBEg
+ mNrxZ8X6DWckCdDN0ZFwQtZqi0Enp4KHJLu62KY58u0kpxHnprCe8kfUq09OwBtmDTK75ap6o0E
+ xpkfqtr5YeZaN+W2ND18sQ3l92DIC/94upRP9NwxbVpcu72BkeJZLfAICpxDaNXBmFG8VZPVtzy
+ LH1zbJsnIID2SgfGfeYF0dlFL54ffg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_06,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300147
 
-On Thu, Oct 30, 2025 at 4:58=E2=80=AFPM Marco Crivellari
-<marco.crivellari@suse.com> wrote:
+On Thu, 30 Oct 2025 at 19:25, Bjorn Andersson <andersson@kernel.org> wrote:
 >
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
+> On Thu, Oct 30, 2025 at 11:59:00AM +0100, Konrad Dybcio wrote:
+> > On 10/30/25 11:58 AM, Konrad Dybcio wrote:
+> > > On 10/28/25 10:00 PM, Dmitry Baryshkov wrote:
+> > >> In order to reduce duplication, move common GPU memory configuration
+> > >> from individual board files to sc8180x.dtsi.
+> > >>
+> > >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > >> ---
+> > >
+> > > [...]
+> > >
+> > >> diff --git a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > >> index 93de9fe918ebdadf239832db647b84ac9d5a33f6..069953dcad378448800d45e14931efe1fe1a69fc 100644
+> > >> --- a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > >> +++ b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> > >> @@ -14,6 +14,8 @@
+> > >>  #include "sc8180x.dtsi"
+> > >>  #include "sc8180x-pmics.dtsi"
+> > >>
+> > >> +/delete-node/ &gpu_mem;
 >
-> This lack of consistency cannot be addressed without refactoring the API.
+> I agree with your hmm, seems this line should be dropped(?)
 >
-> system_unbound_wq should be the default workqueue so as not to enforce
-> locality constraints for random work whenever it's not required.
+> Dmitry, please confirm and I can fix it up as I'm applying the series.
 >
-> Adding system_dfl_wq to encourage its use when unbound work should be use=
-d.
+> Regards,
+> Bjorn
 >
-> The old system_unbound_wq will be kept for a few release cycles.
->
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> > >> +
+> > >>  / {
+> > >>    model = "Qualcomm SC8180x Primus";
+> > >>    compatible = "qcom,sc8180x-primus", "qcom,sc8180x";
+> > >> @@ -444,7 +446,6 @@ &gpu {
+> > >>    status = "okay";
+> > >>
+> > >>    zap-shader {
+> > >> -          memory-region = <&gpu_mem>;
+> > >
+> > > Hm?
+> >
+> > I "hm"d at the wrong line.. why are we delete-node-ing gpu_mem?
 
-I rewrote the copy&pasted commit message to be simpler and also
-include a reference to 128ea9f6ccfb ("workqueue: Add system_percpu_wq
-and system_dfl_wq"). And then I queued it up in the random tree.
-Thanks for the patch.
+Because it's a part of the sc8180x.dtsi now. There is no need to have it here.
 
-Jason
+
+
+-- 
+With best wishes
+Dmitry
 
