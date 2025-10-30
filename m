@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-878032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672C2C1F9B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 438A9C1F9C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668B3188EBD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E07189088C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE7434D92C;
-	Thu, 30 Oct 2025 10:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C64D35470E;
+	Thu, 30 Oct 2025 10:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWxnrBI4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOLo2YOH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF3C23D2B2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300E335BAF;
+	Thu, 30 Oct 2025 10:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820965; cv=none; b=HCSEqIVkPO+xU/FDMBQmPDPFdDuSdi7pRTUcK1vUowS9IILEko0FftogQMLJbvKDgMyreh2kZmSjsFgF2jrpWPaAwEnKvpSamFX6bJ5F9CFxB7clwOoYKhL/I97fiuCPSnPyUtg/gNsiHGaLClHoRGKn7i1GqzLtMIgUuz0hVaw=
+	t=1761820969; cv=none; b=Xnch0qMVAiCFoFaP5PwB4Qx2JsUk1DXJxNhlRO7SKy/ZBWAo8qg1W5eWOphF6x+iN864KAuJWFX/uLI86Y0oZRgmFNzY+BFK5xJ5BOt0G3Ir/Fu/oywBIlUTB5sc4jDtKf9fcc6BJIqUqerquBZHoab/9aZpI/hcXj/wGXPLKv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820965; c=relaxed/simple;
-	bh=G9W7fptY1OBNfQ3kQqrC8Ke7TKS8aSvFyr6gkJbxgUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m+j1KGlYiCSznIMxJkpqL1ljhwE53VFttotjaBg0Hv+46s8+3Oxq5Fo8oa3fxhtesp9j0Z9l0v7urQBMN0c+5FOglDMOQJPk/1Oi92WInHpedfTghtQi2riIH1jK2P5grgqSJLrsx01zftHsllCdLMl4nTwXvnCEgMyy2su+lIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWxnrBI4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFCDFC4CEF1;
-	Thu, 30 Oct 2025 10:42:41 +0000 (UTC)
+	s=arc-20240116; t=1761820969; c=relaxed/simple;
+	bh=21Imxsayj+IViqhAG6JgOVkWhAy1BH84E8W2Bso8PDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ViNMhKtHn8f0vohJmBM3K30XonH63JMwHoYKIp7scBBFhjAm4V2K7yf+RvqDrTx0pTVS1ITCgWv2EYMgLlI1An57VbkQoIcBhc4B7Vakl3wLngpqTqr2Dij4fwDVSb1bOcai79KNqxmtaQyo9yxXYYa5E1AmXSrrcDpKGvzbYGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOLo2YOH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDFFDC4CEF1;
+	Thu, 30 Oct 2025 10:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761820965;
-	bh=G9W7fptY1OBNfQ3kQqrC8Ke7TKS8aSvFyr6gkJbxgUg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UWxnrBI4ivtJN0Jwz6QcrF6kihuKvTd0MeM43P/V2bB7GGlr8K+GC+QX80bw5jfk0
-	 aPFGS1/TOmBBPhxB8UpGzj3dx2PI51JsVNvR0wRcEqTRuEyOib1mg+MUBWB07IO/yG
-	 jourJZHBYoYHrf+w9Ce9dm3ICl9tfKVltmpjOHRhaAPAN+BGogpyZDxMEqKhC+Foip
-	 +STsayyFPtSgD49XjkrpXP/fyoGHX/5FSoIiy7NT4Oq4/wD3sNkSSRORiWnaigSnIw
-	 DmRIJhDfcGsgyu8a0tEdGygTTys0v0D66tIMqAnGgwtePRJyJ/IC0DfHT77DBAWFGT
-	 gNEsZweoPC1Zw==
+	s=k20201202; t=1761820969;
+	bh=21Imxsayj+IViqhAG6JgOVkWhAy1BH84E8W2Bso8PDw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FOLo2YOH4OkOEoCN2DKzPliod5u8DzwhLaUYSh74iVtICZoUDt59pB8EOqnc+yKi7
+	 fOyvR4BAB6BsL6YKrPtxL5d+SYvMj49JujD8R++V2+geHBZxgpea9o38Br3rYXxctg
+	 8n1+lUyYXHRoL1PivR5S+WVqAkbven2QAvK4x8grgpNh07qH7UsV/rFfYoZTGVu0b7
+	 IVTNZuawGp+6BYSVTBSiVb1yjODMg8n/IUygF0t0s2bhqjftt69aKPEcclC2kaeii8
+	 M1pt38bVOMD78mMJpA1Df7osigAlWmJfaHyPfORpT0tJEVWVgIsVThGRg1Y4iX4aBc
+	 EJWfDQn0geYNA==
 From: Philipp Stanner <phasta@kernel.org>
 To: Matthew Brost <matthew.brost@intel.com>,
 	Danilo Krummrich <dakr@kernel.org>,
@@ -53,11 +54,14 @@ To: Matthew Brost <matthew.brost@intel.com>,
 	Melissa Wen <mwen@igalia.com>,
 	Steven Price <steven.price@arm.com>
 Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] drm/sched: Add bloody spinlocks
-Date: Thu, 30 Oct 2025 11:42:18 +0100
-Message-ID: <20251030104219.181704-2-phasta@kernel.org>
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] drm/sched: Use proper locks in drm_sched_job_arm()
+Date: Thu, 30 Oct 2025 11:42:19 +0100
+Message-ID: <20251030104219.181704-3-phasta@kernel.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251030104219.181704-2-phasta@kernel.org>
+References: <20251030104219.181704-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,20 +70,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The scheduler wouldn't be the scheduler if there weren't functions like
-drm_sched_job_arm() being called probably a few thousand times per
-second without taking proper locks, just racing wildly.
+drm_sched_job_arm() is just racing when dereferencing entity and
+runqueue.
 
-This series adds the proper locks to drm_sched_job_init() and
-drm_sched_job_arm().
+Add the proper spinlocks.
 
-Philipp Stanner (2):
-  drm/sched: Use proper locks in drm_sched_job_arm()
-  drm/sched: Use proper locks for drm_sched_job_init()
+Cc: stable@vger.kernel.org # v5.16+
+Fixes: dbe48d030b28 ("drm/sched: Split drm_sched_job_init")
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+---
+ drivers/gpu/drm/scheduler/sched_main.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
- drivers/gpu/drm/scheduler/sched_main.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index c39f0245e3a9..7f938f491b6f 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -859,10 +859,16 @@ void drm_sched_job_arm(struct drm_sched_job *job)
+ 
+ 	BUG_ON(!entity);
+ 	drm_sched_entity_select_rq(entity);
++
++	spin_lock(&entity->lock);
++	spin_lock(&entity->rq->lock);
+ 	sched = entity->rq->sched;
++	spin_unlock(&entity->rq->lock);
++
++	job->s_priority = entity->priority;
++	spin_unlock(&entity->lock);
+ 
+ 	job->sched = sched;
+-	job->s_priority = entity->priority;
+ 
+ 	drm_sched_fence_init(job->s_fence, job->entity);
+ }
 -- 
 2.49.0
 
