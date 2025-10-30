@@ -1,149 +1,168 @@
-Return-Path: <linux-kernel+bounces-879257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67134C22A88
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:10:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A717DC22A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6A69134C2F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830124612B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8D733BBBB;
-	Thu, 30 Oct 2025 23:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEB133BBBC;
+	Thu, 30 Oct 2025 23:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="veMub3IL"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="DyVQKM9A"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7932ED2F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDAF33B6E4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761865810; cv=none; b=i8SoZMHRV5Rmi12ClxjROUziFNNUOj3/04y/7CV+51Rx+Jl8qu5nCHbNiEDY7hSNb+ld75U8KQ5yhesSBJrZB6+y9gvaqlRxwNpSOtvoC1jMyTTGpiBqIr4ktAgTsv91yYeO4CvkZje9cJ0Eebmcn7e3M6fB9iYpS1P+h5Y94A8=
+	t=1761865831; cv=none; b=IEBmrIJRmIkq/EUpaoJhQs8CLSkqGvp1VYvS43AHN1YDmQkB9UzMCxpsF2Hmy4mncUv5jlKGAyQKhNtOk9N0d//UjSeE446lN4WXZh44lKDeepvg4yd1Ve0aKoWt6K3xh0ZZfBDSUgO/3+XaJ5/tlJ9q3/IfaJaNyzNyMg7KpwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761865810; c=relaxed/simple;
-	bh=3c8fubCSOMv120xOPHfvgzA84Hedn11zJ/B3Ut3CdEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzRZq5hRpk4HKSej5dwWkUJqqAeO0Qvc/7NfIRzfiIueaNlpCtkly+FfwPR5mi41++BxO8b7wJWZmiARXPBc+mb9YkhCLCy4XaFo7AqkR5kWCP7csjf46+Na8utlOZh1Gou9evHgRuN2dI5SnSdp/ls2FTJTNtCuUfLxgN3HhIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=veMub3IL; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b6ce696c18bso1371651a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:10:08 -0700 (PDT)
+	s=arc-20240116; t=1761865831; c=relaxed/simple;
+	bh=cZhuNO7QWzS4+SMkxGfliO0rBMVSjnGz40sl2s/wftM=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=UxZ3ut83NUrZZrTFyw/JrOS+dpfA0ZrSVWqRVDCzYfej+ZMqOvAJnpqEzyK3ogX0GxswM+Vpz+3/lguRlc1Wo9KrXvk4oyAaWMd9914iu7SR9LNJyHRCxY0ftVMzvAzhXDjPQei91xC3JIXn8hamVmYQFpjy1UrkrC7CouM1OuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=DyVQKM9A; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761865808; x=1762470608; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GVrBZIo4jViBqFI34xTRu6DdRHmaa8XjkF8JPCjoQvA=;
-        b=veMub3IL6/IzVwVBTVxovKgfQ48ftr9Zb1gFb2xlhnmYqV7gs5wTh/Qkpgd1/MAJqp
-         CinbTODC4ksv2ffWtVGxWpWRYjXJhKlaQuXYSa+VgYzFVcJMV3KSISioCzjfHjbQt6p3
-         nUcb2R3dQfSMN+FzOlPIzs6w1bBknLxmJPlgp4FZhVvhe2ezsYk5fXwNZikM5Nsdkj/9
-         Hss/oy10N/xNwt+RPSKw5XZ6s+JyWVuCfktuU84bx5PJBY6+scLUo7V5XqGy7s7OXZlh
-         CC5xj5s96JqHbCRc4aiHVVQm4jbMXEazmypQrf8CIq9XAFZahwQKpE45ENATZYcBgHL3
-         d+lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761865808; x=1762470608;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GVrBZIo4jViBqFI34xTRu6DdRHmaa8XjkF8JPCjoQvA=;
-        b=N7h/6RCv7BgXuM4LLcqqoxaXXUddVPLcTEYrmxQeP1jbH0rNYqibjEI/w2jiDgB9iq
-         Gccgo9l+xpjP7RlS23JwNBtHgPw5XDM6ilI4MwiQfT6YFr6GJlg07qtmgW+VH790R1lt
-         bu2ver/7y0nG+oUNQ+O1YuUw649YG2tVGP9zal+S+pfiQapTOrvYljsHIPJ3xU88aeQs
-         v0FX/DWTNOX9Y+fg7DudFyE0OH/spb/OPsNqpmxezhVvIjbqz6pMkCNhSxKBkaZkfSUB
-         fqrLPF36Iz+8TAp+/CLmb+6S/7CdDzORTd2dgDvfhE3ovr6EWIQWeTeJObMtHbpZGxj3
-         cetg==
-X-Forwarded-Encrypted: i=1; AJvYcCVN/LWwqQ4t3/2+T3xs+sKNHrSUy98O8r4IYfFT5wHmZnk38D3T2MsjPZFE4d4TlYUtAepg7N2War7ICSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzclh92/8r9sJJ8+GGEUMCU0rlOy8p0pnAhAWQ3ObwyxTEkMqW5
-	pJBFAGDScNRVCaCudP+vTZTxcjOJHKXxSYODtrPk2wR+FwneKZxAKAGsxyYbcFYGfg==
-X-Gm-Gg: ASbGncvOPq0OxyZWcbX/UUYyLw/Yf0KN01I51tzZO3taaZqSBPnAKXEVzl2Kad5iGBY
-	PPM+ZYeISR8barpbvqMX+eTB5fMEXfcKh+QJNQCTctLftZg/s3RWllNvLT3KebgRr4uw5AgHFxG
-	bgtpPWslAetutyOt5hgvXx9nDTUA6MWTjXRGGkyVEIDABZ/RzcHSWYBYjeUISM0duhhA5ISIBm5
-	CxlCxKMRMKX3GXeKsmZ2Tc7XjqutCWHqvoUA4prHfPDh38LAL1rhAWZdEX0YMSY7asiu5Cils4G
-	Q62Ee8EdMq/1/HFYyZKADP37NUuu4xbM7tCIow+G/gNmv2Vu7xSvIUQ9hrFMgaXBX2VR4369G3U
-	FcXEq2glVS36EFKLNeNJxNh2LKPxIRFsu5UUD2mmsvTiYOfYfVyKNfQzroY1wuQKlNC4xuOZI2+
-	Ok3kHMwbTvkw25Nu1481N0uyN0LgcpV3x/6p8DrLTgU0R9WB3KDDgq
-X-Google-Smtp-Source: AGHT+IEM9Vd0HVjov8boWovrq63avSdAuwijp306wSVuatfQyJg281aFDD9T6kwljFFF6SpZOGU8uQ==
-X-Received: by 2002:a17:902:d505:b0:290:c0ed:de42 with SMTP id d9443c01a7336-2951a4dfc4fmr19563065ad.36.1761865807920;
-        Thu, 30 Oct 2025 16:10:07 -0700 (PDT)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699b791sm833815ad.75.2025.10.30.16.10.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 16:10:06 -0700 (PDT)
-Date: Thu, 30 Oct 2025 23:10:02 +0000
-From: David Matlack <dmatlack@google.com>
-To: Jacob Pan <jacob.pan@linux.microsoft.com>
-Cc: Vipin Sharma <vipinsh@google.com>, bhelgaas@google.com,
-	alex.williamson@redhat.com, pasha.tatashin@soleen.com, jgg@ziepe.ca,
-	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
-	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com,
-	parav@nvidia.com, saeedm@nvidia.com, kevin.tian@intel.com,
-	jrhilke@google.com, david@redhat.com, jgowans@amazon.com,
-	dwmw2@infradead.org, epetron@amazon.de, junaids@google.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 06/21] vfio/pci: Accept live update preservation
- request for VFIO cdev
-Message-ID: <aQPwSltoH7rRsnV9@google.com>
-References: <20251018000713.677779-1-vipinsh@google.com>
- <20251018000713.677779-7-vipinsh@google.com>
- <20251027134430.00007e46@linux.microsoft.com>
+	d=codeconstruct.com.au; s=2022a; t=1761865827;
+	bh=88KBlL4xUTV7siG+o+5Td6u+tNx+n4ecg/FuEBRQIzg=;
+	h=Subject:From:To:Cc:Date;
+	b=DyVQKM9AN351thCoS8lCuUYSZbGE3zHkEb1My2e1PTyKyUc4BKNLPTaBen5Uj9+Zx
+	 Tf61VjJJH8VUfWMAmIG+MzBqGRvacQmjxpE3QmZh/OV8GIvjLBnqrJiTaOTaEN9I0x
+	 xnZEdWwRfuF4rHGF9wzEWsGXHdplY/6rh1B/5k+m7Zy6Uw1Rz6zwqFEUArJgWaBGkm
+	 bjY0cjy1YqQcrtQ/C70eCsbvIy7Ddis84NYNxM9VzbWfn1/rsuKvZ+dA1kSiaSrF9O
+	 +MyzJjRDTnDG8HSHgtBAWcK5qSZz02oVJTDU7i/Bu6vhMK3g/m3qjpft6yLlNHpRgS
+	 yomLHRmC3I/gw==
+Received: from [IPv6:2405:6e00:2421:7372:17cf:8b2f:ac7e:ac4d] (unknown [120.20.6.198])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9C2D278C99;
+	Fri, 31 Oct 2025 07:10:26 +0800 (AWST)
+Message-ID: <d2bd7e3e6045ac68875fd220e528c76f4fb2faac.camel@codeconstruct.com.au>
+Subject: [GIT PULL] aspeed: First batch of devicetree changes for 6.19
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: soc <soc@lists.linux.dev>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
+Date: Fri, 31 Oct 2025 09:40:25 +1030
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027134430.00007e46@linux.microsoft.com>
 
-On 2025-10-27 01:44 PM, Jacob Pan wrote:
-> On Fri, 17 Oct 2025 17:06:58 -0700 Vipin Sharma <vipinsh@google.com> wrote:
-> >  static int vfio_pci_liveupdate_retrieve(struct
-> > liveupdate_file_handler *handler, u64 data, struct file **file)
-> >  {
-> > @@ -21,10 +28,17 @@ static int vfio_pci_liveupdate_retrieve(struct
-> > liveupdate_file_handler *handler, static bool
-> > vfio_pci_liveupdate_can_preserve(struct liveupdate_file_handler
-> > *handler, struct file *file) {
-> > -	return -EOPNOTSUPP;
-> > +	struct vfio_device *device = vfio_device_from_file(file);
-> > +
-> > +	if (!device)
-> > +		return false;
-> > +
-> > +	guard(mutex)(&device->dev_set->lock);
-> > +	return vfio_device_cdev_opened(device);
->
-> IIUC, vfio_device_cdev_opened(device) will only return true after
-> vfio_df_ioctl_bind_iommufd(). Where it does:
-> 	device->cdev_opened = true;
-> 
-> Does this imply that devices not bound to an iommufd cannot be
-> preserved?
+Hello SoC maintainers,
 
-Event if being bound to an iommufd is required, it seems wrong to check
-it in can_preserve(), as the device can just be unbound from the iommufd
-before preserve().
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787=
+:
 
-I think can_preserve() just needs to check if this is a VFIO cdev file,
-i.e. vfio_device_from_file() returns non-NULL.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-> 
-> If so, I am confused about your cover letter step #15
-> > 15. It makes usual bind iommufd and attach page table calls.
-> 
-> Does it mean after restoration, we have to bind iommufd again?
+are available in the Git repository at:
 
-This is still being discussed. These are the two options currently:
+  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
+-6.19-devicetree-0
 
- - When userspace retrieves the iommufd from LUO after kexec, the kernel
-   will internally restore all VFIO cdevs and bind them to the iommufd
-   in a single step.
+for you to fetch changes up to 6953afcd81a2cc73784e3dd23faa0a1aaf97441a:
 
- - Userspace will retrieve the iommufd and cdevs from LUO separately,
-   and then bind each cdev to the iommufd like they were before kexec.
+  ARM: dts: aspeed: santabarbara: Add eeprom device node for PRoT module (2=
+025-10-17 16:44:13 +1030)
+
+----------------------------------------------------------------
+First batch of ASPEED Arm devicetree changes for 6.19
+
+Significant changes:
+
+- The IBM Power11 FSI DTSIs have been rearranged to accommodate new systems
+
+New platforms:
+
+- IBM Balcones
+
+  The Balcones system is similar to Bonnell but with a POWER11 processor.
+  Like POWER10, the POWER11 is a dual-chip module, so a dual chip FSI
+  tree is needed.
+
+- Meta Yosemite5
+
+  The Yosemite5 platform provides monitoring of voltages, power,
+  temperatures, and other critical parameters across the motherboard,
+  CXL board, E1.S expansion board, and NIC components.
+
+Updated platforms:
+
+- clemente (Meta): LEDs, shunt resistor configuration
+- santabarbara (Meta): AMD APML, EEPROMs, LEDs, GPIO line names, MCTP for N=
+ICs
+
+There are a scattering of one-off changes and devicetree cleanups for other
+platforms as well.
+
+----------------------------------------------------------------
+Daniel Hsu (1):
+      ARM: dts: aspeed: harma: Add MCTP I2C controller node
+
+Eddie James (4):
+      dt-bindings: arm: aspeed: add IBM Balcones board
+      dt-bindings: arm: aspeed: add IBM Bonnell board
+      ARM: dts: aspeed: Add Balcones system
+      ARM: dts: aspeed: Fix max31785 fan properties
+
+Fred Chen (7):
+      ARM: dts: aspeed: santabarbara: Add blank lines between nodes for rea=
+dability
+      ARM: dts: aspeed: santabarbara: Add sensor support for extension boar=
+ds
+      ARM: dts: aspeed: santabarbara: Enable MCTP for frontend NIC
+      ARM: dts: aspeed: santabarbara: Add bmc_ready_noled Led
+      ARM: dts: aspeed: santabarbara: Add gpio line name
+      ARM: dts: aspeed: santabarbara: Add AMD APML interface support
+      ARM: dts: aspeed: santabarbara: Add eeprom device node for PRoT modul=
+e
+
+Kevin Tung (2):
+      dt-bindings: arm: aspeed: add Meta Yosemite5 board
+      ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
+
+Leo Wang (2):
+      ARM: dts: aspeed: clemente: add shunt-resistor-micro-ohms for LM5066i
+      ARM: dts: aspeed: clemente: Add HDD LED GPIO
+
+Zane Li (1):
+      ARM: dts: aspeed: yosemite4: allocate ramoops for kernel panic
+
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml      |    3 +
+ arch/arm/boot/dts/aspeed/Makefile                             |    2 +
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts     |    9 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts        |    8 +
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarbara.dts |  919 +++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts    |   14 ++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dts    | 1067 +++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-balcones.dts          |  609 +++++=
++++++++++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dts           |    4 -
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts           |    8 -
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts           |   12 -
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dts            |   36 ---
+ arch/arm/boot/dts/aspeed/ibm-power11-dual.dtsi                |  779 +++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/ibm-power11-quad.dtsi                |  769 +----=
+----------------------------------------------------------
+ 14 files changed, 3405 insertions(+), 834 deletions(-)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.=
+dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-balcones.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/ibm-power11-dual.dtsi
+
 
