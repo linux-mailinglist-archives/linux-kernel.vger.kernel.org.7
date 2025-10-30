@@ -1,131 +1,103 @@
-Return-Path: <linux-kernel+bounces-878846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B2AC21993
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:57:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF66C2192D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1631881F6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:56:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACAC74E94F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A16D36CA94;
-	Thu, 30 Oct 2025 17:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XR9NB8fi"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0DC36CA7B;
+	Thu, 30 Oct 2025 17:55:17 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411E736CDE5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E8A365D39;
+	Thu, 30 Oct 2025 17:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846936; cv=none; b=ubw6uzeFXNM/iw3GaYPGGe2mzfWr9dnOZsK6eELi6mbRBhaG6DsKObqCQyafa7nYOyG00B8IgBDqsqflbFm+KDRXUh6nz8rNo79Xn2QxljSQ1QIbh3MRo71uZ1RcsRN1asFJSNbyNW6olL1KLcLYdUmWxX+WErz+NpT3sdG3X/8=
+	t=1761846917; cv=none; b=evVs4EhEBkjaQBrVMaRJbOrtO//nqCgT6BuW69f3Fdw8URtke/1t0z+7Pb4R5pYmudPou79783tUBiqIVUjblCRlIsppFKOBqDAK56+diwjzSa9zPtAWML6mAAQOqB7qwmJAcXw7dP8VFzR7dd3PJDuFCdm6UEiVgzWwRGKwSXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846936; c=relaxed/simple;
-	bh=h/WB+hR/anHyT+SzoBQFwmDv8A8kpm7m3RVwaDTL2qk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KD5xUk8niLrfvQ3AZa8AAJx1h4zXVlNEz8nHxupsRr7sH9Fno4PiBfTqKWZt8JwR0oXpZKumlVpElQkiO2MFrO1ZiR806NxvLNLuZtHCbQVi0X7tKfuMMqsN2k1YE7xuf2np/RR0tzS5pWra7U7EtJcQTCVaneB6ZQf+pqy26xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XR9NB8fi; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so844726f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761846932; x=1762451732; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fpqM7R8t1LjT1e31UVuLTSZ7tEVjNoHsGLOYlh8Q1Lk=;
-        b=XR9NB8fi7Ziaui3V5/Wqg92z4H6KHvGsDgot4efrfCicu4b6E9JG1GunqqicPpbytQ
-         DBUDXRK58bzGbLWo+u51FfhthD7497PQP7KznEHsxfpeQZ2/iSdQAjkqQNScZpjrX6wa
-         oUcmFGGNxhQeu3w2n5Zh1wrpcDl8OR0Hz17wmo0jdxG5br8CMWU21e1CyVaxTE/RYnIb
-         b+SJnM0aO9D1LGztZ4TcBlGmagL5Z5suBfCQIOu2Jk+90Mwr4ZJ6zdH8u++q9rE18OIH
-         T73s4BmFauPBN5nf5kczm7A+DG33vS32inm9lKDZnD1jgWvKIADflChcN0NJqZL4VduA
-         nJXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761846932; x=1762451732;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fpqM7R8t1LjT1e31UVuLTSZ7tEVjNoHsGLOYlh8Q1Lk=;
-        b=eXF8SjjmyoHKvn/ouVGWEHeTQ+lY5pODuIZQgdW8M1gCssEBAUy98rNDNYz57Z74V9
-         p5oXfGsAO4ufwddYsqxUcDrp7Sk7qOY67tRLQ0bzywjy01VisoA1a/qp+3lKs2u+2WjA
-         oqbNkq+/sd/OVSb13s3xKxvB+XwhlqWttLHJuXq21BrOp7VjP3WeriEF+bC40j83PKGU
-         TS6YE7vRr5zVaDvUofsvetFZ+W16Rll4ikLBh4oDBXu+Rhs9KXFhGSUvR+jxKdqujQgG
-         OScjoNymBL46A+07ILXK6HY6twW+0meOdO7PMtlDnN9dAf81+AIgMl0ThpixUtThfxHb
-         Z06Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWa3oq8fmxMA5W2G22NzuUj05+8oV72rFG3UaAp1/6szjEi2Vh1v5KAP9v5JoUaDtKA6HiPiCO6DJWhBNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl+hPX0O7YBuITIRKUDxq2iaMMe+YvHyXSOYMdlO8DwzNUDs+T
-	oZsgdS9yKddjjnvabpMFHQxnAQaKmk9Rh/aEvas9Q4qmPt4QxHZBzoS/
-X-Gm-Gg: ASbGncsrjaY1bht3bbhUEz2L72PRF/7wx6LnYFryHOnlH+3jnC32ORTc4kamu33na8n
-	ZTtbeyMAOqMfPfcmvZ5zyTePDcdJRKRhi0G+a1+v7xNLJIPe9W1ZhVPfv8T7GxBc4U2KrRLetSi
-	mUQaXQ3rOdP2KzvTJkYjQZ472TCoXbMsrk+e6tKUZTfLCXu0rm70xFTzQ48mPHtNTfIBHYdVVlz
-	cgWB9+ApRydDwnocKsSy1qwnTqZcOb3a78axwK/HM68ZeCVQQawOlX4+WgpsbUASVa7pAlXLN2R
-	xRjGG1VqbA56qmIIPaZrpLGgkPoh/NXNbBcY0z6fBWklBZtppmqZDadOOOc7yJmZ7ueVNe7fXwp
-	4c54Kqva9p8tJSReNPNta4gvXcgicJybd/TJznAXXaKxqEjeFD5MYA07f7VQScuuDNhiOhJRvXA
-	PMH2wBYwELf357BhLtShujHrcmJPAmzK7yh5kCxTLGAASAvek48C+v/n6+3MQvdUfi3MzWLfw=
-X-Google-Smtp-Source: AGHT+IFB4CtW/QHwxBewuQQ+kfNYXHph8zhhcP0AJhTDvVbB8Po9WDTizjGc7lFwCMRyRyZ8mFCw8Q==
-X-Received: by 2002:a05:6000:24c3:b0:3e8:ee5d:f31e with SMTP id ffacd0b85a97d-429bd68376cmr479687f8f.25.1761846931811;
-        Thu, 30 Oct 2025 10:55:31 -0700 (PDT)
-Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm33384041f8f.38.2025.10.30.10.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 10:55:31 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 06/13] serial: sh-sci: Use devm_reset_control_array_get_exclusive()
+	s=arc-20240116; t=1761846917; c=relaxed/simple;
+	bh=n03Kkd8B9lkuPGGTD2/aS2js141OYFeGO2LxnTibEvA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W88UfAWvKnxTXS66if50YtNJ36Wx0ZNYcVLNzCCuzatAsM7n5B82VbnIxd00UvXsaFJ/ON5Q/a8GBYmD+W8Sgqc7SVgdDfdpF7Q/fm3rgM1CpcOeOHseSwB02RKuLUnHkUfT29QO26bdKggI6oAw3B0xMqzvheVCryiQ3lI1rD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cyBVw1ddfz6M4qj;
+	Fri, 31 Oct 2025 01:51:20 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id C480F140370;
+	Fri, 31 Oct 2025 01:55:12 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 Oct
+ 2025 17:55:12 +0000
 Date: Thu, 30 Oct 2025 17:55:10 +0000
-Message-ID: <20251030175526.607006-7-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251030175526.607006-1-biju.das.jz@bp.renesas.com>
-References: <20251030175526.607006-1-biju.das.jz@bp.renesas.com>
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Ajith Anandhan <ajithanandhan0406@gmail.com>
+CC: <linux-iio@vger.kernel.org>, <jic23@kernel.org>, <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, <andy@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/3] MAINTAINERS: Add entry for TI ADS1120 ADC
+ driver
+Message-ID: <20251030175510.00005af8@huawei.com>
+In-Reply-To: <20251030163411.236672-4-ajithanandhan0406@gmail.com>
+References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
+	<20251030163411.236672-4-ajithanandhan0406@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Thu, 30 Oct 2025 22:04:11 +0530
+Ajith Anandhan <ajithanandhan0406@gmail.com> wrote:
 
-Replace devm_*_get_exclusive()->devm_*_array_get_exclusive() to support
-existing SoCs along with RZ/G3E as RZ/G3E has 2 resets.
+> Add a new MAINTAINERS entry for the Texas Instruments ADS1120
+> ADC driver and its device tree binding.
+blank line before tag block.
+> Signed-off-by: Ajith Anandhan <ajithanandhan0406@gmail.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change.
----
- drivers/tty/serial/sh-sci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just bring this in along with the code, it doesn't need a separate
+commit.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index e9345f898224..d07424caeeab 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3533,7 +3533,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 
- 	data = of_device_get_match_data(&pdev->dev);
- 
--	rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
-+	rstc = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
- 	if (IS_ERR(rstc))
- 		return ERR_PTR(dev_err_probe(&pdev->dev, PTR_ERR(rstc),
- 					     "failed to get reset ctrl\n"));
--- 
-2.43.0
+Thanks,
+
+Jonathan
+> ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3da2c26a7..1efe88fc9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -25613,6 +25613,13 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/iio/adc/ti,ads1119.yaml
+>  F:	drivers/iio/adc/ti-ads1119.c
+>  
+> +TI ADS1120 ADC DRIVER
+> +M:	Ajith Anandhan <ajithanandhan0406@gmail.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> +F:	drivers/iio/adc/ti-ads1120.c
+> +
+>  TI ADS7924 ADC DRIVER
+>  M:	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+>  L:	linux-iio@vger.kernel.org
 
 
