@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-878027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940ECC1F992
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:39:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BE9C1F9B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07610425D6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:37:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62DF64E98DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD5F351FC2;
-	Thu, 30 Oct 2025 10:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C5F33DEFD;
+	Thu, 30 Oct 2025 10:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aBX0RDbW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v6Mgd5hs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Dipggkwh"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F82341648;
-	Thu, 30 Oct 2025 10:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A0432570D;
+	Thu, 30 Oct 2025 10:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820621; cv=none; b=lq/9qAIySp0P6fZ7vNj4FE2qMzq4KVE/iJqF2Ju/BACROWCWo8rPbTIMFWCQCEGpbnRyfjDQBIc43tcHfqhZ/mfNcl3osQzyfUNBbM8hqeNP/fiIb51cLViJ3Z0DGCV3J9WHDB/pq9UVmfV92b4j9DSHLlEv7nrHYSPfrqKABPw=
+	t=1761820818; cv=none; b=Aofy1vg7tbte5JnOYDW1B/xbemu+wMOk+XeG+it4jMBogHn1Bu+WPDD3k/NiEvFW+GIdon+3nB6MjZVgPbwo7jMRxCVD9epLgAKIbrzqcy5jjoeJJm5V6JC7BYZIxjTlIqOposBz2/gopr1YbXfQduGAk5fQKNAd7KY2bNnhqyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820621; c=relaxed/simple;
-	bh=L8b13vfr/o8PIDJQEKUPohIMgSikN01SUV6G6Aj6AGs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=iKwmYbfdAPmFYyDPSUIBLmBdn+Bw3X9wtO90pdnQ536MJgs363Izapq5soyX83fz3229s2619IzbIM6xhEXkEwH2rNlb1T7VXr/wiyR5aLhSy82OQrpEF09Q9x+cc2X4ewaUgEfqeYfuYSRmzolLAHQnwJKTr1y0U2XypEpfyBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aBX0RDbW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v6Mgd5hs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 30 Oct 2025 10:36:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761820617;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QlmTeIY1qN9QihaueXPyguFmOe8rD/j9b336BhDLo3Q=;
-	b=aBX0RDbWIVHTpC6b18FqI6HkC74+4asDiE6SESEBMjlRHMHim4zjTvmG3/ntbKieuIKg1s
-	C6Mr7Psqq1/TykYpWU4nHyMVVpLdkWNtgd8l/eYY/nm5Ohrz7PD+YjmSdwpKjOs1MuB7XH
-	68kbNEoPKQU69bRKtLNYGtyy0TQgYuG2ALrmgi99iuXralFLVUq6hg0NfC97h/DGgJXwp3
-	y0fCHjdwtQO8FNlKuufeeYLezHOqvOFb++S5OvozUEGKl9fkzVPfcekdbmT4O8F2JZ3zDW
-	/bKEoXFZ+a0UWPlB2hNW3DaJuhtAES/sq7nTxQ+cOmDQ1jT/iE/Y/cBKKYDwhg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761820617;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QlmTeIY1qN9QihaueXPyguFmOe8rD/j9b336BhDLo3Q=;
-	b=v6Mgd5hsmERvLWHK+ftwWeYDoDGqVgriCgNhH/TbpJyyU9O4FUyW5p4eDcjgk9fh+AtsDH
-	s3b4isLv1ZiEM1CA==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/CPU/AMD: Extend Zen6 model range
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251029123056.19987-1-bp@kernel.org>
-References: <20251029123056.19987-1-bp@kernel.org>
+	s=arc-20240116; t=1761820818; c=relaxed/simple;
+	bh=8Vzuw1iAvx1zgZghcv2owGbdLTGXx8dqKeXVGD0+4B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5yYUbF9fOj8qkKQSLmwYFigAmnnvgxzjt7wHETPcflT9wkkxMVPc9+uS/FtJBG4MGKuklQkf2ffQULGjLwtod8hbjLOBcN/Yn52LI4TeETHFLxsCZn1VkETDn5kUP2JYZmNBwQvlqLMQJHpLDCkK50zkhWUzHGt5ZDVjm9HYFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Dipggkwh; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RCywyWtPG7xhPz4mDJsFONHwjktY6zCv82HEx1Rjk2s=; b=DipggkwhifOTGFbt6Tw5h2OBCG
+	ShvA3eH+PJz5SAosWXlC6MzBX0ny72o8hYDYFpCd5ZK9t17vVAL7cnGRxOkUqXQj27Sp9XpKs3uvC
+	O3SEkV74W7Luyvz+J6dpAqBP4jxEu1R5EjfqvFHoejfVCpjfRI2hlEMc0QFR7Bf8nFdQke89adTkV
+	nu5PTgG+SEC2sNHaPYTG4pjLAhZCujDjhj3rGYHxFH3kG4/9go3ViQTBk5j7F2PcqHJsmjq2aFvI/
+	5yFSXd+d92/XAiED1/xTe2pTex1tL8h+M0oGuwIGJYAt7YVzmXUJStuz35ynhA7hNd5+2rO0ZQiEc
+	8APENvFA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34098)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vEQ4g-000000005ZB-0ady;
+	Thu, 30 Oct 2025 10:40:10 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vEQ4e-000000008Oe-2a4n;
+	Thu, 30 Oct 2025 10:40:08 +0000
+Date: Thu, 30 Oct 2025 10:40:08 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Krebs, Olaf" <Olaf.Krebs@emh-metering.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Fix IMX PWM period setting
+Message-ID: <aQNAiDVKahkIrLYA@shell.armlinux.org.uk>
+References: <20251030084727.4098222-1-user@jenkins>
+ <c26fde7dff3a41ff9f7e6c97e2a31801@emh-metering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176182061649.2601451.8878178575772709358.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c26fde7dff3a41ff9f7e6c97e2a31801@emh-metering.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, Oct 30, 2025 at 08:51:20AM +0000, Krebs, Olaf wrote:
+> From: Olaf krebs <olaf.krebs@emh-metering.com>
+> 
+> We use 3 PWM channels to control an RGB LED. Without this patch we get an error:
 
-Commit-ID:     847ebc4476714f81d7dea73e5ea69448d7fe9d3a
-Gitweb:        https://git.kernel.org/tip/847ebc4476714f81d7dea73e5ea69448d7f=
-e9d3a
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Wed, 29 Oct 2025 12:34:31 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 30 Oct 2025 11:33:55 +01:00
+Not build-tested.
 
-x86/CPU/AMD: Extend Zen6 model range
+> -		if (tpm->user_count > 1)
+> +		if ((tpm->user_count > 1) && (tmp->real_period != 0))
 
-Add some more Zen6 models.
+"tmp" vs "tpm". As there's no variable called "tmp" in this function...
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://patch.msgid.link/20251029123056.19987-1-bp@kernel.org
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index bc29be6..8e36964 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -516,7 +516,7 @@ static void bsp_init_amd(struct cpuinfo_x86 *c)
- 			setup_force_cpu_cap(X86_FEATURE_ZEN5);
- 			break;
- 		case 0x50 ... 0x5f:
--		case 0x90 ... 0xaf:
-+		case 0x80 ... 0xaf:
- 		case 0xc0 ... 0xcf:
- 			setup_force_cpu_cap(X86_FEATURE_ZEN6);
- 			break;
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
