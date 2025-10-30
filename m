@@ -1,114 +1,83 @@
-Return-Path: <linux-kernel+bounces-877725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FFEC1EDDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:57:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46D9C1EDDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:57:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 945DE1892AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:57:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77E1734BCB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966F338586;
-	Thu, 30 Oct 2025 07:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AA2338911;
+	Thu, 30 Oct 2025 07:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pBsx3SMj"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMZrFydo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36B115CD74;
-	Thu, 30 Oct 2025 07:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1453370E8;
+	Thu, 30 Oct 2025 07:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811009; cv=none; b=mMGhrULSjMIS3Kifgq1MNoTxj9V17QLSa3j7tQfhByaeqQwPQ/whzLyG9r8ftND91rj7EtEDSYAIhVDxxtRXChho6mERV7l08rLX7oXSCcfT4IEVgfqo67CnjX6/1sCRsep3l5dslCfTQmoEJVEg6HzxlvV3isXhethorlAEXZU=
+	t=1761811014; cv=none; b=N7pS0QKwVLEs0fDxUK3ecVD2A4xQnaWDFaDaxn3g5Gr6DqrMXXOoOfXwaPJRNNEzEH38BBjpetX0VpUWwa/fRGCEpvpcI4H0eGlgX3Ud6z95F7Z/Pc/K5hjojgFg7ywFX6Ife5zwdD85aEFXYRjT+CPNpcW6YYSuT4sSTtIr+7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761811009; c=relaxed/simple;
-	bh=IiJIHtx4LNQ3qF/KRvZQ+MHK5HTeIwkOeW1dOjSZDFs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cODaZ6fNsh8cTuG9kmAFfiOxWW597NhOjWQqd6zR1a9QG0vTBPSBtAStxbKBV64kt+aBxuiLw493y23SCY+hoGpLr73y/VDJ+f3yXltiUwO7YUGBa8G+TFt3gXluHAl775/h+/6TScd4YQ5StEVowHvrdkxUrHdz2En34pkgZh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pBsx3SMj; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761811004;
-	bh=IiJIHtx4LNQ3qF/KRvZQ+MHK5HTeIwkOeW1dOjSZDFs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=pBsx3SMjSEC7MviEGO95wmcJHfj/QHCzMV5mPbg2jTiLtL3KTJMqot4SkEM95Nucu
-	 nzqrx6dmA10b9IV7XzYc5Z3YuRdvcOdn761vEoxBfEZ76m4XxuuOwd+qs2piGTBj+B
-	 MBcMHBUERxTAYltU/EgekrkEY/C1Tvn+daLNFvgSNhZ/nvXX1CRYWPiKamWeE3YXdk
-	 fKFAyQGquPfQEzCatN9BlBSWxVblZ6ZvdKrRa9EHkE4gprzEMBfmlj7E/wLCZeEe5t
-	 omEWFcI61+gXYPj+S2U1YKFMXmq5ipY2Q+eOVv9SvsYCBNef+NRb9V0FzmYxFWJCTf
-	 xFafOHvGCw5kg==
-Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 250C517E0CF8;
-	Thu, 30 Oct 2025 08:56:44 +0100 (CET)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Thu, 30 Oct 2025 08:56:29 +0100
-Subject: [PATCH] dt-bindings: i2c: i2c-mt65xx: Add compatible for MT8189
- SoC
+	s=arc-20240116; t=1761811014; c=relaxed/simple;
+	bh=zjYbPecjjnmHzNsJou3TxkfUOdtr4RaVDpxS/ktQUPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IADbz3Ljf69TuYqJDLqZwBEtACc8XXd4aTPdhQ4B1W8xM9BN8p1xphuv0nUHBAbZSSoKG55wY/W9CgTTla8JmQl6NawMkB7Fc5NWvhCWDbB/RhZWdryGvAfe0lDDkdfkmwIlFEYZWmEo1eICfBX0tpytiF+Aey2qBbAantyVvaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMZrFydo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6C0C4CEF1;
+	Thu, 30 Oct 2025 07:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761811012;
+	bh=zjYbPecjjnmHzNsJou3TxkfUOdtr4RaVDpxS/ktQUPI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HMZrFydoWFCzeeBoZYYyrbQuU/ZwnPFlZo1prFAU+rnGmfne8GEFQlSKmdNGWFfVz
+	 d14HZ4JVCXa6fkFvKlJyRYGlYi4+U6NZFh006V8SgokNBubwoGInucX/IwNAoJiMqQ
+	 VloIHNpywAwQabJH3ZTHpzjqr+fr+fn0C2kBSpuMFGTKyWShVfV0tV5FhwLFYx/ku6
+	 o3rpS9eD9OF11MccEjL54AQIi6WqSl/8v6u0STM2hZhiSQEuEq/+Ye55KNniPa81xf
+	 xZDun5ru20PvNS4mZeDMfeYaFaE0U4CkfnuJ4ViXCafy3VzUP8iN1KPPu4CBsfxk2T
+	 RFINC1L9RmHsg==
+Date: Thu, 30 Oct 2025 08:56:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mahesh Rao <mahesh.rao@altera.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: firmware: Add Agilex5 SVC compatible
+ string
+Message-ID: <20251030-poetic-ant-of-bloom-0ee7fb@kuoka>
+References: <cover.1761648711.git.khairul.anuar.romli@altera.com>
+ <71503d442d66054c023ec25ae21838c0939c72b4.1761648711.git.khairul.anuar.romli@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-mt8189-dt-bindings-i2c-v1-1-5b60914c6453@collabora.com>
-X-B4-Tracking: v=1; b=H4sIACwaA2kC/yWNQQ7CIBBFr0Jm7SRAbYRexXRBYayzgCqgadL07
- hJZvpf89w8olJkKTOKATF8uvKUG6iLAP11aCTk0Bi31qKS2GKtRxmKouHAKnNaCrD3egjFXGmw
- YXYA2fmV68P4P3+fOmd6f1q9dwuIKod9i5DqJRHvF/jFImM/zB9YNynCZAAAA
-X-Change-ID: 20251029-mt8189-dt-bindings-i2c-7d884e39d5ad
-To: Qii Wang <qii.wang@mediatek.com>, Andi Shyti <andi.shyti@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, linux-i2c@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761811004; l=1109;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=IiJIHtx4LNQ3qF/KRvZQ+MHK5HTeIwkOeW1dOjSZDFs=;
- b=XbTvX83Kx4NFoKuoYVDYvyO2jrZ+6lSryjDVRAiL9yZSEGCjOm1sh87rkoRpIj55MypbtBG07
- wXWsB68KKBTBx2/9vta16iPk7IiYriiM8xfF5JWu81zhBvdx+jOC9xn
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <71503d442d66054c023ec25ae21838c0939c72b4.1761648711.git.khairul.anuar.romli@altera.com>
 
-Add compatible string for MT8189 SoC.
-Its multiple I2C controller instances are compatible with the ones
-found in the MT8188 SoC.
+On Thu, Oct 30, 2025 at 11:30:07AM +0800, Khairul Anuar Romli wrote:
+> Enable support for the Agilex5 SoC in the Stratix10 Service Layer (SVC) by
+> adding the new compatible string "intel,agilex5-svc" to the device tree
+> bindings.
+> 
+> This allows distinguishing Agilex5 from earlier SoC generations, as it
+> uses a different mechanism for handling reserved memory regions.
+> 
+> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+> ---
+> Changes in v2:
+> 	- Reprase commit message to exclude iommu
 
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml b/Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml
-index 3562ce0c0f7e4889d34410a9d32e1c8e6ddaae0a..ecd5783f001b3e1c2a29aa6575141093ead4e6a2 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mt65xx.yaml
-@@ -54,6 +54,7 @@ properties:
-           - enum:
-               - mediatek,mt6878-i2c
-               - mediatek,mt6991-i2c
-+              - mediatek,mt8189-i2c
-               - mediatek,mt8196-i2c
-           - const: mediatek,mt8188-i2c
-       - items:
-
----
-base-commit: d78b0fee454c25d292fb6343253eca06d7634fd9
-change-id: 20251029-mt8189-dt-bindings-i2c-7d884e39d5ad
+Last time you said there is a iommu, so please post complete bindings.
+See also writing-bindings doc.
 
 Best regards,
--- 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Krzysztof
 
 
