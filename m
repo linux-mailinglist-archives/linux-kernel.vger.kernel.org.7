@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-878288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E273C202D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:11:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC56C202FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 520BF1881E55
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:12:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E96D44E2B6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4002A35471E;
-	Thu, 30 Oct 2025 13:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76562354AF5;
+	Thu, 30 Oct 2025 13:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ABYraAcS";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Cf4qAOqf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R8Xdn32Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001E62D4B57
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7C633F38A;
+	Thu, 30 Oct 2025 13:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761829908; cv=none; b=mDDsAO/g2oDn9Utb3s2lM/6CDU1UmwE3+978tdxaEAqAKZjnOFfqOHKn3L/4cWPIBENxGuDt0z0X2zVCgWbDUI8vmFcmwKHWaIWPG5p8d6d/Z9ZJjDq12ENeRFAiMiuIL8XZcBvn3txJNCcnrI24vnskFwCvusobgcv9U9OLjAM=
+	t=1761830054; cv=none; b=UEPuuoUR4Y+CUyMWVKCbdC+NL//cPhkL6zREbDnPI4BIaOGJ8k6Nbc5gMNfKPVMVwrmHcphewwXm7Q33ubxUTPkkICLCBCPNzo3JOSgGeX44RT3sQMVjPdgNUUT262u1bLlgkk9+wLcpd5nypttCgoDjJljJkORlStD2CMivRlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761829908; c=relaxed/simple;
-	bh=CTON+1YiSNLXW7O3tYfA8KU1jBCvhgFdVi4tIrcfgMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzUceChgGs6oEi2SnJDHY7LKrW9v5s3gSGeu/cUJ+DtR6IjPLu8pPRuRFn1XjztD4tuSqOeLPEjZIURiMXQWU+7UnlrxNh0b7UWP50AdiDzys7f5hMDQIc2qaFGNDuzi9LsqAHNVXUq4QH4Ek/a1S1uGk46MasJWNVLABaSJ4gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ABYraAcS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Cf4qAOqf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59UCbFiB2623042
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:11:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Fe6ZqXuF7BFQDpJST8BTWNx753y2EUmzRxkdcWX3P94=; b=ABYraAcSnQ7IpmMR
-	PlP8rkb2a4Scju+jkm+iEuC3RJT5zEPpOVe+zas8wKWI7HgiK8CG+lqj0fOS5Z8M
-	FvV1iEE4v4DSYvNygXNqdcnSvJwol3pf0wcYV1K2iFkWfo42VHLhJdnLPtJXz2gQ
-	3SemBoT6z2YW0CcIUCtaXMhXI8SN/i0UqPqfYffzOkEDvw6RBGX+Xr96gi8r9C15
-	p0SOWS4wzV7KmhTreWLj8yIMUtsxXLan+SwEJ4qSqa1HNFyhYvkC35xZvhFsMOal
-	SwlBVE/LLBwZlAorhswkOvXjpBBs0nAiKNUeYj1LN0fil+8hOxkqE6+y2WqNacgq
-	tO8uDw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a41fxhbxq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:11:45 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b6cf1b799dcso756437a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761829905; x=1762434705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fe6ZqXuF7BFQDpJST8BTWNx753y2EUmzRxkdcWX3P94=;
-        b=Cf4qAOqfjCnfoClVSZYGf78l2OLrL1Tsm5xHU0VcPpuWunzr7yhlSYlbfZD+E6PwiQ
-         MpWvthBLNtU7cVTeq3U89WLmEVOLXTXZizXRsSmr1qMv9vuCQI0ebUarBNAEE84qn6tn
-         KU6pWWALgd3gTVL0Hux5CShXopqz9T69iw0gwU5GsQHGPx2C1zkbTIjzkm7TOb4ceMdj
-         i7FEm4B4zpbfFwbn6eGDv11cU5T4NoOcCUXGzRqNr1r9E5JlQiThKNpuqEHBU6jdZ8Me
-         BBXi0azVsrIFhSo+54uIKv31sPVxagRPMuqHtpxXxUOa3dk4EPlVF+dCWepwJnpyuYSA
-         Sv2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761829905; x=1762434705;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fe6ZqXuF7BFQDpJST8BTWNx753y2EUmzRxkdcWX3P94=;
-        b=UnhGfp6j3R/XOGam4vcGOzRUbsWrlwzt7hi74kN6D01kVkKEfat9vI2edOGjR/F8Y9
-         jh3kwRUhUjrjcIY5T8eSWOaCmoq/uJHEdTeybEXWMnIymdreT0Eo2hEKJPHjpoptMR56
-         osCZbecMfrwPz8xbLPNdAXOIMGsUCQ/eRVUAHi+/kyJ/oDxAwfGUWTVIfFtXRFuHb35J
-         47PhY/uhc+OWUqZ1GpRPKfwiFZs5EVA6TM+FtwGOzgJ2k+pxCtpVi3f16Fk/F54o7nXE
-         SzFETiodL/3O8Ghy3+rm3FaAWyHq28kfpN+ojR8f8iD6jbZ9LEagll/czY+Q2YsXrnCa
-         Sq/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXt4766RxNKeV6ZN6IID/4K0JjCj0vuWbgkELoSqdE/RF6AurYldCt0FxawoaloL7GKdAI/0vt+PK+urkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6DgQEiZkGWAW01gL6wA9iziYcdC1aP12QMyWYOY5yNEIrroNe
-	1F487gd9h5C9TaoHQK4GoPH7fMRhZEBvUZZNe61UZPkZ3tx0kqWHn1b6LPmuFm1RMHbVsmAwcDX
-	VILEc+AdHh5tNhvkXBJuyT/kYWvKtuihOgCLeES2PkapHGAITK++86oiP5xMEdjEwBds=
-X-Gm-Gg: ASbGncuv8vMWBQlzkgQidnx8NfR/CPc7B4Nh1lhVgwoza4w3f3r4PCVBVWwQ09v0a/U
-	5lu0zuc/E953eVDwTjQumQpQ9wceh0SEiCoqBStcT1O1x/vHO4rApSt19YzSC2tCgsc0jCQhtpt
-	BLWrVHiuR3CIq1S0CZoav4XaAXs63K7pPoNl710VhBNA21t9c3F1rTb1kdhPxeSPgeykh0k7Y8z
-	Va5et1kNrvBmr4m3J+Laz8caM0iKjCT6u3dyUjR8yjvM8xUZK4g3AosYV0eisjrrM2Et+OV7kCK
-	oBxhmvNUv0rH2mYwFBk/zMaheYB554Ue0V2CD2OYFaK2YYIGHYVZq1yTLqfrihQpXqskbv1EL47
-	mQGB6Bf8UQSQuJMS9dvPBxSbcADpLfdr7r8fYsawV5I78r+IJtPwoOwRZq3E9mKTUpuu2jA==
-X-Received: by 2002:a05:6300:2189:b0:2b6:3182:be1e with SMTP id adf61e73a8af0-34784e363f0mr4199126637.12.1761829904633;
-        Thu, 30 Oct 2025 06:11:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYo+sTstYK/heFB9PDCfOnBRUTwhY5YthFbAsH/cpYV6rgtf1ia/tw3RjvmsxlIS5v4slqcg==
-X-Received: by 2002:a05:6300:2189:b0:2b6:3182:be1e with SMTP id adf61e73a8af0-34784e363f0mr4198740637.12.1761829900455;
-        Thu, 30 Oct 2025 06:11:40 -0700 (PDT)
-Received: from [10.133.33.41] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a41408757csm18627442b3a.59.2025.10.30.06.11.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 06:11:40 -0700 (PDT)
-Message-ID: <83d8d2bb-767a-4dd6-8e1b-de96164cad4c@oss.qualcomm.com>
-Date: Thu, 30 Oct 2025 21:11:34 +0800
+	s=arc-20240116; t=1761830054; c=relaxed/simple;
+	bh=vgYy0YR7cxPz/F9MMecj8OAQXS2Eto8/k7VHrXsHgkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZ9rmERyLa0Qt9MtW79VpxbY7yp8B8ryYP8Iv0GSKmroCR6OGf336j07SpxqesbG+xbiTYx5pfrNcEVc9BHQ0nb5DXQh6kVdll/FllysuI32PZvZ3s1dedhxFz4ndLYCo/cVFrlAIitxawj7bpUC02cOlG2Xm6Hxway6OsyQqR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R8Xdn32Q; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761830053; x=1793366053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vgYy0YR7cxPz/F9MMecj8OAQXS2Eto8/k7VHrXsHgkk=;
+  b=R8Xdn32Q7aYMBnOzmUaaTFnGesONoyxohLjpPjBiL2v95cztLrnFz1Cy
+   oUktrKB2E8GKwYnwYoWyTYHnOV878S+n5KAR9+DlUR3KaM/6ZGeUCUQmz
+   u4PjGaJOMGOyoUjrm+13X+x3v8ZUnc7RwXdVAUUCc5nMk8QNRbwGYN4R7
+   w4EqSJe6vevX7d3AnYYrYl3estUnkUCfuAvHeqliitWo90g8WN/k5T2DZ
+   /TpxAbxQb+YxTcQMDkSn27NdomqSEq6ftDlWHJ3kQpsk548QQOgdpKBvo
+   bzaXBfhD/vI0dF769Sh7ZoG2dT62fV/RgXgcF8oq0OcN4wCidN4SRoqD0
+   g==;
+X-CSE-ConnectionGUID: ZZSO5RAtSbGQ9fRFvjOJnA==
+X-CSE-MsgGUID: wqw4RIYqTbiwdbuPnutv1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="81598766"
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="81598766"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 06:14:13 -0700
+X-CSE-ConnectionGUID: 3BWR6up0RKK7QmzhDHseXg==
+X-CSE-MsgGUID: 1Hep8LgGReGevykNIjiKfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="186045472"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 30 Oct 2025 06:14:10 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vESTb-000M0S-1B;
+	Thu, 30 Oct 2025 13:14:07 +0000
+Date: Thu, 30 Oct 2025 21:13:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org, pfalcato@suse.de,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+Message-ID: <202510302004.OdLRz1Wy-lkp@intel.com>
+References: <20251030105242.801528-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mei: bus: Add newline to sysfs attribute outputs
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: alexander.usyskin@intel.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        zhongqiu.han@oss.qualcomm.com
-References: <20251030123000.1701700-1-zhongqiu.han@oss.qualcomm.com>
- <2025103052-taking-shredding-c77a@gregkh>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <2025103052-taking-shredding-c77a@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: oLPOgdKWaasm4kFfaI1VDpbxP9Yc3IFz
-X-Authority-Analysis: v=2.4 cv=UJrQ3Sfy c=1 sm=1 tr=0 ts=69036411 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=r73D0LNGBsUp-UDSsYAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: oLPOgdKWaasm4kFfaI1VDpbxP9Yc3IFz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDEwNyBTYWx0ZWRfXxLwy0dkJ4fAh
- 2AnfPVknJ/Xq4xFD6KwC4vwLSSRmF6QoDQAPHwxdM2MMeTnLx49gh6DqFoVcjwCfienwX/hL5Zk
- oKlkq4Vdsz2nDannTtLfQI52z0L7LEkam4VojRXunr8dgt4b9F+DMLUk6Y5meCo5/6ljQywWYoA
- 41THE6zyqhAAVkGH3XuTY/Rew+Vo31pVwUleBKktuelAFA4RWwIoYvJXvg8tlvW7+iMibLNHFuR
- OQKjqjWSpJsv3zeuOCOeAP2doEaEEpBghXmiG8YD+XNkZhspZhnVWHYcpz2sXrM+2W6Z8cs/9Go
- crkiSHXBXbi2C2Kmjn3duRF8YHtYA0SVQ4eMYlt6D4wumq75Ce73YtE1hwO8EgtyHR15rSt3RFO
- 8aPZ5MkibLBjx+kX5xmv7wtxf87STw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_04,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510300107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030105242.801528-1-mjguzik@gmail.com>
 
-On 10/30/2025 8:32 PM, Greg KH wrote:
-> On Thu, Oct 30, 2025 at 08:30:00PM +0800, Zhongqiu Han wrote:
->> Append newline characters to sysfs_emit() outputs in func max_conn_show(),
->> fixed_show(), and vtag_show(). This aligns with common kernel conventions
->> and improves readability for userspace tools that expect
->> newline-terminated values.
-> 
-> What userspace tool reads these values today?  Will this user/kernel api
-> break them?  How was this tested?
-> 
-> thanks,
-> 
-> greg k-h
+Hi Mateusz,
 
-Hi Greg,
-Thanks for your review~
+kernel test robot noticed the following build errors:
 
-Apologies for the confusion in the commit message — there isn't
-actually a userspace tool that depends on the newline in this case. I
-just made the change to follow common sysfs formatting practices and
-improve consistency.
+[auto build test ERROR on arnd-asm-generic/master]
+[also build test ERROR on linus/master brauner-vfs/vfs.all linux/master v6.18-rc3 next-20251030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If you'd prefer the patch to be dropped or revised, I will proceed
-accordingly.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-hide-names_cachep-behind-runtime-access-machinery/20251030-185523
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251030105242.801528-1-mjguzik%40gmail.com
+patch subject: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20251030/202510302004.OdLRz1Wy-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510302004.OdLRz1Wy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510302004.OdLRz1Wy-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/riscv/include/asm/runtime-const.h:7,
+                    from include/linux/fs.h:53,
+                    from include/linux/huge_mm.h:7,
+                    from include/linux/mm.h:1016,
+                    from arch/riscv/kernel/asm-offsets.c:8:
+   arch/riscv/include/asm/cacheflush.h: In function 'flush_cache_vmap':
+>> arch/riscv/include/asm/cacheflush.h:49:13: error: implicit declaration of function 'is_vmalloc_or_module_addr' [-Wimplicit-function-declaration]
+      49 |         if (is_vmalloc_or_module_addr((void *)start)) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/compat.h:18,
+                    from arch/riscv/include/asm/elf.h:12,
+                    from include/linux/elf.h:6,
+                    from include/linux/module.h:20,
+                    from include/linux/device/driver.h:21,
+                    from include/linux/device.h:32,
+                    from include/linux/node.h:18,
+                    from include/linux/memory.h:19,
+                    from arch/riscv/include/asm/runtime-const.h:9:
+   include/uapi/linux/aio_abi.h: At top level:
+>> include/uapi/linux/aio_abi.h:79:9: error: unknown type name '__kernel_rwf_t'; did you mean '__kernel_off_t'?
+      79 |         __kernel_rwf_t aio_rw_flags;    /* RWF_* flags */
+         |         ^~~~~~~~~~~~~~
+         |         __kernel_off_t
+   make[3]: *** [scripts/Makefile.build:182: arch/riscv/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1282: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +/is_vmalloc_or_module_addr +49 arch/riscv/include/asm/cacheflush.h
+
+08f051eda33b51 Andrew Waterman 2017-10-25  42  
+7e3811521dc393 Alexandre Ghiti 2023-07-25  43  #ifdef CONFIG_64BIT
+503638e0babf36 Alexandre Ghiti 2024-07-17  44  extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+503638e0babf36 Alexandre Ghiti 2024-07-17  45  extern char _end[];
+503638e0babf36 Alexandre Ghiti 2024-07-17  46  #define flush_cache_vmap flush_cache_vmap
+503638e0babf36 Alexandre Ghiti 2024-07-17  47  static inline void flush_cache_vmap(unsigned long start, unsigned long end)
+503638e0babf36 Alexandre Ghiti 2024-07-17  48  {
+503638e0babf36 Alexandre Ghiti 2024-07-17 @49  	if (is_vmalloc_or_module_addr((void *)start)) {
+503638e0babf36 Alexandre Ghiti 2024-07-17  50  		int i;
+503638e0babf36 Alexandre Ghiti 2024-07-17  51  
+503638e0babf36 Alexandre Ghiti 2024-07-17  52  		/*
+503638e0babf36 Alexandre Ghiti 2024-07-17  53  		 * We don't care if concurrently a cpu resets this value since
+503638e0babf36 Alexandre Ghiti 2024-07-17  54  		 * the only place this can happen is in handle_exception() where
+503638e0babf36 Alexandre Ghiti 2024-07-17  55  		 * an sfence.vma is emitted.
+503638e0babf36 Alexandre Ghiti 2024-07-17  56  		 */
+503638e0babf36 Alexandre Ghiti 2024-07-17  57  		for (i = 0; i < ARRAY_SIZE(new_vmalloc); ++i)
+503638e0babf36 Alexandre Ghiti 2024-07-17  58  			new_vmalloc[i] = -1ULL;
+503638e0babf36 Alexandre Ghiti 2024-07-17  59  	}
+503638e0babf36 Alexandre Ghiti 2024-07-17  60  }
+7a92fc8b4d2068 Alexandre Ghiti 2023-12-12  61  #define flush_cache_vmap_early(start, end)	local_flush_tlb_kernel_range(start, end)
+7e3811521dc393 Alexandre Ghiti 2023-07-25  62  #endif
+7e3811521dc393 Alexandre Ghiti 2023-07-25  63  
 
 -- 
-Thx and BRs,
-Zhongqiu Han
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
