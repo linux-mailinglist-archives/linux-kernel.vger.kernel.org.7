@@ -1,285 +1,170 @@
-Return-Path: <linux-kernel+bounces-877731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C6EC1EE2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DA6C1EE2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:00:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DB61896980
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95EFC1895A6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB0033B6C8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C592433B6D2;
 	Thu, 30 Oct 2025 07:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdMfSwb4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IWL1+ANl"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49F2338586;
-	Thu, 30 Oct 2025 07:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125A5334C34
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811162; cv=none; b=tfrsZLyrmMFqMQV2uNLsPG4AlxmKHcAUcNOO/6ioRDZIE19Dkdf9CA1zl8SQhz2UeY4YcpOxlaltnu5GUHgGAsgA4aPGHFEqb1FUN84zgPWkxLKLWb16kGtO8fFoFwT9dcOGXNCEe46Rhs23M/H+D4WRVdXeloNyee1g8lgvXyU=
+	t=1761811162; cv=none; b=JHN1BdYjT9pTIYyagRpbis5SaFwxESrCBuBNesnL72/Qbt0l7cMbvOMH5z3U1o1ycz+RgnPtKjagKu08GWpOXbKjQ3KCdQWrye20uLPz2FQUJN9hFEX/iTw2sXyYmf3d/Ec2Ny1zi/L/f09nDHS/ts4p4wwWKSdv1ImEuWuuZ2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761811162; c=relaxed/simple;
-	bh=rUyecgTwsqCvUufit3wBcxnKv3nqT/whCCCo67e/TwM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jkgnBO9GwBe8qw+g/MfVdJfOtTTvFbLXQvdLrIhn2Ti0peBy+YnVwNbn4UgnI9NnjIPbaeQSIl8MVf/UtVonZM8AtrfEfdAYF7pLSHa03cOCFIEj9+0kcgsA3Od3m35JBj5nCUfknFZO+om/2hbkb3MAGPqsIcEBnduGY1jGpVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdMfSwb4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 780CBC113D0;
-	Thu, 30 Oct 2025 07:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761811162;
-	bh=rUyecgTwsqCvUufit3wBcxnKv3nqT/whCCCo67e/TwM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RdMfSwb4EZR5TXsRsiU9S8DUIsFnumKaSK7D/MjrQezq61SD0FgcpfCFj3NoBF8Z2
-	 8JCB3xkfwZuDlloHUSCgr2Ps4Nb/blcO71lqyZ/ikJAxijgnrG9YJII1OlOOXm5XBA
-	 8yURitkrFNayNNRGES5HDXw8EPjOzXKnC7RiLImJX+zDNSw+gMbA1VyaDN5YFeFTDM
-	 s0aC65XUagt5SPHMCRZ/UzhS3EfxIbR3/SsYNEHNaGqSm55yazk56KuCKSO1sXWqAE
-	 j1JAM6Ch6wBLC+9IAIO9FwPdC2h+CNQCwag+Cu2s57Xq7b0wPRrWCsVqhTuHnVhanP
-	 yFC3J98122MEw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671EACCF9FA;
-	Thu, 30 Oct 2025 07:59:22 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Thu, 30 Oct 2025 08:59:15 +0100
-Subject: [PATCH v8 4/4] arm64: dts: qcom: msm8939: Add camss and cci
+	bh=p9Kbtdf4LrBZJvlhGyrQ8xwNEm/z9oCOyc3wRrZl5os=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DzqLK9mPgYWHelQptoRhACUVuOYZPpgkIZD2+ioU76/elkLOC2jJWcIaNSzwXI8YUhIF4TgszI7pFF/8z9DKMIhZ2EMCElBRBkFCtPOnHVmstB6MaXaK5sstqQ1nw672aHYya3g3QUw+Q891EeCZ+UWQkbWycFpLr6uaIIrEQcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IWL1+ANl; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4270a072a0bso109670f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761811158; x=1762415958; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IIoxsoXYWqm4Xf1ajsdITMeQ3bdYTIRud5Xrl/r9fQ4=;
+        b=IWL1+ANl5AoWxTOtEMKOz9aYdt3IKKVF3chHbxGI5kGBpFN8jX1lrRTy2jfI0/yJJa
+         fEkZPFXg4SJ1IWNWGVAtOHayOt75AN/S5YtVSU3ahEQjWtbpCFbKPmFl+DY+9/B8LvWW
+         DfaF+j1aBaVWXVpPhCvQXyPqa79stgVubjkGRhFbutLthSa2BvjzVZRJRafvRBth24R8
+         1U9L2uuJEtQ3g0TRb6bOAeWfUtPrcAAtJotaa6ZoQO8lZAXxBIkWyTqIkOJZZhFricxC
+         DKMi6GxtuVAcdTRbiwO93WTykNCka2jVkGUsMhsbjvuokgiPqPWOIRXkBerGMK+cQGiX
+         B0ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761811158; x=1762415958;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IIoxsoXYWqm4Xf1ajsdITMeQ3bdYTIRud5Xrl/r9fQ4=;
+        b=P1pjn2hf+hKscez1NH7yGS7Gi8LjjuIMXPvIfHvtCkIYFzWiCRckKMU34RGM2OZFfm
+         8gpsH5Sif8fe6khhHrwb9aXx8PRyTXEjt1UD7MVzCHSI6kJm13BLwBvGTjcAeUxEK4At
+         2nb8T13OxkUZARlR8zExePf9HVizEHAe5NNIFi6T6FJ9GVu/PjOVNW8H08g6+xNBvwz7
+         +H3dIjGMz22EC6uezPlCsvENa7B1Pjj3E3JRY5VT/hxlhPrB5Wn3X0+FZ+Eo576kQ7VB
+         IHiF216M5PbG5CAbP4JmununN9CVo+WodkBM7HcNjcpXYzaCqyhxowJOTxttV3Zf2TPW
+         3h6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXawBp6XuejPl5SF4pHAvn1U8Qu/HnKGI92NJIy7gi/ovduQdnZTp290FTKy4xUbGV85FGxZjWXMwSfmcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznnkvgz3Qxa9+lOEESKPpP2/jM3ae8z/ulqKbAlWjMovbOBtj+
+	VgfzrslIapelcpi/uwiKXjuT/1oM1Hyo1zJEoRFsX0bjfNPi0C+P0EsLEe3qE9DkmdA=
+X-Gm-Gg: ASbGncvTgtCv5CudDx076snb1Yvq3RyCjFu4XJYMvaXQJgUoqaUk7Vro4d2YYBcdUNL
+	PMkJMV6E4TlMi2jwv05nZE5ZZ8ZUduCPAsqVQ9HktIeL4isCgYXIlQR7yB4YRPu1tM73NfIhU5H
+	SpPzoqSCrkN/c8Cw+QlfQ72jQQG/LowGXFXsl59CDOChU9nV5rxoDIAidBoGh/oJiCgIW58Yejv
+	d2/9q6VCIG6Mh2anrAQ9IUPQRmpEt73Y3Gea+E68PZaPqEFNQ+7u3saAej7C/3wNTgj9Gky4V85
+	6zTmgoZiyBBjE31Qe5EGzeRTYG2Aptd3/DV85R6dcQY2Yhf0f3IkquGBdi0GV+S0Pt8jqk4sDXz
+	y6t4/glecG9luYIWUod1tEtT4zmNT710wtF9SP78dIlDpW0iDb6/BkS+WumpyyKvSLgh+FG7gp1
+	o=
+X-Google-Smtp-Source: AGHT+IG7qoNWxeH56TLe6+Z4Mf4ydyY551FTBsYsB9Zop338tCPTa37NEB0x1rOcV0kV8iiRB6Eptw==
+X-Received: by 2002:a05:6000:26cf:b0:426:ff0e:b563 with SMTP id ffacd0b85a97d-429aef845a1mr2544640f8f.3.1761811158290;
+        Thu, 30 Oct 2025 00:59:18 -0700 (PDT)
+Received: from localhost ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-340509894c9sm1616343a91.7.2025.10.30.00.59.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 00:59:17 -0700 (PDT)
+Date: Thu, 30 Oct 2025 15:59:15 +0800
+From: Heming Zhao <heming.zhao@suse.com>
+To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, 
+	skhan@linuxfoundation.org, syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com, 
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
+ during read
+Message-ID: <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
+References: <20251029225748.11361-2-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251030-camss-8x39-vbif-v8-4-754834937f5c@apitzsch.eu>
-References: <20251030-camss-8x39-vbif-v8-0-754834937f5c@apitzsch.eu>
-In-Reply-To: <20251030-camss-8x39-vbif-v8-0-754834937f5c@apitzsch.eu>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Bryan O'Donoghue <bod@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vincent Knecht <vincent.knecht@mailoo.org>, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761811160; l=5537;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=un+kmwhPLrnW0O5VHk7Q4Pi0zfXDaXthz4QyW1loye8=;
- b=A4LjwZh4tO0kDAa2JX8f4plWf7EYkDJWkTg1QPQO2Xbk7sLfQSlhnix+k945d8fVAWy7I+3X9
- Za90D19xjFeDFjjIp60Bc9mteuLmsHhYUJEgAA/TicEJJ6k7WYkIAb7
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029225748.11361-2-eraykrdg1@gmail.com>
 
-From: Vincent Knecht <vincent.knecht@mailoo.org>
+Hi,
 
-Add the camera subsystem and CCI used to interface with cameras on the
-Snapdragon 615.
+In my view, combining this patch and another patch [1] is a complete
+solution for this bug.
 
-Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
-[André: Make order of items the same as in 8916]
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi |   4 +
- arch/arm64/boot/dts/qcom/msm8939.dtsi        | 146 +++++++++++++++++++++++++++
- 2 files changed, 150 insertions(+)
+According to the oops stack, the FS is already in read-only mode.
+We should forbid any write operations and then perform the inode
+sanity check.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-index adb96cd8d643..659d127b1bc3 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-@@ -11,6 +11,10 @@
- #include "msm8939.dtsi"
- #include "pm8916.dtsi"
- 
-+&camss {
-+	vdda-supply = <&pm8916_l2>;
-+};
-+
- &mdss_dsi0 {
- 	vdda-supply = <&pm8916_l2>;
- 	vddio-supply = <&pm8916_l6>;
-diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-index eb64ec35e7f0..d4d7b0c9206c 100644
---- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-@@ -1436,6 +1436,145 @@ mdss_dsi1_phy: phy@1aa0300 {
- 			};
- 		};
- 
-+		camss: isp@1b0ac00 {
-+			compatible = "qcom,msm8939-camss";
-+			reg = <0x01b0ac00 0x200>,
-+			      <0x01b00030 0x4>,
-+			      <0x01b0b000 0x200>,
-+			      <0x01b00038 0x4>,
-+			      <0x01b08000 0x100>,
-+			      <0x01b08400 0x100>,
-+			      <0x01b0a000 0x500>,
-+			      <0x01b00020 0x10>,
-+			      <0x01b10000 0x1000>,
-+			      <0x01b08800 0x100>,
-+			      <0x01b40000 0x200>;
-+			reg-names = "csiphy0",
-+				    "csiphy0_clk_mux",
-+				    "csiphy1",
-+				    "csiphy1_clk_mux",
-+				    "csid0",
-+				    "csid1",
-+				    "ispif",
-+				    "csi_clk_mux",
-+				    "vfe0",
-+				    "csid2",
-+				    "vfe0_vbif";
-+
-+			clocks = <&gcc GCC_CAMSS_TOP_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_ISPIF_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0PHYTIMER_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1PHYTIMER_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0PHY_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0PIX_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0RDI_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1PHY_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1PIX_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1RDI_CLK>,
-+				 <&gcc GCC_CAMSS_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_VFE0_CLK>,
-+				 <&gcc GCC_CAMSS_CSI_VFE0_CLK>,
-+				 <&gcc GCC_CAMSS_VFE_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_VFE_AXI_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2PHY_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2PIX_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2RDI_CLK>;
-+			clock-names = "top_ahb",
-+				      "ispif_ahb",
-+				      "csiphy0_timer",
-+				      "csiphy1_timer",
-+				      "csi0_ahb",
-+				      "csi0",
-+				      "csi0_phy",
-+				      "csi0_pix",
-+				      "csi0_rdi",
-+				      "csi1_ahb",
-+				      "csi1",
-+				      "csi1_phy",
-+				      "csi1_pix",
-+				      "csi1_rdi",
-+				      "ahb",
-+				      "vfe0",
-+				      "csi_vfe0",
-+				      "vfe_ahb",
-+				      "vfe_axi",
-+				      "csi2_ahb",
-+				      "csi2",
-+				      "csi2_phy",
-+				      "csi2_pix",
-+				      "csi2_rdi";
-+
-+			interrupts = <GIC_SPI 78 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 51 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 52 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 55 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 153 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csiphy0",
-+					  "csiphy1",
-+					  "csid0",
-+					  "csid1",
-+					  "ispif",
-+					  "vfe0",
-+					  "csid2";
-+
-+			iommus = <&apps_iommu 3>;
-+
-+			power-domains = <&gcc VFE_GDSC>;
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		cci: cci@1b0c000 {
-+			compatible = "qcom,msm8916-cci", "qcom,msm8226-cci";
-+			reg = <0x01b0c000 0x1000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&gcc GCC_CAMSS_TOP_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CCI_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CCI_CLK>,
-+				 <&gcc GCC_CAMSS_AHB_CLK>;
-+			clock-names = "camss_top_ahb",
-+				      "cci_ahb",
-+				      "cci",
-+				      "camss_ahb";
-+			assigned-clocks = <&gcc GCC_CAMSS_CCI_AHB_CLK>,
-+					  <&gcc GCC_CAMSS_CCI_CLK>;
-+			assigned-clock-rates = <80000000>,
-+					       <19200000>;
-+			pinctrl-0 = <&cci0_default>;
-+			pinctrl-names = "default";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+
-+			cci_i2c0: i2c-bus@0 {
-+				reg = <0>;
-+				clock-frequency = <400000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
- 		gpu: gpu@1c00000 {
- 			compatible = "qcom,adreno-405.0", "qcom,adreno";
- 			reg = <0x01c00000 0x10000>;
-@@ -1500,6 +1639,13 @@ apps_iommu: iommu@1ef0000 {
- 			#iommu-cells = <1>;
- 			qcom,iommu-secure-id = <17>;
- 
-+			/* vfe */
-+			iommu-ctx@3000 {
-+				compatible = "qcom,msm-iommu-v1-sec";
-+				reg = <0x3000 0x1000>;
-+				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
- 			/* mdp_0: */
- 			iommu-ctx@4000 {
- 				compatible = "qcom,msm-iommu-v1-ns";
+And I think ocfs2_validate_inode_block is a good place for make_bad_inode().
 
--- 
-2.51.2
+[1]:
+https://syzkaller.appspot.com/text?tag=Patch&x=1287f614580000
+- by albinbabuvarghese20@gmail.com from:
+  https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072 
 
+Thanks,
+Heming
 
+On Thu, Oct 30, 2025 at 01:57:49AM +0300, Ahmet Eray Karadag wrote:
+> Potentially triggered by sequences like buffered writes followed by
+> open(O_DIRECT), can result in an invalid on-disk inode block 
+> (e.g., bad signature). OCFS2 detects this corruption when reading the
+> inode block via ocfs2_validate_inode_block(), logs "Invalid dinode",
+> and often switches the filesystem to read-only mode.
+> 
+> Currently, the function reading the inode block (ocfs2_read_inode_block_full())
+> fails to call make_bad_inode() upon detecting the validation error.
+> Because the in-memory inode is not marked bad, subsequent operations
+> (like ftruncate) proceed erroneously. They eventually reach code
+> (e.g., ocfs2_truncate_file()) that compares the inconsistent
+> in-memory size (38639) against the invalid/stale on-disk size (0), leading
+> to kernel crashes via BUG_ON.
+> 
+> Fix this by calling make_bad_inode(inode) within the error handling path of
+> ocfs2_read_inode_block_full() immediately after a block read or validation
+> error occurs. This ensures VFS is properly notified about the
+> corrupt inode at the point of detection. Marking the inode bad  allows VFS
+> to correctly fail subsequent operations targeting this inode early,
+> preventing kernel panics caused by operating on known inconsistent inode states.
+> 
+> [RFC]: While this patch prevents the kernel crash triggered by the reproducer,
+> feedback is requested on whether ocfs2_read_inode_block_full() is the most
+> appropriate layer to call make_bad_inode(). Should this check perhaps reside
+> within the caller or should the error propagation be handled differently?:
+> Input on the best practice for handling this specific VFS inconsistency
+> within OCFS2 would be appreciated.
+> 
+> Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
+> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+> ---
+>  fs/ocfs2/inode.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> index fcc89856ab95..415ad29ec758 100644
+> --- a/fs/ocfs2/inode.c
+> +++ b/fs/ocfs2/inode.c
+> @@ -1690,6 +1690,8 @@ int ocfs2_read_inode_block_full(struct inode *inode, struct buffer_head **bh,
+>  	rc = ocfs2_read_blocks(INODE_CACHE(inode), OCFS2_I(inode)->ip_blkno,
+>  			       1, &tmp, flags, ocfs2_validate_inode_block);
+>  
+> +	if (rc < 0)
+> +		make_bad_inode(inode);
+>  	/* If ocfs2_read_blocks() got us a new bh, pass it up. */
+>  	if (!rc && !*bh)
+>  		*bh = tmp;
+> -- 
+> 2.43.0
+> 
+> 
 
