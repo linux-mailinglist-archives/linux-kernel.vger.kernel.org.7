@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-878392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0E0C207F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:09:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CEBC20829
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102923AE421
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:05:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA12F4ED853
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5251D22A7E0;
-	Thu, 30 Oct 2025 14:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C323EA9E;
+	Thu, 30 Oct 2025 14:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsfZ0knt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mBWuMfc4"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FFE1EEA49;
-	Thu, 30 Oct 2025 14:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0C324BD0C;
+	Thu, 30 Oct 2025 14:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833100; cv=none; b=queg4CYBNHDFApsjjA1ukhWcc3W6o7soP0UGbcKLqtuaGOMCf+F4B0jduGJwnVmXHRKmoFpg6yN9mxPAr5J573ZJWBI4njAN+CVkID+0eqRK1QPWjnTdA/wI9ryHFZ+OurmCVe1G9bff1Pa0xoado21a4xDcBTnZBnNuI44O02k=
+	t=1761833105; cv=none; b=GCPaUsiDCdr4WP4IpCCkgNc7Sq5jqL9NPhGdEWNjQSZ8ATs5WKgNPIONyEGY4DX0MMAVBHNJdaNdep8mIvO3WJNwHoNj9FiwU/IlZmhUJVZUxX9k/1nxf+tf07rZd+He4Pwz/e29xgpM8alQQv6x9DyXYRFQSUhUJd0ACTvopiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833100; c=relaxed/simple;
-	bh=LKSA5kjPUGMHZZpJTjFfuRmu0oSOpXV4X1NFS+NHl88=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lZ/IfhuG08XtwQTdQEYEmVw+yBcYzRg3kM4TUBI6CTdl1IHn7d1WUowtPRx8SXBL9catbsuvfvhAUsozEYwAhcAe+7kaRnl0/VcIuvmkanu0kPJkp3GuMUopXgugaoCW3I/DZlT2S39XwE60WUxSbeH4dB36wFvW+ylcvy+Nejs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsfZ0knt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829C7C4CEF8;
-	Thu, 30 Oct 2025 14:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761833100;
-	bh=LKSA5kjPUGMHZZpJTjFfuRmu0oSOpXV4X1NFS+NHl88=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=NsfZ0kntiAAsYA/kbFbts7G/hkZ5mjULzmVn4OOb+bvMDEeI4UV85RG8tiH3Fy/1n
-	 ATqDUoQCP40EGyAa3WZG2f43NTwWO8F1BoslC2m3O9V+WzT+UD4ho9n/MHaQoQG6Cn
-	 QQvtBUKZlcpiHorOKaknMwCMzty+K/OkYxh6LXlrMvuE9GzXTNz13HKx6EEdkHUrz5
-	 DANQe7JhWNbNQBSvIs7LqhWC79cp2d75NzIrgFU9MLRoPoVHnzdn3hgAxP6HyGd/LP
-	 dvnsMZMCUga58NKKuAWhUab5ncePZz9/nAeS+gQCRLTm3QeiPMY1zXiFVQXqZz8iaT
-	 tpMYVKxttIE6Q==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.j.williams@intel.com, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH RESEND v2 06/12] coco: host: arm64: Add RMM device
- communication helpers
-In-Reply-To: <20251029183306.0000485c@huawei.com>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
- <20251027095602.1154418-7-aneesh.kumar@kernel.org>
- <20251029183306.0000485c@huawei.com>
-Date: Thu, 30 Oct 2025 19:34:51 +0530
-Message-ID: <yq5asef0cwos.fsf@kernel.org>
+	s=arc-20240116; t=1761833105; c=relaxed/simple;
+	bh=pcUvfzjJIS8X9Z2iVO1COuyDkpyh2KXBtzZqEZQzzto=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=kyoXSB5W/BoWRYQHdNFb8UZFNP9yqmVsfbyFvq2OwLcO0Iuq49d25RFFxkaOHXgxGmbkCs9iNYGcInBjzMz6siI98h2jNho3IzEicN0ETQKvmbw3wwTgjENscZhUW0jNSv/3g+nI4cxxGZSIpU5NBod+YEhuMFmS5Gofphdz+6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mBWuMfc4; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 160BDC0DAB7;
+	Thu, 30 Oct 2025 14:04:36 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 77D6D6068C;
+	Thu, 30 Oct 2025 14:04:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 442AD11808AD6;
+	Thu, 30 Oct 2025 15:04:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761833095; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=nS6Tx9jK9BuNcGfzXxz3LJT+z2ofZPtTh2IjKicAfKc=;
+	b=mBWuMfc4SaB27L/gZWQnrSba9chzIQNTEFnJMYGYeHp82JTF7//5xSkJoVdCbs4nauDLu0
+	y0YO0T9N2Pr/ISipdwQ7rRatIjYUVufRFM4lyeI2JRTgqF+VrKkvOp5x11AB14ZwQLhYM1
+	rmOaWENzOlQK4Qrt5QU25WEwbUXuJ42FHx6hNZv544coKycyxwU929MbVJWiC/GIMAOnUj
+	WpwbngAD5j7M5+UAeEsaxa/CaZP2wNryPDvSdah6ZNR3YBQ/u6FXZZUqHsKa2GYKs1MoQD
+	ou795dIpXd8dRmF68ai6tqfL6CPKwcgLj8JBDRdch6WnHnzI/QA+MwFcojulVg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 30 Oct 2025 15:04:51 +0100
+Message-Id: <DDVPPGIO5P1F.E3DWINA74BJ6@bootlin.com>
+Subject: Re: [PATCH bpf-next v3 3/4] selftests/bpf: integrate
+ test_tc_tunnel.sh tests into test_progs
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Eduard
+ Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
+ Song" <yonghong.song@linux.dev>, "John Fastabend"
+ <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
+ <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
+ <bastien.curutchet@bootlin.com>, <bpf@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Martin KaFai Lau" <martin.lau@linux.dev>,
+ =?utf-8?b?QWxleGlzIExvdGhvcsOpIChlQlBGIEZvdW5kYXRpb24p?=
+ <alexis.lothore@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
+ <20251027-tc_tunnel-v3-3-505c12019f9d@bootlin.com>
+ <1ac9d14e-4250-480c-b863-410be78ac6c6@linux.dev>
+In-Reply-To: <1ac9d14e-4250-480c-b863-410be78ac6c6@linux.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Jonathan Cameron <jonathan.cameron@huawei.com> writes:
+Hello Martin,
+thanks for the review and the initial merge. I am preparing the follow-up
+series.
 
-> On Mon, 27 Oct 2025 15:25:56 +0530
-> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
->
-
-...
-
->> +void pdev_communicate_work(struct work_struct *work)
+On Wed Oct 29, 2025 at 8:56 PM CET, Martin KaFai Lau wrote:
+> On 10/27/25 7:51 AM, Alexis Lothor=C3=A9 (eBPF Foundation) wrote:
+>> +static int run_server(struct subtest_cfg *cfg)
 >> +{
->> +	unsigned long state;
->> +	struct pci_tsm *tsm;
->> +	struct dev_comm_work *setup_work;
->> +	struct cca_host_pf0_dsc *pf0_dsc;
->> +
->> +	setup_work = container_of(work, struct dev_comm_work, work);
->> +	tsm = setup_work->tsm;
->> +	pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
-> Could combine these 3 with declarations for shorter code without much
-> change to readability.
+>> +	struct nstoken *nstoken =3D open_netns(SERVER_NS);
 >
+> It is unlikely but still better to check for open_netns failure. Just in=
+=20
+> case that the network changes/traffic is accidentally done in the=20
+> original netns. There are a few netns switching in the test. Please=20
+> followup.
 
-Not sure about this.
+Yes, I'll add those missing checks.
 
- static void pdev_communicate_work(struct work_struct *work)
- {
- 	unsigned long state;
--	struct pci_tsm *tsm;
--	struct dev_comm_work *setup_work;
--	struct cca_host_pf0_dsc *pf0_dsc;
--
--	setup_work = container_of(work, struct dev_comm_work, work);
--	tsm = setup_work->tsm;
--	pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
-+	struct dev_comm_work *setup_work = container_of(work,
-+							struct dev_comm_work,
-+							work);
-+	struct pci_tsm *tsm = setup_work->tsm;
-+	struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
- 
- 	guard(mutex)(&pf0_dsc->object_lock);
- 	state = do_pdev_communicate(tsm, setup_work->target_state);
-
+>> +	int family =3D cfg->ipproto =3D=3D 6 ? AF_INET6 : AF_INET;
 >> +
->> +	guard(mutex)(&pf0_dsc->object_lock);
->> +	state = do_pdev_communicate(tsm, setup_work->target_state);
->> +	WARN_ON(state != setup_work->target_state);
->> +
->> +	complete(&setup_work->complete);
->> +}
+>> +	cfg->server_fd =3D start_reuseport_server(family, SOCK_STREAM,
+>> +						cfg->server_addr, TEST_PORT,
+>> +						TIMEOUT_MS, 1);
 >
+> Why reuseport is needed? Does it have issue in bind() to the same=20
+> ip/port in the later sub-test?
 
--aneesh
+Yes, I observed that is I use the bare start_server, I systematically have
+the first test passing, an all the others failing on the server startup
+with errno 98 (Address already in use). I have been assuming that it is due
+to some TIME_WAIT state on the freshly closed socket, but I may be missing
+something ?
+
+Thanks,
+
+Alexis
+
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
