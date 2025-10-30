@@ -1,166 +1,201 @@
-Return-Path: <linux-kernel+bounces-878657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917D2C21361
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:35:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0327C21316
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4F146454A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFCF188C513
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF4A3678B0;
-	Thu, 30 Oct 2025 16:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1670366FBF;
+	Thu, 30 Oct 2025 16:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Wr67yKJ4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D+oqUsGa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Wr67yKJ4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D+oqUsGa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lFMHd8O5"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C88366FB3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EB73678A1
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761841566; cv=none; b=isacnnKrxlA6r2eqKsbW/AucU7lDH5bHwLpyzAAK/b/TAwfYEj4BDdBj3EhkEkrOD0NxZMgOt68i+nQrKgB6gPu7I3RjLDsG6GeQJOi2gYX+HbCu3JLzHhiqiBUJ8R/e/WiR83OiCV2YCq4bxqiaIzSLGBGgI3ROhaFqH3tj/9M=
+	t=1761841577; cv=none; b=pkp2YxmP/epheDMJNHtQozr8duDWPgZisrawtj6CozFBba/7qVKsWMlyJMIXF/KHN5GiWUA2pXmlTrOYNLjBPNXJWgrkuxb2UQWvXDlFCIAoYK2aw3otsK4mbJyD1aFm0DZISDOUbUJh3UB5DExn3e7L0E2j6TJxYCx6iY5jMTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761841566; c=relaxed/simple;
-	bh=tzp1RPz9J6cF5ewTGOUXuNYVp2WUlMURNL2v6N9EIjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXQgTjTLGkKjVLkR/+84wkVfqgVPi4rX0RwIOPOBhJR+3QzqngDxlFAwEUlTe0osbUcQS1flHIhchYnAkzF9xjxHvyeh9Upyi0UrBimBm1jANNdAY7APDGWMz3PppEv9PhSk8qkWbQC8NCkVCs2ieeYwaM18zW+l+jVlqPx2LiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Wr67yKJ4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D+oqUsGa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Wr67yKJ4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D+oqUsGa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6B776337A4;
-	Thu, 30 Oct 2025 16:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761841562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y45ny24R7zem9vCEHKWr8/ZHpLbSWhPSrqSC/spGVIw=;
-	b=Wr67yKJ4CtPObOAKIVbuQJ9uY1Mk/MgeJUi4m6VsB6BWlU0F0w3slr/L7uxGX4UIVenmYG
-	FVooJOrHZxMD/LXTl1NWfVDmDpsPcFAepG2c3+9mRbdmLpk/tAp/3f6fhAHmZQkmiFApmK
-	dN1RFs/oz0bT5pWP2kremYVE/gbgeeQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761841562;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y45ny24R7zem9vCEHKWr8/ZHpLbSWhPSrqSC/spGVIw=;
-	b=D+oqUsGaCNVth5UJ+jVZ9a4MlY9qTQC2zol7+YlVgHZwEw4ExmMJUEvovqmF7TEqS4ZDTF
-	1G1QbvzD5qIGfHCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761841562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y45ny24R7zem9vCEHKWr8/ZHpLbSWhPSrqSC/spGVIw=;
-	b=Wr67yKJ4CtPObOAKIVbuQJ9uY1Mk/MgeJUi4m6VsB6BWlU0F0w3slr/L7uxGX4UIVenmYG
-	FVooJOrHZxMD/LXTl1NWfVDmDpsPcFAepG2c3+9mRbdmLpk/tAp/3f6fhAHmZQkmiFApmK
-	dN1RFs/oz0bT5pWP2kremYVE/gbgeeQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761841562;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y45ny24R7zem9vCEHKWr8/ZHpLbSWhPSrqSC/spGVIw=;
-	b=D+oqUsGaCNVth5UJ+jVZ9a4MlY9qTQC2zol7+YlVgHZwEw4ExmMJUEvovqmF7TEqS4ZDTF
-	1G1QbvzD5qIGfHCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0369B1396A;
-	Thu, 30 Oct 2025 16:25:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rF/mOJeRA2m3FgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 30 Oct 2025 16:25:59 +0000
-Date: Thu, 30 Oct 2025 16:25:54 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH 2/3] mm: implement sticky, copy on fork VMA flags
-Message-ID: <jmyrkglrrdxtdkcnovmkcxbk64zgfpp6r3e33bquixkvoxl45r@zcnwp3v2ucbp>
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com>
- <ec71238fd1f735ca6e4970ccdc0abfbb60967596.1761756437.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1761841577; c=relaxed/simple;
+	bh=eDmpmRV/ZNwGix8F1hLn2eltY/f5k4rXZJVH9UOROjI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OFpnjC2yV7Nqq3BMtTwYIzaJX/Bv0NFmocKuZ6FkINYZvm0xC+6DCRrRlvunXbLhdczGtkWP87jMKKLM0KCawWHhwJq1vOJ7V70UK9km2rBWUxmud7cZOh8MCKh0ssoYvBktGmaXG+42j8bqbDrvQQB8JaZQlu8+gL3HiifNGdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lFMHd8O5; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-477124f7c00so7161775e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761841571; x=1762446371; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0mUcHikc00JVyhViII/UBbKRulbb7db3Z+EvGHwldIE=;
+        b=lFMHd8O5EXMhnG8UfHZ9qKXwMFArzpKnC9RxKIg7pRNIOiv823N9R6ZvPk8OjeRrtf
+         MQK/GoDc9Sp9O+x8YG0lG6Kcgv+e+Ls/wLmXE/wbPz0Wj9Mvd9zlX6IXP/mRQJTDk/dc
+         B5IdTu/xttSK2MoUXcVGMUJL2iCdchNHUz9IesEW3F3KVJbuEM1Kl/GRjuOeo9lGAUq5
+         fnsMHS/gb28vTVuc1Bf9U8g6N0bewl2+zX3hWnVnbgEBxSE7rjsq0Le3Srf28jzkJ8dP
+         E94kf62m0/Qs5g1sbE7cLiHMC2I7U1HNFaf1ncteakltHB7BcR2rFCiEnKo8FY2tCrW2
+         KfCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761841571; x=1762446371;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0mUcHikc00JVyhViII/UBbKRulbb7db3Z+EvGHwldIE=;
+        b=C3qCZmWHu6b3mOhKD5hAAF+v1wJbSGIGFmBGeCt96BJX7hk5mws0DNTXLn5W1N27e9
+         Hh3IFLTsEF6iVEpvEv0/Y/B1w6yrqS6O+8bOf+JZT3U1lkS/GG8KtY+n6PVpTvYXx5gu
+         IL56MhrJfOETo1uYhDxeE5/iAGJ+QeVjczRpQP8CTZE70P8PnMJH/4gVeW6c3zMmt9my
+         glHE+yeoze2UheJburbaiidWpZSyzEa9DsrELuYvKqljQ7yNL8oeo/lXlkdklbChCqPI
+         QBq0wIWqu7nEFNToBcTDuRRoujr3W3NFWHDzc84Us8KZ/EGT57a/cpzDrlgWJWqvTpmF
+         iKWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWx3abl7en0tjlmWTgmZkeDITaNCmNAQR1nekrCGqG3TR2hpe9tqSiqcLdU9o8l8f0xWtXRZ4QwQdpBwXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzr3o6jAj3PCBypeRgRPmB3VPKt6UGH27BKu3wzeyiX78fxEfs
+	tty9sIl8bwi2t5dLvXrZkFnT0bLRymFHk1TRS8ZY+FPbHHHPdIxdGVg2ROzj1U7wtITEYVUzZC6
+	jJNoNCuYRfRyEKQ==
+X-Google-Smtp-Source: AGHT+IFGfOI5GGOoZu/FznqScqK81s0PahXoAIRUX8rG/K1uKkyKen3uibwRjOLiewUxdMnOjmZhdmN8oKlvUw==
+X-Received: from wmon4.prod.google.com ([2002:a05:600c:4644:b0:477:1162:935])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:198a:b0:477:bb0:5e0e with SMTP id 5b1f17b1804b1-477308a118dmr2613715e9.20.1761841571504;
+ Thu, 30 Oct 2025 09:26:11 -0700 (PDT)
+Date: Thu, 30 Oct 2025 16:26:10 +0000
+In-Reply-To: <aQONEWlBwFCXx3o6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec71238fd1f735ca6e4970ccdc0abfbb60967596.1761756437.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,redhat.com,oracle.com,suse.cz,kernel.org,google.com,suse.com,goodmis.org,efficios.com,vger.kernel.org,kvack.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Mime-Version: 1.0
+References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+ <20251029-verw-vm-v1-3-babf9b961519@linux.intel.com> <DDVO5U7JZF4F.1WXXE8IYML140@google.com>
+ <aQONEWlBwFCXx3o6@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDVSPNXCG4HY.1B7OBAPDZ97CX@google.com>
+Subject: Re: [PATCH 3/3] x86/mmio: Unify VERW mitigation for guests
+From: Brendan Jackman <jackmanb@google.com>
+To: Sean Christopherson <seanjc@google.com>, Brendan Jackman <jackmanb@google.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>, 
+	<kvm@vger.kernel.org>, Tao Zhang <tao1.zhang@intel.com>, 
+	Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 29, 2025 at 04:50:32PM +0000, Lorenzo Stoakes wrote:
-> It's useful to be able to force a VMA to be copied on fork outside of the
-> parameters specified by vma_needs_copy(), which otherwise only copies page
-> tables if:
-> 
-> * The destination VMA has VM_UFFD_WP set
-> * The mapping is a PFN or mixed map
-> * The mapping is anonymous and forked in (i.e. vma->anon_vma is non-NULL)
-> 
-> Setting this flag implies that the page tables mapping the VMA are such
-> that simply re-faulting the VMA will not re-establish them in identical
-> form.
-> 
-> We introduce VM_COPY_ON_FORK to clearly identify which flags require this
-> behaviour, which currently is only VM_MAYBE_GUARD.
+On Thu Oct 30, 2025 at 4:06 PM UTC, Sean Christopherson wrote:
+> On Thu, Oct 30, 2025, Brendan Jackman wrote:
+>> > @@ -160,6 +163,8 @@ SYM_FUNC_START(__vmx_vcpu_run)
+>> >  	/* Load guest RAX.  This kills the @regs pointer! */
+>> >  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+>> >  
+>> > +	/* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
+>> > +	jz .Lskip_clear_cpu_buffers
+>> 
+>> Hm, it's a bit weird that we have the "alternative" inside
+>> VM_CLEAR_CPU_BUFFERS, but then we still keep the test+jz
+>> unconditionally. 
+>
+> Yeah, I had the same reaction, but couldn't come up with a clean-ish solution
+> and so ignored it :-)
+>
+>> If we really want to super-optimise the no-mitigations-needed case,
+>> shouldn't we want to avoid the conditional in the asm if it never
+>> actually leads to a flush?
+>> 
+>> On the other hand, if we don't mind a couple of extra instructions,
+>> shouldn't we be fine with just having the whole asm code based solely
+>> on VMX_RUN_CLEAR_CPU_BUFFERS and leaving the
+>> X86_FEATURE_CLEAR_CPU_BUF_VM to the C code?
+>> 
+>> I guess the issue is that in the latter case we'd be back to having
+>> unnecessary inconsistency with AMD code while in the former case... well
+>> that would just be really annoying asm code - am I on the right
+>> wavelength there? So I'm not necessarily asking for changes here, just
+>> probing in case it prompts any interesting insights on your side.
+>> 
+>> (Also, maybe this test+jz has a similar cost to the nops that the
+>> "alternative" would inject anyway...?)
+>
+> It's not at all expensive.  My bigger objection is that it's hard to follow what's
+> happening.
+>
+> Aha!  Idea.  IIUC, only the MMIO Stale Data is conditional based on the properties
+> of the vCPU, so we should track _that_ in a KVM_RUN flag.  And then if we add yet
+> another X86_FEATURE for MMIO Stale Data flushing (instead of a static branch),
+> this path can use ALTERNATIVE_2.  The use of ALTERNATIVE_2 isn't exactly pretty,
+> but IMO this is much more intuitive.
+>
+> diff --git a/arch/x86/kvm/vmx/run_flags.h b/arch/x86/kvm/vmx/run_flags.h
+> index 004fe1ca89f0..b9651960e069 100644
+> --- a/arch/x86/kvm/vmx/run_flags.h
+> +++ b/arch/x86/kvm/vmx/run_flags.h
+> @@ -4,10 +4,10 @@
+>  
+>  #define VMX_RUN_VMRESUME_SHIFT                 0
+>  #define VMX_RUN_SAVE_SPEC_CTRL_SHIFT           1
+> -#define VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT                2
+> +#define VMX_RUN_CAN_ACCESS_HOST_MMIO_SHIT      2
+>  
+>  #define VMX_RUN_VMRESUME               BIT(VMX_RUN_VMRESUME_SHIFT)
+>  #define VMX_RUN_SAVE_SPEC_CTRL         BIT(VMX_RUN_SAVE_SPEC_CTRL_SHIFT)
+> -#define VMX_RUN_CLEAR_CPU_BUFFERS      BIT(VMX_RUN_CLEAR_CPU_BUFFERS_SHIFT)
+> +#define VMX_RUN_CAN_ACCESS_HOST_MMIO   BIT(VMX_RUN_CAN_ACCESS_HOST_MMIO_SHIT)
+>  
+>  #endif /* __KVM_X86_VMX_RUN_FLAGS_H */
+> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> index ec91f4267eca..50a748b489b4 100644
+> --- a/arch/x86/kvm/vmx/vmenter.S
+> +++ b/arch/x86/kvm/vmx/vmenter.S
+> @@ -137,8 +137,10 @@ SYM_FUNC_START(__vmx_vcpu_run)
+>         /* Load @regs to RAX. */
+>         mov (%_ASM_SP), %_ASM_AX
+>  
+> -       /* jz .Lskip_clear_cpu_buffers below relies on this */
+> -       test $VMX_RUN_CLEAR_CPU_BUFFERS, %ebx
+> +       /* Check if jz .Lskip_clear_cpu_buffers below relies on this */
+> +       ALTERNATIVE_2 "",
+> +                     "", X86_FEATURE_CLEAR_CPU_BUF
+> +                     "test $VMX_RUN_CAN_ACCESS_HOST_MMIO, %ebx", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
 
-Do we want this to be sticky though? If you're looking for more granularity
-with this flag, the best option might be to stop merges from happening there.
-If not, I can imagine a VMA that merges with other VMAs far past the original
-guarded range, and thus you get no granularity (possibly, not even useful).
+Er, I don't understand the ALTERNATIVE_2 here, don't we just need this?
 
-If you're _not_ looking for granularity, then maybe using a per-mm flag for
-guard ranges or some other solution would be superior?
+ALTERNATIVE "" "test $VMX_RUN_CAN_ACCESS_HOST_MMIO, %ebx", 
+	    X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
 
-The rest of the patch (superficially) looks good to me, though.
+>  
+>         /* Check if vmlaunch or vmresume is needed */
+>         bt   $VMX_RUN_VMRESUME_SHIFT, %ebx
+> @@ -163,8 +165,9 @@ SYM_FUNC_START(__vmx_vcpu_run)
+>         /* Load guest RAX.  This kills the @regs pointer! */
+>         mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+>  
+> -       /* Check EFLAGS.ZF from the VMX_RUN_CLEAR_CPU_BUFFERS bit test above */
+> -       jz .Lskip_clear_cpu_buffers
+> +       ALTERNATIVE_2 "jmp .Lskip_clear_cpu_buffers",
+> +                     "", X86_FEATURE_CLEAR_CPU_BUF
+> +                     "jz .Lskip_clear_cpu_buffers", X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO
 
--- 
-Pedro
+To fit with the rest of Pawan's code this would need
+s/X86_FEATURE_CLEAR_CPU_BUF/X86_FEATURE_CLEAR_CPU_BUF_VM/, right?
+
+In case it reveals that I just don't understand ALTERNATIVE_2 at all,
+I'm reading this second one as saying:
+
+if cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO)
+   "jz .Lskip_clear_cpu_buffers "
+else if !cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_VM)
+   "jmp .Lskip_clear_cpu_buffers"
+
+I.e. I'm understanding X86_FEATURE_CLEAR_CPU_BUFFERS_MMIO as mutually
+exclusive with X86_FEATURE_CLEAR_CPU_BUF_VM, it means "you _only_ need
+to verw MMIO". So basically we moved cpu_buf_vm_clear_mmio_only into a
+CPU feature to make it accessible from asm?
+
+(Also let's use BUF instead of BUFFERS in the name, for consistency)
 
