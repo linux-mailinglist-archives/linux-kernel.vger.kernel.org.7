@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-879280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55391C22BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:43:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3F2C22BC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FB41893A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31323AAA24
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5101A33E374;
-	Thu, 30 Oct 2025 23:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457C333F39A;
+	Thu, 30 Oct 2025 23:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aKncfpuG"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="ZEwa7ojE"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017E733E353
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A7133E355
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761867771; cv=none; b=d4+S5tJ1W5+Oa1mRjXSV2wBq4iPEp89Er2E1D4RntUkmwgacL5Z/5s8EwcqbbXbGGrAuezSerDVUjIwlw5OpzNyOSmCiusbghYBI05WAJpja76Nd9oo3Rd3Ll9KvuTvvIolbsqiyWDaeEOLmyX/C2UScKIQm4Gs1pBH/zaWthWA=
+	t=1761867772; cv=none; b=tZzUXfW47efeR1WTVzjyRMnp4HyyoSUh4ihUrBMfVMg3WNPR6yLm6FgFZl0YtVR5gdX80St6x+diw+uVBJU9a0KpiV2O74SviKgmA3Xqq8TJbd+U/hzHbEoAtOKAsFQhcNgCB6MJ/afxCjKk0Xnzb3XKEntMzP1B9aVJ8mo2lGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761867771; c=relaxed/simple;
-	bh=DE4GqBuV22TruGHl8amYHLxxmTXP99iA093bN/VEK1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kiNN1ajw/Xvio1yNIPjzHLuwh5FtPh62E/J5C2E+s3cVFHxwdmZtcRdARFF0/n9LS3gK7HmTeW0IOPPZK+ahWt9MhsIPc+xx8CUdZjoCY6qeM4qWr8TgJCNRNLSbFXVjJJqbm8dFQ2fryBuF5CE/iOCAcvgT6kETTfOPRbeNb5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aKncfpuG; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b50206773adso525306066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:42:49 -0700 (PDT)
+	s=arc-20240116; t=1761867772; c=relaxed/simple;
+	bh=nkfYFXJwYLkDxQAM+J3yvHwlLGq7CnLEUoPw1DWa5F0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=JQLC2zVHQH4tWxwzj0X3v2S6C4yeuMcvGLlpV83+DYMMfo3ufZ+a5vmeS4L6xW7EDF9Q34WXvYy9WkLX0Rb9I7MLkHfmucZpoay1DubqW4znEVb7q1/jYxisI0zHQZUJPFetTE8QCbWJ9+zL7c8O7Q5jsfdikrU05rji5fBb5QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=ZEwa7ojE; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 52d8f39b-b5ea-11f0-9e68-005056994fde
+Received: from mta.kpnmail.nl (unknown [10.31.161.190])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 52d8f39b-b5ea-11f0-9e68-005056994fde;
+	Fri, 31 Oct 2025 00:44:06 +0100 (CET)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 24468cc8-b5ea-11f0-99be-0050569977a2;
+	Fri, 31 Oct 2025 00:42:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761867768; x=1762472568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S3CZRZY4J4yS1ZyrgmpV6YjQg7tsbEO1A3A5njHalyg=;
-        b=aKncfpuGM/foVpT069aO9Zgbp1PSjVBELO7Lz6tIoQar+5igBPGeKufy6GK89jDcQa
-         Jd+8n7zJFS6VLDLUPcLCDjl6YqP6m/tGNTb13nUmGgMiYTVWkBrwoiAP2uHDUaqgd58V
-         VDq4hEmQ1R+Tg9smz9eZ66G4X378UKs7Y5cpRHUzIuKJsF+AWTKSOWnOF5UJW/bonU4q
-         JL4M3izPHw+DpxJmVHBNjmMAMvWTbqkl7WdkYg8QEb6l3vr5RHj8JLIniV0quRqnaY6C
-         k3WbT6U0uSgWmDE4gKGPWAV6CDtLPgldqDlUF/nja/5jD8lc7lGW3Fq5qffnNdd6KS8t
-         t5/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761867768; x=1762472568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S3CZRZY4J4yS1ZyrgmpV6YjQg7tsbEO1A3A5njHalyg=;
-        b=IufIB1JUXMOaLsWI4LW5RJCTxn1eid1KA6whKCwaVbu0w4cBGGHMdsddTEz85jYM/r
-         cYkKWdMXWGwtMmM/ve+CoXvzDD2aMrU6FJjFE3/lkMJtdmj8NwYzMv8jXEOXlpinecaW
-         QiHQpqCNBOKVtOQR9cer902cPPCB9QqfSdnnvymKRfvJNRPq9xobA6S2KuGbR1ItXyvF
-         SqAfY1tVs1BtEusE50Ijssx5H/gGTgh71aI0EWIJdIzWc5AXVgtgGJrQIxriBrj8OJwT
-         i86ykqO1zO1CA+qbjukwFtyAy38gS+PFXSBbP+wYTVShDSyyY0FEcawkSF61SRVtzgaQ
-         Cs8g==
-X-Gm-Message-State: AOJu0YxAIcGscYzB2lxMBxWry5MeLd+TRfaEyVMzz2dCe5IBtwP59Hmy
-	t+vg4pzorJtgraltWkyyKPP/40PSTLpDL1NGbXx6GXJx0Nr8uuO8O6B++fn50taqT2sqmWFm5Ol
-	NmhbLgygi6ekcY/FJGQ1oeSXyBekRCYcnsOEra5U=
-X-Gm-Gg: ASbGncvZmZfsnuQiQXLHlrh3+8k9phCiL2cQOLkcgaBrndh/zfVkL/m6tH3c6li/O52
-	SNTSNu/kotcGCKUHzO9FeX+yU48+CfFxw5OMn+/WGZLl4LopinLmPVhSJCjTSyEU1Hf+B66g64T
-	iDIE8yt0hgcb2LN2UqFLpU3yFvFuIdZqHlfESYEm1GHtyACeNzIDkGl8weuB0R5ELGD/GY0r4zG
-	APNzW9DhTprB0ObKXLGHD2myNXRO2J/ePyyZu2NEi6xvC6LppVuSl5ZDwJOGbJI5CmM/4mHdmmJ
-	RQ6SmbWGv+n4Yw==
-X-Google-Smtp-Source: AGHT+IHXJyABwy+YlpHtWHFVZ9scJu1XN6C/NhPGdB38J8lEYF3J9TpuRK4stAjtt5Nw478VYGku63Ewg7zGh8cdzxE=
-X-Received: by 2002:a17:907:3f89:b0:b6d:671d:8814 with SMTP id
- a640c23a62f3a-b706e5823f5mr176167266b.27.1761867767913; Thu, 30 Oct 2025
- 16:42:47 -0700 (PDT)
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=YNH9qr385z7prnfO/J9QCbJW8LGnn4eD5DHAOV/HtOw=;
+	b=ZEwa7ojE+tGwtpEzT0VX9ENZC+6JWG00tQKIFHqN3lHx/OG6PJVKGj77SqoXZupG/i4TVOEawxR8v
+	 GdXvviK3StbOuNhKuU011ERN6sZeBSq3imfOL1BIrSJ5U1us+h9z0AW1d29xrNe6Tl8uxnidLwF0pT
+	 1uc5GdfskejpcR2LYQhodTUtdXPBBDCBeuvuMCTgc10I5n/tSWzWPJlCON+Are3uhi4pQbAf0QYx4c
+	 xfIFwS4buIrr4VPlCGtU8fbW3Lw0f6LbxsmbJIlQp5Y8Re6wzzIJVBd0r1xDfmertUAN9WStR1Ond7
+	 GmCnh5fdNDQEX8apq8EYTXulTDM59Nw==
+X-KPN-MID: 33|KzXuCSdk2oQCotu/rg9R75nPeYijkUWpv5rYNvsrlM9t6tTXAAdNk06gOX+E3RF
+ PG90DfV4X+ZwJ/NCON7xKZvbKFDCZl0E6V0+7erKGNaE=
+X-CMASSUN: 33|SPMP6fo5NCWd0iqNF86h/IGpzJ8RFWiRG4QMLJClWpjo6j0fn5M1YfrlIEzCgDr
+ T9bxrp2E1DSnaImp+Aptr2Q==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh08 (cpxoxapps-mh08.personalcloud.so.kpn.org [10.128.135.214])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 243ede69-b5ea-11f0-b8d7-005056995d6c;
+	Fri, 31 Oct 2025 00:42:48 +0100 (CET)
+Date: Fri, 31 Oct 2025 00:42:48 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	Khalid Aziz <khalid@kernel.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Taotao Chen <chentaotao@didiglobal.com>, NeilBrown <neil@brown.name>,
+	linux-kernel@vger.kernel.org,
+	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
+Message-ID: <1767594126.3216238.1761867768351@kpc.webmail.kpnmail.nl>
+In-Reply-To: <tnofelm75pbsccdkulwpq7lkfz6wjmg4acrrvinkn6zzrkdxqi@dppnd4fge2tu>
+References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
+ <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
+ <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
+ <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
+ <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
+ <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
+ <90143686.3161766.1761833369803@kpc.webmail.kpnmail.nl>
+ <1ed30710481dd6739e6e9b4bd6f57c7c9d7e7de3.camel@kernel.org>
+ <tnofelm75pbsccdkulwpq7lkfz6wjmg4acrrvinkn6zzrkdxqi@dppnd4fge2tu>
+Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030001857.681432-1-jstultz@google.com> <20251030001857.681432-3-jstultz@google.com>
- <84c4aa9d-9094-4b12-8912-63a338a43351@amd.com>
-In-Reply-To: <84c4aa9d-9094-4b12-8912-63a338a43351@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 30 Oct 2025 16:42:35 -0700
-X-Gm-Features: AWmQ_bksMgjup1xlf2cptdec-fRrAfEHXuVbuQz6w9ObfjuDmB3nMcLHtKT2UqY
-Message-ID: <CANDhNCqHd5tHC_N2unYyhH3nuiq_b23WKEwHzpOWizWzCfT9JA@mail.gmail.com>
-Subject: Re: [PATCH v23 2/9] sched: Fix modifying donor->blocked on without
- proper locking
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 29, 2025 at 9:51=E2=80=AFPM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
-> On 10/30/2025 5:48 AM, John Stultz wrote:
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 517b26c515bc5..0533a14ce5935 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -6591,7 +6591,7 @@ static struct task_struct *proxy_deactivate(struc=
-t rq *rq, struct task_struct *d
-> >                * as unblocked, as we aren't doing proxy-migrations
-> >                * yet (more logic will be needed then).
-> >                */
-> > -             donor->blocked_on =3D NULL;
-> > +             clear_task_blocked_on(donor, NULL);
->
-> nit. You can probably switch this to use __clear_task_blocked_on() in
-> the previous patch and then to the clear_task_blocked_on() variant here.
-> It makes it more clear that proxy_deactivate() is now out of the
-> "donor->blocked_lock" critical section.
-
-The gotcha there is the __clear_task_blocked_on() will assert if we
-don't hold the right lock. So this patch is sort of fixing it up to
-allow for proper locking without cheating here.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
 
-> Either way, no strong feelings.
->
-> >       }
-> >       return NULL;
-> >  }
-> > @@ -6619,6 +6619,7 @@ find_proxy_task(struct rq *rq, struct task_struct=
- *donor, struct rq_flags *rf)
-> >       int this_cpu =3D cpu_of(rq);
-> >       struct task_struct *p;
-> >       struct mutex *mutex;
-> > +     enum { FOUND, DEACTIVATE_DONOR } action =3D FOUND;
->
-> nit. If you move that declaration to the top, you can preserve the nice
-> reverse xmas arrangement ;)
+> 
+> Yes, I kind of like that idea too. I think we could maybe take the existing
+> in-kernel minix driver and morph it into a FUSE driver which would deal
+> with the licensing as well.
+> 
 
-Yeah, I meant to do that, but just overlooked it. Thanks for pointing it ou=
-t.
+By now I am quite comfortable with the in-kernel implementation as it exists.
+The parts that I understand less are about how exactly the data from the
+device ends up in the right place in memory and how address_space and folios
+are built up for it. But these are precisely the parts that are not too
+relevant for a userspace driver. So, I would be very happy to work on a GPL
+FUSE driver for minix and get it to functional parity for all versions v1-v3.
+After that, and when all the available tests run well, we can start the
+deprecation process.
 
+I think this would be a great opportunity for me to learn and contribute
+something non-trivial, but that is still within my current level of ability.
+Shuah has also encouraged me to proceed on this track. However, since this
+is more than a couple of days work for me (for one I have to study the FUSE
+API), it would be helpful if I can get a sense of whether there is a
+reasonable chance for such work to be eventually included upstream. Of
+course, only IF it functions according to the criteria set out. I am not
+looking for guarantees, because I understand that is not how Linux
+development works, but just a sense of how the community feels about this.
+So far I have seen quite favorable responses, but I am too unfamiliar with
+the development process to understand how this may play out.
 
-> Apart from those couple of nits, feel free to include:
->
-> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Thanks again Jan and Jeff for your patient replies.
 
-As always, greatly appreciate your time for the review and feedback here!
-Thank you!
--john
+Jori
 
