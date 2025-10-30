@@ -1,281 +1,444 @@
-Return-Path: <linux-kernel+bounces-878341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93591C2053E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39257C20526
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:48:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A59D3BED57
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735283BA162
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417021D58B;
-	Thu, 30 Oct 2025 13:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984782139CE;
+	Thu, 30 Oct 2025 13:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RjElCyTS";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ez8+KVP+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BWgPcoTP"
+Received: from sonic313-19.consmr.mail.gq1.yahoo.com (sonic313-19.consmr.mail.gq1.yahoo.com [98.137.65.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0E11EB9E1;
-	Thu, 30 Oct 2025 13:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831980; cv=fail; b=ciI33F3xhn1idmFZjzXUZp/9wHrvLUFynwWagoAqQtn90E74b0SMeQcI54/km6WLMInXjZy0vjR55vSEVB55ax3erzPyGtocKaNBK1eg+AZXusQttvZLeuScmL68n+0pWJAeE+k1f9kwZNbYD/tqdZpIZDboZv7rgHPGTPwh7mQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831980; c=relaxed/simple;
-	bh=sIO9QI5Q2ya2gdVjFDAg2AF3PENtWSo2If3f+W1IeSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MLNvl78xFTPUSzlELE/ymRweNiVe3zUa5xlMRko56oCHChPNVpp1exv/13X9vy5XRUbhIMSVo7JmbTrv27jDE5a70srmoHZ3RtrnnCkkJtVLHHpDVAoHBtsMDDbvJqy1VpSNxBtjNSVyiyl8gZsk/gQ+OdxDPAU8txVITNex3DM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RjElCyTS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ez8+KVP+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDCKgI019850;
-	Thu, 30 Oct 2025 13:45:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=ptEcnKcgIcNXw5i6ds
-	bPopNXewUz2bu6bs8eNDGtQS4=; b=RjElCyTSFFxkJ7I2UOh4pGZCNp1p7ZDjKg
-	brVAvvHJi/ZNJZbH0M2Kw+LN4BfeFp7ae/yVHcCJtvJ21ZYud53i1D0nY9q99NaR
-	myhb0JIgZDczy8Q8RwlHf3vtWTFWT7d87eg+OHejZ4IzIwMrVhNru3Wchhnnvjd1
-	yBRQsg7L5l3tlJX9UYhkpBcPizYj+SNbS3saTdrtA8JfhopdlYMZ/w8UuY9hFIla
-	iy6KwIkNqkrBDC4v1frIRCPaJVdlVQUKLIil4NQ56mG+0RrH+fVnKWR3w6O5JocI
-	tC7PUlxkqeCt8AvGA7EgXcfJ5caQVzW5x/Jvv5ohbXbyaIuuadtA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a48gs83kf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 13:45:13 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59UCtOgv034253;
-	Thu, 30 Oct 2025 13:45:12 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011043.outbound.protection.outlook.com [40.107.208.43])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a34edcd0x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 13:45:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qbMSrtpvp/b+U6dJF5JZ+sOTZT3l2SXSiK5OLC2o+9pLKf6/P4VQAPIFf0GSCR1VD6xjuhpWHTOoqSZGf6huQgCbIEFXtMpxs5/ch39YL63fVG8SB28b+A1S1fZecpbemaJO0MqX1rzg4g0HkNmNxfGCZE3ZQ1tyGB0NcCkunEgOGH3kpyEjJOvVS46MyxcgXSOyzHKvOPWgQgy2BtV52tLETswPF4+EUdN3I9r2pJrTFF4TRR2ze54/xUBLza1aLVWv7wAhaV5m+d22VYEOFlw8xKcAGxezV2MJZmmstMUVEJalw1cNYktdvqscBTZxJTslp0IrPyG+t0YRm1f7KQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ptEcnKcgIcNXw5i6dsbPopNXewUz2bu6bs8eNDGtQS4=;
- b=f1epafLl6EpW9K6cRzgOk18VBdLdDQHF/Lk8MQFBMHHMo4vIELAXkAVrYXbqKwVWBd7ybLlXq3WOm+v9atWLza321NQS0IaQ1PZggVSMmOhcftt++In0uzodxdz99aWnS67EwZhLjxGxU/bnAWxVyoiqMIEl//BKOmmgLt0kxxUdWt+N61HjUg/ZX1A3KUcqrPGf3F6MEZklAq5HTLTUXMxVb/pHJ6l/7S4aOCXOoR/pREI7ZDoiG5y3rGrHWipDS2jNyxl7Ig3Q/hI8hcKjLinl1p1UeC8WQQcYDYdnIhaxRv/JWwTrSPva64+aruQVI4oTPy9GFJyb0OHk0I5akA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ptEcnKcgIcNXw5i6dsbPopNXewUz2bu6bs8eNDGtQS4=;
- b=ez8+KVP+M4tQZcOADGiuoOrLoGiCtAQ3/Ii7xkU+jwYTK7WDGat2HZ7WF7XcUQaynQhMMly7bN0t78uGi3c98vaeI2BXAoTXMBPZPSMj+M0+SYDX+cjEV49WJqIvxwbrRm22kgN1tQf1Tj1X49C36uPgUzBsCW3WK24tQky/uj8=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB7089.namprd10.prod.outlook.com (2603:10b6:8:142::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Thu, 30 Oct
- 2025 13:45:07 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Thu, 30 Oct 2025
- 13:45:07 +0000
-Date: Thu, 30 Oct 2025 13:45:04 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-        Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Kees Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-        Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
-        Shakeel Butt <shakeel.butt@linux.dev>,
-        David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>,
-        Harry Yoo <harry.yoo@oracle.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Qi Zheng <zhengqi.arch@bytedance.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/4] mm: declare VMA flags by bit
-Message-ID: <4be39304-6719-4b95-9484-7936124bdb73@lucifer.local>
-References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
- <a94b3842778068c408758686fbb5adcb91bdbc3c.1761757731.git.lorenzo.stoakes@oracle.com>
- <20251029190228.GS760669@ziepe.ca>
- <f1d67c7b-5e08-43b3-b98c-8a35a5095052@lucifer.local>
- <20251030125521.GB1204670@ziepe.ca>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030125521.GB1204670@ziepe.ca>
-X-ClientProxiedBy: LO3P265CA0015.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:bb::20) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549A1A9FAB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.82
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761831922; cv=none; b=m+V7VoHd8d3zwtAlE22T0CkLMgO4iFKTzOYp3eU759o5XH6UzADhAvrpRC3vXP1JslqEvgQQPLPBOhUcf4aq2LY6gSwYpvgsQogpgpUCmkSx9Tg+H32jIyopFpOpOphRnasYopWcMcwXFuCRA23V/Jdoh+gg1PeeG32DRDzsGDM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761831922; c=relaxed/simple;
+	bh=aEFqZw6aFDt12WHgRCSu6gwStoG5nCd1PZ89+g4e2cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PY+j+xfXSU/y+mR39Ntjt+j3uYCfoZWI3tM3P+JOf76fZfTKLf1IpTqsS09arQuXW3Qjk64Hjn1sTw4P8XpDzlYl6z5mAlP7XNn2SISX7c0vREE8uNiz9ECbabstIQ0G2rw7p/ej5tm3Lah/izx07LUPJccdsfwUhP0cTr9pJlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=BWgPcoTP; arc=none smtp.client-ip=98.137.65.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761831914; bh=yHIYzJpxqjSw6u75ZKXfrlyGuW7/O4GYojD4cOMN2BY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BWgPcoTP4IBJEW3c5l1JkKC/uIxHI8GuQK5DLi/XL/gv7cq8NNoSMaO6jXQ67Wm0fnXRYQqkSn43wnBt/mHW/7aUFF3Cg5TMDcghTd9JPR1iijDTsVO873U98i3ivtILpvD9NA9AB8CjCOSKzGDBBWEj3hIXh9aJNEehuiIEKNLLpypU1MEQePmoFToz1wF2ENmRAipaJLNS3EQycZN7QDSKbssfpTr7pjYykBAGGMnIcsBqfQQeDwspkq0thlS5dJhLcFSWI8pnKi97JJ7M5QI087EjJRlPkPmrtc8NU7EFbvDC+6ovn57h+7fMVf0pp7EPmME2oAzIIOMXIheWVA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761831914; bh=SyOwVI3iAJvJeZyJQI7ZUsndvIHuoBcRhfbwm5M2LSm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=mCvHaZ2rd3ByBmrEDxaKS5H6K8vlC7hjd8jHuiUhNzDD5m8DZfw7LRnBNWq2GErOFsoyrTZddRixMK0Elquy6pCNebZj+fw2KNFOacgmny5fQQcxyXy2zQSRQpXL+76D/A5k9Dgwx2jSX/kTxhpFSUyClPx//LDYzdRIEnk8MSBmpwdPHz27y0Jp892MrBfdHxh6ZfeLYQnUPIeN0mTiiKgfqosrK04+JqVYzZA53c5I1nsKC41skzCojPtwnl7MZtggK4WwB/mYIXmtndU8rlrObwkZ2UY4qLWsn+c6pMI223ALU9u7MeScBtvjVa+VjMixEghz1+LtqA3+lTJvYQ==
+X-YMail-OSG: AKm.6p8VM1lVwk1bXEhluTH5IsmruEtbX8HHpv9cfMmjhm_HKG0ApgFeK7OKgZR
+ kJ7rnv.faU2W2A57LzlArpGNm0HuP9rQVxV.yxnYUo8QJY7MwPJVxY6TtkUcsYBAXvyucxwc3Mez
+ aEQXAIv7hmdJglhqZrQ._Si3_A5fXmYwwaw_mtUY67KIGMjpxLFog0WsP7K42Bpff3_Dvbv6cdCg
+ 682vKE0F3lniKm6OOGwmii2KD8xKa50pI3Toe8NeW0yLAgNrCedmtXLfR3RrLh0Zxb82lPEJshWu
+ e9cz3VkINKRbhFWAIs5eWDoLIV2rLOj8BzcHeMA.X5IATxdLbtZfCIjRCklLN.HkeTrtlyXLM3o3
+ HSB39Efru4iGok0cX2KCGKr.Gz8SM5Am2yqFMJZEzUPt9zrEvXeeVI11xU.FAkrIFwXkhazdh9Ez
+ porORi.ODYzq0cZ7nRtwbNf1rYukCoEya0odvJOvIRRcwV5XSCnkYzn_KXCwH2aOe7ro86ObrdHT
+ V1JJHtZ5Pjtl8aW1rO_LVXbI_Cp5MHXO6hXW.kSwFrWSt7Cxj8mUh3dTyuHU1iafJBjbow9AsjJs
+ 6uBT5nxSDONiSB.U7Hkr0kovEW21EOHT51AyS_n75LR98eyadKNHhgtnUymdYLJX8bQoXBEDTICt
+ m0ZkR110Hi9X_hFzyShKHRykIODfYUlepPnSTxwh4kZZvxhFEKbuxvap9Gm_dubBYqGZcb_ixo9N
+ 5MZr8O8RpbdO1RQYeKnM3Bc7rEG7Yi5cegMAvTIQLx6ZuMfFOlTJU40VNLkeN3xeQ5ggTdZp6oRu
+ SiROsYYqKR7EeaF_l8HjP57qtFUmQguusGBXbhu2PiUorQKLw2JpJkIdK.WD6T4N8CgVf9uK.78F
+ lsQcyvG2p07Pcaya_lgZgQTR8L3l8vAhezLInfacoiOZAQoZnILFc8uThe9sKzCb7NCJXqGZftc4
+ Dxbxeql.d9siyukTp_MxegirI0NtXoEoKXVVYYJhUNO5aEZeuUqgrVYG_m.xM.XZ18f_onkGhD8.
+ RoCV5eAqv1nSLJT5DZ1GwgPZvsQrRA95vd3UJEsy2YPjYERQCnmfPKsuATzDqR.V0xpJ3v5IbE_Q
+ bY0AxIc9yo1m45iYF8_meCN9K9IrDpuFdEPs4.dPuDYfz3NsHuS76WSmI6yqo27M5_VYeZXQtcS0
+ qCsGgxjnAc2AkA4e1TGpGeybPaL8QFQl73b8FIJulT0rvKBtFdRgTQBhZ390buGf9ZbcE8gimAN7
+ EKFGllnsXjSzoAlsdN8vm0W.5x4qHMs7pB48n2l5Pxw.fJmsTeJOAIsqJ2olKs4K7wiNABf46qiO
+ e3tc7wqcXN5UpnWBSL.nn29R.7m2r4rqo3nAGTDzLW_DcdHiqYRERFX1XW9B81pQ6qb3o2YuVa.I
+ lYsX2z5TqfBwIrl_TRft0vGMTf3TMqwsGraD53_hSLN7vmj9rVh9zPj161OzmyoiZrQcatWu0FZv
+ emugkz9rAETL6Q1Llm6lS6AiTySJdh7LwIBsEvyGUS9JXmnaMne2XL8ovcRnc5XXyZY.8FGqPflQ
+ B1QSysKDQyxUKD5xU5nog_p_TfZUD8yiXsqeUki.spHxzAcH47X.m0VppQdeTkmNaxxZAKlG_GB.
+ A.bUm5r_7acc0ekx3So9Ch6wCAT.3inj_iPn_fEjUIauMirCJfTm21Zebmwc2ldkkvzPEGtdb7jJ
+ YybGg0e.Jjh9ZMdCxnnHUF7uIO3YTXXhIDf0LAgQAkcilUcMzEirF1hWoVzBB0LwVloUS5ddKuM_
+ BhzdFXCs1ZDZO8NU.prNdZNFLY2iKT1VaZ4.GIooo9OVnwzivCvePaKxAqQTuP0iSpeC2SbeZYC3
+ SxNfDW4ZfIaoiCgzmdmqUm09CWQFSuoBjBQHCc2oOY9GvupWByWbYqwVtsZ0j9K63APmFsyFk.5A
+ iQ7FxBOsetz8lLTOOqfLRHb6cXrDUDpyEBrsr442_Y.DGy.kWpiXd56VKF7Y.oJ1gpbQgK0xA5NG
+ ulVFx.bmzje5ugVYQH8bOvIZrZkPfAc2ae05cfUOfvLnffrmgpQ2q2KOnKTi56lLuFLsf60jZDsQ
+ VzZuCz1dx.gqXH7AMBGTgYLrH05fYRDzdHDBGmhvekdkEPiCRS8Jzn3P8usBg1gw0WT0FLPgzpyO
+ .I3bGlR9i3DqEh2vXllLbliy71Ca.rAxm2.Sww9yJMzuFpokyjW1DLQok75OsWpVyM4KzLQDd0l_
+ 6HSJNWZcqrE3ugAN9Dmxau4IBivIfnSTVFEK_BFuqS8OaiTkylhHheK_3dVO9majLt2JEQkAYdY9
+ o8zObVTpxkqf9ziUm
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: eb168b63-a1cb-4d05-9a35-dba5ad33248a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Thu, 30 Oct 2025 13:45:14 +0000
+Received: by hermes--production-bf1-748c868fb8-6gpbb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 80d5fd42e856c29b84fb2d08d66114ff;
+          Thu, 30 Oct 2025 13:45:11 +0000 (UTC)
+Message-ID: <7c4070ed-1702-4288-90c6-7edb90468718@yahoo.com>
+Date: Thu, 30 Oct 2025 14:45:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7089:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1491b9df-0108-4c86-84e3-08de17ba8952
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FqNTxjCHzBM2KAyw6q5M3GuYqchHrFwxBAsdIZpjJ3lQVTXUkPQluaG6e2Vr?=
- =?us-ascii?Q?ZPoW/AgqZWWuRPFZ8AYUP83pSHnexhqKDf/3vODG8HdoRv3gCM6nFrmUaL6c?=
- =?us-ascii?Q?oXP4xQaPbWr/U4dArGSYJqMRDaXgIBidIRnGmd87WsnjoiRUuA5EJrI04egK?=
- =?us-ascii?Q?iizLJC6sr5Grp/yrNS8RbVwsYRp9jFUzJjq0aeiKdQWrqeiveVtgjBHiA92g?=
- =?us-ascii?Q?nP1rmgL3dqDMpqRx3Ny0LIPfcAGz2yBLer/g4o+SXMB7HMNpcZaTMI4hhWXN?=
- =?us-ascii?Q?HwLrZ8SuMGIbu6vNfNWtsSrpGEIZtXaqo/6vT5fFotsxRtj8Trybw5FEUAJV?=
- =?us-ascii?Q?cBfLBcNWZ2pLHq4Oo37Ln42dwgrTb2pAI1fntUzJ82eMih03BXFOVAyICmCv?=
- =?us-ascii?Q?KhWKLdi3nmwFmXz8wxjNc7MxxE+TrkA1VOuuiZD865IUWFV+XbEINwnnimuB?=
- =?us-ascii?Q?Y6YyGBsD4QeRnDvmhfXdbFiKCrBDaeT5KDL8QVLCioVsu8ZVyZ7lS6gDnP9Q?=
- =?us-ascii?Q?HnoHv3ALelxaFUUJ33M9X44/188GtbVE4o6EKaG8Q/2gYUDbkROF4uSQ8K9t?=
- =?us-ascii?Q?pBqB0/jnwhiQTZe4E5jy4InSfaBggw9oME91Fplp4Tk5+LGKX1nicOCNAOMC?=
- =?us-ascii?Q?S8rU4NydxNguPu7XXbsE30ZQJz4Ua+mgm53R94kFnLzgid0DGfQOTd9QC+3d?=
- =?us-ascii?Q?ljgXBpQNv4A6DdxDduztrsVpj740CRX4AOZpZiMYZuNpy4nVeS7gZ/MZ2M8p?=
- =?us-ascii?Q?HGpbKfIAcfCVqQ+piaGG/xjsLEQQl7OFLzrYIW+JQmPtLH8ZU58siBHIUenL?=
- =?us-ascii?Q?P6rLG5z1Y3X3gK8pygf2hpF4UMkx21ddL2OPE1YdJEwG3vwxmGIwgrgo8Q81?=
- =?us-ascii?Q?T5eWFCoDGLC5H1CHwEpIOet3UWJF77d9vqBzACl30qIYNhjsWuovwftlb5Ea?=
- =?us-ascii?Q?d7DrVhdxN0eOsVn01IFpBYvdGBIsoCuNG6pDuRtYx0RVxJU4+gb6Ko7YKjRW?=
- =?us-ascii?Q?OUbCs4LJAm64QxS90Bg+OoDENYf+VRTSVK3FUCRxtmmD8smPHJcttqOocsKF?=
- =?us-ascii?Q?PfKKFmOPXDK5Ws2wOXuXlYRpU4G2l21ZFSLTuBjcSqIOraCVq5w7bMibUYYI?=
- =?us-ascii?Q?31Q7Ip/lFiYccM6IVywJllHUEYehOuGQ4uCGtPB68W9BD/JBnz1hlIKjle+s?=
- =?us-ascii?Q?HGhfsTHm8arusrUGxKd0QgThpE4dql/ow9oyAf/bQhChN1zzZyPqUsjuZfYq?=
- =?us-ascii?Q?ZwtcslCGxeAljy6Qd1OiMENF9fAHybvQ9GDXKT6ELJjGZxg5q9AcLQRNCHqV?=
- =?us-ascii?Q?H9iv4cdnxkBhJGy9W0RlojxE58u7aGS/mERnwoKd9qL24hLqy6g/8t5BjSiE?=
- =?us-ascii?Q?uPe314XNJSmgnmafD+yDpaWZV4ZpMjfJzyu49dkpHzTdebPRykwBt4M4XpxA?=
- =?us-ascii?Q?xAzwkVJDPF5zd+S7FW8w46e3RSIwmLme?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4E/Yk4oFYGeViC6FcLUvgOioeP7J1aJz3dhz7j4nHNHThWblWOJt9A+tvn04?=
- =?us-ascii?Q?Untjt/SmljzCG969pkHecKzURX5agKvD6FoTjycNZWxY4J9JABUO3xg2CxcD?=
- =?us-ascii?Q?D6FmvTfC2Lw3ryBq86fULZNfzK9LPtKrDm5VDs+FKuACIYReV0uLqV2LR2hv?=
- =?us-ascii?Q?cNB0gs7g2JgyHAp1HFJr6nuCmPWKyeR+D3cDCCNLXV651zpoP8U9+mXgYCbo?=
- =?us-ascii?Q?h9d/oMLGp4Pk068GC/FLfuJeelKufNgZhxTV7TaC1oh80hnZqCbbKlhN2oYK?=
- =?us-ascii?Q?CkmUo3e3Re7hWdb6CRaA0v+UD97lSJW9D7z/Ythl4wlvUsGvtWQaPvDaRgM7?=
- =?us-ascii?Q?CSu4IVBlemXEERiuj+AodW/ebRUXoYpU92XQ5/C+1FRpkBwaNFs+Q7aoOec4?=
- =?us-ascii?Q?hkFEsx0Ywnshb3kf8C9WCGGGd1zMkc2gbX8CmAb9OooTfNXfzhqaMSaiF6ba?=
- =?us-ascii?Q?WpVOlNH8vm3BG1DalkRASo44A1xW6eC0W/XDQv90oVKDyciF1TjezrV9NSRO?=
- =?us-ascii?Q?Mhzuo27nfW9yIzB8eazO5AoAUKR0D456dr+49Xyl+NodE4zsVMVzJdYQU7eX?=
- =?us-ascii?Q?+Kor4t9YNpqJkfxOcq5IrJIOsSpSlzUsi0+cXlXwaupBeYm5tq1egLW1TFK7?=
- =?us-ascii?Q?5wTLtMaYgpEkd+jjIVMKe4xQBRafgUXZR/Eytp23PGVxbUQjdZyRedpdaUli?=
- =?us-ascii?Q?uNt1+O3FfN9YRVyS6FYSmjsNUXB8cyOE2ZlVydnY/+tl/+S92DE4S3IclsZA?=
- =?us-ascii?Q?4xIh/fn3KScF0W7UKg5PJ5o0VibV4WYnLapxUV68BxMfcCCGnciJLeeQ4Z7s?=
- =?us-ascii?Q?zeEM52CCet5rVcGiYEdZQPb9WVHYRUKAFD28621H2qiDr+YLNJFTjnBlybKs?=
- =?us-ascii?Q?PRF0G6LsYIDil2b07D3JWJgtC4cD6pl7IrQyLccP6+iIHwYo5utA7WRwCGAx?=
- =?us-ascii?Q?ejBEHH+whtzzMSBEJfrkHaqnpY8D71OAwKkkATrKTtHWJ8k6jIuS80cyyAT/?=
- =?us-ascii?Q?Tte+4DFC8IWgT/nJLM4Abw+PFxSNGJYcyBObMEcejfZjR+ACloP1MUd2D4LT?=
- =?us-ascii?Q?JCKo3Lq7Ej378CDfJIs/nDbIaHfFH9UeeHheAzCxFN+1XYPwDjdNawSxMmuF?=
- =?us-ascii?Q?Abl8pPfP7aDhWXV6E7x/TZ9oWlM6OquqpSa2p343QJaM8whZ7yK9CuMZ262S?=
- =?us-ascii?Q?KcP0qmhMJ2qeMS56fjeNIgGUbM/fTAr+n70CJClySGZwA7s9V1HjWCr59Lil?=
- =?us-ascii?Q?vdTQWZGBqg0AKrhWgMupKXUl3e/FXEgwiCfXjqz/dqowI2Jg6tzlpq+VzxIZ?=
- =?us-ascii?Q?wwAygY8+2Jb/wMYpf3alHjYgmtGQmkddt4nM05aw7ryCMHaUcSkyr90wSZj3?=
- =?us-ascii?Q?+Nv/Czy3kq3PE4DXBW/PklsX3mCniW/T0C0VbYwygqowpG7T9FWKFbZbTqmY?=
- =?us-ascii?Q?JevVq2XjXLPJRob59m1bEAWrszpbrUeUi69AJzTu3D0V1sD+wZzJdi4BjxKV?=
- =?us-ascii?Q?Ib89Mdvl8XI9ibxPhh21+pbCfpe95uouwesCi8Z1ERWn0LMRTyXKaHBpT8LO?=
- =?us-ascii?Q?XSS3nOwDKPPFqaLGCFME90H2VgA4ZP9+iwUlbYqZACsWy/hmOStcyXOHNZ41?=
- =?us-ascii?Q?hA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	I1PfSbUeE1HY+sSz6CT9QqN1JRt8Dl+KA5/QpeXiT68F+nomq/9IbBy5BxZjqlmBFGkfmCh7GPkAoDy+vuUbb4mVC57FRzmsLZ5wXbTVD15G/ZUrFKSkrekKIec4q9H7Kb4GjMtmHUKlCGFhdILQ5URF5qlY0w4SCrvDfozkDMOYA9J7kIOHduTg3s3m2ZmdR8Xb6TJ514mX5xkE4HKXW8eEKVWAJE1jIJLsafYwFmQ1xbu8v2a/Y2uDzSjpLgsPBB8Vmt72rfAre480XVbaJ/m5zOpSwGI48Yjm9h+2pBrmOx7ABczMGSplSCznz/c6j8hCh2/j0zJtz8KS5M1jlUfL2g2S1hUEHa2XMVfCRIq1Z4M3Tf85OcrcJOCESZij7xlMUlhhLzIfv1OpO21tUFiJDRu5R8fZEuzX30lH33WYih4h+/rwfxhCkt6FWeuYgjQx/OXEgFejstN8lfaXXZRxc7sxxpeHE7QmYAFkLwmHWyNshMWWfqE0XnIQN1zUh1iGYUMZx32XwR8NdP+BZxTZszmhtuup16SDs7H2w9XpevXrnZPAKMGD5a6bdtVsZqNMir9GNpjPkhg7alMCdOQ4vKOzWb7G6CRfS6uAFNg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1491b9df-0108-4c86-84e3-08de17ba8952
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 13:45:07.0255
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4lAXHsvHPbgNhHWjTah2sBEqshl0iLP9gRIaD2MjmidufrvA5XGXiwCc1Qw4/M/m1OubNDBomR1KZ9KDmmHUXQ+JAXIxyF1BzrtdJowzFjc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7089
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_04,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 malwarescore=0
- mlxscore=0 phishscore=0 mlxlogscore=915 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2510300112
-X-Authority-Analysis: v=2.4 cv=c96mgB9l c=1 sm=1 tr=0 ts=69036be9 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=KZyhuud8GAxWFf9lls8A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13657
-X-Proofpoint-GUID: 5-6WMY6xaD3xdE9_ZX_9J29wBajxrdWz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDEwNSBTYWx0ZWRfXyY2x/FzmQn55
- J4S9Y3dkLwYgOmZgx4xLzQpMOcF/e1BxHV1TPNg9p85r+/t0/cExE2LwQ/mt+4ldUm61IRxAdyB
- 96PG6tvmTK2GdBWEq/Ea69YQXsNeB2zDPVezEHaoqfiCswRpkQUNcOE4KRzTYPEmUCGInS6cKrj
- rGeuVwBzE/4JAOFaMqUQyFjA/k8/wcHxfLa0xUv2ZKZ+txLiZvG77NcjAY+fDmzCXuDQlZg+tQq
- BNsP1DMilJmrsePZ/j2384xUkByrxYh0dD1O0TzREEvUAWQSqX2K22vSzDfJ5zjlc6/FN/mKSvL
- UyHMzT5nLnQQI2YGGl9Egg50GJXeyImoMnaPghgCKmfsRHavDhnhbYoEtBKeuVY8xNRjsQICqaL
- wQGpL5xVkb/+PG/63lkZCX/IbCs/GrucL6r6a8JGXFPhrnW80FI=
-X-Proofpoint-ORIG-GUID: 5-6WMY6xaD3xdE9_ZX_9J29wBajxrdWz
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: af_unix: Add tests for ECONNRESET and EOF
+ semantics
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: "=David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ David Hunter <david.hunter.linux@gmail.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251025190256.11352-1-adelodunolaoluwa.ref@yahoo.com>
+ <20251025190256.11352-1-adelodunolaoluwa@yahoo.com>
+ <CAAVpQUAbDfaiAZ_NCppGE5vsafWoU7V1xvnqtQQM44cwv6jHsA@mail.gmail.com>
+Content-Language: en-US
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+In-Reply-To: <CAAVpQUAbDfaiAZ_NCppGE5vsafWoU7V1xvnqtQQM44cwv6jHsA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Oct 30, 2025 at 09:55:21AM -0300, Jason Gunthorpe wrote:
-> On Thu, Oct 30, 2025 at 09:07:19AM +0000, Lorenzo Stoakes wrote:
-> > > >  fs/proc/task_mmu.c               |   4 +-
-> > > >  include/linux/mm.h               | 286 +++++++++++++++++---------
-> > > >  tools/testing/vma/vma_internal.h | 341 +++++++++++++++++++++++++++----
-> > >
-> > > Maybe take the moment to put them in some vma_flags.h and then can
-> > > that be included from tools/testing to avoid this copying??
-> >
-> > It sucks to have this copy/paste yeah. The problem is to make the VMA
-> > userland testing work, we intentionally isolate vma.h/vma.c dependencies
-> > into vma_internal.h in mm/ and also do the same in the userland component,
-> > so we can #include vma.c/h in the userland code.
-> >
-> > So we'd have to have a strict requirement that vma_flags.h doesn't import
-> > any other headers or at least none which aren't substituted somehow in the
-> > tools/include directory.
+On 10/28/25 19:28, Kuniyuki Iwashima wrote:
+> On Sat, Oct 25, 2025 at 12:03 PM Sunday Adelodun
+> <adelodunolaoluwa@yahoo.com> wrote:
+>> Add selftests to verify and document Linux’s intended behaviour for
+>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
+>> The tests cover:
+>>
+>>    1. EOF returned when a SOCK_STREAM peer closes normally.
+>>    2. ECONNRESET returned when a SOCK_STREAM peer closes with unread data.
+>>    3. SOCK_DGRAM sockets not returning ECONNRESET on peer close.
+>>
+>> This follows up on review feedback suggesting a selftest to clarify
+>> Linux’s semantics.
+>>
+>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+>> ---
+>> Changelog:
+>>
+>> Changes made from v1:
+>>
+>> - Patch prefix updated to selftest: af_unix:.
+>>
+>> - All mentions of “UNIX” changed to AF_UNIX.
+>>
+>> - Removed BSD references from comments.
+>>
+>> - Shared setup refactored using FIXTURE_VARIANT().
+>>
+>> - Cleanup moved to FIXTURE_TEARDOWN() to always run.
+>>
+>> - Tests consolidated to reduce duplication: EOF, ECONNRESET, SOCK_DGRAM peer close.
+>>
+>> - Corrected ASSERT usage and initialization style.
+>>
+>> - Makefile updated for new directory af_unix.
+>>
+>>   tools/testing/selftests/net/af_unix/Makefile  |   1 +
+>>   .../selftests/net/af_unix/unix_connreset.c    | 161 ++++++++++++++++++
+>>   2 files changed, 162 insertions(+)
+>>   create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
+>>
+>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
+>> index de805cbbdf69..5826a8372451 100644
+>> --- a/tools/testing/selftests/net/af_unix/Makefile
+>> +++ b/tools/testing/selftests/net/af_unix/Makefile
+>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
+>>          scm_pidfd \
+>>          scm_rights \
+>>          unix_connect \
+>> +       unix_connreset \
+>>   # end of TEST_GEN_PROGS
+>>
+>>   include ../../lib.mk
+>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>> new file mode 100644
+>> index 000000000000..c65ec997d77d
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>> @@ -0,0 +1,161 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
+>> + *
+>> + * This test verifies that:
+>> + *  1. SOCK_STREAM sockets return EOF when peer closes normally.
+>> + *  2. SOCK_STREAM sockets return ECONNRESET if peer closes with unread data.
+>> + *  3. SOCK_DGRAM sockets do not return ECONNRESET when peer closes.
+>> + *
+>> + * These tests document the intended Linux behaviour.
+>> + *
+>> + */
+>> +
+>> +#define _GNU_SOURCE
+>> +#include <stdlib.h>
+>> +#include <string.h>
+>> +#include <fcntl.h>
+>> +#include <unistd.h>
+>> +#include <errno.h>
+>> +#include <sys/socket.h>
+>> +#include <sys/un.h>
+>> +#include "../../kselftest_harness.h"
+>> +
+>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
+>> +
+>> +static void remove_socket_file(void)
+>> +{
+>> +       unlink(SOCK_PATH);
+>> +}
+>> +
+>> +FIXTURE(unix_sock)
+>> +{
+>> +       int server;
+>> +       int client;
+>> +       int child;
+>> +};
+>> +
+>> +FIXTURE_VARIANT(unix_sock)
+>> +{
+>> +       int socket_type;
+>> +       const char *name;
+>> +};
+>> +
+>> +/* Define variants: stream and datagram */
+>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
+>> +       .socket_type = SOCK_STREAM,
+>> +       .name = "SOCK_STREAM",
+>> +};
+>> +
+>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
+>> +       .socket_type = SOCK_DGRAM,
+>> +       .name = "SOCK_DGRAM",
+>> +};
+> Let's add coverage for SOCK_SEQPACKET,
+> which needs listen() / connect() but other semantics
+> are similar to SOCK_DGRAM.
+
+I will add it through:
+if (variant->socket_type == SOCK_STREAM ||
+		variant->socket_type == SOCK_SEQPACKET)
+  
+
+in both the setup and teardown fixtures with a little bit of modification
+
+where necessary (especially in the setup fixture).
+
+And also the fixture_variant_add macro.
+
+>> +
+>> +FIXTURE_SETUP(unix_sock)
+>> +{
+>> +       struct sockaddr_un addr = {};
+>> +       int err;
+>> +
+>> +       addr.sun_family = AF_UNIX;
+>> +       strcpy(addr.sun_path, SOCK_PATH);
+>> +
+>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
+>> +       ASSERT_LT(-1, self->server);
+>> +
+>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
+>> +       ASSERT_EQ(0, err);
+>> +
+>> +       if (variant->socket_type == SOCK_STREAM) {
+>> +               err = listen(self->server, 1);
+>> +               ASSERT_EQ(0, err);
+>> +
+>> +               self->client = socket(AF_UNIX, SOCK_STREAM, 0);
+>> +               ASSERT_LT(-1, self->client);
+>> +
+>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
+>> +               ASSERT_EQ(0, err);
+>> +
+>> +               self->child = accept(self->server, NULL, NULL);
+>> +               ASSERT_LT(-1, self->child);
+>> +       } else {
+>> +               /* Datagram: bind and connect only */
+>> +               self->client = socket(AF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK, 0);
+>> +               ASSERT_LT(-1, self->client);
+>> +
+>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
+>> +               ASSERT_EQ(0, err);
+>> +       }
+>> +}
+>> +
+>> +FIXTURE_TEARDOWN(unix_sock)
+>> +{
+>> +       if (variant->socket_type == SOCK_STREAM)
+>> +               close(self->child);
+>> +
+>> +       close(self->client);
+>> +       close(self->server);
+>> +       remove_socket_file();
+>> +}
+>> +
+>> +/* Test 1: peer closes normally */
+>> +TEST_F(unix_sock, eof)
+>> +{
+>> +       char buf[16] = {};
+>> +       ssize_t n;
+>> +
+>> +       if (variant->socket_type != SOCK_STREAM)
+>> +               SKIP(return, "This test only applies to SOCK_STREAM");
+> Instead of skipping, let's define final ASSERT() results
+> for each type.
 >
-> I think that's fine, much better than copying it like this..
+> Same for other 2 tests.
 
-Ack will give it a go!
+can I use a switch statement in all the tests? say, for example
+
+test1:
+
+...
+
+switch (variant->socket_type) {
+
+case SOCK_STREAM:
+
+case SOCK_SEQPACKET:
+
+         ASSERT_EQ(0, n);
+
+case SOCK_DGRAM:
+
+         ASSERT(-1, n);
+
+         ASSERT_EQ(EAGAIN, errno);
+
+         break;
+
+}
+
+...
+
+test2:
+
+...
+
+switch (variant->socket_type) {
+
+case SOCK_STREAM:
+
+case SOCK_SEQPACKET:
+
+         ASSERT_EQ(-1, n);
+
+         ASSERT_EQ(ECONNRESET, errno);
+
+         break;
+
+case SOCK_DGRAM:
+
+         ASSERT(-1, n);
+
+         ASSERT_EQ(EAGAIN, errno);
+
+         break;
+
+}
+...
+
+test 3:
+
+...
+
+switch (variant->socket_type) {
+
+case SOCK_STREAM:
+
+case SOCK_SEQPACKET:
+
+         ASSERT_EQ(-1, n);
+
+         ASSERT_EQ(ECONNRESET, errno);
+
+         break;
+
+case SOCK_DGRAM:
+
+         ASSERT(-1, n);
+
+         ASSERT_EQ(EAGAIN, errno);
+
+         break;
+
+}
+
+...
+
+if not these, could you kindly shed more light to what you meant
 
 >
-> > The issue is people might quite reasonably update include/linux/vma_flags.h
-> > to do more later and then break all of the VMA userland testing...
 >
-> If only the selftest build system wasn't such a PITA maybe more people
-> would run it :(
-
-This isn't a selftest thing :)
-
-So it's literally:
-
-$ cd tools/testing/vma
-$ make && ./vma
+>> +
+>> +       /* Peer closes normally */
+>> +       close(self->child);
+>> +
+>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
+>> +       if (n == -1)
+>> +               ASSERT_EQ(ECONNRESET, errno);
+> ... otherwise, we don't see an error here
+>
+>> +
+>> +       if (n != -1)
+>> +               ASSERT_EQ(0, n);
+> and this can be checked unconditionally.
+did you mean I should remove the if (n != -1) ASSERT_EQ(0, n); part?
 
 >
-> Jason
+>> +}
+>> +
+>> +/* Test 2: peer closes with unread data */
+>> +TEST_F(unix_sock, reset_unread)
+>> +{
+>> +       char buf[16] = {};
+>> +       ssize_t n;
+>> +
+>> +       if (variant->socket_type != SOCK_STREAM)
+>> +               SKIP(return, "This test only applies to SOCK_STREAM");
+>> +
+>> +       /* Send data that will remain unread by client */
+>> +       send(self->client, "hello", 5, 0);
+>> +       close(self->child);
+>> +
+>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
+>> +       ASSERT_EQ(-1, n);
+>> +       ASSERT_EQ(ECONNRESET, errno);
+>> +}
+>> +
+>> +/* Test 3: SOCK_DGRAM peer close */
+>> +TEST_F(unix_sock, dgram_reset)
+>> +{
+>> +       char buf[16] = {};
+>> +       ssize_t n;
+>> +
+>> +       if (variant->socket_type != SOCK_DGRAM)
+>> +               SKIP(return, "This test only applies to SOCK_DGRAM");
+>> +
+>> +       send(self->client, "hello", 5, 0);
+>> +       close(self->server);
+>> +
+>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
+>> +       /* Expect EAGAIN because there is no datagram and peer is closed. */
+>> +       ASSERT_EQ(-1, n);
+>> +       ASSERT_EQ(EAGAIN, errno);
+>> +}
+>> +
+>> +TEST_HARNESS_MAIN
+>> +
+>> --
+>> 2.43.0
+>>
+Thank you very much for the review and comments.
 
-Cheers, Lorenzo
+I will send v3 after you review the questions/clarifications I asked in 
+my previous reply.
+Apologies for the delay in responding.
+
+Thanks again for the guidance and patience, really appreciate it.
+
 
