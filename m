@@ -1,139 +1,135 @@
-Return-Path: <linux-kernel+bounces-878490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82291C20D10
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:04:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F735C20CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556651899F9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:57:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D29954ED4E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9AB2874FF;
-	Thu, 30 Oct 2025 14:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F7E283FCE;
+	Thu, 30 Oct 2025 14:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Oj/Ddl/p";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EgNGwUjt"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L1pfcBeR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC109243968;
-	Thu, 30 Oct 2025 14:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E625D266EFC;
+	Thu, 30 Oct 2025 14:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836203; cv=none; b=VdKhnYC8B2dOenvf7yTcydchl/cY6AL2dkIcqZhQTjpO1OqO88jwdQRMeqdHvayhpMNr4XJ6Z+ja0lT+Syt3mgNtRKPLYxZHi5fvaxrI+InOfvVwqHtlZCtDvFNpCOqzheVSDaofIIkNVXgpWwCEduKaCiNB2B0Sm711G7KdsR0=
+	t=1761836202; cv=none; b=UfpT6hP8RjlqIkmFQMeTwaEFBdStwHu5U1uDMndCHh4tm4k128wLL+AGiPhD+W/wNh82RbxIsMs3YGJj2HaAc/i90H4ZROIZ4j8PfpZki9Vctzb180FGgaT6edS+ACwy+qb2Lj0lFho65BhhXcFmdHOvdUdS4LjFNvnBmdrxOBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836203; c=relaxed/simple;
-	bh=c2BK3WHxLANraikKdYCXJO6WoebIYoIS2U7VOwWgQVI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=dRX9FZjzrFaEtHNG3BNgLoH8R8+H7lSh0hwPXL44K9nyahuHpgMTza+X+mj0fZFe26+crySuRzTpkGiUtJu9C86W5u/S7w/irGJ+e0IvVC+WsUkLw8jxf/x4XOfOQBplM4OWlB2FYegBYA66V4GlrpB/frvD7FVcJUDegIGBSmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Oj/Ddl/p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EgNGwUjt; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id BC1151D00112;
-	Thu, 30 Oct 2025 10:56:40 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 10:56:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761836200;
-	 x=1761922600; bh=k8LscHRVr5StbVgpWIhTiPBUvOyGR/V9XAyNZxxwQFQ=; b=
-	Oj/Ddl/pOGER+UXiXv17UreATMvRHzZkrH9g19WkcATMdz+Xa2xeAJXKjHOkDiCR
-	GsAXV5/vXclGVF8YWWlI5NJcp8RdaA240vm/KBcgdneGLzRUU7BaaM/lawkO22RR
-	ge0uQtX96mebX57WAz+1se5GOKjqU9WV7vMv32SeQOrOYO+orlCv19PxHXUa7Pkd
-	A1J0EpGo/oqIFOwmagp3fFekgu671qY0wCXCXmZIxT/lbu1TYd2dX05m/EjevmTc
-	h4ayMdGxTW/gx+eHGgW/ZmOnvH+kiGDlYjCq7yy0uCQv4d+2LgMx3A+HS2GfGP74
-	8ylkyuMGU2NW/n9KbiS4GA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761836200; x=
-	1761922600; bh=k8LscHRVr5StbVgpWIhTiPBUvOyGR/V9XAyNZxxwQFQ=; b=E
-	gNGwUjtTvjHGnWm2mePDhGES2OBe8zxgtnweOjCfleyyTsCT1N7pkl8ozIREi/Cw
-	R/Q7Vqk6/EM4LnErnT4bfHzv99q+8nmuC7FfcGz1eNdJwVp/IIk5NWokPqiF/eAx
-	R0kPhtUttF6GtUblaSc8KwkJ6Us2TAgHfr4HBMEPeWTPWG9BYiDyHwiYOuY05YyF
-	G7f+qmVu8BhW0ZJ8JVSD+FmfsMSriMIddlwH4x8uPINeYH0yoTkw3Rjlb+YTjC5Z
-	g3j/9HJTy6CxdUMtO42MiuR/041HGZgwcUNOUsuMdMe95uwI5kXE7C4sEWIi5J3d
-	veao3rOI1n8rh+G8digAg==
-X-ME-Sender: <xms:qHwDaX9Qn-DLdxu5BuYUkeWIiVsFt1RJ2d4n348PYNpQ3D96s1ezbA>
-    <xme:qHwDaegzyvjJJjUvU3kv7P-Mb1iiI0QjLTdHHU-upzLT13Ccyq-6zmaYCVLZ6Ha5u
-    1ui4neioyNIK615kVFIBYvACBmLrFlT_EbGjCi8QTcCOegYq8uyLA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeileduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthhqre
-    dtredtjeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghr
-    nhgusgdruggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvle
-    ehvddvgeejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtth
-    hopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifsedufihtrdgvuhdprhgt
-    phhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugiesfigvihhsshhstghhuhhhrdhnvght
-X-ME-Proxy: <xmx:qHwDaWI-vNksSNHTECU0KpLQQH-ePUDKbJ29C9Km2HhA3YLyk0BOpw>
-    <xmx:qHwDaXH1hleYHOEyaJH4HOuh9-bGrKf19BJq134VKCMFFqRvnQL1Zw>
-    <xmx:qHwDaSRPXx2x0f_OLn7ykjtf0PPbvHznhXCPweQiikVxl6FgiZVoKw>
-    <xmx:qHwDabdLUEe8_-5JJI1O19GPiQUD99TBJVDXiEMwPt1KBGrjWrOQ8g>
-    <xmx:qHwDaRMQuMPmOfs_i9G-OrUHKjjLpClrAMIAfvag09w_MGMAVs3cya2D>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 43C2A700054; Thu, 30 Oct 2025 10:56:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761836202; c=relaxed/simple;
+	bh=lxIidyC8bvUANjwjJLME1xg2tbOP7jPCKE2eRIf2hEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nPtWcFgd0iQfUBlmXVocEYoNlkBiE+P/3D/z2p/iMuWKwMjfcHyTv1wUSOFqeHkwso8g4BCSxFoiVuVcCxb6zo2hFgVvH7ku9GY9XL5W+Mmu9uz6J+g3CxQuPgscghthFJJgTx98TIUtABaReXwUwsEvlWXLy0ZKKvptz7sEGcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L1pfcBeR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UBTrpW008927;
+	Thu, 30 Oct 2025 14:56:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=Les6f//qwBT7/Erw4za969+5qvX/0M
+	zpxi7KAFPadnA=; b=L1pfcBeRBc/hIV/B3J72+7YGIwGLymjDNzecm8E+Qus3LN
+	h+q+8857ji/E2khKKqlmrjYTA8X2BNcM5s8xunVFqMvV8xu/8+KxnLQpukXebuiW
+	iCrPdPadePejoV55KadFDvbQggdU09YoT4cWRJFVCKUHlhhYpRC1x+QwITxNKgU3
+	uIQNqQhwFdkDgV019xHMhmZbSGYWV58TVB7WKsMDnWhZqvFMlmS1oGrmr4yvlh+4
+	wGWpv6dPUjZGWIhnxluH7HAhI+AOsqx2B3CZPDQv6QyYtDn3VkZ5Vgr8QlhU3gUD
+	a2FO5W44+BgeUKXq0QU1khkHLn4d80Pc8BO+9W3A==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34afh1w5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 14:56:28 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59UD9GNh030817;
+	Thu, 30 Oct 2025 14:56:27 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a33wws9sq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 14:56:27 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59UEuNC048890168
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Oct 2025 14:56:23 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B523520043;
+	Thu, 30 Oct 2025 14:56:23 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 63E8F20040;
+	Thu, 30 Oct 2025 14:56:23 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 30 Oct 2025 14:56:23 +0000 (GMT)
+Date: Thu, 30 Oct 2025 15:56:21 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Luiz Capitulino <luizcap@redhat.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>, borntraeger@linux.ibm.com,
+        joao.m.martins@oracle.com, mike.kravetz@oracle.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        osalvador@suse.de, akpm@linux-foundation.org, aneesh.kumar@kernel.org
+Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
+Message-ID: <20251030145621.16837Bd6-hca@linux.ibm.com>
+References: <20251028211533.47694-1-luizcap@redhat.com>
+ <6bbdf4ce-10e3-429b-89fc-ef000f118fec@redhat.com>
+ <20251029104457.8393B96-hca@linux.ibm.com>
+ <9a8254b9-92f8-4530-88e8-fca3b7465908@redhat.com>
+ <20251029124953.8393Cc7-hca@linux.ibm.com>
+ <20251030153807.0a835fee@thinkpad-T15>
+ <bdd4ea3a-f326-4eb8-866a-52b1ea2bdc5a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AGMnaZTMArBF
-Date: Thu, 30 Oct 2025 15:56:19 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Willy Tarreau" <w@1wt.eu>, shuah <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Message-Id: <d0c6b2fd-1bba-4a9a-add1-b7c29ada7dd2@app.fastmail.com>
-In-Reply-To: <20251029-nolibc-uapi-types-v1-2-e79de3b215d8@weissschuh.net>
-References: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
- <20251029-nolibc-uapi-types-v1-2-e79de3b215d8@weissschuh.net>
-Subject: Re: [PATCH 02/12] tools/nolibc: handle 64-bit off_t for llseek
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bdd4ea3a-f326-4eb8-866a-52b1ea2bdc5a@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: eJT-qssreGV4OP2Nrdb-clNTopJMWB1z
+X-Authority-Analysis: v=2.4 cv=WPhyn3sR c=1 sm=1 tr=0 ts=69037c9d cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=byvkRpKd6ojhK890NEcA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX/aNxGWQWVx5c
+ Q/e8N/+TAYD1DoLooorVyX7Wqk3cr7aZOB1WNj3KaFmJ4reeZ8/JxL2z8SrQL79CvVKfvw7iTJr
+ Bw24SnuOirymBobzMMTGFsH2AGlyys7DXe3fQByUuW65oYsEQSdPnrE1V4IkhXYTioqlKhof1IJ
+ RnDjpN4xdyekSrpkH36gh+y2e6HB3a2WuG8pDAwCjXQKYMY9WlslqDIUuOANyV+9S0xByRhDk8v
+ lzXbhpwYs2TyEzJ1KzTKBgx+PYoRamifbCRbCaX4zDsa6Ds7yMWdW+memuEIwHlHFWp8chqkWa4
+ Ya4515iA81bSMMT/5GAXZyDwAdKb6XtPNlSrVcL1rt/EROMDO2NDi7p4OwpFWxvZt0hvRligFnQ
+ 6a/YYPeXtyzTrbHv5+Uz59GCDEHiEg==
+X-Proofpoint-ORIG-GUID: eJT-qssreGV4OP2Nrdb-clNTopJMWB1z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-On Wed, Oct 29, 2025, at 17:02, Thomas Wei=C3=9Fschuh wrote:
-> Correctly handle 64-bit off_t values in preparation for 64-bit off_t on
-> 32-bit architectures.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->  tools/include/nolibc/sys.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
-> index 386ed80aead0..321a3bd16ff4 100644
-> --- a/tools/include/nolibc/sys.h
-> +++ b/tools/include/nolibc/sys.h
-> @@ -599,8 +599,7 @@ off_t sys_lseek(int fd, off_t offset, int whence)
->  	off_t result;
->  	int ret;
->=20
-> -	/* Only exists on 32bit where nolibc off_t is also 32bit */
-> -	ret =3D my_syscall5(__NR_llseek, fd, 0, offset, &loff, whence);
-> +	ret =3D my_syscall5(__NR_llseek, fd, offset >> 32, (uint32_t)offset,=20
-> &loff, whence);
+On Thu, Oct 30, 2025 at 10:54:47AM -0400, Luiz Capitulino wrote:
+> On 2025-10-30 10:38, Gerald Schaefer wrote:
+> > On Wed, 29 Oct 2025 13:49:53 +0100
+> > Heiko Carstens <hca@linux.ibm.com> wrote:
+> > Therefore, we should disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP again, for
+> > now. Doing it right would most likely require common code changes and
+> > CRDTE / CSPG usage on s390. Not sure if this feature is really worth the
+> > hassle, reading all the drawbacks that I mentioned in my commit 00a34d5a99c0
+> > ("s390: select ARCH_WANT_HUGETLB_PAGE_OPTIMIZE_VMEMMAP").
+> 
+> OK, let's do the right thing. Do you plan to post a patch? I can do it
+> if you would like.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-This one is easier than some of the others because it passes
-the two halves explictly. It's a bit trickier for preadv/pwritev,
-preadv2/pwritev2, fallocate, truncate64/ftruncate64, sync_file_range,
-and fadvise64/fadvise64_64, all of which have slightly tricky
-calling conventions. Not sure if any of these are currently
-supported in nolibc.
-
-    Arnd
+It is already in your inbox :)
 
