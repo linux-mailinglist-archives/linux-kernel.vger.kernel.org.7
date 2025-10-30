@@ -1,195 +1,343 @@
-Return-Path: <linux-kernel+bounces-878334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51C9C204BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:43:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08287C204F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8037A4E2668
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63EA1A64E5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552AA25A355;
-	Thu, 30 Oct 2025 13:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7096324DD13;
+	Thu, 30 Oct 2025 13:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqGpSP7Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="B9T4uWCX";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="B9T4uWCX"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013036.outbound.protection.outlook.com [52.101.72.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7555B25A2A7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831808; cv=none; b=HlAmZ21ByJscLsBD/4vx2EToet35Gc56lSRNeJxmOGmXPBDdhs77vrERxDDPSa2il1E7YYoXotZblxo587+NF/2mMcFTUgp9qrqyLcV1MLbgVbglCfSinqlqnPg/8ye5umSyd6qaOPjWVbzoKAlT+1L+Q1sJhvDePKHyiC8aGhk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831808; c=relaxed/simple;
-	bh=KbprDtN6SmJCRjRjO5BVk4rfuKfK+mVV+/Hwpvetsuc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lTKTzeHBL3CBTmcNAJdoNwNE8ejVfG/xR61E/gyFJLd/z7pRKz9lZpUvNwZiVsnzrLHi6PlZ1qRVYFzIgfjUpQANuScO7zbdg2CkEFq65DAlLxqnsN2vX26ZKwKeFLEMbr6QNJrC6dn1zpOHoxKYbk78i3IP+ELEFah0L8p8Q1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqGpSP7Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24434C116C6;
-	Thu, 30 Oct 2025 13:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761831807;
-	bh=KbprDtN6SmJCRjRjO5BVk4rfuKfK+mVV+/Hwpvetsuc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=PqGpSP7ZaqfCEKyjywoNvuXC957e4EDmioAXvyvCsxdWE/8YgXax8Xm+/L6W8FmbJ
-	 +BFw/MqUg5NycEM2fF68mSKFRKDZyw6uJ5M4Un9xxyc6bhFGPEkHvXAaRsU+z25pMj
-	 gtEoixZknceQtOI/8j0EmvLV/oFHsGRM8axG7ZH/+DXu1fVD51x2F0v296RFAH206I
-	 QVC3owiqYWHVaICXtLmX/8Hi9YgUDDPbaRTqFoeVDSv9KWmLk+1oDOcDL5zdrVPaP7
-	 yAVrNgc4+LM2bNgnn9Ca+5ohP0dXMJHTrCNFPILvziy1nrADWAcReN2sL1GWP9sA+q
-	 bmknc3ZxwUWBg==
-Message-ID: <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
-From: Jeff Layton <jlayton@kernel.org>
-To: Jori Koolstra <jkoolstra@xs4all.nl>, Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, "skhan@linuxfoundation.org"	
- <skhan@linuxfoundation.org>, Khalid Aziz <khalid@kernel.org>, Tetsuo Handa	
- <penguin-kernel@i-love.sakura.ne.jp>, Taotao Chen
- <chentaotao@didiglobal.com>,  NeilBrown <neil@brown.name>,
- linux-kernel@vger.kernel.org, 
-	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Date: Thu, 30 Oct 2025 09:43:26 -0400
-In-Reply-To: <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
-	 <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
-	 <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
-	 <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
-	 <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985272367CF
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.36
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761831859; cv=fail; b=P36jujZBFfsc2rjw52N0U9TP1Xg4mLgkS+KGICg7A/tr3s4cfoFVyT5PM4InE2/GBWLJ+xaKO0lRbLOGfcsvkhF/eNrPBS7KOCtDnA/Lv2u0cUbKmvsRPXyj7dReTZ7YVKY6m3doKzMXBQ5vVwauWa7P6HDlS4VTlDcxdWPsuSo=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761831859; c=relaxed/simple;
+	bh=8QC6+9e+AFHFbplyzFWljcItBUSDLMr7CqP35sF08zI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ISr7ClNh/sRgmXlzMwe5N2D8xnrsH5Re3MO70v3aEI6zanF58GcNA/d2kHvp4g+rx1JfdZWSXtWnw21kb/O1bcDIrI0EQ8tgWhWqZvfpCPyQH+e9T3QKFMgh+Mf/4N6SFpwPd3m6j+KYYbJvXEhA2uDHkndGKnBMtAr1qIh2/YE=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=B9T4uWCX; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=B9T4uWCX; arc=fail smtp.client-ip=52.101.72.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=DIFmUY+I4V0GqU39c17HaD4e2UHn1ZXouve/iOEDsICgO/56AaruyWeNCkCyIhqd8SBkmZx/U7QdHYLa5i+3sQuGMfysaiz1KVpXaJ37lvP1LQa+upzqfInobH43/Cn0LIdbMPx1IYTnICRzfyC2Wwc/daXQitmnL2ffhVKglzsk0FE2jpFV4A5MUNnIirHnjJq7dGTCopEAIpa84t8Rtrsmk6cy6/1q9FHCpk6SmoWJNGJbxi/itp2V4b6jPJwk3d4XOAl0G9Op4X4z7vWVUyhC9vTM9Qp1X9RwelzJbivIho79iW9++OyIcWhGHjJtaG6ik3UL1de2Juu719t+Mw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OKpww5m50l9L4wzVwk9g/1WWpy5+tAeMIyQIQS+2KX4=;
+ b=y8dcLNbwimrn0vsOMGCYlA2kmewdeHhbv9ysfusZqksGcXtSYhRSvaFZCd3GV8XaiVwf2T3JdCBLxcJgRDwPyq27sPqtj2d4iDOniG4TFvAHIzl3WJepi+gxUOCcCC3uKSZHTf5PB+zjy88hKTxkNp7sTjJtQmFy0LvBZdMjy5ZXNU9t0g/gljChATnfmHl2LJXBMO+yZPoVxTrkv8jT98NuKYshlgv3FBF0B9nLnw0Let96A9wcVpRe3/N8IIQVmyRZPQoka+OHQEX6UOrbbmtob4ZMw/JMaZCH6q7UU9oM9hnX9R/bNVreLvcYPcPOjMV4cehHywLauRVhWVoLZg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=immunant.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OKpww5m50l9L4wzVwk9g/1WWpy5+tAeMIyQIQS+2KX4=;
+ b=B9T4uWCXa11tMtPRYvxOn8ZVAhS9lNxwu/d1BBRg4ku4/TVjKCGVQuayWNyeKOlCMBw8w6OL8dqg5yHyYVvU9w4wiInPhQJq5xumBrACJ+shD7VF5TD+qumHIInsR1lb7B5F/wL8UyC74v2OgjRlNyYfYtiYzmk+IrtqR6mCNyw=
+Received: from DUZPR01CA0174.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b3::23) by AM7PR08MB5303.eurprd08.prod.outlook.com
+ (2603:10a6:20b:102::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
+ 2025 13:44:12 +0000
+Received: from DU2PEPF00028D09.eurprd03.prod.outlook.com
+ (2603:10a6:10:4b3:cafe::61) by DUZPR01CA0174.outlook.office365.com
+ (2603:10a6:10:4b3::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
+ 30 Oct 2025 13:44:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DU2PEPF00028D09.mail.protection.outlook.com (10.167.242.169) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.10
+ via Frontend Transport; Thu, 30 Oct 2025 13:44:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jmDiDmjWy93ullmN/NoucrMl7aM6fcrFD1UGhZOW0WC8l76iRGL7xFH8zwhn2V3HEmHaayDHUFzozBmeuM39F1d39dhcAL5X2YrCgLX0ACTsiJKoeBXMB/71OVwJQQLcAIgNXQvkbkiq+IJc+RhoGRfgvmLNickgCh2+33J2KZAKIu2mG2d+7HMXcYdUGtKZ2ycJ7S9AGWPo5Lua5l3aR6G2W69adAfa5lmUvjNf6A5lv1ldY5RzC2PLd1AoJDSqNKjTARpWT20BuVbS8PTYXIx5X46eBSfFHrURvsKLqh9yQ6CybU3l1oPXy7CCAVIoI4WdmTFxzO78qo4Im915VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OKpww5m50l9L4wzVwk9g/1WWpy5+tAeMIyQIQS+2KX4=;
+ b=VaW0NrNhNUgC8hXOdjXH3Ehp0gaMkT1FtwACwxN9lyJ2sicRUamAsbWGyAvOKa1b8kvYQQcm7glD9lpg8QTD70+LFxwS/SlVGgDLefG64a62AkTPAj7s2qVf/kxlWHVlt0OP7S76JS9A/kS6/tSuT19RcuOJHCYW3Bfap0KXHDA5rGfJKQjjALAG5rkScZdYqbEHVVhf5BQVGmyxeR+9iJspi2p5deSY/6RZUk871jneJvVrV748CsD+LMZQS4kF4sZAzGW7UfhP+OMcSKMFON9NCmP9iv7ypqUHCWZ/WJBwoXigXZ7y2ZLoucYXC8Rp7bYLFAmF1gF8Ws0A0CluOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OKpww5m50l9L4wzVwk9g/1WWpy5+tAeMIyQIQS+2KX4=;
+ b=B9T4uWCXa11tMtPRYvxOn8ZVAhS9lNxwu/d1BBRg4ku4/TVjKCGVQuayWNyeKOlCMBw8w6OL8dqg5yHyYVvU9w4wiInPhQJq5xumBrACJ+shD7VF5TD+qumHIInsR1lb7B5F/wL8UyC74v2OgjRlNyYfYtiYzmk+IrtqR6mCNyw=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by DB9PR08MB7651.eurprd08.prod.outlook.com
+ (2603:10a6:10:30e::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Thu, 30 Oct
+ 2025 13:43:38 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9275.011; Thu, 30 Oct 2025
+ 13:43:38 +0000
+Date: Thu, 30 Oct 2025 13:43:35 +0000
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Per Larsen <perl@immunant.com>
+Cc: Ben Horgan <ben.horgan@arm.com>, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, perlarsen@google.com,
+	ayrton@google.com, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KVM: arm64: support optional calls of FF-A v1.2
+Message-ID: <aQNrh1BG8KSkLOHg@e129823.arm.com>
+References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
+ <20251027191729.1704744-3-yeoreum.yun@arm.com>
+ <f5aa3c19-fdea-4f62-9541-530e59b20a87@arm.com>
+ <aQEwVe8+okm/Nmso@e129823.arm.com>
+ <61e923d6-388b-4cc6-8c26-5581a1e1cc10@arm.com>
+ <aQIYZoP5iKcwtXwW@e129823.arm.com>
+ <96171283-6f2a-45b5-b889-be1bee91678c@immunant.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96171283-6f2a-45b5-b889-be1bee91678c@immunant.com>
+X-ClientProxiedBy: LO6P123CA0009.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::12) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|DB9PR08MB7651:EE_|DU2PEPF00028D09:EE_|AM7PR08MB5303:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2007a5c6-ae91-4e68-c18b-08de17ba689c
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?+DAP9Rh4O4KjyMWp/Nza2Q5PqsIFsgc1TNr5XEd7+4A++xfb8yFSUtKQ50au?=
+ =?us-ascii?Q?eljp4RKM0TnuQp68YQGgV57H1C6eM0D9qjV7OTaoyM2e3k+2jKzqZ4rFvrK0?=
+ =?us-ascii?Q?xfHCZbPhsAm7PhDwbTIe7RZL/KEOGwwQP4aR5bW5pcvxn+5BGdTRw2dYpGY/?=
+ =?us-ascii?Q?nBeQiSuf6TEf6BdiZOXF+VSsxxeITBNPUcfXB0aaXg6K0/hzllM2oTZrD1JI?=
+ =?us-ascii?Q?1xCi4V+AAVUt6dFp/8KDmDasZ9MrLg3OqmCcSqst7tidqUbb+KK5sMO4obkI?=
+ =?us-ascii?Q?hBJJFHO3izkwwYKmwSP8ZRSeNurcGplgiTMdxktMCM/ksoN9zSwMMCqAH0gV?=
+ =?us-ascii?Q?0Z16TTlNqbCWdx9K9XcwC477jSXVjtPIoi9CPyYBJIu1meq2XgRW0Yek+F0z?=
+ =?us-ascii?Q?dLOkxGMliAhxJNKAILVrrf2vX34lwPNFzU9eeE6MTWW3ns46F2DI8t8v9ALT?=
+ =?us-ascii?Q?ahf/OjprIBA8U1tD3S65d1hu/dAjibyDMI8NXvv+iQ1kUjJHMhwOq7KQhsG6?=
+ =?us-ascii?Q?RZ+/GXUqc4tZp+Gzm6Pn54Wb09dcBZly9jieTKTHuHD3LwFIKVGukEtG+2r3?=
+ =?us-ascii?Q?OTZJ8pPDQec4Ug7vJgZsQe3YhCzGgE1fxNZUb23ARdh1+EKJktOlmf+3yZBC?=
+ =?us-ascii?Q?gyi8fNMTrC7gnTC+MdtS8cWs7vaBBs2lrv6woP7mlnIR+WJ0ySou1WCEk9YI?=
+ =?us-ascii?Q?+xgh+JqRYCJ/7xewzx7c1n+GKnG4UWRtVTiJRo9OmfzT57ccWc00BYhA+SEl?=
+ =?us-ascii?Q?yMp1pns9TykLgO6bvAOiTL2rQGf0IQzn762gb09uXj2+C+1qyRjTxklPqFu8?=
+ =?us-ascii?Q?miqngLGvoE2xsDnYlUHwlrHc6p6/ufQlKHjdUV3zI8LDwuvjARCjK+HVM0l9?=
+ =?us-ascii?Q?QOszl9VufsMFIihOiMO5CoZRu8guPO/VRpDK+W3bh1nXwALloCNDOgYudLHN?=
+ =?us-ascii?Q?X6oSYz6E8LtDOWJEjSA5w7GSEBlXmcWH5oVkD1VK+LAgjrxSv3aGjzKxJyMx?=
+ =?us-ascii?Q?LL/17IcAdvCSla4c4V0kBkL6IWQSOlr+Bnt504M28iEnqMknAxQ6XINh14QE?=
+ =?us-ascii?Q?avDV6XHo89rWdAzcO/j+r9cLa4l0V5KtsA8gMzGqBT+JUy4wH3GEHOuIsVfx?=
+ =?us-ascii?Q?/DfDQIZS2HAggPKrtqzFMTicK3NJ8hNEo1v78BMI4G17wSk+ta3dJFE4LUh8?=
+ =?us-ascii?Q?rWzBIEz4JgClHYpXwkRvkGi7+Y9wENDCizHMX9MjnGRvfwNgrMVSlLn+TxXH?=
+ =?us-ascii?Q?EJz59Mbh1pIBPyhdFFeV9WPzImIyyh0IRBtGaePwUyI/P8O0THIrY7x3/Ky+?=
+ =?us-ascii?Q?XFYBKfvAjTdjIywSgWa+NxYPTwtPYBsipghTu+zM3iQnbQGeLr27wuQt1pks?=
+ =?us-ascii?Q?lG5yDfPQWMouZTSIj+MGRf1ur2bHZuXyZpeqjY6pbfrbBoQGItvJcFqKGY9H?=
+ =?us-ascii?Q?VdhsziBi6cg=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7651
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DU2PEPF00028D09.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	9320798f-a986-4e89-9550-08de17ba5450
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|35042699022|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?X57wq+boYQsgyVYcbq7NuRgtpdk2MMuwv5bxXyvGrYUrSEUgptr3G+auf0tp?=
+ =?us-ascii?Q?D+hDVeaKaMB4TBu/bB1Q6eLtlO4nEODJ80xqbbPfMatGNEGIdyQvgouq9NXP?=
+ =?us-ascii?Q?phdENKFKF1+uKmIvuu6O794gVmHyA4OIp82tyGfUotfHTbnQJt9VIZpcel9T?=
+ =?us-ascii?Q?RsvhXn3xlNxzCmJNqW8QFGLr9uDeEIAIUf/71GmT9t2h0ZL+XdIggy6lHErR?=
+ =?us-ascii?Q?Zu3OpKYofiTSCWD5mQLejsjNT8OOxyZJjD5sq50N5UIJ0e3AN4Q/tAkfUIoh?=
+ =?us-ascii?Q?RiXiSFSvVF6BsKht7CCiWCE+fWdIOTGyfiOsfVF+LK3kMxbPb1C9pzIRTfYp?=
+ =?us-ascii?Q?BCl6cYnjeUP01V60KLQhRvKG6NlUn4tvXNDyr5APwxB+ODvyw4NPztEktHwU?=
+ =?us-ascii?Q?enlFxb0m+4n5fEztfzPjyLaowjurMiAvF7pREQhUsx0uCT8Jr1f1NPcuXFv0?=
+ =?us-ascii?Q?kBimDMtppKlb0XaAiEjd8S2B28+Gorrk2rKPj7GUuSuTi8STbvmADup64dwX?=
+ =?us-ascii?Q?WrqCV2HSCsOjgWDhHRX2QSUfaP3nJeiSqRGCcNrXfjyGFXYMZWcwNGliJ3VV?=
+ =?us-ascii?Q?VH5LD2hi8ZTnvp6M0AKl0ScMRMyblDUXnWyjOfi2f80KUNMsY5O265mdA4Eh?=
+ =?us-ascii?Q?8djoxEsTX5AG07ELWXROAmcAWKFqia11Q1eMxGgKkq17P6zYqLN0NoJwUTlX?=
+ =?us-ascii?Q?5sFz0Q7rSbFC74uj3vIgssHH/JrQIgu6DjXun6Y4w/pRj4eL/JJaKS2YC0KD?=
+ =?us-ascii?Q?cCiDdPMCxlcNPX27Wr/meqcn2dLy5CkjCoX8UmccDLFiIRiDpsOyx2BIPmWV?=
+ =?us-ascii?Q?evUA1g4wuywaaGUYmaUgKjOM7XZNf/Y1cXvCJOzq5eZ/FrJR7kg7V+r93J0m?=
+ =?us-ascii?Q?81gAY5z4WALnr1QFFpiNBKaT/5t+MqC09uZYF0DbuLlt4c7pBLb7ae6fOulF?=
+ =?us-ascii?Q?siiTeoI2qjp0hNoV6mEPN/Ui3lyuWFVs+R3C3ac6ROq0hVLOMp35PppRq5KV?=
+ =?us-ascii?Q?RmXGYh3mPPkKy8AUWbZZ2tqwWLwXHt7paDFSIL2F6RlioI2qOWbmj96+ad6L?=
+ =?us-ascii?Q?iZX4X6pmdsygdS/gfZ/M1by00JvQxMwaPUn0muqFr4b8rdPIAKY34jFKZazy?=
+ =?us-ascii?Q?YXkyK84lQgNwuh46rBDZWYRLHJEYdceDZx0IVqUc+QOHKp3aPCZW8unLzigH?=
+ =?us-ascii?Q?1ZsuBvBo63Qtho4R6lD8kRV1oYCli8B/Oh/GnQB/Aczcmk3GT2mmEPWkzbPf?=
+ =?us-ascii?Q?KOC7mWHn64bnz2WHd0gjqPFZTHwFRF28lWz93+DOGszaV+JHG2IZypwWUjnj?=
+ =?us-ascii?Q?ZbNZ59F0N3Oun992yWvx54zPHni3NThVFnsCCa+CaNJ5jBcb5LyPaRgBSP/a?=
+ =?us-ascii?Q?97vznFQG7EJtRnnEvGAx2Iv/FAdwP5nyO4V1LzjfsW7S01zivTqT93N9GLNo?=
+ =?us-ascii?Q?dXtIoYw90cP1U560EPcNoKyUxyJ86fHsKhwkr2Hvrv4cnJlkocof70jfTJKa?=
+ =?us-ascii?Q?hkxAWFUYN6XWzPortQ3IBP1ytPq0HuNc3van?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(35042699022)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 13:44:11.8381
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2007a5c6-ae91-4e68-c18b-08de17ba689c
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D09.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR08MB5303
 
-On Thu, 2025-10-30 at 14:31 +0100, Jori Koolstra wrote:
-> > Not necessarily.
-> >=20
-> > I'm not sure if your internship covers this, but you could start a
-> > project to build a minixfs FUSE fs (if one doesn't already exist). If
-> > you get it working and stable, you can then submit patches to deprecate
-> > and remove it from the kernel.
->=20
->=20
-> I would have to ask Shuah but am open to it. But a quick search turns up
-> this: https://github.com/redcap97/fuse-mfs . I would have to see if it
-> actually works and it does not seem to support v1, v2 of minix fs either.
-> There might also be a licensing issue.
->=20
+Hi Per,
 
-I don't see a licensing issue. It's BSD licensed. Also, this is a
-userland code, so we wouldn't need to worry about that too much.
-=20
-> > For some background: this is a continuation of a discussion that we had
-> > at LSF/MM summit this year. A lot of these smaller, less-used
-> > filesystems represent a significant maintenance burden. Whenever we
-> > have to make changes at the VFS layer, they represent another fs that
-> > we have to touch.
->=20
-> > Many of these are not performance-critical and are hard to test. They
-> > would be _much_ easier to maintain in userland if we can make that
-> > work.
->=20
-> One question I would have about this is that if we move minix, for
-> instance, out of the kernel code, how can we be sure that it is
-> maintained. What if some Github repo suddenly disappears? Like I said,
-> I would be fine with helping maintain minix, otherwise what should be
-> the course of action from here? What demands do we place on a userland
-> replacement for minix before I submit a patch to deprecate and remove
-> the code?
->=20
+>
+> On 10/29/25 2:36 PM, Yeoreum Yun wrote:
+> > Hi Ben,
+> >
+> > >
+> > > On 10/28/25 21:06, Yeoreum Yun wrote:
+> > > > Hi Ben,
+> > > >
+> > > > > > To use TPM drvier which uses CRB over FF-A with FFA_DIRECT_REQ2,
+> > > > > > support the FF-A v1.2's optinal calls by querying whether
+> > > > > > SPMC supports those.
+> > > > > >
+> > > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > > > > > ---
+> > > > > >   arch/arm64/kvm/hyp/nvhe/ffa.c | 19 ++++++++++++++++++-
+> > > > > >   1 file changed, 18 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > > > > index 0ae87ff61758..9ded1c6369b9 100644
+> > > > > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > > > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > > > > @@ -646,6 +646,22 @@ static void do_ffa_mem_reclaim(struct arm_smccc_1_2_regs *res,
+> > > > > >   		ffa_to_smccc_res(res, ret);
+> > > > > >   }
+> > > > > >
+> > > > > > +static bool ffa_1_2_optional_calls_supported(u64 func_id)
+> > > > > > +{
+> > > > > > +	struct arm_smccc_1_2_regs res;
+> > > > > > +
+> > > > > > +	if (!smp_load_acquire(&has_version_negotiated) ||
+> > > > > > +		(FFA_MINOR_VERSION(FFA_VERSION_1_2) < 2))
+> > > > > > +		return false;
+> > > > > > +
+> > > > > > +	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
+> > > > > > +		.a0 = FFA_FEATURES,
+> > > > > > +		.a1 = func_id,
+> > > > > > +	}, &res);
+> > > > > > +
+> > > > > > +	return res.a0 == FFA_SUCCESS;
+> > > > > > +}
+> > > > > > +
+> > > > > >   /*
+> > > > > >    * Is a given FFA function supported, either by forwarding on directly
+> > > > > >    * or by handling at EL2?
+> > > > > > @@ -678,12 +694,13 @@ static bool ffa_call_supported(u64 func_id)
+> > > > > >   	case FFA_NOTIFICATION_SET:
+> > > > > >   	case FFA_NOTIFICATION_GET:
+> > > > > >   	case FFA_NOTIFICATION_INFO_GET:
+> > > > > > +		return false;
+> > > > > >   	/* Optional interfaces added in FF-A 1.2 */
+> > > > > >   	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
+> > > > > >   	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
+> > > > > >   	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
+> > > > >
+> > > > > Looking at table 13.54 in the FF-A 1.2 spec FFA_CONSOLE_LOG is only supported in secure FF-A
+> > > > > instances and not from the normal world.
+> > > >
+> > > > Thanks. in that case, we can return false for FFA_CONSOLE_LOG
+> > > > unconditionally.
+> > > >
+> > > > >
+> > > > > >   	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
+> > > > > > -		return false;
+> > > > > > +		return ffa_1_2_optional_calls_supported(func_id);
+> > > > > >   	}
+> > > > >
+> > > > > I don't think that an smc call here is the right thing to do. This changes this from a light
+> > > > > weight deny list to an extra smc call for each ffa_msg_send_direct_req2 from the driver.
+> > > > >
+> > > > > Instead, I would expect this patch just to remove FFA_MSG_SEND_DIRECT_REQ2 from the deny list
+> > > > > and rely on the TPM driver to use FFA_FEATURES to check whether it's supported.
+> > > > >
+> > > > > So, just this change:
+> > > > >
+> > > > > @@ -679,7 +679,6 @@ static bool ffa_call_supported(u64 func_id)
+> > > > >          case FFA_NOTIFICATION_GET:
+> > > > >          case FFA_NOTIFICATION_INFO_GET:
+> > > > >          /* Optional interfaces added in FF-A 1.2 */
+> > > > > -       case FFA_MSG_SEND_DIRECT_REQ2:          /* Optional per 7.5.1 */
+> > > > >          case FFA_MSG_SEND_DIRECT_RESP2:         /* Optional per 7.5.1 */
+> > > > >          case FFA_CONSOLE_LOG:                   /* Optional per 13.1: not in Table 13.1 */
+> > > > >          case FFA_PARTITION_INFO_GET_REGS:       /* Optional for virtual instances per 13.1 */
+> > > > >
+> > > > > Am I missing something?
+> > > >
+> > > > Nope. I think you don't think you miss anything and
+> > > > I also think about it.
+> > > >
+> > > > But, I'm not sure about "support" means in the pkvm about FF-A.
+> > > > Anyway unless the SPMC doesn't support the specific FF-A ABI,
+> > > > I don't know that's meaningful to return "TRUE" in here.
+> > > > IOW, suppose pkvm returns supports of  FFA_MSG_SEND_DIRECT_REQ2
+> > > > but user receive when it calls FFA_MSG_SEND_DIRECT_REQ2 with NOT SUPPORTED.
+> > >
+> > > As I understand it, the ffa_call_supported() is used in two places:
+> > > 1. To return NOT SUPPORTED to an FFA_FEATURE call for ffa calls that are
+> > > on the deny list.
+> > > 2. To block ffa calls if they are on the deny list.
+> > >
+> > > For both your patch and just removing FFA_MSG_SEND_DIRECT_REQ2 from the
+> > > denylist I think the behaviour is the same.
+> > >
+> > > If FFA_MSG_SEND_DIRECT_REQ2 is not supported at the spmc then:
+> > > a) an FFA_FEATURE call will return not supported
+> > > b) an FFA_MSG_SEND_DIRECT_REQ2 will return not supported
+> > >
+> >
+> > Right! I've missed the FFA_FEATURE handles via default_host_smc_handler().
+> > As you said, it just a deny list.
+> >
+> > Thanks. I'll change it.
+> Sorry to jump into the discussion very late. I uploaded a patch set which
+> adds support for the FFA_MSG_SEND_DIRECT_REQ2 interface which was originally
+> developed for the Android common kernels:
+>
+> https://lore.kernel.org/all/20251030-host-direct-messages-v1-0-463e57871c8f@google.com/T/#t
+>
+>
+> Since there appears to be an upstream use case for this functionality, it
+> might be a good building block for the present patch set.
 
-These are great questions that I don't think we have an answer for just
-yet.
+No worries and thanks for sharing.
+I'll take a look and let me rebase this patch upon your one.
 
-In practice, FUSE interfaces are quite stable, and the minixfs format
-also doesn't change a lot. Much like minixfs in the kernel, I wouldn't
-expect that it would require a lot of maintenance itself over the long
-haul (but everything requires _some_). It might need some to keep up
-with broader OS changes, but that's not usually too burdensome.
+Thanks.
 
-You're quite right though that userland replacements will need to meet
-some criteria before we can rip out the in-kernel versions. This might
-be a good discussion topic for next year's LSF/MM!
---=20
-Jeff Layton <jlayton@kernel.org>
+--
+Sincerely,
+Yeoreum Yun
 
