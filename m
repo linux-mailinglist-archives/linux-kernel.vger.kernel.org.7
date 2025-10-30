@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-878492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F871C20D2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33509C20D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:06:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3401A20710
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:58:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74EDF1A22964
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFC3296BC0;
-	Thu, 30 Oct 2025 14:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A734266EFC;
+	Thu, 30 Oct 2025 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZ/8uG9s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K3ZQh7Np";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mGBM+Kse"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79EB283FCE;
-	Thu, 30 Oct 2025 14:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAEC2857F0;
+	Thu, 30 Oct 2025 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836269; cv=none; b=LfAKhJ15xOkOJKu3mQTedEhouLmFizZUDoRqIH51ttJ6tl4SZFN/sGH1De7J7u660PbN8JMYQIZKu0ivBa1MDbrwGGMMJkYVTQpPuOcD/swkG8p87MrLLWrnuv8BuSb2psaJL74xdLPMTnXlFUrnaDszJGwRLW6TAIeItfCSi/w=
+	t=1761836349; cv=none; b=sjd+1AK3rmy9iXvhIJX3WILelCkF13AG52zWCVjJJThz6XDECL91By2W9D3RHZ5CRKXxdaLbwkTqUA2FaPYazVfZC6N5fGqszVWabb0Xy2sLcpkahWr10iMlvc3Bmp99iHRvybYaEnWUGCDI6475OUi2r1zdM6dvuxphM7yI06s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836269; c=relaxed/simple;
-	bh=MPH444EZaU6hB0oe8fwJQJCQuWbHbzn+g5+EsUVpY/8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KihXs2Ax3cH2oVD0pN973jrvPe2rorCPQj8pvasGthU/0WVTXraqL/evd8Hah4wOiAqBxLX8HxZGyovBM38GV3Zi6BEPtPcbyr0cWO2gnhWUcdMIPXlj9BDMBmayDSWtOp/X0HibMBVJvhRdz08gvwL7k0slifE9WiEDoEUfsfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZ/8uG9s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D33C4CEF8;
-	Thu, 30 Oct 2025 14:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761836268;
-	bh=MPH444EZaU6hB0oe8fwJQJCQuWbHbzn+g5+EsUVpY/8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=NZ/8uG9sgSxgb3j2CP8YltLWsQB47scQpxGKcbR+MrBAvSTgaYZddAH9NvQVGxgCw
-	 jMpUMahh2MOfXnnLoIWYFzo/z5SUQWH6OtWirV1MskoUFnhA0Lw3LEVhTLAJ4ge2sB
-	 EaW7Xt7Ts72Nt2tAEOjVuHrEoE4oiAUc53DYyXuydo3/t8rkO7kS4zaierKba829eG
-	 lTVRQZtleWTO1rimqLOyp5tt4yk56zMv3caXQ/wkevBe5n0RkWPmE2h5jGuWpQ60AL
-	 gx4egPU999DB+RUobTImD6plP3mbmCWsKA1FWaCseeITaGgey0cf7mVcCxCSzZaRaR
-	 zCQ0turLOoXvg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno
- Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
- <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
- <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Asahi Lina
- <lina+kernel@asahilina.net>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Oliver Mangold
- <oliver.mangold@pm.me>
-Subject: Re: [PATCH v12 2/4] `AlwaysRefCounted` is renamed to `RefCounted`.
-In-Reply-To: <20251001-unique-ref-v12-2-fa5c31f0c0c4@pm.me>
-References: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
- <20251001-unique-ref-v12-2-fa5c31f0c0c4@pm.me>
-Date: Thu, 30 Oct 2025 15:57:35 +0100
-Message-ID: <87sef08mjk.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1761836349; c=relaxed/simple;
+	bh=iAMRPUbbYbZlhKn5in/HGlgUn+ksUFRcO6IEVrJCJv8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=YeYzoeJiTCoMPllYrzsmdLZt200zq8+RUd8A42bbpOQ60nPvCAoUr2Do9UJMF/e+n2EQDIu1HvS8UfM3TILt5GTzLs6S9SC8rO/hNrDp3wN3btLD9POTwhQ/jNTOh7XCAbA8vk+UyFDMYmzswL0t6lhP4h2eMnFSKMYzU8nlg2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K3ZQh7Np; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mGBM+Kse; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D517E7A0160;
+	Thu, 30 Oct 2025 10:59:06 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 10:59:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761836346;
+	 x=1761922746; bh=iAMRPUbbYbZlhKn5in/HGlgUn+ksUFRcO6IEVrJCJv8=; b=
+	K3ZQh7NpKBLDq7TE6gR55oLH0KU4k0deEz2HPO8ED1FRL61uGon+/10mDd/7kdjo
+	ntwCNvSnSZxnDHS3Zruu/8WdtvMPuqMDmiL3r6E/qmAo54sI6qIBj1kIY8/iNKq1
+	TPcSD7WeCI7kMXW6VzBh4SPFnZEc8+FbXxrq9/J3qh0YeGjhYtMG3cMVV4qMpA5J
+	m7/o91j3JZXeC9Vf1VB3Da1BDX3BOY7NdcWIh6W1DSyp5JYP/lAvKbVyuXE1v0hp
+	I31Jm0vPgVK1Kr6On1a8KkMGW32mbedZb5c+rcxWRYinOXc+cMWCoyr9eztq3A3F
+	hrCBu5P9HLy1uqCsRytUrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761836346; x=
+	1761922746; bh=iAMRPUbbYbZlhKn5in/HGlgUn+ksUFRcO6IEVrJCJv8=; b=m
+	GBM+Ksesig0lHRYd2u+NiP7tq4MCftcyLnNRO3BF9Hu51hPLeouqX+vt6Z0gXOOT
+	OoROs34V3X8KN1Kxs36weBOzKdFqJlBEeoZUfeCzUzbGPigLkFYa2Q/msElyXbAz
+	KEyUQVUnnpsPNRBfQnYe4hNEz9RqT2Ot54sdzQv7PswL/LeGBwMwKpgKkJUPB9YR
+	jx0UFlQZxFT//O1A02jbdlQuaJYIHOftGuFi7zYby02bhRga1VHEkdwICmqkmIlf
+	TUnJXoLo7ojn0Wj7y//itXXzfGw7x87A2LLL8NKQGKjWBi6W97PUyD4Tn8XDkFGI
+	JZOhBIpjVNPYjsxTlfO5Q==
+X-ME-Sender: <xms:On0DafqdqH3uE0CmVlLRmjzh8Ghu8TdMl3Dye-o56p2boBUFrOOAfQ>
+    <xme:On0DaUezwEh-rmiMB3lUNChwjtqubDCNZT2Og4mL87c4ayTGSSUIWtlj3mqOn86yT
+    4F-G5mS5r-hCrJ_j3mscWAKuiaUkrf9519wMzBUow1IwFx_ZaYsBcQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeileduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthhqre
+    dtredtjeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghr
+    nhgusgdruggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvle
+    ehvddvgeejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpeefnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtth
+    hopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifsedufihtrdgvuhdprhgt
+    phhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugiesfigvihhsshhstghhuhhhrdhnvght
+X-ME-Proxy: <xmx:On0DaQ16PkpP0Kwq_CQZC7sOaVGXU4tPPehsNnvkl5piOPribijXrw>
+    <xmx:On0DaUD_OYwxvX4Wb1_aLsZFjizVLL870rHNFqZvtCDxk727vHONXg>
+    <xmx:On0DaUd2PvV2joyuJSX-dLKgI7-EQK9yFEvVYksV0E0UDdsAdOdkaA>
+    <xmx:On0DaZ5nwRzyJL_xbw5L3nkez0_lRV-ZzPkuK_X-SIL8K4TRGdWKUA>
+    <xmx:On0DaXbzgphq62Yu4ut5OZ3RQ4iWfB5E0UtQyDC4tVMB3J9-S2KZlWDJ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5DEF9700063; Thu, 30 Oct 2025 10:59:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-ThreadId: Ao3O5_vZS4X7
+Date: Thu, 30 Oct 2025 15:58:45 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ "Willy Tarreau" <w@1wt.eu>, shuah <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Message-Id: <344a3ebe-f991-4d28-ae54-89e76725830d@app.fastmail.com>
+In-Reply-To: <20251029-nolibc-uapi-types-v1-5-e79de3b215d8@weissschuh.net>
+References: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
+ <20251029-nolibc-uapi-types-v1-5-e79de3b215d8@weissschuh.net>
+Subject: Re: [PATCH 05/12] tools/nolibc: remove now superfluous overflow check in
+ llseek
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Oliver Mangold <oliver.mangold@pm.me> writes:
-
-> `AlwaysRefCounted` will become a marker trait to indicate that it is
-> allowed to obtain an `ARef<T>` from a `&T`, which cannot be allowed for
-> types which are also Ownable.
+On Wed, Oct 29, 2025, at 17:02, Thomas Wei=C3=9Fschuh wrote:
+> As off_t is now always 64-bit wide this overflow can not happen anymor=
+e,
+> remove the check.
 >
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
 
-Please update the title to
-
- rust: rename `AlwaysRefCounted` to `RefCounted`
-
-No period in the summary line.
-
-With that, you can add my review tag.
-
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-Since this patch touches so many moving parts of the rust tree, it is
-going to be a cat and mouse game regarding rebasing this thing. It also
-touches a lot if peoples code. I am not sure how something like this
-would merge. Do we need ACK from everyone @Miguel?
-
-Best regards,
-Andreas Hindborg
-
-
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
