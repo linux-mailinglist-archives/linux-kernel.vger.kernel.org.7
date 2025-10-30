@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-878770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2710FC21717
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:19:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C98C21726
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96EFF4EEF97
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:16:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEB584F0020
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5395A36838D;
-	Thu, 30 Oct 2025 17:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EAB32B9B3;
+	Thu, 30 Oct 2025 17:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Nt1FjlE/"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013009.outbound.protection.outlook.com [40.107.201.9])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eiXL/tc9"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011028.outbound.protection.outlook.com [40.93.194.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D223EA80;
-	Thu, 30 Oct 2025 17:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A5736839F;
+	Thu, 30 Oct 2025 17:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.28
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844572; cv=fail; b=KconaYT44cirjacWe83j9FS1Wd+2N/JE+A3b3dUW9ga5tVYgio4Bl53xf6wWqLOTCAqfuRIPnMBlbjEy9IsvvFo4F6GxFC5SlV2HXYHUANrBxnuQedvy7wOMBnEF7FmjHEMiJALgKRnvmIrF7OeVVsz//hXUjqYTpQr2MFIBDBg=
+	t=1761844580; cv=fail; b=I2Jrm1VlKXUW5w6jRRaCB4YAIJ9pUgalSMJJ/rgrk9TgPCfQ89tWvyNFhDiIhHnMPfpliW2Hhk2cyT/SwYQoqaXtMRkqgH0bueYmRKEQaVtb2Uh6ek7lg5REeqLYw8ixB/waMfq5ItApybc5iZBinRkN2/WFIYiYUyT01cRGCLE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844572; c=relaxed/simple;
-	bh=YMOMOSDVSdn/51ZCvd6RVe2+r9VzqGQcg3+1pgq5yl4=;
+	s=arc-20240116; t=1761844580; c=relaxed/simple;
+	bh=hceZeNYB4I6GDFAvFcHwTUG5qSslYLzoeYAQKK+2lbQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XRnbXp93JyCjRyO2OX12toeE7JLtpQsCQJbndjNl7mp5169b5zDO2G/54TsvYSlKX/V6T49dW2ja7k9GWuGpD+GQBhQy0SKsdZBqRoMvLmXs4i6umXQi//Ca0f3jbFRA1DG8R6H43VFM0C/JIAviFH85nFopLs0YHyi4f4ZAdR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Nt1FjlE/; arc=fail smtp.client-ip=40.107.201.9
+	 MIME-Version:Content-Type; b=S114/Ko5CZ+vLeecggKubekoQm9mkCtY8gE9JgyoThFM4R+9a2ScVt9OhPH3CwCB8pHKgGKsVcnqEF2C17cbskeMok+Xn4ctgaTJsq/aqiZ2S3Qxe3YqMf4hbt2cJNUM8GwJEK625ty/fu65E0MMK45yxJzChHsFtA7yDWKnKFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eiXL/tc9; arc=fail smtp.client-ip=40.93.194.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WLDnUK9TrPy7venO0WnulL2+tyivbayr60fycTyiXdZduNTlEFfo8XFoE2gOsQBH6BAV6MvRfN2EiYzmigRjEtct7ENEjNrjLo9n10GzDX8TZqMVhf2c3ovUxVj4hcQdPvodIk2Yq776gN4a3AS8zcJ54j51JZMarQWAsnFcZzw5eirm0lHZ3xoKXOadgn7CPAHlcK5ISpxAO2cqKCA/MrXnNRJjsJ9WUHN5wHzPwNdtvFNZXdkoVhqtAW5k+LlgmKbfCMTND2vjUPFutLpFKfN8zBRrwMps3LHerZQwFScfLxvM3ox6IvF2ufWlu03n1t7rWzGAHkY0kO3SXdNbkg==
+ b=PXsx0yy4mfRxN2nCFWPiBJU/EfDVmznuNcINOO6uhNYbpTXwUKeSisw0sm/cxIxcUMOPZfLlU12tbOrGwrrmtYgrsAZRJG0dlCirmncavH7z/HB1YAoAwCKaWv8cOKDncBS20ORrwFVM8drPgpNxlVWyo3EoIdoSfF6WzjpCEPlHujEwhxHZ3ST9PvGNuTcXchxH0ipLwsL/Q92T/FzGp/QwpR9lV3X26Rl7CAXnKzYm8wfma4Nmxl30i1pPanbordrci+tjVmvv1yvjR7jiVFjvo6x/qcLjMJZf1NmoUsbLE+mmx8zShHa0tDS9Nu1rOSLJ7Cpa6T64yA2UlqtQTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kOtCQxbTI+rioWWIiAedzqPFaxUVtOgIaEpZDgSr6tY=;
- b=PPUyFvHetjBKlKKbpLoqUcFI4EBpBesRC7gP8OmbKnzsZ2KO65T42Gz7vXDP8VmcVqNKAiNmfEumhXBOsx/WpN74LpEWwrlF7rfDyFyt1DYTMW+a2DvV16AU7d/w9wxJhu5qibI1l60qKGKG/2q8cdwNN5uQmXS+imWIgMOzX9TWA0OqmS2lTLB5Vhys9hwJcw5duXu8rDNZN8e4IPThkk0QrQZTdBcad2hXghlOpKlTSZHjgJ3L7PJK7hobYYVzcTr8/g0/gKe6BQdFziRajftUWoGRn7arO+poJcEEDUkp2ip1F6LN+7Za8XkK+Zun63kXVx+TnSvmDNByIcmGiw==
+ bh=1Olim9tqpWvHYKDaG0eXdDe5rsRQ6r2z/MKr+DOQpO4=;
+ b=CCtWhNhqKCn0iqubKRID3g+ziWbIzjyzqbJSk/TwshpQrQysa+0KR68KlaH6s5VeSTySkDV9VjTHso8SnP3lfvsGd5gugVU7wvrAZURk9KTf4L7u7xNEST93Iubp7dKWwIbrXmqG9MZbePMizoOeo8o3rctvR3sOEVSxi0LgqvRiKJSUeB5QeNPBA76ELuYHKHvLho00EL8t+JrN/gV91TLA6M39xS11wzoeYgKErdebIPaW7cnwISyQIKPAzTcHm3vHxsqC7s2lc5g+eEyfYOjvj91YvSQu9zFF7NPJ4sSbxhghPBBMEdXBgTT8BFUaZ+dJx5vkDnDOAzCpxli6lw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kOtCQxbTI+rioWWIiAedzqPFaxUVtOgIaEpZDgSr6tY=;
- b=Nt1FjlE/hsd9q9oDEk/NrxmslKRukB9x6QtIuFDrsLnLl6/XmJGyOpedhD8IctW4uincvs+L/B17F/d8fN8lSvQNAb8uBOLj+HvOWT36kLDqG7ZakV72XPUGtt3JEZv/ox+e1FMsqofIBK4Ng196eaZF2kW8b4Uau29ZnaRcHWo=
-Received: from BN9PR03CA0984.namprd03.prod.outlook.com (2603:10b6:408:109::29)
- by DS7PR12MB8083.namprd12.prod.outlook.com (2603:10b6:8:e4::21) with
+ bh=1Olim9tqpWvHYKDaG0eXdDe5rsRQ6r2z/MKr+DOQpO4=;
+ b=eiXL/tc9oCq2vVMvQGnHq4mJbxZEZlSCNGtfqXy+x2MWCJPhbnvgiINmHFztlbb2kutESr2H77nwsV80FK0c31x/weP3tdyZpLgAMPs1iaaUHoWwpBUN8TZYgxGClzA7HfnO6WKNTPDqlvU9OHhc9Jz1l9jg4Fak/pVjfn4t+Js=
+Received: from MN2PR05CA0002.namprd05.prod.outlook.com (2603:10b6:208:c0::15)
+ by SA0PR12MB7478.namprd12.prod.outlook.com (2603:10b6:806:24b::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
- 2025 17:16:03 +0000
-Received: from MN1PEPF0000F0E4.namprd04.prod.outlook.com
- (2603:10b6:408:109:cafe::8e) by BN9PR03CA0984.outlook.office365.com
- (2603:10b6:408:109::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
- 30 Oct 2025 17:16:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Thu, 30 Oct
+ 2025 17:16:15 +0000
+Received: from MN1PEPF0000F0E2.namprd04.prod.outlook.com
+ (2603:10b6:208:c0:cafe::be) by MN2PR05CA0002.outlook.office365.com
+ (2603:10b6:208:c0::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.5 via Frontend Transport; Thu,
+ 30 Oct 2025 17:16:15 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- MN1PEPF0000F0E4.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ MN1PEPF0000F0E2.mail.protection.outlook.com (10.167.242.40) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 17:16:02 +0000
+ 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 17:16:15 +0000
 Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 30 Oct
- 2025 10:16:00 -0700
+ 2025 10:16:13 -0700
 From: Babu Moger <babu.moger@amd.com>
 To: <tony.luck@intel.com>, <reinette.chatre@intel.com>, <tglx@linutronix.de>,
 	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
@@ -83,9 +83,9 @@ CC: <corbet@lwn.net>, <Dave.Martin@arm.com>, <james.morse@arm.com>,
 	<mario.limonciello@amd.com>, <perry.yuan@amd.com>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<peternewman@google.com>, <feng.tang@linux.alibaba.com>
-Subject: [PATCH v11 02/10] x86/resctrl: Add SDCIAE feature in the command line options
-Date: Thu, 30 Oct 2025 12:15:31 -0500
-Message-ID: <f2d4b24c04d0e1db05af3c5c3d077f6fd09d158d.1761844489.git.babu.moger@amd.com>
+Subject: [PATCH v11 03/10] x86,fs/resctrl: Detect io_alloc feature
+Date: Thu, 30 Oct 2025 12:15:32 -0500
+Message-ID: <1f47c6596f9804d1a2ca4907462f6edd1f6e6b42.1761844489.git.babu.moger@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1761844489.git.babu.moger@amd.com>
 References: <cover.1761844489.git.babu.moger@amd.com>
@@ -101,155 +101,142 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E4:EE_|DS7PR12MB8083:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6b468fa-1f2d-45a3-744f-08de17d80079
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E2:EE_|SA0PR12MB7478:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3c4d1b1-73c7-47f0-6ef7-08de17d8082c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
+	BCL:0;ARA:13230040|7416014|82310400026|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5CDAGUesRjKDUXVjOOGA5AFrsO24XsXFPCJ8Ieixc96PybwSgDg5YIxHvZQN?=
- =?us-ascii?Q?3O7/yn6RB43TzMXJpP1jEsXuEq9jXBO/m4ra8CKt8Z1fNcdyVbj/ithZ/bAo?=
- =?us-ascii?Q?kb825217zYbhFq7fbSV4f8TpGcZui9HBOXdujOTuQ7hhOihYYAQARb1rtpYz?=
- =?us-ascii?Q?foFgjKHEoC8i13NFToVuKLnXW+GasSfYaYjdYiqNimD8oVrlZwpGMfGIGzvH?=
- =?us-ascii?Q?kYK9O5cvpHWiNcwyl2SDualu7GZAYXln8IM2o4Ovo4dnjukFLChyVhKQ3R51?=
- =?us-ascii?Q?ikTTPABxjr7oegzTyK6BSbSZW9F5vTB2ApGVCP1Y5YYddIZgyBknzi8veuh9?=
- =?us-ascii?Q?qE/tH8WWdQ92RH8RpvV6pusjXZXwikUiA1GJvvMSP8bYAoYahyCxS4i1RDcu?=
- =?us-ascii?Q?pHyShbWdNtepoqmvoqSpb41PzjLoGQGXeFBUIt63PtVPttxbR1FeKCiVnaUA?=
- =?us-ascii?Q?jBs4+ojsYZ7iTwrxH+krvsf8gh9JhX2ifRB6rTpN3e0Q5jc4VgEOZmCsy2aJ?=
- =?us-ascii?Q?DBpq6FeBezaEi3m8KiXVmabvZ2BlGfrEnK6D1Ueph1ZUOAZLnH+jBAuGdn2k?=
- =?us-ascii?Q?z6mgStBo60PisHXbMqDeD7EDLXYpWHBUs8SHEm1FsoZzcJKYGXAqFzDuRfZU?=
- =?us-ascii?Q?A8Pp8MyQv05ECTyCeNuGDHVkG91B/fdn1OSuj5fAgeDZwd+kwhs73Zfqiz5O?=
- =?us-ascii?Q?himYQYu3ZC3VjIujS3LZ2LR1eeJYSNuv3cTR8A22qzBQBIVz6TVFZiMcmuPB?=
- =?us-ascii?Q?pE8BwspaXSc+lLMbjANqvzOHYkFTrc6Lqh7nRfGNOiiRINllRU3sdldGc11z?=
- =?us-ascii?Q?ZQZ65J8F7rrSJSSkH6JoU1hVAXxp/Cd/AArmHbzCWGqCCznVIy3nvAs4Jl+X?=
- =?us-ascii?Q?UI5+5JLF5tMbNwhgn4uGWMSU6KmnNjE9r/RiVBAH6khcYNrqMVgOV9L7t2+N?=
- =?us-ascii?Q?xm/t//i+mLfoYGCpPBTWlSQhhja+a/FUlZStP+KMdTxRMV45vmZARVTCAQbT?=
- =?us-ascii?Q?TsgjX3CZihdgj0/wB+tpOBT31ngol3xQ+Z1TpBGWH3ldHCnUun51ua+3zOES?=
- =?us-ascii?Q?YIeyuDHteRIR6QVBfO37/GPQB0r4zctnpt+HOB5Ij+pJrNwStjEpQjZzqPK4?=
- =?us-ascii?Q?RH2xBL+06Ky0RW56dwPpzbcxt7LnK0FBli504FFkQkg7ADqxGgo2dwzIFwVZ?=
- =?us-ascii?Q?Z7Pq3IgQDBjxHLqMNzDNwh2JeIucPV8mLSOs7sEwg2gAkV4FL/t4dJ2gQ9ho?=
- =?us-ascii?Q?rW8QRbeiz1fowJA9KCFIY2PcRVIdzxdOwRWB2rY5rdE+YdONnuAqLJRsArNj?=
- =?us-ascii?Q?u2Wmc4VBlhp63EbhsV17W5YVAo722JWJmhz61VoRWRwtJHB1/3ExVLPq/Xt7?=
- =?us-ascii?Q?wJUO/3gcGYDCbWDH6q4EHFP1hxLwcuB8PaeXeNszRkYo4eme0Yu/08CGdOQB?=
- =?us-ascii?Q?OKY7l+GteNBgWyci9NXOupRubVfDu5ly2A3FfRyZ7IoD3ZTdeosAbafFIjMd?=
- =?us-ascii?Q?fPoOSZIhJqSoLbtEm6KcFkP7hfY02DxoWUJUDn1LRO48KBu3dpIMCKoEm7jG?=
- =?us-ascii?Q?1PiMu3VF+D9M2+5HZ/M=3D?=
+	=?us-ascii?Q?zObPxk17OcmZqHlk7wdPqE4dPcnVRZSi1YKlohWaIAtuEhNRPkt/mSEtQNEX?=
+ =?us-ascii?Q?ixobuqB/081sEKSJO0vQQ3SGoIvYQwnfEnxqQ7nLkffQ4GP7YPmIgcOw9JdA?=
+ =?us-ascii?Q?Jsdh0CXOPMRor/C7hpdIhwlowEcy5aq+pClot/nv6GMChPglkzsmYO7dx5bv?=
+ =?us-ascii?Q?7TSIvU9ZEZARs9zCL6jlb/3r1Pf6kvkJ3LS9n0FZcPUUO8zdcnfP93GVXdtF?=
+ =?us-ascii?Q?7JT0x5w9ghRgLu24E73p28vxTEnW7qV+Q38HGJcTAiXVu+zWEoIQU2qbOrbU?=
+ =?us-ascii?Q?CVyS8BAySxWUnx1xRY/Vf9NvDnrn7oIhuDCzixjMzOiltXb9WUXi2k7xLGTW?=
+ =?us-ascii?Q?RsGokfmk3S/4OLrbx88U/wv1DSzRpPOOILTYu5jFeWWCW6XuSznYTw2Ttv+5?=
+ =?us-ascii?Q?bgKSljlhmsEyhWoDAyTwP3aBUI00vacmYOKOQQvPPD9pCaeyHfbXjOkzZ5Wo?=
+ =?us-ascii?Q?oiLT8Xlxbj7lrZsidThNbZQ5rtxJ9isjklwvs6fx3tXP6/kGr9lhIswa/7HF?=
+ =?us-ascii?Q?IM40kPFkDgebhV+Gy3EzYFnWCXmL1oryTuNUs9lKjQzqZZ4x6aU6ksqDdKhi?=
+ =?us-ascii?Q?vyo2LMFDQagNRwSXtqiy1XhILHnDGAtuB7LVu5MZnsaw3svDYFbYK+Z7kGpN?=
+ =?us-ascii?Q?YmKBdQzJar1Alla9x7rCsueGCcupm4h6BTpoH0sXd3jjt1i6brMMT1PUajLQ?=
+ =?us-ascii?Q?oaiTt2/YYECMrdKgjXUVGVj9dKPmg+DAbt7yCZF9QOCF/NGZWT5va+l1Y3mS?=
+ =?us-ascii?Q?yqvNmYHZ+B2GuCG/xxErMVddb3DpNp75GuubUmyNhyG2K2wv9sWys3X5AiYm?=
+ =?us-ascii?Q?o1+zSbLXFbXo4/M0eIPbwFCBgw/zFqTZDjghRj+0xUxEctw0CkznmVj2Y59k?=
+ =?us-ascii?Q?CetvnY4Y/RrDFcHB+zYUE4vWa2Gq09TGYGoQFC53fo8ZGmwNrPVhBCbcoK9U?=
+ =?us-ascii?Q?rds/7QTku0ZoFM5V6sgAnHop6gWCE2eqGfic88DFSGDa0sDXlaCRPfHThKxr?=
+ =?us-ascii?Q?jJRQb3Y3tZUvchIPrY1cD4K70MG4BR/dlHbFdVNUI75CIKzChrGsa/aChteT?=
+ =?us-ascii?Q?36njfNkZZqOQSKS/wMDd6GBYkjuMx1ORXDRfFcNbrtPbBRyzAg7I6+jAcRT5?=
+ =?us-ascii?Q?7KEw0SJ0AG8QNRHS5Kf9KdPeVD5Q+bfC3s4+VOlFeOHoqV3Z7KBEIPwsX6Zg?=
+ =?us-ascii?Q?BFn2q+jdqHFo/cOO5JE07VkCm0DO0eDPfeiYtTzCspd9MdfEfGzTi5oOfSTZ?=
+ =?us-ascii?Q?rGPu9k5DL5VfzjjK3yhn6J3uLowVBCb4oIiZ0P+BM7EU7F2ZdqMrsGQDWJOe?=
+ =?us-ascii?Q?RQMLFE0BwbvIjQW7HBucnanyiyBupWlWRTV9QeWj7IjJK85pSJzD0c9lgVIm?=
+ =?us-ascii?Q?GisHwMRkc+1dE3Ku0Xgyp1T/fwwaXp/zTY94QQCIOUIU+vHQAKe0mFi0qOyy?=
+ =?us-ascii?Q?w31KHqIDeD9l/ecK9rAKGreLHxYvM7XSJvea9kmg+Rg+lXGPG85B/59AyHSb?=
+ =?us-ascii?Q?sKOJGACZw4nIGeVRFX/MkoWFGKTECMXe5pfUleGm+VDxr1KPT4SVs4sUAtf3?=
+ =?us-ascii?Q?p3nZ6so2k09F7W1wwhc=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 17:16:02.1089
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 17:16:15.0255
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6b468fa-1f2d-45a3-744f-08de17d80079
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3c4d1b1-73c7-47f0-6ef7-08de17d8082c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E4.namprd04.prod.outlook.com
+	MN1PEPF0000F0E2.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8083
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7478
 
-Add a kernel command-line parameter to enable or disable the exposure of
-the L3 Smart Data Cache Injection Allocation Enforcement (SDCIAE) hardware
-feature to resctrl.
+AMD's SDCIAE (SDCI Allocation Enforcement) PQE feature enables system software
+to control the portions of L3 cache used for direct insertion of data from I/O
+devices into the L3 cache.
+
+Introduce a generic resctrl cache resource property "io_alloc_capable" as the
+first part of the new "io_alloc" resctrl feature that will support AMD's
+SDCIAE. Any architecture can set a cache resource as "io_alloc_capable" if a
+portion of the cache can be allocated for I/O traffic.
+
+Set the "io_alloc_capable" property for the L3 cache resource on x86 (AMD)
+systems that support SDCIAE.
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
 v11: No changes.
 
-v10: Changelog update.
-     Fixed the few conflicts due to recent ABMC feature merge.
+v10: Updated the changelog.
 
-v9: Minor changelog update.
-    Fixed the tabs in SMBA and BMEC lines.
+v9: No changes.
 
-v8: Updated Documentation/filesystems/resctrl.rst.
+v8: Added Reviewed-by tag.
 
-v7: No changes.
+v7: Few text updates in changelog and resctrl.h.
 
 v6: No changes.
 
 v5: No changes.
 
-v4: No changes.
+v4: Updated the commit message and code comment based on feedback.
 
-v3: No changes.
+v3: Rewrote commit log. Changed the text to bit generic than the AMD specific.
+    Renamed the rdt_get_sdciae_alloc_cfg() to rdt_set_io_alloc_capable().
+    Removed leftover comment from v2.
 
-v2: No changes.
+v2: Changed sdciae_capable to io_alloc_capable to make it generic feature.
+    Also moved the io_alloc_capable in struct resctrl_cache.
 ---
- .../admin-guide/kernel-parameters.txt         |  2 +-
- Documentation/filesystems/resctrl.rst         | 23 ++++++++++---------
- arch/x86/kernel/cpu/resctrl/core.c            |  2 ++
- 3 files changed, 15 insertions(+), 12 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c | 7 +++++++
+ include/linux/resctrl.h            | 3 +++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 6c42061ca20e..29db32a86815 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6207,7 +6207,7 @@
- 	rdt=		[HW,X86,RDT]
- 			Turn on/off individual RDT features. List is:
- 			cmt, mbmtotal, mbmlocal, l3cat, l3cdp, l2cat, l2cdp,
--			mba, smba, bmec, abmc.
-+			mba, smba, bmec, abmc, sdciae.
- 			E.g. to turn on cmt and turn off mba use:
- 				rdt=cmt,!mba
- 
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index b7f35b07876a..d7a51cae6b26 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -17,17 +17,18 @@ AMD refers to this feature as AMD Platform Quality of Service(AMD QoS).
- This feature is enabled by the CONFIG_X86_CPU_RESCTRL and the x86 /proc/cpuinfo
- flag bits:
- 
--===============================================	================================
--RDT (Resource Director Technology) Allocation	"rdt_a"
--CAT (Cache Allocation Technology)		"cat_l3", "cat_l2"
--CDP (Code and Data Prioritization)		"cdp_l3", "cdp_l2"
--CQM (Cache QoS Monitoring)			"cqm_llc", "cqm_occup_llc"
--MBM (Memory Bandwidth Monitoring)		"cqm_mbm_total", "cqm_mbm_local"
--MBA (Memory Bandwidth Allocation)		"mba"
--SMBA (Slow Memory Bandwidth Allocation)         ""
--BMEC (Bandwidth Monitoring Event Configuration) ""
--ABMC (Assignable Bandwidth Monitoring Counters) ""
--===============================================	================================
-+=============================================================== ================================
-+RDT (Resource Director Technology) Allocation			"rdt_a"
-+CAT (Cache Allocation Technology)				"cat_l3", "cat_l2"
-+CDP (Code and Data Prioritization)				"cdp_l3", "cdp_l2"
-+CQM (Cache QoS Monitoring)					"cqm_llc", "cqm_occup_llc"
-+MBM (Memory Bandwidth Monitoring)				"cqm_mbm_total", "cqm_mbm_local"
-+MBA (Memory Bandwidth Allocation)				"mba"
-+SMBA (Slow Memory Bandwidth Allocation)				""
-+BMEC (Bandwidth Monitoring Event Configuration)			""
-+ABMC (Assignable Bandwidth Monitoring Counters)			""
-+SDCIAE (Smart Data Cache Injection Allocation Enforcement)	""
-+=============================================================== ================================
- 
- Historically, new features were made visible by default in /proc/cpuinfo. This
- resulted in the feature flags becoming hard to parse by humans. Adding a new
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 06ca5a30140c..2b2935b3df8d 100644
+index 2b2935b3df8d..3792ab4819dc 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -719,6 +719,7 @@ enum {
- 	RDT_FLAG_SMBA,
- 	RDT_FLAG_BMEC,
- 	RDT_FLAG_ABMC,
-+	RDT_FLAG_SDCIAE,
+@@ -274,6 +274,11 @@ static void rdt_get_cdp_config(int level)
+ 	rdt_resources_all[level].r_resctrl.cdp_capable = true;
+ }
+ 
++static void rdt_set_io_alloc_capable(struct rdt_resource *r)
++{
++	r->cache.io_alloc_capable = true;
++}
++
+ static void rdt_get_cdp_l3_config(void)
+ {
+ 	rdt_get_cdp_config(RDT_RESOURCE_L3);
+@@ -855,6 +860,8 @@ static __init bool get_rdt_alloc_resources(void)
+ 		rdt_get_cache_alloc_cfg(1, r);
+ 		if (rdt_cpu_has(X86_FEATURE_CDP_L3))
+ 			rdt_get_cdp_l3_config();
++		if (rdt_cpu_has(X86_FEATURE_SDCIAE))
++			rdt_set_io_alloc_capable(r);
+ 		ret = true;
+ 	}
+ 	if (rdt_cpu_has(X86_FEATURE_CAT_L2)) {
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+index a7d92718b653..533f240dbe21 100644
+--- a/include/linux/resctrl.h
++++ b/include/linux/resctrl.h
+@@ -206,6 +206,8 @@ struct rdt_mon_domain {
+  * @arch_has_sparse_bitmasks:	True if a bitmask like f00f is valid.
+  * @arch_has_per_cpu_cfg:	True if QOS_CFG register for this cache
+  *				level has CPU scope.
++ * @io_alloc_capable:	True if portion of the cache can be configured
++ *			for I/O traffic.
+  */
+ struct resctrl_cache {
+ 	unsigned int	cbm_len;
+@@ -213,6 +215,7 @@ struct resctrl_cache {
+ 	unsigned int	shareable_bits;
+ 	bool		arch_has_sparse_bitmasks;
+ 	bool		arch_has_per_cpu_cfg;
++	bool		io_alloc_capable;
  };
  
- #define RDT_OPT(idx, n, f)	\
-@@ -745,6 +746,7 @@ static struct rdt_options rdt_options[]  __ro_after_init = {
- 	RDT_OPT(RDT_FLAG_SMBA,	    "smba",	X86_FEATURE_SMBA),
- 	RDT_OPT(RDT_FLAG_BMEC,	    "bmec",	X86_FEATURE_BMEC),
- 	RDT_OPT(RDT_FLAG_ABMC,	    "abmc",	X86_FEATURE_ABMC),
-+	RDT_OPT(RDT_FLAG_SDCIAE,    "sdciae",	X86_FEATURE_SDCIAE),
- };
- #define NUM_RDT_OPTIONS ARRAY_SIZE(rdt_options)
- 
+ /**
 -- 
 2.34.1
 
