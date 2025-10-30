@@ -1,105 +1,191 @@
-Return-Path: <linux-kernel+bounces-878228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0022FC20110
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:43:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C643C20119
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0F8E4EB475
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B451889988
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C12E32AAC9;
-	Thu, 30 Oct 2025 12:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C22430FF1C;
+	Thu, 30 Oct 2025 12:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnkvz0/J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yc8whvFa"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA44326D4A;
-	Thu, 30 Oct 2025 12:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FC423D7D4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761828140; cv=none; b=Az1MVlihMVT1PwOtVKkxWw67kPT7piuVGe8AS8w6PrhuN1wRv0C4NXUMFZFbDvfAyvnwaA0c7H2fzoCPAIkdRWl9yhydeXn72Bi8t9yxNBkeKo/6QTw4b7TRPmSaT+RT3lpQ05H6lauURF6oyyuJl35kgjN9Nx30CExKAMrn1wE=
+	t=1761828246; cv=none; b=G62MJ6uck24ltbzhOvG8Vo0VYd+RItu0f64GSVm0P1/giOG9IfniZo08WYe+SQLqRfMxRO35Qo4FKQP0kixH19pbNh4LXzUURHBinHuSCPpIZq9BkeQ226STmoVt1OOGdO7qkTyfNdUPGml6erBfxUh2xY1cQglFAlsPAKZGM/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761828140; c=relaxed/simple;
-	bh=/XfJU+cdY0jpYU5tPGaNdi+JWjcrGHtgmumVolcAM3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q6JyOFWYZVR/V3pYRgj6Rr7Koga949rcWl4BTeoky1556i+QEEbeK2eTvneFKIeMOTeWtZ2mzw84WbxTIdpXMMnl4o+KeENCTd05RprdvBWwE7Eu2Hn4BlVvm9IXMjuEUDn6cMaa/6x6z0ZsRvqtt3dTjHAy+rYHrCsN3aXh6xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnkvz0/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12984C4CEF1;
-	Thu, 30 Oct 2025 12:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761828139;
-	bh=/XfJU+cdY0jpYU5tPGaNdi+JWjcrGHtgmumVolcAM3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bnkvz0/JD8J1nSXnJ80taDNxCsASTKz4tmkyiMkkB/j8+6HPEoS0bGyb28DXdik3x
-	 UYDUzI/hUqwDDLDyxaGifTacj9v6Mo1cFbwsMnju1hpAh4utcL7rJfVVTOhsLVnK7x
-	 6YVMMdepfOqU5WE0UNuNyUUPN6KZb3gXj1fLBhFrlcUzsClHHiB2HEkampof0ksiwU
-	 IOZ1iFcsp2h1Dz8e871zofCPExK4fwLo6CXd+NRK6w37w5Maj2ux0SuOFXoDiQHwnb
-	 6VRezHmiO2+wOwZv6QF+LuSmXt8R9bJzFiJb3nuqDE17ZIRPWQqGEVgHyymNhrLV7T
-	 CRjXjG/vfeWlw==
-Date: Thu, 30 Oct 2025 12:42:10 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Liao, Bard" <bard.liao@intel.com>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"vkoul@kernel.org" <vkoul@kernel.org>,
-	"tiwai@suse.de" <tiwai@suse.de>,
-	"vinod.koul@linaro.org" <vinod.koul@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"pierre-louis.bossart@linux.dev" <pierre-louis.bossart@linux.dev>
-Subject: Re: [PATCH RESEND 5/7] ASoC: SOF: Intel: export
- hda_sdw_bpt_get_buf_size_aligment
-Message-ID: <8dac7fb5-ca36-4150-93e8-18d3173efe5f@sirena.org.uk>
-References: <20251030070253.1216871-1-yung-chuan.liao@linux.intel.com>
- <20251030070253.1216871-6-yung-chuan.liao@linux.intel.com>
- <fa2758bc-7149-43db-8dd9-610d97d86137@sirena.org.uk>
- <SJ2PR11MB84240C3B09792E128D1D057EFFFBA@SJ2PR11MB8424.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1761828246; c=relaxed/simple;
+	bh=Vsg6pHABg0QNnlZoDT/EUBC2xV1JRoFDH/4oiFVdKOE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oBImT2byZSkcS5tbl775ozwp6RnDUxEHc3Wi1UrpQrtMococ7HfqR/kb0qxLZSaQ9gZ+2RWY0M3uvs76gRLwz0ac1NqldGW9vSiW+pzkmyAqH7oChkrNDL63BbCDToCuxt9ajwTuvDJXh0n+j76mQVt43NgAlxLi6eaAufEqzwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yc8whvFa; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7815092cd22so16116177b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761828244; x=1762433044; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zDjyf2YcWAcYN9vEkqn7UbYwTq6TCYnnMJLBk0aUuPQ=;
+        b=yc8whvFa1Tmpuzr3K+A5YOFo3An4OohDN+/8+Aq+94D8QKXtIktbbHGBaRGFOwq6dG
+         2ySUQ9a4NL6UQkbOjQF+Ec5AeiHdKw4kCRP+fonQnVnUWOvTLfYl3zQmN+b5Q33MKASq
+         8USEHcWLNmwzKo1KBPuGZzpd4+459kHbecapQfiiU9ZhlO9OmbCgDjqeaj7JVHNDHCqf
+         kjQtdF/cSVSNEqZ+H1xNCxVulUTBt9b9H+GjgqfUDYfeWcFBi/riLImY80picPVK6evB
+         6KGOrGvOOXXKpseNkNyZUyGvnWvdyfFi/7ZmdhhNG9c+CkHn2+dyfF3md8GOFYMi8VVe
+         Aw5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761828244; x=1762433044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zDjyf2YcWAcYN9vEkqn7UbYwTq6TCYnnMJLBk0aUuPQ=;
+        b=A1ulY5h25q0bjfb79X63+FqEaSOPEbMjwRDLcDgJgR//9vFSQrLWwPta0lnIBmQeoL
+         b9381XEhiHNwxfNiR9SzVntk/ZPDon8EuxOdY9E9fMPir7dlt8ZG9u7eWwuDWUv4Orn+
+         QKuYnEL8GU0UUTei4I2GPnSc7mgcL8ewAn3FCnzlXmLb4lPwfv0FVCuRiRs+dnm40hnC
+         JA+akVYXX9nI0d9xldyplDjePAgqk/vv9Rjyj0qP3pEl/DzN6oM9LPYpD15eQXwKzpNP
+         17frKFGO22lhYOxCd53MS7q+wA836HBBCiNVPwHWH0O1OPdO2QAOV3cRuRrwyy5fTpfA
+         GeUg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3BajUzd4UTAmnrRIRL7jnGgRJhGd+SNDnj4+vfquDHzaer5zt8YY+FK9tdvwW+3nnddEZYRVVVsWrq/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3jWjI/uwbJbI0H9wTlWgjUpGdkAu8QGBZLkTxwoT3KwoWNHTd
+	F+6pPKFnuvT389VqaDokvODnitOCfqbuLXmsEUhccLbFioIauZo4Ioq3i5FEH+hIfCxLWDjAGlM
+	gcGQbcKo6+Qxu0wcVMF49NhmUoFUlXha/+UPhZb3Nnw==
+X-Gm-Gg: ASbGncssn6ZGY7UwyKnAiAjnSJnhT6K8RvDYQdxC4grThHr1QGOgcCr5sBOT5yWvCX7
+	QL8zcqNOlHLeaWx0gPUDefjCnvrEGtokPVYInHcPnmBCyx7dUoOCmQEf7SRSFRoiBQV/feZDQ5L
+	bQEFsi1aB/hlhMGZPZfvIcaD3e1R8myowmHmOsv+assZptwCe/5hBKxUfGcnwjsIgt8+3d05UXv
+	dOEmX/0Jyy6GTf98WT3PxH+1deWQFubudfJCvxIb+Hasow0KAQAinXnMawDOA==
+X-Google-Smtp-Source: AGHT+IHoJ3bGFdVpESH8uyHHz88xUNMEBC8Fu5HjAXHiNMtBHIYJ/tKO/aZSWr4m+lV+8zQnl1zuKQVq+qW0clPbizU=
+X-Received: by 2002:a05:690c:b89:b0:785:c7ab:97e6 with SMTP id
+ 00721157ae682-78628e82e1amr62754117b3.12.1761828244016; Thu, 30 Oct 2025
+ 05:44:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="djrmMc/L29cExWVT"
-Content-Disposition: inline
-In-Reply-To: <SJ2PR11MB84240C3B09792E128D1D057EFFFBA@SJ2PR11MB8424.namprd11.prod.outlook.com>
-X-Cookie: Is there life before breakfast?
-
-
---djrmMc/L29cExWVT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
+ <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
+ <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com> <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Oct 2025 13:43:28 +0100
+X-Gm-Features: AWmQ_blgVg55or3EyJ2go7j43VTMSM_CtPJYz4izL2KNF_jSNbaJ7DwH95vB6ks
+Message-ID: <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
+ for s2idle
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 12:05:23PM +0000, Liao, Bard wrote:
+On Thu, 30 Oct 2025 at 13:29, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Oct 30, 2025 at 1:26=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
+.org> wrote:
+> > >
+> > > On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.org> w=
+rote:
+> > > >
+> > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansson@li=
+naro.org> wrote:
+> > > > >
+> > > > > Changes in v2:
+> > > > >         - Limit the new QoS to CPUs  and make some corresponding =
+renaming of the
+> > > > >         functions along with name of the device node for user spa=
+ce.
+> > > > >         - Make sure we deal with the failure/error path correctly=
+ when there are
+> > > > >         no state available for s2idle.
+> > > > >         - Add documentation.
+> > > > >
+> > > > > Some platforms supports multiple low-power states for CPUs that c=
+an be used
+> > > > > when entering system-wide suspend and s2idle in particular. Curre=
+ntly we are
+> > > > > always selecting the deepest possible state for the CPUs, which c=
+an break the
+> > > > > system-wakeup latency constraint that may be required for some us=
+e-cases.
+> > > > >
+> > > > > Therefore, this series suggests to introduce a new interface for =
+user-space,
+> > > > > allowing us to specify the CPU system-wakeup QoS limit. The QoS l=
+imit is then
+> > > > > taken into account when selecting a suitable low-power state for =
+s2idle.
+> > > >
+> > > > Last time we discussed this I said I would like the new limit to be
+> > > > taken into account by regular "runtime" cpuidle because the "s2idle=
+"
+> > > > limit should not be less that the "runtime" limit (or at least it
+> > > > would be illogical if that happened).
+> > >
+> > > Yes, we discussed this, but that was also before we concluded to add =
+a
+> > > new file for user-space to operate on after all.
+> > >
+> > > To me, it looks unnecessarily limiting to not allow them to be
+> > > orthogonal,
+> >
+> > So what's the use case in which it makes sense to have a lower latency
+> > limit for s2idle than for runtime?
 
-> > The rest of ASoC is _GPL?
+Honestly, I don't know, but I just wanted to keep things more flexible.
 
-> All functions exported in hda-sdw-bpt.c are with EXPORT_SYMBOL_NS.=20
-> I suppose it is ok?
+> >
+> > > but I am not insisting that it needs to be like this. I
+> > > was just thinking that we do not necessarily have to care about the
+> > > same use-case in runtime as in the system-suspend state. Moreover,
+> > > nothing would prevent user-space from applying the same constraint to
+> > > both of them, if that is needed.
+> > >
+> > > >
+> > > > It looks like that could be implemented by making
+> > > > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limit()
+> > > > into account, couldn't it?
+> > >
+> > > Right, but I am not sure we want that. See above.
+> >
+> > I do or I need to be convinced that this is a bad idea.
+>
+> And there is a specific reason why I want that.
+>
+> Namely, say somebody wants to set the same limit for both s2idle and
+> "runtime" cpuidle.  If the s2idle limit did not affect "runtime", they
+> would need to open two device special files and write the same value
+> to both of them.  Otherwise, they just need to use the s2idle limit
+> and it will work for "runtime" automatically.
 
-OK, I guess that's fine.
+Right. User-space would need to open two files instead of one, but is
+that really a problem?
 
-Acked-by: Mark Brown <broone@kernel.org>
+What if user-space doesn't want to affect the runtime state-selection,
+but cares only about a use-case that requires a cpu-wakeup constraint
+when resuming from s2idle.
 
---djrmMc/L29cExWVT
-Content-Type: application/pgp-signature; name="signature.asc"
+It's your call, I can change if you prefer, np!
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDXSEACgkQJNaLcl1U
-h9DaPwf+LMg2s588T2+Z7Of6rjQBKPF6uk7MvdSUB7VGvcOZfwVih4WNljG4U8JV
-0NyluuKSleyB2fnn+jvyHBe04dN83pDkJ5vfXmF7nwVeFkvZGNODgXxudNVf9mOp
-hUPdHOoNdgNSMsxMw+zeaoJfFUIb8vFbThM7Yza08ZMetOIgUdABqDqije1lt05S
-wHHt4k/CxbUKtWWn37GO/aicuygHXWDaxJxi7eY4hplj+6OKRMZlvQec5Q1HjV0P
-F/je+dE9CSP5E/DpZr5tidpwUl6gI6tGfQBHQzHKg2NZcrM/vM/wvJmCKfMQJMhn
-hE4E/PKOrufGvoUAhTYDnrs01Sm1ZA==
-=819G
------END PGP SIGNATURE-----
-
---djrmMc/L29cExWVT--
+Kind regards
+Uffe
 
