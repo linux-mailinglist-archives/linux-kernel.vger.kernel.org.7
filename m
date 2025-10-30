@@ -1,529 +1,212 @@
-Return-Path: <linux-kernel+bounces-878878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A7CC21A9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:07:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D273C21A62
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7507C1892BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2F7435052C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB9E374ADD;
-	Thu, 30 Oct 2025 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EA1374AB5;
+	Thu, 30 Oct 2025 18:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rHB+V5in"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010049.outbound.protection.outlook.com [52.101.85.49])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m6mN25O1";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fBsl6Q4F"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0D9374AC6;
-	Thu, 30 Oct 2025 18:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847296; cv=fail; b=MPCj6yNXl9PzSmdhGUhv/aarNy4L5DUd/21I0VUGPXFjL2lHoa3t/oOnXSWy8dkbM1tWqsAMImWihy2xA+uh+ACWr+rvkeDJCJNDTaFF/VgQQHNgxzujLE5l8Ohebbgx4nfShR4h9UuOGYqL7TWcKc3PaODh765ePpq6qmTQr+w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847296; c=relaxed/simple;
-	bh=wEIEkWBRUDEn57YO4gCps+gRIaKivJKXU4qSrnaa3Sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=otpkKeP/GW6xhHMVU8Bv4IkGDEY/UQEglcJEY1BJecMpOaB2e0g79s0u5EvjFNIC0iawWPlau99ffySk9nw/6aGcgYbqdeu2WLgc6TYWFoiQzSSKf61WdPBRNWqHzcGAiQbqCqe0zIV9Ksf9TbVDZnLx4ImRlyTjhEK7iRwUw7o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rHB+V5in; arc=fail smtp.client-ip=52.101.85.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o6C8wmikJY0RYk9yffOjBCIxUF1VHQPK3CqPChO+CQY8siYy1kT4Vj76fAwnq8vmX3dTQnfcbR1/7aT/g/1IU9O++9LHueFYsfDot5XLF8xilpJFs6swk4ippADoDyK3fpTkQCFnzmX/P6EpUjrA4vsaqhqdzjf9PWBw/CC5bRASyBkmQhmEpFgV19o2Wndl5HAyERf8BPZOe7Yl81YGX8pfq6MwGV0uvKslzUyuo6udvU2VTSSjNgcq7Rv8oEDTvHn5HEk4fFGp41sg7q9TSgIaQtxm8MqdmmKrB40kEQgXza0x3yGUH693PzfHptIsXK6oDWMxOopuPjWJX10pIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9oTlmY6l2L5sHFfJb80tZU+ZlmPQMG0isnZD2jGkU/k=;
- b=ygCWCpXUfJwV+UzsXTrpQNQXhoZczM9lAW7VNzeIhgQPoWu6Rjc+rvJjZX3zUEDUUc99aoo/d0VM6DrTChKzUFSA1otdQdUaafc/WEbWho2r1pcnD5XLzwOYnj4BdrNx17EMS//cx/04pzHi2u6cWUGeErUWhJZimGcNj/xyPjkiaQART3OPJx+gSteFzxJKez5O+xpsop0vAyWgfactXwI8WNy46ad1c1NIticuAOXxhb/rYPjbyYeFs1KKaxDmzfu09UqZD3uuHkkDpB4BUhMUujmrICWeyaCrYMDSrNy9WsCru3noLsYWoFUpqhHdD5XACQxdTNXZb2gXK685CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9oTlmY6l2L5sHFfJb80tZU+ZlmPQMG0isnZD2jGkU/k=;
- b=rHB+V5inJBBFY4buH5W7YmCd2Lg9yngAZbkxXBB+HIq4BbyukpxT1OFKqtqjHgfDQLWUNbvo74lhgnbhZuo7bQDe1peylrXIdxL7lyBQBmatJQAfHEwb9ADKgw96+0MfIlPpZ2H0ADuoCZ5MRJunXLVCIzgxvl44TmC++PeGvQQ=
-Received: from MN2PR20CA0061.namprd20.prod.outlook.com (2603:10b6:208:235::30)
- by CYYPR10MB7651.namprd10.prod.outlook.com (2603:10b6:930:bc::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
- 2025 18:01:29 +0000
-Received: from BL6PEPF0001AB77.namprd02.prod.outlook.com
- (2603:10b6:208:235:cafe::24) by MN2PR20CA0061.outlook.office365.com
- (2603:10b6:208:235::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.13 via Frontend Transport; Thu,
- 30 Oct 2025 18:01:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- BL6PEPF0001AB77.mail.protection.outlook.com (10.167.242.170) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Thu, 30 Oct 2025 18:01:28 +0000
-Received: from DFLE210.ent.ti.com (10.64.6.68) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 13:01:15 -0500
-Received: from DFLE214.ent.ti.com (10.64.6.72) by DFLE210.ent.ti.com
- (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 13:01:15 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE214.ent.ti.com
- (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 30 Oct 2025 13:01:15 -0500
-Received: from [10.250.149.46] ([10.250.149.46])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59UI17qI2566598;
-	Thu, 30 Oct 2025 13:01:08 -0500
-Message-ID: <9bc6f796-6ac4-44ff-a23e-d23d30f431b6@ti.com>
-Date: Thu, 30 Oct 2025 23:31:06 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4463A374AAC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761847280; cv=none; b=LtoU9Q9juF2Pwg14eG7ULCNuR6dlqij6fSIyz/pCUEIoQE0qCXXfpFJnB9JHVItNFOoIbLL8nw2a+OlwR+9j2jOFR5WNIhJyI6DGBVr549bm9qHQtqfXcbBve+DPf3QNtb8vgM/MjveGxGWQzS7cUEZIG9P2odQceM3pMEUJvKw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761847280; c=relaxed/simple;
+	bh=Rn9bRqhzSNXcchPQcrH4b0rYlXJqIKlgZkSe44lo8DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pgjs47I1E7tZMkfwc34hMwRjBlmoSBpIpH4K5lpqVde8hhJwJdg2QdvEIDUikSl9xb5SIIZX+Pnaa3ots5BiJ58bagh3zQiWjcytkk5QDPnOA3bRmNbgoLFXkcYXfBWUkgo/94k+raNY+vzl6eJlNfiPYI5OkIz16kca5QV9qRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m6mN25O1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fBsl6Q4F; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U9TuLN1994489
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:01:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cXV5bK5NXAnWN8bRl9mITOxX
+	zPOm4995onAokhRKwyM=; b=m6mN25O19Y4bcqLCtKcVEF0B/y1gxRwia7ULE0fq
+	qYPXfgHrA1nctu1RYAFFx5yrQNs1wM304UEcfyB0cZLP7H1HBTTBecQ+afqCWy0F
+	CQPWRKpivCGuX5490S5PjipEM8H0yzqLUns/rYD0f7igFBfUecFUlq/7VbE3cgr9
+	VvTC82IB7llKV6mX+EyUnXbBeMajf9O9sc8MzYq7O8ok7IL+OXOAVyZtbqOE6LO1
+	cu3ybhDOR8s2uacfCdPvKSB1OKP2E+q1gYKmNt7EOvTFwjwwSv5yM/0PB/e4NHRR
+	6ziRF0kQ3Ebah6qHgtIv3ap2ryn8BrZDSLVP0q9lqUqpYw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3wr72s8h-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:01:17 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8a4c63182so35073161cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761847277; x=1762452077; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXV5bK5NXAnWN8bRl9mITOxXzPOm4995onAokhRKwyM=;
+        b=fBsl6Q4FtkIgEl+tFn+9YU2jBrz6cYTiIcMfRS4XUNnmSzXuP3ZjUIZFWn1bJak/4y
+         IzRVAzG1EjJbnat9MFuVE3TAANBuHXF934lSvwL00nf8s6lB69pTy8TimlpWaH6b7Hq7
+         0QM9sUa1kWpMuYAdMe4R4nbzKOO5GOg5t6OjEpOMyP4JmBT/4e5Q1hxdvY541Ol7A3a/
+         UKyKCwMAmBTUSKBW5exg7kwLnIVbjGLdpkTFTxXZnoRF4pYXPpvItsy51uszK0DCNWMJ
+         XAEY/9FyJGn/3VX5DYjsr7g6lt45GSin1A9k14KR8raH+ZiSuJiuJLNjc3oOcVs7IJiG
+         myxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761847277; x=1762452077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cXV5bK5NXAnWN8bRl9mITOxXzPOm4995onAokhRKwyM=;
+        b=oSY7X9bcnxiQigwLvjT/HuVRIuCY0NqmIQMQ1p1VEnFNyVFWd/U3e4rzqTAznL1CVg
+         GEzFq1Vy+TGI409Z+bwQakXa029csImprBend/Wm+rZAr3zt9aJrSvdU9/ly+poOZZS6
+         YJzflsU0RmUxTncZnHVSMiDk55esQCiEhHb2xfZ2fN0odvpPFxyCGicqbMTJWOImDB9g
+         6ZR+AHmpFaeD4ZzdBB79zOD/GyJoYZc22HRhrS4YQPKlH63EBBdAccnV/GahX9fehfVd
+         wMYrxy2uxzBkddDPv0yuh52gDgKXuhTnoH7R8qKoe8hvvGvhbsEwzStsVN7f6vCxlpY0
+         wTCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrT5mPFofKeM6lHkVWW4MXngh+uI9L2HmkhaaIMX+j72QtV7NaRazPxODlavUUDKa4cnlaUZwVdEh5+lQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGrYyZgLul7kXszj7BVePIpSkPydufrqRdKJyid0dRGtJjjZeZ
+	s1hJPG1I6/wEJygFKhFp5cmkAuzuIoWJ8jIwrRKt275LetVbb7IxHGClP/4tXpOX0bTIWU9eSy1
+	shAP7lOci/EZwD9HQ/Yn7jSt3puTk4P16QS2o4ORaDl8VVYp8fUFFiJ4Meix5m9KEf64=
+X-Gm-Gg: ASbGncuf1YjN3vr7yF98WafFNW8GGZ+kxyEaCxUBcH8Ds1F2DkWA0rrwdLlRggFf4AD
+	S4EY2exolx9Hv1ienkI3XILPGAYtkphtrluWTbiLhhx2/HsLcMPCxdq3+GDPqackfqut03VS+tS
+	QAK+91LeXy40oy41azZ1KPvDmL5j9flC1u5soMYqzILbBOzxrKzk1yzBKo8Bohk+BlW8CeAVI0/
+	zoWUM6Io/CB+Q8xD5Sid5w0eSD+xDAjZ60z9l7QkVjNRoc5x54qIOV4a3H5jylJwkxP41r/v0Wd
+	SSRjWZc/kGSt6waUQTEuo+nZ4EE52Ef8a0mIx69rkxgVrfjnJrK9O6ejtXMWy0uMWrHE7Wln+fu
+	4XD/wtq7vfXXF05fqhSs4+8UOEYwtVhUrT7y3yaXabVxxn4/s8JJ7e4NozZ7RTff0x1A3ypbBjl
+	m5ul8CHvgpJL71
+X-Received: by 2002:a05:622a:40f:b0:4e8:a269:ceab with SMTP id d75a77b69052e-4ed30d4ecfamr6635401cf.5.1761847275154;
+        Thu, 30 Oct 2025 11:01:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBsOQjcOvRjMP4pTZJOPkX1Iw2AZufQNpkNP01OrVkZ+/BT71YfbXhtRUq9boF7rgtxSZZrQ==
+X-Received: by 2002:a05:622a:40f:b0:4e8:a269:ceab with SMTP id d75a77b69052e-4ed30d4ecfamr6634351cf.5.1761847274420;
+        Thu, 30 Oct 2025 11:01:14 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a1614e1edsm3259121fa.22.2025.10.30.11.01.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 11:01:13 -0700 (PDT)
+Date: Thu, 30 Oct 2025 20:01:10 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        robin.clark@oss.qualcomm.com, lumag@kernel.org,
+        abhinav.kumar@linux.dev, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 01/12] drm/msm/dsi/phy: Add support for Kaanapali
+Message-ID: <mlhohop2uifsdo3qxxzmuxbkjo735hdw6xcosvkmsx4eskfufz@5otklefey5k7>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023075401.1148-2-yuanjie.yang@oss.qualcomm.com>
+ <omlhiywjr46ik6bj2aiutgcf4aifen4vsvtlut7b44ayu4g4vl@zn4u3zkf6cqx>
+ <ad906eb5-c08f-4b66-9e37-aaba99889ad4@oss.qualcomm.com>
+ <aPryORKIuSwtXpon@yuanjiey.ap.qualcomm.com>
+ <einog245dsbqtx3by2cojyzmyctk2fffpwndwoe24puwqq4fta@cu6iiidxqgr4>
+ <0291d0f2-483f-48d8-8c75-f1bbcd1ab18f@oss.qualcomm.com>
+ <ehgdx7av3jewowkvtsqrbnsphgxm5hryl6n5otnapi4xneldze@gcwvpssisv2x>
+ <aQGHyN19/a/tl0BH@yuanjiey.ap.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-{j7/am6}*-ti-ipc-firmware: Limit FIFOs
- to Linux use
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
-	<hiago.franco@toradex.com>, <francesco.dolcini@toradex.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20251030160635.1388401-1-b-padhi@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <20251030160635.1388401-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB77:EE_|CYYPR10MB7651:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb5b7295-e4e3-4fa5-b813-08de17de5941
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|34020700016|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z0M1ZDI4aWhEbHdyTC9yVjRuNmRlRW5MdklUeWlDMFJUazdiTVhHSHBjYmN5?=
- =?utf-8?B?eFh5azh0QVBIMXBPSzlXNWhNVkNMNjdWRUFZdWRQVzlWWm9JaHNxZWN2c0RV?=
- =?utf-8?B?YVFWUnlsVnJ3YW5PTWpyNjhmQ0wvWlpqTHpOdEpHTUs3K1cyWHVmdnZpQW5N?=
- =?utf-8?B?QzErY0FCQ0lCSzhjMllXTWsxTU5Qd1ZGUTluVjgzcFZaSlNUTWluckhqVW5v?=
- =?utf-8?B?L1N2WHBHQytGMzUvSXJzckMwb0FpZTFXRFkzL2FCeGJKSmVZOGhmem1Dc3M1?=
- =?utf-8?B?SDdJY3lTSUY5aldEbGt2cnY2dlZwVDVrOUN1L3E1akpiQUNJMmI1bEpyQmNp?=
- =?utf-8?B?TkZER0FENjBYWXNWaTVQLzc0bUc4azcxM3dZL083UkoybUFva1BQVnlyRlFL?=
- =?utf-8?B?aGx5ZG5nTng0WFhKRGFQTjU5N2xNN2hQS0xvdjJjZmZpTHJXUWVzZnFWOEY2?=
- =?utf-8?B?emE3c2pUUmptK2JDMkNJaEdPcG1ZZVBEUzdnU01ldXZEWElBeUJNMFZhQnoy?=
- =?utf-8?B?S0oxWW5IOTYxa1ZGYU5RS081RXg1S0FOck5pWnU0MUNkUk1penI3QkxsbjZ5?=
- =?utf-8?B?TG00eWFnbWV2VVRveE5id0l3WlBlK2hXN3BMbTVjM0JBQ1FhbFZMWmJiSGVx?=
- =?utf-8?B?SWpJanRhRjZqNDNEdDgybGZzZlNCK3VQa21qRTVzRmg5V1JEeGVPQmJJOSt5?=
- =?utf-8?B?amRGWnJqZFAvb2NldkplMGxHdUM1SXZTRTFVdnZBNkxaWnRqRHQ3N0Jabks2?=
- =?utf-8?B?VUd3NzQyTEFhejE0L1hSbjdjRGl0cFdCZGNlN0g0YmU0N2txZWdSOGRDSnl3?=
- =?utf-8?B?TS81M0hmUEVXUFE1Q2prNHpZbmE4SlJ3eFcvNmpiQVB1OXRrQnc4TU41NmM1?=
- =?utf-8?B?WmxlTnNDaCttZHo2RUFnQ3lTdEZwc20ybXpoblN5UkVzSURZWjRFYWF4cEVU?=
- =?utf-8?B?QnFHK0tPNklLeGVXTUZCUmpZYVJVRGlKa0M3VGx6NzF4MXdZU3c4N0o3dHNE?=
- =?utf-8?B?NVAvNGV1WGE4TVBkV0x0MXk1a1BVNGtsYWFhNWpjL1dRTHdEMXh4cmZnM0Ur?=
- =?utf-8?B?QUtnWS9zWGZLOUdBTmtwMjMrRWlYbHNzNHJSbHdnalQyQytCNW0yVmh5aGp2?=
- =?utf-8?B?bE5iWURFbUFiWS9JQmpuSGR0MjBybTRNNlAzWXBka0U2Z0phU05tQVlTTVR0?=
- =?utf-8?B?YjlHNGlUSWdORGlIaWpZYkYxM1NjUG9zM1NqaW16SHFyWktaSTlZMjBDTmxw?=
- =?utf-8?B?V2t6V0lXWFVhOHFEM2MvWkc5YzRVL2FaYmwwTFdGa29CRVRpSUxtN3EzV2xT?=
- =?utf-8?B?SDgzR1RoRUhURmJaSkU0ZjhueWV4a0taTHFLVWRZMzV0QTRIV2x0RXdHUU5w?=
- =?utf-8?B?R1kzUTFQOGZaZlBDNHhVb3dmaDVmK0kxbFpVdHEwT01NSDZ5dXlWdGpsYTdU?=
- =?utf-8?B?eUttY3Y0OHBndlh0SjFMV3FBcG1oUmo2cnRwRmxKb1pmNnIwOEZ2Nkw3K29B?=
- =?utf-8?B?QVRkRUpqUGtPa2hJSzB0L1hlUEVlV0t3aWtJYUpNdkVIbmFCNlZCQUgzdHJT?=
- =?utf-8?B?ZjVRakE2WmtKQzhydUZZdElXR0JWT1M1dTVxS01NNDBBNUw1Qys5OEcvUzdu?=
- =?utf-8?B?aW9IYzhDb0JJeFJNTW40T01ManBwQUltVkdkSTluQmZsNnc0RkYrTDJZeXF3?=
- =?utf-8?B?MHdaeE5DNDBoZkplWHMzVW5WRUhHMFNqWmE4R2hEbzdXVjFVc2tUYk96YWsz?=
- =?utf-8?B?T1l4dUZKYk9TZTVFcW85NEVIWi9JK0NGemJoQjh2ZWJoSUc4bEZhUzZXNnZl?=
- =?utf-8?B?ZnVSQmRGRC9kcG1kTFBVMndkSDc3dGVCMWRrZWVpOXBvc2VDd0tIbUI4bERq?=
- =?utf-8?B?aHU5OFpMQnY4clRTQUpyTTdDSUQrNFBDanpSVUp4LzFCWlB2SXZxeDNMbWlq?=
- =?utf-8?B?Zy9xU1VPOUdXQWhjSm9QSERjWHgxWDdHN3JvNEt4MkpIYXQ4RkRrS3ZxMlZ5?=
- =?utf-8?B?Z2ltOVhiOWRnbTRwelJraUo0ZVFsNGQ5ZE1tMm40SHdYYTJoYnNOaWhKMEJ3?=
- =?utf-8?B?QnZ6ZVZ2a0c3dEQvMy9iL0VTdHRoQ1grMUQ1Zk5jMFlmb0EzMWJnT2dZbWRQ?=
- =?utf-8?Q?aFL8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(34020700016)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 18:01:28.0130
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb5b7295-e4e3-4fa5-b813-08de17de5941
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB77.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR10MB7651
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQGHyN19/a/tl0BH@yuanjiey.ap.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE0OCBTYWx0ZWRfX9hYg3us/SYGy
+ SGmwrdR/xV1Z1KVMMLPIfA6YGMcRBs0e1Lc64T6+RY9jRSNnbJZKl0rsQv7PwFvALPNhgd1b3z5
+ JrrQeEpY6yL48hxjSr54KDsyRVJ/yVMdPtVBI6onJUbY76bJhDSdz5qzQASlcRn3K4usjXGVTgp
+ o9en8adfA2V1U/4nKRGijqQlyiOqjE2o4TjCx81PrJpQwmFtFMjiEskUR6fdbZh20i5uQZ1Saze
+ pAYHumoCaCuCcT998IX6WNQKd2+tFWSR7kgWxHnTsl01fVsBa/2HkpROgAWRNRFIGvFVNcN/fhG
+ n1sFRIjqsrHMgrAWjeEBddCba3QfKbm+aY7f29vmlltE1U4eEklReqaHyleLcIJVWCqLZm/5bME
+ KQJSu7HRdRCO9dmvMO667+nilmsAfQ==
+X-Authority-Analysis: v=2.4 cv=P+Y3RyAu c=1 sm=1 tr=0 ts=6903a7ed cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=dW72lhU0GKDYo0j8srIA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: xoBCXwkn384dZv4sWBDmQDXMlxOt7619
+X-Proofpoint-GUID: xoBCXwkn384dZv4sWBDmQDXMlxOt7619
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_06,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300148
 
-Hi All,
+On Wed, Oct 29, 2025 at 11:19:36AM +0800, yuanjiey wrote:
+> On Mon, Oct 27, 2025 at 03:29:40PM +0200, Dmitry Baryshkov wrote:
+> > On Mon, Oct 27, 2025 at 02:20:26PM +0100, Konrad Dybcio wrote:
+> > > On 10/27/25 2:14 PM, Dmitry Baryshkov wrote:
+> > > > On Fri, Oct 24, 2025 at 11:27:53AM +0800, yuanjiey wrote:
+> > > >> On Thu, Oct 23, 2025 at 02:02:45PM +0200, Konrad Dybcio wrote:
+> > > >>> On 10/23/25 1:48 PM, Dmitry Baryshkov wrote:
+> > > >>>> On Thu, Oct 23, 2025 at 03:53:50PM +0800, yuanjie yang wrote:
+> > > >>>>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > > >>>>>
+> > > >>>>> Add DSI PHY support for the Kaanapali platform.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > > >>>>> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > > >>>>> ---
+> > > >>>
+> > > >>> [...]
+> > > >>>
+> > > >>>>> +	.io_start = { 0x9ac1000, 0xae97000 },
+> > > >>>>
+> > > >>>> These two addresses are very strange. Would you care to explain? Other
+> > > >>>> than that there is no difference from SM8750 entry.
+> > > >>>
+> > > >>> They're correct.
+> > > >>> Although they correspond to DSI_0 and DSI_2..
+> > > >>>
+> > > >>> Yuanjie, none of the DSI patches mention that v2.10.0 is packed with
+> > > >>> new features. Please provide some more context and how that impacts
+> > > >>> the hw description.
+> > > >>
+> > > >> Thanks for your reminder.
+> > > >>
+> > > >> Correct here:
+> > > >> io_start = { 0x9ac1000, 0x9ac4000 }  DSI_Phy0 DSI_phy1
+> > > >>
+> > > >> And v2.10.0 no clearly meaningful changes compared to v2.9.0.
+> > > >> just some register address change.
+> > > > 
+> > > > Addition of DSI2 is a meaningful change, which needs to be handled both
+> > > > in the core and in the DSI / DSI PHY drivers.
+> > > 
+> > > DSI2 was introduced in 8750 already, but it was done without any
+> > > fanfare..
+> > > 
+> > > I see a diagram that shows an XBAR with inputs from DSI0 and DSI2,
+> > > and an output to DSI0_PHY (same thing on kaanapali - meaning this
+> > > patch is potentially wrong and should ref DSI1_PHY instead?)
+> > 
+> Yes, I check ipcata Doc, I see DSI0\DSI0_PHY DSI1\DSI1_PHY DSI2\DSI2_PHY in Kaanapali, 
+> addition of DSI2\DSI2_PHY compared to SM8650.
+> 
+> look like I should add: config io_start = {DSI0_PHY, DSI1_PHY, DSI2_PHY},
 
-On 10/30/2025 9:36 PM, Beleswar Padhi wrote:
-> Each mailbox cluster has 16 hardware FIFOs shared among 4 users (CPUs).
-> Each FIFO supports one-way communication between two users and is
-> configured by the firmware.
->
-> For TI IPC firmware, the FIFOs starting from 0 are assigned for
-> communication between the Cortex A-core (running Linux) and remote
-> processors (running RTOS). The remaining FIFOs are used for
-> RTOS-to-RTOS communication.
->
-> In some cases, pending messages may remain in the RTOS-to-RTOS FIFOs if
-> a remote processor is powered off or in a bad state. To avoid issues
-> such as suspend failures, restrict the 'ti,mbox-num-fifos' property in
-> the device tree to only include the FIFOs used for Linux-to-RTOS
-> communication. This ensures the Linux mailbox driver checks only its
-> own FIFOs and does not interfere with those used by other remote
-> processors.
->
-> Fixes: a49f991e740f ("arm64: dts: ti: k3-am62-verdin: Add missing cfg for TI IPC Firmware")
-> Closes: https://lore.kernel.org/all/sid7gtg5vay5qgicsl6smnzwg5mnneoa35cempt5ddwjvedaio@hzsgcx6oo74l/
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Cc: Hiago De Franco <hiago.franco@toradex.com>
-> Please help in testing the patch on Toradex platforms.
+I see DSI0, DSI1, DSI2, but DSI0_PHY and DSI1_PHY.
 
-
-Please ignore the below patch. We had a discussion internally
-and want to take a different route for this problem. I will post
-the new patch tomorrow.
-
-Thanks,
-Beleswar
-
->
-> Testing Done:
-> 1. Tested Boot across all TI K3 EVM/SK boards.
-> 2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
-> 3. Tested that the patch generates no new warnings/errors.
->
->   arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi         | 1 +
->   arch/arm64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi        | 3 +++
->   arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi        | 2 ++
->   arch/arm64/boot/dts/ti/k3-am64-ti-ipc-firmware.dtsi         | 3 +++
->   arch/arm64/boot/dts/ti/k3-am65-ti-ipc-firmware.dtsi         | 2 ++
->   arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi        | 2 ++
->   arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi        | 5 +++++
->   arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi       | 4 ++++
->   arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi        | 4 ++++
->   .../dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi     | 6 ++++++
->   arch/arm64/boot/dts/ti/k3-j784s4-ti-ipc-firmware.dtsi       | 1 +
->   11 files changed, 33 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-> index ea69fab9b52b..913bd5ff49f7 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-ti-ipc-firmware.dtsi
-> @@ -21,6 +21,7 @@ mcu_m4fss_memory_region: memory@9cc00000 {
->   
->   &mailbox0_cluster0 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_m4_0: mbox-m4-0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi
-> index 950f4f37d477..b377edb52bc9 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi
-> @@ -33,6 +33,7 @@ mcu_r5fss0_core0_memory_region: memory@9b900000 {
->   
->   &mailbox0_cluster0 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_r5_0: mbox-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -42,6 +43,7 @@ mbox_r5_0: mbox-r5-0 {
->   
->   &mailbox0_cluster1 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_c7x_0: mbox-c7x-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -51,6 +53,7 @@ mbox_c7x_0: mbox-c7x-0 {
->   
->   &mailbox0_cluster2 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_mcu_r5_0: mbox-mcu-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi
-> index d29a5dbe13ef..82512e7a44ea 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi
-> @@ -21,6 +21,7 @@ mcu_r5fss0_core0_memory_region: memory@9b900000 {
->   
->   &mailbox0_cluster0 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_r5_0: mbox-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -30,6 +31,7 @@ mbox_r5_0: mbox-r5-0 {
->   
->   &mailbox0_cluster1 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_mcu_r5_0: mbox-mcu-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am64-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am64-ti-ipc-firmware.dtsi
-> index 6b10646ae64a..793e965c5a4b 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am64-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am64-ti-ipc-firmware.dtsi
-> @@ -63,6 +63,7 @@ rtos_ipc_memory_region: memory@a5000000 {
->   
->   &mailbox0_cluster2 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss0_core0: mbox-main-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 2>;
-> @@ -77,6 +78,7 @@ mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
->   
->   &mailbox0_cluster4 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss1_core0: mbox-main-r5fss1-core0 {
->   		ti,mbox-rx = <0 0 2>;
-> @@ -91,6 +93,7 @@ mbox_main_r5fss1_core1: mbox-main-r5fss1-core1 {
->   
->   &mailbox0_cluster6 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_m4_0: mbox-m4-0 {
->   		ti,mbox-rx = <0 0 2>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am65-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am65-ti-ipc-firmware.dtsi
-> index 61ab0357fc0d..579533df6bd4 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am65-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am65-ti-ipc-firmware.dtsi
-> @@ -28,6 +28,7 @@ rtos_ipc_memory_region: memory@a2000000 {
->   &mailbox0_cluster0 {
->   	status = "okay";
->   	interrupts = <436>;
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
->   		ti,mbox-tx = <1 0 0>;
-> @@ -38,6 +39,7 @@ mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
->   &mailbox0_cluster1 {
->   	status = "okay";
->   	interrupts = <432>;
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_mcu_r5fss0_core1: mbox-mcu-r5fss0-core1 {
->   		ti,mbox-tx = <1 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
-> index 9477f1efbbc6..4245a5319085 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-ti-ipc-firmware.dtsi
-> @@ -52,6 +52,7 @@ rtos_ipc_memory_region: memory@a4000000 {
->   &mailbox0_cluster0 {
->   	status = "okay";
->   	interrupts = <436>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -67,6 +68,7 @@ mbox_mcu_r5fss0_core1: mbox-mcu-r5fss0-core1 {
->   &mailbox0_cluster1 {
->   	status = "okay";
->   	interrupts = <432>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss0_core0: mbox-main-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
-> index 40c6cc99c405..4003f125dbe7 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j721e-ti-ipc-firmware.dtsi
-> @@ -114,6 +114,7 @@ rtos_ipc_memory_region: memory@aa000000 {
->   &mailbox0_cluster0 {
->   	status = "okay";
->   	interrupts = <436>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -129,6 +130,7 @@ mbox_mcu_r5fss0_core1: mbox-mcu-r5fss0-core1 {
->   &mailbox0_cluster1 {
->   	status = "okay";
->   	interrupts = <432>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss0_core0: mbox-main-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -144,6 +146,7 @@ mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
->   &mailbox0_cluster2 {
->   	status = "okay";
->   	interrupts = <428>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss1_core0: mbox-main-r5fss1-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -159,6 +162,7 @@ mbox_main_r5fss1_core1: mbox-main-r5fss1-core1 {
->   &mailbox0_cluster3 {
->   	status = "okay";
->   	interrupts = <424>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_c66_0: mbox-c66-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -174,6 +178,7 @@ mbox_c66_1: mbox-c66-1 {
->   &mailbox0_cluster4 {
->   	status = "okay";
->   	interrupts = <420>;
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_c71_0: mbox-c71-0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
-> index ebab0cc580bb..2ef5c95f6e93 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-ti-ipc-firmware.dtsi
-> @@ -100,6 +100,7 @@ rtos_ipc_memory_region: memory@a8000000 {
->   &mailbox0_cluster0 {
->   	status = "okay";
->   	interrupts = <436>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -115,6 +116,7 @@ mbox_mcu_r5fss0_core1: mbox-mcu-r5fss0-core1 {
->   &mailbox0_cluster1 {
->   	status = "okay";
->   	interrupts = <432>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss0_core0: mbox-main-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -130,6 +132,7 @@ mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
->   &mailbox0_cluster2 {
->   	status = "okay";
->   	interrupts = <428>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss1_core0: mbox-main-r5fss1-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -145,6 +148,7 @@ mbox_main_r5fss1_core1: mbox-main-r5fss1-core1 {
->   &mailbox0_cluster4 {
->   	status = "okay";
->   	interrupts = <420>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_c71_0: mbox-c71-0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi
-> index cb7cd385a165..c25dec00cc2a 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi
-> @@ -63,6 +63,7 @@ rtos_ipc_memory_region: memory@a5000000 {
->   
->   &mailbox0_cluster0 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_wkup_r5_0: mbox-wkup-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -72,6 +73,7 @@ mbox_wkup_r5_0: mbox-wkup-r5-0 {
->   
->   &mailbox0_cluster1 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_mcu_r5_0: mbox-mcu-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -81,6 +83,7 @@ mbox_mcu_r5_0: mbox-mcu-r5-0 {
->   
->   &mailbox0_cluster2 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_c7x_0: mbox-c7x-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -90,6 +93,7 @@ mbox_c7x_0: mbox-c7x-0 {
->   
->   &mailbox0_cluster3 {
->   	status = "okay";
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5_0: mbox-main-r5-0 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
-> index 455397227d4a..809ecf26ddd1 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-ti-ipc-firmware-common.dtsi
-> @@ -130,6 +130,7 @@ c71_2_memory_region: memory@aa100000 {
->   &mailbox0_cluster0 {
->   	status = "okay";
->   	interrupts = <436>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_mcu_r5fss0_core0: mbox-mcu-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -145,6 +146,7 @@ mbox_mcu_r5fss0_core1: mbox-mcu-r5fss0-core1 {
->   &mailbox0_cluster1 {
->   	status = "okay";
->   	interrupts = <432>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss0_core0: mbox-main-r5fss0-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -160,6 +162,7 @@ mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
->   &mailbox0_cluster2 {
->   	status = "okay";
->   	interrupts = <428>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss1_core0: mbox-main-r5fss1-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -175,6 +178,7 @@ mbox_main_r5fss1_core1: mbox-main-r5fss1-core1 {
->   &mailbox0_cluster3 {
->   	status = "okay";
->   	interrupts = <424>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_main_r5fss2_core0: mbox-main-r5fss2-core0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -190,6 +194,7 @@ mbox_main_r5fss2_core1: mbox-main-r5fss2-core1 {
->   &mailbox0_cluster4 {
->   	status = "okay";
->   	interrupts = <420>;
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_c71_0: mbox-c71-0 {
->   		ti,mbox-rx = <0 0 0>;
-> @@ -205,6 +210,7 @@ mbox_c71_1: mbox-c71-1 {
->   &mailbox0_cluster5 {
->   	status = "okay";
->   	interrupts = <416>;
-> +	ti,mbox-num-fifos = <2>;
->   
->   	mbox_c71_2: mbox-c71-2 {
->   		ti,mbox-rx = <0 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-ti-ipc-firmware.dtsi
-> index 81b508b9b05e..67af04b25fd0 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-ti-ipc-firmware.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-ti-ipc-firmware.dtsi
-> @@ -20,6 +20,7 @@ c71_3_memory_region: memory@ab100000 {
->   };
->   
->   &mailbox0_cluster5 {
-> +	ti,mbox-num-fifos = <4>;
->   
->   	mbox_c71_3: mbox-c71-3 {
->   		ti,mbox-rx = <2 0 0>;
+-- 
+With best wishes
+Dmitry
 
