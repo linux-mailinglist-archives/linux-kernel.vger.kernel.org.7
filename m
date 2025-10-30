@@ -1,201 +1,156 @@
-Return-Path: <linux-kernel+bounces-878756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AF3C216B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:16:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120FFC21668
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA923B84BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:12:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4107A1897E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D867C36838C;
-	Thu, 30 Oct 2025 17:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PLxGrbSz"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC833683A5;
+	Thu, 30 Oct 2025 17:12:20 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641A53678A7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E073678D9;
+	Thu, 30 Oct 2025 17:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761844338; cv=none; b=lhvRO4eM2QtPLWPvhDml3laq1TcAx00+14Jdw7R/PEPD95Q8cPt+wwglfh89ghn8NkHqtiO12sg31MkIF/pqsPpEc9ybHqCGdqejef8G8sSdPTH5klBn31sJQE4FLLrliXq9P9JcIij26PcMrUrL+jKsQa8QimeY2AKd/g5Sp3Q=
+	t=1761844340; cv=none; b=PS1Ecjw7LvT6ec040btvFil/ZE/ked+I2Ho/0sHU1p0oJ35CkSDJQzI9paHqNM+QhIgwFILWpWb1ZnK7Aiir6GQXH3GQMZRgGL4SaTn4yljqiIMPzyJXPXiGb8GgrHt+QzXxw4PtrL9QEtAVIlnMQJruoZU9vY7Q6DTJCkCa4tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761844338; c=relaxed/simple;
-	bh=btQzL2ZL/PLD+psnQSivSO5arjE2jQOSxVQpDVtS2L8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=YANyUtv9Ot3+SDZMaNRyZgxL1PVErLsgfLLVNScQf5ZiO/KHRmUGcPu6CuTPYgXMF4CdaNfEsggAM4hdMKfD8jFf7EOKeJeiR0jnuwMIa/cNyxHpkR7KxvD52JykBUJhFkv9BwH/GgQqYQ3sCiSC9qHt1NF3nkE8E4lRbpRw+Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PLxGrbSz; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-294df925293so12097825ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761844336; x=1762449136; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zdgUIWhxFpBO1eWPwkXjelAIvbaSYwWWLU1wd9xgw1s=;
-        b=PLxGrbSzB4T5dYv8UKRjNJcEOfkDhhqXCaXJskItooFAn8q0FuRyJTjzU2cJcYn6VH
-         exFiCvhGz8SN49fyANE7RQEm/gqG6sCzW1jixObmi2UdqTvn36GfLTql/0+a6wE92FT9
-         UxhNGocEU0EDLM2mBhWMLPhc46NFKsRKG7ItoUSbdGrSsDj93gjJXgdDw1PVgi0YefPC
-         /FKSulSPwzSEDbZ9WgbkxTKoeV30eYCQUD7JsAPW7v7KBcUPGjVk1XNE7bIzrBZMyJLN
-         lgweQpRLNk9uT3Mi8mdWXeh8b00Nz53VMhdXV3L7YVeS0CJK3qOdJLbulxXe9gN3mnzq
-         4fng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761844336; x=1762449136;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zdgUIWhxFpBO1eWPwkXjelAIvbaSYwWWLU1wd9xgw1s=;
-        b=vUBnyq+HQV0Q5jNPwyM7lsSnTZxDfi3+Xv8xsUH5Ki/ibSRe4yqlrnn4+b/deAV42l
-         vHq+I428OfsqUzj0/fskx+LmYvOzXHx+CU29mZ7o7CtT2wgfiV0hnPtAXs4HDho8yvqS
-         H5LJmVLEfrVisa0dbnzIWiceGjTdGRxmzINK3+YOnbvswHSX/sreLiTExz924yYcqu9p
-         SR8Yjs573riwrU8VKFjwS7T4i9IV9xpQEn0CN5JRlpEGhsiMkLwOanRQoQcz/AGvSc0s
-         9iY62QZCmsU+DHIzNd8VWQRamWS6Mc/a3zk+XKz0cBYgIuaNklK8U9VcQ80DMbu2KnLh
-         7AXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUK+E5acrC7/bysM+5xB1Xp5DGf62SfUCZ+8CvxffXYadvEvSjcbXCNna3ceF8YFZ4Iwn0gfylzkAZOeYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylqqepWhDi8yPRuzU6/kHdsluw0g/eGAZK72CkowkjLHFtWf4a
-	iX0g3D32wyqerHxjbcllLwTdAeIzxYYMvp7+V/3i/5HHAB9lE53j6B70wATbtl5MatU6Vxht4ZJ
-	qfCRBJSiONw==
-X-Google-Smtp-Source: AGHT+IFqOe63wYQO+7Jrsp5fFjA9y7kyFxhqMfIHUQGb1bFWI5ah1MbT82aHXilcNfQcq6K8OX3UbTQ0w9Sd
-X-Received: from pjsd13.prod.google.com ([2002:a17:90a:bf8d:b0:33b:c327:1273])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2c10:b0:294:ccc6:ccfd
- with SMTP id d9443c01a7336-2951a3a2fcbmr5902745ad.24.1761844335727; Thu, 30
- Oct 2025 10:12:15 -0700 (PDT)
-Date: Thu, 30 Oct 2025 10:12:11 -0700
+	s=arc-20240116; t=1761844340; c=relaxed/simple;
+	bh=Z4l1+K19PrS87Nnkrl3lJLy1OZ65JYlIiTAuPULHAh8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=klUKM/XNFMtXeKXeU1TIGtog3dVVZnYZXfXQWTctdFsEgKc2HFkog9PvPLmdfEUOHSi91rfY/ocWhvH0oZfY0VvS2hktD636ks1+UMkfm7Gimc2IfQfV+9GaFJLKLCXG/poA5rwO6ahnavzxd+XoAP96uWks8u6zo4oeFUsmHZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cy9db4MhNzJ46BP;
+	Fri, 31 Oct 2025 01:12:03 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 50C0E140275;
+	Fri, 31 Oct 2025 01:12:15 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 Oct
+ 2025 17:12:14 +0000
+Date: Thu, 30 Oct 2025 17:12:12 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Ajith Anandhan <ajithanandhan0406@gmail.com>
+CC: <linux-iio@vger.kernel.org>, <jic23@kernel.org>, <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, <andy@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: iio: adc: Add TI ADS1120 binding
+Message-ID: <20251030171212.00004069@huawei.com>
+In-Reply-To: <20251030163411.236672-2-ajithanandhan0406@gmail.com>
+References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
+	<20251030163411.236672-2-ajithanandhan0406@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251030171211.1109480-1-irogers@google.com>
-Subject: [PATCH v1] perf s390-sample-raw: Cache counter names
-From: Ian Rogers <irogers@google.com>
-To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Searching all event names is slower now that legacy names are
-included. Add a cache to avoid long iterative searches.
+On Thu, 30 Oct 2025 22:04:09 +0530
+Ajith Anandhan <ajithanandhan0406@gmail.com> wrote:
 
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-e4a64ed61d38@linux.ibm.com/
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/s390-sample-raw.c | 52 +++++++++++++++++++++++++++++--
- 1 file changed, 49 insertions(+), 3 deletions(-)
+> Add device tree binding documentation for the Texas Instruments
+> ADS1120.
+> 
+> The binding defines required properties like compatible, reg, and
+> SPI configuration parameters.
+> 
+> Link: https://www.ti.com/lit/gpn/ads1120
+Datasheet: https://www.ti.com/lit/gpn/ads1120
 
-diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
-index 335217bb532b..2d0a0c4360e4 100644
---- a/tools/perf/util/s390-sample-raw.c
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -19,12 +19,14 @@
- 
- #include <sys/stat.h>
- #include <linux/compiler.h>
-+#include <linux/err.h>
- #include <asm/byteorder.h>
- 
- #include "debug.h"
- #include "session.h"
- #include "evlist.h"
- #include "color.h"
-+#include "hashmap.h"
- #include "sample-raw.h"
- #include "s390-cpumcf-kernel.h"
- #include "util/pmu.h"
-@@ -133,7 +135,7 @@ static int get_counterset_start(int setnr)
- 
- struct get_counter_name_data {
- 	int wanted;
--	char *result;
-+	const char *result;
- };
- 
- static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
-@@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
- 
- 	rc = sscanf(event_str, "event=%x", &event_nr);
- 	if (rc == 1 && event_nr == data->wanted) {
--		data->result = strdup(info->name);
-+		data->result = info->name;
- 		return 1; /* Terminate the search. */
- 	}
- 	return 0;
- }
- 
-+static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unused)
-+{
-+	return key;
-+}
-+
-+static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void *ctx __maybe_unused)
-+{
-+	return key1 == key2;
-+}
-+
- /* Scan the PMU and extract the logical name of a counter from the event. Input
-  * is the counter set and counter number with in the set. Construct the event
-  * number and use this as key. If they match return the name of this counter.
-@@ -164,17 +176,51 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
-  */
- static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
- {
-+	static struct hashmap *cache;
-+	static struct perf_pmu *cache_pmu;
- 	struct get_counter_name_data data = {
- 		.wanted = get_counterset_start(set) + nr,
- 		.result = NULL,
- 	};
-+	long cache_key = (set << 16) | nr;
-+	char *result = NULL;
- 
- 	if (!pmu)
- 		return NULL;
- 
-+	if (cache_pmu == pmu && hashmap__find(cache, cache_key, &result))
-+		return strdup(result);
-+
- 	perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/ true,
- 				 &data, get_counter_name_callback);
--	return data.result;
-+
-+	if (data.result)
-+		result = strdup(data.result);
-+
-+	if (cache_pmu == NULL) {
-+		struct hashmap *tmp = hashmap__new(get_counter_name_hash_fn,
-+						   get_counter_name_hashmap_equal_fn,
-+						   /*ctx=*/NULL);
-+
-+		if (!IS_ERR(cache)) {
-+			cache = tmp;
-+			cache_pmu = pmu;
-+		}
-+	}
-+
-+	if (cache_pmu == pmu) {
-+		char *old_value = NULL, *new_value = strdup(result);
-+
-+		if (new_value) {
-+			hashmap__set(cache, cache_key, new_value, /*old_key=*/NULL, &old_value);
-+			 /*
-+			  * Free in case of a race, but resizing would be broken
-+			  * in that case.
-+			  */
-+			free(old_value);
-+		}
-+	}
-+	return result;
- }
- 
- static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
--- 
-2.51.1.930.gacf6e81ea2-goog
+Is a somewhat official tag for these. Though better to put it in the dt-binding
+doc itself as well or instead of here.
+
+> Signed-off-by: Ajith Anandhan <ajithanandhan0406@gmail.com>
+> ---
+>  .../bindings/iio/adc/ti,ads1120.yaml          | 50 +++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> new file mode 100644
+> index 000000000..09285c981
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/ti,ads1120.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments ADS1120 4-channel, 16-bit, 2kSPS ADC
+> +
+> +maintainers:
+> +  - Ajith Anandhan <ajithanandhan0406@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,ads1120
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 4000000
+> +
+> +  spi-cpha: true
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+
+Power supplies should be here and required (even if real boards
+rely on stub regulators). 
+
+Looks like there is an optional reference as well - so include that
+but not as required (use internal ref if not supplied).
+
+There is a data ready pin as well so I'd expect an interrupt.
+
+All these should be in the binding from the start as we want it
+to be as complete as possible.  The driver doesn't have to use everything
+the binding supplies.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@0 {
+> +            compatible = "ti,ads1120";
+> +            reg = <0>;
+> +            spi-max-frequency = <4000000>;
+> +            spi-cpha;
+> +        };
+> +    };
+> +...
+> +
 
 
