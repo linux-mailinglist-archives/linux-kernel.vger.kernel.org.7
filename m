@@ -1,211 +1,158 @@
-Return-Path: <linux-kernel+bounces-878732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477A1C215B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D4BC215AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AADB3A8121
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:58:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8374F357E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0A12E1EEE;
-	Thu, 30 Oct 2025 16:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345CF2FA0F2;
+	Thu, 30 Oct 2025 16:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d4GxQwTX"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9bVXpDO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1F21DF269
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFCA33F8BC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843488; cv=none; b=fWQ52BLQvfyg52m1KnvLnywBcawEh31ISdquScJvH8/a51lmohWKLkRl8bOggupciO2WtM9mtHmc7NRZq+PiHj9mCGlkjaLQis10DeC8VfjRMSXIgu+P1on4y12wVGkKw3zbqnR7NRRw5y1yV45j+ZYfc+5X1b53XrRmWV8AEKw=
+	t=1761843505; cv=none; b=EQ2HIoIXyrenmcbuQTPDLzZA8UUp+RM9neoN0ZB3i8Q2IIes5P1wNpWWK6TQ8Xsi05q/ihIA6EmOkNPlNVXsjeawkOm92JFMOC+q8qTZgcDuf0C7XnFtbx4dSr77gnElCF94V1G+sGNH+Ya2+bqJzCc4r5expc3H3s8x0rGn3ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843488; c=relaxed/simple;
-	bh=MgfuD+X+reEYsZWWSJ3a5HfuCUcHA0yw6XFi9qUAUpY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rX7St1fpENrLE4sUr+HT8rQQfGmQSqJBvMv8MA0gdCb89CMs5kdvr1hPcpwNeYctPboarfm/XWSm5Nu/RXTii10Y1CY63Zg6ZwFkTqlQRae/4gvh2x3P52wuREVfZkbwqoh5CB56n4EB2KhtcZxctxHpT5BDQKGxUy32o5opTJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d4GxQwTX; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4711b95226dso17007425e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761843482; x=1762448282; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=asHTuwHQMlsaIwxd7fRvxE9E6RLII85FGsjE8sF6u2s=;
-        b=d4GxQwTXDRB581EU4H+LtW4s6t8Y6JJjnWMfRYNfJp9osc7p2CgqB7jNeUHSx4wz3v
-         44lVaKA+w3Q51rLqPQyzu3/y6EfHg9oONtNpbVqgao4gK3tJw0sYv349/HET+v+fcDSy
-         UK+pwR+phrKsGlEO2rRA0IuoIGCQ6iACLiFBXBv2T62RgYVZeeSjdrYbgwiRUtxTZk3X
-         VrjZVJU5JnvFDZwUP8W6grHRL5wZJGkoeNiWsOGBwyeS4SoMtGuRcpVZqfoC268Gwrev
-         ptYU1N2xTxjdpP4EeMEI8vUm66LTqt3h+5cnIHsgQx0QhRmnSJk365b64+3/DmrEhfau
-         T0YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761843482; x=1762448282;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=asHTuwHQMlsaIwxd7fRvxE9E6RLII85FGsjE8sF6u2s=;
-        b=RVBgLl1+2kvPuDavCLiogN2uuIKExUfn1IblOGCTVmM1Ucy+74tpxrq/V6TDkVdAnm
-         qhguFDFDfuHCqIo4Qiie8xl3bdAdXTOf5wfF4bFilSBD0xi8ZjTVcuqAK9b05lYAxkJ3
-         vwncgOzsitMuMhG4/AhRrnsyu/0vEh7v9i0ZZFK9Z1D2XlQfgMFaVqfhD5G0KtVCXhzL
-         ng5MJlPum7sFMNW+BoyvWWAO3xjiI9C8m5jZfudqLi69+d88loH7s/deA1ZND6IPoXWm
-         GH6xVQrPkunIpV8WkcU2GC+vYaNidm78z+QE+VkQFzbjaMyqzED9/8vxfS/T1eg+R5MD
-         Ec+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWg80DqCgKhd+KWoujMB6r7OVA5kYJAqPkxu9cU/q8FkYj9+O1zg9MssdxEV3JSdufwZaMn089mM3yitQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtBNV/9wKB4K4rFLJoiXleggjZ/05BFycZAjKmUMPEYPBUsJhw
-	rTRUmgtIqsPee3lihaxtt5D8/4FS3efc3NgHxrOXdYMkmVMOPv8RoVF3ccEo9+nQT4E=
-X-Gm-Gg: ASbGncvd8UMqw3uZuXq+Qvwnm4TyAyz62G+pAEPSyikwf1UoFp6JD1V3ummZvec2jfy
-	g/QwXxhpVT+jZ0oJOJKrQwAAg8uR4KYaghe0Z3Ca+EAjlBjUE8pRFUWieYjfw50gXeNBFIx1vSc
-	yFhjkQM/ISzouseHxZzj3nd76fOAV2ILz/CP1LyIz2BE8uRcYM5Cz2mWcsyGPFPdX3kl+dYXJ1a
-	Jm5cClzOtDlax6LgJplkFvcdypfav4p+Sw8e8bjbjPpeKqlIoHTrunptBfzGWieGBYMmQ3Mcrmn
-	5TW9001ZuIaGlGeBPrq8tgZr58UYwdJv1MjUw5W1h4Ra02MdJjCELDJRk4oXskFQQOohNeAOCsF
-	mJtKZIF9hEoHd1ziZNznIP0LS23cpNLBYRlL2QtI/wP9zbB9JS/NJ//ZK8SOsLIGzFaigzp0rkq
-	iCEYM=
-X-Google-Smtp-Source: AGHT+IFqi7Xpp7w622mR0rNuKijgJ6z8TIArkNB6daVO26Go88Si98M7vPyCpKED2icvujDHVbXEhw==
-X-Received: by 2002:a05:6000:26c3:b0:427:690:1d84 with SMTP id ffacd0b85a97d-429bd69e14bmr268308f8f.32.1761843482254;
-        Thu, 30 Oct 2025 09:58:02 -0700 (PDT)
-Received: from localhost ([195.52.63.148])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df682sm32814036f8f.43.2025.10.30.09.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 09:58:01 -0700 (PDT)
+	s=arc-20240116; t=1761843505; c=relaxed/simple;
+	bh=Hq8p5I7KnzMNDXe5Bh4E6FjIiLt5mIsSkQFjlD2+pAA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SrPdNs6s1XkWl9Q5iBgCynwKXEfmG3fBpRpAmaOgrWdBVXGny1mLMMCcXKX5Ag8GIvBvNpyie/BZDbRJCYtodDWTVD6qNW/5/bbT7AyZ4oQx3z0+aqnvlpoYsIjGEAyLU8wj8eaFOHcPackpIkObj7zvzaeDd4BDnBeUH6sixYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9bVXpDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4500FC116D0;
+	Thu, 30 Oct 2025 16:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761843505;
+	bh=Hq8p5I7KnzMNDXe5Bh4E6FjIiLt5mIsSkQFjlD2+pAA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=n9bVXpDOf9VthcUBfHJnC8mpWz6YhCOooMpbFMBp7/ZbvXyo3aD5kV+ZMykjOB93s
+	 wWPwbQaMPlVYGQGmCSTuQBQECegPkvmdqcFcSIiaoPauHMlP8WXMUfe66aNrj3tFEg
+	 KjFF5qfKShrisJ2AkPA19EEJTGDzgW9HzA1nxp3ksoPtKRoGTLLpQ/gEejWVVhlEQY
+	 z3ht9m0v/2PQBZDr6i5r5+x5teguunonpj8L5TTXLE4tWRrqaNYaxFlNKiR7DDYK/x
+	 mklxud8NIb+MlcM9Vb7GpAdW6xJPHCuN4TS6WFBLhOOQlW1XrqEtRDBpgOocjfd17H
+	 qomLuMoffIrKw==
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 57047F4006A;
+	Thu, 30 Oct 2025 12:58:23 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-01.internal (MEProxy); Thu, 30 Oct 2025 12:58:23 -0400
+X-ME-Sender: <xms:L5kDaSlUbQA7GCqRAGTpDeO4iqaK3amShbeM434nOKrxQQFYMzXZyQ>
+    <xme:L5kDaUp_hGcJkhoMI3oh8cy-qL4WHo9QoiLfOuCE-RircW3NBuFbg6HO6xHX6r8St
+    sbDGIpn_d0j2TkpsXp-_TWpve-oQtxuKIUdAVJqjTlNotY2PhaKeD4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejudehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehnugih
+    ucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecuggftrf
+    grthhtvghrnhepkefhieejfedvueejheehiefgvdfhjeefjeelvdfghfelgeejudevleej
+    uddvvefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudeiudekheei
+    fedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlihhnuhigrd
+    hluhhtohdruhhspdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepugifmhifsegrmhgrii
+    honhdrtghordhukhdprhgtphhtthhopegrnhgurhgvfidrtghoohhpvghrfeestghithhr
+    ihigrdgtohhmpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgt
+    phhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehrug
+    hunhhlrghpsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggrvhgvrdhhrghn
+    shgvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehrihgtkhdrphdrvggughgvtghomh
+    gsvgesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:L5kDaQvgTbcZS_XKBnDK2gguq4s39S4iUBwOXM_ZNzzlvTJ2mWCRBw>
+    <xmx:L5kDaXHK4ZNhn8FQSyDMxobbBNzdx6G96JZD5_fsogynaiJBbMe34Q>
+    <xmx:L5kDafMflp3Jne2Us4cvLoEgHxHAfjCoVEf9qGYIRYZnwmcVqM3oZA>
+    <xmx:L5kDaaHMq5VbBt14P-ssDJUCKMP2U0cfZl6Flcx8Kuowrwcn7g9PRg>
+    <xmx:L5kDacEkQVGLVk93dJRcCxKyiW_a8DGya7QjDJB8yzD8znCRGuFEDSV_>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 16A5F700054; Thu, 30 Oct 2025 12:58:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=752930e6c5b8c7be54d7a69ae03bc5b16c5525c23708b9d108f2a94d97cf;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 30 Oct 2025 17:57:53 +0100
-Message-Id: <DDVTDY4T9I21.2MG05Z8984M5T@baylibre.com>
-Cc: "Vishal Mahaveer" <vishalm@ti.com>, "Kevin Hilman"
- <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin Francis"
- <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>, "Akashdeep
- Kaur" <a-kaur@ti.com>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 1/3] firmware: ti_sci: Remove constant 0 function
- arguments
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Andrew Davis" <afd@ti.com>, "Markus Schneider-Pargmann (TI.com)"
- <msp@baylibre.com>, "Nishanth Menon" <nm@ti.com>, "Tero Kristo"
- <kristo@kernel.org>, "Santosh Shilimkar" <ssantosh@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20251030-topic-am62-partialio-v6-12-b4-v9-0-074f55d9c16b@baylibre.com> <20251030-topic-am62-partialio-v6-12-b4-v9-1-074f55d9c16b@baylibre.com> <1b3f183f-3923-4183-a237-861e4f886958@ti.com>
-In-Reply-To: <1b3f183f-3923-4183-a237-861e4f886958@ti.com>
+MIME-Version: 1.0
+X-ThreadId: AlsNM-Jg7rAZ
+Date: Thu, 30 Oct 2025 09:58:02 -0700
+From: "Andy Lutomirski" <luto@kernel.org>
+To: "Dave Hansen" <dave.hansen@intel.com>,
+ "Rick P Edgecombe" <rick.p.edgecombe@intel.com>,
+ "Sohil Mehta" <sohil.mehta@intel.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "the arch/x86 maintainers" <x86@kernel.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>
+Cc: "Jonathan Corbet" <corbet@lwn.net>, "Ard Biesheuvel" <ardb@kernel.org>,
+ "david.laight.linux@gmail.com" <david.laight.linux@gmail.com>,
+ "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+ "Andrew Cooper" <andrew.cooper3@citrix.com>,
+ "Tony Luck" <tony.luck@intel.com>,
+ "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+ "Kirill A . Shutemov" <kas@kernel.org>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Randy Dunlap" <rdunlap@infradead.org>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Vegard Nossum" <vegard.nossum@oracle.com>, "Xin Li" <xin@zytor.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "Kees Cook" <kees@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>
+Message-Id: <f4ae0030-9bc2-4675-ae43-e477cd894750@app.fastmail.com>
+In-Reply-To: <3e3d2426-6296-4a61-beae-4e3ff5d60f2c@intel.com>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+ <20251007065119.148605-9-sohil.mehta@intel.com>
+ <a33d59c7add98dd9ef352ac95178821dbcd0ce0e.camel@intel.com>
+ <3e3d2426-6296-4a61-beae-4e3ff5d60f2c@intel.com>
+Subject: Re: [PATCH v10 08/15] x86/vsyscall: Reorganize the page fault emulation code
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
---752930e6c5b8c7be54d7a69ae03bc5b16c5525c23708b9d108f2a94d97cf
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Andrew,
 
-On Thu Oct 30, 2025 at 3:13 PM CET, Andrew Davis wrote:
-> On 10/30/25 4:26 AM, Markus Schneider-Pargmann (TI.com) wrote:
->> ti_sci_cmd_prepare_sleep takes three arguments ctx_lo, ctx_hi and
->> debug_flags which are always 0 for the caller. Remove these arguments as
->> they are basically unused.
->>=20
+On Tue, Oct 7, 2025, at 11:48 AM, Dave Hansen wrote:
+> On 10/7/25 11:37, Edgecombe, Rick P wrote:
+>>>  	/*
+>>>  	 * No point in checking CS -- the only way to get here is a user mode
+>>>  	 * trap to a high address, which means that we're in 64-bit user code.
+>> I don't know. Is this as true any more? We are now sometimes guessing based on
+>> regs->ip of a #GP. What if the kernel accidentally tries to jump to the vsyscall
+>> address? Then we are reading the kernel stack and strange things. Maybe it's
+>> worth replacing the comment with a check? Feel free to call this paranoid.
 >
-> They might not be used today, but the TI-SCI command does support
-> passing them, so why remove that ability from the wrapper function?
-
-Thank you. I removed the arguments as I prefer something like
-
-  return ti_sci_cmd_prepare_sleep(&info->handle,
-                                  TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED);
-
-over
-
-  return ti_sci_cmd_prepare_sleep(&info->handle,
-                                  TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED,
-                                  0, 0, 0);
-
-As this function is not part of any API and only used by
-ti_sci_prepare_system_suspend I didn't see a problem in removing it.
-Also I don't know of any code that will be using these arguments.
-
-If you prefer I can drop this patch.
-
-Best
-Markus
-
+> The first check in emulate_vsyscall() is:
 >
-> Andrew
+>        /* Write faults or kernel-privilege faults never get fixed up. */
+>        if ((error_code & (X86_PF_WRITE | X86_PF_USER)) != X86_PF_USER)
+>                return false;
 >
->> Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
->> ---
->>   drivers/firmware/ti_sci.c | 15 +++++----------
->>   1 file changed, 5 insertions(+), 10 deletions(-)
->>=20
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index 49fd2ae01055d0f425062147422471f0fd49e4bd..24ab392b4a5d0460153de76f=
-e382371e319d8f2e 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -1661,14 +1661,10 @@ static int ti_sci_cmd_clk_get_freq(const struct =
-ti_sci_handle *handle,
->>    * ti_sci_cmd_prepare_sleep() - Prepare system for system suspend
->>    * @handle:		pointer to TI SCI handle
->>    * @mode:		Device identifier
->> - * @ctx_lo:		Low part of address for context save
->> - * @ctx_hi:		High part of address for context save
->> - * @debug_flags:	Debug flags to pass to firmware
->>    *
->>    * Return: 0 if all went well, else returns appropriate error value.
->>    */
->> -static int ti_sci_cmd_prepare_sleep(const struct ti_sci_handle *handle,=
- u8 mode,
->> -				    u32 ctx_lo, u32 ctx_hi, u32 debug_flags)
->> +static int ti_sci_cmd_prepare_sleep(const struct ti_sci_handle *handle,=
- u8 mode)
->>   {
->>   	struct ti_sci_info *info;
->>   	struct ti_sci_msg_req_prepare_sleep *req;
->> @@ -1696,9 +1692,9 @@ static int ti_sci_cmd_prepare_sleep(const struct t=
-i_sci_handle *handle, u8 mode,
->>  =20
->>   	req =3D (struct ti_sci_msg_req_prepare_sleep *)xfer->xfer_buf;
->>   	req->mode =3D mode;
->> -	req->ctx_lo =3D ctx_lo;
->> -	req->ctx_hi =3D ctx_hi;
->> -	req->debug_flags =3D debug_flags;
->> +	req->ctx_lo =3D 0;
->> +	req->ctx_hi =3D 0;
->> +	req->debug_flags =3D 0;
->>  =20
->>   	ret =3D ti_sci_do_xfer(info, xfer);
->>   	if (ret) {
->> @@ -3689,8 +3685,7 @@ static int ti_sci_prepare_system_suspend(struct ti=
-_sci_info *info)
->>   			 * internal use and can be 0
->>   			 */
->>   			return ti_sci_cmd_prepare_sleep(&info->handle,
->> -							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED,
->> -							0, 0, 0);
->> +							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED);
->>   		} else {
->>   			/* DM Managed is not supported by the firmware. */
->>   			dev_err(info->dev, "Suspend to memory is not supported by the firmw=
-are\n");
->>=20
+> If the kernel jumped to the vsyscall page, it would end up there, return
+> false, and never reach the code near the "No point in checking CS" comment.
+>
+> Right? Or am I misunderstanding the scenario you're calling out?
+>
+> If I'm understanding it right, I'd be a bit reluctant to add a CS check
+> as well.
 
+IMO it should boil down to exactly the same thing as the current code for the #PF case and, for #GP, there are two logical conditions that we care about:
 
---752930e6c5b8c7be54d7a69ae03bc5b16c5525c23708b9d108f2a94d97cf
-Content-Type: application/pgp-signature; name="signature.asc"
+1. Are we in user mode?
 
------BEGIN PGP SIGNATURE-----
+2. Are we using a 64-bit CS such that vsyscall emulation makes sense.
 
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaQOZERsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlOM
-vgD/bew27FQMEeji6OeLZOJJgA8vPqrL/NU4DrIdV/zVC98A/iLGQiDwd2GnsjGV
-gXIBqqIameTAi7bsnPw9wg9lVhcN
-=fkwa
------END PGP SIGNATURE-----
+Now I'd be a tiny bit surprised if a CPU allows you to lretq or similar to a 32-bit CS with >2^63 RIP, but what do I know?  One could test this on a variety of machines, both Intel and AMD, to see what actually happens.
 
---752930e6c5b8c7be54d7a69ae03bc5b16c5525c23708b9d108f2a94d97cf--
+But the kernel wraps all this up as user_64bit_mode(regs).  If user_64bit_mode(regs) is true and RIP points to a vsyscall, then ISTM there aren't a whole lot of options.  Somehow we're in user mode, either via an exit from kernel mode or via CALL/JMP/whatever from user mode, and RIP is pointing at the vsyscall page, and CS is such that, in the absence of LASS, we would execute the vsyscall.  I suppose the #GP could be from some other cause than a LASS violation, but that doesn't seem worth worrying about.
+
+So I think all that's needed is to update "[PATCH v10 10/15] x86/vsyscall: Add vsyscall emulation for #GP" to check user_64bit_mode(regs) for the vsyscall case.  (As submitted, unless I missed something while composing the patches in my head, it's only checking user_mode(regs), and I think it's worth the single extra line of code to make the result a tiny bit more robust.)
 
