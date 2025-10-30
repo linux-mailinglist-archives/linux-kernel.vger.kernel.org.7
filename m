@@ -1,499 +1,81 @@
-Return-Path: <linux-kernel+bounces-877575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A3EC1E7A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:58:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E54FC1E7B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F25244E675C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBAB3AE9F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752A030748D;
-	Thu, 30 Oct 2025 05:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHdG2IDw"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B093231A056;
+	Thu, 30 Oct 2025 05:58:58 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4038D2EC56D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE4317736;
+	Thu, 30 Oct 2025 05:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761803902; cv=none; b=flMp4JEvzx7fImKc+oe3isYEkp8ctlpZrJct9bAhOnLPvUrYnV2uam3ET2Y8MFUpKE/1MjwFWATelRN1lkpEeobW38NiZUqLJI0Oa/pVU/5dr2E/CjDLJXKkdvo5RNfHbQzVT3lVyGmHHw9XI8qxxRRKYo69HSJs0hgdvHgWZ/g=
+	t=1761803938; cv=none; b=bYbc3C83/9j1LqIMD6knIxNo6dcZU5LKi5K8D+9mGQhnsu55PT/1FSj8wctMbrukK/LqAl6AOlGAycljn+UJ0hsqgi72Cn8hr7WWNhy3Mq6S5HLWfULbn1E99Y0yPz3Tgra0O3RIaJgkl0SI7VQSz0p/vcuotcr5jLgRbQB9Xpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761803902; c=relaxed/simple;
-	bh=BFsKeamwyLRenE3BOM9iEeCDRzA2vzKBMXrusRP0q+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E/1LG5apc8+INr6PEWfNx+u3cXzgnslBEv0xr1tslimJ9ePyYJIUbYhZKfSn942hcKNU88WdIgZ34l2NM4xVUzVB3p+QsnGHRIzIgoHcZPkbsIa41JiP9YzPO/t/k0IJWxUqlUOyffJSUIKquaxfgB0mhK3L3DFwjlAYbP5YlDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XHdG2IDw; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-784a5f53e60so9056487b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761803898; x=1762408698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=44CpAxEQd2flt1Ihx/Ia7H9Y9aQczX78AOv9CGcJyPw=;
-        b=XHdG2IDwFUJtbcI/+o29DYOYr5H1SrgALhyxThL7p2cEfFPYPFmbnw6ZM4THWJzmCa
-         2xQ/yHbHAe0Nh2TmQu/7rW/yzO0/8Sa/S/AHIcq8tjNrwZFahsSfQNqQjyy4scLHYcY/
-         vLb8JKFDg/C7BK5UugFjpgFef+0SQCaZ/ryEgSyFK3uw8AkdNuQO2aNddzF8y2Tld2NK
-         FAP7b0nCnqS21vI1aCuhM3Fr8Su/UZSs4j/xN1ekRMCQ61EIfdrHhWn2h7WpQGz92dis
-         BV5+2eiTY6hbCeAHQ2RMo1NjGaAepv1erqn556MX9Q2DYJUYQPeetgiC52382GVTzZpJ
-         Ah2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761803898; x=1762408698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=44CpAxEQd2flt1Ihx/Ia7H9Y9aQczX78AOv9CGcJyPw=;
-        b=RoFQ5yAYB6bBbF2JdvOH8zdqKvL85a0dRvhMukTMxocFA1lSEPhrxCbb5cQoKwXqcb
-         mH6ksRlhUDtc6sVWvgs7BsnKSbC2j9qU2yEE3lpuCc+pgb/8pwcXHcVZhIXY9K+bavrw
-         4mxBnkm7zKq4Z7+Ge4no3vmL05g8iBgRMVBfBRiyCGPVqGS5O6v+WIxefBnY7RoUGMhc
-         P0Hxwey6k24wqZ1vipWRPP5CyWNobvpuDMOVYCLJnJK7aZpR++qtzzwhB7aTvvrGxfVU
-         S/j3Mkc+lYLkRqryJmghfHP57CN54ZYX+2hhuEPdDo4euTbVwipdd9TIuhrgBjHqNOaR
-         646w==
-X-Forwarded-Encrypted: i=1; AJvYcCX1HdTYeovKCPvUAp9uIxOvVd3hmKu8lXq2N+8qKwC5nTxMfa89doLS0OAaIf/vUkeqE3y0cAwlOnDqc+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyj+KkXITTgeUkmX7NI8uqG4Kz1P8zL8epRviXoI5SqL7xhnvA
-	GSPag9QK5WD+IEU68/mmg1yVQB7Mi2/Czth9NypcEzGixCRrehyKm5HnUyYqeCJOklVm2VS8GP/
-	OH4J/1Ustlvuri0cvTML274AMpg5CUc0=
-X-Gm-Gg: ASbGncsPNu16KWpi9LXYcSBRjQgoiBMHoOTtJlaScLE/EaptAPbOyVyCW+wUgC4bWBH
-	5cUQtc25dPe7NMW3c9U0pRZSsvVmjh3XY5iBmCecFHjwfZppQPPSitLGEyt2jC5fL5s/N3phyp6
-	Nl6kdiav6fsCxeO2/ZDNHGRz60sAOYWN9hpW4Tlwa5fd88nK3cYflD+xCC9lFVlKhZXlg5VMz93
-	bCpf0Zg5ejeyiHYpmD7TryPsv61RyqkXB4nP2pZzi0atlT9ZyNYud6k1w1fS4Lh6DNClywY
-X-Google-Smtp-Source: AGHT+IEkqTShipMaEL0Xz6lVmMBlYFoNnJAmvAxJI8GnivPdsxuC3uaQU9h3KfORjbsr6qUGYSBm+EG1Eo+umq+dmao=
-X-Received: by 2002:a05:690c:600e:b0:784:ae5b:672e with SMTP id
- 00721157ae682-786390b1042mr23512867b3.44.1761803898047; Wed, 29 Oct 2025
- 22:58:18 -0700 (PDT)
+	s=arc-20240116; t=1761803938; c=relaxed/simple;
+	bh=GBlgjLNeJz65AJOmnVZrgtZCqCiQlYkuYzXXuncYbGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzcVOaZ2AsmTF6V4ApmCE47ldFVlgiWB2WEwhL997duCDni7OW2eYRDiFZnR5XzxyqtUD/UNXqBPmd9EQNf1ppnWR40QBk9K9m/6COZLMvW1RRpjK+HlL4TmAWPe7I+x+qmerynIb2AymCdqlGJqU1nPykpqEyuBKcADQVOQsF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 83FC2227AAA; Thu, 30 Oct 2025 06:58:51 +0100 (CET)
+Date: Thu, 30 Oct 2025 06:58:51 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when
+ stable writes are required
+Message-ID: <20251030055851.GA12703@lst.de>
+References: <20251029071537.1127397-1-hch@lst.de> <20251029071537.1127397-5-hch@lst.de> <20251029155306.GC3356773@frogsfrogsfrogs> <20251029163555.GB26985@lst.de> <8f384c85-e432-445e-afbf-0d9953584b05@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027231727.472628-1-roman.gushchin@linux.dev> <20251027231727.472628-7-roman.gushchin@linux.dev>
-In-Reply-To: <20251027231727.472628-7-roman.gushchin@linux.dev>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 30 Oct 2025 13:57:41 +0800
-X-Gm-Features: AWmQ_bnrGvSDvqcO1gz0my1IRVwq5iqm8EZUd991D3gWW54pYf-XPYtuxndhzy0
-Message-ID: <CALOAHbDmD2sTw6SLcZ3zikGO54GTyUSyFwTmak2UhA02oo4C-w@mail.gmail.com>
-Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f384c85-e432-445e-afbf-0d9953584b05@suse.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 28, 2025 at 7:22=E2=80=AFAM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
->
-> Introduce a bpf struct ops for implementing custom OOM handling
-> policies.
->
-> It's possible to load one bpf_oom_ops for the system and one
-> bpf_oom_ops for every memory cgroup. In case of a memcg OOM, the
-> cgroup tree is traversed from the OOM'ing memcg up to the root and
-> corresponding BPF OOM handlers are executed until some memory is
-> freed. If no memory is freed, the kernel OOM killer is invoked.
->
-> The struct ops provides the bpf_handle_out_of_memory() callback,
-> which expected to return 1 if it was able to free some memory and 0
-> otherwise. If 1 is returned, the kernel also checks the bpf_memory_freed
-> field of the oom_control structure, which is expected to be set by
-> kfuncs suitable for releasing memory. If both are set, OOM is
-> considered handled, otherwise the next OOM handler in the chain
-> (e.g. BPF OOM attached to the parent cgroup or the in-kernel OOM
-> killer) is executed.
->
-> The bpf_handle_out_of_memory() callback program is sleepable to enable
-> using iterators, e.g. cgroup iterators. The callback receives struct
-> oom_control as an argument, so it can determine the scope of the OOM
-> event: if this is a memcg-wide or system-wide OOM.
->
-> The callback is executed just before the kernel victim task selection
-> algorithm, so all heuristics and sysctls like panic on oom,
-> sysctl_oom_kill_allocating_task and sysctl_oom_kill_allocating_task
-> are respected.
->
-> BPF OOM struct ops provides the handle_cgroup_offline() callback
-> which is good for releasing struct ops if the corresponding cgroup
-> is gone.
->
-> The struct ops also has the name field, which allows to define a
-> custom name for the implemented policy. It's printed in the OOM report
-> in the oom_policy=3D<policy> format. "default" is printed if bpf is not
-> used or policy name is not specified.
->
-> [  112.696676] test_progs invoked oom-killer: gfp_mask=3D0xcc0(GFP_KERNEL=
-), order=3D0, oom_score_adj=3D0
->                oom_policy=3Dbpf_test_policy
-> [  112.698160] CPU: 1 UID: 0 PID: 660 Comm: test_progs Not tainted 6.16.0=
--00015-gf09eb0d6badc #102 PREEMPT(full)
-> [  112.698165] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S 1.17.0-5.fc42 04/01/2014
-> [  112.698167] Call Trace:
-> [  112.698177]  <TASK>
-> [  112.698182]  dump_stack_lvl+0x4d/0x70
-> [  112.698192]  dump_header+0x59/0x1c6
-> [  112.698199]  oom_kill_process.cold+0x8/0xef
-> [  112.698206]  bpf_oom_kill_process+0x59/0xb0
-> [  112.698216]  bpf_prog_7ecad0f36a167fd7_test_out_of_memory+0x2be/0x313
-> [  112.698229]  bpf__bpf_oom_ops_handle_out_of_memory+0x47/0xaf
-> [  112.698236]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [  112.698240]  bpf_handle_oom+0x11a/0x1e0
-> [  112.698250]  out_of_memory+0xab/0x5c0
-> [  112.698258]  mem_cgroup_out_of_memory+0xbc/0x110
-> [  112.698274]  try_charge_memcg+0x4b5/0x7e0
-> [  112.698288]  charge_memcg+0x2f/0xc0
-> [  112.698293]  __mem_cgroup_charge+0x30/0xc0
-> [  112.698299]  do_anonymous_page+0x40f/0xa50
-> [  112.698311]  __handle_mm_fault+0xbba/0x1140
-> [  112.698317]  ? srso_alias_return_thunk+0x5/0xfbef5
-> [  112.698335]  handle_mm_fault+0xe6/0x370
-> [  112.698343]  do_user_addr_fault+0x211/0x6a0
-> [  112.698354]  exc_page_fault+0x75/0x1d0
-> [  112.698363]  asm_exc_page_fault+0x26/0x30
-> [  112.698366] RIP: 0033:0x7fa97236db00
->
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> ---
->  include/linux/bpf_oom.h    |  74 ++++++++++
->  include/linux/memcontrol.h |   5 +
->  include/linux/oom.h        |   8 ++
->  mm/Makefile                |   3 +
->  mm/bpf_oom.c               | 272 +++++++++++++++++++++++++++++++++++++
->  mm/memcontrol.c            |   2 +
->  mm/oom_kill.c              |  22 ++-
->  7 files changed, 384 insertions(+), 2 deletions(-)
->  create mode 100644 include/linux/bpf_oom.h
->  create mode 100644 mm/bpf_oom.c
->
-> diff --git a/include/linux/bpf_oom.h b/include/linux/bpf_oom.h
-> new file mode 100644
-> index 000000000000..18c32a5a068b
-> --- /dev/null
-> +++ b/include/linux/bpf_oom.h
-> @@ -0,0 +1,74 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +
-> +#ifndef __BPF_OOM_H
-> +#define __BPF_OOM_H
-> +
-> +struct oom_control;
-> +
-> +#define BPF_OOM_NAME_MAX_LEN 64
-> +
-> +struct bpf_oom_ctx {
-> +       /*
-> +        * If bpf_oom_ops is attached to a cgroup, id of this cgroup.
-> +        * 0 otherwise.
-> +        */
-> +       u64 cgroup_id;
-> +};
-> +
-> +struct bpf_oom_ops {
-> +       /**
-> +        * @handle_out_of_memory: Out of memory bpf handler, called befor=
-e
-> +        * the in-kernel OOM killer.
-> +        * @ctx: Execution context
-> +        * @oc: OOM control structure
-> +        *
-> +        * Should return 1 if some memory was freed up, otherwise
-> +        * the in-kernel OOM killer is invoked.
-> +        */
-> +       int (*handle_out_of_memory)(struct bpf_oom_ctx *ctx, struct oom_c=
-ontrol *oc);
-> +
-> +       /**
-> +        * @handle_cgroup_offline: Cgroup offline callback
-> +        * @ctx: Execution context
-> +        * @cgroup_id: Id of deleted cgroup
-> +        *
-> +        * Called if the cgroup with the attached bpf_oom_ops is deleted.
-> +        */
-> +       void (*handle_cgroup_offline)(struct bpf_oom_ctx *ctx, u64 cgroup=
-_id);
-> +
-> +       /**
-> +        * @name: BPF OOM policy name
-> +        */
-> +       char name[BPF_OOM_NAME_MAX_LEN];
-> +};
-> +
-> +#ifdef CONFIG_BPF_SYSCALL
-> +/**
-> + * @bpf_handle_oom: handle out of memory condition using bpf
-> + * @oc: OOM control structure
-> + *
-> + * Returns true if some memory was freed.
-> + */
-> +bool bpf_handle_oom(struct oom_control *oc);
-> +
-> +
-> +/**
-> + * @bpf_oom_memcg_offline: handle memcg offlining
-> + * @memcg: Memory cgroup is offlined
-> + *
-> + * When a memory cgroup is about to be deleted and there is an
-> + * attached BPF OOM structure, it has to be detached.
-> + */
-> +void bpf_oom_memcg_offline(struct mem_cgroup *memcg);
-> +
-> +#else /* CONFIG_BPF_SYSCALL */
-> +static inline bool bpf_handle_oom(struct oom_control *oc)
-> +{
-> +       return false;
-> +}
-> +
-> +static inline void bpf_oom_memcg_offline(struct mem_cgroup *memcg) {}
-> +
-> +#endif /* CONFIG_BPF_SYSCALL */
-> +
-> +#endif /* __BPF_OOM_H */
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 50d851ff3f27..39a6c7c8735b 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -29,6 +29,7 @@ struct obj_cgroup;
->  struct page;
->  struct mm_struct;
->  struct kmem_cache;
-> +struct bpf_oom_ops;
->
->  /* Cgroup-specific page state, on top of universal node page state */
->  enum memcg_stat_item {
-> @@ -226,6 +227,10 @@ struct mem_cgroup {
->          */
->         bool oom_group;
->
-> +#ifdef CONFIG_BPF_SYSCALL
-> +       struct bpf_oom_ops *bpf_oom;
-> +#endif
-> +
->         int swappiness;
->
->         /* memory.events and memory.events.local */
-> diff --git a/include/linux/oom.h b/include/linux/oom.h
-> index 7b02bc1d0a7e..721087952d04 100644
-> --- a/include/linux/oom.h
-> +++ b/include/linux/oom.h
-> @@ -51,6 +51,14 @@ struct oom_control {
->
->         /* Used to print the constraint info. */
->         enum oom_constraint constraint;
-> +
-> +#ifdef CONFIG_BPF_SYSCALL
-> +       /* Used by the bpf oom implementation to mark the forward progres=
-s */
-> +       bool bpf_memory_freed;
-> +
-> +       /* Policy name */
-> +       const char *bpf_policy_name;
-> +#endif
->  };
->
->  extern struct mutex oom_lock;
-> diff --git a/mm/Makefile b/mm/Makefile
-> index 21abb3353550..051e88c699af 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -105,6 +105,9 @@ obj-$(CONFIG_MEMCG) +=3D memcontrol.o vmpressure.o
->  ifdef CONFIG_SWAP
->  obj-$(CONFIG_MEMCG) +=3D swap_cgroup.o
->  endif
-> +ifdef CONFIG_BPF_SYSCALL
-> +obj-y +=3D bpf_oom.o
-> +endif
->  obj-$(CONFIG_CGROUP_HUGETLB) +=3D hugetlb_cgroup.o
->  obj-$(CONFIG_GUP_TEST) +=3D gup_test.o
->  obj-$(CONFIG_DMAPOOL_TEST) +=3D dmapool_test.o
-> diff --git a/mm/bpf_oom.c b/mm/bpf_oom.c
-> new file mode 100644
-> index 000000000000..c4d09ed9d541
-> --- /dev/null
-> +++ b/mm/bpf_oom.c
-> @@ -0,0 +1,272 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * BPF-driven OOM killer customization
-> + *
-> + * Author: Roman Gushchin <roman.gushchin@linux.dev>
-> + */
-> +
-> +#include <linux/bpf.h>
-> +#include <linux/oom.h>
-> +#include <linux/bpf_oom.h>
-> +#include <linux/srcu.h>
-> +#include <linux/cgroup.h>
-> +#include <linux/memcontrol.h>
-> +
-> +DEFINE_STATIC_SRCU(bpf_oom_srcu);
-> +static struct bpf_oom_ops *system_bpf_oom;
-> +
-> +#ifdef CONFIG_MEMCG
-> +static u64 memcg_cgroup_id(struct mem_cgroup *memcg)
-> +{
-> +       return cgroup_id(memcg->css.cgroup);
-> +}
-> +
-> +static struct bpf_oom_ops **bpf_oom_memcg_ops_ptr(struct mem_cgroup *mem=
-cg)
-> +{
-> +       return &memcg->bpf_oom;
-> +}
-> +#else /* CONFIG_MEMCG */
-> +static u64 memcg_cgroup_id(struct mem_cgroup *memcg)
-> +{
-> +       return 0;
-> +}
-> +static struct bpf_oom_ops **bpf_oom_memcg_ops_ptr(struct mem_cgroup *mem=
-cg)
-> +{
-> +       return NULL;
-> +}
-> +#endif
-> +
-> +static int bpf_ops_handle_oom(struct bpf_oom_ops *bpf_oom_ops,
-> +                             struct mem_cgroup *memcg,
-> +                             struct oom_control *oc)
-> +{
-> +       struct bpf_oom_ctx exec_ctx;
-> +       int ret;
-> +
-> +       if (IS_ENABLED(CONFIG_MEMCG) && memcg)
-> +               exec_ctx.cgroup_id =3D memcg_cgroup_id(memcg);
-> +       else
-> +               exec_ctx.cgroup_id =3D 0;
-> +
-> +       oc->bpf_policy_name =3D &bpf_oom_ops->name[0];
-> +       oc->bpf_memory_freed =3D false;
-> +       ret =3D bpf_oom_ops->handle_out_of_memory(&exec_ctx, oc);
-> +       oc->bpf_policy_name =3D NULL;
-> +
-> +       return ret;
-> +}
-> +
-> +bool bpf_handle_oom(struct oom_control *oc)
-> +{
-> +       struct bpf_oom_ops *bpf_oom_ops =3D NULL;
-> +       struct mem_cgroup __maybe_unused *memcg;
-> +       int idx, ret =3D 0;
-> +
-> +       /* All bpf_oom_ops structures are protected using bpf_oom_srcu */
-> +       idx =3D srcu_read_lock(&bpf_oom_srcu);
-> +
-> +#ifdef CONFIG_MEMCG
-> +       /* Find the nearest bpf_oom_ops traversing the cgroup tree upward=
-s */
-> +       for (memcg =3D oc->memcg; memcg; memcg =3D parent_mem_cgroup(memc=
-g)) {
-> +               bpf_oom_ops =3D READ_ONCE(memcg->bpf_oom);
-> +               if (!bpf_oom_ops)
-> +                       continue;
-> +
-> +               /* Call BPF OOM handler */
-> +               ret =3D bpf_ops_handle_oom(bpf_oom_ops, memcg, oc);
-> +               if (ret && oc->bpf_memory_freed)
-> +                       goto exit;
-> +       }
-> +#endif /* CONFIG_MEMCG */
-> +
-> +       /*
-> +        * System-wide OOM or per-memcg BPF OOM handler wasn't successful=
-?
-> +        * Try system_bpf_oom.
-> +        */
-> +       bpf_oom_ops =3D READ_ONCE(system_bpf_oom);
-> +       if (!bpf_oom_ops)
-> +               goto exit;
-> +
-> +       /* Call BPF OOM handler */
-> +       ret =3D bpf_ops_handle_oom(bpf_oom_ops, NULL, oc);
-> +exit:
-> +       srcu_read_unlock(&bpf_oom_srcu, idx);
-> +       return ret && oc->bpf_memory_freed;
-> +}
-> +
-> +static int __handle_out_of_memory(struct bpf_oom_ctx *exec_ctx,
-> +                                 struct oom_control *oc)
-> +{
-> +       return 0;
-> +}
-> +
-> +static void __handle_cgroup_offline(struct bpf_oom_ctx *exec_ctx, u64 cg=
-roup_id)
-> +{
-> +}
-> +
-> +static struct bpf_oom_ops __bpf_oom_ops =3D {
-> +       .handle_out_of_memory =3D __handle_out_of_memory,
-> +       .handle_cgroup_offline =3D __handle_cgroup_offline,
-> +};
-> +
-> +static const struct bpf_func_proto *
-> +bpf_oom_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog=
-)
-> +{
-> +       return tracing_prog_func_proto(func_id, prog);
-> +}
-> +
-> +static bool bpf_oom_ops_is_valid_access(int off, int size,
-> +                                       enum bpf_access_type type,
-> +                                       const struct bpf_prog *prog,
-> +                                       struct bpf_insn_access_aux *info)
-> +{
-> +       return bpf_tracing_btf_ctx_access(off, size, type, prog, info);
-> +}
-> +
-> +static const struct bpf_verifier_ops bpf_oom_verifier_ops =3D {
-> +       .get_func_proto =3D bpf_oom_func_proto,
-> +       .is_valid_access =3D bpf_oom_ops_is_valid_access,
-> +};
-> +
-> +static int bpf_oom_ops_reg(void *kdata, struct bpf_link *link)
-> +{
-> +       struct bpf_struct_ops_link *ops_link =3D container_of(link, struc=
-t bpf_struct_ops_link, link);
-> +       struct bpf_oom_ops **bpf_oom_ops_ptr =3D NULL;
-> +       struct bpf_oom_ops *bpf_oom_ops =3D kdata;
-> +       struct mem_cgroup *memcg =3D NULL;
-> +       int err =3D 0;
-> +
-> +       if (IS_ENABLED(CONFIG_MEMCG) && ops_link->cgroup_id) {
-> +               /* Attach to a memory cgroup? */
-> +               memcg =3D mem_cgroup_get_from_ino(ops_link->cgroup_id);
-> +               if (IS_ERR_OR_NULL(memcg))
-> +                       return PTR_ERR(memcg);
-> +               bpf_oom_ops_ptr =3D bpf_oom_memcg_ops_ptr(memcg);
-> +       } else {
-> +               /* System-wide OOM handler */
-> +               bpf_oom_ops_ptr =3D &system_bpf_oom;
-> +       }
-> +
-> +       /* Another struct ops attached? */
-> +       if (READ_ONCE(*bpf_oom_ops_ptr)) {
-> +               err =3D -EBUSY;
-> +               goto exit;
-> +       }
-> +
-> +       /* Expose bpf_oom_ops structure */
-> +       WRITE_ONCE(*bpf_oom_ops_ptr, bpf_oom_ops);
+On Thu, Oct 30, 2025 at 07:53:30AM +1030, Qu Wenruo wrote:
+> Yep, a common helper will help, or even integrate the check into 
+> __iomap_dio_rw().
 
-The mechanism for propagating this pointer to child cgroups isn't
-clear. Would an explicit installation in every cgroup be required?
-This approach seems impractical for production environments, where
-cgroups are often created dynamically.
+Having the check in __iomap_dio_rw would be a last resort, because at
+the point we've already done direct I/O specific locking we'd need to
+unwind from, making the fallback slower than we'd have to.
 
---=20
-Regards
-Yafang
+> However I'm not sure if a warning will be that useful.
+>
+> If the warning is only outputted once like here, it doesn't show the ino 
+> number to tell which file is affected.
+> If the warning is shown every time, it will flood the dmesg.
+
+While the flag is set on the address_space it is global (or semi global
+for separate storage pools like the XFS RT device), so the inode number
+doesn't really matter too much.
+
+> It will be much straightforward if there is some flag allowing us to return 
+> error directly if true zero-copy direct IO can not be executed.
+
+I don't really understand this part.
+
 
