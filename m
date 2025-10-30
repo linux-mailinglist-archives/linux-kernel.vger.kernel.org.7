@@ -1,144 +1,83 @@
-Return-Path: <linux-kernel+bounces-877452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0416CC1E258
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:39:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EECBC1E25B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F023B6753
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E81C1893EFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7348D26FA77;
-	Thu, 30 Oct 2025 02:39:10 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5A32B9A7;
+	Thu, 30 Oct 2025 02:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="EbLknmts"
+Received: from sg-1-12.ptr.blmpb.com (sg-1-12.ptr.blmpb.com [118.26.132.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13C2312831;
-	Thu, 30 Oct 2025 02:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E90E31A056
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761791947; cv=none; b=cdhSHu0EX/VtJxIjQXaYEI/+asaNDTexuPBlaKUaYY5b/so6E7HiT2A+puTdUNGU7vZJRjFUh/usjgJQ7mDoWRTfDLgttzPJEyMAkBrzj5Aak+/Igt6ujzBM23UWZU3SIlYGNtL11vDvK+pQc2SE66QERAUWP6OVAA7B+h039ls=
+	t=1761792003; cv=none; b=g+vZr4Kdi6cjL9yWJobMeay4ZVhsXYC0eX96JDbNatE+G46/JOkjbjbN30CrRlYFWLOSkIckBCeS4ZjG60U0fUDq+r6Q8get7kXQovV7W9T7GVEwLSui0uawVsa4DTk7rxU83D3UulAZOGJLPvh9AA1fL18Vc7rO5snfOs4M+jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761791947; c=relaxed/simple;
-	bh=oVuDDtd2axgUAxAvrFHqDWkmcssDCdZXA7wQLCd59Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJUuUe0nxMI73mmfiFqtgp599w0JVkHTVJjSiB5pyafEuQSj/tWHAHPwsUcZuIjaMSnViWIKppoBPF6AUbtu44Dr2vZR2DhftiLyd7XNc25rT+mOKAHg9H5zbjqJA8REtuOhmwhUzSoyHJQ0nyolNzPntAQRsDotwZMJw60Y9Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz9t1761791920t005c51d5
-X-QQ-Originating-IP: T/SMG0nGFujjspmfsnQihJ7vhqT5qQQsRFsuL9HLjaE=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 30 Oct 2025 10:38:38 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12961766081760271054
-Date: Thu, 30 Oct 2025 10:38:38 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	horms@kernel.org, corbet@lwn.net, andrew+netdev@lunn.ch,
-	danishanwar@ti.com, vadim.fedorenko@linux.dev,
-	geert+renesas@glider.be, mpe@ellerman.id.au, lorenzo@kernel.org,
-	lukas.bulwahn@redhat.com, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v16 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <24FCCB72DBB477C9+20251030023838.GA2730@nic-Precision-5820-Tower>
-References: <20251027032905.94147-1-dong100@mucse.com>
- <20251027032905.94147-6-dong100@mucse.com>
- <20251029192135.0bada779@kernel.org>
+	s=arc-20240116; t=1761792003; c=relaxed/simple;
+	bh=ThNrNURslt67ENdzzidR8I57heYr+EHWMgLGfBYpWJk=;
+	h=Mime-Version:References:Cc:Subject:Content-Type:To:From:
+	 Message-Id:Date:In-Reply-To; b=k5iW9xqR14CocOglURVXP3htBoauTCSwc6cX2/ft/ju1/5PPmdDtE9p7lrX2GjwxQhEuw8jl23HZ2P+2Qjz9VGKuoZhJJtWVdFiLGEin13ufqw66fAcegtKmwm3npPKAE8WIE4vAeHH9YP5jfieTT+BDRqOY5FgdPSk4EdHB7iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=EbLknmts; arc=none smtp.client-ip=118.26.132.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761791994;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=PpETjQCrXpmPKARG99vTEdxE6+OSeGvIljYABF1mUa0=;
+ b=EbLknmtsU/GHUFe9NFvx2P8ovm2+TjEIpJ/aUlCWrR6wv3m/FaJ8RxTozL+xgTdlEjtiuX
+ dn5e1blCzmydBeOqXN+UO28AouLM6Fsw+AST5TPlqxhcve2TvgDRtjjPG8wgtPl9ttQ/qZ
+ KJBV6lIW/fC8F9kgCNf4SgJjMdg6R4eDNbwsIFIGAe6a/1+kIVLH/JqnXThLsbG9+fo9i5
+ zA2l5/EJUnnr4gjRly/vzzPs9X+uLjNnaRps6DmZZ85IGnO0f+huiHIsSvDXNAkx0biFxZ
+ 9XXuTpz2xbHUw2fvbJK4LmF9VQW0mYzwEimmLhht/xX8uGTkjsm2AfR/yC+XDA==
+Reply-To: yukuai@fnnas.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029192135.0bada779@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: N4K5tpF4eYNGoRPrZZmogRHETnCl6d+ahF3h3K0uKRVzDtfguNLztKLF
-	1f+0Bbah+dBjmkpGKdhUszw+HPyzkRlUJZ6CixIxW+ceapun62rt8XQ0P9w+RDG1T0Jd3Ir
-	xBd4mgPEH2CxY0jrt/rZJENSE2AYPJLCkWczfCmvSpP/5MSbbEU2A+lz50JD7jCLMV3P6Jf
-	jvsunXOwZW6K1KBRYIP+3QZmUhvLnIfzxSQYtopow9CBt/9dfAfUVMBwMITGcQfZuFU2o/M
-	uptsMv6bEfjFR5yQKeEL7NJ6HTb6cxTlSyHRl7TYvTCkEtlvh2qn+vuHndUuigRb6SKJZy5
-	hEeXA9gtTipxQ2BXTR8Uad2LfBKCQ9LmwGBA3FPQ/k1rrKHquK9lpYmnEXb9JcDap0KVHqO
-	2mlzzRyXXNsNhO0jsBS3/CXPWwjVJNejc76DsyeP2AQwQAbQD5wM5vCWEPJtdixS+GHVcvj
-	2vKEgyhGNrsnbqCtaC5qbieegPwjM8U1jb5/jmmxVpWbKfKyN0MpCtyc1u0Yx6me5/V3IUq
-	d8fPJJvaOtrB2lXX1nGeS3xTZewsUzgXfYuu3/4Kvrm5GHsowfe3O5uEAthMFkvkImnIkVq
-	6lnSyZA0SRJHMabrf+myiy9mhdPNHYFkl9LYpJKJ3c7KlPJhWh0wqgJfTU5ZC8XdrSDVwp8
-	OiBltDLTd8JCkptpZFo3W3eQYUwvGUP437VZ0slEOD4YwPxObsQ4d1VwKuZOrfinPkeGHZ7
-	W9gwZZ4e47aTpunoVRsOgJC1NyYamZ/qvmRI2PT9yuJ9Bie/5L6OyPTIeZaOTvGqm8Ki9Tj
-	5EaOERpuY4wfNYBYlkzQcsWx5efQHyQoEEh0/Rf7qyYOUgSUB4xcvQLiV3UUo2FBMVFMB3v
-	hLOhvAN5o0J/aOUhpEP28t2+C7/aDqxbCGhC8dfD7hZRfFU+hUg//8q8ouw55KZe6uYkbCM
-	+TgtNUbcJgFFPKk39S7zPy2wpvE5JxkjNMljNBcoRK2yEGePZtjZiJ0tUhitbvxAMqJl2O3
-	0qLUlHFMTp5LHvh2mO1dfKYMvXb4z8HKdGiadG/g==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-9-k@mgml.me>
+Content-Transfer-Encoding: quoted-printable
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<yukuai@fnnas.com>
+Subject: Re: [PATCH v5 08/16] md/raid10: refactor handle_read_error()
+User-Agent: Mozilla Thunderbird
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+X-Lms-Return-Path: <lba+26902cff8+b3b649+vger.kernel.org+yukuai@fnnas.com>
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 10:39:51 +0800
+Content-Type: text/plain; charset=UTF-8
+To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
+	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>, 
+	"Guoqing Jiang" <jgq516@gmail.com>
+From: "Yu Kuai" <yukuai@fnnas.com>
+Message-Id: <a203ac26-20be-4cd6-9969-860cf9878b94@fnnas.com>
+Date: Thu, 30 Oct 2025 10:39:49 +0800
+In-Reply-To: <20251027150433.18193-9-k@mgml.me>
 
-On Wed, Oct 29, 2025 at 07:21:35PM -0700, Jakub Kicinski wrote:
-> On Mon, 27 Oct 2025 11:29:05 +0800 Dong Yibo wrote:
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > index 37bd9278beaa..27fb080c0e37 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > @@ -6,6 +6,7 @@
-> >  
-> >  #include <linux/types.h>
-> >  #include <linux/mutex.h>
-> > +#include <linux/netdevice.h>
-> 
-> Why do you need to include netdevice.h here now?
-> This patch doesn't add anything that'd need it to the header.
-> 
+=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
 
-It is for 'u8 perm_addr[ETH_ALEN];'
-Maybe I should just "#include <linux/if_ether.h>" for this patch. 
+> For the failfast bio feature, the behavior of handle_read_error() will
+> be changed in a subsequent commit, but refactor it first.
+>
+> This commit only refactors the code without functional changes. A
+> subsequent commit will replace md_error() with md_cond_error()
+> to implement proper failfast error handling.
+>
+> Signed-off-by: Kenta Akagi<k@mgml.me>
+> ---
+>   drivers/md/raid10.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
 
-> >  enum rnpgbe_boards {
-> >  	board_n500,
-> > @@ -26,18 +27,38 @@ struct mucse_mbx_info {
-> >  	u32 fwpf_ctrl_base;
-> >  };
-> >  
-> > +/* Enum for firmware notification modes,
-> > + * more modes (e.g., portup, link_report) will be added in future
-> > + **/
-> > +enum {
-> > +	mucse_fw_powerup,
-> > +};
-> 
-> > +	err = rnpgbe_get_permanent_mac(hw);
-> > +	if (err == -EINVAL) {
-> > +		dev_warn(&pdev->dev, "Using random MAC\n");
-> > +		eth_random_addr(hw->perm_addr);
-> > +	} else if (err) {
-> > +		dev_err(&pdev->dev, "get perm_addr failed %d\n", err);
-> > +		goto err_powerdown;
-> > +	}
-> > +
-> > +	eth_hw_addr_set(netdev, hw->perm_addr);
-> 
-> This is wrong, you may have gotten random address. This will make it
-> look like a real permanent address. Should be:
-> 
-> 	err = rnpgbe_get_permanent_mac(hw);
-> 	if (!err) {
-> 		eth_hw_addr_set(netdev, hw->perm_addr);
-> 	} else if (err == -EINVAL) {
-> 		dev_warn(&pdev->dev, "Using random MAC\n");
-> 		eth_hw_addr_random(netdev);
-> 		ether_addr_copy(hw->perm_addr, dev->dev_addr);
-> 	} else if (err) {
-> 		dev_err(&pdev->dev, "get perm_addr failed %d\n", err);
-> 		goto err_powerdown;
-> 	}
-> 
-
-You are right. I will fix this in next version, thanks.
-
+Reviewed-by: Yu Kuai <yukuai@fnnas.com>
 
