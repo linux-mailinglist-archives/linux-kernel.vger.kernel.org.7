@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-877494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70844C1E398
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:40:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC78EC1E386
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90041890ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F603AE93E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BC92D46B1;
-	Thu, 30 Oct 2025 03:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CDA2D0C76;
+	Thu, 30 Oct 2025 03:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LMN0IIwW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtATJpib"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE95021ABAC;
-	Thu, 30 Oct 2025 03:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A6421ABAC;
+	Thu, 30 Oct 2025 03:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761795629; cv=none; b=GxsIhFbVfPdGKDIi0Q0Y7kZNRS4NtZZDvOhuEA0dOnOIIA2IuFnJEDRFsvKZkIFRWrleXPPsm87swQH2m9dpfiJKXn4X807WQc5UOgF0+dWwxjJEArBmnWCUn8nZWrd7Sw0rDy2rO9smGrRAnOcuJlx0XhchHUIv37/QdcX2iMk=
+	t=1761795536; cv=none; b=VRK7wwrKaAz462xBiiezh/e264oszUeUO6JtLb90STprqNCf4ilS4KR2hpwftaiPEQEScw88nzrMyveFKAENyNCyIzxkb5R/LESUQSbBWvUEaALq8nuPT1QoG28B4mLVPrMluv9m1IIE4fA3/SXr0oQU1RfqipIehYqcHXsRRmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761795629; c=relaxed/simple;
-	bh=eP+v44bFnQV6pzfjh1fsjAmhu/NjG8eSqtbS6lHqGyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=progKE2uBwQf8Oa6v783LuBMr5ECTL14Pc9l7BPhjrGP/WSF+vIYXzEVC1fK+pgy7b5CXN8gXrZGCv8SkdOCAMWuwdQfdRUWYm1yuNv6eKikLGfC+NsZBIegnNJ5nmVp5B6y/kLVKxFmx1zcvcJBl5YWnzGgEr0GrITyg++clrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LMN0IIwW; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761795626; x=1793331626;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=eP+v44bFnQV6pzfjh1fsjAmhu/NjG8eSqtbS6lHqGyo=;
-  b=LMN0IIwWIa4r8Bfe+VJqkoh+xIvfELrc4DCSOEauIp+Hh7Tzqm6R1+JU
-   UcD+k4HLxE+5j/bXnNduQbzqBRR/hXJpI5eLv5JJdUAMzg3BshDujZcjT
-   6CXBGbIQqlJjNUYNtP+05/Ra19+OdiZ4BxgwT+tWjc+DIKq7VZdrPebz/
-   Rs8naQZa9Ki0NApf3IsP22mv4+V89lkU/JcB3I6cNK/L5r9Xqq2lFA+1G
-   iiVXgHcApgppvV9TwC7FhFYyHFwtPOEyOycZ5y9ULnVEm3d+zPlgB77O3
-   zH1yu7u+tL1nd/DwkpitSUhvK3jbqKiMVtkbhDC8s1fStruX0LsZxbA6t
-   w==;
-X-CSE-ConnectionGUID: Q6PUKDdhR7e+31tYN6x1qw==
-X-CSE-MsgGUID: LeCEIcaZTLacXzEAaGLPNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74528614"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="74528614"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 20:40:25 -0700
-X-CSE-ConnectionGUID: IXqawMBZRs6YZejWKU1Vmw==
-X-CSE-MsgGUID: 4mtAaMg5T9eoMBdWxPoang==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="216694173"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 29 Oct 2025 20:40:22 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEJUw-000LQF-12;
-	Thu, 30 Oct 2025 03:39:33 +0000
-Date: Thu, 30 Oct 2025 11:38:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Apitzsch via B4 Relay <devnull+git.apitzsch.eu@kernel.org>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vincent Knecht <vincent.knecht@mailoo.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-Subject: Re: [PATCH v7 3/4] media: qcom: camss: Add support for MSM8939
-Message-ID: <202510301103.9EJIzPFp-lkp@intel.com>
-References: <20251028-camss-8x39-vbif-v7-3-91ee8becda85@apitzsch.eu>
+	s=arc-20240116; t=1761795536; c=relaxed/simple;
+	bh=yRzypom4pzbe6gsbRhjk2rPEpXETf4phZwOxcFZU3IQ=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=YAs3s/xxmATyTLy7mdsMJ+n7bKX49Y7KIUl8MrNvdm8BHPtmWr1KcfiKxGSM4+oRE/+lgMd5lVBEzBk1IpNIabeLI7GJeG1QAg5BSVf3xq8xQ7q/1agAcrjGfTe5Iom2vVrKg2/7gFCHfnmui8WCCxif3xf7tnjiY43QJOETx6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtATJpib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D7AC4CEF1;
+	Thu, 30 Oct 2025 03:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761795536;
+	bh=yRzypom4pzbe6gsbRhjk2rPEpXETf4phZwOxcFZU3IQ=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=TtATJpibSYniStxQ6oAGf+jR1gJj1TsxoioIGhMJG4WCqH8jB+O0G3FggGJdQHp7Y
+	 KzHgVq5/dLhlGGAgyQhNZmZx4QGAr3cPZvl0WCJzTTGHqUB6jY5MCHCO84/XaKWcRM
+	 pXgkDNpmVXAh5Rgfq5vdZaf1xAt707GroCYapJ1DV+2xk3TpE5ri+nbIA66rid+8B6
+	 qea3CLzKNPOKM/kyyEpguHcVwwUAdPeqKw9nd7n2+yxasCVWTo4WXh0RYqRHAeQhL/
+	 bNqhA5QdfC1avYcHLTmL1MwJE39csDMpOLYZywjEa/1JJS4qt8UYE8br2fw6lVAxAV
+	 yhl+y5apQ6/Aw==
+Content-Type: multipart/mixed; boundary="===============3203120713277759930=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028-camss-8x39-vbif-v7-3-91ee8becda85@apitzsch.eu>
+Message-Id: <18b6f2c755710330b0c7399d17606a46c977f1ba3de4f37319aa1783638b1d2f@mail.kernel.org>
+In-Reply-To: <20251030030010.95352-2-dongml2@chinatelecom.cn>
+References: <20251030030010.95352-2-dongml2@chinatelecom.cn>
+Subject: Re: [PATCH bpf 1/2] bpf: use rqspinlock for lru map
+From: bot+bpf-ci@kernel.org
+To: menglong8.dong@gmail.com,martin.lau@linux.dev,leon.hwang@linux.dev
+Cc: ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,eddyz87@gmail.com,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,shuah@kernel.org,jiang.biao@linux.dev,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,linux-kselftest@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Thu, 30 Oct 2025 03:38:54 +0000 (UTC)
 
-Hi André,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on f7d2388eeec24966fc4d5cf32d706f0514f29ac5]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Apitzsch-via-B4-Relay/media-dt-bindings-Add-qcom-msm8939-camss/20251029-053926
-base:   f7d2388eeec24966fc4d5cf32d706f0514f29ac5
-patch link:    https://lore.kernel.org/r/20251028-camss-8x39-vbif-v7-3-91ee8becda85%40apitzsch.eu
-patch subject: [PATCH v7 3/4] media: qcom: camss: Add support for MSM8939
-config: parisc-randconfig-001-20251030 (https://download.01.org/0day-ci/archive/20251030/202510301103.9EJIzPFp-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510301103.9EJIzPFp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510301103.9EJIzPFp-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/media/platform/qcom/camss/camss.c:4458:3: error: 'const struct camss_resources' has no member named 'link_entities'
-     .link_entities = camss_link_entities
-      ^~~~~~~~~~~~~
->> drivers/media/platform/qcom/camss/camss.c:4458:19: warning: excess elements in struct initializer
-     .link_entities = camss_link_entities
-                      ^~~~~~~~~~~~~~~~~~~
-   drivers/media/platform/qcom/camss/camss.c:4458:19: note: (near initialization for 'msm8939_resources')
+--===============3203120713277759930==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
 
-vim +4458 drivers/media/platform/qcom/camss/camss.c
+```
+commit 8ae9fd98fe53c45a1a89adf6d254c2db90d26544
+Author: Menglong Dong <menglong8.dong@gmail.com>
 
-  4448	
-  4449	static const struct camss_resources msm8939_resources = {
-  4450		.version = CAMSS_8x39,
-  4451		.csiphy_res = csiphy_res_8x39,
-  4452		.csid_res = csid_res_8x39,
-  4453		.ispif_res = &ispif_res_8x39,
-  4454		.vfe_res = vfe_res_8x39,
-  4455		.csiphy_num = ARRAY_SIZE(csiphy_res_8x39),
-  4456		.csid_num = ARRAY_SIZE(csid_res_8x39),
-  4457		.vfe_num = ARRAY_SIZE(vfe_res_8x39),
-> 4458		.link_entities = camss_link_entities
-  4459	};
-  4460	
+bpf: use rqspinlock for lru map
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This patch converts raw_spinlock_t to rqspinlock_t in BPF LRU maps to
+prevent NMI context deadlocks. The new lock API can fail gracefully
+instead of deadlocking, returning an error code.
+
+Link: https://lore.kernel.org/bpf/CAEf4BzbTJCUx0D=zjx6+5m5iiGhwLzaP94hnw36ZMDHAf4-U_w@mail.gmail.com/
+
+> diff --git a/kernel/bpf/bpf_lru_list.c b/kernel/bpf/bpf_lru_list.c
+> index e7a2fc605..38fddcb1e 100644
+> --- a/kernel/bpf/bpf_lru_list.c
+> +++ b/kernel/bpf/bpf_lru_list.c
+
+[ ... ]
+
+> @@ -466,23 +470,26 @@ static struct bpf_lru_node *bpf_common_lru_pop_free(struct bpf_lru *lru,
+>  	do {
+>  		steal_loc_l = per_cpu_ptr(clru->local_list, steal);
+>
+> -		raw_spin_lock_irqsave(&steal_loc_l->lock, flags);
+> +		if (raw_res_spin_lock_irqsave(&steal_loc_l->lock, flags))
+> +			goto out_next;
+>
+>  		node = __local_list_pop_free(steal_loc_l);
+>  		if (!node)
+>  			node = __local_list_pop_pending(lru, steal_loc_l);
+>
+> -		raw_spin_unlock_irqrestore(&steal_loc_l->lock, flags);
+> +		raw_res_spin_unlock_irqrestore(&steal_loc_l->lock, flags);
+>
+> +out_next:
+>  		steal = cpumask_next_wrap(steal, cpu_possible_mask);
+>  	} while (!node && steal != first_steal);
+>
+>  	loc_l->next_steal = steal;
+>
+>  	if (node) {
+> -		raw_spin_lock_irqsave(&loc_l->lock, flags);
+> +		if (raw_res_spin_lock_irqsave(&loc_l->lock, flags))
+> +			return NULL;
+                        ^^^^^^^^^^^
+
+Can this leak the node? At this point in bpf_common_lru_pop_free(),
+a node was successfully stolen from another CPU's list. The
+__local_list_pop_free() or __local_list_pop_pending() call removed
+the node from steal_loc_l, and steal_loc_l was unlocked. The node
+now exists but is not in any list.
+
+When raw_res_spin_lock_irqsave() fails here, the function returns
+NULL, but the stolen node is never added to the local pending list
+and never returned to any list. The node becomes orphaned.
+
+In NMI context (which this patch is designed to handle), lock
+failures are expected to be common. Each failure would leak one
+pre-allocated node from the BPF LRU pool, eventually exhausting
+the available nodes.
+
+>  		__local_list_add_pending(lru, loc_l, cpu, node, hash);
+> -		raw_spin_unlock_irqrestore(&loc_l->lock, flags);
+> +		raw_res_spin_unlock_irqrestore(&loc_l->lock, flags);
+>  	}
+>
+>  	return node;
+
+[ ... ]
+
+
+```
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+In-Reply-To-Subject: `bpf: use rqspinlock for lru map`
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18928591681
+
+--===============3203120713277759930==--
 
