@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-878359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E64C2062B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:54:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15356C20649
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC9D74EC71C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:53:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F27B04EC24C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7D52475C7;
-	Thu, 30 Oct 2025 13:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957B724A079;
+	Thu, 30 Oct 2025 13:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npp8d30E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIR6j42j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389C5194A65;
-	Thu, 30 Oct 2025 13:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDE41EF39E;
+	Thu, 30 Oct 2025 13:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832289; cv=none; b=mT+gRXNTyJjcIumiUBWeus/LxpsD7pNgYoOu2+oELTvzD4X02+TsrMhHGqVHlvW5CHomZfBxcon3xUP0vZ0O/BbCHsvFLZN6vveGQC2ZAbNqh/CV3lSZmoUzmXsHkY73NY/s3C5UGzMFbVFO2yBlsg+VLyDB+48xK1ukoN10ZNo=
+	t=1761832369; cv=none; b=frtS1zMG4c3uT/iTeFtVFOgzt0ZVsMEElx8vdqbdu/k5JaDBmm8fV6QQP+oGbOfoXDwQ8NYE91jeUbdbRGXE6xB5fl+rF5yP/Bnl05Fd8KI2UJmDgeIqubUbmsWhDj6aSoOlfqzKbs5i2d4Xh6xYwQ5RrfSWaxJaAPBMp+hroqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832289; c=relaxed/simple;
-	bh=6VPqUQyQcSRQKEXeyerD21USQXJN+lundDeK7TpzpYs=;
+	s=arc-20240116; t=1761832369; c=relaxed/simple;
+	bh=eZjyLvOFzMZRQj65+8qH5o8o4HIvM8oDUkHkj4nGFLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dm6jKsaIPhGr5yVeu/ykVnLsdM1EqiDI0xw3OXCCmXOoLWfdOgtiz8pSsLza+u9vo+gzxcFTL2Xtb36KDThmHL+ARZ1KyttZYwz630guuqAxxwplGyLxb++JWD0exTF1EUjy3rzwp0KT+qeMyNzuBrdUoDz/sIr45jNFEms9bCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npp8d30E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493AFC4CEF1;
-	Thu, 30 Oct 2025 13:51:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MebICFmhtl85p1tI20C/DgHj0MHK4KeTWL5MJ5toNdaT9Y+9NdXB85lFSGJOTklcpumrbmd513jqa1vISQ7CcaJuE10/1avQDvMjClPzmAXD+rkwNMhVYV5o6A/baJED5IyR73WPENe1pgAa+1SWpHMc7czetxWNZuOvkVgQvXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIR6j42j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE95C4CEF8;
+	Thu, 30 Oct 2025 13:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761832288;
-	bh=6VPqUQyQcSRQKEXeyerD21USQXJN+lundDeK7TpzpYs=;
+	s=k20201202; t=1761832368;
+	bh=eZjyLvOFzMZRQj65+8qH5o8o4HIvM8oDUkHkj4nGFLo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=npp8d30ERa7Ss6871jkOdtpPHu+a13/I8PlGf4cofbr+Bi+PQ6dxJYT8lWaZI/ukr
-	 JkbSAWOObhxx8ecZzSMhYCjGOYaevrRVYnMvPFb7IBKYZxki06VsTwJhSUpmJgvcBD
-	 ORJiY1c/nu1GXwLG4EAWo5O7CFIWIZPH0832/UILOzMseFfomrUqGvkTARhDSbRtHW
-	 s6QCUxxbmENjR8jVwZpxOjfOccA1mAhlF1kN6begFoOVO4Ybndp6Yvv11jrLhjKuYI
-	 vPCLU49/L/ExjKdbFF5wREtUrJFB3CaxJBht/uZyvBF+Ez9h47RTrIYPugbXKukRlY
-	 9afaeLexMegOQ==
-Date: Thu, 30 Oct 2025 08:51:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>,
+	b=MIR6j42jULIRRKr1pBBLheADEM/ved2LDyNs82hTw9WEr2VDXtvVVUdiXzdWVnuZn
+	 3RW34veyevcDc7pSh/Ja7X8z+J8VGQ3/l1aApVoSCHZZZhJbXDvgCufsjTR3dWD89g
+	 J0H3inRTuBS6MroR/tNZsAQQwuQ2z/M85HdSkTMzYeLuhXMIPveFn7DQg9auBAgo7I
+	 JzgqqQjhLUCpGLHSqhjKaEGMW3ush3rMrYGIa0vn/yfpDMHvTu+kzcWLu+c3T3S6hH
+	 G7IA1PTHISS7zVl4Do07L+kZJLNKKn97XyAeGMtXXaS+MLeaLXqwL/6BOyfvXZv49j
+	 ffHQ74/XK655A==
+Date: Thu, 30 Oct 2025 13:52:41 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: spi: Add spi-buses property
-Message-ID: <20251030135126.GA3749313-robh@kernel.org>
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-1-2098c12d6f5f@baylibre.com>
- <20251021142129.GA34073-robh@kernel.org>
- <14ae0769-341b-4325-b925-7bba6d57bbdf@baylibre.com>
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Axel Lin <axel.lin@ingics.com>,
+	Brian Austin <brian.austin@cirrus.com>, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+Message-ID: <794c1c49-83f8-4bff-b602-5f20f589aaa1@sirena.org.uk>
+References: <20251029093921.624088-1-herve.codina@bootlin.com>
+ <20251029093921.624088-2-herve.codina@bootlin.com>
+ <06766cfb10fd6b7f4f606429f13432fe8b933d83.camel@gmail.com>
+ <20251030144319.671368a2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KuymU7zciVsA1ocq"
+Content-Disposition: inline
+In-Reply-To: <20251030144319.671368a2@bootlin.com>
+X-Cookie: Is there life before breakfast?
+
+
+--KuymU7zciVsA1ocq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <14ae0769-341b-4325-b925-7bba6d57bbdf@baylibre.com>
 
-On Tue, Oct 21, 2025 at 09:59:22AM -0500, David Lechner wrote:
-> On 10/21/25 9:21 AM, Rob Herring wrote:
-> > On Tue, Oct 14, 2025 at 05:02:11PM -0500, David Lechner wrote:
-> >> Add a spi-buses property to the spi-peripheral-props binding to allow
-> >> specifying the SPI data bus or buses that a peripheral is connected to
-> >> in cases where the SPI controller has more than one physical SPI data
-> >> bus.
-> > 
-> > Is there a reason why spi-rx-bus-width property doesn't work for you? 
-> > The only thing I see would be you need to define the order of the pins 
-> > like "data-lanes" property.
-> > 
-> > Rob
-> 
-> Because we can have both at the same time. In one of the other threads,
-> we talked about the AD4630 ADC that will require this since it has 2 data
-> buses each with a width of 4 (total of 8 lines).
-> 
-> See: https://lore.kernel.org/linux-iio/ad929fe5-be03-4628-b95a-5c3523bae0c8@baylibre.com/
+On Thu, Oct 30, 2025 at 02:43:19PM +0100, Herve Codina wrote:
 
-But it can't really be 2 independent buses/controllers unless the ADC 
-has 2 completely independent interfaces, right? Surely the clock is 
-shared across the 2 buses? So aren't you really just borrowing pins and 
-the fifo of the 2nd controller? That seems pretty controller specific to 
-support that. For example, how would you support this with spi-gpio 
-(obviously kind of pointless given the bandwidth needs with 8 data 
-lines) or any 2 independent instances of SPI controllers?
+> I hesitate to fully remove cs4271_dt_ids in the SPI part.
 
-Rob
+...
+
+> Maybe this could be handle globally out of this series instead of introducing
+> a specific pattern in this series.
+
+Yes, it feels sensible to be consistant and if there's practical issues
+fix everyone rather than have one driver that works randomly differently.
+
+--KuymU7zciVsA1ocq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDbakACgkQJNaLcl1U
+h9Bs1Qf/W5JnT2/KHyguMuqqdBHz6kDJg3xv4gpOSoK17mPlbwQBgUa4kupa8/zd
+w3XnVQzm2oEvRJrBlLLGNrxT0Dpz08xhIEE01pEVE/FHfPcAruASOoJNFM1gyJPX
+9ItqNU5kv/EM8Cyf7ftdanmBE9CEnPaHE0HYDh+3DlYr7iiULP3IEE94S1owH10S
+0j1KvlxKxz5yJuckqHvkwIuW19/Bveqp7pa4I3bA+4FbnCMNuBDMtuqfCXDimphR
+ax/CjFIwyXa50p49oyxKOfROKbf8lwfU/OBhPbkJ8Pme2DLToPfSVmZTsN/kC8te
+f+sDdDFul/6GS5+sP7LqQTcdLhNbqw==
+=15HB
+-----END PGP SIGNATURE-----
+
+--KuymU7zciVsA1ocq--
 
