@@ -1,165 +1,149 @@
-Return-Path: <linux-kernel+bounces-879167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC639C226D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:34:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBA4C226DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 36DC33491E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:34:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17E61897166
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7330430C636;
-	Thu, 30 Oct 2025 21:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B01030499A;
+	Thu, 30 Oct 2025 21:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVkgTo8z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sYnAE4ZG"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9FC2E0922
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416ED13C3F2;
+	Thu, 30 Oct 2025 21:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761860062; cv=none; b=fJMSIXL6JxnUOm9gmXZQDszFvqga+dNVD0xfTL/RdoHQRFQijBOgnU0V0lG86AgTz4x8+65nvlv4rTNYxEFwlha5/XCAHbrJlCIOeHDWz0gBXLFDAy5vAx4JTePriLCQAKpY37XjxehXCpXTsfvkd9Hy6T7HpfFiJb5x+jDUjf0=
+	t=1761860139; cv=none; b=sr5XlMoqx8jVmOV97TGoNitorcTfLIvbAsNrYZaSGAFnaispKgrjyXPwAMFyopECsVDSwyMhz+uLKDiyl45QVRuJ689mnSTlSC+xkQDa443pC9xYRja2RU97DGm7dU/n0Vh++0m+deggp5BMlLoKnxMOD/kHyimN1sjsmGQfJRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761860062; c=relaxed/simple;
-	bh=vA3cQcFFKPHYjkv/o095+U48maXEWxIDrmI8GV0FkR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kcUZfTW1wP2sEXidvL6O7DpUnIJgwMiiGHAuLU7aHDJAPqoIVXSCHePJrb+1S+rUGn8cCLsFfyQm/TgEn5Jq2ifviOjd8LlUMgTjZoP35ijMQ3F9NquS02uKD2pSQ/HoNEo5dZ2dnF9FYApa+qh2txO6yP2wquCRgZSUCq/cet0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVkgTo8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B63FC2BC87
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761860062;
-	bh=vA3cQcFFKPHYjkv/o095+U48maXEWxIDrmI8GV0FkR8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NVkgTo8zsh/oLtwCRGHu02MRlHkXjU+0bxw2XcUHuagq5PJLN22kQBFZbdeMY7efS
-	 2MTJdgK0VYBtO97xuZ0uisPN4RrlxI/WvEcHqfuhrvNI/Y5a97boExAn4Ycg6oVNob
-	 c02S5GXecCSsPAreWAfcsKrMVgQHvlf4rczHVAD6J79JtcmY7HPuo3NeP/vRGVLLEz
-	 s4gfZsgjB54VRsiZrOJ1pViSDlr3dOfKN7Lk3KIpofVaxxCTc4e7BeCm9SUcQFrJyp
-	 3NLPq2OIweWu/X2DT2D4jEpFhoyzaTcyKLubXPmJ4jVQBZUGX2dSXTf/JHgC7QaGFz
-	 krQmQNvq4YLtA==
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-87dcb1dd50cso25483606d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:34:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWoKm8b1UKlzzYHmHuxEO/fmoOLw4EKkynlz3UifwbB7FSwoZ+L/9ajUdcn9pjfg9AKXwiEIjjKJGjWW+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPYG5AUV0EYjE4ucyiO2du2XR73wmI2t1C6oZ3Ex1dlhpBfvXX
-	rlpol0E07ICVuUGb2wkzbbiGcQTTZR9CvUweQITRW1CAMEYFAQMmhggYkBl6dM5S2wUcQ77ep3L
-	2RldRrP4fUpS9OCZiWG6LhVMvaKJ6/jI=
-X-Google-Smtp-Source: AGHT+IHMkX2vgEpmo54ScXG2z+0WIl2vpMLiW/fIKrF0LrJBFRJd62XKtruZSD0g4dhRrF2T+Nff4509mwhwddlY7x4=
-X-Received: by 2002:a05:6214:21e2:b0:87f:c009:79cc with SMTP id
- 6a1803df08f44-8802f4db53cmr14665996d6.51.1761860061351; Thu, 30 Oct 2025
- 14:34:21 -0700 (PDT)
+	s=arc-20240116; t=1761860139; c=relaxed/simple;
+	bh=fS1bE4KpfoLX6sLifapuk0WBbL4Jcr3hZBNe5UFS++o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tr1k7zMDrXdIMzXpZpebQnHdsvnsd+RV5zK+gS0H6PcfAsryM8nk6sokao1oMtV7lrvPBdjKfhmrJe+ladhDb4aI4k6pJqlHniqMwWGZ3KZijt9r3w+zuIJlWS4wvtlcWoDAHwGfYaZg1UEgutoG78Aw1GrGAFvVNqp+e2Py6ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sYnAE4ZG; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761860132;
+	bh=81IGFNJFE/aATygJVVWIXOCCzKbZf3iPEEOLaVmpKcc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sYnAE4ZG0+SbKe2wy5Oj+nfSb8tuhVlk3XGJDpmfzWOipJDd1fxW6UEMBmgD+VEPd
+	 hZdFDpsPr7wAJUMmZk0xePGesA2boYcMkjAUhmObCLQk5Vj6+40zjesuRE8KqXAfo8
+	 r5Fz2lgdFNXscEUglDz1dJTzNAIRTwWXtLcNZsgKKSQCCkOeZdbI0ylwFyWsrsHCcN
+	 KX5ce+5Zr5RjwoE6lTDGjdQhU16Chwxm5DckJBin0hJaUwBp93Fgl7yckduCsFCFcp
+	 CxImKhdSeTvvrnrSUTjXdbY3LIRj2ZpjjR2fhPEMfOBkHGIqrqoLm2UwcBiETKfOTx
+	 gaVnxRlIZhZYg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyHTc2g4kz4wMB;
+	Fri, 31 Oct 2025 08:35:32 +1100 (AEDT)
+Date: Fri, 31 Oct 2025 08:35:31 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20251031083531.56c76f27@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
- <20251027231727.472628-3-roman.gushchin@linux.dev> <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
- <87zf98xq20.fsf@linux.dev> <CAHzjS_tnmSPy_cqCUHiLGt8Ouf079wQBQkostqJqfyKcJZPXLA@mail.gmail.com>
- <CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com> <877bwcus3h.fsf@linux.dev>
-In-Reply-To: <877bwcus3h.fsf@linux.dev>
-From: Song Liu <song@kernel.org>
-Date: Thu, 30 Oct 2025 14:34:10 -0700
-X-Gmail-Original-Message-ID: <CAHzjS_u5oqD3Dsk9JjK942QBL8UOMkqdM23xP0yTEb+MMuOoLw@mail.gmail.com>
-X-Gm-Features: AWmQ_bk7HNuiosItrXA1dyLcCJexg7C-WNSjzhjZ-UrPmMqZcQrRacrRjcLhdZg
-Message-ID: <CAHzjS_u5oqD3Dsk9JjK942QBL8UOMkqdM23xP0yTEb+MMuOoLw@mail.gmail.com>
-Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Amery Hung <ameryhung@gmail.com>, Song Liu <song@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/tZ+7p9Q31fQu0BI7QEpVqKe";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/tZ+7p9Q31fQu0BI7QEpVqKe
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Roman,
+Hi all,
 
-On Thu, Oct 30, 2025 at 12:07=E2=80=AFPM Roman Gushchin
-<roman.gushchin@linux.dev> wrote:
-[...]
-> > In TCP congestion control and BPF qdisc's model:
-> >
-> > During link_create, both adds the struct_ops to a list, and the
-> > struct_ops can be indexed by name. The struct_ops are not "active" by
-> > this time.
-> > Then, each has their own interface to 'apply' the struct_ops to a
-> > socket or queue: setsockopt() or netlink.
-> >
-> > But maybe cgroup-related struct_ops are different.
->
-> Both tcp congestion and qdisk cases are somewhat different because
-> there already is a way to select between multiple implementations, bpf
-> just adds another one. In the oom case, it's not true. As of today,
-> there is only one (global) oom killer. Of course we can create
-> interfaces to allow a user make a choice. But the question is do we want
-> to create such interface for the oom case specifically (and later for
-> each new case separately), or there is a place for some generalization?
+After merging the vfs-brauner tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Agreed that this approach requires a separate mechanism to attach
-the struct_ops to an entity.
+In file included from include/linux/init.h:5,
+                 from include/linux/printk.h:6,
+                 from include/asm-generic/bug.h:22,
+                 from arch/powerpc/include/asm/bug.h:116,
+                 from include/linux/bug.h:5,
+                 from arch/powerpc/include/asm/cmpxchg.h:8,
+                 from arch/powerpc/include/asm/atomic.h:11,
+                 from include/linux/atomic.h:7,
+                 from include/linux/refcount.h:104,
+                 from include/linux/ns_common.h:5,
+                 from include/linux/nstree.h:5,
+                 from kernel/nstree.c:3:
+kernel/nstree.c: In function '__ns_tree_add_raw':
+kernel/nstree.c:144:48: error: 'struct ns_tree' has no member named 'type'
+  144 |         VFS_WARN_ON_ONCE(ns->ns_type !=3D ns_tree->type);
+      |                                                ^~
+include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON=
+_INVALID'
+   30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+      |                                                               ^
+kernel/nstree.c:144:9: note: in expansion of macro 'VFS_WARN_ON_ONCE'
+  144 |         VFS_WARN_ON_ONCE(ns->ns_type !=3D ns_tree->type);
+      |         ^~~~~~~~~~~~~~~~
+kernel/nstree.c: In function '__ns_tree_remove':
+kernel/nstree.c:210:48: error: 'struct ns_tree' has no member named 'type'
+  210 |         VFS_WARN_ON_ONCE(ns->ns_type !=3D ns_tree->type);
+      |                                                ^~
+include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON=
+_INVALID'
+   30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+      |                                                               ^
+kernel/nstree.c:210:9: note: in expansion of macro 'VFS_WARN_ON_ONCE'
+  210 |         VFS_WARN_ON_ONCE(ns->ns_type !=3D ns_tree->type);
+      |         ^~~~~~~~~~~~~~~~
+kernel/nstree.c: In function '__ns_tree_adjoined_rcu':
+kernel/nstree.c:355:98: error: 'struct ns_tree' has no member named 'type'
+  355 |         VFS_WARN_ON_ONCE(list_entry_rcu(list, struct ns_common, ns_=
+list_node)->ns_type !=3D ns_tree->type);
+      |                                                                    =
+                              ^~
+include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON=
+_INVALID'
+   30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+      |                                                               ^
+kernel/nstree.c:355:9: note: in expansion of macro 'VFS_WARN_ON_ONCE'
+  355 |         VFS_WARN_ON_ONCE(list_entry_rcu(list, struct ns_common, ns_=
+list_node)->ns_type !=3D ns_tree->type);
+      |         ^~~~~~~~~~~~~~~~
 
-> Ok, let me summarize the options we discussed here:
+Presumably caused by commit
 
-Thanks for the summary!
+  c6b288f5382b ("nstree: maintain list of owned namespaces")
 
->
-> 1) Make the attachment details (e.g. cgroup_id) the part of struct ops
-> itself. The attachment is happening at the reg() time.
->
->   +: It's convenient for complex stateful struct ops'es, because a
->       single entity represents a combination of code and data.
->   -: No way to attach a single struct ops to multiple entities.
->
-> This approach is used by Tejun for per-cgroup sched_ext prototype.
->
-> 2) Make the attachment details a part of bpf_link creation. The
-> attachment is still happening at the reg() time.
->
->   +: A single struct ops can be attached to multiple entities.
->   -: Implementing stateful struct ops'es is harder and requires passing
->      an additional argument (some sort of "self") to all callbacks.
-> I'm using this approach in the bpf oom proposal.
->
+I have used the vfs-brauner tree from next-20251030 for today.
 
-I think both 1) and 2) have the following issue. With cgroup_id in
-struct_ops or the link, the cgroup_id works more like a filter. The
-cgroup doesn't hold any reference to the struct_ops. The bpf link
-holds the reference to the struct_ops, so we need to keep the
-the link alive, either by keeping an active fd, or by pinning the
-link to bpffs. When the cgroup is removed, we need to clean up
-the bpf link separately.
+--=20
+Cheers,
+Stephen Rothwell
 
-> 3) Move the attachment out of .reg() scope entirely. reg() will register
-> the implementation system-wide and then some 3rd-party interface
-> (e.g. cgroupfs) should be used to select the implementation.
->
->   +: ?
->   -: New hard-coded interfaces might be required to enable bpf-driven
->      kernel customization. The "attachment" code is not shared between
->      various struct ops cases.
->      Implementing stateful struct ops'es is harder and requires passing
->      an additional argument (some sort of "self") to all callbacks.
->
-> This approach works well for cases when there is already a selection
-> of implementations (e.g. tcp congestion mechanisms), and bpf is adding
-> another one.
+--Sig_/tZ+7p9Q31fQu0BI7QEpVqKe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Another benefit of 3) is that it allows loading an OOM controller in a
-kernel module, just like loading a file system in a kernel module. This
-is possible with 3) because we paid the cost of adding a new select
-attach interface.
+-----BEGIN PGP SIGNATURE-----
 
-A semi-separate topic, option 2) enables attaching a BPF program
-to a kernel object (a cgroup here, but could be something else). This
-is an interesting idea, and we may find it useful in other cases (attach
-a BPF program to a task_struct, etc.).
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkD2iMACgkQAVBC80lX
+0GyBagf/cbAFZ78JA9dCH8UN0D6vDnCBjDxevuoi/WxAXP5EugIU6VKSO6AT2sX8
+joG3z61eRj3s+mwKXdE0OPUI4gC9BfmlVL5iRiPQuyAegXdQPkZDXlK/dTCrmMqG
+9vvOo8A1K7lmhXjOFSUDo7sPHogoFrpfIL6jWsR3z12uawWGf0/dAoDx76TU87ka
+aXxwwRFtNTFL/2nitiJvUFyq7/lkAsx8lxNTdz9OCyvLcjE94TT0IpskmMXs70O7
+DK6mfzCC46YPFhkn/3dRlHpCR2FsecrrL9dy7TXKsZQ2kRKTRoqXCbnZkdzYcPOJ
+QejoQDm9d7V88+VLOMHSUxT1TXI4hA==
+=u0Er
+-----END PGP SIGNATURE-----
 
-Thanks,
-Song
+--Sig_/tZ+7p9Q31fQu0BI7QEpVqKe--
 
