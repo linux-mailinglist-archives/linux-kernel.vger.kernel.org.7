@@ -1,157 +1,102 @@
-Return-Path: <linux-kernel+bounces-877980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08B7C1F7F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:22:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C524C1F7FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E77219C0E77
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:22:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 894BD34DCD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9ED350D5D;
-	Thu, 30 Oct 2025 10:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4nziRlZ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855C3351FA3;
+	Thu, 30 Oct 2025 10:22:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D902182D0
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3C626B2C8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761819737; cv=none; b=SHPp51IDjrWwoyUGos6S+mGB8J9oHmx3hrqwVS9mOC+c0uG3O+Ck0siIjknUVN249ZOYL4vY+r0ia/RhJo/KoiO5yyQB4Fzb0bRIEmdFS7++8Y6pVOYCVNFtRNryILJ0SGlspoH2Mg6sh05XwpFuvL0fQwloTbqXHvNf3ITbfUg=
+	t=1761819759; cv=none; b=cawciLeBm9rvJq26vxAcjuWAx2MscP62yHwjV1pYzIxQ2n6I3AabgWJFYxrbTUDxawGAMElRX1B9wwA4t/bZQvC9UVWOLF16ihJwU9HNpDCf6ylHWOX17OGFq+jsAvE1JACeeKNC9f8I7cpyyDjWXc9je0XNupX6MbT8wYLAKYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761819737; c=relaxed/simple;
-	bh=G1w0BDUSacW0XOVA8splxjQGwNpkVsIpdBFy2H1rlrk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZeKvQoY27l/VbuPi0mZ/5SSLRQc7U2yGUOmW7Jyf39zPQID5CqIID76mIYKgDk6ilPa1JXj05+YOrL/dCDw5O8N58ch6nXqNv284RVz+sabtLUZ3eKdPw7YEwi5UfZQFO6J66K9LRfPSJ8QlnQEqkp/t+9C1zTruEUQLv5Z9PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4nziRlZ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429b85c3880so561564f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761819734; x=1762424534; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=T2kUtsOiX/qEGmwwQ7Isl75d5/MBlGm1S9q3l+zR8t4=;
-        b=O4nziRlZhgxJfb1KvMVN2gNQbV2P+Xo4+fuBmNEr9fW8RTQz+B0i7jpMxzFaal93HW
-         k61fraA1ZvcPT12sNxmEgNUZgCz48e3IaclXacyTktXDJ3iypfXBqVTRg3QDalNeTetY
-         Syc5iJsTppy0NmrUPDed117+Dc5ebhdsFbJOjx1Dkdye9vKp0adQA7l1vhQZ9UcAzw4a
-         HQP6CFKG1F1p8u0IwNRWsny0YSGWj9p5GKjNlKx+V4KbJKplu5d1f0lUcV3GQ1es8sMJ
-         Cq60OSKCI0Y74Das+fyAmBL05LtvXZE5ncyaMf2YAdvQhN62ILqJzntogMij8FnV84uO
-         ebMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761819734; x=1762424534;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2kUtsOiX/qEGmwwQ7Isl75d5/MBlGm1S9q3l+zR8t4=;
-        b=Gf/5xiS3K2UYZp81GQkfDa2I2+5kGHFB3A+eumOFEM8Fao4JQHKDHhQD/WQqV3VvcT
-         sWSr4jmfZvUvyTQE04LPJzln4OHXgCHSzmXICR/aql8EnOgiDBAEtoRhu0uJt4WXsftx
-         3LgaJTg6v7wBwxdUIvL/mmXzZbwiC22KcGIljvM3on1j7qdKWeZcg9fo/PHJb/eA2Y0s
-         BVo9BI3YFiX8E+A4b19fmY2W7TWWdDREfqxgpGq5j2LyyO4JBfWTkP0ZUHrkP9C7rDU9
-         csG08nMEic0hpYddSPUk+VOl32keyBTT/zYfp2v2nG+0nuq8GBXdYVrL0Qb3P+XSeqP8
-         9/nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtUHndLL+qjnHwlQCcqFYrMsbFSpxdVLFxPio3Eanbe5qf8F7X+pW/C4JkJm3BuNPK6wkS/jopMURl6s8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7WbhX01Ji8W+B35ZaKJs2dOmQdgFgZkwcW64ehJoZcaWXnaZc
-	rtn8kyqymHt1uUt6h7jo21pQFpucxeXdiWArEYUK4TMhuitbSJEBNtq2
-X-Gm-Gg: ASbGncuxf2c8bPRpBSG0D+6oUwtgRCy6qnun1bUCkSMWQ7cWJtG/rRyrQn8Wzxa+NrC
-	KfdH6PNi1/KzBZrWskV2wx8qdXy+hhP+eV0g9ml/E2r5dogHA3DV8XZTRBED8fRW2J49jhLjcRp
-	6w9xJqDWh7PrNZVhdvGk6IdWAhIee/VOYpx1Tq73+ZroDu59iRp6QREITVqwWSD66cB4A057Ffg
-	4SUPMM8ng3wesdgfRXh1J/Fvpl3H+pOSHA0nNh0WNq1J6ILynjdhdxbDrolGuU83fxQWlXGmtaV
-	Rrr0IO8PmhhK/XbL6suufRKYxQOmAhjNYiCPY9WIiXsCt65P9U8CNfj6uuYU9hnhDvt1N1kgveg
-	R/ClVRZCNLSXDsdPm2HqpczoCEkxMZpP3gOIktcqPzMbD8vqkQNSzXjNN7mt8xVJqokBWycnDC1
-	j4uLTS2IiMxvzhaBR9si779h/JLKdO
-X-Google-Smtp-Source: AGHT+IG2GvMxb9LZfEwn29dXFAw3jlFUGhKBMnjmh2/V3MU6jJoVJ3uGtYSEM3H6aIAKv8Kvh0ETuA==
-X-Received: by 2002:a05:6000:4012:b0:429:b7cd:47ff with SMTP id ffacd0b85a97d-429b7cd4e85mr1197378f8f.40.1761819733529;
-        Thu, 30 Oct 2025 03:22:13 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952da12dsm31773234f8f.29.2025.10.30.03.22.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 03:22:13 -0700 (PDT)
-Message-ID: <69033c55.df0a0220.1a33d7.49ff@mx.google.com>
-X-Google-Original-Message-ID: <aQM8U143LTOytPrj@Ansuel-XPS.>
-Date: Thu, 30 Oct 2025 11:22:11 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Raag Jadav <raag.jadav@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] err.h: add ERR_PTR_CONST macro
-References: <20251029133323.24565-1-ansuelsmth@gmail.com>
- <aQIzoGnvZWYuHuoQ@smile.fi.intel.com>
- <69023512.5d0a0220.3cccb7.8e65@mx.google.com>
- <aQMheocySykpTFDN@smile.fi.intel.com>
+	s=arc-20240116; t=1761819759; c=relaxed/simple;
+	bh=h6ZeZMm+kh/ZMKD2CWbwzRP0dY/DOi2RxLvBAU5tIYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ok+0i/68bBqNMcfjIRQr+bMafxz+igo7X4D0f8Hq8fV2Gy9EAbyELNxiq2VFzJJM4s0a/My19sQemjv+EDXZUcl0nUM09IFCLuBL142Rkxe6ZXvlVlg6yYBNVCns/Ty7EOxOqA7h0jDpAXAsoTQ7IqRZn+d6LuaBs0t9CVRTQ0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vEPnK-00035h-B2; Thu, 30 Oct 2025 11:22:14 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vEPnI-006C7e-30;
+	Thu, 30 Oct 2025 11:22:12 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vEPnI-008rEb-2Z;
+	Thu, 30 Oct 2025 11:22:12 +0100
+Date: Thu, 30 Oct 2025 11:22:12 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Thomas Wismer <thomas@wismer.xyz>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/2] net: pse-pd: tps23881: Add support for
+ TPS23881B
+Message-ID: <aQM8VF2YN7fACzNm@pengutronix.de>
+References: <20251029212312.108749-1-thomas@wismer.xyz>
+ <20251029212312.108749-2-thomas@wismer.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aQMheocySykpTFDN@smile.fi.intel.com>
+In-Reply-To: <20251029212312.108749-2-thomas@wismer.xyz>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 30, 2025 at 10:27:38AM +0200, Andy Shevchenko wrote:
-> On Wed, Oct 29, 2025 at 04:38:53PM +0100, Christian Marangi wrote:
-> > On Wed, Oct 29, 2025 at 05:32:48PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Oct 29, 2025 at 02:33:19PM +0100, Christian Marangi wrote:
-> > > > Add ERR_PTR_CONST macro to initialize global variables with error
-> > > 
-> > > ERR_PTR_CONST()
-> > > 
-> > > > pointers. This might be useful for specific case where there is a global
-> > > > variables initialized to an error condition and then later set to the
-> > > > real handle once probe finish/completes.
-> > > 
-> > > Okay, this has two caveats:
-> > > 
-> > > 1) naming is bad as it suggests something about const qualifier (and not, it's
-> > > not about that at all);
-> > > 
-> > > 2) it doesn't explain what's wrong with ERR_PTR().
-> > >
-> > 
-> > It can't be used for global variables as it does cause compilation
-> > error.
+On Wed, Oct 29, 2025 at 10:23:09PM +0100, Thomas Wismer wrote:
+> From: Thomas Wismer <thomas.wismer@scs.ch>
 > 
-> Can you show an example, please?
->
-
-drivers/soc/qcom/smem.c:361:35: error: initializer element is not constant
-  361 | static struct qcom_smem *__smem = ERR_PTR(-EPROBE_DEFER);
-      |                                   ^~~~~~~
-make[9]: *** [scripts/Makefile.build:229: drivers/soc/qcom/smem.o] Error 1
-
-You want me to add this to the commit? Or any hint to better reword this
-so it's more understandable?
-
-> > I wanted to use ERR_PTR to set the __smem handle instead of freecode
-> > (void *) -EPROBE_DEFER and notice the compiler doesn't like using
-> > ERR_PTR().
-> > 
-> > Then the problem is clear as static declaration require constant value
-> > for initialization and ERR_PTR is a inline function.
-> > 
-> > This is why ERR_PTR_CONST following the pattern that was used for
-> > FIELD_PREP -> FIELD_PREP_CONST that was also introduced for similar
-> > case.
-> > 
-> > So yes this is specific for case of static global variables.
+> The TPS23881B uses different firmware than the TPS23881. Trying to load the
+> TPS23881 firmware on a TPS23881B device fails and must be omitted.
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+> The TPS23881B ships with a more recent ROM firmware. Moreover, no updated
+> firmware has been released yet and so the firmware loading step must be
+> skipped. As of today, the TPS23881B is intended to use its ROM firmware.
 > 
-> 
+> Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
 
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+Thank you.
 -- 
-	Ansuel
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
