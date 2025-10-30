@@ -1,589 +1,261 @@
-Return-Path: <linux-kernel+bounces-878591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF910C210F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:55:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9F1C210F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B9295625D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DFF3BFEC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5481EA7D2;
-	Thu, 30 Oct 2025 15:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CEA3655E3;
+	Thu, 30 Oct 2025 15:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jamo+2XF"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="su9L0il/"
+Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022095.outbound.protection.outlook.com [40.107.193.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D02B2638BC;
-	Thu, 30 Oct 2025 15:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761839453; cv=none; b=YvhIJ1sL1qZ7Wcqxu7Ax1Prd2LNcwBpu+qtyM5/vmACRBNYpZNgteMcj3Igp1/ZLf6l7tjZpsgY896gtKw6ZxFGjEF59tTh5OIp0Wzl9PWV7vt1k9mf0+tKHxBHnVDa5L1wfomvSIbX0/YZU+4oya3MlImvg3RoWAXhoWrKSZ8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761839453; c=relaxed/simple;
-	bh=FtQzmHoTFEM48OA/9W8Mg+5qb4J64qOrSPthinoiWzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IoyxCsmP7qLLy5YqyZJnEL/OoFmvB5dAlZXv6V/w2zrQIFXtgim8lTSo5kO9l7+WHaQ0xgh4Dim8kmLFscw3x/qi0sO6PEUP+jWIumPss7opwiTuhrbtblgBo1ZIeXLkeS4m2/u/FNgwz8ayjIWDKzdxRn4LCfkubzWvVwlvELc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jamo+2XF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4501A22B;
-	Thu, 30 Oct 2025 16:48:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761839329;
-	bh=FtQzmHoTFEM48OA/9W8Mg+5qb4J64qOrSPthinoiWzo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jamo+2XFzyyMZiJOYxniY9zQsioadVaet5g8+qwb0sVFJV8wTUepCMBcF92zpPurM
-	 uaTn9wM9kp8kBUACWaiRou0Atgvrq733TjkDdeA8E/aNierdW//8yLW5DzSEyDFAGQ
-	 xWbxMMlLT+/5fzkhYLm4vhacyC/6ocesg2RP/RHc=
-Date: Thu, 30 Oct 2025 16:50:36 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Tarang Raval <tarang.raval@siliconsignals.io>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Hans de Goede <hansg@kernel.org>, =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
-	Dongcheng Yan <dongcheng.yan@intel.com>, Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] media: i2c: add Sony IMX111 CMOS camera sensor
- driver
-Message-ID: <nf5ad7wru2mmyvy7yskt3qkshsxjmnlwkxr7p32tf2ttslhgzj@7hz2rcksdcux>
-References: <20251030115757.33695-1-clamor95@gmail.com>
- <20251030115757.33695-3-clamor95@gmail.com>
- <PN3P287MB182950EC8691183FBFC4EC098BFBA@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
- <CAPVz0n0Vqi0xg8c=PS3vyFr9YzRC0PtFXyxw9G5yHohS4FKVbQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D3A312801
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761839471; cv=fail; b=t9Uu3aR68RnBVa/D4vn46IXX6KBNCe7FbLuPnqtF3jVBL4RnmdcAb/aKQMzPtmwATptowb3rEdQ97AoyCLCX6XnD5sULVAHGFSxHRDdI5NKv8IVD7ft4b+14w5h9D5yz01WOIU+MYt4JV1U3eL23QoZAnH0vZpZHPtmGcnEL7Tc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761839471; c=relaxed/simple;
+	bh=F6LryvBmdL/wzC3tfd7+hC8RY4aLCUxD5OOSsRo923g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p0DAusAy640aY+43vr9QTALAAHphg9O0mSgBU7avHmR832jXUNj+m42v+frwhuKSKJZjUWlUyiya753mgBySFB83ZFdvLsZyumRb3Iphd3o3Wp8Baf5xlyY9FrHlU7JRNy72iwuMCIJFHepd4eLHaN9YIJ6Qv7soqYeHlXP4PMI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=su9L0il/; arc=fail smtp.client-ip=40.107.193.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oBLjrv58FzTVg18scwIL+Zli6YK5SF+ZE3uQTy74UOEPw62k/67L3TGNgWN6roPUNZMH1nJGY9gtLNRqbD3Vi7YmLAtAOb58B/jYVl80ZtNaC1r1tPHbr8V9iFzHnYy71s24LACKI5ZzvcKhCzkN9VIGcQ+SFy/fPDB3+lSQeRPDLROANIZAaS+J/Q66b0PcfCx/KocGlmBXjGoFLQhwIZ74EaQmQQAT4WzmXnO7r5jvvFtzEGyaLD0egAz/33/EJxUpungbgK6RmRNmiwrhIKzhnckof8YdS1IQWWNxhjR9AkWe/tX8mZTynqZQJgCOyf0wDHXqzYBOD1UAhiRobw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PlWGTh9UKqckq9X0qms1JXm6/dtAzzhPnYlayA/+3zE=;
+ b=EO4zgr3ZG5CViZVGE/2oCcmexNtW29fVVgA2aqjjFsjrG9LhjpKdujVBIcJwkNF67FxL0WPU9CJZwqlYCeQl9u/HbsAvaJdMHwA1MX3jqwlVERIxno21+uXsI4c0Zyv4kzuI70v2xIQ3AeBFHiOM8gjYA8YSlApHNjER1X4uDNR0UkOMTlMhW4VA9mFoN1+GofmBuPNSfOO4rqfMHS2oaLJqmoP+kdMw+xwP7g/z9L8zqaOC/pu+lf5SAUfL5E0ujfTe1xeDz/avP6tT17s+szQCBKja05lXiMO/g6xLGi9QYPns9WM63XvGrQGA5ZveKhhaVLcBkTZ5VLEdGiWDpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PlWGTh9UKqckq9X0qms1JXm6/dtAzzhPnYlayA/+3zE=;
+ b=su9L0il/yL5mVVRn9vm65sxi/I0diZGj6H+Bi8Kw5kikZTztThzxV9OUCs+xR6rRIJ7kh4Juk6Bnv3j/tkLv5jVFqE8FrmoaW0riysXifLxVKx0qu5mLpNefNOYucBgAa5BRV3Bw2yWfP0ZZ/puSWaISL9psTuRXvOh+/i+RpYNjZFNZI1j8OqeCBvWTjk4lHbhuyWdu/mv/t4jAovFl23EdAy9G0hjrG/zh3LedwcbbPTIDBxfWkxB6xOc/lWmNP3T5MEZjWzWQIREo78nnZy6tVUGDNi2bUqbDnIvhgP4yfsxXkSDurNXZLcD41bwrQ5iu0fpeNJTyHbUI2NtaQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT3PR01MB10361.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:8a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Thu, 30 Oct
+ 2025 15:51:05 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
+ 15:51:04 +0000
+Message-ID: <c2e4fed9-b207-4d28-93f5-b09f0fe78e35@efficios.com>
+Date: Thu, 30 Oct 2025 11:51:03 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V3 17/20] sched/mmcid: Provide CID ownership mode fixup
+ functions
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Gabriele Monaco <gmonaco@redhat.com>, Michael Jeanson
+ <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
+ Yury Norov <yury.norov@gmail.com>, Shrikanth Hegde <sshegde@linux.ibm.com>
+References: <20251029123717.886619142@linutronix.de>
+ <20251029124516.343419392@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251029124516.343419392@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0226.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:eb::19) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n0Vqi0xg8c=PS3vyFr9YzRC0PtFXyxw9G5yHohS4FKVbQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB10361:EE_
+X-MS-Office365-Filtering-Correlation-Id: f37ef5dd-3654-4002-5494-08de17cc220b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cjZYUVkxYjlkMTdXL3ZEVjgvMW5TcWxVN0ZGU1JqbWZqMWN5U3MwSStqY3VC?=
+ =?utf-8?B?TVE4ZDB4L0g4aHZ6ajJjQ2RaU2RzcjNnaVRaWjgwS3RnTThqS2g1K0VlK3pZ?=
+ =?utf-8?B?dDF6WEJDdjRNWHREK2NvSjg3WG0zUUFUWnhTeEhpMkVCTEg2eHJFbVRXcDNP?=
+ =?utf-8?B?eEFNREptWnQ4bUdBS0YwczdkZmpkMittQXhNR0NRUkloRktIdGV3cTR3OXJy?=
+ =?utf-8?B?bC80Qk5OdmwzU0krdWhIZ1A4VUdwYmo3QjZBTEdmWVFrZ29WdE96bXZ3ZjI1?=
+ =?utf-8?B?eDdrbWlQUEI1dUtUaXNjYXdVU0FtVFVmTlhFSS9vNlZ4b3ZDMHVwL0lPZk5I?=
+ =?utf-8?B?MHp3M3I5WXJUUmg3dllLbldyaVVMdHFMTGtweStnNVBKU3pYeEVMVlhwZ20y?=
+ =?utf-8?B?a0hKUVRqZWhXaXZUZktoL2ZhQjlWa2s2R0tuTkhwWGNBZDgrYW5qZjhBQ3c1?=
+ =?utf-8?B?Z2ZiNXNBVk5aZDNER25RUmdiSmF2T01LWFlQYmJyaG0yUXFCMHdKdTVQSW1x?=
+ =?utf-8?B?M1cyQXJvclpPYzhkTHo3Mm5VNVRaWWpwcXlseUIxc3Y4VEZaQ2FMa3MyTmVr?=
+ =?utf-8?B?YTAzWVRvZ1ZwVFVNU0hjLzdWUE1nK0tPQzFpRERoaytGN09pOGVFV0NiRUx4?=
+ =?utf-8?B?YnNUV0JTSXpmNVp0bmlRZzRadHVJcDMwT24wak1aN1AwN0hQQ0xnVnNIRjk1?=
+ =?utf-8?B?UHpRT2FHdVB5Y2RnOEJpUnZQQ1dYUldpUTRmUnRrMVNRU1NUYXJ0TDdIYjUv?=
+ =?utf-8?B?SXoyRjhYbVRPb1NrVWY0OGVkWWVIZURxOE1Ka095cnUwWTNOYnB3TUZEQnJy?=
+ =?utf-8?B?L1hPcWZQZzUyN3FWcVNHZTJzVU9lTi9CQkprVTNFSW5MOEZEWkNrN2I2Qi9v?=
+ =?utf-8?B?ZE9ST01YVW5mSGlkNGJyVGZ2aEdLWTFKWEFmMGpYOTdOU0V2Wm9RaGxkdE4r?=
+ =?utf-8?B?U21UZ0pGKzIxa3B4UFMvMGd6TDlkMEtIV1BNSFM3Q2Y0aVlnSndzU3ZRVHVK?=
+ =?utf-8?B?bDhSdGI1STY0VGQxTGRsOXV2eVNKd2hoVnU3K016bFNxQ3JVTUhYUUk1Smdh?=
+ =?utf-8?B?WFVSRHFjWStsYjI4OUpzTU1LOTZFVFhSRWVyTEY3cG1CN1REeUJ6MGJNRlpG?=
+ =?utf-8?B?VGVCSGRJS1JXSmxEemVwbXlsSHcra29PWVJDeE5vQTBNc2NBVTl0MktyQlZ6?=
+ =?utf-8?B?LzdWY1k4NE9RMUt2R1Rua2VpSVYwVlFuZVNZRXp1Nk01QmtHMkRyaFcrQ2d2?=
+ =?utf-8?B?OVY3dWNxZTlGa0EydmNOVmYwUkljRTQwVTd3OVhvMVJmR1habWtjY05WeGVx?=
+ =?utf-8?B?WitlWHkrUUZaa09ZbkQ2dGFaNjFHOGc2cVJtdkEwVndtVCtjWDZWUFRxdG9n?=
+ =?utf-8?B?d1VZdFc4bjJHWFFINGtRUi96NFNOSzRuSmdwNzAzNW5JL2hUdEtlYlZ3T1c0?=
+ =?utf-8?B?dG9TUUhoMlJzcERDQ2VUT0dYMjhIdzZsUHUvaE90a04wTjZnZkNBVzV0SzFY?=
+ =?utf-8?B?bS9hRUllWERNeVhQTWM5N0UvNWtpS29GVUhEL2VqVTNzb3BBRVpQUzRibnNx?=
+ =?utf-8?B?TzM0QmdMZ01SOEN1NnltWW8weGVMV1N5M0p3M1FTWC81WWhkZFI5am15RE9T?=
+ =?utf-8?B?MWFYcEdLNnZEckRRbVdQSGRhamJnbFdtb2Z2OWVXck5HSUNJS0E1ZDE4TlBn?=
+ =?utf-8?B?cHhhMFBnVWZmb3lVaVN4M1FJZ09xNllDVFF1cElkeEZPa08rb0VWS1BpSVNI?=
+ =?utf-8?B?WDZ1UkNyVTZTdmhoUUFZMFpTUW9KQy9kbHg0dndDc2t3OGZpOXN1Y1psd2dv?=
+ =?utf-8?B?Tkpmbi95blZVTWIrWHdIR3UyN2xRTEpkazBUZVRzMmdodE1UMXhRdDE2T3ZQ?=
+ =?utf-8?B?SURkRGwxNk1NdktIaVhjL3RaVERrcUZBb0VMRHp2U2dhWWc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bmZKN2hhMnYySHJkdEtsVTZUZjloVm9pYm9KQ3E1eW9ncWNnb0JoZ256VzIv?=
+ =?utf-8?B?QVhTdXlqOWhYYkdvMGhqOTU2elZzRDBTanMxNjVVNjlaNzhFMkV1R1k1SzEx?=
+ =?utf-8?B?Tk5aZGRNbFhwZXRlQnJKU25CY2hGS1l1OWdoemt0RVR2bE5JeldoY29ZU1F4?=
+ =?utf-8?B?eE1yMnhydmtYN3hIWWRscmc0UUFWUTg5L1ZYdU1DSCtjUmcyUzBvSnA0VFAz?=
+ =?utf-8?B?bVFyd3RpenFPK2hsTXVlblpTUkVRckx4NEU5a3R5Yi96THVENVR4c29FV0RT?=
+ =?utf-8?B?NWIzamlOVThQbjQ0eGs0Z0pySXc0ZmltT3RZOXE4WkhxeGt1WVNSY0NSUTlQ?=
+ =?utf-8?B?Y1pCazcyRVI5bHg3UVJDNE4zci8zbkE0QUp0ZENYSm9LZlRtZS9SSys3VXhI?=
+ =?utf-8?B?aUpERnpQK2FzV3BIVWZ3dHprTEVOdWNPUHVJS0xZRHhpTmI1WnRibXArazM1?=
+ =?utf-8?B?aEJtM0tnWDBGOFhmckZSb2hTc0l4TWFCVmVyZklTcDNtRmUyRnVvcnNoSUdp?=
+ =?utf-8?B?QzdFQzF4NmZ1NFlzNFBmaDM5Szlhd25GMGoxeDlCei9lMkhhOHIraEIwckxS?=
+ =?utf-8?B?M1ZGUmFKSFZVTGlNbkhKdU51Z1U2R2Vra1RMYXNIc09TdHNBdUFRSGREODA1?=
+ =?utf-8?B?T2dHNmJRQlpZdHlCY25DVDRhb05yRUxXNGZzOEpoejdvcWtBT093YmEvb1Ir?=
+ =?utf-8?B?bTdNc2dYOWc4Y3JsTXNlVmFMWkNhbE1TQkhXZGNWTEpTeUZYNkF3dHRSamFu?=
+ =?utf-8?B?bFZoS2xNZUI2OUpacVR3N1hkVXpuczJRamFaa283WW8reGg1SGw4b0xhdWNs?=
+ =?utf-8?B?T3hDL1hqdGYvRTczZkp3Sk9vTjBUS2tqcG9FRFZuUnp6WHBrRXBwSlhkeWZZ?=
+ =?utf-8?B?REFRMGhSRGNRQkxaeThMTHBsYUNkZ29Da0JTVHRwWDk1Q3VTblF0SG55OWRj?=
+ =?utf-8?B?UnpuR0ZmRHRhTXJvN2hIeFBSamQzRWV4MFg2dXBmYU1YTVEwV1RtSUl1ZjBs?=
+ =?utf-8?B?L3NPMVI2RFF0NW9tb09CdVdqa09Ya0NkaytaMERrVm4yZlQwS2tTQUg5Titr?=
+ =?utf-8?B?aWJjWEovekpTaW8rN2lTWTNZdnQ1MVZEa0ExdnE1bU16anlqb09VbVNkclhi?=
+ =?utf-8?B?MmNaQ0FhUmQ1WTA0Y0hOYmZQeXBoWGhSZ2xZWEV2LzdacGZueFFjeTZxRWhx?=
+ =?utf-8?B?dnMxUW01VGw2Z0hUeTR6SmR0UXZCa0tQSTRzRFAwdlNJUzUxVHQ4S3Rqdnpa?=
+ =?utf-8?B?Y0svVk45U1pqS3R1eTdBSEd0YjZZK3hCWG5QSUFoUytZd05icUxyVm1ZVHc2?=
+ =?utf-8?B?amtuR1Z2N05lbk5LdHV6V0tOaHBzQW1WK3U2YWprdW5KZVJ0SnFXeThTM1dP?=
+ =?utf-8?B?MEdJT2tlM0Y2dE5VeEJidUVjMVJLTzFPVHFNOUJFbGFGNmRlTVo2Y1FvMG9o?=
+ =?utf-8?B?YnVXZnJUQzcwZnVVTGpTMW1KWTFNN3lmS2xNR0FCZDVOdGp2eWN1djFjWXQ0?=
+ =?utf-8?B?MGdQbHBYdmtjUzBGd1MrSS8wMnBzZmpZZVNrYjlwVEczQ00vejJmMkwzSXJt?=
+ =?utf-8?B?cjNTdGRqYjk4YXBMY3NMWS9RL2k2Z0xNZThVYWM2dUdXb0VJVlFkTEhPUTFD?=
+ =?utf-8?B?bENMYVgvVUZ1QVZUclozc2JkMnVsVWsycGdOS2xoa2drYzZpKzV2S2k2RlJu?=
+ =?utf-8?B?R1JWSkhlZ1AvOW1iVVU4MkdCdTNkZjd5d05XWmRjazNSZklXWnVSR3RrY0tK?=
+ =?utf-8?B?S1R5MkJBeGhWeFZmcFhnNGYzeklnN2c1Ukh2YVFYeG9hQjNGSndvTGZrT3NI?=
+ =?utf-8?B?TFhSUmJ2MGtlUEZTMXUwZUtUS014anZZRWRsWmFDZHJBVkhpRTJWdlNTeUF4?=
+ =?utf-8?B?SWRTSGxHeDVqVDVhRVloK1hkNEdHM0M1QnVYdlplNTExV3FhaWlENFQrTDUx?=
+ =?utf-8?B?ZC9WNzlQYXN5cHNGNEY0RitING9yM1kvc0pROUZNb0k4TFJFMmNCNG1FZlov?=
+ =?utf-8?B?R1Z2VW56aDZvdHhReGNKSmlGZW5sTFZlUDZoMExHcGVpd2lsa2s0SEJKN2Vv?=
+ =?utf-8?B?MUJMWTR3bDBzN2tHbUpqZHFnUk1IZUZUZlFlY29FUGlWRERCck9GL1RUNUVB?=
+ =?utf-8?B?MFUrcEp6bGRBVzZ6ZmF6N2MySlBzRldZSmloWTlNMVhHM2ErR01DSlNFOWN5?=
+ =?utf-8?Q?TnvD0cRMzHOJI5QrutccO28=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f37ef5dd-3654-4002-5494-08de17cc220b
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 15:51:04.6854
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TIKQn9o+eDgL52a8tsvudv+OEDja4Xr9kb3USIamPXCv1rA0QzuALuzwpU8jbR+dQBVEhi/kqtmj3GGTriOZHfK6nUICcTohtm2IThjFWaY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB10361
 
-Hello,
-  sorry for entering the conversation
+On 2025-10-29 09:09, Thomas Gleixner wrote:
+> 
+> At the point of switching to per CPU mode the new user is not yet visible
+> in the system, so the task which initiated the fork() runs the fixup
+> function: mm_cid_fixup_tasks_to_cpu() walks the thread list and either
+> transfers each tasks owned CID to the CPU the task runs on or drops it into
+> the CID pool if a task is not on a CPU at that point in time. Tasks which
+> schedule in before the task walk reaches them do the handover in
+> mm_cid_schedin(). When mm_cid_fixup_tasks_to_cpus() completes it's
+> guaranteed that no task related to that MM owns a CID anymore.
+> 
+> Switching back to task mode happens when the user count goes below the
+> threshold which was recorded on the per CPU mode switch:
+> 
+> 	pcpu_thrs = min(opt_cids - (opt_cids / 4), nr_cpu_ids / 2);
+> 
 
-On Thu, Oct 30, 2025 at 05:13:31PM +0200, Svyatoslav Ryhel wrote:
-> чт, 30 жовт. 2025 р. о 16:55 Tarang Raval <tarang.raval@siliconsignals.io> пише:
-> >
-> > Hi Svyatoslav,
-> >
-> > > Add a v4l2 sub-device driver for the Sony IMX111 image sensor. This is a
-> > > camera sensor using the i2c bus for control and the csi-2 bus for data.
-> > >
-> > > The following features are supported:
-> > > - manual exposure, digital and analog gain control support
-> > > - pixel rate/link freq control support
-> > > - supported resolution up to 3280x2464 for single shot capture
-> > > - supported resolution up to 1920x1080 @ 30fps for video
-> > > - supported bayer order output SGBRG10 and SGBRG8
-> > >
-> > > Camera module seems to be partially compatible with Nokia SMIA but it
-> > > lacks a few registers required for clock calculations and has different
-> > > vendor-specific per-mode configurations which makes it incompatible with
-> > > existing CCS driver.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> >
-> > ---
-> >
-> > > +static int imx111_set_ctrl(struct v4l2_ctrl *ctrl)
-> > > +{
-> > > +   struct imx111 *sensor = ctrl_to_imx111(ctrl);
-> > > +   struct device *dev = regmap_get_device(sensor->regmap);
-> > > +   s64 max;
-> > > +   int ret = 0;
-> > > +
-> > > +   /* Propagate change of current control to all related controls */
-> > > +   switch (ctrl->id) {
-> >
-> > Do we need the switch statement, since only one case is present?
-> > You can use an 'if' instead.
-> >
->
-> imx219 and imx319 which are recommended references use switch, and it
-> seems that media maintainters are particularly picky to code style, I
-> have copied it from there.
->
-
-Personally, whenever doing reviews, receiving a reply that ignores the
-merit of the comment and simply refers to the existing code base as an
-excuse for not caring, it's what put me off the most.
-
-Please respect the time reviewers have invested in looking at your
-code by at least considering their comment instead of dismissing them.
-In this specific case you could have easily said "I like it more this
-way and it's consistent with what other drivers do". The same cannot
-be said for other comments that you have decided to ignore.
-
-
-> > > +   case V4L2_CID_VBLANK:
-> > > +         /* Update max exposure while meeting expected vblanking */
-> > > +         max = sensor->cur_mode->height + ctrl->val - 5;
-> >
-> > You can define a macro for the value 5 to improve readability.
-> > Also, make this change in the init_control function.
-> >
->
-> imx219 does not specifies this as a define
->
-
-It doesn't but it should, like 90% of other drivers in mainline do
-
-
-> > > +         __v4l2_ctrl_modify_range(sensor->exposure,
-> > > +                            sensor->exposure->minimum,
-> > > +                            max, sensor->exposure->step, max);
-> >
-> > This may fail; consider adding an error check.
-> >
->
-> imx219 does not return error here too
->
-
-so ?
-
-> > > +         break;
-> > > +   }
-> > > +
-> > > +   /*
-> > > +    * Applying V4L2 control value only happens
-> > > +    * when power is up for streaming
-> > > +    */
-> > > +   if (!pm_runtime_get_if_in_use(dev))
-> > > +         return 0;
-> > > +
-> > > +   switch (ctrl->id) {
-> > > +   case V4L2_CID_ANALOGUE_GAIN:
-> > > +         cci_write(sensor->regmap, IMX111_REG_ANALOG_GAIN, ctrl->val, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_DIGITAL_GAIN:
-> > > +         ret = imx111_update_digital_gain(sensor, ctrl->val);
-> > > +         break;
-> > > +   case V4L2_CID_EXPOSURE:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         cci_write(sensor->regmap, IMX111_INTEGRATION_TIME, ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_HBLANK:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         dev_err(dev, "writing 0x%x to HTL\n", sensor->cur_mode->width + ctrl->val);
-> > > +         cci_write(sensor->regmap, IMX111_HORIZONTAL_TOTAL_LENGTH,
-> > > +                 sensor->cur_mode->width + ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_VBLANK:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         dev_err(dev, "writing 0x%x to VTL\n", sensor->cur_mode->height + ctrl->val);
-> > > +         cci_write(sensor->regmap, IMX111_VERTICAL_TOTAL_LENGTH,
-> > > +                 sensor->cur_mode->height + ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_HFLIP:
-> > > +   case V4L2_CID_VFLIP:
-> > > +         cci_write(sensor->regmap, IMX111_IMAGE_ORIENTATION,
-> > > +                 sensor->hflip->val | sensor->vflip->val << 1, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_TEST_PATTERN:
-> > > +         cci_write(sensor->regmap, IMX111_TEST_PATTERN, ctrl->val, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_TEST_PATTERN_RED:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         cci_write(sensor->regmap, IMX111_SOLID_COLOR_RED, ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_TEST_PATTERN_GREENR:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         cci_write(sensor->regmap, IMX111_SOLID_COLOR_GR, ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_TEST_PATTERN_BLUE:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         cci_write(sensor->regmap, IMX111_SOLID_COLOR_BLUE, ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   case V4L2_CID_TEST_PATTERN_GREENB:
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     IMX111_GROUP_WRITE_ON, &ret);
-> > > +         cci_write(sensor->regmap, IMX111_SOLID_COLOR_GB, ctrl->val, &ret);
-> > > +         cci_update_bits(sensor->regmap, IMX111_GROUP_WRITE, IMX111_GROUP_WRITE_ON,
-> > > +                     0, &ret);
-> > > +         break;
-> > > +   default:
-> > > +         ret = -EINVAL;
-> > > +   }
-> > > +
-> > > +   pm_runtime_put(dev);
-> > > +
-> > > +   return ret;
-> > > +}
-> >
-> > ---
-> >
-> > > +static int imx111_init_controls(struct imx111 *sensor)
-> > > +{
-> > > +   const struct v4l2_ctrl_ops *ops = &imx111_ctrl_ops;
-> > > +   struct device *dev = regmap_get_device(sensor->regmap);
-> > > +   const struct imx111_mode *mode = sensor->cur_mode;
-> > > +   struct v4l2_fwnode_device_properties props;
-> > > +   struct v4l2_subdev *sd = &sensor->sd;
-> >
-> > No need for a new variable; there is only one user in the function.
-> >
->
-> This make code reading cleaner, no?
->
-> > > +   struct v4l2_ctrl_handler *hdl = &sensor->hdl;
-> > > +   s64 pixel_rate_min, pixel_rate_max;
-> > > +   int i, ret;
-> > > +
-> > > +   ret = v4l2_fwnode_device_parse(dev, &props);
-> > > +   if (ret < 0)
-> > > +         return ret;
-> > > +
-> > > +   ret = v4l2_ctrl_handler_init(hdl, 13);
-> >
-> > Now there are 15 controls.
-> >
-> > No need for explicit error checking; you can omit the error check if you'd like.
-> >
-> > > +   if (ret)
-> > > +         return ret;
-> > > +
-> > > +   pixel_rate_min = div_u64(sensor->pixel_clk_raw, 2 * IMX111_DATA_DEPTH_RAW10);
-> > > +   pixel_rate_max = div_u64(sensor->pixel_clk_raw, 2 * IMX111_DATA_DEPTH_RAW8);
-> > > +   sensor->pixel_rate = v4l2_ctrl_new_std(hdl, NULL, V4L2_CID_PIXEL_RATE,
-> > > +                                  pixel_rate_min, pixel_rate_max,
-> > > +                                  1, div_u64(sensor->pixel_clk_raw,
-> > > +                                  2 * sensor->data_depth));
-> > > +
-> > > +   sensor->link_freq = v4l2_ctrl_new_int_menu(hdl, NULL, V4L2_CID_LINK_FREQ,
-> > > +                                    0, 0, &sensor->default_link_freq);
-> > > +   if (sensor->link_freq)
-> > > +         sensor->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > > +
-> > > +   v4l2_ctrl_new_std(hdl, ops, V4L2_CID_ANALOGUE_GAIN,
-> > > +                 IMX111_ANA_GAIN_MIN, IMX111_ANA_GAIN_MAX,
-> > > +                 IMX111_ANA_GAIN_STEP, IMX111_ANA_GAIN_DEFAULT);
-> > > +
-> > > +   v4l2_ctrl_new_std(hdl, ops, V4L2_CID_DIGITAL_GAIN,
-> > > +                 IMX111_DGTL_GAIN_MIN, IMX111_DGTL_GAIN_MAX,
-> > > +                 IMX111_DGTL_GAIN_STEP, IMX111_DGTL_GAIN_DEFAULT);
-> > > +
-> > > +   sensor->hflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
-> > > +   if (sensor->hflip)
-> > > +         sensor->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> > > +
-> > > +   sensor->vflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
-> > > +   if (sensor->vflip)
-> > > +         sensor->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> > > +
-> > > +   sensor->vblank = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_VBLANK, IMX111_VBLANK_MIN,
-> > > +                              IMX111_VTL_MAX - mode->height, 1,
-> > > +                              mode->vtl_def - mode->height);
-> > > +   sensor->hblank = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HBLANK, IMX111_HBLANK_MIN,
-> > > +                              IMX111_HTL_MAX - mode->width, 1,
-> > > +                              mode->htl_def - mode->width);
-> > > +
-> > > +   /*
-> > > +    * The maximum coarse integration time is the frame length in lines
-> > > +    * minus five.
-> > > +    */
-> > > +   sensor->exposure = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_EXPOSURE,
-> > > +                                IMX111_INTEGRATION_TIME_MIN,
-> > > +                                IMX111_PIXEL_ARRAY_HEIGHT - 5,
-> > > +                                IMX111_INTEGRATION_TIME_STEP,
-> > > +                                IMX111_PIXEL_ARRAY_HEIGHT - 5);
-> > > +
-> > > +   v4l2_ctrl_new_fwnode_properties(hdl, ops, &props);
-> > > +
-> > > +   v4l2_ctrl_new_std_menu_items(hdl, ops, V4L2_CID_TEST_PATTERN,
-> > > +                          ARRAY_SIZE(test_pattern_menu) - 1, 0, 0,
-> > > +                          test_pattern_menu);
-> > > +   for (i = 0; i < 4; i++) {
-> > > +         /*
-> > > +          * The assumption is that
-> > > +          * V4L2_CID_TEST_PATTERN_GREENR == V4L2_CID_TEST_PATTERN_RED + 1
-> > > +          * V4L2_CID_TEST_PATTERN_BLUE   == V4L2_CID_TEST_PATTERN_RED + 2
-> > > +          * V4L2_CID_TEST_PATTERN_GREENB == V4L2_CID_TEST_PATTERN_RED + 3
-> > > +          */
-> > > +         v4l2_ctrl_new_std(hdl, ops, V4L2_CID_TEST_PATTERN_RED + i,
-> > > +                       IMX111_TESTP_COLOUR_MIN, IMX111_TESTP_COLOUR_MAX,
-> > > +                       IMX111_TESTP_COLOUR_STEP, IMX111_TESTP_COLOUR_MAX);
-> > > +         /* The "Solid color" pattern is white by default */
-> > > +   }
-> > > +
-> > > +   if (hdl->error)
-> > > +         return hdl->error;
-> > > +
-> > > +   sd->ctrl_handler = hdl;
-> > > +
-> > > +   return 0;
-> > > +};
-> >
-> > ---
-> >
-> > > +static int imx111_initialize(struct imx111 *sensor)
-> > > +{
-> > > +   struct device *dev = regmap_get_device(sensor->regmap);
-> > > +   int ret;
-> >
-> > ret = 0;
-> >
->
-> cci_write does not state that ret must be initiated.
-
-Could you at least take the time to read the code ?
-
-int cci_write(struct regmap *map, u32 reg, u64 val, int *err)
-{
-	bool little_endian;
-	unsigned int len;
-	u8 buf[8];
-	int ret;
-
-	if (err && *err)
-		return *err;
-
-And by the way, the documentation says:
-
-/**
- * cci_write() - Write a value to a single CCI register
- *
- * @map: Register map to write to
- * @reg: Register address to write, use CCI_REG#() macros to encode reg width
- * @val: Value to be written
- * @err: Optional pointer to store errors, if a previous error is set
- *       then the write will be skipped
- *
- * Return: %0 on success or a negative error code on failure.
- */
-int cci_write(struct regmap *map, u32 reg, u64 val, int *err);
+AFAIU this provides an hysteresis so we don't switch back and
+forth between modes if a single thread is forked/exits repeatedly,
+right ?
 
 
->
-> > > +
-> > > +   /* Configure the PLL. */
-> > > +   cci_write(sensor->regmap, IMX111_PRE_PLL_CLK_DIVIDER_PLL1,
-> > > +           sensor->pll->pre_div, &ret);
+> did not cover yet do the handover themself.
 
-I'm very surprised this doesn't sometimes fail as ret is not
-initialized
+themselves
 
-> > > +   cci_write(sensor->regmap, IMX111_PLL_MULTIPLIER_PLL1, sensor->pll->mult, &ret);
-> > > +   cci_write(sensor->regmap, IMX111_POST_DIVIDER, IMX111_POST_DIVIDER_DIV1, &ret);
-> > > +   cci_write(sensor->regmap, IMX111_PLL_SETTLING_TIME,
-> > > +           to_settle_delay(sensor->pll->extclk_rate), &ret);
-> > > +
-> > > +   ret = cci_multi_reg_write(sensor->regmap, imx111_global_init,
-> > > +                       ARRAY_SIZE(imx111_global_init), NULL);
-> >
-> > You are overwriting the previous errors.
-> >
-> > please use ret |=
+> 
+> This transition from CPU to per task ownership happens in two phases:
+> 
+>   1) mm:mm_cid.transit contains MM_CID_TRANSIT. This is OR'ed on the task
+>      CID and denotes that the CID is only temporarily owned by the
+>      task. When it schedules out the task drops the CID back into the
+>      pool if this bit is set.
 
-or you can pass ret to cci_multi_reg_write() as well
+OK, so the mm_drop_cid() on sched out only happens due to a transition
+from per-cpu back to per-task. This answers my question in the previous
+patch.
 
-Maybe that's why you don't see errors causes by uninitialized ret ?
 
-> >
-> > > +   if (ret < 0) {
-> > > +         dev_err(dev, "Failed to initialize the sensor\n");
-> > > +         return ret;
-> > > +   }
-> > > +
-> > > +   return 0;
-> > > +}
-> >
-> > ---
-> >
-> > > +static int imx111_set_format(struct v4l2_subdev *sd,
-> > > +                    struct v4l2_subdev_state *state,
-> > > +                    struct v4l2_subdev_format *format)
-> > > +{
-> > > +   struct imx111 *sensor = sd_to_imx111(sd);
-> > > +   struct v4l2_mbus_framefmt *mbus_fmt = &format->format;
-> > > +   struct v4l2_mbus_framefmt *fmt;
-> > > +   const struct imx111_mode *mode;
-> > > +
-> > > +   mode = v4l2_find_nearest_size(imx111_modes, ARRAY_SIZE(imx111_modes),
-> > > +                           width, height,
-> > > +                           mbus_fmt->width, mbus_fmt->height);
-> > > +
-> > > +   fmt = v4l2_subdev_state_get_format(state, format->pad);
-> > > +
-> > > +   fmt->code = imx111_get_format_code(sensor, mbus_fmt->code, false);
-> > > +   fmt->width = mode->width;
-> > > +   fmt->height = mode->height;
-> > > +   fmt->colorspace = V4L2_COLORSPACE_RAW;
-> > > +
-> > > +   *mbus_fmt = *fmt;
-> > > +
-> > > +   if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-> > > +         sensor->cur_mode = mode;
-> > > +         sensor->data_depth = imx111_get_format_bpp(fmt);
-> > > +         __v4l2_ctrl_s_ctrl_int64(sensor->pixel_rate,
-> > > +                            div_u64(sensor->pixel_clk_raw, 2 * sensor->data_depth));
-> > > +
-> > > +         __v4l2_ctrl_modify_range(sensor->vblank, IMX111_VBLANK_MIN,
-> > > +                            IMX111_VTL_MAX - mode->height, 1,
-> > > +                            mode->vtl_def - mode->height);
-> > > +         __v4l2_ctrl_s_ctrl(sensor->vblank, mode->vtl_def - mode->height);
-> > > +
-> > > +         __v4l2_ctrl_modify_range(sensor->hblank, IMX111_HBLANK_MIN,
-> > > +                            IMX111_HTL_MAX - mode->width, 1,
-> > > +                            mode->htl_def - mode->width);
-> > > +         __v4l2_ctrl_s_ctrl(sensor->hblank, mode->htl_def - mode->width);
-> >
-> > All the above V4L2 operations need to check for errors.
-> >
->
-> yet again imx219 and imx319 do not check any of those
->
+> 
+>   2) The initiating context walks the per CPU space and after completion
+>      clears mm:mm_cid.transit. After that point the CIDs are strictly
+>      task owned again.
+> 
+> This two phase transition is required to prevent CID space exhaustion
+> during the transition as a direct transfer of ownership would fail if
+> two tasks are scheduled in on the same CPU before the fixup freed per
+> CPU CIDs.
 
-And we recently got an error on imx219 controls update that went
-unnoticed because of this and I'm now fixing 40+ drivers because this
-has been copied over and over. Want to make them 41 ?
+Clever. :-)
 
-> > > +   }
-> > > +
-> > > +   return 0;
-> > > +}
-> >
-> > ---
-> >
-> > > +static int imx111_identify_module(struct imx111 *sensor)
-> > > +{
-> > > +   struct device *dev = regmap_get_device(sensor->regmap);
-> > > +   u64 value, revision, manufacturer;
-> > > +   int ret;
-> > > +
-> > > +   ret = cci_read(sensor->regmap, IMX111_PRODUCT_ID, &value, NULL);
-> > > +   if (ret)
-> > > +         return ret;
-> > > +
-> > > +   if (value != IMX111_CHIP_ID) {
-> > > +         dev_err(dev, "chip id mismatch: %x!=%04llx", IMX111_CHIP_ID, value);
-> > > +         return -ENXIO;
-> > > +   }
-> > > +
-> > > +   cci_read(sensor->regmap, IMX111_REVISION, &revision, NULL);
-> > > +   cci_read(sensor->regmap, IMX111_MANUFACTURER_ID, &manufacturer, NULL);
-> >
-> > Instead of NULL, pass ret for the error code, and return ret at the end.
-> >
-> > > +
-> > > +   dev_dbg(dev, "module IMX%03llx rev. %llu manufacturer %llu\n",
-> > > +         value, revision, manufacturer);
-> > > +
-> > > +   return 0;
-> > > +}
-> > > +
-> > > +static int imx111_clk_init(struct imx111 *sensor)
-> > > +{
-> > > +   struct device *dev = regmap_get_device(sensor->regmap);
-> > > +   u32 ndata_lanes = sensor->bus_cfg.bus.mipi_csi2.num_data_lanes;
-> > > +   u64 extclk_rate, system_clk;
-> > > +   unsigned int i;
-> > > +
-> > > +   extclk_rate = clk_get_rate(sensor->extclk);
-> > > +   if (!extclk_rate)
-> > > +         return dev_err_probe(dev, -EINVAL, "EXTCLK rate unknown\n");
-> > > +
-> > > +   for (i = 0; i < ARRAY_SIZE(imx111_pll); i++) {
-> > > +         if (clk_get_rate(sensor->extclk) == imx111_pll[i].extclk_rate) {
-> > > +               sensor->pll = &imx111_pll[i];
-> > > +               break;
-> > > +         }
-> > > +   }
-> > > +   if (!sensor->pll)
-> > > +         return dev_err_probe(dev, -EINVAL, "Unsupported EXTCLK rate %llu\n", extclk_rate);
-> >
-> > Max line length should be 80 columns. This applies everywhere the line
-> > length exceeds 80 characters.
 
-In response to your reply in a separate email:
+> + * Switching to per CPU mode happens when the user count becomes greater
+> + * than the maximum number of CIDs, which is calculated by:
+> + *
+> + *	opt_cids = min(mm_cid::nr_cpus_allowed, mm_cid::users);
+> + *	max_cids = min(1.25 * opt_cids, num_possible_cpus());
+[...]
+> + * Switching back to task mode happens when the user count goes below the
+> + * threshold which was recorded on the per CPU mode switch:
+> + *
+> + *	pcpu_thrs = min(opt_cids - (opt_cids / 4), num_possible_cpus() / 2);
 
-https://www.kernel.org/doc/html/latest/driver-api/media/maintainer-entry-profile.html#coding-style-addendum
-Media development uses checkpatch.pl on strict mode to verify the code style, e.g.:
-$ ./scripts/checkpatch.pl --strict --max-line-length=80
+I notice that mm_update_cpus_allowed() calls __mm_update_max_cids() 
+before updating the pcpu_thrs threshold.
 
-I don't like being that strict too. Feel free to send a patch, you'll
-have my ack
+sched_mm_cid_{add,remove}_user() only invoke mm_update_max_cids(mm)
+without updating pcpu_thrs first.
 
-> >
-> > > +
-> > > +   system_clk = div_u64(extclk_rate, sensor->pll->pre_div) * sensor->pll->mult;
-> > > +
-> > > +   /*
-> > > +    * Pixel clock or Logic clock is used for internal image processing is
-> > > +    * generated by dividing into 1/10 or 1/8 frequency according to the
-> > > +    * word length of the CSI2 interface. This clock is designating the pixel
-> > > +    * rate and used as the base of integration time, frame rate etc.
-> > > +    */
-> > > +   sensor->pixel_clk_raw = system_clk * ndata_lanes;
-> > > +
-> > > +   /*
-> > > +    * The CSI-2 bus is clocked for 16-bit per pixel, transmitted in DDR over n lanes
-> > > +    * for RAW10 default format.
-> > > +    */
-> > > +   sensor->default_link_freq = div_u64(sensor->pixel_clk_raw * 8,
-> > > +                               2 * IMX111_DATA_DEPTH_RAW10);
-> > > +
-> > > +   if (sensor->bus_cfg.nr_of_link_frequencies != 1 ||
-> > > +       sensor->bus_cfg.link_frequencies[0] != sensor->default_link_freq)
-> > > +         return dev_err_probe(dev, -EINVAL,
-> > > +                          "Unsupported DT link-frequencies, expected %llu\n",
-> > > +                          sensor->default_link_freq);
-> > > +
-> > > +   return 0;
-> > > +}
-> >
-> > ---
-> >
-> > > +static const struct of_device_id imx111_of_match[] = {
-> > > +   { .compatible = "sony,imx111" },
-> > > +   { /* sentinel */ }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, imx111_of_match);
-> > > +
-> > > +static struct i2c_driver imx111_i2c_driver = {
-> > > +   .driver = {
-> > > +         .name = "imx111",
-> > > +         .of_match_table = imx111_of_match,
-> > > +         .pm = &imx111_pm_ops,
-> > > +   },
-> > > +   .probe = imx111_probe,
-> > > +   .remove = imx111_remove,
-> > > +};
-> > > +module_i2c_driver(imx111_i2c_driver);
-> > > +
-> > > +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
-> > > +MODULE_DESCRIPTION("Sony IMX111 CMOS Image Sensor driver");
-> > > +MODULE_LICENSE("GPL");
-> >
-> > Best Regards,
-> > Tarang
+Are those done on purpose ?
+
+Thanks,
+
+Mathieu
+
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
