@@ -1,155 +1,113 @@
-Return-Path: <linux-kernel+bounces-877669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11452C1EB69
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:15:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7199EC1EB78
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:15:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2D719C1844
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:15:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1D81188B90F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044113358A5;
-	Thu, 30 Oct 2025 07:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4A2336EFF;
+	Thu, 30 Oct 2025 07:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dESBZqrb"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZWhqEE0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5952EACE9
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3973358B6;
+	Thu, 30 Oct 2025 07:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761808473; cv=none; b=Tr6h4cZ5qGzhimQfCid9sXWn2B0YD5pdvF/GNlDkg1yHMqrVh/CIhjp0NJm8fdT1mRFEpO53LMIm5+pyOWhrtJO1ary8gbIWtooVCAQ4vzn28l5NlmDOruzsQj0WkEltOwerc2Sw98DLAMyxoOU2MdN8dLVfNRs+s1KJlLrKjFw=
+	t=1761808489; cv=none; b=cXoBLoTykOFK6tB64lg2YIPSKWeIty4Y9KGnc6xueuF4tOSzRmpPtuwjBsavpoo6KyIFbGj17Y45U6LVBY/T2RMAgEI4v/n+DXZ9wAwCnPlM2UY0KqWVnZzIcd+rgspeZLAlt1BLGvWfne4y9qLHxzNaJSAUMG2yjCxRJokJ864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761808473; c=relaxed/simple;
-	bh=XMlrJEWTdkAKXDcZVo3PSrnFRhI521tu4gKbZ0l7fQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQD7Zc7qEkKwg2bHyQuej1ul1QTOzWl297RanxkwbvHLsE2Yj5PTpFDstHPovBHddpsaebC2VIGQW5fZOHK0Ogp6b6AkgnsB+LiQTf07cSEcyULWFqX7cMihulfq2QS/UwmMUtNlD5sQfm9/rpsNGJ2YKy7cw3z/18dhalkgPXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dESBZqrb; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-426fc536b5dso420349f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761808470; x=1762413270; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aH6T32Cb7TYi8VumYlF/21u6CEuW0X6v+ipNrECbl3c=;
-        b=dESBZqrbJr9m7OWaPAwMJ95tYkFIOS+NwWaX9JNkA9HUJCHaX7GCOWGG5hXziKdzE2
-         1TAXx65D1LUwmIR0gu45LUHth75+7K9tCEErn+8KTRy12ryjSVruj64pcqKKyDv4UCes
-         Tuq5t6YZwU6DYZFXXKsfhnIrTqB/9Aity/Gelie/uB6OydNiugpotdXyxMmSs07XVsMI
-         YxUB8VGaD2Cc5eLrax3ZzKXs0iRncIkshZtw6FJWDv27YBB8SIgQZoBg7zH4XHWmpQtm
-         tfWvINqsrB2zEIDo/Ql0ABnGkOKTDnE5W8sGgfGj6t49J8t3M8Hd4mP6IKxKKPAgLIPR
-         KHfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761808470; x=1762413270;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aH6T32Cb7TYi8VumYlF/21u6CEuW0X6v+ipNrECbl3c=;
-        b=bdIe7WP3W/nvXxokvAIc9+8qFhB31QLEqv26MKrg5oXjkCiTW76IKN8VUvlhQAKEAY
-         BWeM0QAcruPQRVpTA7KgRL/0wSvJrqLT2FagkjH4muNvbNZN8o3hkSMfIaJnA6pWclSj
-         MzGMztoCHFFCeBWd2jOxIWYDlqEGYsJklF4PvVJaKv9QiTqpBOsdvV7Wkk2RxqZhJCa7
-         i2vzjMMN7fyqVwKpBxTYdnFY79MSGE2Ch4jBAiqxwoi2OfQlRa/hMuySM0r56oiUz6rw
-         AjQC0IMbHewapFdp+2tTbfpNjU9KDf/WL8dGG0S8g2y4+GaXmsrPDgtsFAnx0gIQrptx
-         Ex3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5dr9KnY9ADMx0AnGnJq0dgw2RbP2iko9XLV6u12e3FtVcUXTMND9Ei3VstDY75DV+pq8FKrlqhZ9nbXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhDd/f8kwlg/cwH7V/6bJnEIdJpBZB678kN4rW3U9ozeJ2hC2M
-	uqtZqG7+ImDbAleIeXcwtyRtqVu5Z7vxDPf4vYyjY1XV5XV3KzvqNxv9f7ZcJ6Z1sSI=
-X-Gm-Gg: ASbGncu8StBauI9OIberNyALTMPMeu6AfD9Ts7fcQGdIGLUKqSx0laQNjbdc7PuSadi
-	E6YFkBychzF0Xsoe2zzA7oGrDSZLIjpMxc9GCAbper5k2tpHmnjwf+2S1NqI1xU3hZHoyQVpSCl
-	X0DS7MLP5mj/Gbj1qyLFLIoJDIfXTkgJVESOlBpvuFzr3ulqwFsQrN68lg3JkB+PvBG6gGexI83
-	JQnb7joOSdC6UHR7x9ygVOnFIL1G4DCrcTSsH7usgp1UW7UKvy7EKrh4dlNyODj/+4xUPpcHQXw
-	O9sPiT1j+hgaUPln8QNQjTy+9euoTZGvgPA6nSTh1kLMbrDRSOA150SKOZHJ7XDcDdtGCRHzdWv
-	bYixpgcJtdzBzdmOgIqt5H4f+0VTXVGN0eSd3SM0DmJRB8HqG7FbDT9RDHzzfSlgaQtf4NK74po
-	6WAX5nbinErIkcPPL8WpRzQ10hSSaB+Rv4z2YDsZU=
-X-Google-Smtp-Source: AGHT+IHn7MtTON5++FHTniNKg/4xSWijqk1ryDdUxKxT7I/HueMz7ChV39hFowYXxw84gLxbWRyTuQ==
-X-Received: by 2002:a05:6000:43d6:10b0:429:b8e2:1064 with SMTP id ffacd0b85a97d-429b8e211e5mr534668f8f.47.1761808469621;
-        Thu, 30 Oct 2025 00:14:29 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0c414sm175434765ad.44.2025.10.30.00.14.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 00:14:29 -0700 (PDT)
-Message-ID: <c3512f2a-f995-4642-8eb9-a227890ba856@suse.com>
-Date: Thu, 30 Oct 2025 17:44:22 +1030
+	s=arc-20240116; t=1761808489; c=relaxed/simple;
+	bh=WD77tKmKY5w/O3RSmdbBKzMTfY9r3GWRp/ahnOefiNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlleM7MotzJnoQhweWMpiqz+iUWieh7H5O8z5IQZhJo+Arb6C4bXI/o/DxELkZC4KcyEhpg7xH0nNY9dmIlSNHCAg/uusDMgryifTsPdZcxgFstN7zWUIWDff7SkyHDcPVoGU26k613B3mPUtRVPaGxmhDob7dtCfm4bTqxvRhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZWhqEE0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E68FC4CEF1;
+	Thu, 30 Oct 2025 07:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761808487;
+	bh=WD77tKmKY5w/O3RSmdbBKzMTfY9r3GWRp/ahnOefiNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uZWhqEE0v7kucYmOBKf4QRFYMQNGZdv1nhvKJf6bTHAzDO/zoYGErGf3GJYri/+BL
+	 kdt5Ra0vTF49aIJ7jy1FsMYcIPPGfcXe7M2BM9xWUpVBnykxZAF68WOsLAC0OWJjKJ
+	 3M84yufh+vT+sPy1B3V6kM+/8PWmrgoPwhNcMxWESbkUCYdH04Ls1iqH42SE9XR+T6
+	 UeQyn7v+tL/i40hov1XsBgkNbq6xeEhbk2RIqWALUZjoNkprcX8RAssZS6LO6vA8pf
+	 uVqfcfUizMT7drZWB9oqZbCWm/0QR7erp0XfyPOCKgIoEydKj9mTwa0wP+7Y0UcnfH
+	 Kaf27Ts3m9jDA==
+Date: Thu, 30 Oct 2025 08:14:45 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, 
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+Subject: Re: [PATCH v4 0/6] media: qcom: camss: Add Kaanapali support
+Message-ID: <20251030-tody-of-strongest-wizardry-1f7c8e@kuoka>
+References: <20251028-add-support-for-camss-on-kaanapali-v4-0-7eb484c89585@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] xfs: fallback to buffered I/O for direct I/O when
- stable writes are required
-To: Christoph Hellwig <hch@lst.de>, Qu Wenruo <wqu@suse.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <20251029071537.1127397-1-hch@lst.de>
- <20251029071537.1127397-5-hch@lst.de>
- <20251029155306.GC3356773@frogsfrogsfrogs> <20251029163555.GB26985@lst.de>
- <8f384c85-e432-445e-afbf-0d9953584b05@suse.com>
- <20251030055851.GA12703@lst.de>
- <04db952d-2319-4ef9-8986-50e744b00b62@gmx.com>
- <20251030064917.GA13549@lst.de>
- <a44566d9-4fef-43cc-b53e-bd102724344a@suse.com>
- <20251030065504.GB13617@lst.de>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20251030065504.GB13617@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251028-add-support-for-camss-on-kaanapali-v4-0-7eb484c89585@oss.qualcomm.com>
 
-
-
-在 2025/10/30 17:25, Christoph Hellwig 写道:
-> On Thu, Oct 30, 2025 at 05:23:32PM +1030, Qu Wenruo wrote:
->>> So what is your application going to do if the open fails?
->>
->> If it can not accept buffered fallback, error out.
+On Tue, Oct 28, 2025 at 10:44:09PM -0700, Hangxiang Ma wrote:
+> Add support for the RDI only CAMSS camera driver on Kaanapali. Enabling
+> RDI path involves adding the support for a set of CSIPHY, CSID and TFE
+> modules, with each TFE having multiple RDI ports. This hardware
+> architecture requires 'qdss_debug_xo' clock for CAMNOC to be functional.
 > 
-> Why would it not be able to accept that?
+> Kaanapali camera sub system provides
 > 
+> - 3 x VFE, 5 RDI per VFE
+> - 2 x VFE Lite, 4 RDI per VFE Lite
+> - 3 x CSID
+> - 2 x CSID Lite
+> - 6 x CSI PHY
+> 
+> This series has been tested using the following commands with a
+> downstream driver for S5KJN5 sensor.
+> 
+> - media-ctl --reset
+> - media-ctl -V '"msm_csiphy2":0[fmt:SGBRG10/4096x3072]'
+> - media-ctl -V '"msm_csid0":0[fmt:SGBRG10/4096x3072]'
+> - media-ctl -V '"msm_vfe0_rdi0":0[fmt:SGBRG10/4096x3072]'
+> - media-ctl -l '"msm_csiphy2":1->"msm_csid0":0[1]'
+> - media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+> - yavta  --capture=20 -I -n 5 -f SGBRG10P -s 4096x3072 -F  /dev/video0
+> 
+> Dependencies:
+> - https://lore.kernel.org/all/20251014-use-marco-to-denote-image-buffer-number-v1-1-f782e4cc622d@oss.qualcomm.com/
+> - https://lore.kernel.org/all/20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com/
+> - https://lore.kernel.org/all/20251023-make-csiphy-status-macro-cross-platform-v1-1-5746446dfdc6@oss.qualcomm.com/
+> 
+> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+> ---
+> Changes in v4:
+> - Refactor kaanapali camss binding style and commit message - Krzysztof
 
-Because for whatever reasons, although the only reason I can come up 
-with is performance.
+Everything is refactor. That's so unspecific.
 
-I thought the old kernel principle is, providing the mechanism not the 
-policy.
-But the fallback-to-buffered looks more like a policy, and if that's the 
-case user space should be more suitable.
+For sure adding 8 more supplies is not refactor.
 
-Thanks,
-Qu
+Write complete changelogs.
+
+Best regards,
+Krzysztof
+
 
