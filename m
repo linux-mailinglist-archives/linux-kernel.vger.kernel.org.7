@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-877440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAD0C1E1E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D387CC1E1ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FEE21885A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0600A189A24F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BAF304BB7;
-	Thu, 30 Oct 2025 02:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE8A303C9A;
+	Thu, 30 Oct 2025 02:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXeivoYt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="FaTThvYE"
+Received: from sg-1-14.ptr.blmpb.com (sg-1-14.ptr.blmpb.com [118.26.132.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC232302CC9;
-	Thu, 30 Oct 2025 02:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398C617A2F6
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761790898; cv=none; b=PKIiM01Rc6YR5+wCBP/UpocdNEWSpMWA3SBE/iZdBuOzBuKoEC3hnSmgBIPE7W5HNVTbTv+eLOllJhZoHMc5o5gPASf27QW4ZKZCXytWa7HEBHoBFAaGYfdij906OcBPop4zxaFRTl8FUIK6AXorvv9HgglxyFBC7NqGvOtK2/A=
+	t=1761791061; cv=none; b=Tk1oxbvccgv8t7ob7OdUO71HhUeY2nsW7qpMtx1QOt6TxpYOEuFRu9v6mELZvFJCXp9Upci4f9tm9BJ0VL3tEEYdG9q+VzLfGL1rEeeFK+H2Nojq4SKcRCJ0DZorSEmzmLKxFRHcQgf0Lj/wblgoGwzVE0lDE57nM2MqbPsyXkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761790898; c=relaxed/simple;
-	bh=wa2sUdEchOAiuz3+hiAyB8Dv5L0tT3wnkmLfpm/KCOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FfU36ICQ64XMwN5NmeEPCiVwlyxMgZeYuRQqp9vQ5NyM1UIYY93/PlZmWBrxkw9T0bbi/TdBsCRkY9dIoxwrzBrrDDTvneOVFLc2q/SMblKvgPnmiBLQmval9nyhfSTmir+Li9nnD9ao5FRlQHF7nnglDoKrYbwzYyfglLgdRRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXeivoYt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51F5C4CEF7;
-	Thu, 30 Oct 2025 02:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761790897;
-	bh=wa2sUdEchOAiuz3+hiAyB8Dv5L0tT3wnkmLfpm/KCOU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DXeivoYtgN4428rHUo6UoD4UJNXMGRvMJi74zv3PZ/bpW+5bMi9eJxtx5nWE5vAor
-	 gwHFz6Y+ZPh+E0EuzS45oB+4hDkIr0rHKYiCfLXZ8/QISfzfkwn+peHlButTtty5nY
-	 3WRUIzWZ4t3TKNOy7l5x8bYFH//jQvoOyorXdZzspMRsofOTHLyf+klN/lKUjUkeuX
-	 0LpYvtQNsHRMPjLXwiKsyTE0tugT2rnwjCaoOi/Nx++zXYDsdWv8xsz0Mc+cLlIGgG
-	 KguuOrZ5iZ0+gl8i2qfynK/L/gxkys/8Aho3hapiDjMaIzmWh6JRW9Bs48AXiHR+Ov
-	 KkEF3rvz51Y4Q==
-Date: Wed, 29 Oct 2025 19:21:35 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dong Yibo <dong100@mucse.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, corbet@lwn.net, andrew+netdev@lunn.ch,
- danishanwar@ti.com, vadim.fedorenko@linux.dev, geert+renesas@glider.be,
- mpe@ellerman.id.au, lorenzo@kernel.org, lukas.bulwahn@redhat.com,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v16 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <20251029192135.0bada779@kernel.org>
-In-Reply-To: <20251027032905.94147-6-dong100@mucse.com>
-References: <20251027032905.94147-1-dong100@mucse.com>
-	<20251027032905.94147-6-dong100@mucse.com>
+	s=arc-20240116; t=1761791061; c=relaxed/simple;
+	bh=8T1NZtdERi3glLVs0OfkU5E5R9xt8iw3yd4AmOM7q+s=;
+	h=Mime-Version:Content-Type:Message-Id:Date:In-Reply-To:References:
+	 To:Cc:From:Subject; b=EoQt9BuKHFJs7D6y5ptoIgMmZnE+521XJ2B13V/H4QAHzIYt2hKj0lfJeLlcs9NtJYGjePVFNb3vRdcQ7d5bSYyW35cmT/7OMk5KD0Pxr4LKUXKy/uEeZFeEcDqodap0lZiJlinRLiPAbVpGHD9qL3wlyd0zbrrH+Z3jb2QVikM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=FaTThvYE; arc=none smtp.client-ip=118.26.132.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761791049;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=AEZ2trUioNfgZa8wwN5unpFskfe2YlsQ3FyT5CgCRG0=;
+ b=FaTThvYEXLNNDapjMQ2w3fiKds/NfbCKI1iFCm1rUYW0CmKtRJPREMCdp/krmLNs5FUfwn
+ a4kxDrcUBftcDAg6YbdVqpiiP6Bus4CWEy6mVTZfQIn6qc8mbZv1bwWZoNTSpyydiV6/dY
+ a1KqIwOB/76PjWXL/m75teMlNygX1HPDKdtgi848rn2k6/3a0vCfeyBEpziNAFGItffUkF
+ 7O1dxaE/sMhDBUUbK38rq+w/Lm9EP6BFQs3kRJWTrqGuF3YyRGfPb2qLxi0E1V3wrnNDGW
+ G23EBQzHkQTjQPSHs1bZz2cuF7MhKhurLar7KJXTXFWm8GMMVkbfINQXqvV1TQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Message-Id: <177e7ee6-69c7-4809-86bc-e0a4094a6672@fnnas.com>
+Date: Thu, 30 Oct 2025 10:24:05 +0800
+In-Reply-To: <20251027150433.18193-4-k@mgml.me>
+References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-4-k@mgml.me>
+To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
+	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>, 
+	"Guoqing Jiang" <jgq516@gmail.com>
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<yukuai@fnnas.com>
+From: "Yu Kuai" <yukuai@fnnas.com>
+Subject: Re: [PATCH v5 03/16] md: add pers->should_error() callback
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 10:24:07 +0800
+X-Lms-Return-Path: <lba+26902cc48+503080+vger.kernel.org+yukuai@fnnas.com>
+Reply-To: yukuai@fnnas.com
+Content-Transfer-Encoding: quoted-printable
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+User-Agent: Mozilla Thunderbird
 
-On Mon, 27 Oct 2025 11:29:05 +0800 Dong Yibo wrote:
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> index 37bd9278beaa..27fb080c0e37 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> @@ -6,6 +6,7 @@
->  
->  #include <linux/types.h>
->  #include <linux/mutex.h>
-> +#include <linux/netdevice.h>
+Hi,
 
-Why do you need to include netdevice.h here now?
-This patch doesn't add anything that'd need it to the header.
+=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
+> The failfast feature in RAID1 and RAID10 assumes that when md_error() is
+> called, the array remains functional because the last rdev neither fails
+> nor sets MD_BROKEN.
+>
+> However, the current implementation can cause the array to lose
+> its last in-sync device or be marked as MD_BROKEN, which breaks the
+> assumption and can lead to array failure.
+>
+> To address this issue, a new handler md_cond_error() will be introduced
+> to ensure that failfast I/O does not mark the array as broken.
+>
+> As preparation, this commit adds a helper pers->should_error() to determi=
+ne
+> from outside the personality whether an rdev can fail safely, which is
+> needed by md_cond_error().
+>
+> Signed-off-by: Kenta Akagi <k@mgml.me>
+> ---
+>   drivers/md/md.h | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index c982598cbf97..01c8182431d1 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -763,6 +763,7 @@ struct md_personality
+>   	 * if appropriate, and should abort recovery if needed
+>   	 */
+>   	void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev);
+> +	bool (*should_error)(struct mddev *mddev, struct md_rdev *rdev, struct =
+bio *bio);
 
->  enum rnpgbe_boards {
->  	board_n500,
-> @@ -26,18 +27,38 @@ struct mucse_mbx_info {
->  	u32 fwpf_ctrl_base;
->  };
->  
-> +/* Enum for firmware notification modes,
-> + * more modes (e.g., portup, link_report) will be added in future
-> + **/
-> +enum {
-> +	mucse_fw_powerup,
-> +};
+I think the name is not quite accurate, perhaps error_handler_check()?
 
-> +	err = rnpgbe_get_permanent_mac(hw);
-> +	if (err == -EINVAL) {
-> +		dev_warn(&pdev->dev, "Using random MAC\n");
-> +		eth_random_addr(hw->perm_addr);
-> +	} else if (err) {
-> +		dev_err(&pdev->dev, "get perm_addr failed %d\n", err);
-> +		goto err_powerdown;
-> +	}
-> +
-> +	eth_hw_addr_set(netdev, hw->perm_addr);
+Thanks,
+Kuai
 
-This is wrong, you may have gotten random address. This will make it
-look like a real permanent address. Should be:
-
-	err = rnpgbe_get_permanent_mac(hw);
-	if (!err) {
-		eth_hw_addr_set(netdev, hw->perm_addr);
-	} else if (err == -EINVAL) {
-		dev_warn(&pdev->dev, "Using random MAC\n");
-		eth_hw_addr_random(netdev);
-		ether_addr_copy(hw->perm_addr, dev->dev_addr);
-	} else if (err) {
-		dev_err(&pdev->dev, "get perm_addr failed %d\n", err);
-		goto err_powerdown;
-	}
+>   	int (*hot_add_disk) (struct mddev *mddev, struct md_rdev *rdev);
+>   	int (*hot_remove_disk) (struct mddev *mddev, struct md_rdev *rdev);
+>   	int (*spare_active) (struct mddev *mddev);
 
