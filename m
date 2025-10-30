@@ -1,172 +1,105 @@
-Return-Path: <linux-kernel+bounces-878722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6D0C21565
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:59:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89185C21547
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E553A4225
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C296F189BB35
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F867191F84;
-	Thu, 30 Oct 2025 16:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CF12FA0F2;
+	Thu, 30 Oct 2025 16:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0l/4Twk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="nEvFbdoz"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4B12F0688
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2AF2EBB81;
+	Thu, 30 Oct 2025 16:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843244; cv=none; b=LAIUUL09shfQgxYSwk7K9cCycyish37i0MxFdG7zsBLd1k32ABZuqVgHHERY9y7Dkytq9D+adBFZq7W3hdX1f60nCN8gVxzd9C4UdAA4BMFeq376+1vPdIEkmukTPi/pNPDfCTIQmps1NmWWZPnC9uTfxYaa5LwuG0wrg1cHUPY=
+	t=1761843261; cv=none; b=uC2/zTTJaJFGLVhPOkxHJIGARvlMQcmiMXsVhZFJ02jW2NaT0bXxEJ102UlJDdHLUl3+rC9NDZI5TvWGrUQNJKFotjoLQ2jF13X69xedCpDgp2+RGJEL57R/Gmyos2/IYU7TctkWS++e6wwyvhL5MSQbsB2bwd6mT/YN7O7hPJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843244; c=relaxed/simple;
-	bh=nhQWtm1oUaMK7I82idlzIVZuW8HPtEQdMdDI/3KSAK8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Z/GvS+36h1etVMEuK4m4tnX2ad9ePmqvoTBnf2IMemAQSoMAN55kjPHhO1WZ+Y0BVIuY/WHo4aomzj7p5lzhqqer4hDc8z/Zwb86ftjjssY6RrUio8tgmNRXsJbB4TyHmvjE0VJTfUwwZS5c5gsJljA33qQuh19aT810e2zak0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0l/4Twk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A11C4AF0B;
-	Thu, 30 Oct 2025 16:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761843244;
-	bh=nhQWtm1oUaMK7I82idlzIVZuW8HPtEQdMdDI/3KSAK8=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=I0l/4Twko5Sn4/u3mTViJ7/iR5bpZay1IHkqMwY7uz34hHWA2vXSvevDOjPjq48zz
-	 xm0nVMERM7Kiwi6Zr7vMO72bFGJKWZ3OyZEQnG4vmgdDv646g/wQGkPfd4rOejtyUb
-	 V7g4Ek9BRW+Cd/Lj5894g8Z1GSSb6lTsv3C79bxzwZrVD2181oJjheZBu+IGYQbkKc
-	 jddsLGoqlaIWLqFDFu3ks2WiEO/LV932oR6jPfm65Tn0fUPLdCZYU4cqTEdoNQLgwZ
-	 /jROoG1iH36As58X6Mel4VgEGJ7H9DZ8KxIv4FJ7KatzMHE2h/Cb7te87WauiF3Rrx
-	 no0WyV29QjImw==
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 74BE4F4006A;
-	Thu, 30 Oct 2025 12:54:02 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-01.internal (MEProxy); Thu, 30 Oct 2025 12:54:02 -0400
-X-ME-Sender: <xms:KpgDabihH0z186GuRo5ElIwGqsL1AkENgyGBc45lWedVSbmQV9cEDQ>
-    <xme:KpgDaS3_8VUEy6vzItNtpTGgYQqiKiRjVXAcHPpKW-4Z7gq0CKrLE33bZIi42E3mK
-    PDTxqpOO-xMirXMb123NOo1Eq3VcAa1PAUhFawfluIsE2D1fSX1I50>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejudegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehnugih
-    ucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhephffgieeuueevvddvffehiedtteduveejtefhuedtteehfffgieehhfeg
-    ffehvddvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqdhluhhtoh
-    eppehkvghrnhgvlhdrohhrgheslhhinhhugidrlhhuthhordhushdpnhgspghrtghpthht
-    ohepvdeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrd
-    guvgdprhgtphhtthhopegufihmfiesrghmrgiiohhnrdgtohdruhhkpdhrtghpthhtohep
-    rghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopehsvg
-    grnhhjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgr
-    uggvrggurdhorhhgpdhrtghpthhtoheprhguuhhnlhgrphesihhnfhhrrgguvggrugdroh
-    hrghdprhgtphhtthhopehrihgtkhdrphdrvggughgvtghomhgsvgesihhnthgvlhdrtgho
-    mhdprhgtphhtthhopehsohhhihhlrdhmvghhthgrsehinhhtvghlrdgtohhmpdhrtghpth
-    htohepthhonhihrdhluhgtkhesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:KpgDabzAziOmhgRrFLgWkaXa5RPVXdbZYbqVhZR7t2qXePjlguFMsg>
-    <xmx:KpgDabqQxR_pHoj11bszIoQ-WFG-hkBTr6YSZ9l1lUAy0f-Cda-QiA>
-    <xmx:KpgDaXgTYunVTmHerTP5zONR0NwWyB67HCRp64ldaQm-jBgGDwmCMw>
-    <xmx:KpgDadVLPnDRTp0FaUOflwcgpzri0RLfHmAhZaHfJGiyaKvkp1trrQ>
-    <xmx:KpgDafEQ1aro8EzL-qYNN7N4GXvQpUYyl6R-V2tHwmgTwRRGePglIHsP>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 39A9E700063; Thu, 30 Oct 2025 12:54:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761843261; c=relaxed/simple;
+	bh=IAa3g1dCS+JQYUlzG8wtI5nxRXw7u3GnYsaf9pUaHBM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lQcjR7bYlXQhT/ms8jyIQDYqX7zPuwIs+bn6rAFMJFnU8VQlEGmCWNVdTnpB/hI/553z7AAwIwR2E6BXP+n4DEGC6Ov3/NIX30MX3Ay5+1HjmgvYLKL2ibVvcB/c7ukT1vKVENkSHqkBzEN3VN+i6c5c0AZOlcZjlnKK51vuOzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=nEvFbdoz; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 292EC40AED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1761843258; bh=3TQG9ZKbIk35Xrzl9XV4HOWfqcpUjDw8Xyqu2bLMh4U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nEvFbdozJpVyAQL6v2ZT51qOqIZi8IK5a1GHA/z/BGchX/M4GUc123Hl1br/IVFW2
+	 NBO94ZvLjWbFn6WfWNGTdhmsz47H6uI90RLblBoGamVo+RlGsd/Cq2xy3mHe6oVSBq
+	 h9Dwn1slnVVL9Q6tebNC2cNTLSKdCZGUo+9M/H1sViCphOQYsa3KHi3vZ0VDxTIQYF
+	 FQQLcPzT1GrkT+1WNCLB/0iXLHCaPaWduS+wTjUArymkSi3Nj7ID77UKeU3DYoPyhe
+	 rWaH48VdpTHnFi8oX+9bpFV8spm11PsEdTfKepNWArFnYxM3UKEel8APFgTmH4y8xJ
+	 hSFzjfwu/v3wg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 292EC40AED;
+	Thu, 30 Oct 2025 16:54:18 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Jacob Keller <jacob.e.keller@intel.com>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH] docs: kdoc: fix duplicate section warning message
+In-Reply-To: <20251029-jk-fix-kernel-doc-duplicate-return-warning-v1-1-28ed58bec304@intel.com>
+References: <20251029-jk-fix-kernel-doc-duplicate-return-warning-v1-1-28ed58bec304@intel.com>
+Date: Thu, 30 Oct 2025 10:54:17 -0600
+Message-ID: <87frb0miti.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AuvVN0AAjWd7
-Date: Thu, 30 Oct 2025 09:53:41 -0700
-From: "Andy Lutomirski" <luto@kernel.org>
-To: "Sohil Mehta" <sohil.mehta@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "the arch/x86 maintainers" <x86@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>
-Cc: "Jonathan Corbet" <corbet@lwn.net>,
- "Josh Poimboeuf" <jpoimboe@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- "Ard Biesheuvel" <ardb@kernel.org>, "Kirill A . Shutemov" <kas@kernel.org>,
- "Xin Li" <xin@zytor.com>, "David Woodhouse" <dwmw@amazon.co.uk>,
- "Sean Christopherson" <seanjc@google.com>,
- "Rick P Edgecombe" <rick.p.edgecombe@intel.com>,
- "Vegard Nossum" <vegard.nossum@oracle.com>,
- "Andrew Cooper" <andrew.cooper3@citrix.com>,
- "Randy Dunlap" <rdunlap@infradead.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, "Kees Cook" <kees@kernel.org>,
- "Tony Luck" <tony.luck@intel.com>,
- "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
- linux-doc@vger.kernel.org,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-efi@vger.kernel.org
-Message-Id: <ed1a6e12-68cb-4103-946a-761260d18eab@app.fastmail.com>
-In-Reply-To: <d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-10-sohil.mehta@intel.com>
- <789ADBB5-F7AC-4B08-B343-F23260FB8FBC@zytor.com>
- <13681100-ddc3-4ef0-bd13-744282324ff1@app.fastmail.com>
- <d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com>
-Subject: Re: [PATCH v11 9/9] x86/cpu: Enable LASS by default during CPU initialization
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
+Jacob Keller <jacob.e.keller@intel.com> writes:
 
+> The python version of the kernel-doc parser emits some strange warnings
+> with just a line number in certain cases:
+>
+> $ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
+> Warning: 174
+> Warning: 184
+> Warning: 190
+> Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
+> Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
+> Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
+> Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
+>
+> I eventually tracked this down to the lone call of emit_msg() in the
+> KernelEntry class, which looks like:
+>
+>   self.emit_msg(self.new_start_line, f"duplicate section name '{name}'\n")
+>
+> This looks like all the other emit_msg calls. Unfortunately, the definition
+> within the KernelEntry class takes only a message parameter and not a line
+> number. The intended message is passed as the warning!
+>
+> Pass the filename to the KernelEntry class, and use this to build the log
+> message in the same way as the KernelDoc class does.
 
-On Thu, Oct 30, 2025, at 9:44 AM, Sohil Mehta wrote:
-> On 10/30/2025 8:45 AM, Andy Lutomirski wrote:
->> On Thu, Oct 30, 2025, at 1:40 AM, H. Peter Anvin wrote:
->>> Legacy vsyscalls have been obsolete for how long now?
->>=20
->> A looooong time.
->>=20
->> I would suggest defaulting LASS to on and *maybe* decoding just enoug=
-h to log, once per boot, that a legacy vsyscall may have been attempted.=
- It=E2=80=99s too bad that #GP doesn=E2=80=99t report the faulting addre=
-ss.
->>=20
->
-> Unfortunately, CONFIG_X86_VSYSCALL_EMULATION defaults to y. Also, the
-> default Vsyscall mode is XONLY. So even if vsyscalls are deprecated,
-> there is a non-zero possibility someone would complain about it.
->
-> My primary goal here is to get the base LASS series merged (soonish)
-> with the simplest possible option.
->
-> I am planning to follow-up immediately with a vsyscall specific series
-> that relaxes *most* restrictions.
->
-> IIUC, supporting XONLY mode with LASS probably does not need complicat=
-ed
-> decoding because the vsyscall address is available in the faulting RIP.
->
-> The spec says:
-> "LASS for instruction fetches applies when the linear address in RIP is
-> used to load an instruction from memory. Unlike canonicality checking
-> (see Section 4.5.2), LASS does not apply to branch instructions that
-> load RIP. A branch instruction can load RIP with an address that would
-> violate LASS. Only when the address is used to fetch an instruction wi=
-ll
-> a LASS violation occur, generating a #GP. (The return instruction
-> pointer of the #GP handler is the address that incurred the LASS
-> violation.)"
->
-> I attempted to do that in the last revision here:
-> https://lore.kernel.org/lkml/20251007065119.148605-9-sohil.mehta@intel=
-.com/
-> https://lore.kernel.org/lkml/20251007065119.148605-11-sohil.mehta@inte=
-l.com/
->
-> On the other hand, supporting EMULATE mode during a #GP is a bit trick=
-y,
-> which isn't worth the effort.
+So I would like to thrash the logging more thoroughly in a number of
+ways.  Having separate log() and warn() functions would be a good start.
 
-I would say it's definitely worth the effort, but it probably does make =
-sense to get the rest of the series in a mergeable condition such that i=
-t only works with vsyscall=3Dnone.
+Failing that, though, this looks to me like a reasonable fix.
+
+However: it doesn't apply to docs-next.  I can try to make a version
+that does in the next day or three, but if you could respin it against
+the current docs, that would be great...?
+
+Thanks,
+
+jon
 
