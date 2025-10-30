@@ -1,198 +1,183 @@
-Return-Path: <linux-kernel+bounces-877460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5814BC1E2A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:50:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D12EC1E2AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37881401409
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:50:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2783B34B0E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BE532C93D;
-	Thu, 30 Oct 2025 02:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDmSfMcI"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA6132C93B;
+	Thu, 30 Oct 2025 02:54:40 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062E9264F96
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C1F2BDC14;
+	Thu, 30 Oct 2025 02:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761792628; cv=none; b=R17qBrxdLhvWhPQgBI44lBJi1K+LK77adodWQBnXncJfc2k2X5oYJj0L1WxcdChb2haIn6cfB/5VJbFgzCzF+kP3fKkN4WaUNwtnfP6LGgo8nPL7SY3JSITcTlrlUGV5odtXmheX9ZfHvNLTE+R/ueYa8Kc5sAcMlTZ/2evyKbI=
+	t=1761792880; cv=none; b=NKmNrrhdqvDlv5xo6qlvZISoTmBCpkBiqFlGGMlK9nkaM9hBChhwq/J8/N8msZmTr/22ZXoH4GT1HXCxS2aE2YFtA1JsMpkOsBEdXnveAfAtjthpKTO+czXGSJqdTEQVGr2/seIYIus5afCFd/Qa6exbFKLaPVyZp4KZLMogHbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761792628; c=relaxed/simple;
-	bh=ULHZ+cHHaL+5iHaOLJNUHVNaWClPu5YSGCKCYmnu47w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hOwiknjwKBICzlClvE8tOv2jvtV8Ov2mv/jcbj7kjbpYNrXMSMrb8dsQWKOr5ixX2k7VRZP2m3KJZkIJwVLSYvWwlxNxiSaxtpFJ+vgcYXSDhkGg0DY8cxsME3iFGpTe7g64Ry+GYyEHF61H76VZgRXVLSg543gzGMSWSkv8SYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDmSfMcI; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6014810fso7068767b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761792626; x=1762397426; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=49j9QrYlm4qxZHbvYSYUJsJt0aMp426fig3D6hH+fj0=;
-        b=EDmSfMcI1I0RB3mL+KS6FaXru/zT9nI9bPxO8dUeZOTkNh1MHBjO2te+pUa1T5EvS5
-         qry+N/5WTv4eEOU1wnMMKUhY8q4s2qAmXvx8Ml6vnU7xPor/nTbGKb5nOYe0+zJLjeK+
-         v9o5XfgB0JvmGyX6Hsoffmb2SltZdvxrWZRvPmtyG9pEykkVFDWfQBGDg5v/npxL6k95
-         nnvnVhJJhmj1Ubc+413h7hLwA9k76z79lESUR/rcuT3f7r5wezXpGfQ2sERYgATbEbTu
-         U5yeIM+COkMA2QFti8fvSHF14E4JA9KrIt1tvxD4hHsqpJCKsxKam91NO/s3kVx47u36
-         LzrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761792626; x=1762397426;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=49j9QrYlm4qxZHbvYSYUJsJt0aMp426fig3D6hH+fj0=;
-        b=LriezlXCyI3uyaMCS1ITuEd8rZ8aRlaY+dRbh38TB8Gy/cakskN3vxlMHC/ql0m49T
-         Qw9+rb+d/Rk5EgubcYiNdl8DruV9thwsJ87N46BvctD54OmdePPoKnjSD6UCqZH2f4u4
-         /l5naB4/EKZs/pZLbpSPCXVPATwmRs6CcJ8EwnY38jMAUXf4BnfpJVnBIIzK4+sdtAlv
-         efQYYmasz2QgZG/bn7oKt5NBwmx/nJCoOnIhNoUUUL4SEIOj8vESFm3NQEV2qtneW1Eq
-         5tjuCTEiCHFTnIOL+YNguUoJP4ILHlPSiwQbk9eq65mTLaAGm87G0Z4fcLbwHg9HP57R
-         ZnSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGfi5dpFZ9Mp7+Qy/U7HSt1+7+aw8cjtt3rg0eYNiOHa2PVnxLYQ6ZqEnHRoHDs3jmBfnEWm3fqm76/PQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp4X/esuzV/eQ27mVb44HgnDvolgl0wuAMe38FdoUdkOw2+0RM
-	j45qX7ExWx7iqnpfKcu0wTxj39dZXhBfDwkg3bK/Stgv67XPSnUjwv++ZT8rhpO53tkG6Pq74Mx
-	4ywaIEGWGZv1txP0KKaIRnZliBypRBBg=
-X-Gm-Gg: ASbGnctQiMKYpq8VNsD9vO/1U/JErYFqwzlntqYv+ZqzP/ty3aN3ZBiWhKGATqqjdIc
-	stdo8T2dYMng0j/hR3BBeQ646biDsjQ6KeeU6/jm7iIYSQ8J67ZbUlMxalUUZnVfPlKKg7hjRL7
-	YoF4GSTnRDdt9zqEGYtkRi1MovqjZb5geGGMGz37JjL7JLLF4k78yff0FZbtqRT+elC9CmLxKA+
-	f9jvtQO/G35JWukSKPnGATykb/n5lZYeeCSJoaSZPwMoQHQd/eOaLCWTCxyOnaML6XxWw==
-X-Google-Smtp-Source: AGHT+IHyoJ9K1Vnf2DZwS2Kk6JM2P4IoAuduJ5ZhKYBvP2Erk/Knw6rAfD9/QlPYp3ts6NwBBaU6zsVdEYEe2Nqfv+s=
-X-Received: by 2002:a05:690c:22c2:b0:784:8a26:b74 with SMTP id
- 00721157ae682-78628cf728dmr50871897b3.0.1761792625956; Wed, 29 Oct 2025
- 19:50:25 -0700 (PDT)
+	s=arc-20240116; t=1761792880; c=relaxed/simple;
+	bh=2nou3+sYzr5FFBks/6IKQLsdlovVhPpCAxuxUPstnEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HfUsobp92diKwx8Yu0zfyhR6vfbTdGYWUGHCe4kVn201wiL7Bm2hLOambB5YYc4VqHWnpc0m+xC+ASufNJUyPUHxBPWl4mBywUZE1zIr57b/8NZjXu8zqipCkT8eceGIz1dP/ZRmkRHC02MV4FOMpDcEkauAvfqKFpu1dhZV+ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowACHqVhh0wJpy4RVBg--.33188S2;
+	Thu, 30 Oct 2025 10:54:27 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Markus.Elfring@web.de
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH v2] leds: netxbig: fix GPIO descriptor leak in error paths
+Date: Thu, 30 Oct 2025 10:53:12 +0800
+Message-ID: <20251030025312.1623-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
+In-Reply-To: <20251028082117.276-1-vulab@iscas.ac.cn>
+References: <20251028082117.276-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029071435.88-1-kernel@airkyi.com> <20251029071435.88-11-kernel@airkyi.com>
- <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
- <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com> <e0c5bda3-7428-49e0-9955-fa23f1e4f35d@rock-chips.com>
- <CAL411-oXfvp-iqN+uRmFHijdmW=1omKwozKOoZ2shxukMHmwPg@mail.gmail.com> <C6253E8254C80B0F+839b71d0-1bd8-40b7-9515-7ce4a1eb8673@airkyi.com>
-In-Reply-To: <C6253E8254C80B0F+839b71d0-1bd8-40b7-9515-7ce4a1eb8673@airkyi.com>
-From: Peter Chen <hzpeterchen@gmail.com>
-Date: Thu, 30 Oct 2025 10:50:15 +0800
-X-Gm-Features: AWmQ_bl1mNxPmQHnKmASAzhusTRjlDlCn6q9Kp_CyHmpybtPIUgHFck3iJTK_U4
-Message-ID: <CAL411-pULVu4AYybW9oW7kmr4M_kJhdytgBjLPb4y6w_2dj+0w@mail.gmail.com>
-Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
- support for DisplayPort
-To: Chaoyi Chen <kernel@airkyi.com>
-Cc: Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>, 
-	Andy Yan <andy.yan@rock-chips.com>, Yubing Zhang <yubing.zhang@rock-chips.com>, 
-	Frank Wang <frank.wang@rock-chips.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>, 
-	Diederik de Haas <didi.debian@cknow.org>, Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHqVhh0wJpy4RVBg--.33188S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur13Cr13GrWxtw17tr1fZwb_yoW5ZFyxpr
+	W8A3ZYkFy5GFyxJr4jqF4kAFyfuw4ktr4xGa1xKas09F1Iqr1rXa4rJF45Z3WDKrykJrWY
+	qF4rWay7uF4DC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+	Yx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUSNt
+	xUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgsLA2kC0GAMlQAAsH
 
-> > Okay.  My question is basic: USB2 PHY supplies DP/DM, and the DP/DM is
-> > short for Type-C connector,
-> > and no control is needed for Type-C application.
-> > Why is there a remote-endpoint connection between USB2 PHY and Type-C connector?
->
->  From the perspective of Type-C, this should not be added.  Is the approach in v2 correct [0] ?
->
+The function netxbig_gpio_ext_get() acquires GPIO descriptors but
+fails to release them when errors occur mid-way through initialization.
+The cleanup callback registered by devm_add_action_or_reset() only
+runs on success, leaving acquired GPIOs leaked on error paths.
 
-Have you tried debugging based on upstream code?
-v2 is correct, but the dts needs to improve.
-- There is a remote-endpoint connection for USB role switch between
-Type-C connector
-device and USB controller device
-- There is a remote-endpoint connection for orientation and lane configuration
-between Type-C connector device and USB/DP PHY device.
+Add goto-based error handling to release all acquired GPIOs before
+returning errors.
 
-Peter
+Fixes: 9af512e81964 ("leds: netxbig: Convert to use GPIO descriptors")
+Suggested-by: Markus Elfring <Markus.Elfring@web.de>
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 
-> [0]: https://lore.kernel.org/all/20250715112456.101-6-kernel@airkyi.com/
->
-> Or is the following approach correct?
->
->
-> port@0 {
->      reg = <0>;
->
->      usbc_hs: endpoint {
->          remote-endpoint = <&tcphy0>;
->      };
-> };
->
-> port@1 {
->      reg = <1>;
->
->      usbc_ss: endpoint {
->          remote-endpoint = <&tcphy0>;
->      };
-> };
->
-> port@2 {
->      reg = <2>;
->
->      usbc_dp: endpoint {
->          remote-endpoint = <&tcphy0_typec_dp>;
->      };
-> };
->
->
-> >
-> >>>>> +                               port@1 {
-> >>>>> +                                       reg = <1>;
-> >>>>> +
-> >>>>> +                                       usbc_ss: endpoint {
-> >>>>> + remote-endpoint = <&tcphy0_typec_ss>;
-> >>>>> +                                       };
-> >>>>> +                               };
-> >>>>> +
-> >>>>> +                               port@2 {
-> >>>>> +                                       reg = <2>;
-> >>>>> +
-> >>>>> +                                       usbc_dp: endpoint {
-> >>>>> + remote-endpoint = <&tcphy0_typec_dp>;
-> >>>>> +                                       };
-> >>>>> +                               };
-> >>>>> +                       };
-> >>>>> +               };
-> >>>>> +       };
-> >>>>> +};
-> >>>>> +
-> >>>> .....
-> >>>>>    &u2phy0 {
-> >>>>>           status = "okay";
-> >>>>> +
-> >>>>> +       port {
-> >>>>> +               u2phy0_typec_hs: endpoint {
-> >>>>> +                       remote-endpoint = <&usbc_hs>;
-> >>>>> +               };
-> >>>>> +       };
-> >>>>>    };
-> >>>>>
-> >>>> There is no switch and mux, how to co-work with Type-C?
-> >>> I checked the phy-rockchip-inno-usb2.c but did not find any switch or mux. Does this mean that we need to implement them? Thank you.
-> >> Wait a minute, actually we have multiple hardware interfaces, one of which is Type-C, eventually connected to USBDPPHY, and the other is micro-usb connected to U2PHY.
-> > I assume the Micro-USB connector does not use Type-C/PD IC, is it
-> > right? Does it relate to this patch?
-> >
-> > Best regards,
-> > Peter
-> >
->
+---
+Changes in v2:
+- Consolidate PTR_ERR(gpiod) extraction into err_gpiod_put label
+  (suggested by Markus Elfring)
+---
+ drivers/leds/leds-netxbig.c | 40 +++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index e95287416ef8..55afb03ee933 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -364,6 +364,9 @@ static int netxbig_gpio_ext_get(struct device *dev,
+ 	if (!addr)
+ 		return -ENOMEM;
+ 
++	gpio_ext->addr = addr;
++	gpio_ext->num_addr = 0;
++
+ 	/*
+ 	 * We cannot use devm_ managed resources with these GPIO descriptors
+ 	 * since they are associated with the "GPIO extension device" which
+@@ -374,46 +377,61 @@ static int netxbig_gpio_ext_get(struct device *dev,
+ 	for (i = 0; i < num_addr; i++) {
+ 		gpiod = gpiod_get_index(gpio_ext_dev, "addr", i,
+ 					GPIOD_OUT_LOW);
+-		if (IS_ERR(gpiod))
+-			return PTR_ERR(gpiod);
++		if (IS_ERR(gpiod)) {
++			ret = PTR_ERR(gpiod);
++			goto err_free_addr;
++		}
+ 		gpiod_set_consumer_name(gpiod, "GPIO extension addr");
+ 		addr[i] = gpiod;
++		gpio_ext->num_addr++;
+ 	}
+-	gpio_ext->addr = addr;
+-	gpio_ext->num_addr = num_addr;
+ 
+ 	ret = gpiod_count(gpio_ext_dev, "data");
+ 	if (ret < 0) {
+ 		dev_err(dev,
+ 			"Failed to count GPIOs in DT property data-gpios\n");
+-		return ret;
++		goto err_free_addr;
+ 	}
+ 	num_data = ret;
+ 	data = devm_kcalloc(dev, num_data, sizeof(*data), GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
++	if (!data) {
++		ret = -ENOMEM;
++		goto err_free_addr;
++	}
++
++	gpio_ext->data = data;
++	gpio_ext->num_data = 0;
+ 
+ 	for (i = 0; i < num_data; i++) {
+ 		gpiod = gpiod_get_index(gpio_ext_dev, "data", i,
+ 					GPIOD_OUT_LOW);
+ 		if (IS_ERR(gpiod))
+-			return PTR_ERR(gpiod);
++			goto err_gpiod_put;
+ 		gpiod_set_consumer_name(gpiod, "GPIO extension data");
+ 		data[i] = gpiod;
++		gpio_ext->num_data++;
+ 	}
+-	gpio_ext->data = data;
+-	gpio_ext->num_data = num_data;
+ 
+ 	gpiod = gpiod_get(gpio_ext_dev, "enable", GPIOD_OUT_LOW);
+ 	if (IS_ERR(gpiod)) {
+ 		dev_err(dev,
+ 			"Failed to get GPIO from DT property enable-gpio\n");
+-		return PTR_ERR(gpiod);
++		goto err_gpiod_put;
+ 	}
+ 	gpiod_set_consumer_name(gpiod, "GPIO extension enable");
+ 	gpio_ext->enable = gpiod;
+ 
+ 	return devm_add_action_or_reset(dev, netxbig_gpio_ext_remove, gpio_ext);
++
++err_gpiod_put:
++	ret = PTR_ERR(gpiod);
++err_free_data:
++	for (i = 0; i < gpio_ext->num_data; i++)
++		gpiod_put(gpio_ext->data[i]);
++err_free_addr:
++	for (i = 0; i < gpio_ext->num_addr; i++)
++		gpiod_put(gpio_ext->addr[i]);
++	return ret;
+ }
+ 
+ static int netxbig_leds_get_of_pdata(struct device *dev,
+-- 
+2.50.1.windows.1
+
 
