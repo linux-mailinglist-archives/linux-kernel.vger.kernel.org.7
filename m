@@ -1,198 +1,107 @@
-Return-Path: <linux-kernel+bounces-878932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D28C21CB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:35:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DC9C21CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3808B40393C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948A7189168A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6191E363B8D;
-	Thu, 30 Oct 2025 18:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18E936C247;
+	Thu, 30 Oct 2025 18:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sy1FACyx"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jhj+rZRc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429B92765C0
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF1437A3C8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761849344; cv=none; b=b41Nqe/nSP7t+lDRhlgCZ+eGXKClwFSPzvS/Rsc5RvWD42f3hfPPuzc0h1js4IlwDxa76rGu4zA6mfdkvXDT4CG6gnxnZ9i2DejHat5REoTCadxJcbM72/ei39bQqse7XUBDkhWngZ+tTmbBYRvnD10yUr2+29yeiBSuPZklRdo=
+	t=1761849730; cv=none; b=bpMO8yHO0NJLEEpJKIqoOk76R1JCQG4bYX2FjarFCd59l7DjPujnclHLqKVvw6nfJA0yl1rNvzvEErxVQv8IlIub7rU7icNs1D9SCS6fdTImWt9mNXzmgXIRu1kSoWnP3eauuMp+sQdsGz+J9gS1Dp7qgdLT/SDiQ/zypKE1wLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761849344; c=relaxed/simple;
-	bh=1qrajjhp13xpL0CoKzAUqraUrYqycPIA/OdWCWoGiJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q4StjCQGyfSyY63zektoRLaCAGR9IVEVWAVIBae9MLMBxA49gpm89JUT1s3low185+zgerDZgOzsLFsiAR9teFNRufFtAJ5WRp9km2yoeW1jrvC7rtsukJa5l5FyXkZrDZvSZp8VQjLf99G6vOOy+o2R8Wu6pG3TH98L3/Uaoa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sy1FACyx; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27d3540a43fso16340495ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:35:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761849342; x=1762454142; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8xsKuisRukEib8wrs+zMZBJKZQ/YPyJdbnfQcP0zKw=;
-        b=Sy1FACyx7IR6XOKvcyUd1xJguKlRdeLYyW1H8lCy7jm32EGIzCitC3kfyT7RZxtI+Z
-         H4roGIzbT1hWmCLGr5v+epzE8w6XnKGeWKPhixLH+C3FvrEMfaE+fwf8lFapNE3BRlGo
-         zIzFdkT3fGmDfkNV2lXSS+JAIFHHXS3F+Mbs+x7DA36qcA/YcGw2rR6Gynw9mcOitdHX
-         FtHBkQtv5CtvOHzpxE8NBaEndPLdKrNScuXOCFEYjXMTwKZtfPNyrRqObONx0KnouWQf
-         DEvDYp8u4tuzSO3KVEma9D/djEM4fjj5oyjWkuetYlv0S+26OEpZcYdP/RTuAucVUF0G
-         9KVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761849342; x=1762454142;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R8xsKuisRukEib8wrs+zMZBJKZQ/YPyJdbnfQcP0zKw=;
-        b=XkaQNy6ALQJi2osb1ammwfFQWmqcJnUOtz8cgm5v51r0I1yywe13mpuPC/dbaWKGF7
-         Zoq5G3a3kCDF3Ej5Pg2L1OmD+H7khVN/mbINDLL0f1v/NskNNzeGFWvyromTt8q9ZwkP
-         ayQq09btaP6ut8uedZOyZOHiGUG/VStm7aDrjPCWL13DyZrFZNLXqSzxgKBqk4wBvqf9
-         SsIJiQzjazZYrzmf30liziDAmai1aN7Fu+gX8yqD7CxiWbrQO4yQ86NoCcW0nfPDdPSr
-         bYI6iHkTCLEpdv02SC3YYZgAFSzaro/WTDAK0HX9CxX7FwKv1uOi/WCz8+mO4nPm4wzh
-         LrOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZgk4sqv9JLN84csmZViL4kAbzj8lpgZr3pGAiBD4074DLswtU7Gs07MOJIOiugzQO0BRnUwiBymmSkf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz2M3gIMtpzvngNc42thIw+U+akHusLiG13njeZxl8LOqgq7Yh
-	Fm2R+DdjpZDaLGMUXTYdjLzlpq6zYJtkVTh2qjiyWYRhVuivGBFhVS5u
-X-Gm-Gg: ASbGncsP0AHK2ZABBcIcXX+qLP6eIh6WZirJ5uH4I4XUrzZFv4+278ooEpY6fQsde6h
-	O7AsaeX1qmk3zOz5OQIVpPGO/eX/oTRf7Q/cmdcj/3YxgH7VbU13/K0sTf+yI54D9nM0Qj7l46O
-	hb5NqcA65b/v8QnxYGc32wJInuFIX6NQab1ZY1r7vCVV5fWUNLvwuaa4Q448pUyp0K0N8lNzBjW
-	WUAJLGdpxAv3zuTGRVvKmZFxucOQ+4z4aJtJdn3MUd/yrQCI51e7dcN7ryeuJwtWLVVo4QKsZ7A
-	heIBKi3phnzRgQIwM4B2oNYvCZ21ozvy8IqLOMhanphlTIlD3mQ3P3jGleuv6c6Y0XEqjQowyVb
-	F/ND2kx/ePihIFL5L4cgpUd3GbF9+HD6vJHee2Qf82+cwqFZBXFbR43DQvHncQuglIq4g9PM7sA
-	8XwfdLLz3xgJQzIZSp7aS0Oog=
-X-Google-Smtp-Source: AGHT+IGW4Tyk7D3F3D6JGBtTqkPio7zAXmHomclEQkI2qiHCT3Q0ZPi73lO3+xGLPY1C7uPSyGKKGg==
-X-Received: by 2002:a17:902:cecc:b0:264:befb:829c with SMTP id d9443c01a7336-2951a423385mr9385915ad.9.1761849342414;
-        Thu, 30 Oct 2025 11:35:42 -0700 (PDT)
-Received: from fedora ([2401:4900:1f32:68ad:2e67:289c:5dac:46fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-294fc9feb21sm30201135ad.73.2025.10.30.11.35.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 11:35:42 -0700 (PDT)
-From: Shi Hao <i.shihao.999@gmail.com>
-To: koby.elbaz@intel.com
-Cc: konstantin.sinyuk@intel.com,
-	ogabbay@kernel.org,
-	i.shihao.999@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] accel: goya: replace sprintf() with sysfs_emit()
-Date: Fri, 31 Oct 2025 00:05:29 +0530
-Message-ID: <20251030183529.93665-1-i.shihao.999@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761849730; c=relaxed/simple;
+	bh=qfWVp/47gDYfMV04cUy/+JxeEB45pBCZPvYNWIkA2Tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H43foorXPOWaA6jUAq9Q9XQqtWnYBnJZMS3bsoobshpSSSjxQ5rMINq7BYHkGOtBhODxWnUF6omLv/k3UwulqGqR/6X1yVhUICKmlX6BYnvW4XD71l5GkQEcONDCRVWQlqMChVIPqDCyyCpzgPedZffuoadYwODOXx3I2J+vSkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jhj+rZRc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VuDtk6Wfak+z/PHOCu2vMlEQrltrT5X8Ug5SksNAYSo=; b=jhj+rZRcsQ4+mzhzN3eGx8eXO/
+	WVoRqVsbq7J2wsK8BfEZRlW8UpXjG0GDrC+/pWxA+ruzWXQCXA3L9jH84jHZo++nb8rRe7gWXhwtK
+	NBZuFe48KzwzpWIstySmJVpMav6Ss7kbjQWMeijIcG38T4PDfP8lmFG+Y9y4PTUPU3a1GRRmph7Vq
+	RukM91dVr0Rfv7VxMsftfBKXGcHjvXMRkwPZU3twV/59z9VDHyhomeoavg0k/9uPicAF2ziWBTG5G
+	4pK5tR0gWSmO/7woJPztGCQqGsTuVABbJYyvfcKWA+Wo3JcemUr2bG+mJBTHBl0rBn1+9aylft8t5
+	mI/X4S0Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEWjL-00000009m0N-1s8q;
+	Thu, 30 Oct 2025 17:46:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5143C30029E; Thu, 30 Oct 2025 19:42:05 +0100 (CET)
+Date: Thu, 30 Oct 2025 19:42:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Clark Williams <williams@redhat.com>, arighi@nvidia.com
+Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
+ expired deadline
+Message-ID: <20251030184205.GB2989771@noisy.programming.kicks-ass.net>
+References: <20251007122904.31611-1-gmonaco@redhat.com>
+ <20251014095407.GM4067720@noisy.programming.kicks-ass.net>
+ <a0ccf27f5e12a11d2e9dc951ceaf7f9d103f67f6.camel@redhat.com>
+ <20251014102541.GS3245006@noisy.programming.kicks-ass.net>
+ <83a5971ef07226737421737f889795ec57b6fa6c.camel@redhat.com>
+ <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb>
+ <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
+ <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb>
+ <20251020141130.GJ3245006@noisy.programming.kicks-ass.net>
+ <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com>
 
-Replace deprecated sprintf() with sysfs_emit() in various sysfs show
-functions to avoid buffer overflows.
+On Wed, Oct 22, 2025 at 12:11:51PM +0200, Gabriele Monaco wrote:
 
-The sysfs_emit() function is specifically designed for sysfs show handlers
-and provides built-in bounds checking by limiting output to PAGE_SIZE,
-unlike sprintf() which has no bounds checking. This prevents buffer
-overflows that could result in kernel crashes or potential security
-vulnerabilities.
+Sorry, finally cycling back to this.
 
-Convert sprintf() to sysfs_emit() as per kernel code practices and
-guidelines.
+> > So how about something like this for starters?
+> > 
+> 
+> Thanks Peter for sharing this patch, I run it through my test and the model
+> seems to pass (i.e. no more boosting after deadline). What I found curious
+> however, is that throughout the test, servers went only through replenish
+> events.
+> The system under test is mostly idle (6 periodic dl tasks on a 16 CPUs virtme-ng
+> VM), so I expect not to see any task boosted by the servers, but in 5 minutes I
+> didn't even observe any start/stop for the server.
+> 
+> I'm not sure why this is happening, but looking at traces it seems replenish
+> occurs more often and perhaps doesn't let the server stop:
+> 
+> <idle>-0     [009] d.h3.    14.312395: (+950124) event_nomiss:         -9: idle x dl_replenish_idle -> idle
+> <idle>-0     [009] d.h3.    14.312401: (+6)     sched_dl_replenish:   comm=server pid=-9 runtime=50000000 deadline=15253307235 yielded=0
+> <idle>-0     [009] d.h3.    15.262771: (+950370) event_nomiss:         -9: idle x dl_replenish_idle -> idle
+> <idle>-0     [009] d.h3.    15.262781: (+10)    sched_dl_replenish:   comm=server pid=-9 runtime=50000000 deadline=16203668554 yielded=0
+> <idle>-0     [009] d.h3.    16.213117: (+950336) event_nomiss:         -9: idle x dl_replenish_idle -> idle
+> <idle>-0     [009] d.h3.    16.213123: (+6)     sched_dl_replenish:   comm=server pid=-9 runtime=50000000 deadline=17154029879 yielded=0
+> 
+> Is this expected?
 
-Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
----
- drivers/accel/habanalabs/goya/goya_hwmgr.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/accel/habanalabs/goya/goya_hwmgr.c b/drivers/accel/habanalabs/goya/goya_hwmgr.c
-index b595721751c1..3ef18f42c393 100644
---- a/drivers/accel/habanalabs/goya/goya_hwmgr.c
-+++ b/drivers/accel/habanalabs/goya/goya_hwmgr.c
-@@ -49,7 +49,7 @@ static ssize_t mme_clk_show(struct device *dev, struct device_attribute *attr,
- 	if (value < 0)
- 		return value;
-
--	return sprintf(buf, "%lu\n", value);
-+	return sysfs_emit(buf, "%lu\n", value);
- }
-
- static ssize_t mme_clk_store(struct device *dev, struct device_attribute *attr,
-@@ -98,7 +98,7 @@ static ssize_t tpc_clk_show(struct device *dev, struct device_attribute *attr,
- 	if (value < 0)
- 		return value;
-
--	return sprintf(buf, "%lu\n", value);
-+	return sysfs_emit(buf, "%lu\n", value);
- }
-
- static ssize_t tpc_clk_store(struct device *dev, struct device_attribute *attr,
-@@ -147,7 +147,7 @@ static ssize_t ic_clk_show(struct device *dev, struct device_attribute *attr,
- 	if (value < 0)
- 		return value;
-
--	return sprintf(buf, "%lu\n", value);
-+	return sysfs_emit(buf, "%lu\n", value);
- }
-
- static ssize_t ic_clk_store(struct device *dev, struct device_attribute *attr,
-@@ -196,7 +196,7 @@ static ssize_t mme_clk_curr_show(struct device *dev,
- 	if (value < 0)
- 		return value;
-
--	return sprintf(buf, "%lu\n", value);
-+	return sysfs_emit(buf, "%lu\n", value);
- }
-
- static ssize_t tpc_clk_curr_show(struct device *dev,
-@@ -213,7 +213,7 @@ static ssize_t tpc_clk_curr_show(struct device *dev,
- 	if (value < 0)
- 		return value;
-
--	return sprintf(buf, "%lu\n", value);
-+	return sysfs_emit(buf, "%lu\n", value);
- }
-
- static ssize_t ic_clk_curr_show(struct device *dev,
-@@ -230,7 +230,7 @@ static ssize_t ic_clk_curr_show(struct device *dev,
- 	if (value < 0)
- 		return value;
-
--	return sprintf(buf, "%lu\n", value);
-+	return sysfs_emit(buf, "%lu\n", value);
- }
-
- static ssize_t pm_mng_profile_show(struct device *dev,
-@@ -242,7 +242,7 @@ static ssize_t pm_mng_profile_show(struct device *dev,
- 	if (!hl_device_operational(hdev, NULL))
- 		return -ENODEV;
-
--	return sprintf(buf, "%s\n",
-+	return sysfs_emit(buf, "%s\n",
- 			(goya->pm_mng_profile == PM_AUTO) ? "auto" :
- 			(goya->pm_mng_profile == PM_MANUAL) ? "manual" :
- 			"unknown");
-@@ -313,7 +313,7 @@ static ssize_t high_pll_show(struct device *dev, struct device_attribute *attr,
- 	if (!hl_device_operational(hdev, NULL))
- 		return -ENODEV;
-
--	return sprintf(buf, "%u\n", hdev->high_pll);
-+	return sysfs_emit(buf, "%u\n", hdev->high_pll);
- }
-
- static ssize_t high_pll_store(struct device *dev, struct device_attribute *attr,
-@@ -369,7 +369,7 @@ static ssize_t infineon_ver_show(struct device *dev, struct device_attribute *at
-
- 	cpucp_info = &hdev->asic_prop.cpucp_info;
-
--	return sprintf(buf, "%#04x\n", le32_to_cpu(cpucp_info->infineon_version));
-+	return sysfs_emit(buf, "%#04x\n", le32_to_cpu(cpucp_info->infineon_version));
- }
-
- static DEVICE_ATTR_RO(infineon_ver);
---
-2.51.0
-
+Sort of, that was next on the list. Let me see if I can make it stop a
+little more.
 
