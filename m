@@ -1,105 +1,183 @@
-Return-Path: <linux-kernel+bounces-878135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94C8C1FDD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:43:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BA6C1FDDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AD41895707
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284EE4243D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0655D33F370;
-	Thu, 30 Oct 2025 11:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6EF343D67;
+	Thu, 30 Oct 2025 11:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WjnkiH/e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e6eub5k+"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7EC632
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE81340DB8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761824604; cv=none; b=mqbL9EJho9d9xI2+z8cGFuvYz/hr3mv3iSkWP3zDasvkXkXfGX/KiLHEFbACEKAk0I2xIdZ1jIF+HWRB+RiymdeNldxy44s6tE0LL7k09Mwp1pmTDnEcOqIvMdz+TMzkMSGDE2MHFfvX4P6wGMVTVIvWTvBWg2zzhCQjNoHwaDs=
+	t=1761824610; cv=none; b=M++Uvb/AEv2S1z3KcxsFs7Ad+n0KmXTEnwKGfT8Av6KuqFNk587c87jxny8JL1/RmIpnUXrtmUGbcB87GVH0/Bz7BOw31fm10ZCrgzSsoC2wxOC7jboUBXkKyUIPtW9XL+Y/rt6A4X1cZcshuOr6cAOTfVgb4Rraq/u+S5X9YVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761824604; c=relaxed/simple;
-	bh=qL4WTWUtGMXK40xu62G2cTfK76OTgkRteM7b56dx2J4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HHJX1yHk+e1L6CX90iOA68X2BxaxRFrBe+XvRW0atmf2jVCmWdKdFW0btB5z2P+UGMn5xqMV5/uUdlMwgIuvYgIc6LSw15eEVCOcgDl7q3CEqn2BI+2I6zNbxI4B3oppVmEQIwTx+ntjjHfT7OMPfkpDrsbR9e+EKCv6hzQl8C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WjnkiH/e; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761824603; x=1793360603;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qL4WTWUtGMXK40xu62G2cTfK76OTgkRteM7b56dx2J4=;
-  b=WjnkiH/eTUbQtuOUKqIWg4AoWJjiecEe6Q43wK7gMpmo7ysAdWTmwXXp
-   2W+00OlX/T0W9BAnSAPuZ7IxftV/TUBAV6iE36C2PKrQqAtfq+4oB6MIt
-   K/sjDAITwNNfPskCk0YjAyBo6PBYlUR0oFvsgcQJBSKX71eEFA64tu5Ye
-   OVDs9cauyfgUL54P3jI8aoZwfC6RKWRk8e0rLtFI5ZiJGe46YIDx5sfUv
-   aRx8tbSuon+p0L8PsNsPrlobFdNtEUEX2AJ3E05R5mwbt1vG99SFPgxpD
-   Xe81crBRzjHUAnnKo6L4w9JYrYFaDwBmHLaNkgfkchQoKUbr12dv8wZSi
-   A==;
-X-CSE-ConnectionGUID: DPvt9VBFQp+EgdRdX3c/+Q==
-X-CSE-MsgGUID: GUOL+/6UQOCNRD6dvnnh1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="51534730"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="51534730"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 04:43:22 -0700
-X-CSE-ConnectionGUID: 7Bac7wG1QQWQdo2o6/jcuA==
-X-CSE-MsgGUID: HM8QJxeSTimBe/hXkVy/3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="186675144"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 04:43:20 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vER3m-00000003tmJ-0vX4;
-	Thu, 30 Oct 2025 13:43:18 +0200
-Date: Thu, 30 Oct 2025 13:43:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v1 0/4] regcache: Split out ->populate()
-Message-ID: <aQNPVUSKeg9odlRF@smile.fi.intel.com>
-References: <20251029073131.3004660-1-andriy.shevchenko@linux.intel.com>
- <c33c5930-ad6e-4ff0-9a6f-4dfd15fcd352@sirena.org.uk>
+	s=arc-20240116; t=1761824610; c=relaxed/simple;
+	bh=8K202zcT/5Asm+XAnj+oZfeb7i++8K1HRzH59kLoZlc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=E+1InJlZ+YhYRxM8mTZk8PitocPTBWFd8I8HSBIGGnfDORuz/x68/rDjKIT12CVpiTARAz57iIq6TeyJXyMq3h1ESAhKIA0pnfc5btardHWHzwVM5Tbdq0J6UWOBZgSeo5Ud4E3LTh6YWlU8Qid9JEbMEJ0MA5w7L5IzIeD/nmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e6eub5k+; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-427a125c925so460645f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761824607; x=1762429407; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nDSI58A/HQKOUf6eeXjJJOZLO/JqDx1ROCyXyTZAY7w=;
+        b=e6eub5k+S99WJGRdh3tMlYUvQRHbfhXapbdzJLS42qfE5/7K7jEApuqdBsz5RD+aG6
+         KsVtxKTip2zxubSN7O7gGykzcshX9Jba+DCbkxmt3h2UeoH9GUV6Rjk8yp0CYLLPRAz+
+         3ryGYmpRZLOnXJlb3r44zO7glDOUp5ziTMDX3KHo5xm1WEh8Daboaq1al6GeL4b3nKKR
+         z7JrDM96WlVI0/NvzmwBw9c5/t6YK8pV3tFPZT7ucSkB9es4eXNmzI+5GhmN8mvLCOZk
+         wIiN0aZ4IGLj26y9lX9pZ8p/O5DrL9wFIAgN5ikhYnYq8PjyOPffgWjEukr1W7py3d7z
+         R1uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761824607; x=1762429407;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nDSI58A/HQKOUf6eeXjJJOZLO/JqDx1ROCyXyTZAY7w=;
+        b=HsTUUoGMa7uIgM9L8mmxJIZDjjJV9gLZSSrECgo7X+7Eh6T1Fn5SzuahC2CjwmHpWV
+         LD3Ss+T29wWzmHW6uCdBGhY+mNfI/PPdpcKfdyE+GkacvTE00GWu260JNbQH3KQNwLBm
+         L5QQqyuRNtfC82uoxTBJ/kAXVPKafq4vvKhjSvaM72R8Fw60tUM91u5ZBcrNTTYQvycg
+         9zOi7uDyKP6iDycsJbi8jqXFauqjeIubWDOw4Vtno8zxccQdTxxWjjKKUoStoJPiVr2R
+         VSY3oi7yjWDKU4JpNUTTbkQZ7y5EU5PXQxYw1GbBXXOO07973tbZtboy7JAm/TJC6Cx3
+         kong==
+X-Forwarded-Encrypted: i=1; AJvYcCXk9yxnScNA4PDnfkwQMDlfR0ms5inU+Z9OmlTO/Gzh286ZoPXtb93+thwYiJXVmgcNjPp/+H/mxl07KGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYA9tpm12qOa1kbU2bnTwbsgE2aU3b/Xe4HchXf5XELKR4PZuM
+	fZoKPGiSFpIJ3Qed3OjpcqsOHpCHZwU0mHy7MtRxuwEm92fqbFNVT6uKwmTOqYn0Mn9VIz6BfAz
+	9WcWiJ+DbhV2YTji1UA==
+X-Google-Smtp-Source: AGHT+IHzjpoD898gBgMNPMdZP5uEYogpZiJA8uErDROog5MEOI5DpnJbAzYLVH3kmqrIf4gyzUsqqY51Um1rkCk=
+X-Received: from wrme11.prod.google.com ([2002:adf:e38b:0:b0:3ec:e23c:988f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:290f:b0:429:58f:325 with SMTP id ffacd0b85a97d-429aef830c6mr5166773f8f.24.1761824606490;
+ Thu, 30 Oct 2025 04:43:26 -0700 (PDT)
+Date: Thu, 30 Oct 2025 11:43:25 +0000
+In-Reply-To: <4e6d3f7b-551f-4cbf-8c00-2b9bb1f54d68@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c33c5930-ad6e-4ff0-9a6f-4dfd15fcd352@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+ <CAA1CXcCiS37Kw78pam3=htBX5FvtbFOWvYNA0nPWLyE93HPtwA@mail.gmail.com> <4e6d3f7b-551f-4cbf-8c00-2b9bb1f54d68@lucifer.local>
+Message-ID: <aQNPXcxcxcX3Lwv0@google.com>
+Subject: Re: [PATCH 0/4] initial work on making VMA flags a bitmap
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Nico Pache <npache@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Peter Xu <peterx@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
+	Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Oct 30, 2025 at 11:36:27AM +0000, Mark Brown wrote:
-> On Wed, Oct 29, 2025 at 08:28:57AM +0100, Andy Shevchenko wrote:
-> > This is a refactoring series to decouple cache initialisation and population.
-> > On its own it has no functional impact but will be used in the further
-> > development. Besides that I found this split useful on its own (from the design
-> > perspective). That's why I decided to send it out as is separately from a bigger
-> > (and ongoing) work.
+On Thu, Oct 30, 2025 at 08:33:10AM +0000, Lorenzo Stoakes wrote:
+> +cc Alice - could you help look at this? It seems I have broken the rust
+> bindings here :)
 > 
-> This looks fine but needs a rebase onto the latest code.
+> Thanks!
+> 
+> On Wed, Oct 29, 2025 at 09:07:07PM -0600, Nico Pache wrote:
+> > Hey Lorenzo,
+> >
+> > I put your patchset into the Fedora Koji system to run some CI on it for you.
+> >
+> > It failed to build due to what looks like some Rust bindings.
+> >
+> > Heres the build: https://koji.fedoraproject.org/koji/taskinfo?taskID=138547842
+> >
+> > And x86 build logs:
+> > https://kojipkgs.fedoraproject.org//work/tasks/7966/138547966/build.log
+> >
+> > The error is pretty large but here's a snippet if you want an idea
+> >
+> > error[E0425]: cannot find value `VM_READ` in crate `bindings`
+> >    --> rust/kernel/mm/virt.rs:399:44
+> >     |
+> > 399 |     pub const READ: vm_flags_t = bindings::VM_READ as vm_flags_t;
+> >     |                                            ^^^^^^^ not found in `bindings`
+> > error[E0425]: cannot find value `VM_WRITE` in crate `bindings`
+> >    --> rust/kernel/mm/virt.rs:402:45
+> >     |
+> > 402 |     pub const WRITE: vm_flags_t = bindings::VM_WRITE as vm_flags_t;
+> >     |                                             ^^^^^^^^ not found
+> > in `bindings`
+> > error[E0425]: cannot find value `VM_EXEC` in crate `bindings`
+> >      --> rust/kernel/mm/virt.rs:405:44
+> >       |
+> >   405 |     pub const EXEC: vm_flags_t = bindings::VM_EXEC as vm_flags_t;
+> >       |                                            ^^^^^^^ help: a
+> > constant with a similar name exists: `ET_EXEC`
+> >       |
+> >      ::: /builddir/build/BUILD/kernel-6.18.0-build/kernel-6.18-rc3-16-ge53642b87a4f/linux-6.18.0-0.rc3.e53642b87a4f.31.bitvma.fc44.x86_64/rust/bindings/bindings_generated.rs:13881:1
+> >       |
+> > 13881 | pub const ET_EXEC: u32 = 2;
+> >       | ---------------------- similarly named constant `ET_EXEC` defined here
+> > error[E0425]: cannot find value `VM_SHARED` in crate `bindings`
+> >    --> rust/kernel/mm/virt.rs:408:46
+> >     |
+> > 408 |     pub const SHARED: vm_flags_t = bindings::VM_SHARED as vm_flags_t;
+> >     |                                              ^^^^^^^^^ not found
+> > in `bindings`
+> >
+> > In the next version Ill do the same and continue with the CI testing for you!
+> 
+> Thanks much appreciated :)
+> 
+> It seems I broke the rust bindings (clearly), have pinged Alice to have a
+> look!
+> 
+> May try and repro my side to see if there's something trivial that I could
+> take a look at.
+> 
+> I ran this through mm self tests, allmodconfig + a bunch of other checks
+> but ofc enabling rust was not one, I should probably update my scripts [0]
+> to do that too :)
+> 
+> Cheers, Lorenzo
+> 
+> [0]:https://github.com/lorenzo-stoakes/review-scripts
 
-Will do, thanks!
+I can help convert the Rust bindings to work with this approach. I see
+there is a nice and simple vma_test() method for checking a flag, but I
+don't see any equivalent method for setting or unsetting a given bit.
+What would be the best function for Rust to call to set or unset a given
+bit in the vma flags?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alice
 
