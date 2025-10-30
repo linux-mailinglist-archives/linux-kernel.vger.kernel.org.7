@@ -1,186 +1,152 @@
-Return-Path: <linux-kernel+bounces-879279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB757C22BB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:42:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55391C22BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DA5420A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:41:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FB41893A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A89E340A4C;
-	Thu, 30 Oct 2025 23:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5101A33E374;
+	Thu, 30 Oct 2025 23:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Pc73YfLW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KWbkt+uk"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aKncfpuG"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F142C11CB;
-	Thu, 30 Oct 2025 23:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017E733E353
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761867696; cv=none; b=VkriFrzvPO8LC3mJ3OQZWev3XTaK3dV8ifqaWrD3Zrn3s2GtGro79qBmw8lPMgI/mJ3BG/2eqmL4fxp2uAzx5DOb2bahuJz8J47t1lZ8TdMb8snbpHsVgoVhC75EkjP2KdfWc82DsrGAFzBPipqdEqZybtFVL/hobtQ52IDccos=
+	t=1761867771; cv=none; b=d4+S5tJ1W5+Oa1mRjXSV2wBq4iPEp89Er2E1D4RntUkmwgacL5Z/5s8EwcqbbXbGGrAuezSerDVUjIwlw5OpzNyOSmCiusbghYBI05WAJpja76Nd9oo3Rd3Ll9KvuTvvIolbsqiyWDaeEOLmyX/C2UScKIQm4Gs1pBH/zaWthWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761867696; c=relaxed/simple;
-	bh=s8qJUitOPA47j/+WNL0JxWMSGHgP2Ys3toCWUcFEg8w=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=jBGzbEnyx7JcwPkR/GnWVNVO/fFiDaiarDmS0GMkYa+nTLOjTRbG6+AmFwpUpthQnXw2pYTzFTJblHCpXcd6E1pdoYgLGigno57+kxXso8FhUX3MsGDp1NJZq534Djh01hDHKlR4Asdwq0R32cO7BDmO0cJmfhGdpKYiTt//YuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Pc73YfLW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KWbkt+uk; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 5577013000CC;
-	Thu, 30 Oct 2025 19:41:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Thu, 30 Oct 2025 19:41:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1761867693; x=1761874893; bh=YJ19THsgVSpeJzD7ckpZErclcEybeF1XkFe
-	eDx68jLs=; b=Pc73YfLWNJ3JZUpAFftBu85kxypozmP3ZD5/OjTIW4+78wVgHrd
-	APjipNv1sLLaH83N9CHHyy0YUsn+ICUZ8366jLzMiaCndf/ZhTomsa5n1s9d6Sx2
-	lYsvb7wfgqbkIVJuAe1dBNKfCb5GOJ67VWz2SLmSPeKDyfdXFu+FqA3YKI1/DesJ
-	Z6JFLw0AL8cUm4vpkhv/9eKmgu5/NPfq1a1t/7uQOJ+9taGLDFExAZxNvYM0Pu/p
-	nEM0vIT2wO5ddSYbSoswgRyAp9USqLc1l03EAeQ5kAo7VStg502Gz9bAKsLaWFEy
-	XR9a+RjpomdVL30ntbZj9FLNztubWKwwDNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761867693; x=
-	1761874893; bh=YJ19THsgVSpeJzD7ckpZErclcEybeF1XkFeeDx68jLs=; b=K
-	Wbkt+ukMftFT8/uCW0USbi5pG4WHh6mJfTHeCqce3pv0oFhjHpCPue1rZ7m6jpGK
-	kDIQc87wInw1uQS67C9fn6tSIfa9dvZS0lf1ZUuvTRQC3fMrWiUZTSTB/gaoiNYp
-	eMXdNg/C3Gs1SGhHB91KSi53z6Bt9umyjijt0poClQlNoQFep71J8UB5U0pUPgZk
-	l9/crQcz5MBp95fjC4FaOHBqvqxU2qe+uS5um8Wcbem+YxI5OKo3xoZMxKyD9tz3
-	0ccbyuRHaKP9IPF4ReakWchgno7XrttHF2+6FA1RiM6e2LmHEnzzb7kWTkAe6DQ4
-	exJ6EyGKjlKNkD4sY+H2Q==
-X-ME-Sender: <xms:rPcDaZ8fz2PV7rMm0ZSYArsKSJ75ceExcgCJ6QGyjQRKO5KBTq8nPQ>
-    <xme:rPcDaQmzuIyO28wxwNQwfudDj_CV47r-uovIjzlv4bUJkjMusrInjlEArZ7k-UwLI
-    HAc48WwcRI1vfCPp3MElGN-CErojabz0OZDD46_wQzL8799Zw>
-X-ME-Received: <xmr:rPcDaX3wPZf_7EgJjGns4r24abu2VRs0WJIogDD88n5dRmdBmesekvHkBU1FVszWCB6vmtuXogZ7a40oqlM_9oHkO0wg6GQDgpt5pOJAwPuz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejleeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:rPcDafSIaFYl-RgHoqcs0t7YrKDZ2gioLPgi-mlU48SQlKTTMBJOIA>
-    <xmx:rPcDacK6aitOy-K4GZOFYzD9IizJlaKR_2q4A8eMNjCKjpMIUTwCHA>
-    <xmx:rPcDaSnTe9Z_0l91HNTze7DZRYuxwKs7F3DOvRPNBgkt8xRriYRBIQ>
-    <xmx:rPcDaVj1apibW2cs8riW6YdfSEBfeA_ytKnNM-17ym5kitOJlMeFcg>
-    <xmx:rfcDaZmZWSefDAP2LqnLmEPokPLWMSLY_fExqU3FZVX4WsNL0DMUw6Zo>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 19:41:22 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761867771; c=relaxed/simple;
+	bh=DE4GqBuV22TruGHl8amYHLxxmTXP99iA093bN/VEK1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kiNN1ajw/Xvio1yNIPjzHLuwh5FtPh62E/J5C2E+s3cVFHxwdmZtcRdARFF0/n9LS3gK7HmTeW0IOPPZK+ahWt9MhsIPc+xx8CUdZjoCY6qeM4qWr8TgJCNRNLSbFXVjJJqbm8dFQ2fryBuF5CE/iOCAcvgT6kETTfOPRbeNb5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aKncfpuG; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b50206773adso525306066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:42:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761867768; x=1762472568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S3CZRZY4J4yS1ZyrgmpV6YjQg7tsbEO1A3A5njHalyg=;
+        b=aKncfpuGM/foVpT069aO9Zgbp1PSjVBELO7Lz6tIoQar+5igBPGeKufy6GK89jDcQa
+         Jd+8n7zJFS6VLDLUPcLCDjl6YqP6m/tGNTb13nUmGgMiYTVWkBrwoiAP2uHDUaqgd58V
+         VDq4hEmQ1R+Tg9smz9eZ66G4X378UKs7Y5cpRHUzIuKJsF+AWTKSOWnOF5UJW/bonU4q
+         JL4M3izPHw+DpxJmVHBNjmMAMvWTbqkl7WdkYg8QEb6l3vr5RHj8JLIniV0quRqnaY6C
+         k3WbT6U0uSgWmDE4gKGPWAV6CDtLPgldqDlUF/nja/5jD8lc7lGW3Fq5qffnNdd6KS8t
+         t5/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761867768; x=1762472568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S3CZRZY4J4yS1ZyrgmpV6YjQg7tsbEO1A3A5njHalyg=;
+        b=IufIB1JUXMOaLsWI4LW5RJCTxn1eid1KA6whKCwaVbu0w4cBGGHMdsddTEz85jYM/r
+         cYkKWdMXWGwtMmM/ve+CoXvzDD2aMrU6FJjFE3/lkMJtdmj8NwYzMv8jXEOXlpinecaW
+         QiHQpqCNBOKVtOQR9cer902cPPCB9QqfSdnnvymKRfvJNRPq9xobA6S2KuGbR1ItXyvF
+         SqAfY1tVs1BtEusE50Ijssx5H/gGTgh71aI0EWIJdIzWc5AXVgtgGJrQIxriBrj8OJwT
+         i86ykqO1zO1CA+qbjukwFtyAy38gS+PFXSBbP+wYTVShDSyyY0FEcawkSF61SRVtzgaQ
+         Cs8g==
+X-Gm-Message-State: AOJu0YxAIcGscYzB2lxMBxWry5MeLd+TRfaEyVMzz2dCe5IBtwP59Hmy
+	t+vg4pzorJtgraltWkyyKPP/40PSTLpDL1NGbXx6GXJx0Nr8uuO8O6B++fn50taqT2sqmWFm5Ol
+	NmhbLgygi6ekcY/FJGQ1oeSXyBekRCYcnsOEra5U=
+X-Gm-Gg: ASbGncvZmZfsnuQiQXLHlrh3+8k9phCiL2cQOLkcgaBrndh/zfVkL/m6tH3c6li/O52
+	SNTSNu/kotcGCKUHzO9FeX+yU48+CfFxw5OMn+/WGZLl4LopinLmPVhSJCjTSyEU1Hf+B66g64T
+	iDIE8yt0hgcb2LN2UqFLpU3yFvFuIdZqHlfESYEm1GHtyACeNzIDkGl8weuB0R5ELGD/GY0r4zG
+	APNzW9DhTprB0ObKXLGHD2myNXRO2J/ePyyZu2NEi6xvC6LppVuSl5ZDwJOGbJI5CmM/4mHdmmJ
+	RQ6SmbWGv+n4Yw==
+X-Google-Smtp-Source: AGHT+IHXJyABwy+YlpHtWHFVZ9scJu1XN6C/NhPGdB38J8lEYF3J9TpuRK4stAjtt5Nw478VYGku63Ewg7zGh8cdzxE=
+X-Received: by 2002:a17:907:3f89:b0:b6d:671d:8814 with SMTP id
+ a640c23a62f3a-b706e5823f5mr176167266b.27.1761867767913; Thu, 30 Oct 2025
+ 16:42:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
- "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
- "David Howells" <dhowells@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Ondrej Mosnacek" <omosnace@redhat.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Stefan Berger" <stefanb@linux.ibm.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Subject:
- Re: [PATCH v4 12/14] ecryptfs: use new start_creating/start_removing APIs
-In-reply-to: <20251030062420.GX2441659@ZenIV>
-References: <20251029234353.1321957-1-neilb@ownmail.net>,
- <20251029234353.1321957-13-neilb@ownmail.net>,
- <20251030062420.GX2441659@ZenIV>
-Date: Fri, 31 Oct 2025 10:41:20 +1100
-Message-id: <176186768028.1793333.3200874180667501034@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+References: <20251030001857.681432-1-jstultz@google.com> <20251030001857.681432-3-jstultz@google.com>
+ <84c4aa9d-9094-4b12-8912-63a338a43351@amd.com>
+In-Reply-To: <84c4aa9d-9094-4b12-8912-63a338a43351@amd.com>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 30 Oct 2025 16:42:35 -0700
+X-Gm-Features: AWmQ_bksMgjup1xlf2cptdec-fRrAfEHXuVbuQz6w9ObfjuDmB3nMcLHtKT2UqY
+Message-ID: <CANDhNCqHd5tHC_N2unYyhH3nuiq_b23WKEwHzpOWizWzCfT9JA@mail.gmail.com>
+Subject: Re: [PATCH v23 2/9] sched: Fix modifying donor->blocked on without
+ proper locking
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 30 Oct 2025, Al Viro wrote:
-> On Thu, Oct 30, 2025 at 10:31:12AM +1100, NeilBrown wrote:
->=20
-> > +static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dent=
-ry)
-> >  {
-> > -	struct dentry *lower_dir_dentry;
-> > +	struct dentry *parent =3D dget_parent(dentry->d_parent);
->=20
-> "Grab the reference to grandparent"?
->=20
+On Wed, Oct 29, 2025 at 9:51=E2=80=AFPM K Prateek Nayak <kprateek.nayak@amd=
+.com> wrote:
+> On 10/30/2025 5:48 AM, John Stultz wrote:
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 517b26c515bc5..0533a14ce5935 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -6591,7 +6591,7 @@ static struct task_struct *proxy_deactivate(struc=
+t rq *rq, struct task_struct *d
+> >                * as unblocked, as we aren't doing proxy-migrations
+> >                * yet (more logic will be needed then).
+> >                */
+> > -             donor->blocked_on =3D NULL;
+> > +             clear_task_blocked_on(donor, NULL);
+>
+> nit. You can probably switch this to use __clear_task_blocked_on() in
+> the previous patch and then to the clear_task_blocked_on() variant here.
+> It makes it more clear that proxy_deactivate() is now out of the
+> "donor->blocked_lock" critical section.
 
-That's somewhat embarrassing :-(
-
-Fixed as below.
-Thanks a lot!
-
-NeilBrown
-
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index b3702105d236..6a5bca89e752 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -26,7 +26,7 @@
-=20
- static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dentry)
- {
--	struct dentry *parent =3D dget_parent(dentry->d_parent);
-+	struct dentry *parent =3D dget_parent(dentry);
- 	struct dentry *ret;
-=20
- 	ret =3D start_creating_dentry(ecryptfs_dentry_to_lower(parent),
-@@ -37,7 +37,7 @@ static struct dentry *ecryptfs_start_creating_dentry(struct=
- dentry *dentry)
-=20
- static struct dentry *ecryptfs_start_removing_dentry(struct dentry *dentry)
- {
--	struct dentry *parent =3D dget_parent(dentry->d_parent);
-+	struct dentry *parent =3D dget_parent(dentry);
- 	struct dentry *ret;
-=20
- 	ret =3D start_removing_dentry(ecryptfs_dentry_to_lower(parent),
+The gotcha there is the __clear_task_blocked_on() will assert if we
+don't hold the right lock. So this patch is sort of fixing it up to
+allow for proper locking without cheating here.
 
 
+> Either way, no strong feelings.
+>
+> >       }
+> >       return NULL;
+> >  }
+> > @@ -6619,6 +6619,7 @@ find_proxy_task(struct rq *rq, struct task_struct=
+ *donor, struct rq_flags *rf)
+> >       int this_cpu =3D cpu_of(rq);
+> >       struct task_struct *p;
+> >       struct mutex *mutex;
+> > +     enum { FOUND, DEACTIVATE_DONOR } action =3D FOUND;
+>
+> nit. If you move that declaration to the top, you can preserve the nice
+> reverse xmas arrangement ;)
+
+Yeah, I meant to do that, but just overlooked it. Thanks for pointing it ou=
+t.
+
+
+> Apart from those couple of nits, feel free to include:
+>
+> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
+As always, greatly appreciate your time for the review and feedback here!
+Thank you!
+-john
 
