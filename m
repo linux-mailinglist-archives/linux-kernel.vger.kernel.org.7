@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-878185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B50C1FFA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:21:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C77C1FF7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDF4419C558B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:19:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67C3234AFF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EB42D9493;
-	Thu, 30 Oct 2025 12:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F082D6605;
+	Thu, 30 Oct 2025 12:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f//lnYEV"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqwvNwZ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE5486347
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F72F2BD5BF;
+	Thu, 30 Oct 2025 12:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761826739; cv=none; b=gI/Ft/K6Wrw0d4tKhY1OVMrf9ngpW+JIa7aQnqh9oVq5iKryK5i+QCVmpPNHGUcWD4Ih2Qc6AHSLXLqTX6d3aVbkLWpcAcxYLSyjFD6kkUuqvk1gRVvGEB01RyZNG0JtTVrVcEf4NxdPxM1DMfV6gCWHq6i+CQ+HHciVH0CvNZc=
+	t=1761826687; cv=none; b=gWhyCgYApW1XYo/mvErtWZ/43QXj2BlK+GMMYmkfmbhv59/rZe16Xp0g88ZjHTKtUOd9kj5YZME4sFwleXrvbq5l3bFnPjLESIYmpE13Udo8ou2AmTRNUYR39YbkXbHk71piJKv7ozS1379Q4LHo6TL50gaIUskTnfqM3966cUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761826739; c=relaxed/simple;
-	bh=TABK/Q+ydCHzLyK7rxDmqk1HrIEcMcD1FUzJNM7w9h4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZsK1G0Lp/bO3SoOuwwlHD2InyMXTan1A5h8fyik2DUrv6+2Tcubp+5GIilqJmR6H4pViln2tyrJbY0fW9okAnQEV+3J21Mmk2M3fOIjm+7FFZm1nEzzaPzvnQyPYy/1eXSO66P02oXkDjcON0AiSzXeyqjGvbSyQKCrqAG5GKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f//lnYEV; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761826734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OdFEC/WJhQ8Epnksfw2pN1ATvi7R6vX3+Bf3YnT57Rg=;
-	b=f//lnYEVbdkIC+QtcC6zlI35rSP8ZTkEPEk0y5l5VUJBs6py9Zx7ULLvreXbJVLVbrhunh
-	wvNNTCenluCx/OuPqAXXx9/mAcYCyy3Un3AmDX2STq4Ie1w4bPbrFAPmlpdeCOHLr4/Lb8
-	YeQtH0Ke4edvXDI7rK7xSN0xlVGukwU=
-From: Hao Ge <hao.ge@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH] mailmap: add entry for Hao Ge
-Date: Thu, 30 Oct 2025 20:17:46 +0800
-Message-Id: <20251030121746.230747-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1761826687; c=relaxed/simple;
+	bh=c/5NhRaDMZ/kbf4ALWp9C3bkG4NzH2gCZR2gh2BS+5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jljr+d8amLThR7jFEp90n9bCzYdnwq2Mq0cJ9wTp+6ICFiFh5iQqcj+Zn79DUDZjfcGsxRaKP0KfKceQoMD31Hc75WGW8nCHQKaiB+O/mc0Z3+nFakfEE/nBNpAZ8GffU7WyAXd9jIVU63i5H3qdaypcBfUL1Dhj+D7egqBj/TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqwvNwZ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDE6C4CEF1;
+	Thu, 30 Oct 2025 12:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761826686;
+	bh=c/5NhRaDMZ/kbf4ALWp9C3bkG4NzH2gCZR2gh2BS+5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eqwvNwZ6OXvD0PLLo9oKFlOauS0KB9w85q0SZ3Xda7sQevCZ+PF82wJOLsJwYVa8J
+	 1876w8uLPUw/grmthVZBX1OwHBWnWfh/zmDlS2ZyeNUGt17A6GXXqYHgyC01Wg4nP9
+	 lyC1pnN2cdKNa069kddROOPKTXz8sdfvgbqsp2K5m5AbGGI5cMnoBqIk7nkTXWGD7B
+	 qHg3KdbmcIwJKg+nCcKhbU70mhjWFFaHX+gynoFm2YmmwmXNcwEZLAY7PdGfXh+Brl
+	 udhaAHnl3jScbhaAQdPhAsXaix37XODTzGa5lfTJa6icjLK7SVb1kCjZgZhgvxT/XD
+	 pzVl8j7N89Y0w==
+Date: Thu, 30 Oct 2025 12:17:58 +0000
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org,
+	Han Gao <gaohan@iscas.ac.cn>, Han Gao <rabenda.cn@gmail.com>,
+	linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org, Fu Wei <wefu@redhat.com>
+Subject: Re: [PATCH v3 3/5] reset: th1520: Prepare for supporting multiple
+ controllers
+Message-ID: <aQNXdmH_sA6hgOKC@gen8>
+References: <20251014131032.49616-1-ziyao@disroot.org>
+ <20251014131032.49616-4-ziyao@disroot.org>
+ <aQIOgbUf2IHoWCf2@gen8>
+ <aQIvH4jbj9Ifd7Av@pie>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQIvH4jbj9Ifd7Av@pie>
 
-From: Hao Ge <gehao@kylinos.cn>
+On Wed, Oct 29, 2025 at 03:13:46PM +0000, Yao Zi wrote:
+> On Wed, Oct 29, 2025 at 12:54:25PM +0000, Drew Fustini wrote:
+> > On Tue, Oct 14, 2025 at 01:10:30PM +0000, Yao Zi wrote:
+> > > TH1520 SoC is divided into several subsystems, shipping distinct reset
+> > > controllers with similar control logic. Let's make reset signal mapping
+> > > a data structure specific to one compatible to prepare for introduction
+> > > of more reset controllers in the future.
+> > > 
+> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > > ---
+> > >  drivers/reset/reset-th1520.c | 42 +++++++++++++++++++++++++-----------
+> > >  1 file changed, 30 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
+> > > index 14d964a9c6b6..2b65a95ed021 100644
+> > > --- a/drivers/reset/reset-th1520.c
+> > > +++ b/drivers/reset/reset-th1520.c
+> > [snip]
+> > > @@ -138,22 +147,31 @@ static int th1520_reset_probe(struct platform_device *pdev)
+> > >  	if (IS_ERR(priv->map))
+> > >  		return PTR_ERR(priv->map);
+> > >  
+> > > -	/* Initialize GPU resets to asserted state */
+> > > -	ret = regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
+> > > -				 TH1520_GPU_RST_CFG_MASK, 0);
+> > > -	if (ret)
+> > > -		return ret;
+> > > +	if (of_device_is_compatible(dev->of_node, "thead,th1520-reset")) {
+> > 
+> > Is there a reason that there is a now a conditional check for the
+> > compatible here?
+> 
+> Yes, this regmap operation is for initializing GPU resets and thus
+> modifies TH1520_GPU_RST_CFG, which only applies for the VO reset
+> controller (with compatible "thead,th1520-reset") but not others, or
+> other unrelated resets could be unexpectedly asserted.
 
-Use hao.ge@linux.dev as the main address for kernel work
+Thanks for the explanation.
 
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/.mailmap b/.mailmap
-index 717d754b378c..85fc24840c9d 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -298,6 +298,7 @@ Hans de Goede <hansg@kernel.org> <hdegoede@redhat.com>
- Hans Verkuil <hverkuil@kernel.org> <hverkuil@xs4all.nl>
- Hans Verkuil <hverkuil@kernel.org> <hverkuil-cisco@xs4all.nl>
- Hans Verkuil <hverkuil@kernel.org> <hansverk@cisco.com>
-+Hao Ge <hao.ge@linux.dev> <gehao@kylinos.cn>
- Harry Yoo <harry.yoo@oracle.com> <42.hyeyoo@gmail.com>
- Heiko Carstens <hca@linux.ibm.com> <h.carstens@de.ibm.com>
- Heiko Carstens <hca@linux.ibm.com> <heiko.carstens@de.ibm.com>
--- 
-2.25.1
-
+Reviewed-by: Drew Fustini <fustini@kernel.org>
 
