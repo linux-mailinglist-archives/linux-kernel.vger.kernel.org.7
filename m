@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-877721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A44C1EDB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:53:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F029CC1ED83
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3797718896E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7043AB5A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C59337B91;
-	Thu, 30 Oct 2025 07:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52789337BB8;
+	Thu, 30 Oct 2025 07:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RKRZ8ljE"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8PUAp/7"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5F98F5B;
-	Thu, 30 Oct 2025 07:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514B257AEC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761810766; cv=none; b=cWpEK2Qz6oyQGYG6LSZBkzArRFSZWVummpgmqirteJ177niTbsIz29MaYvUy6eV7tbuXCjJ4M0ixt/yQFrZCi5f9xi3CyrzfER6wBq1y0zKpmQnaPh89rIybNNtBnzegKjymt956cTp1ED31zrM8gCJp0k2NVH8yDh3drMoHXI4=
+	t=1761810630; cv=none; b=rrJwpR50kJ5j9MN88DoE6HxT5MRi0+zvzwWlMNfNOCfFY6uSAzdzULfA/Ck711uYzWgqa/c+wbgPsv4sFTrH7OfOgcxnZrhZbA55brABSyZUh2haJ/tSf0AzVJ6iqlp2c3JAeJJFyehlY5n8o48NWg0m6nE6kyqeOwZIyy8RORw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761810766; c=relaxed/simple;
-	bh=4brPCS6Z+GhMLQ+QXdncx2uLcqx1yYNpz/2tWj5/whk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r39gYlbhkuUfU1SMGlVmQ5hOIMceuzj55H1w8jw/y3Rm/HbpvbPBEvDlY5BFGOLrF3N8EopK5jzZMjO2fBMQi1DuT9f1xV8WQc4W9JdHZWoJ+Cuklp1bAUnOvq6TGbN8YlWnsEyCoyyXVSpubQ+oV2UO/JkFoVRIENQ5TEss50E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RKRZ8ljE; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761810765; x=1793346765;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4brPCS6Z+GhMLQ+QXdncx2uLcqx1yYNpz/2tWj5/whk=;
-  b=RKRZ8ljEKx7Bn4rZ4Vz0EPwiVwoIUnh5ZiNfHldMd5Si7mfX1rgBL201
-   TBtvMhRZ0iV8oRIj69ZP5NZmWE6QGKsFqjQUsqlmv1fpjsSFVoJpvjP7C
-   TFw+BeFxhXgm17EWL7nbS3OvUZlVOsEi5/w6SYM9y0dIC6fLVxQmZL0Y9
-   eRnTqMUpICEr0B8mjQ1pb8VWI7jU8Bpwf42Df+kpHS5Xu3LZU+sqtZpnA
-   qSLLrHxGVjhROSeaOzJVV0ZbniGKf2ZPmkvekrTEzYg4TIk6QRwSL9Vsz
-   NeOKw5Lc5fFHWrbtTpQBS5JLxdIjPHDxIee0lY0F+1sBOdPFHGoYKZr0R
-   A==;
-X-CSE-ConnectionGUID: GIlKJHtsT5WfM3AzSiISvg==
-X-CSE-MsgGUID: saPEV6GpTTSfiOHD5Sbi4A==
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="54760039"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 00:52:44 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Thu, 30 Oct 2025 00:52:30 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 30 Oct 2025 00:52:28 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v3 2/2] net: phy: micrel: lan8842 errata
-Date: Thu, 30 Oct 2025 08:49:41 +0100
-Message-ID: <20251030074941.611454-3-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251030074941.611454-1-horatiu.vultur@microchip.com>
-References: <20251030074941.611454-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1761810630; c=relaxed/simple;
+	bh=JEl9GC42JmfajoHCarU2JPEtxV/Dvh3GNqFUPBkz8So=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P7hgZmgq1N2e/Rw2iYNj3+pjngQuUXt5JDaFq76eLnTK6R8wVtJgN0wGbLqo9kliQ2JTWtAvBCQbziHgnKRchyb2cUInXGlDXelSy4HkpIQq2iLLDNFr+XkDlYNovPZS/EECjhfPGLfoH/IttwdvELU3Clnh6Mn1ZDbRjS3rnKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8PUAp/7; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3307de086d8so726163a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761810628; x=1762415428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdDJYs2ftj9g3gsNmVUwfcn6X4b2n8l3NR5CnT8xsbU=;
+        b=d8PUAp/75/QKRXkvqcwfPDCm23XFiMmFSdAKkxyBcCJ4Ft/nxDzTzn/r5+ChTRoTXZ
+         CgIAfjk2mvYQlI9AD0GO50UDn4Uz4RQz+8d6Rtg/Y5PML8fxlrw2RRj42ZVZYviSFLC7
+         2TEh0w6GY7j7fuUCg247cD9wRmQFLycP2pwIRNP+mfZoApeOWHic09OLzYRZWZ50HVQn
+         cDe0/7YhpPTltn+2TnBtVrJ/kO5EPIFKD1xf8t+hZWwG/lDHJx02QHGOrKqREYrgZ31b
+         kMv2klfC+Za1Pj+TWsZVVt8q+cwjkrDK6zGFNucnfoYyYD+0z7E5lNb5sktlA+2w+Zmt
+         getQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761810628; x=1762415428;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vdDJYs2ftj9g3gsNmVUwfcn6X4b2n8l3NR5CnT8xsbU=;
+        b=t5RO00B1HqUQCnHsFbzLsccXafhAbFh9blkNXhsGPyXDts77zCFX5DxF8QX54HILHq
+         Us4MRWkH8z6Savr5iQeYMYGfNLcq5tw/wD39Tn2r9gTSCs1uLDA4i/RNXDv2JJYE6oqU
+         9bAx5eHzPfpu0tT8CiFLkt6tD6ayMLEEKKZr4oIm84Uc4VEjLMQRqhti7JlDPG2fyarC
+         4UaUHjx1nVYs2IM7W5Uxsz4PRMwLUGpbCoEyYTT/Xi1knl3Hp+yInY0IxYRBJsvRT6wc
+         Et+M9TdHbJsK42sLkiPvB3lNmlvB4lPPjrugkf6cVCsHwq2c99+ZISN52a6iCpa46V+R
+         8NcQ==
+X-Gm-Message-State: AOJu0Ywavq558y9XB6rz5g8gqrj+24lh91YSgXVDE7m2IXN6rq3btGXc
+	fOpzEPyTs3VMHyb1LEqj8waqyJvT4TzkEti+Na371dc9RLZG4QHTtrO2
+X-Gm-Gg: ASbGncte6b86K6u/NEf+vRIsGQm5beAPeaK1ikb50pNn7Phvf5Uql3XSXm2CbGf8BOp
+	gmDRd8YhMYMicQ/cZWkPJzlFt7z8rZ/jyvNLYnrvfEDi4q87cfROSPHwRkoopOFy+itbffZeoYK
+	AB0mZjpxzQgze3X6GAmrptTvsDq2Tb+cQewTSKOlUHLHAP0ALiPKaCDTFPiozVKiNziajV0tMJm
+	UpbqqXM2jxssl3+tbWAsWSpcBd8qFwRsbdOySQv8mCktsiBUvSEF6HV7wLq2CyefR9y7eM+Zg8G
+	my8XdDs/pcOvSK/CRFZIQrJVNZkqXGdaMI6I85w+2KWloxxaujE2A0HQ8UbF8Bamhu5YAVi4V6C
+	xpVszMUECgl8NWmxEUPB+arNW/h/apKmwTwzlbsr3hc0psiYahChZGcV1RyoWmmI70sGopeXr6e
+	ueyDi66Fr4R2w=
+X-Google-Smtp-Source: AGHT+IEnOW3OBrwdrAR2/T02/vIwASDH7t9uKYiCN2IyW2jPQ7gCDPSDpZfSRXEfWPjcVg3PiiwQKA==
+X-Received: by 2002:a17:90b:4c09:b0:32d:d408:e86 with SMTP id 98e67ed59e1d1-3404c3ff4b8mr2592187a91.7.1761810627892;
+        Thu, 30 Oct 2025 00:50:27 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34050bb62casm1554574a91.20.2025.10.30.00.50.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 00:50:26 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 7AD704209E4B; Thu, 30 Oct 2025 14:50:17 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: Breno Leitao <leitao@debian.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH net-next v2] Documentation: netconsole: Separate literal code blocks for full and short netcat command name versions
+Date: Thu, 30 Oct 2025 14:50:13 +0700
+Message-ID: <20251030075013.40418-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1137; i=bagasdotme@gmail.com; h=from:subject; bh=JEl9GC42JmfajoHCarU2JPEtxV/Dvh3GNqFUPBkz8So=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJnMEpucuOR/GChNmvJz0qIJUgtObFj4kHXNrRd7Y3S/7 HO5+iZGv6OUhUGMi0FWTJFlUiJf0+ldRiIX2tc6wsxhZQIZwsDFKQAT2SvAyHB0dYPejlmlOdet 1/wKtCh4v+HUdsMvXz9+4uJlLd/LnnCBkeHxnq3C29++ajx83tl4/4u4vh0aSRHVUcyLbULmMCj t2MoLAA==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add errata for lan8842. The errata document can be found here [1].
-This is fixing the module 7 ("1000BASE-T PMA EEE TX wake PHY-side shorted
-center taps")
+Both full and short (abbreviated) command name versions of netcat
+example are combined in single literal code block due to 'or::'
+paragraph being indented one more space than the preceding paragraph
+(before the short version example).
 
-[1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/Errata/LAN8842-Errata-DS80001172.pdf
+Unindent it to separate the versions.
 
-Fixes: 5a774b64cd6a ("net: phy: micrel: Add support for lan8842")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/net/phy/micrel.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+Changes since v1 [1]:
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 504c715b7db90..b0f5941fddb0a 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -2835,6 +2835,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
-  */
- #define LAN8814_PAGE_PCS_DIGITAL 2
+  - Apply proofreading suggestions on patch title and description (Randy)
+
+[1]: https://lore.kernel.org/linux-doc/20251029015940.10350-1-bagasdotme@gmail.com/
+
+ Documentation/networking/netconsole.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/networking/netconsole.rst b/Documentation/networking/netconsole.rst
+index 59cb9982afe60a..0816ce64dcfd68 100644
+--- a/Documentation/networking/netconsole.rst
++++ b/Documentation/networking/netconsole.rst
+@@ -91,7 +91,7 @@ for example:
  
-+/**
-+ * LAN8814_PAGE_EEE - Selects Extended Page 3.
-+ *
-+ * This page contains EEE registers
-+ */
-+#define LAN8814_PAGE_EEE 3
-+
- /**
-  * LAN8814_PAGE_COMMON_REGS - Selects Extended Page 4.
-  *
-@@ -5952,6 +5959,9 @@ static int lan8842_probe(struct phy_device *phydev)
+ 	nc -u -l -p <port>' / 'nc -u -l <port>
  
- #define LAN8814_POWER_MGMT_VAL5		LAN8814_POWER_MGMT_B_C_D
+-    or::
++   or::
  
-+#define LAN8814_EEE_WAKE_TX_TIMER			0x0e
-+#define LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL		0x1f
-+
- static int lan8842_erratas(struct phy_device *phydev)
- {
- 	int ret;
-@@ -6023,9 +6033,16 @@ static int lan8842_erratas(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
+ 	netcat -u -l -p <port>' / 'netcat -u -l <port>
  
--	return lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
--				     LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
--				     LAN8814_POWER_MGMT_VAL4);
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
-+				    LAN8814_POWER_MGMT_VAL4);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Refresh time Waketx timer */
-+	return lanphy_write_page_reg(phydev, LAN8814_PAGE_EEE,
-+				     LAN8814_EEE_WAKE_TX_TIMER,
-+				     LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL);
- }
- 
- static int lan8842_config_init(struct phy_device *phydev)
+
+base-commit: 1bae0fd90077875b6c9c853245189032cbf019f7
 -- 
-2.34.1
+An old man doll... just what I always wanted! - Clara
 
 
