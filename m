@@ -1,208 +1,107 @@
-Return-Path: <linux-kernel+bounces-878475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779CFC20C4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:56:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BB5C20C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 840C74EE859
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D481A68366
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398ED27FB25;
-	Thu, 30 Oct 2025 14:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4C827CCE2;
+	Thu, 30 Oct 2025 14:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c4jfDxDa"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Cw4NWfRM"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8857277CBF
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11C927A917
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761835843; cv=none; b=VQUEA/Fi4Px0U6EhdUjYP4Gux6ynGA7/sNJUfr9kHcYQhDC4Qm+ab2muHZRI7qx6ThJroB7rtXC/sTYpK7MQ+EVKO+ZBsxJuaVx7goKV9pqhm9PbGb1hulpgaxOj+g+pqrapRGLRoIwoek50ILhIyMXsbI1WNkkzJojBlwwPkis=
+	t=1761835859; cv=none; b=UrObtw6DIV9XqWYvVACf4VW5Q0dOqmFNiPjUXQXVpdX5/KEeEsBelt0y4bE691QztpcB2o/9mVSAfHd2YaL4ZrxVEZdNGFoJmbjwR8xHIwCnO7z0So4WBkWYGSwkENJnJrdX2a0vh5iOXOjT+iaxEtL8eo6b77SiJn5kTS4lavs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761835843; c=relaxed/simple;
-	bh=3L6GDKEDg3zuG7rGWxNDn00DLu7kQEV2e1daHP0d+hI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=teFb0/qRjnnbLuHiIER5UzhykTY3DOpJRw/rWoZ+f5M8YmahQQ/hJh6lgN//ISkhf/RcI0BtRI9JrbPhoafS90EBd4kmGSx6GiT+ouE6yHhSwQewEyfX/BwftaPgpB3b9ZGtKh4xbI14k75CFc2LMfndm3v6a+Xtft1Nm5MB2HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c4jfDxDa; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1761835859; c=relaxed/simple;
+	bh=ETOATM5qH2qm7D4Kf6Y3WSupVBpNwRNqG50pShfhYyM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=AtjE+XrE4cd29bV/EhVHBQQJ+FSUu8umIcYmGZYUWbSszESnIiKb5Xcn25/4rwkFP/5E/uFMF0277DNSpOGVUndIm8PkWCytFhaTWt332/FfblF0BJL5RwhslRR+r0fcjrlyLCiEp6VvY1MUitJ7ZjCFk4hNaPR9MLiOu+nYwBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Cw4NWfRM; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 0A8851A1787;
-	Thu, 30 Oct 2025 14:50:39 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DDBC0C0DAB4;
+	Thu, 30 Oct 2025 14:50:35 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CEAE06068C;
-	Thu, 30 Oct 2025 14:50:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA2EF118085D0;
-	Thu, 30 Oct 2025 15:50:28 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 547E76068C;
+	Thu, 30 Oct 2025 14:50:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 07728118085D0;
+	Thu, 30 Oct 2025 15:50:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761835837; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=+1Ygbu6e/z62ponw49iBMoX40vLxbr6Wro8ocFjVzww=;
-	b=c4jfDxDaT7/tVH7dUdrj/rMHhXZb5FKMUZRP2sjVcueoc2itU5lk3zruIAyueCdoFM1fLw
-	7McxfrFbhskqXwSsiRl+kz8Tow+vo3oRbaRsj8G+XmyLujC2rkg3lrfvPf5RTXemvc3D7S
-	xzdGDxlGRK2BFG/ZaNxn7LxlSvRkADyOizAuJDb9ZWYL0JADEPuY7WFrul65gkEWG4kvcx
-	CQLvKMhCKtQzpVM6W9HZdc/85ivPnl6XvHlsTZ6uTlGbqdhUPJtO+tNuj+28MCo78LJwpq
-	gisCKKFuiq9TnBRQUAK7AAo7a5N8dfuIBOIWMK7uRtBxFXjIPsTRC30aBWo38Q==
-Message-ID: <7a611937-a2af-4780-9b88-cf9f282f88b3@bootlin.com>
-Date: Thu, 30 Oct 2025 15:50:27 +0100
+	t=1761835855; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=/5QmLAbB3bIU4Ql0Kwi/aAatM3bfZBytTuFNp0I0dMQ=;
+	b=Cw4NWfRMu7iA0vfrTlZd21uu4IqUjsVzKM2um3d4pvcjjWn7iaFwPCOcPHvbypdzBfeCPL
+	EJCiJJ+IG+nXvjuXwqcq7qcCUHL/6de211IpcllY+z8fAhXNI33ehMUQas1za8pEKPAbeT
+	PMNOnhR35btZu5UO2ehKR8zOUiK/26efIDSILzAlWcOC7Ni9WSHxxRruwzqJ96OrxKgh0H
+	EMxVbWrvAmYHpu3cSpBZNg6JhkMoodjh7A54RksAK1YtZFqP5GWfWxAKp8n8p7vjWjwgR2
+	UD+PL7fwmhS2ImOABnr5k1uQqYZi5KSZf4RmzWhxFwWpBdhowjhnFUrSDrW0Rw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v14 01/16] dt-bindings: net: Introduce the
- ethernet-connector description
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-References: <20251013143146.364919-1-maxime.chevallier@bootlin.com>
- <20251013143146.364919-2-maxime.chevallier@bootlin.com>
- <382973b8-85d3-4bdd-99c4-fd26a4838828@bootlin.com>
- <b6a80aba-638f-45fd-8c40-9b836367c0ea@lunn.ch>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <b6a80aba-638f-45fd-8c40-9b836367c0ea@lunn.ch>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 30 Oct 2025 15:50:52 +0100
+Message-Id: <DDVQOOYR7YOO.3L40JABB6VVUW@bootlin.com>
+To: "Carlos Llamas" <cmllamas@google.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+ "Breno Leitao" <leitao@debian.org>, "Miroslav Benes" <mbenes@suse.cz>,
+ "Mark Brown" <broonie@kernel.org>, "Puranjay Mohan" <puranjay@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Catalin Marinas"
+ <catalin.marinas@arm.com>
+Cc: <kernel-team@android.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scripts/decode_stacktrace.sh: fix build ID and PC
+ source parsing
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20251030010347.2731925-1-cmllamas@google.com>
+In-Reply-To: <20251030010347.2731925-1-cmllamas@google.com>
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Andrew, thanks for the reply !
+Hello,
 
-On 30/10/2025 14:23, Andrew Lunn wrote:
-> On Thu, Oct 30, 2025 at 01:13:14PM +0100, Maxime Chevallier wrote:
->> Hi,
->>
->>> @@ -313,5 +324,12 @@ examples:
->>>                      default-state = "keep";
->>>                  };
->>>              };
->>> +            /* Fast Ethernet port, with only 2 pairs wired */
->>> +            mdi {
->>> +                connector-0 {
->>> +                    lanes = <2>;
->>> +                    media = "BaseT";
->>> +                };
->>> +            };
->>>          };
->>>      };
->>
->> As Andrew suggest clearly differentiating "lanes" and "pairs", do we
->> want this difference to also affect the binding ?
->>
->> I still think "lanes" makes some level of sense here, but at least
->> the doc will need updating.
-> 
-> How do you define MDI?
-> 
-> For copper, one possibility is an RJ-45 plug/socket, and you have
-> twisted pairs, 2 or 4 of them.
-> 
-> Some people are old enough to remember 10Base2, using a coaxial cable
-> and BNC connectors. Would you consider that a pair? A lane?
-> 
-> How about an SFF, a soldered down module. Its MDI interface is likely
-> to be 2 fibre strands. But consider so called bidi modules, which use
-> one fibre, and two different wavelengths of light.
-> 
-> Or an SFP, where you have no idea what the MDI is until you plug it in
-> and read the EEPROM.
-> 
-> Do we need to be able to describe all the different MDI? Do we maybe
-> need to look at the media property to decide it is an RJ-45 connector
-> so there should be a pairs property? Or the media is -KS, so there
-> should be a lanes property for the number of PCS lanes on the PCB?
-> 
-> This needs further discussion, what are you actually trying to
-> represent here?
+On Thu Oct 30, 2025 at 2:03 AM CET, Carlos Llamas wrote:
+> Support for parsing PC source info in stacktraces (e.g. '(P)') was
+> added in commit 2bff77c665ed ("scripts/decode_stacktrace.sh: fix
+> decoding of lines with an additional info"). However, this logic was
+> placed after the build ID processing. This incorrect order fails to
+> parse lines containing both elements, e.g.:
+>
+>   drm_gem_mmap_obj+0x114/0x200 [drm 03d0564e0529947d67bb2008c3548be77279f=
+d27] (P)
+>
+> This patch fixes the problem by extracting the PC source info first and
+> then processing the module build ID. With this change, the line above is
+> now properly parsed as such:
+>
+>   drm_gem_mmap_obj (./include/linux/mmap_lock.h:212 ./include/linux/mm.h:=
+811 drivers/gpu/drm/drm_gem.c:1177) drm (P)
+>
+> While here, also add a brief explanation the build ID section.
+>
+> Fixes: bdf8eafbf7f5 ("arm64: stacktrace: report source of unwind data")
+> Fixes: 2bff77c665ed ("scripts/decode_stacktrace.sh: fix decoding of lines=
+ with an additional info")
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
 
-What I'd like to represent here is at least BaseT connectors, or simple
-Fiber connectors without SFF/SFP (we already have an sff/sfp description
-in DT, and we can know what they do by reading the eeprom).
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Let's consider these examples, which are representative of what I
-want to represent and why.
-
-As a remainder, the end-goal is to be able to list to userspace the
-front-facing ports that are beind a netdev, so that we can in the end
-support MII-side muxing.
-
-We have several examples of that already upstream :
- - Turris omnia, where we have a mux in the SoC to output the SGMII/1000BaseX
-  either on a PHY or an SFP port. This is not covered by this series.
-
- - The MCBin Doubleshot. Here we have the Marvell 88x3310 PHY connected to the MAC,
-and to both an SFP and a RJ45.
-
-However, what we have in DT is :
-
-
-&cp0_xmdio {
-	status = "okay";
-
-	phy0: ethernet-phy@0 {
-		compatible = "ethernet-phy-ieee802.3-c45";
-		reg = <0>;
-		sfp = <&sfp_eth0>;
-	};
-
-	[...]
-};
-
-The question is, with the information we have in DT and from what the PHY
-can autodiscover, how do we know if we have this :
-
-MAC --- PHY ---- SFP
-
-or this :
-
-MAC ---PHY ----SFP
-        \-----RJ45
-
-I don't think we can, we are missing a description of the MDI-side of the PHY.
-
-Of course I don't want to start representing the MDI for every PHY out
-there, most common case we have one MDI, that supports whatever the PHY
-reports from .get_features(), with the possibility of reading some straps to
-adjust.
-
-When we start representing the MDI, we can take that opportunity to solve other
-problems :
-
- - The proliferation of vendor properties like "ti,fiber-mode" or "micrel,fiber-mode"
- - The use of "max-speed = <100>;" because the PHY is only connected to the RJ45 with
-   2 pairs
-
-So that being said, an option could be to only focus on pairs, only for medium = BaseT,
-and ditch the "lanes" terminology, at least when it comes to the DT bindings.
-
-Does that sound good ?
-
-Maxime
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
