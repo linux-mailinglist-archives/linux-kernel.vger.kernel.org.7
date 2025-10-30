@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-878152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C10C1FE5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:59:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A876C1FE53
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1199188CB20
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:59:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F97F34D353
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0A8351FC8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4265B351FCF;
 	Thu, 30 Oct 2025 11:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Na0Z/6vM"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4n+qQKb"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9D334381
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A560B33F399
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761825509; cv=none; b=PdpJbvbA18zSxlF+agjMg2ikXtUAIWakfx1KwVjQW6nOZQO4JFlUUSbvwE6O6b9K1m8eivNU4Tdt5DuzRaoNTxPziMZaBKDPkEXeshiLkQ7T1ZPqJX4XmGbb/GrcxidLIS7v0hD4oRJ6KzvcZgASnHmxTKRhGBgx2aNlBSu/ZWY=
+	t=1761825509; cv=none; b=A6Wsbggx5GQHu/psUQOr1FUJOuvKI+1vozurrHiTNRZzrDqyBIHHMFu9IwBWTFiDcA3cYhxmebmx9AI6xQ1Y8baZuKDOwHoYXdFZIf3JVt1H4IDVQx3s5rtrqkzx/zP2w77h+OLGqkGweaDhMT4DGatC9CvBicm6ck71KqRw2OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761825509; c=relaxed/simple;
-	bh=sZNW52iY85l+p/HOpEFb2S81aet8Iw1lQAC4ADUJqwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q5/cZvUVbzfOKjs96PpjVm2+RqmVm3PvthGrEAjGrZfumlPbGTjPD3hACkqW5s+Y+O2samZQqP/5knMaPhNu9n2oBFbc4OtEtIIbpYakXorVYYPZsrWP3o5P/i7wgM0yDce8jwWGp3bLHyH4wtp3kBbL1911dUjwsZQQqzUMNCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Na0Z/6vM; arc=none smtp.client-ip=209.85.218.52
+	bh=z8+/TiRnqkkKhbz/FE5y0ykIKcQoH6t739+vrrDNkVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=njXI1VffWeaPdAiDiGJOrYW3bWLczT1Yyk816/JeBeoAE3DfmRnGYmeZX8VjoOBNQoidd5X1MdC+dP3F9kyvf0k+Ib1kcZ838AVnohJVXt7YDrq3qS1uiWDzDEKyWUjGDzHEwqZg75y8UuAvYW8NoCo2jhHWJieEhIwoP1bGy3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4n+qQKb; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b6d78062424so48926566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:58:26 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so182232866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761825505; x=1762430305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPxRIbahOA8JF1fBeI0tVZJCAEXOLdeMtoMqodgWGYs=;
-        b=Na0Z/6vMBL8Zc7h1ETExdWzjpN9Z8UywQ+xiWnf79uQKa6j2k/WBFPRzykM8VP9ulB
-         3fHvARhWDZqM1bpH+Xo+AFtjMngczUtuDRlFE42JnDVISMJ27xMRZ2EbvNX8U5dm6+Tj
-         u2D5E1aQz1psL+wEkkwnsYYrQksyy9ISQUCYRMrKxkV9DBYm0tpW5xw1TzQzJ3/dTQbR
-         81FUnWU24I6FFfclQ5V0zKVfate0e629Rd7DoxNLPkyMwZvbgX4qzh0r+eWLa0oGF6iY
-         pNQJ8nB3IcDaCdXAGEPHqBx82p9l2P1UDEDICRgGd7RcMxBvtepE7aNNHkFtyGEXXFbV
-         1zUw==
+        d=gmail.com; s=20230601; t=1761825506; x=1762430306; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LgqDr2FdByIC3kvKF2/wW7lARGVAOjJzTLXp8RXcVms=;
+        b=f4n+qQKbUdgruadyC9rsrpYIT8MzHOEfRUbY99gNBF9cObAMO+IB+IuGaT9Rs5vsgY
+         nDxFf/4XIoh5pZ/zhqoMlLW/905qrxTLYqfOiztRBrWDiwy2bMWQV/kMDXZ8bV0llv7C
+         ElM3T0q1KpCj2xbYpkWLUubHzFkfy2WnsfJaAzfZODVYfIErgQvYqb0uHu6iXdM9rbaO
+         AGnMDuMNZSNexAwophPhQtudTm/EQ3LIDgyt+TEyP9HXreTR8aKAjC5ph3lCPaLzQUKp
+         R+OuO0IDPRq7xEdM29+hZzU/rq1lR0NwgpxN7ICZxEFwQ+AJCY4l/QlMaIqjxAcKR8Pe
+         f7NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761825505; x=1762430305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CPxRIbahOA8JF1fBeI0tVZJCAEXOLdeMtoMqodgWGYs=;
-        b=CamsmFqMmS3h3KMZMbeC1gbUnwJnafmsQX8wKBBS/QJeiSgTjOUfyYlhyz+3vdx3mH
-         UZ0Ds4Gmywv5eelPBx2sth/QDnkcmqu7cUWkxshCBZF/nwjtARxe0T7+xaU4y5G3Po5r
-         W6y4UQxwOjPxyoBymGKF5M3L/oj9GFUKMO2v0urfbv3t8l5nNVW8dhsuSHVFmQQnPIxU
-         IluMJ48XR/6/3HIUffVf4993uvKuyEaQSNIX9VdjPiVHkoxNmB2ELVf32Y/tdeY/TKal
-         zcSqd5QqFkSBALPq8sZ/3LAUIskisG3iCVrfkdib9gR0YcLUFPvQig5j3Kszk7rQGEpM
-         XyYA==
-X-Forwarded-Encrypted: i=1; AJvYcCV60uOfpTWxZLoffnssAiEsnrh0HosJgYHKk5P22b65Qs32UmWG3aoH99AcQoaLRC+uvcN2JjqPsXyt0ME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQVtLhxYfsCDqkfA6lFLO2lT3JzlyMKMakowRTPSq2Oypa+0Ur
-	MB6zhBhrgDugx3x60H75pSXJs8vb+ak9/3ec9XgQvRxWU5cGd4umVRai
-X-Gm-Gg: ASbGncvvw5+bqKLofkubuNe+NNjOK4e3VmHbdgmZiBslM6FvxLmD1kIOaNlJqlYLJHH
-	uGige8VU5kAPut4pGSLt25JhWPB02DJkvJTAstv6cmW7lKtz3EH6lFc7i+P1HSalc4iFgjIYZuq
-	jcaW1rzuF+WLNUkXse7useCam7tDe+KDVc/tv2VWvL+fk08fa75FmGtf89Rxsgh+6KxUNtY4Sx2
-	lm8nVylw5sCyWH6FXjCAKODZgao3jlOtnX/dOGQpxLumGzGNTdCAMtc6N03p1GS73B6sLqI7PJt
-	X2M5MqCQRqlhj2hrPRhRHb0HCkj0jnvaJ/fRQw8w7Xm1GAqov4p/bQfk9G2WB88gt+dKS+d5cEP
-	LxG2O8VP1hLWhva7cfdZb7I5NDvJoJcyJW+46V1o9PuM26POtk6rLyi/Jbd0WWop8SQE=
-X-Google-Smtp-Source: AGHT+IHeSvgWKMHX9GjmCJ+A3zvrNHDZSYQPKt5DrHCbP1HCW+BvdIN08JLaAeXVo88A33OVPe//Xw==
-X-Received: by 2002:a17:907:dab:b0:b70:30c6:c169 with SMTP id a640c23a62f3a-b7053bf1e3bmr282001866b.18.1761825504572;
-        Thu, 30 Oct 2025 04:58:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761825506; x=1762430306;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LgqDr2FdByIC3kvKF2/wW7lARGVAOjJzTLXp8RXcVms=;
+        b=atY/ekmFYwL6lU/l9MCLkKuppEwCCzcPwC9vsqjHhADpQnNlV53aTyGiFmzZIx9fLg
+         NVbGpLuBqJiMAFzyuDNICZoZjDnGfo67WviYdVYWKwUzszT6SB3JJheT4Cv3m/BSFUJ3
+         BGGVKZgBK1KQjCmIELlGDiSQMLxtRf59vlr5CoYmg2/8CdVA60Lp7PXTpqW+IxXQgAYN
+         rTyKb3y8IlSr/JSJ3bF/vrBprQOZqglD+oBEZ8JuCZC3dbn8x+tksqqgz/9LShbKoQs4
+         WrwkHR3UF9i484cBWoUlWJ5BoER/EXcuc7fJYwQK7Jrueyl4oeQlS10FAPl7FR5OBEJW
+         p4uA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfQCMO4GnEmTxlAJfni6iwBfo1ktVnhNS252Q3IeNVOeZbZwBElEBffE7JphsNE+Chhh9p2VyVcCqfNaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLTweS2zU9FK2pmFGaWkFnnL1Ucb2ZNJ3+qD/ETdKlmGjt/7tX
+	NUt72IEh3ACnshtbuf7WxvG49Ora2LmbkvHAeNoDaw8+AUQV8uRvl8IK
+X-Gm-Gg: ASbGncswSyYjPHMXw/Y4OgLwRE/9uQoP3C7bmtL2oxODIQ5dIGseWpF4nA8E3naqOj4
+	UWHBJVMS/pX/mZbdThaNsb4g9L77w9EuLUW+1YcUdNrcWUdAGsN2pvNodF2uYLpuHOByWgv1Hw3
+	sO75BWn+Qz6jLjLIKFnxiFvukzgGdc4BFC4Y0Tt3v5tz0XiP+3NcB8QzS0xLSgXXEmwCYjIGa81
+	ZTxREBXb+B22qK9SicHPzzyCG4u/5sdZHN4w3sDGVMhyqQW1sbmt5/RIMcNnyxGEKPnkdcNFGGo
+	9848IP6DOo4ivUcA8E2dsZSONqxFeLpokj6mBv3Y0HK+g64NnQ3TSXicfgiNij8jXQjPZ6XjeR1
+	23r2BEGyMEHjB7YyPEak0+WyJYdXPrxuztQEYH9kKGArWzQz0A9GgxRk1bFC2I7q2ZD4=
+X-Google-Smtp-Source: AGHT+IEOsIqXvX4XMDlcUuqmCWZeHt5WzeFQ5I60zX1ZWFQCMUMZGW0CUcXNsPFzkeC/WIVGiRU9Hg==
+X-Received: by 2002:a17:907:934c:b0:b3f:ccac:af47 with SMTP id a640c23a62f3a-b703d4f7d94mr691571366b.31.1761825505841;
+        Thu, 30 Oct 2025 04:58:25 -0700 (PDT)
 Received: from xeon.. ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85308c82sm1752564566b.5.2025.10.30.04.58.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85308c82sm1752564566b.5.2025.10.30.04.58.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 04:58:24 -0700 (PDT)
+        Thu, 30 Oct 2025 04:58:25 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -88,10 +90,12 @@ To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 Cc: linux-media@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] media: i2c: add Sony IMX111 CMOS camera sensor driver
-Date: Thu, 30 Oct 2025 13:57:55 +0200
-Message-ID: <20251030115757.33695-1-clamor95@gmail.com>
+Subject: [PATCH v3 1/2] dt-bindings: media: i2c: document Sony IMX111 CMOS sensor
+Date: Thu, 30 Oct 2025 13:57:56 +0200
+Message-ID: <20251030115757.33695-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251030115757.33695-1-clamor95@gmail.com>
+References: <20251030115757.33695-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,51 +104,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add driver for Sony IMX111 CMOS sensor found in LG Optimus 4X and Vu
-smartphones.
+Add bindings for Sony IMX111 CMOS Digital Image Sensor found in LG
+Optimus 4X (P880) and Optimus Vu (P895) smartphones.
 
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- added nvmem-consumer and dropped eeprom
-- switched to unevaluatedProperties
-- dropped flash-leds, lens-focus, orientation and rotation since they are
-  inherited from video-interface-devices by unevaluatedProperties
-- dropped assigned-clock* props
-- improved code style
-- adjusted colorspace definitions
-
-Changes in v3:
-- switched to devm_regulator_bulk_get_const
-- set V4L2_MBUS_CSI2_DPHY bus type unconditionaly
-- removed pm_runtime_mark_last_busy
-- removed properties from port endpoint and bus-type requirement
-- removed unused headers
-- adjusted register macros
-- added vblank and hblank
-- swapped register writed with known purpuse with macros
-- container_of > container_of_const
-- added return check to group write
-- adjusted PM similar to imx219
-- switched to enable/disable streams
-- dropped enum_frame_interval, get_frame_interval and set_frame_interval ops
-- devm_clk_get > devm_v4l2_sensor_clk_get
-- adjusted default_link_freq calculation
-- dropped imx111_id i2c_device_id
-- improved code formatting
----
-
-Svyatoslav Ryhel (2):
-  dt-bindings: media: i2c: document Sony IMX111 CMOS sensor
-  media: i2c: add Sony IMX111 CMOS camera sensor driver
-
- .../bindings/media/i2c/sony,imx111.yaml       |  105 ++
- drivers/media/i2c/Kconfig                     |   10 +
- drivers/media/i2c/Makefile                    |    1 +
- drivers/media/i2c/imx111.c                    | 1548 +++++++++++++++++
- 4 files changed, 1664 insertions(+)
+ .../bindings/media/i2c/sony,imx111.yaml       | 105 ++++++++++++++++++
+ 1 file changed, 105 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
- create mode 100644 drivers/media/i2c/imx111.c
 
+diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
+new file mode 100644
+index 000000000000..20f48d5e9b2d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
+@@ -0,0 +1,105 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/i2c/sony,imx111.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sony IMX111 8MP CMOS Digital Image Sensor
++
++maintainers:
++  - Svyatoslav Ryhel <clamor95@gmail.com>
++
++description:
++  IMX111 sensor is a Sony CMOS active pixel digital image sensor with an active
++  array size of 2464H x 3280V. It is programmable through I2C interface. Image
++  data is sent through MIPI CSI-2, through 1 or 2 lanes.
++
++allOf:
++  - $ref: /schemas/media/video-interface-devices.yaml#
++  - $ref: /schemas/nvmem/nvmem-consumer.yaml#
++
++properties:
++  compatible:
++    const: sony,imx111
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    description: EXTCLK with possible frequency from 6 to 54 MHz
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++  iovdd-supply:
++    description: Digital IO power supply (1.8V)
++
++  dvdd-supply:
++    description: Digital power supply (1.2V)
++
++  avdd-supply:
++    description: Analog power supply (2.7V)
++
++  port:
++    additionalProperties: false
++    $ref: /schemas/graph.yaml#/$defs/port-base
++
++    properties:
++      endpoint:
++        $ref: /schemas/media/video-interfaces.yaml#
++        unevaluatedProperties: false
++
++        required:
++          - data-lanes
++          - link-frequencies
++
++    required:
++      - endpoint
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - port
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/media/video-interfaces.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        camera@10 {
++            compatible = "sony,imx111";
++            reg = <0x10>;
++
++            clocks = <&imx111_clk>;
++
++            iovdd-supply = <&camera_vddio_1v8>;
++            dvdd-supply = <&camera_vddd_1v2>;
++            avdd-supply = <&camera_vdda_2v7>;
++
++            orientation = <1>;
++            rotation = <90>;
++
++            nvmem = <&eeprom>;
++            flash-leds = <&led>;
++            lens-focus = <&vcm>;
++
++            reset-gpios = <&gpio 84 GPIO_ACTIVE_LOW>;
++
++            port {
++                imx111_output: endpoint {
++                    data-lanes = <1 2>;
++                    link-frequencies = /bits/ 64 <542400000>;
++                    remote-endpoint = <&csi_input>;
++                };
++            };
++        };
++    };
++...
 -- 
 2.48.1
 
