@@ -1,82 +1,98 @@
-Return-Path: <linux-kernel+bounces-878239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C665C20167
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:51:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC04AC2014F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28F8934E8AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:51:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61BBF3479F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C723354AC7;
-	Thu, 30 Oct 2025 12:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C2D34028E;
+	Thu, 30 Oct 2025 12:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lVflvyhq"
-Received: from mx-relay32-hz1.antispameurope.com (mx-relay32-hz1.antispameurope.com [94.100.133.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biz7aGwJ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFB934028F
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.133.208
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761828666; cv=pass; b=kKKfdq2tyl8Gq+nc8Mu1pPj9QvTNgN622Yg9yeh1MToWf7lFMS3OVA7jW3xhiEZwC9obRA2UA/9M0YSZo1Zt16dGyXTR9dzPwqFhQ+Xf/o+8YzDlrJxqCuUguQbxC8JyhTr1N9CX4DmcmrC0JOVuCKR6wVtSB9L3wF+W+aBzVf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761828666; c=relaxed/simple;
-	bh=8R70P4kEEcIbFjodXfQBxXqAq+lQZtKZ+MdM85RNf64=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jnLtQIOgr90RaSo+MrWchnsyOtCQpc0ckAJav3bJnKSfhkZ8iukz+j2u3+uUwkzKgjIzRnZy1VBU+YprKvDTPI74dQnAliClOW8RxRpb5P9yiXkmP13K81P09c1D8s7YXk4XRbjuoP+ewGVy6JpMLWhwdwhKwO38/YWA7b+2hpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lVflvyhq; arc=pass smtp.client-ip=94.100.133.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate32-hz1.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=orpjfmaMqp/ep6TopDZ6qss0KQr8oMJ5sbynNFItMqc=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1761828619;
- b=RAWKsq/pM29F20MO5Dch37HP8eH9bRtaA0F5W2kGCZ2LPDqaaVNCP9T3mBLgf9pJbmB7zkcr
- G9LmI1rFNjW5PGX+JvYi66X0uEzNsU6rNYrBelZNxPCY/LZxKt0iqNi3jskzwxT2NhxA3PjRfF0
- uF31eNT14YMspXjHz/AniJqaZpO/BDMumWViUwMbl8AkrQnvsn9sWcBnY272Hre4jz6UmxaDIDI
- 1TH8at4sIvxR9dnatLRPsCSigWcOnauQVnukUjsHfCTgVX3Ot3jqqJ2Gl2Wsn9Ndk7wTE/Q5oxA
- MJZOqJSglX9A8afsoGdKEzVIbzSPCJL2gSISm23RuCB+g==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1761828619;
- b=pYPt7FAXiYyHnLZVKD3AY2Mju6oQT6p1/tDwy4rETyA/rHj7RZn/428fVaOG1kOUHKB8t0rO
- jpsgyzsS7ifu2K36Rv/6dScXEy+GOVuzNUjmYHxF2kvosoW/3kzAh0mYAOcM9AglxNSDEoW6Bn0
- JAyz5zZEbA2nZsP8/CU0Ir6BPX6K6mbR/LOpnkNIgtrBl8xVySBvCgpOtFzC/7W+tKzzl4A2eqR
- JOqaBV2Y+nwEcphfimNgtfdzM3gYq53ZePdffPy3A6re5/7t19un/hkqQS0cZsuWksCXvGVTTJe
- hjJua4bARf01f3rmT4nlBItGsPI8bsUIqi0Ou6shtlU4Q==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay32-hz1.antispameurope.com;
- Thu, 30 Oct 2025 13:50:19 +0100
-Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id CFE28220C62;
-	Thu, 30 Oct 2025 13:50:02 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: linux@ew.tq-group.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 10/19] arm64: dts: imx95-tqma9596sa: remove superfluous pinmux for flexspi
-Date: Thu, 30 Oct 2025 13:49:17 +0100
-Message-ID: <20251030124936.1408152-11-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251030124936.1408152-1-alexander.stein@ew.tq-group.com>
-References: <20251030124936.1408152-1-alexander.stein@ew.tq-group.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356172FBDE3
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761828597; cv=none; b=anhzVb38+QKQf2kQ1fpv8X8SGMsx84Mr/NqtpF/NbCt3AEeWRu/5H/ZUJTRyhNs0nZcN1zibREY1ySBHTHZGzxqoHM76C6pXbFSb0Tm2jR06EaM8wwgodot4J8txT67bl7UkooDQljFWIse2WGkBE285DSg+V7HPSZJhBMYlxWA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761828597; c=relaxed/simple;
+	bh=pl2Dax7X8Q2Kn2J5L1Qv7Q75J13hklW936GDEM09W0I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mPVnQMNCAYBZBbQuiMgnXbZUCDbIaaRdVGsui8NeJ4NigDF1EAHuS5+Re3aBOM7ax8opV/rwVkFfdl8XNhyE8CgZsFVAI7dAEAv/stedZJIDoeyyv94QPQqbIeJA19I6LP/ghhoM2h/IUqrnKz27YdpKyJdYi9UQF/Tmo66IFLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biz7aGwJ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-269639879c3so8707395ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761828595; x=1762433395; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0wMUkyUpK3qsMRsq71Jgy8aRMQN0C5fUI1+KxForyRw=;
+        b=biz7aGwJPjM/t9shv/+KlX2eHVgmkzw1NlWrPQEC3XwQkuwNCUvzrqb02qDuoDoJni
+         LnXVEZ7fjxS9/jWHO9BvWH3j2O64exRqFnU+MjYoxYdtUfU6x+aK0aKhtG/NWXzl+EUj
+         P3rzI+MKxkF4/jfu2XQ7I8lNH+AoP8stQuMNZPX2k7GcsPLtIhkPS6H66aUE0yD71GJH
+         9kRRPOxzSwc5x+JoJKS7fnX+rI3oqonb1v8YkRoXGK5vXD3W14J/DcOgweNZeFHXya9p
+         ZM+VnQHBlOhZs0hykKSEk2Sy4T5CYf9RaWAno8vC3m3mB3+ZRi+uUMdd1bRtOSDX2FiF
+         PJTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761828595; x=1762433395;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0wMUkyUpK3qsMRsq71Jgy8aRMQN0C5fUI1+KxForyRw=;
+        b=ACo1H0UiRXPRcRNUDziuIW2sKfKKBpk+Lik3Z27WZBkuo+qS6dCU9RLUd2Ug4OTCnV
+         H/0nbxG4NOah674gh3wGdOnqGSChJTrQpZFEVMOMT0/E5sE1NYaJ+q50mai19H63fnwx
+         t54Ho3zcHXGVl/pK/D6RDQAZmbMy4O+HSUbi6mmdLQMq0vulVna4Ix+dlCZAv6qPlAQQ
+         fS88vufTJBUTo/qcgk03cz/UK2IngGqTH3GbS4uMfWi5C1crr5/J6F0Q98XjA+2FmicT
+         yrNlCEXjMWpSnkAjPVNk/SSMtHhBOjq+jIqNrOGgDXEI791WBZFswpV2m+5eoaOJJcTS
+         QGSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaooqu+bZP3hv30U8VcZ7FTv6NM4/S2q3+N+JSIMJCmYs8OK9ukbPV7Obn3ZPWr4wVRKKqtFuzEZih+/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa2lLFsy0oLqX/yJVOzJp7bS0yD2FguYTIW2E5gy8hi6QCymv2
+	Yv2JFPwWXpXLjmmihUin6+Berb6OmT7wdRWD+Hk1cENE+1rAQX0cmveW
+X-Gm-Gg: ASbGncui9bQv05kDzUiTRc3XmOZtSRnEF9u8n8nzm1kyDt/JhhxRIm3xQQIMjIdwkbk
+	dFtE/QlqAt1l2ujKbek3uP6EkgS1tm+sVAFlBX6jTb8zsJBoq2fW7l1krufJpPk10DIP1gd1D8V
+	vkiho7qraUd7i1LtxAYML+iQCqIc7lpvXI6WAzLDzxoasOGUEWaeuo1Mn+GJYxejGyf+kj75pP0
+	syGzrziBUviRMcmSaSKwdHcmMkJanOB2h+BZrfB70qtGnxTIO85fq3DzyneSj3oGuXDsHdnZ8Zu
+	bkXEppgXWyHuDRG4MBCy6vKtyJePZbrrgU0PCrAckzgJN51fVYvKoasUwE9WV5ZTKw8FXh/iX3D
+	g2M7VUsEpp+8IUgAeNCMcXIBEmXY8+03oshQSsaCoP5drh7051qBAQsyPrc5f0d2zUBph3fEze2
+	p0ikLMn0zwu5+C
+X-Google-Smtp-Source: AGHT+IFqMiF+448NAGIOILZt5S2gDNl6+/qjfqm3OgH1RKZRoe6AgVc3Kgh8Qko6BWtweiYRhF+MNw==
+X-Received: by 2002:a17:902:f708:b0:290:a3b9:d4be with SMTP id d9443c01a7336-294dee128c3mr80435845ad.24.1761828594891;
+        Thu, 30 Oct 2025 05:49:54 -0700 (PDT)
+Received: from ustb520lab-MS-7E07.. ([123.124.147.27])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b7127bf47a1sm16719123a12.10.2025.10.30.05.49.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 05:49:54 -0700 (PDT)
+From: Jiaming Zhang <r772577952@gmail.com>
+To: kory.maincent@bootlin.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	kuniyu@google.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	r772577952@gmail.com,
+	sdf@fomichev.me,
+	syzkaller@googlegroups.com,
+	vladimir.oltean@nxp.com
+Subject: [PATCH v3 0/1] net: core: prevent NULL deref in generic_hwtstamp_ioctl_lower()
+Date: Thu, 30 Oct 2025 12:49:46 +0000
+Message-Id: <20251030124947.34575-1-r772577952@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251030111445.0fe0b313@kmaincent-XPS-13-7390>
+References: <20251030111445.0fe0b313@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,50 +100,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay32-hz1.antispameurope.com with 4cy3qH419Jz8stG
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:201a609ca4cd8de84ce042f2b20575b7
-X-cloud-security:scantime:1.813
-DKIM-Signature: a=rsa-sha256;
- bh=orpjfmaMqp/ep6TopDZ6qss0KQr8oMJ5sbynNFItMqc=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1761828619; v=1;
- b=lVflvyhqCM+ETOxTrU6fZuA6ct7eglLqj1yKwtn4luWYzHLo+m+XP3cFKjufLy+77AB2mFu6
- SajO8x6gV65D6B/syuslxjHaCq/qOWNR6v0Oh1XQ0gvuwWqXb7CiAlRKaXFQlnTazSrW9q54kbE
- uLvW681HER1KwNLbY/OWQkXNO+40mNwhS5ORwFYVK57nfv8eCZd2dYj3Q4lhtyMokkLCQjcUSm0
- pZl6pepKxPFSYQQozW0AhhsUPJwa16GER66AMlA17LxYpGuj/GRkAVjBraVAImtFyZNwQAVUqiY
- ubgBP/vmpbMFOEp8ZmgvxDpJbsh6UR5Drc1xunlNvEotg==
 
-A sleep pin mux is not useful if it is the same as the normal pin mux.
+Hi Kory,
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Apologies for the resubmission (v3); I forgot to add Reviewed-by tag in
+the v2 patch.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
-index 36da8ff8d1835..b7136982700a9 100644
---- a/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
-@@ -117,9 +117,8 @@ &flexcan3 {
- };
- 
- &flexspi1 {
--	pinctrl-names = "default", "sleep";
-+	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_flexspi1>;
--	pinctrl-1 = <&pinctrl_flexspi1>;
- 	status = "okay";
- 
- 	flash0: flash@0 {
+v3:
+- Add Kory's Reviewed-by tag.
+
+v2:
+- Fix typo in comment ("driver" -> "lower driver")
+
+Best Regards,
+Jiaming Zhang
+
+Jiaming Zhang (1):
+  net: core: prevent NULL deref in generic_hwtstamp_ioctl_lower()
+
+ net/core/dev_ioctl.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
 -- 
-2.43.0
+2.34.1
 
 
