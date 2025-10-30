@@ -1,106 +1,144 @@
-Return-Path: <linux-kernel+bounces-878444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EA2C209BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:34:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD999C209F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6A718933A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:33:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DC844EC678
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C569726E6F6;
-	Thu, 30 Oct 2025 14:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC024274B3C;
+	Thu, 30 Oct 2025 14:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBk6qmF8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="c0frDGXY"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B025235053;
-	Thu, 30 Oct 2025 14:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919AE1F0E39;
+	Thu, 30 Oct 2025 14:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834749; cv=none; b=mPzrCC0zNJfO3PyQ8fHaV5kqS3JkNmpqdryf5tXHYxgAjQZWp79o2wTTYUFTPcVIP7LgjEPp9YLOMbpEsu0yAFtcsgfKMK9+aSS1x7cDJlS11s4wlHGG1MlenPu03LZakFZB+k9i0Lgcxe9MuRSFp+CBxu5waKKs7ELIqS4teV8=
+	t=1761834777; cv=none; b=bA1AGyG2bX8q3SFU9387F7GBOnaYYciMPbyUqYR0cqTMgQmSkrBFCR+ruNeOOwuRS2APoFKe4SaUJsm6c4Z70oc/JokQYFmBvDOTsE2aFDTmY9E0OjA8PDcZYTrrWGhVNq2JDRE6/T+pM4BJQhp1uGiiXs3g8qyPd6h0oMeSi1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834749; c=relaxed/simple;
-	bh=cjreltSEJSqHTk+3GCLPf/cZs/IRqnpfQiN9hHzpvDo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oukRfpx39L+43FkmIsJrwivC85eD30v19FbYkNhtWJDm1Gr9n35l+2CUHYsZ6DfS1s2ih6PMPaXCOGBosMEIOKAHlSmzSRZLmeGo4lUm75w71rsPREfP5tu6Kzk+JNwy0Ee1XkxoOIv62+fQVq1+A56kTHQZUAHLG6CEqU8Uwbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBk6qmF8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9619EC4CEF1;
-	Thu, 30 Oct 2025 14:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761834748;
-	bh=cjreltSEJSqHTk+3GCLPf/cZs/IRqnpfQiN9hHzpvDo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NBk6qmF8iZEJg+NsOK3eEgkgxOcDwOqRxoIuUt0GzXQu1/XQUkUgVlzrn0hLrfoVu
-	 mckAZ9s+cFfGxaxbJ1bAAJBgmKiTbRmeuRSdB8wXTBAUc7cX3LdSykrs5VnIi/r+BM
-	 FrQr7oyDZ4OyL/iK8+vVgQ7h4zfAy9wttqu7be95XZDNZUPamRs7WexCOn7/3+zH6h
-	 ox/b2s3MgaIsSOspUPFFWxHiFrUadpWuVyNDQo8Zd4eGAQOg1f9KSmNmhWnRdk5Foz
-	 VDuH2fAjZMm3ThAZuOBQh5SVbFprlYZMpWL6SUAtfQ35pBnkn6pkADff1QwuQV5imE
-	 2uMirtlf9M7Rg==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [PATCH v2 2/2] mm/damon/sysfs: change next_update_jiffies to a global variable
-Date: Thu, 30 Oct 2025 07:32:20 -0700
-Message-ID: <20251030143221.46859-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251030020746.967174-3-yanquanmin1@huawei.com>
-References: 
+	s=arc-20240116; t=1761834777; c=relaxed/simple;
+	bh=D62bdTPTtRN3AVB5FJdx5lqUZgowJjCwSpNZ7p2tbBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Oq08BJ30RFZwEgRXsiqQO5YuJf+CSPrdLsNmNGJAxcyldB+/yieLRu4RBwCZ8itIctevxiqgo9I8/HMhGswXfrnUda3sPZ62M2le3b1w3UmVKTp+zq4ChLPZeL6VuYw0wyuahY3ElBSrZJtOPlGAy4XeivbgZSMTUcxi0QCd2A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=c0frDGXY; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761834776; x=1793370776;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=D62bdTPTtRN3AVB5FJdx5lqUZgowJjCwSpNZ7p2tbBQ=;
+  b=c0frDGXY4mr5bp5ucbHh5rxAMnnNH1fGGCo7N/yNDewjJyryHfC9ZTZp
+   99CqSw+1dSPpDByl/YjEmdVCHXD6M4C7skDjNGiUriHMBaKs9I8jU+nny
+   MYjvkZyTwOU6yXEULPgnhPbiM6Atg3T6IfCZRwom8GCaojJtSYzJmvTet
+   nAyQ2imByPY8ETjrdR1bW4oBoz2SMomesk0v2f+12qrTKHt0cwK9gl16f
+   35hR/CEdEoXURyemCcJ5x1yOTCtjrNWhvPqwz81TJsIhJ6Cb02GXxsfKO
+   S1lzHq3M3NWmEn6ahHvzK5Xnuq5kmFCoTwtJUwgGaQ6LH8Q0nYnklw9lA
+   g==;
+X-CSE-ConnectionGUID: dL1EgsYfRVKQ49uqN4PuEg==
+X-CSE-MsgGUID: LcgAnV1xSRm3PROQENaW/Q==
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="48976230"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:32:54 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Thu, 30 Oct 2025 07:32:41 -0700
+Received: from [10.171.248.18] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Thu, 30 Oct 2025 07:32:36 -0700
+Message-ID: <f777c7d5-346d-42d3-b328-45320b22aacc@microchip.com>
+Date: Thu, 30 Oct 2025 15:32:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/5] net: macb: add no LSO capability
+ (MACB_CAPS_NO_LSO)
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Russell King <linux@armlinux.org.uk>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?=
+	<benoit.monin@bootlin.com>, =?UTF-8?Q?Gr=C3=A9gory_Clement?=
+	<gregory.clement@bootlin.com>, Maxime Chevallier
+	<maxime.chevallier@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Vladimir Kondratiev
+	<vladimir.kondratiev@mobileye.com>, Andrew Lunn <andrew@lunn.ch>
+References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
+ <20251023-macb-eyeq5-v3-3-af509422c204@bootlin.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20251023-macb-eyeq5-v3-3-af509422c204@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Thu, 30 Oct 2025 10:07:46 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-
-> In DAMON’s damon_sysfs_repeat_call_fn(), time_before() is used to compare
-> the current jiffies with next_update_jiffies to determine whether to
-> update the sysfs files at this moment.
+On 23/10/2025 at 18:22, Théo Lebrun wrote:
+> LSO is runtime-detected using the PBUF_LSO field inside register DCFG6.
+> Allow disabling that feature if it is broken by using bp->caps coming
+> from match data.
 > 
-> On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
-> jiffies wrap bugs appear earlier. However, this causes time_before() in
-> damon_sysfs_repeat_call_fn() to unexpectedly return true during the first
-> 5 minutes after boot on 32-bit systems (see [1] for more explanation,
-> which fixes another jiffies-related issue before). As a result, DAMON
-> does not update sysfs files during that period.
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+
+Even if already applied:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+> ---
+>   drivers/net/ethernet/cadence/macb.h      | 1 +
+>   drivers/net/ethernet/cadence/macb_main.c | 7 +++++--
+>   2 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> There is also an issue unrelated to the system’s word size[2]: if the
-> user stops DAMON just after next_update_jiffies is updated and restarts
-> it after 'refresh_ms' or a longer delay, next_update_jiffies will retain
-> an older value, causing time_before() to return false and the update to
-> happen earlier than expected.
+> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+> index 93e8dd092313..05bfa9bd4782 100644
+> --- a/drivers/net/ethernet/cadence/macb.h
+> +++ b/drivers/net/ethernet/cadence/macb.h
+> @@ -778,6 +778,7 @@
+>   #define MACB_CAPS_DMA_64B                      BIT(21)
+>   #define MACB_CAPS_DMA_PTP                      BIT(22)
+>   #define MACB_CAPS_RSC                          BIT(23)
+> +#define MACB_CAPS_NO_LSO                       BIT(24)
 > 
-> Fix these issues by making next_update_jiffies a global variable and
-> initializing it each time DAMON is started.
+>   /* LSO settings */
+>   #define MACB_LSO_UFO_ENABLE                    0x01
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index be3d0c2313a1..8b688a6cb2f9 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -4564,8 +4564,11 @@ static int macb_init(struct platform_device *pdev)
+>          /* Set features */
+>          dev->hw_features = NETIF_F_SG;
 > 
-> [1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
-> [2] https://lore.kernel.org/all/20251029013038.66625-1-sj@kernel.org/
-
-Thank you for finding and fixing these!
-
+> -       /* Check LSO capability */
+> -       if (GEM_BFEXT(PBUF_LSO, gem_readl(bp, DCFG6)))
+> +       /* Check LSO capability; runtime detection can be overridden by a cap
+> +        * flag if the hardware is known to be buggy
+> +        */
+> +       if (!(bp->caps & MACB_CAPS_NO_LSO) &&
+> +           GEM_BFEXT(PBUF_LSO, gem_readl(bp, DCFG6)))
+>                  dev->hw_features |= MACB_NETIF_LSO;
 > 
-> Fixes: d809a7c64ba8 ("mm/damon/sysfs: implement refresh_ms file internal work")
-> Suggested-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+>          /* Checksum offload is only available on gem with packet buffer */
+> 
+> --
+> 2.51.1
+> 
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-
-Thanks,
-SJ
-
-[...]
 
