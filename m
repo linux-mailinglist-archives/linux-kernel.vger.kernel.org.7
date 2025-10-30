@@ -1,104 +1,71 @@
-Return-Path: <linux-kernel+bounces-877425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261A3C1E155
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:00:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D82C1E149
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A3AA4E5B2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:00:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B325834D4C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF062EA157;
-	Thu, 30 Oct 2025 02:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD39123ABBE;
+	Thu, 30 Oct 2025 02:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvgD0crX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="e0D1lCYE"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAFD6FC5;
-	Thu, 30 Oct 2025 02:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCAB6FC5
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761789634; cv=none; b=W0w8MjKLEJuS10C++h/f49RLYZFS/Gd4hUbnhmKwtdNQGUaa+Wvp4KuZ2VnDc6iwU83XvcEuwMuUN/7Sy7O/qkCwjHHo1t/6CQIxjwQDQDBW/c43oaqFojgo7jLDt/zQEEcn/2tT8pwRp+KasPV9iLhIQuetf1LyRG0EYxFDYxc=
+	t=1761789629; cv=none; b=r6gSwOuzyQcqT6JDibAXtTEcu1yJDCiVfrVJ7XXkldt4NU9rwoevRMWiUGsxb43+AkNedBMOF9XBT7kTsd0g2eDesFeVLLyEk8fXPvfNG/XvCNS4IMj6AaLHazyzvyS9WY0kiKHmF9/XaF5odcvdFxf6n6jOVwt7d44FYnfxdSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761789634; c=relaxed/simple;
-	bh=adIWWp6JkooxcKkGWYYawGCvhKj6QLF1nHLdmWN8kTU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iKL4d8acscSuxcTcmoloPOVHnn9escCoDu4rLB0LlAlKQBd1XkAcmy3if+4Va+PYZbrJqQr44hEwqeRAvdqwz0cxerY6BdosfrMrr85TYWu/MeE6OWsthnjhoAhSpt/fjexWUIa60HLO7ISnH2SMwpH/KcwH7oMcUEm4yF72PuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvgD0crX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF0EC4CEFD;
-	Thu, 30 Oct 2025 02:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761789634;
-	bh=adIWWp6JkooxcKkGWYYawGCvhKj6QLF1nHLdmWN8kTU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DvgD0crXsz2KIHnfdi2gFAs+PUXtkzVqXmU0p99CXOjMOalyelax+Vt3tajwrE6X+
-	 pLi7P2vQso326M5CXCD369G0Y/kUzkwJeIq/3WmqLYV9OmVRlfqC4bcxH94Ors1RCe
-	 g5sACvH+KPESlK0/hcbU2jOKBJB6SW5X7Z1GWiRzfyncxOddGTimHShWe1HhHhPc3J
-	 TLvq89M2lJ4wXUSGW8/4Tmx44Yx0w6Fdkj+2F78x2POLBShSO3YUdkEsIf0GgpBgpq
-	 +2q8fzLAL8eM7lcXln+LKoQTc4cIV7C6cgv+3fydUpIDsDAdB/nS0DuRnPu1AYHL04
-	 EjEUP9E3qnzhg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C123A55ED9;
-	Thu, 30 Oct 2025 02:00:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1761789629; c=relaxed/simple;
+	bh=3gpLTmyFpc+JfGSe4RAcu0u/+obWLauvfquFj/3m+Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOTBs0lsJPN41o0Ph3Jt2r7kwUxaIIcbWszlTHUh4PVNiRkGscdZumQI/8XtdnEgwGY6l8euCXmYdIYP4y7+z9hGP8tQeAgp3zCwPuJuBUZmP7s0YP3mJac9YVjkGbnwNTtD9LYulqQ7do9KxyXbOUpcehvkHcNPtIQZrJ/GP6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=e0D1lCYE; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761789618; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=tnDygJTj35NeJIA2of2oglKX1I1n/+8UrGE1eV1fK3s=;
+	b=e0D1lCYEftmZyYeFOYUbQvDvjVMniGL7dtZWE5ZMgBsCap3obY4iq1qsfRFJs7B6yNneswLoNHtnleMeiYpdqtsINBaJaI/QFDVCfe+9kHvVDYLPc1LdYqY4R7vFXjn4sFMXLmClWxKBllQ89kzBZEqyIR+5eIBbiSEoCDkcM5E=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WrHtb4v_1761789617 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 30 Oct 2025 10:00:17 +0800
+Date: Thu, 30 Oct 2025 10:00:15 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH v2 1/6] panic: sys_info: Capture si_bits_global before
+ iterating over it
+Message-ID: <aQLGr25DrvA62uDH@U-2FWC9VHC-2323.local>
+References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
+ <20251029111202.3217870-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v4 0/3] net: stmmac: Fixes for stmmac Tx VLAN insert
- and EST
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176178961100.3282477.1158388762703076399.git-patchwork-notify@kernel.org>
-Date: Thu, 30 Oct 2025 02:00:11 +0000
-References: <20251028-qbv-fixes-v4-0-26481c7634e3@altera.com>
-In-Reply-To: <20251028-qbv-fixes-v4-0-26481c7634e3@altera.com>
-To: G@codeaurora.org, Thomas@codeaurora.org,
-	Rohan <rohan.g.thomas@altera.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, Jose.Abreu@synopsys.com,
- rohan.g.thomas@intel.com, boon.khai.ng@altera.com, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- matthew.gerlach@altera.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251029111202.3217870-3-andriy.shevchenko@linux.intel.com>
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 28 Oct 2025 11:18:42 +0800 you wrote:
-> This patchset includes following fixes for stmmac Tx VLAN insert and
-> EST implementations:
->    1. Disable STAG insertion offloading, as DWMAC IPs doesn't support
->       offload of STAG for double VLAN packets and CTAG for single VLAN
->       packets when using the same register configuration. The current
->       configuration in the driver is undocumented and is adding an
->       additional 802.1Q tag with VLAN ID 0 for double VLAN packets.
->    2. Consider Tx VLAN offload tag length for maxSDU estimation.
->    3. Fix GCL bounds check
+On Wed, Oct 29, 2025 at 12:07:36PM +0100, Andy Shevchenko wrote:
+> The for-loop might re-read the content of the memory the si_bits_global
+> points to on each iteration. Instead, just capture it for the sake of
+> consistency and use that instead.
 > 
-> [...]
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Here is the summary with links:
-  - [net,v4,1/3] net: stmmac: vlan: Disable 802.1AD tag insertion offload
-    https://git.kernel.org/netdev/net/c/c657f86106c8
-  - [net,v4,2/3] net: stmmac: Consider Tx VLAN offload tag length for maxSDU
-    https://git.kernel.org/netdev/net/c/ded9813d17d3
-  - [net,v4,3/3] net: stmmac: est: Fix GCL bounds checks
-    https://git.kernel.org/netdev/net/c/48b2e323c018
+Reviewed-by: Feng Tang <feng.tang@linux.alibaba.com>
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks!
 
