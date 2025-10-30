@@ -1,194 +1,104 @@
-Return-Path: <linux-kernel+bounces-878445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88EB3C209B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:32:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36F1C209C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D9C3B0D22
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:32:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8415E4ED116
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0E1274B35;
-	Thu, 30 Oct 2025 14:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916137A3C2;
+	Thu, 30 Oct 2025 14:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="NWBCJeQK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIyo4OWP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F341B37A3C2;
-	Thu, 30 Oct 2025 14:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28242475C7;
+	Thu, 30 Oct 2025 14:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834755; cv=none; b=PuPi8iHtQjFDPOYl7r6DPMLuH4aE6ZHzGxTvaqjjs7UtLrPTnR9VIWELuymDRv/O9c46WnCIan/UHDfAQdqG56kgHKfhOEKE3pIM9O1iLG6QTC/Y8uLi6Y+j3ktyh51qN2vOvs3YUSNd9gyz2cz6wx/XU3m9znw5vt5G5sYebCY=
+	t=1761834723; cv=none; b=isrb0C+0sahj7WjhsOL0Lad9Yp7wWt/djo/AoZugWI1XX0OymeYAYTponaFx08vTWDx/I42mFGs1JYka1L9EkX52cslVsorJcb0/ci9qDhMVPX7Vah5Y97DQNK8gxyf/GwAAPaDv3Opy1Fo9c8QYddlCy7DfJrqJ/aKjCAzVxBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834755; c=relaxed/simple;
-	bh=gkH2lxMFOGTlkMaVDMgra9ZABBZcWcp6GHDGbzzQ2gI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b2J3UrJ0eYtoisTfscj5NlEvOUjR1ixbh7JgRwUgEF105g8vQGoD+LkgLKkSOmXMPXDzGPk40sojYVZTFeIOYQT2o/AuYB6WQlB7FEXwl7656dHdZT4WrCf2mrFtYjlS7RtMHB9PAkRK/6mULiuIUDFHZL/1Pdkfa4gjrp+gpQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=NWBCJeQK; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761834753; x=1793370753;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gkH2lxMFOGTlkMaVDMgra9ZABBZcWcp6GHDGbzzQ2gI=;
-  b=NWBCJeQKgG1LnmZeRKK0uEnKaYr3mDTrbbbQZigB1gGxaWgDzkd1Ut+9
-   bzCtAAF6j7eMzCMoc/QzD196PlTLlE+0BawhEfwK/VmlP/aCiq5g5ERri
-   fKDuxr1LMjhNNwTE7S4MnqcGtJHMw5mPhL64nSULeEuM/xc12Xj9z0Skv
-   FVzeDoxmiTGn5t35PccI9d2o7MrHn1BpEPr1e5aDE8TWOT4LAtcrFMttQ
-   ThZBUd57Bvorrfiw5vgc4dp7mrHh/+f4A/ykod4GrYYUntyNJhUabW9zV
-   WB8+UMAU1mH/QjQXm/5YgNdr2xfkgbpRzyMZ8/L4XCbWfVvw+aFvXkE8u
-   g==;
-X-CSE-ConnectionGUID: KJy2Pai7RkKq6Xlk05XjEA==
-X-CSE-MsgGUID: 8m4Z3GghSJ2ziABezsM1ww==
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="47837768"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 07:32:32 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Thu, 30 Oct 2025 07:32:01 -0700
-Received: from [10.171.248.18] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 30 Oct 2025 07:31:56 -0700
-Message-ID: <ea7ad70a-73d4-48a5-92cb-9cb73e9be325@microchip.com>
-Date: Thu, 30 Oct 2025 15:31:55 +0100
+	s=arc-20240116; t=1761834723; c=relaxed/simple;
+	bh=k3H8jsiZTGUXxdkwpwxpn0XrTdrEfAY+7KJsVjaBrMw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=p/3vZufgSu6nvY79H95o1dAGiJ96GjB34w7xU3vXSGy3E/fc9cv0m8j5OUoMRNqPf6Zpc6LHWz0+bjBDftlU0S4QlTGBZlkxE1wa0ma40VVH1RKgo9Nyy4zXYky8EQcp6ey9f+8etL+CAzSslOl/f1N7XO23+jutggc881TZ8qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIyo4OWP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E932C113D0;
+	Thu, 30 Oct 2025 14:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761834722;
+	bh=k3H8jsiZTGUXxdkwpwxpn0XrTdrEfAY+7KJsVjaBrMw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YIyo4OWPjDQedXN6sko3BSB3gvVCNXXFKPSI6H+Y3HhXpja1Hy710ylcrWjcbSA/W
+	 GybZP4C+M2CgUktvshYOsCdcYP5lQmnoI7dFcYj2Ahl0eWzkK454HPsyMoKSkXeTzn
+	 mlVXhbNj+gBQlV71Vo5bdPQu4z9Wb5dwar1OgodKbNcO+mvUdvPY5YHvUEYvFn2grK
+	 2Mv7oHbGpWnuPaZF9WJjc42ePzVdmk7lSXlbDt+5MlbKl8C01cZjtodwyuSYSQLs+H
+	 45dRnXT7I08c0+pN5/5R9PQaJGBCmNHWRG745ff0xe2iofI7nQTpJq2H3TYc+R64Xs
+	 cqQXhkxL67RSg==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ hariconscious@gmail.com
+Cc: khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com, 
+ kuninori.morimoto.gx@renesas.com, patches@opensource.cirrus.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251025043011.598300-1-hariconscious@gmail.com>
+References: <20251025043011.598300-1-hariconscious@gmail.com>
+Subject: Re: [PATCH] ASoC: codec: wm8400: replace printk() calls with
+ dev_*() device aware logging
+Message-Id: <176183472016.63092.11146848509492024868.b4-ty@kernel.org>
+Date: Thu, 30 Oct 2025 14:32:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 2/5] net: macb: match skb_reserve(skb,
- NET_IP_ALIGN) with HW alignment
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Russell King <linux@armlinux.org.uk>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?=
-	<benoit.monin@bootlin.com>, =?UTF-8?Q?Gr=C3=A9gory_Clement?=
-	<gregory.clement@bootlin.com>, Maxime Chevallier
-	<maxime.chevallier@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Vladimir Kondratiev
-	<vladimir.kondratiev@mobileye.com>
-References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
- <20251023-macb-eyeq5-v3-2-af509422c204@bootlin.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20251023-macb-eyeq5-v3-2-af509422c204@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-On 23/10/2025 at 18:22, Théo Lebrun wrote:
-> If HW is RSC capable, it cannot add dummy bytes at the start of IP
-> packets. Alignment (ie number of dummy bytes) is configured using the
-> RBOF field inside the NCFGR register.
+On Sat, 25 Oct 2025 10:00:11 +0530, hariconscious@gmail.com wrote:
+> Replace direct printk() calls with the appropriate dev_*() logging
+> APIs.Use dev_err, dev_warn, dev_info, or dev_dbg to reflect the correct
+> severity level. Pass the canonical struct device pointer so logs
+> include device context and become traceable to specific hardware
+> instances.Improve log clarity, make messages filterable by device
+> and align the driver with kernel logging conventions to aid
+> debugging and maintenance.
 > 
-> On the software side, the skb_reserve(skb, NET_IP_ALIGN) call must only
-> be done if those dummy bytes are added by the hardware; notice the
-> skb_reserve() is done AFTER writing the address to the device.
-> 
-> We cannot do the skb_reserve() call BEFORE writing the address because
-> the address field ignores the low 2/3 bits. Conclusion: in some cases,
-> we risk not being able to respect the NET_IP_ALIGN value (which is
-> picked based on unaligned CPU access performance).
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> [...]
 
-For the record:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Applied to
 
-Thanks Théo! Regards,
-   Nicolas
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> ---
->   drivers/net/ethernet/cadence/macb.h      |  3 +++
->   drivers/net/ethernet/cadence/macb_main.c | 23 ++++++++++++++++++++---
->   2 files changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 5b7d4cdb204d..93e8dd092313 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -537,6 +537,8 @@
->   /* Bitfields in DCFG6. */
->   #define GEM_PBUF_LSO_OFFSET                    27
->   #define GEM_PBUF_LSO_SIZE                      1
-> +#define GEM_PBUF_RSC_OFFSET                    26
-> +#define GEM_PBUF_RSC_SIZE                      1
->   #define GEM_PBUF_CUTTHRU_OFFSET                        25
->   #define GEM_PBUF_CUTTHRU_SIZE                  1
->   #define GEM_DAW64_OFFSET                       23
-> @@ -775,6 +777,7 @@
->   #define MACB_CAPS_MACB_IS_GEM                  BIT(20)
->   #define MACB_CAPS_DMA_64B                      BIT(21)
->   #define MACB_CAPS_DMA_PTP                      BIT(22)
-> +#define MACB_CAPS_RSC                          BIT(23)
-> 
->   /* LSO settings */
->   #define MACB_LSO_UFO_ENABLE                    0x01
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 39673f5c3337..be3d0c2313a1 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -1300,8 +1300,19 @@ static void gem_rx_refill(struct macb_queue *queue)
->                          dma_wmb();
->                          macb_set_addr(bp, desc, paddr);
-> 
-> -                       /* properly align Ethernet header */
-> -                       skb_reserve(skb, NET_IP_ALIGN);
-> +                       /* Properly align Ethernet header.
-> +                        *
-> +                        * Hardware can add dummy bytes if asked using the RBOF
-> +                        * field inside the NCFGR register. That feature isn't
-> +                        * available if hardware is RSC capable.
-> +                        *
-> +                        * We cannot fallback to doing the 2-byte shift before
-> +                        * DMA mapping because the address field does not allow
-> +                        * setting the low 2/3 bits.
-> +                        * It is 3 bits if HW_DMA_CAP_PTP, else 2 bits.
-> +                        */
-> +                       if (!(bp->caps & MACB_CAPS_RSC))
-> +                               skb_reserve(skb, NET_IP_ALIGN);
->                  } else {
->                          desc->ctrl = 0;
->                          dma_wmb();
-> @@ -2773,7 +2784,11 @@ static void macb_init_hw(struct macb *bp)
->          macb_set_hwaddr(bp);
-> 
->          config = macb_mdc_clk_div(bp);
-> -       config |= MACB_BF(RBOF, NET_IP_ALIGN);  /* Make eth data aligned */
-> +       /* Make eth data aligned.
-> +        * If RSC capable, that offset is ignored by HW.
-> +        */
-> +       if (!(bp->caps & MACB_CAPS_RSC))
-> +               config |= MACB_BF(RBOF, NET_IP_ALIGN);
->          config |= MACB_BIT(DRFCS);              /* Discard Rx FCS */
->          if (bp->caps & MACB_CAPS_JUMBO)
->                  config |= MACB_BIT(JFRAME);     /* Enable jumbo frames */
-> @@ -4321,6 +4336,8 @@ static void macb_configure_caps(struct macb *bp,
->                  dcfg = gem_readl(bp, DCFG2);
->                  if ((dcfg & (GEM_BIT(RX_PKT_BUFF) | GEM_BIT(TX_PKT_BUFF))) == 0)
->                          bp->caps |= MACB_CAPS_FIFO_MODE;
-> +               if (GEM_BFEXT(PBUF_RSC, gem_readl(bp, DCFG6)))
-> +                       bp->caps |= MACB_CAPS_RSC;
->                  if (gem_has_ptp(bp)) {
->                          if (!GEM_BFEXT(TSU, gem_readl(bp, DCFG5)))
->                                  dev_err(&bp->pdev->dev,
-> 
-> --
-> 2.51.1
-> 
+Thanks!
+
+[1/1] ASoC: codec: wm8400: replace printk() calls with dev_*() device aware logging
+      commit: 6ef8e042cdcaabe3e3c68592ba8bfbaee2fa10a3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
