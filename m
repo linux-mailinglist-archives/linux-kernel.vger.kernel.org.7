@@ -1,91 +1,87 @@
-Return-Path: <linux-kernel+bounces-877918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE60BC1F56E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:39:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3C3C1F432
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603EF3A55F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3877A1889C75
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C9D34403C;
-	Thu, 30 Oct 2025 09:38:32 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B38833FE11;
+	Thu, 30 Oct 2025 09:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JugtqFC+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8449A342145;
-	Thu, 30 Oct 2025 09:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1F17A318;
+	Thu, 30 Oct 2025 09:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761817111; cv=none; b=mLP/X3yKmIlROuI6SFjPeRrI/RagMTR52IXFfSNfvbsFWeHEN4OuFfB0Plasse200mOqoE8JB7GeYC01CBeEMX7cG6z+IsjVKFT/0nu4+SmHu3akdwdncUC4TQI+U+xhE+r4CEjdwQjzdt4jSFQm7sO1DMn6ajeRM0ocHw2aE7Q=
+	t=1761816209; cv=none; b=tCN4XKR5xnDcEQZ0oO+VtBKol5CKkOpAVnpUMxd2bBgWRtP5iq5qHyoz4tAUIpdH4zdZ2ja3NSU01dpsCvZ8NKNDkkj/cBxWv9W60DYes8mEI2qrq5vQQDcmPa8kdmqErIPfZxuX1l1Or3Adz1UMCqcggOBJSDOm9rsXa0SLFZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761817111; c=relaxed/simple;
-	bh=+ZwnTMBnWIAb8iGPJ9ruuqYPni5mZ8ZCofxgvftxBms=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ys7ina0+pGGHwdpYqpFjZ+UprPyazDwiaE/9Yk7D8XfuOLN0O0qLIHK9t/uBRapuxJUJgNvRaAYt4srrTxXa3NJbjoUnOJkn3HDVa7VBIMHQMNQdTXcQoe3D62yRatB9snlFnMQMfpuM6cqT0njE8dRmpvLx9wvLR8hkJjaV3mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cxzCF3ckdzYlcX2;
-	Thu, 30 Oct 2025 17:22:01 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 Oct
- 2025 17:23:02 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 30 Oct
- 2025 17:23:02 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <tj@kernel.org>
-CC: <akpm@linux-foundation.org>, <axboe@kernel.dk>, <cgroups@vger.kernel.org>,
-	<christoph.boehmwalder@linbit.com>, <corbet@lwn.net>,
-	<drbd-dev@lists.linbit.com>, <dsterba@suse.com>, <feng.han@honor.com>,
-	<hannes@cmpxchg.org>, <jinji.z.zhong@gmail.com>, <lars.ellenberg@linbit.com>,
-	<linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liulu.liu@honor.com>,
-	<mhocko@kernel.org>, <minchan@kernel.org>, <mkoutny@suse.com>,
-	<muchun.song@linux.dev>, <philipp.reisner@linbit.com>,
-	<roman.gushchin@linux.dev>, <senozhatsky@chromium.org>,
-	<shakeel.butt@linux.dev>, <terrelln@fb.com>, <zhongjinji@honor.com>
-Subject: Re: [RFC PATCH 0/3] Introduce per-cgroup compression priority
-Date: Thu, 30 Oct 2025 17:22:58 +0800
-Message-ID: <20251030092258.2576-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aP-Ymcsoyls04jov@slm.duckdns.org>
-References: <aP-Ymcsoyls04jov@slm.duckdns.org>
+	s=arc-20240116; t=1761816209; c=relaxed/simple;
+	bh=vfjU7SCgYDMFO30HAISoEJD4pRpKsAR7TJkNaxWJ9j4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ByVb5QL0Fs5LWvp3f8yp1LRfaTiYQyyHuNmPN9oAOPn3U5ywSlJrYDLTfp1p0KEqD4xyF8UnJLnKZ00lQ5W6X6OMzmjyuPy/DKvwmgYCm/urB4wYsMqXRe6XiAsP0jKcdooAzOgXQlZoZDttP0RbDv6sOVbHLgzjJM8Oa31PbSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JugtqFC+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761816206;
+	bh=vfjU7SCgYDMFO30HAISoEJD4pRpKsAR7TJkNaxWJ9j4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JugtqFC+5sJwcESTnYce/Z9hW6PCkhUdr3OUrtCBQps7TwlulwSe1IHWdn9Kla0hL
+	 Xvw13Ev+kh2D874lIhsYXZcvqGEHb4sOQik1PqoctefIN84BULFmuYNOlwfBMyybbr
+	 eRL+D7rZPxYpWe6L/xP5q/2GSQbSy+tmZPIb242VU30IsRGFbgLqzLkLyLKP5Ru6u4
+	 VeX5DNw6DLD+LuqgdVKjKuZTHyz+rY9pSK+rrZfqJgOXW3WtLECwXciQlPXKbZhQ7P
+	 F766y3alxzRVMaPPMXl4C62E+TfXcvoDeff0jBJDGk2oMjYQjKbdSd+iMUlwWKNz5/
+	 60aBeIjub63AA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 54EC717E13DE;
+	Thu, 30 Oct 2025 10:23:25 +0100 (CET)
+Message-ID: <95335943-9b63-40d5-89c0-6d616f811e59@collabora.com>
+Date: Thu, 30 Oct 2025 10:23:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a018.hihonor.com
- (10.68.17.250)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iio: adc: Add compatible for MT8189 SoC
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc: kernel@collabora.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Hello,
+Il 29/10/25 15:52, Louis-Alexis Eyraud ha scritto:
+> Add compatible string for MT8189 SoC.
+> The AUXADC IP in this chip is fully compatible with the one found in
+> MT8173 SoC.
 > 
-> On Sun, Oct 26, 2025 at 01:05:07AM +0000, jinji zhong wrote:
-> > This patch introduces a per-cgroup compression priority mechanism,
-> > where different compression priorities map to different algorithms.
-> > This allows administrators to select appropriate compression
-> > algorithms on a per-cgroup basis.
-> 
-> I don't think it makes sense to tie this to cgroups. Is there something
-> preventing this from following the process hierarchy?
-> Thanks.
-Hello, Tejun,
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-There is also a layer of page tables between the process and the page,
-so making it follow the process hierarchy would be complicated.
-But you make a good point; it may indeed be unnecessary to introduce
-a separate per-cgroup compression priority. As Nhat suggested,
-we could try reusing the per-cgroup swap priority.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> -- 
-> tejun
+
 
