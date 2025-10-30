@@ -1,158 +1,136 @@
-Return-Path: <linux-kernel+bounces-878735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D4BC215AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:03:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E84C215A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:03:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8374F357E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:58:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A424B4EF016
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345CF2FA0F2;
-	Thu, 30 Oct 2025 16:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41122311C09;
+	Thu, 30 Oct 2025 16:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9bVXpDO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZf5k1X9"
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFCA33F8BC
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E54030E82B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843505; cv=none; b=EQ2HIoIXyrenmcbuQTPDLzZA8UUp+RM9neoN0ZB3i8Q2IIes5P1wNpWWK6TQ8Xsi05q/ihIA6EmOkNPlNVXsjeawkOm92JFMOC+q8qTZgcDuf0C7XnFtbx4dSr77gnElCF94V1G+sGNH+Ya2+bqJzCc4r5expc3H3s8x0rGn3ew=
+	t=1761843504; cv=none; b=BxkzY0tOJHarqd1arMsqCaB0v/rKEHO1vcYOuw0jDfhDdxmOeVyFLyD7pf8raGmJwCRTY+NsdOMzktRgVLbcO1tGS4zasU/tH8FSpTegek2uU69osDHfzPAw+3D0EegvN+gfYSF3b3xq9XtCBgiXHLPDDReb55acQ3ZIZAdOb0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843505; c=relaxed/simple;
-	bh=Hq8p5I7KnzMNDXe5Bh4E6FjIiLt5mIsSkQFjlD2+pAA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=SrPdNs6s1XkWl9Q5iBgCynwKXEfmG3fBpRpAmaOgrWdBVXGny1mLMMCcXKX5Ag8GIvBvNpyie/BZDbRJCYtodDWTVD6qNW/5/bbT7AyZ4oQx3z0+aqnvlpoYsIjGEAyLU8wj8eaFOHcPackpIkObj7zvzaeDd4BDnBeUH6sixYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9bVXpDO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4500FC116D0;
-	Thu, 30 Oct 2025 16:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761843505;
-	bh=Hq8p5I7KnzMNDXe5Bh4E6FjIiLt5mIsSkQFjlD2+pAA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=n9bVXpDOf9VthcUBfHJnC8mpWz6YhCOooMpbFMBp7/ZbvXyo3aD5kV+ZMykjOB93s
-	 wWPwbQaMPlVYGQGmCSTuQBQECegPkvmdqcFcSIiaoPauHMlP8WXMUfe66aNrj3tFEg
-	 KjFF5qfKShrisJ2AkPA19EEJTGDzgW9HzA1nxp3ksoPtKRoGTLLpQ/gEejWVVhlEQY
-	 z3ht9m0v/2PQBZDr6i5r5+x5teguunonpj8L5TTXLE4tWRrqaNYaxFlNKiR7DDYK/x
-	 mklxud8NIb+MlcM9Vb7GpAdW6xJPHCuN4TS6WFBLhOOQlW1XrqEtRDBpgOocjfd17H
-	 qomLuMoffIrKw==
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 57047F4006A;
-	Thu, 30 Oct 2025 12:58:23 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-01.internal (MEProxy); Thu, 30 Oct 2025 12:58:23 -0400
-X-ME-Sender: <xms:L5kDaSlUbQA7GCqRAGTpDeO4iqaK3amShbeM434nOKrxQQFYMzXZyQ>
-    <xme:L5kDaUp_hGcJkhoMI3oh8cy-qL4WHo9QoiLfOuCE-RircW3NBuFbg6HO6xHX6r8St
-    sbDGIpn_d0j2TkpsXp-_TWpve-oQtxuKIUdAVJqjTlNotY2PhaKeD4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejudehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehnugih
-    ucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepkefhieejfedvueejheehiefgvdfhjeefjeelvdfghfelgeejudevleej
-    uddvvefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudeiudekheei
-    fedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlihhnuhigrd
-    hluhhtohdruhhspdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepugifmhifsegrmhgrii
-    honhdrtghordhukhdprhgtphhtthhopegrnhgurhgvfidrtghoohhpvghrfeestghithhr
-    ihigrdgtohhmpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmh
-    grihhlrdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgt
-    phhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehrug
-    hunhhlrghpsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggrvhgvrdhhrghn
-    shgvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehrihgtkhdrphdrvggughgvtghomh
-    gsvgesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:L5kDaQvgTbcZS_XKBnDK2gguq4s39S4iUBwOXM_ZNzzlvTJ2mWCRBw>
-    <xmx:L5kDaXHK4ZNhn8FQSyDMxobbBNzdx6G96JZD5_fsogynaiJBbMe34Q>
-    <xmx:L5kDafMflp3Jne2Us4cvLoEgHxHAfjCoVEf9qGYIRYZnwmcVqM3oZA>
-    <xmx:L5kDaaHMq5VbBt14P-ssDJUCKMP2U0cfZl6Flcx8Kuowrwcn7g9PRg>
-    <xmx:L5kDacEkQVGLVk93dJRcCxKyiW_a8DGya7QjDJB8yzD8znCRGuFEDSV_>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 16A5F700054; Thu, 30 Oct 2025 12:58:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761843504; c=relaxed/simple;
+	bh=E68T2ZkjnQfOB2TtPtritiOjh/qgxTXRIYSNsvI6CzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUKo/RFq71IDZMf7/eafhWplNq4eO2EAaf+tzH0y0QIkloQDx32nFsoLwgkaVmqKE08DEUNQtNXrfmNDUCojJuAJo1I8j9+RAi73ocef0GQnyYTpIjdGHERiHnDW8gyAKKEQROICJha69Vnk5y7zseNRca6DiRNlHzJL16pDHZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZf5k1X9; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63d8788b18dso1440532d50.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761843502; x=1762448302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E68T2ZkjnQfOB2TtPtritiOjh/qgxTXRIYSNsvI6CzQ=;
+        b=KZf5k1X9bxs1cxIK23l+w9I/oMmpg0XjlJPmml2dLDopGrLZWiUSajApfBzYUDLq+o
+         X7dGwaf1kKx+3g45IIlwl4OGqtlwWrT1X6BNWbjiAN6WzO/IKdDcIG5eCtB2kb5Q6CfT
+         8i/S+dZFFOUOUdiK2nnpKhlfdPFOr86FmjPYct5VYt8dqRbJcbFhj6sAz0oVMMhJu3ya
+         NeLfqkL5T3v3Rity4jEnonwBOYOUkIuEGm8DWmZnU/qOdb6m3hZQJ/m+PSFpl+KAnoaZ
+         KA4GAz4vNNfJoYEnW7MaVqekwh4gVVKI6mbx3D9HEW2oTcNwJEVaSdeQ/dNAxGN23p6R
+         ON2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761843502; x=1762448302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E68T2ZkjnQfOB2TtPtritiOjh/qgxTXRIYSNsvI6CzQ=;
+        b=EFdddCtMsNOqsSDf3wCx9WtzS7/SoVzET10l7HaLdP9gyYQ/hk5LyfEwMiZTlldZEm
+         mcM3KK0pLJWEuwoXCpOYA0oD9CCdpg2YlAYMHrIoZBNw0ol6zktvpqeZZSBxIu9csAhA
+         WHg3Olvk2gfscwHRzV5Vitg0F0vRBj7aCmYOlI/ulWEdBmgC2L+8XfkcqcgFBogIXLrW
+         amW4Kwh7oNi/6zGha0tXZXjlqMULD4kKLUyFJwchkJbK1sR4idToYltU7e6cezNT+/7e
+         0D517T68LfMngc3ouEJwNeMhj7HMXWZZWJvLLxuBiSW0HqpQfTLWYdDhDKgZZhRdbBMJ
+         Axuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKjWeL6/diGWHW0Fdxjv9n+jHvD59y0p9C6Wjp0f6BXHQbwva/rt4w+jiIV1YS30sLRmRXLp2BXm5NZCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynzmtLfEYuQQcH/IzGK0yMfrtYdrG2zYCwCoJzFwX1DWGtlC8q
+	PceKJZvXLvvLfv1Zb4a9eTUovODjK5ci9a4jISdE+mTZ4B5bremcaKg4J4QcD9rkKyZ346poNQI
+	q7ikbU4H3t4wWowfaRdQ15elVt/m7b8Q=
+X-Gm-Gg: ASbGncujv/xz48izGb6wJgAtYWjL+ebLC1YpshfhEdGUpk+QgvPV4FZCABciZ6irRn8
+	vMMXwsH6wlX0dzVxVNcWh/mziC+WoZlAgswmLDEGbC4Ohukcmx0/QHs2SELdNDw5mZQNT0OG0Ua
+	yxMslPnXF5vWjiR741m94Y97K3z17iaGg5upnugRM+wB/zj2DC5nZIxONxNz1W7825AXfJ3Bzvn
+	AI6L/F7JWhSrtSV1EPCLc0UqJ22w7NIGSCe0vYdOCpngjWAqVXid9ZqfAH6TIPJ090JneMxP80l
+	+8tjxiUokSgaJjeGTGjX96SdVaOhXYyL5bIe7ymmWcIuh5EiHW0JLShwhMmzLQrZfhZravHzRIm
+	88pE9Phbu5gHJZ9zN9UJbJXB8TECh61sx
+X-Google-Smtp-Source: AGHT+IHbrUeLeobaoyLbyIRyrMhLM50yjN3yU4t5GGhWsxndX/hdKmL0CE7lmxbO/igBCODfibDQ9Objs317x1v+yjg=
+X-Received: by 2002:a53:d70b:0:b0:63e:22b1:21a5 with SMTP id
+ 956f58d0204a3-63f92261520mr114604d50.17.1761843502030; Thu, 30 Oct 2025
+ 09:58:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AlsNM-Jg7rAZ
-Date: Thu, 30 Oct 2025 09:58:02 -0700
-From: "Andy Lutomirski" <luto@kernel.org>
-To: "Dave Hansen" <dave.hansen@intel.com>,
- "Rick P Edgecombe" <rick.p.edgecombe@intel.com>,
- "Sohil Mehta" <sohil.mehta@intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "the arch/x86 maintainers" <x86@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>
-Cc: "Jonathan Corbet" <corbet@lwn.net>, "Ard Biesheuvel" <ardb@kernel.org>,
- "david.laight.linux@gmail.com" <david.laight.linux@gmail.com>,
- "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
- "Andrew Cooper" <andrew.cooper3@citrix.com>,
- "Tony Luck" <tony.luck@intel.com>,
- "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
- "Kirill A . Shutemov" <kas@kernel.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Randy Dunlap" <rdunlap@infradead.org>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Vegard Nossum" <vegard.nossum@oracle.com>, "Xin Li" <xin@zytor.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "Kees Cook" <kees@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>
-Message-Id: <f4ae0030-9bc2-4675-ae43-e477cd894750@app.fastmail.com>
-In-Reply-To: <3e3d2426-6296-4a61-beae-4e3ff5d60f2c@intel.com>
-References: <20251007065119.148605-1-sohil.mehta@intel.com>
- <20251007065119.148605-9-sohil.mehta@intel.com>
- <a33d59c7add98dd9ef352ac95178821dbcd0ce0e.camel@intel.com>
- <3e3d2426-6296-4a61-beae-4e3ff5d60f2c@intel.com>
-Subject: Re: [PATCH v10 08/15] x86/vsyscall: Reorganize the page fault emulation code
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
+ <efd2690f-35ba-4104-ac88-4e068984d19f@kernel.org> <CABPXPSKzOhGicdPLoMFy8xvd0Xx5_D2P2pduteY3QhDRV4d2Ow@mail.gmail.com>
+In-Reply-To: <CABPXPSKzOhGicdPLoMFy8xvd0Xx5_D2P2pduteY3QhDRV4d2Ow@mail.gmail.com>
+From: Ajith Anandhan <ajithanandhan0406@gmail.com>
+Date: Thu, 30 Oct 2025 22:28:10 +0530
+X-Gm-Features: AWmQ_bkxeHE-cf9YU0GEMawPIITvstN85hgTqjgnSUTHDIlKXFHjvkCTrqkY-sI
+Message-ID: <CABPXPSLKa9SasCpunrTSuoYaPcvPGTCZX+FPs9uq19m8a2XNRg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] iio: adc: Add support for TI ADS1120 ADC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Krzysztof,
 
+Thank you for the feedback! I=E2=80=99ll resend this as a regular PATCH ser=
+ies
+shortly. I appreciate you taking the time to review.
 
-On Tue, Oct 7, 2025, at 11:48 AM, Dave Hansen wrote:
-> On 10/7/25 11:37, Edgecombe, Rick P wrote:
->>>  	/*
->>>  	 * No point in checking CS -- the only way to get here is a user mode
->>>  	 * trap to a high address, which means that we're in 64-bit user code.
->> I don't know. Is this as true any more? We are now sometimes guessing based on
->> regs->ip of a #GP. What if the kernel accidentally tries to jump to the vsyscall
->> address? Then we are reading the kernel stack and strange things. Maybe it's
->> worth replacing the comment with a check? Feel free to call this paranoid.
+Best regards,
+Ajith
+
+On Thu, Oct 30, 2025 at 10:19=E2=80=AFPM Ajith Anandhan
+<ajithanandhan0406@gmail.com> wrote:
 >
-> The first check in emulate_vsyscall() is:
+> Thank you for the feedback! I=E2=80=99ll resend this as regular PATCH ser=
+ies shortly. I appreciate you taking the time to review.
 >
->        /* Write faults or kernel-privilege faults never get fixed up. */
->        if ((error_code & (X86_PF_WRITE | X86_PF_USER)) != X86_PF_USER)
->                return false;
+> Best regards,
+> Ajith
 >
-> If the kernel jumped to the vsyscall page, it would end up there, return
-> false, and never reach the code near the "No point in checking CS" comment.
->
-> Right? Or am I misunderstanding the scenario you're calling out?
->
-> If I'm understanding it right, I'd be a bit reluctant to add a CS check
-> as well.
-
-IMO it should boil down to exactly the same thing as the current code for the #PF case and, for #GP, there are two logical conditions that we care about:
-
-1. Are we in user mode?
-
-2. Are we using a 64-bit CS such that vsyscall emulation makes sense.
-
-Now I'd be a tiny bit surprised if a CPU allows you to lretq or similar to a 32-bit CS with >2^63 RIP, but what do I know?  One could test this on a variety of machines, both Intel and AMD, to see what actually happens.
-
-But the kernel wraps all this up as user_64bit_mode(regs).  If user_64bit_mode(regs) is true and RIP points to a vsyscall, then ISTM there aren't a whole lot of options.  Somehow we're in user mode, either via an exit from kernel mode or via CALL/JMP/whatever from user mode, and RIP is pointing at the vsyscall page, and CS is such that, in the absence of LASS, we would execute the vsyscall.  I suppose the #GP could be from some other cause than a LASS violation, but that doesn't seem worth worrying about.
-
-So I think all that's needed is to update "[PATCH v10 10/15] x86/vsyscall: Add vsyscall emulation for #GP" to check user_64bit_mode(regs) for the vsyscall case.  (As submitted, unless I missed something while composing the patches in my head, it's only checking user_mode(regs), and I think it's worth the single extra line of code to make the result a tiny bit more robust.)
+> On Thu, Oct 30, 2025 at 10:10=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+>>
+>> On 30/10/2025 17:34, Ajith Anandhan wrote:
+>> > This RFC patch series adds support for the Texas Instruments ADS1120,
+>> > a precision 16-bit delta-sigma ADC with SPI interface.
+>> >
+>> > The driver provides:
+>> > - 4 single-ended voltage input channels
+>> > - Programmable gain amplifier (1 to 128)
+>> > - Configurable data rates (20 to 1000 SPS)
+>> > - Single-shot conversion mode
+>> >
+>> > I'm looking for feedback on:
+>> > 1. The implementation approach for single-shot conversions
+>> > 2. Any other suggestions for improvement
+>>
+>>
+>> No need to call your patches RFC then. It only stops from merging and
+>> some people will not review the code (RFC means not ready for inclusion)=
+.
+>>
+>> Best regards,
+>> Krzysztof
 
