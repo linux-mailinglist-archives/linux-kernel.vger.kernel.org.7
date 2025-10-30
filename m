@@ -1,81 +1,53 @@
-Return-Path: <linux-kernel+bounces-878497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A917C20D37
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B981C20D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E8BE4ED779
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:01:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB8C94EE118
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB052DD61E;
-	Thu, 30 Oct 2025 15:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229E22E92B0;
+	Thu, 30 Oct 2025 15:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s7j2QD18"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hqsL5jEu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149922DA759;
-	Thu, 30 Oct 2025 15:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504F62DA759;
+	Thu, 30 Oct 2025 15:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836504; cv=none; b=Z++fzE56MceQ9DclFEGr83t1d1CsvdpZi2Apd2HKqsU7R0SP6SETEv2xbddvszI8/cjUT9MlB7zsIdsM6yBOWamOmddCY1YgOMdP8Apz68Z+cTzSF7k64mSd56FyFOscFKdiiSQ8dXRuhxh8cXss7Y0Zzy1UmsJ6Zhg7jFMC+zs=
+	t=1761836508; cv=none; b=OOB1fto1X3EvADIN2UF/Zvd9DShc/maLuENnBXws5lFzZaIGR4vorWjovjkfvWYCcIvDZhT+aLZ2J01+mMNgCRrB+XKZPcCw1qOtIu3VOwmI7BO10CoFX4ytR7zVQ3C2VaiH4le0ogZhK0+PUnFtCIt3aC9azrAKNbM21udjAYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836504; c=relaxed/simple;
-	bh=HoI9A5dBBG/SP18tn0qdYgJCPMwIZpw/yCunp7reoSE=;
+	s=arc-20240116; t=1761836508; c=relaxed/simple;
+	bh=DlPlo9FJNjgGbqXjhpE/3RhOWvwERzb1fKLR9seCutc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuxtjlSmQThPicJV0jlJuD/XKJ2uhX77Xrpz4gVb8p/Rzjn4pjHYRPp/Ae5f43t58adeCC8Rk+dwQzuWIzV0bB6MU3Z8VJqMDGS5U63Hl+e+V58LwzhX+vBawJMorggNrmw+n0LzIO04FgXvZthJjQwzD/K1sau8cf3WNtW1MhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s7j2QD18; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Ev+WYGcskpqGIIHF3ivwDxrnkr+tx39eqoXSZQFeHS4=; b=s7j2QD18Ifk5JJ5i3kDidFZBGP
-	1ZSafhgxrWn784jyyT40jnXFTQXSOup0KQKwY0Qo//PIMODPXAD/K0lT2Jo6jU1ML+h1zR92GcqOD
-	kXNyTJI+rAUedXLIAnw9SP//oUMikCeIIXltq+lT5vdFqrocJ7jb1+VOe3Zua8Y0+qmg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vEU9W-00CWJa-69; Thu, 30 Oct 2025 16:01:26 +0100
-Date: Thu, 30 Oct 2025 16:01:26 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: Re: [PATCH net-next v14 01/16] dt-bindings: net: Introduce the
- ethernet-connector description
-Message-ID: <b8561c97-483f-4f43-897c-4bc3a4b916b4@lunn.ch>
-References: <20251013143146.364919-1-maxime.chevallier@bootlin.com>
- <20251013143146.364919-2-maxime.chevallier@bootlin.com>
- <382973b8-85d3-4bdd-99c4-fd26a4838828@bootlin.com>
- <b6a80aba-638f-45fd-8c40-9b836367c0ea@lunn.ch>
- <7a611937-a2af-4780-9b88-cf9f282f88b3@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sppSZPag/+mfRCz+70wl4/1izGpZ0sszxR96KNj0RrNv3FD0FvoIpjPXVkxHpMav3ZV1nwlnz3Kdgn4zRB5uB4tL9wsW3pFKqsT7rvfEkyFikOY7CoXlE5azUUYlnEx4cCjmts4A+oAFi7M4FgZuEzNLuNfxY8V8iAZftgg1jiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hqsL5jEu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AFEC4CEF8;
+	Thu, 30 Oct 2025 15:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761836506;
+	bh=DlPlo9FJNjgGbqXjhpE/3RhOWvwERzb1fKLR9seCutc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hqsL5jEu8NQfy5/5dbc5WKhnPHHblAekoPEsFwQ8i5bu1XUC1iBsaKm/VTsEh4nU3
+	 YA5tf5tcKv6nAIfXOaBcpX51pSJrBS492bLkg6vUrhc/kNjctnSxSwUQZgrq2reYo1
+	 c/hyYx3rCGyZ3D9n7/xViDby4FchrC94k/YTqkks=
+Date: Thu, 30 Oct 2025 16:01:43 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
+	yazen.ghannam@amd.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] EDAC/mc_sysfs: Begin deprecating legacy sysfs EDAC
+ interface
+Message-ID: <2025103029-reforest-negate-cc34@gregkh>
+References: <20251013173632.1449366-1-avadhut.naik@amd.com>
+ <20251013173632.1449366-5-avadhut.naik@amd.com>
+ <20251029172419.GGaQJNw4Pofl1x1mve@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,20 +56,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7a611937-a2af-4780-9b88-cf9f282f88b3@bootlin.com>
+In-Reply-To: <20251029172419.GGaQJNw4Pofl1x1mve@fat_crate.local>
 
-> So that being said, an option could be to only focus on pairs, only
-> for medium = BaseT, and ditch the "lanes" terminology, at least when
-> it comes to the DT bindings.
+On Wed, Oct 29, 2025 at 06:24:19PM +0100, Borislav Petkov wrote:
+> + Greg to tell us whether that would be a proper deprecation strategy.
 > 
-> Does that sound good ?
+> On Mon, Oct 13, 2025 at 05:30:43PM +0000, Avadhut Naik wrote:
+> > The legacy sysfs EDAC interface has been made obsolete more than a decade
+> > ago through the introduction of a new per-DIMM interface.
+> > 
+> > The legacy interface however, hasn't been removed till date.
+> > 
+> > Begin deprecating it so that it can eventually be removed by v6.21.
+> > 
+> > Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> > ---
+> >  drivers/edac/Kconfig         |  2 +-
+> >  drivers/edac/edac_mc.h       |  5 +++++
+> >  drivers/edac/edac_mc_sysfs.c | 16 ++++++++++++++++
+> >  3 files changed, 22 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> > index 39352b9b7a7e..fdfeba848114 100644
+> > --- a/drivers/edac/Kconfig
+> > +++ b/drivers/edac/Kconfig
+> > @@ -25,7 +25,7 @@ if EDAC
+> >  
+> >  config EDAC_LEGACY_SYSFS
+> >  	bool "EDAC legacy sysfs"
+> 
+> Add "DEPRECATED: EDAC ..."
+> 
+> here.
 
-That sounds reasonable.
+Hah, good luck!
 
-In the binding, maybe try to express that we might in the future
-extend it. You can do that with conditionals. medium is required.  If
-medium = BaseT then pairs is required. That leaves it open, e.g. in
-the future we could add medium = BaseKS, and require that has lanes.
+> > -	default y
+> > +	default n
+> >  	help
+> >  	  Enable the compatibility sysfs nodes.
+> >  	  Use 'Y' if your edac utilities aren't ported to work with the newer
+> > diff --git a/drivers/edac/edac_mc.h b/drivers/edac/edac_mc.h
+> > index 881b00eadf7a..78b49d6906fd 100644
+> > --- a/drivers/edac/edac_mc.h
+> > +++ b/drivers/edac/edac_mc.h
+> > @@ -95,6 +95,11 @@ do {									\
+> >  
+> >  #define to_mci(k) container_of(k, struct mem_ctl_info, dev)
+> >  
+> > +static inline void deprecate_interface(void)
+> > +{
+> > +	pr_warn_once("NOTICE: The legacy EDAC sysfs interface has been deprecated and will be removed by v6.21. Please switch to the new interface!\n");
+> > +}
+> 
+> You don't need to have a function which you replicate everywhere. Simply dump
+> this notice once...
+> 
+> edac_create_sysfs_mci_device:
+> 
+> 	...
+> 
+> #ifdef CONFIG_EDAC_LEGACY_SYSFS
+> 
+> <--- here.
+> 
+>         err = edac_create_csrow_objects(mci);
+>         if (err < 0)
+>                 goto fail;
+> #endif
+> 
+> So that it gets issued and hopefully someone sees it.
+> 
+> Then, I'd say around 6.19 we should make those functions return an error
+> unconditionally and then zap them in 6.21.
+> 
+> That is, if no one comes crawling out of the woodwork with a valid use case.
 
-	Andrew
+No one is going to notice this type of kernel log message.  If you think
+that no one is using the sysfs files, delete them now.  Why wait?
+
+sysfs is meant to be such that userspace can handle file removals (i.e.
+that value is not present.)  Unfortunately, sometimes this does not
+actually happen and user tools do mess up and rely on things.  So either
+no one uses the file and it can be removed now, OR you have to leave it
+in for "forever".  There's no real chance to remove it later, that's
+just postponing the decision.
+
+good luck!
+
+greg k-h
 
