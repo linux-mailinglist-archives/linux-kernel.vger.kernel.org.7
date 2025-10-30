@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-878528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559D7C20E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:23:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC7AC20E71
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43CF54E2776
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:23:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4618C34F601
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9CD363B9B;
-	Thu, 30 Oct 2025 15:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35B2363378;
+	Thu, 30 Oct 2025 15:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FA88wTSO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XsRvY6ir"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D13208;
-	Thu, 30 Oct 2025 15:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44A63208;
+	Thu, 30 Oct 2025 15:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837809; cv=none; b=msH1U8Wiv43KG00Vlox/h8wdYLuoyBZ0g4jSEbVEKdf/oir0sVf6hHgXNd9M7c2kn1tG0sMx7oH8FoYZrw6ljF9R1WenDEtms1qXLIwMHg+zh9WTjyepD6Y2uNdPkvhJtkXfD2hCmA45lv00jnC4YONaaNxHLzrlMAbV0WS+kAA=
+	t=1761837835; cv=none; b=IthFLXBFNZQ5LuaIaV906FCitUB0vlA/g3HMT6Zne9bs7wwC16zbfFUC6z4MiXSFn2Q/kGNKAlr8d+68opyq519zMhwX4PfzRxhOR9UOwBDi8mzEGqUGsSsXiLvlKFSdQiSGFfP6DvPaPqcjet/KYzP4VcfA03bcTauzelUk7YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837809; c=relaxed/simple;
-	bh=DeegVoD/FpDij0JSaJoj94TY1CnINwyeRhD2sowD2hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k58NVCGFyXDVYu5QuoBciH7Ee0wQ1kdG5tD6QZ+FFiEGiaR4SjHeNJ4EpRl03jWvgIzp2cwfoJxYWWCJ+AywEVzBXsnpLtoZbMS8asZyfstI6u9WDs3Hhcip6gQqXiCTmOhP9uAKVPHLTd2fmSCjvICvJ7cRitAcg29Bt7Z+vko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FA88wTSO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6FDC4CEFF;
-	Thu, 30 Oct 2025 15:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761837809;
-	bh=DeegVoD/FpDij0JSaJoj94TY1CnINwyeRhD2sowD2hk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FA88wTSOrmHFd7V1HulHrQjr6P3mVPZ7KY4wbyBFaC5Dsk5ivyms3bifB3pOi9rIS
-	 gpKLD607l/e92oCqdYMmcKT8rQQKkIlwuB63YBXi9fLchTTT8GMo0h/rcSM/1DmRI+
-	 d2mLYU7KBwbnmnCxAsP5ZA0HjE1VXoMpIQ0/QtIDO6QZb0GP1hiOxiOGKoqnfgL1CW
-	 Ribgl8/BtOC04OBJ+7wBHSIwZFWxHZk2sMvoWne2PbU+3xoNfSmRuvaGcpeEeZGGGB
-	 7k4WQxwIVOTVVQb6tGuJfqRcCtJ7/15gA70oDA/D5eB+c4LlmyQ0feVtknRcYafCZJ
-	 GIS6Cw4DP8+ug==
-Date: Thu, 30 Oct 2025 16:23:24 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	David Rhodes <david.rhodes@cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund <steen.hegelund@microchip.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 18/29] i2c: mux: Create missing devlink between mux
- and adapter physical device
-Message-ID: <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-19-herve.codina@bootlin.com>
+	s=arc-20240116; t=1761837835; c=relaxed/simple;
+	bh=+70wsxsUKt4UILi1sS3Hkbru1yirfCe5Hv9sXg1ElVc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nVQLsxB+F8IaSOaXklQ1yF55UgtbRSrWThlaKWLnEOuC2/YIZcjttcFdOmbWgAxiNTiG9AMUhmouZ+kZZbCLTrY7G6LnBejrU2IFTKBT4h6VlZAhdkf5apMuYDpWapbk9s/0+MUiO8uRk1dXnOqYCRE4aE/Cu3KxZlET+6arf2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XsRvY6ir; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cy7Dg6lDvz9t3b;
+	Thu, 30 Oct 2025 16:23:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761837828; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u5e1e008gbO1/zsprlDyPBCZ7fdZFhj66DGzzytqzuQ=;
+	b=XsRvY6irrdPrD8d9dBP1MABjFGs0HiyFQN9u9P6b0Gjz/HyMS39KS4Q93VFvX5Kj+D7Yy4
+	Xc05edZos7ptFMRZx2iiwIx+HzLNpHAlGyJg8UDpJ0ECb3AibH4JzU/8nG5KDWOJOMXGe/
+	fZDPS/bM9b3z+0cZM6UDSCKIiqOA3Cen7w/QXZJIBBqAOijyyAKPi1zVwbyZmtaK21lFCl
+	/LxVJEeSTn3SvyPYlmxYmmRb1ktth1teMz9ct2Gc3YU3TVzg5ZewN5XQwuTbQ8nL0ev+4x
+	glEHsar9iCtFJqSg0P0VtbV/ZuqPSiQIGrK9s2DP2TQALstbLTgLktb1rXAbzg==
+Message-ID: <015c204472811734b1e2a12d044ac3b13926c617.camel@mailbox.org>
+Subject: Re: [PATCH v3] drm/sched: Add warning for removing hack in
+ drm_sched_fini()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
+ <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org
+Date: Thu, 30 Oct 2025 16:23:44 +0100
+In-Reply-To: <20251023123429.139848-2-phasta@kernel.org>
+References: <20251023123429.139848-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015071420.1173068-19-herve.codina@bootlin.com>
+X-MBO-RS-ID: 50bb01bfe4d79271fe0
+X-MBO-RS-META: wd5awe31de8g61xfb6fczuxkck9e7365
 
-Hi Herve,
+On Thu, 2025-10-23 at 14:34 +0200, Philipp Stanner wrote:
+> The assembled developers agreed at the X.Org Developers Conference 2025
+> that the hack added for amdgpu in drm_sched_fini() shall be removed. It
+> shouldn't be needed by amdgpu anymore.
+>=20
+> As it's unclear whether all drivers really follow the life time rule of
+> entities having to be torn down before their scheduler, it is reasonable
+> to warn for a while before removing the hack.
+>=20
+> Add a warning in drm_sched_fini() that fires if an entity is still
+> active.
+>=20
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-...
+Can someone review this?
 
-> When an i2c mux is involved in an i2c path, the struct dev topology is
-> the following:
+At XDC we agreed on removing the hack, but wanted to add a warning
+print first for a few releases, to really catch if there are no users
+anymore.
 
-supernitpick: I'd leave blank line here.
+Thx
+P.
 
->     +----------------+                +-------------------+
->     | i2c controller |                |      i2c mux      |
->     |     device     |                |      device       |
->     |       ^        |                |                   |
->     |       |        |                |                   |
->     |  dev's parent  |                |                   |
->     |       |        |                |                   |
->     |   i2c adapter  |                | i2c adapter chanX |
->     |     device  <---- dev's parent ------  device       |
->     |   (no driver)  |                |    (no driver)    |
->     +----------------+                +-------------------+
-> 
+> ---
+> Changes in v3:
+> =C2=A0 - Add a READ_ONCE() + comment to make the warning slightly less
+> =C2=A0=C2=A0=C2=A0 horrible.
+>=20
+> Changes in v2:
+> =C2=A0 - Fix broken brackets.
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 9 ++++++++-
+> =C2=A01 file changed, 8 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index 46119aacb809..31039b08c7b9 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1419,7 +1419,7 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched=
+)
+> =C2=A0		struct drm_sched_rq *rq =3D sched->sched_rq[i];
+> =C2=A0
+> =C2=A0		spin_lock(&rq->lock);
+> -		list_for_each_entry(s_entity, &rq->entities, list)
+> +		list_for_each_entry(s_entity, &rq->entities, list) {
+> =C2=A0			/*
+> =C2=A0			 * Prevents reinsertion and marks job_queue as idle,
+> =C2=A0			 * it will be removed from the rq in drm_sched_entity_fini()
+> @@ -1440,8 +1440,15 @@ void drm_sched_fini(struct drm_gpu_scheduler *sche=
+d)
+> =C2=A0			 * For now, this remains a potential race in all
+> =C2=A0			 * drivers that keep entities alive for longer than
+> =C2=A0			 * the scheduler.
+> +			 *
+> +			 * The READ_ONCE() is there to make the lockless read
+> +			 * (warning about the lockless write below) slightly
+> +			 * less broken...
+> =C2=A0			 */
+> +			if (!READ_ONCE(s_entity->stopped))
+> +				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n=
+");
+> =C2=A0			s_entity->stopped =3D true;
+> +		}
+> =C2=A0		spin_unlock(&rq->lock);
+> =C2=A0		kfree(sched->sched_rq[i]);
+> =C2=A0	}
 
-...
-
-> No relationship exists between the i2c mux device itself and the i2c
-> controller device (physical device) in order to have the i2c mux device
-> calling i2c_del_adapter() to remove its downtream adapters and so,
-
-/downtream/downstream/
-
-> release references taken to the upstream adapter.
-
-...
-
-> +	/*
-> +	 * There is no relationship set between the mux device and the physical
-> +	 * device handling the parent adapter. Create this missing relationship
-> +	 * in order to remove the i2c mux device (consumer) and so the dowstream
-> +	 * channel adapters before removing the physical device (supplier) which
-> +	 * handles the i2c mux upstream adapter.
-> +	 */
-> +	parent_physdev = i2c_get_adapter_physdev(parent);
-> +	if (!parent_physdev) {
-> +		dev_err(muxc->dev, "failed to get the parent physical device\n");
-> +		ret = -EINVAL;
-
--ENODEV?
-
-> +		goto err_free_priv;
-> +	}
-> +	dl = device_link_add(muxc->dev, parent_physdev, DL_FLAG_AUTOREMOVE_CONSUMER);
-
-Not to call twice put_device, I would add it once here and then
-check for !dl.
-
-> +	if (!dl) {
-> +		dev_err(muxc->dev, "failed to create device link to %s\n",
-> +			dev_name(parent_physdev));
-> +		put_device(parent_physdev);
-> +		ret = -EINVAL;
-
-same here, should this be -ENODEV?
-
-Andi
-
-> +		goto err_free_priv;
-> +	}
-> +	put_device(parent_physdev);
-> +
->  	if (force_nr) {
->  		priv->adap.nr = force_nr;
->  		ret = i2c_add_numbered_adapter(&priv->adap);
-> -- 
-> 2.51.0
-> 
 
