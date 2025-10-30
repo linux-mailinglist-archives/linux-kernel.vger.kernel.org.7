@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-878915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7A4C21BF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:22:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EEAC21CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D55407ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECDFD1A24D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC2B34AAF0;
-	Thu, 30 Oct 2025 18:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADF936CA8A;
+	Thu, 30 Oct 2025 18:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M6ST0f8G"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="SBl4cNzG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="tN9CbTRc";
+	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="NF2HvmrE";
+	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="ckhcImAC"
+Received: from sender5.mail.selcloud.ru (sender5.mail.selcloud.ru [5.8.75.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF7F258EE0;
-	Thu, 30 Oct 2025 18:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC796EEBB;
+	Thu, 30 Oct 2025 18:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761848566; cv=none; b=NCot3snzThnzUSe/CP8elo+v2VlfkOiXmA69omspizHfyJgROJ6LdmoNKv1q1OoGMvYxJZojy1umtJdjmhzaoVoqMRGZdqRxAa0vfLKWYNukBIVdlmHmlLgjtzMUrHDETPDk7P42MuuBFYNaFqhdgKzZ/4r5UMpSkdoPaEgskxQ=
+	t=1761849574; cv=none; b=dS5RoaeAgS4tDhv+AWQtKXTUabqUM9falTPuO8Fl3zcK523a2IOle0pf5rrbNIIZFXa9CZQxagU/Ph2CKRcncdSEg0276uOI1/Vb+swMjDdji2IDSPcbiXVNz1JOcaEw1eyczaqrt++XhAPfTGwxNbuiFW7zjoeJ2rvOzw38h30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761848566; c=relaxed/simple;
-	bh=7yyD5U+PYsRKwp8Uhb+m6+KksaxC3GTC2RJTL/9eup0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUY/UkuDM7kOsSncKfL7hTPDhJhdhgA6H9KShtNzrPSiBJstDFfVX7RAacP8IHA/px2UUXg62ndXM/jy7xZvu9qa3YhffG5BL8xGYtx6kymYCQziQvRkd8JUwLd6YeVw2/PbBfW1/AASzJ7MYP6fCv5BDO6D4RqvvSXe7JgqnmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M6ST0f8G; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1761849574; c=relaxed/simple;
+	bh=TekjPNxEvxifqfA9tU1bs6msDNIILyeqiQoQHC1s9E4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h0hTJn7ZZUOvG7tVEwTkyCa4d7jbDQY/2dyyVwwKqELHFSIlg3AsJFrRAyLLk8FPJFsf8M/qUabLjPSbrCPYiPux5BZcGSs0bE6o26byLmT7Sp+S56V4EUgOUKTy4sN5UEsLKBliYdXeJAr+W3KeJm0kH4IB6DEVrxdjrWtt2eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=SBl4cNzG; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=tN9CbTRc; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=NF2HvmrE; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=ckhcImAC; arc=none smtp.client-ip=5.8.75.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kEelh1U2KFvGZlwyaZuMb29p7lTzeUCDxOLG+vsywwY=; b=M6ST0f8Gn1FtTUgjwQPlSSCBB8
-	AXGLR45eiXW+wI5g5/msRcxDdUG3GdAqKmlTuiS9a/hS31jix2TlfsPnMDtFe0+scriNr/ghMS0vL
-	1tm4NCs5N+Kou+EBun1zh0eMQve/iO8N89YwQno6wl7dMoNnOIM08N+QZW8dR2fi20wD2RcmxUj52
-	rj6Nfi3uMjLbZjYCb5tcPCdWpUrLfgBiQaWMULaYyETypymP5IQxfU2Bw7nRT2At/kXhbfZygujTx
-	McIDgTJ7pv5fnC/CSsyW8O3h3Z3uYzazl7fSkK53T4sqafO4SZyzpQIYdglQHE8hgakb0KFD1Le30
-	GE0GWBJg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEXIE-0000000ADjb-3KPQ;
-	Thu, 30 Oct 2025 18:22:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E4E41300289; Thu, 30 Oct 2025 19:22:38 +0100 (CET)
-Date: Thu, 30 Oct 2025 19:22:38 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Fangrui Song <maskray@sourceware.org>
-Cc: linux-toolchains@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=IwRegeCdAxRUZSDwQb6vAVMbdRio5Zuxgn8WY4q5vV0=; t=1761849570; x=1762022370;
+	 b=SBl4cNzGDEK1ccoDN4lR1idJCz8gNBwyzX+91n4U68EgdvNWJ5rprNzM8Aa/DhPtzHNTT3WFw0
+	DLzIuQHO4uLKkCBAS9V2oqinPlXqV9f10NHIWpaoc78yMtBG9KlrQYyIhC+920QzoqcYJVGJFJgXO
+	TaAi7G14oGfmQOrUhRwU=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Help:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=IwRegeCdAxRUZSDwQb6vAVMbdRio5Zuxgn8WY4q5vV0=;
+	t=1761849570; x=1762022370; b=tN9CbTRcaejLKjdUOUlaWDRCY0nYma6l4NmJ6AKqqNbMc9/
+	i6a5wq6UW/R4DkTPnwmSEq30TGWqso6WvYHuPgX/Mo+DMTsqwvxbrxUEKe/Besq0GvZ6lWCjFz2jR
+	R/24sqrcYjBBpboRCdUB72/BhDHd7IupRMVFzmAgKfQJsgc=;
+Precedence: bulk
+X-Issuen: 1390421
+X-User: 149890965
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1390421:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20251029.201254
+X-SMTPUID: mlgnr59
+DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1761848632; bh=IwRegeCdAxRUZSDwQb6vAVM
+	bdRio5Zuxgn8WY4q5vV0=; b=NF2HvmrERes1QkI3TPC+nacq7G0N+VU42kAZRmb1LvpIozx+Cm
+	ob9cGdOka0hddTe83JmtL1rB33usJzLGgjkL2Y1nT25wn2YQAAH1X4IuQhxSX4tjeYeXCL3lBEp
+	0Ui7cpIbXY1+H4XNv2ISDGtp42OU/g013HhNGHsntt6OiWobCIMK3NlN7w0bSKX4L81IThh97jS
+	DWFnKJLNux8Se5PYvX76YVptGW1CnXHbVmwtHo2ked0Ltdmfi3T55x976rRixyP48MWR8MWXGvH
+	bzsBlkl9WaXYmRD2hj4tDCKlb4tgC9nX9aiOR2weQszDSjkeFm3K1CML0kOSfASoa4g==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1761848632; bh=IwRegeCdAxRUZSDwQb6vAVM
+	bdRio5Zuxgn8WY4q5vV0=; b=ckhcImACfa0F44z7zVfDbptfH76D8cqwdLO48TXEFKvt1xbWvT
+	ttrc41lX5pylpNlMuF6f7QuswI7lB+azPMAw==;
+From: Gladyshev Ilya <foxido@foxido.dev>
+To: foxido@foxido.dev
+Cc: Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: Concerns about SFrame viability for userspace stack walking
-Message-ID: <20251030182238.GA2989771@noisy.programming.kicks-ass.net>
-References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
- <20251030102626.GR3245006@noisy.programming.kicks-ass.net>
- <CAN30aBF3MofmVTjTZ9KFq9OBM0nA16amP5VFv+VAEJfFkLx0qw@mail.gmail.com>
+Subject: [PATCH] btrfs: make ASSERT no-op in release builds
+Date: Thu, 30 Oct 2025 21:23:17 +0300
+Message-ID: <20251030182322.4085697-1-foxido@foxido.dev>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAN30aBF3MofmVTjTZ9KFq9OBM0nA16amP5VFv+VAEJfFkLx0qw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 09:48:50AM -0700, Fangrui Song wrote:
+The current definition of `ASSERT(cond)` as `(void)(cond)` is redundant,
+because all checks are without side effects and don't affect code logic.
 
-> Thanks for this perspective???the unwinder complexity concern is
-> absolutely valid and critical for kernel use.
-> To clarify my motivation: I've seen attempts to use SFrame for
-> userspace adoption
-> (https://fedoraproject.org/wiki/Changes/SFrameInBinaries ), and I
-> believe it's not viable for that purpose given the size overhead I
-> documented. My concerns are primarily about userspace adoption, not
-> the kernel's internal unwinding.
-> 
-> If SFrame is exclusively a kernel-space feature, it could be
-> implemented entirely within objtool ??? similar to how objtool --link
-> --orc generates ORC info for vmlinux.o. This approach would eliminate
-> the need for any modifications to assemblers and linkers, while
-> allowing SFrame to evolve in any incompatible way.
-> 
-> For userspace, we could instead modify assemblers and linkers to
-> support a more compact format or an extension to .eh_frame , but it
-> won't be SFrame (all of Apple???s compact unwind, ARM EHABI???s
-> exidx/extab, and Microsoft???s pdata/xdata can implement C++ exception
-> handling , while SFrame can't, leading to a huge missed opportunity.)
+However, some checks has READ_ONCE in them or other 'compiler-unfriendly'
+behaviour. For example, ASSERT(list_empty) in btrfs_add_dealloc_inode
+was compiled to redundant mov because of this.
 
-No, you misunderstand. The x86_64 Linux kernel is using ORC internally
-and we're happy with that. However, the kernel also needs to be able to
-unwind/walk user stack frames.
+This patch replaces ASSERT with BUILD_BUG_ON_INVALID for
+!CONFIG_BTRFS_ASSERT builds.
 
-We need simple robust means of walking user space stacks from the kernel.
+Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
 
-It is here that SFrame is proposed on x86_64. The kernel consumes user
-space SFrame data to unwind user space stacks. This is also why the
-SFrame sections are SHF_ALLOC, such that the kernel can simply fault
-them in on-demand without having to otherwise initiate IO.
+---
+.o size reductions are not that big, for example on defconfig + btrfs
+fs/btrfs/*.o size went from 3280528 to 3277936, so compiler was pretty
+efficient on his own
+---
+ fs/btrfs/messages.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/messages.h b/fs/btrfs/messages.h
+index 4416c165644f..f80fe40a2c2b 100644
+--- a/fs/btrfs/messages.h
++++ b/fs/btrfs/messages.h
+@@ -168,7 +168,7 @@ do {										\
+ #endif
+ 
+ #else
+-#define ASSERT(cond, args...)			(void)(cond)
++#define ASSERT(cond, args...)			BUILD_BUG_ON_INVALID(cond)
+ #endif
+ 
+ #ifdef CONFIG_BTRFS_DEBUG
+
+base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+-- 
+2.51.1.dirty
 
 
