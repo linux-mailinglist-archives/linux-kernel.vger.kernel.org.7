@@ -1,231 +1,282 @@
-Return-Path: <linux-kernel+bounces-878122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05079C1FD86
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:35:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D39BC1FD65
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6916C1A263E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1F7D4EADC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F8E1E0DD8;
-	Thu, 30 Oct 2025 11:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA190319617;
+	Thu, 30 Oct 2025 11:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iQjV4Qkw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="APYEF91G";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MOvoqIVB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wArq54LY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Uq3eLJh9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hM0sMtCY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107B82E03EF
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7B82F1FC7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761823928; cv=none; b=lhxdKI6MUWoS1Koqe5BQkXtLLKmg/6jcg8a6361krhUjBEg+NQj5co54GZqeACb6/iJUkCfR9fQqBUXvNYw6dIqa79t0SZhQrNyesing145+aCu+EqhZgJRmn8zNj65cs/XHIg+xvpgFKjfLlrilxWQMamtqepjeNLWPpi9NT/M=
+	t=1761823950; cv=none; b=YFzh4br3AVOvEVpsFsvx4AKy2TPFyq/oQLlQP46DT1yP6siS9wydYRZyIpxJEh995ZhbiqSPret10tLTUgB19byoT1cfxCbClRdDSKNYR9bITtw4Cv5LI1Xwt+rIj+mPTVPCLqYzxrWb1GMvFJuCqpnGsubsAuKyqk5OWrMCj+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761823928; c=relaxed/simple;
-	bh=OZ3Yq4YdDmWhDi/hUxHScmEubonH1DIfS5EheJ/DK3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnlrsWrj1P7c+WhGpRWqMJhIHOZ2gwFce2tCpFtovDAX96zU5iIKN6RW/3XIbbzwQWI2KQZl+batCCM8tW4qr/UOkGy+PVc1GE5mt72/Nr6yWm/RxNSh4BljjrFnH2lOJD9tTOuotX1jxtpwBwcPNpTXBMJjimRxzh8piibDHiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iQjV4Qkw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=APYEF91G; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MOvoqIVB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wArq54LY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C263D3370D;
-	Thu, 30 Oct 2025 11:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761823924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ntw06CVPtYKA20BePGYDvcSPKowAchzswyZRcPGcQqs=;
-	b=iQjV4QkwkctgtDR0/g883064ybVchiq/QmGKncpucj8wgHtn2qpN8Rq9SPdUdQv+hWoFhX
-	Tmo+bPJbU3FCIm/dUeTNJdyNQ2eURN2IMLr9KPCuHCyg02zyse1qn4uO4/yoz4FRhVUC1o
-	Uoq/2oPXgyvdLXt9Qn7vjpqszi7oe/M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761823924;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ntw06CVPtYKA20BePGYDvcSPKowAchzswyZRcPGcQqs=;
-	b=APYEF91GxFI+yR6Mip4jKTTT7Dmr6yyjkMVDhWfeqRX91yTP4UHMu8kmswBb9qWiRdqnpx
-	bFchAEGXRbVz4sDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MOvoqIVB;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=wArq54LY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761823922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ntw06CVPtYKA20BePGYDvcSPKowAchzswyZRcPGcQqs=;
-	b=MOvoqIVBUlXjCsKDPCoKy1sAGtX5virqZ5SXbUwaG2l96SDllOR/UAjOWSQll7fp+xWppD
-	6UEDwkD4rczojsJdVBtryz2kNUm7bWAOCKvvHvN9/nHciOCbza5rUV3rJjqiRfOromIYY3
-	RwgC06sp5Ok2T+zNWJ2txge5wgYkN7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761823922;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ntw06CVPtYKA20BePGYDvcSPKowAchzswyZRcPGcQqs=;
-	b=wArq54LYoiQ4MYXRHLzZurpiYk5/OJPzr8ipIn+tuDskxBlxdAUkPzHi7lGhjFUdJdmjQF
-	xkoBYKZu/PbnDVAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B32E81396A;
-	Thu, 30 Oct 2025 11:32:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fyy6K7JMA2mebgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 11:32:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id ED0F8A0AD6; Thu, 30 Oct 2025 12:32:01 +0100 (CET)
-Date: Thu, 30 Oct 2025 12:32:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH 1/2] ext4: fix up copying of mount_opts in superblock
- tuning ioctls
-Message-ID: <yq6rbx54jt4btntsh37urd6u63wwcd3lyhovbrm6w7occaveea@riljfkx5jmhi>
-References: <20251028130949.599847-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1761823950; c=relaxed/simple;
+	bh=lf2SZXPHOeNKfnR+2AGHeP0WDmv17afwkbv4+3+gA8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ccmXC8Vxyj7dSWHFalzaf2GuAGQ/FVcCTXstrmcj9/FzPBubGzkaS0ZHKpg0En9VRXHmGQdu9J8FaoO3KF2sSm3LpMG78NpMPmWPbVZVISFT3iuJHo2+LY9hKZb87RmVGEmdtzrIicQMlyJ9gxcK05dlufhcyU/DhomNArUs/fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Uq3eLJh9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hM0sMtCY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U7VGoP1655983
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:32:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YNULkZggaBVWafuH6G2UI48mTzyPJboSv12GQ652rF4=; b=Uq3eLJh9ra6dJgB8
+	dG4OIxQmZZlTKSlBq7XkdfbuzNTwrhA25TyyDfC7sI8w1uhUHyun2tCTk/GjmB9h
+	O0Cjn+MJVOt7uLg+BxoZz4i+QTanLGrQpRFfqoY5QUkXYemjF91rz3qoDtXzkEjk
+	VPvSdW8YEz4mbibu9xHJU01kgQeZL6FVUPAgjUGaJc2gQAZsQRxFkpG9XNDaZ8Vf
+	RKHQgs+Fk8tFSJQ9BjZe3vWVTCu6/fLcruYAAy0hFLGRW9ljbBIl4B3VeAfbHz0/
+	tJhCUNqm9vATl1exoKHMrl4uhikFRhm72BL5Rtbd4uF4XaCRhixgoAbYMOmWcsP1
+	ltPTMA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3tptt5f5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:32:27 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e890deecf6so1490521cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761823947; x=1762428747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YNULkZggaBVWafuH6G2UI48mTzyPJboSv12GQ652rF4=;
+        b=hM0sMtCYU5Socks/0tRuc+nLVvw6HdQzA/whBhvx52+SAGz0DHSNsEryVrWsJ26ZXB
+         y53W7uQVxupPGKT5G0Na23huBETkaZiA99aHZIUR9YwSfdw8tTvobkICUcZVCBFb0JZt
+         WFciYXF5rH9XL+Pz5ruYNh211tHzjDCfSOjpictwnB+NEEoIc4Q5Ei+3ucS5YD5TJbom
+         +ArkxZGT768mwO8lQyfz0lXPp2O/HIJQkAQyoZnTW+ATEY3RDNmsdmRpyZTE05R4eOPu
+         9Iq7pbPGf7VQYt8TGfjDMnieU0BMkPIfKhreugRdvTVdHNz19RuL80MHjP/TaivUb7XJ
+         pqzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761823947; x=1762428747;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNULkZggaBVWafuH6G2UI48mTzyPJboSv12GQ652rF4=;
+        b=WYNixBMOPL7G0/K3FnCtQArDOs8Vuau4sgjqLum3ooqmPdBZmCKLPOyBuER2An9HgH
+         H1k7pmZ041B1pquPJbQNia9komWWgr4kAJv11M/V4RlUGZNt90omyj64HTSxJHxvrjB8
+         xskmuJVr+ehtkELjhV6eeISdnJLO3uuz9ysHaxJwM8LFW9wnom0RrjnjvLk/GzgWJXux
+         PiWWQ1vSDJRmFPFIUYYx3RmctHBW9CTOrqVyCwbyiS9Q7koOBn/Gw/Gkf91LP0Av11gt
+         7nzrqCt+E8MplLM4nfT+rzLCavnKK/X+/x5srn82MNS0oDaxXDO78YtVFKebSz8m+n7D
+         o5mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnXUDRGBhJG7a/quDv8K9dFi/8jGAuKS2taz1ds8SUQCUvpg3isqZUcfVgqfUhBR+hhw6lc6hHVmLaHzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxffc8v5ECnIW2E2A68+EyDZ4nc0pwo1R5Zyks2hiQH+9kVtwcw
+	BdoHfWleKRnwXQjZF4cMRaqBFIhSXB1J1hTojhfGibkqnX35YHgDwjdVMrG7s1TX3TGf2l1iSvn
+	0pu5Lc7jvjEH4D2TcdfYbf3kp4CmViQ5cB03hxsTD3Vle2kOiShhGG4YEaNQHbrTVYZk=
+X-Gm-Gg: ASbGncuShNS3BpWwl8LtL/rgN43Vh1nvroeLr/i6DMqeEEWnsab5nTod2673ffP0DLY
+	zU+InYD4JqaBwYiB2NfJlJJfrb6RVz4YveUEX3t3h25PFGXFWJlHFiJM2SSSl/MPRZMPWdMHPqh
+	Obzkn9a+j9QxP6IBJyt7HX9URWf6ZgKav7g0bbVOJUA8+DvBqo55F54xDWZospfJLZM3ujuMdge
+	tY7SLLqE5qUXRDCLJjArvIq8rpjHy9+TIQHQM1liHNnWAl+YBWHXKCZJzWuX1mxaw3SNj8ty/ZO
+	j+stLf7khK61EqwhNaDqS0DDpvhhHaiG708l3QieiKrbZHy70henyAq2THNdNNiu/BSfAnzOYm/
+	cAeOE5e2xeQyje0aJ6ZzbhrOykAswX7jP+FsZsVwH0MWaH07uganKGFjI
+X-Received: by 2002:a05:622a:93:b0:4eb:7dac:7b8d with SMTP id d75a77b69052e-4ed15b96605mr50153101cf.6.1761823946368;
+        Thu, 30 Oct 2025 04:32:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGllTvEh/j7ZHlMm91hXr1OxceGb0VIuQkkd1NhOxJeediP+Nlwluw0PKrGl2uJiszadcidLA==
+X-Received: by 2002:a05:622a:93:b0:4eb:7dac:7b8d with SMTP id d75a77b69052e-4ed15b96605mr50152721cf.6.1761823945826;
+        Thu, 30 Oct 2025 04:32:25 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef6be28sm14649254a12.2.2025.10.30.04.32.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 04:32:25 -0700 (PDT)
+Message-ID: <8d32460d-894b-472a-a262-4c6a60fbcef1@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 12:32:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028130949.599847-1-pchelkin@ispras.ru>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: C263D3370D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,ispras.ru:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Add support for Pixel 3 and
+ Pixel 3 XL
+To: david@ixit.cz, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: phodina@protonmail.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+        Casey Connolly <casey@connolly.tech>,
+        Joel Selvaraj <foss@joelselvaraj.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <20251030-pixel-3-v2-0-8caddbe072c9@ixit.cz>
+ <20251030-pixel-3-v2-2-8caddbe072c9@ixit.cz>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251030-pixel-3-v2-2-8caddbe072c9@ixit.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA5NCBTYWx0ZWRfX+dXtlY/51BBO
+ w9686J5yxYYXJm8xl10ccm0J60rkRRNAgTLfDHYr4IAR2SbST02hHAxU+4Z5BvuBfWfLOwNOXQK
+ onBL/oILvSx6N01yy4QuN2DhSDryAmlL+LOkwN0Wo5UqaUUZpK2rACBXnk1n2EjeC8jkMRrtZuM
+ uLtQ8AfM9oHc3qvhmnWsePtozUpU8o5KsbGSdCl4y9OoTwfMxdSG6zHZ63kDhaxfSXSK3gqadzS
+ iwGjbPvj5Nd8wg3mZtDBWZ0U2Uds9D7/c0s6bHFpEQSE56ib/owavgrrpSxG7hrkbAauGuu746x
+ RgsmADeyKEFySUd+VNY7J3hTTCFov2/WYUL39hm0TRm66qbo+yUgIruUlYysG8pMFGU4fy36qaT
+ ChAxiQAUvcPfwykZnfyuGOdwO9760g==
+X-Proofpoint-GUID: sAMm_uMY30eA48IW8Kqsdmzz6jqKLk_H
+X-Authority-Analysis: v=2.4 cv=MuRfKmae c=1 sm=1 tr=0 ts=69034ccb cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=aBSXULQCl1RkmNN2VsYA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: sAMm_uMY30eA48IW8Kqsdmzz6jqKLk_H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_03,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300094
 
-On Tue 28-10-25 16:09:47, Fedor Pchelkin wrote:
-> Judging by commit 8ecb790ea8c3 ("ext4: avoid potential buffer over-read in
-> parse_apply_sb_mount_options()"), the contents of s_mount_opts should be
-> treated as __nonstring, i.e. there might be no NUL-terminator in the
-> provided buffer.
+On 10/30/25 8:24 AM, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
 > 
-> Then the same holds for the corresponding mount_opts field of the struct
-> ext4_tune_sb_params exchanged with userspace via a recently implemented
-> superblock tuning ioctl.
+> This adds initial device tree support for the following phones:
 > 
-> The problem is that strscpy_pad() can't work properly with non-NUL-term
-> strings.  String fortifying infrastructure would complain if that happens.
-> Commit 0efc5990bca5 ("string.h: Introduce memtostr() and memtostr_pad()")
-> gives additional information in that regard.
-> 
-> Both buffers are just raw arrays of the similar fixed size, essentially
-> they should represent the same contents.  As they don't necessarily have
-> NUL-terminators, in both directions use plain memcpy() to copy their
-> contents.
-> 
-> Found by Linux Verification Center (linuxtesting.org).
-> 
-> Fixes: 04a91570ac67 ("ext4: implemet new ioctls to set and get superblock parameters")
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+>  - Google Pixel 3 (blueline)
+>  - Google Pixel 3 XL (crosshatch)
 
-I agree there are some holes in the logic of 8ecb790ea8c3 ("ext4: avoid
-potential buffer over-read in parse_apply_sb_mount_options()") and
-consequently 04a91570ac67 may need fixing up as well. But I think the fixes
-should look differently. The clear intended use of s_mount_opts field is
-that it is at most 63 characters long with the last byte guaranteed to be
-0. This is how userspace utilities use it and they complain if you try
-setting more than 63 characters long string. So I think strscpy_pad() use
-in ext4_ioctl_get_tune_sb() is actually fine (sizes of both buffers match).
-In ext4_sb_setparams() we should actually make sure userspace buffer is
-properly Nul-terminated and return error otherwise. And the buffer in
-parse_apply_sb_mount_options() should actually be only 64 bytes long to
-match the size of the source buffer at which point using strscpy_pad()
-becomes correct. How does that sound?
+[...]
 
-								Honza
+> +#include <dt-bindings/arm/qcom,ids.h>
+> +#include <dt-bindings/dma/qcom-gpi.h>
+> +#include <dt-bindings/input/linux-event-codes.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +
+> +#include "sdm845.dtsi"
+> +#include "pm8998.dtsi"
+> +#include "pmi8998.dtsi"
+> +
+> +/delete-node/ &mpss_region;
+> +/delete-node/ &venus_mem;
+> +/delete-node/ &cdsp_mem;
+> +/delete-node/ &mba_region;
+> +/delete-node/ &slpi_mem;
+> +/delete-node/ &spss_mem;
+> +/delete-node/ &rmtfs_mem;
+> +
+> +/ {
+> +	chassis-type = "handset";
+> +	qcom,board-id = <0x00021505 0>;
+> +	qcom,msm-id = <QCOM_ID_SDM845 0x20001>;
+> +
+> +	aliases {
+> +		serial0 = &uart9;
+> +		serial1 = &uart6;
+> +	};
+> +
+> +	battery: battery {
+> +		compatible = "simple-battery";
+> +
+> +		status = "disabled";
 
-> ---
-> 
-> The 1/2 patch of the current series fixes an issue existing only in 6.18-rc
-> while 2/2 fixes the commit which was in turn backported to stable kernels.
-> That's the reasoning for separation.
-> 
->  fs/ext4/ioctl.c           | 4 ++--
->  include/uapi/linux/ext4.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index a93a7baae990..c39b87d52cb0 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -1292,7 +1292,7 @@ static int ext4_ioctl_get_tune_sb(struct ext4_sb_info *sbi,
->  	ret.raid_stripe_width = le32_to_cpu(es->s_raid_stripe_width);
->  	ret.encoding = le16_to_cpu(es->s_encoding);
->  	ret.encoding_flags = le16_to_cpu(es->s_encoding_flags);
-> -	strscpy_pad(ret.mount_opts, es->s_mount_opts);
-> +	memcpy(ret.mount_opts, es->s_mount_opts, sizeof(ret.mount_opts));
->  	ret.feature_compat = le32_to_cpu(es->s_feature_compat);
->  	ret.feature_incompat = le32_to_cpu(es->s_feature_incompat);
->  	ret.feature_ro_compat = le32_to_cpu(es->s_feature_ro_compat);
-> @@ -1353,7 +1353,7 @@ static void ext4_sb_setparams(struct ext4_sb_info *sbi,
->  		es->s_encoding = cpu_to_le16(params->encoding);
->  	if (params->set_flags & EXT4_TUNE_FL_ENCODING_FLAGS)
->  		es->s_encoding_flags = cpu_to_le16(params->encoding_flags);
-> -	strscpy_pad(es->s_mount_opts, params->mount_opts);
-> +	memcpy(es->s_mount_opts, params->mount_opts, sizeof(es->s_mount_opts));
->  	if (params->set_flags & EXT4_TUNE_FL_EDIT_FEATURES) {
->  		es->s_feature_compat |=
->  			cpu_to_le32(params->set_feature_compat_mask);
-> diff --git a/include/uapi/linux/ext4.h b/include/uapi/linux/ext4.h
-> index 411dcc1e4a35..8ed9acbd0e03 100644
-> --- a/include/uapi/linux/ext4.h
-> +++ b/include/uapi/linux/ext4.h
-> @@ -138,7 +138,7 @@ struct ext4_tune_sb_params {
->  	__u32 clear_feature_compat_mask;
->  	__u32 clear_feature_incompat_mask;
->  	__u32 clear_feature_ro_compat_mask;
-> -	__u8  mount_opts[64];
-> +	__u8  mount_opts[64] __nonstring;
->  	__u8  pad[64];
->  };
->  
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+You added support for both non-proto boards based on this platform,
+there is no usecase for you to disable the battery, remove this line
+
+[...]
+
+> +	reserved-memory {
+> +		cont_splash_mem: splash@9d400000 {
+> +			/* size to be updated by actual board */
+> +			reg = <0x0 0x9d400000 0x0>;
+
+Don't define it here then
+
+Normally the bootloader allocates a bigger buffer here BTW
+(although it shooould be reclaimable without issues)
+
+> +			no-map;
+> +
+> +			status = "disabled";
+
+ditto
+
+[...]
+
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		label = "Volume keys";
+> +		autorepeat;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&volume_up_gpio>;
+
+property-n
+property-names
+
+in this order, please
+
+[...]
+
+> +&tlmm {
+> +	gpio-reserved-ranges = <0 4>, <81 4>;
+
+Could you add a comment (like in x1-crd.dtsi) mentioning what these
+pins correspond to? Usually it's a fingerprint scanner or things like
+that
+
+> +
+> +	touchscreen_reset: ts-reset-state {
+> +		pins = "gpio99";
+> +		function = "gpio";
+> +		drive-strength = <8>;
+> +		bias-pull-up;
+> +	};
+> +
+> +	touchscreen_pins: ts-pins-gpio-state {
+> +		pins = "gpio125";
+> +		function = "gpio";
+> +		drive-strength = <2>;
+> +		bias-disable;
+> +	};
+> +
+> +	touchscreen_i2c_pins: qup-i2c2-gpio-state {
+> +		pins = "gpio27", "gpio28";
+> +		function = "gpio";
+> +
+> +		drive-strength = <2>;
+
+stray \n above
+
+> +		bias-disable;
+> +	};
+> +};
+> +
+> +&uart6 {
+> +	pinctrl-0 = <&qup_uart6_4pin>;
+> +
+> +	status = "okay";
+> +	bluetooth {
+
+Please add a \n above, to separate the properties from subnodes
+
+[...]
+
+> +&mdss {
+> +	/* until the panel is prepared */
+> +	status = "disabled";
+> +};
+
+Is it not the same as on the little boy, except the resolution?
+(don't know, just asking)
+
+Konrad
 
