@@ -1,238 +1,179 @@
-Return-Path: <linux-kernel+bounces-878020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92CAC1F971
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:37:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99793C1F983
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429D24647C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:35:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BAC46191B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED010351FB8;
-	Thu, 30 Oct 2025 10:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8523546E4;
+	Thu, 30 Oct 2025 10:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtZlMuIi"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSGT/15K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5775332D0E8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFE34DB57
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820510; cv=none; b=XQ6LxOlAh2nKlj/lO05sxgUK4RJi62g8xI3ro774sCOi1/hkN5IhfElP593krj/K7lkRH77ZjdU45o7L586eGmnpOWfp34JyErPFN6NHY0NnEyQQ9Zz6mZlzGxxff9bxtIioNJBCZ9OukJa5GHrlYk1e8qHNAnPzaW74tIBooDI=
+	t=1761820586; cv=none; b=rTJZX1thvh5uV3sNTYjPCZQHRVsDvFsCoX3yGY5whWjUg61KGuFXcCgXZLlZMVaPKD90mp0sxmDKFroa+/VwNqP/ijzSvFuI2fkosJSFJADj4TePcpfaIxn0XQxFo6aAEOB4m96wBK1d9ugBKpRN79LAbxvB2PRBWaEJyR+FaZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820510; c=relaxed/simple;
-	bh=SZ6e+WXbvMDAvZNixEY7qjyYrMagzCDzDbDS4AZsWI8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQpnr7SsiN595bBZ9POOo5QlZKW+4sSr95XNxyPdQRxAyoh7gk5Fn7ys2MOe1MrBKFLTc54/vXesjrkPhTEPWTBFM86dNiBYWvr/l4fKGjupR1diCBwlh6vo6LrRZAJqZCqWJ38IpraheG81c+21hmOdf8WQdOytkCq7fVqNS8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtZlMuIi; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso878705f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761820507; x=1762425307; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsPngKrFqfEFSGok7TSQm60g/euZJ7JcyyRZuGnNgBg=;
-        b=KtZlMuIif2oarcFs92tXATxx4V7/B2kyFZnLCbwukioJ/zxndUSBEBo+k1Wia0WfFX
-         HaJ0gSTUZL/8E2nlm3Uz2Bcc+0guuxaWWbvq+AbCx/YVpubmOu1xJuU5vgayPMBP04UI
-         fxwqLaiR0GyH1jiVtsctCLh2zRhwEBLdy4ItGg7AnRed31i+lTkjmyBbzsJy2v97l+qE
-         rmukQ50y6al50QS56HjIa3APOp6ThaP6Y2l+EbMqmCoMxYP7yV5V/5AFO++69v+yEWFt
-         ac5Vtg+7zxyZqjS400+SKvbJ5wmK6mVwu7iuAKsi9kF6nQloDKaiNUROEq+D8WN0D2MX
-         tX9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761820507; x=1762425307;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZsPngKrFqfEFSGok7TSQm60g/euZJ7JcyyRZuGnNgBg=;
-        b=rGbyfNx7LXHKIwLoqbMV1yTMcbJFS67EslO+lLqLAALZCxL7YA2xwi/3W5UfpcS4wq
-         pzIcw4zFtrhUpjMWG9uHcO6HxsywLPIa+ITGjil9vbsca22xybZn9yeHRz5OfmfKTrFU
-         v1qvh9Z1hZEBlQDKxV3hHVm82exeQ2MmVea3Sbig/LGy/yPQGgTW40vylxpbb+VTefwg
-         IkMEwSkwvHSl/BWOSvq8HHQlw3poHYSLdGh5P0cD+zPFp7KWP69sEfovkLNJA8x6nLbg
-         1Dl95r+q5M3T65Q7UM0sJvPjnWzqoc9DCyIzQtVDDP9EF/LmlX7gp9qr8c7RO9cKg5Yu
-         KgkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/s5XlgN8H+XdYRmUc2pUXz34dq25KxLXqUSYZtsFsHEaUfUXtHUTqpciW+FEFHhscidvZ/S5IyBZDLtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+smivGNKH7EmUwZtr7F53R5yE08EurRrlWoxnrybvulr6NMVJ
-	yWoszk+0Naqaz63BKkMKYwqblbI9sz1ObxvKq+ddi9t3t4eQoY+al+ih
-X-Gm-Gg: ASbGncts/AYsePEc1YHk9D5jMy14U2byQYwOUi1biU9TXXRlmfbHV9BHNLcKf7mmG66
-	mpz9T2vZWMfdkjB5Uk+Hdc1z2eoGS6MKFJNvcD0EOd7nUPYXQdbZnV1hUHBtFhQW47ngV4uXPLu
-	K1uSabVOYLsmcEAOxX5r53HhXEr2VfjiXmNUyM6TeZi+b5AFirvBvfY7UhzjZ/8lS0yYejBxS0a
-	LEkTSPGGDyUZIKEyBO9XfIR7HoOexmDFASxiQNQHe1GVZFfLSzUmCR+JpQzjmBTlREEZoyrtUy8
-	HTcS2sWFOnQ70x0kOKWUvdwgbh5rmB/TW/BKOCSzy/vgGgV8rHsR6U055OQ+r13Hctz5se2Ze6m
-	0xKb3qVoQUWdKYX/SWUGS+fgQo9drSOB7vRQpO8hllpCKSWWYo6Vto1Lpak/nKsx6ZdIUP0c5ua
-	O3F5t6x3QXknhMLxRJm5OdoDnpMAyl
-X-Google-Smtp-Source: AGHT+IESaUzzzN97jkFB4AyHPl8jIeK4DpYfr+xMeimLxz4XvTZuV9U4wyHB6rScPa52l5uDwp+EVw==
-X-Received: by 2002:a05:6000:2c05:b0:428:3e7f:88c3 with SMTP id ffacd0b85a97d-429b4c9ee77mr2317234f8f.50.1761820506460;
-        Thu, 30 Oct 2025 03:35:06 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d4494sm31832354f8f.21.2025.10.30.03.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 03:35:06 -0700 (PDT)
-Message-ID: <69033f5a.df0a0220.25fede.548f@mx.google.com>
-X-Google-Original-Message-ID: <aQM_WCsuEDykB4e1@Ansuel-XPS.>
-Date: Thu, 30 Oct 2025 11:35:04 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v2 2/2] net: airoha: add phylink support for GDM1
-References: <20251023145850.28459-1-ansuelsmth@gmail.com>
- <20251023145850.28459-3-ansuelsmth@gmail.com>
- <aP00w4CQdeX9GIJA@shell.armlinux.org.uk>
+	s=arc-20240116; t=1761820586; c=relaxed/simple;
+	bh=EWFesmgztVELijrKVyAIw58RaW5qiWVySUAVHUAu/+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uITXp5k3grki2qjYtMXqwo8SFcn+wNp5YibsHWKJHP17a4eSt6I+4oSJK9vHrbD2TyL3rXLn2GBWxbt60duFxfwejnQJeWEzhi1WXVYNRpkbYOLLkXv/0Xuy5lexj8aXpc1B77P0PWziKqPpw9kr9+pRQRlxR5Ps0p7GbT5th80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSGT/15K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06135C4CEFD
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761820586;
+	bh=EWFesmgztVELijrKVyAIw58RaW5qiWVySUAVHUAu/+U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dSGT/15Kfa4OjyCbAC3SF32XVKb7iNe5i2e4rxYDvK+/9ZzBSpT0ZAMJfDHB1bcP2
+	 hp5kUsmaBwE0hUemzCE8xVONjhfFtAVrRoKKP13YBZa7NSi8axpICuho4I7H7pyOXn
+	 jdM+sxNM2/bMtwb/8zTeW1KCgChee/4k78ddKWL5YKaucYtJvcIMlwzOhYUO7mPGey
+	 9i/5Nf9FD59c14UP/zd1Kar2xylXV8dSZNyLvDNGacgpUNIjWv8EmRHggYRoep7d3a
+	 cC2Z6yFL0DTwcMRBC0hqJqNbd74O1SUUL2lp4zC10zY5eFpCTEe1YISaoNMaN+mcRb
+	 csZ/MUE3SsF4Q==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-58d29830058so983289e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:36:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXj6IgKJf0H/MpFoxJMObygotQrKTnKLpYosK70ikfMtygz+9r8SF/eo3w2O2jxyK/4dXvuMB3UwSot1FA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWAy4UJSRWHTDFPWqVArYq03/Lqoh7OiBqnCuGxjAl2pWkx40V
+	H8DpcO7snVcrTMgsxpoHvshOvGE1AQMIvseIljD8dfIEi62bm4gYbOPJP7riojrAdFVnRMF9rf3
+	lwVGpqFqlkJ8dXpxEsO5Q1Qstjjdk8Z8=
+X-Google-Smtp-Source: AGHT+IHR/19RmctxNKLqKlIM6A9WMpVSviX3cRXYR7NP88oXpyxxA4MhRkufffXBTnPae5fME9y34v1H81TPMSh2mxo=
+X-Received: by 2002:a05:6512:39c5:b0:592:fa97:e167 with SMTP id
+ 2adb3069b0e04-59412a07650mr2713264e87.51.1761820584347; Thu, 30 Oct 2025
+ 03:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP00w4CQdeX9GIJA@shell.armlinux.org.uk>
+References: <20251023082129.75612-1-maqianga@uniontech.com>
+ <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
+ <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
+ <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com>
+ <9F7F632B7963434F+abad2548-a90d-4448-ae79-dd4bf637ee6e@uniontech.com>
+ <CAMj1kXHu5ABgxKsc_gg1j=pWMz6DbWoqv=qAAjx-5CiSF2PAiQ@mail.gmail.com>
+ <BD93A8DBE27154B0+22bf4a83-a850-4f78-8e0d-84cc93fe2715@uniontech.com>
+ <CAMj1kXFUUCoE=gZ0kTMKx87qnJMU9J9skT75STTKjjakXb8kmw@mail.gmail.com> <89364700AD0CD6E1+dd8d745f-5a72-4b0a-80db-eaa1d00c4e64@uniontech.com>
+In-Reply-To: <89364700AD0CD6E1+dd8d745f-5a72-4b0a-80db-eaa1d00c4e64@uniontech.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 30 Oct 2025 11:36:13 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHpJ3gz=+Keswx0MZ8v6YQENR2pjeS_CE6g4cXML2LQhA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmO2T77I4AkXqTFCl7Na2UIDeYUBNoQV7BXje2VupPA54kyxqhBixnA39k
+Message-ID: <CAMj1kXHpJ3gz=+Keswx0MZ8v6YQENR2pjeS_CE6g4cXML2LQhA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25, 2025 at 09:36:19PM +0100, Russell King (Oracle) wrote:
-> On Thu, Oct 23, 2025 at 04:58:49PM +0200, Christian Marangi wrote:
-> > In preparation for support of GDM2+ port, fill in phylink OPs for GDM1
-> > that is an INTERNAL port for the Embedded Switch.
-> > 
-> > Add all the phylink start/stop and fill in the MAC capabilities and the
-> > internal interface as the supported interface.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/net/ethernet/airoha/Kconfig      |  1 +
-> >  drivers/net/ethernet/airoha/airoha_eth.c | 77 +++++++++++++++++++++++-
-> >  drivers/net/ethernet/airoha/airoha_eth.h |  3 +
-> >  3 files changed, 80 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/airoha/Kconfig b/drivers/net/ethernet/airoha/Kconfig
-> > index ad3ce501e7a5..3c74438bc8a0 100644
-> > --- a/drivers/net/ethernet/airoha/Kconfig
-> > +++ b/drivers/net/ethernet/airoha/Kconfig
-> > @@ -2,6 +2,7 @@
-> >  config NET_VENDOR_AIROHA
-> >  	bool "Airoha devices"
-> >  	depends on ARCH_AIROHA || COMPILE_TEST
-> > +	select PHYLIB
-> 
-> This looks wrong if you're using phylink.
-> 
-> >  	help
-> >  	  If you have a Airoha SoC with ethernet, say Y.
-> >  
-> > diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
-> > index ce6d13b10e27..deba909104bb 100644
-> > --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> > +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> > @@ -1613,6 +1613,8 @@ static int airoha_dev_open(struct net_device *dev)
-> >  	struct airoha_gdm_port *port = netdev_priv(dev);
-> >  	struct airoha_qdma *qdma = port->qdma;
-> >  
-> > +	phylink_start(port->phylink);
-> > +
-> >  	netif_tx_start_all_queues(dev);
-> >  	err = airoha_set_vip_for_gdm_port(port, true);
-> >  	if (err)
-> 
-> phylink_start() _can_ bring the carrier up immediately. Is the netdev
-> ready to start operating at the point phylink_start() has been called?
-> This error handling suggests the answer is "no", and the lack of
-> phylink_stop() in the error path is also a red flag.
+On Thu, 30 Oct 2025 at 11:25, Qiang Ma <maqianga@uniontech.com> wrote:
+>
+>
+> =E5=9C=A8 2025/10/30 18:02, Ard Biesheuvel =E5=86=99=E9=81=93:
+> > On Thu, 30 Oct 2025 at 08:37, Qiang Ma <maqianga@uniontech.com> wrote:
+> >>
+> >> =E5=9C=A8 2025/10/29 22:15, Ard Biesheuvel =E5=86=99=E9=81=93:
+> >>> On Wed, 29 Oct 2025 at 10:55, Qiang Ma <maqianga@uniontech.com> wrote=
+:
+> >>>> =E5=9C=A8 2025/10/28 21:42, Ard Biesheuvel =E5=86=99=E9=81=93:
+> >>>>> On Mon, 27 Oct 2025 at 04:46, Qiang Ma <maqianga@uniontech.com> wro=
+te:
+> >>>>>> =E5=9C=A8 2025/10/23 16:30, Ard Biesheuvel =E5=86=99=E9=81=93:
+> >>>>>>> On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> w=
+rote:
+> >>>>>>>> In the efi_virtmap_init(), permission settings have been applied=
+:
+> >>>>>>>>
+> >>>>>>>> static bool __init efi_virtmap_init(void)
+> >>>>>>>> {
+> >>>>>>>>             ...
+> >>>>>>>>             for_each_efi_memory_desc(md)
+> >>>>>>>>                     ...
+> >>>>>>>>                     efi_create_mapping(&efi_mm, md);
+> >>>>>>>>             ...
+> >>>>>>>>             efi_memattr_apply_permissions(&efi_mm, efi_set_mappi=
+ng_permissions);
+> >>>>>>>>             ...
+> >>>>>>>> }
+> >>>>>>>>
+> >>>>>>>> Therefore, there is no need to apply it again in the efi_create_=
+mapping().
+> >>>>>>>>
+> >>>>>>>> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI=
+ Runtime Services regions")
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> >>>>>>> No, efi_memattr_apply_permissions() uses the /optional/ memory
+> >>>>>>> attributes table, whereas efi_create_mapping() uses the permissio=
+n
+> >>>>>>> attributes in the EFI memory map. The memory attributes table is
+> >>>>>>> optional, in which case any RO/XP attributes from the memory map
+> >>>>>>> should be used.
+> >>>>>>>
+> >>>>>> I see.
+> >>>>>>
+> >>>>>> Then, can it be modified like this?
+> >>>>> No
+> >>>>>
+> >>>>>> --- a/arch/arm/kernel/efi.c
+> >>>>>> +++ b/arch/arm/kernel/efi.c
+> >>>>>> @@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct=
+ *mm,
+> >>>>>> efi_memory_desc_t *md)
+> >>>>>>                     desc.type =3D MT_MEMORY_RWX_NONCACHED;
+> >>>>>>             else if (md->attribute & EFI_MEMORY_WC)
+> >>>>>>                     desc.type =3D MT_DEVICE_WC;
+> >>>>>> +       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
+> >>>>> This will be true for RO, XP or RO+XP.
+> >>>>>
+> >>>>>> +               desc.type =3D MT_MEMORY_RO;
+> >>>>> This will apply RO permissions even to XP regions, which need to be=
+ writable.
+> >>>>>
+> >>>> Thanks for your review.
+> >>>> I see.
+> >>>>
+> >>>> I can introduce a new type MT_MEMORY_RO_XP, to describe RO+XP,
+> >>>> and then we can use the RO+XP attribute to implement memory mapping.
+> >>>>
+> >>> Why? The current code is working fine, no?
+> >>>
+> >> Yes, the current code is running normally.
+> >>
+> >> The reasons for the modification are as follows:
+> >> I noticed that the arm64/RISC-V efi_create_mapping() always return 0,
+> >> but in the code where efi_virtmap_init() calls it, it is as follows:
+> >>
+> >> ret =3D efi_create_mapping(&efi_mm, md);
+> >> if (ret) {
+> >>       pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
+> >>           &phys, ret);
+> >>       return false;
+> >> }
+> >>
+> >> This return error print is unnecessary, so I want to remove it.
+> > So what is preventing you from removing this from the RISC-V version?
+> >
+> The current idea is to first remove the unnecessary return print from
+> arm/arm64,
+
+Please leave the ARM code alone.
+
+> and then remove RISC-V later, as this RISC-V code is also adapted based
+> on arm64.
 >
 
-So I guess the correct way is to move start at the very end of dev_open.
-
-> > @@ -1665,6 +1667,8 @@ static int airoha_dev_stop(struct net_device *dev)
-> >  		}
-> >  	}
-> >  
-> > +	phylink_stop(port->phylink);
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > @@ -2813,6 +2817,18 @@ static const struct ethtool_ops airoha_ethtool_ops = {
-> >  	.get_link		= ethtool_op_get_link,
-> >  };
-> >  
-> > +static struct phylink_pcs *airoha_phylink_mac_select_pcs(struct phylink_config *config,
-> > +			phy_interface_t interface)
-> 
-> I'd write this as:
-> 
-> static struct phylink_pcs *
-> airoha_phylink_mac_select_pcs(struct phylink_config *config,
-> 			      phy_interface_t interface)
-> 
-> but:
-> 
-> > +{
-> > +	return NULL;
-> > +}
-> 
-> Not sure what the point of this is, as this will be the effect if
-> this function is not provided.
-> 
-
-Sorry I was confused with the other OPs that are mandatory or a kernel
-panic is triggered if not defined. (for example the MAC config)
-
-> > +
-> > +static void airoha_mac_config(struct phylink_config *config,
-> > +			      unsigned int mode,
-> > +			      const struct phylink_link_state *state)
-> > +{
-> > +}
-> > +
-> >  static int airoha_metadata_dst_alloc(struct airoha_gdm_port *port)
-> >  {
-> >  	int i;
-> > @@ -2857,6 +2873,57 @@ bool airoha_is_valid_gdm_port(struct airoha_eth *eth,
-> >  	return false;
-> >  }
-> >  
-> > +static void airoha_mac_link_up(struct phylink_config *config,
-> > +			       struct phy_device *phy, unsigned int mode,
-> > +			       phy_interface_t interface, int speed,
-> > +			       int duplex, bool tx_pause, bool rx_pause)
-> > +{
-> > +}
-> > +
-> > +static void airoha_mac_link_down(struct phylink_config *config,
-> > +				 unsigned int mode, phy_interface_t interface)
-> > +{
-> > +}
-> > +
-> > +static const struct phylink_mac_ops airoha_phylink_ops = {
-> > +	.mac_select_pcs = airoha_phylink_mac_select_pcs,
-> > +	.mac_config = airoha_mac_config,
-> > +	.mac_link_up = airoha_mac_link_up,
-> > +	.mac_link_down = airoha_mac_link_down,
-> > +};
-> 
-> All the called methods are entirely empty, meaning that anything that
-> phylink reports may not reflect what is going on with the device.
-> 
-> Is there a plan to implement these methods?
-> 
-
-Yes. For the internal port there isn't much to configure but when the
-PCS for the other GDM port will be implemented, those will be filled in.
-This is really to implement the generic part and prevent having a
-massive series later (as it will be already quite big and if not more
-than 10-12 patch)
-
-Hope it's understandable why all these empty functions.
-
--- 
-	Ansuel
+RISC-V copied the ARM code and used it as a starting point. That does
+not mean it has to remain that way.
 
