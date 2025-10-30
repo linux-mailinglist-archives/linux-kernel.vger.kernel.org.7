@@ -1,102 +1,98 @@
-Return-Path: <linux-kernel+bounces-877919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828B8C1F598
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:41:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C250C1F592
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30E504E939B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:40:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1780134D9E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07737342CA2;
-	Thu, 30 Oct 2025 09:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9834320D;
+	Thu, 30 Oct 2025 09:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hjcff35R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vSrDUMlb"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7DE341661;
-	Thu, 30 Oct 2025 09:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE799342170;
+	Thu, 30 Oct 2025 09:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761817228; cv=none; b=hD1D78bffxlV7cyXi0beO1zAqYIJT7K/zdXVsA8yukkvvk/qj5CgSlnLVqWnypiNzwR1pKPJQZmT7Dv18AAUzwiIIdmLt2FdFBm+c2TPsQJd4gIfzf8O3y5yI08ox++pklewhG2Ly4+ZJ8NPz/2si38gxLZZdQiaCutv1gVRFXs=
+	t=1761817256; cv=none; b=S9+F7/HZAmtLEqDCdv6qsXt6EDwe966JUJ+vPc0aNRESFZOtsEV4q68iuw7WbQ++XN7alt4TusgGFRgzJaODv6/vdN74WS/eTPogseL2XI6wtWETcxa4ttFG+FI0DcuPev3j8PypY5McdvoqyAyTsTvVCg43SKJm87ao98ytXY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761817228; c=relaxed/simple;
-	bh=WrfP/raxXECm6y+BjC6Gos4EkPPABLN2YvzRMU/SBBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aW/MH91H3tKQxlJof5/yM+ByVFl2NJH7bOtnsB7DPJy5V8K0T2ItFa/mxZrVYXybDzkCCiNw7chgAhoP/vCKxbpvWEnQZYATv4VhuVYCsQ1NfAybCltaOgQoCtsip5/MNbtG+nX6IFKto7SJR8CFSoU/UKsL7mlTn2unKnU7QRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hjcff35R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF9FC4CEF1;
-	Thu, 30 Oct 2025 09:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761817227;
-	bh=WrfP/raxXECm6y+BjC6Gos4EkPPABLN2YvzRMU/SBBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hjcff35RmI/X7nv2sjMFkjeDZnmBvL4gjMlh5dTozmH/gFabhgd+lJXnIOnQMG26E
-	 KxreF0viO0R9Gf4W5KPO0fkdolQ23fCpntkrUjSPr3aYa9c/xX5MVYKA2ayigrggC8
-	 sSmM3D+66Ilnw3x7ZF8bFprGouh8ctVdAsLdtiH0GQNMIdGJLVyEI/C53zF5nfT9uU
-	 cV994T2rOov+nC/TvmXslFuU3hrSLi97qR8K/1Yzdtk11SZ4u0KiRImoe7L54F1XA5
-	 gN1vXsW/+CD6Iy2U6tAEu++qaHwHd254I9vbFvo3Vjn0lrycE08wbxuclgetC3PhMz
-	 DgwCOKezyRMvg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vEP90-000000004db-3QzY;
-	Thu, 30 Oct 2025 10:40:34 +0100
-Date: Thu, 30 Oct 2025 10:40:34 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Oleksandr Suvorov <cryosay@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: ftdi_sio: add device ID for U-Blox EVK-M101
-Message-ID: <aQMykuOFuwi0OTdi@hovoldconsulting.com>
-References: <20250926060235.3442748-1-cryosay@gmail.com>
- <aO5kBAjE6EMG2aUE@hovoldconsulting.com>
- <CAGgjyvFATG4PpHrbWV87tqtLeO3zeM_0508wtATrsxw3s06zVw@mail.gmail.com>
+	s=arc-20240116; t=1761817256; c=relaxed/simple;
+	bh=AXhIip8aIJ6Y54u/3AC4lYdPqgouWN/WzBDGCLOYg0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LmFChGRJRrcba5tNhd0pcl9bl20CsknolwONSon6enepGG4cDF9blPO06jj4WLn8L1ZM60lDMxpvRw39e1hl5btAgmLFYzSL5v4uvoG5MXSfimJ88QJYoCim5UOp+sn3qyt4sDE8LcJa9g9XkzqBMnmtCRO2hkvQbZ3j2UzPAPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vSrDUMlb; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 703A1C0DAA7;
+	Thu, 30 Oct 2025 09:40:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B150C6068C;
+	Thu, 30 Oct 2025 09:40:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EB2AA118085E6;
+	Thu, 30 Oct 2025 10:40:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761817250; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=AXhIip8aIJ6Y54u/3AC4lYdPqgouWN/WzBDGCLOYg0c=;
+	b=vSrDUMlbZ8avJZWyHiNapiup5y0BhHT/84h+ToSACliw/NSLq0u2GnKDCUxrDfZRDTZbO2
+	HK17XCryYRmoexUDrq84kUG5ffGjPlrPua9QR25+Jcp4jMkv6+/Z+5qw5upIO3tMT4F4Rh
+	eb1B2bEfwLYWgFvJ3pEnEmxMn2skbfby+RrMCHDxKu0LQf1M1/BBb5PbopdI/3CD4FMNLT
+	cayZYKMH4B8fLt4MQjVHjahr8jFcH2Cc7H7/B9dQJrPCu+HpVyWwtm28fJsV1o+zzwScpg
+	vf8/T6SHmPipvEXMhyuuE/XcD17AvonD5pXJXDD/erV93pIGw0uWYT7oFbkwbQ==
+Date: Thu, 30 Oct 2025 10:40:46 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Thomas Wismer <thomas@wismer.xyz>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/2] net: pse-pd: tps23881: Add support for
+ TPS23881B
+Message-ID: <20251030104046.107457ac@kmaincent-XPS-13-7390>
+In-Reply-To: <20251029212312.108749-2-thomas@wismer.xyz>
+References: <20251029212312.108749-1-thomas@wismer.xyz>
+	<20251029212312.108749-2-thomas@wismer.xyz>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGgjyvFATG4PpHrbWV87tqtLeO3zeM_0508wtATrsxw3s06zVw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Oct 30, 2025 at 09:39:36AM +0200, Oleksandr Suvorov wrote:
-> On Wed, Oct 15 2025 at 16:36 Johan Hovold <johan@kernel.org> wrote:
+On Wed, 29 Oct 2025 22:23:09 +0100
+Thomas Wismer <thomas@wismer.xyz> wrote:
 
-> > > has a USB Type-C port that presents itself as a USB device
-> > > (1546:0506) [1] with four attached FTDI serial ports, connected to:
-> > > - EVK-M101 current sensors
-> > > - EVK-M101 I2C
-> > > - EVK-M101 UART
-> > > - EVK-M101 port D
-> > >
-> > > This commit registers U-Blox's VID/PID of this device so that FTDI SIO driver
-> > > successfully registers these 4 serial ports.
-> >
-> > Are you sure you should not just register the UART port? Some FTDI chips
-> > support I2C but you'd need a different driver for that.
-> 
-> Thanks for pointing this out, looks like I should add a custom probe()
-> for this device.
-> Preparing v2.
+> From: Thomas Wismer <thomas.wismer@scs.ch>
+>=20
+> The TPS23881B uses different firmware than the TPS23881. Trying to load t=
+he
+> TPS23881 firmware on a TPS23881B device fails and must be omitted.
+>=20
+> The TPS23881B ships with a more recent ROM firmware. Moreover, no updated
+> firmware has been released yet and so the firmware loading step must be
+> skipped. As of today, the TPS23881B is intended to use its ROM firmware.
 
-Actually, you can just use USB_DEVICE_INTERFACE_NUMBER() in the match
-table, no need for a custom probe function.
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
 
-> > > Datasheet: https://content.u-blox.com/sites/default/files/documents/EVK-M10_UserGuide_UBX-21003949.pdf
-> >
-> > The user guide also says "Do not use this COM port" for all ports but
-> > the UART port.
-> 
-> Yes, you're right, thanks. It's just not that easy hacking the kernel
-> while defending from russian invaders :)
-
-I can only imagine.
-
-Johan
+Thank you!
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
