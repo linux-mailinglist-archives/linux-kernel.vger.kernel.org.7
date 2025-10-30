@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-877927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4897EC1F5E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:44:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FE0C1F60D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:47:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE493A3C60
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:44:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 494534E9022
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C636034405D;
-	Thu, 30 Oct 2025 09:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BAB347BBA;
+	Thu, 30 Oct 2025 09:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="QRKxApUr"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="mi+RgVcZ"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462D2344045
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB154C6D;
+	Thu, 30 Oct 2025 09:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761817484; cv=none; b=kS5qqEPbLMzBGHJzWzXKFYSsOqz2Vc3PAfZKzPuE9g7b5nH8nf+Wryk0K4FpJ7OhkiJ9XEc7t26X+XpB/RAgMiXUuSnRvxvo1U1ym27v62uK8xqKDdOD+7tXs+10/NQZDkY4LxEl325RcZTox7xkTs8/bsAUsdSLLMRqceNz9Wk=
+	t=1761817603; cv=none; b=qWdHg4sZyMsmdPtzYdIgSf0kHomJH7dJMlvtAaGhXnh/X7AtLhwHqLMqqG2NpYBFQ2mA+k8fEY9pQVUfN2w64eryZ5CnZv5J5J9LhHvkuKSP8ukFRMtKA2i/mfyajwbGDguQ8+jbadKjyXy3DR/XSODlT/uobOZjb1fYf2a8U8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761817484; c=relaxed/simple;
-	bh=p0kXNgeMoGwWo0q1Nw9glAh2ZK/zdM5MygFl5xFS5F4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iiCEgTRMLcX0lHU6Qkr8M03+grf380UAvBXDAanBnMcfsCU2el2HQG59Xv7XujUISjV5huSlfk9hk8il9eDyqlLG/bsDKaO7qKCr61NF6cBcRIVfxGMT5CZg9M0DyCr1crE0TncxkXiIJtMha//QWGFRxcTxiGP9/qIkYqgtVYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=QRKxApUr; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-294df925292so6983235ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1761817481; x=1762422281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dUMWN07GOm3UETuex7a4WdCXyC4g5BU9lI+5N7mCsWI=;
-        b=QRKxApUrwqP5Lucf/KS+AHlxWLgXR5bZBHP5Bg71B7+hVNbRu/TwcwECKLd+HztTyn
-         c8pH+n/u2rc7KxzcgEQwoQwWe672jN9ppQpRpGJ6ZOdpSbIip+tWTSq7byOutNkk3OVY
-         ajRt46lXq6gIQivULRXE7kDPItYE6j0m23J1varUw2BNppLtCl033mWht0hcbWhsKAgH
-         lJ9BzdE7XEyo83TJ59p8K3k9xaBcoBTVCLNtrsZlynG/v14YZuS0gUvwBeVuRcZF/89q
-         BOhfjeyXGSiNQ2c8EhtO5VPEXu/04KiWBN61U3/jiFJtOpnkc/+MH2yrzO3D0Y2ZAJFm
-         JjfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761817481; x=1762422281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dUMWN07GOm3UETuex7a4WdCXyC4g5BU9lI+5N7mCsWI=;
-        b=w07Gbv17LIiAmGPewtmHzzJ76m/pshpZwaOfZb4ZZlDfHZfRVQTCIRuHqRLQXZQ9E9
-         RN5cEIAYJfy9H1UJmjrl+oMtHTdDo/qob0CUUO5uO/XP9Q+CyFtXNB9Q77k5pOdZqvSy
-         Ppma0VGNGMQKL0EqqNh3kqg52mZ1hi6DCZVhshzPDVfWKSP0yX6P8pns9ps1Hgq9/Yi7
-         qK6Cq5Ec0ntLBsURohISXf7Lp98OudhlPua6f8LvA9Bj4Wuqd3zZ3I+4G8v5YWLt0gCd
-         jvv+3jcK/JzBpYzqxZQ7r9ANz1LwewQOscVhZWt1EqqOZMaeTecpkq1BfD7gnEmp3oL8
-         LotQ==
-X-Gm-Message-State: AOJu0YyX2pK6Ayc1XLcF+iAXP0WLViVNRIyawOlbc6zO3//bsoLjUIro
-	+v0cNdmF54bUii1E/FSsVNEV07JQfNjvA9i6nal7QnhRrS4IFetmujYdRWx5AqqP3TTXeKa0qyX
-	H+SFEI0YojQ==
-X-Gm-Gg: ASbGnctUW96CgIpPsy/BB3W3gsA5TRqIS+rSUnp27byFtZQ0ls5zsjWaiN6nIvsc81T
-	re5eXRB8aQQ7i5kfcoGwtmaNWVeN7NHj77rMw4o9zv7gPyk+pTE2ulYogVUy/1oimcZ6GuUscOJ
-	Bl2C8fYQi71eCO1RumMxRdEVB4q9NKKKF8bOIFET+UFqPGLqa8jJb5hymbtQWpW+p1bnF9UPQ+Y
-	dxI3qBniLi0bje1AqKpmIQLEffEFhL6QrszGKUo/iGJlt2dLWy4tyMR8T+rkauebmvpt+LwSaWp
-	1q1oXeeiMArSQQ1jc3+zlfSvufZCW2mB+ZxPPfc2os9nz2n42I2ca1ni9yJZFs1Sz8WQhhFDmoN
-	dWpXvaPb7sETOrBj/mFuZEqT3C4Z+S3D2jbKHJw3lrK2Sx4rVpmZeFr0VZ+4SXRXwvwY0jeGpeh
-	yVxDEjVLRa1ygmg358SIs39jt0IAQAqQQJhzS2/FVcNbw7PPhfM4deIKJGbrTxstbhWwKMpvUds
-	xDjOA==
-X-Google-Smtp-Source: AGHT+IGRBRkOmZGPU5EMzd9TgaTueUJvpQPPnxjEI1ZcWRlqn8hhOpa3io65WaXAJwks1FNKf4aGTw==
-X-Received: by 2002:a17:903:234d:b0:290:7e29:f59f with SMTP id d9443c01a7336-294dee60875mr73492425ad.27.1761817481234;
-        Thu, 30 Oct 2025 02:44:41 -0700 (PDT)
-Received: from localhost.localdomain (61-219-175-100.hinet-ip.hinet.net. [61.219.175.100])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d26c13sm179027625ad.53.2025.10.30.02.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 02:44:40 -0700 (PDT)
-From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-Subject: [PATCH v1] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
-Date: Thu, 30 Oct 2025 17:44:34 +0800
-Message-Id: <20251030094434.1390143-1-ajye_huang@compal.corp-partner.google.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761817603; c=relaxed/simple;
+	bh=blAzx4uEJP53BDG/8DrX8nI2p4iLjnpZLefLr7MozMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IHldSi4RNJxcy0o9mEuT1//Mc48wnuH1uFdRzGlE7b9mEnTkoEa/HLAmXnQ3DGWfhuyiFzhBRU3ZekdlX5M7Ej0DLeKTEHREAhSY7A5uRQ3aA7rQyovQf5s5F7D8eV0tsOmjwlNezyDefmmQyYWbKbDqHeJUCWkvtWW/juIsaAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=mi+RgVcZ; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1761817597;
+	bh=blAzx4uEJP53BDG/8DrX8nI2p4iLjnpZLefLr7MozMU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mi+RgVcZPPquTxgQAIIu24Hrb+IbAuotd0mc2iERVk6Q2Lv0htkI3uaOkxMsFsnvN
+	 Y050MQCaPqBjBVG0Y23LunRj23dRRkf16k9Ni8cky+2pskVO/4me9/neuIZcsRsnxi
+	 kNyzv8fmlyogZEnE+tvvTcAgSrk140GXwbafYlORxy9Ahx7d45BXuNDoXHCFlPYOFH
+	 TGvj9oCiuHYuzRwpMrzYbo7WgAToOTeSR4xguTB9A8F9r97OvnJOmGHS3Ik562cZzx
+	 fV/1AA0zBX5IN6rwIWEdP+NWU2xRqob8rI7zLov8vMlzJERKKFLQR4Dl0KDZMpkVmg
+	 Kkj4ilyCEOEJQ==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 0FE406000C;
+	Thu, 30 Oct 2025 09:46:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id 3ED7A201247;
+	Thu, 30 Oct 2025 09:46:25 +0000 (UTC)
+Message-ID: <52e4619e-d018-4395-a94a-499ff7fd918d@fiberby.net>
+Date: Thu, 30 Oct 2025 09:46:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 01/11] wireguard: netlink: validate nested
+ arrays in policy
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Donald Hunter <donald.hunter@gmail.com>, Simon Horman <horms@kernel.org>,
+ Jacob Keller <jacob.e.keller@intel.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251029205123.286115-1-ast@fiberby.net>
+ <20251029205123.286115-2-ast@fiberby.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <20251029205123.286115-2-ast@fiberby.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The Sharp LQ116M1JW105 reports that it supports 8 bpc modes,
-but it will happen display noise in some videos.
-So, limit it to 6 bpc modes.
+On 10/29/25 8:51 PM, Asbjørn Sloth Tønnesen wrote:
+> diff --git a/drivers/net/wireguard/netlink.c b/drivers/net/wireguard/netlink.c
+> index 67f962eb8b46d..9bc76e1bcba2d 100644
+> --- a/drivers/net/wireguard/netlink.c
+> +++ b/drivers/net/wireguard/netlink.c
+> @@ -27,7 +27,7 @@ static const struct nla_policy device_policy[WGDEVICE_A_MAX + 1] = {
+>   	[WGDEVICE_A_FLAGS]		= NLA_POLICY_MASK(NLA_U32, __WGDEVICE_F_ALL),
+>   	[WGDEVICE_A_LISTEN_PORT]	= { .type = NLA_U16 },
+>   	[WGDEVICE_A_FWMARK]		= { .type = NLA_U32 },
+> -	[WGDEVICE_A_PEERS]		= { .type = NLA_NESTED }
+> +	[WGDEVICE_A_PEERS]		= NLA_POLICY_NESTED_ARRAY(peer_policy),
+>   };
+>   
+>   static const struct nla_policy peer_policy[WGPEER_A_MAX + 1] = {
+> @@ -39,7 +39,7 @@ static const struct nla_policy peer_policy[WGPEER_A_MAX + 1] = {
+>   	[WGPEER_A_LAST_HANDSHAKE_TIME]			= NLA_POLICY_EXACT_LEN(sizeof(struct __kernel_timespec)),
+>   	[WGPEER_A_RX_BYTES]				= { .type = NLA_U64 },
+>   	[WGPEER_A_TX_BYTES]				= { .type = NLA_U64 },
+> -	[WGPEER_A_ALLOWEDIPS]				= { .type = NLA_NESTED },
+> +	[WGPEER_A_ALLOWEDIPS]				= NLA_POLICY_NESTED_ARRAY(allowedip_policy),
+>   	[WGPEER_A_PROTOCOL_VERSION]			= { .type = NLA_U32 }
+>   };
 
-Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
----
- drivers/gpu/drm/drm_edid.c | 3 +++
- 1 file changed, 3 insertions(+)
+Oops, I messed this patch up.
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index e2e85345aa9a..a73d37fe7ea1 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -250,6 +250,9 @@ static const struct edid_quirk {
- 	EDID_QUIRK('S', 'V', 'R', 0x1019, BIT(EDID_QUIRK_NON_DESKTOP)),
- 	EDID_QUIRK('A', 'U', 'O', 0x1111, BIT(EDID_QUIRK_NON_DESKTOP)),
- 
-+	/* LQ116M1JW10 displays noise when 8 bpc, but display fine as 6 bpc */
-+	EDID_QUIRK('S', 'H', 'P', 0x154c, EDID_QUIRK_FORCE_6BPC),
-+
- 	/*
- 	 * @drm_edid_internal_quirk entries end here, following with the
- 	 * @drm_edid_quirk entries.
+I will add forward declarations in v2, which will be removed again once the policy code is generated,
+as that will be less messy than reordering the policies.
+
 -- 
-2.25.1
-
+pw-bot: changes-requested
 
