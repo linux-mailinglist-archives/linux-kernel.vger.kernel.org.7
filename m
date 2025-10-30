@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-878976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAA8C21E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:15:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E59C21E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:15:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40E0E34FCDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:15:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 050494EC72C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FED2BD11;
-	Thu, 30 Oct 2025 19:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539A32D2382;
+	Thu, 30 Oct 2025 19:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zUB8BlfS"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PTI/oFlw"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F5318991E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF3F207A20
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761851735; cv=none; b=OddnuaXvFdjbSZRnG3V1LQH6iawrZo+97Vz0c5oKKmH6lllPAcbyHtUy/ditCuyc4NtV9baA5n1FJ4LWopHXN9/Z666P7VV3/ZNdf9q1pNV4WKijTj2rQdgeAFEnrWQYD9UkVE9xbnncRsyWP1LUpI4ahiEpPQnbj2Y790hHru8=
+	t=1761851736; cv=none; b=DU3IngPseA5dBS0ZNRJdDmGPtkPgtjR3qeakLkfrWT8H0o3iPxyrUl5yC5TAU9VYvkmaVXCNwOwary41SS/2VypfrZncGpVdcqjiHNb3dMQbdS0ND5aFjKU3Pyfvz+SVMn4QZQ+2b6cMvxJcAIRLt0qiokfYT8QFwvoea2bWn58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761851735; c=relaxed/simple;
-	bh=lWzlB0iKIoWvR0KWONloUbPP7jxIV0kTEpcbpDhzXe8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=P53XGhgj97PjNPagiNi83qDlaCJwHIaZ6hligXgi1y5fJi9oGGJ7uioL3h5JDr7qFLuRr6s8Hl7Zxoc7rFtSPsvkn8Oky2O85Xw+cBWLoPN3XUYMXOVdGmlVz9zPkDLwXTRl7Joz1Rg57lyly4KZ4S4HTRGmpCAAf/yvvRcxkZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zUB8BlfS; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1761851736; c=relaxed/simple;
+	bh=j2T7DW3Qe5yMXkG86FZZbGazbRBbfYmr7MKMMdilO1k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=aCufCgb50LU5rFJuCXWds3mOX3Ql90pc4dfL+aNniSaquZNxPYWeaTBtDVcHM7P1raK8qfYLTPmRRTLIgSffxA4TkPTnJhtvmHAuNOJ3/9IRAEdXZX3v44fy8t01OdrhTgUBIjMhAUD0WYbuQkqMUWiKGQvJs4O3uHJMFFkqoIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PTI/oFlw; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-286a252bfbfso33283505ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:15:32 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-34077439124so966454a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761851732; x=1762456532; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cuU0G1rKKzQ0bN8b2xmtCp6y8rTt4E6EmC8pujr8+1c=;
-        b=zUB8BlfS/r4a3Qid6rhqzwEG0WCqgEAhKU+UaR09CGwFXd5eW2w6I8yGUMWNRbmQhS
-         +rrLQWo9iZG8hQtLHLL/OIUmddueWG0xQL3VUQGm67np4KslP3vPCQy0Qs9fmKQ+14Sj
-         aXxBpxX3J6xJHD+PruRWCgvMlke4lAA5tSLyIbmPoZOdXOAWNLTbZepoMESoCPoKqJN5
-         s0O1BVfHJGz1ioBTDaWgM040T1iIetPoMUOlfopa9MBQf/T3lURfI2UbRNB1cSlb5kAF
-         0Cw6KufY3SbkyIW29BWU8dnNFoFVSL6JFwNHNvcFQPBrr1BZ7OJm5o4FufsqQkKOolBt
-         s75g==
+        d=google.com; s=20230601; t=1761851734; x=1762456534; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dq1vYL3NSNsi6Qw9Ae5vBXSHkezMLdaWd5VgrpqK1Lg=;
+        b=PTI/oFlwFtg+xtJegJAlnvfL80AoSwiaLQq32r7l+4F07JW7fDTHIonU9bfNhim6aj
+         2/7ZLU0I+HGXt5JzF5AYY7Sz79wihy7SYA9B8s87SWNw4themWlf4hlMnsGqu9Scie4r
+         2K7Bq2X0J7JLwjdTXGJVsvzGpJJ0pnUIEK2r7hsvLU0cyT+E3CDZjR8ln7/Z6hj5BmnT
+         uDmOA0HMZ7l/lhy87x6Y1bDI7Vah92c8nh6p1qNv1uMXZ938/ZPcXmSQk8XY1n0MdgXV
+         QOyItUCgLJDXcWYLhuRzdir9v7nBgG8+YZt99kXvrHPR7S99RCz/8uqLzbqgC05kA4Mk
+         9zHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761851732; x=1762456532;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cuU0G1rKKzQ0bN8b2xmtCp6y8rTt4E6EmC8pujr8+1c=;
-        b=tEf3aV15GS82OFwf3DVSLKtGdKx1a3TpFVsjLqr1rOuKfMgt1Uu+VwTveyTimsLjJD
-         vRP/yA91Be4TSey/5WZ5os88T1ToBZ/dOeZ2gr/fxojTvONO3IaT5bHzw9oOjMC6CR7Q
-         5697EX68MJ32SsOaiWmuHFQvi5ju+VoNOHzL8bHVDBHao1rnyb0wYXu+cCC6CmcnyuLo
-         h7qd916e7RE72j+IQv3NwCE5H5CBj7jOkEMlbtb1PFt3Lng3PQIuofvpiZsn/oKfzjiW
-         xJvmpLt3+/WidEr0VVm5ulwRoUwDlxqN0XoSrCHIc8xLhgh9m/reeA8zOkkWaR5+Q86v
-         Ae3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcAEJhPl8y9qgCLThW6qTqKER364rntNywCkVl2dbSMBXMxiXhsBUCcCmw9SgT3n6ZWbJau/CET+hcO6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnHC8wHpR6gmrrZiuzLRRK3AoxgZrcjujlYjIL3aqgULx5WRQ4
-	V+J/faTsPPMXf63YhsJHrRHulp6O7IN5IzNxNGRNq44PljDofIJs7PO2PNuR9WzMnqLak1blbY9
-	knWVEvw==
-X-Google-Smtp-Source: AGHT+IHh8pk9JaiOfs+9/GV0orbjyBBA2NWN7A++gjRGRE1BeSyhooYBSK8ujIaLO6y5tDeY0PhwGLCZviM=
-X-Received: from pjbbf22.prod.google.com ([2002:a17:90b:b16:b0:330:a006:a384])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e892:b0:25e:37ed:d15d
- with SMTP id d9443c01a7336-2951997e352mr11605825ad.0.1761851732223; Thu, 30
- Oct 2025 12:15:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761851734; x=1762456534;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dq1vYL3NSNsi6Qw9Ae5vBXSHkezMLdaWd5VgrpqK1Lg=;
+        b=Iu1eHXi4VHVLCouFWQ6sPtQJltxgmbKCzQvQT/EMo0fXRysWm72RgxCQmOurRIYZD5
+         q0+uiLAwjDnLOBKZD3oaq0MAux0CxtPkUl4NMc0plXoMFK9kPoWniuyUL+RaB9eN5kgF
+         8Cf7gUAC7lzsVGXmtBtEO4FPR/1/1pmHMOJRKVDmG0/R/m7zDhsnRDFr/C1nsc/LV5ZX
+         6L/CwxGzxtjon6cbJQ7xsa2MIALZTDAqmKrnujVa8xbor7wajrGhrxbhZ6znM8bya1FY
+         T+eJj5caH5nA3NRBS0j8efPZHhBDmqYMqfDzSxQps3LddaIT68S1PAv5FsMCWBv9IPK1
+         FRdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWN1hhTAmsJSPjdPaIIGL3TaX+j3Q9IstpTOK1yJGOUeBYopmNt6+sa5trxvtpLKqb/T+BYkzMsyZJydd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD40nOQtmoRHnScTXP+LnZXIQLit/VzIhvr8xrIxgclHwn3KDB
+	AWs8s+DCuv/LXtsCdQsjrK+GUDTLmFGBGsT58kJVh2b+FsGfzyyScTci4AReEuIwGNShYG1jKkg
+	Xas4+Yg==
+X-Google-Smtp-Source: AGHT+IFMS6wWJi/5fPuAa9ahYFcHZMTgc+dfquVEQJl3MCn69erLyEpCcqPdCsRbIozxN4rCkrsm4Ku7EUw=
+X-Received: from pjbli2.prod.google.com ([2002:a17:90b:48c2:b0:340:5f48:d8ff])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5628:b0:32e:a54a:be4a
+ with SMTP id 98e67ed59e1d1-34082fc6369mr1032761a91.2.1761851734140; Thu, 30
+ Oct 2025 12:15:34 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 30 Oct 2025 12:15:24 -0700
+Date: Thu, 30 Oct 2025 12:15:25 -0700
+In-Reply-To: <20251030191528.3380553-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251030191528.3380553-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251030191528.3380553-1-seanjc@google.com>
-Subject: [PATCH v5 0/4] KVM: x86: User-return MSR fix+cleanups
+Message-ID: <20251030191528.3380553-2-seanjc@google.com>
+Subject: [PATCH v5 1/4] KVM: TDX: Explicitly set user-return MSRs that *may*
+ be clobbered by the TDX-Module
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	"Kirill A. Shutemov" <kas@kernel.org>
@@ -82,48 +87,180 @@ Cc: kvm@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
 	Hou Wenlong <houwenlong.hwl@antgroup.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Fix a bug in TDX where KVM will incorrectly update the current user-return
-MSR values when the TDX-Module doesn't actually clobber the relevant MSRs,
-and then cleanup and harden the user-return MSR code, e.g. against forced
-reboots.
+Set all user-return MSRs to their post-TD-exit value when preparing to run
+a TDX vCPU to ensure the value that KVM expects to be loaded after running
+the vCPU is indeed the value that's loaded in hardware.  If the TDX-Module
+doesn't actually enter the guest, i.e. doesn't do VM-Enter, then it won't
+"restore" VMM state, i.e. won't clobber user-return MSRs to their expected
+post-run values, in which case simply updating KVM's "cached" value will
+effectively corrupt the cache due to hardware still holding the original
+value.
 
-v5:
- - Set TDX MSRs to their expected post-run value during
-   tdx_prepare_switch_to_guest() instead of trying to predict what value
-   is in hardware after the SEAMCALL. [Yan]
- - Free user_return_msrs at kvm_x86_vendor_exit(), not kvm_x86_exit(). [Chao]
+In theory, KVM could conditionally update the current user-return value if
+and only if tdh_vp_enter() succeeds, but in practice "success" doesn't
+guarantee the TDX-Module actually entered the guest, e.g. if the TDX-Module
+synthesizes an EPT Violation because it suspects a zero-step attack.
 
-v4:
- - https://lore.kernel.org/all/20251016222816.141523-1-seanjc@google.com
- - Tweak changelog regarding the "cache" rename to try and better capture
-   the details of how .curr is used. [Yan]
- - Synchronize the cache immediately after TD-Exit to minimize the window
-   where the cache is stale (even with the reboot change, it's still nice to
-   minimize the window). [Yan]
- - Leave the user-return notifier registered on reboot/shutdown so that the
-   common code doesn't have to be paranoid about being interrupted.
+Force-load the expected values instead of trying to decipher whether or
+not the TDX-Module restored/clobbered MSRs, as the risk doesn't justify
+the benefits.  Effectively avoiding four WRMSRs once per run loop (even if
+the vCPU is scheduled out, user-return MSRs only need to be reloaded if
+the CPU exits to userspace or runs a non-TDX vCPU) is likely in the noise
+when amortized over all entries, given the cost of running a TDX vCPU.
+E.g. the cost of the WRMSRs is somewhere between ~300 and ~500 cycles,
+whereas the cost of a _single_ roundtrip to/from a TDX guest is thousands
+of cycles.
 
-v3: https://lore.kernel.org/all/15fa59ba7f6f849082fb36735e784071539d5ad2.1758002303.git.houwenlong.hwl@antgroup.com
-
-v1 (cache): https://lore.kernel.org/all/20250919214259.1584273-1-seanjc@google.com
-
-Hou Wenlong (1):
-  KVM: x86: Don't disable IRQs when unregistering user-return notifier
-
-Sean Christopherson (3):
-  KVM: TDX: Explicitly set user-return MSRs that *may* be clobbered by
-    the TDX-Module
-  KVM: x86: WARN if user-return MSR notifier is registered on exit
-  KVM: x86: Leave user-return notifier registered on reboot/shutdown
-
+Fixes: e0b4f31a3c65 ("KVM: TDX: restore user ret MSRs")
+Cc: stable@vger.kernel.org
+Cc: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
  arch/x86/include/asm/kvm_host.h |  1 -
- arch/x86/kvm/vmx/tdx.c          | 52 +++++++++++-------------
+ arch/x86/kvm/vmx/tdx.c          | 52 +++++++++++++++------------------
  arch/x86/kvm/vmx/tdx.h          |  1 -
- arch/x86/kvm/x86.c              | 72 ++++++++++++++++++++-------------
- 4 files changed, 66 insertions(+), 60 deletions(-)
+ arch/x86/kvm/x86.c              |  9 ------
+ 4 files changed, 23 insertions(+), 40 deletions(-)
 
-
-base-commit: 4cc167c50eb19d44ac7e204938724e685e3d8057
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 48598d017d6f..d158dfd1842e 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -2378,7 +2378,6 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+ int kvm_add_user_return_msr(u32 msr);
+ int kvm_find_user_return_msr(u32 msr);
+ int kvm_set_user_return_msr(unsigned index, u64 val, u64 mask);
+-void kvm_user_return_msr_update_cache(unsigned int index, u64 val);
+ u64 kvm_get_user_return_msr(unsigned int slot);
+ 
+ static inline bool kvm_is_supported_user_return_msr(u32 msr)
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 326db9b9c567..cde91a995076 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -763,25 +763,6 @@ static bool tdx_protected_apic_has_interrupt(struct kvm_vcpu *vcpu)
+ 	return tdx_vcpu_state_details_intr_pending(vcpu_state_details);
+ }
+ 
+-/*
+- * Compared to vmx_prepare_switch_to_guest(), there is not much to do
+- * as SEAMCALL/SEAMRET calls take care of most of save and restore.
+- */
+-void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+-{
+-	struct vcpu_vt *vt = to_vt(vcpu);
+-
+-	if (vt->guest_state_loaded)
+-		return;
+-
+-	if (likely(is_64bit_mm(current->mm)))
+-		vt->msr_host_kernel_gs_base = current->thread.gsbase;
+-	else
+-		vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
+-
+-	vt->guest_state_loaded = true;
+-}
+-
+ struct tdx_uret_msr {
+ 	u32 msr;
+ 	unsigned int slot;
+@@ -795,19 +776,38 @@ static struct tdx_uret_msr tdx_uret_msrs[] = {
+ 	{.msr = MSR_TSC_AUX,},
+ };
+ 
+-static void tdx_user_return_msr_update_cache(void)
++void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ {
++	struct vcpu_vt *vt = to_vt(vcpu);
+ 	int i;
+ 
++	if (vt->guest_state_loaded)
++		return;
++
++	if (likely(is_64bit_mm(current->mm)))
++		vt->msr_host_kernel_gs_base = current->thread.gsbase;
++	else
++		vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
++
++	vt->guest_state_loaded = true;
++
++	/*
++	 * Explicitly set user-return MSRs that are clobbered by the TDX-Module
++	 * if VP.ENTER succeeds, i.e. on TD-Exit, with the values that would be
++	 * written by the TDX-Module.  Don't rely on the TDX-Module to actually
++	 * clobber the MSRs, as the contract is poorly defined and not upheld.
++	 * E.g. the TDX-Module will synthesize an EPT Violation without doing
++	 * VM-Enter if it suspects a zero-step attack, and never "restore" VMM
++	 * state.
++	 */
+ 	for (i = 0; i < ARRAY_SIZE(tdx_uret_msrs); i++)
+-		kvm_user_return_msr_update_cache(tdx_uret_msrs[i].slot,
+-						 tdx_uret_msrs[i].defval);
++		kvm_set_user_return_msr(tdx_uret_msrs[i].slot,
++					tdx_uret_msrs[i].defval, -1ull);
+ }
+ 
+ static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vt *vt = to_vt(vcpu);
+-	struct vcpu_tdx *tdx = to_tdx(vcpu);
+ 
+ 	if (!vt->guest_state_loaded)
+ 		return;
+@@ -815,11 +815,6 @@ static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
+ 	++vcpu->stat.host_state_reload;
+ 	wrmsrl(MSR_KERNEL_GS_BASE, vt->msr_host_kernel_gs_base);
+ 
+-	if (tdx->guest_entered) {
+-		tdx_user_return_msr_update_cache();
+-		tdx->guest_entered = false;
+-	}
+-
+ 	vt->guest_state_loaded = false;
+ }
+ 
+@@ -1059,7 +1054,6 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ 		update_debugctlmsr(vcpu->arch.host_debugctl);
+ 
+ 	tdx_load_host_xsave_state(vcpu);
+-	tdx->guest_entered = true;
+ 
+ 	vcpu->arch.regs_avail &= TDX_REGS_AVAIL_SET;
+ 
+diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+index ca39a9391db1..7f258870dc41 100644
+--- a/arch/x86/kvm/vmx/tdx.h
++++ b/arch/x86/kvm/vmx/tdx.h
+@@ -67,7 +67,6 @@ struct vcpu_tdx {
+ 	u64 vp_enter_ret;
+ 
+ 	enum vcpu_tdx_state state;
+-	bool guest_entered;
+ 
+ 	u64 map_gpa_next;
+ 	u64 map_gpa_end;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index b4b5d2d09634..639589af7cbe 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -681,15 +681,6 @@ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
+ }
+ EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_set_user_return_msr);
+ 
+-void kvm_user_return_msr_update_cache(unsigned int slot, u64 value)
+-{
+-	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+-
+-	msrs->values[slot].curr = value;
+-	kvm_user_return_register_notifier(msrs);
+-}
+-EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_user_return_msr_update_cache);
+-
+ u64 kvm_get_user_return_msr(unsigned int slot)
+ {
+ 	return this_cpu_ptr(user_return_msrs)->values[slot].curr;
 -- 
 2.51.1.930.gacf6e81ea2-goog
 
