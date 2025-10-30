@@ -1,126 +1,101 @@
-Return-Path: <linux-kernel+bounces-878393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CEBC20829
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6903C20835
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA12F4ED853
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:05:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6B1D4F135B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C323EA9E;
-	Thu, 30 Oct 2025 14:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC17242D65;
+	Thu, 30 Oct 2025 14:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mBWuMfc4"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OU42mios"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0C324BD0C;
-	Thu, 30 Oct 2025 14:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27973126BF1;
+	Thu, 30 Oct 2025 14:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833105; cv=none; b=GCPaUsiDCdr4WP4IpCCkgNc7Sq5jqL9NPhGdEWNjQSZ8ATs5WKgNPIONyEGY4DX0MMAVBHNJdaNdep8mIvO3WJNwHoNj9FiwU/IlZmhUJVZUxX9k/1nxf+tf07rZd+He4Pwz/e29xgpM8alQQv6x9DyXYRFQSUhUJd0ACTvopiA=
+	t=1761833120; cv=none; b=Aw3MyWTrbdoqmSlY81u0vtgRekKXGNEGjNOhI1d6dxAd/nCQeZ1iWoIi8scERezVBSMRd8SnXYZl7hk46+L2e/UkSS8FtXtPuQBv/pEKcAqHEYNEMLaO5QXjsTxCT8tTfUXJxhI+eMk9DiH/jhbvTORNRJOtI/sLvBnhL3ACHpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833105; c=relaxed/simple;
-	bh=pcUvfzjJIS8X9Z2iVO1COuyDkpyh2KXBtzZqEZQzzto=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=kyoXSB5W/BoWRYQHdNFb8UZFNP9yqmVsfbyFvq2OwLcO0Iuq49d25RFFxkaOHXgxGmbkCs9iNYGcInBjzMz6siI98h2jNho3IzEicN0ETQKvmbw3wwTgjENscZhUW0jNSv/3g+nI4cxxGZSIpU5NBod+YEhuMFmS5Gofphdz+6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mBWuMfc4; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 160BDC0DAB7;
-	Thu, 30 Oct 2025 14:04:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 77D6D6068C;
-	Thu, 30 Oct 2025 14:04:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 442AD11808AD6;
-	Thu, 30 Oct 2025 15:04:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761833095; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=nS6Tx9jK9BuNcGfzXxz3LJT+z2ofZPtTh2IjKicAfKc=;
-	b=mBWuMfc4SaB27L/gZWQnrSba9chzIQNTEFnJMYGYeHp82JTF7//5xSkJoVdCbs4nauDLu0
-	y0YO0T9N2Pr/ISipdwQ7rRatIjYUVufRFM4lyeI2JRTgqF+VrKkvOp5x11AB14ZwQLhYM1
-	rmOaWENzOlQK4Qrt5QU25WEwbUXuJ42FHx6hNZv544coKycyxwU929MbVJWiC/GIMAOnUj
-	WpwbngAD5j7M5+UAeEsaxa/CaZP2wNryPDvSdah6ZNR3YBQ/u6FXZZUqHsKa2GYKs1MoQD
-	ou795dIpXd8dRmF68ai6tqfL6CPKwcgLj8JBDRdch6WnHnzI/QA+MwFcojulVg==
+	s=arc-20240116; t=1761833120; c=relaxed/simple;
+	bh=FIKu4iYEpNCcQJAJFxEAKcyoNhn57WXUvUK9Lqt+ERU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DmZ213yzDCgKJpLu8x3RgRZnQZYUTv9PkN93SXlu+sybxdhR383rRjRmXMzO2e1xZKHOou2He3GfkGD7d4qqWYfs14cUzlcugWM1whI89n+VJCs4CuZeMtY3gcFFIDILydJo6GsdrMx9PIlB9fYdBdMZqEEfsQVgoMbA00Buu2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OU42mios; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=xFP5v3fUOlDAEzHhimBhc19pvPkZDICA/lfyXRtuCO8=; b=OU42miosZZnsNGA8GWX4rxDD5v
+	NbliiDx+SjRjbIF9jFGckM3MdP80CQtGSDK/nbkvMlbdk1UygMYUDjPgN0c3vvX0NOyP5CKxGp8AZ
+	A0DJkJWWLkbUlw/iPQNrDXvp28dgzimT0B/sxr0cBPO6KMupjjlnCC3hxe9S9lUyGvfnixBrqjeAC
+	wT0vgTXn2TPw1TpM6hxsYrRnggBilsHevdZqkWTFmJhpkv49kyH6eyrb1h6QAe2DZ4/V8W1eTyrm9
+	TrXUxnBsjtbfa8pB8oZssfa0DYQyEYtx2WM8A6WPnUYKejXmj9paTw59DZGiAsEmGg/W8PAHKEk9q
+	Asgroq/g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vETGn-00000004H02-1Xin;
+	Thu, 30 Oct 2025 14:04:54 +0000
+Date: Thu, 30 Oct 2025 07:04:53 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Christoph Hellwig <hch@infradead.org>, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com,
+	peterx@redhat.com, sj@kernel.org, rppt@kernel.org, mhocko@suse.com,
+	corbet@lwn.net, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
+	m.szyprowski@samsung.com, robin.murphy@arm.com, hannes@cmpxchg.org,
+	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev,
+	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+	minchan@kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH v2 0/8] Guaranteed CMA
+Message-ID: <aQNwhQcN8Su_Il6c@infradead.org>
+References: <20251026203611.1608903-1-surenb@google.com>
+ <aP8XMZ_DfJEvrNxL@infradead.org>
+ <CAJuCfpH1Nmnvmg--T2nYQ4r25pgJhDEo=2-GAXMjWaFU5vH7LQ@mail.gmail.com>
+ <aQHdG_4yk0-o0iEY@infradead.org>
+ <CAJuCfpFPDPaQdHW3fy46fsNczyqje0W8BemHSfroeawB1-SRpQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 Oct 2025 15:04:51 +0100
-Message-Id: <DDVPPGIO5P1F.E3DWINA74BJ6@bootlin.com>
-Subject: Re: [PATCH bpf-next v3 3/4] selftests/bpf: integrate
- test_tc_tunnel.sh tests into test_progs
-Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
- <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Eduard
- Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
- Song" <yonghong.song@linux.dev>, "John Fastabend"
- <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
- Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
- <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
- <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
- <bastien.curutchet@bootlin.com>, <bpf@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-To: "Martin KaFai Lau" <martin.lau@linux.dev>,
- =?utf-8?b?QWxleGlzIExvdGhvcsOpIChlQlBGIEZvdW5kYXRpb24p?=
- <alexis.lothore@bootlin.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
- <20251027-tc_tunnel-v3-3-505c12019f9d@bootlin.com>
- <1ac9d14e-4250-480c-b863-410be78ac6c6@linux.dev>
-In-Reply-To: <1ac9d14e-4250-480c-b863-410be78ac6c6@linux.dev>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFPDPaQdHW3fy46fsNczyqje0W8BemHSfroeawB1-SRpQ@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hello Martin,
-thanks for the review and the initial merge. I am preparing the follow-up
-series.
+On Wed, Oct 29, 2025 at 07:57:34AM -0700, Suren Baghdasaryan wrote:
+> On Wed, Oct 29, 2025 at 2:23 AM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Mon, Oct 27, 2025 at 12:51:17PM -0700, Suren Baghdasaryan wrote:
+> > > I'm guessing you missed my reply to your comment in the previous
+> > > submission: https://lore.kernel.org/all/CAJuCfpFs5aKv8E96YC_pasNjH6=eukTuS2X8f=nBGiiuE0Nwhg@mail.gmail.com/
+> > > Please check it out and follow up here or on the original thread.
+> >
+> > I didn't feel to comment on it.  Please don't just build abstractions
+> > on top of abstractions for no reason.  If you later have to introduce
+> > them add them when they are actually needed.
+> 
+> Ok, if it makes it easier to review the code, I'll do it. So, I can:
+> 1. merge cleancache code (patch 1) with the GCMA code (patch 7). This
+> way all the logic will be together.
+> 2. . LRU additiona (patch 2) and readahead support (patch 3) can stay
+> as incremental additions to GCMA, sysfs interface (patch 4) and
+> cleancache documentation (
 
-On Wed Oct 29, 2025 at 8:56 PM CET, Martin KaFai Lau wrote:
-> On 10/27/25 7:51 AM, Alexis Lothor=C3=A9 (eBPF Foundation) wrote:
->> +static int run_server(struct subtest_cfg *cfg)
->> +{
->> +	struct nstoken *nstoken =3D open_netns(SERVER_NS);
->
-> It is unlikely but still better to check for open_netns failure. Just in=
-=20
-> case that the network changes/traffic is accidentally done in the=20
-> original netns. There are a few netns switching in the test. Please=20
-> followup.
-
-Yes, I'll add those missing checks.
-
->> +	int family =3D cfg->ipproto =3D=3D 6 ? AF_INET6 : AF_INET;
->> +
->> +	cfg->server_fd =3D start_reuseport_server(family, SOCK_STREAM,
->> +						cfg->server_addr, TEST_PORT,
->> +						TIMEOUT_MS, 1);
->
-> Why reuseport is needed? Does it have issue in bind() to the same=20
-> ip/port in the later sub-test?
-
-Yes, I observed that is I use the bare start_server, I systematically have
-the first test passing, an all the others failing on the server startup
-with errno 98 (Address already in use). I have been assuming that it is due
-to some TIME_WAIT state on the freshly closed socket, but I may be missing
-something ?
-
-Thanks,
-
-Alexis
-
---=20
-Alexis Lothor=C3=A9, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Sounds good.
 
 
