@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-878184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3CFC1FF8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:18:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E75C1FFB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C83304E9190
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:18:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3E1F34E21B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601D62D5C97;
-	Thu, 30 Oct 2025 12:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="IKeyBXMA"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386F2EBBB2;
+	Thu, 30 Oct 2025 12:21:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C3F2D6409
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4326B3F9C5
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761826730; cv=none; b=PgoqjOEGflgibMZEgN9i8JW4FrA3pYLzoZN2YV3/P8BsoVIyxbOtKRDl8W6rx0t58+qYFsuMn5F87FNzd24h4lmIUT1AF4igIrF2o5l51vjTvt+n6QiTm71qUHLTS6dsCoUh7eNzQdaBKteVWQRaN96YEglLtZNL1v/guY7udMU=
+	t=1761826902; cv=none; b=jhOYC/X+IWjfDILgVK8L4mAFpJbZnDyI4OeNTW5uO6To9Fr13DW9J2sEnT0SwrHw3XODIGB9OQh9KuJF4tsrK7W/94J18GKnF2eust460W6BpQja8IBq/gXfKwCl8Qbx7wV3znwWMdEJZF/YrhutlcohA/SVCUEW+ce3eOnyUj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761826730; c=relaxed/simple;
-	bh=wnhbQmh4ahC8PKdCzcYNoFOto08zipbrJDQpVkPseTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OJ6zLjots2+yXMPVb7KAgJTE/30d+N3LLuNZ+6b4qJ7W3gBb9H17w6q/BS4JXl733LLPD2VX8P4BzN49wk6OucZbkRDGQ9JPZc4ZXr3lEC+1LyuOC6cYOkI7awCg+GQJYNsFTKPcFIbGsZiSJA6mhZ6YGww2CYqMoo6RYalo7VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=IKeyBXMA; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3402942e79cso1369215a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761826728; x=1762431528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SV3Wyms5GctmoxFgrHuylYNeXPRM7QEqyLlsa9U1RVE=;
-        b=IKeyBXMANtoC2kDVWMWzblpfbBCCKWAtm5X3/oeXJT3LQe/ZK20nfjoC/RFWAXsRML
-         L/DuDwrB7bC5m/J1FlN9I6dVfskzy6xJXnZsZaAQYUuWiFEqwRrom2jfyx+p5qEsvXAt
-         mHe9VfSiID6WhiCx1DBab/uQL9UCo54Cl6U9XfOsHEfx+soCGWOfoO81v4An3HRaDYan
-         3Y/vq1LZ1qZLl+zcVzkUa74WpefYc6SPdrhbzzjlEIgPFDq0LOTJEkHL/VyPfJIrBnZv
-         +yEGoJxh4wFSbSXLUihOkTRNqNAM9c3rmYwj4BQ/ieWeF5SiMqcx8XJ60RyeeZgXFHF1
-         KlaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761826728; x=1762431528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SV3Wyms5GctmoxFgrHuylYNeXPRM7QEqyLlsa9U1RVE=;
-        b=wzZjz3dAkRpTBFEkjzrHudLl6uHY3lvDZSa9Ucgr9OTJknZNUoZnQYiYLNt0q5RUeO
-         SzxuawccIBn30U4iuMSSAIgtLSf875tHeSWPKGYKEXmq+exZIHRWz1nC9mnZxu3gNYV9
-         WbV18RxkO7KkugN9XR+ZBNZf0axA6X3bvn0yyz7flFYc9EpfO2Q7yEftUWiR6GH3vjOI
-         qS4rxKUusZIKTbc11M7zzkec17Q6w+AGGannNeHhHL+iGcK1lJzA7DzxJ+yBRDm704R5
-         3pWxKI/L6cY3+tInAJlNjClJuZ9QfYNIqftb9+KT2vboln8Y+5b6+9P3EjZneWQKAEDw
-         okdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUVoWu2n0Be6UN97DNEASEo4cbckaCCAoxLi7ndMXU07DBDCGzDjbOwJsg+CI2WTdqcxdWudaOjGcTQIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6+VOdtiCOtMeg1YZSi3/4joIQ8P+wOLoz3op0Y6lnZY8TuOmo
-	A0qb0zxWCf2FoW9fy8NHOTkwonxOJ5zxLVFotN0oAebXyuvZYIQH3Qi8mRL6k8h3ZyKELggQL7e
-	LaS8MEilmElLuagx9FuWUIL4Xwq1v687atOLm8MPJ
-X-Gm-Gg: ASbGncskEaEi/sUtqrPtOptu00yxGMvAoYpggckAcjxfBL+LTCNtc2FfvTLUlvF8SXZ
-	KFqikjm+4HP3oAZFd3TbdmjgVcW19XB63RsL7kRFM1bUQLTCcBwPVbRRLHX4/Yc7TkcedGVSEnP
-	cU/EVZMnpZUQ2iG9ejG+2pp9aeQ4VYYiiPVJmitjCdhbjKJAymKwFVfoVg1qMjeChhgPxfvKPxS
-	Uv4RtME4Keja/ZBmT4ls0/g/HQ9saSt2G2oVdYJ9uvZpBADLyH5H2XEbklMRCHwwsgZbp5VLRV9
-	nDN9nEs=
-X-Google-Smtp-Source: AGHT+IEAOTMFK3D5taJ3KPSJjji4K5xecEJyo6FAdbfI1bayrytkxTVqsVBKlawrgvajLnMKq8BLOieel/imjS8/7jA=
-X-Received: by 2002:a17:90b:1c87:b0:33f:ee05:56e7 with SMTP id
- 98e67ed59e1d1-3404c404985mr3892931a91.16.1761826727860; Thu, 30 Oct 2025
- 05:18:47 -0700 (PDT)
+	s=arc-20240116; t=1761826902; c=relaxed/simple;
+	bh=V4xzQhAJ9xAGNxC/CzElAQ3qSL4KygnQMpAzX8Gfg7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kIUYbAPFPurbKsXPRtMtRXKMwr5EbHF9AGfryI6jlverEEcujKh1kKOzkJ8dsY2VG9DwpxHrUPFLEX0IqHMtWByPIvWhp2v4VFJffj5KkHJULtgcyIbP+TgBIHhu3EgMSlkwyVdijPVFmaINbPxp+/OT4we8KXMDyTxErP7NXY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f5869fcab58a11f0a38c85956e01ac42-20251030
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:55fd8289-df6b-4af7-8330-c5fa5204d938,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:20
+X-CID-META: VersionHash:a9d874c,CLOUDID:15497eaa1c29a836e773eb15bd369132,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|15|50,EDM:5,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f5869fcab58a11f0a38c85956e01ac42-20251030
+Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <pengyu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1484032101; Thu, 30 Oct 2025 20:21:27 +0800
+From: Yu Peng <pengyu@kylinos.cn>
+To: bp@alien8.de,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org
+Cc: hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Yu Peng <pengyu@kylinos.cn>
+Subject: [PATCH v3] arch/x86/microcode: Mark early_parse_cmdline() as __init
+Date: Thu, 30 Oct 2025 20:19:48 +0800
+Message-Id: <20251030121948.1395870-1-pengyu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030100025.95113-1-eperezma@redhat.com> <20251030100025.95113-3-eperezma@redhat.com>
-In-Reply-To: <20251030100025.95113-3-eperezma@redhat.com>
-From: Yongji Xie <xieyongji@bytedance.com>
-Date: Thu, 30 Oct 2025 20:18:36 +0800
-X-Gm-Features: AWmQ_bmiKDcTTVrpLtfWQHLoVOAgkHmCC4dbaQET0qDlzDFIGwHDaLhNbSek-Lo
-Message-ID: <CACycT3tUQuQLgxE1-++izeKZLbdzKWUt9a5ukRW52HCjm3V1ZQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/6] vduse: add vq group support
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Laurent Vivier <lvivier@redhat.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev, 
-	Stefano Garzarella <sgarzare@redhat.com>, Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 6:01=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redhat=
-.com> wrote:
->
-> This allows separate the different virtqueues in groups that shares the
-> same address space.  Asking the VDUSE device for the groups of the vq at
-> the beginning as they're needed for the DMA API.
->
-> Allocating 3 vq groups as net is the device that need the most groups:
-> * Dataplane (guest passthrough)
-> * CVQ
-> * Shadowed vrings.
->
-> Future versions of the series can include dynamic allocation of the
-> groups array so VDUSE can declare more groups.
->
-> Acked-by: Jason Wang <jasowang@redhat.com>
-> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+Fix section mismatch warning reported by modpost:
+  .text:early_parse_cmdline() -> .init.data:boot_command_line
 
-Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
+The function early_parse_cmdline() is only called during init and
+accesses init data, so mark it __init to match its usage.
 
-Thanks,
-Yongji
+Signed-off-by: Yu Peng <pengyu@kylinos.cn>
+---
+ arch/x86/kernel/cpu/microcode/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Changes in v3:
+  - Fix Signed-off-by email address.
+
+Changes in v2:
+  - Resend to add correct email.
+  - No code changes.
+  
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index d7baec8ec0b4..ccc83b0bf63c 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -136,7 +136,7 @@ bool __init microcode_loader_disabled(void)
+ 	return dis_ucode_ldr;
+ }
+ 
+-static void early_parse_cmdline(void)
++static void __init early_parse_cmdline(void)
+ {
+ 	char cmd_buf[64] = {};
+ 	char *s, *p = cmd_buf;
+-- 
+2.43.0
+
 
