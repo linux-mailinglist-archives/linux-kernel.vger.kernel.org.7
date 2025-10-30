@@ -1,211 +1,229 @@
-Return-Path: <linux-kernel+bounces-878736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BC7C215CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B835EC215CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6EC4EFE5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259E11A6072C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2D932ABC6;
-	Thu, 30 Oct 2025 17:00:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F572D6E71;
-	Thu, 30 Oct 2025 17:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742C5330D42;
+	Thu, 30 Oct 2025 17:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WgPrI6BU"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09730363B82
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843631; cv=none; b=W8+8HFMiOTvJNRVGoSud6n4T6D0Yjg3fqubqDYzXWu48Ip+NlQpgcEDtYxbWnJ6+UrBM4KU85hD5u6u7z21x1mfRvd8IIHQCbf0Kc0/G5dZSdQj16CGoaddEVtzdf/6noIcwKV8Veb3h1sAtK/GaTU+3Zkn2pUI9dyziPHLsNxI=
+	t=1761843720; cv=none; b=UvyH3bZGxYSloKQa+IloKORPuXWY93c7OzD4D48pQTOP9juoeafrtPtMzqbVatig+gJIK3tLu2OviSNU44hM/RNtCRJ3wXymGgezMAOII+FKzDAJyl0ndl0iFxLFbSvPZmCPQ5FTRIstKaPxGg8rgsOIhPeL7BUQ+ds7Wjco9ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843631; c=relaxed/simple;
-	bh=Us7RqJUdMWhpC26w+AHuMmRgNQ+ROlw8AWfw4V26NZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ao5SVHjXVfsr4TelSyIzEz9//89BP7/DUBB0+TMNvRB5ABkJXsaJ0KMm5PfcW2gEpis72s7xmiOnLOgLwY+n1SwwfDe5GAVeWAkxSYKbD2YSwz+nnHqPT/4HbgQnNw4jk73JKNvzTzk/ITYVSoW10lgPd1mczec6BDPRRHSJvoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D3882C40;
-	Thu, 30 Oct 2025 10:00:21 -0700 (PDT)
-Received: from [10.57.36.244] (unknown [10.57.36.244])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D79E3F673;
-	Thu, 30 Oct 2025 10:00:25 -0700 (PDT)
-Message-ID: <c978e3ed-054f-4849-a4ff-d0fba07e3c19@arm.com>
-Date: Thu, 30 Oct 2025 17:00:24 +0000
+	s=arc-20240116; t=1761843720; c=relaxed/simple;
+	bh=qpm9nedNDxz4xhTge3n3IQ5KgJG7zyt90dJXjqfDrsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t8Z5j3ywfFzaJGBSUGwo8acNhZK4dd4Mx29QXOptO1OTPPpr26mz+mm9Ix0Y4xrPzjGVCHxikRObgbrORtpaew3LxuwtPXIIBRKVWnXGChf4lSSTas6e7m9QrwzE8nLfvBLScTjiSd4ujK655/2//OFy3LCR53ucIzpYGBUM39k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WgPrI6BU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-294f3105435so4005ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761843716; x=1762448516; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+EDv0KdgDVuAqLBbP2rl8wFdWQKGxBBXu9U1vhd9YY=;
+        b=WgPrI6BUWspd9VQ1fSLcLNEevC8A/2amoZEJhMrOc1SHbn7SoXM+83wEWpeg7RvBB8
+         rJGbTRtOMsdtjkETj/bQau6P2CwHogFyI/uPmsmxKvsPqFpBC8SVeXUrSflrX6Sv2N0c
+         ltHTo2NbxoS1ChEFN61dZbK4ccPwnJIpHLNhN/nbtK+Av21vr5SHsk1JGdOPTt1ebMby
+         LKfL2peSMyVPEk818UMWn089Q/7NY/bCxAEBhmiSK4BcZ0JDtfzzvsdhi92cp0+gZoCA
+         TqX9vA7MwvlBE9X/6tyLxSAUuGpo04XKzM4ix6ijTbq/6Z7RFzXtR+Qv+TxKrIytChd7
+         9TwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761843716; x=1762448516;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I+EDv0KdgDVuAqLBbP2rl8wFdWQKGxBBXu9U1vhd9YY=;
+        b=d2I7kPTSccLV9DIzvNiWqDKDcpos0b5RnI38xsyrdktu4kJfQ6Q9b2ExS8W2WGSSYJ
+         NN/OIxeFN44+xq6/M+iTs4WaTsieBOcXC68lty23j0lLe6JhId8lbHT5rzx8Y18ZL/Kk
+         sES1HpqlJDdKpYuKm+7SGuccNISVn+eOX9lT/q4uMLFp1OLiOPtZ4YhSnIlEUK9OWabK
+         784PAVcMWiAxcBAtiXf/jZhuDe1HQksyCxL0xoSVON2/DDgD6mmL6/LvuyEewpR2ChS9
+         NlYzkcxOO++IBgJcNB4M5UkQ0F4d0tVRmf3v268h0DIUaWVvubSjwmLjZwp6XP0lfGw0
+         mNIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTqsXojiBvanG12gQ+xFnlS39c+h7aNdJvU1ZiJQktIBKOqsYIKNWfB+XRvhmvmmQ1TwrhjmNJaYMTc8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzCWTHnBXi8lLCYLB4CjpI0NtSu2E/CLbye9Pq1RByl6FNU7N3
+	LDwNZIK8Qwj14vpT9sJTYGcgDT3+i9bFyAYnYvpfhPT1ixYtXsUmEHzrgD8tzmWjcTqmfaW4HId
+	kzLk2NwovaGrSKtjB+Z0KewL7AoxxoG0/ed9nxFn0
+X-Gm-Gg: ASbGncuEtc+LAD4SU4zaT+ObXXiefn7GwpMJbYF1i8vZCtujmTb5+Tk7vrGYIvzFuxK
+	G6NWDM6GcgVGPHoxvs0IHGs9duTZlBKgIRGZj5jpgrWiHqpj4Bk1Tmsj2mVHI9ES3EGilVVpLtB
+	hbc9M2Cg9NFvM5mOkmOFxMA5c3O392hagtByxsoUS45eJ3yyWBzT7WE1p2leje8EIW9JdKEdFTz
+	S2cwk8qIdTJ9LwalwFZfc+UrPmMqS3/K32MZy9ZKCKVMxZg/a1m5VDA7omPcUd0x1lvnQYcy0xg
+	zDmh4yTNhj3k5I9NcnofrGGmhalW3nyAQ+RDLPw=
+X-Google-Smtp-Source: AGHT+IE4OqQ/W6hJWfcB2dN7mxyOsfraIhSzr9lSBisqAXwrkaVgZsawMssYkny+eOU3PNG5tkaqyCvR01t7WahaQ/c=
+X-Received: by 2002:a17:902:d50e:b0:294:e585:1f39 with SMTP id
+ d9443c01a7336-294ee3c1c62mr6090225ad.14.1761843714039; Thu, 30 Oct 2025
+ 10:01:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v10 sched_ext/for-6.19] Add a deadline server for
- sched_ext tasks
-To: Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
- Joel Fernandes <joelagnelf@nvidia.com>,
- Emil Tsalapatis <emil@etsalapatis.com>,
- Luigi De Matteis <ldematteis123@gmail.com>, sched-ext@lists.linux.dev,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251029191111.167537-1-arighi@nvidia.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20251029191111.167537-1-arighi@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <68fc2af6305be_10e210029@dwillia2-mobl4.notmuch>
+ <CAGtprH8-UGFkh4NmuY1ETPYmg7Uk+bm24Er2PPxf8tUOSR_byQ@mail.gmail.com>
+ <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch> <CAGtprH8g5212M26HPneyaHPq8VKS=x4TU4Q4vbDZqt_gYLO=TA@mail.gmail.com>
+ <68ffbfb53f8b5_10e210078@dwillia2-mobl4.notmuch> <CAGtprH-rv9T1ano+ti=3eU4FO2APCOcR06buPALggAwUnka3Dg@mail.gmail.com>
+ <690026ac52509_10e2100cd@dwillia2-mobl4.notmuch> <CAAYXXYyVC0Sm+1PBw=xoYNDV7aa54c_6KTGjMdwVaBAJOd8Hpw@mail.gmail.com>
+ <aQFmOZCdw64z14cJ@google.com> <6901792e39d13_10e9100ed@dwillia2-mobl4.notmuch>
+ <aQIbM5m09G0FYTzE@google.com>
+In-Reply-To: <aQIbM5m09G0FYTzE@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 30 Oct 2025 10:01:41 -0700
+X-Gm-Features: AWmQ_bk8e0F5YzgwVWMiaGYCsgnYeJ1vHVGZjF4GsM1pPXtd3P-0mcJulnC-JVo
+Message-ID: <CAGtprH_oR44Vx9Z0cfxvq5-QbyLmy_+Gn3tWm3wzHPmC1nC0eg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
+To: Sean Christopherson <seanjc@google.com>
+Cc: dan.j.williams@intel.com, Erdem Aktas <erdemaktas@google.com>, 
+	Dave Hansen <dave.hansen@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Elena Reshetova <elena.reshetova@intel.com>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Kai Huang <kai.huang@intel.com>, "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>, 
+	"sagis@google.com" <sagis@google.com>, "paulmck@kernel.org" <paulmck@kernel.org>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/25 19:08, Andrea Righi wrote:
-> sched_ext tasks can be starved by long-running RT tasks, especially since
-> RT throttling was replaced by deadline servers to boost only SCHED_NORMAL
-> tasks.
-> 
-> Several users in the community have reported issues with RT stalling
-> sched_ext tasks. This is fairly common on distributions or environments
-> where applications like video compositors, audio services, etc. run as RT
-> tasks by default.
-> 
-> Example trace (showing a per-CPU kthread stalled due to the sway Wayland
-> compositor running as an RT task):
-> 
->  runnable task stall (kworker/0:0[106377] failed to run for 5.043s)
->  ...
->  CPU 0   : nr_run=3 flags=0xd cpu_rel=0 ops_qseq=20646200 pnt_seq=45388738
->            curr=sway[994] class=rt_sched_class
->    R kworker/0:0[106377] -5043ms
->        scx_state/flags=3/0x1 dsq_flags=0x0 ops_state/qseq=0/0
->        sticky/holding_cpu=-1/-1 dsq_id=0x8000000000000002 dsq_vtime=0 slice=20000000
->        cpus=01
-> 
-> This is often perceived as a bug in the BPF schedulers, but in reality
-> schedulers can't do much: RT tasks run outside their control and can
-> potentially consume 100% of the CPU bandwidth.
-> 
-> Fix this by adding a sched_ext deadline server, so that sched_ext tasks are
-> also boosted and do not suffer starvation.
-> 
-> Two kselftests are also provided to verify the starvation fixes and
-> bandwidth allocation is correct.
-> 
-> == Highlights in this version ==
-> 
->  - wait for inactive_task_timer() to fire before removing the bandwidth
->    reservation (Juri/Peter: please check if this new
->    dl_server_remove_params() implementation makes sense to you)
->  - removed the explicit dl_server_stop() from dequeue_task_scx() and rely
->    on the delayed stop behavior (Juri/Peter: ditto)
-> 
-> This patchset is also available in the following git branch:
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/arighi/linux.git scx-dl-server
-> 
-> Changes in v10:
->  - reordered patches to better isolate sched_ext changes vs sched/deadline
->    changes (Andrea Righi)
->  - define ext_server only with CONFIG_SCHED_CLASS_EXT=y (Andrea Righi)
->  - add WARN_ON_ONCE(!cpus) check in dl_server_apply_params() (Andrea Righi)
->  - wait for inactive_task_timer to fire before removing the bandwidth
->    reservation (Juri Lelli)
->  - remove explicit dl_server_stop() in dequeue_task_scx() to reduce timer
->    reprogramming overhead (Juri Lelli)
->  - do not restart pick_task() when invoked by the dl_server (Tejun Heo)
->  - rename rq_dl_server to dl_server (Peter Zijlstra)
->  - fixed a missing dl_server start in dl_server_on() (Christian Loehle)
->  - add a comment to the rt_stall selftest to better explain the 4%
->    threshold (Emil Tsalapatis)
-> 
-> Changes in v9:
->  - Drop the ->balance() logic as its functionality is now integrated into
->    ->pick_task(), allowing dl_server to call pick_task_scx() directly
->  - Link to v8: https://lore.kernel.org/all/20250903095008.162049-1-arighi@nvidia.com/
-> 
-> Changes in v8:
->  - Add tj's patch to de-couple balance and pick_task and avoid changing
->    sched/core callbacks to propagate @rf
->  - Simplify dl_se->dl_server check (suggested by PeterZ)
->  - Small coding style fixes in the kselftests
->  - Link to v7: https://lore.kernel.org/all/20250809184800.129831-1-joelagnelf@nvidia.com/
-> 
-> Changes in v7:
->  - Rebased to Linus master
->  - Link to v6: https://lore.kernel.org/all/20250702232944.3221001-1-joelagnelf@nvidia.com/
-> 
-> Changes in v6:
->  - Added Acks to few patches
->  - Fixes to few nits suggested by Tejun
->  - Link to v5: https://lore.kernel.org/all/20250620203234.3349930-1-joelagnelf@nvidia.com/
-> 
-> Changes in v5:
->  - Added a kselftest (total_bw) to sched_ext to verify bandwidth values
->    from debugfs
->  - Address comment from Andrea about redundant rq clock invalidation
->  - Link to v4: https://lore.kernel.org/all/20250617200523.1261231-1-joelagnelf@nvidia.com/
-> 
-> Changes in v4:
->  - Fixed issues with hotplugged CPUs having their DL server bandwidth
->    altered due to loading SCX
->  - Fixed other issues
->  - Rebased on Linus master
->  - All sched_ext kselftests reliably pass now, also verified that the
->    total_bw in debugfs (CONFIG_SCHED_DEBUG) is conserved with these patches
->  - Link to v3: https://lore.kernel.org/all/20250613051734.4023260-1-joelagnelf@nvidia.com/
-> 
-> Changes in v3:
->  - Removed code duplication in debugfs. Made ext interface separate
->  - Fixed issue where rq_lock_irqsave was not used in the relinquish patch
->  - Fixed running bw accounting issue in dl_server_remove_params
->  - Link to v2: https://lore.kernel.org/all/20250602180110.816225-1-joelagnelf@nvidia.com/
-> 
-> Changes in v2:
->  - Fixed a hang related to using rq_lock instead of rq_lock_irqsave
->  - Added support to remove BW of DL servers when they are switched to/from EXT
->  - Link to v1: https://lore.kernel.org/all/20250315022158.2354454-1-joelagnelf@nvidia.com/
-> 
-> Andrea Righi (5):
->       sched/deadline: Add support to initialize and remove dl_server bandwidth
->       sched_ext: Add a DL server for sched_ext tasks
->       sched/deadline: Account ext server bandwidth
->       sched_ext: Selectively enable ext and fair DL servers
->       selftests/sched_ext: Add test for sched_ext dl_server
-> 
-> Joel Fernandes (6):
->       sched/debug: Fix updating of ppos on server write ops
->       sched/debug: Stop and start server based on if it was active
->       sched/deadline: Clear the defer params
->       sched/deadline: Add a server arg to dl_server_update_idle_time()
->       sched/debug: Add support to change sched_ext server params
->       selftests/sched_ext: Add test for DL server total_bw consistency
-> 
->  kernel/sched/core.c                              |   3 +
->  kernel/sched/deadline.c                          | 169 +++++++++++---
->  kernel/sched/debug.c                             | 171 +++++++++++---
->  kernel/sched/ext.c                               | 144 +++++++++++-
->  kernel/sched/fair.c                              |   2 +-
->  kernel/sched/idle.c                              |   2 +-
->  kernel/sched/sched.h                             |   8 +-
->  kernel/sched/topology.c                          |   5 +
->  tools/testing/selftests/sched_ext/Makefile       |   2 +
->  tools/testing/selftests/sched_ext/rt_stall.bpf.c |  23 ++
->  tools/testing/selftests/sched_ext/rt_stall.c     | 222 ++++++++++++++++++
->  tools/testing/selftests/sched_ext/total_bw.c     | 281 +++++++++++++++++++++++
->  12 files changed, 955 insertions(+), 77 deletions(-)
->  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.bpf.c
->  create mode 100644 tools/testing/selftests/sched_ext/rt_stall.c
->  create mode 100644 tools/testing/selftests/sched_ext/total_bw.c
+On Wed, Oct 29, 2025 at 6:48=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Tue, Oct 28, 2025, dan.j.williams@intel.com wrote:
+> > Sean Christopherson wrote:
+> > [..]
+> > > > IMO, It is something userspace should decide, kernel's job is to
+> > > > provide the necessary interface about it.
+> > >
+> > > I disagree, I don't think userspace should even get the option.  IMO,=
+ not setting
+> > > AVOID_COMPAT_SENSITIVE is all kinds of crazy.
+> >
+> > Do see Table 4.4: "Comparison of Update Incompatibility Detection and/o=
+r
+> > Avoidance Methods" from the latest base architecture specification [1].
+> > It lists out the pros and cons of not setting AVOID_COMPAT_SENSITIVE.
+> > This thread has only argued the merits of "None" and "Avoid updates
+> > during update- sensitive times". It has not discussed "Detect
+> > incompatibility after update", but let us not do that.
+>
+> But we already are discussing that, because the "None" option is just pun=
+ting
+> "Detect incompatibility after update" to something other than the VMM.  D=
+oing
+> literally nothing isn't an option.  The fact that it's even listed in the=
+ table,
+> not to mention has "Simplest." listed as a pro, makes me question whether=
+ or not
+> the authors actually understand how software built around the TDX-Module =
+is used
+> in practice.
+>
+> If an update causes a TD build to fail, or to generate the wrong measurem=
+ent, or
+> whatever "Failures due to incompatibilities" means, *something* eventuall=
+y needs
+> to take action.  Doing nothing is certainly the simplest option for the h=
+ypervisor
+> and VMM, but when looking at the entire stack/ecosystem, it's the most co=
+mplex
+> option as it bleeds the damage into multiple, potentially-unknown compone=
+nts of
+> the stack.  Either that, or I'm grossly misunderstanding what "Failures" =
+means.
+>
+> That section also states:
+>
+>   Future TDX Module versions may have different or additional update-sens=
+itive cases.
+>
+> Which means that from an ABI perspective, "Avoid updates during update-se=
+nsitive
+> times" is the _ONLY_ viable option.  My read of that is that future TDX-M=
+odules
+> can effectively change the failure modes for a existing KVM ioctls.  That=
+ is an
+> ABI change and will break userspace, e.g. if userspace is sane and expect=
+s certain
+> operations to succeed.
 
-Thanks Andrea, I've tested a few things I had in mind with no complaints.
-Most importantly it a) it doesn't break the existing fair_server and b)
-Ensures BPF schedulers don't stall even with something like:
-sudo chrt -r 95 stress-ng --cpu 0 --taskset 0-$(($(nproc)-1)) -t 30m
+A reference patch we tested for "Avoid updates during update-sensitive
+times" and one caveat was that
+/sys/devices/virtual/tdx/tdx_tsm/version was not available post update
+failure until a subsequent successful update:
 
-For patches 0 to 9:
-Tested-by: Christian Loehle <christian.loehle@arm.com>
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index e00650b83f08..96ae7c679e4e 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -22,6 +22,7 @@
+ #define TDX_FEATURES0_NO_RBP_MOD               BIT_ULL(18)
+ #define TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC     BIT_ULL(23)
+ #define TDX_FEATURES0_DYNAMIC_PAMT             BIT_ULL(36)
++#define TDX_FEATURES0_UPDATE_COMPATIBILITY     BIT_ULL(47)
+
+ #ifndef __ASSEMBLY__
+
+@@ -129,6 +130,11 @@ static inline bool
+tdx_supports_dynamic_pamt(const struct tdx_sys_info *sysinfo)
+        return sysinfo->features.tdx_features0 & TDX_FEATURES0_DYNAMIC_PAMT=
+;
+ }
+
++static inline bool tdx_supports_update_compatibility(const struct
+tdx_sys_info *sysinfo)
++{
++       return sysinfo->features.tdx_features0 &
+TDX_FEATURES0_UPDATE_COMPATIBILITY;
++}
++
+ int tdx_guest_keyid_alloc(void);
+ u32 tdx_get_nr_guest_keyids(void);
+ void tdx_guest_keyid_free(unsigned int keyid);
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index f6199f8ce411..95deb1146a79 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1523,6 +1523,10 @@ int tdx_module_shutdown(void)
+         * fail.
+         */
+        args.rcx =3D tdx_sysinfo.handoff.module_hv;
++
++       if (tdx_supports_update_compatibility(&tdx_sysinfo))
++               args.rcx |=3D TDX_SYS_SHUTDOWN_AVOID_COMPAT_SENSITIVE;
++
+        ret =3D seamcall_prerr(TDH_SYS_SHUTDOWN, &args);
+        if (!ret)
+                tdx_module_reset_state();
+diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+index 0cd9140620f9..772c714de2bc 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.h
++++ b/arch/x86/virt/vmx/tdx/tdx.h
+@@ -94,6 +94,8 @@ struct tdmr_info {
+ /* Bit definitions of TDX_FEATURES0 metadata field */
+ #define TDX_FEATURES0_TD_PRESERVING    BIT(1)
+
++#define TDX_SYS_SHUTDOWN_AVOID_COMPAT_SENSITIVE                BIT(16)
++
+ /*
+  * Do not put any hardware-defined TDX structure representations below
+  * this comment!
 
