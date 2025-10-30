@@ -1,144 +1,119 @@
-Return-Path: <linux-kernel+bounces-878403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3382CC208A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:18:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6402AC20862
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:14:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87C784ECE47
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6B418904F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FBE239E9E;
-	Thu, 30 Oct 2025 14:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53FC23EA9B;
+	Thu, 30 Oct 2025 14:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2VzhgQu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="s+Ysh6L6"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F94223DE8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1753237A3C1
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833336; cv=none; b=pSQIRTtrztn6FxjP4xhWGTCn27etArTl+n1l+vHBmTJLsS9+FXeDm2rccUgND1f6XQeM8lyyFwBbdRWrfUCpXhLG4yzUK1KeeeCtZLx06qbz8H0l4ELPVslKXfABoMk58gzObR/eA/huUnfvkYPEywU7Ad78W/i0VASF7v9zQik=
+	t=1761833441; cv=none; b=P3Vxvcqtn5HC8wYpgn2q47NYS80mpSnQEpobT1SKbPcVe8tBXeuDcu9MWrR6saYZHjk8RpUGgeV7V1BbTG/Dp7Si9C+oNO5ZkzCJD2fPTx358d+33n9mjOsn7vEt2m9kEYi0FKPwotITJ810HGawxf4AuIXvp2fKOHee0oFacxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833336; c=relaxed/simple;
-	bh=rGp1JBYK1mL0otpAztrc7nUrgT5FS8nLHRGVxjQo6Uk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gt3UlCfwYlNH+Ut9CTRGJtW9dMCpzV+druuHQocIGe/qRLxcUMjpR8iXvNoTmLZxMbLdDqqBx2C1AlQdgeVpy6eltArTY2s+UPcohE4USDZbE7EsjnmfmBNi+Q3T46K7rc6JicUKFKLCaCWL5sJ0AHxKSysJ0KmY0sbDOkToOKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2VzhgQu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61B1C116B1
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761833335;
-	bh=rGp1JBYK1mL0otpAztrc7nUrgT5FS8nLHRGVxjQo6Uk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g2VzhgQuAetX4UqLApCRMz10hkDQCEIqCvlkYoYReeBjGRLeD5LLhTCz4nvy6JhuP
-	 IMMTQCRsf2xT2ePf9bu/3HjjzfGHqYoetvgd+Dn/Mvb2X2V7ShlaKElXqLihuUmfeK
-	 5dxszIYQMptoJHSlFziZ6/zKLZuPugn81vj9uI/Yj32oDqEJY2Q9K1iDKhwUT+3X5u
-	 TKuyVKZ/6d0AhcGcbdu9HvgBT2oGZsid4YszYACOGNqR2Gk/VoVlogmYZARr5aQJEz
-	 VmWKfsVWuWj5z43aCi9oDkcwih0Y1BTW0NoBsytI6RG7fnz2O0krWZDuM45Kxn/GrS
-	 IHpxlAo5+Ilrg==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59310014b8eso1138085e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:08:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUT9ycmMt/fPzWc/JK+HGh7e2YqyMROXOmU85CcnQAEgmwtBO1Q84T6UD/1wJU40NmdGE8+JWhTRn9QFc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy8B3PcCQj7sFOV6DQcxBNwslizmv9Efcgn5BcMDbg3kpOMei7
-	NDdX38zU8ddaz7Kvog36yP/Kzjp8GW/s+3f40gPs43pT/eU9+Rf0GELmstQwx5mTDmq7CRrFBds
-	B0mccd4+/WytJXDzIAchB8N70RTOG5T0=
-X-Google-Smtp-Source: AGHT+IHHbF/WjBxeq1E6VyXB5fSpfqArMxEc2iIkFLjyxdwV0+rh9GbWGUYmuc+y1VNP2dUtRDQQdQyMkTV5CrGpyPw=
-X-Received: by 2002:a05:6512:15a0:b0:592:f40f:a39b with SMTP id
- 2adb3069b0e04-594128cdef0mr2510717e87.47.1761833334300; Thu, 30 Oct 2025
- 07:08:54 -0700 (PDT)
+	s=arc-20240116; t=1761833441; c=relaxed/simple;
+	bh=x0gRfgwwb2IFkRD0DpGlvxRNflqEZumP+YvMoSdPXqQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=I7e3/51k8pxc2UmIG5/QpjYmcx3lie36Yf5Ah/lxm+eI/pm+4EO9n5dbVfCL0lapL6+ugikpx+pw4IddELQ+DvCWS0Wk27LxcmheeNJDUYAqXoF6s3KyF4r6vvhXPciQ0hN3XRtCToR1b9+hlcvD8F55/AjuH/R4pO7KtD3es3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=s+Ysh6L6; arc=none smtp.client-ip=195.121.94.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 0fff8db7-b59a-11f0-ad1a-005056999439
+Received: from mta.kpnmail.nl (unknown [10.31.161.190])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 0fff8db7-b59a-11f0-ad1a-005056999439;
+	Thu, 30 Oct 2025 15:09:34 +0100 (CET)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.189])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id 0d2a1850-b59a-11f0-99be-0050569977a2;
+	Thu, 30 Oct 2025 15:09:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=2eEy/6EcAVyFWHfUVEkAOX6BOji9hmVNnJRFpSNEEMA=;
+	b=s+Ysh6L6riHvxHupOpCI8JFjCudaFSIccfn0bhjjL55didougKPvPiPCV1SFe0P0nlpvzgoimjUw1
+	 kNFRbrBEUd9nsrS5/v5t/rcWAylg8NQPNOErPnC/SxFtOZ0h1JD2MFU1+n6lG2IMwCFZtknuhvyQSg
+	 biGcLG+22RVlyEpBvDVKmztLiRmzGhYRFsdwVJh3Q9JtKzP2ZNK2fvgJ4pUtabLdLLDVFS3rQlcvpO
+	 ay9I6fpKAT7vq0pFrhA2tRBX6C9t99dDWHLmF49y8Zf06ad2OrqoC1uiqjGJnHcA9UleLl/1fbLTRK
+	 KlrQiEqb/yyDzY0srpaH3zFYUaxLIIw==
+X-KPN-MID: 33|gOa/nWvXxVoNd4itQTBEZz7rboYn28RKV+/yRyql5XYbyO//xOtnIvAjjbl62iM
+ ThwB+7SPjLai5cL+PCkbDJjHSapoUuvJvi2wQzN6u74U=
+X-CMASSUN: 33|Rmem3q1b9cO3SQxroIm/awni+4Ar88f5X/NYEBW+vJM5bTO+fgfCQ/8yVRnsK1E
+ hYGnb/ZuRGy82l2iOy3akTA==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh03 (cpxoxapps-mh03.personalcloud.so.kpn.org [10.128.135.209])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id 0d1b85ec-b59a-11f0-94b1-00505699eff2;
+	Thu, 30 Oct 2025 15:09:29 +0100 (CET)
+Date: Thu, 30 Oct 2025 15:09:29 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	Khalid Aziz <khalid@kernel.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Jan Kara <jack@suse.cz>, Taotao Chen <chentaotao@didiglobal.com>,
+	NeilBrown <neil@brown.name>, linux-kernel@vger.kernel.org,
+	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
+Message-ID: <90143686.3161766.1761833369803@kpc.webmail.kpnmail.nl>
+In-Reply-To: <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
+References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
+ <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
+ <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
+ <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
+ <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
+ <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
+Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026055032.1413733-1-ebiggers@kernel.org>
-In-Reply-To: <20251026055032.1413733-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 30 Oct 2025 15:08:42 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEi7FMANDmdXhL5w5HFs_Kbf--BvOn1D1QU1axFTrHn3w@mail.gmail.com>
-X-Gm-Features: AWmQ_bkg3z1jPhxoXgHvPJUcxMYHgojNY5flDtxcrxvUxkgwYwbnfThirTljmPc
-Message-ID: <CAMj1kXEi7FMANDmdXhL5w5HFs_Kbf--BvOn1D1QU1axFTrHn3w@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] SHA-3 library
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, Holger Dengler <dengler@linux.ibm.com>, 
-	Harald Freudenberger <freude@linux.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
-On Sun, 26 Oct 2025 at 06:53, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> This series is targeting libcrypto-next.  It can also be retrieved from:
->
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha3-lib-v2
->
-> This series adds SHA-3 support to lib/crypto/.  This includes support
-> for the digest algorithms SHA3-224, SHA3-256, SHA3-384, and SHA3-512,
-> and also support for the extendable-output functions SHAKE128 and
-> SHAKE256.  The SHAKE128 and SHAKE256 support will be needed by ML-DSA.
->
-> The architecture-optimized SHA-3 code for arm64 and s390 is migrated
-> into lib/crypto/.  (The existing s390 code couldn't really be reused, so
-> really I rewrote it from scratch.)  This makes the SHA-3 library
-> functions be accelerated on these architectures.
->
-> Finally, the sha3-224, sha3-256, sha3-384, and sha3-512 crypto_shash
-> algorithms are reimplemented on top of the library API.
->
-> If the s390 folks could re-test the s390 optimized SHA-3 code (by
-> enabling CRYPTO_LIB_SHA3_KUNIT_TEST and CRYPTO_LIB_BENCHMARK), that
-> would be helpful.  QEMU doesn't support the instructions it uses.  Also,
-> it would be helpful to provide the benchmark output from just before
-> "lib/crypto: s390/sha3: Add optimized Keccak function", just after it,
-> and after "lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest
-> functions".  Then we can verify that each change is useful.
->
-> Changed in v2:
->   - Added missing selection of CRYPTO_LIB_SHA3 from CRYPTO_SHA3.
->   - Fixed a bug where incorrect SHAKE output was produced if a
->     zero-length squeeze was followed by a nonzero-length squeeze.
->   - Improved the SHAKE tests.
->   - Utilized the one-shot SHA-3 digest instructions on s390.
->   - Split the s390 changes into several patches.
->   - Folded some of my patches into David's.
->   - Dropped some unnecessary changes from the first 2 patches.
->   - Lots more cleanups, mainly to "lib/crypto: sha3: Add SHA-3 support".
->
-> Changed in v1 (vs. first 5 patches of David's v6 patchset):
->   - Migrated the arm64 and s390 code into lib/crypto/
->   - Simplified the library API
->   - Added FIPS test
->   - Many other fixes and improvements
->
-> The first 5 patches are derived from David's v6 patchset
-> (https://lore.kernel.org/linux-crypto/20251017144311.817771-1-dhowells@redhat.com/).
-> Earlier changelogs can be found there.
->
-> David Howells (5):
->   crypto: s390/sha3 - Rename conflicting functions
->   crypto: arm64/sha3 - Rename conflicting function
->   lib/crypto: sha3: Add SHA-3 support
->   lib/crypto: sha3: Move SHA3 Iota step mapping into round function
->   lib/crypto: tests: Add SHA3 kunit tests
->
-> Eric Biggers (10):
->   lib/crypto: tests: Add additional SHAKE tests
->   lib/crypto: sha3: Add FIPS cryptographic algorithm self-test
->   crypto: arm64/sha3 - Update sha3_ce_transform() to prepare for library
->   lib/crypto: arm64/sha3: Migrate optimized code into library
->   lib/crypto: s390/sha3: Add optimized Keccak functions
->   lib/crypto: sha3: Support arch overrides of one-shot digest functions
->   lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest functions
->   crypto: jitterentropy - Use default sha3 implementation
->   crypto: sha3 - Reimplement using library API
->   crypto: s390/sha3 - Remove superseded SHA-3 code
+
+> 
+> I don't see a licensing issue. It's BSD licensed. Also, this is a
+> userland code, so we wouldn't need to worry about that too much.
 >
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Oh, my bad. I thought Minix (the OS) had some licensing incompatibilities
+with Linux, and this repo takes code from Minix. But that may be long in
+the past.
+
+> 
+> You're quite right though that userland replacements will need to meet
+> some criteria before we can rip out the in-kernel versions. This might
+> be a good discussion topic for next year's LSF/MM!
+
+Would an in-tree but out of kernel implementation be an idea? Like how
+kselftest is integrated in the code, even though most of that also takes
+place in userland. That would guarantee a level of support, at least for
+the time being. I could take the code, verify it, and write some tests
+for in selftest.
+
+And there is still the issue of what we do for the syzbot bugs until a
+more permanent solution is achieved.
+
+Anyway, this probably goes over my head as a clueless beginner. Just
+trying to see where I can help. Thanks a lot Jeff for you answers, I
+appreciate it.
+
+Jori.
 
