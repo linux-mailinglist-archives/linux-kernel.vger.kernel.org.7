@@ -1,229 +1,190 @@
-Return-Path: <linux-kernel+bounces-878738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B835EC215CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE37BC215E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259E11A6072C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019381A22D62
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742C5330D42;
-	Thu, 30 Oct 2025 17:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC1B365D3B;
+	Thu, 30 Oct 2025 17:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WgPrI6BU"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="FxQcLMjS"
+Received: from poodle.tulip.relay.mailchannels.net (poodle.tulip.relay.mailchannels.net [23.83.218.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09730363B82
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843720; cv=none; b=UvyH3bZGxYSloKQa+IloKORPuXWY93c7OzD4D48pQTOP9juoeafrtPtMzqbVatig+gJIK3tLu2OviSNU44hM/RNtCRJ3wXymGgezMAOII+FKzDAJyl0ndl0iFxLFbSvPZmCPQ5FTRIstKaPxGg8rgsOIhPeL7BUQ+ds7Wjco9ZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843720; c=relaxed/simple;
-	bh=qpm9nedNDxz4xhTge3n3IQ5KgJG7zyt90dJXjqfDrsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t8Z5j3ywfFzaJGBSUGwo8acNhZK4dd4Mx29QXOptO1OTPPpr26mz+mm9Ix0Y4xrPzjGVCHxikRObgbrORtpaew3LxuwtPXIIBRKVWnXGChf4lSSTas6e7m9QrwzE8nLfvBLScTjiSd4ujK655/2//OFy3LCR53ucIzpYGBUM39k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WgPrI6BU; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-294f3105435so4005ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761843716; x=1762448516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+EDv0KdgDVuAqLBbP2rl8wFdWQKGxBBXu9U1vhd9YY=;
-        b=WgPrI6BUWspd9VQ1fSLcLNEevC8A/2amoZEJhMrOc1SHbn7SoXM+83wEWpeg7RvBB8
-         rJGbTRtOMsdtjkETj/bQau6P2CwHogFyI/uPmsmxKvsPqFpBC8SVeXUrSflrX6Sv2N0c
-         ltHTo2NbxoS1ChEFN61dZbK4ccPwnJIpHLNhN/nbtK+Av21vr5SHsk1JGdOPTt1ebMby
-         LKfL2peSMyVPEk818UMWn089Q/7NY/bCxAEBhmiSK4BcZ0JDtfzzvsdhi92cp0+gZoCA
-         TqX9vA7MwvlBE9X/6tyLxSAUuGpo04XKzM4ix6ijTbq/6Z7RFzXtR+Qv+TxKrIytChd7
-         9TwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761843716; x=1762448516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I+EDv0KdgDVuAqLBbP2rl8wFdWQKGxBBXu9U1vhd9YY=;
-        b=d2I7kPTSccLV9DIzvNiWqDKDcpos0b5RnI38xsyrdktu4kJfQ6Q9b2ExS8W2WGSSYJ
-         NN/OIxeFN44+xq6/M+iTs4WaTsieBOcXC68lty23j0lLe6JhId8lbHT5rzx8Y18ZL/Kk
-         sES1HpqlJDdKpYuKm+7SGuccNISVn+eOX9lT/q4uMLFp1OLiOPtZ4YhSnIlEUK9OWabK
-         784PAVcMWiAxcBAtiXf/jZhuDe1HQksyCxL0xoSVON2/DDgD6mmL6/LvuyEewpR2ChS9
-         NlYzkcxOO++IBgJcNB4M5UkQ0F4d0tVRmf3v268h0DIUaWVvubSjwmLjZwp6XP0lfGw0
-         mNIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTqsXojiBvanG12gQ+xFnlS39c+h7aNdJvU1ZiJQktIBKOqsYIKNWfB+XRvhmvmmQ1TwrhjmNJaYMTc8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzCWTHnBXi8lLCYLB4CjpI0NtSu2E/CLbye9Pq1RByl6FNU7N3
-	LDwNZIK8Qwj14vpT9sJTYGcgDT3+i9bFyAYnYvpfhPT1ixYtXsUmEHzrgD8tzmWjcTqmfaW4HId
-	kzLk2NwovaGrSKtjB+Z0KewL7AoxxoG0/ed9nxFn0
-X-Gm-Gg: ASbGncuEtc+LAD4SU4zaT+ObXXiefn7GwpMJbYF1i8vZCtujmTb5+Tk7vrGYIvzFuxK
-	G6NWDM6GcgVGPHoxvs0IHGs9duTZlBKgIRGZj5jpgrWiHqpj4Bk1Tmsj2mVHI9ES3EGilVVpLtB
-	hbc9M2Cg9NFvM5mOkmOFxMA5c3O392hagtByxsoUS45eJ3yyWBzT7WE1p2leje8EIW9JdKEdFTz
-	S2cwk8qIdTJ9LwalwFZfc+UrPmMqS3/K32MZy9ZKCKVMxZg/a1m5VDA7omPcUd0x1lvnQYcy0xg
-	zDmh4yTNhj3k5I9NcnofrGGmhalW3nyAQ+RDLPw=
-X-Google-Smtp-Source: AGHT+IE4OqQ/W6hJWfcB2dN7mxyOsfraIhSzr9lSBisqAXwrkaVgZsawMssYkny+eOU3PNG5tkaqyCvR01t7WahaQ/c=
-X-Received: by 2002:a17:902:d50e:b0:294:e585:1f39 with SMTP id
- d9443c01a7336-294ee3c1c62mr6090225ad.14.1761843714039; Thu, 30 Oct 2025
- 10:01:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872D71C8616;
+	Thu, 30 Oct 2025 17:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.249
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761843933; cv=pass; b=IN2xyW4+RUb2r6cf1c9te7Lfx+2ztZnpcPpvHRh/106g3XlZnpoiugM9+Ud/v8vYUx44oa8Dl58knmdoaYMONdNythe4SjrmwZX0bYLSLZNx1xAwlupdR+Pq2vEhzzPYTRJyl5PtZXnu1iNeFuj+M7LPRIgsYPj93hHZ0OVgJ2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761843933; c=relaxed/simple;
+	bh=hg/95hEUFBThe3H+ibVwxlOjMXwtSvokvXgvdVPz/ac=;
+	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Date; b=LeWOBVO35SeM8iqxcbVJcRBb7/fGW3HsaBuZij4LT0uop9tw/zMsF424CQK0l4/zgCkUuYwhuYi8CiIsxNRfyWcKlIHLHlbBLVR3tNukquyHJMte0UHHzyhetWi0Ojo5ERdDuyXsRvI/juJE8tp/gHriYERR7rvq1rIp+nJPaPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=FxQcLMjS; arc=pass smtp.client-ip=23.83.218.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id EBB016C2DA8;
+	Thu, 30 Oct 2025 16:57:49 +0000 (UTC)
+Received: from fr-int-smtpout21.hostinger.io (trex-green-2.trex.outbound.svc.cluster.local [100.124.159.62])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 5243B6C278E;
+	Thu, 30 Oct 2025 16:57:44 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1761843466; a=rsa-sha256;
+	cv=none;
+	b=Z0UCplVB+eSdVGhtkzD65nFS5cI7vE7/Za3LWPTC0LG9rGaYu3W3U+dcUlh64gIXP8yQBk
+	gtNkMbmbDLlG2lmOnEi631NMINLXsnvcjrXndxTB64rTNt2cwxajlGh3kUKjq+vO9Zw0a5
+	Tb8jbwOkrRg/auaqkTyx+QJU8m4x0fpVXp4EvyByu4CbMC1CvpVPnwrylj4CH47TDpFRP4
+	eGlpKr1HPuXBAOzyRxr2x/7+Cg5dPX0DINS1BrtlWJ8yyW5BK/aPEbk2TUZKbsBIgpzFYn
+	bjDPEsd8wK8KejxuP43LQAdVrYarcM84gbnMQvkHJwS/ShQCwfeqzQ8xm0qGwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1761843466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=llSNrpdxHG9NnwU1enTHpQTssCJw0Xi5+BHkeVKaDQ0=;
+	b=WjBqSHD07j7aAfjf+c1V7cBAgbe4/5Vs2g4mxaYNwgRwCYgdZXKy98CzP8PSC4q52Edy2j
+	D+QQpaO+kOAoS/ToM1eCcGC6nSoz6AIY7bZCdDwj5qW+VFuqueO9XD+fA+8xNv5GHP7UsS
+	DpholT/jYiQQsQBEOtyI58/mfHeNk5JMyQ94NNz6Bt4zIp7e0CanBA54LBecabUt2RWlLJ
+	DJ/wbfpWS7k+mu5qbH0yAnNPF/F9mzb2dkP4/BFdOawy6eTFTWcSqCgBKcRtdOs8udq4v6
+	+Fs4vD62kUC4oNfGW1VEJ/fJdpxBA7aUHGveEK45ynkQNYhvKAaD3ryS6d00kw==
+ARC-Authentication-Results: i=1;
+	rspamd-77bb85d8d5-cbz7w;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Spot-Occur: 203d5329002b97d4_1761843468479_438798023
+X-MC-Loop-Signature: 1761843468479:3186618478
+X-MC-Ingress-Time: 1761843468479
+Received: from fr-int-smtpout21.hostinger.io (fr-int-smtpout21.hostinger.io
+ [148.222.54.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.124.159.62 (trex/7.1.3);
+	Thu, 30 Oct 2025 16:57:48 +0000
+Received: from [192.168.1.100] (unknown [36.79.115.179])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cy9K04ZZzz1xq1;
+	Thu, 30 Oct 2025 16:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
+	s=hostingermail-a; t=1761843462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=llSNrpdxHG9NnwU1enTHpQTssCJw0Xi5+BHkeVKaDQ0=;
+	b=FxQcLMjSW1FrrAdMnBYOxrLNbUUlSUIJJMxzucJGsa2aYUGuqN/l76CBecQmD7AQPsctm+
+	atynGvxhfq8S6Vj6XS6bjdhplJRHitn74PX6Lri3khh12byEz/U7CyqHGzZRevlGY43Zmd
+	iKg09uOk7y/drjogSWr2hqzy3bpIdmJVh9hczCKRaMziTJV50/kJyeykNLiYYd/sDAE9IP
+	rz2ZFatUSZLfu8vEzWTCPIr/urJ6U8KThjtjn7jZdgqsAIMqE1YGht8zI1HAsSbEh4q1J/
+	WiXaFrPffAMyjI1OdO+Ew5TDPrbFzNaPwF4mdFChfnWXttO6GsWTaKBw0vDGgA==
+Message-ID: <6f68327c-73b2-4684-bc8a-156714b6e3fc@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68fc2af6305be_10e210029@dwillia2-mobl4.notmuch>
- <CAGtprH8-UGFkh4NmuY1ETPYmg7Uk+bm24Er2PPxf8tUOSR_byQ@mail.gmail.com>
- <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch> <CAGtprH8g5212M26HPneyaHPq8VKS=x4TU4Q4vbDZqt_gYLO=TA@mail.gmail.com>
- <68ffbfb53f8b5_10e210078@dwillia2-mobl4.notmuch> <CAGtprH-rv9T1ano+ti=3eU4FO2APCOcR06buPALggAwUnka3Dg@mail.gmail.com>
- <690026ac52509_10e2100cd@dwillia2-mobl4.notmuch> <CAAYXXYyVC0Sm+1PBw=xoYNDV7aa54c_6KTGjMdwVaBAJOd8Hpw@mail.gmail.com>
- <aQFmOZCdw64z14cJ@google.com> <6901792e39d13_10e9100ed@dwillia2-mobl4.notmuch>
- <aQIbM5m09G0FYTzE@google.com>
-In-Reply-To: <aQIbM5m09G0FYTzE@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Thu, 30 Oct 2025 10:01:41 -0700
-X-Gm-Features: AWmQ_bk8e0F5YzgwVWMiaGYCsgnYeJ1vHVGZjF4GsM1pPXtd3P-0mcJulnC-JVo
-Message-ID: <CAGtprH_oR44Vx9Z0cfxvq5-QbyLmy_+Gn3tWm3wzHPmC1nC0eg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: Sean Christopherson <seanjc@google.com>
-Cc: dan.j.williams@intel.com, Erdem Aktas <erdemaktas@google.com>, 
-	Dave Hansen <dave.hansen@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Elena Reshetova <elena.reshetova@intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>, 
-	"sagis@google.com" <sagis@google.com>, "paulmck@kernel.org" <paulmck@kernel.org>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: adc: qcom-pm8xxx-xoadc: fix incorrect
+ calibration values
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251028-pm8xxx-xoadc-fix-v1-0-b000e1036e41@smankusors.com>
+ <20251028-pm8xxx-xoadc-fix-v1-2-b000e1036e41@smankusors.com>
+ <7558d070-762c-4c81-aed7-1b087d131483@oss.qualcomm.com>
+Content-Language: en-US
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+In-Reply-To: <7558d070-762c-4c81-aed7-1b087d131483@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 30 Oct 2025 16:57:40 +0000 (UTC)
+X-CM-Envelope: MS4xfLHiMq5rjbjKJw5ofKWoM2Dkx4FtDaY4k08WQvmYqHQZLK8o87JlAoyAhrZS8sReutLKp63IqrA2L7ww+KJSjYUbChaSYEOomUKisyMKQv28VjmLmMrJ Gu/CVu9SyRZovqsNZAn+ILFHUv51x0CGBYShyPIOpKfLoaPxH6CBoPqadpCdR3lOL0D8ko0aEFyWH3I+OpTZpHb9TYFzIqyrFLj/D42vdXejDG3MPFb62P/r a0uMwtpLfoZtGoxmFojqEy8dACm+6ywcNFd3lr0GT89s8mz6nkkBJ5Sbwi+VeTpUPcA7KkD9CvLFnaFG4eG7/OioCcWsiReEByDQalc2QepORA8WEw68bs2i R2rXtlxBu3+rvUQeUpEYkLgvsRmmtx33relSpRCKHRXjg8F/4I/JG31nT68V+D3nZJfyg5VQCMwMfurHCEizX/4VLdVH2A==
+X-CM-Analysis: v=2.4 cv=NuiDcNdJ c=1 sm=1 tr=0 ts=69039906 a=zvY53+tUHMHsMQrS9yrnQg==:117 a=zvY53+tUHMHsMQrS9yrnQg==:17 a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=wxLWbCv9AAAA:8 a=tahBNpKbuAaPwjICECgA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+X-AuthUser: linux@smankusors.com
 
-On Wed, Oct 29, 2025 at 6:48=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
+On 10/28/2025 4:44 PM, Konrad Dybcio wrote:
+> On 10/27/25 6:29 PM, Antony Kurniawan Soemardi wrote:
+>> On msm8960 phones, the XOADC driver was using incorrect calibration
+>> values:
+>> absolute calibration dx = 625000 uV, dy = 4 units
+>> ratiometric calibration dx = 1800, dy = -29041 units
+>>
+>> As a result, reading from the IIO bus returned unexpected results:
+>> in_voltage_7 (USB_VBUS): 0
+>> in_voltage_10 (125V): 0
+>>
+>> The issue was caused by not setting the ratiometric scale (amux_ip_rsv)
+>> from the predefined channels. Additionally, the downstream code always
+>> set the ADC_ARB_USRP_DIG_PARAM register to PM8XXX_ADC_ARB_ANA_DIG [1].
+>> That value does not include the SEL_SHIFT0 and SEL_SHIFT1 bits. Enabling
+>> those bits caused calibration errors too, so they were removed.
+>>
+>> With these fixes, calibration now uses the correct values:
+>> absolute calibration dx = 625000 uV, dy = 6307 units
+>> ratiometric calibration dx = 1800, dy = 18249 units
+>>
+>> Reading from the IIO bus now returns expected results:
+>> in_voltage_7 (USB_VBUS): 4973836
+>> in_voltage_10 (125V): 1249405
+>>
+>> [1] https://github.com/LineageOS/android_kernel_sony_msm8960t/blob/93319b1e5aa343ec1c1aabcb028c5e88c7df7c01/drivers/hwmon/pm8xxx-adc.c#L407-L408
+>>
+>> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+>> ---
+>>   drivers/iio/adc/qcom-pm8xxx-xoadc.c | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/qcom-pm8xxx-xoadc.c b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
+>> index 8555f34036fb13c41ac720dc02c1dc39876e9198..a53d361456ec36b66d258041877bd96ab37838c4 100644
+>> --- a/drivers/iio/adc/qcom-pm8xxx-xoadc.c
+>> +++ b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
+>> @@ -503,10 +503,11 @@ static int pm8xxx_read_channel_rsv(struct pm8xxx_xoadc *adc,
+>>   		goto unlock;
+>>   
+>>   	/* Decimation factor */
+>> -	ret = regmap_write(adc->map, ADC_ARB_USRP_DIG_PARAM,
+>> -			   ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT0 |
+>> -			   ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT1 |
+>> -			   ch->decimation << ADC_DIG_PARAM_DEC_SHIFT);
+>> +	ret = regmap_update_bits(adc->map,
+>> +				 ADC_ARB_USRP_DIG_PARAM,
+>> +				 ADC_ARB_USRP_DIG_PARAM_DEC_RATE0 |
+>> +				 ADC_ARB_USRP_DIG_PARAM_DEC_RATE1,
+> The PM8921 datasheet suggests a single valid value of BIT(5)=1, BIT(6)=0
+> for a "1K" (1/1024?) ratio, although a comment in this file suggests
+> BIT(5)|BIT(6) is also valid and corresponds to 1/4096.. I wouldn't be
+> surprised if that is the case
 >
-> On Tue, Oct 28, 2025, dan.j.williams@intel.com wrote:
-> > Sean Christopherson wrote:
-> > [..]
-> > > > IMO, It is something userspace should decide, kernel's job is to
-> > > > provide the necessary interface about it.
-> > >
-> > > I disagree, I don't think userspace should even get the option.  IMO,=
- not setting
-> > > AVOID_COMPAT_SENSITIVE is all kinds of crazy.
-> >
-> > Do see Table 4.4: "Comparison of Update Incompatibility Detection and/o=
-r
-> > Avoidance Methods" from the latest base architecture specification [1].
-> > It lists out the pros and cons of not setting AVOID_COMPAT_SENSITIVE.
-> > This thread has only argued the merits of "None" and "Avoid updates
-> > during update- sensitive times". It has not discussed "Detect
-> > incompatibility after update", but let us not do that.
+> The previously set bits are a field called DECI_SEL but are otherwise left
+> undescribed
+
+So, do you think we can leave the BIT(0) and BIT(1) as is? I have a feeling
+that if they aren't set, these changes might prevent the APQ8060 Dragonboard
+from reading the cm3605 sensor? or maybe not?
+
+I mean this one, since the driver was originally tested on that board
+https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts#L67-L79
+
+> Hope this is useful
 >
-> But we already are discussing that, because the "None" option is just pun=
-ting
-> "Detect incompatibility after update" to something other than the VMM.  D=
-oing
-> literally nothing isn't an option.  The fact that it's even listed in the=
- table,
-> not to mention has "Simplest." listed as a pro, makes me question whether=
- or not
-> the authors actually understand how software built around the TDX-Module =
-is used
-> in practice.
->
-> If an update causes a TD build to fail, or to generate the wrong measurem=
-ent, or
-> whatever "Failures due to incompatibilities" means, *something* eventuall=
-y needs
-> to take action.  Doing nothing is certainly the simplest option for the h=
-ypervisor
-> and VMM, but when looking at the entire stack/ecosystem, it's the most co=
-mplex
-> option as it bleeds the damage into multiple, potentially-unknown compone=
-nts of
-> the stack.  Either that, or I'm grossly misunderstanding what "Failures" =
-means.
->
-> That section also states:
->
->   Future TDX Module versions may have different or additional update-sens=
-itive cases.
->
-> Which means that from an ABI perspective, "Avoid updates during update-se=
-nsitive
-> times" is the _ONLY_ viable option.  My read of that is that future TDX-M=
-odules
-> can effectively change the failure modes for a existing KVM ioctls.  That=
- is an
-> ABI change and will break userspace, e.g. if userspace is sane and expect=
-s certain
-> operations to succeed.
+> Konrad
 
-A reference patch we tested for "Avoid updates during update-sensitive
-times" and one caveat was that
-/sys/devices/virtual/tdx/tdx_tsm/version was not available post update
-failure until a subsequent successful update:
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index e00650b83f08..96ae7c679e4e 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -22,6 +22,7 @@
- #define TDX_FEATURES0_NO_RBP_MOD               BIT_ULL(18)
- #define TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC     BIT_ULL(23)
- #define TDX_FEATURES0_DYNAMIC_PAMT             BIT_ULL(36)
-+#define TDX_FEATURES0_UPDATE_COMPATIBILITY     BIT_ULL(47)
-
- #ifndef __ASSEMBLY__
-
-@@ -129,6 +130,11 @@ static inline bool
-tdx_supports_dynamic_pamt(const struct tdx_sys_info *sysinfo)
-        return sysinfo->features.tdx_features0 & TDX_FEATURES0_DYNAMIC_PAMT=
-;
- }
-
-+static inline bool tdx_supports_update_compatibility(const struct
-tdx_sys_info *sysinfo)
-+{
-+       return sysinfo->features.tdx_features0 &
-TDX_FEATURES0_UPDATE_COMPATIBILITY;
-+}
-+
- int tdx_guest_keyid_alloc(void);
- u32 tdx_get_nr_guest_keyids(void);
- void tdx_guest_keyid_free(unsigned int keyid);
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index f6199f8ce411..95deb1146a79 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1523,6 +1523,10 @@ int tdx_module_shutdown(void)
-         * fail.
-         */
-        args.rcx =3D tdx_sysinfo.handoff.module_hv;
-+
-+       if (tdx_supports_update_compatibility(&tdx_sysinfo))
-+               args.rcx |=3D TDX_SYS_SHUTDOWN_AVOID_COMPAT_SENSITIVE;
-+
-        ret =3D seamcall_prerr(TDH_SYS_SHUTDOWN, &args);
-        if (!ret)
-                tdx_module_reset_state();
-diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-index 0cd9140620f9..772c714de2bc 100644
---- a/arch/x86/virt/vmx/tdx/tdx.h
-+++ b/arch/x86/virt/vmx/tdx/tdx.h
-@@ -94,6 +94,8 @@ struct tdmr_info {
- /* Bit definitions of TDX_FEATURES0 metadata field */
- #define TDX_FEATURES0_TD_PRESERVING    BIT(1)
-
-+#define TDX_SYS_SHUTDOWN_AVOID_COMPAT_SENSITIVE                BIT(16)
-+
- /*
-  * Do not put any hardware-defined TDX structure representations below
-  * this comment!
+Thanks,
+Antony K. S.
 
