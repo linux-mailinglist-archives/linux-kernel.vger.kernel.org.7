@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-877738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBA4C1EE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD75C1EE79
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8C23BDB34
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD383BE9F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DAC30C37C;
-	Thu, 30 Oct 2025 08:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FC8337BAD;
+	Thu, 30 Oct 2025 08:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gy/Swgzw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jlsLX77L"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7463A2F12C4;
-	Thu, 30 Oct 2025 08:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951ED29D28B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811318; cv=none; b=cWNCdD2TIcZW4WZJp4gSvBuUdkRDVCksy940mWnCdsvCAJI3zr8pwYf9JocM52deXOdKVZR7JjSdmFkt4ChO+fgj+MP8dJHYq/0ImWrRHZAf9dpE2hNXqpA4NE3yRzEWJF8+alWVUjAXi/924VPxbwGlBjyouRvQp+xo78ajB/U=
+	t=1761811561; cv=none; b=pOxJ7qJrmQAb12M9cTrQKnuGal5rxX0eyAJT9huJu9LL+EP4O/CddyaIvhC2K9E3ajDc0pL6EwY2Oa5JaWv+a5PeN4JpaSh2r5shl9WzdITC2Yov3zDPl7SVSOO5lz44NaErDImfk40HRpQ9ClPLFvtc0BNJY7aSf37R6GOGLNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761811318; c=relaxed/simple;
-	bh=n7Qqfgj+rQT+Jh2BZlXaQF3sxTbKPl3C7VVMoYSKvzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rk4PTREHvvkjDd5aU7UgxUmXDDSGDV+CI45Ey/6ZRWuweOIPcSzKjelSqTfQQOebSKfI0weO3rYU1BiYWgL0o2/GoarSzIAFyXBdeuvFZQt7WhRCpTBo4nb9G1PShutFAnJveAtSbfm9PO638dbK4tsp/Cj+WWOiCr+mloEX4iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gy/Swgzw; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761811317; x=1793347317;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n7Qqfgj+rQT+Jh2BZlXaQF3sxTbKPl3C7VVMoYSKvzM=;
-  b=Gy/Swgzw9CXp5vGnuzxoBD+Ub028JE2yPkIgWB53x7/pR0ORNHnrKeuN
-   9mtshZfY4cyMuUd7Htys2+XSIBifPqmOP3oMmpZikRQ0fN5l8vintJAWo
-   zwN1mpmjzUHRWrDv2K2WwzgY6zvmFI008ypNlq9S6LE3zqVabgIzCW5sd
-   atI1L4dv1zNIag5qD2Y7XFB9JnmxzZ41IwUZjlUB/ZGU1VMtVwuDgjw2B
-   UsTdZLKejJ6X+TBZtIhYna3px9swZhSgrr7JeX8AyMKYXGgQoyk5rb7MD
-   unfswnzaxqGNWOk1Z/QL8du5iGjFXRJSwvafwOIZom4Uoi/jiZyE6dxLT
-   A==;
-X-CSE-ConnectionGUID: UE+viay0SGq66E37/q94XA==
-X-CSE-MsgGUID: rQFGNYH2TR2ZiVcXOvXC4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75292082"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="75292082"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 01:01:56 -0700
-X-CSE-ConnectionGUID: FnZCSWSMT3azCtSa2/wvJw==
-X-CSE-MsgGUID: IhL1YlJUQrmaDAE1YXVXBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="190250405"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 01:01:54 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vENbT-00000003pzk-2HzG;
-	Thu, 30 Oct 2025 10:01:51 +0200
-Date: Thu, 30 Oct 2025 10:01:51 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] iio: imu: st_lsm6dsx: remove event_threshold field
- from hw struct
-Message-ID: <aQMbb6BUBHQUXX9y@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
- <20251030072752.349633-7-flavra@baylibre.com>
+	s=arc-20240116; t=1761811561; c=relaxed/simple;
+	bh=Op1t4LLfAXhJLesSQQ0Zr9Tb4KUF5kV6yD/hPL9PUSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pw7LC46vPp7p8X179FovFtlvDqJ2n9d6KZVros8cus0yUQcvQsNj2VkxfoxwDaQb5E2SpKUGJJqf/gRKV1ngEzeXjZsXZK9LN2xQfYvehtRqzN7bl5B20uidSzZnt+zLiV9B5XBDuc0oS+JFKpYHdlW9WGFHg/vhHrBte5QCEx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jlsLX77L; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 47A4CC0DAAB;
+	Thu, 30 Oct 2025 08:05:36 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7DDD96068C;
+	Thu, 30 Oct 2025 08:05:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BD087102F2130;
+	Thu, 30 Oct 2025 09:05:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761811555; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=yhO0zoxEkB9DzrUVoWIN7bjo6McuuEao4alqEu6uLBQ=;
+	b=jlsLX77LeQNohInoJWs+ecJrRdx6EBTro8CMxvC3JPE0B4chG8p7w/UusCVGAaMnr+1by2
+	rFS5EtZPlcXC37k9JwKwOBoYt/KYglMziIUjDzOeGvfy321aj9dfJZF9TnzJcKpv8gTVZw
+	rgLMYpNIMH3sL363P1TBpmaGeu8RfX01IID9c9hEo0zVBeGeBD5S9L0Csk06GDMAt5wAWR
+	orRWpcqnFmdeK7ZqniILIj0pWgsfiFoZfrm98KdvQUeXP/V3MSLz2BA0/sAmWDaqW+xkM8
+	gJ2vmYsvzbnERCIb3kxPlDOb25QcesuUIsBpG5o16ja0PzlrIZZ1T59M42FzBQ==
+Message-ID: <0e576e3d-7e77-43ec-8ec2-5867dcb44960@bootlin.com>
+Date: Thu, 30 Oct 2025 09:05:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030072752.349633-7-flavra@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v6 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>,
+ Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
+ <CAADnVQ+ESBTW-+NOQ55HXLwODFZa+uHWzMpPAq1FfjPP4otH_A@mail.gmail.com>
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <CAADnVQ+ESBTW-+NOQ55HXLwODFZa+uHWzMpPAq1FfjPP4otH_A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Oct 30, 2025 at 08:27:49AM +0100, Francesco Lavra wrote:
-> This field is used to store the wakeup event detection threshold
-> value. When adding support for more event types, some of which may
-> have different threshold values for different axes, storing all
-> threshold values for all event sources would be cumbersome. Thus,
-> remove this field altogether, and read the currently configured
-> value from the sensor when requested by userspace.
+Hi,
 
-...
+On 10/29/25 7:54 PM, Alexei Starovoitov wrote:
+> On Wed, Oct 29, 2025 at 6:52 AM Bastien Curutchet (eBPF Foundation)
+> <bastien.curutchet@bootlin.com> wrote:
+>>
+>> Hi all,
+>>
+>> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+>> are defined in xksxceiver.c. Since this script is used to test real
+>> hardware, the goal here is to leave it as it is, and only integrate the
+>> tests that run on veth peers into the test_progs framework.
+>>
+>> I've looked into what could improve the speed in the CI:
+>> - some tests are skipped when run on veth peers in a VM (because they
+>>    rely on huge page allocation or HW rings). This skipping logic still
+>>    takes some time and can be easily avoided.
+>> - the TEARDOWN test is quite long (several seconds on its own) because
+>>    it runs the same test 10 times in a row to ensure the teardown process
+>>    works properly
+>>
+>> With theses tests fully skipped in the CI and the veth setup done only
+>> once for each mode (DRV / SKB), the execution time is reduced to about 5
+>> seconds on my setup.
+>> ```
+>> $ tools/testing/selftests/bpf/vmtest.sh -d $HOME/ebpf/output-regular/ -- time ./test_progs -t xsk
+>> [...]
+>> real    0m 5.04s
+>> user    0m 0.38s
+>> sys     0m 1.61s
+> 
+> This is fine. I see
+> Summary: 2/48 PASSED, 0 SKIPPED, 0 FAILED
+> 
+> real    0m8.165s
+> user    0m1.795s
+> sys     0m4.740s
+> 
+> on debug kernel with kasan which is ok.
+> > But it conflicts with itself :(
+> 
+> $ test_progs -j -t xsk
+> 
+> All error logs:
+> setup_veth:FAIL:ip link add veth0 numtxqueues 4 numrxqueues 4 type
+> veth peer name veth1 numtxqueues 4 numrxqueues 4 unexpected error: 512
+> (errno 2)
+> test_xsk_drv:FAIL:setup veth unexpected error: -1 (errno 2)
+> #664     xsk_drv:FAIL
+> Summary: 1/24 PASSED, 0 SKIPPED, 1 FAILED
+> 
+> Pls fix the parallel run and not by adding "_serial", of course.
+Oups, in my quest for speed I removed the 'test_ns' prefix. It didn't 
+seem necessary since all tests are run at once, but I forgot about 
+parallel execution between the DRV and SKB modes..
 
-> +	*val = (data & reg->mask) >> __ffs(reg->mask);
+Sorry about this, I'll put back the 'test_ns' prefix.
 
-Seems like yet another candidate for field_get() macro.
-
--- 
-With Best Regards,
-Andy Shevchenko
+It will be a good opportunity to address some of the AI feedback I received.
 
 
+Best regards,
+Bastien
 
