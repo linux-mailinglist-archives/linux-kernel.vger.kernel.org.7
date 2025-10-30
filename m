@@ -1,407 +1,105 @@
-Return-Path: <linux-kernel+bounces-878542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474B2C20F22
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:33:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA796C20F7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C851C4EB24F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:32:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1911888066
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA00288517;
-	Thu, 30 Oct 2025 15:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6E53644A8;
+	Thu, 30 Oct 2025 15:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vf0kFFrM"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vxts/fQZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8485572639
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033B71990A7;
+	Thu, 30 Oct 2025 15:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761838364; cv=none; b=eaaMwPUHe1+Lp0VQdw9720uwp8hCXcCmJ+nPqp7997k2NZsT1UgTlXBmv4id3sqv8gZE5fYHltl6Ay9SRpaRiqsOYSpbYEkA5UMp7n6WPr7UH3/J1ypDKEIRYRBl15dXjv/YMFfEJisnfBsPmxBZ1I7vZt4ap7WsB3jR7R5Oyso=
+	t=1761838417; cv=none; b=K2vd/kCcxkPAdKMGXtIFtjcf+qotyeNOFPzWNi6AwasMvBKX//+eXEDQyhhO2mzjMI2VqwIVTE+3CPVgvSQ4CSLTA9sicHB/EDp9xR5AEK563FgwxIRoD90p6HmgAS21ZBnEuACQks76E9biSp4lzHOdG5isTseeqQ3mndl0CKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761838364; c=relaxed/simple;
-	bh=7+179jkXBWf7iUMeoVmkYzlaHBEPAcDQsLny+3UjYeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fJiiAIWW1uAQhm2DaVEa3VOVgoL8+wNG5j2jdKTdUrCL5V2KcvYx8Ba48jDhfCd03JM3c0BKruNR/6JTkM9sDZluB99i094Z7KPEvHcAQ/ko0Gh6ZgspuufRtAbIZiff7kfqACOCZyeHZ9Qf1bfrvJtIRby2MuqyoV5m65iIWLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vf0kFFrM; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-89c81839de7so71498085a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761838361; x=1762443161; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=90sKvhv/LxlQSSqjQG+hqX7h6vW6w7D0vD2lEF/vA1s=;
-        b=vf0kFFrMrpdF1xYyJ/jcOBzdPK2O80oecV8C30WBfcp/SGyFNZUNfhR2dX82+7MB95
-         qkKCEotEQ7D24fuaF/pKZyv5Ix05UbafkmbZjF1l03GJWZEQzbZp+k8WziOmA2spFOHs
-         qJ/LVotf2PxcOGSQf/wwZGgbxF1a0DE5+TXw4qqG/5BVurVlx5su4T90tHSbo9RdKJ2s
-         jKJsh7iCoN1+/QpUDrcGRvQOyB9d+V+U9P2U5XDGL/u79PFgyEcabQW1FRxDODTNNAcI
-         4TepyMvJjgVFDqto3/NTUAoJDfxpmxC3I/muFwOopBp2hqy8MSlC7s3WsE/09obr2xXJ
-         f6Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761838361; x=1762443161;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90sKvhv/LxlQSSqjQG+hqX7h6vW6w7D0vD2lEF/vA1s=;
-        b=OhE5yO1ajHi0KE4VGmX01KCEgO4fJt71ngZgYcqBiiLOKe69F53OA6y9ygDHjvvSJ7
-         n8UpO5jBY9EnHk5GSGLCgY7W9LwX+HuaEzA2s/TOYhHdVs60phNwbvjme0A3LBoTEP6K
-         jSx9yaDSmqg1BvHWQnYC5hmXSL/qTKqtGvK4kCuASuBAN+AWQK93ZjkPLs3ixLTqJfY0
-         ZQlOWAPhdFhLw69Hq2P7RE+g/W1HPK2ApMRMfM3aOEkM511y3k9nO3qn21eTWS91VP0R
-         l0yvXQX817Inyczf4YbrBA7teCAdF9g4utD9uqsHgVTKaPCeEvksN0PxoWyaXjEe47ay
-         ppwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOEZ6rK8QWy7UiEuofr7f/MJRJ6V3b7n3fi5yMc7ehtmabeRasku3VDrwUMtQW61tgryh4HkGax29dj2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb8PTeky1ccMu75Xgh/g3eW+LZoGmwvZUk0lIaEv6irPejG09w
-	DZSCUmZEp5mOu3NYs6Z92zZnoL4ZPY3phDnA0b6o+d5GMA7QDijjQhVK2zrBCEz+wJTDJOeCd9T
-	G/0T4Dx+uHlz+3j74kNxKga4TQaMtB+PxbiRdd+OzRQ==
-X-Gm-Gg: ASbGncv1OkZTC2Q3z82b0Va5imnAUOeb+UYjy94wmKfASFADIcSYVwIQiOQTL6AKXr6
-	7IH/a4ugmVcnjwrPW1dsobMstL4uXcC91+aU4B5udVqxKfMECuhmujVCihmv9NzVAHwd9135meK
-	VzGv5zE/cSvZwWqQ7s7Ot2m5T65QzUeWu8DEH9i7C4yIfGt5g8Ceg354zol11oE9WqkB0OSDUDX
-	fEjteBaPw43g+H2/sChEACogBiNj6Ho/BnxKpfQh5zHMtIdFSS0pWGHIPzrWnR4oui/2fzQbGbt
-	xgY6WUrhDEtommmaYg==
-X-Google-Smtp-Source: AGHT+IEgV93wREdWunbf+FF7vUk4F3W5QN6rnxf/b5n6hCHXmBsC+r6T1L85oyN8vW3LF2cyQS3Ard/bFxRE2AGXrLE=
-X-Received: by 2002:a05:620a:2913:b0:892:7dd2:9f0f with SMTP id
- af79cd13be357-8aa2c563761mr433075985a.19.1761838360928; Thu, 30 Oct 2025
- 08:32:40 -0700 (PDT)
+	s=arc-20240116; t=1761838417; c=relaxed/simple;
+	bh=yVmx64HxX9GoeUiK3VwYFbYD1eZhphaMlhQqO1pIxo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7l2E0iDSNnuG2fOInF/TxulHo8p0Yn4wYFV3dDp+av+tN7aVsogJP+DpVwSa7ZCoPmaKjsCICmroLfSJycWBGuMN2+64rfwkv22ixJ8jp+6pk/40YYY1RLMLwcGJLZw5HT7wtSvC4mgdRRUxpRL0sRJWpsSEyZaOyZWTYh71oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vxts/fQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B341C4CEF1;
+	Thu, 30 Oct 2025 15:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761838416;
+	bh=yVmx64HxX9GoeUiK3VwYFbYD1eZhphaMlhQqO1pIxo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vxts/fQZyEIuU+lhUU90wioM/NMijSFswy0qskCM/9RCaL7WTpnjn44TzUWyVhqjp
+	 rkscBWjcLpOb9ooGIHRSOs/i3qxljOWdmmsbsuXf8aGJdCo0LFch4BLZVBgNaRAafy
+	 M7x8SlMedtG46ZNvS2MYNSXddc8KkxGDlf9k4+fQ=
+Date: Thu, 30 Oct 2025 16:33:33 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Kuen-Han Tsai <khtsai@google.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: gadget: f_tcm: Use auto-cleanup for usb_request
+Message-ID: <2025103010-awkward-gentleman-150d@gregkh>
+References: <20251030-auto-cleanup-v1-0-db30584fadfd@google.com>
+ <20251030-auto-cleanup-v1-1-db30584fadfd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020-extended_cti-v5-0-6f193da2d467@oss.qualcomm.com> <20251020-extended_cti-v5-1-6f193da2d467@oss.qualcomm.com>
-In-Reply-To: <20251020-extended_cti-v5-1-6f193da2d467@oss.qualcomm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Thu, 30 Oct 2025 15:32:30 +0000
-X-Gm-Features: AWmQ_bmTZo8Ep2bfi7zMuaSG2pUo8tJvBDHBZCZJODqdh48KYMuAfDMpUBYETyw
-Message-ID: <CAJ9a7VjLmCQ1WKu_FitcPhxksWe+v8gKoZBk20hYQZ_s42Da-w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] coresight: cti: Convert trigger usage fields to
- dynamic bitmaps and arrays
-To: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>, 
-	quic_yingdeng@quicinc.com, Jinlong Mao <jinlong.mao@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030-auto-cleanup-v1-1-db30584fadfd@google.com>
 
-Hi,
+On Thu, Oct 30, 2025 at 11:14:19PM +0800, Kuen-Han Tsai wrote:
+> Refactor f_tcm.c to use auto-cleanup mechanism for usb_request
+> allocations in bot_prepare_reqs(), uasp_alloc_stream_res(), and
+> uasp_alloc_cmd().
 
-On Mon, 20 Oct 2025 at 08:12, Yingchao Deng
-<yingchao.deng@oss.qualcomm.com> wrote:
->
-> Replace the fixed-size u32 fields in the cti_config and cti_trig_grp
-> structure with dynamically allocated bitmaps and arrays. This allows
-> memory to be allocated based on the actual number of triggers during probe
-> time, reducing memory footprint and improving scalability for platforms
-> with varying trigger counts.
-> Additionally, repack struct cti_config to reduce its size from 80 bytes to
-> 72 bytes.
->
-> Signed-off-by: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-cti-core.c   | 58 ++++++++++++++++------
->  .../hwtracing/coresight/coresight-cti-platform.c   | 16 +++---
->  drivers/hwtracing/coresight/coresight-cti-sysfs.c  | 10 ++--
->  drivers/hwtracing/coresight/coresight-cti.h        | 17 ++++---
->  4 files changed, 65 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
-> index 8fb30dd73fd2..8c9cec832898 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-core.c
-> @@ -214,8 +214,8 @@ void cti_write_intack(struct device *dev, u32 ackval)
->  /* DEVID[19:16] - number of CTM channels */
->  #define CTI_DEVID_CTMCHANNELS(devid_val) ((int) BMVAL(devid_val, 16, 19))
->
-> -static void cti_set_default_config(struct device *dev,
-> -                                  struct cti_drvdata *drvdata)
-> +static int cti_set_default_config(struct device *dev,
-> +                                 struct cti_drvdata *drvdata)
->  {
->         struct cti_config *config = &drvdata->config;
->         u32 devid;
-> @@ -234,12 +234,33 @@ static void cti_set_default_config(struct device *dev,
->                 config->nr_trig_max = CTIINOUTEN_MAX;
->         }
->
-> +       config->trig_in_use = devm_bitmap_zalloc(dev, config->nr_trig_max, GFP_KERNEL);
-> +       if (!config->trig_in_use)
-> +               return -ENOMEM;
-> +
-> +       config->trig_out_use = devm_bitmap_zalloc(dev, config->nr_trig_max, GFP_KERNEL);
-> +       if (!config->trig_out_use)
-> +               return -ENOMEM;
-> +
-> +       config->trig_out_filter = devm_bitmap_zalloc(dev, config->nr_trig_max, GFP_KERNEL);
-> +       if (!config->trig_out_filter)
-> +               return -ENOMEM;
-> +
-> +       config->ctiinen = devm_kcalloc(dev, config->nr_trig_max, sizeof(u32), GFP_KERNEL);
-> +       if (!config->ctiinen)
-> +               return -ENOMEM;
-> +
-> +       config->ctiouten = devm_kcalloc(dev, config->nr_trig_max, sizeof(u32), GFP_KERNEL);
-> +       if (!config->ctiouten)
-> +               return -ENOMEM;
-> +
->         config->nr_ctm_channels = CTI_DEVID_CTMCHANNELS(devid);
->
->         /* Most regs default to 0 as zalloc'ed except...*/
->         config->trig_filter_enable = true;
->         config->ctigate = GENMASK(config->nr_ctm_channels - 1, 0);
->         config->enable_req_count = 0;
-> +       return 0;
->  }
->
->  /*
-> @@ -270,8 +291,10 @@ int cti_add_connection_entry(struct device *dev, struct cti_drvdata *drvdata,
->         cti_dev->nr_trig_con++;
->
->         /* add connection usage bit info to overall info */
-> -       drvdata->config.trig_in_use |= tc->con_in->used_mask;
-> -       drvdata->config.trig_out_use |= tc->con_out->used_mask;
-> +       bitmap_or(drvdata->config.trig_in_use, drvdata->config.trig_in_use,
-> +                 tc->con_in->used_mask, drvdata->config.nr_trig_max);
-> +       bitmap_or(drvdata->config.trig_out_use, drvdata->config.trig_out_use,
-> +                 tc->con_out->used_mask, drvdata->config.nr_trig_max);
->
->         return 0;
->  }
-> @@ -293,12 +316,20 @@ struct cti_trig_con *cti_allocate_trig_con(struct device *dev, int in_sigs,
->         if (!in)
->                 return NULL;
->
-> +       in->used_mask = devm_bitmap_alloc(dev, in_sigs, GFP_KERNEL);
-> +       if (!in->used_mask)
-> +               return NULL;
-> +
->         out = devm_kzalloc(dev,
->                            offsetof(struct cti_trig_grp, sig_types[out_sigs]),
->                            GFP_KERNEL);
->         if (!out)
->                 return NULL;
->
-> +       out->used_mask = devm_bitmap_alloc(dev, out_sigs, GFP_KERNEL);
-> +       if (!out->used_mask)
-> +               return NULL;
-> +
->         tc->con_in = in;
->         tc->con_out = out;
->         tc->con_in->nr_sigs = in_sigs;
-> @@ -314,7 +345,6 @@ int cti_add_default_connection(struct device *dev, struct cti_drvdata *drvdata)
->  {
->         int ret = 0;
->         int n_trigs = drvdata->config.nr_trig_max;
-> -       u32 n_trig_mask = GENMASK(n_trigs - 1, 0);
->         struct cti_trig_con *tc = NULL;
->
->         /*
-> @@ -325,8 +355,9 @@ int cti_add_default_connection(struct device *dev, struct cti_drvdata *drvdata)
->         if (!tc)
->                 return -ENOMEM;
->
-> -       tc->con_in->used_mask = n_trig_mask;
-> -       tc->con_out->used_mask = n_trig_mask;
-> +       bitmap_fill(tc->con_in->used_mask, n_trigs);
-> +       bitmap_fill(tc->con_out->used_mask, n_trigs);
-> +
->         ret = cti_add_connection_entry(dev, drvdata, tc, NULL, "default");
->         return ret;
->  }
-> @@ -339,7 +370,6 @@ int cti_channel_trig_op(struct device *dev, enum cti_chan_op op,
->  {
->         struct cti_drvdata *drvdata = dev_get_drvdata(dev->parent);
->         struct cti_config *config = &drvdata->config;
-> -       u32 trig_bitmask;
->         u32 chan_bitmask;
->         u32 reg_value;
->         int reg_offset;
-> @@ -349,18 +379,16 @@ int cti_channel_trig_op(struct device *dev, enum cti_chan_op op,
->            (trigger_idx >= config->nr_trig_max))
->                 return -EINVAL;
->
-> -       trig_bitmask = BIT(trigger_idx);
-> -
->         /* ensure registered triggers and not out filtered */
->         if (direction == CTI_TRIG_IN)   {
-> -               if (!(trig_bitmask & config->trig_in_use))
-> +               if (!(test_bit(trigger_idx, config->trig_in_use)))
->                         return -EINVAL;
->         } else {
-> -               if (!(trig_bitmask & config->trig_out_use))
-> +               if (!(test_bit(trigger_idx, config->trig_out_use)))
->                         return -EINVAL;
->
->                 if ((config->trig_filter_enable) &&
-> -                   (config->trig_out_filter & trig_bitmask))
-> +                   test_bit(trigger_idx, config->trig_out_filter))
->                         return -EINVAL;
->         }
->
-> @@ -891,7 +919,9 @@ static int cti_probe(struct amba_device *adev, const struct amba_id *id)
->         raw_spin_lock_init(&drvdata->spinlock);
->
->         /* initialise CTI driver config values */
-> -       cti_set_default_config(dev, drvdata);
-> +       ret = cti_set_default_config(dev, drvdata);
-> +       if (ret)
-> +               return ret;
->
->         pdata = coresight_cti_get_platform_data(dev);
->         if (IS_ERR(pdata)) {
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> index d0ae10bf6128..4bef860a0484 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> @@ -136,8 +136,8 @@ static int cti_plat_create_v8_etm_connection(struct device *dev,
->                 goto create_v8_etm_out;
->
->         /* build connection data */
-> -       tc->con_in->used_mask = 0xF0; /* sigs <4,5,6,7> */
-> -       tc->con_out->used_mask = 0xF0; /* sigs <4,5,6,7> */
-> +       bitmap_set(tc->con_in->used_mask, 4, 4); /* sigs <4,5,6,7> */
-> +       bitmap_set(tc->con_out->used_mask, 4, 4); /* sigs <4,5,6,7> */
->
->         /*
->          * The EXTOUT type signals from the ETM are connected to a set of input
-> @@ -194,10 +194,10 @@ static int cti_plat_create_v8_connections(struct device *dev,
->                 goto of_create_v8_out;
->
->         /* Set the v8 PE CTI connection data */
-> -       tc->con_in->used_mask = 0x3; /* sigs <0 1> */
-> +       bitmap_set(tc->con_in->used_mask, 0, 2); /* sigs <0 1> */
->         tc->con_in->sig_types[0] = PE_DBGTRIGGER;
->         tc->con_in->sig_types[1] = PE_PMUIRQ;
-> -       tc->con_out->used_mask = 0x7; /* sigs <0 1 2 > */
-> +       bitmap_set(tc->con_out->used_mask, 0, 3); /* sigs <0 1 2 > */
->         tc->con_out->sig_types[0] = PE_EDBGREQ;
->         tc->con_out->sig_types[1] = PE_DBGRESTART;
->         tc->con_out->sig_types[2] = PE_CTIIRQ;
-> @@ -213,7 +213,7 @@ static int cti_plat_create_v8_connections(struct device *dev,
->                 goto of_create_v8_out;
->
->         /* filter pe_edbgreq - PE trigout sig <0> */
-> -       drvdata->config.trig_out_filter |= 0x1;
-> +       set_bit(0, drvdata->config.trig_out_filter);
->
->  of_create_v8_out:
->         return ret;
-> @@ -257,7 +257,7 @@ static int cti_plat_read_trig_group(struct cti_trig_grp *tgrp,
->         if (!err) {
->                 /* set the signal usage mask */
->                 for (idx = 0; idx < tgrp->nr_sigs; idx++)
-> -                       tgrp->used_mask |= BIT(values[idx]);
-> +                       set_bit(values[idx], tgrp->used_mask);
->         }
->
->         kfree(values);
-> @@ -331,7 +331,9 @@ static int cti_plat_process_filter_sigs(struct cti_drvdata *drvdata,
->
->         err = cti_plat_read_trig_group(tg, fwnode, CTI_DT_FILTER_OUT_SIGS);
->         if (!err)
-> -               drvdata->config.trig_out_filter |= tg->used_mask;
-> +               bitmap_or(drvdata->config.trig_out_filter,
-> +                         drvdata->config.trig_out_filter,
-> +                         tg->used_mask, drvdata->config.nr_trig_max);
->
->         kfree(tg);
->         return err;
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-sysfs.c b/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-> index 572b80ee96fb..a9df77215141 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-> @@ -711,10 +711,8 @@ static ssize_t trigout_filtered_show(struct device *dev,
->         struct cti_drvdata *drvdata = dev_get_drvdata(dev->parent);
->         struct cti_config *cfg = &drvdata->config;
->         int size = 0, nr_trig_max = cfg->nr_trig_max;
-> -       unsigned long mask = cfg->trig_out_filter;
->
-> -       if (mask)
-> -               size = bitmap_print_to_pagebuf(true, buf, &mask, nr_trig_max);
-> +       size = bitmap_print_to_pagebuf(true, buf, cfg->trig_out_filter, nr_trig_max);
->         return size;
->  }
->  static DEVICE_ATTR_RO(trigout_filtered);
-> @@ -926,9 +924,8 @@ static ssize_t trigin_sig_show(struct device *dev,
->         struct cti_trig_con *con = (struct cti_trig_con *)ext_attr->var;
->         struct cti_drvdata *drvdata = dev_get_drvdata(dev->parent);
->         struct cti_config *cfg = &drvdata->config;
-> -       unsigned long mask = con->con_in->used_mask;
->
-> -       return bitmap_print_to_pagebuf(true, buf, &mask, cfg->nr_trig_max);
-> +       return bitmap_print_to_pagebuf(true, buf, con->con_in->used_mask, cfg->nr_trig_max);
->  }
->
->  static ssize_t trigout_sig_show(struct device *dev,
-> @@ -940,9 +937,8 @@ static ssize_t trigout_sig_show(struct device *dev,
->         struct cti_trig_con *con = (struct cti_trig_con *)ext_attr->var;
->         struct cti_drvdata *drvdata = dev_get_drvdata(dev->parent);
->         struct cti_config *cfg = &drvdata->config;
-> -       unsigned long mask = con->con_out->used_mask;
->
-> -       return bitmap_print_to_pagebuf(true, buf, &mask, cfg->nr_trig_max);
-> +       return bitmap_print_to_pagebuf(true, buf, con->con_out->used_mask, cfg->nr_trig_max);
->  }
->
->  /* convert a sig type id to a name */
-> diff --git a/drivers/hwtracing/coresight/coresight-cti.h b/drivers/hwtracing/coresight/coresight-cti.h
-> index 8362a47c939c..0bd71407ef34 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti.h
-> +++ b/drivers/hwtracing/coresight/coresight-cti.h
-> @@ -68,7 +68,7 @@ struct fwnode_handle;
->   */
->  struct cti_trig_grp {
->         int nr_sigs;
-> -       u32 used_mask;
-> +       unsigned long *used_mask;
->         int sig_types[];
->  };
->
-> @@ -146,20 +146,21 @@ struct cti_config {
->         bool hw_enabled;
->         bool hw_powered;
->
-> -       /* registered triggers and filtering */
-> -       u32 trig_in_use;
-> -       u32 trig_out_use;
-> -       u32 trig_out_filter;
->         bool trig_filter_enable;
->         u8 xtrig_rchan_sel;
->
->         /* cti cross trig programmable regs */
-> -       u32 ctiappset;
->         u8 ctiinout_sel;
-> -       u32 ctiinen[CTIINOUTEN_MAX];
-> -       u32 ctiouten[CTIINOUTEN_MAX];
-> +       u32 ctiappset;
->         u32 ctigate;
->         u32 asicctl;
-> +       u32 *ctiinen;
-> +       u32 *ctiouten;
-> +
-> +       /* registered triggers and filtering */
-> +       unsigned long *trig_in_use;
-> +       unsigned long *trig_out_use;
-> +       unsigned long *trig_out_filter;
->  };
->
->  /**
->
-> --
-> 2.43.0
->
-This all looks good to me. Thanks
+Using guards are great for new code, or for bug fixes, but please don't
+just refactor code to use them for the sake of using them.  It makes it
+hard to review and justify the churn, especially when there is almost no
+code savings here at all.
 
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
+> The explicit nullification of fu->..._req and stream->..._req pointers
+> on error is no longer needed. This is safe because these pointers are
+> only updated after all allocations within the function have succeeded.
+> If an error occurs, the fu structure members retain their previous
+> value, and the existing cleanup functions like bot_cleanup_old_alt() and
+> uasp_cleanup_old_alt() already handle stale pointers in the fu
+> structure.
 
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+This seems to imply this is really fragile, and tricky, and maybe not
+worth it?
+
+The comment you added kind of enforces that feeling:
+
+> +	fu->bot_req_in = no_free_ptr(bot_req_in);
+> +	fu->bot_req_out = no_free_ptr(bot_req_out);
+> +
+> +	/* This line is placed here because free_usb_request also frees its
+> +	 * buffer, which in this case points to the static fu->bot_status.csw.
+> +	 */
+
+Which is "this line"?
+
+> +	status_req->buf = &fu->bot_status.csw;
+
+This one?
+
+> +	status_req->length = US_BULK_CS_WRAP_LEN;
+
+Or that one?
+
+Using guards for buffers for other structures is rough, as you have seen
+here, I don't really see the benefit at all, do you?
+
+thanks,
+
+greg k-h
 
