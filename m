@@ -1,197 +1,198 @@
-Return-Path: <linux-kernel+bounces-877459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4EAC1E28B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:49:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5814BC1E2A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:50:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 213334E2255
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37881401409
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBFF32AADB;
-	Thu, 30 Oct 2025 02:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BE532C93D;
+	Thu, 30 Oct 2025 02:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARHAs7jR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDmSfMcI"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA3264F96
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062E9264F96
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761792548; cv=none; b=G2dPy8qO7P1Em+yGNXe3qWANSXalW3toI+e1LqdZttQqp4TnJt0emMVoNg6oYa7W80YcaBUplOOWUUwZ5By4y55eZF3eCtV92uE7xMgaCmKZ4/FmOuYVi9oQlBx35NlovEB2n7kdmmC2oFCEjqg2ry4dUy1KtMCdHwPKAYhNXII=
+	t=1761792628; cv=none; b=R17qBrxdLhvWhPQgBI44lBJi1K+LK77adodWQBnXncJfc2k2X5oYJj0L1WxcdChb2haIn6cfB/5VJbFgzCzF+kP3fKkN4WaUNwtnfP6LGgo8nPL7SY3JSITcTlrlUGV5odtXmheX9ZfHvNLTE+R/ueYa8Kc5sAcMlTZ/2evyKbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761792548; c=relaxed/simple;
-	bh=OESeLapDHFHLWeeCn3u5du4nwmNj0LtI4GPRrXkwZ6U=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=DmqA/Hygjn6huNox4PKCiM5bhhfE3auz2GeRb9L0ast7Aoe3UnPPPVM0/LgOcJO2vGN/8xLVA14nvYhe11Hg1wFRUJSwfL/8VtVO5x6RahrdKa3XiQxunzTqAwq57RSV+bMgpCommsJ2buI1Quik/Gk+uOq/5TQvNwG+HQavUTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARHAs7jR; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761792547; x=1793328547;
-  h=date:from:to:cc:subject:message-id;
-  bh=OESeLapDHFHLWeeCn3u5du4nwmNj0LtI4GPRrXkwZ6U=;
-  b=ARHAs7jR8r8hI6dKkXc2Fa1vwn4SX+lZVpu9p9GC6bi6vbJsCyZMBjEA
-   QtoKXf9JKTxmdZI9dW4O6Sx4wslqXbOIlPYGre7BHtWpjcf0PrFvaRvnc
-   0ZeT6k/OQSw9Uk4Fqc8FAAO38WBE1wfnQuJldgc2ckpmBSFPZ3+yWWU2e
-   bDWmwz81HiZeeKVPgGmbNu62sJrXl5GrJ0HLaBXc7Ngj1dWu10k0ZTONz
-   MhHnofC1v6JBvQHTd53++7W7Ek+mduBAhZUKHY1e0DaK82ZGX4es3ZGtS
-   NHj/W6nyYExi/e15JSjOKYlk3/wUTdz2ZTrp5WBw/9+lCrTPmtYcCnO7i
-   w==;
-X-CSE-ConnectionGUID: myLq2ftDQXOnYePqyRgj/Q==
-X-CSE-MsgGUID: UQ74Ni9pQke2FaTqsLh0KQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74218600"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="74218600"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 19:49:06 -0700
-X-CSE-ConnectionGUID: 0jZyIBy6TVyCi3RKCsPMgQ==
-X-CSE-MsgGUID: Runq7G77QpOzO60+3kkN2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="185713083"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 29 Oct 2025 19:49:05 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEIih-000LO0-1h;
-	Thu, 30 Oct 2025 02:49:00 +0000
-Date: Thu, 30 Oct 2025 10:48:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2025.10.04b] BUILD SUCCESS
- 67ac598b08778041e1ef69f686b4c68ce61a1fed
-Message-ID: <202510301046.FvaEg5QE-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1761792628; c=relaxed/simple;
+	bh=ULHZ+cHHaL+5iHaOLJNUHVNaWClPu5YSGCKCYmnu47w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hOwiknjwKBICzlClvE8tOv2jvtV8Ov2mv/jcbj7kjbpYNrXMSMrb8dsQWKOr5ixX2k7VRZP2m3KJZkIJwVLSYvWwlxNxiSaxtpFJ+vgcYXSDhkGg0DY8cxsME3iFGpTe7g64Ry+GYyEHF61H76VZgRXVLSg543gzGMSWSkv8SYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDmSfMcI; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6014810fso7068767b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761792626; x=1762397426; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=49j9QrYlm4qxZHbvYSYUJsJt0aMp426fig3D6hH+fj0=;
+        b=EDmSfMcI1I0RB3mL+KS6FaXru/zT9nI9bPxO8dUeZOTkNh1MHBjO2te+pUa1T5EvS5
+         qry+N/5WTv4eEOU1wnMMKUhY8q4s2qAmXvx8Ml6vnU7xPor/nTbGKb5nOYe0+zJLjeK+
+         v9o5XfgB0JvmGyX6Hsoffmb2SltZdvxrWZRvPmtyG9pEykkVFDWfQBGDg5v/npxL6k95
+         nnvnVhJJhmj1Ubc+413h7hLwA9k76z79lESUR/rcuT3f7r5wezXpGfQ2sERYgATbEbTu
+         U5yeIM+COkMA2QFti8fvSHF14E4JA9KrIt1tvxD4hHsqpJCKsxKam91NO/s3kVx47u36
+         LzrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761792626; x=1762397426;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=49j9QrYlm4qxZHbvYSYUJsJt0aMp426fig3D6hH+fj0=;
+        b=LriezlXCyI3uyaMCS1ITuEd8rZ8aRlaY+dRbh38TB8Gy/cakskN3vxlMHC/ql0m49T
+         Qw9+rb+d/Rk5EgubcYiNdl8DruV9thwsJ87N46BvctD54OmdePPoKnjSD6UCqZH2f4u4
+         /l5naB4/EKZs/pZLbpSPCXVPATwmRs6CcJ8EwnY38jMAUXf4BnfpJVnBIIzK4+sdtAlv
+         efQYYmasz2QgZG/bn7oKt5NBwmx/nJCoOnIhNoUUUL4SEIOj8vESFm3NQEV2qtneW1Eq
+         5tjuCTEiCHFTnIOL+YNguUoJP4ILHlPSiwQbk9eq65mTLaAGm87G0Z4fcLbwHg9HP57R
+         ZnSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGfi5dpFZ9Mp7+Qy/U7HSt1+7+aw8cjtt3rg0eYNiOHa2PVnxLYQ6ZqEnHRoHDs3jmBfnEWm3fqm76/PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp4X/esuzV/eQ27mVb44HgnDvolgl0wuAMe38FdoUdkOw2+0RM
+	j45qX7ExWx7iqnpfKcu0wTxj39dZXhBfDwkg3bK/Stgv67XPSnUjwv++ZT8rhpO53tkG6Pq74Mx
+	4ywaIEGWGZv1txP0KKaIRnZliBypRBBg=
+X-Gm-Gg: ASbGnctQiMKYpq8VNsD9vO/1U/JErYFqwzlntqYv+ZqzP/ty3aN3ZBiWhKGATqqjdIc
+	stdo8T2dYMng0j/hR3BBeQ646biDsjQ6KeeU6/jm7iIYSQ8J67ZbUlMxalUUZnVfPlKKg7hjRL7
+	YoF4GSTnRDdt9zqEGYtkRi1MovqjZb5geGGMGz37JjL7JLLF4k78yff0FZbtqRT+elC9CmLxKA+
+	f9jvtQO/G35JWukSKPnGATykb/n5lZYeeCSJoaSZPwMoQHQd/eOaLCWTCxyOnaML6XxWw==
+X-Google-Smtp-Source: AGHT+IHyoJ9K1Vnf2DZwS2Kk6JM2P4IoAuduJ5ZhKYBvP2Erk/Knw6rAfD9/QlPYp3ts6NwBBaU6zsVdEYEe2Nqfv+s=
+X-Received: by 2002:a05:690c:22c2:b0:784:8a26:b74 with SMTP id
+ 00721157ae682-78628cf728dmr50871897b3.0.1761792625956; Wed, 29 Oct 2025
+ 19:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251029071435.88-1-kernel@airkyi.com> <20251029071435.88-11-kernel@airkyi.com>
+ <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
+ <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com> <e0c5bda3-7428-49e0-9955-fa23f1e4f35d@rock-chips.com>
+ <CAL411-oXfvp-iqN+uRmFHijdmW=1omKwozKOoZ2shxukMHmwPg@mail.gmail.com> <C6253E8254C80B0F+839b71d0-1bd8-40b7-9515-7ce4a1eb8673@airkyi.com>
+In-Reply-To: <C6253E8254C80B0F+839b71d0-1bd8-40b7-9515-7ce4a1eb8673@airkyi.com>
+From: Peter Chen <hzpeterchen@gmail.com>
+Date: Thu, 30 Oct 2025 10:50:15 +0800
+X-Gm-Features: AWmQ_bl1mNxPmQHnKmASAzhusTRjlDlCn6q9Kp_CyHmpybtPIUgHFck3iJTK_U4
+Message-ID: <CAL411-pULVu4AYybW9oW7kmr4M_kJhdytgBjLPb4y6w_2dj+0w@mail.gmail.com>
+Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
+ support for DisplayPort
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>, 
+	Andy Yan <andy.yan@rock-chips.com>, Yubing Zhang <yubing.zhang@rock-chips.com>, 
+	Frank Wang <frank.wang@rock-chips.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>, 
+	Diederik de Haas <didi.debian@cknow.org>, Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2025.10.04b
-branch HEAD: 67ac598b08778041e1ef69f686b4c68ce61a1fed  fixup! rcutorture: Make srcu{,d}_torture_init() announce the SRCU type
+> > Okay.  My question is basic: USB2 PHY supplies DP/DM, and the DP/DM is
+> > short for Type-C connector,
+> > and no control is needed for Type-C application.
+> > Why is there a remote-endpoint connection between USB2 PHY and Type-C connector?
+>
+>  From the perspective of Type-C, this should not be added.  Is the approach in v2 correct [0] ?
+>
 
-elapsed time: 1520m
+Have you tried debugging based on upstream code?
+v2 is correct, but the dts needs to improve.
+- There is a remote-endpoint connection for USB role switch between
+Type-C connector
+device and USB controller device
+- There is a remote-endpoint connection for orientation and lane configuration
+between Type-C connector device and USB/DP PHY device.
 
-configs tested: 105
-configs skipped: 2
+Peter
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                           sama5_defconfig    gcc-15.1.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251029    gcc-12.5.0
-arm64                 randconfig-002-20251029    clang-22
-arm64                 randconfig-003-20251029    gcc-13.4.0
-arm64                 randconfig-004-20251029    gcc-11.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251029    gcc-9.5.0
-csky                  randconfig-002-20251029    gcc-11.5.0
-hexagon                           allnoconfig    clang-22
-hexagon               randconfig-001-20251029    clang-20
-hexagon               randconfig-002-20251029    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251029    gcc-14
-i386        buildonly-randconfig-002-20251029    gcc-14
-i386        buildonly-randconfig-003-20251029    clang-20
-i386        buildonly-randconfig-004-20251029    gcc-14
-i386        buildonly-randconfig-005-20251029    gcc-14
-i386        buildonly-randconfig-006-20251029    gcc-14
-i386                  randconfig-001-20251030    gcc-14
-i386                  randconfig-002-20251030    gcc-14
-i386                  randconfig-003-20251030    clang-20
-i386                  randconfig-004-20251030    clang-20
-i386                  randconfig-005-20251030    clang-20
-i386                  randconfig-011-20251030    gcc-14
-i386                  randconfig-012-20251030    gcc-14
-i386                  randconfig-013-20251030    gcc-14
-i386                  randconfig-014-20251030    clang-20
-i386                  randconfig-015-20251030    gcc-14
-i386                  randconfig-016-20251030    gcc-14
-i386                  randconfig-017-20251030    gcc-14
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20251029    clang-22
-loongarch             randconfig-002-20251029    clang-22
-m68k                              allnoconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                 randconfig-001-20251029    gcc-11.5.0
-nios2                 randconfig-002-20251029    gcc-9.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                randconfig-001-20251029    gcc-12.5.0
-parisc                randconfig-002-20251029    gcc-8.5.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                     ksi8560_defconfig    gcc-15.1.0
-powerpc                      mgcoge_defconfig    clang-22
-powerpc                      ppc44x_defconfig    clang-22
-powerpc               randconfig-001-20251029    clang-22
-powerpc               randconfig-002-20251029    gcc-12.5.0
-powerpc                     redwood_defconfig    clang-22
-powerpc                  storcenter_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20251029    clang-22
-powerpc64             randconfig-002-20251029    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                 randconfig-001-20251029    clang-20
-riscv                 randconfig-002-20251029    clang-19
-s390                              allnoconfig    clang-22
-s390                  randconfig-001-20251029    gcc-11.5.0
-s390                  randconfig-002-20251029    gcc-8.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-14
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20251029    gcc-11.5.0
-sh                    randconfig-002-20251029    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20251029    gcc-8.5.0
-sparc                 randconfig-002-20251029    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20251029    clang-20
-sparc64               randconfig-002-20251029    clang-22
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251029    clang-22
-um                    randconfig-002-20251029    clang-22
-um                           x86_64_defconfig    clang-22
-um                           x86_64_defconfig    gcc-14
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251030    clang-20
-x86_64      buildonly-randconfig-002-20251030    gcc-14
-x86_64      buildonly-randconfig-003-20251030    gcc-13
-x86_64      buildonly-randconfig-004-20251030    gcc-14
-x86_64      buildonly-randconfig-005-20251030    clang-20
-x86_64      buildonly-randconfig-006-20251030    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                                  kexec    clang-20
-x86_64                randconfig-011-20251030    clang-20
-x86_64                randconfig-013-20251030    gcc-13
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-14
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-14
-x86_64                           rhel-9.4-ltp    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251029    gcc-8.5.0
-xtensa                randconfig-002-20251029    gcc-8.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> [0]: https://lore.kernel.org/all/20250715112456.101-6-kernel@airkyi.com/
+>
+> Or is the following approach correct?
+>
+>
+> port@0 {
+>      reg = <0>;
+>
+>      usbc_hs: endpoint {
+>          remote-endpoint = <&tcphy0>;
+>      };
+> };
+>
+> port@1 {
+>      reg = <1>;
+>
+>      usbc_ss: endpoint {
+>          remote-endpoint = <&tcphy0>;
+>      };
+> };
+>
+> port@2 {
+>      reg = <2>;
+>
+>      usbc_dp: endpoint {
+>          remote-endpoint = <&tcphy0_typec_dp>;
+>      };
+> };
+>
+>
+> >
+> >>>>> +                               port@1 {
+> >>>>> +                                       reg = <1>;
+> >>>>> +
+> >>>>> +                                       usbc_ss: endpoint {
+> >>>>> + remote-endpoint = <&tcphy0_typec_ss>;
+> >>>>> +                                       };
+> >>>>> +                               };
+> >>>>> +
+> >>>>> +                               port@2 {
+> >>>>> +                                       reg = <2>;
+> >>>>> +
+> >>>>> +                                       usbc_dp: endpoint {
+> >>>>> + remote-endpoint = <&tcphy0_typec_dp>;
+> >>>>> +                                       };
+> >>>>> +                               };
+> >>>>> +                       };
+> >>>>> +               };
+> >>>>> +       };
+> >>>>> +};
+> >>>>> +
+> >>>> .....
+> >>>>>    &u2phy0 {
+> >>>>>           status = "okay";
+> >>>>> +
+> >>>>> +       port {
+> >>>>> +               u2phy0_typec_hs: endpoint {
+> >>>>> +                       remote-endpoint = <&usbc_hs>;
+> >>>>> +               };
+> >>>>> +       };
+> >>>>>    };
+> >>>>>
+> >>>> There is no switch and mux, how to co-work with Type-C?
+> >>> I checked the phy-rockchip-inno-usb2.c but did not find any switch or mux. Does this mean that we need to implement them? Thank you.
+> >> Wait a minute, actually we have multiple hardware interfaces, one of which is Type-C, eventually connected to USBDPPHY, and the other is micro-usb connected to U2PHY.
+> > I assume the Micro-USB connector does not use Type-C/PD IC, is it
+> > right? Does it relate to this patch?
+> >
+> > Best regards,
+> > Peter
+> >
+>
 
