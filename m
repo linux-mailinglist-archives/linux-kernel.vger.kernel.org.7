@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-878727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3582C2156F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF77C21575
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 381344F0A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:56:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 695A44E7DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBAE30FC01;
-	Thu, 30 Oct 2025 16:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85E731076D;
+	Thu, 30 Oct 2025 16:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BjBfTlHI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NB3PkIEw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687A61D618C;
-	Thu, 30 Oct 2025 16:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAF42F12BE;
+	Thu, 30 Oct 2025 16:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761843383; cv=none; b=o8tv4F/3gus9fwCVoRD3vtRUAFTPk5hqrBuUmkU7wcybNdFFVQlsLFSauBhqILiEMmukA6Petxy6GcRqL3l2A/GE0MiaV4BSAEQLGB0JV/l6zX9loCjKH02UtV2w7luaaiTIGiWu/0dN3OzVqx9UB/IYmzRAfEYeyoplHc3Vqic=
+	t=1761843421; cv=none; b=OTAwEUf3vsm9i/i60QUKd1cbX/ASH9PhGSqjpvirkj2wimLJzqQLurz/By5xgz+7XddRbAln36RGAKF6oxvrJT87FtKq8dIoQWAigTBWM3UZSBlrCvvfAF7/S019zoM3hZ/qCQLuzMvMN9/e6ybTEIr2oRoBHu4iktoTCiHb1ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761843383; c=relaxed/simple;
-	bh=Z7sOU0bbDMmS+MjdgUDB2NUz/zjHubwdouBstkH1zHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMKMYjdupZLgVHZW+K5wyWhZBXekclD1NK7bKWK5VgKu1+wP3FhjCwKsbgJYD6kLx8d+TgswK+AUr4LlwkrjrI/rU/F5mWaroEB25viaTJXV4rUMlHCCoML7MDJKfePIulehGRFxF5nN811BzJ6LYJqtz8nqlhAG9eWy0VhuCDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BjBfTlHI; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1761843421; c=relaxed/simple;
+	bh=Bu3GaDn+KhEy/BmFR54Rp6ZMwsXMWG+ZTktrK8/UtVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JhySKAbr6UMKojYm5w21bi0YBZ21MyDM1GhRPNljteBVZQWqofq6Pi2GFC3U/KYWlJePqji8PvI64G8w2+/scod9pb+HggekmGgLZIYxUGIZ74lzakTPc9dcgeDKUFNqKmO/8gtM32hnsBBoEkya6ikqiJ1fxV5zrJ90uaBQZcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NB3PkIEw; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761843381; x=1793379381;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Z7sOU0bbDMmS+MjdgUDB2NUz/zjHubwdouBstkH1zHI=;
-  b=BjBfTlHIFo81kZI07ZNUQJZlO+Xv1wCpF0v4fx6ZYB1h017ja3CwhA60
-   cwd53q38l35MQPbU8I5aKuRVd/uGD1mjOZ1aT35kZ7JYoun3cJlVui3Ri
-   Ykox43B2Wn2fMo9Y9x/EH8UvGxKVfKP7o/d6TvOQSeKvWwkngNJjcE0js
-   z82o3QKtaCXSebflD6fKldMGJXfVanYHSuq3zms6gmCcyI5NZyoVEtXCb
-   YDzlKE9QOPK/JXj4f4Y6hG4mHbtS2k+y1g34MepZNfGm0VZOmkVenIHBb
-   wfF3Wg58HM4F51HtxchpZWZZIw0FaXMSX8pLMlSnExoObqDuWO1O7i1Hq
-   w==;
-X-CSE-ConnectionGUID: gJXKP5+QRaCiH9iZhfvbrA==
-X-CSE-MsgGUID: eWPqo+5fS2+e6ZQ1bRZ1IA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64142949"
+  t=1761843416; x=1793379416;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bu3GaDn+KhEy/BmFR54Rp6ZMwsXMWG+ZTktrK8/UtVE=;
+  b=NB3PkIEwyoGS3PVNUGaEcT4LKfX+jC4vu/SV4arQKW0A2a1qAjpd2PvO
+   K8rCQq7r7wgOPFgrBsqev7s33wan0eP8pEgqCoCwb1u55nyej7DoqO4ip
+   /LWc8skT27ATQBC9XRJZUvBB0RherH5YukXJBZyNnG4sUv1kSHhS7XJog
+   qavtJBxIInqRsgRnt8+gJckGcx+8nz6C7bjq+0uIbRImosG+mk6hVYrDD
+   8bCSdv2po4YwN6EtLN3xcXP0SRF5M1IRhNmEMDRg89Ya1muxNL5lgRkmK
+   NHIBhL5BH3k/8aOeZgsJJfH1Y+KIu+gEzwKdqzijVYQ240wO3iVmaKbP6
+   g==;
+X-CSE-ConnectionGUID: Nd8ktODIRGCx3VRw8102UA==
+X-CSE-MsgGUID: UlHNHBLmQWGnQHqmpdI9lQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="66607376"
 X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="64142949"
+   d="scan'208";a="66607376"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 09:56:21 -0700
-X-CSE-ConnectionGUID: THjspqanTAqkPD84sDVyug==
-X-CSE-MsgGUID: I0pdvgYXSCuF8LZtURSo9Q==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 09:56:56 -0700
+X-CSE-ConnectionGUID: JYmqv/AoSkWfV6zFxdk7pA==
+X-CSE-MsgGUID: zeXhZBYRQRaqlY3mGhgd/w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="186448828"
-Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.125.110.3]) ([10.125.110.3])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 09:56:19 -0700
-Message-ID: <8d7e51d5-ab51-442a-a015-77653d0fb684@intel.com>
-Date: Thu, 30 Oct 2025 09:56:17 -0700
+   d="scan'208";a="186448967"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.223.240])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 09:56:55 -0700
+Date: Thu, 30 Oct 2025 09:56:45 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
+	Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH 2/3] x86/mmio: Rename cpu_buf_vm_clear to
+ cpu_buf_vm_clear_mmio_only
+Message-ID: <20251030165645.rsu2pvkgak32nyip@desk>
+References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+ <20251029-verw-vm-v1-2-babf9b961519@linux.intel.com>
+ <DDVNOKPKN4II.33NWK6IDYPRFD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/pci: replace use of system_wq with system_percpu_wq
-To: Marco Crivellari <marco.crivellari@suse.com>,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Michal Hocko <mhocko@suse.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-References: <20251030163839.307752-1-marco.crivellari@suse.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251030163839.307752-1-marco.crivellari@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDVNOKPKN4II.33NWK6IDYPRFD@google.com>
 
+On Thu, Oct 30, 2025 at 12:29:39PM +0000, Brendan Jackman wrote:
+> On Wed Oct 29, 2025 at 9:26 PM UTC, Pawan Gupta wrote:
+> > cpu_buf_vm_clear static key is only used by the MMIO Stale Data mitigation.
+> > Rename it to avoid mixing it up with X86_FEATURE_CLEAR_CPU_BUF_VM.
+> >
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> 
+> (except the build issue)
 
+Will fix that.
 
-On 10/30/25 9:38 AM, Marco Crivellari wrote:
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> 
-> This lack of consistency cannot be addressed without refactoring the API.
-> 
-> system_wq should be the per-cpu workqueue, yet in this name nothing makes
-> that clear, so replace system_wq with system_percpu_wq.
-> 
-> The old wq (system_wq) will be kept for a few release cycles.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> Reviewed-by: Brendan Jackman <jackmanb@google.com>
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/cxl/pci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index bd100ac31672..0be4e508affe 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -136,7 +136,7 @@ static irqreturn_t cxl_pci_mbox_irq(int irq, void *id)
->  	if (opcode == CXL_MBOX_OP_SANITIZE) {
->  		mutex_lock(&cxl_mbox->mbox_mutex);
->  		if (mds->security.sanitize_node)
-> -			mod_delayed_work(system_wq, &mds->security.poll_dwork, 0);
-> +			mod_delayed_work(system_percpu_wq, &mds->security.poll_dwork, 0);
->  		mutex_unlock(&cxl_mbox->mbox_mutex);
->  	} else {
->  		/* short-circuit the wait in __cxl_pci_mbox_send_cmd() */
-
+Thanks.
 
