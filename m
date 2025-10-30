@@ -1,146 +1,106 @@
-Return-Path: <linux-kernel+bounces-878663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04936C2131C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:32:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD02C21340
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 358604EA47C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34CE81881C82
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E3723D7E3;
-	Thu, 30 Oct 2025 16:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97CB23909F;
+	Thu, 30 Oct 2025 16:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCOItoPL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="na+WmttR"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6BC4503B;
-	Thu, 30 Oct 2025 16:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1BD1A23A4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761841857; cv=none; b=pBUnHUKewTsDBEDSB8mkCTdbdXBa2snsV1EM5f2Vnz9WOx0VQmHrjSJaKswl/35kiV2v67xhSAikcFuQPWA61ItuAjfNgB9C2oYdJr1589HxpQx46O+oEV2fAW9Veoag1Ol6yTHLnVKk59Wsd1C1dOoHPmEs3ClZtZXHJjZ5C6o=
+	t=1761841896; cv=none; b=fbOAI1L3LKF+eVljRKwqHMXiGDvS42eLuZhoMpGUwxB2jz7RonoEizQV64l4dFZ217B1grGrU1ArvC7cpa9g8Y8DJrkay3mELTtR/NNBYGmr2v+ftr1DM76tBZRDTTETVybbXkD+QwYNar1zH8cPa8A+4zqahvMuDjjvKvVQIGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761841857; c=relaxed/simple;
-	bh=h26E/9tOi5+3z+6AzmCTRNPJkZyNHYsjXa7b8MQ2gG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkYwX9o12u63MMiTfqzBRDRtsfqg48de2phlWoXUM5KE/xkJoit66+TqgeYMAAqORSzqBO71IC6AtnZEYNjzDiRLsxhBAMFdMlL6yB2ZkwEV7LoBUf+OEzmN6w9k4sA1gngH3qjdFxYtJDZAzw+8jF/t0amIsdQ8h3ww9vjhS7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCOItoPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DF1C4CEF1;
-	Thu, 30 Oct 2025 16:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761841856;
-	bh=h26E/9tOi5+3z+6AzmCTRNPJkZyNHYsjXa7b8MQ2gG8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kCOItoPL9MmL87UaVXKYyIWFHkci5d9gEOG1qWi/gnlMaMkJQk/9MedsqbzBYRcil
-	 2gIlXMPv+mRlN6zCVPTZhCd+2PKGDNnCE+Yf9KMPpHX17A0UMWY9j7hiIgCQ2NTii/
-	 qsbxeFSJXsv9dkKNDvWvr3S9M8socy9dYHH70pHnpeN9jnL+imKP1AK53QugFRLdz8
-	 qDElIdUXlJ8QNYE0NuUcfHGYsw3+vF54ZkecOHW4x/bxx0NsHaTlzaIBsVjl7xnseN
-	 nw6syWgqMKgFOOez6jT3F0sjAVjk+/P5ojsLykc7eEX+NXMT0fwtCUh6WmlJClcMmr
-	 EVlzYn2zGOqMA==
-Message-ID: <bfd59dc5-9503-4642-ba01-5f54c12c0175@kernel.org>
-Date: Thu, 30 Oct 2025 17:30:51 +0100
+	s=arc-20240116; t=1761841896; c=relaxed/simple;
+	bh=Lcro7aS2LTQSDE5KiwibL0iMqZiuCu8FC+2EGOTSddI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sd11JQpbvQFXMqqdO51uZRQF+yo9RNeCvDjnruUjPctsmO06MuldUGBFp2OpkDfuoBn/zd21WanQgD325Sif/kMp9FaEoOpvftB0VsASWl4eXQP+JzwUTZo36+XzZRkd4p4bOMRPqBAXbNzy+GZDKXuHHn+GVHRgBeOJeCyyp1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=na+WmttR; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-8801f0f46b6so7282976d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761841893; x=1762446693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lcro7aS2LTQSDE5KiwibL0iMqZiuCu8FC+2EGOTSddI=;
+        b=na+WmttRNxeEsWH5SXK2p+tYyQgIB8myzXcv2iKEBIm9fFDsggtLTyNtuOlbJRLusg
+         LqDNgdAmO5q6JUWOX4SNz4vhst8Al9h1K23XgmE/Esp5Y+n+1Zbn5zrDfEsrDu9J3lWO
+         vd/cZEbh9Q0damwn0yzC26ZltBKP5GPLFv2CN5OH0y5lWwFh1NABdyIlDW80hp4/QrQW
+         EDIQUJ6Kq3/0yCcIetU3yx9T7Fu09w6ou8mEGesUgc9OsIQqkS6z8cgG3Ld8ATGqSDJ0
+         MUM05WILEXPqXNWCJY+iVZDTKYt9aB0XQ/GcJeCLHtzo1zLhnK+zXU9QB1zEyvINc947
+         4WcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761841893; x=1762446693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lcro7aS2LTQSDE5KiwibL0iMqZiuCu8FC+2EGOTSddI=;
+        b=moQLJ53TvQjC4x1n1xbJDsrurMVcRq/SXJ3MZOqoHKKoa84hvq5pdVCU8IFj465EX6
+         66z2nuVg3WM2LAjOuSnqtoAlj33qtmCWH0d9wDq1udM+BHxo/Brc3Fapd2Rq7NVXqdAR
+         KUwZdouOCIyIwlkQ8gi1/LY3oWs85ylmPsjGQTJ4dNxY2zUW4PsXQOS2m31QCt2PHsUf
+         nU38Ava+OMgU6Oa7hqYKK/QoKIkLq62kGOuHssmPYdQYH5WyaUm74o8NifzatkF3FW9P
+         nmcOQTNs9U5xUdAZDorBAZ6HBv9VHWdmioH1TyAFkPweJ15tNlM6CjZDj4j+85GPWQwn
+         4Jhw==
+X-Gm-Message-State: AOJu0Yz5Grly5ZRk7sEJDEBktHvwLkiG+2kJOZx3qVwEuW2YzUn6SFnN
+	1OdTok5TKVGJhLT1xS5KDmDpfCQAvVATPsoKh/TtjFFGW3jLbcPZnq/LpKjo1AMBsgK4e3IW9r6
+	oaT1JAQi7M78o2awb50slU2r48bmw4ay2+S1Q9z+gsQ==
+X-Gm-Gg: ASbGncua6KIF0vvvXDzEOTJpal9PLOPlBo9I49CQEBU7Zg1piJfXom0Dtiu6sC916tQ
+	iyvdFMGLFCQGxrn1AjvWYa3/sB9g9niDE7akIrCEyVvZyZ83UsO+hEWqDYXn4rwJ/2Z4m56lHRz
+	8HbYUz37mtSgBgU9jxm3oMl2gmPSQvbZ78J2cDV2c5rqwmdkQS3OMEO3zc2L+nWxzA3aLea/FdF
+	uDRu+EeCLlk//Q1Jqs9DrOHTn4y4S+p51rhNpNDifqVpFODtwt7IdbFZX95ltQu9bKi7cZUCNus
+	FnQGHHkXsaRcDaDPjA==
+X-Google-Smtp-Source: AGHT+IEkj46+/B0K8GIyrlYZyKHcCV6t6mvnj2aOt9aXfuZPt6AReZRXp0RWtwLFCrq6LGljuPZNyWbF+jhr2bn5n/0=
+X-Received: by 2002:ad4:5f87:0:b0:87c:2967:fd52 with SMTP id
+ 6a1803df08f44-8802f2f5681mr2517706d6.17.1761841885454; Thu, 30 Oct 2025
+ 09:31:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/WIP 0/4] arm64: dts: qcom: sm8750: Enable display
-To: Mahadevan P <mahadevan.p@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- jesszhan0024@gmail.com, quic_rajeevny@quicinc.com,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Abhinav Kumar <abhinavk@quicinc.com>,
- Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
- <w6f3s56gx7psqgweuntqvkzrot7elhc5pdrxhvenukzwyt5eys@fndmaszfbo5k>
- <921afe20-42b1-4999-b5c4-035669dc831e@linaro.org>
- <32eb3b4f-b2c4-4895-8b48-ade319fd83de@oss.qualcomm.com>
- <CAO9ioeWdJpKfpu3jGyv42Mf5+02ehxyEu_Lj+Boz0NyDjPZ-CQ@mail.gmail.com>
- <58a658bb-7338-442f-ad8c-845b5fa5ce00@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <58a658bb-7338-442f-ad8c-845b5fa5ce00@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251030094434.1390143-1-ajye_huang@compal.corp-partner.google.com>
+ <CAD=FV=V6xV0m4pj=7f2dxDP-0A1AaQuYJP5NAnXNz1_bzH7nSw@mail.gmail.com>
+In-Reply-To: <CAD=FV=V6xV0m4pj=7f2dxDP-0A1AaQuYJP5NAnXNz1_bzH7nSw@mail.gmail.com>
+From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Date: Fri, 31 Oct 2025 00:31:23 +0800
+X-Gm-Features: AWmQ_blljuOVJEoWM8HEfx4HXzb3s-EmtRR_lYI7XqNnS-lC5zNQ1CNEjOYQWaE
+Message-ID: <CALprXBYir7u3N3x6pZ_VK73Nrp5dP=qt5LCnUdhrjeQo4s1JsA@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/10/2025 13:21, Mahadevan P wrote:
->>
->>>
->>> Also, I’m curious to understand more about the DSI PHY PLL VCO rate issue that Jessica had narrowed down—could you please share some details?
->>>
->>> Lastly, I’d appreciate it if you could share the plan for merging these changes upstream. We’re aiming to enable display support on this target as part of our program.
->>
->> Please see Documentation/process/, I think it describes the process of
->> merging patches pretty well.
-> 
-> Sorry for any confusion in my previous message. Could you please share 
-> when we might expect the next non-RFC version of this series, 
-> specifically for the DSI enablement patch? Alternatively, if there are 
+Hi Doug,
 
-When dependencies get merged. The patchset cannot be merged and posting
-something unmergeable, different than RFC, only clutters maintainers
-mailboxes. Ask owners of dependencies about their status (as I said, I
-stopped pinging for that)
+On Thu, Oct 30, 2025 at 11:08=E2=80=AFPM Doug Anderson <dianders@chromium.o=
+rg> wrote:
 
-> no immediate plans to post an updated version, would it be acceptable 
-> for us to take it forward and submit the subsequent non-RFC versions of 
-
-No, because the patch is ready. It is waiting on dependencies, so you
-taking it would mean work is done twice. Plus you would not solve any
-problem - still cannot submit it.
-
-Best regards,
-Krzysztof
+>
+> NOTE: in general if someone is involved in the discussion of a
+> previous versoin, it's good to CC them on newer versions. I've added
+> Jani back to the CC list here.
+>
+Yes, you are right, It's my rudeness,
+I will pay more attention to this detail in the future. Thank you for
+reminding me.
 
