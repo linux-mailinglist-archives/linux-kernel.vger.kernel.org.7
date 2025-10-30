@@ -1,90 +1,199 @@
-Return-Path: <linux-kernel+bounces-878254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D246C201C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:55:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6BAC201BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 301D54EAE6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:55:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7D5188BEF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F0E35503C;
-	Thu, 30 Oct 2025 12:55:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A56F354AC2;
+	Thu, 30 Oct 2025 12:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sIZioqoc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+ExO06wt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sIZioqoc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+ExO06wt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE8F35471A
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48BD2E5437
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761828904; cv=none; b=StdD3Ys0Xwxb01CjtjRs9XN37BYfvEtTIIxZwv+KgaSQLcQNWW0tarJG8u2fCa2w9wS3fEUZt8jtyLu1f+tMmEYm500RD1qI9FPNasmUeELquyCkfnBqR2NBdtBCg6zjfV1Ri2+HrKHTTsw+CSEVVUpAYvOlnIJLbG9AxKcUhNs=
+	t=1761828901; cv=none; b=PJsHbRuhyzOGdRAZC89qESj0crox5K0ye8vh80pTaDLWIRgPMUsBB86zxVoR2t4x+S7t6BO4mA1l2zgy88XsCxgCmh/uPjbaBfCGwoVnXsTooz/8Se8GNliajlb9/TYmpUoEIGJ9yEclGua4vRAJ2SdYsZK9Q+drZQA7OQo9+NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761828904; c=relaxed/simple;
-	bh=Po6b7mw3FBhvhgqPrfJ2LP2ZcFjOTAafBEccsvNf/3M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NzgdsDqfJVsM5EPuM6yuHEyOMfxi7f8m8J13lj+B88/JdhzvtOBSh/VKoGMskU5Wm7MUZgjoxHTyl0m9Y1EUNZksJgECIK6o6f6AAWHae5Eo3dnG1/DU3e4/tKTBHYpxRkunFq41VVQCjEBjWdyyfuvLMgMh5Bo1priGqmlWHvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vESAy-0004fI-VK; Thu, 30 Oct 2025 13:54:48 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vESAw-006DFP-2i;
-	Thu, 30 Oct 2025 13:54:46 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vESAw-000000009BE-3Bi1;
-	Thu, 30 Oct 2025 13:54:46 +0100
-Message-ID: <ea2a66b778e19dea7609370be0c16f1a440c99ed.camel@pengutronix.de>
-Subject: Re: [PATCH v7 0/2] Add driver support for ESWIN eic7700 SoC reset
- controller
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: dongxuyang@eswincomputing.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Date: Thu, 30 Oct 2025 13:54:46 +0100
-In-Reply-To: <20250930093132.2003-1-dongxuyang@eswincomputing.com>
-References: <20250930093132.2003-1-dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1761828901; c=relaxed/simple;
+	bh=u8ECFwUUGjFmeNZKOnUzuZtrLuBRbwwB0bHvHqCIcTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/CkdDYZJpgDWQoClSly+b8rZGDtuxH9PNpwnddip1OAlsTX+PvRr/cZ4//EWdIzkaQq/A9k8+pbDd2KKV2+SkLW9vMWVwNcjRxsu0ic/QQCuqViarQXDRt1aq3afE1/8yw3YNQ2sKrAX7WvlIv6BgqTm9B9lnpFpveswtUprLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sIZioqoc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+ExO06wt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sIZioqoc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+ExO06wt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 010C43376F;
+	Thu, 30 Oct 2025 12:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761828898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glh4d7jIrhmVwvs6juX9j4qY4JWhtfTVX1rq7n//aXQ=;
+	b=sIZioqocldhdLfSE0ikv+66H/BwUY1NnHjSF7IkZPrewOV4TIjR0L0ZxenI+DikegLIzIL
+	q7TGtuRlP/dz9trVR6lXjg4bgm+P+Vgt0oLTZgYpLQIbOCxIcWgM8fARoMzb6wx9YSwHmi
+	gZOBC5sxRFhubytS62sUCb3vwjknjIc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761828898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glh4d7jIrhmVwvs6juX9j4qY4JWhtfTVX1rq7n//aXQ=;
+	b=+ExO06wt0o23jz7/OfkhXfVdkxV4JSZuH5faMNkEuAKNViZoZKVGXn/ter5hKQCBHqkwVw
+	n9vk2f4aK68PMdBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=sIZioqoc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+ExO06wt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761828898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glh4d7jIrhmVwvs6juX9j4qY4JWhtfTVX1rq7n//aXQ=;
+	b=sIZioqocldhdLfSE0ikv+66H/BwUY1NnHjSF7IkZPrewOV4TIjR0L0ZxenI+DikegLIzIL
+	q7TGtuRlP/dz9trVR6lXjg4bgm+P+Vgt0oLTZgYpLQIbOCxIcWgM8fARoMzb6wx9YSwHmi
+	gZOBC5sxRFhubytS62sUCb3vwjknjIc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761828898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glh4d7jIrhmVwvs6juX9j4qY4JWhtfTVX1rq7n//aXQ=;
+	b=+ExO06wt0o23jz7/OfkhXfVdkxV4JSZuH5faMNkEuAKNViZoZKVGXn/ter5hKQCBHqkwVw
+	n9vk2f4aK68PMdBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E83F813393;
+	Thu, 30 Oct 2025 12:54:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eFaoOCFgA2liQgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 30 Oct 2025 12:54:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A27E9A0AD6; Thu, 30 Oct 2025 13:54:53 +0100 (CET)
+Date: Thu, 30 Oct 2025 13:54:53 +0100
+From: Jan Kara <jack@suse.cz>
+To: Geoff Back <geoff@demonlair.co.uk>
+Cc: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
+	Carlos Maiolino <cem@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <zqnjwqiqjhtr74ixaaqwm3vxyfyhzln3a7vbol3z4qmyebryar@v42uqt4lnmxh>
+References: <20251029071537.1127397-1-hch@lst.de>
+ <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+ <5ac7fb86-07a2-4fc6-959e-524ff54afebf@demonlair.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ac7fb86-07a2-4fc6-959e-524ff54afebf@demonlair.co.uk>
+X-Rspamd-Queue-Id: 010C43376F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Di, 2025-09-30 at 17:31 +0800, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
->=20
-> This series depends on the config option patch [1].
->=20
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
-ommit/?h=3Dnext-20250929&id=3Dce2d00c6e192b588ddc3d1efb72b0ea00ab5538f
-[...]
+On Thu 30-10-25 12:00:26, Geoff Back wrote:
+> On 30/10/2025 11:20, Dave Chinner wrote:
+> > On Wed, Oct 29, 2025 at 08:15:01AM +0100, Christoph Hellwig wrote:
+> >> Hi all,
+> >>
+> >> we've had a long standing issue that direct I/O to and from devices that
+> >> require stable writes can corrupt data because the user memory can be
+> >> modified while in flight.  This series tries to address this by falling
+> >> back to uncached buffered I/O.  Given that this requires an extra copy it
+> >> is usually going to be a slow down, especially for very high bandwith
+> >> use cases, so I'm not exactly happy about.
+> > How many applications actually have this problem? I've not heard of
+> > anyone encoutnering such RAID corruption problems on production
+> > XFS filesystems -ever-, so it cannot be a common thing.
+> >
+> > So, what applications are actually tripping over this, and why can't
+> > these rare instances be fixed instead of penalising the vast
+> > majority of users who -don't have a problem to begin with-?
+> I don't claim to have deep knowledge of what's going on here, but if I
+> understand correctly the problem occurs only if the process submitting
+> the direct I/O is breaking the semantic "contract" by modifying the page
+> after submitting the I/O but before it completes.  Since the page
+> referenced by the I/O is supposed to be immutable until the I/O
+> completes, what about marking the page read only at time of submission
+> and restoring the original page permissions after the I/O completes? 
+> Then if the process writes to the page (triggering a fault) make a copy
+> of the page that can be mapped back as writeable for the process - i.e.
+> normal copy-on-write behaviour - and write a once-per-process dmesg
+> warning that the process broke the direct I/O "contract".  And maybe tag
+> the process with a flag that forces all future "direct I/O" requests
+> made by that process to be automatically made buffered?
+> 
+> That way, processes that behave correctly still get direct I/O, and
+> those that do break the rules get degraded to buffered I/O.
+> 
+> Unfortunately I don't know enough to know what the performance impact of
+> changing the page permissions for every direct I/O would be.
 
-Applied to reset/next, thanks!
+That is a fine idea and we've considered that. The trouble is this gets
+quite complex because buffers may be modified not only through the
+application directly writing to the buffer while the IO is in flight but
+also by setting up another IO to the same buffer. As soon as you let the
+first IO use the buffer, the kernel would need to block all the other IOs
+to the same buffer and doing all this without providing malicious apps with
+a way to deadlock the kernel by cleverly chaining IOs & buffers.
 
-[1/2] dt-bindings: reset: eswin: Documentation for eic7700 SoC
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3De40291127aa9
-[2/2] reset: eswin: Add eic7700 reset driver
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Da4c5b6b610d9
-
-regards
-Philipp
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
