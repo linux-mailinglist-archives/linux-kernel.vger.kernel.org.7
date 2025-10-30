@@ -1,138 +1,169 @@
-Return-Path: <linux-kernel+bounces-878966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68088C21DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5588C21E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6181AA16B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:09:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10A51898116
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E66B36CE0E;
-	Thu, 30 Oct 2025 19:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FED36E356;
+	Thu, 30 Oct 2025 19:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxbNvTrB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCBYXG8D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A23293C4E;
-	Thu, 30 Oct 2025 19:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A382D36E37E
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761851312; cv=none; b=RBWS/prf7NVrE8tGJkI63MVppPQMNmVGie7cs0gllRkOsSOY1B+fis5AQLfq4BmZCmbne4dxIZUO/20uFvhSmbDNfA8ED5rWhP+TNg4ZJYnZZWG/f2QNS5bF24XWNj3MU7/5dzerSXuFEPrvQ7pygwmHzy88nFUW+jWah+qjSbQ=
+	t=1761851524; cv=none; b=MV+IjEHuOkERNCl5D9dxKAJ6ctY6PK4kZmBElMcYtX8GMHXjMsBrTRHMWeMQKKmnq1obmNcRzrQb0radTkA0u8WzOFTvXVhaloiEfEf/DNt2DDOR84rAOApQwzHexT6gumkUHghadwyDo4RLx9yoFV6hZSk9pKkvxioU0SALR2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761851312; c=relaxed/simple;
-	bh=kOo+PpES5NgQcULf7S+Q+UVAhdpsgLGwKOQrs8bQIEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpH/XRcUFwVp/leX/ETe7XsaMKAUR/TlcqQKQWHnTfipHDSEbvOts+a4npvDg+PQdyaURhIYuFq7ZU3bhbFnPK0+C0NCa092IxQAfA2tagLbH655cyuXh5w1ORluucIQGHAxmuhEwOKGsMAKXVpt7YHR6WxFwPHNYGIS4iyovuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxbNvTrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC8FC4CEFB;
-	Thu, 30 Oct 2025 19:08:30 +0000 (UTC)
+	s=arc-20240116; t=1761851524; c=relaxed/simple;
+	bh=6xyDz4Zv+Fz3D7eGGPtoJdgPOgu0NDwcJxs8Vj+X7vE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ckvFZ+BH0Bl1gcWIqzzDUtqASmS2+aMFA2dbYDLRpGkTfRmMamRqTMr6nJ7vLQThJdsTi+yxyp+Hc7bOIL3MVoW8aK7iHq9BVQkgIGqYpxyhmn1mBQ+C/YSYJLEqsgBfCMVUW3aZehUnIfzbHBXiF5jgYHaK1bFuLuLV9LOTUn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCBYXG8D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6AAC4CEF8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761851311;
-	bh=kOo+PpES5NgQcULf7S+Q+UVAhdpsgLGwKOQrs8bQIEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DxbNvTrBua7xWRyCgNRUIZ3uCilnBZbV/HdNHv7X7+SaC+wACQ1cwzbTRtnwqeIt5
-	 s2JoJnBGaOwRV/uMKCFwHv9n+044xo2h5IDoWWFxDuL7UqA2OM114R+6xXCwZI3ntp
-	 ASzXawONhxHRiKUDwMeZbCpwxFzs7hSwq6eTO0gzCDmDE6npO9Y8QJCui+s6TQAVDJ
-	 bsOOL0v2QDyy3lozq/F8/itl3Dra4M5Lv6adOVL3qEofKcT12q5Z6SnlhOp4QhFLJl
-	 aGYRi1dD19NrzTbdNpY2A7RadUp8qRTIZh+LZ4M6ePkeKwBZBsFMb6pOqKwhESnx/z
-	 s4N2+YwlZE6MQ==
-Date: Thu, 30 Oct 2025 14:11:40 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: mailbox: qcom: Add IPCC support for
- Glymur Platform
-Message-ID: <ofoie57qkonmyots5y3jf3sn27zy45rd54raosvo2gu4nzrxjo@3hvm7bp7vswa>
-References: <20251029-knp-ipcc-v2-0-8ba303ab82de@oss.qualcomm.com>
- <20251029-knp-ipcc-v2-2-8ba303ab82de@oss.qualcomm.com>
- <67038d9f-7c6c-4bb3-ba64-b06816b76be7@kernel.org>
- <qyfxtoe7ixko7k5whtzjpkynwpeqxzb2sgwq7y4y3kstblapz5@ggny5uq7qv6s>
- <5468378e-3ca3-45d2-98bf-9388005bba85@kernel.org>
+	s=k20201202; t=1761851524;
+	bh=6xyDz4Zv+Fz3D7eGGPtoJdgPOgu0NDwcJxs8Vj+X7vE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tCBYXG8DaR6/kiP003dg2+xF4uWJVKQustcz7V3hQ1z8dRqWX87dQBDHGfbg2uS1d
+	 zgpIVuKDqoZfsKXqQ39PkQifnCdeHzMycY11jB/O723+Nqj4G9Sz8rN+fP/nrs34qg
+	 +Z+BQBXiWeOIH9rgI5mw012DhOH1oNKwxHRY7TK13asEiEYsWClvHPrWK107BYe7l2
+	 yuXMjdx03X/J1bX4BTQK3NnB2uawsPX/rhx9t56SrKR4SXzaSYfUtn6abhQMttfIrm
+	 LDD4rKoxD7xBtBZ4gyl6kaAiWzs/d4Syu2XwIhtA9ZPxt4W6J3OfX8M/0UPEj928tu
+	 GwAEmXyj/JmKQ==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-65043e595a8so690416eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:12:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUN2RxbfyLofgPNT3lInFlSySeoSMoIgEOsYDMUhT2XpTl6vzLrPaWhPQ+1/moczjbEtN3pWWSd/95vilc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtYE4AfpSn+LAmUL6YH407ynxeBO+AfDpRoyAZZg6Ix2ef9OIn
+	m3eHA6tnlySkP269QI9w2sAIpemTm7YBZBOeSSThxAfEaBMkGb/8xAypqY5sR6HZPMGvR/3rZ+l
+	QgMisXpf7Qc8ohMZvCekMH6jxpbRPqGk=
+X-Google-Smtp-Source: AGHT+IE6TrJjM9TRHexTnovuHzQRW1lUv7NW/lz08f1NwlylUgWvTyacZkqDtcU1rODiMJXU04fh+Y3wt8PU6SdWFqs=
+X-Received: by 2002:a05:6820:1c88:b0:656:8300:2f4e with SMTP id
+ 006d021491bc7-6568a6e8057mr418989eaf.6.1761851523519; Thu, 30 Oct 2025
+ 12:12:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5468378e-3ca3-45d2-98bf-9388005bba85@kernel.org>
+References: <aPZ3q6Hm865NicBC@slm.duckdns.org>
+In-Reply-To: <aPZ3q6Hm865NicBC@slm.duckdns.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 30 Oct 2025 20:11:51 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gPNwrKXNg1Ng6bJ5B99PEDNhdh2YrfvbcpXc4CjLq0ww@mail.gmail.com>
+X-Gm-Features: AWmQ_blQ5bUzIcmxIXXhh4vKWwm397kKdEkdtDaeZlFIwyqPH0qBTNkbeDTpsJQ
+Message-ID: <CAJZ5v0gPNwrKXNg1Ng6bJ5B99PEDNhdh2YrfvbcpXc4CjLq0ww@mail.gmail.com>
+Subject: Re: [PATCH PM/for-6.19] freezer: Clarify that only cgroup1 freezer
+ uses PM freezer
+To: Tejun Heo <tj@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Qu Wenruo <wqu@suse.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 06:53:59AM +0100, Krzysztof Kozlowski wrote:
-> On 29/10/2025 18:23, Bjorn Andersson wrote:
-> > On Wed, Oct 29, 2025 at 04:49:30PM +0100, Krzysztof Kozlowski wrote:
-> >> On 29/10/2025 09:15, Jingyi Wang wrote:
-> >>> diff --git a/include/dt-bindings/mailbox/qcom,glymur-ipcc.h b/include/dt-bindings/mailbox/qcom,glymur-ipcc.h
-> >>> new file mode 100644
-> >>> index 000000000000..3ab8189974a5
-> >>> --- /dev/null
-> >>> +++ b/include/dt-bindings/mailbox/qcom,glymur-ipcc.h
-> >>> @@ -0,0 +1,68 @@
-> >>> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-> >>> +/*
-> >>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> >>> + */
-> >>> +
-> >>> +#ifndef __DT_BINDINGS_MAILBOX_IPCC_GLYMUR_H
-> >>> +#define __DT_BINDINGS_MAILBOX_IPCC_GLYMUR_H
-> >>> +
-> >>> +/* Glymur physical client IDs */
-> >>> +#define IPCC_MPROC_AOP			0
-> >>
-> >>
-> >> Here the same - not used by Linux.
-> > 
-> > How is this different from e.g.:
-> > 
-> > include/dt-bindings/interrupt-controller/arm-gic.h:#define GIC_SPI 0
-> 
-> $ git grep GIC_SPI
-> drivers/irqchip/irq-mchp-eic.c
-> 
+On Mon, Oct 20, 2025 at 7:55=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> cgroup1 freezer piggybacks on the PM freezer, which inadvertently allowed
+> userspace to produce uninterruptible tasks at will. To avoid the issue,
+> cgroup2 freezer switched to a separate job control based mechanism. While
+> this happened a long time ago, the code and comment haven't been updated
+> making it confusing to people who aren't familiar with the history.
+>
+> Rename cgroup_freezing() to cgroup1_freezing() and update comments on top=
+ of
+> freezing() and frozen() to clarify that cgroup2 freezer isn't covered by =
+the
+> PM freezer mechanism.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Qu Wenruo <wqu@suse.com>
+> ---
+>  include/linux/freezer.h        |   12 ++++++++----
+>  kernel/cgroup/legacy_freezer.c |    2 +-
+>  kernel/freezer.c               |    2 +-
+>  3 files changed, 10 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/freezer.h b/include/linux/freezer.h
+> index 32884c9721e5..0a8c6c4d1a82 100644
+> --- a/include/linux/freezer.h
+> +++ b/include/linux/freezer.h
+> @@ -22,14 +22,18 @@ extern bool pm_nosig_freezing;              /* PM nos=
+ig freezing in effect */
+>  extern unsigned int freeze_timeout_msecs;
+>
+>  /*
+> - * Check if a process has been frozen
+> + * Check if a process has been frozen for PM or cgroup1 freezer. Note th=
+at
+> + * cgroup2 freezer uses the job control mechanism and does not interact =
+with
+> + * the PM freezer.
+>   */
+>  extern bool frozen(struct task_struct *p);
+>
+>  extern bool freezing_slow_path(struct task_struct *p);
+>
+>  /*
+> - * Check if there is a request to freeze a process
+> + * Check if there is a request to freeze a task from PM or cgroup1 freez=
+er.
+> + * Note that cgroup2 freezer uses the job control mechanism and does not
+> + * interact with the PM freezer.
+>   */
+>  static inline bool freezing(struct task_struct *p)
+>  {
+> @@ -63,9 +67,9 @@ extern bool freeze_task(struct task_struct *p);
+>  extern bool set_freezable(void);
+>
+>  #ifdef CONFIG_CGROUP_FREEZER
+> -extern bool cgroup_freezing(struct task_struct *task);
+> +extern bool cgroup1_freezing(struct task_struct *task);
+>  #else /* !CONFIG_CGROUP_FREEZER */
+> -static inline bool cgroup_freezing(struct task_struct *task)
+> +static inline bool cgroup1_freezing(struct task_struct *task)
+>  {
+>         return false;
+>  }
+> diff --git a/kernel/cgroup/legacy_freezer.c b/kernel/cgroup/legacy_freeze=
+r.c
+> index dd9417425d92..915b02f65980 100644
+> --- a/kernel/cgroup/legacy_freezer.c
+> +++ b/kernel/cgroup/legacy_freezer.c
+> @@ -63,7 +63,7 @@ static struct freezer *parent_freezer(struct freezer *f=
+reezer)
+>         return css_freezer(freezer->css.parent);
+>  }
+>
+> -bool cgroup_freezing(struct task_struct *task)
+> +bool cgroup1_freezing(struct task_struct *task)
+>  {
+>         bool ret;
+>
+> diff --git a/kernel/freezer.c b/kernel/freezer.c
+> index ddc11a8bd2ea..a76bf957fb32 100644
+> --- a/kernel/freezer.c
+> +++ b/kernel/freezer.c
+> @@ -44,7 +44,7 @@ bool freezing_slow_path(struct task_struct *p)
+>         if (tsk_is_oom_victim(p))
+>                 return false;
+>
+> -       if (pm_nosig_freezing || cgroup_freezing(p))
+> +       if (pm_nosig_freezing || cgroup1_freezing(p))
+>                 return true;
+>
+>         if (pm_freezing && !(p->flags & PF_KTHREAD))
 
-My interpretation of that snippet (and the other use cases) is that they
-are programmatically constructing the values of a DT property, not that
-they define the SW API.
+I gather that this is for me to pick up, so applied.
 
-> How is this not used by Linux? What is drivers/irqchip/foo.c if not a
-> Linux driver?
-> 
-
-No argument there.
-
-[..]
-> > 
-> >> Or provide explanation in terms what Linux interface you are binding
-> >> here (please focus on Linux or other SW).
-> >>
-> > 
-> > Don't we use include/dt-bindings to define hardware constants for use in
-> 
-> No, we do not.
-> 
-
-I have completely missed this. Perhaps this is the first use case, but
-the result is non-the-less:
-
-$ find arch/*/boot/dts/qcom -name '*.h' | wc -l
-0
-
-
-But this makes sense, and I like it.
-
-@Jingyi, as these header constants are consumed only by DeviceTree
-source, please move them to arch/arm64/boot/dts/qcom/
-
-Thanks,
-Bjorn
+Thanks!
 
