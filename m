@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-878399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DD5C2083E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:13:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BDBC2081A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F75F189D52F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:07:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26F23B112F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B945024BD0C;
-	Thu, 30 Oct 2025 14:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F91A223DE8;
+	Thu, 30 Oct 2025 14:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChvhmA3H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJuUs2ey"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203323EA8A
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4B656B81
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833211; cv=none; b=a92D1zHVUFcAqqtVZsJTbVfHxO40MT7tt1gG9umDiGwlT62agYK811+YmwtwXSnorY7MJtMibZvpXYuEoiBpgO91u6EOLv0acdBY0JHqJAorJ34JjSUxy4/fQH2N2TiXMD78IpZkbTDWJ4z8Rlk8dioxTQF7hQ4MlcnARTfbBzc=
+	t=1761833248; cv=none; b=fs9z0qydlXgaPJ5+w60RL+15N6GQVa4l2FQL3cVprATIEMY43VMWwuBlAvimF9S2d5BDcjN8vgPQvESIl0cozDml2IG/reTFcZ6zdnEshlDRuO1NKIN0Iq5I1sQJGjYmLz/GREurXc4Tb+l+I/k1DI2StH2A56kwCayw0WLEni4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833211; c=relaxed/simple;
-	bh=Dz4xOhrMTNX+wcfa5hYkqJx2E8dqowAvq+/zwJDFp1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jgo8wYdtvj+Y+UBZbUawaas/33vd54yYaAbrSlUoWOV15oYMXJSY//B47hueeAmlJFIWbeS7Ad3HPboODc/7hkf0ANNcUifw4zXrJt+vrtQR8gjACQczfpjg+O10SOZIu20udnybrywbk+Tnmu4VQLrhZC5n75zIC5cuhQlkm6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChvhmA3H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D28C4CEF8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:06:50 +0000 (UTC)
+	s=arc-20240116; t=1761833248; c=relaxed/simple;
+	bh=ElSuKqJi7YmoFgm6sGoqUg8kYUYstSWdd9WHWiRKB4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3InImaGp5XfAnnrxKme2DFJwOmEN9GuxkYnXSiLg2nF3HsC252lpvwEy36lbDf3KtAEwCkpyeoyrRpClcRrdgRlzY/CUVYVoMxkQ+CymNfxXx4WYDyCevojL2sicpvunUjlCgHjQEUXLpBhYRBq+QKF1LFOuehqVlh7oMfrP9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJuUs2ey; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A210C4CEF8;
+	Thu, 30 Oct 2025 14:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761833210;
-	bh=Dz4xOhrMTNX+wcfa5hYkqJx2E8dqowAvq+/zwJDFp1s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ChvhmA3HVwxXvtRjAM89eYP3Yb3LXnrhCtNPgMzFWCS0962UBDr+Qil1L+St/GaBj
-	 Qmh13HJZ3CZi4JpNgTqGEb3s+3WMAPB02suprra1bT6sZn4r9PZRymzyQmpX5Tnpww
-	 JWgysqNdddIUzxgj4G6ngzHKxy1aGh6svtB6MNMCnVzEmg9cJwfJzQYTMIIEBdWEI2
-	 MonZ8KFWfhPiKdF3nMoe4UrWzkLM/KmxA8J8qQZpxboSQQ5zyscIX8k7lmeKpmRRQB
-	 niTYoeLRgnAGFJjhylXNt/wqo/7DIy2ihYQ9nuW+uOlRRL7q/QlQAKX1Lv2c8SwRmX
-	 Kf3SexViRV7iQ==
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-44f783add60so661043b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:06:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVyo+5gzYEYr2kzRnfj6ogun6/El7Kx8dqYb+NIy1bCZ2UY4RDOIodU/+72DBsXG+Wi/VE9n28GCiXjZmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymZFr+SiWAbkO/0NrtOMVNM4m4fglSiEIuCBjGMXaTP4YwZwfw
-	v8HekuJTt+GiAeOgBClflkKeCi97p38TVJtUiO/fVQymau55qpQAA1enmBaoqoKPQeLolBP6GTB
-	97vGiAaOB8CtfCY5nbV/dnnoG586bhZc=
-X-Google-Smtp-Source: AGHT+IEMTQb+aUa2x3zxR9LsPUgyIaqCB158ba+He4+AFp1L349tjtBQ6XJuvZoqEQzHR4+LGS6E4/e9RiKA/m5Mx9k=
-X-Received: by 2002:a05:6808:4443:b0:443:9ee4:3656 with SMTP id
- 5614622812f47-44f7a4daf3cmr3088791b6e.38.1761833209875; Thu, 30 Oct 2025
- 07:06:49 -0700 (PDT)
+	s=k20201202; t=1761833248;
+	bh=ElSuKqJi7YmoFgm6sGoqUg8kYUYstSWdd9WHWiRKB4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bJuUs2ey7RaoceKzXP3BAhCLGwW/6cpZG1UH33PXH7C03WML9SmP+tfW9u3ml7q0M
+	 KmZ2k4dyfKUSr/aHyiqjRhOHG6GtqLDTm+hUoEMziCBkMu2QJ+P5doSIfpFVl6Pmgh
+	 V0HZYrjBvtJcJpz2pHfwZgF+AHNgroOGjnnDRtbjNNqyrPZTl2ZXDcZQnhQBrJOYJq
+	 qmKubWhG6J6xDOEDqOtifE3EhuNZsIwdGtabljsxEoQsF3J6sQF1MMhDKL7ffSk5RK
+	 vFogArbVaDGwOfSoaYRQykZsKFLsEI8U/b0SUjYsaXDAoku6ZC3mHnwye4dJ3eE0QR
+	 2+vZ6Oe/GPQmA==
+Date: Thu, 30 Oct 2025 15:07:25 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [RESEND PATCH v13 1/9] timers/migration: Postpone online/offline
+ callbacks registration to late initcall
+Message-ID: <aQNxHUQK8wrqGvuP@localhost.localdomain>
+References: <20251020112802.102451-1-gmonaco@redhat.com>
+ <20251020112802.102451-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
- <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
- <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com>
- <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com> <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
-In-Reply-To: <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 30 Oct 2025 15:06:38 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bk8CDtp7hapBF11SwzM_-NwA6URJrRlEKbJpTpP-57E_VrWkAAgZGTqVgk
-Message-ID: <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
- for s2idle
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251020112802.102451-2-gmonaco@redhat.com>
 
-On Thu, Oct 30, 2025 at 1:44=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> On Thu, 30 Oct 2025 at 13:29, Rafael J. Wysocki <rafael@kernel.org> wrote=
-:
-> >
-> > On Thu, Oct 30, 2025 at 1:26=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> > >
-> > > On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > > >
-> > > > On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.org>=
- wrote:
-> > > > >
-> > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansson@=
-linaro.org> wrote:
-> > > > > >
-> > > > > > Changes in v2:
-> > > > > >         - Limit the new QoS to CPUs  and make some correspondin=
-g renaming of the
-> > > > > >         functions along with name of the device node for user s=
-pace.
-> > > > > >         - Make sure we deal with the failure/error path correct=
-ly when there are
-> > > > > >         no state available for s2idle.
-> > > > > >         - Add documentation.
-> > > > > >
-> > > > > > Some platforms supports multiple low-power states for CPUs that=
- can be used
-> > > > > > when entering system-wide suspend and s2idle in particular. Cur=
-rently we are
-> > > > > > always selecting the deepest possible state for the CPUs, which=
- can break the
-> > > > > > system-wakeup latency constraint that may be required for some =
-use-cases.
-> > > > > >
-> > > > > > Therefore, this series suggests to introduce a new interface fo=
-r user-space,
-> > > > > > allowing us to specify the CPU system-wakeup QoS limit. The QoS=
- limit is then
-> > > > > > taken into account when selecting a suitable low-power state fo=
-r s2idle.
-> > > > >
-> > > > > Last time we discussed this I said I would like the new limit to =
-be
-> > > > > taken into account by regular "runtime" cpuidle because the "s2id=
-le"
-> > > > > limit should not be less that the "runtime" limit (or at least it
-> > > > > would be illogical if that happened).
-> > > >
-> > > > Yes, we discussed this, but that was also before we concluded to ad=
-d a
-> > > > new file for user-space to operate on after all.
-> > > >
-> > > > To me, it looks unnecessarily limiting to not allow them to be
-> > > > orthogonal,
-> > >
-> > > So what's the use case in which it makes sense to have a lower latenc=
-y
-> > > limit for s2idle than for runtime?
->
-> Honestly, I don't know, but I just wanted to keep things more flexible.
->
-> > >
-> > > > but I am not insisting that it needs to be like this. I
-> > > > was just thinking that we do not necessarily have to care about the
-> > > > same use-case in runtime as in the system-suspend state. Moreover,
-> > > > nothing would prevent user-space from applying the same constraint =
-to
-> > > > both of them, if that is needed.
-> > > >
-> > > > >
-> > > > > It looks like that could be implemented by making
-> > > > > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limit(=
-)
-> > > > > into account, couldn't it?
-> > > >
-> > > > Right, but I am not sure we want that. See above.
-> > >
-> > > I do or I need to be convinced that this is a bad idea.
-> >
-> > And there is a specific reason why I want that.
-> >
-> > Namely, say somebody wants to set the same limit for both s2idle and
-> > "runtime" cpuidle.  If the s2idle limit did not affect "runtime", they
-> > would need to open two device special files and write the same value
-> > to both of them.  Otherwise, they just need to use the s2idle limit
-> > and it will work for "runtime" automatically.
->
-> Right. User-space would need to open two files instead of one, but is
-> that really a problem?
+Le Mon, Oct 20, 2025 at 01:27:54PM +0200, Gabriele Monaco a écrit :
+> From: Frederic Weisbecker <frederic@kernel.org>
+> 
+> During the early boot process, the default clocksource used for
+> timekeeping is the jiffies. Better clocksources can only be selected
+> once clocksource_done_booting() is called as an fs initcall.
+> 
+> NOHZ can only be enabled after that stage, making global timer migration
+> irrelevant up to that point.
+> 
+> The tree remains inactive before NOHZ is enabled anyway. Therefore it
+> makes sense to enable each CPUs to the tree only once that is setup.
+> 
+> Make the CPUs available to the tree on late initcall, after the right
+> clocksource had a chance to be selected. This will also simplify the
+> handling of domain isolated CPUs on further patches.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>  kernel/time/timer_migration.c | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+> index c0c54dc5314c..891891794b92 100644
+> --- a/kernel/time/timer_migration.c
+> +++ b/kernel/time/timer_migration.c
+> @@ -1481,6 +1481,16 @@ static int tmigr_cpu_online(unsigned int cpu)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * NOHZ can only be enabled after clocksource_done_booting(). Don't
+> + * bother trashing the cache in the tree before.
+> + */
+> +static int __init tmigr_late_init(void)
+> +{
+> +	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
+> +				 tmigr_cpu_online, tmigr_cpu_offline);
+> +}
 
-It is potentially confusing and error-prone.
+I just worked on a fix in the timer migration code and this made me realize
+my suggestion was plain wrong.
 
-> What if user-space doesn't want to affect the runtime state-selection,
-> but cares only about a use-case that requires a cpu-wakeup constraint
-> when resuming from s2idle.
+The CPU doing the prepare work for the target must be online because we must
+guarantee that the old top level is active since we unconditionally propagate
+its active state to the new top.
 
-Well, I'm not sure if this use case exists at all, which is key here.
-If it doesn't exist, why make provisions for it?
+And if we do that late call to tmigr_cpu_online (after most CPUs have booted)
+then we break that guarantee.
+
+So I fear we can't do that and we must go back to your previous idea which
+consisted in sending IPIs to apply isolation on late stage.
+
+Sorry about the late brain :-s
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
