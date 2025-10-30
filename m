@@ -1,549 +1,201 @@
-Return-Path: <linux-kernel+bounces-877660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6352C1EB0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E29AC1EB1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EBC73A9B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDA63B8155
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27967336EDE;
-	Thu, 30 Oct 2025 07:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB77E3358B1;
+	Thu, 30 Oct 2025 07:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pK0D2X4B"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOAz0xsk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6243358B8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00462335091;
+	Thu, 30 Oct 2025 07:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761808049; cv=none; b=BL6TFzPWcnk21iPuD9RsdOfar8CnUhI+nU+pUCmWLNQBAei4FPZEfNLV0tWHJM+FKAyFZg3/HrsR6qXDcJVm/vNo4JtRZG6W8z9wfzTEkl1RCVdQ3c8bqTitDU9eYG827NDWloJDmLOl2NJM751FNrjwdTkE5FcpQUl7VRCPo5g=
+	t=1761808078; cv=none; b=RiQTXLhpQN33Q+/QQROFFkE7i6uuUBiqJUywPJr4PDz0bk1wWJ54236AILHzKLsh6MMpa8uGax6QzO7hhdyW5zRpc31GRfUneyM7n1HySQaTGidfhldGzdsbMhxRCxAy8QdeWClivzrbYBiqdyDEh82p9Qwo+540+maNLQE6u0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761808049; c=relaxed/simple;
-	bh=9uICUoLbunFaYrqthhSqg3turK9EvwGSpT6tuM6Vyyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=I8yyRDkuWF4pZTdtLtV3C6KtLkbgQOHW1cQTnLf768QtuFgwSRzHc/Xirfb4ZxOvas7vgsF1t9gLqL09FWpqktOKDNi672VPDTMoYNOsodKU70L4guMKuwH9RJVsDLmBBC3Hb7oZ9ZMTvBSPnLcQVw2KNr5I4WHeaMPtLjWMKvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pK0D2X4B; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251030070719epoutp01760519cd3e5bf15667ee61064b8e7b1f~zMxO-ELDG1980819808epoutp01e
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:07:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251030070719epoutp01760519cd3e5bf15667ee61064b8e7b1f~zMxO-ELDG1980819808epoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761808039;
-	bh=nFWWNPB0U+yN5g9VWpUZhtMoCfwQ9SvKveW352qxGWc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pK0D2X4B/nenPVOPgQ5QGu9gCmekbyCnvTLWCuKPrREYRRlaPNeOOuKNkAye3lc8R
-	 Z1yRHatbtlkap0CUTkArIGU+syGrQCB3GinOQTvqVgakroe9O5+pGd+sbMRk5rJwe9
-	 8eQtEEPBYhb+edjfguLYn6NCCknLTiibQ4IxVwRU=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20251030070718epcas2p430fa46a8b7a2db2771d8ea580052c941~zMxOVG4IM1433014330epcas2p4t;
-	Thu, 30 Oct 2025 07:07:18 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.38.206]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cxwCp0cLwz2SSKZ; Thu, 30 Oct
-	2025 07:07:18 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251030070717epcas2p3009a167a6d881be5d3b88f960dfd177d~zMxNAGkN02559825598epcas2p3_;
-	Thu, 30 Oct 2025 07:07:17 +0000 (GMT)
-Received: from asswp60 (unknown [10.229.9.60]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251030070716epsmtip27abf5e8dff06fa243767ab8cd5be86dd~zMxM5lO2B1278412784epsmtip2c;
-	Thu, 30 Oct 2025 07:07:16 +0000 (GMT)
-From: Shin Son <shin.son@samsung.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Henrik Grimler
-	<henrik@grimler.se>
-Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 RESEND 3/3] arm64: dts: exynosautov920: Add multiple
- sensors
-Date: Thu, 30 Oct 2025 16:07:12 +0900
-Message-ID: <20251030070712.248065-4-shin.son@samsung.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251030070712.248065-1-shin.son@samsung.com>
+	s=arc-20240116; t=1761808078; c=relaxed/simple;
+	bh=ipLpVtkSZXmlBFR2EviXdNceYMtpLlgeI6yDHRxnKRk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pGtY+tmUf8Sl8pjaZnshvgUtgA1YNX9jOynYd5KGCN9RWojKFc3tb8aTywN6EyjRowmhoUiRUYGRL2T47dxK0MAU8W+qY79MbGzjTnMHIk0EnVp3Vu9T8KAPOOjUgfxf5lraiZep95RtON8Wxp3JJeFqsjENM+dY8jNQychHR3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOAz0xsk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 825B2C4CEF1;
+	Thu, 30 Oct 2025 07:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761808077;
+	bh=ipLpVtkSZXmlBFR2EviXdNceYMtpLlgeI6yDHRxnKRk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=FOAz0xskRH2ndTBgwKEuPzwHUdaOaGVkxXElJb1tVTf9NDfBpFjXB81jin0YaL3Tj
+	 pB697jahyGLl7DwA55ZoYTBtbuJKLGRwH5RS1PDQGXKsgmg8+ggxmBFZzsCQl84cil
+	 1OJzK3B0c1V5459NqZ+2hK0qMqhbOytrkYZTtSHi0tU/ItcKwaR+VaOjgseJXA6zMQ
+	 6UrRhoXrMfQzMdjnyHJd2V9WYhxAkXzwH4M/kpJP62wJjFs79DQFYWTYZ2Bhv/M32K
+	 zhiFBNCybPjjh2SVCQIGgfxWAeyO0veLFFQhPD4owEmMQtnKuPKZ9sfhzlJ6gGa2jI
+	 88s5YkgD+sYMQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E680CCF9F6;
+	Thu, 30 Oct 2025 07:07:57 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Date: Thu, 30 Oct 2025 08:07:42 +0100
+Subject: [PATCH] net: can: mcp251x: use dev_err_probe() in probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251030070717epcas2p3009a167a6d881be5d3b88f960dfd177d
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251030070717epcas2p3009a167a6d881be5d3b88f960dfd177d
-References: <20251030070712.248065-1-shin.son@samsung.com>
-	<CGME20251030070717epcas2p3009a167a6d881be5d3b88f960dfd177d@epcas2p3.samsung.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251030-mcp_err-v1-1-eecf737823b7@gocontroll.com>
+X-B4-Tracking: v=1; b=H4sIAL4OA2kC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA2MD3dzkgvjUoiLdNLNEY8PUpKRUE/NEJaDqgqLUtMwKsEnRsbW1ADw
+ ycApZAAAA
+X-Change-ID: 20251030-mcp_err-f6a31ebbe47a
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol@kernel.org>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Maud Spierings <maudspierings@gocontroll.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761808076; l=3745;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=7SQx5+xuTmbRP2jC1wr5GUv3U4vwif5G7XletYOqjvM=;
+ b=ajEC4nBLTA9I/eM7uEBSr4UY3zwgPURL28Oc1vZrtNHrN+r1aYzTOc0fCUk3mcDsIkoLu1vBm
+ nxT+mb8Zr9bCRo61rJ+jIATfekBzhDYcYITa6yj7nAhslll9CFMEwYC
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-Create a new exynosautov920-tmu.dtsi describing new TMU hardware
-and include it from exynosautov920.dtsi.
+From: Maud Spierings <maudspierings@gocontroll.com>
 
-The exynosautov920-tmu node uses the misc clock as its source.
+The currently used combination of dev_err plus return leaves a loud
+error in dmesg even when the error is a deferred probe which gets
+resolved later. For example a supply that has not been probed yet.
 
-This TMU binding defines multiple thermal zones with a critical trip point
-at 125 degrees:
+Use dev_err_probe to improve the handling/display of errors.
 
-tmu_top : cpus0-0, cpus0-1, cpus0-2, cpus0-3,
-          cpus1-0, cpus1-1, cpus1-2, cpus1-3,
-	  cpus1-4, cpus1-5, cpus1-6, cpus1-7
-
-tmu_sub0: cpus0-4, cpus0-5, cpus0-6, cpus0-7,
-          cpus2-0, cpus2-1, cpus2-2, cpus2-3
-
-tmu_sub1: gpu0, gpu1, gpu2, gpu3, npu0, npu1
-
-Signed-off-by: Shin Son <shin.son@samsung.com>
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 ---
- .../boot/dts/exynos/exynosautov920-tmu.dtsi   | 377 ++++++++++++++++++
- .../arm64/boot/dts/exynos/exynosautov920.dtsi |  31 ++
- 2 files changed, 408 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
+ drivers/net/can/spi/mcp251x.c | 31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
-new file mode 100644
-index 000000000000..641d142e0eeb
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
-@@ -0,0 +1,377 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung's ExynosAuto920 TMU configurations device tree source
-+ *
-+ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
-+ *
-+ * Samsung's ExynosAuto920 SoC TMU(Thermal Managemenut Unit) are listed as
-+ * device tree nodes in this file.
-+ */
-+
-+/ {
-+	thermal-zones {
-+		cpus0-0-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 9>;
-+
-+			trips {
-+				cpus0_0_critical: cpus0-0-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-1-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 10>;
-+
-+			trips {
-+				cpus0_1_critical: cpus0-1-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-2-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 11>;
-+
-+			trips {
-+				cpus0_2_critical: cpus0-2-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-3-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 12>;
-+
-+			trips {
-+				cpus0_3_critical: cpus0-3-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-4-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 7>;
-+
-+			trips {
-+				cpus0_4_critical: cpus0-4-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-5-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 8>;
-+
-+			trips {
-+				cpus0_5_critical: cpus0-5-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-6-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 9>;
-+
-+			trips {
-+				cpus0_6_critical: cpus0-6-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus0-7-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 10>;
-+
-+			trips {
-+				cpus0_7_critical: cpus0-7-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-0-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 1>;
-+
-+			trips {
-+				cpus1_0_critical: cpus1-0-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-1-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 2>;
-+
-+			trips {
-+				cpus1_1_critical: cpus1-1-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-2-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 3>;
-+
-+			trips {
-+				cpus1_2_critical: cpus1-2-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-3-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 4>;
-+
-+			trips {
-+				cpus1_3_critical: cpus1-3-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-4-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 5>;
-+
-+			trips {
-+				cpus1_4_critical: cpus1-4-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-5-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 6>;
-+
-+			trips {
-+				cpus1_5_critical: cpus1-5-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-6-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 7>;
-+
-+			trips {
-+				cpus1_6_critical: cpus1-6-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus1-7-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 8>;
-+
-+			trips {
-+				cpus1_7_critical: cpus1-7-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus2-0-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 3>;
-+
-+			trips {
-+				cpus2_0_critical: cpus2-0-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus2-1-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 4>;
-+
-+			trips {
-+				cpus2_1_critical: cpus2-1-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus2-2-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 5>;
-+
-+			trips {
-+				cpus2_2_critical: cpus2-2-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpus2-3-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub0 6>;
-+
-+			trips {
-+				cpus2_3_critical: cpus2-3-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu0-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub1 1>;
-+
-+			trips {
-+				gpu0_critical: gpu0-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu1-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub1 2>;
-+
-+			trips {
-+				gpu1_critical: gpu1-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu2-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub1 3>;
-+
-+			trips {
-+				gpu2_critical: gpu2-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu3-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub1 4>;
-+
-+			trips {
-+				gpu3_critical: gpu3-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		npu0-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub1 6>;
-+
-+			trips {
-+				npu0_critical: npu0-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		npu1-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_sub1 7>;
-+
-+			trips {
-+				npu1_critical: npu1-critical {
-+					temperature = <125000>;	/* millicelsius */
-+					hysteresis = <0>;	/* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 0fdf2062930a..884fe2466691 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -330,6 +330,36 @@ watchdog_cl1: watchdog@10070000 {
- 			samsung,cluster-index = <1>;
- 		};
+diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
+index 1e54e1a22702..fa97adf25b73 100644
+--- a/drivers/net/can/spi/mcp251x.c
++++ b/drivers/net/can/spi/mcp251x.c
+@@ -1320,7 +1320,7 @@ static int mcp251x_can_probe(struct spi_device *spi)
  
-+		tmu_top: tmu@100a0000 {
-+			compatible = "samsung,exynosautov920-tmu";
-+			reg = <0x100a0000 0x1000>;
-+			interrupts = <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>;
-+			#thermal-sensor-cells = <1>;
-+			clocks = <&cmu_misc CLK_DOUT_MISC_NOCP>;
-+			clock-names = "tmu_apbif";
-+			samsung,sensors = <12>;
-+		};
-+
-+		tmu_sub0: tmu@100b0000 {
-+			compatible = "samsung,exynosautov920-tmu";
-+			reg = <0x100b0000 0x1000>;
-+			interrupts = <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>;
-+			#thermal-sensor-cells = <1>;
-+			clocks = <&cmu_misc CLK_DOUT_MISC_NOCP>;
-+			clock-names = "tmu_apbif";
-+			samsung,sensors = <10>;
-+		};
-+
-+		tmu_sub1: tmu@100c0000 {
-+			compatible = "samsung,exynosautov920-tmu";
-+			reg = <0x100c0000 0x1000>;
-+			interrupts = <GIC_SPI 949 IRQ_TYPE_LEVEL_HIGH>;
-+			#thermal-sensor-cells = <1>;
-+			clocks = <&cmu_misc CLK_DOUT_MISC_NOCP>;
-+			clock-names = "tmu_apbif";
-+			samsung,sensors = <7>;
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
-@@ -1507,3 +1537,4 @@ timer {
- };
+ 	clk = devm_clk_get_optional(&spi->dev, NULL);
+ 	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++		return dev_err_probe(&spi->dev, PTR_ERR(clk), "Cannot get clock\n");
  
- #include "exynosautov920-pinctrl.dtsi"
-+#include "exynosautov920-tmu.dtsi"
+ 	freq = clk_get_rate(clk);
+ 	if (freq == 0)
+@@ -1328,7 +1328,7 @@ static int mcp251x_can_probe(struct spi_device *spi)
+ 
+ 	/* Sanity check */
+ 	if (freq < 1000000 || freq > 25000000)
+-		return -ERANGE;
++		return dev_err_probe(&spi->dev, -ERANGE, "clock frequency out of range\n");
+ 
+ 	/* Allocate can/net device */
+ 	net = alloc_candev(sizeof(struct mcp251x_priv), TX_ECHO_SKB_MAX);
+@@ -1336,8 +1336,10 @@ static int mcp251x_can_probe(struct spi_device *spi)
+ 		return -ENOMEM;
+ 
+ 	ret = clk_prepare_enable(clk);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(&spi->dev, ret, "Cannot enable clock\n");
+ 		goto out_free;
++	}
+ 
+ 	net->netdev_ops = &mcp251x_netdev_ops;
+ 	net->ethtool_ops = &mcp251x_ethtool_ops;
+@@ -1362,20 +1364,25 @@ static int mcp251x_can_probe(struct spi_device *spi)
+ 	else
+ 		spi->max_speed_hz = spi->max_speed_hz ? : 10 * 1000 * 1000;
+ 	ret = spi_setup(spi);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(&spi->dev, ret, "Cannot set up spi\n");
+ 		goto out_clk;
++	}
+ 
+ 	priv->power = devm_regulator_get_optional(&spi->dev, "vdd");
+ 	priv->transceiver = devm_regulator_get_optional(&spi->dev, "xceiver");
+ 	if ((PTR_ERR(priv->power) == -EPROBE_DEFER) ||
+ 	    (PTR_ERR(priv->transceiver) == -EPROBE_DEFER)) {
+ 		ret = -EPROBE_DEFER;
++		dev_err_probe(&spi->dev, ret, "supply deferred\n");
+ 		goto out_clk;
+ 	}
+ 
+ 	ret = mcp251x_power_enable(priv->power, 1);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(&spi->dev, ret, "Cannot enable power\n");
+ 		goto out_clk;
++	}
+ 
+ 	priv->wq = alloc_workqueue("mcp251x_wq",
+ 				   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
+@@ -1409,21 +1416,24 @@ static int mcp251x_can_probe(struct spi_device *spi)
+ 	/* Here is OK to not lock the MCP, no one knows about it yet */
+ 	ret = mcp251x_hw_probe(spi);
+ 	if (ret) {
+-		if (ret == -ENODEV)
+-			dev_err(&spi->dev, "Cannot initialize MCP%x. Wrong wiring?\n",
+-				priv->model);
++		dev_err_probe(&spi->dev, ret, "Cannot initialize MCP%x. Wrong wiring?\n",
++			      priv->model);
+ 		goto error_probe;
+ 	}
+ 
+ 	mcp251x_hw_sleep(spi);
+ 
+ 	ret = register_candev(net);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(&spi->dev, ret, "Cannot register CAN device\n");
+ 		goto error_probe;
++	}
+ 
+ 	ret = mcp251x_gpio_setup(priv);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(&spi->dev, ret, "Cannot set up gpios\n");
+ 		goto out_unregister_candev;
++	}
+ 
+ 	netdev_info(net, "MCP%x successfully initialized.\n", priv->model);
+ 	return 0;
+@@ -1442,7 +1452,6 @@ static int mcp251x_can_probe(struct spi_device *spi)
+ out_free:
+ 	free_candev(net);
+ 
+-	dev_err(&spi->dev, "Probe failed, err=%d\n", -ret);
+ 	return ret;
+ }
+ 
+
+---
+base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
+change-id: 20251030-mcp_err-f6a31ebbe47a
+
+Best regards,
 -- 
-2.50.1
+Maud Spierings <maudspierings@gocontroll.com>
+
 
 
