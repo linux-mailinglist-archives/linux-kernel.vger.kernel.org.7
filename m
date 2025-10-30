@@ -1,201 +1,150 @@
-Return-Path: <linux-kernel+bounces-878018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E75C1F93E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:33:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB98C1F938
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 421AA34DE86
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A99B188F4F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D51234D91B;
-	Thu, 30 Oct 2025 10:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB50734A3AB;
+	Thu, 30 Oct 2025 10:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mhe+afEJ"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tw3cpasq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79AE2882A1;
-	Thu, 30 Oct 2025 10:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C182E4257;
+	Thu, 30 Oct 2025 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761820418; cv=none; b=s91W4eDuDMfwLszib72U5uB045EtL8Us5DqbiPasnbn9raftQD0RhytGTUuosrasRseSYt5bFaARyjML1ywGvt8TTVHkWsSV4mkSV1Lc7HSuTkMo/HTsKCffpU/fWbgyZUDR3dbtA5SiGw6zQvoh2AyaQHZb2qU0HPrHbPNLm2g=
+	t=1761820413; cv=none; b=NSkDwi02YxAzBQ1EOMNLohCUoBfEz5k3fluMwwnt/fctf3rZs7gtJX3bcOkjE+eXpEVX5J+OscSYTcLz503y32TsraNToL+CHyL/MOgRzvFN4IhLBwtsphGhnO7qRhH3MsSitjY0cRiuIGot1DfoQmQzZq9xShTvzmf0MPbp5mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761820418; c=relaxed/simple;
-	bh=oel8tMmtyc6xaq2BcHMZlBGzzEoBoMry4zkVTpe0pHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlyqMBMOeBAZERtV7tF2NrGVbISsuKn3hLjDo5T0K+GYAJ8eZiVNmoM9lZVYZ/qFMeqrzZxashvT356bkvolfsmSXPyzO9FxGWMHLUM9g+sfecGooyqxj8WyQbgJNOoE6ffb/pObTx+DSEF4c3g4osWwYZXAYRpMc8R0AXY78rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=mhe+afEJ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dEOf8TBUJIgzfwfRuKWeofWnNpL3ZO9x9PK/8aK9tEY=; b=mhe+afEJcNn+x4wnWIMPjJbLD7
-	gkSxD39KBgElP1LV9Tbvx04mg7o6Z/Me2kU44aUJRahVhf/ruS0gtTMuwJ0COCZGS+973Z7atktAJ
-	siXZ6OdIXiO1tHxM0AJCrNDrmO+yguhyDoeRw9r4kYgRYUO7aCNg6VooGewnN/MkeqxT8HWGmuNxz
-	vLhhy/wtvE7oIwHD9xm52ysUPDT6eeFb40o3oG2vFhOJdxzG5ZonCh0BCjMPPn1SLaci6vqrt8FUN
-	FVrNbl8MVGZpNd8gF2a9HpgHBORSCM75aom/nPD82V/dirsi8fifDPn5cwV6EHx1cPiVReFx/Yamr
-	AwOZWKHg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50626)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	s=arc-20240116; t=1761820413; c=relaxed/simple;
+	bh=4vlTcUHnlIGUCSTolMoyH6GKsNTaPDWCyxiVix+mu18=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OqZakQV4rUCkJp5YomUBNUgIwONRCDEddOywvOiUk4ziW38I0k7vZ4u7Oo9plon9Iii8LVB2Ma58UvM98NRMgmmdEvDMgFhURqZzyT3N5RILrTdY/rzHIAq83z9pgS5meckG9hEFhmFe5iJcCWpuihLCxVOx1hn65Q/KC719Uy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tw3cpasq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA30C4CEF1;
+	Thu, 30 Oct 2025 10:33:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761820412;
+	bh=4vlTcUHnlIGUCSTolMoyH6GKsNTaPDWCyxiVix+mu18=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tw3cpasqLEIBjik6KTPCMSZe3NvREh1EFnQ9RuYMkBx1FyzNNaUS0EozRXUx8JGBu
+	 mmbgSK/yxIIQGCRwmVlbjRSt0eJ5xJ1HoMQdNF8IP38xDJNzfbR7FU3zyMAy4UnbeG
+	 tj8+/P6rRxGrlGBDmUEY4QLxO6NSY4uc8LH/ivMzfXRcLltZsblFMAMNWzwMSfQI70
+	 P2xQHZZW+6Zoch+poBjJyQ2rU5p6ESngaCutGzWoJ/ghxULWww2x1ulO0N35UcvSAo
+	 U93OANVkOT1/T23Lpm9MRtOTEJG0qgiq0gOGQ3gpB0VROIgLSxHF/q2UBhlyRBzi2W
+	 TjqKcLaS0QRUw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vEPyD-000000005YA-1MR4;
-	Thu, 30 Oct 2025 10:33:29 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vEPyB-000000008NU-09Cu;
-	Thu, 30 Oct 2025 10:33:27 +0000
-Date: Thu, 30 Oct 2025 10:33:26 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3 1/2] net: phy: micrel: lan8842 errata
-Message-ID: <aQM-9u6MQKN_t9fE@shell.armlinux.org.uk>
-References: <20251030074941.611454-1-horatiu.vultur@microchip.com>
- <20251030074941.611454-2-horatiu.vultur@microchip.com>
+	(envelope-from <maz@kernel.org>)
+	id 1vEPyE-00000000wgf-1s4g;
+	Thu, 30 Oct 2025 10:33:30 +0000
+Date: Thu, 30 Oct 2025 10:33:29 +0000
+Message-ID: <86v7jwvfuu.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/4] ACPI: GTDT: Generate platform devices for MMIO timers
+In-Reply-To: <1eafe745-068b-4c15-a3d0-14e7222970fd@quicinc.com>
+References: <20250807160243.1970533-1-maz@kernel.org>
+	<20250807160243.1970533-2-maz@kernel.org>
+	<1eafe745-068b-4c15-a3d0-14e7222970fd@quicinc.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030074941.611454-2-horatiu.vultur@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: pavan.kondeti@oss.qualcomm.com, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, rafael@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Oct 30, 2025 at 08:49:40AM +0100, Horatiu Vultur wrote:
-> +static int lan8842_erratas(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +
-> +	/* Magjack center tapped ports */
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_3_ANEG_MDI,
-> +				    LAN8814_POWER_MGMT_VAL1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_4_ANEG_MDIX,
-> +				    LAN8814_POWER_MGMT_VAL1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_5_10BT_MDI,
-> +				    LAN8814_POWER_MGMT_VAL1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_6_10BT_MDIX,
-> +				    LAN8814_POWER_MGMT_VAL1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_7_100BT_TRAIN,
-> +				    LAN8814_POWER_MGMT_VAL2);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_8_100BT_MDI,
-> +				    LAN8814_POWER_MGMT_VAL3);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_9_100BT_EEE_MDI_TX,
-> +				    LAN8814_POWER_MGMT_VAL3);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_10_100BT_EEE_MDI_RX,
-> +				    LAN8814_POWER_MGMT_VAL4);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_11_100BT_MDIX,
-> +				    LAN8814_POWER_MGMT_VAL5);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_12_100BT_EEE_MDIX_TX,
-> +				    LAN8814_POWER_MGMT_VAL5);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				    LAN8814_POWER_MGMT_MODE_13_100BT_EEE_MDIX_RX,
-> +				    LAN8814_POWER_MGMT_VAL4);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> +				     LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
-> +				     LAN8814_POWER_MGMT_VAL4);
+On Thu, 30 Oct 2025 08:10:31 +0000,
+Pavan Kondeti <pavan.kondeti@oss.qualcomm.com> wrote:
+> 
+> On Thu, Aug 07, 2025 at 05:02:40PM +0100, Marc Zyngier wrote:
+> > In preparation for the MMIO timer support code becoming an actual
+> > driver, mimic what is done for the SBSA watchdog and expose
+> > a synthetic device for each MMIO timer block.
+> > 
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  drivers/acpi/arm64/gtdt.c | 29 +++++++++++++++++++++++++----
+> >  1 file changed, 25 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> > index 70f8290b659de..fd995a1d3d248 100644
+> > --- a/drivers/acpi/arm64/gtdt.c
+> > +++ b/drivers/acpi/arm64/gtdt.c
+> > @@ -388,11 +388,11 @@ static int __init gtdt_import_sbsa_gwdt(struct acpi_gtdt_watchdog *wd,
+> >  	return 0;
+> >  }
+> >  
+> > -static int __init gtdt_sbsa_gwdt_init(void)
+> > +static int __init gtdt_platform_timer_init(void)
+> >  {
+> >  	void *platform_timer;
+> >  	struct acpi_table_header *table;
+> > -	int ret, timer_count, gwdt_count = 0;
+> > +	int ret, timer_count, gwdt_count = 0, mmio_timer_count = 0;
+> >  
+> >  	if (acpi_disabled)
+> >  		return 0;
+> > @@ -414,20 +414,41 @@ static int __init gtdt_sbsa_gwdt_init(void)
+> >  		goto out_put_gtdt;
+> >  
+> >  	for_each_platform_timer(platform_timer) {
+> > +		ret = 0;
+> > +
+> >  		if (is_non_secure_watchdog(platform_timer)) {
+> >  			ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
+> >  			if (ret)
+> > -				break;
+> > +				continue;
+> >  			gwdt_count++;
+> > +		} else 	if (is_timer_block(platform_timer)) {
+> > +			struct arch_timer_mem atm = {};
+> > +			struct platform_device *pdev;
+> > +
+> > +			ret = gtdt_parse_timer_block(platform_timer, &atm);
+> > +			if (ret)
+> > +				continue;
+> > +
+> > +			pdev = platform_device_register_data(NULL, "gtdt-arm-mmio-timer",
+> > +							     gwdt_count, &atm,
+> > +							     sizeof(atm));
+> 
+> Did you mean to pass `mmio_timer_count` as the `id` argument to
+> platform_device_register_data()?
 
-This is a lot of repetition.
+I did. Clearly a brain fart. And looking at this again, there are
+additional cleanups that can be applied. I'll spin something shortly.
 
-Is it worth storing the errata register information in a struct, and
-then using a loop to write these registers. Something like:
+Thanks,
 
-struct lanphy_reg_data {
-	int page;
-	u16 addr;
-	u16 val;
-;
-
-static const struct lanphy_reg_data short_centre_tap_errata[] = {
-	...
-};
-
-static int lanphy_write_reg_data(struct phy_device *phydev,
-				 const struct lanphy_reg_data *data,
-				 size_t num)
-{
-	int ret = 0;
-
-	while (num--) {
-		ret = lanphy_write_page_reg(phydev, data->page, data->addr,
-					    data->val);
-		if (ret)
-			break;
-	}
-
-	return 0;
-}
-
-static int lan8842_erratas(struct phy_device *phydev)
-{
-	int ret;
-
-	ret = lanphy_write_reg_data(phydev, short_centre_tap_errata,
-				    ARRAY_SIZE(short_centre_tap_errata));
-	if (ret)
-		return ret;
-
-	return lanphy_write_reg_data(phydev, blah_errata,
-				     ARRAY_SIZE(blah_errata));
-}
-
-?
+	M.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Without deviation from the norm, progress is not possible.
 
