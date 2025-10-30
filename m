@@ -1,235 +1,272 @@
-Return-Path: <linux-kernel+bounces-878278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6F1C202A4
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3181FC202A3
 	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEED1188512E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:07:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF6BD4EAB88
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA683546E3;
-	Thu, 30 Oct 2025 13:06:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB131917ED;
+	Thu, 30 Oct 2025 13:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beDnRk8L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ABC34D923
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683C6340DB8
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761829611; cv=none; b=piwwXuG6b0XqCbdGdPPeXhZvVDYJdjOZvM18Kq/shX9vzDbncd2SUx1XDlipnEH9NrnYcjeBn6PbIycHDAqnCI2pUjDMrlQTtO3i3o06980g2yGHgoDyfZJG/eXmTajJJO+Z4286WnTuB0mV55G61tV1jUY3qYY5lM+nKfb1sOU=
+	t=1761829665; cv=none; b=MI+p7O3Sydd5zKAC3MPWxEc4Tk73bpgKwB92zmYDKjTwT4E/allaUM5rFJQjq+NOvEzvk0Wmy+XKsNq7NcwDO2Vlv6deSkv02alb55e0eQgnUtDaTBGTNFQUuSl+mzpmRDf2RjRuzDmzhTRuPNn7aDDwsSRZlt1I4uvpAjuV+TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761829611; c=relaxed/simple;
-	bh=tyv5U14rZUqntfSo8Ih2AZ1Lql7y8cKlmbDYXAk3K1c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QDQlLqT5Xhsk/CjxGCIfiAxRPqgpk+ptDSrYxK6cH3mDqaRKRljR154XNC15tWlSZs9RkSq5Cn2bNpZhZCjEbVqpgYVvO8rTX4S1wdU7TMh2/G/ADIvoHZ76B+0I+A8MmlHfGUH7gWd2sgxsGzyA0Ko/VAt2ev98KAdnLig0OYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vESMJ-0006ym-Cs; Thu, 30 Oct 2025 14:06:31 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vESMI-006DXP-03;
-	Thu, 30 Oct 2025 14:06:30 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vESMH-000000009YP-3s7P;
-	Thu, 30 Oct 2025 14:06:29 +0100
-Message-ID: <105ed81ed67d8e4cacb63a83a606e206a4d6f310.camel@pengutronix.de>
-Subject: Re: [PATCH v3 5/8] reset: imx8mp-audiomix: Switch to using regmap
- API
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Abel Vesa
-	 <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam
-	 <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
-	 <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  Pengutronix Kernel Team	
- <kernel@pengutronix.de>
-Date: Thu, 30 Oct 2025 14:06:29 +0100
-In-Reply-To: <20251029135229.890-6-laurentiumihalcea111@gmail.com>
-References: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
-	 <20251029135229.890-6-laurentiumihalcea111@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1761829665; c=relaxed/simple;
+	bh=lmmU+JRQdnDXGDXoGhgusjLi67+ffyF4g7180es3rOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AbbWAfqL86mFrN7nhdfxMwFs5mWU/wSaOAEn9B8z8MF/t7RcJjAtx5lbhrbp1zI2rtweS143T64GJ4+EvIpJ/QJ3vtjVBWahGtBcmvlCrUbcv2PZaCIk8g+DHGmVU068zanZDaFcwrnPBdhFX5q7FtbPpQ4l+KObiWp46Bqg+iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beDnRk8L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C8F9C4CEF8;
+	Thu, 30 Oct 2025 13:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761829664;
+	bh=lmmU+JRQdnDXGDXoGhgusjLi67+ffyF4g7180es3rOI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=beDnRk8LfUTRIWNiBqO7RCYuddClQOBSpG0GEHENmEj4TJv1r4iJNQD8rIna1ak1I
+	 wJTHRqy+2DjX2w63aESb29Ln6kHi6LKM2uXUhK+eyIzwdrEfh+/KG/qGdFrUIWPfUq
+	 GGjGGvkes4hxrz2cp1Ntg0WM4vroYLq003TImVoXWZPnEJgp+4s48CRtcHnORpFIHw
+	 SZeqD3diusKgTMrcJkTNOdbmQIIpKOHYENb0d1k7XZJxzH5LDoOhD2146/hYKEB8Tv
+	 3Dz/0A2vHHJQqhG5Do0UERYdSTQn+nN/3fYk9+WDSxufGavF0qG8l4UJrved3YamvE
+	 J3S6Xor8mWKOg==
+Date: Thu, 30 Oct 2025 10:07:41 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@kernel.org>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sean Christopherson <seanjc@google.com>
+Subject: [PATCH 1/1] tools arch x86: Sync msr-index.h to pick
+ AMD64_{PERF_CNTR_GLOBAL_STATUS_SET,SAVIC_CONTROL},
+ IA32_L3_QOS_{ABMC,EXT}_CFG
+Message-ID: <aQNjHZBB_dWtCQQG@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mi, 2025-10-29 at 06:52 -0700, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->=20
-> As far as the Linux kernel is concerned, block devices such as i.MX8MP's
-> AUDIOMIX block control or i.MX8ULP's SIM LPAV can simultaneously act as
-> clock controllers, reset controllers or mux controllers. Since these IPs
-> offer different functionalities through different subsystem APIs, it's
-> important to make sure that the register R-M-W cycles are performed under
-> the same lock across all subsystem APIs. This will ensure that registers
-> will not end up with the wrong values because of race conditions (e.g.
-> clock consumer tries to update block control register A, while, at the
-> same time, reset consumer tries to update the same block control register=
-).
->=20
-> However, the aforementioned race conditions will only impact block contro=
-l
-> IPs which use the same register for multiple functionalities. For example=
-,
-> i.MX8MP's AUDIOMIX block control IP provides clock gating functionalities
-> and reset control functionalities through different registers. This is wh=
-y
-> the current approach (i.e. clock control and reset control work using
-> different locks) has worked well so far.
->=20
-> Since we want to extend this driver to be usable for i.MX8ULP's SIM LPAV
-> block control IP, we need to make sure that clock control, reset control,
-> and mux control APIs use the same lock since all of these functionalities
-> are performed using the SYSCTRL0 register.
->=20
-> To do so, we need to switch to the regmap API and, if possible, use the
-> parent device's regmap, which, in the case of i.MX8ULP, will be the clock
-> controller. This way, we can make sure that the clock gates and the reset
-> controller will use the same lock to perform the register R-M-W cycles.
->=20
-> This change will also work fine for cases where we don't really need to
-> share the lock across multiple APIs (e.g. i.MX8MP's AUDIOMIX block
-> control) since regmap will take care of the locking we were previously
-> explicitly performing in the driver.
->=20
-> The transition to the regmap API also involves some cleanup. Specifically=
-,
-> we can make use of devres to unmap the device's memory and get rid of the
-> memory mapping-related error paths and the remove() function altogether.
->=20
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  drivers/reset/reset-imx8mp-audiomix.c | 91 +++++++++++++++++----------
->  1 file changed, 57 insertions(+), 34 deletions(-)
->=20
-> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-=
-imx8mp-audiomix.c
-> index e9643365a62c..3f6d11270918 100644
-> --- a/drivers/reset/reset-imx8mp-audiomix.c
-> +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> @@ -11,6 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/regmap.h>
->  #include <linux/reset-controller.h>
-> =20
->  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
-> @@ -42,8 +43,8 @@ static const struct imx8mp_reset_map reset_map[] =3D {
-> =20
->  struct imx8mp_audiomix_reset {
->  	struct reset_controller_dev rcdev;
-> -	spinlock_t lock; /* protect register read-modify-write cycle */
->  	void __iomem *base;
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-Drop base as well, better let devres handle this.
+Full explanation:
 
-[...]
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-> +/* assumption: registered only if not using parent regmap */
-> +static void imx8mp_audiomix_reset_iounmap(void *data)
+See further details at:
 
-Pass base instead of dev.
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
 
-> +{
-> +	struct imx8mp_audiomix_reset *priv =3D dev_get_drvdata(data);
-> +
-> +	iounmap(priv->base);
+To pick up the changes in:
 
-	void __iomem *base =3D data;
+  cdfed9370b96aaba ("KVM: x86/pmu: Move PMU_CAP_{FW_WRITES,LBR_FMT} into msr-index.h header")
+  bc6397cf0bc4f2b7 ("x86/cpu/topology: Define AMD64_CPUID_EXT_FEAT MSR")
+  84ecefb766748916 ("x86/resctrl: Add data structures and definitions for ABMC assignment")
+  faebbc58cde9d8f6 ("x86/resctrl: Add support to enable/disable AMD ABMC feature")
+  c4074ab87f3483de ("x86/apic: Enable Secure AVIC in the control MSR")
+  869e36b9660dd72a ("x86/apic: Allow NMI to be injected from hypervisor for Secure AVIC")
+  30c2b98aa84c76f2 ("x86/apic: Add new driver for Secure AVIC")
+  0c5caea762de31a8 ("perf/x86: Add PERF_CAP_PEBS_TIMING_INFO flag")
+  68e61f6fd65610e7 ("KVM: SVM: Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2")
+  a3c4f3396b82849a ("x86/msr-index: Add AMD workload classification MSRs")
+  65f55a30176662ee ("x86/CPU/AMD: Add CPUID faulting support")
+  17ec2f965344ee3f ("KVM: VMX: Allow guest to set DEBUGCTL.RTM_DEBUG if RTM is supported")
 
-	iounmap(base);
+Addressing this tools/perf build warning:
 
-> +}
-> +
-> +/* assumption: dev_set_drvdata() is called before this */
+  Warning: Kernel ABI header differences:
+    diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.h
 
-Why not just pass priv instead of dev?
+That makes the beautification scripts to pick some new entries:
 
-> +static int imx8mp_audiomix_reset_get_regmap(struct device *dev)
-> +{
-> +	struct imx8mp_audiomix_reset *priv;
-> +	int ret;
-> +
-> +	priv =3D dev_get_drvdata(dev);
-> +
-> +	/* try to use the parent's regmap */
-> +	priv->regmap =3D dev_get_regmap(dev->parent, NULL);
-> +	if (priv->regmap)
-> +		return 0;
-> +
-> +	/* ... if that's not possible then initialize the regmap right now */
-> +	priv->base =3D of_iomap(dev->parent->of_node, 0);
+  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > before
+  $ cp arch/x86/include/asm/msr-index.h tools/arch/x86/include/asm/msr-index.h
+  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > after
+  $ diff -u before after
+  --- before	2025-10-30 09:34:49.283533597 -0300
+  +++ after	2025-10-30 09:35:00.971426811 -0300
+  @@ -272,6 +272,9 @@
+   	[0xc0000300 - x86_64_specific_MSRs_offset] = "AMD64_PERF_CNTR_GLOBAL_STATUS",
+   	[0xc0000301 - x86_64_specific_MSRs_offset] = "AMD64_PERF_CNTR_GLOBAL_CTL",
+   	[0xc0000302 - x86_64_specific_MSRs_offset] = "AMD64_PERF_CNTR_GLOBAL_STATUS_CLR",
+  +	[0xc0000303 - x86_64_specific_MSRs_offset] = "AMD64_PERF_CNTR_GLOBAL_STATUS_SET",
+  +	[0xc00003fd - x86_64_specific_MSRs_offset] = "IA32_L3_QOS_ABMC_CFG",
+  +	[0xc00003ff - x86_64_specific_MSRs_offset] = "IA32_L3_QOS_EXT_CFG",
+   	[0xc0000400 - x86_64_specific_MSRs_offset] = "IA32_EVT_CFG_BASE",
+   	[0xc0000500 - x86_64_specific_MSRs_offset] = "AMD_WORKLOAD_CLASS_CONFIG",
+   	[0xc0000501 - x86_64_specific_MSRs_offset] = "AMD_WORKLOAD_CLASS_ID",
+  @@ -319,6 +322,7 @@
+   	[0xc0010133 - x86_AMD_V_KVM_MSRs_offset] = "AMD64_RMP_END",
+   	[0xc0010134 - x86_AMD_V_KVM_MSRs_offset] = "AMD64_GUEST_TSC_FREQ",
+   	[0xc0010136 - x86_AMD_V_KVM_MSRs_offset] = "AMD64_RMP_CFG",
+  +	[0xc0010138 - x86_AMD_V_KVM_MSRs_offset] = "AMD64_SAVIC_CONTROL",
+   	[0xc0010140 - x86_AMD_V_KVM_MSRs_offset] = "AMD64_OSVW_ID_LENGTH",
+   	[0xc0010141 - x86_AMD_V_KVM_MSRs_offset] = "AMD64_OSVW_STATUS",
+   	[0xc0010200 - x86_AMD_V_KVM_MSRs_offset] = "F15H_PERF_CTL",
+  $
 
-Make base a local variable ...
+Now one can trace systemwide asking to see backtraces to where that MSR
+is being read/written:
 
-> +	if (!priv->base)
-> +		return dev_err_probe(dev, -ENOMEM, "failed to iomap address space\n");
-> +
-> +	ret =3D devm_add_action_or_reset(dev, imx8mp_audiomix_reset_iounmap, de=
-v);
+  root@x1:~# perf trace -e msr:*_msr/max-stack=32/ --filter="msr==IA32_L3_QOS_ABMC_CFG"
+  ^Croot@x1:~#
 
-... and pass it as data instead of dev.
+If we use -v (verbose mode) we can see what it does behind the scenes:
 
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register action\n");
-> +
-> +	priv->regmap =3D devm_regmap_init_mmio(dev, priv->base, &regmap_config)=
-;
-> +	if (IS_ERR(priv->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
-> +				     "failed to initialize regmap\n");
-> +
-> +	return 0;
-> +}
-> +
->  static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
->  				       const struct auxiliary_device_id *id)
->  {
-> @@ -105,36 +139,26 @@ static int imx8mp_audiomix_reset_probe(struct auxil=
-iary_device *adev,
->  	if (!priv)
->  		return -ENOMEM;
-> =20
-> -	spin_lock_init(&priv->lock);
-> -
->  	priv->rcdev.owner     =3D THIS_MODULE;
->  	priv->rcdev.nr_resets =3D ARRAY_SIZE(reset_map);
->  	priv->rcdev.ops       =3D &imx8mp_audiomix_reset_ops;
->  	priv->rcdev.of_node   =3D dev->parent->of_node;
->  	priv->rcdev.dev	      =3D dev;
->  	priv->rcdev.of_reset_n_cells =3D 1;
-> -	priv->base            =3D of_iomap(dev->parent->of_node, 0);
-> -	if (!priv->base)
-> -		return -ENOMEM;
-> =20
-> +	/* keep before call to imx8mp_audiomix_reset_init_regmap() */
+  root@x1:~# perf trace -v -e msr:*_msr/max-stack=32/ --filter="msr==IA32_L3_QOS_ABMC_CFG"
+  0xc00003fd
+  New filter for msr:write_msr: (msr==0xc00003fd) && (common_pid != 449842 && common_pid != 433756)
+  0xc00003fd
+  New filter for msr:read_msr: (msr==0xc00003fd) && (common_pid != 449842 && common_pid != 433756)
+  mmap size 528384B
+  ^Croot@x1:~#
 
-Not needed if priv is passed to it directly.
+Example with a frequent msr:
 
-regards
-Philipp
+  # perf trace -v -e msr:*_msr/max-stack=32/ --filter="msr==IA32_SPEC_CTRL" --max-events 2
+  Using CPUID AuthenticAMD-25-21-0
+  0x48
+  New filter for msr:read_msr: (msr==0x48) && (common_pid != 2612129 && common_pid != 3841)
+  0x48
+  New filter for msr:write_msr: (msr==0x48) && (common_pid != 2612129 && common_pid != 3841)
+  mmap size 528384B
+  Looking at the vmlinux_path (8 entries long)
+  symsrc__init: build id mismatch for vmlinux.
+  Using /proc/kcore for kernel data
+  Using /proc/kallsyms for symbols
+   0.000 Timer/2525383 msr:write_msr(msr: IA32_SPEC_CTRL, val: 6)
+                                   do_trace_write_msr ([kernel.kallsyms])
+                                   do_trace_write_msr ([kernel.kallsyms])
+                                   __switch_to_xtra ([kernel.kallsyms])
+                                   __switch_to ([kernel.kallsyms])
+                                   __schedule ([kernel.kallsyms])
+                                   schedule ([kernel.kallsyms])
+                                   futex_wait_queue_me ([kernel.kallsyms])
+                                   futex_wait ([kernel.kallsyms])
+                                   do_futex ([kernel.kallsyms])
+                                   __x64_sys_futex ([kernel.kallsyms])
+                                   do_syscall_64 ([kernel.kallsyms])
+                                   entry_SYSCALL_64_after_hwframe ([kernel.kallsyms])
+                                   __futex_abstimed_wait_common64 (/usr/lib64/libpthread-2.33.so)
+   0.030 :0/0 msr:write_msr(msr: IA32_SPEC_CTRL, val: 2)
+                                   do_trace_write_msr ([kernel.kallsyms])
+                                   do_trace_write_msr ([kernel.kallsyms])
+                                   __switch_to_xtra ([kernel.kallsyms])
+                                   __switch_to ([kernel.kallsyms])
+                                   __schedule ([kernel.kallsyms])
+                                   schedule_idle ([kernel.kallsyms])
+                                   do_idle ([kernel.kallsyms])
+                                   cpu_startup_entry ([kernel.kallsyms])
+                                   secondary_startup_64_no_verify ([kernel.kallsyms])
+  #
+
+Please see tools/include/uapi/README for further details.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Babu Moger <babu.moger@amd.com>
+Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Perry Yuan <perry.yuan@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/asm/msr-index.h | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
+index f627196eb79662f2..9e1720d73244f686 100644
+--- a/tools/arch/x86/include/asm/msr-index.h
++++ b/tools/arch/x86/include/asm/msr-index.h
+@@ -315,9 +315,12 @@
+ #define PERF_CAP_PT_IDX			16
+ 
+ #define MSR_PEBS_LD_LAT_THRESHOLD	0x000003f6
++
++#define PERF_CAP_LBR_FMT		0x3f
+ #define PERF_CAP_PEBS_TRAP		BIT_ULL(6)
+ #define PERF_CAP_ARCH_REG		BIT_ULL(7)
+ #define PERF_CAP_PEBS_FORMAT		0xf00
++#define PERF_CAP_FW_WRITES		BIT_ULL(13)
+ #define PERF_CAP_PEBS_BASELINE		BIT_ULL(14)
+ #define PERF_CAP_PEBS_TIMING_INFO	BIT_ULL(17)
+ #define PERF_CAP_PEBS_MASK		(PERF_CAP_PEBS_TRAP | PERF_CAP_ARCH_REG | \
+@@ -633,6 +636,11 @@
+ #define MSR_AMD_PPIN			0xc00102f1
+ #define MSR_AMD64_CPUID_FN_7		0xc0011002
+ #define MSR_AMD64_CPUID_FN_1		0xc0011004
++
++#define MSR_AMD64_CPUID_EXT_FEAT	0xc0011005
++#define MSR_AMD64_CPUID_EXT_FEAT_TOPOEXT_BIT	54
++#define MSR_AMD64_CPUID_EXT_FEAT_TOPOEXT	BIT_ULL(MSR_AMD64_CPUID_EXT_FEAT_TOPOEXT_BIT)
++
+ #define MSR_AMD64_LS_CFG		0xc0011020
+ #define MSR_AMD64_DC_CFG		0xc0011022
+ #define MSR_AMD64_TW_CFG		0xc0011023
+@@ -701,8 +709,15 @@
+ #define MSR_AMD64_SNP_VMSA_REG_PROT	BIT_ULL(MSR_AMD64_SNP_VMSA_REG_PROT_BIT)
+ #define MSR_AMD64_SNP_SMT_PROT_BIT	17
+ #define MSR_AMD64_SNP_SMT_PROT		BIT_ULL(MSR_AMD64_SNP_SMT_PROT_BIT)
+-#define MSR_AMD64_SNP_RESV_BIT		18
++#define MSR_AMD64_SNP_SECURE_AVIC_BIT	18
++#define MSR_AMD64_SNP_SECURE_AVIC	BIT_ULL(MSR_AMD64_SNP_SECURE_AVIC_BIT)
++#define MSR_AMD64_SNP_RESV_BIT		19
+ #define MSR_AMD64_SNP_RESERVED_MASK	GENMASK_ULL(63, MSR_AMD64_SNP_RESV_BIT)
++#define MSR_AMD64_SAVIC_CONTROL		0xc0010138
++#define MSR_AMD64_SAVIC_EN_BIT		0
++#define MSR_AMD64_SAVIC_EN		BIT_ULL(MSR_AMD64_SAVIC_EN_BIT)
++#define MSR_AMD64_SAVIC_ALLOWEDNMI_BIT	1
++#define MSR_AMD64_SAVIC_ALLOWEDNMI	BIT_ULL(MSR_AMD64_SAVIC_ALLOWEDNMI_BIT)
+ #define MSR_AMD64_RMP_BASE		0xc0010132
+ #define MSR_AMD64_RMP_END		0xc0010133
+ #define MSR_AMD64_RMP_CFG		0xc0010136
+@@ -735,6 +750,7 @@
+ #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS	0xc0000300
+ #define MSR_AMD64_PERF_CNTR_GLOBAL_CTL		0xc0000301
+ #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR	0xc0000302
++#define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET	0xc0000303
+ 
+ /* AMD Hardware Feedback Support MSRs */
+ #define MSR_AMD_WORKLOAD_CLASS_CONFIG		0xc0000500
+@@ -1225,6 +1241,8 @@
+ /* - AMD: */
+ #define MSR_IA32_MBA_BW_BASE		0xc0000200
+ #define MSR_IA32_SMBA_BW_BASE		0xc0000280
++#define MSR_IA32_L3_QOS_ABMC_CFG	0xc00003fd
++#define MSR_IA32_L3_QOS_EXT_CFG		0xc00003ff
+ #define MSR_IA32_EVT_CFG_BASE		0xc0000400
+ 
+ /* AMD-V MSRs */
+-- 
+2.51.0
+
 
