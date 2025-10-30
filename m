@@ -1,122 +1,156 @@
-Return-Path: <linux-kernel+bounces-878808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F20CC2185E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:39:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC99C21855
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F083404FE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:38:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E7834E2859
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC0436B988;
-	Thu, 30 Oct 2025 17:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39D836B980;
+	Thu, 30 Oct 2025 17:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tdJNHn9r"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQ7F0kXx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6D24BBEE;
-	Thu, 30 Oct 2025 17:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A7253B42;
+	Thu, 30 Oct 2025 17:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761845890; cv=none; b=s62bJhORWpWzr9xXPV3z0sC9ZJSd6vcw/S4gYkYXOK9YdQ0Q5102nkJsPEWCLreCP7ml6iM+OWifBDC0BO+wZagu0d9lGJxYgM1CTlgyPC6tTpxmnu/XOkYjo2mINK3oCJ7SxCzzeE7TPdloe4ThwncQLLrULkHgXT9R81sCYa4=
+	t=1761845940; cv=none; b=oKrNsrw3TEAkB2bkdlXgdQZK922HTR18TSn4+o1IHr9TrMz3uIzZq6CG1BOFQcMztbeCng8Dyl5LcUvw1i6vkpZT/VQggBS2fphZGRdXeTFKFBTjVhheQfnDC/Oek0b1ZevDyNHakHf4tSRN/Utl3sQamlPGeaCH9Xp8/1gCGrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761845890; c=relaxed/simple;
-	bh=n+E2FDQMzyue9+MdBENohOQ4Hy7t5K7MNazW9zFdZ30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GF0mB5IlxYhEUst0rrBPWc6roI3FXY60/Z0d1kfY3Kv4Oeloi17+/nIMQ8jJwEaVbB9enso8pUs7zmLzWhHncgQ0EMTvjNrQI8tNZ2kNSFVwBQb3LjGTXAsOiE/wr9rVZRje9EiydcmR3SGmxeCKbhgpFjikKn0p7ZUnYnP5ibs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tdJNHn9r; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1skhUG0vBEhCXLwn0Npbuxg9kdPLx5DwATtJQ8dFMTg=; b=tdJNHn9rOe0S+1GB8M+UuknrHx
-	9QhQySt5tWqCBZ5TX58LkvfVpWru/dcPEc/KXPi55HzTOF/AgMivnWM0zgqbEBFkOjeYwfkC1gpu0
-	Rqun9PZRs5Uyu9YvDZUTiMwFb6AYyr5eMh34GiMLVM1yLk2XPEMtILGP4mQxKlr+SQM8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vEWax-00CX37-SN; Thu, 30 Oct 2025 18:37:55 +0100
-Date: Thu, 30 Oct 2025 18:37:55 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Rasesh Mody <rmody@marvell.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] bna: prevent bad user input in bnad_debugfs_write_regrd()
-Message-ID: <75e4c931-3e17-430a-a902-60f9d8161bc3@lunn.ch>
-References: <20251030053411.710-1-linmq006@gmail.com>
+	s=arc-20240116; t=1761845940; c=relaxed/simple;
+	bh=/UPKDyvVWB4kKUrCrgXmDwQqbD2oxGQL6Jet9kzEgVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YmEYiWm5Zadzy9BiiW5bGqKtSfnMSDUzos+s6spnZtCE6wU4Mn47iFrAdtvOaVbneWbC702QntcQ2Z94sEVZ4Fru+DrD3d8f3+pGnX2eZFgVDCHeV1eocugUJj6ePkyuFQ9LwSmiojHCTL/6E9+lkFXN8hTwn1a658HyDIXlwAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EQ7F0kXx; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761845938; x=1793381938;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/UPKDyvVWB4kKUrCrgXmDwQqbD2oxGQL6Jet9kzEgVY=;
+  b=EQ7F0kXxf8hMcxykKKNvgbNUD8jSiWHMGWNs72vYp3rufYZzjAo9gxVi
+   k4G/TLgWikoHy795xKoWbXSuUZ76xkmULXalEdXaaMTf3eR+txhxVMgTg
+   aCRxvV9sfvGUfNmUYFMiMEPg6MB929sTUjbFg4LxDwtRuC1oviDhQO3rN
+   43kTFGohgVrFCvUq521k2ArxRmnWfRpn9t1X6PgEQueVK0xwLglek2PIm
+   1AeECeAvdbatMNiypjP2aj76y1eEM9q8l8ugYnkh2qLwCqIC/dBkdc3gL
+   CDdc+ELTrhJFKKJU5088V6CT1qTi+VlaWxQp1dcJz5Il6PX+xrEOAOyvD
+   w==;
+X-CSE-ConnectionGUID: +TJdvbFkS1+QEaCMpXGJng==
+X-CSE-MsgGUID: ATxufDvOQAyrX9IdGsGOmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75345843"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="75345843"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:38:57 -0700
+X-CSE-ConnectionGUID: 58dnJo8KQa6TUBuI/IcyXw==
+X-CSE-MsgGUID: mc8ZvrNXTH+cxyQ5pfXDmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="186753503"
+Received: from unknown (HELO [10.241.241.94]) ([10.241.241.94])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:38:57 -0700
+Message-ID: <9c21d7e0-fcfd-43c2-ba5d-5881400a46ca@intel.com>
+Date: Thu, 30 Oct 2025 10:38:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030053411.710-1-linmq006@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 1/3] perf/x86/intel/cstate: Add Clearwater Forest
+ support
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, Xudong Hao <xudong.hao@intel.com>,
+ Falcon Thomas <thomas.falcon@intel.com>,
+ Artem Bityutskiy <artem.bityutskiy@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Zhenyu Wang <zhenyuw.linux@gmail.com>
+References: <20251023223754.1743928-1-zide.chen@intel.com>
+ <20251023223754.1743928-2-zide.chen@intel.com> <aQMrONyVjGsCFXe2@gmail.com>
+Content-Language: en-US
+From: "Chen, Zide" <zide.chen@intel.com>
+In-Reply-To: <aQMrONyVjGsCFXe2@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 01:34:10PM +0800, Miaoqian Lin wrote:
-> A malicious user could pass an arbitrarily bad value
-> to memdup_user_nul(), potentially causing kernel crash.
 
-How would it crash the kernel? I would expect memdup_user_nul() to
-either succeed or fail and return a NULL.
 
-However, adding a range check does make sense.
-
-> This follows the same pattern as commit ee76746387f6
-> ("netdevsim: prevent bad user input in nsim_dev_health_break_write()")
-> and commit 7ef4c19d245f
-> ("smackfs: restrict bytes count in smackfs write functions")
+On 10/30/2025 2:09 AM, Ingo Molnar wrote:
 > 
-> Found via static analysis and code review.
+> * Zide Chen <zide.chen@intel.com> wrote:
 > 
-> Fixes: d0e6a8064c42 ("bna: use memdup_user to copy userspace buffers")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->  drivers/net/ethernet/brocade/bna/bnad_debugfs.c | 3 +++
->  1 file changed, 3 insertions(+)
+>> Clearwater Forest is based on the Darkmont Atom microarchitecture.
+>> From the perspective of C-state residency profiling, it supports the
+>> same residency counters as Sierra Forest: CC1/CC6, PC2/PC6, and MC6.
+>>
+>> Please note that the C1E residency counter can only be read via PMT,
+>> not MSR. Therefore, tools relying on the perf_event framework cannot
+>> access the C1E residency.
+>>
+>> Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
+>> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+>> Signed-off-by: Zhenyu Wang <zhenyuw.linux@gmail.com>
+>> Signed-off-by: Zide Chen <zide.chen@intel.com>
 > 
-> diff --git a/drivers/net/ethernet/brocade/bna/bnad_debugfs.c b/drivers/net/ethernet/brocade/bna/bnad_debugfs.c
-> index 8f0972e6737c..ad33ab1d266d 100644
-> --- a/drivers/net/ethernet/brocade/bna/bnad_debugfs.c
-> +++ b/drivers/net/ethernet/brocade/bna/bnad_debugfs.c
-> @@ -311,6 +311,9 @@ bnad_debugfs_write_regrd(struct file *file, const char __user *buf,
->  	unsigned long flags;
->  	void *kern_buf;
->  
-> +	if (nbytes == 0 || nbytes > PAGE_SIZE)
-> +		return -EINVAL;
-> +
->  	/* Copy the user space buf */
->  	kern_buf = memdup_user_nul(buf, nbytes);
->  	if (IS_ERR(kern_buf))
+> So, this is not a valid SOB chain: primary author should be the first 
+> SOB, or if it was co-developed, it should have the proper 
+> Co-developed-by tags.
+> 
+> Here I can see two possibilities:
+> 
+> (1) if Zhenyu Wang was the primary author, and Zide Chen reviewed, 
+>     tested and submitted it upstream, then:
+> 
+> 
+>   | From: Zide Chen <zide.chen@intel.com>
+>   | Subject: [PATCH 1/3] perf/x86/intel/cstate: Add Clearwater Forest support
+> 
+>     From: Zhenyu Wang <zhenyuw.linux@gmail.com>
+>     ...
+> 
+>     Signed-off-by: Zhenyu Wang <zhenyuw.linux@gmail.com>
+>     Signed-off-by: Zide Chen <zide.chen@intel.com>
+> 
+> (I.e. add the extra From line as the first line of the changelog.)
 
-Look at what it does next:
+Yes, that is the case.
+Thank you very much for pointing this out! I will pay extra attention to
+the SoB chain going forward.
 
-rc = sscanf(kern_buf, "%x:%x", &addr, &len);
 
-What is the maximum length of "%x:%x" ? A lot less than PAGE_SIZE. So
-you can make the range check much smaller.
+> (2) if it was co-developed, with Zhenyu Wang and Zide Chen having each 
+>     written unique lines of code of their own that finally resulted in 
+>     this submission, then:
+> 
+>   | From: Zide Chen <zide.chen@intel.com>
+>   | Subject: [PATCH 1/3] perf/x86/intel/cstate: Add Clearwater Forest support
+> 
+>     ...
+> 
+>     Co-developed-by: Zide Chen <zide.chen@intel.com>
+>     Signed-off-by: Zide Chen <zide.chen@intel.com>
+>     Co-developed-by: Zhenyu Wang <zhenyuw.linux@gmail.com>
+>     Signed-off-by: Zhenyu Wang <zhenyuw.linux@gmail.com>
+> 
+> Which one was it? :-)
+> 
+> Thanks,
+> 
+> 	Ingo
 
-Also, what about bnad_debugfs_write_regwr()? If you find a bug, look
-around, the same bug might be repeated close by. You might also want
-to look at your static analysis tool and find out why it did not
-report that function.
-
-    Andrew
-
----
-pw-bot: cr
 
