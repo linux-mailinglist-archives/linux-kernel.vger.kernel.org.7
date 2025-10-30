@@ -1,184 +1,280 @@
-Return-Path: <linux-kernel+bounces-879132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA78C2258E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:52:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED374C2259D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A181A188C8AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:51:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E63194F06C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ADB334C00;
-	Thu, 30 Oct 2025 20:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7B5332EBF;
+	Thu, 30 Oct 2025 20:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p4kS23KL"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XqDP0IUG"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C35329E7E;
-	Thu, 30 Oct 2025 20:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BD2329E51
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761857469; cv=none; b=rScoKYeejiCctuob/NxMQWI2oVXK78me1n93fQJKRkHDxn8q1XZtmsH+aytnz1AnOVS9uY2Qcemqcpz5S+TsbfhRdZTPaLH/ps/f99feQjJSHz0TePEGjY0V5JxXhSDkOVooMnZmF0mDDd/y6Av1N344wRuh9SlbuIURxa6em9A=
+	t=1761857514; cv=none; b=rP1XUrbAkJDKqcVOAvja7NpeQuplGxHEtQEkqpQiS4LSalf+7f1PZTegYIgh1BN6TZKiViUTjs0vZB9uo1E0Y17xecmRweY5QezD2DCFeGSh3PFE+dwoE+wS6kvJy7wvRjUtrHbBqKsu+PiYHLyrvSz00xmFWqTaqALiFgqdDgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761857469; c=relaxed/simple;
-	bh=4TnDzFARb/hHkBWc55xRoXAP0oqfEr2SQqlingyQbz0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Hz3FzT74zdm+LpvRnwoPa67fgSHhDmOZr05yvtDeIpNH9l8WBx0FMpg8W7uy43bqEXiQ0FyEsznZfMWB6NeHbs/Uc0VuMxVQlMZcmgO0rx+iXVFmkKMQEA7d9mMWgBJg/5qKy1ksUb6nuVwmCWKIU543HGf0VuRaMN+Zj27Bifc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=p4kS23KL; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761857463; x=1762462263; i=markus.elfring@web.de;
-	bh=UX+za681ZLF+H9xjQXJpwgYS36XQPi3DvT8rFDYYswI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=p4kS23KL3NHnIT3dQkJrWgZjv7az7eFapfcM2629V+KaGNRGKil4dORsQ3ngU54s
-	 hAjzr3xe6NXX9C9JGrENt3m23vXa2adnjFyfu59oMmXFbLA39C7S9iqm5sLa80JBc
-	 Y2W4jfhflofzM8QizoST3mRVJSValm419+7s5H0P1kfMAtnzjx7tDr70VI37XNQFW
-	 k2458k/ddv5FfYGuoF4xQQHra+ByvTz2KgtpYqu+kMrHi44/rr1B8U/LMGSzQNMkk
-	 PVu3h7c6HyPPonD6SDXERqiQWGMUzt0EUPKhRXCBGuWYQP19b0D2xOk+7Nx9CYYgt
-	 Rk184HtCMr26zo+PPg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8n4G-1wIxQP1FRu-00zGZd; Thu, 30
- Oct 2025 21:51:03 +0100
-Message-ID: <ad42871b-22a6-4819-b5db-835e7044b3f1@web.de>
-Date: Thu, 30 Oct 2025 21:51:00 +0100
+	s=arc-20240116; t=1761857514; c=relaxed/simple;
+	bh=+4uCcoAB+xZdEjfs2ZApcSKOkH2PY2XqjQCwslYmWEQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=bPDMwXdfSd8mqR9wuBIcFfyj+19J+pJfb2r0kAJQTK7YsKojd7TVBkUGC+NIODzdTu4z+Yw9/8RteYudmwOT2mlUCkki3dwtHJb6Pfv+E8QRWy5YZwvMMWLa/A3ZHJqmhiSFJH/v6teT9hrprSUo7IUJEGXXkN0/L8QJCUYCISA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XqDP0IUG; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d67abd215so57145ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:51:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761857512; x=1762462312; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rtjYWo2Aq+FsK2pzMrNNRstbZ+nQ8feK/GRfWrcLRLA=;
+        b=XqDP0IUGFp6ZdCmp7MhOuJ+rldW5olCFBdWAxZGcPgahJvEuesIcHyaOsjt+qZFsBE
+         1RvmUpvO3EjUUFCVk0H/eDfsjWqE62eHojBpszxSHyOZk0bP/V4i4IrgPpVqms36NVwO
+         61z06cq935EdVnEDEL6ustN6ggmFnsMp/jrol54oxUQwrxzfzXAR3D1Z5eq1z+bHdptO
+         IgQHwD7XREPLd9q0H+JntIbkED40zi7vYmmXjkd4eRNBu75SrqiHDdq2gNBKqshjnVaT
+         0ASj9LV17yNF+bmj9fvLiFhcL8xHlZ73hjQH+rHl90jEK+vqrOGrDQfvjj9JSB92V087
+         f9Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761857512; x=1762462312;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rtjYWo2Aq+FsK2pzMrNNRstbZ+nQ8feK/GRfWrcLRLA=;
+        b=UFdu5Zc9q4ZXn+QXbuwEltDuMg2a9fHYmIvZ9R14ve5F+384cn/0DfkqKKbhx0hbaE
+         MYh86rJD0IjQG/dDNxj3FktGoPTdo8iglywV062EJYjxNODyWqXseLCER7zJ+X0vU9VM
+         aY58qYtfrubXCmuQHN6PIha2Ch/2uHEtfV93bVpXWZIeMEvXw9c9EJWbrX+qe2+tLmS7
+         dNhmD3A8tvvUG1QU1QBwljRryc5mm1MIqOi0UMHx+myGnXBbd7PW0V76XwIAx+CQMp5g
+         XMdnh1X2KBUiIFJu5pJ6AlYZ9CHE21VrkuuLlhHRyZUKSRRUHWWc7pvO9/neoBBrNa7v
+         AwgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXR+ToT3vsOlxfzSx6Os1g0SvOYDUWYsOLABqPtBNsNPGMHdYFXqh6x2/Clt/dK+Go+QVbHY9btF8YkvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylaZ9JvH3HWONIbPY+OzkxJvqDF0AvuEbDxWzO8rVHvtDWaH8r
+	KLqvu+xaJn8fMWcew00cDJkBbF39d3pNYZkGsm6gXUq5TF/PLBLvG0BTHz3bFRrwCyOMM3YC/4W
+	Tjqjrt1Fh2gLhERoQiI5vJhvcVru8nlE5K1RTMEO6
+X-Gm-Gg: ASbGncvKgJXTfPdmX0V6iDVMDHBHSypPmb90DzY5r8ikt6T1rxOFhuJrxyZaQryC57b
+	ThfPViGZsXbxZipE9RpdcUiQ4g1tL4v2C0Xqh7f3y+j2ZeHG7HrbOCUowi4XZNLxyp177uRgLuf
+	iXt9WSq5kp1DDgrQldI+Dgx4ZOqONp0zJ/NdDadO0Ak3Aq2op2X+n2YDvTJgkvmcD3GhxQUWJOs
+	2ngbQCAWVPIOZ0r6L26MhojnxtZNzGUHt1kGz/wzFImwE8HdJlT3GCuU5Uuz5TkdgE9XDesY9H+
+	ivmw3lm5MJ7Hwg==
+X-Google-Smtp-Source: AGHT+IE4QM/XLPpMzVEFWT1gvDrMSis269JF+oBhf07i0pA1gy8Rd4e/MLn8zSibOcsromZeIk3OudM2E6GeefspzI8=
+X-Received: by 2002:a17:903:41ca:b0:290:b527:97ec with SMTP id
+ d9443c01a7336-29522c8961emr376895ad.5.1761857511550; Thu, 30 Oct 2025
+ 13:51:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
- Alexander Graf <agraf@suse.de>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Miaoqian Lin <linmq006@gmail.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] KVM: PPC: Use pointer from memcpy() call for assignment in
- kvmppc_kvm_pv()
-Content-Type: text/plain; charset=UTF-8
+References: <20251024175857.808401-1-irogers@google.com>
+In-Reply-To: <20251024175857.808401-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 30 Oct 2025 13:51:39 -0700
+X-Gm-Features: AWmQ_bkC8i9E88AAEwMhkOTMnbvf9tzmo4D_FrV_a2KF2FWrDs2THu3mR_4I8lA
+Message-ID: <CAP-5=fUsK9+d0=f2RuTQBfooVZ6qTPZ=XQZ_z7DaH08FG6tV9w@mail.gmail.com>
+Subject: Re: [PATCH v1 00/22] Switch the default perf stat metrics to json
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6XSDec5DYQ+59fbNP5IzsgzWfTdFXyH3eZ1ElapDgQ1U38Km2Fb
- lMfJ4kuLtgIN6aFggUBKLyFCYAzuJQZci0K75dhp3kAV19AWcDXgS2OMc9oLGBgSI7SwJde
- srQxqcV1IGyWylwgYLAOd19hXIraxJsyV9LrvvmRvhYyStvPakJGltqUYsTaPo3J5eWDbXL
- DnM5dTpiPGDj+36DuZTgg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wc1zTz28d0g=;JqI+53ybK2zx2j4VKpxKpNGsLHp
- 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
- gg2uznPjKj0EvhViw+kjLCXNek=
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 30 Oct 2025 21:43:20 +0100
-Subject: [PATCH] KVM: PPC: Use pointer from memcpy() call for assignment i=
-n kvmppc_kvm_pv()
+On Fri, Oct 24, 2025 at 10:59=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> Prior to this series stat-shadow would produce hard coded metrics if
+> certain events appeared in the evlist. This series produces equivalent
+> json metrics and cleans up the consequences in tests and display
+> output. A before and after of the default display output on a
+> tigerlake is:
+>
+> Before:
+> ```
+> $ perf stat -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>     16,041,816,418      cpu-clock                        #   15.995 CPUs =
+utilized
+>              5,749      context-switches                 #  358.376 /sec
+>                121      cpu-migrations                   #    7.543 /sec
+>              1,806      page-faults                      #  112.581 /sec
+>        825,965,204      instructions                     #    0.70  insn =
+per cycle
+>      1,180,799,101      cycles                           #    0.074 GHz
+>        168,945,109      branches                         #   10.532 M/sec
+>          4,629,567      branch-misses                    #    2.74% of al=
+l branches
+>  #     30.2 %  tma_backend_bound
+>                                                   #      7.8 %  tma_bad_s=
+peculation
+>                                                   #     47.1 %  tma_front=
+end_bound
+>  #     14.9 %  tma_retiring
+> ```
+>
+> After:
+> ```
+> $ perf stat -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>              2,890      context-switches                 #    179.9 cs/se=
+c  cs_per_second
+>     16,061,923,339      cpu-clock                        #     16.0 CPUs =
+ CPUs_utilized
+>                 43      cpu-migrations                   #      2.7 migra=
+tions/sec  migrations_per_second
+>              5,645      page-faults                      #    351.5 fault=
+s/sec  page_faults_per_second
+>          5,708,413      branch-misses                    #      1.4 %  br=
+anch_miss_rate         (88.83%)
+>        429,978,120      branches                         #     26.8 K/sec=
+  branch_frequency     (88.85%)
+>      1,626,915,897      cpu-cycles                       #      0.1 GHz  =
+cycles_frequency       (88.84%)
+>      2,556,805,534      instructions                     #      1.5 instr=
+uctions  insn_per_cycle  (88.86%)
+>                         TopdownL1                 #     20.1 %  tma_backe=
+nd_bound
+>                                                   #     40.5 %  tma_bad_s=
+peculation      (88.90%)
+>                                                   #     17.2 %  tma_front=
+end_bound       (78.05%)
+>                                                   #     22.2 %  tma_retir=
+ing             (88.89%)
+>
+>        1.002994394 seconds time elapsed
+> ```
+>
+> Having the metrics in json brings greater uniformity, allows events to
+> be shared by metrics, and it also allows descriptions like:
+> ```
+> $ perf list cs_per_second
+> ...
+>   cs_per_second
+>        [Context switches per CPU second]
+> ```
+>
+> A thorn in the side of doing this work was that the hard coded metrics
+> were used by perf script with '-F metric'. This functionality didn't
+> work for me (I was testing `perf record -e instructions,cycles` and
+> then `perf script -F metric` but saw nothing but empty lines) but
+> anyway I decided to fix it to the best of my ability in this
+> series. So the script side counters were removed and the regular ones
+> associated with the evsel used. The json metrics were all searched
+> looking for ones that have a subset of events matching those in the
+> perf script session, and all metrics are printed. This is kind of
+> weird as the counters are being set by the period of samples, but I
+> carried the behavior forward. I suspect there needs to be follow up
+> work to make this better, but what is in the series is superior to
+> what is currently in the tree. Follow up work could include finding
+> metrics for the machine in the perf.data rather than using the host,
+> allowing multiple metrics even if the metric ids of the events differ,
+> fixing pre-existing `perf stat record/report` issues, etc.
+>
+> There is a lot of stat tests that, for example, assume '-e
+> instructions,cycles' will produce an IPC metric. These things needed
+> tidying as now the metric must be explicitly asked for and when doing
+> this ones using software events were preferred to increase
+> compatibility. As the test updates were numerous they are distinct to
+> the patches updating the functionality causing periods in the series
+> where not all tests are passing. If this is undesirable the test fixes
+> can be squashed into the functionality updates.
 
-A pointer was assigned to a variable. The same pointer was used for
-the destination parameter of a memcpy() call.
-This function is documented in the way that the same value is returned.
-Thus convert two separate statements into a direct variable assignment for
-the return value from a memory copy action.
+Hi,
 
-The source code was transformed by using the Coccinelle software.
+no comments on this series yet, please help! I'd like to land this
+work and then rebase the python generating metric work [1] on it. The
+metric generation work is largely independent of everything else but
+there are collisions in the json Makefile/Build files.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- arch/powerpc/kvm/powerpc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks,
+Ian
 
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index 2ba057171ebe..ae28447b3e04 100644
-=2D-- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -216,8 +216,7 @@ int kvmppc_kvm_pv(struct kvm_vcpu *vcpu)
-=20
- 			shared &=3D PAGE_MASK;
- 			shared |=3D vcpu->arch.magic_page_pa & 0xf000;
--			new_shared =3D (void*)shared;
--			memcpy(new_shared, old_shared, 0x1000);
-+			new_shared =3D memcpy(shared, old_shared, 0x1000);
- 			vcpu->arch.shared =3D new_shared;
- 		}
- #endif
-=2D-=20
-2.51.1
+[1]
+* Foundations: https://lore.kernel.org/lkml/20240228175617.4049201-1-iroger=
+s@google.com/
+* AMD: https://lore.kernel.org/lkml/20240229001537.4158049-1-irogers@google=
+.com/
+* Intel: https://lore.kernel.org/lkml/20240229001806.4158429-1-irogers@goog=
+le.com/
+* ARM: https://lore.kernel.org/lkml/20240229001325.4157655-1-irogers@google=
+.com/
 
+
+
+> Ian Rogers (22):
+>   perf evsel: Remove unused metric_events variable
+>   perf metricgroup: Update comment on location of metric_event list
+>   perf metricgroup: Missed free on error path
+>   perf metricgroup: When copy metrics copy default information
+>   perf metricgroup: Add care to picking the evsel for displaying a
+>     metric
+>   perf jevents: Make all tables static
+>   perf expr: Add #target_cpu literal
+>   perf jevents: Add set of common metrics based on default ones
+>   perf jevents: Add metric DefaultShowEvents
+>   perf stat: Add detail -d,-dd,-ddd metrics
+>   perf script: Change metric format to use json metrics
+>   perf stat: Remove hard coded shadow metrics
+>   perf stat: Fix default metricgroup display on hybrid
+>   perf stat: Sort default events/metrics
+>   perf stat: Remove "unit" workarounds for metric-only
+>   perf test stat+json: Improve metric-only testing
+>   perf test stat: Ignore failures in Default[234] metricgroups
+>   perf test stat: Update std_output testing metric expectations
+>   perf test metrics: Update all metrics for possibly failing default
+>     metrics
+>   perf test stat: Update shadow test to use metrics
+>   perf test stat: Update test expectations and events
+>   perf test stat csv: Update test expectations and events
+>
+>  tools/perf/builtin-script.c                   | 238 ++++++++++-
+>  tools/perf/builtin-stat.c                     | 154 ++-----
+>  .../arch/common/common/metrics.json           | 151 +++++++
+>  tools/perf/pmu-events/empty-pmu-events.c      | 139 ++++--
+>  tools/perf/pmu-events/jevents.py              |  34 +-
+>  tools/perf/pmu-events/pmu-events.h            |   2 +
+>  .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
+>  tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
+>  tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
+>  tools/perf/tests/shell/stat+json_output.sh    |   2 +-
+>  tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
+>  tools/perf/tests/shell/stat+std_output.sh     |   4 +-
+>  tools/perf/tests/shell/stat.sh                |   6 +-
+>  .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
+>  tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
+>  tools/perf/util/evsel.c                       |   2 -
+>  tools/perf/util/evsel.h                       |   2 +-
+>  tools/perf/util/expr.c                        |   3 +
+>  tools/perf/util/metricgroup.c                 |  95 ++++-
+>  tools/perf/util/metricgroup.h                 |   2 +-
+>  tools/perf/util/stat-display.c                |  55 +--
+>  tools/perf/util/stat-shadow.c                 | 402 +-----------------
+>  tools/perf/util/stat.h                        |   2 +-
+>  23 files changed, 672 insertions(+), 643 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.json
+>
+> --
+> 2.51.1.821.gb6fe4d2222-goog
+>
 
