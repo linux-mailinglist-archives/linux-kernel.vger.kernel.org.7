@@ -1,92 +1,130 @@
-Return-Path: <linux-kernel+bounces-877421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E68C1E13D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:59:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0346C1E140
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12591886680
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:00:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5D6C034D1A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225642E3387;
-	Thu, 30 Oct 2025 01:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64902E6CAD;
+	Thu, 30 Oct 2025 01:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="DPCEq+2e"
-Received: from sg-1-23.ptr.blmpb.com (sg-1-23.ptr.blmpb.com [118.26.132.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s+0oU0Ni"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051305464D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13532E4274
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761789581; cv=none; b=afL5+LXHlmRl1ERmMU6ES52Zm7Iye9Ex8vSqhSp4lFWiQ4poyq+fiRTp5S/6Yhwu/o0DydqOlV6J6ogi0RS5NckcWDFCZ54TlAIopz4mW2Qm2Sdc3cc2dvwtkBFJGgnNfFjIANIZUa+xYfbb9/zO/eOPheJVkQ+WGiPLR7p6nHs=
+	t=1761789591; cv=none; b=Lbn9QaCjRMxmQAi7vIFxCCNhVCQAQs+fFVeK2KMlT6n1JDa261OwlbT9Ap9JoshBDGjyc5xx96uxXgvM94K5hR2d0pSkXREbXgvgZz0pHvDC8rVDbMMJT68DdlQGalkGEEm6Eod+zT93E/jd5TQjUtIhCH190QQtbRzI7GXt+n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761789581; c=relaxed/simple;
-	bh=3ZChRu8l8Ocb11ALE9MuCwWyYWsaX4PJ9HKaC5MpeDc=;
-	h=Message-Id:References:From:Date:Cc:Content-Type:In-Reply-To:To:
-	 Subject:Mime-Version; b=kvWjF/LZ01IryWUTdpQWts4QlmE43J69FY+HHThpoDSG7qEjcXuuvxSaIVz3TpFTOoPp03Aj7Xv6GcjQPT4HYBZQMhtP2b3lj1+FomSOVSztZqODf6IILy+xTd2BoGLCBGfSkL16hYAhT0rrjGt6bPkFZOI8NDucDMkdakO9+Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=DPCEq+2e; arc=none smtp.client-ip=118.26.132.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761789566;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=TFNzpWGB60q9ORcJFUu5EIYWym+NnCK6t8plrVdYWx4=;
- b=DPCEq+2e+jMp+v89cd7eZqxW9+OZ5fR7WRwPEvFqHAdQ7bnZIbxIwZdHxVsckXuJrwb+aU
- hGQerms9YlDyRPulBvTcLI0Uj90hLEjfbAzWrtPsQ3z9jw3MzhMx1urIADpUmFnvwyqMPU
- IbujUCaMDLpieAgD/Zpyo9kdgTwxp8qpgfyhv4xn3sqUb6fAW7BS523nFr84EXFU4JB4IO
- zzmq5H9wlcqXjTELgiviupTNJZozXPItN1J9lQ63G9iptGYZ7sHpghkotp8Ve5BN6vdJU/
- Xw6231fUGXVjXKDSoRzEvX35UmF0aQXxakazt7UKuUpB7dQLci+i38fY7g5W7g==
-X-Original-From: Yu Kuai <yukuai@fnnas.com>
-Message-Id: <d2fa618a-6757-4ed1-9626-6e97e227d9fa@fnnas.com>
-User-Agent: Mozilla Thunderbird
-References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-2-k@mgml.me>
-X-Lms-Return-Path: <lba+26902c67c+4b6446+vger.kernel.org+yukuai@fnnas.com>
-From: "Yu Kuai" <yukuai@fnnas.com>
-Date: Thu, 30 Oct 2025 09:59:20 +0800
-Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 09:59:22 +0800
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20251027150433.18193-2-k@mgml.me>
-Reply-To: yukuai@fnnas.com
-To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
-	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>, 
-	"Guoqing Jiang" <jgq516@gmail.com>
-Subject: Re: [PATCH v5 01/16] md: move device_lock from conf to mddev
+	s=arc-20240116; t=1761789591; c=relaxed/simple;
+	bh=qHgkJEoo9vKbt8bJwNliKNRAJvcjE4nFUuPvCoiouPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yzhg8Uklr2baU3VHCS1vV870C4MjjdhJ9YVHR3ePHERUYIq7kCBv5lgl2o5TKgwdunirMkm1941NYTsdljkJrp6Vqcd8y7WmXgMaiv52A5HUw8/rVXcCWJMX0uxRJt+WrkZCAP5opSJYYcI6/bp+mAfgJfLFy7W4RyMW2V/3lc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s+0oU0Ni; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761789579; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=Ml0yY3472o5Ybqsrj9t3E0TSOTI/vlBi/P/JSeFDAKM=;
+	b=s+0oU0Nixi/HcIk9vSsY5SkgR/uuklpkF5xsKtur5gs376QMpIKmMrNM4msYOFggstJ/1GyeEjh17sOYfJOr4RM42vNwdV67l1BrfcAl6gyYeUOiBhorf29aC3FpcgSWoVx4h9NN/gQoU/IhOFtDiqxeEWq7mNQV4ykd2w7xOpc=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WrHtajt_1761789578 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 30 Oct 2025 09:59:38 +0800
+Date: Thu, 30 Oct 2025 09:59:35 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH v2 2/6] panic: sys_info: Align constant definition names
+ with parameters
+Message-ID: <aQLGhzh9UOYNM-V7@U-2FWC9VHC-2323.local>
+References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
+ <20251029111202.3217870-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251029111202.3217870-4-andriy.shevchenko@linux.intel.com>
 
-=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
+On Wed, Oct 29, 2025 at 12:07:37PM +0100, Andy Shevchenko wrote:
+> Align constant definition names with parameters to make it easier
+> to map. It's also better to maintain and extend the names while
+> keeping their uniqueness.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> Move device_lock from mddev->private (r1conf, r10conf, r5conf)
-> to the mddev structure in preparation for serializing md_error() and
-> introducing new function that conditional md_error() calls to
-> improvement failfast bio error handling.
+Reviewed-by: Feng Tang <feng.tang@linux.alibaba.com>
+
+Thanks,
+Feng
+
 >
-> This commit only moves the device_lock location with no functional
-> changes. Subsequent commits will serialize md_error() and introduce
-> a new function that calls md_error() conditionally.
->
-> Signed-off-by: Kenta Akagi<k@mgml.me>
 > ---
->   drivers/md/md.c          |   1 +
->   drivers/md/md.h          |   2 +
->   drivers/md/raid1.c       |  51 +++++++-------
->   drivers/md/raid1.h       |   2 -
->   drivers/md/raid10.c      |  61 +++++++++--------
->   drivers/md/raid10.h      |   1 -
->   drivers/md/raid5-cache.c |  16 ++---
->   drivers/md/raid5.c       | 139 +++++++++++++++++++--------------------
->   drivers/md/raid5.h       |   1 -
->   9 files changed, 135 insertions(+), 139 deletions(-)
-
-Reviewed-by: Yu Kuai <yukuai@fnnas.com>
+>  include/linux/sys_info.h | 2 +-
+>  kernel/panic.c           | 2 +-
+>  lib/sys_info.c           | 4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/sys_info.h b/include/linux/sys_info.h
+> index 89d77dc4f2ed..a5bc3ea3d44b 100644
+> --- a/include/linux/sys_info.h
+> +++ b/include/linux/sys_info.h
+> @@ -14,7 +14,7 @@
+>  #define SYS_INFO_LOCKS			0x00000008
+>  #define SYS_INFO_FTRACE			0x00000010
+>  #define SYS_INFO_PANIC_CONSOLE_REPLAY	0x00000020
+> -#define SYS_INFO_ALL_CPU_BT		0x00000040
+> +#define SYS_INFO_ALL_BT			0x00000040
+>  #define SYS_INFO_BLOCKED_TASKS		0x00000080
+>  
+>  void sys_info(unsigned long si_mask);
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index 341c66948dcb..0d52210a9e2b 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -401,7 +401,7 @@ static void panic_trigger_all_cpu_backtrace(void)
+>   */
+>  static void panic_other_cpus_shutdown(bool crash_kexec)
+>  {
+> -	if (panic_print & SYS_INFO_ALL_CPU_BT)
+> +	if (panic_print & SYS_INFO_ALL_BT)
+>  		panic_trigger_all_cpu_backtrace();
+>  
+>  	/*
+> diff --git a/lib/sys_info.c b/lib/sys_info.c
+> index d542a024406a..6b0188b30227 100644
+> --- a/lib/sys_info.c
+> +++ b/lib/sys_info.c
+> @@ -23,7 +23,7 @@ static const struct sys_info_name  si_names[] = {
+>  	{ SYS_INFO_TIMERS,		"timers" },
+>  	{ SYS_INFO_LOCKS,		"locks" },
+>  	{ SYS_INFO_FTRACE,		"ftrace" },
+> -	{ SYS_INFO_ALL_CPU_BT,		"all_bt" },
+> +	{ SYS_INFO_ALL_BT,		"all_bt" },
+>  	{ SYS_INFO_BLOCKED_TASKS,	"blocked_tasks" },
+>  };
+>  
+> @@ -118,7 +118,7 @@ void sys_info(unsigned long si_mask)
+>  	if (si_mask & SYS_INFO_FTRACE)
+>  		ftrace_dump(DUMP_ALL);
+>  
+> -	if (si_mask & SYS_INFO_ALL_CPU_BT)
+> +	if (si_mask & SYS_INFO_ALL_BT)
+>  		trigger_all_cpu_backtrace();
+>  
+>  	if (si_mask & SYS_INFO_BLOCKED_TASKS)
+> -- 
+> 2.50.1
 
