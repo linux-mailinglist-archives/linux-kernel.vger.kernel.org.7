@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-878928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0F8C21C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:32:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4118BC21CA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:33:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54BB21A217BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:33:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC6574EDB72
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CC53546E6;
-	Thu, 30 Oct 2025 18:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EEB36A616;
+	Thu, 30 Oct 2025 18:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dChJkHGi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0RGGMyf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629E2277026;
-	Thu, 30 Oct 2025 18:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B81130103F;
+	Thu, 30 Oct 2025 18:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761849163; cv=none; b=G2i3MpB7Bfr7c/+MwxrE13hLubLlsQXaLSsBvUmHxA1fcZ9sLfqcykRcx8YFfQBgHd37GCvyXZYMCRrYLCY9JNZ5PfPgmGz7lEFzJJ4/r9piwk++ZwFkUBByG0Wd+A2yu4LEFVErK5BSDSOKyPCkW0u2dRt6CShOH2r+04yEoG0=
+	t=1761849178; cv=none; b=D9LDchvwY1KRfxQGfkUTeCsm9FHUXRsSuftHhpISMzwoTlbsEcRJBwtF0ftLDsjlJrNmpsNFLEA9QsgRxHxHhGuAMg6583e4fhQPLjxtc1qipWflbojQTD2E4rL2tGMm/aQP7WGrd3f4aoRttex+cRQMobLLj2eveuMlqtbELZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761849163; c=relaxed/simple;
-	bh=CyMqvVzmILxJbVYS3TwbJAWt9vwMiFU9moEhJwXvZoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFnSuaiXvSDUjY3KfsA0I4I92ojsS4k/ZfyCP0Wmfh/JdRmF0GlyTgaK4f4Pljk/q0eogfae1hjPoqTg9KXSvl7IZA74ZTet7gvNIbXw29UuUbc0ojEmdLS9lNCeeguu9MAGnOXi10hJhZ60Bsx6c7JL1Gk3bDjMAcYDonxvIu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dChJkHGi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C0FCC4CEF8;
-	Thu, 30 Oct 2025 18:32:40 +0000 (UTC)
+	s=arc-20240116; t=1761849178; c=relaxed/simple;
+	bh=a4JXIrKMSTUa1Rent56WCFZrGKYeMoJ3jHvTugvCZXw=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=VeHJy1TPjv7UKJ0T1/8X2hhKJN8qmnjeFqAhJZhY3e9w2ue/NFBvJab45s9pTTjmz3Z/Mh9j97gA+9IMprNvaD+5GkRiE+yCWQ8CNfxlIBhq6VpefVPATFTrVqk6XqEOCP5jMALxm6G7/6Ut2487QrKiCTs2frCbhMDkpEbgj6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0RGGMyf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75436C4CEF1;
+	Thu, 30 Oct 2025 18:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761849162;
-	bh=CyMqvVzmILxJbVYS3TwbJAWt9vwMiFU9moEhJwXvZoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dChJkHGi9P0T/5JCYP6jMztthAdoYUB6mpdAM8dtp3GAzo0MLc3WKBwN9Z6Fuk6dU
-	 JGx51adtuWLaIWm60DXn5JujV5qza2Ab8KQbzCGvIw4MGMYCSfmYwu0MWCb6YkfJKV
-	 j/CW9bCrUam1iOCBIxLtDZlTPiBnwLABCp2B5g5nM29PUUWQpwAdHu7clPw6wGwWCB
-	 wsufbohSRSjXhDpZz8e7V8KOaLbe6PiClajK1T1leU7RC9UIdwf++vr/aV4z2QmXhK
-	 2V6OZBWMI5T0M3uxtOsX2oIG7j5i+RJmuvXh0V7uksjHDxeHY9/eDH51hwb+tsqlTr
-	 tziFEGVj+RTpg==
-Date: Thu, 30 Oct 2025 18:32:38 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Qii Wang <qii.wang@mediatek.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	kernel@collabora.com, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: i2c: i2c-mt65xx: Add compatible for MT8189
- SoC
-Message-ID: <20251030-profound-afloat-f3bd79b111d5@spud>
-References: <20251030-mt8189-dt-bindings-i2c-v1-1-5b60914c6453@collabora.com>
+	s=k20201202; t=1761849177;
+	bh=a4JXIrKMSTUa1Rent56WCFZrGKYeMoJ3jHvTugvCZXw=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=q0RGGMyfkIVOLXM0ILmKLsODTidtN5vo0qLOML6iTQgKSyJ9atAbJWzr/JGmrU2u0
+	 Dn5uTKWa+fS/5LVOEFiH8m/u2tYYY+WPjMEfMBfXqMJY6ig1Q5mm65kZ5g0pgJsT/0
+	 TzPhZTjZzZ6tP1oPvwppY5FIkLMr+VrCvm4ZxGF4vummn7pMBYpHBSEpibUd+401gJ
+	 LL5hasGm3s6BwUSYttnMwoQwBmkf22AS2clizewr4Nql1UeJCoX6RkvLzfooMILYu4
+	 CURPxDf3YdzSSSJUIEl+9f1HVVSBzR1RGdLMkZSbZ0+togFal9trcwZCRRZQhQje3q
+	 3OB/oNXbvAXiQ==
+Date: Thu, 30 Oct 2025 13:32:56 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="szHEQ6Sx+ZZv/65v"
-Content-Disposition: inline
-In-Reply-To: <20251030-mt8189-dt-bindings-i2c-v1-1-5b60914c6453@collabora.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-pm@vger.kernel.org, Mike Tipton <mike.tipton@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Georgi Djakov <djakov@kernel.org>, 
+ linux-arm-msm@vger.kernel.org
+To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+In-Reply-To: <20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com>
+References: <20251030-knp-interconnect-v3-0-a084a4282715@oss.qualcomm.com>
+ <20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com>
+Message-Id: <176184917597.249475.6554623309176412725.robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Kaanapali SoC
 
 
---szHEQ6Sx+ZZv/65v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 30 Oct 2025 17:09:02 +0000, Raviteja Laggyshetty wrote:
+> Document the RPMh Network-On-Chip Interconnect of the Kaanapali platform.
+> 
+> Co-developed-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+> Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+> ---
+>  .../bindings/interconnect/qcom,kaanapali-rpmh.yaml | 125 +++++++++++++++++
+>  .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h | 149 +++++++++++++++++++++
+>  2 files changed, 274 insertions(+)
+> 
 
-On Thu, Oct 30, 2025 at 08:56:29AM +0100, Louis-Alexis Eyraud wrote:
-> Add compatible string for MT8189 SoC.
-> Its multiple I2C controller instances are compatible with the ones
-> found in the MT8188 SoC.
->=20
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-pw-bot: not-applicable
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+yamllint warnings/errors:
 
---szHEQ6Sx+ZZv/65v
-Content-Type: application/pgp-signature; name="signature.asc"
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.example.dts:31.20-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1547: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
------BEGIN PGP SIGNATURE-----
+doc reference errors (make refcheckdocs):
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQOvRgAKCRB4tDGHoIJi
-0l/dAP9QPRUrWv16mVU4Ly4FWBzgIeEhsVfpsE4qCySvMSQ1RAEAnbotESMjb6UY
-LD7A78dpT+4iygPrnuzENkZIUiF2Nwk=
-=U++K
------END PGP SIGNATURE-----
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com
 
---szHEQ6Sx+ZZv/65v--
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
