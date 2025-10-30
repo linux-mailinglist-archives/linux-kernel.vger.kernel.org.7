@@ -1,147 +1,149 @@
-Return-Path: <linux-kernel+bounces-878918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2832EC21C3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:27:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09B1C21C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4C704F005A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:25:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 15AAA34F004
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A673436996C;
-	Thu, 30 Oct 2025 18:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3676E36B974;
+	Thu, 30 Oct 2025 18:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LcageyWg"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZBAEjp52"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A727238C2F;
-	Thu, 30 Oct 2025 18:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A9A1F4180
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761848714; cv=none; b=cWE9fcXKqJso1r3C4WJU8SKXhd04nfnVNixO9iiEp1+ksd4jsK9w0pro6t+cto9KGjxu3Wr9w9BEvRgIgul8gbe95XZqIkDpPMMx9mLE74vbmYhunVVriIkT5pZN4uYjzX7/GLM2ilRLNKPJzvJrhSfX1OmdGZ7jNM6NZeYkOlg=
+	t=1761848771; cv=none; b=pZVEgtkrjGpEc6ckv/QO8+bRGfnGwNCWA2O0pBNGeHpux+oM9jrptr1TjVIqwqxzW9FoV8MPKE52gn6fr1k+SuZPccJSUGNJ2wq1ynIQlTyaDBMpgV5bVuM4JKDaezBaEbEBuAkGclc1EW2eP+J41LA7c/DZCfkDHQWPh/Bu4VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761848714; c=relaxed/simple;
-	bh=jy5cYh95SFIAyzZsrUnBHjH8llGVA2Sbu4Bpf5WBPzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UNkPyXe+vwSbVBz9lIhlwb9WO3w/f/qktiasLC8bqVBHPSlA3E15e3ORklnfUZPUN/9fyysHU1qtvwC9Dy8xAYV0UHc7Gon1a6NA1eU69ptvA/mt4TDZzvDRwDTKRffh42ICVAYYcB7ZW+cIrvInXiueod495Fj1UyIccC7MQdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LcageyWg; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 914C64E41401;
-	Thu, 30 Oct 2025 18:25:07 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4CC2860331;
-	Thu, 30 Oct 2025 18:25:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3921E1180980D;
-	Thu, 30 Oct 2025 19:24:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761848706; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=vSJU4peJj+Pvauv54hPV1/HslESIG4pVWkh58D4A9/c=;
-	b=LcageyWgxYbyW3qRtqSBLny73lhZbVIesEoOXkAHs9iHO4lt9kUO+hc8vkIVeSDm2+HfJR
-	MTQVRE4RK4fZ21SKCaahaDk6klLPcHTvysUYvkt5e+TRD037gCtRJeX66i8jEyKeoTjb/P
-	DXr0jNMudu8Wp3sONhj/2AssyTKgoSyIDhCOIewXG3CFjxIWnkNHtCSc1uvfpJuHLmSmcB
-	+9fQ2ZD1z+dqc+C6UjelZIb8UpEYFppAshc6Oy9nc6MlW942USNH/leAu8scetsDiPr32A
-	fxfOGrjcqwCnS7yDylZpacXVgzkHa/ddaRi0gyVEr8QKVm/fCphs9RnrLdsHyA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: stmmac: rename devlink parameter ts_coarse into phc_coarse_adj
-Date: Thu, 30 Oct 2025 19:24:53 +0100
-Message-ID: <20251030182454.182406-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1761848771; c=relaxed/simple;
+	bh=PZVE37wwRcSG8WWfpheVX28dn1/Jp9IJqc+83vrL8jI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qy0L5gSoSghhe4iSWWAdPnDlaHVQUF1SIhpRcl0cGybGbiocHHvYjWRO7CTOl9BOAM9NU0MLJ6uj49iLR9roP0u4t6IXuUQMEu56TcJ6K62hCaPDApKLKQRJEL6q8uRwUckLusos6t/hDkAapGy3K/9LuXktNcvGVxTVXVKrUgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZBAEjp52; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c11011e01so1988172a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1761848767; x=1762453567; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FG/tgMR93DSZXM9XUANIqdTVWOdWVYK0sFlihrocsYU=;
+        b=ZBAEjp52znsHe8cH9qn1AcxTo7KwBNCVWyn9c68v9VVVdYjab5/8Vb8ZBT/Rgj9VBg
+         vUGZydmdg22O1KvgUf083f/gyoywkfGgf1/oqrPuSAUuTdfDieDnZuSaz6tL4j1pEoBQ
+         7drQhWoiM/4ra4FrI7PEFj/rITTAaXFJ1qOcQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761848767; x=1762453567;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FG/tgMR93DSZXM9XUANIqdTVWOdWVYK0sFlihrocsYU=;
+        b=erJaYJSP6e0Dox8gjK7hDlZ9DNpPW/opv5nTqJ87lr+GasWkb2gguRVccg4M9R5Aqu
+         HilcUaQPy8mq1bBc//GhhREQglQFLzG4DHn2xKejya+gGuiqmEFx1KmXdqSe+DcKOU6I
+         bcHD4i2HhD6knkg0XAbhPy7bjF5BoYnsS80Tf3Malo5E9zBQXNVPAKyDJvydnodpZfhj
+         XF/QrG1ydTzBXaIn/J510jgnHFstn3XVFEaB93ZGRAoBRY9KfUCz5DbYpPs/kGCh7SS3
+         guxBqFCioahpEwkPYV5B5yGgGXYL2scFaU/Y34PQlMi2/6pZxC6f13+IjhG3L7z0wrrW
+         a1zA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7BY9xKc9GpAKMxJi+wbx/qUFazdVWl7ur9Ut4q3JO2HIhI9xhu2NsE7bT4R8b/ZWzGvoD6bZeAX5qW/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq4bMogPEA99SOrCZdLgSVKXQSc4JcmblESXdl7wUyF204WHLO
+	MnARUhpoB02Pm8d9I2ICDbSNEJvG+ZpJJ9iQ5lWXt4p3PaYhnw7n7F+5h8tVKQjq8VFtKhf4hFG
+	eGRlyCq0=
+X-Gm-Gg: ASbGncsWJQ8iL5a23eprph4Q5mQ02z9ZsR6IvS4p9J0WYtQ27xfHjksFFJ2mY7KkV0F
+	EHYfe7pXiXu8tDAamZEnOCow/xlKEPIzTFMFD5ChL91xNJ0p+H5D6hxnh/nsdQgxc4cT37qzmAj
+	A7naQ4gn1IwpvE7H0Bp17YVcOqP9IbRJNCltGO9UEkjc7pU0ycLxpu9Q2DxsNuEUpQn9AgZq3dh
+	YJXuwbl0E0BP01lQCMwkL6D18QJRCKJCux7tEMHBfyY/sgWfebu21hxNMM+IKVsT1Pvju8YhZsu
+	t+0gSlq89cCsy0QgBSYe3ygx5rKCktb4fqmta3Z4Wfcy35tDNIPodZnp3xHXws6vYDfvDIqW2a8
+	I9d4xOIw1NIf1RtdXf10RwBtHxWvDClOB/aYS+rSYR5hHhuAtNANUNdsGuYSs8nGBz1DgQDIBsW
+	d4MORk8MAXaRRSvsYMSkCIiRY22rBr9TwK3LDBS5N79/fVle8beg==
+X-Google-Smtp-Source: AGHT+IHVzoGCa/uAntybx09XKEL4DwbZYJJ0lO2m/jdt9+cuMIxDd78+qyvGjcR/2Msc/ubeejtkhw==
+X-Received: by 2002:a05:6402:1e90:b0:63c:9e82:4059 with SMTP id 4fb4d7f45d1cf-64077040fcbmr289358a12.19.1761848767167;
+        Thu, 30 Oct 2025 11:26:07 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef96105sm15370101a12.19.2025.10.30.11.26.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 11:26:06 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63c11011e01so1988088a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:26:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX83azW67XIcalHiFiS2tJ4Ild46QQBxRwWeCgyNjdvCuywwiDkV7Wcxdq6YMZs07Kg0QkgI1ZjGd9KjNg=@vger.kernel.org
+X-Received: by 2002:a05:6402:2711:b0:628:5b8c:64b7 with SMTP id
+ 4fb4d7f45d1cf-64076f7cb44mr434963a12.6.1761848764039; Thu, 30 Oct 2025
+ 11:26:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251030105242.801528-1-mjguzik@gmail.com> <CAHk-=wj5o+BPgrUNase4tOuzbBMmiqyiYO9apO9Ou-M_M1-tKQ@mail.gmail.com>
+ <CAGudoHG_WYnoqAYgN2P5LcjyT6r-vORgeAG2EHbHoH+A-PvDUA@mail.gmail.com> <CAHk-=wgGFUAPb7z5RzUq=jxRh2PO7yApd9ujMnC5OwXa-_e3Qw@mail.gmail.com>
+In-Reply-To: <CAHk-=wgGFUAPb7z5RzUq=jxRh2PO7yApd9ujMnC5OwXa-_e3Qw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 30 Oct 2025 11:25:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wifyJz+WCZxHo6FLht380Y7uQAxX-=RqNh7u4978zhggg@mail.gmail.com>
+X-Gm-Features: AWmQ_bkokgorRPDRmv0GASJlLRuWoPF2zAAWRYoR--ZWtsDTk3dH-mNwE000pik
+Message-ID: <CAHk-=wifyJz+WCZxHo6FLht380Y7uQAxX-=RqNh7u4978zhggg@mail.gmail.com>
+Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+To: Mateusz Guzik <mjguzik@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
 
-The devlink param "ts_coarse" doesn't indicate that we get coarse
-timestamps, but rather that the PHC clock adjusments are coarse as the
-frequency won't be continuously adjusted. Adjust the devlink parameter
-name to reflect that.
+On Thu, 30 Oct 2025 at 11:07, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> ENTIRELY UNTESTED PATCH attached - may not compile at all, but
+> something like this *might* work to show when a module uses the
+> runtime_const infrastructure.
 
-The Coarse terminlogy comes from the dwmac register naming, update the
-documentation to better explain what the parameter is about.
+Hmm. I tested it, and it seems to work. And by "work", I mean "show
+real existing problems":
 
-With this change, the parameter can now be adjusted using:
-  devlink dev param set <dev> name phc_coarse_adj value true cmode runtime
+  ERROR: modpost: "no_runtime_const" [arch/x86/kvm/kvm.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [arch/x86/kvm/kvm-amd.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [fs/erofs/erofs.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [lib/tests/usercopy_kunit.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [lib/test_lockup.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [drivers/acpi/acpi_dbg.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [drivers/xen/xen-privcmd.ko] undefined!
+  ERROR: modpost: "no_runtime_const"
+[drivers/iommu/iommufd/iommufd.ko] undefined!
+  ERROR: modpost: "no_runtime_const" [drivers/gpu/drm/drm.ko] undefined!
+  ERROR: modpost: "no_runtime_const"
+[drivers/gpu/drm/radeon/radeon.ko] undefined!
+  WARNING: modpost: suppressed 29 unresolved symbol warnings because
+there were too many)
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- Documentation/networking/devlink/stmmac.rst   | 21 +++++++++++++------
- .../net/ethernet/stmicro/stmmac/stmmac_main.c |  2 +-
- 2 files changed, 16 insertions(+), 7 deletions(-)
+and yeah, I think it comes from access_ok() use.
 
-diff --git a/Documentation/networking/devlink/stmmac.rst b/Documentation/networking/devlink/stmmac.rst
-index e8e33d1c7baf..47e3ff10bc08 100644
---- a/Documentation/networking/devlink/stmmac.rst
-+++ b/Documentation/networking/devlink/stmmac.rst
-@@ -19,13 +19,22 @@ The ``stmmac`` driver implements the following driver-specific parameters.
-      - Type
-      - Mode
-      - Description
--   * - ``ts_coarse``
-+   * - ``phc_coarse_adj``
-      - Boolean
-      - runtime
--     - Enable the Coarse timestamping mode. In Coarse mode, the ptp clock is
--       expected to be updated through an external PPS input, but the subsecond
--       increment used for timestamping is set to 1/ptp_clock_rate. In Fine mode
--       (i.e. Coarse mode == false), the ptp clock frequency is adjusted more
--       frequently, but the subsecond increment is set to 2/ptp_clock_rate.
-+     - Enable the Coarse timestamping mode, as defined in the DWMAC TRM.
-+       A detailed explanation of this timestamping mode can be found in the
-+       Socfpga Functionnal Description [1].
-+
-+       In Coarse mode, the ptp clock is expected to be fed by a high-precision
-+       clock that is externally adjusted, and the subsecond increment used for
-+       timestamping is set to 1/ptp_clock_rate.
-+
-+       In Fine mode (i.e. Coarse mode == false), the ptp clock frequency is
-+       continuously adjusted, but the subsecond increment is set to
-+       2/ptp_clock_rate.
-+
-        Coarse mode is suitable for PTP Grand Master operation. If unsure, leave
-        the parameter to False.
-+
-+       [1] https://www.intel.com/content/www/us/en/docs/programmable/683126/21-2/functional-description-of-the-emac.html
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index ba4eeba14baa..618d1b8dc2f0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -7446,7 +7446,7 @@ static int stmmac_dl_ts_coarse_get(struct devlink *dl, u32 id,
- }
- 
- static const struct devlink_param stmmac_devlink_params[] = {
--	DEVLINK_PARAM_DRIVER(STMMAC_DEVLINK_PARAM_ID_TS_COARSE, "ts_coarse",
-+	DEVLINK_PARAM_DRIVER(STMMAC_DEVLINK_PARAM_ID_TS_COARSE, "phc_coarse_adj",
- 			     DEVLINK_PARAM_TYPE_BOOL,
- 			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
- 			     stmmac_dl_ts_coarse_get,
--- 
-2.49.0
+It turns out that all of this "works", but entirely by mistake, and
+not really properly.
 
+I picked the default value for the runtime_const pointer of
+0x0123456789abcdef because it's easy to see in disassembly, and
+because it causes a nice oops if not fixed up because it's a
+non-canonical address on normal x86-64.
+
+And *because* it's in that non-canonical range, it's actually "good
+enough" for access_ok() in practice. But it sure as hell ain't right.
+
+I think that for x86-64 and for the short term, the right thing to do
+is to make access_ok() be out-of-line. Nobody should use it any more
+anyway, it's a legacy operation for back when doing access_ok() +
+__get_user() was a big and valid optimization.
+
+So I think the other thing that kind of saved us - but probably also
+meant that the bug wasn't as obvious as it should have been - was
+exactly the fact that it affects that operation that really nobody
+should use anyway.
+
+               Linus
 
