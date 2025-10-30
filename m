@@ -1,129 +1,206 @@
-Return-Path: <linux-kernel+bounces-879203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7270CC2283D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:09:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A0EC22850
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D7A1898431
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EAD63B9559
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED95126E16A;
-	Thu, 30 Oct 2025 22:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015FF33557E;
+	Thu, 30 Oct 2025 22:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nuv4oOLn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mYP6TE2r"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010047.outbound.protection.outlook.com [52.101.85.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530FE2F5A23
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761862135; cv=none; b=ZByT2N1zcAXbpqr7IFs+4GrzOd2FDshy1XC6hiLiRY726W5ZRuLkCLZmpnNworqAooK/MkrfkxjBi/vctkxzqnfwUXbF4kGRQ2OCNPiaxdimx7BTtz4TL5ggtX0VSLysbQsN4TpAMx5RHUQRBuzS4Fn61QctVR9lrWGHZBaE/Ww=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761862135; c=relaxed/simple;
-	bh=QCaxQQp22Ou0uBRcqdmljdY4A1uwLgCFWyFq2Al5hH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uhMGLB83hxXBRy99rn+fNN0lFMrq5QVposNuew6urhx2vLMaeM8mEFAqExc0dFU02ZPuzyJXI9fYkQLYn2jzh8kRlTCizqiZt8YxczRnC5MDCfqRmUFVkHsBHa26bo3eC3oZpZdBitva4fH1PQQsdJ6774UckO3oe1tfNPL+/HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nuv4oOLn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0833BC4CEF8
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761862135;
-	bh=QCaxQQp22Ou0uBRcqdmljdY4A1uwLgCFWyFq2Al5hH0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Nuv4oOLn1T4nMLdqbCNuzl0x9YUWtMIIav7oZMEPLyzSI9jZSAH3ixOWmH3g655NT
-	 OT2H1DzuvDV+vQTh+fN18t5YPY/ZS3bCVI1J9jjAhRKw1tY/dQgt/hip+qTVxCDmHE
-	 M8SXwJUbKyLD9SdmybWHOStuEc1s35vR5tDrjZVq/tan4ai5vRZ+A7KwZ9fl83cPE6
-	 HknJgXdSH4SMPTV3kcphvEEfBoty8u9u2t0k9FYbDaBwFPv2U2LmgKFqtPPQ9Q3AiH
-	 zwQPS4ugvZi2Q93qc8M6MTP0KghAjFdsu/hWJ0N0gghNin2pIw9Q2gttp1yuDsuVf0
-	 KKCWbMPGYP2lA==
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6cf25c9ad5so1160734a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:08:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWIZQAdbHyFu8eOVceNS1hXMcNB3DIzRgPFq44chK4RPjxbEezZWTi8ND/tWD/lS3MTDAGol2DKP9oufV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCIFoWnh5tMrWISKyUOQtrX6oH3pfXWRu4JJfJd3qNE4u+Lv5R
-	+TCh0p8VC023H56YjmOEDzAcYtwBPtIkJXgE78llZSnpw9/mm9PEJnFtevHCXvi7NjNpnJuxo6q
-	RzKRGZ1AOQ9jpS3xpLKN3GFagTryIBDo=
-X-Google-Smtp-Source: AGHT+IHEHiUBfUwlW3je89mFpeopWhX58UhG4swXErqOcigIFZnDoujTVPO1LSZCUlt8UHyapOY1EcH0H4JbtJ5zFbU=
-X-Received: by 2002:a17:902:d4ce:b0:293:e0f:3e3 with SMTP id
- d9443c01a7336-2951a440d24mr18670675ad.29.1761862134648; Thu, 30 Oct 2025
- 15:08:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830FD2FD7B2;
+	Thu, 30 Oct 2025 22:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761862178; cv=fail; b=gpBS5rXzggxYnqlq5PNGziy0/RZfIYAWF97J+DBnmync6GsLfFGpwYE6IwZRr/BqebS99ZsrJ8uoUKJ8lOsDiMKa1o04ebHhBUzgo5eBqmueeodz4W8d6V3kSc+5EHT8Q/KFugAOm9TWCd7fTjQ0c131ynzYgXrxGMrGpege0ME=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761862178; c=relaxed/simple;
+	bh=Fnj66bPRDWUZ4QMXFC+VPoN5zMCAa9WYIb0Nhcry7ck=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BrCWx+PKCNivnquyjy14x/V31jwsGuHGCVz9reD4pgvmoiwlOEjlg2gZpGB3LmWe5gq6u+rQHgL2PmEj1UDAFBJULhvE3JGqvbWfbrD1fdQPs80erMf6WPfLqwmmp+XkWSHuB2IFPcCkEUxu0RPIlM7CqMdpzzNtROu8eXb4Bic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mYP6TE2r; arc=fail smtp.client-ip=52.101.85.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LfjneYmqoHZkbjExbXQz/Jb0Ef/KUF6Kli6tWmLCRSQZRad0oasIGvPP+Les0ofWCqxqVcwRspq+Ct9W/jczIGkMJhNwxiL4lX/2+Ja3p0h7rws6OKUTs6oGGUfqbC/uK3ZHxhznWwb2yuFKIkelOK4f+Zt9qFlywrtZ5yuDnPgxRs7gmxNrfMBlDoFC5MGfFOhIcJoILkmN7osybUqkYOnRKwdFumYUJCcQ2L33QNoysFEa/kHlr7WSjPo2Er0g3sBeVYyUg2TOOyWZXavXC6S8N1aWx8P9X+B7bUoLLgagyDS+HJNz0e+LNGwxGFSwb/u7XxDA5OvaIyJhY0WNaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gEi6LCeextNjmkvTPhqU5JBmVJMrBmK3fUOeQz5WYdE=;
+ b=piA6gAyggN7WOpVqX5PeHVhrwZ8AwNBlnHdnW9fdtJQbPtxV4J1rdTzGejMXqkwE8KCyP3k5kEuvyFpkn6SyvOdO5YSWDm4HKPrcP8kLmuk7HPDql2Fl/u1FU4vGyWvywa9yxa+h7ayedCKeQc5zTa9/BoCBWY4HTvYitudG7blCgkYkYQVqvJ6+f2URfwrGEFg66NV62fVbpAofzb6OAay3fc/IeaG7ZLG2LousTqNV/gGS6badlmeSrGeypQO2zpUIq7/a53IJAV7l9FaEygHhp8OsCkmQZs2o+twDH4i/4RCHrMaMTLsaNAVWEUYGz1io4RxU7SRzgtRR7xJp4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gEi6LCeextNjmkvTPhqU5JBmVJMrBmK3fUOeQz5WYdE=;
+ b=mYP6TE2rB7cv76Txe2dBdeWHvKmdyTbXrF5Xoday6WIuKHBnSqtsf+r3feYyTGsCDfth5d18f/Wn1zLVZFuZkebHPFTVxzsNsiCruZV87viIvj+iiG94HAV74cOnh1cUhVsjmOjCvkoLxDNRLWmQRpzt9gpVpsKLhkzBR8JrDo85yuXb40FBgstsw6MRy5zu4u+mn0WGfAFIDg/FByKd05QKn0tSrCVs/TBblVTgYkWBBzT/kTfjnadd4i2cwOn0Ey09KzR9ZHOECSj/h1FfFDF5o9L/nmy2WAdSfamMxSpu3e6UuhcGZjrhz2vCkd0DT/ri01sFxWopoqcz2bvmqg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by BN7PPF34483F4BA.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6cb) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Thu, 30 Oct
+ 2025 22:09:33 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Thu, 30 Oct 2025
+ 22:09:33 +0000
+Message-ID: <a56b54e8-1184-4e56-92d0-bd4cbc90122b@nvidia.com>
+Date: Thu, 30 Oct 2025 18:09:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/4] samples: rust: Add sample demonstrating C linked
+ list iteration
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+ acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
+ nouveau@lists.freedesktop.org
+References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
+ <20251030190613.1224287-3-joelagnelf@nvidia.com>
+ <DDVYVKDW8WG2.2STCJ4ZU00MZF@kernel.org>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DDVYVKDW8WG2.2STCJ4ZU00MZF@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0208.namprd13.prod.outlook.com
+ (2603:10b6:208:2be::33) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023233656.661344-1-yanzhuhuang@linux.microsoft.com> <20251023233656.661344-3-yanzhuhuang@linux.microsoft.com>
-In-Reply-To: <20251023233656.661344-3-yanzhuhuang@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Thu, 30 Oct 2025 15:08:42 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkHVQuR+5N5qimAb=+GpGFpDt7YRq+jYC07R4wfRE6xUgg@mail.gmail.com>
-X-Gm-Features: AWmQ_bm80q11eSbg7G-yU6QtbTi5-vtrJoIqly0ibkMkpjNe7gqJ2xgghoMMvTc
-Message-ID: <CAKtyLkHVQuR+5N5qimAb=+GpGFpDt7YRq+jYC07R4wfRE6xUgg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ipe: Update documentation for script enforcement
-To: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
-Cc: wufan@kernel.org, paul@paul-moore.com, mic@digikod.net, jmorris@namei.org, 
-	serge@hallyn.com, corbet@lwn.net, linux-security-module@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|BN7PPF34483F4BA:EE_
+X-MS-Office365-Filtering-Correlation-Id: da733f5f-07b9-4719-43fc-08de18010161
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZG1HWHZWUnlhbzY4UFRzS0hHcm01akRJTXdFSDRkNE9KcHVXU3Y1K2RQNEdM?=
+ =?utf-8?B?TG5pd1FCcGpWVkx1SElGLzZrU3FZenlIRStKMFRsSU9kc2lEVHlIVGNLYzk5?=
+ =?utf-8?B?SlM2NmZ0V3Rwb2d1cmlFYVBWUnRGYVpnbE5Ub0M4WmVXN0dlSFc4RXUrUGVn?=
+ =?utf-8?B?KzMzK1hpTU9PV01SYjBydGtTQjAwdjY4dGgzYmJLdzZmM2l4N2hKcHpZUWhx?=
+ =?utf-8?B?UDlReDlkbHVIYXVBNnRQTlBmNi9PV3JSV0FGdHk4UGgxcDZ6YjEwMlZHcmdL?=
+ =?utf-8?B?YTZSWjl2VkIreFZYcVFTQllPN0RKSC9NTG1FSjBNQ2pKWEVWakhUU2xmNWdv?=
+ =?utf-8?B?TmFmR3ZacU5qR1ZYL1laNmttMndqRks4U2dMVno2U1ZTTlphWDVyeGNGelZX?=
+ =?utf-8?B?NWlPL2cvNGY3cFNhbFRMbCtKZnBLb0RwRkNBa1owN3pkVWVJdVcxQ09UMEJG?=
+ =?utf-8?B?S0NQamFTOTYwQnU2dnFyQWxXWngwWGtmdS9MTjZBbUZnb21PR01lTUFDMjlt?=
+ =?utf-8?B?aFl2REFNbGdoQmtMcUliMmhDczdmTmVmbzY4aVJqUUQ3QzBab2drTVlDejdk?=
+ =?utf-8?B?RDd5WnhSdU8zR01hazVCNG42WnJtdkc4OFRYeFlrWGpTblBtQ2JNQm5VdzJs?=
+ =?utf-8?B?bWYrMUIwU0NHUE1yYXZIVFRTeFEyKzlHMCtNT2RtUXNHRUVxRC9vSEJWbmpY?=
+ =?utf-8?B?R0hCcVNIR3VPOUJZZ3Vock1QLzJlZXQzSDhiYjFvQjVjR2phaFdSVFVTeE1P?=
+ =?utf-8?B?bW1vdVdGdGJMT2EweGtjbVpGWXEzVG1FY1BJdGZxeFpaYUhDSmJHSFEvM2RC?=
+ =?utf-8?B?S3dXcUtoL09rQnZudk01RDZjbHJYOXZiS05NVnNncCtNdVZ5RmpqVTdaYXhW?=
+ =?utf-8?B?YzhHb2Y3NjJQWTN4SmtoQmJHU01HZUtXZVRtQ2VpUmpUZWpjYTRDMkIxVmUw?=
+ =?utf-8?B?Z3N6N25RNUgzcG5xQVdpa1Rlb0ZCaGN4blprbmxyT3hZNnpzSFFDYW5Pa0lC?=
+ =?utf-8?B?VE1QK29jOFlzYllwNGVhRjErQytkY3htVXpNakp2dk80MzNaVHhQK2d3YTUr?=
+ =?utf-8?B?Y1JvZlIvaExNMXljSWxTSnRaNTV6ZU9vaTJZS2VlVEw3VUZST2NDdWkyaHE1?=
+ =?utf-8?B?MFlnQkljcmdlOGwxYklqUlFVNW1YS0N4TytuSVRRZ0tyWmFpYnVwN1JRTlJP?=
+ =?utf-8?B?Kzh2cW5idmhKMDI0WktSLzFJUzI0L2d2SFpHb3JPN09PREpRalJJem15Q3Ix?=
+ =?utf-8?B?bTlhQ0oyV0Y3YnJuWlZyRDJ2VGthUG0xQk1Ud2YwSjVCZHdTaVRHM0IrRXQy?=
+ =?utf-8?B?OUpaMTFDWXNOZDdsdUNpdWxOcStOaWhwSzJSRXhuMytodWxaNXJRdFkvdHkx?=
+ =?utf-8?B?Mm8rL1pYSThzL0NXd0VpWk9IYTVaeU1ibnBCampxYjF0SmN0NFB4OGREcGts?=
+ =?utf-8?B?Qkc5b2xXV2xuVzJ3NlNVSDdaa3RnMUw3NHBTYW9FcHppUFRCSStVaWdBU0ZJ?=
+ =?utf-8?B?eEJ6d3dFNmRneUhBKzhYenZRMDJES0NqR3hBUGN4d0EveVBjYWZtSlQyRlVu?=
+ =?utf-8?B?M0NDS2w4Z3pvTkY5dlFmZ3h6TGUvOGN3Sno5aVRoU2k0ZGpqNkVBTXNFYTFK?=
+ =?utf-8?B?TlF6N1dwd05CcDlOdk96OU1hejA1WmhaY1hqeEg4alNVbWZGL0Qxa281NjBq?=
+ =?utf-8?B?bklKWWZjMlh6cXdlMkg2VS9ScFVzc3VKQ3ptTzJ2TjdPUlpaTzYvQjJ3VGk0?=
+ =?utf-8?B?Y2E1RVdLR3c4MU9waWJqY1ZpOCs0QkFKVFdLdVZ0ejhhQUd5TVJZZTZCOXQ1?=
+ =?utf-8?B?VVV2QUpUeElvWmhQTGVZUGcveTVOVWhzaXYyUUZTZUV3d0k0TXpKanVjS3ND?=
+ =?utf-8?B?QlBCUldlbVFSZ3AycnhaZXJER3JZNFczT1JyOFBnbUNoc0JtMGViWjZPMko0?=
+ =?utf-8?Q?bZOxBQRpx/GNqqOhTDNPU7AeBqnQc1Gy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RVlrREhNTkxwdHRuME9hMkI0YWlUWmZCTG1SaEhLWnVhQW5adlpBUFFiV1dP?=
+ =?utf-8?B?WUcvazhGenJDZGw5VitIMmlnaUNUWFJIOVphMEg5a1djMVFxbmx0WVNOT0ov?=
+ =?utf-8?B?ZzhncHBTaFVPV0ovRVBSL1ZqY3UwdE14UGdjVnB4TUM3b2UrUk9DSzRTN2hs?=
+ =?utf-8?B?d0ZFKzJnVGlyVkJnNzZzK0dINk1UcWhXSWdjc3QwU2ZuWXdZSzh0SjR1Y2Mx?=
+ =?utf-8?B?b3JVZnF6a0dKMjVnZkZXank2cnNOb0FQNjhjZ3FJbnFGbUUwZm1xM0U2WTEv?=
+ =?utf-8?B?Zy9KMlR1RWZ1MnVRMEZkMjZUTzZ0M3FVT1BXQjBMc3hQcjRVcS9TaGUxVW04?=
+ =?utf-8?B?YVVqQUF4Z09jMVdCKzRpa0kwWXdBZVNINURoZW5ObmYwWEt2bk9FcHVwMVM3?=
+ =?utf-8?B?SnJsOURQM0ZwZEU0bTZxcWJlcEtScGsxVkRhKzFYdHNqM0RhQTRZcUtrd1Rq?=
+ =?utf-8?B?ZlhOMWlPbzcvaDV6NlNUNDJGQWY1R2k0RDlzaVNiYkpFN1NURVdVVXdZRmh6?=
+ =?utf-8?B?Vy90a0Z3MXF5T3MrL25Ra3ZMUkdBUEtjaE91UGhyUDJuUmVqUFVYNnpOcHQ2?=
+ =?utf-8?B?emVwRHlubXo0NUlPanRCOGV0YlhZbzB4cmtoUGNIbCtCdFU0VDI5WkozSXVy?=
+ =?utf-8?B?WW9KelV3dkpVcGkwYkdqcUkwWVJONlVxdE1iQU1rQnVZOGdGRFlydUw3Kzdh?=
+ =?utf-8?B?eDlDcDhwdkYzbXA5dnQzNFZybm8vTjlPZGM1OGFYamdib2tSTWw0QWw1VVpM?=
+ =?utf-8?B?NnViOTErZENIWXRGQURpRm9DRWlIQ2U3d0FrbUViT3MzQnd2am1MSmZ1T1VM?=
+ =?utf-8?B?NXJlaXY5WnpyMXVHcFRobDl1eU9uYy9SOGhSWWxKOGErOWlOci9udmZML0ov?=
+ =?utf-8?B?YnBIU3dZS0NlL0dORkthQnhlM1UrbExtN2dnQ0dCakRHRWczYm9qZVBnK24x?=
+ =?utf-8?B?Ynl3QWFxL2piM1RvZVlIWUJYUmFrVFU5bytFMnZRVmRWYlJ0ZlJxRDEzZC8x?=
+ =?utf-8?B?T3BBL1kvamFlemxMbm1QdFAvSFJhMEQvNWZueHRrcWthK1RaSm01dUMvL2Vo?=
+ =?utf-8?B?WWVUS0hmY094bVBDRGRxb1A0b21MMG56RXFTY252R3hEcllHTFlMTXlpeU4r?=
+ =?utf-8?B?d2taWUtCSmdxcmtxNDVqL3BXcWtkc1VIMEN3MGJSQVJTM1dnRTNkWmtqMXpm?=
+ =?utf-8?B?RmpEL3k2eUo3Y1pFaTE1RXpoQTJ4Qmd0T2ZYQTkrNk9YTHQzSHFCUUlDWDl3?=
+ =?utf-8?B?cVdPVG1tSndxeHVrcXd0dllUTCt4dGNXU1YxZTBUTmE5TlpyY0c1L3ZVUmw2?=
+ =?utf-8?B?WGNZbFBEN29XU1RUanUvSzhyb094VC85MWNacGY1TmwrNWFJR3FXcmU5aGVF?=
+ =?utf-8?B?US9BKy9yVmE4Yng5Zm90TmFVZzJQbTlvTUtzYWxTNmhiYjRESWltdUx5Q2NS?=
+ =?utf-8?B?dWlhYkt3YllvTVBkZG1rS0EyTHBLS2h1c21vd3RqZXFzY3JYNml3ODlXbnFw?=
+ =?utf-8?B?ZjBZK2dzdTJFSksrYlBtN3habmR3elNWWEhjelZUWkxoajNWMVFFQ2tuTEw0?=
+ =?utf-8?B?TjQ0VUdobzU3ODJmU2dRNCtpUmNaUWIzakpiQXgxVUh5TjFHc0NYVzM0MXFB?=
+ =?utf-8?B?UFdicXpzSjBieVQyWnNmMUhUd0NNVHlMa1NuODZlaGhlRy9IS3o3a0JocWl2?=
+ =?utf-8?B?VmZJem5pa1V3OWNIQU5kMEZmaFAweElTQWNEaXk4QVdYZks1VkJnSk9adGFo?=
+ =?utf-8?B?WlNId2N3U1l1MW9nUHRiOTB4NHVldEYvSTlqdTdVckxobzYvZ1h2czc0ekdN?=
+ =?utf-8?B?eE9VTFBDc2tkTDVvaFdPbXpTa2toSVlDVnJReGV5b3F3QTRQcEpENUIxUyt0?=
+ =?utf-8?B?ejZvbHRZbmpYUWJad3ZxaGRoNDF4STZEUG10SEhKMGM1Vnp5M2UxQUg0cVNp?=
+ =?utf-8?B?cFl5M0JiaTMzcXVYSE1sSDVEVVBPdklhMXZIbGZmLzRuZE0wL3V0S3VSSmYx?=
+ =?utf-8?B?K0w3MkxuUGZna3lXZTIzYVZUbkpsNm0yb1B2bnVFT3QzRkFaL1E3QUt1aWh3?=
+ =?utf-8?B?MHRlNUtLR0s5ek5aakVocjl2dG5xbEVPUERRVXJmQ2xWaUhqS1h1Y2lYenhU?=
+ =?utf-8?Q?d55ZO0kQIH2vWxpGBbzdqm//t?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da733f5f-07b9-4719-43fc-08de18010161
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 22:09:33.2086
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 586U1OJx9IgOyVFIBI6UOJMlLFVbS5UqO7DWsG3yVhzzp1wxGdrsNk6gV1RdVMM2NrFTlXrrJiiaQZ+jrC8DAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF34483F4BA
 
-On Thu, Oct 23, 2025 at 4:37=E2=80=AFPM Yanzhu Huang
-<yanzhuhuang@linux.microsoft.com> wrote:
->
-> This patch adds explanation of script enforcement mechanism in admin
-> guide documentation. Describes how IPE supports integrity enforcement
-> for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
-> how this differs from kernel enforcement for compiled executables.
->
-> Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
-> ---
->  Documentation/admin-guide/LSM/ipe.rst | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
-guide/LSM/ipe.rst
-> index dc7088451f9d..1063256559a8 100644
-> --- a/Documentation/admin-guide/LSM/ipe.rst
-> +++ b/Documentation/admin-guide/LSM/ipe.rst
-> @@ -95,7 +95,20 @@ languages when these scripts are invoked by passing th=
-ese program files
->  to the interpreter. This is because the way interpreters execute these
->  files; the scripts themselves are not evaluated as executable code
->  through one of IPE's hooks, but they are merely text files that are read
-> -(as opposed to compiled executables) [#interpreters]_.
-> +(as opposed to compiled executables) [#interpreters]_. However, with the
 
-All looks good to me, however, we could also update the
-[#interpreters] reference to userspace-api/check_exec.
 
--Fan
+On 10/30/2025 5:15 PM, Danilo Krummrich wrote:
+> On Thu Oct 30, 2025 at 8:06 PM CET, Joel Fernandes wrote:
+>> Demonstrates usage of the clist module for iterating over
+>> C-managed linked lists. C code creates and populates the list,
+>> Rust code performs safe iteration using the clist abstraction.
+> 
+> I don't think a sample module is the correct choice for this. It makes it look a
+> bit like this is an API intended for drivers. I think kunit tests might be a
+> better fit.
 
-> +introduction of the ``AT_EXECVE_CHECK`` flag, interpreters can use it to
-> +signal the kernel that a script file will be executed, and request the
-> +kernel to perform LSM security checks on it.
-> +
-> +IPE's EXECUTE operation enforcement differs between compiled executables=
- and
-> +interpreted scripts: For compiled executables, enforcement is triggered
-> +automatically by the kernel during ``execve()``, ``execveat()``, ``mmap(=
-)``
-> +and ``mprotect()`` syscalls when loading executable content. For interpr=
-eted
-> +scripts, enforcement requires explicit interpreter integration using
-> +``execveat()`` with ``AT_EXECVE_CHECK`` flag. Unlike exec syscalls that =
-IPE
-> +intercepts during the execution process, this mechanism needs the interp=
-reter
-> +to take the initiative, and existing interpreters won't be automatically
-> +supported unless the signal call is added.
->
->  Threat Model
->  ------------
-> --
-> 2.43.0
->
+Sure, kunit tests indeed sound better. I will convert it over (this and the
+other one). Thanks!
+
+ - Joel
+
 
