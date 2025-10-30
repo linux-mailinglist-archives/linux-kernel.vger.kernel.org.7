@@ -1,135 +1,170 @@
-Return-Path: <linux-kernel+bounces-878371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDC0C206FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:01:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8F5C2069A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82671A679F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:56:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 726CA4EE93F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D3726A1B5;
-	Thu, 30 Oct 2025 13:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D644324A079;
+	Thu, 30 Oct 2025 13:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="fP7SwIlg"
-Received: from mx-relay100-hz2.antispameurope.com (mx-relay100-hz2.antispameurope.com [94.100.136.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUcIMMVW"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BDC224B0E
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.136.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761832506; cv=pass; b=PtCbfPJ1j1qP1YpGH6q7FAg4RLpx1KF2dT52qL1iYSjuTxuKSa4qxbqrgnDf4xuWNi7p4DyXDRS6TvncXOOTLNxrh2q6ApAZ3Wx+GZSJ120R5NuJBwzaLFENcKuYk122H93WUAIwwRJv7CeSlyNq97hZrxCemyGy4j8nRfkS+zk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761832506; c=relaxed/simple;
-	bh=EaVfQg/+QVSPAOgls27VI6muuvBs3u/FUZyH+/o1etI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LuTJmFmZ8jIP2FJT6kHoiAmCJ+7su4TLg/T16287XfQUX9QTGn2iyLU4QZwuHRQg2PW7y1ZQ4jMpY7SG7R1qYJfuzEoSJK/NYzz5qUKPzYanYN9jzz9qzMb3XWjHcnz2U8MFvIP7ENI9j+QQhqI2/mRiIrqFdntu7mi2Y/dtS7E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=fP7SwIlg; arc=pass smtp.client-ip=94.100.136.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate100-hz2.hornetsecurity.com 1;
- spf=pass reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=KEZFS4oLzG/srptDoN54vEJHXHS1Iew+xlKYXMZp3q0=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1761832428;
- b=JnzJT5NKtrBPy2DXcKaWOyYgokxRjxoc/AvZT/AVxSUWnE1HWAwh8wqdKPrxlg8U+LCys3J+
- UAg2/a+bzVn7J5n1aygG3Co1B429l5H/Yv/CgFTnrIYMyGINr6Gg9tZ2qyyAu7aNjmt+6np4+i5
- S9nzqJvSU92wUp0NWcNjOdTcHuqAxtN/hljDPjmfyi8DRwzLZxOn2teVJr6Aj5RN6VsyAmHvrrv
- 0I7y4s8sMqn/jiJ4WOGueAU8mgWAbxfag0i+P4fXuOtFsN2wiuHgj5ItYLYoGDmqYCKPB1SlTDx
- Mu/GGGlGVSz7m2hQF3Bj/t0EVwZLSQp8a1Ld/kUuf8P+Q==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1761832428;
- b=L8Aa8/UYZktQtElLBQXGI2bIwT70Pj+LEiO8fzxoATkockVLgojh4EYyFBe2UmahyA818aU5
- NaOoBqdxDP/zHvd2a3I6Z6wrZsCWvqnxBa3K346Xu5VcE9lgFk6sGn5zTRtfu4JAaAucHmtXO6y
- p0g0KrMbKzKvHeh8I44JuLIAxMmHgRBPcf1erCgVvmZ0w/VoOYycoCBwKNeEgPcMOoQPMcd+uLO
- Roy4J39twznKDM/rBGBsUWpXOkqPNl2sqAJfXsp6V1zk2XLN/I2DTlZ7/dFg8HRheaG2P0M6HCu
- QkldsMHiL/IInwCwRCiJKPPQJcYp6Kc8QPFwcvu6qlZBQ==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay100-hz2.antispameurope.com;
- Thu, 30 Oct 2025 14:53:48 +0100
-Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 5CA0B5A0E73;
-	Thu, 30 Oct 2025 14:53:20 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 19/19] arm64: dts: imx95-tqma9596sa-mb-smarc-2: add aliases for SPI
-Date: Thu, 30 Oct 2025 14:53:01 +0100
-Message-ID: <20251030135306.1421154-9-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251030135306.1421154-1-alexander.stein@ew.tq-group.com>
-References: <20251030124936.1408152-1-alexander.stein@ew.tq-group.com>
- <20251030135306.1421154-1-alexander.stein@ew.tq-group.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F6123EA8A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761832465; cv=none; b=P108e42lATPPHTLRLlwoYPh8FeJHxyPAovNIEsNyHFtjRY7AjgRMJbTFmXwGjMh3iKNpuO5f4I8RtwOItn/aafvxNRYA80Agu/57VPVD3j6DLkfNiBY6Al+qQm76N1oqfaKGpjKOptqplwXgUyG+NYoeUf7r4MsXfyi9nBWxoa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761832465; c=relaxed/simple;
+	bh=262QZ+XDmTcRlPuTpI23rfyDxN2AbKjqytkFjDvwheo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=go6/3h+PSOPnrdaOm2hekoan6Fx5+XpavwifCevggIu+egM9g/Vfs97sY6MpkzPUGEmMw07v6jJtie76djkN9e4pG5KyOJO8IHcPjx1/dPsCUbPuAwYvFWaeDdcZE/vNdjxBkszYdeEeFmIp5/HAATZBjo34DWWeWXdZTccDsWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUcIMMVW; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so1724397a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761832461; x=1762437261; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AJYbzh7aiosJcbzX1tDjME9nx/8tSNeeeFOOgsgmZUU=;
+        b=DUcIMMVWT+aiTJO+LFx5VMkvfrFy7ENCEZu4VrikX/KbCUDJO2ALjYlpIVWzHmKHyJ
+         X9WgCPlZRoWscYbdmu9QELbY6zRQeTzQoGaXdN+Jkkm3JG1oKGOF+ytRa6Ej3uw9xrlB
+         Bp2iOqxVAtLTOw1PnL/gGWgJc3gHMGI3/mUmn/J2D7hC3Wea9cjqOkvpaXDIyrXm1P8O
+         kBqiDmdNTj8c/k6DSXc4zS4G8bNVVcSwfHghsamizWuS0HnNRvvHuCb6tenW9vg4tFsY
+         PrdywDhvK0rhsjPdsoNAeKoDscTHPr9KuVL/54enES9TPz4ui9SPiWjtC0mXn3jAhTit
+         I/+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761832461; x=1762437261;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AJYbzh7aiosJcbzX1tDjME9nx/8tSNeeeFOOgsgmZUU=;
+        b=eWW5SeHwZHGf09HoDuxJVpDaICbISIf3TAy1iu24PLcuqDPDW1UY/45JTLl9EeHQZC
+         5TGrm60BiE3jJRJLMiE/o2qjRnLK6qgZzrGWPa45lM7Dcmpwtc2qCWrytGpPC7zSTiu5
+         Xj7Il5LSrqpJ1+imO9FbHamfSeHnXMwmbdbp5ukWIvTUqKKOim5HGMRdKl7IsjwjSaI/
+         +7AGOamEozX7LS/QGDK70mrfPMwbCeQgYg+ciX+wBJap57AcLVp3CLzziN/ZuEvJqq1+
+         OwbOoS2fGBHIUtQZ0Sl/OZ0QAYESZ7vLDrew0GtQaCKAh6DNHjMn9XALqx1f0O6JQ2ld
+         MsBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlWB2UMZstp4taSQvec/4BH77SJraBs/QIk4Mqv8tHyecaYpgTwWsvPw71ATii4sHf+4Ld0vxf56ZhbiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUEhHEIZv+nUPvcGMMT9aGWOhO+gC3CrVvHQY0dBrPcxyp/CcH
+	wTgdkUnUDFYHvN2Gi37CaQpdLdNCPM6UE/RDgCWEoPk1xkCes7xWp5Xm
+X-Gm-Gg: ASbGncvn5Kfnp+LhmcQ+Sr+xrfFDW8Q8QEH1SdAeK+MzCTRnDO41Si56qSEWN31G12W
+	G4e1E9bk/SZVRahL71nWxh4WbPqH42DBvCCxhb27XUyyYN30Dc2UmVL/Yn43KcQRhuxTzIfTmGe
+	TlxlVaut4r+QxjRHx3ZdipEBk/3iSYNrESjKWlTy2OTCtHKll6BQUWXCim5YFYh0LoGSIk5A/+a
+	4E+UlDjwbB9NliSKwlMW5UH7naiXSJKvaT1douEus9MWKRB2gyvpj2lyc6DPAuAFCeZNHvNOWc3
+	wGmvYKcZ/x8/wR+ggQM5FzJJ81MPjUj7U/ut0cDe8P12JFBkVUQSkbB+ymsgTeGy1gIpnU4/lJm
+	gzJoCP9m2W8tkyG+X+gIvTFiVfBO/vPWojWiqW2EapirbnOgra1XpiGuXic+kQPbWo2KHlXvhwp
+	z03zxWm9JW1kfiIArqgXAB93TsdsONa9NJQiBmz+zB+4yMfshSBDTeWKrGcCMGIhydhdk=
+X-Google-Smtp-Source: AGHT+IEQFVIvYewjzZ/93rg8is2jjIrooht86OTcuqkjAo75gh3hiz+k4V+6PV6A+M+W65cLQnX5qg==
+X-Received: by 2002:a05:6402:34ca:b0:640:6b00:5e93 with SMTP id 4fb4d7f45d1cf-6406b006061mr1458460a12.36.1761832460539;
+        Thu, 30 Oct 2025 06:54:20 -0700 (PDT)
+Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e86c6d7d3sm15133490a12.27.2025.10.30.06.54.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 06:54:20 -0700 (PDT)
+Message-ID: <1ae385ba6000fc5e90adadc6dcdc2fa8b19d5783.camel@gmail.com>
+Subject: Re: [PATCH v2 1/4] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>, Mark Brown <broonie@kernel.org>
+Cc: David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald	
+ <rf@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai	 <tiwai@suse.com>, Nikita Shubin <nikita.shubin@maquefel.me>, Axel Lin
+	 <axel.lin@ingics.com>, Brian Austin <brian.austin@cirrus.com>, 
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni	
+ <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org
+Date: Thu, 30 Oct 2025 14:54:19 +0100
+In-Reply-To: <20251030144319.671368a2@bootlin.com>
+References: <20251029093921.624088-1-herve.codina@bootlin.com>
+		<20251029093921.624088-2-herve.codina@bootlin.com>
+		<06766cfb10fd6b7f4f606429f13432fe8b933d83.camel@gmail.com>
+	 <20251030144319.671368a2@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay100-hz2.antispameurope.com with 4cy5DW3sFkz3PJ21
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:a7bf318555c57f949278cf3d40d2a7cb
-X-cloud-security:scantime:2.336
-DKIM-Signature: a=rsa-sha256;
- bh=KEZFS4oLzG/srptDoN54vEJHXHS1Iew+xlKYXMZp3q0=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1761832428; v=1;
- b=fP7SwIlgCJ19DR8tDssYEjigOk4tk4F3onB74JCEDxDfKl3A1QoveRIp1VSKv4QIRr57qqLc
- tlduISzq7exEAHGrSvbSP8S5W8tCUQHoiIRzIEbN8qBD1Yl6qXnCCxm0XEum2Ifu+UoJtPkFaUK
- PjNS8f/nevvT5dvM43M5QJM+xpRGduvuZE0OGUXdENEKmwJMncshmSG+l6GxTODglBh3Aku2Evf
- 3UWKl2ll2hbGc5l+zb9ik2oSksmnEEBIMPX3CNnOFnjUWUQoskulvdpQid6D/pX1MKeTlT3br5c
- 45pbkk40lSebLHvh5jLYaVa4P9YK9iixtvqfi9svrzRyA==
 
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+Hi Herve,
 
-Add missing alias for SPI controllers.
+On Thu, 2025-10-30 at 14:43 +0100, Herve Codina wrote:
+> > > --- a/sound/soc/codecs/cs4271-spi.c
+> > > +++ b/sound/soc/codecs/cs4271-spi.c
+> > > @@ -23,11 +23,24 @@ static int cs4271_spi_probe(struct spi_device *sp=
+i)
+> > > =C2=A0	return cs4271_probe(&spi->dev, devm_regmap_init_spi(spi, &conf=
+ig));
+> > > =C2=A0}
+> > > =C2=A0
+> > > +static const struct spi_device_id cs4271_id_spi[] =3D {
+> > > +	{ "cs4271", 0 },
+> > > +	{}
+> > > +};
+> > > +MODULE_DEVICE_TABLE(spi, cs4271_id_spi);
+> > > +
+> > > +static const struct of_device_id cs4271_dt_ids[] =3D {
+> > > +	{ .compatible =3D "cirrus,cs4271", },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, cs4271_dt_ids);=C2=A0=20
+> >=20
+> > So currently SPI core doesn't generate "of:" prefixed uevents, therefor=
+e this
+> > currently doesn't help? However, imagine, you'd have both backends enab=
+led
+> > as modules, -spi and -i2c. udev/modprobe currently load just one module=
+ it
+> > finds first. What is the guarantee that the loaded module for the "of:"
+> > prefixed I2C uevent would be the -i2c module?
+> >=20
+>=20
+> I hesitate to fully remove cs4271_dt_ids in the SPI part.
+>=20
+> I understood having it could lead to issues if both SPI and I2C parts
+> are compiled as modules but this is the pattern used in quite a lot of
+> drivers.
+>=20
+> Maybe this could be handle globally out of this series instead of introdu=
+cing
+> a specific pattern in this series.
+>=20
+> But well, if you and Mark are ok to fully remove the cs4271_dt_ids from t=
+he
+> SPI part and so unset the of_match_table from the cs4271_spi_driver, I ca=
+n
+> do the modification.
+>=20
+> Let me know if I should send a new iteration with cs4271_dt_ids fully rem=
+oved
+> from the SPI part.
+>=20
+> Also, last point, I don't have any cs4271 connected to a SPI bus.
+> I use only the I2C version and will not be able to check for correct
+> modifications on the SPI part.
 
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts | 2 ++
- 1 file changed, 2 insertions(+)
+I'd propose to drop SPI modifications in this case, because by doing this
+you actually introduce yet another problem for the I2C case you are interes=
+ted
+in (namely if you'd enable both modules).
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts
-index d3a9360b8c548..97726eded0f86 100644
---- a/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts
-+++ b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts
-@@ -39,6 +39,8 @@ aliases {
- 		serial5 = &lpuart6;
- 		serial6 = &lpuart7;
- 		serial7 = &lpuart8;
-+		spi0 = &flexspi1;
-+		spi1 = &lpspi3;
- 	};
- 
- 	chosen {
--- 
-2.43.0
-
+--=20
+Alexander Sverdlin.
 
