@@ -1,170 +1,317 @@
-Return-Path: <linux-kernel+bounces-877407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0729C1E0BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:42:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58996C1DFBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532B6188F2B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9BA407058
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF8829B77E;
-	Thu, 30 Oct 2025 01:42:48 +0000 (UTC)
-Received: from sptxd.sgr.oneoffice.jp (sptxd.sgr.oneoffice.jp [211.7.82.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584AA23E334;
+	Thu, 30 Oct 2025 01:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OiDXEoao"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24AF131E49
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.7.82.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E703D238C0F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761788567; cv=none; b=IJoDjYjAmhIdGCSCmqQNvRCpUTHMhdiJgvVrXOQPlmvMfWmn3dwX2ZEuHqx9gk6Kzz8JgxsP1EI5gSaeE+nGKyeb3MOHi5Ab6swfzK4oRpNRBBJeh2Wq2EbvoQuKQQwo5HbQJ20DQDWpY7OQ8cLUgNG3eMgknrWL1RSwi8tbHOY=
+	t=1761786369; cv=none; b=aFFYQ64xIUwLL3y6JupysyCc36SuhBH6SWjY79a7tY49kE6e/og+o+beuVRUR81a8IxsM8VKwhukd5dTNnWaM4TxB+v9nRcYcOb7r5Esw0cxev+gVWpQqOd0/sOYSeSZ5zT9N+8lK4mgka61mq6s6+Fg4UdJzcNDVth5JefJVb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761788567; c=relaxed/simple;
-	bh=vPL9rG/nBNEvUEvnHhBIqWvs1aTGeNpJFJZ4rJ0TJFc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sv1u+bxcSE+NY8/3zFc10hUakGWJPoTSGoPjFnzU2ivBLeuJ/v8nWPctnzMIPggWmp7PkG+9Typ3rAoDz1Y3yRQvGiV7pNsayeqwl0x6RgCVeHxORsJ89mMdsKx8Mr0ezjTEXkJ5UPgLBjM1b234azkV1eDZHI4KD9LroWcEKT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sakatapro.co.jp; spf=pass smtp.mailfrom=sakatapro.co.jp; arc=none smtp.client-ip=211.7.82.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sakatapro.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakatapro.co.jp
-Received: from sptxd.sgr.oneoffice.jp (localhost [127.0.0.1])
-	by sptxd.sgr.oneoffice.jp (Postfix) with ESMTP id 92873382E5B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:34:08 +0900 (JST)
-Received: from oumg-avde14.sgr.oneoffice.jp (unknown [172.16.67.228])
-	by pre.oumg-derl.sgr.oneoffice.jp (Postfix) with ESMTP id 9B129382E6B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:34:07 +0900 (JST)
-X-CSE-ConnectionGUID: HFI3i3toSLmKG3mYAysVLw==
-X-CSE-MsgGUID: kTgAmpSLTR+Y0IoWZueK/g==
-X-IronPort-AV: E=Sophos;i="6.19,265,1754924400"; 
-   d="scan'208";a="50697833"
-Received: from p225.net133186039.broadline.ne.jp (HELO sptxb.scorpio.oneoffice.jp) ([133.186.39.225])
-  by oumg-avma14.sgr.oneoffice.jp with SMTP; 30 Oct 2025 10:34:03 +0900
-Received: from 133.18.164.74
-	by cmspw63.cybermail.jp with Mail 3.0(13362:0:AUTH_LOGIN)
-	(envelope-from <info@sakatapro.co.jp>); Thu, 30 Oct 2025 09:49:59 +0900 (JST)
-From: "vger.kernel.org"<info@sakatapro.co.jp>
-To: linux-kernel@vger.kernel.org
-Subject: =?UTF-8?B?44Ki44Kr44Km44Oz44OI5oOF5aCx44GU56K66KqN44Gu44GK6aGY44GE77yI6YeN6KaB77yJ?=
-Date: 30 Oct 2025 09:49:58 +0900
-Message-ID: <20251030094958.A87666DCA24439B8@sakatapro.co.jp>
+	s=arc-20240116; t=1761786369; c=relaxed/simple;
+	bh=adiu93DlzwcW02RQQQEztmqHCSRUMOCuSZmyc7Gnwl0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVAHEYYE9H0VAm1ohaGvrsrqfPiwmoCCKjlRj+7fE3YWYficXbMRyun0z5sVSxtYS+QrZGrvzLwOVoWrwyAu4J6PXYNK0xQejke24OVt1Qrw83Zg54lA1PFSJ2pDUa5lWLlcLAdQXVHC3cvwukK0BsCVS/EuNWj47ITlEeqCvCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OiDXEoao; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4eccff716f4so94831cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761786366; x=1762391166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YeisVXfwZ0KrQFCLeQpidsEhsQ07SALEwA1Kf0DOiTM=;
+        b=OiDXEoaonjoGJBDJoWeeDFCs+MtiNfuycoVOgA9ir0+Vk822TS+TQuK0Hrxje4EJ8q
+         mumRov7VBe2W2hNJmQ+kqdQUsoxPzFbTVTD5Q/N+mNb6cpJeyqXwjOndqvLv7z7lScOO
+         FJg281QPUdQ0+Jb7UHqnrK6xoZZhulgXfR6eowbNDyJqmEHgSt9EsKM9Rsix8mjyhIHn
+         yetMKF9PxhvR6s8r5tfuPepy/nxaUJhj28Up6ocGDin1GYYHywV/HQVc5gvmlUItqNz/
+         fs2ILuyvNr5s7K3XfjJjuyPqm8mztFLDwz3hpW3EmShg2XF0OeYNMo6VTBzQTc6JBf8x
+         bMKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761786366; x=1762391166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YeisVXfwZ0KrQFCLeQpidsEhsQ07SALEwA1Kf0DOiTM=;
+        b=nSG+sIwxtvbvlEfi7hmY8gnuT91tylNiLW0r3w+el/ttCy7Jp6Mb8XvXxMcq3vRQim
+         DdexTIhGcywChF5xiKVoHeaTHyUAvcxnhH8kllJ8itCBxV0Vc5lrbyh0h0B3U6GO37l/
+         ANrBAvbj+4+5w51C6Vo6pEe7WOSVUoXEE5WP1r/VHKnIibfO5EkRTIpMUlMNSt00v5GA
+         N4SF12FqqCDfKo996YYyafaiac+VwM0j5UM5WuosQXC2vb+CPMXMl8oROj6zPQ6CgqLr
+         DuTRK95FJqYbQ9hZ77MfNmSJhHzROCsW+cHyIEbnRzJg7pK8PqIU5lJjnQlhCKUwatjo
+         hlbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqkXXHL5Ay6QbrfoFPFOBvi2GG3Y7Fld9fZw79Kt5NUuD2XOPeiJLrKyvNtkJ2nomvaYxGq/j6G7q/AC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxam5MYvl6b5JSnmEtN2wUa3lxagTBs5dklxm3aFEiKaR28onZy
+	hDP4pycodkGhV0WhBJfCFZ4yiVET715zu8JyScJ51rTFymTLpn5tJMO34kmneX8H5NG48f0l0oN
+	ndp9JvQpLpLNm1ikRwnnITA3UdH9k0VsVH9Iy+NAC
+X-Gm-Gg: ASbGncuQEJrOVwRfmbHYdtrea1wbjIsX6Y8l6OLiSR7SPE6W335/cgl81+NwbFpLLJU
+	BT3h6XsAjJypYYXA6RaAU0S9xtBa9EzVqqyj6tqmjsQOjiMFNSScf/+3oz+C7dX7vGPjkaagbHM
+	D+l/SeAgtqp+qx7/zqXsnjV0lXHKs3UFixBWiuwgx55kW/HE8zBzYBtou+uh1R3nPPbxCPjIh5D
+	OutiFXdIyJC6knzNhq7bzAGg2yLshnakLe47Cbu74YPZBydxCgiEBSP/Bo=
+X-Google-Smtp-Source: AGHT+IEXE/t7QfqvUm8ZaTuQf2esMJpzDPElyDqBGV0RGdjV360thSADyS4N9hyRQjOYV3uhrbmzYlXY5QHiRxHN85o=
+X-Received: by 2002:ac8:59cd:0:b0:4e8:85ac:f7a7 with SMTP id
+ d75a77b69052e-4ed23bf1436mr1717491cf.9.1761786365282; Wed, 29 Oct 2025
+ 18:06:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
+References: <cover.1761756437.git.lorenzo.stoakes@oracle.com> <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 29 Oct 2025 18:05:54 -0700
+X-Gm-Features: AWmQ_blocebJr4y0y6DBwQJ-I85ZwTlE3oPMzhX8CLpjz_qVxCW5kze5g7B-HN8
+Message-ID: <CAJuCfpEefC1nAQ6TgKcq7osX4Zyr_dLhiR5W0So=CReed+LSuw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
+ guard regions
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Andrei Vagin <avagin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-linux-kernel@vger.kernel.org =E6=A7=98
+On Wed, Oct 29, 2025 at 9:51=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> Currently, if a user needs to determine if guard regions are present in a
+> range, they have to scan all VMAs (or have knowledge of which ones might
+> have guard regions).
+>
+> Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
+> pagemap") and the related commit a516403787e0 ("fs/proc: extend the
+> PAGEMAP_SCAN ioctl to report guard regions"), users can use either
+> /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
+> operation at a virtual address level.
+>
+> This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
+> that guard regions exist in ranges.
+>
+> This patch remedies the situation by establishing a new VMA flag,
+> VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
+> uncertain because we cannot reasonably determine whether a
+> MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
+> additionally VMAs may change across merge/split).
 
-=E5=B9=B3=E7=B4=A0=E3=82=88=E3=82=8A vger.kernel.org =E3=81=AE=E3=82=B5=E3=
-=83=BC=E3=83=93=E3=82=B9=E3=82=92=E3=81=94=E5=88=A9=E7=94=A8=E3=81=84=E3=81=
-=9F=E3=81=A0=E3=81=8D=E3=80=81=E8=AA=A0=E3=81=AB=E3=81=82=E3=82=8A=E3=81=8C=
-=E3=81=A8=E3=81=86=E3=81=94=E3=81=96=E3=81=84=E3=81=BE=E3=81=99=E3=80=82
+nit: I know I suck at naming but I think VM_MAY_HAVE_GUARDS would
+better represent the meaning.
 
-=E3=81=93=E3=81=AE=E3=81=9F=E3=81=B3=E3=80=81=E3=82=BB=E3=82=AD=E3=83=A5=E3=
-=83=AA=E3=83=86=E3=82=A3=E3=81=AE=E7=B6=AD=E6=8C=81=E3=81=8A=E3=82=88=E3=81=
-=B3=E3=81=8A=E5=AE=A2=E6=A7=98=E6=83=85=E5=A0=B1=E4=BF=9D=E8=AD=B7=E3=81=AE=
-=E4=B8=80=E7=92=B0=E3=81=A8=E3=81=97=E3=81=A6=E3=80=81
-=E3=81=8A=E5=AE=A2=E6=A7=98=E3=81=AE=E3=82=A2=E3=82=AB=E3=82=A6=E3=83=B3=E3=
-=83=88=EF=BC=88linux-kernel@vger.kernel.org=EF=BC=89=E3=81=AB=E3=81=A4=E3=
-=81=84=E3=81=A6=E5=AE=9A=E6=9C=9F=E7=9A=84=E3=81=AA=E7=A2=BA=E8=AA=8D=E3=82=
-=92=E3=81=8A=E9=A1=98=E3=81=84=E3=81=97=E3=81=A6=E3=81=8A=E3=82=8A=E3=81=BE=
-=E3=81=99=E3=80=82
+>
+> We utilise 0x800 for this flag which makes it available to 32-bit
+> architectures also, a flag that was previously used by VM_DENYWRITE, whic=
+h
+> was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
+> bee reused yet.
 
-=E3=82=B7=E3=82=B9=E3=83=86=E3=83=A0=E3=81=AE=E5=AE=89=E5=AE=9A=E9=81=8B=E7=
-=94=A8=E3=81=A8=E5=AE=89=E5=85=A8=E6=80=A7=E5=90=91=E4=B8=8A=E3=81=AE=E3=81=
-=9F=E3=82=81=E3=80=81
-=E4=B8=80=E5=AE=9A=E6=9C=9F=E9=96=93=E3=81=94=E3=81=A8=E3=81=AB=E3=82=A2=E3=
-=82=AB=E3=82=A6=E3=83=B3=E3=83=88=E6=83=85=E5=A0=B1=E3=81=AE=E5=86=8D=E7=A2=
-=BA=E8=AA=8D=E3=82=92=E5=AE=9F=E6=96=BD=E3=81=97=E3=81=A6=E3=81=8A=E3=82=8A=
-=E3=81=BE=E3=81=99=E3=80=82
-=E3=81=8A=E6=89=8B=E6=95=B0=E3=82=92=E3=81=8A=E3=81=8B=E3=81=91=E3=81=84=E3=
-=81=9F=E3=81=97=E3=81=BE=E3=81=99=E3=81=8C=E3=80=81=E4=B8=8B=E8=A8=98=E3=82=
-=88=E3=82=8A=E8=A8=AD=E5=AE=9A=E5=86=85=E5=AE=B9=E3=82=92=E3=81=94=E7=A2=BA=
-=E8=AA=8D=E3=81=8F=E3=81=A0=E3=81=95=E3=81=84=E3=80=82
+s/bee/been
+but I'm not even sure the above paragraph has to be included in the
+changelog. It's a technical detail IMHO.
 
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80
-=E2=96=A0 =E3=81=94=E7=A2=BA=E8=AA=8D=E3=81=AF=E3=81=93=E3=81=A1=E3=82=89=
-=20=20
-https://chongkio.innovnational.com/wp-admin/masif/anai/gamiflyf/?zonealldom=
-=3Dlinux-kernel@vger.kernel.org
-=F0=9F=94=97 =E3=82=A2=E3=82=AB=E3=82=A6=E3=83=B3=E3=83=88=E6=83=85=E5=A0=
-=B1=E3=82=92=E7=A2=BA=E8=AA=8D=E3=81=99=E3=82=8B=20=20
-=EF=BC=88=E2=80=BB=E4=B8=8A=E8=A8=98=E3=81=AF vger.kernel.org =E5=85=AC=E5=
-=BC=8F=E3=82=B5=E3=82=A4=E3=83=88=E3=81=AE=E3=82=BB=E3=82=AD=E3=83=A5=E3=83=
-=AA=E3=83=86=E3=82=A3=E3=83=9A=E3=83=BC=E3=82=B8=E3=81=A7=E3=81=99=EF=BC=89=
+>
+> The MADV_GUARD_INSTALL madvise() operation now must take an mmap write
+> lock (and also VMA write lock) whereas previously it did not, but this
+> seems a reasonable overhead.
 
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80
+I guess this is because it is modifying vm_flags now?
 
-=E3=80=90=E7=A2=BA=E8=AA=8D=E5=86=85=E5=AE=B9=E3=80=91=20=20
-=E5=AF=BE=E8=B1=A1=E3=82=A2=E3=82=AB=E3=82=A6=E3=83=B3=E3=83=88=EF=BC=9Alin=
-ux-kernel@vger.kernel.org=20=20
-=E5=AE=9F=E6=96=BD=E6=9C=9F=E9=99=90=EF=BC=9A=E6=9C=AC=E3=83=A1=E3=83=BC=E3=
-=83=AB=E5=8F=97=E4=BF=A1=E5=BE=8C 24 =E6=99=82=E9=96=93=E4=BB=A5=E5=86=85=
-=20=20
-=E5=AE=9F=E6=96=BD=E6=97=A5=E6=99=82=EF=BC=9A2025=E5=B9=B49=E6=9C=8824=E6=
-=97=A5=EF=BC=88=E6=B0=B4=EF=BC=8912:38  
+>
+> We also update the smaps logic and documentation to identify these VMAs.
+>
+> Another major use of this functionality is that we can use it to identify
+> that we ought to copy page tables on fork.
+>
+> For anonymous mappings this is inherent, however since commit f807123d578=
+d
+>  ("mm: allow guard regions in file-backed and read-only mappings") which
+>  allowed file-backed guard regions, we have unfortunately had to enforce
+> this behaviour by settings vma->anon_vma to force page table copying.
+>
+> The existence of this flag removes the need for this, so we simply update
+> vma_needs_copy() to check for this flag instead.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-=E2=80=BB=E3=81=8A=E5=BF=83=E5=BD=93=E3=81=9F=E3=82=8A=E3=81=AE=E3=81=AA=E3=
-=81=84=E5=A0=B4=E5=90=88=E3=80=81=E3=81=BE=E3=81=9F=E3=81=AF=E7=AC=AC=E4=B8=
-=89=E8=80=85=E3=81=AB=E3=82=88=E3=82=8B=E6=93=8D=E4=BD=9C=E3=81=AE=E5=8F=AF=
-=E8=83=BD=E6=80=A7=E3=81=8C=E3=81=82=E3=82=8B=E5=A0=B4=E5=90=88=E3=81=AF=E3=
-=80=81=20=20
-=E6=9C=AC=E3=83=A1=E3=83=BC=E3=83=AB=E3=82=92=E5=89=8A=E9=99=A4=E3=81=AE=E3=
-=81=86=E3=81=88=E3=80=81=E3=82=B5=E3=83=9D=E3=83=BC=E3=83=88=E7=AA=93=E5=8F=
-=A3=E3=81=BE=E3=81=A7=E3=81=94=E9=80=A3=E7=B5=A1=E3=81=8F=E3=81=A0=E3=81=95=
-=E3=81=84=E3=80=82
+Overall, makes sense to me and I think we could use it.
 
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80
-=E3=80=90=E3=81=8A=E5=95=8F=E3=81=84=E5=90=88=E3=82=8F=E3=81=9B=E5=85=88=E3=
-=80=91=20=20
-vger.kernel.org =E3=82=AB=E3=82=B9=E3=82=BF=E3=83=9E=E3=83=BC=E3=82=B5=E3=
-=83=9D=E3=83=BC=E3=83=88=E3=82=BB=E3=83=B3=E3=82=BF=E3=83=BC=20=20
-=E5=8F=97=E4=BB=98=E6=99=82=E9=96=93=EF=BC=9A9:00=E3=80=9C18:00=EF=BC=88=E5=
-=B9=B4=E4=B8=AD=E7=84=A1=E4=BC=91=EF=BC=89=20=20
-=E9=9B=BB=E8=A9=B1=EF=BC=9A0120-86-0000=EF=BC=88=E3=83=95=E3=83=AA=E3=83=BC=
-=E3=83=80=E3=82=A4=E3=83=A4=E3=83=AB=EF=BC=89=20=20
-=E3=83=A1=E3=83=BC=E3=83=AB=EF=BC=9Asupport@vger.kernel.org
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-=E2=80=BB=E6=9C=AC=E3=83=A1=E3=83=BC=E3=83=AB=E3=81=AF=E9=80=81=E4=BF=A1=E5=
-=B0=82=E7=94=A8=E3=82=A2=E3=83=89=E3=83=AC=E3=82=B9=E3=81=8B=E3=82=89=E8=87=
-=AA=E5=8B=95=E9=85=8D=E4=BF=A1=E3=81=97=E3=81=A6=E3=81=8A=E3=82=8A=E3=81=BE=
-=E3=81=99=E3=80=82=20=20
-=E3=81=94=E8=BF=94=E4=BF=A1=E3=81=84=E3=81=9F=E3=81=A0=E3=81=84=E3=81=A6=E3=
-=82=82=E5=AF=BE=E5=BF=9C=E3=81=84=E3=81=9F=E3=81=97=E3=81=8B=E3=81=AD=E3=81=
-=BE=E3=81=99=E3=81=AE=E3=81=A7=E3=80=81=E3=81=82=E3=82=89=E3=81=8B=E3=81=98=
-=E3=82=81=E3=81=94=E4=BA=86=E6=89=BF=E3=81=8F=E3=81=A0=E3=81=95=E3=81=84=E3=
-=80=82
+It would be nice to have a way for userspace to reset this flag if it
+confirms that the VMA does not really have any guards (using say
+PAGEMAP_SCAN) but I think such an API can be abused.
 
-=E4=BB=8A=E5=BE=8C=E3=81=A8=E3=82=82 vger.kernel.org =E3=82=92=E3=81=94=E6=
-=84=9B=E9=A1=A7=E8=B3=9C=E3=82=8A=E3=81=BE=E3=81=99=E3=82=88=E3=81=86=E3=81=
-=8A=E9=A1=98=E3=81=84=E7=94=B3=E3=81=97=E4=B8=8A=E3=81=92=E3=81=BE=E3=81=99=
-=E3=80=82
-
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80
-=C2=A9 2025 vger.kernel.org =E3=82=B7=E3=82=B9=E3=83=86=E3=83=A0=E7=AE=A1=
-=E7=90=86=E9=83=A8
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80
+> ---
+>  Documentation/filesystems/proc.rst |  1 +
+>  fs/proc/task_mmu.c                 |  1 +
+>  include/linux/mm.h                 |  1 +
+>  include/trace/events/mmflags.h     |  1 +
+>  mm/madvise.c                       | 22 ++++++++++++++--------
+>  mm/memory.c                        |  4 ++++
+>  tools/testing/vma/vma_internal.h   |  1 +
+>  7 files changed, 23 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
+ms/proc.rst
+> index 0b86a8022fa1..b8a423ca590a 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
+>      sl    sealed
+>      lf    lock on fault pages
+>      dp    always lazily freeable mapping
+> +    gu    maybe contains guard regions (if not set, definitely doesn't)
+>      =3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>  Note that there is no guarantee that every flag and associated mnemonic =
+will
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index fc35a0543f01..db16ed91c269 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1146,6 +1146,7 @@ static void show_smap_vma_flags(struct seq_file *m,=
+ struct vm_area_struct *vma)
+>                 [ilog2(VM_MAYSHARE)]    =3D "ms",
+>                 [ilog2(VM_GROWSDOWN)]   =3D "gd",
+>                 [ilog2(VM_PFNMAP)]      =3D "pf",
+> +               [ilog2(VM_MAYBE_GUARD)] =3D "gu",
+>                 [ilog2(VM_LOCKED)]      =3D "lo",
+>                 [ilog2(VM_IO)]          =3D "io",
+>                 [ilog2(VM_SEQ_READ)]    =3D "sr",
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index aada935c4950..f963afa1b9de 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -296,6 +296,7 @@ extern unsigned int kobjsize(const void *objp);
+>  #define VM_UFFD_MISSING        0
+>  #endif /* CONFIG_MMU */
+>  #define VM_PFNMAP      0x00000400      /* Page-ranges managed without "s=
+truct page", just pure PFN */
+> +#define VM_MAYBE_GUARD 0x00000800      /* The VMA maybe contains guard r=
+egions. */
+>  #define VM_UFFD_WP     0x00001000      /* wrprotect pages tracking */
+>
+>  #define VM_LOCKED      0x00002000
+> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflag=
+s.h
+> index aa441f593e9a..a6e5a44c9b42 100644
+> --- a/include/trace/events/mmflags.h
+> +++ b/include/trace/events/mmflags.h
+> @@ -213,6 +213,7 @@ IF_HAVE_PG_ARCH_3(arch_3)
+>         {VM_UFFD_MISSING,               "uffd_missing"  },              \
+>  IF_HAVE_UFFD_MINOR(VM_UFFD_MINOR,      "uffd_minor"    )               \
+>         {VM_PFNMAP,                     "pfnmap"        },              \
+> +       {VM_MAYBE_GUARD,                "maybe_guard"   },              \
+>         {VM_UFFD_WP,                    "uffd_wp"       },              \
+>         {VM_LOCKED,                     "locked"        },              \
+>         {VM_IO,                         "io"            },              \
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index fb1c86e630b6..216ae6ed344e 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1141,15 +1141,22 @@ static long madvise_guard_install(struct madvise_=
+behavior *madv_behavior)
+>                 return -EINVAL;
+>
+>         /*
+> -        * If we install guard markers, then the range is no longer
+> -        * empty from a page table perspective and therefore it's
+> -        * appropriate to have an anon_vma.
+> +        * It would be confusing for anonymous mappings to have page tabl=
+e
+> +        * entries but no anon_vma established, so ensure that it is.
+> +        */
+> +       if (vma_is_anonymous(vma))
+> +               anon_vma_prepare(vma);
+> +
+> +       /*
+> +        * Indicate that the VMA may contain guard regions, making it vis=
+ible to
+> +        * the user that a VMA may contain these, narrowing down the rang=
+e which
+> +        * must be scanned in order to detect them.
+>          *
+> -        * This ensures that on fork, we copy page tables correctly.
+> +        * This additionally causes page tables to be copied on fork rega=
+rdless
+> +        * of whether the VMA is anonymous or not, correctly preserving t=
+he
+> +        * guard region page table entries.
+>          */
+> -       err =3D anon_vma_prepare(vma);
+> -       if (err)
+> -               return err;
+> +       vm_flags_set(vma, VM_MAYBE_GUARD);
+>
+>         /*
+>          * Optimistically try to install the guard marker pages first. If=
+ any
+> @@ -1709,7 +1716,6 @@ static enum madvise_lock_mode get_lock_mode(struct =
+madvise_behavior *madv_behavi
+>         case MADV_POPULATE_READ:
+>         case MADV_POPULATE_WRITE:
+>         case MADV_COLLAPSE:
+> -       case MADV_GUARD_INSTALL:
+>         case MADV_GUARD_REMOVE:
+>                 return MADVISE_MMAP_READ_LOCK;
+>         case MADV_DONTNEED:
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 4c3a7e09a159..a2c79ee43d68 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1478,6 +1478,10 @@ vma_needs_copy(struct vm_area_struct *dst_vma, str=
+uct vm_area_struct *src_vma)
+>         if (src_vma->anon_vma)
+>                 return true;
+>
+> +       /* Guard regions have momdified page tables that require copying.=
+ */
+> +       if (src_vma->vm_flags & VM_MAYBE_GUARD)
+> +               return true;
+> +
+>         /*
+>          * Don't copy ptes where a page fault will fill them correctly.  =
+Fork
+>          * becomes much lighter when there are big shared or private read=
+only
+> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_int=
+ernal.h
+> index d873667704e8..e40c93edc5a7 100644
+> --- a/tools/testing/vma/vma_internal.h
+> +++ b/tools/testing/vma/vma_internal.h
+> @@ -56,6 +56,7 @@ extern unsigned long dac_mmap_min_addr;
+>  #define VM_MAYEXEC     0x00000040
+>  #define VM_GROWSDOWN   0x00000100
+>  #define VM_PFNMAP      0x00000400
+> +#define VM_MAYBE_GUARD 0x00000800
+>  #define VM_LOCKED      0x00002000
+>  #define VM_IO           0x00004000
+>  #define VM_SEQ_READ    0x00008000      /* App will access data sequentia=
+lly */
+> --
+> 2.51.0
+>
 
