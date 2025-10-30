@@ -1,158 +1,188 @@
-Return-Path: <linux-kernel+bounces-878992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB829C21ED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:24:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659F3C21EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617D818819BC
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA526188E64C
 	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DE031282D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD3330F934;
 	Thu, 30 Oct 2025 19:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="DZE+XdfC"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZzGEyjyA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC72D249E;
-	Thu, 30 Oct 2025 19:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C9E28727B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761852076; cv=none; b=uw6U4vseHC0Ko3CvLqSXlwqYoeKA523SsPNIWOmaNOSp3Pc3mvil4HWCgxZyiPo28tIEWdOapAnCJphQjpZ1rEnC7x8BBsjbATNa/df0HKhiAosx5e3TPN2+tfUhMYBkbLN9msuFfFd6czpYOtqbmob/SSnutFA3OiL4tTehXGU=
+	t=1761852076; cv=none; b=siGWvDRFyDE/SNAwocyGrQveKW/vWS+Mt4e68IYhnZ1D/y7Kmnc+m6uFaf2ZnaTkM/YQswutQHNKDwkKXAkuoQ6PsNayFmQXT5jqNWSLtNTJGFITW8yoNJv3D4ULBX7WtXZbMazFjm5knsfL57ACs1t67jPdJ2KzdTitOPv4e8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761852076; c=relaxed/simple;
-	bh=Lje3S1Cd+e65j5HWB+pO5sm3BW9jU4cXFc+79FHD8VM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvcQMgLO71PvVZJODFgvnTl+2ojpRmfvHdDOpck5U6FXJLHWzfiRAzbksUuYFERm1NL6zHJQngBw0Zc+qX/mnE0iTChp/z1q1lKY2Yduz/i9SBdlU+G5PmW7wS28WaERtnjL0lLcHz33Zg7rtcsyUe3EV/dXJWRPdZ+SRChnLCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=DZE+XdfC; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E6AE825C4A;
-	Thu, 30 Oct 2025 20:21:12 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id zYlr5GNEC9O2; Thu, 30 Oct 2025 20:21:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1761852072; bh=Lje3S1Cd+e65j5HWB+pO5sm3BW9jU4cXFc+79FHD8VM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=DZE+XdfCUdZZEaRriPfY1gyDgc38Tagc4ZuWc4zaABBUVk3H/+jaGE7zf+Ze4fzeh
-	 oIxPTqI2AxFgthVSIzjwEL4Mk53dSNZNip/1say71X1RrJ/wm7IpHZDCsfsNcvIBDW
-	 5GPykKCPCl/nCXYiOHFF39FDEL+dyYkc7lkQkzJUSPDDxP8ELAt2bLhex3rxAPNf5I
-	 QZ5xhoXnv45BN6tyk2Hd6cSCS/g6BVSnKcu4y5ug+/2k+B8veXFhrfSTP50mwN2UJA
-	 48lbmA+VuqeF+6Mi3u3VXzzwMQOdWC985rDUas8BwgBXOxraX57Wei567f3bW7UBZI
-	 Lr1/UvLYpeVtA==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Fri, 31 Oct 2025 00:50:19 +0530
-Subject: [PATCH v4 5/5] arm64: dts: exynos7870-j6lte: enable display panel
- support
+	bh=2hocMCYlkJ7vaHYBTlrKNpsTpQLXpL7Xf2mz6194Rbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1s1tHs6HreFgSLL7uI+F7hUNYiQBOzboy1eXLU5QUcmIYPv797jzizCqdY2vVUmsHX01gQfHpJCr3DSoUDh+RQmK8w14nRwHvTO9OhdC/YU4r36db0EPdjtm2qOkEguJkRG4Nx3Z0MrNFPT2jI3+MmMkbH+LZ4wAxT8KjuiQfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZzGEyjyA; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761852075; x=1793388075;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2hocMCYlkJ7vaHYBTlrKNpsTpQLXpL7Xf2mz6194Rbw=;
+  b=ZzGEyjyApkMaEvTjUZKQVt7icMogaX7781GSwXwJqY4eS0wh6JYa1HAo
+   fSvKgcMjdM7ROgZW/2/0IC1u6i6Ah1BVF++oS68oLQCktmRDuVJm8ESt2
+   FkCgGuukss/7fTOfMf3n7YE9O4UpG7qyKncSNHX4t+lWwHE8HwzmP5FKF
+   JdBpwfSyemyuCwc3R5M1rYFjXboAfJDdQaqwlSSy8jQStptap49mIaYXO
+   xdzlydH9E9fZEmS9rG8K+CAVgSeFHQKYSwERXSN+VOSrTgd0GVtiCcUrs
+   hNHNm4x9q37xQnKTK9YrYd1jyUhoyjX9kgcQ6VCbblM0gCv1sa2waio7D
+   g==;
+X-CSE-ConnectionGUID: rGKfFlkcT7akW5x32iXWIg==
+X-CSE-MsgGUID: 0wEvD+z1Qqq8jZC01pWzXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="67659537"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="67659537"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:21:14 -0700
+X-CSE-ConnectionGUID: t8XJXzNkRM+8zkg6Ha6a5Q==
+X-CSE-MsgGUID: 9XWg6FwWRmiFZOFHWR4AtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="191191981"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 30 Oct 2025 12:21:12 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEYCr-000MRI-2r;
+	Thu, 30 Oct 2025 19:21:09 +0000
+Date: Fri, 31 Oct 2025 03:20:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qiang Ma <maqianga@uniontech.com>, akpm@linux-foundation.org,
+	bhe@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Qiang Ma <maqianga@uniontech.com>
+Subject: Re: [PATCH] kexec: print out debugging message if required for
+ kexec_load
+Message-ID: <202510310332.6XrLe70K-lkp@intel.com>
+References: <20251030073316.529106-1-maqianga@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-exynos7870-drm-dts-v4-5-c1f77fb16b87@disroot.org>
-References: <20251031-exynos7870-drm-dts-v4-0-c1f77fb16b87@disroot.org>
-In-Reply-To: <20251031-exynos7870-drm-dts-v4-0-c1f77fb16b87@disroot.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761852020; l=1965;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=Lje3S1Cd+e65j5HWB+pO5sm3BW9jU4cXFc+79FHD8VM=;
- b=bokrh+Ct0WkAsgVGoodJr+oOoQpG+p1LgELJVR03bASNgGTEldGNk8XeVvuo4eF74SGNWC3az
- 7AYbr624DaPDiK1fBrexzuBiHwhLkddfsgA7VBdGiRCYxECxjvTrppw
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030073316.529106-1-maqianga@uniontech.com>
 
-Enable DECON and DSI nodes, and add the compatible display panel and
-appropriate panel timings for this device. Also, remove the
-simple-framebuffer node in favor of the panel.
+Hi Qiang,
 
-This device has a 720x1480 AMOLED Samsung AMS561RA01 panel with
-S6E8AA5X01 controller.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts | 38 ++++++++++++++++---------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on linus/master v6.18-rc3 next-20251030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-index eb4701dbafc5d1f30dddbb05d929c722f69a1a93..09f2367cfec9385cb5539a66f97d9148877c9e80 100644
---- a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
-@@ -27,20 +27,7 @@ aliases {
- 	};
- 
- 	chosen {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges;
--
- 		stdout-path = &serial2;
--
--		framebuffer@67000000 {
--			compatible = "simple-framebuffer";
--			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
--			width = <720>;
--			height = <1480>;
--			stride = <(720 * 4)>;
--			format = "a8r8g8b8";
--		};
- 	};
- 
- 	gpio-hall-effect-sensor {
-@@ -119,8 +106,9 @@ ramoops@46e00000 {
- 			pmsg-size = <0x4000>;
- 		};
- 
--		framebuffer@67000000 {
-+		cont_splash_mem: framebuffer@67000000 {
- 			reg = <0x0 0x67000000 (720 * 1480 * 4)>;
-+			iommu-addresses = <&decon 0x67000000 (720 * 1480 * 4)>;
- 			no-map;
- 		};
- 	};
-@@ -133,6 +121,28 @@ vibrator {
- 	};
- };
- 
-+&decon {
-+	memory-region = <&cont_splash_mem>;
-+
-+	status = "okay";
-+};
-+
-+&dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	samsung,burst-clock-frequency = <500000000>;
-+	samsung,esc-clock-frequency = <16000000>;
-+	samsung,pll-clock-frequency = <26000000>;
-+
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "samsung,s6e8aa5x01-ams561ra01";
-+		reg = <0>;
-+	};
-+};
-+
- &gpu {
- 	status = "okay";
- };
+url:    https://github.com/intel-lab-lkp/linux/commits/Qiang-Ma/kexec-print-out-debugging-message-if-required-for-kexec_load/20251030-153807
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20251030073316.529106-1-maqianga%40uniontech.com
+patch subject: [PATCH] kexec: print out debugging message if required for kexec_load
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251031/202510310332.6XrLe70K-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310332.6XrLe70K-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510310332.6XrLe70K-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/kexec.c:160:10: warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+     159 |                 kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+         |                                        ~~
+         |                                        %lu
+     160 |                               i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+         |                               ^
+   include/linux/kexec.h:531:55: note: expanded from macro 'kexec_dprintk'
+     531 |         do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+         |                                                ~~~    ^~~
+   include/linux/printk.h:585:34: note: expanded from macro 'pr_info'
+     585 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |                                 ~~~     ^~~~~~~~~~~
+   include/linux/printk.h:512:60: note: expanded from macro 'printk'
+     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                                                     ~~~    ^~~~~~~~~~~
+   include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+     484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ~~~~    ^~~~~~~~~~~
+   1 warning generated.
+
+
+vim +160 kernel/kexec.c
+
+   141	
+   142		ret = machine_kexec_prepare(image);
+   143		if (ret)
+   144			goto out;
+   145	
+   146		/*
+   147		 * Some architecture(like S390) may touch the crash memory before
+   148		 * machine_kexec_prepare(), we must copy vmcoreinfo data after it.
+   149		 */
+   150		ret = kimage_crash_copy_vmcoreinfo(image);
+   151		if (ret)
+   152			goto out;
+   153	
+   154		kexec_dprintk("nr_segments = %lu\n", image->nr_segments);
+   155		for (i = 0; i < nr_segments; i++) {
+   156			struct kexec_segment *ksegment;
+   157	
+   158			ksegment = &image->segment[i];
+   159			kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+ > 160				      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+   161				      ksegment->memsz);
+   162	
+   163			ret = kimage_load_segment(image, i);
+   164			if (ret)
+   165				goto out;
+   166		}
+   167	
+   168		kimage_terminate(image);
+   169	
+   170		ret = machine_kexec_post_load(image);
+   171		if (ret)
+   172			goto out;
+   173	
+   174		kexec_dprintk("kexec_file_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
+   175			      image->type, image->start, image->head, flags);
+   176	
+   177		/* Install the new kernel and uninstall the old */
+   178		image = xchg(dest_image, image);
+   179	
+   180	out:
+   181	#ifdef CONFIG_CRASH_DUMP
+   182		if ((flags & KEXEC_ON_CRASH) && kexec_crash_image)
+   183			arch_kexec_protect_crashkres();
+   184	#endif
+   185	
+   186		kimage_free(image);
+   187	out_unlock:
+   188		kexec_unlock();
+   189		return ret;
+   190	}
+   191	
 
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
