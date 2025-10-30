@@ -1,185 +1,285 @@
-Return-Path: <linux-kernel+bounces-877889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7D5C1F476
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCC4C1F48E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 558104E4858
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B3964E8A42
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA8F34027D;
-	Thu, 30 Oct 2025 09:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2839F33B6FD;
+	Thu, 30 Oct 2025 09:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WXvFdDly";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PiAhaXjP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="QEEGR4uk"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022142.outbound.protection.outlook.com [40.107.75.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F70630E857
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816409; cv=none; b=pJ4UlRkOxy4VOjkBZxAkFnPgD5sLhDvG1E5lE9Gby49bPXhicKGAKk5eZbuXsbqUZYvCDCeeGOE8PGSiftdW885FDhlQ9wXPW2Kmv7MzBWM1rJi+IC+HacvnBGJauwVD4w/gsg2e+JtfiyBIpIILiRXxPGGvK49/Wxgct1mY9uo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816409; c=relaxed/simple;
-	bh=UGkzncBmFT0Z8Xgx3vo5n6ftCbyEbJOpxTeyYrpQGd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vpvkby1uie8bAMUqRcURUgr6Bjljb8jRZT4SgUgHCwZf+HV7AUocHvfhJUWmL6UUAOX1TDyPSJDkDaTKmhJRZaXFWu/2j2eMJbA9q1gb5gW25/cLALzbyFS7iuhC3x/DOoc7ydSCFwo6DnkiD2/Pe0L1S5wubYx/jzHATwmbfXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WXvFdDly; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PiAhaXjP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U4xuUm2623261
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MkhXCfGdSQcDvTlbYDPsW7XCU2SBVMl9E+b0/qNR+YA=; b=WXvFdDlyVDlLgs24
-	hRq6p+6qK8CV9lic9QlCuUfaa0N8G3YCqYN7vRhVoRwikaXnrxpBvPouyJN9TthI
-	Rvvxg6gHR2/83eMMhgIKHaF/2gzjTsd0/pwzyo1HiT7DJWdmxw4zXGOxJzj75wPv
-	MxIqgQRwirpvHbcGxz6Uh5x1NIHXK1NA5mM+EXNEXSpNYv+ArFuWKkIbnB6TyN+z
-	J+Mh2nk3LYfSRxD1D/R5R5tkklf9An488gzGNuxoue23wlQwz+TJGmjzPZzFtIfl
-	Ecw7mI8ytS+6TnUauCSxQKMRKMdlm9JUK7i5oHYuEdiLkBsiOgfN0108MZ76Nj9P
-	ZeiYXQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a41fxgr1s-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:26:47 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87bd2dececeso3249106d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:26:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761816406; x=1762421206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MkhXCfGdSQcDvTlbYDPsW7XCU2SBVMl9E+b0/qNR+YA=;
-        b=PiAhaXjPWbcM5m3DHUxh22vE63xOb9Je4/o+jQaTPkL1zeZ+LZVjnXGc0SSvjW7DYl
-         xEL1oFqsFclsRFWNeBTyDvSA5MLA+zCkr9LLko9g1YbPfF8Y7j8n3KZ11/VwlfQSHDfc
-         abaXySNacFkDoT/XZun2x97BI9L/EaSKr+jK2fF2qBuL5+v9hzrCURvvEpJyFc+jxhKG
-         45Gqdpvzb25AGF6MXx5ftxjMjxTYyE4Haap+kH5ENJ1ej4d9phR634vcUEMBZ92NrTqM
-         HmspI1p49ShYQJWMo+bA/R0H5Mwft5nhPNobUu3Ydn+xmynPXeNsf6ECxVc8RPnZWfJb
-         s0ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761816406; x=1762421206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MkhXCfGdSQcDvTlbYDPsW7XCU2SBVMl9E+b0/qNR+YA=;
-        b=SE6O8mcLrT06N1Sp4AYZcvg0vYdyCRf9uNkCS8lJUiQZ+R1ILcCEzlKya1ZgfZL8Va
-         9uOHR4YRXNC/IGORxatWajbDp+mYZzc6mItrzvSxK7OC+dvopYiVVKIJdcAdQxab6kxx
-         wb1lG5u7EZ53c+M7e06uU0Q7pxCEGd6hj0KniCmptDODSLR3OIjPlHo7rnE1Cz62eizF
-         wJXS7JA5JV/0OAGj0jWf6Kyxv2iHofGWElGUKvWHRfsVAZ4WRZ+G6i+xUtSY3IA1TYOq
-         wl390LukEbamTwrIjwQ2gt/n76jbtHPGPI8y/yc6monyEWYL7z3LC8KlydfThs7S4W3n
-         4TZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnPt7o2yqQOTaQAqd0/PVE8Hcelpx7HGQetl32FJaXiHSYAFZ2Mz9qamiCQKNpSCxMR0wurYAl3Jye5j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtM5AxSGm0EzWv/1j+3tEy0VGsAt22m9JP5FxQR/IG6/8XkVCF
-	JbUyLyLdYL33UgZNC6+evX5qNVdcDKzbPGchoQNvLysAdct1/1KJrw/nhk+PcEM6Ubq332++gUp
-	SqxZ10RJRKl5P7TCS7su5HwpQRyFdev96FPILPeLy+c6jhZV/scSkkYOSWq/uKBY4CZlXX7YEDQ
-	A=
-X-Gm-Gg: ASbGnctXNxDAvNXiFFs6SiSl9FgS7ArgxUO4r9hGeoEJL1vOW8n555jxB3ifPENJz8g
-	kVQleisKaPhNVKIWmsFYoimcyVEBqstS4Ny2uqqjcSW7t0nqNuEJI9Ud4blvrFybtJWZgBqMMkO
-	zUJz7BXwTe3nENX/I15QUIjqqmxsUNse2QOjpaNBKVtSthWvKtFTp5H5cy1MxVNhYMWzWAPP7h2
-	pQtzj6CUHPjLgV3vTy9OWAkjSlavg58HpwrZ3zvt/MAXgCsb720ZFUYG5FVnmiIoj7SzHYVrEJd
-	jdn42TlbNk5PVLLFNJxcAC7g1W+tmA3Fgz6Dd1an/pLDUv9r8f4eOtw2Q/18ya5UxbvJS45+l8E
-	A6p8sFkPmY7CvFucFNsdpbQLA3KKXE8V/6f9R8QeVNO+ZBI8LxYGetD3f
-X-Received: by 2002:a05:6214:487:b0:84f:81b4:4440 with SMTP id 6a1803df08f44-88009c059damr57947676d6.7.1761816406130;
-        Thu, 30 Oct 2025 02:26:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENOdltg392rpt/C6P2DXClkaCW6AuvtVnIkahf+FfBy++WBa3yu6xR0D9iLMYKtJjowkMGMg==
-X-Received: by 2002:a05:6214:487:b0:84f:81b4:4440 with SMTP id 6a1803df08f44-88009c059damr57947516d6.7.1761816405687;
-        Thu, 30 Oct 2025 02:26:45 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853f9a0fsm1679780866b.50.2025.10.30.02.26.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 02:26:45 -0700 (PDT)
-Message-ID: <49f067c0-20d3-4039-95e6-fc19ce48881d@oss.qualcomm.com>
-Date: Thu, 30 Oct 2025 10:26:42 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618E22F12A0;
+	Thu, 30 Oct 2025 09:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.142
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761816491; cv=fail; b=B+/hrt7TABVKakscOlyJ6iNY1M/7MhrZZVPa9fsegZxjl9P4eB5tHW25s70lfm+CwEEtHJKhJNvRLaf50eKt1BVd+821cJlAXGHs5103F6nRTAn+HSu5z11cUertqbU182bJqXmOvIu01IUkGROxA5SaXbt+lOdXROghg4OIuDw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761816491; c=relaxed/simple;
+	bh=OL5g1vGA2Ucc08H7wH2edymkvWXaL8wWrvwEs32HJLs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=c1L1/IwcQxPYwbzIqg4qrMT+ZMxJI2TABgO/8YvtI9XMQ9BTGJDBaNu94n+uHUIPgjdTqYCyIPMFRwuuI/4lc4WByb0l8IrZ5B4mV58a3/5c+WpLiRI7mxY8+cjWbRnirkVvTJdBkE6WxTotjywX+qx75K7pWpjZu6fNiOk5cVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=QEEGR4uk; arc=fail smtp.client-ip=40.107.75.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=naA/e2/vgqzQGVcdZL59n7CQBVzkJzUuxoZIxWTaJ/98fte2nTGhe6uyrnEpgSWdX8jiarV3U2GOhvPha3wjup0Pt7HjLyJrMagztNsE+/l4riY6MIXb8obfQKWr3E+B6PhThpMD+qifXBDAURocyxQKLqTV+ILtWm+SZWejcI4C1PbU1UxU73KmRH+a6Bzd2VCqUsZwUGH0unUAVpVF4lAN9O2UakpA7sZJWBgx+UWFNhlpiISFwC4Omw7E6mNJmx4ZTozei+kDSv8T8TwO/tZjPd00nevhV0lt3zMMUWZRocA+gbmC9GjkMepiEQZW31MXSB8sEuWHDrI/E+l7Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ki+QqNF0G/FkEzCU35+YAKUyGzHz/X5qArb2X9sfW2E=;
+ b=HlLTXgaRrw0V/R/ZAJJIxMrhtWFAwzRdVOU+zgvUZamBgkiLqx8oTKAhcYX2AEBEFXHiqSxeezoJylNhlU5ISvui9qtIfJU2VxRJM0vWVvM2qQcShjUg2WnzdIEUYSEAHcsugkTsiJvubLr6xfKmefoc2Gx7sW1arZUdn2Lr1jS7mKb5OIkBsRU2QPpsDwaEIOeIhDS9TJXKFprtKybg9DqNWji52ZkTFms9c2E2898e/qLyQ69Yp2OVhI/Gw2jcjn9Ba3CXvZXKPiIz6kG5t4oMfclZ8rhZ6HD2aL/FTJROD2RmQ0gkiN1sONpcGpW9LGQN3rEGyI6+jc9vDmA/WQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ki+QqNF0G/FkEzCU35+YAKUyGzHz/X5qArb2X9sfW2E=;
+ b=QEEGR4ukqFYurykUYRgMtXs3GIFIAN300TObrtZ/f4goig5SijTwRiLaNXs5JbMWNg+/zCJ0phvCQN7Mn7Q/19B2r/0yNGzXLLr82kRjWAOUdbWlu7HYrwfTAACsrwwmEocDRmYyMQtJByWTOKNCLFTxB5s2ZY4fzKsaUWL+VqtTzPAfKfwONdzVkUl6sJaqHoky+bSHo33aq9i5RGGpozVQzuvLZOqa7HJCGVc8pK5dKeB9DKM/y8dZ6dxx+81jt8vw4Luu/LsFhEI8/+93385OBQ5KFI/z+J2e93c9YE2coIocPhHkRRyZaMchQ7BI6GfMbrc0jqMlojWzPEsYeQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+ by SEZPR03MB8830.apcprd03.prod.outlook.com (2603:1096:101:255::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Thu, 30 Oct
+ 2025 09:28:03 +0000
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
+ 09:28:03 +0000
+Message-ID: <7e95df48-8f27-47ab-a5e8-5bc0777d41b9@amlogic.com>
+Date: Thu, 30 Oct 2025 17:27:32 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] clk: amlogic: Change the active level of l_detect
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ da@libre.computer
+References: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
+ <20251030-optimize_pll_driver-v2-5-37273f5b25ab@amlogic.com>
+ <1j4irgzss4.fsf@starbuckisacylon.baylibre.com>
+From: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <1j4irgzss4.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR04CA0017.apcprd04.prod.outlook.com
+ (2603:1096:4:197::15) To KL1PR03MB5778.apcprd03.prod.outlook.com
+ (2603:1096:820:6d::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: qcom-geni: make sure I2C hub controllers can't use
- SE DMA
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
-        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Wolfram Sang <wsa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <20251029-topic-sm8x50-geni-i2c-hub-no-dma-v1-1-5e264258a5bd@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251029-topic-sm8x50-geni-i2c-hub-no-dma-v1-1-5e264258a5bd@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 7sfuBlcSYeTyfItGigzjhxtsacDO5dnD
-X-Authority-Analysis: v=2.4 cv=UJrQ3Sfy c=1 sm=1 tr=0 ts=69032f57 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=7QP1INNbtZu8WugdpZMA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: 7sfuBlcSYeTyfItGigzjhxtsacDO5dnD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA3NiBTYWx0ZWRfXwgF+zL2IlwQG
- QD7100h09Gw0/EsUM01kbx4O7illjbu/vU830qZ5gXrl8DWQeI7m6H60WSu4mpCamdjXDZ/j3ci
- +vKzFwqI5ToXjY6QpRyBGvyOnX97JGVkLeMbzO5I+teXeASpGH+GiVD0m/gDcs9CfJPa9ewaUwr
- xGt2cv7EKQwJOMpnj8cbwJ4Y+bWC5e2T7zkwOZ/DuPj6L5b868+NxNHvBMzWL9Hfq0CVlyz5pTX
- i3oS/HCrCP401KZnQeX6O/ST99WXc/CdJa99eRv/q2iKualUPQAiHKwLku6jyRdSb7+TPQN/POo
- Pkl6+GMA4KsoHDhE1McqPXt6ou4eoA2f5ev8NLkPO+oUwh97y34L6rXDJpQ6eLbU9pt2ZywZMod
- pUIMiKmptD4JpKAFWUKx3EbMZw5WfA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510300076
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEZPR03MB8830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ee806e4-0984-4217-817e-08de1796a04b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RmIyZnZjRkY4SlNXaUlNT2RWS2tsZHF6K1NMbStPTTBlUzQzaUFnVlQrVTR3?=
+ =?utf-8?B?SHVvc242Ui9jVlpSaWEzQjhqVmZ0dENFbHdjTnVrY1p4THFtanBkdmVrYXgx?=
+ =?utf-8?B?SnNCcVhYcEh2cnlOMFBnZHY3UFlnZFBvTUoxTk44N0xhRlNNQmwvS1NWNGZR?=
+ =?utf-8?B?MzZhRjltajE4RERLMFZXcTlRQWVOYnovRCtNWXlDa09RbS9lNkI3NXpXYWxO?=
+ =?utf-8?B?dHk3Qnc4Ky9tUUFJS2txdlNCWG1YblpuVTdmdEdPaFgwQ2RHM1FrZGpFT2Nx?=
+ =?utf-8?B?aVltV0h2RC9qc0Zla2pXcVI0MENqeXFXNGdWVE13SnFMd3V3OWUyZUk3WEVE?=
+ =?utf-8?B?d3p1NDdUaWFQWFBlckFGZEZnd1ZYS0xMdTU3SnB4UytNS0MycnRvOC9rKzlY?=
+ =?utf-8?B?dVVjRnhxeUwzT3pDamgzamNGeFRKeGU1Z3RBeTRyMjBaNDAxd0VCSkJzcnEv?=
+ =?utf-8?B?b3pvOE5EVC9HRjd2SlMrcm1Vc013eE9ZemZNNWJSUFZTeDFtQk92ZUdWR2w5?=
+ =?utf-8?B?eTF5c1JWblBUWjJpRW95dEJsVGlkQ2xnWnpYZTA2Zmlxbjd1OXVJTnN0ZGhW?=
+ =?utf-8?B?SUQ2SnVNNllzb1RGZVZBR3F6TTRTYjJ5cGNnUlNUa1VIUnJIaVpxTTlwdENv?=
+ =?utf-8?B?WEdIMkZHWVRRU210eTk0ektkU0tHdmFSYnlnRU1QOVJrdUVmL2FMaENpcVBr?=
+ =?utf-8?B?K2dxSUNtRk9WUnQycVdRVVJnMmo2eHltbnd0S3h6TVRqclFxMnoveGRzZ1ZP?=
+ =?utf-8?B?SlAwRk5GOUV1MDNwMlBuVnE4cFdiSFNmZ21sbVkrQmd3V3BYN2QvY3dkUjVG?=
+ =?utf-8?B?ejlHdzZqS2k4a3FIc1E3Nk9WK1FXRkgwR1FpSkhkOFpQcDQ2dElDY21EMkZj?=
+ =?utf-8?B?ekM0MDcwcDlKZGQrTndRTXpwVERHb2tJYUJ1V3p5MTBhcWFtZ0VXekJEdXpt?=
+ =?utf-8?B?ZWthZ0o4SVpWQnlhMmVuMnJPTnhyYjdrdEcxYlJhRTluTmNHOE14TUFBOHVl?=
+ =?utf-8?B?WlZZaFVuaEZ0YktTNHBUbFdsT1hWcjljRytqQS9XemZnNnNVWTNFNmFSdTcx?=
+ =?utf-8?B?aUVoTC96R3lzNStYVFBlMDFyUTY1Q0FWa2ZFTkRMamFoWFVBYVh5N1FFU3h1?=
+ =?utf-8?B?ZnlPMkpKcENpcXRBU0NnMERMaC94WlpySWluTUlWRkVtbkpuT1hjTGZHYWJC?=
+ =?utf-8?B?My9ua1lkUTcxY003Zi93ZmFJMUd6S0wzWU0zRC85ekpzQ3NjSVZUam44QUYx?=
+ =?utf-8?B?K25uVE1HM2lUcUNKUFJFKzVJa3hWMVFiTmVtZEpBU3A2alNFREYwWkdYVWVF?=
+ =?utf-8?B?MHgwemdNTDBHSDJGaEQ1dncweFkraStvbFE1b2pObHp3SFZYUlNBOEduM2N5?=
+ =?utf-8?B?UWQyaDlWK3AwdVQvUWhlRTVWbTF3ZHJqaFdSdGxmaUVaTW5oYXdJTTlKdVFl?=
+ =?utf-8?B?YVY2YVNQcmkwYmp3SnhPaGsvTWkrLzNsdks3QnRXZCtyTU14L2V5akI4Szl0?=
+ =?utf-8?B?NmdRazBtL1hKQWdnWnluNVFqYlBHRXZpY1czWGNOWXBYOG5YYzVTVlZaNWFQ?=
+ =?utf-8?B?emgwWDY2bElRa3VuVTQ1VWhPZkZIVHhHaWdiS1EvSU91RUFlTldEdkpyRW44?=
+ =?utf-8?B?cUVoU00zY0pBK3JocFBORld5MDd0NHJoeXM5Ymp4Nzc2VzlKYjZXTDF3WWpH?=
+ =?utf-8?B?aXExY2Y4Q3RZWE9YMk9IWGU5NTRWNDhwaGRsaWYzQmwyc1hldHdhZ0tHM0ZY?=
+ =?utf-8?B?aVF4UWtjL3RpSVRrQVEyQmN2S0RHVTVBemxXckx6MWZPSmVxR0M0V1pacHYr?=
+ =?utf-8?B?Ym5YVklFa2NGOTdZNHhBNEp3aW01SjFBdUIwbEFaL1dWN3FXYVpPTHUzMjhE?=
+ =?utf-8?B?TUttRUVJREUvelpwcXFUellqeWh3VCtEUWNsTGtKUzlCL2NrYUhXSjBleFBu?=
+ =?utf-8?Q?5yEVK66usaensZh42Ip9JYXoWnyKLPho?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N0hDdmRKb0h2ZHNKZ3pxcnlqMzJlaUZWMVdWa0Z0NGZxcHFGWVo2MlIrWDRp?=
+ =?utf-8?B?YmRhMHMzaVkwd0Q0dWdyODZEeS9UYlEzVlBsOUhhMlE3bGIwRVVrRFAvblVX?=
+ =?utf-8?B?cFQ2T1Z6N1o5Zi8xSVNDUmJSbm5RTVBKdC9TeDdJREk4alpONDhIQ2hteHZo?=
+ =?utf-8?B?ZFZad1ZKTU1ZcG9Ma2dLWmVwbnhhZ3FJUFZtM001NzJsNzZmdjFaQ1VEZU5R?=
+ =?utf-8?B?QkowQ1lFYUtKODZqb2UrN0JDK3M3VWpCcjcrb2JyNUZmZy9aUmMvczRUUGRm?=
+ =?utf-8?B?bHBUS3dOQm9Lc1g4UzRQd01QZTZtdGtxOU9nejNhdDc1RkpRemV6ckFaZ1BS?=
+ =?utf-8?B?anJiV1lveitZL1BralJwdHNNZlpDUDVOUW8yS1hGMDF4Vm9mS01oWEFFcEp4?=
+ =?utf-8?B?N2JpWmxnUGNFaG8xWFU5Mnl6elRiZzRkRXU0RmNKalBTck5Jd1puU2EvOEUx?=
+ =?utf-8?B?NG5GY2RycVQ3ZjJSY0t2WGVyRTJRMXhhYzRIQ0JDYXNUUXJBM0NtaFdpQlgv?=
+ =?utf-8?B?NnkvZVNpMkxZdE4xeFVsZGx0TEhIdEUvWlhHNzRJTnBvQ1dTL1hLM1dtdXRD?=
+ =?utf-8?B?eHpYQ2x0dXlUSEl4V3gxTVFLMFNNTGhweXk1WlN4MnpLbUlWSERpOW4zUFND?=
+ =?utf-8?B?RzkrT2F4eTMwanVvT2VxWC9QWmM0WmlIY1VTVmh0UTNNc0swUytxZ29xVWlv?=
+ =?utf-8?B?SGRVL1ptU09aMnlLcysxaXh0NS91bWlwV1RDWU9BUEJ0K0JJNGR5WUN2TEVz?=
+ =?utf-8?B?SVpseGE1SFl0ZVUwTUJjN0lKMmVKRUR5SFVHZUhkWVZNUFhxUjU4Ny96Q3pZ?=
+ =?utf-8?B?R0kyMUFsaWRJNmJ0YnRVSzVOK295ZDQ4SkZrVjZ3c1BDRnRRak5QUzVkTzNo?=
+ =?utf-8?B?cnRDSEkzU0RhVjQ2bGttOGdQZTRSRUpKdkoxOFJzUGMvclhVTnlybjFqRFhn?=
+ =?utf-8?B?cEtGcVpXSUZjOFRJLys4bWdqZjJmMzRpdlNaZ2R4d2d4ckZvZW01UkFlaEFu?=
+ =?utf-8?B?ZjJra2poQ3RuYm5qMzNhTFpTQ3oyWTY2UmNsZStJVjY5bldJemtRRWtwYVht?=
+ =?utf-8?B?VkVPNzRWcmJtLy9zSG1mMnFHdTB1T2lKNjFkVFBIaUlYM0tLSXNDSUVxRERa?=
+ =?utf-8?B?QjBxaGRGZDdkY1Z6UTZDQnQxU3M3MVdlZy9DNWo0MW1ZSENia3J5QnZNSUJI?=
+ =?utf-8?B?dittbU9DUEhTZWNGUmxrVllTY3I4YWhRWENMUUt6R3pUYVFXck1JYUF5Yjl0?=
+ =?utf-8?B?MUtqK1BOUExBa3lXUHYxRFdEa2VGQXlGMjl3VlAvem5lKzA3SmU1eWVtWVZ1?=
+ =?utf-8?B?U0Y5RXJTaGhnbmFHNmU0T0RJd2xYZWJVL0FaR015YmgzSVVsVEhSd01UZTV6?=
+ =?utf-8?B?UHgzZzBOMHZ1TWhZK2QzL2QwQlRROVdwM0haKzl2SDhLck84Y09XSTZsa1BM?=
+ =?utf-8?B?NG5wY3BhWjc4VFlRRnFrNWM2bys2aWVqazdKelRXbWlBU1piN3VOcDJ2WWNI?=
+ =?utf-8?B?TzNsMTZWYmplbTJQbWljMVBJMXVYRWNtLyswdFZhaHdLa3cyQm5vcHJ0SXlq?=
+ =?utf-8?B?SmI2Uno2TlFDTURVdG5VM0dmcXdYTTl3VzVmd09JcEFVck1sRVFGeVVDTGpr?=
+ =?utf-8?B?bFh4U3lrZ1BRS0J2YTd4RXBIZFBKYVF2WlZnVWRBeFo1VHd1eEhqYmFmK2s2?=
+ =?utf-8?B?WVhvbkRKK09PcDk0bXo3M2xaVW5QY2thL2N6Zi9yV3N2b1dScHVZRHNiTy9s?=
+ =?utf-8?B?SWh0VGJobjRmNUlXdjVCUWFvck94UjV5bEdvenE0L3VLVVdKNmpJamdDTWdn?=
+ =?utf-8?B?RmNvOU9pNXpoR1lmaDRIZzJJditDb3QvV25QbldnYlg2WkFhYmxuSnJsWHVL?=
+ =?utf-8?B?TmhHVjJnU1p1emFOTURKamJzcmJzb1I0QzNCYzdpMDZPelZVN3ZhczNWUWlK?=
+ =?utf-8?B?cEt4ZVZwUmdjc0FqbWNJSmpHOVlKUFVVN25OYUlHdTBkMG56d3M5WTNRelNT?=
+ =?utf-8?B?dnZmREIrakFISXAzSzZERVRuTlR0bEFZVm45RTdoeTRnajdkM0J5R0FaNzBH?=
+ =?utf-8?B?dUozbHg0NXZpK3p5b0hlajhrUlJINkxSMDJ6VGhZclNsUm5hUzUxVTlYWlFn?=
+ =?utf-8?Q?hc+aPNDECYSa2NqE2ecRGIoIw?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ee806e4-0984-4217-817e-08de1796a04b
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 09:28:03.7385
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YN+SbX8EoWZAWbf2BD2UjNcBAyDniYloNfRhEcpKXSHu7cBuqpx/4yH5JhhbIfUKyz5cUK3/5qviHiz9PM/xvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB8830
 
-On 10/29/25 7:07 PM, Neil Armstrong wrote:
-> The I2C Hub controller is a simpler GENI I2C variant that doesn't
-> support DMA at all, add a no_dma flag to make sure it nevers selects
-> the SE DMA mode with mappable 32bytes long transfers.
+Hi Jerome,
+
+On 10/30/2025 4:40 PM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
 > 
-> Fixes: cacd9643eca7 ("i2c: qcom-geni: add support for I2C Master Hub variant")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+> On Thu 30 Oct 2025 at 13:24, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 > 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 43fdd89b8beb..bfb352b04902 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -97,6 +97,7 @@ struct geni_i2c_dev {
->  	dma_addr_t dma_addr;
->  	struct dma_chan *tx_c;
->  	struct dma_chan *rx_c;
-> +	bool no_dma;
->  	bool gpi_mode;
->  	bool abort_done;
->  };
-> @@ -425,7 +426,7 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	size_t len = msg->len;
->  	struct i2c_msg *cur;
->  
-> -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-> +	dma_buf = gi2c->no_dma ? NULL : i2c_get_dma_safe_msg_buf(msg, 32);
+>> From: Chuan Liu <chuan.liu@amlogic.com>
+>>
+>> l_detect controls the enable/disable of the PLL lock-detect module.
+>>
+>> The enable signal is normally active-high. This design ensures that
+>> the module remains disabled during the power-on process, preventing
+>> power fluctuations from affecting its operating state.
+>>
+>> For A1, the l_detect signal is active-low:
+>> 0 -> Enable lock-detect module;
+>> 1 -> Disable lock-detect module.
+>>
+>> Here, a flag CLK_MESON_PLL_L_DETECT_N is added to handle cases like
+>> A1, where the signal is active-low.
+> 
+> Given that A1 is the only ship supporting l_detect, this change is not
+> necessary.
+> 
+> Not now at least.
+> 
 
-Not a huge fan of putting the ternary operator here, but I don't
-mind that much either
+The SoCs queued for upstreaming later will depend on this patch, so I
+included it in this patchset.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+If that’s not appropriate, would it be acceptable for me to include
+it in the A4 submission instead?
 
-Konrad
+>>
+>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+>> ---
+>>   drivers/clk/meson/a1-pll.c  |  1 +
+>>   drivers/clk/meson/clk-pll.c | 16 ++++++++++++----
+>>   drivers/clk/meson/clk-pll.h |  2 ++
+>>   3 files changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+>> index 1f82e9c7c14e..bfe559c71402 100644
+>> --- a/drivers/clk/meson/a1-pll.c
+>> +++ b/drivers/clk/meson/a1-pll.c
+>> @@ -137,6 +137,7 @@ static struct clk_regmap a1_hifi_pll = {
+>>                .range = &a1_hifi_pll_range,
+>>                .init_regs = a1_hifi_pll_init_regs,
+>>                .init_count = ARRAY_SIZE(a1_hifi_pll_init_regs),
+>> +             .flags = CLK_MESON_PLL_L_DETECT_N
+>>        },
+>>        .hw.init = &(struct clk_init_data){
+>>                .name = "hifi_pll",
+>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+>> index c6eebde1f516..d729e933aa1c 100644
+>> --- a/drivers/clk/meson/clk-pll.c
+>> +++ b/drivers/clk/meson/clk-pll.c
+>> @@ -384,8 +384,12 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>>                meson_parm_write(clk->map, &pll->rst, 1);
+>>
+>>        /* Disable the PLL lock-detect module */
+>> -     if (MESON_PARM_APPLICABLE(&pll->l_detect))
+>> -             meson_parm_write(clk->map, &pll->l_detect, 1);
+>> +     if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+>> +             if (pll->flags & CLK_MESON_PLL_L_DETECT_N)
+>> +                     meson_parm_write(clk->map, &pll->l_detect, 1);
+>> +             else
+>> +                     meson_parm_write(clk->map, &pll->l_detect, 0);
+>> +     }
+>>
+>>        /* Enable the pll */
+>>        meson_parm_write(clk->map, &pll->en, 1);
+>> @@ -413,8 +417,12 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>>        udelay(20);
+>>
+>>        /* Enable the lock-detect module */
+>> -     if (MESON_PARM_APPLICABLE(&pll->l_detect))
+>> -             meson_parm_write(clk->map, &pll->l_detect, 0);
+>> +     if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+>> +             if (pll->flags & CLK_MESON_PLL_L_DETECT_N)
+>> +                     meson_parm_write(clk->map, &pll->l_detect, 0);
+>> +             else
+>> +                     meson_parm_write(clk->map, &pll->l_detect, 1);
+>> +     }
+>>
+>>        if (meson_clk_pll_wait_lock(hw)) {
+>>                /* disable PLL when PLL lock failed. */
+>> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+>> index 949157fb7bf5..83295a24721f 100644
+>> --- a/drivers/clk/meson/clk-pll.h
+>> +++ b/drivers/clk/meson/clk-pll.h
+>> @@ -29,6 +29,8 @@ struct pll_mult_range {
+>>
+>>   #define CLK_MESON_PLL_ROUND_CLOSEST  BIT(0)
+>>   #define CLK_MESON_PLL_NOINIT_ENABLED BIT(1)
+>> +/* l_detect signal is active-low */
+>> +#define CLK_MESON_PLL_L_DETECT_N     BIT(2)
+>>
+>>   struct meson_clk_pll_data {
+>>        struct parm en;
+> 
+> --
+> Jerome
+
 
