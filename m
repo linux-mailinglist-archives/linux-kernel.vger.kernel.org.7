@@ -1,178 +1,137 @@
-Return-Path: <linux-kernel+bounces-878104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8EAC1FCB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:23:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD2FC1FCD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D35F1887EE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338FE3B3944
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0390A34403C;
-	Thu, 30 Oct 2025 11:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sAe8V63J"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9669C355027;
+	Thu, 30 Oct 2025 11:27:35 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B55E2DA743
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A743446A5;
+	Thu, 30 Oct 2025 11:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761823406; cv=none; b=p4dLIkM5rKrD5ddb8RzJpbgnD/F6J9kDb9wb6yLXJtiKWsuHDErH8YgC8ea5OPxXHPSXPxI7NUuuRYrd8FwRdMMzUiX6MTcfjblRAGr01UL+ij6si2Q1G9VbDrDWqMjiR0D+lFp4pg0iNY5k99U/N7CrAmgIJL7tIOlPMMYcPrs=
+	t=1761823655; cv=none; b=pMYaiji7sNoHGEzsTzdwGJDmczwqJFz53YnGRXYlUJcALGDnj5ZooHnZNeu/G3tzBSsZol2aSF87QuqwtspIVY9touUTgSDZoJLAHYu+kj1qPzx4oG7Xl1oh7Uj1HYyXsNNjgc63lAlJsROCKDmsVrQf4irUfFC9v88H9/sfUpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761823406; c=relaxed/simple;
-	bh=oiUbO1d3hb2fwzyCZ+aN2Hxgm3x+P2N3m7QZfKf1EAY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JHRk439rAYDazdVk1jzqZ1wtd/dDFSUUifIGu3xusclcvwx3nX7jJii+JXREEWcMb7KPGPDMIddFBPTwBwUzZV2FNKsp0m+0BB7a7b5yVEulW47NenYW9LQRYRKKUeXO+bNnJ8F5XBZ9R04rYzfVdQWArXnMwc6YP0f7+lPjS8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sAe8V63J; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63e18829aa7so1240865a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761823403; x=1762428203; darn=vger.kernel.org;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oiUbO1d3hb2fwzyCZ+aN2Hxgm3x+P2N3m7QZfKf1EAY=;
-        b=sAe8V63JnpEcCGswa8MKd0Y7HagTC14/S30d7mhnq+oJ44/B9V7T4pjMLHi6nH3Pir
-         y5Zdw4bOWV5k8Qh6VWxwf8h0OB/Xtc+PiJfXHOHzzI4oW5WQNcJ+wTYymjAGt+tnq8jQ
-         IpFNk266U0Gyaih75FTZBWQW3tXmelFfy3UXxMjLo5SpODTvFCCqgSmxjNTRYAL3THaB
-         PkZYQvY78OV9GDXjYuvvCUuZ0nJME4Jxv3vnIDrUy4ei8QYee9mDS3XhdEf8sBkqQTXA
-         KWp0+hXEZTvzaEaOkebo9zLZUl8HfOQ5DHh27HKk+V0bP9jlTagKW9lNMGsfWv9Cb+nv
-         H8Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761823403; x=1762428203;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oiUbO1d3hb2fwzyCZ+aN2Hxgm3x+P2N3m7QZfKf1EAY=;
-        b=W08XXl98Jp4qnGsfeIyh7nio3Yitlc7C81NnMrIVjpboQuhyv13E8uAP+5Tqq6QDVG
-         U9EkVVbCTEMONwZRK4QXrxWe1k16iP7oUHG2EdGPCjUOtNR8Yz2qdBZzCnIexs2riSSf
-         BM+yRkXb+7K8u0sEIwvD2ff+Ep3oW1FsiV+ianIxGGG98ckWvQWN3Kx32FyVugreQyZU
-         Qs19uiXt+fk4QCnRS9Yp+4ZlhOnyM23D8HeFCKN2P3gX23svVNrXrfGTe4DMsfHSjoeG
-         buz79G3GXMrwXr7pqIWQa05s1vpsBTAwTD3GeVANLW9/jJSSIvM99oJ8tsxNlB62NFsK
-         FRCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7/VP//yvIQNSPA/Xx/tn0bAd8qXELNxjmLnqS5cd+a+JAqQQpLtw63RA7XxZccr3osa5yX5dluC/8o6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpUCkEKax3iuPwP2A9/cJpNMef2cXvNvpE3N3Sgs44rRsaTf/U
-	xZQCzgY7Etcyqja7nk0qgP6615iK1mFPmbX2nFDVf1ogNHfnhS5LPvaoUlit7GoSGsU=
-X-Gm-Gg: ASbGncsXsrLwFz9Cy9gryIDSkQSMDlDA8CyfLA/SPpYyuwtYmRHn27Mms54uN6weT8b
-	I6ystD0KjSv1Z4/BY/MCePkjGqaf9mBqH44FuS3WXQ05Kj7UErEgFQ3C+17D/0F8yAL3hWBKUhR
-	C+iq6wFnP0uxJgLak7bVY/9HRDhLghXrLV4HvrQF5K3ubHiizqYJ8IfPx7il/Am18Qjb79Eg2Zn
-	T/AfhlsD/bFwgp9XLevPVltf4yX7Jo7yHS3myKHSVlvu9acs6LOrzEUGkDJT1GyTJoIHpKOaUKF
-	VaLfICdoIDdXG7Gn5SYVLg2GbP9tN7FuJfc9QdV0aWzlq7vz6pCBSs3nUj3jR9JAJ/sVNKlatuK
-	ibQwT/QWVJol8YQWGhp1S4bJQ3FujlaMJMYShwcMRWqYEB5deyxdF19Dj1mqUySbE1TCDKrgYpG
-	9hnMF79N4FghfeLB4dS7S6zkO5iubOIgfGPYUbyw==
-X-Google-Smtp-Source: AGHT+IFc6m+nMDFkhuN6fkCkGUFwscTkxeKDllrODi6tgfhp7cY/9rkLZ7I78qym6yK6GnQjQmsvWQ==
-X-Received: by 2002:a05:6402:5114:b0:63b:ef0e:dfca with SMTP id 4fb4d7f45d1cf-64061a20728mr2188847a12.4.1761823402628;
-        Thu, 30 Oct 2025 04:23:22 -0700 (PDT)
-Received: from [10.203.83.89] (mob-176-247-57-96.net.vodafone.it. [176.247.57.96])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7efd0c1fsm14634640a12.37.2025.10.30.04.23.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 04:23:22 -0700 (PDT)
-Message-ID: <c1c7222b35a0a7bcddc5d88c92f64d2f2a75fdfd.camel@baylibre.com>
-Subject: Re: [PATCH 8/9] iio: imu: st_lsm6dsx: add event configurability on
- a per axis basis
-From: Francesco Lavra <flavra@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron
- <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 30 Oct 2025 12:23:19 +0100
-In-Reply-To: <aQMgxUNA8XNhPZdG@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
-	 <20251030072752.349633-9-flavra@baylibre.com>
-	 <aQMgxUNA8XNhPZdG@smile.fi.intel.com>
-Organization: BayLibre
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-P5Tv+66OR+vtWhWFF83f"
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1761823655; c=relaxed/simple;
+	bh=5/+S/AagjbzMSJ2Mh4F4ri893iVLPZxVz6VGydrXXE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FavzTb1Dtt246Z2q7HQNyBPkqgdERICPpOInd2IyGeh5gRDeZkXDTJY94zXj4XiHsh0kZjwuUTwZaSbhp1JwVeUpri/5hdui5ylQfShi4FR3umVhBMENiB/WoyTHgaMgsM5zuYfFrYugoPNgYxfCA6AMaZ4GYNO6Zq5trrLqIQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vEQoE-000000005Bs-3e5v;
+	Thu, 30 Oct 2025 11:27:14 +0000
+Date: Thu, 30 Oct 2025 11:27:07 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net-next v5 00/12] net: dsa: lantiq_gswip: Add support for
+ MaxLinear GSW1xx switch family
+Message-ID: <cover.1761823194.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+This patch series extends the existing lantiq_gswip DSA driver to support
+the MaxLinear GSW1xx family of dedicated Ethernet switch ICs. These switches
+are based on the same IP as the Lantiq/Intel GSWIP found in VR9 and xRX
+MIPS router SoCs, but are connected via MDIO instead of memory-mapped I/O.
 
---=-P5Tv+66OR+vtWhWFF83f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+The series includes several improvements and refactoring to prepare for the
+new hardware support.
 
-T24gVGh1LCAyMDI1LTEwLTMwIGF0IDEwOjI0ICswMjAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
-Cj4gT24gVGh1LCBPY3QgMzAsIDIwMjUgYXQgMDg6Mjc6NTFBTSArMDEwMCwgRnJhbmNlc2NvIExh
-dnJhIHdyb3RlOgo+ID4gSW4gb3JkZXIgdG8gYmUgYWJsZSB0byBjb25maWd1cmUgZXZlbnQgZGV0
-ZWN0aW9uIG9uIGEgcGVyIGF4aXMKPiA+IGJhc2lzIChmb3IgZWl0aGVyIHNldHRpbmcgYW4gZXZl
-bnQgdGhyZXNob2xkL3NlbnNpdGl2aXR5IHZhbHVlLCBvcgo+ID4gZW5hYmxpbmcvZGlzYWJsaW5n
-IGV2ZW50IGRldGVjdGlvbiksIGFkZCBuZXcgYXhpcy1zcGVjaWZpYyBmaWVsZHMKPiA+IHRvIHN0
-cnVjdCBzdF9sc202ZHN4X2V2ZW50X3NyYywgYW5kIG1vZGlmeSB0aGUgbG9naWMgdGhhdCBoYW5k
-bGVzCj4gPiBldmVudCBjb25maWd1cmF0aW9uIHRvIHByb3Blcmx5IGhhbmRsZSBheGlzLXNwZWNp
-ZmljIHNldHRpbmdzIHdoZW4KPiA+IHN1cHBvcnRlZCBieSBhIGdpdmVuIGV2ZW50IHNvdXJjZS4K
-PiA+IEEgZnV0dXJlIGNvbW1pdCB3aWxsIGFkZCBhY3R1YWwgZXZlbnQgc291cmNlcyB3aXRoIHBl
-ci1heGlzCj4gPiBjb25maWd1cmFiaWxpdHkuCj4gCj4gLi4uCj4gCj4gPiArwqDCoMKgwqDCoMKg
-wqBvbGRfZW5hYmxlID0gaHctPmVuYWJsZV9ldmVudFtldmVudF07Cj4gPiArwqDCoMKgwqDCoMKg
-wqBuZXdfZW5hYmxlID0gc3RhdGUgPyAob2xkX2VuYWJsZSB8IEJJVChheGlzKSkgOiAob2xkX2Vu
-YWJsZSAmCj4gPiB+QklUKGF4aXMpKTsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghIW9sZF9lbmFi
-bGUgPT0gISFuZXdfZW5hYmxlKQo+IAo+IFRoaXMgaXMgYW4gaW50ZXJlc3RpbmcgY2hlY2suIFNv
-LCBvbGRfZW5hYmxlIGFuZCBuZXdfZW5hYmxlIGFyZSBfbm90Xwo+IGJvb2xlYW5zLCByaWdodD8K
-PiBTbywgdGhpcyBtZWFucyB0aGUgY2hlY2sgdGVzdCBpZiBfYW55XyBvZiB0aGUgYml0IHdhcyBz
-ZXQgYW5kIGtlcHQgc2V0IG9yCj4gbm9uZSB3ZXJlIHNldAo+IGFuZCBub24gaXMgZ29pbmcgdG8g
-YmUgc2V0LiBDb3JyZWN0PyBJIHRoaW5rIGEgc2hvcnQgY29tbWVudCB3b3VsZCBiZQo+IGdvb2Qg
-dG8gaGF2ZS4KCm9sZF9lbmFibGUgYW5kIG5ld19lbmFibGUgYXJlIGJpdCBtYXNrcywgYnV0IHdl
-IGFyZSBvbmx5IGludGVyZXN0ZWQgaW4Kd2hldGhlciBhbnkgYml0IGlzIHNldCwgdG8gY2F0Y2gg
-dGhlIGNhc2VzIHdoZXJlIHRoZSBiaXQgbWFzayBnb2VzIGZyb20KemVybyB0byBub24temVybyBh
-bmQgdmljZSB2ZXJzYS4gV2lsbCBhZGQgYSBjb21tZW50LgoKPiAKPiA+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gMDsKPiAKPiAuLi4KPiAKPiA+ICtzdGF0aWMgY29uc3Qg
-c3RydWN0IHN0X2xzbTZkc3hfcmVnICpzdF9sc202ZHN4X2dldF9ldmVudF9yZWcoc3RydWN0Cj4g
-PiBzdF9sc202ZHN4X2h3ICpodywKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVudW0KPiA+IHN0X2xzbTZkc3hfZXZlbnRf
-aWQgZXZlbnQsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBjb25zdAo+ID4gc3RydWN0IGlpb19jaGFuX3NwZWMgKmNoYW4p
-Cj4gPiArewo+ID4gK8KgwqDCoMKgwqDCoMKgY29uc3Qgc3RydWN0IHN0X2xzbTZkc3hfZXZlbnRf
-c3JjICpzcmMgPSAmaHctPnNldHRpbmdzLQo+ID4gPmV2ZW50X3NldHRpbmdzLnNvdXJjZXNbZXZl
-bnRdOwo+ID4gK8KgwqDCoMKgwqDCoMKgY29uc3Qgc3RydWN0IHN0X2xzbTZkc3hfcmVnICpyZWc7
-Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBzd2l0Y2ggKGNoYW4tPmNoYW5uZWwyKSB7Cj4gPiAr
-wqDCoMKgwqDCoMKgwqBjYXNlIElJT19NT0RfWDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqByZWcgPSAmc3JjLT54X3ZhbHVlOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGJyZWFrOwo+ID4gK8KgwqDCoMKgwqDCoMKgY2FzZSBJSU9fTU9EX1k6Cj4gPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnID0gJnNyYy0+eV92YWx1ZTsKPiA+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBicmVhazsKPiA+ICvCoMKgwqDCoMKgwqDCoGNhc2Ug
-SUlPX01PRF9aOgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9ICZzcmMt
-PnpfdmFsdWU7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJlYWs7Cj4gPiAr
-wqDCoMKgwqDCoMKgwqBkZWZhdWx0Ogo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oHJldHVybiBOVUxMOwo+ID4gK8KgwqDCoMKgwqDCoMKgfQo+IAo+ID4gK8KgwqDCoMKgwqDCoMKg
-aWYgKCFyZWctPmFkZHIpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnID0g
-JnNyYy0+dmFsdWU7Cj4gPiArwqDCoMKgwqDCoMKgwqByZXR1cm4gcmVnOwo+IAo+IMKgwqDCoMKg
-wqDCoMKgwqBpZiAocmVnLT5hZGRyKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-cmV0dXJuIHJlZzsKPiAKPiDCoMKgwqDCoMKgwqDCoMKgLyogUGVyaGFwcyBhIGNvbW1lbnQgaGVy
-ZSB0byBleHBsYWluIHRoZSBjaG9pY2UgKi8KPiDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuICZzcmMt
-PnZhbHVlOwo+ID4gCldpbGwgZG8uCj4gCgo=
+The GSW1xx family includes several variants:
+ - GSW120: 4 ports, 2 PHYs, RGMII & SGMII/2500Base-X
+ - GSW125: 4 ports, 2 PHYs, RGMII & SGMII/2500Base-X, industrial temperature
+ - GSW140: 6 ports, 4 PHYs, RGMII & SGMII/2500Base-X
+ - GSW141: 6 ports, 4 PHYs, RGMII & SGMII
+ - GSW145: 6 ports, 4 PHYs, RGMII & SGMII/2500Base-X, industrial temperature
 
+Key features implemented:
+ - MDIO-based register access using regmap
+ - Support for SGMII/1000Base-X/2500Base-X SerDes interfaces
+ - Configurable RGMII delays via device tree properties
+ - Configurable RMII clock direction
+ - Energy Efficient Ethernet (EEE) support
+ - enabling/disabling learning
 
---=-P5Tv+66OR+vtWhWFF83f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Daniel Golle (12):
+  net: dsa: lantiq_gswip: split into common and MMIO parts
+  net: dsa: lantiq_gswip: support enable/disable learning
+  net: dsa: lantiq_gswip: support Energy Efficient Ethernet
+  net: dsa: lantiq_gswip: set link parameters also for CPU port
+  net: dsa: lantiq_gswip: define and use
+    GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID
+  dt-bindings: net: dsa: lantiq,gswip: add support for MII delay
+    properties
+  net: dsa: lantiq_gswip: allow adjusting MII delays
+  dt-bindings: net: dsa: lantiq,gswip: add MaxLinear RMII refclk output
+    property
+  net: dsa: lantiq_gswip: add vendor property to setup MII refclk output
+  dt-bindings: net: dsa: lantiq,gswip: add support for MaxLinear GSW1xx
+    switches
+  net: dsa: add tagging driver for MaxLinear GSW1xx switch family
+  net: dsa: add driver for MaxLinear GSW1xx switch family
 
------BEGIN PGP SIGNATURE-----
+ .../bindings/net/dsa/lantiq,gswip.yaml        |  300 ++-
+ MAINTAINERS                                   |    3 +-
+ drivers/net/dsa/lantiq/Kconfig                |   18 +-
+ drivers/net/dsa/lantiq/Makefile               |    2 +
+ drivers/net/dsa/lantiq/lantiq_gswip.c         | 1617 +--------------
+ drivers/net/dsa/lantiq/lantiq_gswip.h         |   20 +
+ drivers/net/dsa/lantiq/lantiq_gswip_common.c  | 1737 +++++++++++++++++
+ drivers/net/dsa/lantiq/mxl-gsw1xx.c           |  733 +++++++
+ drivers/net/dsa/lantiq/mxl-gsw1xx.h           |  126 ++
+ drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h       |  154 ++
+ include/net/dsa.h                             |    2 +
+ include/uapi/linux/if_ether.h                 |    1 +
+ net/dsa/Kconfig                               |    8 +
+ net/dsa/Makefile                              |    1 +
+ net/dsa/tag_mxl-gsw1xx.c                      |  116 ++
+ 15 files changed, 3170 insertions(+), 1668 deletions(-)
+ create mode 100644 drivers/net/dsa/lantiq/lantiq_gswip_common.c
+ create mode 100644 drivers/net/dsa/lantiq/mxl-gsw1xx.c
+ create mode 100644 drivers/net/dsa/lantiq/mxl-gsw1xx.h
+ create mode 100644 drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h
+ create mode 100644 net/dsa/tag_mxl-gsw1xx.c
 
-iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmkDSqcACgkQ7fE7c86U
-Nl833AwAo56B5J8jwaMwRZfxSZBiXXlGiXcihr/4WOhKCmcG94wZLv3nxhbFCFz1
-9gNnk7THZeGhlfGUX8nlz85YhbcFtjStfqE+Nb1m9Y6AwGcAj6k+cs8vAQGYtZaP
-YCFunzUO8WZ0Yg0XtW7toxkdmCVmuPppQUNFd1YDoF7BiyYPrdt+jipjGvpxGMUX
-1HE2+fxYtt0T32f8XxXTd+jODRVI3jLGmfoYwWOdaVIcio2uQiaf6dMtXwDlLO7T
-CpjvG0bhNT/YZu1vlYuZmZY4MP1lrEaWnwsbgxIImVLHaLnnlq6IUFkskbtXc5zt
-0P/LVzYDnzKT+bG0572AJHeE0pdUBHoxwaTH2X1YNvIvrsAH9Di1U71CLBG+I+4j
-D+gEeXcOInrxG3Zzzmd60DKxcA+wloD3UAxr3DWvoh1XZdfV2AJHNihJlxGwI24B
-ZWEXiTxakdYApMMKgsfrw8PKr28nPPULLcmxJGglr1WMuxodn2G6GTGEcWDSKuOH
-S4/mPwKH
-=PGvm
------END PGP SIGNATURE-----
-
---=-P5Tv+66OR+vtWhWFF83f--
+-- 
+2.51.2
 
