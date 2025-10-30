@@ -1,243 +1,109 @@
-Return-Path: <linux-kernel+bounces-877748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8C4C1EEC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:12:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95BAC1EEC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500244026F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41D5406292
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCD3338586;
-	Thu, 30 Oct 2025 08:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D87337BB4;
+	Thu, 30 Oct 2025 08:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2Ge2Z6qn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TWJFK5aX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2Ge2Z6qn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TWJFK5aX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="bGulg08Y"
+Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4158D333759
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F0D32E733;
+	Thu, 30 Oct 2025 08:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811920; cv=none; b=mhVQXeZecwOkAA1s5BqFM3aSOxEV33eZs2rterq3nVkljHP4eqJ6WOPLMY62o5VXT1qMmTghneHzElGXwxQsSRT5slMmHtZpHAe6XKXdPJQw7MO8T+OyVu9cvyCLXUI/yVzK+7fECTgDXUn2djGs34ifU38hg+2MZfXvnvuqdeY=
+	t=1761811961; cv=none; b=fINnu3xFBIrROcm6i51HfoNG80SdD0uXvk1GTnsf9yXS+kMq/lmBj7pDnSEepZWyKi0GklfZnP1Allv/s3GAfm/2Q5BcF58lqDEg1FxG2/+oi8K1+ur0W6SqRkC25+y4TQhDfwTxJPa1NsvRwTn++hzRNGb8iiJFb6NhW9BPSTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761811920; c=relaxed/simple;
-	bh=054em+UYd6MqZNe4YbcaeMvCXEu+9iEgbFyv/oW38Zk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AP0tPMyd3XgvKPEyP2A4d2Yn9LJTcbTpqFakXSntsP4QcqOzH2pidOFMWdi3KD8TxKZIR+naC8zS0J1whqkvBhFHW3RLGVXKVgNLhf2kQCvn7tN29D2ZfZlN4wser0zLS9HanBssT9BoreiyAIsHRA8z/2s7WpZqo0sny+jVwaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2Ge2Z6qn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TWJFK5aX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2Ge2Z6qn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TWJFK5aX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1761811961; c=relaxed/simple;
+	bh=qUof08cVvZpyI5pyttc7D1uPQ9Ry6bp7QcptSABtIRY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=erThUYH/fr9re4dfi8bxHJzMdQCtNflI/fuP0ys76x9ixxBJr6uwRMrT6+pIOSkmbwkP/2ljmp6bqK90KyBnha5EAojDn3bNC3oE27GUDLzfVbc3pU2jx5D6GkOu8SMrmu0GzPHJeeL69Qv9bajYsW6nAd1lilP+Pmz4wt3VZG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=bGulg08Y; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by mx1.secunet.com (Postfix) with ESMTP id 1191420860;
+	Thu, 30 Oct 2025 09:12:37 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from mx1.secunet.com ([127.0.0.1])
+ by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id 9910oo1jPUIX; Thu, 30 Oct 2025 09:12:36 +0100 (CET)
+Received: from EXCH-01.secunet.de (unknown [10.32.0.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 65C7A336E0;
-	Thu, 30 Oct 2025 08:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761811916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0pQTBOHFgLXI+4nZUgpiEmdL9di6d4M6U473l4L3jmw=;
-	b=2Ge2Z6qnQebRl/Z2q1iOPUmiex4z2xoteoiIvHTy4UDKZf29m/AC70eQIAklfkrM4BwPMD
-	Qd+p7LZsbkDd/g2AdPI2tz0F/n3MpWbDE9DkGXbRSWUyjxIW7axaPjSQQaxFfph72/xCxV
-	14hLRbKPBeGEGGv9KNNuDJfHSd/ugbs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761811916;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0pQTBOHFgLXI+4nZUgpiEmdL9di6d4M6U473l4L3jmw=;
-	b=TWJFK5aX1tPLCiq3bHMhAKCOdRg+QEFai/wun0LtlElrQT96GikaT4ZtbL2RVC4ljeZJwB
-	h5uRgxuFxbhrs1BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761811916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0pQTBOHFgLXI+4nZUgpiEmdL9di6d4M6U473l4L3jmw=;
-	b=2Ge2Z6qnQebRl/Z2q1iOPUmiex4z2xoteoiIvHTy4UDKZf29m/AC70eQIAklfkrM4BwPMD
-	Qd+p7LZsbkDd/g2AdPI2tz0F/n3MpWbDE9DkGXbRSWUyjxIW7axaPjSQQaxFfph72/xCxV
-	14hLRbKPBeGEGGv9KNNuDJfHSd/ugbs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761811916;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0pQTBOHFgLXI+4nZUgpiEmdL9di6d4M6U473l4L3jmw=;
-	b=TWJFK5aX1tPLCiq3bHMhAKCOdRg+QEFai/wun0LtlElrQT96GikaT4ZtbL2RVC4ljeZJwB
-	h5uRgxuFxbhrs1BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A08013393;
-	Thu, 30 Oct 2025 08:11:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tSl7EcwdA2mmJQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 30 Oct 2025 08:11:56 +0000
-Message-ID: <b445276e-429e-44e5-a5cc-5addebba5dec@suse.de>
-Date: Thu, 30 Oct 2025 09:11:47 +0100
+	by mx1.secunet.com (Postfix) with ESMTPS id 7C94A20820;
+	Thu, 30 Oct 2025 09:12:36 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com 7C94A20820
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1761811956;
+	bh=KlpxZU8es++alJ0W+sTnPbvdyFIjY0cf6QVcV6Ki/IU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=bGulg08YA9llBIt1RWZnBlnizYu0G4gacfmoBKqE5+4CVKh4bXiP8CYxiqAN+T1d4
+	 OSUQqyqy4lB7VaN0KoCxk8PNjdsPKkdtMAFI2Z+XXEa0OIhVCHcdfBF2bMnviknA6v
+	 MgISJ1Z127ktGUvW0hlo16cS04e54culL2GWC0OZrfMSFYmPHiVR/CAyAgqyIhmTOc
+	 BZUVvOl7jEZhiQs54KxiUMvTxwI2MZam09E5a2vxRPVBGtsPYDR4erzczlvbTEBPTJ
+	 1CTSYlI2yq5LmHerlsuLh57oF5cwidtBpvODVtxsij6kpiLfYpWCzfpYPNKYfU6f0e
+	 Q7gGzztRdHDQg==
+Received: from secunet.com (10.182.7.193) by EXCH-01.secunet.de (10.32.0.171)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 30 Oct
+ 2025 09:12:36 +0100
+Received: (nullmailer pid 1011608 invoked by uid 1000);
+	Thu, 30 Oct 2025 08:12:35 -0000
+Date: Thu, 30 Oct 2025 09:12:35 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux
+ Documentation <linux-doc@vger.kernel.org>, Linux Networking
+	<netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>, Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH net-next 6/6] MAINTAINERS: Add entry for XFRM
+ documentation
+Message-ID: <aQMd886miv39BEPC@secunet.com>
+References: <20251029082615.39518-1-bagasdotme@gmail.com>
+ <20251029082615.39518-7-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tiny: pixpaper: add explicit dependency on MMU
-To: LiangCheng Wang <zaq14760@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20251028-bar-v1-1-edfbd13fafff@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251028-bar-v1-1-edfbd13fafff@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251029082615.39518-7-bagasdotme@gmail.com>
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ EXCH-01.secunet.de (10.32.0.171)
 
-
-
-Am 28.10.25 um 03:55 schrieb LiangCheng Wang:
-> The DRM_GEM_SHMEM_HELPER helper requires MMU enabled because it uses
-> vmf_insert_pfn() in its mmap implementation. On NOMMU configurations
-> (e.g. some RISC-V randconfig builds), this symbol is unavailable and
-> selecting DRM_GEM_SHMEM_HELPER causes a modpost undefined reference:
->
->      ERROR: modpost: "vmf_insert_pfn" [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
->
-> Normally, Kconfig prevents this helper from being selected when
-> CONFIG_MMU=n. However, in some randconfig builds (such as those used by
-> 0day CI), select statements can override unmet dependencies, triggering
-> the issue.
->
-> Add an explicit dependency on MMU to DRM_PIXPAPER to prevent this.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510280213.0rlYA4T3-lkp@intel.com/
-> Fixes: 0c4932f6ddf8 ("drm/tiny: pixpaper: Fix missing dependency on DRM_GEM_SHMEM_HELPER")
-> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
-
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-
+On Wed, Oct 29, 2025 at 03:26:14PM +0700, Bagas Sanjaya wrote:
+> XFRM patches are supposed to be sent to maintainers under "NETWORKING
+> [IPSEC]" heading, but it doesn't cover XFRM docs yet. Add the entry.
+> 
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > ---
-> This patch fixes a build issue reported by the kernel test robot when
-> building with CONFIG_MMU=n on RISC-V randconfig.
->
-> In such configurations, the DRM_GEM_SHMEM_HELPER helper uses
-> vmf_insert_pfn(), which is unavailable without MMU support. Although
-> normal Kconfig rules prevent DRM_GEM_SHMEM_HELPER from being selected
-> in this case, randconfig builds may forcibly enable it via select,
-> leading to the following modpost error:
->
->      ERROR: modpost: "vmf_insert_pfn" [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
->
-> The fix is to add an explicit `depends on MMU` to the DRM_PIXPAPER
-> driver, ensuring it cannot be built for NOMMU systems.
->
-> This issue cannot always be reproduced locally because typical builds
-> do not violate Kconfig dependencies, but it was confirmed that the fix
-> prevents the reported 0day failure.
-> ---
-> LiangCheng Wang (1):
->    drm/tiny: pixpaper: add explicit dependency on MMU
->
->   drivers/gpu/drm/tiny/Kconfig
->
-> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
-> ---
->   drivers/gpu/drm/tiny/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
-> index 7d9e85e932d7fd7bdb6ad7a4c6ba0f835841f623..f0e72d4b6a4709564e63c758e857bdb4a320dbe7 100644
-> --- a/drivers/gpu/drm/tiny/Kconfig
-> +++ b/drivers/gpu/drm/tiny/Kconfig
-> @@ -85,6 +85,7 @@ config DRM_PANEL_MIPI_DBI
->   config DRM_PIXPAPER
->           tristate "DRM support for PIXPAPER display panels"
->           depends on DRM && SPI
-> +        depends on MMU
->           select DRM_CLIENT_SELECTION
->           select DRM_GEM_SHMEM_HELPER
->           select DRM_KMS_HELPER
->
-> ---
-> base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
-> change-id: 20251028-bar-ae0d85b16f13
->
-> Best regards,
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d652f4f27756ef..4f33daad40bed6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18041,6 +18041,7 @@ L:	netdev@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec.git
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
+> +F:	Documentation/networking/xfrm/
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+That means that I'm now responsible for this.
+But I'm OK with it if nobody has objections on it.
 
