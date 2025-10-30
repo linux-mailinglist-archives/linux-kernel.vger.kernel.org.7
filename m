@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-878305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE624C2039D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:24:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671DFC203A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3BB1A282AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:24:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1420534F00A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2630331A7F0;
-	Thu, 30 Oct 2025 13:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF161322C80;
+	Thu, 30 Oct 2025 13:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mxWg7ClH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ywQXe4TB"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA6F2E0938;
-	Thu, 30 Oct 2025 13:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F435316911
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761830658; cv=none; b=b0En6qtyQyUhUlNSgaj5S8gGkuHZ+ImSa/BLGfBVgL35kIusq44slieR99JQ5C0t2wzWd5G1iOV3AHH5dAgLrgRb2QqmYgGFvvDX9uOL93/cUL01u3WLMgMp71KfVpSXDEJGR5xeJXnRY+HhUXZK0bVBin9UVvsf0x8arVUHgOg=
+	t=1761830724; cv=none; b=RV1a+4bFg15/Z3Cgh+ufE3Is7wKYRmD8C6IhUQKL1BP2MbO+LPySNRrcUQKXIhWGYoBTTgm7vgD8Lx/hCgzp4W1HGrqwZ4GpvyYHEpX3sD5CXsPryJZVUKrKo1hq0jfOMx8qmVpYrm0AUA2YbvbvsNw6tA3A7W1iQ2Lx05RBkvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761830658; c=relaxed/simple;
-	bh=lZ4jwTDbPAeWp/de4k6f0sgkZG4Y3dvhkwYwZh4vyvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYXkOoGqmpkH3/nZeH/Gv5FiG+TZpE/vJXqLENQJQtsEzvqCQHqlN8UnEPtUbEm92E3CfB06F9DWLhQ8GDAUZVFxDH48lteKqDi15m61dpb/Mcr4og2Ub1rKh8RMy7LKom4BIKdl0McdM2KWUqLEGcfKbXl9qMXnIgg0Wh+N90g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mxWg7ClH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=r0Y78kjdZB9qurE4MI+T/bMh3arrMfi+mi377H2n21A=; b=mxWg7ClHfEhUgZHomS6qMqLvp9
-	6ISViMZNpFt3HbNMjk9qghTjF2k4C4AXKtzrhaSuDVol3/fCO7yeYt7Zcdq/G3OBtG38CpzIcAWSe
-	bzUDf/Awohi+40E83mPY+KCLaVzZQ/YqLi2dPog9b+fLbn1F9K016vIidzE2A9aInk30=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vESd7-00CVeI-OG; Thu, 30 Oct 2025 14:23:53 +0100
-Date: Thu, 30 Oct 2025 14:23:53 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: Re: [PATCH net-next v14 01/16] dt-bindings: net: Introduce the
- ethernet-connector description
-Message-ID: <b6a80aba-638f-45fd-8c40-9b836367c0ea@lunn.ch>
-References: <20251013143146.364919-1-maxime.chevallier@bootlin.com>
- <20251013143146.364919-2-maxime.chevallier@bootlin.com>
- <382973b8-85d3-4bdd-99c4-fd26a4838828@bootlin.com>
+	s=arc-20240116; t=1761830724; c=relaxed/simple;
+	bh=EBbL28z9+MZVw5L1Pv0y6IwIp7d0O1Hu7XPd9vzv+4E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UjTg+EQhbtQy79YsW/bj87ld2+BxBfHlbpCLuxWeSw3hDE12jRBR99jUuqi95QIGiKe7ejqwypnIt8HIVNoCEKk5w8U20ESY3oQ+DDheEuX4CPZUho9g9Oo8ku5g1Rgo99kQHdK2ZbBT/+iJxO22O1wZ0ZFIFw/AUwHIKH5V3Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ywQXe4TB; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-476b8c02445so9984225e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:25:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761830721; x=1762435521; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7SeX/dCS6cWxKpNw3QkcX1Xk7rCu/Lia0ZbW7lkHN4o=;
+        b=ywQXe4TBFGJsINg0pYv0IA+lTwGCSmpCq22Ogppws0U6E2t6GJE70/hNG76pvrjpAV
+         pFNeHA2TJcwi3g0Aq/sYYfAcj3evUZ2V3PLLrzwp7ZQ6jr4BGTl1fn6w0mfHy8rnH3PT
+         MF+17zyi7qIztduF68bYzkKpo4HT5CN1mLyHVUPh8ysSa6hLnOD2fuePHb2c5Gwsyju1
+         8JvOx5ifg1cDMl7J3RZFSlDC61nDYN22bQCPAjroyoNwOc6uB1/DoLFe+gxswIPiZFB9
+         JINSa7DrhKmjaeLyYte4QqEQ25unB5IzBLf/uxx49v+LtOJKgb5XqtSKr4kvlFHdVVoq
+         Cl1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761830721; x=1762435521;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7SeX/dCS6cWxKpNw3QkcX1Xk7rCu/Lia0ZbW7lkHN4o=;
+        b=fymoX078/AA4T1VPFNdjWERWoJy7NQ0NXEgLAs/Pds87bbcU4a29q+0xGqg+xzoesi
+         RN/bu5Qmvo6DKY3leJvaWH0kQQndvVq7GCcFbHixY6MBEyATe53WlL98c00OayhJ9lfA
+         hYRNe7Jy3J2Oux767n+mHayY3Kw6say3YVdxKCo0IbGqSTa65mKsphTDaj5XtAW4qu+p
+         yuAHspq4bWaBWGowM69+G91R+vKU7MvgWk3Tb/b3/BSrYxIiUTTOhBLBi9wK/AxILHqE
+         3KUMGIbuafZ4Dkv1xFiHT4BU52JdImU/SZgbQAu9iwnh7nsS9x0mUkisLkpojvked8kD
+         vhpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2RoBcY9TEKswysm4UrQwMWyDkZMjLSvcdqL6Yp/yI9AVoHP4PSAuTinekF3K9OxaGEX1DFXaTJRhORhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF5fw9642vwF6eIQrOuoBaH5ZeZHZfeSlXCLW3Q5f1QIXfPrq9
+	zjmoWeT50VWhTe7w7AXfh3ELHdUY/S9TR/RDMv7hBksblu/A5FhkX+Sjrodk2DfAQciVkGoj9mr
+	brGgmzb0agzv54y0bGg==
+X-Google-Smtp-Source: AGHT+IFTtaqS9U/7UQQTwaCrLeQO1lf0jngWAua0qbmHooBBncQ6je3VzSX+qVsJRKDBkzwT5OFndSyoGqXhRE8=
+X-Received: from wmbz11.prod.google.com ([2002:a05:600c:c08b:b0:475:d8de:fe5b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:154f:b0:475:de68:3c2e with SMTP id 5b1f17b1804b1-4772687374bmr25909005e9.40.1761830720992;
+ Thu, 30 Oct 2025 06:25:20 -0700 (PDT)
+Date: Thu, 30 Oct 2025 13:25:19 +0000
+In-Reply-To: <2025103017-driller-implant-849e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <382973b8-85d3-4bdd-99c4-fd26a4838828@bootlin.com>
+Mime-Version: 1.0
+References: <20251030-binder-compatptrioctl-v1-1-64875010279e@google.com> <2025103017-driller-implant-849e@gregkh>
+Message-ID: <aQNnP6FWv8dA2_1o@google.com>
+Subject: Re: [PATCH] rust_binder: use compat_ptr_ioctl
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Carlos Llamas <cmllamas@google.com>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Oct 30, 2025 at 01:13:14PM +0100, Maxime Chevallier wrote:
-> Hi,
+On Thu, Oct 30, 2025 at 01:38:56PM +0100, Greg Kroah-Hartman wrote:
+> On Thu, Oct 30, 2025 at 10:41:04AM +0000, Alice Ryhl wrote:
+> > This is commit 1832f2d8ff69 ("compat_ioctl: move more drivers to
+> > compat_ptr_ioctl") but for Rust Binder.
 > 
-> > @@ -313,5 +324,12 @@ examples:
-> >                      default-state = "keep";
-> >                  };
-> >              };
-> > +            /* Fast Ethernet port, with only 2 pairs wired */
-> > +            mdi {
-> > +                connector-0 {
-> > +                    lanes = <2>;
-> > +                    media = "BaseT";
-> > +                };
-> > +            };
-> >          };
-> >      };
-> 
-> As Andrew suggest clearly differentiating "lanes" and "pairs", do we
-> want this difference to also affect the binding ?
-> 
-> I still think "lanes" makes some level of sense here, but at least
-> the doc will need updating.
+> You might want to spell out why this is happening, not just refer to
+> another commit to try to find that information to make it more clear
+> here as to how to attempt to review this :)
 
-How do you define MDI?
+I can replace the commit message with:
 
-For copper, one possibility is an RJ-45 plug/socket, and you have
-twisted pairs, 2 or 4 of them.
+Binder always treats the ioctl argument as a pointer. In this scenario,
+the idiomatic way to implement compat_ioctl is to use compat_ptr_ioctl.
+Thus update Rust Binder to do that.
 
-Some people are old enough to remember 10Base2, using a coaxial cable
-and BNC connectors. Would you consider that a pair? A lane?
-
-How about an SFF, a soldered down module. Its MDI interface is likely
-to be 2 fibre strands. But consider so called bidi modules, which use
-one fibre, and two different wavelengths of light.
-
-Or an SFP, where you have no idea what the MDI is until you plug it in
-and read the EEPROM.
-
-Do we need to be able to describe all the different MDI? Do we maybe
-need to look at the media property to decide it is an RJ-45 connector
-so there should be a pairs property? Or the media is -KS, so there
-should be a lanes property for the number of PCS lanes on the PCB?
-
-This needs further discussion, what are you actually trying to
-represent here?
-
-	Andrew
+Alice
 
