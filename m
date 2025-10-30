@@ -1,166 +1,221 @@
-Return-Path: <linux-kernel+bounces-877867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CF6C1F3D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:19:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B34C1F3C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239B018872F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:17:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CDCD34D72E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D6331986E;
-	Thu, 30 Oct 2025 09:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4BD33FE11;
+	Thu, 30 Oct 2025 09:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fOc7cwYG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZdvJOZR8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aSFRlqer"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA5E313E1B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A914315D37
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815828; cv=none; b=O8eYHmero9+Lg1vfh6I1LLR8KAcAcXKTNgsky5SxY2AixJKQcfaImX4exWTPnN+PdWKKvP4m6FJmnaTXgTyGzarCG/n3jiQAGBUQRvP9Zs6ryQtQJrYmt583+D1eLYLAkJTVxNt0eXnB4kqC6jk3/Q9qMVW/GtOZTTqndycVCM4=
+	t=1761815945; cv=none; b=JsfCD8BPlOejinjJSrA02ziSXvjqiifXy3k5YTPjUia8gZdq30PqEM38LRm0LaRNRXCGO+1NVR6SQCP48YUihzOz4RESyxkhrc1TT04ERwK6Rgzw8DXc2vDon6+pTZleINPt5ZWTI/bPBsKEqy1jUnKrNdKDDOPJnhoNk+BAnVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815828; c=relaxed/simple;
-	bh=B6ER36m7Iv0Bd6NkigQuIXl1EBA+qHiW6lMI6ZMVbVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OvEnm8hEOEnM/X6bLx8QqPa18gcXBclMbYrVe2PMd0MVSE/8net21yIPFkWxAhns2gmXfd8uPzWhv9FWTJMGfntGPjWe612ozDwy7LxRu9q2I8Y6N/1WCIaYiskstOmoj9QeS8c0emcVvioJkLIcfQEvgVBrZ4Ta2wbTcct7lDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fOc7cwYG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZdvJOZR8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U7kPrr1697111
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:17:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Wjg1/j1eaIn0ChUOMAcpTE5peaMAgfC7A+tzK3TiVOA=; b=fOc7cwYGWbchEP3+
-	dc9j6A4aqjC1n1Ltx36/UxLjloB2Je05qikLFspDdVpszGTXlpBGQ1DavO/AxVUu
-	Rz6aOTcgDR7YSspOPDoWNpqWL2UZ5NjsO+e1+ASdVrDhKOGvEtsKonL9PxDPdAMf
-	zVYR8LUwqCOTl0MXQGw3Mky9glOrqiIRL32S1uQ1zZh1EP5Vw0oUr96mrYU+4hbo
-	hyeNn8aO218zHDT1AFLfYVRwPdmOUY1K8Xg+rBDCD5gmibLrqoPMm5nza4ZQM6tE
-	Ky0MFAvPuzHlebpExdtdOStMMNarHdwKvYEjf4xjYsmqWco/mT7w7E4pYrsdSNZa
-	GTwH5w==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3trv1rgy-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:17:05 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4eced2a52ceso2447631cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:17:05 -0700 (PDT)
+	s=arc-20240116; t=1761815945; c=relaxed/simple;
+	bh=zqYIIl4nQJ86jOsDALK6PFe87lmlujk5rxiqWGuMMag=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L1e8+Lm3+N5gsB0ebk3/rQ7DIkFdyXwqUFiEIoQRgLOvy05KOpr9NgP5QFBULD4Hrr87ESO+Q0r8eH5dVSRLKi0cDkwOrloCqUjXd/GMEAaX7ZwQ2ady+oKvU2i/gc32Cos5atDZkgGm1C/ZXs69fCDslwscyYplv/v1VBtBJaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aSFRlqer; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429b895458cso268461f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761815825; x=1762420625; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wjg1/j1eaIn0ChUOMAcpTE5peaMAgfC7A+tzK3TiVOA=;
-        b=ZdvJOZR8glrYYaf8sb6c5+9FnSEEfp6lfH8x1LXmktmaDlYS84Ac1NLHs6pa0kXNuH
-         5O4c7nM2FRFRjHtYW4g30lLPs7ykmp0q5qyE9urAZDvQHvXUYw0GAxr8QPypePrD+oSN
-         CkLrFUJT7B/mZDO8K/kuw4pN+09kUz3nMD62J8MUJe/rwWejv20KOOIQfqgvOXwfC5xC
-         Xtk1tB3GXdNmkieosNWwk0KeG3NDr8tlv4P5/LQXfJBxueXVvEhqOjpLPTOsvqffr0oA
-         7+zNaBu4DIKurULlO8XGUaWisbJI3vIyoJYGhZn++RlsAoOPwFrGot1ySqI/0FTCOokh
-         p1Tg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761815941; x=1762420741; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YSwv5JuXuXyqhsYe8FeccLuDilzKVXkpn0YsKK5l/YY=;
+        b=aSFRlqerOD9E7rZer01+JEOb3p+jKWhYY/c1kHmCtBZ+5PAxq1xuq68mHQl9L2LxFV
+         5pPuYQxcr9bNH3jd+RRMf6OsehnyzkzSsHLcvB0zQIvf456QzJXn0hrnNhZEx4zAm0o2
+         Z+eiTWkGd6dZ8BDNqMnadxhW7850ZIRXsALwB3WjdPtdmCZ0qLaX5Dkkrxkdh+1XTq4J
+         +il4ip5cmbJNmr2S9hJZHmP4RZ3pzxLUFnLm44ewe0QmX8ua73N9Kn9qCv24c7PNtwoL
+         IsubryFutiF1UCqjOl8oLdpFKgGrBdCNOEiqtVELqrlqBdyWsWuM5R3VY0JFdFI5b5m5
+         d1tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761815825; x=1762420625;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wjg1/j1eaIn0ChUOMAcpTE5peaMAgfC7A+tzK3TiVOA=;
-        b=P2rJ7nHJxRqLEdFEkodcMufqmsFYmfiQPG+4ErM+AOKEodUVTg7g4s2ywv3cC3xteI
-         VG1MP47mogKiQ6YB0qM8N/87iBiXUUFH86Wg+k2h3EmzcKsWAv2wAr8Ipq4fVyJ4Aoli
-         vUnlwikzjIOOTqcNUfUUgQYzy2ZWTNyyThieVeaTG26xCjGyEJRp2ED/g7yfd3mGDFlz
-         UQ/4GhCApRQ53iqxPjR4Ey+7wbQ3625w/5xK1eXNv5+S5WCEIZTFi6dC0d54sSw/a4cY
-         flG1A5Bj+u1cgpazRCjquGT0lIqzfLLtynrOn+/txlg7Bmfn5nTB20bWIHJlZDz8EDQh
-         OWAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsI3Dbzb4NAAPnZxV8ubCxYOgL2sVw0tP1f10js6IW1ql/z7HE1wCRELjRU2HXQaXsdNDyXpqQXeMfgOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnlWeP1oSua+sGZV846BMcWIH6umuf0SD0K2MryTXXvt1SIkLx
-	UbJq06G7lGwsgRzXAB58eWWGFFK4NPyF11B6fJJuh1T687dixavmntO19Z0QGNEKgF93jdz9MX2
-	r4qMFau5xqE+gS/SIzJgElkcwwg1k5mgl+uGl+qCiQg1xCuovrozTg1YmIlrIFTajkBA=
-X-Gm-Gg: ASbGncuWrk/JXrr4pVuDfpET3ifRTKEMcmeRm5GPjxNLzl+ltw+ocy8zygxJqWYq1er
-	UclV722vsuTs/97OQ1xNRvAL4ChgV4/HQ6D+h4CS/MJaMYoghbo5Vqtx60438Yh/OT/Bjj/Cxdb
-	NjYyVAhG07kvtknJyko/WWxCgmg76vOq7/menWwZ3EpZ+zamnTsyR0+xXP+ZHdNUDw95dbMD25C
-	He6dtEUtx0zL/K9nEi1nyDyWPJPq4MwaOOkU3JOO/XMoZ1kIlJKDwYJsUEWv4xfaePcXuWC19gf
-	sZNm5O3Z8iZ6WDQ0QjmIuzq+ZiENIdwp93mDAtUcEXyXAa5KBs1Kfsw7phNvPcAKWpQSAMd+gVN
-	qRNPDYuIrn6CfUjbKPMHbMoUMaIsuk9xTwi1RqsA/fBNcIxv8gZAiQ/1S
-X-Received: by 2002:a05:622a:1911:b0:4ec:9b98:7dca with SMTP id d75a77b69052e-4ed15c3228cmr53520021cf.12.1761815824886;
-        Thu, 30 Oct 2025 02:17:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBY5bJcBdjoLKiu4VhBE0Nq2T68hoCiUIh6ldHo/x4Js0PebzZ+30OGsg7Lfh1G10OjaHw5Q==
-X-Received: by 2002:a05:622a:1911:b0:4ec:9b98:7dca with SMTP id d75a77b69052e-4ed15c3228cmr53519851cf.12.1761815824355;
-        Thu, 30 Oct 2025 02:17:04 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8ceeaffasm1722207166b.45.2025.10.30.02.17.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 02:17:03 -0700 (PDT)
-Message-ID: <8a725785-2eec-4acf-bcc1-427c0e88726a@oss.qualcomm.com>
-Date: Thu, 30 Oct 2025 10:17:01 +0100
+        d=1e100.net; s=20230601; t=1761815941; x=1762420741;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YSwv5JuXuXyqhsYe8FeccLuDilzKVXkpn0YsKK5l/YY=;
+        b=UL+gVRAatw2J9GP6sIbxQ5raNrK+aLl/zcienQpde8TTEeKb9Jb0g/w5WVgIhArgw2
+         6iuke6YXETdKRMoegAtvyl/mzQdYC/hKcif0pUNK1l5GPquC1iwPyRdyDhym8i3AUgD0
+         IMwIHzERzgxuw6BliPhfAAS1Mev6sZqGOx9QHpS25MR5AEIi9PtljJgbFpr7pwZBpmdp
+         E6255EeYwaCukEGmBBtjoDxt9OJYbMMGyChzv11O/HznJN8vMWUcAYX2wfOsUFOhNkCj
+         +YxA37cc8uIG34ihNvj1AnwEuczklBqlQ3/pN014AJ672MwonkJBT77lksiP9zMvDdEs
+         5fPw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Hg1VNFpzEVkSQCVy6LkMaTb5iABQes2bMj8aplwp2hHqlg6FkCaLPr2R1E2qrmL6l9pArdO1aM/5STs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjNDP7ma9FYaaNk1pcIYtQ3u29nbZTyOuvb3Fh7+084N8xhKov
+	fKCUPm9WnW+ObG0V0o9BsL36JjcCIEvACI2PbrDTZPLIbWaRWxxrTK9tZn5q4fMBCh8=
+X-Gm-Gg: ASbGncvqjtYyItkH6PafmCJDVSQrNslM83xE736poXp9+Q3i2HMvwqpP/01ycqOsSzr
+	CDhadc4zE0VyL538ANzFGNQfTQ5QCHrvBZehHQECRdzy3vOfSoUvWLr3G4L3DFqf3O7ddtwztAU
+	z9H6GnQqleP5OtEd/CfHafnEYNmGRnaPcYr7Hqp3WfR+qh92GYN4G/HUwBDLhhl9Dd0y1tdVDka
+	eiE12SrDdUfSOvV40wQTM1H219vjjzCLqH01XuWW8xtb9klVFGOHIVm1za5Q8GJV8NdOJ6ryOjg
+	j4j8aTSbpZVMkfaimwF1RPaKju2H47tQpUa9smzEFkaL5iNeeeRfxIM81w2ZNqFUrSx9oANXfR6
+	rvXZ9mHphJODLOf0YcLyLyFEyBpnrGxKXvJ+a41pvjWPmES9YFaZfDYGJ3+HKSpVS+4a0GZkjRQ
+	==
+X-Google-Smtp-Source: AGHT+IFBJraJgSepwNLraPb2/w3Ksa7ALKvRzY+k0hU5XwnAcd25WvkxjzsX4QfROikuqsVWVU8mTg==
+X-Received: by 2002:a5d:5d06:0:b0:428:4354:aa36 with SMTP id ffacd0b85a97d-429aefcd05fmr5037872f8f.58.1761815941338;
+        Thu, 30 Oct 2025 02:19:01 -0700 (PDT)
+Received: from localhost ([2001:4090:a245:8496:49da:2c07:5e9a:7fb9])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952de971sm30459906f8f.39.2025.10.30.02.19.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 02:19:00 -0700 (PDT)
+From: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
+Subject: [PATCH v4 0/6] arm64: dts: ti: k3-am62: Add wakeup-sources for low
+ power modes
+Date: Thu, 30 Oct 2025 10:17:22 +0100
+Message-Id: <20251030-topic-am62-dt-partialio-v6-15-v4-0-6b520dfa8591@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: qcom: gcc-qcs615: Update the SDCC clock to use
- shared_floor_ops
-To: Taniya Das <quic_tdas@quicinc.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@linaro.org>
-References: <20251029-sdcc_rcg2_shared_ops-v3-1-ecf47d9601d1@oss.qualcomm.com>
- <c361ea17-7480-4a10-b446-5072e8edd76d@oss.qualcomm.com>
- <557ff048-7e5d-409e-bf21-98328a834bc8@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <557ff048-7e5d-409e-bf21-98328a834bc8@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Ip5Od1rimySd6c8J3E5T8ybtTDw-I6W5
-X-Authority-Analysis: v=2.4 cv=D+ZK6/Rj c=1 sm=1 tr=0 ts=69032d12 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=jRDqj1xAgmH_Y79Tyd0A:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: Ip5Od1rimySd6c8J3E5T8ybtTDw-I6W5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA3NSBTYWx0ZWRfX1wMGZ6F2y5ht
- C6nckfBsGmlfzUQTpsurtyIrqUCaft95EHefNr2W/wJRj+lnDyzIMZato9PI0DeY7rIklgXCMMO
- N5hL2qjElhoUSoyqoYswOtZPK4HI6FNfbjITqq35uAnPD6enSN8lxYrbAc96IukUdKbKWWwCldd
- KcMcQsIeHQsPRuwlwTK+8fhuuflghnRz8THrWcBqEB/AmPSkvVMwrJlIcvMakk4CZ9ZB49C2N7M
- puKjK6VD6eQ+k7wVg4hfcjvhbl+0Mii96OkE8pmFv5MOtqq5RkVJQZYhfKtsOzV2pejTgxpHWCu
- nzzpwFGa2LelQ/b4hiOwHuiuKb6zkPAgJJkfSqPFq6keVUenlgFbJvmnlh3nun5kfMPBIA+8TG/
- YlZNP51hnzrFZ65fu1JOOQZ611ja9A==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 clxscore=1015 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510300075
+X-B4-Tracking: v=1; b=H4sIACItA2kC/4XOTWrDMBAF4KsYrTtFGvmnyar3KFmMpXEzEFuur
+ JqE4LtHsaGFUvDyScz33l1NHIUndSzuKvIsk4Qhh/KlUO5MwyeD+JwVaqx0aSpIYRQH1NcIPsF
+ IMQldJMBcQ/612Hhvus40nlQ2xsidXFf/47TlyF/fuSZtj6qlicGFvpd0LAa+JnhWGY0H9Tw4y
+ 5RCvK37ZrNebFPQ7EyZDWioHXuriTrv2/eWbhdpI7/muhWf8Rd8M7gHYgaxshXauiRN7h/Q/oB
+ G692FNoONPlQdY23Z8R9wWZYH+kraK6ABAAA=
+X-Change-ID: 20250415-topic-am62-dt-partialio-v6-15-327dd1ff17da
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Vishal Mahaveer <vishalm@ti.com>, 
+ Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+ Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, 
+ Akashdeep Kaur <a-kaur@ti.com>, 
+ "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4652; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=zqYIIl4nQJ86jOsDALK6PFe87lmlujk5rxiqWGuMMag=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhkxmXafTwYycM18bb1f8P+Ve37Y/899pCUuKf1g2/eeb3
+ oMFgS9jO0pZGMS4GGTFFFk6E0PT/svvPJa8aNlmmDmsTCBDGLg4BWAiC2QZ/kprWF1c+eC2VNbH
+ o8+r3+2W91NcH98o/OJ2jtPnKeWrPL8zMuywmx8WtfXiV3c2i6P9/sE71jtJuBvE/Plv5iz2PqQ
+ 2jw0A
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-On 10/29/25 11:31 AM, Taniya Das wrote:
-> 
-> 
-> On 10/29/2025 3:17 PM, Konrad Dybcio wrote:
->> I noticed none of SM8[1234567]50 / hamoa / glymur uses _shared_ here.. 
->>
->> I see that e.g. SM8250's downstream sets it though - should some of
->> these be fixed up too?
-> 
-> I wanted to fix them as well, just trying to check the downstream
-> history of these clocks and then update them.
+Hi,
 
-Nice, thanks 
+This series adds devicetree changes needed for Partial-IO support on TI
+am62, am62a, and am62p SoCs. It defines system states for various low
+power modes and configures the wakeup-sources for devices in the CANUART
+group. Depending on the SoC and board details, some low power modes may
+not be available, so the wakeup-sources are described in the board
+files. The series also adds the necessary pinctrl settings required for
+proper wakeup functionality.
 
-Konrad
+Partial-IO Overview
+------------------
+Partial-IO is a low power system state in which nearly everything is
+turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1,
+wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the
+system on pin activity. Note that this does not resume the system as the
+DDR is off as well. So this state can be considered a power-off state
+with wakeup capabilities.
+
+A documentation can also be found in section 6.2.4 in the TRM:
+  https://www.ti.com/lit/pdf/spruiv7
+
+Implementation Details
+----------------------
+The complete Partial-IO feature requires three coordinated series, each
+handling a different aspect of the implementation:
+
+1. [MERGED] m_can driver series: Implements device-specific wakeup
+   functionality for m_can devices, allowing them to be set as wakeup
+   sources. This is available in linux-next now.
+    https://lore.kernel.org/r/20251001-topic-mcan-wakeup-source-v6-12-v10-0-4ab508ac5d1e@baylibre.com
+
+2. This series (devicetree): Defines system states and wakeup sources in
+   the devicetree for am62, am62a and am62p.
+
+3. TI-SCI firmware series: Implements the firmware interface to enter
+   Partial-IO mode when appropriate wakeup sources are enabled.
+    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/tisci-partialio/v6.18?ref_type=heads
+
+Testing
+-------
+A test branch is available here that includes all patches required to
+test Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-partialio/v6.18?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+I tested these patches on am62-lp-sk.
+
+Best,
+Markus
+
+Previous versions
+-----------------
+ - Link to v3: https://lore.kernel.org/r/20251001-topic-am62-dt-partialio-v6-15-v3-0-7095fe263ece@baylibre.com
+ - Link to v2: https://lore.kernel.org/r/20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com
+ - Link to v1: https://lore.kernel.org/r/20250421-topic-am62-dt-partialio-v6-15-v1-0-6ced30aafddb@baylibre.com
+ - As part of the series "firmware: ti_sci: Partial-IO support"
+   https://lore.kernel.org/r/20250306-topic-am62-partialio-v6-12-b4-v5-0-f9323d3744a2@baylibre.com
+
+Changes in v4:
+ - Rebase to next-20251029
+
+Changes in v3:
+ - Drop patch to add WKUP_EN and rebase to linux-next to base on the
+   patch that accepted which adds PIN_WKUP_EN instead
+   https://lore.kernel.org/all/20250909044108.2541534-1-a-kaur@ti.com/
+ - Fix small typos in the commit messages
+ - Use AM62AX_MCU_IOPAD for am62a and AM62PX_MCU_IOPAD for am62p
+
+Changes in v2:
+ - Combine k3-am62a7-sk.dts devicetree nodes with existing ones
+ - Combine k3-am62p5-sk.dts devicetree nodes with existing ones
+ - Update the idle-state-name properties to the new names from the
+   dt-schema
+ - Rebase to 6.17-rc1
+
+Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
+---
+Markus Schneider-Pargmann (TI.com) (6):
+      arm64: dts: ti: k3-am62: Define possible system states
+      arm64: dts: ti: k3-am62a: Define possible system states
+      arm64: dts: ti: k3-am62p: Define possible system states
+      arm64: dts: ti: k3-am62-lp-sk: Set wakeup-source system-states
+      arm64: dts: ti: k3-am62a7-sk: Set wakeup-source system-states
+      arm64: dts: ti: k3-am62p5-sk: Set wakeup-source system-states
+
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 60 +++++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62.dtsi      | 22 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts  | 71 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi     | 27 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts  | 71 ++++++++++++++++++++++++++++++++
+ 6 files changed, 278 insertions(+)
+---
+base-commit: c9a389ffad27e7847c69f4d2b67ba56b77190209
+change-id: 20250415-topic-am62-dt-partialio-v6-15-327dd1ff17da
+
+Best regards,
+-- 
+Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
 
 
