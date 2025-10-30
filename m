@@ -1,175 +1,138 @@
-Return-Path: <linux-kernel+bounces-879146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D21CC22610
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:09:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334DAC2261F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D173B84AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AA31A274EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E613F3396F0;
-	Thu, 30 Oct 2025 21:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD971335564;
+	Thu, 30 Oct 2025 21:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OsmlvFso"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zh4CdJL9"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C999C32E13F;
-	Thu, 30 Oct 2025 21:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68D234D394
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761858452; cv=none; b=Xx+Jw3x9pnccBmSseworYwmd0kJWcQ09fDJBxmxutHjlrs/Hk8vEYc5jDHIEq5OPw8hWnMXPqfFo6qxPxRsaov0Rqd8uTz56lVFcLPmqDGd+nEmSHlXU19wvfT28CAlmj8GPn41ikqrfBrV66FRW4PxcYppsBcid8CQz5MRd4uY=
+	t=1761858804; cv=none; b=o5VXmZ4WdTaE0Sl9v8EUsjrmjVvTt7ixGJNZjJp9YC4pvwT3YBivjuB+pmks672dHyYt2VVLxLq8zTV186wOZj8iHjFIqyFBBpwprl/5vpD502p2wQTs8U6mc36VmMXSZworyhGUE2glI02ZBrh9nprtgupBmX8EXW3zusrFAQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761858452; c=relaxed/simple;
-	bh=c0lVYLey1J54j8+LzkyiF7aV7X/OiaCcAORzUDvclqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xk2LQOigiBDCgVB6bfiHwUP2h1dh4WfXOS159/3IuvawHtiRb+Njh4ti3yDriwRSQHio36XhVIpgQnIXOS//Ppwh6K9WBkbuSLFjiTplLa6kfb8ZNL/ezSZEmszBYEQQmqzse6z4fQLWErUXwFg0VMZ1Gb4X1DwvqXFa3JjsCNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OsmlvFso; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UKV2Pt009976;
-	Thu, 30 Oct 2025 21:07:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=warw8
-	LcEpdVD1yZ6NqTjeOLsG3Gxja9LpBG0FJuLtoo=; b=OsmlvFso9HKrTTYjL4h3T
-	QLdXiPTFmwLXnDkqVG+zcoYlMutTLLwJ83kHZy6zFjUtGzb5+6NxTYBJPqEXHboZ
-	Vyb0vAS2bU1vQ67N6vaxB45zumW/DX6SaTsuozTDhWlxShnmK5ezgAPpiouUYNpH
-	ctpXT3HYmzDLaAmoQTj6F65hiu3jCmNnpccmkmjqkzI69X4xp4f8O4K8L8AsNdVT
-	2/JSwHUlbMEv8yYQIgNAg61WUEUHgJFEfwxviI7ihOmL0gV2Pp8F9TH0cD9yCs4B
-	kX6/iz1H7sCDI4J0sLrcu9clAlvNIWye8fhSqpVE7PY8JXXp+Tr4iP4cuc9nNqcU
-	Q==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a4d6q0c4h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 21:07:08 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59UJpW0C033995;
-	Thu, 30 Oct 2025 21:07:07 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a34edwy38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 21:07:07 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59UL70pU007669;
-	Thu, 30 Oct 2025 21:07:06 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a34edwxup-3;
-	Thu, 30 Oct 2025 21:07:06 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: bpf@vger.kernel.org
-Cc: alan.maguire@oracle.com,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests/bpf: Add test for bpftool map ID printing
-Date: Thu, 30 Oct 2025 14:06:53 -0700
-Message-ID: <20251030210655.3938262-3-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251030210655.3938262-1-harshit.m.mogalapalli@oracle.com>
-References: <20251030210655.3938262-1-harshit.m.mogalapalli@oracle.com>
+	s=arc-20240116; t=1761858804; c=relaxed/simple;
+	bh=Ds10LqyCnxdrh0ZjTOtUC48GJJV0wJwcpwKLPS3durE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IrDbl+CA+MP8mmuQKjRL8bvIsWvzauyd2LNt7X8fa/I/yI0qxPbUMPSH7ExGVqLgI5CMk1IGT5Gw4UpoOGRQhy861HNxSAPSTxPL+clFP/kofaSsI0r+v9s0PDKccHN5zQbaXutlMBLxZ+S7Wa7+AYEl5Isg1iIbHdrb4EmXTxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zh4CdJL9; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47719ad0c7dso14227645e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761858801; x=1762463601; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mTFjyfM924ecEs5Bh5eIoT2AnXmgRLbADTYF0WurRYE=;
+        b=Zh4CdJL9Ye4tgOk2PdxNL4xixD0FkiLDlyZWIud5Hia8Zs2K6t2cuCJrS6pPLz1NPt
+         6i2LYEcnuOFXWX7xG2PgAhB9WUCChNRAK0Pq44uF+wXfWyFj2DLG6m+SWwOllx1pXDeZ
+         hb61cTMaqZffAFwcQjZPG4GEhC/NAx+yyKDlgmvCZndxsJ41LsBp+JPuHO6/6S0G8GUR
+         d0FPpP2CKwk7L8m9kEoq9n+oF6IIlcisCYDMbPaCxzehDfjmm9ijl7kOgVUekYjpZUTd
+         JZiVs6mwnGbr7MOQru1cX5FpfOIHNxo0FQjh9HOma1Oomvc8kSs7qR6/zSZpxtRxpwEM
+         FopQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761858801; x=1762463601;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mTFjyfM924ecEs5Bh5eIoT2AnXmgRLbADTYF0WurRYE=;
+        b=Co1aM1/lul9P+Tj+8FgjDD+37KER5oF7ADCC9DEUkag+V3bxBKIiy+XutzRcZdDKKZ
+         w2KXmZpammq02hZZND3nntP8skirueO7aVFxZa6txdiUYE8ShHR5zuDewvsHx3LedtbD
+         viLM/vjDIVMj1EEk0cljTnYstfiQikzUaLIG7tfTb91EUWXSFYnDRgq8khyeQDY2aT4k
+         f/P5D6zhrVxX6Z9Ac+9p/uSZVJ8DoRsA+vDomh9puJmERJLcm6OXpo3dxs8VqDJTTz5H
+         RePge4Frf3O6pv1m1WNvS0pKheThciokmgfqp/Sa+YhjHi/jU2Tjty/AmYU2cNgOKjf7
+         vn+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Dvd1kopAQuUTAUww7nQD4wcDvDwdQu5cFHmy1sUiU+Pj+Db3PRrHooe9jxGCLhFxWb1FXoX5Q6jZZyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv3M9+MD/itPX+G+pGYwxTwuSRMYNbG810RyhGh7PgLTOMOMmK
+	jmbgCtK2tozD8l9uq2JzfP8VIaaIaG2Q1drKmgGehvrlpzFGU1iEgMx1
+X-Gm-Gg: ASbGnctrzZZ0bhBGgiwXbqhkmTngnxCVyRjEL5ysFALdHTgBzvopUugP2Ss1m9LTs3C
+	ev0j6tsy4CaqdXtANyIFCEmSMoDyBesLUYV71h1NDPN2k0cXHt7RMrpxP4TmA7KRemAlaNj6IO8
+	T1nz5IXUUaBOXJjPe9ADXSsqwFH7G1FzqIkPQK2R+m4a5BbMHKmthjAXjOMSLMmUrVLAD/33Bak
+	g4Kp96eeyrZMduC/qAgV/8+R50jZ690C+9gynCcd5UDR2ToazuxX5aDKcG2Yx0m40y/Li8FZuxT
+	eAzFgfN1IhtpZvWPtwstK7UTlnt96QHPNlhTeKtqqJxWERPXzZMjg4DWUvqkSJ61MXbMED4k79a
+	35NpDGZfN0ugpH6g8qp75TSqs27hTztz0bR503VYLtHb42ZXSg/xx1PlAlVAnhxV9G6yUenzpPm
+	H6Z9Ad9eAuFv8jfSeeIpfPnv1yX2JHhMknAjN9WeJS1zYAcW23Q8+xKW3j/b2aIno=
+X-Google-Smtp-Source: AGHT+IGHccmEm3OTVvfv1cl8GaVw3qg7Fan/QOWhxWwvh6yuV+lD+Cr5FA7Q1nAV3Zqiw6cVkBYCFw==
+X-Received: by 2002:a05:600c:630e:b0:471:11a3:a6a9 with SMTP id 5b1f17b1804b1-477308acfe4mr10073295e9.37.1761858800991;
+        Thu, 30 Oct 2025 14:13:20 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d5773sm36299466f8f.27.2025.10.30.14.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 14:13:20 -0700 (PDT)
+Date: Thu, 30 Oct 2025 21:13:18 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ "the arch/x86 maintainers" <x86@kernel.org>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Jonathan Corbet
+ <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@kernel.org>, "Peter Zijlstra
+ (Intel)" <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, "Kirill
+ A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse
+ <dwmw@amazon.co.uk>, Sean Christopherson <seanjc@google.com>, Rick P
+ Edgecombe <rick.p.edgecombe@intel.com>, "Vegard Nossum"
+ <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+ Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>, Tony Luck
+ <tony.luck@intel.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, <linux-doc@vger.kernel.org>, "Linux
+ Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH v11 9/9] x86/cpu: Enable LASS by default during CPU
+ initialization
+Message-ID: <20251030211318.74d90c3f@pumpkin>
+In-Reply-To: <d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com>
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+	<20251029210310.1155449-10-sohil.mehta@intel.com>
+	<789ADBB5-F7AC-4B08-B343-F23260FB8FBC@zytor.com>
+	<13681100-ddc3-4ef0-bd13-744282324ff1@app.fastmail.com>
+	<d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_07,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 malwarescore=0
- mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2510300178
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDE1MiBTYWx0ZWRfXwCnPsVT77xOJ
- CkNhLAHkJT96HMmEmxA+vfLV4++CZl2wVBHtQHr04SfPLbdglCvtaevUrfnrPZSUmy+GwS6iTwJ
- ajOikvNYQlNG3f3/ztROSajbEw6tMkhtSf6siyVmnXdtYpodkrwEeGNQ2o0oLgx7pIoIArtS8a3
- cZlzmIndiUXxXw8pzITjlJdhSADlcErqVuhr5p+D1OlOh+PdUKvK3GqhGm3KWugV3P+HUhKI03N
- /3ia4BkvXdJP2zmCpyp+hJkZ4K8y/121ewjD3cq37syYnecaWZYxxt31+JbfoQglSOUFBJ2yzqB
- CTC1Cx0K3ayf65gSv7g5wSlifeIC6SZTZmgU6xXsDV6e/ud6DiwC8M4JSL5tSyB2cYnTvxSkBBg
- HjUiGzTNCLOeqEF2vnA9ItLXW9jUWfE8gVeRB4yfSv6w8AQAIY8=
-X-Proofpoint-GUID: ZteDhwy0O0AjBuXcp3zBcf_EpExXnfoI
-X-Authority-Analysis: v=2.4 cv=bLob4f+Z c=1 sm=1 tr=0 ts=6903d37c b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=zZ8rhmji2bsAaRzR-ewA:9 cc=ntf awl=host:13657
-X-Proofpoint-ORIG-GUID: ZteDhwy0O0AjBuXcp3zBcf_EpExXnfoI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Add selftest to check if Map ID is printed on successful creation in
-both plain text and json formats.
+On Thu, 30 Oct 2025 09:44:02 -0700
+Sohil Mehta <sohil.mehta@intel.com> wrote:
 
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
- .../testing/selftests/bpf/test_bpftool_map.sh | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> On 10/30/2025 8:45 AM, Andy Lutomirski wrote:
+> > On Thu, Oct 30, 2025, at 1:40 AM, H. Peter Anvin wrote: =20
+> >> Legacy vsyscalls have been obsolete for how long now? =20
+> >=20
+> > A looooong time.
+> >=20
+> > I would suggest defaulting LASS to on and *maybe* decoding just enough =
+to log, once per boot, that a legacy vsyscall may have been attempted. It=
+=E2=80=99s too bad that #GP doesn=E2=80=99t report the faulting address.
+> >  =20
+>=20
+> Unfortunately, CONFIG_X86_VSYSCALL_EMULATION defaults to y. Also, the
+> default Vsyscall mode is XONLY. So even if vsyscalls are deprecated,
+> there is a non-zero possibility someone would complain about it.
 
-diff --git a/tools/testing/selftests/bpf/test_bpftool_map.sh b/tools/testing/selftests/bpf/test_bpftool_map.sh
-index 515b1df0501e..013a64e96cbf 100755
---- a/tools/testing/selftests/bpf/test_bpftool_map.sh
-+++ b/tools/testing/selftests/bpf/test_bpftool_map.sh
-@@ -361,6 +361,40 @@ test_map_access_with_btf_list() {
- 	fi
- }
- 
-+# Function to test map ID printing
-+# Parameters:
-+#   $1: bpftool path
-+#   $2: BPF_DIR
-+test_map_id_printing() {
-+	local bpftool_path="$1"
-+	local bpf_dir="$2"
-+	local test_map_name="test_map_id"
-+	local test_map_path="$bpf_dir/$test_map_name"
-+
-+	local output
-+	output=$("$bpftool_path" map create "$test_map_path" type hash key 4 \
-+		value 8 entries 128 name "$test_map_name")
-+	if echo "$output" | grep -q "Map successfully created with ID:"; then
-+		echo "PASS: Map ID printed in plain text output."
-+	else
-+		echo "FAIL: Map ID not printed in plain text output."
-+		exit 1
-+	fi
-+
-+	rm -f "$test_map_path"
-+
-+	output=$("$bpftool_path" map create "$test_map_path" type hash key 4 \
-+		value 8 entries 128 name "$test_map_name" --json)
-+	if echo "$output" | jq -e 'has("id")' >/dev/null 2>&1; then
-+		echo "PASS: Map ID printed in JSON output."
-+	else
-+		echo "FAIL: Map ID not printed in JSON output."
-+		exit 1
-+	fi
-+
-+	rm -f "$test_map_path"
-+}
-+
- set -eu
- 
- trap cleanup_skip EXIT
-@@ -395,4 +429,6 @@ test_map_creation_and_map_of_maps "$BPFTOOL_PATH" "$BPF_DIR"
- 
- test_map_access_with_btf_list "$BPFTOOL_PATH"
- 
-+test_map_id_printing "$BPFTOOL_PATH" "$BPF_DIR"
-+
- exit 0
--- 
-2.50.1
+Presumably a command line parameter could be used to disable LASS
+in order to enable vsyscall emulation?
 
+That might let LASS be enabled by default.
+
+	David
 
