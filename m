@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-878618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295E4C211B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:12:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C901C211B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CF11A624F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F3C4202B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E842C365D32;
-	Thu, 30 Oct 2025 16:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA857365D48;
+	Thu, 30 Oct 2025 16:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bgft3vQq"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FzI9ENtF"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E8A3655FB
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078E23655FE
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761840626; cv=none; b=ECqi5I6//g+tpk1SWTH+ygDZe0h9QGSyRI/ZAU29oLqhaDmk2qmIRb2RVOJX0vi3jdiZZigEHKyuxdQR8EwNV0DOom6ATIaFTp51a/h9v6RczqbOhgkQop9a9g+BzBnUxKSa3YQclkbDiFMZ6SKd/quxr6BEHT/kkQUgpvQsrfA=
+	t=1761840627; cv=none; b=QBgk/alxZC0lc+eAaQM0zsz7HU3dX0+5oHuJWCCJxyBxdPWXlRulBmWtzH9dlzFRDoefU/VB4RQC4jWBmQNfUtY50byntd5ta7T1nzq7f42mSn4xlieGpC+aedwr6CImSTcT1DFE+ti9G3f2JZfmGQrMoiTd42ghXk5U1VqE1RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761840626; c=relaxed/simple;
-	bh=2CRHRjYIG8N3UT6Uqg+4yPTH2iUR9Mqyj2TfzEyLThw=;
+	s=arc-20240116; t=1761840627; c=relaxed/simple;
+	bh=H4IwhcwbBrf3+paFzmD/85/Pn963V60WpXXajyPuM7c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ng4etJOXtAM8XM6heFoaZErMJwErrnbizmSx/JRnhrggU5gKUcsnYcQgee0aeHXUCRZ6Tn4l10/MOX3HP4w69P4ZKSI0ixV0S0/XvxZK53+0ZXDg4zw7T0sVZy/i16ffFgkzJLYw3ELID/h+aMrLcHoTG8Jn4FgJ/xNap/M6gw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bgft3vQq; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=ggFqfW5NIVSklJIGF8TzxbeiIPhCVUlGUnJu0ZIL6xEvdT15zekpeJvaiYJhD4fR6rQLlU0N20kgnAmgy0SVWuFh4YJ0iona2HMlBg7iRnv8fejJObTze0oYwvrie8jn/kg0zZak8drsmsllcGBfl84+OKcQlwa5enSO9hF29RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FzI9ENtF; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-421851bcb25so742771f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:23 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710022571cso14574985e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:10:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761840622; x=1762445422; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761840623; x=1762445423; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zTPZsf+rmUI4vnLNPtXQcosAXrq3VoTes6fLwzo6HcE=;
-        b=Bgft3vQqT/VssFbJHKY5bmj/kj6LG1fLkLBS3L/rITBl/Kjkq1EUP9Y++1T2m7jmCj
-         X/jzVUfB7qjYyZr1JznYHsm79Fo/qRxmfoYHZeGDjAwxmvPWdSHzJhijRd1ZfWLWpkGW
-         nX9NcHlD7ZerzV7kVnugEGKFmRrLoYjit8TPHnWZdlR3frzYZ83NHZC6F3puotyyzu1o
-         jxpcrAq8k+CuUrhMq0Hc5OGL7n2d/EDu/7YSAs6J4wu/Cyg2ll10zWcupa+Q3KFJeb8d
-         kOLJ1ihPBY9nqNLrAi+7O+wlXPLz2lmLeULYpFBfDY/Mc1mU62Q2OGFSbsImVUW25vYj
-         oq8g==
+        bh=2i47abyZfZz1bsH2DYwFEj9nyP4hs0s7U+jv9iT3E+I=;
+        b=FzI9ENtFFNX9cfyHHTU/In6xKrq2LD888CWrLTRsYqerRFYltIGEG/CfqEMlzzOB9g
+         0Z7RPha89b+ZLQo2O5qc0H38fuXOuRZG6ARJ2JzKFResnidZv9155guI3lv2eYn9SXVD
+         Ky76bBSOAlraLemvxFr/DadNi8a12d6R0liFhnRSp6dcq6zJ9op8RycvSUxLNZAjaOcI
+         rQ0aiQ1ONnE5exB2vbJ7e+YuyIkrwAM9GI8flynnCvRNeIxqSCOUKJNX4qhOxUO0yLw7
+         tyRsIrZAIIYeRS8TN06Krl1N+ZwXDgdBRwGLYL9OlAiCILW/oClZAXFRlchpe5EXBGjB
+         KtwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761840622; x=1762445422;
+        d=1e100.net; s=20230601; t=1761840623; x=1762445423;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zTPZsf+rmUI4vnLNPtXQcosAXrq3VoTes6fLwzo6HcE=;
-        b=cChQG87q5vXGj637LOE6zjKexBXqdDLIp6G0xwg6M1qhAKXTZ6doDhBd5dHFLDJLXi
-         N6V7wO5qbY1Ax31PKpMChZngW4flmhBW5Zi2XRQ7a3BOJUO5M4mfS80Pfv5EUGPCEwr4
-         ClSMkwU4aLffUWGcHdZcXOcCurUdl0WBsfG+/bIQR7yZtGROJ+CLz05VVZ4gvMU7FsWp
-         67XoG0RQwV6Q2SdA8kiDgxO23lP67C3HE+qlzAp4WLl8vILAJ5CwD8Oiyvg64Wo5PG7L
-         LKbmCXXbp/e06vAWASJKJpQoUFPoTbmJ9m2bHyj5lTDG+J7VL7yR3kpA7RGzeAxLorR3
-         dRTA==
-X-Gm-Message-State: AOJu0YxAQhIETdPJ0MuRG1SN0nmxtpYxqAdoufKGFRIpXmHFclQLLsfu
-	ONuJTtj+W65DEDVKtM0qj3uyzXiCT1M+XebBWlvUzkD1QCAjpydByQw3sMyzC+jH5nFW278HgjF
-	ec3c8
-X-Gm-Gg: ASbGncsEeXVCkPFE9Uhe3nYQQ1VgLxN3Qz8bendStxNzb159qjuWE7IViinChyV0CLY
-	GSnyg3NXsGZ9gSeWNoYkOMFKhU5BkkTaF7whPuRxx9lD9Z+TD09/+L69jw6XuNXCk/qJVfCt1j8
-	ro//gSbl+utXXujsZjKzGl3w5mX5f0VdJhcERCp3Y2sRS8VdUBJFPI3bOWSsf8NNEIoFvQ/d8YH
-	A0LbbDf7rIJbQmFt6tu2a+BfI+r4ObpEra+1UpKZol0xX8oEWXYMUbfuCymlXeKytlnwuthDdqR
-	xJXgr/H21uci41lVeJQOE5KI/J8VQmTfC3Kl28FByW7gu5CPWK1acFleFEugo1WP01t2y6kkHL+
-	G4cqM66uqiswOCVadtuHj1P6HEEwx1p122NE81sh0LZ2ACXf0hU3ITZf1KsKlUrqQrQYDXHAKi4
-	lUdqmQhSDv/r616BjwvEyKW4qR9g==
-X-Google-Smtp-Source: AGHT+IFyyXNW5PdLb1EAji6FZwxk9z7oFuqaX4IQuCCEMfZdy25gAvQgNKkIYiereVgd1Zd4VZyqew==
-X-Received: by 2002:a5d:5847:0:b0:427:7cd:7b1d with SMTP id ffacd0b85a97d-429bd6a4d9fmr100959f8f.40.1761840621896;
-        Thu, 30 Oct 2025 09:10:21 -0700 (PDT)
+        bh=2i47abyZfZz1bsH2DYwFEj9nyP4hs0s7U+jv9iT3E+I=;
+        b=bReQWR0ckGWZUg68dKJhjSiagJZwBOvs7BmKvIQltHqsrHF0OedFrJynLiv7g6qPhw
+         a+XGVQ3li4itCznGo0wOZ8ucBsCsUppEIxpPdOroIzzI3OpU6i2fCfAxFBzNdQhBPyj2
+         5p67R0ah6f7hjG8KC9ApOL8QiMEwCLxrPNdx3azPcSSKYQDKk5+Uikt2TIVUIBjg6US9
+         GzryXC0Rwq2OANQok8Zp7oEotikvOCehdkcb1uMt8VMt3GnLYxjx8rCbJKkBhOFTOyYj
+         rA9hW8kWpPnoQmuaISSgKDkW9BEcBBm1TnYovfvkTJ3+Kz3TfM8UnoDgNlj4c6hrPE16
+         BcHg==
+X-Gm-Message-State: AOJu0Yzz0e8FmJ7bIwtnxhuJDVeUqmOu4+jwY210svNtzhydvtglQ6iF
+	4j+EUB5TEtutGW965y7hgdmDzanaMI4DgZI8HOJlzDZ20pPQqvgnjWmYf4h/bf5oX59BFj/TGyA
+	fxWAu
+X-Gm-Gg: ASbGncu+N1C/3+fdZyIzpSxW/Sq4M/ZCWGHO6RnN7UUVQCiJPT1BiUJvanPrRQS8Owo
+	woR2upmHvGuMBex43hQYHbYOp/F+81Mi1ewYz3hwaD6MPpPOcBPSCQZprLSQfbK0XAbAQe/Kz1c
+	rT49y4bF7A2ySe9aQEO7jQl2jZhddzmb1fvrx14I3NaxZNLbKGkxiUUlMQfJ0dD7dzHO0jx8+yT
+	uEArOwaiCAUrKJtm7fEvpBZWXBbqLJgdw6idnFSGyXPkp2lmfVPTNeCTMcKbTlPECvI8WW74kOU
+	cvHk7/sHDo2GKP/Ckw9vwbxGI8Fe0mKP570wc0TjrRm0jzZ8Siv/ftfivMaWKKTjUXHUOTWH+Zy
+	KXWs86HbSD+R1CfzM7azcEmscNbn2hy6UcxNAhxXelW2hogdgjC3fW5OwS4THnj5rmtuzaz71nr
+	wE9GE0BVMuNaSPVeE=
+X-Google-Smtp-Source: AGHT+IGAga75c6sY1Q+McZyix+GUEVEkjmtz7d93ls2cdpw2dE67igG9rZbHtTGqPlGirMSJ37N0Bg==
+X-Received: by 2002:a05:600c:8b30:b0:471:15df:9fc7 with SMTP id 5b1f17b1804b1-4773086d57cmr2259475e9.26.1761840622930;
+        Thu, 30 Oct 2025 09:10:22 -0700 (PDT)
 Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a7csm33124857f8f.8.2025.10.30.09.10.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a7csm33124857f8f.8.2025.10.30.09.10.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 09:10:21 -0700 (PDT)
+        Thu, 30 Oct 2025 09:10:22 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	amd-gfx@lists.freedesktop.org,
@@ -87,9 +87,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH 1/4] drm/amdgpu: replace use of system_unbound_wq with system_dfl_wq
-Date: Thu, 30 Oct 2025 17:10:08 +0100
-Message-ID: <20251030161011.282924-2-marco.crivellari@suse.com>
+Subject: [PATCH 2/4] drm/amdgpu: replace use of system_wq with system_percpu_wq
+Date: Thu, 30 Oct 2025 17:10:09 +0100
+Message-ID: <20251030161011.282924-3-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251030161011.282924-1-marco.crivellari@suse.com>
 References: <20251030161011.282924-1-marco.crivellari@suse.com>
@@ -109,60 +109,39 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistency cannot be addressed without refactoring the API.
 
-system_unbound_wq should be the default workqueue so as not to enforce
-locality constraints for random work whenever it's not required.
+system_wq should be the per-cpu workqueue, yet in this name nothing makes
+that clear, so replace system_wq with system_percpu_wq.
 
-Adding system_dfl_wq to encourage its use when unbound work should be used.
-
-The old system_unbound_wq will be kept for a few release cycles.
+The old wq (system_wq) will be kept for a few release cycles.
 
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/gpu/drm/amd/amdgpu/aldebaran.c     | 2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/aldebaran.c b/drivers/gpu/drm/amd/amdgpu/aldebaran.c
-index 9569dc16dd3d..7957e6c4c416 100644
---- a/drivers/gpu/drm/amd/amdgpu/aldebaran.c
-+++ b/drivers/gpu/drm/amd/amdgpu/aldebaran.c
-@@ -175,7 +175,7 @@ aldebaran_mode2_perform_reset(struct amdgpu_reset_control *reset_ctl,
- 	list_for_each_entry(tmp_adev, reset_device_list, reset_list) {
- 		/* For XGMI run all resets in parallel to speed up the process */
- 		if (tmp_adev->gmc.xgmi.num_physical_nodes > 1) {
--			if (!queue_work(system_unbound_wq,
-+			if (!queue_work(system_dfl_wq,
- 					&tmp_adev->reset_cntl->reset_work))
- 				r = -EALREADY;
- 		} else
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 7a899fb4de29..8c4d79f6c14f 100644
+index 8c4d79f6c14f..2f8160702f9a 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -6033,7 +6033,7 @@ int amdgpu_do_asic_reset(struct list_head *device_list_handle,
- 		list_for_each_entry(tmp_adev, device_list_handle, reset_list) {
- 			/* For XGMI run all resets in parallel to speed up the process */
- 			if (tmp_adev->gmc.xgmi.num_physical_nodes > 1) {
--				if (!queue_work(system_unbound_wq,
-+				if (!queue_work(system_dfl_wq,
- 						&tmp_adev->xgmi_reset_work))
- 					r = -EALREADY;
- 			} else
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c
-index 28c4ad62f50e..9c4631608526 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c
-@@ -116,7 +116,7 @@ static int amdgpu_reset_xgmi_reset_on_init_perform_reset(
- 	/* Mode1 reset needs to be triggered on all devices together */
- 	list_for_each_entry(tmp_adev, reset_device_list, reset_list) {
- 		/* For XGMI run all resets in parallel to speed up the process */
--		if (!queue_work(system_unbound_wq, &tmp_adev->xgmi_reset_work))
-+		if (!queue_work(system_dfl_wq, &tmp_adev->xgmi_reset_work))
- 			r = -EALREADY;
- 		if (r) {
- 			dev_err(tmp_adev->dev,
+@@ -4798,7 +4798,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 		}
+ 		/* must succeed. */
+ 		amdgpu_ras_resume(adev);
+-		queue_delayed_work(system_wq, &adev->delayed_init_work,
++		queue_delayed_work(system_percpu_wq, &adev->delayed_init_work,
+ 				   msecs_to_jiffies(AMDGPU_RESUME_MS));
+ 	}
+ 
+@@ -5328,7 +5328,7 @@ int amdgpu_device_resume(struct drm_device *dev, bool notify_clients)
+ 	if (r)
+ 		goto exit;
+ 
+-	queue_delayed_work(system_wq, &adev->delayed_init_work,
++	queue_delayed_work(system_percpu_wq, &adev->delayed_init_work,
+ 			   msecs_to_jiffies(AMDGPU_RESUME_MS));
+ exit:
+ 	if (amdgpu_sriov_vf(adev)) {
 -- 
 2.51.0
 
