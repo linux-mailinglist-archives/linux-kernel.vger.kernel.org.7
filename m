@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-878128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5EAC1FD9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:37:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085CAC1FD99
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B338421E93
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41F7188A27B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11179334C15;
-	Thu, 30 Oct 2025 11:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE51C33A02B;
+	Thu, 30 Oct 2025 11:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="D0IKrB+Z"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+jggJLq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E17223D7E3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB7F33509D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761824177; cv=none; b=IBuCz7SoRSyM6yr8Melf8ysEaACCCvWkxbbMweoeB+1SDAdovbfQ977386Xi9ZUCU1xTOZS875Qha5zNV5ytlmukcEl7PKxKVh1bENEMLiW99WxTuh4KSwNCqdxjCQ4fh2D3akxGmBIqCVQcWqur6xCgBZjjh3vEiWEyLrXgze4=
+	t=1761824192; cv=none; b=VHZ3YjlKoYBFcuXG25ik+FBo1xfSHFRG2B7brrKGv2Ifozyfwn9lpz0DFCoqevEfLl5vkwLXuO/FRNocPTNJaDJwt/TPOcX7lET27zT4mFM4kvdWZaJr1bOtd9GqdwOqWiD2rH1yMeQPu/upRIVcxglP2ElhuLxAkXcByDK/mgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761824177; c=relaxed/simple;
-	bh=JU2RzdzNoNinIbpfBD3TA9Hnte4P5nV8fq1kuymzG2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OnLzA1P99Mcku0HdJqk1yed1uKtPDWzfQUDmnuGgWUwUqnvjJd8xZTxPJwYzvwEWgpMH8crYM+NdiX1crt8VPfJMwhNA4Zn99ytguINwRKVC5WlHghV7jPz9OGWuGKcW26SvMGBY6JJvI02jFfFf953U3rBFoZ0mxByRuNZnWlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=D0IKrB+Z; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b6d5f323fbcso20226366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761824174; x=1762428974; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bK+xN2oi25pfNhkbHeqP+Lhc4lHkzppS0DihgpAOqTw=;
-        b=D0IKrB+Z2g0nUremVjv2tCgCHRhGaluKK3qrHwJKIvyOUTPZBWMMIfbzals7I0hnjv
-         LQV54KEFJd0pXkUP+c5gt+Yw/3U9Xvheu9NagUUYRnqzK+3feaD1vJaTEteGRsPLBueB
-         cSSvdPya6Wu07fkayWFjQLwMQ93gEhGQhleRaYwhk6EDoM4Llj74Z+g1Kq4sqsHzvlve
-         uilSKIVaB1xL25RIownFD+P9bxXIfuSPpbNy/Ls9tEhMqVSpYMB8QCZ4I7/PdRImIkAq
-         Lu83m29xe5Lli7JweiqVhoGsbXOmA7YYbIAgVQZ1cL/FyPTNF3Q/yXq51OlA91BQ2xIC
-         Bm+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761824174; x=1762428974;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bK+xN2oi25pfNhkbHeqP+Lhc4lHkzppS0DihgpAOqTw=;
-        b=MoYAuxbheqSuhg2lkKkCoXoH4Jr539oiP9nBQi07EGgW3LDng8KOlYEG70SbW7S80s
-         QnLQsVBr6BWGPty1THQ2X0SAl6vE+x34prSt1QmnHJPbLKG5xsblGcb19jOtTSGQhzkC
-         Xyp0Hk6FMkjP0bouVbHYrE3HmouAhbFkECD3J+xcztmSpe0fRpeGkwMF62VwdPgozYTo
-         n0Ktso0hgv4c6FYlHkI18hITGUkn6fF0Pd/qL+VWcQ/AyQuRfmPf1amLkmcA3jnLH47j
-         JhGm+YPe+8+Nb6gKParnkcWKZkbCS9h7BtFvxLGD8as/VkDuiJpKTcfmOUYDcvgRh2uH
-         T3mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKbBad6h9j/yKvwP4CQlJejsUKl73BBLwoUDu6jfcY6La/wmH1iDNWWaHDBTKFncEcp2VVW1SZ786xC0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcLy+LCKB6UcKdhv186YJoAus9aJ5w7fTfQBWoRour4cWtYbe4
-	tRaHa6BtVkryLJV0eYIFHdCk3+YKUgoBPftCxXvIQoIOyl4gm1vNU3VOGOwYKYUh8NY=
-X-Gm-Gg: ASbGncve7j5rpVvYDll9bOcxkmYERmJOuPE4jsGVMWu5+oWXFrytkPPRz8TLU8ZTvZR
-	D/WnNpjtYchIY5oP92wBVkD5ep0a6W1TXxYO63D5GuY88UMS1XML542R/iYHUGCojG+vb5jeWvp
-	MxniiHOsDC2+yfNBhdO5edtQNy4zXdROc4QSXvZ2tridrzSFPcGilMmlCyyyOM9+tqjcwfqT/CP
-	uwUWC4ADKkk55VguZ4Y0ePJV2/6hHl4niB20MvTf/X6kJz2eNqsWO+wuNMdEUxaydBNoqvIOGyP
-	6QUb9Z6n1D5hgQOUwQsk+SzJEYyx8Kzo36i8nywRlO6UziDX3c0l+gnymjc0IEiVLGFbXZHisi+
-	/iEBH+lIsId/OE0N+ycUlvaF51XWjNKzsnVkRXsLY8i+neZ4i3WFN1gO5GSBjfn2G5hPTceoKC9
-	iGQ7zzWxiWRhnQ1KUb4kq5GuznKS6mM6mI2iFNc61FywV+7rfjJ+WFqnGebN8jtVg2NA==
-X-Google-Smtp-Source: AGHT+IFj9ZpM2DdqZcpwsXqHdAysTt/TBVGsjkwzkXEBmVWTbZUal3znf8YBaAwZI6eMSQW9iDxpEA==
-X-Received: by 2002:a05:6402:518c:b0:639:e56a:86e3 with SMTP id 4fb4d7f45d1cf-64043f48007mr2792028a12.0.1761824173886;
-        Thu, 30 Oct 2025 04:36:13 -0700 (PDT)
-Received: from mordecai (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7efd116asm14938765a12.33.2025.10.30.04.36.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 04:36:13 -0700 (PDT)
-Date: Thu, 30 Oct 2025 12:36:07 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
- <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Roman Gushchin
- <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] slab: switch away from the legacy param parser
-Message-ID: <20251030123607.714bbaa7@mordecai>
-In-Reply-To: <2236fdb6-4616-4b9f-82c9-eba3ce5d371f@suse.cz>
-References: <cover.1761324765.git.ptesarik@suse.com>
-	<2236fdb6-4616-4b9f-82c9-eba3ce5d371f@suse.cz>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1761824192; c=relaxed/simple;
+	bh=kGJsMqY6jwmXVuvCqeHnPicIh5I7M/4ABWD9iqi/WJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1EOUyaIFO53lMjcegCRkOH91h02KV+gNAUwjHIn23a4WWsRYHGYgGoJckfDrIsztiY8H1KkA2HoRcro6eHhoYoI8+EwXB4en2VZ/9X0b8otczw+pjow6QtPfO/e+XIPjxGlmolWNr7MV6LV7MxcUVtKURgLM5FdTDNqIuhTelg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+jggJLq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F59C4CEF1;
+	Thu, 30 Oct 2025 11:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761824191;
+	bh=kGJsMqY6jwmXVuvCqeHnPicIh5I7M/4ABWD9iqi/WJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i+jggJLqF96e1cKK1AaFp72YoJQbusuY9xn44ByUptCY9V6z0Q8DrWwLz/y9teK13
+	 3RkICPjFEq8X09t4DM7BEIl4RLY3PBwel35ptFESXmP0Q7DzOvstZm8H6day1t2BIH
+	 4tu/DElEUxtkdbhf5W08VQ8JWQjP5D3h1d9jZu0lwt4sTvJekY598O2p/tF2uGXm6a
+	 269hAss+OWJEjGred2DZ5J4B+S/2XDTLghUJsathJ0zf+aHVDN5q5dDj8R6OahFVLY
+	 +PBfppfqz1o9klNImeM+ISOMYnDsXLwEZQmlOqZ+M788bQJzAsYmLwUzN/HvXHzsdC
+	 1rwwMpZq/4Xtw==
+Date: Thu, 30 Oct 2025 11:36:27 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v1 0/4] regcache: Split out ->populate()
+Message-ID: <c33c5930-ad6e-4ff0-9a6f-4dfd15fcd352@sirena.org.uk>
+References: <20251029073131.3004660-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e1bQXAt395XhYLwE"
+Content-Disposition: inline
+In-Reply-To: <20251029073131.3004660-1-andriy.shevchenko@linux.intel.com>
+X-Cookie: Is there life before breakfast?
 
-On Mon, 27 Oct 2025 16:06:21 +0100
-Vlastimil Babka <vbabka@suse.cz> wrote:
 
-> On 10/24/25 19:06, Petr Tesarik wrote:
-> > The handling of legacy __setup() parameters has some confusing quirks.
-> > Instead of fixing them, convert the code to struct kerenel_param, which
-> > is a saner API.
-> > 
-> > Note that parameters defined with core_param() and __core_param_cb() are
-> > parsed early in start_kernel(). Do not confuse them with core_param_cb(),
-> > which are processed at a later stage.  
-> 
-> Thanks! Added to slab/for-next
+--e1bQXAt395XhYLwE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you! Appreciated.
+On Wed, Oct 29, 2025 at 08:28:57AM +0100, Andy Shevchenko wrote:
+> This is a refactoring series to decouple cache initialisation and population.
+> On its own it has no functional impact but will be used in the further
+> development. Besides that I found this split useful on its own (from the design
+> perspective). That's why I decided to send it out as is separately from a bigger
+> (and ongoing) work.
 
-Petr T
+This looks fine but needs a rebase onto the latest code.
+
+--e1bQXAt395XhYLwE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkDTboACgkQJNaLcl1U
+h9DQcAf/ZT5h318rjzlqarLcSaEPRM1H6WBn5/8EBFMgTaFW1d+YQ0zrg0xmlrLR
+1GXljn+uAkBigAxqmBkovvinhZm7zCjOK6B8hsObyENlHIOXaLOuXATXZnjnb3bH
+EZALFdCTx13sA7dtyozoFcVrDnApAYxB6dYQy1P3DrpZK1EyWPupehJNUm9WGyYQ
+eaPCn5ydKn7ruwIModBum5qoelft0iVdkqhFMJyjhNRIKOc0/X7N8Kca8VAaEMBa
+lmC90e60/i0M0uNElDyiNnZvf2BbDt1G13RMopjjbBGb51ru+kyYkxkpbemQCV3M
+zBUNzi3JEnWF2xMPu/ayn7KoERBAjw==
+=sS5X
+-----END PGP SIGNATURE-----
+
+--e1bQXAt395XhYLwE--
 
