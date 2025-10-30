@@ -1,267 +1,315 @@
-Return-Path: <linux-kernel+bounces-877805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CE0C1F12C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8488FC1F13E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBB174E9637
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:46:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 488E54E9F03
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8395E339B3C;
-	Thu, 30 Oct 2025 08:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0B2311957;
+	Thu, 30 Oct 2025 08:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEI8E2/0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="btc86mXT"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E662E26FA6F;
-	Thu, 30 Oct 2025 08:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761813973; cv=fail; b=IsjVaFIyW3l7PXtF0uWb+2ETjeV4wbhUEqLD4SciKp3vcXn5n80dxp6futVL9x0hHuqDsFsnsPrigT270qUjxz5OAfG+xJRJZpW0b/uED6P6T3XA7jRxap0erPTaRFQXVgunWnFmnlYWhYg/B4STw8hgdvTk4YlqBDVqitFJWiY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761813973; c=relaxed/simple;
-	bh=xSoGjt8veviIZzv9aZg61Y2aeSV27Aro/OEROaMuJYI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kQLRW+8M+js2FJaAMojMI3Xk3cqA/dsv/qP13FjZCuA/IzqEo+0hWKOVbE2vsH4ovHRPcm2iZX2OW8wRiARa68YOr0gxl2lSD0kTIPqYBG+yjcLZvX0ZQISQvapd9lJ6PhyqauESNnfVHw7AbD86/Y9kdlVU5IpVeqGk96NQ2cU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEI8E2/0; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761813972; x=1793349972;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=xSoGjt8veviIZzv9aZg61Y2aeSV27Aro/OEROaMuJYI=;
-  b=CEI8E2/0SC+WBoIesQ4Xpy/jDp+7e7R02yYgIi0nwGDqSIf/M8HffxNB
-   xz7zaVnk5X/aOnt2sSOQS9UuVukaXZjqMRLuz9/+8v2u5k84yh6jhnbEy
-   dC/Dtm4rEvgIym55bydOBSJQWN+co57SWFDIGcIFAHEH5D1PwkwcjG1dp
-   RYz8nS3GGXgXRj0Ab+N9d+KLkoHmde2c203JInh7GwYyfO7ozTvEJuj8X
-   y+SLYPmEWYzAUlSRP90LRMT59ObPJND0QophmiKdX5VNdUQr7/vxGrtH5
-   hswo7ql5e6L0ATifdaP/pHMGsggXYZ8EnBfCjdaW5KJ2AmlqjByYJPrwV
-   g==;
-X-CSE-ConnectionGUID: JukFkxaCRkSusvNaxhC8IQ==
-X-CSE-MsgGUID: vsEAzP1TRQ2/5v41ha7nqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64097996"
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="64097996"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 01:46:11 -0700
-X-CSE-ConnectionGUID: GpD7xcO9R76OdcCRHvf5wQ==
-X-CSE-MsgGUID: nSejIMQHRVGmuceqty7Ygw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
-   d="scan'208";a="185090623"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 01:46:10 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 30 Oct 2025 01:46:08 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 30 Oct 2025 01:46:08 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.40) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 30 Oct 2025 01:46:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DjsSB/1LVfTr61KgLWvGad/m9C/Xbu1dFX7EC4oTFiaorOcbYAKoC98Dafzau/S+ufh3ZbunJXdL2ZaLeA+Eyb0xc10c3d/sdMgWo6G8C9irx9OtF+0WN0R069p6JWRM1u/vBYt1YDRK+l0nN3pyY54Eq90RYG4rXXa+rNJo8efNq/iUEaxbZT5SZ7cXZOgd61wIskQUitjetvOHG4/E8ECKnRSwxFTRtUZteZJ1S9ePJp0z/fBzQJb0eY0zeZYWgRCjWDT9yg2rNZczTi5TshlU0RlKPV08jCvYbrU8+F7gh7FVnXrWBTcGu0vz85YpXgN7sbhitaX82TLkRi7qbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xSoGjt8veviIZzv9aZg61Y2aeSV27Aro/OEROaMuJYI=;
- b=ewjUd67NzDvaOLmuH92orzJAvvSOGLLTkZ8K7ohqUMs5GQDxhqN4Oz2bcN5F/TZC/3cEytmG9zEUidvHqpuYVW5tjwpW6OHo7er81Vm7k2+m0w2zwPM6XYUpgTfU2n7xXPepUTCKV42LsLKZvyfBwj5gorJRU/aiMpG/5b1VANR5FSK8BpdsVBGS7Els0Xb6GY0JF6Hm6Tyk/aHtQhFPWVZmcentQ0qzwEqRGOJRhnqBRzPXdIgGZVlo3PfxFPv1ieJxvQeF2oz1Ae60CKqO0VB53X+hpWlo4pCRGj7LOvku3o1qG8YKMIhXYf3zeBLJQL/0qeEyAObM14Doc8jCxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by PH8PR11MB8063.namprd11.prod.outlook.com (2603:10b6:510:252::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
- 2025 08:46:03 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%3]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
- 08:46:03 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
-	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH iwl-next] ice: implement configurable
- header split for regular Rx
-Thread-Topic: [Intel-wired-lan] [PATCH iwl-next] ice: implement configurable
- header split for regular Rx
-Thread-Index: AQHcNt1R23cujjrEoEiJSdBK5M/IWbTahVaA
-Date: Thu, 30 Oct 2025 08:46:03 +0000
-Message-ID: <IA3PR11MB89861D8E27A130819515F00DE5FBA@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20251006162053.3550824-1-aleksander.lobakin@intel.com>
-In-Reply-To: <20251006162053.3550824-1-aleksander.lobakin@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|PH8PR11MB8063:EE_
-x-ms-office365-filtering-correlation-id: a1af2bb3-07ae-446b-8306-08de1790c243
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021|7053199007;
-x-microsoft-antispam-message-info: =?utf-8?B?b2pMQkhDZjhKTnA2WHdURVUrQXRiQ21NRi9may9qUlhkU3ZvR1R2UXhjQkQ4?=
- =?utf-8?B?aE40c3dycERlclljUzgvV1J1bnptc2M4M3E4TkdEZlBLcGtVVjFqZmpSTkEr?=
- =?utf-8?B?cWdHL3V4QzExYXJ5bm5KZmpaeGxITDNWN01LZ1djdUcvN29nVCtkdWZRWTNU?=
- =?utf-8?B?UFBDeDdKbDJSVmdsbmVubE0wS0I2UWtURmpYZExMaGw5RmxYNHRnQzFIdnQv?=
- =?utf-8?B?Z0NOQjM5cEg5QXAvM25yL0pOOVFLcmRVc0tKRWFGRFdMOWxWRFBKamZJc1lR?=
- =?utf-8?B?ZnVHdmdWZUFKQWZHUzE4VWRRdG9OWC9TVld5ZWRjNzFBWVBjSTB6enk3N1Qv?=
- =?utf-8?B?c2U3YTF4dFErSEQ0YjQ2MU5RL1BoYXhvb09ZRERqSUI1NUUzc2hHRjlkZGJH?=
- =?utf-8?B?aC94OFF0MUU0eExLRVBWOWtodzZsdjRzOFJQaHhIRkg4Qmc4am1Wa1FDQnE1?=
- =?utf-8?B?OWtDYkU2VFRSSHRPZmJ0N2NIN2hwaDcvei9OT09PWFQ5YXgyVlQ1Q3phSEs5?=
- =?utf-8?B?SkFiV0lCVFJZc01VRFVuTE9lR2k3OE1Za2NtMENMcnhBRElCaHRGenFxbDk2?=
- =?utf-8?B?d2RvRUErQUlRckNiYk4vSXcvUFJoWit3VWdJZzI0K3ljZSt4NVF5VVRFOUk1?=
- =?utf-8?B?eWhjM05uQklSN1hZNXlyTTRtaVh6blN2WmFmWktETnNEVmNKY3daZGd4QnZQ?=
- =?utf-8?B?RkZ0b2o3MGQ1ODgzNTY1VjFVZldrSmxMajY5aUNCNFZzWnFUTnFUZmF0VzVX?=
- =?utf-8?B?Ty9vNjJiLzZNNjdqelBnYmZzYmo0N0Fnb1dvQm1JM09NbjgrR3Q3cmI1VVBt?=
- =?utf-8?B?M3hPRTU2VmphUzZqQURZVUZWWHF1cVZCN0l2YjlzYkxNbXE4MjQxbTIvNVlh?=
- =?utf-8?B?ZTJjak13Z295WlhDVFZCUUNvbHJqSW5yMTY1S1Q1c0VaZG1mZTJRZUsyVHVu?=
- =?utf-8?B?WUhQMnlKVTVxdmlXZmFzYnZGZkc1S2hTYnk5dDloQndBTitTejFoSFpaL2FK?=
- =?utf-8?B?elRCemN6VEpHeXJlUHYyTFhUbFZ5SEpYOWdtZE9XeW93a2tOTXpUS3JXWGY0?=
- =?utf-8?B?aUUxVlVwaFNHN2dIZm8zZXp1YlE5Zkx1ZHNNekZ3RHRvbmh4RGx0RU0yUTJ1?=
- =?utf-8?B?K0NkL29TbkdKUjA0ZjJKYzBxWllWaWpLWkZCZjIyWG0rbjRPVFErYjNLcno3?=
- =?utf-8?B?U2FQUkNJVlB3MUhXSXV6T1JyODhBNkNBK3BZNVhjVHMwS1ZlOUViNTVFZDJ0?=
- =?utf-8?B?UnYyem1peGp5Tm1nY2w5RnRWMkF5RFloTldJWUkxYnV2cXFqa1VReG9tdVI5?=
- =?utf-8?B?YjRPVFZVWHhqQXB1VytwU3hpRmJZWitHWE9SbDFwZEhPeUlpaUZ5c0p2Lzl1?=
- =?utf-8?B?Z0ljQno3TnJjRmtPM1lKWWJTay9pMm14N1JOOWdqZHJxRUhnU2J6blUrVDRX?=
- =?utf-8?B?d3RSOHVuS2haOVROL3FOTWxxZmZ6bFM1czErYTdCa3RNdFg4SDc0RVU0N0wx?=
- =?utf-8?B?U2NzaEFaTEtsekpuNWFXbnh2S0ZmSWxFcWQrdW9CeGIwZTF1cGJMcmhMdGl0?=
- =?utf-8?B?b282cWkxelRZRjNtOWUzaVdpTVZvVnhtNHpWQVNMYVhRY0g1T1lvQ0Y1d3BM?=
- =?utf-8?B?V2pDbUJaSnNheCtzUmVsQUFVYUNFWkYwNGt4Q0JEWm9SVXF6WE5qVUFjcm16?=
- =?utf-8?B?cXlYQ0VTZTc2R29GbGVHeVQ3U0lEWGx5SXA0LytvZkZLOEkyQlhvV2R2MHhB?=
- =?utf-8?B?S2ZUamV5R0lKK2QvYnhIZVZ5UndmZGxmSUxVRFI5NmFFR2QrclN5R2hIaXZL?=
- =?utf-8?B?YzZXelJHM2UwaFY0ZldNYVBndnRYcS9YbVdBa1J6RnJsVXVRNnp4REM5dlVP?=
- =?utf-8?B?TE9lZ1VtL1piY0dsdnYwaTdCbnllWnNYUmhWN2U0Smc4aktMVTdOcWJWajZ4?=
- =?utf-8?B?N2FxOFh3a3psUEdNNXpWcUFCdE1ub0Q3dzVnVld3OG83dFBuOUpjVEhudUht?=
- =?utf-8?B?UmhacHord1RmQVBraFU5SisrYnJVUUhyTEQ3Z3JFYW1qbzlpN21HbytMMkxY?=
- =?utf-8?Q?sbH5jC?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MU5QZU1wMFZ5dVZGWjRQTzViMnNFRHhDTnBiSERrRlVQR1hHU1UwSDR5Z3d4?=
- =?utf-8?B?d2FFWUcwMnFwZnZ0Y2FvSmU2dFhoRy9hRzJ6S2JTVENLWlBPajZoQmRFL1pv?=
- =?utf-8?B?RmRDY3NWZ200RGU5U2dnM0QxZmF3amtrWlBzOFJiN2FSNUxReFhXQzlpUTFU?=
- =?utf-8?B?KzAzbGNobWh4bTU5WDlXeWpUY2JleDdKYnVzSUp6enAzYSt0aFN1ZnhyMVlL?=
- =?utf-8?B?cm1xTmp0QjVoNTBZNzAvVjlLZkZxZm80TDNMWHdOcXR0cGlxQVd0NllYTU9Z?=
- =?utf-8?B?bGsrSjZiREJnNG1hZ1FqczR4VHNkTUcvaUNYZVFlMXJTdGplWXFXV0Zpempj?=
- =?utf-8?B?ZXpSNXlLUkxsQXNNZWlENTRiZFdqaDU4SG8ySi8zN1ZPN1RwTy83b2NpL2hK?=
- =?utf-8?B?MjM1NTdvK3dEaU4vWXZyL3hCazZaeExnenN5bFdLSUpHc0lGTFowdVprRFZW?=
- =?utf-8?B?WXI4MHJHaCtGampTcmVjVmFiY2lSUEhBaDBEWmVOWks3L1pud043RHB0RlA1?=
- =?utf-8?B?SnVhWFh5b3l2Ris3NXlaTkZXTXVodU1NVlZ5dHJDRUZWWHFWenlQSWZwL1pU?=
- =?utf-8?B?bmkyTEZPbEJ3cnVSWWtnM3VyOGk2ZzUvUkVXY0U3N3NTTFArNGNoT2I3OUNW?=
- =?utf-8?B?bnZueDBMajJVNkJmN2V3aVRZSmNIK0I5N1dWZWdCZEkzR2NsZE0yZUJCREdG?=
- =?utf-8?B?NFNBUXZyZFJxMzZlZzZlZXFHajdLdUlubmg0VHBJbWpVeXBCWmYwUEpRZGQ2?=
- =?utf-8?B?RmVsaGY4WjZDRktZRHBZbWl5clh6RVplSVVyejZzVkpFUHc1a29jUjU0RUNs?=
- =?utf-8?B?Zk1iYmUzbW53bDFhMVk1WGdFWXVBMDQxRWJMdU9PK3c3bStkSk45a1Z2T21F?=
- =?utf-8?B?U3lkR1gwWTNtcHZTenlYa003Y0dRN2RkeW1xUmV3d1BtQXNOTFllTW1tQUs0?=
- =?utf-8?B?NFVCV29QNjZIYWVxaTZDUHZOaGtPY0p2SDlNVktQOGRWNkQ5SmZGcWdGU3pT?=
- =?utf-8?B?UmZPRHd6RldXWk1MRUliOGRsTWg0dmVFN0V6YTkzSUR3d3dMampmQXBqSzNV?=
- =?utf-8?B?RjVxb25aNjV5bUFzeWF6SHZPMWFISEdaVzlPOU9QVEQ4TG16MVJHTDIwa1NR?=
- =?utf-8?B?aE1lRlBzMzE0d2l4MlYxVWNvZEV3K0pkaVorQURzOTdwM2tuS21xOG1JOGRB?=
- =?utf-8?B?ZDNOWTlZVnJ4YU9SMXdnR3JWU2hmSGR3VnUrVGhNZGJydzA4RUVPQVAzZkJH?=
- =?utf-8?B?Q3pnWUF0UVZINFl3eWt4TW1mU0JORXNkb2ZmV1BMQU5DUTFqSHZYam5FNXlB?=
- =?utf-8?B?eHZIYWUvQnJ4UVY3K3NHdnd1T29TVzFPei8wcC9oc2Jnb2Rab0tnWnVsbjNs?=
- =?utf-8?B?RUZwRzZmV2dabmNIU3RXZ2tRWjNWWlovN25KdjNWNXJiekdwa2hjUVdFSlhT?=
- =?utf-8?B?ZUJFeEVOb3R2a2hVQitvUjF3Ym5rWjRzeVNueEhlN3JmMFREeUZreTI5TVBM?=
- =?utf-8?B?bW9uVmdydW5Cb3UvQW1XR0FWN2FmVHVMNTNuQ1EvSm9HNFlPSnZSbmlqR0J0?=
- =?utf-8?B?ZHBTL2NUbjRTdW9uVnpnSUlZSFhKMDRyaTdkdnNtS0pMQlBkdzRKOThXNjF1?=
- =?utf-8?B?UVE1V1pSQUwyejF4KytibzdTMjJvK2JvQThYUXVpOTJKNGNWU09aaStNNDJk?=
- =?utf-8?B?VkdFcWdtUlAvdHJ0VCtrWjBUNFFKd3RiVjZaTlFZQloxbHNFdUtkM1dIb3ZQ?=
- =?utf-8?B?YkZPZXAxT0ZKRUJ4ZXhCdG5CZ1BpQ2dlcWpKdmtUNHVoUzRaTm5lbGNVK1l4?=
- =?utf-8?B?b1lTR3RJTjdzbmhDUWJ6Rm56cmttdHdBSzFuL0Mrb2hLbFZ2OXdma29tNDhR?=
- =?utf-8?B?cWRWZ21GVDdJYURUV2R4QnNIK1hpMHgxa1hsMzQ0L24rekc1QTRscURsdSti?=
- =?utf-8?B?L2ljc2ViQk5kb1RCUWZBbjJmbE44SlhpYXk4Wjgvb2RrWEovTzRNVU5tVVJH?=
- =?utf-8?B?allpbjQ2OTk1UWxJWThrOEdGTzYweFhRRmRPUE9nbVA1NDNDWVRQMWpZS2J1?=
- =?utf-8?B?bFE5dlAwa3ZrSnBNVlJyc0tPdG44RUFHNVN3ZExUZ2VteVJiQWlXQ201cmsx?=
- =?utf-8?B?bUdLYkdkNkVGL2dDMlNJeEl4Vm1OWnNJeHZISlpQdnlzTmM5KzZlaHU5SDM1?=
- =?utf-8?B?S0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716562E092D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761814013; cv=none; b=NefrJGZb6wOpjOn1ThRxb2Rzapw2g+MuqkPcYPfQkoUh2Ix0McUUlDO6YT+K1Ky3VY21qTA2XMmFOYUsnzYU0+7bueCaLn6RPT4LHRmRSnf6COdUOIU7o1lF8hvQbmlr1WcNAgxpJmMAHOfz1y6+jjnYfa39BPhQa9K4yl19CYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761814013; c=relaxed/simple;
+	bh=vjLdCNlaJAv8F+u21kOBC8dOCjMucS/4uY9btI/ZyGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hF07gd3LXEmvzxp5lpAUITauzCsCEECz1mQmoBGlLreiNVtLORqkOiy46BcQ0FZQ2FSuofcHg32gAuwIC9AW/JTVKxZCV1gnXwswCs082g9wnX+UjeLFF3lQ1uFVDOC++oHcPn9iRMwkX0H5Gm1eOZmYyRTHcTF7vCbD60qLqbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=btc86mXT; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e9c2021a-fa7f-4b01-9b48-afe5fa73135f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761814007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ts8r14E983Oj7YJR45lgRteJfrOnqFoS1A/vTyH0UoY=;
+	b=btc86mXT8yRgDvLIH42JPCXR2Rr3nleh9BvTKXgCEXn70QTw0Ku+Ixlyj+Cs7I3GbhVomY
+	8htPfQqzMpamGyA7XQOi/EbQDnBw3pxmBDWQN0KZ6emQTsR/OaNJ97p1Biq3PfpzMd66uz
+	hoWrQlgogjMrUtz5L82iYBNSPTf8keM=
+Date: Thu, 30 Oct 2025 01:46:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1af2bb3-07ae-446b-8306-08de1790c243
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2025 08:46:03.5011
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9w+viIYmxejElvZ+Sa96/9ljtgs4sYesCp2fc/JmDTTf4CrPu8MAGHm/stVvfFtIHji/B2vUIDDdYYT6+UTA0X3I4kQiENePfIpunfiD+mI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8063
-X-OriginatorOrg: intel.com
+Subject: Re: [PATCH 3/3] riscv: crash: use NMI to stop the CPU
+To: Yunhui Cui <cuiyunhui@bytedance.com>, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, conor@kernel.org,
+ luxu.kernel@bytedance.com, cleger@rivosinc.com, ajones@ventanamicro.com,
+ apatel@ventanamicro.com, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, songshuaishuai@tinylab.org,
+ bjorn@rivosinc.com, charlie@rivosinc.com, masahiroy@kernel.org,
+ valentina.fernandezalanis@microchip.com, jassisinghbrar@gmail.com,
+ conor.dooley@microchip.com
+References: <20251027133431.15321-1-cuiyunhui@bytedance.com>
+ <20251027133431.15321-4-cuiyunhui@bytedance.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20251027133431.15321-4-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSW50ZWwtd2lyZWQtbGFu
-IDxpbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bvc3Vvc2wub3JnPiBPbiBCZWhhbGYNCj4gT2YgQWxl
-eGFuZGVyIExvYmFraW4NCj4gU2VudDogTW9uZGF5LCBPY3RvYmVyIDYsIDIwMjUgNjoyMSBQTQ0K
-PiBUbzogaW50ZWwtd2lyZWQtbGFuQGxpc3RzLm9zdW9zbC5vcmcNCj4gQ2M6IExvYmFraW4sIEFs
-ZWtzYW5kZXIgPGFsZWtzYW5kZXIubG9iYWtpbkBpbnRlbC5jb20+OyBOZ3V5ZW4sDQo+IEFudGhv
-bnkgTCA8YW50aG9ueS5sLm5ndXllbkBpbnRlbC5jb20+OyBLaXRzemVsLCBQcnplbXlzbGF3DQo+
-IDxwcnplbXlzbGF3LmtpdHN6ZWxAaW50ZWwuY29tPjsgQW5kcmV3IEx1bm4gPGFuZHJldytuZXRk
-ZXZAbHVubi5jaD47DQo+IERhdmlkIFMuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IEVy
-aWMgRHVtYXpldA0KPiA8ZWR1bWF6ZXRAZ29vZ2xlLmNvbT47IEpha3ViIEtpY2luc2tpIDxrdWJh
-QGtlcm5lbC5vcmc+OyBQYW9sbyBBYmVuaQ0KPiA8cGFiZW5pQHJlZGhhdC5jb20+OyBTaW1vbiBI
-b3JtYW4gPGhvcm1zQGtlcm5lbC5vcmc+OyBOWE5FIENOU0UgT1NEVA0KPiBJVFAgVXBzdHJlYW1p
-bmcgPG54bmUuY25zZS5vc2R0Lml0cC51cHN0cmVhbWluZ0BpbnRlbC5jb20+Ow0KPiBuZXRkZXZA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6
-IFtJbnRlbC13aXJlZC1sYW5dIFtQQVRDSCBpd2wtbmV4dF0gaWNlOiBpbXBsZW1lbnQNCj4gY29u
-ZmlndXJhYmxlIGhlYWRlciBzcGxpdCBmb3IgcmVndWxhciBSeA0KPiANCj4gQWRkIHNlY29uZCBw
-YWdlX3Bvb2wgZm9yIGhlYWRlciBidWZmZXJzIHRvIGVhY2ggUnggcXVldWUgYW5kIGFiaWxpdHkN
-Cj4gdG8gdG9nZ2xlIHRoZSBoZWFkZXIgc3BsaXQgb24vb2ZmIHVzaW5nIEV0aHRvb2wgKGRlZmF1
-bHQgdG8gb2ZmIHRvDQo+IG1hdGNoIHRoZSBjdXJyZW50IGJlaGF2aW91cikuDQo+IFVubGlrZSBp
-ZHBmLCBhbGwgSFcgYmFja2VkIHVwIGJ5IGljZSBkb2Vzbid0IHJlcXVpcmUgYW55IFcvQXMgYW5k
-DQo+IGNvcnJlY3RseSBzcGxpdHMgYWxsIHR5cGVzIG9mIHBhY2tldHMgYXMgY29uZmlndXJlZDog
-YWZ0ZXIgTDQgaGVhZGVycw0KPiBmb3IgVENQL1VEUC9TQ1RQLCBhZnRlciBMMyBoZWFkZXJzIGZv
-ciBvdGhlciBJUHY0L0lQdjYgZnJhbWVzLCBhZnRlcg0KPiB0aGUgRXRoZXJuZXQgaGVhZGVyIG90
-aGVyd2lzZSAoaW4gY2FzZSBvZiB0dW5uZWxpbmcsIHNhbWUgYXMgYWJvdmUsDQo+IGJ1dCBhZnRl
-ciBpbm5lcm1vc3QgaGVhZGVycykuDQo+IFRoaXMgZG9lc24ndCBhZmZlY3QgdGhlIFhTayBwYXRo
-IGFzIHRoZXJlIGFyZSBubyBiZW5lZml0cyBvZiBoYXZpbmcgaXQNCj4gdGhlcmUuDQo+IA0KPiBT
-aWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgTG9iYWtpbiA8YWxla3NhbmRlci5sb2Jha2luQGludGVs
-LmNvbT4NCj4gLS0tDQo+IEFwcGxpZXMgb24gdG9wIG9mIFRvbnkncyBuZXh0LXF1ZXVlLCBkZXBl
-bmRzIG9uIE1pY2hhxYIncyBQYWdlIFBvb2wNCj4gY29udmVyc2lvbiBzZXJpZXMuDQo+IA0KPiBT
-ZW5kaW5nIGZvciByZXZpZXcgYW5kIHZhbGlkYXRpb24gcHVycG9zZXMuDQo+IA0KPiBUZXN0aW5n
-IGhpbnRzOiB0cmFmZmljIHRlc3Rpbmcgd2l0aCBhbmQgd2l0aG91dCBoZWFkZXIgc3BsaXQgZW5h
-YmxlZC4NCj4gVGhlIGhlYWRlciBzcGxpdCBjYW4gYmUgdHVybmVkIG9uL29mZiB1c2luZyBFdGh0
-b29sOg0KPiANCj4gc3VkbyBldGh0b29sIC1HIDxpZmFjZT4gdGNwLWRhdGEtc3BsaXQgb24gKG9y
-IG9mZikNCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pY2UvaWNlLmggICAg
-ICAgICAgfCAgMSArDQo+ICAuLi4vbmV0L2V0aGVybmV0L2ludGVsL2ljZS9pY2VfbGFuX3R4X3J4
-LmggICAgfCAgMyArDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pY2UvaWNlX3R4cngu
-aCAgICAgfCAgNyArKw0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWNlL2ljZV9iYXNl
-LmMgICAgIHwgODkgKysrKysrKysrKysrKysrLS0tDQo+IC0NCj4gIGRyaXZlcnMvbmV0L2V0aGVy
-bmV0L2ludGVsL2ljZS9pY2VfZXRodG9vbC5jICB8IDE1ICsrKy0NCj4gIGRyaXZlcnMvbmV0L2V0
-aGVybmV0L2ludGVsL2ljZS9pY2VfdHhyeC5jICAgICB8IDg5ICsrKysrKysrKysrKysrKy0tLQ0K
-PiAtDQo+ICA2IGZpbGVzIGNoYW5nZWQsIDE2OCBpbnNlcnRpb25zKCspLCAzNiBkZWxldGlvbnMo
-LSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pY2UvaWNl
-LmgNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pY2UvaWNlLmgNCj4gaW5kZXggZDQ2
-ZmY5Yzk3Yzg2Li5iZWYzZDZkOGQ0OTEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVy
-bmV0L2ludGVsL2ljZS9pY2UuaA0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9p
-Y2UvaWNlLmgNCj4gQEAgLTM1MSw2ICszNTEsNyBAQCBzdHJ1Y3QgaWNlX3ZzaSB7DQo+ICAJdTE2
-IG51bV9xX3ZlY3RvcnM7DQo+ICAJLyogdGVsbCBpZiBvbmx5IGR5bmFtaWMgaXJxIGFsbG9jYXRp
-b24gaXMgYWxsb3dlZCAqLw0KPiAgCWJvb2wgaXJxX2R5bl9hbGxvYzsNCj4gKwlib29sIGhzcGxp
-dDoxOw0KDQouLi4NCg0KPiAtLQ0KPiAyLjUxLjANCg0KUmV2aWV3ZWQtYnk6IEFsZWtzYW5kciBM
-b2t0aW9ub3YgPGFsZWtzYW5kci5sb2t0aW9ub3ZAaW50ZWwuY29tPg0K
+On 10/27/25 6:34 AM, Yunhui Cui wrote:
+> NMI is more robust than IPI for stopping CPUs during crashes,
+> especially with interrupts disabled. Add SBI_SSE_EVENT_LOCAL_CRASH_NMI
+> eventid to implement NMI for stopping CPUs.
+> 
+
+Resending it again as my previous response was rejected due to 
+gmail/html issue.
+
+This should be used as the last resort instead of the preferred approach 
+for below reasons.
+
+1. Invoking SSE on this path may lead to some race conditions if 
+interruption is enabled.
+2. With AIA IPI will be faster than SSE if interrupt is enabled.
+
+Can we do a hybrid approach where we use CRASH_NMI (or SOFTWARE_INJECTED 
+event) only when IPI fails.
+Looking at other architecture implementations, it already does something 
+similar.
+
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>   arch/riscv/include/asm/crash.h   |  1 +
+>   arch/riscv/include/asm/sbi.h     |  1 +
+>   arch/riscv/kernel/crash.c        | 31 +++++++++++++-
+>   drivers/firmware/riscv/sse_nmi.c | 71 +++++++++++++++++++++++++++++++-
+>   include/linux/sse_nmi.h          |  8 ++++
+>   5 files changed, 109 insertions(+), 3 deletions(-)
+>   create mode 100644 include/linux/sse_nmi.h
+> 
+> diff --git a/arch/riscv/include/asm/crash.h b/arch/riscv/include/asm/crash.h
+> index b64df919277d4..5076f297cbc15 100644
+> --- a/arch/riscv/include/asm/crash.h
+> +++ b/arch/riscv/include/asm/crash.h
+> @@ -5,6 +5,7 @@
+>   
+>   #ifdef CONFIG_KEXEC_CORE
+>   void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs);
+> +void cpu_crash_stop(unsigned int cpu, struct pt_regs *regs);
+>   #else
+>   static inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+>   {
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 52d3fdf2d4cc1..65cce85237879 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -487,6 +487,7 @@ enum sbi_sse_attr_id {
+>   #define SBI_SSE_EVENT_GLOBAL_LOW_PRIO_RAS	0x00108000
+>   #define SBI_SSE_EVENT_LOCAL_SOFTWARE_INJECTED	0xffff0000
+>   #define SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI		0xffff0001
+> +#define SBI_SSE_EVENT_LOCAL_CRASH_NMI		0xffff0002
+>   #define SBI_SSE_EVENT_GLOBAL_SOFTWARE_INJECTED	0xffff8000
+>   
+>   #define SBI_SSE_EVENT_PLATFORM		BIT(14)
+> diff --git a/arch/riscv/kernel/crash.c b/arch/riscv/kernel/crash.c
+> index 12598bbc2df04..9f3f0becfdd95 100644
+> --- a/arch/riscv/kernel/crash.c
+> +++ b/arch/riscv/kernel/crash.c
+> @@ -3,14 +3,16 @@
+>   #include <linux/cpu.h>
+>   #include <linux/delay.h>
+>   #include <linux/kexec.h>
+> +#include <linux/sse_nmi.h>
+>   #include <linux/smp.h>
+>   #include <linux/sched.h>
+>   
+> +#include <asm/crash.h>
+>   #include <asm/cpu_ops.h>
+>   
+>   static atomic_t waiting_for_crash_ipi = ATOMIC_INIT(0);
+>   
+> -inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+> +void cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+>   {
+>   	crash_save_cpu(regs, cpu);
+>   
+> @@ -27,6 +29,11 @@ inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+>   		wait_for_interrupt();
+>   }
+>   
+> +inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+> +{
+> +	cpu_crash_stop(cpu, regs);
+> +}
+> +
+>   /*
+>    * The number of CPUs online, not counting this CPU (which may not be
+>    * fully online and so not counted in num_online_cpus()).
+> @@ -38,6 +45,24 @@ static inline unsigned int num_other_online_cpus(void)
+>   	return num_online_cpus() - this_cpu_online;
+>   }
+>   
+> +#ifdef CONFIG_RISCV_SSE_NMI
+> +static int send_nmi_stop_cpu(cpumask_t *mask)
+> +{
+> +	unsigned int cpu;
+> +	int ret = 0;
+> +
+> +	for_each_cpu(cpu, mask)
+> +		ret += carsh_nmi_stop_cpu(cpu);
+> +
+> +	return ret;
+> +}
+> +#else
+> +static inline int send_nmi_stop_cpu(cpumask_t *mask)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +#endif
+> +
+>   void crash_smp_send_stop(void)
+>   {
+>   	static int cpus_stopped;
+> @@ -66,7 +91,9 @@ void crash_smp_send_stop(void)
+>   	atomic_set(&waiting_for_crash_ipi, num_other_online_cpus());
+>   
+>   	pr_crit("SMP: stopping secondary CPUs\n");
+> -	send_ipi_mask(&mask, IPI_CPU_CRASH_STOP);
+> +
+> +	if (send_nmi_stop_cpu(&mask))
+> +		send_ipi_mask(&mask, IPI_CPU_CRASH_STOP);
+>   
+>   	/* Wait up to one second for other CPUs to stop */
+>   	timeout = USEC_PER_SEC;
+> diff --git a/drivers/firmware/riscv/sse_nmi.c b/drivers/firmware/riscv/sse_nmi.c
+> index 2c1eaea2bbabc..152d787075345 100644
+> --- a/drivers/firmware/riscv/sse_nmi.c
+> +++ b/drivers/firmware/riscv/sse_nmi.c
+> @@ -4,13 +4,16 @@
+>   
+>   #include <linux/nmi.h>
+>   #include <linux/riscv_sbi_sse.h>
+> +#include <linux/sse_nmi.h>
+>   #include <linux/sysctl.h>
+>   
+> +#include <asm/crash.h>
+>   #include <asm/irq_regs.h>
+>   #include <asm/sbi.h>
+>   
+>   int unknown_nmi_panic;
+>   static struct sse_event *unknown_nmi_evt;
+> +static struct sse_event *crash_nmi_evt;
+>   static struct ctl_table_header *unknown_nmi_sysctl_header;
+>   
+>   static int __init setup_unknown_nmi_panic(char *str)
+> @@ -32,6 +35,12 @@ const struct ctl_table unknown_nmi_table[] = {
+>   	},
+>   };
+>   
+> +static inline struct sbiret sbi_sse_ecall(int fid, unsigned long arg0,
+> +					  unsigned long arg1)
+> +{
+> +	return sbi_ecall(SBI_EXT_SSE, fid, arg0, arg1, 0, 0, 0, 0);
+> +}
+> +
+>   static int unknown_nmi_handler(u32 evt, void *arg, struct pt_regs *regs)
+>   {
+>   	pr_emerg("NMI received for unknown on CPU %d.\n", smp_processor_id());
+> @@ -73,9 +82,69 @@ static int unknown_nmi_init(void)
+>   	return ret;
+>   }
+>   
+> +#ifdef CONFIG_KEXEC_CORE
+> +int carsh_nmi_stop_cpu(unsigned int cpu)
+> +{
+> +	unsigned int hart_id = cpuid_to_hartid_map(cpu);
+> +	u32 evt = SBI_SSE_EVENT_LOCAL_CRASH_NMI;
+> +	struct sbiret ret;
+> +
+> +	ret = sbi_sse_ecall(SBI_SSE_EVENT_INJECT, evt, hart_id);
+> +	if (ret.error) {
+> +		pr_err("Failed to signal event %x, error %ld\n", evt, ret.error);
+> +		return sbi_err_map_linux_errno(ret.error);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int crash_nmi_handler(u32 evt, void *arg, struct pt_regs *regs)
+> +{
+> +	cpu_crash_stop(smp_processor_id(), regs);
+> +
+> +	return 0;
+> +}
+> +
+> +static int crash_nmi_init(void)
+> +{
+> +	int ret;
+> +
+> +	crash_nmi_evt = sse_event_register(SBI_SSE_EVENT_LOCAL_CRASH_NMI, 0,
+> +				 crash_nmi_handler, NULL);
+> +	if (IS_ERR(crash_nmi_evt))
+> +		return PTR_ERR(crash_nmi_evt);
+> +
+> +	ret = sse_event_enable(crash_nmi_evt);
+> +	if (ret) {
+> +		sse_event_unregister(crash_nmi_evt);
+> +		return ret;
+> +	}
+> +
+> +	pr_info("Using SSE for crash NMI event delivery\n");
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+>   static int __init sse_nmi_init(void)
+>   {
+> -	return unknown_nmi_init();
+> +	int ret;
+> +
+> +	ret = unknown_nmi_init();
+> +	if (ret) {
+> +		pr_err("Unknown_nmi_init failed with error %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +#ifdef CONFIG_KEXEC_CORE
+> +	ret = crash_nmi_init();
+> +	if (ret) {
+> +		pr_err("Crash_nmi_init failed with error %d\n", ret);
+> +		return ret;
+> +	}
+> +#endif
+> +
+> +	return 0;
+>   }
+>   
+>   late_initcall(sse_nmi_init);
+> diff --git a/include/linux/sse_nmi.h b/include/linux/sse_nmi.h
+> new file mode 100644
+> index 0000000000000..548a348ac0a46
+> --- /dev/null
+> +++ b/include/linux/sse_nmi.h
+> @@ -0,0 +1,8 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __LINUX_RISCV_SSE_NMI_H
+> +#define __LINUX_RISCV_SSE_NMI_H
+> +
+> +int carsh_nmi_stop_cpu(unsigned int cpu);
+> +
+> +#endif
+
 
