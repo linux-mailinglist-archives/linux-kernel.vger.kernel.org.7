@@ -1,156 +1,285 @@
-Return-Path: <linux-kernel+bounces-878201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C7CC2004A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:29:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3382C20089
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC05462B81
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AE5463EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBAB31BC96;
-	Thu, 30 Oct 2025 12:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9262874F8;
+	Thu, 30 Oct 2025 12:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A0LW+ue8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnVGs4nN"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA662DE6F5
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C04126C17
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761827332; cv=none; b=RYDIRxEFACjZwIzWTVHT4nhXzO3+kj7OHjdaQIYu4AEci5/4S3MxjssFzPQPUmS7u8A3ne5dxvH8m+FaVzBxQBd0RXU0gaJ+UZD1KI53n/yhqz360Tfcs5yJQfqJOj5Ga0peyDfGcl20S/3kHWV2clWII6OSC2IR9bpFMbMgY68=
+	t=1761827472; cv=none; b=KxpS3shl8mdAiOvnXHJJFg4F1InfXkaNQ8KkiDYrzX6SBNm4up1qu6K1uulm8C5MPmUCORKavrjmtDTzcKk68bQbwrvU7O7hh87b+TRE2PsFkQ03PypreNEHQySOnrpkHZez0Oaz+ZewR+5zEukgw4hwVJ5PFYK8siHgKLVcPxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761827332; c=relaxed/simple;
-	bh=3rsc6ptPvWByOYOhRv+nQJ1v7jnad7jLTGQxU4GRYQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eMWGpgxQBsDvFSUaaJuRVkoazFlvs6wgOTKtbSJj2iTYT6eway3HaQqtKDpg7MuKaksRXujwrhDDOBDPLLO/uyrAMYzLy6ykuE7j/i+Rfed7igRzrvfDVR8UZKWqUSA1Y2Y8kaQx1TWurBqfesIR+30TPeu2sEEt0qGjSfw0k+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A0LW+ue8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761827329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+WMVXs8TQMP3kSanWp9H8RTwHILJeUuZYlKUFoW3Nlw=;
-	b=A0LW+ue8xSq37qODwE/SfXSorgI0WFb9q6F0bfaunm3r084Ibu8fbyvgz9rK3LNFyIs9KG
-	tJH7n7JHa79HqJCqxEyLoobStESqLnLi2GqwejlFEpq4EqimTAIlMBVyh3NyKCvW5ZO37O
-	/dVkacldbuQ62JM35d+J011/iGnR4Dk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-vvSHLEuOMN6AwLtnViXgIg-1; Thu, 30 Oct 2025 08:28:48 -0400
-X-MC-Unique: vvSHLEuOMN6AwLtnViXgIg-1
-X-Mimecast-MFC-AGG-ID: vvSHLEuOMN6AwLtnViXgIg_1761827327
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4770e0910a1so6741445e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:28:47 -0700 (PDT)
+	s=arc-20240116; t=1761827472; c=relaxed/simple;
+	bh=HdcEvt37hCu5aG5hVS7CUVhxB757AfOyx3y6TFDPwJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jn6qjHDs7Q5ZSiSNvLfZe5L4YuopEkKrOHtWoqcmwb8TbZg1lPUj3gSH02c6rtva7L80yejD90LBKpfZgyh0MRasgB11yqAduaIkqxm+X/BUo+5WbXdtbqNQ9jBAnyEmNzP+U3mh3ikYh/CDl7GldepuRHKTvyYiiRqrrRZyK+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YnVGs4nN; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32ec291a325so839696a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:31:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761827470; x=1762432270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QUnnnzKNF6jolr4B3pNsI3K3/iZV7NjjIbRTrmi3YPg=;
+        b=YnVGs4nNk5U7cBOScksP9/F1MJhU7BANzT4UEPjZjC0w7iTNCXpkn7xvol7AtCRAw5
+         +0Cx9teRLQqovULmFutraU+2AXWkWhm7cu6m/eZ9hNDjjdbJn5zn6q/I3aH3jPsmLsGu
+         XXblTBFBzJh2VVLWlnkoPj63+57w86QKDsJ10z6VeHzSB6iaAD5ZC3uBg5uS6zvN/FDE
+         Ht8YEJGdisX+mIBjICljGdW9KrB7KfboFQG8YtePYGJA9Qmd9JXqxoGswUld2Sr6PzD0
+         KkYmCjxMBuYO6b0jHDXLq94LtzK51y3NeX7DPwHv3nqEFd94V97ulL/4ZunAmBt6c2JP
+         AMjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761827327; x=1762432127;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+WMVXs8TQMP3kSanWp9H8RTwHILJeUuZYlKUFoW3Nlw=;
-        b=KDHvEc+Or4qKmDb/XzMahxGIK7dg+6xGrj0yDljv9wYdW7nQfrjvTU8koRyE6gsoV5
-         2+APXARzfATyDuTvBLL7sLSq6kZK1TtU4jlhRZzHNVmZFgua91RVEnSoWljdtxpSrg4t
-         DkziZ4isYwHe8tf3+FxUhcmHHKFhS4w0flTwpqgBLKLf22feHM7V3bxm8AHNBKtlBx9C
-         EHybDI7GvKvS6FY1swA7MDQ6ClGmjZ41zJarUvw44Sb1wEw7TK0s/49sZfgH3b8T/JKw
-         Yo1dSiRAB8qmlgEUfvxSHNxTrRt2yVgat8CcQa4efNLPDsizqZllJGsX6N+TqgPhcCqE
-         InFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWX5cN5WeltmlYGgqnpm3TiCTwOaYsEuKUZ06vTMQ+nMPJaJ50/ZdbfntPes60sJEiuU27PnUrI72LKe00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsKcwDuRdnwhJd/j2ppOpzRvc1C7G32TNYAWKYANbx3tL8h2oA
-	GtMKPCTF+4WP7ppqU7pr14pxRSafG9LQcFe/bkty9dhQ5HE/CQ/F9XyzNGRldlL4m44ucidKwWn
-	/Q+GifsnvAGdNtB+/9LrXRaO8TWrNFdvFYKJ+gMjz/HbWGxwJOr+7sjBD5mXacaPy9A==
-X-Gm-Gg: ASbGncvV2X0LeXmJ/9R2HoAQhmO6XU0N0e28TNLUB3LduPk7/QS/lswuB35XZ2RH0Dm
-	AdoRs5I0FPocJGPZMrBuu60M/ttUdkFy49DeldgJ4JDwnRu7rikO8WnxjttJpeD0pXm6kcAIt6h
-	GvWOMX83pzRX47iFQ7j+UPQ7rsg4FaJrs7TUVLdgoasuQWtsB7lDyjTmSsQfEZXqzn0rfMbhIsB
-	nDQU/S41XJOQXIGnWy49AG+5ccEHUrk7OFAcPt3yjInCiQ8odnB9rUemZI//HDi/aqpfQgpeLH9
-	co3nL780I/87x6jwLyM7X34+PLWZ4oKUSbma615LdFDE2edau9FCXAW9o5cKpgUQWKLK/KbB6tv
-	BUk2ET5TbuovrivqGngYF7X66spTXz0USU/0J0elXIcin
-X-Received: by 2002:a05:600c:4511:b0:477:e66:4082 with SMTP id 5b1f17b1804b1-4771e1ec1d1mr66499305e9.29.1761827326751;
-        Thu, 30 Oct 2025 05:28:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQc3JgzM1QEslivftQlK3inQluENUMNYgDE1rjtok3+8IGknzl6HMn3biCdPkc1D7PQaX66g==
-X-Received: by 2002:a05:600c:4511:b0:477:e66:4082 with SMTP id 5b1f17b1804b1-4771e1ec1d1mr66498985e9.29.1761827326363;
-        Thu, 30 Oct 2025 05:28:46 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b8a2:8d10:2aab:5fa:9fa0:d7e6? ([2a0d:3341:b8a2:8d10:2aab:5fa:9fa0:d7e6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477289adc18sm41187325e9.6.2025.10.30.05.28.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 05:28:45 -0700 (PDT)
-Message-ID: <154ebe12-6e3c-4b16-9f55-e10a30f5c989@redhat.com>
-Date: Thu, 30 Oct 2025 13:28:43 +0100
+        d=1e100.net; s=20230601; t=1761827470; x=1762432270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QUnnnzKNF6jolr4B3pNsI3K3/iZV7NjjIbRTrmi3YPg=;
+        b=jOj+pmJkfAwc+s1QquEV0TWSSd22nQpls8jFfpoG7n/TwZEtQA/heX2fLu/Gqm8GGh
+         0p6vQ5LV/0L9X1IF7KDFNgsYJMpXi08B9uXQMoPHweSGUQFhE9rre2XoA1OgoRbL4rwn
+         ugw0J4UnWjkY3yTA3MH2EeXs16j8XoDgGneytDcNjEOGuLyGA1U0K0F4AAvHmbLuvZy4
+         Ebo4elEAEbb+KAHpw62eyfz3Dl4/qStB0Z2+pphDgHAdXDTCHfJMYoVNjd6VqmaqEqOS
+         5fZ+Gml7u0uKhg9OeRS/8HIq6F0WGqJM8MUuAWH7exqD0iQEBDqA0SMd1owtJoddkqRR
+         qVng==
+X-Forwarded-Encrypted: i=1; AJvYcCVWTC/TlP1r+S5wCf50+jff/ZgST6G9pFK9l3VmcJ6Fi0LUdbTDmJl3XEmfWSRfeaj+HkEd0eMlB5cKnjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaYqrtz4jJNLAqT4nXa08wjrV9DtXgBQhvZfe0ne9f6wK1SGmE
+	fKSJGZrWCY1zpxM2iJhnrc95AyNlHkoaHVKYDM+KlU60KdzfAejOzqX4
+X-Gm-Gg: ASbGncvaksBJfAiGLm6A+KeylrgvbWAdgYIgn+cTeM9GRWND3mGRQ+Xxj07kEJYM8d3
+	TPJuO2qrURPxQDR8kT2Hi5xyuMMprSMZ5XOzQVpahZfRIVtwOt1JvMgzVCEKeF8MavtWYe7hhUw
+	1hRf/QDSPOyeEqMtcQpdAX8qeFcZFqC9vPAPjxAPDFSrriwWv9PyLz+ShY0kLXmUqwaUsiqDfGz
+	g5qhZjYvPsp/IUkL3RH7CA4HqMtSL51rQvd4PCE+wllp+yPzi3q9pBilZ1rzQOTgX0NjVwM2LIs
+	Y0hX3Qs/6DCt9+pfcHgquBVk9o4wxTHbqjzhxaJYca5jj7rImTaBWpJ93lA0MZxYfUQ5Cg/etJn
+	Bt03moURB/AgmhGNrBnuUXcO7UbWvwjGFQfYiTMWGdCpag+80f4CoCECvdQiV8LsEcRb+djwa4g
+	zbJK0NlpjQq8Y3QQkWCq0uDkf9f+/YOlhk9T8sAA1TMpE=
+X-Google-Smtp-Source: AGHT+IFA6icduLZxkWAsDzHrUB6N/1XP3GWDghxWUFnVHotHexY3CKUXxycdYpJBjS+mrF9P+AZFpg==
+X-Received: by 2002:a17:90b:380e:b0:330:6d2f:1b5d with SMTP id 98e67ed59e1d1-3403a2f123emr7979152a91.26.1761827469626;
+        Thu, 30 Oct 2025 05:31:09 -0700 (PDT)
+Received: from weg-ThinkPad-P16v-Gen-2 ([177.73.136.69])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-340509c89a9sm2510392a91.9.2025.10.30.05.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 05:31:09 -0700 (PDT)
+Date: Thu, 30 Oct 2025 09:29:19 -0300
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] ksm: perform a range-walk in break_ksm
+Message-ID: <lv2c4z5utzr37moyish53pmazcnyprhp7ncnrp3hwxyh2fxcvh@466zyeltaisr>
+References: <20251028131945.26445-1-pedrodemargomes@gmail.com>
+ <20251028131945.26445-3-pedrodemargomes@gmail.com>
+ <85604399-40a8-4d13-809d-e5492e74a988@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net V2 2/2] veth: more robust handing of race to avoid txq
- getting stuck
-To: Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- ihor.solodrai@linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
- makita.toshiaki@lab.ntt.co.jp, toshiaki.makita1@gmail.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-team@cloudflare.com
-References: <176159549627.5396.15971398227283515867.stgit@firesoul>
- <176159553930.5396.4492315010562655785.stgit@firesoul>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <176159553930.5396.4492315010562655785.stgit@firesoul>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85604399-40a8-4d13-809d-e5492e74a988@redhat.com>
 
-On 10/27/25 9:05 PM, Jesper Dangaard Brouer wrote:
-> (3) Finally, the NAPI completion check in veth_poll() is updated. If NAPI is
-> about to complete (napi_complete_done), it now also checks if the peer TXQ
-> is stopped. If the ring is empty but the peer TXQ is stopped, NAPI will
-> reschedule itself. This prevents a new race where the producer stops the
-> queue just as the consumer is finishing its poll, ensuring the wakeup is not
-> missed.
+On Wed, Oct 29, 2025 at 03:45:14PM +0100, David Hildenbrand wrote:
+> On 28.10.25 14:19, Pedro Demarchi Gomes wrote:
+> > Make break_ksm() receive an address range and change
+> > break_ksm_pmd_entry() to perform a range-walk and return the address of
+> > the first ksm page found.
+> > 
+> > This change allows break_ksm() to skip unmapped regions instead of
+> > iterating every page address. When unmerging large sparse VMAs, this
+> > significantly reduces runtime, as confirmed by benchmark test (see
+> > cover letter).
+> 
+> Instead of referencing the cover letter, directly include the data here.
+> 
 
-[...]
+Ok
 
-> @@ -986,7 +979,8 @@ static int veth_poll(struct napi_struct *napi, int budget)
->  	if (done < budget && napi_complete_done(napi, done)) {
->  		/* Write rx_notify_masked before reading ptr_ring */
->  		smp_store_mb(rq->rx_notify_masked, false);
-> -		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring))) {
-> +		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring) ||
-> +			     (peer_txq && netif_tx_queue_stopped(peer_txq)))) {
->  			if (napi_schedule_prep(&rq->xdp_napi)) {
->  				WRITE_ONCE(rq->rx_notify_masked, true);
->  				__napi_schedule(&rq->xdp_napi);
+> > 
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+> > ---
+> >   mm/ksm.c | 88 +++++++++++++++++++++++++++++++-------------------------
+> >   1 file changed, 49 insertions(+), 39 deletions(-)
+> > 
+> > diff --git a/mm/ksm.c b/mm/ksm.c
+> > index 2a9a7fd4c777..1d1ef0554c7c 100644
+> > --- a/mm/ksm.c
+> > +++ b/mm/ksm.c
+> > @@ -607,34 +607,54 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
+> >   	return atomic_read(&mm->mm_users) == 0;
+> >   }
+> > -static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long next,
+> > +struct break_ksm_arg {
+> > +	unsigned long addr;
+> > +};
+> 
+> You can avoid that by simply passing a pointer to addr.
+> 
+> > +
+> > +static int break_ksm_pmd_entry(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> >   			struct mm_walk *walk)
+> >   {
+> > -	struct page *page = NULL;
+> > +	struct page *page;
+> >   	spinlock_t *ptl;
+> > -	pte_t *pte;
+> > -	pte_t ptent;
+> > -	int ret;
+> > +	pte_t *start_ptep = NULL, *ptep, pte;
+> 
+> Is there a need to initialize start_ptep?
+> 
 
-Double checking I'm read the code correctly. The above is supposed to
-trigger when something alike the following happens
+No, I will fix that.
 
-[producer]				[consumer]
-					veth_poll()
-					[ring empty]
-veth_xmit
-  veth_forward_skb
-  [NETDEV_TX_BUSY]		
-					napi_complete_done()
-					
-  netif_tx_stop_queue
-  __veth_xdp_flush()
-  rq->rx_notify_masked == true
-					WRITE_ONCE(rq->rx_notify_masked,
-						   false);
+> > +	int ret = 0;
+> > +	struct mm_struct *mm = walk->mm;
+> > +	struct break_ksm_arg *private = (struct break_ksm_arg *) walk->private;
+> 
+> Prefer reverse xmas tree:
+> 
+> struct break_ksm_arg *private = (struct break_ksm_arg *) walk->private;
+> struct mm_struct *mm = walk->mm;
+> ...
+> 
+> With the break_ksm_arg simplification you'd had
+> 
+> unsigned long *found_addr = (unsigned long *)walk->private;
+> 
+> 
 
-?
+Ok
 
-I think the above can't happen, the producer should need to fill the
-whole ring in-between the ring check and napi_complete_done().
+> > -	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+> > -	if (!pte)
+> > +	if (ksm_test_exit(walk->mm))
+> >   		return 0;
+> > -	ptent = ptep_get(pte);
+> > -	if (pte_present(ptent)) {
+> > -		page = vm_normal_page(walk->vma, addr, ptent);
+> > -	} else if (!pte_none(ptent)) {
+> > -		swp_entry_t entry = pte_to_swp_entry(ptent);
+> > -		/*
+> > -		 * As KSM pages remain KSM pages until freed, no need to wait
+> > -		 * here for migration to end.
+> > -		 */
+> > -		if (is_migration_entry(entry))
+> > -			page = pfn_swap_entry_to_page(entry);
+> > +	if (signal_pending(current))
+> > +		return -ERESTARTSYS;
+> 
+> I assume that's not a problem for the other callsites that wouldn't check
+> this before.
+> 
 
-Am I misreading it?
+Correct.
 
-/P
+> > +
+> > +	start_ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
+> > +	if (!start_ptep)
+> > +		return 0;
+> > +
+> > +	for (ptep = start_ptep; addr < end; ptep++, addr += PAGE_SIZE) {
+> 
+> Best to declare pte and folio (see last mail) here in the loop:
+> 
+> 	pte_t pte = ptep_get(ptep);
+> 	struct folio *folio = NULL;
+> 
 
+Ok.
+
+> > +		pte = ptep_get(ptep);
+> > +		page = NULL;
+> > +		if (pte_present(pte)) {
+> > +			page = vm_normal_page(walk->vma, addr, pte);
+> > +		} else if (!pte_none(pte)) {
+> > +			swp_entry_t entry = pte_to_swp_entry(pte);
+> > +
+> > +			/*
+> > +			 * As KSM pages remain KSM pages until freed, no need to wait
+> > +			 * here for migration to end.
+> > +			 */
+> > +			if (is_migration_entry(entry))
+> > +				page = pfn_swap_entry_to_page(entry);
+> > +		}
+> > +		/* return 1 if the page is an normal ksm page or KSM-placed zero page */
+> > +		ret = (page && folio_test_ksm(page_folio(page))) || is_ksm_zero_pte(pte);
+> > +		if (ret) {
+> > +			private->addr = addr;
+> > +			goto out_unlock;
+> > +		}
+> 
+> I suggest you call "ret" "found" instead.
+> 
+
+Ok.
+
+> >   	}
+> > -	/* return 1 if the page is an normal ksm page or KSM-placed zero page */
+> > -	ret = (page && folio_test_ksm(page_folio(page))) || is_ksm_zero_pte(ptent);
+> > -	pte_unmap_unlock(pte, ptl);
+> > +out_unlock:
+> > +	pte_unmap_unlock(ptep, ptl);
+> >   	return ret;
+> >   }
+> > @@ -661,9 +681,11 @@ static const struct mm_walk_ops break_ksm_lock_vma_ops = {
+> >    * of the process that owns 'vma'.  We also do not want to enforce
+> >    * protection keys here anyway.
+> >    */
+> > -static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_vma)
+> > +static int break_ksm(struct vm_area_struct *vma, unsigned long addr,
+> > +		unsigned long end, bool lock_vma)
+> >   {
+> >   	vm_fault_t ret = 0;
+> > +	struct break_ksm_arg break_ksm_arg;
+> >   	const struct mm_walk_ops *ops = lock_vma ?
+> >   				&break_ksm_lock_vma_ops : &break_ksm_ops;
+> > @@ -671,11 +693,10 @@ static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_v
+> >   		int ksm_page;
+> >   		cond_resched();
+> > -		ksm_page = walk_page_range_vma(vma, addr, addr + 1, ops, NULL);
+> > -		if (WARN_ON_ONCE(ksm_page < 0))
+> > +		ksm_page = walk_page_range_vma(vma, addr, end, ops, &break_ksm_arg);
+> > +		if (ksm_page <= 0)
+> >   			return ksm_page;
+> > -		if (!ksm_page)
+> > -			return 0;
+> > +		addr = break_ksm_arg.addr;
+> >   		ret = handle_mm_fault(vma, addr,
+> >   				      FAULT_FLAG_UNSHARE | FAULT_FLAG_REMOTE,
+> >   				      NULL);
+> > @@ -761,7 +782,7 @@ static void break_cow(struct ksm_rmap_item *rmap_item)
+> >   	mmap_read_lock(mm);
+> >   	vma = find_mergeable_vma(mm, addr);
+> >   	if (vma)
+> > -		break_ksm(vma, addr, false);
+> > +		break_ksm(vma, addr, addr + 1, false);
+> 
+> Better to use addr + PAGE_SIZE
+> 
+
+OK.
+
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
+> 
 
