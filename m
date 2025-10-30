@@ -1,208 +1,109 @@
-Return-Path: <linux-kernel+bounces-877698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE93C1ECCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6655C1ECD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 301803A8D74
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AFD63B9791
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59993337B87;
-	Thu, 30 Oct 2025 07:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25B2337B90;
+	Thu, 30 Oct 2025 07:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTu0b8qN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NFQa9raw"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07FA189F3B;
-	Thu, 30 Oct 2025 07:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1018A2DF710;
+	Thu, 30 Oct 2025 07:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761809871; cv=none; b=X/V8BuAWTiNaoFiZt4Eq2dsMgzMngw4H6UOuQKQJ1x2DiQCge5zyIclD/PTvaSPnIZTwSV7sqr/9OfXLTzal5J0oVAvpIP2ksUre2bHcEaPk/t34+YklFelQBvu+mvg6B3e6ncU4m/cmibQZyfjBtxEt29ZKHNQPWDC4qt2Oe6U=
+	t=1761809910; cv=none; b=ioQqJ0W8CBN+BxoQTegJsDOqywQLjjCQ8+JQMC0hEJkfX28hoA+kZ8SN4rP5gZag5JuDyAZ4JZdbZcWje+eYVksYbUQ81KMj+/kt4EkpHsnCCAYtPVBknq5LimUVEidEN37dz1EiWpuZyFRNFImdnaHtx1s25HOgk8SA/fn6FV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761809871; c=relaxed/simple;
-	bh=p5DHJywARmB6vgwsW87ali+itZaEbJODsI/RAOXtFCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9VkA5TztRz/wslyuaNsnaE/p1ng9HB23uofqVx8R0PELYOuBqLtcpuNMxs4VXkUs7oxc0lEP2bYjMI4xgGW0c0pTS81l6lakVyzpuEoatmScV6u5/tKi26I3fDaoypAPpWS7sgZwdQBhXy6RGTrm/5gYDoMFRrvFEgCFd51JxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTu0b8qN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E2C8C4CEF1;
-	Thu, 30 Oct 2025 07:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761809871;
-	bh=p5DHJywARmB6vgwsW87ali+itZaEbJODsI/RAOXtFCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BTu0b8qNGle6R+nWGmP4sNLndzagsCvdS/cbADesFxlULifaO76DGm7ScTcoqCjfZ
-	 fP5A7qc+k+GR7FJ13+GWv4Rw59IycUpgKVZ6ZJiGv3Plx/qxok01KYRsRvBcKe9+G1
-	 Dv9ssTxAPwWBqV6erVoEaiFEvLsGTUDvIT1icXMUvwlJRE8dHDlaHEnUWomt04+sOz
-	 yRTLDWvk0P2VxTjrQpx02G5OaH0kGK3OMmpm3i7lekjMcE1Df15k5rOgRrgWje0dln
-	 yGJDcg4EEc5LXOxsc3ty2JeUUHgFecigDQ0w58W0Y0Q30kw1Lh9pkcdXgj3Z2P/PD6
-	 iLjEuL9hL0tNg==
-Date: Thu, 30 Oct 2025 08:37:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Doug Anderson <dianders@google.com>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: phy: google: Add Google Tensor G5
- USB PHY
-Message-ID: <20251030-cunning-copper-jellyfish-1b5f3b@kuoka>
-References: <20251029214032.3175261-1-royluo@google.com>
- <20251029214032.3175261-2-royluo@google.com>
+	s=arc-20240116; t=1761809910; c=relaxed/simple;
+	bh=dLE70Vb7ALl+7w9D13VKYrToxonM3UZ+Iq+NTt2I2zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rW8QhDDP6FN/AP4kDjjbEgPgZ4sZZzah8CVnpuggKzfVMi0GrIkxV45gaQBHRMp5qBqJervF59yR7A4bKEr6PgB3+qP3kh+HqWMcbOOF84zmNw8nTzHuixUS4WWgD9Y2JOSfHNYNIJjVQzgEResUl71iVoTScEcTyo5d3xPtDT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NFQa9raw; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id C71F41A178F;
+	Thu, 30 Oct 2025 07:38:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8A6886068C;
+	Thu, 30 Oct 2025 07:38:23 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EBD5D117FDA39;
+	Thu, 30 Oct 2025 08:38:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761809902; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=PQ79r995lrIt1vl1eAOi6ClCmWaLJS9lKpg7n7yo+7E=;
+	b=NFQa9rawQavfjzTLyyQ/Y0W+PMKaWgvzn9L9RhvvAHFzCf9Pt80fJTBxc0NGK7DXKca4ER
+	oW9Z+VETAQJ5x9/ZRMYfm77dyHEBBzqStxjHtB8G/wdr+zwk/qwo9/ExJFYTLoiyidJPNe
+	KreJ2ai4gjuoJzCetoYuz1bHPZHsfjBgj51Wnfaa/BpPGgv7VCs3uYMk0xBngf+zmqs3Kn
+	CK4pBpnGydgYFRMmA7DDVGucOO48KxOBIYkAwRhYcsIFf9BQZruNNCLnxNb64brCOoig0g
+	pcfySQcPOA7YwXDQOnFe7H21OgD2mtEcuYP12CdvgxK3z7WZvuDa/Zb0YFxdDQ==
+Message-ID: <da8d9585-d464-4611-98c0-a10d84874297@bootlin.com>
+Date: Thu, 30 Oct 2025 08:38:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251029214032.3175261-2-royluo@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/3] net: stmmac: loongson: Use generic PCI
+ suspend/resume routines
+To: Yao Zi <ziyao@disroot.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Yanteng Si <si.yanteng@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Philipp Stanner <phasta@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>,
+ Qunqin Zhao <zhaoqunqin@loongson.cn>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Furong Xu <0x1207@gmail.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Jacob Keller <jacob.e.keller@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251030041916.19905-1-ziyao@disroot.org>
+ <20251030041916.19905-3-ziyao@disroot.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20251030041916.19905-3-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 29, 2025 at 09:40:31PM +0000, Roy Luo wrote:
-> Document the device tree bindings for the USB PHY interfaces integrated
-> with the DWC3 controller on Google Tensor SoCs, starting with G5
-> generation. The USB PHY on Tensor G5 includes two integrated Synopsys
-> PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP.
+Hi,
+
+On 30/10/2025 05:19, Yao Zi wrote:
+> Convert glue driver for Loongson DWMAC controller to use the generic
+> platform suspend/resume routines for PCI controllers, instead of
+> implementing its own one.
 > 
-> Due to a complete architectural overhaul in the Google Tensor G5, the
-> existing Samsung/Exynos USB PHY binding for older generations of Google
-> silicons such as gs101 are no longer compatible, necessitating this new
-> device tree binding.
-> 
-> Signed-off-by: Roy Luo <royluo@google.com>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
 > ---
->  .../bindings/phy/google,gs5-usb-phy.yaml      | 127 ++++++++++++++++++
->  1 file changed, 127 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  1 +
+>  .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 36 ++-----------------
+>  2 files changed, 4 insertions(+), 33 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
-> new file mode 100644
-> index 000000000000..8a590036fbac
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
-> @@ -0,0 +1,127 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Tensor Series (G5+) USB PHY
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description: |
-> +  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
-> +  Google Tensor SoCs, starting with the G5 generation.
-> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
-> +  and USB 3.2/DisplayPort combo PHY IP.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,gs5-usb-phy
-> +
-> +  reg:
-> +    items:
-> +      - description: USB3.2/DisplayPort combo PHY core registers.
-> +      - description: USB3.2/DisplayPort combo PHY Type-C Assist registers.
-> +      - description: USB2 PHY configuration registers.
-> +      - description: USB3.2/DisplayPort combo PHY top-level registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: usb3_core
-> +      - const: usb3_tca
-> +      - const: usb2_cfg
-> +      - const: usb3_top
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> index 598bc56edd8d..4b6911c62e6f 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> @@ -373,6 +373,7 @@ config DWMAC_LOONGSON
+>  	default MACH_LOONGSON64
+>  	depends on (MACH_LOONGSON64 || COMPILE_TEST) && STMMAC_ETH && PCI
+>  	depends on COMMON_CLK
+> +	depends on STMMAC_LIBPCI
 
-These prefixes are redundant. Also, you are still referencing here
-completely different devices. MMIO of IP blocks do not have size of 0xc
-and they do not span over other blocks (0x0c410000 and then next one is
-0x0c637000).
+If we go with a dedicated module for this, "select STMMAC_LIBPCI" would
+make more sense here I think. The same applies for the next patch.
 
-
-> +            reg = <0 0x0c410000 0 0x20000>,
-> +                  <0 0x0c430000 0 0x1000>,
-> +                  <0 0x0c450014 0 0xc>,
-> +                  <0 0x0c637000 0 0xa0>;
-> +
-> +  "#phy-cells":
-> +    description: |
-> +      The phandle's argument in the PHY specifier selects one of the three
-> +      following PHY interfaces.
-> +      - 0 for USB high-speed.
-> +      - 1 for USB super-speed.
-> +      - 2 for DisplayPort.
-> +    const: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    items:
-> +      - description: USB2 PHY clock.
-> +      - description: USB2 PHY APB clock.
-> +      - description: USB3.2/DisplayPort combo PHY clock.
-> +      - description: USB3.2/DisplayPort combo PHY firmware clock.
-> +    description:
-> +      USB3 clocks are optional if the device is intended for USB2-only
-> +      operation.
-
-No, they are not. SoCs are not made that internal wires are being
-disconnected when you solder it to a different board.
-
-I stopped reviewing here.
-
-You are making unusual, unexpected big changes after v4. At v4 you
-received only few nits because the review process was about to finish.
-
-Now you rewrite everything so you ask me to re-review from scratch.
-
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    items:
-> +      - const: usb2
-> +      - const: usb2_apb
-> +      - const: usb3
-> +      - const: usb3_fw
-
-Again, what's with the prefixes? apb is bus clock, so how you could have
-bus clock for usb2 and usb3? This means you have two busses, so two
-devices.
-
-> +
-> +  resets:
-> +    minItems: 2
-> +    items:
-> +      - description: USB2 PHY reset.
-> +      - description: USB2 PHY APB reset.
-> +      - description: USB3.2/DisplayPort combo PHY reset.
-> +    description:
-> +      USB3 clocks are optional if the device is intended for USB2-only
-> +      operation.
-> +
-> +  reset-names:
-> +    minItems: 2
-> +    items:
-> +      - const: usb2
-> +      - const: usb2_apb
-> +      - const: usb3
-
-And here?
-
-This all looks like downstream code.
-
-Best regards,
-Krzysztof
+Maxime
 
 
