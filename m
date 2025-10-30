@@ -1,217 +1,128 @@
-Return-Path: <linux-kernel+bounces-878963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32127C21DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:09:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23974C21DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51DA11AA00AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294DE406EF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E788136E377;
-	Thu, 30 Oct 2025 19:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730B2374AC9;
+	Thu, 30 Oct 2025 19:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D5LxtFEq"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZckXw5vU"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5CA348457
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395D9348457
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761851227; cv=none; b=rzHrsB/DV9zyY5F5o3vZ202DmIuWHKYQTU41lUUfDrTUGJ6EkkqyA2OGP4/UarXIXA3EOqAxZ2xy8UsYUTL9puJQfWNNV+V+xR2r3NlNXHtgQa1M7C479j5Yyyn2wAXCBrz484utCvDRvf4pUc3gVhfhgqZnpE5RuIBCZ0IetYQ=
+	t=1761851245; cv=none; b=JglL9/T0yOWczQmiN5Xd/vyKHk6zrQDmzRLxj6HN3VYPDYVOoWDFOV8rhI9wljVrruvnv7gJp+2qf6HrAsmkwicAd3V09Xc/88EehIRUM4ZQkBlhnj+aPYp6I3Vmr08B62I9/ZwhsZiKLDFAwDj/N9U3WX8fc6SmGwjv0KfnEhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761851227; c=relaxed/simple;
-	bh=gYHkvpfJ7NmC+pz9e7oilRRIc6gDbQrnkoKo55uq7x4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DFcMfYnkj9tqdokW3Cu2LvGmkmxv+fSW+2xRcZdtynmIZidIg0pzSoJ/8keJIaFUlV35bW0TCLHM9kfCH63FRnCCJQnz7E5UIyJ8QMnROMxlpnbEGZyen0e7xx81gwc4caZUB7gzvqrhZf+XupulHo1ovfaz/2nt6vyI5v6UXBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D5LxtFEq; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761851211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lhWnjZelzOe9tyVT1vIXYOQef+bxuvWza/B/Vqmbb0E=;
-	b=D5LxtFEqxG8uDpVpfZvPERxoVNSJiF5uGU4oYINjPif2JtMGmAip97OZ2emrzwdh9rmuPr
-	zfbLXebyjkLvy30tZWWZvZRv53ViAXmBpNtraVpi+xfXfAFkgtbzag9VuBr6g2fsHssdFU
-	gx6K61ctconfr5Y5vdelplfWzEfFt8U=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Amery Hung <ameryhung@gmail.com>
-Cc: Song Liu <song@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
- Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-  Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
- to cgroups
-In-Reply-To: <CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com>
-	(Amery Hung's message of "Thu, 30 Oct 2025 11:19:52 -0700")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-3-roman.gushchin@linux.dev>
-	<CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
-	<87zf98xq20.fsf@linux.dev>
-	<CAHzjS_tnmSPy_cqCUHiLGt8Ouf079wQBQkostqJqfyKcJZPXLA@mail.gmail.com>
-	<CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com>
-Date: Thu, 30 Oct 2025 12:06:42 -0700
-Message-ID: <877bwcus3h.fsf@linux.dev>
+	s=arc-20240116; t=1761851245; c=relaxed/simple;
+	bh=DvFyvNSh8qxl399ZX4Dvk2UH8sJtqfrtdkTSXiS2O28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LhvmmUK47LM2o9ZM5g9n4QBpSx9XW6vH/oZMhJ3s3pgSbr4e95ue5TNFWYQeRPWcaEkyn4R8MtMQ3EzWxPKR5a/a6zyx85Dv8D2V8ENdjh5rom/LvuCIXmFWAsespEbGv4LFxYginoqBqrgbH0YQu1ujZ92ZwLtkC8xZqknxMsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZckXw5vU; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ecfafb92bcso65231cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761851242; x=1762456042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PCoLCqthfjlxcZmXPuVo/a5TDaJzLCC0xdNynQX7McU=;
+        b=ZckXw5vU0LXRw4K7WamRpYd/12eb909nfOJSCoI08y8xTLLYR3UlS/DHzw/12P+TVT
+         WG9hLNIW8f5kI9IjFfPGFdWFJMouX0MULieJ838fZCCc1+PCDzM84UwKh4K1ij6ejU6Y
+         xGE6IcMP/05CscvVqu/k/KQctwKgLT0Lk4Te+zPbS1RIYaNxHSKApG2/pfkSibhFMSsA
+         eitOA0vQ2U4ni8qXfR7iJiFLC6lDYcuaT/zs2yQpKQ2yV4DgWKO0wAQ8dJYqW+3gCOQg
+         rN2flXr4dd6UlmO7HwBbzO3VGPUlNaiUz+flcw9qqCPxtcGQF56uzothabnGPvYrXGFD
+         dcJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761851242; x=1762456042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PCoLCqthfjlxcZmXPuVo/a5TDaJzLCC0xdNynQX7McU=;
+        b=otC9x6mv3HH+VGEjEe9WyCbrzYtDivNN9QMnB7cktAIKUY6eTVLqvt8VsUVmjCtk+l
+         Q83yIEZx7aBa+pf62GNXLyVRept68jjS1v35KqE5OgdADPo/QkF7Ug5XQO50/UH/hauv
+         2dG7ulQ0Sq8ay4n3RovoHAfR9AgZcUG/CXztqHFjADiQHAQbukEWAsW8g+em1HaC8ZTu
+         MmDC6IzUapaEySX6sCCWWIuwdDs+j2sYAwBtZBB8BRAN0CX3r6oU0tkxF/UAOrGFem+1
+         mXQolc+dGMMOv9ejzUElTNLgTxxGOQFxk5grnJvDhUhBEFCR6PVI1fauIr8HHavb1YS1
+         fEfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUI4vn5tJWkxiNphrltxXNkd4mh7mvt7mAFk4FFLKb9Nx9JSH8jw8+oXP/5j1tN74JNc3T3SpE+Unq+pUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz38PFHNtr0hc2myO3a3p14/5XTj9tigBP7Ka/7Qw32ioUQebz5
+	jQTbsPOvzQzCmHMnveQ1sA3t6vFWWSNGenH8mzFeKFhoGXdffplbPblWM5cMaQHGNCN1IkGXemw
+	aI9JAQcubUKPCRFB0mdOYYNCLeZF98OBXTTxN/meR
+X-Gm-Gg: ASbGncurR3dZSPXem6FxonOU7D7XaVJsopRzDYRLDJ7a21H1LZ0XQMrJqMZxwCcPy1V
+	4IrQ+FMcg71cdrO5/ZHg1+XB1OIfcoWIvaOda3ct0IdpJuzavZoH+6Faiv0OPDJ56v1d+V901Wh
+	wcB6Kox2/MActO4SHdzWNaLqfJ1H97/7FMnh8wsT0qQbkME4PrLakhiUvu+25txzA913//7mi+N
+	mQo+b/mvfDkAo+mWyrJxwpr0vTMSjsmZ/AvlYbpCzh4W3r7G5sfTLeBAn8T9vsTTSrJw5pEUaDp
+	6aJ7m1oDUxHc3Kdlw+3O4K1PKA==
+X-Google-Smtp-Source: AGHT+IHkIhJCo7NFdaHLBFyJbonDCNFLcwrhYELkE6OW4OeZdx3rf5ADytg1g/CT0hOvRfBwqeiJwH0z6jqJ9LzJDkw=
+X-Received: by 2002:a05:622a:2:b0:4e8:85ac:f7a7 with SMTP id
+ d75a77b69052e-4ed31f3529amr938991cf.9.1761851241873; Thu, 30 Oct 2025
+ 12:07:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20251030171238.1674493-1-rananta@google.com> <20251030183120.GD1204670@ziepe.ca>
+In-Reply-To: <20251030183120.GD1204670@ziepe.ca>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Thu, 30 Oct 2025 12:07:10 -0700
+X-Gm-Features: AWmQ_bmODnSgIiguqq9wgyDj-h2iOZbOtTbAP3dhn7MpDJGiXfBAH1fV5zpiZRs
+Message-ID: <CAJHc60yMgzQL9VT-K4GuDa7ZAYfNBi3Az3nnZTgd+RLYW+3iTg@mail.gmail.com>
+Subject: Re: [PATCH] vfio: Fix ksize arg while copying user struct in vfio_df_ioctl_bind_iommufd()
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alex Williamson <alex.williamson@redhat.com>, David Matlack <dmatlack@google.com>, 
+	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
 
-Amery Hung <ameryhung@gmail.com> writes:
-
-> On Thu, Oct 30, 2025 at 11:09=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->>
->> On Thu, Oct 30, 2025 at 10:22=E2=80=AFAM Roman Gushchin
->> <roman.gushchin@linux.dev> wrote:
->> >
->> > Song Liu <song@kernel.org> writes:
->> >
->> > > On Mon, Oct 27, 2025 at 4:17=E2=80=AFPM Roman Gushchin <roman.gushch=
-in@linux.dev> wrote:
->> > > [...]
->> > >>  struct bpf_struct_ops_value {
->> > >>         struct bpf_struct_ops_common_value common;
->> > >> @@ -1359,6 +1360,18 @@ int bpf_struct_ops_link_create(union bpf_att=
-r *attr)
->> > >>         }
->> > >>         bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_s=
-truct_ops_map_lops, NULL,
->> > >>                       attr->link_create.attach_type);
->> > >> +#ifdef CONFIG_CGROUPS
->> > >> +       if (attr->link_create.cgroup.relative_fd) {
->> > >> +               struct cgroup *cgrp;
->> > >> +
->> > >> +               cgrp =3D cgroup_get_from_fd(attr->link_create.cgrou=
-p.relative_fd);
->> > >
->> > > We should use "target_fd" here, not relative_fd.
->> > >
->> > > Also, 0 is a valid fd, so we cannot use target_fd =3D=3D 0 to attach=
- to
->> > > global memcg.
->> >
->> > Yep, but then we need somehow signal there is a cgroup fd passed,
->> > so that struct ops'es which are not attached to cgroups keep working
->> > as previously. And we can't use link_create.attach_type.
->> >
->> > Should I use link_create.flags? E.g. something like add new flag
->> >
->> > @@ -1224,6 +1224,7 @@ enum bpf_perf_event_type {
->> >  #define BPF_F_AFTER            (1U << 4)
->> >  #define BPF_F_ID               (1U << 5)
->> >  #define BPF_F_PREORDER         (1U << 6)
->> > +#define BPF_F_CGROUP           (1U << 7)
->> >  #define BPF_F_LINK             BPF_F_LINK /* 1 << 13 */
->> >
->> >  /* If BPF_F_STRICT_ALIGNMENT is used in BPF_PROG_LOAD command, the
->> >
->> > and then do something like this:
->> >
->> > int bpf_struct_ops_link_create(union bpf_attr *attr)
->> > {
->> >         <...>
->> >         if (attr->link_create.flags & BPF_F_CGROUP) {
->> >                 struct cgroup *cgrp;
->> >
->> >                 cgrp =3D cgroup_get_from_fd(attr->link_create.target_f=
-d);
->> >                 if (IS_ERR(cgrp)) {
->> >                         err =3D PTR_ERR(cgrp);
->> >                         goto err_out;
->> >                 }
->> >
->> >                 link->cgroup_id =3D cgroup_id(cgrp);
->> >                 cgroup_put(cgrp);
->> >         }
->> >
->> > Does it sound right?
->>
->> I believe adding a flag (BPF_F_CGROUP or some other name), is the
->> right solution for this.
->>
->> OTOH, I am not sure whether we want to add cgroup fd/id to the
->> bpf link. I personally prefer the model used by TCP congestion
->> control: the link attaches the struct_ops to a global list, then each
->> user picks a struct_ops from the list. But I do agree this might be
->> an overkill for cgroup use cases.
+On Thu, Oct 30, 2025 at 11:31=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wro=
+te:
 >
-> +1.
+> On Thu, Oct 30, 2025 at 05:12:38PM +0000, Raghavendra Rao Ananta wrote:
+> > For the cases where user includes a non-zero value in 'token_uuid_ptr'
+> > field of 'struct vfio_device_bind_iommufd', the copy_struct_from_user()
+> > in vfio_df_ioctl_bind_iommufd() fails with -E2BIG. For the 'minsz' pass=
+ed,
+> > copy_struct_from_user() expects the newly introduced field to be zero-e=
+d,
+> > which would be incorrect in this case.
+> >
+> > Fix this by passing the actual size of the kernel struct. If working
+> > with a newer userspace, copy_struct_from_user() would copy the
+> > 'token_uuid_ptr' field, and if working with an old userspace, it would
+> > zero out this field, thus still retaining backward compatibility.
+> >
+> > Fixes: 86624ba3b522 ("vfio/pci: Do vf_token checks for VFIO_DEVICE_BIND=
+_IOMMUFD")
+> > Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+> > ---
+> >  drivers/vfio/device_cdev.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> In TCP congestion control and BPF qdisc's model:
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 >
-> During link_create, both adds the struct_ops to a list, and the
-> struct_ops can be indexed by name. The struct_ops are not "active" by
-> this time.
-> Then, each has their own interface to 'apply' the struct_ops to a
-> socket or queue: setsockopt() or netlink.
+> Though I feel this was copied from some other spot in vfio so I wonder
+> if we have a larger set of things that are a little off..
 >
-> But maybe cgroup-related struct_ops are different.
+I could only find vfio_df_ioctl_bind_iommufd() in vfio referencing
+copy_struct_from_user(). The other closest would be in
+drivers/iommu/iommufd/main.c::iommufd_fops_ioctl(), which seems to be
+doing the right thing.
 
-Both tcp congestion and qdisk cases are somewhat different because
-there already is a way to select between multiple implementations, bpf
-just adds another one. In the oom case, it's not true. As of today,
-there is only one (global) oom killer. Of course we can create
-interfaces to allow a user make a choice. But the question is do we want
-to create such interface for the oom case specifically (and later for
-each new case separately), or there is a place for some generalization?
-
-
-Ok, let me summarize the options we discussed here:
-
-1) Make the attachment details (e.g. cgroup_id) the part of struct ops
-itself. The attachment is happening at the reg() time.
-
-  +: It's convenient for complex stateful struct ops'es, because a
-      single entity represents a combination of code and data.
-  -: No way to attach a single struct ops to multiple entities.
-
-This approach is used by Tejun for per-cgroup sched_ext prototype.
-
-2) Make the attachment details a part of bpf_link creation. The
-attachment is still happening at the reg() time.
-
-  +: A single struct ops can be attached to multiple entities.
-  -: Implementing stateful struct ops'es is harder and requires passing
-     an additional argument (some sort of "self") to all callbacks.
-
-I'm using this approach in the bpf oom proposal.
-
-3) Move the attachment out of .reg() scope entirely. reg() will register
-the implementation system-wide and then some 3rd-party interface
-(e.g. cgroupfs) should be used to select the implementation.
-
-  +: ?
-  -: New hard-coded interfaces might be required to enable bpf-driven
-     kernel customization. The "attachment" code is not shared between
-     various struct ops cases.
-     Implementing stateful struct ops'es is harder and requires passing
-     an additional argument (some sort of "self") to all callbacks.
-
-This approach works well for cases when there is already a selection
-of implementations (e.g. tcp congestion mechanisms), and bpf is adding
-another one.
-
-I personally lean towards 2), but I can easily implement bpf_oom with 1)
-and most likely with 3) too, but it's a bit more complicated.
-
-So I guess we all need to come to an agreement which way to go.
-
-Thanks!
+Thank you.
+Raghavendra
 
