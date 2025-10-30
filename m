@@ -1,168 +1,181 @@
-Return-Path: <linux-kernel+bounces-879259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A717DC22A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:11:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B65DBC22AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830124612B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911C93B5D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEB133BBBC;
-	Thu, 30 Oct 2025 23:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937E033BBD5;
+	Thu, 30 Oct 2025 23:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="DyVQKM9A"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ee9GcDCb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDAF33B6E4
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B5F33BBB4;
+	Thu, 30 Oct 2025 23:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761865831; cv=none; b=IEBmrIJRmIkq/EUpaoJhQs8CLSkqGvp1VYvS43AHN1YDmQkB9UzMCxpsF2Hmy4mncUv5jlKGAyQKhNtOk9N0d//UjSeE446lN4WXZh44lKDeepvg4yd1Ve0aKoWt6K3xh0ZZfBDSUgO/3+XaJ5/tlJ9q3/IfaJaNyzNyMg7KpwQ=
+	t=1761866024; cv=none; b=h1pWj3BrY2tSLIUOwUm9ylc1BWt7R0jpOyKo7WX5Q2LN3rDIGzvgXMo53mjVYm934Vv5CSyFNnBjNfCY/rREZf7uOsJ3TjZS1ENnSA9djITrTRgWdwDpZoFBc/SsJdWiH8wiftsWY31g83o+DAwdbzrU2HHXF95YX4j+IesLlnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761865831; c=relaxed/simple;
-	bh=cZhuNO7QWzS4+SMkxGfliO0rBMVSjnGz40sl2s/wftM=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=UxZ3ut83NUrZZrTFyw/JrOS+dpfA0ZrSVWqRVDCzYfej+ZMqOvAJnpqEzyK3ogX0GxswM+Vpz+3/lguRlc1Wo9KrXvk4oyAaWMd9914iu7SR9LNJyHRCxY0ftVMzvAzhXDjPQei91xC3JIXn8hamVmYQFpjy1UrkrC7CouM1OuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=DyVQKM9A; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1761865827;
-	bh=88KBlL4xUTV7siG+o+5Td6u+tNx+n4ecg/FuEBRQIzg=;
-	h=Subject:From:To:Cc:Date;
-	b=DyVQKM9AN351thCoS8lCuUYSZbGE3zHkEb1My2e1PTyKyUc4BKNLPTaBen5Uj9+Zx
-	 Tf61VjJJH8VUfWMAmIG+MzBqGRvacQmjxpE3QmZh/OV8GIvjLBnqrJiTaOTaEN9I0x
-	 xnZEdWwRfuF4rHGF9wzEWsGXHdplY/6rh1B/5k+m7Zy6Uw1Rz6zwqFEUArJgWaBGkm
-	 bjY0cjy1YqQcrtQ/C70eCsbvIy7Ddis84NYNxM9VzbWfn1/rsuKvZ+dA1kSiaSrF9O
-	 +MyzJjRDTnDG8HSHgtBAWcK5qSZz02oVJTDU7i/Bu6vhMK3g/m3qjpft6yLlNHpRgS
-	 yomLHRmC3I/gw==
-Received: from [IPv6:2405:6e00:2421:7372:17cf:8b2f:ac7e:ac4d] (unknown [120.20.6.198])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9C2D278C99;
-	Fri, 31 Oct 2025 07:10:26 +0800 (AWST)
-Message-ID: <d2bd7e3e6045ac68875fd220e528c76f4fb2faac.camel@codeconstruct.com.au>
-Subject: [GIT PULL] aspeed: First batch of devicetree changes for 6.19
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: soc <soc@lists.linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
-Date: Fri, 31 Oct 2025 09:40:25 +1030
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761866024; c=relaxed/simple;
+	bh=e8KQYXWP8oyWIEZBL5fnE122BuOb1hJtXET+NzPdXq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5ThovsGcSiK9pVldXnNHlc5L8jCbYvEOUPNvOxnAC35ZAnwv6BXyeW/v25BBXgE8L4exoPqCtK7rSI8tiOk0LilYlZBarOkKMSGPClv1QF/7A2LszYXiU3sANJO7JzJEETHwArsD/Ha7h0Mab2a74mjgK61n9Sb4vJ5bA7onl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ee9GcDCb; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761866023; x=1793402023;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e8KQYXWP8oyWIEZBL5fnE122BuOb1hJtXET+NzPdXq0=;
+  b=ee9GcDCbOytRwhszeDypXIHpwnZnLL5sVnh2SJUDttx+Lc6f5LBG8ksc
+   F4frqfnIhSzaAIGGM6zM1HhMKF8RCWBNuc8YegrEoNYkBixFkT4HkTzog
+   DiTThcsUP8Lr/1bRzozKGHRTuCypqnOdmF+3ao4jShBbYBvj7bSe2T1mv
+   ZuXJVf3jC+GEzoXJthIdThs8J54ZAXf6gsl539j8hn1qQVBr4KY1qsMV+
+   m6n6Vz64dfkzg2FmH5VFbO63WrILXfRRPq/aj6/4dy8oCQ4c7MwMgGeVl
+   gEShjEViogfJ6l8Wq3JYzMRpI4PQbZY6WSeDs+hjXq0cbxaHzgm632qAa
+   g==;
+X-CSE-ConnectionGUID: bwm8NxJKRrStnxUkUDOksg==
+X-CSE-MsgGUID: 904ArfMhTUGUq9gNKLFMQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="81650250"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="81650250"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 16:13:37 -0700
+X-CSE-ConnectionGUID: 8asRz2VwTNy8DKADF97QKw==
+X-CSE-MsgGUID: V/W3T8a6QIaozlDd7bsCmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="190431875"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 30 Oct 2025 16:13:34 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEbpj-000MbQ-1i;
+	Thu, 30 Oct 2025 23:13:31 +0000
+Date: Fri, 31 Oct 2025 07:11:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: cy_huang@richtek.com, Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	ChiYuan Huang <cy_huang@richtek.com>, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] power: supply: rt9756: Add Richtek RT9756 smart
+ cap divider charger
+Message-ID: <202510310620.GXuWxbZt-lkp@intel.com>
+References: <5eab51e111b092329519dd2c200858a522780626.1761699952.git.cy_huang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5eab51e111b092329519dd2c200858a522780626.1761699952.git.cy_huang@richtek.com>
 
-Hello SoC maintainers,
+Hi,
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787=
-:
+kernel test robot noticed the following build warnings:
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+[auto build test WARNING on sre-power-supply/for-next]
+[also build test WARNING on krzk-dt/for-next robh/for-next linus/master v6.18-rc3 next-20251030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-are available in the Git repository at:
+url:    https://github.com/intel-lab-lkp/linux/commits/cy_huang-richtek-com/dt-bindings-power-supply-Add-Richtek-RT9756-smart-cap-divider-charger/20251029-091554
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
+patch link:    https://lore.kernel.org/r/5eab51e111b092329519dd2c200858a522780626.1761699952.git.cy_huang%40richtek.com
+patch subject: [PATCH v3 2/3] power: supply: rt9756: Add Richtek RT9756 smart cap divider charger
+config: alpha-randconfig-r122-20251031 (https://download.01.org/0day-ci/archive/20251031/202510310620.GXuWxbZt-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310620.GXuWxbZt-lkp@intel.com/reproduce)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
--6.19-devicetree-0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510310620.GXuWxbZt-lkp@intel.com/
 
-for you to fetch changes up to 6953afcd81a2cc73784e3dd23faa0a1aaf97441a:
+sparse warnings: (new ones prefixed by >>)
+>> drivers/power/supply/rt9756.c:645:41: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned long [usertype] size @@     got restricted gfp_t @@
+   drivers/power/supply/rt9756.c:645:41: sparse:     expected unsigned long [usertype] size
+   drivers/power/supply/rt9756.c:645:41: sparse:     got restricted gfp_t
+>> drivers/power/supply/rt9756.c:645:53: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted gfp_t [usertype] gfp @@     got unsigned long @@
+   drivers/power/supply/rt9756.c:645:53: sparse:     expected restricted gfp_t [usertype] gfp
+   drivers/power/supply/rt9756.c:645:53: sparse:     got unsigned long
 
-  ARM: dts: aspeed: santabarbara: Add eeprom device node for PRoT module (2=
-025-10-17 16:44:13 +1030)
+vim +645 drivers/power/supply/rt9756.c
 
-----------------------------------------------------------------
-First batch of ASPEED Arm devicetree changes for 6.19
+   619	
+   620	static int rt9756_register_psy(struct rt9756_data *data)
+   621	{
+   622		struct power_supply_desc *desc = &data->psy_desc;
+   623		struct power_supply_desc *bat_desc = &data->bat_psy_desc;
+   624		struct power_supply_config cfg = {}, bat_cfg = {};
+   625		struct device *dev = data->dev;
+   626		char *psy_name, *bat_psy_name, **supplied_to;
+   627	
+   628		bat_cfg.drv_data = data;
+   629		bat_cfg.fwnode = dev_fwnode(dev);
+   630	
+   631		bat_psy_name = devm_kasprintf(dev, GFP_KERNEL, "rt9756-%s-battery", dev_name(dev));
+   632		if (!bat_psy_name)
+   633			return -ENOMEM;
+   634	
+   635		bat_desc->name = bat_psy_name;
+   636		bat_desc->type = POWER_SUPPLY_TYPE_BATTERY;
+   637		bat_desc->properties = rt9756_bat_psy_properties;
+   638		bat_desc->num_properties = ARRAY_SIZE(rt9756_bat_psy_properties);
+   639		bat_desc->get_property = rt9756_bat_psy_get_property;
+   640	
+   641		data->bat_psy = devm_power_supply_register(dev, bat_desc, &bat_cfg);
+   642		if (IS_ERR(data->bat_psy))
+   643			return dev_err_probe(dev, PTR_ERR(data->bat_psy), "Failed to register battery\n");
+   644	
+ > 645		supplied_to = devm_kzalloc(dev, GFP_KERNEL, sizeof(*supplied_to));
+   646		if (!supplied_to)
+   647			return -ENOMEM;
+   648	
+   649		/* Link charger psy to battery psy */
+   650		supplied_to[0] = bat_psy_name;
+   651	
+   652		cfg.drv_data = data;
+   653		cfg.fwnode = dev_fwnode(dev);
+   654		cfg.attr_grp = rt9756_sysfs_groups;
+   655		cfg.supplied_to = supplied_to;
+   656		cfg.num_supplicants = 1;
+   657	
+   658		psy_name = devm_kasprintf(dev, GFP_KERNEL, "rt9756-%s", dev_name(dev));
+   659		if (!psy_name)
+   660			return -ENOMEM;
+   661	
+   662		desc->name = psy_name;
+   663		desc->type = POWER_SUPPLY_TYPE_USB;
+   664		desc->usb_types = BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN) | BIT(POWER_SUPPLY_USB_TYPE_SDP) |
+   665				  BIT(POWER_SUPPLY_USB_TYPE_DCP) | BIT(POWER_SUPPLY_USB_TYPE_CDP);
+   666		desc->properties = rt9756_psy_properties;
+   667		desc->num_properties = ARRAY_SIZE(rt9756_psy_properties);
+   668		desc->property_is_writeable = rt9756_psy_property_is_writeable;
+   669		desc->get_property = rt9756_psy_get_property;
+   670		desc->set_property = rt9756_psy_set_property;
+   671	
+   672		data->psy = devm_power_supply_register(dev, desc, &cfg);
+   673	
+   674		return PTR_ERR_OR_ZERO(data->psy);
+   675	}
+   676	
 
-Significant changes:
-
-- The IBM Power11 FSI DTSIs have been rearranged to accommodate new systems
-
-New platforms:
-
-- IBM Balcones
-
-  The Balcones system is similar to Bonnell but with a POWER11 processor.
-  Like POWER10, the POWER11 is a dual-chip module, so a dual chip FSI
-  tree is needed.
-
-- Meta Yosemite5
-
-  The Yosemite5 platform provides monitoring of voltages, power,
-  temperatures, and other critical parameters across the motherboard,
-  CXL board, E1.S expansion board, and NIC components.
-
-Updated platforms:
-
-- clemente (Meta): LEDs, shunt resistor configuration
-- santabarbara (Meta): AMD APML, EEPROMs, LEDs, GPIO line names, MCTP for N=
-ICs
-
-There are a scattering of one-off changes and devicetree cleanups for other
-platforms as well.
-
-----------------------------------------------------------------
-Daniel Hsu (1):
-      ARM: dts: aspeed: harma: Add MCTP I2C controller node
-
-Eddie James (4):
-      dt-bindings: arm: aspeed: add IBM Balcones board
-      dt-bindings: arm: aspeed: add IBM Bonnell board
-      ARM: dts: aspeed: Add Balcones system
-      ARM: dts: aspeed: Fix max31785 fan properties
-
-Fred Chen (7):
-      ARM: dts: aspeed: santabarbara: Add blank lines between nodes for rea=
-dability
-      ARM: dts: aspeed: santabarbara: Add sensor support for extension boar=
-ds
-      ARM: dts: aspeed: santabarbara: Enable MCTP for frontend NIC
-      ARM: dts: aspeed: santabarbara: Add bmc_ready_noled Led
-      ARM: dts: aspeed: santabarbara: Add gpio line name
-      ARM: dts: aspeed: santabarbara: Add AMD APML interface support
-      ARM: dts: aspeed: santabarbara: Add eeprom device node for PRoT modul=
-e
-
-Kevin Tung (2):
-      dt-bindings: arm: aspeed: add Meta Yosemite5 board
-      ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
-
-Leo Wang (2):
-      ARM: dts: aspeed: clemente: add shunt-resistor-micro-ohms for LM5066i
-      ARM: dts: aspeed: clemente: Add HDD LED GPIO
-
-Zane Li (1):
-      ARM: dts: aspeed: yosemite4: allocate ramoops for kernel panic
-
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml      |    3 +
- arch/arm/boot/dts/aspeed/Makefile                             |    2 +
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts     |    9 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts        |    8 +
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarbara.dts |  919 +++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts    |   14 ++
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dts    | 1067 +++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-balcones.dts          |  609 +++++=
-+++++++++++++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dts           |    4 -
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts           |    8 -
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts           |   12 -
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dts            |   36 ---
- arch/arm/boot/dts/aspeed/ibm-power11-dual.dtsi                |  779 +++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/aspeed/ibm-power11-quad.dtsi                |  769 +----=
-----------------------------------------------------------
- 14 files changed, 3405 insertions(+), 834 deletions(-)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.=
-dts
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-balcones.dts
- create mode 100644 arch/arm/boot/dts/aspeed/ibm-power11-dual.dtsi
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
