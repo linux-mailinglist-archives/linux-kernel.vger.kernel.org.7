@@ -1,160 +1,139 @@
-Return-Path: <linux-kernel+bounces-878413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4E0C2086B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:15:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E61C208ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA8F3AB183
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:14:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 674294F1CE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE3824C076;
-	Thu, 30 Oct 2025 14:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA29F25EFBE;
+	Thu, 30 Oct 2025 14:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7VHHOUy"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZRg3Lcv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A47230BCB
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD73023C513;
+	Thu, 30 Oct 2025 14:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761833637; cv=none; b=PBa28XZcDEtrrpBoKPBGGPM+uuee75r5CAXty2XJ3wCpi+5PwO8HHh/SP2+1cjDxBkbfsOXWwh87dhtCBHAXpQ1VlF+h+YMEvhqZLARCSpZWUM7F8RSc9/SZoRAvVXp8ayXP1S+5A7FPAE5n8Z9Vw7EFlrUFUD59uySWyR4Id8E=
+	t=1761833701; cv=none; b=SKWjHsyDdAWWep/tmNZkHK1OVlWGngxy3JyVdyDoBl0idjiT9c2l/yJlydz6565Mbb72bmjrwSpOrJUnuzOVpqqpVI+hLio3mkCwFE8xy5oRJUeUn+aYteD9RCBt5jhPr7ZvXw9LXWy5Xso/9e4N7bwBgqmkX95O509ox2PoCOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761833637; c=relaxed/simple;
-	bh=94nDq8zBh97mffHHJCaEGopUfRCzcjVIRb5EcN4m/EY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f4sQC8AQhgDoiUdbKCsZFXUezUGhC0plvuF1ewXM4GDRxLU+ymsrxWKaR0OkGByoak4GaMM47mlFhqBrx2Pz6EXtheC4MqG+MirWHceSo8hAAxboObXbxokdAR5/SkaySroSmassEw9YCqA/QkyBZMPQnYT+5gBM/pdkz2NwrJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7VHHOUy; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64074f01a6eso132280a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761833634; x=1762438434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tOC9DCoI/J/8bu8rwIJ0BqF4IPlr7KAf52CibhE5rhU=;
-        b=O7VHHOUy4Y+X2t4LqR7Q3shM0D+MZEgB2ZenQg9mRTVdyQf8zbim8m39gaabue3uvI
-         wd9r9osTkueechVgHqRrmanq/KOr8VtUB3AWXX4jcf5OhRLC2dlvMTjTUhH0ICZupj2+
-         SzX/O+vWc6FGBHBUr50hI1a50XZBW0WVNMyH18lFGF0YOXX9baz49fC9DD41ZY2OP9A5
-         z4taTY1dQ+eS0V12FkFS9Ju2W8I6D229VmyM2VCiNi8HFSaTNzmS+UiH0LUFnLu22pgQ
-         Oq9usp4mLK70qPzt6OvMfYa3AyU1CpOCJV/ufRtr5OKIobZe2inrKXtwJUX/LAXxW19v
-         /OYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761833634; x=1762438434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tOC9DCoI/J/8bu8rwIJ0BqF4IPlr7KAf52CibhE5rhU=;
-        b=mqjzmXqUFGOzfG66dPfyihoCS9HJsboPFdPRVrogf57FeI/Lha0j2SE8Lb51+9FYCw
-         GrRXG46P2CghKGC+eXBa62O/ENBSaIMYgUN4Xgkl5cukaTuT44v6eKc0ptinQu0JskfS
-         NGBf3f67FTXyUk4fkymOltbT98b1UA/ru5e7luM0qUrwxlHafvsV5/a6t61yGXWgh3Cm
-         1QrMu9AZcqprUqpEi+c/a7auHO9S9g3pnOtdjHIitMycw1uDUTRownD2nRmV/Ywtp3i2
-         DHCPA2Uk/hFiLnWFcCs5BpEH3kbOLb/upIiKWrPX5FwQUERoC+gUbhiKkt2ZxLPRrTSq
-         TPlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXACSBjj9+ocVJLHGal4sy94juuUcxmFiUZfe+yxEYmWE5lTgdXqsTMZKAyHObtJNZpndtlv91VmysIFQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZTGx6ZOviriw+8HAAnHXTmjajNimRrzIvBy+Dtqo945XCpBJU
-	qNwxRGtEhNRjuIiNw9wRJcoPMAflL2Yo1ENGcyrGa+vlTx1frsAoHH84U1xTnFgRMUyu+mfLgBs
-	jrz6wpRxdwCHc59EVvFRXOZF6/RZmykE=
-X-Gm-Gg: ASbGnctFPC1ts3lmnIJ+xtaEqz7oNiQpXV+AsHPBJUtS76gHjlr4ubFLRcThpmmGJis
-	hXAsCzut2vvNj083xjTcDDMqMUGuhjvt2CEIUJnVKXx+ZiaoSPOfGvd0KQBhvoujI5e4KyTgJek
-	lUf21H5EP4zXAF5Vm9LD2QBlCBa6PODj23EVOj81G2QOn571nNCqFELXitjVuiTQ/zF9io/y25c
-	2R4Xm5bTGjdTnsQvSmAtRAjzQPsXX3edRNzqFWRVgJXBNAhCK8v4Srp09zC9oU+N2vX3v/goQqA
-	3lmwNT6ZtJftw06n01AMZ8pvtw==
-X-Google-Smtp-Source: AGHT+IHHiFU7O4X2/IErWSfBx1kH/lPRHPmhsiq+izBQRCkA7d5xQXqg6CS0MeVhAebPeWBMpKqtWUmkxAZqrttEmnY=
-X-Received: by 2002:a05:6402:35d4:b0:637:ab6d:71c0 with SMTP id
- 4fb4d7f45d1cf-640441cde44mr5940503a12.7.1761833633789; Thu, 30 Oct 2025
- 07:13:53 -0700 (PDT)
+	s=arc-20240116; t=1761833701; c=relaxed/simple;
+	bh=ARkbEZwIcjtq3UHgVcwLTAhe5ywrSMfhcggmgV1iso8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNVNM00lVRKALcENWHxHbHY5k8r2rKMp+mk4MNMxn5U9M5jP8vhYuXxgpfaD2CkScw1vlasg/8gVwPeh7PeEIfqlJIwJsm9hAb2zKcJq7nw/YjjWhVCTTTXRJZ6ipLExsajTdpucrkEYT4atv2gTa63YcCC+BD6L4ZoiuzcrrwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZRg3Lcv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43177C4CEFF;
+	Thu, 30 Oct 2025 14:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761833699;
+	bh=ARkbEZwIcjtq3UHgVcwLTAhe5ywrSMfhcggmgV1iso8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZRg3Lcvd8GObcu7mv5GNEOQTP82tLQK9Fl51npkDqQkq8vYqiXjd+sdbWRm+AaKS
+	 KM05NDknRHsO9S3x92lDMWSXtGzaU5EbeIrn74EMy0Vn9dsDaegeR4nvExsA3djLUP
+	 VIgK0Wjr8X+dTo/niyqSMRgbYKTqJXZY0RP0Co/azFwbieXvnh7lwPpyXWLgV7FNWX
+	 twXnIP0x8vUNwSyA96xXCYhrS/xVTBSa143Z2dBIN1G3kq1e9zqrIJRND6e/Nt9r7B
+	 CEPqGJIpLThMFYq2/zDzz6r1MwoPduvgQLuJg5UqqWx2aNvdP/Aj492SQNNbrfTU54
+	 3aj6I/1c7UcYQ==
+Date: Thu, 30 Oct 2025 09:14:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251030141448.GA3853761-robh@kernel.org>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-6-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029131428.654761-1-mjguzik@gmail.com> <pzstmkemz36aecf7ckphbcz3ph55cn6si3ca2nm6sku444365m@pntnbgblgxuf>
-In-Reply-To: <pzstmkemz36aecf7ckphbcz3ph55cn6si3ca2nm6sku444365m@pntnbgblgxuf>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 30 Oct 2025 15:13:40 +0100
-X-Gm-Features: AWmQ_bkA9dBRMVR-2VtG6VNKL-gCT_mzVoOQ03lsjs4LdqZ-PeopA_KO9V5L_2k
-Message-ID: <CAGudoHHsV5oyOnKNuQNwQXTeS4ZQp2pTnbrQ3B9+_dvFkmA3bQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fs: push list presence check into inode_io_list_del()
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015071420.1173068-6-herve.codina@bootlin.com>
 
-On Thu, Oct 30, 2025 at 2:54=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 29-10-25 14:14:27, Mateusz Guzik wrote:
-> > For consistency with sb routines.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->
-> Not sure if you've noticed but inode_io_list_del() is also called from
-> ext4_evict_inode() (for annoying reasons but that's besides this thread).
-> So there you have another list_empty() check to deduplicate. Plus ext4
-> actually uses list_empty_careful() for the unlocked check which kind of
-> makes sense because in theory these checks could race with someone removi=
-ng
-> the inode from writeback lists.
->
+On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
+> A Simple Platform Bus is a transparent bus that doesn't need a specific
+> driver to perform operations at bus level.
+> 
+> Similar to simple-bus, a Simple Platform Bus allows to automatically
+> instantiate devices connected to this bus.
+> 
+> Those devices are instantiated only by the Simple Platform Bus probe
+> function itself.
 
-huh, gotta say this is pretty bad.
+Don't let Greg see this... :)
 
-i'm going to the updates later for the sake of the clean up, but long
-term if ext4 has to do this, the evict func should postpone
-inode_io_list_del instead. there is related mess in interaction with
-writeback as is though, so this is for some indeterminate point in the
-future.
+I can't say I'm a fan either. "Platform bus" is a kernel thing, and the 
+distinction here between the 2 compatibles is certainly a kernel thing.
 
->                                                                 Honza
->
-> > ---
-> >
-> > rebased
-> >
-> >  fs/fs-writeback.c | 3 +++
-> >  fs/inode.c        | 4 +---
-> >  2 files changed, 4 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index f784d8b09b04..5dccbe5fb09d 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -1349,6 +1349,9 @@ void inode_io_list_del(struct inode *inode)
-> >  {
-> >       struct bdi_writeback *wb;
-> >
-> > +     if (list_empty(&inode->i_io_list))
-> > +             return;
-> > +
-> >       wb =3D inode_to_wb_and_lock_list(inode);
-> >       spin_lock(&inode->i_lock);
-> >
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 1396f79b2551..b5c2efebaa18 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -815,9 +815,7 @@ static void evict(struct inode *inode)
-> >       BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
-> >       BUG_ON(!list_empty(&inode->i_lru));
-> >
-> > -     if (!list_empty(&inode->i_io_list))
-> > -             inode_io_list_del(inode);
-> > -
-> > +     inode_io_list_del(inode);
-> >       inode_sb_list_del(inode);
-> >
-> >       spin_lock(&inode->i_lock);
-> > --
-> > 2.34.1
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+I think this needs to be solved within the kernel.
+
+What I previously said is define a list of compatibles to not 
+instantiate the child devices. This would essentially be any case having 
+a specific compatible and having its own driver. So if someone has 
+'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if 
+they add a driver for "vendor,not-so-simple-bus", then they have to add 
+the compatible to the list in the simple-pm-bus driver. I wouldn't 
+expect this to be a large list. There's only a handful of cases where 
+"simple-bus" has a more specific compatible. And only a few of those 
+have a driver. A more general and complicated solution would be making 
+linux handle 2 (or more) drivers matching a node and picking the driver 
+with most specific match. That gets complicated with built-in vs. 
+modules. I'm not sure we really need to solve that problem.
+
+If we have to do something in the DT, then I think I prefer a property 
+to control the behavior. That way we have the option to ignore it.
+
+Rob
 
