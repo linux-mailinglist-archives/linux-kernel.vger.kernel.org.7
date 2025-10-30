@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-879026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70817C2212E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:52:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04112C2218B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A16D4E3DC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3453A7867
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCDC31618F;
-	Thu, 30 Oct 2025 19:51:54 +0000 (UTC)
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781803328F8;
+	Thu, 30 Oct 2025 19:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RU/BtFOa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6D827FB25;
-	Thu, 30 Oct 2025 19:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D489B332ECC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761853914; cv=none; b=tJ4Zw9HuwdtCrpb90LffzLuAWeUatQfgrHdvToMFjth0cf7s6GlWaNx/0NH6QDxoQg7pK+JqKiIWijMU7IY05tBoyEw6/POGkI+BWipfIeqUXU08n74899JyALpWxB19kXnBRoxYDCo/TvLP0BoPpGI9Zdmc4j5rdU7i6HGVBfI=
+	t=1761854247; cv=none; b=t/an9PkI43LkOx/hZhYwHobSSNNf7VcYHCaePPwDjEMa1SGct6g8OQt3+/JisH9Z6yGRTbKCJUDYM5krxINg8IbRVtwvMLCSx/+ogLVwpENPVc2OP9rqYUzasxSyPvTu24H9+2RJiambp9UVVl17JNdDlNCzFYbNMmJBk0Xgtjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761853914; c=relaxed/simple;
-	bh=1K65T+QRQPvRIGdXU/w+k/IIV/8h+Bu/VmkZtTAW9uM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=noZicBLKNh7S8yKACKUhE4MWoCDbc6l6zEpjJaszi6s7bWvZpJbYXlynPkJbE69ND28AWo/RCugRSl9Rh4RJf15JVbJiCo/TIAtzg7AN5KHQ2QpZ+qkkSO7u/h3CpD4EeYTkY23p48kvvYkupeskunGwL49t3acNWGqqCwEMAkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 59UJvCVD020239;
-	Thu, 30 Oct 2025 19:57:12 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.15.2/8.15.2/Submit) id 59UJvCCN020235;
-	Thu, 30 Oct 2025 19:57:12 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Lee Jones <lee@kernel.org>, Dzmitry Sankouski <dsankouski@gmail.com>,
-        Griffin Kroah-Hartman <griffin.kroah@fairphone.com>,
-        Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "Dr . David Alan Gilbert" <linux@treblig.org>,
-        Job Sava <jsava@criticallink.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, Alexander Kurz <akurz@blala.de>
-Subject: [PATCH v6 6/6] ARM: dts: imx53: add imx53-qsrb PMIC power button
-Date: Thu, 30 Oct 2025 19:56:54 +0000
-Message-Id: <20251030195654.20142-7-akurz@blala.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20251030195654.20142-1-akurz@blala.de>
-References: <20251030195654.20142-1-akurz@blala.de>
+	s=arc-20240116; t=1761854247; c=relaxed/simple;
+	bh=OBpdvl/BtoQiGvtNgbEFbsYPKZFMiSxUgYLc3AyFoHw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=YilAdq5KkZjX34FObRToFjraW7lJKvA8+FN0H7XnWbYOc282qLLL+YwLNTzrBMoUwC1iLN24x89gxewRNNgI5rj9swUM61KwYgUfCsEEPpvQSfufNeEIN3iuDIBiAjFog7PJ4U+gVFu1fSEYysAx/ctoSgl06PmHP9YS3mCXWIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RU/BtFOa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A54CC4CEFB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:57:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761854247;
+	bh=OBpdvl/BtoQiGvtNgbEFbsYPKZFMiSxUgYLc3AyFoHw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=RU/BtFOa4rVNsPWEDaqyPDOJCVzaDGpiGvWA3bLqKJx06dLINFUHRriYCWR5xvXrQ
+	 Lbe+HV1jNP5bZWYe5tOvzyPab4CiDPP24+xHY4n7QB5tQJJVax/2c9POXJyp27c+Fd
+	 hG/FLvzKmx1nINbCH45QoCOI7fiiR/t8EwQTOFIfyqoM1T2zJyNpqIlzwdfGwPPm8L
+	 62echcKQ/16bkOFVbvHKnLYh9ncjzPwlvKgkMCRkdT++mI0I+phU4QWWM1iV+y5/gl
+	 XyUJNUsinLxNjbLOM0KfyOlgnba6fvAMb3Yp2LTwMBqKb1ICX7v41zIWJllujy1Wqn
+	 B/h7tWNzJdL1w==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-65675447dbbso399435eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:57:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPUM44B1YCDH+5UzleVF1IBnzPme45XSkwpw9KwMTxy8uRnXk4bFJZjB4cEst1qzYpqMACp4GRywqy0cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynZnD4gTABVLxeB5f1m2lLJmmqFI9/Vq0X+f4FPlmHfRRjB4+F
+	IYh/PNvX/a2HUgx4tbOMvC8f8NFspt4d0iBz8yGo54/mQDazUz/gTDykWECPnRx5G5WbHt/18Hx
+	dCJzd+idOHJRW+uNe3v6sleBNcXIJ/H8=
+X-Google-Smtp-Source: AGHT+IEgyAlZtg0wuRPXPbyZZfEUOj6/ocGllOrporuhj6LQp5k7NHPMaK65lYNywn7H/qfPn8flTVIMFo4N7dTlHbI=
+X-Received: by 2002:a05:6820:201:b0:656:735e:9eff with SMTP id
+ 006d021491bc7-6568a69fb65mr481386eaf.7.1761854246775; Thu, 30 Oct 2025
+ 12:57:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 30 Oct 2025 20:57:16 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i1FFbZZeqtk__gKMy2dc6HREtqm7aBmNpXeFTKz2Kbvg@mail.gmail.com>
+X-Gm-Features: AWmQ_bk8FcC0Qg8pO5IW6wFP9AIitODCZAxiDdkGcJLxjLHOaulumleUatoSV_c
+Message-ID: <CAJZ5v0i1FFbZZeqtk__gKMy2dc6HREtqm7aBmNpXeFTKz2Kbvg@mail.gmail.com>
+Subject: [GIT PULL] Power management fixes for v6.18-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-As described in the board hardware user guide IMX53RQSBRM-R.pdf, the
-mc34708 pin PWRON1 is connected to a button "SW6"/"POWER", connecting
-this line to GND.
-Add support for the imx53-qsrb "POWER" button.
+Hi Linus,
 
-Signed-off-by: Alexander Kurz <akurz@blala.de>
----
- arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Please pull from the tag
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts b/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts
-index 2f06ad61a766..2a6d28e9e8f8 100644
---- a/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts
-@@ -139,6 +139,18 @@ vgen2_reg: vgen2 {
- 				regulator-always-on;
- 			};
- 		};
-+
-+		buttons {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			onkey@0 {
-+				reg = <0>;
-+				linux,code = <KEY_POWER>;
-+				debounce-delay-ms = <30>;
-+				active-low;
-+				fsl,enable-reset;
-+			};
-+		};
- 	};
- };
- 
--- 
-2.39.5
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.18-rc4
 
+with top-most commit 590c5cd10675a6ae49f6019502dec5c87aba07e4
+
+ Merge branches 'pm-cpuidle' and 'pm-sleep'
+
+on top of commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+
+ Linux 6.18-rc3
+
+to receive power management fixes for 6.18-rc4.
+
+These fix three regressions, two recent ones and one introduced during
+the 6.17 development cycle:
+
+ - Add an exit latency check to the menu cpuidle governor in the case
+   when it considers using a real idle state instead of a polling one to
+   address a performance regression (Rafael Wysocki)
+
+ - Revert an attempted cleanup of a system suspend code path that
+   introduced a regression elsewhere (Samuel Wu)
+
+ - Allow pm_restrict_gfp_mask() to be called multiple times in a row
+   and adjust pm_restore_gfp_mask() accordingly to avoid having to play
+   nasty games with these calls during hibernation (Rafael Wysocki)
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (2):
+      cpuidle: governors: menu: Select polling state in some more cases
+      PM: sleep: Allow pm_restrict_gfp_mask() stacking
+
+Samuel Wu (1):
+      Revert "PM: sleep: Make pm_wakeup_clear() call more clear"
+
+---------------
+
+ drivers/cpuidle/governors/menu.c |  7 +++++--
+ kernel/power/hibernate.c         |  4 ----
+ kernel/power/main.c              | 22 +++++++++++++++++-----
+ kernel/power/process.c           |  1 +
+ kernel/power/suspend.c           |  1 -
+ 5 files changed, 23 insertions(+), 12 deletions(-)
 
