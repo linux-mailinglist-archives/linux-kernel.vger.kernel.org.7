@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-879219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F370DC22920
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:35:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B4AC2291D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DF33B6465
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65603B58B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BBA33BBB3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0458F33BBAB;
 	Thu, 30 Oct 2025 22:34:34 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028B832ABF7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D532BAF7
 	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761863673; cv=none; b=fdTqpc3tKFxUhN3NxyHfagyis89dy5fPpxl0BffOz6mqn+zlTVsJN4avgU9wX+vHtORXCHIRdZEV/627UKPIwVyAS6bleTPuUUdGOzGn7Wz8LZI410Cc1KoBETBmsvSx4/Q7nEJ7r+MjJ/xpS5ROb6Ra9GnAQiLZMAuFVenben0=
+	t=1761863673; cv=none; b=bIKEbxXFpnpGtsddfDDOqQkzhNEfL24HKpDhkIYBXLv/ZSuxrOKml4tBPmXqTb69mE3u4TTlkE2OYk/B716ctH0OU1qnDPLK3kmGYPQ4IvnKcUWlfhbR4dH3NiSWV9PDFJgBHEkhkprk2ocuO9s8HlxC66qmAmUPOxhFk96kpcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761863673; c=relaxed/simple;
-	bh=+yIrfAcHvZQGSn8LDTP6aWdoergAqd08V3lV3dcK6eI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NPyO2DpBinbXdu1RbnmnMTfDvOVFrvyAu2l8brWvT0mxOyPufs3u9AqiifXKnTyACSWiLaql4kqKdTt5p/idk3ryzcA6+dLhVJeQWKh6rjJm7xLOZIf9J80HPY0QO2Ny81UiKJk+zGOuqnwH2+39OeRjgq5AC/rRLkZycIGtGAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	bh=PDG+4R0bR+zUy5rnRXrobvWRNhVRznZikV2XejgbQgQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TIR6fpw7cum9scGvwrY6IxthwhZE4MyoBb7zgVkB4ZD1epYBuMzthe8Hv6fW3VXVx8OnWR47i8SY1cVwlHVYN0PavPRYiKWwGT2b9yaEVBXIS1pTwxHeNBHvE5CERSFkP1sVlKNTHdh5ZV6IZm4K1VfVrHbpg3jrYkJXTayorLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430d83d262fso53925065ab.2
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-93e8db8badeso186473539f.3
         for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:34:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761863671; x=1762468471;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=khvxWLmDWKcLZe7oJicpi4kJnAITF6zg/vQbhpB8OZE=;
-        b=QXVjjzIfFx4VqjVTXwO6bXDt/D0jhyWWyGvFU2my1xZFZ9ZQkAiUFnraMB/T5hzSCi
-         nN6Tb+SQQmlHqbNhZfr1kfHpJpeU8MQrBHxnSE0vlOTegeqbjVs9DZjLWuUqRq/mib73
-         fTEypbDIHFGBFPiiebyocT/ytSeIL2o63WvQJQ2/pZT8BF3VgJ2hHndu0AwYPB+BTHSL
-         jXzWD0uaEjT4TXyqb7OVwCfq8qGI9Bd5ms5Tf5akvg+eMXPyToN9Y5yqWUP8ZIxzd8t8
-         tFQBpsttt/oNkTfp49j/igp/GY5+NZD0zUFQXuE2brGJtlOU7bUixXSZS48RlR+ogUf+
-         769Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVucgVntuEg0LAL5RM8ESBPMuIgOIn4RqFZodl7ml/jrnHdVIM8ywBox9sKfw/2ZgvlgTlIYV4pM/fBMck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYBq7i4ElKszmHRs9hRsIxz6deWZYq/UiZ638kOoJqKXCY7Kms
-	BWFOyST1YDnHSrnpvVoSToY3EwLe/X2hg9LIRpWOBlvrJICo5lhzrMv+9aXeCgSlVFAFAI/gYiM
-	X5Z6GdwFQSephhfN8rJezorwkEwTl7GSYtU9afgJV7MXbqd+2QxlXa786mT8=
-X-Google-Smtp-Source: AGHT+IFtmqur8E8iOXH77isYpzZloSaHX6NBgwM4MVMm7lZIvJ3h5hrbet+7k0YLZAbtqH3hVii6quGaqb+MY4T5+tMcqgmPsTpr
+        bh=NIZ0Uu9MMshqp8xzh1+njbzcONq0p2voF8lI6LDP9wQ=;
+        b=qehuggLcWvWlI0UyPVD4zScVeDYrpsc2UmnLet6YLOU2gxXbREUAKtnkMRkYZW0mc8
+         jJW84wPTDAw1jQJSgfbU1KkU1LR77+W3aliCYeiKHq3ta0BU1DwW2mue3aehbkgUvwn3
+         U0/v8ZrM3LSCOPgtA9i29af15m2PgnL329GeObixkMpOjU9UCEv5LX7H/eGkBDTFLCXD
+         3Uimff7Ha8oIw6Y62Lqsa9HrO7GlwvhkNaAqKBCYy3YNYYSk2ckAAUPdATTxJYTMtFrl
+         ghTZ5i1cDHAznL+oyniYsI4pucHtUtIHQlua8cXWPAe+ndCzcJqX96VLotD45bRsNJeB
+         CICQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVC9S3ceBRl9YfoWJHRLxUuo2yAqUTG08v7MfsZjEx+0I+jWptVJsz1iyuUfa6+b/n+NUrGWB4PfnFau1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCz2pI8NJ7E0qeL0gTJjmmGQD6hnS3jfBtWh+jVh2LoiCr2YJQ
+	yMYcq5e/Qhsc31MFV7VBO4+GxIfb41WQnY3a+Up6KjG44YAE3qt1emWxFiTGh9owvuTSUix+nUO
+	ZF12jRThkajYUyLTu1nMwrenpgmuVT2xqHHn73MvQV/4CO4MGr9e70O0em4M=
+X-Google-Smtp-Source: AGHT+IH8rbugZWseHZZude7SAZ+heAK7OUOj2rQDiXnDpnCyUA5qZGMVwJZAbrfFjmu+Ri0uTlGgSp3G2WYaQNW18sOVlKyezB3A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:330a:b0:430:aec5:9be4 with SMTP id
- e9e14a558f8ab-4330d1199efmr24254395ab.7.1761863671296; Thu, 30 Oct 2025
+X-Received: by 2002:a05:6e02:1447:b0:430:b59b:5f2b with SMTP id
+ e9e14a558f8ab-4330d1bec10mr20376375ab.16.1761863671070; Thu, 30 Oct 2025
  15:34:31 -0700 (PDT)
 Date: Thu, 30 Oct 2025 15:34:31 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6903e7f7.050a0220.3344a1.044d.GAE@google.com>
-Subject: [syzbot] [io-uring?] KASAN: global-out-of-bounds Read in io_uring_show_fdinfo
-From: syzbot <syzbot+b883b008a0b1067d5833@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, kbusch@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <6903e7f7.050a0220.3344a1.044c.GAE@google.com>
+Subject: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref (2)
+From: syzbot <syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f9ba12abc528 Add linux-next specific files for 20251029
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16493fe2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=32e95de7031f410d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b883b008a0b1067d5833
+HEAD commit:    e53642b87a4f Merge tag 'v6.18-rc3-smb-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=150aa32f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=929790bc044e87d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=76916a45d2294b551fd9
 compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15729258580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10988e14580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101f5f34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121dbe7c580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7b5f5194573e/disk-f9ba12ab.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/83dabfc9c13b/vmlinux-f9ba12ab.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7e62a1d361f0/bzImage-f9ba12ab.xz
-
-The issue was bisected to:
-
-commit 101e596e7404d07a85b38358a392009503aad797
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Tue Oct 28 01:09:28 2025 +0000
-
-    io_uring/fdinfo: cap SQ iteration at max SQ entries
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=102f8342580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=122f8342580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=142f8342580000
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-e53642b8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bb13d82854da/vmlinux-e53642b8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f3a72d29f243/bzImage-e53642b8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fb4c6b817064/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16191fe2580000)
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b883b008a0b1067d5833@syzkaller.appspotmail.com
-Fixes: 101e596e7404 ("io_uring/fdinfo: cap SQ iteration at max SQ entries")
+Reported-by: syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: global-out-of-bounds in __io_uring_show_fdinfo io_uring/fdinfo.c:111 [inline]
-BUG: KASAN: global-out-of-bounds in io_uring_show_fdinfo+0x86d/0x1830 io_uring/fdinfo.c:257
-Read of size 2 at addr ffffffff8bbe27f0 by task syz.0.17/6025
-
-CPU: 0 UID: 0 PID: 6025 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+EXT4-fs warning (device loop0): ext4_xattr_inode_get:546: inode #11: comm syz.0.17: ea_inode file size=0 entry size=6
+EXT4-fs warning (device loop0): ext4_expand_extra_isize_ea:2853: Unable to expand inode 15. Delete some EAs or run e2fsck.
+------------[ cut here ]------------
+EA inode 11 i_nlink=2
+WARNING: CPU: 0 PID: 5496 at fs/ext4/xattr.c:1058 ext4_xattr_inode_update_ref+0x51a/0x5b0 fs/ext4/xattr.c:1056
+Modules linked in:
+CPU: 0 UID: 0 PID: 5496 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ext4_xattr_inode_update_ref+0x51a/0x5b0 fs/ext4/xattr.c:1056
+Code: 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 06 84 c0 0f 85 80 00 00 00 41 8b 17 48 c7 c7 80 1f 80 8b 4c 89 e6 e8 a7 1b f8 fe 90 <0f> 0b 90 90 4c 8b 6c 24 28 e9 59 fe ff ff e8 f3 0b bd 08 44 89 f9
+RSP: 0018:ffffc90002847240 EFLAGS: 00010246
+RAX: 96417f00249f1400 RBX: 0000000000000001 RCX: ffff88801f648000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: ffffc90002847330 R08: ffff88801fe24293 R09: 1ffff11003fc4852
+R10: dffffc0000000000 R11: ffffed1003fc4853 R12: 000000000000000b
+R13: ffff8880121df630 R14: 1ffff1100243beb4 R15: ffff8880121df5a0
+FS:  000055557b2d3500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd0e033d000 CR3: 000000004bac3000 CR4: 0000000000352ef0
 Call Trace:
  <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __io_uring_show_fdinfo io_uring/fdinfo.c:111 [inline]
- io_uring_show_fdinfo+0x86d/0x1830 io_uring/fdinfo.c:257
- seq_show+0x5bc/0x730 fs/proc/fd.c:68
- traverse+0x1ee/0x580 fs/seq_file.c:111
- seq_read_iter+0xd08/0xe20 fs/seq_file.c:195
- seq_read+0x369/0x480 fs/seq_file.c:162
- do_loop_readv_writev fs/read_write.c:847 [inline]
- vfs_readv+0x5aa/0x850 fs/read_write.c:1020
- do_preadv fs/read_write.c:1132 [inline]
- __do_sys_preadv fs/read_write.c:1179 [inline]
- __se_sys_preadv fs/read_write.c:1174 [inline]
- __x64_sys_preadv+0x197/0x2a0 fs/read_write.c:1174
+ ext4_xattr_inode_dec_ref fs/ext4/xattr.c:1081 [inline]
+ ext4_xattr_inode_dec_ref_all+0x867/0xda0 fs/ext4/xattr.c:1223
+ ext4_xattr_delete_inode+0xa4c/0xc10 fs/ext4/xattr.c:2947
+ ext4_evict_inode+0xac9/0xee0 fs/ext4/inode.c:271
+ evict+0x504/0x9c0 fs/inode.c:810
+ ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
+ __ext4_fill_super fs/ext4/super.c:5617 [inline]
+ ext4_fill_super+0x5920/0x61e0 fs/ext4/super.c:5736
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1751
+ fc_mount fs/namespace.c:1208 [inline]
+ do_new_mount_fc fs/namespace.c:3651 [inline]
+ do_new_mount+0x302/0xa10 fs/namespace.c:3727
+ do_mount fs/namespace.c:4050 [inline]
+ __do_sys_mount fs/namespace.c:4238 [inline]
+ __se_sys_mount+0x313/0x410 fs/namespace.c:4215
  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f67fb78efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe53f8b308 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00007f67fb9e5fa0 RCX: 00007f67fb78efc9
-RDX: 0000000000000001 RSI: 00002000000005c0 RDI: 0000000000000004
-RBP: 00007f67fb811f91 R08: 00000000ffffffff R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f67fb9e5fa0 R14: 00007f67fb9e5fa0 R15: 0000000000000005
+RIP: 0033:0x7f9e5239076a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd45601928 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd456019b0 RCX: 00007f9e5239076a
+RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007ffd45601970
+RBP: 0000200000000180 R08: 00007ffd456019b0 R09: 0000000000800700
+R10: 0000000000800700 R11: 0000000000000246 R12: 00002000000001c0
+R13: 00007ffd45601970 R14: 000000000000046c R15: 0000200000000680
  </TASK>
-
-The buggy address belongs to the variable:
- .str.15+0x10/0x20
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xbbe2
-flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000002000 ffffea00002ef888 ffffea00002ef888 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff8bbe2680: 00 03 f9 f9 00 04 f9 f9 00 01 f9 f9 00 04 f9 f9
- ffffffff8bbe2700: 00 00 f9 f9 00 f9 f9 f9 00 f9 f9 f9 00 f9 f9 f9
->ffffffff8bbe2780: 00 07 f9 f9 07 f9 f9 f9 00 05 f9 f9 00 05 f9 f9
-                                                             ^
- ffffffff8bbe2800: 00 f9 f9 f9 00 02 f9 f9 07 f9 f9 f9 06 f9 f9 f9
- ffffffff8bbe2880: 00 05 f9 f9 06 f9 f9 f9 05 f9 f9 f9 06 f9 f9 f9
-==================================================================
 
 
 ---
@@ -164,7 +145,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
