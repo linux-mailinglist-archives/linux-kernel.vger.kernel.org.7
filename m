@@ -1,157 +1,119 @@
-Return-Path: <linux-kernel+bounces-878548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411FBC20F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:35:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574C6C20FAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB1194EC723
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2256C189FAAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06D13655DF;
-	Thu, 30 Oct 2025 15:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8535B3644B2;
+	Thu, 30 Oct 2025 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cPTlTxBd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gy+77v1p"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D58C13777E;
-	Thu, 30 Oct 2025 15:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6A2274FDB
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761838494; cv=none; b=G0cFdgu/V9FrP/Kw/A1k6Gv2oGW7OPJ3tLpjM4KzCawxuwnaOePSsqx/+4a7nP+Sy15rVmrTGilGi/UuWnY1qa/w+ztAX5iVGQvxTyLQRTV6pOkseqKFse11mLlPAsPu1hO2qaR/BDa0DTkAHquyRre2XnMtIYxABFnRGi3IVag=
+	t=1761838507; cv=none; b=S571TiNQu2S10dRQoic/GEaNDXrah46GpBi/sGqc0hwobm84vbduhmptzp+NTcyG8wf9GsSTMARboe0gFLED8AbAerDLKcLZ1mNaDfloDacqNXs+o37uMSWdv+5714CZnoSc+duBXmIM4gCAMi2iWaEsGFHZ/ntP2+/WS2FW/IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761838494; c=relaxed/simple;
-	bh=wa0XjLpuio9V5069OumImxH+9JACRiW/gyAPcbGAAyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M30abqnu7sJTOWtocqeOkiSH5cDxxOSFm3NQfKz5B5IYN/S6ToXhLiJFHdfkAJPO3ECQQgJG6prKvVfBgstM6BvY1PILVkCJ1/BRS/YSdpPIWiqcQVUPVJcR1Ocj0NAdxz83RH5hsGlxgiZ2r/gTO6G9WctmDwP5KCDtBEajlIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cPTlTxBd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDClaa030847;
-	Thu, 30 Oct 2025 15:34:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=CDURBL
-	vEZvnDo3KV9/2hW0/0ZlTuB6U/SwxQzM1S2RU=; b=cPTlTxBdS/u27SobwBICzI
-	O1kJ+jjDUMdGgH33V3/dyEC982Cu8Zxs5bDMew4KyU9OzKs35Wr3pYqT0jDsOC5R
-	8C26uuxy056gEclveZ88kGtQWW0YtZ5zYZ13Z4QOGqHzKgbZHRNZNVPlfnlgHZP6
-	9XBmWkg/kLe+Qjeww2Q+P5PBjO1j0xnSyyhBO9krjDgyxCO370LfaF7C44mFp/96
-	BGYrSijojImalWCFyB+NFfjvWZOlDd3TfRRSaOE6ZLgzn1laRDDkktFusu5W4z+J
-	Viyfg2pufgCTNf2aHd/dyObFfg7g9UdPV5KIPgjEWW2Z+kZDYvvIq56wgxvr649w
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34ajs08d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 15:34:39 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59UD7Nui031653;
-	Thu, 30 Oct 2025 15:34:38 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a33w09ggg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 15:34:38 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59UFYYFq53281042
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 15:34:34 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8694E20049;
-	Thu, 30 Oct 2025 15:34:34 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C2A620040;
-	Thu, 30 Oct 2025 15:34:34 +0000 (GMT)
-Received: from thinkpad-T15 (unknown [9.152.212.238])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 30 Oct 2025 15:34:34 +0000 (GMT)
-Date: Thu, 30 Oct 2025 16:34:33 +0100
-From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Luiz Capitulino <luizcap@redhat.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Joao Martins
- <joao.m.martins@oracle.com>,
-        David Hildenbrand <david@redhat.com>, osalvador@suse.de,
-        aneesh.kumar@kernel.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390: Disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
-Message-ID: <20251030163433.1b178a40@thinkpad-T15>
-In-Reply-To: <20251030145505.2764038-1-hca@linux.ibm.com>
-References: <20251030145505.2764038-1-hca@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761838507; c=relaxed/simple;
+	bh=ACjwdk8FrhEdulai0ptYpIj2Vc0V/QYCTmXFcLn6jp0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IouWqBXMS3BC2AoXgc0f1sN713tOxfHVJLk2D+moy/7pl7nwshdjQ+jACHu9ygIqZ1xrOIbJexNxOUyTdb2P9ep0tNWuw6bLDYXKEOvKdrwZM0QyUMv54XfeoL2SQbBUeeZUQgU8KBFPq8+adWHvoLlTjE9RsXJLNqyTW09Mv+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gy+77v1p; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-475dd559b0bso15940845e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761838504; x=1762443304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yMjHugVum7QNRx23N0Xydg5pEWW7JC7mvFaBCaZk2OI=;
+        b=Gy+77v1pGDeLaMD9SKAtgH+F1xq1VuVufnnHwSVUi2tF16KeAo8xwkmfNg9/xKHFLE
+         DFRRPKPapq06XS+9GD+9nkYAprWjT4baZ9qUDKwY80zk2xhlPp0qjwFHxhtujMFOhdBv
+         nEnjVfIjCbZQ2UGYPVzxB0mYsI18fhtN4KdZ01S0w9lOENNlbLZOioGAUbYQntrGdDAP
+         s5jw6ZMpA2mexFGV7va6e0ysWZNJWaUgPyzQNCZEkyAp37LuiF5RmFtJyRAdgXNc53Bm
+         BQebyHU03YBdJ0GHXXls/YyybCszDQbl9gWliyFAY6H4iH2zgZHMPsUfAWEeUrIQ3D4P
+         b7iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761838504; x=1762443304;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yMjHugVum7QNRx23N0Xydg5pEWW7JC7mvFaBCaZk2OI=;
+        b=r99Qc5Jy//tz4Nidq6xtZ+3lxLoKETKvyarw3sX8MTapnGoKIGwoReOwx6eiA9vFNI
+         ML2vL+1nSLAomJNTUp2ZJy+nWHFryDFX7wAVUU2DtgKLg7Y//dfzSKKj6AHFRI9jZgeR
+         AQJdxdpzrM2vVNfwTKIJDohQoqgE2ES8QmYjbzej3LMH02f+S6zzRnAXbkyON3d4SKeB
+         uDLDHW0MBF1X5LFlC2M+tqlvhCNM7rl6cASx5X6IXViH5L828Pn40urzxv7dlU5gybpM
+         41zVo5uPFoRiwli8gboXMpctm+NFXhcmE0ZM/fwZ030QrLJl2CK+KjeVw24d4442uGrs
+         kJPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJuI5OqkBv8s1SEvTOD3PfjqPdzYUpMshkQSPX6a64nEooomdvieGJAo7RMYdTAdTN80a2g4JDqaUdzs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY6WcTV6xUjcvZIgCN3vQD7RBgB11ZOmGhfcuoJ29/8/R3F/xP
+	4XFUcICAPsM6I6O0a2K871qtS5CjhEU2VxU/h5yup8cLcSQJsxwwVCk9GIX0Ze7sKzU=
+X-Gm-Gg: ASbGncv9dLff4srtG+98xl86MYAZd0pWQrkTrl6+MPVbH21uUy/6tZl3W6BLYqzhqyJ
+	kZZLawHsqfkkc9P1NvC4waLZ3DaAjx8FCQ7I2o4iD6o6phZTHsjVomm2+pmZ8RuSI2d2OpzSDlh
+	4IW5b6g3FAEdbI+TUBIsvOA93Q7QubuuSOWWLOow6WP1UZqyeT3TuXUnDnKI5iNp5jH0gSt9XjJ
+	Vi+/Fdw3Xcg9UJVTT5xYd2Z8v0JEs+f5Tgjl+vf1A9/VXKhwE5+977Ws/SlzWa0mnHPrVJ2H7OM
+	YtOT7l6Qyx6ryV0IHuX1dK+cMtRKoDJkylkKBrFQd9jY8dMdFsR5ftqsUAeTbhXn4i2BQCKZbfU
+	LYEjDVhC8cYAT3jCGo8am2WpjD5rvc3sqzuvt6Ip3BTphnH5VwhgBAXz6hgSoRJf2w0/G0T/Ssf
+	iBfiOpwIzf+loBWW8jySJmMw/e0Cz0p5o=
+X-Google-Smtp-Source: AGHT+IHZeYrq8+mRtX1lTeY4B5rTgJhAiC8nhVTLREWZuzfET2A3NjWN8gRpSGrW1jSySlURYEGMqA==
+X-Received: by 2002:a05:600c:a08:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-477308c9355mr946125e9.27.1761838504411;
+        Thu, 30 Oct 2025 08:35:04 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a7csm32976206f8f.8.2025.10.30.08.35.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 08:35:04 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <jesszhan0024@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Stephen Rothwell <sfr@canb.auug.org.au>
+In-Reply-To: <20251030-topic-drm-fix-panel-synaptics-tddi-v1-1-206519d246e8@linaro.org>
+References: <20251030-topic-drm-fix-panel-synaptics-tddi-v1-1-206519d246e8@linaro.org>
+Subject: Re: [PATCH] drm/panel: synaptics-tddi: fix build error by missing
+ regulator/consumer.h include
+Message-Id: <176183850374.52027.4493661188023999045.b4-ty@linaro.org>
+Date: Thu, 30 Oct 2025 16:35:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=C/XkCAP+ c=1 sm=1 tr=0 ts=6903858f cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=UHg0BC72YOLF96oe5NYA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 9LPMGJUUuyEQ-wsfG6v5PycWDrR69Kv7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX2NRgdtn/21oZ
- IP/FdEaETScIsttY7JZrrTnwOXcTAjEYjy/gcKhtO/q89fyY5RqgMM2Zz84QWOlwerqLl9GYzNU
- 7mNFTo7u97cWMiBFc0JcL/8pe67t3p9klJ8Z3unnb3+FXYb4avIdxXzpdiU41XTLcxkOnKAw57p
- mmOSPx+DH7qmY8W0MKakEld5nr4iQOA74Sjl8U232cb1nT5AxzxHaiMmR+B85s0JWNJ2xquY326
- bdN81w+lgJmglZVAK91W8N2nW9LXCbVTRQBWr6bEmhf9qlQVSpx3bkmbTxUDMrRORzoHH+NOnF+
- vKnNL4okgojDQCxfPEUfg0sQJVUMgNVSS76k5S2gZTH5SWGF6Wu/MyRKOSBl3Mh83Fp31ORoVgT
- 3s5tIZv597025Fuhr61/XNN6FjH/xA==
-X-Proofpoint-ORIG-GUID: 9LPMGJUUuyEQ-wsfG6v5PycWDrR69Kv7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_05,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
- spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2510280166
+X-Mailer: b4 0.14.3
 
-On Thu, 30 Oct 2025 15:55:05 +0100
-Heiko Carstens <hca@linux.ibm.com> wrote:
+Hi,
 
-> As reported by Luiz Capitulino enabling HVO on s390 leads to reproducible
-> crashes. The problem is that kernel page tables are modified without
-> flushing corresponding TLB entries.
+On Thu, 30 Oct 2025 09:28:28 +0100, Neil Armstrong wrote:
+> Fix up for "backlight: Do not include <linux/fb.h> in header file"
+> interacting with [1] from the drm-misc tree.
 > 
-> Even if it looks like the empty flush_tlb_all() implementation on s390 is
-> the problem, it is actually a different problem: on s390 it is not allowed
-> to replace an active/valid page table entry with another valid page table
-> entry without the detour over an invalid entry. A direct replacement may
-> lead to random crashes and/or data corruption.
+> [1] commit 3eae82503f4f ("drm: panel: add support for Synaptics TDDI series DSI panels")
 > 
-> In order to invalidate an entry special instructions have to be used
-> (e.g. ipte or idte). Alternatively there are also special instructions
-> available which allow to replace a valid entry with a different valid
-> entry (e.g. crdte or cspg).
 > 
-> Given that the HVO code currently does not provide the hooks to allow for
-> an implementation which is compliant with the s390 architecture
-> requirements, disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP again, which is
-> basically a revert of the original patch which enabled it.
-> 
-> Reported-by: Luiz Capitulino <luizcap@redhat.com>
-> Closes: https://lore.kernel.org/all/20251028153930.37107-1-luizcap@redhat.com/
-> Fixes: 00a34d5a99c0 ("s390: select ARCH_WANT_HUGETLB_PAGE_OPTIMIZE_VMEMMAP")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-> ---
->  arch/s390/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
 
-Thanks!
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+[1/1] drm/panel: synaptics-tddi: fix build error by missing regulator/consumer.h include
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/66610c08e954e6a995c2504934e54f8945f9ee49
+
+-- 
+Neil
+
 
