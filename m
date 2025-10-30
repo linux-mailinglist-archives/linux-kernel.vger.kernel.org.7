@@ -1,106 +1,211 @@
-Return-Path: <linux-kernel+bounces-878442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD915C209BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:34:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC97C209E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C888A4ECF55
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D7A1A25000
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59848272E56;
-	Thu, 30 Oct 2025 14:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zmmw5/Dx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77B4273D66;
+	Thu, 30 Oct 2025 14:32:44 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2409272811;
-	Thu, 30 Oct 2025 14:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460B137A3C2;
+	Thu, 30 Oct 2025 14:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834684; cv=none; b=IwkyNvqlAoiqs/pl0McQ2904eE598dcuUPMJLY46lAeDYi6FImprySEUKgEG4q7Ythoa9WoJMHSkrcS75LQWZOXZqUKXSMbfnOhhTPms4hNsAP80960/fQt45ea8rhDoq7MKxycjQuUIUhagLCjFhfVYFeUV0Zn81X75tjeZsCE=
+	t=1761834764; cv=none; b=Z9EVxFInYuCiB+nE6552bUBKFAyF1ltpmULVwQCJxPjan9nrVsIXCZPqBHkwsGcnC1t73ctvYKW53lScV/wc8gUMbqZ+zA9BiGrCK3EcwZSoQ8kDJtA19eqBZXwtn0sf+SxUFnohA7E0NQUAmARkM/pWPkPrAn2fFp/JcE7zHfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834684; c=relaxed/simple;
-	bh=wVeI2bnXMnl1w241QzL6qX0vCpn21BM863M6E2kLIP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ANDBHG3ZlJpXH0X71ELV2UHbXtGpgHinLJJKGf97VMyoK1v0u6uWHWx0SXzxFSmw5tu8wUveq3FNNq04hqlsdInliS2Ucg8cmiCZzRrnNv2TYE7gZr5+ejMoBNz7sa3tBEfsTm/5Qs/ENwT/3lxSsLqGfXyZfdcvw27iKkD7WrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zmmw5/Dx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BEAC4CEF8;
-	Thu, 30 Oct 2025 14:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761834684;
-	bh=wVeI2bnXMnl1w241QzL6qX0vCpn21BM863M6E2kLIP8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zmmw5/DxF/Q7Hn3z5GWlK4KKI+8xA4rJZuQbGWiaovZxVH59927YB0QXzb74DAoRe
-	 +ns92p7RyrWSP6aTuFeb37I6lJ5inAlGAvzQuDpibr6DDp+Ak8dLCt6vqtusQohnOv
-	 YTxZLxLo20oI6dAhGO+tIz9P0jIcdBnHWmLhAWgoHarexv43JujzLGCai58myLDssS
-	 my4arN+0SUr9abOWKzoD3lSV/7FTPxXb9PDSeGt5aYs4nlDlizX387iJGHMxGW+p1J
-	 zukfGgVZ524yqGT6oad3PhLYHQKiPUIerTI7m+Nvp41d0d0I2gSDVqDz/0AlfMI1p5
-	 FFv55IqYizoZQ==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [PATCH v2 1/2] mm/damon/stat: change last_refresh_jiffies to a global variable
-Date: Thu, 30 Oct 2025 07:31:15 -0700
-Message-ID: <20251030143116.46746-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251030020746.967174-2-yanquanmin1@huawei.com>
-References: 
+	s=arc-20240116; t=1761834764; c=relaxed/simple;
+	bh=Vv8+Zc55MjFKW5EjvmWza6mHqxGSrdju6Wu7nRKTDb0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hPT61pHCSFUvYC3Ngy1YQR/P0NuzKjuRleDPySmmCFY0i09HGBuq0mEqgEJuitac8bvcY9O26MReHKECIi5WCXYtJ5MF76NwSEJAUi2KUyv0/cRvRiEcfIR2KSFTZcKN/XiX+CUanJGgzG8jb5wPE+kzz2c8nnX/rMxXNdRPPbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.85.109])
+	by APP-05 (Coremail) with SMTP id zQCowAAnlfPfdgNpTQZlAA--.3125S2;
+	Thu, 30 Oct 2025 22:32:01 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Date: Thu, 30 Oct 2025 22:31:44 +0800
+Subject: [PATCH net] net: spacemit: Implement emac_set_pauseparam properly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251030-k1-ethernet-fix-autoneg-v1-1-baa572607ccc@iscas.ac.cn>
+X-B4-Tracking: v=1; b=H4sIANB2A2kC/y2NSw6CMBCGr0Jm7Zi2RKNcxbBoywgTQ6vTQkwId
+ 3eiLr//uUEhYSrQNRsIrVw4JwV7aCBOPo2EPCiDM+5kTWvwYZHqRJKo4p3f6JeaE43oyfmrC21
+ 0QwBtP4XU/i7fQMPQ/0Sh16Iv9e8EXwhjnmeuXbOej/aCEi30+/4B8sktx5sAAAA=
+X-Change-ID: 20251030-k1-ethernet-fix-autoneg-ae2a92b3c2db
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Yixun Lan <dlan@gentoo.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: netdev@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Vivian Wang <wangruikang@iscas.ac.cn>
+X-Mailer: b4 0.14.3
+X-CM-TRANSID:zQCowAAnlfPfdgNpTQZlAA--.3125S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF47Gw4rArWktF1xWr17Wrg_yoWrXF4DpF
+	WUXa4Skr4UXFs3tFsxAF4UAFy3Ga4xtr17uFyfCwsYq3ZxAryxCFyvkay7GFykurW8Xry3
+	G3y5AF1xGFWDZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Thu, 30 Oct 2025 10:07:45 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+emac_set_pauseparam (the set_pauseparam callback) didn't properly update
+phydev->advertising. Fix it by changing it to call phy_set_asym_pause.
 
-> In DAMON_STAT's damon_stat_damon_call_fn(), time_before_eq() is used to
-> avoid unnecessarily frequent stat update.
-> 
-> On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
-> jiffies wrap bugs appear earlier. However, this causes time_before_eq()
-> in DAMON_STAT to unexpectedly return true during the first 5 minutes
-> after boot on 32-bit systems (see [1] for more explanation, which fixes
-> another jiffies-related issue before). As a result, DAMON_STAT does not
-> update any monitoring results during that period, which becomes more
-> confusing when DAMON_STAT_ENABLED_DEFAULT is enabled.
-> 
-> There is also an issue unrelated to the system’s word size[2]: if the
-> user stops DAMON_STAT just after last_refresh_jiffies is updated and
-> restarts it after 5 seconds or a longer delay, last_refresh_jiffies will
-> retain an older value, causing time_before_eq() to return false and the
-> update to happen earlier than expected.
-> 
-> Fix these issues by making last_refresh_jiffies a global variable and
-> initializing it each time DAMON_STAT is started.
-> 
-> [1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
-> [2] https://lore.kernel.org/all/20251028143250.50144-1-sj@kernel.org/
+Also simplify/reorganize related code around this.
 
-Thank you for finding and fixing these!
+Fixes: bfec6d7f2001 ("net: spacemit: Add K1 Ethernet MAC")
+Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+---
+ drivers/net/ethernet/spacemit/k1_emac.c | 48 ++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 28 deletions(-)
 
-> 
-> Fixes: fabdd1e911da ("mm/damon/stat: calculate and expose estimated memory bandwidth")
-> Suggested-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
+index e1c5faff3b71..61d62c0f028e 100644
+--- a/drivers/net/ethernet/spacemit/k1_emac.c
++++ b/drivers/net/ethernet/spacemit/k1_emac.c
+@@ -133,7 +133,6 @@ struct emac_priv {
+ 	u32 rx_delay;
+ 
+ 	bool flow_control_autoneg;
+-	u8 flow_control;
+ 
+ 	/* Softirq-safe, hold while touching hardware statistics */
+ 	spinlock_t stats_lock;
+@@ -1039,14 +1038,7 @@ static void emac_set_rx_fc(struct emac_priv *priv, bool enable)
+ 	emac_wr(priv, MAC_FC_CONTROL, val);
+ }
+ 
+-static void emac_set_fc(struct emac_priv *priv, u8 fc)
+-{
+-	emac_set_tx_fc(priv, fc & FLOW_CTRL_TX);
+-	emac_set_rx_fc(priv, fc & FLOW_CTRL_RX);
+-	priv->flow_control = fc;
+-}
+-
+-static void emac_set_fc_autoneg(struct emac_priv *priv)
++static void emac_set_fc(struct emac_priv *priv)
+ {
+ 	struct phy_device *phydev = priv->ndev->phydev;
+ 	u32 local_adv, remote_adv;
+@@ -1056,17 +1048,18 @@ static void emac_set_fc_autoneg(struct emac_priv *priv)
+ 
+ 	remote_adv = 0;
+ 
+-	if (phydev->pause)
++	/* Force settings in advertising if autoneg disabled */
++
++	if (!priv->flow_control_autoneg || phydev->pause)
+ 		remote_adv |= LPA_PAUSE_CAP;
+ 
+-	if (phydev->asym_pause)
++	if (!priv->flow_control_autoneg || phydev->asym_pause)
+ 		remote_adv |= LPA_PAUSE_ASYM;
+ 
+ 	fc = mii_resolve_flowctrl_fdx(local_adv, remote_adv);
+ 
+-	priv->flow_control_autoneg = true;
+-
+-	emac_set_fc(priv, fc);
++	emac_set_tx_fc(priv, fc & FLOW_CTRL_TX);
++	emac_set_rx_fc(priv, fc & FLOW_CTRL_RX);
+ }
+ 
+ /*
+@@ -1429,31 +1422,28 @@ static void emac_get_pauseparam(struct net_device *dev,
+ 				struct ethtool_pauseparam *pause)
+ {
+ 	struct emac_priv *priv = netdev_priv(dev);
++	u32 val = emac_rd(priv, MAC_FC_CONTROL);
+ 
+ 	pause->autoneg = priv->flow_control_autoneg;
+-	pause->tx_pause = !!(priv->flow_control & FLOW_CTRL_TX);
+-	pause->rx_pause = !!(priv->flow_control & FLOW_CTRL_RX);
++	pause->tx_pause = !!(val & MREGBIT_FC_GENERATION_ENABLE);
++	pause->rx_pause = !!(val & MREGBIT_FC_DECODE_ENABLE);
+ }
+ 
+ static int emac_set_pauseparam(struct net_device *dev,
+ 			       struct ethtool_pauseparam *pause)
+ {
+ 	struct emac_priv *priv = netdev_priv(dev);
+-	u8 fc = 0;
++	struct phy_device *phydev = dev->phydev;
+ 
+-	priv->flow_control_autoneg = pause->autoneg;
++	if (!phydev)
++		return -ENODEV;
+ 
+-	if (pause->autoneg) {
+-		emac_set_fc_autoneg(priv);
+-	} else {
+-		if (pause->tx_pause)
+-			fc |= FLOW_CTRL_TX;
++	if (!phy_validate_pause(phydev, pause))
++		return -EINVAL;
+ 
+-		if (pause->rx_pause)
+-			fc |= FLOW_CTRL_RX;
++	priv->flow_control_autoneg = pause->autoneg;
+ 
+-		emac_set_fc(priv, fc);
+-	}
++	phy_set_asym_pause(dev->phydev, pause->rx_pause, pause->tx_pause);
+ 
+ 	return 0;
+ }
+@@ -1632,7 +1622,7 @@ static void emac_adjust_link(struct net_device *dev)
+ 
+ 		emac_wr(priv, MAC_GLOBAL_CONTROL, ctrl);
+ 
+-		emac_set_fc_autoneg(priv);
++		emac_set_fc(priv);
+ 	}
+ 
+ 	phy_print_status(phydev);
+@@ -2010,6 +2000,8 @@ static int emac_probe(struct platform_device *pdev)
+ 	priv->pdev = pdev;
+ 	platform_set_drvdata(pdev, priv);
+ 
++	priv->flow_control_autoneg = true;
++
+ 	ret = emac_config_dt(pdev, priv);
+ 	if (ret < 0)
+ 		return dev_err_probe(dev, ret, "Configuration failed\n");
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+---
+base-commit: cb6649f6217c0331b885cf787f1d175963e2a1d2
+change-id: 20251030-k1-ethernet-fix-autoneg-ae2a92b3c2db
 
+Best regards,
+-- 
+Vivian "dramforever" Wang
 
-Thanks,
-SJ
-
-[...]
 
