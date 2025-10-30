@@ -1,229 +1,124 @@
-Return-Path: <linux-kernel+bounces-878310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A519C203C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:30:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968FDC203CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1553BD8AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 127B73B42E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 13:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06982316911;
-	Thu, 30 Oct 2025 13:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61639218AB0;
+	Thu, 30 Oct 2025 13:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=immunant-com.20230601.gappssmtp.com header.i=@immunant-com.20230601.gappssmtp.com header.b="xxBaE3R1"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="kcKuqp6A"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41245238C1A
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E53A2557A
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 13:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761830956; cv=none; b=MiLutbqGAfQnjMQzJsZSpB42p13BCoWAW0aPqFyfCAtFIt46zroOiKDNWWrJ4ouhiQDV2va6/z+lWRYgtgVffF+r4CKmo4k86QCpUm7lGeQOrXmc3UtP3P/qn/l1pW59xJG9NoJQmkroJ+5yhiUp7C/PP+05xwL29BVxEqfJtl0=
+	t=1761831111; cv=none; b=oNYonIyLkfa2JzuwgNrHCl+qmGGFjTu68HDqnnEzpzcCenvZsteRXQnij1GSAEGJQqNBMu2akDADDdo61lSCBCQxGgyNWfndop/CUEYWG7qLJGGWuvFws67r3zY/dncQTIf3tjC/8o4MbSecjJWNxnPotQuqSqDolYDP8uXKjiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761830956; c=relaxed/simple;
-	bh=Vs0+cyBDqRmqBNfMhGNE41BaBBwZK0FNmTvnCgVzops=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jvfX7/PSt7UkgpwXtHnRG02krzaDwGCgg4HEmkPI0SyNi/1krr5Dhfj36YYODsMiocK9qLaqcc8+kmhU5cMcOrYMgNoQZteuoftNiIZl1fT6upJ+ZXSE81vEfFHAeGu/h5uRzFMCv+fbZcfR1PI6W9biK7IVC3ERupFqa6CM1Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=immunant.com; spf=none smtp.mailfrom=immunant.com; dkim=pass (2048-bit key) header.d=immunant-com.20230601.gappssmtp.com header.i=@immunant-com.20230601.gappssmtp.com header.b=xxBaE3R1; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=immunant.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=immunant.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-592f3630b69so1262843e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 06:29:12 -0700 (PDT)
+	s=arc-20240116; t=1761831111; c=relaxed/simple;
+	bh=Svk7dHTr2ilj/YLrcK7cgXeMyf3gp21F7lY8CtYHzZg=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=PsA55u4i7jjxOiNhW7M7J+ZaNG+bR9XQmcx9dBw0HF4LrvH8OUW6ZfQkSGlDbopojVggkiMGBO8CDzdxMDQw6WFIqeTuo3azF3xBHE1qfEo99L5yftH46+umhWUlouulQ/F1lgj/76ZuT2Er5txdn8Q5zpALjTrmRwuiwENxIq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=kcKuqp6A; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: f5535523-b594-11f0-9e68-005056994fde
+Received: from mta.kpnmail.nl (unknown [10.31.161.191])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id f5535523-b594-11f0-9e68-005056994fde;
+	Thu, 30 Oct 2025 14:33:02 +0100 (CET)
+Received: from mtaoutbound.kpnmail.nl (unknown [10.128.135.190])
+	by mta.kpnmail.nl (Halon) with ESMTP
+	id c7e42fe6-b594-11f0-83be-00505699891e;
+	Thu, 30 Oct 2025 14:31:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=immunant-com.20230601.gappssmtp.com; s=20230601; t=1761830951; x=1762435751; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=auJLL78IWvyRiv8Z3SkGGwJVdNC/ugwPZHVGdPaUXw4=;
-        b=xxBaE3R1Lyab+HN33+cXTwlZOQIKz85i6kqB+rJWWAAcSvdlAOOYDkLmbLRtAVfBm6
-         4tLzCv/3hxtXcNOmlIl5h+zXCY/1dXkL/WbpP0/HEg/dSRL4k5CDsn2dIWnuUzI4Bkff
-         9B/ln6t/uTFA3oH/k1aCGvtaB3/pGs6OtsAm52RIqIriAEt8nyKhYe6Av8P5RifnFC+r
-         BV6nZGxwoIGlXNMrXeKFOALPRsPIhoePPxjYayVFV3qpXSo7kW2SFl4MpH3XVrwi1NCz
-         J9GUKEBXJnbj8jLuIlIa/Qr/T+jzv9pRc+Scm1++q1sVNdAKLQsbGaH9jgwVQ9cqhFa/
-         lVig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761830951; x=1762435751;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=auJLL78IWvyRiv8Z3SkGGwJVdNC/ugwPZHVGdPaUXw4=;
-        b=WULtb7D1ApvYMOQHbi20QplWVDsIcz2qt8EkpkpTPyqdoxbLy8t/ShWepQBjsgJTRV
-         hrwMPTA+K80WkQP0mtH16UgdLEVn7qU50MgOmKTcjKKpeltUekWp9UhLl40OuDa/xwZH
-         XftSoGsdcl2nkIqIVt+KkLrC+VJ8LbyrLUS0GK48/74NjwWHlBKZXRUlkNfJGWwj918V
-         lttYRz/m9F5srmzOi6+lW8Y7d/BCSCwnbahmd5HUzGd3R6TRlJSocaq8P/+vLlEBwtz8
-         DADeqm79azBIpHG1sIxgiOHW2b609R0JT/Z4Jhs/ASlcZB3Zg8XV+Y9H8DSqnsFfW+Wd
-         rMYg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9pZ23o/jFGBBBWuy5HftZ33o89kNsayigiKyO1E5pSxge54Ufk5aQICyQQNWe7nwIj7ruwNyR9tIjoi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhBqdMWAaOAWeq7CxjwxubDcHT2jy2BG1pFMZB5fDqogiIxD33
-	IT9KB/8wZfftX5TBK+G69EdeDKPNMpexjC1mwy0H/flf32+TGolJSII0DPCpXV2IuR2aAgbVbq2
-	N8vmwrh+Inw==
-X-Gm-Gg: ASbGncsfUkLS6zjTvO1+iLtduV61UVE6kge1rILbfL0MUfhH6mc+H3mpx8vKpYvC7Sr
-	2jNOCTzZIEixLNza8jHpT53jdvdpEGFAKucYfyFuyjFe+FWcZOlp9Aya4agbMyhhTqMe2tCbvV8
-	76/+XCSjPTU4t6CgNFCdr5VfMqrnOWGaBYXTFR34gCbISgsAlF6Ewxslg8XXvPWcUuLsBILfFf2
-	yrfwWPeFz3ec0UTdH51GIuFooodJfRTYfc1dPI5ooS06jhqbe2YrWT+e2vuQAl+x0Qj29eY9pTp
-	pmTOlZpTLO5AeOSYuLgvMLKBrSsdkfOYVO/+SSy9drPOnOePiOSutybrXr/6jW7per8AHgnO0VL
-	OiPO+jem8k1OqILRvixooumNdnNTdstd6ntTCU/LzSgixImRnUGUuWRlvKDTXq4u399mF4/5S3Z
-	UkXFAHpoqGhBK/mEnXzE85eRO/dQOlAvPeVq9ehz4whR2hdXufNpOniyMapwcd088JeQ==
-X-Google-Smtp-Source: AGHT+IH+7r03/reqlDO5F/xWopHhAZmJ6AzdE8dl2+vnGjXgF+KVVuZqJNmKyiG5BCz+kU/FitGyxg==
-X-Received: by 2002:a05:6512:2312:b0:591:d903:4384 with SMTP id 2adb3069b0e04-594128df108mr2867146e87.51.1761830950729;
-        Thu, 30 Oct 2025 06:29:10 -0700 (PDT)
-Received: from [192.168.1.11] (0x5da5f0d7.static.cust.fastspeed.dk. [93.165.240.215])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f48bc5sm4562968e87.30.2025.10.30.06.29.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 06:29:09 -0700 (PDT)
-Message-ID: <96171283-6f2a-45b5-b889-be1bee91678c@immunant.com>
-Date: Thu, 30 Oct 2025 14:29:07 +0100
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:message-id:to:from:date;
+	bh=Svk7dHTr2ilj/YLrcK7cgXeMyf3gp21F7lY8CtYHzZg=;
+	b=kcKuqp6ASEbApVy9Gyh4LyN/2jxHKkK+rbsnYpz2rGOelmxG0m3ZzvOM/swIgbkG9564c87Iv6iPB
+	 RqPBNtYIrMTbDeINr9TtjVSrFblrgs3sV1vGXFwUA1k8cPnqu8PPTHO2wDExav7YTQ+aUhAnRMa1yx
+	 k2UWPbuhQG80W46M+hF66g7KUaYBoauNR7zw/0sNQQxW5SivBrsxBySbA2VZXROJ7VbfMwJ+GuuNmX
+	 a0MK37kBSvvZBvu3Lca3ISxe8gVVR0mUS1DgO4McWyjH+uzEAy51GRgrLGwWbVmYsfrVJejNFQUrHT
+	 32Kx+FDFNtyu3AJqroPKxxUAfKTWVyw==
+X-KPN-MID: 33|PUFm3suIrV9htZ/jvjyEBKrg4hqi0rEj+UtlxHv9wmLaZpK1+zL7Zy83eLPZXkU
+ 69uc09EhQ13OPi8Ey5wEfG3tuun13jINDcoD7Rvn3Haw=
+X-CMASSUN: 33|DXt98IFyBX15frFu4ymS61iafF6ai2qlLsORvzhSO73HHzjtTydFd5SUGDn3PBj
+ xE4/F8DUYCuAxxQXHNqf6Ow==
+X-KPN-VerifiedSender: Yes
+Received: from cpxoxapps-mh05 (cpxoxapps-mh05.personalcloud.so.kpn.org [10.128.135.211])
+	by mtaoutbound.kpnmail.nl (Halon) with ESMTPSA
+	id c7d748cd-b594-11f0-b8d7-005056995d6c;
+	Thu, 30 Oct 2025 14:31:46 +0100 (CET)
+Date: Thu, 30 Oct 2025 14:31:46 +0100 (CET)
+From: Jori Koolstra <jkoolstra@xs4all.nl>
+To: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	Khalid Aziz <khalid@kernel.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Taotao Chen <chentaotao@didiglobal.com>, NeilBrown <neil@brown.name>,
+	linux-kernel@vger.kernel.org,
+	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
+Message-ID: <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
+In-Reply-To: <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
+References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
+ <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
+ <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
+ <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
+Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: arm64: support optional calls of FF-A v1.2
-To: Yeoreum Yun <yeoreum.yun@arm.com>, Ben Horgan <ben.horgan@arm.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
- suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com,
- will@kernel.org, perlarsen@google.com, ayrton@google.com,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
- <20251027191729.1704744-3-yeoreum.yun@arm.com>
- <f5aa3c19-fdea-4f62-9541-530e59b20a87@arm.com>
- <aQEwVe8+okm/Nmso@e129823.arm.com>
- <61e923d6-388b-4cc6-8c26-5581a1e1cc10@arm.com>
- <aQIYZoP5iKcwtXwW@e129823.arm.com>
-Content-Language: en-US
-From: Per Larsen <perl@immunant.com>
-In-Reply-To: <aQIYZoP5iKcwtXwW@e129823.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
 
-Hi Yeoreum,
-
-On 10/29/25 2:36 PM, Yeoreum Yun wrote:
-> Hi Ben,
-> 
->>
->> On 10/28/25 21:06, Yeoreum Yun wrote:
->>> Hi Ben,
->>>
->>>>> To use TPM drvier which uses CRB over FF-A with FFA_DIRECT_REQ2,
->>>>> support the FF-A v1.2's optinal calls by querying whether
->>>>> SPMC supports those.
->>>>>
->>>>> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
->>>>> ---
->>>>>   arch/arm64/kvm/hyp/nvhe/ffa.c | 19 ++++++++++++++++++-
->>>>>   1 file changed, 18 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
->>>>> index 0ae87ff61758..9ded1c6369b9 100644
->>>>> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
->>>>> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
->>>>> @@ -646,6 +646,22 @@ static void do_ffa_mem_reclaim(struct arm_smccc_1_2_regs *res,
->>>>>   		ffa_to_smccc_res(res, ret);
->>>>>   }
->>>>>
->>>>> +static bool ffa_1_2_optional_calls_supported(u64 func_id)
->>>>> +{
->>>>> +	struct arm_smccc_1_2_regs res;
->>>>> +
->>>>> +	if (!smp_load_acquire(&has_version_negotiated) ||
->>>>> +		(FFA_MINOR_VERSION(FFA_VERSION_1_2) < 2))
->>>>> +		return false;
->>>>> +
->>>>> +	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
->>>>> +		.a0 = FFA_FEATURES,
->>>>> +		.a1 = func_id,
->>>>> +	}, &res);
->>>>> +
->>>>> +	return res.a0 == FFA_SUCCESS;
->>>>> +}
->>>>> +
->>>>>   /*
->>>>>    * Is a given FFA function supported, either by forwarding on directly
->>>>>    * or by handling at EL2?
->>>>> @@ -678,12 +694,13 @@ static bool ffa_call_supported(u64 func_id)
->>>>>   	case FFA_NOTIFICATION_SET:
->>>>>   	case FFA_NOTIFICATION_GET:
->>>>>   	case FFA_NOTIFICATION_INFO_GET:
->>>>> +		return false;
->>>>>   	/* Optional interfaces added in FF-A 1.2 */
->>>>>   	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
->>>>>   	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
->>>>>   	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
->>>>
->>>> Looking at table 13.54 in the FF-A 1.2 spec FFA_CONSOLE_LOG is only supported in secure FF-A
->>>> instances and not from the normal world.
->>>
->>> Thanks. in that case, we can return false for FFA_CONSOLE_LOG
->>> unconditionally.
->>>
->>>>
->>>>>   	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
->>>>> -		return false;
->>>>> +		return ffa_1_2_optional_calls_supported(func_id);
->>>>>   	}
->>>>
->>>> I don't think that an smc call here is the right thing to do. This changes this from a light
->>>> weight deny list to an extra smc call for each ffa_msg_send_direct_req2 from the driver.
->>>>
->>>> Instead, I would expect this patch just to remove FFA_MSG_SEND_DIRECT_REQ2 from the deny list
->>>> and rely on the TPM driver to use FFA_FEATURES to check whether it's supported.
->>>>
->>>> So, just this change:
->>>>
->>>> @@ -679,7 +679,6 @@ static bool ffa_call_supported(u64 func_id)
->>>>          case FFA_NOTIFICATION_GET:
->>>>          case FFA_NOTIFICATION_INFO_GET:
->>>>          /* Optional interfaces added in FF-A 1.2 */
->>>> -       case FFA_MSG_SEND_DIRECT_REQ2:          /* Optional per 7.5.1 */
->>>>          case FFA_MSG_SEND_DIRECT_RESP2:         /* Optional per 7.5.1 */
->>>>          case FFA_CONSOLE_LOG:                   /* Optional per 13.1: not in Table 13.1 */
->>>>          case FFA_PARTITION_INFO_GET_REGS:       /* Optional for virtual instances per 13.1 */
->>>>
->>>> Am I missing something?
->>>
->>> Nope. I think you don't think you miss anything and
->>> I also think about it.
->>>
->>> But, I'm not sure about "support" means in the pkvm about FF-A.
->>> Anyway unless the SPMC doesn't support the specific FF-A ABI,
->>> I don't know that's meaningful to return "TRUE" in here.
->>> IOW, suppose pkvm returns supports of  FFA_MSG_SEND_DIRECT_REQ2
->>> but user receive when it calls FFA_MSG_SEND_DIRECT_REQ2 with NOT SUPPORTED.
->>
->> As I understand it, the ffa_call_supported() is used in two places:
->> 1. To return NOT SUPPORTED to an FFA_FEATURE call for ffa calls that are
->> on the deny list.
->> 2. To block ffa calls if they are on the deny list.
->>
->> For both your patch and just removing FFA_MSG_SEND_DIRECT_REQ2 from the
->> denylist I think the behaviour is the same.
->>
->> If FFA_MSG_SEND_DIRECT_REQ2 is not supported at the spmc then:
->> a) an FFA_FEATURE call will return not supported
->> b) an FFA_MSG_SEND_DIRECT_REQ2 will return not supported
->>
-> 
-> Right! I've missed the FFA_FEATURE handles via default_host_smc_handler().
-> As you said, it just a deny list.
-> 
-> Thanks. I'll change it.
-Sorry to jump into the discussion very late. I uploaded a patch set 
-which adds support for the FFA_MSG_SEND_DIRECT_REQ2 interface which was 
-originally developed for the Android common kernels:
-
-https://lore.kernel.org/all/20251030-host-direct-messages-v1-0-463e57871c8f@google.com/T/#t 
+> Not necessarily.
+>
+> I'm not sure if your internship covers this, but you could start a
+> project to build a minixfs FUSE fs (if one doesn't already exist). If
+> you get it working and stable, you can then submit patches to deprecate
+> and remove it from the kernel.
 
 
-Since there appears to be an upstream use case for this functionality, 
-it might be a good building block for the present patch set.
+I would have to ask Shuah but am open to it. But a quick search turns up
+this: https://github.com/redcap97/fuse-mfs . I would have to see if it
+actually works and it does not seem to support v1, v2 of minix fs either.
+There might also be a licensing issue.
+
+> For some background: this is a continuation of a discussion that we had
+> at LSF/MM summit this year. A lot of these smaller, less-used
+> filesystems represent a significant maintenance burden. Whenever we
+> have to make changes at the VFS layer, they represent another fs that
+> we have to touch.
+
+> Many of these are not performance-critical and are hard to test. They
+> would be _much_ easier to maintain in userland if we can make that
+> work.
+
+One question I would have about this is that if we move minix, for
+instance, out of the kernel code, how can we be sure that it is
+maintained. What if some Github repo suddenly disappears? Like I said,
+I would be fine with helping maintain minix, otherwise what should be
+the course of action from here? What demands do we place on a userland
+replacement for minix before I submit a patch to deprecate and remove
+the code?
 
 Thanks,
-Per
+Jori.
+
+PS. Sorry for sending this twice. I am still having to remind myself to
+"reply all". My apologies.
 
