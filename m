@@ -1,352 +1,242 @@
-Return-Path: <linux-kernel+bounces-879271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDF7C22B37
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:23:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EAEC22B3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D455F3A4B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:22:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F230B4EDE28
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628AD33BBCD;
-	Thu, 30 Oct 2025 23:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF39233C510;
+	Thu, 30 Oct 2025 23:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCIsl/eS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="TCq7ftdg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lByC82tf"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797A933711D;
-	Thu, 30 Oct 2025 23:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF32F6577;
+	Thu, 30 Oct 2025 23:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761866517; cv=none; b=bOu7ErcjbJ47OmokUWhyBBb7XWE/SxOyYZQ3P59E3h1abUPShJKfbuacuZb/jGFqeKWNqtBe7lUI4MftX/daOLLXYkIb2vlhdtGrCZMu+nls3z2HvvNIIZ4Y3IluwftNPCxwKHyJHJ1PWd3vOWAP6p1yESfO7uh6MllVgK+AMoM=
+	t=1761866583; cv=none; b=BcIzOL+JJo+h9SJO8dPwLfG2M6RMG3PQtth7fzXsHEFwpHtjB6rSsHVgcNxhUUHJGK6T2+msGqG6SLcQsB/SxHc9bzgMHovSJyG8/jdsLFdhCAmwhO43mcG570xNCmHZZ9Tew/9vPUhDKjGERQTXHygCDplET+QGNul0i9fyoSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761866517; c=relaxed/simple;
-	bh=/rp/ubawNd5SVser7ZjxZ6b5BNO+EY12E0k+TbAyPLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=dg52PICT3J48AjEsCFRfMfvCHzChO4qtlHbHlF105MyWCLZis/wUdLMiDKOav5DxrwCuNseUuUbMyHoCqskSyKWnoxnZ0c0beJAjmGe22eVeChtLxa8eoEstxSoNzFfQwcD9MasbqRQRQYE09YT1K9AyhEbj0jOr2uegdYnclts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCIsl/eS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09D8C4CEF1;
-	Thu, 30 Oct 2025 23:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761866517;
-	bh=/rp/ubawNd5SVser7ZjxZ6b5BNO+EY12E0k+TbAyPLU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KCIsl/eSxxSyFEaE2YxpIn3cJf5Hm5Kl0Zdm9XqB9RjEo1l2w3/qSrZZ3ZeMUOPiq
-	 2/ay8rzb/365zDTQg5fGF1CbeHn54vk/NebhkcE86H5nblkOZdoEjNqHXZNZi48RaL
-	 NaKnwoBpAba6uxmYaTr+E66WYmkSQPwr6zVjPl9q1HFV57QN9zultMQ5PbeCg7qUZz
-	 5+6JmZNaoIzGFcT79P0J+cSguJn0wOynq4UnF8uNPHc5/IL2MjoHE1TuLrm2d7V/xG
-	 hPK2MSXPIZb1EAND2TsiXdL635VlQDO84oTuAso4gVpgCyykLCm8BW/GqD0z54d8K1
-	 AME9spocr58SQ==
-Date: Thu, 30 Oct 2025 18:21:55 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: zhangsenchuan@eswincomputing.com
-Cc: bhelgaas@google.com, mani@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	robh@kernel.org, p.zabel@pengutronix.de, jingoohan1@gmail.com,
-	gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christian.bruel@foss.st.com, mayank.rana@oss.qualcomm.com,
-	shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com,
-	thippeswamy.havalige@amd.com, inochiama@gmail.com,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, ouyanghui@eswincomputing.com
-Subject: Re: [PATCH v4 2/2] PCI: EIC7700: Add Eswin PCIe host controller
- driver
-Message-ID: <20251030232155.GA1632897@bhelgaas>
+	s=arc-20240116; t=1761866583; c=relaxed/simple;
+	bh=S7s7dokVdFKGKrrKiqnoayVZMt1AiI9aemANRN265QY=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=CiT1y33w5LvKNHMqk9WpxbHm+JeUgRZm9Iv6wVVaoQUc0uySQ6ZDd3FMwxwND+KvBomoKLM3FSj8O40j5HI9GMD5kzkNin4CUQRzuN+NXiHIC20XzegAQjIGi7gTxIJ2yhTbUYQZH0NJcXl3iu76RHpFdz0yLYOg+Ce6SNKYY5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=TCq7ftdg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lByC82tf; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id BC65313000CB;
+	Thu, 30 Oct 2025 19:22:59 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 30 Oct 2025 19:23:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1761866579; x=1761873779; bh=hvbbxiEqeKOPLV15+amtC5BVkJM9zfXU4+P
+	k3GSk48w=; b=TCq7ftdgwGivoKj2hAIF9AvUFPJGc0vADUYKumDOEz/qIezJWGl
+	gnzbZnPiifNw3COiR8GxTl91Gf8Rbq+FrAGOQufTMrm8C8m+9hlYqRrZrTwJ+g8K
+	20VD6M+2yrAl7K6LoIIQDoqcD1sGEeCXEsAtpDM1j3tE0Yd0AZtC92b4/hyJ6qTq
+	C/EQdlj8PQQur6U25As8epdpAKaeil7QOz00GappXprYPbYnL96Zhe5btlbRiSTY
+	zsb5M5miarjxUMxhQy2PY/oLyPXGdkEzci8MfaAjKN8WnMtOZwZb12JU7GAECu8c
+	hOmldHjWyNT/WtipJr4NtA3//jnMWP2XeNA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761866579; x=
+	1761873779; bh=hvbbxiEqeKOPLV15+amtC5BVkJM9zfXU4+Pk3GSk48w=; b=l
+	ByC82tfl/EMQQRfkYqkDz3IJ7sRI/WQXG2mcBDyJW2v2hXqVKSNQlqoQzEem5Eym
+	dR9MImcEWJmOIF1xR5FKhIPik83yNa6QT/fk9TqIqdIVAFoSoeHLMcBvDrzEDD8D
+	XjdMAiA35425YFXSxF5x+0qNcY2W/MVxg/TcY0YIKXL3xKuTvuoDJIasxC0Qxxmi
+	iTm5aTaKG9pIhv6A+jNXcFgENGr5j/ldMZv5wV8XUdvkg+7O5aFtxXorlGOjXT5b
+	tLjd+kxVdbT3deiBaC6grJvvbfJjS+2jpuAjxSkr5PY4R0j1Nku+VxyFrvYfpEWe
+	/cWGsReam2wLzO1MMOROw==
+X-ME-Sender: <xms:UPMDaRhUVZd0x7_m2K17HihcRjCDpVNYHFuEuX0MMgm20e897e5KkA>
+    <xme:UPMDaY7AjV2fQCLr_snCqH1fQeOzq1khXo6h6YlzncD-hrTaP3jvkupkkSppCGbEK
+    3_FJ-R2P97AhdeuJVUfknkc1NHRstlmMB11PTJieu4Jgrp6>
+X-ME-Received: <xmr:UPMDaR4wtri-pKxjBpYPkO67BfCd6oydbgfEbdFMML-UxKIpAqf7uEQcrmb8ircyBRb3gkh38Y-CFv6PS5eeA8faA1-9rnol0Gt6iFnCvxLw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejledvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:UPMDaYFGMua7g80kGbfcUaz9Di8tafwlq4iKeb9hO4aVvX2qo_uERw>
+    <xmx:UPMDacsdmaie4UXKmXFZ3mEfrheGemagwqaZFEvxWGs9YShlaMG9lQ>
+    <xmx:UPMDaf4TguqIroQ6tzSgxweML37Y98bapEIbob097jWZZJuu0xphMA>
+    <xmx:UPMDaQnurzcpOOav6s9l9JXVYIdItJKKsSEy0NTn122915Snsl7u-w>
+    <xmx:U_MDaaJxwd0jRvItfq6nxG-85nWt4d2jCvckXynlPHJGLvIfrzldVxtX>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 Oct 2025 19:22:46 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030083143.1341-1-zhangsenchuan@eswincomputing.com>
+From: NeilBrown <neilb@ownmail.net>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
+ "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
+ "David Howells" <dhowells@redhat.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ "Ondrej Mosnacek" <omosnace@redhat.com>,
+ "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Stefan Berger" <stefanb@linux.ibm.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+Subject: Re: [PATCH v4 07/14] VFS: introduce start_removing_dentry()
+In-reply-to: <20251030061159.GV2441659@ZenIV>
+References: <20251029234353.1321957-1-neilb@ownmail.net>,
+ <20251029234353.1321957-8-neilb@ownmail.net>,
+ <20251030061159.GV2441659@ZenIV>
+Date: Fri, 31 Oct 2025 10:22:43 +1100
+Message-id: <176186656376.1793333.1075264554692169239@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Nit: if you run "git log --oneline drivers/pci/controller/", you'll
-notice that the driver tags ("EIC7700" here) are all lower-case.
-Same for the DT bindings.
+On Thu, 30 Oct 2025, Al Viro wrote:
+> On Thu, Oct 30, 2025 at 10:31:07AM +1100, NeilBrown wrote:
+>=20
+> > @@ -428,11 +429,14 @@ static bool cachefiles_invalidate_cookie(struct fsc=
+ache_cookie *cookie)
+> >  		if (!old_tmpfile) {
+> >  			struct cachefiles_volume *volume =3D object->volume;
+> >  			struct dentry *fan =3D volume->fanout[(u8)cookie->key_hash];
+> > -
+> > -			inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
+> > -			cachefiles_bury_object(volume->cache, object, fan,
+> > -					       old_file->f_path.dentry,
+> > -					       FSCACHE_OBJECT_INVALIDATED);
+> > +			struct dentry *obj;
+> > +
+> > +			obj =3D start_removing_dentry(fan, old_file->f_path.dentry);
+> > +			if (!IS_ERR(obj))
+> > +				cachefiles_bury_object(volume->cache, object,
+> > +						       fan, obj,
+> > +						       FSCACHE_OBJECT_INVALIDATED);
+> > +			end_removing(obj);
+>=20
+> Huh?  Where did you change cachefiles_bury_object to *not* unlock the paren=
+t?
+> Not in this commit, AFAICS, and that means at least a bisection hazard arou=
+nd
+> here...
+>=20
+> Confused...
+>=20
 
-On Thu, Oct 30, 2025 at 04:31:42PM +0800, zhangsenchuan@eswincomputing.com wrote:
-> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> 
-> Add driver for the Eswin EIC7700 PCIe host controller, which is based on
-> the DesignWare PCIe core, IP revision 6.00a. The PCIe Gen.3 controller
-> supports a data rate of 8 GT/s and 4 channels, support INTX and MSI
-> interrupts.
+Thanks for the review and for catching that error.
+This incremental patch should fix it.
 
-s/INTX/INTx/ to match spec usage.
+Thanks,
+NeilBrown
 
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -93,6 +93,17 @@ config PCIE_BT1
->  	  Enables support for the PCIe controller in the Baikal-T1 SoC to work
->  	  in host mode. It's based on the Synopsys DWC PCIe v4.60a IP-core.
->  
-> +config PCIE_EIC7700
-> +	bool "Eswin PCIe controller"
+diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
+index 3f8a6f1a8fc3..a08250d244ea 100644
+--- a/fs/cachefiles/interface.c
++++ b/fs/cachefiles/interface.c
+@@ -436,7 +436,6 @@ static bool cachefiles_invalidate_cookie(struct fscache_c=
+ookie *cookie)
+ 				cachefiles_bury_object(volume->cache, object,
+ 						       fan, obj,
+ 						       FSCACHE_OBJECT_INVALIDATED);
+-			end_removing(obj);
+ 		}
+ 		fput(old_file);
+ 	}
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index b97a40917a32..0104ac00485d 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -261,6 +261,7 @@ static int cachefiles_unlink(struct cachefiles_cache *cac=
+he,
+  * - Directory backed objects are stuffed into the graveyard for userspace to
+  *   delete
+  * On entry dir must be locked.  It will be unlocked on exit.
++ * On entry there must be at least 2 refs on rep, one will be dropped on exi=
+t.
+  */
+ int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 			   struct cachefiles_object *object,
+@@ -275,12 +276,6 @@ int cachefiles_bury_object(struct cachefiles_cache *cach=
+e,
+=20
+ 	_enter(",'%pd','%pd'", dir, rep);
+=20
+-	/* end_removing() will dput() @rep but we need to keep
+-	 * a ref, so take one now.  This also stops the dentry
+-	 * being negated when unlinked which we need.
+-	 */
+-	dget(rep);
+-
+ 	if (rep->d_parent !=3D dir) {
+ 		end_removing(rep);
+ 		_leave(" =3D -ESTALE");
+@@ -650,7 +645,6 @@ bool cachefiles_look_up_object(struct cachefiles_object *=
+object)
+ 			ret =3D cachefiles_bury_object(volume->cache, object,
+ 						     fan, de,
+ 						     FSCACHE_OBJECT_IS_WEIRD);
+-		end_removing(de);
+ 		dput(dentry);
+ 		if (ret < 0)
+ 			return false;
+diff --git a/fs/cachefiles/volume.c b/fs/cachefiles/volume.c
+index ddf95ff5daf0..90ba926f488e 100644
+--- a/fs/cachefiles/volume.c
++++ b/fs/cachefiles/volume.c
+@@ -64,7 +64,6 @@ void cachefiles_acquire_volume(struct fscache_volume *vcook=
+ie)
+ 				cachefiles_bury_object(cache, NULL, cache->store,
+ 						       vdentry,
+ 						       FSCACHE_VOLUME_IS_WEIRD);
+-			end_removing(vdentry);
+ 			cachefiles_put_directory(volume->dentry);
+ 			cond_resched();
+ 			goto retry;
 
-I think this should mention EIC7700.
-
-> +	depends on ARCH_ESWIN || COMPILE_TEST
-> +	depends on PCI_MSI
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Say Y here if you want PCIe controller support for the Eswin.
-> +	  The PCIe controller on Eswin is based on DesignWare hardware,
-> +	  enables support for the PCIe controller in the Eswin SoC to
-> +	  work in host mode.
-
-Mention EIC7700 here also.
-
-> +++ b/drivers/pci/controller/dwc/pcie-eic7700.c
-> @@ -0,0 +1,462 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ESWIN PCIe root complex driver
-
-Probably here also.
-
-> + *
-> + * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd.
-> + *
-> + * Authors: Yu Ning <ningyu@eswincomputing.com>
-> + *          Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> + *          Yanghui Ou <ouyanghui@eswincomputing.com>
-> + */
-> +
-> +#include <linux/interrupt.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/resource.h>
-> +#include <linux/reset.h>
-> +#include <linux/types.h>
-> +
-> +#include "pcie-designware.h"
-> +
-> +/* PCIe top csr registers */
-> +#define PCIEMGMT_CTRL0_OFFSET		0x0
-> +#define PCIEMGMT_STATUS0_OFFSET		0x100
-> +
-> +/* LTSSM register fields */
-> +#define PCIEMGMT_APP_LTSSM_ENABLE	BIT(5)
-> +
-> +/* APP_HOLD_PHY_RST register fields */
-> +#define PCIEMGMT_APP_HOLD_PHY_RST	BIT(6)
-> +
-> +/* PM_SEL_AUX_CLK register fields */
-> +#define PCIEMGMT_PM_SEL_AUX_CLK		BIT(16)
-> +
-> +/* ROOT_PORT register fields */
-> +#define PCIEMGMT_CTRL0_ROOT_PORT_MASK	GENMASK(3, 0)
-
-Looks like this is actually a "device type" field, not a "root port"
-field, since you OR in the PCI_EXP_TYPE_ROOT_PORT device type below.
-
-Maybe you could name it simply "PCIEMGMT_CTRL0_DEV_TYPE" or similar?
-
-> +/* Vendor and device id value */
-
-s/id/ID/
-
-> +#define PCI_VENDOR_ID_ESWIN		0x1fe1
-> +#define PCI_DEVICE_ID_ESWIN		0x2030
-> +
-> +struct eswin_pcie_data {
-
-Generally speaking the prefix for structs and functions matches the
-driver filename, i.e., "eic7700" in this case.
-
-  $ git grep "^struct .*_pcie {" drivers/pci/controller/dwc
-  drivers/pci/controller/dwc/pci-dra7xx.c:struct dra7xx_pcie {
-  drivers/pci/controller/dwc/pci-exynos.c:struct exynos_pcie {
-  drivers/pci/controller/dwc/pci-imx6.c:struct imx_pcie {
-  drivers/pci/controller/dwc/pci-keystone.c:struct keystone_pcie {
-  ...
-
-> +static int eswin_pcie_perst_deassert(struct eswin_pcie_port *port,
-> +				     struct eswin_pcie *pcie)
-> +{
-> +	int ret;
-> +
-> +	ret = reset_control_assert(port->perst);
-> +	if (ret) {
-> +		dev_err(pcie->pci.dev, "Failed to assert PERST#");
-> +		return ret;
-> +	}
-> +
-> +	/* Ensure that PERST has been asserted for at least 100 ms */
-
-s/PERST/PERST#/
-
-> +	msleep(PCIE_T_PVPERL_MS);
-> +
-> +	ret = reset_control_deassert(port->perst);
-> +	if (ret) {
-> +		dev_err(pcie->pci.dev, "Failed to deassert PERST#");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int eswin_pcie_parse_port(struct eswin_pcie *pcie,
-> +				 struct device_node *node)
-> +{
-> +	struct device *dev = pcie->pci.dev;
-> +	struct eswin_pcie_port *port;
-> +
-> +	port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
-> +	if (!port)
-> +		return -ENOMEM;
-> +
-> +	port->perst = of_reset_control_get(node, "perst");
-> +	if (IS_ERR(port->perst)) {
-> +		dev_err(dev, "Failed to get perst reset\n");
-
-s/perst/PERST#/ to match spec usage and messages above.
-
-> +static int eswin_pcie_host_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct eswin_pcie *pcie = to_eswin_pcie(pci);
-> +	struct eswin_pcie_port *port;
-> +	u8 msi_cap;
-> +	u32 val;
-> +	int ret;
-> +
-> +	pcie->num_clks = devm_clk_bulk_get_all_enabled(pci->dev, &pcie->clks);
-> +	if (pcie->num_clks < 0)
-> +		return dev_err_probe(pci->dev, pcie->num_clks,
-> +				     "Failed to get pcie clocks\n");
-> +
-> +	ret = eswin_pcie_deassert(pcie);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Configure root port type */
-> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-> +	val &= ~PCIEMGMT_CTRL0_ROOT_PORT_MASK;
-> +	writel_relaxed(val | PCI_EXP_TYPE_ROOT_PORT,
-> +		       pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-
-Use FIELD_PREP() here to remove the assumption that
-PCIEMGMT_CTRL0_ROOT_PORT_MASK is in the low-order bits.
-
-> +static void eswin_pcie_host_exit(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct eswin_pcie *pcie = to_eswin_pcie(pci);
-> +	struct eswin_pcie_port *port;
-> +
-> +	/*
-> +	 * For controllers with active devices, resources are retained and
-> +	 * cannot be turned off, like NVMEe.
-
-s/NVMEe/NVMe/
-
-I'm a little skeptical about having behavior here that depends on
-specific kinds of downstream devices.
-
-Maybe there's some general requirement that these resources need to be
-retained if the link is up, and there's no need to mention NVMe
-specifically?  I don't see similar code in other drivers, though.
-
-> +	 */
-> +	if (!dw_pcie_link_up(&pcie->pci)) {
-> +		list_for_each_entry(port, &pcie->ports, list)
-> +			reset_control_assert(port->perst);
-> +		eswin_pcie_assert(pcie);
-> +		clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
-> +	}
-> +}
-> +
-> +static void eswin_pcie_pme_turn_off(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +
-> +	/*
-> +	 * Hardware doesn't support enter the D3code and L2/L3 states, send
-> +	 * PME_TURN_OFF message, which will then cause Vmain to be removed and
-> +	 * controller stop working.
-> +	 */
-> +	dev_info(pci->dev, "Can't send PME_TURN_OFF message\n");
-
-s/PME_TURN_OFF/PME_Turn_Off/ to match spec usage.
-
-> +}
-> +
-> +static const struct dw_pcie_host_ops eswin_pcie_host_ops = {
-> +	.init = eswin_pcie_host_init,
-> +	.deinit = eswin_pcie_host_exit,
-
-Please include "deinit" in this function name so it's connected to the
-.deinit structure member.
-
-> +static int eswin_pcie_probe(struct platform_device *pdev)
-> +{
-> +	const struct eswin_pcie_data *data;
-> +	struct eswin_pcie_port *port, *tmp;
-> +	struct device *dev = &pdev->dev;
-> +	struct eswin_pcie *pcie;
-> +	struct dw_pcie *pci;
-> +	int ret;
-> +
-> +	data = of_device_get_match_data(dev);
-> +	if (!data)
-> +		return dev_err_probe(dev, -EINVAL, "OF data missing\n");
-> +
-> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(&pcie->ports);
-> +
-> +	pci = &pcie->pci;
-> +	pci->dev = dev;
-> +	pci->ops = &dw_pcie_ops;
-> +	pci->pp.ops = &eswin_pcie_host_ops;
-> +	pcie->msix_cap = data->msix_cap;
-
-I'm not sure there's really any value in copying msix_cap, since
-data->msix_cap is a read-only item anyway.
-
-For example, pcie-qcom.c has a per-SoC struct qcom_pcie_cfg, and it
-just saves the qcom_pcie_cfg pointer in struct qcom_pcie:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-qcom.c?id=v6.17#n286
-
-> +static int eswin_pcie_resume_noirq(struct device *dev)
-> +{
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = dw_pcie_resume_noirq(&pcie->pci);
-
-Add blank line here.
-
-> +	/*
-> +	 * If the downstream device is not inserted, linkup will TIMEDOUT. At
-> +	 * this time, when the resume function return, -ETIMEDOUT shouldn't be
-> +	 * returned, which will raise "PM: failed to resume noirq: error -110".
-> +	 * Only log message "Ignore errors, the link may come up later".
-> +	 */
-> +	if (ret == -ETIMEDOUT && !pcie->linked_up) {
-> +		dev_info(dev, "Ignore errors, the link may come up later\n");
-> +		return 0;
-> +	}
-> +
-> +	return ret;
-> +}
-
-> +MODULE_DESCRIPTION("PCIe host controller driver for EIC7700 SoCs");
-
-Include vendor ("Eswin") in the description.  You can use this to see
-the typical style:
-
-  $ git grep MODULE_DESCRIPTION drivers/pci/controller/
 
