@@ -1,149 +1,178 @@
-Return-Path: <linux-kernel+bounces-878102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FF6C1FC8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:20:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8EAC1FCB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 12:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 861FD4E9363
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D35F1887EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296A5351FD5;
-	Thu, 30 Oct 2025 11:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0390A34403C;
+	Thu, 30 Oct 2025 11:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FATxVZY5"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sAe8V63J"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21D01F4CBB
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B55E2DA743
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 11:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761823208; cv=none; b=iGZHrCSK6yG6d11OFkuqM4DjhQdji53zPvf3bsOZLqMkuc+ohBg4M6nP4qiqQLS/JKCjFASi9QsVoULFmreYGE8dfpM8BdFrQe145T5DBpw4Vyl/IJwqwuT97MYXi4Khya48b/XWTHrqpDAz0e/0Q0dvDjpztknWIcUU/XMsgVk=
+	t=1761823406; cv=none; b=p4dLIkM5rKrD5ddb8RzJpbgnD/F6J9kDb9wb6yLXJtiKWsuHDErH8YgC8ea5OPxXHPSXPxI7NUuuRYrd8FwRdMMzUiX6MTcfjblRAGr01UL+ij6si2Q1G9VbDrDWqMjiR0D+lFp4pg0iNY5k99U/N7CrAmgIJL7tIOlPMMYcPrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761823208; c=relaxed/simple;
-	bh=B71bbQUME6bPFSPnTl2rUk+zM8rJpRXJqWB0RdN61nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9jkS79JmsMJgz95o5/zlYtuvItQEKR9gPppKqBLuZ/IzQ2PVLDS64j9aZuZRo1NeldpV5vB5D3+/gUWiBGLQ4GNkvd+DvcckxOQOab9dLEAB4caTqdKuDwTdHfPSK1BZyHA1zSB7W+0heGW7hHJ71iUOY+k1GNNk8ZGR7r5rwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FATxVZY5; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-781206cce18so1142904b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:20:06 -0700 (PDT)
+	s=arc-20240116; t=1761823406; c=relaxed/simple;
+	bh=oiUbO1d3hb2fwzyCZ+aN2Hxgm3x+P2N3m7QZfKf1EAY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JHRk439rAYDazdVk1jzqZ1wtd/dDFSUUifIGu3xusclcvwx3nX7jJii+JXREEWcMb7KPGPDMIddFBPTwBwUzZV2FNKsp0m+0BB7a7b5yVEulW47NenYW9LQRYRKKUeXO+bNnJ8F5XBZ9R04rYzfVdQWArXnMwc6YP0f7+lPjS8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sAe8V63J; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63e18829aa7so1240865a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 04:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1761823206; x=1762428006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SNDVGLdLslRPQnKZM2E9zoqPqU4j8KmV4lXjwMAwzP8=;
-        b=FATxVZY52eiue2vTxnTXS9XbrgsPWcr82oXbq5fsVvXrS6fYt5UiVwU0LotBphrnXZ
-         gHYM4G9IRmiF7UaIj72aKzZnX6KklO9uQfDfb6nQCBIiHHuFduw7Ar2I6qeoBkbSodZz
-         09PNJ4tssChmILY10vyK0YUnBTH1Syl95PAmh9fgI/+icc/04QpDT1qekgpKZd4WLD63
-         ZmUTKWelBL8CzoRZki9MU5nC0BT+qE4eChtXTbX3fHyt5WC9PXp3SrQo3zWnPlBYrfCl
-         YBLv/58eGx3eWztGvRBsy7RARPcA7ewb8Y5vuFT8oRD+14CXLTNCF+2JpfnUvr04TRRq
-         rk+w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761823403; x=1762428203; darn=vger.kernel.org;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oiUbO1d3hb2fwzyCZ+aN2Hxgm3x+P2N3m7QZfKf1EAY=;
+        b=sAe8V63JnpEcCGswa8MKd0Y7HagTC14/S30d7mhnq+oJ44/B9V7T4pjMLHi6nH3Pir
+         y5Zdw4bOWV5k8Qh6VWxwf8h0OB/Xtc+PiJfXHOHzzI4oW5WQNcJ+wTYymjAGt+tnq8jQ
+         IpFNk266U0Gyaih75FTZBWQW3tXmelFfy3UXxMjLo5SpODTvFCCqgSmxjNTRYAL3THaB
+         PkZYQvY78OV9GDXjYuvvCUuZ0nJME4Jxv3vnIDrUy4ei8QYee9mDS3XhdEf8sBkqQTXA
+         KWp0+hXEZTvzaEaOkebo9zLZUl8HfOQ5DHh27HKk+V0bP9jlTagKW9lNMGsfWv9Cb+nv
+         H8Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761823206; x=1762428006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SNDVGLdLslRPQnKZM2E9zoqPqU4j8KmV4lXjwMAwzP8=;
-        b=sKd47VDcqJCP6UgFU4tm6QmL1ALS3BcaRA+rjab+5ZnwDOYH2HnJOzniHxwGGdh42X
-         02CctndKR/FL0s08P+ix0gXX1lqjPPVyAAHDpF2RVxvzxJQqgclvngF+EvN1waSTJAiF
-         kYz+0xB4sC/i681r4cr/LtrBUqzilJI3owaXb6QauF6yRaeW06XSTW6k6hQl7XPgL0NB
-         q/tEnq7HMWwDi8DVhRlfja0eAurK7ugkHP7Oa0hNeza8IWraECITcqlSg5kwNfN5j1RZ
-         eSlXEXqpop/eQkZZuYEYrfo0sdI1bJo6Ob7bQ1YAaQRoj0LhWvbzuA9TX78FrRAduPJe
-         urzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKRD2mAVP/RU291/6utfT6TOfNaaUD4ao5t63R03eWKZ8PnwO22KUs599nXTrAWFPLD3qwNO34htD7eDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq8KpyUA6SbF5w3dG9v+rkiawaSMIUzniUbVNphq3krRbf7KBu
-	VrtK2pFzRonEVqemKSSMYwt+YHvjfTHm4lQmjgbUp5kmz2tGT45V4nTfPBZFfjuJm+k=
-X-Gm-Gg: ASbGncte/p1wOAhZyhm5mXrCATuXClYCXLBmbLeQ16Fctn+NdGlxhg6sZmONmuO9stm
-	1zOZImcQZiBavdqiIP2UoXE+T71lcz7ECWD2CM54UNH4mJx+G4glg4tvtp9Ynf1Qg8b5Z3cH6Vw
-	oWALI79t+icC7uPQN9A9AfReCklKLk/7r0PKiucMlElXySPj6XLx1BXrsV4KJ0a2WGYrxNIw3XZ
-	WXbf0sxkEltFpNR0A9Xa0p/gegLPkv4KrFLf9CDtsIFsF5kxgKhjh40oaQ/I/FR1C0G8g7P9R26
-	u+TBN2VsFQKNOpXC1FQKeA+mli8p7JMpkLcdPZezSXuCYWT/chQHNLG1gKBY3T5TujOoERBd1ya
-	DdyntEbbvzGTVGmqGBihvGIvoGbI0CRkGO8RgMu3XutMdJRpPi4iBCnTwa5yxgPxN51yz++e3DV
-	P8LwJR3Vd5yjCYnMCrsUB1b8TnCZxMZNdI+f0Uc52pGG36OWVZn6Rvh8GVn8veMg==
-X-Google-Smtp-Source: AGHT+IF/l5E8cKKK2vFaTAZgp/ZGb4MjtxoPBEtVt6VeAi8ECm9tlqHfB9lmTROZ9cINQrgWB7grkQ==
-X-Received: by 2002:a05:6a00:9507:b0:7a4:24af:e16f with SMTP id d2e1a72fcca58-7a612eb8487mr3627141b3a.3.1761823205858;
-        Thu, 30 Oct 2025 04:20:05 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a51bbc1b6csm5620722b3a.10.2025.10.30.04.20.05
+        d=1e100.net; s=20230601; t=1761823403; x=1762428203;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oiUbO1d3hb2fwzyCZ+aN2Hxgm3x+P2N3m7QZfKf1EAY=;
+        b=W08XXl98Jp4qnGsfeIyh7nio3Yitlc7C81NnMrIVjpboQuhyv13E8uAP+5Tqq6QDVG
+         U9EkVVbCTEMONwZRK4QXrxWe1k16iP7oUHG2EdGPCjUOtNR8Yz2qdBZzCnIexs2riSSf
+         BM+yRkXb+7K8u0sEIwvD2ff+Ep3oW1FsiV+ianIxGGG98ckWvQWN3Kx32FyVugreQyZU
+         Qs19uiXt+fk4QCnRS9Yp+4ZlhOnyM23D8HeFCKN2P3gX23svVNrXrfGTe4DMsfHSjoeG
+         buz79G3GXMrwXr7pqIWQa05s1vpsBTAwTD3GeVANLW9/jJSSIvM99oJ8tsxNlB62NFsK
+         FRCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7/VP//yvIQNSPA/Xx/tn0bAd8qXELNxjmLnqS5cd+a+JAqQQpLtw63RA7XxZccr3osa5yX5dluC/8o6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpUCkEKax3iuPwP2A9/cJpNMef2cXvNvpE3N3Sgs44rRsaTf/U
+	xZQCzgY7Etcyqja7nk0qgP6615iK1mFPmbX2nFDVf1ogNHfnhS5LPvaoUlit7GoSGsU=
+X-Gm-Gg: ASbGncsXsrLwFz9Cy9gryIDSkQSMDlDA8CyfLA/SPpYyuwtYmRHn27Mms54uN6weT8b
+	I6ystD0KjSv1Z4/BY/MCePkjGqaf9mBqH44FuS3WXQ05Kj7UErEgFQ3C+17D/0F8yAL3hWBKUhR
+	C+iq6wFnP0uxJgLak7bVY/9HRDhLghXrLV4HvrQF5K3ubHiizqYJ8IfPx7il/Am18Qjb79Eg2Zn
+	T/AfhlsD/bFwgp9XLevPVltf4yX7Jo7yHS3myKHSVlvu9acs6LOrzEUGkDJT1GyTJoIHpKOaUKF
+	VaLfICdoIDdXG7Gn5SYVLg2GbP9tN7FuJfc9QdV0aWzlq7vz6pCBSs3nUj3jR9JAJ/sVNKlatuK
+	ibQwT/QWVJol8YQWGhp1S4bJQ3FujlaMJMYShwcMRWqYEB5deyxdF19Dj1mqUySbE1TCDKrgYpG
+	9hnMF79N4FghfeLB4dS7S6zkO5iubOIgfGPYUbyw==
+X-Google-Smtp-Source: AGHT+IFc6m+nMDFkhuN6fkCkGUFwscTkxeKDllrODi6tgfhp7cY/9rkLZ7I78qym6yK6GnQjQmsvWQ==
+X-Received: by 2002:a05:6402:5114:b0:63b:ef0e:dfca with SMTP id 4fb4d7f45d1cf-64061a20728mr2188847a12.4.1761823402628;
+        Thu, 30 Oct 2025 04:23:22 -0700 (PDT)
+Received: from [10.203.83.89] (mob-176-247-57-96.net.vodafone.it. [176.247.57.96])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7efd0c1fsm14634640a12.37.2025.10.30.04.23.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 04:20:05 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1vEQhG-000000044v1-299E;
-	Thu, 30 Oct 2025 22:20:02 +1100
-Date: Thu, 30 Oct 2025 22:20:02 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
-References: <20251029071537.1127397-1-hch@lst.de>
+        Thu, 30 Oct 2025 04:23:22 -0700 (PDT)
+Message-ID: <c1c7222b35a0a7bcddc5d88c92f64d2f2a75fdfd.camel@baylibre.com>
+Subject: Re: [PATCH 8/9] iio: imu: st_lsm6dsx: add event configurability on
+ a per axis basis
+From: Francesco Lavra <flavra@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron
+ <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 30 Oct 2025 12:23:19 +0100
+In-Reply-To: <aQMgxUNA8XNhPZdG@smile.fi.intel.com>
+References: <20251030072752.349633-1-flavra@baylibre.com>
+	 <20251030072752.349633-9-flavra@baylibre.com>
+	 <aQMgxUNA8XNhPZdG@smile.fi.intel.com>
+Organization: BayLibre
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-P5Tv+66OR+vtWhWFF83f"
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029071537.1127397-1-hch@lst.de>
 
-On Wed, Oct 29, 2025 at 08:15:01AM +0100, Christoph Hellwig wrote:
-> Hi all,
-> 
-> we've had a long standing issue that direct I/O to and from devices that
-> require stable writes can corrupt data because the user memory can be
-> modified while in flight.  This series tries to address this by falling
-> back to uncached buffered I/O.  Given that this requires an extra copy it
-> is usually going to be a slow down, especially for very high bandwith
-> use cases, so I'm not exactly happy about.
 
-How many applications actually have this problem? I've not heard of
-anyone encoutnering such RAID corruption problems on production
-XFS filesystems -ever-, so it cannot be a common thing.
+--=-P5Tv+66OR+vtWhWFF83f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-So, what applications are actually tripping over this, and why can't
-these rare instances be fixed instead of penalising the vast
-majority of users who -don't have a problem to begin with-?
+T24gVGh1LCAyMDI1LTEwLTMwIGF0IDEwOjI0ICswMjAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
+Cj4gT24gVGh1LCBPY3QgMzAsIDIwMjUgYXQgMDg6Mjc6NTFBTSArMDEwMCwgRnJhbmNlc2NvIExh
+dnJhIHdyb3RlOgo+ID4gSW4gb3JkZXIgdG8gYmUgYWJsZSB0byBjb25maWd1cmUgZXZlbnQgZGV0
+ZWN0aW9uIG9uIGEgcGVyIGF4aXMKPiA+IGJhc2lzIChmb3IgZWl0aGVyIHNldHRpbmcgYW4gZXZl
+bnQgdGhyZXNob2xkL3NlbnNpdGl2aXR5IHZhbHVlLCBvcgo+ID4gZW5hYmxpbmcvZGlzYWJsaW5n
+IGV2ZW50IGRldGVjdGlvbiksIGFkZCBuZXcgYXhpcy1zcGVjaWZpYyBmaWVsZHMKPiA+IHRvIHN0
+cnVjdCBzdF9sc202ZHN4X2V2ZW50X3NyYywgYW5kIG1vZGlmeSB0aGUgbG9naWMgdGhhdCBoYW5k
+bGVzCj4gPiBldmVudCBjb25maWd1cmF0aW9uIHRvIHByb3Blcmx5IGhhbmRsZSBheGlzLXNwZWNp
+ZmljIHNldHRpbmdzIHdoZW4KPiA+IHN1cHBvcnRlZCBieSBhIGdpdmVuIGV2ZW50IHNvdXJjZS4K
+PiA+IEEgZnV0dXJlIGNvbW1pdCB3aWxsIGFkZCBhY3R1YWwgZXZlbnQgc291cmNlcyB3aXRoIHBl
+ci1heGlzCj4gPiBjb25maWd1cmFiaWxpdHkuCj4gCj4gLi4uCj4gCj4gPiArwqDCoMKgwqDCoMKg
+wqBvbGRfZW5hYmxlID0gaHctPmVuYWJsZV9ldmVudFtldmVudF07Cj4gPiArwqDCoMKgwqDCoMKg
+wqBuZXdfZW5hYmxlID0gc3RhdGUgPyAob2xkX2VuYWJsZSB8IEJJVChheGlzKSkgOiAob2xkX2Vu
+YWJsZSAmCj4gPiB+QklUKGF4aXMpKTsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghIW9sZF9lbmFi
+bGUgPT0gISFuZXdfZW5hYmxlKQo+IAo+IFRoaXMgaXMgYW4gaW50ZXJlc3RpbmcgY2hlY2suIFNv
+LCBvbGRfZW5hYmxlIGFuZCBuZXdfZW5hYmxlIGFyZSBfbm90Xwo+IGJvb2xlYW5zLCByaWdodD8K
+PiBTbywgdGhpcyBtZWFucyB0aGUgY2hlY2sgdGVzdCBpZiBfYW55XyBvZiB0aGUgYml0IHdhcyBz
+ZXQgYW5kIGtlcHQgc2V0IG9yCj4gbm9uZSB3ZXJlIHNldAo+IGFuZCBub24gaXMgZ29pbmcgdG8g
+YmUgc2V0LiBDb3JyZWN0PyBJIHRoaW5rIGEgc2hvcnQgY29tbWVudCB3b3VsZCBiZQo+IGdvb2Qg
+dG8gaGF2ZS4KCm9sZF9lbmFibGUgYW5kIG5ld19lbmFibGUgYXJlIGJpdCBtYXNrcywgYnV0IHdl
+IGFyZSBvbmx5IGludGVyZXN0ZWQgaW4Kd2hldGhlciBhbnkgYml0IGlzIHNldCwgdG8gY2F0Y2gg
+dGhlIGNhc2VzIHdoZXJlIHRoZSBiaXQgbWFzayBnb2VzIGZyb20KemVybyB0byBub24temVybyBh
+bmQgdmljZSB2ZXJzYS4gV2lsbCBhZGQgYSBjb21tZW50LgoKPiAKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gMDsKPiAKPiAuLi4KPiAKPiA+ICtzdGF0aWMgY29uc3Qg
+c3RydWN0IHN0X2xzbTZkc3hfcmVnICpzdF9sc202ZHN4X2dldF9ldmVudF9yZWcoc3RydWN0Cj4g
+PiBzdF9sc202ZHN4X2h3ICpodywKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVudW0KPiA+IHN0X2xzbTZkc3hfZXZlbnRf
+aWQgZXZlbnQsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBjb25zdAo+ID4gc3RydWN0IGlpb19jaGFuX3NwZWMgKmNoYW4p
+Cj4gPiArewo+ID4gK8KgwqDCoMKgwqDCoMKgY29uc3Qgc3RydWN0IHN0X2xzbTZkc3hfZXZlbnRf
+c3JjICpzcmMgPSAmaHctPnNldHRpbmdzLQo+ID4gPmV2ZW50X3NldHRpbmdzLnNvdXJjZXNbZXZl
+bnRdOwo+ID4gK8KgwqDCoMKgwqDCoMKgY29uc3Qgc3RydWN0IHN0X2xzbTZkc3hfcmVnICpyZWc7
+Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBzd2l0Y2ggKGNoYW4tPmNoYW5uZWwyKSB7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqBjYXNlIElJT19NT0RfWDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqByZWcgPSAmc3JjLT54X3ZhbHVlOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGJyZWFrOwo+ID4gK8KgwqDCoMKgwqDCoMKgY2FzZSBJSU9fTU9EX1k6Cj4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnID0gJnNyYy0+eV92YWx1ZTsKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBicmVhazsKPiA+ICvCoMKgwqDCoMKgwqDCoGNhc2Ug
+SUlPX01PRF9aOgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9ICZzcmMt
+PnpfdmFsdWU7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJlYWs7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqBkZWZhdWx0Ogo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oHJldHVybiBOVUxMOwo+ID4gK8KgwqDCoMKgwqDCoMKgfQo+IAo+ID4gK8KgwqDCoMKgwqDCoMKg
+aWYgKCFyZWctPmFkZHIpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVnID0g
+JnNyYy0+dmFsdWU7Cj4gPiArwqDCoMKgwqDCoMKgwqByZXR1cm4gcmVnOwo+IAo+IMKgwqDCoMKg
+wqDCoMKgwqBpZiAocmVnLT5hZGRyKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+cmV0dXJuIHJlZzsKPiAKPiDCoMKgwqDCoMKgwqDCoMKgLyogUGVyaGFwcyBhIGNvbW1lbnQgaGVy
+ZSB0byBleHBsYWluIHRoZSBjaG9pY2UgKi8KPiDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuICZzcmMt
+PnZhbHVlOwo+ID4gCldpbGwgZG8uCj4gCgo=
 
-> I suspect we need a way to opt out of this for applications that know
-> what they are doing, and I can think of a few ways to do that:
 
-....
+--=-P5Tv+66OR+vtWhWFF83f
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-> In other words, they are all kinda horrible.
+-----BEGIN PGP SIGNATURE-----
 
-Forcing a performance regression on users, then telling them "you
-need to work around the performance regression" is a pretty horrible
-thing to do in the first place. Given that none of the workarounds
-are any better, perhaps this approach should be discarded and some
-other way of addressin the problem be considered?
+iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmkDSqcACgkQ7fE7c86U
+Nl833AwAo56B5J8jwaMwRZfxSZBiXXlGiXcihr/4WOhKCmcG94wZLv3nxhbFCFz1
+9gNnk7THZeGhlfGUX8nlz85YhbcFtjStfqE+Nb1m9Y6AwGcAj6k+cs8vAQGYtZaP
+YCFunzUO8WZ0Yg0XtW7toxkdmCVmuPppQUNFd1YDoF7BiyYPrdt+jipjGvpxGMUX
+1HE2+fxYtt0T32f8XxXTd+jODRVI3jLGmfoYwWOdaVIcio2uQiaf6dMtXwDlLO7T
+CpjvG0bhNT/YZu1vlYuZmZY4MP1lrEaWnwsbgxIImVLHaLnnlq6IUFkskbtXc5zt
+0P/LVzYDnzKT+bG0572AJHeE0pdUBHoxwaTH2X1YNvIvrsAH9Di1U71CLBG+I+4j
+D+gEeXcOInrxG3Zzzmd60DKxcA+wloD3UAxr3DWvoh1XZdfV2AJHNihJlxGwI24B
+ZWEXiTxakdYApMMKgsfrw8PKr28nPPULLcmxJGglr1WMuxodn2G6GTGEcWDSKuOH
+S4/mPwKH
+=PGvm
+-----END PGP SIGNATURE-----
 
-How about we do it the other way around? If the application is known
-to corrupt stable page based block devices, then perhaps they should
-be setting a "DIO is not supported" option somewhere. None of them
-are pretty, but instead of affecting the whole world, it only
-affects the rare applications that trigger this DIO issue.
-
-That seems like a much better way to deal with the issue to me;
-most users are completely unaffected, and never have to worry about
-(or even know about) this workaround for a very specific type of
-weird application behaviour...
-
--Dave.
-
--- 
-Dave Chinner
-david@fromorbit.com
+--=-P5Tv+66OR+vtWhWFF83f--
 
