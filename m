@@ -1,83 +1,115 @@
-Return-Path: <linux-kernel+bounces-877450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73389C1E249
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:38:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A33C1E24C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF82018934E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF7A18953C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EFA32ABD1;
-	Thu, 30 Oct 2025 02:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B011D86DC;
+	Thu, 30 Oct 2025 02:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="O/ujQBaV"
-Received: from sg-1-21.ptr.blmpb.com (sg-1-21.ptr.blmpb.com [118.26.132.21])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICYRryuQ"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEC82D8799
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB432ABC7
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761791915; cv=none; b=YkOee35FQpL8tL01VZzIeegh+f2NYcKh15uKRf8R6E7G7Lp7+Zlsa+VY1dHaUf89+wV4s9pOGLS2dnHzQYq+IuAh0v7LqS/hBXDEj6nUJYbCP0TIlFJMedV8hu5QJOb+FY0C9+Qk84fUq6pbGWAFoJC0c1I5WC+kGfwSP+6lou8=
+	t=1761791933; cv=none; b=arVUNpD3DoOZuFLF8TkXh7d6MIUta2rLFHQ4vsho8BcMAHwZeLWII9JOJ3eKXqCL7yg1WQn03s78ow/oH8ISbLqyDLTgiq/gfrdBYnHzButGqKmIxLhbERJ9IDieZAREuuJfgscyOFbCKnIV1PWU5U8SevxBuyRNu2Rav8HrpZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761791915; c=relaxed/simple;
-	bh=R46gAfYqiumCaJuLQEZh8TtWDQSw3Y4UhfsvsmheOR0=;
-	h=References:Content-Type:Message-Id:Cc:From:Subject:Date:
-	 In-Reply-To:To:Mime-Version; b=hzZQAfnhzLA62u9g3veGcDZ+NNUDedepwcjl3gfpRFgq6X8izu6ki2VcbJglySWxK4DgeOk95+0+Kb8wC26kZDRWYjNrgMWa6hKovsCeQgl6ic6x+CEhanklUmXYhCqHqllNZC15WLcPwv9L0wYpPyGwUPWrq6HmUbImuX2EPsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=O/ujQBaV; arc=none smtp.client-ip=118.26.132.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761791907;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=F/iiLAqBGyZrI9cveUzgHIKgMnlZPCL+4OeqwYcGXF4=;
- b=O/ujQBaVzqRSY8M0wTx7s/4a7waZxSnGb7rDGw6EfKtGDNcCEoZSKiOi4pB7z3Ceu+UFyI
- BSCyHuZD178hQzrovBECTp/klj9FxqenFu4ut7SVdq5kV8H0Pjz/EINiyhkjCQjyzkMZqt
- Nv0UqK7kamzCu2psRqptS1g8LwefON3atlEv1pGSP4sHRXx3DV5RSHGpictFbBeQPQgKRp
- mxGyCLpWd/q1YrzBK84ZxNavpD8TNKWf89AY9tWZqrjHm8nB6t53igZzRsFMD0UzMOBDSA
- A5+QS+ijGIiGTPpuniKqhB9l4BCmyqV+c4EKEHrbiyUbG6a2BH3nr3xqSMQJFQ==
-User-Agent: Mozilla Thunderbird
-References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-8-k@mgml.me>
-X-Original-From: Yu Kuai <yukuai@fnnas.com>
-Content-Type: text/plain; charset=UTF-8
-X-Lms-Return-Path: <lba+26902cfa1+f2f8f1+vger.kernel.org+yukuai@fnnas.com>
-Message-Id: <40543443-02b8-427f-9fd9-3489b975d969@fnnas.com>
-Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<yukuai@fnnas.com>
-From: "Yu Kuai" <yukuai@fnnas.com>
-Subject: Re: [PATCH v5 07/16] md/raid1: refactor handle_read_error()
-Date: Thu, 30 Oct 2025 10:38:22 +0800
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251027150433.18193-8-k@mgml.me>
-To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
-	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>, 
-	"Guoqing Jiang" <jgq516@gmail.com>
+	s=arc-20240116; t=1761791933; c=relaxed/simple;
+	bh=AMq5LFLTBTjPLCaeK6notQ8mgN7CLcxdcRwOBe7Vz8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PvTPDim7vGU4cQJBpkh+SrlnBjz1skUjcpN2OHQsStXiEkxi1R5Icpn3qMr/oQV0nej9qPLzlaXMaMXPb+J3afNGcNpJn1Bp3j6AMmV9L8qVO7Hu1F/e47g52rPJ6UwJNehB7jYDS5RIWcuTmDQR4ryRHvo+xLs10T75xIJPYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICYRryuQ; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8a1744d9b8fso71405185a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761791929; x=1762396729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V6nNeYJj47LC/Yn9TG11EugyfogPj0qEsWlsX47jJWc=;
+        b=ICYRryuQ3Zoa61UiN7eZjBOI+unPW7wOiyiH7SWBFz55mjPypcIG92V6gpuXnYxRri
+         2Nq4S6EyXzuBstu2FAb+7DoAl1H6GJ0tVH5iYOgj0vsLx+YpmfWbIww4Kn132k3B7f7W
+         AGjAM1XJNonMyxfwiGQgKo9eXCD7TvIvETpicuiscPH+FIn6JOJ/JrrY6A5JAbMb13sV
+         pyjpwzJw06MGfJOr/KJTx0fmSb3X9AkSFmJy2/D4pmHl608MDkx+uX6XD9MsKct7v4NK
+         uO8/XIllpVboFMvcIVT8kLbAp3GYXO3JxSERhakJDmx9/b84woF2es1sTkuQhxRCb4LC
+         G+jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761791929; x=1762396729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V6nNeYJj47LC/Yn9TG11EugyfogPj0qEsWlsX47jJWc=;
+        b=srEQGw5EX5KCW70X3UXexc/HgqGsbzAjqDE4MXva2XzP4MjII++zmnAxt/DwsW8UBn
+         6II8ACZj0Qn9mRRGx3xR4DVPkFK5Ui07d0WPA0KXwYsw4Hybp42c/OO+VtP2Y0+5xHFj
+         JGvhpjvt9I3GXYpyQJfpGVwDQsnqVzzBRGsLjApz/3ap5twOeaeUBUDXFDEGEqJ3Fgm+
+         nGnZ23QV5f2V3Znz9+Ylax3vN0KIT0AatQ5rcX2QGGnfiEaK5Ds5FYo8yrVwa2JyfaiI
+         QHnUliqRuRlQqBxHxWe3m7zUpth0wYWPbB3j14Ph3yy2omagotVa2NFgF3YkQauMWi5A
+         rgjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhsLvgBOpz/aeNCDSLuPsctDLv4OdwZvGOpx2lltiQfwlVBgX9YW5WE+5Iz6PWeSK92aDjUfhAtPNUQMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd3xfuJ97UM9IyN8ZUp5WUUroeID/QJIDqqwkQNk2ExxWZGB+a
+	WsNQD7dlFasBKOx/hMJIqXQLPXAFGD9fUdMxaDjeFTovytk5TPN9ZfTKVNEkeGwU9Cgg2vBtX3p
+	+F0v7pKx21CkxoQXeAxkh9WHZKTeYnGM=
+X-Gm-Gg: ASbGnctRUrtZOzHT/ELQ2m1Fi3yCvGmxgflZrLyenL+aCcIXoYmK8mDJOtikVMskfX3
+	uVGEGTB2JGxwpDoVZsOfIfnTqGcd2bmRxubidZVTkCBmtCis8pJdePaU7cpvf6wWyGUkKU0SQPx
+	18bQlUXDUjdUAHAtcK569ZofAd/guxkhYxkmQIK08VX89Ge/cepU9WYJTnJQrPP4yXYVDZ5QvKq
+	N/AyZ3uDRCn2DPX5pd6niPpoQ5EsARZsUm8ne4ILwLb/r1nGgkXzmQRZJooRF97wQGqE4EwH7bk
+	uU1qR8SlJpzw33qY
+X-Google-Smtp-Source: AGHT+IH/NdEqkxVdErKm21bKL2gsa0HivcBd1sC5JLSxUC0NTL1b+8ekEWLzZcLSO5WqylHT28D8+ZBosG8IrfbuoAc=
+X-Received: by 2002:a05:620a:6919:b0:8a1:c120:4617 with SMTP id
+ af79cd13be357-8a8e4ff156amr776454585a.51.1761791929275; Wed, 29 Oct 2025
+ 19:38:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 10:38:24 +0800
-Reply-To: yukuai@fnnas.com
+MIME-Version: 1.0
+References: <20251030014020.475659-1-ziy@nvidia.com> <20251030014020.475659-2-ziy@nvidia.com>
+In-Reply-To: <20251030014020.475659-2-ziy@nvidia.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 30 Oct 2025 10:38:38 +0800
+X-Gm-Features: AWmQ_bnlFtMc3CzOHCzWJ0c5wI5RvGU_i4SjVvno9Biz6ZUIiW7knGxWCgCNPkI
+Message-ID: <CAGsJ_4yYrk5O29_+YdgufPCJ6h2xbEE7q4EbtFPCS6xqivWFug@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] mm/huge_memory: add split_huge_page_to_order()
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
+	kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org, 
+	nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
+On Thu, Oct 30, 2025 at 9:40=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+>
+> When caller does not supply a list to split_huge_page_to_list_to_order(),
+> use split_huge_page_to_order() instead.
+>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-> For the failfast bio feature, the behavior of handle_read_error() will
-> be changed in a subsequent commit, but refactor it first.
->
-> This commit only refactors the code without functional changes. A
-> subsequent commit will replace md_error() with md_cond_error()
-> to implement proper failfast error handling.
->
-> Signed-off-by: Kenta Akagi<k@mgml.me>
+LGTM,
+
+Reviewed-by: Barry Song <baohua@kernel.org>
+
 > ---
->   drivers/md/raid1.c | 14 ++++++--------
->   1 file changed, 6 insertions(+), 8 deletions(-)
-
-Reviewed-by: Yu Kuai <yukuai@fnnas.com>
+>  include/linux/huge_mm.h | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>
 
