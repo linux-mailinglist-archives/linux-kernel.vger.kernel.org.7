@@ -1,106 +1,74 @@
-Return-Path: <linux-kernel+bounces-877411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BA9C1E0E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:51:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BCAC1E0F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB353B8CAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:51:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B4C14E332D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 01:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15C2DC77E;
-	Thu, 30 Oct 2025 01:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025762DCF7D;
+	Thu, 30 Oct 2025 01:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bH3ISx6b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHHgj6p6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA2621ABA2;
-	Thu, 30 Oct 2025 01:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D9D21ABA2;
+	Thu, 30 Oct 2025 01:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761789054; cv=none; b=Cjs3fWjuU8Vw97OEhIyt+t2V3fM/7zo+FmGGYcoc+K0eTkKQQ1zkeU+UBVKkD/SGjIb7zaJfdwJdZRKFDUkXXFORyUooJnQdKhPl/N4UAu9umYbgCnGrb737QvOkt6QHwweEm6rFFV8XUcWV3b+7UdHuZ/MtDIscOiYNmCcLoQ4=
+	t=1761789150; cv=none; b=Yn7bBGcGkKE+aH0S+mbGg3/gpf3sGmtXyc2oQHmR3j+CBSNhOun8bn62ImtesCY+6u+fmZNbMhKW0sY1/MoZMQ1gfY5a8G8eV1eocvK1Z+B7xZU+K3CzSdC/VRuohf8duwuYKXWKK1V0l24V84WkcUlgQhCI8Yka+OCm6JIpxrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761789054; c=relaxed/simple;
-	bh=IKUqTfkv9S0tIEz9qzJhcoUBVUV/t+c+iT11tcNwLgw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=biL4jircy4i1wy1IT9RiXVsM0+EIjyiHR7gUNykd70bVXeoICx9KPVN2g33i3BJxsJMW3xR/1v/V/pjH3w+egAqGeXknhdjPmTCfW81WWbmSY8H2StE1lX4gEZHKoS2wW/OnCPpHecNuriz8p2yqGdGJVtYWVqk47Ncj8f4bl0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bH3ISx6b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA18C4CEF7;
-	Thu, 30 Oct 2025 01:50:53 +0000 (UTC)
+	s=arc-20240116; t=1761789150; c=relaxed/simple;
+	bh=Ic9O0/2u74wHwW8wBGsNLD2iRerNjlVMf5m0rfxMtTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rIqlACXA7NGLXKMSR0VeXXUBFtADijy6o+Rh774CpPPwGZawrJqG583ZRS9A72b9On3QTZ2frMpnqiNB6y0WqYhAchTxorgBb6O1C2ZqHMkHuz9ubAg4/Aeth67auLCrlWjp6S3yHOmg7HTT0gVV8Wzaff/SduDJPefL2I/0hhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHHgj6p6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E27FC4CEF7;
+	Thu, 30 Oct 2025 01:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761789054;
-	bh=IKUqTfkv9S0tIEz9qzJhcoUBVUV/t+c+iT11tcNwLgw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bH3ISx6bHqa9wEqek7U4oE3gJNqAXCt9x2DdgTUbw35gVJ335CIRdXXVPzUNYJxW0
-	 WSzpFFBQoAkmlzRHl+Suii3ih+U5QuKEUvzUClAlZSeCOvrIpJVQc8gDYFl7WWvaX3
-	 XsJr9dCqx4/9J2veiwd9YMiGYDY3iHk1rgpTx3y/Bq50hZLI6liD3Yf8KpRR1phVoX
-	 w745ReQL0QH6hUCV5PJQcO85vl2DcB4Xm0EZlDqQZYCzrDZ1n0whOAOq25XAEf4xp7
-	 msS7xdrxjfvuiGrLkv0GHP28YFE0Qat4xglt9LyukCwM6HDDi6snvgaqsfkAOaoK8x
-	 dTTazzS6TGWOA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EB03A55ED9;
-	Thu, 30 Oct 2025 01:50:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1761789149;
+	bh=Ic9O0/2u74wHwW8wBGsNLD2iRerNjlVMf5m0rfxMtTc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OHHgj6p6QF2rK3ts0WCBIBqsMJu39Iqj5nk/6WMLl/Z5OvjY6QZyI513GNE47hR6k
+	 2cWh3pS2lltyEUhczP/mk+V7qNdJKVdwEIEwW48/fkyobyn2vjTsxm0gAhFCmtjEN6
+	 XKpXraZ2BDbr0npXQAsdXMgxmuAJzhBPA4WbLeg9DVIvzZExMsmoYmwpv7w0IxaojM
+	 nuDYWq1UNOZknGqkRkT5X3Ny7eWazuZB8AA4zwXsG6jml9pEGIstkcXK3Lrjt3jJ7Q
+	 M77RDbMYqyd/UeeairCBtumpZXNkqGH4qqoo8o1fG/BlgSrN7wO5duGqyFbH2a66s9
+	 4kOZUT+2QqSHQ==
+Date: Wed, 29 Oct 2025 18:52:28 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, shradhagupta@linux.microsoft.com,
+ ssengar@linux.microsoft.com, dipayanroy@linux.microsoft.com,
+ shirazsaleem@microsoft.com, kotaranov@microsoft.com, longli@microsoft.com,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] net: mana: Fix incorrect speed reported by
+ debugfs
+Message-ID: <20251029185228.0c2da909@kernel.org>
+In-Reply-To: <1761735154-3593-1-git-send-email-ernis@linux.microsoft.com>
+References: <1761735154-3593-1-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 net-next 0/6] net: enetc: Add i.MX94 ENETC support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176178903073.3280604.13344054625304001526.git-patchwork-notify@kernel.org>
-Date: Thu, 30 Oct 2025 01:50:30 +0000
-References: <20251029013900.407583-1-wei.fang@nxp.com>
-In-Reply-To: <20251029013900.407583-1-wei.fang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
- Frank.Li@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, imx@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed, 29 Oct 2025 03:52:34 -0700 Erni Sri Satya Vennela wrote:
+> Fixes: 75cabb46935b ("net: mana: Add support for net_shaper_ops") 
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 29 Oct 2025 09:38:54 +0800 you wrote:
-> i.MX94 NETC has two kinds of ENETCs, one is the same as i.MX95, which
-> can be used as a standalone network port. The other one is an internal
-> ENETC, it connects to the CPU port of NETC switch through the pseudo
-> MAC. Also, i.MX94 have multiple PTP Timers, which is different from
-> i.MX95. Any PTP Timer can be bound to a specified standalone ENETC by
-> the IERB ETBCR registers. Currently, this patch only add ENETC support
-> and Timer support for i.MX94. The switch will be added by a separate
-> patch set.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v4,net-next,1/6] dt-bindings: net: netc-blk-ctrl: add compatible string for i.MX94 platforms
-    https://git.kernel.org/netdev/net-next/c/3a85ec37bc11
-  - [v4,net-next,2/6] dt-bindings: net: enetc: add compatible string for ENETC with pseduo MAC
-    https://git.kernel.org/netdev/net-next/c/c4430f2ac047
-  - [v4,net-next,3/6] net: enetc: add preliminary i.MX94 NETC blocks control support
-    https://git.kernel.org/netdev/net-next/c/ba5d7d45ce8e
-  - [v4,net-next,4/6] net: enetc: add ptp timer binding support for i.MX94
-    https://git.kernel.org/netdev/net-next/c/1cd3f21c18c2
-  - [v4,net-next,5/6] net: enetc: add basic support for the ENETC with pseudo MAC for i.MX94
-    https://git.kernel.org/netdev/net-next/c/5175c1e4adca
-  - [v4,net-next,6/6] net: enetc: add standalone ENETC support for i.MX94
-    https://git.kernel.org/netdev/net-next/c/2d673b0e2f8d
-
-You are awesome, thank you!
+I've preferred this without the fixes tag, TBH.
+It's debugfs, nobody is supposed to be using it in production.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+pw-bot: cr
 
