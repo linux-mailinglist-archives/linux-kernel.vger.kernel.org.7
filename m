@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-877539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB70C1E630
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:59:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D93C1E634
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E232D4E5439
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:59:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 104B54E1726
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ED332B99A;
-	Thu, 30 Oct 2025 04:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66F7233140;
+	Thu, 30 Oct 2025 05:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kGZ0FWUV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fcyCZgxF"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652F2329C53;
-	Thu, 30 Oct 2025 04:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0FA37A3CC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761800376; cv=none; b=R3tB8VSSvu0khMIS0SOzvC9mQ6Llt/yzkLbsLFD04ScBoyedSU10n8WrXfrc7dS294CavnEtl3ITsnHzr9gcfXC5QNt4TYic1QlKLeDyzO6Cl0GVnHMRmM+J1aLXQMcnhpWgZgPJs1BKsGw6rzd123SuyV8CSwAQEFbW3D54gIs=
+	t=1761800432; cv=none; b=j/AwZC54GzW9jBX90N1ZDkZGXWOdHAKj7RmPtefcZgnOpC4Khixah2EePYg1ATbVmxb1URXqDxZDY4GiyIPONcRnLfLcWJz6qLDokbkQjeBrnghwS54tvmg7v9T8BHNyoewNKuOXjI5RHtJT6iydQ+q9IFqwTuNPi/HANXuPZJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761800376; c=relaxed/simple;
-	bh=XrSWWjKUo7m9rj5cc4tuAtsaIQt7tpo1lwMllKwYVkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TG+SqjiNzjaFH7vDxPV8aZ7qu4Wki9x7AgVXiNNcB6nNUL1PxgD8n9Llzso05jtVuDBS6eizBbsVzlGh1A/PZhtB2iAnEZpyt+HpbUzo8jZ+BBBpSL77Ty6fvS8Vi+N6862Ctpa9+HMKUzkT95bCoXRX3oWP/GanAYDxa7w5LTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kGZ0FWUV; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761800375; x=1793336375;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XrSWWjKUo7m9rj5cc4tuAtsaIQt7tpo1lwMllKwYVkE=;
-  b=kGZ0FWUVqGlr/a7mkdO6JEW2FQQPnJVlOJENyU1f1Mu0691Cdu8gNhxi
-   jN0lDgxWVYQ/4HVymEQjQSF46bLWdXtppRvIbNM4DlwtvWzRcgTpFE1pU
-   yJHJA54WHyXHFsb6SisWgOKLCsp6ehJp8l852QEm15/kqnFC8P4GYU7Xc
-   ScGnbieJMXcgnCuwswP8QkbYI+wpLHr7GaJuBCthZYzVLk6ugtx6TQdLh
-   p2QQNSTWQESgPjaOVtesKg4ARfWmZ+5lZ3YDqqtmTCWGaIRR+2I8krMa8
-   hLenuesmqtUcFiLtk+K2x1SL/OMw6S74fgIOf/KUl+RMMRY0jWMOHQz6r
-   A==;
-X-CSE-ConnectionGUID: LST+datSTeOwkFCegHvyMQ==
-X-CSE-MsgGUID: Mg9ugy55SaqpG6cxHSRUog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64030004"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="64030004"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 21:59:34 -0700
-X-CSE-ConnectionGUID: bQZdnZDLReSi76ExYndiCg==
-X-CSE-MsgGUID: SQ5nwnfASfK/7dgA9AJjIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="223075256"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 29 Oct 2025 21:59:29 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEKkx-000LTs-0r;
-	Thu, 30 Oct 2025 04:59:27 +0000
-Date: Thu, 30 Oct 2025 12:58:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Botila <andrei.botila@oss.nxp.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Andrei Botila <andrei.botila@oss.nxp.com>
-Subject: Re: [PATCH net-next] net: phy: nxp-c45-tja11xx: config_init restore
- macsec config
-Message-ID: <202510301246.x4ua5CJ6-lkp@intel.com>
-References: <20251029104258.1499069-1-andrei.botila@oss.nxp.com>
+	s=arc-20240116; t=1761800432; c=relaxed/simple;
+	bh=aIIDMY3AHK5dw1R7m3doBiBvTy/DW6Af897s/1Y0FmM=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=VVzsXi4wQfhhvrXN4g+20WOMf56WQC4FfXxkXqneKX4L0LWMriTD95xSFT9M18QoZ9ct6kaE8wPJJ9JlfDtm5Qy0Nxu4gHYckR4iWbNclXypQyY4Kd601rbhwDj4n7wVLoK6Ng0hVEp/VimzC/fb7gh2PluIRkof52MwaEG6K9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fcyCZgxF; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8765B6DF;
+	Thu, 30 Oct 2025 05:58:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761800316;
+	bh=aIIDMY3AHK5dw1R7m3doBiBvTy/DW6Af897s/1Y0FmM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=fcyCZgxF4TpjFmwHBuC4i48DKDr4kJjvw70dSw9AgEwoEjzO8tnC/CvDyArO0N7Ar
+	 yzi8VhGp38/iGMgzZIld8SGzlLgZlse3SMyA52aoZ08v6zImE4FWA+atzoXveV6lIV
+	 R2Nd8Jf3wXg6+EnhYwU99ZdvYJ4nFlq+ibaYeSTg=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029104258.1499069-1-andrei.botila@oss.nxp.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aQIEOJUHdVMriz7S@stanley.mountain>
+References: <20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com> <aQIEOJUHdVMriz7S@stanley.mountain>
+Subject: Re: [PATCH v3 0/7] staging: Destage VCHIQ interface and MMAL
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com, Stefan Wahren <wahrenst@gmx.net>, Dave Stevenson <dave.stevenson@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, Phil Elwell <phil@raspberrypi.com>, Umang Jain <uajain@igalia.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Date: Thu, 30 Oct 2025 10:30:22 +0530
+Message-ID: <176180042213.8690.16888216388545206511@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-Hi Andrei,
+Hi Dan,
 
-kernel test robot noticed the following build warnings:
+Thanks for the review.
 
-[auto build test WARNING on net-next/main]
+Quoting Dan Carpenter (2025-10-29 17:40:32)
+> I did a review of some Smatch warnings.  These aren't published because
+> they generate too many false positives.  Only number 3 and number 7
+> are actual issues the rest are style nit-picks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Botila/net-phy-nxp-c45-tja11xx-config_init-restore-macsec-config/20251029-185313
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20251029104258.1499069-1-andrei.botila%40oss.nxp.com
-patch subject: [PATCH net-next] net: phy: nxp-c45-tja11xx: config_init restore macsec config
-config: x86_64-randconfig-076-20251030 (https://download.01.org/0day-ci/archive/20251030/202510301246.x4ua5CJ6-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510301246.x4ua5CJ6-lkp@intel.com/reproduce)
+3 - 8 are for bcm2835-camera, which is altogether dropped from staging in
+PATCH 1/7.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510301246.x4ua5CJ6-lkp@intel.com/
+>=20
+> 1. drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:2728 vc=
+hiq_add_service_internal() info: returning a literal zero is cleaner
+> s/return service;/return NULL;/
+>=20
+> 2. drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:408 vchi=
+q_shutdown() info: returning a literal zero is cleaner
+> Delete the "ret" variable.
+>=20
+> 3. drivers/staging/vc04_services/bcm2835-camera/controls.c:198 ctrl_set_i=
+so() warn: array off by one? 'iso_values[ctrl->val]'
+> There seems to be a mixup between iso_qmenu[] and iso_values[].  The one
+> is only used for ARRAY_SIZE() and the other is never checked for
+> ARRAY_SIZE().
+>=20
+> 4. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:337 buff=
+er_cb() warn: can 'buf' even be NULL?
+> Delete the NULL check.
+>=20
+> 5. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:513 star=
+t_streaming() pedantic: propagate return from 'enable_camera' instead of re=
+turning '-EINVAL'
+> -       if (enable_camera(dev) < 0) {
+> +       ret =3D enable_camera(dev);
+> +       if (ret) {
+>                 v4l2_err(&dev->v4l2_dev, "Failed to enable camera\n");
+> -               return -EINVAL;
+> +               return ret;
+>         }
+> 6. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:576 star=
+t_streaming() pedantic: propagate return from 'disable_camera' instead of r=
+eturning '-EINVAL'
+> Same.
+>=20
+> 7. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:881 vidi=
+oc_querycap() error: uninitialized symbol 'major'.
+>    drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:881 vidi=
+oc_querycap() error: uninitialized symbol 'minor'.
+> No error checking on vchiq_mmal_version()
+>=20
+> 8. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:1276 mma=
+l_setup_components() info: returning a literal zero is cleaner
+> s/return ret;/return 0;/
+>=20
+> regards,
+> dan carpenter
 
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/net/phy/nxp-c45-tja11xx.c:20:
->> drivers/net/phy/nxp-c45-tja11xx.h:42:6: warning: no previous prototype for function 'nxp_c45_macsec_link_change_notify' [-Wmissing-prototypes]
-      42 | void nxp_c45_macsec_link_change_notify(struct phy_device *phydev)
-         |      ^
-   drivers/net/phy/nxp-c45-tja11xx.h:42:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      42 | void nxp_c45_macsec_link_change_notify(struct phy_device *phydev)
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/nxp_c45_macsec_link_change_notify +42 drivers/net/phy/nxp-c45-tja11xx.h
-
-    33	
-    34	#if IS_ENABLED(CONFIG_MACSEC)
-    35	void nxp_c45_macsec_link_change_notify(struct phy_device *phydev);
-    36	int nxp_c45_macsec_config_init(struct phy_device *phydev);
-    37	int nxp_c45_macsec_probe(struct phy_device *phydev);
-    38	void nxp_c45_macsec_remove(struct phy_device *phydev);
-    39	void nxp_c45_handle_macsec_interrupt(struct phy_device *phydev,
-    40					     irqreturn_t *ret);
-    41	#else
-  > 42	void nxp_c45_macsec_link_change_notify(struct phy_device *phydev)
-    43	{
-    44	}
-    45	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Jai
 
