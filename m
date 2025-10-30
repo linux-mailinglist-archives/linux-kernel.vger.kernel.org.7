@@ -1,104 +1,138 @@
-Return-Path: <linux-kernel+bounces-878972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091E1C21E27
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:12:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68088C21DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:10:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9F2422816
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6181AA16B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A7136CE0D;
-	Thu, 30 Oct 2025 19:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E66B36CE0E;
+	Thu, 30 Oct 2025 19:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h+PBpZ6u"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxbNvTrB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90C9354710;
-	Thu, 30 Oct 2025 19:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A23293C4E;
+	Thu, 30 Oct 2025 19:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761851495; cv=none; b=BYAND2e27mnl+4K7U0YwduC84/GSVqgytF+5nn9tyIWrRngza8pGhAQKEApX1Srtm8HPWD8bu0aSABjuIMOtaWld43fA/bLaQXcnIiOq+QDLkGVpUZwMvdNi50OmbiQ9Brk+Z5FxcjxO+aCnoQiTMJUL03v4NjkiUviVkznFjNU=
+	t=1761851312; cv=none; b=RBWS/prf7NVrE8tGJkI63MVppPQMNmVGie7cs0gllRkOsSOY1B+fis5AQLfq4BmZCmbne4dxIZUO/20uFvhSmbDNfA8ED5rWhP+TNg4ZJYnZZWG/f2QNS5bF24XWNj3MU7/5dzerSXuFEPrvQ7pygwmHzy88nFUW+jWah+qjSbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761851495; c=relaxed/simple;
-	bh=qfeTTk7/TR99l/94qyEHZDp+hNO6DYE5PXmmWZKEwbk=;
+	s=arc-20240116; t=1761851312; c=relaxed/simple;
+	bh=kOo+PpES5NgQcULf7S+Q+UVAhdpsgLGwKOQrs8bQIEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAJK5iZd78dv6uPt98Rlcs/TcNrAmOQjmNoRxIiSpUNP1AQ+CN4HLZBOJ4v6fNzt3j3uER6hk6iPQ0HXWPrupn3m00e14QzG4qEFgE50yniXMujcYvJl0OCvvISui53/hdrzVxE5KeQU1WeO3FXtHofN4Aq9SyLrsqf/BpYibvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h+PBpZ6u; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 37B4540E016E;
-	Thu, 30 Oct 2025 19:11:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cGgbTPGaS5x5; Thu, 30 Oct 2025 19:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761851479; bh=8MFOnuSPsAMXRSVQXBva5fNQkul1fYm0Kt2r5nN3Ckw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jpH/XRcUFwVp/leX/ETe7XsaMKAUR/TlcqQKQWHnTfipHDSEbvOts+a4npvDg+PQdyaURhIYuFq7ZU3bhbFnPK0+C0NCa092IxQAfA2tagLbH655cyuXh5w1ORluucIQGHAxmuhEwOKGsMAKXVpt7YHR6WxFwPHNYGIS4iyovuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxbNvTrB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC8FC4CEFB;
+	Thu, 30 Oct 2025 19:08:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761851311;
+	bh=kOo+PpES5NgQcULf7S+Q+UVAhdpsgLGwKOQrs8bQIEw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h+PBpZ6uaSjfapcKGzeE1LrFNn69xOfPxeFIpFOtKOypflPqDjHYCxNXdbwsn6IL0
-	 FumzoqajiIrJzvmPmuuFZ9qjmrH8VZZZw40+IeD1U8vVBmT+ZG+6qXFY9l5pxHrvff
-	 kRFrx3/OZhFEqJcJhOwT6/HX7STNInRIpgBNI2KzlVLh7RFP+WyZftv5jSiBAkIScP
-	 iC9dA4azI6fzU5wfYb874Nd1Qe74hAe/8nEYtnwZWOY68gGqnxkSPPkU93/pZUfKpW
-	 CQEHZcTbaTeZxXRzFJlrVgOBg0dqA6jsCZQHyfsWT5GyASAjTce/0lDDe+Fo8G7KXV
-	 xL4aRrP2GjD2dxmT/8n6y977CiJLGpX7soabWEm99F/T0Co77ZEN6WMVcJEoS+JLlQ
-	 qmTJeDoehukSqap64Ks+TnGCljqvxs5mxkB0KM6hKZH9VwFK24c6BnhKgc/YA1apV5
-	 n4vPwfJjBwGypuuQyI/l/FWYmfnKVy7iC3Ri3v5BfQ5aHd63L/1EACLGLwQfupNYrC
-	 7VoIwwlIrX2id77k1DsYgw1vfBoc+kXumqFLRiik0G1bE2F92NK8FP7LAnqnqDd1k9
-	 nEh8+AmPOdXy8cXPig6vo/eMdRGCtkAOZ8r3fmiktYW1N4Xg7efaA6DExkgRNTbCDA
-	 MXUskIvmU42V2jcd0ux2fjXo=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id CF94040E021A;
-	Thu, 30 Oct 2025 19:11:03 +0000 (UTC)
-Date: Thu, 30 Oct 2025 20:10:57 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-	gpiccoli@igalia.com, peterz@infradead.org,
-	davydov-max@yandex-team.ru, martin.petersen@oracle.com,
-	jani.nikula@intel.com, joel.granados@kernel.org, xin@zytor.com,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH RESEND] x86/split_lock: Make split lock mitigation sleep
- duration configurable
-Message-ID: <20251030191057.GDaQO4QYoZytxdQW_c@fat_crate.local>
-References: <20251028094333.49841-1-wangfushuai@baidu.com>
+	b=DxbNvTrBua7xWRyCgNRUIZ3uCilnBZbV/HdNHv7X7+SaC+wACQ1cwzbTRtnwqeIt5
+	 s2JoJnBGaOwRV/uMKCFwHv9n+044xo2h5IDoWWFxDuL7UqA2OM114R+6xXCwZI3ntp
+	 ASzXawONhxHRiKUDwMeZbCpwxFzs7hSwq6eTO0gzCDmDE6npO9Y8QJCui+s6TQAVDJ
+	 bsOOL0v2QDyy3lozq/F8/itl3Dra4M5Lv6adOVL3qEofKcT12q5Z6SnlhOp4QhFLJl
+	 aGYRi1dD19NrzTbdNpY2A7RadUp8qRTIZh+LZ4M6ePkeKwBZBsFMb6pOqKwhESnx/z
+	 s4N2+YwlZE6MQ==
+Date: Thu, 30 Oct 2025 14:11:40 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/2] dt-bindings: mailbox: qcom: Add IPCC support for
+ Glymur Platform
+Message-ID: <ofoie57qkonmyots5y3jf3sn27zy45rd54raosvo2gu4nzrxjo@3hvm7bp7vswa>
+References: <20251029-knp-ipcc-v2-0-8ba303ab82de@oss.qualcomm.com>
+ <20251029-knp-ipcc-v2-2-8ba303ab82de@oss.qualcomm.com>
+ <67038d9f-7c6c-4bb3-ba64-b06816b76be7@kernel.org>
+ <qyfxtoe7ixko7k5whtzjpkynwpeqxzb2sgwq7y4y3kstblapz5@ggny5uq7qv6s>
+ <5468378e-3ca3-45d2-98bf-9388005bba85@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028094333.49841-1-wangfushuai@baidu.com>
+In-Reply-To: <5468378e-3ca3-45d2-98bf-9388005bba85@kernel.org>
 
-On Tue, Oct 28, 2025 at 05:43:33PM +0800, Fushuai Wang wrote:
-> Commit 727209376f49 ("x86/split_lock: Add sysctl to control the misery
-> mode") introduce a sysctl 'sysctl_sld_mitigate' to control the misery
-> mode for split lock detection (0 to disable, 1 to enable). However,
-> when enabled, the sleep duration for split lockers was fixed at 10 ms.
+On Thu, Oct 30, 2025 at 06:53:59AM +0100, Krzysztof Kozlowski wrote:
+> On 29/10/2025 18:23, Bjorn Andersson wrote:
+> > On Wed, Oct 29, 2025 at 04:49:30PM +0100, Krzysztof Kozlowski wrote:
+> >> On 29/10/2025 09:15, Jingyi Wang wrote:
+> >>> diff --git a/include/dt-bindings/mailbox/qcom,glymur-ipcc.h b/include/dt-bindings/mailbox/qcom,glymur-ipcc.h
+> >>> new file mode 100644
+> >>> index 000000000000..3ab8189974a5
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/mailbox/qcom,glymur-ipcc.h
+> >>> @@ -0,0 +1,68 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
+> >>> +/*
+> >>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> >>> + */
+> >>> +
+> >>> +#ifndef __DT_BINDINGS_MAILBOX_IPCC_GLYMUR_H
+> >>> +#define __DT_BINDINGS_MAILBOX_IPCC_GLYMUR_H
+> >>> +
+> >>> +/* Glymur physical client IDs */
+> >>> +#define IPCC_MPROC_AOP			0
+> >>
+> >>
+> >> Here the same - not used by Linux.
+> > 
+> > How is this different from e.g.:
+> > 
+> > include/dt-bindings/interrupt-controller/arm-gic.h:#define GIC_SPI 0
 > 
-> This patch extands 'sysctl_sld_mitigate' to allow configuring the sleep
-> duration in milliseconds. Now, when 'sysctl_sld_mitigate' is set to
-> N (N > 0), split lockers will sleep for N milliseconds.
+> $ git grep GIC_SPI
+> drivers/irqchip/irq-mchp-eic.c
+> 
 
-I'm reading this and the only question that pops up in my mind is "why".
+My interpretation of that snippet (and the other use cases) is that they
+are programmatically constructing the values of a DT property, not that
+they define the SW API.
 
-Why does the upstream kernel need this?
+> How is this not used by Linux? What is drivers/irqchip/foo.c if not a
+> Linux driver?
+> 
 
--- 
-Regards/Gruss,
-    Boris.
+No argument there.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+[..]
+> > 
+> >> Or provide explanation in terms what Linux interface you are binding
+> >> here (please focus on Linux or other SW).
+> >>
+> > 
+> > Don't we use include/dt-bindings to define hardware constants for use in
+> 
+> No, we do not.
+> 
+
+I have completely missed this. Perhaps this is the first use case, but
+the result is non-the-less:
+
+$ find arch/*/boot/dts/qcom -name '*.h' | wc -l
+0
+
+
+But this makes sense, and I like it.
+
+@Jingyi, as these header constants are consumed only by DeviceTree
+source, please move them to arch/arm64/boot/dts/qcom/
+
+Thanks,
+Bjorn
 
