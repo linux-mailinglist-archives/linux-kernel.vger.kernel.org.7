@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-878688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1CDC21430
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:43:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC4FC21457
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03C5C4F100C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:40:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5F104EE0A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1456D2E03F3;
-	Thu, 30 Oct 2025 16:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A582D2E6CB8;
+	Thu, 30 Oct 2025 16:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0fgZ8Yh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFfTgDYU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566002153EA;
-	Thu, 30 Oct 2025 16:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37F82DE1E0;
+	Thu, 30 Oct 2025 16:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842435; cv=none; b=drsiYAx7dDpnL0w+qr5YLAoJAAJp/67COM+GTMgo06donsU6g8Hhf8sZrhlcK5iUzppUbdTJMBe2kY1O808iWgrRXgmoSjXddzos/8sdLUdV7p5q5Dv5/IuCpF3HF0sqeM5EKWvl9c2a9HnxOl5gLAJG5bbs9JpCiY4UGiyTzn0=
+	t=1761842484; cv=none; b=sKJWyP1goZ8K419qGaWpujAqngRnjsfL9m1fabaa5xZd2ICEFsZKGPf0JXCDplvhUV5SCSJor8/l4vyA7ZmnfRotu3xp/OwEF3BWKMhx/8THoBcXXmp+DICSdso+JhHVINquBfs53aKG/MZICANSQ4wW6epc/qigWnQ3hGkZCv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842435; c=relaxed/simple;
-	bh=D1fLHv6UtZH5JtJqdHVRIpQ3bulaFvN7jScs941smeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GtAU3K6Pcb2VkVuE3H4DSZZjX+s4xGBGme+SqxepfxoFL8O8H3yL9FWp9JIVM6JYjYiFXW5W2DysZrSzYd0xMT+3KkUyBLvriarOd1QqvSXtbW3V1ntHtl6/6Y2mTfQZWJpiiC8xIHlKpheUHqYHOTHMyix49kRCfZfsZ/wlUSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0fgZ8Yh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E609C4CEF8;
-	Thu, 30 Oct 2025 16:40:32 +0000 (UTC)
+	s=arc-20240116; t=1761842484; c=relaxed/simple;
+	bh=aIoUwknKACszK3iv7HnkpaK0g2nYzhodMj6uyK4R4cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVnbuwrPva/HQJQ0JlIpWyhASuXiLTfCFI9oTZWi5nLzR6o6XG9L4lTSgoFA3VqFBTx6p1H1K2mykEola3u3PPiOi41DCFLhymS0TiSy47NU0ULVl91KcT+57qIbPGsmisgcpMEIMbNQJal/14xJiq8djGxckcZnzDgX9eVpblo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFfTgDYU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17F5C4CEF1;
+	Thu, 30 Oct 2025 16:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761842434;
-	bh=D1fLHv6UtZH5JtJqdHVRIpQ3bulaFvN7jScs941smeY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q0fgZ8YhgrKj5qQZgtgSVBwpimwaFxFwdOg9jfm03O15RHO5ugSU23Hl2REJOjM4C
-	 OAmxVF5Gc6qYbTaepYjNv1Z2rxBl0ArILlQp7Q1J4PrGQNRS568ttPaVLSAhISvjXu
-	 UmeyTLXMiWgDmoVid0Sb/XELVz8rCaIME7F2K5wrwDqgXgFPnXbVEc44/lh4uSBuv+
-	 jjniqGZmQd9qHTYhGwQycKcODVNwWrJo/mqPYjCuLSd/p2ua6tCeyud+8AAbQVkdFr
-	 vILG8q8xJp6TbRwm5GF2fXjYSarJb8DVPsEQeV3AWXH7rN9T9L7QbAsQ5Akhf2iF1s
-	 g1uWaQPaF3y7A==
-Message-ID: <efd2690f-35ba-4104-ac88-4e068984d19f@kernel.org>
-Date: Thu, 30 Oct 2025 17:40:30 +0100
+	s=k20201202; t=1761842483;
+	bh=aIoUwknKACszK3iv7HnkpaK0g2nYzhodMj6uyK4R4cI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OFfTgDYUwwtk9a3MXmhN+C5QZeQcKowOvQ7JtdxMp86xa7GEim8ms4eA76JdlZfHS
+	 eFhBevKSCYCx6yMiJ4R3yNh1fEKAOckpxYlBhI00S+GuEHbN3tDMHcHFjIQ1269XM1
+	 0162sMPeIP15mj38QzG6640TZdgvl0DyZO+zAfpQ7ma2P8O29xh8ZpHLOZ/sL32xe0
+	 iqWWZ9MUG/8ewMu0jydmDJAMYeZyKtiWVz81dJNlG9Bj+piDGu94CB0PcteyGg6uJe
+	 yPXStu00GL1l1YREbznHaQFRp4m3fyjHtsoP+kDTeTeOt9XtrZbecyLXwkT6Ds1J5w
+	 cFFbUk6PUfVZg==
+Date: Thu, 30 Oct 2025 22:11:12 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Johannes Erdfelt <johannes@erdfelt.com>, 
+	Aurelien Jarno <aurelien@aurel32.net>
+Cc: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, bhelgaas@google.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org, 
+	guodong@riscstar.com, pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, p.zabel@pengutronix.de, christian.bruel@foss.st.com, 
+	shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com, 
+	namcao@linutronix.de, thippeswamy.havalige@amd.com, inochiama@gmail.com, 
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] Introduce SpacemiT K1 PCIe phy and host controller
+Message-ID: <5kwbaj2eqr4imcaoh6otqo7huuraqhodxh4dbwc33vqpi5j5yq@ueufnqetrg2m>
+References: <20251013153526.2276556-1-elder@riscstar.com>
+ <aPEhvFD8TzVtqE2n@aurel32.net>
+ <92ee253f-bf6a-481a-acc2-daf26d268395@riscstar.com>
+ <aQEElhSCRNqaPf8m@aurel32.net>
+ <20251028184250.GM15521@sventech.com>
+ <82848c80-15e0-4c0e-a3f6-821a7f4778a5@riscstar.com>
+ <20251028204832.GN15521@sventech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] iio: adc: Add support for TI ADS1120 ADC
-To: Ajith Anandhan <ajithanandhan0406@gmail.com>, linux-iio@vger.kernel.org
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251028204832.GN15521@sventech.com>
 
-On 30/10/2025 17:34, Ajith Anandhan wrote:
-> This RFC patch series adds support for the Texas Instruments ADS1120,
-> a precision 16-bit delta-sigma ADC with SPI interface.
++ Aurelien
+
+On Tue, Oct 28, 2025 at 01:48:32PM -0700, Johannes Erdfelt wrote:
+> On Tue, Oct 28, 2025, Alex Elder <elder@riscstar.com> wrote:
+> > On 10/28/25 1:42 PM, Johannes Erdfelt wrote:
+> > > I have been testing this patchset recently as well, but on an Orange Pi
+> > > RV2 board instead (and an extra RV2 specific patch to enable power to
+> > > the M.2 slot).
+> > > 
+> > > I ran into the same symptoms you had ("QID 0 timeout" after about 60
+> > > seconds). However, I'm using an Intel 600p. I can confirm my NVME drive
+> > > seems to work fine with the "pcie_aspm=off" workaround as well.
+> > 
+> > I don't see this problem, and haven't tried to reproduce it yet.
+> > 
+> > Mani told me I needed to add these lines to ensure the "runtime
+> > PM hierarchy of PCIe chain" won't be "broken":
+> > 
+> > 	pm_runtime_set_active()
+> > 	pm_runtime_no_callbacks()
+> > 	devm_pm_runtime_enable()
+> > 
+> > Just out of curiosity, could you try with those lines added
+> > just before these assignments in k1_pcie_probe()?
+> > 
+> > 	k1->pci.dev = dev;
+> > 	k1->pci.ops = &k1_pcie_ops;
+> > 	dw_pcie_cap_set(&k1->pci, REQ_RES);
+> > 
+> > I doubt it will fix what you're seeing, but at the moment I'm
+> > working on something else.
 > 
-> The driver provides:
-> - 4 single-ended voltage input channels
-> - Programmable gain amplifier (1 to 128)
-> - Configurable data rates (20 to 1000 SPS)
-> - Single-shot conversion mode
+> Unfortunately there is no difference with the runtime PM hierarchy
+> additions.
 > 
-> I'm looking for feedback on:
-> 1. The implementation approach for single-shot conversions
-> 2. Any other suggestions for improvement
 
+These are not supposed to fix the issues you were facing. I discussed with Alex
+offline and figured out that L1 works fine on his BPI-F3 board with a NVMe SSD.
 
-No need to call your patches RFC then. It only stops from merging and
-some people will not review the code (RFC means not ready for inclusion).
+And I believe, Aurelien is also using that same board, but with different
+SSDs. But what is puzzling me is, L1 is breaking Aurelien's setup with 3 SSDs
+from different vendors. It apparently works fine on Alex's setup. So it somehow
+confirms that Root Port supports and behaves correctly with L1. But at the same
+time, I cannot just say without evidence that L1 is broken on all these SSDs
+that you and Aurelien tested with.
 
-Best regards,
-Krzysztof
+So until that is figured out, I've asked Alex to disable L1 CAP in the
+controller driver. So in the next version of this series, your SSDs should work
+out of the box.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
