@@ -1,126 +1,206 @@
-Return-Path: <linux-kernel+bounces-878469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B818DC20BCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:52:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008E0C20BDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1741A2537B
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A80E4F0D2D
 	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE9026A1B5;
-	Thu, 30 Oct 2025 14:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAD827F015;
+	Thu, 30 Oct 2025 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="oVCtoStt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e82/qKKR"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCcQ0B+w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B8725A2A2;
-	Thu, 30 Oct 2025 14:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F88D14A91;
+	Thu, 30 Oct 2025 14:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761835604; cv=none; b=pX86nWLwCQk0GArUOQaP372+TWwGgtm3UUcTFls5EdX1KAIOnaMqh1cc6QePHUTdMPf+2YLUaYuQGyqF1NFq7JQwvxtLB76/2VBdGKagy1PtyUc0n0EuVEV6SNtpp784vrldeOIE0cb/KHWYDsCuSO8ZZkUX9QC4RY33mK0hyC0=
+	t=1761835617; cv=none; b=bUWjfzZ8JZsrvMjC54vPYJCY/PT230PRPV/ystkJPp3ZB/z7jMprpGk2LPXm0ja47MY7dtFW+f9LePxZqX5eckFqzMogrVJWm96X2CDe8d0gRAEbuQ4sCD0UEcrAQIMXYggpRGtPMdRym4nEc90DUajp3HmIL30+wBnaHNMGr0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761835604; c=relaxed/simple;
-	bh=hwom/9Pw4N/VBgtc2jmqRmRlOKuePcQjEIxGERUjxKo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WPZTWyM94JCQFIP/8SxXpxZ2Xwy+yVt+MvbUWOTglyK/X5bo/jVGYvFGzJPosAzfNaXtKJRI/HIOVOhOW7ykk4PR98AZWGCEFrszVIeRodY/arU55NwlgYkkhlB3l5K+r95MbOKfwLtuJGGMi47zpgO0DqWFwYXC0ZmUgTJIPqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=oVCtoStt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e82/qKKR; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D58F57A0198;
-	Thu, 30 Oct 2025 10:46:41 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 10:46:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761835601;
-	 x=1761922001; bh=mq773LgvHiz9EeslLKHUfMGabLJxIqZC6ZCw+K/E+Gg=; b=
-	oVCtoStt3IhLvDDR2JnIIsiE0FbbwAGCsRlfeNm6vKPCgQLiM+OM5RaMAngjqBpx
-	vqSLf5oD9N1Yy7xaMuRPhs02QzXMsM3AQ4586+781LJa5Jrcve0LAX60p5U6amrI
-	803plTsov+Z7fjdyqjYPFqerKqQrT7tuOseMtJDkrsK2LSNtf45XovhaEyG8dQoc
-	w/Ximhplspga5Ka70ejaoQ0crVsyDknX136+633DcDM8jq4yKoW1pDHAun7ZTqCS
-	BNp4czqCCH9DPDFlGoD9EJZpW2XXA9JF4wl0Q0X/NMK3729oVMR3e43ayTB3CNpU
-	FFwSsdeAgKphppmsHtT26Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761835601; x=
-	1761922001; bh=mq773LgvHiz9EeslLKHUfMGabLJxIqZC6ZCw+K/E+Gg=; b=e
-	82/qKKRo4OpbBFPmp9kwlpcc4RwRjDN1SF5JU5i4yPnqpE1hDR/MWSkPiqt46MzE
-	Qsakbauj/yGKKFs4j+ZnPoUnvJbwwirlJnOANip5RGyphOo9ZEfvLMhiD142kObN
-	65bFcyPS7EoGfqo1BxjNA5tuEuyPxL6EznE1nnBdDiiLCKAv5a36YXH5RQEsGopA
-	d3QVogZdgL/Ek5btDxe/johOPtj8gOcS0WNv5Vmkg72aWFxVyxpIGAwZsRvz3amG
-	rWWqq93IW+C1Hg8n7E1JWPHsD5pdAyuwUSI+bSkiyMsS2POiXXWjBuQyjh//rKZf
-	GjIORx16Utqlnr+1QsAGw==
-X-ME-Sender: <xms:UXoDaeimKUDbrxREAGQh1FQkrocZO6a9Jfga9RYtNYrV2lthm5VugA>
-    <xme:UXoDaZ1UH6f-L5GeusE1mpL16Vmp5QBrPVaSuiOVkjzY_lU3PsXtV8FFlURJJmXAj
-    GWtY7pZTQs3qm7VLonhv4lRABGt0r98ajvP29Qa0mT0dBQVMeh5Lw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeikeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthhqre
-    dtredtjeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghr
-    nhgusgdruggvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvle
-    ehvddvgeejvdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedunecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtth
-    hopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifsedufihtrdgvuhdprhgt
-    phhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugiesfigvihhsshhstghhuhhhrdhnvght
-X-ME-Proxy: <xmx:UXoDadti9-zEwvYXUQhbA4ifJK6LeLJU7P6SDBSNYrRJC1x1nrttrw>
-    <xmx:UXoDafYyBjgImx_VImRM3cwW_d5uSB567TOdKUMC_4VTGDNwZzk6HA>
-    <xmx:UXoDacX-bRHCr-umNeYFgu7QQ8v0SuFxy3Was1lOuWeb5Pn8uPQFkQ>
-    <xmx:UXoDaUS5x-moSgOVBB6ymExlpBGdCXmQudwRPuuOqkUfXbw_EFD07A>
-    <xmx:UXoDaXRuBSkvtrvhZZcDdYMkuFPZjbCYKdu5V0zUqBimyLs4YAhoaS8y>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 650E7700065; Thu, 30 Oct 2025 10:46:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761835617; c=relaxed/simple;
+	bh=ZbD7yOLwW/cgaU5VsklEXPxgoTiYiE4edNqVj6qNico=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e61Gp111G+88GCHPpvfyACPbeVEa3fw7ujsLioHbfn1WdfNd7WETM3webYkEcQGyQ6FVDOuZ7KhaLYWLd6Iw1jTYl4oa2MAYvRdJuOXqKs1HP2NhNxawgpVvihjzs5FN97DANRLXHYVLhFjb9BbjY83UKfG450dZuq3NFJNIf/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCcQ0B+w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840B5C4CEF8;
+	Thu, 30 Oct 2025 14:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761835616;
+	bh=ZbD7yOLwW/cgaU5VsklEXPxgoTiYiE4edNqVj6qNico=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCcQ0B+w8LJ6ToMaS6Qm6GHAn0D54ovIPp2mSH+uiK/SKSLzgJBCV3Snalz6zFMcp
+	 UUjEDY+D73uxZGayO0srDEnQe6uWD3GHNw3n7bYLcbuxIiA8/sBQTFaoJB7/cI09E2
+	 XxQaY0TUrWYvhLs4KGQYVdvBusWUB9vRkaSu58MVvJheIaPF3suaEBTcmQ/puWLR8C
+	 x0qSrQuC3NGFxPrA7RSI5DXKUzK3z0kbqOVAbyA6CUn+thpA0Y3NC/0rem3AnoO9I/
+	 UblRftK8xQfF4/jViVZT1NPycEdWVdsd+pHU/H15mBM2H2zkXd3RmKIn0omPOZRxHc
+	 Sf80ZkUjpjz5g==
+Date: Thu, 30 Oct 2025 09:46:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 19/29] of: property: Allow fw_devlink device-tree on
+ x86
+Message-ID: <20251030144650.GA3911092-robh@kernel.org>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-20-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AIJo198GG4pg
-Date: Thu, 30 Oct 2025 15:46:21 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Willy Tarreau" <w@1wt.eu>, shuah <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Message-Id: <9c8025ad-8c47-470d-89fa-81a19664ba24@app.fastmail.com>
-In-Reply-To: <20251029-nolibc-uapi-types-v1-9-e79de3b215d8@weissschuh.net>
-References: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
- <20251029-nolibc-uapi-types-v1-9-e79de3b215d8@weissschuh.net>
-Subject: Re: [PATCH 09/12] tools/nolibc: use a custom struct timespec
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015071420.1173068-20-herve.codina@bootlin.com>
 
-On Wed, Oct 29, 2025, at 17:02, Thomas Wei=C3=9Fschuh wrote:
->=20
-> +struct timespec {
-> +	time_t	tv_sec;
-> +	long	tv_nsec;
-> +};
-> +#define _STRUCT_TIMESPEC
+On Wed, Oct 15, 2025 at 09:14:06AM +0200, Herve Codina wrote:
+> PCI drivers can use a device-tree overlay to describe the hardware
+> available on the PCI board. This is the case, for instance, of the
+> LAN966x PCI device driver.
+> 
+> Adding some more nodes in the device-tree overlay adds some more
+> consumer/supplier relationship between devices instantiated from this
+> overlay.
+> 
+> Those fw_node consumer/supplier relationships are handled by fw_devlink
+> and are created based on the device-tree parsing done by the
+> of_fwnode_add_links() function.
+> 
+> Those consumer/supplier links are needed in order to ensure a correct PM
+> runtime management and a correct removal order between devices.
+> 
+> For instance, without those links a supplier can be removed before its
+> consumers is removed leading to all kind of issue if this consumer still
+> want the use the already removed supplier.
+> 
+> The support for the usage of an overlay from a PCI driver has been added
+> on x86 systems in commit 1f340724419ed ("PCI: of: Create device tree PCI
+> host bridge node").
+> 
+> In the past, support for fw_devlink on x86 had been tried but this
+> support has been removed in commit 4a48b66b3f52 ("of: property: Disable
+> fw_devlink DT support for X86"). Indeed, this support was breaking some
+> x86 systems such as OLPC system and the regression was reported in [0].
+> 
+> Instead of disabling this support for all x86 system, use a finer grain
+> and disable this support only for the possible problematic subset of x86
+> systems (at least OLPC and CE4100).
+> 
+> Those systems use a device-tree to describe their hardware. Identify
+> those systems using key properties in the device-tree.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Link: https://lore.kernel.org/lkml/3c1f2473-92ad-bfc4-258e-a5a08ad73dd0@web.de/ [0]
+> ---
+>  drivers/of/property.c | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index c1feb631e383..09b568e3b826 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1600,12 +1600,41 @@ static int of_fwnode_irq_get(const struct fwnode_handle *fwnode,
+>  	return of_irq_get(to_of_node(fwnode), index);
+>  }
+>  
+> +static int match_property_by_path(const char *node_path, const char *prop_name,
+> +				  const char *value)
+> +{
+> +	struct device_node *np __free(device_node) = of_find_node_by_path(node_path);
 > +
-> +#include <linux/time.h>
+> +	return of_property_match_string(np, prop_name, value);
+> +}
+> +
+> +static bool of_is_fwnode_add_links_supported(void)
+> +{
+> +	static int is_supported = -1;
+> +
+> +	if (is_supported != -1)
+> +		return !!is_supported;
+> +
 
-Unfortunately this is not the definition we want on big-endian
-systems because it puts the tv_nsec field in the wrong place.
+All of this:
 
-You can either uses the simple (non-POSIX) __kernel_timespec
-definition in nolibc with a 64-bit tv_nsec, or copy the more
-complicated definition with explicit padding that is used
-in musl and glibc.
+> +	if (match_property_by_path("/soc", "compatible", "intel,ce4100-cp") >= 0)
+> +		goto not_supported;
+> +
+> +	if (match_property_by_path("/", "architecture", "OLPC") >= 0)
+> +		goto not_supported;
+> +
+> +	is_supported = 1;
+> +	return !!is_supported;
+> +
+> +not_supported:
+> +	is_supported = 0;
 
-      Arnd
+can be simplified to:
+
+is_supported = !((match_property_by_path("/soc", "compatible", "intel,ce4100-cp") >= 0) || 
+                 (match_property_by_path("/", "architecture", "OLPC") >= 0));
+
+> +	return !!is_supported;
+> +}
+> +
+>  static int of_fwnode_add_links(struct fwnode_handle *fwnode)
+>  {
+>  	const struct property *p;
+>  	struct device_node *con_np = to_of_node(fwnode);
+>  
+> -	if (IS_ENABLED(CONFIG_X86))
+> +	if (IS_ENABLED(CONFIG_X86) && !of_is_fwnode_add_links_supported())
+
+I would move the IS_ENABLED() check to 
+of_is_fwnode_add_links_supported().
+
+Rob
 
