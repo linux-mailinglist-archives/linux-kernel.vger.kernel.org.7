@@ -1,152 +1,112 @@
-Return-Path: <linux-kernel+bounces-877740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD75C1EE79
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:06:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70555C1EE7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD383BE9F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2EB189D789
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FC8337BAD;
-	Thu, 30 Oct 2025 08:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE073338912;
+	Thu, 30 Oct 2025 08:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jlsLX77L"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cIRiDQVs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951ED29D28B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B3B2F12C4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761811561; cv=none; b=pOxJ7qJrmQAb12M9cTrQKnuGal5rxX0eyAJT9huJu9LL+EP4O/CddyaIvhC2K9E3ajDc0pL6EwY2Oa5JaWv+a5PeN4JpaSh2r5shl9WzdITC2Yov3zDPl7SVSOO5lz44NaErDImfk40HRpQ9ClPLFvtc0BNJY7aSf37R6GOGLNg=
+	t=1761811568; cv=none; b=t8BclzxygrSvdaA2DSzIfhAV2s5mWLtpxviay3I70qDOrgR+WBMrjEgv63YGv1PXkEORgMP3i/jbCQylXv4BzyLCPnl9cJod0w/WQcZgyVlK01C6PyPJjv+JEp62kd3urdpi5nZD/HpQgIEAIeYBA7gcZObbSwUlfiNs6QZUgag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761811561; c=relaxed/simple;
-	bh=Op1t4LLfAXhJLesSQQ0Zr9Tb4KUF5kV6yD/hPL9PUSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pw7LC46vPp7p8X179FovFtlvDqJ2n9d6KZVros8cus0yUQcvQsNj2VkxfoxwDaQb5E2SpKUGJJqf/gRKV1ngEzeXjZsXZK9LN2xQfYvehtRqzN7bl5B20uidSzZnt+zLiV9B5XBDuc0oS+JFKpYHdlW9WGFHg/vhHrBte5QCEx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jlsLX77L; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 47A4CC0DAAB;
-	Thu, 30 Oct 2025 08:05:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7DDD96068C;
-	Thu, 30 Oct 2025 08:05:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BD087102F2130;
-	Thu, 30 Oct 2025 09:05:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761811555; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=yhO0zoxEkB9DzrUVoWIN7bjo6McuuEao4alqEu6uLBQ=;
-	b=jlsLX77LeQNohInoJWs+ecJrRdx6EBTro8CMxvC3JPE0B4chG8p7w/UusCVGAaMnr+1by2
-	rFS5EtZPlcXC37k9JwKwOBoYt/KYglMziIUjDzOeGvfy321aj9dfJZF9TnzJcKpv8gTVZw
-	rgLMYpNIMH3sL363P1TBpmaGeu8RfX01IID9c9hEo0zVBeGeBD5S9L0Csk06GDMAt5wAWR
-	orRWpcqnFmdeK7ZqniILIj0pWgsfiFoZfrm98KdvQUeXP/V3MSLz2BA0/sAmWDaqW+xkM8
-	gJ2vmYsvzbnERCIb3kxPlDOb25QcesuUIsBpG5o16ja0PzlrIZZ1T59M42FzBQ==
-Message-ID: <0e576e3d-7e77-43ec-8ec2-5867dcb44960@bootlin.com>
-Date: Thu, 30 Oct 2025 09:05:47 +0100
+	s=arc-20240116; t=1761811568; c=relaxed/simple;
+	bh=lOLWB+sn53IEBJ2NfXNAqi9W2x7ka3pC9NCkNFlL6yY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXjIFHAKLlcSnJvBcg7mZX4W6a9/Vgat4NIrHrP7iBVzOBS/v9o+ncwqjcdr29M4egIHn+UTe13bfz8ifUa0/yYurmaUherJ1Ufj6nWjc9b4uALqqlyq4aPjCMuXOH7cFWADx8FqxD+zLtmWvMXSOsfPhc+UpYk+9/dgQ0uS2wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cIRiDQVs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761811565;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
+	bh=zBFIdlgABwYbbBOS3RkdoYsL1Gh/EHDnSfDmTuI8UhM=;
+	b=cIRiDQVsf0wm2whBygJrYnE2JX0Rz0vyv03RApKzi4KPrEj4ihMoTGOusKm1gdvquQ1gih
+	jbveOR2BFlQCnPWMn9N3FD2T23NQwvNthQfbJnd1LSDvXuy2X68NVEN8nuuCBKpDjpjUJm
+	zkORTu+0aa786KYXG5BqWNfAheajFLg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-61-sRKpnhg7OSC5mR7r32yTQQ-1; Thu,
+ 30 Oct 2025 04:05:59 -0400
+X-MC-Unique: sRKpnhg7OSC5mR7r32yTQQ-1
+X-Mimecast-MFC-AGG-ID: sRKpnhg7OSC5mR7r32yTQQ_1761811558
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43A6B180A225;
+	Thu, 30 Oct 2025 08:05:58 +0000 (UTC)
+Received: from tucnak.zalov.cz (unknown [10.44.32.9])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B574B1800579;
+	Thu, 30 Oct 2025 08:05:57 +0000 (UTC)
+Received: from tucnak.zalov.cz (localhost [127.0.0.1])
+	by tucnak.zalov.cz (8.17.1/8.17.1) with ESMTPS id 59U85sOE4065049
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 30 Oct 2025 09:05:54 +0100
+Received: (from jakub@localhost)
+	by tucnak.zalov.cz (8.17.1/8.17.1/Submit) id 59U85stU4065048;
+	Thu, 30 Oct 2025 09:05:54 +0100
+Date: Thu, 30 Oct 2025 09:05:53 +0100
+From: Jakub Jelinek <jakub@redhat.com>
+To: Fangrui Song <maskray@sourceware.org>
+Cc: linux-toolchains@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Concerns about SFrame viability for userspace stack walking
+Message-ID: <aQMcYe5BK+Rsu3xF@tucnak>
+Reply-To: Jakub Jelinek <jakub@redhat.com>
+References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
+ <aQMUGvXv6sy75nKn@tucnak>
+ <CAN30aBHOw16Tzdn_Z0TZKie7Fyi39bmB2PQK4LB-rjU1vn3zQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v6 00/15] selftests/bpf: Integrate test_xsk.c to
- test_progs framework
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexis Lothore <alexis.lothore@bootlin.com>,
- Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
- <CAADnVQ+ESBTW-+NOQ55HXLwODFZa+uHWzMpPAq1FfjPP4otH_A@mail.gmail.com>
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <CAADnVQ+ESBTW-+NOQ55HXLwODFZa+uHWzMpPAq1FfjPP4otH_A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAN30aBHOw16Tzdn_Z0TZKie7Fyi39bmB2PQK4LB-rjU1vn3zQQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi,
+On Thu, Oct 30, 2025 at 12:50:42AM -0700, Fangrui Song wrote:
+> An effective compact unwinding scheme needs to leverage ISA-specific properties.
 
-On 10/29/25 7:54 PM, Alexei Starovoitov wrote:
-> On Wed, Oct 29, 2025 at 6:52 AM Bastien Curutchet (eBPF Foundation)
-> <bastien.curutchet@bootlin.com> wrote:
->>
->> Hi all,
->>
->> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
->> are defined in xksxceiver.c. Since this script is used to test real
->> hardware, the goal here is to leave it as it is, and only integrate the
->> tests that run on veth peers into the test_progs framework.
->>
->> I've looked into what could improve the speed in the CI:
->> - some tests are skipped when run on veth peers in a VM (because they
->>    rely on huge page allocation or HW rings). This skipping logic still
->>    takes some time and can be easily avoided.
->> - the TEARDOWN test is quite long (several seconds on its own) because
->>    it runs the same test 10 times in a row to ensure the teardown process
->>    works properly
->>
->> With theses tests fully skipped in the CI and the veth setup done only
->> once for each mode (DRV / SKB), the execution time is reduced to about 5
->> seconds on my setup.
->> ```
->> $ tools/testing/selftests/bpf/vmtest.sh -d $HOME/ebpf/output-regular/ -- time ./test_progs -t xsk
->> [...]
->> real    0m 5.04s
->> user    0m 0.38s
->> sys     0m 1.61s
-> 
-> This is fine. I see
-> Summary: 2/48 PASSED, 0 SKIPPED, 0 FAILED
-> 
-> real    0m8.165s
-> user    0m1.795s
-> sys     0m4.740s
-> 
-> on debug kernel with kasan which is ok.
-> > But it conflicts with itself :(
-> 
-> $ test_progs -j -t xsk
-> 
-> All error logs:
-> setup_veth:FAIL:ip link add veth0 numtxqueues 4 numrxqueues 4 type
-> veth peer name veth1 numtxqueues 4 numrxqueues 4 unexpected error: 512
-> (errno 2)
-> test_xsk_drv:FAIL:setup veth unexpected error: -1 (errno 2)
-> #664     xsk_drv:FAIL
-> Summary: 1/24 PASSED, 0 SKIPPED, 1 FAILED
-> 
-> Pls fix the parallel run and not by adding "_serial", of course.
-Oups, in my quest for speed I removed the 'test_ns' prefix. It didn't 
-seem necessary since all tests are run at once, but I forgot about 
-parallel execution between the DRV and SKB modes..
+Having 40-50 completely different unwinding schemes, one for each
+architecture or even ISA subset, would be a complete nightmare.  Plus the
+important property of DWARF is that it is easily extensible.  So, I think it
+would be better to invent new DWARF DW_CFA_* arch specific opcodes which
+would be a shorthand for the most common sequences of unwind info, or allow
+the CIEs to define a library of DW_CFA_* sets perhaps with parameters which
+would then be usable in the FDEs.  There are already some arch specific
+opcodes, DW_CFA_GNU_window_save for SPARC and
+DW_CFA_AARCH64_negate_ra_state_with_pc/DW_CFA_AARCH64_negate_ra_state for
+AArch64, but if somebody took time to look through .eh_frame of many
+binaries/libraries on several different distributions for particular arch
+(so that there is no bias in what exact options those distros use etc.) and
+found something that keeps repeating there commonly that could be shortened,
+perhaps the assembler or linker could rewrite sequences of specific .cfi_*
+directives into something equivalent but shorter once the extension opcodes
+are added.  Though, there are only very few opcodes left, so taking them
+should be done with great care and at least one should be left as a
+multiplexer (single byte opcode followed by uleb128 code for further
+operation + arguments).
 
-Sorry about this, I'll put back the 'test_ns' prefix.
+	Jakub
 
-It will be a good opportunity to address some of the AI feedback I received.
-
-
-Best regards,
-Bastien
 
