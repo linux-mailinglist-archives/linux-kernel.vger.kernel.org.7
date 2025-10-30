@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-877920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C250C1F592
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:41:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C805C1F5CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:43:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1780134D9E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:41:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5BE94E913F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9834320D;
-	Thu, 30 Oct 2025 09:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FA434405D;
+	Thu, 30 Oct 2025 09:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vSrDUMlb"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKUul9Cv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE799342170;
-	Thu, 30 Oct 2025 09:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62901342170;
+	Thu, 30 Oct 2025 09:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761817256; cv=none; b=S9+F7/HZAmtLEqDCdv6qsXt6EDwe966JUJ+vPc0aNRESFZOtsEV4q68iuw7WbQ++XN7alt4TusgGFRgzJaODv6/vdN74WS/eTPogseL2XI6wtWETcxa4ttFG+FI0DcuPev3j8PypY5McdvoqyAyTsTvVCg43SKJm87ao98ytXY4=
+	t=1761817308; cv=none; b=OqDBWIx9mDXeFYExKhMoFGDUDh+qlqkaWMIrUU3ew0jeUivmNu5lquZ7MZFfWpXy9D9oI04ZLqGnXQJUs9PO8sobWeNlxzn7HIIc19sn3jiji4LmgWSCWII2ghp4NJvKVaOfM+6Sz7pNtiVi/uQrEZy7bkVolJhX9heEd+3NJeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761817256; c=relaxed/simple;
-	bh=AXhIip8aIJ6Y54u/3AC4lYdPqgouWN/WzBDGCLOYg0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LmFChGRJRrcba5tNhd0pcl9bl20CsknolwONSon6enepGG4cDF9blPO06jj4WLn8L1ZM60lDMxpvRw39e1hl5btAgmLFYzSL5v4uvoG5MXSfimJ88QJYoCim5UOp+sn3qyt4sDE8LcJa9g9XkzqBMnmtCRO2hkvQbZ3j2UzPAPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vSrDUMlb; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 703A1C0DAA7;
-	Thu, 30 Oct 2025 09:40:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B150C6068C;
-	Thu, 30 Oct 2025 09:40:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EB2AA118085E6;
-	Thu, 30 Oct 2025 10:40:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761817250; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AXhIip8aIJ6Y54u/3AC4lYdPqgouWN/WzBDGCLOYg0c=;
-	b=vSrDUMlbZ8avJZWyHiNapiup5y0BhHT/84h+ToSACliw/NSLq0u2GnKDCUxrDfZRDTZbO2
-	HK17XCryYRmoexUDrq84kUG5ffGjPlrPua9QR25+Jcp4jMkv6+/Z+5qw5upIO3tMT4F4Rh
-	eb1B2bEfwLYWgFvJ3pEnEmxMn2skbfby+RrMCHDxKu0LQf1M1/BBb5PbopdI/3CD4FMNLT
-	cayZYKMH4B8fLt4MQjVHjahr8jFcH2Cc7H7/B9dQJrPCu+HpVyWwtm28fJsV1o+zzwScpg
-	vf8/T6SHmPipvEXMhyuuE/XcD17AvonD5pXJXDD/erV93pIGw0uWYT7oFbkwbQ==
-Date: Thu, 30 Oct 2025 10:40:46 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Thomas Wismer <thomas@wismer.xyz>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
- Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/2] net: pse-pd: tps23881: Add support for
- TPS23881B
-Message-ID: <20251030104046.107457ac@kmaincent-XPS-13-7390>
-In-Reply-To: <20251029212312.108749-2-thomas@wismer.xyz>
-References: <20251029212312.108749-1-thomas@wismer.xyz>
-	<20251029212312.108749-2-thomas@wismer.xyz>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761817308; c=relaxed/simple;
+	bh=96f0HHie9Rype+AxiSlvXgHs8dSjnSUG9UaN5uQtgCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKaylB9im5D/X2BYsMFPLT6a735dMl343bentIW8IvZhx8h5jex5skzmMnpyUvJgFhmdMLbq1GnDdVR8UTEkVkaD2JjNEmMMhcXPwGm6wNSghx0ciFWl85dgXVkIVs1VZtJcKfhyMnHtckDsn3hJ5wRVl+ZLtuJqBMPfVWhh/hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKUul9Cv; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761817306; x=1793353306;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=96f0HHie9Rype+AxiSlvXgHs8dSjnSUG9UaN5uQtgCA=;
+  b=cKUul9CvA5Iu/VDw22HNjNPREGHwI2q6vrbMTQ/tey7B6RKI9pgnfqay
+   KqkvRaGT1YxHqB8BjfBVWJYz/U82sYrZ1SDFjn0uhxMSiN/bQZYbtIwFm
+   i0dPs5N6t+bO1wLd8sEVmyNrn0spmEMEGamaEAXUwlAYotRyKYkmfW1mc
+   pA/tuN1gCchxIk2yi3kfRYsw9UBdHh4n2t41FgUizoNIc67Ddqv8nZQSC
+   LKQ+swzbI9VAaqOiH/f74DMSKHyfaJuwJla1WymFBzFYye3i2Ma1C4axC
+   AzaxrAHrGbUVkJk3cPfE6YH0lIuRgSqCQAybYab7BFX4WRSOIoSyEKa38
+   A==;
+X-CSE-ConnectionGUID: o34QNY8TT7GPQw3eg9uXtQ==
+X-CSE-MsgGUID: LDeyidBdT9um8jcV57cwAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67788379"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67788379"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:41:46 -0700
+X-CSE-ConnectionGUID: PwVRsI+KQFmxj0dKfTofng==
+X-CSE-MsgGUID: BE1Z+VKKTo+X92Mb0siYGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="190270848"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:41:41 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEPA3-00000003rQD-391F;
+	Thu, 30 Oct 2025 11:41:39 +0200
+Date: Thu, 30 Oct 2025 11:41:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 03/10] software node: allow referencing firmware nodes
+Message-ID: <aQMy00pxp7lrIrvh@smile.fi.intel.com>
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 29 Oct 2025 22:23:09 +0100
-Thomas Wismer <thomas@wismer.xyz> wrote:
+On Wed, Oct 29, 2025 at 01:28:37PM +0100, Bartosz Golaszewski wrote:
+> 
+> At the moment software nodes can only reference other software nodes.
+> This is a limitation for devices created, for instance, on the auxiliary
+> bus with a dynamic software node attached which cannot reference devices
+> the firmware node of which is "real" (as an OF node or otherwise).
+> 
+> Make it possible for a software node to reference all firmware nodes in
+> addition to static software nodes. To that end: add a second pointer to
+> struct software_node_ref_args of type struct fwnode_handle. The core
+> swnode code will first check the swnode pointer and if it's NULL, it
+> will assume the fwnode pointer should be set. Rework the helper macros
+> and deprecate the existing ones whose names don't indicate the reference
+> type.
+> 
+> Software node graphs remain the same, as in: the remote endpoints still
+> have to be software nodes.
 
-> From: Thomas Wismer <thomas.wismer@scs.ch>
->=20
-> The TPS23881B uses different firmware than the TPS23881. Trying to load t=
-he
-> TPS23881 firmware on a TPS23881B device fails and must be omitted.
->=20
-> The TPS23881B ships with a more recent ROM firmware. Moreover, no updated
-> firmware has been released yet and so the firmware loading step must be
-> skipped. As of today, the TPS23881B is intended to use its ROM firmware.
+...
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+> -#define SOFTWARE_NODE_REFERENCE(_ref_, ...)			\
+> +#define __SOFTWARE_NODE_REF(_ref, _node, ...)			\
+>  (const struct software_node_ref_args) {				\
+> -	.node = _ref_,						\
+> +	._node = _ref,						\
+>  	.nargs = COUNT_ARGS(__VA_ARGS__),			\
+>  	.args = { __VA_ARGS__ },				\
+>  }
 
-Thank you!
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Okay, looking at this again I think we don't need a new parameter.
+We may check the type of _ref_
+(actually why are the macro parameters got renamed here and elsewhere?)
+and assign the correct one accordingly. I think this is what _Generic()
+is good for.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
