@@ -1,137 +1,272 @@
-Return-Path: <linux-kernel+bounces-878684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263E5C21448
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:44:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3B4C2145A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2503A42AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5BD3A55FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86552D6400;
-	Thu, 30 Oct 2025 16:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7E925EFBE;
+	Thu, 30 Oct 2025 16:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BMs5MKcw"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eHmm86lF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAgraI62";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eHmm86lF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAgraI62"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF882153EA
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0DC23909F
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 16:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842327; cv=none; b=Q9x2Bxv/pION8cagcWUISWNrw54Lqwuqkm2WRo7Hq+vh0HxVA0sH2bIQ1C4B9J3ZMgmipSD950q28Yu3zWm0wrsY1nzTDANt+oTjeXKL7mWGf3VuD9PQa0xRWo3eH0tGoz8O/bGyiYH9/pkLuSyMd1oNQPgGKVint3RokOoiQRU=
+	t=1761842363; cv=none; b=MBIdGZ8apTzVnrxQ5mdA0U+KpDrShrtijgNVtY8eeMZC0UlXNzXldNKyZF5A12+qCbCrfitfSsZJDdhhu3AiEKzvI1EwStCrAykcEHF/ZwLhOZsgNFGpLLmPRsSRxoYNSqEzAndI8DTDa/FQkxCzXD1b7Co6Q8Ngk6bmumR63ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842327; c=relaxed/simple;
-	bh=+yZIzum66M0oPmn/3oQOleUS3Pi5YkNB9duKj2LX/R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oKn2frGWm7YZUo8mRV+Fj/zXmBTgLSak2L00gR5A9po3rUIUtSqRJT3zT3t0/YfVt9pOmimIFbCncnQgT6YcRgoDKqbiIQLQHipWgk6iwdc3bOV5sBng/ysTg4mlKAE6IfCgpOHDfOc74fqQOcAW3vAGcCTYQm6vvLa15t3RGXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BMs5MKcw; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429b9b6ce96so601037f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761842323; x=1762447123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=54giQrwwEn96jLZZhaBwfuj7+qjJhVGS+n5IIXiT1MA=;
-        b=BMs5MKcwcPRdEGHBXIIEHAi2gLZWZAFj/qN9+GSE6lrW0HPSfcJUTD7Wp9mXQ4wUz1
-         WNEo3v7y2DELWELE5rZoFMDVdl15Gck0+IVHhj4sEwfSjMX2QHa/s6p3AX9nZxXvFRwb
-         /p4Dc0olMo8agC8m+8Z9CxGR1xD7rXO3UqHBfcTrqaf3U9PBx5a3gZ7W8gohNJjg6LAs
-         hRFqdIS7EuPIcTT2o4KpW6aKFc6IBB9KW5X4oDyMihMyRjpYxsAtoxkQulOm/+/PN4jl
-         1852AC9HXVCeVX1gdFHfQu+gJ8oGrqYh2NmH+Z1E6fop4JZK+iOCkZj2zFehrPQJ/76e
-         tPWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761842323; x=1762447123;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54giQrwwEn96jLZZhaBwfuj7+qjJhVGS+n5IIXiT1MA=;
-        b=Ne5pjEjdSONB+cXMwUs+b+J7jiwYxkN/20kQ9YqudBcko4MrKwhMUDhRXOOenFKD2N
-         jbex3FMuTNlb8pXfYHmyjOUnYc5yUbDIt2YmTl9vbxQx1SxxGB5tTpGaQN1JNSQh+DFT
-         oGpw62287IO0gJ+oQv0CfT5jR3tnexzD5wcdZMjMts3BAR2a661YAy/TroDG6ybZRc5q
-         2i1cFJz6dLVPjOiBCwZKtmACvfXf11af0tGgF+PHFHhao86tu/dQRtpNp1rBinJMNmyK
-         8gfFWpWAI5oj9KnBOVBOkB1tqY09ZATKlVtnxSWRstNTSZ6RfdVWcO7ki4lMuhwOYjv/
-         1Tww==
-X-Gm-Message-State: AOJu0YwzdKCCJ1Ws8h0GVN2o0OmF9LoaEKQ0Dl3Wr2BFoUaKc6vgcTzj
-	uCYP48PWOPa0TjxULYxL9WdX4oR/RGwfJOk7kWEFhIKoMqvjoQaORW3H4HgPzrXrP5uKBpHns2X
-	/4Mi+
-X-Gm-Gg: ASbGncsFvm3b8NlS7j30A7ptX9fmEeYx4yrU6VA9RA4vXiBDkwN2i1NEb5DYPA03q5j
-	BNTkEI5VJvSd3tTDifOROfYcnNehkzil+RY6xyGxmz6Kv1gUeIeHkQxe9nKD8mrptwrgBEHhiov
-	kHDyMcVXuaQYUoLK2ZaO9KmcbtYMxVXmtHNmOsT28ITm9bdMa+d8/U35l5j6GjYiSUkFv01CW6h
-	rTZW6rt2rsRN8hhBk+9oLiGudTUXXNSCmyLykGkEsTD8iP3msTtWzTN88hmOC0S6Z0ZIVdtcVi1
-	aJnBQi/Yx9ewcrYs/0bS/rqN4udY5XIYs4Xk/sBKzgk26twQeBrOuoJLkNqKKtxUq25+s4IfiOg
-	/54xiPwLiW9i3HRkHbwG1j33LL+aWYZeepzXdI8MZM74km053pIOqa5MrMv0PN+uuTrVkw+PQ5f
-	2AZ7Z5TXLOqa6iH3Y=
-X-Google-Smtp-Source: AGHT+IH40grKlZFcgNET1Ic1yaJbEZTBCRZMx9hDmAfRXfwjzK7wZukFCQCR1jXrFH7HCUeLEGfujg==
-X-Received: by 2002:a05:6000:430d:b0:429:b52e:3505 with SMTP id ffacd0b85a97d-429bd682fcbmr233503f8f.11.1761842323256;
-        Thu, 30 Oct 2025 09:38:43 -0700 (PDT)
-Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47728999a4bsm46197675e9.2.2025.10.30.09.38.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 09:38:42 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH] cxl/pci: replace use of system_wq with system_percpu_wq
-Date: Thu, 30 Oct 2025 17:38:39 +0100
-Message-ID: <20251030163839.307752-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761842363; c=relaxed/simple;
+	bh=Evn3B0D4skYSZdLKLlKMUdlqbrJ7YA6kmTSp9i+64ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TJNtE3DB07QBmbeiIFh7AypGrLW515alk9ar6gBQHFfPDr3Fncp5qX71H+o5FNyNcFEXra92U5BxKrjfoshPOnHofArLhfS00BGTr1kfG5IG92WOuFKA5K9Wko8conUd8fi52PJLlp+PvqoRbStPWoQaK43fBPBlsXqYx+u/55o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eHmm86lF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAgraI62; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eHmm86lF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAgraI62; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B1841F8B8;
+	Thu, 30 Oct 2025 16:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761842359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wiy+U/AQlM6qnKofaU0EH6uvOrXsym1vqU/rghgli48=;
+	b=eHmm86lFHYAfqWqJgZF5JvYesJjmVDuLRKiC1TaRZJkHwLhcZzVScC8qJ1F2NWqIarp7tb
+	RLybPislVLLOmBVhyLAwZgCDwp4dhvwz/BYDzBMh2IxuHlUGvKbqVsetS8nlGIWzjt1KB5
+	oY8whzVrWAk7NLuhojUUaC3bjTaVjUs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761842359;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wiy+U/AQlM6qnKofaU0EH6uvOrXsym1vqU/rghgli48=;
+	b=OAgraI62465BGDHP2x4wlx/Li1smzJmxDus9HWxvvzW+DEaRU+ikVIlFmKHCjBp3AvLa98
+	tyEMpK38ktSRwdBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eHmm86lF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OAgraI62
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761842359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wiy+U/AQlM6qnKofaU0EH6uvOrXsym1vqU/rghgli48=;
+	b=eHmm86lFHYAfqWqJgZF5JvYesJjmVDuLRKiC1TaRZJkHwLhcZzVScC8qJ1F2NWqIarp7tb
+	RLybPislVLLOmBVhyLAwZgCDwp4dhvwz/BYDzBMh2IxuHlUGvKbqVsetS8nlGIWzjt1KB5
+	oY8whzVrWAk7NLuhojUUaC3bjTaVjUs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761842359;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wiy+U/AQlM6qnKofaU0EH6uvOrXsym1vqU/rghgli48=;
+	b=OAgraI62465BGDHP2x4wlx/Li1smzJmxDus9HWxvvzW+DEaRU+ikVIlFmKHCjBp3AvLa98
+	tyEMpK38ktSRwdBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 65CA013393;
+	Thu, 30 Oct 2025 16:39:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lP9OGLeUA2m9IwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 30 Oct 2025 16:39:19 +0000
+Message-ID: <aa71ebf3-4445-49cf-a68a-0effc567fee7@suse.cz>
+Date: Thu, 30 Oct 2025 17:39:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH V3 0/7] mm/slab: reduce slab accounting memory
+ overhead by allocating slabobj_ext metadata within unused slab space
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>, akpm@linux-foundation.org
+Cc: andreyknvl@gmail.com, cl@linux.com, dvyukov@google.com,
+ glider@google.com, hannes@cmpxchg.org, linux-mm@kvack.org,
+ mhocko@kernel.org, muchun.song@linux.dev, rientjes@google.com,
+ roman.gushchin@linux.dev, ryabinin.a.a@gmail.com, shakeel.butt@linux.dev,
+ surenb@google.com, vincenzo.frascino@arm.com, yeoreum.yun@arm.com,
+ tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251027122847.320924-1-harry.yoo@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251027122847.320924-1-harry.yoo@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 8B1841F8B8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux.com,google.com,cmpxchg.org,kvack.org,kernel.org,linux.dev,arm.com,mit.edu,dilger.ca,vger.kernel.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+On 10/27/25 13:28, Harry Yoo wrote:
+> RFC v2: https://lore.kernel.org/linux-mm/20250827113726.707801-1-harry.yoo@oracle.com/
+> 
+> RFC v2 -> v3:
+>   - RFC v3 now depends on the patch "[PATCH V2] mm/slab: ensure all metadata
+>     in slab object are word-aligned"
 
-This lack of consistency cannot be addressed without refactoring the API.
+Looks like there's some outstanding feedback on that patch. Also on this
+series already, so I'll wait for the next version before looking in detail,
+but overall it looks good to me! Thanks!
 
-system_wq should be the per-cpu workqueue, yet in this name nothing makes
-that clear, so replace system_wq with system_percpu_wq.
-
-The old wq (system_wq) will be kept for a few release cycles.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/cxl/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-index bd100ac31672..0be4e508affe 100644
---- a/drivers/cxl/pci.c
-+++ b/drivers/cxl/pci.c
-@@ -136,7 +136,7 @@ static irqreturn_t cxl_pci_mbox_irq(int irq, void *id)
- 	if (opcode == CXL_MBOX_OP_SANITIZE) {
- 		mutex_lock(&cxl_mbox->mbox_mutex);
- 		if (mds->security.sanitize_node)
--			mod_delayed_work(system_wq, &mds->security.poll_dwork, 0);
-+			mod_delayed_work(system_percpu_wq, &mds->security.poll_dwork, 0);
- 		mutex_unlock(&cxl_mbox->mbox_mutex);
- 	} else {
- 		/* short-circuit the wait in __cxl_pci_mbox_send_cmd() */
--- 
-2.51.0
+>   - During the merge window, the size of ext4 inode cache has shrunken
+>     and it couldn't benefit from the change anymore as the unused space
+>     became smaller. But I somehow found a way to shrink the size of
+>     ext4 inode object by a word...
+> 
+>     With new patch 1 and 2, now it can benefit from the optimization again.
+> 
+>   - As suggested by Andrey, SLUB now disables KASAN and KMSAN, and reset the
+>     kasan tag instead of unpoisoning slabobj_ext metadata (Patch 5).
+> 
+> When CONFIG_MEMCG and CONFIG_MEM_ALLOC_PROFILING are enabled,
+> the kernel allocates two pointers per object: one for the memory cgroup
+> (obj_cgroup) to which it belongs, and another for the code location
+> that requested the allocation.
+> 
+> In two special cases, this overhead can be eliminated by allocating
+> slabobj_ext metadata from unused space within a slab:
+> 
+>   Case 1. The "leftover" space after the last slab object is larger than
+>           the size of an array of slabobj_ext.
+> 
+>   Case 2. The per-object alignment padding is larger than
+>           sizeof(struct slabobj_ext).
+> 
+> For these two cases, one or two pointers can be saved per slab object.
+> Examples: ext4 inode cache (case 1) and xfs inode cache (case 2).
+> That's approximately 0.7-0.8% (memcg) or 1.5-1.6%% (memcg + mem profiling)
+> of the total inode cache size.
+> 
+> Implementing case 2 is not straightforward, because the existing code
+> assumes that slab->obj_exts is an array of slabobj_ext, while case 2
+> breaks the assumption.
+> 
+> As suggested by Vlastimil, abstract access to individual slabobj_ext
+> metadata via a new helper named slab_obj_ext():
+> 
+> static inline struct slabobj_ext *slab_obj_ext(struct slab *slab,
+>                                                unsigned long obj_exts,
+>                                                unsigned int index)
+> {
+>         return (struct slabobj_ext *)(obj_exts + slab_get_stride(slab) * index);
+> } 
+> 
+> In the normal case (including case 1), slab->obj_exts points to an array
+> of slabobj_ext, and the stride is sizeof(struct slabobj_ext).
+> 
+> In case 2, the stride is s->size and
+> slab->obj_exts = slab_address(slab) + s->red_left_pad + (offset of slabobj_ext)
+> 
+> With this approach, the memcg charging fastpath doesn't need to care the
+> storage method of slabobj_ext.
+> 
+> Harry Yoo (7):
+>   mm/slab: allow specifying freepointer offset when using constructor
+>   ext4: specify the free pointer offset for ext4_inode_cache
+>   mm/slab: abstract slabobj_ext access via new slab_obj_ext() helper
+>   mm/slab: use stride to access slabobj_ext
+>   mm/memcontrol,alloc_tag: handle slabobj_ext access under KASAN poison
+>   mm/slab: save memory by allocating slabobj_ext array from leftover
+>   mm/slab: place slabobj_ext metadata in unused space within s->size
+> 
+>  fs/ext4/super.c      |  20 ++-
+>  include/linux/slab.h |   9 ++
+>  mm/memcontrol.c      |  34 +++--
+>  mm/slab.h            |  94 ++++++++++++-
+>  mm/slab_common.c     |   8 +-
+>  mm/slub.c            | 304 ++++++++++++++++++++++++++++++++++++-------
+>  6 files changed, 398 insertions(+), 71 deletions(-)
+> 
 
 
