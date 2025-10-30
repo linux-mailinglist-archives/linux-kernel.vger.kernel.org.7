@@ -1,397 +1,419 @@
-Return-Path: <linux-kernel+bounces-878429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DA8C2090E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:24:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F33C20962
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D5DF034EEE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:24:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D3EC4EEF6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A3725C822;
-	Thu, 30 Oct 2025 14:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA6726CE2B;
+	Thu, 30 Oct 2025 14:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aM6nyLWL"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011038.outbound.protection.outlook.com [40.93.194.38])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0Y+YHy5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D481825B1D2
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761834262; cv=fail; b=bINlzfOL+JSyvZkBfs1BGJKJjBR2x2TkjwBKIxGgPT4eahYUPbFCCTbr89zW3zqF6KqP8vDBsAUKlEErJVd/N4Zeoid2Krb8kUvnR+VOO3W3rJyn8xXUpzd4FluCnlA1FyufAN1xqGe4BXpT3bejc2UU/WafYGP7rN/kmHWb7hA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761834262; c=relaxed/simple;
-	bh=TnPfZFXcehwjr+iG2I+LOv1DyiIxFmAuGtmQ8hZIwis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TrCyU9w7Zw3roCczr7efvdm0jAF888f+DcKNq8xgGyOq9sEmj5KCRPBfjHaVGzEVQFRkkBmE1F1x5GbM52F0rCCqOSWcjh+FgW2/7MQLz0Vsz6Ol0ihyQsq8kn+hrWpsb/gSp4gVmHKZRxEQJhnYoBHmo5Kr4im2sIZsxG0gI2E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aM6nyLWL; arc=fail smtp.client-ip=40.93.194.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ti7kwJUyrVglEamultOEIPUhvnfvGJZYfAuf8rEdvgRHZCwIcYCcT+Vgch3k9u4fie7k/h8zPvNxmb0qQOBmUYTBL1e5Mjq7rg9D/77QIBn9PhVV+dNW58ZaNRSpbiTiR+rvvcfQ6xzrFeXuLHk+Pr4zLAIHi+6wjuzMYDOdofhXkwtgbxGzj+k5H8KQ7lDDTcx9KQR5ytzH+PAVyZJKjTSUEGMGSV0+Z/IUyjr1h9W8eOtMPzOVbssP8+BS9mNPFfeUnhu3Cy+Aqmh439h0QrConCkN8/ybLVwnVU/gudiPUZyk6CivQ1YDNvmKOJw7sHNyFQoxAfKXcXQ7Zv9wxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nuJTUtTOvRmcCxXNCk/9hTu+0zfey4/Hr7TCgSb3Uck=;
- b=uNdKEJk3eVp+j9PV1kB/X0VwTPQC+ugwh+djEH8jpBcWRYK1bdJILARpIGHV9vTCYO2upVtGorj30ScjqK4Gi02LvvVl0gyKza8u5ed+ypS2InYoe/QdxvvbDZOaYUFIknOCrIN7pSS8ALBGRjp/MRrDbZNCMR9h/SCGdTKReOx50crnsvJgMGoQCYGdLIebjxf3mBO7PfuuDRbNiLMRQXbbZL8rDJc4msaHzBIVLYvizkDoTe9CrwByG3AWuMtRNlsJx3IjUDI20Fx3jViLbOfsNxJC5fcZ1BNKceS0qcSoVCaWAZj5EuHLTkpHq0nSbofpBobvt9npCRwIivFSSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nuJTUtTOvRmcCxXNCk/9hTu+0zfey4/Hr7TCgSb3Uck=;
- b=aM6nyLWL3uCuWJEYXwr7P/sheqb1InygiL1aOpk6Qb1gCtLxBJ+u4a/g8eLngOCRbyGInPkTF60y82g1dQcPK3/46k3u8Z8mLgOb//vCx44Pka61I9bS4VLMcKJ9qisk1MN+MSS2XQblWMPLfXEaKgZ9FLf68GeXCS272On1Vs4=
-Received: from SN7PR18CA0014.namprd18.prod.outlook.com (2603:10b6:806:f3::26)
- by IA3PR10MB8162.namprd10.prod.outlook.com (2603:10b6:208:513::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Thu, 30 Oct
- 2025 14:24:16 +0000
-Received: from SN1PEPF000397AE.namprd05.prod.outlook.com
- (2603:10b6:806:f3:cafe::b5) by SN7PR18CA0014.outlook.office365.com
- (2603:10b6:806:f3::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
- 30 Oct 2025 14:24:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- SN1PEPF000397AE.mail.protection.outlook.com (10.167.248.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 14:24:15 +0000
-Received: from DFLE202.ent.ti.com (10.64.6.60) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 09:24:06 -0500
-Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 09:24:05 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 30 Oct 2025 09:24:05 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59UEO5kY2326151;
-	Thu, 30 Oct 2025 09:24:05 -0500
-Message-ID: <d3209c85-dc30-4f9a-8ea5-3c3e19330afd@ti.com>
-Date: Thu, 30 Oct 2025 09:24:05 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064A25B1D2
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 14:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761834292; cv=none; b=SFkuaj500D7jpUGVw0tBHGO9meyQIyhZKyueV2uWaDsIVVsesAP10k6eA2npTomG5VbELYmkNEL0X97wI2TuPQWYz68FBxbVlWM+YXrgIB9YSNrkRJ7NQohPLRpgfwXjUMt+0az2y3tQ8ZJ90T7kWcC1meQ/xXSB5W2nSqKgaaE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761834292; c=relaxed/simple;
+	bh=cbRji5smRT1vcaorG6gHQjSz03HGWszJDkAlppuBN9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lGvpCIc7CMqSjF2HSSUxe7hFCcEZ1s9e5SS9wAmwvsX6BDoNaFfD5F3pwREH9whBRHTwTKSsAVbaY8tD2BhOH98WhDHWYujDruc2I5baAmPSJ342NWb9G64xMvDVE+0IZIOQSpwcoUj0mqtFmodU6vZEvxybPMMOFFwOk7zp31Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0Y+YHy5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761834289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mZVJ1MysJf9HvK2dLJ/M3JIjPeNWLhLG665s/jqHrkM=;
+	b=T0Y+YHy5+rDNlyl92xelvxUB0bpk/HdbzXBhcWiy4mdwL9PlUVOcS3TN5ddrLzHrugnBkz
+	xGDzUiWgMmVRRMMpjK97tEoM/hA9uqL0FiLQT3BfjJReBfP9fNytKr09GsAmf+vLs6piv8
+	ukPA07CUUotdIPO7M5kNRRe5KMayeiY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-1Rhk3uxrN5-zOkrtqKrWAQ-1; Thu,
+ 30 Oct 2025 10:24:43 -0400
+X-MC-Unique: 1Rhk3uxrN5-zOkrtqKrWAQ-1
+X-Mimecast-MFC-AGG-ID: 1Rhk3uxrN5-zOkrtqKrWAQ_1761834282
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6FBDC1955EA6;
+	Thu, 30 Oct 2025 14:24:42 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.44.33.237])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFC431955BE3;
+	Thu, 30 Oct 2025 14:24:39 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.18-rc4
+Date: Thu, 30 Oct 2025 15:24:15 +0100
+Message-ID: <20251030142415.29023-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] firmware: ti_sci: Partial-IO support
-To: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>, Nishanth Menon
-	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
-	<ssantosh@kernel.org>
-CC: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-	Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, "Kendall
- Willis" <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20251030-topic-am62-partialio-v6-12-b4-v9-0-074f55d9c16b@baylibre.com>
- <20251030-topic-am62-partialio-v6-12-b4-v9-3-074f55d9c16b@baylibre.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20251030-topic-am62-partialio-v6-12-b4-v9-3-074f55d9c16b@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397AE:EE_|IA3PR10MB8162:EE_
-X-MS-Office365-Filtering-Correlation-Id: c775bbdc-41ec-4d6d-9ecf-08de17c0011d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|34020700016|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QTZDYXRkT2xrNE94T3lOVTNXN016a2pzeklwdkVRUlpCMXBKSUxTQUhGb3dE?=
- =?utf-8?B?VHZSQldhUDZrZVhuSHM0NG1NcU5oVC9vMFpBRDh4ME5FckJET1IwU1ZYZEdz?=
- =?utf-8?B?VGtIRndhTVRQQ0FnKzZ5L053MjE5YTZPQU1CamdTS2hnR0Y3VWdISitDVi93?=
- =?utf-8?B?dWtvZ0xhMDJZWUU1WGdXeExQZGgxc21QTVA1TFB5NDFsVDRzUGJRaXoyWCtL?=
- =?utf-8?B?R0ttOTJsb0JJbGRJSkpVbER0L2l2QW95blREUHhKU0xpc2RVUm90ODZqSzFp?=
- =?utf-8?B?YlczU1ZqVDFYYU9yYVBOcFVZc0RwT0J6a1ZoVnpoeGczS0gxRlJUNUZGcjRT?=
- =?utf-8?B?SEFhd21scFM2eUttWjFDR0JaNE9OUzY1TnZncjBIaFdIeUV6RDZBTHdyOWxr?=
- =?utf-8?B?NWFHanZKRi9GR0FqS3dMcTJFVE56cW9TNmVtLzZMZ2hEN3RiSGUvRkRXT3J4?=
- =?utf-8?B?SkRGTkI0M0NJaUsvamNNN3Q4Sm5OWVNmOThiNkc1Z0M3ZWNJMVBjQUhQLzV2?=
- =?utf-8?B?SFljR1c2TUZZb3pnV3FLZkhjMHRadENBMzA0UUVabFpQcFpwM2txU1FLWXc1?=
- =?utf-8?B?clB5UllBNm1IdE9hSitSYzM3Rmh2QlNBYlc4cllCQVlwd0hGUjZUUzhoY0dO?=
- =?utf-8?B?M3pURk9nUk9ONUY2REQweml5QkJKaFRBd2FrUjgxWDVBblZSZXB4VmxleXp2?=
- =?utf-8?B?MzJZenVwZHlWNUZ6LzhBRFZFVjM1Z3hMb1Bqa21jRE93U3NuZjJZcFI1RkVu?=
- =?utf-8?B?ZU9uZmNHZVlZSlB3dUR3Qzk5eC9EakVQVzA3QXdubnFQVXJwNzloTk14RnVs?=
- =?utf-8?B?WkQ3dHdZNjdOYUpTcjk2V1FnVDExczRxa0FHY1BVZDcxNEF6Y2Y4YlE4cENy?=
- =?utf-8?B?QUpsZ0swL2UySWFPT25YWnJhK3RuWld3bzExT0txc1RzVzBYaEZDTDdqNVNX?=
- =?utf-8?B?eU84QzFVdUxac29tZkx1UUV4MGUyN1ZaUXlOKzV4bElnRnpsOUhiYmx2azlC?=
- =?utf-8?B?MEVaNTdxdTZsYTg2SHVQOGZidEhsbWw5Y3dCQUdsRDU5amhyczNROURQeGxK?=
- =?utf-8?B?ZHlRQzZGbXlML1JETlpkelZuOTJKMnFnT1RZU3crNWJicXRyNzNUODF5R3NY?=
- =?utf-8?B?NVZCb2xsRFY0cEtYSkc0L0JETTlyam9qVnNUWEJrZ3UrYytFVW5LdDFLb1dh?=
- =?utf-8?B?Q2dNNFhjdWQ4ZEt6TjN4eTRIQnJocnh3ZjVpbW1oUVc2WDlrQW1pTHJRR2lO?=
- =?utf-8?B?czRjaTRDdm5Bd21nVVIvS1dwMWNCVHpYUXZvMy9KUncxTk9IeGRoR3c3RFpE?=
- =?utf-8?B?YjE2cGJNbVpWK2tEZHkxOGVpQTJ2aG93VTNocUhTYnMwNjdBMjR4bjhOWVdp?=
- =?utf-8?B?aUNzdnZhQkg5KzFkeDlqeWtiblVObzZsTWVPYXhMa2RvMEFVOEdlSFZmRFQz?=
- =?utf-8?B?VU1QTWhXMnpTcHpEQ1ozVm15WUpWa1JodEllKzRsd1g5M2swOUR0UXo0K1ZK?=
- =?utf-8?B?cEs3WE5vcHFwZll3LzI3ZE54eUNiWEhTTTh5N1VGOUVQaXI2d3JkMzVualJ4?=
- =?utf-8?B?bjZFSDBhUGJWMlM0OEkwcFRmR000c3F3UGNhNVFteStuTjQwQTdzbndvZWlu?=
- =?utf-8?B?eCt4M1ZGcmN2L2lvYVV6SDBVZjV3aVNBTWtkVmZVWWFwSW9VeHR4TlFYUE84?=
- =?utf-8?B?USs4QUFFTWNLck1NR0VPb2VWeEt2b1dXcjlLNExQVFBqaWhmdkp0d2o0SjdN?=
- =?utf-8?B?TzNXWGExZ0FPQWFtc2lNRzY4VFh6b1lnV0VSOUM4eHk2eFcxRk55TktmL1pn?=
- =?utf-8?B?MERqSmtoVFRJcHVvNmprMGFBSUZzbld3eWR4UWgrd1h2Nmpld1c4cFBWb09n?=
- =?utf-8?B?TXhkdWs5ZS9BbENFYWphVlVNSGU0U1hZbEFVR2U2Q0pmVUNuTFUyOXJ2OHFX?=
- =?utf-8?B?dFVoUWFWNFVJWHY1Q21NNDE5cEdHZE9JbCtDM20zN1VWaThMQkpWRUlsSmo1?=
- =?utf-8?B?cUhNREdtOGFSTUhxYzA0cTV5bW81Mlc4NW9pejVmSUJhclNNUTdEeDVtRnQz?=
- =?utf-8?B?MXQ2aEpUb3VZSTFHWGtLdG05NDV3NXBYNXE3KzUzSFk0OHhmNVZNSzNGazhC?=
- =?utf-8?Q?PaE8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(34020700016)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 14:24:15.2531
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c775bbdc-41ec-4d6d-9ecf-08de17c0011d
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397AE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8162
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 10/30/25 4:26 AM, Markus Schneider-Pargmann (TI.com) wrote:
-> Add support for Partial-IO poweroff. In Partial-IO pins of a few
-> hardware units can generate system wakeups while DDR memory is not
-> powered resulting in a fresh boot of the system. These hardware units in
-> the SoC are always powered so that some logic can detect pin activity.
-> 
-> If the system supports Partial-IO as described in the fw capabilities, a
-> sys_off handler is added. This sys_off handler decides if the poweroff
-> is executed by entering normal poweroff or Partial-IO instead. The
-> decision is made by checking if wakeup is enabled on all devices that
-> may wake up the SoC from Partial-IO.
-> 
-> The possible wakeup devices are found by checking which devices
-> reference a "Partial-IO" system state in the list of wakeup-source
-> system states. Only devices that are actually enabled by the user will
-> be considered as an active wakeup source. If none of the wakeup sources
-> is enabled the system will do a normal poweroff. If at least one wakeup
-> source is enabled it will instead send a TI_SCI_MSG_PREPARE_SLEEP
-> message from the sys_off handler. Sending this message will result in an
-> immediate shutdown of the system. No execution is expected after this
-> point. The code will wait for 5s and do an emergency_restart afterwards
-> if Partial-IO wasn't entered at that point.
-> 
-> A short documentation about Partial-IO can be found in section 6.2.4.5
-> of the TRM at
->    https://www.ti.com/lit/pdf/spruiv7
-> 
-> Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
-> ---
->   drivers/firmware/ti_sci.c | 132 +++++++++++++++++++++++++++++++++++++++++++++-
->   drivers/firmware/ti_sci.h |   5 ++
->   2 files changed, 136 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 4db84a92a517b0aa7bb8d47e809d9848a16e2cc4..f2922fccfbe748a436cb9aa0a8c8e5f48db02ef9 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -6,6 +6,7 @@
->    *	Nishanth Menon
->    */
->   
-> +#include "linux/dev_printk.h"
->   #define pr_fmt(fmt) "%s: " fmt, __func__
->   
->   #include <linux/bitmap.h>
-> @@ -3663,6 +3664,116 @@ devm_ti_sci_get_resource(const struct ti_sci_handle *handle, struct device *dev,
->   }
->   EXPORT_SYMBOL_GPL(devm_ti_sci_get_resource);
->   
-> +/*
-> + * Enter Partial-IO, which disables everything including DDR with only a small
-> + * logic being active for wakeup.
-> + */
-> +static int ti_sci_enter_partial_io(struct ti_sci_info *info)
-> +{
-> +	struct ti_sci_msg_req_prepare_sleep *req;
-> +	struct ti_sci_xfer *xfer;
-> +	struct device *dev = info->dev;
-> +	int ret = 0;
-> +
-> +	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_PREPARE_SLEEP,
-> +				   TI_SCI_FLAG_REQ_GENERIC_NORESPONSE,
-> +				   sizeof(*req), sizeof(struct ti_sci_msg_hdr));
-> +	if (IS_ERR(xfer)) {
-> +		ret = PTR_ERR(xfer);
-> +		dev_err(dev, "Message alloc failed(%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	req = (struct ti_sci_msg_req_prepare_sleep *)xfer->xfer_buf;
-> +	req->mode = TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO;
+Hi Linus!
 
-This whole function is almost identical to ti_sci_cmd_prepare_sleep() other
-than you use a different mode here, which this different mode can be passed
-into ti_sci_cmd_prepare_sleep() just the same. Only other difference would
-be the NORESPONSE flag which you could just check "mode" passed in and
-use the right flag for the mode.
+The following changes since commit ab431bc39741e9d9bd3102688439e1864c857a74:
 
-> +	req->ctx_lo = 0;
-> +	req->ctx_hi = 0;
-> +	req->debug_flags = 0;
-> +
-> +	ret = ti_sci_do_xfer(info, xfer);
-> +	if (ret) {
-> +		dev_err(dev, "Mbox send fail %d\n", ret);
-> +		goto fail;
-> +	}
-> +
-> +fail:
-> +	ti_sci_put_one_xfer(&info->minfo, xfer);
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Iterate all device nodes that have a wakeup-source property and check if one
-> + * of the possible phandles points to a Partial-IO system state. If it
-> + * does resolve the device node to an actual device and check if wakeup is
-> + * enabled.
-> + */
-> +static bool ti_sci_partial_io_wakeup_enabled(struct ti_sci_info *info)
-> +{
-> +	struct device_node *wakeup_node = NULL;
-> +
-> +	for_each_node_with_property(wakeup_node, "wakeup-source") {
-> +		struct of_phandle_iterator it;
-> +		int err;
-> +
-> +		of_for_each_phandle(&it, err, wakeup_node, "wakeup-source", NULL, 0) {
-> +			struct platform_device *pdev;
-> +			bool may_wakeup;
-> +
-> +			/*
-> +			 * Continue if idle-state-name is not off-wake. Return
-> +			 * value is the index of the string which should be 0 if
-> +			 * off-wake is present.
-> +			 */
-> +			if (of_property_match_string(it.node, "idle-state-name", "off-wake"))
-> +				continue;
-> +
-> +			pdev = of_find_device_by_node(wakeup_node);
-> +			if (!pdev)
-> +				continue;
-> +
-> +			may_wakeup = device_may_wakeup(&pdev->dev);
-> +			put_device(&pdev->dev);
-> +
-> +			if (may_wakeup) {
-> +				dev_dbg(info->dev, "%pOF identified as wakeup source for Partial-IO\n",
-> +					wakeup_node);
-> +				of_node_put(it.node);
-> +				of_node_put(wakeup_node);
-> +				return true;
-> +			}
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static int ti_sci_sys_off_handler(struct sys_off_data *data)
-> +{
-> +	struct ti_sci_info *info = data->cb_data;
-> +	bool enter_partial_io = ti_sci_partial_io_wakeup_enabled(info);
-> +	int ret;
-> +
-> +	if (!enter_partial_io)
-> +		return NOTIFY_DONE;
-> +
-> +	dev_info(info->dev, "Entering Partial-IO because a powered wakeup-enabled device was found.\n");
-> +
-> +	ret = ti_sci_enter_partial_io(info);
-> +
+  Merge tag 'net-6.18-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-10-23 07:03:18 -1000)
 
-No need for newline here.
+are available in the Git repository at:
 
-> +	if (ret) {
-> +		dev_err(info->dev,
-> +			"Failed to enter Partial-IO %pe, trying to do an emergency restart\n",
-> +			ERR_PTR(ret));
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.18-rc4
 
-Why cast this int to a pointer before printing it out?
+for you to fetch changes up to 51e5ad549c43b557c7da1e4d1a1dcf061b4a5f6c:
 
-Andrew
+  net: sctp: fix KMSAN uninit-value in sctp_inq_pop (2025-10-30 11:21:05 +0100)
 
-> +		emergency_restart();
-> +	}
-> +
-> +	mdelay(5000);
-> +	emergency_restart();
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
->   static int tisci_reboot_handler(struct sys_off_data *data)
->   {
->   	struct ti_sci_info *info = data->cb_data;
-> @@ -3941,6 +4052,19 @@ static int ti_sci_probe(struct platform_device *pdev)
->   		goto out;
->   	}
->   
-> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO) {
-> +		ret = devm_register_sys_off_handler(dev,
-> +						    SYS_OFF_MODE_POWER_OFF,
-> +						    SYS_OFF_PRIO_FIRMWARE,
-> +						    ti_sci_sys_off_handler,
-> +						    info);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to register sys_off_handler %pe\n",
-> +				ERR_PTR(ret));
-> +			goto out;
-> +		}
-> +	}
-> +
->   	dev_info(dev, "ABI: %d.%d (firmware rev 0x%04x '%s')\n",
->   		 info->handle.version.abi_major, info->handle.version.abi_minor,
->   		 info->handle.version.firmware_revision,
-> @@ -3950,7 +4074,13 @@ static int ti_sci_probe(struct platform_device *pdev)
->   	list_add_tail(&info->node, &ti_sci_list);
->   	mutex_unlock(&ti_sci_list_mutex);
->   
-> -	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +	if (ret) {
-> +		dev_err(dev, "platform_populate failed %pe\n", ERR_PTR(ret));
-> +		goto out;
-> +	}
-> +	return 0;
-> +
->   out:
->   	if (!IS_ERR(info->chan_tx))
->   		mbox_free_channel(info->chan_tx);
-> diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-> index 701c416b2e78f8ef20ce6741a88ffa6fd4853b2d..09eaea54dd5cabce72dd1652c9603e3ab446b60c 100644
-> --- a/drivers/firmware/ti_sci.h
-> +++ b/drivers/firmware/ti_sci.h
-> @@ -595,6 +595,11 @@ struct ti_sci_msg_resp_get_clock_freq {
->   struct ti_sci_msg_req_prepare_sleep {
->   	struct ti_sci_msg_hdr	hdr;
->   
-> +/*
-> + * When sending prepare_sleep with MODE_PARTIAL_IO no response will be sent,
-> + * no further steps are required.
-> + */
-> +#define TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO				0x03
->   #define TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED				0xfd
->   	u8			mode;
->   	u32			ctx_lo;
-> 
+----------------------------------------------------------------
+Including fixes from wireless, Bluetooth and netfilter.
+
+Current release - regressions:
+
+  - tcp: fix too slow tcp_rcvbuf_grow() action
+
+  - bluetooth: fix corruption in h4_recv_buf() after cleanup
+
+Previous releases - regressions:
+
+  - mptcp: restore window probe
+
+  - bluetooth:
+    - fix connection cleanup with BIG with 2 or more BIS
+    - fix crash in set_mesh_sync and set_mesh_complete
+
+  - batman-adv: release references to inactive interfaces
+
+  - nic: ice: fix usage of logical PF id
+
+  - nic: sfc: fix potential memory leak in efx_mae_process_mport()
+
+Previous releases - always broken:
+
+  - devmem: refresh devmem TX dst in case of route invalidation
+
+  - netfilter: add seqadj extension for natted connections
+
+  - wifi:
+    - iwlwifi: fix potential use after free in iwl_mld_remove_link()
+    - brcmfmac: fix crash while sending action frames in standalone AP Mode
+
+  - eth: mlx5e: cancel tls RX async resync request in error flows
+
+  - eth: ixgbe: fix memory leak and use-after-free in ixgbe_recovery_probe()
+
+  - eth: hibmcge: fix rx buf avl irq is not re-enabled in irq_handle issue
+
+  - eth: cxgb4: fix potential use-after-free in ipsec callback
+
+  - eth: nfp: fix memory leak in nfp_net_alloc()
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Abdun Nihaal (2):
+      sfc: fix potential memory leak in efx_mae_process_mport()
+      nfp: xsk: fix memory leak in nfp_net_alloc()
+
+Aloka Dixit (1):
+      wifi: mac80211: reset FILS discovery and unsol probe resp intervals
+
+Andrii Melnychenko (1):
+      netfilter: nft_ct: add seqadj extension for natted connections
+
+Bagas Sanjaya (2):
+      MAINTAINERS: mark ISDN subsystem as orphan
+      Documentation: netconsole: Remove obsolete contact people
+
+Bui Quang Minh (1):
+      virtio-net: drop the multi-buffer XDP packet in zerocopy
+
+Calvin Owens (1):
+      Bluetooth: fix corruption in h4_recv_buf() after cleanup
+
+Cen Zhang (1):
+      Bluetooth: hci_sync: fix race in hci_cmd_sync_dequeue_once
+
+Chris Lu (1):
+      Bluetooth: btmtksdio: Add pmctrl handling for BT closed state during reset
+
+Cosmin Ratiu (1):
+      net/mlx5: Don't zero user_count when destroying FDB tables
+
+Dan Carpenter (1):
+      wifi: iwlwifi: fix potential use after free in iwl_mld_remove_link()
+
+Dr. David Alan Gilbert (1):
+      MAINTAINERS: wcn36xx: Add linux-wireless list
+
+Emanuele Ghidoli (1):
+      net: phy: dp83867: Disable EEE support as not implemented
+
+Emmanuel Grumbach (1):
+      wifi: nl80211: call kfree without a NULL check
+
+Eric Dumazet (3):
+      trace: tcp: add three metrics to trace_tcp_rcvbuf_grow()
+      tcp: add newval parameter to tcp_rcvbuf_grow()
+      tcp: fix too slow tcp_rcvbuf_grow() action
+
+Fernando Fernandez Mancera (1):
+      netfilter: nft_connlimit: fix possible data race on connection count
+
+Florian Westphal (1):
+      netfilter: nft_ct: enable labels for get case too
+
+Frédéric Danis (1):
+      Revert "Bluetooth: L2CAP: convert timeouts to secs_to_jiffies()"
+
+Gokul Sivakumar (1):
+      wifi: brcmfmac: fix crash while sending Action Frames in standalone AP Mode
+
+Grzegorz Nitka (3):
+      ice: fix lane number calculation
+      ice: fix destination CGU for dual complex E825
+      ice: fix usage of logical PF id
+
+Gustavo Luiz Duarte (1):
+      netconsole: Fix race condition in between reader and writer of userdata
+
+Hangbin Liu (1):
+      tools: ynl: avoid print_field when there is no reply
+
+Ivan Vecera (1):
+      dpll: zl3073x: Fix output pin registration
+
+Jakub Kicinski (10):
+      Merge tag 'wireless-2025-10-23' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
+      Merge tag 'for-net-2025-10-24' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+      Merge tag 'batadv-net-pullrequest-20251024' of https://git.open-mesh.org/linux-merge
+      Merge branch 'bug-fixes-for-the-hibmcge-ethernet-driver'
+      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+      Merge branch 'tcp-fix-receive-autotune-again'
+      Merge branch 'mptcp-various-rare-sending-issues'
+      Merge tag 'nf-25-10-29' of https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+      Merge branch 'tls-introduce-and-use-rx-async-resync-request-cancel-function'
+      Merge branch 'net-stmmac-fixes-for-stmmac-tx-vlan-insert-and-est'
+
+Jijie Shao (4):
+      net: hns3: return error code when function fails
+      net: hibmcge: fix rx buf avl irq is not re-enabled in irq_handle issue
+      net: hibmcge: remove unnecessary check for np_link_fail in scenarios without phy.
+      net: hibmcge: fix the inappropriate netif_device_detach()
+
+Jinliang Wang (1):
+      net: mctp: Fix tx queue stall
+
+Johan Hovold (1):
+      Bluetooth: rfcomm: fix modem control handling
+
+Johannes Berg (3):
+      Merge tag 'ath-current-20251006' of git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath
+      wifi: mac80211: fix key tailroom accounting leak
+      Merge tag 'iwlwifi-fixes-2025-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next
+
+Karthik M (1):
+      wifi: ath12k: free skb during idr cleanup callback
+
+Kiran K (1):
+      Bluetooth: btintel_pcie: Fix event packet loss issue
+
+Kohei Enju (5):
+      ixgbe: fix memory leak and use-after-free in ixgbe_recovery_probe()
+      igc: power up the PHY before the link test
+      igb: use EOPNOTSUPP instead of ENOTSUPP in igb_get_sset_count()
+      igc: use EOPNOTSUPP instead of ENOTSUPP in igc_ethtool_get_sset_count()
+      ixgbe: use EOPNOTSUPP instead of ENOTSUPP in ixgbe_ptp_feature_enable()
+
+Krzysztof Kozlowski (1):
+      dt-bindings: net: sparx5: Narrow properly LAN969x register space windows
+
+Lizhi Xu (1):
+      usbnet: Prevents free active kevent
+
+Loic Poulain (1):
+      wifi: ath10k: Fix memory leak on unsupported WMI command
+
+Luiz Augusto von Dentz (5):
+      Bluetooth: ISO: Fix BIS connection dst_type handling
+      Bluetooth: HCI: Fix tracking of advertisement set/instance 0x00
+      Bluetooth: ISO: Fix another instance of dst_type handling
+      Bluetooth: hci_conn: Fix connection cleanup with BIG with 2 or more BIS
+      Bluetooth: hci_core: Fix tracking of periodic advertisement
+
+Mark Pearson (1):
+      wifi: ath11k: Add missing platform IDs for quirk table
+
+Miaoqian Lin (1):
+      net: usb: asix_devices: Check return value of usbnet_get_endpoints
+
+Paolo Abeni (5):
+      mptcp: fix subflow rcvbuf adjust
+      mptcp: drop bogus optimization in __mptcp_check_push()
+      mptcp: fix MSG_PEEK stream corruption
+      mptcp: restore window probe
+      mptcp: zero window probe mib
+
+Pauli Virtanen (1):
+      Bluetooth: MGMT: fix crash in set_mesh_sync and set_mesh_complete
+
+Pavel Zhigulin (1):
+      net: cxgb4/ch_ipsec: fix potential use-after-free in ch_ipsec_xfrm_add_state() callback
+
+Petr Oros (3):
+      tools: ynl: fix string attribute length to include null terminator
+      dpll: spec: add missing module-name and clock-id to pin-get reply
+      dpll: fix device-id-get and pin-id-get to return errors properly
+
+Po-Hsu Lin (1):
+      selftests: net: use BASH for bareudp testing
+
+Rafał Miłecki (1):
+      bcma: don't register devices disabled in OF
+
+Rameshkumar Sundaram (1):
+      wifi: ath11k: avoid bit operation on key flags
+
+Ranganath V N (1):
+      net: sctp: fix KMSAN uninit-value in sctp_inq_pop
+
+Rohan G Thomas (3):
+      net: stmmac: vlan: Disable 802.1AD tag insertion offload
+      net: stmmac: Consider Tx VLAN offload tag length for maxSDU
+      net: stmmac: est: Fix GCL bounds checks
+
+Shahar Shitrit (3):
+      net: tls: Change async resync helpers argument
+      net: tls: Cancel RX async resync request on rcd_delta overflow
+      net/mlx5e: kTLS, Cancel RX async resync request in error flows
+
+Shivaji Kant (1):
+      net: devmem: refresh devmem TX dst in case of route invalidation
+
+Sven Eckelmann (1):
+      batman-adv: Release references to inactive interfaces
+
+Thanh Quan (1):
+      net: phy: dp83869: fix STRAP_OPMODE bitmask
+
+ CREDITS                                            |  4 ++
+ .../bindings/net/microchip,sparx5-switch.yaml      |  4 +-
+ Documentation/netlink/specs/dpll.yaml              |  2 +
+ Documentation/networking/netconsole.rst            |  3 -
+ MAINTAINERS                                        |  9 +--
+ drivers/bcma/main.c                                |  6 ++
+ drivers/bluetooth/bpa10x.c                         |  4 +-
+ drivers/bluetooth/btintel_pcie.c                   | 11 +--
+ drivers/bluetooth/btmtksdio.c                      | 12 ++++
+ drivers/bluetooth/btmtkuart.c                      |  4 +-
+ drivers/bluetooth/btnxpuart.c                      |  4 +-
+ drivers/bluetooth/hci_ag6xx.c                      |  2 +-
+ drivers/bluetooth/hci_aml.c                        |  2 +-
+ drivers/bluetooth/hci_ath.c                        |  2 +-
+ drivers/bluetooth/hci_bcm.c                        |  2 +-
+ drivers/bluetooth/hci_h4.c                         |  6 +-
+ drivers/bluetooth/hci_intel.c                      |  2 +-
+ drivers/bluetooth/hci_ll.c                         |  2 +-
+ drivers/bluetooth/hci_mrvl.c                       |  6 +-
+ drivers/bluetooth/hci_nokia.c                      |  4 +-
+ drivers/bluetooth/hci_qca.c                        |  2 +-
+ drivers/bluetooth/hci_uart.h                       |  2 +-
+ drivers/dpll/dpll_netlink.c                        | 36 +++++-----
+ drivers/dpll/zl3073x/dpll.c                        |  2 +-
+ .../chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c    |  7 +-
+ .../net/ethernet/hisilicon/hibmcge/hbg_common.h    |  1 +
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c   | 10 +--
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c    |  3 +
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c   |  1 +
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c  |  1 -
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  3 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c    |  9 ++-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_mdio.h    |  2 +-
+ drivers/net/ethernet/intel/ice/ice_common.c        | 35 ++++++++-
+ drivers/net/ethernet/intel/ice/ice_flex_pipe.c     |  2 +-
+ drivers/net/ethernet/intel/ice/ice_sbq_cmd.h       |  1 +
+ drivers/net/ethernet/intel/igb/igb_ethtool.c       |  2 +-
+ drivers/net/ethernet/intel/igc/igc_ethtool.c       |  5 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c      |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c       |  2 +-
+ .../ethernet/mellanox/mlx5/core/en_accel/ktls_rx.c | 41 +++++++++--
+ .../mellanox/mlx5/core/en_accel/ktls_txrx.h        |  4 ++
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c    |  4 ++
+ .../net/ethernet/mellanox/mlx5/core/esw/legacy.c   |  1 -
+ .../ethernet/mellanox/mlx5/core/eswitch_offloads.c |  1 -
+ .../net/ethernet/netronome/nfp/nfp_net_common.c    |  6 +-
+ drivers/net/ethernet/sfc/mae.c                     |  4 ++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 32 ++++-----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    |  4 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c  |  2 +-
+ drivers/net/mctp/mctp-usb.c                        |  8 ++-
+ drivers/net/netconsole.c                           | 21 +++---
+ drivers/net/phy/dp83867.c                          |  6 ++
+ drivers/net/phy/dp83869.c                          |  4 +-
+ drivers/net/usb/asix_devices.c                     | 12 +++-
+ drivers/net/usb/usbnet.c                           |  2 +
+ drivers/net/virtio_net.c                           | 11 ++-
+ drivers/net/wireless/ath/ath10k/wmi.c              |  1 +
+ drivers/net/wireless/ath/ath11k/core.c             | 54 ++++++++++++--
+ drivers/net/wireless/ath/ath11k/mac.c              | 10 +--
+ drivers/net/wireless/ath/ath12k/mac.c              | 34 ++++-----
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c         |  3 +-
+ .../net/wireless/broadcom/brcm80211/brcmfmac/p2p.c | 28 +++-----
+ .../net/wireless/broadcom/brcm80211/brcmfmac/p2p.h |  3 +-
+ drivers/net/wireless/intel/iwlwifi/mld/link.c      |  5 +-
+ include/net/bluetooth/hci.h                        |  1 +
+ include/net/bluetooth/hci_core.h                   |  1 +
+ include/net/bluetooth/l2cap.h                      |  4 +-
+ include/net/bluetooth/mgmt.h                       |  2 +-
+ include/net/tcp.h                                  |  2 +-
+ include/net/tls.h                                  | 25 +++----
+ include/trace/events/tcp.h                         |  9 +++
+ net/batman-adv/originator.c                        | 14 +++-
+ net/bluetooth/hci_conn.c                           |  7 ++
+ net/bluetooth/hci_event.c                          | 11 ++-
+ net/bluetooth/hci_sync.c                           | 21 +++---
+ net/bluetooth/iso.c                                | 10 ++-
+ net/bluetooth/l2cap_core.c                         |  4 +-
+ net/bluetooth/mgmt.c                               | 26 ++++---
+ net/bluetooth/rfcomm/tty.c                         | 26 +++----
+ net/core/devmem.c                                  | 27 ++++++-
+ net/ipv4/tcp_input.c                               | 21 ++++--
+ net/mac80211/cfg.c                                 |  3 +
+ net/mac80211/key.c                                 | 11 ++-
+ net/mptcp/mib.c                                    |  1 +
+ net/mptcp/mib.h                                    |  1 +
+ net/mptcp/protocol.c                               | 83 ++++++++++++++--------
+ net/mptcp/protocol.h                               |  2 +-
+ net/netfilter/nft_connlimit.c                      |  2 +-
+ net/netfilter/nft_ct.c                             | 30 +++++++-
+ net/sctp/input.c                                   |  2 +-
+ net/tls/tls_device.c                               |  4 +-
+ net/wireless/nl80211.c                             |  3 +-
+ tools/net/ynl/lib/ynl-priv.h                       |  4 +-
+ tools/net/ynl/pyynl/ethtool.py                     |  3 +
+ tools/testing/selftests/net/bareudp.sh             |  2 +-
+ 96 files changed, 597 insertions(+), 285 deletions(-)
 
 
