@@ -1,199 +1,188 @@
-Return-Path: <linux-kernel+bounces-878875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F55AC21B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:10:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C771C21ADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E68664F030E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:03:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B2F34F345E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2A32ED15D;
-	Thu, 30 Oct 2025 18:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F322322AE45;
+	Thu, 30 Oct 2025 18:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snrEyqdq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="lP7ppbfl"
+Received: from fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.65.3.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2901E1DE7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87E523B607
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.65.3.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847218; cv=none; b=OrgiXL/oiXBYkJlFEo3HHQTezpannlkM70zQfyB/3I1POfcLTkqhSfFj8aTe8EKGIakOZPVtWRlAYtHI84H+SZaAz8bbxoT81+1YedzDbaw6f2uPP5gC81/AH4qxz97DQ5xpIqNlolndAakHI6YeDfVFnt0CjuKWRKmwe80WZvw=
+	t=1761847241; cv=none; b=RgiJqHf5fySQTHR0KxeqxTHZGFr9do6OwGNsJshmUhndcQiVa1ldGPvxP4uizlHvKgBr+v1KSslDPSMOpTVR6P7oYDE59YSyOt5v+3P/tDb9Wzd3HhN4USOmnCrixSM8GG5jW3nGsSsR+O8ljEnSjd3uri4IOsroWBPMLz5anqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847218; c=relaxed/simple;
-	bh=gOqv+E7d4lcmpT+rD7QuyL3jeIQ4Hma35tRFZWG6s74=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XALfbAYq0BbduywwLEciAYh186qM49sbTWnYzdv9jaLg1EZlnt05qvga1fscjfpwvv6vRi3/M9lNcEtdVW/lUrDWqwHHqpWMJHIj2dqUTuV7ZyReC6AvAoLWP3/X8knZtCd+thFlb34tf2gMi2bQ4zNa2b73YQbTzrUTirC7ago=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snrEyqdq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDEFDC4CEF1;
-	Thu, 30 Oct 2025 18:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761847218;
-	bh=gOqv+E7d4lcmpT+rD7QuyL3jeIQ4Hma35tRFZWG6s74=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=snrEyqdqulV6waTVp0GRxbC69utQGoWXKG4w2Zvdyjg4SnEyaHMmC5VYC4AdRMD9F
-	 2jQqlGsAMRU5rnZ/k/TvgpmowGy09RPIKXTUhC4GD054tkmoyrnO0U7dyeX0bXRFve
-	 +t65zh4/J8LmQ9ks4kgh3ImnizSymIjSbrle5AzjidCsi0gs/rszNcrmHMycV9eY0n
-	 Qqny+3KfXuE6dggbapMwqVxGLq0fBwiwG1/ceH4QTMcZXbwgIMU0QTG9b7sWTrDpDJ
-	 pJGt4c5bYAEpYXv/zJECDcWeCDatgg17UI7eCgAwxbBdFV3HRrxntIpal9rdPFFCxd
-	 4+ziDlCzoE1+Q==
-Message-ID: <f053d2a1c3eba92d390d13859b40203388e86bac.camel@kernel.org>
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
-From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Jori Koolstra <jkoolstra@xs4all.nl>, Christian Brauner
- <brauner@kernel.org>,  "skhan@linuxfoundation.org"	
- <skhan@linuxfoundation.org>, Khalid Aziz <khalid@kernel.org>, Tetsuo Handa	
- <penguin-kernel@i-love.sakura.ne.jp>, Taotao Chen
- <chentaotao@didiglobal.com>,  NeilBrown <neil@brown.name>,
- linux-kernel@vger.kernel.org, 
-	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com, "Darrick J. Wong"	
- <djwong@kernel.org>
-Date: Thu, 30 Oct 2025 14:00:16 -0400
-In-Reply-To: <ci6wvlqqh6jkdmnz5obfjx3moy67cik3354apiihifh4gtgx2t@zh4fk7zevbpx>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
-	 <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
-	 <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
-	 <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
-	 <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
-	 <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
-	 <ci6wvlqqh6jkdmnz5obfjx3moy67cik3354apiihifh4gtgx2t@zh4fk7zevbpx>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761847241; c=relaxed/simple;
+	bh=iVLQgIn3lWgiQoO8C/gs1W/8mb+Z2Uld6E3EyWVLBu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Dy/ZPViF5zdRDZTkXeooEAdl22f8ggto9Iwy95q4nxwar8Uv5Fh9zCstmZzz5vd3AMPP9eUrx/oDyYXMWmvlKNzhab+NnvnYojJO18+yaWIpS8ec/9zbtJJqJDpxLLCYO5YA3sDan5TN4iTSSUYQGhzC9lS8c8gbmMSggklkgCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=lP7ppbfl; arc=none smtp.client-ip=3.65.3.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1761847239; x=1793383239;
+  h=message-id:date:mime-version:reply-to:subject:to:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=E5wlxdnDcWixx3BBmRUtZ/2zQxVYjliI5U0iUUmSWIE=;
+  b=lP7ppbfljTOhVMc0RcxKspXSy8ns67IvU9uZPk043omtUAgFYEONrpqJ
+   kyOwsD4hiSbu2KlfieEW5aicK2DQyO3KX/R7M9f0kS2wA0Q6filSEG5Zn
+   TofqT1lHm7KxY9dMENoWOkQEs4s2GWP1T+rIJR/e7y1WJX1kKrZ+wywdO
+   TZxSWeWB3JJeDiPio7i4fMQZDpNpLxUuIelTB00EOH/CgrxJIAdhM+H0n
+   P6jlBASun7ekLiP8/r7z9/ZFYQG9uR+86sem+DcY3t7avPxKNX8Fk5f0x
+   +NuZsxzeC6+lNejVsaNcF2lwg8CIcC0ENzDgNZFSBqVBjPb9xIWtYo5UR
+   A==;
+X-CSE-ConnectionGUID: G8ewqpOrQEq2XZbS6lN9+A==
+X-CSE-MsgGUID: DnvGQGwYQ6C6gQx2z9HmHw==
+X-IronPort-AV: E=Sophos;i="6.19,250,1754956800"; 
+   d="scan'208";a="4468863"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 18:00:28 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:12141]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.6.105:2525] with esmtp (Farcaster)
+ id de7d695c-09e8-48b3-aec3-a2124ec2e8ae; Thu, 30 Oct 2025 18:00:28 +0000 (UTC)
+X-Farcaster-Flow-ID: de7d695c-09e8-48b3-aec3-a2124ec2e8ae
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Thu, 30 Oct 2025 18:00:28 +0000
+Received: from [192.168.10.151] (10.106.82.18) by
+ EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Thu, 30 Oct 2025 18:00:27 +0000
+Message-ID: <0b403696-addb-45ab-a9b5-60f231d9dc4b@amazon.com>
+Date: Thu, 30 Oct 2025 18:00:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Peter Xu <peterx@redhat.com>,
+	David Hildenbrand <david@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, Mike Rapoport <rppt@kernel.org>, Muchun Song
+	<muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, Axel Rasmussen
+	<axelrasmussen@google.com>, Andrew Morton <akpm@linux-foundation.org>, "James
+ Houghton" <jthoughton@google.com>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>, Hugh Dickins <hughd@google.com>, Michal Hocko
+	<mhocko@suse.com>, Ujwal Kundur <ujwal.kundur@gmail.com>, Oscar Salvador
+	<osalvador@suse.de>, Suren Baghdasaryan <surenb@google.com>, Andrea Arcangeli
+	<aarcange@redhat.com>
+References: <20251014231501.2301398-1-peterx@redhat.com>
+ <78424672-065c-47fc-ba76-c5a866dcdc98@redhat.com> <aPZDVuscFsYSlQjI@x1.local>
+ <dtepn7obw5syd47uhyxavytodp7ws2pzr2yuchda32wcwn4bj4@wazn24gijumu>
+ <aPe0oWR9-Oj58Asz@x1.local>
+ <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D010EUA002.ant.amazon.com (10.252.50.108) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On Thu, 2025-10-30 at 18:22 +0100, Jan Kara wrote:
-> On Thu 30-10-25 09:43:26, Jeff Layton wrote:
-> > On Thu, 2025-10-30 at 14:31 +0100, Jori Koolstra wrote:
-> > > One question I would have about this is that if we move minix, for
-> > > instance, out of the kernel code, how can we be sure that it is
-> > > maintained. What if some Github repo suddenly disappears? Like I said=
-,
-> > > I would be fine with helping maintain minix, otherwise what should be
-> > > the course of action from here? What demands do we place on a userlan=
-d
-> > > replacement for minix before I submit a patch to deprecate and remove
-> > > the code?
-> > >=20
-> >=20
-> > These are great questions that I don't think we have an answer for just
-> > yet.
-> >=20
-> > In practice, FUSE interfaces are quite stable, and the minixfs format
-> > also doesn't change a lot. Much like minixfs in the kernel, I wouldn't
-> > expect that it would require a lot of maintenance itself over the long
-> > haul (but everything requires _some_). It might need some to keep up
-> > with broader OS changes, but that's not usually too burdensome.
-> >=20
-> > You're quite right though that userland replacements will need to meet
-> > some criteria before we can rip out the in-kernel versions. This might
-> > be a good discussion topic for next year's LSF/MM!
->=20
-> Usually the requirement is feature parity - meaning if the kernel can rea=
-d
-> / write filesystem with some set of features, then the other drivers shou=
-ld
-> support that as well. Also passing the same set of fstests is a good
-> indication the replacement is sound. Darrick did quite some work with
-> making fstests work better for FUSE filesystems recently if I remember
-> correctly.
->=20
 
-Right. We probably need to codify that into a checklist in
-Documentation/ somewhere.
 
-- feature parity (at least mostly, might can omit obscure things on
-some crufty old filesystems)
+On 30/10/2025 17:13, Liam R. Howlett wrote:
+> * Peter Xu <peterx@redhat.com> [251021 12:28]:
+> 
+> ...
+> 
+>> Can you send some patches and show us the code, help everyone to support
+>> guest-memfd minor fault, please?
+> 
+> Patches are here:
+> 
+> https://git.infradead.org/?p=users/jedix/linux-maple.git;a=shortlog;h=refs/heads/modularized_mem
+> 
+> This is actually modularized memory types.  That means there is no
+> hugetlb.h or shmem.h included in mm/userfaultfd.c code.
+> 
+> uffd_flag_t has been removed.  This was turning into a middleware and
+> it is not necessary.  Neither is supported_ioctls.
+> 
+> hugetlb now uses the same functions as every other memory type,
+> including anon memory.
+> 
+> Any memory type can change functionality without adding instructions or
+> flags or anything to some other code.
+> 
+> This code passes uffd-unit-test and uffd-wp-mremap (skipped the swap
+> tests).
+> 
+> guest-memfd can implement whatever it needs to (or use others
+> implementations), like shmem_uffd_ops here:
+> 
+> static const struct vm_uffd_ops shmem_uffd_ops = {
+>          .copy                   =       shmem_mfill_atomic_pte_copy,
+>          .zeropage               =       shmem_mfill_atomic_pte_zeropage,
+>          .cont                   =       shmem_mfill_atomic_pte_continue,
+>          .poison                 =       mfill_atomic_pte_poison,
+>          .writeprotect           =       uffd_writeprotect,
+>          .is_dst_valid           =       shmem_is_dst_valid,
+>          .increment              =       mfill_size,
+>          .failed_do_unlock       =       uffd_failed_do_unlock,
+>          .page_shift             =       uffd_page_shift,
+>          .complete_register      =       uffd_complete_register,
+> };
+> 
+> Where guest-memfd needs to write the one function:
+> guest_memfd_pte_continue(), from what I understand.
+> 
+> Obviously some of the shmem_ functions would need to be added to a
+> header, or such.
+> 
+> And most of that can come from shmem_mfill_atomic_pte_continue(), from
+> what I understand.  This is about 40 lines of code, but may require
+> exposing some shmem functions to keep the code that compact.
+> 
+> So we don't need to expose getting a folio to a module, or decode any
+> special flags or whatever.  We just call the function that needs to be
+> called on the vma that is found.
+> 
+> If anyone has tests I can use for guest-memfd and instructions on
+> guest-memfd setup, I'll just write it instead of expanding the
+> userfaultfd middleware.
 
-- passes fstests (at least as well as the in-kernel driver)
+I used to use [1] as a test.  The test function can be called from inside
 
-- entry in a list of deprecated filesystems and where the tree is
-hosted if they aren't hosted in the kernel tree
+         if (flags & GUEST_MEMFD_FLAG_MMAP) {
+                 test_mmap_supported(fd, page_size, total_size);
+                 test_fault_overflow(fd, page_size, total_size);
+         } else {
 
-There are probably all sorts of other things I'm not thinking of too.
---=20
-Jeff Layton <jlayton@kernel.org>
+in your tree (tools/testing/selftests/kvm/guest_memfd_test.c).
+
+CONFIG_KVM_GUEST_MEMFD=y should be sufficient to enable guest_memfd support.
+
+[1] https://lore.kernel.org/kvm/20250404154352.23078-7-kalyazin@amazon.com/
+
+> 
+> Thanks,
+> Liam
+> 
+
 
