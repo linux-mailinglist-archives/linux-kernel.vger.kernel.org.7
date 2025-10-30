@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-877900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69B1C1F4C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:30:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD730C1F4BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78E5A4E8B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE79A188A62F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895DF32C305;
-	Thu, 30 Oct 2025 09:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B013112C1;
+	Thu, 30 Oct 2025 09:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pmGq5W/4"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dInDxbEa"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCD533CEB4
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77BB341678
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816600; cv=none; b=TTSuscnOwCEbnarN3WxtEV/BDatQSL7pd9TvNHb1Z8dfXS9g07CLwVgpSPpPhPUwywCrYfSumzezVMiummK32jrSR9Z+ptP/HYUdv/WlbN5kXSOIV45eAHkzLPBQz810kmYgy+A+C64ymSld5h42nxBT+RBDAgvrdh5QTUt4Z7I=
+	t=1761816627; cv=none; b=Q018y5hNp47A08i2OGBz8y7wlqo0ADyO072NbYQonZ8Bg7QNYUUS5FH1uux35IemKQiPTQl8s7FnUMQ6EzXv2cgETGz83QOvJBYah2vI9lDHrp5Qw5HjV3DrYZlwd9EpFwNpM6WV0KjWr5+OpVG1bL5ldrepydRBey1QEcfcLmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816600; c=relaxed/simple;
-	bh=Qc0+Uf2TFezTPsGtg5X2co1br8c8C1ZQ+ZgGCIOw4lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jDRmX2Xwc/NyfGDsGcoIVYlBP+zykUzeUoFiUIRzcdu3AxcTacega4dREQRUsSzX/p5TLVCZnbvqX5dKDYAfWQstllmvuuUUS4vzOuCFpAFdNjZhCo/6BIxdEjt/sE5WzbVVAFsr2FqXdXd6ERkOPPO99Ji3uz+28r3p31bTpMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pmGq5W/4; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id DC3CFC0DAA7;
-	Thu, 30 Oct 2025 09:29:34 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3C1EA6068C;
-	Thu, 30 Oct 2025 09:29:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F0E4118085A8;
-	Thu, 30 Oct 2025 10:29:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761816594; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Qc0+Uf2TFezTPsGtg5X2co1br8c8C1ZQ+ZgGCIOw4lE=;
-	b=pmGq5W/44Mtkdq7TTp7dSZj3t/TgnGDAWoHSYDgULOIpMa8IY9s7/DG1No2v0g/ibD7KUp
-	/c2WlIdCHUPNC22HynCrww9tlVnYdlC9c0DzeXQkwDcdiSMfXe+fFuNah2dYXjdetMnlG3
-	yVvIfGqSkZGntcz4aLJbkakQW3kv4gQ2j8c4b9N+3TbFF6A5pGV5PB2RQApxX0gO/kDaY6
-	faJ4kIqqLparBMUWB9QYjDHgxrIoxRfV6Q6cIe4PirYzdS8YSN/ib1BVxVn1p9jI+7t8AZ
-	9Tr+l7q2zKCLqM1ytbi1uUqIkpJKY7iD0A6Pet/THIF84zC+C88L21uGLGqH6A==
-Date: Thu, 30 Oct 2025 10:29:48 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Thomas Wismer <thomas@wismer.xyz>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
- Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley
- <conor.dooley@microchip.com>
-Subject: Re: [PATCH net-next v3 2/2] dt-bindings: pse-pd: ti,tps23881: Add
- TPS23881B
-Message-ID: <20251030102948.49cb0b42@kmaincent-XPS-13-7390>
-In-Reply-To: <20251029212312.108749-3-thomas@wismer.xyz>
-References: <20251029212312.108749-1-thomas@wismer.xyz>
-	<20251029212312.108749-3-thomas@wismer.xyz>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761816627; c=relaxed/simple;
+	bh=5GlMRQtGH2G2gDAvQEsZfUFiG9JUxvh98BBVJOE8/lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubajCzO8gj0XOW3e/t7fQuqlU8TMP4Sch5wfWH7211uJn9pMb5p6ckLdzaSXBn0kpWQ1HxzK22PUI8KJDF6sRll3yDpN5lJuipczAkPmHD61XAKcpa0g/+M4PEry0Ao0t/0SO9T2BvDwz5cR/wxBbvBe9BAswRAAM0M4cJDz36Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dInDxbEa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/nDypDsdSKuowBHLqpSMoZOwLxsLaOUn0lb2AWVf9v4=; b=dInDxbEasc+47t+VNB40tKpYzN
+	iuLOWtWEL8L6MK17CVdNKcylRdnpzJWxidxy08xuuCjOJGHJsGFw4J+PDHZQ68uqSyR0Vq8xOOtq5
+	gfjYpFtuQieGBtigMfGBnq+QR7lK0a4av1P+H/2GmgcCa8kYRizhb26uSdqc6HGgwtS7UMN3+kWwM
+	JmXZHPVwqtfnK/zsA+PRXNkpPpJ+cAlg0c7l88dz7K8DGlMLkGBDU5V2zs1j9FQk+EXnSUuINim3O
+	d0TmyCvtUmXjHWS3G1HCwOpJ1+zJojQPGZij4qeAFNJW7c5DDu+QUQUtI/tfC5CK6S9KPgKH0+Exu
+	FWPseAIg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEOyz-00000001bSO-2QKR;
+	Thu, 30 Oct 2025 09:30:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4F2D630029E; Thu, 30 Oct 2025 10:30:13 +0100 (CET)
+Date: Thu, 30 Oct 2025 10:30:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adam Li <adamli@os.amperecomputing.com>
+Cc: Joseph Salisbury <joseph.salisbury@oracle.com>,
+	Chris Mason <clm@meta.com>, clm@fb.com,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [External] : Re: [REGRESSION][v6.17-rc1]sched/fair: Bump
+ sd->max_newidle_lb_cost when newidle balance fails
+Message-ID: <20251030093013.GI4067720@noisy.programming.kicks-ass.net>
+References: <006c9df2-b691-47f1-82e6-e233c3f91faf@oracle.com>
+ <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
+ <20251007113459.GF3245006@noisy.programming.kicks-ass.net>
+ <36545e62-9947-43ef-9bc1-776f5663a45c@oracle.com>
+ <20251010170937.GG4067720@noisy.programming.kicks-ass.net>
+ <2aa7380b-bebd-4bb9-8597-49e06d1dcc6d@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2aa7380b-bebd-4bb9-8597-49e06d1dcc6d@os.amperecomputing.com>
 
-On Wed, 29 Oct 2025 22:23:10 +0100
-Thomas Wismer <thomas@wismer.xyz> wrote:
 
-> From: Thomas Wismer <thomas.wismer@scs.ch>
->=20
-> Add the TPS23881B I2C power sourcing equipment controller to the list of
-> supported devices.
->=20
-> Falling back to the TPS23881 predecessor device is not suitable as firmwa=
-re
-> loading needs to handled differently by the driver. The TPS23881 and
-> TPS23881B devices require different firmware. Trying to load the TPS23881
-> firmware on a TPS23881B device fails and must therefore be omitted.
->=20
-> Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Hi Adam,
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+On Thu, Oct 30, 2025 at 03:22:34PM +0800, Adam Li wrote:
 
-Thank you!
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> Commit 155213a2aed4 brings ~6% regression for SpecJBB critical-jOPS on
+> AmpereOne server. 
+> 
+> Baseline: v6.17 kernel + patch. Compared with baseline:
+> NI_TARGET	+7%
+> NI_SPARE	-3%
+> NI_RUNNABLE	-4%
+> NI_RANDOM	-3%
+> 
+> So NI_TARGET reverts the performance regression.
+> The other options brings more regression for SpecJBB.
+
+Excellent, how does NI_TARGET+NI_RANDOM work for you? Like Chris, I
+found that the schbench workload was really suffering from doing too
+many idle balance attempts that weren't really working out.
+
+NI_RANDOM reduces the number of newidle balances based on the success
+ratio. Eg. if you have successful balancing 25% of the time, it will do
+1 in 4 balances and count a successful balance as 4 to keep the
+accounting straight.
+
+So workloads with a high success rate will keep newidle balance calls
+frequent, while workloads with a low success rate (like schbench) will
+greatly reduce the number of calls.
 
