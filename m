@@ -1,84 +1,90 @@
-Return-Path: <linux-kernel+bounces-878495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F8EC20C99
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:59:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7C4C20D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95B246137F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 14:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9933B86D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B433528314E;
-	Thu, 30 Oct 2025 14:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816AA2DECD3;
+	Thu, 30 Oct 2025 15:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xg4Syogi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DHaDAYn3"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F903253F3A;
-	Thu, 30 Oct 2025 14:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6C22DEA74
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761836365; cv=none; b=V3IDFQAdc31NWnRatGJM453yxdDol+gCNF1g1V8ID9CvCUKqgNtDaej2I/sTnTfv6JwVqXUcMdXWVx0idJmrGH4knE4/LgBvnicEdu6dU7ObrmhGN8C+tvxi++2YOcrKT8i9UiiQ6AVx/q+J9SWRB3PqdaYa52WrZkX3lbXWL3I=
+	t=1761836607; cv=none; b=BRRh9NcPTzmCq3cLGKtXlHzFUAZlPYYDKtfv9zRUALbgOEZ0euLawyZ6AyFYnSQ6rNljmnCBmNKEwbj794yjOvUstbB4BLdo/KVBu57vu1aJT6kLEpsT7oY31TGzN58c2Xn3HLCrPbcGd/KEOD4cwLpVU+iqWPH4eQRagTJholE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761836365; c=relaxed/simple;
-	bh=TBkQ7jlW78onLhbg+CwKbnwsG8iZdKr/vA/pDUxvOvk=;
+	s=arc-20240116; t=1761836607; c=relaxed/simple;
+	bh=qN5+ruluEslMYfwABwsiAzDZ654++DBH5v/82CjNTgA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubby2mFdoAxPwcDYvAvTnunI5CxI/coC1JpdvSOuEnMK0QG3mni3qCdKyJotU/ZjhA6ppXqhZFwA/IMQPtzMhLwVNq+4FShTxrqcFZrkNm/fKoos4jfw0dLuTjqliI30WHwSgCnxWejIhaBq1VRAlryK9mOGTiR1+B/+xDItc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xg4Syogi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDEP1F026053;
-	Thu, 30 Oct 2025 14:59:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=szkv1VBsV5AZDTc7OasVlkTIQXnkgG
-	gqPoYbWRPezv0=; b=Xg4SyogiVAXKcG6w/Yr3MNFxIaNM8G6rw3Ge3SywIpdnEL
-	aX0YjKId0XAa6ZWEQCn87N/R+akWktPlvn+mBYF3je+YleQx0xY+Kn9rsMfg7una
-	lDHteG7oCjMWeTHJRm7Mlj9afFzdgHK5UDu1LdsFuk9CqazvIUtv9hrsX7CxyS3q
-	uzpCRaIeLnlf6abatyDEgDtI7dwL9i4jM2fduO0sTlFJ8KqdPxxRc96IhU5Jcyam
-	ykX4WNcdoJuZjlRKA6uHLtQM9Z43W1UQcj+oPu+aFY7gIjjYeHCy2Vp63S+Z9U7g
-	o1vaLXkczpvUm56OGkWMfWUoYNgoPgvX0aPjuHbA==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34aartm2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 14:59:09 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59UDJQLC019555;
-	Thu, 30 Oct 2025 14:59:08 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xy99gw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 14:59:08 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59UEx5Vs39256572
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 14:59:05 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F313C20043;
-	Thu, 30 Oct 2025 14:59:04 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9F94B20040;
-	Thu, 30 Oct 2025 14:59:04 +0000 (GMT)
-Received: from osiris (unknown [9.155.211.25])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 30 Oct 2025 14:59:04 +0000 (GMT)
-Date: Thu, 30 Oct 2025 15:59:02 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Luiz Capitulino <luizcap@redhat.com>, borntraeger@linux.ibm.com,
-        joao.m.martins@oracle.com, mike.kravetz@oracle.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, agordeev@linux.ibm.com,
-        osalvador@suse.de, david@redhat.com, aneesh.kumar@kernel.org
-Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
-Message-ID: <20251030145902.16837C8a-hca@linux.ibm.com>
-References: <20251028211533.47694-1-luizcap@redhat.com>
- <20251028145334.5a97211e0e46ca42fe2fa0d0@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ce9C3pnGdm0gcUESqnzSveUTGy2YypIWElvrLEGmzjMrOQPMYwpCuUg1FXNUkC8GqlpVKAuge0M6UgrwyR+EJ5/E3qLbY0+1u/3MsolYIbSiNjIE0N8ca2bT6n2FoSs6b13oV9LEgzJcG1aZx3QjOSyZH081ieUPtcok9hvlwJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DHaDAYn3; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47114a40161so13067495e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761836600; x=1762441400; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0rX4ZWwZjbz+sCqsuSVmEQevsucF/zOMrkQ0dHaaJmk=;
+        b=DHaDAYn3DWCVM8fJRHjdZOFiFfAWIaU57nlbXKP0mAYa8gb1uL42QJj/iGALaORrKI
+         ZVGa2CL4Zto32vs/ou9EwZRKin2e2UQscrNsXXF8ZhXW7lV4rXll8N7Ar4g+cCA9GKq+
+         5VH+b5s/R7NAXW3wjPiihH3GU6Tm91Vmwidkh+jvErKlEw9kCDSzb77KSlvXHd3mRVW6
+         YmqPb90EnScH3VWfwPcZUt2WWCasvovEq3MZIQauXuEIbHcOcTkG7SbDmDdi6MbXDVRs
+         PWjPCWYBGtv3+PH4kd/FnmntuzSlHAON3Nmx7Zdt4PPFptIBgFpAaa25nNipuTLlsjIQ
+         cGsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761836600; x=1762441400;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rX4ZWwZjbz+sCqsuSVmEQevsucF/zOMrkQ0dHaaJmk=;
+        b=cvboPPfKyFNMW7KQus+O9ybKohPlLEtMMupB/OR6asCVLDJ6pHu8OS5tgPLmoPSRHu
+         t+07iZu+8iuZq7SpL8xSOf8Ga4lrF670SJRqCBP/g0zOYuE6drvuMpN57b9NoXrVW3j2
+         idqjr3CA4pCvrwD/kwtyWcJFbkadC2eN4FUho+F0FuKj5+lZ5H1ybBnw+QOEGgk+A86o
+         FYJtZwzcD7gMxZ/AmQbxBBdoEtc57iU8OZlMwKb2MF9facV3Zir29dJSK31MmO9J9hXE
+         9S0PKanbLQxMySTT9SDmMSqngWKRAhTWDYcg+M+3Rq9OsCVmIQlkeU2JiRMD6KEQsunC
+         iv6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWiOOSlc3iX8PBLrxHfUpksGqlNDJB+gMkqdf/A0Zo8C/yTG40LYwPvEX2+zcxJSRd4Ou53kjSccCxjFao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycjlhasao6KSPgz8sGWjcxVgGth17GQ4dnNXYjggzj/X1lDqsR
+	eadFoCTTXc3It5HTqwlOAwWWzGe08tNnBIiTzq5j+5tPUDQQd4piXg2Nz2if9F8MAZo=
+X-Gm-Gg: ASbGncvJdcvzqE6oLHuGdO2+j8l7KL0r5V74puD6nLm11iIzaQ4B2zPF5frtou/jhE7
+	690py93oKaNMms2KnPYJvUFr2fDarkCHeCpH5BQQkURtEVrGBQbIOTvmYMN0GaWh97X+QdSftFm
+	v9lTZMysBca6PV4nB3CxaY1ebAZInmixaeif1uf2f4z3kESqIdi/ldKHtckTr4olDszzTC3zw0n
+	fZEl+d68jjIUZvl5YvgqrEljx1nT7Vq+uc74yW38uYnJYz139uv4AKyX8yrBmqBzOvhk/ti0k+u
+	QOY++RW9l116RJ7iTCNo00xHP6DPLZfSVvxKoQ7XrIBw/wyz7Hu1izSxskMb6P/XZvU/SEi0pLU
+	Acp14KWwXia9vIbfvzk7H8pLgh7BKK55PIE+Ll0ErKAbk6uuGJeLVjl7sxJ5xAqEMEK+F3g9C8k
+	25JC35FsLusj1hZQ==
+X-Google-Smtp-Source: AGHT+IHRHARDP80Knjii2eWVpygOVlNOatxN4qzGZJUhKYH3F/xYgYHJcAY0BQHLLPdeMNoxhT8tWg==
+X-Received: by 2002:a05:600c:3149:b0:475:dd89:acb with SMTP id 5b1f17b1804b1-4773089c4a1mr102625e9.22.1761836600017;
+        Thu, 30 Oct 2025 08:03:20 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477289b3956sm44133905e9.10.2025.10.30.08.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 08:03:19 -0700 (PDT)
+Date: Thu, 30 Oct 2025 16:03:17 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v2 1/1] printk: nbcon: Allow unsafe write_atomic()
+ for panic
+Message-ID: <aQN-NeWzlxtWDLXF@pathway.suse.cz>
+References: <20251027161212.334219-1-john.ogness@linutronix.de>
+ <20251027161212.334219-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,62 +93,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028145334.5a97211e0e46ca42fe2fa0d0@linux-foundation.org>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=ALkgKXG8 c=1 sm=1 tr=0 ts=69037d3d cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=20KFwNOVAAAA:8 a=pnrwH9RaTRmhQM8EeXAA:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: oHpYfSrcI6OOpyeOQezm9Vb57hP5iAPn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX0Ksmz6rT4f+q
- kKyfEFKwabEfiC76idkfmav3QtBTrTLlVq5CPl9EZJLL1FRpZjcwgIyZ/yCe5U7Tz52SMmHfxvs
- YywqnUnsfXy8K0JqE6CBFyvlIinM89AFPwrY+0cjDh3SRvvqqDBxhbLfPSnGd7617H49qpE1uwy
- WhPC5TLsd0k/nz73nTw+0+mqM0DR6nTBN7W8WOWGC8g3obWq74rYKlBlBIiCGqeIGRu1VH8Xplg
- XaGQiYx67SNpwNU2NMqyI2cUYFFj4ykOj7EJ1cn45xum+NF+NzEkQpW4fLKgk9hN/1anE3Vx0Ue
- seuv1applaZsC13GGepco+QQJNalq0VIZrZ+ht4xkz14OcRznwioLr4+4Zw5LHGXFeBmmMezlfd
- Dq/vHqbe+afSWyr+75yIH/nqXqmPVw==
-X-Proofpoint-GUID: oHpYfSrcI6OOpyeOQezm9Vb57hP5iAPn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_04,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2510280166
+In-Reply-To: <20251027161212.334219-2-john.ogness@linutronix.de>
 
-On Tue, Oct 28, 2025 at 02:53:34PM -0700, Andrew Morton wrote:
-> On Tue, 28 Oct 2025 17:15:33 -0400 Luiz Capitulino <luizcap@redhat.com> wrote:
-> > A reproducible crash occurs when enabling HugeTLB vmemmap optimization (HVO)
-> > on s390. The crash and the proposed fix were worked on an s390 KVM guest
-> > running on an older hypervisor, as I don't have access to an LPAR. However,
-> > the same issue should occur on bare-metal.
-> > 
-> > Reproducer (it may take a few runs to trigger):
-> > 
-> >  # sysctl vm.hugetlb_optimize_vmemmap=1
-> >  # echo 1 > /proc/sys/vm/nr_hugepages
-> >  # echo 0 > /proc/sys/vm/nr_hugepages
-> > 
-> > ...
-> > 
-> > This commit fixes this by implementing flush_tlb_all() on s390 as an
-> > alias to __tlb_flush_global(). This should cause a flush on all TLB
-> > entries on all CPUs as expected by the flush_tlb_all() semantics.
-> > 
-> > ...
-> >
-> >  arch/s390/include/asm/tlbflush.h | 6 +++++-
+On Mon 2025-10-27 17:18:03, John Ogness wrote:
+> There may be console drivers that have not yet figured out a way
+> to implement safe atomic printing (->write_atomic() callback).
+> These drivers could choose to only implement threaded printing
+> (->write_thread() callback), but then it is guaranteed that _no_
+> output will be printed during panic. Not even attempted.
 > 
-> Thanks, I'll add this to mm.git.  If s390 people prefer to merge it
-> (or nack it!) then please do so and I'll drop the mm.git copy.
+> As a result, developers may be tempted to implement unsafe
+> ->write_atomic() callbacks and/or implement some sort of custom
+> deferred printing trickery to try to make it work. This goes
+> against the principle intention of the nbcon API as well as
+> endangers other nbcon drivers that are doing things correctly
+> (safely).
+> 
+> As a compromise, allow nbcon drivers to implement unsafe
+> ->write_atomic() callbacks by providing a new console flag
+> CON_NBCON_ATOMIC_UNSAFE. When specified, the ->write_atomic()
+> callback for that console will _only_ be called during the
+> final "hope and pray" flush attempt at the end of a panic:
+> nbcon_atomic_flush_unsafe().
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> Link: https://lore.kernel.org/lkml/b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt
 
-Andrew, could you drop this one please? After looking a bit deeper
-into the real problem, this patch would just paper over the real bug
-(and it could still happen).
+The patch looks good to me:
 
-I added you on Cc for the bug fix, but that is supposed to go via the
-s390 tree - just in case you are wondering :)
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+That said, it needs one more hunk to fix build with the patchset
+adding support for nbcon into kdb which is
+in https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/
+
+It would fix the compilation problem reported by the robot:
+
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -1935,5 +1935,5 @@ void nbcon_kdb_release(struct nbcon_write_context *wctxt)
+ 	 * The console was locked only when the write_atomic() callback
+ 	 * was usable.
+ 	 */
+-	__nbcon_atomic_flush_pending_con(ctxt->console, prb_next_reserve_seq(prb), false);
++	__nbcon_atomic_flush_pending_con(ctxt->console, prb_next_reserve_seq(prb));
+ }
+
+
+
+Also there is one trivial conflict with the new branch which is
+preventing hardlockups in atomic flush which is
+https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/log/?h=rework/atomic-flush-hardlockup
+
+Namely, it is the last patch which moves nbcon_context_try_acquire()
+into to while cycle, see
+https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=rework/atomic-flush-hardlockup&id=d5d399efff65773ed82ddaf6c11a0fcfdb5eb029
+
+Commit:
+
+I am not sure how to move forward. IMHO, the original plan was to push
+this patch together with the other netconsole-related changes. In this
+case, the conflicts will need to be solved when merging pull requests
+from netconsole and printk trees. Well, the conflicts are trivial.
+
+Or I could push this patch via the printk tree and queue it for 6.19.
+But this might be too late for netconsole.
+
+It primary depends whether the netconsole side might be ready for 6.19
+or if it could wait for 6.20.
+
+Best Regards,
+Petr
 
