@@ -1,166 +1,197 @@
-Return-Path: <linux-kernel+bounces-877458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB2DC1E285
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:44:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4EAC1E28B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:49:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53D93AF09D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:44:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 213334E2255
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2366F32ABD6;
-	Thu, 30 Oct 2025 02:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBFF32AADB;
+	Thu, 30 Oct 2025 02:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YXjCM2kb"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARHAs7jR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00BF1B041A
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA3264F96
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761792244; cv=none; b=hk59jljmgFlyTm0OiD44Syd9ooqkn/p/LBTTM9HkLDz/caYjzdzFzZOYYZoV7VaaYOi8r1ILgXro+vPjmHCrDCfBzs1I2jVpwlxzsw5eoPmHhIdpuc9aj+fRm6z/5UCW9GEdJng8z9ESinQrQjkRTqnRaXZew+UHhCkSg+U0PQM=
+	t=1761792548; cv=none; b=G2dPy8qO7P1Em+yGNXe3qWANSXalW3toI+e1LqdZttQqp4TnJt0emMVoNg6oYa7W80YcaBUplOOWUUwZ5By4y55eZF3eCtV92uE7xMgaCmKZ4/FmOuYVi9oQlBx35NlovEB2n7kdmmC2oFCEjqg2ry4dUy1KtMCdHwPKAYhNXII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761792244; c=relaxed/simple;
-	bh=DfOGEOr+ZWItEdsyHaCYdxtCrUpYU6IvOFm+waMAB6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a3fkNqJtvmhLvICNxY9xG2bzh/FltdFuBzSa2cO8xVsFmmYeQl8kDFr6dsg3uOBEJsCYEWfxffqCMorhK5SWE/SXJh7Cua0VUuYbscCLzKcxKvXdUm4mFi8RKPgiCom8HGAMoS9RWJXyryprIPVvKzD9h3vLqrt2tbq90ru1Zck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YXjCM2kb; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761792230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXYnC3K3LDk/2WfKoZt4rs/JfbsDXoEJ5L7oBgFc64Y=;
-	b=YXjCM2kbyVTzStgk7lJtk68m2WI/bFmlNImUIFnnnNwTnA0zpzIgrsom9OeoX0A1wyaxkP
-	2GCK9rJbSbcpu820w1FxPY9S7UvKh1Y9Pw6Z08FdHYomvQJjzyH5j91DFzXNoyLgdUIoem
-	Z4GtoKDugYf4A4x7neuveW7mtyzxisA=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Menglong Dong <menglong8.dong@gmail.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, jolsa@kernel.org, mathieu.desnoyers@efficios.com,
- jiang.biao@linux.dev, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] tracing: fprobe: use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-Date: Thu, 30 Oct 2025 10:43:43 +0800
-Message-ID: <6206414.lOV4Wx5bFT@7950hx>
-In-Reply-To: <20251030094047.9f8aa77cb90897a14c8adada@kernel.org>
-References:
- <20251029021514.25076-1-dongml2@chinatelecom.cn>
- <20251030094047.9f8aa77cb90897a14c8adada@kernel.org>
+	s=arc-20240116; t=1761792548; c=relaxed/simple;
+	bh=OESeLapDHFHLWeeCn3u5du4nwmNj0LtI4GPRrXkwZ6U=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=DmqA/Hygjn6huNox4PKCiM5bhhfE3auz2GeRb9L0ast7Aoe3UnPPPVM0/LgOcJO2vGN/8xLVA14nvYhe11Hg1wFRUJSwfL/8VtVO5x6RahrdKa3XiQxunzTqAwq57RSV+bMgpCommsJ2buI1Quik/Gk+uOq/5TQvNwG+HQavUTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARHAs7jR; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761792547; x=1793328547;
+  h=date:from:to:cc:subject:message-id;
+  bh=OESeLapDHFHLWeeCn3u5du4nwmNj0LtI4GPRrXkwZ6U=;
+  b=ARHAs7jR8r8hI6dKkXc2Fa1vwn4SX+lZVpu9p9GC6bi6vbJsCyZMBjEA
+   QtoKXf9JKTxmdZI9dW4O6Sx4wslqXbOIlPYGre7BHtWpjcf0PrFvaRvnc
+   0ZeT6k/OQSw9Uk4Fqc8FAAO38WBE1wfnQuJldgc2ckpmBSFPZ3+yWWU2e
+   bDWmwz81HiZeeKVPgGmbNu62sJrXl5GrJ0HLaBXc7Ngj1dWu10k0ZTONz
+   MhHnofC1v6JBvQHTd53++7W7Ek+mduBAhZUKHY1e0DaK82ZGX4es3ZGtS
+   NHj/W6nyYExi/e15JSjOKYlk3/wUTdz2ZTrp5WBw/9+lCrTPmtYcCnO7i
+   w==;
+X-CSE-ConnectionGUID: myLq2ftDQXOnYePqyRgj/Q==
+X-CSE-MsgGUID: UQ74Ni9pQke2FaTqsLh0KQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74218600"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="74218600"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 19:49:06 -0700
+X-CSE-ConnectionGUID: 0jZyIBy6TVyCi3RKCsPMgQ==
+X-CSE-MsgGUID: Runq7G77QpOzO60+3kkN2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="185713083"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 29 Oct 2025 19:49:05 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEIih-000LO0-1h;
+	Thu, 30 Oct 2025 02:49:00 +0000
+Date: Thu, 30 Oct 2025 10:48:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev.2025.10.04b] BUILD SUCCESS
+ 67ac598b08778041e1ef69f686b4c68ce61a1fed
+Message-ID: <202510301046.FvaEg5QE-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
 
-On 2025/10/30 08:40, Masami Hiramatsu wrote:
-> On Wed, 29 Oct 2025 10:15:14 +0800
-> Menglong Dong <menglong8.dong@gmail.com> wrote:
-> 
-> > For now, we will use ftrace for the fprobe if fp->exit_handler not exists
-> > and CONFIG_DYNAMIC_FTRACE_WITH_REGS is enabled.
-> > 
-> > However, CONFIG_DYNAMIC_FTRACE_WITH_REGS is not supported by some arch,
-> > such as arm. What we need in the fprobe is the function arguments, so we
-> > can use ftrace for fprobe if CONFIG_DYNAMIC_FTRACE_WITH_ARGS is enabled.
-> > 
-> > Therefore, use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_REGS or
-> > CONFIG_DYNAMIC_FTRACE_WITH_ARGS enabled.
-> > 
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> >  kernel/trace/fprobe.c | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> > index ecd623eef68b..9fad0569f521 100644
-> > --- a/kernel/trace/fprobe.c
-> > +++ b/kernel/trace/fprobe.c
-> > @@ -254,7 +254,11 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
-> >  	return ret;
-> >  }
-> >  
-> > -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > +#if defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS) || defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
-> > +#define FPROBE_USE_FTRACE
-> > +#endif
-> > +
-> > +#ifdef FPROBE_USE_FTRACE
-> >  /* ftrace_ops callback, this processes fprobes which have only entry_handler. */
-> >  static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent_ip,
-> >  	struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> > @@ -295,7 +299,7 @@ NOKPROBE_SYMBOL(fprobe_ftrace_entry);
-> >  
-> >  static struct ftrace_ops fprobe_ftrace_ops = {
-> >  	.func	= fprobe_ftrace_entry,
-> > -	.flags	= FTRACE_OPS_FL_SAVE_REGS,
-> > +	.flags	= FTRACE_OPS_FL_SAVE_ARGS,
-> >  };
-> >  static int fprobe_ftrace_active;
-> >  
-> > @@ -349,7 +353,7 @@ static bool fprobe_is_ftrace(struct fprobe *fp)
-> >  {
-> >  	return false;
-> >  }
-> > -#endif
-> > +#endif /* !FPROBE_USE_FTRACE */
-> >  
-> >  /* fgraph_ops callback, this processes fprobes which have exit_handler. */
-> >  static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> > @@ -599,7 +603,7 @@ static int fprobe_module_callback(struct notifier_block *nb,
-> >  	if (alist.index > 0) {
-> >  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> >  				      alist.addrs, alist.index, 1, 0);
-> > -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > +#ifdef FPROBE_USE_FTRACE
-> >  		ftrace_set_filter_ips(&fprobe_ftrace_ops,
-> >  				      alist.addrs, alist.index, 1, 0);
-> >  #endif
-> 
-> Instead of introducing FPROBE_USE_FTRACE, I think it is better to add another
-> wrapper to be called here.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2025.10.04b
+branch HEAD: 67ac598b08778041e1ef69f686b4c68ce61a1fed  fixup! rcutorture: Make srcu{,d}_torture_init() announce the SRCU type
 
-Sounds better! I'll modify it in the next version.
+elapsed time: 1520m
 
-Thanks!
-Menglong Dong
+configs tested: 105
+configs skipped: 2
 
-> 
-> #if defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS) || defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
-> 
-> static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove, int reset)
-> {
-> 		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> 				      alist.addrs, alist.index, 1, 0);
-> 		ftrace_set_filter_ips(&fprobe_ftrace_ops,
-> 				      alist.addrs, alist.index, 1, 0);
-> }
-> ...
-> #else
-> static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove, int reset)
-> {
-> 		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> 				      alist.addrs, alist.index, 1, 0);
-> }
-> #endif
-> 
-> Thank you,
-> 
-> 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                           sama5_defconfig    gcc-15.1.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20251029    gcc-12.5.0
+arm64                 randconfig-002-20251029    clang-22
+arm64                 randconfig-003-20251029    gcc-13.4.0
+arm64                 randconfig-004-20251029    gcc-11.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20251029    gcc-9.5.0
+csky                  randconfig-002-20251029    gcc-11.5.0
+hexagon                           allnoconfig    clang-22
+hexagon               randconfig-001-20251029    clang-20
+hexagon               randconfig-002-20251029    clang-22
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20251029    gcc-14
+i386        buildonly-randconfig-002-20251029    gcc-14
+i386        buildonly-randconfig-003-20251029    clang-20
+i386        buildonly-randconfig-004-20251029    gcc-14
+i386        buildonly-randconfig-005-20251029    gcc-14
+i386        buildonly-randconfig-006-20251029    gcc-14
+i386                  randconfig-001-20251030    gcc-14
+i386                  randconfig-002-20251030    gcc-14
+i386                  randconfig-003-20251030    clang-20
+i386                  randconfig-004-20251030    clang-20
+i386                  randconfig-005-20251030    clang-20
+i386                  randconfig-011-20251030    gcc-14
+i386                  randconfig-012-20251030    gcc-14
+i386                  randconfig-013-20251030    gcc-14
+i386                  randconfig-014-20251030    clang-20
+i386                  randconfig-015-20251030    gcc-14
+i386                  randconfig-016-20251030    gcc-14
+i386                  randconfig-017-20251030    gcc-14
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20251029    clang-22
+loongarch             randconfig-002-20251029    clang-22
+m68k                              allnoconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                 randconfig-001-20251029    gcc-11.5.0
+nios2                 randconfig-002-20251029    gcc-9.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                randconfig-001-20251029    gcc-12.5.0
+parisc                randconfig-002-20251029    gcc-8.5.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                     ksi8560_defconfig    gcc-15.1.0
+powerpc                      mgcoge_defconfig    clang-22
+powerpc                      ppc44x_defconfig    clang-22
+powerpc               randconfig-001-20251029    clang-22
+powerpc               randconfig-002-20251029    gcc-12.5.0
+powerpc                     redwood_defconfig    clang-22
+powerpc                  storcenter_defconfig    gcc-15.1.0
+powerpc64             randconfig-001-20251029    clang-22
+powerpc64             randconfig-002-20251029    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20251029    clang-20
+riscv                 randconfig-002-20251029    clang-19
+s390                              allnoconfig    clang-22
+s390                  randconfig-001-20251029    gcc-11.5.0
+s390                  randconfig-002-20251029    gcc-8.5.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-14
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20251029    gcc-11.5.0
+sh                    randconfig-002-20251029    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                 randconfig-001-20251029    gcc-8.5.0
+sparc                 randconfig-002-20251029    gcc-15.1.0
+sparc64                             defconfig    clang-20
+sparc64                             defconfig    gcc-14
+sparc64               randconfig-001-20251029    clang-20
+sparc64               randconfig-002-20251029    clang-22
+um                                allnoconfig    clang-22
+um                                  defconfig    clang-22
+um                                  defconfig    gcc-14
+um                             i386_defconfig    gcc-14
+um                    randconfig-001-20251029    clang-22
+um                    randconfig-002-20251029    clang-22
+um                           x86_64_defconfig    clang-22
+um                           x86_64_defconfig    gcc-14
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20251030    clang-20
+x86_64      buildonly-randconfig-002-20251030    gcc-14
+x86_64      buildonly-randconfig-003-20251030    gcc-13
+x86_64      buildonly-randconfig-004-20251030    gcc-14
+x86_64      buildonly-randconfig-005-20251030    clang-20
+x86_64      buildonly-randconfig-006-20251030    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                                  kexec    clang-20
+x86_64                randconfig-011-20251030    clang-20
+x86_64                randconfig-013-20251030    gcc-13
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-14
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-14
+x86_64                           rhel-9.4-ltp    gcc-14
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20251029    gcc-8.5.0
+xtensa                randconfig-002-20251029    gcc-8.5.0
 
-
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
