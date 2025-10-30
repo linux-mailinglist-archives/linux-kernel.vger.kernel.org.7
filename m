@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-877992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846D0C1F82F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C33ACC1F833
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 11:25:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734994E8B6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:25:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DCE34E8819
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF32D354AF3;
-	Thu, 30 Oct 2025 10:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429F535505D;
+	Thu, 30 Oct 2025 10:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cuKxX9me"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gZxe+zAT"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7474F351FC3
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A552D8DB9
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761819872; cv=none; b=MSVYJbJ64HRgEqObJC/68/qO1hBBnGmTN7yv8wGI8MdtRkhmcjYf8/vPbbNcL6VFQlZYEjNB9fwvLF4xlRJyNf1bvsjgXiF2XjwhOBMiw8ZOsGJj9sATE5KwOTbNzyZq/ATE1MAFLp1fpyMvkhgm6Tbul/l9R8EU2L5nmRzr0jM=
+	t=1761819874; cv=none; b=K4gr+7wZk0p5WTAXyscx1fcK9hpOCWj5plgg5LbirOoJYs0GQxj2X1x1OWoQE6oL2Q53wANZ7mPzhWRT+SYyFnHi3/x5UqPWXWKsqFQttF18mlS8WMUH/fXDrltBxV+nb00yOyjTciOsqhPweSs8eBCx1r4ta4gHBL7mk54FIlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761819872; c=relaxed/simple;
-	bh=Ez7a+wreIh7UMIo9IVUU+O2bN8hhAvrjsWtYzNG/hJA=;
+	s=arc-20240116; t=1761819874; c=relaxed/simple;
+	bh=/+Ud9HruVze393NyT1qzp2ulTBCT/YDFMljaKM2s+v8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=igLWanG+zH+LkZ6DhffmkylW46l4gvpMGLoQx/Ay/z8RFamfFiE1D8KC8AWI/OqEKyIxTmssYxIN5Isitez11LUUABxplvqGu5iuEPuk/PQx0Yr4YMnde6Byd4ty7Nrbpq9F74Z7mQvGwV+tLd0dZbVjy7918kitFn7RoD5KZ+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cuKxX9me; arc=none smtp.client-ip=185.171.202.116
+	 MIME-Version; b=MoRCG953Kxwep6Nj5hlCHaHaKW7qfTXEoItuAYra0bVNSNBaLZUtyWGrSqZAIbjRPyqoVZbnsrIbjcI9gu7HsBnYgFtWLesSMg/jQ8sJJd413lBrrGvXTjRohwE8ghX+nHsBkeZtuSUxSNuUx+TUzUMLsQZI7buwMktgN/Pm92Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gZxe+zAT; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id B2546C0DAAB;
-	Thu, 30 Oct 2025 10:24:08 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id EF8BE4E413F2;
+	Thu, 30 Oct 2025 10:24:30 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 284156068C;
-	Thu, 30 Oct 2025 10:24:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3D81911808821;
-	Thu, 30 Oct 2025 11:24:27 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C66136068C;
+	Thu, 30 Oct 2025 10:24:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A67E0102F2500;
+	Thu, 30 Oct 2025 11:24:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761819868; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1761819870; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=RoyBPsQbxCeIyoPQ2zrzEdmuX54xkmjv6HtTh7tX2pE=;
-	b=cuKxX9meA+bNJDneTgaqLKGwAeRY7C04U2PFcPPzTSTA9uWBDYQ0LRTaKNwIBFSD3I7Bzi
-	ObVIj158RqAaCWrwRf9txLznrlOKryzaZB4nwF/0oqyKVx6pQk4raE090zw2mci+BK9iQT
-	IibgK5D/5bmfhh3kOoQ/0WCrv+mWKZ6GYTSxggeieViKa0kDvlnHHMpZgXhRGX83uf6qMn
-	LMz1d22VP5UDc72kb0mtMhlR5Nbd7K9ZX/GJJuets1I14b0pBELKf/wU/HCy6VqQjljV8h
-	fEl0yPKiC2m8yS8kVIGzr9BoMaobqKdZWONokoR5helRQmT8GiWYVCRPXvtaUA==
+	bh=pYQO/J8iwjLT+7v/VfTgDA/2MnHjgHlcPgf4jpQ3AXs=;
+	b=gZxe+zATPo1ZUR444y2TlDGvsM9lETqMy7I/JWzjj9wQNzpOdcT1fm+2wN4cCzHxZBj6WP
+	cVF0v/YOfw0Feab6GlIKGwKAdIw9yNFLaU29abStuieUIn/eHDigSsmZAhvD34iB7yrmWM
+	/kIko9F7NQHox/3C8nu/WQsXfsIB7evmNNfK5Fuf7Brl/Upabt0QOBZhNWGCeViOifPb2Z
+	belpWKJXlcvvksH/XuoZd5wuzVgF6OrnfBHHebYgjnQMxDSz2nKfin85LD4N7oblPEgmnf
+	fpsHuxEYvNduINWzIRxEfUSZ1u+8HoFj+4QeL3/0IOK6kD8BTRI+BfpEuxw+oA==
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
 	davem@davemloft.net,
@@ -62,9 +62,9 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	netdev@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 3/4] net: altera-tse: Don't use netdev name for the PCS mdio bus
-Date: Thu, 30 Oct 2025 11:24:16 +0100
-Message-ID: <20251030102418.114518-4-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 4/4] net: altera-tse: Init PCS and phylink before registering netdev
+Date: Thu, 30 Oct 2025 11:24:17 +0100
+Message-ID: <20251030102418.114518-5-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251030102418.114518-1-maxime.chevallier@bootlin.com>
 References: <20251030102418.114518-1-maxime.chevallier@bootlin.com>
@@ -77,28 +77,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The PCS mdio bus must be created before registering the net_device. To
-do that, we musn't depend on the netdev name to create the mdio bus
-name. Let's use the device's name instead.
+register_netdev() must be done only once all resources are ready, as
+they may be used in .ndo_open() immediately upon registration.
+
+Move the lynx PCS and phylink initialisation before registerng the
+netdevice. We also remove the call to netif_carrier_off(), as phylink
+takes care of that.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/ethernet/altera/altera_tse_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/altera/altera_tse_main.c | 32 +++++++++----------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index c74b1c11d759..a601ba57190e 100644
+index a601ba57190e..4ffa3edf1d0c 100644
 --- a/drivers/net/ethernet/altera/altera_tse_main.c
 +++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -1404,7 +1404,7 @@ static int altera_tse_probe(struct platform_device *pdev)
- 			 (unsigned long) control_port->start, priv->rx_irq,
- 			 priv->tx_irq);
+@@ -1390,20 +1390,6 @@ static int altera_tse_probe(struct platform_device *pdev)
  
--	snprintf(mrc.name, MII_BUS_ID_SIZE, "%s-pcs-mii", ndev->name);
-+	snprintf(mrc.name, MII_BUS_ID_SIZE, "%s-pcs-mii", dev_name(&pdev->dev));
+ 	priv->revision = ioread32(&priv->mac_dev->megacore_revision);
+ 
+-	netif_carrier_off(ndev);
+-	ret = register_netdev(ndev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to register TSE net device\n");
+-		goto err_register_netdev;
+-	}
+-
+-	if (netif_msg_probe(priv))
+-		dev_info(&pdev->dev, "Altera TSE MAC version %d.%d at 0x%08lx irq %d/%d\n",
+-			 (priv->revision >> 8) & 0xff,
+-			 priv->revision & 0xff,
+-			 (unsigned long) control_port->start, priv->rx_irq,
+-			 priv->tx_irq);
+-
+ 	snprintf(mrc.name, MII_BUS_ID_SIZE, "%s-pcs-mii", dev_name(&pdev->dev));
  	pcs_bus = devm_mdio_regmap_register(&pdev->dev, &mrc);
  	if (IS_ERR(pcs_bus)) {
- 		ret = PTR_ERR(pcs_bus);
+@@ -1441,12 +1427,26 @@ static int altera_tse_probe(struct platform_device *pdev)
+ 		goto err_init_phylink;
+ 	}
+ 
++	ret = register_netdev(ndev);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to register TSE net device\n");
++		goto err_register_netdev;
++	}
++
++	if (netif_msg_probe(priv))
++		dev_info(&pdev->dev, "Altera TSE MAC version %d.%d at 0x%08lx irq %d/%d\n",
++			 (priv->revision >> 8) & 0xff,
++			 priv->revision & 0xff,
++			 (unsigned long)control_port->start, priv->rx_irq,
++			 priv->tx_irq);
++
+ 	return 0;
++
++err_register_netdev:
++	phylink_destroy(priv->phylink);
+ err_init_phylink:
+ 	lynx_pcs_destroy(priv->pcs);
+ err_init_pcs:
+-	unregister_netdev(ndev);
+-err_register_netdev:
+ 	netif_napi_del(&priv->napi);
+ 	altera_tse_mdio_destroy(ndev);
+ err_free_netdev:
 -- 
 2.49.0
 
