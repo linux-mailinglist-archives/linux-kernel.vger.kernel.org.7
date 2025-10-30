@@ -1,160 +1,147 @@
-Return-Path: <linux-kernel+bounces-878826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE362C218BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:46:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A05C218D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37B303504A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C5F1882788
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C9036C25F;
-	Thu, 30 Oct 2025 17:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8111B33EAEF;
+	Thu, 30 Oct 2025 17:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a9aZc+oa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DQZjQDcG"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EA572639;
-	Thu, 30 Oct 2025 17:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30801192B90
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846372; cv=none; b=n5f8Txq4n8t+OpdBRFNNU8U6nzFw1YPTAgyPFMoz2H/5AAS0vT73o9UZqkxKGlNU5bqJt8BizRziXzBdnNGjG+D2IR7xe24m69CeOPGwRYOlk3sYSkXCBBNpmdJPYxQOe8L7yisE6ELu4GeRKwqGEa7W51PI3ix27LLT+Ta+Wlc=
+	t=1761846529; cv=none; b=APwiyq9VnRTrc4dSB9+BLGmyD7ra8rUX6AaXll0iKY23S/sJx7N6iLCLCUjf6fv9tamQ3fyk9IV8ehpxQuGUsBgvclZXkNkHik1BOFYD6gRQwHjWrIuq8Bl2yZ+NyvbaARH9SvGNPP9ayTudrlMq/prRuDFQXClWrwFnI3kmHvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846372; c=relaxed/simple;
-	bh=b2xexS6Qluhsr9ZmEqlGOXtDsR48B9OmLyAHTqqnzbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LjoLq0MKGeFrLfUrUIe51XbsZqc5fwnua1H39mqhbrIWWIPo7VrKdPaH3TeEFTgHvFB/FYbNyqZ9N1x/rhz3Q/NlLsCiX+znGeQgYfu1ZfxerfyNVXKjQxSCz4/Vf9VU4tuL+xaSqzqYJZ2n5USdHGQYoe4A/PXYHfWY9Fku9KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a9aZc+oa; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761846371; x=1793382371;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b2xexS6Qluhsr9ZmEqlGOXtDsR48B9OmLyAHTqqnzbk=;
-  b=a9aZc+oalwpkkO3hWqBjbs+vMi2rgj2oCJWDp9pLe3pUWSPg17iqCDkk
-   qtoML0dPBqScbo9FxrwSY7YmQ7R/AZQMGRtMEp8FyyOxwlGnBwjCp0Vvd
-   L5zCnMqUbvo4RtH77w62IQLIkhCDtzYEjNT4TpN6wIfv+x4EAb205jkxB
-   97ro6/cHB+/K2qd2xpsYHiqeTsw97hnUSzPDmTo3cwvzxloXWSuyDIOCt
-   bDsIGdyu3BwN9yVxbg8OTj1KZ84jVX/0rH6qbmoBK+b/LarR1PP3eI258
-   KPdDmAphYmaudT3bb5j5vaY6vXMiTcU8IyniGCQX7e13RwYO0LDCgyrqd
-   A==;
-X-CSE-ConnectionGUID: O6WR9q+wTHSEKlMPPgKEkA==
-X-CSE-MsgGUID: khR0DuIRQTuTyy4OBIblWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64039302"
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="64039302"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:46:10 -0700
-X-CSE-ConnectionGUID: b/GmOWjcS2aKDC4H8SgNzQ==
-X-CSE-MsgGUID: HAspeAjwQ7KrOmmY4Vdu1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="191158265"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:45:58 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vEWif-00000003zFy-3ih6;
-	Thu, 30 Oct 2025 19:45:53 +0200
-Date: Thu, 30 Oct 2025 19:45:53 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 18/29] i2c: mux: Create missing devlink between mux
- and adapter physical device
-Message-ID: <aQOkUa1IwuiOeSvT@smile.fi.intel.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-19-herve.codina@bootlin.com>
- <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
+	s=arc-20240116; t=1761846529; c=relaxed/simple;
+	bh=hvY2AMeEF+akSyY9xQ1EJHrpfTQa+amr5KHr3IBGL+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TfY8u9g/jR/YlMrP9sf0fc/ixoyYqj4GdXQPvAtwQbIo3Ivmjziu4Tw9mxXJIJEXs3HUuy6001pK4Ue58fc/dTCzdPit4G/6naPxKBGRhO/CIIeWx+JbENAjtuEghlV7yiHrVYjwAsEIv+LXGnp1Ki4k0IvPRz+sXLV1QczZphc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DQZjQDcG; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b6d78062424so153987266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761846526; x=1762451326; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rh3v1Ouyt2/LL0f3ahZVxJ6mw6N6zXyY0nD5+7NxUoI=;
+        b=DQZjQDcGuTOKSLGYXJ3033Y4M5Jd3QS0jaUUYEFbAp3e4UxkdKtcELU0ZT9VUGJ6ap
+         mHkEcRSvM15uT2F9zqUZFBfYKdAGaPeaiphEDsC0zzxtwATRFk7Vl0jqGzqJeaWIWBig
+         ZiXOcp3arKHBLS8NrrVCtgFM1uNQy82eAKUsQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761846526; x=1762451326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rh3v1Ouyt2/LL0f3ahZVxJ6mw6N6zXyY0nD5+7NxUoI=;
+        b=YCHgoIx2z7OoXF4myfqf7RPAUv5W4Uh8Qa+E31MUSse0Um54YZqko4vRSBSDXwNAzB
+         lzYM8DgH31xCVivULfuSFOccqT/QyLjPpSBW7mbNQ1PnHdb4OLWBWTTOuT9cs/NwbmVn
+         wd3g+4JX9M5ZetSNXcM1a0yd8wy2RO/LyrktSeJyKHj1OobD++xpoEmjNUhw2lT/1f3X
+         0PwSnQirs3qDIar5nsBASXCBGlLl04/+zBvAREVsYbnA3+Unwh9/cgXJp7MyAQfJ50vA
+         It5lmSslGM51jrnXey7hkwjaQZ4M9GIf58YkwLoAxO5kxMWVWqLwp/9oMntP8euQ00hU
+         cqnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY8BRcWWS5y8UBCVEFvDxnv86nODqIeNehJ9fxx0J2gT3HoofVMWLU7M0Wcyb1bvSXTshIoajokPI3Mnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6mcnGAdkIJkWpCUIPg8hAKnrAIjWOu6Fw6SE7TWBikvesWSms
+	a1l29XoPuEbwS5GaVNUhFpyyH3Gf7Z8nCvekENvxjkJbpDbofVIZ0DcIdK/0MlwcWzf3XimO7RY
+	+LWaiQegcoaU0LJmAVZnOKResQRmtm7A+RLkVU6Cz
+X-Gm-Gg: ASbGncthvMObyLHPaRuBaNDxWdmHhIQb/e1HYNA+VAWaM0bkhuZcqMguu32u92yc/rB
+	acsXd1ISREQ0nKrduiZEjWWr7EBEZpM7sCADvP55pg8AESX5RBIce8loPZr/M6QWHqqIdrYjBkq
+	pobWYlPvOlPPCM49PmxlI5lmRr+HH2nuXLZULUP4EODqjY84AZADRNro/XY/EVw+bgwK4QvQe6X
+	K8Hi33eNvn3pQj3WVPURNtAknb1a9wEwchNGgiI4HrVFSwsZxr+55JnhD9i
+X-Google-Smtp-Source: AGHT+IFqQURgiVVoko3shKC6Bba8izDNAkvb/wrfoTaAwLNWBZJOf02mJMQvX3esqCeLaHeNf9hngmACT/ffLDzYAUk=
+X-Received: by 2002:a17:907:96a8:b0:b40:8954:a8bf with SMTP id
+ a640c23a62f3a-b70700dc258mr41404966b.2.1761846526480; Thu, 30 Oct 2025
+ 10:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20251006230205.521341-1-sjg@chromium.org>
+In-Reply-To: <20251006230205.521341-1-sjg@chromium.org>
+From: Simon Glass <sjg@chromium.org>
+Date: Thu, 30 Oct 2025 18:48:34 +0100
+X-Gm-Features: AWmQ_blfeBNw3Xuud5_t8lUhFAGElC9C1cTXKbT5FkRt30uiLVTs4DdYWXfmWS4
+Message-ID: <CAFLszTibSrTwhGaRZC5HF=UYnsdi8q0j9pyNbEL7jKSnYd6hBA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] scripts/make_fit: Support ramdisks and faster operations
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, =?UTF-8?B?SiAuIE5ldXNjaMOkZmVy?= <j.ne@posteo.net>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Tom Rini <trini@konsulko.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Sterba <dsterba@suse.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Terrell <terrelln@fb.com>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Rong Xu <xur@google.com>, Will Deacon <will@kernel.org>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 30, 2025 at 04:23:24PM +0100, Andi Shyti wrote:
+Hi,
 
-...
+On Tue, 7 Oct 2025 at 01:02, Simon Glass <sjg@chromium.org> wrote:
+>
+> This series updates 'make image.fit' to support adding a ramdisk to the
+> FIT, either one provided as a parameter or one created from all the
+> kernel modules.
+>
+> It also includes a few performance improvement, so that building a FIT
+> from ~450MB of kernel/module/devicetree files only takes a few seconds
+> on a modern machine.
+>
+> Changes in v4:
+> - Provide the list of modules from the Makefile
+> - Reduce verbosity (don't print every module filename)
+> - Rename the Makefile variable from 'EXTRA' to 'MAKE_FIT_FLAGS'
+> - Use an empty FIT_MODULES to disable the feature, instead of '0'
+> - Make use of the 'modules' dependency to ensure modules are built
+> - Pass the list of modules to the script
+>
+> Changes in v3:
+> - Move the ramdisk chunk into the correct patch
+> - Add a comment at the top of the file about the -r option
+> - Count the ramdisk in the total files
+> - Update the commit message
+> - Update the commit message
+> - Add a way to add built modules into the FIT
+>
+> Changes in v2:
+> - Don't compress the ramdisk as it is already compressed
+>
+> Simon Glass (7):
+>   scripts/make_fit: Speed up operation
+>   scripts/make_fit: Support an initial ramdisk
+>   scripts/make_fit: Move dtb processing into a function
+>   scripts/make_fit: Provide a way to add built modules
+>   kbuild: Allow adding modules into the FIT ramdisk
+>   scripts/make_fit: Support a few more parallel compressors
+>   scripts/make_fit: Compress dtbs in parallel
+>
+>  arch/arm64/boot/Makefile |   4 +
+>  scripts/Makefile.lib     |  10 +-
+>  scripts/make_fit.py      | 264 +++++++++++++++++++++++++++++++++------
+>  3 files changed, 239 insertions(+), 39 deletions(-)
+>
 
-> > +	dl = device_link_add(muxc->dev, parent_physdev, DL_FLAG_AUTOREMOVE_CONSUMER);
-> 
-> Not to call twice put_device, I would add it once here and then
-> check for !dl.
+Are there any comments on this series?
 
-I was almost commenting the same in one of the previous rounds, but...
+> --
+> 2.43.0
+>
+> base-commit: 4a71531471926e3c391665ee9c42f4e0295a4585
+> branch: fita4
 
-> > +	if (!dl) {
-> > +		dev_err(muxc->dev, "failed to create device link to %s\n",
-> > +			dev_name(parent_physdev));
-
-...haven't you noticed this use? With your (and my old) suggestion this may
-lead to NULL / stale pointer dereference.
-
-> > +		put_device(parent_physdev);
-> > +		ret = -EINVAL;
-> > +		goto err_free_priv;
-> > +	}
-> > +	put_device(parent_physdev);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Simon
 
