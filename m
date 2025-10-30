@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-878825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B97AC218BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:46:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE362C218BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C38A41AA0FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:44:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37B303504A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F493253B42;
-	Thu, 30 Oct 2025 17:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C9036C25F;
+	Thu, 30 Oct 2025 17:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnHAwF/D"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a9aZc+oa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1950F36A61B
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EA572639;
+	Thu, 30 Oct 2025 17:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761846259; cv=none; b=VtG6p81CCuQpIna0PvBDE4nUi8U3OJRdEYFP79rpJ0OSdCUdOHvg6h7tjZtLQaVQc4Mxoz2moPvfgVxvuzyftTXoEnc6yPgKaFkDjg6cTXNT7HGdlZymMvqqh2ZPcTPmpkvrMFNodC4yg3+5rHnTugnsRTuKA0k4xaVHpCVdK+A=
+	t=1761846372; cv=none; b=n5f8Txq4n8t+OpdBRFNNU8U6nzFw1YPTAgyPFMoz2H/5AAS0vT73o9UZqkxKGlNU5bqJt8BizRziXzBdnNGjG+D2IR7xe24m69CeOPGwRYOlk3sYSkXCBBNpmdJPYxQOe8L7yisE6ELu4GeRKwqGEa7W51PI3ix27LLT+Ta+Wlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761846259; c=relaxed/simple;
-	bh=D6cA0tuKeFpeMg9nWmYaQYp+gHaB5LK2pOt58ibUKA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=saWHHhoxJ8zN28aTa5tPSWOHy2Xms2CxVf0MLYNp8wy44W9me8fWiyjG0ZMbKf8v4Hixn0CFFDsofzNGOonxB0W6KhSOqtUWn+X/U14hiCJhcIZQaeOjOT84RRfrzCJx+sOgs92W8LnrUDfp1cgTR7NX1m8PDSeRa5v0V5jm63g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnHAwF/D; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-785bf425f96so35210887b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 10:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761846257; x=1762451057; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dPcGBwo0LIxONJDvhEXLjvnHJC4KOb17GqsunV3dmKw=;
-        b=OnHAwF/DFejoPBpnC6PrPbPyjJqHSgn4ZRpWE3jjEC2n7KWT/IWkpFFlAw0yvGP1wH
-         +F0Fb0qDhBlJkqIwclzEup6d1L2hlNuBGtaq+YNf/A8L5XViAr9jUk/NfztpUs6Kmuln
-         3HOJSASODT2cowculb53XIMp+20Qh+Og3EdALmvIztSCVKkXOt+Z7pPdcAiAEw2gWrYB
-         FEZnYfEot/mMV4ABwclvVKl4W4UAwfT+P710Ylz4Xv0xrT7I9+QI/YWbe+LdjmXCy4zD
-         SJhEzkclvc2kNJpXfCJLJb3roVR9yDv1MoBAtJ/MNnhinEpkXx3q5wBdxCwdruLtV7Wj
-         xpCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761846257; x=1762451057;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dPcGBwo0LIxONJDvhEXLjvnHJC4KOb17GqsunV3dmKw=;
-        b=Yh+LKaO/bEHSymR4daRcZEa3qdTGJf2KaB3Nx6IfBbq+uVr0VaJQ1CVgqEb4WH1wLn
-         f1jOCAUKgGy4eGzRwDChuaQPSICNiAzaGPre9wXDxsCPnJ9orfnFdyyILJpNJeOfLmlC
-         ZrysZRBER7kmKFYYTTuTAdUYJgfCfyLXCPwoz2tBML8KaM1TeBJKNtYB+/uTRh3uxdFj
-         O2BjUQHYMomRlBfXEyrLn8LCi4JuYal14AgkR7hvU6hQeoe6J6Nx7RbvS5qKANqAJvl4
-         rYknrsz6u5oWylOMA3wu7yO8IrVYaOPyHdXxzUcPO8ofjp82Ib/pv5MnnmaMqV5k7I7l
-         Z0mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0kNgJMrU3jmqt3mJLai1Tk68uvm+sBPdR+7OfVkPvuqHOdNh3Uvac2uDQEJIv2x5se8WqVQS1gqeMJDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgmkYBOkBfEQCUn/p74AFd9z5TpCgi+QCldIHXp3JROVWsoUri
-	mgp2O6W0L5/8o+3bL3ndmhanEEoZT3E34IqssOwVQ/bIBMVps4wW2alafUOE+jA46orWNQo2ULI
-	3ei/5lBOOmrAXqeuQIgwP3EopVXmbUGM=
-X-Gm-Gg: ASbGncuOjaasZdaZ8hGyXsgTk9iqRyKvOoEvr54JTK47iHYSdebmqL5k9AeAuLEYwIq
-	EnkqDynf0BnfwOgLtaL8F18xRssujabZnJ0NV857yK7C8qS1cWkU5GcNV7oVvz5arIJn2RnGGDO
-	tSCztxh+lF6QZCpReFIW83Gt2YW+bzq1GvY3G1ADkuM/rhlXSVw965Eq2Obx7Rx7KcjZFs7LSCA
-	UNHXOKYhJg33wLg0z99xmJEv2lnxWdbAvDCHBkJh59733ql0K1+3jdYtP4=
-X-Google-Smtp-Source: AGHT+IHUzr1i1p7RU6UbmOcxsnFajiDYf7p1VqY7fU7ZTT5VMVQZ7PZnaERwesvfRaKWecuNG4UrqRarnwwWYMVZGFg=
-X-Received: by 2002:a05:690c:7601:b0:77f:6c6b:bfdc with SMTP id
- 00721157ae682-78638e17dd7mr32251337b3.21.1761846256822; Thu, 30 Oct 2025
- 10:44:16 -0700 (PDT)
+	s=arc-20240116; t=1761846372; c=relaxed/simple;
+	bh=b2xexS6Qluhsr9ZmEqlGOXtDsR48B9OmLyAHTqqnzbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjoLq0MKGeFrLfUrUIe51XbsZqc5fwnua1H39mqhbrIWWIPo7VrKdPaH3TeEFTgHvFB/FYbNyqZ9N1x/rhz3Q/NlLsCiX+znGeQgYfu1ZfxerfyNVXKjQxSCz4/Vf9VU4tuL+xaSqzqYJZ2n5USdHGQYoe4A/PXYHfWY9Fku9KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a9aZc+oa; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761846371; x=1793382371;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b2xexS6Qluhsr9ZmEqlGOXtDsR48B9OmLyAHTqqnzbk=;
+  b=a9aZc+oalwpkkO3hWqBjbs+vMi2rgj2oCJWDp9pLe3pUWSPg17iqCDkk
+   qtoML0dPBqScbo9FxrwSY7YmQ7R/AZQMGRtMEp8FyyOxwlGnBwjCp0Vvd
+   L5zCnMqUbvo4RtH77w62IQLIkhCDtzYEjNT4TpN6wIfv+x4EAb205jkxB
+   97ro6/cHB+/K2qd2xpsYHiqeTsw97hnUSzPDmTo3cwvzxloXWSuyDIOCt
+   bDsIGdyu3BwN9yVxbg8OTj1KZ84jVX/0rH6qbmoBK+b/LarR1PP3eI258
+   KPdDmAphYmaudT3bb5j5vaY6vXMiTcU8IyniGCQX7e13RwYO0LDCgyrqd
+   A==;
+X-CSE-ConnectionGUID: O6WR9q+wTHSEKlMPPgKEkA==
+X-CSE-MsgGUID: khR0DuIRQTuTyy4OBIblWQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64039302"
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="64039302"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:46:10 -0700
+X-CSE-ConnectionGUID: b/GmOWjcS2aKDC4H8SgNzQ==
+X-CSE-MsgGUID: HAspeAjwQ7KrOmmY4Vdu1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
+   d="scan'208";a="191158265"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 10:45:58 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEWif-00000003zFy-3ih6;
+	Thu, 30 Oct 2025 19:45:53 +0200
+Date: Thu, 30 Oct 2025 19:45:53 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 18/29] i2c: mux: Create missing devlink between mux
+ and adapter physical device
+Message-ID: <aQOkUa1IwuiOeSvT@smile.fi.intel.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-19-herve.codina@bootlin.com>
+ <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030063704.903998-1-willyhuang@google.com>
-In-Reply-To: <20251030063704.903998-1-willyhuang@google.com>
-From: Daniel Ogorchock <djogorchock@gmail.com>
-Date: Thu, 30 Oct 2025 13:44:05 -0400
-X-Gm-Features: AWmQ_bmxtubT41TSd360g6dW7G4Zo3f5Auufn28DCK8uKGh1hxFirWw0tHt3aIE
-Message-ID: <CAEVj2tkow09F0CpnWBy1CqyC_CGTqkPkH4geNgCGn5R_ZGD9TQ@mail.gmail.com>
-Subject: Re: [PATCH] HID: nintendo: Reduce JC_SUBCMD_RATE_MAX_ATTEMPTS
-To: Willy Huang <willyhuang@google.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Willy,
+On Thu, Oct 30, 2025 at 04:23:24PM +0100, Andi Shyti wrote:
 
-On Thu, Oct 30, 2025 at 2:37=E2=80=AFAM Willy Huang <willyhuang@google.com>=
- wrote:
->
-> The JC_SUBCMD_RATE_MAX_ATTEMPTS constant is currently set to 500.
-> In a worst-case scenario where all attempts consistently fail, this could
-> cause the loop to block for up to 60000 ms (500 * 60ms * 2, including the
-> additional retry after a timeout).
->
-> This change lowers the maximum potential blocking time to 3000 ms
-> (25 * 60ms * 2), improving system responsiveness and efficiency.
->
-> Signed-off-by: Willy Huang <willyhuang@google.com>
-> ---
->  drivers/hid/hid-nintendo.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/hid-nintendo.c b/drivers/hid/hid-nintendo.c
-> index c2849a541f65..342cd6893502 100644
-> --- a/drivers/hid/hid-nintendo.c
-> +++ b/drivers/hid/hid-nintendo.c
-> @@ -819,7 +819,7 @@ static void joycon_wait_for_input_report(struct joyco=
-n_ctlr *ctlr)
->  #define JC_INPUT_REPORT_MAX_DELTA      17
->  #define JC_SUBCMD_TX_OFFSET_MS         4
->  #define JC_SUBCMD_VALID_DELTA_REQ      3
-> -#define JC_SUBCMD_RATE_MAX_ATTEMPTS    500
-> +#define JC_SUBCMD_RATE_MAX_ATTEMPTS    25
->  #define JC_SUBCMD_RATE_LIMITER_USB_MS  20
->  #define JC_SUBCMD_RATE_LIMITER_BT_MS   60
->  #define JC_SUBCMD_RATE_LIMITER_MS(ctlr)        ((ctlr)->hdev->bus =3D=3D=
- BUS_USB ? JC_SUBCMD_RATE_LIMITER_USB_MS : JC_SUBCMD_RATE_LIMITER_BT_MS)
-> --
-> 2.51.1.851.g4ebd6896fd-goog
->
+...
 
-Thanks for the patch. Seems like a good change.
+> > +	dl = device_link_add(muxc->dev, parent_physdev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> 
+> Not to call twice put_device, I would add it once here and then
+> check for !dl.
 
-Reviewed-by: Daniel J. Ogorchock <djogorchock@gmail.com>
+I was almost commenting the same in one of the previous rounds, but...
 
-- Daniel
+> > +	if (!dl) {
+> > +		dev_err(muxc->dev, "failed to create device link to %s\n",
+> > +			dev_name(parent_physdev));
+
+...haven't you noticed this use? With your (and my old) suggestion this may
+lead to NULL / stale pointer dereference.
+
+> > +		put_device(parent_physdev);
+> > +		ret = -EINVAL;
+> > +		goto err_free_priv;
+> > +	}
+> > +	put_device(parent_physdev);
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
