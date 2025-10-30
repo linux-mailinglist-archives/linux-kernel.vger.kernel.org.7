@@ -1,344 +1,265 @@
-Return-Path: <linux-kernel+bounces-878703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CF7C214D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:51:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A725C2147B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 17:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA7984F4B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF5D188D5D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACBF2DF154;
-	Thu, 30 Oct 2025 16:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB24F2DC33B;
+	Thu, 30 Oct 2025 16:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G7fylf4g"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010042.outbound.protection.outlook.com [40.93.198.42])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="r7JYoDpB"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011053.outbound.protection.outlook.com [52.101.65.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF212212559;
-	Thu, 30 Oct 2025 16:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE0E1D618C;
+	Thu, 30 Oct 2025 16:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761842752; cv=fail; b=Q0J+X/vCmt51wpWbjVKkfoDtlrQ8BdEWBXqkX2IMEAg3mAINk4LamAYwHPPJbYyOuv0TmP4JUgZphgMDbhviaYn1GDEwvTVF6CwSImNIJj7tCLhd7SfaTpia9BnEfKK0YC8aoATFZL3h12w3NXx6BXfhPVYNVxtvb6e+46H2n6I=
+	t=1761842845; cv=fail; b=q86UcqVjn8rY4xYqH1AC6pmFGWIPBjskdYGB3/EspS4UWpxMsCaxMXGeI/ZtUhB85R13a6OKWKG9wKfVNWqptwj38rVX4EovIOG3aVIZO97XeiZI3WqbNSCKmeIHs0c378KTCtZQD8GUVi+4sWGufoyhT+E34ok8/06QEekPLrk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761842752; c=relaxed/simple;
-	bh=YeL7sfBkeH6faV7b8Q8y/55Oi1mCLaCJdzWHDW+Y9Dc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eoQmiKy2ExyjtCGUAB/sRA/o4yvIgOorqi0/Y1aiscKtykjQhnQo/PlaOtCiUgr/0H+nHmOlMB+3fSAk63zWbePb+Oi+lisa6T8xKLXGrqhWOWNp+eEZuY5xvL43/YtFtNKiah292s306WfjntRTnlYi+f5+HX44AzRKiHJr2GA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G7fylf4g; arc=fail smtp.client-ip=40.93.198.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1761842845; c=relaxed/simple;
+	bh=xrKO9SJSS6ywtE60xX+5hG8W4tktzszhu7p+qeu69iE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gkM2KhTbvvrbcE5yB0nFEp3vKRBpzkawXW7PrrtSV9CjMALcXI1CHkAr3FNFyT88/uIT/e+opHUza7CG47b0r8zNxDxhh3hlbJPmoqnUV1NFo9jYTLAAqTibTXujt010eUUPVp1zAz+dfKTp7AgERvpPMsSI2GXhbSnGOKSSCjY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=r7JYoDpB; arc=fail smtp.client-ip=52.101.65.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kul8i7MvFc0zoD9qdK/S3jzS2OVvxFC2YMkkCEKECP3VMKRGEG6TrmO3o1ZLMX8/ovY0UxzYoQOpWuWY2UTDuVWZg38ueWOXHRJLV6CSTwW1s14X21DBupiXa4uu1axUUzDeWz/FXxSPugF0JPOOsfkvXECBSIc4q7KV5k3xyToKrujT/zJzTzd68vzCTTq8sn7iAV3T2unQlkDiNQQc5G/D9RdIWGJWEkbHCuaXg73xEP1kNNnr7TXOf7FbmhHv9H8MaIUCia8ogWjJ/eJVZ6TM/roOZ5uZmfR/OuBTQRDELZ7MqTjPGZHqVv0AGjUrBivui25i+fma3KKqj67AbA==
+ b=Jmxir2vPwyNBQmoN+VuS0vU/g9j6PEYFN6AIqrK7Wf+hHDQYg1N+Rq1/iTlktjl8rhjLbn1Ex8AT6PkxpTa6qdu7DGwSzONxWiP82jyJHlfUK98G1z2QoDYP70QynoWBsCjCHXhHFZc/TNuQCfltSmD9xIzjGVoLSzkS/ZZb3TlP39MIcHawKi6iWKS+u5F5bcdtqt715qqWPu0hCyUeK6OF2csUQoRIfbLWOqCArPVhsbqGcx+4dDFYTblDO/mcUhhooI5m6idLXnyXJzisKa8gRf0te6K/fo+40EhrO1xdYHeem/LNDpuCPA0VbzB1Px9z3c8kig3DA19m5kahwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J1XrrhnIREuuD/+I8s3lPxrRfD84h+c/gtbw5YlxpQ8=;
- b=RaSvAJOgJbdRZsYU4eNiyShbAJPtN7LyycrUTb4Xgq1A9PjjoorrUlyjj93sXo25tgea4NUkdTru4+D1ltoRTmm+cptHj6UZDpLq3T2dv/237d7mmXZEkC+IVZ5eskx/ulQ/chFH6E/VhFKZcBHnB+ytQHhhINPH49RIOH9AayjnTzoWSqAfNYN3AUU7t4blnOhMW8RlVXlj0E+BQWSO0Arg98zDBUWRu8LS9o9pYf+soYrV1JLNb3772b98iRXM6mzKV307odfS8CGa1X/eMyrdZgJD48WZzYRBf2U64fUVOsnfWoKsLTTtDvzJEGyx1s4ut0v99cwlBQAMSW6PDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ bh=RUwPLz+c5QoCXNo50BsConM3laevK2g9EFaT+qaRk0o=;
+ b=bCVh/hXXNYN1dLubpzzhglmJYVIo8pLp5608Yop2gqPwONs30/e0GXm0oXIRF05SIz9gle1hLNc0nwXfW9UtsYks+rGh2cy6yj7psgaOsixP/wKwThwcMYNJMGPb0O+wR3O0gb84Gu/uE011vhhQ92xazsBOpiK/yIp0LPHI93ufUFZy39IOHr8EMYIJqM4ahUGhK4p2cAzOCh5iXlchp4KZf5bRT2dVYpQlcI/lW97AY7l4pEqQXZAMtvTBaXeat3kcl6NdbWJBbqQd3dwfHC6S+jWDzNcT15KJXCtw+SqHc9Tro6XxHHccP9ZB/lhHRFhbnBq60F/az7nAdyGqeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J1XrrhnIREuuD/+I8s3lPxrRfD84h+c/gtbw5YlxpQ8=;
- b=G7fylf4g90y/NeEAQ7qlYgX7s3LmwcMkT0hEJxKNu9nKa3IMX+JxuJ2Ab6B3RNUAGmJQcEPpPKnEyiFV6URYUy+x0cQxDxm0dHhHaadmLDww0yS8Dh4040Z9+Lj9f594BOoasWtqCJ6OxQOJiCUpq4glDt9wzwRRYO2tg/EbaWI=
-Received: from PH7PR17CA0025.namprd17.prod.outlook.com (2603:10b6:510:323::27)
- by DS4PR10MB997598.namprd10.prod.outlook.com (2603:10b6:8:318::18) with
+ bh=RUwPLz+c5QoCXNo50BsConM3laevK2g9EFaT+qaRk0o=;
+ b=r7JYoDpB3cSswQBAT6cs+XpxdAYN09zb41cfcePPP4XqXHe2YcluzPmDiY6y6reHc+FdIpbBmEUni188OGJsaYz7fAMWQKLy52zGICfiI72/6/mrnWRlUFnYk6+cm9ctC3L4mG3azvQL7iJdEfPOjwRCxiKUIFHRhe5m+mCwJIWTEq4+mo7jaGQoSA1mxUPni7KDHdCujV8LPE4YDQ9SUauk5pKq3T6RnF8c4BuFVUQEyFTZcWJeLnQSCuvgC8twi+vyrC1CBsdU5I4yKQ89uKPdRheuzIpKZXt+2HqI8L4qwMhJPHFT80QrfXIh8wG+ysL0PX3RahOybZ1U77mQsQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DBAPR10MB4011.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:1c3::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 30 Oct
- 2025 16:45:48 +0000
-Received: from CY4PEPF0000EE38.namprd03.prod.outlook.com
- (2603:10b6:510:323:cafe::e8) by PH7PR17CA0025.outlook.office365.com
- (2603:10b6:510:323::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Thu,
- 30 Oct 2025 16:45:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- CY4PEPF0000EE38.mail.protection.outlook.com (10.167.242.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 16:45:47 +0000
-Received: from DLEE103.ent.ti.com (157.170.170.33) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Thu, 30 Oct
- 2025 11:45:45 -0500
-Received: from DLEE211.ent.ti.com (157.170.170.113) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 30
- Oct 2025 11:45:44 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE211.ent.ti.com
- (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 30 Oct 2025 11:45:44 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59UGjh7e2476028;
-	Thu, 30 Oct 2025 11:45:44 -0500
-Date: Thu, 30 Oct 2025 22:15:42 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>, "Vincent
- Guittot" <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, "Len
- Brown" <len.brown@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Saravana Kannan <saravanak@google.com>, Maulik Shah
-	<quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
-Message-ID: <20251030164542.atnhs4wgk6ggmmly@lcpd911>
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-2-ulf.hansson@linaro.org>
- <20251029081014.443psmqznd2pqm4i@lcpd911>
- <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
+ 2025 16:47:21 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
+ 16:47:21 +0000
+Message-ID: <1eec0bc4-dc4a-4fe1-affa-3b8620dfc79d@siemens.com>
+Date: Thu, 30 Oct 2025 17:47:19 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] scripts/gdb/symbols: make BPF debug info available to
+ GDB
+To: Ilya Leoshkevich <iii@linux.ibm.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Kieran Bingham <kbingham@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250710115920.47740-1-iii@linux.ibm.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <20250710115920.47740-1-iii@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0105.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a9::20) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE38:EE_|DS4PR10MB997598:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab38c51b-6c99-422c-b3ab-08de17d3c6dd
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DBAPR10MB4011:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a060d07-458a-482b-a78d-08de17d3fe76
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013|34020700016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NlpScm5HYmlvbm5RQXpXemRwenVmc2xFK2Y0RSt0RkJHTzhFMnRWMzh0U281?=
- =?utf-8?B?M0tERWpXU2dvTTRaQkExTDA1WE5OaE9RWHkrOWZBV3NHMHI3ZUliSi9JWWlR?=
- =?utf-8?B?OVdUSDVEcENSQTdmeGhKeDM0clNoMUlpS2VMWXlvZmNPOGxlWGh3bzZmeGV1?=
- =?utf-8?B?bC83dWlPV1I5NVVXTUdPRFJIQjZUdHJwMkZUYStqY015Y3ZWZUVjakRaNTBx?=
- =?utf-8?B?T1owWVpVM00yYTh4RXE0UTB6N3M2cHFhU2RQYk1GVFZGVENycENDQ1g1dkxP?=
- =?utf-8?B?U05kalJscUZVQjd5M2FnVFZMRFRRcjRPS24rcWFidkxka1l5Q254SzRkVzdT?=
- =?utf-8?B?RWJtc1hqZDVLNTZsdG9BYkVKVWt2cnQ5VC91V2F3K0tGNXlLa0JFVzU5TEZO?=
- =?utf-8?B?c1R4eVNsSHZpdEgvYy9RK2ZoVEpTQk9SM0ZYS1kreGV1aWQ1TFN4aXBGUWxm?=
- =?utf-8?B?aUVQVGs0d1d6VmgvL09xWG9SNHVZOVgrYzdvQ3lRcW5YMWNzV1pMMWZIR05n?=
- =?utf-8?B?NjhiWTNzWnh5ZHY2Y1JXTTZWZ1JTaGNGWndmSExmYU1scDRKMEgvZFFhZmRT?=
- =?utf-8?B?YlgwNGNMK1Jkb051NElKNENITXQ2c3d5UFJaYS8wYjhpNm5IMkEzOHlqYVF0?=
- =?utf-8?B?eTJxVmlLdEdyYWF2NWdzWkVobXJPQm5ocjlrc0pmZUpib3JxNDFKVnBWZ3My?=
- =?utf-8?B?dkFYVUpVa1lyQ3NUUlZiSHEwVXIzWUZjNSsxMU1LM0hmTkJETU9FNEN2M3Jv?=
- =?utf-8?B?dVZzM3kvVVVNTXRKOHBVUVZ3MlcwTmkycHphRG5xZUg2Y0VQZmQ1VVE1VzVY?=
- =?utf-8?B?Z2dUTWhrbysreCtrUWRrSnRZeGphdFUvbDlmVzUrdFp2dS82Z2dlTWk0TjNj?=
- =?utf-8?B?UmhqZDhPeHlXY3N6YTlndTE5VWhGcWpCZytkcTRKOXN3T0ZWSHdZa1Uzc0ZI?=
- =?utf-8?B?Qnk2eWQrOFNSRDVLM24rT3I4ZDF6UGxBUVYrTEpjNzlTMDAyWTdvcC81K25a?=
- =?utf-8?B?dk5CaWJOLzdkWXR4TDJVbFNXRDFhdnB4ZzBtbU1YeHpHZ3FLbFpPbGVCNHJG?=
- =?utf-8?B?aHh6MnlNRm8rRHdOazdwNEtaVy8vU2JmQUtmWU41U1UzbnM2T3VkaW8xUjIv?=
- =?utf-8?B?Qkw4TXRZN0ZMZkI5cWR3b1NmZFRXZW5HazFmS0NadDg0ZTJrWEdNVGI5eVRS?=
- =?utf-8?B?WVB6K0dGUWZybjBwbUMycGhxZUJMOXlpZW55RkoyV25laHQwaU5HeVUveENm?=
- =?utf-8?B?WHhjcVZhUXppVTBaWHFQenlaS1NlWXBUN1k2MDhZYkxHemhjMUhReEFZaXRQ?=
- =?utf-8?B?MlZvbWxSWWZqTmoyUmJPUXJudWpKcWNQdnVpd1lVZ2gyWHI1QkRUNDAvNTF5?=
- =?utf-8?B?L0hVcHplRWxSZ3RWMFFpUVVKVUlXbUhrTlRBYlZSOTZSblpBd3kwb3piYzNs?=
- =?utf-8?B?RGRxMVMxRGNpdUdwUnJYWEliU0xHeTR2MDBNdUVrclhKNWFYNC8zdGdueTND?=
- =?utf-8?B?b25Jd05iS3NyM0xoOENRamN2b3Yxck5tTmdhMlAvV0RLMjFvTXFnd2pvVTBR?=
- =?utf-8?B?Q1JPV2NoRXlYVXE0UUxVQldqLzYrS2IrdDEvaDdPOEgzMHMxMnE4aTFxTm5H?=
- =?utf-8?B?M21yOFpUemJRZTV3bVptWXJUV1NhdVNydHl2WFI4TUUrT2NFSStSNkN3LzI4?=
- =?utf-8?B?RVpPWlhQRTBKTUpxYW9NRTVkYnJRZ1Rob2FzVHBKbWY5aW12aEFiemJCMnE1?=
- =?utf-8?B?KzBXOENZclVSSWlFOEUxMzNXeVN4bjJacGFSVEh5SDF4RWZPYjRwMFE1eXJy?=
- =?utf-8?B?anZnWUFuN1d3clhiY2lPRzlyVGhqNUNDVkxWWVFqTEVWRzNHcHhrTTB6L0Fq?=
- =?utf-8?B?alpIU2FnakZqZlQ4K2NNVVlnTW43NVNtYVBNZ1RlTldSYkppWHFDT3VyU0x5?=
- =?utf-8?B?Q3VxWWdzY1d6OUJOOTBBMDlzcFhSMEZqODZTRXEvREd4WnpMcXhpcVREWThI?=
- =?utf-8?B?ckhrMWprMFBlZml5LytCT3Jia0M5c1lBZU1xK2oyUmgrdHBCZE54NndZM0l6?=
- =?utf-8?B?ZGRQQ2Q2Q0pWNnhlWllLYTd1OG1aL1BrSzdjamRnSWJOWWtDVkxoaE1rMkFq?=
- =?utf-8?Q?/Tis=3D?=
+	=?utf-8?B?Tks3bFcyNTJpbFk4N2xtSWZjQW5sV3lHOG56ZGE0NXd0UjArYUJHTm5SbG5V?=
+ =?utf-8?B?cWdJUjdYcDBTSG5GUldTNlVnRGV0WlFOOGtWQXlDZnBhTWxrS3lTdWkrMlVo?=
+ =?utf-8?B?NEFoQkRZWkd4MHJzNXNuWEFLU25zM05nRnNYWk1FQVp0YTNnSGdRTGpLZ3Zz?=
+ =?utf-8?B?QWZ6Wkh4TXR1emJ0Ly95cit6WUs3VjhqZlo0L1M0NDdValBQcDNtRUI0aG1Z?=
+ =?utf-8?B?czVuZUx4RVdmTDhmRGJ4VnpJSmVyQWkxZThLTnJsdnhtdkpJVVNKUTVIOTF2?=
+ =?utf-8?B?K215U2R0NDMrbFphdDlUZ3UvWld0ZGRFQ05kakNZY2tzcURHemRuTnd1cUp5?=
+ =?utf-8?B?a1VSZW15UXFvd2oxZDBFN2lpYlFrU3poVmx0Y0RJa3BQb25Qb3dUeTdVTUdD?=
+ =?utf-8?B?amt1amR1anhRT1QwWlpPUithMEk1ZXJLWjZJQ04vWWNmSXRXdk54Y1N5RGlz?=
+ =?utf-8?B?YWYxM2huUTdsNEJRdHk3N0pncWpBY0kyV0F6TFpIQ054NENuZmxSUG9oYVdK?=
+ =?utf-8?B?c2tBTkRYOFlwVGdudEhIWE1nOXFsaWdlSlVKK2hDOVBHdG9OT3YzUTRxME1U?=
+ =?utf-8?B?YXBQcGppSG9pYnJvWThlZ0FIcWtvZUY0WndRc2pHZUs4REloYWF4MmhsQ0Mz?=
+ =?utf-8?B?czZsU0JCbVhnRTN0RFNQbWVlVUt3L1h5eFBEM0lTOUh2T2gxc2FYMFZISHZi?=
+ =?utf-8?B?Ukw1am9iT3c3YjBFVGxCT2FGY2d0dGtiUkJjS0tmd3JnL2phVjlSMDJnTnA3?=
+ =?utf-8?B?QUFuSFllTEFsdDlrTEdEdEhValpPS1ZRRDVGN1JmTkNpdyt6bE83MUtxSThD?=
+ =?utf-8?B?UDNWVXpzTktJcGNRZ0Zma1BNV1BRUVc0TVZMTThYSUtPcjdheXpjZGJmZm1m?=
+ =?utf-8?B?bDFaYTlIZlp6NkI2ei9JN0c5NjFiTnNBU0JhOHMycVpOTHVCYjdoNjJPTUwv?=
+ =?utf-8?B?T2FHZlNFMFZubER6b0lSSDZxcXNYMzVLS2RONTZVS2dWNXVNRUN2cllpdUVw?=
+ =?utf-8?B?R2ZIbzRrZ0cvWVBQZGdYTHBOT0NhR01NRDgxVnIvaWRQMnV3amVZSGU2Vm1C?=
+ =?utf-8?B?aFNuemJwU01mSXVxaVZGK0QxeTJ2U2VlVldhaEYzaUtUNjhQVnZNTjhKcHFt?=
+ =?utf-8?B?clNRWUpTWjRRRDN2OGE4VnF6ZGFBSERtc0Naa3pRUURSa05jQzkrY2ZrK2Iv?=
+ =?utf-8?B?SVNHZTJwdzRCRXZzQXZBSDFOYW9FN3B4Tzd0eXVFdlArS1l6S2pYKzRTTzJZ?=
+ =?utf-8?B?OXBKeUNOOC9ocndLdlpzeGRYZmNWSnBpSitPYTdsNDRrejBJbDdpZmdpem16?=
+ =?utf-8?B?U2F6RFd6Vy81NllYeStqbW5sM1J0Nk0zTEIvTEYxVjBsUDMyT2RRbmY1WUo3?=
+ =?utf-8?B?ZHRyaTRVTFp6QW45cWJIaHBwTFJwcDR4QkE5R2FURWhQN1NzdEQ2SWxwZHVv?=
+ =?utf-8?B?TTJ2czlsa3c0ZmpXVjlETXpjMlV4SVlLeWpya2c5L3RkYXF4UEJtc1RvWmxQ?=
+ =?utf-8?B?QXZxdkxzMjIxMlJmZThEV0ZRc0N0bVV1UEI5SVQxa1VUdVNtM1pZOGExM29X?=
+ =?utf-8?B?ZE92MTYvQVFtajVGcnhPN05FbWJldURFL2NNekJmNUVYRlRYS2tHUEpxTEsz?=
+ =?utf-8?B?YWJ0bjFueEtOb2hTdElLZHNXeDZKV2xnVTBpM1VwSzRwaklWa0ZUMXBjQytJ?=
+ =?utf-8?B?bW5kV094Yzh3KzUvY1ptSG1EUS92R0Y5aHRxU2svK05XNlFMSUdwRm1iMkNx?=
+ =?utf-8?B?YnJTOEQ3V2tyWi96SVg0VEkzc1h3czVWd1gxRUpabjN0T0ZnNXRRc3pIdDg3?=
+ =?utf-8?B?NzNnUUxvTlQyc0lmckxCTzZOcktVcWpCNEE4bWx1K3hTZDZHbFJwZHY0SzNO?=
+ =?utf-8?B?TmoxanJFSnVlbUIyM3h1S0F0dGQzUUloTTI4RnBtdGZHSmZZNWsrc1VYSTR4?=
+ =?utf-8?Q?NgtSCsYhZDnOj4HeGoJMub0p/CZAlLSL?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013)(34020700016);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 16:45:47.4454
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eEVqNlVoVlIvdkNqVDNRWEdKdUdBeEc0Ly9DV1ZEUHR0dVFNMjJjd2xyTElY?=
+ =?utf-8?B?c2ZxZHZQZUw4eU5nODdFMzB0ZEJsK0ZBbUdQTzllZE5kSWZpM2I3RW1nZEFt?=
+ =?utf-8?B?MUs3OFBJcm1HMTl1aUpIWVlqNHpYaktLVWxjRUtOUHo4bFNOeG5RS3N5QnRJ?=
+ =?utf-8?B?bGZxNHdiTXFMb2hJR0s5UUVhVFFiU3FLbWpEa1lLMzlTQkRsbDcra25YTExa?=
+ =?utf-8?B?a0ZOSDFnN0FLbHlGcWo5SU85MlhrYStHejYwc1UwK0R2NU5mWTJFZ21aYlY5?=
+ =?utf-8?B?WkV1QS9xVnpQWmpNNDZCS0pET3pCa2lsUHo1M0lFRExoQmZvTndsc3dxNDho?=
+ =?utf-8?B?bzZ2NUtjYS93bVljSnRoT0MzeTZBekF2WTFueWlnZHNZNXd5NkRoWDVVeS9N?=
+ =?utf-8?B?c09lam9vVkdDeFd5TVJrVW1OSXc1MUdMdUN0YTVFNS9rRndNanFpeVhPSUkz?=
+ =?utf-8?B?UkJIclM3aVBRM3N0aStRbnNSTVNmWkw1RUtBZTNPS2JGZGZVNFZvbEMxeWVH?=
+ =?utf-8?B?NWNSY0M3Y1BBVmZqY2VobmJydmVIV1dyNTZMNW9vSWhzNzFYQ0RGT1Jqbmx0?=
+ =?utf-8?B?ZlhkSDJGV1JGYkVGaGd6R3A2bzNmK2FONlVQSW12bXdOQ3RaNHoyL0dTZGM0?=
+ =?utf-8?B?SG5mU3ZURFFMOHZoOUdydWQ0TTdRT244elJiSTlaZ2cvYmV6bjJKdXJBVDVk?=
+ =?utf-8?B?bldPTE9pNDRGWmNSdEl6Z2FXeDNyT0NZbmFYYjg0TkltQ2cxVVl2ZkpUbElx?=
+ =?utf-8?B?SXFFaUFyY0RDaGlmeU03RXM0aEtOZEpZdTJ1bEJOWUhmOXR5UUxWWlc1aEp4?=
+ =?utf-8?B?c2JLWXJDbmdjeTRFV0VEei83a2JGMFJOOWpkeVUvanNHUHdSbm5ObzlVSElB?=
+ =?utf-8?B?ZTJsc3g3T25UanhVeEt6UEw3N3lXZnNNOG82dWQ2czBzaEc2MVVtSGdSL3Ft?=
+ =?utf-8?B?R0ZSZk4xSFFiTUlrMDJFdlpjVlh5djBHWkR2S3NRSSs0TmpLb1h4cUpQdFhq?=
+ =?utf-8?B?YlIwbGNNL29td3NuNUpKckNPRUgyMlMxdy9udkdWYmdhOUh3NGxYVjJVcUVN?=
+ =?utf-8?B?SnRBWE1KRnJ1OW1PWWNGbVFwM1dhWkdKSFpNcm8yZE81b1JNQnVBcTFzSGk4?=
+ =?utf-8?B?U3hFQ0ZRem1zK1l1Y0pZNzFIZ09VZkVvbkNIK0d3TnJGc1lqWlVRVFFVSWJ0?=
+ =?utf-8?B?VCtiUGhjSHVZdWxUT21jK3UrbkNoOHRPSWFZR0ZlT0d2RUIxb3ZpKzdEdFN6?=
+ =?utf-8?B?bkdESzF6aS9oZE9xSThPWVc2dXVEUDRidzVadjZXNUNZYjVmN3Qra1NGVmpq?=
+ =?utf-8?B?U2JhK2dET3M5TlZ1Z2tRUXFTQURLa1FwWjRPcExraWFWdzNoQkU1ZHh1cnlj?=
+ =?utf-8?B?R1lxN2RxSkVSZ2E5c1dNb2tuWGIvN05LYk5XZW1aSEcyME5FQ2FDbjhxaVRG?=
+ =?utf-8?B?VXE5QWVIRloxek82M0Q1NU5IdEtieTA2NVVJK1VaWndSOE1qNE1zL0FranBE?=
+ =?utf-8?B?eHFTa3RnZ0czRXlZNkU2d3FiOTBQbW9oejk5Ymk0dnZ3Y2s5am5xUkh4a05Q?=
+ =?utf-8?B?QWhBRFhXSmp5SDhKRGplZ092dGs3VHFXS3RzUCtoVHJESFNOWkNtUjZTM05m?=
+ =?utf-8?B?RWhYc2VqRElCUUkyeHUwVEFmQmFnOHBRWDRtVXlyd3d6ZEFmUnorTjUxTzc3?=
+ =?utf-8?B?NGhoOGQzK2ZGRFFyZWFmZGMwUzJqMEhkemVCdmkrTmttQStlbFI3LzladTE5?=
+ =?utf-8?B?OXdyd3ZhTnpRUGk0YUFaTWlaSE5nc1hEL0FGalpvNjhGUkl1SWNXcWhGWC90?=
+ =?utf-8?B?bWlUeThPZkE4empWYnp2MVZXSXNXdCszY25seEh6UUNrcnJMTjhLUjJNZWJK?=
+ =?utf-8?B?bEJ5VGV6aG1QRE1sSXIyTXovdVJsWXhKdTc5RkVvWWFPUWRwMjhtOHBiV0lK?=
+ =?utf-8?B?Nk50ZkN4bmhmK2NnREpxNUw5RjErSzgwSDRVMWxhTEp4ZkNKWUVBZGZnbHVH?=
+ =?utf-8?B?Tjh6N1dNYnh1NkFjaDFMbDhjOXVVZXJDc2RTcFlMRTdoQVg2aDJYa1dCYTdS?=
+ =?utf-8?B?SFY5YmdsT1JnRGJ6Rk5oTGF4Ym5Cc1RXYTJBR3N6eW9qbVVIZ2ppaXBFMmNt?=
+ =?utf-8?B?a25SZittYjVOdTEwUExWMHljc1JJL2NhbEIzNEVNNVI0RnBHbkozeFp2bll2?=
+ =?utf-8?B?WWc9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a060d07-458a-482b-a78d-08de17d3fe76
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 16:47:20.9613
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab38c51b-6c99-422c-b3ab-08de17d3c6dd
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE38.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR10MB997598
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RAE703qwjmSkF3xLFWhFDCxflEii/N5aIvChLa2Bhp3bP0wt4vUNn3W/YpLMMCUnzHaYE7ZKoFLG1y2E9Eif+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR10MB4011
 
-On Oct 29, 2025 at 15:28:22 +0100, Rafael J. Wysocki wrote:
-> On Wed, Oct 29, 2025 at 9:10 AM Dhruva Gole <d-gole@ti.com> wrote:
-> >
-> > Hi Ulf,
-> >
-> > On Oct 16, 2025 at 17:19:21 +0200, Ulf Hansson wrote:
-> > > Some platforms supports multiple low-power states for CPUs that can be used
-> > > when entering system-wide suspend. Currently we are always selecting the
-> > > deepest possible state for the CPUs, which can break the system-wakeup
-> > > latency constraint that may be required for some use-cases.
-> > >
-> > > Let's take the first step towards addressing this problem, by introducing
-> > > an interface for user-space, that allows us to specify the CPU
-> > > system-wakeup QoS limit. Subsequent changes will start taking into account
-> > > the new QoS limit.
-> > >
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > ---
-> > >
-> > > Changes in v2:
-> > >       - Renamings to reflect the QoS are limited to CPUs.
-> > >       - Move code inside "CONFIG_CPU_IDLE".
-> > >
-> > > ---
-> > >  include/linux/pm_qos.h |   5 ++
-> > >  kernel/power/qos.c     | 102 +++++++++++++++++++++++++++++++++++++++++
-> > >  2 files changed, 107 insertions(+)
-> > >
-> > > diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-> > > index 4a69d4af3ff8..bf7524d38933 100644
-> > > --- a/include/linux/pm_qos.h
-> > > +++ b/include/linux/pm_qos.h
-> > > @@ -149,6 +149,7 @@ bool cpu_latency_qos_request_active(struct pm_qos_request *req);
-> > >  void cpu_latency_qos_add_request(struct pm_qos_request *req, s32 value);
-> > >  void cpu_latency_qos_update_request(struct pm_qos_request *req, s32 new_value);
-> > >  void cpu_latency_qos_remove_request(struct pm_qos_request *req);
-> > > +s32 cpu_wakeup_latency_qos_limit(void);
-> > >  #else
-> > >  static inline s32 cpu_latency_qos_limit(void) { return INT_MAX; }
-> > >  static inline bool cpu_latency_qos_request_active(struct pm_qos_request *req)
-> > > @@ -160,6 +161,10 @@ static inline void cpu_latency_qos_add_request(struct pm_qos_request *req,
-> > >  static inline void cpu_latency_qos_update_request(struct pm_qos_request *req,
-> > >                                                 s32 new_value) {}
-> > >  static inline void cpu_latency_qos_remove_request(struct pm_qos_request *req) {}
-> > > +static inline s32 cpu_wakeup_latency_qos_limit(void)
-> > > +{
-> > > +     return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-> > > +}
-> > >  #endif
-> > >
-> > >  #ifdef CONFIG_PM
-> > > diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-> > > index 4244b069442e..8c024d7dc43e 100644
-> > > --- a/kernel/power/qos.c
-> > > +++ b/kernel/power/qos.c
-> > > @@ -415,6 +415,103 @@ static struct miscdevice cpu_latency_qos_miscdev = {
-> > >       .fops = &cpu_latency_qos_fops,
-> > >  };
-> > >
-> > > +/* The CPU system wakeup latency QoS. */
-> > > +static struct pm_qos_constraints cpu_wakeup_latency_constraints = {
-> > > +     .list = PLIST_HEAD_INIT(cpu_wakeup_latency_constraints.list),
-> > > +     .target_value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> > > +     .default_value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> > > +     .no_constraint_value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> > > +     .type = PM_QOS_MIN,
-> > > +};
-> > > +
-> > > +/**
-> > > + * cpu_wakeup_latency_qos_limit - Current CPU system wakeup latency QoS limit.
-> > > + *
-> > > + * Returns the current CPU system wakeup latency QoS limit that may have been
-> > > + * requested by user-space.
-> > > + */
-> > > +s32 cpu_wakeup_latency_qos_limit(void)
-> > > +{
-> > > +     return pm_qos_read_value(&cpu_wakeup_latency_constraints);
-> > > +}
-> > > +
-> > > +static int cpu_wakeup_latency_qos_open(struct inode *inode, struct file *filp)
-> > > +{
-> > > +     struct pm_qos_request *req;
-> > > +
-> > > +     req = kzalloc(sizeof(*req), GFP_KERNEL);
-> > > +     if (!req)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     req->qos = &cpu_wakeup_latency_constraints;
-> > > +     pm_qos_update_target(req->qos, &req->node, PM_QOS_ADD_REQ,
-> > > +                          PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-> > > +     filp->private_data = req;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int cpu_wakeup_latency_qos_release(struct inode *inode,
-> > > +                                       struct file *filp)
-> > > +{
-> > > +     struct pm_qos_request *req = filp->private_data;
-> > > +
-> > > +     filp->private_data = NULL;
-> > > +     pm_qos_update_target(req->qos, &req->node, PM_QOS_REMOVE_REQ,
-> > > +                          PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-> >
-> > Please excuse the delay in reviewing these patches,
-> > I was wondering why we have decided here in release to reset the
-> > constraints set by a user. For eg. even when I was testing the previous
-> > revision locally I'd just commented out this release hook, since I
-> > wanted to be able to just echo 0xABCD into /dev/cpu_wakeup_latency...
+On 10.07.25 13:53, Ilya Leoshkevich wrote:
+> Hi,
 > 
-> If you want "fire and forget", that would be a different interface.
-> Device special files are not for that.
+> This series greatly simplifies debugging BPF progs when using QEMU
+> gdbstub by providing symbol names, sizes, and line numbers to GDB.
 > 
-> Cleaning up after closing a file descriptor is a safety measure and
-> CPU wakeup latency constraints are a big deal.  Leaving leftover ones
-> behind dead processes is not a good idea.
-
-Hmm okay ..
-
+> Patch 1 adds radix tree iteration, which is necessary for parsing
+> prog_idr. Patch 2 is the actual implementation; its description
+> contains some details on how to use this.
 > 
-> > It seems an overkill to me that a userspace program be required to hold
-> > open this file just to make sure the constraints are honoured for the
-> > lifetime of the device. We should definitely give the freedom to just be
-> > able to echo and also be able to cat and read back from the same place
-> > about the latency constraint being set.
+> Best regards,
+> Ilya
 > 
-> So you'd want a sysfs attribute here, but that has its own issues (the
-> last writer "wins", so if there are multiple users of it with
-> different needs in user space, things get tricky).
-
-sysfs makes sense, then would it make sense to have something like a
-/sys/devices/system/cpu/cpu0/power/cpu_wakeup_latency entry?
-
-IMHO userspace should decide accordingly to manage it's users and how/whom to allow to
-set the latency constraint.
-We already have CPU latency QoS entry for example which is sysfs too.
-
+> Ilya Leoshkevich (2):
+>   scripts/gdb/radix-tree: add lx-radix-tree-command
+>   scripts/gdb/symbols: make BPF debug info available to GDB
 > 
-> > One other thing on my mind is - and probably unrelated to this specific
-> > series, but I think we must have some sysfs entry either appear in
-> > /sys/.../cpu0/cpuidle or s2idle/ where we can show next feesible s2idle
-> > state that the governor has chosen to enter based on the value set in
-> > cpu_wakeup_latency.
+>  scripts/gdb/linux/bpf.py          | 253 ++++++++++++++++++++++++++++++
+>  scripts/gdb/linux/constants.py.in |   3 +
+>  scripts/gdb/linux/radixtree.py    | 139 +++++++++++++++-
+>  scripts/gdb/linux/symbols.py      |  77 ++++++++-
+>  4 files changed, 462 insertions(+), 10 deletions(-)
+>  create mode 100644 scripts/gdb/linux/bpf.py
 > 
-> Exit latency values for all states are exposed via sysfs.  Since
-> s2idle always uses the deepest state it can use, it is quite
-> straightforward to figure out which of them will be used going
-> forward, given a specific latency constraint.
 
-I disagree regarding the straightforward part. There could be
-multiple domain heirarchy in a system for eg. and all these multiple
-domains would have their own set of domain-idle-states. All of them having their own
-entry, exit, and residency latencies. I myself while testing this series
-have been thoroughly confused at times what idle-state did the kernel
-actually pick this time, and had to add prints just to figure that out.
+This wasn't picked up yet, right? Sorry for the late reply, my part of
+the "maintenance" here is best effort based.
 
-When implementing these things for the first
-time, especially when one has complex and many a domain idle-states it
-would indeed help alot if the kernel could just advertise somewhere what
-the governor is going to pick as the next s2idle state.
+Looks good to me regarding integration. I haven't tried it out, I'm just
+wondering if it has notable performance impact on starting gdb or
+interacting or when that could be the case. BPF programs are not
+uncommon in common setups today. But if you don't want to debug them,
+does this add unneeded overhead?
 
-Also, I am not quite sure if these latencies are exposed in the
-domain-idle-states scenario ... 
-I tried checking in /sys/kernel/debug/pm_genpd/XXX/ but I only see
-these:
-active_time  current_state  devices  idle_states  sub_domains  total_idle_time
+Otherwise, I think it could move forward if it still applies (which it
+likely does).
 
-Maybe an additional s2idle_state or something appearing here is what I
-was inclined toward.
-
+Jan
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
