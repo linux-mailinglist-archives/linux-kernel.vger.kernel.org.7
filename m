@@ -1,162 +1,123 @@
-Return-Path: <linux-kernel+bounces-877905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EEAC1F518
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:33:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F48C1F526
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1ACF3A6712
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DAA618968B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22613341AB1;
-	Thu, 30 Oct 2025 09:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBF9342169;
+	Thu, 30 Oct 2025 09:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ql/eyUw+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="muo6QcSh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B1F285CB9;
-	Thu, 30 Oct 2025 09:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ECC34028D;
+	Thu, 30 Oct 2025 09:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761816804; cv=none; b=gbDFELK07M80SEXXG+d90SwWxgnulGxJOtU3IPbi6UV5Ql9oXf/18C+JO5gYUvJNd1vu8oGC1yXJbncDmNO9p7Q7tUVXWhAEYj8p86NJR6P5jEmOW4VgJs5aBFSQnapcZel6qhNgKKkBIVgYtIMTD8jsw2Ffbs8yKyTnlu6ifRs=
+	t=1761816818; cv=none; b=f0aUsCAtAkr74HnxO0ICUr9+9WyglPazXubO+y8dm3s/2T0DgLJAFVrWJEYGNKSVhK4/a/oVUC6k0ummUIOeDjPTwK4gyBpeiIRQuS+6tQthB4AkPAGgcjhtRNghiv9jG6B4OJ/Ij23ofwQHW+A8muTu3lSGyV3eAVsdEz5xXQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761816804; c=relaxed/simple;
-	bh=Uc+POICSyiMTjtw+yN5lE8RaU+hJ/qKWJLG4Qepa7S8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ufvE8NLAjzmhwm+4Rl/Yv5xLb5Is/vAeIT37l3rPd7hThCmJJFfJP7Uqkmn2P03+xxZ/xx1HM/QVUCusoG7JO8C3LbD7i9O04RhuWeECnBoRJTBnWmOlFlxj5B4KVVQchsWQQXYl6Z7xnKymHvmkMJ0ImtLyhLGjI6N5FdqZPqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ql/eyUw+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761816801;
-	bh=Uc+POICSyiMTjtw+yN5lE8RaU+hJ/qKWJLG4Qepa7S8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ql/eyUw+mIsDdWaDdmdHjzHNAT4lrz+S3uGNw5XcX85b+Yukux9+wLoDmEgy3qB0N
-	 daz0MaG6I8Sdw2m1NPTnjfmT3AvsckngsJZ0I49h5P0nJNObQyk5YyeEjIxwERJ79R
-	 mfCWPU0WgSK5ORtt7NT5WWlRbWIRIU6Y7u5C3Sp38YxAG9OaMmLquGVRL2HmTO0ob/
-	 Qq8vjx71NA3dGfcj+KVvdUMwX+nx7NNvXOaMH2/Jpz385RQfpW4HvZakhL2j/lvSw9
-	 Ab7v5xJZIOJ0Kqfp7l3970XP0I5A4TbO5c6gDLGQHsu0K6Ju/VnZuyIEga9hYQ82/9
-	 ETvQEGGfrrkTg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8E68F17E0CF8;
-	Thu, 30 Oct 2025 10:33:20 +0100 (CET)
-Message-ID: <febb8bb9-ab4f-4bf1-a0af-84c5382c3419@collabora.com>
-Date: Thu, 30 Oct 2025 10:33:20 +0100
+	s=arc-20240116; t=1761816818; c=relaxed/simple;
+	bh=iUzaj/HC8cI0ED6gbD+JxBUi5KPlIooYnQCOqA8856Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OAQxjK5AHghpAPumwVjE0D96NYn6SPkaHL9gayxyuEqyePTTBohUkmBdlbuOn1N1on60xhq/aOhladhgQ0VhmBq45W+NKOtmQ78PT6yyLK50Hql4iaLY5FEV7e8qUSKgM+jRAmCvwxG/cUyv1t/e/G2ak/CLBi4wVgBLIU0nHNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=muo6QcSh; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761816817; x=1793352817;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iUzaj/HC8cI0ED6gbD+JxBUi5KPlIooYnQCOqA8856Y=;
+  b=muo6QcSh6TgqNCNyjSEBpItYP0R0vBH39QNRsdBvXuKbgMifXpeLSRzr
+   jl+FcUeiZydJ8/JJy7eJCakZvdHuo+qyagyuKHfHO0uajVuTpYjeeil30
+   3xPOnV4djhOo01tAGfYsi2yR8rQlzJJyIYQVbVGrfEEy1VNa0qH4eGyve
+   m6Ev4WB1u1aZTB+8xY42yfDLLxqvBICW+E1jSjOsDlIGMWuZNl97bQChC
+   3/dqzyBJW7aYn9VqeSkSmtERVw2UdP574zgUVOnLc1SrO3vO3PtWTYzza
+   GPveU4ruNml4hk/paQ6TD52K7oxjHtFN4n10VPEgq/bVA2H1rFKJ9WzUq
+   w==;
+X-CSE-ConnectionGUID: yaAuaB8nSjezKlZkKCubVg==
+X-CSE-MsgGUID: pIF4e7roTKmaKCvSMOnKnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75073348"
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="75073348"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:33:28 -0700
+X-CSE-ConnectionGUID: 6uxt4iFzR0OrZ3aeQApLDA==
+X-CSE-MsgGUID: a4xHlyO0S2eOkT/56V+emQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,266,1754982000"; 
+   d="scan'208";a="216567635"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.174])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 02:33:24 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEP20-00000003rKs-2B90;
+	Thu, 30 Oct 2025 11:33:20 +0200
+Date: Thu, 30 Oct 2025 11:33:20 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 01/10] software node: read the reference args via the
+ fwnode API
+Message-ID: <aQMw4ID6W3bouX9b@smile.fi.intel.com>
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-1-638a4cb33201@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
- firmware-name not present
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
- arnd@arndb.de, andersson@kernel.org, matthias.bgg@gmail.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
- <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
- <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-reset-gpios-swnodes-v3-1-638a4cb33201@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Il 30/10/25 09:21, Chen-Yu Tsai ha scritto:
-> On Wed, Oct 29, 2025 at 7:05 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 29/10/25 10:14, Chen-Yu Tsai ha scritto:
->>> On Wed, Oct 15, 2025 at 4:41 PM AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>
->>>> After a reply on the mailing lists [1] it emerged that the DT
->>>> property "firmware-name" should not be relied on because of
->>>> possible issues with firmware versions.
->>>> For MediaTek SCP, there has never been any firmware version vs
->>>> driver version desync issue but, regardless, the firmwares are
->>>> always using the same name and they're always located in a path
->>>> with a specific pattern.
->>>>
->>>> Instead of unconditionally always relying on the firmware-name
->>>> devicetree property to get a path to the SCP FW file, drivers
->>>> should construct a name based on what firmware it knows and
->>>> what hardware it is running on.
->>>>
->>>> In order to do that, add a `scp_get_default_fw_path()` function
->>>> that constructs the path and filename based on two of the infos
->>>> that the driver can get:
->>>>    1. The compatible string with the highest priority (so, the
->>>>       first one at index 0); and
->>>>    2. The type of SCP HW - single-core or multi-core.
->>>>
->>>> This means that the default firmware path is generated as:
->>>>    - Single core SCP: mediatek/(soc_model)/scp.img
->>>>      for example:     mediatek/mt8183/scp.img;
->>>>
->>>>    - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
->>>>      for example:     mediatek/mt8188/scp_c0.img for Core 0, and
->>>>                       mediatek/mt8188/scp_c1.img for Core 1.
->>>
->>> I know this patch has been applied, but this scheme doesn't actually
->>> follow what is already in the linux-firmware repository.
->>>
->>> For all the supported platforms, the first core, even for multi core SCP,
->>> already have their firmware uploaded as just "scp.img". Multicore SCP
->>> is seen in MT8195 and MT8188.
->>
->> The only one that is affected is MT8188, which needs a rename or a symlink in
->> linux-firmware.
->>
->> MT8195 is not affected by this change, because the SCP is used as single-core,
->> hence this code will look for scp.img and not for scp_c0.img.
->>
->>>
->>> I guess I can send a followup patch?
->>
->> The only followup patch that I deem to be necessary is one adding a symlink
->> or renaming for MT8188's SCP and nothing else.
+On Wed, Oct 29, 2025 at 01:28:35PM +0100, Bartosz Golaszewski wrote:
 > 
-> The firmware was uploaded in March of 2025, and is packaged in Debian
-> Trixie, and was also backported to Bookworm. Either adding a symlink or
-> renaming it won't trickle down to users for some time. So this seems
-> like a possible ABI break, where the ABI is the file name.
-> 
-> Or maybe you don't consider it as such because SCP hasn't been enabled
-> in the kernel in any release yet?
-> 
->> Please remember that some of those SoCs (including MT8195) allow the SCP to be
->> configured as *either* single-core *or* dual-core - and usually firmwares for
->> single-core configurations are not compatible with dual-core ones, because of
->> the SRAM carveout/usage.
-> 
-> For MT8188, whether the current blob is dual core compatible needs to be
-> checked. The blob upstreamed to linux-firmware was built locally by
-> MediaTek engineers and is not what we ship with ChromeOS devices.
+> Once we allow software nodes to reference all kinds of firmware nodes,
+> the refnode here will no longer necessarily be a software node so read
+> its proprties going through its fwnode implementation.
 
-The current blob is dual core compatible.
+As pointed out in previous reviews this would have benefit of a short comment.
+explaining the indirect call to read an array.
 
-We assisted MediaTek (Moudy) in choosing and validating the SCP firmware for
-MT8188, and made sure that it uses only one core, and that doesn't clash with
-the second core SRAM.
+...
 
-Cheers,
-Angelo
+>  	if (nargs_prop) {
+> -		error = property_entry_read_int_array(ref->node->properties,
+> -						      nargs_prop, sizeof(u32),
+> -						      &nargs_prop_val, 1);
+> +		error = fwnode_property_read_u32(refnode, nargs_prop,
+> +						 &nargs_prop_val);
 
-> 
-> 
-> ChenYu
+It can be one line now. We are not fanatics of 80 limitation. :-)
+
+>  		if (error)
+>  			return error;
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
