@@ -1,157 +1,167 @@
-Return-Path: <linux-kernel+bounces-879220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC45C22929
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADACC2292C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB82F3BBEB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D2C3BDBB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40C133BBA3;
-	Thu, 30 Oct 2025 22:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUuXGCYc"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB5533B949;
+	Thu, 30 Oct 2025 22:35:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDA52BAF7
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318233B96B
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761863722; cv=none; b=iSJScmiXo5NRle5wkAIWRblOSMdPgajhtHxdGPRi0lOZoQZCXy3qgLCCgwp3Tv9tIAVCgdbHM8mQObhOQxLxLkzovklAP9uqFG04WIxVi/ak3At22hUdtznnh++l4yM/mTBmRjCHKrS2qos91Db7VdtVbREW83KnkYBpiSnzKKE=
+	t=1761863732; cv=none; b=WwVayaj1VeMukAPiFaU6BP5TfvD5OOo9lQGnf/6ijq65MOWwDY9Axyt6RYqXpVwn29ArHM2V4cl6nU2rRppjsB48mNemThJW+eKdbdz/1FBLG5gP3ge1Ya+iN2S2nAdufL7M5tabipJHLpuSPivifB/aOijzsdKmD+74F2NnU0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761863722; c=relaxed/simple;
-	bh=zLn/caSgsK1UHkcN+BLUKD1qS2XUazFMSmih5z8SILk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NEZiash+mYte/z+shbJIrQuawIUuMtYZAa+2Ev0XUD+drbVqa7wOOLF83gy/8Mu7x1v4LoH+BD0CJizrT2QJqwimWgo4ialXhrIPrShG5v16ykr8NvnlRyA/DnUJ/NpvMfqkqiq7WkQFDOKbpOq5HeVZtixu0b/zvk8vSK40EJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUuXGCYc; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so981266f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761863719; x=1762468519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b2Kd7J+q6FDvOoPfI5A3gvP81dJS9CMda+auiDLSkyg=;
-        b=BUuXGCYcE4eBqyC9jkeW7vWdpEl9d4X0rRBSWG8d6oUYV0QT1ScRn41N/JIUGiobp2
-         BxV0x5nAuCpAomUGVE3hH5NprtqynDmsW7ZinbzrzZshdTppA3TPaNKJYzX+1a8Edc7O
-         ZkutwTMy3xbC0EqiG34M4bQS8aFiKcfilAUzIRqAzGytcjKW2CUAeuJktbp7LL1xGUZG
-         zf/7ZxF5OG6ApDD3B05NWecdi1KmQYJRvmQ6z3v1u755Jc14wWL6GfgjMXO7IEfcwvWY
-         nSdI2KvDtrUITXpUDNGsKJ+QUo1DzmB1747a3cTq5mKLKznqAkPBpFxywEkxSF6300Oy
-         /bxw==
+	s=arc-20240116; t=1761863732; c=relaxed/simple;
+	bh=pHhiEmcH4TfrXRWRl9ZT/C5yKUB2Ot9b0HrCeVjExVY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I+/6ZHBdUMiuP/IblxQEMtCobpwOW9bwEGZk1dVANia1pGnUzi9O1CmYa2CkQE1tDQ1x9EitQNYQtSvcOr9wq7LFQTZ9p62/Y+Ul48AbSUc4dFSiruTASMz2WnBwXj6j5ZhOZntCaKiGkMR+wSLkbRaEK6iiW4McoZtI2nrnUOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-93e4da7a183so180920639f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:35:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761863719; x=1762468519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b2Kd7J+q6FDvOoPfI5A3gvP81dJS9CMda+auiDLSkyg=;
-        b=EQNXeva9bJF8oHX1TEBFHV0XpsOwLbycZBG9FAYOkv4Uz+3W43FqLJhzFgwwbk7igT
-         S/N25HNTGhLRJ1MYQNeM565vuChVvST6gcDkiElCiYOq5fqY91FMPly2A1Mx3DlUGy8q
-         40QGAcMuR+RG54+ZKg7ZwN9bhZm1QEBjL350eAdDt9BvfrgpStCfjbVolTbgdH74eHZ4
-         vZKuFkWIc7yIzfN6WxQbQvmLSjougrbueRy3rZkWMQVL4Fbw7k3Yz4cqi6FOm3qhLz/h
-         eZPLB3ld7IPwdLfs/Vm1dLljJUAp+Thok0gDGovf8hKp3cVergJie8lsL1o1BeYUMJ3Z
-         TvOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+EEBcnIcBqRqiIymkBk5P3LjyQJNNVI3EyVbuXyw+Vu8jAOJmxwUKS5BnpH4/+l8JGRXnDCgFzmfgJRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbLgoQREIkmIwQ4Cyw2iau4Vk3zzF4OnEqVlpvCAPJ8jNYIQ7X
-	GJ8n2obPIsYThYt5b3pigou3/l+DN4SeU6MZ9bcW1iPUaggKAWRMZc7SrN7wrnP229juZXMZ6DQ
-	ujwHhAfnHAn6kSIk7ctinpsN4baq0ihI=
-X-Gm-Gg: ASbGncsS/HEUMup7899cZUVN9UbxAdTzwzjpXV5jsdxoIln7I2fpYaKanc4fLcso3M1
-	t16w5X0jyyRW7HibRe/boy1IqQLeroy55RYAu6JbDeW3tl9rgE8HV93Y+7Z1g3jkrkMdXj8v9hM
-	y8ncTS47jRVNpkZwEtyWWHNQgkkWLXhya9OYasVX/50feXfdzH3PotIwI+4XVjrCxXKTax/IvUm
-	8nDzEFOu3vyd43AkMVHhfSrml+/+YeelEGWXZyEh9KPxRdeTMBV8NH/0O+llTnRB7NQI8cEUVpB
-	pkKRzFHHefg/BkrSwFu/3e6o7xCy
-X-Google-Smtp-Source: AGHT+IHZCU0gTn2L+Kp3B9B3JGAYVk5CsdKbo+O31NvkyuOempOCQnQ6EAdMvfyCUL7LeYh5rvujR6k1Uu36Xz1gFFI=
-X-Received: by 2002:a5d:588b:0:b0:429:a81a:a77b with SMTP id
- ffacd0b85a97d-429bd69d876mr969395f8f.31.1761863718764; Thu, 30 Oct 2025
- 15:35:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761863730; x=1762468530;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fp+4+kCVvDg0f5kqZQEqrS4jtPcNoNwju4JpJrSlTyM=;
+        b=Cm61QHGF6RSt1dicjy5VAD872JM2BqMqxifJRXOtQiQ+m+0imUw29ICSyV5iSdXztu
+         bGXhW4AS0vyRjJE2qWpPbom1Bakm34YyltVvH/GJraWB/ptjiFZjExvK7Hq8qSleKGu2
+         XgQnRrMm4rWlCwksPWTTIpXn2nB6UytVmLccAJMN60WTfvojo5bZcAr1KpGxFcWHjUz0
+         O+MissAhJyrHqsI0hOfhum3bOAZ+MU9vYbShBcpLwJ02p8nuAjFO4EmgIuPhIa2lRrbz
+         4tqUKXDQ26br71eThuDnKS1ZCjjJ8xUpLrOBeCnQbf7HcDWyltO7M//7MQC1alT1mz0E
+         2KZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxv0UJv6hdy8bX0vsSutd12Keewlnf7P9/zShfTy3D8RWBUOuY8AI+EGCbC+JxuBmgX/vGno04TsytDDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzygKOS4uGw2uHsKUn2uO2pvW+xWswmJKgInD/6rRujb1CuY3q5
+	KXNbE+WQDaOwKbSuCdHQNGXjq2mW9nno4mmh++NI+HK1mDayoJHjBnB+M5k9Yvk7lQqxWVDdlix
+	kUAzMQRK/N72CgzmiVPXK87W/pPh2zgS299kJVoyyEJZe1nsCny6KBsxjAoo=
+X-Google-Smtp-Source: AGHT+IHknQ7ZbSDfRhb0aP3Ovs7zHXUMcbOpMt8WvY7Z5XLulnLyyblNnCvDDAxofqtD6d+MJY7tvzUOvTYsVwGjDl2rRdYvDBaQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030152451.62778-1-leon.hwang@linux.dev> <20251030152451.62778-4-leon.hwang@linux.dev>
-In-Reply-To: <20251030152451.62778-4-leon.hwang@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 30 Oct 2025 15:35:07 -0700
-X-Gm-Features: AWmQ_blKfB4pxXMdDnXXUorw9Ocz1_SHHY4LgAN_jPLmqmk4HBIDWWtoYD5-r84
-Message-ID: <CAADnVQLib8ebe8cmGRj98YZiArendX8u=dSKNUrUFz6NGq7LRg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 3/4] bpf: Free special fields when update
- local storage maps with BPF_F_LOCK
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Amery Hung <ameryhung@gmail.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-patches-bot@fb.com
+X-Received: by 2002:a05:6e02:228b:b0:433:5b1:671f with SMTP id
+ e9e14a558f8ab-4330d1e1888mr18194775ab.24.1761863730175; Thu, 30 Oct 2025
+ 15:35:30 -0700 (PDT)
+Date: Thu, 30 Oct 2025 15:35:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6903e832.050a0220.3344a1.044e.GAE@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in ni_rename (2)
+From: syzbot <syzbot+4d8e30dbafb5c1260479@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, bigeasy@linutronix.de, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 8:25=E2=80=AFAM Leon Hwang <leon.hwang@linux.dev> w=
-rote:
->
-> When updating local storage maps with BPF_F_LOCK on the fast path, the
-> special fields were not freed after being replaced. This could cause
-> memory referenced by BPF_KPTR_{REF,PERCPU} fields to be held until the
-> map gets freed.
->
-> Similarly, on the other path, the old sdata's special fields were never
-> freed when BPF_F_LOCK was specified, causing the same issue.
->
-> Fix this by calling 'bpf_obj_free_fields()' after
-> 'copy_map_value_locked()' to properly release the old fields.
->
-> Fixes: 9db44fdd8105 ("bpf: Support kptrs in local storage maps")
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-> ---
->  kernel/bpf/bpf_local_storage.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storag=
-e.c
-> index b931fbceb54da..9f447530f9564 100644
-> --- a/kernel/bpf/bpf_local_storage.c
-> +++ b/kernel/bpf/bpf_local_storage.c
-> @@ -609,6 +609,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
-l_storage_map *smap,
->                 if (old_sdata && selem_linked_to_storage_lockless(SELEM(o=
-ld_sdata))) {
->                         copy_map_value_locked(&smap->map, old_sdata->data=
-,
->                                               value, false);
-> +                       bpf_obj_free_fields(smap->map.record, old_sdata->=
-data);
->                         return old_sdata;
->                 }
->         }
-> @@ -641,6 +642,7 @@ bpf_local_storage_update(void *owner, struct bpf_loca=
-l_storage_map *smap,
->         if (old_sdata && (map_flags & BPF_F_LOCK)) {
->                 copy_map_value_locked(&smap->map, old_sdata->data, value,
->                                       false);
-> +               bpf_obj_free_fields(smap->map.record, old_sdata->data);
->                 selem =3D SELEM(old_sdata);
->                 goto unlock;
->         }
+Hello,
 
-Even with rqspinlock I feel this is a can of worms and
-recursion issues.
+syzbot found the following issue on:
 
-I think it's better to disallow special fields and BPF_F_LOCK combination.
-We already do that for uptr:
-        if ((map_flags & BPF_F_LOCK) &&
-btf_record_has_field(map->record, BPF_UPTR))
-                return -EOPNOTSUPP;
+HEAD commit:    e53642b87a4f Merge tag 'v6.18-rc3-smb-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ca5932580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d8e30dbafb5c1260479
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17273fe2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15374fe2580000
 
-let's do it for all special types.
-So patches 2 and 3 will change to -EOPNOTSUPP.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c69a7713b158/disk-e53642b8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7138dd74fe48/vmlinux-e53642b8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e715eea6ae3e/bzImage-e53642b8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/cd997f980581/mount_0.gz
 
-pw-bot: cr
+The issue was bisected to:
+
+commit d2d6422f8bd17c6bb205133e290625a564194496
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Fri Sep 6 10:59:04 2024 +0000
+
+    x86: Allow to enable PREEMPT_RT.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16e84e14580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15e84e14580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e84e14580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4d8e30dbafb5c1260479@syzkaller.appspotmail.com
+Fixes: d2d6422f8bd1 ("x86: Allow to enable PREEMPT_RT.")
+
+loop0: detected capacity change from 0 to 4096
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5981 at fs/ntfs3/frecord.c:3030 ni_rename+0xee/0x100 fs/ntfs3/frecord.c:3029
+Modules linked in:
+CPU: 1 UID: 0 PID: 5981 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ni_rename+0xee/0x100 fs/ntfs3/frecord.c:3029
+Code: 8b 05 e6 5b a0 0e 48 3b 44 24 10 75 22 44 89 e0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 09 1b c2 07 cc e8 a3 d9 bc fe 90 <0f> 0b 90 eb c5 e8 88 5c be 07 0f 1f 84 00 00 00 00 00 90 90 90 90
+RSP: 0018:ffffc90004327a98 EFLAGS: 00010293
+RAX: ffffffff8301e45d RBX: 00000000fffffffe RCX: ffff888032795a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00000000fffffffe R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1dac52f R12: 0000000000000000
+R13: ffff88803c0e0000 R14: ffff888057118f60 R15: ffff888057116ba0
+FS:  0000555590f59500(0000) GS:ffff888126efc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f59c3aa1000 CR3: 000000003a7e2000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ntfs_rename+0x735/0xbf0 fs/ntfs3/namei.c:332
+ vfs_rename+0xb34/0xe80 fs/namei.c:5216
+ do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+ __do_sys_rename fs/namei.c:5411 [inline]
+ __se_sys_rename fs/namei.c:5409 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3c2c65efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffd158f078 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007f3c2c8b5fa0 RCX: 00007f3c2c65efc9
+RDX: 0000000000000000 RSI: 00002000000002c0 RDI: 0000200000000580
+RBP: 00007f3c2c6e1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3c2c8b5fa0 R14: 00007f3c2c8b5fa0 R15: 0000000000000002
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
