@@ -1,223 +1,167 @@
-Return-Path: <linux-kernel+bounces-878569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2347AC21066
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:49:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04195C210D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:53:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2048646626F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:47:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6AA1AA1646
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758F02F6939;
-	Thu, 30 Oct 2025 15:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EBE359F85;
+	Thu, 30 Oct 2025 15:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7xbFnOL"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T/xScyqN"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD072773F0
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F186821CA03
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761839227; cv=none; b=SKLx7hT0B9uXcxQeSQPUDRsw+1JDTkDg/+SN7A+2dvg5qy8x8Dp+LyNpEVIfrmCV0+KLJZBSYTtJ5ppvbhpSURExhhy/0wA2jtHveXiVvS91kvA0fUGeobu2rFUH41cR1sILYBRHFOBTfjEHThgbnmo7pGva7gOgl3/F1pOmGdE=
+	t=1761839276; cv=none; b=ZriPE6I46H62W3mxCo1cBZcV8HmtWzGzqnj3UZlDAwEDkz6VZDWhND8hSmKpr33DzVkMlzKWu+MVtZlE58/hum1oK5V9Ahg2F0ERJ+8awRc/rIr4JYTPNOQu/IXHzOYYfZRNuwP7cYAMidpraxUn3Lh5TtszZo0mSiRaBHpdr+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761839227; c=relaxed/simple;
-	bh=KYCvtl9iIb9z3sYLX7mth6ZRx4xzHJNyk0OwzpOVQks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=prWveiMWPRo67fVqZKKuUwcW7jtKBeqLwFUHlJ3u10i4mliF3pJGCMF0ElWgDcf1E6UuZCc9rm9Tqadglr92m1bbs+SmlN1GMDYbxSmEYJ4IS6fTU5G7B70S3RFEljfKyZWUbGWGpuX2r5FNLOjdQtqTR2+7QJdIn5qwgIQlR78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7xbFnOL; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-782e93932ffso1258041b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:47:05 -0700 (PDT)
+	s=arc-20240116; t=1761839276; c=relaxed/simple;
+	bh=W1zw8qCD1fGu6vpnn4V64xxQGTS5z7t2Go4O+Abr6i8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z+gHoe57X2WEhkLJRwum9Ti4pMfHpRyCQPIiHmsd5LBZ+eFBdGXjW9/Fv0E+mSsunUeSSN5ifFMinlCIfQhkgKgyg8F0llRtugT1JV8Zvetj2pqQZoDgmG/i7PjkACdXvFlfTpFwqNc9ZqKYysCrLED4AQ1LAQJ2gEpdRw4SURQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T/xScyqN; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so751859f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:47:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761839225; x=1762444025; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761839273; x=1762444073; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HwkNGraBfoQB4E2yTSbSQQ8WvUrKXkWt+AnAAOpCLo=;
-        b=f7xbFnOLn5MVSmoPhrvkxGy77LmdxUNAcLjTlSMFOQAB1UCbLZkAxhMCPXmv/b9B/M
-         IzuhNU0Dd6Rehxr9YOiOShTIUjwWs2NDTRB/4UUKcYGm/ELHNOU4ziB3hkB3nLOiQYJH
-         nmZnE8uBJUNKlyDOrm2GQdYoccnW1wG7yTkn2e1h0MhRlXTf2TEcjug4XP9a6DP8WqsC
-         D0SjJAK4sxpAM1ctAlQy1iRmQQgBFhqhMCqdmpWSA6ol3R/yKZ8fYR907ifySWOVtiWe
-         kHgMqiEEOad2BR5sAj2wX0gPRorvpkIUI/KL+ebc91hcZyj0z4QcGTudmJx8f20h8LH+
-         1nCQ==
+        bh=X+2vUN9vUrrG0TjG/UGpxBf0iBedJfrxlMW3xSp+vBQ=;
+        b=T/xScyqNpG0vSitb/PRRo3WYI1mUJ20pIOBwISfby+JNFHMvYBLxwwhqPQ1GskxV/6
+         sx483naw3H2w9hzpgB5PwhiaqptpL9qnucmIZsFJqhsf36X4n8vQTMIkbNu9S3r0C96d
+         xHzNYf0ENAM0s0ZWm2bwpg+iD2yAKWvEJIPA2+iWKSH7HFSx3vPrO0E4pIhI0M+afNkt
+         2JEQlLIh3o3HaTkJTD4Gg8H/KwPOtH9sbdqwMhrS2Sw64k+9ICOwVhL3DWRSYLwD3apI
+         +2dhoEUu/ykbCSjSgWLja3BYJUwzaS3asFYKL81nELrmNS51jGc5oqUERTG4ycTu54Ap
+         HueA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761839225; x=1762444025;
+        d=1e100.net; s=20230601; t=1761839273; x=1762444073;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4HwkNGraBfoQB4E2yTSbSQQ8WvUrKXkWt+AnAAOpCLo=;
-        b=PgG3Hlxo+5GvWeRAFDdUEfpRMfULcn1p0FWUVAltFCjrDll3YOy6fuuUVt1dnHn5nb
-         EMLcG/krBp/Wtm9LsHqvHmzCcXH5ynSw5n/i45tIY9rrfC6zjeww0SR95dYX2GmvpGJa
-         xIF9a5geT0nIvDdlP1O+isf9Fx4EnhyK8g01GQUk1+5dykBFpd2XKsOLsFn3MX5lj4If
-         lg17i9C+qWYgVRy4uYGJylUQNPfLY7j6u/OSHyH2W+rk37P5BowVk0/oXP9bnlyJPv1i
-         CQ9JR0dzgB5InLxDCaFZLEImmDXuPLDDwYDeOmh7zvsITOH2OaAz5pylLddrgkndxVDv
-         HP2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUOyr3MH1Iq8yOFUWz82KMgDkGDZyITV7AbigCFknPgWKhmBt8fXAV2Ua+G53YDOrtQ/teFUfd4a9Q8tS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzra+K+/+41zc5ztrGi4ZKMWjfb+XEHrlaBkpQeUWk79TULkltB
-	Uwx9mVhjY9Lx7/iOZLgm5RU27ALuic4P+3uL4lWSPRr3ISkYScGB9ELl56QIxg==
-X-Gm-Gg: ASbGnctWP9tqTlXnXauE2QdY0cJSsOUiUe+9V4B2IqZQ5DTVLqbaZWrZSeOWcHm4oZQ
-	bdX+OZgxbhJxItrd+GanxJOyPOb3FPJEgOpSFbzN/j/FzM5kJ6zT4JZj1tU1jEk+k5Btpt2PWox
-	C5zpzqPwEvvJ12Qav8HyYSlx9UfBz20LQjdeDFs2WM+tHTkJk7yce0sZTfIMwUTF0/9YmQohgg6
-	OD/gecsIznb0fbWpnV5c/uKFNh4ttBY0h3dP2ISiATX+1M6LI0cD+KyTKzhQ5Yl6qjvkw9lvDUC
-	zId/sgl5y1IfbpgTAV12RralNBsOZIoq2UychE85pT9Bm0Wet66Q85rfSHXuEG9rggqEhENcYNz
-	CM0Unrc2HU1pCbxZKX8GqfrUBn/pEc/kNK0qQdWfN3iPuO+NQ0X8Fbd58Ghsw/jaJ4fkWvQLVK/
-	X1bBZayeQq4q3EYaKGi7soAB6sDyTfZCtVRopkvtkzBHSVS3cpiKO9Vp8MseA=
-X-Google-Smtp-Source: AGHT+IFcc33VqBkxqmqM9pNxRLYyND/KX19MuxGKFkzF9NJYd7inwOjqBTFF6JjTi4M2JMlKTu/4xQ==
-X-Received: by 2002:a05:6a20:4327:b0:343:6639:f1b2 with SMTP id adf61e73a8af0-348cac86b7bmr94843637.15.1761839225002;
-        Thu, 30 Oct 2025 08:47:05 -0700 (PDT)
-Received: from carrot.home.local (i114-180-53-102.s42.a014.ap.plala.or.jp. [114.180.53.102])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414072487sm18992926b3a.52.2025.10.30.08.47.02
+        bh=X+2vUN9vUrrG0TjG/UGpxBf0iBedJfrxlMW3xSp+vBQ=;
+        b=E1XJgjR/QpEtGMeNtb8uxuyFrDRUGffGKNd4+Gw6k55jCwW7XdtFSlu+dtHf8YkfN5
+         Cc3uBOk2kLKWKzQJpTMPoCGdyNEHzdFM0IDjM6n8qMHjj71rOo5TVYj6ivy5Eb9vuQXy
+         MVRZcS8vXqdFWYoe6gmD18ws9HbqB8+8URllyAn14WDsPPM0Tt7yxU8VT3aEMNu0p7De
+         zqoJcRRhAdl+htcyF8uS9QxcvBv6TZRLxAjM2++guUddwWzuV8rPIwtGqLPwsxjz9gai
+         fe2gqFd81gvQ1aJ87wRhsUWByKpq1rithfotaIqxtzYZt93xB9wt/6qpV3vq00QvvOJB
+         ZNAA==
+X-Gm-Message-State: AOJu0YwJnl+G89+DtjCt3srAaVgWkSp5fex37cFTcWsuni3YnDhjSdHx
+	Ee76Mjj7AcfB7apLmg+YL08vEu1uSlIHzntSG1KJYg1KyOrdSZP6C4zOOotHzFT/ZFiFRn/psQy
+	gUng6
+X-Gm-Gg: ASbGncv10+5AwoB2W9gjR+ZIpWhH/JOgYaELq0jL09Tsp/Wxqf4kqDX72HCXtf2nC53
+	1l5pRVQ4xASfHgSMEoosrec1BgZSj7rUAfpM+B2u98sYumpQ12C+3iJmHtSB1BugH+rgyDdX6bf
+	lq7SJ1VrfHEQRmh8nnEIGYNlPezNZrM8FvU4m2NUg0kqARoblxWQOlcoDIXSyEB8KgEe+5tZh82
+	7O+FD0FqTxY+clOkVN1FjqdiTg/IFU00DhwfOu2mG5KTyLnh1ex9kH6JlPfDvElCMb5jNMh4WKg
+	HIxlToK+ItPNMHCk3RIOXc9lr9+bPAjwbGsZXG2a8eCG8D8STrpDHH1n64W6rTyhFa7ZhGgXTZY
+	2lFz0j+X4QdsOKCNKPv7ggMFkFIhTitU+HgLBfeGGeaOlUAJG8ryBAnKZt2ca1K95Nf3J65RSyV
+	cEt8hWWR9GA5uCoK8=
+X-Google-Smtp-Source: AGHT+IGP0z4V00XKiXMmYp4l2/BZ8F0n9XtVTSemRHjCzKtJaTEABQJsm3CuVaPc7Far4bXVn0wIIA==
+X-Received: by 2002:a5d:64e4:0:b0:429:66bf:1475 with SMTP id ffacd0b85a97d-429bd67242fmr59867f8f.3.1761839273055;
+        Thu, 30 Oct 2025 08:47:53 -0700 (PDT)
+Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d4494sm33230465f8f.21.2025.10.30.08.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 08:47:04 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nilfs2: replace vmalloc + copy_from_user with vmemdup_user
-Date: Fri, 31 Oct 2025 00:46:43 +0900
-Message-ID: <20251030154700.7444-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 30 Oct 2025 08:47:52 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Subject: [PATCH 0/5] replace old wq(s), added WQ_PERCPU to alloc_workqueue
+Date: Thu, 30 Oct 2025 16:47:34 +0100
+Message-ID: <20251030154739.262582-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Thorsten Blum <thorsten.blum@linux.dev>
+Hi,
 
-Replace vmalloc() followed by copy_from_user() with vmemdup_user() to
-improve nilfs_ioctl_clean_segments() and nilfs_ioctl_set_suinfo(). Use
-kvfree() to free the buffers created by vmemdup_user().
+=== Current situation: problems ===
 
-Use u64_to_user_ptr() instead of manually casting the pointers and
-remove the obsolete 'out_free' label.
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
-No functional changes intended.
+This leads to different scenarios if a work item is scheduled on an
+isolated CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
-Hi Andrew,
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
 
-Please queue this for the next cycle.
-This updates the ioctl handling code of nilfs2 to follow current
-practices.
+        schedule_delayed_work(, 1);
 
-Thanks,
-Ryusuke Konishi
+Will move the timer on an housekeeping CPU, and schedule the work there.
 
- fs/nilfs2/ioctl.c | 35 ++++++++++-------------------------
- 1 file changed, 10 insertions(+), 25 deletions(-)
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
-index 3288c3b4be9e..e17b8da66491 100644
---- a/fs/nilfs2/ioctl.c
-+++ b/fs/nilfs2/ioctl.c
-@@ -49,7 +49,7 @@ static int nilfs_ioctl_wrap_copy(struct the_nilfs *nilfs,
- 						   void *, size_t, size_t))
- {
- 	void *buf;
--	void __user *base = (void __user *)(unsigned long)argv->v_base;
-+	void __user *base = u64_to_user_ptr(argv->v_base);
- 	size_t maxmembs, total, n;
- 	ssize_t nr;
- 	int ret, i;
-@@ -836,7 +836,6 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
- 		sizeof(struct nilfs_bdesc),
- 		sizeof(__u64),
- 	};
--	void __user *base;
- 	void *kbufs[5];
- 	struct the_nilfs *nilfs;
- 	size_t len, nsegs;
-@@ -863,7 +862,7 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
- 	 * use kmalloc() for its buffer because the memory used for the
- 	 * segment numbers is small enough.
- 	 */
--	kbufs[4] = memdup_array_user((void __user *)(unsigned long)argv[4].v_base,
-+	kbufs[4] = memdup_array_user(u64_to_user_ptr(argv[4].v_base),
- 				     nsegs, sizeof(__u64));
- 	if (IS_ERR(kbufs[4])) {
- 		ret = PTR_ERR(kbufs[4]);
-@@ -883,20 +882,14 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
- 			goto out_free;
- 
- 		len = argv[n].v_size * argv[n].v_nmembs;
--		base = (void __user *)(unsigned long)argv[n].v_base;
- 		if (len == 0) {
- 			kbufs[n] = NULL;
- 			continue;
- 		}
- 
--		kbufs[n] = vmalloc(len);
--		if (!kbufs[n]) {
--			ret = -ENOMEM;
--			goto out_free;
--		}
--		if (copy_from_user(kbufs[n], base, len)) {
--			ret = -EFAULT;
--			vfree(kbufs[n]);
-+		kbufs[n] = vmemdup_user(u64_to_user_ptr(argv[n].v_base), len);
-+		if (IS_ERR(kbufs[n])) {
-+			ret = PTR_ERR(kbufs[n]);
- 			goto out_free;
- 		}
- 	}
-@@ -928,7 +921,7 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
- 
- out_free:
- 	while (--n >= 0)
--		vfree(kbufs[n]);
-+		kvfree(kbufs[n]);
- 	kfree(kbufs[4]);
- out:
- 	mnt_drop_write_file(filp);
-@@ -1181,7 +1174,6 @@ static int nilfs_ioctl_set_suinfo(struct inode *inode, struct file *filp,
- 	struct nilfs_transaction_info ti;
- 	struct nilfs_argv argv;
- 	size_t len;
--	void __user *base;
- 	void *kbuf;
- 	int ret;
- 
-@@ -1212,18 +1204,12 @@ static int nilfs_ioctl_set_suinfo(struct inode *inode, struct file *filp,
- 		goto out;
- 	}
- 
--	base = (void __user *)(unsigned long)argv.v_base;
--	kbuf = vmalloc(len);
--	if (!kbuf) {
--		ret = -ENOMEM;
-+	kbuf = vmemdup_user(u64_to_user_ptr(argv.v_base), len);
-+	if (IS_ERR(kbuf)) {
-+		ret = PTR_ERR(kbuf);
- 		goto out;
- 	}
- 
--	if (copy_from_user(kbuf, base, len)) {
--		ret = -EFAULT;
--		goto out_free;
--	}
--
- 	nilfs_transaction_begin(inode->i_sb, &ti, 0);
- 	ret = nilfs_sufile_set_suinfo(nilfs->ns_sufile, kbuf, argv.v_size,
- 			argv.v_nmembs);
-@@ -1232,8 +1218,7 @@ static int nilfs_ioctl_set_suinfo(struct inode *inode, struct file *filp,
- 	else
- 		nilfs_transaction_commit(inode->i_sb); /* never fails */
- 
--out_free:
--	vfree(kbuf);
-+	kvfree(kbuf);
- out:
- 	mnt_drop_write_file(filp);
- 	return ret;
+This lack of consistency cannot be addressed without refactoring the API.
+
+=== Recent changes to the WQ API ===
+
+The following, address the recent changes in the Workqueue API:
+
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+The old workqueues will be removed in a future release cycle.
+
+=== Introduced Changes by this series ===
+
+1) [P 1-2]  Replace uses of system_wq and system_unbound_wq
+
+	system_wq is a per-CPU workqueue, but his name is not clear.
+	system_unbound_wq is to be used when locality is not required.
+
+	Because of that, system_wq has been replaced with system_percpu_wq, and
+	system_unbound_wq has been replaced with system_dfl_wq.
+
+2) [P 3-4-5] WQ_PERCPU added to alloc_workqueue()
+
+	This change adds a new WQ_PERCPU flag to explicitly request
+	alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+
+Thanks!
+
+Marco Crivellari (5):
+  ACPI: scan: replace use of system_unbound_wq with system_dfl_wq
+  ACPI: OSL: replace use of system_wq with system_percpu_wq
+  ACPI: EC: WQ_PERCPU added to alloc_workqueue users
+  ACPI: OSL: WQ_PERCPU added to alloc_workqueue users
+  ACPI: thermal: WQ_PERCPU added to alloc_workqueue users
+
+ drivers/acpi/ec.c      | 3 ++-
+ drivers/acpi/osl.c     | 6 +++---
+ drivers/acpi/scan.c    | 2 +-
+ drivers/acpi/thermal.c | 3 ++-
+ 4 files changed, 8 insertions(+), 6 deletions(-)
+
 -- 
-2.43.0
+2.51.0
 
 
