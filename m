@@ -1,196 +1,215 @@
-Return-Path: <linux-kernel+bounces-878512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E233C20D95
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0A7C20DA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 725B24EC616
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:12:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B97DB4EC42E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD64832ABF6;
-	Thu, 30 Oct 2025 15:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBDB329C60;
+	Thu, 30 Oct 2025 15:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4+wvwsB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MC3krj1k"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A5D32AACE
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13031329C57
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837166; cv=none; b=LUrL58EU4++GbDn1nfafXDp7CL/L8h/fe884GWW9tAYQEsHJcokHO7q2CAChOj3+nY2jFSmdJBM4ZEOFHMQ+y2iJwtbMW6ys1pvKSxyCiMcBepFF1IQz5z1nUvhkIRlhQ4p0HF4iGlppMQz8kGm6Hqc8HR5DCTUbFSXxh0XS4A8=
+	t=1761837208; cv=none; b=kg5Aajp+vZNOPKEo0ZQ1NiGouEUXPY+H0fu4yBEh0M888gKykO46mkBsbVP0sE5aEP1iwx1HLlvawS7PGBG/zTRBIKhpRMRxBXj68ayGAjVWgjoqgnr7IqPl5cqxbBq60DOIMeTxPYypR6JT6gXdvWfEZYXzeaBySQG5CJw9/qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837166; c=relaxed/simple;
-	bh=Ln5lI1/a4uz/Ax9PDEya8yjyMf+wmQDUYqb0KNH2ATo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fYUoM4uZmz0YhWUJK3ZN5SpGC0PN9YySz5IGYbqv2ciioulpkXiI44Tjfi/cH+hkyECRYiRZvXcCUUEAXJn0NRvBSc8TmF7YsAuHgmjt2deDgr3isWPILh1iz7pEnbfjFctaknZ1DNK33JAX+P436sxeHPbOStG3E3gsWBVXMkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4+wvwsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A874DC4CEF8;
-	Thu, 30 Oct 2025 15:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761837166;
-	bh=Ln5lI1/a4uz/Ax9PDEya8yjyMf+wmQDUYqb0KNH2ATo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=h4+wvwsB5dnaHSrNRsou/umuX3c9xeHosNYjWDZkHjlKzviMFH89KF86Nx47lKU+2
-	 mQpCkjx+EIZtDixUGj+ff8dtJez++pDXDNRi5VOot7ugtqDuRDrPWThLP98iRytvdd
-	 Y7lPTdNqjcYDT2pa4SH9Ef/kFYGzgaUlXxCEpoN0//ibJrFaw/sIXChN/6cPcysY20
-	 FvqrGyRNRi6hJY+5ZpVMFcMFn2yNiiAkyCCL9G3C/wJSnKvvPa9w/dkYyNs2rY8AV5
-	 0TOCndI2eFMv6TvQW+IsSSWu/3tO5T/9yAIsVNNyRsyp4HBE+/JMZdfcMDnwm+ksV7
-	 mOngEks4qGmeA==
-Message-ID: <1ed30710481dd6739e6e9b4bd6f57c7c9d7e7de3.camel@kernel.org>
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
-From: Jeff Layton <jlayton@kernel.org>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: Christian Brauner <brauner@kernel.org>, "skhan@linuxfoundation.org"
-	 <skhan@linuxfoundation.org>, Khalid Aziz <khalid@kernel.org>, Tetsuo Handa
-	 <penguin-kernel@i-love.sakura.ne.jp>, Jan Kara <jack@suse.cz>, Taotao Chen
-	 <chentaotao@didiglobal.com>, NeilBrown <neil@brown.name>, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Date: Thu, 30 Oct 2025 11:12:44 -0400
-In-Reply-To: <90143686.3161766.1761833369803@kpc.webmail.kpnmail.nl>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
-	 <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
-	 <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
-	 <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
-	 <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
-	 <a2954b90bda141e71da6a4aeb4767d4821abad03.camel@kernel.org>
-	 <90143686.3161766.1761833369803@kpc.webmail.kpnmail.nl>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761837208; c=relaxed/simple;
+	bh=4LZvzW9Kh+P42auNNJ0YzK0VaO1s27OYFzOhbaTw/iY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KUPm/SyMtqeTlSrb1OCT2vi4SjwuZaktO8+O+R9KVgwSvOd1xKRlppDLOXKdjLApbNLljn9gUo0syWIAjCX4X9eLGOlsIPmZ+tp4OQgq9MWsT5KgPmp6uRzSBra0oJCmurMLKPLAm6Va+Y5mTlWwN2OTsfVpi3mMQihc8XfFguU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MC3krj1k; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-78356c816fdso16445327b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761837206; x=1762442006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4COQfU/3sWCyd46/b/oPZJ7AhRt72nzQkq06aF3DpQ4=;
+        b=MC3krj1ksF7SfBaU9zscMdxwAvVG5rZU4U2Ps9E4tsOJ98shLETDmsZosy/UNviwXO
+         mztR6OGnJgIjp4uQT2TxrNggcy1OAQE0unntSBAGmgnGZjVczoUG2ddqO561HDaGEut0
+         RwSVIVay5yG8pQwbiLc9clOM03JNQjrhJyQK4AAsD1bDHwlhVSCDkSCTicvMZ1vPrhel
+         4vasECfUZBAt5IVGtwJ/Rrn3QIUl9sK3jeWI+MuT5LPN50Gy6Qkezkzz9YfSkPxRcEMw
+         whp44erlKUl2cc3R96GjKxozOplgh4EjAPDs3REX4rcgLumC9f6C+vvRGmeGEoTaqdqL
+         qJYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761837206; x=1762442006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4COQfU/3sWCyd46/b/oPZJ7AhRt72nzQkq06aF3DpQ4=;
+        b=FwHlQKAEQbWkE9rbfhHDA5l6loNCtQTL6NM1tAPS+M6FQxNFr7robO8CnhsZ5qhyzF
+         9eqJBzh4eDf78I8OOD2EOYt8LkBRlCJl52ssR9Oz2ugJRMWp4jerRNlS8eymkwALxvFo
+         KdImx2HHP2Zc0cMkmhNZirIhULtzbMwEGBOPhcvRrP6gqIy8QR6tXJyGJ0icrwvVr5th
+         ZC4b2mj2jgKCZkxySY8G5Qhv2b6f0vSnY7m8MyOQbskIwT+gbHX7j2wGFsvEnTKQhijK
+         O+PtFTY2dczsoT+2tGk5vXYjN+1dQ7P4uV7hkGWYIfB6z442NOxn3SGXbGbvOMA1b0hx
+         ZuPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJBKlk31Wv30AIbKlIuIR5vhMP2L7VUHGzw0xhfSVFQVVqV4s7dDK5uLzZY5YUv7F/PLf5NOD/rkv6VAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqkVUd73fpSVA7kwX6Hn/mEPd7HhHpQIzmIr8GzNy8oLDvVVQ8
+	ti40CDZbW7yXN2BHtPlwdx06RsTAsxONaOFBHmInlsO7uETNckkX1sxxgcFdtmF3BjNpdD/4AeZ
+	9YRa4ZSTTeildCLoTT//jDVStD/0h1yJs4Cg4byRJ5Q==
+X-Gm-Gg: ASbGncv+Nw3osmud4o9sZDDvFDhRSFHaiH/jIprRsiyJBi1XrqW6eFZnbXxO8v1Y3PQ
+	dAqBkYIH7d9kYj9dX2KYYxxD6wWx00BWeJnE+qN/JImjajXsvHDxdzsYaGRAlvcXNdApRxP7idp
+	+fF9q7IFI9cWibvUHPLY33peWlzrECFkGujX93ewQdTG4+XqtRJPMw6QnHOHG+FTqcdY3xWEHYB
+	2SB9xnUGo/DeI14wilr/hnYf1G+Cn69zJUmSH/xTWMtaQSVavv96hDReW51R0zxHQlYm2If
+X-Google-Smtp-Source: AGHT+IEgl+53+xVIpNx265m6xqVaVzDLYtfsMuYpDq/HyQpNXpcYzvl86YayDl9WX2cRTzUBgfmVHWp/0OwN+1Uhe6s=
+X-Received: by 2002:a05:690c:504a:b0:780:f9f7:1c4b with SMTP id
+ 00721157ae682-786390d3f7bmr29250837b3.33.1761837205781; Thu, 30 Oct 2025
+ 08:13:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
+ <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
+ <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com>
+ <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com>
+ <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com> <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Oct 2025 16:12:49 +0100
+X-Gm-Features: AWmQ_blf0zyNKfrORMoqLZv73Dd3HNaOv_nSPiu2DZwurZLSwec8TwHbzKR5H2g
+Message-ID: <CAPDyKFpBHZ758khTGhidcyYCwy7dDtkabJ4trg4K16BhWEpUYA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
+ for s2idle
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-30 at 15:09 +0100, Jori Koolstra wrote:
-> >=20
-> > I don't see a licensing issue. It's BSD licensed. Also, this is a
-> > userland code, so we wouldn't need to worry about that too much.
-> >=20
->=20
-> Oh, my bad. I thought Minix (the OS) had some licensing incompatibilities
-> with Linux, and this repo takes code from Minix. But that may be long in
-> the past.
->=20
+On Thu, 30 Oct 2025 at 15:06, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Oct 30, 2025 at 1:44=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> >
+> > On Thu, 30 Oct 2025 at 13:29, Rafael J. Wysocki <rafael@kernel.org> wro=
+te:
+> > >
+> > > On Thu, Oct 30, 2025 at 1:26=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
+> > > >
+> > > > On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansson@li=
+naro.org> wrote:
+> > > > >
+> > > > > On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+> > > > > >
+> > > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hansso=
+n@linaro.org> wrote:
+> > > > > > >
+> > > > > > > Changes in v2:
+> > > > > > >         - Limit the new QoS to CPUs  and make some correspond=
+ing renaming of the
+> > > > > > >         functions along with name of the device node for user=
+ space.
+> > > > > > >         - Make sure we deal with the failure/error path corre=
+ctly when there are
+> > > > > > >         no state available for s2idle.
+> > > > > > >         - Add documentation.
+> > > > > > >
+> > > > > > > Some platforms supports multiple low-power states for CPUs th=
+at can be used
+> > > > > > > when entering system-wide suspend and s2idle in particular. C=
+urrently we are
+> > > > > > > always selecting the deepest possible state for the CPUs, whi=
+ch can break the
+> > > > > > > system-wakeup latency constraint that may be required for som=
+e use-cases.
+> > > > > > >
+> > > > > > > Therefore, this series suggests to introduce a new interface =
+for user-space,
+> > > > > > > allowing us to specify the CPU system-wakeup QoS limit. The Q=
+oS limit is then
+> > > > > > > taken into account when selecting a suitable low-power state =
+for s2idle.
+> > > > > >
+> > > > > > Last time we discussed this I said I would like the new limit t=
+o be
+> > > > > > taken into account by regular "runtime" cpuidle because the "s2=
+idle"
+> > > > > > limit should not be less that the "runtime" limit (or at least =
+it
+> > > > > > would be illogical if that happened).
+> > > > >
+> > > > > Yes, we discussed this, but that was also before we concluded to =
+add a
+> > > > > new file for user-space to operate on after all.
+> > > > >
+> > > > > To me, it looks unnecessarily limiting to not allow them to be
+> > > > > orthogonal,
+> > > >
+> > > > So what's the use case in which it makes sense to have a lower late=
+ncy
+> > > > limit for s2idle than for runtime?
+> >
+> > Honestly, I don't know, but I just wanted to keep things more flexible.
+> >
+> > > >
+> > > > > but I am not insisting that it needs to be like this. I
+> > > > > was just thinking that we do not necessarily have to care about t=
+he
+> > > > > same use-case in runtime as in the system-suspend state. Moreover=
+,
+> > > > > nothing would prevent user-space from applying the same constrain=
+t to
+> > > > > both of them, if that is needed.
+> > > > >
+> > > > > >
+> > > > > > It looks like that could be implemented by making
+> > > > > > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_limi=
+t()
+> > > > > > into account, couldn't it?
+> > > > >
+> > > > > Right, but I am not sure we want that. See above.
+> > > >
+> > > > I do or I need to be convinced that this is a bad idea.
+> > >
+> > > And there is a specific reason why I want that.
+> > >
+> > > Namely, say somebody wants to set the same limit for both s2idle and
+> > > "runtime" cpuidle.  If the s2idle limit did not affect "runtime", the=
+y
+> > > would need to open two device special files and write the same value
+> > > to both of them.  Otherwise, they just need to use the s2idle limit
+> > > and it will work for "runtime" automatically.
+> >
+> > Right. User-space would need to open two files instead of one, but is
+> > that really a problem?
+>
+> It is potentially confusing and error-prone.
+>
+> > What if user-space doesn't want to affect the runtime state-selection,
+> > but cares only about a use-case that requires a cpu-wakeup constraint
+> > when resuming from s2idle.
+>
+> Well, I'm not sure if this use case exists at all, which is key here.
+> If it doesn't exist, why make provisions for it?
 
-Minix is BSD licensed too. That's not completely incompatible with the
-GPL, but IANAL.
+Well, because it's not possible to change afterwards as it becomes ABI.
 
-> >=20
-> > You're quite right though that userland replacements will need to meet
-> > some criteria before we can rip out the in-kernel versions. This might
-> > be a good discussion topic for next year's LSF/MM!
->=20
-> Would an in-tree but out of kernel implementation be an idea? Like how
-> kselftest is integrated in the code, even though most of that also takes
-> place in userland. That would guarantee a level of support, at least for
-> the time being. I could take the code, verify it, and write some tests
-> for in selftest.
->=20
+It would be silly having to add yet another file for userspace, down
+the road, if it turns out to be needed.
 
-That's not a bad idea. We already have some userland code in the kernel
-tree (the tools/ directory comes to mind). A directory with replacement
-FUSE drivers for in-kernel filesystems could be a reasonable thing to
-add. Anything we keep in-tree will need to be GPL-compatible though.
-
-> And there is still the issue of what we do for the syzbot bugs until a
-> more permanent solution is achieved.
->=20
-
-Yeah, that's a different issue.  Most likely we'll need to fix those in
-the near term. Replacing minix.ko with a FUSE fs will take time
-(years), even once we have a new driver in hand.
-
-We'll need to mark the old driver deprecated and then wait a few
-releases before we can rip it out.
-
-> Anyway, this probably goes over my head as a clueless beginner. Just
-> trying to see where I can help. Thanks a lot Jeff for you answers, I
-> appreciate it.
->=20
-
-You're welcome. We all start out as beginners!
---=20
-Jeff Layton <jlayton@kernel.org>
+Kind regards
+Uffe
 
