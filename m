@@ -1,151 +1,91 @@
-Return-Path: <linux-kernel+bounces-879040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5047CC221BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:00:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE5CC221CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 21:02:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F356A34B009
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD80E18935CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DB333343D;
-	Thu, 30 Oct 2025 20:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BCE337BA7;
+	Thu, 30 Oct 2025 20:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+DLOqD1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="SA+dwgu9"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71E13191B0;
-	Thu, 30 Oct 2025 20:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45AD3328F1;
+	Thu, 30 Oct 2025 20:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761854407; cv=none; b=B6T9oqtJtXXSJAO/QIzpNmJQxGapdt9MS9Lzz/cXgmJ+F1OQLkAkmng3N4ft9+/vGs7I/1jVCUKwgjwaxUXyBIhbP5gYwR7EvwokGkHISnjcXN7nbB28eUMIMmi0nItfIZYWYUo/XbH6ZXlCmPMFG9unotC2NK9GDG44+xNnaVk=
+	t=1761854515; cv=none; b=RkVdJALwAjrsyARdSt+jWA+MVqzySdv8pAG+kNMA0ZXfaChQvGQB0SLoUM+vRiWzEOC8/3wHTFQKGOArOM2S+obJxJf24ceXoHJ0kvNdQWnF7amqA5qpbCdNaQty+fvH8LVLTbRQzHfanegbz6B15wbWm/QO4Q//QvF7pmSA3hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761854407; c=relaxed/simple;
-	bh=adl3rEiDgJT/7cpcKay8yGJNneTH4HZ4ERRdYFjnDOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqqT1ZOcYGBqQ1djfLIWz6armjSe0WFNhfpr34/7UIiBlObGeYOi6zKIQo8CN3tOL+U6MYYt+jb/MiSEdIa0lkeFHqVmQZEhLX+/Q88ypdAanNlpwOzyRiEwPt1a9g0SPwRPmmOZJh4NKLVWphkX/UgCjdEdNHD0SxWAu6e2X9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+DLOqD1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC73C4AF0B;
-	Thu, 30 Oct 2025 20:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761854405;
-	bh=adl3rEiDgJT/7cpcKay8yGJNneTH4HZ4ERRdYFjnDOE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d+DLOqD1CWACwg4wIfPnpv8wzdyZrwA0aUjXNcieEbxD2JUNWEt0RnsCUT/SWKWLe
-	 m+OFqHGdHc7RNWi1igOQCTdXyY12I5XlBdEPazuTEiFZkv4U3nUpTNyAV8y5cnN7P3
-	 Rb0WSN8cJEK4nMG7cSFkCryyQoOq4o66WeNxRfey0ml/EbWF9EEMrXYRsUPoHOqf8G
-	 nmjnuOXWRbonwMkc6KaBIc5NhtobNiVr0eDWOVExaNx02RnS2Ng7Ni58E/xEtU2RFq
-	 L3rf8qndYjlIBeUnlb+QJ0j89apRUnTFIsljI+RUUNDR3U3SY39DDfS77OaexINLOD
-	 z6CSp2vPEM7Yw==
-Date: Thu, 30 Oct 2025 19:59:59 +0000
-From: Conor Dooley <conor@kernel.org>
-To: akemnade@kernel.org
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: twl: enable power button also
- for twl603x
-Message-ID: <20251030-scientist-splashed-e0505d44abc4@spud>
-References: <20251030-twl6030-button-v2-0-09653d05a2b1@kernel.org>
- <20251030-twl6030-button-v2-1-09653d05a2b1@kernel.org>
+	s=arc-20240116; t=1761854515; c=relaxed/simple;
+	bh=HVg1JjuEIl2ZtyXthNVNE0xyixvCrCltCUszdJpTUrE=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=VSzhFZFWkFc/HrB8zBD6qVrfmKtwvvk+M8bio9KuwsYrzuH4yHWqR95hbW29HfB++xEUiGwX9PsRInrIMuOwoxutl0HyPtKb776TO77oaMP3LI+HwFFFDcmOYkL8Yr9/96VjhfebW0R4/5RfV/wrHP/7o54N2Ubo34LQKcaDagA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=SA+dwgu9; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=VWspoIGJ+J2dFkXu8DhQ+OCtXbfe73pkNJPKHONBNxc=; b=SA+dwgu91w+y9okuQ+yehHmkum
+	UDMKx61Sr1Enf3DDYiRyOzfEN2xVIAbbDYmgSox9UesJh0umKDiBOZzMGmMVge6xb+autZ+Nktwdb
+	ssBtZYRdrMx5KddCbq9FydKpb3FHvHrx+iZMXD1ZXr76tClUPbUIuS0BGdq5gtI6OsV8=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:35546 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1vEYq7-0004jm-Nk; Thu, 30 Oct 2025 16:01:44 -0400
+Date: Thu, 30 Oct 2025 16:01:42 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>
+Message-Id: <20251030160142.e1ae7b158216b8101582cd49@hugovil.com>
+In-Reply-To: <aQM_VBg_7JwyGGLG@black.igk.intel.com>
+References: <20251027142957.1032073-1-hugo@hugovil.com>
+	<20251027142957.1032073-12-hugo@hugovil.com>
+	<aQM_VBg_7JwyGGLG@black.igk.intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AwBfcfdV42k/Lguc"
-Content-Disposition: inline
-In-Reply-To: <20251030-twl6030-button-v2-1-09653d05a2b1@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -3.6 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v3 11/14] serial: sc16is7xx: use KBUILD_MODNAME
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
+On Thu, 30 Oct 2025 11:35:00 +0100
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
---AwBfcfdV42k/Lguc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Oct 27, 2025 at 10:29:53AM -0400, Hugo Villeneuve wrote:
+> > 
+> > There is no need to redefine the driver name. Use KBUILD_MODNAME and get
+> > rid of DRV_NAME altogether.
+> 
+> Actually I am slightly against this change. The modname (and hence modalias)
+> are parts of an ABI (visible via sysfs). Changing the module name (file name
+> in this case) may inadvertently break this. Yes, it most likely not critical
+> in this case, but should be taken into account.
 
-On Thu, Oct 30, 2025 at 08:10:34PM +0100, akemnade@kernel.org wrote:
-> From: Andreas Kemnade <andreas@kemnade.info>
->=20
-> TWL603x has also a power button function, so add the corresponding subnod=
-e.
-> As not in all cases there is a power button connected to the corresponding
-> pad of the TWL603x, the functionality can be disabled by
-> status =3D "disabled" or simply not adding the subnode.
-> To keep things simple, follow the established design pattern of using con=
-st
-> interrupts as used also by the other subdevices.
->=20
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Hi Andy,
+thank you for pointing that out. It didn't occur to me that this could
+impact the sysfs ABI.
 
-> @@ -225,12 +248,8 @@ properties:
->      additionalProperties: false
-> =20
->      properties:
-> -      compatible:
-> -        const: ti,twl4030-pwrbutton
-> -      interrupts:
-> -        items:
-> -          - items:
-> -              const: 8
-> +      compatible: true
-> +      interrupts: true
-
-I think this should be
-    properties:
-      compatible:
-        enum:
-          - ti,twl4030-pwrbutton
-          - ti,twl6030-pwrbutton
-      interrupts:
-        maxItems: 1
-since we want to keep the widest constraints that apply at the outer
-level, rather than removing the constraints entirely.
-
-pw-bot: changes-requested
-
-Cheers,
-Conor.
-
-> =20
->    watchdog:
->      type: object
-> @@ -459,6 +478,11 @@ examples:
->            #io-channel-cells =3D <1>;
->          };
-> =20
-> +        pwrbutton {
-> +          compatible =3D "ti,twl6030-pwrbutton";
-> +          interrupts =3D <0>;
-> +        };
-> +
->          rtc {
->            compatible =3D "ti,twl4030-rtc";
->            interrupts =3D <8>;
->=20
-> --=20
-> 2.47.3
->=20
-
---AwBfcfdV42k/Lguc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQPDvwAKCRB4tDGHoIJi
-0geGAQCUOfSydQ4hCeo0qguS5sInoT+gqjD5PYSMfQqcdg01ZQD+Nqjvu20sQwhz
-pZjtbtBlHG05Iohv3xX/fzZnXmFPzQo=
-=OvzN
------END PGP SIGNATURE-----
-
---AwBfcfdV42k/Lguc--
+Hugo.
 
