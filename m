@@ -1,124 +1,119 @@
-Return-Path: <linux-kernel+bounces-878551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77908C20F90
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:38:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84058C20FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:43:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142053AD3CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A94188950A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9823363B85;
-	Thu, 30 Oct 2025 15:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580FC36336B;
+	Thu, 30 Oct 2025 15:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eBWSXKRY"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nleKMoCV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FAB30506A
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0141990A7;
+	Thu, 30 Oct 2025 15:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761838693; cv=none; b=HgmfGbmkLtbXxA1YcFfiB7pZMUKqDfn2h40X6JzCoEw2w226csFsADQ3NPVy00XhnQFnTsLuy78cZuQifIKauGpN/ubl+CMiN7a/k3uTgoVsZlq/3gtFkORtAopodJkAVDsp3sB8IZJtGvbBEG3AngTArzVRcHQEo7FucAlziSI=
+	t=1761838756; cv=none; b=KndHoHJbxsQQ7lo5yMqD2t+1oovhq3s0nh4L26j+0ZNJGOuFlH7GF57KLfikSQ2g4bHcUWCH8pHcZa+4kYt51Ufgce8z2ywajdpFoYHSBTNjPGgGPHwxpEoiT2Ls6j3Dedrg3UphHcYIy6InAXj+WLgHsZjxleJlKJCrr/BtPqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761838693; c=relaxed/simple;
-	bh=mW+b0mZ0Xzoc1rgTkOGOcy4tpIVH1posyla2QdFqaqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUudS+XDfupwAxfyNmUJ8dAePF3Jg++lEI17beFog0/TxgNEOYF7YnYc9FZudrJPmJH5zLfmFvnH60OAQlm5/BFQOu4qjcrHPMrsjhJsrteIx8N49qzjULNz6aosq3dXPmfkQ4ASX3VBgTA9Vx9t3nGGWxyHfGUTmktjBKFPq6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eBWSXKRY; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-430ab5ee3afso11604155ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1761838690; x=1762443490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M4rhNISJyn3MQmXHfnEF2nxTYwm6ZMRXlKsdLf5mgvM=;
-        b=eBWSXKRYLbfiDbI/iSrUBks7XhTvWRU0I8tc/6Uvn1bL3EplmxWUSRny10p1oKdvhK
-         RnYIrt2uSQggyF79y4ngYr55b523FFbGVlppHM5aMCCvE7YCYWkJRMMfVmvgZSdwLD3I
-         gjZDnNNqSWnvGJheKiIABHATGTKskOFcY5MVg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761838690; x=1762443490;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4rhNISJyn3MQmXHfnEF2nxTYwm6ZMRXlKsdLf5mgvM=;
-        b=Bme6KUVhhYiR9dz9qW6jOJg6rJlbYsKBWd+W8OQd7fUv/jSmWFHGpZDRBg9gLV563U
-         nTbil8t2Q3hRTY3yZ2IaUme3lTo5kDDgu/p0RvmxBgI2x1jIhYJd4BzPG4N8JIeQ5alh
-         TbV3Ewhmzlwi4cPbM7O0iOEGGk6AMR2OSN4DE3B0NxiPM6JvLGgY+oCQcVmmPHL4Puek
-         dKyHkSXH1lMMuVWCsfj/fkJ72rhVBdp3EHdCrfOaBVQVhatfJ1laN9iOU9iTrvBiv2aa
-         4FD66atRnzG+NtzdwhO0Py9PVg9DGWDAx7wQuH3cdzxTowZSrXn2cBdn9gWOXNroRJRh
-         zMtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdyjCg3OMp/uEnJumc/rAfFPmnDzEXFklKsn1RxFD1Y812CUfKUvN/tHzmiW53L4BJiqPgwQlHNbtiuos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/aWXy8M51yfvr4ipeMuQoxpzqPFlzjuR560QqukTjNhuLqXrL
-	GLmTNiyJB325wJ1wHiwGqnyCLh45BigbWCDTylGkkPAeNzBDKiSX3GdD2/m0EZpVgJ6cdlXOlwU
-	Ed2Zy
-X-Gm-Gg: ASbGncvjWefCRhB2ie+PAYZ2CF+0+e+1slA9Y50HKLgx6diIZ/RlAF2r4Wgf/vxQD9H
-	JPU/isomjFrRAtg3XLBHG3N2Bna85YobpGImOoPsgEkSkg+jYXs7RuLhywa8YkHPZ1YCNZqAIrQ
-	lFOvVMYQuoBOxZALjw0zInx00SnmF276A44e42CQ1DoLg6aemH1+bDrUqu0GAKRZT5dyMbIgNj0
-	w+YOzhvGBoUxG9aFjQfsglEEo4ibMs2xW2kRlJNvZM7fT73eR7IbLqkNsU7P4DcgjjrezkL4K3w
-	RxK2dtL+Mdcq2/Ej2EMPhA26Vv06yoZwAsEYPl8/fVV35fN698jIy7yXHwJPcEGIlfuMIXwixJZ
-	y5oDGFCSX1kDtVLwj8DIlOOh2LOpe6dH/ziKCEGiSuDVomcI9FmmGq+BDgieDoYOW0tmSoJQUao
-	E2ywrPx9COuukTulgHEJ9h03s=
-X-Google-Smtp-Source: AGHT+IEEQub5sLJ3aGuBouA92Z7nNZCPqtVdawvMALkZKTYfxOyi2b16vy5AGAgrD2+qrkL/YuY6LA==
-X-Received: by 2002:a05:6e02:3b87:b0:430:a65c:a833 with SMTP id e9e14a558f8ab-4330d205bcemr2256365ab.31.1761838690330;
-        Thu, 30 Oct 2025 08:38:10 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea995d179sm6740700173.47.2025.10.30.08.38.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 08:38:09 -0700 (PDT)
-Message-ID: <67f93be1-b5f3-4945-8701-8e86d61bafca@linuxfoundation.org>
-Date: Thu, 30 Oct 2025 09:38:07 -0600
+	s=arc-20240116; t=1761838756; c=relaxed/simple;
+	bh=ek0IzzttXXx97qNT2h1xklMaf1xglphbe0kKLIhYhN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=em5Jri69zrBQVwEnuO7kXjkwVVZjMCq7o6WvfYbVrsWJxPQ1w9bslZyf8LVwo+ZoMQucmNZvYdSuxHezyoTVup55gV0XNer907lGuXzURIA3o3q5JgjOFlnTLZbjOX1NKIgfSbP/OeF7P66kwtIbcU2a6w3JgAexQAQIMorj4Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nleKMoCV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7E4C4CEF1;
+	Thu, 30 Oct 2025 15:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761838756;
+	bh=ek0IzzttXXx97qNT2h1xklMaf1xglphbe0kKLIhYhN4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nleKMoCV/yk0BtnlIzx2I86cr3HqnGJCU2jCbp9S0N/Q/Sb8AY040g42QhifNtB8Z
+	 udiMRHAA0R8lBIhjvOVioR2YzQFLaGzXZ5dBAAhrCBor4d9fALEU1V4A4qV8rnRdEq
+	 hP0KMwy8FhR5ib1gdGtUvhOpN+eHx9fT0K9XJtrFhb+fVmFC8Elq8IuEFMvQzBKIew
+	 QKFOZ3tVdkiCBLZ6ZaLIOd7pOt6K+mygmbGAtJ7KwZ3oBH8c24H2QJBS45eYZMwFyC
+	 0zolbfs49T4uyRqBOcIkUj/9tq1+KJte6+ls+ftCku+3nWF1ALDRaetliGcVLmOyYm
+	 WYCCxgN+u+CRQ==
+Date: Thu, 30 Oct 2025 10:39:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	chaitanya chundru <quic_krichai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, amitk@kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	jorge.ramirez@oss.qualcomm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7 0/8] PCI: Enable Power and configure the TC9563 PCIe
+ switch
+Message-ID: <20251030153914.GA1632785@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Add error handling to minix filesystem similar to ext4
-To: Jori Koolstra <jkoolstra@xs4all.nl>, Jeff Layton <jlayton@kernel.org>,
- Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Khalid Aziz <khalid@kernel.org>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- Taotao Chen <chentaotao@didiglobal.com>, NeilBrown <neil@brown.name>,
- linux-kernel@vger.kernel.org,
- syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20251028205857.386719-1-jkoolstra@xs4all.nl>
- <su4qka5wugz3asm3sakmptgeeogx6duj6kc7doom5r4fhdwdcv@ogp4lz5gxn7x>
- <792975039.3142581.1761826973320@kpc.webmail.kpnmail.nl>
- <1697efab0661c4c80831544f84c9e520f33962e7.camel@kernel.org>
- <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <1979215152.3123282.1761831106100@kpc.webmail.kpnmail.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dccca2d-272f-451a-9e38-901a6fa3a24c@oss.qualcomm.com>
 
-On 10/30/25 07:31, Jori Koolstra wrote:
->> Not necessarily.
->>
->> I'm not sure if your internship covers this, but you could start a
->> project to build a minixfs FUSE fs (if one doesn't already exist). If
->> you get it working and stable, you can then submit patches to deprecate
->> and remove it from the kernel.
-> 
-> 
-> I would have to ask Shuah but am open to it. But a quick search turns up
-> this: https://github.com/redcap97/fuse-mfs . I would have to see if it
-> actually works and it does not seem to support v1, v2 of minix fs either.
-> There might also be a licensing issue.
+On Thu, Oct 30, 2025 at 09:13:29AM +0530, Krishna Chaitanya Chundru wrote:
+> On 10/30/2025 4:53 AM, Bjorn Helgaas wrote:
+> > On Wed, Oct 29, 2025 at 04:59:53PM +0530, Krishna Chaitanya Chundru wrote:
+> > > TC9563 is the PCIe switch which has one upstream and three downstream
+> > > ports. To one of the downstream ports ethernet MAC is connected as endpoint
+> > > device. Other two downstream ports are supposed to connect to external
+> > > device. One Host can connect to TC956x by upstream port.
+> > > 
+> > > TC9563 switch power is controlled by the GPIO's. After powering on
+> > > the switch will immediately participate in the link training. if the
+> > > host is also ready by that time PCIe link will established.
+> > > 
+> > > The TC9563 needs to configured certain parameters like de-emphasis,
+> > > disable unused port etc before link is established.
+> > > 
+> > > As the controller starts link training before the probe of pwrctl driver,
+> > > the PCIe link may come up as soon as we power on the switch. Due to this
+> > > configuring the switch itself through i2c will not have any effect as
+> > > this configuration needs to done before link training. To avoid this
+> > > introduce two functions in pci_ops to start_link() & stop_link() which
+> > > will disable the link training if the PCIe link is not up yet.
+> > > 
+> > > This series depends on the https://lore.kernel.org/all/20250124101038.3871768-3-krishna.chundru@oss.qualcomm.com/
+> > What does this series apply to?  It doesn't apply cleanly to v6.18-rc1
+> > (the normal base for topic branches) or v6.18-rc3 or pci/next.
+>
+> I sent this on top of rc3 as we have some dependencies with latest changes
+> i.e ecam changes in dwc driver.
 
-No objections from me. I was expecting we might end up here based on
-initial reactions to syzbot fix. Since you are interested in fs, this
-work you did for this patch is a good learning opportunity which will
-stay with you.
+Oops, sorry, my fault.  I must have been trying to apply the v6 series
+(not this v7) on -rc3.  This v7 *does* apply cleanly to -rc3.
 
-thanks,
--- Shuah
+But all the other topic branches are based on -rc1, so I think the
+best thing is to make this one apply on -rc1 as well, and I will deal
+with the resulting conflicts when merging into pci/next and ultimately
+into Linus's tree.
+
+Bjorn
 
