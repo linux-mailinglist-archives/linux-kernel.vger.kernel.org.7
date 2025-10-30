@@ -1,149 +1,169 @@
-Return-Path: <linux-kernel+bounces-877856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD08C1F34D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 393BFC1F35C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 10:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9C919C105B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17ACC188B5A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5BF340DB1;
-	Thu, 30 Oct 2025 09:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB71341AC7;
+	Thu, 30 Oct 2025 09:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="G2IQJO95";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L3ey6p+1"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="isDN+2yc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD719340294;
-	Thu, 30 Oct 2025 09:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2711341AA0
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815460; cv=none; b=TIx8nvunqNFDnpaLtxqKrTaTD4NfaSodU2rpJXKIHD/OJfSxo37rBnuVxyjVrorPZ3pe7qGHzSmJCTdF2qDoHIAX786IrH2po9JKOChR/HCzy/GOTL58p9FLgPPn9nAMgFurCMwhydnPn+gimvZZyTDYAE39o2Re+6n9xW7Ray0=
+	t=1761815467; cv=none; b=epOLQn8wpr5b4O2jLK/xZQ6zcavhrFgCraA3d/hMS3ZSEMYhuLH+Hy2FilC99R7Nq+vO1QN9fS2FOg6cZRWrYKSk88QyEzt6qbpItcBFOT37E+cFXXytnjoUNAEvHqpJqs4bAQeAmmHE5YnE8aRSXjOwuh3KKOvUzutjZM7wLq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815460; c=relaxed/simple;
-	bh=LwImtIic5S4WdFUw4zvNryLJBfpSk1GZjFAPdn+xADs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uZCTL5ti0ChsrJIpszVnQUQn/Hho5HrkWRIDOABM+iZt7I8LBsv/YdZ45r3ZXuFCM5+4zze1h/cCJsyWgQUuLwAD5KvJVex7yjPbcIIswaJ7Cen/GQPYtfvyn7JP2xpZ3GLXKIcnCGDtdW9RagNvI/0a/iru7ZP9zYFPDQmJ7LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=G2IQJO95; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L3ey6p+1; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CA3CE14001B2;
-	Thu, 30 Oct 2025 05:10:57 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Thu, 30 Oct 2025 05:10:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761815457;
-	 x=1761901857; bh=tb0V2rWF8eK5noQCPf0SL+1neAJPUMgNFsms4dB+ol0=; b=
-	G2IQJO95adkPHgL2RfFliPL7gFRAaAg5OtYxLBIfNxL6pb8jgmaQw5iHi+PTwB/1
-	Vi0uKCr977vPjTQ5eQ4qqW1gQlZBDUAtKVlJEu/CdokvPpZxyMRbp5ohwnR6J3bN
-	lCwwR1em5n16nPrx89XEHmqlYZTjfjwyeOZfFrSnaf2XZ4lkfFgTqIESaXbVP6iL
-	lZnkQEdOYgwEmOtRp6M3EK+XQpl76EOw1wFbyqQoxVGkXl9QdnRZveW0R2NGkxVS
-	oxTWMXsysOGEFS6PyZytYeuzEo/9QolWjNItIF+d7Q7XJNbcTLHN3Pzqbftn+b1e
-	qqg+I7u0ra2vaQPawxyx0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761815457; x=
-	1761901857; bh=tb0V2rWF8eK5noQCPf0SL+1neAJPUMgNFsms4dB+ol0=; b=L
-	3ey6p+1i2RRBrNpVwE/AI9rUWRHZasfr2ezQxr6UwMWVWrMlmyMjPCvGSTsAWo+W
-	1/b09Ug3Z7mEfj50zKmxvpGFyPXF3B8+t8Rwj1gsZ+M6kGB/DP4aJKcxur3PgyIp
-	fWE29kr1BMADTO1SxOe0gxbI+V+812cQ7CxzXgKYwDIKdFrmgDMON3TqFf3qVM5p
-	QI2Vb94WY+I35hMl9LS7EfI81Ak9i3VSFKKTStL2YrXEYYggb6mGjWumNMo/OUTm
-	7dZl/pBOF3XZGSb2uq2pK7RgMNCqATH3ujTezCWXvykz7EZhgmeoGmu1v76MvcWi
-	wV0awuTuES7+yi0gxgtDw==
-X-ME-Sender: <xms:oSsDabVPrIrTAdK_m5JigryzDqTJVooQbuI_XrkyLlusjclGGdAepg>
-    <xme:oSsDaeZhZSc4TnJ35k38hvg0zJnRQMaRNOPI2tBhQ2gjO25sWUwvzMLKtYjcFNNys
-    8Gk9nD9s6HFSZq-_vHpiXqbotvqiOS29gvLA40TiakvO9T5cdnVIveb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieeivddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopeifvghnshhtsegthhhrohhmihhumhdrohhrghdprhgtphhtthhope
-    grnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgr
-    rdgtohhmpdhrtghpthhtohepkhgvrhhnvghlsegtohhllhgrsghorhgrrdgtohhmpdhrtg
-    hpthhtohepmhgrthhthhhirghsrdgsghhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    rghnuggvrhhsshhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrthhhihgvuh
-    drphhoihhrihgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
-    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqmhgvughirghtvghksehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:oSsDaWB9qRfihMri8moXwHla_MkZk0GCsxLCxQ2gXBbQ0Mr5TvNOIA>
-    <xmx:oSsDaewnx5C0FXH3B4xhDmLLOfzFlFDuMJ6zbBvYV-nIzWbxsiOXqw>
-    <xmx:oSsDaS5LiP9Tuuc7OO14BJkDjhsLQyWVBzY56kbZ6v3vKgNerK1j3w>
-    <xmx:oSsDaXwp4GkDZ5eFt32DUXgSKHuva78C0j57vuM2rhTuQ06fUCQ97g>
-    <xmx:oSsDaSnin9clfra-86r2dbBeGWJnhtq8OAB7muA_mrNh8B9qgws6CvnM>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 65CD5700054; Thu, 30 Oct 2025 05:10:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761815467; c=relaxed/simple;
+	bh=6/QX07MYzXkytcH97ORf+VAW2W3Hrv4Q9mInZ97sScg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwdNUx04ZcZgHdb/vbMwBlsvc5PKyg4ZXueDGsrT2B7AHKQb2F5JZJdi/BLd0zcLjMhojowvUT+Vmmp761GO/6QUK8if5pX0ZJiy0IUMNzNcPpbdjt5XVp/4e6ib3DW0ifUJi+zyslCvrvdMdOeapJsxTvMr8uPtC8mYkyOOiRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=isDN+2yc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tEDxOOjEBH1pDitKdsOoKQB+3NU54CLqTj+EUDuC0vU=; b=isDN+2ycvFWdXuWFiDv2icNpbq
+	6KMS6hH4cak9qZYTpLwyIeIyUyqs83ef5FrIu6rvqBFskf4Jr/fE9pNJJ3OWI/huDkKwLU6iRTeUO
+	5kVJiaJggMty+Pv4GCZSApy7Y1KuJP8a9j1jd078v9KUY4aGJwK54DVVV+6KS1hIjI1oZPLRdHvek
+	nyKSXkOoOWSgOak83hqZOH6pLbOo53CwoQVypnfW1rDeRD8tQHwZZj0xuP7+Dpg5WFKjvpf8thuMY
+	b9Q1HkDpfaQ69A7bJbURiUXyGwnLwS+Um6WbcddF2d5zs25wP6m1uyUPii5uhZhdyIFGMmwpNbwVK
+	hiK8NRow==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vENoe-00000008k2q-1RHl;
+	Thu, 30 Oct 2025 08:15:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E8C3B3001D4; Thu, 30 Oct 2025 10:10:58 +0100 (CET)
+Date: Thu, 30 Oct 2025 10:10:58 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chris Mason <clm@meta.com>
+Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
+ EEVDF goals
+Message-ID: <20251030091058.GG4067720@noisy.programming.kicks-ass.net>
+References: <20251027133915.4103633-1-mgorman@techsingularity.net>
+ <20251027133915.4103633-3-mgorman@techsingularity.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A1uT7sOefpDB
-Date: Thu, 30 Oct 2025 10:10:37 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Chen-Yu Tsai" <wenst@chromium.org>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
-Cc: "Mathieu Poirier" <mathieu.poirier@linaro.org>,
- linux-remoteproc@vger.kernel.org, "Bjorn Andersson" <andersson@kernel.org>,
- "Matthias Brugger" <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-Message-Id: <f434165f-1717-41ff-93e4-9be5b7fca929@app.fastmail.com>
-In-Reply-To: 
- <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
-References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
- <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
- <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if firmware-name not
- present
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027133915.4103633-3-mgorman@techsingularity.net>
 
-On Thu, Oct 30, 2025, at 09:21, Chen-Yu Tsai wrote:
-> On Wed, Oct 29, 2025 at 7:05=E2=80=AFPM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> >
->> > I guess I can send a followup patch?
->>
->> The only followup patch that I deem to be necessary is one adding a s=
-ymlink
->> or renaming for MT8188's SCP and nothing else.
->
-> The firmware was uploaded in March of 2025, and is packaged in Debian
-> Trixie, and was also backported to Bookworm. Either adding a symlink or
-> renaming it won't trickle down to users for some time. So this seems
-> like a possible ABI break, where the ABI is the file name.
->
-> Or maybe you don't consider it as such because SCP hasn't been enabled
-> in the kernel in any release yet?
+On Mon, Oct 27, 2025 at 01:39:15PM +0000, Mel Gorman wrote:
+> +static inline enum preempt_wakeup_action
+> +__do_preempt_buddy(struct rq *rq, struct cfs_rq *cfs_rq, int wake_flags,
+> +		 struct sched_entity *pse, struct sched_entity *se)
+> +{
+> +	bool pse_before;
+> +
+> +	/*
+> +	 * Ignore wakee preemption on WF_WORK as it is less likely that
+> +	 * there is shared data as exec often follow fork. Do not
+> +	 * preempt for tasks that are sched_delayed as it would violate
+> +	 * EEVDF to forcibly queue an ineligible task.
+> +	 */
+> +	if (!sched_feat(NEXT_BUDDY) ||
 
-It's normally up to the kernel driver to know about the firmware
-file names and the order of trying the possible fallbacks, which
-is exactly why I originally asked to not rely on the property
-from dtb.
+This seems wrong, that would mean wakeup preemption gets killed the
+moment you disable NEXT_BUDDY, that can't be right.
 
-If you want a symlink in linux-firmware, that would go the other
-way, pointing the old filename to the new location.
+> +	    (wake_flags & WF_FORK) ||
+> +	    (pse->sched_delayed)) {
+> +		return PREEMPT_WAKEUP_NONE;
+> +	}
+> +
+> +	/* Reschedule if waker is no longer eligible. */
+> +	if (!entity_eligible(cfs_rq, se))
+> +		return PREEMPT_WAKEUP_RESCHED;
 
-    Arnd
+That comment isn't accurate, unless you add: && in_task(). That is, if
+this is an interrupt doing the wakeup, it has nothing to do with
+current.
+
+> +	/*
+> +	 * Keep existing buddy if the deadline is sooner than pse.
+> +	 * The downside is that the older buddy may be cache cold
+> +	 * but that is unpredictable where as an earlier deadline
+> +	 * is absolute.
+> +	 */
+> +	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
+> +		return PREEMPT_WAKEUP_NONE;
+
+But if previously we set next and didn't preempt, we should try again,
+maybe it has more success now. That is, should this not be _NEXT?
+
+> +
+> +	set_next_buddy(pse);
+> +
+> +	/*
+> +	 * WF_SYNC|WF_TTWU indicates the waker expects to sleep but it is not
+> +	 * strictly enforced because the hint is either misunderstood or
+> +	 * multiple tasks must be woken up.
+> +	 */
+> +	pse_before = entity_before(pse, se);
+> +	if (wake_flags & WF_SYNC) {
+> +		u64 delta = rq_clock_task(rq) - se->exec_start;
+> +		u64 threshold = sysctl_sched_migration_cost;
+> +
+> +		/*
+> +		 * WF_SYNC without WF_TTWU is not expected so warn if it
+> +		 * happens even though it is likely harmless.
+> +		 */
+> +		WARN_ON_ONCE(!(wake_flags | WF_TTWU));
+
+s/|/&/ ?
+
+> +		if ((s64)delta < 0)
+> +			delta = 0;
+> +
+> +		/*
+> +		 * WF_RQ_SELECTED implies the tasks are stacking on a
+> +		 * CPU when they could run on other CPUs. Reduce the
+> +		 * threshold before preemption is allowed to an
+> +		 * arbitrary lower value as it is more likely (but not
+> +		 * guaranteed) the waker requires the wakee to finish.
+> +		 */
+> +		if (wake_flags & WF_RQ_SELECTED)
+> +			threshold >>= 2;
+> +
+> +		/*
+> +		 * As WF_SYNC is not strictly obeyed, allow some runtime for
+> +		 * batch wakeups to be issued.
+> +		 */
+> +		if (pse_before && delta >= threshold)
+> +			return PREEMPT_WAKEUP_RESCHED;
+> +
+> +		return PREEMPT_WAKEUP_NONE;
+> +	}
+> +
+> +	return PREEMPT_WAKEUP_NEXT;
+> +}
+
+Add to this that AFAICT your patch ends up doing:
+
+	__pick_eevdf(.protect = false) == pse
+
+which unconditionally disables the slice protection feature.
+
+
 
