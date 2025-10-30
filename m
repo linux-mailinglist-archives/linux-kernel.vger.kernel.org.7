@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-877455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176F5C1E270
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60522C1E276
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2860406B8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231AA3A7F6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 02:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2910D2F3C2C;
-	Thu, 30 Oct 2025 02:41:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347E032ABDB
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5796832ABE0;
+	Thu, 30 Oct 2025 02:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="3eyi3/5p"
+Received: from sg-1-11.ptr.blmpb.com (sg-1-11.ptr.blmpb.com [118.26.132.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C0C524D1
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 02:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761792087; cv=none; b=EMFLIEqFbxlfWO4JSKWIl3mH3hvxxVQDpc4w3qBUwvqW2cRvI6n45ENqOiqtSuGBOZWkYVlka7ev96cGqCYiK1TWnmpnXQZsb1e6FBsCk9fRnWJJVTd0PNWc1S9lxCdR+5WwL5Z7TfqEUiXhi/r+LldDzVBz9qo3lnJ4sRIGI18=
+	t=1761792127; cv=none; b=I1H5zRLgPXfwicNAuA/rvbafJF7eBBKWTIYnmyodL+251lsz2JqekjcJrG2RZuxYU+UviD4wTfEYrvMAX+N3Ga6CdPEURc0UNeaBhuUvKxKBxOiMfwWmUp12DutwVkW0Re1SEVj38Xd1GCB6welrSIHLgMReS7pMfYcUYmY0HvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761792087; c=relaxed/simple;
-	bh=35O68B3yYenhF/csDe9xTVqzRsbi7wfuR8H72IjF2fY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q2olZGZAM4Dt7u1/8Ha8A7UVGAxLQ1dNwJPMo36H9mDGkNVB8EANl4Er8WjJXh4ZbdjXQYptXSLNISFYl4xDWOmQyiiAbf0wzBr7qjJylv0Y2wdcRQcpWS3c9PDXQLcmC9ubWYfVz/lpTbP9GfB4z+Xaapj+ofypnYavHvDyoa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4DE12C42;
-	Wed, 29 Oct 2025 19:41:13 -0700 (PDT)
-Received: from [10.164.18.45] (unknown [10.164.18.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD7E33F66E;
-	Wed, 29 Oct 2025 19:41:18 -0700 (PDT)
-Message-ID: <434eebff-069d-424f-a2b8-d9dae4e2202f@arm.com>
-Date: Thu, 30 Oct 2025 08:11:15 +0530
+	s=arc-20240116; t=1761792127; c=relaxed/simple;
+	bh=TcyUSbo80Jx0DmY6uBc8ZIvIg0DwakU3w7Y1gSrDpVw=;
+	h=References:From:Subject:Mime-Version:In-Reply-To:Date:Message-Id:
+	 Content-Type:To:Cc; b=uAJjlfcQ64SqWJYhpG3pm7TGf488zfOrb/La5KEqH/eJj+5LyHQjBLbpztj3bp0QllVe3lpncdMiBP1xF5M//6+2dHGasyGoGLybKJprMvhXWLIRb3xPVz4xWCvSbai0LQEBD05Q6+DK0USt5RiCI9bPocRKZ0vRIdSVUc/tWlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=3eyi3/5p; arc=none smtp.client-ip=118.26.132.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761792117;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=yh8djo7Nd21BgC+Yx2aUSeybVAkoleHM0MeaAP2URjo=;
+ b=3eyi3/5pRMbR0mK6qLLwl5wwNN22NJn6h/53GYsFO3ggtlTRnxZOLi+ZrtKvyqQepMHU+v
+ 2AsFOu3DJVwa7qgEKMLJEbD1SLaDYVWzQTc1OUD77IcsD5uGNFu2l4z9RkNZfRJE3FkJUg
+ kP2YLTpL4B7YfxCETosBD92zhSmWHYBeJfGJGf4XpO+MARVf3x9K66L6n0Sw0Mr1wuTK3D
+ 9jZ5Y1Z8JzGp+PeNCo3KPcfr4wDdIPnEIsRuPgca18py3WctDPy7qDwIVQQ1nqna/m9AWL
+ 5Umgo6LceXya2LfSRsseufRC+4qWUtmQzSmddg83gSE2BPQpgm5cHob2zX37ew==
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+Reply-To: yukuai@fnnas.com
+References: <20251027150433.18193-1-k@mgml.me> <20251027150433.18193-10-k@mgml.me>
+X-Lms-Return-Path: <lba+26902d073+40b84b+vger.kernel.org+yukuai@fnnas.com>
+User-Agent: Mozilla Thunderbird
+From: "Yu Kuai" <yukuai@fnnas.com>
+Subject: Re: [PATCH v5 09/16] md/raid10: fix failfast read error not rescheduled
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, ben.horgan@arm.com,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-References: <20251024040207.137480-1-anshuman.khandual@arm.com>
- <20251024040207.137480-3-anshuman.khandual@arm.com>
- <20251024120014.000020af@huawei.com>
- <6e7d0bf3-ddf1-44a0-a0cb-7dc994101878@arm.com>
- <20251028124334.00001e77@huawei.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20251028124334.00001e77@huawei.com>
+Mime-Version: 1.0
+In-Reply-To: <20251027150433.18193-10-k@mgml.me>
+Date: Thu, 30 Oct 2025 10:41:51 +0800
+Message-Id: <daefef14-c1de-48f1-992d-f8dbe1c7504e@fnnas.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 30 Oct 2025 10:41:54 +0800
+To: "Kenta Akagi" <k@mgml.me>, "Song Liu" <song@kernel.org>, 
+	"Shaohua Li" <shli@fb.com>, "Mariusz Tkaczyk" <mtkaczyk@kernel.org>
+Cc: <linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	"Li Nan" <linan122@huawei.com>, <yukuai@fnnas.com>
 
+=E5=9C=A8 2025/10/27 23:04, Kenta Akagi =E5=86=99=E9=81=93:
 
+> raid10_end_read_request lacks a path to retry when a FailFast IO fails.
+> As a result, when Failfast Read IOs fail on all rdevs, the upper layer
+> receives EIO, without read rescheduled.
+>
+> Looking at the two commits below, it seems only raid10_end_read_request
+> lacks the failfast read retry handling, while raid1_end_read_request has
+> it. In RAID1, the retry works as expected.
+> * commit 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
+> * commit 2e52d449bcec ("md/raid1: add failfast handling for reads.")
+>
+> This commit will make the failfast read bio for the last rdev in raid10
+> retry if it fails.
+>
+> Fixes: 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
+> Signed-off-by: Kenta Akagi<k@mgml.me>
+> Reviewed-by: Li Nan<linan122@huawei.com>
+> ---
+>   drivers/md/raid10.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
 
-On 28/10/25 6:13 PM, Jonathan Cameron wrote:
-> On Mon, 27 Oct 2025 07:06:45 +0530
-> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
->> On 24/10/25 4:30 PM, Jonathan Cameron wrote:
->>> On Fri, 24 Oct 2025 05:02:07 +0100
->>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>>   
->>>> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
->>>> While here replace hard coded page size based shifts but with derived ones
->>>> via ilog2() thus adding some required context.
->>>>
->>>> TLBI_TTL_MASK has been split into separate TLBI_TTL_MASK and TLBI_TG_MASK
->>>> as appropriate because currently it simultaneously contains both page size
->>>> and translation table level information. KVM on arm64 has been updated to
->>>> accommodate these changes to TLBI_TTL_MASK.
->>>>
->>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>>> Cc: Will Deacon <will@kernel.org>
->>>> Cc: Marc Zyngier <maz@kernel.org>
->>>> Cc: Oliver Upton <oliver.upton@linux.dev>
->>>> Cc: linux-arm-kernel@lists.infradead.org
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Cc: kvmarm@lists.linux.dev
->>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>> ---
->>>>  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
->>>>  arch/arm64/kvm/nested.c           |  8 +++++---
->>>>  2 files changed, 23 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->>>> index 131096094f5b..cf75fc2a06c3 100644
->>>> --- a/arch/arm64/include/asm/tlbflush.h
->>>> +++ b/arch/arm64/include/asm/tlbflush.h
->>>> @@ -57,9 +57,10 @@
->>>>  /* This macro creates a properly formatted VA operand for the TLBI */
->>>>  #define __TLBI_VADDR(addr, asid)				\
->>>>  	({							\
->>>> -		unsigned long __ta = (addr) >> 12;		\
->>>> -		__ta &= GENMASK_ULL(43, 0);			\
->>>> -		__ta |= (unsigned long)(asid) << 48;		\
->>>> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
->>>> +		__ta &= TLBI_BADDR_MASK;			\
->>>> +		__ta &= ~TLBI_ASID_MASK;			\
->>>> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\  
->>> I think you can replace the two lines above with
->>> 		FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);
->>>
->>> It's a small reduction in code but I don't mind much either way.  
->>
->> Right. FIELD_MODIFY() might be appropriate in this scenario but
->> there will be some additional code churn needed. I don't have a
->> strong opinion either way.
->>
->> --- a/arch/arm64/include/asm/tlbflush.h
->> +++ b/arch/arm64/include/asm/tlbflush.h
->> @@ -55,13 +55,12 @@
->>  } while (0)
->>
->>  /* This macro creates a properly formatted VA operand for the TLBI */
->> -#define __TLBI_VADDR(addr, asid)                               \
->> -       ({                                                      \
->> -               unsigned long __ta = (addr) >> ilog2(SZ_4K);    \
->> -               __ta &= TLBI_BADDR_MASK;                        \
->> -               __ta &= ~TLBI_ASID_MASK;                        \
->> -               __ta |= FIELD_PREP(TLBI_ASID_MASK, asid);       \
->> -               __ta;                                           \
->> +#define __TLBI_VADDR(addr, asid)                                       \
->> +       ({                                                              \
->> +               unsigned long __ta = (addr) >> ilog2(SZ_4K);            \
->> +               __ta &= TLBI_BADDR_MASK;                                \
->> +               __ta |= FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);      \
-> 		  FIELD_MODIFY(TLBI_ASID_MASK, &__tab, asid);
-> 
-> as it's done in place in the second parameter.
-
-Sorry but could not understand your point above.
+Reviewed-by: Yu Kuai <yukuai@fnnas.com>
 
