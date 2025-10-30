@@ -1,191 +1,129 @@
-Return-Path: <linux-kernel+bounces-878526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3660C20E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:21:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E3EC20E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 16:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 599494E2447
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:20:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 450B04E3FD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 15:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE1363B8D;
-	Thu, 30 Oct 2025 15:20:39 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A318B363364;
+	Thu, 30 Oct 2025 15:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WaXCZTz7"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E8636336D
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAC52F3636
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 15:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837638; cv=none; b=PtUYQkQUH+LmIkjaDmpQsaYjlR7g1YW0ZjmP59CqrzNQF66fzwukOzxcZAEK2zc5ILKGUWyrI9g1JPqxnayUcBJ4m1Od85GMj1NKn4Qp+9msDP7wJ4Dp9FZkOymNE2pPtUOC9xgMK3HH70gOyV9ZLt/0QGnIzjHoN2BNbFUFMP8=
+	t=1761837748; cv=none; b=TrG87B3NOC6FOH36KBGHZrWVbu3iEaORZj5T6bk2zde5z0HyofHv6EzPBSSfWpsOnnrBE2cI/dNCJvqvI0cGk1MH4kHyEjHPuL3Z5VA+vYZ6EeMbfOmt4dSZ4/6AxuNd/YLf55L6Zk1Qt6h4lBalOyzVSlw5maLwskpGcB4VKt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837638; c=relaxed/simple;
-	bh=XvVtumf+fqy2FWoM1pl0Qysoj0glLkvB2WXvkSaCcdA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZZyg2+Izpef+5JMgSThas0A/OO8hTrLj5hxzEfgQMtTfhOz6x7fzRawWIZXhjW4iZXEBOAoL1TLHSTfUWp+DpuA+82ftuvNiU5yTtTHMFxJz8CeTR6LQOafsqVAooODLWg3Czu4F8U3il3JL6cJjhBgeJ+Y/GrxfuLxcVfv14Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-4330ba63227so1664075ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:20:36 -0700 (PDT)
+	s=arc-20240116; t=1761837748; c=relaxed/simple;
+	bh=6d/OVmKJJb7OlddG1Bh9+D9lD7AVNsH/e/F/SKjKcKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6bDP7Tb+jtm8B2NqQqQoV5d86SSCqhJtST/PkHGftWh5s1Lw6WVsJPrFkpJDow2mzRjvgrIA58Shd4rtDPlo19cowwSA8sXsJbe8GdgQPeDgNh9qsEFmmOwnPBcUxVaTEnWFHjq+kqTuCNikNyYAygpJIkWiMkXeC0WxUF1txc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WaXCZTz7; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b27b50090so199982266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761837743; x=1762442543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6d/OVmKJJb7OlddG1Bh9+D9lD7AVNsH/e/F/SKjKcKo=;
+        b=WaXCZTz7tePSRgNv7Pkvrf/u4Vg91E0+C2q5cVsPZ5NtpUYyLca24nqxplAXYClEm3
+         abJV2YrT2cVObZw55Wfao8eAV5KCvJeTwzgfP7HIFAnzbgkcbDSjt62ZR7Tc8X8ZO69U
+         tPGfZepsczbGnO1oPomGObBguiGWG4KozFDzI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761837636; x=1762442436;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HQOoO0KSAHoPO47OmpMMZnYp4L7LjjvgRRFTquouxA8=;
-        b=SIfGLMOiQIoGEwSqggWFHz7yYEu6Fr7ONl6zOIEQ2iFUPKNpj0I7/FIdGY3SaX2Otd
-         LOvoDwnU1RX8KvWFH/dAH8OypBj2vLFX3UDns+Thdsuiyj50HlkSL+Qq9859sJJ/8f9u
-         FImvwhOiIxgufWjIGPYHeo7heqxXI9bB0gF8JpEm59dPegPIzljj+QgcAzzZtry+ozhM
-         TWRIgpX2qhWPNiTake6FrM0KVn+MqVGpX4F6X342m/zX0ChvbReeQq2o6k9d04eX6TCY
-         w7HjfEocnKdJyes3wt05/nar8LwAoYjd4uVYhfWXdAjKNT3gxcO9Ry3pCQ6kErUrA4NA
-         ocjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ2UUPgGvKk206gUn9JNwfTu7Ewhc6o8qMCdaD27v1rLLnYLjNnSjH+IK1BjU1PfTGnZoOIXdbjhzjdus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWw6Aq/cpE+1051UpD1yqdh3R9stFDvwCGtt4olKPtns8cM43x
-	ZzShUG1qD+fRe+k9NKF27hFYuYUbT32JxHkzokR5KAyFmXkmBcxshdAtiJ/TfPqKJ6xyBukkfBO
-	IJ695nLLIHsKAd11ALXRIrGg3e6NGrAO+tCl0Q7BhUutnBye78eU4yxxJt6o=
-X-Google-Smtp-Source: AGHT+IEpCDOtAdHK5L4c0YSB8igRXeKbdV2j1P50w1oqVnCB2UlfHHUwk/fTOjlDx2n5WySYqZi6iIWMs/Qt8lOW184TA7flERTr
+        d=1e100.net; s=20230601; t=1761837743; x=1762442543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6d/OVmKJJb7OlddG1Bh9+D9lD7AVNsH/e/F/SKjKcKo=;
+        b=fcWKUeTKD9j5YK2JEBM0FAdhKTCAOyW4ZzgAFJa8vGzbd7zILyjzHfWDSZC2UJrnY6
+         6o2DjprWjo16U3SkXRT4/+CKxRj+W+siWZMaCOBorKinfjPKV9nmyvecIgMdWl0U2/zf
+         NPyN9S+FwtgxZZv3HDf6ANf36UHdAEBOlVSYt89m2sK+TLEW2WmqYV3ud0X9IYisWiLN
+         bsAdzhumXoyKnAyiHHOCSekVWIJvGtF+38mUMyqXOJ/xD8Y5kLZy2lQ49E41leo5pL69
+         rceplrZSPBs4azgkHDZlQJWNEpWNwBzWMovT3uNhY1mtmhb6S097FgHtBELd8zN+wC97
+         +QuA==
+X-Gm-Message-State: AOJu0Yw1p8QO6WqPnmW0HwIDBpyqLlNsQGgjgwpWZr7AXVJyPBcmDTnJ
+	gTVRhKGTVidNfvgG2eao0Vt0YFiA9LYZv1IhODrvOY4FIhmUdb5lNIbAg+4ECC12gBDK37l4IiQ
+	FAxGjOO0a
+X-Gm-Gg: ASbGncvj1C5Fre6xYcdaUWJm5MwlC+2rFM/nBFI8kEgQJW/T1X6E/DPkRlO3eW/6hHl
+	dB7oYmX7nnC9t2Hp9nDMrHHy7NnsKHlIajR6RjrbXOHnMtNpK5XpC69kzvPw0Y3VZcdz1kt2Btl
+	fg6go8MjBPN/6vQlYQuUt1BbRMFBUwKCpOePimjeZlC/iD1ZDLLOrgBMQjjrrVc6GrOs/2hIn2A
+	r1S0SCK95ak46r554AVkVdnDkFw9Ro2IVZ7dsHTykcBYGYkj05JpQViToxrdZUHMaj6rTuG2ClP
+	7na8zFugcshfQJvNHOqEb12WKUaJQ+QEpF+wScoYSt1BwwQeAYm2gbSQNBGJI3Oo2NYs2eMwz9k
+	LsbP2yBYCIQ2KLrPXothaHpcTLHarlzS5NiymPUNg8Lozc7DfD0Zr66G/4Kb5glzTtxn+Y+lMXT
+	XaPWh6hZM2h2u/Q9eMyey2uWNfAb2ZdLX2xomLHsY=
+X-Google-Smtp-Source: AGHT+IG4PHSG5nJUS0ovVVsUE7XDsMJxAyteqbV0t5OT84EHLu9IeOTSUpEuvlu0ETjxAV2SlHbsOQ==
+X-Received: by 2002:a17:907:970e:b0:b5d:7a22:ae41 with SMTP id a640c23a62f3a-b7053c1571dmr367230766b.24.1761837743358;
+        Thu, 30 Oct 2025 08:22:23 -0700 (PDT)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7044d00de6sm495632766b.74.2025.10.30.08.22.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 08:22:22 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710022571cso13972705e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:22:22 -0700 (PDT)
+X-Received: by 2002:a05:600c:190e:b0:46e:42aa:75b5 with SMTP id
+ 5b1f17b1804b1-47730793c04mr1042045e9.4.1761837741749; Thu, 30 Oct 2025
+ 08:22:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c262:0:b0:430:afae:fe24 with SMTP id
- e9e14a558f8ab-4330bdaa062mr3299235ab.8.1761837635814; Thu, 30 Oct 2025
- 08:20:35 -0700 (PDT)
-Date: Thu, 30 Oct 2025 08:20:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69038243.a70a0220.5b2ed.0048.GAE@google.com>
-Subject: [syzbot] [usb?] BUG: corrupted list in usb_hcd_link_urb_to_ep (5)
-From: syzbot <syzbot+e69c25cf38a53d0cf64c@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
+ <20251029081048.162374-3-ajye_huang@compal.corp-partner.google.com>
+ <CAD=FV=WbR0u_a7S1pcL-6C+sj9Kt=GOLUwJmwt8ANJbyV4JYFQ@mail.gmail.com> <CALprXBb=_HuwskwFP0nRKH=3zwoGbig4fWY+Q4g53Jhn985TsA@mail.gmail.com>
+In-Reply-To: <CALprXBb=_HuwskwFP0nRKH=3zwoGbig4fWY+Q4g53Jhn985TsA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 30 Oct 2025 08:22:09 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UXRpk=O7zC4B9hRE4oTNHJLosm_bhhNUgVur0csChMhQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnhb78qdonzJKwyTXBrXsT_c1_8-ezmVyvceIjunYMg8V3tseIDtx918nA
+Message-ID: <CAD=FV=UXRpk=O7zC4B9hRE4oTNHJLosm_bhhNUgVur0csChMhQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] drm/panel-edp: Modify LQ116M1JW10 panel's bpc to 6
+To: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, jazhan@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+On Thu, Oct 30, 2025 at 2:58=E2=80=AFAM Ajye Huang
+<ajye_huang@compal.corp-partner.google.com> wrote:
+>
+> Hi Doug,
+>
+> On Thu, Oct 30, 2025 at 7:25=E2=80=AFAM Doug Anderson <dianders@chromium.=
+org> wrote:
+>
+> >
+> > Unless folks end up preferring EDID_QUIRK_FORCE_6BPC:
+> >
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>
+> After following your suggestion with the following, the issue goes
+> away during YouTube playback.
+> I will send a new patch for drm_edid.c, thank you so much
 
-HEAD commit:    6fab32bb6508 MAINTAINERS: add Mark Brown as a linux-next m..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d0ed42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d1ce99afe6f71855
-dashboard link: https://syzkaller.appspot.com/bug?extid=e69c25cf38a53d0cf64c
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+FWIW, it is a bit baffling to me that you report link training seems
+to be failing yet then talk about the symptom of noise during youtube
+playback. If link training is failing I'd expect nothing to ever show
+up on the screen...
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-6fab32bb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/38b1c3a2c170/vmlinux-6fab32bb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6a6377b85494/bzImage-6fab32bb.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e69c25cf38a53d0cf64c@syzkaller.appspotmail.com
-
-input: CM109 USB driver as /devices/platform/dummy_hcd.6/usb11/11-1/11-1:0.8/input/input39
-list_add double add: new=ffff888047968c18, prev=ffff888047968c18, next=ffff88803609c078.
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:35!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 34 Comm: kworker/3:0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:__list_add_valid_or_report+0x143/0x190 lib/list_debug.c:35
-Code: 89 f1 48 c7 c7 c0 6e f0 8b 48 89 ee e8 a6 0d ef fc 90 0f 0b 48 89 f2 48 89 e9 4c 89 e6 48 c7 c7 40 6f f0 8b e8 8e 0d ef fc 90 <0f> 0b 48 89 f7 48 89 34 24 e8 1f 46 79 fd 48 8b 34 24 e9 07 ff ff
-RSP: 0018:ffffc900006ded50 EFLAGS: 00010086
-RAX: 0000000000000058 RBX: ffff888047968c00 RCX: ffffffff819b7079
-RDX: 0000000000000000 RSI: ffffffff819beba6 RDI: 0000000000000005
-RBP: ffff88803609c078 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000002 R11: 0000000000002b91 R12: ffff888047968c18
-R13: ffff88803609c080 R14: 0000000000000000 R15: ffff888047968c18
-FS:  0000000000000000(0000) GS:ffff8880d6d0a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c3c92d9 CR3: 00000000320a4000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- __list_add_valid include/linux/list.h:96 [inline]
- __list_add include/linux/list.h:158 [inline]
- list_add_tail include/linux/list.h:191 [inline]
- usb_hcd_link_urb_to_ep+0x220/0x3a0 drivers/usb/core/hcd.c:1158
- dummy_urb_enqueue+0x2a7/0x920 drivers/usb/gadget/udc/dummy_hcd.c:1288
- usb_hcd_submit_urb+0x25b/0x1c60 drivers/usb/core/hcd.c:1546
- usb_submit_urb+0x89f/0x1990 drivers/usb/core/urb.c:587
- cm109_input_open+0x27a/0x490 drivers/input/misc/cm109.c:566
- input_open_device+0x24c/0x3d0 drivers/input/input.c:601
- kbd_connect+0x103/0x160 drivers/tty/vt/keyboard.c:1584
- input_attach_handler.isra.0+0x176/0x250 drivers/input/input.c:994
- input_register_device+0xab9/0x1180 drivers/input/input.c:2378
- cm109_usb_probe+0x122f/0x17c0 drivers/input/misc/cm109.c:797
- usb_probe_interface+0x303/0xa40 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x241/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- usb_new_device+0xd07/0x1a60 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x2f34/0x4fe0 drivers/usb/core/hub.c:5952
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
- process_scheduled_works kernel/workqueue.c:3346 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_add_valid_or_report+0x143/0x190 lib/list_debug.c:35
-Code: 89 f1 48 c7 c7 c0 6e f0 8b 48 89 ee e8 a6 0d ef fc 90 0f 0b 48 89 f2 48 89 e9 4c 89 e6 48 c7 c7 40 6f f0 8b e8 8e 0d ef fc 90 <0f> 0b 48 89 f7 48 89 34 24 e8 1f 46 79 fd 48 8b 34 24 e9 07 ff ff
-RSP: 0018:ffffc900006ded50 EFLAGS: 00010086
-RAX: 0000000000000058 RBX: ffff888047968c00 RCX: ffffffff819b7079
-RDX: 0000000000000000 RSI: ffffffff819beba6 RDI: 0000000000000005
-RBP: ffff88803609c078 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000002 R11: 0000000000002b91 R12: ffff888047968c18
-R13: ffff88803609c080 R14: 0000000000000000 R15: ffff888047968c18
-FS:  0000000000000000(0000) GS:ffff8880d6d0a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c3c92d9 CR3: 00000000320a4000 CR4: 0000000000352ef0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-Doug
 
