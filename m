@@ -1,242 +1,113 @@
-Return-Path: <linux-kernel+bounces-879272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EAEC22B3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:23:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8FDC22B4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F230B4EDE28
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:23:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF03D4E2967
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF39233C510;
-	Thu, 30 Oct 2025 23:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D334733BBBD;
+	Thu, 30 Oct 2025 23:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="TCq7ftdg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lByC82tf"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mfyFjY+x"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF32F6577;
-	Thu, 30 Oct 2025 23:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CBD33BBC4
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761866583; cv=none; b=BcIzOL+JJo+h9SJO8dPwLfG2M6RMG3PQtth7fzXsHEFwpHtjB6rSsHVgcNxhUUHJGK6T2+msGqG6SLcQsB/SxHc9bzgMHovSJyG8/jdsLFdhCAmwhO43mcG570xNCmHZZ9Tew/9vPUhDKjGERQTXHygCDplET+QGNul0i9fyoSc=
+	t=1761866666; cv=none; b=SkCzR/zCaIIfwn9d1aCHSMpmzNz2cEeK1njxfBye/gS3sgT3rmvfQLlb9GRe9UydZuOEGJWu+CsuOttP6bgnmXyo99RTjW89zMw9XNGVT/s9QOYagLBARu4V+VXyWFl6BPpUPEx2EUp+BqxVH5N/p5bQGKzN74NetmeEwVRWQJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761866583; c=relaxed/simple;
-	bh=S7s7dokVdFKGKrrKiqnoayVZMt1AiI9aemANRN265QY=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=CiT1y33w5LvKNHMqk9WpxbHm+JeUgRZm9Iv6wVVaoQUc0uySQ6ZDd3FMwxwND+KvBomoKLM3FSj8O40j5HI9GMD5kzkNin4CUQRzuN+NXiHIC20XzegAQjIGi7gTxIJ2yhTbUYQZH0NJcXl3iu76RHpFdz0yLYOg+Ce6SNKYY5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=TCq7ftdg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lByC82tf; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id BC65313000CB;
-	Thu, 30 Oct 2025 19:22:59 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 30 Oct 2025 19:23:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1761866579; x=1761873779; bh=hvbbxiEqeKOPLV15+amtC5BVkJM9zfXU4+P
-	k3GSk48w=; b=TCq7ftdgwGivoKj2hAIF9AvUFPJGc0vADUYKumDOEz/qIezJWGl
-	gnzbZnPiifNw3COiR8GxTl91Gf8Rbq+FrAGOQufTMrm8C8m+9hlYqRrZrTwJ+g8K
-	20VD6M+2yrAl7K6LoIIQDoqcD1sGEeCXEsAtpDM1j3tE0Yd0AZtC92b4/hyJ6qTq
-	C/EQdlj8PQQur6U25As8epdpAKaeil7QOz00GappXprYPbYnL96Zhe5btlbRiSTY
-	zsb5M5miarjxUMxhQy2PY/oLyPXGdkEzci8MfaAjKN8WnMtOZwZb12JU7GAECu8c
-	hOmldHjWyNT/WtipJr4NtA3//jnMWP2XeNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761866579; x=
-	1761873779; bh=hvbbxiEqeKOPLV15+amtC5BVkJM9zfXU4+Pk3GSk48w=; b=l
-	ByC82tfl/EMQQRfkYqkDz3IJ7sRI/WQXG2mcBDyJW2v2hXqVKSNQlqoQzEem5Eym
-	dR9MImcEWJmOIF1xR5FKhIPik83yNa6QT/fk9TqIqdIVAFoSoeHLMcBvDrzEDD8D
-	XjdMAiA35425YFXSxF5x+0qNcY2W/MVxg/TcY0YIKXL3xKuTvuoDJIasxC0Qxxmi
-	iTm5aTaKG9pIhv6A+jNXcFgENGr5j/ldMZv5wV8XUdvkg+7O5aFtxXorlGOjXT5b
-	tLjd+kxVdbT3deiBaC6grJvvbfJjS+2jpuAjxSkr5PY4R0j1Nku+VxyFrvYfpEWe
-	/cWGsReam2wLzO1MMOROw==
-X-ME-Sender: <xms:UPMDaRhUVZd0x7_m2K17HihcRjCDpVNYHFuEuX0MMgm20e897e5KkA>
-    <xme:UPMDaY7AjV2fQCLr_snCqH1fQeOzq1khXo6h6YlzncD-hrTaP3jvkupkkSppCGbEK
-    3_FJ-R2P97AhdeuJVUfknkc1NHRstlmMB11PTJieu4Jgrp6>
-X-ME-Received: <xmr:UPMDaR4wtri-pKxjBpYPkO67BfCd6oydbgfEbdFMML-UxKIpAqf7uEQcrmb8ircyBRb3gkh38Y-CFv6PS5eeA8faA1-9rnol0Gt6iFnCvxLw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejledvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:UPMDaYFGMua7g80kGbfcUaz9Di8tafwlq4iKeb9hO4aVvX2qo_uERw>
-    <xmx:UPMDacsdmaie4UXKmXFZ3mEfrheGemagwqaZFEvxWGs9YShlaMG9lQ>
-    <xmx:UPMDaf4TguqIroQ6tzSgxweML37Y98bapEIbob097jWZZJuu0xphMA>
-    <xmx:UPMDaQnurzcpOOav6s9l9JXVYIdItJKKsSEy0NTn122915Snsl7u-w>
-    <xmx:U_MDaaJxwd0jRvItfq6nxG-85nWt4d2jCvckXynlPHJGLvIfrzldVxtX>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 19:22:46 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761866666; c=relaxed/simple;
+	bh=U5mVOjOKselIrEKZtoh+wWmjWaAqnt6aq/qkVMVT11c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=INDmDRq5Fjezvf6ROviht1SRS2yoi+cIV7v3Naoai7yLhK+gdXlFnuzCErV/T5X0aEataYlIdIhZ6IRME/c111QaptnN0r96cY06+qHrMuW8M+yC80xWOQr1PaPtFvCVrxomxVBCh+gadYoo4T5Mc+2pDhvb8uLrpGbo5ie2RiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mfyFjY+x; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761866662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vFcFfa21Y8J0EvYjz5FYEa4biOxuGL1h90UpSLZ/vN0=;
+	b=mfyFjY+xuK5o/5m3QmAXgABGIwfeRaMj8f5cMWUmw2pAzfQT8LIKXkkjjjHK/fKnYyBZ7k
+	81yKYEXTIfVNFD686cdiGUOIO4/FODITODwT1oQm33mRZNioDP2jq5kO1hi2ljt7DmY/+x
+	d+7pG1L9EuwIC5HQqNbCGpdPnpfZspg=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Amery Hung <ameryhung@gmail.com>,  Song Liu <song@kernel.org>,  Andrew
+ Morton <akpm@linux-foundation.org>,  LKML <linux-kernel@vger.kernel.org>,
+  Alexei Starovoitov <ast@kernel.org>,  Suren Baghdasaryan
+ <surenb@google.com>,  Michal Hocko <mhocko@kernel.org>,  Shakeel Butt
+ <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
+ Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
+  linux-mm <linux-mm@kvack.org>,  "open list:CONTROL GROUP (CGROUP)"
+ <cgroups@vger.kernel.org>,  bpf <bpf@vger.kernel.org>,  Martin KaFai Lau
+ <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+  Tejun Heo <tj@kernel.org>
+Subject: Re: bpf_st_ops and cgroups. Was: [PATCH v2 02/23] bpf: initial
+ support for attaching struct ops to cgroups
+In-Reply-To: <CAADnVQJGiH_yF=AoFSRy4zh20uneJgBfqGshubLM6aVq069Fhg@mail.gmail.com>
+	(Alexei Starovoitov's message of "Thu, 30 Oct 2025 15:19:11 -0700")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-3-roman.gushchin@linux.dev>
+	<CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
+	<87zf98xq20.fsf@linux.dev>
+	<CAHzjS_tnmSPy_cqCUHiLGt8Ouf079wQBQkostqJqfyKcJZPXLA@mail.gmail.com>
+	<CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com>
+	<877bwcus3h.fsf@linux.dev>
+	<CAADnVQJGiH_yF=AoFSRy4zh20uneJgBfqGshubLM6aVq069Fhg@mail.gmail.com>
+Date: Thu, 30 Oct 2025 16:24:15 -0700
+Message-ID: <87bjloht28.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
- "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
- "David Howells" <dhowells@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Ondrej Mosnacek" <omosnace@redhat.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Stefan Berger" <stefanb@linux.ibm.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Subject: Re: [PATCH v4 07/14] VFS: introduce start_removing_dentry()
-In-reply-to: <20251030061159.GV2441659@ZenIV>
-References: <20251029234353.1321957-1-neilb@ownmail.net>,
- <20251029234353.1321957-8-neilb@ownmail.net>,
- <20251030061159.GV2441659@ZenIV>
-Date: Fri, 31 Oct 2025 10:22:43 +1100
-Message-id: <176186656376.1793333.1075264554692169239@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 30 Oct 2025, Al Viro wrote:
-> On Thu, Oct 30, 2025 at 10:31:07AM +1100, NeilBrown wrote:
->=20
-> > @@ -428,11 +429,14 @@ static bool cachefiles_invalidate_cookie(struct fsc=
-ache_cookie *cookie)
-> >  		if (!old_tmpfile) {
-> >  			struct cachefiles_volume *volume =3D object->volume;
-> >  			struct dentry *fan =3D volume->fanout[(u8)cookie->key_hash];
-> > -
-> > -			inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
-> > -			cachefiles_bury_object(volume->cache, object, fan,
-> > -					       old_file->f_path.dentry,
-> > -					       FSCACHE_OBJECT_INVALIDATED);
-> > +			struct dentry *obj;
-> > +
-> > +			obj =3D start_removing_dentry(fan, old_file->f_path.dentry);
-> > +			if (!IS_ERR(obj))
-> > +				cachefiles_bury_object(volume->cache, object,
-> > +						       fan, obj,
-> > +						       FSCACHE_OBJECT_INVALIDATED);
-> > +			end_removing(obj);
->=20
-> Huh?  Where did you change cachefiles_bury_object to *not* unlock the paren=
-t?
-> Not in this commit, AFAICS, and that means at least a bisection hazard arou=
-nd
-> here...
->=20
-> Confused...
->=20
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-Thanks for the review and for catching that error.
-This incremental patch should fix it.
+> On Thu, Oct 30, 2025 at 12:06=E2=80=AFPM Roman Gushchin
+> <roman.gushchin@linux.dev> wrote:
+>>
+>> Ok, let me summarize the options we discussed here:
+>>
+>> 1) Make the attachment details (e.g. cgroup_id) the part of struct ops
+>> itself. The attachment is happening at the reg() time.
+>>
+>>   +: It's convenient for complex stateful struct ops'es, because a
+>>       single entity represents a combination of code and data.
+>>   -: No way to attach a single struct ops to multiple entities.
+>>
+>> This approach is used by Tejun for per-cgroup sched_ext prototype.
+>
+> It's wrong. It should adopt bpf_struct_ops_link_create() approach
+> and use attr->link_create.cgroup.relative_fd to attach.
 
-Thanks,
-NeilBrown
+This is basically what I have in v2, but Andrii and Song suggested that
+I should use attr->link_create.target_fd instead.
 
-diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index 3f8a6f1a8fc3..a08250d244ea 100644
---- a/fs/cachefiles/interface.c
-+++ b/fs/cachefiles/interface.c
-@@ -436,7 +436,6 @@ static bool cachefiles_invalidate_cookie(struct fscache_c=
-ookie *cookie)
- 				cachefiles_bury_object(volume->cache, object,
- 						       fan, obj,
- 						       FSCACHE_OBJECT_INVALIDATED);
--			end_removing(obj);
- 		}
- 		fput(old_file);
- 	}
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index b97a40917a32..0104ac00485d 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -261,6 +261,7 @@ static int cachefiles_unlink(struct cachefiles_cache *cac=
-he,
-  * - Directory backed objects are stuffed into the graveyard for userspace to
-  *   delete
-  * On entry dir must be locked.  It will be unlocked on exit.
-+ * On entry there must be at least 2 refs on rep, one will be dropped on exi=
-t.
-  */
- int cachefiles_bury_object(struct cachefiles_cache *cache,
- 			   struct cachefiles_object *object,
-@@ -275,12 +276,6 @@ int cachefiles_bury_object(struct cachefiles_cache *cach=
-e,
-=20
- 	_enter(",'%pd','%pd'", dir, rep);
-=20
--	/* end_removing() will dput() @rep but we need to keep
--	 * a ref, so take one now.  This also stops the dentry
--	 * being negated when unlinked which we need.
--	 */
--	dget(rep);
--
- 	if (rep->d_parent !=3D dir) {
- 		end_removing(rep);
- 		_leave(" =3D -ESTALE");
-@@ -650,7 +645,6 @@ bool cachefiles_look_up_object(struct cachefiles_object *=
-object)
- 			ret =3D cachefiles_bury_object(volume->cache, object,
- 						     fan, de,
- 						     FSCACHE_OBJECT_IS_WEIRD);
--		end_removing(de);
- 		dput(dentry);
- 		if (ret < 0)
- 			return false;
-diff --git a/fs/cachefiles/volume.c b/fs/cachefiles/volume.c
-index ddf95ff5daf0..90ba926f488e 100644
---- a/fs/cachefiles/volume.c
-+++ b/fs/cachefiles/volume.c
-@@ -64,7 +64,6 @@ void cachefiles_acquire_volume(struct fscache_volume *vcook=
-ie)
- 				cachefiles_bury_object(cache, NULL, cache->store,
- 						       vdentry,
- 						       FSCACHE_VOLUME_IS_WEIRD);
--			end_removing(vdentry);
- 			cachefiles_put_directory(volume->dentry);
- 			cond_resched();
- 			goto retry;
+I have a slight preference towards attr->link_create.cgroup.relative_fd
+because it makes it clear that fd is a cgroup fd and potentially opens
+a possibility to e.g. attach struct_ops to individual tasks and
+cgroups, but I'm fine with both options.
 
+Also, as Song pointed out, fd=3D=3D0 is in theory a valid target, so instea=
+d of
+using the "if (fd) {...}" check we might need a new flag. Idk if it
+really makes sense to complicate the code for it.
+
+Can we, please, decide on what's best here?
 
