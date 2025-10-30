@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-877688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D5CC1EC0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E8BC1EC18
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B4E19C455B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:30:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603B919C4BB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2785F33A036;
-	Thu, 30 Oct 2025 07:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD89933B6F8;
+	Thu, 30 Oct 2025 07:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xWsNjuTv"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GF+3QyNL"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3F4338F23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2EF33A039
 	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 07:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761809287; cv=none; b=TIc96CowNszGSjJYq7y8E2ritNNDsfFtExlgzMMkbH2oxqkBm00YzTe+J6MqtAOctX7NlD0x3xBoGUNjyWyHROVxe3qD4zperP80tkbwlX/a5DoSbV+5zI6Uewfz37mKpu3qc1IIJz96m5xE2yn7F8wPGcB7vZ9uUAzycg8R2Rs=
+	t=1761809290; cv=none; b=gGfZYtU+nkETr+KLJnbWYuvRU4GBlAd/s5DquCxAMcMXV6UAlbJ6c2mNNCSh1QnegmlIsOlg2tlY6MWEk/bSqyVTqpG+3E7GkGVxtRL8H1IKaZF7D6aWDunB+l74PZ1+H/XfR1hV6S1LD2azpMdKbiY11A+8jhNTjCmsRwbs2YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761809287; c=relaxed/simple;
-	bh=WcwF899ijzMkV7KsctD1Rs0qOwaqBA4nOWWB8G5J4uI=;
+	s=arc-20240116; t=1761809290; c=relaxed/simple;
+	bh=ryWrHwVNfLrlYPtWRwT19syvjek2k+I8uWyDlcucveg=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O38XacfMBoegh8eVP0amCTvPkHor1T4nHyt6hHqmkfVwA9OyN/ebslsfGyj0Ef7dL/A2Jhq5GNMLFS6HgpcDjnvq+Rf7NbyJKoiw3m7AL9UYHAN0QJy8+pHmPy13JojeW3GP8vx9opSkhHfQf/hJhPBGRary9oIq9PEWgW5vz0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xWsNjuTv; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=exyGnfdyYJ5vmu2er8eSWP8a1hGuCyUezn55uSOGCeTzXba3K7xgg3m5Z2FVlqkFQ/fFAdm5HTFnkV9C730IXtp8qSTYMS91KAUdxlpaIppRuomTV0AnXX5Wp9QRt7G+8AOmhzXk1h2E67dvJopxB3f6eAfwdrwwS45ISSyDkxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GF+3QyNL; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63c2d72582cso1228591a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:28:03 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b64cdbb949cso165266566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 00:28:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761809282; x=1762414082; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761809283; x=1762414083; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iU3VmjxFWQVTxfFInnvPCoNmKzRhY9rVV2g8Tv3wIqE=;
-        b=xWsNjuTvqmWXs4D9WC3oi9DyKdk6L7mKQ49janzmAsVPH5IfiTlkZ9HK1Yel4T+3/e
-         3fob1uvPOY1nT21gjTw9mr1V6K13+BsYgtRwNuNqKr/5WQq04ALgECcVtcuir/RODIUD
-         lfk479H4dsygc4PdhFh2+8jFMRzF1iXzC9RiBV+SyFKz8/0Y81n5Emh4XWeGhMvYdX6o
-         SQlpusqynfWwA/QVp/v/ju8B23DaMfT/VwSIAhI+1KfJr29t2kMx6Biqs0gHHfV6yEOe
-         pOsYG3hlUGLu/d+sAjS4zIxax/WU+ciUONuv3XZX72NkTsTOCW8AJcqp96tIrC4Ejfo8
-         OfNQ==
+        bh=Mj5IeQfrnY7EW0pWlNNC0h+E0DMhgzqscBGxInRy3qI=;
+        b=GF+3QyNLsVV+4Rvefo6Ss4Ihc+UefxKeRH7y4tvWl0W1V1olvGmhQtSgXtNIidf4DS
+         YsO6E0F/ggSb0Aoc1Tt1pjHXQNj8QzCuk6/9rciEngQVLLTuBTlKDdOQufKymBUetFJN
+         kYvKa8NB+eWMJeBaXVxdXEbLqQzVYClUpR+ama0LbqlYEVEc9+X3DV/0B/kbQIOxIDHe
+         6B+Xplao1dQoOfQUF1Kmo5ofvH8BjVP98knSJx5UP6Ed8EeSuLCueI37lcOft/nMqKfE
+         efWnMLCsMgJUUp9eFx4nbHoeyzPNycHTNKS2hgGf2jGc/V/+x75Wynp2vbSKgHVkKOTf
+         M9xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761809282; x=1762414082;
+        d=1e100.net; s=20230601; t=1761809283; x=1762414083;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iU3VmjxFWQVTxfFInnvPCoNmKzRhY9rVV2g8Tv3wIqE=;
-        b=tYYLbMVirrWUqOwxZ5AywtYg1Z9ZYtgrYCcldVCJ/aiHdhDpuABS5Q2HxlERS9S0mT
-         KgSrZUszoktGOR8qKqs4jkkzkWT8JwoZsfKmyiuGeAXqm3UKzv6BPyZtq++RRVQfLJY8
-         oQUpSqQFS0n8HUIx5d/6XKVuZXVgIuQ9KJE40IGzb6WMgC2kuccdkelBfhcwCtj6tq2Z
-         SBcFf/8xFu5WUuAipzMaiqbPNpdWDaJVFDIBYAQXGpkqpciR5B6F/uUNEIacnVezR8SY
-         Aac13s1htorg80muRofKa0/FqZH4oIVI2gAQZW6+fN5xA274K4xGanA6oBNxd88P8rQ7
-         db6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRexAFsd5ngRlRe/GcpQXZL0t5j/jpoviUbAZvrPdK28r4kM/BMtPIMa8modwVguYN9FBh9n43+vYN89s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziuVhAnjRR/b+F9FOvPEhmdxFM23urcpI8+Sv3PWdf3VdFMGfM
-	nTom82YQBm2LKr5l41eus9xNJO8aH/G8IZPY0RoX71JpRem/4VYwlrVI42fpXN+zqZo=
-X-Gm-Gg: ASbGncue1Dx2LSr/TndlWgzl5qCqVrvxosOTGC7qAu4zocKy7ypSv/gyRGzVYZQ+gZF
-	f2wou40Ba6JsynUzVG1YTiffwSW5bHarW3oRscCVbGHCSoTW2H3vEFaghRLi2ORhgP7iRv+XpiB
-	xAzt8rra9WJui57INSaF7muZkOqXpw1e8JwG050QZbDMRxZb2HCIeevblF0IR2R5QTr3a0ndT6T
-	vq+k8IhjnD5icu34efFAgQ5uelXjAhsNL1s8b1Z9BtzAsxms9URLkHvBvkBSi0e7vaRIWgycF2O
-	c/udjHDiMRnDpWVH6gF2CdOcNGTe9W4AnasRZpAEojYil98xnvn/2kRHy9MyWEHA/6KOQIUmGoK
-	9Vhha6bli01It9x+Om61rNk2VdSWAPnlEpiysoNhR9aEko0x7hC9s/m2/BHtbmfHq8YoUykUSq4
-	eFlXgIc6/C7iE2g5GubtdCKNIK9H+C92Re/R+i
-X-Google-Smtp-Source: AGHT+IGk4IG0pOgH6w0d4p7m6u5vpiZbUz4rJ/M64G/oyDVzMmCpWEQhZEqdyBbrxSEcpB1EqYyZrg==
-X-Received: by 2002:a05:6402:440d:b0:63c:215e:4377 with SMTP id 4fb4d7f45d1cf-6404424a5bfmr5200349a12.24.1761809282442;
-        Thu, 30 Oct 2025 00:28:02 -0700 (PDT)
+        bh=Mj5IeQfrnY7EW0pWlNNC0h+E0DMhgzqscBGxInRy3qI=;
+        b=DLe3QdgmgaPUgQ8xtwL98xpMZ04JEScGcw1XQesjBSsIBLdHnfVN9SeAwvGMHpayx8
+         J54Gzif6pPWtfL1H03GUHCSD2OpJzTR0OtEQKJLBPWDNxUNHJClLbydl30eo5zKJJlar
+         Gaiieu/MUkm4ggaNozcyL/LTpmDymDJ64VpaDK5KWgIeEJt0DSU4/zIFJbLUzV9tgDiz
+         l3ggKbi50ymTOdbFOkqFgNJ8zduYRHmW8HT3NqRtPqxtEQupyzAZZ351oUymuApYj+at
+         +V0+Yilki5RRVmfnMD6QSNnppGaPP7qZh3fl1S0w0fozWz8uu1Xn0mk2tjmAVg/dnkVc
+         iZqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9+jHERKvDXRXV2aA9TRnUxggDg4QFeYbeUAprQ/jVxA0+5mtqKR9eJF8Th0uA5+dkuKfd6xgHWxMhJHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0++W3gp1fKS9aQxUfkETg+/i2jXiK4lBtvvVOg2Lx7xjpLFgw
+	zdKHQbW3Zxk1Mp1tzo2WBd6DIJCynbBAjESAm4/7MolwoR3YBkeYSUT2gvVAhS+KzTY=
+X-Gm-Gg: ASbGncsuE24tSveTzBq9MYYqpFgD+v1n/jCrFDpS7T3ZxqwTNYi6l7H63y05n8iGOGa
+	O5Gf5e/1kb6qtGFuNBK+hCguFkUQyNOuNK7qZfBr/l5L0Lbi1g1ZcJy3BHcmXUJHQauVIQCSj4S
+	5hSdHrulb/a3zhGSHJFncQ02jtPNxd2x/BGxvPgf1qOhrdZ7Zkzey6WMBlrGDBzs9vBnny7GnnI
+	6J1lotDtA4lyb6xD4lI4xiuPsfc3fsz+sSfIjCqj3wgcpvNlrTWTb9/AJOVU8m/SHHMHjAdW3ww
+	DYcTXVjSUrmte4/OaGHKu482SCCrzbQiBYq+y48Ikcn2IQcbE1MKyx23232o9/JnwnAxsIZCbW4
+	GTjtu6DHd4hWQqIn/HusarXifDRl/8ANx7HY/FKIIQVXZtD02xWoH9MTKtpXhTYqHn54UZrEfIg
+	grR59N9rUbKse8esLFdsymtzqkVXVdfKg+aAl9
+X-Google-Smtp-Source: AGHT+IEKsu/bkeeIK0jg8SgH2xnO4BzyoQGDQXrrvwW8FZKWoxRprqP1EvGLr4TamAbC/0bHRkjfRw==
+X-Received: by 2002:a17:907:a088:b0:b46:31be:e8fe with SMTP id a640c23a62f3a-b703d2b187cmr591713266b.11.1761809283450;
+        Thu, 30 Oct 2025 00:28:03 -0700 (PDT)
 Received: from localhost (mob-176-247-57-96.net.vodafone.it. [176.247.57.96])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef9a5cbsm14151348a12.23.2025.10.30.00.28.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d854763b1sm1661301666b.71.2025.10.30.00.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 00:28:02 -0700 (PDT)
+        Thu, 30 Oct 2025 00:28:03 -0700 (PDT)
 From: Francesco Lavra <flavra@baylibre.com>
 To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Jonathan Cameron <jic23@kernel.org>,
@@ -81,9 +81,9 @@ To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Andy Shevchenko <andy@kernel.org>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/9] iio: imu: st_lsm6dsx: add event configurability on a per axis basis
-Date: Thu, 30 Oct 2025 08:27:51 +0100
-Message-Id: <20251030072752.349633-9-flavra@baylibre.com>
+Subject: [PATCH 9/9] iio: imu: st_lsm6dsx: add tap event detection
+Date: Thu, 30 Oct 2025 08:27:52 +0100
+Message-Id: <20251030072752.349633-10-flavra@baylibre.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251030072752.349633-1-flavra@baylibre.com>
 References: <20251030072752.349633-1-flavra@baylibre.com>
@@ -93,174 +93,99 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5102; i=flavra@baylibre.com; h=from:subject; bh=WcwF899ijzMkV7KsctD1Rs0qOwaqBA4nOWWB8G5J4uI=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBpAxNL4n9ehavBMpqRL2pwa2X216ad7wnHUYFlu w9apBAI6Y2JAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaQMTSwAKCRDt8TtzzpQ2 X8T7C/9rHBv1KulTrWD/56agpc3fL1uB0j7Yl1kfeit7xbnJADo2NKexHNOOkE6cPNuqV9ICL7H Q4y81WOD7z+9+X3zDW7etoUkFDQas78lsEAVAlGeyEXASz7cSMxAIqnHKnFT2Mch3ppwFcSoGtc 7e8CP7035Zpt51QtAmNw+GE5GegUf6ZJFka+ZlwR57PNrlEIvFZZSttAZw7iQw5emt32JuSe576 Fy6jaoS5XrlhEfrVlyjbOH5Ro75qJ3YIkw/mM2EymvLo/C40MvfC23fAs2Uw6QDm8yqV2tE3lyP 0OjthEhx+jADriOiMh+6UYdMtxBOvDhqpx5JWrUY5/ns02dyfbXE5Mf4XAd9EC5suyV2Heaa9aD qyft9xvM7fav9JtvTHtmml2dPo36dJIHvjEcQZdB0liA/dSq5WeGDd7pzdWKPbHPPiLk+976XKN woEKoe94PF2evpksGNM9i9rur83Tye6+Al2LQAWSKmQbHNNFARpaPv9m3b1mRHL6u0QBo=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3025; i=flavra@baylibre.com; h=from:subject; bh=ryWrHwVNfLrlYPtWRwT19syvjek2k+I8uWyDlcucveg=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBpAxNLuoGQgeF2bVzRfpEk/5RAI+1zVrRkSrMrR b1W978ht+qJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaQMTSwAKCRDt8TtzzpQ2 X9unC/41B/+tkoh1a9dryX84uhL23mUeKgMj7JYCt1IIZ1qSNZBtB2rLTi1m5wwg54p3FODIsRo QJ5cE8soOw4PEvXngPTLIEK5YsAfdNRLa58GMegk4x603vcjzw7CrF8gGDc8/SdWv7OIPtG+TQy ODt4rU3HltHbDEMce9jR0xwdc24dsrh89KyQZkoBnnuIPOMNl99Bp6v750rQdOHGIkwR3fLgDRz dgfDEnNAFiZVtL9QXZ9PPnaheX6uxLT3gP51wRm285M0PR9+p+MqKDKb3msjzi5bm3KHR/gzUQP oc8edF75oSicvW/mTBb3UXWlxxVWq+8qL9KjFmpw5CEzDFN4rPbKCiAbkwaM4RlLxAb0YEHPpXn 7l7kFfwLOr4QPQ4+9Djh1NnNTNMN5wjAy3jsLiVVys5KM9AMCYt68y34dMRdTv6qEV5mr71Deh1 gy0n0m6yh8F55IZOKa3K0IGNpY4s3xxJnPTv2r/wsIo+MwbQUtShc1IzdESuLo//GCq0k=
 X-Developer-Key: i=flavra@baylibre.com; a=openpgp; fpr=8657854F953BDCA31EC314E6EDF13B73CE94365F
 Content-Transfer-Encoding: 8bit
 
-In order to be able to configure event detection on a per axis
-basis (for either setting an event threshold/sensitivity value, or
-enabling/disabling event detection), add new axis-specific fields
-to struct st_lsm6dsx_event_src, and modify the logic that handles
-event configuration to properly handle axis-specific settings when
-supported by a given event source.
-A future commit will add actual event sources with per-axis
-configurability.
+Add the logic to advertise tap event capability and report tap
+events; define a tap event source for the LSM6DSV chip family.
+Tested on LSMDSV16X.
 
 Signed-off-by: Francesco Lavra <flavra@baylibre.com>
 ---
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h      |  7 ++
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 77 ++++++++++++++++----
- 2 files changed, 70 insertions(+), 14 deletions(-)
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h      |  1 +
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 35 ++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
 diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-index 0e0642ca1b6f..62edd177c87c 100644
+index 62edd177c87c..75953a78fc04 100644
 --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
 +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-@@ -228,7 +228,14 @@ enum st_lsm6dsx_event_id {
+@@ -223,6 +223,7 @@ struct st_lsm6dsx_shub_settings {
  
- struct st_lsm6dsx_event_src {
- 	struct st_lsm6dsx_reg value;
-+	struct st_lsm6dsx_reg x_value;
-+	struct st_lsm6dsx_reg y_value;
-+	struct st_lsm6dsx_reg z_value;
- 	u8 enable_mask;
-+	u8 enable_axis_reg;
-+	u8 enable_x_mask;
-+	u8 enable_y_mask;
-+	u8 enable_z_mask;
- 	u8 status_reg;
- 	u8 status_mask;
- 	u8 status_x_mask;
+ enum st_lsm6dsx_event_id {
+ 	ST_LSM6DSX_EVENT_WAKEUP,
++	ST_LSM6DSX_EVENT_TAP,
+ 	ST_LSM6DSX_EVENT_MAX
+ };
+ 
 diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-index 87d40e70ca26..6d1b7b2a371a 100644
+index 6d1b7b2a371a..1bc69c6c1b9d 100644
 --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
 +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -1802,10 +1802,38 @@ static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, enum st_lsm6dsx_even
- 	u8 enable_mask;
- 	unsigned int data;
- 	int err;
-+	u8 old_enable, new_enable;
- 
- 	if (!hw->irq_routing)
- 		return -ENOTSUPP;
- 
-+	if (src->enable_axis_reg) {
-+		switch (axis) {
-+		case IIO_MOD_X:
-+			enable_mask = src->enable_x_mask;
-+			break;
-+		case IIO_MOD_Y:
-+			enable_mask = src->enable_y_mask;
-+			break;
-+		case IIO_MOD_Z:
-+			enable_mask = src->enable_z_mask;
-+			break;
-+		default:
-+			enable_mask = 0;
-+		}
-+		if (enable_mask) {
-+			data = ST_LSM6DSX_SHIFT_VAL(state, enable_mask);
-+			err = st_lsm6dsx_update_bits_locked(hw, src->enable_axis_reg,
-+							    enable_mask, data);
-+			if (err < 0)
-+				return err;
-+		}
-+	}
-+	old_enable = hw->enable_event[event];
-+	new_enable = state ? (old_enable | BIT(axis)) : (old_enable & ~BIT(axis));
-+	if (!!old_enable == !!new_enable)
-+		return 0;
-+
- 	/* Enable/disable event interrupt */
- 	enable_mask = src->enable_mask;
- 	data = ST_LSM6DSX_SHIFT_VAL(state, enable_mask);
-@@ -1823,6 +1851,31 @@ static enum st_lsm6dsx_event_id st_lsm6dsx_get_event_id(enum iio_event_type type
+@@ -1349,6 +1349,30 @@ static const struct st_lsm6dsx_settings st_lsm6dsx_sensor_settings[] = {
+ 					.status_y_mask = BIT(1),
+ 					.status_x_mask = BIT(2),
+ 				},
++				[ST_LSM6DSX_EVENT_TAP] = {
++					.x_value = {
++						.addr = 0x57,
++						.mask = GENMASK(4, 0),
++					},
++					.y_value = {
++						.addr = 0x58,
++						.mask = GENMASK(4, 0),
++					},
++					.z_value = {
++						.addr = 0x59,
++						.mask = GENMASK(4, 0),
++					},
++					.enable_mask = BIT(6),
++					.enable_axis_reg = 0x56,
++					.enable_x_mask = BIT(3),
++					.enable_y_mask = BIT(2),
++					.enable_z_mask = BIT(1),
++					.status_reg = 0x46,
++					.status_mask = BIT(5),
++					.status_x_mask = BIT(2),
++					.status_y_mask = BIT(1),
++					.status_z_mask = BIT(0),
++				},
+ 			},
+ 		},
+ 	},
+@@ -1846,6 +1870,8 @@ static enum st_lsm6dsx_event_id st_lsm6dsx_get_event_id(enum iio_event_type type
+ 	switch (type) {
+ 	case IIO_EV_TYPE_THRESH:
+ 		return ST_LSM6DSX_EVENT_WAKEUP;
++	case IIO_EV_TYPE_GESTURE:
++		return ST_LSM6DSX_EVENT_TAP;
+ 	default:
+ 		return ST_LSM6DSX_EVENT_MAX;
  	}
+@@ -2427,6 +2453,13 @@ static int st_lsm6dsx_chan_init(struct iio_chan_spec *channels, struct st_lsm6ds
+ 				event_spec->dir = IIO_EV_DIR_EITHER;
+ 				event_spec->mask_separate = BIT(IIO_EV_INFO_VALUE) |
+ 							    BIT(IIO_EV_INFO_ENABLE);
++				event_spec++;
++			}
++			if (event_sources & BIT(ST_LSM6DSX_EVENT_TAP)) {
++				event_spec->type = IIO_EV_TYPE_GESTURE;
++				event_spec->dir = IIO_EV_DIR_SINGLETAP;
++				event_spec->mask_separate = BIT(IIO_EV_INFO_VALUE) |
++							    BIT(IIO_EV_INFO_ENABLE);
+ 			}
+ 		}
+ 	}
+@@ -2553,6 +2586,8 @@ st_lsm6dsx_report_motion_event(struct st_lsm6dsx_hw *hw)
+ 
+ 	events_found = st_lsm6dsx_report_events(hw, ST_LSM6DSX_EVENT_WAKEUP, IIO_EV_TYPE_THRESH,
+ 						IIO_EV_DIR_EITHER);
++	events_found |= st_lsm6dsx_report_events(hw, ST_LSM6DSX_EVENT_TAP, IIO_EV_TYPE_GESTURE,
++						 IIO_EV_DIR_SINGLETAP);
+ 
+ 	return events_found;
  }
- 
-+static const struct st_lsm6dsx_reg *st_lsm6dsx_get_event_reg(struct st_lsm6dsx_hw *hw,
-+							     enum st_lsm6dsx_event_id event,
-+							     const struct iio_chan_spec *chan)
-+{
-+	const struct st_lsm6dsx_event_src *src = &hw->settings->event_settings.sources[event];
-+	const struct st_lsm6dsx_reg *reg;
-+
-+	switch (chan->channel2) {
-+	case IIO_MOD_X:
-+		reg = &src->x_value;
-+		break;
-+	case IIO_MOD_Y:
-+		reg = &src->y_value;
-+		break;
-+	case IIO_MOD_Z:
-+		reg = &src->z_value;
-+		break;
-+	default:
-+		return NULL;
-+	}
-+	if (!reg->addr)
-+		reg = &src->value;
-+	return reg;
-+}
-+
- static int st_lsm6dsx_read_event(struct iio_dev *iio_dev,
- 				 const struct iio_chan_spec *chan,
- 				 enum iio_event_type type,
-@@ -1840,7 +1893,10 @@ static int st_lsm6dsx_read_event(struct iio_dev *iio_dev,
- 	if (event == ST_LSM6DSX_EVENT_MAX)
- 		return -EINVAL;
- 
--	reg = &hw->settings->event_settings.sources[event].value;
-+	reg = st_lsm6dsx_get_event_reg(hw, event, chan);
-+	if (!reg)
-+		return -EINVAL;
-+
- 	err = st_lsm6dsx_read_locked(hw, reg->addr, &data, sizeof(data));
- 	if (err < 0)
- 		return err;
-@@ -1872,7 +1928,10 @@ st_lsm6dsx_write_event(struct iio_dev *iio_dev,
- 	if (val < 0 || val > 31)
- 		return -EINVAL;
- 
--	reg = &hw->settings->event_settings.sources[event].value;
-+	reg = st_lsm6dsx_get_event_reg(hw, event, chan);
-+	if (!reg)
-+		return -EINVAL;
-+
- 	data = ST_LSM6DSX_SHIFT_VAL(val, reg->mask);
- 	err = st_lsm6dsx_update_bits_locked(hw, reg->addr,
- 					    reg->mask, data);
-@@ -1915,20 +1974,11 @@ st_lsm6dsx_write_event_config(struct iio_dev *iio_dev,
- 	if (event == ST_LSM6DSX_EVENT_MAX)
- 		return -EINVAL;
- 
--	if (state) {
-+	if (state)
- 		enable_event = hw->enable_event[event] | BIT(axis);
--
--		/* do not enable events if they are already enabled */
--		if (hw->enable_event[event])
--			goto out;
--	} else {
-+	else
- 		enable_event = hw->enable_event[event] & ~BIT(axis);
- 
--		/* only turn off sensor if no events is enabled */
--		if (enable_event)
--			goto out;
--	}
--
- 	/* stop here if no changes have been made */
- 	if (hw->enable_event[event] == enable_event)
- 		return 0;
-@@ -1965,7 +2015,6 @@ st_lsm6dsx_write_event_config(struct iio_dev *iio_dev,
- 	if (err < 0)
- 		return err;
- 
--out:
- 	hw->enable_event[event] = enable_event;
- 
- 	return 0;
 -- 
 2.39.5
 
