@@ -1,229 +1,121 @@
-Return-Path: <linux-kernel+bounces-879234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02621C22995
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:49:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC574C2299B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 23:49:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E7D1A60237
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:49:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38E504ED174
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 22:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41818335556;
-	Thu, 30 Oct 2025 22:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFDD33B969;
+	Thu, 30 Oct 2025 22:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NSCMwTg0"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010004.outbound.protection.outlook.com [52.101.85.4])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nn3zP5yO"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A4C2C2364;
-	Thu, 30 Oct 2025 22:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761864561; cv=fail; b=NWpmuWw64VfG6Lch9PhUd7nDICynFAivwuMRoUuTYxXEPFtCl6eo/m3BRGLi8MakehaptQIk9VT0ZJRawl4TfPTCd+d80LLWSNIK9L6hm3RTjl8qwdTV7q9lT4VaWpqirQrRUSjsDSXoTTFO7nD2IMPZGBNS+I11GHgmRewA8GY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761864561; c=relaxed/simple;
-	bh=kIjoug//4q5XNuZ7sVt7Q5EKrIsaUu6dJXvbfEN4PDw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=W5wZ8L9a68ZPKOsTaIsocjBZjcGLvJPeUtg0gG2MpbZrJnysQxlRj2SaADk579EmU6oPnqu4SQ/e4cZA1Y6++iFfhE/ndtKFZV8xYy7w9VPcguL8FUDrKow8vH/KiRnz0/6xms3lmtuHieLf7GTw0BbPI0JRTqEtJxw42h5mvYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NSCMwTg0; arc=fail smtp.client-ip=52.101.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eWIGmIKqlkUeMPH0EqIJDXRYU26oNqY+qHYE253fsCfBW5cyX6llKEL/AZzADUOxbAgvi/aeNO3BW9+VD5l9sfIvxRvA8fswSU7fUJExDkhMSQjUv+VLh5Gb7eXBIdGHG7UXs02lXCA/zPVOR4eRd0QfG92VlMx66Z4gnp1LEtAOOJKRcrBhOtrzBfxZl+LYjVMCoFa4kiF060ePhzceFQyM3/wK8lCzPsM6CFFeOCxMZJn35mVuBudWu/GkKXS7DOy84mZoACgdeho1cwaOZCNg7V9fUiJJ3gwfMxEVBjhyp6ey7K35FJdTBnNhnNomc6ALSIx2KDDOFEDmSogCSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wMT9vZ5X9GcRvR2+KaNvC47QpElM8truj0YU1Ya8MSk=;
- b=NY5xbJMwRoloZuWvC1a1eXHLPpKLs6lD1eodHPoI9CQdhHpVpl1kYlMZkGBTZlCIKpu4iRoSUopm1omk0KgGIuyqoP1jhoHPy+85SekurGleClgh0vPmWbPDzTzeZNBVuoJoKQQaw4shWhA02B4fnT3S4y9i44wMpNcY4tyK/+Qd68MPofyqi1WqhmMNHIvpbY8LGtlHYlfhbj+pJIJMEqoqh4obbCB22Gi1RRFis52JKZdoioevYEqN5dnwa8TEmLw+Wazl0bticwiHZrmdm8c9oQGSV+35Pz/qStbCCSf4Ld5AxGYX1AFKdzXS6wEEpZpBucKwFDR2cCold+j9uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wMT9vZ5X9GcRvR2+KaNvC47QpElM8truj0YU1Ya8MSk=;
- b=NSCMwTg0ofVV5xTXMTN4iVvvLQrgzfNhQrl+vqT6XX3UvbKmYzKxRAh1sC46AdKMq9h8Kr//7LEN2n48rR/YV00qinzzeOI6e4dXwbhy5h/pMOS/GXawEKa9tNRmAvcQZTClMKjJOGQ6mjpd+WIQXOmdvg6Gih1TohCUIVwWuklX3Bsf4NahpcSsiar3Jen/yCzFo1ypPJZ0D0VWiI1eb9cftOhT0coW1wJ8WcUgud2SIHfdvwe9BIqdRk7MY3gLka38kzyznVvQPxN/rfhaM0a9LSHVQSHlKgHBRJCzvB3licyBX2NegyK3OJYZIXKl8MQTGWQgNzyXilWBPPCR4w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SA0PR12MB4478.namprd12.prod.outlook.com (2603:10b6:806:9c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Thu, 30 Oct
- 2025 22:49:17 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.015; Thu, 30 Oct 2025
- 22:49:15 +0000
-Message-ID: <721dff90-aefd-4df9-b383-d62dc54ca454@nvidia.com>
-Date: Thu, 30 Oct 2025 18:49:12 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] rust: drm: Add DRM buddy allocator bindings
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
- acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
- nouveau@lists.freedesktop.org
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-4-joelagnelf@nvidia.com>
- <DDVZ4L08QMIR.GFMG544BYQEO@kernel.org>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <DDVZ4L08QMIR.GFMG544BYQEO@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN0P222CA0004.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:208:531::11) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6768F34D395;
+	Thu, 30 Oct 2025 22:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761864570; cv=none; b=Ff8PigWkYlU2dYp4cI6R27gi2rv1SXXRh64HA3Hv+BfbxxpV5iN4MkBojXN76FTlyWT7nYq+HwaXWKRcWVFePbrw/a4I5aM0Onuhpio/29ElAC4QR4xJ0yoiKpzGDxMM0zl0LFXI1SXt62TQpzDkY6DgUelX7jDME7y187RYH90=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761864570; c=relaxed/simple;
+	bh=UgGB97gFfkBMFKeQUH3mcQQ+pc+E2qEDyTSQDbCoFik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qNVB0OA660f+yRnM+2/7J8BItAuknrcfvRnV8OKv/fayPauGqFtwmCJC+hwVOi0nSzvBDQB9GcoLlvGjR0AV2G+u8C+yReWJBQdHokonkkM95tr6bsY4jKcrQmrWLrESr57CseafZEV9lKSH3FCaycPjSD8LXQuqAQUyDVXxHAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nn3zP5yO; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=W39D1CHVnz5ftoUtLOXhSfT0d9vFvzHtYZUvOQ5CQgk=; b=nn3zP5yOZotkrkB2k4BgnxAfmk
+	UlFWyoo4RmBgRnjD5M62q2lTBaT5DK0CwAbfVauIadDlI/jg/HV2vOCQoqTFnWoc82uzLJ/AjuK6/
+	2E6ZbTDnC9/LFOkmo8JDQ1nI5HLB5PQROT66Z+x3se5Ui/n/mCJ0w8Rvc0tnpRllW/QVi3++gqBm3
+	gyhgh3zE+HjqFiXrnQGuxSW7r50+2FibVfnAXDNnbi5i9tQ+vkq2KaFGVXZouvxkVRb4iX7+9aDpn
+	C2qcj6QzMoNl9OsTovabmdxa/SzOx/sGuWCM1FJ+P0EqsfGU1YRHXEGjWromyJ2OlNM8jHCy6Ecre
+	telx9loQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEbSQ-000000055Ov-28yJ;
+	Thu, 30 Oct 2025 22:49:26 +0000
+Message-ID: <574473a2-e86a-4a4c-875a-cb3013acf4d0@infradead.org>
+Date: Thu, 30 Oct 2025 15:49:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA0PR12MB4478:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b467aa3-81ca-4517-2f1c-08de18068d82
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZVpGL2lBOGkrck5HMlVqY3VObEt0STlhYmZrczhKd0lTMkdRQUVOKy9xU0ow?=
- =?utf-8?B?MXlRd1lxWXdVOS85TlhYOE81TlJkMlk1VHp3eDM5Q1UyaFVvKzRrWW8xelEy?=
- =?utf-8?B?REpkSEl0a0ZUVzIrVUtnSGVnNnBJdFZGN0grWEM1VHR4OGh5M0U3NWpLS3dz?=
- =?utf-8?B?TzlNSkhkRzVIQXZ3MFArdHBiOU4vQVVXVmFaTXdJUUZzTm1zUEticFRxclNN?=
- =?utf-8?B?alJJRU1iOGtvQXVla1BWbEl2MnZkblNYNmZMNC9ZajA0ZXNIaC94K3A4WjVI?=
- =?utf-8?B?a0FHRWk2d21Ya0FYMDFzV1JaeHViOUM5SkU0NlJVWnJOZjREV2tCNjdwRE4w?=
- =?utf-8?B?Zy9JcmdjUEYyMmpZVzkwUisyREpuei96UCtWc1AwUWhDdEY1eTdwK0gvSVVv?=
- =?utf-8?B?czdTaDdrTzJsSVJ5SHF1M0YyNzA4YndHNjl6NUNaQjVkeDJ1VFVNK2dmSll3?=
- =?utf-8?B?QjAyMXQ4SWhITlo4TUJoekRRT1JqZ3VPVE84MW5xRDdOeDdXQXMyWHQ1MjZH?=
- =?utf-8?B?ZjdDR08zdEpIcG9KK2pvb1ZuR2M5eS9aMEJxM2VUdGdVeW1MckwvNWRvS0ZS?=
- =?utf-8?B?Vm00WHlvMDBJd1pOYzRiUFEyWU9RcHFnQWtMREFCakVmbS9pMDE2aFNsU2JI?=
- =?utf-8?B?eVBobmhDWC9DalBGcUh4VVZ2ZXVYRHlpODVONG5aUGlxOFZaQXhkNWMra04z?=
- =?utf-8?B?U3ozWFdkdXhoaUNTVnk3eVhYUjJrR09LaHVDYy9FUU5PSjJON2ZzaFZHT2xG?=
- =?utf-8?B?cVN3a2ZFd3ZMb1ZPODg1TXRXWWNQTGJGNG1BSytpc1FPdk1NczNOYVlIVXpW?=
- =?utf-8?B?UWIyTTFnNHBUb3hLbE84VXd4OUIraFpGd0R5N0p0S2lQbUc3eTJValBQbmNk?=
- =?utf-8?B?Y0ZxZ0lLdTZNRFRRMGxjZTMxQ0gvbmJYWEtLeHErdEt6d3FJaHcvclpRVU5q?=
- =?utf-8?B?SEhPQnh6bHZ4R0pwYXh5SUs5S0FqOG0wYjFUS0dRQUhOUlZEYW92MmYzL0px?=
- =?utf-8?B?ZkJhcUNEdEJHTkJoR0JaN1AwUnVQbUVtUkVKdHpiNTJ2MTZWK3ZqY3ZtOGxM?=
- =?utf-8?B?VFZxM0RlcmRVNEkyaFd1RGlsc3YvNlIyNHlodjVlUXRSbGRFK0Fzc2lDVENX?=
- =?utf-8?B?bHltWlVqbFlZY3k3MXFzREdrbmxLVTBlN3hVUVhFZ2hjTDk0S1Y2dVlCakJh?=
- =?utf-8?B?QnVzTkZIdWdVbHlTVDNSMG5CNU51eHV1WkFtd2YrV1VROFNPd3JmTGdQcVVK?=
- =?utf-8?B?cmVtNU1KQTdYV1RoZFlHR2NTMnFRSmJYU1NkNWtUTWwzUjFtNWNvZDhuWXdN?=
- =?utf-8?B?WE94TUg1ajYvdk5tRHlZNWxiYnFLSGVIbGNNeXFPaXJtM0l6UlNSZEpZTXJ1?=
- =?utf-8?B?ZjRFZVBreXVRbHBzVGY2UWtxTUpFMUpwWEhBYXFvajQxZDI0V2dONWJpUUxG?=
- =?utf-8?B?cEg5RVFtWXlHS0xad1hLMWpmR1lhZm5Rc0FPaDNEK08rYVpyRVZoaEVWN1hF?=
- =?utf-8?B?cjVjK0VDN3JyaEFvQXkzVFJhcldPUThGa3RBNTNNbTJ0ekVKRTFsWDhsL2JW?=
- =?utf-8?B?YUhOT1Y2anc1UlorTTVTT0dQWEV0a1k1QTJjYWhUZTd6VHRhS1ZsZ2FWUzFw?=
- =?utf-8?B?NkxiN2k4V0FGUU9VVnE4WmhLdUZJYWdIRDRuRUl6bUZzSEJzc09LU0t5WkFj?=
- =?utf-8?B?citINkxBSVpxTnhpVE1YbTlVUytDUlZtTTFLRG9FRmllOERBZ3BNMmxPbWlN?=
- =?utf-8?B?RFRhVG0vTmJZVlFWS0pvRWZDUDVyalhZbjV5aE9pckZUTFArOGtkeDFoRWtV?=
- =?utf-8?B?ZnBjMU9NSzRINDVFUSttMElnbGNlYlo5ckVJN1pKTm1rNm1XUDVobVl4bHZj?=
- =?utf-8?B?UWRXTzRyakxsN2hzSG82eUlEUlB3ZFk4TzBnclRXM0VVb1dBeENPaGc2a3NR?=
- =?utf-8?Q?6xVmDOP4JmhoCgZKeOUxEamZV/cQ9r75?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RTFraHhaMXNab3NBMzdZYTBtN3BIUkhIRnlIc3JRQjN6MVFZTzg3OXdneCtB?=
- =?utf-8?B?dzZqd3NZVldvUE91elQ5ZVM0dGpjQWRpeXZpZUhlLzhscDc5VGtFd25CSDhB?=
- =?utf-8?B?RWlQZFNnOGo4SkhhTkhNL1dCSzFLYW1LM2lDMFg5SFJMK3hvRXNiWFEwa0lN?=
- =?utf-8?B?NCtOTzVJSkMxLzVwb3VjekQxdWk1WnErNnI1d3NxUDE1eGwyNGhrcjdRWVh4?=
- =?utf-8?B?YktjSGRJTDFVWE96ejNjcmN4Ti8wUjMxc3lMckJFUFpZWG5IRnlmMTZidGV4?=
- =?utf-8?B?V09zbFkrK1hWNDJPcUdEVTFjdC9WeVhLR0RSODc1a0lsYW9hcHNUa0NVZ1Ri?=
- =?utf-8?B?RzJEZ3E4NVBrcm9PS25rWnhyTkNRa0NXbE9HaXFpeVN4ZC9PQ2o5Y3JrSTlR?=
- =?utf-8?B?b1JxMVY5dXY4SXJSS2VlTHJod3VYUHlsWmpiN1BvTmVjaHI2dnYrT08vTWNN?=
- =?utf-8?B?Y09JYjRJZEFhTDJVdXlHaWJyTmFhK3BpUG5FYkp5bjNFWUpoNDNCWU5aT2d4?=
- =?utf-8?B?YUxiNXd3SjNvdmJSRGFOL3VQVjN4UlVpNlU1NDk0T3lteU1BZG1ad0xiODlM?=
- =?utf-8?B?OWx4UFg0YVZHVDJBMnhlalZMRDRqaUo0dzdwbFNIYjU0ZVpCQm5zU2I3ekxB?=
- =?utf-8?B?RktPMjVHM0V2R3paL2crWm9BSGYvTHBYeFpCYnZBL0EwK1hvcGYwdE94V1Vn?=
- =?utf-8?B?eUU3WGFkSHZCUkw1V1JFR3BET29PRkNwUCtSa0hwZVpUdFdXdzVvU0JJbmY0?=
- =?utf-8?B?OXUwbzhDQmlPeDI2aEZPbzBsRHdnUFBWdmRHaTEyNDBvL0tJTFRPUVVocHJ6?=
- =?utf-8?B?YkxWUTFkOVhSVE5BUTFZUmgxTnBkRlRUTEFUeXFtMWxRNUZqZjVnM3FhK1Yr?=
- =?utf-8?B?dENoV1FTTmRmUm9DbTBVQjVHcGtKcUZwVmJHb25qVDVlcENUaXlpRUpaZDN5?=
- =?utf-8?B?bXRkeG9ITHlHbnRQalMwSklWRXB5Y2pSY1FpVjNXbjVtNUVmSEs2OUFMT0U5?=
- =?utf-8?B?UE5vOG4wQXdhU3hUbHNmaEs5TTU5TGs0TUx6RVYyL3htRFdqc2F0aXFXc0dY?=
- =?utf-8?B?ZnVPQXhMaEFTVEJwVkZzekVzaVN0Q2lvUzB0amhYWEFDcjVrUGYvTU5vZnFm?=
- =?utf-8?B?NGUrY2Q3SDlLZ1FOVWV2dk1mRjI1b0QwWU4vUDVibmFkblN1TSt1Mk1MaFRL?=
- =?utf-8?B?K1pVUTkzR3NQTytNeUxFTStCU2V0SVdjM1ZYbVFvQWVEUFg3d3RoTHZGeCsx?=
- =?utf-8?B?MjJUOHE3eUVabkExbndjTFh0aHhBa3dIVTRNbHh2djlVazRZSkFPNjdCU3BE?=
- =?utf-8?B?dVdrU3N3N2p3eE5aSWsvYkhsV2x3L1NmSDNrTWVLYWlxUkNDWVJXQ2RzOCt0?=
- =?utf-8?B?VTNOZnZ1bitDaUdLN1pST3ZFVDFwQ0g4cnIrbTFwK2VqbjFzcDRXQmNXSnhn?=
- =?utf-8?B?Mm5Od1d5c2R6a0tid0JGTHlqaEtpTEZBeXlUanFyMUgwZFdtSjlDRWdxZ0Iz?=
- =?utf-8?B?a2lGdzNLOXZuTkJlbmt6a01GcHVDb0NwT0tiWVQzZE15eVhIV3lMWmY5VmpV?=
- =?utf-8?B?SU8xK1c5OCtOT3huZURkV2RCeUV4SkFNQnZZK2lSamlyWUl4SUp2S1F3bUZp?=
- =?utf-8?B?blpxNTBBeG52NlRTSHNnUENlVjJ5OWdBK0FhUUxKb01wRGlNd3RPdzFvMEZR?=
- =?utf-8?B?WlZRUHpFSXE3d0Q2UEU3U2xGTGxQU29MMHNpVFBacEdqMS9BdjFVa3RZQ3RW?=
- =?utf-8?B?cTZJSkhnR1lJZ0ZzaVVDSThUeitOazlhNUFNdWR4MVBKSjRoSEY0NUFFZWRs?=
- =?utf-8?B?UlhWTW54OWFzeWdKUkNhUFI2UW45YUllZjNpSW4rWk5zQTRCUW00Q2wvWUx4?=
- =?utf-8?B?ZHJvY0NEWlRibkNUMVJGelV6OVZ6SjNrSU5UNnZ4M2YzbkRDWXU1U28wb0ho?=
- =?utf-8?B?aVl2bEpTOUsvdmdEbmxOTFRJV0cwRllOTTU3VlVWbkVqbDRtYllrMHNWSFk3?=
- =?utf-8?B?ODZzS0ZranRzTFBSRFpvT3EwUExXNVg2S3dqbXZmOTYxQldTWFZuN1BlL0h4?=
- =?utf-8?B?SGVZZUplWXI4UXBzaXcrOHRBa29qVWdURERySjFtaWhKS1gwMkhOd3ZjMk5z?=
- =?utf-8?Q?67ZNIPvtU9N3paC8Py4FsK2LJ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b467aa3-81ca-4517-2f1c-08de18068d82
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 22:49:15.8240
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UI2z9wv3LS1+a/mE0Iqk0X+iZ5Us3WUtZK8XYdzapUe7d2kcaMAEQrdhTJuM14WMxtLB28r/XWdy2mUHNUKyng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4478
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs: kdoc: fix duplicate section warning message
+To: Jonathan Corbet <corbet@lwn.net>, Jacob Keller
+ <jacob.e.keller@intel.com>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251030-jk-fix-kernel-doc-duplicate-return-warning-v2-1-ec4b5c662881@intel.com>
+ <873470m5wd.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <873470m5wd.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Danilo,
 
-On 10/30/2025 5:27 PM, Danilo Krummrich wrote:
-> On Thu Oct 30, 2025 at 8:06 PM CET, Joel Fernandes wrote:
->> +    ///
->> +    /// Returns an [`AllocatedBlocks`] structure that owns the allocated blocks and automatically
->> +    /// frees them when dropped. Allocation of `list_head` uses the `gfp` flags passed.
->> +    pub fn alloc_blocks(
->> +        &self,
->> +        start: usize,
->> +        end: usize,
->> +        size: usize,
->> +        min_block_size: usize,
->> +        flags: BuddyFlags,
->> +        gfp: Flags,
->> +    ) -> Result<AllocatedBlocks<'_>> {
->> +        // Allocate list_head on the heap.
->> +        let mut list_head = KBox::new(bindings::list_head::default(), gfp)?;
->> +
->> +        // SAFETY: list_head is valid and heap-allocated.
->> +        unsafe {
->> +            bindings::INIT_LIST_HEAD(&mut *list_head as *mut _);
->> +        }
+
+On 10/30/25 2:33 PM, Jonathan Corbet wrote:
+> Jacob Keller <jacob.e.keller@intel.com> writes:
 > 
-> Not a full review, but a quick drive-by comment:
+>> The python version of the kernel-doc parser emits some strange warnings
+>> with just a line number in certain cases:
+>>
+>> $ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
+>> Warning: 174
+>> Warning: 184
+>> Warning: 190
+>> Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
+>> Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
+>> Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
+>> Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
+>>
+>> I eventually tracked this down to the lone call of emit_msg() in the
+>> KernelEntry class, which looks like:
+>>
+>>   self.emit_msg(self.new_start_line, f"duplicate section name '{name}'\n")
+>>
+>> This looks like all the other emit_msg calls. Unfortunately, the definition
+>> within the KernelEntry class takes only a message parameter and not a line
+>> number. The intended message is passed as the warning!
+>>
+>> Pass the filename to the KernelEntry class, and use this to build the log
+>> message in the same way as the KernelDoc class does.
+>>
+>> To avoid future errors, mark the warning parameter for both emit_msg
+>> definitions as a keyword-only argument. This will prevent accidentally
+>> passing a string as the warning parameter in the future.
+>>
+>> Also fix the call in dump_section to avoid an unnecessary additional
+>> newline.
+>>
+>> Fixes: e3b42e94cf10 ("scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class")
+>> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
 > 
-> bindings::list_head has to be pinned in memory it should be
+> This one applies, thanks.
 > 
-> 	let list_head = KBox::pin_init(Opaque::ffi_init(|slot: *mut bindings::list_head| {
-> 	    // SAFETY: `slot` is a valid pointer to uninitialized memory.
-> 	    unsafe { bindings::INIT_LIST_HEAD(slot) };
-> 	}), gfp)?;
+> jon
 > 
 
-Sure. I will use pin_init here.
-
-> if you're doing it by hand, but as mentioned in a previous patch, I think it
-> would be nice to have a transparent wrapper type, CListHead, for this.
-I like your CListHead idea. Let me sketch this out a bit more and see what the
-lifetime relationships look like, thanks! - Joel
-
+-- 
+~Randy
 
