@@ -1,225 +1,136 @@
-Return-Path: <linux-kernel+bounces-879037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CED3C221A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06489C221AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 20:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61906189EC74
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30ABF1A253A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE3233344F;
-	Thu, 30 Oct 2025 19:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A9B33344B;
+	Thu, 30 Oct 2025 19:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TbHVe6//"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aifjOcy5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1842333440;
-	Thu, 30 Oct 2025 19:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D26D33343D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761854325; cv=none; b=HumguV1m8a3lHfTl78em8A6PdDgV5YO6yhFnLTSbBwEQ2fuPQpJqHg04m4ClUFUumwZrLRiR0TrU9CIWWh9c3EdCtqjx81FzGn3Zuz3oo0tPA4Ir0sVSQi0ij3OSybWuSwxXyeeRMtiwpYj8pRbWo0tDFlE9IVKmmYyFhHbybb0=
+	t=1761854336; cv=none; b=M8ImYfH2NaJQgIPPBPHtUa9CH6BlkFSi8Oew4e/4XAYDdHRUCJl92CvEEkC1d68uLvGBpProjOXdpZQaAYmEjUqnmpTvk9vQG1F9w1ShlXH5zcHXqxrTqWVZ/JPxIXiq9BlUAOmyk8IY7nMkp1pshrJ2KB2bafcsIsTjoZ9B8bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761854325; c=relaxed/simple;
-	bh=gX0eYm6yHbhuq2jgqmTjz7o0HFpQFtUjRWVy79LpAqo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=orPVZ2PaCLcyl1BRRcyziBXBgFKH8oKiX5KfPyBXBnDMrKLKMt0AVINqjHDEJ14nVMqQdkwhwXwMnhZOQ8rI0C5vx7BF7f0rntY/KJAJpi29ztxc9G9A+LtOa5/k1cG9T2NYLp3UpPjKKwYwUdniFdBlVW+oaRt5TdgM/Ac7MtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TbHVe6//; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761854324; x=1793390324;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=gX0eYm6yHbhuq2jgqmTjz7o0HFpQFtUjRWVy79LpAqo=;
-  b=TbHVe6//3DnwIDhbDKpniNRaT16s79pRCVlSMKuPHuy+V3CBsN4iw6H1
-   rcU6PmJoFbX7fzddOP5y/OnISETyd67IYiCdXrVK2ArUyfDDK5ue6n0YZ
-   EQZpMJwy91SjrFbIkOHOKoEItUIpzgkF1HsT1t0YR2RQ7qxg+5FwNyMBF
-   h/xe4iZvJGjmo13df4YsO7vpd9eS2juHx2V9upqb2FUUf83xRf0TxJT3v
-   jHOHGTSByfn1jfxTCC0UyWGlauQqBcei7FHy5lEW2wRm10FPpW5QLlaPz
-   DgK853J1d7aqrY0vFrp2dQbtuAFj1iOqbAco+vxPY+YzJVJRS7S/NHIx2
-   A==;
-X-CSE-ConnectionGUID: yGeOpAgdS+OtxZXF0L54eg==
-X-CSE-MsgGUID: qnANKxWXSv6MuRVGrz+MzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64159368"
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="64159368"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:58:43 -0700
-X-CSE-ConnectionGUID: sTbGkBz8SJaolOUPAMb6vg==
-X-CSE-MsgGUID: QcVpFbzCTJWRayLCOEXSXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="190390693"
-Received: from unknown (HELO orcnseosdtnuc.amr.corp.intel.com) ([10.166.241.20])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 12:58:44 -0700
-From: Jacob Keller <jacob.e.keller@intel.com>
-Date: Thu, 30 Oct 2025 12:58:32 -0700
-Subject: [PATCH v2] docs: kdoc: fix duplicate section warning message
+	s=arc-20240116; t=1761854336; c=relaxed/simple;
+	bh=27Bt+XohUsCY6jPuadnGJYHmq2UygEPw3QOYlngYMe0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZPiV1UZwrAna705Wk3ZQu9S4LYsbG41C5r6Bw95uPr+H5WhqU8/zplqvGPB5HX1n24tqqx99XKr0kYPE+peIC0C70Tx3GhV99TqEdvrtgcL91ZlLIn0jCZ24qkLGTY3yjAIN+pZorPqG9zhPaJERE0lWWsr39jZNlRNkc+trHIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aifjOcy5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5FDC4CEFD
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761854336;
+	bh=27Bt+XohUsCY6jPuadnGJYHmq2UygEPw3QOYlngYMe0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=aifjOcy5p31rA4UaJkpaf61qn0EzeV7pjNxuprvvXuySfZHVhGmrHq6aAWud1w/q0
+	 KjH8TtVkGCJUkahZrzDzxJDzK0pDjfQ5yOWK60SGWUAKHCVIy852/Ypep8uV9vDZf9
+	 pWlFSM5cdF0XVmq5t3a4kN7f43T6PS8f08esYKOZGaQ6FueX3gPFPtsYxUMxcY5OVK
+	 cD3R0ENYLDaCSVA8DU1YdPvBMfYFEYfbDbo6+obmfHV5Z92x3hHtFJH4s3O5os/2PV
+	 aPrba+vxKzWBIOgGEfOstK9IpMrsuMK6hI38vrFWg4bPxk5UUTnCXvj00olv6iA7su
+	 qqaSiYY8R508Q==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c2948b774cso997990a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 12:58:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWleYUxafh0rXoZTrHMoFM+drTS/kZDM7WQSMLeSuLU5p5PRARjf48/4Tslg8vl21Zj76zyrJkajo6sRi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp/wy6nuSj0myVl7xcMOINZsQ4sCTNPyT+mKHaZgeIaRZRcdId
+	lVaX9c9I0uhwiKF2Lhok4El3efpvYAiQZ/WARoky/CdEE+bBDwBx9ucyCj4t4Y90j5oaSdv7CGG
+	fuPXmzN5359fTRuIs4jQcpSzHy7cw5Mw=
+X-Google-Smtp-Source: AGHT+IG3Lr6fvBnfKNJvXTlqKqqyJFVgcQM1Ir5oNAP54/iFD1uFwuwIGNg2P27LmaSU/D7Xbc6eAsFKXBttWKKDO0c=
+X-Received: by 2002:a05:6808:2f1b:b0:43f:1daf:dad6 with SMTP id
+ 5614622812f47-44f95fe10demr480804b6e.49.1761854335647; Thu, 30 Oct 2025
+ 12:58:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-jk-fix-kernel-doc-duplicate-return-warning-v2-1-ec4b5c662881@intel.com>
-X-B4-Tracking: v=1; b=H4sIAGfDA2kC/52NQQ6CMBBFr2K6dgwtouDKexgWpR1hBFsyLagh3
- N3KEVy+n/z3FhGQCYO47BbBOFMg7xKo/U6YTrsWgWxioTJVyExV8OjhTm/okR0OYL0BO40DGR0
- RGOPEDl6aHbkWGlucUeeVOalSJOHImK5b7FYn7ihEz5+tPcvf+ldmliBBlWiLskGTZ8cruYjDw
- finqNd1/QJs8b7Z5AAAAA==
-X-Change-ID: 20251029-jk-fix-kernel-doc-duplicate-return-warning-bd57ea39c628
-To: Jonathan Corbet <corbet@lwn.net>, 
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>
-X-Mailer: b4 0.15-dev-782a1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5810;
- i=jacob.e.keller@intel.com; h=from:subject:message-id;
- bh=gX0eYm6yHbhuq2jgqmTjz7o0HFpQFtUjRWVy79LpAqo=;
- b=owGbwMvMwCWWNS3WLp9f4wXjabUkhkzmw8XXVA9e+/v6pP5fbsUHB45UZy9fki0fH8If/UP3m
- sD6Td/yO0pZGMS4GGTFFFkUHEJWXjeeEKb1xlkOZg4rE8gQBi5OAZhI7C6G/66NFe+qtly4dXhl
- jYFWkb95x87XfxPik6PXKm7/8PTn+bMM/7PFl7+50TFH9rPeWi2pHJeKqy+805jaXgpeL1gYcaT
- alQsA
-X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
- fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 30 Oct 2025 20:58:44 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gWU1sKjFQMcnhP17F4h6HbeX3Fvw4GQDqd6zbQknD4VQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bns_GLKZyutIK1RZWaosqCZigZYk56k68y3_xnWg2bKlpCF1jjtmgftj0o
+Message-ID: <CAJZ5v0gWU1sKjFQMcnhP17F4h6HbeX3Fvw4GQDqd6zbQknD4VQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v6.18-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The python version of the kernel-doc parser emits some strange warnings
-with just a line number in certain cases:
+Hi Linus,
 
-$ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
-Warning: 174
-Warning: 184
-Warning: 190
-Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
-Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
-Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
-Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
+Please pull from the tag
 
-I eventually tracked this down to the lone call of emit_msg() in the
-KernelEntry class, which looks like:
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-6.18-rc4
 
-  self.emit_msg(self.new_start_line, f"duplicate section name '{name}'\n")
+with top-most commit 8907226bed1ebd10d069f6f70ff0aaa8840f3267
 
-This looks like all the other emit_msg calls. Unfortunately, the definition
-within the KernelEntry class takes only a message parameter and not a line
-number. The intended message is passed as the warning!
+ Merge branches 'acpi-button', 'acpi-video' and 'acpi-fan'
 
-Pass the filename to the KernelEntry class, and use this to build the log
-message in the same way as the KernelDoc class does.
+on top of commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
 
-To avoid future errors, mark the warning parameter for both emit_msg
-definitions as a keyword-only argument. This will prevent accidentally
-passing a string as the warning parameter in the future.
+ Linux 6.18-rc3
 
-Also fix the call in dump_section to avoid an unnecessary additional
-newline.
+to receive ACPI fixes for 6.18-rc4.
 
-Fixes: e3b42e94cf10 ("scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class")
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
----
-We recently discovered this while working on some netdev text
-infrastructure. All of the duplicate section warnings are not being logged
-properly, which was confusing the warning comparison logic we have for
-testing patches in NIPA.
+These fix three ACPI driver issues and add version checks to two ACPI
+table parsers:
 
-This appears to have been caused by the optimizations in:
-https://lore.kernel.org/all/cover.1745564565.git.mchehab+huawei@kernel.org/
+ - Call input_free_device() on failing input device registration as
+   necessary (and mentioned in the input subsystem documentation) in the
+   ACPI button driver (Kaushlendra Kumar)
 
-Before this fix:
-$ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
-Warning: 174
-Warning: 184
-Warning: 190
-Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
-Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
-Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
-Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
+ - Fix use-after-free in acpi_video_switch_brightness() by canceling
+   a delayed work during tear-down (Yuhao Jiang)
 
-After this fix:
-$ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
-Warning: include/linux/virtio_config.h:174 duplicate section name 'Return'
-Warning: include/linux/virtio_config.h:184 duplicate section name 'Return'
-Warning: include/linux/virtio_config.h:190 duplicate section name 'Return'
-Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
-Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
-Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
-Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
----
-Changes in v2:
-- Rebased onto docs-next from git://git.lwn.net/linux.git
-- Link to v1: https://patch.msgid.link/20251029-jk-fix-kernel-doc-duplicate-return-warning-v1-1-28ed58bec304@intel.com
----
- scripts/lib/kdoc/kdoc_parser.py | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ - Use platform device for devres-related actions in the ACPI fan driver
+   to allow device-managed resources to be cleaned up properly (Armin
+   Wolf)
 
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 6e5c115cbdf3..ee1a4ea6e725 100644
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -275,6 +275,8 @@ class KernelEntry:
- 
-         self.leading_space = None
- 
-+        self.fname = fname
-+
-         # State flags
-         self.brcount = 0
-         self.declaration_start_line = ln + 1
-@@ -289,9 +291,11 @@ class KernelEntry:
-         return '\n'.join(self._contents) + '\n'
- 
-     # TODO: rename to emit_message after removal of kernel-doc.pl
--    def emit_msg(self, log_msg, warning=True):
-+    def emit_msg(self, ln, msg, *, warning=True):
-         """Emit a message"""
- 
-+        log_msg = f"{self.fname}:{ln} {msg}"
-+
-         if not warning:
-             self.config.log.info(log_msg)
-             return
-@@ -337,7 +341,7 @@ class KernelEntry:
-                 # Only warn on user-specified duplicate section names
-                 if name != SECTION_DEFAULT:
-                     self.emit_msg(self.new_start_line,
--                                  f"duplicate section name '{name}'\n")
-+                                  f"duplicate section name '{name}'")
-                 # Treat as a new paragraph - add a blank line
-                 self.sections[name] += '\n' + contents
-             else:
-@@ -393,15 +397,15 @@ class KernelDoc:
-                           'Python 3.7 or later is required for correct results')
-             python_warning = True
- 
--    def emit_msg(self, ln, msg, warning=True):
-+    def emit_msg(self, ln, msg, *, warning=True):
-         """Emit a message"""
- 
--        log_msg = f"{self.fname}:{ln} {msg}"
--
-         if self.entry:
--            self.entry.emit_msg(log_msg, warning)
-+            self.entry.emit_msg(ln, msg, warning=warning)
-             return
- 
-+        log_msg = f"{self.fname}:{ln} {msg}"
-+
-         if warning:
-             self.config.log.warning(log_msg)
-         else:
+ - Add version checks to the MRRM and SPCR table paresers (Tony Luck and
+   Punit Agrawal)
 
----
-base-commit: b4ff1f611b00b94792988cff794124fa3c2ae8f8
-change-id: 20251029-jk-fix-kernel-doc-duplicate-return-warning-bd57ea39c628
+Thanks!
 
-Best regards,
---  
-Jacob Keller <jacob.e.keller@intel.com>
 
+---------------
+
+Armin Wolf (2):
+      ACPI: fan: Use ACPI handle when retrieving _FST
+      ACPI: fan: Use platform device for devres-related actions
+
+Kaushlendra Kumar (1):
+      ACPI: button: Call input_free_device() on failing input device
+registration
+
+Punit Agrawal (1):
+      ACPI: SPCR: Check for table version when using precise baudrate
+
+Tony Luck (1):
+      ACPI: MRRM: Check revision of MRRM table
+
+Yuhao Jiang (1):
+      ACPI: video: Fix use-after-free in acpi_video_switch_brightness()
+
+---------------
+
+ drivers/acpi/acpi_mrrm.c  |  3 +++
+ drivers/acpi/acpi_video.c |  4 +++-
+ drivers/acpi/button.c     |  4 +++-
+ drivers/acpi/fan.h        |  7 ++++---
+ drivers/acpi/fan_attr.c   |  2 +-
+ drivers/acpi/fan_core.c   | 36 +++++++++++++++++++++++-------------
+ drivers/acpi/fan_hwmon.c  | 11 +++++------
+ drivers/acpi/spcr.c       |  2 +-
+ 8 files changed, 43 insertions(+), 26 deletions(-)
 
