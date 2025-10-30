@@ -1,210 +1,124 @@
-Return-Path: <linux-kernel+bounces-877480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B51EC1E32F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:28:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAE3C1E332
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA313402DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:28:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E06A4E3919
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5AB24BBEE;
-	Thu, 30 Oct 2025 03:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bqH9SAvQ"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E845829D291;
+	Thu, 30 Oct 2025 03:28:22 +0000 (UTC)
+Received: from out28-173.mail.aliyun.com (out28-173.mail.aliyun.com [115.124.28.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF0822D792
-	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3A52264DC
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761794899; cv=none; b=iB262lpsohUX5vLsA0O0mOOU53ZR+uYPkCVviLqnYCbenwo966yCsIFit3ZktBHxMoOL7qNd5ASRFaPz1XNtg6PsBVV8YojVcR/IqcG0WoSNEliwPQ3wNvwCt3W+I80x8wkXeEwqOsiLTxAHWPvuGNriEDEi5glDGoClXo7WWjY=
+	t=1761794902; cv=none; b=VGf+zjMdWfHwmtdLtKRfHjJIhmjGdmd+20P1+35xtHRJ9e8J7h4CO9rojnAzguqoAGddxmAorkqRsIPfP+ZcaxLxosDq5BG6mA6yljozE0L9EKaeaK7ylX9j0l1Qao0FoRAx1De+Eypw6cBQ7B1JDHho54oqPkLTDbXCulaqVO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761794899; c=relaxed/simple;
-	bh=SkDWpYKu1nSOnKsbCTQKuFVAC2RnvnNp8vUYxn7+YxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G6Dxa44SLFcdyz/kgXgOEZAuQcLGVb3bkPhr5wsfnH2GTYFIpomiZpIo7yikQpP2sJ/64ehHGN+bfaRs+1zMA7VRvmW4TC47w2xEJ34MmNYCILCD8LSkqkoyzmIS7GZL+XQLleQplJTbGCahcoAGGzDQlcXM0mnaqnuIHsnmHpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bqH9SAvQ; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b6329b6e3b0so1447711a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761794896; x=1762399696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nYlMPBv2BDKY22nRrXTeqvpEz+VH951iigjkXd5EgVU=;
-        b=bqH9SAvQMe5Y48897t9WPf1SkfNY/YeoPjkdDkTL/p0QXvvjRSVfV1Op607hnkc1Vg
-         zGZMjrn0g5Fej7cH1zHzwjAI69DPhhyQkz+N+paUYZ5Y1elT1KKuFfdV69hpRBX9jgUw
-         duI0Ld5NredXZTbDnwH8GGRuxMuauLvTmCsYTcUCsEK7rptrSy6k2cguAlkY46RD5O+v
-         Rl98+f7F9VYU40bQQqThipcQFo1uz53/HfBYJPhQb+EvuV9wXDX8hlo52yWvqaPGjuOl
-         w/lBM/4KMchfMvD6sxYSpmCfy0ef/MLT1E9zc6J6v5GUPTAHSZ9O32COVn1i36tojK4g
-         TX9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761794896; x=1762399696;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nYlMPBv2BDKY22nRrXTeqvpEz+VH951iigjkXd5EgVU=;
-        b=LHDsEul+PKiECa7YJ2IKZ+bhM8ExPx+jk1zeHuGzVgmpO3Bb80IZF6vBmqPIHIqc5i
-         YmMntW5k8rNhL73EGCIYFHGw54yfVnF7w0XyOJGdH+P+GM6Jm7SKNcWiZV0QIqEkkJTd
-         +yCSZw8mJdm5Abd9tf6BTQ9RcMPPFmfCp5H4jGQAsdxOfRV2d9Q19y973mXlp97BoYaA
-         IFUKz8SBVgASSQILdfDfpsdfI+LH9Xi/VQYK5DZnNZdREgNMMpqZaBF9ymGFdPojUgSh
-         q7djFEqQfELmlLnET2/1knturUUMp+TECtu6XuQcNosKfhphvyuuk7YrgAnDW00ub7sM
-         fDbQ==
-X-Gm-Message-State: AOJu0YzVamD+/O4Qtgufq67EVZ0e7i5J9xFtzOTd/XzE3oPAZcXm3js5
-	eEdZSrS16Ij7AYs7ZeSBFPkVcvmHeTLXvyAjabflcj+i5I/uWFozD821SXXIzpR+hg==
-X-Gm-Gg: ASbGncuuZnMY0o8hux6TMHxmYmZ7++3cSxtcqsDprfVUw1aoCjxG8zshbXalAZ5EyT1
-	A7EYojjPTsBCyUvYdRGQa2OkmQIznjRmqjRHk3XcI/hy8ffEuG3yhfkPePLVh5MEL1wiu5aC8y1
-	Pb1P+sJS6sYcQymcYSW1SDQ8HLAJ0hxpL8PB9Ifcxa50/0GRX6ZHUPV1kLuhburMFwK89AOueRR
-	EmjvVMVJbInTEDmalAt3+SvO06p5arsLlje4j4h6D/VyQhrVZAV4rcVPW9eo4ThxpEo4NT5nCBw
-	vvpykLRmDISyk+AS5CDK24GI0al5O2m7Zq6FtYxEDYPO3/0hDaUhnyRAuu0JVJYxUnOMEYIWJu+
-	m/xighk6vnnKLXW2Z8QDWRnlbUGPeKgIc+/+9/qMqFu7ZAOLxWKoJbDJEgA3eogABOge9DIrYtd
-	hpCg+i4l9NZijWdCz6C+D1DOjbZkKBNWgltd9c9OREwpy1hQ==
-X-Google-Smtp-Source: AGHT+IFxGfHymDeRABDvSKaTcY7w23hP63TOF9MD98gnGy89jyB7ISq33O9vHsmh1XiG3yHlGeWm3Q==
-X-Received: by 2002:a17:903:247:b0:266:57f7:25f5 with SMTP id d9443c01a7336-294ed098015mr19072475ad.7.1761794895852;
-        Wed, 29 Oct 2025 20:28:15 -0700 (PDT)
-Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d47ffesm171501755ad.87.2025.10.29.20.28.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 20:28:15 -0700 (PDT)
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Hao Jia <jiahao.kernel@gmail.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v3] sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
-Date: Thu, 30 Oct 2025 11:27:55 +0800
-Message-ID: <20251030032755.560-1-ziqianlu@bytedance.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1761794902; c=relaxed/simple;
+	bh=ZRwsoDODDDkoyUVw9jZogJ+/+K8HHSV4Lf9blPtqaGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OfhmWn2wYrUiYLq0uAVViHWGvK4tK9n6IexFhWzlR0+ekIqcjShFnAs2fhIi0PdhZBRSPNLvbKMdqS66LfaZs9Cr+a2nHWWq8znCNTwOtHg6L70JqawPaFYpNWl51A0P7QEUUYd4nhIEcIBPdp9FeLIAk6rZ1X4y3uWouvFVlNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn; spf=pass smtp.mailfrom=bosc.ac.cn; arc=none smtp.client-ip=115.124.28.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bosc.ac.cn
+Received: from 172.38.11.120(mailfrom:zhangzhijie@bosc.ac.cn fp:SMTPD_---.fAeuCRr_1761794886 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Thu, 30 Oct 2025 11:28:07 +0800
+Message-ID: <889561a0-cf44-4a17-a7c2-095408006bf3@bosc.ac.cn>
+Date: Thu, 30 Oct 2025 11:28:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Support Intel Xe GPU dirver Porting on RISC-V
+ Architecture
+To: Jeff Geerling <jeff@jeffgeerling.com>
+Cc: wangran@bosc.ac.cn, zhangjian@bosc.ac.cn, daniel@ffwll.ch,
+ jani.nikula@linux.intel.com, rodrigo.vivi@intel.com,
+ joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250715061837.2144388-1-zhangzhijie@bosc.ac.cn>
+ <C67D4EC2-649C-4E46-A55D-8B48A31E8928@jeffgeerling.com>
+Content-Language: en-US
+From: ZhangZhiJie <zhangzhijie@bosc.ac.cn>
+In-Reply-To: <C67D4EC2-649C-4E46-A55D-8B48A31E8928@jeffgeerling.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-When a cfs_rq is to be throttled, its limbo list should be empty and
-that's why there is a warn in tg_throttle_down() for non empty
-cfs_rq->throttled_limbo_list.
 
-When running a test with the following hierarchy:
 
-          root
-        /      \
-        A*     ...
-     /  |  \   ...
-        B
-       /  \
-      C*
-
-where both A and C have quota settings, that warn on non empty limbo list
-is triggered for a cfs_rq of C, let's call it cfs_rq_c(and ignore the cpu
-part of the cfs_rq for the sake of simpler representation).
-
-Debug showed it happened like this:
-Task group C is created and quota is set, so in tg_set_cfs_bandwidth(),
-cfs_rq_c is initialized with runtime_enabled set, runtime_remaining
-equals to 0 and *unthrottled*. Before any tasks are enqueued to cfs_rq_c,
-*multiple* throttled tasks can migrate to cfs_rq_c (e.g., due to task
-group changes). When enqueue_task_fair(cfs_rq_c, throttled_task) is
-called and cfs_rq_c is in a throttled hierarchy (e.g., A is throttled),
-these throttled tasks are directly placed into cfs_rq_c's limbo list by
-enqueue_throttled_task().
-
-Later, when A is unthrottled, tg_unthrottle_up(cfs_rq_c) enqueues these
-tasks. The first enqueue triggers check_enqueue_throttle(), and with zero
-runtime_remaining, cfs_rq_c can be throttled in throttle_cfs_rq() if it
-can't get more runtime and enters tg_throttle_down(), where the warning
-is hit due to remaining tasks in the limbo list.
-
-I think it's a chaos to trigger throttle on unthrottle path, the status
-of a being unthrottled cfs_rq can be in a mixed state in the end, so fix
-this by granting 1ns to cfs_rq in tg_set_cfs_bandwidth(). This ensures
-cfs_rq_c has a positive runtime_remaining when initialized as unthrottled
-and cannot enter tg_unthrottle_up() with zero runtime_remaining.
-
-Also, update outdated comments in tg_throttle_down() since
-unthrottle_cfs_rq() is no longer called with zero runtime_remaining.
-While at it, remove a redundant assignment to se in tg_throttle_down().
-
-Fixes: e1fad12dcb66 ("sched/fair: Switch to task based throttle model")
-Suggested-by: Benjamin Segall <bsegall@google.com>
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
----
-v3: grant cfs_rq 1ns runtime on quota set as suggested by Ben, thanks!
-
- kernel/sched/core.c |  2 +-
- kernel/sched/fair.c | 15 ++++++---------
- 2 files changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f1ebf67b48e21..f754a60de8484 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -9606,7 +9606,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
- 
- 		guard(rq_lock_irq)(rq);
- 		cfs_rq->runtime_enabled = runtime_enabled;
--		cfs_rq->runtime_remaining = 0;
-+		cfs_rq->runtime_remaining = 1;
- 
- 		if (cfs_rq->throttled)
- 			unthrottle_cfs_rq(cfs_rq);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 25970dbbb2795..5b752324270b0 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6024,20 +6024,17 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	struct sched_entity *se = cfs_rq->tg->se[cpu_of(rq)];
- 
- 	/*
--	 * It's possible we are called with !runtime_remaining due to things
--	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
--	 * unthrottled us with a positive runtime_remaining but other still
--	 * running entities consumed those runtime before we reached here.
-+	 * It's possible we are called with runtime_remaining < 0 due to things
-+	 * like async unthrottled us with a positive runtime_remaining but other
-+	 * still running entities consumed those runtime before we reached here.
- 	 *
--	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
--	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
--	 * throttle, which is not supposed to happen on unthrottle path.
-+	 * We can't unthrottle this cfs_rq without any runtime remaining because
-+	 * any enqueue in tg_unthrottle_up() will immediately trigger a throttle,
-+	 * which is not supposed to happen on unthrottle path.
- 	 */
- 	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
- 		return;
- 
--	se = cfs_rq->tg->se[cpu_of(rq)];
--
- 	cfs_rq->throttled = 0;
- 
- 	update_rq_clock(rq);
--- 
-2.39.5
-
+On 2025/10/30 09:55, Jeff Geerling wrote:
+> +1 for this patch, as it would enable Xe on any non-x86 system.
+> 
+> I've successfully tested this change on Ampere and Broadcom (Raspberry Pi) systems.
+> 
+> We've been using the flag `CONFIG_VGA_CONSOLE` instead of `CONFIG_X86` but either should achieve the same goal. See: https://github.com/6by9/linux/commit/6bd4cfe79b5111986dd11a5c6e48d4a963fd7740
+> 
+> With some OSes a later Mesa version needs to be compiled to support newer Xe/Xe2 cards, however I've successfully tested a number of Intel dGPUs at this point. Sometimes setting force probe to '*' (or the particular GPU ID) is required, but otherwise stability is good.
+> 
+> For example, the A750: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/510#issuecomment-3383284831
+> 
+>> On Jul 15, 2025, at 1:18 AM, zhangzhijie <zhangzhijie@bosc.ac.cn> wrote:
+>>
+>>     inb/outb speccial wire not support on other ARCH.
+>> Should detect whether arch platform support or not.
+>>
+>> Signed-off-by: zhangzhijie <zhangzhijie@bosc.ac.cn>
+>> ---
+>> drivers/gpu/drm/i915/display/intel_vga.c | 4 ++++
+>> 1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/i915/display/intel_vga.c b/drivers/gpu/drm/i915/display/intel_vga.c
+>> index 4b98833bfa8c..5e48e3282670 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_vga.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_vga.c
+>> @@ -33,6 +33,7 @@ void intel_vga_disable(struct drm_i915_private *dev_priv)
+>> if (intel_de_read(dev_priv, vga_reg) & VGA_DISP_DISABLE)
+>> return;
+>>
+>> +#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
+>> /* WaEnableVGAAccessThroughIOPort:ctg,elk,ilk,snb,ivb,vlv,hsw */
+>> vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
+>> outb(0x01, VGA_SEQ_I);
+>> @@ -40,6 +41,7 @@ void intel_vga_disable(struct drm_i915_private *dev_priv)
+>> outb(sr1 | VGA_SR01_SCREEN_OFF, VGA_SEQ_D);
+>> vga_put(pdev, VGA_RSRC_LEGACY_IO);
+>> udelay(300);
+>> +#endif
+>>
+>> intel_de_write(dev_priv, vga_reg, VGA_DISP_DISABLE);
+>> intel_de_posting_read(dev_priv, vga_reg);
+>> @@ -80,6 +82,7 @@ void intel_vga_redisable(struct drm_i915_private *i915)
+>>
+>> void intel_vga_reset_io_mem(struct drm_i915_private *i915)
+>> {
+>> +#if defined(CONFIG_X86) || defined(CONFIG_X86_64)
+>> struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
+>>
+>> /*
+>> @@ -95,6 +98,7 @@ void intel_vga_reset_io_mem(struct drm_i915_private *i915)
+>> vga_get_uninterruptible(pdev, VGA_RSRC_LEGACY_IO);
+>> outb(inb(VGA_MIS_R), VGA_MIS_W);
+>> vga_put(pdev, VGA_RSRC_LEGACY_IO);
+>> +#endif
+>> }
+>>
+>> int intel_vga_register(struct drm_i915_private *i915)
+>> -- 
+>> 2.34.1
+>>
+>>
+Congratulation! . So I think shoule be disable this ops or take other 
+ways to instead this code， Like None IO soc/ARCH
 
