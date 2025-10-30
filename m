@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-877566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24DDC1E726
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AB7C1E702
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719E0400967
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71FC3A3F95
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D8A2F5463;
-	Thu, 30 Oct 2025 05:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129F82E6CD9;
+	Thu, 30 Oct 2025 05:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PI+AP8BB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAFpFgNl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642B2286419;
-	Thu, 30 Oct 2025 05:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2F778F2B;
+	Thu, 30 Oct 2025 05:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761802825; cv=none; b=cWQ1M/z7/GqqYkwrbcx8z2u2095GLgEAS8eY4406MI7vf3cMTmbu1olCmhfuNEcDkCemHccTXJC3VdmEVtNn2rRIgY8SfMonDKpmpEu65SwPOz7qmPoBN2JZYjXDO1vjPse7TNJkqAUhktjsZB3Hwg1EkOYet3icEYL16Ekwq2A=
+	t=1761802600; cv=none; b=LLteaGLpnIMq8dR9NHMs52j3Lf7oWx+e4nC1iH7hQSR5tP6lAj4kyt4M7GX2YRVzH7Su2PPTCapb6wLKYdc4MLX4RlhJ7jWfUSz+jSzFfs+YxsFTSCDWY0aI6rnucWeozCbQteyWuYp3tqad8LMzLdgcO5cvJHCjaNplJSVx4K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761802825; c=relaxed/simple;
-	bh=jHCNvinaOkYM655G2d10JGOUEvs4HKvUSGzoQaDdvPo=;
+	s=arc-20240116; t=1761802600; c=relaxed/simple;
+	bh=I0DvfS4U97yWtVOK4JDyCuktO+OnCUalK1razNfYHYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sfc7y2tgh1EcHv5QxYu6+VBYioSM1tBnv2gOt9CMt2EYwKcDWzcuY9yC4IE1IGGP3S5SEBYqaLk+r+3HXTMQFvm9Dn0XCD7sKNNd/Qu/NFf7AEflM9U68Nn4Mf8j++FZ1zSrhTEUDeBKJbwGiygtuYWB6mktQcdIm7ndYfNOGio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PI+AP8BB; arc=none smtp.client-ip=192.198.163.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWV6W8IcyLam/KvB1fjTZn+ExLE1vfl1wu7ulGC1PnlgP3h0wQY5uEheZFIQlmrknoO2DV2juLjG6bc9VYYEsiWpJjLovL1xshezC0uMjWGLUU3yQHbvSqDPnKRr2TMok/E61DYhVdaiW9QTkXWH3aYtdUDTIb+xT4CC32AZ8BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAFpFgNl; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761802823; x=1793338823;
+  t=1761802599; x=1793338599;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=jHCNvinaOkYM655G2d10JGOUEvs4HKvUSGzoQaDdvPo=;
-  b=PI+AP8BBEXt5ghpf/S969bZ35x6EGR7QjfR5N006adLJMduzU0atW+jY
-   SmK8LfnlAjqxgdvIJABNsoTVy4kt+oZsHx3uDwFKmF0xR8VIBUbpbw5Sw
-   2OHb07jO1Zc26CJklh6OPxGn8326CEIMpKniXeSpVxTRWHPp7ipJLhJ2j
-   7Bp0SRzDwk0icHq0mEjhtccp9IpiWo8SWimNINBiyaNoLw/AiLI9cEnel
-   JUEyUb1rXP8Yjr97U8+sdI6K4oIZGx1d4Fe9ysO7RlnyytaAINHIYPijT
-   oJu6Cj5sIuORjbuVshv4jsROKwm+ZyOGtsasK6FGXjIpTw5+q+Z9mTxUn
-   w==;
-X-CSE-ConnectionGUID: 51seY/GUTa2EHiIpJI2hJA==
-X-CSE-MsgGUID: xwVhIhrTSW6DPACO0QBfCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="62958413"
+  bh=I0DvfS4U97yWtVOK4JDyCuktO+OnCUalK1razNfYHYY=;
+  b=ZAFpFgNlRyrNqvSS2nGqp0PIjnZdUw7KsOKgKSgwrQvkfSkb8T5r6+Xt
+   1ekHqtkSlNc1Qk0LGDpSf87XgXhP4WJidxvEoqCwy4tzSAxdyL1lC/JZO
+   Nv2zoGKUVtrY0nPUniv+rMeql1k8nnP9/v6S3L4K0TkExiVhwRk2cBAvh
+   MF2DKaT2meWigO4Gjv71Z3kB7BRFg1IDQBdirSTPcYHxef3pPNu0VHyGY
+   D5R3/6J0omQj/UELgh1bfRyMc5HIX7Z9iw3xDBqy6uBow7fg1zpdessjf
+   iQuC/Ol8S5sEns0AfkudTVZdfSw0/mT5c69dEIJIR7DzYNaN0z08PKyOg
+   Q==;
+X-CSE-ConnectionGUID: 00A4lAj/TMuM6ki3qc9UWg==
+X-CSE-MsgGUID: LU/dPjw+TLe+kVwLsHCPRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="86561957"
 X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="62958413"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:40:23 -0700
-X-CSE-ConnectionGUID: AMlTHf/dSe+VWVWA/3K/gw==
-X-CSE-MsgGUID: 3PFZ2nniREmq9C9A9U69zg==
+   d="scan'208";a="86561957"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:36:39 -0700
+X-CSE-ConnectionGUID: LvGHA+liS02goj4ga5s29g==
+X-CSE-MsgGUID: fXa5BMzSQTy9VXuquhwAag==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="190193623"
-Received: from vverma7-desk1.amr.corp.intel.com (HELO desk) ([10.124.223.151])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:40:22 -0700
-Date: Wed, 29 Oct 2025 22:40:14 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Tao Zhang <tao1.zhang@intel.com>,
-	Jim Mattson <jmattson@google.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH 2/3] x86/mmio: Rename cpu_buf_vm_clear to
- cpu_buf_vm_clear_mmio_only
-Message-ID: <20251030054014.ev7caj7ejrl5hpgv@desk>
-References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
- <20251029-verw-vm-v1-2-babf9b961519@linux.intel.com>
- <aQKuy34wmCWvXcMS@google.com>
+   d="scan'208";a="190224388"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:36:34 -0700
+Date: Wed, 29 Oct 2025 22:43:50 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Chris Oo <cho@microsoft.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+	linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Yunhong Jiang <yunhong.jiang@linux.intel.com>
+Subject: Re: [PATCH v6 02/10] x86/acpi: Move acpi_wakeup_cpu() and helpers to
+ smpwakeup.c
+Message-ID: <20251030054350.GA17477@ranerica-svr.sc.intel.com>
+References: <20251016-rneri-wakeup-mailbox-v6-0-40435fb9305e@linux.intel.com>
+ <20251016-rneri-wakeup-mailbox-v6-2-40435fb9305e@linux.intel.com>
+ <20251027141835.GYaP9_O1C3cms6msfv@fat_crate.local>
+ <20251027205816.GB14161@ranerica-svr.sc.intel.com>
+ <20251029111358.GDaQH29lURT0p_WWsb@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,33 +90,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQKuy34wmCWvXcMS@google.com>
+In-Reply-To: <20251029111358.GDaQH29lURT0p_WWsb@fat_crate.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Wed, Oct 29, 2025 at 05:18:19PM -0700, Sean Christopherson wrote:
-> On Wed, Oct 29, 2025, Pawan Gupta wrote:
-> > cpu_buf_vm_clear static key is only used by the MMIO Stale Data mitigation.
-> > Rename it to avoid mixing it up with X86_FEATURE_CLEAR_CPU_BUF_VM.
+On Wed, Oct 29, 2025 at 12:13:58PM +0100, Borislav Petkov wrote:
+> On Mon, Oct 27, 2025 at 01:58:16PM -0700, Ricardo Neri wrote:
+> > Right. All the functions in the file start with the acpi_ prefix. It could
+> > be kept under arch/x86/kernel/acpi/. The Kconfig symbol X86_MAILBOX_WAKEUP
+> > would have to live in arch/x86/Kconfig as there is no Kconfig file under
+> > arch/x86/kernel/acpi. ACPI_MADT_WAKEUP is arch/x86/Kconfig.
 > > 
-> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > ---
+> > Does that sound acceptable?
 > 
-> ...
+> Right, this looks kinda weird. You have devicetree thing using ACPI code,
+> you're trying to carve it out but then it is ACPI code anyway. So why even do
+> that?
 > 
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index f87c216d976d7d344c924aa4cc18fe1bf8f9b731..451be757b3d1b2fec6b2b79157f26dd43bc368b8 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -903,7 +903,7 @@ unsigned int __vmx_vcpu_run_flags(struct vcpu_vmx *vmx)
-> >  	if (!msr_write_intercepted(vmx, MSR_IA32_SPEC_CTRL))
-> >  		flags |= VMX_RUN_SAVE_SPEC_CTRL;
-> >  
-> > -	if (static_branch_unlikely(&cpu_buf_vm_clear) &&
-> > +	if (static_branch_unlikely(&cpu_buf_vm_clear_mmio_only) &&
-> >  	    kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
-> >  		flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
-> 
-> The use in vmx_vcpu_enter_exit() needs to be renamed as well.  The code gets
-> dropped in patch 3, but intermediate builds will fail.
+> You can simply leave ACPI enabled on that configuration. I don't see yet what
+> the point for the split is - saving memory, or...?
 
-Ya, thanks for catching it.
+I did not want to enable the whole of ACPI code as I need a tiny portion of it.
+Then yes, saving memory and having a smaller binary were considerations.
+
+The only dependency that ACPI_MADT_WAKEUP has on ACPI is the code to read and
+parse the ACPI table that enumerates the mailbox. (There are a couple of
+declarations for CPU offlining that need tweaking if I want ACPI_MADT_WAKEUP to
+not depend on ACPI at all).
+
+The DeviceTree firmware only needs the code to wake CPUs up. That is the code
+I am carving out.
+
+Having said that, vmlinux and bzImage increase by 4% if I enable ACPI.
+
+Thanks and BR,
+Ricardo
 
