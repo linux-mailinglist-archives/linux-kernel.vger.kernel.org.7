@@ -1,368 +1,289 @@
-Return-Path: <linux-kernel+bounces-877803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8641C1F0E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:48:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AA6C1F132
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 09:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C22B4EA813
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50CE61884B93
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1321D33B96C;
-	Thu, 30 Oct 2025 08:45:40 +0000 (UTC)
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022130.outbound.protection.outlook.com [52.101.126.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ABB33C510;
+	Thu, 30 Oct 2025 08:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="seB9uSZn"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8280717B43F;
-	Thu, 30 Oct 2025 08:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761813939; cv=fail; b=IAGU62zjSYv0pvvsH3Xx9G4GdXBBkKXZVZ0zalXdF/DsdzyQuybCXozZOvZgmpB+WIOAPA4yyN1ltjru3bSdMwXzOb4rFJBaGMfz+WZSwlw6OnN5BbStx2SSYrCzpo+PiQpMX5ZsJmR1lx4ntwKITzJonI2oV+NE1ZSqBk2DMcQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761813939; c=relaxed/simple;
-	bh=7r8Td4WuNB3aEkgREp1S8UjbxccFLUhyPC0iGZc/1Q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CVUSAY9DEJKENCczbL2pItmVbTtTyh0Wef18Kja6e/aMlrs6SgiuzteFL8QfYGlhf2Pnbm1byqYH9qk8kOVTWJu6M/yrWpk3nW6z1vu0spggim6xz0leXlVJBzuIWXQnTBsu5ojYPQsJysvIfzdRWLSsxW8egWBg/zxNWR9iI+w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.126.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sOcQ6cvM4Ll+gWmALqt5H41ktdKAWJL6G2M+maCNhnX5glo3fmDnGR9dip5k4YMcWuQRAZRqxtgzDIpKVrzYOdIazEiOLy4bxlkLJcun51q4aLDuHHB1ZCrdkYTts8bDi0jcKRRXMFeH0UcNR6PNcRjY9AZ5Ph2D4ZfZ9zQHyp+GyGAtsjHkstlzg5iRDkSNvJto4e6SD3K8X0sp289mRB6Tr2T7PsPJp9vrrKYUxWSNqYDiqOVlHZ0CG5KKLquwFw2kbea1KrCx8nQc0y7Ffk12IoP4e1iTXtNg8Y/6w8qygEcuUKnXPUu0nOGTOvFp5Q1dFyBzLCxk9mQsOK2XMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+3xYDIHokD44tax2t0uYNppF8FcoEugsh2opYaENEB0=;
- b=tTlOHV27yh8v+re7zIiQ6lrc2vNkZxkNiGVrFkVZFrAES5+43SRIP3jGwsMvZZhpZCiumGB8LuxNa0EazwuyDzvBOylQ2wc7tNANZ2pPEmnqSOlnSK405WmqEnMMo3fLd+Oek7FRtD7bvb9o5T+LGfsHgwLUowC+6bhAY7THt4w5xhoCZ5AI9XOujsB1uC9rGxGsb6xEPJBAUervZBiJr23yVVANpw/QyLK+DTBExZ6fteokxWc4WQ7Snh8P88jM8GLLvEyjDeXV57x70hx3Z46fUm8kVRaiLOU20/Q7Dp07vmTpQ11zGkxSNYn4lAWJkGZONClQ9TLQPqoXK5QIGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2PR02CA0069.apcprd02.prod.outlook.com (2603:1096:4:54::33) by
- SI2PR06MB5115.apcprd06.prod.outlook.com (2603:1096:4:1aa::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.14; Thu, 30 Oct 2025 08:45:32 +0000
-Received: from SG1PEPF000082E8.apcprd02.prod.outlook.com
- (2603:1096:4:54:cafe::1b) by SG2PR02CA0069.outlook.office365.com
- (2603:1096:4:54::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Thu,
- 30 Oct 2025 08:45:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E8.mail.protection.outlook.com (10.167.240.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Thu, 30 Oct 2025 08:45:30 +0000
-Received: from [172.16.96.116] (unknown [172.16.96.116])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 0B7EB41C0145;
-	Thu, 30 Oct 2025 16:45:30 +0800 (CST)
-Message-ID: <b6ad96f5-09f6-469c-be89-6c44aff7d3ae@cixtech.com>
-Date: Thu, 30 Oct 2025 16:45:29 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5533891D
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 08:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761813947; cv=none; b=raOoiOe2mzcSbeUlWtOPGNuIs/hoXDFXTHOMZCfUnV60Wu+pMpmgg1c2kSTdTwEm2TMXtA9DGios8/wHF6WuJeTAwK3aEZsRJrTqI47ebMZZvYodik+cE8acIvaS/e+aTIp9WBMFpB4MgVn06R4appXQj7nFb26obDnElR0WluU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761813947; c=relaxed/simple;
+	bh=p0YTr8pZnV8XjIK8AhYjFdr23HFQm7ooT2DkcPG0BQY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rm8dYCEIcDWB+Pt8GUBXi5EivAU1h7DN14YGGL25qHFLYwDbaudM6yUivOfPHBmAmGriPJesvQwuwqq3qu9KWiJQiT07TlXbU+nWrAuUivbo8RHemmh7UTi3aQcaqHFSwcChF5cGFfK07YBfAqGfqgWvPSK2RXIjOPs8Vr9CZiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=seB9uSZn; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47728f914a4so2506585e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 01:45:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761813943; x=1762418743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ZpYo4qCdvkOxQDRmJbeXBNTq2tyicbeHh7QBXTUQpc=;
+        b=seB9uSZn0W1fLrwcEwtT5TIqucYVcbv3bZ7e0I4FBn9Ho8Bb/MiTIjK3M6c8OjhJF3
+         VVuOIqQPADQ6AxES6lQy/wMUw76ZWHZ34CIAvC+ycmP4zODwsMUvwM6VUbxGVw3Kyeza
+         9ReKE4k1vFPuNQWY5YVL9KLVu7MDLy70QX1yiVqKjGBgH8PudrOrEx3tEB7UzF6d50EU
+         vPxJ1mF5o6x7+HGjWWwU5KqsyrvemSdrr4wwwPiRHiAbB3ds8Zd+BRxAshcTp4TejFHA
+         cplNZKsp5jr0G7hbJ4of5hIidHEDs2Q6xgzFb0G24hEoTvrciFD/WtjsaxSEkF3yHJ/h
+         A7Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761813943; x=1762418743;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/ZpYo4qCdvkOxQDRmJbeXBNTq2tyicbeHh7QBXTUQpc=;
+        b=dXoPjKFRokFkY+QH4vZSu6aW/v9zkQD/gIDvRLS3SaXDmpa/SgKa4oxGNtSRb3Pqua
+         EfEkBRneflXRJKagU/W0xe906WLsuTFgB4fEGoLDglCypOQMB03iEq4qpPuyamsoHT1k
+         Eqtr6ddDxyYy5Uy1CKWm0ERiwnPQiqu/k32GcLAPwygRblR0vmPc6nQG3XQ2lhOhVtIr
+         aoJzTbaaqjM7zFbThDJejHktrKwuwkftdWf8c9/QZVH22ocRj5DoB+aQ16yhj+d1fKex
+         e+aWPjj49tLkuHpC1UQn3zmtS+JPGZ5t1AjQek9r1MotjJyVZ3jiy5PaQ8KqoanUBzNc
+         CSKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPB/1B++/KhAPW2T9dYBcjIvSC9MKMEpJoeZTu2Sv1YPlM5p91dn9uWYqNcEHTFWG68pYR/dDpTWZ2io=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0p8r1gcb7c2JulZP7tP7J1/vGdDX4Sado6hLiKoGjedScwBb+
+	fU1spCoJ5AW/OmpKKUUsac/Xhn40jD//I3sWWOcmEkDUF0htJ2Uzp142BddoiJqMeFbDgJsN9mA
+	/DARV
+X-Gm-Gg: ASbGncvicmjOh6bM7lEu+ixtKo726Vldbb6dwU8wOrWVrZ99OTcnctQCpHIrBavdRu6
+	1M4pbJhps/Hg3VUtRvTcdbvNpofEFe6zdoCkm6zpYLP7SproF1j2yugGo/QySLNgkPaIRlj0xZX
+	0GsVfS2Y5ShA+TafWkCHErJyhuP9LXepYFjGhBWlnxZhNkzIBnkz7+xBEnXLkKDRKw28+XKVSsj
+	dvV2X6q98+iY8kaQYWySx/xlumz2m0MGTfz2l7WhqjzsaRmIOk81rD2brSe0E9AwqpLyQvQINsM
+	tDFIGit1UC3u2TgMH7QGAhaXgkOj14VfZJOZJHFGrDul3o05/tzinPy6js+6wIzcz757s/NXZUv
+	4h4Y5+M7rvrvxGZIrxxcXBbOUT2Nut5QEstTSUM8uSoaqve3zK1o+PkrQ+YRXnPJtLR1gpr5EAA
+	==
+X-Google-Smtp-Source: AGHT+IFRqKns2v7+EvpR5bRe/kFdtX/HOMybFPiYMJcDt+PidpgK4dhZ2EOX0xqyN5JCUyI4UtPn5g==
+X-Received: by 2002:a05:600c:608b:b0:475:de12:d3b2 with SMTP id 5b1f17b1804b1-4771e1f1dc2mr56796015e9.36.1761813943196;
+        Thu, 30 Oct 2025 01:45:43 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:64bd:9043:d05:7012])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4771902fa8dsm61122685e9.8.2025.10.30.01.45.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 01:45:42 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,  Neil
+ Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: amlogic: Optimize PLL enable timing
+In-Reply-To: <61c2738d-7291-4a45-aa73-f18528c81ba8@amlogic.com> (Chuan Liu's
+	message of "Wed, 22 Oct 2025 22:07:43 +0800")
+References: <20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com>
+	<20251022-optimize_pll_driver-v1-2-a275722fb6f4@amlogic.com>
+	<1j347b403i.fsf@starbuckisacylon.baylibre.com>
+	<61c2738d-7291-4a45-aa73-f18528c81ba8@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 30 Oct 2025 09:45:41 +0100
+Message-ID: <1jsef0ydze.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/10] Enhance the PCIe controller driver for next
- generation controllers
-To: bhelgaas@google.com, helgaas@kernel.org, lpieralisi@kernel.org,
- kw@linux.com, mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
- peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251020042857.706786-1-hans.zhang@cixtech.com>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <20251020042857.706786-1-hans.zhang@cixtech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E8:EE_|SI2PR06MB5115:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7949e782-86d9-4d0b-5c9c-08de1790aedc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjVKblNPejJ1UGhuQ3hKdjFPRXFvRlVuaXYyYjZDZzFoeTRUdUk5c3lBck56?=
- =?utf-8?B?Q2tLSFNucUVqT3BTVDZ6eFNWRDdVSFljV0tHYVVHQ3NKb2p2a0ZkMEM1VHJn?=
- =?utf-8?B?R1cwakNPUE1SSW5wSHl5TEY1dHkybjBZdkZBamhEeG91RHBwUGZubituYXpz?=
- =?utf-8?B?M1ZMeDMxS1U4eXN4SDBwMmk2VXRGcmdpb2EyTityaVVYckMxRGlFa09IZVNw?=
- =?utf-8?B?YUZoRXE3cVExeWVBSFppQ1daVlByYmswcE91bVVCb2RtcG45ZGZPTEM5Ymlm?=
- =?utf-8?B?dE5mMHZKS0NGZFZDNGJHdFdsUkVwdjhMb0t0enhPU1N3eDIrYndzcWk1K2VP?=
- =?utf-8?B?SExlcnFrMnFmd2JmNldDUFVJL0tESTgzbzlFY0lEczRHcmkvOXJGMzRXSjFE?=
- =?utf-8?B?bzZvelgwblQ0c0YzQXNOdm5KczJHN0NCdDFFbzduT2NOMHQ4Zm1qVVVBN3RN?=
- =?utf-8?B?dU50L0M3bUF1S2xDQURKaUcyallvdExkalU0amx1V0VEUStmU3RkQTVkSkta?=
- =?utf-8?B?ODNxK1d3eTlvb052Mys1VXFSMGhLWCtXelIxNG9tMitCcldQSjRqTWRJZW5H?=
- =?utf-8?B?YVdMSC9idTJLMWxTeW5PMFZxUE8xa2QvR3VTQ0EzM0l1Zm1za3czdHlUdDZt?=
- =?utf-8?B?S1F3NkVtSXFpdk5Gd1Z0NmVWTkdrRGxqeGdYTXVZc290M3MyV1A0VXBTbmdY?=
- =?utf-8?B?V2ZuUVJUbXVnZ3N1TWEvWU5WY1V4Tzlya0pDZklxS2NiYkY3NmRCdWQwbmoz?=
- =?utf-8?B?Z21TQkNBNVZwa3JFSDRCV0lSaGZ3V0Y5WHF4MXA3cHdzMm43MGtURExYbVNQ?=
- =?utf-8?B?NWxtZkdkQVlwRm4rZFNCcWppSlRVbjJEMG1Pb3dCWXRSQWpRSXJaeVZBblEy?=
- =?utf-8?B?OW94RFNuNkIwWkg3YWZsdDJ5OWY5VFhsZlZ3aU1WWG96bmVhcWlOOTRYVDVa?=
- =?utf-8?B?UnQrR2VQaXdSekhubkhnWkV5V2c3aWNacGZrOE9WVGZIUmxaWEdzOHFmbmdB?=
- =?utf-8?B?ai82Yisxck9rS2YyS2JETEw5TWJ2R0hNc2kxK004enoydHB4Q01iNXQ1MVFE?=
- =?utf-8?B?YlUyZkUzbCtEQ3ZyaGY3dmJleWE0WGhXbU1iRzRIelZEUVBTd1hlS3k1R3p2?=
- =?utf-8?B?V0JYYndBQytTcFdHZmJHYitIL3JxSzdOVnhlU09Ic1I4TTJBOG1UZGMxREFr?=
- =?utf-8?B?bjYrWVlQRUNkNE80L2VrYWlhamovOU1rV2lFbnZoczhHcHV5Q09KSmMxM08w?=
- =?utf-8?B?SWxoQjhQTjdCUnpnTFFOUjRjeEQyR1E2K3dBYjk4Z0FvbUl4ZGZrYWVVbHFj?=
- =?utf-8?B?enl0Wndwbmo4bE5zeDJtcVVya0YwLzZOcTBIWG5SOG5zUHR0TXJiVm11aG5Y?=
- =?utf-8?B?WVFOYjdQb2xUS3QxQmtqOGpHbHl1cGptZ2tsQk9QTEM3RS9OUGc0bWhveEsy?=
- =?utf-8?B?Zk1FMTVBZEVwbmp1anMrSVlsT0hKQlpCdVJFcWJxeXNPQmtCMmlFR3pZclZw?=
- =?utf-8?B?Rlp6dlNKU2twT3laUnFCcExiWjRzWEJSZkR1WnNsRktaWE1MN0cvdXU5ZDJz?=
- =?utf-8?B?MU5aQzBJcnRMY0RZaHlHNUMyTmV6c1dBSFFZMEJjZVdzbllqUHE0NDJoMmZZ?=
- =?utf-8?B?U2NXbTI1Y255MEFRSTRmL09XckdsVmJ6UGJMSTREdEVGS1VzcmFKQWtJUW9z?=
- =?utf-8?B?MmVZQkJQRVhUd3lVallJK1ZzSndBZ3BzN0FGNUVCOWw0Y2tDcDJjekx1QjJk?=
- =?utf-8?B?K2JOM0o5VFFPa2EwN2pocUhDbWZKZXBwVFhaR1BNVnpXSEMzRnNqc2ROd1RB?=
- =?utf-8?B?VUdPVTBoVXpIb1MxYU9zQW9RYXpxUjAvQjJMZjBQVTB1UTVKR3ZvaER0bTFx?=
- =?utf-8?B?VmpJdjl3c2NyOFJBdFhxRUdmMWxDR1R4alV1aXBuZlFyMWRuc2x5NVRNeEJO?=
- =?utf-8?B?amk0bmc4VjVHN1NueWdPY1phUU11RTBKVnZhamt1dng1K050b1BTUUtvVndr?=
- =?utf-8?B?d3l2cFZGbDYrT054RjhyOHZjbkZZK0U3a1hVLzlSeW0vSWdzYlNQcnR0LzhN?=
- =?utf-8?B?R2xmMWdZUDltem9VaHV0cW5qMkRDa3RJbTk5QU12N3VEcDRyckZiZ0hRZy9s?=
- =?utf-8?Q?z1AI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 08:45:30.7707
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7949e782-86d9-4d0b-5c9c-08de1790aedc
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E8.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5115
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed 22 Oct 2025 at 22:07, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-Gentle ping.
+> Hi Jerome,
+>
+>
+> On 10/22/2025 8:01 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Wed 22 Oct 2025 at 14:58, Chuan Liu via B4 Relay
+>> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>>=20
+>>> From: Chuan Liu <chuan.liu@amlogic.com>
+>>>
+>>> Amlogic PLL locking procedure shall follow this timing sequence:
+>>> 1 Assert reset signal: Ensures PLL circuits enter known initial state.
+>>> 2 Deassert lock-detect signal: Avoid lock signal false triggering.
+>>> 3 Assert enable signal: Powers up PLL supply.
+>>> 4 udelay(20): Wait for Bandgap and LDO to power up and stabilize.
+>>> 5 Enable self-adaptation current module (Optional).
+>>> 6 Deassert reset signal: Releases PLL to begin normal operation.
+>>> 7 udelay(20): Wait for PLL loop stabilization.
+>>> 8 Assert lock-detect signal: lock detection circuit starts to work.
+>>> 9 Monitor lock status signal: Wait for PLL lock completion.
+>>> 10 If the PLL fails to lock, it should be disabled, This makes the
+>>> logic more complete, and also helps save unnecessary power consumption
+>>> when the PLL is malfunctioning.
+>> Is this applicable to all supported SoC ? from meson8 to s4 ?
+>
+> Yes.
+>
+>> What did you test ?
+>
+> We have tested this on the G12A and later SoCs without any issues.
+> Internally, we have adopted this configuration sequence in our branch
+> and verified it on a large number of SoCs.
+>
+> We haven't maintained the meson series for a while, so it hasn't been
+> included in our recent validation. I also don't have any meson boards
+> on hand. If you have one available, it would be appreciated if you
+> could help verify this, Thanks.
 
+It's very interresting that you ask the community to test and validate
+chips sold by your compagny, chip that are still sold *today* and readility
+available on most market places.
 
-Best regards,
-Hans
+I'd be happy to forward you a few links if that helps.
 
-On 10/20/2025 12:28 PM, hans.zhang@cixtech.com wrote:
-> From: Hans Zhang <hans.zhang@cixtech.com>
-> 
-> ---
-> Dear Maintainers,
-> 
-> This series is Cadence's HPA PCIe IP and the Root Port driver of our
-> CIX sky1. Please help review. Thank you very much.
-> ---
-> 
-> Enhances the exiting Cadence PCIe controller drivers to support
-> HPA (High Performance Architecture) Cadence PCIe controllers.
-> 
-> The patch set enhances the Cadence PCIe driver for HPA support.
-> The header files are separated out for legacy and high performance
-> register maps, register address and bit definitions. The driver
-> read register and write register functions for HPA take the
-> updated offset stored from the platform driver to access the registers.
-> As part of refactoring of the code, few new files are added to the
-> driver by splitting the existing files.
-> This helps SoC vendor who change the address map within PCIe controller
-> in their designs. Setting the menuconfig appropriately will allow
-> selection between RP and/or EP PCIe controller support. The support
-> will include Legacy and HPA for the selected configuration.
-> 
-> The TI SoC continues to be supported with the changes incorporated.
-> 
-> The changes address the review comments in the previous patches where
-> the need to move away from "ops" pointers used in current implementation
-> and separate out the Legacy and HPA driver implementation was stressed.
-> 
-> The scripts/checkpatch.pl has been run on the patches with and without
-> --strict. With the --strict option, 4 checks are generated on 3 patch,
-> which can be ignored. There are no code fixes required for these checks.
-> All other checks generated by ./scripts/checkpatch.pl --strict can be
-> ignored.
-> ---
-> Changes for v10:
-> https://patchwork.kernel.org/project/linux-pci/cover/20250901092052.4051018-1-hans.zhang@cixtech.com/
-> 
->    - Rebase to v6.18-rc2.
->    - Comments from Manivannan which have been addressed.
->    - Merging of header file split patches with the patches that
->      use the changes.
->    - Addressing some of the code comments, initialization of variables,
->      making some functions static and removing unused functions.
->    - Delete the cdns_pcie_hpa_create_region_for_ecam function, which
->      depends on the initialization of ECAM by bios. After this series
->      is accepted, I will submit it later.
-> 
-> Changes for v9
-> https://patchwork.kernel.org/project/linux-pci/cover/20250819115239.4170604-1-hans.zhang@cixtech.com/
-> 
-> 	- Fixes the issue of kernel test robot where one variable overflow was flagged
-> https://urldefense.com/v3/__https://lore.kernel.org/oe-kbuild-all/202508261955.U9IomdXb-lkp@intel.com/__;!!EHscmS1ygiU1lA!EZnnh6v5bjIDVqDhCnuprUvH9PTNCSANIaNa6wx7Tp3NgGMqsrTwOKz9z8z5fWHkQH3Q8l_S$
-> 	- Minor changes that includes adding a flag for RC, removing vendor id and device id from DTS.
->      - Fix comments
-> 	- Remove EP platform code by removing patch 0007 in v8 series
->      - Fix comments style for new files
->      - Remove #define from within functions to header file
->    - Modification of the review opinion on CIX SKY1 RC driver (Mani).
-> 
-> Changes for v8
->    - Fixed the error issue of DT binding. (Rob and Krzysztof)
->    - Optimization of CIX SKY1 Root Port driver. (Bjorn and Krzysztof)
->    - Review comments fixed. (Bjorn and Krzysztof)
->    - All comments related fixes like single line comments, spaces
->          between HPA or LGA, periods in single line, changes proposed
->          in the description, etc are fixed. (Bjorn and Krzysztof)
->    - Patches have been split to separate out code moves from
->      update and fixes.
->    - "cdns_...send_irq.." renamed to "cdns_..raise_irq.."
-> 
->    The test log on the Orion O6 board is as follows:
->    root@cix-localhost:~# lspci
->    0000:c0:00.0 PCI bridge: Device 1f6c:0001
->    0000:c1:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. Device 8126 (rev 01)
->    0001:90:00.0 PCI bridge: Device 1f6c:0001
->    0001:91:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller PM9A1/PM9A3/980PRO
->    0002:60:00.0 PCI bridge: Device 1f6c:0001
->    0002:61:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. Device 8126 (rev 01)
->    0003:00:00.0 PCI bridge: Device 1f6c:0001
->    0003:01:00.0 Network controller: Realtek Semiconductor Co., Ltd. RTL8852BE PCIe 802.11ax Wireless Network Controller
->    0004:30:00.0 PCI bridge: Device 1f6c:0001
->    0004:31:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8125 2.5GbE Controller (rev 05)
->    root@cix-localhost:~#
->    root@cix-localhost:~# uname -a
->    Linux cix-localhost 6.17.0-rc2-00043-gb2782ead460c #185 SMP PREEMPT Tue Aug 19 19:35:34 CST 2025 aarch64 GNU/Linux
->    root@cix-localhost:~# cat /etc/issue
->    Debian GNU/Linux 12 \n \l
-> 
-> Changes for v7
-> https://patchwork.kernel.org/project/linux-pci/cover/20250813042331.1258272-1-hans.zhang@cixtech.com/
-> 
->    - Rebase to v6.17-rc1.
->    - Fixed the error issue of cix,sky1-pcie-host.yaml make dt_binding_check.
->    - CIX SKY1 Root Port driver compilation error issue: Add header
->      file, Kconfig select PCI_ECAM.
-> 
-> Changes for v6
-> https://patchwork.kernel.org/project/linux-pci/cover/20250808072929.4090694-1-hans.zhang@cixtech.com/
-> 
->    - The IP level DTS changes for HPA have been removed as the SoC
->      level DTS is added
->    - Virtual FPGA platform is also removed as the CiX SoC support is
->      added
->    - Fix the issue of dt bindings
->    - Modify the order of PCIe node attributes in sky1-orion-o6.dts
->      and delete unnecessary attributes.
->    - Continue to simplify the RC driver.
->    - The patch of the Cix Sky1 platform has been accepted and merged into the linux master branch.
->    https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250721144500.302202-1-peter.chen@cixtech.com/
-> 
-> Changes for v5
-> https://patchwork.kernel.org/project/linux-pci/cover/20250630041601.399921-1-hans.zhang@cixtech.com/
-> 
->    - Header and code files separated for library functions(common
->      functions used by both architectures) and Legacy and HPA.
->    - Few new files added as part of refactoring
->    - No checks for "is_hpa" as the functions have been separated
->      out
->    - Review comments from previous patches have been addressed
->    - Add region 0 for ECAM and region 1 for message.
->    - Add CIX sky1 PCIe drivers. Submissions based on the following v9 patches:
->    https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250609031627.1605851-1-peter.chen@cixtech.com/
-> 
->    Cix Sky1 base dts review link to show its review status:
->    https://lore.kernel.org/all/20250609031627.1605851-9-peter.chen@cixtech.com/
-> 
->    The test log on the Orion O6 board is as follows:
->    root@cix-localhost:~# lspci
->    0000:c0:00.0 PCI bridge: Device 1f6c:0001
->    0000:c1:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. Device 8126 (rev 01)
->    0001:90:00.0 PCI bridge: Device 1f6c:0001
->    0001:91:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller PM9A1/PM9A3/980PRO
->    0002:60:00.0 PCI bridge: Device 1f6c:0001
->    0002:61:00.0 Network controller: Realtek Semiconductor Co., Ltd. RTL8852BE PCIe 802.11ax Wireless Network Controller
->    0003:00:00.0 PCI bridge: Device 1f6c:0001
->    0003:01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. Device 8126 (rev 01)
->    0004:30:00.0 PCI bridge: Device 1f6c:0001
->    0004:31:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. Device 8126 (rev 01)
->    root@cix-localhost:~# uname -a
->    Linux cix-localhost 6.16.0-rc1-00023-gbaa962a95a28 #138 SMP PREEMPT Fri Jun 27 16:43:41 CST 2025 aarch64 GNU/Linux
->    root@cix-localhost:~# cat /etc/issue
->    Debian GNU/Linux 12 \n \l
->   
-> Changes for v4
-> https://patchwork.kernel.org/project/linux-pci/cover/20250424010445.2260090-1-hans.zhang@cixtech.com/
-> 
->    - Add header file bitfield.h to pcie-cadence.h
->    - Addressed the following review comments
->            Merged the TI patch as it
->            Removed initialization of struct variables to '0'
-> 
-> Changes for v3
-> https://patchwork.kernel.org/project/linux-pci/patch/20250411103656.2740517-1-hans.zhang@cixtech.com/
-> 
->    - Patch version v3 added to the subject
->    - Use HPA tag for architecture descriptions
->    - Remove bug related changes to be submitted later as a separate
->      patch
->    - Two patches merged from the last series to ensure readability to
->      address the review comments
->    - Fix several description related issues, coding style issues and
->      some misleading comments
->    - Remove cpu_addr_fixup() functions
-> ---
-> 
-> Hans Zhang (6):
->    dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex bindings
->    PCI: Add Cix Technology Vendor and Device ID
->    PCI: sky1: Add PCIe host support for CIX Sky1
->    MAINTAINERS: add entry for CIX Sky1 PCIe driver
->    arm64: dts: cix: Add PCIe Root Complex on sky1
->    arm64: dts: cix: Enable PCIe on the Orion O6 board
-> 
-> Manikandan K Pillai (4):
->    PCI: cadence: Add module support for platform controller driver
->    PCI: cadence: Split PCIe controller header file
->    PCI: cadence: Move PCIe RP common functions to a separate file
->    PCI: cadence: Add support for High Perf Architecture (HPA) controller
-> 
->   .../bindings/pci/cix,sky1-pcie-host.yaml      |  83 +++
->   MAINTAINERS                                   |   7 +
->   arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  20 +
->   arch/arm64/boot/dts/cix/sky1.dtsi             | 126 +++++
->   drivers/pci/controller/cadence/Kconfig        |  21 +-
->   drivers/pci/controller/cadence/Makefile       |  11 +-
->   drivers/pci/controller/cadence/pci-sky1.c     | 233 ++++++++
->   .../cadence/pcie-cadence-host-common.c        | 182 +++++++
->   .../cadence/pcie-cadence-host-common.h        |  26 +
->   .../cadence/pcie-cadence-host-hpa.c           | 499 ++++++++++++++++++
->   .../controller/cadence/pcie-cadence-host.c    | 156 +-----
->   .../cadence/pcie-cadence-hpa-regs.h           | 193 +++++++
->   .../pci/controller/cadence/pcie-cadence-hpa.c | 186 +++++++
->   .../cadence/pcie-cadence-lga-regs.h           | 230 ++++++++
->   .../controller/cadence/pcie-cadence-plat.c    |   9 +-
->   drivers/pci/controller/cadence/pcie-cadence.c |  12 +
->   drivers/pci/controller/cadence/pcie-cadence.h | 410 ++++++--------
->   include/linux/pci_ids.h                       |   3 +
->   18 files changed, 2006 insertions(+), 401 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
->   create mode 100644 drivers/pci/controller/cadence/pci-sky1.c
->   create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-common.c
->   create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-common.h
->   create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
->   create mode 100644 drivers/pci/controller/cadence/pcie-cadence-hpa-regs.h
->   create mode 100644 drivers/pci/controller/cadence/pcie-cadence-hpa.c
->   create mode 100644 drivers/pci/controller/cadence/pcie-cadence-lga-regs.h
-> 
-> 
-> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+>
+> This PLL sequence adjustment for meson SoCs adds a 20us delay after
+> enabling the PLL and after releasing its reset. The delay addresses
+> rare PLL lock failures observed under low temperatures. As a result,
+> it slightly increases enable time but improves stability.
+>
+>>=20
+>>>
+>>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+>>> ---
+>>>   drivers/clk/meson/clk-pll.c | 68 ++++++++++++++++++++++++++----------=
+---------
+>>>   1 file changed, 40 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+>>> index b07e1eb19d12..26c83db487e8 100644
+>>> --- a/drivers/clk/meson/clk-pll.c
+>>> +++ b/drivers/clk/meson/clk-pll.c
+>>> @@ -353,6 +353,23 @@ static int meson_clk_pcie_pll_enable(struct clk_hw=
+ *hw)
+>>>        return -EIO;
+>>>   }
+>>>
+>>> +static void meson_clk_pll_disable(struct clk_hw *hw)
+>>> +{
+>>> +     struct clk_regmap *clk =3D to_clk_regmap(hw);
+>>> +     struct meson_clk_pll_data *pll =3D meson_clk_pll_data(clk);
+>>> +
+>>> +     /* Put the pll is in reset */
+>>> +     if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +             meson_parm_write(clk->map, &pll->rst, 1);
+>>> +
+>>> +     /* Disable the pll */
+>>> +     meson_parm_write(clk->map, &pll->en, 0);
+>>> +
+>>> +     /* Disable PLL internal self-adaption current module */
+>>> +     if (MESON_PARM_APPLICABLE(&pll->current_en))
+>>> +             meson_parm_write(clk->map, &pll->current_en, 0);
+>>> +}
+>> I don't get why you moved that code around and make the diff even harder
+>> to read
+>
+> Sorry about the misaligned formatting. I moved meson_clk_pll_disable()
+> earlier in the code because I added handling for PLL lock failures,
+> which unintentionally broke the alignment.
+>
+> I'll split the PLL lock failure handling into a separate patch in the
+> next version to make review easier.
+>
+>>=20
+>>> +
+>>>   static int meson_clk_pll_enable(struct clk_hw *hw)
+>>>   {
+>>>        struct clk_regmap *clk =3D to_clk_regmap(hw);
+>>> @@ -366,53 +383,48 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>>>        if (MESON_PARM_APPLICABLE(&pll->rst))
+>>>                meson_parm_write(clk->map, &pll->rst, 1);
+>>>
+>>> +     /* Disable the PLL lock-detect module */
+>>> +     if (MESON_PARM_APPLICABLE(&pll->l_detect))
+>>> +             meson_parm_write(clk->map, &pll->l_detect, 1);
+>>> +
+>>>        /* Enable the pll */
+>>>        meson_parm_write(clk->map, &pll->en, 1);
+>>> -
+>>> -     /* Take the pll out reset */
+>>> -     if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> -             meson_parm_write(clk->map, &pll->rst, 0);
+>>> +     /* Wait for Bandgap and LDO to power up and stabilize */
+>>> +     udelay(20);
+>>>
+>>>        /*
+>>>         * Compared with the previous SoCs, self-adaption current module
+>>>         * is newly added for A1, keep the new power-on sequence to enab=
+le the
+>>>         * PLL. The sequence is:
+>>> -      * 1. enable the pll, delay for 10us
+>>> +      * 1. enable the pll, ensure a minimum delay of 10=CE=BCs
+>>>         * 2. enable the pll self-adaption current module, delay for 40us
+>>>         * 3. enable the lock detect module
+>>>         */
+>>>        if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+>>> -             udelay(10);
+>>>                meson_parm_write(clk->map, &pll->current_en, 1);
+>>> -             udelay(40);
+>>> -     }
+>>> -
+>>> -     if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+>>> -             meson_parm_write(clk->map, &pll->l_detect, 1);
+>>> -             meson_parm_write(clk->map, &pll->l_detect, 0);
+>>> +             udelay(20);
+>>>        }
+>>>
+>>> -     if (meson_clk_pll_wait_lock(hw))
+>>> -             return -EIO;
+>>> +     /* Take the pll out reset */
+>>> +     if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +             meson_parm_write(clk->map, &pll->rst, 0);
+>>>
+>>> -     return 0;
+>>> -}
+>>> +     /* Wait for PLL loop stabilization */
+>>> +     udelay(20);
+>>>
+>>> -static void meson_clk_pll_disable(struct clk_hw *hw)
+>>> -{
+>>> -     struct clk_regmap *clk =3D to_clk_regmap(hw);
+>>> -     struct meson_clk_pll_data *pll =3D meson_clk_pll_data(clk);
+>>> +     /* Enable the lock-detect module */
+>>> +     if (MESON_PARM_APPLICABLE(&pll->l_detect))
+>>> +             meson_parm_write(clk->map, &pll->l_detect, 0);
+>>>
+>>> -     /* Put the pll is in reset */
+>>> -     if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> -             meson_parm_write(clk->map, &pll->rst, 1);
+>>> +     if (meson_clk_pll_wait_lock(hw)) {
+>>> +             /* disable PLL when PLL lock failed. */
+>>> +             meson_clk_pll_disable(hw);
+>>> +             pr_warn("%s: PLL lock failed!!!\n", clk_hw_get_name(hw));
+>>>
+>>> -     /* Disable the pll */
+>>> -     meson_parm_write(clk->map, &pll->en, 0);
+>>> +             return -EIO;
+>>> +     }
+>>>
+>>> -     /* Disable PLL internal self-adaption current module */
+>>> -     if (MESON_PARM_APPLICABLE(&pll->current_en))
+>>> -             meson_parm_write(clk->map, &pll->current_en, 0);
+>>> +     return 0;
+>>>   }
+>>>
+>>>   static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long ra=
+te,
+>> --
+>> Jerome
 
+--=20
+Jerome
 
