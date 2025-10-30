@@ -1,177 +1,128 @@
-Return-Path: <linux-kernel+bounces-877547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0945BC1E665
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:17:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7EDC1E66E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 06:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2B4A4E638A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF4D1891FF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 05:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2135932C93C;
-	Thu, 30 Oct 2025 05:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2280232A3D8;
+	Thu, 30 Oct 2025 05:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UQF/lNxo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfVXhoZu"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B271A1F4631;
-	Thu, 30 Oct 2025 05:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF771F4631
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 05:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761801459; cv=none; b=OS/eSeFU1HgjmDR+5bWIox19q+Xzf8LheMqxN7YJSAGFKfRYa8J8SxRs8fm4wEzRTEBZP9d+i8nLgZJEBJ4/4+wggVfTzQ20D/l/eYjAq3XKYv3qyNOWnYSNJdFcKh7i/fg/N4IDyFSqM19UXdnnECj/+dkLzie9tvmJge/o6TE=
+	t=1761801496; cv=none; b=AR7KODYI52IgfZj9ifxfEhd3KiGli0ha1UH44u0xD1Wtvy42dsLx9dKz/NM6kmjADcWyvzOzBaNq2YCoLOaW9vXDJntoIQRuCv5gahXlRx4W/aoDPEcMUUEgs9e8bwfq6thAz3eBy+SGtc7whBuUEbBpOhNXDMD1OUydA/rv6kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761801459; c=relaxed/simple;
-	bh=f7TlgeVtEnw5QuGJCBWUdQupgLGr0mILsmLnG2oC5ns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5sbkS4rWKlASPYHQx/C9QTX0z/y9SIQRSdMTdV6oNOC3xhLpWPgIAKT+u2HwsYQeqD0iQXCIDQsFoRivsAIvlEHyPxuM1JjoxvouD9PUqykYUQ8ISO1EXUBD4pWEsLzz8q2x+5Avxle4rH8RYlFdqDjfTIB810a55Ff9kj7KxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UQF/lNxo; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761801457; x=1793337457;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=f7TlgeVtEnw5QuGJCBWUdQupgLGr0mILsmLnG2oC5ns=;
-  b=UQF/lNxoIRfp/L0XR9BfIZG+VCBCAs77ZVB11/HZt5Kq6VJAQCm33jID
-   LHnjabSb/VBcnWc3nAG1kVZF+fJmOrx0gs90eOhAxSEVHMByZJkNBtclM
-   u8w7UTYZ0Off8T90gtsSsXaWyYcpl0092QPzPL4/6/ChkpTe/V+JOz75J
-   6ElUL+TAAnitjxvp6pyukKYK3sYCkHCwh48YqPUc1unaYo5cBe3Ha3bpn
-   LiZx2B+MljE5bBZtWknsTRUvfFkIVDbL/R5T6FLLsXWHS/y8U/LvtvJdJ
-   RH5g80wu98BL0/eqrlDku+UJO+y9Ix+p+fyRciUP3zVBJiPAlzLYnTCP2
-   A==;
-X-CSE-ConnectionGUID: 5pioP2mhSCaLUD0KwelmeA==
-X-CSE-MsgGUID: 6X93XcfTRWGDO/jjsz40+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="81353598"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="81353598"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:17:37 -0700
-X-CSE-ConnectionGUID: m+F77FaHQH2ObhV/IqfVdQ==
-X-CSE-MsgGUID: 7fKGZ7v0TX+KksZ24RwISg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="190994513"
-Received: from yjung-mobl.amr.corp.intel.com (HELO [10.125.83.0]) ([10.125.83.0])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:17:36 -0700
-Message-ID: <370b7f4b-3996-466f-ae40-83c4890e8527@intel.com>
-Date: Wed, 29 Oct 2025 22:17:36 -0700
+	s=arc-20240116; t=1761801496; c=relaxed/simple;
+	bh=yTB2Ypsw7haBzkxm1rv/lmJKPxOzHQ8R5zcpQamqQkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jvunlFjy3qXtHXJpZopzXIRK+Dd/i34YK+QgxR13jKSdk3kZxO0rfUNaHLdm6wA+AEPzSs1+C3CFtEeO98IEo/MYg8Rqla42KlOmiywFSRAu2AwA1mfCp0pYseIV7hXOE/a+KIsSwnxUjfDtZIqchwOS/McDw0qOhFFFUnOZHuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfVXhoZu; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7810289cd4bso768681b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761801494; x=1762406294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=74tfITgN+jliSCJFJEsvOUjVL101aogmvXZmW0Fyfy8=;
+        b=PfVXhoZu69k8RxK/on8OOFYZeTwNGTCM/LYeKCRXkjtwdnePnOr0EsyCmV0s2Znxgg
+         h2drZpduXpahge3oVBDwptf8J5LjdkFH8/LcrQmttdzdMnhT68EvWzlf2xMWV2eSpb7F
+         0p6qixOewFa2NYD6RyQ5dm64GOeDmhh3w52bTImuxgeLCJnk5+l+jrFlBEVzawYUYPFi
+         YlM/9r7/3/98XmBPTyiiGfp+dCCLMiea3vwJ7PjXxMNqPgsp110r+JSyUoYA76e0jkx2
+         2/SbNhJWD1NkdQOlV+A+eOTM+t24rdI2x785HRsWbPBq0sMos1k5NgVWty4luMkhnujd
+         nbPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761801494; x=1762406294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=74tfITgN+jliSCJFJEsvOUjVL101aogmvXZmW0Fyfy8=;
+        b=nBOXbFdKubi3HGKboR2JfdRz7GIcLT/8hKWaG+mD46dAUnSufEs50NFUC16bug1jBQ
+         +AzzCM/6NDgwm0Wysu8YZtYcc5qAsS6jZp14NCfozSGnFXvUbknftR8smn5Ee46vAK05
+         xC8c/+h2CcJhPPXPFFu+jIC8EUMwo2KcL1GrVpAyv0Fxb1qXeprcZsTqiehET/DNOpgo
+         bctuyWh4Bz4EFQNeb4QOLG4QMorD/7XpinMplCCRjX1UE05yVmHnOiPn4WTSk/ZMpgyZ
+         JP3sbF3F0w3h+I3BZfsr4diVcTNkLpfkaO2nC1DLRzooAG0cWu8ypi7YUrpukcUd7uIP
+         z7Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnTd1+lsEhISvBTXdzJ4H4afq3osgFx9HaXG/xsEYXDhE3Xlvco42OplkYQ/ZMo16Sd1GRLFB5a0VoQCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGLvm6WLub8dwmILMRFs96cxxla0gO3GlPx4SOIkdJSZiWVKy3
+	t/HrBEKC6XzYkLfDl6Lvm3vdahgLwsxRn6r7fimkOd1C7Z3a5ioKYykX
+X-Gm-Gg: ASbGncuXN35m5qAF8Bb+0uXSi7v8NxzyNHRmxNO5UnWcF5XVgveWE6sFLeRJ6Xd68cW
+	DUWpESXXtgkRJPM1IwN4do14CyrBCI4eQuy0/Tq8AgYUegoI7NxbvWKtPsEAnf/4VXiReNZuQ+O
+	xKtgRxc13aePkrG5NOhwiFDhARi02IrKYaJSuY0J63FCpjheirTQ0hTky52GzPdGbMOhhD41Ztf
+	hDxfSJ353/XM2pYTo1ntwTZuHAtM548da5tQa9g9hb75rWmMvUfEf95G5lZoDL0Zvc8SRs4lj38
+	57gU6qjY2BiNiEdXWgSwobqIBtqz7uINn9QbtgDvogj203bZ3lEZKJtPCLHp1zWjqTW1XNzVCp9
+	hif7Ni3ev4BOMrklRtOnVVyVqVmqdoT7qVEPbGdHB5l0uyvDW6sAn/M9gyXzCZH5lbs0wch/RMT
+	30JC1tESEKy+fULmBbYi+L8RGKVEnJqwrP
+X-Google-Smtp-Source: AGHT+IEhzK1oEYrUQqCBBSqPHXsRDk4cferL/O21CP4C7/ru0ksQFcHNu9ziLSsqEz7nZQmTjmZx7A==
+X-Received: by 2002:a05:6a00:3988:b0:7a2:183a:924f with SMTP id d2e1a72fcca58-7a62cc6de7cmr2012742b3a.31.1761801494420;
+        Wed, 29 Oct 2025 22:18:14 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a414066d0esm17445157b3a.43.2025.10.29.22.18.11
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 29 Oct 2025 22:18:14 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Geliang Tang <geliang@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] powerpc/pseries: add input size check in ofdt_write
+Date: Thu, 30 Oct 2025 13:17:55 +0800
+Message-Id: <20251030051759.93014-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] perf/x86/intel/uncore: Fix die ID init and look up
- bugs
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Xudong Hao <xudong.hao@intel.com>, Falcon Thomas <thomas.falcon@intel.com>,
- Steve Wahl <steve.wahl@hpe.com>
-References: <20251029220711.57909-1-zide.chen@intel.com>
- <20251029220711.57909-2-zide.chen@intel.com>
- <926de635-35ae-4ac9-b235-2d394f20ae7e@linux.intel.com>
-Content-Language: en-US
-From: "Chen, Zide" <zide.chen@intel.com>
-In-Reply-To: <926de635-35ae-4ac9-b235-2d394f20ae7e@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+A malicious user could pass an arbitrarily bad value
+to memdup_user_nul(), potentially causing kernel crash.
 
+This follows the same pattern as commit ee76746387f6
+("netdevsim: prevent bad user input in nsim_dev_health_break_write()")
 
-On 10/29/2025 6:39 PM, Mi, Dapeng wrote:
-> 
-> On 10/30/2025 6:07 AM, Zide Chen wrote:
->> In snbep_pci2phy_map_init(), if there are more than 8 nodes,
->> uncore_device_to_die(ubox_dev) may return -1 if all CPUs
->> associated with the UBOX device are offline.  This is not an error
->> and we still need to populate map->pbus_to_dieid[].
->>
->> If NUMA is disabled on a NUMA-capable platform, pcibus_to_node()
->> returns NUMA_NO_NODE and uncore_device_to_die() returns -1.  As a
->> result, in spr_update_device_location(), which is used on Intel SPR,
->> GNR etc., the PMON units are ignored and not added to the RB tree.
-> 
-> It seems spr_update_device_location() currently is only called by SPR,
-> please double check. 
+Found via static analysis and code review.
 
-Woops, it's used by SPR and EMR, not GNR.
-> BTW, is this a SPR specific issue or a common issue? Thanks.
-This is a general statement: uncore_device_to_die() can't be used when
-numa=off. However, in the current code, it is misused only in
-spr_update_device_location().
->>
->> Use uncore_pcibus_to_dieid() instead, which retrieves topology
->> information from the GIDNIDMAP register of the UBOX device.
->>
->> Fixes: 9a7832ce3d92 ("perf/x86/intel/uncore: With > 8 nodes, get pci bus die id from NUMA info")
->> Fixes: 65248a9a9ee1 ("perf/x86/uncore: Add a quirk for UPI on SPR")
->> Signed-off-by: Zide Chen <zide.chen@intel.com>
->> ---
->>  arch/x86/events/intel/uncore.c       |  1 +
->>  arch/x86/events/intel/uncore_snbep.c | 13 ++++++-------
->>  2 files changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
->> index 5c3aeea5c78d..84d6e481f18f 100644
->> --- a/arch/x86/events/intel/uncore.c
->> +++ b/arch/x86/events/intel/uncore.c
->> @@ -77,6 +77,7 @@ int uncore_die_to_segment(int die)
->>  	return bus ? pci_domain_nr(bus) : -EINVAL;
->>  }
->>  
->> +/* Note: This API can only be used when NUMA information is available. */
->>  int uncore_device_to_die(struct pci_dev *dev)
->>  {
->>  	int node = pcibus_to_node(dev->bus);
->> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
->> index ad4d11762ecf..e68467f617f9 100644
->> --- a/arch/x86/events/intel/uncore_snbep.c
->> +++ b/arch/x86/events/intel/uncore_snbep.c
->> @@ -1471,13 +1471,7 @@ static int snbep_pci2phy_map_init(int devid, int nodeid_loc, int idmap_loc, bool
->>  			}
->>  
->>  			map->pbus_to_dieid[bus] = die_id = uncore_device_to_die(ubox_dev);
->> -
->>  			raw_spin_unlock(&pci2phy_map_lock);
->> -
->> -			if (WARN_ON_ONCE(die_id == -1)) {
->> -				err = -EINVAL;
->> -				break;
->> -			}
->>  		}
->>  	}
->>  
->> @@ -6530,7 +6524,7 @@ static void spr_update_device_location(int type_id)
->>  
->>  	while ((dev = pci_get_device(PCI_VENDOR_ID_INTEL, device, dev)) != NULL) {
->>  
->> -		die = uncore_device_to_die(dev);
->> +		die = uncore_pcibus_to_dieid(dev->bus);
->>  		if (die < 0)
->>  			continue;
->>  
->> @@ -6554,6 +6548,11 @@ static void spr_update_device_location(int type_id)
->>  
->>  int spr_uncore_pci_init(void)
->>  {
->> +	int ret = snbep_pci2phy_map_init(0x3250, SKX_CPUNODEID, SKX_GIDNIDMAP, true);
->> +
->> +	if (ret)
->> +		return ret;
->> +
->>  	/*
->>  	 * The discovery table of UPI on some SPR variant is broken,
->>  	 * which impacts the detection of both UPI and M3UPI uncore PMON.
+Fixes: 3783225130f0 ("powerpc/pseries: use memdup_user_nul")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ arch/powerpc/platforms/pseries/reconfig.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
+index 599bd2c78514..b6bc1d8b2207 100644
+--- a/arch/powerpc/platforms/pseries/reconfig.c
++++ b/arch/powerpc/platforms/pseries/reconfig.c
+@@ -366,6 +366,9 @@ static ssize_t ofdt_write(struct file *file, const char __user *buf, size_t coun
+ 	if (rv)
+ 		return rv;
+ 
++	if (count == 0 || count > PAGE_SIZE)
++		return -EINVAL;
++
+ 	kbuf = memdup_user_nul(buf, count);
+ 	if (IS_ERR(kbuf))
+ 		return PTR_ERR(kbuf);
+-- 
+2.39.5 (Apple Git-154)
 
 
