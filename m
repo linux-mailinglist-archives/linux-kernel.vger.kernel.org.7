@@ -1,100 +1,218 @@
-Return-Path: <linux-kernel+bounces-877666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DFDC1EB39
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:12:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26B7C1EB48
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 08:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5233A402769
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:12:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CBEF18908AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 07:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFDE3358BF;
-	Thu, 30 Oct 2025 07:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FE43358AC;
+	Thu, 30 Oct 2025 07:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFaWNMqi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="p7g4CpNs"
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40643328E5;
-	Thu, 30 Oct 2025 07:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFF13595D;
+	Thu, 30 Oct 2025 07:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761808347; cv=none; b=Ss38rm18i2iYy3FEROyOYtuy9ZWmQKw9Sx6qfhJrA7s8fnR2BV+LUszbHIWOlEsvbLfahC2oF0maqiz6gOPkdRNTvwoIGxZ64nekLCTZ+/ow5cGf1xcmvFcEvtki02pULg2DgVBsP2Y1AXSCEc5lDcw2ecxPDqVOsB+sItS6Tvg=
+	t=1761808416; cv=none; b=M2D27hMqm7GDFVPwNcmeAZe3CxbF8RaHB1HJE6ew3E3tKs0+2U7RHCpUsMqehKYvYtd0LtukHbsQSj7MwCsfnyW73z+LNjX3ALXVREt9ToyHbtckwUcLJ6/9W9SXNxseZIp3qd6lACF/QTZvXEnkitSekaPNAwD4iJ8E4CXTexI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761808347; c=relaxed/simple;
-	bh=1hY8bOD1IiZ/4yqtsa1oXjj3u5rqpHnBjbS4wEQe1tE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9UQA8Tb5vxNVX5/BG6U5EjkdoJptsp7xb+XA/K9ZPl9kNOXqrJuXfYGd2/M4sa53R98qJIyjuF4C1ul5PuSjN66u58XthYkvSeIOafoyN07kz88PQBzWr7Ab5HVvb6Xi7APhpcFLvTT9SNvEmtA7P98LEaYyQRXFSSj50xQ28Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFaWNMqi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F67C4CEF1;
-	Thu, 30 Oct 2025 07:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761808347;
-	bh=1hY8bOD1IiZ/4yqtsa1oXjj3u5rqpHnBjbS4wEQe1tE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YFaWNMqiVtEwj3KcXWBJDwBiOcL+ZgLMsi3V3JArK16kHhRts9gNHwLfrVuBEDWTh
-	 UPBG8bFKX9WPOxdFwbCZNmQybLMYABdikxd8HvdrMiiTrZ6VqVY3bn9W4Pne7Hv8ra
-	 xyJQuEobSCVd3yHX/HfQwIc6PV8LcBSUchPZqhNCDvo9H5SNqMhRaMS4FncHBxgvE9
-	 TJ0oSXOmdNhUKmbN9pmBArBEfW8/bS8h06eT+bn/vP2QHIEcdlrPw2UOF2aF/CguRe
-	 3f3cBq0T+zYxjLiVA55BXqTn44Qcg5ZpmWFg7Rs1iEYLKr6sOOEZ4huDp/ip8jPDuL
-	 k2I2A+OPsBDnw==
-Date: Thu, 30 Oct 2025 08:12:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, 
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-Subject: Re: [PATCH v4 1/6] dt-bindings: i2c: qcom-cci: Document Kaanapali
- compatible
-Message-ID: <20251030-masterful-daring-lorikeet-ae45b0@kuoka>
-References: <20251028-add-support-for-camss-on-kaanapali-v4-0-7eb484c89585@oss.qualcomm.com>
- <20251028-add-support-for-camss-on-kaanapali-v4-1-7eb484c89585@oss.qualcomm.com>
+	s=arc-20240116; t=1761808416; c=relaxed/simple;
+	bh=CTUkh/b3PUPbjFi6Mev8pgtZJVqt78u0cx/ZG3awATg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A7+LXagZs3Z/4378TEfmrmDCu3T8+GKLAvZZQdJYxp0u2SmocENVaMVWlWLXBL2t+NBkNfel1JAABxYIiJcbrsySw5HOPGOnjOUT7DYKU6LpGnkkPYmjbd+lo/XjAHHAcbBrDMpX4omjknGmPGBF1DyjtpVfT3AiKhbMcMBj1B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=p7g4CpNs; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=5b/+/mkouW76nc7fPhFgrG/ENZ8PlhIsp4pHwFuI8oY=;
+	b=p7g4CpNsL/rTvnTI1YEgszYjLsvZoeJup8WVTd/W2bLNKLjxNDhSetYvOvtKPdj4nmNoYVNsh
+	lr7AZTX96HINjeOqv8OPWDkiVqHxMZhsZijHTRIXd1kWYqEBW5s5UvRVdGSk8YTAXgIce7Mr7bM
+	s/sznaJJz6W69XEkUqKj6yg=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cxwKZ05g4z1T4FV;
+	Thu, 30 Oct 2025 15:12:18 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 22565180237;
+	Thu, 30 Oct 2025 15:13:23 +0800 (CST)
+Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 30 Oct 2025 15:13:22 +0800
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 30 Oct 2025 15:13:22 +0800
+From: Junhao He <hejunhao3@h-partners.com>
+To: <rafael@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
+	<guohanjun@huawei.com>, <mchehab@kernel.org>, <xueshuai@linux.alibaba.com>,
+	<jarkko@kernel.org>, <yazen.ghannam@amd.com>, <jane.chu@oracle.com>,
+	<lenb@kernel.org>, <Jonathan.Cameron@Huawei.com>
+CC: <linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+	<shiju.jose@huawei.com>, <tanxiaofei@huawei.com>, <linuxarm@huawei.com>,
+	<hejunhao3@h-partners.com>
+Subject: [PATCH] ACPI: APEI: Handle repeated SEA error interrupts storm scenarios
+Date: Thu, 30 Oct 2025 15:13:21 +0800
+Message-ID: <20251030071321.2763224-1-hejunhao3@h-partners.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251028-add-support-for-camss-on-kaanapali-v4-1-7eb484c89585@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemn500004.china.huawei.com (7.202.194.145)
 
-On Tue, Oct 28, 2025 at 10:44:10PM -0700, Hangxiang Ma wrote:
-> Add Kaanapali compatible consistent with CAMSS CCI interfaces.
-> 
+The do_sea() function defaults to using firmware-first mode, if supported.
+It invoke acpi/apei/ghes ghes_notify_sea() to report and handling the SEA
+error, The GHES uses a buffer to cache the most recent 4 kinds of SEA
+errors. If the same kind SEA error continues to occur, GHES will skip to
+reporting this SEA error and will not add it to the "ghes_estatus_llist"
+list until the cache times out after 10 seconds, at which point the SEA
+error will be reprocessed.
 
-You are using b4 so I don't understand why you still ignore our review.
+The GHES invoke ghes_proc_in_irq() to handle the SEA error, which
+ultimately executes memory_failure() to process the page with hardware
+memory corruption. If the same SEA error appears multiple times
+consecutively, it indicates that the previous handling was incomplete or
+unable to resolve the fault. In such cases, it is more appropriate to
+return a failure when encountering the same error again, and then proceed
+to arm64_do_kernel_sea for further processing.
 
-<form letter>
-This is a friendly reminder during the review process.
+When hardware memory corruption occurs, a memory error interrupt is
+triggered. If the kernel accesses this erroneous data, it will trigger
+the SEA error exception handler. All such handlers will call
+memory_failure() to handle the faulty page.
 
-It looks like you received a tag and forgot to add it.
+If a memory error interrupt occurs first, followed by an SEA error
+interrupt, the faulty page is first marked as poisoned by the memory error
+interrupt process, and then the SEA error interrupt handling process will
+send a SIGBUS signal to the process accessing the poisoned page.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
+However, if the SEA interrupt is reported first, the following exceptional
+scenario occurs:
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+When a user process directly requests and accesses a page with hardware
+memory corruption via mmap (such as with devmem), the page containing this
+address may still be in a free buddy state in the kernel. At this point,
+the page is marked as "poisoned" during the SEA claim memory_failure().
+However, since the process does not request the page through the kernel's
+MMU, the kernel cannot send SIGBUS signal to the processes. And the memory
+error interrupt handling process not support send SIGBUS signal. As a
+result, these processes continues to access the faulty page, causing
+repeated entries into the SEA exception handler. At this time, it lead to
+an SEA error interrupt storm.
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+Fixes this by returning a failure when encountering the same error again.
 
-Best regards,
-Krzysztof
+The following error logs is explained using the devmem process:
+  NOTICE:  SEA Handle
+  NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
+  NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+  NOTICE:  EsrEl3 = 0x92000410
+  NOTICE:  PA is valid: 0x1000093c00
+  NOTICE:  Hest Set GenericError Data
+  [ 1419.542401][    C1] {57}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 9
+  [ 1419.551435][    C1] {57}[Hardware Error]: event severity: recoverable
+  [ 1419.557865][    C1] {57}[Hardware Error]:  Error 0, type: recoverable
+  [ 1419.564295][    C1] {57}[Hardware Error]:   section_type: ARM processor error
+  [ 1419.571421][    C1] {57}[Hardware Error]:   MIDR: 0x0000000000000000
+  [ 1419.571434][    C1] {57}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000081000100
+  [ 1419.586813][    C1] {57}[Hardware Error]:   error affinity level: 0
+  [ 1419.586821][    C1] {57}[Hardware Error]:   running state: 0x1
+  [ 1419.602714][    C1] {57}[Hardware Error]:   Power State Coordination Interface state: 0
+  [ 1419.602724][    C1] {57}[Hardware Error]:   Error info structure 0:
+  [ 1419.614797][    C1] {57}[Hardware Error]:   num errors: 1
+  [ 1419.614804][    C1] {57}[Hardware Error]:    error_type: 0, cache error
+  [ 1419.629226][    C1] {57}[Hardware Error]:    error_info: 0x0000000020400014
+  [ 1419.629234][    C1] {57}[Hardware Error]:     cache level: 1
+  [ 1419.642006][    C1] {57}[Hardware Error]:     the error has not been corrected
+  [ 1419.642013][    C1] {57}[Hardware Error]:    physical fault address: 0x0000001000093c00
+  [ 1419.654001][    C1] {57}[Hardware Error]:   Vendor specific error info has 48 bytes:
+  [ 1419.654014][    C1] {57}[Hardware Error]:    00000000: 00000000 00000000 00000000 00000000  ................
+  [ 1419.670685][    C1] {57}[Hardware Error]:    00000010: 00000000 00000000 00000000 00000000  ................
+  [ 1419.670692][    C1] {57}[Hardware Error]:    00000020: 00000000 00000000 00000000 00000000  ................
+  [ 1419.783606][T54990] Memory failure: 0x1000093: recovery action for free buddy page: Recovered
+  [ 1419.919580][ T9955] EDAC MC0: 1 UE Multi-bit ECC on unknown memory (node:0 card:1 module:71 bank:7 row:0 col:0 page:0x1000093 offset:0xc00 grain:1 - APEI location: node:0 card:257 module:71 bank:7 row:0 col:0)
+  NOTICE:  SEA Handle
+  NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
+  NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+  NOTICE:  EsrEl3 = 0x92000410
+  NOTICE:  PA is valid: 0x1000093c00
+  NOTICE:  Hest Set GenericError Data
+  NOTICE:  SEA Handle
+  NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
+  NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+  NOTICE:  EsrEl3 = 0x92000410
+  NOTICE:  PA is valid: 0x1000093c00
+  NOTICE:  Hest Set GenericError Data
+  ...
+  ...        ---> Hapend SEA error interrupt storm
+  ...
+  NOTICE:  SEA Handle
+  NOTICE:  SpsrEl3 = 0x60001000, ELR_EL3 = 0xffffc6ab42671400
+  NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+  NOTICE:  EsrEl3 = 0x92000410
+  NOTICE:  PA is valid: 0x1000093c00
+  NOTICE:  Hest Set GenericError Data
+  [ 1429.818080][ T9955] Memory failure: 0x1000093: already hardware poisoned
+  [ 1429.825760][    C1] ghes_print_estatus: 1 callbacks suppressed
+  [ 1429.825763][    C1] {59}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 9
+  [ 1429.843731][    C1] {59}[Hardware Error]: event severity: recoverable
+  [ 1429.861800][    C1] {59}[Hardware Error]:  Error 0, type: recoverable
+  [ 1429.874658][    C1] {59}[Hardware Error]:   section_type: ARM processor error
+  [ 1429.887516][    C1] {59}[Hardware Error]:   MIDR: 0x0000000000000000
+  [ 1429.901159][    C1] {59}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000081000100
+  [ 1429.901166][    C1] {59}[Hardware Error]:   error affinity level: 0
+  [ 1429.914896][    C1] {59}[Hardware Error]:   running state: 0x1
+  [ 1429.914903][    C1] {59}[Hardware Error]:   Power State Coordination Interface state: 0
+  [ 1429.933319][    C1] {59}[Hardware Error]:   Error info structure 0:
+  [ 1429.946261][    C1] {59}[Hardware Error]:   num errors: 1
+  [ 1429.946269][    C1] {59}[Hardware Error]:    error_type: 0, cache error
+  [ 1429.970847][    C1] {59}[Hardware Error]:    error_info: 0x0000000020400014
+  [ 1429.970854][    C1] {59}[Hardware Error]:     cache level: 1
+  [ 1429.988406][    C1] {59}[Hardware Error]:     the error has not been corrected
+  [ 1430.013419][    C1] {59}[Hardware Error]:    physical fault address: 0x0000001000093c00
+  [ 1430.013425][    C1] {59}[Hardware Error]:   Vendor specific error info has 48 bytes:
+  [ 1430.025424][    C1] {59}[Hardware Error]:    00000000: 00000000 00000000 00000000 00000000  ................
+  [ 1430.053736][    C1] {59}[Hardware Error]:    00000010: 00000000 00000000 00000000 00000000  ................
+  [ 1430.066341][    C1] {59}[Hardware Error]:    00000020: 00000000 00000000 00000000 00000000  ................
+  [ 1430.294255][T54990] Memory failure: 0x1000093: already hardware poisoned
+  [ 1430.305518][T54990] 0x1000093: Sending SIGBUS to devmem:54990 due to hardware memory corruption
+
+Signed-off-by: Junhao He <hejunhao3@h-partners.com>
+---
+ drivers/acpi/apei/ghes.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 005de10d80c3..eebda39bfc30 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1343,8 +1343,10 @@ static int ghes_in_nmi_queue_one_entry(struct ghes *ghes,
+ 	ghes_clear_estatus(ghes, &tmp_header, buf_paddr, fixmap_idx);
+ 
+ 	/* This error has been reported before, don't process it again. */
+-	if (ghes_estatus_cached(estatus))
++	if (ghes_estatus_cached(estatus)) {
++		rc = -ECANCELED;
+ 		goto no_work;
++	}
+ 
+ 	llist_add(&estatus_node->llnode, &ghes_estatus_llist);
+ 
+-- 
+2.33.0
 
 
