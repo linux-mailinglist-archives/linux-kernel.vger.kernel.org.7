@@ -1,279 +1,302 @@
-Return-Path: <linux-kernel+bounces-877490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEB3C1E36E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:36:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895DCC1E307
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 04:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF2818848FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E096A3A92B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 03:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7E22BD5A1;
-	Thu, 30 Oct 2025 03:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F321626657D;
+	Thu, 30 Oct 2025 03:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EgQvhcqx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eaz064tm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DBB2877D8;
-	Thu, 30 Oct 2025 03:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765D82E1743
+	for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 03:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761795357; cv=none; b=QRIWe83HxaS19NWdrFvJ+8K+vck+ZwefaBfSuYtpJjrDaf75m7ulnlqavKufuqlUjh6rh0AbkFVAffgPLI7ZIJH1hDQJPhjoFDC+S8YFC0mGpFB2YonhlWr8CX/WLttyiJ3N2paElU+9EUjH548rDZ/ceqD2qEyNbZN6bBIZufQ=
+	t=1761793660; cv=none; b=CaEU/lYW615/zCzWdz/a75YYPAZFHHCPqp6+APkIAVCYupz2r1ZEcWUuL2vR0fVjvMZYjgHNSA9fYdbeEBzV19DGuKql+l87i12d678PLpC2S7VbQMnUVQkwKPTD+/Dy5x0bJXi16rg6Q7WfPy+fo0+puxT56EiPME2WWlcVdjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761795357; c=relaxed/simple;
-	bh=EvQ/5bKwDUtEf9AiD5um2+uxCVxKBdw9w0/JZ2SDjXU=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=UcC9n3Pjt75pP71NMgaY4sa10q4yDYmxdODfst8ocMepanu6bq8Fp/Gpl495S5sPeEuXDzdvADmSW2/PahdtEmGJjfh65O0FjQxqZBrBuOJ8DkWMu+xQJWUpCR8wWY9P+9AqYMh3bDiQMgWHqfx5gWSUAapRt4+SI449Vhv5UG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EgQvhcqx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59TLQWCl031470;
-	Thu, 30 Oct 2025 03:35:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=PpJ8T8
-	iD1KR7ITAfQ53AMGj5fpGO31ZCrQIFW1meyaw=; b=EgQvhcqx3CnsMtUACV40cC
-	L7o0NAHndTBQWTaPz8AdWH57M6ssnceKT5Oqrr/012dza57p3MQd0nD6vrBP5f3s
-	kcKJ/+KsjEuXHJrIti4K7O8nioqJNqp2ORifIu83VJRCULY64sjvZwq+K77Ze/YO
-	R+QGz1A78kUpiHmjz7Aw2/55tcaKaqpaH45o4t5nf9OExojs1uoUg9Cxj1sZ5goL
-	DtFPOulCLpqBQVboQRaZEogqJqyIGbKtG7A4CYU5GqCcSXxcYvYBNVpKo52ydmx+
-	Dufx6wZU/rm66e5rYIt3N18B2/XN7eesqTfIm6JZoq9a1zhJCGhbrgudMOJBpiQQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34ajp5qk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 03:35:36 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59U3ZZC4016839;
-	Thu, 30 Oct 2025 03:35:35 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34ajp5qf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 03:35:35 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59U1wID7019373;
-	Thu, 30 Oct 2025 03:35:34 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xweg0m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Oct 2025 03:35:34 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59U3ZYQu29032968
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Oct 2025 03:35:34 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E0A75877C;
-	Thu, 30 Oct 2025 03:01:38 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 44EED58720;
-	Thu, 30 Oct 2025 03:01:29 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.32.143])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 30 Oct 2025 03:01:29 +0000 (GMT)
-Message-ID: <26cb0926bd707edea6f19ca1bf8f5d5d3d10ff96.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,
-        Karel Srot <ksrot@redhat.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
-        open list	 <linux-kernel@vger.kernel.org>
-In-Reply-To: <xldwpvz4gzp74kualadf2n2wdlpbo3xorrgvkibhdocjtroipd@dpukmalev4yu>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-	 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-	 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-	 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-	 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-	 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-	 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-	 <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-	 <02d18fe0a0ca1223eec9af5c8e01739aa164bf32.camel@linux.ibm.com>
-	 <xldwpvz4gzp74kualadf2n2wdlpbo3xorrgvkibhdocjtroipd@dpukmalev4yu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 29 Oct 2025 23:01:27 -0400
+	s=arc-20240116; t=1761793660; c=relaxed/simple;
+	bh=646IL+Zrykg6Qc9jPOQV2i5OhKMGMAT3ELcoy1hQF18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZhTyl+k3jYAbmPN9CKppzsVTYRI/iLDfjjWxALCmelBqdz/Kp42TA7bQm1FFVAa22X+NmvSZ3ksZumkDka/JQMhVoIvt99Q4VI4QlhvmIjXPa0RpOA2zU1mCRXKsNXKT0xN/gKel1uiPcylm0rm4j6V7cO0lZ3GlmXcmgq9u0Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eaz064tm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761793657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9wN0XWQ1N0rtxB4cj1GaEpvY3UQhVabXBsS/QmbEqpk=;
+	b=eaz064tm7hYNBF30k+bmcWVMkSqIpsiyOJ+nmTwIGUYBdXJ930DGjyjTJPakHuV9W5LZZt
+	tlSuho9V5X1DvpfwqnqkzTnd1ZhQz8wfF2Te04wt1MqpJxvWr3RROtyCGnW0ZTXprtZVSg
+	StefAhGuVfiMqRd7SGQYQLBcUHT9Pqo=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-q2MZoWtUNbeizBeK5OPvIA-1; Wed, 29 Oct 2025 23:07:36 -0400
+X-MC-Unique: q2MZoWtUNbeizBeK5OPvIA-1
+X-Mimecast-MFC-AGG-ID: q2MZoWtUNbeizBeK5OPvIA_1761793653
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-78495d5ab26so35723977b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:07:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761793653; x=1762398453;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9wN0XWQ1N0rtxB4cj1GaEpvY3UQhVabXBsS/QmbEqpk=;
+        b=plPeFrS55CuvlTrXNlZfXPfqnQbglsDRqWzRTAxGrITLmJCDUWdC4wgoxjB+7chk/I
+         5IIWZlhrOElgP0rir97I8VYaR7Q6GFBwD82vsbgimINvOYOcGDZ1SejcsEFLjWnFNFP7
+         r+xcO7U71hZ1WPdWqiA+4VbyE8v8tSboviBK5jA4d+2aQ3bBYKDO+kfekmQ0QzTc+kD7
+         7bacDJfrHe6cj2YfAXBV8mQ4ZxkrudVkFUkemu0W5bz+7DG93oe8md0fuiv6lLUyzUSU
+         MKXRE8ypDN6W/ohZ2LBHpWP3LyZNh7Hq2JbcIEx7ft0Ko5icemtlMA5s/+ETnpN3tFxl
+         i9lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrOszLf/Ydt4xAYQLnPyxMJvKFNF+we6Bu5tUmDW3RcgLvVqlpnTqMpVW/WUZfEneTcxzemVFZTkFxBWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNjt2NIi1CrJRf8Qd1IBvMk0ppdczeX/Y8NySIaO1vgUhdYri/
+	Yyr6+msfRTiOLQgLyAesnpZlP9/eCRqXsGOoixUWX16YegsewJfQvxrEIDO1DQY4btGqyBAXMYC
+	Oyv2rQePPTn4aUPV9oS9hSTlA9z9G/Pu4lO+LqhtoFUuoOs34vpjPpZrznFdVpEuyg8p2xm8gPL
+	5TAWlg5exNIkhPesb2xW+QML2MXzsmCiHxtEmvGNyq
+X-Gm-Gg: ASbGncuawMTEGuWHcDx3qbcn90g9MdWQGA+HzZ91rJe3p2XvB7fGZHLVdNEMS9EGCMt
+	5AWURM+J/aisMsTT5VV2uvLnuyo4bYpSTlzbzfgVSG5NazKTVUiNJxXHhFEUhptFyPKzuC7b+wb
+	22ZHYCfM+Vb6d+LcSgGOz0K6nQWw+sC+V6Mlk6qP53QvQQRIu5rae8EeJFJayYPEo9wU1LNw==
+X-Received: by 2002:a05:690e:1248:b0:63e:1521:c29f with SMTP id 956f58d0204a3-63f829a2809mr1659576d50.17.1761793653277;
+        Wed, 29 Oct 2025 20:07:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEC5CkcBnh/sb8uhkM3WgOJU7Y4/I4RGXP2TJxmJQ2XYo9gh6ekWqrMeIKQHHjyKjrwn97kwUnbrionRddMKeM=
+X-Received: by 2002:a05:690e:1248:b0:63e:1521:c29f with SMTP id
+ 956f58d0204a3-63f829a2809mr1659506d50.17.1761793652731; Wed, 29 Oct 2025
+ 20:07:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=C/XkCAP+ c=1 sm=1 tr=0 ts=6902dd08 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=UXIAUNObAAAA:8 a=YMm9jw0qTLC_d0oe6EwA:9 a=QEXdDO2ut3YA:10 a=U308fY8ZEg0A:10
- a=a1s67YnXd6TbAZZNj1wK:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=pHzHmUro8NiASowvMSCR:22 a=n87TN5wuljxrRezIQYnT:22
-X-Proofpoint-GUID: AcH7RolWTlFm9MvrVEMp-3D4o2zQziF4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX4Sm2N6+CCGEA
- SQZQAJWK5D+yCnNFLYnU7wetVV8qdr9XmfpM8a0lhHnmj882fZq+ihOaWrpDh+4dkGd9yNIf2qt
- Cxt6S9frtX3yRqmx/To4S+NaFykiaIGzucKoCfekaMuWe7yyJR8JA35wBpQzqqnb+aUHx+mn+3B
- tlGe2h9IiAJeRd0JroTJXJmQYbeF38wrbpOP23fDBs5Rcb83VmSuUg9Jy0QWYcFAi/9w3vWm6Kh
- 4j5suLIc9B+4bwFgLldfZy409Q49T4u02sCW9Wp+KA2R67NueS1HEXVPZt9le2btiQyZQwxmRSz
- sUdjqHcBSTeHa49dTzo48PUgrkWlrZGKfu6Io4eRwSjc83C/4vBnv5qa6FtZsABAn/qLxBiWN7z
- m0BqtHHamwMS+XBS9cTMAIi33p41nw==
-X-Proofpoint-ORIG-GUID: qgkqj84ktxezLlGSp810K1CeDhGZ9Gxd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
- spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2510280166
+References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+From: Nico Pache <npache@redhat.com>
+Date: Wed, 29 Oct 2025 21:07:07 -0600
+X-Gm-Features: AWmQ_bmIFH7DQx94H00ZendIrBM5Leqedwdezzz2vnEqWrhrlST8xh1cZBn-MjI
+Message-ID: <CAA1CXcCiS37Kw78pam3=htBX5FvtbFOWvYNA0nPWLyE93HPtwA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] initial work on making VMA flags a bitmap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
+	Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-30 at 08:31 +0800, Coiby Xu wrote:
-> On Fri, Oct 24, 2025 at 11:16:37AM -0400, Mimi Zohar wrote:
-> > On Mon, 2025-10-20 at 08:21 -0400, Mimi Zohar wrote:
-> > > On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
-> > > > > > > 2. Instead of defining an additional process_measurement() ar=
-gument to identify
-> > > > > > > compressed kernel modules, to simplify the code it might be p=
-ossible to define a
-> > > > > > > new "func" named COMPRESSED_MODULE_CHECK.
-> > > > > > >=20
-> > > > > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COM=
-PRESSED_MODULE_CHECK
-> > > > > >=20
-> > > > > > I also thought about this approach. But IMA rule maps kernel mo=
-dule
-> > > > > > loading to MODULE_CHECK. If we define a new rule and ask users =
-to use
-> > > > > > this new rule, ima_policy=3Dsecure_boot still won't work.
-> > > > >=20
-> > > > > I don't have a problem with extending the "secure-boot" policy to=
- support
-> > > > > uncompressed kernel modules appended signatures, based on whether
-> > > > > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition =
-to the existing
-> > > > > MODULE_CHECK rule.
-> > > >=20
-> > > > I assume once the new rule get added, we can't remove it for usersp=
-ace
-> > > > backward compatibility, right? And with CPIO xattr supported, it se=
-ems
-> > > > there is no need to keep this rule. So if this concern is valid, do=
- you
-> > > > think we shall switch to another approach i.e. to make IMA support
-> > > > verifying decompressed module and then make "secure-boot" to allow
-> > > > appended module signature?
-> > >=20
-> > > Yes, once the rule is added, it wouldn't be removed.  As for "to make=
- IMA
-> > > support verifying decompressed module", yes that might be a better so=
-lution,
-> > > than relying on "sig_enforce" being enabled. IMA already supports ver=
-ifying the
-> > > appended signatures.  A new IMA specific or LSM hook would need to be=
- defined
-> > > after module_decompress().
-> >=20
-> > Looking at the code further,=C2=A0decompressing the kernel module in IM=
-A is
-> > redundant.  Instead I think the best approach would be to:
-> > - define DECOMPRESSED_MODULE, in addition to COMPRESSED_MODULE.
-> >=20
-> > id(COMPRESSED_MODULE, compressed-kernel-module) \
-> > id(DECOMPRESSED_MODULE, decompressed-kernel-module)    \
-> >=20
-> > - instead of passing a boolean indicating whether the module is compres=
-sed, pass
-> > the kernel_read_file_id enumeration to differentiate between the compre=
-ssed and
-> > decompressed module.
-> >=20
-> > - define a new IMA hook, probably LSM hook as well, named
-> > ima_decompressed_module().
-> >=20
-> > - call the new ima_decompressed_module() from init_module_from_file()
-> > immediately after decompressing the kernel module.  Something along the=
- lines
-> > of:
-> >=20
-> > err =3D ima_decompressed_module(f, (char *)info.hdr, info.len,
-> >                              READING_DECOMPRESSED_MODULE);
->=20
-> Thanks for proposing a better solution! Yeah, decompressing the kernel
-> module in IMA is unnecessary. Do you think we can further extend your
-> idea to call one IMA hook only after kernel module decompression is
-> done? If we call two IMA hooks in finit_module, we'll need coordination
-> between two IMA hooks i.e. the 1st IMA hook shouldn't fail in order for
-> the 2nd IMA hook to be executed. The new IMA hook will always have
-> access to the decompressed kernel module buffer so there is no need to
-> differentiate between compressed and decompressed module.
-
-Agreed instead of verifying the kernel module signature on the LSM
-kernel_post_read_file() hook, define and move it to a new IMA/LSM hook afte=
-r it
-is decompressed, would be much simpler than coordinating two LSM hooks.
-
->=20
-> Another question is whether we should allow loading a kernel module with
-> appended signature but misses IMA signature. Both IMA arch specific polic=
+On Wed, Oct 29, 2025 at 11:50=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> We are in the rather silly situation that we are running out of VMA flags
+> as they are currently limited to a system word in size.
+>
+> This leads to absurd situations where we limit features to 64-bit
+> architectures only because we simply do not have the ability to add a fla=
+g
+> for 32-bit ones.
+>
+> This is very constraining and leads to hacks or, in the worst case, simpl=
 y
-> and init_module syscall only require appended signature verification. On
-> the other hand, we only allow "appraise_type=3Dimasig|modsig" but not
-> appraise_type=3Dmodsig. How about we allow loading a kernel module with
-> valid appended signature regardless of its IMA signature? We won't call
-> set_module_sig_enforced but as long as we know is_module_sig_enforced()
-> is true, we allow the module in IMA.
-
-Based on the policy, IMA enforces signature verification. Only if
-CONFIG_MODULE_SIG is configured, the IMA arch specific policy does not defi=
-ne an
-IMA kernel module appraise rule. However, custom policies could still requi=
-re
-both types of signatures, not necessarily signed by the same entity.
-
-The option "appraise_type=3Dimasig|modsig" allows either an IMA signature O=
-R an
-appended signature.
-
->=20
-> >=20
-> > For testing purposes to see the decompressed appended signature in the
-> > measurement list, modify the MODULE_CHECK measure rule to include "temp=
-late=3Dima-
-> > modsig" in ima_efi.c.
->=20
-> I haven't figured out why to include "template=3Dima-modsig" for testing
-> purpose considering we can simply check if the kernel module has been
-> loaded successfully.
-
-That's fine too.
-
-> It it related to the design that "The d-modsig and
-> modsig fields are only populated if both the measure and appraise rules
-> trigger"? If so, can you also help me understand there is such a design?
->=20
-> [1] https://ima-doc.readthedocs.io/en/latest/event-log-format.html#ima-mo=
-dsig
-
-The "ima-sig" template contains the file data hash and file signature, allo=
-wing
-the attestation server to verify the signature based on the file data hash
-contained in the measurement list.
-
-In addition to the file data hash and the file signature, the "ima-modsig"
-template contains the file data hash without the appended signature, allowi=
+> an inability to implement features we want for entirely arbitrary reasons=
+.
+>
+> This also of course gives us something of a Y2K type situation in mm wher=
+e
+> we might eventually exhaust all of the VMA flags even on 64-bit systems.
+>
+> This series lays the groundwork for getting away from this limitation by
+> establishing VMA flags as a bitmap whose size we can increase in future
+> beyond 64 bits if required.
+>
+> This is necessarily a highly iterative process given the extensive use of
+> VMA flags throughout the kernel, so we start by performing basic steps.
+>
+> Firstly, we declare VMA flags by bit number rather than by value, retaini=
 ng
-the attestation server to verify the appended signature against it.
+> the VM_xxx fields but in terms of these newly introduced VMA_xxx_BIT
+> fields.
+>
+> While we are here, we use sparse annotations to ensure that, when dealing
+> with VMA bit number parameters, we cannot be passed values which are not
+> declared as such - providing some useful type safety.
+>
+> We then introduce an opaque VMA flag type, much like the opaque mm_struct
+> flag type introduced in commit bb6525f2f8c4 ("mm: add bitmap mm->flags
+> field"), which we establish in union with vma->vm_flags (but still set at
+> system word size meaning there is no functional or data type size change)=
+.
+>
+> We update the vm_flags_xxx() helpers to use this new bitmap, introducing
+> sensible helpers to do so.
+>
+> We then provide vma_flags_test() and vma_test() to allow for testing of V=
+MA
+> flag bits, and utilise these across the memory management subsystem.
+>
+> Since it would be entirely inefficient to do away with the bitwise
+> operations used throughout the kernel with respect to VMA flags, we permi=
+t
+> these to exist, providing helpers for these operations against the new
+> bitmap.
+>
+> These operate on the assumption that such operations will only be require=
+d
+> for flags which can exist within a system word. This allows the fundament=
+al
+> flags to be used efficiently as before.
+>
+> This series lays the foundation for further work to expand the use of
+> bitmap VMA flags and eventually eliminate these arbitrary restrictions.
+>
+>
+> ANDREW/REVIEWS NOTES:
+>
+> Apologies, but the nature of this series is that it's going to be a littl=
+e
+> painful, I've based it on [0] to make life a bit easier. Let me know if y=
+ou
+> need rebases etc.
 
-Mimi
+Hey Lorenzo,
+
+I put your patchset into the Fedora Koji system to run some CI on it for yo=
+u.
+
+It failed to build due to what looks like some Rust bindings.
+
+Heres the build: https://koji.fedoraproject.org/koji/taskinfo?taskID=3D1385=
+47842
+
+And x86 build logs:
+https://kojipkgs.fedoraproject.org//work/tasks/7966/138547966/build.log
+
+The error is pretty large but here's a snippet if you want an idea
+
+error[E0425]: cannot find value `VM_READ` in crate `bindings`
+   --> rust/kernel/mm/virt.rs:399:44
+    |
+399 |     pub const READ: vm_flags_t =3D bindings::VM_READ as vm_flags_t;
+    |                                            ^^^^^^^ not found in `bind=
+ings`
+error[E0425]: cannot find value `VM_WRITE` in crate `bindings`
+   --> rust/kernel/mm/virt.rs:402:45
+    |
+402 |     pub const WRITE: vm_flags_t =3D bindings::VM_WRITE as vm_flags_t;
+    |                                             ^^^^^^^^ not found
+in `bindings`
+error[E0425]: cannot find value `VM_EXEC` in crate `bindings`
+     --> rust/kernel/mm/virt.rs:405:44
+      |
+  405 |     pub const EXEC: vm_flags_t =3D bindings::VM_EXEC as vm_flags_t;
+      |                                            ^^^^^^^ help: a
+constant with a similar name exists: `ET_EXEC`
+      |
+     ::: /builddir/build/BUILD/kernel-6.18.0-build/kernel-6.18-rc3-16-ge536=
+42b87a4f/linux-6.18.0-0.rc3.e53642b87a4f.31.bitvma.fc44.x86_64/rust/binding=
+s/bindings_generated.rs:13881:1
+      |
+13881 | pub const ET_EXEC: u32 =3D 2;
+      | ---------------------- similarly named constant `ET_EXEC` defined h=
+ere
+error[E0425]: cannot find value `VM_SHARED` in crate `bindings`
+   --> rust/kernel/mm/virt.rs:408:46
+    |
+408 |     pub const SHARED: vm_flags_t =3D bindings::VM_SHARED as vm_flags_=
+t;
+    |                                              ^^^^^^^^^ not found
+in `bindings`
+
+In the next version Ill do the same and continue with the CI testing for yo=
+u!
+
+Cheers,
+-- Nico
+
+>
+> [0]: https://lore.kernel.org/linux-mm/cover.1761756437.git.lorenzo.stoake=
+s@oracle.com/
+>
+> Lorenzo Stoakes (4):
+>   mm: declare VMA flags by bit
+>   mm: simplify and rename mm flags function for clarity
+>   mm: introduce VMA flags bitmap type
+>   mm: introduce and use VMA flag test helpers
+>
+>  fs/proc/task_mmu.c               |   4 +-
+>  include/linux/hugetlb.h          |   2 +-
+>  include/linux/mm.h               | 341 +++++++++++++-------
+>  include/linux/mm_inline.h        |   2 +-
+>  include/linux/mm_types.h         | 120 ++++++-
+>  include/linux/userfaultfd_k.h    |  12 +-
+>  kernel/fork.c                    |   4 +-
+>  mm/filemap.c                     |   4 +-
+>  mm/gup.c                         |  16 +-
+>  mm/hmm.c                         |   6 +-
+>  mm/huge_memory.c                 |  34 +-
+>  mm/hugetlb.c                     |  48 +--
+>  mm/internal.h                    |   8 +-
+>  mm/khugepaged.c                  |   2 +-
+>  mm/ksm.c                         |  12 +-
+>  mm/madvise.c                     |   8 +-
+>  mm/memory.c                      |  77 +++--
+>  mm/mempolicy.c                   |   4 +-
+>  mm/migrate.c                     |   4 +-
+>  mm/migrate_device.c              |  10 +-
+>  mm/mlock.c                       |   8 +-
+>  mm/mmap.c                        |  16 +-
+>  mm/mmap_lock.c                   |   4 +-
+>  mm/mprotect.c                    |  12 +-
+>  mm/mremap.c                      |  18 +-
+>  mm/mseal.c                       |   2 +-
+>  mm/msync.c                       |   4 +-
+>  mm/nommu.c                       |  16 +-
+>  mm/oom_kill.c                    |   4 +-
+>  mm/pagewalk.c                    |   2 +-
+>  mm/rmap.c                        |  16 +-
+>  mm/swap.c                        |   3 +-
+>  mm/userfaultfd.c                 |  33 +-
+>  mm/vma.c                         |  37 ++-
+>  mm/vma.h                         |   6 +-
+>  mm/vmscan.c                      |   4 +-
+>  tools/testing/vma/vma.c          |  20 +-
+>  tools/testing/vma/vma_internal.h | 536 +++++++++++++++++++++++++++----
+>  38 files changed, 1037 insertions(+), 422 deletions(-)
+>
+> --
+> 2.51.0
+>
+
 
