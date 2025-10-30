@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-878952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-878950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9098DC21D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:57:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FADC21D70
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 19:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB0A188F200
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BC63BFF65
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 18:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EE036E356;
-	Thu, 30 Oct 2025 18:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385A436E354;
+	Thu, 30 Oct 2025 18:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kXeQN4T/"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMvJZHce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32CF36E342;
-	Thu, 30 Oct 2025 18:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5761F4289;
+	Thu, 30 Oct 2025 18:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761850650; cv=none; b=fMB3MsIPhH3Mwr0jrvrmMwgSlSJT5GXEKi86NsSeBuPOViPEjkE+XlMoIpEejPcHs51K9TR/9kG8p7u+N9PJFxrrWkasuZ+F4d77tWVeEWO4W1cUYYsGI3BYE4qgniCEbC7VZOtKTxhK+8fOqZksjkfgYH7wFele+cdLKabpEG8=
+	t=1761850464; cv=none; b=qBpMi2Scnh7LBj6MzUiokOHIC7WV+liay97s4AZ4la0A6rBD6WkCOK1CXKTO0eVp0hUrwZ1xCQyVtJPTjuSC24GdxwK0gsMJ9nLv8dtbRFaQWpu5uJOt/kaNTl3BuCRjQmC0+ArZKOdPgKTsJYFxby80o7J7/Yvyq/iP0ElI74w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761850650; c=relaxed/simple;
-	bh=DPN3R+jNqmq2nzo8zU5Q6weJpi9cFGa1aTDCxjEzbXU=;
+	s=arc-20240116; t=1761850464; c=relaxed/simple;
+	bh=LcXInhdYM4JhzkE2rlpVp4so9C1DZXUfbRAwtPpGjyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s3y8HFOdY70NsP/bLS8EfcreR0KyDXP6c/FFXBo3ORM+2DOZWx5UXoCof+CDgwDbhyFC8satW//nlBPy3yt/hOaA1sSSxXk2wU+SAoDbRIHVzYA0HPivxvd252bmZ/UeZTxA61l4mP08ybBiM7sT7H1+pr+kMpLelVLIrpvgpPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kXeQN4T/; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DPN3R+jNqmq2nzo8zU5Q6weJpi9cFGa1aTDCxjEzbXU=; b=kXeQN4T/MrS523pclpe0pc40fz
-	dlvTiBkT+cDZ4/4pZvYiPGw2buLmXbnU9aUnz4X00FnJ0PUazFkW72u52hkNrUUtJtw5T/yPdL53K
-	9nnuZ5EBCWNw9k8ihjszAOrhCtDypG6M7oyTOmG/3HWQg8RCTXQ6QtfGzHuE3HGOr40qHqd5TSRKK
-	pGpjyckPRrc/rqYV1s5lb3Ap2b0HiRFRbx8G+F0uFyGf5NtrUa1xWMuAKtNZ3KIDMbQ37yjKZEWy6
-	c9rz3MSebsDi8UTeWc1HrravwEOd5fbCBIng9QXIwfcQQcUevuo+1Z+svU832I1QWAVezpj/Rp83q
-	u7WQWKMA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEWyA-00000009n9Q-3mvE;
-	Thu, 30 Oct 2025 18:01:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5D93830029E; Thu, 30 Oct 2025 19:57:25 +0100 (CET)
-Date: Thu, 30 Oct 2025 19:57:25 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Mark Brown <broonie@kernel.org>, Fangrui Song <maskray@sourceware.org>,
-	linux-toolchains@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Concerns about SFrame viability for userspace stack walking
-Message-ID: <20251030185725.GC2989771@noisy.programming.kicks-ass.net>
-References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
- <20251030102626.GR3245006@noisy.programming.kicks-ass.net>
- <87zf982s52.fsf@linux.intel.com>
- <bdda89a7-ff60-46b0-8ce3-28ffec1fac2a@sirena.org.uk>
- <aQOvCugzYe/2DcNW@firstfloor.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYaD6daztu8LdiHwc1qCbUojpACPkxv9R1i46NgNWOLxDQ9r4oi6S8gm7gbWYoBoVmSOEQs5ezemfUGvVCRdTaQG1S0yIp5CpzNWQ7COZg2H55Mtjb2aPlVNNHnSTMNsPDuGHpgj0zJX5nMt/f8UL+q1Kd3dq0N8IHI4h/LLBYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMvJZHce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C554C4CEF8;
+	Thu, 30 Oct 2025 18:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761850464;
+	bh=LcXInhdYM4JhzkE2rlpVp4so9C1DZXUfbRAwtPpGjyE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RMvJZHced0xe0SYXEBdqUWtrj5+Ios4HX4RT21t3HJdbVrs/SSLPGy6v3bd5R2S1O
+	 lLtM9oyfvDaN2Y4SYcIqlcf93wW+8/lwvWenvC6Oo6BZgzziIqhW37ygVMI0XI7E6k
+	 xwwWsxGhq2owrbwZ35/N9nSqStSSzxHJbYobCl47SWFV4sD5SWoK1/EAmXphB6EqUp
+	 uLB9wEnsS+Fjwi+HIXhgD76KbPyQy80G+U7XUIkXhF2vlOZTUEWDocY0CX9BC+Qx9Y
+	 eCFgNVKXpZPG3dFOPBzLPm+TPR4UfP9f87qGcNYP0+FzRgCM1+M0i/5T0v1GuDaHRr
+	 N/nOau3BEixkQ==
+Date: Thu, 30 Oct 2025 13:57:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mike Tipton <mike.tipton@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Kaanapali SoC
+Message-ID: <g6fxmbakdpfuzg3yhxx6dciii7fwcnphrwdeyiubmaasjwrh4u@hvyx2eru7ail>
+References: <20251030-knp-interconnect-v3-0-a084a4282715@oss.qualcomm.com>
+ <20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,18 +61,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQOvCugzYe/2DcNW@firstfloor.org>
+In-Reply-To: <20251030-knp-interconnect-v3-1-a084a4282715@oss.qualcomm.com>
 
-On Thu, Oct 30, 2025 at 11:31:38AM -0700, Andi Kleen wrote:
+On Thu, Oct 30, 2025 at 05:09:02PM +0000, Raviteja Laggyshetty wrote:
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml
+[..]
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
 
-> Not on x86 at least. All my x86 systems have it, except for a few old
-> skylakes.
+What is this used for?
 
-About half of my systems have CET, but I just checked, none of them
-seem to actually use userspace shadow stacks.
+> +    clk_virt: interconnect-0 {
+> +      compatible = "qcom,kaanapali-clk-virt";
+> +      #interconnect-cells = <2>;
+> +      qcom,bcm-voters = <&apps_bcm_voter>;
+> +    };
+> +
+> +    aggre_noc: interconnect@16e0000 {
+> +      compatible = "qcom,kaanapali-aggre-noc";
+> +      reg = <0x016e0000 0x42400>;
+> +      #interconnect-cells = <2>;
+> +      clocks = <&gcc_aggre_ufs_phy_axi_clk>,
+> +               <&gcc_aggre_usb3_prim_axi_clk>
 
-AFAICT Debian hasn't build their packages with this stuff on.
+make dt_binding_check
 
-But yeah, thanks for reminding me, we should definitely build a shstk
-unwinder.
+> +               <&rpmhcc_ipa_clk>;
+> +      qcom,bcm-voters = <&apps_bcm_voter>;
+> +    };
+
+Regards,
+Bjorn
 
