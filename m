@@ -1,161 +1,130 @@
-Return-Path: <linux-kernel+bounces-879322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922DFC22D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:04:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FBDC22D64
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1EC37342FFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:04:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BCB84E8ED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521AD21D3EE;
-	Fri, 31 Oct 2025 01:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFCE217F29;
+	Fri, 31 Oct 2025 01:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5Fhrn5p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QXkx2rja"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23E520F067
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7DB7261B;
+	Fri, 31 Oct 2025 01:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761872642; cv=none; b=C+RzeC4mWuUo/JD5f4TwBbGgEbIkucmNF8jtZvERO5XfQGkURHqgQMkRBmYZ4Pv9fvf02MjUpSrbRhYDzCKCPqilnN/DW28L24Z4+yJHtzG1A+Tld1FsGHeBNa3RIJewN/w0guUfp6Gx9Q8YV5KyvM4h0JtHwfoZthH4kNPJ4BQ=
+	t=1761872572; cv=none; b=Cb1hgXwt0WKIv1lGt0Hn29XThsxhFks48FWIKi0FCibLjmIo8F5t84Pl1R8TZ4G4pU3UFlRwCBCqy3TkH6lWdrzfK36p/5ftgEj70vjIEHFBw3Ymk1qsq+Eh0UPuwxvMhtThEVok3JkDIiMSkX60sqCV6NHVdCN1xdUbToh5/P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761872642; c=relaxed/simple;
-	bh=oiaNxHqLsiUGi3fMQH1S26PrUGrpe0lpo+mJR1gGkVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SvTfKhWWCe7eegeWIswyMV2CCwPcfmZU5m2jiZ/1Iax/vR7/nDF6tXtGaV3/gkaykZvk4JMBprwOvV8Zou/vPkSKiXShZ0hpmTHto+kilGrmlhStMRZ8JcIbfKaR/Z4Fx4I4PdDNjOJNThmLXCyGkGilzcedTyJn+s0XEjqYMuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5Fhrn5p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14108C4CEF1;
-	Fri, 31 Oct 2025 01:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761872641;
-	bh=oiaNxHqLsiUGi3fMQH1S26PrUGrpe0lpo+mJR1gGkVk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=J5Fhrn5pyZuNBEGbHAarvD/nYoX2ZQDpAlrXSYeyOwgqminpY6FRan9S4s+oWlXwV
-	 W12HbM/5rRyinYTrSyEKMz3TyT4rMAegNA3joqfTE3XThEHPyg2DDHEmfswpLCbNOm
-	 nErqu5LDLHsKvBXu4zLSZvpe/GNba8iwdUfmuAeXeMbaHJOWeZrRM1pcML2NHqXwRU
-	 hxncwOoiowlHojBpAZnJVKa6dE1/mEdFWlbyx61uemMyaOBGVMajkaxt1hAJG1No5l
-	 89w8yahHF+eHtDCig4fL2wmtePMpAQc6I1YfSKizLvWu5NOhRai5ITLT0gRD/lCZuB
-	 mQWgugSk51pTg==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-	Hari Bathini <hbathini@linux.ibm.com>
-Subject: [PATCH] vmlinux.lds: Exclude .text.startup and .text.exit from TEXT_MAIN
-Date: Thu, 30 Oct 2025 18:01:54 -0700
-Message-ID: <07f74b4e5c43872572b7def30f2eac45f28675d9.1761872421.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761872572; c=relaxed/simple;
+	bh=EaYGUuCrSTMZmYoLx79I7S+/tp36oNKqy/fQx7wgpu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P/c7jfRiRLGFSB8Z9aNi02mm6b/rTpGMMdW94+9xOg69fRHkAYyxpvLpUQy9PlMZTt9JPFaXskc61dBZzwA88w5TnIQxumsxoJs4LqaG4+MKLJKPit928TVnmdq+Tmvkv/AUbku6SxVo8CtLVWcgPTu/oBNDsWrMdk6zwDqjSck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QXkx2rja; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761872565;
+	bh=P6cBC3miHiRhrWN0nClOrPmei8K9laNqw58pRuAvIQ8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QXkx2rja/fOX2tf14hrOqrmOr8QlPTfcUwNgVs9GbqxhVYYDJjCROow03vvTrn5cL
+	 BsV38B9f4cwK+9JOV3ewhXRIrYDtc8cC8et9BZcCgtAvy1842b9preC2qNGU8bGTva
+	 cOJ55ENySvnJMPk7KP9ub4pEg5JClIs5P7KehPAWHvhIBHNMMBsmA7mWuXUOEVqa3k
+	 XheGjlPDIA3RYsR2/XIwHFxgfcGqN24GJaBkMxz2lXofvGGyeGwV2yVYIRtdubbDjU
+	 ep5fNMovwktWIjm6r4qVoUy+/BgdUy5HBENmEIHwAPTew3ei48d7PrbIJhq+ziiAdX
+	 EzLCR0lteaxSQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyN4h3HQkz4wM9;
+	Fri, 31 Oct 2025 12:02:44 +1100 (AEDT)
+Date: Fri, 31 Oct 2025 12:02:43 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <20251031120243.4394e6a8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-An ftrace warning was reported in ftrace_init_ool_stub():
+--Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   WARNING: arch/powerpc/kernel/trace/ftrace.c:234 at ftrace_init_ool_stub+0x188/0x3f4, CPU#0: swapper/0
+Hi all,
 
-The problem is that the linker script is placing .text.startup in .text
-rather than in .init.text, due to an inadvertent match of the TEXT_MAIN
-'.text.[0-9a-zA-Z_]*' pattern.
+After merging the tip tree, today's linux-next build (arm64 defconfig)
+failed like this:
 
-This bug existed for some configurations before, but is only now coming
-to light due to the TEXT_MAIN macro unification in commit 1ba9f8979426
-("vmlinux.lds: Unify TEXT_MAIN, DATA_MAIN, and related macros").
+arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mode':
+arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration of func=
+tion 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mode_prep=
+are'? [-Wimplicit-function-declaration]
+  103 |         exit_to_user_mode_prepare(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+      |         arch_exit_to_user_mode_prepare
+In file included from arch/arm64/include/asm/current.h:5,
+                 from include/linux/sched.h:12,
+                 from include/linux/context_tracking.h:5,
+                 from include/linux/irq-entry-common.h:5,
+                 from kernel/entry/common.c:3:
+kernel/entry/common.c: In function 'exit_to_user_mode_loop':
+kernel/entry/common.c:77:29: error: implicit declaration of function 'rseq_=
+exit_to_user_mode_restart'; did you mean 'arch_exit_to_user_mode_prepare'? =
+[-Wimplicit-function-declaration]
+   77 |                 if (likely(!rseq_exit_to_user_mode_restart(regs, ti=
+_work)))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+   76 | # define likely(x)      __builtin_expect(!!(x), 1)
+      |                                             ^
 
-The .text.startup section consists of constructors which are used by
-KASAN, KCSAN, and GCOV.  The constructors are only called during boot,
-so .text.startup is supposed to match the INIT_TEXT pattern so it can be
-placed in .init.text and freed after init.  But since INIT_TEXT comes
-*after* TEXT_MAIN in the linker script, TEXT_MAIN needs to manually
-exclude .text.startup.
+Caused by commit
 
-Update TEXT_MAIN to exclude .text.startup (and its .text.startup.*
-variant from -ffunction-sections), along with .text.exit and
-.text.exit.* which should match EXIT_TEXT.
+  d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
 
-Specifically, use a series of more specific glob patterns to match
-generic .text.* sections (for -ffunction-sections) while explicitly
-excluding .text.startup[.*] and .text.exit[.*].
+and maybe following ones.
 
-Also update INIT_TEXT and EXIT_TEXT to explicitly match their
--ffunction-sections variants (.text.startup.* and .text.exit.*).
+I have reverted these commits for today:
 
-Fixes: 1ba9f8979426 ("vmlinux.lds: Unify TEXT_MAIN, DATA_MAIN, and related macros")
-Closes: https://lore.kernel.org/72469502-ca37-4287-90b9-a751cecc498c@linux.ibm.com
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Debugged-by: Hari Bathini <hbathini@linux.ibm.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
-For tip/objtool/core.
+  69c8e3d16105 ("rseq: Switch to TIF_RSEQ if supported")
+  1b3dd1c538a8 ("rseq: Split up rseq_exit_to_user_mode()")
+  d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
 
- include/asm-generic/vmlinux.lds.h | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 5facbc994634..9de1d900fa15 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -88,13 +88,29 @@
- 
- /*
-  * Support -ffunction-sections by matching .text and .text.*,
-- * but exclude '.text..*'.
-+ * but exclude '.text..*', .text.startup[.*], and .text.exit[.*].
-  *
-- * Special .text.* sections that are typically grouped separately, such as
-+ * .text.startup and .text.startup.* are matched later by INIT_TEXT.
-+ * .text.exit and .text.exit.* are matched later by EXIT_TEXT.
-+ *
-+ * Other .text.* sections that are typically grouped separately, such as
-  * .text.unlikely or .text.hot, must be matched explicitly before using
-  * TEXT_MAIN.
-  */
--#define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
-+#define TEXT_MAIN							\
-+	.text								\
-+	.text.[_0-9A-Za-df-rt-z]*					\
-+	.text.s[_0-9A-Za-su-z]*						\
-+	.text.st[_0-9A-Zb-z]*						\
-+	.text.sta[_0-9A-Za-qs-z]*					\
-+	.text.star[_0-9A-Za-su-z]*					\
-+	.text.start[_0-9A-Za-tv-z]*					\
-+	.text.startu[_0-9A-Za-oq-z]*					\
-+	.text.startup[_0-9A-Za-z]*					\
-+	.text.e[_0-9A-Za-wy-z]*						\
-+	.text.ex[_0-9A-Za-hj-z]*					\
-+	.text.exi[_0-9A-Za-su-z]*					\
-+	.text.exit[_0-9A-Za-z]*
- 
- /*
-  * Support -fdata-sections by matching .data, .data.*, and others,
-@@ -713,16 +729,16 @@
- 
- #define INIT_TEXT							\
- 	*(.init.text .init.text.*)					\
--	*(.text.startup)
-+	*(.text.startup .text.startup.*)
- 
- #define EXIT_DATA							\
- 	*(.exit.data .exit.data.*)					\
- 	*(.fini_array .fini_array.*)					\
--	*(.dtors .dtors.*)						\
-+	*(.dtors .dtors.*)
- 
- #define EXIT_TEXT							\
- 	*(.exit.text)							\
--	*(.text.exit)							\
-+	*(.text.exit .text.exit.*)
- 
- #define EXIT_CALL							\
- 	*(.exitcall.exit)
--- 
-2.51.0
+--Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkECrMACgkQAVBC80lX
+0Gwwowf9G+TYFuh8UaO6aiMJW/SD95CEcVRWtw714ILsgy9L9JjLfrkiA77/ueMP
+mnDu8fMPazGhYT20HdVgt8jia61x9AkSq10+Ej5HTA75wrUdSOpKaIYGII5sfQyE
+2cAizM37SbW0sh58PBAB9Q+57LNocW3xrH4eyDTnfu3hRUuSu8IYNikSPVsW6csq
+MTGLY/ogiuymcO2B3tskd4ogeFB6dZNVYj/3iIqagOMSW2wUinMz6TA/SQf3+sZQ
+7fIl6XVXBKnqx5UqmwavO0oBkU6je9Nlz0sVa46Pr6EO7MF7Pad4vbClGRZGcbEX
+dwL2eFM+7Qv7s+L/l+gmtGgfY+nqSg==
+=E7QS
+-----END PGP SIGNATURE-----
+
+--Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE--
 
