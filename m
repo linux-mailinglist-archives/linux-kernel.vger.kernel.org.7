@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-880380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD75C25A22
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:43:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822D4C25A5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E55405DD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80BE71A65216
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77DE34C9A5;
-	Fri, 31 Oct 2025 14:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7ADF34C9BF;
+	Fri, 31 Oct 2025 14:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IRUWm0rp"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011011.outbound.protection.outlook.com [40.93.194.11])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZPCFVcp8"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011059.outbound.protection.outlook.com [52.101.52.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF4734C82D;
-	Fri, 31 Oct 2025 14:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D3934C982;
+	Fri, 31 Oct 2025 14:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921777; cv=fail; b=LKJr6eTXn4z+uVQ3KhoZHcSQ4zTwR1imxa/SmFkShAt8fy3Wpquw0cuDpN2P6JkXB/g1EpUNZ8Bq5hWBnq8avesNeu07KXuTxb/trC1gURlfSoAO2EgIBtZ8xJqs6L8h2G0VgFjpB9UTuU8SzT8oDnAM4mUhVprIfqZ2AqtDnXo=
+	t=1761921778; cv=fail; b=pdCiKqE7mxgDPmmdr53ojNzW4XC725G7+ouTHWEjLyGipkx2aRQI7hBVolO2EgP65uW+lBNOgCtYzgKbVw6RV402kNpvt3IlIfQbnyL1UUtdvUFN8g4gEGmcXHG1fPtHp5RTHR8ry5LY3sqXoRzTFaJlOJIQ4Pv5EgA81je3SBQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921777; c=relaxed/simple;
-	bh=GbTcGtdy5nc04bMN/Ppv/y+iotyRl6+ld55b/Tci3rc=;
+	s=arc-20240116; t=1761921778; c=relaxed/simple;
+	bh=vnQXiL0jK0pvirRFRba6ELrQ4TPHECQkYidC98sHhIY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WfsMQcNS9IGh4g2m1yqa3NA7NnMXAsYlQcXbQ5BBZlvudNne7UbM9snZJ+2f2pGEBjvvjBnQoYK8rPxEu5FqZnaYHLfHzJV6e5kY/7+fx0H+11v6TZkw4wFTLH36W/evrDh3+WjueUlYN/EsBkCL04+F5XgTzAiNUW7jrG0bMNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IRUWm0rp; arc=fail smtp.client-ip=40.93.194.11
+	 MIME-Version:Content-Type; b=cbFqkGF2mBxNvAj0SQxtKQhpuG8HBeMOEPJpR8skUY6162yGcRl0e0nJ3jTwwHzoweSUd08JrVUmEPiK5YCUpcs64jGHEY7PqGdDjQmZEcf7VtFVQWdZmPrFRwaCpIclpdkFtl3VjvdC69XV9+BcF0l6Xy/Ll0HmhMIYgh7ObTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZPCFVcp8; arc=fail smtp.client-ip=52.101.52.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FZtzxbdMGIMroQfSOzIWbDPhwkdQ3+mSiNWGVX0MDxaZvLiXU97WuAvD398D+HML88N60zmyCgCEj2tSZd9tpBNrtiiBvFFuRGFvON6HzMlhfGDUgNcVMH7nJAE2aSN5+1KYTnWvOXuCgaGkB6oOtegn07nJHL84YNqdJW8w0KIaLrXQ3nPCAO0rJLhyWxngEaJ9MiT9Dw/DC1gZZYLjmECKgbpOnm68YfxkegYODMUvwh6RHkGHDVN/Qvl/GQZqh2PGDsFYp4/biNSplR5PeNm5Z1bIsNj124b2EoB94J3z/MVEOMlbjiB2LWFzVbtDxxkOItu1Dm7ty6YYYoXxng==
+ b=qiUtoJSTnoaLNK/dJVhHjFG+JzlLYcE64R5+OkHIt+NUf7AD1WJhK1piEcjqPFyORmaw8fn52GDxrCPg9TNVoIYJzZ5sQY6KrQSZemNYaZ8jI9TfnwCrQv8TF28KyGV9KTnyOyqA61Xkw408FwCHbGAXAMtGBcUGYumT6zLWaCnWVb1m7YWbHmA2/0A0dU44KNek0eV0o46x/oqB/x7ckE81buMf5feRHm5zluM6g/X/atsiKR+zgrkJqvdFwHB3zprbuEtaIMlScnIX0sNWqe8AyEitFriHie3KLnEEgrviKCr5wkW0tjmOWe5dCOLFtKO3QQvmnNx24qTAOf4Jqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8jNgLgU+8Dhd7NVBFoNb21G3Q8hVCVLA9VFcRjhpm5M=;
- b=CnEcSH+l9gU7tdStpAoD3LzqHs+ATLDEslgHc2V/cDKeb9kdJdLRGNHxKkw037zNqF1F0p9l1Nd+cPwuJThnCB6f6hFjyaaqrbUYC05qX+HGP7XhkLAXhuCWTVSZoy10W6oVUCGvytSuVOE96pw6g5mb0y6B3t7qKixUs2T9HSdBp6bC5cBY5/hMgu316HgSHROkRGrqtvPR5VnVQs9ztN9sc6rhh7QXNXiOxd3KoRx5Y+mfLB9sCsloiOAjEPqcIhHffcnwX0k22Yl9dorxs5BvsKSmnLBKXpyDBku5KM7splT2680II0wVuTHfl9h8lEZhiLACcCmKQEnWDY/uWg==
+ bh=Csmx5SMDLLlNrmYWFllgKqVZ7T6KuRkk9eFLswmWBU0=;
+ b=K5GWrAKkyRIk+BehXPKlecJ7rHgZxflyRcY7qpSZ5wQQibS45I4G4CnSh0LC8rtw5lZDMPl5EkJJCABfrVLXirgcovmJu2ahUO/le4/X5DWthL/BvIDmBFqxKCegm8KW0e5evqFwopY3wKmKeTd9gxhBKc7VlNknn0t6Lyh0PaSHXwEAl5EeK4qL5b11TTPVxo6BP2Ge5J9+0xjLUc09YxJzdIxyekM0i+jDtskvD+NVjuiAWUsY3XZwBMe4qYUMmilZ1uZIwx9Q6PAESIxLShsKe/+c2JcDy15TfDwOp5GRL9J23FU0ZaEtgW2bnpT6JIpLeSwls0jKXf7N43iuiA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8jNgLgU+8Dhd7NVBFoNb21G3Q8hVCVLA9VFcRjhpm5M=;
- b=IRUWm0rpM17peMxxOktS2YirEKUZqPpuNv14V2zSzbQsgYrBa4KT0ibFxGmxiJOopFRr0Ub2etfC5YfDJ1YKaAW8ohBDaJv1qlmAmko1ao2IVRTWIPMENBfGYViln2J61v+QaliXi1xfot58K6WwmazcBsjFpznOWVfyTJMJRLQ=
-Received: from MN2PR12CA0024.namprd12.prod.outlook.com (2603:10b6:208:a8::37)
- by CH0PR10MB5209.namprd10.prod.outlook.com (2603:10b6:610:da::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 14:42:51 +0000
-Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
- (2603:10b6:208:a8:cafe::72) by MN2PR12CA0024.outlook.office365.com
- (2603:10b6:208:a8::37) with Microsoft SMTP Server (version=TLS1_3,
+ bh=Csmx5SMDLLlNrmYWFllgKqVZ7T6KuRkk9eFLswmWBU0=;
+ b=ZPCFVcp83cOMGRGKvCIBzvcYkKkVGZHk942wDjxoUdYI/PNSzNMHLxjjD99bZB7AiMf6y7Fr/zR+3kummR/CgT8PuDRhYNJu4e70BLZIAmvoUPUoubhDZH59VIe+Hyo0Y9wQkrbuMZf+FPZnqp/WHledD3G6IrcgN4Qp/jy1Zp0=
+Received: from DM5PR08CA0027.namprd08.prod.outlook.com (2603:10b6:4:60::16) by
+ DS0PR10MB6917.namprd10.prod.outlook.com (2603:10b6:8:134::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.13; Fri, 31 Oct 2025 14:42:50 +0000
+Received: from CY4PEPF0000FCBF.namprd03.prod.outlook.com
+ (2603:10b6:4:60:cafe::10) by DM5PR08CA0027.outlook.office365.com
+ (2603:10b6:4:60::16) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
- 31 Oct 2025 14:42:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ 31 Oct 2025 14:42:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ CY4PEPF0000FCBF.mail.protection.outlook.com (10.167.242.101) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 14:42:51 +0000
-Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 14:42:49 +0000
+Received: from DLEE203.ent.ti.com (157.170.170.78) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 31 Oct
- 2025 09:42:45 -0500
-Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE211.ent.ti.com
+ 2025 09:42:49 -0500
+Received: from DLEE211.ent.ti.com (157.170.170.113) by DLEE203.ent.ti.com
+ (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 31 Oct
+ 2025 09:42:49 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE211.ent.ti.com
  (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 31 Oct
- 2025 09:42:45 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
- (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 31 Oct 2025 09:42:45 -0500
+ Transport; Fri, 31 Oct 2025 09:42:49 -0500
 Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.233.103])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59VEgf5V4024498;
-	Fri, 31 Oct 2025 09:42:42 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59VEgf5W4024498;
+	Fri, 31 Oct 2025 09:42:46 -0500
 From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Aniket Limaye
-	<a-limaye@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Dominik Haller <d.haller@phytec.de>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <upstream@lists.phytec.de>,
 	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <gehariprasath@ti.com>
-Subject: Re: [PATCH v3] arm64: dts: ti: k3-j784s4: Fix I2C pinmux pull configuration
-Date: Fri, 31 Oct 2025 20:10:53 +0530
-Message-ID: <176192142809.427883.385396429453219228.b4-ty@ti.com>
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am68-phycore-som: Add pmic label
+Date: Fri, 31 Oct 2025 20:10:54 +0530
+Message-ID: <176192142808.427883.13302707913583517689.b4-ty@ti.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251022122638.234367-1-a-limaye@ti.com>
-References: <20251022122638.234367-1-a-limaye@ti.com>
+In-Reply-To: <20251014002240.85045-1-d.haller@phytec.de>
+References: <20251014002240.85045-1-d.haller@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,82 +103,76 @@ Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|CH0PR10MB5209:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed08deda-bb62-415d-5bf0-08de188bc4d8
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBF:EE_|DS0PR10MB6917:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9020e109-09be-4b1f-b735-08de188bc3ce
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|34020700016|376014|1800799024;
+	BCL:0;ARA:13230040|34020700016|82310400026|1800799024|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V1U3ZlQ4SXBuUjVrTjZPZHV3VlplVTNYb2lUaWxwSHNGWDZQNnp2YjVKeGNT?=
- =?utf-8?B?MnBFd3hKYStBUExWSCtKdXJSQno2dWlyNWxzTjRLbFVkb2U1ZGhvRzhVTTYr?=
- =?utf-8?B?NFdDdFljcWJ4Y3gwZUtMeUZjT1kxMTNienVRZ3N3ajNuSU5BbUZUN3VueHFL?=
- =?utf-8?B?WW53MHhVcFRDcmRyKzJzTjBWQ2MwK25ZZXNrQ1hVdEZtU3Vub3NoZUlFMGZZ?=
- =?utf-8?B?NzhSTnBCb3lSa3BPd0JFUkpLZXJ0V0o1SVFCS2tUZ3YzWnJsMUFNNGdwNjVn?=
- =?utf-8?B?OHJwcEppZ3VKK0VkUzh0ZWlaQSs3dVZLM25XTWg4SkhLQjF6ZXVJU2VzTlA1?=
- =?utf-8?B?cjZoL2xvR2dSRlgvMExYc3NHd1ZQVWh6K01ndURPdlV6K0lLYjNsSytZTVVQ?=
- =?utf-8?B?TUVEaEF2aTN4cWQvaXhUd1BCdlVtYjRaWVl5akNDUjRRMGhmQzhheGZtQ2tP?=
- =?utf-8?B?REhFTlNjT2o5ZkNlazRwSXhSc2lpamlHb1FhYzVuNHdYZ2JxbEpTOEVkaW13?=
- =?utf-8?B?RlBFYnJYWFhkaEZVc1h3UGZGNXQ0anFWVGVSdWU3bWNvRUlmd1M1SEJIbk5D?=
- =?utf-8?B?bjZNaGpSeVIxRm5qYkFEOS9JYnJDbXNQbTljOHAzdk1oWTlMMWxBVTEvQWpr?=
- =?utf-8?B?MXY2c01nVTVzejF6K3NnK1o0ZmxwUEljOVdlTzNPM0FuZngrekpzZlVEMmpM?=
- =?utf-8?B?TDRVR0JxemtZVG83dmszZ0F0RlVSRGZwZmFDcWNqNTJSMVFMd0RiYURrVWpJ?=
- =?utf-8?B?NjFSWnAwci9IQ1YyS2JyQlJvL3J3eG4vUkEza1pXS2hRZWFOUGV2MFk2WGZD?=
- =?utf-8?B?NDhnTnpPK01yaStQRmdjczdSZ2NBZnVuMlEvYkw2cFlDV1B1clFYTWF5c1VZ?=
- =?utf-8?B?eVFvWVBpRGc1WFFVNlZSeFg5VnFlWnJIaFlVMUZuOVg1U01KTUd4ZHhzVlZh?=
- =?utf-8?B?TzYxeU9XeVBwSUtzdkZPeTdpNmVNdGt2dXI2amg2cjZKSUMzM2dDMUdKYlc4?=
- =?utf-8?B?ejhweGpkNUVkSkcwdlJ2RkFxYXRWSXQzR0kyckgvNEsydDVHZUlqY2REZS90?=
- =?utf-8?B?U3FUS2JQSmxoRlJFMmtmckFId29OOGJ4RGlyMlNVVlkxbjU0UzJGM21nakVa?=
- =?utf-8?B?OE9vd0ZkQlpCcDZuT3k1V3FacnZnVzlwcmwrQU5LaUQ4a1gxZHFRVFlueFpU?=
- =?utf-8?B?MWZkZ28yclA0ZTdtdlZ2R3g5cjg4VkhqMmN0djR2Tk9ua3htSFhFYnUyQVNv?=
- =?utf-8?B?eFZsSG5LK2ZKbFl2bU4zZjV4dnBwSnE5ZktuZHpVNlhpeFFBWkhPSXBGMURo?=
- =?utf-8?B?QW5VWkczUlgrazJlTysrSzFuRjNEdklkUDlLWkwxVm0zOHErS21GNFpWU0dY?=
- =?utf-8?B?cjBqMGVReVp6ODdCbGFQSElOWmVPbXlmNHJjWkRCd2h1c1lCeC9YSjdjZ213?=
- =?utf-8?B?TmN0SGFyVU9qdlpTTzFFcm5rb3JFTHpwb1BSRVZOdkdOWkxLREJoaWxsWGNQ?=
- =?utf-8?B?cUl1Mmw4T3ZpbjBIdWVScEs5UFY5NTJyQ2pNMmhRR3hzN2plSTlTVElsdGl3?=
- =?utf-8?B?ZGdrckQxa2pWS2tCQ1o4aUNmakVrWkpubEpPbW5HbUgwOTFvQnBQTXpnSlpx?=
- =?utf-8?B?NmNVVUIvM1FjRFI1R0xkYStnUXFiWFltVWdsZlJMVzdGSlgxdXRobWtOSnZG?=
- =?utf-8?B?MHV3d1ZGVGlwekRKRHFhUnRRdys0bDAxOEtJaktGejBQWThPUDFxamJBYmJs?=
- =?utf-8?B?R3JyNUdIaVNyanNYS2l2NFIwN3k4QWtkZkE3Vm9tMGJDU01lN0RqdUJOWlFa?=
- =?utf-8?B?QTN3a2owQTFBN2xOTklObjN2VlJ5ZXRyZDdkMXE4QzFqVERSWHp1Q0Mremgx?=
- =?utf-8?B?ZThiRDhDTmhtMGpkMzZTVkxxdERXOGowZmEzeXdBYmVUUW9Jem9RTS9nOFhm?=
- =?utf-8?B?clZZZUgrTHN1RFFGUEhSb001Q0F4VUgzSlJvY1M5OVU1ZENUWkZwNVBSdVFJ?=
- =?utf-8?B?STc4cGlGUmNVUkplM3JRZ0NUUWFhejZ3Z3BjcXJQdlVMWXNmS2lRZ2l6TVdJ?=
- =?utf-8?B?dUh0UmlhSkMvMDJ0RDJzNnppR1VBalM2bnd5MWc2NEFkSThxTFhJUjB5U3Bx?=
- =?utf-8?Q?hOkg=3D?=
+	=?utf-8?B?aEtlWmNDSklsMHJsYUdjL2JsZHZCUUo2TU1IcjlPUXBrUDV5T2t5aFpIOVJQ?=
+ =?utf-8?B?VVpZQmo3eFEveDY5MGIrb3cyaWNITFhhWFhnNC9PYlNnQ0Uya04zcG05RndM?=
+ =?utf-8?B?ZUp0YkxjWk42Ym5uMU9tZDNWTlpwVVR3WjdMQ3VBWnhjWjR4Z0RZTnNPK2Zu?=
+ =?utf-8?B?S1VablJ3dFQ4U2cvNS9TRFJhRU5lZVdEelpJQWhBa1VBNDZNekNKR3lyeTNr?=
+ =?utf-8?B?ZFY4c3NTemI5QnhhV0Q2QmJsS3NTKy9BUFlNTStQdXlIQm00czcvQmNtZUJx?=
+ =?utf-8?B?MFJVK3BHOStWUTFMVzJMdGZ4R0lKUy9ZT0xhbXpKRlhhWVgvcVdtS2F6MDMz?=
+ =?utf-8?B?M0o5WkNlcEwrY2ZBNG9WQmMyVzN2K3JZTjhpUldNQStwb1M3Q1JYc2xxT0hB?=
+ =?utf-8?B?YVUvNnZ2S1ZEZDNEeDIzNWR0eG9MK0dodjNVV1RMdmE0ZWM4MzZ3KzFWSjNH?=
+ =?utf-8?B?b1cwUy9OeUVJYi9WaUNnaGVvemNLdTN5b09SY3pWTkJNZDhYQXhmdVV4b3hl?=
+ =?utf-8?B?anVVcHRDMlp2MDVUM0hpVU1wdkZMMEgvQTlvaEVtUkZDeThhYXBITTloeTV5?=
+ =?utf-8?B?Q0g0b3RCcWZqdEhsQVlMZU1RWDlzajl1RVNxVzVnbUVYTTdSV1hTRDE2R0c3?=
+ =?utf-8?B?OVBFU21NK2poQkV4YS9BSVNqNEx2SmhtSnUwZm5FeGFWZDhtR25OaTUwc05s?=
+ =?utf-8?B?ZmNTK2FXSnNLTHcrVnNsRVZLYnhaeThhejNBcXA0TmFBYnprSlo1REwxbENn?=
+ =?utf-8?B?RExmVEl6dStOaUpDemFxeldQcHNCQjFYUU1mTU9sVlh2R1FoZnpCNjgyaVF3?=
+ =?utf-8?B?QW1raHN4RTB6NWNpRlB6OXp3N0hIQTlCRDU3Z0trRDBmWUVtelo5SElyUVh2?=
+ =?utf-8?B?QjJsNmlaSkJRWlJBck9Xb0hHL0IxTTZ2Z0NEYkVjWkVsU0JuV1p2Z2tNUlE5?=
+ =?utf-8?B?bmIvZjJEKzF3bmxvQ2VlVTNadVA2N09rRE80NFY2M25tN3lKajJwWEJnaUt6?=
+ =?utf-8?B?Y0xYVDZJSE14eGoxVzZ5WktXSFlXQUp2WTdRN2VUUi96bFhxL2VoQjFRbmhs?=
+ =?utf-8?B?ek90WGp0NDVnbTlIcEFsWjBzSlUxSml0M21xNDVtS1dWTWxvWlRGaWVyYUZC?=
+ =?utf-8?B?NHNmMitBVDJ2MmdzM0o3OVhvV1IvOUNoVVZHUWxzTUI3Zkp5OTNXYVNpeVI5?=
+ =?utf-8?B?MFVHejFTRzduSlBSR2hYSFgyQkp3a2FONFZiUFIvL1Q4SHU1MFc3OGluMW50?=
+ =?utf-8?B?ZENFb0VwYU5qMmNTYTl6Ujd0bmw2WWhTc3dmSko5SmM4UUJQRzQ0QmVPVVdB?=
+ =?utf-8?B?YUFubDk5aWFXaUJ6MG9QUjhUMjZ2K1NqcXUxRmpzeEtMZktDUmRXT0JxKzNO?=
+ =?utf-8?B?Rm5FSUxsT25rV1liRUg0UENsTTA2Tk9wei93K1gwWnFJdkJJSFBiaFVGQjh3?=
+ =?utf-8?B?c00yblp2dkVndnF2dkprekNKcWRWTERJMnJPSVRNeUFGZjBQK2VENmd6ajdZ?=
+ =?utf-8?B?K0ZOQUZ3Nm9MUlM4ODE5aEYwNStsSVQzM2h2Z3lNNnVpNlJ3WEl5VVdVd1J6?=
+ =?utf-8?B?TW5sZll5YjVrTi9BMWtpWEVnSTFmdTVLYlhBNmlhQTdaOFkybS9YSW91ekRk?=
+ =?utf-8?B?NVJna1QrUzdHUkxaRjhPbTBXTHhIUTZSRDBtMThBaDRqcWRrVTZDWWpaaDZ5?=
+ =?utf-8?B?Q3RjVm41SDZHNDhHUzQ1Y0UrVFRvUmhLQ09EZGhsOGxyd0RIelZoZHJkbzhR?=
+ =?utf-8?B?OU55Rk41b1p4SFRNNjczamNSZjNMNlp5S2k1L0VHc3F4dXpUSy8wR3BSMktG?=
+ =?utf-8?B?MkgrZ0djVk9QV0g1eXRXcVYvQW5iTEZRU1B2ekZRSmNtWWZVWXlPSGxoSEVY?=
+ =?utf-8?B?QTVQMlF6TDh4T1h0UDBObW5aZXZjcHV2ZEwrM0dXekVJNzJGUVY1SDdsczNL?=
+ =?utf-8?B?UjcvNTFWV0dkZndic1BvNDg0RFVOd3ZYMHFlN3ZNUEQyNFpjNXVYZ1BUSXpJ?=
+ =?utf-8?B?by8wdGFuSXloajdkVjdjcW9yWWg2dXRVanhyTzlFOGtaWHR5eGhMNmhyWVFu?=
+ =?utf-8?B?T1NZblpvNVVPaGJPTWNJV21wOERZMTZIVG55UHJJRHdnZHN4b1RjUzU5VW9s?=
+ =?utf-8?Q?+ICI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(34020700016)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(34020700016)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 14:42:51.4500
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 14:42:49.6954
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed08deda-bb62-415d-5bf0-08de188bc4d8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9020e109-09be-4b1f-b735-08de188bc3ce
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6E.namprd02.prod.outlook.com
+	CY4PEPF0000FCBF.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5209
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6917
 
-Hi Aniket Limaye,
+Hi Dominik Haller,
 
-On Wed, 22 Oct 2025 17:56:33 +0530, Aniket Limaye wrote:
-> The I2C pins for some of the instances on J784S4/J742S2/AM69 are
-> configured as PIN_INPUT_PULLUP while these pins are open-drain type and
-> do not support internal pull-ups [0][1][2]. The pullup configuration
-> bits in the corresponding padconfig registers are reserved and any
-> writes to them have no effect and readback checks on those bits fail.
+On Mon, 13 Oct 2025 17:22:40 -0700, Dominik Haller wrote:
+> Add a label to the pmic node which is necessary to configure the pmic
+> esm in the spl devicetree.
 > 
-> Update the pinmux settings to use PIN_INPUT instead of PIN_INPUT_PULLUP
-> to reflect the correct hardware behaviour.
 > 
-> [...]
 
 I have applied the following to branch ti-next on [1].
 Thank you!
 
-[1/1] arm64: dts: ti: k3-j784s4: Fix I2C pinmux pull configuration
-      commit: 671c852fc53d1b6f5eccdb03c1889a484c9d1996
+[1/1] arm64: dts: ti: k3-am68-phycore-som: Add pmic label
+      commit: 33a2c98caba8a45d2da0c7678f14b036b5d8d750
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
