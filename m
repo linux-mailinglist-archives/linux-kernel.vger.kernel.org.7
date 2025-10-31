@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-880476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D251FC25D7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:32:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBE7C25DA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC1C74E057C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:32:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796321895D14
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096912D4B6D;
-	Fri, 31 Oct 2025 15:32:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED932D73BB;
+	Fri, 31 Oct 2025 15:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AJLpB3Qx"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA72D190C;
-	Fri, 31 Oct 2025 15:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102392D7392;
+	Fri, 31 Oct 2025 15:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761924735; cv=none; b=m59lKX6m7+bRgKUvRmmyeVhT45JfkOAnwWjQgpbf+x/wy00eNBr6BN4JtxFOC2B3EqZlfSfdF14OMTGAttmW65m6VP8G4sEMo44I+Fl8goxL822q7I1hpAw/TDrNHqmZ7PuvC286U9ao0f8ihMon9BNA1Ixl5T5LZWKy9/HvuTw=
+	t=1761924849; cv=none; b=gwO9n+dSc4jBebvCfX+Mc+e7a/8L/qEt3ahxdr+wzwT8Ao0axTdfWfswbGPkzfTzLJH3puO4FjVufTufOc/pS7tPjJ3fw3cEudS5BlOLXAau309+CzMQO2wjePl5sB8R2Wo4v+0m0fsn6Tririe2gWvCtSV0XcxYOyG1hTubYGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761924735; c=relaxed/simple;
-	bh=WcgFF4PkKNvA0xUIOYiPTH3prKFPwpV8G0/bf8Qb3+8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bry8EPGNha5haXNgL2V/bMOBevr8J3yrTWfsk4RCYPQh9YekRUeIAS0LNC5XSnxt4UFY/f1W8X6hhUQUEDRYQ78rUpnIQN8jmRvGen3NhfEKbxHX/+Mlxq8dO/JfjHLi1m7GIPqNTVuS8tLDic3eWbsmPjEeCJVoDwxgcrfEvJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cylHN0BWLz6M4GQ;
-	Fri, 31 Oct 2025 23:28:16 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id EDAE41402F2;
-	Fri, 31 Oct 2025 23:32:09 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 31 Oct
- 2025 15:32:09 +0000
-Date: Fri, 31 Oct 2025 15:32:07 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Devyn Liu <liudingyuan@h-partners.com>
-CC: <shenyang39@huawei.com>, <broonie@kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kangfenglong@huawei.com>, <liuyonglong@huawei.com>,
-	<lujunhua7@h-partners.com>, <yubowen8@huawei.com>, <liudingyuan@huawei.com>
-Subject: Re: [PATCH] spi: hisi-kunpeng: Fixed the wrong debugfs node name in
- hisi_spi debugfs initialization
-Message-ID: <20251031153207.000031ee@huawei.com>
-In-Reply-To: <20251024063133.3796584-1-liudingyuan@h-partners.com>
-References: <20251024063133.3796584-1-liudingyuan@h-partners.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761924849; c=relaxed/simple;
+	bh=kJmRRnNeS1owqm0E/1djEGR1sOxq7Nu3f4G1MM+I2Qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wo1Y1ML4E9JlcPfjfEnG4expbWtNBDQANKlXxIsKaTekjBLzDQrbXikPsfWR3XjHwiNK+26DzWSBYVhKA1vOcRGmDhOaJcxZwR1u/OmVUjOi9Rw3V2d9pjem3TY1jX6o9GJaEinkumxgrmZfGZn1QgtKw5WVJVOYFQLtKPotDnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AJLpB3Qx; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A857840E021A;
+	Fri, 31 Oct 2025 15:34:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QT8xxUEEt2T5; Fri, 31 Oct 2025 15:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761924840; bh=f00D3S5AR7vMTHGqzBoI83rNHDDKZCTG2jsuv9IM9Dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AJLpB3QxqFudtVnzMYLQ7RmFM9EPdqwTV4njAwFElqSe+bdglxejFhwAWYDWWMzXx
+	 4i5ir2ixnQ35wXxZYHjY7bCAriWWX8qZvkyu2yB9mMOsxItmEB0F+dNZCut/I17rGB
+	 0PqRCSWxPm6SID2wgA04CsmyQ4Q4dHQHUXCXAaXITp+bwR7ynzX8lhlh9i2UZC0Rai
+	 IyPdlwFRDQX7I3toF9J49V/vGYnv8OIBxD9oU0w9+zDwLAK4jzvh92GsVD//hb/3rs
+	 fjsDnr0d1Qi6F8fWKeQjx0uCD3sh5e8obAVQFlVXK2LZj2dRVUeE9qFt0vE5W3Se/e
+	 ubyRyV7+LuSK4Fjv31WWLhkBd37qpwEhjoIB8S7gaCjBGd4z90F8SGNNQOMiCVCP0W
+	 uTQ0UuOED+PfAS+JC4nsqdq5WPFQQ9Dt0rx1sRWdJEsIebu4zuHEO6IlNGtnb1ayVA
+	 jRgkwo56HVVJMrxGaNNJcZtSzkv3iE02PxNVxjpmLFtNbW2X/nNxQky+SZcW72XrGv
+	 pmWcp0+sWJOHEX1GPqVu+Ybh7X4q61crkHof31kVqm/pKhSmP7POlvbnzgkH555rpP
+	 RPxIbSTBkRXsiLbHkjXjpw5krf2M4ptPP81EygXYa/yzn0uXz1KVDe7pazDNHXOe7x
+	 iBlzNF4Jd/GwxqV2J9rfg5b4=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 38CDC40E016D;
+	Fri, 31 Oct 2025 15:33:43 +0000 (UTC)
+Date: Fri, 31 Oct 2025 16:33:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	hpa@zytor.com, x86@kernel.org, apopple@nvidia.com, thuth@redhat.com,
+	nik.borisov@suse.com, kas@kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, kernel-team@meta.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Tobias Fleig <tfleig@meta.com>
+Subject: Re: [PATCH v2 2/2] efi/libstub: Fix page table access in 5-level to
+ 4-level paging transition
+Message-ID: <20251031153336.GJaQTW0GUyWc1CZla4@fat_crate.local>
+References: <20251028105637.769470-1-usamaarif642@gmail.com>
+ <20251028105637.769470-3-usamaarif642@gmail.com>
+ <20251031144002.GMaQTKQnpp2u493ZZS@fat_crate.local>
+ <CAMj1kXEwfYqTG2R8m8+t=DLFsBY3wxSm1b70DyK2gu_TF-L4wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEwfYqTG2R8m8+t=DLFsBY3wxSm1b70DyK2gu_TF-L4wQ@mail.gmail.com>
 
-On Fri, 24 Oct 2025 14:31:33 +0800
-Devyn Liu <liudingyuan@h-partners.com> wrote:
+On Fri, Oct 31, 2025 at 03:43:25PM +0100, Ard Biesheuvel wrote:
+> This code should be using native_pgd_val() not pgd_val().
 
-> In hisi_spi_debugfs_init, spi controller pointer is calculated by
-> container_of macro, and the member is hs->dev. But the host pointer cannot
-> be calculated offset directly by this, because hs->dev points to the
-> device in platform device(pdev->dev), and it is the host->dev.parent
-> points to the pdev->dev, which is set in __spi_alloc_controller.
-> 
-> In this patch, this issues is fixed by getting the spi_controller data
-> from pdev->dev->driver_data directly, driver_data points to the spi
-> controller data in the probe stage.
-> 
-> Signed-off-by: Devyn Liu <liudingyuan@h-partners.com>
+Seems to fix it, thanks.
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+I'll let Usama do more testing along with the usual build smoke tests - all
+permutations of the below:
 
-> ---
->  drivers/spi/spi-hisi-kunpeng.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-hisi-kunpeng.c b/drivers/spi/spi-hisi-kunpeng.c
-> index dadf558dd9c0..7458a4bc0856 100644
-> --- a/drivers/spi/spi-hisi-kunpeng.c
-> +++ b/drivers/spi/spi-hisi-kunpeng.c
-> @@ -164,7 +164,7 @@ static int hisi_spi_debugfs_init(struct hisi_spi *hs)
->  
->  	struct spi_controller *host;
->  
-> -	host = container_of(hs->dev, struct spi_controller, dev);
-> +	host = hs->dev->driver_data;
->  	snprintf(name, 32, "hisi_spi%d", host->bus_num);
->  	hs->debugfs = debugfs_create_dir(name, NULL);
->  	if (IS_ERR(hs->debugfs))
+ARCHES=('x86_64' 'i386')
+SMOKE_CONFIGS=("allnoconfig" "defconfig" "allmodconfig" "allyesconfig")
 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
