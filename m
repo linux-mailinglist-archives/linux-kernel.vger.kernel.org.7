@@ -1,522 +1,656 @@
-Return-Path: <linux-kernel+bounces-879583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6BCC23837
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:15:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AF3C23843
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95D3189E71F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:15:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE5104EB2F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193D8327217;
-	Fri, 31 Oct 2025 07:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5372328623;
+	Fri, 31 Oct 2025 07:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E6cQL2rf";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Q7g1yt6Y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="YUKnFl1b"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D143271FB
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5CD328B70;
+	Fri, 31 Oct 2025 07:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894895; cv=none; b=iUWUgMM9OBKB8kZDZKtRANN92vkS+ppB/VVPzTdv2Wf+gH8FeF7JqLWYJCyk1OFkFZo4gRxjGDyPE2nO7H9Cub3eB7Xxz1pbjg15B7zBTr39OSYZYFXIo6Qcbd1dOf9kxp4skHexr+aCa9OJIvxnH6jcdFBvYBnrUMBmPzhoy/0=
+	t=1761894937; cv=none; b=V2ds0xqdDqRta9KaqtQ/NQixaMhISfXB9+LwUb8vh575UrkYi3rpMvAieUt4JACR/B0pkLLkW/eM2sXc2pjoMuWO4c026m5tLxqlddy1dGS3dvEpwMciCwWBGpE1qCbEVCNYW8FnXPLUTHz4KSCwleZH7oDtfJPt086XK5LSuaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894895; c=relaxed/simple;
-	bh=ZjFiT163DU8f0vSN+tXKjOELPUt4rwlVM61p1bhcAHY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cVDB2rLBkFTn/BDZkF/GpsTkc+NyPYHit6FvMij7eUMdwKpjKzOPzYh3yDmogSvVLp6UiYJtXDpKi17D2D68n8v4Zgu5nkgPoVj72Dz15VyEVq75EZXKo41LfUHX+NiCWzYyJM5rOSJZ+DmriRBbUqJwIcEWuOwzlyQA6Hui2bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E6cQL2rf; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Q7g1yt6Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V188gq1417233
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c3If5XRwUcch6Vq5Jb3/Y5QIOP0LOmjER+KdRVCU5eg=; b=E6cQL2rfBG/rmNVM
-	jtWQRvm0IA88wlS3RgVvE4p3oqDzg4xbHfBEvN7/0lfMJgk7Yyo1JhkMNwav9eY/
-	FTxaPidpc98KFqdg911/TQ9o5o6L6u3g5kNcWZRXFAtbjqByJMkZwiIX5kcHJsct
-	xeWbBBEt2iikmtpccEwDZ4Ejy4y2ghMedQjU2K0H9ze6a++umPQsv76AvlfrCs9m
-	jPP070rrtgyjxmG2JN7mkg6rAHxQhPU2ZP3BMteYRNPV2R27LycWyL2RNxAfpiyU
-	Lyjk+m+wsAad4pz2CLK1bgdneTdvIH2kBM4dvAw+C5wY/w+qUBlqZOiDjAvrM1C5
-	I5WRUg==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4k69gu18-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:52 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-340410b11b8so1787783a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:14:52 -0700 (PDT)
+	s=arc-20240116; t=1761894937; c=relaxed/simple;
+	bh=9gjK2wHVEI2cwyP19ZSa7HGwPtmu5ioiCQrU6rWBP2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aiGXuTwxL8zaRA9HTsU7tjvGm9PW4bAzGD8pBQinW5SvczJ8vClNv4GtSkI3SXy7lyE/kWfTAuw8eDoHgjOMhXII/XwpTUe+EMNTM3ZA5nJETKhaB4vyE/R+1MdL/VqJlosA2wMLxqUTnKSJ0KI55K9s/T+IMmAjna2KgQ/uxbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=YUKnFl1b; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 1930C1E39;
+	Fri, 31 Oct 2025 07:12:17 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=YUKnFl1b;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 4ABE731;
+	Fri, 31 Oct 2025 07:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761894891; x=1762499691; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=c3If5XRwUcch6Vq5Jb3/Y5QIOP0LOmjER+KdRVCU5eg=;
-        b=Q7g1yt6YlBBEqLKfGVwKG4cMHLKt3XqUQgJ+so/zT+rG0R+fkujeYFQvDPHIwx8k7B
-         LdEPjDMqCg4hIDRK2xuE3bWCYY5QkH6waawrfyvFQWieTcndca+85cEmnesBDwX8Pc4b
-         EtBmhI05Dgrnhmnflpwv2PJ9x59W3wcDgFkvJ7s6faAe6zG3pjHKNl5Z3kA9rdF3n60u
-         /jDX33Q/uFD9YumynDUuZE08e0Tir0csQG0VbiU8Iz436eV3GM6CcVhXgQnXLBew3xlh
-         glmNUl3v6O/rclRVpghlaRt8LhahRl6q9YLsAxac1kFvm+fBVxt8Gmvd/HijrKwwKSbD
-         NJyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761894891; x=1762499691;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c3If5XRwUcch6Vq5Jb3/Y5QIOP0LOmjER+KdRVCU5eg=;
-        b=fVnilhJzcdczwt9zVYKgn1sYsrvpMeMQ5Y2DKSpFIPmDjgFvfZHnmvmPUStDJb8D0U
-         68LXGc2ca5ieXmGWYTt9hruWLyFSNs5zi28guUJMJQcQ1lv4dWnkGQTW1+P6NZEoxFmN
-         d7qod5ohk+iQjIvThSBhzv/63tAC8COSx2wfnwP8bobQ2FonoZGImyf3XkOMZxBnWhxW
-         b1VN8tqDGFigrrbDzN5TJPpaKs78e3g6rdspI14kNucXD635VOgv+MrPpUuMPrRezIee
-         LAf67frFp2HdmM1ivIbMxT+Q0FDgnvHDm/ZjenGkuaqoBa8P2Vmqt82PnixlfRM20KOc
-         UHeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWNOpoE3w1Jw8n6tCTD3dgyRdKf8inn1NqJ2xRL/4RbAVnhr4pOsARBsVSOk+4BZaPZwaIrEDyWghmCgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+OObAjJ+yiqSn/QGCDHDlIp4aeGqHC4jd2+Er/KtREVbY/BKC
-	zinKyzyNx1b++6k348kLwzOLk7dURDHuA3Erq7BYxgHuawNECCQr/KqrR3Q4PqNKH6dJ6ZxjbtT
-	E0FNpNCpfV9Ws5Z89i6PMmsYGA53bPVKDTfQtj6C8rFNpvJINmId5LLHUoGEubzOIpZMPTviK87
-	A=
-X-Gm-Gg: ASbGncsSH6hs7U7vRxOAwbpX8lALcDxxA32d56ulbxMBhgZE8yJaILO/mQT0KtsDAIG
-	aIoE4TCLXbm6sjs4ZGtfC/OblvI41ciZ7Zf7TUzoiBQ40++JFe9C8KaYSCRfXKk/Z0X582aC6ub
-	kLaim4QYoMctRc6Wx13sfBiDCp3JSdtlH6FSjcJN9TFry1a9bdAPKfhkY+xW8HnxDu+mfVSlf1E
-	pPPlEq7RGu/1JJfy44/dkU38KcyPJsStZt49cKJoXIwxNhlNh4RAm75y1tGhTgUy12HxJQPQV9C
-	3tYemGbpfPRTAG8HlsY6uosvFmfsQh6DZdgGcLVaersxNM4H27D69n6vsEDEKUcGEd8+uzPxp3d
-	+JFj3K5toI9JF/SEUOkV4Qns9ESfvypk=
-X-Received: by 2002:a17:90b:3e88:b0:33b:b020:596a with SMTP id 98e67ed59e1d1-34082fd9e22mr3162364a91.10.1761894890991;
-        Fri, 31 Oct 2025 00:14:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxE5d0p7YQ8HrhMd6PO5rEIxewNDCfeak5gUQQuTsaswaLZ4F+BbU9dYiUnhC3kQyw4MWkTg==
-X-Received: by 2002:a17:90b:3e88:b0:33b:b020:596a with SMTP id 98e67ed59e1d1-34082fd9e22mr3162323a91.10.1761894890373;
-        Fri, 31 Oct 2025 00:14:50 -0700 (PDT)
-Received: from [10.0.0.3] ([106.222.229.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34050980be1sm4859994a91.2.2025.10.31.00.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 00:14:49 -0700 (PDT)
-Message-ID: <2dd8c1e1-1e05-1c81-cbb9-36ade7de513c@oss.qualcomm.com>
-Date: Fri, 31 Oct 2025 12:44:45 +0530
+	d=paragon-software.com; s=mail; t=1761894926;
+	bh=OpCFc2u6CH7glT0gDsjbR3AmVOrBe58fnilqPfGxNr8=;
+	h=From:To:CC:Subject:Date;
+	b=YUKnFl1b5TDAt+3QqxQrOc9/kPMtIiwf/qQl6BIoX1oNdbMJtcpFgaC7phHzXuUrb
+	 XQB37UKTkaO17R7pfv/hxt5lTKOVzjjthrIzxUP14h+Ugge1pBwr9aGfSR010yZqlv
+	 YYukDhQ4PUjs6VssO79T/jXD5cgo2Zp/brQUOHNo=
+Received: from localhost.localdomain (172.30.20.190) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 31 Oct 2025 10:15:25 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: remove ntfs_bio_pages and use page cache for compressed I/O
+Date: Fri, 31 Oct 2025 08:15:16 +0100
+Message-ID: <20251031071516.3604-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-Subject: Re: [PATCH v1 2/4] media: qcom: iris: Add rotation support for
- encoder
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
-        vikash.garodia@oss.qualcomm.com, abhinav.kumar@linux.dev,
-        bod@kernel.org, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
-        quic_renjiang@quicinc.com
-References: <20251015092708.3703-1-wangao.wang@oss.qualcomm.com>
- <20251015092708.3703-3-wangao.wang@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20251015092708.3703-3-wangao.wang@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDA2NSBTYWx0ZWRfX9uMcCtVBAD6W
- iZD+/qXJZ8HTHXBXMRjtzEFoskPNAmqo0SGrj8cmHro1x9k7PIy7ypBNF1ykhj5pupuu13Q0xMt
- 0OGnZRyNXBysD58xm39OqdiZcraRhU2jqjpYW/WBSvDPSVC+zLvnnxM3sRRevRI9S1JV5oVUWTo
- NFAuScP0Ce8+b7VR7UBhtGNZRn0gBBjNaGuZZfWF7ZkJW0/dvMQFyMzapJ7GIT1zTOaBqfqSNB+
- bBetopvPLx7XabIqwBlSrPOjruwRLigFxseQ9i0c7PlcGlcMri+ENDcCfDvFyqWQ/oLaknP9kei
- 8n0mAp2L/ZNqwnNhraUZc1ayH4UbqfLY/gPr2icdI9uKyXxd7a2AUoF/1mvZEiKSTI+aq6JC6Gb
- 376KXvsCbF0Sd/B/lLGGH/vCXjfCew==
-X-Authority-Analysis: v=2.4 cv=Bv2QAIX5 c=1 sm=1 tr=0 ts=690461ec cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Qa9o6sTEP_P653HxESMA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-GUID: Wao-fQejeltiMrr0fOeaeLlEatOv-yLN
-X-Proofpoint-ORIG-GUID: Wao-fQejeltiMrr0fOeaeLlEatOv-yLN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-31_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310065
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
+Replace the use of ntfs_bio_pages with the disk page cache for reading and
+writing compressed files. This slightly improves performance when reading
+compressed data and simplifies the I/O logic.
 
+When an XPRESS or LZX compressed file is opened for writing, it is now
+decompressed into a normal file before modification. A new argument (`int copy`)
+is added to ni_read_frame() to handle writing of decompressed and mapped data.
 
-On 10/15/2025 2:57 PM, Wangao Wang wrote:
-> Add rotation control for encoder, enabling V4L2_CID_ROTATE and handling
->  90/180/270 degree rotation.
-> 
-> Add VPSS buffer to platform data, which the rotate function requires.
-> 
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_ctrls.c | 34 ++++++++++++
->  drivers/media/platform/qcom/iris/iris_ctrls.h |  1 +
->  .../qcom/iris/iris_hfi_gen2_command.c         | 12 ++++-
->  .../qcom/iris/iris_hfi_gen2_defines.h         |  9 ++++
->  .../qcom/iris/iris_hfi_gen2_response.c        |  2 +
->  .../platform/qcom/iris/iris_platform_common.h |  1 +
->  .../platform/qcom/iris/iris_platform_gen2.c   | 20 +++++++
->  drivers/media/platform/qcom/iris/iris_utils.c |  6 +++
->  drivers/media/platform/qcom/iris/iris_utils.h |  1 +
->  .../platform/qcom/iris/iris_vpu_buffer.c      | 52 +++++++++++--------
->  10 files changed, 114 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> index 754a5ad718bc..00949c207ddb 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> @@ -98,6 +98,8 @@ static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
->  		return B_FRAME_QP_H264;
->  	case V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP:
->  		return B_FRAME_QP_HEVC;
-> +	case V4L2_CID_ROTATE:
-> +		return ROTATION;
->  	default:
->  		return INST_FW_CAP_MAX;
->  	}
-> @@ -185,6 +187,8 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
->  		return V4L2_CID_MPEG_VIDEO_H264_B_FRAME_QP;
->  	case B_FRAME_QP_HEVC:
->  		return V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP;
-> +	case ROTATION:
-> +		return V4L2_CID_ROTATE;
->  	default:
->  		return 0;
->  	}
-> @@ -883,6 +887,36 @@ int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->  				     &range, sizeof(range));
->  }
->  
-> +int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	u32 hfi_val;
-> +
-> +	switch (inst->fw_caps[cap_id].value) {
-> +	case 0:
-> +		hfi_val = HFI_ROTATION_NONE;
-> +		return 0;
-> +	case 90:
-> +		hfi_val = HFI_ROTATION_90;
-> +		break;
-> +	case 180:
-> +		hfi_val = HFI_ROTATION_180;
-> +		break;
-> +	case 270:
-> +		hfi_val = HFI_ROTATION_270;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return hfi_ops->session_set_property(inst, hfi_id,
-> +					     HFI_HOST_FLAGS_NONE,
-> +					     iris_get_port_info(inst, cap_id),
-> +					     HFI_PAYLOAD_U32,
-> +					     &hfi_val, sizeof(u32));
-> +}
-> +
->  int iris_set_properties(struct iris_inst *inst, u32 plane)
->  {
->  	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.h b/drivers/media/platform/qcom/iris/iris_ctrls.h
-> index 30af333cc494..3ea0a00c7587 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.h
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.h
-> @@ -32,6 +32,7 @@ int iris_set_min_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
->  int iris_set_max_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->  int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->  int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
-> +int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->  int iris_set_properties(struct iris_inst *inst, u32 plane);
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> index c2258dfb2a8a..15db4f9e85ff 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> @@ -198,8 +198,12 @@ static int iris_hfi_gen2_set_bitstream_resolution(struct iris_inst *inst, u32 pl
->  		payload_type = HFI_PAYLOAD_U32;
->  	} else {
->  		codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> -		resolution = ALIGN(inst->enc_bitstream_width, codec_align) << 16 |
-> -			ALIGN(inst->enc_bitstream_height, codec_align);
-> +		if (is_rotation_90_or_270(inst))
-> +			resolution = ALIGN(inst->enc_bitstream_height, codec_align) << 16 |
-> +				ALIGN(inst->enc_bitstream_width, codec_align);
-> +		else
-> +			resolution = ALIGN(inst->enc_bitstream_width, codec_align) << 16 |
-> +				ALIGN(inst->enc_bitstream_height, codec_align);
->  		inst_hfi_gen2->dst_subcr_params.bitstream_resolution = resolution;
->  		payload_type = HFI_PAYLOAD_32_PACKED;
->  	}
-> @@ -241,6 +245,10 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->  		right_offset = (ALIGN(inst->enc_raw_width, codec_align) - inst->enc_raw_width);
->  		left_offset = inst->crop.left;
->  		top_offset = inst->crop.top;
-> +		if (inst->fw_caps[ROTATION].value) {
-> +			bottom_offset = 0;
-> +			right_offset = 0;
-> +		}
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/attrib.c  |   4 +-
+ fs/ntfs3/file.c    |   6 +-
+ fs/ntfs3/frecord.c | 151 ++++++++++++---------------------------------
+ fs/ntfs3/fsntfs.c  | 123 +++++++++++++++++-------------------
+ fs/ntfs3/inode.c   |   1 -
+ fs/ntfs3/ntfs_fs.h |  20 ++++--
+ 6 files changed, 114 insertions(+), 191 deletions(-)
 
-why is this needed?
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index eced9013a881..d0373254f82a 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -1457,7 +1457,6 @@ int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
+ 		pgoff_t index = vbo[i] >> PAGE_SHIFT;
+ 
+ 		if (index != folio->index) {
+-			struct page *page = &folio->page;
+ 			u64 from = vbo[i] & ~(u64)(PAGE_SIZE - 1);
+ 			u64 to = min(from + PAGE_SIZE, wof_size);
+ 
+@@ -1467,8 +1466,7 @@ int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
+ 			if (err)
+ 				goto out1;
+ 
+-			err = ntfs_bio_pages(sbi, run, &page, 1, from,
+-					     to - from, REQ_OP_READ);
++			err = ntfs_read_run(sbi, run, addr, from, to - from);
+ 			if (err) {
+ 				folio->index = -1;
+ 				goto out1;
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 7471a4bbb438..60eb90bff955 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -59,7 +59,7 @@ static int ntfs_ioctl_get_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
+ 
+ static int ntfs_ioctl_set_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
+ {
+-	u8 user[FSLABEL_MAX] = {0};
++	u8 user[FSLABEL_MAX] = { 0 };
+ 	int len;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -1039,7 +1039,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 		if (!frame_uptodate && off) {
+ 			err = ni_read_frame(ni, frame_vbo, pages,
+-					    pages_per_frame);
++					    pages_per_frame, 0);
+ 			if (err) {
+ 				for (ip = 0; ip < pages_per_frame; ip++) {
+ 					folio = page_folio(pages[ip]);
+@@ -1104,7 +1104,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 			if (off || (to < i_size && (to & (frame_size - 1)))) {
+ 				err = ni_read_frame(ni, frame_vbo, pages,
+-						    pages_per_frame);
++						    pages_per_frame, 0);
+ 				if (err) {
+ 					for (ip = 0; ip < pages_per_frame;
+ 					     ip++) {
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index e44181185526..4a7d56c06dcb 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -2105,7 +2105,7 @@ int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio)
+ 		pages[i] = pg;
+ 	}
+ 
+-	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame);
++	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame, 0);
+ 
+ out1:
+ 	for (i = 0; i < pages_per_frame; i++) {
+@@ -2175,17 +2175,9 @@ int ni_decompress_file(struct ntfs_inode *ni)
+ 	 */
+ 	index = 0;
+ 	for (vbo = 0; vbo < i_size; vbo += bytes) {
+-		u32 nr_pages;
+ 		bool new;
+ 
+-		if (vbo + frame_size > i_size) {
+-			bytes = i_size - vbo;
+-			nr_pages = (bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
+-		} else {
+-			nr_pages = pages_per_frame;
+-			bytes = frame_size;
+-		}
+-
++		bytes = vbo + frame_size > i_size ? (i_size - vbo) : frame_size;
+ 		end = bytes_to_cluster(sbi, vbo + bytes);
+ 
+ 		for (vcn = vbo >> sbi->cluster_bits; vcn < end; vcn += clen) {
+@@ -2210,15 +2202,7 @@ int ni_decompress_file(struct ntfs_inode *ni)
+ 			pages[i] = pg;
+ 		}
+ 
+-		err = ni_read_frame(ni, vbo, pages, pages_per_frame);
+-
+-		if (!err) {
+-			down_read(&ni->file.run_lock);
+-			err = ntfs_bio_pages(sbi, &ni->file.run, pages,
+-					     nr_pages, vbo, bytes,
+-					     REQ_OP_WRITE);
+-			up_read(&ni->file.run_lock);
+-		}
++		err = ni_read_frame(ni, vbo, pages, pages_per_frame, 1);
+ 
+ 		for (i = 0; i < pages_per_frame; i++) {
+ 			unlock_page(pages[i]);
+@@ -2408,20 +2392,19 @@ static int decompress_lzx_xpress(struct ntfs_sb_info *sbi, const char *cmpr,
+  * Pages - Array of locked pages.
+  */
+ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+-		  u32 pages_per_frame)
++		  u32 pages_per_frame, int copy)
+ {
+ 	int err;
+ 	struct ntfs_sb_info *sbi = ni->mi.sbi;
+ 	u8 cluster_bits = sbi->cluster_bits;
+ 	char *frame_ondisk = NULL;
+ 	char *frame_mem = NULL;
+-	struct page **pages_disk = NULL;
+ 	struct ATTR_LIST_ENTRY *le = NULL;
+ 	struct runs_tree *run = &ni->file.run;
+ 	u64 valid_size = ni->i_valid;
+ 	u64 vbo_disk;
+ 	size_t unc_size;
+-	u32 frame_size, i, npages_disk, ondisk_size;
++	u32 frame_size, i, ondisk_size;
+ 	struct page *pg;
+ 	struct ATTRIB *attr;
+ 	CLST frame, clst_data;
+@@ -2513,7 +2496,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 		err = attr_wof_frame_info(ni, attr, run, frame64, frames,
+ 					  frame_bits, &ondisk_size, &vbo_data);
+ 		if (err)
+-			goto out2;
++			goto out1;
+ 
+ 		if (frame64 == frames) {
+ 			unc_size = 1 + ((i_size - 1) & (frame_size - 1));
+@@ -2524,7 +2507,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 
+ 		if (ondisk_size > frame_size) {
+ 			err = -EINVAL;
+-			goto out2;
++			goto out1;
+ 		}
+ 
+ 		if (!attr->non_res) {
+@@ -2545,10 +2528,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 					   ARRAY_SIZE(WOF_NAME), run, vbo_disk,
+ 					   vbo_data + ondisk_size);
+ 		if (err)
+-			goto out2;
+-		npages_disk = (ondisk_size + (vbo_disk & (PAGE_SIZE - 1)) +
+-			       PAGE_SIZE - 1) >>
+-			      PAGE_SHIFT;
++			goto out1;
+ #endif
+ 	} else if (is_attr_compressed(attr)) {
+ 		/* LZNT compression. */
+@@ -2582,60 +2562,37 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 		if (clst_data >= NTFS_LZNT_CLUSTERS) {
+ 			/* Frame is not compressed. */
+ 			down_read(&ni->file.run_lock);
+-			err = ntfs_bio_pages(sbi, run, pages, pages_per_frame,
+-					     frame_vbo, ondisk_size,
+-					     REQ_OP_READ);
++			err = ntfs_read_run(sbi, run, frame_mem, frame_vbo,
++					    ondisk_size);
+ 			up_read(&ni->file.run_lock);
+ 			goto out1;
+ 		}
+ 		vbo_disk = frame_vbo;
+-		npages_disk = (ondisk_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 	} else {
+ 		__builtin_unreachable();
+ 		err = -EINVAL;
+ 		goto out1;
+ 	}
+ 
+-	pages_disk = kcalloc(npages_disk, sizeof(*pages_disk), GFP_NOFS);
+-	if (!pages_disk) {
++	/* Allocate memory to read compressed data to. */
++	frame_ondisk = kvmalloc(ondisk_size, GFP_KERNEL);
++	if (!frame_ondisk) {
+ 		err = -ENOMEM;
+-		goto out2;
+-	}
+-
+-	for (i = 0; i < npages_disk; i++) {
+-		pg = alloc_page(GFP_KERNEL);
+-		if (!pg) {
+-			err = -ENOMEM;
+-			goto out3;
+-		}
+-		pages_disk[i] = pg;
+-		lock_page(pg);
++		goto out1;
+ 	}
+ 
+ 	/* Read 'ondisk_size' bytes from disk. */
+ 	down_read(&ni->file.run_lock);
+-	err = ntfs_bio_pages(sbi, run, pages_disk, npages_disk, vbo_disk,
+-			     ondisk_size, REQ_OP_READ);
++	err = ntfs_read_run(sbi, run, frame_ondisk, vbo_disk, ondisk_size);
+ 	up_read(&ni->file.run_lock);
+ 	if (err)
+-		goto out3;
+-
+-	/*
+-	 * To simplify decompress algorithm do vmap for source and target pages.
+-	 */
+-	frame_ondisk = vmap(pages_disk, npages_disk, VM_MAP, PAGE_KERNEL_RO);
+-	if (!frame_ondisk) {
+-		err = -ENOMEM;
+-		goto out3;
+-	}
++		goto out2;
+ 
+-	/* Decompress: Frame_ondisk -> frame_mem. */
+ #ifdef CONFIG_NTFS3_LZX_XPRESS
+ 	if (run != &ni->file.run) {
+ 		/* LZX or XPRESS */
+-		err = decompress_lzx_xpress(
+-			sbi, frame_ondisk + (vbo_disk & (PAGE_SIZE - 1)),
+-			ondisk_size, frame_mem, unc_size, frame_size);
++		err = decompress_lzx_xpress(sbi, frame_ondisk, ondisk_size,
++					    frame_mem, unc_size, frame_size);
+ 	} else
+ #endif
+ 	{
+@@ -2653,24 +2610,21 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+ 		memset(frame_mem + ok, 0, frame_size - ok);
+ 	}
+ 
+-	vunmap(frame_ondisk);
+-
+-out3:
+-	for (i = 0; i < npages_disk; i++) {
+-		pg = pages_disk[i];
+-		if (pg) {
+-			unlock_page(pg);
+-			put_page(pg);
+-		}
+-	}
+-	kfree(pages_disk);
+-
+ out2:
++	kvfree(frame_ondisk);
++out1:
+ #ifdef CONFIG_NTFS3_LZX_XPRESS
+ 	if (run != &ni->file.run)
+ 		run_free(run);
++	if (!err && copy) {
++		/* We are called from 'ni_decompress_file' */
++		/* Copy decompressed LZX or XPRESS data into new place. */
++		down_read(&ni->file.run_lock);
++		err = ntfs_write_run(sbi, &ni->file.run, frame_mem, frame_vbo,
++				     frame_size);
++		up_read(&ni->file.run_lock);
++	}
+ #endif
+-out1:
+ 	vunmap(frame_mem);
+ out:
+ 	for (i = 0; i < pages_per_frame; i++) {
+@@ -2697,13 +2651,11 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 	u64 frame_vbo = folio_pos(folio);
+ 	CLST frame = frame_vbo >> frame_bits;
+ 	char *frame_ondisk = NULL;
+-	struct page **pages_disk = NULL;
+ 	struct ATTR_LIST_ENTRY *le = NULL;
+ 	char *frame_mem;
+ 	struct ATTRIB *attr;
+ 	struct mft_inode *mi;
+ 	u32 i;
+-	struct page *pg;
+ 	size_t compr_size, ondisk_size;
+ 	struct lznt *lznt;
+ 
+@@ -2738,34 +2690,18 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		goto out;
+ 	}
+ 
+-	pages_disk = kcalloc(pages_per_frame, sizeof(struct page *), GFP_NOFS);
+-	if (!pages_disk) {
+-		err = -ENOMEM;
+-		goto out;
+-	}
+-
+-	for (i = 0; i < pages_per_frame; i++) {
+-		pg = alloc_page(GFP_KERNEL);
+-		if (!pg) {
+-			err = -ENOMEM;
+-			goto out1;
+-		}
+-		pages_disk[i] = pg;
+-		lock_page(pg);
+-	}
+-
+-	/* To simplify compress algorithm do vmap for source and target pages. */
+-	frame_ondisk = vmap(pages_disk, pages_per_frame, VM_MAP, PAGE_KERNEL);
++	/* Allocate memory to write compressed data to. */
++	frame_ondisk = kvmalloc(frame_size, GFP_KERNEL);
+ 	if (!frame_ondisk) {
+ 		err = -ENOMEM;
+-		goto out1;
++		goto out;
+ 	}
+ 
+ 	/* Map in-memory frame for read-only. */
+ 	frame_mem = vmap(pages, pages_per_frame, VM_MAP, PAGE_KERNEL_RO);
+ 	if (!frame_mem) {
+ 		err = -ENOMEM;
+-		goto out2;
++		goto out1;
+ 	}
+ 
+ 	mutex_lock(&sbi->compress.mtx_lznt);
+@@ -2781,7 +2717,7 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		if (!lznt) {
+ 			mutex_unlock(&sbi->compress.mtx_lznt);
+ 			err = -ENOMEM;
+-			goto out3;
++			goto out2;
+ 		}
+ 
+ 		sbi->compress.lznt = lznt;
+@@ -2818,25 +2754,16 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		goto out2;
+ 
+ 	down_read(&ni->file.run_lock);
+-	err = ntfs_bio_pages(sbi, &ni->file.run,
+-			     ondisk_size < frame_size ? pages_disk : pages,
+-			     pages_per_frame, frame_vbo, ondisk_size,
+-			     REQ_OP_WRITE);
++	err = ntfs_write_run(sbi, &ni->file.run,
++			     ondisk_size < frame_size ? frame_ondisk :
++							frame_mem,
++			     frame_vbo, ondisk_size);
+ 	up_read(&ni->file.run_lock);
+ 
+-out3:
+-	vunmap(frame_mem);
+ out2:
+-	vunmap(frame_ondisk);
++	vunmap(frame_mem);
+ out1:
+-	for (i = 0; i < pages_per_frame; i++) {
+-		pg = pages_disk[i];
+-		if (pg) {
+-			unlock_page(pg);
+-			put_page(pg);
+-		}
+-	}
+-	kfree(pages_disk);
++	kvfree(frame_ondisk);
+ out:
+ 	return err;
+ }
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 5ae910e9ecbd..a65b66c349e8 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -1479,99 +1479,86 @@ int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
+ }
+ 
+ /*
+- * ntfs_bio_pages - Read/write pages from/to disk.
++ * ntfs_read_write_run - Read/Write disk's page cache.
+  */
+-int ntfs_bio_pages(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+-		   struct page **pages, u32 nr_pages, u64 vbo, u32 bytes,
+-		   enum req_op op)
++int ntfs_read_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
++			void *buf, u64 vbo, size_t bytes, int wr)
+ {
+-	int err = 0;
+-	struct bio *new, *bio = NULL;
+ 	struct super_block *sb = sbi->sb;
+-	struct block_device *bdev = sb->s_bdev;
+-	struct page *page;
++	struct address_space *mapping = sb->s_bdev->bd_mapping;
+ 	u8 cluster_bits = sbi->cluster_bits;
+-	CLST lcn, clen, vcn, vcn_next;
+-	u32 add, off, page_idx;
++	CLST vcn_next, vcn = vbo >> cluster_bits;
++	CLST lcn, clen;
+ 	u64 lbo, len;
+-	size_t run_idx;
+-	struct blk_plug plug;
++	size_t idx;
++	u32 off, op;
++	struct page *page;
++	char *kaddr;
+ 
+ 	if (!bytes)
+ 		return 0;
+ 
+-	blk_start_plug(&plug);
++	if (!run_lookup_entry(run, vcn, &lcn, &clen, &idx))
++		return -ENOENT;
+ 
+-	/* Align vbo and bytes to be 512 bytes aligned. */
+-	lbo = (vbo + bytes + 511) & ~511ull;
+-	vbo = vbo & ~511ull;
+-	bytes = lbo - vbo;
++	if (lcn == SPARSE_LCN)
++		return -EINVAL;
+ 
+-	vcn = vbo >> cluster_bits;
+-	if (!run_lookup_entry(run, vcn, &lcn, &clen, &run_idx)) {
+-		err = -ENOENT;
+-		goto out;
+-	}
+ 	off = vbo & sbi->cluster_mask;
+-	page_idx = 0;
+-	page = pages[0];
++	lbo = ((u64)lcn << cluster_bits) + off;
++	len = ((u64)clen << cluster_bits) - off;
+ 
+ 	for (;;) {
+-		lbo = ((u64)lcn << cluster_bits) + off;
+-		len = ((u64)clen << cluster_bits) - off;
+-new_bio:
+-		new = bio_alloc(bdev, nr_pages - page_idx, op, GFP_NOFS);
+-		if (bio) {
+-			bio_chain(bio, new);
+-			submit_bio(bio);
+-		}
+-		bio = new;
+-		bio->bi_iter.bi_sector = lbo >> 9;
++		/* Read range [lbo, lbo+len). */
++		page = read_mapping_page(mapping, lbo >> PAGE_SHIFT, NULL);
+ 
+-		while (len) {
+-			off = vbo & (PAGE_SIZE - 1);
+-			add = off + len > PAGE_SIZE ? (PAGE_SIZE - off) : len;
++		if (IS_ERR(page))
++			return PTR_ERR(page);
+ 
+-			if (bio_add_page(bio, page, add, off) < add)
+-				goto new_bio;
++		off = offset_in_page(lbo);
++		op = PAGE_SIZE - off;
+ 
+-			if (bytes <= add)
+-				goto out;
+-			bytes -= add;
+-			vbo += add;
++		if (op > len)
++			op = len;
++		if (op > bytes)
++			op = bytes;
+ 
+-			if (add + off == PAGE_SIZE) {
+-				page_idx += 1;
+-				if (WARN_ON(page_idx >= nr_pages)) {
+-					err = -EINVAL;
+-					goto out;
+-				}
+-				page = pages[page_idx];
+-			}
++		kaddr = kmap_local_page(page);
++		if (wr) {
++			memcpy(kaddr + off, buf, op);
++			set_page_dirty(page);
++		} else {
++			memcpy(buf, kaddr + off, op);
++			flush_dcache_page(page);
++		}
++		kunmap_local(kaddr);
++		put_page(page);
+ 
+-			if (len <= add)
+-				break;
+-			len -= add;
+-			lbo += add;
++		bytes -= op;
++		if (!bytes)
++			return 0;
++
++		buf += op;
++		len -= op;
++		if (len) {
++			/* next volume's page. */
++			lbo += op;
++			continue;
+ 		}
+ 
++		/* get next range. */
+ 		vcn_next = vcn + clen;
+-		if (!run_get_entry(run, ++run_idx, &vcn, &lcn, &clen) ||
++		if (!run_get_entry(run, ++idx, &vcn, &lcn, &clen) ||
+ 		    vcn != vcn_next) {
+-			err = -ENOENT;
+-			goto out;
++			return -ENOENT;
+ 		}
+-		off = 0;
+-	}
+-out:
+-	if (bio) {
+-		if (!err)
+-			err = submit_bio_wait(bio);
+-		bio_put(bio);
+-	}
+-	blk_finish_plug(&plug);
+ 
+-	return err;
++		if (lcn == SPARSE_LCN)
++			return -EINVAL;
++
++		lbo = ((u64)lcn << cluster_bits);
++		len = ((u64)clen << cluster_bits);
++	}
+ }
+ 
+ /*
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 439078106cc6..53b51659b3a4 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -2106,7 +2106,6 @@ const struct address_space_operations ntfs_aops = {
+ 
+ const struct address_space_operations ntfs_aops_cmpr = {
+ 	.read_folio	= ntfs_read_folio,
+-	.readahead	= ntfs_readahead,
+ 	.dirty_folio	= block_dirty_folio,
+ 	.direct_IO	= ntfs_direct_IO,
+ };
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 6a7594d3f3eb..86f825cf1c29 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -570,7 +570,7 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
+ int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio);
+ int ni_decompress_file(struct ntfs_inode *ni);
+ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
+-		  u32 pages_per_frame);
++		  u32 pages_per_frame, int copy);
+ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
+ 		   u32 pages_per_frame);
+ int ni_remove_name(struct ntfs_inode *dir_ni, struct ntfs_inode *ni,
+@@ -633,9 +633,21 @@ int ntfs_get_bh(struct ntfs_sb_info *sbi, const struct runs_tree *run, u64 vbo,
+ 		u32 bytes, struct ntfs_buffers *nb);
+ int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
+ 		  struct ntfs_buffers *nb, int sync);
+-int ntfs_bio_pages(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+-		   struct page **pages, u32 nr_pages, u64 vbo, u32 bytes,
+-		   enum req_op op);
++int ntfs_read_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
++			void *buf, u64 vbo, size_t bytes, int wr);
++static inline int ntfs_read_run(struct ntfs_sb_info *sbi,
++				const struct runs_tree *run, void *buf, u64 vbo,
++				size_t bytes)
++{
++	return ntfs_read_write_run(sbi, run, buf, vbo, bytes, 0);
++}
++static inline int ntfs_write_run(struct ntfs_sb_info *sbi,
++				 const struct runs_tree *run, void *buf,
++				 u64 vbo, size_t bytes)
++{
++	return ntfs_read_write_run(sbi, run, buf, vbo, bytes, 1);
++}
++
+ int ntfs_bio_fill_1(struct ntfs_sb_info *sbi, const struct runs_tree *run);
+ int ntfs_vbo_to_lbo(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+ 		    u64 vbo, u64 *lbo, u64 *bytes);
+-- 
+2.43.0
 
->  	}
->  
->  	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> index aa1f795f5626..4edcce7faf5e 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> @@ -83,6 +83,15 @@ enum hfi_seq_header_mode {
->  };
->  
->  #define HFI_PROP_SEQ_HEADER_MODE		0x03000149
-> +
-> +enum hfi_rotation {
-> +	HFI_ROTATION_NONE = 0x00000000,
-> +	HFI_ROTATION_90   = 0x00000001,
-> +	HFI_ROTATION_180  = 0x00000002,
-> +	HFI_ROTATION_270  = 0x00000003,
-> +};
-> +
-> +#define HFI_PROP_ROTATION			0x0300014b
->  #define HFI_PROP_SIGNAL_COLOR_INFO		0x03000155
->  #define HFI_PROP_PICTURE_TYPE			0x03000162
->  #define HFI_PROP_DEC_DEFAULT_HEADER		0x03000168
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> index 2f1f118eae4f..dc3e606b6ab4 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> @@ -54,6 +54,8 @@ static u32 iris_hfi_gen2_buf_type_to_driver(struct iris_inst *inst,
->  			return BUF_SCRATCH_2;
->  	case HFI_BUFFER_PERSIST:
->  		return BUF_PERSIST;
-> +	case HFI_BUFFER_VPSS:
-> +		return BUF_VPSS;
->  	default:
->  		return 0;
->  	}
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 58d05e0a112e..9a4232b1c64e 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -140,6 +140,7 @@ enum platform_inst_fw_cap_type {
->  	P_FRAME_QP_HEVC,
->  	B_FRAME_QP_H264,
->  	B_FRAME_QP_HEVC,
-> +	ROTATION,
->  	INST_FW_CAP_MAX,
->  };
->  
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index 36d69cc73986..c2cba30be83d 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -588,6 +588,16 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
->  		.flags = CAP_FLAG_OUTPUT_PORT,
->  		.set = iris_set_u32,
->  	},
-> +	{
-> +		.cap_id = ROTATION,
-> +		.min = 0,
-> +		.max = 270,
-> +		.step_or_mask = 90,
-> +		.value = 0,
-> +		.hfi_id = HFI_PROP_ROTATION,
-> +		.flags = CAP_FLAG_OUTPUT_PORT,
-> +		.set = iris_set_rotation,
-> +	},
->  };
->  
->  static struct platform_inst_caps platform_inst_cap_sm8550 = {
-> @@ -729,6 +739,10 @@ static const u32 sm8550_dec_op_int_buf_tbl[] = {
->  	BUF_DPB,
->  };
->  
-> +static const u32 sm8550_enc_ip_int_buf_tbl[] = {
-> +	BUF_VPSS,
-
-VPSS would be needed for scaling as well, pls add in correct patch.
-
-> +};
-> +
->  static const u32 sm8550_enc_op_int_buf_tbl[] = {
->  	BUF_BIN,
->  	BUF_COMV,
-> @@ -816,6 +830,8 @@ struct iris_platform_data sm8550_data = {
->  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->  
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->  };
-> @@ -908,6 +924,8 @@ struct iris_platform_data sm8650_data = {
->  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->  
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->  };
-> @@ -989,6 +1007,8 @@ struct iris_platform_data sm8750_data = {
->  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->  
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->  };
-> diff --git a/drivers/media/platform/qcom/iris/iris_utils.c b/drivers/media/platform/qcom/iris/iris_utils.c
-> index 85c70a62b1fd..97465dfbdec1 100644
-> --- a/drivers/media/platform/qcom/iris/iris_utils.c
-> +++ b/drivers/media/platform/qcom/iris/iris_utils.c
-> @@ -124,3 +124,9 @@ int iris_check_core_mbps(struct iris_inst *inst)
->  
->  	return 0;
->  }
-> +
-> +bool is_rotation_90_or_270(struct iris_inst *inst)
-> +{
-> +	return inst->fw_caps[ROTATION].value == 90 ||
-> +		inst->fw_caps[ROTATION].value == 270;
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_utils.h b/drivers/media/platform/qcom/iris/iris_utils.h
-> index 75740181122f..b5705d156431 100644
-> --- a/drivers/media/platform/qcom/iris/iris_utils.h
-> +++ b/drivers/media/platform/qcom/iris/iris_utils.h
-> @@ -51,5 +51,6 @@ void iris_helper_buffers_done(struct iris_inst *inst, unsigned int type,
->  int iris_wait_for_session_response(struct iris_inst *inst, bool is_flush);
->  int iris_check_core_mbpf(struct iris_inst *inst);
->  int iris_check_core_mbps(struct iris_inst *inst);
-> +bool is_rotation_90_or_270(struct iris_inst *inst);
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> index 4463be05ce16..749cc3139de2 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> @@ -556,6 +556,22 @@ static u32 iris_vpu_dec_scratch1_size(struct iris_inst *inst)
->  		iris_vpu_dec_line_size(inst);
->  }
->  
-> +static inline u32 iris_vpu_enc_get_bitstream_width(struct iris_inst *inst)
-> +{
-> +	if (is_rotation_90_or_270(inst))
-> +		return inst->fmt_dst->fmt.pix_mp.height;
-> +	else
-> +		return inst->fmt_dst->fmt.pix_mp.width;
-> +}
-> +
-> +static inline u32 iris_vpu_enc_get_bitstream_height(struct iris_inst *inst)
-> +{
-> +	if (is_rotation_90_or_270(inst))
-> +		return inst->fmt_dst->fmt.pix_mp.width;
-> +	else
-> +		return inst->fmt_dst->fmt.pix_mp.height;
-> +}
-> +
->  static inline u32 size_bin_bitstream_enc(u32 width, u32 height,
->  					 u32 rc_type)
->  {
-> @@ -638,10 +654,9 @@ static inline u32 hfi_buffer_bin_enc(u32 width, u32 height,
->  static u32 iris_vpu_enc_bin_size(struct iris_inst *inst)
->  {
->  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
-> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
->  	u32 stage = inst->fw_caps[STAGE].value;
-> -	struct v4l2_format *f = inst->fmt_dst;
-> -	u32 height = f->fmt.pix_mp.height;
-> -	u32 width = f->fmt.pix_mp.width;
->  	u32 lcu_size;
->  
->  	if (inst->codec == V4L2_PIX_FMT_HEVC)
-> @@ -676,9 +691,8 @@ u32 hfi_buffer_comv_enc(u32 frame_width, u32 frame_height, u32 lcu_size,
->  
->  static u32 iris_vpu_enc_comv_size(struct iris_inst *inst)
->  {
-> -	struct v4l2_format *f = inst->fmt_dst;
-> -	u32 height = f->fmt.pix_mp.height;
-> -	u32 width = f->fmt.pix_mp.width;
-> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
-> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
->  	u32 num_recon = 1;
->  	u32 lcu_size = 16;
->  
-> @@ -958,9 +972,8 @@ u32 hfi_buffer_non_comv_enc(u32 frame_width, u32 frame_height,
->  static u32 iris_vpu_enc_non_comv_size(struct iris_inst *inst)
->  {
->  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-> -	struct v4l2_format *f = inst->fmt_dst;
-> -	u32 height = f->fmt.pix_mp.height;
-> -	u32 width = f->fmt.pix_mp.width;
-> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
-> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
->  	u32 lcu_size = 16;
->  
->  	if (inst->codec == V4L2_PIX_FMT_HEVC) {
-> @@ -1051,9 +1064,8 @@ u32 hfi_buffer_line_enc_vpu33(u32 frame_width, u32 frame_height, bool is_ten_bit
->  static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
->  {
->  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-> -	struct v4l2_format *f = inst->fmt_dst;
-> -	u32 height = f->fmt.pix_mp.height;
-> -	u32 width = f->fmt.pix_mp.width;
-> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
-> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
->  	u32 lcu_size = 16;
->  
->  	if (inst->codec == V4L2_PIX_FMT_HEVC) {
-> @@ -1131,10 +1143,8 @@ static u32 iris_vpu_enc_arp_size(struct iris_inst *inst)
->  
->  inline bool is_scaling_enabled(struct iris_inst *inst)
->  {
-> -	return inst->crop.left != inst->compose.left ||
-> -		inst->crop.top != inst->compose.top ||
-> -		inst->crop.width != inst->compose.width ||
-> -		inst->crop.height != inst->compose.height;
-> +	return inst->fmt_dst->fmt.pix_mp.width != inst->fmt_src->fmt.pix_mp.width ||
-> +		inst->fmt_dst->fmt.pix_mp.height != inst->fmt_src->fmt.pix_mp.height;
->  }
-
-this is needed for scaling as well? pls add in correct patch.
-
-Thanks,
-Dikshita
-
->  
->  static inline
-> @@ -1291,9 +1301,8 @@ static inline u32 hfi_buffer_scratch1_enc(u32 frame_width, u32 frame_height,
->  static u32 iris_vpu_enc_scratch1_size(struct iris_inst *inst)
->  {
->  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-> -	struct v4l2_format *f = inst->fmt_dst;
-> -	u32 frame_height = f->fmt.pix_mp.height;
-> -	u32 frame_width = f->fmt.pix_mp.width;
-> +	u32 frame_height = iris_vpu_enc_get_bitstream_height(inst);
-> +	u32 frame_width = iris_vpu_enc_get_bitstream_width(inst);
->  	u32 num_ref = 1;
->  	u32 lcu_size;
->  	bool is_h265;
-> @@ -1389,9 +1398,8 @@ static inline u32 hfi_buffer_scratch2_enc(u32 frame_width, u32 frame_height,
->  
->  static u32 iris_vpu_enc_scratch2_size(struct iris_inst *inst)
->  {
-> -	struct v4l2_format *f = inst->fmt_dst;
-> -	u32 frame_width = f->fmt.pix_mp.width;
-> -	u32 frame_height = f->fmt.pix_mp.height;
-> +	u32 frame_height = iris_vpu_enc_get_bitstream_height(inst);
-> +	u32 frame_width = iris_vpu_enc_get_bitstream_width(inst);
->  	u32 num_ref = 1;
->  
->  	return hfi_buffer_scratch2_enc(frame_width, frame_height, num_ref,
 
