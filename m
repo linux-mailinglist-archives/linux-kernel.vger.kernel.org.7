@@ -1,56 +1,52 @@
-Return-Path: <linux-kernel+bounces-880717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D759DC2664D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:37:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBA1C26569
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:27:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308574600D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:33:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CB7635149E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332233559F8;
-	Fri, 31 Oct 2025 17:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20239309F01;
+	Fri, 31 Oct 2025 17:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hqNZ/wsU"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YezzmReo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B8E35504A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD5E2FB0B9;
+	Fri, 31 Oct 2025 17:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931723; cv=none; b=A9Yh2QC+uXAdvIy7ObMdFrHGR7804NmpyPJrpxOnfvuricaQAU06SbEQGEju9sYoVNAojATbgUnj/HqLh54nVyrVQDXetB8dZPgxxHVtiJgEHNKoakGhwknpoh3xuq5xj65F1GRDdU9FxbV/UhhKWebjf62ZpZ1iCqR7R/VdLDA=
+	t=1761931636; cv=none; b=TnT5EDmEsltEIx/8NcIBpGC7ggv42Y7vancDaU0a/z07zkb3wg65aCG0uMX4HSW1lZKeC4B8S3dHFH6JIn6V++3rnT+FIAIsSC6LIKX8EN+8NpIL5lNeNugwKNB3PGEgGQMXIBzWXcNHfaizSTeCp1UppxLs8WsLBdSmlgTWDMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931723; c=relaxed/simple;
-	bh=iX+n9HzY/YkNmOzBAg84DXwptwGF3y7LQxR8/FtomhA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iimk1gKdPjXzqxXGxSr7PMX1+X6wXB+gOy1X4rQ3eMbKD/7/c0Mcc1KFVbNvCJm2SZurG3rTKXMzp6c9B+V5PqcdTI4lkeupIJBzJey4Zti0ca0ln8GLPTvGMruDgerbytkUEal6EW8BA1lx6VymcVhxtYXDzIXl2W7uhstyVlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hqNZ/wsU; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A9A5AC0E959;
-	Fri, 31 Oct 2025 17:28:19 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3ACC160704;
-	Fri, 31 Oct 2025 17:28:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B053A11818007;
-	Fri, 31 Oct 2025 18:28:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761931719; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0TkMp9aMwcsGosTWrhdTtxz4Lwc7YIxnivcDZ+k6Uqo=;
-	b=hqNZ/wsUGkTKZq0riG/RmSnnIu+QPPr5pXIU6713zaYh/NXlRythOCClzvCx1gGf3gP5dh
-	yuDeya8OSJEaPvBDjz9H7XBH6q3G92VWEGDKFegdGjw8rY7TydMlKET3/ntMuEmC8Moqx3
-	5GvTE+YcEf0nwT2FSO5G3gFnVLKnH2g998eTODG+mg2ILBDdv+x0dKwxoCNp8CuJRd6s01
-	U7K9wgK6oNMpFuXhFBxa2+ZLzLGRmG9mTCPMHWA2O1974jWEPBk1YDGcotII5jhekKbfbK
-	bn51RrZRAgPew1eXsdTJN+9Hc6WAMsXJzpRRDASkSIpU1SEo1zlzeFZqsgBfqA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 31 Oct 2025 18:27:06 +0100
-Subject: [PATCH 22/28] mtd: spinand: Gather all the bus interface steps in
- one single function
+	s=arc-20240116; t=1761931636; c=relaxed/simple;
+	bh=t4zIx4Z11X9zS02u+s0yDHEllOpDAKEqSMdLm4SCIRU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CrP9t78zJnfwHtRWBwHRG4F5MXCyhSsYZHwNAopccir1eYsrgkRU1N6E9gefZPwV5v5b/j8/gVz1CRO0q6HBuQVoyx5Axtll6f/K5d4JP5clXUzQMxxIqlu6uKGJNFdYpNuVWf8g/qanZvPyZX/jpOqedM415quX7WZG2rumTAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YezzmReo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E6458C4CEE7;
+	Fri, 31 Oct 2025 17:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761931636;
+	bh=t4zIx4Z11X9zS02u+s0yDHEllOpDAKEqSMdLm4SCIRU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=YezzmReoBglXbbwmuX7vtp2Yo5fWl1KttjMuHVlFK4VMneRMnUbGJrpjNwcAAJWAv
+	 wBBNW2CT8fXIxeK1SdB3sV/vmSNuC1LZ7O04Mk86aAGJHpEQ/jrqWDNUxj5oE4QiWs
+	 exT7DjIq2vEm1+p3quxHp7VZRNfl7+VX+/h/ZOiinzitSJDqSeAjcggvv11zdcJiTn
+	 xv6YMeUrySBTqXgwi892Ivh7Dvv/m0b4+v08+8AoHjzafHbhyId+B6+XsoZGyRj+ri
+	 LC77rKbh7ewjJkAEmFCj6al2UmFsQl2V8TDo1mbaiQsv7d5CH/zBN6NdDmu9UI9AjB
+	 xjNbYqGXrC5Og==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D82CCFA02;
+	Fri, 31 Oct 2025 17:27:15 +0000 (UTC)
+From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
+Subject: [PATCH net-next v2 0/4] net: stmmac: socfpga: Add Agilex5 platform
+ support and enhancements
+Date: Sat, 01 Nov 2025 01:27:06 +0800
+Message-Id: <20251101-agilex5_ext-v2-0-a6b51b4dca4d@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,147 +55,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-22-be42de23ebf1@bootlin.com>
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
-To: Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAGrxBGkC/22NwQqDMBBEf0X23JRsxEp66n8UKWmy6oKNkgRJk
+ fx7g+cehzfz5oBIgSnCvTkg0M6RV1+DujRgZ+MnEuxqBiVVh1JpYSZeKHcvyklY7N+u77V1NEJ
+ dbIFGzqftCZ6S8LUFQyUzx7SG73mz48n/GncUUqBuEVtVze72MEuiYK52/cBQSvkBxwC0UbEAA
+ AA=
+X-Change-ID: 20251029-agilex5_ext-c17bd779cdef
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rohan G Thomas <rohan.g.thomas@altera.com>
 X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761931634; l=1421;
+ i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
+ bh=t4zIx4Z11X9zS02u+s0yDHEllOpDAKEqSMdLm4SCIRU=;
+ b=8tiYGEzN7w19aqajaofQRjkGf2F3m3eiOWWkDj28bjUqjQj6UIaO4zBm5kbVZIxDz1VNq8w2i
+ dSp1UujxJ92AuHoJwtCC4A5HU1kp3nuDde1lw7H3PS28n7NfeQi3Q6x
+X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
+ pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
+X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
+ with auth_id=494
+X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reply-To: rohan.g.thomas@altera.com
 
-Writing the quad enable bit in one helper and doing the chip
-configuration in another does not make much sense from a bus interface
-setup point of view.
+This patch series adds support for the Agilex5 EMAC platform to the
+dwmac-socfpga driver.
 
-Instead, let's create a broader helper which is going to be in charge of
-all the bus configuration steps at once. This will specifically allow to
-transition to octal DDR mode, and even fallback to quad (if suppoorted)
-or single mode otherwise.
+The series includes:
+   - Platform configuration for Agilex5 EMAC
+   - Enabling Time-Based Scheduling (TBS) for Tx queues 6 and 7
+   - Enabling TCP Segmentation Offload(TSO)
+   - Adding hardware-supported cross timestamping using the SMTG IP,
+     allowing precise synchronization between MAC and system time via
+     PTP_SYS_OFFSET_PRECISE.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
 ---
- drivers/mtd/nand/spi/core.c | 62 +++++++++++++++++++++++++++------------------
- 1 file changed, 37 insertions(+), 25 deletions(-)
+Changes in v2:
+- Fixed reduntant leftover tsis irq and use_ns changes from smtg_crosststamp
+- Keep common platform config for socfpga platforms in socfpga_dwmac_probe
+- Link to v1: https://lore.kernel.org/r/20251029-agilex5_ext-v1-0-1931132d77d6@altera.com
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index 7c01516c6b6acb41d2cc080d6fbaaa5ace661602..caf549617f369ada2c1712e863e563ae547ca0e6 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -177,18 +177,9 @@ static int spinand_init_cfg_cache(struct spinand_device *spinand)
- 	return 0;
- }
- 
--static int spinand_init_quad_enable(struct spinand_device *spinand)
-+static int spinand_init_quad_enable(struct spinand_device *spinand,
-+				    bool enable)
- {
--	bool enable = false;
--
--	if (!(spinand->flags & SPINAND_HAS_QE_BIT))
--		return 0;
--
--	if (spinand->op_templates->read_cache->data.buswidth == 4 ||
--	    spinand->op_templates->write_cache->data.buswidth == 4 ||
--	    spinand->op_templates->update_cache->data.buswidth == 4)
--		enable = true;
--
- 	return spinand_upd_cfg(spinand, CFG_QUAD_ENABLE,
- 			       enable ? CFG_QUAD_ENABLE : 0);
- }
-@@ -1306,12 +1297,6 @@ static int spinand_manufacturer_init(struct spinand_device *spinand)
- 			return ret;
- 	}
- 
--	if (spinand->configure_chip) {
--		ret = spinand->configure_chip(spinand);
--		if (ret)
--			return ret;
--	}
--
- 	return 0;
- }
- 
-@@ -1517,6 +1502,31 @@ static int spinand_detect(struct spinand_device *spinand)
- 	return 0;
- }
- 
-+static int spinand_configure_chip(struct spinand_device *spinand)
-+{
-+	bool quad_enable = false;
-+	int ret;
-+
-+	if (spinand->flags & SPINAND_HAS_QE_BIT) {
-+		if (spinand->ssdr_op_templates.read_cache->data.buswidth == 4 ||
-+		    spinand->ssdr_op_templates.write_cache->data.buswidth == 4 ||
-+		    spinand->ssdr_op_templates.update_cache->data.buswidth == 4)
-+			quad_enable = true;
-+	}
-+
-+	ret = spinand_init_quad_enable(spinand, quad_enable);
-+	if (ret)
-+		return ret;
-+
-+	if (spinand->configure_chip) {
-+		ret = spinand->configure_chip(spinand);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return ret;
-+}
-+
- static int spinand_init_flash(struct spinand_device *spinand)
- {
- 	struct device *dev = &spinand->spimem->spi->dev;
-@@ -1527,10 +1537,6 @@ static int spinand_init_flash(struct spinand_device *spinand)
- 	if (ret)
- 		return ret;
- 
--	ret = spinand_init_quad_enable(spinand);
--	if (ret)
--		return ret;
--
- 	ret = spinand_upd_cfg(spinand, CFG_OTP_ENABLE, 0);
- 	if (ret)
- 		return ret;
-@@ -1543,19 +1549,25 @@ static int spinand_init_flash(struct spinand_device *spinand)
- 		return ret;
- 	}
- 
-+	ret = spinand_configure_chip(spinand);
-+	if (ret)
-+		goto manuf_cleanup;
-+
- 	/* After power up, all blocks are locked, so unlock them here. */
- 	for (i = 0; i < nand->memorg.ntargets; i++) {
- 		ret = spinand_select_target(spinand, i);
- 		if (ret)
--			break;
-+			goto manuf_cleanup;
- 
- 		ret = spinand_lock_block(spinand, BL_ALL_UNLOCKED);
- 		if (ret)
--			break;
-+			goto manuf_cleanup;
- 	}
- 
--	if (ret)
--		spinand_manufacturer_cleanup(spinand);
-+	return 0;
-+
-+manuf_cleanup:
-+	spinand_manufacturer_cleanup(spinand);
- 
- 	return ret;
- }
+---
+Rohan G Thomas (4):
+      net: stmmac: socfpga: Agilex5 EMAC platform configuration
+      net: stmmac: socfpga: Enable TBS support for Agilex5
+      net: stmmac: socfpga: Enable TSO for Agilex5 platform
+      net: stmmac: socfpga: Add hardware supported cross-timestamp
 
+ .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    | 166 ++++++++++++++++++++-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   5 +
+ 2 files changed, 168 insertions(+), 3 deletions(-)
+---
+base-commit: 0d0eb186421d0886ac466008235f6d9eedaf918e
+change-id: 20251029-agilex5_ext-c17bd779cdef
+
+Best regards,
 -- 
-2.51.0
+Rohan G Thomas <rohan.g.thomas@altera.com>
+
 
 
