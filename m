@@ -1,190 +1,169 @@
-Return-Path: <linux-kernel+bounces-879430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BFCC2315A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:57:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D612C23168
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 298A64E56C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EB33ABD4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA36530E83D;
-	Fri, 31 Oct 2025 02:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukhDa1qk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E6130EF6A;
+	Fri, 31 Oct 2025 02:59:19 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BFB27E040;
-	Fri, 31 Oct 2025 02:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A998C155C97;
+	Fri, 31 Oct 2025 02:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761879443; cv=none; b=BUM+sHAbkMLCyw4fRsYZhPl2Xc1cKxlZH0DB3QNT9pJjp8K9FPGkTz+nkGdLRHhfAxe9Igos9ALUSxpufYH6nfI0CEnef0rNCXwOQADUkbO8h0ctjgNCGNAi6wh+zFOvqPUgLJZ77akZ3T1Cm91KIHDg9mzPNWuNm8nysi7m7kU=
+	t=1761879559; cv=none; b=WGYbRKIGXAuglqfnhd4vaQNfLBt4EgBFCNx2iwoQY5Sg/lMMWg7B6h58+r1p6/diwuvQv/EhRKEJ5Aa7xmCGT2L/XBwhjyr0EkEct76YUvoAR/5/1p7HuAfHHgDsRO7WyBQrJeQzKfZm5YnlHNOJOeNydqQRgVT/nnDe/GGT7SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761879443; c=relaxed/simple;
-	bh=KUsx73wI6sPC91XwqDu6VZod5VCxoTfFdHsrrDX5nf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7qWVxLhYAzbB6g9sSXhzjZ6KMI2Ek32q1CS9cTsSL1Ag/YbCK21CaXBwVjJNHg3W9dNL3fizfRBbjACh19+7xvob3KRPIoVqvBvf+G5jJ5WRDIv7z62oESq1k2kKngSMY4ZsVgK46RYdD1m6nOHWmmKDSuknCnRhl2L5ZazVmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukhDa1qk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E85C4CEF1;
-	Fri, 31 Oct 2025 02:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761879441;
-	bh=KUsx73wI6sPC91XwqDu6VZod5VCxoTfFdHsrrDX5nf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ukhDa1qkvjAzY+T6gBWTtd0jrGSBFVBl09O0lJYB2SHzAOkMz6sTMtOR/dj+TnIXd
-	 LKZzJvbJ/0Qcoa+mSFCf6INBUkBhBfcr+xfw83aFPRW3DgpByzn8jq71LeoORgFtXF
-	 rsspDY5bF10qgLba/5IRnXdYcg6qvi65+5BaZ3g49HXYWerJIuM5AFURncimGWqQgo
-	 gJYMwHgKqFcjWR22DcBqvbRcLpg8c0pMZVtQKyhMzYkpO51WfoyYTYXPf/6BhtC63p
-	 9a3LBIl6DJQhdIN1PTVP87RynTFfRaInze9g3nZSylz9YcqYTyNxlxhFgvhmOc//U7
-	 dNf7nuRJe+ArQ==
-Date: Fri, 31 Oct 2025 10:57:12 +0800
-From: "Peter Chen (CIX)" <peter.chen@kernel.org>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Peter Chen <hzpeterchen@gmail.com>, Chaoyi Chen <kernel@airkyi.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Yubing Zhang <yubing.zhang@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Amit Sunil Dhamne <amitsd@google.com>,
-	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
- support for DisplayPort
-Message-ID: <20251031025712.GA1284354@nchen-desktop>
-References: <20251029071435.88-11-kernel@airkyi.com>
- <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
- <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com>
- <e0c5bda3-7428-49e0-9955-fa23f1e4f35d@rock-chips.com>
- <CAL411-oXfvp-iqN+uRmFHijdmW=1omKwozKOoZ2shxukMHmwPg@mail.gmail.com>
- <C6253E8254C80B0F+839b71d0-1bd8-40b7-9515-7ce4a1eb8673@airkyi.com>
- <CAL411-pULVu4AYybW9oW7kmr4M_kJhdytgBjLPb4y6w_2dj+0w@mail.gmail.com>
- <7853bbf0-34e5-4880-a2f4-2d73f25cd5e6@rock-chips.com>
- <CAL411-rFK0o_cxBO_yJFHWurGFKxZGxw6=kpqxRipMetJskTaQ@mail.gmail.com>
- <e2fcc437-0650-4fdf-bb75-3463a80299fe@rock-chips.com>
+	s=arc-20240116; t=1761879559; c=relaxed/simple;
+	bh=NX+LUOI/DG6pE0xhbeDboThMj5zOWdUpVqcRRjTUk8I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aHLYe2uFHtMN4vRO/QRciTh89QOh3Z3OD3v64yGgZx536WBhHpWbYn5KUgtd45BaqWtFZ516259nlKmXZY13QTv8+oMYxhbqtIywuSFxKvTZrX1mWRC5j25fxdaavNp3sel5SsvREUoExSkaejdQj/ecO0QVfqJmyEtq1wdCuPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201617.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202510311059002425;
+        Fri, 31 Oct 2025 10:59:00 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 31 Oct 2025 10:58:59 +0800
+Received: from inspur.com (10.100.2.96) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 31 Oct 2025 10:58:59 +0800
+Received: from localhost.localdomain.com (unknown [10.94.18.144])
+	by app1 (Coremail) with SMTP id YAJkCsDwdHTxJQRpDoE5AA--.2227S4;
+	Fri, 31 Oct 2025 10:58:59 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <john.g.garry@oracle.com>, <will@kernel.org>, <james.clark@linaro.org>,
+	<mike.leach@linaro.org>, <leo.yan@linux.dev>, <peterz@infradead.org>,
+	<mingo@redhat.com>, <acme@kernel.org>, <namhyung@kernel.org>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>
+CC: <linux-arm-kernel@lists.infradead.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu
+ Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH] tools/perf: Fix spelling typo in tools/perf
+Date: Fri, 31 Oct 2025 10:58:10 +0800
+Message-ID: <20251031025810.1939-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e2fcc437-0650-4fdf-bb75-3463a80299fe@rock-chips.com>
+X-CM-TRANSID: YAJkCsDwdHTxJQRpDoE5AA--.2227S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFy3ArW5XryUtw48uw1Dtrb_yoW5Cr1UpF
+	W8uF4DWr4Sgr9xKas5trWIqF4S9ayruF4ftw1UKw1UuwnrZr1Yga9Fq3s7AF48ZrykGa13
+	uF1qyryUGr1UCw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
+	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?2i/CDZRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KSsk7pV3dl0RDxB5lh+8iA1sgC2aonM+cb2ich98r/c+ONOc/CtnYH4qOsQlllj5oCnS
+	+g25hQ9F1vYY068nJEw=
+Content-Type: text/plain
+tUid: 2025103110590000223a6740299a0011290c2d99340e5e
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On 25-10-30 14:50:33, Chaoyi Chen wrote:
-> > Hi Chaoyi,
-> > 
-> > There are two questions I have still not seen the answer to:
-> > - Why USB2 PHY is related to your Type-C patch?
-> 
-> I was just following other people's approach. Sorry, this should be removed from the dts.
-> 
-> 
-> > - How does the USB role switch event notify the USB controller driver, eg dwc3?
-> 
-> Sorry, I misunderstood what you said before. There is indeed a missing usb-role-switch now. I referred to the approach in rk3588-evb1-v10.dts. Is the following way of writing correct?
-> 
-> &usbc_connector {
->     ports {
->         #address-cells = <1>;
->         #size-cells = <0>;
-> 
->         port@0 {
->             reg = <0>;
-> 
->             usbc_orien_sw: endpoint {
->                 remote-endpoint = <&tcphy0_typec_orien_sw>;
->             };
->         };
-> 
->         port@1 {
->             reg = <1>;
-> 
->             usbc_role_sw: endpoint {
->                 remote-endpoint = <&dwc3_0_role_switch>;
->             };
->         };
-> 
-> 
->         port@2 {
->             reg = <2>;
-> 
->             usbc_dp: endpoint {
->                 remote-endpoint = <&tcphy0_typec_dp>;
->             };
->         };
->     };
-> };
-> 
-> &usbdrd_dwc3_0 {
->     status = "okay";
->     usb-role-switch;
-> 
->     port {
->         #address-cells = <1>;
->         #size-cells = <0>;
->         dwc3_0_role_switch: endpoint@0 {
->             reg = <0>;
->             remote-endpoint = <&usbc_role_sw>;
->         };
->     };
-> };
-> 
-> &tcphy0_usb3 {
->     orientation-switch;
-> 
->     port {
->         tcphy0_typec_orien_sw: endpoint {
->             remote-endpoint = <&usbc_orien_sw>;
->         };
->     };
-> };
-> 
-> &tcphy0_dp {
->     mode-switch;
-> 
->     port {
->         #address-cells = <1>;
->         #size-cells = <0>;
-> 
->         tcphy0_typec_dp: endpoint@0 {
->             reg = <0>;
->             remote-endpoint = <&usbc_dp>;
->         };
->     };
-> };
-> 
+The json file incorrectly used "acceses" instead of "accesses".
 
-The general hierarchy is okay, just need to fix some dts coding
-style issue.
+Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+---
+ .../arch/arm64/ampere/ampereonex/metrics.json    | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+index 6817cac149e0..a29aadc9b2e3 100644
+--- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
++++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+@@ -388,55 +388,55 @@
+         "MetricExpr": "L1D_CACHE_RW / L1D_CACHE",
+         "BriefDescription": "L1D cache access - demand",
+         "MetricGroup": "Cache",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "l1d_cache_access_prefetches",
+         "MetricExpr": "L1D_CACHE_PRFM / L1D_CACHE",
+         "BriefDescription": "L1D cache access - prefetch",
+         "MetricGroup": "Cache",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "l1d_cache_demand_misses",
+         "MetricExpr": "L1D_CACHE_REFILL_RW / L1D_CACHE",
+         "BriefDescription": "L1D cache demand misses",
+         "MetricGroup": "Cache",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "l1d_cache_demand_misses_read",
+         "MetricExpr": "L1D_CACHE_REFILL_RD / L1D_CACHE",
+         "BriefDescription": "L1D cache demand misses - read",
+         "MetricGroup": "Cache",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "l1d_cache_demand_misses_write",
+         "MetricExpr": "L1D_CACHE_REFILL_WR / L1D_CACHE",
+         "BriefDescription": "L1D cache demand misses - write",
+         "MetricGroup": "Cache",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "l1d_cache_prefetch_misses",
+         "MetricExpr": "L1D_CACHE_REFILL_PRFM / L1D_CACHE",
+         "BriefDescription": "L1D cache prefetch misses",
+         "MetricGroup": "Cache",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "ase_scalar_mix",
+         "MetricExpr": "ASE_SCALAR_SPEC / OP_SPEC",
+         "BriefDescription": "Proportion of advanced SIMD data processing operations (excluding DP_SPEC/LD_SPEC) scalar operations",
+         "MetricGroup": "Instructions",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     },
+     {
+         "MetricName": "ase_vector_mix",
+         "MetricExpr": "ASE_VECTOR_SPEC / OP_SPEC",
+         "BriefDescription": "Proportion of advanced SIMD data processing operations (excluding DP_SPEC/LD_SPEC) vector operations",
+         "MetricGroup": "Instructions",
+-        "ScaleUnit": "100percent of cache acceses"
++        "ScaleUnit": "100percent of cache accesses"
+     }
+ ]
 -- 
+2.43.7
 
-Best regards,
-Peter
 
