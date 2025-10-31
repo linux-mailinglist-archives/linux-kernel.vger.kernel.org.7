@@ -1,94 +1,109 @@
-Return-Path: <linux-kernel+bounces-880930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F8C26E44
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:25:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF938C26E47
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28F9A4E8738
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30EF31897D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B4D328635;
-	Fri, 31 Oct 2025 20:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C68C328B47;
+	Fri, 31 Oct 2025 20:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHYMpYLF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfcYue1o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2E283FD6;
-	Fri, 31 Oct 2025 20:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6943F2EB841
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761942331; cv=none; b=NBh8u+eVCT09+BqBPRZG23oR7LtOWk+6/FNEm+d6w6KDY9cHL4lethk5fSy31r1vIiSnV38cx769zmmAXZSlIlBoZKpW8nfkCYxCjixvP5Ei9NJ84s+rmczyaGOoRjkNkxsj/tFlwDwV/I8O03Eo4VJ3tDgjAa1viZ3RNKKw098=
+	t=1761942494; cv=none; b=jgwxzXsfOvTgjlY0xgFCXI2Y3/1PQBREMai9UUCCWqO+cemZAgj0PwVa9AGnnxrX6eg5ih+dhB4TRDUV58xSQ++pJEAMZUwT28r6D5VTVRdZeyXW6AyDKWAYb7kmXknnuKFtyp9nxIVQWEkt4BR28oV5Zj6h69Cv/J0X7UNAhxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761942331; c=relaxed/simple;
-	bh=ekWfu0jFUCvipEAA7CjOSxLrpj/17ejOSajkemq7+RM=;
+	s=arc-20240116; t=1761942494; c=relaxed/simple;
+	bh=AjVeRmIbqZi82dYPjfPgsCsGvHgBizwI8tFFClRS8SM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxNxnKDU/My6olpBCgc7B/eeXT/uRsbpwF2Dxc4Vhuvc9LxJ95xEZXtcOws64IuB3OSkiceaRF0RmdS2Kico2YpyBWvKuplYo4sC+nZrR9tExULla3sS4RImZ32pu7sHUxaixfHbzE34UqGMo8GJGzeWZ8ClCFK3s8hzdLnR/WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHYMpYLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0A7C4CEE7;
-	Fri, 31 Oct 2025 20:25:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNFVPcZOmt/Rq473V3Y+xKoLAuDLmiODtJceQyKkZS7EYpUnvWTsdjcF58PJkcILS9Smn0Q/lzoP94hDcDK9OdpFf4ogIcK0a58pAroOByTPilY1Knyne44dVEHX6DbPOchlf2NYAW6S1v2YHK6JSVLpYCz58T8GtNGKgTUwccY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfcYue1o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27342C4CEE7;
+	Fri, 31 Oct 2025 20:28:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761942331;
-	bh=ekWfu0jFUCvipEAA7CjOSxLrpj/17ejOSajkemq7+RM=;
+	s=k20201202; t=1761942494;
+	bh=AjVeRmIbqZi82dYPjfPgsCsGvHgBizwI8tFFClRS8SM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AHYMpYLF5pe34hRnZrK1ExWTV+KBRS2sMbJZmh4Un+w4/keZ+g8fIwnshpP9ODSZu
-	 KlLekXpe4GYiOU7DR9v9qEZ5QHnPe746Il3G9oVUofiVTw+LFoqusgPjC5lt+EbHBZ
-	 vw3SD6APCa8Sp95c+jaZfTSG9cMn8WxZOjWZsvdemgYs2dLTvAiDChXDIlJ2yQCb5q
-	 fi0jOfcuPXmJWqWc3bWbPRFmJlePfOKui0qo1fEkZu9xwQhA4pBtoGa41+Y8+87TJz
-	 WeAe4B6ZIRF1V4Rm521Yx4kvi+c0vneVoNoberCbWbpFLDu8G6YWfB/h6hhhV7Egzt
-	 WdhEP82bpkWQw==
-Date: Fri, 31 Oct 2025 16:25:26 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org
-Subject: Re: [tip: objtool/core] objtool/klp: Add --debug option to show
- cloning decisions
-Message-ID: <20251031202526.GB2486902@ax162>
-References: <176060833509.709179.4619457534479145477.tip-bot2@tip-bot2>
- <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
- <20251031140944.GA3022331@ax162>
- <20251031142100.GEaQTFzKD-nV3kQkhj@fat_crate.local>
- <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
+	b=rfcYue1oQ3uq8YHp8V1iDJCRGvnrd06gOmEOqlGneaK2xJXHaFDCppvFgMZTXqyeU
+	 IOR1iFO16AqKcdQCF1pDx/d4o9macTrIFcAKT0aEJHJL4nG+bq4KR2sJif8BOzWHjg
+	 cIAnpkDSmDBA9zYg33ZIO6f1dfUpwHog7yt9oNZWmwFqKL1FLAEBRvEkbs2RGmyrWc
+	 UT7GZFuxR81naZ4cOrp6da/ToPF5PA83nkBloOFa+Rtz+oXkqqedFSgbbvmc9Q1IxP
+	 zrm1Vav/mHjd5is7c8RRPXU/ICZiJsbC60Tl9HaSTaUXQh7BbBMvOPZPnhXReCxDtg
+	 IVlVSuJKDBfJg==
+Date: Fri, 31 Oct 2025 13:28:11 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jan Stancek <jstancek@redhat.com>
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, 
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, 
+	joe.lawrence@redhat.com
+Subject: Re: [PATCH RESEND] powerpc/tools: drop `-o pipefail` in gcc check
+ scripts
+Message-ID: <skcy4n4qyoqklhbs2gjefdyhu7nfgwxkwyamxal33ckv66bxr4@3xradd7kt57e>
+References: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
+In-Reply-To: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
 
-On Fri, Oct 31, 2025 at 09:11:44AM -0700, Josh Poimboeuf wrote:
-> On Fri, Oct 31, 2025 at 03:21:00PM +0100, Borislav Petkov wrote:
-> > On Fri, Oct 31, 2025 at 10:09:44AM -0400, Nathan Chancellor wrote:
-> > > Yeah, that looks good to me and matches the workaround that Peter did in
-> > > include/linux/compiler-clang.h. If cleanup is going to be used more in
-> > > objtool, it might be worth taking that approach there too like:
-> > > 
-> > >   #ifdef __clang__
-> > >   #define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
-> > >   #else
-> > >   #define __cleanup(func) __attribute__((__cleanup__(func)))
-> > >   #endif
-> > 
-> > LGTM.
-> > 
-> > I'll wait for the objool-er folks to lemme know what they want before
-> > I productize it.
-> > 
-> > Thx Nathan!
+On Tue, Sep 23, 2025 at 05:32:16PM +0200, Jan Stancek wrote:
+> We've been observing rare non-deterministic kconfig failures during
+> olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
+> disabled and with it number of other config options that depend on it.
 > 
-> How about __maybe_unused unconditionally without the #ifdef damage?
+> The reason is that gcc-check-fpatchable-function-entry.sh can fail
+> if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit while
+> there is still someone writing on other side of pipe. `pipefail`
+> propagates that error up to kconfig.
+> 
+> This can be seen for example with:
+>   # (set -e; set -o pipefail; yes | grep -q y); echo $?
+>   141
+> 
+> or by running the actual check script in loop extensively:
+>   ----------------------------- 8< -------------------------------
+>   function kconfig()
+>   {
+>     for i in `seq 1 100`; do
+>       arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh \
+>         ./scripts/dummy-tools/gcc -mlittle-endian \
+>         || { echo "Oops"; exit 1; }
+>     done
+>   }
+> 
+>   for ((i=0; i<$(nproc); i++)); do kconfig & done
+>   wait; echo "Done"
+>   ----------------------------- >8 -------------------------------
+> 
+> Fixes: 0f71dcfb4aef ("powerpc/ftrace: Add support for -fpatchable-function-entry")
+> Fixes: b71c9ffb1405 ("powerpc: Add arch/powerpc/tools directory")
+> Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
 
-Yeah I had only suggested that to mirror the kernel but fundamentally,
-GCC already treats it that way so I don't think there is any harm in
-just doing this unconditionally.
+Ooh, that is nasty...
 
-Nathan
+The fix looks obviously correct: pipefail isn't needed in these cases
+anyway since an earlier pipe failure (e.g., compile error) would result
+in EOF getting piped to grep, causing it to returning an error
+regardless.
+
+Reviewed-by: Josh Poimboeuf <jpoimboe@kernel.org>
+
+-- 
+Josh
 
