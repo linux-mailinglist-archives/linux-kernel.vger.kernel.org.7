@@ -1,166 +1,133 @@
-Return-Path: <linux-kernel+bounces-880331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C31C25842
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:17:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92805C257BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C4E34F9E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAF01883C97
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FECA31A7E1;
-	Fri, 31 Oct 2025 14:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F680335069;
+	Fri, 31 Oct 2025 14:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N01GKuW8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="r7F5Yrkw";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="+lUlqknY"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D81F37D4;
-	Fri, 31 Oct 2025 14:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3614F258ED1;
+	Fri, 31 Oct 2025 14:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919789; cv=none; b=FplNVsT4ykBQjPdEjF+NPW2aqECDf7ZoWPIcf376qjJnlDMlvM7v4wg18xOvda/sBFoXbr8bdnKilSJNGhC8/30Eo2d9NW+XQ1V6rKJE4lr0SrGSYuj7SoA8kfVbvic6KaZDZAkMhMsoScdHv0g5LLyL+0GmkhidEZKYrbBhyCA=
+	t=1761919889; cv=none; b=jhEbJ8cNizk5OGzvJz4D5hn8Y58zHApE+Q4tqpFoUpPnSsKcFf8hzYafJbCq9FfOFL57yR4UsPz7d6pVXrR5cCUQLXokacNWmpj7l5zOKC8KJXTM/kSwVSSSMb3laH7jEHV+mSqs2p3B/gk1QSeS1mab9bQLCOTgs9BtIqjCOYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919789; c=relaxed/simple;
-	bh=8wCSZybMl3Z4NnP/tU1aMkhTs/+6NLIANQ/z8Bp5xP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VpE7ORP7KqmVq1/hhxBTB0KgdnfDKrNsmlRsM3lQ7ugVz0IIcbAPbYYY5Vt5ae3DRZZnTFmBGMGY5WxDAHM841uDQhnCXGlYj5JY0o1A9tT3h9id+hfp2JuJL/aMbZ/RD3CGpBStCqUHa1kV+piIeruheYJq0WUFpOX8PsfVBtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N01GKuW8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2B3C4CEE7;
-	Fri, 31 Oct 2025 14:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761919789;
-	bh=8wCSZybMl3Z4NnP/tU1aMkhTs/+6NLIANQ/z8Bp5xP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N01GKuW8ftbJt69UA7TPfzf3LH3hsMP6C7T11F31s03b6IplnFnX9lL3z7g33K9EL
-	 560PBzMWkDvyThjJ8uo/LsEb5aUtITmtwjj5VCExvDTch9G8EuEo4w6PT7HDV6DCpi
-	 V0OZ1+1p1c2RruO60VTf2rzspeBSf2ui0NksSRx2c8z62kOxI3vV+ywURyXA7mlZaU
-	 mJdYQIvJLWHSJFLTi05y+Jz1jbN6kR3XANd4uBEwnlreIfV8SYJGGLcb9pM8xOYcT5
-	 2N/yndx2C27XpLWSc3i+5i16VKrU7Iv0Y8cwlvIURXH9OXnAvvw6/53OYZrH5B7Bey
-	 vfg7Bd0NXjR2g==
-Date: Fri, 31 Oct 2025 10:09:44 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org
-Subject: Re: [tip: objtool/core] objtool/klp: Add --debug option to show
- cloning decisions
-Message-ID: <20251031140944.GA3022331@ax162>
-References: <176060833509.709179.4619457534479145477.tip-bot2@tip-bot2>
- <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
+	s=arc-20240116; t=1761919889; c=relaxed/simple;
+	bh=806F3k6XPgIgtDKzOwiqa5q3jJuv/CbOcstiKN4t/Bc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OitXdkWow0L0y9rNGdzuDyHErdOK6xy0a4HcioQpmY49mLlesxWQ6Dv2v+/AAvjOmz73Dieiap20mx7ICxNwLZpASjjba2VyT4vN2xSpB/X/ZFPb68D3c5hBXVnh27EyQm33xt9ihQDayP3Y15t6jMEZKJypoFBKoCKlbkgWd3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=r7F5Yrkw; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=+lUlqknY; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1761919844; bh=4KnHJ3WNKUbgqsydcoN1WSh
+	PIzk8mgmN3Q6/6Zfh76w=; b=r7F5YrkwtSP33iQ8E5EmfLcGqC/PsSba9/zfh7W9yEKZkBCKe2
+	eIl3syGPOeoQZTM0k0lxbLxYqNtdFRIeDzz2HZu0hQp2hDU4aFUdiZm3FdQ/FSvB+aXlDoTR8cl
+	0c+uxpjkhNy99xwACwawUHzyrNCAVBIMHij3qbeyS+oC3v960WCgVKFHhadNh+Il+w3pl3XiUoL
+	akxETjfGm5WzPpPNdUMji1hxCFkSEUEsZhhC1ONZ3xN8LRWwpHkpKcxQmylXyOJ1poSsk2c9aD1
+	Je/raOF425npaOisFAuC2uOswYnOU3Z82QZfOT965YoPpEzwdTKKuChYmZcxf2ceiTA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1761919844; bh=4KnHJ3WNKUbgqsydcoN1WSh
+	PIzk8mgmN3Q6/6Zfh76w=; b=+lUlqknYEM2JGx0/FAjqopAU3erMVOj1Y7yEIbflOMOcmMMfIW
+	NgLENQvh7lRWG1PmygwKT2f5sN8RvQrkeFDA==;
+Message-ID: <ebc028f2-3d2d-4f42-a667-df7d6c2b7eb0@damsy.net>
+Date: Fri, 31 Oct 2025 15:10:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/sched: Add warning for removing hack in
+ drm_sched_fini()
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20251023123429.139848-2-phasta@kernel.org>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <20251023123429.139848-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hey Boris,
+Hi Philipp,
 
-On Fri, Oct 31, 2025 at 12:49:19PM +0100, Borislav Petkov wrote:
-> On Thu, Oct 16, 2025 at 09:52:15AM -0000, tip-bot2 for Josh Poimboeuf wrote:
-> > The following commit has been merged into the objtool/core branch of tip:
-> > 
-> > Commit-ID:     7c2575a6406fb85946b05d8dcc856686d3156354
-> > Gitweb:        https://git.kernel.org/tip/7c2575a6406fb85946b05d8dcc856686d3156354
-> > Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-> > AuthorDate:    Wed, 17 Sep 2025 09:04:00 -07:00
-> > Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-> > CommitterDate: Tue, 14 Oct 2025 14:50:18 -07:00
-> > 
-> > objtool/klp: Add --debug option to show cloning decisions
-> > 
-> > Add a --debug option to klp diff which prints cloning decisions and an
-> > indented dependency tree for all cloned symbols and relocations.  This
-> > helps visualize which symbols and relocations were included and why.
-> > 
-> > Acked-by: Petr Mladek <pmladek@suse.com>
-> > Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > ---
+Le 23/10/2025 à 14:34, Philipp Stanner a écrit :
+> The assembled developers agreed at the X.Org Developers Conference 2025
+> that the hack added for amdgpu in drm_sched_fini() shall be removed. It
+> shouldn't be needed by amdgpu anymore.
 > 
-> ...
+> As it's unclear whether all drivers really follow the life time rule of
+> entities having to be torn down before their scheduler, it is reasonable
+> to warn for a while before removing the hack.
 > 
-> > +#define dbg_indent(args...)						\
-> > +	int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;	\
+> Add a warning in drm_sched_fini() that fires if an entity is still
+> active.
 > 
-> so this compiler:
-> 
-> Ubuntu clang version 15.0.7
-> 
-> doesn't like this, see below. With some configs only, I've attached one.
-> 
-> Newer clang is fine so I guess this old one which we support can't do that
-> unused var squashing or so.
-
-Correct, I fixed this in clang-17 so clang-15 and clang-16 will show
-this.
-
-https://github.com/llvm/llvm-project/commit/877210faa447f4cc7db87812f8ed80e398fedd61
-
-> How about this fix?
-
-Yeah, that looks good to me and matches the workaround that Peter did in
-include/linux/compiler-clang.h. If cleanup is going to be used more in
-objtool, it might be worth taking that approach there too like:
-
-  #ifdef __clang__
-  #define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
-  #else
-  #define __cleanup(func) __attribute__((__cleanup__(func)))
-  #endif
-
-> Seems to work here.
-> 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 > ---
+> Changes in v3:
+>    - Add a READ_ONCE() + comment to make the warning slightly less
+>      horrible.
 > 
-> diff --git a/tools/objtool/include/objtool/warn.h b/tools/objtool/include/objtool/warn.h
-> index e88322d97573..289fbce428c5 100644
-> --- a/tools/objtool/include/objtool/warn.h
-> +++ b/tools/objtool/include/objtool/warn.h
-> @@ -127,7 +127,7 @@ static inline void unindent(int *unused) { indent--; }
->  })
->  
->  #define dbg_indent(args...)                                            \
-> -       int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;   \
-> +       int __attribute__((cleanup(unindent))) __used __dummy_##__COUNTER__; \
->         __dbg_indent(args);                                             \
->         indent++
->  
+> Changes in v2:
+>    - Fix broken brackets.
 > ---
+>   drivers/gpu/drm/scheduler/sched_main.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> build error:
-> 
-> ---
-> 
-> klp-diff.c:601:2: error: unused variable '__dummy___COUNTER__' [-Werror,-Wunused-variable]
->         dbg_indent("%s%s", patched_sym->name, data_too ? " [+DATA]" : "");
->         ^
-> /home/amd/kernel/linux/tools/objtool/include/objtool/warn.h:130:41: note: expanded from macro 'dbg_indent'
->         int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;   \
->                                                ^
-> <scratch space>:132:1: note: expanded from here
-> __dummy___COUNTER__
-> ^
-> klp-diff.c:1045:2: error: unused variable '__dummy___COUNTER__' [-Werror,-Wunused-variable]
->         dbg_clone_reloc(sec, offset, patched_sym, addend, export, klp);
->         ^
-> klp-diff.c:1016:2: note: expanded from macro 'dbg_clone_reloc'
->         dbg_indent("%s+0x%lx: %s%s0x%lx [%s%s%s%s%s%s]",                                \
->         ^
-> /home/amd/kernel/linux/tools/objtool/include/objtool/warn.h:130:41: note: expanded from macro 'dbg_indent'
->         int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;   \
->                                                ^
-> <scratch space>:138:1: note: expanded from here
-> __dummy___COUNTER__
-> ^
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 46119aacb809..31039b08c7b9 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1419,7 +1419,7 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+>   		struct drm_sched_rq *rq = sched->sched_rq[i];
+>   
+>   		spin_lock(&rq->lock);
+> -		list_for_each_entry(s_entity, &rq->entities, list)
+> +		list_for_each_entry(s_entity, &rq->entities, list) {
+>   			/*
+>   			 * Prevents reinsertion and marks job_queue as idle,
+>   			 * it will be removed from the rq in drm_sched_entity_fini()
+> @@ -1440,8 +1440,15 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+>   			 * For now, this remains a potential race in all
+>   			 * drivers that keep entities alive for longer than
+>   			 * the scheduler.
+> +			 *
+> +			 * The READ_ONCE() is there to make the lockless read
+> +			 * (warning about the lockless write below) slightly
+> +			 * less broken...
+>   			 */
+> +			if (!READ_ONCE(s_entity->stopped))
+> +				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n");
+>   			s_entity->stopped = true;
+> +		}
 
-Cheers,
-Nathan
+The patch is Acked-by: Pierre-Eric Pelloux-Prayer 
+<pierre-eric.pelloux-prayer@amd.com>
+
+Thanks.
+
+
+>   		spin_unlock(&rq->lock);
+>   		kfree(sched->sched_rq[i]);
+>   	}
+
 
