@@ -1,107 +1,154 @@
-Return-Path: <linux-kernel+bounces-879296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23775C22C5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:15:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63940C22C64
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655441A623DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:16:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E7844E83AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DA6176FB1;
-	Fri, 31 Oct 2025 00:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5070B190664;
+	Fri, 31 Oct 2025 00:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hE+0Q19+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="WR8lxUAx"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533767262A;
-	Fri, 31 Oct 2025 00:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C871624DF
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761869729; cv=none; b=UnCskqK/kMTY+ktrJq/u9MntX3jiq0zFvOv2smKrSB5WxGFIc048hW06G+Q9xmny2+QbNAu0IZEtpVbvTT2HvMnEF6/IolUEh6tzNMLbcosKTYxW4td6i6/xAs+ebxbQZ5bH78rzZgEjtDj0E4Rg2gIKoxJPic0Nmsb7pHaFKSs=
+	t=1761869974; cv=none; b=IRYewB/m/Rt9W8vGZ7Sht/ImMYGnaycqKNHNr3sI7HJqenVx7DNhsmtcaVLF/2oWaBNh57BdsnOGgNQ4jZ0DISfbehrlixb8tu/5J76/VtWlKRVXIOx924eyqtFzXLk8VlLgeVDen8lLhLMvBljNtNT7bdWl3jY5ws9kHumihcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761869729; c=relaxed/simple;
-	bh=0hTiIqTSjld9kHehdAyq7BzjbFtvLXAH5RszgX4jNzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Gd6GlojtFLU8pFcqREZWFsMJJnSGPdyzOiciXjArnBe5C0DAIHDT9bI8mrexRmIV8pm7en7lQazO32wT2kvie3sbe8qZQK1q8jMJlUjziUjwTyIfKj3Y8fBuy+TmTUB7Zn6kbYBmXqMpbsM9ZKulyB18Dw1vgvq6yDjHoADedQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hE+0Q19+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761869716;
-	bh=0hTiIqTSjld9kHehdAyq7BzjbFtvLXAH5RszgX4jNzE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hE+0Q19+Ki3GAKaJesc6gfV6Y8JXAb2E+3O6/QdAMwmM3O8ZvdHdQmRBnaaM2bf2h
-	 UkC28BXlKAgEzeyBLSyGuWGdOpwqjwkuFp2UaVLJD9zZr0ZKZigA/dCwndKFYsQnlP
-	 ckVeD055zStPMjcEe0OISnfKTTdn9qgOCHXDivgOp/9r58ukVNkPoRd+LRVBqOxti8
-	 JzWbMgQX+ZRC77wlLqv/Ty3Nao2kmbgvA0n7pvoVAXXiEiEtZMp1UZbPWQ7mbozn2Q
-	 +lubF1Fzd2dFq5uJenMmaQrOTYRVdtcXzdU3+CcD6X70CUYcIfGL/g40r/Muj3ly/o
-	 KSULWlYo3ezPw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyM1v59Spz4wD7;
-	Fri, 31 Oct 2025 11:15:15 +1100 (AEDT)
-Date: Fri, 31 Oct 2025 11:15:15 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: new objtool warnings
-Message-ID: <20251031111515.09c9a4ed@canb.auug.org.au>
+	s=arc-20240116; t=1761869974; c=relaxed/simple;
+	bh=8rHUYkXKPL5IW43a+4rQNutLuyHqHIoW5Z0VxJSm0u4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KcA8ma4C09uknR4RUlXyCBJkJsHQensrltxJMQMwD/e623KHP8blm5VkZADgxvk8ZNhOLcS8mO0r5kjv3d7L/THtemAHwjjjDWaocnGd1FW4KBfovCe4Hpsl7Dzfz7P06NWVUb3uvFFcMo2jzaySuxDpag9uyOHUwpq4PlpKa4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=WR8lxUAx; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64071184811so1892506a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1761869971; x=1762474771; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cv3Ljvf1heM/ChX+5Kbnk959i79o/ym9ON91SVXdVic=;
+        b=WR8lxUAxQmD+DWLD1tgzmINQnPnyk6Vm976ZZpfc/IITPpAPs+kxbXZbaybX0nFwbv
+         NP62A1PqWLovWAkXh9DGcUrXuzEEQQpxKJ3JorgCVpURG+3TKFcJ9nQy3vy+SWPmR3NS
+         X8PTqprIfWt1r8qoyEIY8+qr8MTuKr8btlRjGZ2k1dZ7zM41eNj7VKyWMl1RNHRk6Zav
+         0IxobgQB8mmDp07zCyQVT5Jn4zr7J1GWVIvCUjPxfK9x782d6AEE0y2XdGOLZJ5OPbNx
+         xq4vRUKVwBDN8go1aAmpL3GcFErz41o/O7lOstO8c67Lob+4CzOstfEduiGJ6TAwzc5Q
+         O/DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761869971; x=1762474771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cv3Ljvf1heM/ChX+5Kbnk959i79o/ym9ON91SVXdVic=;
+        b=NN9aBr2iFKDOXCVnhoUnnGW9SE6wOKbPpkPqa/fxDD6ZJV0+YkOZE+aEK29Z5tciPP
+         ARf5N8ihMcFGOPbqeVeFHGz0Vka7MexqJYuOwjDDIf0B++Yw9PMAayocITF6vvmECA5b
+         TiA5MSBSWPe9vbJXkLu3vssXDaYiHcELF05rPSWNbwb6zbilU+styrGs6U3U9Uax8TIJ
+         cToBdNt+Ut3DSsvuNJal0TMzkpay6RfQ9vwkZqHGx3eFklokaBM9sp5J2Mdk/zrHbM6+
+         fxlvguO6yGXrTx5jRj1zV0Vh1ow8zxDceM2i2JtGRD/SSsm5HX8/BniAJTUGWFcHkH9a
+         ilnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXB4HJc6lPUArbM+L8Zw5jTVPyRIUBdc8686SNFSgfEu86ddpsM9R/HpPtG7wtuLFS+tRPltNNZscDs59g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+i70H9cM+aGHngOHuTE7Obqh4aqRlWNMO77uu7VcJ53eWocsO
+	d/n+DUipEg9/vDhaCtZU9tGIvwbkBpN9v3VlPqanJX6KHbTa4A8I0t2auzvjkm2Jsc4cXJ0uTPb
+	cPPMNu5E7i633pskRKGFLjmkR4hud+GsiHhu5RL8kZQ==
+X-Gm-Gg: ASbGnctt5/ke5jgbtEMloPlY0jUKZ4AZapFlUddPiLHrT2GcNYgVgqjF50ZnvDHyczi
+	6I8rLzYYbZgXoWyZLUyf0USM+m3uDA850maid4MBuGmGclnpfdEQLx9SsRfDaZ/5rpmq8bNabB/
+	nOyW0i4P7vkCMN6UpcfmeSbUBv+69G5isAu/l7BdeJmabCqssmnTSXVRdNBc6AKW1lbk/vDdJjF
+	sTXqnItEhVVXlE/Aj/AcrxrIi9sR8a6rwWlkb6y7H0H2lD9JvbDlgq43hZmlxxAZ7EV
+X-Google-Smtp-Source: AGHT+IHAmJ5aHdM6JoD2TOJsB7BThxEoT5eo1YrDOCS0gC6NmplAKbJLD+yZsTcgPKK2dj5Dhi5gMIE8RdzNHN72sus=
+X-Received: by 2002:a05:6402:13cb:b0:640:6a18:2931 with SMTP id
+ 4fb4d7f45d1cf-6407702dcd1mr1160377a12.29.1761869971150; Thu, 30 Oct 2025
+ 17:19:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/P_BwQS.ai+5sipj7_caTBNq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/P_BwQS.ai+5sipj7_caTBNq
-Content-Type: text/plain; charset=US-ASCII
+References: <20251018000713.677779-1-vipinsh@google.com> <20251018000713.677779-7-vipinsh@google.com>
+ <20251027134430.00007e46@linux.microsoft.com> <aQPwSltoH7rRsnV9@google.com>
+In-Reply-To: <aQPwSltoH7rRsnV9@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 30 Oct 2025 20:18:54 -0400
+X-Gm-Features: AWmQ_bmaQn5U2r87lGmHMokOwG7--caG9FTwwPKr2aHRFfrExiLwJYx42aUNdvg
+Message-ID: <CA+CK2bD-E0HKsuE0SPpZqEoJyEK4=KJCBw-h1WFP7O1KEoKuNQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 06/21] vfio/pci: Accept live update preservation
+ request for VFIO cdev
+To: David Matlack <dmatlack@google.com>
+Cc: Jacob Pan <jacob.pan@linux.microsoft.com>, Vipin Sharma <vipinsh@google.com>, 
+	bhelgaas@google.com, alex.williamson@redhat.com, jgg@ziepe.ca, 
+	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org, 
+	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com, parav@nvidia.com, 
+	saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
+	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
+	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Oct 30, 2025 at 7:10=E2=80=AFPM David Matlack <dmatlack@google.com>=
+ wrote:
+>
+> On 2025-10-27 01:44 PM, Jacob Pan wrote:
+> > On Fri, 17 Oct 2025 17:06:58 -0700 Vipin Sharma <vipinsh@google.com> wr=
+ote:
+> > >  static int vfio_pci_liveupdate_retrieve(struct
+> > > liveupdate_file_handler *handler, u64 data, struct file **file)
+> > >  {
+> > > @@ -21,10 +28,17 @@ static int vfio_pci_liveupdate_retrieve(struct
+> > > liveupdate_file_handler *handler, static bool
+> > > vfio_pci_liveupdate_can_preserve(struct liveupdate_file_handler
+> > > *handler, struct file *file) {
+> > > -   return -EOPNOTSUPP;
+> > > +   struct vfio_device *device =3D vfio_device_from_file(file);
+> > > +
+> > > +   if (!device)
+> > > +           return false;
+> > > +
+> > > +   guard(mutex)(&device->dev_set->lock);
+> > > +   return vfio_device_cdev_opened(device);
+> >
+> > IIUC, vfio_device_cdev_opened(device) will only return true after
+> > vfio_df_ioctl_bind_iommufd(). Where it does:
+> >       device->cdev_opened =3D true;
+> >
+> > Does this imply that devices not bound to an iommufd cannot be
+> > preserved?
+>
+> Event if being bound to an iommufd is required, it seems wrong to check
+> it in can_preserve(), as the device can just be unbound from the iommufd
+> before preserve().
+>
+> I think can_preserve() just needs to check if this is a VFIO cdev file,
+> i.e. vfio_device_from_file() returns non-NULL.
 
-My x86_64 allmodconfig builds started producing these warnings today:
++1, can_preserve() must be fast, as it might be called on every single
+FD that is being preserved, to check if type is correct.
+So, simply check if "struct file" is cdev via ops check perhaps via
+and thats it. It should be a very simple operation
 
-vmlinux.o: warning: objtool: user_exc_vmm_communication+0x15a: call to __ka=
-san_check_read() leaves .noinstr.text section
-vmlinux.o: warning: objtool: exc_debug_user+0x182: call to __kasan_check_re=
-ad() leaves .noinstr.text section
-vmlinux.o: warning: objtool: exc_int3+0x123: call to __kasan_check_read() l=
-eaves .noinstr.text section
-vmlinux.o: warning: objtool: noist_exc_machine_check+0x17a: call to __kasan=
-_check_read() leaves .noinstr.text section
-vmlinux.o: warning: objtool: fred_exc_machine_check+0x17e: call to __kasan_=
-check_read() leaves .noinstr.text section
-
-I can't easily tell what caused this change, sorry.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/P_BwQS.ai+5sipj7_caTBNq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkD/5MACgkQAVBC80lX
-0GyuRwf/VG8CSmqTkLrsp05ckREMWeUE66P66s+f+oqYeUrpiiSNJ31bofYZEWt2
-peJelx310jw18RqdGhYYcqPdsaxfsy9V8PBlrK1hUOL9Sa1aOQjal6QgeALrXFVJ
-ze/rf7CQiOWufbXNgqQIbHb9/YMnWVQvrHEaj43Q4U7MeoZ7hml7o8C8h/4sNIpW
-sywAe1kbwA47EDNWh1vEbn25P1mkXYk80FGQy+oAROkn00w/VSkIQHwkbBwKW+hL
-A+3BfVMYadqVZRa/+VYLWUZIqOf4pc1QOCKkWd75dg93+XB7a/0kpNzrcFXcamgK
-qwWtBPRGPD7i66uwHJ2PVDnWx9KFCA==
-=3HWb
------END PGP SIGNATURE-----
-
---Sig_/P_BwQS.ai+5sipj7_caTBNq--
+>
+> >
+> > If so, I am confused about your cover letter step #15
+> > > 15. It makes usual bind iommufd and attach page table calls.
+> >
+> > Does it mean after restoration, we have to bind iommufd again?
+>
+> This is still being discussed. These are the two options currently:
+>
+>  - When userspace retrieves the iommufd from LUO after kexec, the kernel
+>    will internally restore all VFIO cdevs and bind them to the iommufd
+>    in a single step.
+>
+>  - Userspace will retrieve the iommufd and cdevs from LUO separately,
+>    and then bind each cdev to the iommufd like they were before kexec.
 
