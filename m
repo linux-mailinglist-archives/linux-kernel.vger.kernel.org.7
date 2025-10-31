@@ -1,123 +1,91 @@
-Return-Path: <linux-kernel+bounces-880991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2512DC27241
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:50:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59570C27274
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6773634BFA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3EA3BBAB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2896330FC39;
-	Fri, 31 Oct 2025 22:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068FD31D378;
+	Fri, 31 Oct 2025 22:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHxjxcMn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Jd9gO7t/"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28C72DEA74;
-	Fri, 31 Oct 2025 22:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7153195FC;
+	Fri, 31 Oct 2025 22:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761951037; cv=none; b=sHscSsSVDVB9oQmXj4ThIojAWwJE4ZDSvBbRkl2YXkMbNflWvmIx44FgztTkA+ub/JD9luH8hMFKcaxCqu2WK6osrDeGPrNtUO1bdEgrZcjOPTdNQ1Mv4OUmJQqH9PF23TunhNj1ztHzDQA0Q64tZSCkEHrMydPYdI1vAugyDMY=
+	t=1761951241; cv=none; b=XZBGwQdcNvvIisWh15gabSWAIS+/KoWcton2kK2F/8KP+ZOo1zFsNtGHbHnT6KCNaLzLaLwcgU7WY0SF3s17xKiDg9Nt6gjCW+3+flGSVocrLN7iS8HU++GTjgPd4S3j2ubatd4Oy1Uy49M8GvfMI+PTE4BtZVRtKoTsyHlmZZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761951037; c=relaxed/simple;
-	bh=N+BjP6skRoZCMXqZexziR26mcgroiZe+JaxD8LzzPKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fOhQGyPjr+ysjhH9fn9m18bBacggqj1abfDw2p8OlXV3IUH9wIBsMNvFQEUkWvpkTdmF4QkzUk587+3kik05GNkiW7SqvFww/RVUgxZS+j89lLvVOiIiw9pWMGtan1wkbo4a7UL2EnJPY5eZoHDiQwpB80tnSfJA15IC0XKxBss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHxjxcMn; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761951035; x=1793487035;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N+BjP6skRoZCMXqZexziR26mcgroiZe+JaxD8LzzPKE=;
-  b=OHxjxcMnLzfFW7qBc7p8VQDol+s9nbojcg99zMZNw7Ody2T9d+VHSTgE
-   okQqJUBrz8rikGWAtqcm6eRixLEVNvAxVFzW2AXeh52fnYuNoEhDynQJu
-   ZhOI//9kyFedE2LNEE+14h5CCy8vEGGc4rhZUyXpgkuVego1eqmo1Vif/
-   +7iW3p07HUatdwNLzxQRICldoon6RLv2+vsPQ/dins/KOZtnCrodvIV7k
-   pgZdTFPjVCYRJS2DOYjEniqEmvHT91FxtZQ7yn75uZ1nucRM/BcGAWfgS
-   gb2EBV30su8clI36QfJ6QUJq3D02awDbF9EqnMQKAeeFo2p8wbOsLxwSG
-   w==;
-X-CSE-ConnectionGUID: qRz9QUgPQCmy52SoVzHqvQ==
-X-CSE-MsgGUID: sv4chqy3SESLHNOlYr37Rg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="86744645"
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="86744645"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 15:50:35 -0700
-X-CSE-ConnectionGUID: lkyuywq9TSaZ/I5sEjb6ew==
-X-CSE-MsgGUID: ++e7E4N7S5u8p3vT24J+VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="209907241"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.220.87])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 15:50:34 -0700
-Date: Fri, 31 Oct 2025 15:50:28 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the
- MMIO Stale Data mitigation
-Message-ID: <20251031225028.fe2jztp4v5peqttb@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-4-seanjc@google.com>
- <20251031222804.s26squjrtbaq7aly@desk>
- <aQU6LqP-PxBQ-R0m@google.com>
+	s=arc-20240116; t=1761951241; c=relaxed/simple;
+	bh=Yj29WDgxlLEedqCZR5eWBVpXmXjp2WjWbd056crVc3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JpF6adzq6Zgsfhzj8hH1emwjqTxQj3tntlagTcAQsbOPQNMXnR8HEprxzhJb44riohoPzMrkvEvJHX3STXWL/Q04+ngYr7dxjlTETIufcimGi/1dKFRHHV9A36cChhMJWN5NClu7pAqBgBS8myzDVWF3L7xwthK88EVHCHmiv+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Jd9gO7t/; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=LGBstjIM281caVG9Z8ocydbe7tTH0iKKYoIgQmU9WDU=; b=Jd9gO7t//aDutiqNxMCy5TNTnw
+	POsexLObduMMmCI60KIHom/r3TjiUJE3YP/U8Tvjyj2PnrlL2m9CkrOzvRvEuPFpSBfH21B4OUf31
+	1SJ7by5B74ZRSwSMtMsg0iqtZXhcYyG3W+tHO0M1+JdH05hqbLmO4dyrNRH9hBNYYcuDZeeRUcCWX
+	X9Daz2MeA8XrTzF46JqX1CeP9LXz33EhXjuQHaQUnLcqua+y5WOvxkyb0B3zFk6DqFNdOOamRurPw
+	a6RwFblrmti9wzFr0d/Pvc9ZYaM3y8t9zC8HkkdFXrOywk+2+Yi+AT1WLWbt27Gu3wnUPQnMyreQw
+	LDSUtU+w==;
+Received: from i53875bca.versanet.de ([83.135.91.202] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vExzq-0004vM-LN; Fri, 31 Oct 2025 23:53:26 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Diederik de Haas <diederik@cknow-tech.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dragan Simic <dsimic@manjaro.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Fix vccio4-supply on rk3566-pinetab2
+Date: Fri, 31 Oct 2025 23:53:19 +0100
+Message-ID: <176195118799.233084.13663178557562820227.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251027155724.138096-1-diederik@cknow-tech.com>
+References: <20251027155724.138096-1-diederik@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQU6LqP-PxBQ-R0m@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 31, 2025 at 03:37:34PM -0700, Sean Christopherson wrote:
-> On Fri, Oct 31, 2025, Pawan Gupta wrote:
-> > On Thu, Oct 30, 2025 at 05:30:35PM -0700, Sean Christopherson wrote:
-> > > Convert the MMIO Stale Data mitigation flag from a static branch into an
-> > > X86_FEATURE_xxx so that it can be used via ALTERNATIVE_2 in KVM.
-> > > 
-> > > No functional change intended.
-> > > 
-> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > ---
-> > >  arch/x86/include/asm/cpufeatures.h   |  1 +
-> > >  arch/x86/include/asm/nospec-branch.h |  2 --
-> > >  arch/x86/kernel/cpu/bugs.c           | 11 +----------
-> > >  arch/x86/kvm/mmu/spte.c              |  2 +-
-> > >  arch/x86/kvm/vmx/vmx.c               |  4 ++--
-> > >  5 files changed, 5 insertions(+), 15 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> > > index 7129eb44adad..d1d7b5ec6425 100644
-> > > --- a/arch/x86/include/asm/cpufeatures.h
-> > > +++ b/arch/x86/include/asm/cpufeatures.h
-> > > @@ -501,6 +501,7 @@
-> > >  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
-> > >  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
-> > >  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
-> > > +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
-> > 
-> > Some bikeshedding from my side too:
-> > s/iff/if/
+
+On Mon, 27 Oct 2025 16:54:28 +0100, Diederik de Haas wrote:
+> Page 13 of the PineTab2 v2 schematic dd 20230417 shows VCCIO4's power
+> source is VCCIO_WL. Page 19 shows that VCCIO_WL is connected to
+> VCCA1V8_PMU, so fix the PineTab2 dtsi to reflect that.
 > 
-> Heh, that's actually intentional.  "iff" is shorthand for "if and only if".  But
-> this isn't the first time my use of "iff" has confused people, so I've no objection
-> to switching to "if".
+> 
 
-I did a quick search, there are about ~500 instances of "iff" in the
-kernel. So, it's a common abbreviation that I learnt today. It is fine to
-keep it as is.
+Applied, thanks!
+
+[1/1] arm64: dts: rockchip: Fix vccio4-supply on rk3566-pinetab2
+      commit: 03c7e964a02e388ee168c804add7404eda23908c
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
