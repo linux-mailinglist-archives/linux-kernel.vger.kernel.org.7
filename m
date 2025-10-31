@@ -1,101 +1,137 @@
-Return-Path: <linux-kernel+bounces-879768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F88BC23FCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:04:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E141C23FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C364564BA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:00:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FD7C4F2321
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6BE32D7D6;
-	Fri, 31 Oct 2025 09:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B1832C93D;
+	Fri, 31 Oct 2025 09:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNI5ipt5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Sn3Pxfic"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E3126FDA5;
-	Fri, 31 Oct 2025 09:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE9A307AFB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901241; cv=none; b=VNE53wQ2rx/YdBQx7gbGPQtRhUbmbQ44Jbdr8AV4tYZ3OrA0yRRZXzFmfjuGROMywnPbtU0oONe22gvJnTKr8/K9xPNemZprxN7na+lxWL6EsOr3nSkGeDQ7tCTZ839bpyfHjG6PDIhegmPIexvvDcPtRA4kOgRa/NUIxonwV14=
+	t=1761901296; cv=none; b=e3df5Lh+flCfOFGPxEaS24EYhsGpyqw3kaVJOPRMviBSPLzjPKv1V0PH/M9NSBJcFcpm+XQVqFt+kIHmviOaQ5x/ThGW/F4aOFPhvHTD/iIQmXpsrSELWqRIm0I6qxKJdFA36bYQriYEYZnR0r4relMpbpWCSACtLyW1/isC56c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901241; c=relaxed/simple;
-	bh=cI2iZAW8PV/PB8lHMkN53VOykrZcBJpPojzOoAR2Tp0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JxCIYUVDH2DOGD+HCvR89B1IrFYEQwCRVrIflEhq6WXtUBQGH5IIBv5+paFBkf7DoWUy/epGNRtyLzh8iiyg1SMTiEmwyXYEvQnXNlb9cmRjBEXiJw3ecb57oxvY+xttiKEVjRA/QwQwh2m1pWiSLNLa/lC4kqWgSp4GkjhmDAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNI5ipt5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB109C4CEF1;
-	Fri, 31 Oct 2025 09:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761901241;
-	bh=cI2iZAW8PV/PB8lHMkN53VOykrZcBJpPojzOoAR2Tp0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=TNI5ipt5yJ+hG0iB57xLqCsi4FQ9Si5Tdwi/cginDvNUPf9+svSh0W+wfdVBO+Ju5
-	 uRukp9QhhoGh4DCPeTpPtbk1G1HnDpAYHEV1xOg3qc73GNAlXlrw61RqGf3TuRRh0c
-	 K7uHNY4PNXaFjAV4Yx1PerWItzgCQj/Ai+Fc2hJzUavEij8gZJ044imbntKrnl2T+K
-	 Vt+vMXFJ+VOtbRE37EtmHMtK0aUbIWMia5J8z2rhG78sGa9v+EenYYsUHMUp6HJoLW
-	 LpQM+xjUs4umFiwjlpkvS5fiqmiPYM5Vqb8NgJ/jrivjmHqgpc9QMl+9AvMZymWyEX
-	 LSyQfuwWpLL1g==
-Date: Fri, 31 Oct 2025 10:00:38 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Siarhei Vishniakou <svv@google.com>
-cc: Benjamin Tissoires <bentiss@kernel.org>, 
-    Roderick Colenbrander <roderick.colenbrander@sony.com>, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: playstation: Remap joystick axes to be centered at
- 0
-In-Reply-To: <20251010012006.2282321-1-svv@google.com>
-Message-ID: <no3r172s-899p-7s78-o199-8q8oq1r2nr71@xreary.bet>
-References: <20251010012006.2282321-1-svv@google.com>
+	s=arc-20240116; t=1761901296; c=relaxed/simple;
+	bh=c0hTlH67K568hX4H2ZDmViDDnbU6qv6S/VvOio8xyuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mKdbkA8liTk69nOG7MDMwe0YUDJxJ4L1i/3v4JUE25bDI5YJ0DEcCV4H+4An5z/iPg/6o3JJP2FqFh9srz+I6xIs3Uoz9Mckwuddv4H0ytLUe1iVC1RaeSHiAEmXKmU/U+XOVrLIdYnlcDoDAbNZm0o5FHx515H+Y38XayH6a7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Sn3Pxfic; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-592fdbeb7b2so2651028e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761901293; x=1762506093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sz8A+kt2c263JVWpwySRC4hb0MoNUZ2J+PKEPthLk9k=;
+        b=Sn3PxficYtbxeQROqn+d+djNUUbsgTjhXwEGetU/mWHwTKjCUuDLiU7nNRrBu8C+bn
+         Vh0AMbppz2/eE+l7vnS/RAA8NTH6MGLLmUfsMmE+dQWEEZChjskP7z06YZOMidglXF2P
+         ikyfPHPP/7JxTmmdwxas5viKZA26ALHwUnuHcwoKQ32Hy24VrzLwuoCu8bpyZb2EPieg
+         9q58dOs3urxXTQzG2Ssh/2CdNey96knvrOgbVMvhsTQ6NXve4o4215XgZ7M9RkIkYD1s
+         jWHkxteosOzoT+Np6zWdjCbXNxQEk80dZhia57ghk0PZksWsiW8AvCiBH706xefeACij
+         VZDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761901293; x=1762506093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sz8A+kt2c263JVWpwySRC4hb0MoNUZ2J+PKEPthLk9k=;
+        b=KEHgIUru44pStep4hmCYjwVO2p95lO3H++E7Ci6DOzQPIZLJfBYZbNSNjs8QGCNvSy
+         x4Q5iaUG89wphUGxaJQxe1MxBeFawWnjovkCti/nt6udtFH/BR842itSj+VOlmoN7fsV
+         vO5EnlNBmzPRPSbzwa0yK1rNIqFGsw76k4YnhWMVMbkDNU2SI5JuvvS8JmfOQ13JcPqr
+         UGK7Pdxe1llfhkkfZO6yvZR2H6gflHyejfSwTP6se5h4iSc6U8qjJeOTDMNRpWzvnLgs
+         iUYGQxmhjqJaeuMry6Tf/TwEvnr4UOzAm1VGmYUAZeW+Rp+9W1tQDBAdr2EP3MBYlyAF
+         s1BA==
+X-Gm-Message-State: AOJu0Yw74iRMW3FmZQLPwqDgW5WUxZbP/Bbn+jI/fI71Vt8UJbouZodi
+	dynxd22jeQIRyiRBnITeV5+AuZ/9OVRNMqXyMpQ77rtgcKehz48enB7/ykAuKBJfZFan0D33NVy
+	ewgtgvn0gRlwCeU2OHiYLZYDnfhPrCkSq8jOThz39QQ==
+X-Gm-Gg: ASbGncvrIgae/1dUsSMv1v5BxuY4MRGkwQPOEWSzEnmO9QGcqfUzV2TIume8EqCBdjw
+	wKJVGPu2BFYSDDCizZMwIUk7PEzgsmYVJiGyKX9b2MidopIKfjLvI/d8rS3QLfK1BiBKJ17qcqZ
+	kr6YsZcGHoUaPhbhjmAGaHhPCl7Wm/p1V3S4JTdnpI0MANE0L918TXEeqL7xm7bxyMoSzwjAkYa
+	MHCFEne1wI9lVK3c9o9TVszBhY6ZJyJ4By498bYo4jHISzcmim4qpCEZN3DNGeyHl6yARxOgj09
+	wwWUD3w1orxyTXQnhg==
+X-Google-Smtp-Source: AGHT+IG6dDTmqgRndauEm3n43gUUTvbxoIAo8xjrG46WEWaGTmwuwaI0CaRln1vBjuRad9gGiPuvQ5vdbLdXcNS55e0=
+X-Received: by 2002:a05:6512:3c93:b0:592:f9dd:8f28 with SMTP id
+ 2adb3069b0e04-5941d53e85amr990212e87.35.1761901292415; Fri, 31 Oct 2025
+ 02:01:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20251030161011.282924-1-marco.crivellari@suse.com>
+ <20251030161011.282924-3-marco.crivellari@suse.com> <34829993-a888-4f7c-a2c6-e87723644c3c@amd.com>
+In-Reply-To: <34829993-a888-4f7c-a2c6-e87723644c3c@amd.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Fri, 31 Oct 2025 10:01:21 +0100
+X-Gm-Features: AWmQ_blyHKRMjIwqs9IEExJag89S5F7s8p2T3thDh3CMhSPUjI4-6H-ukHS_NTs
+Message-ID: <CAAofZF5pSB-kJVr_PJbo_845VbpaB1Fbf+yeA74sWOU_vXfypQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] drm/amdgpu: replace use of system_wq with system_percpu_wq
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 10 Oct 2025, Siarhei Vishniakou wrote:
+On Thu, Oct 30, 2025 at 6:10=E2=80=AFPM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>[...]
+> In this particular use case we actually don't want the percpu wq.
+>
+> This can execute on any CPU except for the current one.
+>
+> Regards,
+> Christian.
+>
+> >  exit:
+> >       if (amdgpu_sriov_vf(adev)) {
+>
 
-> The joystick axes (ABS_X, ABS_Y, ABS_RX, ABS_RY) for PlayStation
-> gamepads report a neutral state of 128 over HID, with a full range of
-> [0, 255]. The driver previously mapped this directly, resulting in an
-> evdev range of [0, 255] with a resting point of 128.
-> 
-> This approach is unconventional for Linux gamepad drivers and has several
-> drawbacks: it requires userspace applications to be aware of the
-> non-zero resting state, and it is incompatible with the input
-> subsystem's 'flat' (deadzone) logic, which assumes a resting point of 0.
-> 
-> This patch remaps the four joystick axes to the conventional signed
-> 8-bit range of [-128, 127], with 0 as the neutral state. This is
-> accomplished by changing their evdev range in ps_gamepad_create() and
-> translating the incoming hardware value in the report parsing functions
-> by subtracting 128.
-> 
-> The analog trigger axes (ABS_Z, ABS_RZ) are handled separately. Their
-> resting state is 0 (un-pressed), and their hardware range of [0, 255]
-> is already the conventional representation. They are left unmodified by
-> this patch.
-> 
-> This makes the joystick behavior consistent with other gamepad drivers
-> while preserving the standard behavior for the triggers.
-> 
-> Signed-off-by: Siarhei Vishniakou <svv@google.com>
+Hi Christian,
 
-Hmmm ... as I am rather unaware of the existing playstation userspace 
-ecosystem -- is there any way how we could now be breaking existing 
-playstation-specific userspace assumptions that have already developed 
-based on asumptions that we're centered at 128?
+like for the unbound workqueue also the system_percpu_wq is just a
+rename for system_wq.
+Technically I changed the workqueue because we added in the code two wq:
+- system_percpu_wq
+- system_dfl_wq
 
-Thanks,
+You can see the commits mentioned in the cover letter, shared also below:
 
--- 
-Jiri Kosina
-SUSE Labs
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
+So basically the behavior is the same.
+
+But if it would be beneficial to have an unbound wq, I can send the v2
+with the change!
+We did so also for other subsystems.
+
+Thanks!
+
+
+
+--
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
