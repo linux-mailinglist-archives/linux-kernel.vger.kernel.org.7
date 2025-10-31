@@ -1,60 +1,113 @@
-Return-Path: <linux-kernel+bounces-879812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35494C2423C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:26:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85552C2412C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BFF564DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F0B188E240
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE95330305;
-	Fri, 31 Oct 2025 09:10:20 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57D7330B1D;
+	Fri, 31 Oct 2025 09:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HQCZO9vT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A01732ABC4;
-	Fri, 31 Oct 2025 09:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C2329E6A;
+	Fri, 31 Oct 2025 09:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901819; cv=none; b=NFMEKxTzLeK5/5XQky1o0DSJd0dbqMVBI9LpCU64MAgTUqpCNi1nsaK+2x0YSP6+Axen4GTmYH87FxRCUn0GDPRTTQXP8V4Vx9g6fjutb7GgG5WZ7SCkR1EAjMFyaee0R8QMgAYqdKZrczlKT0pq0ScffY5UlP1AI8g5u0wJkhg=
+	t=1761901878; cv=none; b=qStPuSGlo/VoSdGpIkc5gTEU4MKJxvsKvdedr0Bpn7KzqBW3QoVV1MhBOZfnFwxz7745Ca08Ey6EKzeB3uohTtivQkw7shF/PiyLCwMwGZ4kHuujABRRxVGBHqGT0q/WKY19JLjNRfMO6RJfECc6hQPReU4BiCjItXi+EITNhz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901819; c=relaxed/simple;
-	bh=D/mPPvnyLAPwluyXYtU7V3lARpwYkvyFIeIREaupNtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDA52x1W0IX/+r/8CRj1Wb5TJyKT8auQlFGjBgZV+orgH5/65v4ysnPJYiLsxbiKCLHj0VhIFnpBqt1EQ0go+SCaq7Gn/BPG8VfO1avV+fGplTBMowJUotfIM26P1s+mxu4cUuQb2uuPQADegl1QaHvy6Lu0PnUvBFw0s/gTvdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id A9C6D227A88; Fri, 31 Oct 2025 10:10:14 +0100 (CET)
-Date: Fri, 31 Oct 2025 10:10:14 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Llamas <cmllamas@google.com>,
-	Jens Axboe <axboe@kernel.dk>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org,
-	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>
-Subject: Re: [PATCH] blk-crypto: use BLK_STS_INVAL for alignment errors
-Message-ID: <20251031091014.GA9413@lst.de>
-References: <20251030043919.2787231-1-cmllamas@google.com> <20251030060303.GA12820@lst.de> <20251030171704.GB1624@sol>
+	s=arc-20240116; t=1761901878; c=relaxed/simple;
+	bh=nVFcr7cSAivJ3kX3Ong+t5W82ll2lBVB0+D6Fy+f66w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JkRMc2CN2l56U97rWh4DJ6uVBvkAnUvS9ht9eWlHCRL5g4B8ueANduS4cmRj3X/4JkARQB7NFp1usddejCJn51aK7mFMiwi8n3ORZL5tUCuJsVgfWQAswIPSGysRS3ziWjy3GNs3uRP79A/g9wu51VXxk72m6AWHrsM2UWFwVuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HQCZO9vT; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761901877; x=1793437877;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nVFcr7cSAivJ3kX3Ong+t5W82ll2lBVB0+D6Fy+f66w=;
+  b=HQCZO9vTEpjJxjl/WaTCvT+awRwcTymmY5VKXIyecuwkdXGSQ4CdTnUI
+   I+SrED/yK0H0+LUQlpaR8xRryORZOVL1URSehS1vyIaEvzTNXIcsTgOaH
+   tdeT6vlFUshLs8u11njnrWwIo6ImhQlkoUHf7wDQ7H2h3/oCBBwIMMSdV
+   ajxLSEMH9BbPzsF+p5NWMQ1TFqL3cp0KcQswEkWcN50GI+PFF8wH1sBsT
+   HbD5HCUpsLuHLF3Cia/l8G5NOIlTYr9Cxnu2hexEzm33E+kjxoTct31c1
+   32154/Mipa40drH93kHLEL9tV4E5ELqv45Hl4q3z5INSOrK4ZKbJ9HvRI
+   g==;
+X-CSE-ConnectionGUID: mkqLbQ7hSyi9GvTFVHTqQA==
+X-CSE-MsgGUID: e4MlsgwaSvebtVkkrSxOig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63944980"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="63944980"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:11:16 -0700
+X-CSE-ConnectionGUID: mtRCVhiuRGSbh+b9MLYkrw==
+X-CSE-MsgGUID: naB5mn6dRoCATJ8bJWh6cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="186124007"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:11:08 -0700
+Message-ID: <709166ed-2102-46f2-807b-3d8139a386f0@linux.intel.com>
+Date: Fri, 31 Oct 2025 17:11:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030171704.GB1624@sol>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 22/28] KVM: TDX: Add tdx_get_cmd() helper to get and
+ validate sub-ioctl command
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251030200951.3402865-1-seanjc@google.com>
+ <20251030200951.3402865-23-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251030200951.3402865-23-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 10:17:04AM -0700, Eric Biggers wrote:
-> I'm not sure what you mean.  They already take encryption into account
-> and report dio_mem_align=filesystem_block_size on encrypted files.
 
-Oh, right - it's just hidden a few layers deep.
+
+On 10/31/2025 4:09 AM, Sean Christopherson wrote:
+> Add a helper to copy a kvm_tdx_cmd structure from userspace and verify
+> that must-be-zero fields are indeed zero.
+>
+> No functional change intended.
+>
+> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
 
