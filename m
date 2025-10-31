@@ -1,134 +1,163 @@
-Return-Path: <linux-kernel+bounces-879636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03B2C23A14
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:59:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9B9C23A23
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94E784F1AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56A2C3BE21B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4689232B98C;
-	Fri, 31 Oct 2025 07:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E084432AAD5;
+	Fri, 31 Oct 2025 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="goZspn5d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+Lje8q9"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF333329C4F;
-	Fri, 31 Oct 2025 07:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75DB328B70
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897514; cv=none; b=dGLyR0fNwDydJzac6lsbi+Bo1IErFHCArmLMk4XWV6vHrF9AinVgkRVtPKprzwWfQgz7jevF5EXWhjlnkUqA9d4QjtXnU7b9F3qIKN4Hj+wmJs1w38QFT3D40dza/6SpZTQbFp+bHk7ro+0/6WOhzG3FBljz7dAeWIk2u8Ai6z0=
+	t=1761897576; cv=none; b=aFDtGd9qURGDF4hAhO3dQ4M0vW3wZBVb0JEFT6DGbeMVuIK4TzCtXxeRONZMjZwhYwImfUzsYchcBX8nZRsINM5/D667cQg0UdREaaerz/dNUbJFq6CgpEQ8eIhCT6Svcien0H+j2HyS/jrcwWz7UiJfoDBSb2SGmV5SCMQa1/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897514; c=relaxed/simple;
-	bh=rzM0b8qPEYkMq5nIoO4tMjMsIEGrMoYlxde7BXZgKfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HIogGFfNUKplNjSoFbbOA0M7H97Uv+ex7ea+WK3xNdb8q7hp4Iuwp6CdLoK2Zsq75FU0a6DETz7PnnFBzCyeal7+LzI8jlGhCh12m7P/asHDtMU3UARIqfgTOuleiaV4MQ1++hBGgI4hUOKtceNC/U4FVPRMtMhouOJ8Yb8GUaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=goZspn5d; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761897513; x=1793433513;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rzM0b8qPEYkMq5nIoO4tMjMsIEGrMoYlxde7BXZgKfY=;
-  b=goZspn5dnwSdx0wnGIBedLEsVmCijQR8zOYDAJ9DYziwKsyIJyYBEysK
-   9rmBTMXeIkJW8t94ZLfZGI/bH6NQh1aXyOtVQQF5K268be1bEl972jb1W
-   DTTNvLO7voXC/gPxSFH4D9OEtIQb7Yby5JgOWBuJlsoKb0EIDZP3salof
-   /EOu764ODGwOAYplkyRe5aUZuD4mrJZxspR9m5M70YBsCtdSyLayEWecp
-   S13125gqwWd10Np1sqThsaEDwQPA8514P/Wfx4s8Bx9WoLObGJ67+jZ07
-   jBp1f1sPtcuTqRWTYw6RCQrXTdE4Uk/m03NCvMApNYRK38lNbqpxKkeZa
-   w==;
-X-CSE-ConnectionGUID: VBey73xERvO0gqfsJjj/eQ==
-X-CSE-MsgGUID: 6wXurUJPRYqWBosLmB8j3Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75401443"
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="75401443"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 00:58:32 -0700
-X-CSE-ConnectionGUID: aelFfb7/T7+TXvXFUL/t7w==
-X-CSE-MsgGUID: o2Ju4geKSZSKLBD3vX8YRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="186108753"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 00:58:25 -0700
-Message-ID: <7e43061a-b901-4e8f-8ee9-57d67aaf4f38@linux.intel.com>
-Date: Fri, 31 Oct 2025 15:58:22 +0800
+	s=arc-20240116; t=1761897576; c=relaxed/simple;
+	bh=oCFU+Jq75hVAWXXdS62XSOnstkhM/oQ6Cc7WTvuNuXk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=baYR8s8oDjLr1s3x1tHGfAWCrlG+ZhEENVMfGBo2YHORqZCvaNUqQAjOj/vgUAedweIB7f1/J9NdpHdMq81F+S5NYDQWDLGAMfI184NIYldTwPRFylcoRqQo3ecHRegPVpnPtXS4USWQt5Bg12eu5k1l/MBNvPduVgA9F/aizZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+Lje8q9; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-78118e163e5so2595679b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761897574; x=1762502374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FIG1gPHWz5YUTSFTq2X6NcEVev5w3QKx2U2b3x+eC04=;
+        b=D+Lje8q9jWoTtcKwZvjdKuqVly1M+Md6sLDhgLHf0DrgO9dMPHg/2hbyk7QpiueWyG
+         p2LGOlro7LjGr5UG87mVKFmLVMHn1rRH1sx9PUmepKeHzXDvQ1uYM47eRBXxuA58lVSC
+         fo+ZijT3OV/Z9c8sWINOd7EkrqT7gDeRlFGv+8PDxBU5XYojLetuyCuTf6jShXB9BjUP
+         g3B8igvQlOFtAUv6oHspWDY63J9Cmk4CY/cog34kth9Cw9C7Ixeo5k+6mVX9gau9a0Ru
+         1uiEN8uUJB/B4G3C8RCtu3fyzTkvIn5cs3T7l01jVIa+yqqYrcUE0S0V5/xNU6qPs8eb
+         XU1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761897574; x=1762502374;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FIG1gPHWz5YUTSFTq2X6NcEVev5w3QKx2U2b3x+eC04=;
+        b=VAZ8ddxQJp0A5uirW78U1jE/BkxUb4pu5MdyJClhD1ENHXm1jSh7RIwCXmJ0vaP65M
+         azJ/TYpZGTg2zXRitkf88kV3WnWEdcCUQ7v4dEXomj1rYvOkDBQDqTyC5Pd1qpfIfK2Z
+         yq4M94gSmMO7bgrMk73DFLJIDzfw/ZXCoIe1zZTaDhEwFmwRYL7082k4ZKDkrqiRYn3/
+         LM+JidUapbrL7WNOYVMSdTvXVX6e/VlQ1QyjyBiAnJlQlsXenn1ztevUG8aiQKttePfi
+         OqHx3T2GcRmYmnCcIZQpGmtQPkHDbH2iiU2RevYaVsDhpYthOYx/TpcAXMAopbngQPiC
+         4MEw==
+X-Gm-Message-State: AOJu0Yyaw9gjdYq22MgcGFZ9N4ljjINs4tG5DZbggGDpk2ePS+gTCXlv
+	BgyN5G8MyK6gVve5yXUKBODaK6oPIZ9RBpDOP7bAJYt7g7x0Tl+Hi0LPBQPDHjUI
+X-Gm-Gg: ASbGncsHX9GldjsGyja0xXxd9+vJEhNY02mr4XIV+CeTeFb4ZHvAfq3lVIIv2ZpgDSU
+	dEAQfSXT9BkC3ZsXIlHNCvmlJuE9p49dNNfp+/4/OUpPzJIrrlUI2zGEXdADCAfJ/CypcsLDleE
+	viUJ5s27ERgZQxl70fK/N1nzf8aV06EZWtJD2pg+t5JO6alN+nYMgP3Q3If02RztO1FvPGAFeX2
+	6yjvxVsnmdiPJaTjkunjsebA+R4N5K/VucO3vYBsTLissBzFU0Q1rhEDvwdOSon+Uznn4p1gWtg
+	n3Udhu2S3AjGq0rVV0eCCQ/nl9skSO7OwT/fcTAaCHl1hLRYvSH5nVVRmeQP3LnCLvJk2/TADRU
+	VQDce+sA38TVxrV5HbTEu7b0u4w79nX0uluFLvvTrHdvz2ThWRbgYIvM6WrLAPrc0xIzngLja3z
+	WYKglggyuwLAfOda7wc722DGpwxP1TTc+eu3/OfTk=
+X-Google-Smtp-Source: AGHT+IHdbZmqsXSWeXv/r8DTnZI3dtQC+Ykx5SbKuHeqzqFtK6HuJVgXOKgrXJEaUHZqapUmILM+JQ==
+X-Received: by 2002:a05:6a21:998f:b0:342:a261:e2c9 with SMTP id adf61e73a8af0-348ba48c3d6mr3838807637.8.1761897573947;
+        Fri, 31 Oct 2025 00:59:33 -0700 (PDT)
+Received: from E07P150077.ecarx.com.cn ([103.52.189.23])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93be4045fbsm1216575a12.28.2025.10.31.00.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 00:59:33 -0700 (PDT)
+From: Jianyun Gao <jianyungao89@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jianyun Gao <jianyungao89@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [LIBRARY] (libbpf))
+Subject: [PATCH v2 0/5] libbpf: add Doxygen docs for public LIBBPF_API APIs
+Date: Fri, 31 Oct 2025 15:59:02 +0800
+Message-Id: <20251031075908.1472249-1-jianyungao89@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/28] KVM: x86/mmu: Add dedicated API to map
- guest_memfd pfn into TDP MMU
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251030200951.3402865-1-seanjc@google.com>
- <20251030200951.3402865-5-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251030200951.3402865-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
+Background:
+While consulting libbpf's online documentation at https://libbpf.readthedocs.io/
+I noticed that many public LIBBPF_API helpers in tools/lib/bpf/bpf.h either
+lacked descriptions entirely or had very minimal/fragmented information. This
+makes it harder for both new and experienced users to understand semantics,
+error handling, privilege requirements, flag usage, and concurrency aspects of
+these APIs. To improve discoverability and self-service learning, I prepared a
+series adding consistent Doxygen comment blocks for all currently exported
+LIBBPF_API interfaces.
 
-On 10/31/2025 4:09 AM, Sean Christopherson wrote:
-> Add and use a new API for mapping a private pfn from guest_memfd into the
-> TDP MMU from TDX's post-populate hook instead of partially open-coding the
-> functionality into the TDX code.  Sharing code with the pre-fault path
-> sounded good on paper, but it's fatally flawed as simulating a fault loses
-> the pfn, and calling back into gmem to re-retrieve the pfn creates locking
-> problems, e.g. kvm_gmem_populate() already holds the gmem invalidation
-> lock.
->
-> Providing a dedicated API will also removing several MMU exports that
-> ideally would not be exposed outside of the MMU, let alone to vendor code.
-> On that topic, opportunistically drop the kvm_mmu_load() export.  Leave
-> kvm_tdp_mmu_gpa_is_mapped() alone for now; the entire commit that added
-> kvm_tdp_mmu_gpa_is_mapped() will be removed in the near future.
->
-> Gate the API on CONFIG_KVM_GUEST_MEMFD=y as private memory _must_ be backed
-> by guest_memfd.  Add a lockdep-only assert to that the incoming pfn is
-> indeed backed by guest_memfd, and that the gmem instance's invalidate lock
-> is held (which, combined with slots_lock being held, obviates the need to
-> check for a stale "fault").
->
-> Cc: Michael Roth <michael.roth@amd.com>
-> Cc: Yan Zhao <yan.y.zhao@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Vishal Annapurve <vannapurve@google.com>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Link: https://lore.kernel.org/all/20250709232103.zwmufocd3l7sqk7y@amd.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Goals of this series:
+- Provide structured @brief, parameter, return, and common error descriptions.
+- Clarify behavior of flags (e.g. BPF_F_LOCK, batch operation semantics).
+- Note privilege/capability considerations where relevant.
+- Normalize wording of return conventions (0 on success, negative libbpf-style
+  error == -errno) without changing actual behavior.
+- Improve completeness of generated HTML/PDF docs produced via Doxygen.
+- Pure documentation; no code logic, ABI, or symbol changes.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Patch breakdown:
+  1/5 libbpf: Add Doxygen documentation for bpf_map_* APIs in bpf.h
+  2/5 libbpf: Add Doxygen documentation for bpf_prog_* APIs in bpf.h
+  3/5 libbpf: Add Doxygen documentation for bpf_link_* APIs in bpf.h
+  4/5 libbpf: Add Doxygen documentation for bpf_obj_* APIs in bpf.h
+  5/5 libbpf: Add Doxygen documentation for btf/iter etc. in bpf.h
+
+Diffstat (approximate):
+ tools/lib/bpf/bpf.h | 2962 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 2941 insertions(+), 21 deletions(-)
+
+Thanks for reviewing.
+
+Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
+
+---
+v1->v2:
+ - Fixed compilation error caused by embedded literal "/*" inside a
+   comment (rephrased/escaped).
+ - Refined bpf_map_* return value docs: explicit non-negative success
+   vs negative -errno failures.
+ - Fixed the non-ASCII characters in the patches.
+
+The v1 is here:
+https://lore.kernel.org/lkml/20251031032627.1414462-1-jianyungao89@gmail.com/
+
+---
+
+Jianyun Gao (5):
+  libbpf: Add doxygen documentation for bpf_map_* APIs in bpf.h
+  libbpf: Add doxygen documentation for bpf_prog_* APIs in bpf.h
+  libbpf: Add doxygen documentation for bpf_link_* APIs in bpf.h
+  libbpf: Add doxygen documentation for bpf_obj_* APIs in bpf.h
+  libbpf: Add doxygen documentation for btf/iter etc. in bpf.h
+
+ tools/lib/bpf/bpf.h | 2967 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 2946 insertions(+), 21 deletions(-)
+
+-- 
+2.34.1
 
 
