@@ -1,182 +1,247 @@
-Return-Path: <linux-kernel+bounces-880153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8515AC24FC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:25:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34B5C24FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F7F4351111
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:25:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF4704F4606
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347A7348862;
-	Fri, 31 Oct 2025 12:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D75433FE39;
+	Fri, 31 Oct 2025 12:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1asyvAI"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pNpAfdzW"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5EB242D8A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742EA305E02;
+	Fri, 31 Oct 2025 12:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913496; cv=none; b=bUZ76FBpEZsP923PcNKkbHE+kmiaIqsIV3hmrUuR+EmDjRtjZkkyEGwWKSchBV1UjAD+2uj6oxLltJnKWDlsvskACsR6FAOBVEVULn33bm7FL9p6hZeMVFpeokR2JtdAiPOhHm2cGFT6XKamQbGq1jyY3HuYveTly3KRiwnRqoU=
+	t=1761913560; cv=none; b=tZRt+TOnaWM7hVKtK0VrE9cAwoIWdDECrTDB+ElDlj0zPpzJQfNnbFQVbnW5A7F/cQJPqSS577H1xY3Q266kkU3KNgnqdIS66hS28bWyKnw46VnsETOQDrgTZq+3X8StetjA1iQGJGJiqqknfJFbnaIv7ce+w+eGXKKKXNYzX5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913496; c=relaxed/simple;
-	bh=Y66ckEvjvtnhjR24BjBtiS57XqFb+Ky669W3IQ8Uc/8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oMR8N6/JWVAVSyq94AG4bkuYJ8H3P6go5gyh+49KgA9wx/qyHeFJP6PUWAxk9nxsL7N8kN5UO+c3Ftl0D+YfI0uGoL7MmwEzvVAzB5ylMm5mbMVvp32zjnj3SQ+ZxG3r2H4v0fgpKHmxXQGNIH+MT0R2c9SB1cMJJq/uJht7Z8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1asyvAI; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7a271fc7e6bso390574b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:24:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761913494; x=1762518294; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kA4eiGvrcUQKapvU5kcBIm2q6gz7Mks5lq1mQ3d3x5w=;
-        b=M1asyvAIekgsKgNoxpzsIYk4I+4cmACA+pT/LGwZpsZZ8NBboZjPeecTe4a/hBNWE3
-         rehYWP99A/GnrZ9Ck0iWT0IzcHzfYoIoTv6NlA5jA7SQx8nJKsxB59oZU6sw5w/3Pn49
-         Sqz+b0MvHZcyxd2UvaJ2P7N7sFnW7U5GbRjIv6U1/OaftXDvGxi8vprR1w3X5EJmsZNe
-         wgz4z+tBfg9h2NUpSNfHbnnTOtnuuU4taSgp0mlA37NyUVF6Wuw2C3VVUCUHCiBVo+KF
-         GQnfULJtsSRuLnVu+s9P81UVMQfffa1pELpldAgrYkCNueVEcE7UwdpeSVSv7DPfMtBE
-         2tJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761913494; x=1762518294;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kA4eiGvrcUQKapvU5kcBIm2q6gz7Mks5lq1mQ3d3x5w=;
-        b=dXfjfwcBT1A3nbMuETdzskFlE6VyukzWNv0df1e2dcTyhKPRyKHu4ha6X8alo0WXJW
-         iF2hi4K45LpNeysR2BarRik5FNKJP6+sUhJiGpsiAzDB6F0xVr0+2JevCsa3Kp7XMUnF
-         4vnMMe/9s6J8UX67x1fVyBvNdPC/N/mfUP7G0EqZo4j7LS2btIxBIVLjkxTh6zdOvAOU
-         QXQ/qWoHyJPg2tx9VTIA3JHvRgM4P4rrniukPVZFuPRVMWkHAc12VJGEJXvKuqT6OIL4
-         l/IFbpLTKqZycQIowrl2G99TT+eN5YpCwZTphEM4Uq2zf/e+2yv011CQzeGyuf+nxSm+
-         Wj9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW/0PDco+fLKsV5nDSCoODFS9oSOcOAWsANbIr4V/yq4vlYI6HC/y8k2onKSUjkwQxUXFpuRKhRitANz4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtxo0KV5K7KeloJXgjinK8LP3ou1KNtLaBvukCKirrPvO36KwX
-	BfQbVT9n5nyOcSsgQoF3XKqd8NfpuUUgYMzzgBIaODHntVLpJg5wlj8P
-X-Gm-Gg: ASbGncseS9rji9OpvdhSwP1TRlK2HAYScGNRJcVODQ4wKsEr43Rl9UI9Lj/fm66ggtk
-	IHqGhRNw6xsNkIWBA/X3hJJEtbMpovpY2szEyaG+OsKhhTtBUHpYGeHWfpe6HAoakWPjvB92bbT
-	duL5eO+l/Z+8v/IGbBij5b4JAkU9il++eJL6Z1yKns/Z8jpa6fDpAdTxU0dCd8Q5ZneyAFw6D83
-	PpcnCHdhFKoLV5QGwmhEII1PZ5pollEJqhmvc+jv5MnY4TtL/VxNuFcUWKeIqwTp2kvQcSrLYWJ
-	waGVIKf6FKwEL+Oc8Y/cF8ZAaXdsR2oR5ToR8SQxut7Tlu1VSCzYYSf4ncEslX1X0CwA6QUF6wx
-	/CyraR/TEcTS7PX9p3SYvkDXz1cRYCZw72EaWr/bgZ/Zhq2j09yRC049G/sRM8KK8M340LuWNZu
-	bjMI7OXG3y3zMr9jWIrFWyoccNGz/vlX+X/pK7GoLmBQ==
-X-Google-Smtp-Source: AGHT+IF6kAFNrFllQ0zDpOrghfPSaKBaGJtRBoDThOoMjH+SuWUWv1YoOL7AYSxtynciu5SEjAdfdA==
-X-Received: by 2002:a05:6a21:6d9e:b0:244:aefe:71ef with SMTP id adf61e73a8af0-348ccc044b9mr2487003637.6.1761913493991;
-        Fri, 31 Oct 2025 05:24:53 -0700 (PDT)
-Received: from [127.0.1.1] ([2406:7400:10c:5702:8dcc:c993:b9bb:4994])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db67cbdfsm2086639b3a.49.2025.10.31.05.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 05:24:53 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-Date: Fri, 31 Oct 2025 17:54:43 +0530
-Subject: [PATCH] net: sched: act_ife: initialize struct tc_ife to fix KMSAN
- kernel-infoleak
+	s=arc-20240116; t=1761913560; c=relaxed/simple;
+	bh=+2UonHQLD58Zbc0/s/PV+vfI+D6frN46kJ6879B+8Hc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RYNJCVeVkuftRyz8wUK4/34aYOUkjs15tef9uvGnefkpXMCf0JHwD8baV6hXXUp3K4m5KM5ttthWKdXJI+RoZ9Da0EJf90zQfwLQnTWF4Tx2+iGnuqiOuPCs/6zhVWT/+govyrTFjjMoS+AJ9M3XxiRbCOBmd9TsZFf4bNg5IUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pNpAfdzW; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761913549; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=0iJJ56HyHlVHUe0K6WSYqY6o/tgEUh7N0oHbwmxxNLs=;
+	b=pNpAfdzWWlNwo0D6DWBBB/mh+l9mks7UeNK5IcWLkGbtSjX5qWC5RdgfbIinfcjxOYVJqFQtYJ1XMGb6PboH7CxcSAVnIMFvD+l4JjLixDQhtMJ3w20H3IuAUQJKZIfMA4ILLTWgHuLD41SNSRR0eJSMeeQhtDvaiz98NYhe8nk=
+Received: from 30.180.79.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrOw1AG_1761913547 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 31 Oct 2025 20:25:48 +0800
+Message-ID: <bc738580-4e1f-411f-af7b-f76a4ce7b7ea@linux.alibaba.com>
+Date: Fri, 31 Oct 2025 20:25:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-infoleak-v1-1-9f7250ee33aa@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIqqBGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA2ND3cy8tPyc1MRsXYtE85RUs8S0ZEsLcyWg8oKi1LTMCrBR0bG1tQA
- LhyiFWgAAAA==
-To: Jamal Hadi Salim <jhs@mojatatu.com>, 
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
- syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com, 
- Ranganath V N <vnranganath.20@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761913489; l=2758;
- i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
- bh=Y66ckEvjvtnhjR24BjBtiS57XqFb+Ky669W3IQ8Uc/8=;
- b=33eyT/pXFi3nNGN+9479Hggr+jQ9J6Kl06dy4BiDsIUEPo/wD3BQpTeJuZs/ZUlmJxISzNa/0
- vXwIWSu4mFSCuhs1QhN+6DvJly7CJrhvTpJbud3CZn/xFzYZkTzaiUR
-X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
- pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
+User-Agent: Mozilla Thunderbird
+Subject: Re: question about bd_inode hashing against device_add() // Re:
+ [PATCH 03/11] block: call bdev_add later in device_add_disk
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
+ zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20210818144542.19305-1-hch@lst.de>
+ <20210818144542.19305-4-hch@lst.de>
+ <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
+ <20251031090925.GA9379@lst.de>
+ <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
+ <20251031094552.GA10011@lst.de>
+ <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+ <2025103155-definite-stays-ebfe@gregkh>
+ <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
+ <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+In-Reply-To: <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fix a KMSAN kernel-infoleak detected  by the syzbot .
 
-[net?] KMSAN: kernel-infoleak in __skb_datagram_iter
 
-In tcf_ife_dump(), the variable 'opt' was partially initialized using a
-designatied initializer. While the padding bytes are reamined
-uninitialized. nla_put() copies the entire structure into a
-netlink message, these uninitialized bytes leaked to userspace.
+On 2025/10/31 20:23, Gao Xiang wrote:
+> 
+> 
+> On 2025/10/31 18:12, Gao Xiang wrote:
+>> Hi Greg,
+>>
+>> On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
+>>> On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2025/10/31 17:45, Christoph Hellwig wrote:
+> 
+> ...
+> 
+>>>>> But why does the device node
+>>>>> get created earlier?  My assumption was that it would only be
+>>>>> created by the KOBJ_ADD uevent.  Adding the device model maintainers
+>>>>> as my little dig through the core drivers/base/ code doesn't find
+>>>>> anything to the contrary, but maybe I don't fully understand it.
+>>>>
+>>>> AFAIK, device_add() is used to trigger devtmpfs file
+>>>> creation, and it can be observed if frequently
+>>>> hotpluging device in the VM and mount.  Currently
+>>>> I don't have time slot to build an easy reproducer,
+>>>> but I think it's a real issue anyway.
+>>>
+>>> As I say above, that's not normal, and you have to be root to do this,
+> I just spent time to reproduce with dynamic loop devices and
+> actually it's easy if msleep() is located artificiallly,
+> the diff as below:
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 810707cca970..a4273b5ad456 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
+>       struct inode *inode;
+> 
+>       inode = ilookup(blockdev_superblock, dev);
+> -    if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
+> +    if (0) {
+>           blk_request_module(dev);
+>           inode = ilookup(blockdev_superblock, dev);
+>           if (inode)
+> diff --git a/block/genhd.c b/block/genhd.c
+> index 9bbc38d12792..3c9116fdc1ce 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
+>       set_bit(GD_ADDED, &disk->state);
+>   }
+> 
+> +#include <linux/delay.h>
+> +
+>   static int __add_disk(struct device *parent, struct gendisk *disk,
+>                 const struct attribute_group **groups,
+>                 struct fwnode_handle *fwnode)
+> @@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
+>       if (ret)
+>           goto out_free_ext_minor;
+> 
+> +    if (disk->major == LOOP_MAJOR)
+> +        msleep(2500);           // delay 2.5s for all loops
+> +
+>       ret = disk_alloc_events(disk);
+>       if (ret)
+>           goto out_device_del;
+> 
+> 
+> (Note that I masked off CONFIG_BLOCK_LEGACY_AUTOLOAD
+>   for cleaner ftrace below.)
+> 
+> and then
+> 
+> # uname -a  (patched 6.18-rc1 kernel)
+> 
+> ```
+> Linux 7e5b4b5f5181 6.18.0-rc1-dirty #25 SMP PREEMPT_DYNAMIC Fri Oct 31 19:52:10 CST 2025 x86_64 GNU/Linux
+> ```
+> 
+> # truncate -s 1g test.img; mkfs.ext4 -F test.img;
+> # losetup /dev/loop999 test.img & sleep 1; ls -l /dev/loop999; strace mount -t ext4 /dev/loop999 mnt 2>&1 | grep fsconfig
+> 
+> It shows
+> 
+> ```
+> brw------- 1 root root 7, 999 Oct 31 20:06 /dev/loop999
+> fsconfig(3, FSCONFIG_SET_STRING, "source", "/dev/loop999", 0) = 0
+> fsconfig(3, FSCONFIG_CMD_CREATE, NULL, NULL, 0) = -1 ENXIO (No such device or address)  // unexpected
+> ```
+> 
+> then
+> 
+> # losetup /dev/loop996 test.img & sleep 1; stat /dev/loop996; trace-cmd record -p function_graph mount -t ext4 /dev/loop996 mnt &> /dev/null
+> 
+> It shows
+> ```
+>    File: /dev/loop996
+>    Size: 0               Blocks: 0          IO Block: 4096   block special file
+> Device: 0,6     Inode: 429         Links: 1     Device type: 7,996
+> Access: (0600/brw-------)  Uid: (    0/    root)   Gid: (    0/    root)
+> Access: 2025-10-31 20:07:54.938474868 +0800
+> Modify: 2025-10-31 20:07:54.938474868 +0800
+> Change: 2025-10-31 20:07:54.938474868 +0800
+>   Birth: 2025-10-31 20:07:54.938474868 +0800
+> ```
+> 
+> but
+> 
+> # trace-cmd report | grep mount | less
+>             mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                bdev_file_open_by_dev() {
+>             mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                  bdev_permission() {
+>             mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                    devcgroup_check_permission() {
+>             mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                      __rcu_read_lock() {
+>             mount-561   [007] ...1.   240.180514: funcgraph_exit:         0.193 us   |                      } (ret=0x1)
+>             mount-561   [007] ...1.   240.180514: funcgraph_entry:                   |                      match_exception_partial() {
+>             mount-561   [007] ...1.   240.180514: funcgraph_exit:         0.199 us   |                      } (ret=0x0)
+>             mount-561   [007] ...1.   240.180514: funcgraph_entry:                   |                      __rcu_read_unlock() {
+>             mount-561   [007] ...1.   240.180515: funcgraph_exit:         0.202 us   |                      } (ret=0x0)
+>             mount-561   [007] ...1.   240.180515: funcgraph_exit:         1.602 us   |                    } (ret=0x0)
+>             mount-561   [007] ...1.   240.180515: funcgraph_exit:         2.100 us   |                  } (ret=0x0)
+>             mount-561   [007] ...1.   240.180515: funcgraph_entry:                   |                  ilookup() {
+>             mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                    __cond_resched() {
+>             mount-561   [007] ...1.   240.180516: funcgraph_exit:         0.194 us   |                    } (ret=0x0)
+>             mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                    find_inode_fast() {
+>             mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                      __rcu_read_lock() {
+>             mount-561   [007] ...1.   240.180516: funcgraph_exit:         0.195 us   |                      } (ret=0x1)
+>             mount-561   [007] ...1.   240.180517: funcgraph_entry:                   |                      __rcu_read_unlock() {
+>             mount-561   [007] ...1.   240.180517: funcgraph_exit:         0.193 us   |                      } (ret=0x0)
+>             mount-561   [007] ...1.   240.180517: funcgraph_exit:         1.060 us   |                    } (ret=0x0)
+>             mount-561   [007] ...1.   240.180517: funcgraph_exit:         1.970 us   |                  } (ret=0x0)
+>             mount-561   [007] ...1.   240.180518: funcgraph_exit:         4.818 us   |                } (ret=-6)
+> 
+> here -6 (-ENXIO) is unexpected.
+> 
+> Actually the problematic code path I've said is device_add():
+> 
+> upstream code:
+> 
+> loop_control_ioctl
+>   loop_add
+>     add_disk_fwnode
+>       __add_disk
+>         devtmpfs_create_node   // here create devtmpfs blkdev file, but racy
+>       add_disk_final
+>         bdev_add
+>           insert_inode_hash    // just seen by bdev_file_open_by_dev()
+>         disk_uevent(disk, KOBJ_ADD)
 
-Initialize the structure with memset before assigning its fields
-to ensure all members and padding are cleared prior to beign copied.
+minor revision:
 
-This change silences the KMSAN report and prevents potential information
-leaks from the kernel memory.
+  loop_control_ioctl
+    loop_add
+      add_disk_fwnode
+        __add_disk
+          device_add
+            devtmpfs_create_node   // here create devtmpfs blkdev file, but racy
+        add_disk_final
+          bdev_add
+            insert_inode_hash    // just seen by bdev_file_open_by_dev()
+          disk_uevent(disk, KOBJ_ADD)
 
-This fix has been tested and validated by syzbot. This patch closes the
-bug reported at the following syzkaller link and ensures no infoleak.
-
-Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
-Tested-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
-Fixes: ef6980b6becb ("introduce IFE action")
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
-Fix a KMSAN kernel-infoleak detected  by the syzbot .
-
-[net?] KMSAN: kernel-infoleak in __skb_datagram_iter
-
-In tcf_ife_dump(), the variable 'opt' was partially initialized using a
-designatied initializer. While the padding bytes are reamined
-uninitialized. nla_put() copies the entire structure into a
-netlink message, these uninitialized bytes leaked to userspace.
-
-Initialize the structure with memset before assigning its fields
-to ensure all members and padding are cleared prior to beign copied.
----
- net/sched/act_ife.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/net/sched/act_ife.c b/net/sched/act_ife.c
-index 107c6d83dc5c..608ef6cc2224 100644
---- a/net/sched/act_ife.c
-+++ b/net/sched/act_ife.c
-@@ -644,13 +644,16 @@ static int tcf_ife_dump(struct sk_buff *skb, struct tc_action *a, int bind,
- 	unsigned char *b = skb_tail_pointer(skb);
- 	struct tcf_ife_info *ife = to_ife(a);
- 	struct tcf_ife_params *p;
--	struct tc_ife opt = {
--		.index = ife->tcf_index,
--		.refcnt = refcount_read(&ife->tcf_refcnt) - ref,
--		.bindcnt = atomic_read(&ife->tcf_bindcnt) - bind,
--	};
-+	struct tc_ife opt;
- 	struct tcf_t t;
- 
-+	memset(&opt, 0, sizeof(opt));
-+	memset(&t, 0, sizeof(t));
-+
-+	opt.index = ife->tcf_index,
-+	opt.refcnt = refcount_read(&ife->tcf_refcnt) - ref,
-+	opt.bindcnt = atomic_read(&ife->tcf_bindcnt) - bind,
-+
- 	spin_lock_bh(&ife->tcf_lock);
- 	opt.action = ife->tcf_action;
- 	p = rcu_dereference_protected(ife->params,
-
----
-base-commit: d127176862a93c4b3216bda533d2bee170af5e71
-change-id: 20251031-infoleak-8a7de6afc987
-
-Best regards,
--- 
-Ranganath V N <vnranganath.20@gmail.com>
+> 
+> I actually think it's enough to explain the root.
+> 
+> Thanks,
+> Gao Xiang
 
 
