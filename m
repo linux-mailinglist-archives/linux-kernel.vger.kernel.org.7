@@ -1,111 +1,110 @@
-Return-Path: <linux-kernel+bounces-879699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80E4C23CC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:28:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D10EBC23C78
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDDB4269FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:19:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79E6F4F59A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DF92FF65C;
-	Fri, 31 Oct 2025 08:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007B82EC0A7;
+	Fri, 31 Oct 2025 08:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LFOptmJA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDRnDgoQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5066C2BE7DF;
-	Fri, 31 Oct 2025 08:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB88253957;
+	Fri, 31 Oct 2025 08:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898772; cv=none; b=a7gnlu3z4Wi/Bib/UUx6G+MEW8qHQUWz7c0pBYn3Sr5s3erb7Z2cb6Q7x3+m1Dckq9/5B1HxOmrJJjyiNW+1sRkHGMAJq0lTYpaKKJ+RbdLWJ+UBKPtYav21hjBeJAleAP2DhYpkrKw5Aoe7YaRP6KYy02QiKyFStZv36b+xDrg=
+	t=1761898769; cv=none; b=j3vFLogIf27MUB2fTS7r6Urg2QN5AwAtMvF/IGADtPaYhDytFdrpYCR+Rzt3BUSfoWVHd2csUFlrvZcFjpvL8ZcrxabbYr2x9cRPU3eJ2DcMkmU0P+6Z5sINgD0aRakXpsjVoSbodCWKWQ+M+0+nmtQcyhBJnD7GC+9qp+/bLuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898772; c=relaxed/simple;
-	bh=EzjqWFPbYzjEfpDteBcncRVxcsQvYXXWJGNfJY3z6Qw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iq7DMAHP3PaGAM84gslYris5UUNFNIoKihBWCAcmTX4Ov3OFNez7RoNqZjUnFXJl7HQXZjVmAC5CmOlcm//woxANhBBPHKE7B0TP0dz+sHjTNgBSg1OllX0O9aYQ6t/X8Vmra2RbScmFX4C9zbxXOijfudSubc/QIPFDFKEt728=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LFOptmJA; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761898770; x=1793434770;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EzjqWFPbYzjEfpDteBcncRVxcsQvYXXWJGNfJY3z6Qw=;
-  b=LFOptmJANNqkz6pzHsk9AEPaajUEL+rEbqEb72Kkk9cdPxdh7/wfFBJX
-   Ynh+XWPHbUZLfpD0SKSqcgA6CiTN8ae1jYZu6iY7cHLTMGs6EvDZdkL7r
-   mUqh/twj4GZBLhPcQj8oKkGnsck3v+Zt4DqWV8J70+WCygQVgxUMyNuVF
-   jfbgYvVoALuIX5B+95mAFnCKNN7HcouTwf2NvAfJ1H2SyvX3JJsWoYMOs
-   lWzSCaYowjiHfFN3/RjEf5pUkLgcEtLx8G9pDYrUqz0kxV6oBXtQnBIVI
-   QCnsiimj6MFItpa4CDQ7TQgTcZAsorYAlOFTv0eOlCyQ9l9dV6GFOCKm2
-   w==;
-X-CSE-ConnectionGUID: ArpzwkzBQVyEvIxVgSoIfQ==
-X-CSE-MsgGUID: gLKkGtRaTtK2tBoQwUM3hg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63939831"
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="63939831"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:19:29 -0700
-X-CSE-ConnectionGUID: ln37oo4sSVGgtPADrikf7g==
-X-CSE-MsgGUID: Cf3BSL1nT0KAv+tRtGKg6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="186112068"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:19:22 -0700
-Message-ID: <af023723-63d5-46d3-85bb-c2d2dcfe7b15@linux.intel.com>
-Date: Fri, 31 Oct 2025 16:19:18 +0800
+	s=arc-20240116; t=1761898769; c=relaxed/simple;
+	bh=KxNLKm898ISK9bg5Y6Dwq7+27/Y6B02z4sitZmbdhhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeL23nKmxWsR8pUknxVwcbhG21vYHd//SBcwrYCCx13Z2ZWxmQXdXNAwG3bVjtqOeIF0edejj1ccqW5ua8Wu236AEKtPG4Rc+G+CgYvDjZ7CjLCb2uEhgUH276Xa+AU8rEgoY0/YJzBDGRh1yR0FL/A7fJBYZwLoiYsESxV0YlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDRnDgoQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2498BC4CEF1;
+	Fri, 31 Oct 2025 08:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761898768;
+	bh=KxNLKm898ISK9bg5Y6Dwq7+27/Y6B02z4sitZmbdhhg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WDRnDgoQwv4gBXL/VUzJI6qGi4Zy3uokZrGwaE6SKKFuKRt+pTZT9gTjpAzBT/Co/
+	 Qso8QrABj/VtulwZ4lvoIr5kWCpirgnjzq1uHgwIwczKNgrEluq2uofGwIYFdELjUY
+	 PdkjBaZ3Ad2+4K0D9++HEFhucTPuw7Ca7DbD5Xo6hMZ98kj8GjyI88OlFGyZmT2V+1
+	 rb0goahzfje7Ej6/vgknrOKQmAX3LVt9QkYa3gMMQDbCjJABz5fByn1zTVvpSsI+BG
+	 9F4bbFi1MIW1bLytKYZ3uzPSKNN86cqFh+ZEYNvEaKpCdGDs5Bgbn7C4nuF4HeiykC
+	 K71fxnhwQdSRQ==
+Date: Fri, 31 Oct 2025 09:19:26 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jack Hsu <jh.hsu@mediatek.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	srini@kernel.org, ukleinek@kernel.org, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, 
+	chunfeng.yun@mediatek.com, wim@linux-watchdog.org, linux@roeck-us.net, 
+	sean.wang@mediatek.com, zhiyong.tao@mediatek.com, andrew-ct.chen@mediatek.com, 
+	lala.lin@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v6 07/11] dt-bindings: usb: Support MediaTek MT8189 evb
+ board xhci
+Message-ID: <20251031-nifty-sticky-hoatzin-eeafeb@kuoka>
+References: <20251030134541.784011-1-jh.hsu@mediatek.com>
+ <20251030134541.784011-8-jh.hsu@mediatek.com>
+ <20251030-underwent-courier-1f4322e1cb34@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/28] KVM: TDX: WARN if mirror SPTE doesn't have full
- RWX when creating S-EPT mapping
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251030200951.3402865-1-seanjc@google.com>
- <20251030200951.3402865-13-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251030200951.3402865-13-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251030-underwent-courier-1f4322e1cb34@spud>
 
+On Thu, Oct 30, 2025 at 07:32:26PM +0000, Conor Dooley wrote:
+> On Thu, Oct 30, 2025 at 09:44:39PM +0800, Jack Hsu wrote:
+> > modify dt-binding for support mt8189 evb board dts node of xhci
+> > 
+> > Signed-off-by: Jack Hsu <jh.hsu@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/usb/mediatek,mtk-xhci.yaml         | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
+> > index 004d3ebec091..05cb6a219e5c 100644
+> > --- a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
+> > +++ b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
+> > @@ -34,6 +34,7 @@ properties:
+> >            - mediatek,mt8183-xhci
+> >            - mediatek,mt8186-xhci
+> >            - mediatek,mt8188-xhci
+> > +          - mediatek,mt8189-xhci
+> >            - mediatek,mt8192-xhci
+> >            - mediatek,mt8195-xhci
+> >            - mediatek,mt8365-xhci
+> > @@ -119,6 +120,9 @@ properties:
+> >    resets:
+> >      maxItems: 1
+> >  
+> > +  reset-names:
+> > +    maxItems: 1
+> 
+> Is this reset required on mt8189? Does it appear on other mediatek xhci
+> controllers?
 
+reset was there, it is the name added for some unknown reason.
 
-On 10/31/2025 4:09 AM, Sean Christopherson wrote:
-> Pass in the mirror_spte to kvm_x86_ops.set_external_spte() to provide
-> symmetry with .remove_external_spte(), and assert in TDX that the mirror
-> SPTE is shadow-present with full RWX permissions (the TDX-Module doesn't
-> allow the hypervisor to control protections).
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Best regards,
+Krzysztof
 
 
