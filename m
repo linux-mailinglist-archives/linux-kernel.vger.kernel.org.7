@@ -1,179 +1,184 @@
-Return-Path: <linux-kernel+bounces-879690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034E8C23C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:24:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E9EC23BAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98BB63A5B34
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:14:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46154188B270
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D5A32AAC9;
-	Fri, 31 Oct 2025 08:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C74305E37;
+	Fri, 31 Oct 2025 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJbKnESF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T1ygqf85"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369EA3009DE;
-	Fri, 31 Oct 2025 08:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6C72F9D9A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898468; cv=none; b=EkP7TlwtxRCP+xJND5+9QAl2VmwcpvbLr1tPSr6jze42w4xgL08PRW3sXzh9VmFuSjEtX7fWD0lNizZ7FkLTcb0CTN6lrUrvsTMBNNYf+IarGPIKsDHf+/7quq2NZ3ML+VEQ+a7B7wsNymhDbKiz3jbSvJrijb09pQw4PeuOu/w=
+	t=1761898496; cv=none; b=u3kXWS9SDWAFbtxAp9G5SxrRAm0TSDuRB4xa6sVlygq7izSJOIzZUlXyOhyU8uRdld/XWwHmmxJ9MJnM7Kav+x2JFrAHsXaVJvoAXbSyomGDHnuA5SmYPpPRqlRSo08jaadoINrT7iNwQ87XIpBl0xwzCxRVosrdwrWdge4mOv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898468; c=relaxed/simple;
-	bh=T7nI7xvtFl7krfWTdP/qjx1BlQ3XmAzSZCU1Kz/Md9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P4O8g6Q0JOWN2XufPa6QGFk2cNx3MYQuUndsqCWvsVKV3mQcO/P6GoKcFP4Y1eey+orRMxjRSBPwV3EgUznQxd6EXVD8FqB2+rJPJajdEjbyx63AO4VvCtI+EbtgD2ftQGPho4DDcrKhQMBtMt7LC7hhBajaIQUw4ClBj0t9czk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJbKnESF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754F3C4CEFB;
-	Fri, 31 Oct 2025 08:14:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761898468;
-	bh=T7nI7xvtFl7krfWTdP/qjx1BlQ3XmAzSZCU1Kz/Md9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LJbKnESFg6XyUjYSq7gFteRw1AzLeEOwhq/R1FQ9acELAGb+1lo+BK3K6HG4G/O9k
-	 xCbFSxVcLC6lxIA0RrBry1xU4Ny6c2H9iQpJGAXLuYmETlnLIP8hBxSbvlZPayn7P3
-	 pcdWLf2PtvqhAnCGPD2p3hRJ9Lk1gYYEF4knXXJYhNNNRjes5DC7lcoG0kLdNdtV/1
-	 nCEB4VgBWNM6NXS1awmf6VveSzpRC4x8tIriIrbbOk8w5xV8RlXWbSdrKrJV1DsLdn
-	 UnSBH3oBfQXE59g/0J4wbD5O4tEdAtNlrTE0qdoi8niaUfHbef0uVckyS7o8sjZq5k
-	 qYs5Od5VGpOrQ==
-Date: Fri, 31 Oct 2025 09:14:25 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ashish Mhetre <amhetre@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	thierry.reding@gmail.com, jonathanh@nvidia.com, jgg@ziepe.ca, nicolinc@nvidia.com, 
-	linux-tegra@nvidia.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
-Message-ID: <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
-References: <20251031062959.1521704-1-amhetre@nvidia.com>
- <20251031062959.1521704-3-amhetre@nvidia.com>
+	s=arc-20240116; t=1761898496; c=relaxed/simple;
+	bh=/QnJcZUJ5qnAWkQ1qujlZ/10Xlu6j2TSKjRO9Yhs9zM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=tD+WVIwFthG43TrWb5JGWAXMbgRw79Mq6RnfCH4LncNRXPzlIX10B3fs/zVz5GL6YyObTWOzhQvvDhQ6n5eIssxvaSpyrrUq6a28aCm4mIF6g+2oztrpE3Bv6XqNPSMuocRfsINyKDC4M/KuyC/JjvTNZZUSODLI6zeRIFwX72A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T1ygqf85; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D640EC0E949;
+	Fri, 31 Oct 2025 08:14:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3224F60704;
+	Fri, 31 Oct 2025 08:14:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5BCFC1180FC53;
+	Fri, 31 Oct 2025 09:14:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761898491; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=5kqeQwCaBXcdDdY/fhWUYtRy6WjKsRWcRbvT6plygZk=;
+	b=T1ygqf85lOMPWNIDgy20hrud9rCyd1xYGw6YtoFTSBH3pQHtW1WHik1l52Ilu0OT6lsl/L
+	zHbQrU6Klq8WUqyjfkbqD9cE5v1+IHAHs3ioVdpqt4SZ+4sVt52p45QAqmqiNS4tAT6jN4
+	JcFj+iG9CLwUNVoTsgr3/ZvFloNGRaGHDiWEJFsdStw7t0+V8b1u/1Cl4GZQUUToGmJ0Lj
+	Aqk8f1rIgCxzN3KcXKmwhU9EE9CdtmRjNu8cIpT9LENVwKr1icISps9Ay8L6Yvp7cxG2ju
+	K4FEKe9rAKcgYlnMBOvrU+XSh0Q0AWraH9ZR4sWbJefClS7Y3DjOAJX7nyVD2g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031062959.1521704-3-amhetre@nvidia.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 31 Oct 2025 09:14:45 +0100
+Message-Id: <DDWCVYBQSV10.2MFZFEEHPYJY4@bootlin.com>
+To: "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>, <imx@lists.linux.dev>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>
+Cc: <dri-devel@lists.freedesktop.org>, "Sandor Yu" <sandor.yu@nxp.com>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 5/9] drm/imx: Add support for i.MX94 DCIF
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20250911-dcif-upstreaming-v5-0-a1e8dab8ae40@oss.nxp.com>
+ <20250911-dcif-upstreaming-v5-5-a1e8dab8ae40@oss.nxp.com>
+In-Reply-To: <20250911-dcif-upstreaming-v5-5-a1e8dab8ae40@oss.nxp.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 31, 2025 at 06:29:58AM +0000, Ashish Mhetre wrote:
-> The Command Queue Virtualization (CMDQV) hardware is part of the
-> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
-> virtualizing the command queue for the SMMU.
+Hello Laurentiu,
 
-If this is specific to Nvidia, then I think you need specific front
-compatible and disallow it for other vendors.
+On Thu Sep 11, 2025 at 1:37 PM CEST, Laurentiu Palcu wrote:
 
-> 
-> Add a new device tree binding document for nvidia,tegra264-cmdqv.
-> 
-> Also update the arm,smmu-v3 binding to include an optional nvidia,cmdqv
-> property. This property is a phandle to the CMDQV device node, allowing
-> the SMMU driver to associate with its corresponding CMDQV instance.
-> 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->  .../bindings/iommu/arm,smmu-v3.yaml           | 10 ++++
->  .../bindings/iommu/nvidia,tegra264-cmdqv.yaml | 46 +++++++++++++++++++
->  2 files changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
-> index 75fcf4cb52d9..edc0c20a0c80 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
-> @@ -58,6 +58,15 @@ properties:
->  
->    msi-parent: true
->  
-> +  nvidia,cmdqv:
-> +    description: |
-> +      A phandle to its pairing CMDQV extension for an implementation on NVIDIA
-> +      Tegra SoC.
-> +
-> +      If this property is absent, CMDQ-Virtualization won't be used and SMMU
-> +      will only use its own CMDQ.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
->    hisilicon,broken-prefetch-cmd:
->      type: boolean
->      description: Avoid sending CMD_PREFETCH_* commands to the SMMU.
-> @@ -92,4 +101,5 @@ examples:
->              dma-coherent;
->              #iommu-cells = <1>;
->              msi-parent = <&its 0xff0000>;
-> +            nvidia,cmdqv = <&cmdqv>;
->      };
-> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
-> new file mode 100644
-> index 000000000000..f22c370278a3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra264 CMDQV
+...
 
-Missing blank line
+> +static struct drm_bridge *dcif_crtc_get_bridge(struct drm_crtc *crtc,
+> +					       struct drm_crtc_state *crtc_state)
+> +{
+> +	struct drm_connector_state *conn_state;
+> +	struct drm_encoder *encoder;
+> +	struct drm_connector *conn;
+> +	struct drm_bridge *bridge;
+> +	int i;
+> +
+> +	for_each_new_connector_in_state(crtc_state->state, conn, conn_state, i)=
+ {
+> +		if (crtc !=3D conn_state->crtc)
+> +			continue;
+> +
+> +		encoder =3D conn_state->best_encoder;
+> +
+> +		bridge =3D drm_bridge_chain_get_first_bridge(encoder);
 
-> +description: |
+The bridge returned by drm_bridge_chain_get_first_bridge() is refcounted
+since v6.18-rc1 [0], so you have to put that reference...
 
-Do not need '|' unless you need to preserve formatting.
+> +		if (bridge)
+> +			return bridge;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static void dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
+> +					      struct drm_crtc_state *crtc_state)
+> +{
+> +	struct dcif_crtc_state *dcif_state =3D to_dcif_crtc_state(crtc_state);
+> +	struct drm_bridge_state *bridge_state;
+> +	struct drm_bridge *bridge;
+> +
+> +	dcif_state->bus_format =3D MEDIA_BUS_FMT_RGB888_1X24;
+> +	dcif_state->bus_flags =3D 0;
+> +
+> +	bridge =3D dcif_crtc_get_bridge(crtc, crtc_state);
+> +	if (!bridge)
+> +		return;
+> +
+> +	bridge_state =3D drm_atomic_get_new_bridge_state(crtc_state->state, bri=
+dge);
+> +	if (!bridge_state)
+> +		return;
+> +
+> +	dcif_state->bus_format =3D bridge_state->input_bus_cfg.format;
+> +	dcif_state->bus_flags =3D bridge_state->input_bus_cfg.flags;
 
-> +  The CMDQ-Virtualization hardware block is part of the SMMUv3 implementation
-> +  on Tegra264 SoCs. It assists in virtualizing the command queue for the SMMU.
-> +
-> +maintainers:
-> +  - NVIDIA Corporation <linux-tegra@nvidia.com>
+...perhaps here, when both the bridge pointer and the bridge_state pointer
+referencing it go out of scope.
 
-No. It should be a person. If entire Nvidia cannot find a person, I
-don't think we are interested in having this in the kernel.
+> +}
 
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra264-cmdqv
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: cmdqv
+You can just call drm_bridge_put(bridge) there, or (at your option) use a
+cleanup action:
 
-Drop interript names, obvious.
+ static void dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
+                                               struct drm_crtc_state *crtc_=
+state)
+ {
+         struct dcif_crtc_state *dcif_state =3D to_dcif_crtc_state(crtc_sta=
+te);
+         struct drm_bridge_state *bridge_state;
+-        struct drm_bridge *bridge;
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    cmdqv: cmdqv@8105200000 {
+         dcif_state->bus_format =3D MEDIA_BUS_FMT_RGB888_1X24;
+         dcif_state->bus_flags =3D 0;
 
-Drop unused label
+-        bridge =3D dcif_crtc_get_bridge(crtc, crtc_state);
++        struct drm_bridge *bridge __free(drm_bridge_put) =3D dcif_crtc_get=
+_bridge(crtc, crtc_state);
+         if (!bridge)
+                 return;
+
+         bridge_state =3D drm_atomic_get_new_bridge_state(crtc_state->state=
+, bridge);
+         if (!bridge_state)
+                 return;
+
+         dcif_state->bus_format =3D bridge_state->input_bus_cfg.format;
+         dcif_state->bus_flags =3D bridge_state->input_bus_cfg.flags;
+ }
+
+This would call drm_bridge_put() at end of scope, i.e. end of function.
+
+You can also have a look at recent commits involving drm_bridge_put (git
+log -p -Gdrm_bridge_put v6.16..origin/master) to see how other parts of the
+kernel have added drm_bridge_put().
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8fa5909400f3773=
+51836419223c33f1131f0f7d3
 
 Best regards,
-Krzysztof
+Luca
 
+---
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
