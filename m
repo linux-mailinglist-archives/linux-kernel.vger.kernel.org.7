@@ -1,109 +1,184 @@
-Return-Path: <linux-kernel+bounces-880482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB39C25DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:36:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E5C1C25DDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E44E1A26714
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A3C425D43
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EFA2DF132;
-	Fri, 31 Oct 2025 15:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D3D2E336E;
+	Fri, 31 Oct 2025 15:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xaIzXA4x"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgZioyMf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9CE2D543E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1732D9EE0;
+	Fri, 31 Oct 2025 15:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761924954; cv=none; b=k/to5z0Qdr8c0RU2SSxmYbQPkxJDVBznSJFB/jIEj9qGFljAKZJR9b14HqEyLCuQEKuSTPySpOJliTbfUpdjsFzmIPWRHdF5rwCkzuE5FRcQ82L2Cm17tY8WmqSQruZb3nChHibz7V9Fc/uym2lJLki30svbqdOpb3QMbsWR0uc=
+	t=1761924966; cv=none; b=LFSgZrGfvp1rH24TGF9JnpZ1yl8O5MJDIA675l2SiE1VtA6+fHx6lCl0CApQZ489ORialwLeuYeFSB3+SW2T1JLbiS9c7U1wPORzSsW9EEZMLB25xaLeGqJHf6/OcMzD04MCTLi97zbRHZR8eqYkvB9WV7JvDASBEKe+48CO0Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761924954; c=relaxed/simple;
-	bh=qiLdJIzVO+jKGGBbXYftuUXlskKJmBc2AUMgGXCy3fA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dIVzSAa6eO0imCA1eFtcS3Kk50nWdC1zfhUy10QEBgbaUXNqqAwTDjld0gfBK+IAd8HCECaL1AMhGfgCTC7zQvxBQFx1ZdPB9mNEncrGckh48KL5p3WnO/Umt46mSC36/QSjaa+C+YhL7sAK0JqbufXhofS9BBV6iLIcY89+S3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xaIzXA4x; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-87dfd3c24ddso34691326d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761924950; x=1762529750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6ACvehQQuyEQdMS3T6Vr1FtAWe8uc2yBWuRjxIoUTA=;
-        b=xaIzXA4xsy/o5bo+GzQMg4ii6bwwtustnednq+QcE3D49Rh3bRhWQdNpSbyBl49eO9
-         wd+zhgcibTh1kf6R8XZHOMoTOvSoBoS1ny7jRgFiymK9b8I30I+mYbWcXQXZ7v9cJ2mH
-         Pmy74C3BABHuzlrVCenUUyqSPcoxHlW5lvTOsZEXgeYhH/3Qn5zT1ja6ErRQtQRq6C/1
-         Ny1e5xZLTXYS/iJOzLepkrFKhhKJ3E8uq2wB0YXVhS1IBdzjZo9IckxMrmV0cfyKkuUk
-         zk/1qeItlZCxVDSdHIO8mJjlM42vPN8ezfLgncY7iWidgy33GylMjRR5YNog4Z29qCck
-         J9SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761924950; x=1762529750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L6ACvehQQuyEQdMS3T6Vr1FtAWe8uc2yBWuRjxIoUTA=;
-        b=xASokjXh3XtxdYzlNbzW+4ARR3QOoriWgS0ThXJu7nEYJlC7IzG7Jwr6FB3DCiX7qt
-         4ZYqfn1qiUY0cTpIzym3OXM9F3LHUJWRmgoT9ueKGDBeH7mKogIFWehiUHKCAfVSLJSm
-         Tz/4NEMbSU3mepxZFqqeXUhrJMCEtWxehqrAb+oqSjV2RyyXMXqh4b4kwZSmnZfGW4An
-         BXNFywMB9JH9l/ZLDsrtZYRo/MTBZs5sUqTp0XjpIyRMdTbg1rJlI/qb+b/cz9OQ+3m7
-         Bpc084E1K0dwwNJqDKegZztGoY4/6ajrVj5vjXzsJaC5wV9RjipHJEXVn5Wj63YwWHBA
-         cUTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvEaDJrt+JdTP1MqFj8j/eilu0kA6KnyGZSvVoVr6ds12Yl+noslqfaaFl5NEInW7X3X75nXrHzN6lI+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz21f/utjBm3uHptTLTbdxUYadqf4q0PTEaGbhIpCzD1a3O2+oj
-	QhzMa70unxcQCOpjvDGnUAWgxR5+r/eW9o5NEDnrB9u//Utkc+VIyUOSQK8Afzl+SKtran8pwi9
-	CisnaPyCw4xRLNgLQc7M3ujMRKXtiQszx3fDCRaddWw==
-X-Gm-Gg: ASbGncvmIm5ky0PfZ4+kKnPvu517GALulP/oVQXHr4GNd2bWYWCs595MeCQddhRVCgA
-	pKLjTpqfYeTf5DdL3EFV+TIkMUNF/0KBixnQcxDcHbHUzOFw7m4buX8u80NI4tJf2yza4XrbXkv
-	3ZtBVP+0FdoT/CtogzEdEpa5KR6iYRRWP8lG6DhSfSddx5Pejc59HMZ1LYua6lCoh82PbxjnWRU
-	qLPznxl9Gnl3C4qBcHFox74LY1+B8QARGOvKteauO7ucGq7ykac6EJeR2OpSyTGNdqVMre2VKhP
-	136208cvBzPJk590/w==
-X-Google-Smtp-Source: AGHT+IFa/2cbIGKCDZ2v8wEyvKnZrrGJFeRexJg6fwcZTSltyNTrXO5QbxDoX827DZL9AHbtcev7dhQ9QG3pQWiW/UQ=
-X-Received: by 2002:a05:6214:1bcd:b0:87d:f969:6a7d with SMTP id
- 6a1803df08f44-8802f2d2d04mr54375076d6.18.1761924950343; Fri, 31 Oct 2025
- 08:35:50 -0700 (PDT)
+	s=arc-20240116; t=1761924966; c=relaxed/simple;
+	bh=f2kdcTzIgflTZpNVJcpB/wXw4Pn7v3oe8LGnD3Ghpv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNs+RM3QtDWkDhDH5hv9rLUYC/XW9hFzBPQ9AtrF911at0jFjw7SejBJZB9DvKVPdylrsz8B9eX20ZnTNruL3al40CMVwwfSRHokNITtI66ImNEpZcaub/0g0p6E0A3Z97+Ft3o1QjhmArcO3ls8YLea/9cYd5OeMbKK1Z/tLcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgZioyMf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E3AEC4CEE7;
+	Fri, 31 Oct 2025 15:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761924964;
+	bh=f2kdcTzIgflTZpNVJcpB/wXw4Pn7v3oe8LGnD3Ghpv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bgZioyMfejcWWV0MS6C05S2LbsEdxX50diKJLFbw9ByzTss1Ijd602OkOPk5VfJ9K
+	 BRKcnvMU8FhGuOYJD6IlhqxkvqA74T7C11v39u1D+WoQbt6yJqS7412XtCYdJe0PHy
+	 Ln62jNHD5VjGRqjBBZSBa4jUMaVRdwp5bzP89/ZWKaQCzVlnK86qZsU+w4X0SXlEbI
+	 lRkg7pYEBULQLbHiEuqIewp4ucaxmKc3j/liAl9yD7UK/IyLDT6JMbpqc1UA7U21O9
+	 xfmguuXRFsOBFWFtnYsZeHmVkddUjMRhYiHjr9QoNL/wS5AGPYJo2404lc9S1uCEeI
+	 AAsxziPBgXXWA==
+Date: Fri, 31 Oct 2025 16:36:01 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 05/33] sched/isolation: Save boot defined domain flags
+Message-ID: <aQTXYSyPS65nhkvl@localhost.localdomain>
+References: <20251013203146.10162-1-frederic@kernel.org>
+ <20251013203146.10162-6-frederic@kernel.org>
+ <xhsmhecqtoc4b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030094434.1390143-1-ajye_huang@compal.corp-partner.google.com>
- <CAD=FV=V6xV0m4pj=7f2dxDP-0A1AaQuYJP5NAnXNz1_bzH7nSw@mail.gmail.com>
- <7071a2b8198c09011c84d39b45dc6d1da4b69d12@intel.com> <789d88744fbd3a05758971dc8d893fb4599475f3@intel.com>
-In-Reply-To: <789d88744fbd3a05758971dc8d893fb4599475f3@intel.com>
-From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-Date: Fri, 31 Oct 2025 23:35:48 +0800
-X-Gm-Features: AWmQ_blxyQaGsb2G54AT5MgQtyEAT64D04t6hwU5kGIchciQ4ACQDUgJ67aHa7I
-Message-ID: <CALprXBb7w_15kOBo=ZUzD9vhKyPDD34frk9UYmcQvS_7vEfNaQ@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xhsmhecqtoc4b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-Hi Jani, Doug
+Le Thu, Oct 23, 2025 at 05:45:40PM +0200, Valentin Schneider a écrit :
+> On 13/10/25 22:31, Frederic Weisbecker wrote:
+> > HK_TYPE_DOMAIN will soon integrate not only boot defined isolcpus= CPUs
+> > but also cpuset isolated partitions.
+> >
+> > Housekeeping still needs a way to record what was initially passed
+> > to isolcpus= in order to keep these CPUs isolated after a cpuset
+> > isolated partition is modified or destroyed while containing some of
+> > them.
+> >
+> > Create a new HK_TYPE_DOMAIN_BOOT to keep track of those.
+> >
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > Reviewed-by: Phil Auld <pauld@redhat.com>
+> > ---
+> >  include/linux/sched/isolation.h | 1 +
+> >  kernel/sched/isolation.c        | 5 +++--
+> >  2 files changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+> > index d8501f4709b5..da22b038942a 100644
+> > --- a/include/linux/sched/isolation.h
+> > +++ b/include/linux/sched/isolation.h
+> > @@ -7,6 +7,7 @@
+> >  #include <linux/tick.h>
+> >
+> >  enum hk_type {
+> > +	HK_TYPE_DOMAIN_BOOT,
+> >       HK_TYPE_DOMAIN,
+> >       HK_TYPE_MANAGED_IRQ,
+> >       HK_TYPE_KERNEL_NOISE,
+> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > index a4cf17b1fab0..8690fb705089 100644
+> > --- a/kernel/sched/isolation.c
+> > +++ b/kernel/sched/isolation.c
+> > @@ -11,6 +11,7 @@
+> >  #include "sched.h"
+> >
+> >  enum hk_flags {
+> > +	HK_FLAG_DOMAIN_BOOT	= BIT(HK_TYPE_DOMAIN_BOOT),
+> >       HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
+> >       HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
+> >       HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
+> > @@ -216,7 +217,7 @@ static int __init housekeeping_isolcpus_setup(char *str)
+> >
+> >               if (!strncmp(str, "domain,", 7)) {
+> >                       str += 7;
+> > -			flags |= HK_FLAG_DOMAIN;
+> > +			flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
+> >                       continue;
+> >               }
+> >
+> > @@ -246,7 +247,7 @@ static int __init housekeeping_isolcpus_setup(char *str)
+> >
+> >       /* Default behaviour for isolcpus without flags */
+> >       if (!flags)
+> > -		flags |= HK_FLAG_DOMAIN;
+> > +		flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
+> 
+> I got stupidly confused by the cpumask_andnot() used later on since these
+> are housekeeping cpumasks and not isolated ones; AFAICT HK_FLAG_DOMAIN_BOOT
+> is meant to be a superset of HK_FLAG_DOMAIN - or, put in a way my brain
+> comprehends, NOT(HK_FLAG_DOMAIN) (i.e. runtime isolated cpumask) is a
+> superset of NOT(HK_FLAG_DOMAIN_BOOT) (i.e. boottime isolated cpumask),
+> thus the final shape of cpu_is_isolated() makes sense:
+> 
+>   static inline bool cpu_is_isolated(int cpu)
+>   {
+>           return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN);
+>   }
 
-On Fri, Oct 31, 2025 at 6:40=E2=80=AFPM Jani Nikula <jani.nikula@intel.com>=
- wrote:
->
-> And as soon as I hit send, I notice the quirk is missing BIT(). It's a
-> bit mask, and the enum signifies the bit number.
->
+Right, I get confused myself as well. I've been thinking several times about
+inverting those housekeeping masks to work instead with isolated masks. But I'm
+not sure that would make the APIs easier to use.
 
-This is my mistake, really sorry about that.
-The  device which is equipped with the sharp panel uses kernel 6.6, which
- #define EDID_QUIRK_FORCE_6BPC            (1 << 10)  in drm_edid.c
-However, the kernel latest is using enum, really appreciate you all
-find this my mistake.
- I will send the v2 ,Thank you all.
+> Could we document that to make it a bit more explicit? Maybe something like
+> 
+>   enum hk_type {
+>         /* Set at boot-time via the isolcpus= cmdline argument */
+>         HK_TYPE_DOMAIN_BOOT,
+>         /*
+>          * Updated at runtime via isolated cpusets; strict subset of
+>          * HK_TYPE_DOMAIN_BOOT as it accounts for boot-time isolated CPUs.
+>          */
+>         HK_TYPE_DOMAIN,
+>         ...
+>   }
+
+I thought I did already but obviously not. Let me fix that...
+
+Thanks.
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
