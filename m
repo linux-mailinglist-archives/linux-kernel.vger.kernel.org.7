@@ -1,212 +1,232 @@
-Return-Path: <linux-kernel+bounces-880892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75FEC26CF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:42:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88212C26CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DC21897C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:42:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56A254E8B11
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61273310762;
-	Fri, 31 Oct 2025 19:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528403126A6;
+	Fri, 31 Oct 2025 19:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IZm7Fwfi"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="L67JYJk0"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020117.outbound.protection.outlook.com [52.101.189.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458311AF4D5
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761939742; cv=none; b=iZrmdvngt0sSgu+QEkvqMeTiq78b78g6RcNP03dhckUIWOXogTEu+A1PTC2UXDWQ8gjm8W4cj/t8gRTlJWaB07CltI8P4GkNuAtzatnohO/moNkqKKXXSnlZjGE3RUIPbdPZ0nqyfWTT72XQDO/YcCVGedXl8E1Hvr1PdkyvXc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761939742; c=relaxed/simple;
-	bh=82aBPTw4nAD0S7uZR++gRXJuMqWxM2qxpvikhp8S274=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=eXMVKOW/zwY3SoVz57cq9X3aBGLmkBL+r6X0n1NtV2RYJrC105e5RZZT2J2yCk8ugmfWL9h9VrqgexZedOzlUWVMPCkiNOLOA7KMmppthshr+ziSB/irXaHlu5EuuphVTFCd4YB+vxEcyF6BmQOzY8CHcG4PyiTXD+SoLzGEtT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IZm7Fwfi; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-294fb21b0e9so20654025ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761939740; x=1762544540; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bp6I5I4DuTfJ4CVISPFiYfryrJjJqDYIHDeQo3MNWD0=;
-        b=IZm7FwfiVM4mDJ9TIN3sfNZF5qGlkh1QyGR5hmDOUeSr6BeqMFSrYz6j5lah97pG2m
-         rRlCqCapr+GheybT1wAqK7523LQxGhjHuwqdVDEK2GkdIx7Y7raZzNWHAPJTliLnC7Jl
-         a0RbDoaVP/C2gb15blwBWCZxskwnJAJPEiUuXroordIadFcGIb3lg3LGo+dphlXNwcZ0
-         7C5PqU8byrbzrtWb5AIRk0XpjCPxbo5ukY0mOOi/+ek2IEVg+mWdOIvkpEDY2j7BtLDl
-         qBkBKJjzE2ftlyfzgiZ9pk0OUtsZm10Hf6tY2oSkwyW9FATMvydkDxp9+7KHAe/VqqF0
-         F3+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761939740; x=1762544540;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bp6I5I4DuTfJ4CVISPFiYfryrJjJqDYIHDeQo3MNWD0=;
-        b=qjp3YZFcSkUlFXxKU8GkVk7/7OVmuNfmfVIsnsttOTFdKYF2ebH2+BOGZFZa+XoupK
-         CXJ4oRqX7Lfm8WV/2xLTJx/35tljlUQorD1emvWPd16IjSUtpM2/aFEfT7ubT6DSgxHi
-         eX76SOqdsAfvYV+oTdboA6ZOktoxQQK1qZDNZ3Iq+DdmIO27mxsUQT6EBlg5H4aPVgWI
-         yARDxQRSh4t8yYz5rBS/z/cILzOdDv3fxynlvkeZs7vYhjbSBruJTwENRaeWlscrXzv2
-         gVszBJOCqIfzULNyxWyq3gIxDAbLfD8UNlJLicpNA3s4sm6MyTZ+MajSKM4nyUta8okn
-         uSOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkmqKCalp4ZcoZudqev+K0AsSoOHhZk92Dr9dqfgKcNIUmobnrlGWzFu0SnoFBjITqJx1buWl9QV+82nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB2N99CrZUAanxjprNGclo0OHXtRjX5lg4742mq+rePL8VkrMF
-	lyQQqFQEsO0Kw4RvGg7Ctl6Euz8PENHZBilhyMUnhH8RNQttpB7w3cN5Mo9tXwsj35zxoqJT+KA
-	HPtG+omP3+Q==
-X-Google-Smtp-Source: AGHT+IGPSqxzD1iE4N1SB4IFZfSib3S04XhI1jpHw9sLosjIbaZkKdOvcl8DgLBv1kdvkkCw4YsjfV+5YGcq
-X-Received: from pjbcl3.prod.google.com ([2002:a17:90a:f683:b0:340:9a37:91a4])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1ce:b0:27e:ec72:f62
- with SMTP id d9443c01a7336-2951a35eb36mr74883535ad.6.1761939740620; Fri, 31
- Oct 2025 12:42:20 -0700 (PDT)
-Date: Fri, 31 Oct 2025 12:42:16 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B572B2D47E6;
+	Fri, 31 Oct 2025 19:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761939830; cv=fail; b=X1vaGgfkrZ66/o2Rhga8nQqJ0IzhKDSnmjpnGRNJSRi92DzTUzoiu/XTX/NDP5AByuYCj83RhJD+mOWQSSy8iwi9bdga9jtytQ6mbbpMfmFDBVBtruVYUYmIN7RmT1OslsHc0yKMCiPoYTnDPTW+KK1LwjGaLDY1NYYyadqIacw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761939830; c=relaxed/simple;
+	bh=2UBgPg8eNnI2xk3HYAwwXhDO5rElsiQzDIzyvoBlm1I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XGyhoSiXldFC5OfXvqwgIoRauPG6kGWpzvf8hKysBSalPQ42QGmhTOhFMM06zOs1GWGcl6xs+qcX10QMNvRaM3W1cW8OR2hw4q9uW8Hhwd7sN91PsI90Gvofx4xILNJ834f8zvipAreCEl4NjCBAdmAcVOAVVUz1PI5oSfKCL3k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=L67JYJk0; arc=fail smtp.client-ip=52.101.189.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AloO4/HTGUJmMbhnGEDqCDSBWgIoVYjkl8RkCeJpYR/7f+YxDUNnLbJlVprF3YfDiiO8OKn8nbl1O4rDuD44wt60wBeWQkbo2ZVFLkVKI/nUqdq4O/CEpeKsrilQBvYTT88P6D5ogji1JGOQGcWpQgVKGjyC1DpQLXrs8vx5XxzWnqqJnR3iPY5N03twSHvrzh5MiVH5cUDh3KYebeWy/P5pIRS36EWRRcaoKvbYb1MXvaNUR8sVbbDmxUnS8IOTeQv9C+XJiC/P/P8NhIW4jVHw6FjCU79t+xPlyBAbhSmYrbE32sisIxWTdk0l4dJWbQtaxPSme3NWzNHnjB0qtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u6H670EXTBYXvSVbdBms8hBtxKzq8sHnWxxDOh14GTc=;
+ b=yYd+N6ULTDCLWlJAbDLb4KX0M+JS+Vn9bMPdRTcCow5VCDw0nrcaPvoYL70vj3eMjzfmlqshUrOEUl8fzMEm02mm70FgTQzEdF+Ge4un6EwsUva7TBIFI8UbhRG/MQY2XavvBpiqxJ0/25INrxxWVecfnasvH1/w0yvMIliZpSSO2tVDEIGeBu8EnVNPY4SUJs28Vcw9EXoi3drgrhTvMJoPW502RAJZTMPXCl6XOObzKTeq9G9hRl6q3BvydMWr6KnMmFNxG1XRaGHCkTbaZxP8be0J8Y3efknHK+ghR1ACU9vEjLwaEg2O73a6AlV2Wd/IZuUkwH1QTKUTnbCKnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u6H670EXTBYXvSVbdBms8hBtxKzq8sHnWxxDOh14GTc=;
+ b=L67JYJk0qe5t9TlbZg1SR+vVcmHvUyKHpIESel5yerXf8Y2KEau6WDQqRkgFgC+Qe92nbBNVB4knTsm9SP/fCo8TpNNLMSSUh8rP6/8oJWKM8ahsedJiIeACVS+hCF2FncbHwWeR5EgQRfsCWg4Bnx7QPY9UEI+pyfWJ0Hv0lx//Q6r8PZJ9OS1H94mYXJ81lQNf+UigdHe8UJTmUsHg3yMrpwInQeFpea9DT3RW69T2yPk23CGt+CGJfpcfoWuXt0rMK3U5Hi4mRSnLYA2Mzc8xg5BtcqPY5vwJpo8KvPlpDdgdXmPNk51M6AkFhb5iBZ9dzTJ1KtfsptoZXm8rmg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQBPR0101MB8432.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:57::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
+ 2025 19:43:42 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 19:43:42 +0000
+Message-ID: <68bafe10-23db-4885-b4d7-7d8126da76d7@efficios.com>
+Date: Fri, 31 Oct 2025 15:43:41 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V3 05/12] rseq: Add prctl() to enable time slice
+ extensions
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+References: <20251029125514.496134233@linutronix.de>
+ <20251029130403.733465222@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251029130403.733465222@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0410.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10b::16) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251031194216.1518072-1-irogers@google.com>
-Subject: [PATCH v4] perf s390-sample-raw: Cache counter names
-From: Ian Rogers <irogers@google.com>
-To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB8432:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30c25b20-5f8f-4a68-50ca-08de18b5cc06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QkgvYkxZZ3B3YU10UVVMN2JMSktsaU4zWEtWeXBmSnZERGRkSmZ5VkxMcFg3?=
+ =?utf-8?B?QVRFRmdPaXNHbFV3VTlrdzNNN3YzSnhIZzJmSm5Sb3NYQzRBSy9CN09sMjNF?=
+ =?utf-8?B?RGVZMk9VU243Q1VTT2t2cFRod0NaQjZYOVlBN1FDQ2tvQjBBYmVaeXEyV3g2?=
+ =?utf-8?B?eXIrWlJ2YXNkMi91U21aOTc2RWgraFBCM2dMblhKOFlEMmhvcFl2L0JWS1dj?=
+ =?utf-8?B?VWZISFZUQmxXTWY1SldPakFuaU1WVHhLS1dyak5GYWN6YmpLYXF4cktEN1RP?=
+ =?utf-8?B?RjJKRzFwQkV5bEt4LzloOHN4MjFpYjhROWo5N3VndkRJY3ZUeFpGZklpWTRs?=
+ =?utf-8?B?SDNjMGZsYklHQlF3cGxSVXpkdlpaUmttbWpmeEdxMm1LUTIyOXl5dmRSdnF3?=
+ =?utf-8?B?TnJtR1RhV0JUNFc1UjFTdXNPZzc0VTVTTU5wMmFDVkoyUnhMV1A4c1g1anRu?=
+ =?utf-8?B?S0NmUWpkUUkzYzNEbXlVUGtlZFlBdWV4R1ZveG0vQXgrYmdOeGdCc0cwUndZ?=
+ =?utf-8?B?QUJRWDdjMVRpamprTDNRL1gxK2FNOEtoZWx6d3ExdUgxTTVQdVcwWHVGR3E4?=
+ =?utf-8?B?MTdad1Q4RllibndtV3BXT2xxMlU0QXo1a3JGZTl2UlJLUVJHeWY4QjlqdjlF?=
+ =?utf-8?B?cjRyZVJVS09BNitFU05HS3pidmtTd1NIdTNKeTg1Njdkb2hxWFVhVUZac0FS?=
+ =?utf-8?B?Q1NocytQYklJRHovbXVsY2d4d2lremRsc2F6WU5MK29ibE1kVkpOQjhHUkpB?=
+ =?utf-8?B?R3VrckMrMWd0VmNGeFEyamRoSHhreld6bjBhUTEzdUUxc2x2RER3bUVmMzhX?=
+ =?utf-8?B?MmVTUC92Q0Jya2pWdVd5Uk1Vb3l3dzVNKzcvaVVPSjAzNEloZkU4Zyt2YzJi?=
+ =?utf-8?B?eUl1alc0LzdZT3N4K1FOSHM3TjVMTWRQMzFYQW03ME9nbnNxbHdITEppSEI3?=
+ =?utf-8?B?OGx1T0pZcndsakhwYklTR0lkamZjWDV3WnNDUjc1SDRvNWhXU3NtZ1dzNnYw?=
+ =?utf-8?B?WUFWOW5tRjNtR2pQeFZYWHZ5OW45bFhVM29IQ3hxRkx5QWJKTzhzK2JZNWlS?=
+ =?utf-8?B?aHcyRlZINnlKMTltVG5XeUljcWRUdFdhWDRXcU01SVJnVkZPTlR6ZTF5anJU?=
+ =?utf-8?B?YWVvbnpFdkduanJuSFhHZnM1d2lPYVlhcklDYno0ZVJvTnB4SzVMSHVzd25j?=
+ =?utf-8?B?cFR5MlpieDdqUUg0Z3Vpd1MrcytOakNva0U4amM1MGl2Qy9pNXVVRUthYU1a?=
+ =?utf-8?B?aEg3Z0tsZ0YwbkduUkViMEhoQzJiWG5kUUVZMmZ2eGRtSVltS3FDYVQycDRl?=
+ =?utf-8?B?QWxhTFBHZ011U0tDR3JzTDlFOG5QaTUrcWVSZ0NZYnErM0x2bXl1SjBUUUIr?=
+ =?utf-8?B?U1RwcGViVm4rWUlPSHVJSmExcXRUUjN6TmFQSXJlS3dQWFFhRTROSnBiR1pr?=
+ =?utf-8?B?VzBYRmpEWWpLZTZnM0VSZHEyckhPRXJJV3R3Rk1iNWNNdFlIKzF1OVRkQmR5?=
+ =?utf-8?B?dUhWa1g1Rkh3MjUxMmNHb1AxL1QxaW5xUEk3Tm9iQ1FNa1VXQjQ0MVRacTJa?=
+ =?utf-8?B?Wlh0enQzM0wzZG50bzNFQkdBTWU4QjBTRGJ0dEZiUXRObTkyYkFhajl0MlZx?=
+ =?utf-8?B?TUJuRjBTTi9sUWhVYWRMTVZvdlJnQVBWdU1Eam5HKzZPajNQMW9sYzZiTjlj?=
+ =?utf-8?B?clgvVWtmLzc2Z2dzQ0Z6UWt4L1NlbXExVllETEhrcmxpL1NGaE1ObTZQYUd0?=
+ =?utf-8?B?b3c5ZkJwazBiVHNJS3N2dEhTSkIwVVlhdVVCN09kTFE5ZkJSM2hkSC85MHdD?=
+ =?utf-8?B?REZOaUNJZENwZzBiMmNyQTl3S2V3bitKVmEvNmUxazBBNWY1eWF1bXVoTXF2?=
+ =?utf-8?B?SEFQaERPVm1zOWkvbmEyekZLMGdWTjI4ODFFQk1IWlVaSkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b0thU3RvVGRMbFlMbEYxZXliR1oxZERJeUlVb2F1dkFneHRmMlE3bTgwOFpk?=
+ =?utf-8?B?TlVGUGNvTW9yQmdwZlE5Y2tOWktFd1pwZmJ0cDFVTWJBV3Nzc1dNdU1qd1NB?=
+ =?utf-8?B?VFNyMTBHeEpncVlXSjNvUDMzNVdQL3psZUNQMElqZWxXWEFaa1JNeDRUN1gy?=
+ =?utf-8?B?SVUrNVh0TGRJbWFWcW5IbitSb2ttM1U3OFFoNGl2cW52L3UwbncwYzRLZW0z?=
+ =?utf-8?B?WmNzbXFsMzIwTGxEVmdtOVhHTk5TekE1OTVWczdnTXFObHpDM2pibFJoRWxa?=
+ =?utf-8?B?VkdBTGVUL3dLZzV4RlNQV2J6MC8zK0JWWDdzUEJFb2F6UVdtNjgyQ0R6emRM?=
+ =?utf-8?B?UVpwcnFOQkF5N25sRjY3MDJTbkpQdDNPTUdoYXAvZUNLQmxJeSsxTVZzRE1C?=
+ =?utf-8?B?SVAwQTVnMU9sM0p4bzJLdVdUZ1g2NkMzVU92NGk2bm1rODlKWGlFUFEzQ1VU?=
+ =?utf-8?B?RWJGUDdIV0R1enFMcStpMXNmcEF5aHpvQmt5ZWVpTXdmeFc4TXBZdTVyUG1v?=
+ =?utf-8?B?VFdhYnRTN205ZkdyYktIZ3hjVUxqck1CdE1WNjhMcHVhUStHQkpiaWsvUFJ1?=
+ =?utf-8?B?L29kWWs5elhmSTNlV1FLdE5Va3RWd2ZWWmxOck9zMHV1Zy83QmNuaDJoZG5U?=
+ =?utf-8?B?U2puNUVpWmJLOGlQUXQrQlBWL0NNaWNKTFQ4eVVFUExjRUF3anFQQmZhY0ov?=
+ =?utf-8?B?U3JTOUVEaDN5YVdybTdZd2V5RlJYNlVQRWdvaEFoSmtCWGNDcnlwblRFZDln?=
+ =?utf-8?B?TUZlbWczOTk1YW8xZkt0OXlrcHlEMS8zclpRb0w3MlRpZFd3c0U1QzBVcTl4?=
+ =?utf-8?B?ZTRnUzdDd1RHUVNRenRQYUJZSXRZUTA3WENzV3RDK3hlaklJcnl6SlVweDN2?=
+ =?utf-8?B?bE5oaTJKQlVPcDFjVWxsdWdZZ1R0bmZicEJxY1NleERLWWhmQ2YrdUJQT0hj?=
+ =?utf-8?B?R0VwK2RrZDRRN1VybERBZVVDbnNFSTVqbnZjZzFVcU5DdTdvMUxXTFpBdHB4?=
+ =?utf-8?B?WVpiYnM0SG14SHZiRmwyTVNvUlpaTHVOTHZqVHlHTEh1emo3Z1dxenBVK0lS?=
+ =?utf-8?B?OWpkYzNxcVpQN0tVQWpnb2dsVXNYTlBvUGJRSWRDUkc4cFlrMTRacEN0cEJ3?=
+ =?utf-8?B?T1UwbmVXRmttZEs2dDdnaUdSZXdmcDhpWWwzU0RXZFVMY0xpdWc5RnNHNEx5?=
+ =?utf-8?B?dUhvblhnd3VQTFRJWG91bzN6dGg1QmdhRXRWa2tQZ0pyd2IxYmgvaWpCZFlX?=
+ =?utf-8?B?NjQ1cGxMc2ZyUFdaSUlORUNkSHNzNjN5VHZOYW9jKzVQUUVraVZTMFkzd2RP?=
+ =?utf-8?B?Um0xZml6UXVJWkkwcWtKcnNjMFdZcnhDUHN0LzRpeExibGlUWi9vMlUrTE4w?=
+ =?utf-8?B?TGV6aGR5YWZ5Q1pEbDZDbEhXZGtKelRUYTNRR1ZTaHVKYklCQ1FXUG02a25t?=
+ =?utf-8?B?aW1qZ1pOZFBJSkV0L21UR0hxZ3ZNMEw5N3VFSFdFa0lJcnVHT3FMTDl1Wkd4?=
+ =?utf-8?B?NzBVVlgvSVhvMHkycm5vUFAzcEVRMlNRUEFJdUU3Q2xmeWNqOEFJUkdLazZp?=
+ =?utf-8?B?OUIxZzNMWmRZVkxzVmZnYVgxL3NrR2pRSDUzZXpKMnVtem1VTnRaWm5YMUJl?=
+ =?utf-8?B?Z3hXbUN4a2dqYXlXdjJma3I4QndDYnRleWNBOXo3ZUg2M0ZrSjlLOHlhNFhB?=
+ =?utf-8?B?cHNmREE3bmxSZ2pHMCtZZmhhNFZwREYwYUZ3VGxZVEorZHRDRncyc3R0NDB1?=
+ =?utf-8?B?bDFvc0N0TDV4OEtucmpKSTV5UXNLaW5haFp6MUJGSS9WVVA0OVR3NWxHMlRh?=
+ =?utf-8?B?M3lnakNrYS9md1FWNmIrTDdOWEVvQnV1R3dLbE9maGlLcitKSUI4MmlxbUd5?=
+ =?utf-8?B?MXNPOW5pUVV3UXNSZkdaa2NUZFdZRWxVMUkxNnp6ZjdPSTFsRUlkNm1EQjFO?=
+ =?utf-8?B?cHdWZUg5eGNYNXB1bXRnK2dmaE5JNXZ0ZE5BVWR4eEdFZk5tb3lTSHNwOEM1?=
+ =?utf-8?B?RTlvV1pNYUQwZ3BVa0MwRHozWDNTakYvdmNxK3NuQ2ZqZTlxSjVJNnBLMTBG?=
+ =?utf-8?B?VzQ3TDdLeHNmT1ZFRkZnUndUMnQ2M1VGM2FaejdhbnNUMkNZK3VwMWNBZDZ1?=
+ =?utf-8?B?Zy9tcVBLWE1iTVBKZHJIUmFBekRpdklqTmV5d3lsQVpIbDc1dFpLUzhLckY4?=
+ =?utf-8?Q?dGeO6ITaw6uMUA3wi+mzEKg=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30c25b20-5f8f-4a68-50ca-08de18b5cc06
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 19:43:42.6041
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MiGHVrn5N9o+cvPDHUZUj1ufpu4Acd6CyEBlJwYDwCUG4ms6l4zxq7B1y5SwEHBu50y6Y5nNN8vbeE+DPOI+FxmTZTJ1Zzm03bvI3O20C3A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB8432
 
-Searching all event names is slower now that legacy names are
-included. Add a cache to avoid long iterative searches. Note, the
-cache isn't cleaned up and is as such a memory leak, however, globally
-reachable leaks like this aren't treated as leaks by leak sanitizer.
+On 2025-10-29 09:22, Thomas Gleixner wrote:
+> Implement a prctl() so that tasks can enable the time slice extension
+> mechanism. This fails, when time slice extensions are disabled at compile
+> time or on the kernel command line and when no rseq pointer is registered
+> in the kernel.
 
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-e4a64ed61d38@linux.ibm.com/
-Signed-off-by: Ian Rogers <irogers@google.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
----
-v4: Fix testing cache not tmp (Namhyung). If the find fails store
-    "<unknown>" so that future hashmap lookups will not repeat the
-    failing find.
-v3: Fix minor comment typo, add Thomas' tag.
-v2: Small tweak to the cache_key, just make it match the wanted event value.
----
- tools/perf/util/s390-sample-raw.c | 55 ++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 5 deletions(-)
+I'm still unsure that going for enabling per-thread vs per-process is
+the right approach. Enabling per-thread requires to either modify each
+thread's startup code, or integrate this into libc's thread startup.
 
-diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
-index 335217bb532b..c6ae0ae8d86a 100644
---- a/tools/perf/util/s390-sample-raw.c
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -19,12 +19,14 @@
- 
- #include <sys/stat.h>
- #include <linux/compiler.h>
-+#include <linux/err.h>
- #include <asm/byteorder.h>
- 
- #include "debug.h"
- #include "session.h"
- #include "evlist.h"
- #include "color.h"
-+#include "hashmap.h"
- #include "sample-raw.h"
- #include "s390-cpumcf-kernel.h"
- #include "util/pmu.h"
-@@ -132,8 +134,8 @@ static int get_counterset_start(int setnr)
- }
- 
- struct get_counter_name_data {
--	int wanted;
--	char *result;
-+	long wanted;
-+	const char *result;
- };
- 
- static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
-@@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
- 
- 	rc = sscanf(event_str, "event=%x", &event_nr);
- 	if (rc == 1 && event_nr == data->wanted) {
--		data->result = strdup(info->name);
-+		data->result = info->name;
- 		return 1; /* Terminate the search. */
- 	}
- 	return 0;
- }
- 
-+static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unused)
-+{
-+	return key;
-+}
-+
-+static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void *ctx __maybe_unused)
-+{
-+	return key1 == key2;
-+}
-+
- /* Scan the PMU and extract the logical name of a counter from the event. Input
-  * is the counter set and counter number with in the set. Construct the event
-  * number and use this as key. If they match return the name of this counter.
-@@ -164,17 +176,50 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
-  */
- static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
- {
-+	static struct hashmap *cache;
-+	static struct perf_pmu *cache_pmu;
-+	long cache_key = get_counterset_start(set) + nr;
- 	struct get_counter_name_data data = {
--		.wanted = get_counterset_start(set) + nr,
-+		.wanted = cache_key,
- 		.result = NULL,
- 	};
-+	char *result = NULL;
- 
- 	if (!pmu)
- 		return NULL;
- 
-+	if (cache_pmu == pmu && hashmap__find(cache, cache_key, &result))
-+		return strdup(result);
-+
- 	perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/ true,
- 				 &data, get_counter_name_callback);
--	return data.result;
-+
-+	result = strdup(data.result ?: "<unknown>");
-+
-+	if (cache_pmu == NULL) {
-+		struct hashmap *tmp = hashmap__new(get_counter_name_hash_fn,
-+						   get_counter_name_hashmap_equal_fn,
-+						   /*ctx=*/NULL);
-+
-+		if (!IS_ERR(tmp)) {
-+			cache = tmp;
-+			cache_pmu = pmu;
-+		}
-+	}
-+
-+	if (cache_pmu == pmu && result) {
-+		char *old_value = NULL, *new_value = strdup(result);
-+
-+		if (new_value) {
-+			hashmap__set(cache, cache_key, new_value, /*old_key=*/NULL, &old_value);
-+			/*
-+			 * Free in case of a race, but resizing would be broken
-+			 * in that case.
-+			 */
-+			free(old_value);
-+		}
-+	}
-+	return result;
- }
- 
- static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
+Enabling per-process makes it easy to invoke from program or library
+constructor.
+
+[...]
+
+>   
+> +int rseq_slice_extension_prctl(unsigned long arg2, unsigned long arg3)
+> +{
+
+[...]
+
+> +	case PR_RSEQ_SLICE_EXTENSION_SET: {
+> +		u32 rflags, valid = RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE;
+> +		bool enable = !!(arg3 & PR_RSEQ_SLICE_EXT_ENABLE);
+> +
+> +		if (arg3 & ~PR_RSEQ_SLICE_EXT_ENABLE)
+> +			return -EINVAL;
+> +		if (!rseq_slice_extension_enabled())
+> +			return -ENOTSUPP;
+> +		if (!current->rseq.usrptr)
+> +			return -ENXIO;
+> +
+
+So what happens if we have an (unlikely) scenario of:
+
+- thread startup
+- thread registration to rseq
+- prctl PR_RSEQ_SLICE_EXTENSION_SET
+- rseq unregistration
+- rseq registration
+--> What's the status of slice extension here ?
+
+Thanks,
+
+Mathieu
+
 -- 
-2.51.1.930.gacf6e81ea2-goog
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
