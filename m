@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-880314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFDFC256CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:05:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECBFC25796
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8990735171A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:05:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E1644F6FAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C7C2459F8;
-	Fri, 31 Oct 2025 14:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073A723F417;
+	Fri, 31 Oct 2025 14:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XMaKKTCG"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFJrYsXb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F05622A4D6
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5952A2512E6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919522; cv=none; b=ScOwzr74cvfEC3+I7VN2Iab6AZPUoUDlrn7pkSW23tiqSBA3iBejXmYMzMMgA0Ypmry7hAOk1zXI7Mw0bjsJUiEB1z6BuCoZSS2VrOZnv2v5+mG1PMs7n1CjUPUdjPcJzJro7cVtt7s+f0bczPcPOlciQadxza8x4ezXJoRFyzM=
+	t=1761919533; cv=none; b=sbMzNoJ81JyGtmsebkqXb2CHBgbnAQXjrihd9Ebx2v6+rjG4gAjhhJvW1KR7YBAktj4GSFxGdcHWv+WkbRUWYXcsC8b+4Z2iQrIbT6p2ENXwoc9Aqrvm8ZHxc5kXjxBdUcl+mTsu6c6n18be44UZ34I8pde9WJ4tlNY0hp9jhz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919522; c=relaxed/simple;
-	bh=ckWEHSYzRMCQdSdV1+aItXg+MoosM9PmpiIfZ+3IkXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDLRHEjafimp9HRdC2elgVs9SR1yFwNmAjTW4VcbCpsjx0BRGA7tAOMI3gniGJYut4S03iLjnVm6Mb0FsFfuQ/6WSIComak4VE+SyFTc8p/DhG+tiqqIU6/C6R7gseWcsvNfKAyf74GWZ0eK/5y7E2iYWbKWx8RN9KWsEawsmto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XMaKKTCG; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429bee84e7eso120174f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:05:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761919519; x=1762524319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEEYMKZKM55egNcS9TLQLwdFtLgzGx5oRqh6S7KgDlc=;
-        b=XMaKKTCGw249u5j/ODNwFaWzk0Rn+JUnl1H8wZZfCxGIES6v6jHJ6kI1cVYJX4xMg0
-         pLY3syWjlgbHEpuxqOzsqauChfcO+VB8IDPBuePVUEXBAR+FiTUej5E7eSaaaxw0Ly0H
-         VOrQueaIYgH94O17gKdAFgZlJ9u8I+qmfb9qYpSiD1g3DdZGqvH9vKbOMLsaBLS4FHQD
-         CSDP5Pzz8ebibfGc8toS7kFvFANKJV6OBY1h7459PQk9YvDyDE314W+2XB6XIdb1PB0u
-         P7BMRQPUr4NQuQd2mnvGkydD8cigIa+Xv93OljA+hs1EIBh6/rNcOZzyNLXFCWZZHC3y
-         lrJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761919519; x=1762524319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UEEYMKZKM55egNcS9TLQLwdFtLgzGx5oRqh6S7KgDlc=;
-        b=PvAtC9uYoPvKA7hfwo7zgSP1djhtpJyal7jlgQps0zPi7deGFWLk3Sm5f15J1Mio8/
-         EEeUUAmz5e5PawvkxStPclrNCz4OV0022bFXom0oK0md1qVk1DkOCzTAr2EB4EIPF336
-         4lC5WVMrgNF0OtotCvIQSLYcTrxMw6gjEhAhCD5glbrkbxKqVhZd0BMhpeLeQt4VHUyN
-         l5DryEm4jpjw7mgU/3JNZIQIm2E1N1Ct4SidpMmHgrcqD5TAix3Y1WLLxXDNorucBUGd
-         AKy46zJah7VnbmBchMnkjJNkyVat46rIQa/kJJulyuQ41izvv7P3U5WF3qbf8GkNgdvS
-         k6QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGkKo5QmFbtaA7ZqwrvEWRaqi+Nbp9BdyFL5AMyvDR8dm7SI+e0YjO8ivN7KJyYfXTcDZMKrhto6lRoOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYk7Si9GR2J/NSNnTIqy7FQjkC5keWaP6XnOR4P7TP4hDiNcGr
-	3NLEcVwhcFmt5N1wycZa1JnY12IL6eetEW126btIjDN66LDSCIw2Rm+LOhu8KOfASEg=
-X-Gm-Gg: ASbGncur2DnoF/OjsIbeqkF3//JjAWGKR616bppRn9zrovvR1+9hPdOUYgwCHr4n9yj
-	6VhT58gTL7x7z6T7wYiXkVZ61UtFegbZTcFVNhlcst+8dsDQ6eGg1MuTqWe4imtptvEueeejVR2
-	2wFcjfa45WC3CsCQREBDRxuQoZbxuS+jxqZDN5wYJGEPURv+oV4zCyP1w76L+EX3938Hgt3wYIm
-	9vbBeF8gP7jDvK51cXvU83wPlVFmTlL2BxCoSzotWeEY/PaBeTobCVDNjHTQXko21CAGiu7HXqu
-	Vl5trALIr9Pxhvj89phUQkw9oKLDqaYM7Vt3cjrtT8br23ickKdyzX/R38BUD0BFJmAbjDcmbmf
-	S+X8BB3JbcTtr2O9c0wwGp0ERU2jmuZ1kCP1KyXvcjq8cEUYpzpz4OZjHfpx29y6uFTLD8cfBRl
-	J3zBpeO/lExg==
-X-Google-Smtp-Source: AGHT+IE20aFgYfEmUsR0QvaAoacDC6fODutHzSvHSUQsADrC6Dw8Qfg3mMEOFdiGJnzQSF6ImIcR9g==
-X-Received: by 2002:a5d:5c89:0:b0:429:927e:f23 with SMTP id ffacd0b85a97d-429bd6a7a39mr1718841f8f.6.1761919518697;
-        Fri, 31 Oct 2025 07:05:18 -0700 (PDT)
-Received: from localhost ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269c1c17sm24932505ad.108.2025.10.31.07.05.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 07:05:18 -0700 (PDT)
-Date: Fri, 31 Oct 2025 22:05:14 +0800
-From: Heming Zhao <heming.zhao@suse.com>
-To: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Cc: Ahmet Eray Karadag <eraykrdg1@gmail.com>, mark@fasheh.com, 
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, ocfs2-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, skhan@linuxfoundation.org, 
-	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
- during read
-Message-ID: <stmj7kbqis2idlscf5iwch23ft2azuyyr7q2kmelavjk5lnug4@66in667d6bym>
-References: <20251029225748.11361-2-eraykrdg1@gmail.com>
- <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
- <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
- <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
- <aQQ0DLqL0iVN7D15@arch-box>
- <leys5guzkcvlilaccjmsw7cvncm6o2vqo2wwezhuz7r6lcfjnk@va3cnphl4zf3>
- <aQS_oUDXGt_nF__d@arch-box>
+	s=arc-20240116; t=1761919533; c=relaxed/simple;
+	bh=uj/ZlfFSuGh87bLUZBain32EiwylAIzOLbNNPboS71c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GF5HDToOtK57RBDkw7IBlxRLH3nSRXb7D5O+QSQxo3NKskw9zXyFIn53glUKlKraL4n8IqPby/Q8Dcyv5VSjsH9ePgFnozm+ceJH2CjRGB/lZGWyF63O5tvCExxFTgfsK3xRDsJ4cm8mu4/Ub+SPUmaOkpXWAaR2VLGEDDDRWD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFJrYsXb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28608C4CEFD
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761919533;
+	bh=uj/ZlfFSuGh87bLUZBain32EiwylAIzOLbNNPboS71c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UFJrYsXbqrOJNvjxLmImQz4gJ+MWtlDo5SyX6Oc0Ool0gh13fHTVQpPuML3GLF74v
+	 WKl6J4HtDo1hfwREpyz0F7IwSaYUfzVB8neaNmYVpHHciGdZdO193RZ/XF+E7VJS5T
+	 AyOg7qnZBsZCj5q80JaOYlTBx2qeENWa5cfI7wYObFhv8C8V1bZ5oIambHR1edFOjZ
+	 to+dLqSNQCgtc78NR0xYaXuBOaM+DAlzmsnGePsEyRPOzz7p7HDnHrQlMs6rvyfYpi
+	 GAjx6SnSA2SiQs4k1RfgwbkDLfZyyaJNN+hC/Lk/D1V1ns2x/6KQbC5iWWY++6V+b0
+	 LVlCHCMThzVig==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57992ba129eso3022560e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:05:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqI15OL51TK2hJDUhDBvm4agii97l6lHW14aKsRv09V3D0TLfGhUoSzPAJIXUSofexmD800P/iIIUs9FQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWiMPEu/sZqw6jQta9k7w/z7YaJ1ltjrTMQqLZKvCu54XSTx6h
+	Lu7sa8jeCoy/0eZj1Wkg1axJoA3S1TrS2JAC+cFXLJfSV2i50jjA1DtKIGrdhPgdKB2j8pHnyPS
+	ZMb9zpVcqnW8pO4CmgKz9a3gbjZ/GW1o=
+X-Google-Smtp-Source: AGHT+IHxedjSkvxKkv90NCDn2L1W+uzOFU/ki2EFNLnaSTgc3pXi1eADnpmiAPba+uDgY3ddk1bvQQvTu14wKMJoNJQ=
+X-Received: by 2002:a05:6512:4019:b0:592:f41d:4dae with SMTP id
+ 2adb3069b0e04-5941d511d69mr1308147e87.3.1761919531454; Fri, 31 Oct 2025
+ 07:05:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQS_oUDXGt_nF__d@arch-box>
+References: <20251031103858.529530-23-ardb+git@google.com> <20251031103858.529530-31-ardb+git@google.com>
+ <20251031134909.00006bf3@huawei.com> <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
+In-Reply-To: <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 31 Oct 2025 15:05:19 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com>
+X-Gm-Features: AWmQ_bl0cRHww67O1TA2qm0ejud4NB4PHqq4Dz-q88By71LxnM0QIuZZvhBuGWw
+Message-ID: <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com>
+Subject: Re: [PATCH v4 08/21] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
+ guard API
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, ebiggers@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 31, 2025 at 09:54:41AM -0400, Albin Babu Varghese wrote:
-> Hi Heming,
-> 
-> > I support adding make_bad_inode() in ocfs2_read_inode_block_full().
-> > ocfs2_read_locked_inode() calls ocfs2_read_inode_block[_full] to read the inode
-> > from disk. However, ocfs2_read_inode_block[_full] have many callers, and in
-> > current code, only ocfs2_read_locked_inode() marks the inode as bad. All others
-> > forget to set the bad_inode.
-> > 
-> > The 'forbid' write operations when read-only mode is worth another patch, and
-> > I plan to create this patch. This patch adds a similar ext4_emergency_state()
-> > function for ocfs2.
-> 
-> We're working on this as part of the Linux Kernel Mentorship Program, and we'd
-> love to take on implementing the read-only check if it's not overly
-> complicated. We're just beginners, but we thought it would be a great learning
-> experience to work on this following the ext4 pattern you mentioned - if you
-> haven't already started working on it by the time you see this reply.
+On Fri, 31 Oct 2025 at 14:52, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Fri, 31 Oct 2025 at 14:49, Jonathan Cameron
+> <jonathan.cameron@huawei.com> wrote:
+> >
+> > On Fri, 31 Oct 2025 11:39:07 +0100
+> > Ard Biesheuvel <ardb+git@google.com> wrote:
+> >
+> > > From: Ard Biesheuvel <ardb@kernel.org>
+> > >
+> > > Before modifying the prototypes of kernel_neon_begin() and
+> > > kernel_neon_end() to accommodate kernel mode FP/SIMD state buffers
+> > > allocated on the stack, move arm64 to the new 'ksimd' scoped guard API,
+> > > which encapsulates the calls to those functions.
+> > >
+> > > For symmetry, do the same for 32-bit ARM too.
+> > >
+> > > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > ---
+> > >  lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
+> > >  lib/crc/arm/crc32.h        | 11 ++++-------
+> > >  lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
+> > >  lib/crc/arm64/crc32.h      | 16 ++++++----------
+> > >  4 files changed, 20 insertions(+), 39 deletions(-)
+> > >
+> > > diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
+> > > index 63441de5e3f1..aaeeab0defb5 100644
+> > > --- a/lib/crc/arm/crc-t10dif.h
+> > > +++ b/lib/crc/arm/crc-t10dif.h
+> >
+> > >  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
+> > > @@ -20,21 +19,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
+> > >  static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
+> > >  {
+> > >       if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
+> > > -             if (static_branch_likely(&have_pmull)) {
+> > > -                     if (likely(may_use_simd())) {
+> > > -                             kernel_neon_begin();
+> > > -                             crc = crc_t10dif_pmull64(crc, data, length);
+> > > -                             kernel_neon_end();
+> > > -                             return crc;
+> > > -                     }
+> > > +             if (static_branch_likely(&have_pmull) && likely(may_use_simd())) {
+> > > +                     scoped_ksimd()
+> > > +                             return crc_t10dif_pmull64(crc, data, length);
+> >
+> > >               } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
+> > >                          static_branch_likely(&have_neon) &&
+> > >                          likely(may_use_simd())) {
+> >
+> > I briefly thought this was a functional change but it's not because
+> > of may_use_simd() being something that isn't going to change between
+> > the two evaluations.
+> >
+> > Would it hurt at all to pull that up to be
+> >         if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE && likely(may_use_simd())) {
+> >                 if (static_branch_likely(&have_pmull)) {
+> >                         scoped_ksimd()
+> >                                 return crc_t10dif_pmull64(crc, data, length);
+> >
+> >                 } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
+> >                            static_branch_likely(&have_neon)) {
+> >                 ...
+> >
+> > ?
+> >
+>
+> Yeah that would be a reasonable cleanup, I guess.
 
-I haven't started the patch job, you are welcome to take it.
-
-- Heming
-> 
-> > Therefore, your original patch looks good to me. I will provide my Reivewed-by
-> > for it.
-> 
-> Thank you so much for your review and the Reviewed-by tag
-> 
-> Cheers,
-> 	Albin
+Actually, looking more closely, that would result in may_use_simd()
+being evaluated even when the static keys are set to false, given that
+the compiler is unlikely to be able to figure out by itself that
+may_use_simd() has no side effects.
 
