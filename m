@@ -1,80 +1,94 @@
-Return-Path: <linux-kernel+bounces-880782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CFEC268C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:22:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E04C268C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DCA74350004
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:22:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC73A1A26367
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40531351FB8;
-	Fri, 31 Oct 2025 18:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F8F354AD5;
+	Fri, 31 Oct 2025 18:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdIBg2fT"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TzgpNHyK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CEH3HQeM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TzgpNHyK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CEH3HQeM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29004351FA8
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58007351FB9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761934927; cv=none; b=cV5VdEDLch9u18/7l5Zc0+TsVZIr3zuTCETAI5vta2fXRIrD9cpQQg/5NhJYFMDplOx4m3n8E4W8CXdCfTy35bDNULnMagOB4pBDdEdk5Ygvg4tgDGpKMPvPodqurMza9qASaDxNlOmcRJXFT/oCsiFKuiATYR4Px8BP6gJ9cfk=
+	t=1761934930; cv=none; b=iD+KFCPf9TjpyGZpzJqaAO25Hu5LPm4OEWHd78KrmtiD8sGLEkfANFWLjfO28ysM2ZkurK+a39XWBoa3ClIICdPZbGnrw5K8sIXtrMct3rs5H3m4gvheJgCy6sdwP6EUeM/m3FwRLv4sc/WMuKd1qLWOlewS1Fv3F0uaNASCHig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761934927; c=relaxed/simple;
-	bh=v1UakN9jsJPX7yNaZTbgyP8GASSXUsSW6o8Zsu1ouC0=;
+	s=arc-20240116; t=1761934930; c=relaxed/simple;
+	bh=ivxC6rH3aWZdDf91ZyEVWpF+MAQfTwbgZSJgH5XVPfs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TGe8D7E5n705nTNKv7O4CDIOdNdJQZu/XNPsbyUzkc8QelHaYVyv8JS+ruVBBNaypPol4j0oZfsLR1ch4/y0Y8LOUx/+H2H7IlL1kbBPhul3X2KZ5JGr0IlOh/nyvk4Csya4GQ7LeoUMnN0t3z1o9mpyIICk/m2FVB/PzkM3GIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdIBg2fT; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4e89ac45e61so22479101cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:22:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761934924; x=1762539724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WNg7rFgur4Ks9J4kEGe6V9kXX8sEbPHDJWbUh7qSANQ=;
-        b=XdIBg2fTsyB6MmtTo+yrX1t28QOJAQ1pKH6y8hRe+N6k8M/SkISeoDivWrmoKeU90Z
-         QqC4Dpj0vFdhYzvJj4oOaqnre2UCj/ps30NNrBkWrbtEHxNlzkmqs77wKwTSVmQG/Bx9
-         2PchN7iOPBURnsWdZRnP2J6Y6nRZgS7dz2V00MSMfcu69gzgazzKzUi64sp5hLgl5XaP
-         o8CcRbVAplkb5edY1bR7OYzzV94F5aNkf6CFBFcEReUtZNSUxp8WvDrW0kqrjvpBohob
-         4a805RH5aybh00MdtGh7yz+jsCsbeUDpXtWE7XGds0wglqZqKUNzxZJAVJBfXYjLUjb0
-         pNog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761934924; x=1762539724;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNg7rFgur4Ks9J4kEGe6V9kXX8sEbPHDJWbUh7qSANQ=;
-        b=D8sKnQLiInqSJ4yzGhJwtsHcnmqTSLxcW8yei/8T0XBxS/C/aX+MP1901eXy7Na4wl
-         njEfqlwoG+CUA/+vgrBLLdIxQZ/6Mghe/ZrDgKjBd7FYlnqcj935Oozp7ZFti6XIRtdm
-         9h2V89bUYWI7jJ9pZ/MXBVrL0uFJUfNnoSn6WthCYPc9VS5wrIki8M5+XqT5gX4rAoAc
-         BIssXvAHlkSSz2RrUKINXAM3dBlzduzb27m2hhKcOcclJbdHvTphiEIO70YkTKjLCHOy
-         ZGAgRx9LK1WLNfzwzg3AmhkMad8wK2iyr6xBZCG+jMZCRzWez4lNT431iomPxVnUkGCL
-         Dp1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWD7HVl3p+jBObJ8aXhl8J2cXIU0Eh1epO/n7dlVNgtaMld/oWlgFIwx49T1CBqOX1vB6DiHLkhRqJnjwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy/28fEVOp4eY/l2iFT7FUSS0rYpCS0IkrJs+zD/yRqb82VCdq
-	ieLlLqy7V1OQkECTVgMYZddn6XvfxIhY9E56Hw6Usaej544FJ8ApOAQRpt8CXsLD
-X-Gm-Gg: ASbGncu+H6wh3taYgeuEPpU3ZwiZmZcCuSOvQGTXQyzZCcUXzNHknfAOaIPTPJZvo+P
-	TJLELM6Y/36evBpnM6cngRt2TzddKENTw1z0GrR4ClEDlPje+Xbm0HVwMmRMVPaoPg37GmfJJ1j
-	rgOb9z1SRFislmOx8ab4M1FQI7AKPpTRasYHenFAPowPgGuZmKqV4ytOZuh692M0WvMByYC7Nh2
-	YiZlRivgvhsMiDaD04CKO2j70pC+CeS0m60xjhN0uZ7F6bEjK+zIRVIVY3NHDRp1xA7FRq+8aIt
-	YTZ/VJu8QJRqqRu+EP517L+wLKMbnF97rL3ZaXc3yzA/Cp8GgYK4IZvS0A/gbgU5t3gk17DBtTw
-	b+pdQgiG2JpzVAwH6KkU/fgS5wn4dYPrxCqkDz6vGbPIyV/MAvnw46xFSAH4XYFbn0xW2qeCZYX
-	F/rC8ejzQhVCM2PfMFVfgPJ1GqUSmA99xgFRywuA==
-X-Google-Smtp-Source: AGHT+IE2Y4cl4HdAmAnO0Nju4hog4gnzrMfHzCSqMbr0G0SdGHuWH2lYj4xE8ZKGSbOxQrsimKrLbA==
-X-Received: by 2002:a05:622a:424c:b0:4ec:f285:4256 with SMTP id d75a77b69052e-4ed30dcaa9cmr58851571cf.25.1761934923830;
-        Fri, 31 Oct 2025 11:22:03 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ac00a9a851sm153268685a.20.2025.10.31.11.22.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 11:22:02 -0700 (PDT)
-Message-ID: <3305be28-849a-4892-9f62-706d6faf0f55@gmail.com>
-Date: Fri, 31 Oct 2025 11:21:58 -0700
+	 In-Reply-To:Content-Type; b=VK059VohLaBTfzWD+XaHIiH3p6U0kdbkd4NddAh72VI8jkxIZK/qfGxnGdO0A8NDfezl/dzPvbjf9EcXeRHTLz9lub+7eMzMK/zDkZ9JrYa2hMEXmvAd7EmPkmA//1Zorb7thKD2N4hpLnPbz42lzPsXFyNnMIz6IAvjtHixTxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TzgpNHyK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CEH3HQeM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TzgpNHyK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CEH3HQeM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 433DE223E4;
+	Fri, 31 Oct 2025 18:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761934926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jessRx6TNC0QixhPKRj2h5XBAo+ylMyAf01j+QDGZrw=;
+	b=TzgpNHyKZcFSDWwunMLd2X71Jgz9ba03UiBxZQcLzDelaJP6atFhs4LA0UDe8oMvUnDgwp
+	PXC4sOOnEzEEwiKdsskYEq54s11zaGrTZsRRvvU0ig797fLdg+pXn4i0rHIPxMGOQUoN6l
+	l6wrLEjXKj2RmV1xsZ8efQstlGY02JY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761934926;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jessRx6TNC0QixhPKRj2h5XBAo+ylMyAf01j+QDGZrw=;
+	b=CEH3HQeMT3rUTyh+KA1JIrTOUkOIE/w2GWcujKzHW1fp1rCI2mIJMdd52lszF9KohAiG1t
+	YyI7HhGigbhCIZBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761934926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jessRx6TNC0QixhPKRj2h5XBAo+ylMyAf01j+QDGZrw=;
+	b=TzgpNHyKZcFSDWwunMLd2X71Jgz9ba03UiBxZQcLzDelaJP6atFhs4LA0UDe8oMvUnDgwp
+	PXC4sOOnEzEEwiKdsskYEq54s11zaGrTZsRRvvU0ig797fLdg+pXn4i0rHIPxMGOQUoN6l
+	l6wrLEjXKj2RmV1xsZ8efQstlGY02JY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761934926;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jessRx6TNC0QixhPKRj2h5XBAo+ylMyAf01j+QDGZrw=;
+	b=CEH3HQeMT3rUTyh+KA1JIrTOUkOIE/w2GWcujKzHW1fp1rCI2mIJMdd52lszF9KohAiG1t
+	YyI7HhGigbhCIZBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A086D13991;
+	Fri, 31 Oct 2025 18:22:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1SBoJU3+BGn3bwAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Fri, 31 Oct 2025 18:22:05 +0000
+Message-ID: <309707dc-43e6-4c2c-9547-cbfce2e9e1fb@suse.de>
+Date: Fri, 31 Oct 2025 20:22:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,45 +96,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 00/32] 6.6.116-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- sr@sladewatkins.com
-References: <20251031140042.387255981@linuxfoundation.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20251031140042.387255981@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 2/4] dt-bindings: soc: bcm: Add bcm2712 compatible
+To: Conor Dooley <conor@kernel.org>, Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Willow Cunningham <willow.e.cunningham@gmail.com>,
+ Stefan Wahren <wahrenst@gmx.net>, Saenz Julienne <nsaenz@kernel.org>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20251031102423.1150093-1-svarbanov@suse.de>
+ <20251031102423.1150093-3-svarbanov@suse.de>
+ <20251031-icon-woozy-58061dd3d4b4@spud>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20251031-icon-woozy-58061dd3d4b4@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dt];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.net];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,broadcom.com,kernel.org,linaro.org,gmail.com,gmx.net,suse.com,raspberrypi.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-On 10/31/25 07:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.116 release.
-> There are 32 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.116-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Conor,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On 10/31/25 5:04 PM, Conor Dooley wrote:
+> On Fri, Oct 31, 2025 at 12:24:21PM +0200, Stanimir Varbanov wrote:
+>> Add bcm2712-pm compatible and update the bindings to satisfy it's
+>> requirements. The PM hardware block inside bcm2712 lacks the "asb"
+>> and "rpivid_asb" register ranges and also does not have clocks, update
+>> the bindings accordingly.
+>>
+>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>> ---
+>>  .../bindings/soc/bcm/brcm,bcm2835-pm.yaml     | 38 ++++++++++++++++---
+>>  1 file changed, 32 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
+>> index e28ef198a801..ce910802ee9d 100644
+>> --- a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
+>> @@ -13,23 +13,21 @@ description: |
+>>  maintainers:
+>>    - Nicolas Saenz Julienne <nsaenz@kernel.org>
+>>  
+>> -allOf:
+>> -  - $ref: /schemas/watchdog/watchdog.yaml#
+>> -
+>>  properties:
+>>    compatible:
+>>      items:
+>>        - enum:
+>>            - brcm,bcm2835-pm
+>>            - brcm,bcm2711-pm
+>> +          - brcm,bcm2712-pm
+>>        - const: brcm,bcm2835-pm-wdt
+>>  
+>>    reg:
+>> -    minItems: 2
+>> +    minItems: 1
+>>      maxItems: 3
+>>  
+>>    reg-names:
+>> -    minItems: 2
+>> +    minItems: 1
+>>      items:
+>>        - const: pm
+>>        - const: asb
+>> @@ -62,7 +60,35 @@ required:
+>>    - reg
+>>    - "#power-domain-cells"
+>>    - "#reset-cells"
+>> -  - clocks
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/watchdog/watchdog.yaml#
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - brcm,bcm2835-pm
+>> +              - brcm,bcm2711-pm
+>> +    then:
+>> +      required:
+>> +        - clocks
+>> +
+>> +      properties:
+>> +        reg:
+>> +          minItems: 2
+>> +
+>> +        reg-names:
+>> +          minItems: 2
+> 
+>> +
+>> +    else:
+>> +      properties:
+>> +        reg:
+>> +          minItems: 1
+>> +
+>> +        reg-names:
+>> +          minItems: 1
+> 
+> This else has no impact, was it meant to be maxItems?
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Oops, yes it should be maxItems. Sending new version ...
+
+~Stan
+
 
