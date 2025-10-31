@@ -1,214 +1,291 @@
-Return-Path: <linux-kernel+bounces-880239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD540C252C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:06:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82737C252D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB7B3BBE00
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C641896A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC5934A77F;
-	Fri, 31 Oct 2025 13:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3141534A789;
+	Fri, 31 Oct 2025 13:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GqzB85ya"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tuBaAxSI"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012050.outbound.protection.outlook.com [40.107.209.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991993446DD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915953; cv=none; b=JrklDRQRkix4U2Y9qPth4VH6SZC2ZUOHhwnFzv2ggeR8jYoX6N51bsJsDowmnFgeeYfhbma7ThoqECjEscPGvXvfQ/kIzYardc/VHkoIylXEBhED6sFFkDCD/HcF1NqbNYkcCY1XkVB2O8g0sWECyIK7q+thKEKYucHRhhHSM40=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915953; c=relaxed/simple;
-	bh=otj2Q0H44kaMLpL8S/Pe6SUdozZ4C10pF5ZbBm5j6u4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPtUBiF1GUXG8UtG/1ti8bmgi00OakBiTXsLXVpiG1UrXiEbstVPJH2H1zR8NGIpQSsNnLf/WPpwY3dxkdOixrQOlZNb/KksMPiTR2Zuv+8CZL5txE3B5opoGdZa/8DIhqpPVXQ0oH+kan65xe7x/VIsJdrf6DMtwAOwGKlndUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GqzB85ya; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aRPDrXNPlaqnk1HfwtWWK8qZAcRzcSwOSrQk/jb9Qtw=; b=GqzB85yadf+goDrbJqZRE0zu8Y
-	uN6b5OCApGbiTRSixaIISEfzFQOqnoXeMzJKH2OcHxwtUXmGvi2fbchg2zadDd7piBZ9xWIrDhYvj
-	V3VtOTWPAGww5TPTFnkW0jkJkktbthKcHA7m/BSb1T2Mw/1XmJ51QdGXxa4oDyChhsBo+Eq2v8L9K
-	fS1+NSPgplj246Rdr5xJrs7rUYSKdYzS+TzX1t/35Ca7ZV7PuIpRfFWDSlzO+AVWgSnWDN1L3xlhV
-	1KgFzl1pLgIlAObd7SVHAudYQ7G7pTTtFuIK/StnyksLZ1SSSGwxTrJkpvrfVUn0Gaeu7yNZDji4J
-	LbqDxkBw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEop5-0000000FiLc-4B3I;
-	Fri, 31 Oct 2025 13:05:45 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B790530029E; Fri, 31 Oct 2025 14:05:43 +0100 (CET)
-Date: Fri, 31 Oct 2025 14:05:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Clark Williams <williams@redhat.com>, arighi@nvidia.com
-Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
- expired deadline
-Message-ID: <20251031130543.GV4068168@noisy.programming.kicks-ass.net>
-References: <20251014095407.GM4067720@noisy.programming.kicks-ass.net>
- <a0ccf27f5e12a11d2e9dc951ceaf7f9d103f67f6.camel@redhat.com>
- <20251014102541.GS3245006@noisy.programming.kicks-ass.net>
- <83a5971ef07226737421737f889795ec57b6fa6c.camel@redhat.com>
- <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb>
- <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
- <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb>
- <20251020141130.GJ3245006@noisy.programming.kicks-ass.net>
- <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com>
- <20251030184205.GB2989771@noisy.programming.kicks-ass.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9135235957;
+	Fri, 31 Oct 2025 13:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761916044; cv=fail; b=h6gXYwd2g6Kq40wT2FMDoXvqc8KvMyW0bAL0SYNzkz9Doa84R5fPNJBLxxs43BWf/jLIUc2J9SGvi97kkVK1QAHRZ0fWZXh3S1g9K3vyKayY/uaU7i09zjxa0D67e1aTSeweTZJvlD/K3mjn9x63/b3bm32hkpHGFY7HvAWVkBc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761916044; c=relaxed/simple;
+	bh=XESAF2gcoNqzBXN/rT9JcTJbGtotcRVJPh6JgFsxceg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OhlGxowcJwQ2mOyd9IOZ3yLEP6a7LZY1IyPUUsjesSNDcBhXHTLGNVaD9ilISIwTFb8pkOKcWlUaOe3qRSVQyRM3P4whaLretTfncQin+hlwDa48StPXGhouMWeYHcNJm36uMYFF0qGJlAKpZPtnqc1gvkbkuD0jAbuTNphLHG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tuBaAxSI; arc=fail smtp.client-ip=40.107.209.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=maOelpxgo9pp8svYCTIn39zTilbI2SQUfoQGsV3ZokflOtVZRYUZbb/zTATSxnML+ot0NE2FbWZ7oCGCql55royYjHlARCJ9Ci7JUBf2P9mVDCEXaZ4uQxsjpYW9GeOVa+UgDUfs4AS5bvI6XM3RhwxyiH9E6sLBTjoBvEs0IS2pQqmDg5TqkHbr0xTlgC3iXi8gwljgoTddHbKZ4qfzGIcpZgZB7Nfz2Yc4SARpSpZIzZ4GMAZOE3ZLPgq4NuJKJMQUFu6FLAdkAYeYy099ZSAaAyAXvj8QtuznxqlCuc89FVGsvz1nHgRb+WDkOzTZVwtXdpvj8zCQ5wf7W3jf8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m126+cJMHNHrExOSFwi+TjuySlB0IMkrX2TWc4QMFYA=;
+ b=HeRQrTk0c/h0yIMFlvyf1wfKejSBVtci+1jJ6wsy3Nk8zHlX1Ww5g10H7vwyB+i9sVJCoibtQ6e9aUFWWUtA8HVI3X038m6hPXK6T0KlaYkPaWLESpog/RPocHnvPPqU0eyDPHUCwlJiVU4IvcUpu+1DZQEJpfk5jZHk164xmAXVorjs/hxzqCqFR+ileI7ebV2xmUJOVzI97pO+KMq6dfHxuR/hi+I5hDeAZUReFCOOLL4eog5zwVYJFN1yCRlv8yXyol7DGyMcBPd5RsN+R4+He4FzenoP9jjWEpACnVtyhvFKS1GT95vbM5sH/gkBFAa9AJGRagFGhKup1yC7oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m126+cJMHNHrExOSFwi+TjuySlB0IMkrX2TWc4QMFYA=;
+ b=tuBaAxSIEOpBDtazQDQFDVF9DWOCu6HMI/wGYquCnaKOPjn9YbCYNKoXdYRO1Gswykord5B1Xs+loCxk8slMFK5zW2FYzgQ5knjGlW4shskRuQE8tAqebRj+fAoIZvl3EmdNlrHNup5bD8Bq03M9dXGYMWIe09hdvk3K9fbU7+cHKnQ9Tr8OuCs+qWgraoFSWnt9G8/CY2SWHAOc44vndeX12eIDnKFEt7zk+5TrnMyznpf8Nf0EgbbdVgLDvp0xJ4DALCWBR4xhhxyCZX5BwqYJu5HDlDoD7juDuDalc+Pj4yWd2rgliRZRvSDBxqsRXdJPBS3wKrHqhqnZtJMQKQ==
+Received: from BYAPR12MB3015.namprd12.prod.outlook.com (2603:10b6:a03:df::14)
+ by SJ1PR12MB6145.namprd12.prod.outlook.com (2603:10b6:a03:45c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
+ 2025 13:07:18 +0000
+Received: from BYAPR12MB3015.namprd12.prod.outlook.com
+ ([fe80::db88:47e8:4619:e06b]) by BYAPR12MB3015.namprd12.prod.outlook.com
+ ([fe80::db88:47e8:4619:e06b%5]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 13:07:17 +0000
+From: Ron Li <xiangrongl@nvidia.com>
+To: "hdegoede@redhat.com" <hdegoede@redhat.com>,
+	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>, Vadim
+ Pasternak <vadimp@nvidia.com>, "alok.a.tiwari@oracle.com"
+	<alok.a.tiwari@oracle.com>, Khalil Blaiech <kblaiech@nvidia.com>, David
+ Thompson <davthompson@nvidia.com>
+CC: "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>
+Subject: RE: [PATCH v3 0/3] platform/mellanox: Add mlxbf_pka driver for
+ BlueField DPU
+Thread-Topic: [PATCH v3 0/3] platform/mellanox: Add mlxbf_pka driver for
+ BlueField DPU
+Thread-Index: AQHcKZ8Gl+BSsmsolk6LqJ36cprvhbTceycg
+Date: Fri, 31 Oct 2025 13:07:17 +0000
+Message-ID:
+ <BYAPR12MB30158345E1327BD4FFECC8C6A9F8A@BYAPR12MB3015.namprd12.prod.outlook.com>
+References: <20250919195132.1088515-1-xiangrongl@nvidia.com>
+In-Reply-To: <20250919195132.1088515-1-xiangrongl@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR12MB3015:EE_|SJ1PR12MB6145:EE_
+x-ms-office365-filtering-correlation-id: 5c465b01-cbc1-422f-a8a2-08de187e6b39
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|7053199007|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?gBRScdV7galuEEUoqyJZSybjI5A7/GvzcK9ixus05LNaAYU2tSH3TO9aAVcG?=
+ =?us-ascii?Q?bb4VoYlqcB6BMRb3IFsuh/AWB7wws3w3A/UA7q5enbpCxeys5AI73PzEwdwb?=
+ =?us-ascii?Q?FZf/zxe/BAPWD2rDDMu82BUgV3gcClzA4nJkeyVdUSkqtNtKRlNZZdMZCXHV?=
+ =?us-ascii?Q?ShBcO1yQ1s2+EQE5aS46zLR9lpc2kkGX6mbmKlZ/PqQvMgZKQtqD+GpVxgIP?=
+ =?us-ascii?Q?C8q5G/ZW53/nJTQCQgpUsX22eNm1vfnKmQb7gLBxNQahf2Jdb65g0Os8dHv7?=
+ =?us-ascii?Q?LBNQ3h82RXxZHmM4WSHumk2Rswd756OtgTC/NS7JaWlmqFIaXAjh8qXyMONd?=
+ =?us-ascii?Q?V0B8P/ImzYxV/wLbCQzZOK8TlkcvSZ4IBW85sk2vLROwhrc+Asjn8bPP9TAm?=
+ =?us-ascii?Q?Wp4HABg8a4XAd17RKGtYX+ot4srcvW99wfsppjlttHAq0H9jWdXeVB+XQMy9?=
+ =?us-ascii?Q?idYM7JvPqJLK6w0jDtCCJDOIulJ36eHP7nGO6hAdHz4B+QWeNgZ2XCPQfLI7?=
+ =?us-ascii?Q?kECxUvUyz6FgxKLvC510GXHfC1+ZxGMgCQNn3y/zm9tXQibDTw/OHzzNS5yH?=
+ =?us-ascii?Q?O8tUGE8QnALCImAzT2dwGhp4MafdmqFxO9xiNsgBKoD2fdN4BSlP22JbZjuL?=
+ =?us-ascii?Q?EHNU1Z3ViGEcghQHXQ2R509Xts/70a2fIQKpLodaHyy2/JZZqxvYQIgFWN4b?=
+ =?us-ascii?Q?33SJ4mSrzvZwDr2w3P2u1DdFkMnSnnF7v5OXh38kh7UAsGftUe7KSDMFhI9u?=
+ =?us-ascii?Q?LIKDEdnJBASypkdAbnD0plMlj0ELb7LP02U4gfYloYVoNtmGHduJVzsq0KxQ?=
+ =?us-ascii?Q?s8OUohLE4eAtSL/jWSkPF3cDm2YOY1XT5idQAQnsVcZdkGHsb91+Y6rXWgpG?=
+ =?us-ascii?Q?RfGE6XI2rp7ZP0Qe6J5trchUrYM9gxYFVg9axOOQa4FpGY5zNfIVVFZ+oeTZ?=
+ =?us-ascii?Q?ES5DsjfH0z1ZWQRFRm14N1At+r+IAlXI2OJuVuPTxOuJZsc5cY+H78IgdT1a?=
+ =?us-ascii?Q?jA4K8ko8g/9aI+FhA8/rM4IMzLQJ791w0ujs7SqcFPvzQbp8mi7OvaeObO5a?=
+ =?us-ascii?Q?9B3F4MZshNE8mjzVkGJ96iPYxwGtk3yhsTEpzBwC7b8dlEnSOWZ1Z/ER83Ia?=
+ =?us-ascii?Q?bIrZ/8iSgvRgs+XGzzXf6NZgrl0lK8ysNgi7dRvc5T5DDL22IDiiT9OnMe0F?=
+ =?us-ascii?Q?oYdolBVjgRtEIw8VD5rQxFdYcScXVk4YskR7HOU8XFKAeY/8/QciCvq5zR5N?=
+ =?us-ascii?Q?Sb3xvqZKC6hAaPVfidYalR41YuflaN44e7r9Fqr9XQSBBVj0e/LVxPRucN27?=
+ =?us-ascii?Q?Y3d0MYJfgvJaASRASyFrw5DWnHps0KeWSqJ60EqfRRifsBzQOSuvrTC/j7x5?=
+ =?us-ascii?Q?6sLB7YaOJm914lij8Ckz+WZpuqpLgp70R9LiWqgWAnU5J/S+XRy0sXxGsU6k?=
+ =?us-ascii?Q?Zq3cGLO++NHBbKuicVTy9EbJU+kEwSX7Tabl2EPGIO3YPmf5gS/PTpW8Iu2o?=
+ =?us-ascii?Q?7Ht1TI36MuyIAUIXW4FvrqXiLhKBh/r1hT8x?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3015.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?LE6OfpIrdEcwXtS5EuhtT/8yZosBSp63DIUG8tAZsRZd1tOCi5Lw+C+tvsEJ?=
+ =?us-ascii?Q?Tizu9rrMBEqxOWegFaLpZyI75RP/QwsnBre1bjAZnPxPnDjaY3Gmq50CeS62?=
+ =?us-ascii?Q?LJ/wmLLz42r8NfgpOr7L1QI6DnsEfX+xmnDFOj9OgFe5vaFBBsv2DB/rzk/I?=
+ =?us-ascii?Q?7QIEHbxHEnlNccoN/5OzLFWlCSoXI0CLX5TF1ZYVUjqHqI2aZFzvjIcMVoK5?=
+ =?us-ascii?Q?JCzIoLU+nl9G1+PyWTbmXRJ9NAiryk5hqfRfuCipwZh113zcPj/QMflt6yuV?=
+ =?us-ascii?Q?JPXj1t/XovUfNTD34EqSeG0BFR8m5BOFZ5XIBkGpfDykamDzFpZSUCCoKOxK?=
+ =?us-ascii?Q?a4tOxpYgSNzwPzHjeIXa1dDpudiwoM+9hW2Cxn9/qyrXzVvrxj0+DOPW/7re?=
+ =?us-ascii?Q?j7uO9i3jj1BANxi0G48x9CFoP7wN5bbEDGsZ6qDh60fQohJcJGR9NvNcXlDD?=
+ =?us-ascii?Q?ETxdFwjNDgCxeXW5sSfhPJAGKOxQ0Dx+t/dqPIABim7ncRHnRB12vRGKlTG7?=
+ =?us-ascii?Q?pF9C408PXRHtsRKkHlaq4JzHLhdMmJ1G/s9x6TSvcvc+HangtgtU6RxAN/wS?=
+ =?us-ascii?Q?NOKTx7RMu+KvC8/WyZr70OFYsifbo55J56Y7yejirkRNSZU/oFwNe7g8Je42?=
+ =?us-ascii?Q?PWYB4b/nwzDzagAQ0WbOiTHRFG/HgJgrp2yiMWKr0mw8uxLfnNXE7oXteeBG?=
+ =?us-ascii?Q?Va7ftpEQ+iTG+PXkYW/iqubJJmw7M3bnp8lOiT8Z/P2fP1NluTBM1IxXyWWN?=
+ =?us-ascii?Q?M/UVpoQhXptB31BbyZHruPhhsb2WcvhaGpDy1W9zlkMoKBRWLldBOlUZ/k51?=
+ =?us-ascii?Q?M2Rg1lMUXNVv2iNImkl8NZjHVCQAqXnw59FAW2iVjXb4N9EtvH3rU31gQOLK?=
+ =?us-ascii?Q?q8omq22juuIbGb0lnyI4Bw1Fo7LvrHFzd3uROE8J3k9ey6McWZ7RAujn+58a?=
+ =?us-ascii?Q?IK43XBh4hj5V8/BGb+0wd0phDO79Nbt1ixc1LBLnKf+u7qMoEFI7dN/iG/qq?=
+ =?us-ascii?Q?LYhEztq0iJRJOr0ItdZKLkHdBqqnQmjy3eK/XmY79nplgJKpOItDI4j19y3F?=
+ =?us-ascii?Q?WXHwILB9NjhaMHa17a67O4/DCTj1zgAUW1AZWgdf9nHAdcr+86aw7UpdeAcp?=
+ =?us-ascii?Q?94Nl3pZkp+xHIta3p9nFSby6HyUJka7gnnDJn2bX1k7mwlSLu/7zJ87O+4gX?=
+ =?us-ascii?Q?uC1mWyHKJwWaHjr9w3Q6YIK5Ffa18LXIaGYUQmqA6QfjPQkDrLOi0nbl+IYU?=
+ =?us-ascii?Q?1u42tw3WLLVwlrqcpwlBD44lhmpLdmsShFMkVlRzuWARS47a9ZY1TTBuIo/w?=
+ =?us-ascii?Q?t+GjFdcyD8dhGDphgzj2mBKEm6DOQUfOCaApbDNpQ3A7tFygOMZ3ai1zeL9Z?=
+ =?us-ascii?Q?/Tv4PgRRtwjypOklS+aKXfCXaxORioNt6V2h75YOOMJNmNFPr++KJXvOrCSr?=
+ =?us-ascii?Q?kuJaOyqDW6OPl5BmTt1pTvFfB05bInVHkUTRkNGECITCjej+1RcTOJCVry/5?=
+ =?us-ascii?Q?j00O6WRPY5YohXeBr+R2Zg/5pPI6CsyxywgGdeUzdxj/k5+BC6u02h6zdQW5?=
+ =?us-ascii?Q?nf/UW0eWa5sz04pH+1TfrH8l0PcX/rofLHY02MvB?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030184205.GB2989771@noisy.programming.kicks-ass.net>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3015.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c465b01-cbc1-422f-a8a2-08de187e6b39
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2025 13:07:17.6593
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9UdstijYViQUoPzQNTJ1TMa75rrN+BJOvszFlR1Z/+EYx1E/k+0KJjIrTO+YZDHjDUVnxZ3VbhK1Rf3HgJo3QQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6145
 
-On Thu, Oct 30, 2025 at 07:42:05PM +0100, Peter Zijlstra wrote:
-> On Wed, Oct 22, 2025 at 12:11:51PM +0200, Gabriele Monaco wrote:
-> 
-> Sorry, finally cycling back to this.
-> 
-> > > So how about something like this for starters?
-> > > 
-> > 
-> > Thanks Peter for sharing this patch, I run it through my test and the model
-> > seems to pass (i.e. no more boosting after deadline). What I found curious
-> > however, is that throughout the test, servers went only through replenish
-> > events.
-> > The system under test is mostly idle (6 periodic dl tasks on a 16 CPUs virtme-ng
-> > VM), so I expect not to see any task boosted by the servers, but in 5 minutes I
-> > didn't even observe any start/stop for the server.
-> > 
-> > I'm not sure why this is happening, but looking at traces it seems replenish
-> > occurs more often and perhaps doesn't let the server stop:
-> > 
-> > <idle>-0     [009] d.h3.    14.312395: (+950124) event_nomiss:         -9: idle x dl_replenish_idle -> idle
-> > <idle>-0     [009] d.h3.    14.312401: (+6)     sched_dl_replenish:   comm=server pid=-9 runtime=50000000 deadline=15253307235 yielded=0
-> > <idle>-0     [009] d.h3.    15.262771: (+950370) event_nomiss:         -9: idle x dl_replenish_idle -> idle
-> > <idle>-0     [009] d.h3.    15.262781: (+10)    sched_dl_replenish:   comm=server pid=-9 runtime=50000000 deadline=16203668554 yielded=0
-> > <idle>-0     [009] d.h3.    16.213117: (+950336) event_nomiss:         -9: idle x dl_replenish_idle -> idle
-> > <idle>-0     [009] d.h3.    16.213123: (+6)     sched_dl_replenish:   comm=server pid=-9 runtime=50000000 deadline=17154029879 yielded=0
-> > 
-> > Is this expected?
-> 
-> Sort of, that was next on the list. Let me see if I can make it stop a
-> little more.
+Gentle reminder.
 
-OK, so I've gone over things again and all I got was a comment.
+Thanks
+Ron
 
-That is, today I think it all works as expected.
+> -----Original Message-----
+> From: Ron Li <xiangrongl@nvidia.com>
+> Sent: Friday, September 19, 2025 3:51 PM
+> To: hdegoede@redhat.com; ilpo.jarvinen@linux.intel.com; Vadim Pasternak
+> <vadimp@nvidia.com>; alok.a.tiwari@oracle.com; Khalil Blaiech
+> <kblaiech@nvidia.com>; David Thompson <davthompson@nvidia.com>
+> Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org; li=
+nux-
+> crypto@vger.kernel.org; Ron Li <xiangrongl@nvidia.com>
+> Subject: [PATCH v3 0/3] platform/mellanox: Add mlxbf_pka driver for
+> BlueField DPU
+>=20
+> This patch series adds the mlxbf_pka driver to support the BlueField DPU
+> Public Key Acceleration (PKA) hardware. The three patches in this series =
+are:
+>=20
+> Patch 1: Base implementation that wires up the platform driver and the
+>          device/shim layer:
+>=20
+> Patch 2: Add userspace PKA ring device interface.
+>=20
+> Patch 3: Add True Random Number Generator support to the BlueField PKA
+> driver
+>          and wire it into the HWRNG core to feed kernel entropy (/dev/hwr=
+ng).
+>=20
+> Testing:
+> - Kernel builds for ARM64
+> - Tested ARM64 build on several Mellanox BlueField 2 and 3 SoC boards tha=
+t
+>   include the PKA hardware.
+> - PKA shim devices probe and remove successfully
+> - The PKA ring devices presented at /dev/mlxbf_pka/.
+> - The PKA device validation test passed.
+> - /dev/hwrng present; rng_available lists mlxbf_pka
+> - Generating random numbers succeeds on BlueField platforms
+>=20
+> Signed-off-by: Ron Li <xiangrongl@nvidia.com>
+> ---
+> v2->v3:
+> - Split the source code into three patches to improve the readability. Ea=
+ch
+>   patch introduces new device features and functions.
+> - The latest kernel APIs are used for each patch in the series.
+> - Updated some variable names to improve the readability.
+> - Fixed the logic in the mlxbf_pka_ring_mem_addr() function.
+> - Update all the pr_xxx() to dev_xxx(). Except for one pr_xxx() print whe=
+n
+>   the PKA device is not available yet.
+>=20
+> v1->v2:
+> For patch 0001:
+> - Move ioctl related definition to include/uapi/linux/mlxbf-pka.h.
+> - Changed the ioctl number from 0xB7 to 0xBF, to avoid conflict with othe=
+r
+>   drivers.
+> - Remove interrupt related code, since the PKA driver uses polling instre=
+ad
+>   of interrupt.
+> - Use devm_kcalloc() to allocate memory with calculated length.
+> - Use read_poll_timeout() to handle infinite loop checking.
+> - Use lockdep_assert_held() to enforce serialization.
+> - Create mlxbf_pka_drv_verify_bootup_status() to handle duplicated code.
+> - Remove error handling in ***_remove_device functions since nothing usef=
+ul
+>   can be done.
+> - Fix the rollbacks in some functions by adding proper goto rollback path=
+.
+> - Updated all comments to under 80 characters per line.
+> - Upgrade some constant with kernel definitions.
+> - Include missing kernel libraries.
+> - Update some pr_xxx() to dev_xxx().
+> - Use FIELD_PREP and GENMASK to handle mask and offset of register access=
+.
+> - Refactor some code snippet to improve readability.
+> - Update the comments of some functions and type definitions.
+> - The FRO in the source code stands for Free Running Oscillator.
+> - Fix typos.
+> ---
+>=20
+> Ron Li (3):
+>   platform/mellanox/mlxbf_pka: Add core BlueField PKA platform driver
+>   platform/mellanox/mlxbf_pka: Add userspace PKA ring device interface
+>   platform/mellanox/mlxbf_pka: Add TRNG support and hwrng integration
+>=20
+>  .../ABI/testing/sysfs-platform-mellanox-pka   |   35 +
+>  .../userspace-api/ioctl/ioctl-number.rst      |    2 +
+>  MAINTAINERS                                   |    8 +
+>  drivers/platform/mellanox/Kconfig             |   10 +
+>  drivers/platform/mellanox/Makefile            |    1 +
+>  drivers/platform/mellanox/mlxbf_pka/Makefile  |   12 +
+>  .../mellanox/mlxbf_pka/mlxbf_pka_dev.c        |  481 ++++++++
+>  .../mellanox/mlxbf_pka/mlxbf_pka_dev.h        |  327 ++++++
+>  .../mellanox/mlxbf_pka/mlxbf_pka_drv.c        | 1016 +++++++++++++++++
+>  .../mellanox/mlxbf_pka/mlxbf_pka_ring.c       |  563 +++++++++
+>  .../mellanox/mlxbf_pka/mlxbf_pka_ring.h       |  255 +++++
+>  .../mellanox/mlxbf_pka/mlxbf_pka_trng.c       |  874 ++++++++++++++
+>  .../mellanox/mlxbf_pka/mlxbf_pka_trng.h       |  152 +++
+>  include/uapi/linux/mlxbf-pka.h                |  112 ++
+>  14 files changed, 3848 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-mellanox-
+> pka
+>  create mode 100644 drivers/platform/mellanox/mlxbf_pka/Makefile
+>  create mode 100644 drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_dev.c
+>  create mode 100644 drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_dev.h
+>  create mode 100644 drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
+>  create mode 100644 drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_ring.c
+>  create mode 100644
+> drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_ring.h
+>  create mode 100644
+> drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_trng.c
+>  create mode 100644
+> drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_trng.h
+>  create mode 100644 include/uapi/linux/mlxbf-pka.h
+>=20
+> --
+> 2.34.1
 
-The dl_server will stop once the fair class goes idle long enough. Can
-you confirm this?
-
----
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1152,6 +1152,94 @@ static void __push_dl_task(struct rq *rq
- /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
- static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
- 
-+
-+/*
-+ * dl_server && dl_defer:
-+ *   dl_defer_armed = 0
-+ *   dl_defer_running = 0
-+ *   dl_throttled = 0
-+ *
-+ * [1] dl_server_start()
-+ *   dl_server_active = 1;
-+ *   enqueue_dl_entity()
-+ *     update_dl_entity(WAKEUP)
-+ *       if (!dl_defer_running)
-+ *         dl_defer_armed = 1;
-+ *         dl_defer_throttled = 1;
-+ *     if (dl_throttled && start_dl_timer())
-+ *       return;
-+ *       // start server into waiting for zero-laxity
-+ *
-+ * // deplete server runtime from fair-class
-+ * [2] update_curr_dl_se()
-+ *   if (dl_defer && dl_throttled && dl_runtime_exceeded())
-+ *     dl_defer_running = 0;
-+ *     hrtimer_try_to_cancel();   // stop timer
-+ *     replenish_dl_new_period()
-+ *       // advance period
-+ *       dl_throttled = 1;
-+ *       dl_defer_armed = 1;
-+ *       start_dl_timer();        // restart timer
-+ *       // back into waiting for zero-laxity
-+ *
-+ * // timer actually fires means we have runtime
-+ * [4] dl_server_timer()
-+ *   if (dl_defer_armed)
-+ *     dl_defer_running = 1;
-+ *   enqueue_dl_entity(REPLENISH)
-+ *     replenish_dl_entity()
-+ *       opt-fwd-period
-+ *       if (dl_throttled)
-+ *         dl_throttled = 0;
-+ *       if (dl_defer_armed)
-+ *         dl_defer_armed = 0;
-+ *     __enqueue_dl_entity();
-+ *     // server queued
-+ *
-+ * // schedule server
-+ * [5] pick_task_dl()
-+ *   p = server_pick_task();
-+ *   if (!p)
-+ *     dl_server_stop()
-+ *       dequeue_dl_entity();
-+ *       hrtimer_try_to_cancel();
-+ *       dl_defer_armed = 0;
-+ *       dl_throttled = 0;
-+ *       dl_server_active = 0;
-+ *       // goto [1]
-+ *
-+ * // server running
-+ * [6] update_curr_dl_se()
-+ *   if (dl_runtime_exceeded())
-+ *     dl_throttled = 1;
-+ *     dequeue_dl_entity();
-+ *     start_dl_timer();
-+ *     // replenish-timer
-+ *
-+ * // goto [2]
-+ *
-+ * [7] dl_server_timer()
-+ *   enqueue_dl_entity(REPLENISH)
-+ *     replenish_dl_entity()
-+ *       fwd-period
-+ *       if (dl_throttled)
-+ *         dl_throttled = 0;
-+ *     __enqueue_dl_entity();
-+ *     // goto [5]
-+ *
-+ * Notes:
-+ *
-+ *  - When there are fair tasks running the most likely loop is [2]->[2].
-+ *    the dl_server never actually runs, the timer never fires.
-+ *
-+ *  - When there is actual fair starvation; the timer fires and starts the
-+ *    dl_server. This will then throttle and replenish like a normal DL
-+ *    task. Notably it will not 'defer' again.
-+ *
-+ *  - When fair goes idle, it will not consume dl_server budget so the server
-+ *    will start. However, it will find there are no fair tasks to run and
-+ *    stop itself.
-+ */
- static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
- {
- 	struct rq *rq = rq_of_dl_se(dl_se);
 
