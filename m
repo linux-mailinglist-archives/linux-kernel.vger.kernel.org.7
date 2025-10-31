@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-879490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CFEC233C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:10:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A68C233CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB60E4E2513
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035113A16DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92F629E109;
-	Fri, 31 Oct 2025 04:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B555629E109;
+	Fri, 31 Oct 2025 04:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hy8Nn9rC"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011045.outbound.protection.outlook.com [52.101.52.45])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nPmfXkf4"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010026.outbound.protection.outlook.com [52.101.56.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38D026FA52
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994D724466D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.26
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761883833; cv=fail; b=JEeVQtjmmb6f2f/AT7YZn9UK2wdXlFdm5NhBrg9Hea4XK5x7/bsbU2+iF8Glsg1heomt/36rrFziZtlcYcDnH6saGgQ6l9MJFn82L+I3WSH9yuHWgThQ9kfXSRac/GelBETKrIrAYl9P7yFyuyjipy5TkWG52aQEDiP/QWXqkjc=
+	t=1761883912; cv=fail; b=h/7KZsVjUgJzKByiSxWEyLpIbOlBHCzrKUKPP231jim26q9olek3VWHVzvskLavdwqku1LZGn+TyBK7U+yQw0z8ll7MwMmNsujbVN+vFLk9P6TSzZlxgylSpTjMtlqHu7EjYJduR7RHKYhWKWUkbLxCIrauWslZUAZW7ih2hH3M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761883833; c=relaxed/simple;
-	bh=x724WoogbYSJVjFl57oAnXSNVzLKq0lGnIr0FldF15s=;
+	s=arc-20240116; t=1761883912; c=relaxed/simple;
+	bh=/W7F4uVlHbGOy4Wa4Z3CxDzEjdrtxvcSb2iPSpZYTxI=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2DjlvBY6shej0ggFUBmRIXa9IePJkj7QkuP5D7Vnz1S8yo6OzE9lBF9ejGdfSLRdUhQc48i/rz7r2CszCxsxEg9G61gXyOwlwNdONzfg9HO5EyTDbHYRAkPQ3OQ8pO2Lj9W7/NvPQVzY/by+oUEOPefDtsTzCdb2IIz0cnS6FM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Hy8Nn9rC; arc=fail smtp.client-ip=52.101.52.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dq/KWrZnnJU/qdCuaQEyoKfBjZ8DxqKqhquzIHpJiGCKKHL9BV4BjDlb6sZ8VqaZ5+foSIsgWTNuIUQ5QOSURxXFx2XZoKvq+B8qGiPkzhpNOZoADFqAi/W8SW3e0DrJJewzTjiRvqbUjDEcXelPcX6iXiS7oyzdhfhPEM4aTug=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nPmfXkf4; arc=fail smtp.client-ip=52.101.56.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WU0ek1Vycn5YFK6YZ3nWO5T0c3akarf4dwOQJh2ZGN7FFCbRkUd6ZTNAJloRzyrt3r8K0Uvvk6WK6ZN0cX+tkVyKYC/0B551rcpezMlDhStrxnrMzmLvIbyfQCv6Gh9n29/0hp27Ii/f+5Gg03Lw5oUOJ8oBkvLqSrP2TIiJksDgF7HyhB11tfMszooEHxn1yZ4GYaYmNYypZu9PdLgfrqOYF137nNcqLJ8k5eZ0zkLKFhV5u7aSAaZS9RWa8xIkjR4SppPAzR+qfjtHEi2q09VCQ/5QwYKYCd1w5sFChFtZKKXG3bnWxBoipVNB7QytLp0i0LP97EeR78krWwblKw==
+ b=AKNVRm/hpTjCXA5LGk2DCWRyM6M2mwdo6QuZS+lp90n2692cMRbK3TBJpGrKj9u0dTA5wsuxepYeOm3DTOvRKD23xThJDDkpK1eMNA5IIavOlCXY2CKVijtmZYIh+PDvzEQUt0/4oElx5WYsJOJSnPn7XRfnzRYaLYOnOv0DcOWJTGSlWYtrrsmJxk2aliEsUbZgq6fEf82XqTTAolBH/cdt+YDtuyUE9t1HpJO2grhJOLK+aWNoIPXL/Zq0g/QSunAee3aTUfaAidPTJ/k+uqheSEsvFZU/CWqTaz91l7ki4kP9gMkZDo82PG4qpIpSZSTLFcqaXmQAItocZtVSJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/GcExelvZHgLHmnH/LZ0YNu1y/pUMQdmMrtdtUrutEo=;
- b=cbcPvTI+fqxIJLqghFeRO3Uz+gX9LjveiJwsj5c4GldUmTDKQwv1tXLwbwCFypZ78Nt4V7lLVJwnQe3V1Kjj9ml1GryX95RGEEE5WUrkxhNE56bMX2N2b0a5KVf2adB6Q+L+WRNwbU8QWPpWldwJhWF8mCmH1Yu1IAK05XFqYEZjs1uRSxaAAkoqVnchkRgSRu6BhsSrkw4QM2OR8nRj/kDhgX9Yz1fD4nhsnBV2IaX+QFu+tKim6cb/Um9SjlO+NWwTZBwwyn51t3SvfJi+QGSU/qxo7ASr9sYdQyAJNvEE4m41rYycBUCJnWeMqM6dD+Fk8KdMS4TFXDvOn9TDCw==
+ bh=hL6X2dib5gxWObO+IUAr7/ebtIOwZTsyaVCuihIOeyg=;
+ b=TmZzfZdW+TrCnj152AfQAolXxmpreLFWgpPdT0Go9iA3AiY73WRFjlM1jJdIV++PT8O8C91AN4I7gwzWMznRR+5BLzdPrA1q+e/2RcTIx6AXzHq5TbbyvpxwXrsK5/mOee/ijBAHCx4pSZEJweOzN2PhebbfmyjwdJJ7jlMN/cAE+TIoG9zS8EJ2C6mzDFQaGhoLs75zjTW4uSquMXUWHcgxUpX5ZieDVZlEAWT+cCzJPp9mUulj0Rny6XtauUO7Zrh//LnQs+IFKs0cphU5l0so5DeOQH3ubeaht5hQ+9idaJgaexIngHN80f3YR0+uMrWh5DalYWuLVZHC8iARTw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/GcExelvZHgLHmnH/LZ0YNu1y/pUMQdmMrtdtUrutEo=;
- b=Hy8Nn9rCuPQCiq/WwgGMlYb5xZ61EO6wcGlPu4OLwh4n0Q1MYzeZTsg4MepAEN6eUw9fnXIe3f9Fr6IT5elrxdy+f/jbxPfIPqF5HvDLA+q7R3r8OWWwuTfz8xmka/5r6XFU8jv7iJqS/b4et4d7a6mmCzy1QlzoNRx8DQ90Gw8=
-Received: from CH2PR18CA0008.namprd18.prod.outlook.com (2603:10b6:610:4f::18)
- by DM4PR10MB6693.namprd10.prod.outlook.com (2603:10b6:8:113::12) with
+ bh=hL6X2dib5gxWObO+IUAr7/ebtIOwZTsyaVCuihIOeyg=;
+ b=nPmfXkf4SF2VLscgB0nY9i+nPsXmfkUgjqfW6OLB5JpJBivaK6Hrna8c/ZBX3N3CdDZUnUthoF9ZEK/OzEkV7Ap2/YQXo7dzs7QANbtADw+AhQBGi/bXA5JnIJeVdhIDm7JK1WNI/oObaib/Offahn2xPSnswspuWibRNk2PNFc=
+Received: from CH0PR04CA0058.namprd04.prod.outlook.com (2603:10b6:610:77::33)
+ by SN4PR10MB5621.namprd10.prod.outlook.com (2603:10b6:806:20f::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Fri, 31 Oct
- 2025 04:10:27 +0000
-Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
- (2603:10b6:610:4f:cafe::cd) by CH2PR18CA0008.outlook.office365.com
- (2603:10b6:610:4f::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.18 via Frontend Transport; Fri,
- 31 Oct 2025 04:10:25 +0000
+ 2025 04:11:47 +0000
+Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
+ (2603:10b6:610:77:cafe::3b) by CH0PR04CA0058.outlook.office365.com
+ (2603:10b6:610:77::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
+ 31 Oct 2025 04:11:43 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
@@ -62,25 +62,25 @@ Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
  198.47.21.194 as permitted sender) receiver=protection.outlook.com;
  client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
 Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
+ CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 04:10:24 +0000
-Received: from DFLE208.ent.ti.com (10.64.6.66) by flwvzet200.ext.ti.com
+ 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 04:11:46 +0000
+Received: from DFLE210.ent.ti.com (10.64.6.68) by flwvzet200.ext.ti.com
  (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 23:10:13 -0500
-Received: from DFLE208.ent.ti.com (10.64.6.66) by DFLE208.ent.ti.com
- (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 23:11:31 -0500
+Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 23:10:13 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE208.ent.ti.com
- (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 23:11:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 30 Oct 2025 23:10:13 -0500
+ Transport; Thu, 30 Oct 2025 23:11:31 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59V4ADZu3280795;
-	Thu, 30 Oct 2025 23:10:13 -0500
-Date: Thu, 30 Oct 2025 23:10:13 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59V4BVPt3248099;
+	Thu, 30 Oct 2025 23:11:31 -0500
+Date: Thu, 30 Oct 2025 23:11:31 -0500
 From: Nishanth Menon <nm@ti.com>
 To: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
 CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
@@ -89,10 +89,10 @@ CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
 	Udit Kumar <u-kumar1@ti.com>, Prasanth Mantena <p-mantena@ti.com>, "Abhash
  Kumar" <a-kumar2@ti.com>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] firmware: ti_sci: set IO Isolation only if the firmware
- is capable
-Message-ID: <20251031041013.kfyveddq7rkmtvfv@wince>
-References: <20251014-ti-sci-io-isolation-v1-1-67c7ce5d1b63@bootlin.com>
+Subject: Re: [PATCH] firmware: ti_sci: replace ifdeffery by pm_sleep_ptr()
+ macro
+Message-ID: <20251031041131.3qmqfitiertc7vdp@scotch>
+References: <20251014-ti-sci-pm-ops-cleanup-v1-1-70b50b73ac85@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,152 +101,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251014-ti-sci-io-isolation-v1-1-67c7ce5d1b63@bootlin.com>
+In-Reply-To: <20251014-ti-sci-pm-ops-cleanup-v1-1-70b50b73ac85@bootlin.com>
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|DM4PR10MB6693:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a751068-1f97-4374-fd74-08de18336a6b
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|SN4PR10MB5621:EE_
+X-MS-Office365-Filtering-Correlation-Id: b520bfd3-3e44-4b1d-743a-08de18339b4d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|34020700016;
+	BCL:0;ARA:13230040|1800799024|82310400026|34020700016|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4YKfbbKdHiKShwfSzTEqvMMFjGPOA95b8itDZ7idVvcM0Pcdcj4c9RpoOh1J?=
- =?us-ascii?Q?m7EWbRUuYq+OIogriOWEpzGTVhcgY/krAKVKufOBlHelBdf03QdNQF9/wAjB?=
- =?us-ascii?Q?D77wq5gDJJbDy8rPZPlP/HFO29ejqYa7/TpNrV+7MSLBAVKlEpZdRJUNYw0g?=
- =?us-ascii?Q?JsdgNsUsMTKWngOOVA6ReGdhmQNpY4hJyvelNY5BVgzVeDKyhWS32wAMUkn7?=
- =?us-ascii?Q?Htkhg2/H5KJ3YAkxaeWbOl7MmItgwsrwt/wN1OWYY5KCSZYMu1DwrLJB8jdB?=
- =?us-ascii?Q?3Tbk+PNpZgQUY7vxUylesRcRfyBR6CyxEgpubFDE7OI6A9qvFJck9YGg7Ogj?=
- =?us-ascii?Q?WXMbAhoJPy+8yI4Q6P0DCcE2jDfPXn4BqPJaXN6/YQsIttwQOqlPrVVgsHjf?=
- =?us-ascii?Q?J/4eKswcPdJMCwebF8Pd9dfOBqXND7IA5b4DaE+hsBiQ+8wmiEdcAGaZnJLb?=
- =?us-ascii?Q?rY+rkPSS1maebIxVYHM88Togo/8dk2PukZXyCeJCZX5LX+bNeeRDGbXTRqNU?=
- =?us-ascii?Q?CLH3Rm8VZMEFW7TaEBwtBKl/LVt62DpxSy6ukvppXsbN0qydhqwHP7DjhAgb?=
- =?us-ascii?Q?cAnriFA9seGQMfKITcVLqtrSKpVlMrapE8fRlCNlcAMMkEMJPkDBN7c9rwX+?=
- =?us-ascii?Q?HNqdzxJIdtZFBW771Bw/Wh+BfIE7vGBXtN3vXi6aM0vt+6c4d2I34tQNWIiR?=
- =?us-ascii?Q?GoKjJ1yNHu18Y+iPspa/gmbdcA6XAWSKETBVvX9X6OuSLTLxz3UhW4X1EWu2?=
- =?us-ascii?Q?pAj1zw3bur9Y+mawARgmLuKkW+P2xKYyApAFq1cCBX/MoAqRVMCz2rQaDfkS?=
- =?us-ascii?Q?up8lkaF7cag+ys84ijd163I5yPWHlJAVE9cf/JpJCbVVRiWVKEJfUUIkzQ2a?=
- =?us-ascii?Q?qKswG9oNMXmfhEKBtOY4PEdlgbWF6Q3AMgsBuHKsUVIHwh2ZfUtOc2xE9N6I?=
- =?us-ascii?Q?a7GuScDyPxNMdNionVxG0E9zWopF0pvqgyi19qw+Osew5hJESWiyYDfGabkN?=
- =?us-ascii?Q?M1oe2BDy1wYxsoSzooUhuB/9Ve/zyvA9tl5T/E7DhZ+UHFG/CZhKv7I9vIAg?=
- =?us-ascii?Q?EOSIZe+I4k6B4LsaPzRPB6Njj5kM6oNV4ZVanggtmboCsrA44dzdM7Lu+Y7X?=
- =?us-ascii?Q?0K+W+JEAn39+C4+Ge8T72w9khQlJ9zt9ZUtz7NarVOyOjBsw6BnNzWXa2i1M?=
- =?us-ascii?Q?fJ5RO6I5b8fYioeaaZGA1bcIuIEs5eOwbdaxGM6vfSLzlzjgDzuV7bvT/0kq?=
- =?us-ascii?Q?ywqx0Pdk2AAtiD7VIurrCaD97j4gyMMqdKHWNE7jTtFbJHp2XKwk3IVZHRHb?=
- =?us-ascii?Q?re623KJuWADZPaP4LPiIcXAGa1DrWJlkvinl+k1g7HRyiJngaMsbO3NCXmAK?=
- =?us-ascii?Q?Y3M5PZBOs35aoFd4KDuphMFQzTa9m1ZvF6upw/qMK6X50s6Rp4b5vIFCYle4?=
- =?us-ascii?Q?Pz1MKkRmc0KjF6ukjC9RHqDnqp2WgC023GgVKxo4N6bUbEBmW9qKv7Zq3jYv?=
- =?us-ascii?Q?VTK6Z+EhtaRCIgwnmsPsbD60GEuQB2DtmRmePxshefufrr6LHz0A14fckfMd?=
- =?us-ascii?Q?kwzr3W0WJWlt/KUJ6cY=3D?=
+	=?us-ascii?Q?sI4wOkUDkgw8K/iC6b8iIdVRPZ19yNgKNLWCUJwcX/aZk9R+X46Tz3m60dkO?=
+ =?us-ascii?Q?EzyqdXnwC2eDvU5FeZxRGP+1Ar39i6O2tPUQ1SuFzBNv6vX/oZhiaf0e0tWK?=
+ =?us-ascii?Q?R4p3IGZG8funPjjntc3YZBmtUTQtbKhZPBINqTbton047sanzzNsCPj6Jmka?=
+ =?us-ascii?Q?dbZgiLN2lz7iTqbu+dRec/33r1Aceer55qQFpmVfpyb6fektKJRUrRj/Fffb?=
+ =?us-ascii?Q?xhUUzNz3jqjFj9iS7F5fRWPItY0cR9Z9m4LobUFa5Ye2ehaQNyhY+s8SECg9?=
+ =?us-ascii?Q?nLlUzN92ZIKicKDV+yV8x+X26oL9ErdBQ7IQxRipAHMJ4p8mScNsYLYx+mKr?=
+ =?us-ascii?Q?fFoKOPkHrPm/pKCiJYChyBJvGCYBVG76eydCX0pHXtwL5z8u7Nc9nlT84RI/?=
+ =?us-ascii?Q?A93C1sE4WK3NqrYFCA0pr4GMSAr2XyBMm7dpxYzfe9lm7MwWjJE2bz17uYFb?=
+ =?us-ascii?Q?W0zJk4SCj/9AcPHipzegNQaXOycbcrtvz+Ohy4WnGUdArkHA86FMjbRsdqoA?=
+ =?us-ascii?Q?KReMiUeQo3jtpdFoFL+d52a3au28/WtLqvDfzjFNjWdxj0i4eKkihaK/xnh4?=
+ =?us-ascii?Q?4ADiqYz3J5ZtcvDyrpSUiIOJ4tRxzWWDmdVyGos4Zm0qLoF4ZsGvUthkGWgc?=
+ =?us-ascii?Q?82tLAu4LvLzS6Q5ltHqrt9PDX1luyzwb7jQVySoZ5d8VwjlWz/v8KE5EW7c1?=
+ =?us-ascii?Q?0k7DNHp3T8tWBQtSNcUXANAngjlHoGGR/Kyf3+HY32W5Dz32RCKYF1b1+tQ5?=
+ =?us-ascii?Q?xZb2+8amtBiPc9+TiblkKyfXexioweG5wGM+q7X45soHT5AakZ50HQDE8tnc?=
+ =?us-ascii?Q?VfCbnYscHUC6BNgnSfI8Tn/rtbWaivBBoJYSkjzlS9ojx3NTomBSifhZvcQg?=
+ =?us-ascii?Q?qqGSfFmZ6NK/upwzidVD7FWL+0QDCXiRGR67Jp90963Yfy+eOyrdrNiXGujd?=
+ =?us-ascii?Q?KsdmzcMZMuycSQ3iWUmbyOIfMRH38RZhONrRafpLhNmdO2e9J402fIltGNZb?=
+ =?us-ascii?Q?zidR0gXTdGut/emiVCGnpGt7oGCe8O4ui3HUG6LMziOt8Cx3wwCCEQZuFUFU?=
+ =?us-ascii?Q?hINgrY3WVQEogOhi8/ZlSbnUMmOtdbJ2G9sdq+EkKZVcfQunw14URKKjPD51?=
+ =?us-ascii?Q?ivcrLZtmlHdGCnvyZSxHmCbb2Ep1b7UFYssHZZP87QmuWocO0qmknLr8wZ8L?=
+ =?us-ascii?Q?Uywf4n9HPl0U2WKtrIjwAQLCYJHAg4axWhuh27zi4DHr2LK4HB7EHPJzXssX?=
+ =?us-ascii?Q?akR5seIU8AE2/Y+Pd9bD6FC6jUDahxvygxB+12dgGzjGr6t+Jqdh//u/81Wp?=
+ =?us-ascii?Q?QlI348qYvdkeihGDRoD9yXmlXsgUHWB3HSqqJ25lEXtNTnJKgsqjVNLuxMR4?=
+ =?us-ascii?Q?Lkca/EKNG/N/TumKPLE/Xo+vK+a5/jFp85Ny+y1yMQEALXRCCp11NVtdvuKb?=
+ =?us-ascii?Q?vfEy22+ivmEAy6zrX+aDS+5OWyMVLakkOIb9/MWMZZWjIJkFPZl8mOtbNjvi?=
+ =?us-ascii?Q?9XYuCap92ZkFSgkUO306yhGhCdkCi15paeBEeawwlpZJ1LkJK2t9vGCE6QJW?=
+ =?us-ascii?Q?eiYhC3E11PwSK3ptdWY=3D?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(34020700016);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(34020700016)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 04:10:24.0388
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 04:11:46.0662
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a751068-1f97-4374-fd74-08de18336a6b
+X-MS-Exchange-CrossTenant-Network-Message-Id: b520bfd3-3e44-4b1d-743a-08de18339b4d
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A349.namprd04.prod.outlook.com
+	CH1PEPF0000A348.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6693
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR10MB5621
 
-On 10:31-20251014, Thomas Richard (TI.com) wrote:
-> Add the IO_ISOLATION firmware capability, and set IO Isolation during
-> suspend only if the firmware is capable.
-
-How about:
-Prevent calling ti_sci_cmd_set_io_isolation() on
-firmware that does not support the IO_ISOLATION capability. Add
-the MSG_FLAG_CAPS_IO_ISOLATION capability flag and check it before
-attempting to set IO isolation during suspend/resume operations.
-
-Without this check, systems with older firmware may experience
-undefined behavior or errors when entering/exiting suspend states.
-
+On 10:35-20251014, Thomas Richard (TI.com) wrote:
+> Using pm_sleep_ptr() macro allows to remove ifdeffery and '__maybe_unused'
+> annotations.
 > 
-> Fixes: ec24643bdd62 ("firmware: ti_sci: Add system suspend and resume call")
 > Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
 > ---
->  drivers/firmware/ti_sci.c | 21 +++++++++++++--------
->  drivers/firmware/ti_sci.h |  2 ++
->  2 files changed, 15 insertions(+), 8 deletions(-)
+>  drivers/firmware/ti_sci.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
 > 
 > diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 49fd2ae01055d0f425062147422471f0fd49e4bd..8d96a3c12b36a908097805b44dc3343172fbbfec 100644
+> index 49fd2ae01055d0f425062147422471f0fd49e4bd..99a2e0e2960f463918950fef8829409ec365ce70 100644
 > --- a/drivers/firmware/ti_sci.c
 > +++ b/drivers/firmware/ti_sci.c
-> @@ -3751,9 +3751,11 @@ static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+> @@ -3706,7 +3706,7 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
+>  	}
+>  }
+>  
+> -static int __maybe_unused ti_sci_suspend(struct device *dev)
+> +static int ti_sci_suspend(struct device *dev)
+>  {
 >  	struct ti_sci_info *info = dev_get_drvdata(dev);
->  	int ret = 0;
->  
-> -	ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_ENABLE);
-> -	if (ret)
-> -		return ret;
-> +	if (info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION) {
-> +		ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_ENABLE);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
+>  	struct device *cpu_dev, *cpu_dev_max = NULL;
+> @@ -3746,7 +3746,7 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
 >  	return 0;
 >  }
-> @@ -3767,9 +3769,11 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
->  	u8 pin;
->  	u8 mode;
 >  
-> -	ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_DISABLE);
-> -	if (ret)
-> -		return ret;
-> +	if (info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION) {
-> +		ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_DISABLE);
-> +		if (ret)
-> +			return ret;
-> +	}
+> -static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+> +static int ti_sci_suspend_noirq(struct device *dev)
+>  {
+>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>  	int ret = 0;
+> @@ -3758,7 +3758,7 @@ static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+>  	return 0;
+>  }
 >  
->  	ret = ti_sci_msg_cmd_lpm_wake_reason(&info->handle, &source, &time, &pin, &mode);
->  	/* Do not fail to resume on error as the wake reason is not critical */
-> @@ -3928,11 +3932,12 @@ static int ti_sci_probe(struct platform_device *pdev)
->  	}
+> -static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+> +static int ti_sci_resume_noirq(struct device *dev)
+>  {
+>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>  	int ret = 0;
+> @@ -3780,7 +3780,7 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+>  	return 0;
+>  }
 >  
->  	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
-> -	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s\n",
-> +	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s\n",
->  		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
->  		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
->  		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
-> -		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : ""
-> +		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
-> +		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : ""
->  	);
+> -static void __maybe_unused ti_sci_pm_complete(struct device *dev)
+> +static void ti_sci_pm_complete(struct device *dev)
+
+PTR_IF when CONFIG_PM_SLEEP is disabled will result in these static
+functions unused, no? should we leave __maybe_unused as is?
+
+>  {
+>  	struct ti_sci_info *info = dev_get_drvdata(dev);
 >  
->  	ti_sci_setup_ops(info);
-> diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-> index 701c416b2e78f8ef20ce6741a88ffa6fd4853b2d..7559cde17b6ccfeeb1bc357fce5c5767c3f75c54 100644
-> --- a/drivers/firmware/ti_sci.h
-> +++ b/drivers/firmware/ti_sci.h
-> @@ -149,6 +149,7 @@ struct ti_sci_msg_req_reboot {
->   *		MSG_FLAG_CAPS_LPM_PARTIAL_IO: Partial IO in LPM
->   *		MSG_FLAG_CAPS_LPM_DM_MANAGED: LPM can be managed by DM
->   *		MSG_FLAG_CAPS_LPM_ABORT: Abort entry to LPM
-> + *		MSG_FLAG_CAPS_IO_ISOLATION: IO Isolation support
->   *
->   * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
->   * providing currently available SOC/firmware capabilities. SoC that don't
-> @@ -160,6 +161,7 @@ struct ti_sci_msg_resp_query_fw_caps {
->  #define MSG_FLAG_CAPS_LPM_PARTIAL_IO	TI_SCI_MSG_FLAG(4)
->  #define MSG_FLAG_CAPS_LPM_DM_MANAGED	TI_SCI_MSG_FLAG(5)
->  #define MSG_FLAG_CAPS_LPM_ABORT		TI_SCI_MSG_FLAG(9)
-> +#define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
->  #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
->  	u64 fw_caps;
->  } __packed;
+> @@ -3791,12 +3791,10 @@ static void __maybe_unused ti_sci_pm_complete(struct device *dev)
+>  }
+>  
+>  static const struct dev_pm_ops ti_sci_pm_ops = {
+> -#ifdef CONFIG_PM_SLEEP
+> -	.suspend = ti_sci_suspend,
+> -	.suspend_noirq = ti_sci_suspend_noirq,
+> -	.resume_noirq = ti_sci_resume_noirq,
+> -	.complete = ti_sci_pm_complete,
+> -#endif
+> +	.suspend = pm_sleep_ptr(ti_sci_suspend),
+> +	.suspend_noirq = pm_sleep_ptr(ti_sci_suspend_noirq),
+> +	.resume_noirq = pm_sleep_ptr(ti_sci_resume_noirq),
+> +	.complete = pm_sleep_ptr(ti_sci_pm_complete),
+>  };
+>  
+>  /* Description for K2G */
 > 
 > ---
 > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251013-ti-sci-io-isolation-63a8bcd9d4e9
+> change-id: 20251014-ti-sci-pm-ops-cleanup-1b7ef3f43cbc
 > 
 > Best regards,
 > -- 
