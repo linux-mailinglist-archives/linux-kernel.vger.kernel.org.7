@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-880645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF906C2637E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:51:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333E3C2642D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 68E2D34DACE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFDA3B476B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E062F7AD5;
-	Fri, 31 Oct 2025 16:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641DB2FD1B1;
+	Fri, 31 Oct 2025 16:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALkdXFjX"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4wjm+hsB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="POIpP0mT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AE723D2A1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4711423D7F8
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761929472; cv=none; b=mLYyBS+qSlECygYfQ+uFWVw/X4p9auHTihJvjNxmJg0DslzqiMgIxvqumpOgkkA/hPVSgrM811OS+MUPzDi33URLPggphLevYMAgz64SWjDDaH0jETZB872ZKqoMJYac6+BfA0UnWLPhL7f2fvbm7KtU7gWdybCNAcwXaI2w0eg=
+	t=1761929652; cv=none; b=dl++RGRJJ0mHwLQqdzQSFQo5yG44XzNYpd2OLsd2IwqRtJVCk+iac5foij2hFF0ioe+V3UMWCSne/Vw0taDb+p12oI4KU7sI+FJoDJvlcp1b8njRbt3qcb9tgvMYBJTWaK6v5JQ6HcNkUTX4u8wHW91CGbTaqICpr04oT4drXDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761929472; c=relaxed/simple;
-	bh=8shnFbex+N4GECN4bN30/kDUC0TOUrQgwn5Qp2z6djM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lCb2e+X71W295DhKyfW+Qf8qJ7qTRN0GNnyPQvRjSwypqpZy3rqg2tliqYGMCRQCduEv8WP+HtpNyscc/SqFze24TZragvRp8EBHSq8W525g9/iqDwC1f83OeeD4qiH6gdZNVNI/OULzRDlpAaIyIRsSkDTmHxn5j2UCgQPgQ0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALkdXFjX; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so3116900a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761929470; x=1762534270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uYNKy7Fx3oHSfgQtLncT7eimMXrknVn2yP69xOS1ue4=;
-        b=ALkdXFjXXZm4XPG65+V8ajGoY1v1Rao1Z/1j+jpbmieNmIadRbGsH8HbdZKMJ4d8Bq
-         MyLn/7n+bPFmb3BS5ZOTOmF0k8LxEBx4ijSvJS+FeuuPj7ufZwvsDiuz9YPJ9JgJQyTj
-         NNFYf+KG49ipt5Jqr8WNKihZd6+m39M2FTFaN6zoPpJqYQhG6048vseQNzGNNeRW6dMu
-         BbLp1pus8XVK0WCMxctJ4jwa7I4K9Oib/eu09htdMSxUzjgYiULbtmAbSn/0OlA0e6/v
-         XFpjnOig4qrdiWqAkj97gLxZB07LQzNfHcELReEJW4LQprGR4i+/9nMciTbJduyw28mK
-         MKCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761929470; x=1762534270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uYNKy7Fx3oHSfgQtLncT7eimMXrknVn2yP69xOS1ue4=;
-        b=sPjOWmFaQUrDrd7tXv8+ASFLX4sRdS4/fFsiYNQBO2Y8nqjOSCwAXVmKp46Tig0OgI
-         rmdM3J1GjyNf+2tmdsJuU2p0WGUZegxCC0UN4DA5aB0WBDgTDMTrgnfNDeK0BZf5v7BE
-         jHLOHMLnk75fXtktc9XuFkE4fvwJ1EfsP+OC/69snTxSQdDKux+zxmLWR/AJdSKie7Kz
-         qPHtRcUhIGkpnzNmfjsWF9oFaGcz18PKXlblrwF7cUuM2ni8XJlBjd+Ni6uGu93aomKL
-         sXKlD1EnYLRzpg6To9mHeGm2aeneTN+wPw0+MevjJ899yoqcPJYb9ctE7l6e9C2qPWL4
-         EzBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVQKX+hA0UcS70QQz/pRn8wd5UiqbrouPnSvn10HQo3fkmpKxuxlaUlxpCTP11HNRkjGCohO4fWxOfM/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOGIBgKtOgsPDDUuGJbcdmlMX64XMIsIqrSZE9cHeoZ79Le8t6
-	hExQ8Yrixo7h8XuQzn69gDd2bamnOOHxDfBjo0h7IwgA7TNQPcJQ7mKx24ustboDlYLm2ytRLjH
-	mpaOtqsMIHlf1cWxthYepugLE8mWe8W8=
-X-Gm-Gg: ASbGnctV0ixnXH1ca2NwzH7hc4yb2pbJSlG1egKSRVoM/FrCEwIR39B4dPgF9AtsS48
-	wze8vZC/Ai4NKs4xaRk6W+nAOEZcSVNPWi05/THkcvLVq3le+Pw8Z5Xfg7qtdG5ljlvMK2G8fus
-	qq0a5JvUl5b7cjil3O3BdS4zf6HhDssjsowdiJJlo1Mq+W1UdWl9LorbWu3oBGXT9s7KOrEMNMI
-	zyVitjSBRsTFHqusZPQe+pnRO+ft8TTUcMIe/UifIrEbqwpwcMgsGsaEsgTxyvErBkbKYePT3uR
-X-Google-Smtp-Source: AGHT+IEiacar6qB8jD3g66qBU4Ddyr/uSDN/8vOGXojDuA3wgJ7tz5N1BHQldiDqdumL0bfpCo0UPhOyJn5YZEGUs3E=
-X-Received: by 2002:a17:90b:4ece:b0:32e:4716:d551 with SMTP id
- 98e67ed59e1d1-3407f9d2290mr5797992a91.6.1761929470033; Fri, 31 Oct 2025
- 09:51:10 -0700 (PDT)
+	s=arc-20240116; t=1761929652; c=relaxed/simple;
+	bh=mqGWgO7cyC3iggWMgWRC+CNmWFkC2rMhj3EhiBsn0NA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TSGR240J+MzVlv3FdW/Erybd48mOaU590h6OPLIFHE/uW03duyg0WrXtA4r3IPTaG60lCZjfpsIM93PfNDTRw4uSzAYWjqPqdk71hhJXCujlV25KXQJSKzZDfqBx+Pq2n+GGDKazCP9jO1Ew3WefcvuaBlKDxsVG3W+De5h1qfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4wjm+hsB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=POIpP0mT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761929648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e6n+rSOP7O7Kh+RAMVznelXmjArh9FxQrsNWnMALPbU=;
+	b=4wjm+hsBvVWIAG3xTKA96NxL+eBfsDGoHKcBtzUNz2WYWjr/mdoYRiz+SwQW9QTzYciKV6
+	jblwA38qtBPI2InsG9TS9G9bFhUO4+JkfKekFybdnvGwNxX9NruQPCvz27fqwJNeC9/7i5
+	v38ka5Ncv81A5ISZ36WvvtQ+c+L4NBCIlEI0cOwLnqY3+iXdyG/2oUzXm4MUOPzh7GDcM+
+	uTcJJO3rrziP41VW0IaKvpVgJmS6RJbm+4sXaMQdtkK3PGHe2ZIeszRT/19zzFPuBdbK3K
+	E1UvAPfi0d7SEmvb/i8P5mElgUqwr6IABl2oX/kP7cMkVc89EGuWdNto9YWHPg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761929648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e6n+rSOP7O7Kh+RAMVznelXmjArh9FxQrsNWnMALPbU=;
+	b=POIpP0mTC5pmIbsND22UCFYxCyi0YOJ6daoH8mdD0xYEVxo/vH9nZCkrnpcaKJH4ghq20U
+	QzVQVmg4SzlIGMDg==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Michael Jeanson <mjeanson@efficios.com>, Jens Axboe
+ <axboe@kernel.dk>, "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R.
+ Shenoy" <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim
+ Chen <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>, Shrikanth
+ Hegde <sshegde@linux.ibm.com>
+Subject: Re: [patch V3 17/20] sched/mmcid: Provide CID ownership mode fixup
+ functions
+In-Reply-To: <c2e4fed9-b207-4d28-93f5-b09f0fe78e35@efficios.com>
+References: <20251029123717.886619142@linutronix.de>
+ <20251029124516.343419392@linutronix.de>
+ <c2e4fed9-b207-4d28-93f5-b09f0fe78e35@efficios.com>
+Date: Fri, 31 Oct 2025 17:54:07 +0100
+Message-ID: <87wm4brp00.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
- <20251027135423.3098490-4-dolinux.peng@gmail.com> <CAEf4BzZ+tpT2ViD_zc8mwz260spriYDiPymw3MFsEibRcuqbqg@mail.gmail.com>
- <CAErzpmvahZJRFktDydp5tcpYnhCAw9P9UmPeC5XpRxPuo0mZ8w@mail.gmail.com>
-In-Reply-To: <CAErzpmvahZJRFktDydp5tcpYnhCAw9P9UmPeC5XpRxPuo0mZ8w@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 31 Oct 2025 09:50:56 -0700
-X-Gm-Features: AWmQ_bl2pkbCj-tZacYhL5Mpsd86_p8dHPqapZkhenpMO3hvM2PFZBH615Hksc4
-Message-ID: <CAEf4Bzbv+vgsh9_8hsy=JMojmdR_Zoq1EEzaGj0CetMN-7LmDQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
- verification and binary search
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Oct 28, 2025 at 7:03=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
+On Thu, Oct 30 2025 at 11:51, Mathieu Desnoyers wrote:
+> On 2025-10-29 09:09, Thomas Gleixner wrote:
+>> At the point of switching to per CPU mode the new user is not yet visible
+>> in the system, so the task which initiated the fork() runs the fixup
+>> function: mm_cid_fixup_tasks_to_cpu() walks the thread list and either
+>> transfers each tasks owned CID to the CPU the task runs on or drops it into
+>> the CID pool if a task is not on a CPU at that point in time. Tasks which
+>> schedule in before the task walk reaches them do the handover in
+>> mm_cid_schedin(). When mm_cid_fixup_tasks_to_cpus() completes it's
+>> guaranteed that no task related to that MM owns a CID anymore.
+>> 
+>> Switching back to task mode happens when the user count goes below the
+>> threshold which was recorded on the per CPU mode switch:
+>> 
+>> 	pcpu_thrs = min(opt_cids - (opt_cids / 4), nr_cpu_ids / 2);
+>> 
 >
-> On Wed, Oct 29, 2025 at 2:40=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmai=
-l.com> wrote:
-> > >
-> > > The previous commit implemented BTF sorting verification and binary
-> > > search algorithm in libbpf. This patch enables this functionality in
-> > > the kernel.
-> > >
-> > > Cc: Eduard Zingerman <eddyz87@gmail.com>
-> > > Cc: Alexei Starovoitov <ast@kernel.org>
-> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > Cc: Alan Maguire <alan.maguire@oracle.com>
-> > > Cc: Song Liu <song@kernel.org>
-> > > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > > ---
-> > > v2->v3:
-> > > - Include btf_sort.c directly in btf.c to reduce function call overhe=
-ad
-> > > ---
-> > >  kernel/bpf/btf.c | 34 ++++++++++++++++++----------------
-> > >  1 file changed, 18 insertions(+), 16 deletions(-)
-> > >
-> > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> > > index 0de8fc8a0e0b..df258815a6ca 100644
-> > > --- a/kernel/bpf/btf.c
-> > > +++ b/kernel/bpf/btf.c
-> > > @@ -33,6 +33,7 @@
-> > >  #include <net/sock.h>
-> > >  #include <net/xdp.h>
-> > >  #include "../tools/lib/bpf/relo_core.h"
-> > > +#include "../tools/lib/bpf/btf_sort.h"
-> >
-> > I don't believe in code reuse for the sake of code reuse. This code
-> > sharing just makes everything more entangled and complicated.
-> > Reimplementing binary search is totally fine, IMO.
->
-> Thanks. Would you be open to the approach from v2, where we place
-> the common code in btf_sort.c and compile it separately rather than
-> including it directly?
->
+> AFAIU this provides an hysteresis so we don't switch back and
+> forth between modes if a single thread is forked/exits repeatedly,
+> right ?
 
-No, the code is too trivial to try to reuse it. Kernel and user space
-libbpf code are run with different constraints, sharing it is
-necessary evil (like for BPF CO-RE relocations), not something that
-should be encouraged.
+Yes. We could do that with a timer too, but the hysteresis worked fine
+so far.
 
-> >
-> > [...]
+>> This transition from CPU to per task ownership happens in two phases:
+>> 
+>>   1) mm:mm_cid.transit contains MM_CID_TRANSIT. This is OR'ed on the task
+>>      CID and denotes that the CID is only temporarily owned by the
+>>      task. When it schedules out the task drops the CID back into the
+>>      pool if this bit is set.
+>
+> OK, so the mm_drop_cid() on sched out only happens due to a transition
+> from per-cpu back to per-task. This answers my question in the previous
+> patch.
+
+:)
+
+>> + * Switching back to task mode happens when the user count goes below the
+>> + * threshold which was recorded on the per CPU mode switch:
+>> + *
+>> + *	pcpu_thrs = min(opt_cids - (opt_cids / 4), num_possible_cpus() / 2);
+>
+> I notice that mm_update_cpus_allowed() calls __mm_update_max_cids() 
+> before updating the pcpu_thrs threshold.
+>
+> sched_mm_cid_{add,remove}_user() only invoke mm_update_max_cids(mm)
+> without updating pcpu_thrs first.
+>
+> Are those done on purpose ?
+
+Yes. Update of pcpu_thrs is only possible when a resulting transition
+can be handled in the context. max_cids update is always possible.
+
+That's why mm_update_cpus_allowed() only updates max_cids and then
+schedules work to defer a potential transition to the worker thread
+context.
+
+sched_mm_cid_{add,remove}_user() does:
+
+    mm_update_max_cids()
+      __mm_update_max_cids()    <- Updates max_cids
+
+      update threshold and potentially switch ownership mode
+
+As this holds the mutex it prevents new tasks coming in or other tasks
+exiting until it managed the transition.
+
+mm_cid_work_fn() does the same thing unless a
+sched_mm_cid_{add,remove}_user() did not already handle it.
+
+Thanks,
+
+        tglx
+
+      
 
