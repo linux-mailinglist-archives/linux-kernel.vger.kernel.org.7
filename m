@@ -1,133 +1,92 @@
-Return-Path: <linux-kernel+bounces-880333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92805C257BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:12:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76CBC2586D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:18:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAF01883C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8317B58168E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F680335069;
-	Fri, 31 Oct 2025 14:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB9125784B;
+	Fri, 31 Oct 2025 14:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="r7F5Yrkw";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="+lUlqknY"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7xchXRP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3614F258ED1;
-	Fri, 31 Oct 2025 14:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9746822A4D6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919889; cv=none; b=jhEbJ8cNizk5OGzvJz4D5hn8Y58zHApE+Q4tqpFoUpPnSsKcFf8hzYafJbCq9FfOFL57yR4UsPz7d6pVXrR5cCUQLXokacNWmpj7l5zOKC8KJXTM/kSwVSSSMb3laH7jEHV+mSqs2p3B/gk1QSeS1mab9bQLCOTgs9BtIqjCOYc=
+	t=1761919834; cv=none; b=b73HZ74GU6j62E3jKgYMyQu54DVpwEnnRZxDJn+irSJ6bQdG7r8VyslDc8bNj/yWWr4G4kG2WZnyKdXO9WnxyTxmyJd4bhocrXugbrlq4EqkWGVeQe+tA+PrBQins+JSXuFN/TYFGvaCwc2djJKLIkufjHWqdIbkBqJkFllbLSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919889; c=relaxed/simple;
-	bh=806F3k6XPgIgtDKzOwiqa5q3jJuv/CbOcstiKN4t/Bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OitXdkWow0L0y9rNGdzuDyHErdOK6xy0a4HcioQpmY49mLlesxWQ6Dv2v+/AAvjOmz73Dieiap20mx7ICxNwLZpASjjba2VyT4vN2xSpB/X/ZFPb68D3c5hBXVnh27EyQm33xt9ihQDayP3Y15t6jMEZKJypoFBKoCKlbkgWd3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=r7F5Yrkw; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=+lUlqknY; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1761919844; bh=4KnHJ3WNKUbgqsydcoN1WSh
-	PIzk8mgmN3Q6/6Zfh76w=; b=r7F5YrkwtSP33iQ8E5EmfLcGqC/PsSba9/zfh7W9yEKZkBCKe2
-	eIl3syGPOeoQZTM0k0lxbLxYqNtdFRIeDzz2HZu0hQp2hDU4aFUdiZm3FdQ/FSvB+aXlDoTR8cl
-	0c+uxpjkhNy99xwACwawUHzyrNCAVBIMHij3qbeyS+oC3v960WCgVKFHhadNh+Il+w3pl3XiUoL
-	akxETjfGm5WzPpPNdUMji1hxCFkSEUEsZhhC1ONZ3xN8LRWwpHkpKcxQmylXyOJ1poSsk2c9aD1
-	Je/raOF425npaOisFAuC2uOswYnOU3Z82QZfOT965YoPpEzwdTKKuChYmZcxf2ceiTA==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1761919844; bh=4KnHJ3WNKUbgqsydcoN1WSh
-	PIzk8mgmN3Q6/6Zfh76w=; b=+lUlqknYEM2JGx0/FAjqopAU3erMVOj1Y7yEIbflOMOcmMMfIW
-	NgLENQvh7lRWG1PmygwKT2f5sN8RvQrkeFDA==;
-Message-ID: <ebc028f2-3d2d-4f42-a667-df7d6c2b7eb0@damsy.net>
+	s=arc-20240116; t=1761919834; c=relaxed/simple;
+	bh=0B0L8Lq+i3gAWgbniEZql6RTQ0bjsRjHlxIl+KdSv88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AnIjnxdAPNaaIGZ9Tjp48f70ijre1fyp9dE5QGWM6djpnHz/2JjTMskKAycyQlcNMOr9rIJKI/tQ5mFJ4Is35/qqCrdYQ/kGRJHDGGo2ApvKUevXJ6AJCawKn7RNhBkr8ZYVab7+/db0MHAHbGlZSSjy0VQskokITjp/X+AGng0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7xchXRP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EE0C4CEE7;
+	Fri, 31 Oct 2025 14:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761919834;
+	bh=0B0L8Lq+i3gAWgbniEZql6RTQ0bjsRjHlxIl+KdSv88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S7xchXRPtpFVO6T5D1JkSCcM8nKEjLjXwzEU4leQME3MsMInJJw6zd6fOCErOKUsG
+	 YfermksGty5JVvBmJZmaL2xNFYRjtqkzdhgXU738RA1/sv1zFMguePq66wiDa/xPha
+	 xsgriSUfZu4RP7srKln19T5tVvg8gYKqjTZ60cMKLjA206r32Ck8uZxSve+n8w4PIX
+	 sfjlPeON1/LDLClqAGDkPjHP/lIT8BPfvd3cqwUmQ9//4/RjniZHPOcxY6cD8yptuq
+	 z4QdDVLdttG4S520vKc+kYKj0DD1k5K1lPd7PMfiIqCmD59Ef69YzQpvH4y5+Btwyq
+	 vYRJSy1Nk1V3A==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vEppz-000000007uC-1bOJ;
+	Fri, 31 Oct 2025 15:10:43 +0100
 Date: Fri, 31 Oct 2025 15:10:43 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Gal Pressman <gal@nvidia.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Jakub Kicinski <kuba@kernel.org>, Alexei Lazar <alazar@nvidia.com>,
+	Simon Horman <horms@kernel.org>, cocci@inria.fr,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "scripts/coccinelle: Find PTR_ERR() to %pe
+ candidates"
+Message-ID: <aQTDY6m6xuDpNSAH@hovoldconsulting.com>
+References: <20251029132922.17329-1-johan@kernel.org>
+ <826f2fdb-bad8-44f4-8c8e-9353c3de73cd@nvidia.com>
+ <aQJDIz-8Ow0OmczH@hovoldconsulting.com>
+ <3b04f763-aaba-41ee-a81f-94195043fd4b@nvidia.com>
+ <aQNw5NqZSZk5JNxn@hovoldconsulting.com>
+ <9c32fa45-2b8f-4005-94cd-a9755981cff5@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/sched: Add warning for removing hack in
- drm_sched_fini()
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20251023123429.139848-2-phasta@kernel.org>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <20251023123429.139848-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c32fa45-2b8f-4005-94cd-a9755981cff5@nvidia.com>
 
-Hi Philipp,
+On Thu, Oct 30, 2025 at 04:36:46PM +0200, Gal Pressman wrote:
+> On 30/10/2025 16:06, Johan Hovold wrote:
 
-Le 23/10/2025 à 14:34, Philipp Stanner a écrit :
-> The assembled developers agreed at the X.Org Developers Conference 2025
-> that the hack added for amdgpu in drm_sched_fini() shall be removed. It
-> shouldn't be needed by amdgpu anymore.
+> > It still generates noise and extra work for already overworked
+> > maintainers that would need to explain over and over again why they are
+> > rejecting patches that appears to fix "warnings". Some will just take
+> > the patches, which leads to inconsistencies (as only a handful of
+> > printks will be converted) and a push for a style which again only some
+> > people prefer.
 > 
-> As it's unclear whether all drivers really follow the life time rule of
-> entities having to be torn down before their scheduler, it is reasonable
-> to warn for a while before removing the hack.
-> 
-> Add a warning in drm_sched_fini() that fires if an entity is still
-> active.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
-> Changes in v3:
->    - Add a READ_ONCE() + comment to make the warning slightly less
->      horrible.
-> 
-> Changes in v2:
->    - Fix broken brackets.
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 46119aacb809..31039b08c7b9 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1419,7 +1419,7 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
->   		struct drm_sched_rq *rq = sched->sched_rq[i];
->   
->   		spin_lock(&rq->lock);
-> -		list_for_each_entry(s_entity, &rq->entities, list)
-> +		list_for_each_entry(s_entity, &rq->entities, list) {
->   			/*
->   			 * Prevents reinsertion and marks job_queue as idle,
->   			 * it will be removed from the rq in drm_sched_entity_fini()
-> @@ -1440,8 +1440,15 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
->   			 * For now, this remains a potential race in all
->   			 * drivers that keep entities alive for longer than
->   			 * the scheduler.
-> +			 *
-> +			 * The READ_ONCE() is there to make the lockless read
-> +			 * (warning about the lockless write below) slightly
-> +			 * less broken...
->   			 */
-> +			if (!READ_ONCE(s_entity->stopped))
-> +				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n");
->   			s_entity->stopped = true;
-> +		}
+> There's the subsystem maintainer "rules" documentation in
+> Documentation/process/maintainer-*.rst which can document these kinds of
+> stuff.
 
-The patch is Acked-by: Pierre-Eric Pelloux-Prayer 
-<pierre-eric.pelloux-prayer@amd.com>
+There's already too many rules in there and I guess not many people
+actually read it so that doesn't really scale.
 
-Thanks.
-
-
->   		spin_unlock(&rq->lock);
->   		kfree(sched->sched_rq[i]);
->   	}
-
+Johan
 
