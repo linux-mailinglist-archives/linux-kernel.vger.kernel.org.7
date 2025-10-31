@@ -1,1194 +1,226 @@
-Return-Path: <linux-kernel+bounces-879415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83068C230D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:46:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89839C230E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F108140748B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:46:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43F554EFAF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD96176AC8;
-	Fri, 31 Oct 2025 02:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DE830CDA7;
+	Fri, 31 Oct 2025 02:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pk+Y0MF3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aLMrBcDK";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jp7n3XvH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8021EF09B;
-	Fri, 31 Oct 2025 02:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24FE30B50B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761878775; cv=none; b=I19hp16wWzG+cE8/jediY5JlRHmDbULkZKqMPXTAeoq7CMMxWiTJd5V3FSTSTIrL0V5FhStJGjwSHBrVzmTOQCXXFFeVGa4KWMKys59o423p7G97gGm5IJdl0R4OrN7EEMc92qCZk+0nSUuCu5YMCaKio5AZNvO1Lx7Sr9hmU70=
+	t=1761878793; cv=none; b=FrA8DPzF280Dwv9vPbYTe0klsyWlbYxqaz48wi/DHbj4U69/xW1ozR1orllqA7KjQbml9R4Geiw5jCYIfcVGbhVsW3oKO3psjG+7v66BrpgP0P8Oj7w+TYPcaaLRlhGmYXZATAYgJ0yFkoNR/x1HWboxk91cmOPVBckkA+Xk/EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761878775; c=relaxed/simple;
-	bh=eNKcCtZ2D2ZTNa5fn0PVMZH/l/zdzPizPsrbvDM73u8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G5SyeK/uLO0Re64E95pP10oY6fd62NuPQz2DR3I0ciros6J7sIszx/Z9iaF+eUD/oe8YpQB5es4jjo8RgrL7u9x4a4KETu9cfyqmH/HN0n5GUWUK35nV/uPPAr02jWXB+pfDiwrC8PB6qCBOL59ExPlnRWTvEwNOGa1ka7oBFlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pk+Y0MF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93CF2C4CEF1;
-	Fri, 31 Oct 2025 02:46:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761878775;
-	bh=eNKcCtZ2D2ZTNa5fn0PVMZH/l/zdzPizPsrbvDM73u8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Pk+Y0MF3j4dT73guhsjcbB2QhWfItIzuz81bHFqu0ei0nhQ+D1W6iLbfmIL7uypc0
-	 kpAAh0/OS/ztTbrsgmtYHKk8lk0g+/A/2cXqZDMOyiWF4hTVVOno/33XxCg9MRYRHX
-	 MuSWYKHMbih6VWBx9qBt3ziT8TZm95RXjr+pezqy3VYLEnse5EZd/opWU+ST+WqiXB
-	 7/5xAOlKA4tTMD5ZIse1ZXXdTa5Ho1+swq71NZSH/KgH4SOlRDK2VSIhOIstRP8Rkc
-	 hbAFCO9N+bLr04LJpgANZSEMzxNvBDbtbvYvEQmB4cM8TEURKiS2TEc0tDeJag3xoB
-	 oIQ6TX67Uc+Kw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v7 1/2] tracing: Allow tracer to add more than 32 options
-Date: Fri, 31 Oct 2025 11:46:11 +0900
-Message-ID: <176187877103.994619.166076000668757232.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <176187876133.994619.14047043856461447890.stgit@devnote2>
-References: <176187876133.994619.14047043856461447890.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1761878793; c=relaxed/simple;
+	bh=Qu4QSbV2XtSbfDV8VqAU0A1+l5WwqdMrJdktutHmg+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TERQAubPSvTMcF2GLYsIvO7iR6FYZdk+oPs/yjbanJEII0vSJOBP80OKVk8EGOLGEaVqn6T1xbCuvxvr/x8S6JIRWlw9ItdqXU4uWaIvxc6L2ib9NxGUypI/+vlqwW+zx5TBdQXNHc6sj4totTgHPcPpCulPoPIOD3BwdJxssIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aLMrBcDK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jp7n3XvH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V1mfCl1571314
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:46:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2NFGqDp1m2CdSv3QB44B0+at
+	avVoajX3Ebv3PN+tFIE=; b=aLMrBcDKOkjo9SE8gzH3PyCwxvTqQ5WjlCsRsxeW
+	iW3xYgoQk851uP+2iX+G41FV1D7cAI4gV9ETn8BGE/SaOUSdmL9/h0oeVrN4SwfG
+	wJif2mVk1aWNplgPl2By+lnc/Xhl3dlxr5HRS4LZU9reWX8uD3GJAGfzbXEUFTpr
+	RLR0jIHxLHt/sFREFKftMHn+kFGCcQNKu+q+KoFv6htWLPWgc4XPVKpZsJ0gB21R
+	+YhrImjkAsXtJXjE3KXKS516VHt6mtAz9mdCvNDURHY9hNf4/JFo69UfJ343oH4i
+	QdIYA9XeX+EoSZUZ/Qtkkuocb+UQ1SQiIDI1x/WmgIZ9bg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4ksc046m-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:46:30 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e892acc0b3so43843431cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761878790; x=1762483590; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2NFGqDp1m2CdSv3QB44B0+atavVoajX3Ebv3PN+tFIE=;
+        b=jp7n3XvHDb0IV//fb1NAzVfcn/1irlQw7xBIg0ECclmVgBn53h+ZUnLERIJX1ZmB2K
+         +jK1P9cgAkVegImq18l1GhRjq5pFJVI4R8QbzaLc/ZFLUcf45Bt+dnEHXJRzgNU3R2pf
+         8DVsjuRmB68VX4QB0jboszN8VYpg9kh7hphLZwnL0MIAPDkl3BxZxDF5h50LV8MVU3Xm
+         H9nndQd7w5pl2fMo6Dq8UeItGKVx69GYzqeYDxX7/EN8ZL1F+i6m4W4Yn1sF8s0JQ4Vr
+         lX+Y0XF/G/np0YGYN8vT2Gz4WjS5nLlRPiSxZ1HiCYShlqSdnMuPWb5+LCNK9Jls3gMy
+         Dp7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761878790; x=1762483590;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2NFGqDp1m2CdSv3QB44B0+atavVoajX3Ebv3PN+tFIE=;
+        b=UuWliRxE+AMQhqOZYdNUbqvp46DNLX9tFsWUAqUDERMtdinlAiczlHqVBqlJL7u740
+         D6iqywcKo+Xdv2k18rst942G/ETjRypyzId9KVvf5KcSqPFUYgtEwMTvv3Nq+33/D04W
+         7s/kOzBkPID56Kdl67QwSg85gF9IT8YWS2KmUO9r+J4B+grx8+2HyaOc7LpuB1sDD+0u
+         bASQb1nuLKgdF+Nga1zus9DrxPRBlilPZ0LVa0jxr4EtQ80qUxe06B/MYYUQdvinx9Lw
+         FlAKWNbM5YoSBUE+IeNNZDkoRF7/95clk2xYlv37GhaDR37Qa1FzfQqVbo06HV7GyKEQ
+         7JoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtXmdAXFF9hFg/DbBdzy1IKxzsoo61knx34Qlp0O1VWG4djly9JDq+PUqrb0TvjmjEqj/lWdqrgArdzds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfqGC7azxHa+UgllPPoi/jp2yGuZ7stbBK89vEsWJ9AwU8VslN
+	82mkqg8BapqwH5Ycqsh7ZY4hoOaMR4VnaXVXew1TC5u01xLcdZLrql7JhDIN866fYAfh1eK0OXZ
+	uytdGvD5FfYAzMN8MlxQdAhkTAwavzJkaiKpaPOdHoCwBf1Q9IV7bVlUoUu9pQeDpP4M=
+X-Gm-Gg: ASbGnct4X4cnUhOr0a04fawYczqnufokmmzEgAmmMQbnRfzcLA8nU1zKTX+W++u7vvR
+	HUdI4bPldtYmKX2z9jWHbccFxtK39GQsX3c1i4Vd8T4FQf+PpsWSVcT8FbaueDpOmsqRQgsYFfs
+	wlbzO9X72CE66eLkoCD4Yyn1cQIoMUuRcefKmyVauhBW42MhAWbMncXCOLDk0AVpUlAuhpFFaoU
+	GA7gZXXaAdypz52MH2na4hLzZah67UhtSI1SeN9VJhxRzxjZcxX3ierBsCyM6B/ncvwKeSSUbH9
+	zH0aNNriJicwqI8zeVylTog9fbm9IqV7ZnT5SJ4LtibHpa5anlCovU/8tTiO8ot3y3VECteEEBO
+	rQO/L1leqpgEhusTAaJLEdQZzi8Xgd9Xp+Lrh+AxwQ+u2A8vHSTRfSIoL5ZHv
+X-Received: by 2002:a05:622a:1b8b:b0:4eb:e283:9262 with SMTP id d75a77b69052e-4ed310a7896mr22748041cf.80.1761878789944;
+        Thu, 30 Oct 2025 19:46:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGW+R7k4Z+WWJ9w992LN8TRCm5lm7xZV0CFcN/lZYH0/QcEjNEF7RkEkCbgI/lUUmwN9IKgHQ==
+X-Received: by 2002:a05:622a:1b8b:b0:4eb:e283:9262 with SMTP id d75a77b69052e-4ed310a7896mr22747661cf.80.1761878789388;
+        Thu, 30 Oct 2025 19:46:29 -0700 (PDT)
+Received: from yuanjiey.ap.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed352deaf3sm3405111cf.29.2025.10.30.19.46.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 19:46:28 -0700 (PDT)
+Date: Fri, 31 Oct 2025 10:46:16 +0800
+From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        robin.clark@oss.qualcomm.com, lumag@kernel.org,
+        abhinav.kumar@linux.dev, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 01/12] drm/msm/dsi/phy: Add support for Kaanapali
+Message-ID: <aQQi+KA7KfibvhBu@yuanjiey.ap.qualcomm.com>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023075401.1148-2-yuanjie.yang@oss.qualcomm.com>
+ <omlhiywjr46ik6bj2aiutgcf4aifen4vsvtlut7b44ayu4g4vl@zn4u3zkf6cqx>
+ <ad906eb5-c08f-4b66-9e37-aaba99889ad4@oss.qualcomm.com>
+ <aPryORKIuSwtXpon@yuanjiey.ap.qualcomm.com>
+ <einog245dsbqtx3by2cojyzmyctk2fffpwndwoe24puwqq4fta@cu6iiidxqgr4>
+ <0291d0f2-483f-48d8-8c75-f1bbcd1ab18f@oss.qualcomm.com>
+ <ehgdx7av3jewowkvtsqrbnsphgxm5hryl6n5otnapi4xneldze@gcwvpssisv2x>
+ <aQGHyN19/a/tl0BH@yuanjiey.ap.qualcomm.com>
+ <mlhohop2uifsdo3qxxzmuxbkjo735hdw6xcosvkmsx4eskfufz@5otklefey5k7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mlhohop2uifsdo3qxxzmuxbkjo735hdw6xcosvkmsx4eskfufz@5otklefey5k7>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDAyMiBTYWx0ZWRfX7i1vL5YwIefP
+ 20IutnESCxn+9gF0G1/A/FruNCq1i1htHAIlcNu+esGY1qe4HtR+aIanAu+BV4E5rEDZ6heQcM8
+ Uhh1+G0wIVNqkHqZ/4rxG50+BP87IQ0JS41W+CINbwcO57fiogvy7RiJ6xCOJdnwkcvQRrzNWOt
+ ymRoDmDxLNcwBIbjcON/pcjmr+CQiyvd2N4xKSXi5UKiHGMv8/uR1lpp0JQtm6mQpaOl25xQIa/
+ 2YnYcI0QP/0tYTEbWCnrjNw9nVxZK+oZmOi4CFX15sXMyL5KP2SF/5TgtwZDloA7drphOTmxxic
+ rsssXVgeAtln2td5/etbG/Ok1J4xjHuO33NDEV0rS7JMt6Gs0vJzh2DHSQu0j6iWTyc2xOE/vTB
+ jth8eleiFTnUEHbonU2wnsjtBp69iw==
+X-Authority-Analysis: v=2.4 cv=Q8PfIo2a c=1 sm=1 tr=0 ts=69042306 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=EkNEsoD3ZKdRnMbS8bYA:9
+ a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: RhX88uu7x3npjuZDStrtHLU9oNfwP7WO
+X-Proofpoint-GUID: RhX88uu7x3npjuZDStrtHLU9oNfwP7WO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_08,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310022
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Thu, Oct 30, 2025 at 08:01:10PM +0200, Dmitry Baryshkov wrote:
+> On Wed, Oct 29, 2025 at 11:19:36AM +0800, yuanjiey wrote:
+> > On Mon, Oct 27, 2025 at 03:29:40PM +0200, Dmitry Baryshkov wrote:
+> > > On Mon, Oct 27, 2025 at 02:20:26PM +0100, Konrad Dybcio wrote:
+> > > > On 10/27/25 2:14 PM, Dmitry Baryshkov wrote:
+> > > > > On Fri, Oct 24, 2025 at 11:27:53AM +0800, yuanjiey wrote:
+> > > > >> On Thu, Oct 23, 2025 at 02:02:45PM +0200, Konrad Dybcio wrote:
+> > > > >>> On 10/23/25 1:48 PM, Dmitry Baryshkov wrote:
+> > > > >>>> On Thu, Oct 23, 2025 at 03:53:50PM +0800, yuanjie yang wrote:
+> > > > >>>>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > > > >>>>>
+> > > > >>>>> Add DSI PHY support for the Kaanapali platform.
+> > > > >>>>>
+> > > > >>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > > > >>>>> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > > > >>>>> ---
+> > > > >>>
+> > > > >>> [...]
+> > > > >>>
+> > > > >>>>> +	.io_start = { 0x9ac1000, 0xae97000 },
+> > > > >>>>
+> > > > >>>> These two addresses are very strange. Would you care to explain? Other
+> > > > >>>> than that there is no difference from SM8750 entry.
+> > > > >>>
+> > > > >>> They're correct.
+> > > > >>> Although they correspond to DSI_0 and DSI_2..
+> > > > >>>
+> > > > >>> Yuanjie, none of the DSI patches mention that v2.10.0 is packed with
+> > > > >>> new features. Please provide some more context and how that impacts
+> > > > >>> the hw description.
+> > > > >>
+> > > > >> Thanks for your reminder.
+> > > > >>
+> > > > >> Correct here:
+> > > > >> io_start = { 0x9ac1000, 0x9ac4000 }  DSI_Phy0 DSI_phy1
+> > > > >>
+> > > > >> And v2.10.0 no clearly meaningful changes compared to v2.9.0.
+> > > > >> just some register address change.
+> > > > > 
+> > > > > Addition of DSI2 is a meaningful change, which needs to be handled both
+> > > > > in the core and in the DSI / DSI PHY drivers.
+> > > > 
+> > > > DSI2 was introduced in 8750 already, but it was done without any
+> > > > fanfare..
+> > > > 
+> > > > I see a diagram that shows an XBAR with inputs from DSI0 and DSI2,
+> > > > and an output to DSI0_PHY (same thing on kaanapali - meaning this
+> > > > patch is potentially wrong and should ref DSI1_PHY instead?)
+> > > 
+> > Yes, I check ipcata Doc, I see DSI0\DSI0_PHY DSI1\DSI1_PHY DSI2\DSI2_PHY in Kaanapali, 
+> > addition of DSI2\DSI2_PHY compared to SM8650.
+> > 
+> > look like I should add: config io_start = {DSI0_PHY, DSI1_PHY, DSI2_PHY},
+> 
+> I see DSI0, DSI1, DSI2, but DSI0_PHY and DSI1_PHY.
 
-Since enum trace_iterator_flags is 32bit, the max number of the
-option flags is limited to 32 and it is fully used now. To add
-a new option, we need to expand it.
+1. From HPG MDSS 13.0.0 chapter 1.6 Architecture
+I see DSI0 DSI1 DSI2, and only DSI0_PHY DSI1_PHY 
 
-So replace the TRACE_ITER_##flag with TRACE_ITER(flag) macro which
-is 64bit bitmask.
+2. From ipcatalog memory map address:
+I can see: 
+DSI0: 0x09AC0000 DSI0_PHY: 0x09AC1000
+DSI1: 0x09AC3000 DSI1_PHY: 0x09AC4000
+DSI2: 0x09AC6000 DSI2_PHY: 0x09AC7000
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v7:
-  - Rebased on v6.19-rc3
-  - Introduce seq_print_ip_sym_offset() and seq_print_ip_sym_no_offset().
- Changes in v6:
-  - Rebased on the latest for-next.
- Changes in v5:
-  - Use TRACE_ITER() macro.
- Changes in v4:
-  - Use enum ... : type {} instead of const variables.
- Changes in v3:
-  - Make TRACE_ITER_* to global.
----
- kernel/trace/blktrace.c              |    6 +
- kernel/trace/trace.c                 |  151 +++++++++++++++++-----------------
- kernel/trace/trace.h                 |   29 +++----
- kernel/trace/trace_events.c          |    4 -
- kernel/trace/trace_events_synth.c    |    2 
- kernel/trace/trace_fprobe.c          |    6 +
- kernel/trace/trace_functions_graph.c |   18 ++--
- kernel/trace/trace_irqsoff.c         |   30 +++----
- kernel/trace/trace_kdb.c             |    2 
- kernel/trace/trace_kprobe.c          |    6 +
- kernel/trace/trace_output.c          |   18 ++--
- kernel/trace/trace_output.h          |   11 ++
- kernel/trace/trace_sched_wakeup.c    |   24 +++--
- kernel/trace/trace_syscalls.c        |    2 
- 14 files changed, 159 insertions(+), 150 deletions(-)
+Look like there are three DSI_PHY, but only DSI0_PHY DSI1_PHY work.  
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 6941145b5058..e21176f396d5 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -1452,7 +1452,7 @@ static enum print_line_t print_one_line(struct trace_iterator *iter,
- 
- 	t	   = te_blk_io_trace(iter->ent);
- 	what	   = (t->action & ((1 << BLK_TC_SHIFT) - 1)) & ~__BLK_TA_CGROUP;
--	long_act   = !!(tr->trace_flags & TRACE_ITER_VERBOSE);
-+	long_act   = !!(tr->trace_flags & TRACE_ITER(VERBOSE));
- 	log_action = classic ? &blk_log_action_classic : &blk_log_action;
- 	has_cg	   = t->action & __BLK_TA_CGROUP;
- 
-@@ -1517,9 +1517,9 @@ blk_tracer_set_flag(struct trace_array *tr, u32 old_flags, u32 bit, int set)
- 	/* don't output context-info for blk_classic output */
- 	if (bit == TRACE_BLK_OPT_CLASSIC) {
- 		if (set)
--			tr->trace_flags &= ~TRACE_ITER_CONTEXT_INFO;
-+			tr->trace_flags &= ~TRACE_ITER(CONTEXT_INFO);
- 		else
--			tr->trace_flags |= TRACE_ITER_CONTEXT_INFO;
-+			tr->trace_flags |= TRACE_ITER(CONTEXT_INFO);
- 	}
- 	return 0;
- }
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index d1e527cf2aae..14e8703a6a53 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -513,21 +513,21 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
- /* trace_flags holds trace_options default values */
- #define TRACE_DEFAULT_FLAGS						\
- 	(FUNCTION_DEFAULT_FLAGS |					\
--	 TRACE_ITER_PRINT_PARENT | TRACE_ITER_PRINTK |			\
--	 TRACE_ITER_ANNOTATE | TRACE_ITER_CONTEXT_INFO |		\
--	 TRACE_ITER_RECORD_CMD | TRACE_ITER_OVERWRITE |			\
--	 TRACE_ITER_IRQ_INFO | TRACE_ITER_MARKERS |			\
--	 TRACE_ITER_HASH_PTR | TRACE_ITER_TRACE_PRINTK |		\
--	 TRACE_ITER_COPY_MARKER)
-+	 TRACE_ITER(PRINT_PARENT) | TRACE_ITER(PRINTK) |			\
-+	 TRACE_ITER(ANNOTATE) | TRACE_ITER(CONTEXT_INFO) |		\
-+	 TRACE_ITER(RECORD_CMD) | TRACE_ITER(OVERWRITE) |			\
-+	 TRACE_ITER(IRQ_INFO) | TRACE_ITER(MARKERS) |			\
-+	 TRACE_ITER(HASH_PTR) | TRACE_ITER(TRACE_PRINTK) |		\
-+	 TRACE_ITER(COPY_MARKER))
- 
- /* trace_options that are only supported by global_trace */
--#define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
--	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD)
-+#define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER(PRINTK) |			\
-+	       TRACE_ITER(PRINTK_MSGONLY) | TRACE_ITER(RECORD_CMD))
- 
- /* trace_flags that are default zero for instances */
- #define ZEROED_TRACE_FLAGS \
--	(TRACE_ITER_EVENT_FORK | TRACE_ITER_FUNC_FORK | TRACE_ITER_TRACE_PRINTK | \
--	 TRACE_ITER_COPY_MARKER)
-+	(TRACE_ITER(EVENT_FORK) | TRACE_ITER(FUNC_FORK) | TRACE_ITER(TRACE_PRINTK) | \
-+	 TRACE_ITER(COPY_MARKER))
- 
- /*
-  * The global_trace is the descriptor that holds the top-level tracing
-@@ -558,9 +558,9 @@ static void update_printk_trace(struct trace_array *tr)
- 	if (printk_trace == tr)
- 		return;
- 
--	printk_trace->trace_flags &= ~TRACE_ITER_TRACE_PRINTK;
-+	printk_trace->trace_flags &= ~TRACE_ITER(TRACE_PRINTK);
- 	printk_trace = tr;
--	tr->trace_flags |= TRACE_ITER_TRACE_PRINTK;
-+	tr->trace_flags |= TRACE_ITER(TRACE_PRINTK);
- }
- 
- /* Returns true if the status of tr changed */
-@@ -573,7 +573,7 @@ static bool update_marker_trace(struct trace_array *tr, int enabled)
- 			return false;
- 
- 		list_add_rcu(&tr->marker_list, &marker_copies);
--		tr->trace_flags |= TRACE_ITER_COPY_MARKER;
-+		tr->trace_flags |= TRACE_ITER(COPY_MARKER);
- 		return true;
- 	}
- 
-@@ -581,7 +581,7 @@ static bool update_marker_trace(struct trace_array *tr, int enabled)
- 		return false;
- 
- 	list_del_init(&tr->marker_list);
--	tr->trace_flags &= ~TRACE_ITER_COPY_MARKER;
-+	tr->trace_flags &= ~TRACE_ITER(COPY_MARKER);
- 	return true;
- }
- 
-@@ -1139,7 +1139,7 @@ int __trace_array_puts(struct trace_array *tr, unsigned long ip,
- 	unsigned int trace_ctx;
- 	int alloc;
- 
--	if (!(tr->trace_flags & TRACE_ITER_PRINTK))
-+	if (!(tr->trace_flags & TRACE_ITER(PRINTK)))
- 		return 0;
- 
- 	if (unlikely(tracing_selftest_running && tr == &global_trace))
-@@ -1205,7 +1205,7 @@ int __trace_bputs(unsigned long ip, const char *str)
- 	if (!printk_binsafe(tr))
- 		return __trace_puts(ip, str, strlen(str));
- 
--	if (!(tr->trace_flags & TRACE_ITER_PRINTK))
-+	if (!(tr->trace_flags & TRACE_ITER(PRINTK)))
- 		return 0;
- 
- 	if (unlikely(tracing_selftest_running || tracing_disabled))
-@@ -3078,7 +3078,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
- 				      unsigned int trace_ctx,
- 				      int skip, struct pt_regs *regs)
- {
--	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
-+	if (!(tr->trace_flags & TRACE_ITER(STACKTRACE)))
- 		return;
- 
- 	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
-@@ -3139,7 +3139,7 @@ ftrace_trace_userstack(struct trace_array *tr,
- 	struct ring_buffer_event *event;
- 	struct userstack_entry *entry;
- 
--	if (!(tr->trace_flags & TRACE_ITER_USERSTACKTRACE))
-+	if (!(tr->trace_flags & TRACE_ITER(USERSTACKTRACE)))
- 		return;
- 
- 	/*
-@@ -3484,7 +3484,7 @@ int trace_array_printk(struct trace_array *tr,
- 	if (tr == &global_trace)
- 		return 0;
- 
--	if (!(tr->trace_flags & TRACE_ITER_PRINTK))
-+	if (!(tr->trace_flags & TRACE_ITER(PRINTK)))
- 		return 0;
- 
- 	va_start(ap, fmt);
-@@ -3521,7 +3521,7 @@ int trace_array_printk_buf(struct trace_buffer *buffer,
- 	int ret;
- 	va_list ap;
- 
--	if (!(printk_trace->trace_flags & TRACE_ITER_PRINTK))
-+	if (!(printk_trace->trace_flags & TRACE_ITER(PRINTK)))
- 		return 0;
- 
- 	va_start(ap, fmt);
-@@ -3791,7 +3791,7 @@ const char *trace_event_format(struct trace_iterator *iter, const char *fmt)
- 	if (WARN_ON_ONCE(!fmt))
- 		return fmt;
- 
--	if (!iter->tr || iter->tr->trace_flags & TRACE_ITER_HASH_PTR)
-+	if (!iter->tr || iter->tr->trace_flags & TRACE_ITER(HASH_PTR))
- 		return fmt;
- 
- 	p = fmt;
-@@ -4113,7 +4113,7 @@ static void print_event_info(struct array_buffer *buf, struct seq_file *m)
- static void print_func_help_header(struct array_buffer *buf, struct seq_file *m,
- 				   unsigned int flags)
- {
--	bool tgid = flags & TRACE_ITER_RECORD_TGID;
-+	bool tgid = flags & TRACE_ITER(RECORD_TGID);
- 
- 	print_event_info(buf, m);
- 
-@@ -4124,7 +4124,7 @@ static void print_func_help_header(struct array_buffer *buf, struct seq_file *m,
- static void print_func_help_header_irq(struct array_buffer *buf, struct seq_file *m,
- 				       unsigned int flags)
- {
--	bool tgid = flags & TRACE_ITER_RECORD_TGID;
-+	bool tgid = flags & TRACE_ITER(RECORD_TGID);
- 	static const char space[] = "            ";
- 	int prec = tgid ? 12 : 2;
- 
-@@ -4197,7 +4197,7 @@ static void test_cpu_buff_start(struct trace_iterator *iter)
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_array *tr = iter->tr;
- 
--	if (!(tr->trace_flags & TRACE_ITER_ANNOTATE))
-+	if (!(tr->trace_flags & TRACE_ITER(ANNOTATE)))
- 		return;
- 
- 	if (!(iter->iter_flags & TRACE_FILE_ANNOTATE))
-@@ -4233,7 +4233,7 @@ static enum print_line_t print_trace_fmt(struct trace_iterator *iter)
- 
- 	event = ftrace_find_event(entry->type);
- 
--	if (tr->trace_flags & TRACE_ITER_CONTEXT_INFO) {
-+	if (tr->trace_flags & TRACE_ITER(CONTEXT_INFO)) {
- 		if (iter->iter_flags & TRACE_FILE_LAT_FMT)
- 			trace_print_lat_context(iter);
- 		else
-@@ -4244,7 +4244,7 @@ static enum print_line_t print_trace_fmt(struct trace_iterator *iter)
- 		return TRACE_TYPE_PARTIAL_LINE;
- 
- 	if (event) {
--		if (tr->trace_flags & TRACE_ITER_FIELDS)
-+		if (tr->trace_flags & TRACE_ITER(FIELDS))
- 			return print_event_fields(iter, event);
- 		/*
- 		 * For TRACE_EVENT() events, the print_fmt is not
-@@ -4272,7 +4272,7 @@ static enum print_line_t print_raw_fmt(struct trace_iterator *iter)
- 
- 	entry = iter->ent;
- 
--	if (tr->trace_flags & TRACE_ITER_CONTEXT_INFO)
-+	if (tr->trace_flags & TRACE_ITER(CONTEXT_INFO))
- 		trace_seq_printf(s, "%d %d %llu ",
- 				 entry->pid, iter->cpu, iter->ts);
- 
-@@ -4298,7 +4298,7 @@ static enum print_line_t print_hex_fmt(struct trace_iterator *iter)
- 
- 	entry = iter->ent;
- 
--	if (tr->trace_flags & TRACE_ITER_CONTEXT_INFO) {
-+	if (tr->trace_flags & TRACE_ITER(CONTEXT_INFO)) {
- 		SEQ_PUT_HEX_FIELD(s, entry->pid);
- 		SEQ_PUT_HEX_FIELD(s, iter->cpu);
- 		SEQ_PUT_HEX_FIELD(s, iter->ts);
-@@ -4327,7 +4327,7 @@ static enum print_line_t print_bin_fmt(struct trace_iterator *iter)
- 
- 	entry = iter->ent;
- 
--	if (tr->trace_flags & TRACE_ITER_CONTEXT_INFO) {
-+	if (tr->trace_flags & TRACE_ITER(CONTEXT_INFO)) {
- 		SEQ_PUT_FIELD(s, entry->pid);
- 		SEQ_PUT_FIELD(s, iter->cpu);
- 		SEQ_PUT_FIELD(s, iter->ts);
-@@ -4398,27 +4398,27 @@ enum print_line_t print_trace_line(struct trace_iterator *iter)
- 	}
- 
- 	if (iter->ent->type == TRACE_BPUTS &&
--			trace_flags & TRACE_ITER_PRINTK &&
--			trace_flags & TRACE_ITER_PRINTK_MSGONLY)
-+			trace_flags & TRACE_ITER(PRINTK) &&
-+			trace_flags & TRACE_ITER(PRINTK_MSGONLY))
- 		return trace_print_bputs_msg_only(iter);
- 
- 	if (iter->ent->type == TRACE_BPRINT &&
--			trace_flags & TRACE_ITER_PRINTK &&
--			trace_flags & TRACE_ITER_PRINTK_MSGONLY)
-+			trace_flags & TRACE_ITER(PRINTK) &&
-+			trace_flags & TRACE_ITER(PRINTK_MSGONLY))
- 		return trace_print_bprintk_msg_only(iter);
- 
- 	if (iter->ent->type == TRACE_PRINT &&
--			trace_flags & TRACE_ITER_PRINTK &&
--			trace_flags & TRACE_ITER_PRINTK_MSGONLY)
-+			trace_flags & TRACE_ITER(PRINTK) &&
-+			trace_flags & TRACE_ITER(PRINTK_MSGONLY))
- 		return trace_print_printk_msg_only(iter);
- 
--	if (trace_flags & TRACE_ITER_BIN)
-+	if (trace_flags & TRACE_ITER(BIN))
- 		return print_bin_fmt(iter);
- 
--	if (trace_flags & TRACE_ITER_HEX)
-+	if (trace_flags & TRACE_ITER(HEX))
- 		return print_hex_fmt(iter);
- 
--	if (trace_flags & TRACE_ITER_RAW)
-+	if (trace_flags & TRACE_ITER(RAW))
- 		return print_raw_fmt(iter);
- 
- 	return print_trace_fmt(iter);
-@@ -4436,7 +4436,7 @@ void trace_latency_header(struct seq_file *m)
- 	if (iter->iter_flags & TRACE_FILE_LAT_FMT)
- 		print_trace_header(m, iter);
- 
--	if (!(tr->trace_flags & TRACE_ITER_VERBOSE))
-+	if (!(tr->trace_flags & TRACE_ITER(VERBOSE)))
- 		print_lat_help_header(m);
- }
- 
-@@ -4446,7 +4446,7 @@ void trace_default_header(struct seq_file *m)
- 	struct trace_array *tr = iter->tr;
- 	unsigned long trace_flags = tr->trace_flags;
- 
--	if (!(trace_flags & TRACE_ITER_CONTEXT_INFO))
-+	if (!(trace_flags & TRACE_ITER(CONTEXT_INFO)))
- 		return;
- 
- 	if (iter->iter_flags & TRACE_FILE_LAT_FMT) {
-@@ -4454,11 +4454,11 @@ void trace_default_header(struct seq_file *m)
- 		if (trace_empty(iter))
- 			return;
- 		print_trace_header(m, iter);
--		if (!(trace_flags & TRACE_ITER_VERBOSE))
-+		if (!(trace_flags & TRACE_ITER(VERBOSE)))
- 			print_lat_help_header(m);
- 	} else {
--		if (!(trace_flags & TRACE_ITER_VERBOSE)) {
--			if (trace_flags & TRACE_ITER_IRQ_INFO)
-+		if (!(trace_flags & TRACE_ITER(VERBOSE))) {
-+			if (trace_flags & TRACE_ITER(IRQ_INFO))
- 				print_func_help_header_irq(iter->array_buffer,
- 							   m, trace_flags);
- 			else
-@@ -4682,7 +4682,7 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
- 	 * If pause-on-trace is enabled, then stop the trace while
- 	 * dumping, unless this is the "snapshot" file
- 	 */
--	if (!iter->snapshot && (tr->trace_flags & TRACE_ITER_PAUSE_ON_TRACE))
-+	if (!iter->snapshot && (tr->trace_flags & TRACE_ITER(PAUSE_ON_TRACE)))
- 		tracing_stop_tr(tr);
- 
- 	if (iter->cpu_file == RING_BUFFER_ALL_CPUS) {
-@@ -4876,7 +4876,7 @@ static int tracing_open(struct inode *inode, struct file *file)
- 		iter = __tracing_open(inode, file, false);
- 		if (IS_ERR(iter))
- 			ret = PTR_ERR(iter);
--		else if (tr->trace_flags & TRACE_ITER_LATENCY_FMT)
-+		else if (tr->trace_flags & TRACE_ITER(LATENCY_FMT))
- 			iter->iter_flags |= TRACE_FILE_LAT_FMT;
- 	}
- 
-@@ -5148,7 +5148,7 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
- 	trace_opts = tr->current_trace->flags->opts;
- 
- 	for (i = 0; trace_options[i]; i++) {
--		if (tr->trace_flags & (1 << i))
-+		if (tr->trace_flags & (1ULL << i))
- 			seq_printf(m, "%s\n", trace_options[i]);
- 		else
- 			seq_printf(m, "no%s\n", trace_options[i]);
-@@ -5201,20 +5201,20 @@ static int set_tracer_option(struct trace_array *tr, char *cmp, int neg)
- }
- 
- /* Some tracers require overwrite to stay enabled */
--int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set)
-+int trace_keep_overwrite(struct tracer *tracer, u64 mask, int set)
- {
--	if (tracer->enabled && (mask & TRACE_ITER_OVERWRITE) && !set)
-+	if (tracer->enabled && (mask & TRACE_ITER(OVERWRITE)) && !set)
- 		return -1;
- 
- 	return 0;
- }
- 
--int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
-+int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- {
--	if ((mask == TRACE_ITER_RECORD_TGID) ||
--	    (mask == TRACE_ITER_RECORD_CMD) ||
--	    (mask == TRACE_ITER_TRACE_PRINTK) ||
--	    (mask == TRACE_ITER_COPY_MARKER))
-+	if ((mask == TRACE_ITER(RECORD_TGID)) ||
-+	    (mask == TRACE_ITER(RECORD_CMD)) ||
-+	    (mask == TRACE_ITER(TRACE_PRINTK)) ||
-+	    (mask == TRACE_ITER(COPY_MARKER)))
- 		lockdep_assert_held(&event_mutex);
- 
- 	/* do nothing if flag is already set */
-@@ -5226,7 +5226,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
- 		if (tr->current_trace->flag_changed(tr, mask, !!enabled))
- 			return -EINVAL;
- 
--	if (mask == TRACE_ITER_TRACE_PRINTK) {
-+	if (mask == TRACE_ITER(TRACE_PRINTK)) {
- 		if (enabled) {
- 			update_printk_trace(tr);
- 		} else {
-@@ -5245,7 +5245,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
- 		}
- 	}
- 
--	if (mask == TRACE_ITER_COPY_MARKER)
-+	if (mask == TRACE_ITER(COPY_MARKER))
- 		update_marker_trace(tr, enabled);
- 
- 	if (enabled)
-@@ -5253,33 +5253,33 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
- 	else
- 		tr->trace_flags &= ~mask;
- 
--	if (mask == TRACE_ITER_RECORD_CMD)
-+	if (mask == TRACE_ITER(RECORD_CMD))
- 		trace_event_enable_cmd_record(enabled);
- 
--	if (mask == TRACE_ITER_RECORD_TGID) {
-+	if (mask == TRACE_ITER(RECORD_TGID)) {
- 
- 		if (trace_alloc_tgid_map() < 0) {
--			tr->trace_flags &= ~TRACE_ITER_RECORD_TGID;
-+			tr->trace_flags &= ~TRACE_ITER(RECORD_TGID);
- 			return -ENOMEM;
- 		}
- 
- 		trace_event_enable_tgid_record(enabled);
- 	}
- 
--	if (mask == TRACE_ITER_EVENT_FORK)
-+	if (mask == TRACE_ITER(EVENT_FORK))
- 		trace_event_follow_fork(tr, enabled);
- 
--	if (mask == TRACE_ITER_FUNC_FORK)
-+	if (mask == TRACE_ITER(FUNC_FORK))
- 		ftrace_pid_follow_fork(tr, enabled);
- 
--	if (mask == TRACE_ITER_OVERWRITE) {
-+	if (mask == TRACE_ITER(OVERWRITE)) {
- 		ring_buffer_change_overwrite(tr->array_buffer.buffer, enabled);
- #ifdef CONFIG_TRACER_MAX_TRACE
- 		ring_buffer_change_overwrite(tr->max_buffer.buffer, enabled);
- #endif
- 	}
- 
--	if (mask == TRACE_ITER_PRINTK) {
-+	if (mask == TRACE_ITER(PRINTK)) {
- 		trace_printk_start_stop_comm(enabled);
- 		trace_printk_control(enabled);
- 	}
-@@ -5311,7 +5311,7 @@ int trace_set_options(struct trace_array *tr, char *option)
- 	if (ret < 0)
- 		ret = set_tracer_option(tr, cmp, neg);
- 	else
--		ret = set_tracer_flag(tr, 1 << ret, !neg);
-+		ret = set_tracer_flag(tr, 1ULL << ret, !neg);
- 
- 	mutex_unlock(&trace_types_lock);
- 	mutex_unlock(&event_mutex);
-@@ -6532,7 +6532,7 @@ static int tracing_open_pipe(struct inode *inode, struct file *filp)
- 	/* trace pipe does not show start of buffer */
- 	cpumask_setall(iter->started);
- 
--	if (tr->trace_flags & TRACE_ITER_LATENCY_FMT)
-+	if (tr->trace_flags & TRACE_ITER(LATENCY_FMT))
- 		iter->iter_flags |= TRACE_FILE_LAT_FMT;
- 
- 	/* Output in nanoseconds only if we are using a clock in nanoseconds. */
-@@ -6593,7 +6593,7 @@ trace_poll(struct trace_iterator *iter, struct file *filp, poll_table *poll_tabl
- 	if (trace_buffer_iter(iter, iter->cpu_file))
- 		return EPOLLIN | EPOLLRDNORM;
- 
--	if (tr->trace_flags & TRACE_ITER_BLOCK)
-+	if (tr->trace_flags & TRACE_ITER(BLOCK))
- 		/*
- 		 * Always select as readable when in blocking mode
- 		 */
-@@ -7145,7 +7145,7 @@ tracing_free_buffer_release(struct inode *inode, struct file *filp)
- 	struct trace_array *tr = inode->i_private;
- 
- 	/* disable tracing ? */
--	if (tr->trace_flags & TRACE_ITER_STOP_ON_FREE)
-+	if (tr->trace_flags & TRACE_ITER(STOP_ON_FREE))
- 		tracer_tracing_off(tr);
- 	/* resize the ring buffer to 0 */
- 	tracing_resize_ring_buffer(tr, 0, RING_BUFFER_ALL_CPUS);
-@@ -7395,7 +7395,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- 	if (tracing_disabled)
- 		return -EINVAL;
- 
--	if (!(tr->trace_flags & TRACE_ITER_MARKERS))
-+	if (!(tr->trace_flags & TRACE_ITER(MARKERS)))
- 		return -EINVAL;
- 
- 	if ((ssize_t)cnt < 0)
-@@ -7479,7 +7479,7 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
- 	if (tracing_disabled)
- 		return -EINVAL;
- 
--	if (!(tr->trace_flags & TRACE_ITER_MARKERS))
-+	if (!(tr->trace_flags & TRACE_ITER(MARKERS)))
- 		return -EINVAL;
- 
- 	/* The marker must at least have a tag id */
-@@ -9305,7 +9305,7 @@ trace_options_core_read(struct file *filp, char __user *ubuf, size_t cnt,
- 
- 	get_tr_index(tr_index, &tr, &index);
- 
--	if (tr->trace_flags & (1 << index))
-+	if (tr->trace_flags & (1ULL << index))
- 		buf = "1\n";
- 	else
- 		buf = "0\n";
-@@ -9334,7 +9334,7 @@ trace_options_core_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 
- 	mutex_lock(&event_mutex);
- 	mutex_lock(&trace_types_lock);
--	ret = set_tracer_flag(tr, 1 << index, val);
-+	ret = set_tracer_flag(tr, 1ULL << index, val);
- 	mutex_unlock(&trace_types_lock);
- 	mutex_unlock(&event_mutex);
- 
-@@ -9498,8 +9498,9 @@ static void create_trace_options_dir(struct trace_array *tr)
- 
- 	for (i = 0; trace_options[i]; i++) {
- 		if (top_level ||
--		    !((1 << i) & TOP_LEVEL_TRACE_FLAGS))
-+		    !((1ULL << i) & TOP_LEVEL_TRACE_FLAGS)) {
- 			create_trace_option_core_file(tr, trace_options[i], i);
-+		}
- 	}
- }
- 
-@@ -9820,7 +9821,7 @@ allocate_trace_buffer(struct trace_array *tr, struct array_buffer *buf, int size
- 	struct trace_scratch *tscratch;
- 	unsigned int scratch_size = 0;
- 
--	rb_flags = tr->trace_flags & TRACE_ITER_OVERWRITE ? RB_FL_OVERWRITE : 0;
-+	rb_flags = tr->trace_flags & TRACE_ITER(OVERWRITE) ? RB_FL_OVERWRITE : 0;
- 
- 	buf->tr = tr;
- 
-@@ -10183,7 +10184,7 @@ static int __remove_instance(struct trace_array *tr)
- 	/* Disable all the flags that were enabled coming in */
- 	for (i = 0; i < TRACE_FLAGS_MAX_SIZE; i++) {
- 		if ((1 << i) & ZEROED_TRACE_FLAGS)
--			set_tracer_flag(tr, 1 << i, 0);
-+			set_tracer_flag(tr, 1ULL << i, 0);
- 	}
- 
- 	if (printk_trace == tr)
-@@ -10773,10 +10774,10 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
- 	/* While dumping, do not allow the buffer to be enable */
- 	tracer_tracing_disable(tr);
- 
--	old_userobj = tr->trace_flags & TRACE_ITER_SYM_USEROBJ;
-+	old_userobj = tr->trace_flags & TRACE_ITER(SYM_USEROBJ);
- 
- 	/* don't look at user memory in panic mode */
--	tr->trace_flags &= ~TRACE_ITER_SYM_USEROBJ;
-+	tr->trace_flags &= ~TRACE_ITER(SYM_USEROBJ);
- 
- 	if (dump_mode == DUMP_ORIG)
- 		iter.cpu_file = raw_smp_processor_id();
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 85eabb454bee..8c99136619bf 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -216,7 +216,7 @@ struct array_buffer {
- 	int				cpu;
- };
- 
--#define TRACE_FLAGS_MAX_SIZE		32
-+#define TRACE_FLAGS_MAX_SIZE		64
- 
- struct trace_options {
- 	struct tracer			*tracer;
-@@ -390,7 +390,7 @@ struct trace_array {
- 	int			buffer_percent;
- 	unsigned int		n_err_log_entries;
- 	struct tracer		*current_trace;
--	unsigned int		trace_flags;
-+	u64			trace_flags;
- 	unsigned char		trace_flags_index[TRACE_FLAGS_MAX_SIZE];
- 	unsigned int		flags;
- 	raw_spinlock_t		start_lock;
-@@ -631,7 +631,7 @@ struct tracer {
- 					    u32 old_flags, u32 bit, int set);
- 	/* Return 0 if OK with change, else return non-zero */
- 	int			(*flag_changed)(struct trace_array *tr,
--						u32 mask, int set);
-+						u64 mask, int set);
- 	struct tracer		*next;
- 	struct tracer_flags	*flags;
- 	int			enabled;
-@@ -1345,11 +1345,11 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- # define FUNCTION_FLAGS						\
- 		C(FUNCTION,		"function-trace"),	\
- 		C(FUNC_FORK,		"function-fork"),
--# define FUNCTION_DEFAULT_FLAGS		TRACE_ITER_FUNCTION
-+# define FUNCTION_DEFAULT_FLAGS		TRACE_ITER(FUNCTION)
- #else
- # define FUNCTION_FLAGS
- # define FUNCTION_DEFAULT_FLAGS		0UL
--# define TRACE_ITER_FUNC_FORK		0UL
-+# define TRACE_ITER_FUNC_FORK_BIT	-1
- #endif
- 
- #ifdef CONFIG_STACKTRACE
-@@ -1391,7 +1391,7 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		C(MARKERS,		"markers"),		\
- 		C(EVENT_FORK,		"event-fork"),		\
- 		C(TRACE_PRINTK,		"trace_printk_dest"),	\
--		C(COPY_MARKER,		"copy_trace_marker"),\
-+		C(COPY_MARKER,		"copy_trace_marker"),	\
- 		C(PAUSE_ON_TRACE,	"pause-on-trace"),	\
- 		C(HASH_PTR,		"hash-ptr"),	/* Print hashed pointer */ \
- 		FUNCTION_FLAGS					\
-@@ -1413,20 +1413,17 @@ enum trace_iterator_bits {
- };
- 
- /*
-- * By redefining C, we can make TRACE_FLAGS a list of masks that
-- * use the bits as defined above.
-+ * And use TRACE_ITER(flag) to define the bit masks.
-  */
--#undef C
--#define C(a, b) TRACE_ITER_##a = (1 << TRACE_ITER_##a##_BIT)
--
--enum trace_iterator_flags { TRACE_FLAGS };
-+#define TRACE_ITER(flag)		\
-+	(TRACE_ITER_##flag##_BIT < 0 ? 0 : 1ULL << (TRACE_ITER_##flag##_BIT))
- 
- /*
-  * TRACE_ITER_SYM_MASK masks the options in trace_flags that
-  * control the output of kernel symbols.
-  */
- #define TRACE_ITER_SYM_MASK \
--	(TRACE_ITER_PRINT_PARENT|TRACE_ITER_SYM_OFFSET|TRACE_ITER_SYM_ADDR)
-+	(TRACE_ITER(PRINT_PARENT)|TRACE_ITER(SYM_OFFSET)|TRACE_ITER(SYM_ADDR))
- 
- extern struct tracer nop_trace;
- 
-@@ -1435,7 +1432,7 @@ extern int enable_branch_tracing(struct trace_array *tr);
- extern void disable_branch_tracing(void);
- static inline int trace_branch_enable(struct trace_array *tr)
- {
--	if (tr->trace_flags & TRACE_ITER_BRANCH)
-+	if (tr->trace_flags & TRACE_ITER(BRANCH))
- 		return enable_branch_tracing(tr);
- 	return 0;
- }
-@@ -2064,8 +2061,8 @@ extern const char *__stop___tracepoint_str[];
- 
- void trace_printk_control(bool enabled);
- void trace_printk_start_comm(void);
--int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set);
--int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled);
-+int trace_keep_overwrite(struct tracer *tracer, u64 mask, int set);
-+int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled);
- 
- /* Used from boot time tracer */
- extern int trace_set_options(struct trace_array *tr, char *option);
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index e00da4182deb..9b07ad9eb284 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -845,13 +845,13 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
- 			if (soft_disable)
- 				set_bit(EVENT_FILE_FL_SOFT_DISABLED_BIT, &file->flags);
- 
--			if (tr->trace_flags & TRACE_ITER_RECORD_CMD) {
-+			if (tr->trace_flags & TRACE_ITER(RECORD_CMD)) {
- 				cmd = true;
- 				tracing_start_cmdline_record();
- 				set_bit(EVENT_FILE_FL_RECORDED_CMD_BIT, &file->flags);
- 			}
- 
--			if (tr->trace_flags & TRACE_ITER_RECORD_TGID) {
-+			if (tr->trace_flags & TRACE_ITER(RECORD_TGID)) {
- 				tgid = true;
- 				tracing_start_tgid_record();
- 				set_bit(EVENT_FILE_FL_RECORDED_TGID_BIT, &file->flags);
-diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
-index f24ee61f8884..2f19bbe73d27 100644
---- a/kernel/trace/trace_events_synth.c
-+++ b/kernel/trace/trace_events_synth.c
-@@ -359,7 +359,7 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
- 		fmt = synth_field_fmt(se->fields[i]->type);
- 
- 		/* parameter types */
--		if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
-+		if (tr && tr->trace_flags & TRACE_ITER(VERBOSE))
- 			trace_seq_printf(s, "%s ", fmt);
- 
- 		snprintf(print_fmt, sizeof(print_fmt), "%%s=%s%%s", fmt);
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index ad9d6347b5fa..53e2325800e0 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -631,7 +631,7 @@ print_fentry_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_printf(s, "%s: (", trace_probe_name(tp));
- 
--	if (!seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET))
-+	if (!seq_print_ip_sym_offset(s, field->ip, flags))
- 		goto out;
- 
- 	trace_seq_putc(s, ')');
-@@ -661,12 +661,12 @@ print_fexit_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_printf(s, "%s: (", trace_probe_name(tp));
- 
--	if (!seq_print_ip_sym(s, field->ret_ip, flags | TRACE_ITER_SYM_OFFSET))
-+	if (!seq_print_ip_sym_offset(s, field->ret_ip, flags))
- 		goto out;
- 
- 	trace_seq_puts(s, " <- ");
- 
--	if (!seq_print_ip_sym(s, field->func, flags & ~TRACE_ITER_SYM_OFFSET))
-+	if (!seq_print_ip_sym_no_offset(s, field->func, flags))
- 		goto out;
- 
- 	trace_seq_putc(s, ')');
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index a7f4b9a47a71..fe9607edc8f9 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -703,7 +703,7 @@ print_graph_irq(struct trace_iterator *iter, unsigned long addr,
- 		addr >= (unsigned long)__irqentry_text_end)
- 		return;
- 
--	if (tr->trace_flags & TRACE_ITER_CONTEXT_INFO) {
-+	if (tr->trace_flags & TRACE_ITER(CONTEXT_INFO)) {
- 		/* Absolute time */
- 		if (flags & TRACE_GRAPH_PRINT_ABS_TIME)
- 			print_graph_abs_time(iter->ts, s);
-@@ -723,7 +723,7 @@ print_graph_irq(struct trace_iterator *iter, unsigned long addr,
- 		}
- 
- 		/* Latency format */
--		if (tr->trace_flags & TRACE_ITER_LATENCY_FMT)
-+		if (tr->trace_flags & TRACE_ITER(LATENCY_FMT))
- 			print_graph_lat_fmt(s, ent);
- 	}
- 
-@@ -777,7 +777,7 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
- 		     struct trace_seq *s, u32 flags)
- {
- 	if (!(flags & TRACE_GRAPH_PRINT_DURATION) ||
--	    !(tr->trace_flags & TRACE_ITER_CONTEXT_INFO))
-+	    !(tr->trace_flags & TRACE_ITER(CONTEXT_INFO)))
- 		return;
- 
- 	/* No real adata, just filling the column with spaces */
-@@ -818,7 +818,7 @@ static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retaddr_ent_e
- 		trace_seq_puts(s, " /*");
- 
- 	trace_seq_puts(s, " <-");
--	seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
-+	seq_print_ip_sym_offset(s, entry->graph_ent.retaddr, trace_flags);
- 
- 	if (comment)
- 		trace_seq_puts(s, " */");
-@@ -1054,7 +1054,7 @@ print_graph_prologue(struct trace_iterator *iter, struct trace_seq *s,
- 		/* Interrupt */
- 		print_graph_irq(iter, addr, type, cpu, ent->pid, flags);
- 
--	if (!(tr->trace_flags & TRACE_ITER_CONTEXT_INFO))
-+	if (!(tr->trace_flags & TRACE_ITER(CONTEXT_INFO)))
- 		return;
- 
- 	/* Absolute time */
-@@ -1076,7 +1076,7 @@ print_graph_prologue(struct trace_iterator *iter, struct trace_seq *s,
- 	}
- 
- 	/* Latency format */
--	if (tr->trace_flags & TRACE_ITER_LATENCY_FMT)
-+	if (tr->trace_flags & TRACE_ITER(LATENCY_FMT))
- 		print_graph_lat_fmt(s, ent);
- 
- 	return;
-@@ -1495,7 +1495,7 @@ static void print_lat_header(struct seq_file *s, u32 flags)
- static void __print_graph_headers_flags(struct trace_array *tr,
- 					struct seq_file *s, u32 flags)
- {
--	int lat = tr->trace_flags & TRACE_ITER_LATENCY_FMT;
-+	int lat = tr->trace_flags & TRACE_ITER(LATENCY_FMT);
- 
- 	if (lat)
- 		print_lat_header(s, flags);
-@@ -1543,10 +1543,10 @@ void print_graph_headers_flags(struct seq_file *s, u32 flags)
- 	struct trace_iterator *iter = s->private;
- 	struct trace_array *tr = iter->tr;
- 
--	if (!(tr->trace_flags & TRACE_ITER_CONTEXT_INFO))
-+	if (!(tr->trace_flags & TRACE_ITER(CONTEXT_INFO)))
- 		return;
- 
--	if (tr->trace_flags & TRACE_ITER_LATENCY_FMT) {
-+	if (tr->trace_flags & TRACE_ITER(LATENCY_FMT)) {
- 		/* print nothing if the buffers are empty */
- 		if (trace_empty(iter))
- 			return;
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index 4c45c49b06c8..17673905907c 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -63,7 +63,7 @@ irq_trace(void)
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- static int irqsoff_display_graph(struct trace_array *tr, int set);
--# define is_graph(tr) ((tr)->trace_flags & TRACE_ITER_DISPLAY_GRAPH)
-+# define is_graph(tr) ((tr)->trace_flags & TRACE_ITER(DISPLAY_GRAPH))
- #else
- static inline int irqsoff_display_graph(struct trace_array *tr, int set)
- {
-@@ -485,8 +485,8 @@ static int register_irqsoff_function(struct trace_array *tr, int graph, int set)
- {
- 	int ret;
- 
--	/* 'set' is set if TRACE_ITER_FUNCTION is about to be set */
--	if (function_enabled || (!set && !(tr->trace_flags & TRACE_ITER_FUNCTION)))
-+	/* 'set' is set if TRACE_ITER(FUNCTION) is about to be set */
-+	if (function_enabled || (!set && !(tr->trace_flags & TRACE_ITER(FUNCTION))))
- 		return 0;
- 
- 	if (graph)
-@@ -515,7 +515,7 @@ static void unregister_irqsoff_function(struct trace_array *tr, int graph)
- 
- static int irqsoff_function_set(struct trace_array *tr, u32 mask, int set)
- {
--	if (!(mask & TRACE_ITER_FUNCTION))
-+	if (!(mask & TRACE_ITER(FUNCTION)))
- 		return 0;
- 
- 	if (set)
-@@ -536,7 +536,7 @@ static inline int irqsoff_function_set(struct trace_array *tr, u32 mask, int set
- }
- #endif /* CONFIG_FUNCTION_TRACER */
- 
--static int irqsoff_flag_changed(struct trace_array *tr, u32 mask, int set)
-+static int irqsoff_flag_changed(struct trace_array *tr, u64 mask, int set)
- {
- 	struct tracer *tracer = tr->current_trace;
- 
-@@ -544,7 +544,7 @@ static int irqsoff_flag_changed(struct trace_array *tr, u32 mask, int set)
- 		return 0;
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	if (mask & TRACE_ITER_DISPLAY_GRAPH)
-+	if (mask & TRACE_ITER(DISPLAY_GRAPH))
- 		return irqsoff_display_graph(tr, set);
- #endif
- 
-@@ -582,10 +582,10 @@ static int __irqsoff_tracer_init(struct trace_array *tr)
- 	save_flags = tr->trace_flags;
- 
- 	/* non overwrite screws up the latency tracers */
--	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, 1);
--	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, 1);
-+	set_tracer_flag(tr, TRACE_ITER(OVERWRITE), 1);
-+	set_tracer_flag(tr, TRACE_ITER(LATENCY_FMT), 1);
- 	/* without pause, we will produce garbage if another latency occurs */
--	set_tracer_flag(tr, TRACE_ITER_PAUSE_ON_TRACE, 1);
-+	set_tracer_flag(tr, TRACE_ITER(PAUSE_ON_TRACE), 1);
- 
- 	tr->max_latency = 0;
- 	irqsoff_trace = tr;
-@@ -605,15 +605,15 @@ static int __irqsoff_tracer_init(struct trace_array *tr)
- 
- static void __irqsoff_tracer_reset(struct trace_array *tr)
- {
--	int lat_flag = save_flags & TRACE_ITER_LATENCY_FMT;
--	int overwrite_flag = save_flags & TRACE_ITER_OVERWRITE;
--	int pause_flag = save_flags & TRACE_ITER_PAUSE_ON_TRACE;
-+	int lat_flag = save_flags & TRACE_ITER(LATENCY_FMT);
-+	int overwrite_flag = save_flags & TRACE_ITER(OVERWRITE);
-+	int pause_flag = save_flags & TRACE_ITER(PAUSE_ON_TRACE);
- 
- 	stop_irqsoff_tracer(tr, is_graph(tr));
- 
--	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, lat_flag);
--	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, overwrite_flag);
--	set_tracer_flag(tr, TRACE_ITER_PAUSE_ON_TRACE, pause_flag);
-+	set_tracer_flag(tr, TRACE_ITER(LATENCY_FMT), lat_flag);
-+	set_tracer_flag(tr, TRACE_ITER(OVERWRITE), overwrite_flag);
-+	set_tracer_flag(tr, TRACE_ITER(PAUSE_ON_TRACE), pause_flag);
- 	ftrace_reset_array_ops(tr);
- 
- 	irqsoff_busy = false;
-diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
-index 896ff78b8349..b30795f34079 100644
---- a/kernel/trace/trace_kdb.c
-+++ b/kernel/trace/trace_kdb.c
-@@ -31,7 +31,7 @@ static void ftrace_dump_buf(int skip_entries, long cpu_file)
- 	old_userobj = tr->trace_flags;
- 
- 	/* don't look at user memory in panic mode */
--	tr->trace_flags &= ~TRACE_ITER_SYM_USEROBJ;
-+	tr->trace_flags &= ~TRACE_ITER(SYM_USEROBJ);
- 
- 	kdb_printf("Dumping ftrace buffer:\n");
- 	if (skip_entries)
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index ee8171b19bee..9953506370a5 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1584,7 +1584,7 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_printf(s, "%s: (", trace_probe_name(tp));
- 
--	if (!seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET))
-+	if (!seq_print_ip_sym_offset(s, field->ip, flags))
- 		goto out;
- 
- 	trace_seq_putc(s, ')');
-@@ -1614,12 +1614,12 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_printf(s, "%s: (", trace_probe_name(tp));
- 
--	if (!seq_print_ip_sym(s, field->ret_ip, flags | TRACE_ITER_SYM_OFFSET))
-+	if (!seq_print_ip_sym_offset(s, field->ret_ip, flags))
- 		goto out;
- 
- 	trace_seq_puts(s, " <- ");
- 
--	if (!seq_print_ip_sym(s, field->func, flags & ~TRACE_ITER_SYM_OFFSET))
-+	if (!seq_print_ip_sym_no_offset(s, field->func, flags))
- 		goto out;
- 
- 	trace_seq_putc(s, ')');
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 97db0b0ccf3e..a2403d8f7c39 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -420,7 +420,7 @@ static int seq_print_user_ip(struct trace_seq *s, struct mm_struct *mm,
- 		}
- 		mmap_read_unlock(mm);
- 	}
--	if (ret && ((sym_flags & TRACE_ITER_SYM_ADDR) || !file))
-+	if (ret && ((sym_flags & TRACE_ITER(SYM_ADDR)) || !file))
- 		trace_seq_printf(s, " <" IP_FMT ">", ip);
- 	return !trace_seq_has_overflowed(s);
- }
-@@ -433,9 +433,9 @@ seq_print_ip_sym(struct trace_seq *s, unsigned long ip, unsigned long sym_flags)
- 		goto out;
- 	}
- 
--	trace_seq_print_sym(s, ip, sym_flags & TRACE_ITER_SYM_OFFSET);
-+	trace_seq_print_sym(s, ip, sym_flags & TRACE_ITER(SYM_OFFSET));
- 
--	if (sym_flags & TRACE_ITER_SYM_ADDR)
-+	if (sym_flags & TRACE_ITER(SYM_ADDR))
- 		trace_seq_printf(s, " <" IP_FMT ">", ip);
- 
-  out:
-@@ -569,7 +569,7 @@ static int
- lat_print_timestamp(struct trace_iterator *iter, u64 next_ts)
- {
- 	struct trace_array *tr = iter->tr;
--	unsigned long verbose = tr->trace_flags & TRACE_ITER_VERBOSE;
-+	unsigned long verbose = tr->trace_flags & TRACE_ITER(VERBOSE);
- 	unsigned long in_ns = iter->iter_flags & TRACE_FILE_TIME_IN_NS;
- 	unsigned long long abs_ts = iter->ts - iter->array_buffer->time_start;
- 	unsigned long long rel_ts = next_ts - iter->ts;
-@@ -636,7 +636,7 @@ int trace_print_context(struct trace_iterator *iter)
- 
- 	trace_seq_printf(s, "%16s-%-7d ", comm, entry->pid);
- 
--	if (tr->trace_flags & TRACE_ITER_RECORD_TGID) {
-+	if (tr->trace_flags & TRACE_ITER(RECORD_TGID)) {
- 		unsigned int tgid = trace_find_tgid(entry->pid);
- 
- 		if (!tgid)
-@@ -647,7 +647,7 @@ int trace_print_context(struct trace_iterator *iter)
- 
- 	trace_seq_printf(s, "[%03d] ", iter->cpu);
- 
--	if (tr->trace_flags & TRACE_ITER_IRQ_INFO)
-+	if (tr->trace_flags & TRACE_ITER(IRQ_INFO))
- 		trace_print_lat_fmt(s, entry);
- 
- 	trace_print_time(s, iter, iter->ts);
-@@ -661,7 +661,7 @@ int trace_print_lat_context(struct trace_iterator *iter)
- 	struct trace_entry *entry, *next_entry;
- 	struct trace_array *tr = iter->tr;
- 	struct trace_seq *s = &iter->seq;
--	unsigned long verbose = (tr->trace_flags & TRACE_ITER_VERBOSE);
-+	unsigned long verbose = (tr->trace_flags & TRACE_ITER(VERBOSE));
- 	u64 next_ts;
- 
- 	next_entry = trace_find_next_entry(iter, NULL, &next_ts);
-@@ -1127,7 +1127,7 @@ static void print_fn_trace(struct trace_seq *s, unsigned long ip,
- 	if (args)
- 		print_function_args(s, args, ip);
- 
--	if ((flags & TRACE_ITER_PRINT_PARENT) && parent_ip) {
-+	if ((flags & TRACE_ITER(PRINT_PARENT)) && parent_ip) {
- 		trace_seq_puts(s, " <-");
- 		seq_print_ip_sym(s, parent_ip, flags);
- 	}
-@@ -1417,7 +1417,7 @@ static enum print_line_t trace_user_stack_print(struct trace_iterator *iter,
- 
- 	trace_seq_puts(s, "<user stack trace>\n");
- 
--	if (tr->trace_flags & TRACE_ITER_SYM_USEROBJ) {
-+	if (tr->trace_flags & TRACE_ITER(SYM_USEROBJ)) {
- 		struct task_struct *task;
- 		/*
- 		 * we do the lookup on the thread group leader,
-diff --git a/kernel/trace/trace_output.h b/kernel/trace/trace_output.h
-index 2e305364f2a9..99b676733d46 100644
---- a/kernel/trace/trace_output.h
-+++ b/kernel/trace/trace_output.h
-@@ -16,6 +16,17 @@ extern int
- seq_print_ip_sym(struct trace_seq *s, unsigned long ip,
- 		unsigned long sym_flags);
- 
-+static inline int seq_print_ip_sym_offset(struct trace_seq *s, unsigned long ip,
-+					   unsigned long sym_flags)
-+{
-+	return seq_print_ip_sym(s, ip, sym_flags | TRACE_ITER(SYM_OFFSET));
-+}
-+static inline int seq_print_ip_sym_no_offset(struct trace_seq *s, unsigned long ip,
-+					   unsigned long sym_flags)
-+{
-+	return seq_print_ip_sym(s, ip, sym_flags & ~TRACE_ITER(SYM_OFFSET));
-+}
-+
- extern void trace_seq_print_sym(struct trace_seq *s, unsigned long address, bool offset);
- extern int trace_print_context(struct trace_iterator *iter);
- extern int trace_print_lat_context(struct trace_iterator *iter);
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index e3f2e4f56faa..8faa73d3bba1 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -41,7 +41,7 @@ static void stop_func_tracer(struct trace_array *tr, int graph);
- static int save_flags;
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--# define is_graph(tr) ((tr)->trace_flags & TRACE_ITER_DISPLAY_GRAPH)
-+# define is_graph(tr) ((tr)->trace_flags & TRACE_ITER(DISPLAY_GRAPH))
- #else
- # define is_graph(tr) false
- #endif
-@@ -247,8 +247,8 @@ static int register_wakeup_function(struct trace_array *tr, int graph, int set)
- {
- 	int ret;
- 
--	/* 'set' is set if TRACE_ITER_FUNCTION is about to be set */
--	if (function_enabled || (!set && !(tr->trace_flags & TRACE_ITER_FUNCTION)))
-+	/* 'set' is set if TRACE_ITER(FUNCTION) is about to be set */
-+	if (function_enabled || (!set && !(tr->trace_flags & TRACE_ITER(FUNCTION))))
- 		return 0;
- 
- 	if (graph)
-@@ -277,7 +277,7 @@ static void unregister_wakeup_function(struct trace_array *tr, int graph)
- 
- static int wakeup_function_set(struct trace_array *tr, u32 mask, int set)
- {
--	if (!(mask & TRACE_ITER_FUNCTION))
-+	if (!(mask & TRACE_ITER(FUNCTION)))
- 		return 0;
- 
- 	if (set)
-@@ -324,7 +324,7 @@ __trace_function(struct trace_array *tr,
- 		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- }
- 
--static int wakeup_flag_changed(struct trace_array *tr, u32 mask, int set)
-+static int wakeup_flag_changed(struct trace_array *tr, u64 mask, int set)
- {
- 	struct tracer *tracer = tr->current_trace;
- 
-@@ -332,7 +332,7 @@ static int wakeup_flag_changed(struct trace_array *tr, u32 mask, int set)
- 		return 0;
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	if (mask & TRACE_ITER_DISPLAY_GRAPH)
-+	if (mask & TRACE_ITER(DISPLAY_GRAPH))
- 		return wakeup_display_graph(tr, set);
- #endif
- 
-@@ -681,8 +681,8 @@ static int __wakeup_tracer_init(struct trace_array *tr)
- 	save_flags = tr->trace_flags;
- 
- 	/* non overwrite screws up the latency tracers */
--	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, 1);
--	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, 1);
-+	set_tracer_flag(tr, TRACE_ITER(OVERWRITE), 1);
-+	set_tracer_flag(tr, TRACE_ITER(LATENCY_FMT), 1);
- 
- 	tr->max_latency = 0;
- 	wakeup_trace = tr;
-@@ -725,15 +725,15 @@ static int wakeup_dl_tracer_init(struct trace_array *tr)
- 
- static void wakeup_tracer_reset(struct trace_array *tr)
- {
--	int lat_flag = save_flags & TRACE_ITER_LATENCY_FMT;
--	int overwrite_flag = save_flags & TRACE_ITER_OVERWRITE;
-+	int lat_flag = save_flags & TRACE_ITER(LATENCY_FMT);
-+	int overwrite_flag = save_flags & TRACE_ITER(OVERWRITE);
- 
- 	stop_wakeup_tracer(tr);
- 	/* make sure we put back any tasks we are tracing */
- 	wakeup_reset(tr);
- 
--	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, lat_flag);
--	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, overwrite_flag);
-+	set_tracer_flag(tr, TRACE_ITER(LATENCY_FMT), lat_flag);
-+	set_tracer_flag(tr, TRACE_ITER(OVERWRITE), overwrite_flag);
- 	ftrace_reset_array_ops(tr);
- 	wakeup_busy = false;
- }
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 0f932b22f9ec..e2c679bd7ace 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -157,7 +157,7 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 			trace_seq_puts(s, ", ");
- 
- 		/* parameter types */
--		if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
-+		if (tr && tr->trace_flags & TRACE_ITER(VERBOSE))
- 			trace_seq_printf(s, "%s ", entry->types[i]);
- 
- 		/* parameter values */
-
+Thanks,
+Yuanjie
+ 
+> -- 
+> With best wishes
+> Dmitry
 
