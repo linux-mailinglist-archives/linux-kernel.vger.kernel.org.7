@@ -1,151 +1,159 @@
-Return-Path: <linux-kernel+bounces-880359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDABC2599E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:36:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0C1C25971
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24A2D4F75D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3571A22317
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E433271EB;
-	Fri, 31 Oct 2025 14:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD25D3271EB;
+	Fri, 31 Oct 2025 14:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xvTgD5Ou"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Qq9sD7TS"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E912E1DB15F;
-	Fri, 31 Oct 2025 14:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4CC3446C4;
+	Fri, 31 Oct 2025 14:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921253; cv=none; b=JF0I6JYLxH/Zr7acmy2oHyMtxLkI6/ZwWG4akUzvf3elGo4CodmyS2q2vKofARk/oxWF6PCl18XF3wy/t8BbQ0Y9aiq8WPDYqbklOqUEGIUyvHkTzOQOpVM0jAML+Nsfi+SV28wA7Fd4NpFb7RKwxFWu1jjnQxXl/rh1YfpUci0=
+	t=1761921269; cv=none; b=FDyQ4NMLokBZkeRhKYLQ+P/Pb7Tar16HAZuad0/DaJGdqZNyLlq/EGRNub9jwoKi4WARwy7O0J9CY9bH+DV6aIJ1ElW0kJvN3heKk4LoaPvvBDifZExK55sPF5tJLEt4aWm0cQuPwUncgbF8Wa+I4OJU9GtVaCwWe91Bos+45AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921253; c=relaxed/simple;
-	bh=uuFJKQhG0HltRTkQmhj740X0ylgNZVTihawUTCIoVHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1ip6+f78K422Ez/LMClfDfWEDARxlvygdO1P6RSqw65HgD63x1hrE5CjWXYu774UMGc3530y9mYMDjrAseTL5fb4yuuTccboAf+beu7uasOkIdNK5mZ+XJvPhJLd/1sansWIOVIAwx/ach4iDZipFJuoHo3pXOUWV4tby8JXNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xvTgD5Ou; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E76C4CEE7;
-	Fri, 31 Oct 2025 14:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761921252;
-	bh=uuFJKQhG0HltRTkQmhj740X0ylgNZVTihawUTCIoVHE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xvTgD5Ou0de5Mlq6rDLWFU/y2jZRZtEVNKHLPFFOC/I2sKgfPn9WZ1dEag/bN2CBW
-	 FXG8tW0epeg1HfxilWbEY410R96fkBcXFNXzM7Q/OPzD7OqUkxvXDdl7JxHezpEZIi
-	 Tjr/WsP9srDyEzLB0h/jYS7mXT9KWT4ueuScKDgA=
-Date: Fri, 31 Oct 2025 15:34:09 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	guanghuifeng@linux.alibaba.com, zongyong.wzy@alibaba-inc.com,
-	zyfjeff@linux.alibaba.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-Message-ID: <2025103106-proposal-jogging-a076@gregkh>
-References: <20210818144542.19305-1-hch@lst.de>
- <20210818144542.19305-4-hch@lst.de>
- <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
- <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
- <2025103155-definite-stays-ebfe@gregkh>
- <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
- <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+	s=arc-20240116; t=1761921269; c=relaxed/simple;
+	bh=fUtT4yyaxPZDIJm+CMf9XzeSHwaBFvBHzs3q09vOeow=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=NwdnlQ9WEwqUPoqq4Asq8sOhFyzmwxsdFCdXLRx6WpklFMKN1bGeUSoZRqSkW5DYKmUO0vqMWeFKXLQxD364XtVOhZefbXNha28MnS6XkmeSvNsSL2ZyEb3YBx3CqapH+XFSXjzhr3uGaa4GxWp2CZ4U5Ln++W1rXx0NbRrxuq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Qq9sD7TS; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=mZR9Pq04nskBCnZfHR64uH8c7tW1FVjIhdfQXoh36wA=; b=Qq9sD7TScjYoYu+npw7XmZcDcg
+	1oUcBaaanP3cn8MCTFkHxj6n24qb6dY4XI8aISeJxnDmOleBgtsUAZNHoeessS8uU7tvkMBnLbUyt
+	gyOTV2rIDFkU/ytgqCjXsCkqtEKk1FvyYpf4rcSn3hMKOBKLp4pPqm4AxxwQ4SHuMm3w=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:53038 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1vEqCr-00059X-9u; Fri, 31 Oct 2025 10:34:22 -0400
+Date: Fri, 31 Oct 2025 10:34:20 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: biju.das.au <biju.das.au@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
+ wsa+renesas <wsa+renesas@sang-engineering.com>, Prabhakar Mahadev Lad
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+ <linux-serial@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>
+Message-Id: <20251031103420.e02c11d51e6f8e8871d22b96@hugovil.com>
+In-Reply-To: <TY3PR01MB11346985328E37A14287CB3B986F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
+	<20251030175811.607137-4-biju.das.jz@bp.renesas.com>
+	<20251030162155.d08e9d6fd3100092be2ade80@hugovil.com>
+	<TY3PR01MB1134686842EA2A6EF864E1ABD86F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	<TY3PR01MB11346985328E37A14287CB3B986F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.4 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Fri, Oct 31, 2025 at 08:23:32PM +0800, Gao Xiang wrote:
+On Fri, 31 Oct 2025 07:08:24 +0000
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
+
 > 
 > 
-> On 2025/10/31 18:12, Gao Xiang wrote:
-> > Hi Greg,
+> > -----Original Message-----
+> > From: Biju Das
+> > Sent: 31 October 2025 07:07
+> > To: 'Hugo Villeneuve' <hugo@hugovil.com>; biju.das.au <biju.das.au@gmail.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Jiri Slaby <jirislaby@kernel.org>; wsa+renesas
+> > <wsa+renesas@sang-engineering.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>;
+> > Geert Uytterhoeven <geert+renesas@glider.be>; linux-kernel@vger.kernel.org; linux-
+> > serial@vger.kernel.org; linux-renesas-soc@vger.kernel.org
+> > Subject: RE: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
 > > 
-> > On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
-> > > On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
-> > > > 
-> > > > 
-> > > > On 2025/10/31 17:45, Christoph Hellwig wrote:
+> > Hi Hugo,
+> > 
+> > > -----Original Message-----
+> > > From: Hugo Villeneuve <hugo@hugovil.com>
+> > > Sent: 30 October 2025 20:22
+> > > Subject: Re: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
+> > >
+> > > Hi Biju,
+> > >
+> > > On Thu, 30 Oct 2025 17:57:51 +0000
+> > > Biju <biju.das.au@gmail.com> wrote:
+> > >
+> > > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > > >
+> > > > Shorten the number lines in sci_init_clocks() by fitting the error
+> > > > messages within an 100-character length limit.
+> > > >
+> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > ---
+> > > > v1->v2:
+> > > >  * Updated commit message 80-character->100-character.
+> > > >  * Increased line limit for error messages to 100-column limit.
+> > > > ---
+> > > >  drivers/tty/serial/sh-sci.c | 13 ++++---------
+> > > >  1 file changed, 4 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/tty/serial/sh-sci.c
+> > > > b/drivers/tty/serial/sh-sci.c index b33894d0273b..e9345f898224
+> > > > 100644
+> > > > --- a/drivers/tty/serial/sh-sci.c
+> > > > +++ b/drivers/tty/serial/sh-sci.c
+> > > > @@ -3008,11 +3008,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+> > > >  			return PTR_ERR(clk);
+> > > >
+> > > >  		if (!clk && sci_port->type == SCI_PORT_RSCI &&
+> > > > -		    (i == SCI_FCK || i == SCI_BRG_INT)) {
+> > > > -			return dev_err_probe(dev, -ENODEV,
+> > > > -					     "failed to get %s\n",
+> > > > -					     name);
+> > > > -		}
+> > > > +		    (i == SCI_FCK || i == SCI_BRG_INT))
+> > > > +			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
+> > > >
+> > > >  		if (!clk && i == SCI_FCK) {
+> > > >  			/*
+> > > > @@ -3022,16 +3019,14 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+> > > >  			 */
+> > > >  			clk = devm_clk_get(dev, "peripheral_clk");
+> > > >  			if (IS_ERR(clk))
+> > > > -				return dev_err_probe(dev, PTR_ERR(clk),
+> > > > -						     "failed to get %s\n",
+> > > > +				return dev_err_probe(dev, PTR_ERR(clk), "failed to get %s\n",
+> > > >  						     name);
+> > >
+> > > This one can also be on one line (99 characters).
+> > 
+> > It is 101 characters.
 > 
-> ...
-> 
-> > > > > But why does the device node
-> > > > > get created earlier?  My assumption was that it would only be
-> > > > > created by the KOBJ_ADD uevent.  Adding the device model maintainers
-> > > > > as my little dig through the core drivers/base/ code doesn't find
-> > > > > anything to the contrary, but maybe I don't fully understand it.
-> > > > 
-> > > > AFAIK, device_add() is used to trigger devtmpfs file
-> > > > creation, and it can be observed if frequently
-> > > > hotpluging device in the VM and mount.  Currently
-> > > > I don't have time slot to build an easy reproducer,
-> > > > but I think it's a real issue anyway.
-> > > 
-> > > As I say above, that's not normal, and you have to be root to do this,
-> I just spent time to reproduce with dynamic loop devices and
-> actually it's easy if msleep() is located artificiallly,
-> the diff as below:
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 810707cca970..a4273b5ad456 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
->  	struct inode *inode;
-> 
->  	inode = ilookup(blockdev_superblock, dev);
-> -	if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
-> +	if (0) {
->  		blk_request_module(dev);
->  		inode = ilookup(blockdev_superblock, dev);
->  		if (inode)
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 9bbc38d12792..3c9116fdc1ce 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
->  	set_bit(GD_ADDED, &disk->state);
->  }
-> 
-> +#include <linux/delay.h>
-> +
->  static int __add_disk(struct device *parent, struct gendisk *disk,
->  		      const struct attribute_group **groups,
->  		      struct fwnode_handle *fwnode)
-> @@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
->  	if (ret)
->  		goto out_free_ext_minor;
-> 
-> +	if (disk->major == LOOP_MAJOR)
-> +		msleep(2500);           // delay 2.5s for all loops
-> +
+> Sorry, 100 Characters. Let me run checkpatch to see, it generates warning.
 
-Yes, so you need to watch for the uevent to happen, THEN it is safe to
-access the block device.  Doing it before then isn't a good idea :)
+Hi Biju,
+I already did before replying, it was fine.
 
-But, if you think this is an issue, do you have a patch that passes your
-testing to fix it?
-
-thanks,
-
-greg k-h
+Hugo.
 
