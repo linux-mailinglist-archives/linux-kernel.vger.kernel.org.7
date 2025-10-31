@@ -1,45 +1,52 @@
-Return-Path: <linux-kernel+bounces-879406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6690C23093
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:37:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4077BC230A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C3C3349C41
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35FAB3BD4C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B95A2F60B4;
-	Fri, 31 Oct 2025 02:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA03081A3;
+	Fri, 31 Oct 2025 02:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wIL0q/7z"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="IqD/KbRS"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E817B2F363E;
-	Fri, 31 Oct 2025 02:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C311306D47
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761878216; cv=none; b=VarJ4n03hCBm0j5x6XFJCU+7GdxOoPmLRtgfNu4yZ1gVirbdwUjWVj4BZ5ERyZhvYDxiNSOJ0xroXEDDAapRdrFkDWiVRT6ZH5w1a+ln3NPk7I56YUhx5ITJ9dEl4K7ovt53nKevM30lBJWz4NCSZHMkhL/dWWUwLUo9w81Y3tU=
+	t=1761878463; cv=none; b=ZO6azCaAezMyLdzQLsvs9XcCOX7n3AefwvlfGdGtKxjb6pWqpaJ2MUemsjwbgZdtu6DIO67xiRe9KgXl0/gpPhiadHZGBTX6sPZv2LdYRpOnhD4zg9+k5yyggLa2oRmHeULjqYFUwqsr7GFhBdxOfy5PqRT7lpfPlPa2dnAJQVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761878216; c=relaxed/simple;
-	bh=NUA053BqgqawXS1Qozx//QoxkeT9MqL31R1qOGEfwBw=;
+	s=arc-20240116; t=1761878463; c=relaxed/simple;
+	bh=tkoQATJLDbE5tHjebibo6j+1qG16aQZbtymL7p3lCZk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EQpGaScj09eS+AJxElpLeorX6EtkY85HeyNSRfwPgr1QlZdqLszYRJbQgyU+AVVFivQl5s6u9a8+NF8Z2dwyr+aX4JRnYQ+E+fsA4mtIsTdDqr/TWujacMbcUe5qI+UvFPgEEXGTEzDKgzLm5feObCgv1dzNZRi+qnI4snsh7pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wIL0q/7z; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761878200; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=PyeoLWnDjTpu6Bq9KrYA09g/UfFxetHtGXnQlFKNsX0=;
-	b=wIL0q/7zMLtxHpx5wliNI3yF9CjFjIreOyY1A7jybBAiV0jdm19YYyS6uK0a0EtDk2BRciFPGn/ljf+WnHDL3pbLnqLj6sRFF5TNP/kjBtpWnZEWeysRKPcqH6vdt/+LBgqAccABO/9HivqSvFub/bAbHl/e3XcocGH04wK0WYY=
-Received: from 30.246.176.102(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrNSDa1_1761878198 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 10:36:39 +0800
-Message-ID: <5a06462a-697d-47b6-b51e-6438005b6130@linux.alibaba.com>
-Date: Fri, 31 Oct 2025 10:36:37 +0800
+	 In-Reply-To:Content-Type; b=HoBcNvKs9kx4lLg7YEA110kcdSN6Frkp9DSExRKnBvi7E1yHXUloyZRVju57Wftm1yc5WIdBzrL2dQJ/uDCeZcw3wr+ANYsZVZ6/koXDz7OY+3HaN6wmliJDfXvQFcxcFsJ/PwuFD1C7aih2Ds4QCFBY6ZBCaeguygJ0aj8DV18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=IqD/KbRS; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1761878411;
+	bh=l4/lEo+iFPcejD1HYzXXHmJ4Wq2MvRqAfEXFOQWInZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=IqD/KbRSO0wd1FlEP8dj4zGpyouFW1LhXqtO5p145K1GfBPWOf3AhZ6HH4CYUdRSN
+	 i79WfmbSnXG8BPGJBWQ8hDajrLDqmzkBBvRiCKJma9uwKqR4Qi1IANccaQdTZr0q1/
+	 FqnRbnBDI43fDi998HIxJGIsZ2FK8v8JdPbFzkCE=
+X-QQ-mid: zesmtpsz9t1761878408t66b41fc2
+X-QQ-Originating-IP: aN5SbCMpn4nq2ydWUTEjzwYfahQbWdRio1m+8vmqXrk=
+Received: from [10.10.74.117] ( [123.114.60.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 31 Oct 2025 10:40:07 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6865774659081570964
+Message-ID: <9362A6495165FCC0+d659800e-6751-4d26-a8b8-183705798e96@uniontech.com>
+Date: Fri, 31 Oct 2025 10:40:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,183 +54,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf record: skip synthesize event when open evsel failed
-To: Ian Rogers <irogers@google.com>
-Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org,
- james.clark@arm.com, leo.yan@linaro.org, mingo@redhat.com,
- baolin.wang@linux.alibaba.com, acme@kernel.org, mark.rutland@arm.com,
- jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- nathan@kernel.org, bpf@vger.kernel.org
-References: <20251023015043.38868-1-xueshuai@linux.alibaba.com>
- <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
- <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com>
- <eed27aaf-fd0a-4609-a30b-68e7c5c11890@linux.alibaba.com>
- <CAP-5=fVLGRsn7icH1cgmb==f5_D6Vr2CbzirAv7DY4Afjm4O2A@mail.gmail.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <CAP-5=fVLGRsn7icH1cgmb==f5_D6Vr2CbzirAv7DY4Afjm4O2A@mail.gmail.com>
+Subject: Re: [PATCH] kexec: print out debugging message if required for
+ kexec_load
+To: Baoquan He <bhe@redhat.com>
+Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251030073316.529106-1-maqianga@uniontech.com>
+ <aQMzFnqMC0MnLZFO@MiWiFi-R3L-srv>
+ <C798DAB0066FD66B+590e2398-b667-40dd-abfb-99dcd728b573@uniontech.com>
+ <aQNvHdZcVzletjdi@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Qiang Ma <maqianga@uniontech.com>
+In-Reply-To: <aQNvHdZcVzletjdi@MiWiFi-R3L-srv>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
+X-QQ-XMAILINFO: MShfLn39PbN2mOtH9g2M/3s94fDr9DbJUoSZlrIp2Hq+eSD77Us+HnjJ
+	E97E0+LsZlQLxsg7hg7thfDTyek6gq3Rh5pEIwtjdj0s3Cgeuem5EOUebgV4robtEQWo415
+	OkYwLfnUd4H1Qfbtn4+68NtlDVsPOSn7aLRRB4t5Bax8udO2S/MVHbI0PqVF5tvFPI4d44z
+	WKb1WNMMNWwwsZQ3Mb7f6CwUN1K9eTJAMBpGjRL8Ex2XqUaiafsxZn90ygfmEX3Hf0r+cns
+	bS4z+HZNdmSSuneHDmr9bjjrGShWYNL0QwJ1Oi+BKpy/+fMhvu0sARXo34wsvglB35/SQTl
+	6+a2itCS72n5/v2BAUM2r9JwyvDfiMbcohO2aqvAg8kmRkIIQpZ5jwxRPjSEcHml0uFr11m
+	eN9zfcrAfyTCVlnmWaXA6r8EiGtuFDrvPbyRlanvy9K+EZj0E+eP9mGWW+j0i1hHe7a5EPy
+	TztkbGJ9VESGhG9XGTh0mXgnkrhAZ7kScvRdpic3B1TObM5MAcu1qU3YlaEtHDJIT9EsFE/
+	Dg/MapYZ5oBkysv/0qBNEivesSv32dF52AKLHuXRWiGrCbCLzFrATUqdTBTr88Ynzek75Z+
+	aweTdbvgg9g1YFjuYLNQAVt01LH8vtX/iRVGO9JB02gGNQGXtz6lR6zfJABC/ubYc6/xFed
+	Vl01RvwSU0sj5/DUDUq4hx/Y1d6KVA9GtdpEHEtxY6OrK2q5bT6BuLksO4hSQVEYOiQoTEn
+	3Oy3uHLPbnbAP5VZTtVzLq1q2NSTiYUejbiF1WjFqCotf4Ev3Jp/N5GnRCHRmxERmyJg99o
+	Wr+Wpt+7ZyUbQAuHKA4G34JGa1L6iif/BtpTZBo2BjMqzR8fQZbS03g9MTRigpNoOfH6qev
+	F1nNTqOVW4bp7V29F6ooDiJs23q3d2+TmwW9KdHm2vRy4UwiJm5byn8PzYt7oi8uIY2krC6
+	XAv8HdpH8ivFgDoxqj1GygwfDfe7UwPN2Fp2WUDGWp+pGpAQ2cDeCbiWu8dOlLJGyhoo/vB
+	lP6muhXCiQsvjH5TGpBX9i/cntOhY=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
 
-
-在 2025/10/31 01:32, Ian Rogers 写道:
-> On Wed, Oct 29, 2025 at 5:55 AM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>
->>
->>
->> 在 2025/10/24 10:45, Shuai Xue 写道:
->>>
->>>
->>> 在 2025/10/24 00:08, Ian Rogers 写道:
->>>> On Wed, Oct 22, 2025 at 6:50 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>>>>
->>>>> When using perf record with the `--overwrite` option, a segmentation fault
->>>>> occurs if an event fails to open. For example:
->>>>>
->>>>>     perf record -e cycles-ct -F 1000 -a --overwrite
->>>>>     Error:
->>>>>     cycles-ct:H: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
->>>>>     perf: Segmentation fault
->>>>>         #0 0x6466b6 in dump_stack debug.c:366
->>>>>         #1 0x646729 in sighandler_dump_stack debug.c:378
->>>>>         #2 0x453fd1 in sigsegv_handler builtin-record.c:722
->>>>>         #3 0x7f8454e65090 in __restore_rt libc-2.32.so[54090]
->>>>>         #4 0x6c5671 in __perf_event__synthesize_id_index synthetic-events.c:1862
->>>>>         #5 0x6c5ac0 in perf_event__synthesize_id_index synthetic-events.c:1943
->>>>>         #6 0x458090 in record__synthesize builtin-record.c:2075
->>>>>         #7 0x45a85a in __cmd_record builtin-record.c:2888
->>>>>         #8 0x45deb6 in cmd_record builtin-record.c:4374
->>>>>         #9 0x4e5e33 in run_builtin perf.c:349
->>>>>         #10 0x4e60bf in handle_internal_command perf.c:401
->>>>>         #11 0x4e6215 in run_argv perf.c:448
->>>>>         #12 0x4e653a in main perf.c:555
->>>>>         #13 0x7f8454e4fa72 in __libc_start_main libc-2.32.so[3ea72]
->>>>>         #14 0x43a3ee in _start ??:0
->>>>>
->>>>> The --overwrite option implies --tail-synthesize, which collects non-sample
->>>>> events reflecting the system status when recording finishes. However, when
->>>>> evsel opening fails (e.g., unsupported event 'cycles-ct'), session->evlist
->>>>> is not initialized and remains NULL. The code unconditionally calls
->>>>> record__synthesize() in the error path, which iterates through the NULL
->>>>> evlist pointer and causes a segfault.
->>>>>
->>>>> To fix it, move the record__synthesize() call inside the error check block, so
->>>>> it's only called when there was no error during recording, ensuring that evlist
->>>>> is properly initialized.
->>>>>
->>>>> Fixes: 4ea648aec019 ("perf record: Add --tail-synthesize option")
->>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+在 2025/10/30 21:58, Baoquan He 写道:
+> On 10/30/25 at 07:41pm, Qiang Ma wrote:
+>> 在 2025/10/30 17:42, Baoquan He 写道:
+>>> On 10/30/25 at 03:33pm, Qiang Ma wrote:
+>>>> The commit a85ee18c7900 ("kexec_file: print out debugging message
+>>>> if required") has added general code printing in kexec_file_load(),
+>>>> but not in kexec_load().
 >>>>
->>>> This looks great! I wonder if we can add a test, perhaps here:
->>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/tests/shell/record.sh?h=perf-tools-next#n435
->>>> something like:
->>>> ```
->>>> $ perf record -e foobar -F 1000 -a --overwrite -o /dev/null -- sleep 0.1
->>>> ```
->>>> in a new test subsection for test_overwrite? foobar would be an event
->>>> that we could assume isn't present. Could you help with a test
->>>> covering the problems you've uncovered and perhaps related flags?
+>>>> Especially in the RISC-V architecture, kexec_image_info() has been
+>>>> removed(commit eb7622d908a0 ("kexec_file, riscv: print out debugging
+>>>> message if required")). As a result, when using '-d' for the kexec_load
+>>>> interface, print nothing in the kernel space. This might be helpful for
+>>>> verifying the accuracy of the data passed to the kernel. Therefore, refer to
+>>>> this commit a85ee18c7900 ("kexec_file: print out debugging message
+>>>> if required"), debug print information has been added.
+>>> kexec_file_dbg_print setting when CONFIG_KEXEC_FILE is set. I doubt it
+>>> doesn't work when you unset CONFIG_KEXEC_FILE.
+>> Yes, I just actually tested it and it really doesn't work when unset
+>> CONFIG_KEXEC_FILE.
+>>
+>> In the next version, I can add a KEXEC_DEBUG for the kernel and kexec-tools.
+> Hold on please, it may not need that highweight change. I will reply to
+> you tomorrow if I have other idea.
+Ok. My current idea is to refer to kexec_file, define a kexec_dbg_print,
+initialize it in the kimage_alloc_init(), modify KEXEC_FLAGS and 
+kexec_dprintk,
+and add the judgment of kexec_debug.
+>>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+>>>> ---
+>>>>    kernel/kexec.c | 11 +++++++++++
+>>>>    1 file changed, 11 insertions(+)
 >>>>
->>>
->>> Hi, Ian,
->>>
->>> Good suggestion, I'd like to add a test. But foobar may not a good case.
->>>
->>> Regarding your example:
->>>
->>>     perf record -e foobar -a --overwrite -o /dev/null -- sleep 0.1
->>>     event syntax error: 'foobar'
->>>                          \___ Bad event name
->>>
->>>     Unable to find event on a PMU of 'foobar'
->>>     Run 'perf list' for a list of valid events
->>>
->>>      Usage: perf record [<options>] [<command>]
->>>         or: perf record [<options>] -- <command> [<options>]
->>>
->>>         -e, --event <event>   event selector. use 'perf list' to list available events
->>>
->>>
->>> The issue with using foobar is that it's an invalid event name, and the
->>> perf parser will reject it much earlier. This means the test would exit
->>> before reaching the part of the code path we want to verify (where
->>> record__synthesize() could be called).
->>>
->>> A potential alternative could be testing an error case such as EACCES:
->>>
->>>     perf record -e cycles -C 0 --overwrite -o /dev/null -- sleep 0.1
->>>
->>> This could reproduce the scenario of a failure when attempting to access
->>> a valid event, such as due to permission restrictions. However, the
->>> limitation here is that users may override
->>> /proc/sys/kernel/perf_event_paranoid, which affects whether or not this
->>> test would succeed in triggering an EACCES error.
->>>
->>>
->>> If you have any other suggestions or ideas for a better way to simulate
->>> this situation, I'd love to hear them.
->>>
->>> Thanks.
->>> Shuai
->>
->> Hi, Ian,
->>
->> Gentle ping.
-> 
-> Sorry, for the delay. I was trying to think of a better way given the
-> problems you mention and then got distracted. I wonder if a legacy
-> event that core PMUs never implement would be a good candidate to
-> test. For example, the event "node-prefetch-misses" is for "Local
-> memory prefetch misses" but the memory controller tends to be a
-> separate PMU and this event is never implemented to my knowledge.
-> Running this locally I see:
-> 
-> ```
-> $ perf record -e node-prefetch-misses -a --overwrite -o /dev/null -- sleep 0.1
-> Lowering default frequency rate from 4000 to 1750.
-> Please consider tweaking /proc/sys/kernel/perf_event_max_sample_rate.
-> Error:
-> Failure to open event 'cpu_atom/node-prefetch-misses/' on PMU
-> 'cpu_atom' which will be removed.
-> No fallback found for 'cpu_atom/node-prefetch-misses/' for error 2
-> Error:
-> Failure to open event 'cpu_core/node-prefetch-misses/' on PMU
-> 'cpu_core' which will be removed.
-> No fallback found for 'cpu_core/node-prefetch-misses/' for error 2
-> Error:
-> Failure to open any events for recording.
-> perf: Segmentation fault
->     #0 0x55a487ad8b87 in dump_stack debug.c:366
->     #1 0x55a487ad8bfd in sighandler_dump_stack debug.c:378
->     #2 0x55a4878c6f94 in sigsegv_handler builtin-record.c:722
->     #3 0x7f72aae49df0 in __restore_rt libc_sigaction.c:0
->     #4 0x55a487b57ef8 in __perf_event__synthesize_id_index
-> synthetic-events.c:1862
->     #5 0x55a487b58346 in perf_event__synthesize_id_index synthetic-events.c:1943
->     #6 0x55a4878cb2a3 in record__synthesize builtin-record.c:2150
->     #7 0x55a4878cdada in __cmd_record builtin-record.c:2963
->     #8 0x55a4878d11ca in cmd_record builtin-record.c:4453
->     #9 0x55a48795b3cc in run_builtin perf.c:349
->     #10 0x55a48795b664 in handle_internal_command perf.c:401
->     #11 0x55a48795b7bd in run_argv perf.c:448
->     #12 0x55a48795bb06 in main perf.c:555
->     #13 0x7f72aae33ca8 in __libc_start_call_main libc_start_call_main.h:74
->     #14 0x7f72aae33d65 in __libc_start_main_alias_2 libc-start.c:128
->     #15 0x55a4878acf41 in _start perf[52f41]
-> Segmentation fault
-> ```
-
-
-Hi, Ian，
-
-Is node-prefetch-misses a platform specific event? Running it on ARM Yitian 710
-and Intel SPR platform, I see:
-
-$sudo perf record -e node-prefetch-misses
-Error:
-The node-prefetch-misses event is not supported.
-
-Thanks.
-Shuai
+>>>> diff --git a/kernel/kexec.c b/kernel/kexec.c
+>>>> index 28008e3d462e..02845a7499e9 100644
+>>>> --- a/kernel/kexec.c
+>>>> +++ b/kernel/kexec.c
+>>>> @@ -151,7 +151,15 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+>>>>    	if (ret)
+>>>>    		goto out;
+>>>> +	kexec_dprintk("nr_segments = %lu\n", image->nr_segments);
+>>>>    	for (i = 0; i < nr_segments; i++) {
+>>>> +		struct kexec_segment *ksegment;
+>>>> +
+>>>> +		ksegment = &image->segment[i];
+>>>> +		kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
+>>>> +			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
+>>>> +			      ksegment->memsz);
+>>>> +
+>>>>    		ret = kimage_load_segment(image, i);
+>>>>    		if (ret)
+>>>>    			goto out;
+>>>> @@ -163,6 +171,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+>>>>    	if (ret)
+>>>>    		goto out;
+>>>> +	kexec_dprintk("kexec_file_load: type:%u, start:0x%lx head:0x%lx flags:0x%lx\n",
+>>>> +		      image->type, image->start, image->head, flags);
+>>>> +
+>>>>    	/* Install the new kernel and uninstall the old */
+>>>>    	image = xchg(dest_image, image);
+>>>> -- 
+>>>> 2.20.1
+>>>>
+>>>>
+>
 
