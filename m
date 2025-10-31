@@ -1,217 +1,176 @@
-Return-Path: <linux-kernel+bounces-880756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CDAC2676A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C24C267AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF56C18875D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055C71898853
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FF034402C;
-	Fri, 31 Oct 2025 17:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2772FF15A;
+	Fri, 31 Oct 2025 17:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mm/enWZA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoLnUxrn"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0533E37E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3E42F6581
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761932754; cv=none; b=hN2y2iphekME6WaGwJgQK8YJ2EBfxGO7GgctAlHKO0qpe0Pc0cUFHy5eEfmIgJTGfDr/kWwByyrliNTslD1+qNwcAMo9JaMmtSdCttbSRCdrRuLUqR8Jr3pZ4WtjFhNTMcK/eiRkrKf8lDDtaMpElzrUvFO+ix9dFymuhuT1vmk=
+	t=1761932914; cv=none; b=SJciplO6tr+3rGj4voD10X+Ye6yFyKvpNGSscZFPy3t14P4XkoM3EqFdY8Ajzrki05IAN2qTjTmAHDEGrH4f9u23fPY8o45LK9n2mBaWtNliD61g5G87aMa1kFPpLWj3dmI25l58+8qTiIiu8/QOoKf4p6Vydvx0NfX2cUXYqeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761932754; c=relaxed/simple;
-	bh=8Z5thQC+rZDV7YQzns00IgbOSJUd9ppvWPw+j4n6pWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hR66jY2PJnBqxmix+RikdyCW5Zqz5nljms8kmPh2jP07L2HVGsTa+HmtOFjk56OhPn1DH2vRARC1Twi7rU0dXTfIjJi5FiUNQDmdJXK4YsuuwFHgcmvwqq2augKh6/3rKxl2ThfgzG1GBA6/E4lGwI1Cel0qvTF0565TNoJH2/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mm/enWZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A471C4CEFD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761932753;
-	bh=8Z5thQC+rZDV7YQzns00IgbOSJUd9ppvWPw+j4n6pWM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Mm/enWZAWMDexVX/fM2kYROrmhHpBdzm8nbycEeWDHnO8PA6XXIyNOcJjSWX8bZqn
-	 2OdmViUgwKEHTRFYwD5BgZE10XvwxitQi0+ZD61Nzq8aRrVN2lMfT03tG+dKxr1NYQ
-	 K92snLHJa+AlDf0mSJvP6DfsWKAU1JkCDOWJF4f6IdAMKIjiKHTH1OLq/3cbELc3DJ
-	 wvZCVb1xLk7serWJIZ67u1/RPAd2BS9tZe3GOIFRxb/9dGq4FBY/c/d2Sdm4UkrBLG
-	 jF4OR3sbBwvEi1O9WI/OFg/DyDSuQWE5/dryDqJh6Zs3mEygo8hMwQ1rtwsGhBg/iR
-	 /i9CZ8dqZ4bkg==
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcac45so29894107b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:45:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVwyVMZ502ddMR+kJLtXnJ3YzH1fn0s8YFeooUl1utJyV+3NbVQ0BgYxId/kFhqyqGcyDW70UPZPbsMN4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrNmRT3yX2u8naQcQUXLEEaKy2Fvi+7egeybwR2GmdRYPytC1S
-	GH3BGsgDF3umV7BSu3p4h7mb84/57Lncde9IW9DAiRDwlu4Rps0aoELT9dOVIZM5U67CvAXgUus
-	W2bq6yKWgObN6iK20QUDPWE3oE/HOR30pSdk4gP43jw==
-X-Google-Smtp-Source: AGHT+IFqrgTBfMBmVRiXWO3Rn5PwN2T0UvwtVFKxReo6CBC7EejYTOkW7+aB0EyRLa858pu/9lZjhalDMoVSb2xP8ow=
-X-Received: by 2002:a05:690c:dd5:b0:785:bfd8:c4c6 with SMTP id
- 00721157ae682-78648526568mr44021407b3.49.1761932752205; Fri, 31 Oct 2025
- 10:45:52 -0700 (PDT)
+	s=arc-20240116; t=1761932914; c=relaxed/simple;
+	bh=fFlFA8G66O3AhcJzTF9pfT+MExGCfTmf4oe7oWIRGOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQnMCk5JPkne8s31PMh7kxBnpJNRdS4AvmonzYY6wmiuvbaFmy53lP+z06kU0gpP0xMvRjcGjfSrwVa0gyF4XdZvv/eTTzHvGcvt/3SdtsYupJJlEjIHwEBNLa6PDjBtSaAsoL41I33i9vrtCz1INZzwe0bHasoJhCi3Of5n+Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoLnUxrn; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-294fd2ca6acso18453245ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:48:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761932912; x=1762537712; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=098F261HYE62bz4EbLCakXKNMD6yEDzP+rbKPhuk2BI=;
+        b=MoLnUxrnNKP7t1AnBITiJK9jjshNCQC56mtVddx1KrFPWxDad+UQw3oe6JfBdFgXRM
+         16bK45Rm5VNPKsBs9gHpcQPbQEGy5JXFpPzHBaABvDkjb+U75eGDKUbkOJU8PgW+BB12
+         p8l8GE7cUUlvgCrR+zqyHnO++QNfX7UwyvEXgiY5vfr6U0R97d2SdjPZ57grvxJ8TDiR
+         WaltgCf34j5FtVKQQ96S0GypgKRJJfs0xSjJi9G1k9Me1qTr1CmHaUVSASRFrCWktAks
+         ACl4efnJYT43sWfqSb2KFNqm4TDjVNG1FK0VIRd1vxJ1n0q5nQTZTZyEc+zaDGNW/38W
+         Oipg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761932912; x=1762537712;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=098F261HYE62bz4EbLCakXKNMD6yEDzP+rbKPhuk2BI=;
+        b=aRbx/ZiAa0/CPYGyPaN0BopZVjhgRGmR5qBTvAVHxFZr1WCyeIf7uf5yVKj7R4qQrn
+         SA9GRZm1P6XkaftPYErEEQSUxrcDBUglrNS1nx6KHmMS0sbM+GoAg1PR0Yb248cXglGJ
+         ykIIHVcpmm0wGMwktuB9mp1lz4tRehWiIhlW0woCYAl6giiuHvuy13oJn2RVHEJ3wGhB
+         B2pK/2KCH+TXwB5E/cbbmUebWiMUeu15pLM9EgIo4DGXe8qoBZhnwQvT53T3+4enYDRD
+         GGw1AT+S5G2U1E6RgI4aDVUS3VBdBDd0ccqDrqxyKYNxGx1CWEzbEVFgCyweExuQRXvO
+         hXUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAWBA/sRyAdlyPs9YnoFd/5PUieRxwmI78bY5ZmN6j6EnZ58z4JyVFVyxEzIX1yBdvDjwi9dlvCkboUpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIgCLZ1KeZLwSwncRHr9h95rTdmIQ3R5YLjPb4CgtGx9ZI5MTG
+	x1doWEfZyX6edSyrySN0HSolo4jpRV31UnSjjuVI14hUYg1OV7DxQUax
+X-Gm-Gg: ASbGncsupOLHZa+GxLsFzKp8iAD6hqH8DlRG45mR9Dq4vuQ2xEauV1lFfINxLRalLFv
+	e+W+fqByV2br2J8IAKAuwJU3pxv2IsNv23fygRnaa9sDU5TKpOl2RUVCJsTDzQcFIB5cVfZdldO
+	8ysb2hliSfg9E+jXg0BDb3FNi5X9wOP7pYeaQ07uB2fHnh5D+oy92BeqMPS17gTVaTSAo9piiOU
+	8ascKnofZdytoponSjTlh1jy751icPT1nY9R15YpTYyLuMEZFUuZiW8OsTWdXqgfn+DJHfzn8+9
+	+lWEtTY/QIcZAoIKB3kFbOHGrjqAXvqeQhcPNRDHbXA0A9wAKcWxm3d16Zg0BFkJxNUEfzb1Ggt
+	5y/f8WMjEucIe5CwcHnUyU0lUlbM3SnfEzDgmDMdAHAwqoRDC9rSDWIIyygLkIa8VXIPjJmAe7h
+	RKC7e7zKxIndCEThqLrCBvLW3xLgUCPg58nas=
+X-Google-Smtp-Source: AGHT+IE5ZC1i8KnkDoMeuHdmVM+WBof0Tvfw9Q+Bnfn74KlqAm8f7TNwkIf30NrJPjEKzPvI2EG3Fg==
+X-Received: by 2002:a17:902:f60d:b0:295:28a4:f0ba with SMTP id d9443c01a7336-29528a4f69cmr30095965ad.14.1761932912206;
+        Fri, 31 Oct 2025 10:48:32 -0700 (PDT)
+Received: from weg-ThinkPad-P16v-Gen-2.. ([177.73.136.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29526871693sm30113185ad.20.2025.10.31.10.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 10:48:31 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: [PATCH v2 0/3] ksm: perform a range-walk to jump over holes in break_ksm
+Date: Fri, 31 Oct 2025 14:46:22 -0300
+Message-ID: <20251031174625.127417-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024-swap-clean-after-swap-table-p1-v2-0-c5b0e1092927@tencent.com>
- <20251024-swap-clean-after-swap-table-p1-v2-1-c5b0e1092927@tencent.com>
-In-Reply-To: <20251024-swap-clean-after-swap-table-p1-v2-1-c5b0e1092927@tencent.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 31 Oct 2025 10:45:40 -0700
-X-Gmail-Original-Message-ID: <CACePvbVEaRzFet1_PcRP32MUcDs9M+5-Ssw04dYbLUCgMygBZw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkBLbpzK-7LQwl8d_11rWtB-YUCktamd5vXceO5ofoa6GX9KxB-9BfXeC4
-Message-ID: <CACePvbVEaRzFet1_PcRP32MUcDs9M+5-Ssw04dYbLUCgMygBZw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] mm, swap: do not perform synchronous discard
- during allocation
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	YoungJun Park <youngjun.park@lge.com>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 11:34=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
-> fast path"), swap allocation is protected by a local lock, which means
-> we can't do any sleeping calls during allocation.
->
-> However, the discard routine is not taken well care of. When the swap
-> allocator failed to find any usable cluster, it would look at the
-> pending discard cluster and try to issue some blocking discards. It may
-> not necessarily sleep, but the cond_resched at the bio layer indicates
-> this is wrong when combined with a local lock. And the bio GFP flag used
-> for discard bio is also wrong (not atomic).
->
-> It's arguable whether this synchronous discard is helpful at all. In
-> most cases, the async discard is good enough. And the swap allocator is
-> doing very differently at organizing the clusters since the recent
-> change, so it is very rare to see discard clusters piling up.
->
-> So far, no issues have been observed or reported with typical SSD setups
-> under months of high pressure. This issue was found during my code
-> review. But by hacking the kernel a bit: adding a mdelay(500) in the
-> async discard path, this issue will be observable with WARNING triggered
-> by the wrong GFP and cond_resched in the bio layer for debug builds.
->
-> So now let's apply a hotfix for this issue: remove the synchronous
-> discard in the swap allocation path. And when order 0 is failing with
-> all cluster list drained on all swap devices, try to do a discard
-> following the swap device priority list. If any discards released some
-> cluster, try the allocation again. This way, we can still avoid OOM due
-> to swap failure if the hardware is very slow and memory pressure is
-> extremely high.
->
-> This may cause more fragmentation issues if the discarding hardware is
-> really slow. Ideally, we want to discard pending clusters before
-> continuing to iterate the fragment cluster lists. This can be
-> implemented in a cleaner way if we clean up the device list iteration
-> part first.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast pa=
-th")
-> Acked-by: Nhat Pham <nphamcs@gmail.com>
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+When unmerging an address range, unmerge_ksm_pages function walks every
+page address in the specified range to locate ksm pages. This becomes
+highly inefficient when scanning large virtual memory areas that contain
+mostly unmapped regions, causing the process to get blocked for several
+minutes.
 
-Acked-by: Chris Li <chrisl@kernel.org>
+This patch makes break_ksm, function called by unmerge_ksm_pages for
+every page in an address range, perform a range walk, allowing it to skip
+over entire unmapped holes in a VMA, avoiding unnecessary lookups.
 
-Chris
+As pointed by David Hildenbrand in [1], unmerge_ksm_pages() is called
+from:
+
+* ksm_madvise() through madvise(MADV_UNMERGEABLE). There are not a lot
+of users of that function.
+
+* __ksm_del_vma() through ksm_del_vmas(). Effectively called when
+disabling KSM for a process either through the sysctl or from s390x gmap
+code when enabling storage keys for a VM.
+
+Consider the following test program which creates a 32 TiB mapping in
+the virtual address space but only populates a single page:
+
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/mman.h>
+
+/* 32 TiB */
+const size_t size = 32ul * 1024 * 1024 * 1024 * 1024;
+
+int main() {
+        char *area = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                          MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
+
+        if (area == MAP_FAILED) {
+                perror("mmap() failed\n");
+                return -1;
+        }
+
+        /* Populate a single page such that we get an anon_vma. */
+        *area = 0;
+
+        /* Enable KSM. */
+        madvise(area, size, MADV_MERGEABLE);
+        madvise(area, size, MADV_UNMERGEABLE);
+        return 0;
+}
 
 
-> ---
->  mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------
->  1 file changed, 33 insertions(+), 7 deletions(-)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index cb2392ed8e0e..33e0bd905c55 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(stru=
-ct swap_info_struct *si, int o
->                         goto done;
->         }
->
-> -       /*
-> -        * We don't have free cluster but have some clusters in discardin=
-g,
-> -        * do discard now and reclaim them.
-> -        */
-> -       if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard(s=
-i))
-> -               goto new_cluster;
-> -
->         if (order)
->                 goto done;
->
-> @@ -1394,6 +1387,33 @@ static bool swap_alloc_slow(swp_entry_t *entry,
->         return false;
->  }
->
-> +/*
-> + * Discard pending clusters in a synchronized way when under high pressu=
-re.
-> + * Return: true if any cluster is discarded.
-> + */
-> +static bool swap_sync_discard(void)
-> +{
-> +       bool ret =3D false;
-> +       int nid =3D numa_node_id();
-> +       struct swap_info_struct *si, *next;
-> +
-> +       spin_lock(&swap_avail_lock);
-> +       plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail=
-_lists[nid]) {
-> +               spin_unlock(&swap_avail_lock);
-> +               if (get_swap_device_info(si)) {
-> +                       if (si->flags & SWP_PAGE_DISCARD)
-> +                               ret =3D swap_do_scheduled_discard(si);
-> +                       put_swap_device(si);
-> +               }
-> +               if (ret)
-> +                       return true;
-> +               spin_lock(&swap_avail_lock);
-> +       }
-> +       spin_unlock(&swap_avail_lock);
-> +
-> +       return false;
-> +}
-> +
->  /**
->   * folio_alloc_swap - allocate swap space for a folio
->   * @folio: folio we want to move to swap
-> @@ -1432,11 +1452,17 @@ int folio_alloc_swap(struct folio *folio, gfp_t g=
-fp)
->                 }
->         }
->
-> +again:
->         local_lock(&percpu_swap_cluster.lock);
->         if (!swap_alloc_fast(&entry, order))
->                 swap_alloc_slow(&entry, order);
->         local_unlock(&percpu_swap_cluster.lock);
->
-> +       if (unlikely(!order && !entry.val)) {
-> +               if (swap_sync_discard())
-> +                       goto again;
-> +       }
-> +
->         /* Need to call this even if allocation failed, for MEMCG_SWAP_FA=
-IL. */
->         if (mem_cgroup_try_charge_swap(folio, entry))
->                 goto out_free;
->
-> --
-> 2.51.0
->
+Without this patch, this program takes 9 minutes to finish, while with
+this patch it finishes in less then 5 seconds.
+
+[1] https://lore.kernel.org/linux-mm/e0886fdf-d198-4130-bd9a-be276c59da37@redhat.com/
+
+Changelog:
+
+v2:
+  - Use folios in break_ksm_pmd_entry
+  - Pass address pointer to walk_page_range_vma private parameter
+    instead of struct break_ksm_arg
+  - Do not unnecessarily initialize start_ptep
+  - Order local variable declarations from longest to shortest line
+  - Improve patch 2 description (do not reference the cover letter)
+  - Quite a few styling fixes and improvements as suggested by reviewer
+
+v1: https://lore.kernel.org/all/20251028131945.26445-1-pedrodemargomes@gmail.com/
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+
+Pedro Demarchi Gomes (3):
+  Revert "mm/ksm: convert break_ksm() from walk_page_range_vma() to
+    folio_walk"
+  ksm: perform a range-walk in break_ksm
+  ksm: replace function unmerge_ksm_pages with break_ksm
+
+ mm/ksm.c | 141 +++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 86 insertions(+), 55 deletions(-)
+
+-- 
+2.43.0
+
 
