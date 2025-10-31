@@ -1,209 +1,254 @@
-Return-Path: <linux-kernel+bounces-879394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB89BC2304A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:31:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF08FC23067
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:33:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1CF8405CF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599863BDD3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA2B2E7637;
-	Fri, 31 Oct 2025 02:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7542C11F6;
+	Fri, 31 Oct 2025 02:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZS4Wy3Jq"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AZCR+5QV"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EEF2E6122
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6053F279DCE
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761877820; cv=none; b=e4C+yBV4e82UgNvGNAFVrdWNrwVXPFUTQ3597/i+KayOOEknmJyLnaW+wI3wEoFgmuFQ6zFvUfLlM5jwOwjip7xcrhIG1DkAipuHGTfZlZ5HV9dvYpKDpPhvxpR/cbgVGgXQCIk1yBLWtJL9wcKq1xDVSAhqk1Uul+iFr5fmS00=
+	t=1761877928; cv=none; b=l36fMzshevTmljSNVOw/nYO46cIcCmi07KOo4mbzkVHDcZzyeyjIpwc2yBV/9pICTOmX5WMx2HGEc5dl9Mp6J41Vsy+zRF16RL924P9csX5EEC3HFNk5MwTBFzCPtcMzjflCbjPAsMcN4F0wgL2dgXmk71FICcX40KuFsM0hhtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761877820; c=relaxed/simple;
-	bh=yrxKixVojpbluBisYu0EAkFCmy3swUxaiKLewdtDk78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQaj8Gfx3dH43QvxH/wCIAlCnu8JQgUaXdt687dD7+kXhRcMjcWtf3ToTqRB9ApwRgp64GrIz7SGCrpmdX8Eo5n+aqCs7qzI3N7mJTOe+V0E1cYCAf0m5ii7YmceGQ19PJlfxQbgZG4QokTphVj3L5yv29gMy1Ht3RINVqRHCeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZS4Wy3Jq; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4285645fdfbso230832f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761877805; x=1762482605; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s70uKhnFnCqxMqoMAQZ8ZdV7WdC7wWM/IA4PJPlpz1o=;
-        b=ZS4Wy3Jqxv1OulIIvetGd/IMgkGCJNDS6rFdecwxZU2a7pS4Kqc8KXIYmWl/ciKQsP
-         OliOJXqpl/ck2Q6Ouo1sciX2B8oFhpcZidNVcxYWZx/XSlFOLi7N1B5TbG63Ot33kMXZ
-         i96v4GCYvftciZ3yrBJVcVWBqpZFMmpjQHGMMOaBK7HurKgnme+6cOJz7Vi1kXthGEC0
-         a+SVH5Y7/JDS0j+VSkbes8YiPiFDNy8UqJzpP2QRjssWS563zGu0uIuTA4L28EJDdOAW
-         rwYxGWu15w93mV+GQJBDzaAdYlZJevtYCFl4Hti8b7+63VSuDxMmzs+IjoB3jzZX1ged
-         7EEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761877805; x=1762482605;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s70uKhnFnCqxMqoMAQZ8ZdV7WdC7wWM/IA4PJPlpz1o=;
-        b=vZJsXTkuGqHqTsboQtNtCPxuxFX2/Vr7JKt9QY1sPWCWhpBXprN08obXjndbgQEL0g
-         qrXQ2hEZjFffagoG7ZyExUatX5F2EVye5kTKCOkAVG+IAyqVo/8cuqvJzyUC5t8E5qHw
-         GhGF75dc37Vj1FjNP5vP890i2D51zeEK0s9iYLcs/mkjNg07PPPrwJIYC09JogpUrlY/
-         OU9QvuSq9yTAcIlG96ZJRZNChh9rAVyRH2aU5RoKcBC2ggO+Mgz52FxBAXTGLTO7SggJ
-         DRq/XWGsfNImMIpn9CNxrOLvlyQ198I/sjrQUwhwHQ93dQ+zy6L+izKsVZEaOwu+IHmV
-         Npiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaf16E/jBLSMBNELUqqNL8VKUfIaGeMp/F/xNOSrUkDSLg1DXKujreS5WnUNNVsazI4j6ew156McxsVT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz2FBz5Ed1j02TWVrqS5XGwLfDT3qb67Nqj8a31HOfK9a8dyQ5
-	rljCkUOWrz6qBxqBuJRAj8p38ZMpOZcZx/WNBPX3te8WsjjGA661EvnqGZMjcZ0/4pVVMG4Vbf7
-	1brMh
-X-Gm-Gg: ASbGnctfdu5N5E+TS90ChjcaBr2SfLuumPCPdXVHz7S9SmxNBKZZ9I3qSxrNkmvJ66d
-	79hSD9fxDzUM1OUlOQr/7wmWDzeEkS2VKqHGh1f2ABLHXNPOwOQRpXGhxcVy5I5N5vj+FyUDChj
-	0osoSWL4QwVWDmzfo/EhP2mHBHbIrB6d9Alp+DGMD7Rce9uIN4NNPlcTI2Mu1bVShXduSI0DAyu
-	ioEUR+vBZTSFR1aahH0PoouMZVIhiJy7z8VUs3rBQIoZSyHUNl+WkU1TdWEPfY0XZOT6QcCc9ii
-	YjTIGmKcCVsqC6hVYZBvKF+VlPYcgOLFO0ScuHZQXbGXNZhQS560dCHcMpwbiy5Q93/iNRkDEWu
-	nrq0hfSIRcZoMMWM3TeDY7UPK6OzWhffCSO956ngxb+lGsLwAaOWQoc0HBuVxc+hU0kBXwZ5xG5
-	s=
-X-Google-Smtp-Source: AGHT+IED8Spg75WLEwDjYgLgNpdvHfKONetNjswzCY8ahrupW6jvolIdByK8SLvyz9YbHnzsZdhrdw==
-X-Received: by 2002:a05:6000:2c0b:b0:3ed:e1d8:bd7c with SMTP id ffacd0b85a97d-429bd67c441mr683707f8f.2.1761877804602;
-        Thu, 30 Oct 2025 19:30:04 -0700 (PDT)
-Received: from localhost ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93f1d8f1desm214555a12.2.2025.10.30.19.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 19:30:04 -0700 (PDT)
-Date: Fri, 31 Oct 2025 10:30:01 +0800
-From: Heming Zhao <heming.zhao@suse.com>
-To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, 
-	skhan@linuxfoundation.org, syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com, 
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
- during read
-Message-ID: <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
-References: <20251029225748.11361-2-eraykrdg1@gmail.com>
- <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
- <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
+	s=arc-20240116; t=1761877928; c=relaxed/simple;
+	bh=dQyxJ1d91572THsFTNh3JwQBfOdXBE8nxpCAVZ8Hy84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CX/8Hnwj6gSsgeVfEJuUe53hoHGrTWeAj5ckQgTF1ucXGve6RE/vTmWJ8yKk7plgvu2RaNXuPpAZKDvn2KT+Wi33Pp0b0lMhbobqCGN4LwI41xQrxJTHuSBJGZzE+MMljQ3FUaQzCE8nQOUzo3cmmdw/bQyummVKGMcnEiGsZvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AZCR+5QV; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d1835c8a-f354-498f-a8c3-f43d7bb62548@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761877918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZReHVNJ6NA73HQEk8o4tY+Q+SuvKfISP0Quo375SkgY=;
+	b=AZCR+5QVtdA1uEk82UZAlFWEBpeZaevkicPkVBjsSuLvCGWvXTRLoOpqtSnhftpdTwFrm2
+	chvqN7wmDGnf8ci9bIODkTPKgAzYAeA8VfNO4F4oLxaPdtb4SjCKrkQ4fmHHGOeVaPNYqE
+	dy9DEzTiaI2pAChplDUNFXmg0lqs8ck=
+Date: Fri, 31 Oct 2025 10:31:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH v4 15/24] smb: move FILE_SYSTEM_POSIX_INFO to
+ common/smb1pdu.h
+To: Steve French <smfrench@gmail.com>, =?UTF-8?Q?Ralph_B=C3=B6hme?=
+ <slow@samba.org>
+Cc: sfrench@samba.org, linkinjeon@kernel.org, linkinjeon@samba.org,
+ christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
+ <a0d97e2d-91f5-448c-883c-4d0930375f82@linux.dev>
+ <CAH2r5mtHXDuKUSvZ5TZU1f6WnQaH5Dz59=z29ABJsOYmric+1Q@mail.gmail.com>
+ <CAH2r5muwP4uyELKDNrRGU+8YgwNurb1+jQb+5CYOcU74LZhj3w@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <CAH2r5muwP4uyELKDNrRGU+8YgwNurb1+jQb+5CYOcU74LZhj3w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 31, 2025 at 01:07:56AM +0300, Ahmet Eray Karadag wrote:
-> Hi Heming,
-> 
-> Thanks a lot for the review and comments.
-> 
-> Regarding the placement of make_bad_inode(), our patch places it in
-> ocfs2_read_inode_block_full() because
-> ocfs2_validate_inode_block() itself doesn't have access
-> to the inode object. I believe this (in the caller) is the
-> correct layer, as it seems to match other patterns in OCFS2
-> where the caller handles the make_bad_inode upon validation
-> failure.
+This GitLab repository seems to be more up to date than the one on 
+samba.org: https://git.samba.org/?p=slow/smb3_posix_spec.git;a=shortlog
 
-Thanks for pointing that out. I agree with the above comments.
-> 
-> I had one question about your proposal to combine this patch with
-> Albin's [1]. When you mentioned, "We should forbid any write
-> operations," were you referring to Albin's read-only check in
-> ocfs2_setattr as the mechanism to "forbid" the operation? Or
-> were you suggesting we should use the inode size sanity check
-> itself (e.g., by converting the BUG_ON to an -EIO return)
-> as that mechanism?
-> 
-> Thanks,
-> Eray
+Thanks,
+ChenXiaoSong.
 
-The 'forbid' refers to the read-only check in ocfs2_setattr.
-We can refer to ext4_setattr(), which calls ext4_emergency_state()
-to forbid write operations.
-
-- Heming
+在 2025/10/31 09:53, Steve French 写道:
+> Sorry forgot to attach the link
 > 
-> Heming Zhao <heming.zhao@suse.com>, 30 Eki 2025 Per, 10:59 tarihinde şunu yazdı:
-> >
-> > Hi,
-> >
-> > In my view, combining this patch and another patch [1] is a complete
-> > solution for this bug.
-> >
-> > According to the oops stack, the FS is already in read-only mode.
-> > We should forbid any write operations and then perform the inode
-> > sanity check.
-> >
-> > And I think ocfs2_validate_inode_block is a good place for make_bad_inode().
-> >
-> > [1]:
-> > https://syzkaller.appspot.com/text?tag=Patch&x=1287f614580000
-> > - by albinbabuvarghese20@gmail.com from:
-> >   https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
-> >
-> > Thanks,
-> > Heming
-> >
-> > On Thu, Oct 30, 2025 at 01:57:49AM +0300, Ahmet Eray Karadag wrote:
-> > > Potentially triggered by sequences like buffered writes followed by
-> > > open(O_DIRECT), can result in an invalid on-disk inode block
-> > > (e.g., bad signature). OCFS2 detects this corruption when reading the
-> > > inode block via ocfs2_validate_inode_block(), logs "Invalid dinode",
-> > > and often switches the filesystem to read-only mode.
-> > >
-> > > Currently, the function reading the inode block (ocfs2_read_inode_block_full())
-> > > fails to call make_bad_inode() upon detecting the validation error.
-> > > Because the in-memory inode is not marked bad, subsequent operations
-> > > (like ftruncate) proceed erroneously. They eventually reach code
-> > > (e.g., ocfs2_truncate_file()) that compares the inconsistent
-> > > in-memory size (38639) against the invalid/stale on-disk size (0), leading
-> > > to kernel crashes via BUG_ON.
-> > >
-> > > Fix this by calling make_bad_inode(inode) within the error handling path of
-> > > ocfs2_read_inode_block_full() immediately after a block read or validation
-> > > error occurs. This ensures VFS is properly notified about the
-> > > corrupt inode at the point of detection. Marking the inode bad  allows VFS
-> > > to correctly fail subsequent operations targeting this inode early,
-> > > preventing kernel panics caused by operating on known inconsistent inode states.
-> > >
-> > > [RFC]: While this patch prevents the kernel crash triggered by the reproducer,
-> > > feedback is requested on whether ocfs2_read_inode_block_full() is the most
-> > > appropriate layer to call make_bad_inode(). Should this check perhaps reside
-> > > within the caller or should the error propagation be handled differently?:
-> > > Input on the best practice for handling this specific VFS inconsistency
-> > > within OCFS2 would be appreciated.
-> > >
-> > > Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-> > > Link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
-> > > Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-> > > Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-> > > Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-> > > ---
-> > >  fs/ocfs2/inode.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> > > index fcc89856ab95..415ad29ec758 100644
-> > > --- a/fs/ocfs2/inode.c
-> > > +++ b/fs/ocfs2/inode.c
-> > > @@ -1690,6 +1690,8 @@ int ocfs2_read_inode_block_full(struct inode *inode, struct buffer_head **bh,
-> > >       rc = ocfs2_read_blocks(INODE_CACHE(inode), OCFS2_I(inode)->ip_blkno,
-> > >                              1, &tmp, flags, ocfs2_validate_inode_block);
-> > >
-> > > +     if (rc < 0)
-> > > +             make_bad_inode(inode);
-> > >       /* If ocfs2_read_blocks() got us a new bh, pass it up. */
-> > >       if (!rc && !*bh)
-> > >               *bh = tmp;
-> > > --
-> > > 2.43.0
-> > >
-> > >
+> https://gitlab.com/samba-team/smb3-posix-spec
+> 
+> On Thu, Oct 30, 2025 at 8:53 PM Steve French <smfrench@gmail.com> wrote:
+>>
+>> Ralph,
+>> Is this link current? or do you have the link to a more current
+>> version of the POSIX extensions documentation?
+>>
+>> On Thu, Oct 30, 2025 at 8:42 PM ChenXiaoSong
+>> <chenxiaosong.chenxiaosong@linux.dev> wrote:
+>>>
+>>> Hi Namjae and Steve,
+>>>
+>>> I couldn’t find the definition of FILE_SYSTEM_POSIX_INFO in any of the
+>>> following MS documents:
+>>>
+>>>     - MS-FSCC:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-fscc%2Ftoc.json
+>>>     - MS-CIFS:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-cifs%2Ftoc.json
+>>>     - MS-SMB:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb%2Ftoc.json
+>>>     - MS-SMB2:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb2%2Ftoc.json
+>>>
+>>> Is this structure defined in other MS document?
+>>>
+>>> On 10/27/25 3:21 PM, chenxiaosong.chenxiaosong@linux.dev wrote:
+>>>> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>>>
+>>>> Rename "struct filesystem_posix_info" to "FILE_SYSTEM_POSIX_INFO",
+>>>> then move duplicate definitions to common header file.
+>>>>
+>>>> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>>> ---
+>>>>    fs/smb/client/cifspdu.h    | 22 ----------------------
+>>>>    fs/smb/common/smb1pdu.h    | 23 +++++++++++++++++++++++
+>>>>    fs/smb/server/smb2pdu.c    |  4 ++--
+>>>>    fs/smb/server/smb_common.h | 23 -----------------------
+>>>>    4 files changed, 25 insertions(+), 47 deletions(-)
+>>>>
+>>>> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
+>>>> index d106c6850807..55aaae6dbc86 100644
+>>>> --- a/fs/smb/client/cifspdu.h
+>>>> +++ b/fs/smb/client/cifspdu.h
+>>>> @@ -1875,28 +1875,6 @@ typedef struct {
+>>>>
+>>>>    #define CIFS_POSIX_EXTENSIONS           0x00000010 /* support for new QFSInfo */
+>>>>
+>>>> -typedef struct {
+>>>> -     /* For undefined recommended transfer size return -1 in that field */
+>>>> -     __le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+>>>> -     __le32 BlockSize;
+>>>> -    /* The next three fields are in terms of the block size.
+>>>> -     (above). If block size is unknown, 4096 would be a
+>>>> -     reasonable block size for a server to report.
+>>>> -     Note that returning the blocks/blocksavail removes need
+>>>> -     to make a second call (to QFSInfo level 0x103 to get this info.
+>>>> -     UserBlockAvail is typically less than or equal to BlocksAvail,
+>>>> -     if no distinction is made return the same value in each */
+>>>> -     __le64 TotalBlocks;
+>>>> -     __le64 BlocksAvail;       /* bfree */
+>>>> -     __le64 UserBlocksAvail;   /* bavail */
+>>>> -    /* For undefined Node fields or FSID return -1 */
+>>>> -     __le64 TotalFileNodes;
+>>>> -     __le64 FreeFileNodes;
+>>>> -     __le64 FileSysIdentifier;   /* fsid */
+>>>> -     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+>>>> -     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+>>>> -} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
+>>>> -
+>>>>    /* DeviceType Flags */
+>>>>    #define FILE_DEVICE_CD_ROM              0x00000002
+>>>>    #define FILE_DEVICE_CD_ROM_FILE_SYSTEM  0x00000003
+>>>> diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
+>>>> index 82331a8f70e8..38b9c091baab 100644
+>>>> --- a/fs/smb/common/smb1pdu.h
+>>>> +++ b/fs/smb/common/smb1pdu.h
+>>>> @@ -327,6 +327,29 @@ typedef struct {
+>>>>        __le32 BytesPerSector;
+>>>>    } __packed FILE_SYSTEM_INFO;        /* size info, level 0x103 */
+>>>>
+>>>> +typedef struct {
+>>>> +     /* For undefined recommended transfer size return -1 in that field */
+>>>> +     __le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+>>>> +     __le32 BlockSize;
+>>>> +     /* The next three fields are in terms of the block size.
+>>>> +      * (above). If block size is unknown, 4096 would be a
+>>>> +      * reasonable block size for a server to report.
+>>>> +      * Note that returning the blocks/blocksavail removes need
+>>>> +      * to make a second call (to QFSInfo level 0x103 to get this info.
+>>>> +      * UserBlockAvail is typically less than or equal to BlocksAvail,
+>>>> +      * if no distinction is made return the same value in each
+>>>> +      */
+>>>> +     __le64 TotalBlocks;
+>>>> +     __le64 BlocksAvail;       /* bfree */
+>>>> +     __le64 UserBlocksAvail;   /* bavail */
+>>>> +     /* For undefined Node fields or FSID return -1 */
+>>>> +     __le64 TotalFileNodes;
+>>>> +     __le64 FreeFileNodes;
+>>>> +     __le64 FileSysIdentifier;   /* fsid */
+>>>> +     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+>>>> +     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+>>>> +} __packed FILE_SYSTEM_POSIX_INFO;
+>>>> +
+>>>>    /* See MS-CIFS 2.2.8.2.5 */
+>>>>    typedef struct {
+>>>>        __le32 DeviceType;
+>>>> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+>>>> index 47fab72a3588..dc0f0ed4ccb6 100644
+>>>> --- a/fs/smb/server/smb2pdu.c
+>>>> +++ b/fs/smb/server/smb2pdu.c
+>>>> @@ -5633,14 +5633,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+>>>>        }
+>>>>        case FS_POSIX_INFORMATION:
+>>>>        {
+>>>> -             struct filesystem_posix_info *info;
+>>>> +             FILE_SYSTEM_POSIX_INFO *info;
+>>>>
+>>>>                if (!work->tcon->posix_extensions) {
+>>>>                        pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
+>>>>                        path_put(&path);
+>>>>                        return -EOPNOTSUPP;
+>>>>                } else {
+>>>> -                     info = (struct filesystem_posix_info *)(rsp->Buffer);
+>>>> +                     info = (FILE_SYSTEM_POSIX_INFO *)(rsp->Buffer);
+>>>>                        info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
+>>>>                        info->BlockSize = cpu_to_le32(stfs.f_bsize);
+>>>>                        info->TotalBlocks = cpu_to_le64(stfs.f_blocks);
+>>>> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+>>>> index 6141ca8f7e1c..61048568f4c7 100644
+>>>> --- a/fs/smb/server/smb_common.h
+>>>> +++ b/fs/smb/server/smb_common.h
+>>>> @@ -108,29 +108,6 @@ struct file_id_both_directory_info {
+>>>>        char FileName[];
+>>>>    } __packed;
+>>>>
+>>>> -struct filesystem_posix_info {
+>>>> -     /* For undefined recommended transfer size return -1 in that field */
+>>>> -     __le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+>>>> -     __le32 BlockSize;
+>>>> -     /* The next three fields are in terms of the block size.
+>>>> -      * (above). If block size is unknown, 4096 would be a
+>>>> -      * reasonable block size for a server to report.
+>>>> -      * Note that returning the blocks/blocksavail removes need
+>>>> -      * to make a second call (to QFSInfo level 0x103 to get this info.
+>>>> -      * UserBlockAvail is typically less than or equal to BlocksAvail,
+>>>> -      * if no distinction is made return the same value in each
+>>>> -      */
+>>>> -     __le64 TotalBlocks;
+>>>> -     __le64 BlocksAvail;       /* bfree */
+>>>> -     __le64 UserBlocksAvail;   /* bavail */
+>>>> -     /* For undefined Node fields or FSID return -1 */
+>>>> -     __le64 TotalFileNodes;
+>>>> -     __le64 FreeFileNodes;
+>>>> -     __le64 FileSysIdentifier;   /* fsid */
+>>>> -     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+>>>> -     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+>>>> -} __packed;
+>>>> -
+>>>>    struct smb_version_ops {
+>>>>        u16 (*get_cmd_val)(struct ksmbd_work *swork);
+>>>>        int (*init_rsp_hdr)(struct ksmbd_work *swork);
+>>>
+>>
+>>
+>> --
+>> Thanks,
+>>
+>> Steve
+> 
+> 
+> 
+
 
