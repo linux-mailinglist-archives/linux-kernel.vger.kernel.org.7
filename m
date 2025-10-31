@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-880983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35D8C271F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:28:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD17DC27208
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A2994E93EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:28:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B08454E4EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA82132BF47;
-	Fri, 31 Oct 2025 22:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA0932BF54;
+	Fri, 31 Oct 2025 22:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nt3CRu3b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kmqv0t4r"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E278C32B980;
-	Fri, 31 Oct 2025 22:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ABE27280B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761949694; cv=none; b=hckKFhPsV8dIZlHzC6JL6Nh9ik89/nWSSBZwZwgvbg7OR979cZ+SWbN3QmQz5nwjPKLT2iWtfIb4DR0sXEW6MVEAR186wfvDD4eAy8GVnq6MG3nzNsgdgRPXi/q8j0zobCryDwqHgHYMH27JcxBIBJ4EaDRPvUluR2vk5t3J04E=
+	t=1761949737; cv=none; b=uU4nTn3TXSHaIBbsciNMBpGwAhN5g5JkiXI9Pzcb9XzjYdduR2nhT1i1++mCKV5sb+KDrR9AQUU7eB3Ph71CYu8q72SEpmzFWeuoFegsS/Knl+5819SUUQAls5nUn1PsGbk+Sq2jAw15Sd9JoS6rMPtbMqDKLDFFbv+fH2bTTS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761949694; c=relaxed/simple;
-	bh=Bq28Tp1IB0kcpnWtVcOiVVSTljZ4bPoZ95IiIfkHZKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQgABWRuyQH9/UXAcKdZHSpyY9a6gGQYRsLFY6RQ8I+vnKKRfWd6dOtPYaQclWKlEUHLws62rTGQFDi6pNn+vvFeLMfEfkpdVRrb/vpLgr1rHNwsBe+Jub+cdhz7c1GfMHEhoGRcdRZpP+0WaL8EVDvHMmk0nUq8Xj8Tm4lD5pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nt3CRu3b; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761949692; x=1793485692;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Bq28Tp1IB0kcpnWtVcOiVVSTljZ4bPoZ95IiIfkHZKE=;
-  b=Nt3CRu3b2QgRTGi/M+bYbW/Ds8Oauso30RovHHP02yMmsHY+qIRWfFdT
-   3ofFWmn4Ws2c/yzT/uqkpUTkZNC6OP2qUdmeGMhrmZa9Kp0yYkvGzxh6N
-   f2dCbrBuOENN02GWG6rgLUi2Bdb3X3X5IusLcXZPptQLwbjyPd1jVaXHU
-   qUbfUAJZSDR4eNhlw8+JQrOs2DPg5JXUHew1QFBJwPCTj0K85d763jIDd
-   BmUZQcean7A5Bxl9e/F1UiFgzs0QOK0Gagt2WNfBCDC7TwqfGAi/YGgc/
-   QPm4uXRvFFsvdQmF9zCSMzFAzivVzJsv4IuPB6tUEEZcc7NLP8JU6Di0O
-   g==;
-X-CSE-ConnectionGUID: SVmU1U6PTMmnOpWzOryVdw==
-X-CSE-MsgGUID: VDL19xdUTfSMD3BK6/Hijg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="89580113"
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="89580113"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 15:28:11 -0700
-X-CSE-ConnectionGUID: QdMPbSqRTMu/A3YXWEDWnQ==
-X-CSE-MsgGUID: rHNn4TssQa2xtoM7ZeC6Xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="191490168"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.220.87])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 15:28:10 -0700
-Date: Fri, 31 Oct 2025 15:28:04 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the
- MMIO Stale Data mitigation
-Message-ID: <20251031222804.s26squjrtbaq7aly@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-4-seanjc@google.com>
+	s=arc-20240116; t=1761949737; c=relaxed/simple;
+	bh=VZXcKlS2NfJQUqJUaLkoMO31MbXfEPxVU5q67dhNYbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Su21AXzfPbUlkVt24//319Z670wMTGA/BeawpCPa2FfeNJc3uQmenPwhJLLMFIJ7RvIFkjKbQmCKlrJbTHG32DsieyjUpVE4PYuosuS541ZFkmK0pi9ymv1a0TDboJL2A2fdqFC8FIGJtqY4l1+vAPHbJPCvCl8iBf/qG3S0H6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kmqv0t4r; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-594236810b5so344480e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:28:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761949734; x=1762554534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4VDPOkfEPN3V+mmkEOqmJfTYjVG4ZaMp9wTEce6ggY=;
+        b=kmqv0t4rwZ+OooujAZB89C6U1PE4NY/hxG/N3arnBNvt6gcdI5fjWrSGf9YrcyXxKN
+         yGg9J1HH/8TDQyiQiH1cwV2QnT74vWm7ZDyzcEYxuprajEkVaX4f/gJzwKnq1HfQ20ZI
+         X/H4W9dQ2Sgb7YJMKmtl9Y68AnxuYX3owuhcNhD5/lBrRXvnr8VB6MuiuH4tYrGBphz1
+         FtPytlwa3a6X1saOPHQg4ZaGJlMimZNSNYSsVunvrU6M11Y6f++bi+QoWO4mJJIvDi44
+         uv6MJFrni1aUExCr/m8s6EQTGCu1qWpjXecUUFYn+kyCivXg8JeMiTaqkLgHZZqwIxn1
+         jxhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761949734; x=1762554534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A4VDPOkfEPN3V+mmkEOqmJfTYjVG4ZaMp9wTEce6ggY=;
+        b=MIDChURenMYcX4PVKkbEGRAiL4STny72cIfqBrxDK+FobpjlswebWBbvGnOEWilkA3
+         psmtOr+GqoUBjpBrgYKwrLrjo2PWRq1100jgai+3BHfhP7W3n4tN7/0m/KCck9ON3pW8
+         n3Xre5QEDgpLI2Y5hOEAOH/nlx0S0jm9otak5k/LGuH9cbGIdeEyNs9+emRFeNmkZZ3c
+         Dxiswq+3A/bzvOBT/1K01v8us1faZYl4TsXfCL0dNCKC9h3hWgxbQ+0MINg64OavOodd
+         XU+bri7TsHvPTmJhGJzQXdgrOridTbadU7YAcgkWlBN5YvszRHzfvaXLEdk3cBceyAqs
+         UqGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxr1hEjBikVkaudy0yGbJYAEtLHfmlTMwV+hFxA6GW3+sGBPRp9hxRlcVkBQI5eLydy2oj/Lh6sq5NzPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZOiBPZ4+Vv2T1AXvpIj9Ny/lZtQx4WsXUNHEbA+0aNNZ8KUpR
+	ZjBQ4T5ZE1d6PJeEWyclpTLccRuwVxi2sGI4D8KZJoKTYJv4An9bCRIjIqbJRe6NUoDz91Gs+p/
+	QoX5ivLF1jwkfpvL6RZGyiLdkhkv4QYrQi2SaTLOz
+X-Gm-Gg: ASbGnctW4Nc+M4dawoYHIeU1YNdlBIW5Wt58JDlCTXnUjhRxIosn6tTr8sDLaH9v2dY
+	6gXJ8AAMs1LokRi8Z5v4DmJ2Noul7rX04AN2HgSUTgCbKGCBrfpvHw7Ugb4YtfM+N8/h4vSfJNt
+	RhdIAi51KJYUer/Pa1oSdypR7OU88U/E0K7WS64xRCe2txAfMSe4zsNm4acNaI+yXf1m6H+9bYE
+	urr2gUz216gJnDy1TRu0jmnCl/R5vX8gvkcLPkyg1K9HTyT2WcAhYSOycFtGUDkPPuCoQU=
+X-Google-Smtp-Source: AGHT+IFSwcMwTIDGFtEaqjdkz/AcJl72mmVl0IpQ+J78Aae+a4oANLR7hdtuxWyAxkV1yPdEbNFPfRUD01apBcVpx5M=
+X-Received: by 2002:a05:6512:15a1:b0:593:11bd:9af7 with SMTP id
+ 2adb3069b0e04-5941d5586cemr1780294e87.36.1761949734165; Fri, 31 Oct 2025
+ 15:28:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-4-seanjc@google.com>
+References: <20251018000713.677779-1-vipinsh@google.com> <20251018000713.677779-6-vipinsh@google.com>
+In-Reply-To: <20251018000713.677779-6-vipinsh@google.com>
+From: David Matlack <dmatlack@google.com>
+Date: Fri, 31 Oct 2025 15:28:27 -0700
+X-Gm-Features: AWmQ_bkJhwWK8iLPcHy-hUK2RP4WggOSXosGGLXjIhn9TKPWrHQgEkrODFylvq4
+Message-ID: <CALzav=f9tjgyF7TBsfjCpmvRezkkgfQY-OXwj+TaebjeffK-0A@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/21] vfio/pci: Register VFIO live update file
+ handler to Live Update Orchestrator
+To: Vipin Sharma <vipinsh@google.com>
+Cc: bhelgaas@google.com, pasha.tatashin@soleen.com, jgg@ziepe.ca, 
+	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org, 
+	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com, parav@nvidia.com, 
+	saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
+	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
+	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Alex Williamson <alex@shazbot.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 05:30:35PM -0700, Sean Christopherson wrote:
-> Convert the MMIO Stale Data mitigation flag from a static branch into an
-> X86_FEATURE_xxx so that it can be used via ALTERNATIVE_2 in KVM.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h   |  1 +
->  arch/x86/include/asm/nospec-branch.h |  2 --
->  arch/x86/kernel/cpu/bugs.c           | 11 +----------
->  arch/x86/kvm/mmu/spte.c              |  2 +-
->  arch/x86/kvm/vmx/vmx.c               |  4 ++--
->  5 files changed, 5 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 7129eb44adad..d1d7b5ec6425 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -501,6 +501,7 @@
->  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
->  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
->  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
-> +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
+On Fri, Oct 17, 2025 at 5:07=E2=80=AFPM Vipin Sharma <vipinsh@google.com> w=
+rote:
+> +static const struct liveupdate_file_ops vfio_pci_luo_fops =3D {
+> +       .retrieve =3D vfio_pci_liveupdate_retrieve,
+> +       .can_preserve =3D vfio_pci_liveupdate_can_preserve,
+> +       .owner =3D THIS_MODULE,
+> +};
+> +
+> +static struct liveupdate_file_handler vfio_pci_luo_handler =3D {
+> +       .ops =3D &vfio_pci_luo_fops,
+> +       .compatible =3D "vfio-v1",
+> +};
+> +
+> +void __init vfio_pci_liveupdate_init(void)
+> +{
+> +       int err =3D liveupdate_register_file_handler(&vfio_pci_luo_handle=
+r);
+> +
+> +       if (err)
+> +               pr_err("VFIO PCI liveupdate file handler register failed,=
+ error %d.\n", err);
+> +}
 
-Some bikeshedding from my side too:
-s/iff/if/
-
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Alex and Jason, should this go in the top-level VFIO directory? And
+then have all the preservation logic go through vfio_device_ops? That
+would make Live Update support for VFIO cdev files extensible to other
+drivers in the future.
 
