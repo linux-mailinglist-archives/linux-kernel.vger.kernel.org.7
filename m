@@ -1,249 +1,238 @@
-Return-Path: <linux-kernel+bounces-879565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9093BC237B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:58:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DF3C237BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31DDD4E9F82
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:58:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A63C3B7658
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5331430BBBC;
-	Fri, 31 Oct 2025 06:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F2130CDA9;
+	Fri, 31 Oct 2025 06:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="dbNmMD7x"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010066.outbound.protection.outlook.com [52.101.229.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ms1nzK0C"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7D03081B1;
-	Fri, 31 Oct 2025 06:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761893911; cv=fail; b=ig9hcz3gdOHAYxUYb7hY/H/G4UFGpKy2R4a9cuz4SSvOMTqqW22Gx3kU4BjxEIJbenu1P1kSkZxvxuV0IHWyBWdEwFUMSymLYRC8BJphf0nRUwDEJUpXXFsp/4BcxHFWOob+VwjY3EP50vbb6Wfaogmi85QQQQfDl3nn4agBZF0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761893911; c=relaxed/simple;
-	bh=VxS7VZ4oIPUP6FbiUJuPQhfeeYLX+9v7KFuzwivM4WA=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=l+Y+Ujk5m9MnPzB59+n3HgWZFD01DhpR6yzo+RFCUP5StbwUmVdhmMq3RZA8lV3nH3TibkM/7Jxi95Ebgv8z7JisSTqqWBiyEx59QN6W40Be+Nm5hl+GKtHyw03O+CfYBmVj7HRklr6FBnzxvQ/qukFyiM9lCd+6C3X1A0tDEJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=dbNmMD7x; arc=fail smtp.client-ip=52.101.229.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tDfq4PIR8kU3CS5N7d2c3vnFS8vLSVeuedWFliRpvjpWErRjwuYyhSSm7M+bjcwUOu132tnNYarnPzbhpgRt5KMfsR+hL7a7Br6jn6RTfxdZeOiTWBDPx1PsuGY1LYvjBBhcSIkNxnTaEBZJxxFc6ktmgJ8W5ZzutgkMw7SKSi2XiI9/HCjZxYSjwN3rJu2lHTwB3QrykdczBLfM2bc5FGoiRnZo76OoO3zJvkHsxV8QFM8QFcBcQ9CnQYivQh3RsArWs0Z4vIvBd6V07X2E5b0wOhUBmnxt6l0iogYxO8WhLNo5cqaZvBRl9vJu1Q/ALFoAMIfQqHWvT0FnBJv3FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GBP6TWKdtBkohZxGvmqugBsR/ELwjmgTDcvCnyPs2ps=;
- b=gFLd00ZxKwfmTUSQro5C4c4rd9Bvb6nl/sQLRZkmlgOE0WPF04v124YhUTTd/rF42tNzimIlh+cFDSB7u8KyOqDINyt7YCG6/H6gL+MrvgAzJ/syR8I5b+ytspa+wHK3/ml/JaEISM0z21+d6LK5B1FdknglclehYrN3V9XAdTVWJKS2v6faKTQMPS0xqnpuBmusq/FM67lp7hvzXhQxmMKvvDBRh89QTdLyeADK+YnHM3aEPf7BC9/EROLCwDXqFXGRYJ9drO1VLBxgD5KHl4zgsggcTWj0Bzpa/hKD4cmxjp0zZNQiourrj4OVoobHf77ae2lYg+EH775zCIo81A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GBP6TWKdtBkohZxGvmqugBsR/ELwjmgTDcvCnyPs2ps=;
- b=dbNmMD7xrwEqYeZXoullmJPfMuKrwVritbZ90YJzmzPUlnKzY0LRjWdUyzERN2rwO8x3rd/1r2ZUGEF3Um2FXaol/EiExpxXWK7MhtN7ONdttajspv3uYyFWdWW/VZcvSNQiEKBrwGYYkNV9pBctsS9SaTJjuG/5H44lqwMImFQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYWPR01MB9327.jpnprd01.prod.outlook.com
- (2603:1096:400:1a0::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 06:58:25 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%3]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 06:58:25 +0000
-Message-ID: <87ldkr36cv.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: HariKrishna Sagala <hariconscious@gmail.com>
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shuah@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] ASoC: soc-core: proposal to remove num_auto_selectable_formats from snd_soc_dai_ops
-In-Reply-To: <2daa603f-13fe-c803-17fc-4fdd8e5723ba@gmail.com>
-References: <2daa603f-13fe-c803-17fc-4fdd8e5723ba@gmail.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 31 Oct 2025 06:58:24 +0000
-X-ClientProxiedBy: TYCP301CA0083.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7b::13) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7472834D3B1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761893978; cv=none; b=MEIA6uGwbsDLNmCxoX4yLMkxKgQmdiLiQsLrLb3rEFue9VgYO3l5XX/pE8McOxhDfeSivdNa4PHGw6YANWy3UfpvYr1XAbd65WOkI0YVXzA8bkt4zjM58Ah7lIQrYvwkA7US45R75UekYvafwQWNBNy/YMEQzEPnJ5IYFEh1xg0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761893978; c=relaxed/simple;
+	bh=9BtHEqneFzU9QLRal6pIwf+tE4qGkklVwsPKkao5v08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KcY5ui1te901eF6ppDyoOuy8EkU06bax8pLraMtqrg9Y1vues04rSlOCx2+pQsLlfxEGFjLrz1kfX9xdIK5Eocoo3V5iIZHF9m4zIChx8E4u+sDiH33pjT0IlVgK7nQ1xTHyRxhK05dw79iNPmqrH/0zvzi1fHMubZgxnGUmSjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ms1nzK0C; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63c4f1e7243so2895831a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761893975; x=1762498775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bonxoFN411G1mtJ9G7HJf6xneNKoAlfM/6PZsK2PYNc=;
+        b=ms1nzK0CoF89uom4Gjb7FaZrsYmkiYRMZZ/T080DjB51X+c60kte+rxgGQBV5PL7ce
+         4mHJ3K9BfkqqAFuToQX5x7L+71tYbuN0IGpbBEJEEt5dznbpNp+CPU1jWrsRcEC7N8tm
+         3QGpT3sXkVv3b/0cdb0mLoYZ0bKaKarB09U15lB8rE06hgAG5nlubTrm/6nERc7DXHpu
+         Baai/aXTpocQU1/SER6lWZZ5i/f/vmUye+lDNvPCvHdBlRpDiVUAix609n60tuniwK9G
+         Gfv0SftaKJ5w/J23cY7mxEAKWjgv+Umm7ooJ73Ysk49PsVCm6ebTHvWD8bdffAnabvxi
+         //4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761893975; x=1762498775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bonxoFN411G1mtJ9G7HJf6xneNKoAlfM/6PZsK2PYNc=;
+        b=lJpZ727pAOatzzmISIG97orah1YNQVXdQAkaEt2B5LVw5Ug56OP8sItsOzKh+2uadz
+         L90A8hA0EDdux/FHN8tA3CEYKjJPrKG7Fc0z8hXYJ2lwBdzjwTnl7GxyhgkUHrxUO1IE
+         a9bzfOYceHmfhMsDm7G2QCwRU5cGMFdZKvDFXTI8TKb7+WQmJhHD+y3fOGAll2iLaIm0
+         qaxwtbeQ6pMD8pGAmHqnprW7S0O27jCTFWu+UBU1keYh3rgdjToe1GXjXMxkJLGsW/z/
+         o2tSPREYQjghP1/iut2f2hZbavXHP69vFqdHsQ+990gaUnXobBwCZG0UfmO+pi/23qLE
+         KmDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUeRN8DqDvJb59FUObfxbb/N3OJ6DICab1Lt8J70Qn53GVSJON0bAakiIK37nzFfKAwS4xSRxDeYGn5xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRteFqioNDnBdgO8yD/6Otc1K/sacTQ55zmGtLJrbjU2y5hjXX
+	DQI+D1koGmSwKI60YrW3GRNkBRQU0U0Z8kMvF6grrKh2MFjhyg3a+epkKO7+dnFyoPcBPHT+3hW
+	XGTO95Ffzftcrd74Yl1/EoXud1yFkkBc=
+X-Gm-Gg: ASbGncv9KEXabGXDIIuyTsYXmaE3ZJB1mwFpuyPmkOgRINAr2MeXWAxh8FNyFQUkEHy
+	uDWVAJxlnrGcBQRNEk6GlwDSMBV1wQ7CS54evNN9fv+C2WDDxXJYO0oPmWWyiQXrVcDsFacRZtJ
+	HqCewhKejgWm4ZICwn4N3y+nsLTxMoHmn4F25CgrAwWt06j+1TdgwH1EzyRL523SOP21QjvcIkc
+	KzOcUVoYKKTBhQmvkhS6kGfN2vwQDvyDJnTGCgx2GMmRkqFbcRNjHUbymYl
+X-Google-Smtp-Source: AGHT+IHGr1hi2b+pfVxXmRcZv7A2p33ANK3bqTjSjN3kzwzBVtrMI2IKzUdQ/4oNe6YhVGFoplORFbICYJmdH9bYSvE=
+X-Received: by 2002:a05:6402:3494:b0:634:a8fb:b91d with SMTP id
+ 4fb4d7f45d1cf-64076de1816mr1872200a12.0.1761893974392; Thu, 30 Oct 2025
+ 23:59:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYWPR01MB9327:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3edf2e28-fd70-4af0-6c4e-08de184ae307
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|3613699012|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SnJDbjV3ZGErRTZPS2ZFcnBXM1NTdjBlR3pJN2MvaFZCaGdPTmkzMUdIUjk5?=
- =?utf-8?B?dzUzTEVJWGNiRDJnWStHSWZId01ZZHk2Vk9nU0ZZWHA2eUZ4WXlnYmdCNFZp?=
- =?utf-8?B?ZExpL0dtNFFrTDdabDEweEpyb2c3ZkoyM0VzL2xhNnhKcUJFRlY4bWQ3ME9B?=
- =?utf-8?B?RnVDR0M5RG1Yc1BHendzR3ZKR1VsaS92TEJWUmpQZVV4QkxrUTVBdW9XcFhT?=
- =?utf-8?B?UU45NlQ4bWUwOEhhTDIwVTdDbmFHekREa3dMNU1XaFpYY3JLalZobStNaThG?=
- =?utf-8?B?Q0wvUzFmdU8xcXZXbWJFY3RKNjlRRkpMSjJjZjV5ajlNWlV4d0lSVjhBTWtR?=
- =?utf-8?B?MjAzTGdrMnVHcmg1d2M0STdxSFZhY25vcEVVUytFdC9QSUhpNGdWWDZKejRn?=
- =?utf-8?B?ajVVRkFTTHAwcDZ2QkpUN1Q1SzFKQVpKZ2l6ZkY3MkVqaVlSYWJXSFp3VC9O?=
- =?utf-8?B?U21SdC9ORmQ5dUVJeE9wcjRxMFdwMDJEVjhrVzdmU2pZZnVESUw0dFBxcjk2?=
- =?utf-8?B?NVh3NG00MDFZZmJ2REZKaUlPMUpINnhRNk5FL29HR001bUxJS252VEJBVldF?=
- =?utf-8?B?Vml0WVZLazk1SWdhQ0Y0WGFuc1RNamhEUm1hVlVOVjZ4TEZsdGY0STdJV0xV?=
- =?utf-8?B?K2w1SzhZbU1GbmhWOUVleEhMZHoveHMyTklsM3FpRStLcmtwdkxhdktuaGwv?=
- =?utf-8?B?TFlPQ1VJTGJYVGlabHZhSjB4RXlyWVFjNUdCT0VIVXRMejBKWlErVzQ5TlZt?=
- =?utf-8?B?dEhaTnNiV0pXMDVNY2hnaUFvMlZNZStkbjFaTnZ4bmxtUUdSR0phb0pGN0ti?=
- =?utf-8?B?RzZ4Y3pRcWNMSzRDOWZXTW0vcm5VSHpOL0F3akFGZ1pTVHUvL0cvY0Z3TG54?=
- =?utf-8?B?N01hTjF2dEZmTElGdTR3NVVTSzA3cGYxN2t0RDEra3hGVGdTaXFnLzF3dlFB?=
- =?utf-8?B?Z1ZkSU1OcTJoOThNZmQvandNS3JMb2NNZDY2VzdTaTBwSHJTSkorTkpyYTdU?=
- =?utf-8?B?Zkw1VlNJcFUxb2l3WDJsZ0pRSGtjNjFwSGNOUDV3MC8ybFgxdHhPY1dUM1dy?=
- =?utf-8?B?VFdwOVFQMEpPNEUrMDY4YjhabXBXM0VUaWNvNHdtb1I5VFo2cjBSOUJ1ckRC?=
- =?utf-8?B?aHhMdVdZVzdWN25nM2hzbHdSL3dKTk5XVU9wWVJkN0VZY2FpNldtN2ZrN05I?=
- =?utf-8?B?UnJCWUNGRUJaK3pPTGVyUE9MZ09oWVlvalgvMU1vOWc5bzBQRitDZkMrYXQx?=
- =?utf-8?B?d3FpME1zNDF1UFFtNkJhU29lTnZOa3N4UjcxSmlqMGZtVjQySXBXVnRRWFg4?=
- =?utf-8?B?RHBrdmw2YjIwbkF1djFEMDArdVY1U3pyWlFmd2JyT082V0MwSVAxVGF6OGhs?=
- =?utf-8?B?VnI4TlhVZC9MclVqVVNOaDhoWWt6N3pZSG41NFhSdDE0SGNwTHdFVGlSVERx?=
- =?utf-8?B?TTZURjBiUHJ4ck1WNklEbWJhbmk5VzFvc2cwK1diUGtBMlJWZ3pyZ01JZVc2?=
- =?utf-8?B?M0t0aVB3MUVjbmhxR3NhUnQ4UDROTXdlaUdINldJa2RRTVJoMUV0SEJSSkMy?=
- =?utf-8?B?b1JDSnlkZVM2S0JnYTdYU3hVd3hBV2RJeDNFYTlETDd3Ky9qajdyWHp4b3Y2?=
- =?utf-8?B?Ylk2VGhxUXNIdnkrZ2Y1MWpGMHp5QWZ4SWRFVmZkNGZkdk1HMElXNEZ2T3ll?=
- =?utf-8?B?Uml0cG01akVHbytkdEY0WVJNMjNzTDUwMHQwdndXQyszYmU5Q3U4cWp0SDlX?=
- =?utf-8?B?UEc0Y0hPUjZMZENqQkdiUy85NHJuNFplcnIyNzduVUtYby90cTRXODVpcnMw?=
- =?utf-8?B?a1JMeTJwK0hDcDdoVk5wVU9nUEgvanJwNnlmWHR4NE9rS3RmZ0wyRFBtZ3g0?=
- =?utf-8?B?UG9CY3Q5WWJaSU5mbytQbWJ5WVFVYlN1bTVPcTNxd3ZjRlhGbkJXQmlsMnUy?=
- =?utf-8?B?Z1NsNDhiMTRqN0ZnaElRVFdYaXF3TnlVUmVOc3gwZ3YvczRPNjl0T3cwUDhR?=
- =?utf-8?B?YXZ4UTNsdy9MZnJadDdMWXltNVlXNFZNZ0hMeFdsSERPUDFuWmdHUGo5cXN3?=
- =?utf-8?B?RWIwQzdrWHg1ZmdWa3hIUGYvbTlYckU3M05odz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(3613699012)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dXpCMVNNN1FnS0ZlNlJjc0Zvb0lEcklVR0w0ZExPY1ltZTkyYzBvTDdPandh?=
- =?utf-8?B?d3Z1eFRSbzhUamFPaDhVcVVla0NtdU1XSWFEQkZmUkdQdXBQU3FIWG9yS3Ro?=
- =?utf-8?B?cm9FV2tOOEQ4SDIyZnRuL3ZOYzVhOGZaUUI1Vytveit2Ukk0T0d4RXk1aENM?=
- =?utf-8?B?Tm1pVXN6VC9UOVM1QzhoNVUrMmlidlVZbjU2SDBnOFcwYWN6SU1sWTlEV2lC?=
- =?utf-8?B?aVVvd1lRa0tkcm9CMmJQc2EwcDdoTzNmdytUSHQ3aWxtVmN3aHpwV25DSXRL?=
- =?utf-8?B?aGZVdEpxQTc1OGE5OG9YS2ZTOGZpSmpaQXRZZ0JXNTgySEpwQW9HUXh5cWs2?=
- =?utf-8?B?am1nTm9tR05qYmlGa0tVUXRHZDgrTURLNlhSWTZNUXA0OW9Ra0dpWUwzZ0Vv?=
- =?utf-8?B?NWdYTVcwYlBUb1Zhby9vZlFIc3Y0NGp3ZXFmRXdSakhXNUlvbndMbGlTTnNs?=
- =?utf-8?B?VVFRQVZxVUE1RXdqR0E0bnd0SGtlbGJNT3ZPQjBGekc1NG5rQXZmN1dvaTZx?=
- =?utf-8?B?WGRHbytnTzBhNWlSeGdMWnRVZTk5OEIzQ2ltQ3psYlhnQ0JrMWJBSDlGbDE3?=
- =?utf-8?B?SHRJREkyWXBzeGRacEQ3U0E3dndVZVZEb2RWeDNLbTVUK3RVbEd6UHVmSnFQ?=
- =?utf-8?B?TEtHc3FMdkYzd0JDdDVLNWx0K3IxVWdtdmhjQ2I4Q0w3MjFFbHFFMHRBVkx0?=
- =?utf-8?B?blNOTGhWMjNmazNQeVNWMnY5U2dlWkpXcE83S3hiT0VIU1JsN25HWHBQTkls?=
- =?utf-8?B?emovYlZMWDRPS3pHa1BLZUJhYnNEK25Vd2lDdDZvNFpiRlA3bG9aV1V1dmM0?=
- =?utf-8?B?KzJpZjIrNjluemNBQnlKUlp5K0xYSnU2NGdURnpvcGJGOFlRMWdLbVdqSzFS?=
- =?utf-8?B?QVBxZGpRak96YVNKZTcwaWZVVGF0SGZydC85V1B2djlSaGtFRnUwR1BWMi9K?=
- =?utf-8?B?N1AvSkFaZjByb08wdkVTbENWTCtqVXJZR3BtM2RHdVkwa1BPb2tES3VHSlJz?=
- =?utf-8?B?Y0lMM0YvV3A0alh4ZlcyQThkR2dTY2lWMFdtQ3FqdlJrcEY2Rzl3c2tUdFFC?=
- =?utf-8?B?NmJNSDRlL3Y4dDdQVzRNN2Rtd0VHZmRiaFdIMDZwNkc5QXF0SU55UldmcUtM?=
- =?utf-8?B?ZlNmbFZUTWtlZXljdWE0L3RkeDNwKzQvNG9iQUJ4ZnJCRytpL2dXMHlCTk51?=
- =?utf-8?B?OG9OdlBhdU5YWEVmdDNhblRvait5Yk9OU3BpQUlVQldwai9KSEUyOU4rUnZa?=
- =?utf-8?B?ZUlubjU3SlVGWkswNVcvNnZUOFpQb3dTc3ZoVStOMGZoMHY0K2ZIeTVWdHlG?=
- =?utf-8?B?cWgxOXhIczVqZ1dSMGkzNGlZRFBMSkozWWwwRERiRkZpb01FZERxUUtTTVM4?=
- =?utf-8?B?aGE3K2RQR1hjWW9nZ2c5anFZb2V2UUlrTk5uR2RXRjU3MEpsbVY5NnVGZFg1?=
- =?utf-8?B?dkc0ZkZyNURRRjQ5VHhlVUtoc0Nhd2FEQ1V0VEUyVXhyRHllQzQvKzU0bStB?=
- =?utf-8?B?aDlEbXVKVXpoVFVhek9rQVhyVDcycUN3MXcvWTJEZjBLRDJPT1pKQ1h4VUw4?=
- =?utf-8?B?b2dMaTBWM3ZQc1JnRXFoU291TlB5RXpuV3VrQzJZa2dTakNqUFhhcXFnZUgv?=
- =?utf-8?B?TjJKYzJUbXZZQXNZTVVGM1E3N3VGd3dHdE9IOHB6bDc3U2lNdXYxVUNMblBz?=
- =?utf-8?B?VCs4NERGcXUxb1FkRnhqb0srTjZzN0pMUUNDZ21qM3AwM2l0MU5UMzhaS3hy?=
- =?utf-8?B?ZTVpUGNoS2ZPNVl6UGlkVG8rV25xbzlRQ2NZMmRlaUN5S2xRdEJSSldSU0hz?=
- =?utf-8?B?Ulh4RTQ5aytwSDRvRkR0VEs2bnZUZGxQdUJZMWFnRDd0UzNldFRNd09Xdjhx?=
- =?utf-8?B?cXJTVDNvVUhRNFlHckVKQmJ3bmxldmlDelJIdzdWdHBxTmFLR0xCRE1weHkw?=
- =?utf-8?B?cEx6UTNiK1VWYVhnQ2RxUjlSS1ZmVi9wb2VMWFdLUjNGMzJWdVM1cVp0cHJX?=
- =?utf-8?B?NVBtS3VKVWhUSkQ2WXZyOFVXSmp2TFBxL2hxMFZiZFU2eDEzaWVHSmN3N2o0?=
- =?utf-8?B?OFBpWjBCa3k2RGllSnhnZlVBWHdKblRIMWxWYVZlR3RVZm5CREI3dUFWWDRT?=
- =?utf-8?B?K2hvVk5VWnVsUTJMMzNIczdLbTRaR25qQWlzZ3YvbkNYenNiVmpJb21yQ2Na?=
- =?utf-8?Q?UJ3UGF75NieGHxXij6/Hz30=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3edf2e28-fd70-4af0-6c4e-08de184ae307
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 06:58:25.0055
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GLSiFfLoHpq0fQAe7lNZL0Gg7RuuMY+2tUW7w1h2A2vpBLp0enFUJragRW0AzvDpBeLuFed2GYZGu7vvN3M5543dcRK1Ks3dtrdaYf/hxW0xxqFnSQNpNNPxF4Qrk1Ln
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9327
+References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com> <bvavihwrtkbnsqgjbotwihckxzmnhdd4e6jre4j7xdiyyeyv5o@dnnuyacthvms>
+In-Reply-To: <bvavihwrtkbnsqgjbotwihckxzmnhdd4e6jre4j7xdiyyeyv5o@dnnuyacthvms>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 31 Oct 2025 14:58:58 +0800
+X-Gm-Features: AWmQ_bngUH51OPE8Nr1L_1C4UgHIWE6Hp2m_74eI1jG787uNXrEWhtGWTucSHxA
+Message-ID: <CAMgjq7AC9D6nOcU46ceWcLxCcPp=dezeOeaoMwsdHdSsLp85Ew@mail.gmail.com>
+Subject: Re: [PATCH 00/19] mm, swap: never bypass swap cache and cleanup flags
+ (swap table phase II)
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 31, 2025 at 7:05=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev>=
+ wrote:
+>
+> On Wed, Oct 29, 2025 at 11:58:26PM +0800, Kairui Song wrote:
+> > This series removes the SWP_SYNCHRONOUS_IO swap cache bypass code and
+> > special swap bits including SWAP_HAS_CACHE, along with many historical
+> > issues. The performance is about ~20% better for some workloads, like
+> > Redis with persistence. This also cleans up the code to prepare for
+> > later phases, some patches are from a previously posted series.
+> >
+> > Swap cache bypassing and swap synchronization in general had many
+> > issues. Some are solved as workarounds, and some are still there [1]. T=
+o
+> > resolve them in a clean way, one good solution is to always use swap
+> > cache as the synchronization layer [2]. So we have to remove the swap
+> > cache bypass swap-in path first. It wasn't very doable due to
+> > performance issues, but now combined with the swap table, removing
+> > the swap cache bypass path will instead improve the performance,
+> > there is no reason to keep it.
+> >
+> > Now we can rework the swap entry and cache synchronization following
+> > the new design. Swap cache synchronization was heavily relying on
+> > SWAP_HAS_CACHE, which is the cause of many issues. By dropping the usag=
+e
+> > of special swap map bits and related workarounds, we get a cleaner code
+> > base and prepare for merging the swap count into the swap table in the
+> > next step.
+> >
+> > Test results:
+> >
+> > Redis / Valkey bench:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Testing on a ARM64 VM 1.5G memory:
+> > Server: valkey-server --maxmemory 2560M
+> > Client: redis-benchmark -r 3000000 -n 3000000 -d 1024 -c 12 -P 32 -t ge=
+t
+> >
+> >         no persistence              with BGSAVE
+> > Before: 460475.84 RPS               311591.19 RPS
+> > After:  451943.34 RPS (-1.9%)       371379.06 RPS (+19.2%)
+> >
+> > Testing on a x86_64 VM with 4G memory (system components takes about 2G=
+):
+> > Server:
+> > Client: redis-benchmark -r 3000000 -n 3000000 -d 1024 -c 12 -P 32 -t ge=
+t
+> >
+> >         no persistence              with BGSAVE
+> > Before: 306044.38 RPS               102745.88 RPS
+> > After:  309645.44 RPS (+1.2%)       125313.28 RPS (+22.0%)
+> >
+> > The performance is a lot better when persistence is applied. This shoul=
+d
+> > apply to many other workloads that involve sharing memory and COW. A
+> > slight performance drop was observed for the ARM64 Redis test: We are
+> > still using swap_map to track the swap count, which is causing redundan=
+t
+> > cache and CPU overhead and is not very performance-friendly for some
+> > arches. This will be improved once we merge the swap map into the swap
+> > table (as already demonstrated previously [3]).
+> >
+> > vm-scabiity
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > usemem --init-time -O -y -x -n 32 1536M (16G memory, global pressure,
+> > simulated PMEM as swap), average result of 6 test run:
+> >
+> >                            Before:         After:
+> > System time:               282.22s         283.47s
+> > Sum Throughput:            5677.35 MB/s    5688.78 MB/s
+> > Single process Throughput: 176.41 MB/s     176.23 MB/s
+> > Free latency:              518477.96 us    521488.06 us
+> >
+> > Which is almost identical.
+> >
+> > Build kernel test:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Test using ZRAM as SWAP, make -j48, defconfig, on a x86_64 VM
+> > with 4G RAM, under global pressure, avg of 32 test run:
+> >
+> >                 Before            After:
+> > System time:    1379.91s          1364.22s (-0.11%)
+> >
+> > Test using ZSWAP with NVME SWAP, make -j48, defconfig, on a x86_64 VM
+> > with 4G RAM, under global pressure, avg of 32 test run:
+> >
+> >                 Before            After:
+> > System time:    1822.52s          1803.33s (-0.11%)
+> >
+> > Which is almost identical.
+> >
+> > MySQL:
+> > =3D=3D=3D=3D=3D=3D
+> > sysbench /usr/share/sysbench/oltp_read_only.lua --tables=3D16
+> > --table-size=3D1000000 --threads=3D96 --time=3D600 (using ZRAM as SWAP,=
+ in a
+> > 512M memory cgroup, buffer pool set to 3G, 3 test run and 180s warm up)=
+.
+> >
+> > Before: 318162.18 qps
+> > After:  318512.01 qps (+0.01%)
+> >
+> > In conclusion, the result is looking better or identical for most cases=
+,
+> > and it's especially better for workloads with swap count > 1 on SYNC_IO
+> > devices, about ~20% gain in above test. Next phases will start to merge
+> > swap count into swap table and reduce memory usage.
+> >
+> > One more gain here is that we now have better support for THP swapin.
+> > Previously, the THP swapin was bound with swap cache bypassing, which
+> > only works for single-mapped folios. Removing the bypassing path also
+> > enabled THP swapin for all folios. It's still limited to SYNC_IO
+> > devices, though, this limitation can will be removed later. This may
+> > cause more serious thrashing for certain workloads, but that's not an
+> > issue caused by this series, it's a common THP issue we should resolve
+> > separately.
+> >
+> > Link: https://lore.kernel.org/linux-mm/CAMgjq7D5qoFEK9Omvd5_Zqs6M+TEoG0=
+3+2i_mhuP5CQPSOPrmQ@mail.gmail.com/ [1]
+> > Link: https://lore.kernel.org/linux-mm/20240326185032.72159-1-ryncsn@gm=
+ail.com/ [2]
+> > Link: https://lore.kernel.org/linux-mm/20250514201729.48420-1-ryncsn@gm=
+ail.com/ [3]
+> >
+> > Suggested-by: Chris Li <chrisl@kernel.org>
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+>
+> Unfortunately I don't have time to go through the series and review it,
+> but I wanted to just say awesome work here. The special cases in the
+> swap code to avoid using the swapcache have always been a pain.
+>
+> In fact, there's one more special case that we can probably remove in
+> zswap_load() now, the one introduced by commit 25cd241408a2 ("mm: zswap:
+> fix data loss on SWP_SYNCHRONOUS_IO devices").
 
-Hi HariKrishna
+Thanks! Oh, now I remember that one, it can be removed indeed. There
+are several more cleanup and optimizations that can be done after this
+series, it's getting too long already so I didn't include everything.
 
-Thank you for suggestion
-
-> I=CA=BCd like to propose a small cleanup and simplification in the
-> snd_soc_dai_ops structure by removing the
-> "num_auto_selectable_formats" parameter.
-
-Do you mean like this ?
-
-	struct snd_soc_dai_ops {
-		...
-		const u64 *auto_selectable_formats;
-	-	int num_auto_selectable_formats;
-		...
-	};
-
-> Currently,snd_soc_dai_ops includes the "num_auto_selectable_formats"
-> field to indicate the number of entries in the "auto_selectable_formats"
-> array.However, this count can be derived programmatically using the
-> ARRAY_SIZE() macro wherever needed.
-
-If my understanding was correct, unfortunately we can't do it.
-
-We can use ARRAY_SIZE() in each driver, because we can access to raw array.
-But can't use it on ASoC framework, becase auto_selectable_formats is just
-a pointer. see how ARRAY_SIZE() is defined.
-
-	--- driver ---
-	my_formats[] =3D {
-		[0] =3D SND_SOC_POSSIBLE_DAIFMT_xxx | SND_SOC_POSSIBLE_DAIFMT_xxx ...,
-		[1] =3D SND_SOC_POSSIBLE_DAIFMT_xxx | SND_SOC_POSSIBLE_DAIFMT_xxx ...,
-	};
-
-	// We can use ARRAY_SIZE() in driver, because we know raw array.
-	my_dai_ops =3D {
-		...
-		.auto_selectable_formats	=3D my_formats,
-=3D>		.num_auto_selectable_formats	=3D ARRAY_SIZE(my_formats),
-	};
-
-	--- soc-xxx.c ---
-	// it will be error, because we don't know its size
-=3D>	int num =3D ARRAY_SIZE(ops->auto_selectable_formats);
-
-Or do you mean create new macro, like this ?
-
-	#define ASOC_SELECT_FORMATS(array)\
-		.auto_selectable_formats	=3D array,
-		.num_auto_selectable_formats	=3D ARRAY_SIZE(array)
-
-	my_ops =3D {
-		...
-	-	.auto_selectable_formats	=3D my_formats,
-	-	.num_auto_selectable_formats	=3D ARRAY_SIZE(my_formats),
-	+	ASOC_SELECT_FORMATS(my_formats),
-	};
-
-Or am I misunderstanding your suggestion ?
-
-
-Thank you for your help !!
-
-Best regards
----
-Kuninori Morimoto
+But removing 25cd241408a2 is easy to do and easy to review, I can
+include it in the next update.
 
