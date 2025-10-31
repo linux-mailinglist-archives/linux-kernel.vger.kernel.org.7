@@ -1,228 +1,182 @@
-Return-Path: <linux-kernel+bounces-880771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85604C26851
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA150C2686C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27FC34E4B6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:04:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6E4B4E228C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE083502AA;
-	Fri, 31 Oct 2025 18:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6A0350A0A;
+	Fri, 31 Oct 2025 18:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dedxiGL5"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ngUDwiD3"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982522BEC20
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4637C2FE593;
+	Fri, 31 Oct 2025 18:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761933871; cv=none; b=O4ht0TQ6z2SfJVkUTzsTkLpCoSYshXps5LYJCaZtF8Pi3Y5r/2swfElNpy6GX36atByIJRWXL5Wwthjz5zaGdRW0KTAIQjuaVXtR/zirNIkJTQVlrR3XZuR63rj0KCLKBtCU78YTQ6tyYBDlG7uzQ4Xg/8JaftTEvl97AGSsMh8=
+	t=1761934195; cv=none; b=RMwEsBThcjEHHN1e4TKI0Z5p8CKoSuIeZzhr/xAjq3yNdS5lU5x3dFkHENU7LGzVurNXMgG8+ANEhwMnQdz8n6MwPVDSaas90EBYWpoH/3JXEUTAwmmzTu5fmfcMjHvOwPB0TIFGsx/UHJh+WZbKXxlcY77IU31Grh1IkgXcySA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761933871; c=relaxed/simple;
-	bh=YfFttLxdiNG6z3RJOZ3GHRS6fWTjvMmw1M5uEGGP5Aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qtWuVYg754mXbH/txHKFCfCMOj/CSnlBZCdcU+QonH9o1Dq6b9663oFEuPwpBTdGYUsEkC5mGmW25jhJKN/pjqRj+CgTF3yLcB1dGpBiEo58mxObJmm+KRTAN6U6wUFV5IlrGlZuOWUmtqT+ubFnIlYKX3UzOO9oSQEgzVBRbOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dedxiGL5; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710022571cso26684765e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761933868; x=1762538668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=49KrRFv9kd1q36NjTnjLGrfTzqfV10YN5BSsLat3zVI=;
-        b=dedxiGL5qTbImcoy5yN1l/kujf2w2e6bTqe1+n9H1yhYzml5XX0OcrHrcGhkZ+5eWp
-         V9NDEeuPvyU432plpXA9ZHbt1equMni8K4QMMw3TkbYyGZTSzoYKDW0o/JLMCyMfz5lh
-         Oldj+kG1Mm77XiBo3PHHHnqNtazedjYtqVUWA87tZancROKaLiTX2bKreJokcgLOO9b6
-         C4G8tG872Auvz7fhOhbx2/mnEYrTvgG9vHXvmAMCiuUpkStFa914dyc88ZKVLb16xxea
-         KF3dXzjN3v7Bos6Ww1GOmJsvc9/zxN8OWyWNWYi+5/mqy9qfomML3TJWYgxEUYTpu0Th
-         Nfcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761933868; x=1762538668;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=49KrRFv9kd1q36NjTnjLGrfTzqfV10YN5BSsLat3zVI=;
-        b=UrYxFcZnLy+LSmx0fn2WKshyg8XYo0trAgQkJ0OVlg2ASeFGku7T1BcZP8CrsoqBk+
-         0acvJ3RTuJQSpnuVlkPpUGoF/abBbL42LoCL88BOocQ20c1qB6I0eD5qssN0d26uNdPf
-         YzrQgCy7LVfB3KD8g39xwTp0FmtvmGjFqcpmsBzgVi6k2s9nE8J/pTeRdlICRu7XPyjc
-         tJc58SrTd0MlosRvAF3q3SR7c5O+6dDc1lgcDkTBdLrCC5BD3RnwjhdBqoY0M5M2MFiC
-         iLcVmQ+kqHo64urae9QzRAK/WoSRlTj+oS9+BXVdkZMoZ/x1ADg96ihIZnqMr5ZhonWa
-         H3Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRocBHiOjTSb+6BrVxHko+x/lSJdzVqIn7B/5DGzb/3z5YxtU+ng0nsUVJx73h+8P06WUqHDDGpCAOYqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysUD24Tanvaq81Nlyx4+eCsnpAeFwU1WWj4WkvLWJmEbHPZwPw
-	j6fPQIzKOJj5lCaVjR6U7o8r2nl7eHaBszjGKilw4o+OobnvnL7gLfK6
-X-Gm-Gg: ASbGncuAEQCSRviobrCtuq7LO2SxULrpwtM0OJtSXqhEf8YZm+iAxUIAXHJQdMcBQyO
-	t0FHulaZ/Zv7b8IsfNbQB22ejKodQEnFzixNbCDhfn9bqtcsWSzBcKsMCEoaB0cqNHN2gLRFZQJ
-	aRZBX5nTaDlNWRbkyWMnmH8IkkiiCoBhSb8LeqZUp8EDDV92ChEgTnOquvTOKsWhknrKAjkvPdh
-	/YNpyo+ztg6aaHbYCdb8DKSNTWqzRp0O1HMoq7psK12oe60ISTHoOGA7moLfX7BOYtuatLpKUba
-	qUxljGe0pzIsH2159aPzq/cmSuweup8gbSO6KF1RIB3I9SyEKoVKg6MxFkBFqTQtACEyBWT9DH7
-	wGQunuR8cBlvC0HHc73Z51w5d9A9QfR2l0EjzqPXcIsWW7QDR4W75u4SZemwVWe4rNQZFKgsH9s
-	MKbEWe8VWvG///EHKoUzrtfC9utC6wvfeQ8DWvmFWVgXDZ4yRyphJJ
-X-Google-Smtp-Source: AGHT+IH363goOBXAGB8IPKboqgUYUHaNtdeHhYyLSPS2cS0DA9/uGuq1s/28cgkYsbzIPfs2Y+jhGQ==
-X-Received: by 2002:a05:600c:3e83:b0:477:fad:acd9 with SMTP id 5b1f17b1804b1-477308a4e55mr51789215e9.34.1761933867282;
-        Fri, 31 Oct 2025 11:04:27 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c383b75sm9839515e9.11.2025.10.31.11.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 11:04:26 -0700 (PDT)
-Date: Fri, 31 Oct 2025 18:04:24 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Nicolas Pitre <npitre@baylibre.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas
- Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, Yu Kuai
- <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe
- <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 3/9] lib: mul_u64_u64_div_u64() simplify check
- for a 64bit product
-Message-ID: <20251031180424.006f117b@pumpkin>
-In-Reply-To: <689390nn-ssr5-3341-018r-s181qrr81qop@onlyvoer.pbz>
-References: <20251029173828.3682-1-david.laight.linux@gmail.com>
-	<20251029173828.3682-4-david.laight.linux@gmail.com>
-	<26p1nq66-8pq5-3655-r7n5-102o989391s2@onlyvoer.pbz>
-	<20251031091918.643b0868@pumpkin>
-	<689390nn-ssr5-3341-018r-s181qrr81qop@onlyvoer.pbz>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1761934195; c=relaxed/simple;
+	bh=X/T7VlrmfUiETjz48xqNtteS+0WZkcyXhboH0dEXXBk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=svTx0u0YGdf6Fk2zeevLsSfFIwGtiEp4ClZ0WjNqF6NnJm1Q980BfB9BB1HuAx5FwwaS+K5LZVreCmRMAk1s6+QFaK606zcHdTWs2ztMlbcZ3vephyS4yLi1SSHL6d/EykyYs3Z2zrCL6+xD/FL8C5lEKjUIi99Fd+Pwg7h8flY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ngUDwiD3; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761934190; x=1762538990; i=markus.elfring@web.de;
+	bh=zLLGdw6y9rxoGlcn52s8qTx9QBXWfNxJq1UtVJsoiNQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ngUDwiD3a6/xx2psZ4rBKVbHU1Ki1CIPJDPH7I4kQmUIVEn6b3XrAVeMCKEytPuu
+	 TQRqmjcslvaKz2iv8Ti6YUZGEqcnpUUFD0CARhg83UlFCdQmSMMtKgdAggomdVhBy
+	 nfEKnq4nFDuSXE07XLmG7xyDkpkzVK0RDsuFtnlhqbfd+JJ+CHSwk7+e+3Bebb2RJ
+	 QvJvSwQF3aa6lIaF6Jbd35lgBJJ5UDbP5Hy6zE8o1TTJDZUP+YOgxCC68YfBrL8R/
+	 5QSyvv7Q8tjQjjb+fUPGh48JZyC7RFImHhErMcdB3JfLJyuzTXOjkKNJdj8Sq/XbE
+	 Yz9U+JNATNe8F24P9g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.206]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSqTE-1vgpjk09ss-00KcGx; Fri, 31
+ Oct 2025 19:09:50 +0100
+Message-ID: <836861fb-c9fd-4bb4-86c0-9d39d29f6bab@web.de>
+Date: Fri, 31 Oct 2025 19:09:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: linux-fpga@vger.kernel.org, Alan Tull <atull@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Moritz Fischer <mdf@kernel.org>, Richard Gong <richard.gong@intel.com>,
+ Tom Rix <trix@redhat.com>, Xu Yilun <yilun.xu@intel.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Miaoqian Lin <linmq006@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] fpga: stratix10-soc: Use pointer from memcpy() call for
+ assignment in s10_send_buf()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:szpmJIbNBkJQld1Z6+5NznEAogcD4CX1azLjcwRxJqVQIEYkTgc
+ gFGqTzRxSDjK9KUbfwv+kCw1pT2WtRM4HxOL2UrVwiC9xnl/V6sP0dC33NsjAjnSNL+dwQJ
+ AEEeOqX5InhNYYt5bd1msOJcHnqKvLsr0r7WuDgQ1lGI25QfBQUvvlTPklkNFkM9Rewms8O
+ gTq4SiEYHLd3h3QdFgVug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QWFeVmZIzXs=;M5npvOdFQHaBnYA4RNKBW4cy/iQ
+ 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
 
-On Fri, 31 Oct 2025 13:26:41 -0400 (EDT)
-Nicolas Pitre <npitre@baylibre.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 31 Oct 2025 18:58:50 +0100
 
-> On Fri, 31 Oct 2025, David Laight wrote:
-> 
-> > On Wed, 29 Oct 2025 14:11:08 -0400 (EDT)
-> > Nicolas Pitre <npitre@baylibre.com> wrote:
-> >   
-> > > On Wed, 29 Oct 2025, David Laight wrote:
-> > >   
-> > > > If the product is only 64bits div64_u64() can be used for the divide.
-> > > > Replace the pre-multiply check (ilog2(a) + ilog2(b) <= 62) with a
-> > > > simple post-multiply check that the high 64bits are zero.
-> > > > 
-> > > > This has the advantage of being simpler, more accurate and less code.
-> > > > It will always be faster when the product is larger than 64bits.
-> > > > 
-> > > > Most 64bit cpu have a native 64x64=128 bit multiply, this is needed
-> > > > (for the low 64bits) even when div64_u64() is called - so the early
-> > > > check gains nothing and is just extra code.
-> > > > 
-> > > > 32bit cpu will need a compare (etc) to generate the 64bit ilog2()
-> > > > from two 32bit bit scans - so that is non-trivial.
-> > > > (Never mind the mess of x86's 'bsr' and any oddball cpu without
-> > > > fast bit-scan instructions.)
-> > > > Whereas the additional instructions for the 128bit multiply result
-> > > > are pretty much one multiply and two adds (typically the 'adc $0,%reg'
-> > > > can be run in parallel with the instruction that follows).
-> > > > 
-> > > > The only outliers are 64bit systems without 128bit mutiply and
-> > > > simple in order 32bit ones with fast bit scan but needing extra
-> > > > instructions to get the high bits of the multiply result.
-> > > > I doubt it makes much difference to either, the latter is definitely
-> > > > not mainstream.
-> > > > 
-> > > > If anyone is worried about the analysis they can look at the
-> > > > generated code for x86 (especially when cmov isn't used).
-> > > > 
-> > > > Signed-off-by: David Laight <david.laight.linux@gmail.com>    
-> > > 
-> > > Comment below.
-> > > 
-> > >   
-> > > > ---
-> > > > 
-> > > > Split from patch 3 for v2, unchanged since.
-> > > > 
-> > > >  lib/math/div64.c | 6 +++---
-> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/lib/math/div64.c b/lib/math/div64.c
-> > > > index 1092f41e878e..7158d141b6e9 100644
-> > > > --- a/lib/math/div64.c
-> > > > +++ b/lib/math/div64.c
-> > > > @@ -186,9 +186,6 @@ EXPORT_SYMBOL(iter_div_u64_rem);
-> > > >  #ifndef mul_u64_u64_div_u64
-> > > >  u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
-> > > >  {
-> > > > -	if (ilog2(a) + ilog2(b) <= 62)
-> > > > -		return div64_u64(a * b, d);
-> > > > -
-> > > >  #if defined(__SIZEOF_INT128__)
-> > > >  
-> > > >  	/* native 64x64=128 bits multiplication */
-> > > > @@ -224,6 +221,9 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
-> > > >  		return ~0ULL;
-> > > >  	}
-> > > >  
-> > > > +	if (!n_hi)
-> > > > +		return div64_u64(n_lo, d);    
-> > > 
-> > > I'd move this before the overflow test. If this is to be taken then 
-> > > you'll save one test. same cost otherwise.
-> > >   
-> > 
-> > I wanted the 'divide by zero' result to be consistent.  
-> 
-> It is. div64_u64(x, 0) will produce the same result/behavior.
+A pointer was assigned to a variable. The same pointer was used for
+the destination parameter of a memcpy() call.
+This function is documented in the way that the same value is returned.
+Thus convert two separate statements into a direct variable assignment for
+the return value from a memory copy action.
 
-Are you sure, for all architectures?
+The source code was transformed by using the Coccinelle software.
 
-> 
-> > Additionally the change to stop the x86-64 version panicking on
-> > overflow also makes it return ~0 for divide by zero.
-> > If that is done then this version needs to be consistent and
-> > return ~0 for divide by zero - which div64_u64() won't do.  
-> 
-> Well here I disagree. If that is some x86 peculiarity then x86 should 
-> deal with it and not impose it on everybody. At least having most other 
-> architectures raising SIGFPE when encountering a divide by 0 should 
-> provide enough coverage to have such obviously buggy code fixed.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/fpga/stratix10-soc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The issue here is that crashing the kernel isn't really acceptable.
-An extra parameter could be added to return the 'status',
-but that makes the calling interface horrid.
-So returning ~0 on overflow and divide-by-zero makes it possible
-for the caller to check for errors.
-Ok, you lose ~0 as a valid result - but that is very unlikely to
-need to be treated differently to 'overflow'.
-
-> 
-> > It is worth remembering that the chance of (a * b + c)/d being ~0
-> > is pretty small (for non-test inputs), and any code that might expect
-> > such a value is likely to have to handle overflow as well.
-> > (Not to mention avoiding overflow of 'a' and 'b'.)
-> > So using ~0 for overflow isn't really a problem.  
-> 
-> It is not.
-> 
-> To be clear I'm not talking about overflow nor divide by zero here. I'm 
-> suggesting that the case where div64_u64() can be used should be tested 
-> first as this is a far more prevalent valid occurrence than a zero 
-> divisor which is not.
-
-and I'd rather use the same error path for 'divide by zero'.
-
-	David
-
-> 
-> 
-> Nicolas
+diff --git a/drivers/fpga/stratix10-soc.c b/drivers/fpga/stratix10-soc.c
+index 0a295ccf1644..2e1167668ca8 100644
+=2D-- a/drivers/fpga/stratix10-soc.c
++++ b/drivers/fpga/stratix10-soc.c
+@@ -257,8 +257,7 @@ static int s10_send_buf(struct fpga_manager *mgr, cons=
+t char *buf, size_t count)
+=20
+ 	xfer_sz =3D count < SVC_BUF_SIZE ? count : SVC_BUF_SIZE;
+=20
+-	svc_buf =3D priv->svc_bufs[i].buf;
+-	memcpy(svc_buf, buf, xfer_sz);
++	svc_buf =3D memcpy(priv->svc_bufs[i].buf, buf, xfer_sz);
+ 	ret =3D s10_svc_send_msg(priv, COMMAND_RECONFIG_DATA_SUBMIT,
+ 			       svc_buf, xfer_sz);
+ 	if (ret < 0) {
+=2D-=20
+2.51.1
 
 
