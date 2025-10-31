@@ -1,527 +1,220 @@
-Return-Path: <linux-kernel+bounces-879346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133CEC22E4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:39:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201E7C22E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192813B18C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:38:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F981893DB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F4B253356;
-	Fri, 31 Oct 2025 01:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3932561AE;
+	Fri, 31 Oct 2025 01:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mjOL9NBy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UPHEqcW+"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2526C1A0BD6;
-	Fri, 31 Oct 2025 01:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DA74C9D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761874720; cv=none; b=Y3raC8i9WDVspdQ/Lt9NKVKngaTN+BpMleimkZwjDxaz00a54lV88UZrihOeaMy+QczFANeJMu/wl2XB5qKsI/TeX5300cM5mi4delNIiswHWwrDt/9iYApD0zf8351c474gRET6T2LQx+uIauNrfz7um2tnEUjpVu4M1iJ4dMc=
+	t=1761874933; cv=none; b=idHMuLExLSGD4s/sLyaMCA5rJ07r5ZkCSYSahNaDBWdO2Sga3OC/e0T2zbVAZkZWPqE0Beh09QVA3CCOGrpQZrkhl+HKpqvs6j4N66gdeB6aA2OIXmPJTXFnUBGH9C8p4wGDg4WUn+X7kUj8wUBNnLBhTLIndN1ZIctt4sPyWWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761874720; c=relaxed/simple;
-	bh=BHiiT5Bfg+sFqya7R0d8CbR5Mfy6EzHMQ6z4HvKGY0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LuE3KtHi7tmcO3feMirBNiK78JKiHbjEn9HyNVqAVKh0BHGw79FlYxisG8Gnvbz7MYpUH/A2K67F1HDB1/6rvFrzHdMMonJPmr6KBuUuPYhbFgqhSbI1hiVqwpKOnM79gwFJqtPzJ5smfPQQGtEA8SQzfLnDIkOrzsZynv6KvUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mjOL9NBy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761874714;
-	bh=PYUiL+0V/cAR3Reu0+ixQuOq/kSh5SzuNdMBa0Obe3U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mjOL9NByobrA9rW4IdexS3RXI0PXddIhq9nMk49FugrhdSxNFchk7bz/JsiRbhtOg
-	 drWMXJpy2jh5RbLm+HULU0/+2MBX1vKXXQLmmuHRv8fwwuKg6T6IK+enDHLJ5A9mpP
-	 bYsTuSOmKauyUhGzjTDQTo/xRZSZSkFIeGGusB06U1R4DrHispQf8GirRMFAfSc/Ps
-	 6PUgE6DYL5C7vs0ru2ZCrvYX99rOONxSTRFK/MD4VLCoPum9+AI2auXyrjIbEcoIkV
-	 bZjgurgoF/Pilfkbk8Gw6EBQwSd3FkR1xf/qXgRA2EFu0MKv/Ud5fey8lXXDNfM9MD
-	 AhUNhjp1zQNhg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyNt20dMtz4wc4;
-	Fri, 31 Oct 2025 12:38:34 +1100 (AEDT)
-Date: Fri, 31 Oct 2025 12:38:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20251031123833.1dbd0130@canb.auug.org.au>
-In-Reply-To: <20251031121812.1db72425@canb.auug.org.au>
-References: <20251031120243.4394e6a8@canb.auug.org.au>
-	<20251031121812.1db72425@canb.auug.org.au>
+	s=arc-20240116; t=1761874933; c=relaxed/simple;
+	bh=NdF/5rJM0j5OPWw44GZANVRkOgMlktUfwzO+La+5zHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l2Wd4+dTe1OMmaeH84XzWFqOfFGmynG6BiarhtaF4Um4xWVi1SsiejCZIL3u0HGCVoiGf4uA6J+81b1weZnUlD+CZrQ8tW6MKlUb6k6uS8DGI/W23ya3gpo5Flra8pFSnxpeSzJf5kgqxmMKIT6jiyZrK+a0g/nsYukCCVKjFTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UPHEqcW+; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a0d97e2d-91f5-448c-883c-4d0930375f82@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761874925;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCYrDBcE+YrmiGBoOlXRYwdmc8Z2PMQgBrg8K27fepM=;
+	b=UPHEqcW+IxkoJpImSx3ZDl83BQDa0VpwRS5cOBOket+1geFYsKMMqLiKLmYr1ZjIkNSWte
+	mX5s4p28m+HjYkcXHIS5rFoUQKcmOhY+Wid1ejPes2utKXC7NX4vqwrqraXQ6UuN2xuc0m
+	TpZl4+OzAIfqOOyO9hZGN04Eok9CiEo=
+Date: Fri, 31 Oct 2025 09:41:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LcOTsX+LdJosb8gjuj83z+O";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Subject: Re: [PATCH v4 15/24] smb: move FILE_SYSTEM_POSIX_INFO to
+ common/smb1pdu.h
+To: chenxiaosong.chenxiaosong@linux.dev, sfrench@samba.org,
+ smfrench@gmail.com, linkinjeon@kernel.org, linkinjeon@samba.org,
+ christophe.jaillet@wanadoo.fr
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/LcOTsX+LdJosb8gjuj83z+O
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Namjae and Steve,
 
-Hi all,
+I couldn’t find the definition of FILE_SYSTEM_POSIX_INFO in any of the 
+following MS documents:
 
-On Fri, 31 Oct 2025 12:18:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Fri, 31 Oct 2025 12:02:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the tip tree, today's linux-next build (arm64 defconfig)
-> > failed like this:
-> >=20
-> > arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mode':
-> > arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration of =
-function 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mode_=
-prepare'? [-Wimplicit-function-declaration]
-> >   103 |         exit_to_user_mode_prepare(regs);
-> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-> >       |         arch_exit_to_user_mode_prepare
-> > In file included from arch/arm64/include/asm/current.h:5,
-> >                  from include/linux/sched.h:12,
-> >                  from include/linux/context_tracking.h:5,
-> >                  from include/linux/irq-entry-common.h:5,
-> >                  from kernel/entry/common.c:3:
-> > kernel/entry/common.c: In function 'exit_to_user_mode_loop':
-> > kernel/entry/common.c:77:29: error: implicit declaration of function 'r=
-seq_exit_to_user_mode_restart'; did you mean 'arch_exit_to_user_mode_prepar=
-e'? [-Wimplicit-function-declaration]
-> >    77 |                 if (likely(!rseq_exit_to_user_mode_restart(regs=
-, ti_work)))
-> >       |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > include/linux/compiler.h:76:45: note: in definition of macro 'likely'
-> >    76 | # define likely(x)      __builtin_expect(!!(x), 1)
-> >       |                                             ^
-> >=20
-> > Caused by commit
-> >=20
-> >   d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
-> >=20
-> > and maybe following ones.
-> >=20
-> > I have reverted these commits for today:
-> >=20
-> >   69c8e3d16105 ("rseq: Switch to TIF_RSEQ if supported")
-> >   1b3dd1c538a8 ("rseq: Split up rseq_exit_to_user_mode()")
-> >   d58930640310 ("entry: Split up exit_to_user_mode_prepare()") =20
->=20
-> I also had to revert
->=20
->   84eeeb002035 ("rseq: Switch to fast path processing on exit to user")
+   - MS-FSCC: 
+https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-fscc%2Ftoc.json
+   - MS-CIFS: 
+https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-cifs%2Ftoc.json
+   - MS-SMB: 
+https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb%2Ftoc.json
+   - MS-SMB2: 
+https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb2%2Ftoc.json
 
-And then the sparc64 defconfig build failed like this:
+Is this structure defined in other MS document?
 
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/notif.c:8:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/notif.c:8:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/notif.c:8:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/notif.c:8:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/notif.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/opdef.c:12:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/opdef.c:12:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/opdef.c:12:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/opdef.c:12:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/opdef.o] Error 1
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/filetable.c:12:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/filetable.c:12:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/filetable.c:12:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/filetable.c:12:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/filetable.o] Error 1
-arch/sparc/vdso/vclock_gettime.c:274:1: warning: no previous prototype for =
-'__vdso_clock_gettime' [-Wmissing-prototypes]
-  274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec =
-*ts)
-      | ^~~~~~~~~~~~~~~~~~~~
-arch/sparc/vdso/vclock_gettime.c:302:1: warning: no previous prototype for =
-'__vdso_clock_gettime_stick' [-Wmissing-prototypes]
-  302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_tim=
-espec *ts)
-      | ^~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/sparc/vdso/vclock_gettime.c:327:1: warning: no previous prototype for =
-'__vdso_gettimeofday' [-Wmissing-prototypes]
-  327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezon=
-e *tz)
-      | ^~~~~~~~~~~~~~~~~~~
-arch/sparc/vdso/vclock_gettime.c:363:1: warning: no previous prototype for =
-'__vdso_gettimeofday_stick' [-Wmissing-prototypes]
-  363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct t=
-imezone *tz)
-      | ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/tctx.c:12:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/tctx.c:12:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/tctx.c:12:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/tctx.c:12:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/tctx.o] Error 1
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/kbuf.c:15:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/kbuf.c:15:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/kbuf.c:15:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/kbuf.c:15:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/kbuf.o] Error 1
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/rw.c:19:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/rw.c:19:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/rw.c:19:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/rw.c:19:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/rw.o] Error 1
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/rsrc.c:17:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/rsrc.c:17:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/rsrc.c:17:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/rsrc.c:17:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/rsrc.o] Error 1
-In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
-arch/sparc/vdso/vdso32/../vclock_gettime.c:274:1: warning: no previous prot=
-otype for '__vdso_clock_gettime' [-Wmissing-prototypes]
-  274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec =
-*ts)
-      | ^~~~~~~~~~~~~~~~~~~~
-arch/sparc/vdso/vdso32/../vclock_gettime.c:302:1: warning: no previous prot=
-otype for '__vdso_clock_gettime_stick' [-Wmissing-prototypes]
-  302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_tim=
-espec *ts)
-      | ^~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/sparc/vdso/vdso32/../vclock_gettime.c:327:1: warning: no previous prot=
-otype for '__vdso_gettimeofday' [-Wmissing-prototypes]
-  327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezon=
-e *tz)
-      | ^~~~~~~~~~~~~~~~~~~
-arch/sparc/vdso/vdso32/../vclock_gettime.c:363:1: warning: no previous prot=
-otype for '__vdso_gettimeofday_stick' [-Wmissing-prototypes]
-  363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct t=
-imezone *tz)
-      | ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/io_uring.c:83:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/io_uring.c:83:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from io_uring/io_uring.h:6,
-                 from io_uring/io_uring.c:83:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from io_uring/io_uring.h:6,
-                 from io_uring/io_uring.c:83:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:287: io_uring/io_uring.o] Error 1
-make[3]: *** [scripts/Makefile.build:556: io_uring] Error 2
-make[3]: *** Waiting for unfinished jobs....
-In file included from arch/sparc/kernel/signal_64.c:18:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from arch/sparc/kernel/signal_64.c:18:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from arch/sparc/kernel/signal_64.c:18:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from arch/sparc/kernel/signal_64.c:18:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[5]: *** [scripts/Makefile.build:287: arch/sparc/kernel/signal_64.o] Er=
-ror 1
-make[5]: *** Waiting for unfinished jobs....
-make[4]: *** [scripts/Makefile.build:556: arch/sparc/kernel] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:556: arch/sparc] Error 2
-kernel/fork.c: In function '__do_sys_clone3':
-kernel/fork.c:2898:2: warning: #warning clone3() entry point is missing, pl=
-ease fix [-Wcpp]
- 2898 | #warning clone3() entry point is missing, please fix
-      |  ^~~~~~~
-kernel/fork.c:2898:2: warning: #warning clone3() entry point is missing, pl=
-ease fix [-Wcpp]
- 2898 | #warning clone3() entry point is missing, please fix
-      |  ^~~~~~~
-In file included from kernel/task_work.c:5:
-include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
-include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
-handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
-e-pointer-types]
-   62 |         rseq_handle_notify_resume(regs);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct pt_regs *
-In file included from include/linux/resume_user_mode.h:9,
-                 from kernel/task_work.c:5:
-include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
- is of type 'struct pt_regs *'
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                                              ~~~~~~~~~~~~~~~~^~~~
-In file included from kernel/task_work.c:5:
-include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
- 'rseq_handle_notify_resume'
-   62 |         rseq_handle_notify_resume(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/resume_user_mode.h:9,
-                 from kernel/task_work.c:5:
-include/linux/rseq.h:155:20: note: declared here
-  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
-struct pt_regs *regs) { }
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+On 10/27/25 3:21 PM, chenxiaosong.chenxiaosong@linux.dev wrote:
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> 
+> Rename "struct filesystem_posix_info" to "FILE_SYSTEM_POSIX_INFO",
+> then move duplicate definitions to common header file.
+> 
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> ---
+>   fs/smb/client/cifspdu.h    | 22 ----------------------
+>   fs/smb/common/smb1pdu.h    | 23 +++++++++++++++++++++++
+>   fs/smb/server/smb2pdu.c    |  4 ++--
+>   fs/smb/server/smb_common.h | 23 -----------------------
+>   4 files changed, 25 insertions(+), 47 deletions(-)
+> 
+> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
+> index d106c6850807..55aaae6dbc86 100644
+> --- a/fs/smb/client/cifspdu.h
+> +++ b/fs/smb/client/cifspdu.h
+> @@ -1875,28 +1875,6 @@ typedef struct {
+>   
+>   #define CIFS_POSIX_EXTENSIONS           0x00000010 /* support for new QFSInfo */
+>   
+> -typedef struct {
+> -	/* For undefined recommended transfer size return -1 in that field */
+> -	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+> -	__le32 BlockSize;
+> -    /* The next three fields are in terms of the block size.
+> -	(above). If block size is unknown, 4096 would be a
+> -	reasonable block size for a server to report.
+> -	Note that returning the blocks/blocksavail removes need
+> -	to make a second call (to QFSInfo level 0x103 to get this info.
+> -	UserBlockAvail is typically less than or equal to BlocksAvail,
+> -	if no distinction is made return the same value in each */
+> -	__le64 TotalBlocks;
+> -	__le64 BlocksAvail;       /* bfree */
+> -	__le64 UserBlocksAvail;   /* bavail */
+> -    /* For undefined Node fields or FSID return -1 */
+> -	__le64 TotalFileNodes;
+> -	__le64 FreeFileNodes;
+> -	__le64 FileSysIdentifier;   /* fsid */
+> -	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+> -	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+> -} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
+> -
+>   /* DeviceType Flags */
+>   #define FILE_DEVICE_CD_ROM              0x00000002
+>   #define FILE_DEVICE_CD_ROM_FILE_SYSTEM  0x00000003
+> diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
+> index 82331a8f70e8..38b9c091baab 100644
+> --- a/fs/smb/common/smb1pdu.h
+> +++ b/fs/smb/common/smb1pdu.h
+> @@ -327,6 +327,29 @@ typedef struct {
+>   	__le32 BytesPerSector;
+>   } __packed FILE_SYSTEM_INFO;	/* size info, level 0x103 */
+>   
+> +typedef struct {
+> +	/* For undefined recommended transfer size return -1 in that field */
+> +	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+> +	__le32 BlockSize;
+> +	/* The next three fields are in terms of the block size.
+> +	 * (above). If block size is unknown, 4096 would be a
+> +	 * reasonable block size for a server to report.
+> +	 * Note that returning the blocks/blocksavail removes need
+> +	 * to make a second call (to QFSInfo level 0x103 to get this info.
+> +	 * UserBlockAvail is typically less than or equal to BlocksAvail,
+> +	 * if no distinction is made return the same value in each
+> +	 */
+> +	__le64 TotalBlocks;
+> +	__le64 BlocksAvail;       /* bfree */
+> +	__le64 UserBlocksAvail;   /* bavail */
+> +	/* For undefined Node fields or FSID return -1 */
+> +	__le64 TotalFileNodes;
+> +	__le64 FreeFileNodes;
+> +	__le64 FileSysIdentifier;   /* fsid */
+> +	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+> +	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+> +} __packed FILE_SYSTEM_POSIX_INFO;
+> +
+>   /* See MS-CIFS 2.2.8.2.5 */
+>   typedef struct {
+>   	__le32 DeviceType;
+> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+> index 47fab72a3588..dc0f0ed4ccb6 100644
+> --- a/fs/smb/server/smb2pdu.c
+> +++ b/fs/smb/server/smb2pdu.c
+> @@ -5633,14 +5633,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+>   	}
+>   	case FS_POSIX_INFORMATION:
+>   	{
+> -		struct filesystem_posix_info *info;
+> +		FILE_SYSTEM_POSIX_INFO *info;
+>   
+>   		if (!work->tcon->posix_extensions) {
+>   			pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
+>   			path_put(&path);
+>   			return -EOPNOTSUPP;
+>   		} else {
+> -			info = (struct filesystem_posix_info *)(rsp->Buffer);
+> +			info = (FILE_SYSTEM_POSIX_INFO *)(rsp->Buffer);
+>   			info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
+>   			info->BlockSize = cpu_to_le32(stfs.f_bsize);
+>   			info->TotalBlocks = cpu_to_le64(stfs.f_blocks);
+> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+> index 6141ca8f7e1c..61048568f4c7 100644
+> --- a/fs/smb/server/smb_common.h
+> +++ b/fs/smb/server/smb_common.h
+> @@ -108,29 +108,6 @@ struct file_id_both_directory_info {
+>   	char FileName[];
+>   } __packed;
+>   
+> -struct filesystem_posix_info {
+> -	/* For undefined recommended transfer size return -1 in that field */
+> -	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+> -	__le32 BlockSize;
+> -	/* The next three fields are in terms of the block size.
+> -	 * (above). If block size is unknown, 4096 would be a
+> -	 * reasonable block size for a server to report.
+> -	 * Note that returning the blocks/blocksavail removes need
+> -	 * to make a second call (to QFSInfo level 0x103 to get this info.
+> -	 * UserBlockAvail is typically less than or equal to BlocksAvail,
+> -	 * if no distinction is made return the same value in each
+> -	 */
+> -	__le64 TotalBlocks;
+> -	__le64 BlocksAvail;       /* bfree */
+> -	__le64 UserBlocksAvail;   /* bavail */
+> -	/* For undefined Node fields or FSID return -1 */
+> -	__le64 TotalFileNodes;
+> -	__le64 FreeFileNodes;
+> -	__le64 FileSysIdentifier;   /* fsid */
+> -	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+> -	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+> -} __packed;
+> -
+>   struct smb_version_ops {
+>   	u16 (*get_cmd_val)(struct ksmbd_work *swork);
+>   	int (*init_rsp_hdr)(struct ksmbd_work *swork);
 
-I will come back to this later today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LcOTsX+LdJosb8gjuj83z+O
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkEExkACgkQAVBC80lX
-0Gxozgf/aPkRoi/CeUF9RBPKGG2zalrrnDcD0vPKvnVrLdN1xvE76Izq0f1cp2Yo
-/2eDp4sXztlgTUCsX/BxpkIhaUPQUR9V33vvCY8gr3PUYYAKWym/ZLbkndpk0oIV
-NsvhTKJmPSO4nhLPLcP0xGSJYdfFhZ9A71Cpy84DH+8nd7jFjxbXLO6LFWdP5nii
-MNG3WVYhCDhPaRqv9L1rmG7V27gHg9E4nCIezpjyQzy1PtHPhcICG1txDAQymDhC
-4MmoaM17PNCVSF3Za1V0LMu0xL+VrafMVU3rKpUm8fR1Klpqjl5eMNPyME9YzLyf
-gH1gC1BKDtMHumwBPqeO0RQjhXojgw==
-=N/K0
------END PGP SIGNATURE-----
-
---Sig_/LcOTsX+LdJosb8gjuj83z+O--
 
