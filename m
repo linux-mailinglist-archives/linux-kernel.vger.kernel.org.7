@@ -1,200 +1,159 @@
-Return-Path: <linux-kernel+bounces-879721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BADC23CFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:30:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B778C23D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7FCAC34A700
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:30:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3953A4EFB70
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004B172625;
-	Fri, 31 Oct 2025 08:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909242EF65B;
+	Fri, 31 Oct 2025 08:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="eatq96c3"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gXyIi2vX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6006830F951;
-	Fri, 31 Oct 2025 08:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637A42D6E6E;
+	Fri, 31 Oct 2025 08:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899408; cv=none; b=QKaESQWkUtX/KSfjI68D+EKeZHHT9vB8SGmbStE1/XHXsHRA7+y94h+Smr8rH0tEJEqgH/qO+omGFwPpLisoT6soAmfj8msbhA8IdMNkgRGrrAHvQVbjIgDFlB6gVTsGdF6J90Nym2JjuSLRTyF0nFJfDpYVbI4D4dTas0mv/as=
+	t=1761899459; cv=none; b=AemIcgIK4EM78q9F+PNk8Q8B6MvS0ro0en3pkoVFmtD5K+ENcXWjnHiIeaMihUc2ZKerX2oTFVfQP9/Y4sptdIwpNbVQMcTJL9z0XnaB37nj4OOBTMyFjEk7vG+MGgQnnEQNjrtp1x5uWZNPqTpPHaCeGFGvkxUqKKW4QzxUw7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899408; c=relaxed/simple;
-	bh=j4C7cyamyKgvsuDDQde9W86J7YZV/Xt3hz7KoyxBKl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hLGR08IiJ70edYIaNtImL5W3+RZEYvCzD7icKkqycL8o7k76P0SIQJ6rdxtVKLrt9sOn7WjRf3aogaHDOdWQkAciWazu1tNkmy6mRfYAUKECygXDC0VTYO2vuQweu3oNRA5UrTzK0PpMmcFvlH8LWGJ+Rb1mbvcWE9mo42aLBZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=eatq96c3; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1761899407; x=1793435407;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=j4C7cyamyKgvsuDDQde9W86J7YZV/Xt3hz7KoyxBKl8=;
-  b=eatq96c3WdFwI+T7++DzLEDqhcdfh3pyK/3pHIdH6wlT8m9NEsJ75HNT
-   T4liz9uSr4sUlVxvpd6Z50wcIKypJHrVetN4AUib9C0evKF/KsoiOFZmk
-   cSY5/tkKL4scKXjGv+VpaPkSUaMGCwi76l4HDagrC7/ZbdCaCG2qWBwjE
-   r/aLcbpF1nQp1iYShxU7ETpgniBo4gibpUQVKPOO5oPgMKK/X51329C3G
-   m3dvBnumqmMGjm/VVRmA2wInSY0pFgiovd16ws0vHsqSfZ7VtzLRYdNxK
-   yXwyN2C+70lQkWG3ZWs/ApLxqbopOwutncmp0/lDQcx0PylZdBtR+g80T
-   A==;
-X-CSE-ConnectionGUID: AJhUr+OaSwqVCyC8saEp+g==
-X-CSE-MsgGUID: t2W1Nap7SziMdWDVFxFx0Q==
-X-IronPort-AV: E=Sophos;i="6.19,268,1754928000"; 
-   d="scan'208";a="134260587"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep03.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 31 Oct 2025 16:30:04 +0800
-IronPort-SDR: 6904738b_iX5NWxEhp3pRhKOPQ+wUD/tjnOAFGODAioszSbkEB6gVAy4
- QLa6KXGECMZQ5DeST0CWW6CD5KZsQVnEPhogWYA==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep03.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Oct 2025 01:30:03 -0700
-WDCIronportException: Internal
-Received: from wdap-s2ed6nrh3f.ad.shared (HELO gcv.wdc.com) ([10.224.178.7])
-  by uls-op-cesaip01.wdc.com with ESMTP; 31 Oct 2025 01:30:02 -0700
-From: Hans Holmberg <hans.holmberg@wdc.com>
-To: linux-xfs@vger.kernel.org
-Cc: Carlos Maiolino <cem@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Holmberg <hans.holmberg@wdc.com>
-Subject: [PATCH] xfs: remove xarray mark for reclaimable zones
-Date: Fri, 31 Oct 2025 09:29:48 +0100
-Message-ID: <20251031082948.128062-1-hans.holmberg@wdc.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761899459; c=relaxed/simple;
+	bh=Xh8tWIUHv3j/DCmIBgO9QEjcm9WyoIDhq2xE8ObAHoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCrwixKwthZqS3pV+BHdxcPJOayUf1PdroRzhUPn+w2hW/Va8jg5XCWDGDgpy46SdEm4zYtcuVUOiFwoX7r319UZgQxsntV5I8hMblrGxiU1FYxOPrUvUCXn1TcgW/o66Zvy4O8T8Z/p+L2+Nm5zJ7EsgjrRqvtV3shlYjM/gFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gXyIi2vX; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761899457; x=1793435457;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Xh8tWIUHv3j/DCmIBgO9QEjcm9WyoIDhq2xE8ObAHoo=;
+  b=gXyIi2vXGFrRThuLslnLhfrtokFgGPs2hs+lNL3O09nawuroEPypnHf5
+   GoEPvUd1ofUnmRBwBK7Jsc0ovh3W5QCQk8CHLDr5U46NUCTlghs8TEeJl
+   n5CwFPvmhoH22Ej6ZwhKia/4wkIRCtdXbGdeVX8L4L5hrCszlnMQRnC4a
+   hxFlmFY56qRTAPqexo6Fk9rZ0BdkmkBtuM8pbRk6HzJXxDDrojna/BnNr
+   iu5eMUHd6CB5P9V+x6L7NGLciES83n59O4eNMwIqB1/LLUwjjPv2M6nEM
+   4bqup47EHkYKN6DA6CGjD2DUqXHT4JEg+q2ad6pb2Cx03ve2XBDlqdwOk
+   w==;
+X-CSE-ConnectionGUID: XHek2SXjRWCZAkoXzA4r7A==
+X-CSE-MsgGUID: Bavm9zpHREydJ0TSZh3M8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="89519738"
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="89519738"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:30:57 -0700
+X-CSE-ConnectionGUID: 5MO/jTVdRdumF9aGiIXU4g==
+X-CSE-MsgGUID: xQ4VzNAzTkurEuMfbw1Now==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="185866335"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:30:54 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEkX2-00000004D0w-2sGt;
+	Fri, 31 Oct 2025 10:30:48 +0200
+Date: Fri, 31 Oct 2025 10:30:47 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 02/10] software node: increase the reference of the
+ swnode by its fwnode
+Message-ID: <aQRztwrOFCWk8IG8@smile.fi.intel.com>
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-2-638a4cb33201@linaro.org>
+ <aQMxNgC9SWQp-yUy@smile.fi.intel.com>
+ <CAMRc=Md=Dcwj0qDu5ysDafjuV0Ud9z2Ky3PQpDzfiKRt2L-HgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Md=Dcwj0qDu5ysDafjuV0Ud9z2Ky3PQpDzfiKRt2L-HgQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-We can easily check if there are any reclaimble zones by just looking
-at the used counters in the reclaim buckets, so do that to free up the
-xarray mark we currently use for this purpose.
+On Thu, Oct 30, 2025 at 03:33:02AM -0700, Bartosz Golaszewski wrote:
+> On Thu, 30 Oct 2025 10:34:46 +0100, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > On Wed, Oct 29, 2025 at 01:28:36PM +0100, Bartosz Golaszewski wrote:
+> >>
+> >> Once we allow software nodes to reference other kinds of firmware nodes,
+> >> the node in args will no longer necessarily be a software node so bump
+> >> its reference count using its fwnode interface.
+> >
+> > Same, a short comment (or an update of a kernel-doc if present, I don't
+> > remember).
+> >
+> 
+> Andy: the resulting code after patch 3/10 looks like this:
+> 
+> struct fwnode_handle *refnode;
+> 
+> (...)
 
-Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
----
- fs/xfs/libxfs/xfs_rtgroup.h  |  6 ------
- fs/xfs/xfs_zone_alloc.c      | 26 ++++++++++++++++++++++----
- fs/xfs/xfs_zone_gc.c         |  2 +-
- fs/xfs/xfs_zone_priv.h       |  1 +
- fs/xfs/xfs_zone_space_resv.c |  2 +-
- 5 files changed, 25 insertions(+), 12 deletions(-)
+Let's say something like below to be put here
 
-diff --git a/fs/xfs/libxfs/xfs_rtgroup.h b/fs/xfs/libxfs/xfs_rtgroup.h
-index d36a6ae0abe5..1ac7a4764813 100644
---- a/fs/xfs/libxfs/xfs_rtgroup.h
-+++ b/fs/xfs/libxfs/xfs_rtgroup.h
-@@ -58,12 +58,6 @@ struct xfs_rtgroup {
-  */
- #define XFS_RTG_FREE			XA_MARK_0
- 
--/*
-- * For zoned RT devices this is set on groups that are fully written and that
-- * have unused blocks.  Used by the garbage collection to pick targets.
-- */
--#define XFS_RTG_RECLAIMABLE		XA_MARK_1
--
- static inline struct xfs_rtgroup *to_rtg(struct xfs_group *xg)
- {
- 	return container_of(xg, struct xfs_rtgroup, rtg_group);
-diff --git a/fs/xfs/xfs_zone_alloc.c b/fs/xfs/xfs_zone_alloc.c
-index 23cdab4515bb..a0486a1473d2 100644
---- a/fs/xfs/xfs_zone_alloc.c
-+++ b/fs/xfs/xfs_zone_alloc.c
-@@ -103,9 +103,6 @@ xfs_zone_account_reclaimable(
- 		 */
- 		trace_xfs_zone_emptied(rtg);
- 
--		if (!was_full)
--			xfs_group_clear_mark(xg, XFS_RTG_RECLAIMABLE);
--
- 		spin_lock(&zi->zi_used_buckets_lock);
- 		if (!was_full)
- 			xfs_zone_remove_from_bucket(zi, rgno, from_bucket);
-@@ -127,7 +124,6 @@ xfs_zone_account_reclaimable(
- 		xfs_zone_add_to_bucket(zi, rgno, to_bucket);
- 		spin_unlock(&zi->zi_used_buckets_lock);
- 
--		xfs_group_set_mark(xg, XFS_RTG_RECLAIMABLE);
- 		if (zi->zi_gc_thread && xfs_zoned_need_gc(mp))
- 			wake_up_process(zi->zi_gc_thread);
- 	} else if (to_bucket != from_bucket) {
-@@ -142,6 +138,28 @@ xfs_zone_account_reclaimable(
- 	}
- }
- 
-+/*
-+ * Check if we have any zones that can be reclaimed by looking at the entry
-+ * counters for the zone buckets.
-+ */
-+bool
-+xfs_zoned_have_reclaimable(
-+	struct xfs_zone_info	*zi)
-+{
-+	int i;
-+
-+	spin_lock(&zi->zi_used_buckets_lock);
-+	for (i = 0; i < XFS_ZONE_USED_BUCKETS; i++) {
-+		if (zi->zi_used_bucket_entries[i]) {
-+			spin_unlock(&zi->zi_used_buckets_lock);
-+			return true;
-+		}
-+	}
-+	spin_unlock(&zi->zi_used_buckets_lock);
-+
-+	return false;
-+}
-+
- static void
- xfs_open_zone_mark_full(
- 	struct xfs_open_zone	*oz)
-diff --git a/fs/xfs/xfs_zone_gc.c b/fs/xfs/xfs_zone_gc.c
-index 109877d9a6bf..683835626d48 100644
---- a/fs/xfs/xfs_zone_gc.c
-+++ b/fs/xfs/xfs_zone_gc.c
-@@ -173,7 +173,7 @@ xfs_zoned_need_gc(
- 	s64			available, free, threshold;
- 	s32			remainder;
- 
--	if (!xfs_group_marked(mp, XG_TYPE_RTG, XFS_RTG_RECLAIMABLE))
-+	if (!xfs_zoned_have_reclaimable(mp->m_zone_info))
- 		return false;
- 
- 	available = xfs_estimate_freecounter(mp, XC_FREE_RTAVAILABLE);
-diff --git a/fs/xfs/xfs_zone_priv.h b/fs/xfs/xfs_zone_priv.h
-index 4322e26dd99a..ce7f0e2f4598 100644
---- a/fs/xfs/xfs_zone_priv.h
-+++ b/fs/xfs/xfs_zone_priv.h
-@@ -113,6 +113,7 @@ struct xfs_open_zone *xfs_open_zone(struct xfs_mount *mp,
- 
- int xfs_zone_gc_reset_sync(struct xfs_rtgroup *rtg);
- bool xfs_zoned_need_gc(struct xfs_mount *mp);
-+bool xfs_zoned_have_reclaimable(struct xfs_zone_info *zi);
- int xfs_zone_gc_mount(struct xfs_mount *mp);
- void xfs_zone_gc_unmount(struct xfs_mount *mp);
- 
-diff --git a/fs/xfs/xfs_zone_space_resv.c b/fs/xfs/xfs_zone_space_resv.c
-index 9cd38716fd25..4cb6bf4f9586 100644
---- a/fs/xfs/xfs_zone_space_resv.c
-+++ b/fs/xfs/xfs_zone_space_resv.c
-@@ -174,7 +174,7 @@ xfs_zoned_reserve_available(
- 		 * processing a pending GC request give up as we're fully out
- 		 * of space.
- 		 */
--		if (!xfs_group_marked(mp, XG_TYPE_RTG, XFS_RTG_RECLAIMABLE) &&
-+		if (!xfs_zoned_have_reclaimable(mp->m_zone_info) &&
- 		    !xfs_is_zonegc_running(mp))
- 			break;
- 
+/*
+ * The reference in software node may refer to a node of a different type.
+ * Depending on the type we choose either to use software node directly, or
+ * delegate that to fwnode API.
+ */
+
+> if (ref->swnode)
+> 	refnode = software_node_fwnode(ref->swnode);
+> else if (ref->fwnode)
+> 	refnode = ref->fwnode;
+> else
+> 	return -EINVAL;
+> 
+> if (!refnode)
+> 	return -ENOENT;
+> 
+> if (nargs_prop) {
+> 	error = fwnode_property_read_u32(refnode, nargs_prop,
+> 					 &nargs_prop_val);
+> 	if (error)
+> 		return error;
+> 
+> 		nargs = nargs_prop_val;
+> }
+> 
+> (...)
+> 
+> args->fwnode = fwnode_handle_get(refnode);
+> 
+> I'm typically all for comments but this code really is self-commenting.
+> There's nothing ambiguous about the above. We know the refnode is an fwnode,
+> we assign it and we pass it to the fwnode_ routines. What exactly would you
+> add here that would make it clearer?
+
+See above.
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
