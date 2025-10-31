@@ -1,419 +1,212 @@
-Return-Path: <linux-kernel+bounces-880891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31578C26CF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:41:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75FEC26CF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEDF406121
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DC21897C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343C33115A1;
-	Fri, 31 Oct 2025 19:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61273310762;
+	Fri, 31 Oct 2025 19:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CO47Guhd"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IZm7Fwfi"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6205713AA2F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458311AF4D5
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761939702; cv=none; b=Zl8MfdtM71fy8VHdluAJ/eZ3PkWGHGCf6Ap/3Uk6sWno1j1ZmcBISVEB8OCcZbt9g8mcZ5Kkj7sQpPMm1Hl2GRRkt2PhC0FbBW0AxfweS01XKfi6PVgTQYBtIdJoN1z+osUx4M8DR1670lV08dey/VJIHMlpMJ6w0InljzZMg8Y=
+	t=1761939742; cv=none; b=iZrmdvngt0sSgu+QEkvqMeTiq78b78g6RcNP03dhckUIWOXogTEu+A1PTC2UXDWQ8gjm8W4cj/t8gRTlJWaB07CltI8P4GkNuAtzatnohO/moNkqKKXXSnlZjGE3RUIPbdPZ0nqyfWTT72XQDO/YcCVGedXl8E1Hvr1PdkyvXc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761939702; c=relaxed/simple;
-	bh=maRK7XpfoR92vY8Ydni5YVMz4/Px/3eFRr8cqwFVDz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bsFn69vSHvvs46XbzJgGHqj54/8MNdUnM/wN/qgJ/Ps5q22dlVZ0zDdO59/4oCEXqVcWxsRWJgyd2+R/6TjJfYJ3JPuefUekrrHcFLQJ2o7HXwe1aHk8hVH4u51iE3hsOe7P9S5a1MgW6wYRWB1rjeHLup2hHSAsJJcnBzxxyGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CO47Guhd; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1761939742; c=relaxed/simple;
+	bh=82aBPTw4nAD0S7uZR++gRXJuMqWxM2qxpvikhp8S274=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=eXMVKOW/zwY3SoVz57cq9X3aBGLmkBL+r6X0n1NtV2RYJrC105e5RZZT2J2yCk8ugmfWL9h9VrqgexZedOzlUWVMPCkiNOLOA7KMmppthshr+ziSB/irXaHlu5EuuphVTFCd4YB+vxEcyF6BmQOzY8CHcG4PyiTXD+SoLzGEtT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IZm7Fwfi; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6408f034513so810199a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:41:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-294fb21b0e9so20654025ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761939699; x=1762544499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dYbfNT0Vc8/TiytLOjgG9hBzeApOsG89ichqEMIxreo=;
-        b=CO47GuhdUeuvY3nDtLjGgL2JLFbFwiScv0qtUocZSNhfoh4EA1EDNTyZsTe1IOkltF
-         2OZgqk88DXzyVIYx4eMdFIkAzfFzGqm7sLnpCdAclCLjjN7f5rk06K6eVlZL1zJMEe2H
-         W2bTWnP+7j2/qBYpXE8upTRv/T8lGKOvRCkZP+wD7S8Zzg25NT5laz8XB1H2KHKYDGp3
-         IdG4vCXewqwvs8LZC9pr5TeG7LLvXwciMcH5V3DPTAMQ4vWYOxeeUzS/56CRXYP5dnHR
-         RDZye2fp1dKjDtsZCWE6E20Wx+TkInrCxw4EYgbcmky/ERAbgAv0or8LedfqjGKfkQGa
-         wvqA==
+        d=google.com; s=20230601; t=1761939740; x=1762544540; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bp6I5I4DuTfJ4CVISPFiYfryrJjJqDYIHDeQo3MNWD0=;
+        b=IZm7FwfiVM4mDJ9TIN3sfNZF5qGlkh1QyGR5hmDOUeSr6BeqMFSrYz6j5lah97pG2m
+         rRlCqCapr+GheybT1wAqK7523LQxGhjHuwqdVDEK2GkdIx7Y7raZzNWHAPJTliLnC7Jl
+         a0RbDoaVP/C2gb15blwBWCZxskwnJAJPEiUuXroordIadFcGIb3lg3LGo+dphlXNwcZ0
+         7C5PqU8byrbzrtWb5AIRk0XpjCPxbo5ukY0mOOi/+ek2IEVg+mWdOIvkpEDY2j7BtLDl
+         qBkBKJjzE2ftlyfzgiZ9pk0OUtsZm10Hf6tY2oSkwyW9FATMvydkDxp9+7KHAe/VqqF0
+         F3+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761939699; x=1762544499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dYbfNT0Vc8/TiytLOjgG9hBzeApOsG89ichqEMIxreo=;
-        b=gDfACwfuEg2XB7Zhf13IurWkE1ucgnikzgOPpJMPXEv04XPCrZ3HrAefTkavtJTzU+
-         11HI0OWeyBvrCyApV0rnBkDlANq7BUxy406oLLSe6cnaFDgZ4YfVZuQelORPnYE2hZZz
-         ZWVN29ADN7UKqViuEGD8V49qZmQ6YBePuBfvi/tDa0OINDKNYJCqcigzdCSyVgEOw+Om
-         aCU0E/+Xl7HKEM19LIqSSMLf13wXhE9tD4mN5l3Th1b+UGy49L6Xhje6kM6t+kgPLyIA
-         XsTfa8vKGaFnhmEfuFXjofoQF+a9uW9LdSkcmNkv8SYssTTS5lu8RLNd60tOKHIueS9S
-         xBuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmf6qPOcMwcGFrm95/syBfbtU9Y074c4l01pM4RzlS9be6fC3D8BqsiInYxpKYAdQ4rFMOj+7Kro4aq5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeSWkQ1kdZbywA8/D16hMhz4+CQZhvJgVg2kned/Tzb6JjnAb3
-	5NY48UIgP7BpiCN1phZ180BN90CU9XH3cTjLPzpyc3IxxbrANC1k0FUNZJ2uwBxBFZneoDeN9Js
-	5bIVrz0lv+XNXGaP15uzSDu541Qj8cgUVY5TEYEhT
-X-Gm-Gg: ASbGncsiBEuWA/sZNpMIeejc0i8CNDv83coWtK6Ttw+XezqeOWjIJKvZwxNn7fi2FJ8
-	qio90EgXq76nalUrHQigLHIChXKSVxsFp0JspnRPCm1l/fIRQY2k00LzQxQliIhDoxIGkBeAu+M
-	qUtmXec7eGg4no73SxOL8omOsLzoivGpygJEJOtZS4mruPTz6e5TKPtJ8DmreUFE9yJXlReM2uD
-	3o61mgsDXwaNix7yqIw/RudfzYT0VBe+f2iGh5IGKPY2b5LAyP4uUbpqcVvSCsZrwvBtEdyEcPX
-	MjeuW9V3Vj5znrrrTw==
-X-Google-Smtp-Source: AGHT+IGP39uKZ8Ldsc5A2MSKFDiQ/EXttriDPIq9JhsO1OWBc5tum20Be7vZowWj6ukKGFaTckz2hYue61ejofW9WFY=
-X-Received: by 2002:a05:6402:274b:b0:634:6bca:2d1c with SMTP id
- 4fb4d7f45d1cf-64077081fafmr4171016a12.26.1761939698354; Fri, 31 Oct 2025
- 12:41:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761939740; x=1762544540;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bp6I5I4DuTfJ4CVISPFiYfryrJjJqDYIHDeQo3MNWD0=;
+        b=qjp3YZFcSkUlFXxKU8GkVk7/7OVmuNfmfVIsnsttOTFdKYF2ebH2+BOGZFZa+XoupK
+         CXJ4oRqX7Lfm8WV/2xLTJx/35tljlUQorD1emvWPd16IjSUtpM2/aFEfT7ubT6DSgxHi
+         eX76SOqdsAfvYV+oTdboA6ZOktoxQQK1qZDNZ3Iq+DdmIO27mxsUQT6EBlg5H4aPVgWI
+         yARDxQRSh4t8yYz5rBS/z/cILzOdDv3fxynlvkeZs7vYhjbSBruJTwENRaeWlscrXzv2
+         gVszBJOCqIfzULNyxWyq3gIxDAbLfD8UNlJLicpNA3s4sm6MyTZ+MajSKM4nyUta8okn
+         uSOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkmqKCalp4ZcoZudqev+K0AsSoOHhZk92Dr9dqfgKcNIUmobnrlGWzFu0SnoFBjITqJx1buWl9QV+82nQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB2N99CrZUAanxjprNGclo0OHXtRjX5lg4742mq+rePL8VkrMF
+	lyQQqFQEsO0Kw4RvGg7Ctl6Euz8PENHZBilhyMUnhH8RNQttpB7w3cN5Mo9tXwsj35zxoqJT+KA
+	HPtG+omP3+Q==
+X-Google-Smtp-Source: AGHT+IGPSqxzD1iE4N1SB4IFZfSib3S04XhI1jpHw9sLosjIbaZkKdOvcl8DgLBv1kdvkkCw4YsjfV+5YGcq
+X-Received: from pjbcl3.prod.google.com ([2002:a17:90a:f683:b0:340:9a37:91a4])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1ce:b0:27e:ec72:f62
+ with SMTP id d9443c01a7336-2951a35eb36mr74883535ad.6.1761939740620; Fri, 31
+ Oct 2025 12:42:20 -0700 (PDT)
+Date: Fri, 31 Oct 2025 12:42:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251025190256.11352-1-adelodunolaoluwa.ref@yahoo.com>
- <20251025190256.11352-1-adelodunolaoluwa@yahoo.com> <CAAVpQUAbDfaiAZ_NCppGE5vsafWoU7V1xvnqtQQM44cwv6jHsA@mail.gmail.com>
- <7c4070ed-1702-4288-90c6-7edb90468718@yahoo.com>
-In-Reply-To: <7c4070ed-1702-4288-90c6-7edb90468718@yahoo.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Fri, 31 Oct 2025 12:41:22 -0700
-X-Gm-Features: AWmQ_bn_XVrMh5WLNVzJVx0p1VBoVnrz3YR-LeQYxE8Gmud4G1IaBv7E36TYekY
-Message-ID: <CAAVpQUAT8CVwQfSXq+P78kgPVy8gyD9thEgBcAz45Jpxh=1smw@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests: af_unix: Add tests for ECONNRESET and EOF semantics
-To: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Cc: "=David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	David Hunter <david.hunter.linux@gmail.com>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251031194216.1518072-1-irogers@google.com>
+Subject: [PATCH v4] perf s390-sample-raw: Cache counter names
+From: Ian Rogers <irogers@google.com>
+To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 6:45=E2=80=AFAM Sunday Adelodun
-<adelodunolaoluwa@yahoo.com> wrote:
->
-> On 10/28/25 19:28, Kuniyuki Iwashima wrote:
-> > On Sat, Oct 25, 2025 at 12:03=E2=80=AFPM Sunday Adelodun
-> > <adelodunolaoluwa@yahoo.com> wrote:
-> >> Add selftests to verify and document Linux=E2=80=99s intended behaviou=
-r for
-> >> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
-> >> The tests cover:
-> >>
-> >>    1. EOF returned when a SOCK_STREAM peer closes normally.
-> >>    2. ECONNRESET returned when a SOCK_STREAM peer closes with unread d=
-ata.
-> >>    3. SOCK_DGRAM sockets not returning ECONNRESET on peer close.
-> >>
-> >> This follows up on review feedback suggesting a selftest to clarify
-> >> Linux=E2=80=99s semantics.
-> >>
-> >> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
-> >> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-> >> ---
-> >> Changelog:
-> >>
-> >> Changes made from v1:
-> >>
-> >> - Patch prefix updated to selftest: af_unix:.
-> >>
-> >> - All mentions of =E2=80=9CUNIX=E2=80=9D changed to AF_UNIX.
-> >>
-> >> - Removed BSD references from comments.
-> >>
-> >> - Shared setup refactored using FIXTURE_VARIANT().
-> >>
-> >> - Cleanup moved to FIXTURE_TEARDOWN() to always run.
-> >>
-> >> - Tests consolidated to reduce duplication: EOF, ECONNRESET, SOCK_DGRA=
-M peer close.
-> >>
-> >> - Corrected ASSERT usage and initialization style.
-> >>
-> >> - Makefile updated for new directory af_unix.
-> >>
-> >>   tools/testing/selftests/net/af_unix/Makefile  |   1 +
-> >>   .../selftests/net/af_unix/unix_connreset.c    | 161 ++++++++++++++++=
-++
-> >>   2 files changed, 162 insertions(+)
-> >>   create mode 100644 tools/testing/selftests/net/af_unix/unix_connrese=
-t.c
-> >>
-> >> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/test=
-ing/selftests/net/af_unix/Makefile
-> >> index de805cbbdf69..5826a8372451 100644
-> >> --- a/tools/testing/selftests/net/af_unix/Makefile
-> >> +++ b/tools/testing/selftests/net/af_unix/Makefile
-> >> @@ -7,6 +7,7 @@ TEST_GEN_PROGS :=3D \
-> >>          scm_pidfd \
-> >>          scm_rights \
-> >>          unix_connect \
-> >> +       unix_connreset \
-> >>   # end of TEST_GEN_PROGS
-> >>
-> >>   include ../../lib.mk
-> >> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/to=
-ols/testing/selftests/net/af_unix/unix_connreset.c
-> >> new file mode 100644
-> >> index 000000000000..c65ec997d77d
-> >> --- /dev/null
-> >> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
-> >> @@ -0,0 +1,161 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
-> >> + *
-> >> + * This test verifies that:
-> >> + *  1. SOCK_STREAM sockets return EOF when peer closes normally.
-> >> + *  2. SOCK_STREAM sockets return ECONNRESET if peer closes with unre=
-ad data.
-> >> + *  3. SOCK_DGRAM sockets do not return ECONNRESET when peer closes.
-> >> + *
-> >> + * These tests document the intended Linux behaviour.
-> >> + *
-> >> + */
-> >> +
-> >> +#define _GNU_SOURCE
-> >> +#include <stdlib.h>
-> >> +#include <string.h>
-> >> +#include <fcntl.h>
-> >> +#include <unistd.h>
-> >> +#include <errno.h>
-> >> +#include <sys/socket.h>
-> >> +#include <sys/un.h>
-> >> +#include "../../kselftest_harness.h"
-> >> +
-> >> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
-> >> +
-> >> +static void remove_socket_file(void)
-> >> +{
-> >> +       unlink(SOCK_PATH);
-> >> +}
-> >> +
-> >> +FIXTURE(unix_sock)
-> >> +{
-> >> +       int server;
-> >> +       int client;
-> >> +       int child;
-> >> +};
-> >> +
-> >> +FIXTURE_VARIANT(unix_sock)
-> >> +{
-> >> +       int socket_type;
-> >> +       const char *name;
-> >> +};
-> >> +
-> >> +/* Define variants: stream and datagram */
-> >> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
-> >> +       .socket_type =3D SOCK_STREAM,
-> >> +       .name =3D "SOCK_STREAM",
-> >> +};
-> >> +
-> >> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
-> >> +       .socket_type =3D SOCK_DGRAM,
-> >> +       .name =3D "SOCK_DGRAM",
-> >> +};
-> > Let's add coverage for SOCK_SEQPACKET,
-> > which needs listen() / connect() but other semantics
-> > are similar to SOCK_DGRAM.
->
-> I will add it through:
-> if (variant->socket_type =3D=3D SOCK_STREAM ||
->                 variant->socket_type =3D=3D SOCK_SEQPACKET)
->
->
-> in both the setup and teardown fixtures with a little bit of modification
->
-> where necessary (especially in the setup fixture).
->
-> And also the fixture_variant_add macro.
->
-> >> +
-> >> +FIXTURE_SETUP(unix_sock)
-> >> +{
-> >> +       struct sockaddr_un addr =3D {};
-> >> +       int err;
-> >> +
-> >> +       addr.sun_family =3D AF_UNIX;
-> >> +       strcpy(addr.sun_path, SOCK_PATH);
-> >> +
-> >> +       self->server =3D socket(AF_UNIX, variant->socket_type, 0);
-> >> +       ASSERT_LT(-1, self->server);
-> >> +
-> >> +       err =3D bind(self->server, (struct sockaddr *)&addr, sizeof(ad=
-dr));
-> >> +       ASSERT_EQ(0, err);
-> >> +
-> >> +       if (variant->socket_type =3D=3D SOCK_STREAM) {
-> >> +               err =3D listen(self->server, 1);
-> >> +               ASSERT_EQ(0, err);
-> >> +
-> >> +               self->client =3D socket(AF_UNIX, SOCK_STREAM, 0);
-> >> +               ASSERT_LT(-1, self->client);
-> >> +
-> >> +               err =3D connect(self->client, (struct sockaddr *)&addr=
-, sizeof(addr));
-> >> +               ASSERT_EQ(0, err);
-> >> +
-> >> +               self->child =3D accept(self->server, NULL, NULL);
-> >> +               ASSERT_LT(-1, self->child);
-> >> +       } else {
-> >> +               /* Datagram: bind and connect only */
-> >> +               self->client =3D socket(AF_UNIX, SOCK_DGRAM | SOCK_NON=
-BLOCK, 0);
-> >> +               ASSERT_LT(-1, self->client);
-> >> +
-> >> +               err =3D connect(self->client, (struct sockaddr *)&addr=
-, sizeof(addr));
-> >> +               ASSERT_EQ(0, err);
-> >> +       }
-> >> +}
-> >> +
-> >> +FIXTURE_TEARDOWN(unix_sock)
-> >> +{
-> >> +       if (variant->socket_type =3D=3D SOCK_STREAM)
-> >> +               close(self->child);
-> >> +
-> >> +       close(self->client);
-> >> +       close(self->server);
-> >> +       remove_socket_file();
-> >> +}
-> >> +
-> >> +/* Test 1: peer closes normally */
-> >> +TEST_F(unix_sock, eof)
-> >> +{
-> >> +       char buf[16] =3D {};
-> >> +       ssize_t n;
-> >> +
-> >> +       if (variant->socket_type !=3D SOCK_STREAM)
-> >> +               SKIP(return, "This test only applies to SOCK_STREAM");
-> > Instead of skipping, let's define final ASSERT() results
-> > for each type.
-> >
-> > Same for other 2 tests.
->
-> can I use a switch statement in all the tests? say, for example
+Searching all event names is slower now that legacy names are
+included. Add a cache to avoid long iterative searches. Note, the
+cache isn't cleaned up and is as such a memory leak, however, globally
+reachable leaks like this aren't treated as leaks by leak sanitizer.
 
-switch() is completely fine, but I guess "if" will be shorter :)
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-e4a64ed61d38@linux.ibm.com/
+Signed-off-by: Ian Rogers <irogers@google.com>
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+v4: Fix testing cache not tmp (Namhyung). If the find fails store
+    "<unknown>" so that future hashmap lookups will not repeat the
+    failing find.
+v3: Fix minor comment typo, add Thomas' tag.
+v2: Small tweak to the cache_key, just make it match the wanted event value.
+---
+ tools/perf/util/s390-sample-raw.c | 55 ++++++++++++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 5 deletions(-)
 
->
-> test1:
->
-> ...
->
-> switch (variant->socket_type) {
->
-> case SOCK_STREAM:
->
-> case SOCK_SEQPACKET:
->
->          ASSERT_EQ(0, n);
+diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
+index 335217bb532b..c6ae0ae8d86a 100644
+--- a/tools/perf/util/s390-sample-raw.c
++++ b/tools/perf/util/s390-sample-raw.c
+@@ -19,12 +19,14 @@
+ 
+ #include <sys/stat.h>
+ #include <linux/compiler.h>
++#include <linux/err.h>
+ #include <asm/byteorder.h>
+ 
+ #include "debug.h"
+ #include "session.h"
+ #include "evlist.h"
+ #include "color.h"
++#include "hashmap.h"
+ #include "sample-raw.h"
+ #include "s390-cpumcf-kernel.h"
+ #include "util/pmu.h"
+@@ -132,8 +134,8 @@ static int get_counterset_start(int setnr)
+ }
+ 
+ struct get_counter_name_data {
+-	int wanted;
+-	char *result;
++	long wanted;
++	const char *result;
+ };
+ 
+ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+@@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+ 
+ 	rc = sscanf(event_str, "event=%x", &event_nr);
+ 	if (rc == 1 && event_nr == data->wanted) {
+-		data->result = strdup(info->name);
++		data->result = info->name;
+ 		return 1; /* Terminate the search. */
+ 	}
+ 	return 0;
+ }
+ 
++static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unused)
++{
++	return key;
++}
++
++static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void *ctx __maybe_unused)
++{
++	return key1 == key2;
++}
++
+ /* Scan the PMU and extract the logical name of a counter from the event. Input
+  * is the counter set and counter number with in the set. Construct the event
+  * number and use this as key. If they match return the name of this counter.
+@@ -164,17 +176,50 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
+  */
+ static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
+ {
++	static struct hashmap *cache;
++	static struct perf_pmu *cache_pmu;
++	long cache_key = get_counterset_start(set) + nr;
+ 	struct get_counter_name_data data = {
+-		.wanted = get_counterset_start(set) + nr,
++		.wanted = cache_key,
+ 		.result = NULL,
+ 	};
++	char *result = NULL;
+ 
+ 	if (!pmu)
+ 		return NULL;
+ 
++	if (cache_pmu == pmu && hashmap__find(cache, cache_key, &result))
++		return strdup(result);
++
+ 	perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/ true,
+ 				 &data, get_counter_name_callback);
+-	return data.result;
++
++	result = strdup(data.result ?: "<unknown>");
++
++	if (cache_pmu == NULL) {
++		struct hashmap *tmp = hashmap__new(get_counter_name_hash_fn,
++						   get_counter_name_hashmap_equal_fn,
++						   /*ctx=*/NULL);
++
++		if (!IS_ERR(tmp)) {
++			cache = tmp;
++			cache_pmu = pmu;
++		}
++	}
++
++	if (cache_pmu == pmu && result) {
++		char *old_value = NULL, *new_value = strdup(result);
++
++		if (new_value) {
++			hashmap__set(cache, cache_key, new_value, /*old_key=*/NULL, &old_value);
++			/*
++			 * Free in case of a race, but resizing would be broken
++			 * in that case.
++			 */
++			free(old_value);
++		}
++	}
++	return result;
+ }
+ 
+ static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
+-- 
+2.51.1.930.gacf6e81ea2-goog
 
-You need break; here.
-
->
-> case SOCK_DGRAM:
->
->          ASSERT(-1, n);
->
->          ASSERT_EQ(EAGAIN, errno);
->
->          break;
-
-And also please make sure the compiler will not complain
-without default: depending on inherited build options.
-
->
-> }
->
-> ...
->
-> test2:
->
-> ...
->
-> switch (variant->socket_type) {
->
-> case SOCK_STREAM:
->
-> case SOCK_SEQPACKET:
->
->          ASSERT_EQ(-1, n);
->
->          ASSERT_EQ(ECONNRESET, errno);
->
->          break;
->
-> case SOCK_DGRAM:
->
->          ASSERT(-1, n);
->
->          ASSERT_EQ(EAGAIN, errno);
->
->          break;
->
-> }
-> ...
->
-> test 3:
->
-> ...
->
-> switch (variant->socket_type) {
->
-> case SOCK_STREAM:
->
-> case SOCK_SEQPACKET:
->
->          ASSERT_EQ(-1, n);
->
->          ASSERT_EQ(ECONNRESET, errno);
->
->          break;
->
-> case SOCK_DGRAM:
->
->          ASSERT(-1, n);
->
->          ASSERT_EQ(EAGAIN, errno);
->
->          break;
->
-> }
->
-> ...
->
-> if not these, could you kindly shed more light to what you meant
->
-> >
-> >
-> >> +
-> >> +       /* Peer closes normally */
-> >> +       close(self->child);
-> >> +
-> >> +       n =3D recv(self->client, buf, sizeof(buf), 0);
-> >> +       TH_LOG("%s: recv=3D%zd errno=3D%d (%s)", variant->name, n, err=
-no, strerror(errno));
-> >> +       if (n =3D=3D -1)
-> >> +               ASSERT_EQ(ECONNRESET, errno);
-> > ... otherwise, we don't see an error here
-> >
-> >> +
-> >> +       if (n !=3D -1)
-> >> +               ASSERT_EQ(0, n);
-> > and this can be checked unconditionally.
-> did you mean I should remove the if (n !=3D -1) ASSERT_EQ(0, n); part?
-
-If SOCK_DGRAM does not reuse this test, yes.
-
-The point is we do not want to miss future regression by
-preparing both if (n =3D=3D -1) case and if  (n =3D=3D 0) case, one
-of which should never happen at this point.
-
-Thanks!
 
