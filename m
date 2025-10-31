@@ -1,91 +1,74 @@
-Return-Path: <linux-kernel+bounces-880164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6504CC25047
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:32:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD2EC2505C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92040351431
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:32:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15C2465ADD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFEE330338;
-	Fri, 31 Oct 2025 12:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42552D47F5;
+	Fri, 31 Oct 2025 12:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lEM92E8z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="L4dEnD3J"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B8C338F54;
-	Fri, 31 Oct 2025 12:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0E834217C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913930; cv=none; b=O9Y89lelE9QstUt4RiOeQ3eL+0weVCoH/Hg/AgMlabtv+OHs7cD4u4MCqrnS10KS0lg4/g935lylVlREmr3BZXbZuN5JDP2mEYK/8Pse/y09sRCMDpvNeUvRkPsk4nvUOnxmgRw99gEZPtjbTTkiEO+djyTp/NSlQo4MIqfqkl0=
+	t=1761913955; cv=none; b=XCKN9nbDKM1+JIdH2Qx8pGqHBnwFk2w9n+9cdYQBQdf9G3Gf93CmFoZgM3i1bX7ZXinppR3YvlnD8siiaM/TlCGk74Umiw2MUPCbmlh4d5g0M//yuE5Fh0V8uXAz6jTaCCl7NZbUFUrYAKZFQieQ9WPv6y6zkoCOdNYVffTe55c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913930; c=relaxed/simple;
-	bh=vAvTZWxGuxuqYRzWeF+dPsTukeuTCdomYTBSlfcskGI=;
+	s=arc-20240116; t=1761913955; c=relaxed/simple;
+	bh=Yx51E/hEVPuThO1aORg/TBO9UACHPb0DASTCNYm5fdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B72sLgQZgRFKfVnTDuQv/qs5bS8yB6H3jZyIYA1JixWTJnH15U7oaO7qZ4xN1T6+HwcBM3rtU+8qrS9fxm0HPLVL6VDhOn3kfVITB/Lax2GzQvHrs8161pCzeDZKZBFCgid0yk0KHx2hcmZkBxwwOe4pu6/YYud3G0WicpjGKeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lEM92E8z; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761913927; x=1793449927;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vAvTZWxGuxuqYRzWeF+dPsTukeuTCdomYTBSlfcskGI=;
-  b=lEM92E8z7PO6kvI8wA1U/JkObZeBvcJuFxTyjjFKfsSkSD0Vy83wntd2
-   1Oe7evCWnEAY2QgR89OitD6/O2OnNf18lInbiiP8oSolSpc+mbXlAnmH2
-   2C78G2n+NCpJ0DJEpTSf4wbyQPqrdhF8wBE0H9jcvsE4u/bAu50jgCdD3
-   zynmT3/PI2tVLBY+teeL0CkgP1do1tnpScGms9Q4+uzv7dVq/5HcYkQy+
-   1w8T0P9oawETXwhGYysr7vKi12vIuGOW8QWpWasv6msB4joNzMqu4sMxQ
-   cFxA7OvL/4qKiqV5MMhh+aupIABw5nXfJaUxg8S9fCjPNyX8GYb+x+Hag
-   w==;
-X-CSE-ConnectionGUID: Gml329+OQSuyGMI9HS1tvw==
-X-CSE-MsgGUID: b1L/cz73Qli1dLTZTtXHHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64001045"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64001045"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:32:05 -0700
-X-CSE-ConnectionGUID: imYMsrLsRyC9p//fO6WQxg==
-X-CSE-MsgGUID: 3/0RZUxDQyub/6nfaKcuNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186342409"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:32:03 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vEoIP-00000004GCj-28Or;
-	Fri, 31 Oct 2025 14:31:57 +0200
-Date: Fri, 31 Oct 2025 14:31:56 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 02/10] software node: increase the reference of the
- swnode by its fwnode
-Message-ID: <aQSsPIJ26Sx2WqhE@smile.fi.intel.com>
-References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
- <20251029-reset-gpios-swnodes-v3-2-638a4cb33201@linaro.org>
- <aQMxNgC9SWQp-yUy@smile.fi.intel.com>
- <CAMRc=Md=Dcwj0qDu5ysDafjuV0Ud9z2Ky3PQpDzfiKRt2L-HgQ@mail.gmail.com>
- <aQRztwrOFCWk8IG8@smile.fi.intel.com>
- <CAMRc=MezQ7RC=ZjiKkMa0qiaKTRXePOKxOCDjjV=-qUYto2jqA@mail.gmail.com>
- <aQSFDhUp89xul2AP@smile.fi.intel.com>
- <CAMRc=MdfbbkWBeAgw3G=k7xgSc8TPhZQ56ks9Or9p9Ah-y5YQw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfsJeMhjxXEMZQ3PGzkfh3x7o0rShOpFICa7UG5WnikFT7Kx/xr2H8Bgt+etXAwYcME1t2YPc9sbEvIDDU1DFhefR/zORWt3EITWdFmd358RZ85zMSnFdskbUn4pcRkC1Xz/n2WkR5UfSB8/oiSxywTidZW9QhmYjhqW6VP3Kf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=L4dEnD3J; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C070940E016E;
+	Fri, 31 Oct 2025 12:32:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id EQmMh1wuh5d9; Fri, 31 Oct 2025 12:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761913945; bh=Q1wKm23IWPLU7SS0cQRSfxSNlgwvrah53XvFGrbtS7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L4dEnD3JvwMbKBNj9bNtjxXpVRjb1AIRNRlOuEIR4M/vuYJGeDHZGmPcDIxAjIWDa
+	 0D3e9x1db0wVoAfzYTdVJFX7IaZlMTyU39CPBrEoIR0W9UZwrDgfPe/LpcMR11gX/a
+	 PwrCd27OGhyIf6/v9m6zXFL1mLnRR8bt/TUmyIXIGaS/2kXaDh2VuJBQ63ECMHTVjZ
+	 fonJRB2YfgGRRxUlX9/r17t3Ty0ZELKwKpebISeaaz3E2cft9/mekyHm2ezsTpriEo
+	 Nt56ebqnBkXY9y7B83+RsYXfkVdSNFN+xcYNXtItb2Mlh+c/hkn82J0HxEHGx7pbi4
+	 agcxoRHPV3/X+FNqz/x6CXoOo5D6JYYiavHJ1wqO1RTYCp0xXx5cRnj5GxPAUWVDgJ
+	 w/pNFh1bUohzH2VH+ELquMQjJgFoSxKrsm37rzqdA271MUHJz7iIsIuYFgKVuBAoiB
+	 dBviAZMwGFnUvDNMTF9rK7FSozgjIePhIMNhr8NdqZXqQtarWv6FUL2JaR3+cfZZG4
+	 Sk94uwpb+QTMMQQaFvo+eZtrgfYyiZYCxdXju3Wj9kCBpNAy7SInXoOfpbkr9uOymc
+	 jDllQt9c2frgcX+ncfNjqPBQ1RXFBOGixmPKZRo7DA8ZoC9P0wLW+iNAgPBqMA+xPg
+	 lepazrFIKXTknHmfWP10ZAAM=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 9E31140E021A;
+	Fri, 31 Oct 2025 12:32:16 +0000 (UTC)
+Date: Fri, 31 Oct 2025 13:32:15 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: neqbal <nooraineqbal@gmail.com>
+Cc: dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+	tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com
+Subject: Re: [PATCH] x86/mm: Fix off-by-one error in set_memory
+Message-ID: <20251031123215.GCaQSsT-TMmfz_Ot8b@fat_crate.local>
+References: <20250927223652.17018-1-nooraineqbal@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,75 +77,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdfbbkWBeAgw3G=k7xgSc8TPhZQ56ks9Or9p9Ah-y5YQw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250927223652.17018-1-nooraineqbal@gmail.com>
 
-On Fri, Oct 31, 2025 at 05:27:10AM -0500, Bartosz Golaszewski wrote:
-> On Fri, 31 Oct 2025 10:44:46 +0100, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> said:
-> > On Fri, Oct 31, 2025 at 10:03:47AM +0100, Bartosz Golaszewski wrote:
-> >> On Fri, Oct 31, 2025 at 9:30 AM Andy Shevchenko
-> >> <andriy.shevchenko@linux.intel.com> wrote:
-> >> > On Thu, Oct 30, 2025 at 03:33:02AM -0700, Bartosz Golaszewski wrote:
-> >> > > On Thu, 30 Oct 2025 10:34:46 +0100, Andy Shevchenko
-> >> > > <andriy.shevchenko@linux.intel.com> said:
-
-...
-
-> >> > > Andy: the resulting code after patch 3/10 looks like this:
-> >> > >
-> >> > > struct fwnode_handle *refnode;
-> >> > >
-> >> > > (...)
-> >> >
-> >> > Let's say something like below to be put here
-> >> >
-> >> > /*
-> >> >  * The reference in software node may refer to a node of a different type.
-> >> >  * Depending on the type we choose either to use software node directly, or
-> >> >  * delegate that to fwnode API.
-> >> >  */
-> >>
-> >> But this is incorrect: we're not really doing that. We either use the
-> >> firmware node reference directly OR cast the software node to its
-> >> firmware node representation. We ALWAYS use the firmware node API
-> >> below.
-> >>
-> >> This really *is* evident from the code but if it'll make you happy and
-> >> make you sign off on this, I'll add a corrected version.
-> >
-> > The comment should answer to the Q: "Why the heck are we calling fwnode APIs here?"
-> >
-> >> IMO It's completely redundant.
-> >
-> > This is unusual case for swnode API (see other functions, they call directly
-> > the low-level implementation instead of going to a round via fwnode). That's
-> > why I insist on a comment of this piece. It may be obvious for you, but the
-> > unprepared read would be surprised by this inconsistency.
-> >
+On Sun, Sep 28, 2025 at 04:06:52AM +0530, neqbal wrote:
+> Correct end page calculation by subtracting 1 to prevent
+> out-of-bounds access.
 > 
-> I propose to have the following:
+> Reported-by: syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com
+> Signed-off-by: neqbal <nooraineqbal@gmail.com>
+> ---
+>  arch/x86/mm/pat/set_memory.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> +       /*
-> +        * A software node can reference other software nodes or firmware
-> +        * nodes (which are the abstraction layer sitting on top of them).
-> +        * This is done to ensure we can create references to static software
-> +        * nodes before they're registered with the firmware node framework.
-> +        * At the time the reference is being resolved, we expect the swnodes
-> +        * in question to already have been registered and to be backed by
-> +        * a firmware node. This is why we use the fwnode API below to read the
-> +        * relevant properties and bump the reference count.
-> +        */
-> 
-> This at least adds relevant information on *why* we're using the fwnode API.
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index d2d54b8c4dbb..daefc96403f1 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -446,7 +446,7 @@ static void cpa_flush(struct cpa_data *cpa, int cache)
+>  	}
+>  
+>  	start = fix_addr(__cpa_addr(cpa, 0));
+> -	end =   fix_addr(__cpa_addr(cpa, cpa->numpages));
+> +	end =   fix_addr(__cpa_addr(cpa, cpa->numpages - 1));
+>  	if (cpa->force_flush_all)
+>  		end = TLB_FLUSH_ALL;
+>  
+> -- 
 
-Yes, works for me, thanks!
+
+I guess this got fixed differently:
+
+f25785f9b088 ("x86/mm: Fix overflow in __cpa_addr()")
+
+Thx. 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
