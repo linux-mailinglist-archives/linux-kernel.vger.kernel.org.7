@@ -1,169 +1,222 @@
-Return-Path: <linux-kernel+bounces-879930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DECCC246A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:21:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BEDC246D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF3324F0322
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08B73AEB7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEE333FE03;
-	Fri, 31 Oct 2025 10:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E16341674;
+	Fri, 31 Oct 2025 10:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DTwUCsRU"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lLHooJPA"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012018.outbound.protection.outlook.com [52.101.66.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B767C33F362
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761906033; cv=none; b=I735g7Kod4H3Ezw6hdBhHdO1cGVL/Zfl3YYtChxKvgfExaVYvzpHz+s38wKLz/dJxoonE9mtOcYfGPR/wr4KiZ0qQCAAyfQuKPIS91CqvcOSdhvhGll0vqbT80ARHkd3eYf4B7rncZqUhGlOP9rsrr2nF1g5JCJYOKKY+OjUf9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761906033; c=relaxed/simple;
-	bh=8vaJQn12N1SHmdIdktkw0yTPHhSfa/2Poi8KW4nkNOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eQoKz8xBa8GoxqaDp3xDp1HQ09ayqH35FDNKv3loU+VddRvHM4Oz4GGbDzxV+WjVdLiTLJDzOdpVNAnFk5VnJ/RxXeFR9npSw4l9Ew78I0qFFgLnbXWQ8Yk0X3JNWv9IyGYWrYRyiLT/m9XGXa4w6X+CsG/aWlrvRmiHgLzCGmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DTwUCsRU; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso1555382f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761906030; x=1762510830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/u+awZrbSzQ6eDfqV7nDtHfvXhS1UpzbuBjH1UCPs0c=;
-        b=DTwUCsRUq5E0tlWX3E0X+blw6kHyNP7DuoDDDykweRk3ESGKcmrsKbMn/+nn8nCj8N
-         YdiYWcrK4EvTlc51pXbKH4Jl2JVXoz708Tkxst7bH155vXIc84vgQ4b1/37O71yRYQ24
-         Xgp2XTvZccYL5dmxtCHh+f30aew71iYTHHRpnF9ZfFwjZa+YJQedUDQ9beadY38QsNwe
-         Ko5vjiJIbiqGXhaC7y4UvlAloBktQEv4Wg81XlXfQUunLsQibJw6zv9mCD7UaX0Tdr/N
-         WKRGW7C5u5sK3299ceVTC2bN0VTa3R5ZMM5XN2BikafsINb6frzimvrohCQO/Q0WwRnM
-         GSPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761906030; x=1762510830;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/u+awZrbSzQ6eDfqV7nDtHfvXhS1UpzbuBjH1UCPs0c=;
-        b=NvoL7NkdcGySe8tkmxRwYllc5+p4MkHPS4XFGDnUL2zFKqKJDpAY1wbz7HIGdLswQl
-         g2kJz2uvfcTzSEcnx7l+3JfWXTo21PySfHy2xIhf3jqVwn6zoJIPXNI4ve/HHaLFg1So
-         J2y5oxr2TKCxtmZHihXJ3drFK521I9wFpzHu8eOcXEpKGGWcrhx5ErdkojQSm2cZeq44
-         snvPL6jYCHNHLCi3LtNx7dUwZMbOXCm+4kvOkoJF5x9hQG5xgNOu5YoEewx87uPD0Sta
-         UMBM+hfAKUxSCaDt3BTmSq8KJF4PsSCr6nDPcnb526OdTfUciENP8UDynpW0XMkn54jP
-         xu0A==
-X-Gm-Message-State: AOJu0Yz0sOH4ouemu4Q+FpIy3nHjtAolxFTuDbjOKdqbd4toD6rimDgF
-	tJQIhbSabuJQNLKRYdTcPFivIU74SO/NPBWiJFSlPIqlY5WLCZMUVCtxCBtbXwobRIJm2u6Ebyx
-	ndXgk
-X-Gm-Gg: ASbGncsu/zncEeHRLv4K4FEAKIqkhExX8NG46M8OSlDyg7wj/+kbtbxBXvid52dnwzG
-	jFo6RbbBapUktohPKyxm5El4t1uiBROXsILe5fYrNK8LNZ8DHCkbALlSBW6j5P4NAlrf1Ui0FtW
-	SOA0xbs63ZR1Wz7QI4vYhM+N8SLgQ1MyL9NthW5l7NwKqpJviOkWfne+5j/jbOTn39zokc1wy1B
-	DmRcsdGYYV6Yr8jL8fSenJAi/IlhmjXytpufqmDx8giKAtUosVFHOJrIDZ1GDVdQ0eeHWfarAMR
-	j2eP7fbTDjMpArVH5NT+OtTH2gnI32HrzAGBJyG7skwPOMCZzV1DFgpjjEWdopikg6VQME9/g0v
-	EfUaEqhN18PPoXMG+DsT7ac3M4SQq2thY0bLxiXD7F7Iaco9pS7LpaxV2XZoKuTYq8BW8HsqyGw
-	TquJYZ/njyIGddXP+4yNXSFBwN0nkXzFMp4IvgQrszNSSUFg==
-X-Google-Smtp-Source: AGHT+IFGDvTKB2rxlJh5yej09wy7WNNlEMpaWtu5SfSjAIP63L2LKeKXvN3qht8svwvhZJc5Fdl6Ag==
-X-Received: by 2002:a05:6000:2f86:b0:3f0:2ab8:710f with SMTP id ffacd0b85a97d-429bd671cc6mr2113941f8f.8.1761906029644;
-        Fri, 31 Oct 2025 03:20:29 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c110037asm3090410f8f.3.2025.10.31.03.20.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 03:20:29 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH 2/2] drm/nouveau: WQ_PERCPU added to alloc_workqueue users
-Date: Fri, 31 Oct 2025 11:20:20 +0100
-Message-ID: <20251031102020.95349-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251031102020.95349-1-marco.crivellari@suse.com>
-References: <20251031102020.95349-1-marco.crivellari@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52653340DB2
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761906080; cv=fail; b=phhlziWjJW/7c1M7Xmt8NbalDxOwSGdtHwbX9N4JvxzHS2blm+7OqxJ7oye9Roi6D9rFsGKR+rka8QHZyBC6o7vqBAPVtPUN+ejQXRrvVeoWhiEUpqYcJRlD8x31mvsVdTVDR5zyzW+keWWGD14aReXO61mS8dSX8LsTszq0+WU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761906080; c=relaxed/simple;
+	bh=Wsv/PxEjVqlUodZxhNmnO4NkN75GjwlWDxIl9VJy+g4=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=k3jOxmLS8LLnkDVWDYxAB0w4VF5mxZ9dM7fNwe315lHxSrQO6odEajJh21H1SuRZoLcdTNTk3Wxsrj/ejKvd1CtwO9twmteGv25YWb57jPEPN8lAaqM+Jputf8wBbupa33J9LbDkIlMHGxnDipu+Jk+ZUcmmCtJRxVldC2D82Bc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lLHooJPA; arc=fail smtp.client-ip=52.101.66.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D9pY5s3t+iyLn4DdFohu4PNxQUiKfjfe/Bn+0INWr20fJ/b2t41a3rxpNCKRdUx+wxhA1bvfjql4M8CycCD7jlT0lMt5MVqCpJe142h+HEAeUWMgzOl9rYRwRbmd7AzwCHCxutTNvvG/HiJa+0dqJaQceU6kIoqNDXD1KJTMC+PRlLMbONchLx2CAGKtp1UQyqjNaFpHJddtd2bjjH6cnNnEMfGqAXWO/cVBO2eHZ0c2WTIJEyQKfvYNlC6wkp+PzWV0wmIejJO6IbRlDlg1gSZBKkRyDPwmoJ/JMetmNQnMOgqcroAHRXfF2uI68ANA3bolUBggVVZgvqASFbyY4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s7me4Hdoe2D+Vz/nfpVHFn22kNfi/lyGUeLse+Vexjg=;
+ b=t7WXJKeihd604U6I7BaHRyTkJZvsiJD82ZpkEO7yXz2vG95DlJKDEnRP/GsOL8mVIYebqFdyNAjSdkJ1OxKhJHS5ZHCmlCAAztGQCA42EysRx4DHhNo0WdZwAwibSQJWJeAih7ds633XRaz4rt1G+OiwhvGH5BLyOs5jhtu7e7wNMeK4LomILlwVqRwXuWsTjdbanSHEXgt1ehaWRmomOOQggg203tqSkCZkJlVCt3m8NIR+KImEKOdS9Q/RsXi8oN++YoxSQqWLCa8u4L88OXsHqcuDNlxlqxEbOon/H9rUeVdpOXtrId5JA5dOIU3+BYkzyLqmMYR5ljrl0ZEZIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s7me4Hdoe2D+Vz/nfpVHFn22kNfi/lyGUeLse+Vexjg=;
+ b=lLHooJPAb/uUDLOsiJoWbnhOon8pFQ4gLhXEnHaUqNK88V3HEps2oENXbJud3JbOo2SNTqhOKN5Cj31E0OOxkyWbR/Fm3I5jv2oZSejpm7G5EE9LHgRL6jt5PqFHK3r3k1y57nCFsNCv8LhCcJkfe5x1YQWPVSCcOH6eLdRhEdmFphc8yKOJyC1bz8wdKqquTavxK2t0FkWJxmHRzSWbW4TShsaB22Q6+cFknLjb0aSgtH82YNhpz+Zi8+2nKB3fx9z64It6oxANmQrNf5uqNQtcwLHPE8CJeSleOQmVsl3vShQtzBmJYSSF0YV2xdA6Gb8Sj541uzaOBsxBwaWGVg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB7056.eurprd04.prod.outlook.com (2603:10a6:800:12c::21)
+ by AMDPR04MB11677.eurprd04.prod.outlook.com (2603:10a6:20b:718::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
+ 2025 10:21:15 +0000
+Received: from VI1PR04MB7056.eurprd04.prod.outlook.com
+ ([fe80::66b9:8242:90ad:ac74]) by VI1PR04MB7056.eurprd04.prod.outlook.com
+ ([fe80::66b9:8242:90ad:ac74%5]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 10:21:14 +0000
+From: Liu Ying <victor.liu@nxp.com>
+Subject: [PATCH 0/2] drm/atomic-helper: Support atomic flush with an
+ optional kthread worker
+Date: Fri, 31 Oct 2025 18:21:23 +0800
+Message-Id: <20251031-drm-crtc-flush-worker-v1-0-9edc94da0fb7@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKONBGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA2ND3ZSiXN3kopJk3bSc0uIM3fL8ouzUIl2DxMRkI/PE5DQTgzQloN6
+ CotS0zAqwudGxtbUAiQ3fu2cAAAA=
+X-Change-ID: 20251031-drm-crtc-flush-worker-0aac27acf40f
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Liu Ying <victor.liu@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SG2PR01CA0145.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::25) To VI1PR04MB7056.eurprd04.prod.outlook.com
+ (2603:10a6:800:12c::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR04MB7056:EE_|AMDPR04MB11677:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f4dc4d8-6621-4ba9-ebd0-08de18673849
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|7416014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Zm5qNGZHWHhSaE0vZ1ZmaE9rSURIbWZ6WXdkSjd5Qy9tT1ZvcnphMTYya2dn?=
+ =?utf-8?B?RHFxbVFZUGpxQUZKaDZmbnRUamZYYkNENk5SMWIwL2wwK2RRYjRIWVlvRmdL?=
+ =?utf-8?B?QjZramkybnJjQUtPOVY5RlMwTC9LK2VqTW5xNDlaN21PemZENWx2ZHN6b0lu?=
+ =?utf-8?B?bDFIcndldDNkQkxMN0ZxVTVaYmFsZVpuNUptNFkyRWJTM0N6aDRNZ2ZPU0Ir?=
+ =?utf-8?B?K3FQQ3BRWE0wbnlnaEhpdkxZSjVBZ01mMDd3czY0U0tNZHhEOVlQSmtvTEFy?=
+ =?utf-8?B?WnFSeDN3M2EybnBFTXF3R0pkMlErQXNPeVlCOEZxT25tTDVxMDRyODJIQ3BL?=
+ =?utf-8?B?U0l1T0I2SWRSZjhqV3hRS1R1S1VXelVDSk4xMGYxWllyVVJ6Y0c0VkVKaHZu?=
+ =?utf-8?B?eWV4M3ZXU3VscVNwOEI1YVFsVTREaGV5MmM2a1pFaEM1dTIvT1J0TUZ3b2RD?=
+ =?utf-8?B?ektISXdxUGZRcGc0Y1U5cE8yZHV2OVFtL2hVMHVFSzI5TUtxZkM4VGxhKzZJ?=
+ =?utf-8?B?T1lBQUI1VEFxT1pYN0Y0ekNaUGRtK2M3cTJNUGdJVTlOV1FEeW5ONHZpcC91?=
+ =?utf-8?B?dE5SYlAzenNZNHA1Y0h4QTdXZ3d5bUpNREpCRHZIaWxyNVRkWVFXYWZqdFda?=
+ =?utf-8?B?YXl1OFVqWWRJOS9FdnpmdGxuR1dMTXNGdXkzMzMwY2ZVRStOV21PWXN1bEtB?=
+ =?utf-8?B?RnF0Q3lFYjZFUjNLZFVOeVlyZnp0bGlzNEF3WFc3SEZqRERCbDlwREhyOG94?=
+ =?utf-8?B?VVAzSVNySGx2N2h5dzd6c1B5UE9sc1dOM2Q1SXNtUnFxMFJoRHU2bFhOcWZs?=
+ =?utf-8?B?YXBicVY2OHFBalRJbUwxR0k0QWp0cXhERS84VWtxOTdhaTRIYnRrMU5zb3l1?=
+ =?utf-8?B?UHM1THlmcHY3eDIzZ0MvZGphR1U5SzdPVy9NSFA2SVRRa3Q5Zm5IVnlRd0Js?=
+ =?utf-8?B?ZHRCSU9Db3lzQVV3S2NCMk94THozSzN0SmlReDRsTDVIMWhRYnphN1lWYm5I?=
+ =?utf-8?B?MEpnUmJaOXlmNUNSSUd4Q3A5RmNZMVhBRHNMcXh6UTYvTisvb3VtV0gvTFFB?=
+ =?utf-8?B?UlRUSHMram0vekt1UTBzNXg2Y2g5SEI2T1lKN3lTUDErRXVHazRCaEZiUUtQ?=
+ =?utf-8?B?Ukd2amtJYm1YdmNiS2k0YlE0VjlpYTJpcHJTSEp3S0k3dEVndjN1N08wcUJV?=
+ =?utf-8?B?Y2llOUtXM242aE1pbU9ldG4ydWdHUlZsdjBJeHliUHRNNG1LOUtUNVE0UytU?=
+ =?utf-8?B?UGRuRFdGNU1HYmQrQ0Vqd3hYdm1qRkRTaTd0UDVoejBrbUJiTjdiYTNqa2x4?=
+ =?utf-8?B?cVh6RU1YaHFQdW5nSWFxdDJ6blVGL2ovMnJCNmhHOGZuMnllS1FGN3AwckUw?=
+ =?utf-8?B?cEtNY21WMHlva3Q0b3lvNEFmbjFPRStycGpVcWVYckkwN0lFYVV6ckErMkZu?=
+ =?utf-8?B?ZDQ2eVA0Wkl3WWNsclFEK1IvVXAxRmNFSVZoaW04Y05jdnQyeGhlU2pzeGtO?=
+ =?utf-8?B?YXFIcjhtU1BiS1NmLzI3UTdWV3FVRXlzbnRsQmY3NXFEbGpqQnFQUVVoNzRU?=
+ =?utf-8?B?VEs3djZYQnhBT2pEblc5RmF6cE5XTm5ZcGN4VjFxVHQvYXJFTldKWVVrN01U?=
+ =?utf-8?B?czh3OWkxc2FydW9zczA2dkMyWFN5Q3dXMUlPTkdqNG1qL3BZNjBkZktnam9J?=
+ =?utf-8?B?OU1wUUIwaWNGaWF2S1EwdVVGdVZHMmxwM1JLc09RMkR3eGYxcEJoMkRnS3ZI?=
+ =?utf-8?B?bVd3NU84RmlRRWo5TjFEMWU0RHZGZnBlOTg1NFk4OEhmNmEwYXFtQVppa2t1?=
+ =?utf-8?B?eVdtUjFZeG1aa09oL3QrZ2xNa1dJOEdtTlRvQ2RMaWdUVjlZK25BY3kzU0ZQ?=
+ =?utf-8?B?TFFVUS82S1hiQTdseVV3QjdTT3NVV00rQTh5Q0VWblIraDRuVUdKYS9EMTZ0?=
+ =?utf-8?B?SGViOFFNc055YnhJdFhKdUpubUtmc1l4MStYOTU2b20vc2plbzkyYjkzS0Qr?=
+ =?utf-8?B?ZGxDbFpEVWlONkRoS1hrUmJEcDdOMDZTZWpFeUlXejRHQjM1eFdtdG5aemJY?=
+ =?utf-8?Q?G389qc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB7056.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SUNHbDN5aGZ5RFdJRnBuRGRlUHhrZWVQNTY5Mi9ZanltUXU4SnVwZnpvODNl?=
+ =?utf-8?B?dzNuN2xOS2pIanZPM3JiZktMcy9NVzZVcWYwcHl3UWhLS2ZKSnEwRFZNUktv?=
+ =?utf-8?B?cHdWdHNoOEF1dU51WUpCeVArUmpsWUd3TkRPcXZFVUJnVzl3L0N0a1ZHbURi?=
+ =?utf-8?B?QmJ0WjFKNnVQZmdUbHgzTUhRUDlSMEpseEtPQ0g1d2R3dEpJNExvOU9LZC83?=
+ =?utf-8?B?QlQ0ZWFWcUFDdEZTMVUxR0h6eXlFanlBVzRoWU9nSUFrT2M4eGIvdDVBMzZj?=
+ =?utf-8?B?YWlCVDk1L1RhYVJxeEZnajBSVEsvQzN1aVJxSzlXWUM3d1dQbFNsM3ZXU0Zw?=
+ =?utf-8?B?UmtHMzRkNlA2SVpPZnhxZGZBVnVJalhtdUcrY1plaDZnYS92MnBXcXJvMVlq?=
+ =?utf-8?B?RFZ6V0Zic2FYM1BRMUpNcGRHUytINHlSOGFTRXR6aEFHOE5RSFBBWnNJakpW?=
+ =?utf-8?B?bjgzMWhrYlRUVnNpQmhsNWpKZU9DV1psOXQxdjdvUTlwSEV5OWZ1L2l3MmRm?=
+ =?utf-8?B?Yk1pM2pUNVZiQ0NtOWdCc0pyWVBNcUNOaWF2UkI1VVJhUHpwYmpKT1JrVlZ0?=
+ =?utf-8?B?YXhXZW1xSFBMcFJkeWxaZStaUUpiSkdrOEcvclkwTVpnR21TUmJnbEdmdDdD?=
+ =?utf-8?B?QW02TjU0Vms2aEcrZlY3QVFmdVhrR0hFeVA4K3ZxK1owMXVsdDBHS3YvRExl?=
+ =?utf-8?B?Wk00RHBucUpJZU9mUjZ6ZFE5NkY1T2U2TVJrQWlBdFZ0QzlpdUFycnRMSkxN?=
+ =?utf-8?B?bGp4VEVlWDVWb2NGZlQ2cDBGbnUyRTZmSnFkRzhWWFg2RTlTYjVpZHJGVkg4?=
+ =?utf-8?B?YzFPRlVhZGQ5cFVDSFJLTGZXRVF2TEZBelFPb3VDV2lTMkcvZVgySU52UHR3?=
+ =?utf-8?B?eHQrRDk3cUh0Z0hjaWo1RXMyNlBTWnM1V015RVM5VmI0dTNidERhUEthZWNu?=
+ =?utf-8?B?VHpDbkFxSHgrdHFjUHBVOUdESzFXZ000eitCeGt3OVJHQkk3TGt3bEJMa3pO?=
+ =?utf-8?B?UXlBVXJDWVlaUnQ3dEgwbkYwSkRnUU14MFZRWUwzVUZHeS9TYmZtcWsxTXhV?=
+ =?utf-8?B?OWNLV08vQ3ZHNk04cnRMOERwYW5kb1Y4dzBNMU5lL2dnYzBubHI2UXJXdnh2?=
+ =?utf-8?B?YjBjUjVIZTZhL1pzdnF1MU11anM0R2gwd2tYcHJDdkVYcWROb0NVeVVzeXJv?=
+ =?utf-8?B?RnRwZG85M0d0L01DTWhVOUd2ZmpHZDVHM2dPSGhlVzd0cGd4aHJQaWtiTDhW?=
+ =?utf-8?B?SXpDYnVIV05XV1VzNk9RSzgvc01JOU12MWpBN3M3cUxFS3NDb0NIQ0JHcGhL?=
+ =?utf-8?B?RGprNFhtbHh1bi9jM0kvdjQxUjFZR093VDV4TktBejZITU9uelJ6ME51YnBZ?=
+ =?utf-8?B?a09ldFFkWWhSNjBCSW1xbWh2Mk1iQXJ5OHhUNDZLOXJKcE56eW1MV3piQ2FQ?=
+ =?utf-8?B?UWVaRTFjMmplaHM0OEVDR0JvdEZHTjBaWWg3V3NzMlRCcDlVdDZ0aGgybk1x?=
+ =?utf-8?B?Y3Y1TmFSV2dyTk1BTytYdHpVdDBJdlFRdTU2RkVONGlqS3RuTU0rVTlYTmRD?=
+ =?utf-8?B?NU0xcW1lWHRzVmU1K1lQek9Mdm93ODI4Rm85aFI1QmIyeExPU2RFQTkrZjNR?=
+ =?utf-8?B?QjZSQlp4NGVEYlhYUkVmRnVOajlRaVhrd2w1RDhiVXdzQmowTWt2YXpMS041?=
+ =?utf-8?B?UXNvdGJsQTZmN0VhOTlFcXdtU2djYTNOWHZ2NUlzQnZQemxMc3pUbExZdUFY?=
+ =?utf-8?B?QmdicWRJRndWVWJoYmo5RVlKb2JMdlJDenZ4YW9MK1VNZmo0TiswRTVvWWsx?=
+ =?utf-8?B?V3plaW5vU3Z6ajQrMitUdVZLcTlaNjZFTENReDIyTXQ4UTcvcEhjcTlkK3pB?=
+ =?utf-8?B?TG5pZ0RvTU5mSXY3eTZTUGZDbXl4V25zVEEwSmJlSFFBdzZzMXJsQUFQK3F6?=
+ =?utf-8?B?WkpxSUhqR3UzMGlMRTVEbStTQStnUGdvM3k0SXN6NFlHRG80anB0bXYwcnNl?=
+ =?utf-8?B?NzZ0NWkxMnlxVmZmdjk3SWZ1Q0gwOXY1anl0WTd3S2VmeVN2VVVrZDhPbFJK?=
+ =?utf-8?B?U0tqUk5PM1c5SW9hMERod1dCbCtwNng3S3BFeTNyU2FqaHc3Ynk0U0VnMkZh?=
+ =?utf-8?Q?VRekvYhDWozZgWY+XkFyMiz0b?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f4dc4d8-6621-4ba9-ebd0-08de18673849
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB7056.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 10:21:14.0798
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /p9ruoZjvixZTaTSHfk4GTiF39gFavdyGxaG8qI8VnmjvUc6fDq0pjcCTpnnqqZSsuwqULNm6tF+6i+XRxzGJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMDPR04MB11677
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
+Hi,
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+As drm_atomic_helper_commit_planes() calls atomic_flush for CRTCs
+sequentially and a driver's atomic_flush callback could be blocking,
+the performance for flushing multiple CRTCs in a single atomic commit
+could be low, like page flip for multiple CRTCs.  A real case is imx8-dc,
+which supports two CRTCs and does atomic_flush in a blocking way, i.e.,
+waits for a done event for loading shadow registers.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+To resolve that, introduce an optional kthread worker to conduct
+flush in drm_atomic_helper_commit_planes(), so that flush can run in
+parallel for multiple CRTCs.
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+Drivers should call drmm_crtc_flush_worker_init() to initialize the
+kthread worker if they want to use it.
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+Patch 1 adds the optional kthread worker support.
+Patch 2 makes imx8-dc use the kthread worker.
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+Let me know your thoughts.  Thanks.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c   | 2 +-
- drivers/gpu/drm/nouveau/nouveau_sched.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Liu Ying (2):
+      drm/atomic-helper: Support atomic flush with an optional kthread worker
+      drm/imx: dc-crtc: Use flush worker
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 1527b801f013..5a2970ef27d4 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -631,7 +631,7 @@ nouveau_drm_device_init(struct nouveau_drm *drm)
- 	struct drm_device *dev = drm->dev;
- 	int ret;
- 
--	drm->sched_wq = alloc_workqueue("nouveau_sched_wq_shared", 0,
-+	drm->sched_wq = alloc_workqueue("nouveau_sched_wq_shared", WQ_PERCPU,
- 					WQ_MAX_ACTIVE);
- 	if (!drm->sched_wq)
- 		return -ENOMEM;
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index e60f7892f5ce..79cf157ab2a5 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -416,7 +416,8 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- 	int ret;
- 
- 	if (!wq) {
--		wq = alloc_workqueue("nouveau_sched_wq_%d", 0, WQ_MAX_ACTIVE,
-+		wq = alloc_workqueue("nouveau_sched_wq_%d", WQ_PERCPU,
-+				     WQ_MAX_ACTIVE,
- 				     current->pid);
- 		if (!wq)
- 			return -ENOMEM;
+ drivers/gpu/drm/drm_atomic_helper.c | 27 ++++++++++++++++-
+ drivers/gpu/drm/drm_crtc.c          | 59 +++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/imx/dc/dc-crtc.c    |  9 +++++-
+ include/drm/drm_crtc.h              | 45 ++++++++++++++++++++++++++++
+ 4 files changed, 138 insertions(+), 2 deletions(-)
+---
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+change-id: 20251031-drm-crtc-flush-worker-0aac27acf40f
+
+Best regards,
 -- 
-2.51.0
+Liu Ying <victor.liu@nxp.com>
 
 
