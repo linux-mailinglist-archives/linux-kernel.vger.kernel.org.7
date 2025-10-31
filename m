@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-880059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32E5C24C64
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:27:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6BDC24C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53DEB3B58F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:27:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5177189CA18
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AD13451C9;
-	Fri, 31 Oct 2025 11:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mVx0TeTu"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68B93451CF;
+	Fri, 31 Oct 2025 11:28:57 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909202D4807
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819863254B1;
+	Fri, 31 Oct 2025 11:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761910040; cv=none; b=JM5K5kFHZN86pkj0O0lMaESOssS4ZVNmfGYu3ioih9B/32jjKN+y5oXMsgtsJZ79crcrDkz2R6LNitEXKd39cp/fCdVQin2vu62PNaFM0TrTM8IUYb6JAL6u75uahOaPVcJ+Dy/RcF8dwS+YsKCB6jcAArwTvrTzGk37rM4oyAc=
+	t=1761910137; cv=none; b=j7M79vr+rZYuNlZZYm4SScQ/kGIwwpVc62R6kn2jq6shAp/MNhtRPAs/0E989D5HtDjg/h1gpGYhy3oRZYm8iTt+QYwEyNpmW+NMGbGLulor9mVBTG+5CoAi4H0OkGBMJsyd+Nbwn3T8ljouhi7kPYS04asa9e/wlrulapsLglI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761910040; c=relaxed/simple;
-	bh=plC+/6CrEBYyMLwLcmmekRAtRmr4crxYvfBWrqa4EsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/Lg1rLpGX1/ZMNNbK5pjSJgORADiThNOl0krg05rp7QGAR8A9y8qxslpX8sSw0VYudRtkeE1oqS7iKRUd+TjXhjMb4b5zuG1JZpzwVpxcZzqw9P74HHlu79f8pbeSXDRYnASwA/UneNoi5j8aknGMCbWJ50q7yZCdg8UU7IdKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mVx0TeTu; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-475d9de970eso14745085e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761910037; x=1762514837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwf871RDbtgle/X+gHRRa1kmehrfWm8Nitz2OZjIhxk=;
-        b=mVx0TeTuTskgFvVTRNFRNe6XPJ94tkP1BMM3Y+K2B68F7NwdV8zrYxQtzarW4GnYHN
-         2akQ1i0UOJPhSqXG78UBb3x/gjoD+M1vtBRBMoRzCz+nr5/hoE1RUzwdR6sK30PiSC0N
-         UKgyltXMeNnjYB8zeitgS/3/LFrhIXkoDINbmEfZtBL4SvulrJ4jZmymUYq0y+khpK5q
-         H0Xqr0TMWLZ/853vx/Z2BIy84xuxgKHy+s+RKgYKNiQnj1Yk8XOnpcZUREm2FZev0Vns
-         Ex34fuxZ7RZBIM/sWha4ANvIYjrhV9aubPIfpZQQeEu1rcWjUVVCaY8Scvt9JYx6O+1p
-         Ltyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761910037; x=1762514837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwf871RDbtgle/X+gHRRa1kmehrfWm8Nitz2OZjIhxk=;
-        b=IeTGAjb5USA3bALM5SZ7OB8UBCKxff60DKTGI3jXVHb9dbOrqxnCCEWAUXUfBM/Dc8
-         XEFFH3sfkLHkeuDzJ6YcuGzNJEjpL7iCRa77CLuZuR31EezJWM+PYzEEE8leI2AiL7Sd
-         Eo1fT71/Fu/mwRMZ3DOuKlsriXBrJ5QP2vslLO1V3Gij/i9jfJqT2t1DBC5gZjmVgAYk
-         IaUnF3D2ZUHFdBohd1UHu/+dzHVR0BQDBQmB8P1DCBjFG3WlJsMvkSprJ1qhIpyzWlXj
-         51/LgOHckuESjF2GKpGKALbJ9s8bf0LXtvkIXeahUx1pu6FgwjZNzXQ8zmVwnDcj5q4t
-         GNJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfqMYsQA/fsWe4ytQkYSrkUOxi5uqSr7PI3a/k05aVJTweIXVSJyaHpyRxdWrbq+X27fjtmGbszPEuR98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPOjRmHF8KtBY9HBZyjNG+QjVkiKJL+OXzEW2PD2b74XfBNt79
-	FJmAXJqSaRfTE4jGjMi+C3U3R31XkQOMTQQKXIVRafZ2iUYMedF3VDxDfnHeH/rQluo=
-X-Gm-Gg: ASbGncvgSpCZ/N1X7pUYQKmG1zliVlucHaTgB3rGB1R74Pnb5MtXgmIXZZ98Kmeerrx
-	4fB43Q/fGcHTDwO7f9f8ccHmUSigcMb8m0KJA6PfAv+vLpSsjY66mxrQahD12PP+vcmZk6fq6sN
-	ViBJByR5bqqyZs5a94S43n0JtUnFe5fdhuZ+REzCdPpNAyleik4JU3iItr+7lfLQqV0cV+JGpqB
-	KKMuKt2iwUyrWkXQfeBXeDXceg/aomSTrjRzyrWEHXw01H5nCoFvonhDI9nleTVM9sUe4rFbIwa
-	CJ0EDqOj4Sz1SZ+eE5hisdzzm5szlqWAIfKT3q30b+kd67mKMvP0mMew5F+EoMqR8So9aaQfAmZ
-	E6gV/yWfhG2ZZTeoCAjFOWaXJuwyx1yLan6XgCf+/qH1IN1ajmRzBY0U8wrmVvIzuYG9rlibiR4
-	iObgtwVw==
-X-Google-Smtp-Source: AGHT+IHOCxnrV9vNtIsoHM6missOnF5vwOTnrAGX8+16mZQ7e1sifCeCAgu5UUuGQnX7eDw9qPPn1A==
-X-Received: by 2002:a05:600c:5387:b0:46e:1b89:77f1 with SMTP id 5b1f17b1804b1-477307c23d9mr27753125e9.9.1761910035750;
-        Fri, 31 Oct 2025 04:27:15 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47728a96897sm90006865e9.11.2025.10.31.04.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:27:15 -0700 (PDT)
-Date: Fri, 31 Oct 2025 14:27:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, sparclinux@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Christoph Lameter <cl@linux.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Finn Thain <fthain@linux-m68k.org>, Tejun Heo <tj@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] sparc: time: Use pointer from memcpy() call for
- assignment in setup_sparc64_timer()
-Message-ID: <aQSdD5RFHvzJOlak@stanley.mountain>
-References: <2fa899eb-60b6-4637-9035-aeff78e261fa@web.de>
- <CAMuHMdX-uKt3-Lb2NaxmONEqWdtFgTOqXEo1nOfGq-R8ysHfcQ@mail.gmail.com>
- <33199802-d83d-48e8-9032-f1c4c61cfee7@web.de>
- <CAMuHMdXL+YXxwAM+HkawzTMxL2ez5O4bQ-j-LCCXTjz=NoLOKQ@mail.gmail.com>
+	s=arc-20240116; t=1761910137; c=relaxed/simple;
+	bh=hra7z6zhXatI9pcxh/dwkLABHgq4bkUJMjPULu42SOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Not0WRKJBr0Qtpj1r8iWeaQizF/vqiKDWUhgxfykK0QNotwN4Bxnw209j/p+lwf9SGOX4QAc4jPwa748AY/9EhLi1kZI7QK3ggHUXTocbjT48eCBrq8pY8E5C8v4OgWNvqjxwq6coviCJwUvfKRMfV7sy5YMG9cmNErn4NkBGnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59VBSYRM034127;
+	Fri, 31 Oct 2025 20:28:34 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59VBSXFf034124
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 31 Oct 2025 20:28:33 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8482e4e3-b233-4540-aa47-4573ee87fe96@I-love.SAKURA.ne.jp>
+Date: Fri, 31 Oct 2025 20:28:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXL+YXxwAM+HkawzTMxL2ez5O4bQ-j-LCCXTjz=NoLOKQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] jbd2: allocate lock_class_key for jbd2_handle
+ dynamically
+To: Jan Kara <jack@suse.cz>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <e42f1471-a88a-4938-8743-1d5b171c47ec@I-love.SAKURA.ne.jp>
+ <fwsxrb7ugi5zeosugo6hyjdbhw36ppa5kekfi6n7we2vvi3r7m@ljrizqoagsg7>
+ <93744126-237b-4e36-8a62-a33e1fb52051@I-love.SAKURA.ne.jp>
+ <mjzb7q6juxndqtmoaee3con6xtma5vfzkgfcicjjmt7ltv2gtt@ps2np5r36vn3>
+ <96c8fca1-7568-46c8-a5ad-af4699b95d5e@I-love.SAKURA.ne.jp>
+ <doq4csrkuhpha7v5lunesdrscmqmjvt3flids3iai2gvpbhp3j@mxldi4yvvymw>
+ <a6fcc693-42f0-4d70-a1af-fc1bfb328eb7@I-love.SAKURA.ne.jp>
+ <rajbaoxp7zvaiftmuip4mxdvrdxthhgvbjvtuq3zrwijtdab2j@ouligqrqxyth>
+ <987110fc-5470-457a-a218-d286a09dd82f@I-love.SAKURA.ne.jp>
+ <vgpy66rcs3mvitijmt2v2yfwuhkijh33z3s76ghlsqq6yjgmtw@prlpxdeoitif>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <vgpy66rcs3mvitijmt2v2yfwuhkijh33z3s76ghlsqq6yjgmtw@prlpxdeoitif>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Fri, Oct 31, 2025 at 11:08:39AM +0100, Geert Uytterhoeven wrote:
+Who can take this patch?
+
+On 2025/10/23 16:59, Jan Kara wrote:
+> On Wed 22-10-25 20:11:37, Tetsuo Handa wrote:
+>> syzbot is reporting possibility of deadlock due to sharing lock_class_key
+>> for jbd2_handle across ext4 and ocfs2. But this is a false positive, for
+>> one disk partition can't have two filesystems at the same time.
+>>
+>> Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
 > 
-> The above function could be shortened by writing
+> Thanks! Tha patch looks good. Feel free to add:
 > 
->     (sevt = memcpy(this_cpu_ptr(&sparc64_events), &sparc64_clockevent,
-> sizeof(*sevt)))->cpumask = cpumask_of(smp_processor_id());
-
-Heh.
-
-regards,
-dan carpenter
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
+>> ---
+>>  fs/jbd2/journal.c    | 6 ++++--
+>>  include/linux/jbd2.h | 6 ++++++
+>>  2 files changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+>> index d480b94117cd..f43474002f50 100644
+>> --- a/fs/jbd2/journal.c
+>> +++ b/fs/jbd2/journal.c
+>> @@ -1521,7 +1521,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>>  			struct block_device *fs_dev,
+>>  			unsigned long long start, int len, int blocksize)
+>>  {
+>> -	static struct lock_class_key jbd2_trans_commit_key;
+>>  	journal_t *journal;
+>>  	int err;
+>>  	int n;
+>> @@ -1530,6 +1529,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>>  	if (!journal)
+>>  		return ERR_PTR(-ENOMEM);
+>>  
+>> +	lockdep_register_key(&journal->jbd2_trans_commit_key);
+>>  	journal->j_blocksize = blocksize;
+>>  	journal->j_dev = bdev;
+>>  	journal->j_fs_dev = fs_dev;
+>> @@ -1560,7 +1560,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>>  	journal->j_max_batch_time = 15000; /* 15ms */
+>>  	atomic_set(&journal->j_reserved_credits, 0);
+>>  	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
+>> -			 &jbd2_trans_commit_key, 0);
+>> +			 &journal->jbd2_trans_commit_key, 0);
+>>  
+>>  	/* The journal is marked for error until we succeed with recovery! */
+>>  	journal->j_flags = JBD2_ABORT;
+>> @@ -1611,6 +1611,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>>  	kfree(journal->j_wbuf);
+>>  	jbd2_journal_destroy_revoke(journal);
+>>  	journal_fail_superblock(journal);
+>> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+>>  	kfree(journal);
+>>  	return ERR_PTR(err);
+>>  }
+>> @@ -2187,6 +2188,7 @@ int jbd2_journal_destroy(journal_t *journal)
+>>  		jbd2_journal_destroy_revoke(journal);
+>>  	kfree(journal->j_fc_wbuf);
+>>  	kfree(journal->j_wbuf);
+>> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+>>  	kfree(journal);
+>>  
+>>  	return err;
+>> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+>> index 43b9297fe8a7..f5eaf76198f3 100644
+>> --- a/include/linux/jbd2.h
+>> +++ b/include/linux/jbd2.h
+>> @@ -1253,6 +1253,12 @@ struct journal_s
+>>  	 */
+>>  	struct lockdep_map	j_trans_commit_map;
+>>  #endif
+>> +	/**
+>> +	 * @jbd2_trans_commit_key:
+>> +	 *
+>> +	 * "struct lock_class_key" for @j_trans_commit_map
+>> +	 */
+>> +	struct lock_class_key	jbd2_trans_commit_key;
+>>  
+>>  	/**
+>>  	 * @j_fc_cleanup_callback:
+>> -- 
+>> 2.47.3
+>>
+>>
 
 
