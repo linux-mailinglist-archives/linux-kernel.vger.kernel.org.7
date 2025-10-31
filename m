@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-879873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09E3C244A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A3BC244CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47DE189A337
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAED4282CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B8E333740;
-	Fri, 31 Oct 2025 09:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0386B334C28;
+	Fri, 31 Oct 2025 09:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvXTNdmI"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HnV2yq7M"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0005F34D3B5
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453F33345B;
+	Fri, 31 Oct 2025 09:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904443; cv=none; b=XkYX+4oWEDKdOv1jBzIjXJ+Rcnp9y5jdXlxeZxQPkM6okD/59UUxvb+kwKU8WcqI38ahSHhiaB0cR8mG7u7yaHPpQugk6wPPyTIBcACwLDzywB2GFFyUxawYHqrDm19rGI6WJc1jd61+wAt8Je4HrXTh8GfFYGFtWrr8RNGkNd4=
+	t=1761904464; cv=none; b=lcPM21gTYc+KU3lOoISEmjTbAFcjCTs9EHhW81PLxSEwwPhd0ANlhatMd/S8WcIsrn87SPldYRZZR77ipHWVtP29s3jbF9Iv6X3cqOTYCakxONNKc2WwC1uNJ5Fa6cPpj8SvOywEQce7TPJFfEPHpjQSHU119Lfm0otwehi4R4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904443; c=relaxed/simple;
-	bh=Klmh3jjuYCOmOQGrka0ucLeEvTrFCcJ8wdqYdFBdeFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=om1kcH/cIv8kn7Lx5/HIAYWb5gRtui++/P94yzkSt5q0E+skm0HNMDavumNA8NEOk2Iu/bZ3Z/kyL7UStu+rZIP5Y771KFcGNrNUjbxx8gcNTp6aD2yZwzhKoVjcG29LZDy5B7xhuMymwsmZe0vzXyZm38PEhh5y65INrlRQSNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvXTNdmI; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-294fb21b068so21795695ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761904441; x=1762509241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLNPmDkWzf8eEQQPMNYd08lwz6rZ0+F8xG5ehROMMhs=;
-        b=JvXTNdmIPJz+aVSxwVU2BHYTppBGcdpr2jw9u/XeTLXNLe4jp5/2u62DISxIrP4Bmk
-         85utbcL4pv8nn9ekW+BrcdUT15hCQ48ssKXnTwKcTIagUNmaZAuB1e6MCILUl6WJ3ilC
-         ovlleLNBDzrx28pzU+78QFePsPVBIbVAUzNq159lnftK9vF6+4eqn06qVAGM4SZeIKE7
-         FCs3OpZt4K8Uw4pe42BIeIgMWTEM4g+qNJ9Hdq+l3viiA99hkiZKqoJY2cuOYgsGpN50
-         Y3+tpTMw8cRBxdNR3RCuE/2JMk6s5kQhyzYXYaaPkv7EwtZT6iGTmB9SVX4pZCF434uX
-         jqTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761904441; x=1762509241;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cLNPmDkWzf8eEQQPMNYd08lwz6rZ0+F8xG5ehROMMhs=;
-        b=LXJYC0MEyrtzgzXjGuQec5uMMsrkHl5NqRIBvBywUG2QeQYDQpfXaNeJqbKMU9uKEl
-         JU+mGvHbBkaqM1mUbpHk1b7kVHNEiGDEpwqBTZZyQpPw/498RNEE1ePiMssDLdAZqjLb
-         rWg29n9TAiaOsRkuXoHl6k9mIOq2rUdFZxZ+bNLoQ5YKMa3uieazXHb/qUuQ+SbQ/W0o
-         rRqZAy7m1TdR+A5qR6SRUOY1IKSLuO0znWpXWB1QXxEj6SRU54f0+O/mPvbnYq+E51KM
-         +xeUs+BNvVF1dZmmBKsU1ydtAb4o52opXjg+D4fsNG1iQH1eC/6ppcyYS5X4Gt/btRCj
-         yYtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCybB+DrQ5Bimr5vNmyy+InI8cLlzFJD9aKjG9i0xZ0t2P5R9hr30CpAPyt/owf/qoRFPiLiut65ki9Yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzExsxdZlCHkN7gtxoJkPLb09WK2R9N/qIGkmeCx5ygx6BNDz2V
-	fu5PEj39nf9LBxx2YGW/itn7n+/2rbkyPSGX0c73JlRbAV0pc9ZjgtMD
-X-Gm-Gg: ASbGncv2KtrjE5oKKNZgq/kg55GF3dFiZUZbQZ4wdsHwmmumBhTucDpzNxoD0GKLQFT
-	1GsucvivsaTAGBMvRdHwaG49OrAETpmaIBvJzXxqzVv+Jo3uXL5j1WbLiv0ZHeR+eFwsLb0TrQ3
-	J0QSClKyjF4D9GILIgCD9w9ac3aOsWaVNBAeTHHBtykd4kJf4EYVAOGf9Z6sxQt+b6ol3xLgnKr
-	8x8pnvuWeGg670bzRI0ReRNEs7h8DtqFpMcRtEH5iEZVNzTltPUCeQV7KsgGUMVrR2fUaCdh/LF
-	7DHXYZ2t2cc9/qHNFml1uohnKo9UwK5YXVEySKUhBYNHEi+CA7MlqfxaGhUBThtUuOqwajQNMeU
-	eLV9lqJ4aknKS/hHU8hzydQAX+oKVhgsBSNB3OgEL/8gWkbJ4BfsUID1aIhEX19jgjm0xh27z90
-	v6WBiBmHmwNabc
-X-Google-Smtp-Source: AGHT+IEaWtnPSkn8bEYuOq2PjxBQpign0Dr3z7sevrRCbVO/NKyO3H7xejdOk0+IGGRdzvycMwogmQ==
-X-Received: by 2002:a17:902:f683:b0:295:34ba:7b0b with SMTP id d9443c01a7336-29534ba7bd4mr8072985ad.35.1761904441183;
-        Fri, 31 Oct 2025 02:54:01 -0700 (PDT)
-Received: from fedora ([2401:4900:1f32:68ad:2e67:289c:5dac:46fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699b791sm17746035ad.75.2025.10.31.02.53.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 02:54:00 -0700 (PDT)
-From: Shi Hao <i.shihao.999@gmail.com>
-To: martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	i.shihao.999@gmail.com
-Subject: [PATCH] scsi: target: replace strncpy() with strscpy()
-Date: Fri, 31 Oct 2025 15:23:48 +0530
-Message-ID: <20251031095348.24775-1-i.shihao.999@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761904464; c=relaxed/simple;
+	bh=Qs4ggnpyC8OpSAy9Yb0bJBsNO13Eq7G/g14GI+pEqSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tkEMKubS9DIh68V7/wtXv78wXf52LGRimK85YqmoufJML+zGG8uKvliy/elNWyZlXDAZnkRdEyvfac64FXFaudJKcpjch0rcsap9QrntKRUs6wjZKoisG6qPOrqpt47B5kql3NS7g1N7SrMHpeoYTC5mttxRxA3YV2IFi4S1pQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HnV2yq7M; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761904452; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=V6KM2FGZe0yUHDU7WK2IN28Yp5FlE7rIbHcELeToGpw=;
+	b=HnV2yq7MxaTKvRIgjGFBWt18PHFF/TTrCgCXVNBs6c6M9BNji76zzuWJbrfAOyWs94rKMZCQHzrjmzoeNwGLd46XK4kbk8YezEXhkwHmV7GpHdr6JY+qXvAkv5VAMS6lE/HgPdY/gjr2PXQqAuwK0XTnElLRnHKAgh4n+ncyVDw=
+Received: from 30.221.132.210(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrOUk-u_1761904451 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 31 Oct 2025 17:54:12 +0800
+Message-ID: <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+Date: Fri, 31 Oct 2025 17:54:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: question about bd_inode hashing against device_add() // Re:
+ [PATCH 03/11] block: call bdev_add later in device_add_disk
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+ Christian Brauner <brauner@kernel.org>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
+ zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20210818144542.19305-1-hch@lst.de>
+ <20210818144542.19305-4-hch@lst.de>
+ <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
+ <20251031090925.GA9379@lst.de>
+ <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
+ <20251031094552.GA10011@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20251031094552.GA10011@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replace strncpy function calls to more reliable function
-like strscpy for safer null termination.
 
-Earlier code had some strncpy functions still in use which could be
-replaced with strscpy() since it always NULL terminates the destina
--tion buffer also it does not waste cycles padding with zeros unlike
-strncpy(). In regard to this convert strncpy to strscpy to prevent
-accidental buffer overreads and ensure null termination of destination
-buffer.
 
-No functional changes intended.
+On 2025/10/31 17:45, Christoph Hellwig wrote:
+> On Fri, Oct 31, 2025 at 05:36:45PM +0800, Gao Xiang wrote:
+>> Right, sorry yes, disk_uevent(KOBJ_ADD) is in the end.
+>>
+>>>   Do you see that earlier, or do you have
+>>> code busy polling for a node?
+>>
+>> Personally I think it will break many userspace programs
+>> (although I also don't think it's a correct expectation.)
+> 
+> We've had this behavior for a few years, and this is the first report
+> I've seen.
+> 
+>> After recheck internally, the userspace program logic is:
+>>    - stat /dev/vdX;
+>>    - if exists, mount directly;
+>>    - if non-exists, listen uevent disk_add instead.
+>>
+>> Previously, for devtmpfs blkdev files, such stat/mount
+>> assumption is always valid.
+> 
+> That assumption doesn't seem wrong.
 
-Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
----
- drivers/target/target_core_transport.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+;-) I was thought UNIX mknod doesn't imply the device is
+ready or valid in any case (but dev files in devtmpfs
+might be an exception but I didn't find some formal words)...
+so uevent is clearly a right way, but..
 
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index 0a76bdfe5528..9c255ed21789 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -1112,7 +1112,7 @@ void transport_dump_vpd_proto_id(
- 	}
+> But why does the device node
+> get created earlier?  My assumption was that it would only be
+> created by the KOBJ_ADD uevent.  Adding the device model maintainers
+> as my little dig through the core drivers/base/ code doesn't find
+> anything to the contrary, but maybe I don't fully understand it.
 
- 	if (p_buf)
--		strncpy(p_buf, buf, p_buf_len);
-+		strscpy(p_buf, buf, p_buf_len);
- 	else
- 		pr_debug("%s", buf);
- }
-@@ -1162,7 +1162,7 @@ int transport_dump_vpd_assoc(
- 	}
+AFAIK, device_add() is used to trigger devtmpfs file
+creation, and it can be observed if frequently
+hotpluging device in the VM and mount.  Currently
+I don't have time slot to build an easy reproducer,
+but I think it's a real issue anyway.
 
- 	if (p_buf)
--		strncpy(p_buf, buf, p_buf_len);
-+		strscpy(p_buf, buf, p_buf_len);
- 	else
- 		pr_debug("%s", buf);
-
-@@ -1222,7 +1222,7 @@ int transport_dump_vpd_ident_type(
- 	if (p_buf) {
- 		if (p_buf_len < strlen(buf)+1)
- 			return -EINVAL;
--		strncpy(p_buf, buf, p_buf_len);
-+		strscpy(p_buf, buf, p_buf_len);
- 	} else {
- 		pr_debug("%s", buf);
- 	}
-@@ -1276,7 +1276,7 @@ int transport_dump_vpd_ident(
- 	}
-
- 	if (p_buf)
--		strncpy(p_buf, buf, p_buf_len);
-+		strscpy(p_buf, buf, p_buf_len);
- 	else
- 		pr_debug("%s", buf);
-
---
-2.51.0
+Thanks,
+Gao Xiang
 
 
