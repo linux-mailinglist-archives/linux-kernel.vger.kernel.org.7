@@ -1,169 +1,148 @@
-Return-Path: <linux-kernel+bounces-879777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BD5C2405B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:08:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D36C2401F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 824C25809D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE7D1884FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E55E32E6B9;
-	Fri, 31 Oct 2025 09:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7AE32E12F;
+	Fri, 31 Oct 2025 09:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RzzqwFHe"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="J1/RKiGy"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070A232E133
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702832343C0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901346; cv=none; b=np/ILBDp8Br2gdye8AI1TGNPfikG3lZJMIg8NHME8BlGtiEsn1gsX9LVgBD6kouh6uuTHSxGTGJO2Ke1H5lc2d+DsB9OKEw0Y4butfsdAlUIlii861pdX1TVMbzlkWJAmCLHHlTIsCXCdJLMAK0nL+JXRgHwazKId0nXxN7HYoY=
+	t=1761901442; cv=none; b=NHNfWDvcdyW3Dl0cd7JtIFOpvlbGGzOV2Hr8HuuU5BlLe7dBz9gFhCe9fGfiInSa2hbwP0Q6oiEZePWdmDvtCkLpkakS2cY0q1iw/ulMcWd6LD1DiTsQDUYCrY3zUFgCJq6AGFSEidPWMU9BnqG3h4cjb3M/quzoKhTaMa7uL+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901346; c=relaxed/simple;
-	bh=5L+p7IGlH9yxzXYuJ5A/xcCJdZwumWBo4CpmEJWmbVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLG3dWybRD9x41RbQVIOkaa9RtT+A57FU3bOUVrgP7HRmkDY64uEg9VXBVT5XIZqTyCoVZI1bj9zi1+C8A7fvu/ieTKNLLVFe2AN0Cw+s5pMtStZLYtj5wKzAQEqW8F3fPFWch13T3zjXSSRJgTrpmEoRytOY/Z5f0rZNeAjVcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RzzqwFHe; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47118259fd8so14432435e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:02:23 -0700 (PDT)
+	s=arc-20240116; t=1761901442; c=relaxed/simple;
+	bh=JmwRJW0gNIcYacOJginCbtVk4EY21hnsJ56SOMEXrLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NkO+IxzwRV53MLVEGZEpAebdTBA6Wg1BWygB1+ro7TGGjVJgV1uiCl9+iBRl/qRSZklLT15RdpSjpL8CLP7aAm+al/esXmc9uggGYoveH2/LwTd13sBrgtBgckZ0Wag9gsOPNKPPTrD6GAcbnFuistsdtjMDg1X3uCkQBNIZVTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=J1/RKiGy; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-592fd97c03eso2349133e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:04:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761901342; x=1762506142; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=riW5F2YSMNEn22/E8/Ov0+qACVsdJ9lrTJanAog9mm0=;
-        b=RzzqwFHeq8mHTQQLBrfVbIaGKcPNijJcRahj6PCDHLbN4OfRBAhOiqIHBsPDHR4WMz
-         J2kqpovmbFY8RTTR21Ri1n8n8kY3UdPdg6/lydX2fNRaYBkQfVmLAj6+lnJBrB+xYjsk
-         uB9gxnQBqs35PRI79TLrvrNULt+JQeTU1zJvfzUpG+MEpeHMHWyOsUxtsarC/XBbxD4G
-         YsmqsBW7GgQc8WFfb61+zqj5Y+lg0quMCGut54tjF3Lr+Yu2lpsfccsv8LecJs/h8G/Z
-         3GuK844tywnUnj0pGJeODekBQ8wXlnYvcWEMRh3ZwxfCAAsj4sfWtf6tl82LxO3HhV/S
-         xwcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761901342; x=1762506142;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761901439; x=1762506239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=riW5F2YSMNEn22/E8/Ov0+qACVsdJ9lrTJanAog9mm0=;
-        b=fUGsr3a4CAxk1JvOCHoAxzi8VxLiZewpVSCK8hm6R37PLJ1BBaTi0jeB1Zv0wv5coe
-         5jeooTuuloUTa8we8m0xVxxq8e7Uh3HySWQF39iNS5PAl6qw3tHvbY6EQQysxLr0gkoJ
-         ZimVLi86z4g5Y9jqQKrqbqin0GxjvEnhPyqH1GrS9nc/IVUZA1TMf9rECiX3F94dIRVG
-         akS8AqY9OG2CtYEI0BiT12KqpDUk/niZHrn2HY1Iozcldq8QAHHi4orNtya/3RaXdLpU
-         WT1fVqcSMv4ywzhQSX336YbF+UtivEcDnwfbFQYWjp3T4L3cAyCPURD8dBicITqg6uKY
-         D5gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyFVFJeHbCY5QwXHnkpJbipbvF9K6t1rHC+PbRyQ66a7RHwaL/cWqugak+kUm7nFPO5FI8sEMlIWXmL7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAKSvvPvs1oOQMPuXBqWsz4ACRKePkQ1eVKWbmfFTR/TjjEsnK
-	J4hxL9ZfZaIiV58SNe3I1/CmyZoWdMBPd4RK3y1uXrYAXkD/sR5RUbFn4MvB7ZIUAyHR4+5oe+G
-	yHI0F
-X-Gm-Gg: ASbGncsB5iPQp5H1/lsB8hceb/8YmzJ5mWBThQqURJYDXQGUtis6DxphisgwXzE/Rkc
-	579wdXfa5e51OfvtrInLqbTfy/ylaj9XFCCcS/xAjmQF/WAX3cPuhMOlCChv/6zDeoNVvxrtng0
-	3YrVj9kuht1Ska3FJEle799wClZcOho5bd4du/yeE+3O7PDO/cxcjj82md4DZrn3jrZWN86LVpi
-	TSTQBS35yIF4saAY1dcVYVo8rFhEeUR/MNFlVrrMBj3MRPRYmgZuTCfzoDk4Db2dYkczWeacH+m
-	aQiz4aUOfvBr1neWYsIS4xBBXawnFI2DzsQn9tAWEizvt6I3kG6upB5oAr2SfoTj7d/phB+SyzX
-	Uy3g7D7yGRDj5Ug4le6swRL9G/mUg4IlWYeRBuU1gws1c06xaphHktbYxHyXFe5dYLcQ0WqJzLs
-	teHP7gh5hv/ZHwNa0VWrXHWFt2HwSEoMy73Xo=
-X-Google-Smtp-Source: AGHT+IEfIG+L9PugHrFEoMpYM/xl7+uFJi6ldJ6zhfB62Pmwm0o3+Vbm3I+W0dyQ0yvCl4rrfOq5Ig==
-X-Received: by 2002:a05:600c:1d9b:b0:46d:996b:826a with SMTP id 5b1f17b1804b1-477308c8b64mr25548685e9.36.1761901342084;
-        Fri, 31 Oct 2025 02:02:22 -0700 (PDT)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fd38c4esm16895485e9.12.2025.10.31.02.02.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 02:02:21 -0700 (PDT)
-Date: Fri, 31 Oct 2025 10:02:20 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
-Message-ID: <aQR7HIiQ82Ye2UfA@tiehlicka>
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
- <20251027231727.472628-7-roman.gushchin@linux.dev>
+        bh=JyZkpPnlGmsDa9oHnjzalUScaxn5FyZOHbjL33XRSaE=;
+        b=J1/RKiGyUeJFQmhpQlYKiL/MyfrOhq6dyrVEn5MLXdJ9421EQkdF320DlUYSEz83JV
+         kBsGQ79pWXLf0zrjeZNPCtc7t9yyFMsiqcooHuLJKqYCuJ/92Y+D23fqhsHftyKcoV8e
+         o0Z+3v3KnvyoK17PvjGD2BRlpUimrlslxJ/uMaYldt3e3BCy7Xw9QucxX2jFmrhpE851
+         YZ5ZK3z0M82kHNphaqTa9TqKBcsCw3JL+uMnGquSK6LfH7b/2aZxKHUipbWdbNG4vJRs
+         pWG/ujLt7gTuvcRuCGn41gytwpTqRxogey78JfgSVDAtto1e/gqei2Xsm6eA8aTU8D5i
+         Ynsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761901439; x=1762506239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JyZkpPnlGmsDa9oHnjzalUScaxn5FyZOHbjL33XRSaE=;
+        b=thZ8lITRX1vyf8eFp3N3DBO49k2vEjGgnhh4jbPSMB6IAs2pRc0SXE8StMi67oyEQZ
+         sCR6kfdMn1o2B89stI9ulPtEbP39M+7p/nGgF+5Zg0ZkGQRrYXHESl6DqVkXa9W3PoXH
+         adO7ptKAf4VpmUrKmrh+eD6AAsYkfyZzxS7OmWrkKedHArLobYqFiCc0Io2Q0eSG90xv
+         ECTGZ3qE/elsodzgLfcTcltLo6rEncm3RqmlRuvBezYfVw7yta0zoh8oO9mWSoxcpaPx
+         YpCZMj7bBtvNPXnZh9WdlIIWLYosfuMb28a0HdJUNG9Bk6EjTaV82jWnBMxpw7KB8roH
+         +nEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9mx1bo9hYCB3fdWv3kbE3jOmR6c5wM2YOlWj5Mf27YrDEOOhMOy09iRyeagMDF9a+hM5oVucHRKZYsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaY2ILFAminntZaKt+exuzZlDIVkE4Cgo/goZkCT6IIglWurN3
+	jafnNS9RAEc6OEVtCdepv4+C6FcmiFj2ZUkVAfljJ4uMYo+EcZC/8QpyvbEhi0hnALY/aToJ2xc
+	2YrrG+M0ZykmF4YQBfKOvMsm0gXTirhJqXnfbnkGl/A==
+X-Gm-Gg: ASbGncta3tE3dmgZxmz+QQ9VIgRyeD6HlyVw4uIT695YOCE5JefjfHEBywqqI0ii0et
+	pHdDXUey5utqYVOUcZArRVRKlXpEaK89jfGaiTlAQLGeCX3IE55PADh3X4Wz5Wcr9MfH98wmWRx
+	py1NDBiXTXAFL7nc/M2MkjtCGAqAsE9KsftKBa2qM3suKPRlWJ1xTc7ndI9nooBtGsRTy0/dPos
+	yFz2IpXTXmexgrw5OYsSLlttQmtEpdhdcBQqwtbAwHmDjBMeoeHhZFTU3cnrvSKn7l36Wwh+eH2
+	YrnRnpZsY34v+UD6kHB2eC2H4gw=
+X-Google-Smtp-Source: AGHT+IFfI9eyrhi23j8G72j/eiNvjJuhW6MkfmYo4FhTpD1BLwzZZcpAU2luApM87JyhG9zxJTnSnB8n9suQdUPj0KI=
+X-Received: by 2002:a05:6512:3091:b0:592:f71d:965a with SMTP id
+ 2adb3069b0e04-5941d533768mr1223674e87.33.1761901438614; Fri, 31 Oct 2025
+ 02:03:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027231727.472628-7-roman.gushchin@linux.dev>
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-2-638a4cb33201@linaro.org>
+ <aQMxNgC9SWQp-yUy@smile.fi.intel.com> <CAMRc=Md=Dcwj0qDu5ysDafjuV0Ud9z2Ky3PQpDzfiKRt2L-HgQ@mail.gmail.com>
+ <aQRztwrOFCWk8IG8@smile.fi.intel.com>
+In-Reply-To: <aQRztwrOFCWk8IG8@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 31 Oct 2025 10:03:47 +0100
+X-Gm-Features: AWmQ_bmv8Qxd8nCHziy118YXDf7vt-9TVORFE1gVGmbEVeznxXtKW3L2NFycPdo
+Message-ID: <CAMRc=MezQ7RC=ZjiKkMa0qiaKTRXePOKxOCDjjV=-qUYto2jqA@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] software node: increase the reference of the
+ swnode by its fwnode
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 27-10-25 16:17:09, Roman Gushchin wrote:
-> Introduce a bpf struct ops for implementing custom OOM handling
-> policies.
-> 
-> It's possible to load one bpf_oom_ops for the system and one
-> bpf_oom_ops for every memory cgroup. In case of a memcg OOM, the
-> cgroup tree is traversed from the OOM'ing memcg up to the root and
-> corresponding BPF OOM handlers are executed until some memory is
-> freed. If no memory is freed, the kernel OOM killer is invoked.
+On Fri, Oct 31, 2025 at 9:30=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Oct 30, 2025 at 03:33:02AM -0700, Bartosz Golaszewski wrote:
+> > On Thu, 30 Oct 2025 10:34:46 +0100, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> said:
+> > > On Wed, Oct 29, 2025 at 01:28:36PM +0100, Bartosz Golaszewski wrote:
+> > >>
+> > >> Once we allow software nodes to reference other kinds of firmware no=
+des,
+> > >> the node in args will no longer necessarily be a software node so bu=
+mp
+> > >> its reference count using its fwnode interface.
+> > >
+> > > Same, a short comment (or an update of a kernel-doc if present, I don=
+'t
+> > > remember).
+> > >
+> >
+> > Andy: the resulting code after patch 3/10 looks like this:
+> >
+> > struct fwnode_handle *refnode;
+> >
+> > (...)
+>
+> Let's say something like below to be put here
+>
+> /*
+>  * The reference in software node may refer to a node of a different type=
+.
+>  * Depending on the type we choose either to use software node directly, =
+or
+>  * delegate that to fwnode API.
+>  */
+>
 
-Do you have any usecase in mind where parent memcg oom handler decides
-to not kill or cannot kill anything and hand over upwards in the
-hierarchy?
+But this is incorrect: we're not really doing that. We either use the
+firmware node reference directly OR cast the software node to its
+firmware node representation. We ALWAYS use the firmware node API
+below.
 
-> The struct ops provides the bpf_handle_out_of_memory() callback,
-> which expected to return 1 if it was able to free some memory and 0
-> otherwise. If 1 is returned, the kernel also checks the bpf_memory_freed
-> field of the oom_control structure, which is expected to be set by
-> kfuncs suitable for releasing memory. If both are set, OOM is
-> considered handled, otherwise the next OOM handler in the chain
-> (e.g. BPF OOM attached to the parent cgroup or the in-kernel OOM
-> killer) is executed.
+This really *is* evident from the code but if it'll make you happy and
+make you sign off on this, I'll add a corrected version.
 
-Could you explain why do we need both? Why is not bpf_memory_freed
-return value sufficient?
+IMO It's completely redundant.
 
-> The bpf_handle_out_of_memory() callback program is sleepable to enable
-> using iterators, e.g. cgroup iterators. The callback receives struct
-> oom_control as an argument, so it can determine the scope of the OOM
-> event: if this is a memcg-wide or system-wide OOM.
-
-This could be tricky because it might introduce a subtle and hard to
-debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
-Sleepable locks should be only allowed in trylock mode.
-
-> The callback is executed just before the kernel victim task selection
-> algorithm, so all heuristics and sysctls like panic on oom,
-> sysctl_oom_kill_allocating_task and sysctl_oom_kill_allocating_task
-> are respected.
-
-I guess you meant to say and sysctl_panic_on_oom.
-
-> BPF OOM struct ops provides the handle_cgroup_offline() callback
-> which is good for releasing struct ops if the corresponding cgroup
-> is gone.
-
-What kind of synchronization is expected between handle_cgroup_offline
-and bpf_handle_out_of_memory?
- 
-> The struct ops also has the name field, which allows to define a
-> custom name for the implemented policy. It's printed in the OOM report
-> in the oom_policy=<policy> format. "default" is printed if bpf is not
-> used or policy name is not specified.
-
-oom_handler seems like a better fit but nothing I would insist on. Also
-I would just print it if there is an actual handler so that existing
-users who do not use bpf oom killers do not need to change their
-parsers.
-
-Other than that this looks reasonable to me.
-
--- 
-Michal Hocko
-SUSE Labs
+Bartosz
 
