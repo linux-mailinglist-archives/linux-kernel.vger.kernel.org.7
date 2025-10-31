@@ -1,124 +1,227 @@
-Return-Path: <linux-kernel+bounces-880853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BDDC26B68
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:23:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EBEC26B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:24:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241C31A22ECD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:23:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FD1C4F91F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48A334B180;
-	Fri, 31 Oct 2025 19:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5HDCi2R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA59350A11;
+	Fri, 31 Oct 2025 19:22:40 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04B42D97B7;
-	Fri, 31 Oct 2025 19:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA3D348860;
+	Fri, 31 Oct 2025 19:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761938552; cv=none; b=DD74Y5aMdn5jzFUxKEJqLEoshx1hJxxDMc/4qnP3Y7gSy+2cPHES79dpXZ70ll4GN+n26YKPqvnF5XqzDF2keVmn8Q0jY/gUtkKIGCgnasDf+1lNgerC7rEo484jpOoczB7Wl02aTmtfznssVMJAhIF8glrtUZuBqnEzu4MzOpI=
+	t=1761938560; cv=none; b=NmbW60gGhm/54bAq2wUktGs0pdkRAJ8dtPq5B+7vEy3Cp8M8IhrYtRCP7obOyCtLuV0v8Gty14avP4XsHqZf2iyjZp47NWkJDP/inOT+X85Lv5KRlNe7QcCcqwcYbeRwD2NQLNVEj0iev6gre1YMRG2DGCgNpjlod7A7y9ojB+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761938552; c=relaxed/simple;
-	bh=aRO45gf5CfHW1/jbUbbLGsRCxWY7tHk3cFfnDvNsB6Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=IZEsEfGciCGn7YCUlhF+9OWVyY9PAO4purbzxVHeg6yD/GTVNfKoSLXV+aCWqpyTb7NXboRdqW3ytBWthejEdnrHMocqL8L4rlslaIBlByMP83BosNQXBPehuSzO3CaMi0Rd5igKsZ7BKJatoEA6WJiPTqq8QGT86zz5ECSSLL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5HDCi2R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB1DEC4CEE7;
-	Fri, 31 Oct 2025 19:22:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761938551;
-	bh=aRO45gf5CfHW1/jbUbbLGsRCxWY7tHk3cFfnDvNsB6Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=M5HDCi2R/696KAq+LQQDeEnnFTStWNLkXYwKUiU9FxJS0+SMep8pWFlpbWtMhCEDE
-	 3IqSttDBCsW639HgoIfXNDa5Rl5R2Eg3DPtIMGmbvxRmY4i0JiGYkRMvEIB/UsEAF/
-	 CpSxsd8YDaLo7qB+j1Vd4dXbW9wlxIEkOBpLnql/SBO5QE8BsCAMM0NgYXNNpBc0uG
-	 74Srbaun1zMez0S5J737hSGvZAiklmcFqDN9evPXeLKPQOTt4EkImzO1RV9Ab3ErMe
-	 U7GPDkqCNG4vnEozILb4d3SSdHavGo7+IHCu1Lfn9KlyQUdgHAk2dJZMnL8zRIQzci
-	 moNGNmIxIROuQ==
-Date: Fri, 31 Oct 2025 13:22:23 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Andreas Hindborg <a.hindborg@kernel.org>, 
-    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-    kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-    evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-    samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org, Zong Li <zong.li@sifive.com>
-Subject: Re: [PATCH v22 03/28] riscv: zicfiss / zicfilp enumeration
-In-Reply-To: <20251023-v5_user_cfi_series-v22-3-1d53ce35d8fd@rivosinc.com>
-Message-ID: <9230fa65-6b8e-ebf6-f215-b3a3bb7357d9@kernel.org>
-References: <20251023-v5_user_cfi_series-v22-0-1d53ce35d8fd@rivosinc.com> <20251023-v5_user_cfi_series-v22-3-1d53ce35d8fd@rivosinc.com>
+	s=arc-20240116; t=1761938560; c=relaxed/simple;
+	bh=kP3GgWe5eE3cZOc/hWqKVG0Dw1UYwgnSkjbxCmVG24M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ivp+9c0W+bW2X6fs3wJ9bu2VXmQLOquvqjkPP+fopKbU1PFFD/+CXevpHZC+wZ4idmDkTxteEHPiqY7oLzJWpBKRlFlAUQ3vpR1Dqx2IXATxp7OB1ZHGb7yAB4/YAma2umxgxU8hnIrkiPNK7+GtL/jyfMadiPwDHb2aYr9ZbF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vEuhm-000000005uu-06tl;
+	Fri, 31 Oct 2025 19:22:34 +0000
+Date: Fri, 31 Oct 2025 19:22:30 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net-next v6 09/12] net: dsa: lantiq_gswip: allow adjusting
+ MII delays
+Message-ID: <4153348de172b6645cfaa8eaae7aa6a269ee802d.1761938079.git.daniel@makrotopia.org>
+References: <cover.1761938079.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1761938079.git.daniel@makrotopia.org>
 
-On Thu, 23 Oct 2025, Deepak Gupta wrote:
+Currently the MII clk vs. data delay is configured based on the PHY
+interface mode.
 
-> This patch adds support for detecting zicfiss and zicfilp. zicfiss and
-> zicfilp stands for unprivleged integer spec extension for shadow stack
-> and branch tracking on indirect branches, respectively.
-> 
-> This patch looks for zicfiss and zicfilp in device tree and accordinlgy
-> lights up bit in cpu feature bitmap. Furthermore this patch adds detection
-> utility functions to return whether shadow stack or landing pads are
-> supported by cpu.
-> 
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+In addition to that add support for setting up MII delays using the
+standard Device Tree properties 'tx-internal-delay-ps' and
+'rx-internal-delay-ps', using the values determined by the PHY interface
+mode as default to maintain backward compatibility with legacy device
+trees.
 
-This patch introduces some 'checkpatch.pl --strict' messages:
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+v4: rework to use legacy codepath as fallback
 
-CHECK: Alignment should match open parenthesis
-#68: FILE: arch/riscv/kernel/cpufeature.c:278:
-+static int riscv_cfilp_validate(const struct riscv_isa_ext_data *data,
-+			      const unsigned long *isa_bitmap)
+ drivers/net/dsa/lantiq/lantiq_gswip.h        |  4 +
+ drivers/net/dsa/lantiq/lantiq_gswip_common.c | 94 ++++++++++++--------
+ 2 files changed, 60 insertions(+), 38 deletions(-)
 
-CHECK: Alignment should match open parenthesis
-#77: FILE: arch/riscv/kernel/cpufeature.c:287:
-+static int riscv_cfiss_validate(const struct riscv_isa_ext_data *data,
-+			      const unsigned long *isa_bitmap)
-
-
-I'll fix them up here in the event that v22 goes in, but please do the 
-same on your side in case a new version is needed.  
-
-
-thanks,
-
-- Paul 
+diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.h b/drivers/net/dsa/lantiq/lantiq_gswip.h
+index 42000954d842..0c32ec85e127 100644
+--- a/drivers/net/dsa/lantiq/lantiq_gswip.h
++++ b/drivers/net/dsa/lantiq/lantiq_gswip.h
+@@ -82,6 +82,10 @@
+ #define GSWIP_MII_PCDU5			0x05
+ #define  GSWIP_MII_PCDU_TXDLY_MASK	GENMASK(2, 0)
+ #define  GSWIP_MII_PCDU_RXDLY_MASK	GENMASK(9, 7)
++#define  GSWIP_MII_PCDU_TXDLY(x)	u16_encode_bits(((x) / 500), GSWIP_MII_PCDU_TXDLY_MASK)
++#define  GSWIP_MII_PCDU_RXDLY(x)	u16_encode_bits(((x) / 500), GSWIP_MII_PCDU_RXDLY_MASK)
++#define GSWIP_MII_PCDU_RXDLY_DEFAULT	2000 /* picoseconds */
++#define GSWIP_MII_PCDU_TXDLY_DEFAULT	2000 /* picoseconds */
+ 
+ /* GSWIP Core Registers */
+ #define GSWIP_SWRES			0x000
+diff --git a/drivers/net/dsa/lantiq/lantiq_gswip_common.c b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+index b9d4cd6fcd74..6a4a09ebdd33 100644
+--- a/drivers/net/dsa/lantiq/lantiq_gswip_common.c
++++ b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+@@ -130,30 +130,6 @@ static void gswip_mii_mask_cfg(struct gswip_priv *priv, u32 mask, u32 set,
+ 			  set);
+ }
+ 
+-static void gswip_mii_mask_pcdu(struct gswip_priv *priv, u32 mask, u32 set,
+-				int port)
+-{
+-	int reg_port;
+-
+-	/* MII_PCDU register only exists for MII ports */
+-	if (!(priv->hw_info->mii_ports & BIT(port)))
+-		return;
+-
+-	reg_port = port + priv->hw_info->mii_port_reg_offset;
+-
+-	switch (reg_port) {
+-	case 0:
+-		regmap_write_bits(priv->mii, GSWIP_MII_PCDU0, mask, set);
+-		break;
+-	case 1:
+-		regmap_write_bits(priv->mii, GSWIP_MII_PCDU1, mask, set);
+-		break;
+-	case 5:
+-		regmap_write_bits(priv->mii, GSWIP_MII_PCDU5, mask, set);
+-		break;
+-	}
+-}
+-
+ static int gswip_mdio_poll(struct gswip_priv *priv)
+ {
+ 	u32 ctrl;
+@@ -622,6 +598,61 @@ static int gswip_port_vlan_filtering(struct dsa_switch *ds, int port,
+ 	return 0;
+ }
+ 
++static void gswip_mii_delay_setup(struct gswip_priv *priv, struct dsa_port *dp,
++				  phy_interface_t interface)
++{
++	u32 tx_delay = GSWIP_MII_PCDU_TXDLY_DEFAULT;
++	u32 rx_delay = GSWIP_MII_PCDU_RXDLY_DEFAULT;
++	struct device_node *port_dn = dp->dn;
++	u16 mii_pcdu_reg;
++
++	/* As MII_PCDU registers only exist for MII ports, silently return
++	 * unless the port is an MII port
++	 */
++	if (!(priv->hw_info->mii_ports & BIT(dp->index)))
++		return;
++
++	switch (dp->index + priv->hw_info->mii_port_reg_offset) {
++	case 0:
++		mii_pcdu_reg = GSWIP_MII_PCDU0;
++		break;
++	case 1:
++		mii_pcdu_reg = GSWIP_MII_PCDU1;
++		break;
++	case 5:
++		mii_pcdu_reg = GSWIP_MII_PCDU5;
++		break;
++	default:
++		return;
++	}
++
++	/* legacy code to set default delays according to the interface mode */
++	switch (interface) {
++	case PHY_INTERFACE_MODE_RGMII_ID:
++		tx_delay = 0;
++		rx_delay = 0;
++		break;
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++		rx_delay = 0;
++		break;
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++		tx_delay = 0;
++		break;
++	default:
++		break;
++	}
++
++	/* allow settings delays using device tree properties */
++	of_property_read_u32(port_dn, "rx-internal-delay-ps", &rx_delay);
++	of_property_read_u32(port_dn, "tx-internal-delay-ps", &tx_delay);
++
++	regmap_write_bits(priv->mii, mii_pcdu_reg,
++			  GSWIP_MII_PCDU_TXDLY_MASK |
++			  GSWIP_MII_PCDU_RXDLY_MASK,
++			  GSWIP_MII_PCDU_TXDLY(tx_delay) |
++			  GSWIP_MII_PCDU_RXDLY(rx_delay));
++}
++
+ static int gswip_setup(struct dsa_switch *ds)
+ {
+ 	unsigned int cpu_ports = dsa_cpu_ports(ds);
+@@ -1425,20 +1456,7 @@ static void gswip_phylink_mac_config(struct phylink_config *config,
+ 			   GSWIP_MII_CFG_RGMII_IBS | GSWIP_MII_CFG_LDCLKDIS,
+ 			   miicfg, port);
+ 
+-	switch (state->interface) {
+-	case PHY_INTERFACE_MODE_RGMII_ID:
+-		gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_TXDLY_MASK |
+-					  GSWIP_MII_PCDU_RXDLY_MASK, 0, port);
+-		break;
+-	case PHY_INTERFACE_MODE_RGMII_RXID:
+-		gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_RXDLY_MASK, 0, port);
+-		break;
+-	case PHY_INTERFACE_MODE_RGMII_TXID:
+-		gswip_mii_mask_pcdu(priv, GSWIP_MII_PCDU_TXDLY_MASK, 0, port);
+-		break;
+-	default:
+-		break;
+-	}
++	gswip_mii_delay_setup(priv, dp, state->interface);
+ }
+ 
+ static void gswip_phylink_mac_link_down(struct phylink_config *config,
+-- 
+2.51.2
 
