@@ -1,228 +1,349 @@
-Return-Path: <linux-kernel+bounces-880148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217B6C24FB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:24:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EEE5C24FD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:25:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92684402196
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D521B21CD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7C7348873;
-	Fri, 31 Oct 2025 12:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2625634846E;
+	Fri, 31 Oct 2025 12:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xu2qDVuS"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFM7mXUe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8AF2E5B0D;
-	Fri, 31 Oct 2025 12:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F712C21DF;
+	Fri, 31 Oct 2025 12:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913426; cv=none; b=gxeyPMDkRDF7hpcWc3Sj4ssk7OztMoa2+EdwR4CeoIpe/KviQCRUcQ76NXC9935ejbU3l8ddpYUXmVw6Oltz4Uc7qi3EyVOfLn/Lp3+a7iJcOJechJTUM1+alsoefpawKjzelad3nV6x2IICndMLINiSeeowJyHyzeSOi7gH5jY=
+	t=1761913425; cv=none; b=R1fZS7/qOGdKXXBYxw4csSDXmsuRxT9mMBzYlAnosrfrE34UfMc4xhtpYD4cYRKv3CIvqHus2oy4U2qdbDPtexLIgSmmqef+hVFMhEshU2N4wc68h/u4XAmZKK/8/I5dPQq6ipz5LTJ9cOuE9tcxfx5rySEYIZgcrNvmZdwtWkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913426; c=relaxed/simple;
-	bh=3gLdjc5JTp30T7vJft9FainUwSR8QTAXIC3pIofnYg0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Fh8RrshCHRKoxpBxU+lI7Bvl+5OQPW3i27enHrDZqfCNm7Kz1cUv89SEvSe9nTglEa5+03U6Zrn6LNV1m4mcAAMyG0hdstMvd3bdNTGF4hBY8Ysfv7drGuYDq1BKC2viZ6+CtI/o1i+lyIEsZPWN9LNcKQ6ckmM5NXOKcSB1dow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xu2qDVuS; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761913415; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=D494hvmNDIVYmayGdVuzF928FMcaCSSrh1ggtCCkqFs=;
-	b=Xu2qDVuSVJUtK4/omGq86xD5PYVawojk137TipVNM/0UqfPhIsnPEbJwhpiWiVJXwDaeDJlxj3KeRl/HQEAxxL93Gm4EdpELahlNpFKo5FKwcfRZWWuidINBaDyQZ+YKD07G1LIa35RmxyNtEglfdl0C8uKR7NQxmaiSTO9AztY=
-Received: from 30.180.79.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrOw0dB_1761913413 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 20:23:34 +0800
-Message-ID: <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
-Date: Fri, 31 Oct 2025 20:23:32 +0800
+	s=arc-20240116; t=1761913425; c=relaxed/simple;
+	bh=teAVH4fG3LreoMxTD8/5S+pv4bUIKIPakzAxChdahXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PcZ3tYyyJ9I/mtpM2nXVASDXwfeNUoiToalZRG62uOM5b5avb3XhtaA/IFuJS0tJIh9oypr97cxZjzQ94nlrDEBGzwL0FBRS30HMqqY/pGSlfEfyFUjjO/rW3q4waUSao9PlK3cF5u4GmI6etwYLu4fiZvFX0HSCSNsWPII/g84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFM7mXUe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555E8C4CEE7;
+	Fri, 31 Oct 2025 12:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761913424;
+	bh=teAVH4fG3LreoMxTD8/5S+pv4bUIKIPakzAxChdahXI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HFM7mXUel+Kg91fRCmNz2uzMM3LiMooa3p/kalel14loykQ7inJ7k7oBfBMwMhdwk
+	 OthiTCzv+9rAug31/oaq0wrzAvIpBz018xh3iPD7CrxW7CJa6+RR4iLwUfP62UPoro
+	 Gj1t1XNlIp5eqAfrPc/XM5inFN2Z2RyO6YlK5LiskH2PHFsyc/wsz9Jm1mi0okIZi3
+	 KuV/+dbpKIFHzPOKRgTQqQsZPpB4+BXSPOMmD2PNhaqHjdxCY/cEHPWdT6nBMw6P27
+	 jRpZCQ614sSLTW20WhMwd9IwyB4VQQt3fVYyjZCDi5IajLJjSqoT6UZ6H3/MAEVIxA
+	 0mcI+8emRhmuw==
+Date: Fri, 31 Oct 2025 13:23:33 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 03/13] vfs: allow mkdir to wait for delegation break
+ on parent
+Message-ID: <20251031-bildung-erdig-b18b71db0520@brauner>
+References: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
+ <20251021-dir-deleg-ro-v3-3-a08b1cde9f4c@kernel.org>
+ <20251029-zeltlager-auspuff-0e3070d1a9c3@brauner>
+ <77e357c346ac9dce543fea9c22168f4a53dded5d.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
- zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20210818144542.19305-1-hch@lst.de>
- <20210818144542.19305-4-hch@lst.de>
- <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
- <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
- <2025103155-definite-stays-ebfe@gregkh>
- <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
-In-Reply-To: <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <77e357c346ac9dce543fea9c22168f4a53dded5d.camel@kernel.org>
 
-
-
-On 2025/10/31 18:12, Gao Xiang wrote:
-> Hi Greg,
+On Wed, Oct 29, 2025 at 09:37:22AM -0400, Jeff Layton wrote:
+> On Wed, 2025-10-29 at 14:04 +0100, Christian Brauner wrote:
+> > On Tue, Oct 21, 2025 at 11:25:38AM -0400, Jeff Layton wrote:
+> > > In order to add directory delegation support, we need to break
+> > > delegations on the parent whenever there is going to be a change in the
+> > > directory.
+> > > 
+> > > Add a new delegated_inode parameter to vfs_mkdir. All of the existing
+> > > callers set that to NULL for now, except for do_mkdirat which will
+> > > properly block until the lease is gone.
+> > > 
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > Reviewed-by: NeilBrown <neil@brown.name>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  drivers/base/devtmpfs.c  |  2 +-
+> > >  fs/cachefiles/namei.c    |  2 +-
+> > >  fs/ecryptfs/inode.c      |  2 +-
+> > >  fs/init.c                |  2 +-
+> > >  fs/namei.c               | 24 ++++++++++++++++++------
+> > >  fs/nfsd/nfs4recover.c    |  2 +-
+> > >  fs/nfsd/vfs.c            |  2 +-
+> > >  fs/overlayfs/overlayfs.h |  2 +-
+> > >  fs/smb/server/vfs.c      |  2 +-
+> > >  fs/xfs/scrub/orphanage.c |  2 +-
+> > >  include/linux/fs.h       |  2 +-
+> > >  11 files changed, 28 insertions(+), 16 deletions(-)
+> > > 
+> > > diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> > > index 9d4e46ad8352257a6a65d85526ebdbf9bf2d4b19..0e79621cb0f79870003b867ca384199171ded4e0 100644
+> > > --- a/drivers/base/devtmpfs.c
+> > > +++ b/drivers/base/devtmpfs.c
+> > > @@ -180,7 +180,7 @@ static int dev_mkdir(const char *name, umode_t mode)
+> > >  	if (IS_ERR(dentry))
+> > >  		return PTR_ERR(dentry);
+> > >  
+> > > -	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(path.dentry), dentry, mode);
+> > > +	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(path.dentry), dentry, mode, NULL);
+> > >  	if (!IS_ERR(dentry))
+> > >  		/* mark as kernel-created inode */
+> > >  		d_inode(dentry)->i_private = &thread;
+> > > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> > > index d1edb2ac38376c4f9d2a18026450bb3c774f7824..50c0f9c76d1fd4c05db90d7d0d1bad574523ead0 100644
+> > > --- a/fs/cachefiles/namei.c
+> > > +++ b/fs/cachefiles/namei.c
+> > > @@ -130,7 +130,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
+> > >  			goto mkdir_error;
+> > >  		ret = cachefiles_inject_write_error();
+> > >  		if (ret == 0)
+> > > -			subdir = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> > > +			subdir = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700, NULL);
+> > >  		else
+> > >  			subdir = ERR_PTR(ret);
+> > >  		if (IS_ERR(subdir)) {
+> > > diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> > > index ed1394da8d6bd7065f2a074378331f13fcda17f9..35830b3144f8f71374a78b3e7463b864f4fc216e 100644
+> > > --- a/fs/ecryptfs/inode.c
+> > > +++ b/fs/ecryptfs/inode.c
+> > > @@ -508,7 +508,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+> > >  		goto out;
+> > >  
+> > >  	lower_dentry = vfs_mkdir(&nop_mnt_idmap, lower_dir,
+> > > -				 lower_dentry, mode);
+> > > +				 lower_dentry, mode, NULL);
+> > >  	rc = PTR_ERR(lower_dentry);
+> > >  	if (IS_ERR(lower_dentry))
+> > >  		goto out;
+> > > diff --git a/fs/init.c b/fs/init.c
+> > > index 07f592ccdba868509d0f3aaf9936d8d890fdbec5..895f8a09a71acfd03e11164e3b441a7d4e2de146 100644
+> > > --- a/fs/init.c
+> > > +++ b/fs/init.c
+> > > @@ -233,7 +233,7 @@ int __init init_mkdir(const char *pathname, umode_t mode)
+> > >  	error = security_path_mkdir(&path, dentry, mode);
+> > >  	if (!error) {
+> > >  		dentry = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
+> > > -				  dentry, mode);
+> > > +				  dentry, mode, NULL);
+> > >  		if (IS_ERR(dentry))
+> > >  			error = PTR_ERR(dentry);
+> > >  	}
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index 6e61e0215b34134b1690f864e2719e3f82cf71a8..86cf6eca1f485361c6732974e4103cf5ea721539 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -4407,10 +4407,11 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+> > >  
+> > >  /**
+> > >   * vfs_mkdir - create directory returning correct dentry if possible
+> > > - * @idmap:	idmap of the mount the inode was found from
+> > > - * @dir:	inode of the parent directory
+> > > - * @dentry:	dentry of the child directory
+> > > - * @mode:	mode of the child directory
+> > > + * @idmap:		idmap of the mount the inode was found from
+> > > + * @dir:		inode of the parent directory
+> > > + * @dentry:		dentry of the child directory
+> > > + * @mode:		mode of the child directory
+> > > + * @delegated_inode:	returns parent inode, if the inode is delegated.
+> > 
+> > I wonder if it would be feasible and potentially elegant if delegated
+> > inodes were returned as separate type like struct delegated_inode
+> > similar to the vfsuid_t just a struct wrapper around the inode itself.
+> > The advantage is that it's not possible to accidently abuse this thing
+> > as we're passing that stuff around to try_break_deleg() and so on.
+> > 
 > 
-> On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
->> On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
->>>
->>>
->>> On 2025/10/31 17:45, Christoph Hellwig wrote:
+> I have a patch that does exactly that:
+> 
+> https://lore.kernel.org/linux-nfs/20250924-dir-deleg-v3-15-9f3af8bc5c40@kernel.org/
 
-...
+I love it!
 
->>>> But why does the device node
->>>> get created earlier?  My assumption was that it would only be
->>>> created by the KOBJ_ADD uevent.  Adding the device model maintainers
->>>> as my little dig through the core drivers/base/ code doesn't find
->>>> anything to the contrary, but maybe I don't fully understand it.
->>>
->>> AFAIK, device_add() is used to trigger devtmpfs file
->>> creation, and it can be observed if frequently
->>> hotpluging device in the VM and mount.  Currently
->>> I don't have time slot to build an easy reproducer,
->>> but I think it's a real issue anyway.
->>
->> As I say above, that's not normal, and you have to be root to do this,
-I just spent time to reproduce with dynamic loop devices and
-actually it's easy if msleep() is located artificiallly,
-the diff as below:
+> 
+> I didn't submit it here since it wasn't strictly required for this
+> patchset. If we get around to implementing CB_NOTIFY support however,
+> it will be since we'll need to pass back other information than just
+> the inode.
+> 
+> I could move that into this series if you prefer. If we do that though,
+> then it might also be cleaner to take the previous patch in the series
+> that cleans up __break_lease() arguments:
+> 
+> https://lore.kernel.org/linux-nfs/20250924-dir-deleg-v3-14-9f3af8bc5c40@kernel.org/
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 810707cca970..a4273b5ad456 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
-  	struct inode *inode;
+If you have a wholesome story to tell then by all means tell it all.
+Don't GRRM us with half a tale.  IOW, it's fine to have a large patch
+series. If it's well split-up then it's great. Al or I apparently can't
+get a series out the door that's under 20 patches so you get the same
+leeway. :)
 
-  	inode = ilookup(blockdev_superblock, dev);
--	if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
-+	if (0) {
-  		blk_request_module(dev);
-  		inode = ilookup(blockdev_superblock, dev);
-  		if (inode)
-diff --git a/block/genhd.c b/block/genhd.c
-index 9bbc38d12792..3c9116fdc1ce 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
-  	set_bit(GD_ADDED, &disk->state);
-  }
-
-+#include <linux/delay.h>
-+
-  static int __add_disk(struct device *parent, struct gendisk *disk,
-  		      const struct attribute_group **groups,
-  		      struct fwnode_handle *fwnode)
-@@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
-  	if (ret)
-  		goto out_free_ext_minor;
-
-+	if (disk->major == LOOP_MAJOR)
-+		msleep(2500);           // delay 2.5s for all loops
-+
-  	ret = disk_alloc_events(disk);
-  	if (ret)
-  		goto out_device_del;
-
-
-(Note that I masked off CONFIG_BLOCK_LEGACY_AUTOLOAD
-  for cleaner ftrace below.)
-
-and then
-
-# uname -a  (patched 6.18-rc1 kernel)
-
-```
-Linux 7e5b4b5f5181 6.18.0-rc1-dirty #25 SMP PREEMPT_DYNAMIC Fri Oct 31 19:52:10 CST 2025 x86_64 GNU/Linux
-```
-
-# truncate -s 1g test.img; mkfs.ext4 -F test.img;
-# losetup /dev/loop999 test.img & sleep 1; ls -l /dev/loop999; strace mount -t ext4 /dev/loop999 mnt 2>&1 | grep fsconfig
-
-It shows
-
-```
-brw------- 1 root root 7, 999 Oct 31 20:06 /dev/loop999
-fsconfig(3, FSCONFIG_SET_STRING, "source", "/dev/loop999", 0) = 0
-fsconfig(3, FSCONFIG_CMD_CREATE, NULL, NULL, 0) = -1 ENXIO (No such device or address)  // unexpected
-```
-
-then
-
-# losetup /dev/loop996 test.img & sleep 1; stat /dev/loop996; trace-cmd record -p function_graph mount -t ext4 /dev/loop996 mnt &> /dev/null
-
-It shows
-```
-   File: /dev/loop996
-   Size: 0               Blocks: 0          IO Block: 4096   block special file
-Device: 0,6     Inode: 429         Links: 1     Device type: 7,996
-Access: (0600/brw-------)  Uid: (    0/    root)   Gid: (    0/    root)
-Access: 2025-10-31 20:07:54.938474868 +0800
-Modify: 2025-10-31 20:07:54.938474868 +0800
-Change: 2025-10-31 20:07:54.938474868 +0800
-  Birth: 2025-10-31 20:07:54.938474868 +0800
-```
-
-but
-
-# trace-cmd report | grep mount | less
-            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                bdev_file_open_by_dev() {
-            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                  bdev_permission() {
-            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                    devcgroup_check_permission() {
-            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                      __rcu_read_lock() {
-            mount-561   [007] ...1.   240.180514: funcgraph_exit:         0.193 us   |                      } (ret=0x1)
-            mount-561   [007] ...1.   240.180514: funcgraph_entry:                   |                      match_exception_partial() {
-            mount-561   [007] ...1.   240.180514: funcgraph_exit:         0.199 us   |                      } (ret=0x0)
-            mount-561   [007] ...1.   240.180514: funcgraph_entry:                   |                      __rcu_read_unlock() {
-            mount-561   [007] ...1.   240.180515: funcgraph_exit:         0.202 us   |                      } (ret=0x0)
-            mount-561   [007] ...1.   240.180515: funcgraph_exit:         1.602 us   |                    } (ret=0x0)
-            mount-561   [007] ...1.   240.180515: funcgraph_exit:         2.100 us   |                  } (ret=0x0)
-            mount-561   [007] ...1.   240.180515: funcgraph_entry:                   |                  ilookup() {
-            mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                    __cond_resched() {
-            mount-561   [007] ...1.   240.180516: funcgraph_exit:         0.194 us   |                    } (ret=0x0)
-            mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                    find_inode_fast() {
-            mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                      __rcu_read_lock() {
-            mount-561   [007] ...1.   240.180516: funcgraph_exit:         0.195 us   |                      } (ret=0x1)
-            mount-561   [007] ...1.   240.180517: funcgraph_entry:                   |                      __rcu_read_unlock() {
-            mount-561   [007] ...1.   240.180517: funcgraph_exit:         0.193 us   |                      } (ret=0x0)
-            mount-561   [007] ...1.   240.180517: funcgraph_exit:         1.060 us   |                    } (ret=0x0)
-            mount-561   [007] ...1.   240.180517: funcgraph_exit:         1.970 us   |                  } (ret=0x0)
-            mount-561   [007] ...1.   240.180518: funcgraph_exit:         4.818 us   |                } (ret=-6)
-
-here -6 (-ENXIO) is unexpected.
-
-Actually the problematic code path I've said is device_add():
-
-upstream code:
-
-loop_control_ioctl
-  loop_add
-    add_disk_fwnode
-      __add_disk
-        devtmpfs_create_node   // here create devtmpfs blkdev file, but racy
-      add_disk_final
-        bdev_add
-          insert_inode_hash    // just seen by bdev_file_open_by_dev()
-        disk_uevent(disk, KOBJ_ADD)
-
-I actually think it's enough to explain the root.
-
-Thanks,
-Gao Xiang
+> 
+> Let me know what you'd prefer.
+> 
+> > >   *
+> > >   * Create a directory.
+> > >   *
+> > > @@ -4427,7 +4428,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+> > >   * In case of an error the dentry is dput() and an ERR_PTR() is returned.
+> > >   */
+> > >  struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+> > > -			 struct dentry *dentry, umode_t mode)
+> > > +			 struct dentry *dentry, umode_t mode,
+> > > +			 struct inode **delegated_inode)
+> > >  {
+> > >  	int error;
+> > >  	unsigned max_links = dir->i_sb->s_max_links;
+> > > @@ -4450,6 +4452,10 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+> > >  	if (max_links && dir->i_nlink >= max_links)
+> > >  		goto err;
+> > >  
+> > > +	error = try_break_deleg(dir, delegated_inode);
+> > > +	if (error)
+> > > +		goto err;
+> > > +
+> > >  	de = dir->i_op->mkdir(idmap, dir, dentry, mode);
+> > >  	error = PTR_ERR(de);
+> > >  	if (IS_ERR(de))
+> > > @@ -4473,6 +4479,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+> > >  	struct path path;
+> > >  	int error;
+> > >  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+> > > +	struct inode *delegated_inode = NULL;
+> > >  
+> > >  retry:
+> > >  	dentry = filename_create(dfd, name, &path, lookup_flags);
+> > > @@ -4484,11 +4491,16 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+> > >  			mode_strip_umask(path.dentry->d_inode, mode));
+> > >  	if (!error) {
+> > >  		dentry = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
+> > > -				  dentry, mode);
+> > > +				   dentry, mode, &delegated_inode);
+> > >  		if (IS_ERR(dentry))
+> > >  			error = PTR_ERR(dentry);
+> > >  	}
+> > >  	end_creating_path(&path, dentry);
+> > > +	if (delegated_inode) {
+> > > +		error = break_deleg_wait(&delegated_inode);
+> > > +		if (!error)
+> > > +			goto retry;
+> > > +	}
+> > >  	if (retry_estale(error, lookup_flags)) {
+> > >  		lookup_flags |= LOOKUP_REVAL;
+> > >  		goto retry;
+> > > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> > > index b1005abcb9035b2cf743200808a251b00af7e3f4..423dd102b51198ea7c447be2b9a0a5020c950dba 100644
+> > > --- a/fs/nfsd/nfs4recover.c
+> > > +++ b/fs/nfsd/nfs4recover.c
+> > > @@ -202,7 +202,7 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+> > >  		 * as well be forgiving and just succeed silently.
+> > >  		 */
+> > >  		goto out_put;
+> > > -	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
+> > > +	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, 0700, NULL);
+> > >  	if (IS_ERR(dentry))
+> > >  		status = PTR_ERR(dentry);
+> > >  out_put:
+> > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> > > index 8b2dc7a88aab015d1e39da0dd4e6daf7e276aabe..5f24af289d509bea54a324b8851fa06de6050353 100644
+> > > --- a/fs/nfsd/vfs.c
+> > > +++ b/fs/nfsd/vfs.c
+> > > @@ -1645,7 +1645,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+> > >  			nfsd_check_ignore_resizing(iap);
+> > >  		break;
+> > >  	case S_IFDIR:
+> > > -		dchild = vfs_mkdir(&nop_mnt_idmap, dirp, dchild, iap->ia_mode);
+> > > +		dchild = vfs_mkdir(&nop_mnt_idmap, dirp, dchild, iap->ia_mode, NULL);
+> > >  		if (IS_ERR(dchild)) {
+> > >  			host_err = PTR_ERR(dchild);
+> > >  		} else if (d_is_negative(dchild)) {
+> > > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> > > index c8fd5951fc5ece1ae6b3e2a0801ca15f9faf7d72..0f65f9a5d54d4786b39e4f4f30f416d5b9016e70 100644
+> > > --- a/fs/overlayfs/overlayfs.h
+> > > +++ b/fs/overlayfs/overlayfs.h
+> > > @@ -248,7 +248,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_fs *ofs,
+> > >  {
+> > >  	struct dentry *ret;
+> > >  
+> > > -	ret = vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
+> > > +	ret = vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode, NULL);
+> > >  	pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, PTR_ERR_OR_ZERO(ret));
+> > >  	return ret;
+> > >  }
+> > > diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> > > index 891ed2dc2b7351a5cb14a2241d71095ffdd03f08..3d2190f26623b23ea79c63410905a3c3ad684048 100644
+> > > --- a/fs/smb/server/vfs.c
+> > > +++ b/fs/smb/server/vfs.c
+> > > @@ -230,7 +230,7 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
+> > >  	idmap = mnt_idmap(path.mnt);
+> > >  	mode |= S_IFDIR;
+> > >  	d = dentry;
+> > > -	dentry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
+> > > +	dentry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode, NULL);
+> > >  	if (IS_ERR(dentry))
+> > >  		err = PTR_ERR(dentry);
+> > >  	else if (d_is_negative(dentry))
+> > > diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
+> > > index 9c12cb8442311ca26b169e4d1567939ae44a5be0..91c9d07b97f306f57aebb9b69ba564b0c2cb8c17 100644
+> > > --- a/fs/xfs/scrub/orphanage.c
+> > > +++ b/fs/xfs/scrub/orphanage.c
+> > > @@ -167,7 +167,7 @@ xrep_orphanage_create(
+> > >  	 */
+> > >  	if (d_really_is_negative(orphanage_dentry)) {
+> > >  		orphanage_dentry = vfs_mkdir(&nop_mnt_idmap, root_inode,
+> > > -					     orphanage_dentry, 0750);
+> > > +					     orphanage_dentry, 0750, NULL);
+> > >  		error = PTR_ERR(orphanage_dentry);
+> > >  		if (IS_ERR(orphanage_dentry))
+> > >  			goto out_unlock_root;
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index c895146c1444be36e0a779df55622cc38c9419ff..1040df3792794cd353b86558b41618294e25b8a6 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -2113,7 +2113,7 @@ bool inode_owner_or_capable(struct mnt_idmap *idmap,
+> > >  int vfs_create(struct mnt_idmap *, struct inode *,
+> > >  	       struct dentry *, umode_t, bool);
+> > >  struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
+> > > -			 struct dentry *, umode_t);
+> > > +			 struct dentry *, umode_t, struct inode **);
+> > >  int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
+> > >                umode_t, dev_t);
+> > >  int vfs_symlink(struct mnt_idmap *, struct inode *,
+> > > 
+> > > -- 
+> > > 2.51.0
+> > > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
 
