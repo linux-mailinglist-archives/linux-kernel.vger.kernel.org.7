@@ -1,239 +1,143 @@
-Return-Path: <linux-kernel+bounces-879898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03F5C24590
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:05:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E865C24572
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F2E64F16E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:04:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A6F21347139
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34572FB990;
-	Fri, 31 Oct 2025 10:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5C3314D24;
+	Fri, 31 Oct 2025 10:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KC6hLbUp"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="yOKTV5Ta"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC002277013
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA08277013
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905067; cv=none; b=iDcunJUDkRTcUchchhaU3+kUHgjNQiMBwkSEjgWTNyd9WJftPUN7ble0UOqcjB7sr9p/KW3RzImdYF7MX+WrrB8rvtt0/3tUJBfaD7EzGBkcqS//xILuY4xbwcsfYnEEKbtJpNvfs3lx02egTwpoXirA21dUH9dz+ijp9epYud4=
+	t=1761905098; cv=none; b=GRH2YnRFRtVrxafj0wnnmghtAwTIdWuIEARThlp6UD2NWcimEwQU8arBNnj9NHTIaeARsBKU9okfiW9pB+vdTxbjWlObVZQkMuIqjAXxtGUkT8Ifi/ILPvgXcOXlAjMQOYwGY0F6HZYpq69tJAcK/KckJ+Ot/M6YPoKELxx9pY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905067; c=relaxed/simple;
-	bh=1NPwAuVD0brkPDsGNU2qpw0U6GQjpBoksa6hfCKwLjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hx8mZfADvr0gN+oBaNYn/adMNjbWBpS8lSiQD7CAvgR+0rjwQY2Nm93X1Rlcvokg2zV4cvD20ZEKNQnggjAERTw8xwS/jj9WcY/haqD/wZUnQ7mCrgtyZVzgsWFkQLEsdLnXeN2EO551LlzXPELAB6/4DjlTdAgjIl6UMviR4CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KC6hLbUp; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d71bcab6fso21376967b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:04:24 -0700 (PDT)
+	s=arc-20240116; t=1761905098; c=relaxed/simple;
+	bh=7yfxWcZDMX1WQop/hWs+CPPueDN4eEtRvZml8SfUAnI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S2iRjKLdrJyuIy12UUnEKu5459+WDu/LGTu9DGIBVMEvbgDXkGC6g+CeU0b8vtQbX0luEYB1dXIjg0CK1hwiEUg4M1uWqIMgzFZBaR8nyu0qDxXQmrcmwPT3P3gmgJQgBYU5/5Ad5l6B4L7E68MGc/0XEs3TMk3T9WVgWkT9l9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=yOKTV5Ta; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-780fc3b181aso1539653b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:04:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761905064; x=1762509864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l7tYEGFUqGaeBpHUvE79YnYVY5qHGH/JQgyafV2cAr4=;
-        b=KC6hLbUpwlMQxk9+yKhg6ywRJI2XxyKAP96fQEBtA0DB88JnYiBMv0xdBIOsGmrSk0
-         MrZyFxUETIfjeBHjdMseOrHyiNqnJ2OoJopT4QxzJOg5SUoLN36O7gcEdXDlFBkFvk3x
-         xoMhq43DAIImqQxu3j5GyOQxi4vM7gb/bibSXvmCBQvKtSAYHGKLR56kwLxjasNN+FCU
-         CjRkTayO6iJBdtmpIPYwbWLW5ChylLvaXLCtSD2Ec9UNJvBeKpm4qdn3cHFTObleTM2N
-         7Ny1kcw+1o2cK5scQu1Ua5fVzKh+YvCn8TeI86nTTTszzN+FgxCLBgg710eiExswlTz4
-         g2kA==
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1761905096; x=1762509896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UvssMcqLHNZRnyHGAkwUA5kNWfzI5bQpc+DN0zFiz7s=;
+        b=yOKTV5Ta02t9FqvnaVHwWC3Su1VrqdJaCc4au1pwUPFc15TxOGaj+30Y4bo39unwx9
+         xWfY21DpmWrAdjIeBaXUg8bjHvhtotwizhaU/aPPtQy7WHENDHj5nA8HG9GAsboQOrbY
+         0E86fcTPSCjwHZE+0e5p6lkek2Wgd6NBi+/ZwXnhQAYTPtwyiZkSaduAauCma6//KLg6
+         L8MlDxmqLmCieHrYBID35zsEpevf/vh5i5F6DoeOXjkch/SVz9CqE+r1kxsd0jPS5gDZ
+         UBWtLRsAcTFBUK+1k7jL7rFFwTrDn+dv1xcxPICvEggU8Fx7Q42MMS3AHCG0N+GB0Hj6
+         BniA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761905064; x=1762509864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l7tYEGFUqGaeBpHUvE79YnYVY5qHGH/JQgyafV2cAr4=;
-        b=iiNWo22cNGZ/UwPySAywEe8AK34KnJrLCcpBGwnlix9K70T3Y3TUtpSpYUsCIzZTcP
-         uEnLN6DnxcS/5nAsvU+/q6zUQTTwSI0Ah4vPtztouEH4OpbHF6Vc6WnElwaTUFGvp7cA
-         Fzf4y/120ECZoAcyj7MMflPwWlaXrTRfjahwajhdjToC6nhmyIJKr+TMflv4te6AgSbN
-         feBFr9OyITkIhi5+2pC/CKnb75DBzFKhc1nArh5CEFqsR/vYjgecgdMIXIpXu/wHHlsB
-         QQ0vLXI/LNLtFKHS21AniYXstlI+Fvx7VgMKWlu0am8G/hTFl0cEz4CxQugLmieyhpV4
-         I45Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVDzsYRQo3gZqasEF2HS0RgvaWpHhvtsLlI2+d4ttgvK7PV+AgE/Wv5QxJ9YHGmcljfBnjkOpzkocznlg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnmHBit4dNnRmUSj2JmGMaNbIVResHt6a5l1X8Uq7wDXJmVgrH
-	RHsafTPD+d/GZdHRYJu+H2JfHebyRbQU2UkmkLAHmwzJPJNoR84oC32l2U+WaiQwBsPRlTVnzN8
-	0e1qonbdgCfFJmRqAXffxmt7wJ3PXu6T5przSoHT+EA==
-X-Gm-Gg: ASbGncvmJU9X1t46YpT4se4vC38U++9CZmjWclM7oI/fwbEocpnV/FWm4H6Gyynfo0t
-	edNAtHeltF13yEZgq1+UWsxc0iEwlkjwO4xbsrVQmtmuC3kMv/C5iFROfzuNt/oObYfpCANzRQH
-	hXXaXANXHoaynFP6MMCRNKW+n0mEBNv1TAbJ7Q2YBSTYKtlWhIYdBgvswWTeEs/nx7xczrI9Y5O
-	/vfKbguQ91vYZaM9QZ3bWbvqQQfe5xv4hzhOySZcdsDgT3DcYNW4l/KQurGhg==
-X-Google-Smtp-Source: AGHT+IEut91HJmfSs3799eVqsxwdMr6zHhHhc1/iIvEv2KM762zD6NDcJ1Xclh6t3YwkDZrmCLW33rwcsKuTtN39sMc=
-X-Received: by 2002:a05:690c:6008:b0:783:fa30:b783 with SMTP id
- 00721157ae682-786485afedamr24175417b3.69.1761905063556; Fri, 31 Oct 2025
- 03:04:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761905096; x=1762509896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UvssMcqLHNZRnyHGAkwUA5kNWfzI5bQpc+DN0zFiz7s=;
+        b=GLnJzJ4Y/lvy/GUPhYN8dwru1LmRxeiySlfqYebNM6bdfOqRknE1FiLBqdF8q1ClLB
+         jG/+yhQJHMitlMQ+DZ21hSDpcYdiPCET88/XaDyPhpuoItFSzCclLTvOzAALVXA6PtxV
+         XOaxleIS2QslgKj1zuYw74lPhPAwNLvIFjhUISFI98TiFRIEHJ7FbsmezyRPPDwRAXfC
+         sCWNtnqefMnhTYawGNfPFFUJiTFa+RZeD1jiw/HYGjTYeIWMZR0bzWNaBCiHRp4poAzJ
+         mOyKES5HpTvposEswpjWif188kz3UNAqRMRaZI7/ja8rOh3Ga6inO2LXrExpsCgEXaJC
+         lOHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJdhfEJFgL53EkSP4JMs82in4uvemhlEIW3puYltm8qnUAmD7f/QhkFSt7viYr2+VUgHxX+UkinOG3djM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbPsezVdPGWwWH1BE0NnmGZjvZi1bF64aviXq33D0iNSD2NCmt
+	T6qOGulQGv6pvjDcoyMz/YPWy9vHo7fOA0ha5AkzgbwXASx5j2h5tnMBsQlvy7yFgNg=
+X-Gm-Gg: ASbGncuQmQzKNjblFuW3y4ZolU9VW9aov5q7p9rxfUA43pw2zhlMFCg3BxWIEs46Nyv
+	kBHOhwZZFHkVgcxYFO2PpoSVD5Pjb9RgqkBshJK5rKsu3H72cHbf9XIO4T8MQe+SAuE26+C6TF0
+	U799MLzeqcU5g02SkB5b8vIjCtuXv7YlR+D8+/+8JiKrmwFhitV+heojpUmYKdJPPWTJSLCXSPX
+	cHDzYPB/sWhd1ACTnJaTFCw8E7EWStXrjXdqMCJ6rpzCpKGtQyVP1lTWrE03Ab1glyFGhJQSbD4
+	poVgB1FlwirI9I+CCQJkHvsI0plmaledQXM8Io+sO56z2zrSBOhri3qIV1MqqY20JmfvQpsuVev
+	IYZS8fPe8qdN1AXvx35gPlUxsiVdn79EJIav3IVxVmZcS0l4sbitx9r5VzZg77gNd9jgQskWvqM
+	1TLH3EDdgjtyDky0WDN6GygEK087jOY6e+YX/LROy/cglkASsd2dAbuMYkew==
+X-Google-Smtp-Source: AGHT+IE76fjQ4yD5hDeKMEFGATyM20a1IgpN+btK/m7ndkZxEYOWPa8WOPUvju+PU35yBX2pyjsaHA==
+X-Received: by 2002:a05:6a00:148d:b0:792:f084:404f with SMTP id d2e1a72fcca58-7a7748476femr3809021b3a.0.1761905095714;
+        Fri, 31 Oct 2025 03:04:55 -0700 (PDT)
+Received: from dgp100339560-01.huaqin.com ([103.117.77.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8982117sm1644352b3a.15.2025.10.31.03.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 03:04:55 -0700 (PDT)
+From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+To: neil.armstrong@linaro.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dianders@chromium.org
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Subject: [PATCH v5 0/2] drm/panel: ilitek-ili9882t: Add support for Ilitek IL79900A-based panels
+Date: Fri, 31 Oct 2025 18:04:45 +0800
+Message-Id: <20251031100447.253164-1-yelangyan@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <CAJZ5v0i_0K6+nCvBC55Bbu7XuKYjHrky3uG_aZ3aM0HMymcfeg@mail.gmail.com>
- <CAPDyKFpYfLJ1F1ynLAZLJBoWp+Uk-k2B0796_yWQTNg4xT9zew@mail.gmail.com>
- <CAJZ5v0igMhr=N90As66dioXXzL8YL11PN3k49n5-yoPuHNR-_w@mail.gmail.com>
- <CAJZ5v0jSvU7=bmscRyQrvoWA0q=AgbDE3Ad1jf+4PTdzZgSNjw@mail.gmail.com>
- <CAPDyKFr=uVS0CsuFnTjXH+o+P+xrG7GKj2O92mGgqiSo-tk9Bg@mail.gmail.com>
- <CAJZ5v0g2TebJDR5SWdFfyU7dksShZV0qXeO+yP6V_QTCsE--AQ@mail.gmail.com>
- <CAPDyKFpBHZ758khTGhidcyYCwy7dDtkabJ4trg4K16BhWEpUYA@mail.gmail.com> <CAJZ5v0jdT28Q0mnyU_2RKEYWhEHhQvWBAzsra1Jp9dBCLSCO1Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jdT28Q0mnyU_2RKEYWhEHhQvWBAzsra1Jp9dBCLSCO1Q@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 31 Oct 2025 11:03:47 +0100
-X-Gm-Features: AWmQ_blhjMdakPq54VnrjwOCuXofMbvgMHqoyIVU62N3sTzQMJnLhn4YdtuO4nA
-Message-ID: <CAPDyKFo6DT0cagnEQ61_UkEet6Ao60xfFM=YJ3VQqUYH8KeJyg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
- for s2idle
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 30 Oct 2025 at 17:36, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Oct 30, 2025 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Thu, 30 Oct 2025 at 15:06, Rafael J. Wysocki <rafael@kernel.org> wro=
-te:
-> > >
-> > > On Thu, Oct 30, 2025 at 1:44=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > > >
-> > > > On Thu, 30 Oct 2025 at 13:29, Rafael J. Wysocki <rafael@kernel.org>=
- wrote:
-> > > > >
-> > > > > On Thu, Oct 30, 2025 at 1:26=E2=80=AFPM Rafael J. Wysocki <rafael=
-@kernel.org> wrote:
-> > > > > >
-> > > > > > On Thu, Oct 30, 2025 at 1:23=E2=80=AFPM Ulf Hansson <ulf.hansso=
-n@linaro.org> wrote:
-> > > > > > >
-> > > > > > > On Wed, 29 Oct 2025 at 15:53, Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> > > > > > > >
-> > > > > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.ha=
-nsson@linaro.org> wrote:
-> > > > > > > > >
-> > > > > > > > > Changes in v2:
-> > > > > > > > >         - Limit the new QoS to CPUs  and make some corres=
-ponding renaming of the
-> > > > > > > > >         functions along with name of the device node for =
-user space.
-> > > > > > > > >         - Make sure we deal with the failure/error path c=
-orrectly when there are
-> > > > > > > > >         no state available for s2idle.
-> > > > > > > > >         - Add documentation.
-> > > > > > > > >
-> > > > > > > > > Some platforms supports multiple low-power states for CPU=
-s that can be used
-> > > > > > > > > when entering system-wide suspend and s2idle in particula=
-r. Currently we are
-> > > > > > > > > always selecting the deepest possible state for the CPUs,=
- which can break the
-> > > > > > > > > system-wakeup latency constraint that may be required for=
- some use-cases.
-> > > > > > > > >
-> > > > > > > > > Therefore, this series suggests to introduce a new interf=
-ace for user-space,
-> > > > > > > > > allowing us to specify the CPU system-wakeup QoS limit. T=
-he QoS limit is then
-> > > > > > > > > taken into account when selecting a suitable low-power st=
-ate for s2idle.
-> > > > > > > >
-> > > > > > > > Last time we discussed this I said I would like the new lim=
-it to be
-> > > > > > > > taken into account by regular "runtime" cpuidle because the=
- "s2idle"
-> > > > > > > > limit should not be less that the "runtime" limit (or at le=
-ast it
-> > > > > > > > would be illogical if that happened).
-> > > > > > >
-> > > > > > > Yes, we discussed this, but that was also before we concluded=
- to add a
-> > > > > > > new file for user-space to operate on after all.
-> > > > > > >
-> > > > > > > To me, it looks unnecessarily limiting to not allow them to b=
-e
-> > > > > > > orthogonal,
-> > > > > >
-> > > > > > So what's the use case in which it makes sense to have a lower =
-latency
-> > > > > > limit for s2idle than for runtime?
-> > > >
-> > > > Honestly, I don't know, but I just wanted to keep things more flexi=
-ble.
-> > > >
-> > > > > >
-> > > > > > > but I am not insisting that it needs to be like this. I
-> > > > > > > was just thinking that we do not necessarily have to care abo=
-ut the
-> > > > > > > same use-case in runtime as in the system-suspend state. More=
-over,
-> > > > > > > nothing would prevent user-space from applying the same const=
-raint to
-> > > > > > > both of them, if that is needed.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > It looks like that could be implemented by making
-> > > > > > > > cpuidle_governor_latency_req() take cpu_wakeup_latency_qos_=
-limit()
-> > > > > > > > into account, couldn't it?
-> > > > > > >
-> > > > > > > Right, but I am not sure we want that. See above.
-> > > > > >
-> > > > > > I do or I need to be convinced that this is a bad idea.
-> > > > >
-> > > > > And there is a specific reason why I want that.
-> > > > >
-> > > > > Namely, say somebody wants to set the same limit for both s2idle =
-and
-> > > > > "runtime" cpuidle.  If the s2idle limit did not affect "runtime",=
- they
-> > > > > would need to open two device special files and write the same va=
-lue
-> > > > > to both of them.  Otherwise, they just need to use the s2idle lim=
-it
-> > > > > and it will work for "runtime" automatically.
-> > > >
-> > > > Right. User-space would need to open two files instead of one, but =
-is
-> > > > that really a problem?
-> > >
-> > > It is potentially confusing and error-prone.
-> > >
-> > > > What if user-space doesn't want to affect the runtime state-selecti=
-on,
-> > > > but cares only about a use-case that requires a cpu-wakeup constrai=
-nt
-> > > > when resuming from s2idle.
-> > >
-> > > Well, I'm not sure if this use case exists at all, which is key here.
-> > > If it doesn't exist, why make provisions for it?
-> >
-> > Well, because it's not possible to change afterwards as it becomes ABI.
-> >
-> > It would be silly having to add yet another file for userspace, down
-> > the road, if it turns out to be needed.
->
-> OTOH doing things without a good reason is also not particularly wise.
+This series adds support for the Tianma TL121BVMS07-00 panel, which uses
+the Ilitek IL79900A display controller.
 
-Right. As I said, I don't have a use-case at hand at this very moment
-for why we shouldn't combine the constraints as you propose.
+Following review feedback from Neil Armstrong, the IL79900A support has
+been merged into the existing `panel-ilitek-ili9882t.c` driver instead of
+creating a new one, since both controllers share similar command sequences
+and initialization behavior.
 
-I will send a new version, unless someone speaks up and suggests a
-different approach.
+Changes in v5:
+- PATCH 1/2: No changes (already reviewed-by Conor Dooley)
+- PATCH 2/2: Merge IL79900A support into existing panel-ilitek-ili9882t.c driver.
+- Link to v4: https://lore.kernel.org/all/20251022124628.311544-1-yelangyan@huaqin.corp-partner.google.com/
 
-Kind regards
-Uffe
+Changes in v4:
+- PATCH 1/2: Rename compatible to "tianma,tl121bvms07-00" and update example accordingly.
+- PATCH 2/2: Update driver to use new compatible and rename related data structure.
+- Link to v3: https://lore.kernel.org/all/20251016095043.1694736-1-yelangyan@huaqin.corp-partner.google.com/
+
+Changes in v3:
+- PATCH 1/2: Fix DT schema error for `backlight` property.
+- PATCH 2/2: Address review feedback (use mipi_dsi_msleep/_multi, move init sequence to mode, minor cleanups).
+- Link to v2: https://lore.kernel.org/all/20251010093751.2793492-1-yelangyan@huaqin.corp-partner.google.com/
+
+Changes in v2:
+- PATCH 1/2: Address Rob Herring’s review comments and align with panel-common.yaml conventions.
+- PATCH 2/2: Rename driver to panel-ilitek-il79900a and align naming and structure with existing Ilitek panel drivers.
+- Link to v1: https://lore.kernel.org/all/20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com/
+
+Langyan Ye (2):
+  dt-bindings: display: panel: Add Tianma TL121BVMS07-00 panel
+  drm/panel: ilitek-ili9882t: Add support for Ilitek IL79900A-based
+    panels
+
+ .../display/panel/ilitek,il79900a.yaml        | 68 ++++++++++++++++++
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 69 +++++++++++++++++++
+ 2 files changed, 137 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+
+-- 
+2.34.1
+
 
