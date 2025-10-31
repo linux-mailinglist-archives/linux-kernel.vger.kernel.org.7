@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-879706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C57AC23D0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:31:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05135C23CF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:30:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49743B0BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:24:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6178D4F237E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C802E62B5;
-	Fri, 31 Oct 2025 08:24:44 +0000 (UTC)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E372E8B77;
+	Fri, 31 Oct 2025 08:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="S5F9870o"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2D72DF15A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21B62E0910
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899084; cv=none; b=mG2eHMq3ehmh+pUs3bDEBC922aB2ioW2+p9xPzUNol198FIeZNKjPuEXnkx0/iJ2uZBlX8wXHUa+r76hw7igEWgRXWCUArZOEzMNk/v07UcpGMafuQ4hyUVBje2+4I1wNLasb/GoBB+k5ZCxZLdtBg+Av8G+cvrhosEJIXspJC0=
+	t=1761899189; cv=none; b=YSoQugfe+gPkTPRN8ZQ8TFYS9oHr87b+1rfICHWMGEY1WhxiqLnEbMziE6B52sibNw/RTP6Fi1A+JrTr+wXpXF83EXJD29U4pqAKBjHPoGe1SRBMw6wcUBpRo7s+R2TL+cx+VwdPRrqqGlj7TU6813BYy9Pr0xW081GeP72LBoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899084; c=relaxed/simple;
-	bh=QBdLgXepaoyusDzfPuWF7W5gVFX3pzRYvpA7qsRLNtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kKaSYoLR8RdcT0LQCkJUlWS1noF8isUseXciAVPsB9mMU4r0qeImVzJxW79EFr7DtfZ7rehtj9yF/WQposnun7CDLfiUrCKPlfI1epPt9xWAWNfzjm48OZKjj4U+tBm5UKth3esvAmjYbXJE0QXsdlss2z+BWhYkZOHQNnC3f+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sourceware.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sourceware.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5db7dfe9b7aso1560589137.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:24:42 -0700 (PDT)
+	s=arc-20240116; t=1761899189; c=relaxed/simple;
+	bh=+NjzGhAHtDRHeBvaazZ1DsJgwXBMCElbWAslegY+rbw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u0M7bZXuMCKTq4kdHh+SFmaLhEBoRiozdbWs1lGaRe8xCPn0nIjGZaUl53AsGjFdWJVgnYHMCP5hLDBp6QpC0ZqyfBKf/S5bFbvobvn/ktRIiRd44bJg3CG+tvperNAEln4ljMLlcTiWn3AMHJntOrKZY3lx+rWzygW4HjPXKkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=S5F9870o; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so453954a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761899185; x=1762503985; darn=vger.kernel.org;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+NjzGhAHtDRHeBvaazZ1DsJgwXBMCElbWAslegY+rbw=;
+        b=S5F9870o/u95LK2ubbNut2oR9k8IonRi++hnQY39Br771wckxyDGyOB8I7EnR4tpcc
+         qtVHp/ER8Q851Wa6Z/hzPpSz++djICEhaeJgY77gc7j+WjK+iB/VPxkpVgV0i43IKeTa
+         f3CCURoxC+t4eVQCd6OGel7Gt2Q3R683vAo99ByUJr7X7DQ/cJQRYMacRxuIWusa6kRA
+         LL5+SmcY5/h8PnbGJEHI/ZUNLDzUudzuTmZViGxjR4J0+s/0N4PGVrubAiBhOsvLHct2
+         QbOjZItInFwCl2YqTixMwKm+bxi7CmoGXfy/kTc/42Jd2LwYW784fsDC1uSbkEBX+4Ue
+         EHtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761899081; x=1762503881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YSmGt9VWfBQJDvvEyJ8bQzSLcQfsQHCg2enix3hl0bA=;
-        b=o/gHKXJ/LpJegBhm1av/hhMRGuiM7IV8Hw6xiBBOZKLSR5JapNB2o0lsWfTKbBktTc
-         2eTVPn7IoJ3HCpr5RvmAzbxtTjcHsDV2HxA/Hn5UTkW5Nm2bLY55sTFNXa15JKYu4Yof
-         a3KaLGe7WRTrgTeRcDCzK9SdYGu+CGGGXsIaCs43/P943nGg8RIWo7EDGtjFofP8aGj+
-         RXd39U3H6FaSX+ErICf0ZkCYgi6l10aNIJfK+qHoCm+6NPQFIxE8+SrxyqA2iBg/zp4W
-         A/rTA+RsK9XPbgm1y/MjC6HBOqFXPQK17U/pwW3iibWbhobPyQjq5UG5BdfS0Sq7rvYx
-         S9ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUi1rK4/XbfwJf3qmSUHdJqtQlAsWLHyLCXwhaMDkYydYvzA2wO2RAunxZjIj88J0vElkYO/i9o6FJtfUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaIhls6w7ZQmlr5aLaDeq7IFu0ZQeTO4MEHAPpVL3IjHxWNCU0
-	UQU36apBOCjF7o1Eu4BqvZAe4ETbGZNW4dywBqtweXO/li26lFi0HNWtxGPWeg==
-X-Gm-Gg: ASbGncuHCiHdY5nFqc+gvJA1/mEPdIsMGRwETLSCEKrjwNUY52HPUtQ4FlRsiQFUGDF
-	IOh/YUzI+d7qzffMcNxpNdNixmpPc9s/h7N6o3milpF2BoN05pmb1ndYp981VYw9Fuhg23akKZb
-	RnqsFxr477r8+beJHkAKVRv4Kag5bdEpVyNQd5PyGkP267vYswg0b1Jvrg8OgH3BWxZdXBC40CB
-	fi64RgK+Nim48HWIe6RDqGBB1IGYYbdgFpavS5w5/vKO9svl6/78YHyQKNfBOv/0/7mg7B0eNYp
-	1yADjoHzsvuTqu+c0P7yrO6y3nwRnNWfQZsLanup4mnYR92vtA2xezDQJ9zuMX1yddgFxLJB7sj
-	mdrw89g4cwuolRXE4j6hxv0WI6d5N2H5PfLxfhMMD/rUHVQLo/5AoxDdumxCnWap9nqQFizzjOx
-	DncKvG2cR0xEqmuBch4s9lUGlWaFkgWENbwZZp+NAO
-X-Google-Smtp-Source: AGHT+IFJ+WGwJZsZV+Wl68GwxG793zxp6ZimCJkrvA5fh2vgujMxuQfGia4fB8d5/dj11MlQR5xdjQ==
-X-Received: by 2002:a05:6102:c8b:b0:5db:341e:94bf with SMTP id ada2fe7eead31-5dbb12fb676mr903855137.28.1761899081317;
-        Fri, 31 Oct 2025 01:24:41 -0700 (PDT)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93512a554f5sm432562241.5.2025.10.31.01.24.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 01:24:41 -0700 (PDT)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5db2593c063so1499060137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:24:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVU9cGkJKDdA/LyEwXO0KiD0qfumWadupEIOBnjUqnpbSSClUJ3hlwNfEMQ7/Uc5nnLCjM9y4RtmSw3AcA=@vger.kernel.org
-X-Received: by 2002:a05:6102:508e:b0:5be:d04d:d2c6 with SMTP id
- ada2fe7eead31-5dbb1204032mr790145137.9.1761899080804; Fri, 31 Oct 2025
- 01:24:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761899185; x=1762503985;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+NjzGhAHtDRHeBvaazZ1DsJgwXBMCElbWAslegY+rbw=;
+        b=EHR7OI4asyIV81fnTJHzOHeza/HCBBXDDUwvLRid9BZLZfNPY4hn62reRrHBJO1JT3
+         xrImg07gDzncu+Svr0f8wrnRWEjhPIunZgKy6wVP5MkuyhAqcbcrHgS5BB16T9SFBMOW
+         IiEITP+dQQCUS7Vab8WjwY56RKkxD4SUiVs5Ifw3FlGy0ETsEiJcK1FzCqGcs1fzUp2J
+         0+KYu/szCO42+Rsx40H9ffQKLctQcepHXz5J6eg+0NsLTQq+lTd1sbCVhSBF06w6rsha
+         BvKc3DmgZ12amNS2udei+5u1m1f9SOOvs2f9MkZ4W72RnIPOtBqMnWLGgMKnsk7S1OmV
+         lXEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUflw5E53hymtHMgEOx2/1cBGiwwG4EGnd98zGqUobZX/mbH4k5MKqKH0kHrcbx0MpRYo1IDGhD2A/0F2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+MkvPSrQ7UZhFiTePHX+2Vj24T8QvqMAHDB+IbwzhOnZ1/kZo
+	L6M5XLQ+7sLjezum7s8ZfdH0V2I2tLHSJ3/44prSDiNyl5kUYzMsX582JpBXIgsUKSE=
+X-Gm-Gg: ASbGncvrT/9xW/6iM6LuEjuqjjQw0PEI+FHvdWm8ALzN35nraHjTEExSg/CJvbH4+xM
+	oLSplXvI482wimgHswuF0adh6nNyTfmEg0NWoaer+sm0hP//cjNpMy2fduyXuDyn76/LLpYd1UI
+	pp7eyn//F2YISkpSUzJ1G++9j7StPaZSjlt/LluWzQZT05uZG02PAUC6gULpxTA+ii3J1BMIW7h
+	BcL025Ah6ak/NogJDAl9ITR8ZN6XJdYHg37TNMcGFG89j5GGNTf6ZyT5w2wa+ZNTOsli4hGJDre
+	0evKo3HO2IxpubWbNhFj7scGip13AQzlVB1cvRmFIo+kmFXyHq2uUGimgxu+PXZYcMIp8az2eA3
+	kJg1m7EhTiPctaw3kb5Q+dudEvl/LDEPiDnziIa6h8g1mKVWFMOR7LCVRL0LBjsajf4tNxoIFr0
+	KluP7X+rhqWO+8AbxIcJ5rspqb8OxFNpsRVj+YeVs=
+X-Google-Smtp-Source: AGHT+IE52yNlp2sTU4kqtK3kDMs1xq1Zmn7Phf6YHDr/FwfwMUQX92Kodls2Uqk1gGyKB1dLqXrrxQ==
+X-Received: by 2002:a05:6402:13c1:b0:63b:d7f0:d93a with SMTP id 4fb4d7f45d1cf-64076f66ae8mr2138586a12.3.1761899185309;
+        Fri, 31 Oct 2025 01:26:25 -0700 (PDT)
+Received: from [10.203.83.168] (mob-176-247-67-93.net.vodafone.it. [176.247.67.93])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b390d71sm1084831a12.12.2025.10.31.01.26.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 01:26:24 -0700 (PDT)
+Message-ID: <3e7944588d3011b6a144d70ab9027a05a1e230d0.camel@baylibre.com>
+Subject: Re: [PATCH 1/9] iio: imu: st_lsm6dsx: dynamically initialize
+ iio_chan_spec data
+From: Francesco Lavra <flavra@baylibre.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>,  linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 31 Oct 2025 09:26:19 +0100
+In-Reply-To: <aQOVcCinTd-ZJJX3@lore-desk>
+References: <20251030072752.349633-1-flavra@baylibre.com>
+	 <20251030072752.349633-2-flavra@baylibre.com> <aQOVcCinTd-ZJJX3@lore-desk>
+Organization: BayLibre
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-toCKgrfB8dV8kmHVa9aE"
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
- <20251030102626.GR3245006@noisy.programming.kicks-ass.net>
- <87zf982s52.fsf@linux.intel.com> <bdda89a7-ff60-46b0-8ce3-28ffec1fac2a@sirena.org.uk>
- <aQOvCugzYe/2DcNW@firstfloor.org> <baf2665c-49aa-4b8a-be26-69dc23876bee@sirena.org.uk>
-In-Reply-To: <baf2665c-49aa-4b8a-be26-69dc23876bee@sirena.org.uk>
-From: Fangrui Song <maskray@sourceware.org>
-Date: Fri, 31 Oct 2025 01:24:52 -0700
-X-Gmail-Original-Message-ID: <CAN30aBEVdhju7CG4Tato-D1uof5p+dhTM6nJtjXX_SiYH7fU+Q@mail.gmail.com>
-X-Gm-Features: AWmQ_bkGkpQQsklzLvHTWsBZ_xTryR-WgcL-38L2MiIPvb0SEfuMwf6pZKrIbe4
-Message-ID: <CAN30aBEVdhju7CG4Tato-D1uof5p+dhTM6nJtjXX_SiYH7fU+Q@mail.gmail.com>
-Subject: Re: Concerns about SFrame viability for userspace stack walking
-To: Mark Brown <broonie@kernel.org>
-Cc: Andi Kleen <andi@firstfloor.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Fangrui Song <maskray@sourceware.org>, linux-toolchains@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+
+
+--=-toCKgrfB8dV8kmHVa9aE
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-On Thu, Oct 30, 2025 at 11:45=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> On Thu, Oct 30, 2025 at 11:31:38AM -0700, Andi Kleen wrote:
-> > On Thu, Oct 30, 2025 at 06:07:49PM +0000, Mark Brown wrote:
->
-> > > It's going to take a *considerable* time for the hardware support to
-> > > become standard.
->
-> > Optimizing for the past instead of the future?
->
-> On arm64 no currently available hardware has shadow stack support, and
-> once systems start becoming available it'll take a very long time for
-> that to filter down to even being all newly shipping systems, let alone
-> all systems that people care about running new software on.
->
-> > Not on x86 at least. All my x86 systems have it, except for a few old
-> > skylakes.
->
-> My experience trying to find a system to test changes on was somewhat
-> different :(  I did eventually get something.
+W21pc3NlZCB0aGlzIG9uZV0KCk9uIFRodSwgMjAyNS0xMC0zMCBhdCAxNzo0MiArMDEwMCwgTG9y
+ZW56byBCaWFuY29uaSB3cm90ZToKPiAKPiA+ICvCoMKgwqDCoMKgwqDCoGNoYW4tPmV4dF9pbmZv
+ID0gc3RfbHNtNmRzeF9leHRfaW5mbzsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmIChpZCA9PSBTVF9M
+U002RFNYX0lEX0FDQykgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmICho
+dy0+c2V0dGluZ3MtPmV2ZW50X3NldHRpbmdzLndha2V1cF9yZWcuYWRkcikgewo+IAo+IMKgwqDC
+oMKgwqDCoMKgwqBpZiAoaWQgPT0gU1RfTFNNNkRTWF9JRF9BQ0MgJiYKPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIGh3LT5zZXR0aW5ncy0+ZXZlbnRfc2V0dGluZ3Mud2FrZXVwX3JlZy5hZGRyKSB7
+Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAuLi4KPiDCoMKgwqDCoMKgwqDCoMKgfQoKSW4gcGF0
+Y2ggNC85LCB0aGUgaW5uZXIgY29uZGl0aW9uYWwgd2lsbCBiZSByZXBsYWNlZCBieSBtb3JlIGdl
+bmVyaWMgY29kZSwKc28gd2Ugd291bGQgcmV2ZXJ0IHRvIGlmIChpZCA9PSBTVF9MU002RFNYX0lE
+X0FDQykgWy4uLl0KCg==
 
-I=E2=80=99ve chatted with mobile toolchain developers at the LLVM Dev Mtg, =
-who
-emphasized that size concerns are especially critical for AArch64,
-which is heavily deployed on mobile phones.
-I think Arm ABI makers are unlikely to want a format known not to work
-with mobile Linux to coexist with a future, more widely adopted
-compact format with callee-saved register, LSDA, and personality
-support. I chatted with Peter Smith, who seems to think so, but I
-don't want to put the word into his mouth:)
 
----
+--=-toCKgrfB8dV8kmHVa9aE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Intel=E2=80=99s 11th Gen and AMD Zen 3 support hardware shadow stack.
-A software-only stack walking approach (and remains unvetted for
-AArch64-see above) that doesn=E2=80=99t replace .eh_frame would quickly bec=
-ome
-obsolete.
-Shadow stack can be enabled per process, providing flexibility to
-balance performance overhead / memory consumption with profiling
-needs, even for users who don=E2=80=99t prioritize the security hardening
-aspect.
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmkEcqsACgkQ7fE7c86U
+Nl+8Dwv9Gr5kkOemEE0BT3tMcA0r4Fj9oWgSRTOcD/knPbaMHHuaQtz76lE99xXF
+gVguBJx+Aq0dtrqVtS1Rg7JzyeYFXnaDtRDW8lNPGYiokGitcpyhlKXQlhMpIcrb
+u2hCkP2X+QUhfgrmw14mTd4hVfiRKPh5NxxLRf6Y2tLh4s9tfCbvoDHk6eFHooPq
++nXbKByStxvBt4Z41imsXJFyIr158XyOBa7xEuLUj5XZGad6yKccZ2xWrZHcN2Af
++7Oj4dZ3CRnrbmUbV4w6h1/xzeJzPaeOFJGQ2qYntv/cKBdNTymTq1JZ6aLyl21d
+pJ/EVzhfIYSOppRmNKYzXL5e8y06Gsgb5XtW5ZidCDVS2SVvlVDpSuFwsvKrGJPi
++ZBZ+6MKaYGiTdag4V9IMCDaEJNUyODn9Hl/lh/sdqXAWJtrmH91PTuP8GhFQQ8j
+I6m4vW999UbZrEfpqFjKWDl9RchWDDe/Vf+bscKUGV2/RhhpOKf9koRtz+UMrfyY
+FZBm/4C4
+=VQFO
+-----END PGP SIGNATURE-----
+
+--=-toCKgrfB8dV8kmHVa9aE--
 
