@@ -1,140 +1,167 @@
-Return-Path: <linux-kernel+bounces-879352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A858C22E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:48:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED0EAC22EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A035A18981D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:48:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29D374E8B44
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC858260587;
-	Fri, 31 Oct 2025 01:47:51 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39AF266584;
+	Fri, 31 Oct 2025 01:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="XAB9vnQY"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9330AF9EC;
-	Fri, 31 Oct 2025 01:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E2F19CD0A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761875271; cv=none; b=nNlMc3nEwt7mP2vkwdWX44kdLKRig7UE2bQ5MfUhZhSApTZtwPN6nuzwfdeSx+BMWiiBf2E3t5SjS/5ivhy23V4e6egBQsoxjB3l3xksu8q1m/rE2TRoF96I6WTWrygiBgfkacgBGDO+vm+v5XQ7/zOumF0gvVBYLRB8668LPiA=
+	t=1761875316; cv=none; b=SzRoeFjnB8kytDfyKT1LW4JxKvQzJp/1nL9ssG3NSKKfmmH858oEfp7OGwVPzhwfCnSTJzQ6RwQc6Rdau3Gmj8VVZ6DaD54ON20dyzEzv6+EJSva5EzshlvWfVbk/VZfzbnsxHZONJsrAouNQHFF5KldsYI8Nmcm+g91CYDrbH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761875271; c=relaxed/simple;
-	bh=RMfWNxPNBNw9I+ZX3djWGVD3yE77SQDtOZv505GvMAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IBwkJeFt5nWS95YqpVsHzrm3/uL/SbjjL00QJaixKhvJ55b/fvpAYDfkISL0hOvQJPPNImcJaima59DDmWpEoxsCHl1GYUflAWlv3YsUd7rOmP7nqaTTug8A4zXb3Y7E9Q+Nckrj5Z/dF4HaibB4l/5zYNGuBJORD/tbsZwFe8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cyP4V2LvBzYQtgj;
-	Fri, 31 Oct 2025 09:47:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id ED83A1A0359;
-	Fri, 31 Oct 2025 09:47:45 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP2 (Coremail) with SMTP id Syh0CgBnCEE_FQRp1gDACA--.16157S3;
-	Fri, 31 Oct 2025 09:47:45 +0800 (CST)
-Message-ID: <1901ccda-bed8-4f83-a959-7a6acccf2754@huaweicloud.com>
-Date: Fri, 31 Oct 2025 09:47:43 +0800
+	s=arc-20240116; t=1761875316; c=relaxed/simple;
+	bh=CGQoH/JE7RMcpARc0jVV3Qw00UqxSIi0see9VSUJ5T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHIHodJAGVvQxkWZW/oIrM2ski34t0AHfhxlGhbjFJd/7AiySZJl6r9VNHayA+UqJ6p9lZAC7+SAvnAVUFwwPXi+W7tW61CCqLygjAcKWzs+SwtpbMoq1Ylgx/TxkLpML4YqbhFACbiUvrvBBlJCjdIFK7bGGuUAfzN6LW5S+iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=XAB9vnQY; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-89c81839de7so103605685a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:48:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1761875313; x=1762480113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Nw7ZJvHJNNjuGTUIlC/U+5S3zQdlNMXANqVv6299UA=;
+        b=XAB9vnQYsOIjtQK2Fj2G77Dc621PcYfLDJ2H15bSau7Fj6E0YLlvt5gj+ZN30HaAT0
+         xZW7hEU28J0lYonxoiUkWahKn38dCHgYk/z+amSQb8wtgwUT1mBeQJPsKHJJd4teko+V
+         ftOE2wSyVuECwNL2wGu8EXh4s4eXlU94ATUGreKMgyYvgHC0lwjL/5aftQXNAx8v5O45
+         ZE1c3XkLJFeKDxcX9Fbckxtwy13LL1oV/0sIUjOnp4oVIqJiqBjRMDN/N+HnTwfLyA7T
+         tq7ZQUn5mesYGQj0cbjyVUwHzPT0Slf+hKIzwgWc7h2lN4VYNpOMRBggg+2uJG7l3gNj
+         kmJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761875313; x=1762480113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Nw7ZJvHJNNjuGTUIlC/U+5S3zQdlNMXANqVv6299UA=;
+        b=vyzNFw/xpRVOwj96RdCKJm7Yoar9J4JrGS5UE6kzCtMw2B2ZjEJsU8mRhTzDld8vaw
+         /lC4sSvHPv5Kom0MeAB8DsS3zb+yM+QRJFVJ9HNYIF8GBvQZaAbnMyiozNbd9wdghwf+
+         xXWl8RHIpPC71CUekWsUT1T+UDQmK1DwHYF/b+Nsv0Qka8hFvaAZPWUg+aGqvI+fpDra
+         rWfWKAybDtdC3cMw5OoDzTm0Jtz3PBuVyJBCR8p8o7J5SMTF6TKqMY76SVelUiEV5hyh
+         XgdsXviKpIOaSE0nj8nyAMkbLB/LmMIOhw1x8fPGSrdZUGtWKFb4PKuz1guEn0qzpEFA
+         fCSQ==
+X-Gm-Message-State: AOJu0YyfiNi2vpfVpscifh65TXvxgNO7kqRcKjM0wjAFggOGYaOqJVEz
+	EVML1Vbks6f8IytU7YNONpjR6z1rS1FnQSapo20FM7QHZWSsIFH6lSqTpMLzAXbDsg==
+X-Gm-Gg: ASbGnctvApZz2KNRx1TLKiztj0Lf8kK3fCH1JHMMM9Nh7HHDTTBsCXpE3AcqtWtNT2G
+	1vnM08is+1rAwETVtpPZEYnKs91FtGdKpVp3yubq5RNQ8HqEdIcddOp78yLbAQghJBytSjFBzsY
+	W3m9+7pKeFxqrhhdVzNota05lZyy47CB0KCw6B9IxmIvq8XvA6UI+bAdGZdINSpDz4xT3Z727go
+	BmOjj0KrrknElvNx+f4XJRyC1dWUlf1Ghe3gB5w9a+5JdfvATVkLnQFL5rr5q/3dbZcTauoiKog
+	39nmFamsoXkWAHaGah6ao/iGLkFDRSt4l6favfBZbEiR9IiQXVSWajihNbbzl+qCyAp7TBVVx7B
+	xhBcMsRWvIDK5CKgshPTVZNVRjB0eaNxzKMzRLwXzZC9OPMFJ4xOuc2J2qIiFcAK0SYip+FKaHv
+	9ILw==
+X-Google-Smtp-Source: AGHT+IFPRF3nHMnMN4v7NDKYZrDBxuPNtmp9qyChBVjZlNRHuaz6ttavXZv9Tap/e+QcijC+0d5oUA==
+X-Received: by 2002:a05:620a:1a1f:b0:850:b7ad:c978 with SMTP id af79cd13be357-8ab9b2b6238mr209085385a.49.1761875313404;
+        Thu, 30 Oct 2025 18:48:33 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:d03:1700::db9a])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ac02f85391sm19200085a.29.2025.10.30.18.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 18:48:32 -0700 (PDT)
+Date: Thu, 30 Oct 2025 21:48:29 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Desnes Nunes <desnesn@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: storage: Fix memory leak in USB bulk transport
+Message-ID: <b2ec533d-9f87-4d65-a20f-99488ffe56e9@rowland.harvard.edu>
+References: <20251030214833.44904-1-desnesn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
- __alloc_pages_slowpath() when BS > PS
-To: Matthew Wilcox <willy@infradead.org>, Baokun Li <libaokun@huaweicloud.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
- linux-kernel@vger.kernel.org, kernel@pankajraghav.com, mcgrof@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, yangerkun@huawei.com,
- chengzhihao1@huawei.com, libaokun1@huawei.com
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-23-libaokun@huaweicloud.com>
- <aPxV6QnXu-OufSDH@casper.infradead.org>
- <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
- <aQPX1-XWQjKaMTZB@casper.infradead.org>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <aQPX1-XWQjKaMTZB@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBnCEE_FQRp1gDACA--.16157S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr45Zr47ZrWkXFy5Kr4fGrg_yoW8trWfpa
-	ySkF1jkrWkAryru3Z7Cr1xtFyftaykWF48GFyFq34UCF15JryF9F43t3ZY9Fy7Cr4xu3W2
-	qFW8A34Durn8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030214833.44904-1-desnesn@redhat.com>
 
-Hi!
+On Thu, Oct 30, 2025 at 06:48:33PM -0300, Desnes Nunes wrote:
+> A kernel memory leak was identified by the 'ioctl_sg01' test from Linux
+> Test Project (LTP). The following bytes were mainly observed: 0x53425355.
+> 
+> When USB storage devices incorrectly skip the data phase with status data,
+> the code extracts/validates the CSW from the sg buffer, but fails to clear
+> it afterwards. This leaves status protocol data in srb's transfer buffer,
+> such as the US_BULK_CS_SIGN 'USBS' signature observed here. Thus, this can
+> lead to USB protocols leaks to user space through SCSI generic (/dev/sg*)
+> interfaces, such as the one seen here when the LTP test requested 512 KiB.
+> 
+> Fix the leak by zeroing the CSW data in srb's transfer buffer immediately
+> after the validation of devices that skip data phase.
+> 
+> Note: Differently from CVE-2018-1000204, which fixed a big leak by zero-
+> ing pages at allocation time, this leak occurs after allocation, when USB
+> protocol data is written to already-allocated sg pages.
+> 
+> v2: Use the same code style found on usb_stor_Bulk_transport()
 
-On 10/31/2025 5:25 AM, Matthew Wilcox wrote:
-> On Sat, Oct 25, 2025 at 02:32:45PM +0800, Baokun Li wrote:
->> On 2025-10-25 12:45, Matthew Wilcox wrote:
->>> No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
->>> The right way forward is for ext4 to use iomap, not for buffer heads
->>> to support large block sizes.
->>
->> ext4 only calls getblk_unmovable or __getblk when reading critical
->> metadata. Both of these functions set __GFP_NOFAIL to ensure that
->> metadata reads do not fail due to memory pressure.
->>
->> Both functions eventually call grow_dev_folio(), which is why we
->> handle the __GFP_NOFAIL logic there. xfs_buf_alloc_backing_mem()
->> has similar logic, but XFS manages its own metadata, allowing it
->> to use vmalloc for memory allocation.
-> 
-> In today's ext4 call, we discussed various options:
-> 
-> 1. Change folios to be potentially fragmented.  This change would be
-> ridiculously large and nobody thinks this is a good idea.  Included here
-> for completeness.
-> 
-> 2. Separate the buffer cache from the page cache again.  They were
-> unified about 25 years ago, and this also feels like a very big job.
-> 
-> 3. Duplicate the buffer cache into ext4/jbd2, remove the functionality
-> not needed and make _this_ version of the buffer cache allocate
-> its own memory instead of aliasing into the page cache.  More feasible
-> than 1 or 2; still quite a big job.
-> 
-> 4. Pick up Catherine's work and make ext4/jbd2 use it.  Seems to be
-> about an equivalent amount of work to option 3.
-> 
+Minor nit: The version information is supposed to go below the "---" 
+line.  It's not really part of the patch; when people in the future see 
+this patch in the git history, they won't care how many previous 
+versions it went through or what the changes were.
 
-Regarding these two proposals, would you consider them for the long
-term? Besides the currently discussed case, they offer additional
-benefits, such as making ext4's metadata management more flexible and
-secure, as well as enabling more robust error handling.
-
-Thanks,
-Yi.
-
-> 5. Make __GFP_NOFAIL work for allocations up to 64KiB (we decided this was
-> probably the practical limit of sector sizes that people actually want).
-> In terms of programming, it's a one-line change.  But we need to sell
-> this change to the MM people.  I think it's doable because if we have
-> a filesystem with 64KiB sectors, there will be many clean folios in the
-> pagecache which are 64KiB or larger.
 > 
-> So, we liked option 5 best.
+> Fixes: a45b599ad808 ("scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+> ---
+>  drivers/usb/storage/transport.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
+> diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
+> index 1aa1bd26c81f..ee6b89f7f9ac 100644
+> --- a/drivers/usb/storage/transport.c
+> +++ b/drivers/usb/storage/transport.c
+> @@ -1200,7 +1200,19 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *srb, struct us_data *us)
+>  						US_BULK_CS_WRAP_LEN &&
+>  					bcs->Signature ==
+>  						cpu_to_le32(US_BULK_CS_SIGN)) {
+> +				unsigned char buf[US_BULK_CS_WRAP_LEN];
+> +
+> +				sg = NULL;
+> +				offset = 0;
+> +				memset(buf, 0, US_BULK_CS_WRAP_LEN);
+>  				usb_stor_dbg(us, "Device skipped data phase\n");
 
+Another nit: Logically the comment belongs before the three new lines, 
+because it notes that there was a problem whereas the new lines are part 
+of the scheme to then mitigate the problem.  It might also be worthwhile 
+to add a comment explaining the reason for overwriting the CSW data, 
+namely, to avoid leaking protocol information to userspace.  This point 
+is not immediately obvious.
+
+> +
+> +				if (usb_stor_access_xfer_buf(buf,
+> +						US_BULK_CS_WRAP_LEN, srb, &sg,
+> +						&offset, TO_XFER_BUF) !=
+> +							US_BULK_CS_WRAP_LEN)
+
+Yet another nit: Don't people recommend using sizeof(buf) instead of 
+US_BULK_CS_WRAP_LEN in places like these?  Particularly in memset()?
+
+> +					usb_stor_dbg(us, "Failed to clear CSW data\n");
+> +
+>  				scsi_set_resid(srb, transfer_length);
+>  				goto skipped_data_phase;
+>  			}
+
+Regardless of the nits:
+
+Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+
+Alan Stern
 
