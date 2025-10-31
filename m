@@ -1,116 +1,298 @@
-Return-Path: <linux-kernel+bounces-879357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51312C22EBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DE1C22EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:54:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A4CA4EB924
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:53:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 662754EE2BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6315D26ED22;
-	Fri, 31 Oct 2025 01:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0A535958;
+	Fri, 31 Oct 2025 01:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="JYxTmmgS"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr05KAS4"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6F4264FB5
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8862690D9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761875600; cv=none; b=KopDsr8LUoPNcv2l0mH5I5j6PAyw0472LcmbaOZtWshLMc8DjtjmbsnT4fncqsl9LQn2Eq1nPY4hjgpJlVIEa9oYoCcCucFCvD1IvuVZO2QmLpWZRu9j6tzQZQePw4QH3bOdZ1p4wUGbkbf0aIbOYsaHDS8NIEtvkqQugo6FafA=
+	t=1761875630; cv=none; b=uKCgzbsTPJPejKl3W+eSdo4UKvusxccoH0a9AhOyT+2TaWcPoZhUmH7mLNgfbUWnhqNtmKz78FAggaGqJSJjT4hmxlGq7nfxtFbYuooEnGnsYaMo04cX135yad+yXQD0++cLtSFmkPT8iVKSyBpeL2aObVQKVNhWbTsBEixgPIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761875600; c=relaxed/simple;
-	bh=cm8UfhSD0gkl8XoG7pPsqonRB7l/HpWi/8mznxwuEtw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ewZT1MJdyMwFKVUTKwHi+uvXNkoWQ/gToqQ4lBN9HIG5DzA6trV1j0nUFs1jGCfTjB/PMAM8eI0l5Z1lMSKZGfUlO6a1pXQAaMPgc8xRbOsFcl7p5Q92kKwbRGNX7/udLGgXlbdG8pCqmFnm558EQwFy9QcY5p6Dxe3mgd7YMVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=JYxTmmgS; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V1aJ6j2661906;
-	Fri, 31 Oct 2025 01:53:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=P1gT4eIHfbzHADQLAfZ5HusnFNfIOFJ4/43GXPP31f0=; b=
-	JYxTmmgSROvD4VEjlrZdyZRLuMwNpO2TOTd1CXkb1lRX+N8TBmN5liKxSe++nw+P
-	jVkfyMYD7hKELTnxafpnoT30E6HXJEcULQ91s9tCfhWnxFH/CJnriosGPvYpKg1/
-	Rb4ne1oECKblRYU68jaHEeJX40A6zJp8k/BKZpjFngcW9m9EoyYnCHYr4OZ96iDU
-	3NnttLY61gl+0tcu96xisPwSg1Y+5FrB1g7Y0PoziweDu1IQ53cGRNTASoA8CY6A
-	4JaJmketlrE6gSe1JTFSgeOI0ify0PNGoO/ktpWvtdpOmIDbwxg+TyXimJE3v+BE
-	gi5u7nzF2VQtzwehEFmzgg==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a3w7hhaf2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 31 Oct 2025 01:53:08 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Thu, 30 Oct 2025 18:53:07 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Thu, 30 Oct 2025 18:53:06 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com>
-CC: <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref (2)
-Date: Fri, 31 Oct 2025 09:53:05 +0800
-Message-ID: <20251031015305.1439863-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6903e7f7.050a0220.3344a1.044c.GAE@google.com>
-References: <6903e7f7.050a0220.3344a1.044c.GAE@google.com>
+	s=arc-20240116; t=1761875630; c=relaxed/simple;
+	bh=TkEQdgncQmkZUdZTHYsv8Q32LmvRLVsL4ht2RzwEteA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r1MnW9dma9MkgkVDRnI189srNGyEtpHPJmjcKi39FizHcU3MX0KqM8k9f1oJVBFBqaL3E27oZqj3Jd3t1aLQbfezKUYlA+f94qw3xZubhbCmbn902GFKavw7jD0DOD7XjNqJjLjWcMbsf5YTWoCz69RSzhYlRv553iHDVuucu6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr05KAS4; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88021e1abc4so11957306d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761875627; x=1762480427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iu/I3TTkFlE7Ln/q4osrgcC6+jKW4F1NfjqmlswaX70=;
+        b=Dr05KAS4yU69+ks94w38f3MDAFKy2GufNt81TISftPKDg3yRetqO20raMNPRxG0FeW
+         sj7JdLrnTyhIUBHz1av0sae05/+VPSLveCujwwR83vs6nGuDYMtWAmgvrvTxuQml9Mqd
+         iqsDT4JWsM3WxUi+8+Khu0Rvh1TuIgIRnBue1bayWvsnBbTz4DyehXNX3PpoQW54sX14
+         VFm6lZ3OW5U8+rQQelbVmPzTM5cffYkrGih/mmb7ZdIyLYL9yQDBqw7wKpsOVFBN9eYE
+         7/lmnerJpxw2HXQZrkxKRBABXyEc0/xTjma1HXVsBYsqyChmOhFlBD5iP5n5XK0IaI0w
+         BjBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761875627; x=1762480427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iu/I3TTkFlE7Ln/q4osrgcC6+jKW4F1NfjqmlswaX70=;
+        b=RM5SYw2u9KX9SxWq997AZXS/JwvXc+1a2FvD2EFpsbHuycEbIqoKxTG+6EyCvByVad
+         tsLdOa0eprkxaofOUtzcUSynNTlmI1ih4bkPJ/k1sPvTLBVx+325bfTzcrPC4Zp45dOY
+         /C0gcGXrLfG8As7IZn9AY8BlXireQYNSBtHmdpySTEjdfzHH9oyKEtYyVAgC6M0Xme+u
+         KEky97EhIaT8VPGdMjzlwOcFJNzM0RwZE94RsJo5wXpp58rCdIxXoubRGchanav39lkb
+         2VE+KhRNiNl9IdLEF/BOus3P16AiU1tlaOHwJZ1UvVr01up9uOzUMc6tmbuqnp2rWvtG
+         +a4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVUWbLjK67rPpy3yoK7jPkL69tsIRJqBOmQhNUKAyK2hFpgRWvbMHzHklB95+3iM/FSAa+rR2AHZrJe10I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRNSyeaQOtdtzsaI/od/h0epKgzY6T6s5jC4nZIo1M0StMzh7m
+	1kXPhfRu3MPLIZsZfO9t0Y+7kRIUQW37OSfwBaJqh/U23XGa1UUiiVUoPwB8rfK8U6jpzUHL4h5
+	w3jMUhuQAlmCHKt+bkaM/zoWpH3k6aKk=
+X-Gm-Gg: ASbGncvxqi/TS/YD6qSrIBMRc/ozefCl+ZEaL4u6KmAse96xBdPvObFWVZOwBE6AMqm
+	O3Jm2MSxrSfEInYhtlVkSTXDkmXMQxgoMbZ8zNf+JaXyUwdVbF0lxsFT3zUj32ygQ9ggBPTRVlZ
+	txxcOnPbWfDZsQ6chOD4PZqZFX8AivsZvkBLoJWh2wN9USSPUWA9tBSuO3bu/APDxWj7soFc+hY
+	fQUTvEpkw6KNWU0RyKb8G3iMDU9NRqunxo3SLuNxrrpI3cqSAM/8c2f5MNMm1IRgs7uqo1zR92k
+	Od1yHzQTCUZ1hkA820xS+Surjtaf8OJgwQJe8kxffTdA7xCJz+si63xooq/2tUWMQQiPmY72lTr
+	K0p11m1v/+2zUtngi3DtJXRTFRspZ0sL9yHbBN8tMuYAr7eRV4BZqelXAzWxhnkvO0g8fNuNEK6
+	M=
+X-Google-Smtp-Source: AGHT+IG5pz3OzOV3AfykrpxWJkruh3Ti/8oCPc/nhWC4s4ja6Tx8ik9tDtB3p4StJ521sZet60OOtjsBY5QWeHuk8AY=
+X-Received: by 2002:a05:6214:19e7:b0:880:2248:3a09 with SMTP id
+ 6a1803df08f44-8802f2f6ae0mr21289276d6.22.1761875627264; Thu, 30 Oct 2025
+ 18:53:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDAxNCBTYWx0ZWRfX2pkVcDU+TjL+
- YO80ueNRNrwX3d8xYPzL4R6iLWHM/VgMG9IviP07ES2hjliQY9ffEJhUK8SUXh+CRvmXz68UZ6I
- E65p3nU1amX3YuDcQxUZNw+pIdvzaqYJWer4QOY4eWcowRQNKYfxafq8PrhBM2RfJ4RojGqBtNf
- VVu9+tO3/9x5gi4SbLYrFLR1X3v5JpZ5Qr8UCDT5AAw0r2tx4NnrK1uwBFV4nN+LpMvvFekpuTu
- ABsa+Ym7r4Wg/u/2KJqgIzxhG2mjhEOQ7/TAJ5jmtraARf1kPp/j8RnsXIFdCzPhfpUS9GsTvSL
- EB1mx72/VPlaLhRSz3ZgXHa4EajVepmajwjxSPeFVLdaCfR8weYnj0WKDfhc+gvbNW3TpDnGJMM
- ZN6FPezhj1dm9ppYLoN9JEaYspuBDg==
-X-Proofpoint-ORIG-GUID: bF4R3Q-gZNfEfC-vAPWwBc1vNwvNeC1U
-X-Authority-Analysis: v=2.4 cv=UatciaSN c=1 sm=1 tr=0 ts=69041685 cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VW-RJeJTN37yK0ehcJsA:9
-X-Proofpoint-GUID: bF4R3Q-gZNfEfC-vAPWwBc1vNwvNeC1U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_08,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- clxscore=1011 adultscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310014
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
+ <a0d97e2d-91f5-448c-883c-4d0930375f82@linux.dev> <CAH2r5mtHXDuKUSvZ5TZU1f6WnQaH5Dz59=z29ABJsOYmric+1Q@mail.gmail.com>
+In-Reply-To: <CAH2r5mtHXDuKUSvZ5TZU1f6WnQaH5Dz59=z29ABJsOYmric+1Q@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 30 Oct 2025 20:53:34 -0500
+X-Gm-Features: AWmQ_bn8ZtwkKQDRKtPaCIoFD8q7imAFDtOKuBdMxk4l8Sbiu0PLwLreE1eYthU
+Message-ID: <CAH2r5muwP4uyELKDNrRGU+8YgwNurb1+jQb+5CYOcU74LZhj3w@mail.gmail.com>
+Subject: Re: [PATCH v4 15/24] smb: move FILE_SYSTEM_POSIX_INFO to common/smb1pdu.h
+To: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>, =?UTF-8?B?UmFscGggQsO2aG1l?= <slow@samba.org>
+Cc: sfrench@samba.org, linkinjeon@kernel.org, linkinjeon@samba.org, 
+	christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+Sorry forgot to attach the link
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index ce7253b3f549..8babe8c344fe 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1192,6 +1192,14 @@ ext4_xattr_inode_dec_ref_all(handle_t *handle, struct inode *parent,
- 		if (err)
- 			continue;
- 
-+		size_t size = le32_to_cpu(entry->e_value_size);
-+		if (i_size_read(ea_inode) != size) {
-+			ext4_warning_inode(ea_inode,
-+				   "ea_inode file size=%llu entry size=%zu",
-+				   i_size_read(ea_inode), size);
-+			iput(ea_inode);
-+			continue;
-+		}
- 		err = ext4_expand_inode_array(ea_inode_array, ea_inode);
- 		if (err) {
- 			ext4_warning_inode(ea_inode,
+https://gitlab.com/samba-team/smb3-posix-spec
+
+On Thu, Oct 30, 2025 at 8:53=E2=80=AFPM Steve French <smfrench@gmail.com> w=
+rote:
+>
+> Ralph,
+> Is this link current? or do you have the link to a more current
+> version of the POSIX extensions documentation?
+>
+> On Thu, Oct 30, 2025 at 8:42=E2=80=AFPM ChenXiaoSong
+> <chenxiaosong.chenxiaosong@linux.dev> wrote:
+> >
+> > Hi Namjae and Steve,
+> >
+> > I couldn=E2=80=99t find the definition of FILE_SYSTEM_POSIX_INFO in any=
+ of the
+> > following MS documents:
+> >
+> >    - MS-FSCC:
+> > https://learn.microsoft.com/pdf?url=3Dhttps%3A%2F%2Flearn.microsoft.com=
+%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-fscc%2Ftoc.json
+> >    - MS-CIFS:
+> > https://learn.microsoft.com/pdf?url=3Dhttps%3A%2F%2Flearn.microsoft.com=
+%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-cifs%2Ftoc.json
+> >    - MS-SMB:
+> > https://learn.microsoft.com/pdf?url=3Dhttps%3A%2F%2Flearn.microsoft.com=
+%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb%2Ftoc.json
+> >    - MS-SMB2:
+> > https://learn.microsoft.com/pdf?url=3Dhttps%3A%2F%2Flearn.microsoft.com=
+%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb2%2Ftoc.json
+> >
+> > Is this structure defined in other MS document?
+> >
+> > On 10/27/25 3:21 PM, chenxiaosong.chenxiaosong@linux.dev wrote:
+> > > From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> > >
+> > > Rename "struct filesystem_posix_info" to "FILE_SYSTEM_POSIX_INFO",
+> > > then move duplicate definitions to common header file.
+> > >
+> > > Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> > > ---
+> > >   fs/smb/client/cifspdu.h    | 22 ----------------------
+> > >   fs/smb/common/smb1pdu.h    | 23 +++++++++++++++++++++++
+> > >   fs/smb/server/smb2pdu.c    |  4 ++--
+> > >   fs/smb/server/smb_common.h | 23 -----------------------
+> > >   4 files changed, 25 insertions(+), 47 deletions(-)
+> > >
+> > > diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
+> > > index d106c6850807..55aaae6dbc86 100644
+> > > --- a/fs/smb/client/cifspdu.h
+> > > +++ b/fs/smb/client/cifspdu.h
+> > > @@ -1875,28 +1875,6 @@ typedef struct {
+> > >
+> > >   #define CIFS_POSIX_EXTENSIONS           0x00000010 /* support for n=
+ew QFSInfo */
+> > >
+> > > -typedef struct {
+> > > -     /* For undefined recommended transfer size return -1 in that fi=
+eld */
+> > > -     __le32 OptimalTransferSize;  /* bsize on some os, iosize on oth=
+er os */
+> > > -     __le32 BlockSize;
+> > > -    /* The next three fields are in terms of the block size.
+> > > -     (above). If block size is unknown, 4096 would be a
+> > > -     reasonable block size for a server to report.
+> > > -     Note that returning the blocks/blocksavail removes need
+> > > -     to make a second call (to QFSInfo level 0x103 to get this info.
+> > > -     UserBlockAvail is typically less than or equal to BlocksAvail,
+> > > -     if no distinction is made return the same value in each */
+> > > -     __le64 TotalBlocks;
+> > > -     __le64 BlocksAvail;       /* bfree */
+> > > -     __le64 UserBlocksAvail;   /* bavail */
+> > > -    /* For undefined Node fields or FSID return -1 */
+> > > -     __le64 TotalFileNodes;
+> > > -     __le64 FreeFileNodes;
+> > > -     __le64 FileSysIdentifier;   /* fsid */
+> > > -     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+> > > -     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+> > > -} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
+> > > -
+> > >   /* DeviceType Flags */
+> > >   #define FILE_DEVICE_CD_ROM              0x00000002
+> > >   #define FILE_DEVICE_CD_ROM_FILE_SYSTEM  0x00000003
+> > > diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
+> > > index 82331a8f70e8..38b9c091baab 100644
+> > > --- a/fs/smb/common/smb1pdu.h
+> > > +++ b/fs/smb/common/smb1pdu.h
+> > > @@ -327,6 +327,29 @@ typedef struct {
+> > >       __le32 BytesPerSector;
+> > >   } __packed FILE_SYSTEM_INFO;        /* size info, level 0x103 */
+> > >
+> > > +typedef struct {
+> > > +     /* For undefined recommended transfer size return -1 in that fi=
+eld */
+> > > +     __le32 OptimalTransferSize;  /* bsize on some os, iosize on oth=
+er os */
+> > > +     __le32 BlockSize;
+> > > +     /* The next three fields are in terms of the block size.
+> > > +      * (above). If block size is unknown, 4096 would be a
+> > > +      * reasonable block size for a server to report.
+> > > +      * Note that returning the blocks/blocksavail removes need
+> > > +      * to make a second call (to QFSInfo level 0x103 to get this in=
+fo.
+> > > +      * UserBlockAvail is typically less than or equal to BlocksAvai=
+l,
+> > > +      * if no distinction is made return the same value in each
+> > > +      */
+> > > +     __le64 TotalBlocks;
+> > > +     __le64 BlocksAvail;       /* bfree */
+> > > +     __le64 UserBlocksAvail;   /* bavail */
+> > > +     /* For undefined Node fields or FSID return -1 */
+> > > +     __le64 TotalFileNodes;
+> > > +     __le64 FreeFileNodes;
+> > > +     __le64 FileSysIdentifier;   /* fsid */
+> > > +     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+> > > +     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+> > > +} __packed FILE_SYSTEM_POSIX_INFO;
+> > > +
+> > >   /* See MS-CIFS 2.2.8.2.5 */
+> > >   typedef struct {
+> > >       __le32 DeviceType;
+> > > diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+> > > index 47fab72a3588..dc0f0ed4ccb6 100644
+> > > --- a/fs/smb/server/smb2pdu.c
+> > > +++ b/fs/smb/server/smb2pdu.c
+> > > @@ -5633,14 +5633,14 @@ static int smb2_get_info_filesystem(struct ks=
+mbd_work *work,
+> > >       }
+> > >       case FS_POSIX_INFORMATION:
+> > >       {
+> > > -             struct filesystem_posix_info *info;
+> > > +             FILE_SYSTEM_POSIX_INFO *info;
+> > >
+> > >               if (!work->tcon->posix_extensions) {
+> > >                       pr_err("client doesn't negotiate with SMB3.1.1 =
+POSIX Extensions\n");
+> > >                       path_put(&path);
+> > >                       return -EOPNOTSUPP;
+> > >               } else {
+> > > -                     info =3D (struct filesystem_posix_info *)(rsp->=
+Buffer);
+> > > +                     info =3D (FILE_SYSTEM_POSIX_INFO *)(rsp->Buffer=
+);
+> > >                       info->OptimalTransferSize =3D cpu_to_le32(stfs.=
+f_bsize);
+> > >                       info->BlockSize =3D cpu_to_le32(stfs.f_bsize);
+> > >                       info->TotalBlocks =3D cpu_to_le64(stfs.f_blocks=
+);
+> > > diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+> > > index 6141ca8f7e1c..61048568f4c7 100644
+> > > --- a/fs/smb/server/smb_common.h
+> > > +++ b/fs/smb/server/smb_common.h
+> > > @@ -108,29 +108,6 @@ struct file_id_both_directory_info {
+> > >       char FileName[];
+> > >   } __packed;
+> > >
+> > > -struct filesystem_posix_info {
+> > > -     /* For undefined recommended transfer size return -1 in that fi=
+eld */
+> > > -     __le32 OptimalTransferSize;  /* bsize on some os, iosize on oth=
+er os */
+> > > -     __le32 BlockSize;
+> > > -     /* The next three fields are in terms of the block size.
+> > > -      * (above). If block size is unknown, 4096 would be a
+> > > -      * reasonable block size for a server to report.
+> > > -      * Note that returning the blocks/blocksavail removes need
+> > > -      * to make a second call (to QFSInfo level 0x103 to get this in=
+fo.
+> > > -      * UserBlockAvail is typically less than or equal to BlocksAvai=
+l,
+> > > -      * if no distinction is made return the same value in each
+> > > -      */
+> > > -     __le64 TotalBlocks;
+> > > -     __le64 BlocksAvail;       /* bfree */
+> > > -     __le64 UserBlocksAvail;   /* bavail */
+> > > -     /* For undefined Node fields or FSID return -1 */
+> > > -     __le64 TotalFileNodes;
+> > > -     __le64 FreeFileNodes;
+> > > -     __le64 FileSysIdentifier;   /* fsid */
+> > > -     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+> > > -     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+> > > -} __packed;
+> > > -
+> > >   struct smb_version_ops {
+> > >       u16 (*get_cmd_val)(struct ksmbd_work *swork);
+> > >       int (*init_rsp_hdr)(struct ksmbd_work *swork);
+> >
+>
+>
+> --
+> Thanks,
+>
+> Steve
+
+
+
+--=20
+Thanks,
+
+Steve
 
