@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-879727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F2BC23D23
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5BCC23D38
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD161A2110B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F3D1A252A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585352E62CE;
-	Fri, 31 Oct 2025 08:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4B42BE646;
+	Fri, 31 Oct 2025 08:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EslHc7G6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZrmssfVq"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5726C2E339B;
-	Fri, 31 Oct 2025 08:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C3222172E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899563; cv=none; b=Lu5qCXx75ncF3QHrWUFM4MAsU73u2caNz0jg4tH83rA3/y6+OEQqq2s6Dk+GLQ3i+VTZIi8q+/xUGDxnkSqnURs3vkB/w6rodgOH23S1SEQx/xoXfP7LHQkkWdp+70+mVe+4ezKsYgbqKIRO4jKj25NRGQ7q726X+FooFAchIRs=
+	t=1761899605; cv=none; b=f7ATlx657V55AAKhNSqnyn5IvlIqFzXWp6ub5glxdzMYS0/AE5jdljUlVF8xvr/7Fo8HPeNR0+tHvgvtMaAekD7Gr2xoCCIhy3txYPT9oreai+AsoL9C1o2wKynQkowd5wt58+7UHd/UY4olYZBXnTE79GE5tBgDRjDq8Ex8t0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899563; c=relaxed/simple;
-	bh=kIM+hlR14oLQcGB55fGG4M66nQBzT/POqSRrYN5M+0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjHQTMbvBqqjOyOIZ8464ZJJJOMYQLv5mD/c/AsKrYWfXOpzv+Aqnq9G+FUxRNKAkLM5s0cS5O3hUhE9PdodPjE53QLkXmuWwGAQ75mnlMe4iZRzGeqZonL9UCOKmwiqEqlv0GFqxhNgMrRUD3g/b+fQjCuY2u8q5iUyujFuhOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EslHc7G6; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761899563; x=1793435563;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=kIM+hlR14oLQcGB55fGG4M66nQBzT/POqSRrYN5M+0g=;
-  b=EslHc7G6ppqAvT46wLeAO6PnZJIWF6N3a+zoBbbAZJ3/pgEPBSS7IU5S
-   jhxKysDCZGsNGsckRDPD4qJobXQ/X6fY00VHHp+gMbBr3qUUQoolx+LuQ
-   TRDnS2ZQQWIUi/Ov8vcxLfPULTwjFWUAvXw4PmdoXclEKr7xlxMXpupZm
-   pVnY1rltz3z8I7LEWI4m+eFyKJ3L+B9uLBFDq6eurJgwmWOIzEnsd4/Zt
-   0ZQYjpAlWwEmTDjfxU8SJJwX0NPp4nNSIf79ChLcViouZmewF2mQeBj4f
-   O3F5V9eJsjHq27ZCKLsAEzNasIHEB+4h2gQihzycjp3qrMxQJI8HwrRkf
-   A==;
-X-CSE-ConnectionGUID: MVbugi4fT4mQvDP/SzoL5Q==
-X-CSE-MsgGUID: qYRNVLxbSeyxQuYhA79+zA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63959358"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63959358"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:32:42 -0700
-X-CSE-ConnectionGUID: FH1rl+GhS3OSOg0NjyHCVw==
-X-CSE-MsgGUID: 2FcHal3bTBuraaATMPr8wA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="185866615"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:32:40 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vEkYm-00000004D2p-0K5a;
-	Fri, 31 Oct 2025 10:32:36 +0200
-Date: Fri, 31 Oct 2025 10:32:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] iio: imu: st_lsm6dsx: dynamically initialize
- iio_chan_spec data
-Message-ID: <aQR0Iy2UJn9-XxpG@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
- <20251030072752.349633-2-flavra@baylibre.com>
- <aQOVcCinTd-ZJJX3@lore-desk>
- <3e7944588d3011b6a144d70ab9027a05a1e230d0.camel@baylibre.com>
+	s=arc-20240116; t=1761899605; c=relaxed/simple;
+	bh=WSvD4GxmfFd+tajUhRwYg9HAN6s/4JQ4rCG6KCJLdls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PioTJcUHriBo/sSZcJ8G6/kZA20cF0RmfLDj4UlQfaEgE054uQ3UOW/amMBkZrOIsOZ8tQMXKm/HPycV4YWYynQeyIZ3pEnT0H9VnXXVlKdXG5KXq52zfATTKBWaarlJqircDrvk1gMly4L1McuQkLw9FDkzEHRp4HuMTeIgqaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZrmssfVq; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id CE1B24E4142B;
+	Fri, 31 Oct 2025 08:33:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 923CD60704;
+	Fri, 31 Oct 2025 08:33:21 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A6C11180FE55;
+	Fri, 31 Oct 2025 09:33:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761899600; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=E+isSm0tESAECMiu4x/HWPUg/HqD5qUnglPjpGg08t4=;
+	b=ZrmssfVqvhNe04qAMQHnanzo8UqXJm0eBpIBMo4B0K2KSgv3M6ae422uEQPY5+QOOrARAA
+	DISItDSoi//vNkuJETrUDYbD194s/hTQpA/IYjgNVyil6qZc1zSYJdfr9Bm2IqqlBh+fhg
+	SX7yOxKnR5+pWTZLADqProCI7CKc3bmE3/NywA7fp84frjGE1vgIGe+j3G5Gcacs8AF3xA
+	NfDhvaauNITCEBu5L+cQ0WVygrpC+Fl9D/Y7ux7vH9ZK0Dz5yrTs/u1/rwJ8ie4dfkhmPw
+	P0r33uZ+NWlfSlSLVWHh4LU22t7aJmVjPmhFn3u8uLCrwOdkCc9qp+Y5P0FCrw==
+Message-ID: <da18cd22-9f9e-4166-8a91-d5b19470c693@bootlin.com>
+Date: Fri, 31 Oct 2025 09:33:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e7944588d3011b6a144d70ab9027a05a1e230d0.camel@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: ti_sci: replace ifdeffery by pm_sleep_ptr()
+ macro
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Richard Genoud <richard.genoud@bootlin.com>, Udit Kumar <u-kumar1@ti.com>,
+ Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251014-ti-sci-pm-ops-cleanup-v1-1-70b50b73ac85@bootlin.com>
+ <20251031041131.3qmqfitiertc7vdp@scotch>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20251031041131.3qmqfitiertc7vdp@scotch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 31, 2025 at 09:26:19AM +0100, Francesco Lavra wrote:
-> On Thu, 2025-10-30 at 17:42 +0100, Lorenzo Bianconi wrote:
+Hello Nishanth,
 
-> > > +       chan->ext_info = st_lsm6dsx_ext_info;
-> > > +       if (id == ST_LSM6DSX_ID_ACC) {
-> > > +               if (hw->settings->event_settings.wakeup_reg.addr) {
-> > 
-> >         if (id == ST_LSM6DSX_ID_ACC &&
-> >             hw->settings->event_settings.wakeup_reg.addr) {
-> >             ...
-> >         }
+On 10/31/25 5:11 AM, Nishanth Menon wrote:
+> On 10:35-20251014, Thomas Richard (TI.com) wrote:
+>> Using pm_sleep_ptr() macro allows to remove ifdeffery and '__maybe_unused'
+>> annotations.
+>>
+>> Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
+>> ---
+>>  drivers/firmware/ti_sci.c | 18 ++++++++----------
+>>  1 file changed, 8 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+>> index 49fd2ae01055d0f425062147422471f0fd49e4bd..99a2e0e2960f463918950fef8829409ec365ce70 100644
+>> --- a/drivers/firmware/ti_sci.c
+>> +++ b/drivers/firmware/ti_sci.c
+>> @@ -3706,7 +3706,7 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
+>>  	}
+>>  }
+>>  
+>> -static int __maybe_unused ti_sci_suspend(struct device *dev)
+>> +static int ti_sci_suspend(struct device *dev)
+>>  {
+>>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>>  	struct device *cpu_dev, *cpu_dev_max = NULL;
+>> @@ -3746,7 +3746,7 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+>> +static int ti_sci_suspend_noirq(struct device *dev)
+>>  {
+>>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>>  	int ret = 0;
+>> @@ -3758,7 +3758,7 @@ static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+>> +static int ti_sci_resume_noirq(struct device *dev)
+>>  {
+>>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>>  	int ret = 0;
+>> @@ -3780,7 +3780,7 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static void __maybe_unused ti_sci_pm_complete(struct device *dev)
+>> +static void ti_sci_pm_complete(struct device *dev)
 > 
-> In patch 4/9, the inner conditional will be replaced by more generic code,
-> so we would revert to if (id == ST_LSM6DSX_ID_ACC) [...]
+> PTR_IF when CONFIG_PM_SLEEP is disabled will result in these static
+> functions unused, no? should we leave __maybe_unused as is?
 
-Hmm... The obvious follow up question is why can't we stick with the original
-conditional to begin with?
+PTR_IF is ((cond) ? ptr : NULL)
 
--- 
-With Best Regards,
-Andy Shevchenko
+If CONFIG_PM_SLEEP is disabled, after preprocessor step you will have
 
+	.suspend = 0 ? ti_sci_suspend : NULL,
 
+So ti_sci_suspend() is still used. But as the condition is always false,
+the compiler can do some optimization by removing ti_sci_suspend().
+
+PTR_IF macro has a great documentation [1] which describes this use case.
+
+[1]
+https://elixir.bootlin.com/linux/v6.17.5/source/include/linux/util_macros.h#L85-L136
+
+Best Regards,
+Thomas
 
