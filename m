@@ -1,77 +1,74 @@
-Return-Path: <linux-kernel+bounces-879937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E06CC246E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:24:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893C3C246FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CF23B7A9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:22:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A48C64F380A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992B633DEE9;
-	Fri, 31 Oct 2025 10:22:51 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0264233F8BC;
+	Fri, 31 Oct 2025 10:23:28 +0000 (UTC)
+Received: from akranes.kaiser.cx (akranes.kaiser.cx [152.53.16.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88AC31197E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E156B334372
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.16.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761906171; cv=none; b=Qm01HTozmgEW1u+UEt9wFiVQfe9KmabVtsrCoPRdyK/L96hdhxQtL/3VAO2MUkCo86H5ORiWDcvMiVjm7LPEhAZbDU4KwFlgUMZxACeiRVXHtOcqxEJcnkXo/cdWYfv0DriJEfF3IatTNMppNMt3+hx9k9V7qhY0r69FvMh0P1Q=
+	t=1761906207; cv=none; b=nxUsHUyzZdz2yHVxwfJCiGXxyYfbmauEEGclJzHyRkNuejqQIraUzC4AHvvmW8zNPnH54EwYpZUcIeTDSWQYVQ1pIiboU43akQw3bAenV6kAgzEJWJ2jP/5dHFvyDCJfk86d+U3oWkhBilmgg6DJQ3J8vOhkG+9s19aNTTGbaAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761906171; c=relaxed/simple;
-	bh=M71T/ZJ+3xq/7S9fMBH541aTzoNX8hQXml3aB8Tq6G8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OxjyrWrCKPNx4Ib9lfO77bfm2Uy2ZUcXiqEs2MyBCkTe7v1IyaWS9SwtugDFy/upD1K7yZ1814z4phxUSzvgufJvl7VMlfV8xwlpfS8It4p++FnKlNpDw8QGS2HFN1gKmFUx7oKOlFPm5TbWsLXqyoC395yE88SFaT7hhuIxWZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430c9176acaso30500515ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:22:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761906169; x=1762510969;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M71T/ZJ+3xq/7S9fMBH541aTzoNX8hQXml3aB8Tq6G8=;
-        b=HkcppFl5ckl6AotN98e9eTZaVzMK/elYAFcbAz1/G5mdPoCr+ZmtjaOcBb2EnG8j5E
-         czb1vFshl7Drnth+elwKq/S6vHFL/upAgKv6vpAmbX49W0X0DatyJ9MI/ooxL3sjEU6j
-         JO+QGGKJCl7qR2Yf+DD+DCenJgBqwt0LR5j93oJUyoKapFsIdzRF4BzKqEPY9Hl7DqHh
-         A+PfzD/3e6Q7+YYIT4QP34iLoWwf4ByCBhyLY/746bOs5h2u4PLMO4Q1OpAJbQ86qs4y
-         pV5N4+BErM9rQZ9M7PKXLzIv5bllJHlsKNytBGjvNy2hgx+IYrXh+wfFKRIqoIFPJkYd
-         Xgpg==
-X-Gm-Message-State: AOJu0YzXgoNvRNZXbc3R31PytKIo6ARQ9BzNwiV5E8DuRTvWO9U+BUM8
-	c0TsuAHv6XC2Fe6BFW1h+ecIlNw6LH8JKWpR+Hf2j88hc76KWwGZLdADP/6Pwwn3IWQ70P8zBEV
-	OM0fG9mNtVSE1pbF4Tk6pV6uYO9gm7jcnyb1uvyta6/WpVcH1+dWBDKgkxGY=
-X-Google-Smtp-Source: AGHT+IFxb9Fjc6LLuP1TbHD/nuRF5v2ZxI9ESb8Ai1uyQqqs6xHW4xbGJ0d1VNW5J1x5W1KmQ9Kt9jiZ/gf0MCSUqF/fBJB4Zk1h
+	s=arc-20240116; t=1761906207; c=relaxed/simple;
+	bh=rV78AJulqgBe/69BwJDzf+lU1/rnZMFS0t4vOpTfaU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNqMRG64T9VZq7eNHS4eFnLpWcDGIVrlRMUGlV7PUD35WbL0lymlBnIWlBirIcwapgPkfIKJ/k4OzIKooktLgR8v8QhsLSBM9X7jBjQxn1/oBlRqbRQv/48Rs51heKeNRtGQVVKtLxaCXWUPIgg3tUh7/jYRPrI0bfOhW1QDnFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx; spf=pass smtp.mailfrom=kaiser.cx; arc=none smtp.client-ip=152.53.16.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaiser.cx
+Received: from martin by akranes.kaiser.cx with local (Exim 4.96)
+	(envelope-from <martin@akranes.kaiser.cx>)
+	id 1vEmHa-0067HP-1L;
+	Fri, 31 Oct 2025 11:22:58 +0100
+Date: Fri, 31 Oct 2025 11:22:58 +0100
+From: Martin Kaiser <martin@kaiser.cx>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	maple-tree@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] maple_tree: fix tracepoint string pointers
+Message-ID: <aQSOAkBbFkBfYxPs@akranes.kaiser.cx>
+References: <20251030155537.87972-1-martin@kaiser.cx>
+ <20251030193206.22bb773e697b6cc385d5aa67@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3988:b0:433:31e:1adb with SMTP id
- e9e14a558f8ab-4330bda90e3mr62009755ab.7.1761906168924; Fri, 31 Oct 2025
- 03:22:48 -0700 (PDT)
-Date: Fri, 31 Oct 2025 03:22:48 -0700
-In-Reply-To: <6889adf3.050a0220.5d226.0002.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69048df8.050a0220.e9cb8.0009.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook
- (9)
-From: syzbot <syzbot+78ac1e46d2966eb70fda@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030193206.22bb773e697b6cc385d5aa67@linux-foundation.org>
+Sender: "Martin Kaiser,,," <martin@akranes.kaiser.cx>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Thus wrote Andrew Morton (akpm@linux-foundation.org):
 
-***
+> > -	trace_ma_op(__func__, mas);
+> > +	trace_ma_op(TP_FCT, mas);
 
-Subject: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook (9)
-Author: phil@nwl.cc
 
-#syz test
+> What could cause the storage for __func__ to disappear as you suggest?
+
+I see your point. For __func__, the compiler generates a local symbol in
+.rodata that should always be accessible by its address.
+
+One case that doesn't work without my patch would be trace-cmd record to save
+the binary ringbuffer and trace-cmd report to parse it in userspace. The
+address of __func__ can't be dereferenced from userspace but tracepoint_string
+will add an entry to /sys/kernel/tracing/printk_formats
+
+Best regards,
+Martin
 
