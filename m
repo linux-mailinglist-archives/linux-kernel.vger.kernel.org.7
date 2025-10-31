@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-879899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E865C24572
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:05:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E63CC245AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A6F21347139
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A523A4E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5C3314D24;
-	Fri, 31 Oct 2025 10:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE990334371;
+	Fri, 31 Oct 2025 10:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="yOKTV5Ta"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="oiA28OQJ"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA08277013
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4814D333738
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905098; cv=none; b=GRH2YnRFRtVrxafj0wnnmghtAwTIdWuIEARThlp6UD2NWcimEwQU8arBNnj9NHTIaeARsBKU9okfiW9pB+vdTxbjWlObVZQkMuIqjAXxtGUkT8Ifi/ILPvgXcOXlAjMQOYwGY0F6HZYpq69tJAcK/KckJ+Ot/M6YPoKELxx9pY0=
+	t=1761905102; cv=none; b=fKvL5tbbz/1dIGrVCVLE10Q6qQgjKWSQZBY0zfzvJBdyWxxXI3eShYMSLORZgaxPnTeijN7sNxjyySAEvj7YiRyGsTze9kXSlKt7G3DjoKjKMDUKTmJLRTFJWT6SQrcIsFO1Rrxy9utsNQY86esN9L5XXj7n+5m8vt4SjidJfWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905098; c=relaxed/simple;
-	bh=7yfxWcZDMX1WQop/hWs+CPPueDN4eEtRvZml8SfUAnI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S2iRjKLdrJyuIy12UUnEKu5459+WDu/LGTu9DGIBVMEvbgDXkGC6g+CeU0b8vtQbX0luEYB1dXIjg0CK1hwiEUg4M1uWqIMgzFZBaR8nyu0qDxXQmrcmwPT3P3gmgJQgBYU5/5Ad5l6B4L7E68MGc/0XEs3TMk3T9WVgWkT9l9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=yOKTV5Ta; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1761905102; c=relaxed/simple;
+	bh=cOGZkbrRMxKu50HDv+kW0yjsry3zgsYnkitHwHRZ+CM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=k0su4t1ObitU4OMzRci6iLRnzJpFJndq8RhOVRTN465+pQTaTrqzsW3XBkeR/fL7+T2Jp8ks0CJm5JwYPgSlzb2L/KNRQ9oqGsMdjhT0bpiHPzJdIl70bXidIbAatGBoyN5KSlG1B63sU0VzPKA9sToGoBnuyzr1Xrn5trHGwUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=oiA28OQJ; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-780fc3b181aso1539653b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:04:56 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781010ff051so1635709b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1761905096; x=1762509896; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UvssMcqLHNZRnyHGAkwUA5kNWfzI5bQpc+DN0zFiz7s=;
-        b=yOKTV5Ta02t9FqvnaVHwWC3Su1VrqdJaCc4au1pwUPFc15TxOGaj+30Y4bo39unwx9
-         xWfY21DpmWrAdjIeBaXUg8bjHvhtotwizhaU/aPPtQy7WHENDHj5nA8HG9GAsboQOrbY
-         0E86fcTPSCjwHZE+0e5p6lkek2Wgd6NBi+/ZwXnhQAYTPtwyiZkSaduAauCma6//KLg6
-         L8MlDxmqLmCieHrYBID35zsEpevf/vh5i5F6DoeOXjkch/SVz9CqE+r1kxsd0jPS5gDZ
-         UBWtLRsAcTFBUK+1k7jL7rFFwTrDn+dv1xcxPICvEggU8Fx7Q42MMS3AHCG0N+GB0Hj6
-         BniA==
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1761905099; x=1762509899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GEMeTinKcUP58E4lvnW9PGrRCCfS2qn6jCMWx5eJs2c=;
+        b=oiA28OQJcSEhU1vZzGGGmONeLv1wMy/tdHIoijnHNXC7noQxQGe7+0ci5fBWiOq+Ch
+         BZiX2jkgtd7erw4CC2m9Dr/Y0UHr+0J/NP/Q3Ngze+KimvNyzERDxKmLuRkF1Idtsfaw
+         tMoQEQalw+45U71zeiYxm4OT73+TTeDiEL4+AbRXNRYRXDW5I2g16pMdgmyhMjszsY65
+         VMerd+4yISmKyAtbXj6tq6rxOtTKHnVRcSbl6Q7kpmtLHUlb27nX0m9QzRlulBMRFxNH
+         lJXETDJZf1UfsHJPQljSSromU131TB5Sq/NBf/1k93UhfJpi7vpYLXfT2WbPHcYImTcr
+         CNhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761905096; x=1762509896;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UvssMcqLHNZRnyHGAkwUA5kNWfzI5bQpc+DN0zFiz7s=;
-        b=GLnJzJ4Y/lvy/GUPhYN8dwru1LmRxeiySlfqYebNM6bdfOqRknE1FiLBqdF8q1ClLB
-         jG/+yhQJHMitlMQ+DZ21hSDpcYdiPCET88/XaDyPhpuoItFSzCclLTvOzAALVXA6PtxV
-         XOaxleIS2QslgKj1zuYw74lPhPAwNLvIFjhUISFI98TiFRIEHJ7FbsmezyRPPDwRAXfC
-         sCWNtnqefMnhTYawGNfPFFUJiTFa+RZeD1jiw/HYGjTYeIWMZR0bzWNaBCiHRp4poAzJ
-         mOyKES5HpTvposEswpjWif188kz3UNAqRMRaZI7/ja8rOh3Ga6inO2LXrExpsCgEXaJC
-         lOHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJdhfEJFgL53EkSP4JMs82in4uvemhlEIW3puYltm8qnUAmD7f/QhkFSt7viYr2+VUgHxX+UkinOG3djM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbPsezVdPGWwWH1BE0NnmGZjvZi1bF64aviXq33D0iNSD2NCmt
-	T6qOGulQGv6pvjDcoyMz/YPWy9vHo7fOA0ha5AkzgbwXASx5j2h5tnMBsQlvy7yFgNg=
-X-Gm-Gg: ASbGncuQmQzKNjblFuW3y4ZolU9VW9aov5q7p9rxfUA43pw2zhlMFCg3BxWIEs46Nyv
-	kBHOhwZZFHkVgcxYFO2PpoSVD5Pjb9RgqkBshJK5rKsu3H72cHbf9XIO4T8MQe+SAuE26+C6TF0
-	U799MLzeqcU5g02SkB5b8vIjCtuXv7YlR+D8+/+8JiKrmwFhitV+heojpUmYKdJPPWTJSLCXSPX
-	cHDzYPB/sWhd1ACTnJaTFCw8E7EWStXrjXdqMCJ6rpzCpKGtQyVP1lTWrE03Ab1glyFGhJQSbD4
-	poVgB1FlwirI9I+CCQJkHvsI0plmaledQXM8Io+sO56z2zrSBOhri3qIV1MqqY20JmfvQpsuVev
-	IYZS8fPe8qdN1AXvx35gPlUxsiVdn79EJIav3IVxVmZcS0l4sbitx9r5VzZg77gNd9jgQskWvqM
-	1TLH3EDdgjtyDky0WDN6GygEK087jOY6e+YX/LROy/cglkASsd2dAbuMYkew==
-X-Google-Smtp-Source: AGHT+IE76fjQ4yD5hDeKMEFGATyM20a1IgpN+btK/m7ndkZxEYOWPa8WOPUvju+PU35yBX2pyjsaHA==
-X-Received: by 2002:a05:6a00:148d:b0:792:f084:404f with SMTP id d2e1a72fcca58-7a7748476femr3809021b3a.0.1761905095714;
-        Fri, 31 Oct 2025 03:04:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761905099; x=1762509899;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GEMeTinKcUP58E4lvnW9PGrRCCfS2qn6jCMWx5eJs2c=;
+        b=MiIjAzZNxIHlZmv3JV6SqbiASCM52AwsiLsU6irbTlrGvbeTypFfeJPcOy51gyxHN6
+         lGmW4ElSaaPTch5t8uyk4E0Y55vtwT82/biLRHJMRy9jDh0rJ/0uM8fU3jDE/E7qeEVU
+         ChxbKQqdkfR0AkxzJyaZgPp0lbAiV7g+KBP1STSzXj5K1xcxm5xzNvKvFnA38+V80osb
+         4TshtAlA0XFDZH5YZcakqOwl/u+jAjZgTuLyF4dxynjYrNEw+aBwnXzdLZyLWKp2Rfbm
+         JJ9DfX8OWaTa3lRumqana7LA/p8EYduKCiPs3bDuSn9c+4eTiCSHwv/UxTYt3dxCTMOR
+         ZiUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeHJf0URYg3oQu6vv37Um/JEanYVTNk+Vcz1nY/cVDEm6gD2FX7o3+PBzsJATthcfii5PP0osITbapE2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSULii112/S4vaRdy8sCCkl5HXRLbcm+wJSN6bycHd9TUCN7pj
+	TgPRvdN54DlGcWscMm+nFOaVk7WhxwpJHrYI/NJXPjMf9cujz2FEH1pPM8cacgxY1Lc=
+X-Gm-Gg: ASbGnctZ40FZQ6dBI06U30UccshCg/kXd7HtrR+eNR5rK/aQ5IfUhT3iacQVQKt8smO
+	G07cX8sNzlrl34IJAYZM6MYEBkboNKMLiEl6Z28mAQW19adKAmzo33udBG5xIsYUz7KeZF+Lv1f
+	zdo3fRZYy2dr1b51J8UKwDm6P0nqFJhtrMFEwqkzV0fogs53xmhGZuQzg8YkMCu7xpx4NxBH1Hq
+	WlGzdcnAZ+/GKz6XCfFDiNPhz5ni+RU51ssDTERYSx49kcitNgceO3EIwfTBxfGwo2ClsXb42Aj
+	cxRJpp2p0pRVzkGupg0lcT3gvL6GQ/bx1HheRBhaP8F4hF0JvvvhUbv8mWRLFTitEuBXX9zcw4/
+	yb4aYA2krQxXE/IxnSHv3hHAMzDTT84NofiHTpav9RwvWWEmK88NDCS62ulofTOj3EcFbYlm2An
+	by6dgfN1WdGxwXdj9abzu90zJ/M3cni+ypmuEU80s7knB9Y1AfZnkwVIxz2w==
+X-Google-Smtp-Source: AGHT+IG6rUfkolNN1CRK86/13whfqnSQY7wkh3zlIQBrSCO05TTNTykamCuKrPtjYsc8MEhWLvUtqA==
+X-Received: by 2002:a05:6a00:1886:b0:781:1b5a:959b with SMTP id d2e1a72fcca58-7a779eeccadmr3551694b3a.30.1761905099181;
+        Fri, 31 Oct 2025 03:04:59 -0700 (PDT)
 Received: from dgp100339560-01.huaqin.com ([103.117.77.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8982117sm1644352b3a.15.2025.10.31.03.04.52
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8982117sm1644352b3a.15.2025.10.31.03.04.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 03:04:55 -0700 (PDT)
+        Fri, 31 Oct 2025 03:04:58 -0700 (PDT)
 From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
 To: neil.armstrong@linaro.org,
 	airlied@gmail.com,
@@ -85,58 +87,107 @@ To: neil.armstrong@linaro.org,
 Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-Subject: [PATCH v5 0/2] drm/panel: ilitek-ili9882t: Add support for Ilitek IL79900A-based panels
-Date: Fri, 31 Oct 2025 18:04:45 +0800
-Message-Id: <20251031100447.253164-1-yelangyan@huaqin.corp-partner.google.com>
+	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v5 1/2] dt-bindings: display: panel: Add Tianma TL121BVMS07-00 panel
+Date: Fri, 31 Oct 2025 18:04:46 +0800
+Message-Id: <20251031100447.253164-2-yelangyan@huaqin.corp-partner.google.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251031100447.253164-1-yelangyan@huaqin.corp-partner.google.com>
+References: <20251031100447.253164-1-yelangyan@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This series adds support for the Tianma TL121BVMS07-00 panel, which uses
-the Ilitek IL79900A display controller.
+Add device tree bindings for the Tianma TL121BVMS07-00 12.1-inch
+MIPI-DSI TFT LCD panel. The panel is based on the Ilitek IL79900A
+controller.
 
-Following review feedback from Neil Armstrong, the IL79900A support has
-been merged into the existing `panel-ilitek-ili9882t.c` driver instead of
-creating a new one, since both controllers share similar command sequences
-and initialization behavior.
-
-Changes in v5:
-- PATCH 1/2: No changes (already reviewed-by Conor Dooley)
-- PATCH 2/2: Merge IL79900A support into existing panel-ilitek-ili9882t.c driver.
-- Link to v4: https://lore.kernel.org/all/20251022124628.311544-1-yelangyan@huaqin.corp-partner.google.com/
-
-Changes in v4:
-- PATCH 1/2: Rename compatible to "tianma,tl121bvms07-00" and update example accordingly.
-- PATCH 2/2: Update driver to use new compatible and rename related data structure.
-- Link to v3: https://lore.kernel.org/all/20251016095043.1694736-1-yelangyan@huaqin.corp-partner.google.com/
-
-Changes in v3:
-- PATCH 1/2: Fix DT schema error for `backlight` property.
-- PATCH 2/2: Address review feedback (use mipi_dsi_msleep/_multi, move init sequence to mode, minor cleanups).
-- Link to v2: https://lore.kernel.org/all/20251010093751.2793492-1-yelangyan@huaqin.corp-partner.google.com/
-
-Changes in v2:
-- PATCH 1/2: Address Rob Herring’s review comments and align with panel-common.yaml conventions.
-- PATCH 2/2: Rename driver to panel-ilitek-il79900a and align naming and structure with existing Ilitek panel drivers.
-- Link to v1: https://lore.kernel.org/all/20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com/
-
-Langyan Ye (2):
-  dt-bindings: display: panel: Add Tianma TL121BVMS07-00 panel
-  drm/panel: ilitek-ili9882t: Add support for Ilitek IL79900A-based
-    panels
-
- .../display/panel/ilitek,il79900a.yaml        | 68 ++++++++++++++++++
- drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 69 +++++++++++++++++++
- 2 files changed, 137 insertions(+)
+Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../display/panel/ilitek,il79900a.yaml        | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
 
+diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+new file mode 100644
+index 000000000000..02f7fb1f16dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/ilitek,il79900a.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ilitek IL79900a based MIPI-DSI panels
++
++maintainers:
++  - Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
++
++allOf:
++  - $ref: panel-common.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - tianma,tl121bvms07-00
++      - const: ilitek,il79900a
++
++  reg:
++    maxItems: 1
++    description: DSI virtual channel used by the panel
++
++  enable-gpios:
++    maxItems: 1
++    description: GPIO specifier for the enable pin
++
++  avdd-supply:
++    description: Positive analog voltage supply (AVDD)
++
++  avee-supply:
++    description: Negative analog voltage supply (AVEE)
++
++  pp1800-supply:
++    description: 1.8V logic voltage supply
++
++  backlight: true
++
++required:
++  - compatible
++  - reg
++  - enable-gpios
++  - avdd-supply
++  - avee-supply
++  - pp1800-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    dsi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@0 {
++            compatible = "tianma,tl121bvms07-00", "ilitek,il79900a";
++            reg = <0>;
++            enable-gpios = <&pio 25 0>;
++            avdd-supply = <&reg_avdd>;
++            avee-supply = <&reg_avee>;
++            pp1800-supply = <&reg_pp1800>;
++            backlight = <&backlight>;
++        };
++    };
++
++...
 -- 
 2.34.1
 
