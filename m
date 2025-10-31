@@ -1,283 +1,134 @@
-Return-Path: <linux-kernel+bounces-880289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EBDC2559A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:50:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB59C255A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809903ADAF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:50:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA4B934503E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA28234B40C;
-	Fri, 31 Oct 2025 13:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373F53396E4;
+	Fri, 31 Oct 2025 13:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+ce4UTe"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bls88kcD"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8E3431F0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C34241679
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761918617; cv=none; b=upaJeZF4cq0RA2SGm7MW6hw68tfelx/gBU1142pGByf1xedMjTShDjSMowCXqzIwk16Clspjxt24C8wbvD8JvqrQFUEHaF0B6WtmmQ6Jxobf/1yxG7QOp6Agdp66xNbYLbN73ESMTDtpgmOfWAoOJz4jx4ETfaeNgu8bRKQn0cg=
+	t=1761918644; cv=none; b=qhQiOqpLnL75QkFgoa0tr9eHCI6Q3cOK50u0eZmuFbGweON1wy/zmNWS0rLPOHSWbVC07q557fqVeADK7Z4wfz2xoyfynp6PRLcGFIh5/SL3vYv2Qd6MsXW5A0C6NFE0AWT2VJr3fpto3W352wkSPONOlCZg0fveMcsew52W98w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761918617; c=relaxed/simple;
-	bh=sJK9ZeT3NeI+yYKJ/cWiElYXfQmjsmNW67JpnnKD89I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XBOuFsSKjraPjYirEtA/vRqH9ogstGrM5uxDb/8BnM/ec9SrDt013PxQVyt50UbcvZmoBuoXQ/eOqVY0q65utqcWF0TMrSv1rWpVEApZTb997IJPi2qr3H1a7rvawWlChpHw1yCePPfToUlp+sYdf8ww/J9VawVDp8zmT5RRdqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+ce4UTe; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-474975af41dso16777515e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:50:15 -0700 (PDT)
+	s=arc-20240116; t=1761918644; c=relaxed/simple;
+	bh=atwhmgVb77nhq+0LeDZj6Ml03uLgO6sIm+vbC28Qui4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R458f5MLEr9friYBMyET7SX6gWXXOPMPIyQmjW68u/39quVY3PwWIuNSE7NoY94+1W4VDcPkNd/snrZK2xQQ4pchZmjOJSzXiZTdVxun0ILpaQNbbhLPuOU7AYATBX8XiiiNHo5N9FFlqLnspaGge6hukKMzdA5y/bsTTGNCQHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bls88kcD; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so2268434b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761918614; x=1762523414; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OH6TtzH8OEdYvOB3XWCwPOSyqERGuFlVmCf8h/N53mY=;
-        b=J+ce4UTeid7p4DBdewWfsPVn++ZnPGNLtm6Dh2/F74hbJEDctDNtrj3cu0GDjmNBVc
-         9B7APs8IB0KJjM9keqb1htXl+ALZ8O8Eu4MhQyto9vr/EU3Nbuc+Qd9uF4Q+kc4bgCMI
-         6By5kwCc8Azy/IRx3eQoTvNL32WZ6/lVBW1Rc8qyjkQj+YodVL76c0N4VNHYlxBNwxV4
-         vvRKfiOX3kwINO5QqwzMPGPfTlxFXsqL5gaVVKHhjchvNODaQMziXDDR9rQTkHgG+Uwr
-         JWt2+etM5oE2mHfDftxriJvF3+c12HhDoGWnDEij6cA/ukEINd1op4L803ZPOVYF/nPZ
-         l3tA==
+        d=gmail.com; s=20230601; t=1761918642; x=1762523442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fq99QZ8qEySnepXaN0MvrLAkz3i0KFCQh2dSWAfgdsw=;
+        b=bls88kcDOF7uB3lhIV5zw33jUxbEMJg4I7EGPsfJKd87o/GxSDEd+FpyacWH06RWFe
+         ponCYelbnc4PC9GoCFHq1wvSbQO7zUT1S9DNa9lOmLcI/0po/Dog9AEBgLxfycjpDwSL
+         rFmOj5yI1DF77A0GY8kS8OFT8VDUQb220Wchi/PkP4nR1XF3L7B9oc5XDLq9oN/P/6NW
+         SIitVjCtexkud7eyWq6cV0dDNzfULgZYlc6IkLsfIk1x301glfAHKROLXolkQ/hL1MPi
+         y5hlbkfveVe5nTwHDTdgxgi206SJ8z73jNH/QtnghC8Rmn4tQj/mtspKh48lXuoQr4pj
+         WSgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761918614; x=1762523414;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OH6TtzH8OEdYvOB3XWCwPOSyqERGuFlVmCf8h/N53mY=;
-        b=lHQS0qoQ/7BhOEZLdA6i9RreuOEcwV1Wt+dukqC7AzCXlYSpXHvXANzTZzhNbM3GWO
-         /anp3nd71aZYu96vzg6yv4guctt+NK03bdVNhQ7p5RXo51RupTn4ka5euLVQ5nuCKiUP
-         wjLIuaTVXFaZfe0jfQT659iDInOJGbsCU75PkQsF56T+BFtT+Xeffdrhkps1rXiVaAYc
-         NB9DIVEcc8z1yB604obHTkopAm73zREXqb0tpZI4aBOIeTnCZnDGHBiS7Gp8mMQQOhYj
-         84CFfGBmJeKd/pMRjaiJABLlvo/1DbulkL8dZXfAzXT+mJBOuwbYDIzM0CCC/tW4Q4kg
-         2z0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWoaApTzltZTIO7dpG7IVqNNnA+7HuwNMB7c56FPEwa6MRkiAiLNIvU4zi0KilORLYRMJiUbyOLm2tnoCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAnZJv92O2jxaYiPdLuji7MoqVMJVtayOwe65VKErkzbzZBmrD
-	44Y2ku2sgfU97fb4ozdPOQTJvpl/hKaUlib6LWNew15ZTgzGrtj/Flxx1ghmDo56Nng=
-X-Gm-Gg: ASbGncv4IQ39od2Od0oEVR1Glx5lKtZWD7VD77xBVuPdZD+utrt8H6ZuEnUmRQxDNI/
-	+aZ1JFG3UM5kboXkbjwiX+UQyHL5WOx+HPfB96lD79ke/EZwrcB+9KcBaa3t1E4tUSD4krdNVJ/
-	4K7LNbt3skb9MW0igErWYhbveN4k8MIgn9z+o5wB5z2FUinZr+PGoUYsTWw/FEEvVpSOZVqWWBY
-	A0aXn6kUXgaq0g6Ot/Bc8XM5IAAGVVwYXs1udwB2Kbx9IXCFlGMiVTTgHEY17d+FTFjW6xWjn6T
-	NVW3cFkpDXkrdo+4/OB6kZBaluZTXud++PBLDgplhPrCgN+KPMJn0sUGTd5Fn3ewxUyXN7JFNTV
-	Q7xqTo+yvSydo7DDFB3Ehz47hRSyAp7tb/km7BD4Ld6aMC9CpouUNxvz7JWcol1BYH+gE715mv8
-	34WiysWh33qt8EJsLrpBTuphAeKFHkR5AeJK5SDKQb1A==
-X-Google-Smtp-Source: AGHT+IHswv1jbMa6PmgS62PAO0+xDI1T2gX2fd6DNwet+e3yBeSvkacWO3qek5if48rbanP/YLfkhw==
-X-Received: by 2002:a05:600c:314d:b0:476:84e9:b571 with SMTP id 5b1f17b1804b1-477307c2afbmr37052435e9.14.1761918613142;
-        Fri, 31 Oct 2025 06:50:13 -0700 (PDT)
-Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c114ca0csm4373033f8f.21.2025.10.31.06.50.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 06:50:12 -0700 (PDT)
-Message-ID: <631e4da1-92a0-4d44-b92e-bdcc56196c26@linaro.org>
-Date: Fri, 31 Oct 2025 13:50:10 +0000
+        d=1e100.net; s=20230601; t=1761918642; x=1762523442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fq99QZ8qEySnepXaN0MvrLAkz3i0KFCQh2dSWAfgdsw=;
+        b=xK5ODuw6CumMi/CzspIhNaQMGR9qV42G/36VEnhN8SMwMOqIJ5CUsKi7fL/f3dwzl4
+         D8aQdBQKcxzQ+iP7elO8FEwpQq5f7Yu+p81x2Ye94VadwbZYKe5WFiqlVuK+2TGlqsOO
+         wu7B/tnVdbTgExEALl6pg+lv+LE9Mu8WMKFRl5mjwspaT8S9LVFYDSKMO+/XZKD+NI9r
+         rOCATVELSWWOXtKVNK9CtnpvScQKye+gOa8vl+yZxOl3VXrhNIm8hGXGtJJ9fsYP4ZdS
+         Mpv36twvTsCYXjUMEli0RwsfkSJCJulD/tSrVcvEsv0gtGq8GhlRa4JBl4gO0milQ2dr
+         GMFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXp7cO2mc2R8UhCHyaq8CkgmsDJXKi2IEJNwX1IIP6K3jxkCgolUfm/P0VGwlzr/zKTjlelzRhY+aqw13g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPGcI3WFFJL0nfG2NoGRZXRiXExknFB1YtJtw3WX6+6FzresZ2
+	7BBZZi0yTwqmdoCVVcsSUKdkozcdD9r+2DpE9vkMn9m9FRJ9pVvd6I3pig+dTfY=
+X-Gm-Gg: ASbGnct1WdMzTyokmLa2Veevs+07zfyOA69aVl8sDcKXFrXGxBkoZoXCxfBuTNitqa9
+	uB/ik375psbaKhzQjBkvIBx8kJD4Qm69v3HVwajBTFSnFCKwMuaAFo24cfvv1Z12Sip7XJ7L1b4
+	OYRkr3Cg8T3OVQvNQml60so9LZ6qgHbpnpEXlWaQ6Z68HXE3c0dz1o2wPZIY9jcFC+OyCgpSg4U
+	X70HakslAhUD6F/9NOhOtKJ4kmyPZo1wT4an6j9oZP8KCZXVOPDvOqS+VPg5Yq0FvBrKb6k7ofK
+	caukS6xJZ5+34DACi0FHLrC4DoyyuoviWExd+Qs/VDJqJy5AQbTfLbBnbuyDKgupWc6mJSkpiWP
+	1MyRr8sX7lEa/8ECpnLyIzNjxejpAwQRqTkP2BnnYp6U/rOiich8jYDfG2387xH2A0SlmEs1Pi6
+	XqpdUZQyVcSYBTHRvJzWeZ072Cv1/Kfw==
+X-Google-Smtp-Source: AGHT+IF7JYD2XOTJtQkstN5oP4uEEb+BywbjvfTsn5BYoz4+8+8KXQRgxqgGm9Jv8J28dx+z4JnHzw==
+X-Received: by 2002:a05:6a21:33a0:b0:342:3702:97b2 with SMTP id adf61e73a8af0-348cc6ed97cmr5567276637.49.1761918642388;
+        Fri, 31 Oct 2025 06:50:42 -0700 (PDT)
+Received: from VSPRIME.. ([2401:4900:52f2:3b59:ca2f:95c0:7c6b:6e6a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8e70e6csm2337308b3a.26.2025.10.31.06.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 06:50:41 -0700 (PDT)
+From: vsshingne <vaibhavshingne66@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vsshingne <vaibhavshingne66@gmail.com>
+Subject: [PATCH] usb: core: prevent double URB enqueue causing list corruption
+Date: Fri, 31 Oct 2025 19:20:32 +0530
+Message-ID: <20251031135032.222938-1-vaibhavshingne66@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] media: dt-bindings: Add CAMSS device for Kaanapali
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251030-add-support-for-camss-on-kaanapali-v5-0-f8e12bea3d02@oss.qualcomm.com>
- <20251030-add-support-for-camss-on-kaanapali-v5-2-f8e12bea3d02@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20251030-add-support-for-camss-on-kaanapali-v5-2-f8e12bea3d02@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31/10/2025 02:59, Hangxiang Ma wrote:
-> Add the compatible string "qcom,kaanapali-camss" to support the Camera
-> Subsystem (CAMSS) on the Qualcomm Kaanapali platform.
-> 
-> The Kaanapali platform provides:
-> - 3 x VFE, 5 RDI per VFE
-> - 2 x VFE Lite, 4 RDI per VFE Lite
-> - 3 x CSID
-> - 2 x CSID Lite
-> - 6 x CSIPHY
-> 
-> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> ---
->   .../bindings/media/qcom,kaanapali-camss.yaml       | 406 +++++++++++++++++++++
->   1 file changed, 406 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
-> new file mode 100644
-> index 000000000000..c34867022fd1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
-> @@ -0,0 +1,406 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-camss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Kaanapali Camera Subsystem (CAMSS)
-> +
-> +maintainers:
-> +  - Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> +
-> +description:
-> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,kaanapali-camss
-> +
-> +  reg:
-> +    maxItems: 16
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: csiphy5
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
+Prevents the same URB from being enqueued twice on the same endpoint,
+which could lead to list corruption detected by list_debug.c.
 
-No test pattern generator on this part ?
+This was observed in syzbot reports where URBs were re-submitted
+before completion, triggering 'list_add double add' errors.
 
-We have patches in-flight to add TPG so it makes no sense to omit these 
-registers from current or new submissions.
+Adding a check to return if the URB is already on a queue
+prevents this corruption.
 
-https://lore.kernel.org/linux-media/20251017-camss_tpg-v5-1-cafe3ad42163@oss.qualcomm.com/
-
-While we're at it we should consider adding in the other key functional 
-blocks.
-
-OFE, IPE etc, there's no harm in including the registers even if the 
-intention and outcome is never switching that functionality on.
-
-> +
-> +  clocks:
-> +    maxItems: 34
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camnoc_nrt_axi
-> +      - const: camnoc_rt_axi
-> +      - const: camnoc_rt_vfe0
-> +      - const: camnoc_rt_vfe1
-> +      - const: camnoc_rt_vfe2
-> +      - const: camnoc_rt_vfe_lite
-> +      - const: cam_top_ahb
-> +      - const: cam_top_fast_ahb
-> +      - const: csid
-> +      - const: csid_csiphy_rx
-> +      - const: csiphy0
-> +      - const: csiphy0_timer
-> +      - const: csiphy1
-> +      - const: csiphy1_timer
-> +      - const: csiphy2
-> +      - const: csiphy2_timer
-> +      - const: csiphy3
-> +      - const: csiphy3_timer
-> +      - const: csiphy4
-> +      - const: csiphy4_timer
-> +      - const: csiphy5
-> +      - const: csiphy5_timer
-> +      - const: gcc_hf_axi
-> +      - const: vfe0
-> +      - const: vfe0_fast_ahb
-> +      - const: vfe1
-> +      - const: vfe1_fast_ahb
-> +      - const: vfe2
-> +      - const: vfe2_fast_ahb
-> +      - const: vfe_lite
-> +      - const: vfe_lite_ahb
-> +      - const: vfe_lite_cphy_rx
-> +      - const: vfe_lite_csid
-> +      - const: qdss_debug_xo
-> +
-> +  interrupts:
-> +    maxItems: 16
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: csiphy5
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  interconnects:
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: ahb
-> +      - const: hf_mnoc
-> +
-> +  iommus:
-> +    maxItems: 1
-
-
-This can't be right.
-
-The experience we are having with Iris for example shows that 
-restricting the iommus is wrong.
-
-For this and future bindings I'm expecting to see the full list of 
-AC_VM_HLOS S2 VMID targets.
-
-The second we try to switch on say something like the JPEG encoder this 
-list and its upstream binding becomes a problem.
-
-- S1_IFE_HLOS		@ 0x1c00
-- S1_CDM_BPS_IPS_HLOS	@ 0x1820
-- S1_CDM_BPS_IPS_HLOS	@ 0x18c0
-- S1_CDM_BPS_IPS_HLOS	@ 0x1980
-- S1_CDM_BPS_IPS_HLOS	@ 0x1800
-- S1_JPEG_HLOS		@ 0x18a0
-- S1_RT_CDM_HLOS	@ 0x1860
-- S1_CDM_BPS_IPE_HLOS	@ 0x1840
-- S1_CDM_BPS_IPE_HLOS	@ 0x1880
-- S1_CRE_HLOS		@ 0x18e0
-
-The ICP mappings can come later if ever via iommu-maps..
-
+Signed-off-by: vsshingne <vaibhavshingne66@gmail.com>
 ---
-bod
+ drivers/usb/core/hcd.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 87fcb78c34a8..66861f372daf 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -1758,16 +1758,15 @@ void usb_hcd_giveback_urb(struct usb_hcd *hcd, struct urb *urb, int status)
+ 		pr_warn("usb: URB already linked to bh->head, skipping duplicate addition\n");
+ 		return;
+ 	}
+-	
+ 	list_add_tail(&urb->urb_list, &bh->head);
+ 	running = bh->running;
+ 	spin_unlock(&bh->lock);
+ 
+ 	if (!running) {
+-        	if (bh->high_prio)
+-                	queue_work(system_bh_highpri_wq, &bh->bh);
+-        	else
+-        	        queue_work(system_bh_wq, &bh->bh);
++		if (bh->high_prio)
++			queue_work(system_bh_highpri_wq, &bh->bh);
++		else
++			queue_work(system_bh_wq, &bh->bh);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(usb_hcd_giveback_urb);
+-- 
+2.48.1
+
 
