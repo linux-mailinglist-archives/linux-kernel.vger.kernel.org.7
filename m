@@ -1,708 +1,234 @@
-Return-Path: <linux-kernel+bounces-879847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C2FC24389
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:42:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74BFC243CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:47:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 894244E8B47
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E553BC69B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC8C3321DF;
-	Fri, 31 Oct 2025 09:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3290F3321D5;
+	Fri, 31 Oct 2025 09:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eBr+Bhwf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DTEv0lnC"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013066.outbound.protection.outlook.com [40.107.201.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E41B32ED26;
-	Fri, 31 Oct 2025 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761903715; cv=none; b=JJMDs62PKI1eLsr90A2nifKrofkKIkSi/q0qYejYZfmKZYRsEsFXSk/2P/A4cx4Eop3fNiw8F8bFdcSbH+4p1E3v73n1qXLbyid79hLzDTrW+EhY7wRd6IQJpn8V+Apks/lpW2UTUbJNRSFMzJ/RVG9oM4wigDKu7ojT1LSiSp0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761903715; c=relaxed/simple;
-	bh=AniwhKVEzDyiacvVEjC4H8QPa6pBICc7YQZFV4pKOpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ca3TSgEOJTNmcYQfJw4VCfLaeKnlP5g40DBV80me1CrCAi5q8AE82ldFHKuNCnu5RyZcn63LPmhQF7YzLap8sQsw1rDCxqRBy8wbxGZ926JeRZbWek92GLIXh6LOZFz7oJgVGfyEQ8G5RohSHDUFm+vsexSSb53hp+5uizIbEis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eBr+Bhwf; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761903712; x=1793439712;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AniwhKVEzDyiacvVEjC4H8QPa6pBICc7YQZFV4pKOpw=;
-  b=eBr+BhwfHjNVnjIvEqn8JRIP/FXWWOwtZ4jbbT3XCCJgBAbWLjf58oXC
-   efnvUxlcoRw4wDflly00Q75NAz10/0jFyUtfeSC0a7maHYeDLTGyD3eNz
-   J4KQEi2MrdQeg83cb1REJCcfITwmDWDUPUajgZIAm7rWI5SQyYQu1Cn7V
-   lfBvgOSSy+Xx9XGEiS2fMZ/R+YmS0cSSLz16KjZHQgsKYNTipWKNrfWug
-   aSR75y/4xjJJGOOA7g6Mg9FNJMLn5qsUUUhONkJQjXLXarv1a2e5tC1Xu
-   C1AsPNs5090p1GpaNfR2dZw7LNOda8/flVrmse8XDFkio4XBp46uIwqsO
-   w==;
-X-CSE-ConnectionGUID: rwt33UagT1mMk+gRLrFPyQ==
-X-CSE-MsgGUID: W01/z6uqTb2tJjXblpdrAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="74662065"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="74662065"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:41:51 -0700
-X-CSE-ConnectionGUID: mP5xuws9Sm2J6Xi2Brp9IA==
-X-CSE-MsgGUID: TEKg4Z1ORoSYHP1eeX3fbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="190545685"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:41:50 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vEldh-00000004E4l-3Ikl;
-	Fri, 31 Oct 2025 11:41:45 +0200
-Date: Fri, 31 Oct 2025 11:41:44 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	Paolo Sabatino <paolo.sabatino@gmail.com>,
-	Christian Hewitt <christianshewitt@gmail.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v5 4/7] auxdisplay: Add TM16xx 7-segment LED matrix
- display controllers driver
-Message-ID: <aQSEWGg50VHIECoM@smile.fi.intel.com>
-References: <20250926141913.25919-1-jefflessard3@gmail.com>
- <20250926141913.25919-5-jefflessard3@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D75432ED26;
+	Fri, 31 Oct 2025 09:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761903728; cv=fail; b=U97smFI2KQDff/ICOBBsjMKg6WHNJXEcZ5WnvZu1+JRotIPpreTVH1N68slUT0xx+Ujkpxf1PlxW9S1ysG4zAJMgksm80xwG8NRCMHE0ngB4BuM7km1/kR/BOIm8lY5R6Hn/MslE51JoXbTLUL4YANTNcWnXE/wjLeeHkQ+5JJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761903728; c=relaxed/simple;
+	bh=29E2KnCKvg/Wu12aBfMUofvwEQxm6rTKfLzIOUwjob0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=g+Lb/kmGxrgmqH8ZT1QSGWrcuW+B+EV8XBWYUeFLoXBmyfxf3k3k8dJ8SMtkXqCcF1guFYAah1WvN1hxUhaI1XiSXEgXZS7osoLCu/sJCkhTwA6cHvnjMBHZSKf6TaCX0Uvae80VzQSXFxrjlfntc/L8gtqqr/1En7ctwO5prcg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DTEv0lnC; arc=fail smtp.client-ip=40.107.201.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r8rD+ikk9gTp/QEEhgNzHHwX4fSxYnV6DoGCFjVxZWv6oAA5cBCMn5ciSg+9ThVxN3TmzQkCjEznsoRqnZbtTzqsKvrxV/2W0MCgTDNsAnGxhIdE68fkbT+IJuXldkUp4wkjoqvw7y93AVeiXvuoyDQprgBGApZwpBQ4Fr7k0yKGrpUNDbp0itIAyps5NOj5vq6eH2iwKS97vitPhzXw6M4b71MrfeTS62fs72Pu0tIDdidB/fGaMZTmDzSiGAPsqccGJpZfl7xreSQw9OPjTR7eQ+/mEJSdHqfI52gx2Qcfab5W64AgFECctOeTwOnSDtIqeaDX8NuMZXynjAPs0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=29E2KnCKvg/Wu12aBfMUofvwEQxm6rTKfLzIOUwjob0=;
+ b=WAQKgwV5TSboB191kckihDaUx9R05eqlWIUeLNioR1tWRKBhBPMMhEVg9RmrSUg0HA5BKKN7OZjtJQrpi6+6a4qhRSMfFEXFB+wLeYOcXzC7xhSIQvDnmj8hjmv95qREnQLN9zJfF3eHMjLgkEq+zI1Ov02XijvhguGKCNP21ir3AVdQ+6KvCO5CqLzKMKpr4uqRS4A+2JIv6/osYmfMlnGQQM/Ov7hL5PNiFWkHuRuhLIjzasRfNpZfHpaqMY+573ksGol6qXTTmddrguSLOFAjdEZs6ziEMM0NQWX72Yqmuge9GOFUYn4VeICqAq2mHgdNUmpOgL2lOjtsamEe4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=29E2KnCKvg/Wu12aBfMUofvwEQxm6rTKfLzIOUwjob0=;
+ b=DTEv0lnCSS62yHcaYUCqsoSV2TAGtsbPTMBOgvVDD8OxgFG6TD2na/dd5XFGREGd5yl3nY/ovcVn4ruhT10cVPsFv22GS3TSVku7BLng4Ifjf34Frbn7zKCeEsYQnRK5siHrSdJDd2KJgQG+b381i0LqPt0D9f56sukSFVKkhw0=
+Received: from LV5PR12MB9828.namprd12.prod.outlook.com (2603:10b6:408:304::19)
+ by CY5PR12MB6105.namprd12.prod.outlook.com (2603:10b6:930:2a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
+ 2025 09:41:58 +0000
+Received: from LV5PR12MB9828.namprd12.prod.outlook.com
+ ([fe80::18a1:d79c:8c9:dbda]) by LV5PR12MB9828.namprd12.prod.outlook.com
+ ([fe80::18a1:d79c:8c9:dbda%3]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 09:41:58 +0000
+From: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, "git (AMD-Xilinx)"
+	<git@amd.com>, "shubhrajyoti.datta@gmail.com" <shubhrajyoti.datta@gmail.com>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Robert Richter <rric@kernel.org>
+Subject: RE: [PATCH] EDAC/versalnet: Handle split messages for non-standard
+ errors
+Thread-Topic: [PATCH] EDAC/versalnet: Handle split messages for non-standard
+ errors
+Thread-Index: AQHcRBCX/Q53Gq1QhkS0aPs/5A/O4LTZIh8AgALqIvA=
+Date: Fri, 31 Oct 2025 09:41:58 +0000
+Message-ID:
+ <LV5PR12MB9828A123A3ADFA1EB177E58681F8A@LV5PR12MB9828.namprd12.prod.outlook.com>
+References: <20251023113108.3467132-1-shubhrajyoti.datta@amd.com>
+ <20251029130832.GBaQIR0CF8kSl6exi7@fat_crate.local>
+In-Reply-To: <20251029130832.GBaQIR0CF8kSl6exi7@fat_crate.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-10-31T09:39:02.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV5PR12MB9828:EE_|CY5PR12MB6105:EE_
+x-ms-office365-filtering-correlation-id: d835ab91-db2f-40e5-e608-08de1861bc4d
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?T0tUMFdvT2hDOU5rRUMwWjU3UlgzQVdqMlNrNHJnd2ZLN0hDNDVBMnljU0lO?=
+ =?utf-8?B?ZWhrSlQ3QnA3ZldzcWFsMEtxQVAvRTRVVnpaNVhZS1YrSzJNN0RFWG0wclJY?=
+ =?utf-8?B?SjNOQW95Zkl3aTQwY0J2dnExTkJaVFVtZEN0ZkppdXB3UEVtY0IyblJjSk0r?=
+ =?utf-8?B?NGNiRGd4a3kvaXMyQlZEakNmd2p3bmU4dDF6VW55eGVDOTloK3I0ODBlTlNr?=
+ =?utf-8?B?dzRrM21zajZYSU5aRXc4RFpjaE5iNkFGS2RybisxM1VjQ2NMclVvbWFObkdZ?=
+ =?utf-8?B?czBJMVljbnlyMEhMWHhyclYwTjFjM2p5Z05OZXlubFpNSC9RcU5kZFBpcVI1?=
+ =?utf-8?B?S2xMYzNRNENSa2x6cGYxSno4b25GaElRTDRUdVpwL0M2YkhsakNzVDQ5cW1M?=
+ =?utf-8?B?akhlNFlvdWRXSUJnU0xBRVBucmN5NUdyN3M5eHlERGcya0FHMmltVXdkcnpL?=
+ =?utf-8?B?cDFzbHcyMFhQU0MvbEcwWEhmUXRERVBHUUFXbUpxa2VmamlFSUZSTkNSZDJS?=
+ =?utf-8?B?SnkxWWZ2dVpnM2xRNUVtT1c5Y2xLcElocDlFQmdVdmhGSUdaRTYrbzc2ZHpk?=
+ =?utf-8?B?dVcyTmhnVkY5ckcvZWIzRHRJNTM3Mk5qV2E1RmpOeWpTSU9RMmdobUlBYXp0?=
+ =?utf-8?B?eDUyRUl1T3RTMVdoTTdJMFdDRkJtZWwxMVJmU3o0bnRBRVdQRmlKeGhiZmRz?=
+ =?utf-8?B?K0NWaEJnU0FKQW5nK1ZnUGRieVduR2R6ODVpbHQzVXFKK3hDODdFNnJQbEhn?=
+ =?utf-8?B?Q1k5WXlacHdSUlNFU0lDV2pjRkxnR0RkZXF3VUtJeXgxa09WRnlKdEJ6dGFX?=
+ =?utf-8?B?RXBuamg1Mk5ReW80VzZLSEN1ZURmRTZUdExzZVZaUW9DVlBqVUM3SjYwRisy?=
+ =?utf-8?B?aHIyUnZocXEyeGR3cjhFOUxHb1puZFV3K254aldwVmtnQ0VRQjlYdzZRWm1S?=
+ =?utf-8?B?SXVoWlovcE01T2xJY0UxZVhHR3pVTkFiQVloeXNFYi9nS2dlaE1CWEtNWHRx?=
+ =?utf-8?B?azJOSXRjeTVjY2RXWmpwd2xhcDRuUllLa2xIRlIxcUpPamh6MnBnaUp0S3JT?=
+ =?utf-8?B?YXM0TXgwdTJGaVIvbUZMakZ2VytUTmVCdGlzNWo4MGlxVVY0Tm5YdE5wNWY3?=
+ =?utf-8?B?SDgwY3I2UmhsL2x4RWZUTjI4YVNtMmdwY1p6WHVyaXpwWHlXVG5ibk94MDFJ?=
+ =?utf-8?B?YUZ4VWlIVkJkckx3WGVKTG1uRjRmNE5UaW1hVm5VbmJFL3lBdEJZZDNHNHlr?=
+ =?utf-8?B?UjVJV3dieE5rR0tmbDFROVFPOG5ieGJxbWxVK3duUUpPZnBzM09Yd2dSYXpy?=
+ =?utf-8?B?Z3hYNDBERXR1eWhYcTVLcFVTc2ZneTc5K1Jpa01yaXovN0tEZE5vdGppaGti?=
+ =?utf-8?B?a3pVdFJ4THQ4ZWZGK09tRFhtZWFaaUdKRUFMMFBRUDI0V21wMlcybU1maTZn?=
+ =?utf-8?B?Rm0vbXJqMW11ZTFZVzV5MHAzWEE5MnRKOVVQM2ppTzFIMWl0SEJaUHVCWVc2?=
+ =?utf-8?B?bC83MDVlUUxaVVZMMnloS3hYWkwzMmNzTmpCTDJCY1piY1JBYnFEeFZ3QlVF?=
+ =?utf-8?B?OTh4V1ZPTlVUMCtQZWVlZFkyR2FBTGxOVWtOVU14VUg1SXlTbm5EM3M4Rk9Y?=
+ =?utf-8?B?bVM2MzNuUmRvQlpzODFKVHV0VmFuNStZSVBac2xGYkQ0dEhod09XSlFFOFFt?=
+ =?utf-8?B?V0g1dk1yVWlmdlByeGdYV2tKZXMvUzVYdnowMmZtVWNLdHU5cTZ6ZzI1TzNs?=
+ =?utf-8?B?NXB5V2ZwN2dGcEJQOE5yZ0xUYnhjVnNGcG9VcTNqV3RTWkgyUUJhWnJ2Nk1s?=
+ =?utf-8?B?d0QzcTJ2WGRValJHcWNqdytuQnVqa2wyYkhZRStiS1VUM28ydjRjVER6RFk2?=
+ =?utf-8?B?MEFqZUVGNFpxSFZPSWY4VGN5UGZMM1VHcXZIL3lqcGpjY3F2NU5BV2dWOHoy?=
+ =?utf-8?B?SDh4MDRCRjdja29YQlBHRVkwZWlzVzhEamViZlB5a3dCbXlMbjFaRk5QUzkr?=
+ =?utf-8?B?NldhZUNHSXcwNk9acVRsc2pjQ0IrZ1VwSHlzK2hiaW1lMFRJYU9vTVZTblJ5?=
+ =?utf-8?Q?uAbs9g?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9828.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?OHNOd09pSUQ1Qm80RlU5bzhYL0J6bWtWMCtCUXVMdFZWRVpEMERsZnJHTkhp?=
+ =?utf-8?B?d1NUUlNlK1c3WnNLV1BaMk85ZSthNytaNWlLbG9HMk8xYkhtK3JFSCs1bkRp?=
+ =?utf-8?B?bmtGVkFJalFqRDUxaWVCR1lZNGpYSkFJUmJjS3JzNVVrOVNWbjZHd21hMEt1?=
+ =?utf-8?B?R0NyN1o4WVJRZ1MzRXZhNXl6MXNOVWdDOUVZc3ZwbEk1VTVZZ3phOHBVTFlk?=
+ =?utf-8?B?MFRRVVF4bkhEc2lIZGR3aWlDaGtDNEVmSG5DQitUaHlpSDlMSHZRa2xDWjhS?=
+ =?utf-8?B?TjVzQTh1SlJ4ZE8vcFJhajhKRkVJQjArWTBMYWhZQ3laeVczcERmTmdLVkpG?=
+ =?utf-8?B?ZE1xa2tydHJWSThBK21zRkdjUjZtVVJDYSt0N0F5S0Vkc01KZDRVa3JScytY?=
+ =?utf-8?B?U2Z5Um0vYXMxMUQyMkF1YkNyWFlrSmhJa3RHaXR4OFBaSjBxaTN4Wkp6UzI3?=
+ =?utf-8?B?NVN3SHQyVjVMcW51V1BNcWVTVlJIZUduODBQamVoMzREeUdwMWVJemxLZERh?=
+ =?utf-8?B?QUtuYlJ5em5oM1ZZYXh1QnJLekV0a2ExcUZIa080Z2lWbHByaGl6K2V6SG5V?=
+ =?utf-8?B?RFB4eStPcGd4R3RQam54UHd2aDdDWG8raFpkM3lYZlE2enFCTmxjTUgycGRB?=
+ =?utf-8?B?YUVvcEhVbkJlY1gyOElCM2xraFpQYzVodmJSSjIybFlsVlcva2FJMlpDRE12?=
+ =?utf-8?B?Vk5paHRJNUpmT3gxSzJLNmR0K2plM0ZqdFNleHUwb3JLVVBZLzB5T3J6L3ZM?=
+ =?utf-8?B?d0YxYThjWkEzdVR0T0VGQlRmWEY2YmV1dFhobjdDUkl1WEN3YTlVY0pPSnN3?=
+ =?utf-8?B?Vk1YeTg3Vzd2WDF0V3dtUHU3VXRuNnkyd0ZCN05CWC9lWjFCRGd4WC8rZkRE?=
+ =?utf-8?B?cmtnZUlmVVdWOGJlVmRTOXpFK3h6OSszVy9WQlJUcEJJbGxGRWlCYXJ1WTdj?=
+ =?utf-8?B?OExxeXVReVJIa05sbC9odXdaN1VZdVF6MXFvU0JZT2JTQTA3T0NyS1pGWXdV?=
+ =?utf-8?B?NmV2MWs5RjUrMjZsM2RJd0ZvanNPeFgwUW9peGVuSVRKd2NFNDhPOXcvS25H?=
+ =?utf-8?B?dUQ1bVd4T083QURNN2RUSnhNZXFWaUU3MjllZ3NjaHRZYllXV0ltYzU5TXRO?=
+ =?utf-8?B?UDFYSWxEazNNQUF1NFZjWjlmeGt1WmMxYUM3UkFmVXh3cGs2OVRUaHJtbmd5?=
+ =?utf-8?B?NWMrUXhvZTRWNTRJUTYrTGxBRG0vODIyaU9yMmRJeCtJaGFNc0dkREQzM1Vi?=
+ =?utf-8?B?bXk1aVJOVjRhd1J0UWlxYmFGZm9vdUZQVlVPVFVnYllISE5kbUNkZGNxT2x1?=
+ =?utf-8?B?Z0hPY0FqZEZhNDJ0MlA0V09Ba0MrQjFGYmZMOXlWS1hTWFliSHVrd1JhbzZr?=
+ =?utf-8?B?YzJyM2tPLzhFYzFzdGpSUWI4bkhWOWgrRHpORVV1M2h4bFMwbk5CUkNoa1NQ?=
+ =?utf-8?B?TlNDZVVkRWN5d2xqa0hWS0VrSmQzTVh5REErTUhORmduandkSm5XcGtBcUhp?=
+ =?utf-8?B?Yk00T1FnVWEwWDRnNHZmRkZvSmtnN3JIRjVoOUxHb1J5TFE2RTNOcktKbjlq?=
+ =?utf-8?B?R2IveThYRnFWZ2dMejhZa1NnK0Nma1FXTU9XQnNxSWZGWkZWVm0wQW03TU5E?=
+ =?utf-8?B?V1dQbndEVVlzNkE5WnF2MHp6OU9JZzhUMUdEMndJUEMzcFR5RytTKzgxRkJH?=
+ =?utf-8?B?aUc4M0FGaU9MNE1LdURjeklRK0ZZVGpUTlRMUVZic0dLbllIT25jVGdONEx3?=
+ =?utf-8?B?Ym9PZHcwTm5uWmkwb2lPa0RpL2dRWTNHSGVFT01QODdDbUluYUhySTVPeUM4?=
+ =?utf-8?B?V0ZMNXVIQ3BXZWczS0dyWkVaOFJVVEJSNGRZY3hTT1hIZjZ6VTRnQXlTa0dK?=
+ =?utf-8?B?b3BQTXpia253cTNDSzhuVnRNNXZFL0NRMWxKUG5RZnNvNytyYkRLOG1oZEVK?=
+ =?utf-8?B?OE5tRk94bHJXcEJIM2hjNWtlMDRjd2hNZlVlSHpVZzB4TDZmcjM0aXJGcEFN?=
+ =?utf-8?B?WW45Y3VHNVY5WGxYZmk2SFdlMXptNFRLOEluVGNzRHF5bThYc25BQlJsenhv?=
+ =?utf-8?B?eEpxNnVlS2tFdEF0YlVmRGNqbkFNaSswbzBEeFN1TWZWTEQyOHVWb045MFV4?=
+ =?utf-8?Q?fhX8=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926141913.25919-5-jefflessard3@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Fri, Sep 26, 2025 at 10:19:05AM -0400, Jean-François Lessard wrote:
-> Add driver for TM16xx family LED controllers and compatible chips from
-> multiple vendors including Titan Micro, Fuda Hisi, i-Core, Princeton, and
-> Winrise. These controllers drive 7-segment digits and individual LED icons
-> through either I2C or SPI buses.
-> 
-> Successfully tested on various ARM TV boxes including H96 Max, Magicsee N5,
-> Tanix TX3 Mini, Tanix TX6, X92, and X96 Max across different SoC platforms
-> (Rockchip, Amlogic, Allwinner).
-
-...
-
-> +config TM16XX
-
-Hmm... After applying this patch there will be no compile test coverage.
-
-> +	tristate
-
-IIRC there is a trick how to achieve that by modifying a tristate line to be
-visible depending on the other options.
-
-E.g.,
-drivers/dpll/zl3073x/Kconfig:4: tristate "Microchip Azurite DPLL/PTP/SyncE devices" if COMPILE_TEST
-
-> +	select LEDS_CLASS
-> +	select LEDS_TRIGGERS
-> +	select LINEDISP
-> +	select NEW_LEDS
-> +	help
-> +	  Core TM16XX-compatible 7-segment LED controllers module
-
-Please, elaborate a bit more here. Usually we expect ~3 lines of description to
-be a minimum.
-
-...
-
-> +#ifndef _TM16XX_H
-> +#define _TM16XX_H
-
-+ bits.h
-
-> +#include <linux/bitfield.h>
-> +#include <linux/leds.h>
-
-+ mutex.h
-
-> +#include <linux/workqueue.h>
-
-+ types.h
-
-...
-
-> +#define FD655_CMD_CTRL		0x48
-> +#define FD655_CMD_ADDR		0x66
-> +#define FD655_CTRL_BR_MASK	GENMASK(6, 5)
-> +#define FD655_CTRL_ON		(1 << 0)
-> +
-> +#define FD6551_CMD_CTRL		0x48
-
-Do we need a duplicate? Yes, bitfields can be different, but since the register
-is called the same, I would leave only one register offset definition.
-
-...
-
-> +/**
-> + * DOC: struct tm16xx_controller - Controller-specific operations and limits
-> + * @max_grids: Maximum number of grids supported by the controller.
-> + * @max_segments: Maximum number of segments supported by the controller.
-> + * @max_brightness: Maximum brightness level supported by the controller.
-> + * @max_key_rows: Maximum number of key input rows supported by the controller.
-> + * @max_key_cols: Maximum number of key input columns supported by the controller.
-> + * @init: Pointer to controller mode/brightness configuration function.
-> + * @data: Pointer to function writing display data to the controller.
-> + * @keys: Pointer to function reading controller key state into bitmap.
-> + *
-> + * Holds function pointers and limits for controller-specific operations.
-> + */
-> +struct tm16xx_controller {
-> +	const u8 max_grids;
-> +	const u8 max_segments;
-> +	const u8 max_brightness;
-> +	const u8 max_key_rows;
-> +	const u8 max_key_cols;
-
-What are const above supposed to achieve?
-
-> +	int (*const init)(struct tm16xx_display *display);
-> +	int (*const data)(struct tm16xx_display *display, u8 index, unsigned int grid);
-> +	int (*const keys)(struct tm16xx_display *display);
-> +};
-
-...
-
-> +struct tm16xx_display {
-> +	struct device *dev;
-
-Missing forward declaration.
-
-> +	const struct tm16xx_controller *controller;
-> +	struct linedisp linedisp;
-> +	u8 *spi_buffer;
-> +	u8 num_hwgrid;
-> +	u8 num_hwseg;
-> +	struct led_classdev main_led;
-> +	struct tm16xx_led *leds;
-> +	u8 num_leds;
-> +	struct tm16xx_digit *digits;
-> +	u8 num_digits;
-> +	struct work_struct flush_init;
-> +	struct work_struct flush_display;
-> +	int flush_status;
-> +	struct mutex lock; /* prevents concurrent work operations */
-> +	unsigned long *state;
-> +};
-
-> +#endif /* _TM16XX_H */
-
-...
-
-> +#include <linux/bitfield.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
-> +#include <linux/leds.h>
-> +#include <linux/map_to_7segment.h>
-> +#include <linux/module.h>
-> +#include <linux/property.h>
-> +#include <linux/sysfs.h>
-
-+ types.h
-
-> +#include <linux/workqueue.h>
-
-> +#include "line-display.h"
-
-I would add a blank line here as well.
-
-> +#include "tm16xx.h"
-
-...
-
-> +#define linedisp_to_tm16xx(display) \
-> +	container_of(display, struct tm16xx_display, linedisp)
-
-One line, we are using 100 limit here.
-
-...
-
-> +/**
-> + * tm16xx_set_seg() - Set the display state for a specific grid/segment
-> + * @display: pointer to tm16xx_display
-> + * @hwgrid: grid index
-> + * @hwseg: segment index
-> + * @on: true to turn on, false to turn off
-
-Can also be %true and %false. This helps the rendering to use different font
-settings for the constants (where applicable).
-
-> + */
-> +static inline void tm16xx_set_seg(const struct tm16xx_display *display,
-> +				  const u8 hwgrid, const u8 hwseg, const bool on)
-> +{
-> +	assign_bit(hwgrid * display->num_hwseg + hwseg, display->state, on);
-
-Do you need an atomic call here? Perhaps __assign_bit() would suffice,
-
-> +}
-
-...
-
-> +static inline unsigned int tm16xx_get_grid(const struct tm16xx_display *display,
-> +					   const unsigned int index)
-> +{
-> +	return bitmap_read(display->state, index * display->num_hwseg,
-> +			   display->num_hwseg);
-
-One line.
-
-> +}
-
-...
-
-> +static void tm16xx_display_flush_init(struct work_struct *work)
-> +{
-> +	struct tm16xx_display *display = container_of(work,
-> +						      struct tm16xx_display,
-> +						      flush_init);
-
-I slightly prefer
-
-	struct tm16xx_display *display =
-		container_of(work, struct tm16xx_display, flush_init);
-
-Or even a single line.
-
-
-> +	int ret;
-> +
-> +	if (display->controller->init) {
-> +		scoped_guard(mutex, &display->lock) {
-> +			ret = display->controller->init(display);
-> +			display->flush_status = ret;
-> +		}
-> +		if (ret)
-> +			dev_err(display->dev,
-> +				"Failed to configure controller: %d\n", ret);
-> +	}
-
-First of all, I'm not sure what the lock is protecting. Here you allow "init" to
-be whatever, while in the below code the "data" is protected.
-
-Second, I haven't seen changes in this function later in the series, so perhaps
-drop the indentation by negating conditional?
-
-> +}
-
-> +/**
-> + * tm16xx_display_flush_data() - Workqueue to update display data to controller
-> + * @work: pointer to work_struct
-
-Perhaps add a small description and explain that this is interrupted if an
-error occurs and that error will be stored for further use by upper layers.
-
-Does the same apply to the above function?
-
-> + */
-> +static void tm16xx_display_flush_data(struct work_struct *work)
-> +{
-> +	struct tm16xx_display *display = container_of(work,
-> +						      struct tm16xx_display,
-> +						      flush_display);
-> +	unsigned int grid, i;
-> +	int ret = 0;
-
-> +	scoped_guard(mutex, &display->lock) {
-
-As per above, and here AFAICS guard()() will suit better.
-
-> +		if (display->controller->data) {
-> +			for (i = 0; i < display->num_hwgrid; i++) {
-> +				grid = tm16xx_get_grid(display, i);
-> +				ret = display->controller->data(display, i, grid);
-> +				if (ret) {
-> +					dev_err(display->dev,
-> +						"Failed to write display data: %d\n",
-> +						ret);
-> +					break;
-> +				}
-> +			}
-> +		}
-> +
-> +		display->flush_status = ret;
-> +	}
-> +}
-
-...
-
-> +static void tm16xx_brightness_set(struct led_classdev *led_cdev,
-> +				  enum led_brightness brightness)
-
-One line
-
-...
-
-> +static void tm16xx_led_set(struct led_classdev *led_cdev,
-> +			   enum led_brightness value)
-
-Ditto.
-
-...
-
-> +static int tm16xx_display_value(struct tm16xx_display *display, const char *buf, size_t count)
-> +{
-> +	struct linedisp *linedisp = &display->linedisp;
-> +	struct linedisp_map *map = linedisp->map;
-> +	struct tm16xx_digit *digit;
-> +	unsigned int i, j;
-
-> +	int seg_pattern;
-
-Hmm... Should it be signed?
-
-> +	bool val;
-
-> +	for (i = 0; i < display->num_digits && i < count; i++) {
-
-This means "whatever is smaller", perhaps make it clearer by using min() ?
-
-> +		digit = &display->digits[i];
-> +		seg_pattern = map_to_seg7(&map->map.seg7, buf[i]);
-> +
-> +		for (j = 0; j < TM16XX_DIGIT_SEGMENTS; j++) {
-> +			val = seg_pattern & BIT(j);
-> +			tm16xx_set_seg(display, digit->hwgrids[j], digit->hwsegs[j], val);
-> +		}
-> +	}
-> +
-> +	for (; i < display->num_digits; i++) {
-> +		digit = &display->digits[i];
-> +		for (j = 0; j < TM16XX_DIGIT_SEGMENTS; j++)
-> +			tm16xx_set_seg(display, digit->hwgrids[j], digit->hwsegs[j], 0);
-> +	}
-
-Or unite these two for-loops into a single one with i < count conditional embedded?
-
-		for (j = 0; j < TM16XX_DIGIT_SEGMENTS; j++) {
-			if (i < count)
-				val = seg_pattern & BIT(j);
-			else
-				val = 0;
-			tm16xx_set_seg(display, digit->hwgrids[j], digit->hwsegs[j], val);
-		}
-
-?
-
-> +	schedule_work(&display->flush_display);
-> +	return 0;
-> +}
-
-...
-
-> +static int tm16xx_parse_fwnode(struct device *dev, struct tm16xx_display *display)
-> +{
-> +	struct tm16xx_led *led;
-> +	struct tm16xx_digit *digit;
-> +	unsigned int max_hwgrid = 0, max_hwseg = 0;
-> +	unsigned int i, j;
-> +	int ret;
-> +	u32 segments[TM16XX_DIGIT_SEGMENTS * 2];
-> +	u32 reg[2];
-> +
-> +	struct fwnode_handle *digits_node __free(fwnode_handle) =
-> +		device_get_named_child_node(dev, "digits");
-> +	struct fwnode_handle *leds_node __free(fwnode_handle) =
-> +		device_get_named_child_node(dev, "leds");
-> +
-> +	/* parse digits */
-> +	if (digits_node) {
-> +		display->num_digits = fwnode_get_child_node_count(digits_node);
-
-> +		if (display->num_digits) {
-
-Drop an indentation level by splitting this to a helper.
-
-> +			display->digits = devm_kcalloc(dev, display->num_digits,
-> +						       sizeof(*display->digits),
-> +						       GFP_KERNEL);
-> +			if (!display->digits)
-> +				return -ENOMEM;
-> +
-> +			i = 0;
-> +			fwnode_for_each_available_child_node_scoped(digits_node, child) {
-> +				digit = &display->digits[i];
-> +
-> +				ret = fwnode_property_read_u32(child, "reg", reg);
-> +				if (ret)
-> +					return ret;
-> +
-> +				ret = fwnode_property_read_u32_array(child,
-> +								     "segments", segments,
-> +								     TM16XX_DIGIT_SEGMENTS * 2);
-
-> +				if (ret < 0)
-> +					return ret;
-
-Why '< 0'? Here it's definitely not a counting call, so it should never return
-positive in this case.
-
-> +
-> +				for (j = 0; j < TM16XX_DIGIT_SEGMENTS; ++j) {
-> +					digit->hwgrids[j] = segments[2 * j];
-> +					digit->hwsegs[j] = segments[2 * j + 1];
-> +					max_hwgrid = umax(max_hwgrid, digit->hwgrids[j]);
-> +					max_hwseg = umax(max_hwseg, digit->hwsegs[j]);
-> +				}
-> +				i++;
-> +			}
-> +		}
-> +	}
-> +
-> +	/* parse leds */
-> +	if (leds_node) {
-> +		display->num_leds = fwnode_get_child_node_count(leds_node);
-
-> +		if (display->num_leds) {
-
-Ditto.
-
-> +			display->leds = devm_kcalloc(dev, display->num_leds,
-> +						     sizeof(*display->leds),
-> +						     GFP_KERNEL);
-> +			if (!display->leds)
-> +				return -ENOMEM;
-> +
-> +			i = 0;
-> +			fwnode_for_each_available_child_node_scoped(leds_node, child) {
-> +				led = &display->leds[i];
-> +				ret = fwnode_property_read_u32_array(child, "reg", reg, 2);
-> +				if (ret < 0)
-
-Ditto,.
-
-> +					return ret;
-> +
-> +				led->hwgrid = reg[0];
-> +				led->hwseg = reg[1];
-> +				max_hwgrid = umax(max_hwgrid, led->hwgrid);
-> +				max_hwseg = umax(max_hwseg, led->hwseg);
-> +				i++;
-> +			}
-> +		}
-> +	}
-> +
-> +	if (max_hwgrid >= display->controller->max_grids) {
-> +		dev_err(dev, "grid %u exceeds controller max_grids %u\n",
-> +			max_hwgrid, display->controller->max_grids);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (max_hwseg >= display->controller->max_segments) {
-> +		dev_err(dev, "segment %u exceeds controller max_segments %u\n",
-> +			max_hwseg, display->controller->max_segments);
-> +		return -EINVAL;
-> +	}
-> +
-> +	display->num_hwgrid = max_hwgrid + 1;
-> +	display->num_hwseg = max_hwseg + 1;
-> +
-> +	return 0;
-> +}
-
-...
-
-> +/**
-> + * tm16xx_probe() - Probe and initialize display device, register LEDs
-> + * @display: pointer to tm16xx_display
-> + *
-> + * Return: 0 on success, negative error code on failure
-> + */
-
-Unneeded kernel-doc.
-
-> +int tm16xx_probe(struct tm16xx_display *display)
-> +{
-> +	struct device *dev = display->dev;
-> +	struct led_classdev *main = &display->main_led;
-> +	struct led_init_data led_init = {0};
-
-'0' is not needed.
-
-> +	struct fwnode_handle *leds_node;
-> +	struct tm16xx_led *led;
-> +	unsigned int nbits, i;
-> +	int ret;
-> +
-> +	ret = tm16xx_parse_fwnode(dev, display);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to parse device tree\n");
-> +
-> +	nbits = tm16xx_led_nbits(display);
-> +	display->state = devm_bitmap_zalloc(dev, nbits, GFP_KERNEL);
-> +	if (!display->state)
-> +		return -ENOMEM;
-> +
-> +	ret = devm_mutex_init(display->dev, &display->lock);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to initialize mutex\n");
-
-I believe it's ENOMEM here, so we don't need an error message.
-
-> +	INIT_WORK(&display->flush_init, tm16xx_display_flush_init);
-> +	INIT_WORK(&display->flush_display, tm16xx_display_flush_data);
-
-devm-helpers.h have something for this case, I believe.
-
-> +	/* Initialize main LED properties */
-> +	led_init.fwnode = dev_fwnode(dev); /* apply label property */
-
-I didn't get a comment. This not only about label, but for entire set of
-properties that led framework can consume.
-
-> +	main->max_brightness = display->controller->max_brightness;
-> +	device_property_read_u32(dev, "max-brightness", &main->max_brightness);
-> +	main->max_brightness = umin(main->max_brightness,
-> +				    display->controller->max_brightness);
-
-Hmm... Why 'u' variant of macro?
-
-
-> +	main->brightness = main->max_brightness;
-> +	device_property_read_u32(dev, "default-brightness", &main->brightness);
-> +	main->brightness = umin(main->brightness, main->max_brightness);
-
-Ditto.
-
-Given a comment about propagating fwnode, why do we need all this? Doesn't led
-core take care of these properties as well?
-
-> +	main->brightness_set = tm16xx_brightness_set;
-> +	main->flags = LED_RETAIN_AT_SHUTDOWN | LED_CORE_SUSPENDRESUME;
-> +
-> +	/* Register individual LEDs from device tree */
-> +	ret = led_classdev_register_ext(dev, main, &led_init);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to register main LED\n");
-> +
-> +	i = 0;
-> +	led_init.devicename = dev_name(main->dev);
-> +	led_init.devname_mandatory = true;
-> +	led_init.default_label = "led";
-> +	leds_node = device_get_named_child_node(dev, "leds");
-> +	fwnode_for_each_available_child_node_scoped(leds_node, child) {
-> +		led_init.fwnode = child;
-> +		led = &display->leds[i];
-
-> +		led->cdev.max_brightness = 1;
-
-That should be set to default by the led core based on the property value, not the case?
-
-> +		led->cdev.brightness_set = tm16xx_led_set;
-> +		led->cdev.flags = LED_RETAIN_AT_SHUTDOWN | LED_CORE_SUSPENDRESUME;
-> +
-> +		ret = led_classdev_register_ext(dev, &led->cdev, &led_init);
-
-Why not devm_led_*()?
-
-> +		if (ret) {
-> +			dev_err_probe(dev, ret, "Failed to register LED %s\n",
-> +				      led->cdev.name);
-> +			goto unregister_leds;
-> +		}
-> +
-> +		i++;
-> +	}
-> +
-> +	ret = tm16xx_display_init(display);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to initialize display\n");
-> +		goto unregister_leds;
-> +	}
-
-> +	ret = linedisp_attach(&display->linedisp, display->main_led.dev,
-> +			      display->num_digits, &tm16xx_linedisp_ops);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to initialize line-display\n");
-> +		goto unregister_leds;
-> +	}
-
-If we haven't yet devm for this, it can be
-1) introduced, OR
-2) wrapped to become a such (see devm_add_action_or_reset() usage).
-
-> +	return 0;
-> +
-> +unregister_leds:
-> +	while (i--)
-> +		led_classdev_unregister(&display->leds[i].cdev);
-> +
-> +	led_classdev_unregister(main);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_NS(tm16xx_probe, "TM16XX");
-
-Needs to be namespaced _GPL variant. Same for all exports.
-
-> +/**
-> + * tm16xx_remove() - Remove display, unregister LEDs, blank output
-> + * @display: pointer to tm16xx_display
-> + */
-
-Unneeded kernel-doc.
-
-> +void tm16xx_remove(struct tm16xx_display *display)
-> +{
-> +	unsigned int nbits = tm16xx_led_nbits(display);
-> +	struct tm16xx_led *led;
-> +
-> +	linedisp_detach(display->main_led.dev);
-
-> +	/*
-> +	 * Unregister LEDs first to immediately stop trigger activity.
-> +	 * This prevents LED triggers from attempting to access hardware
-> +	 * after it's been disconnected or driver unloaded.
-> +	 */
-
-After switching to devm_*() this comment won't be needed (besides that it will
-come orphaned).
-
-> +	for (int i = 0; i < display->num_leds; i++) {
-> +		led = &display->leds[i];
-> +		led_classdev_unregister(&led->cdev);
-> +	}
-> +	led_classdev_unregister(&display->main_led);
-> +
-> +	/* Clear display state */
-> +	bitmap_zero(display->state, nbits);
-> +	schedule_work(&display->flush_display);
-> +	flush_work(&display->flush_display);
-> +
-> +	/* Turn off display */
-> +	display->main_led.brightness = LED_OFF;
-> +	schedule_work(&display->flush_init);
-> +	flush_work(&display->flush_init);
-> +}
-> +EXPORT_SYMBOL_NS(tm16xx_remove, "TM16XX");
-
-_GPL
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9828.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d835ab91-db2f-40e5-e608-08de1861bc4d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2025 09:41:58.2692
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Rdod86n8jsHifZedlB6SXlQ9CXh13PHtBEhcSuf4a7BGmWh//ttGriYLvLVuZUj8X7gLTrfUclH6GTY3ZgwMng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6105
+
+W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
+Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3Yg
+PGJwQGFsaWVuOC5kZT4NCj4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVyIDI5LCAyMDI1IDY6Mzkg
+UE0NCj4gVG86IERhdHRhLCBTaHViaHJhanlvdGkgPHNodWJocmFqeW90aS5kYXR0YUBhbWQuY29t
+Pg0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZWRhY0B2Z2VyLmtl
+cm5lbC5vcmc7IGdpdCAoQU1ELVhpbGlueCkNCj4gPGdpdEBhbWQuY29tPjsgc2h1YmhyYWp5b3Rp
+LmRhdHRhQGdtYWlsLmNvbTsgVG9ueSBMdWNrDQo+IDx0b255Lmx1Y2tAaW50ZWwuY29tPjsgSmFt
+ZXMgTW9yc2UgPGphbWVzLm1vcnNlQGFybS5jb20+OyBNYXVybw0KPiBDYXJ2YWxobyBDaGVoYWIg
+PG1jaGVoYWJAa2VybmVsLm9yZz47IFJvYmVydCBSaWNodGVyIDxycmljQGtlcm5lbC5vcmc+DQo+
+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIEVEQUMvdmVyc2FsbmV0OiBIYW5kbGUgc3BsaXQgbWVzc2Fn
+ZXMgZm9yIG5vbi1zdGFuZGFyZA0KPiBlcnJvcnMNCj4NCj4gQ2F1dGlvbjogVGhpcyBtZXNzYWdl
+IG9yaWdpbmF0ZWQgZnJvbSBhbiBFeHRlcm5hbCBTb3VyY2UuIFVzZSBwcm9wZXIgY2F1dGlvbg0K
+PiB3aGVuIG9wZW5pbmcgYXR0YWNobWVudHMsIGNsaWNraW5nIGxpbmtzLCBvciByZXNwb25kaW5n
+Lg0KPg0KPg0KPiBPbiBUaHUsIE9jdCAyMywgMjAyNSBhdCAwNTowMTowOFBNICswNTMwLCBTaHVi
+aHJhanlvdGkgRGF0dGEgd3JvdGU6DQo+ID4gVGhlIGN1cnJlbnQgY29kZSBhc3N1bWVzIHRoYXQg
+b25seSBERFIgZXJyb3JzIGhhdmUgc3BsaXQgbWVzc2FnZXMuDQo+ID4gRW5zdXJlcyBwcm9wZXIg
+bG9nZ2luZyBvZiBub24tc3RhbmRhcmQgZXZlbnQgZXJyb3JzIHRoYXQgbWF5IGJlIHNwbGl0DQo+
+ID4gYWNyb3NzIG11bHRpcGxlIG1lc3NhZ2VzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogU2h1
+YmhyYWp5b3RpIERhdHRhIDxzaHViaHJhanlvdGkuZGF0dGFAYW1kLmNvbT4NCj4gPiAtLS0NCj4g
+Pg0KPiA+ICBkcml2ZXJzL2VkYWMvdmVyc2FsbmV0X2VkYWMuYyB8IDEzICsrKysrKystLS0tLS0N
+Cj4gPiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4g
+Pg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2VkYWMvdmVyc2FsbmV0X2VkYWMuYw0KPiA+IGIv
+ZHJpdmVycy9lZGFjL3ZlcnNhbG5ldF9lZGFjLmMgaW5kZXggZmM3ZTRjNDNiMzg3Li5hMDU1ZjU0
+YTM4OWINCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2VkYWMvdmVyc2FsbmV0X2VkYWMu
+Yw0KPiA+ICsrKyBiL2RyaXZlcnMvZWRhYy92ZXJzYWxuZXRfZWRhYy5jDQo+ID4gQEAgLTYwNSw2
+ICs2MDUsMTIgQEAgc3RhdGljIGludCBycG1zZ19jYihzdHJ1Y3QgcnBtc2dfZGV2aWNlICpycGRl
+diwNCj4gdm9pZCAqZGF0YSwNCj4gPiAgICAgICBsZW5ndGggPSByZXN1bHRbTVNHX0VSUl9MRU5H
+VEhdOw0KPiA+ICAgICAgIG9mZnNldCA9IHJlc3VsdFtNU0dfRVJSX09GRlNFVF07DQo+ID4NCj4g
+PiArICAgICBmb3IgKGkgPSAwIDsgaSA8IGxlbmd0aDsgaSsrKSB7DQo+ID4gKyAgICAgICAgICAg
+ICBrID0gb2Zmc2V0ICsgaTsNCj4gPiArICAgICAgICAgICAgIGogPSBFUlJPUl9EQVRBICsgaTsN
+Cj4gPiArICAgICAgICAgICAgIG1jX3ByaXYtPnJlZ3Nba10gPSByZXN1bHRbal07DQo+ID4gKyAg
+ICAgfQ0KPiA+ICsNCj4gPiAgICAgICBpZiAocmVzdWx0W1RPVEFMX0VSUl9MRU5HVEhdID4gbGVu
+Z3RoKSB7DQo+ID4gICAgICAgICAgICAgICBpZiAoIW1jX3ByaXYtPnBhcnRfbGVuKQ0KPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICBtY19wcml2LT5wYXJ0X2xlbiA9IGxlbmd0aDsgQEAgLTYxNSwx
+MSArNjIxLDYgQEANCj4gPiBzdGF0aWMgaW50IHJwbXNnX2NiKHN0cnVjdCBycG1zZ19kZXZpY2Ug
+KnJwZGV2LCB2b2lkICpkYXRhLA0KPiA+ICAgICAgICAgICAgICAgICogbWVzc2FnZXMgdGhlIG9m
+ZnNldCBpbmRpY2F0ZXMgdGhlIG9mZnNldCBmcm9tIHdoaWNoIHRoZSBkYXRhIGlzIHRvDQo+ID4g
+ICAgICAgICAgICAgICAgKiBiZSB0YWtlbg0KPiA+ICAgICAgICAgICAgICAgICovDQo+DQo+IEkn
+bSBndWVzc2luZyB5b3Ugd2FudCB0byBtb3ZlIHRoYXQgY29tbWVudCB0b28/DQo+DQo+IElmIHNv
+LCBJIGNhbiBtb3ZlIGl0IC0geW91IGRvbid0IGhhdmUgdG8gcmVzZW5kLg0KDQpUaGFua3MgZm9y
+IHRoZSBjYXRjaCAuIEkgYWdyZWUuDQoNCj4NCj4gPiAtICAgICAgICAgICAgIGZvciAoaSA9IDAg
+OyBpIDwgbGVuZ3RoOyBpKyspIHsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgayA9IG9mZnNl
+dCArIGk7DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgIGogPSBFUlJPUl9EQVRBICsgaTsNCj4g
+PiAtICAgICAgICAgICAgICAgICAgICAgbWNfcHJpdi0+cmVnc1trXSA9IHJlc3VsdFtqXTsNCj4g
+PiAtICAgICAgICAgICAgIH1hDQo+DQo+IC0tDQo+IFJlZ2FyZHMvR3J1c3MsDQo+ICAgICBCb3Jp
+cy4NCj4NCj4gaHR0cHM6Ly9wZW9wbGUua2VybmVsLm9yZy90Z2x4L25vdGVzLWFib3V0LW5ldGlx
+dWV0dGUNCg==
 
