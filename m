@@ -1,248 +1,164 @@
-Return-Path: <linux-kernel+bounces-880162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EDD8C25032
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:32:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34F6C25053
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1BA2F35130D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA621463B50
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E223491D1;
-	Fri, 31 Oct 2025 12:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB76347BA7;
+	Fri, 31 Oct 2025 12:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="abt4L+DJ"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="fpIJ5k6j"
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7EC348462
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D357346FC3
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913899; cv=none; b=MLzbFgVYDAvW7MiDN2U/7OEiD4Rst0ghY4sKDKZJfKLiOtzD/LkSeH8FbsQ1nS9kv96TfxCBoFB/tiRzB/j/inXorNKsHdaouRt7N7r7p4tzYKvdZ8SawjW1RU1sYIGfCFa4FnNwBkrZYAZs0l42LZb7ZI2ykvalDXwTDRq2MdY=
+	t=1761913928; cv=none; b=SmySBIOflhaZxKdxzaOM+p5R34XNe57NvKHQoBEWrT0bdZA9+nJ+oTgKJifeXQ2f8P9AacjTlYq4rdKfVI9qf6z9IKydeyzVJBVxqyAuliuBCBLQLTNkY94FSZ1uRwuz/NRE2jHl+MLJ8lhbEw3jEwb6Ddb/B61NGi0nJXGGjDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913899; c=relaxed/simple;
-	bh=WfbbP1hhX+kiPAYHs46B8G4TL3eC7al6qprIiJuS/+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIe/zkRCQ2O71G66HMNfobtnylLgqygnEnnzYosxhn3GF6g1s0WPgaS92oKc9ptEMV2LmTyS17aS7fIwh70+owvVwGLCHZjQwSDL8vljzoI65ouYZ1r6qcX5kTErUyJN/wcVcdAaOz+fZQdL0iWBE3yAOeMCkt9G/tW2T7V5QkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=abt4L+DJ; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so1452993f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:31:36 -0700 (PDT)
+	s=arc-20240116; t=1761913928; c=relaxed/simple;
+	bh=EyUdF6niWEd87pLWTbZVjn7rdZe1vDwhwIQZCMaj54A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L5vz7z6vQYvvy+hPdV0sIjdrHl1Jn1kZUp12jQ1Jtasdzl3ClEbyNbSs5k4fCmrShf3UeILJ3zdcJszMfHekU3Wdu/4Rpd/Mqu5ob+U9OPR9pYDEghTUujnGYyr3lrkUFAgVI0vfq3APCPWBcyllCr1XDNI6G3VMnX6JHzMFGFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=fpIJ5k6j; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-44f96b5401cso13469b6e.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1761913894; x=1762518694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=08fssheEH26ewL9xgSjQ1sFTztWWkCBjLlcECWJQBfM=;
-        b=abt4L+DJjpFOHA+R2FuxQOisG22QXn7plnmf+ggNdTlMcuwqgrEFnqkgG/XpqEK8+x
-         Hy/H/8dpA7DyJLu4giUAFBvf2ePxbaj2q7x6svUxtuI0wJB7JhIpfGJ1xbkAAOvFRw9R
-         P33g9hCCH6mM0Q9xLpGcQBICzOyNbDiWsZjXwhyiNty5A1ok3mfG0Xt2guhm9qdkHovM
-         fzhBP066hh9suQs0onopBG+8qn/ubYW1UvM4hDE3j8ukDpW7XEp8IXsDtAKLBDIAZxSm
-         RrOpnb0yEsm+oHK6ZIN2+JI9BvyLCpPMIVzNq7A5GoUcn7e4A7ZkP42Yd2Wdy5K1QZjh
-         JYAA==
+        d=arista.com; s=google; t=1761913924; x=1762518724; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OlQXBrL6GJchLN0rsfCNDqviLGR3waoluveYLsj3WyU=;
+        b=fpIJ5k6j+UjSLXI30bMS6EXrrW/4JKH/FEdXHbp2Xj35sEgQH6GH+Uj4P1aO/diTcx
+         UA6KpJ06eI9WG39ygQX9prqjGuYZ8PSUS1A+XZDWFRlbfCiKJcumpfNXmrBm3+htAdPm
+         H+wJ6ddgMQFgupf5uJcFBA7h1VxM4Fmd5TrPqnzbe4tRHovsH31mSS6s6hXKbcmg0WMo
+         a21P8tQHOvmmnA66gXr2ta7wm3iTTZrbwPQD66K1CO3SXBF3oGi/I7oTLL3slsKcGORE
+         AR7tJ30tP41Klm73MjOfo054a3fb9e2RASqpv63EmkX4BSTc8+1e0gJ8Btj/HOrv9PWs
+         mXng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761913895; x=1762518695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=08fssheEH26ewL9xgSjQ1sFTztWWkCBjLlcECWJQBfM=;
-        b=TRpq5FahvgNL36FgZqerkUH/uKotBnM9a3iYZvq7vDqGyRl4+OUUcgWGS/tlEpUPMo
-         LnY5LCTYsKgSR/Q4h/xOPtYgQeJ5+5MKbskId6C3b0RLEdYwRdHad3dneX4x8rGYjLMY
-         3HAJ0yWxBYqqyjgiHFIN60xBkL6OwSro+uzVaKDIMy5Tpsnl43MtTq1Xs8ei/1x8T7/u
-         WW8a21tO1l3GDEGbbcBzh97A86I/YQqIu6X5tY6EJSQQ7WyaX8v3nBgMpRq7jea2HZB+
-         gUYBpDIR/MSwb7fM5OF69ZQyXbf2jjgT79nR/5sexrFrFPDes91Xq6Lby7b1c+cbYeiP
-         B6Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5gF71LHxNSfuBFO1BmvwhxbYo5z+Hz/+/DLBqMEjXskD1Opd1IRNsouXMeWSRzBFRpMmM/fmFGXeGCa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP43CZGyKmFhqIz5aPrGnIWxo/SuNRfZ7Cf8dYGAkY2dA2MKCd
-	b8R1/omXJEaSYDzCqlt8Pj23rxPgNbu7Fpt4gPFtOutoRK6lj4JGxtEOQGi8sWftPcU=
-X-Gm-Gg: ASbGnctsVzQx6T7LbEB+hVYlsAt13crZ5LWfOQK45ALUmH5PP0VD80/cWIr92ppdet9
-	8KIvTIfsDHE3iJxITqgXAqlBm1vD6/7cRjE4r9qrp1gSGWhFW+auCx/XuZcuo69i7d9b+Oek02g
-	T9rwyKujEE+ROd+0Ibvzn09i+dRaH0HGwztlxBatmJ1ZDus5iGrlonOZPEeKFX4VLg9ZmusU/JQ
-	OQZb5894QckOvw7ZUMwETh35zkWLgd7CbpAzGUGA7pyLAazAFV/0vBeNkjWbIZO0oTlncAH0vs3
-	K12gmLTlXHl+WBbH+wF8p7FSvDAvDG/HHcb8dXniBPcGdVmc2wSZRacVX7YGnYcvFKZbRAWhCTs
-	SyBcIFmFRsFP2yn8mG+WdvMEeD7xPVQDlgomSUehs1CS1yaQVXWdbmt/ohfa+5ViudYi/Eb53oI
-	Tdb/5JtjT/je0SR9JhZ/BgIXSbUik=
-X-Google-Smtp-Source: AGHT+IFN1SIbYGYuHJIssflh634/zxs/aR+a86BEewospW9lCTe+InyrPCsK+oVBo1QTVBWURISFmw==
-X-Received: by 2002:a05:6000:2288:b0:427:5cf:a284 with SMTP id ffacd0b85a97d-429bd6c2d51mr2705783f8f.60.1761913894379;
-        Fri, 31 Oct 2025 05:31:34 -0700 (PDT)
-Received: from [192.168.0.101] ([90.240.106.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c1406a45sm3333829f8f.47.2025.10.31.05.31.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 05:31:33 -0700 (PDT)
-Message-ID: <08bc7f37-d2d7-4ad0-9575-f8a2c36b1c3f@ursulin.net>
-Date: Fri, 31 Oct 2025 12:31:33 +0000
+        d=1e100.net; s=20230601; t=1761913924; x=1762518724;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OlQXBrL6GJchLN0rsfCNDqviLGR3waoluveYLsj3WyU=;
+        b=oZJqXreA2v+kL/RX7H1W5s04Au4hzD7MZj1WnOMtUag7GOxgUoU6BP7ecjm1iN2YLH
+         B3CKJvu09P0yjfpj11XsLnD3T39AKbYZT/yi6/U+isni9MKjxayUJaesNX4H/05I0pOt
+         TNei2ieo9y192lNgOmoAJAWjcT8HbAoJTun3y9wEMBK0j2eqoc8q6plWnWXAgsw51U9y
+         p6ni7mwUJceXyWjgysJUBo866BrXA5ZuuP972H7AUiO5NofpG3umQH1/h5CDn6ioJJhm
+         KJ87gar0Vxx7Wn53M9AjzR6JCNbKPUTzJFjRlGEa7uBkovvjAhvSanPlkuuY6E1GDhko
+         gCOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYuyWNiMi2cJ9NZnh73rIz926kNd9nngujIb5WnME2KEcniu/34YOjeoYakTV5UCfk0JpSxUm8E9NHOOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaqGiJYknjI0ScB5FqjC8ZgfkQ6ibJLRk6AuDzAqc0mntP5nKe
+	qN52Sv/JtKBxc0AQr1vcn0YBsf5SaLV7eHd9Bl9fjDxPF0ghMQ8LnUtnGGs2a6k998OtmvJP3eJ
+	l5iBWVvXFqunEy/rmyEEHxaypYeT/Jc8pOztE5/g2
+X-Gm-Gg: ASbGncu7HOtesL0DS59O58T6UxctLwms3G/EIF3zCz1fgWXPz+kC3x/FgTpUzKLhd3t
+	XGN7eLAg75jPlaUf2CSuweVIwJ+O6mkmJf7WwMrVJDUBV9FuDsXbLWD+iHzDqgCO+KYRkWke2hh
+	USdtfrx35R0V/CsO1vGD8hH6qh5eFQ/QTru+RjvA+h4KpuDyaKp7hahpH0ycS8s3NvYPpD08qh1
+	E7W0HVU1Ney7w9tp+H8/VRtkhkN5pq8heh3LWk4dsfonOF43bKDvLH6Suh0Vz8sYatPx9PN8d9n
+	osF5Cel/RJPpqe6s
+X-Google-Smtp-Source: AGHT+IGYh3c4p7Lro2vb/Mmkwo7ehq0fLSmv/FWy9Te4d7O0xi13T47Zh+2e4+y9v1m45TtVgV5OLaRslqisajSlViY=
+X-Received: by 2002:a05:6808:1813:b0:443:9fe6:3bbd with SMTP id
+ 5614622812f47-44f96061dd0mr676165b6e.8.1761913923931; Fri, 31 Oct 2025
+ 05:32:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/sched: Fix deadlock in
- drm_sched_entity_kill_jobs_cb
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Philipp Stanner <phasta@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20251031090704.1111-1-pierre-eric.pelloux-prayer@amd.com>
- <411190d4-92d7-4e95-acac-b39afa438c0f@ursulin.net>
- <50f3743f-8b83-42de-87c8-1c7d52df3ab0@amd.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <50f3743f-8b83-42de-87c8-1c7d52df3ab0@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251031084101.701159-1-adriana@arista.com> <20251031101009.704759-1-adriana@arista.com>
+ <20251031101009.704759-2-adriana@arista.com> <CAL_JsqJn+vG=FJEnBT2rMQ9Jf+JE2u_j-JpEb=mnWPuTsuz_4w@mail.gmail.com>
+ <CAL_Jsq+421HUCRQB5ua9p2UBPi+sq8L0aSYpxVGgJpbpWu2MUQ@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+421HUCRQB5ua9p2UBPi+sq8L0aSYpxVGgJpbpWu2MUQ@mail.gmail.com>
+From: Adriana Nicolae <adriana@arista.com>
+Date: Fri, 31 Oct 2025 14:31:52 +0200
+X-Gm-Features: AWmQ_bkNOnWH29heQ4utX5bqmSvBneb1mSwkOXqgWEYTPI_SWMnLMKu6rap9SuQ
+Message-ID: <CAERbo5x3_+RVRsxY-BZseBPzR0Kkvn7SaSSdoC6fw8a5s5RtUA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: firmware: Add binding for SMBIOS
+ /chosen properties
+To: Rob Herring <robh@kernel.org>
+Cc: ilias.apalodimas@linaro.org, ardb@kernel.org, trini@konsulko.com, 
+	krzk@kernel.org, jdelvare@suse.com, frowand.list@gmail.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, vasilykh@arista.com, 
+	arm.ebbr-discuss@arm.com, boot-architecture@lists.linaro.org, 
+	linux-efi@vger.kernel.org, uefi-discuss@lists.uefi.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 31/10/2025 12:25, Christian König wrote:
-> 
-> 
-> On 10/31/25 12:50, Tvrtko Ursulin wrote:
->>
->> On 31/10/2025 09:07, Pierre-Eric Pelloux-Prayer wrote:
->>> The Mesa issue referenced below pointed out a possible deadlock:
->>>
->>> [ 1231.611031]  Possible interrupt unsafe locking scenario:
->>>
->>> [ 1231.611033]        CPU0                    CPU1
->>> [ 1231.611034]        ----                    ----
->>> [ 1231.611035]   lock(&xa->xa_lock#17);
->>> [ 1231.611038]                                local_irq_disable();
->>> [ 1231.611039]                                lock(&fence->lock);
->>> [ 1231.611041]                                lock(&xa->xa_lock#17);
->>> [ 1231.611044]   <Interrupt>
->>> [ 1231.611045]     lock(&fence->lock);
->>> [ 1231.611047]
->>>                   *** DEADLOCK ***
->>>
->>> In this example, CPU0 would be any function accessing job->dependencies
->>> through the xa_* functions that doesn't disable interrupts (eg:
->>> drm_sched_job_add_dependency, drm_sched_entity_kill_jobs_cb).
->>>
->>> CPU1 is executing drm_sched_entity_kill_jobs_cb as a fence signalling
->>> callback so in an interrupt context. It will deadlock when trying to
->>> grab the xa_lock which is already held by CPU0.
->>>
->>> Replacing all xa_* usage by their xa_*_irq counterparts would fix
->>> this issue, but Christian pointed out another issue: dma_fence_signal
->>> takes fence.lock and so does dma_fence_add_callback.
->>>
->>>     dma_fence_signal() // locks f1.lock
->>>     -> drm_sched_entity_kill_jobs_cb()
->>>     -> foreach dependencies
->>>        -> dma_fence_add_callback() // locks f2.lock
->>>
->>> This will deadlock if f1 and f2 share the same spinlock.
->>
->> Is it possible to hit this case?
->>
->> Same lock means same execution timeline
-> 
-> Nope, exactly that is incorrect. It's completely up to the implementation what they use this lock for.
-
-Yes, sorry, I got confused for a moment. The lock can be per hw 
-scheduler while execution timeline is per entity.
-
-Regards,
-
-Tvrtko
-
-> 
->> , which should mean dependency should have been squashed in drm_sched_job_add_dependency(), no?
-> 
-> This makes it less likely, but not impossible to trigger.
-> 
-> Regards,
-> Christian.
-> 
->>
->> Or would sharing the lock but not sharing the entity->fence_context be considered legal? It would be surprising at least.
->>
->> Also, would anyone have time to add a kunit test? ;)
->>
->> Regards,
->>
->> Tvrtko
->>
->>> To fix both issues, the code iterating on dependencies and re-arming them
->>> is moved out to drm_sched_entity_kill_jobs_work.
->>>
->>> Link: https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908
->>> Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
->>> Suggested-by: Christian König <christian.koenig@amd.com>
->>> Reviewed-by: Christian König <christian.koenig@amd.com>
->>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
->>> ---
->>>    drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++++-----------
->>>    1 file changed, 19 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
->>> index c8e949f4a568..fe174a4857be 100644
->>> --- a/drivers/gpu/drm/scheduler/sched_entity.c
->>> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
->>> @@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_entity *entity)
->>>    }
->>>    EXPORT_SYMBOL(drm_sched_entity_error);
->>>    +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
->>> +                      struct dma_fence_cb *cb);
->>> +
->>>    static void drm_sched_entity_kill_jobs_work(struct work_struct *wrk)
->>>    {
->>>        struct drm_sched_job *job = container_of(wrk, typeof(*job), work);
->>> -
->>> -    drm_sched_fence_scheduled(job->s_fence, NULL);
->>> -    drm_sched_fence_finished(job->s_fence, -ESRCH);
->>> -    WARN_ON(job->s_fence->parent);
->>> -    job->sched->ops->free_job(job);
->>> -}
->>> -
->>> -/* Signal the scheduler finished fence when the entity in question is killed. */
->>> -static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
->>> -                      struct dma_fence_cb *cb)
->>> -{
->>> -    struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
->>> -                         finish_cb);
->>> +    struct dma_fence *f;
->>>        unsigned long index;
->>>    -    dma_fence_put(f);
->>> -
->>>        /* Wait for all dependencies to avoid data corruptions */
->>>        xa_for_each(&job->dependencies, index, f) {
->>>            struct drm_sched_fence *s_fence = to_drm_sched_fence(f);
->>> @@ -220,6 +209,21 @@ static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
->>>            dma_fence_put(f);
->>>        }
->>>    +    drm_sched_fence_scheduled(job->s_fence, NULL);
->>> +    drm_sched_fence_finished(job->s_fence, -ESRCH);
->>> +    WARN_ON(job->s_fence->parent);
->>> +    job->sched->ops->free_job(job);
->>> +}
->>> +
->>> +/* Signal the scheduler finished fence when the entity in question is killed. */
->>> +static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
->>> +                      struct dma_fence_cb *cb)
->>> +{
->>> +    struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
->>> +                         finish_cb);
->>> +
->>> +    dma_fence_put(f);
->>> +
->>>        INIT_WORK(&job->work, drm_sched_entity_kill_jobs_work);
->>>        schedule_work(&job->work);
->>>    }
->>
-> 
-
+On Fri, Oct 31, 2025 at 1:43=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Fri, Oct 31, 2025 at 6:15=E2=80=AFAM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Fri, Oct 31, 2025 at 5:10=E2=80=AFAM adriana <adriana@arista.com> wr=
+ote:
+> > >
+> > > Signed-off-by: adriana <adriana@arista.com>
+> > > ---
+> > >  .../firmware/linux,smbios3-entrypoint.yaml    | 25 +++++++++++++++++=
+++
+> > >  1 file changed, 25 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/firmware/linux,=
+smbios3-entrypoint.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/firmware/linux,smbios3=
+-entrypoint.yaml b/Documentation/devicetree/bindings/firmware/linux,smbios3=
+-entrypoint.yaml
+> > > new file mode 100644
+> > > index 000000000000..4d1521c685ff
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/firmware/linux,smbios3-entryp=
+oint.yaml
+> > > @@ -0,0 +1,25 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +# Copyright 2025 Arista Networks
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/firmware/linux,smbios3-entrypoint=
+.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Memory location for SMBIOS entry point
+> > > +
+> > > +description: |
+> > > +  This property is used in the /chosen node to pass the physical add=
+ress
+> > > +  of SMBIOS (System Management BIOS) or DMI (Desktop Management Inte=
+rface)
+> > > +  tables from firmware to the kernel. This is typically used on non-=
+EFI.
+> > > +
+> > > +maintainers:
+> > > +  - Adriana Nicolae <adriana@arista.com>
+> > > +  - Rob Herring <robh+dt@kernel.org>
+> > > +
+> > > +properties:
+> > > +  linux,smbios3-entrypoint:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint64
+> > > +    description:
+> > > +      The 64-bit physical address of the SMBIOSv3 entry point struct=
+ure.
+> >
+> > This needs to go in the chosen binding instead:
+> >
+> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/=
+chosen.yaml
+>
+> Also, drop the 'linux,' prefix as SMBIOS is not a linux invention.
+Thanks! I've renamed it to "smbios3-entrypoint" and opened a separate
+PR for the binding:
+https://github.com/devicetree-org/dt-schema/pull/177
+>
+> Rob
 
