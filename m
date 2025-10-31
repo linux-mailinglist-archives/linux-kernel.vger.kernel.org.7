@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-880189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB161C2514F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:47:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807ABC25149
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6965A423003
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:46:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B48934D987
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3230734C81B;
-	Fri, 31 Oct 2025 12:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C9F1EA7DD;
+	Fri, 31 Oct 2025 12:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKTc/vLY"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPRsw+hx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF12B19ABC6
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F7E3F9FB;
+	Fri, 31 Oct 2025 12:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914739; cv=none; b=V3/yB7xCli7J2RzPLbtLJ9Y6civ89K2c1gl9cHrVYfG6V61GoOaOHPoWbcQY8ZQ8MOd+fOxus0QLre6aTH3yL8aBD1SBIFr53PqBhEL6dwfMoDwuMdCKqkj78dl61GhbWtBechexONg5cdZ9qTYjNmH352ItviZt8m1ojdsKTas=
+	t=1761914796; cv=none; b=p+SKN3KQVwmyc4RVAef2x0O5G29Ua0sCpmit0sTTDbB6RcpRZ/unbeMbgNV4EZlzwP54wYfaBkW/optpKQxYVJh0tWYShR/0KkzylPACR3+aIv57elH3vZn+R7+6dtvcqC7ERugLbzBWDeWkWEErTN/QfApR4g0/dnkHBLLUhU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914739; c=relaxed/simple;
-	bh=YEJFofn4dJHm/7g/MnUrRU8zirCPi/m2VRyPXl529WI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EGFE3UbIFk77acQ+VbU0cmhIc3qahJQ3f9vv3XANAFrNeIf33RnRD4MrNV3CuiDKq2QtWMumDx5kZVoCbt8+nMRyQHvC13Cmd8PLwnJYtqDbTaYS0ENg9NbP/SZRec2atETSYjrmz3Wbutnaa6jeiG8E8IL0NiIepw8HSbpfzQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKTc/vLY; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ece1102998so1570841f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761914732; x=1762519532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=htLfTgaGj6SXyo+gY+C4RM9cQYSpr8e9dgfcpC46jhA=;
-        b=SKTc/vLYhamnfomqqqDSBQM3XSkYb8cQPUdYv/tzGvjNLc84NDF+N3MfONpqDMbvFN
-         ZaYOHDTr7erTHV8vTRzrxxahAwEbV8Z45Dc8d1orsJrA3KbsONJj6K9zLpKoE8rkr24s
-         nPTJWGsDAL8heGdasVxisIydjsTISXLLPiFitnXlek0iYHMRwsmAKQIEzKaldVNLKNJ2
-         VRW1L2IkndqEGDjDjodM3xgnjaGIJtMGjYwALif4wE5X1NIY+5iMrSWeLrQasL8zmjGG
-         bgHMcAr9Ef89TlkeadNGVu7Q050czjfjQEUPEET4tk5+WlEUrOpsHdAvXdJ0sdDKMQVY
-         qDMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761914732; x=1762519532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=htLfTgaGj6SXyo+gY+C4RM9cQYSpr8e9dgfcpC46jhA=;
-        b=CtgeB2K+Cx/OnufGHZYcgP2OilMS0b2f6JYdJMNjEatwCddENpvwLsIT5yDmRJ2v01
-         1F5R4EXOCXU2fjzeiIy/NK4yYvTkLJnTDPG0ndl7NxIgYH3AkCGC4NLHT+GIaa5Mc87n
-         HctiD+toT0s4QCqtCQ7AAxku73s6ceTESrSsGbgs7y187ch60cTF7m6NTzRGBI7tTQEz
-         TmFz+mOTWD0UOYU6Bc+yxuCZ4iGIJmiishRDHGN/vLBcXfonFHEU+ZDxuUYOvQt1c5Vs
-         YGns5uLpil3SqIYcPFdetfq/WyfWKJ5knI6tt5wYSrATliOHvi9gkr2maoQHyCbAeyAv
-         SFPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaqMfOpUBfrMaYFkJgywdyTq1WDZkKpS9HYAcTqyESX5/60oaXawKwe+bsIrzTMgH2Gj4pLzevJdvzPGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLxRgK4XxwpW+gJPKvgzTw2k0ZCZqTnznaFskBOdjI3pxidDi3
-	MWXfaNX+IG10TrGT6r0l0qys/fz5dRWGlShew5TIm857y5PY9vOWJOdi
-X-Gm-Gg: ASbGnct4i0B2DpyvQjzWP4HzTnP7rJksc092ZkyDJ0Q+/vJ5qhCtH0XVuiTYe2dibVB
-	HUPNgxsvvg6kHUhMRF7dKQTow/OPEgPh4zE6gQ7iC1TwudPZWUe3q+LeSSi00wZvDNr62DuaKyw
-	YA2cSwCisT6eUyVKv58Fn2TTxuc+819MZrh/jy8WC3yPIwHAA+newpz7TNsIqQS5V7V+xx8ZlUs
-	FwTo7jNl4ynByUXlI0NUUDaB2EZyIVdtJjPrmjZZ2BTuE7LprPMRFQDmgsopzUlKQlSvnKgpJmJ
-	ggYGoQvMXq7E7fSlZXOejc60AXLH1xbXTJjCwNNf00WU+pvn2l+AuFabkDeaRM7Pe+YDNFvI/qO
-	CAqaUrIjJPiIWmK4oOVI1hYYq9zdn5Z5qny5hFAmeBPB/RGuNL72FRseFnHN8FXIqNkQPgvcFwV
-	qLsKtuuAby4EzsWCzt4BxpqEx28DTBXvIHl/XI4AOK/MCq8ntVttB0
-X-Google-Smtp-Source: AGHT+IHSbBaoyJFzeN/27Rgp+5ix/nizQNjZB0dnWxKV1godF2Cu1it5Urb0qAv1OThr89VNsq/Rxg==
-X-Received: by 2002:a05:6000:40ca:b0:429:b9bc:e81a with SMTP id ffacd0b85a97d-429bd5ef85bmr2376964f8f.0.1761914731839;
-        Fri, 31 Oct 2025 05:45:31 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c1125ad0sm3503532f8f.13.2025.10.31.05.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 05:45:31 -0700 (PDT)
-Date: Fri, 31 Oct 2025 12:45:30 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jyoti Bhayana
- <jbhayana@google.com>, Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2()
- with ilog2()
-Message-ID: <20251031124530.3db7805b@pumpkin>
-In-Reply-To: <aQSHVsWGXzigTEMe@smile.fi.intel.com>
-References: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
-	<20251031094336.6f352b4f@pumpkin>
-	<aQSHVsWGXzigTEMe@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1761914796; c=relaxed/simple;
+	bh=VvHbEhqP4vrrRtNq8/jm4qCTNHw3PAK7ds5gnC1tL0k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=XxaLjfdl5eJEKZ5yd4EuTshdimkPWB98mnwLPUOZV+2EOevx9whRk+FORArOEDmCXbBkBEjNhK7plsKG5xfvLE+HDuLLj+o6JIP3EU9RGXZzDuQ1/HxdOZ337UrZSw3iFsqy8gm48ryVc/7OygDF8otpEbl4KnQfw9samciUFDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPRsw+hx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3362CC4CEE7;
+	Fri, 31 Oct 2025 12:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761914796;
+	bh=VvHbEhqP4vrrRtNq8/jm4qCTNHw3PAK7ds5gnC1tL0k=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=IPRsw+hxmv9zPYcK1RRTEsNyW4ERl/lvUKF3SM0t/rpZuqY3YzdxFwBu9tBlA38D3
+	 Nmf1+/hxjVCl7CNwNxqLztrbMQj0Yfo0Z+ePE6ADYI3x6FD+7xWhLwVRpLQ75dJFBw
+	 Qk6ma3wPPC/eGtialLau5OjzQcZoIkcPDlZH9Pr6ffCeOYOang5zd1gCq2nBJ0Tt1F
+	 YWVfFl87VxC+xTxpOR/Kcdg/Yhpc5qu0IP8EitOffQxdIrq7kri5jo0+NkXxgp8rOB
+	 x0GKZMsWIoasBIWz472JLYCCPvNktUfCTxF/HL2G14YmM8ldhW2YIMAuPDckAe6o5k
+	 0PcTRkozwLKeQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 31 Oct 2025 13:46:28 +0100
+Message-Id: <DDWINZJUGVQ8.POKS7A6ZSRFK@kernel.org>
+Subject: Re: [PATCH v3 3/5] rust: pci: add a helper to query configuration
+ space size
+Cc: "Bjorn Helgaas" <helgaas@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+ <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+ <targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+ <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+To: "Zhi Wang" <zhiw@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251030154842.450518-4-zhiw@nvidia.com>
+ <20251030165115.GA1636169@bhelgaas>
+ <20251031141611.669c5380.zhiw@nvidia.com>
+In-Reply-To: <20251031141611.669c5380.zhiw@nvidia.com>
 
-On Fri, 31 Oct 2025 11:54:30 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Fri Oct 31, 2025 at 1:16 PM CET, Zhi Wang wrote:
+> On Thu, 30 Oct 2025 11:51:15 -0500
+> Bjorn Helgaas <helgaas@kernel.org> wrote:
+>> Apart from pci-sysfs and vfio, I don't really see any drivers that use
+>> pdev->cfg_size today.
+>
+> It is for the framework so far. If we believe that driver doesn't need
+> this in the near term, I can make it private in the next re-spin.
 
-> On Fri, Oct 31, 2025 at 09:43:36AM +0000, David Laight wrote:
-> > On Fri, 31 Oct 2025 08:45:00 +0100
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote: =20
->=20
-> ...
->=20
-> > >  		tstamp_scale =3D sensor->sensor_info->tstamp_scale +
-> > > -			       const_ilog2(NSEC_PER_SEC) / const_ilog2(10);
-> > > +			       ilog2(NSEC_PER_SEC) / ilog2(10); =20
-> >=20
-> > Is that just a strange way of writing 9 ? =20
->=20
-> Why? It's correct way of writing log=C2=B9=E2=81=B0(NSEC_PER_SEC), the pr=
-oblem here is that
-> "i" people do not think about :-)
+Device::cfg_size() should indeed be private, I don't see a reason for drive=
+rs to
+call this directly.
 
-Even without the "i" the division could easily give 8.999999.
-So you'd be relying on rounding to get the required integral value.
+However, enum ConfigSpaceSize has to be public, such that we can implement =
+a
+method:
 
-> But we have intlog10(), I completely forgot about it.
+	pub fn config_space<'a, const SIZE: usize>(&'a self) -> Result<ConfigSpace=
+<'a, SIZE>>
 
-And it isn't the function the code is looking for.
-(The result is shifted left 24 and it doesn't have an optimisation
-for constants.)
+so the driver can assert whether it requires the normal or extended
+configuration space size with e.g.:
 
->=20
-> > Mathematically log2(x)/log2(10) is log10(x) - which would be 9.
-> > The code does seem to be 'in luck' though.
-> > NSEC_PER_SEC is 10^9 or 0x3b9aca00, so ilog2(NSEC_PER_SEC) is 29.
-> > ilog2(10) is 3, and 29/3 is 9.
-> >=20
-> > Do the same for 10^10 and you get 11. =20
->=20
-> That code looks like working by luck entirely, TBH. I just took the scope=
- of
-> the patch to start dropping const_ilog2() usages.
+	// Fails if the configuration space does not have an extended size.
+	let cfg =3D pdev.config_space::<ConfigSpaceSize::Extended>()?;
 
-Something always crawls out of the woodwork...
+Subsequently, we can do infallible accesses within the corresponding guaran=
+teed
+range.
 
-	David
+Given that there are only two options, normal or extended, we can also drop=
+ the
+const generic and just provide two separate methods:
 
+	pub fn config_space<'a>(&'a self) -> Result<ConfigSpace<'a, ConfigSpaceSiz=
+e::Normal>>
 
+and
+
+	pub fn config_space_extended<'a>(&'a self) -> Result<ConfigSpace<'a, Confi=
+gSpaceSize::Extended>>
+
+Allowing drivers to request a ConfigSpace<'a, 0> with only runtime checks m=
+akes
+no sense, ConfigSpaceSize::Normal is always the minimum.
+
+- Danilo
 
