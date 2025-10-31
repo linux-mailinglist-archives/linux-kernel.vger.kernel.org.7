@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-879881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8B8C24518
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:01:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5698C244E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8DC1889AF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:57:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C9E34F4058
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A780334C26;
-	Fri, 31 Oct 2025 09:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62722335097;
+	Fri, 31 Oct 2025 09:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V3mRccOv"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L9W+SN3I"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E5733373A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169D33375B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904616; cv=none; b=Dk/SEftqSvnXevdkxvyveDEOePT4qefZbYmqVUvr/C2EkX8DT1PA9x9/i4WZz56jqzs2s2gscGm3tfQb6xB600yJ5cdxNSjPHBt3KSDthdZY+8U5GJ1j7mh9XynPOlywdeBmkg/JvMW7kLw5uyMJULgC7CSS+23CwnQVuKv/FfE=
+	t=1761904617; cv=none; b=aaSG4Seuwp+GyUjGqe2fnZ28+CJ3f8LqRobd/8sdydf8I3i24P6fBLmL0KAjMz3C2SlV4hMqiYWXI0E2/eVdglIMUM7bkFlHB9foZvwN6w3p8AttQG+PhX8RInZtN6L2hhC7AQbl86hYD7Ahi5JPY5tkSyrwWen9bD6jLAk4LsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904616; c=relaxed/simple;
-	bh=iLz+raYpmV/FRkHcddplK9Xz7NwdeSLevio/ryv7bAM=;
+	s=arc-20240116; t=1761904617; c=relaxed/simple;
+	bh=YsRvqvzwy42IvsqDkcBl0YyIAOhXzGMpxsJ8NofpaA0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ibdvDa7lMy4SuFKW3iunxAmBZAYSXtfp7lSvT2MaTNWqWrrAK8j/ZSpVmdLBuqqho2T+0gee902uoTNtZeLla9q60cwpVphplKcHdkjNFm+o/8MfxU+W7Ziiw181eZutJjEnX3j9V3gnMF3gMS4MfLJ/is8I+a9VNbEjlyBs4f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V3mRccOv; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version:Content-Type; b=fnoiXVTzwakTK0UZq5fpoZXIrNbv77K1ILw328W+hhbUFqMHVCWcJMehOupuMLNG67Ni+E3/0B797dwdDRtk4V7o7V63yd5BzEaNFRj6GNqimzke1lUv2LEFNQQhLkfsLY0kyJWzc0O3o5R8C5Y31U3Kk1fmrr+uox6UKQSjAQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L9W+SN3I; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-474975af41dso14601665e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:56:54 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-426f1574a14so1341120f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761904613; x=1762509413; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761904614; x=1762509414; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j12YdcbQpfT8Ri5Sjm8HpC33Bil9gxYaV08r43TG4D0=;
-        b=V3mRccOv6aym7YTtt9V/2lNEh9Ff0n/0sZ46AecSX451etzHFGgbJDbBVBy2bPUw63
-         ZpvLKIiRH11FnBwZxnfTkfzbKcxAROTqV3g+gRv8aC76P4FzoxcRAaOdLyjlh/akbwbq
-         8TESX0sh8uN06bg3AY4gq2/qIfIZjki7twl4N3ik+S4SwBft8r4ywBFKvqn0jf9sQovc
-         aIWGylbufp/pxoCjrmvtUwYbduZIsEdnRFcPDwm9Ebk1r0GXMtIRXTuSXc6mxm4UflSW
-         j6tX0dwkQkl5t27NkaqdYBfO7CYTLuD3DRuxLQKx/PiASaFQBbNxyCJqTO7aE6Xr+Vqk
-         Nwcw==
+        bh=wj5wFR8hbemxjJEZ74XNLCfMf4UXzmASpi1RkT2VDLs=;
+        b=L9W+SN3IK4LSuka3+vex1h2xg/fdpPfQEEsTE02E84HyN3F6FMqD0U9pn9c7kZIfUJ
+         n4Epv8Ru4Z7qPM3BdlV1KxrlCoHlq1Ztn7SK+nBd9Bqy5Tq06ToIFQibS6pE8urj2cq8
+         RcgCS+6VKJrG+t+ur0VCIwzAIGesvfZFTA1QVzh0aCXQl2sBOb38n8wWgglvKZRN6Z9h
+         X7TKjUnq5aj0fXa28K7YIapdb0KQ6TLQHUVGLykssWj0XeEhuoKYqukWCE48twwwW480
+         8Ghf7vaa1J+cs4GEvxAV4n7VfetDYHpSjcHgh2lvcGHO2i7fO5SOECYm6552Oot+tEUG
+         Qc6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761904613; x=1762509413;
+        d=1e100.net; s=20230601; t=1761904614; x=1762509414;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j12YdcbQpfT8Ri5Sjm8HpC33Bil9gxYaV08r43TG4D0=;
-        b=cAKE/pVjVUtB+W5ABaOHuDYQXxG31LzsZ3cVHUHU/W8M4/L4w+12eCm8fT+vMyhq3r
-         I/3b0aegAg01E5Aq4ILmZXMws9VDzwEp7qYGkeCCSYOUR2umeHFtX/VwNduzOJ7hKX/U
-         S204jqEEqOe7bMCofMeneYkUUfIL+bkJJSoyhP3IPZrHMG4EdqvtBhvOK2K5FzaeJA1I
-         f24dJMIgwkMumpvhvzzyGhjVKxmEr/Xx776N5th/wXZbA5ax7sAjXbVGKzA719Z1A/7u
-         m5eaIszzol14NRGC1wS8XpzvEiHC+wvRJs4VtTaKgiphd7Fz+zxZZhEPZIV4A5VO++2o
-         YGzQ==
-X-Gm-Message-State: AOJu0YxJLmE+hWOlEsI/dRNhNZzqsSGRiLEeN36vhDWlOR715uggqbhH
-	bEmaOhAUjA5VAp+hOTXqTNWqo2+EwGBG8pgAbB0aRlnEtapAeC7Jm1FvvTalcHaUTGGKBhWR2pY
-	b6HU+
-X-Gm-Gg: ASbGncuSHxqc2d3dfbYSWNSBFWa/F3Rk0zQMOFQZqcj02zqIZW5FSFjKiev3SQQ1f6F
-	W0raJs65Aa1uxkgI/v6dGT49Ueo+dSl3V1xI1RHQ+Ux0l957iAG/aXAFB9GP1oSiGOjOFxIKdg8
-	KmtGctLoKxA//49hOvSdTIj2CGyG5xPuIetNnO7LzI2bgpFZvWAEwaMH6SbFqF2q09RSVDPVPZu
-	mf4Pe3BElpoXfuJCCeIYJr09gjAAv7HJD8scBE4W/6oroPcFS1R+JsTFl0O7I9DqNbM169QZ1Vw
-	xchYWuM97498fOB49RHbHVn5rmxETXmV9+07r0FRCzvO+I7kG35fOq0OmKg17yTYiLhW7EmyeXl
-	FteieYEVytBiGJfgfyayLac7t9z3LbrZCEUL0SZ7Ypel6fkaa2e2CDyTv1/jrCjM7hCHTeX/4D/
-	CBxXoSIuvRbRsxOTFXsUIM9Pj6nAwonve+7VeUsp5beRAmbQ==
-X-Google-Smtp-Source: AGHT+IHIxYUB7ucqmBG4m5QaDjIg9L1VP2kIebkbFH+exLigBCCQXvz5AOOKdVL9nqzemP99+DYyqA==
-X-Received: by 2002:a05:600c:a010:b0:477:28c1:26ce with SMTP id 5b1f17b1804b1-47730794423mr28108185e9.7.1761904612811;
-        Fri, 31 Oct 2025 02:56:52 -0700 (PDT)
+        bh=wj5wFR8hbemxjJEZ74XNLCfMf4UXzmASpi1RkT2VDLs=;
+        b=QMuysyg/Y1x9Vhc1ga5ebp1ex7i3/AQHXGP0Qrj7XY/aRqXZreZ9ZT3DNt/ZVIf+Fa
+         yHTNOoTUato5VyJHGd/TszrgwJLyk1rK0OxhTuV3d3FYQ6MTwnmgJ4zRNT2KzikWXlfK
+         TzQXQ1XsoYvjTOU5d0uOy8o/s9IAPDa6MvyStmOP3XXVUTuSMToa0r01jkf9yQmjqCfJ
+         AkxUrmTfgh9AQkiL3PG0HOq4GPjTG8vRape3R90ptaZClnJHOMnSfhFkpbUtq1DicdVi
+         Y6/yDVtWAaqqEAIPnoaEyC34psXAPaR41fg0AB3wAsffml4uwNDZSONYEiBCh4fxfvgF
+         avgg==
+X-Gm-Message-State: AOJu0Yy8tf8dJ0hGLZuARWi/KJAkUBuGQUPhaV2r3Mfoq32wEboSPYZB
+	ULHtd3bVI3YtrITtg7vpYRP5vFPpiw9/9ugj7WsObYK523IJNZh2R68Nz6Tafwo2CwvP4AlC09m
+	b2Obo
+X-Gm-Gg: ASbGncseqD8C5qHYMJPzAqfHsJl8YXpiB3sAi/w6N+RvuUvGiCF9uacDzSt4Ew4iJsB
+	iViVZQEp/ggVlcWcOuJz7y5rv3+b4gVYlziUd4HxuYjn8Atyyd9OELQEoEJWoIH/Qk0b2byUAqV
+	5mkdVZnRPqPWO/ueIBkUEKwWGSyyFmpzKZm4QgVVH5gFAXYsMpOff4Dm0zasscdzt5uRhiywf+H
+	zu15mEUQzxJ+vnhEtXWaiT0vHWXLZ0CTn5/W/Wn3OrDmVprLDnS2nwNl495uXiBdVXoR9FXX4/S
+	w3TiDShzkR/6aXnaaGvQdqW2F5uuZ0A3NCspFX+UAszqeOpsF7Qw9w9hOyBfrhq6gnxHb0a/B2I
+	juTCxHLE/U1KsX6KGmEtTOrsE3GjiQbX4LBOcD1m4+EVHwIiPnZHUWGYutM9A+0f30AzXYAc1Wo
+	Fmel0Tmzx0eeTkd2niFdpN59nb
+X-Google-Smtp-Source: AGHT+IGvgD1iUrqYLeXYES3g/5f/GyDFaDz9O3/AmAhZTEp0SFV6QYXUW5hz3hGfRU8tFX97XX6G3Q==
+X-Received: by 2002:a05:6000:220f:b0:426:d582:14a3 with SMTP id ffacd0b85a97d-429bd671cbbmr1825694f8f.9.1761904613645;
+        Fri, 31 Oct 2025 02:56:53 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772899fdfbsm81572335e9.4.2025.10.31.02.56.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 02:56:52 -0700 (PDT)
+        Fri, 31 Oct 2025 02:56:53 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-scsi@vger.kernel.org
@@ -84,9 +84,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Michal Hocko <mhocko@suse.com>,
 	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 3/4] scsi: scsi_dh_alua: WQ_PERCPU added to alloc_workqueue users
-Date: Fri, 31 Oct 2025 10:56:42 +0100
-Message-ID: <20251031095643.74246-4-marco.crivellari@suse.com>
+Subject: [PATCH 4/4] scsi: scsi_transport_fc: WQ_PERCPU added to alloc_workqueue users
+Date: Fri, 31 Oct 2025 10:56:43 +0100
+Message-ID: <20251031095643.74246-5-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251031095643.74246-1-marco.crivellari@suse.com>
 References: <20251031095643.74246-1-marco.crivellari@suse.com>
@@ -126,22 +126,32 @@ become the implicit default.
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/scsi/device_handler/scsi_dh_alua.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/scsi_transport_fc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
-index 1bf5948d1188..6fd89ae33059 100644
---- a/drivers/scsi/device_handler/scsi_dh_alua.c
-+++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-@@ -1300,7 +1300,7 @@ static int __init alua_init(void)
- {
- 	int r;
+diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
+index 3a821afee9bc..987befb02408 100644
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -441,7 +441,8 @@ static int fc_host_setup(struct transport_container *tc, struct device *dev,
+ 	fc_host->next_vport_number = 0;
+ 	fc_host->npiv_vports_inuse = 0;
  
--	kaluad_wq = alloc_workqueue("kaluad", WQ_MEM_RECLAIM, 0);
-+	kaluad_wq = alloc_workqueue("kaluad", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!kaluad_wq)
+-	fc_host->work_q = alloc_workqueue("fc_wq_%d", 0, 0, shost->host_no);
++	fc_host->work_q = alloc_workqueue("fc_wq_%d", WQ_PERCPU, 0,
++					  shost->host_no);
+ 	if (!fc_host->work_q)
  		return -ENOMEM;
  
+@@ -3088,7 +3089,7 @@ fc_remote_port_create(struct Scsi_Host *shost, int channel,
+ 
+ 	spin_unlock_irqrestore(shost->host_lock, flags);
+ 
+-	rport->devloss_work_q = alloc_workqueue("fc_dl_%d_%d", 0, 0,
++	rport->devloss_work_q = alloc_workqueue("fc_dl_%d_%d", WQ_PERCPU, 0,
+ 						shost->host_no, rport->number);
+ 	if (!rport->devloss_work_q) {
+ 		printk(KERN_ERR "FC Remote Port alloc_workqueue failed\n");
 -- 
 2.51.0
 
