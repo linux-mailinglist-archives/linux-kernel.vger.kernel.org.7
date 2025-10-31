@@ -1,148 +1,87 @@
-Return-Path: <linux-kernel+bounces-879730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777ECC23D59
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:34:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C83C23DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F271A60798
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:35:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 392414F2A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDBB2D5923;
-	Fri, 31 Oct 2025 08:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CcNSXCN8"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC5E2D320E;
+	Fri, 31 Oct 2025 08:35:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A73F29AAE3
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BA31C8605
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899670; cv=none; b=RD21aPCuRp7c+Qelp7nfvSOKydlznchL7nbzJjSIh5L40DNLx14zbabcQRAd14UqWhXQnAJlkQB5KxaPSzyc+OGADkFR43OgG4nlbiGX4b0hHHwQOGrUMVrASCtoUbJH6aV2+8AuDZx9n1Nvs/cd1NjHH6o+CcXcDgFdYy5QeD8=
+	t=1761899704; cv=none; b=Gth/rIDw7b/Q4uydpqS0mCZsEZzG4OyEw9gmsrg7IJyk3Rpidisy09q5cR6GKjgX/yDp4jFTVkYbmpPJLl1BtJ/3NzURm9VWFeHAxOWOdw5JmAD7ah2Tx0YMKtrEqu4Vt2NcfossEhdRjIHCJzAQH8U6DSbn5Z+RWrCz7mXfaEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899670; c=relaxed/simple;
-	bh=JQVFkql8pWeK7mXHaJQC6Gx6KXjAssW26okHU8bcIA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNYAKc99ubrpFB9XzwyjaaXquO6UyqNM5OzUqXvtCFhg+1hM98xpMa6InUbklIfCmYOuc53KoA10Uxia95kmX5zlRw9NJxsDHzNdj6q85shpYXDDUeMct5pa0y4vuoLXrv5ANCVLR5sDenNBBu9taZg41C2FZLpnD48Z6BtaeF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CcNSXCN8; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47728f914a4so9564635e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761899667; x=1762504467; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Brce2942SeTVJJTNYHk2AtyCkePvDy1yHUmXXiPEbXA=;
-        b=CcNSXCN8WDDng70OdVvWRSucR6peMiB+orO6aX3K3eviSeNCIrRkQLHtz4RSn7OYQ9
-         rtjwdOAWKsx4/jkLbhh8f3Z1d8Rey9454hMhCsqKisgPtKn5YMBguXDtbcM3qr+8cuWw
-         4Gt+cwJi2dwb408jjCcuCHA5XDagHWbvfLNCXoHBu3dEtQB4bZRaF2GOP6HV1ozRysT2
-         zMhcxOcq534VG6DI4dNzP9jYEdRLTWkI39K5jwVLh2iVJKZRcVjXa2pMEEdRsFQDgtO9
-         jnT0pfY4655UvndmSOkz0H/aNTt4EOOqvp061i0dojQDcSw7DtUfEdd6+fMfJGJ5RqkR
-         AAZw==
+	s=arc-20240116; t=1761899704; c=relaxed/simple;
+	bh=og29u19LvCCtoIvsFzn/6fyhN/rublKiC4s+JjQHFkY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=e8S1bzlUQbaNqmB5snLGbHiumr2k4DTNzXlj0/OHrGhSbwkYP67JF57amEqLCpCWc305w4yDu5AnYKvpkaBwA4JPND4oGM+w04lzR9dVWCT6KDpkzbGYMSmrs+UBUTNi9IvjHOsgHLeDoeJRv5pRGG79ZEbA1/l8M9qESHwKeNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-433103f5a25so11105235ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:35:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761899667; x=1762504467;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Brce2942SeTVJJTNYHk2AtyCkePvDy1yHUmXXiPEbXA=;
-        b=CbsiMMKC20oFXoEIhB/BFexqZjker70JW+4nF7JayWPH77+0oPeVcdBIPGDyJ1FlA/
-         ne/BmPzq93vMPOTlkyCe5eOIL2i+yqcOK0fU1idm43xv1WsEJUJV2wvBGzCsIRyqZErH
-         zLrlE5kt+Wwr8vT4CXKm6kqIMajjO7lEDCAnLhnT4t6GoBER7R9Q+rjmH0FJT3nmyKyV
-         GG9f9OfRNw/5truOdXBVf6DCFBxTs0PCa2Ifj7b7O/fxE49OdDUtv/5W/5PH6ZY49eb0
-         0ZPRIxGYNjqGLy9XgXAaH663iTydYHMM/TU0To2BuQ1cEDusqXhr2YR0Z28tF0Hvr5rp
-         BA9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdghB65VT9JIx+V+8ZJeGxTybUIWKDZYEbzIgETwxssx0qzCZoA5BsazrYQo6zPYHQGK33f/V3O982GgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOtF0L1Hhw/sw3W235OkmJkJ3nU2m68yQcVTu/y4b/kZ5vQpH6
-	uHzlmHhVtu4IHHbSulMu00Mr0C9ND7Q7LSBnX3aXJvmFwHqDI/6oCkKrzlazFn8E6b8=
-X-Gm-Gg: ASbGncuM3K9kovKnIII0Fi1Ho6tcYfDmPrtw5WL/SPrcMqBH3AwSEYqG+hezjugWF2b
-	piZcdgKaOIBk1gxxosWPhA3HqEcg78SJscuKKX5iVwCy3LSI4oqSA2yqXWrak52THEL3lgY2QGu
-	o4mWmtXv0UKKxtslhtxL5gGqcvwNzvrrFmMEZteO9LGtYvOC7jDE7u0V8QfHx1Np4lD8Z1tM2Y1
-	2bXgs13OrcNCoWiP7ghz7ljKgiXcTfLn9ZvPDNfg3ob9RY3lid6bxQrdd0WM+grNWQWluD1K5d/
-	1xQRINfYaldXcltxH7wMTEa5zET+ifzaRxDAte8OJvO1XG9wCnNH52pH7glLSggE1XvKM8clLuA
-	auvQkDz2M3aXv4L57ST7xy4C0F+2kOBH/5UhHHOlqDoZ4X3EusiLd3OWa8fA0obhOqQlPq8KPMm
-	sxALpPraF2+v8dqg==
-X-Google-Smtp-Source: AGHT+IEqeWzc1dYod8DDM80O+3DfRoIrCHAb+32/10VgcqcE8gyD3g3E2A+vxz5v6zZlDzTIz39ZaQ==
-X-Received: by 2002:a05:600c:34d0:b0:475:daa7:ec60 with SMTP id 5b1f17b1804b1-47730872dcamr20908505e9.21.1761899666777;
-        Fri, 31 Oct 2025 01:34:26 -0700 (PDT)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fcf6c05sm17137655e9.4.2025.10.31.01.34.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 01:34:26 -0700 (PDT)
-Date: Fri, 31 Oct 2025 09:34:25 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 05/23] mm: declare memcg_page_state_output() in
- memcontrol.h
-Message-ID: <aQR0kf_g2e59JCmz@tiehlicka>
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
- <20251027231727.472628-6-roman.gushchin@linux.dev>
+        d=1e100.net; s=20230601; t=1761899702; x=1762504502;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OH1UGt0ARIywstYtQuG/fxtI/hQLFRasxg3N7CcTx4g=;
+        b=nXVxetyLVqRLbE0pAl50s0JKsYrfo09rG4efdg7VqLgpXUZ9UjK1yeYuDb+FrEvTGp
+         7ynhs9Zpsq3YOXBV2Gmc1qsXLuOAYI1njO2jily5WZf4VUnHHRv6gJGwGLQ489jImxQj
+         qMmnW5QzsxBvJWE9im5YRw0yUMOPPJCyqZbTkBi1oWzvMGMHQQVWCVnpiGvsWw5rM0/p
+         lysn5SivwzFAJlPcKd2YcSQ2dJ3KmbHwd2fvBRoadgE6QKqQLAqnzX/++3Rm1XJimGbW
+         0fnMp+C8Yy2TkR+6wHalOoepgCddoGJ3ku/0LA/ZnIt0CTdNLQnZCNMTU18P4V4e7m1u
+         Z8gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGrMXNowtUowlrh4sov4i4UGIQGUs9Au6m8YPSKafHpOMhpX+7l0RKujlakUc6xSuYD8AqygQRpfVbSZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBiP9ZRoxNCw/h8Qt/n9qMX40NeoowLRTqx7UwYKaRzoRP3M8C
+	IXIMJ4jt1XL+y8hattESUepcPmhVVrModlj+p9JTYgHKB95YRMSldG+q3aOzH2zbFOwSJMHmHZE
+	JWdpTGh6CKBZEdypoHK35F0YGrl9cGBkZv1RNopEWWL1nYwq+b9ceC704XlA=
+X-Google-Smtp-Source: AGHT+IGLRzEMbhkDJODYTGOH60tTOuObd9AhRsHiwb6jetGayA07Tg9XrHcmZLFuV+7cGvhkGvLvtGXMRhDvZsqpfolQeje5xnbJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027231727.472628-6-roman.gushchin@linux.dev>
+X-Received: by 2002:a05:6e02:2783:b0:430:a538:25e7 with SMTP id
+ e9e14a558f8ab-4330d1fd720mr44911255ab.29.1761899701962; Fri, 31 Oct 2025
+ 01:35:01 -0700 (PDT)
+Date: Fri, 31 Oct 2025 01:35:01 -0700
+In-Reply-To: <20251031064453.485823-1-hsukrut3@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690474b5.050a0220.e9cb8.0002.GAE@google.com>
+Subject: Re: [syzbot] [net?] general protection fault in sigd_send
+From: syzbot <syzbot+1f22cb1769f249df9fa0@syzkaller.appspotmail.com>
+To: hsukrut3@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 27-10-25 16:17:08, Roman Gushchin wrote:
-> To use memcg_page_state_output() in bpf_memcontrol.c move the
-> declaration from v1-specific memcontrol-v1.h to memcontrol.h.
-> 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+Hello,
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> ---
->  include/linux/memcontrol.h | 1 +
->  mm/memcontrol-v1.h         | 1 -
->  2 files changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 9af9ae28afe7..50d851ff3f27 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -949,6 +949,7 @@ static inline void mod_memcg_page_state(struct page *page,
->  }
->  
->  unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx);
-> +unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
->  unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx);
->  unsigned long lruvec_page_state_local(struct lruvec *lruvec,
->  				      enum node_stat_item idx);
-> diff --git a/mm/memcontrol-v1.h b/mm/memcontrol-v1.h
-> index 6358464bb416..a304ad418cdf 100644
-> --- a/mm/memcontrol-v1.h
-> +++ b/mm/memcontrol-v1.h
-> @@ -27,7 +27,6 @@ unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
->  void drain_all_stock(struct mem_cgroup *root_memcg);
->  
->  unsigned long memcg_events(struct mem_cgroup *memcg, int event);
-> -unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
->  int memory_stat_show(struct seq_file *m, void *v);
->  
->  void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
-> -- 
-> 2.51.0
+Reported-by: syzbot+1f22cb1769f249df9fa0@syzkaller.appspotmail.com
+Tested-by: syzbot+1f22cb1769f249df9fa0@syzkaller.appspotmail.com
 
--- 
-Michal Hocko
-SUSE Labs
+Tested on:
+
+commit:         51e5ad54 net: sctp: fix KMSAN uninit-value in sctp_inq..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=14bc7e7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67b63a24f3c26fca
+dashboard link: https://syzkaller.appspot.com/bug?extid=1f22cb1769f249df9fa0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13cd7c92580000
+
+Note: testing is done by a robot and is best-effort only.
 
