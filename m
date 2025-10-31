@@ -1,119 +1,141 @@
-Return-Path: <linux-kernel+bounces-880467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6D3C25D0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:23:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD5AC25D19
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90DA14E9255
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC8D1890126
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3029D29E;
-	Fri, 31 Oct 2025 15:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC11A2C11F6;
+	Fri, 31 Oct 2025 15:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zcbi8VT0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jy6thDzO"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D152BEC4A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3521277013
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761924014; cv=none; b=c9UZy4wYZeHMi+6pQBajLgQo+g+ILSIsJFS2DWqmZK68EcOSvYgy/83BHCADGVpj0wPTCH0x2a2Xn78cRXox/gLpj+gicSNQUh4Lbju/J/iTREjlvDCsmfRwQEBcx8cp+w47mV4GNwOL5oEQDWLAtGwL2AlPUZN1a1SiXP4ukhU=
+	t=1761924202; cv=none; b=hBes4ciZbrHdc8hhsGAlLHb5lPKNMC8dy5dnkhjax7eSmmAs5ETxm/SGMsc9eAzyz3rp+2Xzl3fQ2x5bKp3aUTTdBzlSKyB7V03DvjHevXRdQtH11kvc+BMjujbeykkuJEOaAtQ98193EUajaKfSVH/5ImnmB55Hqp/IJ/M/1uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761924014; c=relaxed/simple;
-	bh=QmO/nZOVQ0O8efpTIAHlN+50U9WhBaD7ej5ti6Ps0GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5pFFRUOKYTfdDVmpepCNcs2Sgic2U+GT//RintTUmcrJ4Bos5/yYvRIvVUSX70SCs1ASksQCMXJs/Vv7PmszlV2Q9bYoi+qbniUifnh9if7axSdUDewi250KHN6BqnJmqAZWzb+RXxGW9WOzQN68V7xwi+IrKrcxiw20W+viMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zcbi8VT0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=h8bL2TPB6cLF5ZFZFQRP43v5iwip6JKwCi7RFavvBnM=; b=Zcbi8VT03CCzp2BBRylBMMMXgY
-	1luxFL36CN+PJ2nAhC8iRshLBhXsfqXzvgs1bsO7yko3egzpvNds6qHFyzE4/KrARypyc03w1SJXA
-	jPW5xdoE5+1ZFvRYWI8hydmIKgNU3oqcw/mzqL2sCCsklT39szf8ZIE0mqPawZHRB03FYd80Q2Lqh
-	y36Bs6nTT6xF6jUfo+KCcSef7RK1hfeLdmQuSSmarS2R7EburoWyvBCnlq2C6Na3YZi8ce+8CNcDf
-	YevbH+OV47qVx3Me6IiaFQS4vgrZclzq8pZlYrGks0+1TU88UCrvxHg1XxUpimPssq3HBKawqzGsE
-	nx4oSZAw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEqv7-00000000zFu-1rh5;
-	Fri, 31 Oct 2025 15:20:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8735D30029E; Fri, 31 Oct 2025 16:20:05 +0100 (CET)
-Date: Fri, 31 Oct 2025 16:20:05 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Clark Williams <williams@redhat.com>, arighi@nvidia.com
-Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
- expired deadline
-Message-ID: <20251031152005.GT3245006@noisy.programming.kicks-ass.net>
-References: <20251014102541.GS3245006@noisy.programming.kicks-ass.net>
- <83a5971ef07226737421737f889795ec57b6fa6c.camel@redhat.com>
- <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb>
- <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
- <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb>
- <20251020141130.GJ3245006@noisy.programming.kicks-ass.net>
- <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com>
- <20251030184205.GB2989771@noisy.programming.kicks-ass.net>
- <20251031130543.GV4068168@noisy.programming.kicks-ass.net>
- <1f2ad071e59db2ed8bc0b382ae202b7474d07afc.camel@redhat.com>
+	s=arc-20240116; t=1761924202; c=relaxed/simple;
+	bh=QYXe75Yh+yZ09byLhDF9yhftthum4CDB51HUlIPkhPY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=QcwI8M3IkgyevUjZ+86LFLb873tCnjV1U0x5q6vNnfUZyCClfO3cHBfVZjooCZpiy0KEsjgrmZjUbAHW2U3lHGhGVrAUY0oZ9DsIfxmAmdWT5v5vcdsovLGZv5qi7iEVOdFWspNaK6x98gr4p0WeXCEvELFZK7ZJHmVASdYiu2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jy6thDzO; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761924187;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=27IEgfUKPZeIksBqlF8l79OSzqASR8q8aE6o0IGyKhQ=;
+	b=jy6thDzOuar8GUGOiDze+whD6yp57TbQKhCV20GWb3oqRjTJgkuIpyqUb6k4Q0/cimTVN9
+	8/9mnYXCAWm1wTXVIdZmruoIn54vnQPAY/v2Ld6E6NtgGtWQivs8HlYlEFwT5VeId9BF36
+	hfgN6zx5VMWl9vzAfYApaxOub1SIcmQ=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f2ad071e59db2ed8bc0b382ae202b7474d07afc.camel@redhat.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20251031125916.3b0c8b22@pumpkin>
+Date: Fri, 31 Oct 2025 16:23:02 +0100
+Cc: Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
+References: <20251031110647.102728-2-thorsten.blum@linux.dev>
+ <20251031125916.3b0c8b22@pumpkin>
+To: David Laight <david.laight.linux@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 31, 2025 at 02:24:17PM +0100, Gabriele Monaco wrote:
-> On Fri, 2025-10-31 at 14:05 +0100, Peter Zijlstra wrote:
-> > On Thu, Oct 30, 2025 at 07:42:05PM +0100, Peter Zijlstra wrote:
-> > > On Wed, Oct 22, 2025 at 12:11:51PM +0200, Gabriele Monaco wrote:
-> > > > 
-> > > > Is this expected?
-> > > 
-> > > Sort of, that was next on the list. Let me see if I can make it stop a
-> > > little more.
-> > 
-> > OK, so I've gone over things again and all I got was a comment.
-> > 
-> > That is, today I think it all works as expected.
-> > 
-> > The dl_server will stop once the fair class goes idle long enough. Can
-> > you confirm this?
-> > 
-> 
-> I'm going to go through your comment more carefully, but what I can observe now
-> is a bit different:
-> 
-> After this patch, consuming bandwidth in background on fair tasks and on idle is
-> equivalent. Updating idle time does effectively replenish after exhausting
-> runtime and we never stop the server (IMO this is correct behaviour only for
-> fair tasks, since there's potentially something to do).
-> At least this is the behaviour I get on a mostly idle system.
-> 
-> Different scenario if I have the CPU busy with other tasks (e.g. RT policies),
-> there I can see the server stopping and starting again.
-> After I do this I seem to get a different behaviour (even some boosting after
-> idle), I'm trying to understand what's going on.
-> 
-> Does this behaviour make sense to you?
+On 31. Oct 2025, at 13:59, David Laight wrote:
+> Even if ex->major can be ~0 there are much cleaner ways of writing =
+this code.
 
-Ooooh, because idle time is accounted against the server budget too.
+Thanks for pointing this out. Looking at the bigger picture makes it
+clear that most of the code can actually be removed. What do you think
+of this change?
 
-That is, idle and running fair are both [2] in my comment. So we never
-get to [5].
+Thanks,
+Thorsten
 
-Humm, let me noodle a bit more on this. Also, I should see if I can get
-graphviz to draw ascii art state diagrams :-)
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index a41f558f6fdd..cb845b1fad6b 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -244,7 +244,6 @@ static void devcgroup_css_free(struct =
+cgroup_subsys_state *css)
+#define DEVCG_DENY 2
+#define DEVCG_LIST 3
+
+-#define MAJMINLEN 13
+#define ACCLEN 4
+
+static void set_access(char *acc, short access)
+@@ -270,19 +269,11 @@ static char type_to_char(short type)
+	return 'X';
+}
+
+-static void set_majmin(char *str, unsigned m)
+-{
+-	if (m =3D=3D ~0)
+-		strscpy(str, "*", MAJMINLEN);
+-	else
+-		snprintf(str, MAJMINLEN, "%u", m);
+-}
+-
+static int devcgroup_seq_show(struct seq_file *m, void *v)
+{
+	struct dev_cgroup *devcgroup =3D css_to_devcgroup(seq_css(m));
+	struct dev_exception_item *ex;
+-	char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
++	char acc[ACCLEN];
+
+	rcu_read_lock();
+	/*
+@@ -293,17 +284,12 @@ static int devcgroup_seq_show(struct seq_file *m, =
+void *v)
+	 */
+	if (devcgroup->behavior =3D=3D DEVCG_DEFAULT_ALLOW) {
+		set_access(acc, DEVCG_ACC_MASK);
+-		set_majmin(maj, ~0);
+-		set_majmin(min, ~0);
+-		seq_printf(m, "%c %s:%s %s\n", =
+type_to_char(DEVCG_DEV_ALL),
+-			   maj, min, acc);
++		seq_printf(m, "%c *:* %s\n", =
+type_to_char(DEVCG_DEV_ALL), acc);
+	} else {
+		list_for_each_entry_rcu(ex, &devcgroup->exceptions, =
+list) {
+			set_access(acc, ex->access);
+-			set_majmin(maj, ex->major);
+-			set_majmin(min, ex->minor);
+-			seq_printf(m, "%c %s:%s %s\n", =
+type_to_char(ex->type),
+-				   maj, min, acc);
++			seq_printf(m, "%c %u:%u %s\n", =
+type_to_char(ex->type),
++				   ex->major, ex->minor, acc);
+		}
+	}
+	rcu_read_unlock();
+
 
