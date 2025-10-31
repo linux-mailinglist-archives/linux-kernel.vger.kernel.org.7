@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-880452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBDCC25C9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10826C25CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:15:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFD7188B162
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81008188A551
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CE6230D14;
-	Fri, 31 Oct 2025 15:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CF4229B2A;
+	Fri, 31 Oct 2025 15:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMhdOB+M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FVPrdUHS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6791F5847;
-	Fri, 31 Oct 2025 15:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE691DC198;
+	Fri, 31 Oct 2025 15:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761923290; cv=none; b=UCh/aside/MQ9CyhOLmmt6I/JMAR4F4jw9yeVs5FdXXc9l3tSB7IFAfV9l8G4FpQGVKLlHsCdZc1t1s4O42GqV5cFMQJJK62TeELJP4YMSQp/jYVCyQa0nD5cNfoaxBuSV33sNf3QNiXu0J0FlCoPvgFxVKlPMCU++SMFETemh0=
+	t=1761923315; cv=none; b=IFo2qF6Bb083wrbP56xEP+RSJ1ohe3OHvR6j+gSY5U54xwaHRca3kbzdsz4EwJyJk3EqJ2CUSNP7ZwFdjg3ExrQwGxffbplw82cwJo9M1BjhLQaC1GKkQUPSeHHL543sZQPxt8I/HY1tyrmJFCALKRvt3Zhe3DV8Wj8tgO0P3ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761923290; c=relaxed/simple;
-	bh=hhV5vO7shNUsRg+5Wn47NeijB5Xy6knDF8kwZguxWqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4Wlj+mTzuWs1KTEvcgK1uFLbgAt2xttC5ogjvj+6uYkT8IHx+RrCs1YqoKDsfye3QugKQ/Ikr+FRDViirG2qIA783M8Zfhn+B4VqmMkSHnwnv5cPwtjVqp6s1wg5TQDHMi1wad/+qNp0Wq/PWrEjBKGGBecyPq4TLieotsrkpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMhdOB+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B3DC4CEE7;
-	Fri, 31 Oct 2025 15:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761923288;
-	bh=hhV5vO7shNUsRg+5Wn47NeijB5Xy6knDF8kwZguxWqk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HMhdOB+My6boDB6ghkVCj7rdVDZchfxroblBkTV3NJngTJFLkkd7IdPSU4x8GhOsr
-	 8zLQq+bVt7AZ/5C6Pg9w0qvrPucmmlcz6arvqG7EkUPvhKtzECdVtETdwOv9SBZXO5
-	 dhuRUGeWllOI3pdz3HOPyoahBMiq/HIPFrlHA5uGtGdB01A9EvXNgNR2eXKxW5e0yl
-	 WRYGhLPBuKB69/0IncRhGQIwo5ndwD66ttm1rhTCr73lb11rNpgfp1HnGSqg62PvQy
-	 BKXd8ucdt/7USw18Vi7w+43Ir4Y/vxFJ2WHPdhBDNz/z7JvS4DvakvAfCZIEyc8CT/
-	 DGYP1mx8SRZcw==
-Date: Fri, 31 Oct 2025 15:08:04 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Buday Csaba <buday.csaba@prolan.hu>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: net: ethernet-phy: clarify when compatible
- must specify PHY ID
-Message-ID: <20251031-smartness-cattishly-465de28ec20b@spud>
-References: <b8613028fb2f7f69e2fa5e658bd2840c790935d4.1761898321.git.buday.csaba@prolan.hu>
- <f08d956b-4392-41c0-93d7-d7dd105c016c@lunn.ch>
+	s=arc-20240116; t=1761923315; c=relaxed/simple;
+	bh=+0fVAVV8CjLZmynXrrG3nwndOiUEsEKbv4bJrqEDm4Q=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=B1tNHHOULvNW1kr98THuBNlteUlZrYsm7/Pe2hMJ5yOTEPWxWasBd7pLUls7krQFxJpCSDWkjUvodRe5vp4D6ElnZcdQUY+F5doVEA22KkiV64+2uWv8KUlzauo7yALGPHGtdp1VchtAN6dG2xLV7KU4hkOefHQkU8Z31YWwklQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FVPrdUHS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 77EB1520;
+	Fri, 31 Oct 2025 16:06:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761923199;
+	bh=+0fVAVV8CjLZmynXrrG3nwndOiUEsEKbv4bJrqEDm4Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=FVPrdUHSPwpG9UHeAD08omvYfUTMtQpZCwfs1dunml3+sBPsCr3t/RH49saIRs9iu
+	 u/5VuvXYYl3yOzoDRoPCVHOq3OZ/gn57+POohG8KrZILVsoOQ8UvhwZlV68syJ+uPs
+	 wYoen17Wx0DGXoPT0DFcCDIH7B5E7C9o7q85awz8=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ntQblQwoVNjBFIgI"
-Content-Disposition: inline
-In-Reply-To: <f08d956b-4392-41c0-93d7-d7dd105c016c@lunn.ch>
-
-
---ntQblQwoVNjBFIgI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251031114835.113026-3-tarang.raval@siliconsignals.io>
+References: <20251031114835.113026-1-tarang.raval@siliconsignals.io> <20251031114835.113026-3-tarang.raval@siliconsignals.io>
+Subject: Re: [PATCH v1 2/2] media: i2c: imx219: Replace exposure magic value with named constant
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Tarang Raval <tarang.raval@siliconsignals.io>, Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tarang Raval <tarang.raval@siliconsignals.io>, sakari.ailus@linux.intel.com
+Date: Fri, 31 Oct 2025 15:08:27 +0000
+Message-ID: <176192330798.567526.14611830953271874355@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Fri, Oct 31, 2025 at 02:01:26PM +0100, Andrew Lunn wrote:
-> On Fri, Oct 31, 2025 at 09:15:06AM +0100, Buday Csaba wrote:
-> > Change PHY ID description in ethernet-phy.yaml to clarify that a
-> > PHY ID is required (may -> must) when the PHY requires special
-> > initialization sequence.
-> >=20
-> > Link: https://lore.kernel.org/netdev/20251026212026.GA2959311-robh@kern=
-el.org/
-> > Link: https://lore.kernel.org/netdev/aQIZvDt5gooZSTcp@debianbuilder/
-> >=20
-> > Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
-> > ---
-> >  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/=
-Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > index 2ec2d9fda..6f5599902 100644
-> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > @@ -35,9 +35,10 @@ properties:
-> >          description: PHYs that implement IEEE802.3 clause 45
-> >        - pattern: "^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$"
-> >          description:
-> > -          If the PHY reports an incorrect ID (or none at all) then the
-> > -          compatible list may contain an entry with the correct PHY ID
-> > -          in the above form.
-> > +          If the PHY reports an incorrect ID (or none at all), or the =
-PHY
-> > +          requires a specific initialization sequence (like a particul=
-ar
-> > +          order of clocks, resets, power supplies), then the compatibl=
-e list
-> > +          must contain an entry with the correct PHY ID in the above f=
-orm.
+Quoting Tarang Raval (2025-10-31 11:48:35)
+> Introduce IMX219_EXPOSURE_OFFSET (4) and use it instead of the literal
+> '4' when computing the maximum coarse exposure. The IMX219 datasheet
+> specifies the maximum storage time as frame_length_lines - 4.
+> (Ref: Datasheet section 5-7-1)
 >=20
-> That is good start, but how about:
+> Also fix one indentation issue for consistency.
+
+
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
 >=20
->           PHYs contain identification registers. These will be read to
->           identify the PHY. If the PHY reports an incorrect ID, or the
->           PHY requires a specific initialization sequence (like a
->           particular order of clocks, resets, power supplies), in
->           order to be able to read the ID registers, then the
->           compatible list must contain an entry with the correct PHY
->           ID in the above form.
+> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
+> ---
+>  drivers/media/i2c/imx219.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 >=20
-> The first two sentences make it clear we ideally use the ID registers.
-> Then we say what happens if cannot work.
->=20
-> The "(or none at all)" is exactly the case you are trying to clarify,
-> it does not respond due to missing reset, clocks etc. We don't need to
-> say it twice, so i removed it.
-
-I like this wording,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: changes-requested
-
---ntQblQwoVNjBFIgI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQTQ0wAKCRB4tDGHoIJi
-0s2YAQCWOfnQgjf28reEeXDLxZn1pmVaVpd+2TFOYi3ZSjasUQEAoqOMOXyeufvW
-6R6eWhRA4n/i9o4N6Vdmd4NY+qDbVgw=
-=gNd4
------END PGP SIGNATURE-----
-
---ntQblQwoVNjBFIgI--
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index 40693635c0c3..e87d5a18fe87 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -68,6 +68,7 @@
+>  #define IMX219_EXPOSURE_STEP           1
+>  #define IMX219_EXPOSURE_DEFAULT                0x640
+>  #define IMX219_EXPOSURE_MAX            65535
+> +#define IMX219_EXPOSURE_OFFSET                 4
+> =20
+>  /* V_TIMING internal */
+>  #define IMX219_REG_FRM_LENGTH_A                CCI_REG16(0x0160)
+> @@ -450,9 +451,9 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+>                 int exposure_max, exposure_def;
+> =20
+>                 /* Update max exposure while meeting expected vblanking */
+> -               exposure_max =3D format->height + ctrl->val - 4;
+> +               exposure_max =3D format->height + ctrl->val - IMX219_EXPO=
+SURE_OFFSET;
+>                 exposure_def =3D (exposure_max < IMX219_EXPOSURE_DEFAULT)=
+ ?
+> -                       exposure_max : IMX219_EXPOSURE_DEFAULT;
+> +                               exposure_max : IMX219_EXPOSURE_DEFAULT;
+>                 ret =3D __v4l2_ctrl_modify_range(imx219->exposure,
+>                                                imx219->exposure->minimum,
+>                                                exposure_max,
+> @@ -579,9 +580,9 @@ static int imx219_init_controls(struct imx219 *imx219)
+>                                            IMX219_LLP_MIN - mode->width,
+>                                            IMX219_LLP_MAX - mode->width, =
+1,
+>                                            IMX219_LLP_MIN - mode->width);
+> -       exposure_max =3D mode->fll_def - 4;
+> +       exposure_max =3D mode->fll_def - IMX219_EXPOSURE_OFFSET;
+>         exposure_def =3D (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
+> -               exposure_max : IMX219_EXPOSURE_DEFAULT;
+> +                       exposure_max : IMX219_EXPOSURE_DEFAULT;
+>         imx219->exposure =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_op=
+s,
+>                                              V4L2_CID_EXPOSURE,
+>                                              IMX219_EXPOSURE_MIN, exposur=
+e_max,
+> @@ -900,9 +901,9 @@ static int imx219_set_pad_format(struct v4l2_subdev *=
+sd,
+>                         return ret;
+> =20
+>                 /* Update max exposure while meeting expected vblanking */
+> -               exposure_max =3D mode->fll_def - 4;
+> +               exposure_max =3D mode->fll_def - IMX219_EXPOSURE_OFFSET;
+>                 exposure_def =3D (exposure_max < IMX219_EXPOSURE_DEFAULT)=
+ ?
+> -                       exposure_max : IMX219_EXPOSURE_DEFAULT;
+> +                               exposure_max : IMX219_EXPOSURE_DEFAULT;
+>                 ret =3D __v4l2_ctrl_modify_range(imx219->exposure,
+>                                                imx219->exposure->minimum,
+>                                                exposure_max,
+> --=20
+> 2.34.1
+>
 
