@@ -1,114 +1,201 @@
-Return-Path: <linux-kernel+bounces-880438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A7EC25C13
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:07:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8DAC25C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B71A4FB58E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4952189EFFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AA62D46B6;
-	Fri, 31 Oct 2025 14:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2562D6E48;
+	Fri, 31 Oct 2025 14:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gn6d44Be"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hg3KPhvn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A11C20C004;
-	Fri, 31 Oct 2025 14:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C632D5930;
+	Fri, 31 Oct 2025 14:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922391; cv=none; b=uYnjQHpeMLhvCDPSGdsIg6b9wldFBBPc3CgwyY0sp0zWN7TmyLTCO9T6DK/NI0FGCfhrH5DnZjLjbw0fyEltdkf7yrQ0Crf9/+nfavHntkGkUb+eB5+DiKs1xCsN71npp0gQogSpftVwbMd3rOjs7nslDFH7VpK6wdyaXBzPLoY=
+	t=1761922425; cv=none; b=jl3/zsnEfj+h1JODYA0Q+ACMAC7i5TG+XD9jXAeEd7H/IRUF+ezbN/UcqSmmOkENyIMi4r7BVjuEXrcjo8aaJ64n/wYWNYCfAzc7gA01lX+GtNWo7pYtYRszQguidT4a6T1FWzPC5PBkQgztFFT02MWsxfQMlr8/Gi5umCs39uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922391; c=relaxed/simple;
-	bh=lov+vmbKoZkT3iZ5MDyWTKKzx+/OVKK/WuReUGp7jH8=;
+	s=arc-20240116; t=1761922425; c=relaxed/simple;
+	bh=6vHW2fp30oSt1Z1dUetdmISj2k4xcp73KZzarQrJoJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcNI8da48kaGaonKXP6dqPRc3/cMuXvGnJljm3+gQ7RD3/PvR9ooMV/gQ4YJDsgCcPcRRse7FMWAZjAzQaoJIs8UJm3INGfQiHrTmTcOeOORMtVJmHezcZRWFvi6qRl3y/lpVmtsK5CX43WAcp7HbTAFaLfQFaW1KEeAOrujyRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gn6d44Be; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761922389; x=1793458389;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=lov+vmbKoZkT3iZ5MDyWTKKzx+/OVKK/WuReUGp7jH8=;
-  b=gn6d44BeepZC/Xq9ElHBVXpxm+7lKRIS8i4Xip5Mp+GAe3ko0hP+4KBK
-   yO74cjL/lGU/M1uZTXZIectC4MsD9OZgbt6Nzo9oaf2LkYaXmzDKH0okk
-   FGMnUXyJiP2ji91WYtYs7UInNh6RX6t0/RvVhrg7KWJ4rdUwUG1ZY72qz
-   7uy6cVPTc9ml+PmBBHgSuQFJNk/v/lHYfsKr+kqyaqubpW7iyIJxW0xsz
-   h0W9H38cUFXGY6+tJ+wuc7j5+4T2V6beMj6++KgQ8Y6vtrdse77gkVkQw
-   GS12imHlfwoDnlMIj/UO9NWKP3nWy5n0kxuRjxu+iXgWVsutK+ZUrs+Fh
-   w==;
-X-CSE-ConnectionGUID: pXF2APp3RMiP9JMViSnSUA==
-X-CSE-MsgGUID: oJkt8NmHTYCZIacuTEED6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="81713628"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="81713628"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:53:07 -0700
-X-CSE-ConnectionGUID: 7Mj/o2sFSfSx0X2UfuffuA==
-X-CSE-MsgGUID: NVNlY3PoQqmz4ngBEtueig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="216908680"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:53:02 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vEqUq-00000004Iip-1OMj;
-	Fri, 31 Oct 2025 16:52:56 +0200
-Date: Fri, 31 Oct 2025 16:52:55 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Dmitry Guzman <dmitry.guzman@mobileye.com>,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v2 3/5] i2c: designware: Sort compatible strings in
- alphabetical order
-Message-ID: <aQTNR57ae-hGBPn0@smile.fi.intel.com>
-References: <20251031-i2c-dw-v2-0-90416874fcc0@bootlin.com>
- <20251031-i2c-dw-v2-3-90416874fcc0@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WlelFhb9x1A6/fowXWWpj08HDZZBZjVHft3MOeGSluLo038I61EoDwsJ/4BzlV1Rza3uOb/HuexXIoo8P5kNE+h+Y7K3KlBOx/PpEP8sGS4+uAiZ6hD9GgPiJEOBspJi+HIStBjwpCKBzIZvdGTC+AqDyNvnEte/bz4MSijl52Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hg3KPhvn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D644AC4CEE7;
+	Fri, 31 Oct 2025 14:53:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761922425;
+	bh=6vHW2fp30oSt1Z1dUetdmISj2k4xcp73KZzarQrJoJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hg3KPhvnGuPVN9p618BTCV3Kb5hMDEZ/ev5rl0D2cJy40ogHWKJltb29YlTacv1Hi
+	 nuQtkj25k0SbWF25CFg/DdLkuzPz/RURsIOAU66uFwwv54A/ApMvz2Xin7BsGdZJYF
+	 j5yZ5pWm8lBpWJCqiZ1jkvWYhsR3NN5d+uurlsoXAbqh3iFti2RRduOfw9NOsGAbjG
+	 ppISPIizNTSaIzCoNKSmA1BdWs0SLU19Q5fqROuSRTvMR/SbviKtgq9Tg/ONMgapjg
+	 OVI9t4PhUWeYhizGXPmrLqFj5OA7wLfWopW9c8lkW1uLlNRcLU6wNHfYQUlKFZeWXd
+	 4921bdDmC5uyQ==
+Date: Fri, 31 Oct 2025 20:23:27 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Hans Zhang <18255117159@163.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] PCI: dw-rockchip: Add runtime PM support to
+ Rockchip PCIe driver
+Message-ID: <e7cttuu5525k7ryvmkh6ifspm5vloj4muazvmp3yxtkgsdtbjs@u4odsfurejxq>
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-3-linux.amoon@gmail.com>
+ <ukgkfetbggzon4ppndl7gpitlsz7hjhzhyx3dgxqhdo52exguy@bqksd7d27lpy>
+ <CANAwSgTECOAoKeJS_=HxkkTP4OJvYu5xGQxY__Auh81v3QT=-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251031-i2c-dw-v2-3-90416874fcc0@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <CANAwSgTECOAoKeJS_=HxkkTP4OJvYu5xGQxY__Auh81v3QT=-w@mail.gmail.com>
 
-On Fri, Oct 31, 2025 at 03:35:41PM +0100, Beno�t Monin wrote:
-> Reorder the of_device_id structures so that they are in alphabetical
-> order. Also drop the unneeded inner trailing comma in the
-> "snps,designware-i2c" struct.
+On Fri, Oct 31, 2025 at 07:33:23PM +0530, Anand Moon wrote:
+> Hi Manivannan
+> 
+> Thanks for your review comment.
+> 
+> On Fri, 31 Oct 2025 at 14:09, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >
+> > On Mon, Oct 27, 2025 at 08:25:30PM +0530, Anand Moon wrote:
+> > > Add runtime power management support to the Rockchip DesignWare PCIe
+> > > controller driver by enabling devm_pm_runtime() in the probe function.
+> > > These changes allow the PCIe controller to suspend and resume dynamically,
+> > > improving power efficiency on supported platforms.
+> > >
+> >
+> > Seriously? How can this patch improve the power efficiency if it is not doing
+> > any PM operation on its own?
+> >
+> I could verify that runtime power management is active
+> 
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This is runtime status being active, which is a different thing as it only
+allows the runtime PM hierarchy to be maintained. But the way you described the
+commit message sounds like the patch is enabling runtime PM of the controller
+and that improves efficiency (as if the controller driver is actively doing
+runtime PM operations).
+
+> [root@rockpi-5b alarm]# cat
+> /sys/devices/platform/a41000000.pcie/power/runtime_status
+> active
+> [root@rockpi-5b alarm]#  find /sys -name runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/pci_bus/0004:41/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-3::lan/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-2::lan/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-1::lan/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-0::lan/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/mdio_bus/r8169-4-4100/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/mdio_bus/r8169-4-4100/r8169-4-4100:00/power/runtime_status
+> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/mdio_bus/r8169-4-4100/r8169-4-4100:00/hwmon/hwmon11/power/runtime_status
+> 
+> Well, the powertop shows that the runtime power management is enabled
+> on Radxa Rock 5b,
+> 
+> PowerTOP 2.15     Overview   Idle stats   Frequency stats   Device
+> stats   Device Freq stats   Tunables   WakeUp
+> >> Good          Wireless Power Saving for interface wlan0
+>    Good          VM writeback timeout
+>    Good          Bluetooth device interface status
+>    Good          NMI watchdog should be turned off
+>    Good          Autosuspend for unknown USB device 2-1.3 (8087:0a2b)
+>    Good          Autosuspend for USB device USB 2.0 Hub [2-1]
+>    Good          Autosuspend for USB device Generic Platform OHCI
+> controller [usb1]
+>    Good          Autosuspend for USB device xHCI Host Controller [usb8]
+>    Good          Autosuspend for USB device Generic Platform OHCI
+> controller [usb4]
+>    Good          Autosuspend for USB device EHCI Host Controller [usb2]
+>    Good          Autosuspend for USB device xHCI Host Controller [usb6]
+>    Good          Autosuspend for USB device EHCI Host Controller [usb3]
+>    Good          Autosuspend for USB device xHCI Host Controller [usb5]
+>    Good          Autosuspend for USB device xHCI Host Controller [usb7]
+>    Good          Runtime PM for PCI Device Intel Corporation Wireless
+> 8265 / 8275
+>    Good          Runtime PM for PCI Device Rockchip Electronics Co., Ltd RK3588
+>    Good          Runtime PM for PCI Device Rockchip Electronics Co., Ltd RK3588
+>    Good          Runtime PM for PCI Device Realtek Semiconductor Co.,
+> Ltd. RTL8125 2.5GbE Controller
+>    Good          Runtime PM for PCI Device Rockchip Electronics Co., Ltd RK3588
+>    Good          Runtime PM for PCI Device Samsung Electronics Co Ltd
+> NVMe SSD Controller SM981/PM981/PM983
+> 
+> PowerTOP 2.15     Overview   Idle stats   Frequency stats   Device
+> stats   Device Freq stats   Tunables   WakeUp
+>               Usage     Device name
+>               1.1%        CPU use
+>             100.0%        Radio device: rfkill_gpio
+>             100.0%        runtime-rockchip-gate-link-clk.712
+>             100.0%        PCI Device: Realtek Semiconductor Co., Ltd.
+> RTL8125 2.5GbE Controller
+>             100.0%        runtime-rockchip-gate-link-clk.717
+>             100.0%        runtime-rockchip-gate-link-clk.714
+>             100.0%        runtime-rockchip-gate-link-clk.489
+>             100.0%        runtime-a40000000.pcie
+>             100.0%        runtime-a40800000.pcie
+>             100.0%        runtime-rockchip-gate-link-clk.718
+>             100.0%        runtime-rockchip-gate-link-clk.706
+>             100.0%        runtime-rockchip-gate-link-clk.708
+>             100.0%        PCI Device: Intel Corporation Wireless 8265 / 8275
+>             100.0%        Radio device: btusb
+>             100.0%        runtime-fcd00000.usb
+>             100.0%        PCI Device: Samsung Electronics Co Ltd NVMe
+> SSD Controller SM981/PM981/PM983
+>             100.0%        Radio device: rfkill_gpio
+>             100.0%        runtime-fc000000.usb
+>             100.0%        Radio device: iwlwifi
+>             100.0%        PCI Device: Rockchip Electronics Co., Ltd RK3588
+>             100.0%        PCI Device: Rockchip Electronics Co., Ltd RK3588
+>             100.0%        PCI Device: Rockchip Electronics Co., Ltd RK3588
+>             100.0%        runtime-rockchip-gate-link-clk.711
+>             100.0%        runtime-fc400000.usb
+>             100.0%        runtime-rockchip-gate-link-clk.704
+>             100.0%        runtime-rockchip-gate-link-clk.701
+>             100.0%        runtime-rockchip-gate-link-clk.716
+>             100.0%        runtime-rockchip-gate-link-clk.707
+>             100.0%        runtime-rockchip-gate-link-clk.709
+>             100.0%        runtime-rockchip-gate-link-clk.719
+>             100.0%        runtime-xhci-hcd.1.auto
+>             100.0%        runtime-feb50000.serial
+>             100.0%        runtime-rockchip-gate-link-clk.715
+>             100.0%        runtime-rockchip-gate-link-clk.710
+> 
+> > Again, a pointless patch.
+
+This patch might make sense on its own, to enable runtime PM status of the
+controller so that the runtime PM could be applied to the entire PCIe hierarchy.
+
+> I implemented a .remove patch to ensure proper resource cleanup,
+> which is a necessary step for successfully enabling and managing
+> runtime power for the device.
+
+How a dead code (remove callback for a always built-in driver) becomes necessary
+for runtime PM.
+
+- Mani
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+மணிவண்ணன் சதாசிவம்
 
