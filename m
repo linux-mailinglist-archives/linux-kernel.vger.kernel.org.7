@@ -1,295 +1,416 @@
-Return-Path: <linux-kernel+bounces-880656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5149FC2642A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:01:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BD9C2644B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFEB1A26422
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:02:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06C1C4EC9A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8792FFFA4;
-	Fri, 31 Oct 2025 17:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FCB2F3607;
+	Fri, 31 Oct 2025 17:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="f3+wSJl+"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011040.outbound.protection.outlook.com [52.101.52.40])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HtamTVYq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C59D233721
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761930093; cv=fail; b=B8gSumxfTpReoaI2bs3d8OLcQ5FhLbugK3rdDwvXIagPd+dUXL92uXgvrPdmO1N1rDXw9Rfw72KYBmVY8meuHaS9mH/KVLYNKImwvT1w/ZI7XHgeotx5u00gBt5eXeGxtbz7ddOHNBXdg/HGJOiodx01FjfYnxxuA8ARGAJeHxg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761930093; c=relaxed/simple;
-	bh=zyevPOCzPRB0qvYDssgMX8qT+BsamsUukMjU4PqtKac=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oh4P3hFnldU8UKs00J6CbM3H9wr5dnwml+QTqGirmxXjLkkIyGGZUKy6g+NrYzUS5UikF5cO+o8AyEKFJZH4UqBxLiQC17LVRpWBd/dvbI0tEYcf1MWjQaSCkXge4/6Bp6Cew4dHodDDhdHoPm5YbKQPlEGhN/ls1jWCwryRibw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=f3+wSJl+; arc=fail smtp.client-ip=52.101.52.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AY1Z3pLI27WHKtqhyqONzfbjf5uz/jXhpSCQXL6+CNEySm0Vv4OpobriHffw5SWixC/gbK2PyHJOmLzLIQquy+shHKh92ZsAgLJpr4fn5i0aMuvh4QeIBLT4r8GWN2v1oeNRRy+8BEBTYsliBeUYKlexVgI3BJ/GT3WNA/MQmt/0TRSqTUugIh5agA9L6mYARNJxvff6hPMcq0QsKF8dZYZMAQ7Uvv0jCflIc8/zYONh/YhnpVyRebSPZ0MX30rlGAdzfVif4jfmjUcOIEMkGvet9WNaMLFyXkwPlZOgyBpPyfMv65VV/MIiox8Xdfs3ecBs5HW3aSxH37I7EPsy/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2BKp90wjcGKVwXeV9pzKp2ndRARU+FsZCQqsYlp0CZE=;
- b=A47CX2CWyRLa63PYq1OlR+/lNprLBy8blkQ93OJ3XXc45QmwxiaSOCrnVqmcpXyipNFXOP+4YGSPo6f8zaIIl/+xXfmTaQB/xiqwvYEIxJPJNmPIkWObdqUM7IlGAj4dEc7BexIb+T9qkyMMgpugBbocqKYn9zgN0eWMnt2gkJn1bTCKc1JZx/MC3IiEln5pYm66NjFFdFeZvYgYA53pvCRCnfHBQO+2BMk4E/xCA4ygwaPosIF8vxBM4mnWTe+p4joezLGgmkEM0Z/0xye94KOVtIyoAGSUob6LOGgt+igiCUuD7e7cm6/ErnxvAWnovft8bFzlPauYYrbvQezeVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2BKp90wjcGKVwXeV9pzKp2ndRARU+FsZCQqsYlp0CZE=;
- b=f3+wSJl+f5qvQPKbyf2RTjgQLPsuzEzSTGwKYrzANP3tzijTyxsElpnGREgXBc7BubFAvBHPH0h0cQGYiww++WICiIKsUo0MIW+ieGyw7dF2xX6f8yRhy+VQq3AmDoX84UF+R70W3j4+gxsi1g3zEigcm5I3pGWDDhZy0r1aYtvHJL3JP0K6sgSQggpd8lpd5dw/wZqJupix5PAz9Uayd+JNLkCuHkXBiG1PekKRFjDkwtmogAja0a/CZrZ+qFnzefmH/dQpLX+3uB6IXFNaNZcsJzaTI6D0REUE8RH0iIjf6DtSm/4ElrO9WMQ0Wes59K+cFCEdZV0f2IHmYJH38A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA1PR12MB6701.namprd12.prod.outlook.com (2603:10b6:806:251::18)
- by DM4PR12MB7526.namprd12.prod.outlook.com (2603:10b6:8:112::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
- 2025 17:01:23 +0000
-Received: from SA1PR12MB6701.namprd12.prod.outlook.com
- ([fe80::2be0:c316:443d:da3a]) by SA1PR12MB6701.namprd12.prod.outlook.com
- ([fe80::2be0:c316:443d:da3a%5]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 17:01:23 +0000
-Message-ID: <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
-Date: Fri, 31 Oct 2025 10:01:20 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] drm/nouveau/uvmm: Allow larger pages
-To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Mary Guillemard <mary@mary.zone>,
- Faith Ekstrand <faith.ekstrand@collabora.com>, Lyude Paul
- <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- nouveau@lists.freedesktop.org
-References: <20251031104924.10631-1-mohamedahmedegypt2001@gmail.com>
- <20251031104924.10631-3-mohamedahmedegypt2001@gmail.com>
-Content-Language: en-US
-From: James Jones <jajones@nvidia.com>
-In-Reply-To: <20251031104924.10631-3-mohamedahmedegypt2001@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH0PR07CA0046.namprd07.prod.outlook.com
- (2603:10b6:510:e::21) To SA1PR12MB6701.namprd12.prod.outlook.com
- (2603:10b6:806:251::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC542233721;
+	Fri, 31 Oct 2025 17:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761930137; cv=none; b=BOcwEB/esh+th9l3ECDCKWf7yuX4YHB1pMjlyLJFrSlwm8gsA9RVH3LubVQEvQJT4VGdJJmoRdDYxEX8NbqQIuJ0sDbRd0s4KYYDOH4ygk0pmXh3y9nMfdFuExoUsV7QnnjWw2C1mP2puTdYs0VBmuylKsUa2x3E+8jo5rTy1gg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761930137; c=relaxed/simple;
+	bh=1kdjb4E/p9sd91GnUOyYedV9SyUsuRGhYLpFQpqvTMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tMaQjjGAit2sCqIDSlktuJBEXvli6ecq4ZWclbGsVEToqR8wga3dy7MY2uEtEiy4ce6uDPjv7SI41mu4dI36fVAdaFrE2CAquQfdDpbmP2+n36I0OIsL2n5jdZu/sOPlyI17gcMW9SKJZG9jncDdN1hmMqfjRXBXynGacaemSBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HtamTVYq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59VBfqdm004851;
+	Fri, 31 Oct 2025 17:02:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	pp1; bh=ylHql8zLkpNv+9v+wxTr/iWRgAu+BX2hfVbME6KKahA=; b=HtamTVYq
+	s8rZH+FeL6PtRQmeBR8SYCXAVOn065L/xgTsT9kLza7frUc+tJYceQQyp6wV++Ac
+	fPVIvfP5UKGozLPYIh00N0bEqfnL1+Tz76tM5Kf6mVcOR1r2G28i7Np76UNWYeY1
+	6IhQ4t29geGrCzwuTi9D9n1MN9s1vUUBErGlihoUZ+mgdzdVek/AVN6GCBtKHBGs
+	dG3zcUSWMUZ90wpvDOZR0+GegSGSvmyx+hVOVsitZeLoq0+aauSjTFP15won/bBu
+	w4TGIzpaH1FZOo4qDCAiZcfMyvafzvLDNif5l40nUOLBkKec+/1nYgXsMEjYH5CT
+	3oDIoinHPtxcug==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34a8y1bj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 17:02:13 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59VGMkM5019567;
+	Fri, 31 Oct 2025 17:02:12 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xyf85f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 17:02:12 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59VH29LS29032826
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 Oct 2025 17:02:09 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 321EE20040;
+	Fri, 31 Oct 2025 17:02:09 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D040220043;
+	Fri, 31 Oct 2025 17:02:08 +0000 (GMT)
+Received: from osiris (unknown [9.111.9.126])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 31 Oct 2025 17:02:08 +0000 (GMT)
+Date: Fri, 31 Oct 2025 18:02:07 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] s390 fixes for 6.18-rc4
+Message-ID: <20251031170207.14424A48-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB6701:EE_|DM4PR12MB7526:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88f86c5b-c14a-4a8f-bd6b-08de189f1f13
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YzdGNHNXQVNpYnZycHFMYWpSRjg2WEprRjZySlphWHQreEQ3Y3lPVnVMaTQ4?=
- =?utf-8?B?YzA5ZjA1RlFVZnpNRkhDRHBta25KTk5xVkkzcEw0Yzl0Mkx4VGJkaVlnN0hp?=
- =?utf-8?B?SVlBTWErNG5XN01HRlBrT2xWVUE5czZIbksxY2lscThNSDJEQTg2OERtR3Ru?=
- =?utf-8?B?OGhLL3FkbGpMdWp5VS9WTkFDK0JoNzJlNndleExKMXF4bGxxVlFOWTk0ZElJ?=
- =?utf-8?B?S0ZVM1hjeWwwMlRESERXZWNwVlc1aWdwVGU2bU1tRDd0UE1yVjRsOWlJN1U2?=
- =?utf-8?B?eU5ZL3UvVEdld2NXanlvTi9QazFmdVA3UE9IYjZScHYzd242RUMzdTkwY3pS?=
- =?utf-8?B?ck1aNit0TjFEUytVQ2JiSTB0RVJSRkcxRHEwUklKUUtTV0dlODFYQVF1TGZF?=
- =?utf-8?B?SzQ1VkFITFFGTGVvQUNVTng1TTFzdHd0RXEwNmxybDY3WGt0QTNVSnpLOUpw?=
- =?utf-8?B?bERwYkNPcXZzeGhNOU14UHlKVVFpTnUwcjZxbVVKWXNZU2FaTTQyL1p6VHNG?=
- =?utf-8?B?WHk0L1JFYkVJZmhBdm9WV3NDZlpBUC81TXFsb2p5OWN6TWlPMTFSZm5DL0Zt?=
- =?utf-8?B?Ylh1em9LbW5OR2wyZUNXdUs4TnB6ZkZVSFRLQmlZTzJYWDJrNlAxeENMN0t4?=
- =?utf-8?B?OStXaXNIakNJWm1ta0FhRUtCVXozOXR2MFhQRXpFS3lvYWY3clIrTnZmb1J0?=
- =?utf-8?B?dENMUFN6bXNyVkUxRWtFaDFsQ0s5dEJOeE85MmdVeGdDTkVyd0diSWs5bTlF?=
- =?utf-8?B?dFFLZzNic0Z4cjRFZmdDdXVhRDA3WHdGSDhtMWVlN0dmNEdIME1XWXhIKzBY?=
- =?utf-8?B?dFowSlR3RHVUa1ZnLzVqeTdSNmI4YjZFdjVGMTNzaEtmdlNhVDF4cnBGSEkx?=
- =?utf-8?B?N3FoZE1WODJjbWhDTXVpSkU1NHlDdndBanEwbDlNaGFJTjVCYzZtY2hVcGdM?=
- =?utf-8?B?QmJPeXFsdVg0Qys3eU9NOVlPU3BlT2crVzJwcFkrUFEvZW5DUWNIbTB0amNl?=
- =?utf-8?B?VHhKNkRRMTMzWGNqekJmT2swV2laMWNUMGdjb0lSaWt5c0QzL2o2b3V2M08w?=
- =?utf-8?B?ejRHSE01b1FIOXU5cXloMkgxS0Mxbnhjang1NDJ0ZWxMckpuZ0VjRE5ZUEh1?=
- =?utf-8?B?Z3FHZ1dlOE5ZemZWazd0WWpPUVJrOWswNStERUw0YndtRXhoNndMeE96Qi9N?=
- =?utf-8?B?RmJvQjVvZWJFRkNXcGtJOFpNUjJDVEljMHdkajRMWTZIU2FnN3RVVDNPY1Q3?=
- =?utf-8?B?NlBNNVc0eVFZR1NlTkxVV2ovNXVTeTZjeFFCNmFkdTgzWEVQdkxnVXJXYmYr?=
- =?utf-8?B?ZVgvdS9LRGdCdkdYdTlBa1JacHJzSHVnVkZGVUNhR0hsU2l1V0RPaE1nbFl5?=
- =?utf-8?B?QnNOVExLd2wzbE1kRmlDV0JtZVIvRG5hWUhMNVpOTjFRYkZxdm4yNW5rcVlh?=
- =?utf-8?B?ejlVYzBZNkdZWFFuOWpVcHVSWFFhSnpuQlY1V0lvUCtlR3FsQ21IdmZlRXM0?=
- =?utf-8?B?eVYvVjcydTBTWHQwQlhmN1pFbFRvU1UrUmpuVkQ0d0ZIYnMrcSt4L00wdlZN?=
- =?utf-8?B?VURaVElTS2VyekZ4Ui9wSVkwRk52Y0RrUU8wNXlzODdBNmR1RjBBWjBsQmdJ?=
- =?utf-8?B?SUZYSWY0SE1FTFdYUzM0UGtVbXl0dXFtcHkwMFEvK2loM2V3SnNWOG02T2Rq?=
- =?utf-8?B?QjljeW5yWnJhYmpTbnN6U0JyWWsxMGNMV3hPaUFyLzk0S3Vha1RCcStUYWxv?=
- =?utf-8?B?dmQwdFM5eTQwZ21LRnBPVkxRUDJ0VkhIVmdtMmYyQmhUdnBkTTkvZ3pyMTZX?=
- =?utf-8?B?VG1JWUZWQjFTN3g1TnA0QUZ1U3JWNGNaanE2V1hDeXc2R2p3N2dlRzM4RDZw?=
- =?utf-8?B?bXRtdzN0cEZKbTN1anRLRHpuMnNzaEg1L2JkRi9DbGRqSThpYlQ2YjlpenhV?=
- =?utf-8?Q?/IKgOTzc+Kj0cDlEErXJ1Bl3m120Yb/P?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB6701.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TDI3KzFrbkxBc2JUWjVWTHN5WHFMSTc4MWdiVTBQM2ZoY3pjbkNXNHhHVWVw?=
- =?utf-8?B?TGV3ZzYvQmxoRldqcHZBdVNlNUxSSXFlcHJ6OGdXb2Y0TWRJOUNHdlRYQk5X?=
- =?utf-8?B?cFNYelNtQjNZL0hwNzNuTUZRM3RhbmIvaFBiYndmWWVYTG43dUhCbEFGMytO?=
- =?utf-8?B?cHVSS2Jtc2ZyZlBkM0xuZGRyNzE2K29zQzgrL1BvM05oeUpTdHFHNkxZUTVV?=
- =?utf-8?B?NEZwTlZVN0t3WkZTcnJoWnEzMU5JVGEvUlI3WVE3eTgxcnJuVHZHWGJXUlNH?=
- =?utf-8?B?aDFDVWwyeWFjZThMV0ZGSXIvMlNpNTd1VVNvckYyWEp4ckNGL0M5cHdNc1RV?=
- =?utf-8?B?Yzh6OElYRE5weXQ4dmdUOW1xVVBSSTBJVmRvUENYSmhDcVdqQllQdWU3a012?=
- =?utf-8?B?WUhETmhtS01uTittYmR1VHV2ai9HQkFXU3pJbnI5SzRIc25TUEFNYktZdkU3?=
- =?utf-8?B?SDhDY2VoU1p1NnlHN0cxZDZpNkJORk5hVENOQ2hZVjJKcGpIY1VoR3hjZTRh?=
- =?utf-8?B?VC8zem0rcE5QQ0NkSVNOZkhRblpoZmFWSkJ1YW5aOFEzblV1Q0hKN2FLeFFS?=
- =?utf-8?B?NVZucER4b3c5cWhTSmZzZjZmMm9xYjNJSEE1VzU3N3Y0TTk0VkdBSGRod2RI?=
- =?utf-8?B?ckxSU3lOclc0T20ycGVPR1B6dEtvMTduTkhyVUdlUWlNM2I2YkdST3d3cmYz?=
- =?utf-8?B?eDZKd2xiemtTbXQyajczNytKcEhjRHE3clR6ekZld0lNdXVJMElWOVJmOHI0?=
- =?utf-8?B?U0hiVlpEU3FvZnFpQStRa2gxQWxaOVhWQjhkQjZOU2ZMQVljeDFlQXpyVkkr?=
- =?utf-8?B?WW1PbjN1R2t3Sm9ETzlhbWdvejI4aFlLL3NIcUNqV3ZsWkw1Rkg0THFvcGRy?=
- =?utf-8?B?N05ocGc2TDhRNjNhdU9RVWplVjY0MlhUTG5FTHMzb0FtZEozeWtRL2FXRkJy?=
- =?utf-8?B?dHl0ZjNZblRpeVpGU09PTU9iUWxZTVlEVmNiZGtUNkxmTkZtZWFSU3JwRFVQ?=
- =?utf-8?B?L2FHSkZ3OWhqT2VPbkQwWmtlWTNLQWpLOXJlc3RvNjFEL1BVVmx2UG52aWMz?=
- =?utf-8?B?V3dITWp6Z0lMUUpFRG9jME0xdjZDRjA2NDlyTG13V0pKR3p3OUI2WENxN3kx?=
- =?utf-8?B?c01rNmVNOWRCd2krbmtHTFZiS0dXa1NzdmJkcVhZNHFibjhGbGg1NVRMMWt1?=
- =?utf-8?B?Y05ERExjR1JTQ3pVODU0QllHek9nbUtLemMyTEY2TGlxQ3Q4TTlOanRxVjd3?=
- =?utf-8?B?bitTY3p1QzhORDB2YTRSVUdXMGFzK3RUbGtndzhnTXQ0RkFGNlVrM2NkSzF1?=
- =?utf-8?B?Y2VqbktmNTB5NVNZYVBQYWc1akk2VXZvdkxlVmVPenJXbjZyVEk1MmtHVHIz?=
- =?utf-8?B?VEZ4TS9Pd0xSWFg0b2tUTy8vMjcrRVNPeHdwNXdmUnVlZmFZZlcwOXBnSFVy?=
- =?utf-8?B?OGEyMmJDNldIV2s1ZVRSM282QWtkSEo0Q3dEWTc2cW45bkFtSC9ETjJ6NUJk?=
- =?utf-8?B?dnp2cWlVZTdQNDRIckJMQUl4cGdjb2FNUW90K2R1ZEdDZmQzYkV4Z3ZxSE5F?=
- =?utf-8?B?allDL2dkN0Z4dGg2ZGdUQ3gyU0ExZ2plUjM5WDduVnNacU9tVTVsTm5nTEt1?=
- =?utf-8?B?b3UrRVIzZXRQNnUrTVpKdTlFdnFUWEp6a1NiZVFZTTFtNmNmZHJWMlMyckJx?=
- =?utf-8?B?cEFJZC9CZTZGUVh2NTR5UUlOa1FvL29QSmVGc1R1S2EvSm9XV0ZUaEMrS3J1?=
- =?utf-8?B?djdVeUxNZ2t2UUkrNEUzZTgxSm93d2dPcjBST2N4OXhDYzJtNGo3SDlEWEhD?=
- =?utf-8?B?RzJMckVmNVFhMC9jZSt5TERMSm1TVGRBVVJEYjFJZ3lyQWJMaVhaV0JNNnc2?=
- =?utf-8?B?Z3M4b0hWNks0WldZWU52SDFOZnIzbXJycGdKTWJTK09IMGZDd3Q3cGVGeGNB?=
- =?utf-8?B?VzRjN2s0ZnV5bDl0VUV2eFZFemxIVzRoZ0VzS1dyNTJCajJ3SjdlQnFCaW4y?=
- =?utf-8?B?eis3VlBQaTZXSlF6aUNjUmdUYnRWdEJjUmt6NGJ0VlpqSGtYN2h0T0hNUzVG?=
- =?utf-8?B?K3BTdE9LWFhUL3lCMDkxV01oOUI2QmxQdVMvZ2ZFT3pHWHpRYVRPckIrSEZn?=
- =?utf-8?Q?YjTEGPV6V9M4w04NaI1wIARu4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88f86c5b-c14a-4a8f-bd6b-08de189f1f13
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB6701.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 17:01:23.4933
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gTqmZ/fTgeqJAePPVUizcnaa0sw7stnzTOOEfZ9JuHiNNKLWAM8LVHMmSkJm8/B0soBMnI/+TO+anGyhUegulA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7526
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=DYkaa/tW c=1 sm=1 tr=0 ts=6904eb95 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=NVEalAIATpgYVQfZjm4A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: MD1Um72SiiIMEzIZECv29iOLT9__Siq7
+X-Proofpoint-ORIG-GUID: MD1Um72SiiIMEzIZECv29iOLT9__Siq7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX10i+zoiUCz7F
+ Q188ymDGbFWpXZRIC2BYX6OmR5YzPehfMZqa9QfHSTynEfT9a2Nq5gs42u8shSqNYfnMhY9rU42
+ UHEKp9DS6HPKxhLjv9Xkgpzay+GNEYqyuWSPIsEvMyaiEQV7RVyFrFtkz43946yjbme1ezJmxOB
+ WQGwlbkZkbqW5nXL6olR463/UoFSXt4BC2USAYMLwqlyBCX67ocZdFtXmxNSFOQcgX0zBlYQ3B4
+ WL2tQZa5BDABPxKhdQFy9KFKHhTWB94eQjna32A0mx+CgEEoInma3Bmds0BMMlHpcZPDZ7dyewl
+ RhzncdAhtZUDGRrCaL+yAcRN4+jrr+K6rVh5+cQhToWWQp8oxulKJHh2yGxo4LhrlP3IIJ2fuBt
+ X07OxnRStVBBzUmqajHSReslbWIFTA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_05,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 phishscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-On 10/31/25 03:49, Mohamed Ahmed wrote:
-> From: Mary Guillemard <mary@mary.zone>
-> 
-> Now that everything in UVMM knows about the variable page shift, we can
-> select larger values.
-> 
-> The proposed approach relies on nouveau_bo::page unless if it would cause
-> alignment issues (in which case we fall back to searching for an
-> appropriate shift)
-> 
-> Signed-off-by: Mary Guillemard <mary@mary.zone>
-> Co-developed-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-> Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-> ---
->   drivers/gpu/drm/nouveau/nouveau_uvmm.c | 60 +++++++++++++++++++++++++-
->   1 file changed, 58 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> index 2cd0835b05e8..ab8933b88337 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> @@ -454,6 +454,62 @@ op_unmap_prepare_unwind(struct drm_gpuva *va)
->   	drm_gpuva_insert(va->vm, va);
->   }
->   
-> +static bool
-> +op_map_aligned_to_page_shift(const struct drm_gpuva_op_map *op, u8 page_shift)
-> +{
-> +	u64 non_page_bits = (1ULL << page_shift) - 1;
-> +
-> +	return (op->va.addr & non_page_bits) == 0 &&
-> +	       (op->va.range & non_page_bits) == 0 &&
-> +	       (op->gem.offset & non_page_bits) == 0;
-> +}
-> +
-> +static u8
-> +select_page_shift(struct nouveau_uvmm *uvmm, struct drm_gpuva_op_map *op)
-> +{
-> +	struct nouveau_bo *nvbo = nouveau_gem_object(op->gem.obj);
-> +
-> +	/* nouveau_bo_fixup_align() guarantees that the page size will be aligned
-> +	 * for most cases, but it can't handle cases where userspace allocates with
-> +	 * a size and then binds with a smaller granularity. So in order to avoid
-> +	 * breaking old userspace, we need to ensure that the VA is actually
-> +	 * aligned before using it, and if it isn't, then we downgrade to the first
-> +	 * granularity that will fit, which is optimal from a correctness and
-> +	 * performance perspective.
-> +	 */
-> +	if (op_map_aligned_to_page_shift(op, nvbo->page))
-> +		return nvbo->page;
-> +
-> +	struct nouveau_mem *mem = nouveau_mem(nvbo->bo.resource);
-> +	struct nvif_vmm *vmm = &uvmm->vmm.vmm;
-> +	int i;
-> +
-> +	/* If the given granularity doesn't fit, let's find one that will fit. */
-> +	for (i = 0; i < vmm->page_nr; i++) {
-> +		/* Ignore anything that is bigger or identical to the BO preference. */
-> +		if (vmm->page[i].shift >= nvbo->page)
-> +			continue;
-> +
-> +		/* Skip incompatible domains. */
-> +		if ((mem->mem.type & NVIF_MEM_VRAM) && !vmm->page[i].vram)
-> +			continue;
-> +		if ((mem->mem.type & NVIF_MEM_HOST) &&
-> +		    (!vmm->page[i].host || vmm->page[i].shift > PAGE_SHIFT))
-> +			continue;
+Hi Linus,
 
-This logic doesn't seem correct. I'm not sure why there's a need to 
-limit the page size on the host memory type, but assuming there is due 
-to nouveau architecture or HW limitations I'm not aware of, it should be 
-applied universally, not just when falling back due to misaligned 
-addresses. You can get lucky and have aligned addresses regardless of 
-the target page size. Hence, this check would need to precede the above 
-early-out for the case where op_map_aligned_to_page_shift() succeeds.
+please pull some s390 fixes for 6.18-rc4.
 
 Thanks,
--James
+Heiko
 
-> +		/* If it fits, return the proposed shift. */
-> +		if (op_map_aligned_to_page_shift(op, vmm->page[i].shift))
-> +			return vmm->page[i].shift;
-> +	}
-> +
-> +	/* If we get here then nothing can reconcile the requirements. This should never
-> +	 * happen.
-> +	 */
-> +	WARN_ON(1);
-> +
-> +	return PAGE_SHIFT;
-> +}
-> +
->   static void
->   nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
->   			       struct nouveau_uvma_prealloc *new,
-> @@ -506,7 +562,7 @@ nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
->   			if (vmm_get_range)
->   				nouveau_uvmm_vmm_put(uvmm, vmm_get_start,
->   						     vmm_get_range,
-> -						     PAGE_SHIFT);
-> +						     select_page_shift(uvmm, &op->map));
->   			break;
->   		}
->   		case DRM_GPUVA_OP_REMAP: {
-> @@ -599,7 +655,7 @@ op_map_prepare(struct nouveau_uvmm *uvmm,
->   
->   	uvma->region = args->region;
->   	uvma->kind = args->kind;
-> -	uvma->page_shift = PAGE_SHIFT;
-> +	uvma->page_shift = select_page_shift(uvmm, op);
->   
->   	drm_gpuva_map(&uvmm->base, &uvma->va, op);
->   
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
 
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.18-3
+
+for you to fetch changes up to 64e2f60f355e556337fcffe80b9bcff1b22c9c42:
+
+  s390: Disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP (2025-10-30 16:59:28 +0100)
+
+----------------------------------------------------------------
+s390 fixes for 6.18-rc4
+
+- Use correct locking in zPCI event code to avoid deadlock
+
+- Get rid of irqs_registered flag in zpci_dev structure and restore IRQ
+  unconditionally for zPCI devices. This fixes sit uations where the flag
+  was not correctly updated
+
+- Fix potential memory leak kernel page table dumper code
+
+- Disable (revert) ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP for s390 again. The
+  optimized hugetlb vmemmap code modifies kernel page tables in a way which
+  does not work on s390 and leads to reproducible kernel crashes due to
+  stale TLB entries. This needs to be addressed with some larger changes.
+  For now simply disable the feature
+
+- Update defconfigs
+
+----------------------------------------------------------------
+Farhan Ali (1):
+      s390/pci: Restore IRQ unconditionally for the zPCI device
+
+Gerd Bayer (1):
+      s390/pci: Avoid deadlock between PCI error recovery and mlx5 crdump
+
+Heiko Carstens (2):
+      s390: Update defconfigs
+      s390: Disable ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+
+Miaoqian Lin (1):
+      s390/mm: Fix memory leak in add_marker() when kvrealloc() fails
+
+ arch/s390/Kconfig                    |  1 -
+ arch/s390/configs/debug_defconfig    | 14 +++++++++-----
+ arch/s390/configs/defconfig          | 14 +++++++++-----
+ arch/s390/configs/zfcpdump_defconfig |  1 -
+ arch/s390/include/asm/pci.h          |  1 -
+ arch/s390/mm/dump_pagetables.c       | 19 +++++++------------
+ arch/s390/pci/pci_event.c            |  4 ++--
+ arch/s390/pci/pci_irq.c              |  9 +--------
+ 8 files changed, 28 insertions(+), 35 deletions(-)
+
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index c4145672ca34..df22b10d9141 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -158,7 +158,6 @@ config S390
+ 	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
+ 	select ARCH_WANT_KERNEL_PMD_MKWRITE
+ 	select ARCH_WANT_LD_ORPHAN_WARN
+-	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+ 	select ARCH_WANTS_THP_SWAP
+ 	select BUILDTIME_TABLE_SORT
+ 	select CLONE_BACKWARDS2
+diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
+index b31c1df90257..8433f769f7e1 100644
+--- a/arch/s390/configs/debug_defconfig
++++ b/arch/s390/configs/debug_defconfig
+@@ -101,6 +101,7 @@ CONFIG_SLUB_STATS=y
+ CONFIG_MEMORY_HOTPLUG=y
+ CONFIG_MEMORY_HOTREMOVE=y
+ CONFIG_KSM=y
++CONFIG_PERSISTENT_HUGE_ZERO_FOLIO=y
+ CONFIG_TRANSPARENT_HUGEPAGE=y
+ CONFIG_CMA_DEBUGFS=y
+ CONFIG_CMA_SYSFS=y
+@@ -123,12 +124,12 @@ CONFIG_TLS_DEVICE=y
+ CONFIG_TLS_TOE=y
+ CONFIG_XFRM_USER=m
+ CONFIG_NET_KEY=m
+-CONFIG_XDP_SOCKETS=y
+-CONFIG_XDP_SOCKETS_DIAG=m
+-CONFIG_DIBS=y
+-CONFIG_DIBS_LO=y
+ CONFIG_SMC=m
+ CONFIG_SMC_DIAG=m
++CONFIG_DIBS=y
++CONFIG_DIBS_LO=y
++CONFIG_XDP_SOCKETS=y
++CONFIG_XDP_SOCKETS_DIAG=m
+ CONFIG_INET=y
+ CONFIG_IP_MULTICAST=y
+ CONFIG_IP_ADVANCED_ROUTER=y
+@@ -472,6 +473,7 @@ CONFIG_SCSI_DH_EMC=m
+ CONFIG_SCSI_DH_ALUA=m
+ CONFIG_MD=y
+ CONFIG_BLK_DEV_MD=y
++CONFIG_MD_LLBITMAP=y
+ # CONFIG_MD_BITMAP_FILE is not set
+ CONFIG_MD_LINEAR=m
+ CONFIG_MD_CLUSTER=m
+@@ -654,9 +656,12 @@ CONFIG_JFS_POSIX_ACL=y
+ CONFIG_JFS_SECURITY=y
+ CONFIG_JFS_STATISTICS=y
+ CONFIG_XFS_FS=y
++CONFIG_XFS_SUPPORT_V4=y
++CONFIG_XFS_SUPPORT_ASCII_CI=y
+ CONFIG_XFS_QUOTA=y
+ CONFIG_XFS_POSIX_ACL=y
+ CONFIG_XFS_RT=y
++# CONFIG_XFS_ONLINE_SCRUB is not set
+ CONFIG_XFS_DEBUG=y
+ CONFIG_GFS2_FS=m
+ CONFIG_GFS2_FS_LOCKING_DLM=y
+@@ -666,7 +671,6 @@ CONFIG_BTRFS_FS_POSIX_ACL=y
+ CONFIG_BTRFS_DEBUG=y
+ CONFIG_BTRFS_ASSERT=y
+ CONFIG_NILFS2_FS=m
+-CONFIG_FS_DAX=y
+ CONFIG_EXPORTFS_BLOCK_OPS=y
+ CONFIG_FS_ENCRYPTION=y
+ CONFIG_FS_VERITY=y
+diff --git a/arch/s390/configs/defconfig b/arch/s390/configs/defconfig
+index 161dad7ef211..4414dabd04a6 100644
+--- a/arch/s390/configs/defconfig
++++ b/arch/s390/configs/defconfig
+@@ -94,6 +94,7 @@ CONFIG_SLAB_BUCKETS=y
+ CONFIG_MEMORY_HOTPLUG=y
+ CONFIG_MEMORY_HOTREMOVE=y
+ CONFIG_KSM=y
++CONFIG_PERSISTENT_HUGE_ZERO_FOLIO=y
+ CONFIG_TRANSPARENT_HUGEPAGE=y
+ CONFIG_CMA_SYSFS=y
+ CONFIG_CMA_AREAS=7
+@@ -114,12 +115,12 @@ CONFIG_TLS_DEVICE=y
+ CONFIG_TLS_TOE=y
+ CONFIG_XFRM_USER=m
+ CONFIG_NET_KEY=m
+-CONFIG_XDP_SOCKETS=y
+-CONFIG_XDP_SOCKETS_DIAG=m
+-CONFIG_DIBS=y
+-CONFIG_DIBS_LO=y
+ CONFIG_SMC=m
+ CONFIG_SMC_DIAG=m
++CONFIG_DIBS=y
++CONFIG_DIBS_LO=y
++CONFIG_XDP_SOCKETS=y
++CONFIG_XDP_SOCKETS_DIAG=m
+ CONFIG_INET=y
+ CONFIG_IP_MULTICAST=y
+ CONFIG_IP_ADVANCED_ROUTER=y
+@@ -462,6 +463,7 @@ CONFIG_SCSI_DH_EMC=m
+ CONFIG_SCSI_DH_ALUA=m
+ CONFIG_MD=y
+ CONFIG_BLK_DEV_MD=y
++CONFIG_MD_LLBITMAP=y
+ # CONFIG_MD_BITMAP_FILE is not set
+ CONFIG_MD_LINEAR=m
+ CONFIG_MD_CLUSTER=m
+@@ -644,16 +646,18 @@ CONFIG_JFS_POSIX_ACL=y
+ CONFIG_JFS_SECURITY=y
+ CONFIG_JFS_STATISTICS=y
+ CONFIG_XFS_FS=y
++CONFIG_XFS_SUPPORT_V4=y
++CONFIG_XFS_SUPPORT_ASCII_CI=y
+ CONFIG_XFS_QUOTA=y
+ CONFIG_XFS_POSIX_ACL=y
+ CONFIG_XFS_RT=y
++# CONFIG_XFS_ONLINE_SCRUB is not set
+ CONFIG_GFS2_FS=m
+ CONFIG_GFS2_FS_LOCKING_DLM=y
+ CONFIG_OCFS2_FS=m
+ CONFIG_BTRFS_FS=y
+ CONFIG_BTRFS_FS_POSIX_ACL=y
+ CONFIG_NILFS2_FS=m
+-CONFIG_FS_DAX=y
+ CONFIG_EXPORTFS_BLOCK_OPS=y
+ CONFIG_FS_ENCRYPTION=y
+ CONFIG_FS_VERITY=y
+diff --git a/arch/s390/configs/zfcpdump_defconfig b/arch/s390/configs/zfcpdump_defconfig
+index ed0b137353ad..b5478267d6a7 100644
+--- a/arch/s390/configs/zfcpdump_defconfig
++++ b/arch/s390/configs/zfcpdump_defconfig
+@@ -33,7 +33,6 @@ CONFIG_NET=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_SAFE=y
+ CONFIG_BLK_DEV_RAM=y
+-# CONFIG_DCSSBLK is not set
+ # CONFIG_DASD is not set
+ CONFIG_ENCLOSURE_SERVICES=y
+ CONFIG_SCSI=y
+diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+index 6890925d5587..a32f465ecf73 100644
+--- a/arch/s390/include/asm/pci.h
++++ b/arch/s390/include/asm/pci.h
+@@ -145,7 +145,6 @@ struct zpci_dev {
+ 	u8		has_resources	: 1;
+ 	u8		is_physfn	: 1;
+ 	u8		util_str_avail	: 1;
+-	u8		irqs_registered	: 1;
+ 	u8		tid_avail	: 1;
+ 	u8		rtr_avail	: 1; /* Relaxed translation allowed */
+ 	unsigned int	devfn;		/* DEVFN part of the RID*/
+diff --git a/arch/s390/mm/dump_pagetables.c b/arch/s390/mm/dump_pagetables.c
+index 9af2aae0a515..528d7c70979f 100644
+--- a/arch/s390/mm/dump_pagetables.c
++++ b/arch/s390/mm/dump_pagetables.c
+@@ -291,16 +291,14 @@ static int ptdump_cmp(const void *a, const void *b)
+ 
+ static int add_marker(unsigned long start, unsigned long end, const char *name)
+ {
+-	size_t oldsize, newsize;
++	struct addr_marker *new;
++	size_t newsize;
+ 
+-	oldsize = markers_cnt * sizeof(*markers);
+-	newsize = oldsize + 2 * sizeof(*markers);
+-	if (!oldsize)
+-		markers = kvmalloc(newsize, GFP_KERNEL);
+-	else
+-		markers = kvrealloc(markers, newsize, GFP_KERNEL);
+-	if (!markers)
+-		goto error;
++	newsize = (markers_cnt + 2) * sizeof(*markers);
++	new = kvrealloc(markers, newsize, GFP_KERNEL);
++	if (!new)
++		return -ENOMEM;
++	markers = new;
+ 	markers[markers_cnt].is_start = 1;
+ 	markers[markers_cnt].start_address = start;
+ 	markers[markers_cnt].size = end - start;
+@@ -312,9 +310,6 @@ static int add_marker(unsigned long start, unsigned long end, const char *name)
+ 	markers[markers_cnt].name = name;
+ 	markers_cnt++;
+ 	return 0;
+-error:
+-	markers_cnt = 0;
+-	return -ENOMEM;
+ }
+ 
+ static int pt_dump_init(void)
+diff --git a/arch/s390/pci/pci_event.c b/arch/s390/pci/pci_event.c
+index b95376041501..27db1e72c623 100644
+--- a/arch/s390/pci/pci_event.c
++++ b/arch/s390/pci/pci_event.c
+@@ -188,7 +188,7 @@ static pci_ers_result_t zpci_event_attempt_error_recovery(struct pci_dev *pdev)
+ 	 * is unbound or probed and that userspace can't access its
+ 	 * configuration space while we perform recovery.
+ 	 */
+-	pci_dev_lock(pdev);
++	device_lock(&pdev->dev);
+ 	if (pdev->error_state == pci_channel_io_perm_failure) {
+ 		ers_res = PCI_ERS_RESULT_DISCONNECT;
+ 		goto out_unlock;
+@@ -257,7 +257,7 @@ static pci_ers_result_t zpci_event_attempt_error_recovery(struct pci_dev *pdev)
+ 		driver->err_handler->resume(pdev);
+ 	pci_uevent_ers(pdev, PCI_ERS_RESULT_RECOVERED);
+ out_unlock:
+-	pci_dev_unlock(pdev);
++	device_unlock(&pdev->dev);
+ 	zpci_report_status(zdev, "recovery", status_str);
+ 
+ 	return ers_res;
+diff --git a/arch/s390/pci/pci_irq.c b/arch/s390/pci/pci_irq.c
+index 84482a921332..e73be96ce5fe 100644
+--- a/arch/s390/pci/pci_irq.c
++++ b/arch/s390/pci/pci_irq.c
+@@ -107,9 +107,6 @@ static int zpci_set_irq(struct zpci_dev *zdev)
+ 	else
+ 		rc = zpci_set_airq(zdev);
+ 
+-	if (!rc)
+-		zdev->irqs_registered = 1;
+-
+ 	return rc;
+ }
+ 
+@@ -123,9 +120,6 @@ static int zpci_clear_irq(struct zpci_dev *zdev)
+ 	else
+ 		rc = zpci_clear_airq(zdev);
+ 
+-	if (!rc)
+-		zdev->irqs_registered = 0;
+-
+ 	return rc;
+ }
+ 
+@@ -427,8 +421,7 @@ bool arch_restore_msi_irqs(struct pci_dev *pdev)
+ {
+ 	struct zpci_dev *zdev = to_zpci(pdev);
+ 
+-	if (!zdev->irqs_registered)
+-		zpci_set_irq(zdev);
++	zpci_set_irq(zdev);
+ 	return true;
+ }
+ 
 
