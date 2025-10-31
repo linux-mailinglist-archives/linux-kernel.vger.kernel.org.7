@@ -1,76 +1,57 @@
-Return-Path: <linux-kernel+bounces-880790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC073C2690C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:30:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEFEC26915
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17FD6420BCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:30:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78EE94E9D8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D92E2D9EE5;
-	Fri, 31 Oct 2025 18:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF2E24BBEE;
+	Fri, 31 Oct 2025 18:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVrDAkeM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="se15O2SR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893241DF269;
-	Fri, 31 Oct 2025 18:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E965E405F7;
+	Fri, 31 Oct 2025 18:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761935421; cv=none; b=RFvqRCmGxJXkbUf91p2zq35tTGJglSv0a7KFXtzlwJXEVlcxY5wyiJqvxAz8XlRlrniGAoT8LyANIqwi2Wehtr0cjwUGbx0gBQsx9TUxPsf9mPYcVCE5H+1+Ke6GOwBQRCSa+Jw636PGC+J+uZqiFSQsyGT+VvJG/hoIA8ZXEuM=
+	t=1761935471; cv=none; b=O8/zge0fbj9XonqpNCiPXBtxnBgCuAEta8kjsfrxaIEzS4pKQwiXM+fiqPFGY/MRYppDBTKliGWYSLQiAIAHUwETU+yjAgCBm8+a4XooFv3ejfOpGdtyqFDHbD8BVqQE2Y2hfD+R28HA3Ffoo94Guc7D6BgNjErhqwUiK5czHUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761935421; c=relaxed/simple;
-	bh=iH3501CDjRZhHJ4lYEDMDBUiVAkByJFY9KcipmE4ao0=;
+	s=arc-20240116; t=1761935471; c=relaxed/simple;
+	bh=zYuZsmVAveIzaZzGHayeZuxJiEGHcbpgQtlHJ5Bzb9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnTII4BuijbDNlAep8tb6R2uhrLiT9oaU/1iCvnXxCvqc047XpZ9lim+l8n1rcaN+D3M3OAA8JtVJwRo4MwTwS9j0Uyd1wElJ2GQ/we49wzPdBCwl8eNENYRUsbu9gl301/ZtbXUiY4Tog/UxNQkKrh+1dULRvRCnrCbFzcF2Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVrDAkeM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B8CC4CEFD;
-	Fri, 31 Oct 2025 18:30:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZC4MDzF3fRvC+grGhvhxARcXA6QnAMyVq92LVZu9+RHZqcZjUSH7rfVo5Zsx10T4X5XezvI7+xxo4B5pRuH8qM3ibhQcPEMfhe5+DymCubb2N6RFNqoVTpn6zNoYgE8PwlBAssPkh6/gBuucRZE4Fy92HYZPYY89/BVYOs0dyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=se15O2SR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9305FC4CEE7;
+	Fri, 31 Oct 2025 18:31:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761935421;
-	bh=iH3501CDjRZhHJ4lYEDMDBUiVAkByJFY9KcipmE4ao0=;
+	s=k20201202; t=1761935470;
+	bh=zYuZsmVAveIzaZzGHayeZuxJiEGHcbpgQtlHJ5Bzb9I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LVrDAkeMvZUg+GxUROmbRi0HHxFeD4ggUGNCjRVdcTRenUqGzd3BWk96xlAVr4s4y
-	 l3MgMqKPetjdvHSh4k2/Ke0YvdlO0mzRYGC2NOfEfwOV/PmX9AdbSlBynJj4CrpWgC
-	 GiNYZG+WCZx/WAEEG+iO/1OcsudejKRhuz/nlkVLgmlN+3071krhAKT+xV5p6OWOfZ
-	 H0GmeDPTwDYl5XJvZsAfuQFa6OHL194/Doy0kv3KcYz/js88+XnGZRYIqvE7UQ3ZXd
-	 hvxM2mcjLhrj8thGw884hth2dTdJ3He/z4fgnoz0JKcNy7dxqObSneX17WjCVfoG+i
-	 UJAB1L/R4IbFA==
-Date: Fri, 31 Oct 2025 13:30:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v5 06/12] dt-bindings: net: dsa: lantiq,gswip:
- add support for MII delay properties
-Message-ID: <20251031183019.GA1606010-robh@kernel.org>
-References: <cover.1761823194.git.daniel@makrotopia.org>
- <8025f8c5fcc31adf6c82f78e5cfaf75b0f89397c.1761823194.git.daniel@makrotopia.org>
- <20251031002924.GA516142-robh@kernel.org>
- <20251031003704.GA533574-robh@kernel.org>
- <aQQbCs-zn4PfrS71@makrotopia.org>
+	b=se15O2SRovbVlggwRb9+ha+9m6L0oUYw6G+3DUESVPHQ2yDPfnCJ4DjR3qShCQWG8
+	 xZ0Hi0YcTr9pf9WCzHooPcs0AyGhXhpb7730svle9QqsmP4S3BCuGQeGzO3A2AMzfx
+	 hQcyNihaVFvF8h+FTtVLVqU/oTmllzLeDpRq6RO+DlK62HJKycfpFEBJTVrsLBFHkg
+	 0qFo2KoJ6cTIf2lqebYEpEcgMEd2OXMAIj87OqH0Sl9UiKct8ReimBUpciq3ClxDoo
+	 +hWKIfOMiUX2bB24QzWZ7K2A9Z1kgMpZQfHsyagGA7L8aH39gU+qp/wyq/KtP0vhVp
+	 cPZzkq+d+oQkw==
+Date: Fri, 31 Oct 2025 18:31:09 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	muislam@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, longli@microsoft.com,
+	mhklinux@outlook.com, skinsburskii@linux.microsoft.com,
+	romank@linux.microsoft.com, Jinank Jain <jinankjain@microsoft.com>
+Subject: Re: [PATCH v2] mshv: Extend create partition ioctl to support cpu
+ features
+Message-ID: <20251031183109.GC2612078@liuwe-devbox-debian-v2.local>
+References: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,69 +60,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQQbCs-zn4PfrS71@makrotopia.org>
+In-Reply-To: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-On Fri, Oct 31, 2025 at 02:12:26AM +0000, Daniel Golle wrote:
-> On Thu, Oct 30, 2025 at 07:37:04PM -0500, Rob Herring wrote:
-> > On Thu, Oct 30, 2025 at 07:29:24PM -0500, Rob Herring wrote:
-> > > On Thu, Oct 30, 2025 at 11:28:35AM +0000, Daniel Golle wrote:
-> > > > Add support for standard tx-internal-delay-ps and rx-internal-delay-ps
-> > > > properties on port nodes to allow fine-tuning of RGMII clock delays.
-> > > > 
-> > > > The GSWIP switch hardware supports delay values in 500 picosecond
-> > > > increments from 0 to 3500 picoseconds, with a post-reset default of 2000
-> > > > picoseconds for both TX and RX delays. The driver currently sets the
-> > > > delay to 0 in case the PHY is setup to carry out the delay by the
-> > > > corresponding interface modes ("rgmii-id", "rgmii-rxid", "rgmii-txid").
-> > > > 
-> > > > This corresponds to the driver changes that allow adjusting MII delays
-> > > > using Device Tree properties instead of relying solely on the PHY
-> > > > interface mode.
-> > > > 
-> > > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > > > ---
-> > > > v4:
-> > > >  * remove misleading defaults
-> > > > 
-> > > > v3:
-> > > >  * redefine ports node so properties are defined actually apply
-> > > >  * RGMII port with 2ps delay is 'rgmii-id' mode
-> > > > 
-> > > >  .../bindings/net/dsa/lantiq,gswip.yaml        | 31 +++++++++++++++++--
-> > > >  1 file changed, 28 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > > > index f3154b19af78..8ccbc8942eb3 100644
-> > > > --- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > > > +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > > > @@ -6,8 +6,31 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > >  
-> > > >  title: Lantiq GSWIP Ethernet switches
-> > > >  
-> > > > -allOf:
-> > > > -  - $ref: dsa.yaml#/$defs/ethernet-ports
-> > > 
-> > > I think you can keep this as you aren't adding custom properties.
-> > 
-> > Nevermind, I see the next patch now...
+On Thu, Oct 30, 2025 at 02:40:31PM -0700, Nuno Das Neves wrote:
+> From: Muminul Islam <muislam@microsoft.com>
 > 
-> I suppose you mean [08/12] ("dt-bindings: net: dsa: lantiq,gswip: add
-> MaxLinear RMII refclk output property"), right?
+> The existing mshv create partition ioctl does not provide a way to
+> specify which cpu features are enabled in the guest. This was done
+> to reduce unnecessary complexity in the API.
 > 
-> The intention to divert from dsa.yaml#/$defs/ethernet-ports
-> already in this patch was to enforce the possible values of
-> {rx,tx}-internal-delay-ps.
+> However, some new scenarios require fine-grained control over the
+> cpu feature bits.
 > 
-> Anyway, so you are saying I can keep the change in this patch? Or
-> should I just drop the constraints on the possible values of the
-> delays and only divert from dsa.yaml#/$defs/ethernet-ports once I'm
-> actually adding maxlinear,rmii-refclk-out?
+> Define a new mshv_create_partition_v2 structure which supports passing
+> through the disabled cpu flags and xsave flags to the hypervisor
+> directly.
+> 
+> When these are not specified (pt_num_cpu_fbanks == 0) or the old
+> structure is used, define a set of default flags which cover most
+> cases.
+> 
+> Retain backward compatibility with the old structure via a new flag
+> MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables the new struct.
+> 
+> Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
+> Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
+> Signed-off-by: Muminul Islam <muislam@microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+> Changes in v2:
+> - Fix compilation issues [kernel test robot]
+> 
+> ---
+>  drivers/hv/mshv_root_main.c | 176 ++++++++++++++++++++++++++++++++----
+>  include/hyperv/hvhdk.h      |  86 +++++++++++++++++-
 
-You can keep it as-is, but strictly speaking, some of what's here is 
-only needed for [08/12]. Perhaps reverse the order of the patches. Then 
-it would be most of the changes here with the maxlinear,rmii-refclk-out 
-added, and then the 2nd patch is constraints on 
-{rx,tx}-internal-delay-ps.
+There is no mention of updating hvhdk.h in the commit message.
 
-Rob
+Can you split out this part to a separate commit? 
+
+Wei
 
