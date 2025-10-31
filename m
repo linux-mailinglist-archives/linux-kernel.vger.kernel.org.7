@@ -1,280 +1,402 @@
-Return-Path: <linux-kernel+bounces-879546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E7BC23665
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:30:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7006C236A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CFC18920E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1482406EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A269E302CC9;
-	Fri, 31 Oct 2025 06:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEDB2F7466;
+	Fri, 31 Oct 2025 06:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fZaVpm9W"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013017.outbound.protection.outlook.com [40.93.201.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PtCfwl6J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38602FB998;
-	Fri, 31 Oct 2025 06:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892227; cv=fail; b=aT5EdqbyzHRRiUeMVd614f9wwCh/22r9fa71xdtWf2lTFaqk7MKossrVxBAcdQcHUoskGrBhW4yAoFV2YX6XfJjRlj820xC4ankmlyQf3ElP9pmSGGXenaUJUUYATwcgNxVBnVbrCQWkbDhj+zFsuUsrHrFVwav685V3AWf3758=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892227; c=relaxed/simple;
-	bh=SIrZC3EdhWDC5P23eiIc12Fn9xp6f/UcG7tsJUr6A1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nfP654L08vvR3XFCGzEpbQpQ/W1vWGRPa78G7gIKQ0N7lIoptrNMVM3osslihJxcfkgsVdKhZRtkCeHUdjtHrrJdY7RmcN3UscGuhAE3kSY2LCi6e018nrCqcALBT93OJH2vuT4Am7w+eY1ihdd9cjBh08rNXSR5NkEV43/0J+k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fZaVpm9W; arc=fail smtp.client-ip=40.93.201.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CJC+TecQ455CyfEyjQqjxpSRU3PfGoWjGJehjlAPTONRQ/kKkb7jUYUb1hltln2yxxRDubEVP46SuJcjDznVUjcYIM97Jca45pCiHWowTtXa1sSOucAF96WhFWrKA23LFOPyB+B50Z/fjoqNpGsLTLA+lvr22Dp5j4r5+3FITNXxCE15Q89TtS1V0GmgwRNMGK8IsvWoyekFwTu/c6558dxdqVL+d7ekDraScN9cxGZk+x0Mlrt207F2a4VkERkvS2yGT9BtxBM3wmuL2wx7O2zMednTgXzIcRPvf77BewT7L694s2FhuGr9WNlqY7Xbco25Inrxm1d+mQC8hyytwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=woad9F3kNbMCyJ1Xi82xrvKESKMTX5VuL3O1Jz4AvKk=;
- b=GyEIiHmy6qSXDlfnKcOgY6YZI2cO9bt8EOAACwcLUIt5sntZaNx9FeQCrWw/NsFdoPciCAQwPcIhjyrdpTlsWW1wi5ksAM2HHgiB7E7BtuCH4lSzggkYb76kWbay7EJWkHcY9PjwZBezqKSzqs1a79tPBI36NPIMuvk4hDicOc9ttu+2tvMjkyUi9jL/FOFMt4XwTEYgMcHlHBtM9nhs9Dg2bZXaUb3JpyEsUdz9x3LVjfWS0Wq5iCM2LgGHLthXSnD5uah65R4kMDsv2DRL9x6ldHMioqJgQqsN7kVgJm89Sf7KPDt/7FMwLa7VInNNzuh3B+ziZ0Ng2r+E+TscYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=woad9F3kNbMCyJ1Xi82xrvKESKMTX5VuL3O1Jz4AvKk=;
- b=fZaVpm9WNCl1e5L5WOaVz1LMnxJv1P3wbZs1s/dzFNEHCdnbskRJsxkQc/Z1RUfqtXEiQkQJhyiQpvmOXcAF0cE23cDsWjGMw/89QtU/RjWdyQM4YAfHV/seFF3yzOfJM6hc81gDt54t0/0Oa/Jr9Ema9jo9TdQlFTqTPc726ncqVTtMa0vPcLhLJi7nfqY2EMYhsNthup68Jl5d72QLej1c6XSGgTw5Zl85ZNVEzfjpQ6VWBHI+xQ8p6RlsHXG2ETwxxf/vh4TBMM1ZocCRtllG4Ar5wYo5qNWoQ8jUdEHhN2ILl9L621/hGll6+aN1MboRHnmTFd5DOC4N7FnVWg==
-Received: from CH5PR04CA0021.namprd04.prod.outlook.com (2603:10b6:610:1f4::14)
- by CH3PR12MB7716.namprd12.prod.outlook.com (2603:10b6:610:145::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Fri, 31 Oct
- 2025 06:30:21 +0000
-Received: from CH1PEPF0000A34A.namprd04.prod.outlook.com
- (2603:10b6:610:1f4:cafe::e) by CH5PR04CA0021.outlook.office365.com
- (2603:10b6:610:1f4::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
- 31 Oct 2025 06:30:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000A34A.mail.protection.outlook.com (10.167.244.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 06:30:20 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 23:30:06 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
- 2025 23:30:06 -0700
-Received: from build-amhetre-focal-20250825.internal (10.127.8.10) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Thu, 30 Oct 2025 23:30:05 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <jgg@ziepe.ca>,
-	<nicolinc@nvidia.com>
-CC: <linux-tegra@nvidia.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
-	<amhetre@nvidia.com>
-Subject: [PATCH 3/3] arm64: dts: nvidia: Add nodes for CMDQV
-Date: Fri, 31 Oct 2025 06:29:59 +0000
-Message-ID: <20251031062959.1521704-4-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251031062959.1521704-1-amhetre@nvidia.com>
-References: <20251031062959.1521704-1-amhetre@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AAA30FC15
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761892291; cv=none; b=Togjb74VYZiR+6+MlZqPJGOm0INuG5vV/Dm8Kl1TzViLvzCaZ0reIBjgczU/w1t5Vo2JNkfS2iy/rlmMVyPlJ8Fco7MF3vSSpR7UTT92rf+0IZ0J7ra8Sx4J7PRQw68H3k5ymhHIzUOHe2zhjZcWHUZ31ZQ115LAy/JROPKb3Es=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761892291; c=relaxed/simple;
+	bh=LYoxxD7A9LaJtKznfbw8DA6ubROWoQExBvQKqwzcF+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gr6xZRBX5Fp17FRBotAL4cRFjR5fATzUv8+b5/PDau8zu/pvyl2XjE4FGpHzw2OZjYTV8Trn44kzGLr/dA0bBEflTV5SL7G/MEd2Vt1Jo2bOMV3g453RkzM9qNaTEQB616MwE1zLleZxTYlr5n87TdG866wRURfxNQdCNsZxwbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PtCfwl6J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761892287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2KOssj7wkA/xl6jWcLdWThOpLTHiPKSdvNkzYZXdE0U=;
+	b=PtCfwl6JTruTnPbf31JB++wVSJ6DFBU3FbYj/7hlJ8DMNJMEuB0/LK1a6TbUiTXSsSXOf2
+	K7vzgv9Qv9OtuEzD9SzDy7CAB01HT38g0yo1bETsPsQ6r7DxrOCnbh2Tbghypzl/SWJewX
+	ZhJnvAbYLI105lrAwwvyEK69sfNcjsI=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-673-y22RlLs_NyGROxih365Ojw-1; Fri, 31 Oct 2025 02:31:25 -0400
+X-MC-Unique: y22RlLs_NyGROxih365Ojw-1
+X-Mimecast-MFC-AGG-ID: y22RlLs_NyGROxih365Ojw_1761892285
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-7848264ead5so29989287b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:31:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761892285; x=1762497085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2KOssj7wkA/xl6jWcLdWThOpLTHiPKSdvNkzYZXdE0U=;
+        b=Mv8xzxSBSq87RU9oLowVUSfG/Fs/dR4BqKb8ib3/6R+u7THsFCoruj2jrk6CsFE84R
+         9YJaoxIedGSoewBKDrH8S7ReQ8rwxggTDNvHnajMlmdhKHEGVBNv9BHyxtT/6YbytjHb
+         AqZgvZ3a6hges4uCw5n3ANrIb8V+7h4656OPJbIuW4FLFJLS0rVcehhhVcl/saQ5Bh1+
+         LmqrDWb9GbR6JD598B4UzQcKsqdjAATdLzB/lnem02YypDSl4DW8JXavx6nfkUwFvjky
+         9uEIVsl8S1bTbakhyvNqV4FTDFGKvudWiASO5yTfdH8Z/Omh8tQHZ69VTFzYXQkNYGR8
+         VD3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOlQT0SmoCooLcLgc8XwIsqawcjBD8beVTSvk17wNfQ2DJ/E7HDZhIUBo45GkS7LJjYj499oBeTSnSTFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0pViV1awFjBC/OL02dvEb7zx4WkEsSrCtLCS/mYmnBr/AFX3z
+	suKX9Y08GRU7d/lvs95NmgXqPJhInQ0qGrVRHwiThNIBYvRA3Eq3vpV/CHfaHrpkUqWu3TaJms4
+	sqzzJCCDU2g/+2jaCOfPIErMkaXH9mKt3/KGU1UV+SXqhzoobwWgjm82Wg85+yEXTLmBXaLJkKF
+	tIG1wdFqejhS9cttzDLfYazCjMHhDLV6pKXDGzBD/s
+X-Gm-Gg: ASbGncuNXHidCoKmCNxSIugIiDxavt3fheK4kVJjl79tnKjGnbmr5Jh1E9MC72pMQT7
+	snULGPxWACrPLAmjdLt+obwoVlEnJBNlduf0bbND7UPivgMyKzrn5j2I5G5Fldvq+cc+zFFPpla
+	ybONZnfNwWgHx1E0D0vaPmicPCcja4uk6Eclq2kuJeX3jM9ciTBpK68gqk86uZDBoRUNghSoBW/
+	l2qRyjuX2cWmKT3I40/BAFOUAAnT0YG7wZGK5bkDjOiKA==
+X-Received: by 2002:a05:690c:4c13:b0:780:f22a:5633 with SMTP id 00721157ae682-786484c348dmr22010717b3.34.1761892285214;
+        Thu, 30 Oct 2025 23:31:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0pYcVMVFc96qXD6K/Ql1OUWHm6ne7uyRXVYQ20rOyxJK0kOMWBQTxd8VPgJa41heC2gwXU87aR5LL3XdlGRM=
+X-Received: by 2002:a05:690c:4c13:b0:780:f22a:5633 with SMTP id
+ 00721157ae682-786484c348dmr22010557b3.34.1761892284818; Thu, 30 Oct 2025
+ 23:31:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34A:EE_|CH3PR12MB7716:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99cd8215-8bc4-4fee-c334-08de1846f75f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OIkKq4TnmCv65OlfaWGAc6PmGkrDXiFfw4wgc0OGbs9qUFYnyR8y7j/js9+N?=
- =?us-ascii?Q?GXP7VMhE9fx8Js0O3vrjHSwn0IijAyiLxFF6AShbgLnRGEj5KUa+sbBqBTmo?=
- =?us-ascii?Q?1ERAvL14gAKvmiRU099KCzpDlvD8cueH9v/4FlrBdi8VA/uKvbr/J3heT0PC?=
- =?us-ascii?Q?TQ/0ue7G8CmwcbBJw3r0EMEevX7BZnBFob0boXut2M6QLb9DPgMmOtWJC0xG?=
- =?us-ascii?Q?DUBtSe1WuSK2AsioIZUEU2UF9cQcmAcn7FmTzJx2Jm5oLYw0Lr+l887nFvYs?=
- =?us-ascii?Q?coHbqfmfK1O/vfl0KBUZ3EpZUsQFGuKcQUav2fucWHPO+fYecOglPjXkhryX?=
- =?us-ascii?Q?TG6owrxVOpe3BEETm6a23f/4ojcovVW2q4JSKV4xphd0ocLZWai7l393952O?=
- =?us-ascii?Q?SqGLwXp3eglxnQVbw0tMlAxs0Yoymk1SR8+vizPQ2ord3QH6Fy6oPY4IrvZg?=
- =?us-ascii?Q?g+Fb2/b8Qoml/Cz323I0hCexO4TckpTL+Ar+KzAYK4ytTHsVLCHpN0Aladhx?=
- =?us-ascii?Q?N5AmVdlLvMmq2mJ82hMzXRmUv6m8EMCl5kp5NT9aeC0uSJDksAQl76pd3OgB?=
- =?us-ascii?Q?liS9RRPk+GeVfG09JphZVrcoQhtKBXxg3G5WWXtMDsMBEynwPLv/CTn8Y2oC?=
- =?us-ascii?Q?NWZ4vMc13MA2q+oGKFUWh3bsbZvkra86JwHKiJtZXpq+zIcg+FwdifOyHzkn?=
- =?us-ascii?Q?mZczNF3RsSTJKl3qnt3+F/nVv5k8djuU2KiplKKbAN11MMIvVD8o13QIHs18?=
- =?us-ascii?Q?9D3rJqatN2mi0mtXfwFKs0xomOpkDh3DeDvwxHXiDyY9DIHQ0Sr+prC5JnSL?=
- =?us-ascii?Q?zXVr9mCJZfR1RHIzjuv9lnUeYeE/7A0nHozOjbW7ZVgzOiWJczEh8H75JX84?=
- =?us-ascii?Q?LvKohsm4LKgTpZi3gYnTIYoeiU3VTutix0m/JIqFAFMME03kOxmYCDW/p5Ah?=
- =?us-ascii?Q?idEYKA6N1gfC8pK3Q/s6pFhFG3uL2BPLC7cj5y30gX9b8mQ2dz00+vhK4+m6?=
- =?us-ascii?Q?0hg2/x18Mrd0Xw33RQyZ44aNhXNhiP4joF7GBa8VNC1LsMqaE3dmtVPA+cKq?=
- =?us-ascii?Q?AhDl/lOmfyE/+rM/E+db9Pe2b7U1oKPhRAiALNAzwHL1Q8GVz3n2FZnZLM5A?=
- =?us-ascii?Q?GDuMXxQpEra0ljb75xgV+aQC+8hnzwcRUHx/kZStVjLVh2qmmGVZjiaZ4W5m?=
- =?us-ascii?Q?op13LW5//Q40d70Rk76fqbVk30dj9bSyULffQMgeoGOyDBeLGu/iytuJ15yb?=
- =?us-ascii?Q?jjcpEerViBhSUMpNe7ajjHQihakXuW5Bdinvi1JwlEWBuXsKuEjqbyiAYIpe?=
- =?us-ascii?Q?AI8C9m+RwscjJ2TgJp8lYpQvisDwFAm4HdUqTNjngaFCrp8hGEtWXtaLQ9fD?=
- =?us-ascii?Q?dROaucojhemUe9s8XqXktIS30AxRTt9tbwGHkorYnqzKgAx5jOD8D4TCIzk2?=
- =?us-ascii?Q?PANMWSsRW6XJU65rhGoMPPmlEfaVv9FgF2DLWuQM1vSeBojEMxkqwZGDafw7?=
- =?us-ascii?Q?DSzq9kPSih7bdnifOQczeSs8infQ9MYHXAsGID1DfC6HfJ0Ui1ApzRTulz2o?=
- =?us-ascii?Q?78DI0TBgT7pn9N6Gq13btL6Dy2rdM0qCrdYji4Wq?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 06:30:20.8490
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99cd8215-8bc4-4fee-c334-08de1846f75f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A34A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7716
+References: <20251030100025.95113-1-eperezma@redhat.com> <20251030100025.95113-6-eperezma@redhat.com>
+ <CACycT3sYzQM88dkqHiT-g9eRtfo-8PjW7XcRtZ=5q++=By4RVw@mail.gmail.com>
+In-Reply-To: <CACycT3sYzQM88dkqHiT-g9eRtfo-8PjW7XcRtZ=5q++=By4RVw@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Fri, 31 Oct 2025 07:30:47 +0100
+X-Gm-Features: AWmQ_bm8WJvnMLLzQzvgkCul3JNIK5iJLUIxcaAGBScA42BuVqe75HotHCNVTtI
+Message-ID: <CAJaqyWexPHJiZjC+RPvVH4J6gS55fCOfPQmKay2eWO-nqrjcRQ@mail.gmail.com>
+Subject: Re: [PATCH v8 5/6] vduse: add vq group asid support
+To: Yongji Xie <xieyongji@bytedance.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Laurent Vivier <lvivier@redhat.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev, 
+	Stefano Garzarella <sgarzare@redhat.com>, Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Command Queue Virtualization (CMDQV) hardware is part of the
-SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
-virtualizing the command queue for the SMMU.
+On Thu, Oct 30, 2025 at 12:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.co=
+m> wrote:
+>
+> On Thu, Oct 30, 2025 at 6:01=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
+at.com> wrote:
+> >
+> > Add support for assigning Address Space Identifiers (ASIDs) to each VQ
+> > group.  This enables mapping each group into a distinct memory space.
+> >
+> > Now that the driver can change ASID in the middle of operation, the
+> > domain that each vq address point is also protected by domain_lock.
+> >
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > v8:
+> > * Revert the mutex to rwlock change, it needs proper profiling to
+> >   justify it.
+> >
+> > v7:
+> > * Take write lock in the error path (Jason).
+> >
+> > v6:
+> > * Make vdpa_dev_add use gotos for error handling (MST).
+> > * s/(dev->api_version < 1) ?/(dev->api_version < VDUSE_API_VERSION_1) ?=
+/
+> >   (MST).
+> > * Fix struct name not matching in the doc.
+> >
+> > v5:
+> > * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET_F=
+D
+> >   ioctl (Jason).
+> > * Properly set domain bounce size to divide equally between nas (Jason)=
+.
+> > * Exclude "padding" member from the only >V1 members in
+> >   vduse_dev_request.
+> >
+> > v4:
+> > * Divide each domain bounce size between the device bounce size (Jason)=
+.
+> > * revert unneeded addr =3D NULL assignment (Jason)
+> > * Change if (x && (y || z)) return to if (x) { if (y) return; if (z)
+> >   return; } (Jason)
+> > * Change a bad multiline comment, using @ caracter instead of * (Jason)=
+.
+> > * Consider config->nas =3D=3D 0 as a fail (Jason).
+> >
+> > v3:
+> > * Get the vduse domain through the vduse_as in the map functions
+> >   (Jason).
+> > * Squash with the patch creating the vduse_as struct (Jason).
+> > * Create VDUSE_DEV_MAX_AS instead of comparing agains a magic number
+> >   (Jason)
+> >
+> > v2:
+> > * Convert the use of mutex to rwlock.
+> >
+> > RFC v3:
+> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+> >   value to reduce memory consumption, but vqs are already limited to
+> >   that value and userspace VDUSE is able to allocate that many vqs.
+> > * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
+> >   VDUSE_IOTLB_GET_INFO.
+> > * Use of array_index_nospec in VDUSE device ioctls.
+> > * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
+> > * Move the umem mutex to asid struct so there is no contention between
+> >   ASIDs.
+> >
+> > RFC v2:
+> > * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
+> >   part of the struct is the same.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 348 ++++++++++++++++++++---------
+> >  include/uapi/linux/vduse.h         |  53 ++++-
+> >  2 files changed, 292 insertions(+), 109 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index 97be04f73fbf..c6909d73d06d 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -41,6 +41,7 @@
+> >
+> >  #define VDUSE_DEV_MAX (1U << MINORBITS)
+> >  #define VDUSE_DEV_MAX_GROUPS 0xffff
+> > +#define VDUSE_DEV_MAX_AS 0xffff
+> >  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
+> >  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
+> >  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
+> > @@ -86,7 +87,14 @@ struct vduse_umem {
+> >         struct mm_struct *mm;
+> >  };
+> >
+> > +struct vduse_as {
+> > +       struct vduse_iova_domain *domain;
+> > +       struct vduse_umem *umem;
+> > +       struct mutex mem_lock;
+> > +};
+> > +
+> >  struct vduse_vq_group {
+> > +       struct vduse_as *as;
+> >         struct vduse_dev *dev;
+> >  };
+> >
+> > @@ -94,7 +102,7 @@ struct vduse_dev {
+> >         struct vduse_vdpa *vdev;
+> >         struct device *dev;
+> >         struct vduse_virtqueue **vqs;
+> > -       struct vduse_iova_domain *domain;
+> > +       struct vduse_as *as;
+> >         char *name;
+> >         struct mutex lock;
+> >         spinlock_t msg_lock;
+> > @@ -122,9 +130,8 @@ struct vduse_dev {
+> >         u32 vq_num;
+> >         u32 vq_align;
+> >         u32 ngroups;
+> > -       struct vduse_umem *umem;
+> > +       u32 nas;
+> >         struct vduse_vq_group *groups;
+> > -       struct mutex mem_lock;
+> >         unsigned int bounce_size;
+> >         struct mutex domain_lock;
+> >  };
+> > @@ -314,7 +321,7 @@ static int vduse_dev_set_status(struct vduse_dev *d=
+ev, u8 status)
+> >         return vduse_dev_msg_sync(dev, &msg);
+> >  }
+> >
+> > -static int vduse_dev_update_iotlb(struct vduse_dev *dev,
+> > +static int vduse_dev_update_iotlb(struct vduse_dev *dev, u32 asid,
+> >                                   u64 start, u64 last)
+> >  {
+> >         struct vduse_dev_msg msg =3D { 0 };
+> > @@ -323,8 +330,14 @@ static int vduse_dev_update_iotlb(struct vduse_dev=
+ *dev,
+> >                 return -EINVAL;
+> >
+> >         msg.req.type =3D VDUSE_UPDATE_IOTLB;
+> > -       msg.req.iova.start =3D start;
+> > -       msg.req.iova.last =3D last;
+> > +       if (dev->api_version < VDUSE_API_VERSION_1) {
+> > +               msg.req.iova.start =3D start;
+> > +               msg.req.iova.last =3D last;
+> > +       } else {
+> > +               msg.req.iova_v2.start =3D start;
+> > +               msg.req.iova_v2.last =3D last;
+> > +               msg.req.iova_v2.asid =3D asid;
+> > +       }
+> >
+> >         return vduse_dev_msg_sync(dev, &msg);
+> >  }
+> > @@ -436,14 +449,29 @@ static __poll_t vduse_dev_poll(struct file *file,=
+ poll_table *wait)
+> >         return mask;
+> >  }
+> >
+> > +/* Force set the asid to a vq group without a message to the VDUSE dev=
+ice */
+> > +static void vduse_set_group_asid_nomsg(struct vduse_dev *dev,
+> > +                                      unsigned int group, unsigned int=
+ asid)
+> > +{
+> > +       mutex_lock(&dev->domain_lock);
+> > +       dev->groups[group].as =3D &dev->as[asid];
+> > +       mutex_unlock(&dev->domain_lock);
+> > +}
+> > +
+> >  static void vduse_dev_reset(struct vduse_dev *dev)
+> >  {
+> >         int i;
+> > -       struct vduse_iova_domain *domain =3D dev->domain;
+> >
+> >         /* The coherent mappings are handled in vduse_dev_free_coherent=
+() */
+> > -       if (domain && domain->bounce_map)
+> > -               vduse_domain_reset_bounce_map(domain);
+> > +       for (i =3D 0; i < dev->nas; i++) {
+> > +               struct vduse_iova_domain *domain =3D dev->as[i].domain;
+> > +
+> > +               if (domain && domain->bounce_map)
+> > +                       vduse_domain_reset_bounce_map(domain);
+> > +       }
+> > +
+> > +       for (i =3D 0; i < dev->ngroups; i++)
+> > +               vduse_set_group_asid_nomsg(dev, i, 0);
+> >
+> >         down_write(&dev->rwsem);
+> >
+> > @@ -623,6 +651,29 @@ static union virtio_map vduse_get_vq_map(struct vd=
+pa_device *vdpa, u16 idx)
+> >         return ret;
+> >  }
+> >
+> > +static int vduse_set_group_asid(struct vdpa_device *vdpa, unsigned int=
+ group,
+> > +                               unsigned int asid)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +       struct vduse_dev_msg msg =3D { 0 };
+> > +       int r;
+> > +
+> > +       if (dev->api_version < VDUSE_API_VERSION_1 ||
+> > +           group >=3D dev->ngroups || asid >=3D dev->nas)
+> > +               return -EINVAL;
+> > +
+> > +       msg.req.type =3D VDUSE_SET_VQ_GROUP_ASID;
+> > +       msg.req.vq_group_asid.group =3D group;
+> > +       msg.req.vq_group_asid.asid =3D asid;
+> > +
+> > +       r =3D vduse_dev_msg_sync(dev, &msg);
+> > +       if (r < 0)
+> > +               return r;
+> > +
+> > +       vduse_set_group_asid_nomsg(dev, group, asid);
+> > +       return 0;
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                                 struct vdpa_vq_state *state)
+> >  {
+> > @@ -794,13 +845,13 @@ static int vduse_vdpa_set_map(struct vdpa_device =
+*vdpa,
+> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> >         int ret;
+> >
+> > -       ret =3D vduse_domain_set_map(dev->domain, iotlb);
+> > +       ret =3D vduse_domain_set_map(dev->as[asid].domain, iotlb);
+> >         if (ret)
+> >                 return ret;
+> >
+> > -       ret =3D vduse_dev_update_iotlb(dev, 0ULL, ULLONG_MAX);
+> > +       ret =3D vduse_dev_update_iotlb(dev, asid, 0ULL, ULLONG_MAX);
+> >         if (ret) {
+> > -               vduse_domain_clear_map(dev->domain, iotlb);
+> > +               vduse_domain_clear_map(dev->as[asid].domain, iotlb);
+> >                 return ret;
+> >         }
+> >
+> > @@ -843,6 +894,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
+ig_ops =3D {
+> >         .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
+> >         .reset                  =3D vduse_vdpa_reset,
+> >         .set_map                =3D vduse_vdpa_set_map,
+> > +       .set_group_asid         =3D vduse_set_group_asid,
+> >         .get_vq_map             =3D vduse_get_vq_map,
+> >         .free                   =3D vduse_vdpa_free,
+> >  };
+> > @@ -858,9 +910,10 @@ static void vduse_dev_sync_single_for_device(union=
+ virtio_map token,
+> >                 return;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > -
+> > +       mutex_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> >         vduse_domain_sync_single_for_device(domain, dma_addr, size, dir=
+);
+> > +       mutex_unlock(&vdev->domain_lock);
+> >  }
+> >
+> >  static void vduse_dev_sync_single_for_cpu(union virtio_map token,
+> > @@ -874,9 +927,10 @@ static void vduse_dev_sync_single_for_cpu(union vi=
+rtio_map token,
+> >                 return;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > -
+> > +       mutex_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
+> > +       mutex_unlock(&vdev->domain_lock);
+> >  }
+> >
+> >  static dma_addr_t vduse_dev_map_page(union virtio_map token, struct pa=
+ge *page,
+> > @@ -886,14 +940,18 @@ static dma_addr_t vduse_dev_map_page(union virtio=
+_map token, struct page *page,
+> >  {
+> >         struct vduse_dev *vdev;
+> >         struct vduse_iova_domain *domain;
+> > +       dma_addr_t r;
+> >
+> >         if (!token.group)
+> >                 return DMA_MAPPING_ERROR;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > +       mutex_lock(&vdev->domain_lock);
+>
+> The mutex_lock can't be used here since the dma ops might be called in
+> atomic context. And I think we can just remove it since creation and
+> deletion operations of the iova domain are guaranteed not to execute
+> concurrently with I/O operations.
+>
 
-Add device tree nodes for the CMDQV hardware in the Tegra264 SoC
-device tree and enable them on the tegra264-p3834 platform where
-SMMUs are enabled. Each SMMU instance is paired with its corresponding
-CMDQV instance via the nvidia,cmdqv property.
-
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |  8 +++
- arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 50 +++++++++++++++++++
- 2 files changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-index 06795c82427a..375d122b92fa 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-@@ -26,5 +26,13 @@ iommu@5000000 {
- 		iommu@6000000 {
- 			status = "okay";
- 		};
-+
-+		cmdqv@5200000 {
-+			status = "okay";
-+		};
-+
-+		cmdqv@6200000 {
-+			status = "okay";
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-index 872a69553e3c..609f6f5f7ef5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-@@ -212,6 +212,7 @@ smmu1: iommu@5000000 {
- 
- 			#iommu-cells = <1>;
- 			dma-coherent;
-+			nvidia,cmdqv = <&cmdqv1>;
- 		};
- 
- 		smmu2: iommu@6000000 {
-@@ -224,6 +225,25 @@ smmu2: iommu@6000000 {
- 
- 			#iommu-cells = <1>;
- 			dma-coherent;
-+			nvidia,cmdqv = <&cmdqv2>;
-+		};
-+
-+		cmdqv1: cmdqv@5200000 {
-+			compatible = "nvidia,tegra264-cmdqv";
-+			status = "disabled";
-+
-+			reg = <0x00 0x5200000 0x0 0x830000>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "cmdqv";
-+		};
-+
-+		cmdqv2: cmdqv@6200000 {
-+			compatible = "nvidia,tegra264-cmdqv";
-+			status = "disabled";
-+
-+			reg = <0x00 0x6200000 0x0 0x830000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "cmdqv";
- 		};
- 
- 		mc: memory-controller@8020000 {
-@@ -288,6 +308,7 @@ smmu0: iommu@a000000 {
- 
- 			#iommu-cells = <1>;
- 			dma-coherent;
-+			nvidia,cmdqv = <&cmdqv0>;
- 		};
- 
- 		smmu4: iommu@b000000 {
-@@ -300,6 +321,25 @@ smmu4: iommu@b000000 {
- 
- 			#iommu-cells = <1>;
- 			dma-coherent;
-+			nvidia,cmdqv = <&cmdqv4>;
-+		};
-+
-+		cmdqv0: cmdqv@a200000 {
-+			compatible = "nvidia,tegra264-cmdqv";
-+			status = "disabled";
-+
-+			reg = <0x00 0xa200000 0x0 0x830000>;
-+			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "cmdqv";
-+		};
-+
-+		cmdqv4: cmdqv@b200000 {
-+			compatible = "nvidia,tegra264-cmdqv";
-+			status = "disabled";
-+
-+			reg = <0x00 0xb200000 0x0 0x830000>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "cmdqv";
- 		};
- 
- 		i2c14: i2c@c410000 {
-@@ -541,6 +581,16 @@ smmu3: iommu@6000000 {
- 
- 			#iommu-cells = <1>;
- 			dma-coherent;
-+			nvidia,cmdqv = <&cmdqv3>;
-+		};
-+
-+		cmdqv3: cmdqv@6200000 {
-+			compatible = "nvidia,tegra264-cmdqv";
-+			status = "disabled";
-+
-+			reg = <0x00 0x6200000 0x0 0x830000>;
-+			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "cmdqv";
- 		};
- 	};
- 
--- 
-2.25.1
+That would be great indeed! Can you expand on this, what protects here
+from the moment the two syscalls are issues from userland?
 
 
