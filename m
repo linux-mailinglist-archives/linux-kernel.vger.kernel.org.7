@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-880053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F4EC24C37
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:22:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A932C24C40
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A22F64E5603
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384D7401E5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AAE336ECF;
-	Fri, 31 Oct 2025 11:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA2D345723;
+	Fri, 31 Oct 2025 11:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TJxTgbNA"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q90EUdEE"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1621E9919
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C11327214
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761909752; cv=none; b=KgB2x8tt7BWvGnpWsjXpqhFjXoXIRyalmeV1J2cGczHOitLal7DWzSzV3vrqT6Kypult/IyJMm/KnZEa5K1qffDS8iDq4CSVIobqsuAct/CSWc0GNq+d+TkDM+vdh3u0GDdzXeS1204BfBkfjmbencJC7hHM9MVOI2zc7vsGaTM=
+	t=1761909771; cv=none; b=maHGsGBFkJ4Z9oCOZmZ9MZ0Pisf4yDSPE7goJr0beapbwLELh29mTvgFni4xHG5z1KfgmUk+g7PNu3LUI1B0WeMlpqQDY+3QNI0aszxLfqIQqcCSgNBeAniVXAvm27DNha5LYdxxkbrh6B/JfXJz8PFGXLQg/tEDH61tKbYccx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761909752; c=relaxed/simple;
-	bh=B7jR6ssxmsS5H5d9N9znDsqwxKPS3sua7wFOZowWSzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aNCFHaYs6mJf02XJHsI+7dsDCeelGCBXq7wUJW5N6O+ngwTJMvoQ8JFXEKNKMa48JIA1SZwjE/HtHQYQyjb6VqCSWI4lTy4rbOrgq1jTCwaEZ63iUZx4BbYG8FHNTc5fvGjXB8b4nLTSs+vtYxFVxJ5qxmuqN6orbz5Wp0WOQqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TJxTgbNA; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761909748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nyjzKpu22Trt/0gzyWsVXEu/Jh7s7rdQVLQems4ZlKQ=;
-	b=TJxTgbNAv6VQC/hclzu8aspYLQyOkrXQZO59TNSwY65Pe4LtclsZA/dkNjOxHW9lsO/Ia1
-	2OLlRAqRn94pA94cVA1jijQmAdVFm8V8jNTYin0Qjy9afBu8cDrxvLaU0aJ8+vyAh+kQ7e
-	6DXvLLY2U7vmg9GDTWFZ0H8BfGkuoQE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Jason Andryuk <jason.andryuk@amd.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>
-Cc: xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 RESEND] drivers/xen/xenbus: Replace deprecated strcpy in xenbus_transaction_end
-Date: Fri, 31 Oct 2025 12:21:31 +0100
-Message-ID: <20251031112145.103257-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761909771; c=relaxed/simple;
+	bh=fbWhQfJZj8HCmG3H1/jP5tgPn2hV/GyhIqcog7Ktfkg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UkF8UnIzNIQ50LqtfjpphU4SjhCFx8Zaz9JHIijUUiAWCHaVJPTaRIDyF1ugapz1dOV9K6ncPx5Tp72D+t/G4Mu6C5zA9v6Sh1AWsQbG6w4fnbskY5nHhgGBtzSo6caW/1cdkyAHouR50azPqJlE+Kd1Gj4akHN7oT+mvMHulLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q90EUdEE; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-475de0566adso17048525e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761909766; x=1762514566; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWfm1RxpCriXJZKJWKkjI+FEcuEWh6aqEd8ZawD9gRo=;
+        b=q90EUdEEvIDK3haYfEF1A1Gc9syg8Wwwt4cj3VNFkGkN7zsECzUV5ef2pF5asonmPH
+         mIjlBZMOva0nbPGgpjf6zZEnkU2HBimL+3byrNzAfHAkSD2gEWNhAYX9u5FOORPMjhtE
+         esXhrulZvx+GFT78OcKttIxig62OlP03V0iIChkiAgBtSa+omX38r5A4gnY8buraWmOR
+         jnAI0VoFamDBPy0rXAxj3VMiz6GX3S5Akc2/weSsEPv6bqXr0U1QWq5O5elw17Z3J3sD
+         QOFvvQnCLHUu8aMhKpFBLShyQb5O8ge4huLoscuxwh3EF182tuvSGwcRrBySLiSkJJ3p
+         jYew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761909766; x=1762514566;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWfm1RxpCriXJZKJWKkjI+FEcuEWh6aqEd8ZawD9gRo=;
+        b=sq5GX2k2JwrtkUqCu5oAusCLi9Df6jIFDmhCVdeC5dKXt7QpzCU49AfJ+FJUMVj/Qd
+         X3mP7hi9sgDkjQFnxgHs11QZXaVT3YGYP/8FQ3g0ueGzOzeDvi7McqfMHbTSBiG0LItJ
+         7p/6f3xy7JCkUM8YVBtrZLQLdwkA+N+rK0DLNw0TPbj1nLDj0J+kMmup1JHGARHLfxpN
+         +EgvGbEWHb1U/ezK14kNASiXdN2Df1ZkASVj+fKXucm88AtryZHEJdGgZUVa2lfMLYTG
+         Og8d+G7SQ1OgoVngkjP8mj4p05iOMvT0clMCthYxqvWgaFixDjX/Hk5ybD0rHjRxbYxZ
+         D8KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7HSNSsL4bvZzrw7haQlo0k5DY/Bh2B5dzt+nlRFGAkj8U10KqLcLVHd6kr9IWt/mhJaW4fIVYKGjv/8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc74dR7vwKn1Xm8yx8AKrog6SJSCzpmyD5ol3g7h268ZtkEeAy
+	vIt3kB03hN9BsO1a+iMm8+jFqSChtU9t5fbDbp2XcILx6IfjUwD1Sbw4+B0jLANF7flcm5YvU7o
+	WR1h02OzxiG0ufQ==
+X-Google-Smtp-Source: AGHT+IHH+CXCZrRgwm3g861gn6Y0RlY6O0gwkChBWJhVrVubqV8OJjXSbqaG9Nmja1vNYsXI9PQqe4gQXc36Cw==
+X-Received: from wmbd14.prod.google.com ([2002:a05:600c:58ce:b0:46f:aa50:d70d])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:a0b:b0:475:d952:342e with SMTP id 5b1f17b1804b1-477308c2961mr32962115e9.35.1761909766216;
+ Fri, 31 Oct 2025 04:22:46 -0700 (PDT)
+Date: Fri, 31 Oct 2025 11:22:45 +0000
+In-Reply-To: <20251031003040.3491385-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20251031003040.3491385-1-seanjc@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDWGVW5SJQ4S.3KBFOQPJQWLLK@google.com>
+Subject: Re: [PATCH v4 0/8] x86/bugs: KVM: L1TF and MMIO Stale Data cleanups
+From: Brendan Jackman <jackmanb@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-strcpy() is deprecated; inline the read-only string instead. Fix the
-function comment and use bool instead of int while we're at it.
+On Fri Oct 31, 2025 at 12:30 AM UTC, Sean Christopherson wrote:
+> This is a combination of Brendan's work to unify the L1TF L1D flushing
+> mitigation, and Pawan's work to bring some sanity to the mitigations that
+> clear CPU buffers, with a bunch of glue code and some polishing from me.
+>
+> The "v4" is relative to the L1TF series.  I smushed the two series together
+> as Pawan's idea to clear CPU buffers for MMIO in vmenter.S obviated the need
+> for a separate cleanup/fix to have vmx_l1d_flush() return true/false, and
+> handling the series separately would have been a lot of work+churn for no
+> real benefit.
+>
+> TL;DR:
+>
+>  - Unify L1TF flushing under per-CPU variable
+>  - Bury L1TF L1D flushing under CONFIG_CPU_MITIGATIONS=y
+>  - Move MMIO Stale Data into asm, and do VERW at most once per VM-Enter
+>
+> To allow VMX to use ALTERNATIVE_2 to select slightly different flows for doing
+> VERW, tweak the low lever macros in nospec-branch.h to define the instruction
+> sequence, and then wrap it with __stringify() as needed.
+>
+> The non-VMX code is lightly tested (but there's far less chance for breakage
+> there).  For the VMX code, I verified it does what I want (which may or may
+> not be correct :-D) by hacking the code to force/clear various mitigations, and
+> using ud2 to confirm the right path got selected.
 
-Link: https://github.com/KSPP/linux/issues/88
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- Use an inline ternary expression and remove 'char abortstr[2]' as
-  suggested by Jürgen
-- Link to v1: https://lore.kernel.org/lkml/20251012195514.39003-2-thorsten.blum@linux.dev/
----
- drivers/xen/xenbus/xenbus_xs.c | 14 ++++----------
- include/xen/xenbus.h           |  2 +-
- 2 files changed, 5 insertions(+), 11 deletions(-)
+FWIW [0] offers a way to check end-to-end that an L1TF exploit is broken
+by the mitigation. It's a bit of a long-winded way to achieve that and I
+guess L1TF is anyway the easy case here, but I couldn't resist promoting
+it.
 
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index 528682bf0c7f..5d95a5f83119 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -546,18 +546,12 @@ int xenbus_transaction_start(struct xenbus_transaction *t)
- EXPORT_SYMBOL_GPL(xenbus_transaction_start);
- 
- /* End a transaction.
-- * If abandon is true, transaction is discarded instead of committed.
-+ * If abort is true, transaction is discarded instead of committed.
-  */
--int xenbus_transaction_end(struct xenbus_transaction t, int abort)
-+int xenbus_transaction_end(struct xenbus_transaction t, bool abort)
- {
--	char abortstr[2];
--
--	if (abort)
--		strcpy(abortstr, "F");
--	else
--		strcpy(abortstr, "T");
--
--	return xs_error(xs_single(t, XS_TRANSACTION_END, abortstr, NULL));
-+	return xs_error(xs_single(t, XS_TRANSACTION_END, abort ? "F" : "T",
-+				  NULL));
- }
- EXPORT_SYMBOL_GPL(xenbus_transaction_end);
- 
-diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-index 7dab04cf4a36..c94caf852aea 100644
---- a/include/xen/xenbus.h
-+++ b/include/xen/xenbus.h
-@@ -158,7 +158,7 @@ int xenbus_exists(struct xenbus_transaction t,
- 		  const char *dir, const char *node);
- int xenbus_rm(struct xenbus_transaction t, const char *dir, const char *node);
- int xenbus_transaction_start(struct xenbus_transaction *t);
--int xenbus_transaction_end(struct xenbus_transaction t, int abort);
-+int xenbus_transaction_end(struct xenbus_transaction t, bool abort);
- 
- /* Single read and scanf: returns -errno or num scanned if > 0. */
- __scanf(4, 5)
--- 
-2.51.1
-
+(I just received a Skylake machine from ebay, once that's set up I'll be
+able to double check on there that things still work).
 
