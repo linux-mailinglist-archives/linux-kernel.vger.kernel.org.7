@@ -1,162 +1,150 @@
-Return-Path: <linux-kernel+bounces-880078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D921DC24D1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:43:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6574C24D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB8094ECA4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5D43B8581
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E51346E62;
-	Fri, 31 Oct 2025 11:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F392346E66;
+	Fri, 31 Oct 2025 11:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g+MiLl4E"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JQl3emHF"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7720E345CB0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E76A346A06
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761911030; cv=none; b=dgpAl1093TPBzsIUwXDnJNWWaGte4pRUnuVSYEcE5hrAVT9guKdphbkCAQyDQx+v1KHaQVHFS5CXUbqBQIcQKcvDU6IYcLVceDIneng4XKJ5hNhm4dRxf+3k6B3+ePAUXDDdQGdKfKEOWSjSTPHOIK3ECWN47CQZYwHwcmp3a5M=
+	t=1761911079; cv=none; b=ciyTmHhzAo8FzANdxF8Pu65xyNB8G8SOc2JI53utNAF0G7ESTDhWtGBUfxNV2P+8sWFRCAR+6eyjPHkP1v6Y3KYL8WLjew+st9JLEq615J03Mbwt3mfzEQPPmr+BV1AM1u7YbRXMbFOp0oLg3uD2UmRz6Z5sme+pn228fmtdMb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761911030; c=relaxed/simple;
-	bh=UJ99E57Gzp44AGQUn/uVwSyKH+gfNwxwFBUmawztNas=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RkT1ZyKZCkxhpA0L4LQjTNSN3EUOv5J7t60aYu9g8pqKjV7EPyjulpAjDggIma/rSWqRQmAxasUuepIMsY2hEqH+wNgbkgy6FIVZgTpYvcfxOR911CAT7h/+eTudVP2MoQOP1J97Ie1Jcvxu2pKgrVlQh7YbzRj1UfTwgzG/arI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g+MiLl4E; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4aed12cea3so403090966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:43:47 -0700 (PDT)
+	s=arc-20240116; t=1761911079; c=relaxed/simple;
+	bh=1ziLgSIkrp0a6AmlIEBk33I+PNnB6tRTqq43dI1gfd4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HgN9/Z5JXSCa+oOxvg7jIDhX2C5DwfDYeu78/DIOjZ2sOL1GNNKAJGlUQDiDOqmU9D+V3/nrOkEXgDSa/HLkQJMebAVJKFZjZRmUnFQleb+pOCUcGNcoH1A8jqDqT8zuUxW9gLaa7NirSAC3LtxnqkeOuRfGrXzwmfbMQzZcFuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JQl3emHF; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso12102385e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:44:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761911026; x=1762515826; darn=vger.kernel.org;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UJ99E57Gzp44AGQUn/uVwSyKH+gfNwxwFBUmawztNas=;
-        b=g+MiLl4ECgQs/h5TEvuS60ZTVFHktP9d4oIrlytxgYYaIG1E8jMlmItbXtX6UfHy0U
-         aJ1yx6g0hDH6PWuJjtMnN0SzFaV3ndx3gpw/99nRlkNQCAOjqWBFUDW4PhWrV178baiH
-         0G0V7Fv0jZsQvrrqy2tapEYtu5cXIYgD+G6cRt/MdTtuyzzmm0eeHK8bpEVtk7s35l4n
-         53qPiYqWs+p/RDMT/+WGsbhBhz1ENqHutMZ08S8IRLewJnAWB22ucBx6WZ/9P0VsTFxC
-         sDBjxgExN6oFZVwET3Bisv+U8o23ccijagGX2/TWg4EOyo+SKbz2vXMIK0ldsHJIO4eI
-         grHg==
+        d=google.com; s=20230601; t=1761911076; x=1762515876; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sI9GGke3gGadVIlamH57BbMeWwa+Ka12HvCc9u9b0lQ=;
+        b=JQl3emHF5KL2WvimvAW7QWlSelGHSM8uwJ2AMOoxsbgnMi5f4QgkkfuXP/b4yonkwR
+         DvMPDvsREoJYMnO3rB8KUN0niAxe2Wrulfab7UdVxQAGTtiDjnrR8JTrL56xGLXdN3V4
+         ifqsw3w67YKac96slu78/If6PcoURPb1HxmSQtqGc+1pk0LfxHIgOtfChhKYjyDhf23k
+         TFJPyKdNkCReBNZRSAaEOl4N2oxwaBp+OwcUq06qzs4Iw2tbqw9F4HtbJvs2AxEF35Oh
+         MS0tByH2AOhM8h1A9XIg8vweCroveq73kTtD1lD1FyKcj2awNCzcce6+rQTuAc/HtwPW
+         Fe6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761911026; x=1762515826;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UJ99E57Gzp44AGQUn/uVwSyKH+gfNwxwFBUmawztNas=;
-        b=GcgEtxMYgKsAyZw2iywvul2CD6swo4JMU8leiWDgwLVKuafPdVZ4OugE+kkVUMW8zO
-         sztQQEIHemWpoYaSF6CKM6AIMWVK5VDDDhFz6CcMFX7i4+Wr32a2OcfkODtvqvQ5k49P
-         CsZMd8ZdPfDS8G0cpDTPSYXptVcDTTuin/MVn1VwvCfYUwDpbZ+TVVP65Ipb1UzcMBu7
-         CVtSfs13v1XoSFBXKUsP7AJQarxyAHp0Sah6N41xv4lIvNDR+DZM+9j1kkRy+uadjOQb
-         E7/gv2nnITrlP2+DYCMe0y7qjSYW83ddP0GUbcqUqLYPjJcW6vCwVQgt0a4KoE88Hl7v
-         +IKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpq7hdLxi1xzTbKxUahfsZfRtT5d6ts4LI37/SYxuBJCrbIWHI0MWpA2P7aCOybA0DJSWBYZB+QH/Lzy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBB7DMFsgOufBvoLl+qImCSMnk9NaCVW1HnQDg7q2BY+gPyTr8
-	EmYo4ozVzwtY/Qg6QQ7Od7p/ov21JISDGWZ9BUzJ+JMcqV5OS9kzgrT1UauKm9XbMEA=
-X-Gm-Gg: ASbGncssr758Kx65CavNZPhTyt19HT96jOKlea6QfsWEyHCfiKgh0ZmGSfo7Jdw5BBj
-	6k5EYaOAdiJ9+vfkVwnsfnDEGFj87rdDHOz+EKtq0aAsoHlUCs+GQ3DIbLAJnkwj1CNAVYaitme
-	XsZoXceGV3ay4HzPkW3EoBJI/VWVTPnSdzQ07DzksvVosgQ6c/GiVPTSUyGFo7RKzmvxG4w4NWC
-	VueLXAsx8SSsGtALfahK/KTta2oyhhRF3efhDakK2dxU3H1fyAeIzsINKcAcc/9D+55qs7T5RuR
-	u5mPVZHSoIgdFf8xPbO68DKPKUH+7Hm0uM8i6P+WljJOsBttzPI0Vkdxb6PwHPv54s7UpYEMh32
-	3p40SsNFi/2+0jU7EmdLKVE+afWChuH6bCBMPLsCkY5qLCNXNcnVitfnTEVH2RnNt7iygyjVmiZ
-	XT6e42ZIzvcYyLAmOL0/e3bvgnGUJFUDivQv3ebkzoznsre7nj1JbQx830nM0t
-X-Google-Smtp-Source: AGHT+IGl6cehL2XT1Dt5ia4ja85e/cEaMvBzQav3xw1vRSFclSEFYe2UzFwP/UMKQjClT0kQ7aJFMw==
-X-Received: by 2002:a17:907:3d4c:b0:b3c:3c8e:189d with SMTP id a640c23a62f3a-b70704bc39cmr359300066b.32.1761911025762;
-        Fri, 31 Oct 2025 04:43:45 -0700 (PDT)
-Received: from [10.203.83.168] (mob-176-247-67-93.net.vodafone.it. [176.247.67.93])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077c3ad2fsm153616966b.42.2025.10.31.04.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:43:45 -0700 (PDT)
-Message-ID: <e82fc48fadc89014764ad3c0c5f07d0075cf6748.camel@baylibre.com>
-Subject: Re: [PATCH 1/9] iio: imu: st_lsm6dsx: dynamically initialize
- iio_chan_spec data
-From: Francesco Lavra <flavra@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron
- <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 31 Oct 2025 12:43:39 +0100
-In-Reply-To: <aQR0Iy2UJn9-XxpG@smile.fi.intel.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
-	 <20251030072752.349633-2-flavra@baylibre.com> <aQOVcCinTd-ZJJX3@lore-desk>
-	 <3e7944588d3011b6a144d70ab9027a05a1e230d0.camel@baylibre.com>
-	 <aQR0Iy2UJn9-XxpG@smile.fi.intel.com>
-Organization: BayLibre
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-FBmvEx+jh5329MlkkTEj"
-User-Agent: Evolution 3.46.4-2 
+        d=1e100.net; s=20230601; t=1761911076; x=1762515876;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sI9GGke3gGadVIlamH57BbMeWwa+Ka12HvCc9u9b0lQ=;
+        b=vgnWIA991a/70o1sEr/urQhSSdlTc6bVSPuFKdVarb2UfZd74UjRQKec45Ke1zReRb
+         h9YiL6lE0s1xLTQuc/vXVuvMornqOXTRNHSMbKqHn8BSgCRf8VBWyW/HFfCksyBwXQ0w
+         zmdgSaJho+y6fj6n0eipxTS4rPqFUhZJKiPP9+bbcF3gfNK7LBL2LCxmaKshbSZGfiG5
+         tq0NlzVig0wFoUfkhd7Rxbf2m8dHTeeEbZOSxgE9s3LUS1UbYvxijTQpNvfVHygppzSI
+         TKPlYjoX7sq2EJMUGGn5NsEQ/n5Xc/wDbgy1pFlxsjmZ1gqEUgeNkdhGo9MA9I4nXFua
+         GddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUFNubAqNaAk2cUzmdbyrSbq2u+0KVv7H3xNpb6GRpme6kby+a13RQ8ZN4E4co+UkWgWiVcV5qpa3aNpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCyacD39OtTGjdw5bxEGrZ35kYhOERo49ljD554oBO+0g20Qf/
+	kDZ4WXf5/R0HwsvYzhs9UY/f13XVkekmzBnboWakifGT558zG/2JrKskAf9LMWaqLy9SysobX/2
+	j5x3yuCGK/yc3kw==
+X-Google-Smtp-Source: AGHT+IEKamMZcdzktkM4szUvZ/YKxOvtrM+iKDRRu3XsTBqM5qLLJOr1Cmw34NbBirHIxm9Qj3Kdpxe2bePlBg==
+X-Received: from wmlm20.prod.google.com ([2002:a7b:ca54:0:b0:475:d8ff:6aae])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5304:b0:475:dd04:128a with SMTP id 5b1f17b1804b1-477308c0182mr32166645e9.31.1761911076666;
+ Fri, 31 Oct 2025 04:44:36 -0700 (PDT)
+Date: Fri, 31 Oct 2025 11:44:36 +0000
+In-Reply-To: <20251031003040.3491385-4-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-
-
---=-FBmvEx+jh5329MlkkTEj
+Mime-Version: 1.0
+References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-4-seanjc@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDWHCMBU8GVB.1CXGUGVWSF8RD@google.com>
+Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the MMIO
+ Stale Data mitigation
+From: Brendan Jackman <jackmanb@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-10-31 at 10:32 +0200, Andy Shevchenko wrote:
-> On Fri, Oct 31, 2025 at 09:26:19AM +0100, Francesco Lavra wrote:
-> > On Thu, 2025-10-30 at 17:42 +0100, Lorenzo Bianconi wrote:
->=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0chan->ext_info =3D st_ls=
-m6dsx_ext_info;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (id =3D=3D ST_LSM6DSX=
-_ID_ACC) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (hw->settings->event_settings.wakeup_reg.addr) {
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (id =3D=3D ST_LSM6=
-DSX_ID_ACC &&
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hw=
-->settings->event_settings.wakeup_reg.addr) {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ..=
-.
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> >=20
-> > In patch 4/9, the inner conditional will be replaced by more generic
-> > code,
-> > so we would revert to if (id =3D=3D ST_LSM6DSX_ID_ACC) [...]
->=20
-> Hmm... The obvious follow up question is why can't we stick with the
-> original
-> conditional to begin with?
+On Fri Oct 31, 2025 at 12:30 AM UTC, Sean Christopherson wrote:
+> Convert the MMIO Stale Data mitigation flag from a static branch into an
+> X86_FEATURE_xxx so that it can be used via ALTERNATIVE_2 in KVM.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/include/asm/cpufeatures.h   |  1 +
+>  arch/x86/include/asm/nospec-branch.h |  2 --
+>  arch/x86/kernel/cpu/bugs.c           | 11 +----------
+>  arch/x86/kvm/mmu/spte.c              |  2 +-
+>  arch/x86/kvm/vmx/vmx.c               |  4 ++--
+>  5 files changed, 5 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 7129eb44adad..d1d7b5ec6425 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -501,6 +501,7 @@
+>  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
+>  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
+>  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
+> +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
+>  
+>  /*
+>   * BUG word(s)
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index 923ae21cbef1..b29df45b1edb 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -579,8 +579,6 @@ DECLARE_STATIC_KEY_FALSE(cpu_buf_idle_clear);
+>  
+>  DECLARE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
+>  
+> -DECLARE_STATIC_KEY_FALSE(cpu_buf_vm_clear);
+> -
+>  extern u16 x86_verw_sel;
+>  
+>  #include <asm/segment.h>
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 723666a1357e..9acf6343b0ac 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -192,14 +192,6 @@ EXPORT_SYMBOL_GPL(cpu_buf_idle_clear);
+>   */
+>  DEFINE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
+>  
+> -/*
+> - * Controls CPU Fill buffer clear before VMenter. This is a subset of
+> - * X86_FEATURE_CLEAR_CPU_BUF_VM, and should only be enabled when KVM-only
+> - * mitigation is required.
+> - */
 
-There is no original conditional, this is new code.
-So the code here is `if (cond1) {if (cond2) {}}`; in patch 4/9 it will
-become `if (cond1) {something else}`.
-Or, better yet, as you suggested earlier, in the next revision the code
-here will be `if (cond1) helper()`, and in the patch 4/9 this will stay the
-same and only the code inside the helper will change.
+This comment wasn't super clear IMO but now that we're losing it, maybe
+we can replace it with a WARN_ON() at the end of
+cpu_apply_mitigations() or something (maybe it belongs in VMX code)? To
+make it more obvious that X86_FEATURE_CLEAR_CPU_BUF_VM and
+X86_FEATURE_CLEAR_CPU_BUF_MMIO are mutually exclusive.
 
+Other than the continued bikeshedding,
 
---=-FBmvEx+jh5329MlkkTEj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmkEoOsACgkQ7fE7c86U
-Nl98lgv+KTuhsLEtskTA1c/naduRtBbctpqlwzDeaO1NTVgCmG0pbKRDd3KuZKKK
-LHR1671fi14G9/6bUo4Upr5cD0DHtq1FDy4IS4EaGubI/Ghhng0D22nsCFQfyobE
-c4sytsvcZWAlTNfLjkl+6dv+rgRLPRo0hc4bUPZyCiaZ4GOtDa5x7/q0uEI5ppbM
-J/AUWtkuWrclvNrDwSxM0oMms38//x61K2yytp0/p7h4dX5mFeYeTNvb28tdgU3V
-LcIWQKAGlfN9kzp8Hv6tkLhd+LMg/ldETJwlC15a/s7yjImWTzXjOSLMY1ysUVYK
-BEmKuXY/QxmseguaVn3tE6gh06xYFMk2gyFB01sGA3iq6ReU6RBqmRaqmKCuilei
-f96po3OQhbC4m0LRj6gBMebmPYqc75YQmstaJ0JuluohwEt8Z/s6G1+Ib1zDhq+q
-hIG7hL+lRIHl5X0OBZEe6uPL6lkAGGsUJwS+hzWBgmgEgMJ1UM4yRsWp5z6/hj1i
-rWoqhItx
-=t1lv
------END PGP SIGNATURE-----
-
---=-FBmvEx+jh5329MlkkTEj--
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
 
