@@ -1,92 +1,143 @@
-Return-Path: <linux-kernel+bounces-880515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE977C25F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:01:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94CBC25F72
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3461B22C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FBEF1B237EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF29B2EBB8B;
-	Fri, 31 Oct 2025 15:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24CD2EDD41;
+	Fri, 31 Oct 2025 15:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoQ1cxH5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="URXLoNOY"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318832EAB61;
-	Fri, 31 Oct 2025 15:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817042E92D9;
+	Fri, 31 Oct 2025 15:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926258; cv=none; b=c1IcXotNz52+yWgq/P+c9TPsl+nD9Ye0D1Tl0hmDeyR5aRsfk+Tk5KLnyv4MjDMIJEGtMQIap+zxih+cT4djooHPTBAgTz0WD7hiNJ6iU8MQpaA1BiwUnHY4cE8TuZpik53r5LCzbUe7na8V11Mwkr/pi0ipBnDnzKK4kMIDFiI=
+	t=1761926318; cv=none; b=VWvzjuwbysoXaNUCU/CW2ibsmRL1o43/U/ruBarkXIv/FyzM+UCWZbYNb9zeVq55ZUaJBFN/tEyXrlRaofT3Z0RctUOYlrOapZXJt8t0WNU62Tc7LJMhdMfubk/ND/1Ia1U5aN5VpiBAaBqbtXkm3tSNaUeB+6F0QIPtLnITvkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926258; c=relaxed/simple;
-	bh=7vOOCPUn+sRDAtiN3PBAow6khkmIMlLpIWRfEgzH2l8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbEhTrF/NGlD8naNxTYkv8QsnE6HCXsTNmgx/2ggSUTsrwcyxjOkY3PluWGLjdzF+3+egdfLUsbm65jHXlwTooMiG7Yf0WmSn4pN2SccaWEgAJfeTf2iPceHKOGOifaebBpgedbw/cpd0QjkyoyJig8KESek2ROTHTYlWlLGFZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoQ1cxH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24441C4CEE7;
-	Fri, 31 Oct 2025 15:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761926257;
-	bh=7vOOCPUn+sRDAtiN3PBAow6khkmIMlLpIWRfEgzH2l8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CoQ1cxH5nn62XVYZNwBAVJ5Twau7QqRh6ICNXwt4KOeBcxeUARlNDPs0iRHuTftOE
-	 /kUXCHz776FA5YODBQfgW259HtLERHSfkBZqgwGo3nulEgnPfwXn+VQjOCeHFWfmXs
-	 Zg0wTr95shwjkbpzsodLXUITOxbCaQG4+XW/NXogYFJar5nSjWz4oLlfo4gzTHdPEm
-	 xyNTiyrnbNjqnzh+5mvPv2ZA4ROwoYjLvTPORCOqgB0mB+mrx2/3JcCWOknvxTztcd
-	 CixgGeL7AAupqiwNAavfq/oPYh834CaIOCEdC0a27xKGxNTyqTynTjS0AT7xfxkXdn
-	 6e5R1Vubs/meA==
-Date: Fri, 31 Oct 2025 09:57:35 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <aQTcb-0VtWLx6ghD@kbusch-mbp>
-References: <20251029071537.1127397-1-hch@lst.de>
- <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
- <20251030143324.GA31550@lst.de>
- <aQPyVtkvTg4W1nyz@dread.disaster.area>
- <20251031130050.GA15719@lst.de>
+	s=arc-20240116; t=1761926318; c=relaxed/simple;
+	bh=cJhczTAYgsx2TDxNRRHHAOrXQABsbREMRC2Y2BkDELM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QMnTMvgjqtXdHtJZFucs1YPSc08lFBcYTG3/kjnZPGtcSurKw16G6OZjMj3n59OBrHyj4LalzP0NrZgSS/MqBjAst3buuwlkqaVD/c/eHex5KqdK6AMF1dqRpV1WlhOXwRBTpP1vaYVA2Q5u8VpeIhHxv+IFoE3fWVVeeKZbAlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=URXLoNOY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761926308;
+	bh=cJhczTAYgsx2TDxNRRHHAOrXQABsbREMRC2Y2BkDELM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=URXLoNOYWGU0QgfiLlt4mvTUdGeIu3uthu4N1AY7CNi74FLph6gsIqAM0LLRsjIDx
+	 S/ZfdvzQhnOKMeEtpth9vZ1Br/cRFu8uXrPqj4eqcu7X8anhgfRirm4decBd4aL1hP
+	 m4FC4jFKVUsDKwdm/1cdiJIPSFqDetapJzZtiQ0v21ap4I5HSqDSAmZ/sC24Q0CoZR
+	 xLRb5jKm2JvZFJgVCkIl7ajvkpksyAdfW8rpEL2OFyqoVvLvD1XHubKgRu1bR6CZui
+	 j9jGc/h5oRYVtpjMiH7/iLyIsJTB1OPwwfpVyUyqveTWuSxEc1QNtpnm0xO4/qlXUq
+	 alHy0XdJB6tDw==
+Received: from jupiter.universe (dyndsl-091-248-209-065.ewe-ip-backbone.de [91.248.209.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 81E0617E1396;
+	Fri, 31 Oct 2025 16:58:28 +0100 (CET)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 17C07480044; Fri, 31 Oct 2025 16:58:28 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v2 0/2] mmc: sdhci-of-dwcmshc: Add command queue support
+ for Rockchip SOCs
+Date: Fri, 31 Oct 2025 16:58:22 +0100
+Message-Id: <20251031-rockchip-emmc-cqe-support-v2-0-958171f5edad@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031130050.GA15719@lst.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ7cBGkC/42NTQ6CMBBGr0K6dkxb/F95D8OiHQaZCExtkWgId
+ 7dyApfvJd/7ZpUoMiV1KWYVaeLEMmSwm0Jh64Y7AdeZldV2b7TZQRR8YMsBqO8R8EmQXiFIHKE
+ 86to7b83BlirvQ6SG32v7VmVuOY0SP+vVZH72n+pkQMPZnBpd1qTRmytK1zkv0W1RelUty/IFz
+ 4pmZsYAAAA=
+X-Change-ID: 20251014-rockchip-emmc-cqe-support-370dbab21623
+To: Adrian Hunter <adrian.hunter@intel.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Yifeng Zhao <yifeng.zhao@rock-chips.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2061;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=cJhczTAYgsx2TDxNRRHHAOrXQABsbREMRC2Y2BkDELM=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGkE3KNTzwa5DPlEUuhutOzhncvnKuSQleAW6
+ MoCohIu4ZgwuIkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJpBNyjAAoJENju1/PI
+ O/qa7hEP/0Tw6Mo0PI5hSxdRpDkGxO/gGyN1IKDH/G25H6NCj6/iWXXgW6hdK8GEEAN3mo7eqe5
+ DEnwCnchBKz64WKHWkEiZcD7GvHHspQ4GDjP93p9uN3NvCo72aNJBZejAGWv7lD1jlIfpFqGK7f
+ MOvDWfdjWCWmqqPhJik1yu8QEgCgK0HefBvkm8b5WRj4BNioMHJ12SPc0iUfwlON80Yn3KNvEhK
+ qxYGCITpzu8fxnMCi/7WN39Z1ru1n9WPHc7vQjf5aZpswcxlDfrqDsVU2HaSXg37e0oBI6UvZOW
+ stksSymsltUPsrbwYlqFIti7sakYZRvBk2t7/wcWPlZp17Rd6BZzntN4IUUX+lLc4cVPJs0m2XM
+ mz5mnEuYtVTrVCuYXQAXVHXWmkkKfzP066o/1vylyxzG5AgvD5A1rRhQ3ItISq1Cg3TOZzNUjnJ
+ 5lKXJJGEjd1UbmZluIWcwajXihtCJ5Sb+W4Nzo7tbNeUChkJEGa965maGk6Ary3h2nKBvOzSpR3
+ MknBpJpNdHiB8tJwXZG0GPrIa92zds4R6fwoA/D8savq6JJo7IiTSKNPL9OYvhPQX4PYd8q+Nvj
+ 1+CovJwslL0av3mH2S+rOMeOH5W0WGN4N2s9DlvIWBo0GMD9iXRlberaeGd9EIe+uJ8lMZn6Tho
+ QzxVsLRWhMka0jYCitGMsTg==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On Fri, Oct 31, 2025 at 02:00:50PM +0100, Christoph Hellwig wrote:
-> On Fri, Oct 31, 2025 at 10:18:46AM +1100, Dave Chinner wrote:
-> 
-> > Modifying an IO buffer whilst a DIO is in flight on that buffer has
-> > -always- been an application bug.
-> 
-> Says who?
+Right now at least the recent Rockchip SoCs do not support system
+suspend with the mainline kernel. I'm currently looking into
+improving support for the RK3576 platform.
 
-Not sure of any official statement to that effect, but storage in
-general always says the behavior of modifying data concurrently with
-in-flight operations on that data produces non-deterministic results. An
-application with such behavior sounds like a bug to me as I can't
-imagine anyone purposefully choosing to persist data with a random
-outcome. If PI is enabled, I think they'd rather get a deterministic
-guard check error so they know they did something with undefined
-behavior.
+On the Sige5 one of the issues is the eMMC controller, which fails
+to suspend when trying to disable CQE support. While investigating
+I found a missing Rockchip quirk in the Rockchip kernel, which is
+needed for CQE. Since the RK3576 DT has been upstreamed with the
+'supports-cqe' property (RK3588 does not yet have it), we run into
+this problem for that platform.
 
-It's like having reads and writes to overlapping LBA and/or memory
-ranges concurrently outstanding. There's no guaranteed result there
-either; specs just say it's the host's responsibilty to not do that.
-The kernel doesn't stop an application from trying that on raw block
-direct-io, but I'd say that's an application bug.
+A simple workaround would be to drop the 'supports-cqe' property,
+but DT is supposed to describe hardware and the hardware does
+support CQE. Thus let's add proper support instead, which also
+allows adding the flag for RK3588. IMHO the patch seems a bit
+intrusive for backporting, so it might be sensible to drop
+'supports-cqe' there instead. Thus I have not added any stable
+tags.
+
+Note, that there are more suspend related problems on the platform,
+this is just fixing some parts :)
+
+Changes in v2:
+- Link to v1: https://lore.kernel.org/r/20251014-rockchip-emmc-cqe-support-v1-0-918f03de0cb1@collabora.com
+- rename rk35xx_sdhci_cqe_disabled to rk35xx_sdhci_cqe_disable
+- fix device-tree typo in commit message
+- drop duplicated DWCMSHC_SDHCI_CQE_TRNS_MODE setting
+- use pre_enable/post_disable to avoid manually calling cqe_wait_for_idle()
+  before accessing CQHCI_ENABLE bit
+
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+Sebastian Reichel (2):
+      mmc: sdhci-of-dwcmshc: Add command queue support for rockchip SOCs
+      arm64: dts: rockchip: add eMMC CQE support for rk3588
+
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  1 +
+ drivers/mmc/host/sdhci-of-dwcmshc.c           | 93 ++++++++++++++++++++++++++-
+ 2 files changed, 91 insertions(+), 3 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251014-rockchip-emmc-cqe-support-370dbab21623
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
