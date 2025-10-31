@@ -1,257 +1,127 @@
-Return-Path: <linux-kernel+bounces-880850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA12C26B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:25:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F35DC26B83
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225F13AF79E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AAA93A8C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD08229B18;
-	Fri, 31 Oct 2025 19:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/UHlTcT"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A400D3446A9;
+	Fri, 31 Oct 2025 19:21:40 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8DA30B511
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1396229B18;
+	Fri, 31 Oct 2025 19:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761938501; cv=none; b=IfOQkug4gdLwJHhww3zyH7ShZQounzjLnGvdRHCX8f6eI30xuyInrDkxz9jP+BPfwFJd7CfqLRglRtuzMDKqR1TzJkJ15QMFUj+JU+uKQ4bTGT+kZ0U5tabzkzf2WZ80aTHXIkUZOm55jMAtKLzfh8q2S8VsGFQI+ihHbWVZlr0=
+	t=1761938500; cv=none; b=jpcChvDx9G++SC3l2irmd3Wx8RSpFwrtEoGDocVjpyCtctVL+hOvis6xVJYTlD6gauX4jUSwzkxOVT5kNqLWwLo5eb8y3zoChRMrX2sELiXe/23G8NsfNNNNLg52esAK2wP9FbEqV/TdzoRGrV3+TYtsv04FjiAGHjFTK9WIyWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761938501; c=relaxed/simple;
-	bh=IKykEbYZCcLlUg4KrFApgwoDlyD4UsFbAAB9qbP5KRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qlxIXgglq8hsovUGij6xvuDAobE4egYOq5FzZ2hD48zKDRrZqkzLYg/agJy2GfSiuorZWj1/hlMGj70GRfjZnsPCauFxXyc82KucIHlKBNYSuvS3+gI+VmdT3cqniIApqG7q8U3Z9lAHk6EkjmKdWwXLcS8WrbVI3aPIxaoNXK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/UHlTcT; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27eeafd4882so40105ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761938499; x=1762543299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mS5w6YyvPhKniGTg9Zltau2UNMNMQ1CYb3u0bWLzUzw=;
-        b=f/UHlTcTJSt0cS+xe3dWwK0cs6HoA3VZjvEh+BVu4Hzx86U2dQbY3YBz7X3tOnGmE/
-         fN+EN35OYM9OFLLIa4VrK2JdEE9NdlsCjaq2FyCy+rC5k3+zFdcqwZEOb9yBtazpJ0AF
-         SasZ2bs6716bH2J/K0zHICcar7PASFRE/Aaxn0WPY8XZepuqUxMHdwg8UzqUA2q2XtkM
-         3n6k4ihvc+w5SPyxREbVr4WzL+ShP2tsOt0FszZoE9EAgT6zRSVRXx43VqjVnhsXge+Z
-         rvTqm40jVATngzpqos4fZFkD3U1z5OUreMrOXwnfJ0FmtsfMTDFeSBimDLrQsttLHAEK
-         5Zvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761938499; x=1762543299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mS5w6YyvPhKniGTg9Zltau2UNMNMQ1CYb3u0bWLzUzw=;
-        b=icordTtMJF/G07JvzmpdrEDyaBA/tif061a0YK8Rb8qke+PMFi4sbsyIixKcjv03Il
-         1wssaCfz0y5UbRY8opNHK4CZrjGUW+GKAoq3109YE8IxxkDR5kNWmINq8EcFYBMTDdGC
-         v0Y6ER41DqpP2JewNOwr25BBaXHQ7tAuXWFP1kGDYzwxzlxGM0O7xg3CUBOmHGESNj3A
-         0QUCSzuABkFfz5imhtg10tgNM5ArBD890Z/SyHuHCQ0ElFeCD/QE17hp0GT+q6xDXiPa
-         /oJA8giaoQsmSfQ2soYKTdqqH8uv414ZOA4aEj5M/81khFVDbLwgrWnZdEWLK024QZjB
-         iBMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfkxzyZBmXoPbpDeNSjrD5hu1Q3NhBSP/+L6UFHDHKoGbrVtbB2WCCUL7jU8GmJXEPqZ15z1Fprz+GMNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1yVDvpnL9ccnQebopijKPghAuN5FoKdFy1Bo0AEy/M2lnIudU
-	b2KvY9k4AD3dKkakgdsIbJ1j5mYPHatzTzK1VJZI41QWETpKtzWFzn1LLi4QJDHvUp8sQg5ix5i
-	c54jtN+bVxOFeN6sCGADgasK71R3YTAaGMAjgnBPZ
-X-Gm-Gg: ASbGncuIui3W++3Eb8XgYQq3rZOBSoUfZ83LtExqFf80qfrLTRsWQtyVqRuruUt2wnU
-	95XZHbVsHQg9hfHYsGCB0e58cZoviWQqyCzzlQWPcLG3Lu9COmDnAj1ewKZDeTSqxQlTDZW9hc5
-	mzwFDG1ofqV4j4aenLX1j9r977nnbCZOohYYJ7hVfkrAykZ6gCBeMPCXedb2v9XzUt+XL9N0qM/
-	qx95c5zmPSyRPWw4j08m1VEI9Dd7ks/RPz6/V4533/ufEyhC+rKmYckjTnYwwyevSanHi8hqSmy
-	zViq/gH2zONqgSsE5FzpD04ZaQ==
-X-Google-Smtp-Source: AGHT+IEhfAExpGgethZEcA6bBOOjL/P1I77mpqVU3G01mbpDDGArm5Q97pVKlwIHj1kJZGc/Zj0coJ28ayizUFu26cg=
-X-Received: by 2002:a17:902:ce82:b0:26a:f9c7:f335 with SMTP id
- d9443c01a7336-29554cb679emr620315ad.9.1761938498585; Fri, 31 Oct 2025
- 12:21:38 -0700 (PDT)
+	s=arc-20240116; t=1761938500; c=relaxed/simple;
+	bh=7p6Au6FouVQsLTYdKqrLOFedyC3CUIDWOFbaCparMK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CsD6wc7EYtx+56Dirr+tRAF3Tf6AmzQT+byI0QwqUxZO6h1RvvYjPZM0uSMjx2SwoQ0cucqKLUiH6H7cKgYHgb6oqhszbfpUwcRQu03KDE8etdLynTFCHadmrhdIa1ClvKCoPk5jzgZfaNjDaIrExIRSbxcVro9+JT8Ucn91ciQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vEugo-000000005tv-0IUY;
+	Fri, 31 Oct 2025 19:21:34 +0000
+Date: Fri, 31 Oct 2025 19:21:30 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net-next v6 06/12] dt-bindings: net: dsa: lantiq,gswip: add
+ MaxLinear RMII refclk output property
+Message-ID: <c25fdd18373a60eb566f4de85a17279f7ab5518b.1761938079.git.daniel@makrotopia.org>
+References: <cover.1761938079.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031161213.1452901-1-irogers@google.com> <aQUCVvIEC7brqaG-@google.com>
-In-Reply-To: <aQUCVvIEC7brqaG-@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 31 Oct 2025 12:21:27 -0700
-X-Gm-Features: AWmQ_blB1hhdIjnN1ryfJypIwWZzqTSFQwygC4SAtwH05uJJWpIBVzla6fxjaZ4
-Message-ID: <CAP-5=fU8=-Bj7i-WUXfm8qJYDN3B=91VTmMFstEoZ2ub5MZw8w@mail.gmail.com>
-Subject: Re: [PATCH v3] perf s390-sample-raw: Cache counter names
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1761938079.git.daniel@makrotopia.org>
 
-On Fri, Oct 31, 2025 at 11:39=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> Hi Ian,
->
-> On Fri, Oct 31, 2025 at 09:12:13AM -0700, Ian Rogers wrote:
-> > Searching all event names is slower now that legacy names are
-> > included. Add a cache to avoid long iterative searches.
-> >
-> > Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877=
-c-e4a64ed61d38@linux.ibm.com/
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> > ---
-> > v3: Fix minor comment typo, add Thomas' tag.
-> > v2: Small tweak to the cache_key, just make it match the wanted event v=
-alue.
-> > ---
-> >  tools/perf/util/s390-sample-raw.c | 56 ++++++++++++++++++++++++++++---
-> >  1 file changed, 51 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-s=
-ample-raw.c
-> > index 335217bb532b..4f269ea7c93b 100644
-> > --- a/tools/perf/util/s390-sample-raw.c
-> > +++ b/tools/perf/util/s390-sample-raw.c
-> > @@ -19,12 +19,14 @@
-> >
-> >  #include <sys/stat.h>
-> >  #include <linux/compiler.h>
-> > +#include <linux/err.h>
-> >  #include <asm/byteorder.h>
-> >
-> >  #include "debug.h"
-> >  #include "session.h"
-> >  #include "evlist.h"
-> >  #include "color.h"
-> > +#include "hashmap.h"
-> >  #include "sample-raw.h"
-> >  #include "s390-cpumcf-kernel.h"
-> >  #include "util/pmu.h"
-> > @@ -132,8 +134,8 @@ static int get_counterset_start(int setnr)
-> >  }
-> >
-> >  struct get_counter_name_data {
-> > -     int wanted;
-> > -     char *result;
-> > +     long wanted;
-> > +     const char *result;
-> >  };
-> >
-> >  static int get_counter_name_callback(void *vdata, struct pmu_event_inf=
-o *info)
-> > @@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata,=
- struct pmu_event_info *info)
-> >
-> >       rc =3D sscanf(event_str, "event=3D%x", &event_nr);
-> >       if (rc =3D=3D 1 && event_nr =3D=3D data->wanted) {
-> > -             data->result =3D strdup(info->name);
-> > +             data->result =3D info->name;
-> >               return 1; /* Terminate the search. */
-> >       }
-> >       return 0;
-> >  }
-> >
-> > +static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unu=
-sed)
-> > +{
-> > +     return key;
-> > +}
-> > +
-> > +static bool get_counter_name_hashmap_equal_fn(long key1, long key2, vo=
-id *ctx __maybe_unused)
-> > +{
-> > +     return key1 =3D=3D key2;
-> > +}
-> > +
-> >  /* Scan the PMU and extract the logical name of a counter from the eve=
-nt. Input
-> >   * is the counter set and counter number with in the set. Construct th=
-e event
-> >   * number and use this as key. If they match return the name of this c=
-ounter.
-> > @@ -164,17 +176,51 @@ static int get_counter_name_callback(void *vdata,=
- struct pmu_event_info *info)
-> >   */
-> >  static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
-> >  {
-> > +     static struct hashmap *cache;
-> > +     static struct perf_pmu *cache_pmu;
-> > +     long cache_key =3D get_counterset_start(set) + nr;
-> >       struct get_counter_name_data data =3D {
-> > -             .wanted =3D get_counterset_start(set) + nr,
-> > +             .wanted =3D cache_key,
-> >               .result =3D NULL,
-> >       };
-> > +     char *result =3D NULL;
-> >
-> >       if (!pmu)
-> >               return NULL;
-> >
-> > +     if (cache_pmu =3D=3D pmu && hashmap__find(cache, cache_key, &resu=
-lt))
-> > +             return strdup(result);
-> > +
-> >       perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=3D*/ true,
-> >                                &data, get_counter_name_callback);
-> > -     return data.result;
-> > +
-> > +     if (data.result)
-> > +             result =3D strdup(data.result);
-> > +
-> > +     if (cache_pmu =3D=3D NULL) {
-> > +             struct hashmap *tmp =3D hashmap__new(get_counter_name_has=
-h_fn,
-> > +                                                get_counter_name_hashm=
-ap_equal_fn,
-> > +                                                /*ctx=3D*/NULL);
-> > +
-> > +             if (!IS_ERR(cache)) {
->
-> Shouldn't it be if (!IS_ERR(tmp)) ?
+Add support for the maxlinear,rmii-refclk-out boolean property on port
+nodes to configure the RMII reference clock to be an output rather than
+an input.
 
-Yeah, that's me trying to make the code less racy. Will fix in v4.
+This property is only applicable for ports in RMII mode and allows the
+switch to provide the reference clock for RMII-connected PHYs instead
+of requiring an external clock source.
 
-> And it's not released.
+This corresponds to the driver changes that read this Device Tree
+property to configure the RMII clock direction.
 
-It's just a global leak for the sake of performance, similar to pmus, ...
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+v6:
+ * switch order of patches, move deviation from
+   dsa.yaml#/$defs/ethernet-ports to this patch which actually
+   needs it
 
-Thanks,
-Ian
+ .../bindings/net/dsa/lantiq,gswip.yaml         | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-> Thanks,
-> Namhyung
->
-> > +                     cache =3D tmp;
-> > +                     cache_pmu =3D pmu;
-> > +             }
-> > +     }
-> > +
-> > +     if (cache_pmu =3D=3D pmu) {
-> > +             char *old_value =3D NULL, *new_value =3D strdup(result);
-> > +
-> > +             if (new_value) {
-> > +                     hashmap__set(cache, cache_key, new_value, /*old_k=
-ey=3D*/NULL, &old_value);
-> > +                     /*
-> > +                      * Free in case of a race, but resizing would be =
-broken
-> > +                      * in that case.
-> > +                      */
-> > +                     free(old_value);
-> > +             }
-> > +     }
-> > +     return result;
-> >  }
-> >
-> >  static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sampl=
-e *sample)
-> > --
-> > 2.51.1.930.gacf6e81ea2-goog
-> >
+diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+index f3154b19af78..b494f414a3e1 100644
+--- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+@@ -6,8 +6,22 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Lantiq GSWIP Ethernet switches
+ 
+-allOf:
+-  - $ref: dsa.yaml#/$defs/ethernet-ports
++$ref: dsa.yaml#
++
++patternProperties:
++  "^(ethernet-)?ports$":
++    type: object
++    patternProperties:
++      "^(ethernet-)?port@[0-6]$":
++        $ref: dsa-port.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          maxlinear,rmii-refclk-out:
++            type: boolean
++            description:
++              Configure the RMII reference clock to be a clock output
++              rather than an input. Only applicable for RMII mode.
+ 
+ maintainers:
+   - Hauke Mehrtens <hauke@hauke-m.de>
+-- 
+2.51.2
 
