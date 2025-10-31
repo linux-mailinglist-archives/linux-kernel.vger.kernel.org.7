@@ -1,226 +1,123 @@
-Return-Path: <linux-kernel+bounces-880377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57583C25A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:42:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F79C25A1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659B640377E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C26404B36
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F1334C9A0;
-	Fri, 31 Oct 2025 14:42:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A78E34CFB4;
+	Fri, 31 Oct 2025 14:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="Ley0uC2w"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AAF34C829;
-	Fri, 31 Oct 2025 14:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B2F34C9BA;
+	Fri, 31 Oct 2025 14:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921725; cv=none; b=khM3xvv0oANNB+ye2ZuoSY61eyiRJnw86bfZrzzOl3eu2fVUTX6WDNKhfBDEjf+rFtW6UzCmxYX8q0bBzvmx70y9FuBcxveq64UOehxANzS0wHJXAGicmnRHA1I5tP3XSESbe7ELhxxJOH/ZRarfebHXgafgwGc/G7yPQaFjuLQ=
+	t=1761921762; cv=none; b=qTy/g6xJMWMG0j/TfBlI4LVCF4skjtQPKh+CDXvfZRzOBCGUFfMbZUwSbU6qQWorUjLCtzctOptsJfXJTT5gr6uI/Od/CXH1TwwtdQj6Bf8Gc05oVbuKrBrGLuddNc8ILQ/nSvyOyeuvm1IIMtuEs0I2jSkRXHmu90MWykP6o8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921725; c=relaxed/simple;
-	bh=bHhED8iYQydf3s9DLhw8XrjMCOF3voY0wx9ywG6arP4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jO5lcGyE3WIjmXS6DiJCHRmP+4QV+ApHW7fDkCwXPMsqKpbuIL1f7HFdjUQ4g56slzKTiFPt/XGCyXuDelJ7Fb52MpBQByaH6CCs/HQBop7mc9S0sd6AwnC5L9swcHQ2XiAd3YYTWybUGPv/Fd7ebtcWe2y+QvDFvofLvCS2xtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cykDv07rCzHnGhK;
-	Fri, 31 Oct 2025 14:41:03 +0000 (UTC)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9CDBE140144;
-	Fri, 31 Oct 2025 22:41:59 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 31 Oct
- 2025 14:41:58 +0000
-Date: Fri, 31 Oct 2025 14:41:57 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Pengjie Zhang <zhangpengjie2@huawei.com>
-CC: <myungjoo.ham@samsung.com>, <kyungmin.park@samsung.com>,
-	<cw00.choi@samsung.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
-	<linhongye@h-partners.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v2] PM / devfreq: use _visible attribute to replace
- create/remove_sysfs_files()
-Message-ID: <20251031144157.00000e51@huawei.com>
-In-Reply-To: <20251028022458.2824872-1-zhangpengjie2@huawei.com>
-References: <20251028022458.2824872-1-zhangpengjie2@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761921762; c=relaxed/simple;
+	bh=Ahd5Rzp/+Rk/0orJlPIt31Pr0Ga2cuD8Fs7Too8CKBg=;
+	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=U8T4VU5SL2AjRw1K9QhwxH64YoSY8Xf1Hwq/On25dp5qyBXZ/xInOSiOYGdDqqi5m/alHr8+CIjSGkMM5yy9GSBUn3h8H+HvCEAxtUNkFzjQGCg6LQSFpRsgolNBJs+eCX9w3261a49EijMmaVbB4SXdzdaoKO8tB7pkHNXruC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=Ley0uC2w; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59VDiHdH2882472;
+	Fri, 31 Oct 2025 14:42:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=dk201812; bh=p
+	VnwbKyAoM4XNHeszp6tYbSCUGRBg1M1CjmSLFZIMuc=; b=Ley0uC2wO7T5BzH/7
+	zsdZ03fF91Z0sKAaY+PKUgpyLynJL/hCuL/Cj0w6CQqyfWAB8sklyj2qf0LREBbV
+	jYXBhXSJaZBW4dHnhBbmkwPLUm5kWMO71DBmjpdT+/fpPfs52Vv6UUU1QeEwBkfx
+	76sEFt8waK9u4kRCwq0WEj+4219xCK1KKyk66bw2D9CuVwH4CzIjCIIxh6jHjXy1
+	kC04apRAM6VbRgTRn4oD2Jmb/LjzS3U8XEgReEEjG9iU9CnoYwB7XkjUfu6BP0Ih
+	rg7Z+fXI/3OURsfnpuhot5rNDFbDFFuYDwhDxMaD+aUyODcTupb5Pt+V55JP6HrI
+	tpG/Q==
+Received: from hhmail02.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 4a3whxsa38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 14:42:07 +0000 (GMT)
+Received: from HHMAIL03.hh.imgtec.org (10.44.0.121) by HHMAIL02.hh.imgtec.org
+ (10.100.10.20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 31 Oct
+ 2025 14:42:07 +0000
+Received: from
+ 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
+ (172.25.4.134) by HHMAIL03.hh.imgtec.org (10.44.0.121) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 31 Oct 2025 14:42:06 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+To: <devicetree@vger.kernel.org>,
+        Marek Vasut
+	<marek.vasut+renesas@mailbox.org>
+CC: Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
+        Frank Binns <frank.binns@imgtec.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Simona
+ Vetter" <simona@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20251029194210.129326-1-marek.vasut+renesas@mailbox.org>
+References: <20251029194210.129326-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH] dt-bindings: gpu: img,powervr-rogue: Drop duplicate
+ newline
+Message-ID: <176192172651.30862.3429730919575512889.b4-ty@imgtec.com>
+Date: Fri, 31 Oct 2025 14:42:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-Mailer: b4 0.14.3
+X-Proofpoint-ORIG-GUID: b0vaoEnKbzPb7F2e5pKIhGvH2QVMFCCq
+X-Authority-Analysis: v=2.4 cv=C5zkCAP+ c=1 sm=1 tr=0 ts=6904cabf cx=c_pps
+ a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17
+ a=0einROue838A:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=r_1tXGB3AAAA:8 a=S9DGgefAEktgCmtaPdcA:9
+ a=QEXdDO2ut3YA:10 a=t8nPyN_e6usw4ciXM-Pk:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: b0vaoEnKbzPb7F2e5pKIhGvH2QVMFCCq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDEzMyBTYWx0ZWRfX1brwmYvW6If9
+ ummI8lS3/Xn4GLgQYIHAznz8T1D4izhA8MVzbD3MgN/CuOLmGox5EOIaj7OxFoZbA+IQyD7VXBM
+ 2OaFLGbiksNs9mByTtbs1BpIa36aV4fqdJJQBvRPS6VrOdTg2NLpk7BmAM5ZDYaxrC4zMs5xut8
+ UHxyKr/v26iZoaDjuS3YG2NpwE0ujXHO3+vhnQjlFCZ8f+IFI/5yWDqC6mykHOmmY/+2TqPLKLm
+ kgehE9EVr0N6ZVEzsfM1qBhQS+fqR9Kk4jYapY8LN9W9qyj/a/qaTeo1FCEPHV0dPv4CjJDOxY9
+ 7eukHjsei7+01T82r/et+0cZc37YuLZhMWoaNk1+grm58EtCnlw3In+rdB9u1DDbHpSCTVmMtl0
+ unUxY343wAj++zFv53ywU6hcWtznSQ==
 
-On Tue, 28 Oct 2025 10:24:58 +0800
-Pengjie Zhang <zhangpengjie2@huawei.com> wrote:
 
-> Previously, non-generic attributes (polling_interval, timer) used separate
-> create/delete logic, leading to race conditions during concurrent access in
-> creation/deletion. Multi-threaded operations also caused inconsistencies
-> between governor capabilities and attribute states.
+On Wed, 29 Oct 2025 20:42:02 +0100, Marek Vasut wrote:
+> Fix the following DT schema check warning:
 > 
-> 1.Use is_visible + sysfs_update_group() to unify management of these
-> attributes, eliminating creation/deletion races.
-> 2.Add locks and validation to these attributes, ensuring consistency
-> between current governor capabilities and attribute operations in
-> multi-threaded environments.
+> ./Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml:103:1: [warning] too many blank lines (2 > 1) (empty-lines)
 > 
-> Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
-Hi
+> One newline is enough. No functional change.
+> 
+> 
+> [...]
 
-Various comments inline.
+Applied, thanks!
 
-Jonathan
+[1/1] dt-bindings: gpu: img,powervr-rogue: Drop duplicate newline
+      commit: 75d42e0351ac5ea080c33a15a92293155f51c9c9
 
-> @@ -1805,19 +1801,26 @@ static struct attribute *devfreq_attrs[] = {
->  	&dev_attr_min_freq.attr,
->  	&dev_attr_max_freq.attr,
->  	&dev_attr_trans_stat.attr,
-> -	NULL,
-> +	NULL
-Whilst a good change, doesn't belong in a patch doing anything more
-substantial.  So not in here.
-
->  };
-> -ATTRIBUTE_GROUPS(devfreq);
-
->  static ssize_t polling_interval_store(struct device *dev,
-> @@ -1828,15 +1831,22 @@ static ssize_t polling_interval_store(struct device *dev,
->  	unsigned int value;
->  	int ret;
->  
-> -	if (!df->governor)
-> +	mutex_lock(&devfreq_list_lock);
-
-As below I'd use guard() to simplify this.  Applies in various other places in this
-patch.
-
-
-> +	if (!df->governor ||
-> +	    !IS_SUPPORTED_ATTR(df->governor->attrs, POLLING_INTERVAL)) {
-> +		mutex_unlock(&devfreq_list_lock);
->  		return -EINVAL;
-> +	}
->  
->  	ret = sscanf(buf, "%u", &value);
-> -	if (ret != 1)
-> +	if (ret != 1) {
-> +		mutex_unlock(&devfreq_list_lock);
->  		return -EINVAL;
-> +	}
->  
->  	df->governor->event_handler(df, DEVFREQ_GOV_UPDATE_INTERVAL, &value);
->  	ret = count;
-> +	mutex_unlock(&devfreq_list_lock);
->  
->  	return ret;
->  }
-> @@ -1846,11 +1856,19 @@ static ssize_t timer_show(struct device *dev,
->  			     struct device_attribute *attr, char *buf)
->  {
->  	struct devfreq *df = to_devfreq(dev);
-> +	int ret;
->  
-> -	if (!df->profile)
-> +	mutex_lock(&devfreq_list_lock);
-
-guard() would be useful here.
-
-> +	if (!df->profile || !df->governor ||
-> +	    !IS_SUPPORTED_ATTR(df->governor->attrs, TIMER)) {
-> +		mutex_unlock(&devfreq_list_lock);
->  		return -EINVAL;
-> +	}
-> +
-> +	ret = sprintf(buf, "%s\n", timer_name[df->profile->timer]);
-> +	mutex_unlock(&devfreq_list_lock);
->  
-> -	return sprintf(buf, "%s\n", timer_name[df->profile->timer]);
-> +	return ret;
->  }
->  
->  static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
-> @@ -1861,12 +1879,18 @@ static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
->  	int timer = -1;
->  	int ret = 0, i;
->  
-> -	if (!df->governor || !df->profile)
-> -		return -EINVAL;
-> +	mutex_lock(&devfreq_list_lock);
-
-Perhaps a follow up but this code would be more readable with use of guard()
-and returns wherever we are done with anything other than unlocking.
-
-
-> +	if (!df->governor || !df->profile ||
-> +	    !IS_SUPPORTED_ATTR(df->governor->attrs, TIMER)) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
->  
->  	ret = sscanf(buf, "%16s", str_timer);
-> -	if (ret != 1)
-> -		return -EINVAL;
-> +	if (ret != 1) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
->  
->  	for (i = 0; i < DEVFREQ_TIMER_NUM; i++) {
->  		if (!strncmp(timer_name[i], str_timer, DEVFREQ_NAME_LEN)) {
-> @@ -1901,40 +1925,64 @@ static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
->  		dev_warn(dev, "%s: Governor %s not started(%d)\n",
->  			 __func__, df->governor->name, ret);
->  out:
-> +	mutex_unlock(&devfreq_list_lock);
->  	return ret ? ret : count;
->  }
->  static DEVICE_ATTR_RW(timer);
-
-
->  
-> -/* Remove the specific sysfs files which depend on each governor. */
-> -static void remove_sysfs_files(struct devfreq *devfreq,
-> -				const struct devfreq_governor *gov)
-> +static bool gov_group_visible(struct kobject *kobj)
->  {
-> -	if (IS_SUPPORTED_ATTR(gov->attrs, POLLING_INTERVAL))
-> -		sysfs_remove_file(&devfreq->dev.kobj,
-> -				&dev_attr_polling_interval.attr);
-> -	if (IS_SUPPORTED_ATTR(gov->attrs, TIMER))
-> -		sysfs_remove_file(&devfreq->dev.kobj, &dev_attr_timer.attr);
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct devfreq *df;
-> +
-> +	if (!dev)
-> +		return false;
-> +
-> +	df = to_devfreq(dev);
-> +	if (!df)
-> +		return false;
-
-Isn't to_devfreq() just a container_of() wrapper?
-If that's the case it will always be there if dev is not NULL.
-
-As such I not seeing how this group is likely to ever be
-invisible.
-
-
-> +
-> +	return true;
->  }
-> +DEFINE_SYSFS_GROUP_VISIBLE(gov);
+Best regards,
+-- 
+Matt Coster <matt.coster@imgtec.com>
 
 
