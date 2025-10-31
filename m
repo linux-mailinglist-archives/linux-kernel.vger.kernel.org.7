@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-880264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BB6C25430
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:27:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AEBC2543F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECB04241E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933451A645CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D5734B42C;
-	Fri, 31 Oct 2025 13:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C30134B427;
+	Fri, 31 Oct 2025 13:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XccuECJ1"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GTp1qtKy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C61832D7D1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01CC345CD6;
+	Fri, 31 Oct 2025 13:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761917224; cv=none; b=oNYHHEJKUlu3ZF/cI6zRQToaY29LA8XtJJu0DmkNm+gmRhQXpmFO4BHc87FLSrQZ2o/kw+dP/RtCI1VZSK/SL5P6ioSiI+PtnzkjA5iKQ0hivR+4ezDJa2eJaVzJcl1RpmYblX2ndDwRmLr9Ic4SZ8+maFNG2YXufmfvk5pzOKQ=
+	t=1761917271; cv=none; b=JeB1rEMIRlWOC47nHHVQD7rGn7nATOM25bfzLxf0Lz0UqxQbIH47RDEu5h5QfWIxQLmhCoE0vqjlo80iTkk08BLqrKg0SZkZPUuCzmO7HOM3AWucu/3VYGhd2df/v51KmYHopEGI1/87CFdYLG/XOJ5hRYL5LpfXHgE5/llx/Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761917224; c=relaxed/simple;
-	bh=uhaCwSbT1CmynaTtFkFUfd6VKh41RVQZwtYLimsYg7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PUeS+RQfTvweXCD4jPI8mrDiDr54rjLiyKF4ILxEDJV1jf5TEpMN1YTNkpQFpodZyXsfE+n5p5Pli79gkej8t2FI56Cb4VGp49tuFUOxsttxV8ASEii6sUsR6gSpQKoQEH5NMmmgdnFhyo2+5qnjrIqXmSIwaRfRRwojeJ+Dko0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XccuECJ1; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3408dd56b15so644165a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761917221; x=1762522021; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WrmdlO7loopDlm2CqslnppoVSdxtVgkxG6FfUB2qsow=;
-        b=XccuECJ1h8F58ezeiX+S7pyhbOOK97N6iub3dkg4qRuM3AjINAZ1HO/QDn+qRPdRtV
-         uWnR5NPk1jCkV8etFYcJtQ0dUpx+WISpOYzq5KpZtYGzJyOWyvc40G7cvM+r1AbWJdPG
-         WagHtNzTfX0muUpZqGH782C/fIYDX/zGkPt7JBOyUOBSGq2jB59SPx9vvOXd6UJc/clb
-         c4ApnE/lBxPAX/x24A4tUPVQquHK89dv9EhmD8Cz6MYHad7h5W0d+td4pP9nc63XW4II
-         Nx3iBEVDLdEQmIc4Beh7g9BvIq0i6HIS0RwArPJTP7/uzejKduHz0O4m0H9JTqC+G8F6
-         zt7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761917221; x=1762522021;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WrmdlO7loopDlm2CqslnppoVSdxtVgkxG6FfUB2qsow=;
-        b=hSW0LANDM+WkFntZBmcwW1ttC5MIDcxe+bb4+lPbOc3CHVlGR5wUQuJMs9z7wGO435
-         loMQEZ0wxNK1ENmZhZZx1fUEe0KWbf52AZ1+2QSR+WNg+Lo353nz0vUgP8+rwkaGLuZ4
-         qCIteblrHGuac2XLVbKNh/n/lmVEiPhXfPZ9ZMVQ6es+0DZ9wxqZHG6KjpbV6W91DJV1
-         nKsAHBU5uhtC1NknQL5O/Wfu1MnXh3fBdWOTf6hezDXYLwDQ0eUj29MoXjhZVSvrvW7S
-         Ai6uNp9LImSnI+T2Ga0hUkXV1hz0j2HkePpKCG2JTl/wYLVIv25CkmVlDrWFba+TsU99
-         ja/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrcjZ00Bdhmb01TCwL+dj6JZS7InofkBYpVDYPidaSyvj/sYuubyHAHnjmxVGo9QCD9ywzwwEOa1zgjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgvbiIz0ECBsp6tpKf4Yj5qX7Mx5zR5O8aOM9Kmcr6cGm8Rxnq
-	FhP5AjhKSrK4iYrri07C0xwFW8Fvu2sX2iBs3jstQq+XJ5L2T9xaQf5YTmAe7nI=
-X-Gm-Gg: ASbGncuo35vnMyldVf2K1+rbeLEvTFiLvIspkfgPKMhNvcK9O+JXP9TEEM99/6hLyjS
-	AZgRlWfBglUTKSMJ/a9qr7u4oZ5j4EZ4a59Eq0hNbyiwFdgTVkt7QK5zCo/sC2jFE/SN8UOBGiO
-	kyq8gO3jQTBlkF1rhiynWam0Q8vjsoKltdQwYsW6w4yZdc7r1ok8V1tcl9oxd+LsBJ9Im2hxR6P
-	zjUxqXhwmWntP7e1MefvfgcAKGzdRI/FGHvtw5tgvwJ7taZmw7yw2YGURquHyY3OKnP+ZxRZco4
-	defZTzseMNw2HipDW2/QYgFuneTGN3zYx/ay9Dzx128qmVIeG8kbYaAjMhEE7JTUfb/rbhF4uVh
-	TNcY92RopaR2peaClI17faUM39eO72HvVSjVW7SZ7A+Ag37sSAamhywk7jm5T1mQvi52ZqHWLrX
-	nofsa1mj7d
-X-Google-Smtp-Source: AGHT+IHzfVYSO8+J0zNhvwv1+BiO2sqnk9KJnssYCkr+vJvVNaYHRPB82I8IkIFPSwlKvjWLwIcZzA==
-X-Received: by 2002:a17:90b:39cc:b0:32e:a54a:be5d with SMTP id 98e67ed59e1d1-34082fc92bemr4683310a91.2.1761917220515;
-        Fri, 31 Oct 2025 06:27:00 -0700 (PDT)
-Received: from VSPRIME.. ([2401:4900:52f2:3b59:ca2f:95c0:7c6b:6e6a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34092d48252sm2232712a91.15.2025.10.31.06.26.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 06:27:00 -0700 (PDT)
-From: vsshingne <vaibhavshingne66@gmail.com>
-To: skhan@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vsshingne <vaibhavshingne66@gmail.com>
-Subject: [PATCH] usb: core: prevent double URB enqueue leading to corruption
-Date: Fri, 31 Oct 2025 18:56:51 +0530
-Message-ID: <20251031132651.219859-1-vaibhavshingne66@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1761917271; c=relaxed/simple;
+	bh=NEaXmL/KjogWa3Ar76UBtjP3Q9rWcWDv9QQSToHQBFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tz2VToRaMAyAWnRbuWjoVDstPHEgnWE3M0ek/k5Uy38eHuKXV8t35EkUtiVvhZ1qtloFIL0z5c4YIteMxrTHZcK6F9x8ZVPb5VIyieG/zo6gGfQXmyrgjZ/uRPfN5ags+Pyj2spe5EUzevI3D2RUmBf2a+hdgxh4mIyuBQjA5KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GTp1qtKy; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761917270; x=1793453270;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NEaXmL/KjogWa3Ar76UBtjP3Q9rWcWDv9QQSToHQBFY=;
+  b=GTp1qtKyorVCTvkBNVd3FXaN4fStykMOA/3xOoEPH4d3FaimzlrHUsm7
+   ZPYAt4Nca7n96XVMo4+5tRKwELfoWWO2sfzv2/piQiwTGHLIUcd3KLg03
+   YoFsmP5xI+vdMp6kTXnwdux0wkMRTkITtFCUHEr3rxup5io8J+8szj/cM
+   jqCaLZlkJQosmoDzLia/em1DBf3MXDTrUg0dhxdzQTOSGz5snVvyAsQrZ
+   cvqdrcDDvKeUHClrlbhWUSId6xQnmSQShwq/lKHXcjAMhTYdocwjR8/iU
+   QnPwgAPk/+6Wy+eMDz4iVNn1znJRUqjWlNaSijF8wBpJSEjsgqL0+VZyM
+   A==;
+X-CSE-ConnectionGUID: M2ijntaDSwm4bRp+hNphbw==
+X-CSE-MsgGUID: i3eJZvurQbewxj7m4S7UKA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="89541714"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="89541714"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 06:27:49 -0700
+X-CSE-ConnectionGUID: /crBrY90S+C+G/SXMgJaVw==
+X-CSE-MsgGUID: M2ffBQeRRb69LG5jAHjCVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="190583116"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 06:27:47 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEpAM-00000004HIg-09eC;
+	Fri, 31 Oct 2025 15:27:42 +0200
+Date: Fri, 31 Oct 2025 15:27:41 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Raag Jadav <raag.jadav@intel.com>,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] cpufreq: qcom-nvmem: add compatible fallback for
+ ipq806x for no SMEM
+Message-ID: <aQS5Te-nUGLlYNmL@smile.fi.intel.com>
+References: <20251031130835.7953-1-ansuelsmth@gmail.com>
+ <20251031130835.7953-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031130835.7953-4-ansuelsmth@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Signed-off-by: vsshingne <vaibhavshingne66@gmail.com>
----
- drivers/usb/core/hcd.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+On Fri, Oct 31, 2025 at 02:08:34PM +0100, Christian Marangi wrote:
+> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
+> case for some Google devices (the OnHub family) that can't make use of
+> SMEM to detect the SoC ID.
+> 
+> To handle these specific case, check if the SMEM is not initialized (by
+> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
+> OF machine compatible checking to identify the SoC variant.
+> 
+> Notice that the checking order is important as the machine compatible
+> are normally defined with the specific one following the generic SoC
+> (for example compatible = "qcom,ipq8065", "qcom,ipq8064").
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 87fcb78c34a8..66861f372daf 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1758,16 +1758,15 @@ void usb_hcd_giveback_urb(struct usb_hcd *hcd, struct urb *urb, int status)
- 		pr_warn("usb: URB already linked to bh->head, skipping duplicate addition\n");
- 		return;
- 	}
--	
- 	list_add_tail(&urb->urb_list, &bh->head);
- 	running = bh->running;
- 	spin_unlock(&bh->lock);
- 
- 	if (!running) {
--        	if (bh->high_prio)
--                	queue_work(system_bh_highpri_wq, &bh->bh);
--        	else
--        	        queue_work(system_bh_wq, &bh->bh);
-+		if (bh->high_prio)
-+			queue_work(system_bh_highpri_wq, &bh->bh);
-+		else
-+			queue_work(system_bh_wq, &bh->bh);
- 	}
- }
- EXPORT_SYMBOL_GPL(usb_hcd_giveback_urb);
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
