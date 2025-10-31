@@ -1,154 +1,125 @@
-Return-Path: <linux-kernel+bounces-880985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA38C27211
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE8BC27214
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D0B1888FDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9341118857BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCA927F759;
-	Fri, 31 Oct 2025 22:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9188F2E62C8;
+	Fri, 31 Oct 2025 22:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="M39vuJwq"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MZslB/+/"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F85354763;
-	Fri, 31 Oct 2025 22:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FA12D7DC0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761949899; cv=none; b=O+BszwkMxwU+nurRWoEfO1ZHBha00VzX8hyqW+9idhV+btW8hAjYl/QyDARzkIDQPrIySXIVHK3GpgQJyc7UB7gixmq8hbbJB22oeW329/ShaIPkQLfc0z2Mwtni5v/xY0og1zJzmzT10v+Js/2X1ibPQo1XYM8Vjr1GiDp0lZ4=
+	t=1761950132; cv=none; b=mG6T0x9pRKD/b9/OlVhJuDB0LVCjcgdppqlcItfZCrMBK84kq/rmS1LaZR4z8SC868XmrQub6bOsBC+g12iMnisj4gsy2uk3dNgWj0jImkAvWc4i5+NEdeNatCd59jz7DXSSRIg4NeMi4tyImHTvHN1PqBxwyfMna68SuoBuVkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761949899; c=relaxed/simple;
-	bh=mcCYU2DZEgm22G7FtYX6PZDwrQtk7eir+wADAhNPInA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjRdNQdidNZAtVeT7OMy0GZm5T/+FYtI16MWJIw+cxYVHsBaZSXNlL+zJ6z5kgzUzClkgMdbxzeA0VhlQU/gFdKjwsBaLeFeGpFwcuXDb9c/M/lazcoazzFidTbbtLoE2wHYor9QXIyNz3jCP8p73mln/9YzXTt3euI+JOV0v9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=M39vuJwq; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=rD2JIdANTZru7tnoty78FxFPBqnheT+Ouf2ZxL1AylI=; b=M39vuJwqwXyMI1cEG79o39S3fV
-	pg3hdjeCchwqLht2MWcV2mPu9yi571rh04hAjJBtVHTRwz+ndwhBcvUwctdsVo+LVCWFV5CVcDxPA
-	+aMHDZutukWkSVr8VUGA5LLK2ikEdv8XVCzbdKuVT4edJCJAhAB3AXzCW4XkY4BvwNqljKfJPxas2
-	QX0c1OiOYgGKMgdc3u+KGc7JyepotbXrOh5W+G1rktQvwSPSkimoir7GpDpdVWBgnw9MCxegxQ25p
-	Bpz9faVEn4JuIHYjrX+H0GOarFyZj5aMQ90Emhjl7ThdwqKvI0Q8gghX3CPx1ioC+5IRtbvo/v+my
-	4DmCI6aw==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1vExeJ-000000049Fl-0m2N;
-	Fri, 31 Oct 2025 23:31:11 +0100
-Date: Fri, 31 Oct 2025 23:31:08 +0100
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Alex Elder <elder@riscstar.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, dlan@gentoo.org,
-	johannes@erdfelt.com, p.zabel@pengutronix.de,
-	christian.bruel@foss.st.com, thippeswamy.havalige@amd.com,
-	krishna.chundru@oss.qualcomm.com, mayank.rana@oss.qualcomm.com,
-	qiang.yu@oss.qualcomm.com, shradha.t@samsung.com,
-	inochiama@gmail.com, guodong@riscstar.com,
-	linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/7] PCI: spacemit: introduce SpacemiT PCIe host driver
-Message-ID: <aQU4rGzrB1-Vu7C6@aurel32.net>
-Mail-Followup-To: Alex Elder <elder@riscstar.com>, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, dlan@gentoo.org, johannes@erdfelt.com,
-	p.zabel@pengutronix.de, christian.bruel@foss.st.com,
-	thippeswamy.havalige@amd.com, krishna.chundru@oss.qualcomm.com,
-	mayank.rana@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
-	shradha.t@samsung.com, inochiama@gmail.com, guodong@riscstar.com,
-	linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251030220259.1063792-1-elder@riscstar.com>
- <20251030220259.1063792-6-elder@riscstar.com>
+	s=arc-20240116; t=1761950132; c=relaxed/simple;
+	bh=iYck55bahX1dqxP2BL3n7cuT8Xbz8u0rKuNJzAfwsLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nlhLpnhlbPBOXGpz0E41P6YLRTIQIwgIcOX8RCLMlPb5v2XO5qYYKduTZM+Jou3cNg1UsVC+QMk5386kKpQqDpYJanyo6denpCnwJj3tsKSA6GfostpugJ5UlhAn11+/cI5OPumiIgKx/75JvML0rubpJ7hFtvNDkMxWoBFKIOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MZslB/+/; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-943b8b69734so255164739f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1761950129; x=1762554929; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnbrNksRBh1bg9JZSC/QDuCw6CE4G/JQOW3nf+SPy4I=;
+        b=MZslB/+/w0nMXv/n4YHPUFxz+TEKq8ZHzFtX74JfuBwU6ywI9xrQjcw1m3QrIthrRz
+         9x2fnSz4PSZ7LijfJFkGWfZKDQC19gwYkZDOlQpifXvrOLfoKSrVCwZVWVhuQo8WXL2i
+         rjT65/524aZ62hPRx/u5uykndK6EDjwn9PZ/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761950129; x=1762554929;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnbrNksRBh1bg9JZSC/QDuCw6CE4G/JQOW3nf+SPy4I=;
+        b=LhqkiIUlTwRHsyKnsw2hUQrNNBJhzcXgibi9HGeWMVHLy5+kpEyFFw+qkZgh8T5HOM
+         +Zs1vAOSxP3akWrHfp7WFtOq3NV8vNd6Fi8YMov2+g+t8OTVO5BOsLLZGMsHzlp3fYec
+         s9/ej5DlPwFGiZfBx1KpRVU8fzuyzhH/1wy3YRz9bswZgfrI6fASDUZJTN7+MwB2lJ3i
+         O94DOLovU8l+4Nw9fO/7pBFpN07xydeYtTq0gTNM4Ek3e7SEQRWWv9OxuALUCFiYlEbj
+         +1JvyFpQACwbR6vD9dcyAsItDNB19BmabgCg0n1Mizxsd+TTOb6aZI/84g3rZbIeh0cY
+         GnXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFks79AkNRJHIlOYTCS0Mu/4qYoYWhIHlWMQoyJ3k2WIE0C4fWzExDD+QGP/QsyXyZn89XRJV83h7IlEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqJqT/G73a3rdIq0nejDi4H7ntb3WkjwSrfojff5egd28xIqgC
+	9tuxME4+oiMupm+q0ZPaTtnWwU54m37Qc0dIUQ8D5EMrGl50d6+KqllAkjtuLgpyguI=
+X-Gm-Gg: ASbGnctcYdaikzNOGcShvayvFo4W6anaa5g12NTG3GomPbNb1v765PthbOrtuvPcnr1
+	XGJPMWccH0kXk3jkYi9qf/ffhkc/WJiAXCdFK9kT3R0g/kDtvwu998ECd6v3CUdDrJaU3aZVFb5
+	+h3HsVTKLn4WFiV62i+LxLBH7zg5KyCpmPRLxA4fYai4/03GeU3JS0NuS2+Vj7p1W/QO3hmOsmP
+	F0CcnswNL+BD7ImrT4VCkbrD9UBKPkrfpDKiKWWk5uAb641xOyVI1fbsI+I4VdeVIzFzbBpN3/X
+	K0rdtUTszjHbfzvAVCtiy/0HVefel35wQSi+kS62J5b2ENRtPZ2ongTf+u03JmKI3hyMpnShOyA
+	AQAG//H6YscEnRMvPbCBR5ZIyTtQiIGD6J12mz8AkCvsqvovbyBm7cz32T4xvApAyCBB2kchER6
+	MgdXjLHiioCcQpVFJ1ruMcWu2i/qTvVnTi/g==
+X-Google-Smtp-Source: AGHT+IGjVrSQAMNqNAnv/gM9bi4zfu2mobXw57w95CoY0VCC2MJGIb3snv4VN/yENZWB73vMHzXC2Q==
+X-Received: by 2002:a05:6e02:741:b0:430:9f96:23bb with SMTP id e9e14a558f8ab-4330d1315a8mr76043315ab.8.1761950129290;
+        Fri, 31 Oct 2025 15:35:29 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b6a55b1b27sm1151546173.41.2025.10.31.15.35.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 15:35:28 -0700 (PDT)
+Message-ID: <23807f00-6b2a-42a6-9ab6-620ae5dcc661@linuxfoundation.org>
+Date: Fri, 31 Oct 2025 16:35:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030220259.1063792-6-elder@riscstar.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, sr@sladewatkins.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251031140043.564670400@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Alex,
+On 10/31/25 08:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.7 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-On 2025-10-30 17:02, Alex Elder wrote:
-> +/* Disable ASPM L1 for now, until reported errors can be reproduced */
+Compiled and booted on my test system. No dmesg regressions.
 
-Thanks for adding this function.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-> +static void k1_pcie_post_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	u8 offset;
-> +	u32 val;
-> +
-> +	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> +
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +
-> +	/* Turn off ASPM L1 for the link */
-> +	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
-
-Why not using dw_pcie_readl_dbi() instead?
-
-> +	val &= ~PCI_EXP_LNKCAP_ASPM_L1;
-> +	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
-
-And here dw_pcie_writel_dbi()?
-
-> +
-> +	dw_pcie_dbi_ro_wr_dis(pci);
-> +}
-> +
-> +static void k1_pcie_deinit(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct k1_pcie *k1 = to_k1_pcie(pci);
-> +
-> +	/* Assert fundamental reset (drive PERST# low) */
-> +	regmap_set_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
-> +			PCIE_RC_PERST);
-> +
-> +	phy_exit(k1->phy);
-> +
-> +	k1_pcie_disable_resources(k1);
-> +}
-> +
-> +static const struct dw_pcie_host_ops k1_pcie_host_ops = {
-> +	.init		= k1_pcie_init,
-> +	.post_init	= k1_pcie_post_init,
-
-Unfortunately, while I can see the effect of the change with for 
-instance lspci -vvv, this happens way too late in the device scan 
-process, i.e. after pcie_aspm_override_default_link_state() and causes 
-L1 to still be enabled.
-
-I have tried to move it earlier, in k1_pcie_init() after writing the 
-vendor and device IDs. This works as long as "nvme scan" is run in 
-U-Boot. But if I don't run this command, it seems that the change is 
-ignored or lost (i.e. I can still see L1 enabled with lspci -vvv).
-
-Moving it at the end of k1_pcie_init() works fine, like moving it at the 
-beginning of k1_pcie_start_link(). But my knowledge is too limited to 
-know where is the correct place.
-
-Regards
-Aurelien
-
--- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+thanks,
+-- Shuah
 
