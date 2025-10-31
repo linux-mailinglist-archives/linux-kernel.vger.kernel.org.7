@@ -1,63 +1,94 @@
-Return-Path: <linux-kernel+bounces-880334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD868C258C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:23:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFDFC256CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:05:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B05B0581E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:12:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8990735171A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9076834B432;
-	Fri, 31 Oct 2025 14:12:03 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C7C2459F8;
+	Fri, 31 Oct 2025 14:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XMaKKTCG"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A6B26ED55;
-	Fri, 31 Oct 2025 14:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F05622A4D6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919922; cv=none; b=WHjeBlkCr1RZXOMPAjBziV4MIHTbvfXQsTngjb/IJS9Y+/ZkDo3tCdhXloQOcvI75XuI6jGtEysLOhUQG6YGvV+JvtRj+dQwLqLLndR6kumSD3sU8zviR6pKC/C+p1iXGIisrwAIrSEfvxxbNnAoMlF7XPw7o1Uy2uY2g6FzsFg=
+	t=1761919522; cv=none; b=ScOwzr74cvfEC3+I7VN2Iab6AZPUoUDlrn7pkSW23tiqSBA3iBejXmYMzMMgA0Ypmry7hAOk1zXI7Mw0bjsJUiEB1z6BuCoZSS2VrOZnv2v5+mG1PMs7n1CjUPUdjPcJzJro7cVtt7s+f0bczPcPOlciQadxza8x4ezXJoRFyzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919922; c=relaxed/simple;
-	bh=+T4v+KUgJc/8+w8pb5xNmHcDFnylEKU+WWd2hPof9DY=;
+	s=arc-20240116; t=1761919522; c=relaxed/simple;
+	bh=ckWEHSYzRMCQdSdV1+aItXg+MoosM9PmpiIfZ+3IkXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipIMFD4rrk2QYxgSGEHKOSNF/A6RX1HntaI1qd2Etjt3Nt/DKIJCGPMKpFdHTLNOkpVt+UzAdgpzTuKkPWFe3RQdd+XE4NZlU4CFfZEIpBVGnCQv1WICIj4vUGQH0eYkQbZuoWCIeA9a5WvXwybVX2f+XseHINutAg5jQcfpH70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D76C4202F7E;
-	Fri, 31 Oct 2025 15:04:55 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CA781202F7C;
-	Fri, 31 Oct 2025 15:04:55 +0100 (CET)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8372720259;
-	Fri, 31 Oct 2025 15:04:55 +0100 (CET)
-Date: Fri, 31 Oct 2025 15:04:55 +0100
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: freescale: Add GMAC Ethernet for S32G2 EVB
- and RDB2 and S32G3 RDB3
-Message-ID: <aQTCBwLzhRDl+pH9@lsv051416.swis.nl-cdc01.nxp.com>
-References: <20251006-nxp-s32g-boards-v1-1-f70a57b8087f@oss.nxp.com>
- <aP8Ezk_zjo-NZCD4@dragon>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDLRHEjafimp9HRdC2elgVs9SR1yFwNmAjTW4VcbCpsjx0BRGA7tAOMI3gniGJYut4S03iLjnVm6Mb0FsFfuQ/6WSIComak4VE+SyFTc8p/DhG+tiqqIU6/C6R7gseWcsvNfKAyf74GWZ0eK/5y7E2iYWbKWx8RN9KWsEawsmto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XMaKKTCG; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429bee84e7eso120174f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761919519; x=1762524319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEEYMKZKM55egNcS9TLQLwdFtLgzGx5oRqh6S7KgDlc=;
+        b=XMaKKTCGw249u5j/ODNwFaWzk0Rn+JUnl1H8wZZfCxGIES6v6jHJ6kI1cVYJX4xMg0
+         pLY3syWjlgbHEpuxqOzsqauChfcO+VB8IDPBuePVUEXBAR+FiTUej5E7eSaaaxw0Ly0H
+         VOrQueaIYgH94O17gKdAFgZlJ9u8I+qmfb9qYpSiD1g3DdZGqvH9vKbOMLsaBLS4FHQD
+         CSDP5Pzz8ebibfGc8toS7kFvFANKJV6OBY1h7459PQk9YvDyDE314W+2XB6XIdb1PB0u
+         P7BMRQPUr4NQuQd2mnvGkydD8cigIa+Xv93OljA+hs1EIBh6/rNcOZzyNLXFCWZZHC3y
+         lrJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761919519; x=1762524319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UEEYMKZKM55egNcS9TLQLwdFtLgzGx5oRqh6S7KgDlc=;
+        b=PvAtC9uYoPvKA7hfwo7zgSP1djhtpJyal7jlgQps0zPi7deGFWLk3Sm5f15J1Mio8/
+         EEeUUAmz5e5PawvkxStPclrNCz4OV0022bFXom0oK0md1qVk1DkOCzTAr2EB4EIPF336
+         4lC5WVMrgNF0OtotCvIQSLYcTrxMw6gjEhAhCD5glbrkbxKqVhZd0BMhpeLeQt4VHUyN
+         l5DryEm4jpjw7mgU/3JNZIQIm2E1N1Ct4SidpMmHgrcqD5TAix3Y1WLLxXDNorucBUGd
+         AKy46zJah7VnbmBchMnkjJNkyVat46rIQa/kJJulyuQ41izvv7P3U5WF3qbf8GkNgdvS
+         k6QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGkKo5QmFbtaA7ZqwrvEWRaqi+Nbp9BdyFL5AMyvDR8dm7SI+e0YjO8ivN7KJyYfXTcDZMKrhto6lRoOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYk7Si9GR2J/NSNnTIqy7FQjkC5keWaP6XnOR4P7TP4hDiNcGr
+	3NLEcVwhcFmt5N1wycZa1JnY12IL6eetEW126btIjDN66LDSCIw2Rm+LOhu8KOfASEg=
+X-Gm-Gg: ASbGncur2DnoF/OjsIbeqkF3//JjAWGKR616bppRn9zrovvR1+9hPdOUYgwCHr4n9yj
+	6VhT58gTL7x7z6T7wYiXkVZ61UtFegbZTcFVNhlcst+8dsDQ6eGg1MuTqWe4imtptvEueeejVR2
+	2wFcjfa45WC3CsCQREBDRxuQoZbxuS+jxqZDN5wYJGEPURv+oV4zCyP1w76L+EX3938Hgt3wYIm
+	9vbBeF8gP7jDvK51cXvU83wPlVFmTlL2BxCoSzotWeEY/PaBeTobCVDNjHTQXko21CAGiu7HXqu
+	Vl5trALIr9Pxhvj89phUQkw9oKLDqaYM7Vt3cjrtT8br23ickKdyzX/R38BUD0BFJmAbjDcmbmf
+	S+X8BB3JbcTtr2O9c0wwGp0ERU2jmuZ1kCP1KyXvcjq8cEUYpzpz4OZjHfpx29y6uFTLD8cfBRl
+	J3zBpeO/lExg==
+X-Google-Smtp-Source: AGHT+IE20aFgYfEmUsR0QvaAoacDC6fODutHzSvHSUQsADrC6Dw8Qfg3mMEOFdiGJnzQSF6ImIcR9g==
+X-Received: by 2002:a5d:5c89:0:b0:429:927e:f23 with SMTP id ffacd0b85a97d-429bd6a7a39mr1718841f8f.6.1761919518697;
+        Fri, 31 Oct 2025 07:05:18 -0700 (PDT)
+Received: from localhost ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269c1c17sm24932505ad.108.2025.10.31.07.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 07:05:18 -0700 (PDT)
+Date: Fri, 31 Oct 2025 22:05:14 +0800
+From: Heming Zhao <heming.zhao@suse.com>
+To: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Cc: Ahmet Eray Karadag <eraykrdg1@gmail.com>, mark@fasheh.com, 
+	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, ocfs2-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, skhan@linuxfoundation.org, 
+	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
+Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
+ during read
+Message-ID: <stmj7kbqis2idlscf5iwch23ft2azuyyr7q2kmelavjk5lnug4@66in667d6bym>
+References: <20251029225748.11361-2-eraykrdg1@gmail.com>
+ <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
+ <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
+ <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
+ <aQQ0DLqL0iVN7D15@arch-box>
+ <leys5guzkcvlilaccjmsw7cvncm6o2vqo2wwezhuz7r6lcfjnk@va3cnphl4zf3>
+ <aQS_oUDXGt_nF__d@arch-box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,321 +97,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aP8Ezk_zjo-NZCD4@dragon>
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <aQS_oUDXGt_nF__d@arch-box>
 
-On Mon, Oct 27, 2025 at 01:36:14PM +0800, Shawn Guo wrote:
-> On Mon, Oct 06, 2025 at 06:31:28PM +0200, Jan Petrous via B4 Relay wrote:
-> > From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> > 
-> > Add support for the Ethernet connection over GMAC controller connected to
-> > the Micrel KSZ9031 Ethernet RGMII PHY located on the boards.
-> > 
-> > The mentioned GMAC controller is one of two network controllers
-> > embedded on the NXP Automotive SoCs S32G2 and S32G3.
-> > 
-> > The supported boards:
-> >  * EVB:  S32G-VNP-EVB with S32G2 SoC
-> >  * RDB2: S32G-VNP-RDB2
-> >  * RDB3: S32G-VNP-RDB3
-> > 
-> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/s32g2.dtsi        | 50 ++++++++++++++++++++++++-
-> >  arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 21 ++++++++++-
-> >  arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 19 ++++++++++
-> >  arch/arm64/boot/dts/freescale/s32g3.dtsi        | 50 ++++++++++++++++++++++++-
-> >  arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts | 21 ++++++++++-
-> >  5 files changed, 157 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> > index d167624d1f0c..d06103e9564e 100644
-> > --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> > @@ -3,7 +3,7 @@
-> >   * NXP S32G2 SoC family
-> >   *
-> >   * Copyright (c) 2021 SUSE LLC
-> > - * Copyright 2017-2021, 2024 NXP
-> > + * Copyright 2017-2021, 2024-2025 NXP
-> >   */
-> >  
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > @@ -738,5 +738,53 @@ gic: interrupt-controller@50800000 {
-> >  			interrupt-controller;
-> >  			#interrupt-cells = <3>;
-> >  		};
-> > +
-> > +		gmac0: ethernet@4033c000 {
+On Fri, Oct 31, 2025 at 09:54:41AM -0400, Albin Babu Varghese wrote:
+> Hi Heming,
 > 
-> Please sort devices in order of unit-address.
-> 
-
-Moved up.
-
-> > +			compatible = "nxp,s32g2-dwmac";
-> > +			reg = <0x4033c000 0x2000>, /* gmac IP */
-> > +			      <0x4007c004 0x4>;    /* GMAC_0_CTRL_STS */
-> > +			interrupt-parent = <&gic>;
-> > +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-> > +			interrupt-names = "macirq";
-> > +			snps,mtl-rx-config = <&mtl_rx_setup>;
-> > +			snps,mtl-tx-config = <&mtl_tx_setup>;
-> > +			status = "disabled";
-> > +
-> > +			mtl_rx_setup: rx-queues-config {
-> > +				snps,rx-queues-to-use = <5>;
-> > +
-> > +				queue0 {
-> > +				};
-> 
-> We usually have newline between nodes.
-> 
-
-Added newline between queue subnodes.
-
-> > +				queue1 {
-> > +				};
-> > +				queue2 {
-> > +				};
-> > +				queue3 {
-> > +				};
-> > +				queue4 {
-> > +				};
-> > +			};
-> > +
-> > +			mtl_tx_setup: tx-queues-config {
-> > +				snps,tx-queues-to-use = <5>;
-> > +
-> > +				queue0 {
-> > +				};
-> > +				queue1 {
-> > +				};
-> > +				queue2 {
-> > +				};
-> > +				queue3 {
-> > +				};
-> > +				queue4 {
-> > +				};
-> > +			};
-> > +
-> > +			gmac0mdio: mdio {
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +				compatible = "snps,dwmac-mdio";
-> > +			};
-> > +		};
-> >  	};
-> >  };
-> > diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> > index c4a195dd67bf..f020da03979a 100644
-> > --- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> > +++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> > @@ -1,7 +1,7 @@
-> >  // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> >  /*
-> >   * Copyright (c) 2021 SUSE LLC
-> > - * Copyright 2019-2021, 2024 NXP
-> > + * Copyright 2019-2021, 2024-2025 NXP
-> >   */
-> >  
-> >  /dts-v1/;
-> > @@ -15,6 +15,7 @@ / {
-> >  
-> >  	aliases {
-> >  		serial0 = &uart0;
-> > +		ethernet0 = &gmac0;
-> 
-> Sort aliases in alphabetical order.
-
-Swapped.
-
-> 
-> Shawn
-> 
-
-Prepared v2.
-Thanks for review.
-
-/Jan
-
-> >  	};
-> >  
-> >  	chosen {
-> > @@ -43,3 +44,21 @@ &usdhc0 {
-> >  	no-1-8-v;
-> >  	status = "okay";
-> >  };
-> > +
-> > +&gmac0 {
-> > +	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
-> > +	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-> > +	phy-mode = "rgmii-id";
-> > +	phy-handle = <&rgmiiaphy4>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&gmac0mdio {
-> > +	#address-cells = <1>;
-> > +	#size-cells = <0>;
-> > +
-> > +	/* KSZ 9031 on RGMII */
-> > +	rgmiiaphy4: ethernet-phy@4 {
-> > +		reg = <4>;
-> > +	};
-> > +};
-> > diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> > index 4f58be68c818..b9c2f964b3f7 100644
-> > --- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> > +++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> > @@ -16,6 +16,7 @@ / {
-> >  	aliases {
-> >  		serial0 = &uart0;
-> >  		serial1 = &uart1;
-> > +		ethernet0 = &gmac0;
-> >  	};
-> >  
-> >  	chosen {
-> > @@ -77,3 +78,21 @@ &usdhc0 {
-> >  	no-1-8-v;
-> >  	status = "okay";
-> >  };
-> > +
-> > +&gmac0 {
-> > +	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
-> > +	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-> > +	phy-mode = "rgmii-id";
-> > +	phy-handle = <&rgmiiaphy1>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&gmac0mdio {
-> > +	#address-cells = <1>;
-> > +	#size-cells = <0>;
-> > +
-> > +	/* KSZ 9031 on RGMII */
-> > +	rgmiiaphy1: ethernet-phy@1 {
-> > +		reg = <1>;
-> > +	};
-> > +};
-> > diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-> > index be3a582ebc1b..e31184847371 100644
-> > --- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-> > @@ -1,6 +1,6 @@
-> >  // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> >  /*
-> > - * Copyright 2021-2024 NXP
-> > + * Copyright 2021-2025 NXP
-> >   *
-> >   * Authors: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> >   *          Ciprian Costea <ciprianmarian.costea@nxp.com>
-> > @@ -883,6 +883,54 @@ gic: interrupt-controller@50800000 {
-> >  			      <0x50420000 0x2000>;
-> >  			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> >  		};
-> > +
-> > +		gmac0: ethernet@4033c000 {
-> > +			compatible = "nxp,s32g2-dwmac";
-> > +			reg = <0x4033c000 0x2000>, /* gmac IP */
-> > +			      <0x4007c004 0x4>;    /* GMAC_0_CTRL_STS */
-> > +			interrupt-parent = <&gic>;
-> > +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-> > +			interrupt-names = "macirq";
-> > +			snps,mtl-rx-config = <&mtl_rx_setup>;
-> > +			snps,mtl-tx-config = <&mtl_tx_setup>;
-> > +			status = "disabled";
-> > +
-> > +			mtl_rx_setup: rx-queues-config {
-> > +				snps,rx-queues-to-use = <5>;
-> > +
-> > +				queue0 {
-> > +				};
-> > +				queue1 {
-> > +				};
-> > +				queue2 {
-> > +				};
-> > +				queue3 {
-> > +				};
-> > +				queue4 {
-> > +				};
-> > +			};
-> > +
-> > +			mtl_tx_setup: tx-queues-config {
-> > +				snps,tx-queues-to-use = <5>;
-> > +
-> > +				queue0 {
-> > +				};
-> > +				queue1 {
-> > +				};
-> > +				queue2 {
-> > +				};
-> > +				queue3 {
-> > +				};
-> > +				queue4 {
-> > +				};
-> > +			};
-> > +
-> > +			gmac0mdio: mdio {
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +				compatible = "snps,dwmac-mdio";
-> > +			};
-> > +		};
-> >  	};
-> >  
-> >  	timer {
-> > diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-> > index e94f70ad82d9..4a74923789ae 100644
-> > --- a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-> > +++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-> > @@ -1,6 +1,6 @@
-> >  // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> >  /*
-> > - * Copyright 2021-2024 NXP
-> > + * Copyright 2021-2025 NXP
-> >   *
-> >   * NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3)
-> >   */
-> > @@ -18,6 +18,7 @@ aliases {
-> >  		mmc0 = &usdhc0;
-> >  		serial0 = &uart0;
-> >  		serial1 = &uart1;
-> > +		ethernet0 = &gmac0;
-> >  	};
-> >  
-> >  	chosen {
-> > @@ -93,3 +94,21 @@ &usdhc0 {
-> >  	disable-wp;
-> >  	status = "okay";
-> >  };
-> > +
-> > +&gmac0 {
-> > +	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
-> > +	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-> > +	phy-mode = "rgmii-id";
-> > +	phy-handle = <&rgmiiaphy1>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +&gmac0mdio {
-> > +	#address-cells = <1>;
-> > +	#size-cells = <0>;
-> > +
-> > +	/* KSZ 9031 on RGMII */
-> > +	rgmiiaphy1: ethernet-phy@1 {
-> > +		reg = <1>;
-> > +	};
-> > +};
+> > I support adding make_bad_inode() in ocfs2_read_inode_block_full().
+> > ocfs2_read_locked_inode() calls ocfs2_read_inode_block[_full] to read the inode
+> > from disk. However, ocfs2_read_inode_block[_full] have many callers, and in
+> > current code, only ocfs2_read_locked_inode() marks the inode as bad. All others
+> > forget to set the bad_inode.
 > > 
-> > ---
-> > base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
-> > change-id: 20251006-nxp-s32g-boards-2d156255b592
-> > 
-> > Best regards,
-> > -- 
-> > Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > 
-> > 
+> > The 'forbid' write operations when read-only mode is worth another patch, and
+> > I plan to create this patch. This patch adds a similar ext4_emergency_state()
+> > function for ocfs2.
 > 
+> We're working on this as part of the Linux Kernel Mentorship Program, and we'd
+> love to take on implementing the read-only check if it's not overly
+> complicated. We're just beginners, but we thought it would be a great learning
+> experience to work on this following the ext4 pattern you mentioned - if you
+> haven't already started working on it by the time you see this reply.
+
+I haven't started the patch job, you are welcome to take it.
+
+- Heming
+> 
+> > Therefore, your original patch looks good to me. I will provide my Reivewed-by
+> > for it.
+> 
+> Thank you so much for your review and the Reviewed-by tag
+> 
+> Cheers,
+> 	Albin
 
