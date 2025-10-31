@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-880644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947B3C263F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:56:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF906C2637E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5720424C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:50:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 68E2D34DACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88062C2343;
-	Fri, 31 Oct 2025 16:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E062F7AD5;
+	Fri, 31 Oct 2025 16:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TSS0uqVA"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALkdXFjX"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF612EFDAD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AE723D2A1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761929434; cv=none; b=DIuDBH5RLYwUqXSlz7U1XUluYnw97ISMQAbevNY9W8ErpwcHMnnZIwKd2Am2tfuLIvV8/PMAqgxwftkRYn29hQLAWNBsUThUPhOzdF8Jclf0YLM0IFkXdO23+mpdb9YNdZUAplbw8nxyFWUU0shNSk/olgLVvQE/LCzHdG7vkYM=
+	t=1761929472; cv=none; b=mLYyBS+qSlECygYfQ+uFWVw/X4p9auHTihJvjNxmJg0DslzqiMgIxvqumpOgkkA/hPVSgrM811OS+MUPzDi33URLPggphLevYMAgz64SWjDDaH0jETZB872ZKqoMJYac6+BfA0UnWLPhL7f2fvbm7KtU7gWdybCNAcwXaI2w0eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761929434; c=relaxed/simple;
-	bh=CkTc3uqUV4oAWU25vKzur3uX0jgjdH9NEyqWGZX2ofM=;
+	s=arc-20240116; t=1761929472; c=relaxed/simple;
+	bh=8shnFbex+N4GECN4bN30/kDUC0TOUrQgwn5Qp2z6djM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gC5ubLma/nhEMNrq9fn3sBkkxnR6NPUrHJUB30cODtzoYj91MLNZe4AFr/p+l7+pBEkThZ+nZJpWj1lxARCfeOKyNXmci6JC77yO+foo5Qn7DmCTBuRKlaaHuqW5hJYwLV3NtWVwCTwJfFH5MHoGcHk2ly7LFhly/hUAdYGnfnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TSS0uqVA; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-375eff817a3so29838411fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:50:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=lCb2e+X71W295DhKyfW+Qf8qJ7qTRN0GNnyPQvRjSwypqpZy3rqg2tliqYGMCRQCduEv8WP+HtpNyscc/SqFze24TZragvRp8EBHSq8W525g9/iqDwC1f83OeeD4qiH6gdZNVNI/OULzRDlpAaIyIRsSkDTmHxn5j2UCgQPgQ0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALkdXFjX; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so3116900a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:51:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761929430; x=1762534230; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761929470; x=1762534270; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HECjj7h2ccCzw3YUDexJtN/DN7YGJtXB8c7kq1Ybt8w=;
-        b=TSS0uqVAgglLe5OBHsXx4Xwp88Tr8auE90Zf6D0y/NTmlq795OW7U+XmEj5ofTI4uV
-         IV+1FUXQZLxixWWsW20yremn4kZrWHgFUHSAJdM1gnGBJS7kTRLB1kve8hHCErFOxu3i
-         IKM6ogLi92qfHYe5+xUmbJONVXGk1F3zPJbjOfALZtYEVOLV5clHr6Si37IMEamSlhb2
-         miMznn7Jp8P9p8H7A+0qbnlOQv9NXJApcgU6564Hfn+8XC9IXp0qk0pGvpI5xSckrsS3
-         pfngGuT1SCbwAvW0MpAIOGMyF1BYafZ19Nc34xJ7HyFztuYbK4f6r4fparsFouCMumbt
-         ndaQ==
+        bh=uYNKy7Fx3oHSfgQtLncT7eimMXrknVn2yP69xOS1ue4=;
+        b=ALkdXFjXXZm4XPG65+V8ajGoY1v1Rao1Z/1j+jpbmieNmIadRbGsH8HbdZKMJ4d8Bq
+         MyLn/7n+bPFmb3BS5ZOTOmF0k8LxEBx4ijSvJS+FeuuPj7ufZwvsDiuz9YPJ9JgJQyTj
+         NNFYf+KG49ipt5Jqr8WNKihZd6+m39M2FTFaN6zoPpJqYQhG6048vseQNzGNNeRW6dMu
+         BbLp1pus8XVK0WCMxctJ4jwa7I4K9Oib/eu09htdMSxUzjgYiULbtmAbSn/0OlA0e6/v
+         XFpjnOig4qrdiWqAkj97gLxZB07LQzNfHcELReEJW4LQprGR4i+/9nMciTbJduyw28mK
+         MKCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761929430; x=1762534230;
+        d=1e100.net; s=20230601; t=1761929470; x=1762534270;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HECjj7h2ccCzw3YUDexJtN/DN7YGJtXB8c7kq1Ybt8w=;
-        b=GS4g1wnA1XKhOmHHpYPzz4sNqZkXDoOBsZk2vYC3W0qSLl2lH/NoA0nIToNCa85noE
-         /UU9WLj8TzEqDgXgxqBYOPvF9ysoASFBjyiSPY/CvQg5z8LMSWqIYJi3Jix3YUYXSPBZ
-         QyQ6tzpMDuAbyJEiaYFbnQhH36x4Fss6maGDxv9uwfs/7brqD3qpfoZCG83CUDREDG90
-         CnS7sJFsLtL5YmP8uQ5uwtqXbcPUVLPIIfF+2l13OHL30G22RAEz1kd8RUclWUWA1BDb
-         0VWD46uPTNxphqeukK+ywxoKr05403Vg0/Exhpn50l0hHEIEngJD9NfpZCeX/omDlCgr
-         blaA==
-X-Gm-Message-State: AOJu0YyhqxXEMyJjcxlIIbLWGGbpyKtD3pgK887wXsMdR5EY4C7VOV4p
-	bAOwlKleaOke6yT9FZnj8UDC5VmDsCfiGBmM+llNMz2VFOgUkGL8BxWyds6zo3VNEiOJhbtU9AR
-	+WV1/74aHuIUGosuvZt0X2m3ieKg4+/BIkEv4whnFkQ==
-X-Gm-Gg: ASbGncvcSKxBERytk7SSj2Aid819CrkNnHfYKld4ABMEZO/L1lDLU+SZYQIAs5/IZF3
-	IS9uXNJZQHdWyiN75ij7X2a3ZqVIorXmP0aOwY3AaVULtN6F0o6DR0lNOkFBFV3NL8fLVhWmbdJ
-	VeBJwW7dsU1eMnGRWLQ+l5UKnrjU3TGUv45iamDMkAhsj8Ve/B3DAFN8w8aATIhkndJMFbwC/Mp
-	zT9ionLrkiUmiN4v3eKdoSxisglxza/xopD5msPKHtSh32B/sq2YX4wDM6Yjm3PRM4gI3yOZITL
-	pP7jERUANoZ64VeXsg==
-X-Google-Smtp-Source: AGHT+IHNkQkcVReeJSmIh2XeLdh1w6k92Iktx8NubjHPcdvXGpM8QNJ8YlcYkfCdWLOlRt0JgryZEzVytwgIdb8m41o=
-X-Received: by 2002:a05:6512:3b89:b0:592:fa1b:a952 with SMTP id
- 2adb3069b0e04-5941d54f494mr1593682e87.49.1761929430131; Fri, 31 Oct 2025
- 09:50:30 -0700 (PDT)
+        bh=uYNKy7Fx3oHSfgQtLncT7eimMXrknVn2yP69xOS1ue4=;
+        b=sPjOWmFaQUrDrd7tXv8+ASFLX4sRdS4/fFsiYNQBO2Y8nqjOSCwAXVmKp46Tig0OgI
+         rmdM3J1GjyNf+2tmdsJuU2p0WGUZegxCC0UN4DA5aB0WBDgTDMTrgnfNDeK0BZf5v7BE
+         jHLOHMLnk75fXtktc9XuFkE4fvwJ1EfsP+OC/69snTxSQdDKux+zxmLWR/AJdSKie7Kz
+         qPHtRcUhIGkpnzNmfjsWF9oFaGcz18PKXlblrwF7cUuM2ni8XJlBjd+Ni6uGu93aomKL
+         sXKlD1EnYLRzpg6To9mHeGm2aeneTN+wPw0+MevjJ899yoqcPJYb9ctE7l6e9C2qPWL4
+         EzBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVQKX+hA0UcS70QQz/pRn8wd5UiqbrouPnSvn10HQo3fkmpKxuxlaUlxpCTP11HNRkjGCohO4fWxOfM/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOGIBgKtOgsPDDUuGJbcdmlMX64XMIsIqrSZE9cHeoZ79Le8t6
+	hExQ8Yrixo7h8XuQzn69gDd2bamnOOHxDfBjo0h7IwgA7TNQPcJQ7mKx24ustboDlYLm2ytRLjH
+	mpaOtqsMIHlf1cWxthYepugLE8mWe8W8=
+X-Gm-Gg: ASbGnctV0ixnXH1ca2NwzH7hc4yb2pbJSlG1egKSRVoM/FrCEwIR39B4dPgF9AtsS48
+	wze8vZC/Ai4NKs4xaRk6W+nAOEZcSVNPWi05/THkcvLVq3le+Pw8Z5Xfg7qtdG5ljlvMK2G8fus
+	qq0a5JvUl5b7cjil3O3BdS4zf6HhDssjsowdiJJlo1Mq+W1UdWl9LorbWu3oBGXT9s7KOrEMNMI
+	zyVitjSBRsTFHqusZPQe+pnRO+ft8TTUcMIe/UifIrEbqwpwcMgsGsaEsgTxyvErBkbKYePT3uR
+X-Google-Smtp-Source: AGHT+IEiacar6qB8jD3g66qBU4Ddyr/uSDN/8vOGXojDuA3wgJ7tz5N1BHQldiDqdumL0bfpCo0UPhOyJn5YZEGUs3E=
+X-Received: by 2002:a17:90b:4ece:b0:32e:4716:d551 with SMTP id
+ 98e67ed59e1d1-3407f9d2290mr5797992a91.6.1761929470033; Fri, 31 Oct 2025
+ 09:51:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030163839.307752-1-marco.crivellari@suse.com> <6904cc6cb4123_23741210067@iweiny-mobl.notmuch>
-In-Reply-To: <6904cc6cb4123_23741210067@iweiny-mobl.notmuch>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Fri, 31 Oct 2025 17:50:19 +0100
-X-Gm-Features: AWmQ_bls58IN4Jraq6j6gpOUUrBCJuzYEiIJWhONPPwjCeljWuU0Ihmpll3Qlq8
-Message-ID: <CAAofZF48WB10W-wQtUAOghBvBAQEc9bkJqKLir7Qzr4pkhLOWQ@mail.gmail.com>
-Subject: Re: [PATCH] cxl/pci: replace use of system_wq with system_percpu_wq
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>
+References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
+ <20251027135423.3098490-4-dolinux.peng@gmail.com> <CAEf4BzZ+tpT2ViD_zc8mwz260spriYDiPymw3MFsEibRcuqbqg@mail.gmail.com>
+ <CAErzpmvahZJRFktDydp5tcpYnhCAw9P9UmPeC5XpRxPuo0mZ8w@mail.gmail.com>
+In-Reply-To: <CAErzpmvahZJRFktDydp5tcpYnhCAw9P9UmPeC5XpRxPuo0mZ8w@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 31 Oct 2025 09:50:56 -0700
+X-Gm-Features: AWmQ_bl2pkbCj-tZacYhL5Mpsd86_p8dHPqapZkhenpMO3hvM2PFZBH615Hksc4
+Message-ID: <CAEf4Bzbv+vgsh9_8hsy=JMojmdR_Zoq1EEzaGj0CetMN-7LmDQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
+ verification and binary search
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 3:47=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> wro=
-te:
->[...]
-> A reference to:
+On Tue, Oct 28, 2025 at 7:03=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
+m> wrote:
 >
-> commit 128ea9f6ccfb6960293ae4212f4f97165e42222d
-> Author: Marco Crivellari <marco.crivellari@suse.com>
-> Date:   Sat Jun 14 15:35:29 2025 +0200
+> On Wed, Oct 29, 2025 at 2:40=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmai=
+l.com> wrote:
+> > >
+> > > The previous commit implemented BTF sorting verification and binary
+> > > search algorithm in libbpf. This patch enables this functionality in
+> > > the kernel.
+> > >
+> > > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > > Cc: Alexei Starovoitov <ast@kernel.org>
+> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > > Cc: Alan Maguire <alan.maguire@oracle.com>
+> > > Cc: Song Liu <song@kernel.org>
+> > > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> > > ---
+> > > v2->v3:
+> > > - Include btf_sort.c directly in btf.c to reduce function call overhe=
+ad
+> > > ---
+> > >  kernel/bpf/btf.c | 34 ++++++++++++++++++----------------
+> > >  1 file changed, 18 insertions(+), 16 deletions(-)
+> > >
+> > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > > index 0de8fc8a0e0b..df258815a6ca 100644
+> > > --- a/kernel/bpf/btf.c
+> > > +++ b/kernel/bpf/btf.c
+> > > @@ -33,6 +33,7 @@
+> > >  #include <net/sock.h>
+> > >  #include <net/xdp.h>
+> > >  #include "../tools/lib/bpf/relo_core.h"
+> > > +#include "../tools/lib/bpf/btf_sort.h"
+> >
+> > I don't believe in code reuse for the sake of code reuse. This code
+> > sharing just makes everything more entangled and complicated.
+> > Reimplementing binary search is totally fine, IMO.
 >
->     workqueue: Add system_percpu_wq and system_dfl_wq
+> Thanks. Would you be open to the approach from v2, where we place
+> the common code in btf_sort.c and compile it separately rather than
+> including it directly?
 >
-> ...
->
-> Would have been nice just to save reviewers time.  Regardless.
->
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-Many thanks, and sorry for the trouble!
+No, the code is too trivial to try to reuse it. Kernel and user space
+libbpf code are run with different constraints, sharing it is
+necessary evil (like for BPF CO-RE relocations), not something that
+should be encouraged.
 
-
---
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
+> >
+> > [...]
 
