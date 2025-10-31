@@ -1,220 +1,165 @@
-Return-Path: <linux-kernel+bounces-879347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201E7C22E6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:42:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C239C22E74
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F981893DB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:42:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D51DC34EC3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3932561AE;
-	Fri, 31 Oct 2025 01:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ADA2586C9;
+	Fri, 31 Oct 2025 01:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UPHEqcW+"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNJN6Q7x"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DA74C9D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0BF2571D8
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761874933; cv=none; b=idHMuLExLSGD4s/sLyaMCA5rJ07r5ZkCSYSahNaDBWdO2Sga3OC/e0T2zbVAZkZWPqE0Beh09QVA3CCOGrpQZrkhl+HKpqvs6j4N66gdeB6aA2OIXmPJTXFnUBGH9C8p4wGDg4WUn+X7kUj8wUBNnLBhTLIndN1ZIctt4sPyWWg=
+	t=1761874950; cv=none; b=lpdbFbQkpDnFiYgFSLoZkfl1LaOWzI4AzLzc6lQ63IPC/yBNHjdL9U2p8+pA8dgPI1jY0LN3cnLy10SxCvTGHDjoB9ykmM6N4q97depHn7hi6RU4CB8D1OjQptwpgDiSMDtGhCopBPN4O0fMmrXLZcUzrEqi38Olf4TbIjHFx+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761874933; c=relaxed/simple;
-	bh=NdF/5rJM0j5OPWw44GZANVRkOgMlktUfwzO+La+5zHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l2Wd4+dTe1OMmaeH84XzWFqOfFGmynG6BiarhtaF4Um4xWVi1SsiejCZIL3u0HGCVoiGf4uA6J+81b1weZnUlD+CZrQ8tW6MKlUb6k6uS8DGI/W23ya3gpo5Flra8pFSnxpeSzJf5kgqxmMKIT6jiyZrK+a0g/nsYukCCVKjFTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UPHEqcW+; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a0d97e2d-91f5-448c-883c-4d0930375f82@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761874925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GCYrDBcE+YrmiGBoOlXRYwdmc8Z2PMQgBrg8K27fepM=;
-	b=UPHEqcW+IxkoJpImSx3ZDl83BQDa0VpwRS5cOBOket+1geFYsKMMqLiKLmYr1ZjIkNSWte
-	mX5s4p28m+HjYkcXHIS5rFoUQKcmOhY+Wid1ejPes2utKXC7NX4vqwrqraXQ6UuN2xuc0m
-	TpZl4+OzAIfqOOyO9hZGN04Eok9CiEo=
-Date: Fri, 31 Oct 2025 09:41:20 +0800
+	s=arc-20240116; t=1761874950; c=relaxed/simple;
+	bh=2ATUNGgbaZSw6y4sW6ppozk2GJl7GnxzpyFCiq20UPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uGK8D9b7Xi3ayHn6GzBe+XxjoPqu+FkwWgzMsg6Ty8Uii4lRM/dY/8tSTNxPLWaP20YHnBaPtEEFc8yT6JBnArZbDEja4YA42qCpYVgqgWuiybtYnp5Ctk2dCG34dW3KknNcNu0Rs34iGZoDR4XWaXw9uRer9MyDURhOyseeA5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KNJN6Q7x; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710683a644so15724525e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:42:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761874947; x=1762479747; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jcA2fuPv0nibJjY5gaLuKw0u8MBZgVhL7lh4erE+P+w=;
+        b=KNJN6Q7x+09HFG1z3MRfzLk5FkOv6YDPSRQArFOZ442yfP95jQFd7XArxq4CLY5qfM
+         QI0S/3GFJ8deigXQw6yTyKw0zoojJhB0LYW6n1U9oUr2vJFgPdClFn2MC0JjeBQ6sUOz
+         GRGSfQ/agjxJqFY3d/rlNmt6eafl6z49Bh+jsiCDFj5gHmIm3IihV8VqJRgCtFkUKzHh
+         yxp09M+j4DgO9UNwb5V3rnhsJgPnXCJkoTHB0yPC408aPpG9ILjgf1Lg5kPIwTlnwdFA
+         jqRqnocLf9DcOMbA3ahzm92CfbmSqZENsOq7LsBwmFWkOzL4iWC3VbZmQvoyAHbtN6LO
+         L0CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761874947; x=1762479747;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jcA2fuPv0nibJjY5gaLuKw0u8MBZgVhL7lh4erE+P+w=;
+        b=ZikOdGBwIlI3eU+vAXXv+DVTRQfvgkAAQ3STuaL6+Ko8OJQ986iPgi2C1yDboakiqO
+         MjqCtMfu+PBKVMN6+Yq+Y6S+PNSqFMrDORrG9SBSRxmSl7dOepZmO0TD+jM0Gjg1pudi
+         27R6V1mLwv+3/W6/eJ6e3L8w707Ntz9mXsT4CJv1Z/tciUolK3yijqzHnyU3u1NiAppw
+         0+Qf7lsqelpOwa+0mt5QHKCwRgMs5+0tGuyejNYn1Kzkr7/3lq+RA1rxjyX+UL4cfPjb
+         62L8MkI6RPRz7vu5jcCLsfkKYBt0BhYcP0DAqtkem/lnmRqFqcA1Wq55XaLabAu7fe2z
+         oIiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEqZJj7BFlnfTJ2O4bqilUY5oOVfr91nyaRp1bRkFtzhzWr9C6aBpr5LsBXFQeuwOjBxjEAQxhr3INHXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn+MAGIOLfwuZInPJvDNIlzykRMqxls1TT/qEgXCsWVzR1sKpH
+	e0yRuqaRVa9IQGttEic/jstzeJpUZ9fMAvivqjZ4uWEcEjzerBfGELk3IIwaIerW6MOqEMqfBj6
+	/u+Kak0qHG5wj3dGQsHhUUGfvhcKRYtc=
+X-Gm-Gg: ASbGnctJvg0YkDFIYYWhRx3OnW6A9RKhsXDf3Dxnsy/1gFShLjV71o+xmQbQ9A0VQvd
+	X7l5dntFrEPN6A2NHkxqtO5qRJVn7m9jJAanI6sddFInMeJPGuBoUpinNqYWQ7VNE9V/bqefB3J
+	AaXt9/iIO+lwUxtyUAUXj/2K8N3ruMfOc/DVwQqjidvaOGjIWSKD5TjXe1Ca+MjpnT7q0ADBxK+
+	sIxkmAmvk0PkhVuEWRK8zo+oS0Ygm7lNFwySeQaS7sr6dy17af14Mx6h2Z55FF372+YC5oW5td8
+	LtCU1hOIWxxTBuiP9A==
+X-Google-Smtp-Source: AGHT+IHjgEAGnr4nfdh0LhSmnH+sRjuCT8RoVd5GbtltDrO5Kk8/oATSx8VT/19HA2xAKXMbh+mARs050dlD33ztYz0=
+X-Received: by 2002:a05:600c:8a8:b0:471:793:e795 with SMTP id
+ 5b1f17b1804b1-47729701baamr22601315e9.0.1761874946389; Thu, 30 Oct 2025
+ 18:42:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 15/24] smb: move FILE_SYSTEM_POSIX_INFO to
- common/smb1pdu.h
-To: chenxiaosong.chenxiaosong@linux.dev, sfrench@samba.org,
- smfrench@gmail.com, linkinjeon@kernel.org, linkinjeon@samba.org,
- christophe.jaillet@wanadoo.fr
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251026030143.23807-1-dongml2@chinatelecom.cn> <20251026030143.23807-5-dongml2@chinatelecom.cn>
+In-Reply-To: <20251026030143.23807-5-dongml2@chinatelecom.cn>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 30 Oct 2025 18:42:15 -0700
+X-Gm-Features: AWmQ_bkU5AnX8Bwj31yvGuqNgMmOr74c9fvilG5ffkhrLd1xgPSqCBlrOWUn840
+Message-ID: <CAADnVQLfxjOUqbbexFvvVJ4JTUQ2TKL0wvUn3iHv6vXvGfitoQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting
+ for x86_64
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Namjae and Steve,
+On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+>
+> Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_session_entry and
+> invoke_bpf_session_exit is introduced for this purpose.
+>
+> In invoke_bpf_session_entry(), we will check if the return value of the
+> fentry is 0, and set the corresponding session flag if not. And in
+> invoke_bpf_session_exit(), we will check if the corresponding flag is
+> set. If set, the fexit will be skipped.
+>
+> As designed, the session flags and session cookie address is stored after
+> the return value, and the stack look like this:
+>
+>   cookie ptr    -> 8 bytes
+>   session flags -> 8 bytes
+>   return value  -> 8 bytes
+>   argN          -> 8 bytes
+>   ...
+>   arg1          -> 8 bytes
+>   nr_args       -> 8 bytes
+>   ...
+>   cookieN       -> 8 bytes
+>   cookie1       -> 8 bytes
+>
+> In the entry of the session, we will clear the return value, so the fentr=
+y
+> will always get 0 with ctx[nr_args] or bpf_get_func_ret().
+>
+> Before the execution of the BPF prog, the "cookie ptr" will be filled wit=
+h
+> the corresponding cookie address, which is done in
+> invoke_bpf_session_entry() and invoke_bpf_session_exit().
 
-I couldn’t find the definition of FILE_SYSTEM_POSIX_INFO in any of the 
-following MS documents:
+...
 
-   - MS-FSCC: 
-https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-fscc%2Ftoc.json
-   - MS-CIFS: 
-https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-cifs%2Ftoc.json
-   - MS-SMB: 
-https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb%2Ftoc.json
-   - MS-SMB2: 
-https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb2%2Ftoc.json
+> +       if (session->nr_links) {
+> +               for (i =3D 0; i < session->nr_links; i++) {
+> +                       if (session->links[i]->link.prog->call_session_co=
+okie)
+> +                               stack_size +=3D 8;
+> +               }
+> +       }
+> +       cookies_off =3D stack_size;
 
-Is this structure defined in other MS document?
+This is not great. It's all root and such,
+but if somebody attaches 64 progs that use session cookies
+then the trampoline will consume 64*8 of stack space just for
+these cookies. Plus more for args, cookie, ptr, session_flag, etc.
+Sigh.
+I understand that cookie from one session shouldn't interfere
+with another, but it's all getting quite complex
+especially when everything is in assembly.
+And this is just x86 JIT. Other JITs would need to copy
+this complex logic :(
+At this point I'm not sure that "symmetry with kprobe_multi_session"
+is justified as a reason to add all that.
+We don't have a kprobe_session for individual kprobes after all.
 
-On 10/27/25 3:21 PM, chenxiaosong.chenxiaosong@linux.dev wrote:
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> 
-> Rename "struct filesystem_posix_info" to "FILE_SYSTEM_POSIX_INFO",
-> then move duplicate definitions to common header file.
-> 
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> ---
->   fs/smb/client/cifspdu.h    | 22 ----------------------
->   fs/smb/common/smb1pdu.h    | 23 +++++++++++++++++++++++
->   fs/smb/server/smb2pdu.c    |  4 ++--
->   fs/smb/server/smb_common.h | 23 -----------------------
->   4 files changed, 25 insertions(+), 47 deletions(-)
-> 
-> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-> index d106c6850807..55aaae6dbc86 100644
-> --- a/fs/smb/client/cifspdu.h
-> +++ b/fs/smb/client/cifspdu.h
-> @@ -1875,28 +1875,6 @@ typedef struct {
->   
->   #define CIFS_POSIX_EXTENSIONS           0x00000010 /* support for new QFSInfo */
->   
-> -typedef struct {
-> -	/* For undefined recommended transfer size return -1 in that field */
-> -	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
-> -	__le32 BlockSize;
-> -    /* The next three fields are in terms of the block size.
-> -	(above). If block size is unknown, 4096 would be a
-> -	reasonable block size for a server to report.
-> -	Note that returning the blocks/blocksavail removes need
-> -	to make a second call (to QFSInfo level 0x103 to get this info.
-> -	UserBlockAvail is typically less than or equal to BlocksAvail,
-> -	if no distinction is made return the same value in each */
-> -	__le64 TotalBlocks;
-> -	__le64 BlocksAvail;       /* bfree */
-> -	__le64 UserBlocksAvail;   /* bavail */
-> -    /* For undefined Node fields or FSID return -1 */
-> -	__le64 TotalFileNodes;
-> -	__le64 FreeFileNodes;
-> -	__le64 FileSysIdentifier;   /* fsid */
-> -	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
-> -	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
-> -} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
-> -
->   /* DeviceType Flags */
->   #define FILE_DEVICE_CD_ROM              0x00000002
->   #define FILE_DEVICE_CD_ROM_FILE_SYSTEM  0x00000003
-> diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
-> index 82331a8f70e8..38b9c091baab 100644
-> --- a/fs/smb/common/smb1pdu.h
-> +++ b/fs/smb/common/smb1pdu.h
-> @@ -327,6 +327,29 @@ typedef struct {
->   	__le32 BytesPerSector;
->   } __packed FILE_SYSTEM_INFO;	/* size info, level 0x103 */
->   
-> +typedef struct {
-> +	/* For undefined recommended transfer size return -1 in that field */
-> +	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
-> +	__le32 BlockSize;
-> +	/* The next three fields are in terms of the block size.
-> +	 * (above). If block size is unknown, 4096 would be a
-> +	 * reasonable block size for a server to report.
-> +	 * Note that returning the blocks/blocksavail removes need
-> +	 * to make a second call (to QFSInfo level 0x103 to get this info.
-> +	 * UserBlockAvail is typically less than or equal to BlocksAvail,
-> +	 * if no distinction is made return the same value in each
-> +	 */
-> +	__le64 TotalBlocks;
-> +	__le64 BlocksAvail;       /* bfree */
-> +	__le64 UserBlocksAvail;   /* bavail */
-> +	/* For undefined Node fields or FSID return -1 */
-> +	__le64 TotalFileNodes;
-> +	__le64 FreeFileNodes;
-> +	__le64 FileSysIdentifier;   /* fsid */
-> +	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
-> +	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
-> +} __packed FILE_SYSTEM_POSIX_INFO;
-> +
->   /* See MS-CIFS 2.2.8.2.5 */
->   typedef struct {
->   	__le32 DeviceType;
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index 47fab72a3588..dc0f0ed4ccb6 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -5633,14 +5633,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
->   	}
->   	case FS_POSIX_INFORMATION:
->   	{
-> -		struct filesystem_posix_info *info;
-> +		FILE_SYSTEM_POSIX_INFO *info;
->   
->   		if (!work->tcon->posix_extensions) {
->   			pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
->   			path_put(&path);
->   			return -EOPNOTSUPP;
->   		} else {
-> -			info = (struct filesystem_posix_info *)(rsp->Buffer);
-> +			info = (FILE_SYSTEM_POSIX_INFO *)(rsp->Buffer);
->   			info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
->   			info->BlockSize = cpu_to_le32(stfs.f_bsize);
->   			info->TotalBlocks = cpu_to_le64(stfs.f_blocks);
-> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-> index 6141ca8f7e1c..61048568f4c7 100644
-> --- a/fs/smb/server/smb_common.h
-> +++ b/fs/smb/server/smb_common.h
-> @@ -108,29 +108,6 @@ struct file_id_both_directory_info {
->   	char FileName[];
->   } __packed;
->   
-> -struct filesystem_posix_info {
-> -	/* For undefined recommended transfer size return -1 in that field */
-> -	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
-> -	__le32 BlockSize;
-> -	/* The next three fields are in terms of the block size.
-> -	 * (above). If block size is unknown, 4096 would be a
-> -	 * reasonable block size for a server to report.
-> -	 * Note that returning the blocks/blocksavail removes need
-> -	 * to make a second call (to QFSInfo level 0x103 to get this info.
-> -	 * UserBlockAvail is typically less than or equal to BlocksAvail,
-> -	 * if no distinction is made return the same value in each
-> -	 */
-> -	__le64 TotalBlocks;
-> -	__le64 BlocksAvail;       /* bfree */
-> -	__le64 UserBlocksAvail;   /* bavail */
-> -	/* For undefined Node fields or FSID return -1 */
-> -	__le64 TotalFileNodes;
-> -	__le64 FreeFileNodes;
-> -	__le64 FileSysIdentifier;   /* fsid */
-> -	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
-> -	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
-> -} __packed;
-> -
->   struct smb_version_ops {
->   	u16 (*get_cmd_val)(struct ksmbd_work *swork);
->   	int (*init_rsp_hdr)(struct ksmbd_work *swork);
+I think we better spend the energy designing a mechanism to
+connect existing fentry prog with fexit prog without hacking
+it through a stack in the bpf trampoline.
 
+Sorry.
+
+pw-bot: cr
 
