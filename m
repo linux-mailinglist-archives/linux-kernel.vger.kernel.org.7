@@ -1,118 +1,93 @@
-Return-Path: <linux-kernel+bounces-880195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B78C25179
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:50:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68000C25164
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A656A4F4831
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:48:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 136DB348877
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0A1318157;
-	Fri, 31 Oct 2025 12:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD24434B421;
+	Fri, 31 Oct 2025 12:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBqFIu8W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qBDtxLpI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KUgDTxU+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147FB1A23B6;
-	Fri, 31 Oct 2025 12:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A15329E6F;
+	Fri, 31 Oct 2025 12:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914929; cv=none; b=LiMTvVjN6f3/iPi8l2i3XiWqaobNlq34cKSgpL9JpkIiCEMwcRwvwG5RaSfzJf2RvGCxS41AjqTkHnGHVIxwbaIeRvEPrTtyrNu52VlkxU847puv27It1D/uuLUTkMU1cVqQTpozfNu1Zi35RaNElJTUq4FziZUjfguEo5Xj0iQ=
+	t=1761914931; cv=none; b=eG+hV8sE1ZKEU7D5hJMk8ckHrKLeJD6oPvVy9yWHWePDyVy6R978Wteq2SRju3GIYKQtbbXu/PHNpfxnWOFqtxKMQac06jJ1I9pDoekL090O06vDIdS+D7pFYuF5O6cz/hf+1INMm/1IB/lforC40XnGZ9zjUVj7VujBo372myY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914929; c=relaxed/simple;
-	bh=qJZZbyHsXGInSaxUw1uSFmkVRHGNpqvQTdMgquB7srU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=NnBOTOWg5Ld8NaVzaGUMDYCVF/ShMzHSH5V1HOLUtMy3+LQkAbpFZ9doxlKdtm2WxAr7ssmHOh8SaqHAcIaW7WYlSro0f0jmSD8A/z9WxKkenIqVXbcpAnjldVICbPK/XzIJBisQLvA8mjyqGxngykGkkBIoeYwQXUl1d91vlcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBqFIu8W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8341C4CEE7;
-	Fri, 31 Oct 2025 12:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761914927;
-	bh=qJZZbyHsXGInSaxUw1uSFmkVRHGNpqvQTdMgquB7srU=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=mBqFIu8WiJWXPBpSurmGzYSyFhByUUCnEU76WOIUz5aj12MtcvbdsmiwnMRINjKHS
-	 sExKaZNFDEf6EmKVmjZMCi1/dfVvCH1kB0g+kAGMBnIqcHCKXAd3NdnKLyrxPqMXlX
-	 y4vWKKTyaGx3CFPU4uZkb84/zOFyjHX5LFGSzyfGau2pyuVEoUpHlw4/WL1MTS1sH5
-	 QUVy2qc3wfpYHqOETxU4Vn8qfLqR490UY2Bn93ipBUPBzbgZ1DeAoKTdswx6lAr2vI
-	 S1PvV47Id3rzo41d2IvmGTDJ+tqcgJZWwNUldr4nB9utjkDeYUgyqZ6eghVSc0NWoF
-	 q2vf7MBXDNQbg==
+	s=arc-20240116; t=1761914931; c=relaxed/simple;
+	bh=pKYZnWJ2YoSZfWWV3TxBqXZ1CeAIdf1F+JJKdcAlTOQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ZnhQmQCvCUcILwGq6CKU1a5h1morx/XNbxZ+MkWcnzF2rv2LvWDaiKuQqsIFj2JKMOLOgNDN3dfNE86595z1aAqoOZs0qIkFR7kGprSEZksq1mlBK3wCr/b+d6se426CVY0T3jPrJfJvMd7ZJSKhRF1q1siS2HsU+Y8Z9H5/EE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qBDtxLpI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KUgDTxU+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 31 Oct 2025 13:48:45 +0100 (GMT+01:00)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761914928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pKYZnWJ2YoSZfWWV3TxBqXZ1CeAIdf1F+JJKdcAlTOQ=;
+	b=qBDtxLpIKsgaFJrJb5yQkoiQnDOKdKPtWgVIdUbWjGamvmK0enQSsnQPnnmrr2AqG2znUb
+	JQRYciJP2qQk7OtqyH6E3tj8qizq081/n1S3HzBoVeK4U3dUBahfWUPwmq5MKltawOsQ5y
+	qxVtVadysPztqZ6gWk2qBOHTQ+UvdYXV8sVLpm25tWJtGklXGvroCmuMEXMjUzyNQgU8hX
+	jRW5Gvh1ZZNACty3QBtzaNoLEwclXi1zi9ELV34Z8gipZ5yyMm9w8yaV9k1MJOQ8S4FdSc
+	wz43NyGVtqIla1+xlclfo7UP8mk3+N0mbt0wsIi864/Rp2I6S58/ZItZDgF1+A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761914928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pKYZnWJ2YoSZfWWV3TxBqXZ1CeAIdf1F+JJKdcAlTOQ=;
+	b=KUgDTxU+KuF9DLrCj8kBmXI4kAF1uwZoqREyPnH8yTTl/j0zqpM+K0MLFXTqPzH7S8mhmX
+	7LRP4gX6x08P36AQ==
+From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Message-ID: <80dec5ff-a9b2-4622-9dc9-ac65ca06e187@linutronix.de>
+In-Reply-To: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com>
+References: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com>
+Subject: Re: [PATCH v3] selftests/run_kselftest.sh: exit with error if tests
+ fail
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 31 Oct 2025 13:48:41 +0100
-Message-Id: <DDWIPOOIN5X6.3EJE6QNXV61PX@kernel.org>
-Subject: Re: [PATCH v3 4/5] rust: pci: add config space read/write support
-Cc: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
- <kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
- <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
- <targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
- <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
-To: "Zhi Wang" <zhiw@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251030154842.450518-1-zhiw@nvidia.com>
- <20251030154842.450518-5-zhiw@nvidia.com>
-In-Reply-To: <20251030154842.450518-5-zhiw@nvidia.com>
+Content-Transfer-Encoding: 7bit
+X-Correlation-ID: <80dec5ff-a9b2-4622-9dc9-ac65ca06e187@linutronix.de>
 
-On Thu Oct 30, 2025 at 4:48 PM CET, Zhi Wang wrote:
-> +impl<'a, const SIZE: usize> Io<SIZE> for ConfigSpace<'a, SIZE> {
-> +    /// Returns the base address of this mapping.
-> +    #[inline]
-> +    fn addr(&self) -> usize {
-> +        0
-> +    }
-> +
-> +    /// Returns the maximum size of this mapping.
-> +    #[inline]
-> +    fn maxsize(&self) -> usize {
-> +        self.pdev.cfg_size().map_or(0, |v| v as usize)
-> +    }
-> +
-> +    define_read!(fallible, try_read8, call_config_read, pci_read_config_=
-byte -> u8);
-> +    define_read!(fallible, try_read16, call_config_read, pci_read_config=
-_word -> u16);
-> +    define_read!(fallible, try_read32, call_config_read, pci_read_config=
-_dword -> u32);
-> +
-> +    define_write!(fallible, try_write8, call_config_write, pci_write_con=
-fig_byte <- u8);
-> +    define_write!(fallible, try_write16, call_config_write, pci_write_co=
-nfig_word <- u16);
-> +    define_write!(fallible, try_write32, call_config_write, pci_write_co=
-nfig_dword <- u32);
-> +}
+Hi Brendan,
 
-Please also implement the infallible ones.
+Oct 14, 2025 16:45:32 Brendan Jackman <jackmanb@google.com>:
 
-> +
->  /// A PCI BAR to perform I/O-Operations on.
->  ///
->  /// # Invariants
-> @@ -615,6 +670,11 @@ pub fn set_master(&self) {
->          // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
-d `struct pci_dev`.
->          unsafe { bindings::pci_set_master(self.as_raw()) };
->      }
-> +
-> +    /// Return an initialized config space object.
-> +    pub fn config_space<'a>(&'a self) -> Result<ConfigSpace<'a>> {
-> +        Ok(ConfigSpace { pdev: self })
-> +    }
+(...)
 
-Please see [1].
+> In case any user depends on the current behaviour, such as running this
+> from a script with `set -e` and parsing the result for failures
+> afterwards, add a flag they can set to get the old behaviour, namely
+> --no-error-on-fail.
 
-[1] https://lore.kernel.org/lkml/DDWINZJUGVQ8.POKS7A6ZSRFK@kernel.org/
+IMO this new flag is also unnecessary.
+The user can just do "|| true" when needed.
+
+(...)
+
+
+Thomas
 
