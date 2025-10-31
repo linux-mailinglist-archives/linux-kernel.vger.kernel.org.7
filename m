@@ -1,98 +1,145 @@
-Return-Path: <linux-kernel+bounces-881001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3C7C272A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:06:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C7CC272AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06224062F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:06:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B20554E47B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07F2329397;
-	Fri, 31 Oct 2025 23:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B6232B980;
+	Fri, 31 Oct 2025 23:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRhYtVql"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEU749Yw"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497983254A7;
-	Fri, 31 Oct 2025 23:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A20329E7A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761951995; cv=none; b=VNaFzCdDFq2QK9m2n569B/GmI+EK1+UWNeGZbEWyzlD2gRXeP0OUZ9NoxZNPTDOZQRnnhaZ8exXtyU3vOtrHm9+Vz3Nyt7gPDzB9/S3a20aOfJbfScRRTaDmYfh262k7+lIYX5jx2bxE93zk11LgLRYa5dzneRXXJNR/Ma47rN0=
+	t=1761952402; cv=none; b=cbaTc3k8f7jZTl6SpqG0hYGD6PN2ZfxXtuoCe8mcv3GPeqywBjdFhR/lOu1kyyic5CaVfeIpyPlWdRnLnmVy7jjLhTo2nnHAnPN8EROw61guV+005NWF2O8ShWaOoVNH53qzEF89nYTurNpeo+wN0tnfM0g4KQfeuKwS7lDtAV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761951995; c=relaxed/simple;
-	bh=W30gxcU26HoYoi9+GzZbnuluexx6qMzSBo5idMNWlZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bFX0LfACao2EGRMKnZxl1P3VJMUzq4zW65Mj5PTSNE2Ddeo5kwr6pVggvZbvRNcjpthLhHGTuHopDXcR7WvsUJmYFC0+ObtC5F/7oFpPBv5BSCxzoRW7eSDRKV/TiSpDnfTYvqGRn3sz6gndvCTZbTrdGdBidZEGEu5rJXP0aMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRhYtVql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA2AC4CEE7;
-	Fri, 31 Oct 2025 23:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761951994;
-	bh=W30gxcU26HoYoi9+GzZbnuluexx6qMzSBo5idMNWlZM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uRhYtVqlU8YDNjIFHGOkCNn/qlWx2ams+oLrw5U3+R/TeK/d54wSmI7JUO/eSvejp
-	 lxfwQw29UT2jeyVxlFjsLsjhLWFiCvJ+l9tvjaw4LxhiM4zpbI17+XgT9+DicVxWRp
-	 XWmC5mvzAZOe0MSbu5B+8MKo6d5SjOW7JGtYzs2Olro9MdpDzw+xVYMRxQ61O77ljw
-	 a0/KRO3mD4yc9RVU5iR9Dq8zIpvUKbDNDiI5TVa6jUGcvK3tVCx48UNInS3UM8hRwU
-	 FgsXMypLzxJsowdJfPMY+PU797wmrijRjerVqRaFywS5M+2qS0mHsKZ6xJ81pdC8u7
-	 bFy9a9pT5U9qw==
-Date: Fri, 31 Oct 2025 16:06:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, longli@microsoft.com,
- kotaranov@microsoft.com, horms@kernel.org,
- shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
- dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
- rosenp@gmail.com, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] net: mana: Refactor GF stats to use
- global mana_context
-Message-ID: <20251031160632.41c1167f@kernel.org>
-In-Reply-To: <1761734272-32055-2-git-send-email-ernis@linux.microsoft.com>
-References: <1761734272-32055-1-git-send-email-ernis@linux.microsoft.com>
-	<1761734272-32055-2-git-send-email-ernis@linux.microsoft.com>
+	s=arc-20240116; t=1761952402; c=relaxed/simple;
+	bh=XWZsqJRZo0jc8TEwczUrIZCZrP8vjp3+VpCSsodHNDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fIjutscQeCpnFBq42vgGPaG0V9mdwINoLAO7B4bsO/YJ+9m1p17SMomMvPTn17Ehn+GOjMvG6S99/b+hXxU4FZF49XzbbppWy7LS48XBRjSM8d9Zd/KjAWdxQaxb143MYiJA/YdXTe5sN4Q6X5XdEVfw8UW21+f01vGY0nc78EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kEU749Yw; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-592ee9a16adso4264369e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761952398; x=1762557198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CduKhDs2d95anLLqO+pCgedfe9nkoQuIaYxFtLlvMAI=;
+        b=kEU749Yw2luBSyqqeosBP2aguvxblfCIFQy0dCF+uFwUIPWuLzDHY8m+vc9S+svxtF
+         ON96JnjkHmcJj+jr4y+TcnyxRPUnBSVGk9Kb8YQfquWuYdZZMzwhR+4ep+EmnGYbW1OZ
+         wjGzSmDhQTlDpNMjqpgCXwC9lVCnmteiIS5C3r5CY+O/o7zgevmNkhAdcjW3lJ4m6RU1
+         Y4U9LMudrBMj2kwmQItNr19AVN/P3f2Ux4Tk/4qbbs9bY1o4pjH0Xb87GC/PwQbGmYqD
+         iE4DIdLAcsusXamwxNMXhe7bigmA+ElXLYDjkqf3dchNEL5sskAz32eeFZS7icmliiWr
+         gVgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761952398; x=1762557198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CduKhDs2d95anLLqO+pCgedfe9nkoQuIaYxFtLlvMAI=;
+        b=RZFOMlrmhpBS598oRFxga8xGuo8URnOEiofw8u7rPv9Yt0szLXavY9ckprXBCnPP4O
+         HNAxvPq+aVA1pNmeru6pV3cJZViX7fMzZBuDBU+5JmwWpkiBVEQU5bsjNSa/5SJDcfOE
+         +m9XMcH9Ob3eluDajRjGzV39m9eDXFGB2rDHuMEp4rf9RQ/78IBkMCAzWzR+usjf5iyg
+         MOS1Muh72JggEHKLKdxymtYcRqgjub8oWlb0MKTHK48Vln2qEUiXSFPLBdeB+PGlO5Jc
+         VGINRWvhu0TObPruinDjzzNHplBXOjmgwrSwik/myxfcJ6YJtS8QgyF5fhBSrQqstF0i
+         /2wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2sxbfyGXG7ENRatPkc6YCuDanLsm0dsI8S8OmwLz61mrzuYiSRkRM1PIVe4+JpWDYuC/+cvxtvVSqaHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTxALCWkJp+u0KPcFp7yAWkPmVqeZcpXM3GgB9Cbfg/etaqu3w
+	U/Dh0Dj/NELz5dT9+5uWqT3MvZKKWAUnMLivz5HfxhjQeCLKBbDAgwCaIo11sSgs0yfLrN6wBge
+	2b+XguOiHiSmfWuysfTbklbRod5tQIrz44bhjIroF
+X-Gm-Gg: ASbGncvCbxrMQW87xLOyML7vDExzIrT7GNwufKEewwtfNDZ6nGecxjxLQYSy1rSgkfM
+	6NqwO4POCmeVOhvaZ/G5p5Qn41nLEQqsoMR7ATLSkdeLe67+nHI2CLPnzpSTLhr0hFW7T1idTXr
+	EQUTBBc3Agn/b0kFaJAv3HNWxGn9p4dG5eHE5U3QVLGX7rn6yX1OlqkUcKJWZEp7Bjx8WBvJJN4
+	sLighnu8boY+yBWYSazkcOuGFWZftZXavCDfYlYTj3vr859nasmZo/IyuUO
+X-Google-Smtp-Source: AGHT+IExErcOO2EIgmDaicMDUbGTWKxNreSKo2RDOW0/ULZPVApKfmIWoVK+h3uJ79oZ73j1I9/Rf0OSA92b1W105fQ=
+X-Received: by 2002:a05:6512:3c92:b0:591:c8de:467b with SMTP id
+ 2adb3069b0e04-5941d542679mr1891506e87.40.1761952398324; Fri, 31 Oct 2025
+ 16:13:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251018000713.677779-1-vipinsh@google.com> <20251018000713.677779-9-vipinsh@google.com>
+In-Reply-To: <20251018000713.677779-9-vipinsh@google.com>
+From: David Matlack <dmatlack@google.com>
+Date: Fri, 31 Oct 2025 16:12:50 -0700
+X-Gm-Features: AWmQ_bkA4phyOyQRm4wqvCBQ3eNh3dDXKfq4mZi3gYwoRKx7jeTWqc2Xmhrpb1M
+Message-ID: <CALzav=c9yw2B=1Y6kK2ZuxdBCnwuTHyOyA4VGT8_rLv2Wg5r4A@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/21] vfio/pci: Retrieve preserved VFIO device for
+ Live Update Orechestrator
+To: Vipin Sharma <vipinsh@google.com>
+Cc: bhelgaas@google.com, alex.williamson@redhat.com, pasha.tatashin@soleen.com, 
+	jgg@ziepe.ca, graf@amazon.com, pratyush@kernel.org, 
+	gregkh@linuxfoundation.org, chrisl@kernel.org, rppt@kernel.org, 
+	skhawaja@google.com, parav@nvidia.com, saeedm@nvidia.com, 
+	kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
+	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
+	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 29 Oct 2025 03:37:51 -0700 Erni Sri Satya Vennela wrote:
-> Refactor mana_query_gf_stats() to use mana_context instead of per-port,
-> enabling single query for all VFs.
-
-What does "single query for all VFs" mean?
-All types? All within the host?
-
-Coincidentally I don't know what HC and GF stand for.
-Please explain things in more detail, all atypical acronyms 
-(for *Linux* networking).
-
-> Isolate hardware counter stats by introducing mana_ethtool_hc_stats
-> in mana_context and update the code to ensure all stats are properly
-> reported via ethtool -S <interface>, maintaining consistency with
-> previous behavior.
-
-> -void mana_query_gf_stats(struct mana_port_context *apc)
-> +void mana_query_gf_stats(struct mana_context *ac)
+On Fri, Oct 17, 2025 at 5:07=E2=80=AFPM Vipin Sharma <vipinsh@google.com> w=
+rote:
+>  static int vfio_pci_liveupdate_retrieve(struct liveupdate_file_handler *=
+handler,
+>                                         u64 data, struct file **file)
 >  {
->  	struct mana_query_gf_stat_resp resp = {};
->  	struct mana_query_gf_stat_req req = {};
-> -	struct net_device *ndev = apc->ndev;
-> +	struct gdma_context *gc = ac->gdma_dev->gdma_context;
+...
+> +       filep =3D anon_inode_getfile_fmode("[vfio-cdev]", &vfio_device_fo=
+ps, df,
+> +                                        O_RDWR, FMODE_PREAD | FMODE_PWRI=
+TE);
 
-reverse xmas tree, please
+It's a little weird that we have to use an anonymous inode when
+restoring cdev file descriptors. Do we care not about the association
+between VFIO cdev files and their inodes?
 
-> +	struct device *dev = gc->dev;
->  	int err;
+If we wanted to have the cdev inode we could have the user pass a file
+path to ioctl(LIVEUPDATE_SESSION_RESTORE_FD)? File handlers can use
+that to find the inode to use when creating a struct file. This would
+avoid the anonymous inode and also ensure that restoring the fd obeys
+the same filesystem permissions as opening a new fd (I think?).
 
+Pasha this would be a uAPI change to LUO. What do you think?
+
+Sami, Jason, what are you planning to do for iommufd?
+
+> +       if (IS_ERR(filep)) {
+> +               err =3D PTR_ERR(filep);
+> +               goto err_anon_inode;
+> +       }
+> +
+> +       /* Paired with the put in vfio_device_fops_release() */
+> +       if (!vfio_device_try_get_registration(device)) {
+> +               err =3D -ENODEV;
+> +               goto err_get_registration;
+> +       }
+> +
+> +       put_device(&device->device);
+> +
+> +       /*
+> +        * Use the pseudo fs inode on the device to link all mmaps
+> +        * to the same address space, allowing us to unmap all vmas
+> +        * associated to this device using unmap_mapping_range().
+> +        */
+> +       filep->f_mapping =3D device->inode->i_mapping;
+
+Most of this code already exists in vfio_device_fops_cdev_open(). I'll
+work on sharing the code in the next version.
 
