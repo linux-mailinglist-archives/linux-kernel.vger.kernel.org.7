@@ -1,656 +1,229 @@
-Return-Path: <linux-kernel+bounces-879585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AF3C23843
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:15:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75AAEC23850
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE5104EB2F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9250F189F2BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5372328623;
-	Fri, 31 Oct 2025 07:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38233329367;
+	Fri, 31 Oct 2025 07:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="YUKnFl1b"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="bO6UaeUY"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010041.outbound.protection.outlook.com [52.101.228.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5CD328B70;
-	Fri, 31 Oct 2025 07:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894937; cv=none; b=V2ds0xqdDqRta9KaqtQ/NQixaMhISfXB9+LwUb8vh575UrkYi3rpMvAieUt4JACR/B0pkLLkW/eM2sXc2pjoMuWO4c026m5tLxqlddy1dGS3dvEpwMciCwWBGpE1qCbEVCNYW8FnXPLUTHz4KSCwleZH7oDtfJPt086XK5LSuaI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894937; c=relaxed/simple;
-	bh=9gjK2wHVEI2cwyP19ZSa7HGwPtmu5ioiCQrU6rWBP2g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aiGXuTwxL8zaRA9HTsU7tjvGm9PW4bAzGD8pBQinW5SvczJ8vClNv4GtSkI3SXy7lyE/kWfTAuw8eDoHgjOMhXII/XwpTUe+EMNTM3ZA5nJETKhaB4vyE/R+1MdL/VqJlosA2wMLxqUTnKSJ0KI55K9s/T+IMmAjna2KgQ/uxbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=YUKnFl1b; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 1930C1E39;
-	Fri, 31 Oct 2025 07:12:17 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=YUKnFl1b;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 4ABE731;
-	Fri, 31 Oct 2025 07:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1761894926;
-	bh=OpCFc2u6CH7glT0gDsjbR3AmVOrBe58fnilqPfGxNr8=;
-	h=From:To:CC:Subject:Date;
-	b=YUKnFl1b5TDAt+3QqxQrOc9/kPMtIiwf/qQl6BIoX1oNdbMJtcpFgaC7phHzXuUrb
-	 XQB37UKTkaO17R7pfv/hxt5lTKOVzjjthrIzxUP14h+Ugge1pBwr9aGfSR010yZqlv
-	 YYukDhQ4PUjs6VssO79T/jXD5cgo2Zp/brQUOHNo=
-Received: from localhost.localdomain (172.30.20.190) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 31 Oct 2025 10:15:25 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH] fs/ntfs3: remove ntfs_bio_pages and use page cache for compressed I/O
-Date: Fri, 31 Oct 2025 08:15:16 +0100
-Message-ID: <20251031071516.3604-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA971FF1C7;
+	Fri, 31 Oct 2025 07:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761895020; cv=fail; b=W3Z2vKcziyRYpxKcUL4lnzjYIiFjgj3/L4cJjxAHJxn/0uZSEpJ7Wn3a1UwvbTF/njkegKuVFDbYlVcxWPdPsEDi9nDvs9FtG4b/6LKLxRTHzXr4zjMe3t0V5+xBaoxHBcyIriLZyEU4Nq0rq9hw/TOTACnNf5yjibSLeVmb8HU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761895020; c=relaxed/simple;
+	bh=UPhHKoZXsASD7vYi1AuKwk7NvXr37cJgwTLBJn+KLj0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mrkZ3ccNvbylHcBW0vqPoss1+lXFA/p96KqVbtSWXSZYkhvqX7yMjfu6u/eQZOdnNZrJrmCDDNQjY0oXsejfx/wGCcMsRXewkA3lMW1V50KeYk0XJ3hG9pIntKVOSCgzzziX5GBuMJU735GTKIoiMegQ1bs1VXztChT1m0Tc440=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=bO6UaeUY; arc=fail smtp.client-ip=52.101.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n0Xq1FDzvEC3kg1iQXpvD9WHpxEPrQK//U50K8jlqmaFC0gBaS/Itb2R5Rf+11jYtQbujSODrUzoGAJILt6JyFxuq0Pjfjyv51M09i89IA+GZGB//+jSKcpo+o6UGL4ozyXw/oO3B6D0F1FJN5VMUj03tou2gLyU3YRYFEu1gq5D4BjnQlA+xBl5gGK9M5NR+pzrOlkc5syVxdH0/Xy50viocBAY9lvB6ySQfY+YD+ji1iGkLjAMIHV/VfUWkY0iWont3tLqwdIn1H/CsIf89afrMCY9t1/MCI5CXt+tvfTtnlRLsCfKBabnXKIdFfYWgEBTe7gp44NU2M+138idKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UPhHKoZXsASD7vYi1AuKwk7NvXr37cJgwTLBJn+KLj0=;
+ b=bacTSEJ8ovcPWxJyrHCaVyoBi2s7MH6oOFLWb3pM3eQNSOuajnvCt+URZSCriZ1h9BfQpQ/PtL67RJdx81096cuFjRhMYYye4jMSuRSuPtmP8X1a2+0d83KO09fU8gY1cA5/FVvzyDqmoLoxWSLY5CBXAuF+lsRlffKyhIBAAsDI49bDpPdgJFCqzxet7n95W5OZDTsdwEsKcAkH2bNYHC4ZG7jSHBbnpKjOYgOZd3stI7lBo968PnE/4nZBJjZXw5fhz4fHnveFB8C1ARcXgO9REP+6ZnyCEnSRk3oi5VNvHYu5xhwsvJzo2cbdUeB5E8Xc6tkaTeS5T3wofN/jgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UPhHKoZXsASD7vYi1AuKwk7NvXr37cJgwTLBJn+KLj0=;
+ b=bO6UaeUYW/82kJS7l+y9NMwL3BHL3UvgG/zKQRJoY44hd8ZeYzroUQ3L6KRNlXV1sYvG/J63QX2WLaHn6jvKw6cNRzGL7ui/KtUWbNz9Q3cfN7DdGJk4qNKmYMol/0NiMwpiYi+17FcC0WiozaBIWHBxWdfcy9Od1ZfC3LL4LME=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY3PR01MB11904.jpnprd01.prod.outlook.com (2603:1096:400:409::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
+ 2025 07:16:52 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 07:16:52 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Jiri Slaby <jirislaby@kernel.org>, biju.das.au <biju.das.au@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: wsa+renesas <wsa+renesas@sang-engineering.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 12/13] serial: sh-sci: Add support for RZ/G3E RSCI SCIF
+Thread-Topic: [PATCH v2 12/13] serial: sh-sci: Add support for RZ/G3E RSCI
+ SCIF
+Thread-Index: AQHcScbL2JITDi0vh0egfmIXcHsucrTbsFUAgAAoC5A=
+Date: Fri, 31 Oct 2025 07:16:52 +0000
+Message-ID:
+ <TY3PR01MB11346585ED62E65396655EA2A86F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
+ <20251030175811.607137-13-biju.das.jz@bp.renesas.com>
+ <19a08b75-13ca-45f9-884d-f96602336dfd@kernel.org>
+In-Reply-To: <19a08b75-13ca-45f9-884d-f96602336dfd@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB11904:EE_
+x-ms-office365-filtering-correlation-id: ef8769ab-2200-4903-5d2e-08de184d7716
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Mk83Z2ljT09XekZ3SWhnbTBoREdyUkpadUU2VzB6R3F6bURZVzVBY0UydXRH?=
+ =?utf-8?B?MGFnTmgzYkxlbTZwc1FSemxYRkJybjFTaVVvZ0xkNWoydDF2aFF4cDNMZkM0?=
+ =?utf-8?B?bEcrNmRnWG5CMHlMeVRGdUZLOUNFZi9OeE4zekV5QWRwZ2ZLZWlTSklORGFi?=
+ =?utf-8?B?bS9NRStrWG5oNEZLU085WFAwS1N3YUc5UjRORjZRTUUwOHJmT3RzT2FHMHdK?=
+ =?utf-8?B?WFAxWk1ZUlNwNHhKa2lOSEYzT1k2VzZCVFNQK1FVVEZPMzVkYkV6TVRMeUJv?=
+ =?utf-8?B?eUJhRGNzUTY3dXIwQlJIYUp6VlU4eUh3dm1zd0xUbXVZbDJUVmtvSm1IaWxD?=
+ =?utf-8?B?Z0tVTDBnbCs1OTVmbXl3d2hRS2VNYWh3ZGpVSEQwOWxUWkErWkI1OVJraWxJ?=
+ =?utf-8?B?NmU3SzVJSGJlQysvSDFFVXl3WkpoWmJMSFQ3SXJ2ZWR4dCtFOGhOKzN0MXhO?=
+ =?utf-8?B?cFlwcFRocWpibW9tbHZSeGdFSjBQcFB0WmNDNGFDdHNtajZaSEJ4ZlhwekRH?=
+ =?utf-8?B?Y2F5Tlk1MHZNa2VvNHlTdGFLWU52YjdHNWxiQVFHY2FjRUV4eldBMmlZdGwx?=
+ =?utf-8?B?eW9xQzhEL2hDbHZFOUtxNHF3Q2NMTGlaQTdqVVNWYXFJWDhIOUZiazdrOVVH?=
+ =?utf-8?B?YURhc1c4MGJwY3h0UUROOVFqbUtRS2RyQVRYN0V0aU9pV0lDajVVZzRVN1h5?=
+ =?utf-8?B?dUdCMmFFa29ObjhHK1c4VllhbGlRUU5RZHRwMlBBcVUwVEZmMmd1MjNQUERs?=
+ =?utf-8?B?QU84dFdJMTR1WlJwRkRnSjE2TmMxd1d3UGQwYytxTWJ3R0UxSXhuUzY1eGJO?=
+ =?utf-8?B?THJ4QWJmVC81MnFsSndkZE5BVW8xSi90L3F2YXJUOG9ZOVhGaXlWNFo1TEdr?=
+ =?utf-8?B?NTEvY0ZiYVFwTVMzbEN0L0t2c1B1Y0R6NFpOV0hvRTNXL2xhQ3FjTnZVQ3J4?=
+ =?utf-8?B?TjhuNW56cjhiRnl5NW9OYTNHaGJqY28yMEFlaVlLbkpCaUJ3MS9WMDliVGo0?=
+ =?utf-8?B?T2JHQ3VTZ0NyTkIrNXhZQlNPV1M2SUFSWGdoaGVVckEzNDhCcS9VaXE2LzlJ?=
+ =?utf-8?B?MU5wZ0V3OGlWalcvN0RPYTdSb09jU04zUVlTa1I2QXprRzVoMnZpanY5Tmd5?=
+ =?utf-8?B?Zy90WlppbXVvQVZzVnp4YVdmRlN6MXpLM250SXpZNEwxa2NKM3llR0E4R1Zn?=
+ =?utf-8?B?ZEdXOTdPMzRTc1Bmdng1SGtiWEMzNnk3MkxHQlBYMzRkR1ZNZjBOdk5nT09a?=
+ =?utf-8?B?bFUrMlZzY0tBUUhSMG5CQ3J4SVdUQlhlQkRIcW5YZm1QbW9lK0xGZGw1Rzlx?=
+ =?utf-8?B?Q1dCQ3Z6bEwwN3d6Qk9ZakswVkN5K2IyMHFZeEVmcFo1OWdremZqRGt3NjJm?=
+ =?utf-8?B?N29nVUlIU2ZoQmpJajRMSUwySGhEMnFkbGpTeXppaE1jOEpxS3l2RWxqVVB0?=
+ =?utf-8?B?c1Z3R2tlWjJkVzdaMW9tT3ROR3k0U3BsNERsNG0zL2t6bzVqQ3M2RlowRXFi?=
+ =?utf-8?B?RkVST1FaSHBFbHpFYUlNdUk3MHh4Tk5jRmpUSXlQQVI1WmcwbnM3LzU2OVN5?=
+ =?utf-8?B?UC9sZ0R0THA0bXJnTE1FaGhYVzRzRW9CQVVNT1FXcnh0R1NCTkcvRGd0RVVl?=
+ =?utf-8?B?dHNkcWhObm5HYlJoTnJUSncwMUtIQ3htMjYrdU5SQ2Vvb05HcGFwa2Rqc3Zt?=
+ =?utf-8?B?SWkxbGg1RWkwd0RWeGczQkU1dmZ3Q21kZkVwRHZBUk9pTElvdUprYUl1RnFR?=
+ =?utf-8?B?QmlmenZQUTNPcVZ5QTdoVll1QnVNbzFweTZQN2x1YTZGK3MzbXFiQXlVZDBl?=
+ =?utf-8?B?Lzk4bE5zeUdJaVgzc0FuUFBrbU9wU0l4SzQwa28xZ3MyMTNDLzVEa292Nms1?=
+ =?utf-8?B?R1p6SWd5Yit0U0ZydkZxVmgvWmJnYlU5S3VORjQ5NWhzMjh4OXRLdzVrczgy?=
+ =?utf-8?B?VnF1K2g0Y0VPTGNRQ0xWUjN4OU5Yajl4RUhRMXZuYjBhV2MrK1lxWEpmSGo1?=
+ =?utf-8?B?L2ZZRHVsZTBWZ0NWS3J5SUsxVkNxa2o2Z0tKSUNIQy9DYlorSjdzQjNFODRI?=
+ =?utf-8?Q?bnWAA+?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?UGR1Z1N6YXVvK2kxMXNKL0FuNlNJNDF4WmYvM2pGaXl1ZTlNa1paVFQ0dnNJ?=
+ =?utf-8?B?cXV4amJjQ2NieEI2TS9vQjlaa29WSmhBRjc5dWd4MzNaM2FuTEFsU3hqSEU1?=
+ =?utf-8?B?QlVyVVdqcVJCTk9RcVhTUkxzb0NuaW9BN3VpeTU1bzVoL09vK1k5S0dZcS9Z?=
+ =?utf-8?B?VSswUzJINE9DanFzU005ZGZiZHg4SkpGeVhVeEg5WEZEaFRUenFXZ1BUWG02?=
+ =?utf-8?B?T1M0dm5XNkRpOFJKODBKK0I3aDVLaDlHdnRva2M0ZG5YMTBSMFZlQnBqN2Fz?=
+ =?utf-8?B?WHRnUFRPYjNiTWtQWTdiVWxZS0EvK3dEeTZhYkdDZ1lEV1RxMW9jbm9FcCtW?=
+ =?utf-8?B?bjRCbThIZ21wNkMvWDBhMUNwSUhRczN4Qkpqbm9Td3IvM0RkeWVqa3N0dk1Q?=
+ =?utf-8?B?cml6RWtteHpjZGRvU3AxYWxhb3EwRUtrNWdBeFdIcUt4ZU9CWDFhOW5YQlVH?=
+ =?utf-8?B?NVJIZ1B5QTdkVG5XOGlCQ2YxaW5zb2k0RmN1Kzg2czAveHprZXRybHNtL1gy?=
+ =?utf-8?B?Yjc2TnBnRUNkSzZ3Z1FDUFJvZ2IxaXUvd1RqRDh2QUdKdGtTYWVmNVJNcGtF?=
+ =?utf-8?B?cXRpYkUzdGwrcmxOMzZWTDVTZjFMWWlZMmdScUhoUkxiN0FrY2JrNWtpYXdi?=
+ =?utf-8?B?WCtQTlJEcytmRDhYcHdFUG5Hc1VkZE5KbTBBc1l0QnZqZmlWaHVVV2NDVHdV?=
+ =?utf-8?B?anFzSlFReVpudkpOeVJYWWlLa3FKUHNUeFE5aGhYS2t5eTZKTTJVSjdhbGsx?=
+ =?utf-8?B?d3RiVHhvdjVVYkQ1VDZORFZQdmhFb2Vhdm5Oc0tFbW5XQk0zdVVuU1VqdytG?=
+ =?utf-8?B?RzFobE5YeHpYUlVwaHp6ODZkc0pwTHpZOWdwR1VDd2tPMkF6cHRmUmlkY1Rn?=
+ =?utf-8?B?M2xmZ3FHSkhFekcwL2FrSFh6bitUUG5JeGQ5NHBlcEQ2VmZHSm84UGRDUE51?=
+ =?utf-8?B?bytybGVDellaZllNTTEwNUJzcHM5aUxYRjJqZ25SRENoNlJIRzRhSHorZXdz?=
+ =?utf-8?B?Z2hQUjBnODZBYTM1d3NqKzRWRVdkNjkxSzdtNlM5M0ZvbEVOczd6TlAwZ2Ez?=
+ =?utf-8?B?VzcwVVVjaTJIVTJTYlMrRDhGYXlHNmJkTG45N2ttT2pvZHc3NlFjWTE3YndF?=
+ =?utf-8?B?NFA1K3dnaUZZU1RheW8ybE1ZUDF0aFhXenIrWHE3Q2tzZ2V0MkZrV3BwYWJ0?=
+ =?utf-8?B?R3o4ckNGai9VbHdPZGNTcldpd1JCeWsxVFBielFGM0UvbnJUV1RuK1FhQWpq?=
+ =?utf-8?B?b095L2NTWXRSOHd1Q05CZ3lEbEpUSWpEb0dGQWplUWc3Y1JibUlZVDdDNDlZ?=
+ =?utf-8?B?WkVtaWljWllyUU9oR2dHQmtwbk85WHpVenFYTGNwcVV5WDF0eGVNWElwRUQ1?=
+ =?utf-8?B?aEFoUW1ZaHlOcElDeDJYVW95Y3hoWGE3ZnVJMGRVL3hhS0xLNXZNcmNyWE9i?=
+ =?utf-8?B?VC9vN2pvK3orRTJ2T3VscDNoY1hxNkFuM05jMUg0K092SVlRL0tmMHAxQk56?=
+ =?utf-8?B?dTIrZGhFblFoeGtMT0dxMEFJYU4wV05uLzZsRnJGOEtsaFhwQmYxVk9LZDhB?=
+ =?utf-8?B?em4xN2NMa3EyY3haa21WMThVN0N6Ymg5U1ZFTFEvM1RrOXpmNDlzUVkwZi9G?=
+ =?utf-8?B?aEZidm1YTjZ4bWF5eHVtNWhtSTZhWWVPbXU4ZmF5dXRkMkR4cW9Zbkw4Z2lu?=
+ =?utf-8?B?aGRmanZsVFJzclhOOVlDSDJKbDZ5dnI0S1pwenFYa2JPWEZBMEQvcmVkajZa?=
+ =?utf-8?B?T0lldk9TWXgvQkxtbXlLVitnOTliSGprb1FNYkxrMXMwTzlsTU12Q3lHZ1p6?=
+ =?utf-8?B?ck5hY2l6cUlOZEFzcXBkNk9TQi9DS1cvMUZmVGNhRUpsRWhHOGl5OEU0OVVG?=
+ =?utf-8?B?ZFAzcjlIQk1lMVpaTUVsMEhKTzRzS3J0RkhmdkxEQ1BWU1JiV3FhcEF4eFdo?=
+ =?utf-8?B?dHhMWlZNeW1PSkppSUxpaFRwVFZqV083bnYwTm4vR01JaXh6SDdVSkp5a2h0?=
+ =?utf-8?B?RGZtWm5qc3d6cHpaN3NkQVBBQTV0OXBhTzh0SEREZXoxTVJLdW8vRGw1U1Nq?=
+ =?utf-8?B?bDIzMGJEQU1kejNJblNycGpyMXZrSHVYZDRMRHBOQ3dSSlBHU2hZQ2lpZENi?=
+ =?utf-8?B?UTZ4NU0yWnJldy8xYTB3aVY5THlKYS9yZHZ2a2RreE1FdGNWeTZLNEE3NFZi?=
+ =?utf-8?B?aVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef8769ab-2200-4903-5d2e-08de184d7716
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2025 07:16:52.2608
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: h1tSWASa6lYoWoryvQNd+ylAPo+thd09nvZJWFC5rP5krXnZVV9jH90nqrlyE7UkvmDB4QpPrpDhomxAJRBjcJEmhK12ovTtAPtKzrZLVNc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11904
 
-Replace the use of ntfs_bio_pages with the disk page cache for reading and
-writing compressed files. This slightly improves performance when reading
-compressed data and simplifies the I/O logic.
-
-When an XPRESS or LZX compressed file is opened for writing, it is now
-decompressed into a normal file before modification. A new argument (`int copy`)
-is added to ni_read_frame() to handle writing of decompressed and mapped data.
-
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/attrib.c  |   4 +-
- fs/ntfs3/file.c    |   6 +-
- fs/ntfs3/frecord.c | 151 ++++++++++++---------------------------------
- fs/ntfs3/fsntfs.c  | 123 +++++++++++++++++-------------------
- fs/ntfs3/inode.c   |   1 -
- fs/ntfs3/ntfs_fs.h |  20 ++++--
- 6 files changed, 114 insertions(+), 191 deletions(-)
-
-diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
-index eced9013a881..d0373254f82a 100644
---- a/fs/ntfs3/attrib.c
-+++ b/fs/ntfs3/attrib.c
-@@ -1457,7 +1457,6 @@ int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
- 		pgoff_t index = vbo[i] >> PAGE_SHIFT;
- 
- 		if (index != folio->index) {
--			struct page *page = &folio->page;
- 			u64 from = vbo[i] & ~(u64)(PAGE_SIZE - 1);
- 			u64 to = min(from + PAGE_SIZE, wof_size);
- 
-@@ -1467,8 +1466,7 @@ int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
- 			if (err)
- 				goto out1;
- 
--			err = ntfs_bio_pages(sbi, run, &page, 1, from,
--					     to - from, REQ_OP_READ);
-+			err = ntfs_read_run(sbi, run, addr, from, to - from);
- 			if (err) {
- 				folio->index = -1;
- 				goto out1;
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 7471a4bbb438..60eb90bff955 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -59,7 +59,7 @@ static int ntfs_ioctl_get_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
- 
- static int ntfs_ioctl_set_volume_label(struct ntfs_sb_info *sbi, u8 __user *buf)
- {
--	u8 user[FSLABEL_MAX] = {0};
-+	u8 user[FSLABEL_MAX] = { 0 };
- 	int len;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -1039,7 +1039,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 		if (!frame_uptodate && off) {
- 			err = ni_read_frame(ni, frame_vbo, pages,
--					    pages_per_frame);
-+					    pages_per_frame, 0);
- 			if (err) {
- 				for (ip = 0; ip < pages_per_frame; ip++) {
- 					folio = page_folio(pages[ip]);
-@@ -1104,7 +1104,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 			if (off || (to < i_size && (to & (frame_size - 1)))) {
- 				err = ni_read_frame(ni, frame_vbo, pages,
--						    pages_per_frame);
-+						    pages_per_frame, 0);
- 				if (err) {
- 					for (ip = 0; ip < pages_per_frame;
- 					     ip++) {
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index e44181185526..4a7d56c06dcb 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -2105,7 +2105,7 @@ int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio)
- 		pages[i] = pg;
- 	}
- 
--	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame);
-+	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame, 0);
- 
- out1:
- 	for (i = 0; i < pages_per_frame; i++) {
-@@ -2175,17 +2175,9 @@ int ni_decompress_file(struct ntfs_inode *ni)
- 	 */
- 	index = 0;
- 	for (vbo = 0; vbo < i_size; vbo += bytes) {
--		u32 nr_pages;
- 		bool new;
- 
--		if (vbo + frame_size > i_size) {
--			bytes = i_size - vbo;
--			nr_pages = (bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
--		} else {
--			nr_pages = pages_per_frame;
--			bytes = frame_size;
--		}
--
-+		bytes = vbo + frame_size > i_size ? (i_size - vbo) : frame_size;
- 		end = bytes_to_cluster(sbi, vbo + bytes);
- 
- 		for (vcn = vbo >> sbi->cluster_bits; vcn < end; vcn += clen) {
-@@ -2210,15 +2202,7 @@ int ni_decompress_file(struct ntfs_inode *ni)
- 			pages[i] = pg;
- 		}
- 
--		err = ni_read_frame(ni, vbo, pages, pages_per_frame);
--
--		if (!err) {
--			down_read(&ni->file.run_lock);
--			err = ntfs_bio_pages(sbi, &ni->file.run, pages,
--					     nr_pages, vbo, bytes,
--					     REQ_OP_WRITE);
--			up_read(&ni->file.run_lock);
--		}
-+		err = ni_read_frame(ni, vbo, pages, pages_per_frame, 1);
- 
- 		for (i = 0; i < pages_per_frame; i++) {
- 			unlock_page(pages[i]);
-@@ -2408,20 +2392,19 @@ static int decompress_lzx_xpress(struct ntfs_sb_info *sbi, const char *cmpr,
-  * Pages - Array of locked pages.
-  */
- int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
--		  u32 pages_per_frame)
-+		  u32 pages_per_frame, int copy)
- {
- 	int err;
- 	struct ntfs_sb_info *sbi = ni->mi.sbi;
- 	u8 cluster_bits = sbi->cluster_bits;
- 	char *frame_ondisk = NULL;
- 	char *frame_mem = NULL;
--	struct page **pages_disk = NULL;
- 	struct ATTR_LIST_ENTRY *le = NULL;
- 	struct runs_tree *run = &ni->file.run;
- 	u64 valid_size = ni->i_valid;
- 	u64 vbo_disk;
- 	size_t unc_size;
--	u32 frame_size, i, npages_disk, ondisk_size;
-+	u32 frame_size, i, ondisk_size;
- 	struct page *pg;
- 	struct ATTRIB *attr;
- 	CLST frame, clst_data;
-@@ -2513,7 +2496,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
- 		err = attr_wof_frame_info(ni, attr, run, frame64, frames,
- 					  frame_bits, &ondisk_size, &vbo_data);
- 		if (err)
--			goto out2;
-+			goto out1;
- 
- 		if (frame64 == frames) {
- 			unc_size = 1 + ((i_size - 1) & (frame_size - 1));
-@@ -2524,7 +2507,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
- 
- 		if (ondisk_size > frame_size) {
- 			err = -EINVAL;
--			goto out2;
-+			goto out1;
- 		}
- 
- 		if (!attr->non_res) {
-@@ -2545,10 +2528,7 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
- 					   ARRAY_SIZE(WOF_NAME), run, vbo_disk,
- 					   vbo_data + ondisk_size);
- 		if (err)
--			goto out2;
--		npages_disk = (ondisk_size + (vbo_disk & (PAGE_SIZE - 1)) +
--			       PAGE_SIZE - 1) >>
--			      PAGE_SHIFT;
-+			goto out1;
- #endif
- 	} else if (is_attr_compressed(attr)) {
- 		/* LZNT compression. */
-@@ -2582,60 +2562,37 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
- 		if (clst_data >= NTFS_LZNT_CLUSTERS) {
- 			/* Frame is not compressed. */
- 			down_read(&ni->file.run_lock);
--			err = ntfs_bio_pages(sbi, run, pages, pages_per_frame,
--					     frame_vbo, ondisk_size,
--					     REQ_OP_READ);
-+			err = ntfs_read_run(sbi, run, frame_mem, frame_vbo,
-+					    ondisk_size);
- 			up_read(&ni->file.run_lock);
- 			goto out1;
- 		}
- 		vbo_disk = frame_vbo;
--		npages_disk = (ondisk_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 	} else {
- 		__builtin_unreachable();
- 		err = -EINVAL;
- 		goto out1;
- 	}
- 
--	pages_disk = kcalloc(npages_disk, sizeof(*pages_disk), GFP_NOFS);
--	if (!pages_disk) {
-+	/* Allocate memory to read compressed data to. */
-+	frame_ondisk = kvmalloc(ondisk_size, GFP_KERNEL);
-+	if (!frame_ondisk) {
- 		err = -ENOMEM;
--		goto out2;
--	}
--
--	for (i = 0; i < npages_disk; i++) {
--		pg = alloc_page(GFP_KERNEL);
--		if (!pg) {
--			err = -ENOMEM;
--			goto out3;
--		}
--		pages_disk[i] = pg;
--		lock_page(pg);
-+		goto out1;
- 	}
- 
- 	/* Read 'ondisk_size' bytes from disk. */
- 	down_read(&ni->file.run_lock);
--	err = ntfs_bio_pages(sbi, run, pages_disk, npages_disk, vbo_disk,
--			     ondisk_size, REQ_OP_READ);
-+	err = ntfs_read_run(sbi, run, frame_ondisk, vbo_disk, ondisk_size);
- 	up_read(&ni->file.run_lock);
- 	if (err)
--		goto out3;
--
--	/*
--	 * To simplify decompress algorithm do vmap for source and target pages.
--	 */
--	frame_ondisk = vmap(pages_disk, npages_disk, VM_MAP, PAGE_KERNEL_RO);
--	if (!frame_ondisk) {
--		err = -ENOMEM;
--		goto out3;
--	}
-+		goto out2;
- 
--	/* Decompress: Frame_ondisk -> frame_mem. */
- #ifdef CONFIG_NTFS3_LZX_XPRESS
- 	if (run != &ni->file.run) {
- 		/* LZX or XPRESS */
--		err = decompress_lzx_xpress(
--			sbi, frame_ondisk + (vbo_disk & (PAGE_SIZE - 1)),
--			ondisk_size, frame_mem, unc_size, frame_size);
-+		err = decompress_lzx_xpress(sbi, frame_ondisk, ondisk_size,
-+					    frame_mem, unc_size, frame_size);
- 	} else
- #endif
- 	{
-@@ -2653,24 +2610,21 @@ int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
- 		memset(frame_mem + ok, 0, frame_size - ok);
- 	}
- 
--	vunmap(frame_ondisk);
--
--out3:
--	for (i = 0; i < npages_disk; i++) {
--		pg = pages_disk[i];
--		if (pg) {
--			unlock_page(pg);
--			put_page(pg);
--		}
--	}
--	kfree(pages_disk);
--
- out2:
-+	kvfree(frame_ondisk);
-+out1:
- #ifdef CONFIG_NTFS3_LZX_XPRESS
- 	if (run != &ni->file.run)
- 		run_free(run);
-+	if (!err && copy) {
-+		/* We are called from 'ni_decompress_file' */
-+		/* Copy decompressed LZX or XPRESS data into new place. */
-+		down_read(&ni->file.run_lock);
-+		err = ntfs_write_run(sbi, &ni->file.run, frame_mem, frame_vbo,
-+				     frame_size);
-+		up_read(&ni->file.run_lock);
-+	}
- #endif
--out1:
- 	vunmap(frame_mem);
- out:
- 	for (i = 0; i < pages_per_frame; i++) {
-@@ -2697,13 +2651,11 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
- 	u64 frame_vbo = folio_pos(folio);
- 	CLST frame = frame_vbo >> frame_bits;
- 	char *frame_ondisk = NULL;
--	struct page **pages_disk = NULL;
- 	struct ATTR_LIST_ENTRY *le = NULL;
- 	char *frame_mem;
- 	struct ATTRIB *attr;
- 	struct mft_inode *mi;
- 	u32 i;
--	struct page *pg;
- 	size_t compr_size, ondisk_size;
- 	struct lznt *lznt;
- 
-@@ -2738,34 +2690,18 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
- 		goto out;
- 	}
- 
--	pages_disk = kcalloc(pages_per_frame, sizeof(struct page *), GFP_NOFS);
--	if (!pages_disk) {
--		err = -ENOMEM;
--		goto out;
--	}
--
--	for (i = 0; i < pages_per_frame; i++) {
--		pg = alloc_page(GFP_KERNEL);
--		if (!pg) {
--			err = -ENOMEM;
--			goto out1;
--		}
--		pages_disk[i] = pg;
--		lock_page(pg);
--	}
--
--	/* To simplify compress algorithm do vmap for source and target pages. */
--	frame_ondisk = vmap(pages_disk, pages_per_frame, VM_MAP, PAGE_KERNEL);
-+	/* Allocate memory to write compressed data to. */
-+	frame_ondisk = kvmalloc(frame_size, GFP_KERNEL);
- 	if (!frame_ondisk) {
- 		err = -ENOMEM;
--		goto out1;
-+		goto out;
- 	}
- 
- 	/* Map in-memory frame for read-only. */
- 	frame_mem = vmap(pages, pages_per_frame, VM_MAP, PAGE_KERNEL_RO);
- 	if (!frame_mem) {
- 		err = -ENOMEM;
--		goto out2;
-+		goto out1;
- 	}
- 
- 	mutex_lock(&sbi->compress.mtx_lznt);
-@@ -2781,7 +2717,7 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
- 		if (!lznt) {
- 			mutex_unlock(&sbi->compress.mtx_lznt);
- 			err = -ENOMEM;
--			goto out3;
-+			goto out2;
- 		}
- 
- 		sbi->compress.lznt = lznt;
-@@ -2818,25 +2754,16 @@ int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
- 		goto out2;
- 
- 	down_read(&ni->file.run_lock);
--	err = ntfs_bio_pages(sbi, &ni->file.run,
--			     ondisk_size < frame_size ? pages_disk : pages,
--			     pages_per_frame, frame_vbo, ondisk_size,
--			     REQ_OP_WRITE);
-+	err = ntfs_write_run(sbi, &ni->file.run,
-+			     ondisk_size < frame_size ? frame_ondisk :
-+							frame_mem,
-+			     frame_vbo, ondisk_size);
- 	up_read(&ni->file.run_lock);
- 
--out3:
--	vunmap(frame_mem);
- out2:
--	vunmap(frame_ondisk);
-+	vunmap(frame_mem);
- out1:
--	for (i = 0; i < pages_per_frame; i++) {
--		pg = pages_disk[i];
--		if (pg) {
--			unlock_page(pg);
--			put_page(pg);
--		}
--	}
--	kfree(pages_disk);
-+	kvfree(frame_ondisk);
- out:
- 	return err;
- }
-diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
-index 5ae910e9ecbd..a65b66c349e8 100644
---- a/fs/ntfs3/fsntfs.c
-+++ b/fs/ntfs3/fsntfs.c
-@@ -1479,99 +1479,86 @@ int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
- }
- 
- /*
-- * ntfs_bio_pages - Read/write pages from/to disk.
-+ * ntfs_read_write_run - Read/Write disk's page cache.
-  */
--int ntfs_bio_pages(struct ntfs_sb_info *sbi, const struct runs_tree *run,
--		   struct page **pages, u32 nr_pages, u64 vbo, u32 bytes,
--		   enum req_op op)
-+int ntfs_read_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
-+			void *buf, u64 vbo, size_t bytes, int wr)
- {
--	int err = 0;
--	struct bio *new, *bio = NULL;
- 	struct super_block *sb = sbi->sb;
--	struct block_device *bdev = sb->s_bdev;
--	struct page *page;
-+	struct address_space *mapping = sb->s_bdev->bd_mapping;
- 	u8 cluster_bits = sbi->cluster_bits;
--	CLST lcn, clen, vcn, vcn_next;
--	u32 add, off, page_idx;
-+	CLST vcn_next, vcn = vbo >> cluster_bits;
-+	CLST lcn, clen;
- 	u64 lbo, len;
--	size_t run_idx;
--	struct blk_plug plug;
-+	size_t idx;
-+	u32 off, op;
-+	struct page *page;
-+	char *kaddr;
- 
- 	if (!bytes)
- 		return 0;
- 
--	blk_start_plug(&plug);
-+	if (!run_lookup_entry(run, vcn, &lcn, &clen, &idx))
-+		return -ENOENT;
- 
--	/* Align vbo and bytes to be 512 bytes aligned. */
--	lbo = (vbo + bytes + 511) & ~511ull;
--	vbo = vbo & ~511ull;
--	bytes = lbo - vbo;
-+	if (lcn == SPARSE_LCN)
-+		return -EINVAL;
- 
--	vcn = vbo >> cluster_bits;
--	if (!run_lookup_entry(run, vcn, &lcn, &clen, &run_idx)) {
--		err = -ENOENT;
--		goto out;
--	}
- 	off = vbo & sbi->cluster_mask;
--	page_idx = 0;
--	page = pages[0];
-+	lbo = ((u64)lcn << cluster_bits) + off;
-+	len = ((u64)clen << cluster_bits) - off;
- 
- 	for (;;) {
--		lbo = ((u64)lcn << cluster_bits) + off;
--		len = ((u64)clen << cluster_bits) - off;
--new_bio:
--		new = bio_alloc(bdev, nr_pages - page_idx, op, GFP_NOFS);
--		if (bio) {
--			bio_chain(bio, new);
--			submit_bio(bio);
--		}
--		bio = new;
--		bio->bi_iter.bi_sector = lbo >> 9;
-+		/* Read range [lbo, lbo+len). */
-+		page = read_mapping_page(mapping, lbo >> PAGE_SHIFT, NULL);
- 
--		while (len) {
--			off = vbo & (PAGE_SIZE - 1);
--			add = off + len > PAGE_SIZE ? (PAGE_SIZE - off) : len;
-+		if (IS_ERR(page))
-+			return PTR_ERR(page);
- 
--			if (bio_add_page(bio, page, add, off) < add)
--				goto new_bio;
-+		off = offset_in_page(lbo);
-+		op = PAGE_SIZE - off;
- 
--			if (bytes <= add)
--				goto out;
--			bytes -= add;
--			vbo += add;
-+		if (op > len)
-+			op = len;
-+		if (op > bytes)
-+			op = bytes;
- 
--			if (add + off == PAGE_SIZE) {
--				page_idx += 1;
--				if (WARN_ON(page_idx >= nr_pages)) {
--					err = -EINVAL;
--					goto out;
--				}
--				page = pages[page_idx];
--			}
-+		kaddr = kmap_local_page(page);
-+		if (wr) {
-+			memcpy(kaddr + off, buf, op);
-+			set_page_dirty(page);
-+		} else {
-+			memcpy(buf, kaddr + off, op);
-+			flush_dcache_page(page);
-+		}
-+		kunmap_local(kaddr);
-+		put_page(page);
- 
--			if (len <= add)
--				break;
--			len -= add;
--			lbo += add;
-+		bytes -= op;
-+		if (!bytes)
-+			return 0;
-+
-+		buf += op;
-+		len -= op;
-+		if (len) {
-+			/* next volume's page. */
-+			lbo += op;
-+			continue;
- 		}
- 
-+		/* get next range. */
- 		vcn_next = vcn + clen;
--		if (!run_get_entry(run, ++run_idx, &vcn, &lcn, &clen) ||
-+		if (!run_get_entry(run, ++idx, &vcn, &lcn, &clen) ||
- 		    vcn != vcn_next) {
--			err = -ENOENT;
--			goto out;
-+			return -ENOENT;
- 		}
--		off = 0;
--	}
--out:
--	if (bio) {
--		if (!err)
--			err = submit_bio_wait(bio);
--		bio_put(bio);
--	}
--	blk_finish_plug(&plug);
- 
--	return err;
-+		if (lcn == SPARSE_LCN)
-+			return -EINVAL;
-+
-+		lbo = ((u64)lcn << cluster_bits);
-+		len = ((u64)clen << cluster_bits);
-+	}
- }
- 
- /*
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 439078106cc6..53b51659b3a4 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -2106,7 +2106,6 @@ const struct address_space_operations ntfs_aops = {
- 
- const struct address_space_operations ntfs_aops_cmpr = {
- 	.read_folio	= ntfs_read_folio,
--	.readahead	= ntfs_readahead,
- 	.dirty_folio	= block_dirty_folio,
- 	.direct_IO	= ntfs_direct_IO,
- };
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 6a7594d3f3eb..86f825cf1c29 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -570,7 +570,7 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
- int ni_readpage_cmpr(struct ntfs_inode *ni, struct folio *folio);
- int ni_decompress_file(struct ntfs_inode *ni);
- int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
--		  u32 pages_per_frame);
-+		  u32 pages_per_frame, int copy);
- int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
- 		   u32 pages_per_frame);
- int ni_remove_name(struct ntfs_inode *dir_ni, struct ntfs_inode *ni,
-@@ -633,9 +633,21 @@ int ntfs_get_bh(struct ntfs_sb_info *sbi, const struct runs_tree *run, u64 vbo,
- 		u32 bytes, struct ntfs_buffers *nb);
- int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
- 		  struct ntfs_buffers *nb, int sync);
--int ntfs_bio_pages(struct ntfs_sb_info *sbi, const struct runs_tree *run,
--		   struct page **pages, u32 nr_pages, u64 vbo, u32 bytes,
--		   enum req_op op);
-+int ntfs_read_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
-+			void *buf, u64 vbo, size_t bytes, int wr);
-+static inline int ntfs_read_run(struct ntfs_sb_info *sbi,
-+				const struct runs_tree *run, void *buf, u64 vbo,
-+				size_t bytes)
-+{
-+	return ntfs_read_write_run(sbi, run, buf, vbo, bytes, 0);
-+}
-+static inline int ntfs_write_run(struct ntfs_sb_info *sbi,
-+				 const struct runs_tree *run, void *buf,
-+				 u64 vbo, size_t bytes)
-+{
-+	return ntfs_read_write_run(sbi, run, buf, vbo, bytes, 1);
-+}
-+
- int ntfs_bio_fill_1(struct ntfs_sb_info *sbi, const struct runs_tree *run);
- int ntfs_vbo_to_lbo(struct ntfs_sb_info *sbi, const struct runs_tree *run,
- 		    u64 vbo, u64 *lbo, u64 *bytes);
--- 
-2.43.0
-
+SGkgSmlyaSBTbGFieSwNCg0KVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suDQoNCj4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmlyaSBTbGFieSA8amlyaXNsYWJ5QGtlcm5lbC5v
+cmc+DQo+IFNlbnQ6IDMxIE9jdG9iZXIgMjAyNSAwNDo1MQ0KPiBTdWJqZWN0OiBSZTogW1BBVENI
+IHYyIDEyLzEzXSBzZXJpYWw6IHNoLXNjaTogQWRkIHN1cHBvcnQgZm9yIFJaL0czRSBSU0NJIFND
+SUYNCj4gDQo+IEhpLA0KPiANCj4gT24gMzAuIDEwLiAyNSwgMTg6NTgsIEJpanUgd3JvdGU6DQo+
+ID4gRnJvbTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiA+DQo+ID4g
+QWRkIHN1cHBvcnQgZm9yIFJaL0czRSBSU0NJIFNDSUYoYS5rLmEgRklGTyBtb2RlKS4gUlNDSSBJ
+UCBmb3VuZCBvbg0KPiA+IHRoZSBSWi9HM0UgU29DIGlzIHNpbWlsYXIgdG8gUlovVDJILCBidXQg
+aXQgaGFzIGEgMzItc3RhZ2UgRklGTy4gaXQNCj4gPiBoYXMgNg0KPiA+IGNsb2Nrcyg1IG1vZHVs
+ZSBjbG9ja3MgKyAxIGV4dGVybmFsIGNsb2NrKSBpbnN0ZWFkIG9mIDMgY2xvY2tzKDINCj4gPiBt
+b2R1bGUgY2xvY2tzICsgMSBleHRlcm5hbCBjbG9jaykgb24gVDJIIGFuZCBoYXMgbXVsdGlwbGUg
+cmVzZXRzLiBBZGQNCj4gPiBzdXBwb3J0IGZvciB0aGUgaGFyZHdhcmUgZmxvdyBjb250cm9sLg0K
+PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMu
+Y29tPg0KPiA+IC0tLQ0KPiAuLi4NCj4gPiAtLS0gYS9kcml2ZXJzL3R0eS9zZXJpYWwvcnNjaS5j
+DQo+ID4gKysrIGIvZHJpdmVycy90dHkvc2VyaWFsL3JzY2kuYw0KPiA+IEBAIC0xMSw2ICsxMSw4
+IEBADQo+IC4uLg0KPiA+ICtzdGF0aWMgdm9pZCByc2NpX2ZpbmlzaF9jb25zb2xlX3dyaXRlKHN0
+cnVjdCB1YXJ0X3BvcnQgKnBvcnQsIHUzMg0KPiA+ICtjdHJsKSB7DQo+ID4gKwlyc2NpX3Nlcmlh
+bF9vdXQocG9ydCwgQ0NSMCwgY3RybCAmIH5DQ1IwX1RFKTsNCj4gPiArCWNwdV9yZWxheCgpOw0K
+PiANCj4gV2hhdCdzIHRoZSBpbnRlbnQgb2YgY3B1X3JlbGF4IGluIGhlcmU/IEl0IGRvZXMgbm90
+IG1ha2UgbXVjaCBzZW5zZSB0byBtZS4gSWYgeW91IG5lZWQgZGVsYXksIHVzZQ0KPiBkZWxheS4N
+Cg0KSnVzdCB0byBhZGQgc3luY2hyb25pemF0aW9uIGRlbGF5IGFmdGVyIHNldHRpbmcgVEU9MC4g
+T0sgSSB3aWxsIHVzZSBkZWxheSBoZXJlLg0KDQo+IA0KPiA+ICsJcnNjaV9zZXJpYWxfb3V0KHBv
+cnQsIENDUjAsIGN0cmwpOw0KPiA+ICt9DQo+ID4gKw0KPiAuLi4NCj4gPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jIGIvZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5j
+DQo+ID4gaW5kZXggZmFjODNkYWNlMjdjLi44NWI4OWMxZWJmMTUgMTAwNjQ0DQo+ID4gLS0tIGEv
+ZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jDQo+ID4gKysrIGIvZHJpdmVycy90dHkvc2VyaWFs
+L3NoLXNjaS5jDQo+ID4gQEAgLTMzOTcsNyArMzM5Nyw3IEBAIHN0YXRpYyB2b2lkIHNjaV9yZW1v
+dmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqZGV2KQ0KPiA+ICAgCWlmIChzLT5wb3J0LmZpZm9z
+aXplID4gMSkNCj4gPiAgIAkJZGV2aWNlX3JlbW92ZV9maWxlKCZkZXYtPmRldiwgJmRldl9hdHRy
+X3J4X2ZpZm9fdHJpZ2dlcik7DQo+ID4gICAJaWYgKHR5cGUgPT0gUE9SVF9TQ0lGQSB8fCB0eXBl
+ID09IFBPUlRfU0NJRkIgfHwgdHlwZSA9PSBQT1JUX0hTQ0lGIHx8DQo+ID4gLQkgICAgdHlwZSA9
+PSBTQ0lfUE9SVF9SU0NJKQ0KPiA+ICsJICAgIHR5cGUgPT0gU0NJX1BPUlRfUlNDSSB8fCB0eXBl
+ID09IFJTQ0lfUE9SVF9TQ0lGKQ0KPiA+ICAgCQlkZXZpY2VfcmVtb3ZlX2ZpbGUoJmRldi0+ZGV2
+LCAmZGV2X2F0dHJfcnhfZmlmb190aW1lb3V0KTsNCj4gLi4uDQo+ID4gQEAgLTM3NTksNyArMzc2
+Myw4IEBAIHN0YXRpYyBpbnQgc2NpX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRldikN
+Cj4gPiAgIAkJCXJldHVybiByZXQ7DQo+ID4gICAJfQ0KPiA+ICAgCWlmIChzcC0+dHlwZSA9PSBQ
+T1JUX1NDSUZBIHx8IHNwLT50eXBlID09IFBPUlRfU0NJRkIgfHwNCj4gPiAtCSAgICBzcC0+dHlw
+ZSA9PSBQT1JUX0hTQ0lGIHx8IHNwLT50eXBlID09IFNDSV9QT1JUX1JTQ0kpIHsNCj4gPiArCSAg
+ICBzcC0+dHlwZSA9PSBQT1JUX0hTQ0lGIHx8IHNwLT50eXBlID09IFNDSV9QT1JUX1JTQ0kgfHwN
+Cj4gPiArCSAgICBzcC0+dHlwZSA9PSBSU0NJX1BPUlRfU0NJRikgew0KPiANCj4gVGhpcyB0ZXN0
+IGlzIGR1cGxpY2F0ZWQgLS0geW91IHNlZW0geW91IG5lZWQgYSBoZWxwZXIgZm9yIHRoaXMuDQoN
+Ck9LLCB3aWxsIGFkZCBoZWxwZXIgZm9yIHRoaXMuDQoNCkNoZWVycywNCkJpanUNCg==
 
