@@ -1,131 +1,146 @@
-Return-Path: <linux-kernel+bounces-880588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB502C2617B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A7AC26183
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DDFB1B22C5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:17:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C341B20DA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D853093D7;
-	Fri, 31 Oct 2025 16:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CF6313260;
+	Fri, 31 Oct 2025 16:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORVqpIt1"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6dQgcF9"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABE0308F17
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B83309EE4
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761927212; cv=none; b=ZTHmdsU3kVt/ng/INNOHW+anyXw+9j1bVGMltdfrb7BWRoGQM6vLKukKZZQk9bzMIALH+ZgUTGFC4fcHMJ/r6tn6oeGDI5YtwbF4zzXKPnLoHSKq+p0SqCp6cznjO2yW5Ro76lq4UrymddCgR5Sf1IGNK2NCXRsHyVPTa2dt2UI=
+	t=1761927217; cv=none; b=SAAeXDtICRpIkwnTIUTvP44EKcfviWw/GXM5kjzUDBLxrBmBjmYJLdVpxYsBayGOcvojJPsq57KOo6fIdeuzaAG2ejlYjRNe6KzWq2ed+uDqnBpNDJOcRmxScRJn50C/ygRSvn1nTcQByESwhteWyCwFl4iSjQSWtFATFjd3XHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761927212; c=relaxed/simple;
-	bh=9RdCBa4+4sRCwXB20xmXer78rbra+zl9rgLx/Ct8cus=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Yp6CteUiB+7RIgDsn+nODSuyZxTF0lSZMvesN0HLqHzxq+Iq65LXRBbYTXTWfoHz4G+gYb+e5MCJlIijfB4zL2A68kgDejsg/JwqXmOEuC2og7OEee3lWAByGkmLyLpcaO8fHER1KIslh9H4o7TICE6/h/LDfClZTsiVgLDDJQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORVqpIt1; arc=none smtp.client-ip=209.85.219.47
+	s=arc-20240116; t=1761927217; c=relaxed/simple;
+	bh=ndOEHZ3nWccRUrwdUMb0NZJPH9B3+tUoq0msaJX3oRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gds1rxBJyPXL08nl3qZXePS9++kjvMvF5pPEqayKSOW7YINSSjLNdHxpPZEAEEHMheufjdHOo0tYdqQD9ERCjBVTgXRZLaK9lC4hap/GKsiCeaTX8ywDARO4vMW0LtI2j1GhvG0HpWtmzJYiwDv+dcn0mthot2nswuew6AaypZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6dQgcF9; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8801f4e308dso21163336d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:13:30 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47728f914a4so12485835e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761927209; x=1762532009; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2xkF6zKonfubE7Gp45g4295GunQ1O6+736QRxZvvn1w=;
-        b=ORVqpIt1GmcIbDzbHsdSmDxORXdoKcRKGqL25FqvEJ0kc1gcyxGte81BM55QZyD3K8
-         jpxCCykrkM1QDVeYAjXI173urdb+58NPBWLTLEO5Pz1MbSEeRB9S6yQ2ySIQQ/yq7Y/J
-         4AxNuLFo2kKv6WV5fpJWgWzRFSK3brUMrwC+KQHFSHngNzP4syeKmL71OwV5DLrmn+NN
-         hfEHCbi4697f1zdB008F/a4f7AosnFlGZE94aK0HsZkg0lKVv4Prchm+A8nfv7YWC58x
-         mno3k5J+/GiW8opwg3lhoOw+N54wfnguxHmaA7747ylFWiYX+5GYGE4bAgzjTbg/G1qG
-         y9zg==
+        d=gmail.com; s=20230601; t=1761927214; x=1762532014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0sN3X2Xwo6rgocUEV/FIBQzOQxPvDntamogTA2IKqR4=;
+        b=D6dQgcF9lny/vFokxaWJdICvY0QTb4NTgCdgveyuLz5ugCUWpa2Ho0+fyFA8w8Q4pJ
+         9pUPdx1224oqIqfxmEhAVonZbpasRW+xqdY0OPKE4bEEvLnpo6mdnGdaFuAn4KHDQzdW
+         PBxzRwRhwRKa46di9YTZKOu9fawaorTpO3Yr+MnWAUZfJ/YV33TVVrdoS107siSl7Ut0
+         xUa1bD7tgRIPrFw4aOy+1ht65SicGSMou3HeBL0BX8ewQroAVETC8Mjxfh8lxuj1X4UF
+         wUFrEFhSj1qOkbbP8ZI4Tx+6MvYT9cbsWIlMOtLg1xyhRsh/tEAi0r2qLQj05Pj+S/IN
+         rgOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761927209; x=1762532009;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2xkF6zKonfubE7Gp45g4295GunQ1O6+736QRxZvvn1w=;
-        b=iDqwKFHHA/3BiVmhAvzJB5HbPWsuBKYoOusjE//keqwq+xZdQMmC9wSSnI4fdy0sKN
-         Nk4ZGsfIM1CDVf9jOzzx7OL3Qqht6qxeYXjgswXgaOryiHRn1cV7/bdRDRd7PebMn+/4
-         s1NnPR4V0UDBZkwPDm56i/aqey1EmtTHPSNRBrR4WZwnZZlUrICyp64pHz+q6Wysckx5
-         re2mS5BBRFo2NgDvCfXHuiahMIZhtclMHjXqiGLGf2nar83usXhIzDwqYekwKymP+jgv
-         JIt2M3ALqzDs8XXSZTTcHkPcNZ6G5oJPrHjo8+jjPPr0BidtMTDuVWkeEx/JJsR61PMY
-         DY1Q==
-X-Gm-Message-State: AOJu0YxhJ4lJZBFEHTjy5fD9phpjZqj9LB2qv0Ak0xBNVh6GSgbGKsRe
-	0+3Md+rDoI+E77fJDkRGatQj6zWf7Cdo/0dVR1iRZzFmW9YMyv1e8qs9KyyrJVJnikVrFIO6+uK
-	SKdsXPTG+ntSDvPqCMP+6uJuksm8h2FI2RgjsTWo=
-X-Gm-Gg: ASbGncsl4e/1yOB6mi96gt31i0iQ/Jvgy3u/rCaPl051vjlzd6Ybz/u4QuAlIZWPGhh
-	QarpSGzE6r5RY4z9RdGAmsjEMugGisE/7bk9wGX9a09+q/TvS794poXTzm/TUOyankEcJrvQ9sn
-	B/g2xYnazDcjBXyxynZtTf2XnThgvRZ7izTs03u1daCye0G5T/FfiACpZnwrg2+9DEydxtJl35v
-	JQahHsGt2Wr80jb1NPiD3mfI4WN+RM1zlDFrRoUjg/WWRiFWT6eePdk6TOARkfm1wwE26YSZa19
-	uwdEbTi4ejSB4TPWgwzhkHPfQywwwhua+w2qwekXY5OnRIy7sxSpzBI44xSOZ/AmxaneOsYgZXV
-	xhp46tA9E7USPKUrnQPemMs/nA0tUwlVRVKzFzVnnjqH0AJsW1TXjVtvFjk6a+FO0Z/SyAil/mZ
-	wh46Ebvh248g==
-X-Google-Smtp-Source: AGHT+IE52OHr9noC3oLJ1WckJWhHadkdiT7DbUmXmXtxox11pJWlk5r6sZIzlJMLBkAH7DXTCdcA9fcO7XZllyQdAeQ=
-X-Received: by 2002:a05:6214:20ac:b0:880:415d:a9ff with SMTP id
- 6a1803df08f44-880415dacc8mr18734106d6.37.1761927209173; Fri, 31 Oct 2025
- 09:13:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761927214; x=1762532014;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0sN3X2Xwo6rgocUEV/FIBQzOQxPvDntamogTA2IKqR4=;
+        b=iz1GnooVXRv4y+aPvYrzSRdD5xvyIAuUnxSPHV8tZGkO8qmVTM3raM6ypi2fZm3X1z
+         IECPAo8VUlIqzDZnqWv4wv1g7GSR0xGPMGnRfnTrloUMUTyips7ugVQ/H0uzlCpD8zut
+         KMUq2c3l/bV5PNKT7OnoWGYQ41qtQeZMAm1wyruiEWa3O5wcTb1FFGZbGMqm450BtP5W
+         z5rSmfBlcxW3CQtKVy+PAS0uGzbp2X+FihU+vWF2leYviXD4sHYLFQsFRg2pS+6wB3rc
+         RrnplXHDC+qgf/4HKEsEx9nKIWY6Sw5FFKvThFWfqQ6XvuP4rvMckJ4pdZOd++zjpYKk
+         v2CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDivXrFiOkv3Zx6qM4fGRR0IMy7YRJInfkbYboR4iUM8JFrfOzXq/VC4PAl54lS2nvUJWMw6y/OW6QLgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe95z4W0YXhIlAgFWcfUjmsAKNOOCwTLYeNTn4JQmjnJ31V8Rz
+	7ZFeVn7GXeL/24GAxG5M6vxelhdJxoc4RsHAXziDWYcICJSvTYJjhulE
+X-Gm-Gg: ASbGncvxyqFKGDQVkpjgM6eVQMg17izAzhjBenjCyu4IKBKkAYz5u3MVVuN8Sx8DRKt
+	be2JU1DL28TPAPnmW4Ef42QTJ5HixvvM3itQIMdWtGf/UojDpln7uoRgGuDV+kaqB/HIxpXuW+G
+	n8WYKhe7alxFdP7Z0hjCS/EEsQaIx2w/2fsC8EdbQxHZcl5ETfR3n1tOTPxsZXfsHv+M6iJquag
+	sCWLM0tAIZpU73A/o1zs+TZQuVaI4vx7HvBdqPGmfb8XurFbO9isqyT7kbAeHEAKNBpBnwwhLMn
+	0aiPmLrK/SEzfWjNSaXxFjc1CAmoiL6WFaUhAIokGS3HHfs1yfin4A2DbjKpKkg7T+8W8lPwRgO
+	okBF/yGZVCCtWW1qUwf3oHV4AIbySc4zGP079sBCj+M2xXCgYKEJCnjhtaI6krOE8Grqgyx7fGQ
+	YKJYOVuyAqbk1AfszLon5qaKzTcmK5ZK46qbf82l23BzFvFv54XNOC
+X-Google-Smtp-Source: AGHT+IHVP72QSGXFkR2pGkrGQk5WvUtITPWOK+QFA8hZ2bNsTY9AyXA5gNFkfS4+KdvMg01Jb8B6bA==
+X-Received: by 2002:a05:600c:a0b:b0:476:57b4:72b6 with SMTP id 5b1f17b1804b1-477305a6db5mr44531025e9.8.1761927213600;
+        Fri, 31 Oct 2025 09:13:33 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13f2b5asm4250397f8f.40.2025.10.31.09.13.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 09:13:33 -0700 (PDT)
+Date: Fri, 31 Oct 2025 16:13:31 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jyoti Bhayana
+ <jbhayana@google.com>, Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2()
+ with ilog2()
+Message-ID: <20251031161331.0f0ef347@pumpkin>
+In-Reply-To: <aQSw7V7tYjBOtJ7k@smile.fi.intel.com>
+References: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
+	<20251031094336.6f352b4f@pumpkin>
+	<aQSHVsWGXzigTEMe@smile.fi.intel.com>
+	<20251031124530.3db7805b@pumpkin>
+	<aQSw7V7tYjBOtJ7k@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 31 Oct 2025 11:13:15 -0500
-X-Gm-Features: AWmQ_blIddoJEuR4b-Bb6q2Sqpv8Ry0bX3Y62WreUtUF4tvYBQPX1WS7N1E64rg
-Message-ID: <CAH2r5mvmJJAp1AX2Sda3ungmu7hcaYje2NYS6YtngC4F67PHeA@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the following changes since commit
-dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
+On Fri, 31 Oct 2025 14:51:57 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-  Linux 6.18-rc3 (2025-10-26 15:59:49 -0700)
+> On Fri, Oct 31, 2025 at 12:45:30PM +0000, David Laight wrote:
+> > On Fri, 31 Oct 2025 11:54:30 +0200
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote: =20
+> > > On Fri, Oct 31, 2025 at 09:43:36AM +0000, David Laight wrote: =20
+> > > > On Fri, 31 Oct 2025 08:45:00 +0100
+> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:   =20
+>=20
+> ...
+>=20
+> > > > >  		tstamp_scale =3D sensor->sensor_info->tstamp_scale +
+> > > > > -			       const_ilog2(NSEC_PER_SEC) / const_ilog2(10);
+> > > > > +			       ilog2(NSEC_PER_SEC) / ilog2(10);   =20
+> > > >=20
+> > > > Is that just a strange way of writing 9 ?   =20
+> > >=20
+> > > Why? It's correct way of writing log=C2=B9=E2=81=B0(NSEC_PER_SEC), th=
+e problem here is that
+> > > "i" people do not think about :-) =20
+> >=20
+> > Even without the "i" the division could easily give 8.999999.
+> > So you'd be relying on rounding to get the required integral value.
+> >  =20
+> > > But we have intlog10(), I completely forgot about it. =20
+> >=20
+> > And it isn't the function the code is looking for.
+> > (The result is shifted left 24 and it doesn't have an optimisation
+> > for constants.) =20
+>=20
+> Do you have an idea how to improve that?
 
-are available in the Git repository at:
+Not sure I'd want to get cpp to generate a high-precision log.
+It if definitely doable, but will be a mind-blowing mess.
+(and I'm not sure how many MB the expanded line would be).
+An ilog10() would be easier (probably looking like const_ilog2()).
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.18-rc3-smb-client-fixes
+But for this code just use '+ 9' and add a suitable comment :-)
 
-for you to fetch changes up to 895ad6f7083b0c9f1902b23b84136298a492cbeb:
-
-  smb: client: call smbd_destroy() in the same splace as
-kernel_sock_shutdown()/sock_release() (2025-10-29 20:13:13 -0500)
-
-----------------------------------------------------------------
-Four smb client fixes
-- Fix potential UAF in statfs
-- DFS fix for expired referrals
-- Fix minor modinfo typo
-- small improvement to reconnect for smbdirect
-----------------------------------------------------------------
-Henrique Carvalho (1):
-      smb: client: fix potential cfid UAF in smb2_query_info_compound
-
-Paulo Alcantara (1):
-      smb: client: handle lack of IPC in dfs_cache_refresh()
-
-Stefan Metzmacher (1):
-      smb: client: call smbd_destroy() in the same splace as
-kernel_sock_shutdown()/sock_release()
-
-Steve French (1):
-      cifs: fix typo in enable_gcm_256 module parameter
-
- fs/smb/client/cifsfs.c    |  2 +-
- fs/smb/client/cifsproto.h |  2 ++
- fs/smb/client/connect.c   | 46 ++++++++++++++++-----------------------
- fs/smb/client/dfs_cache.c | 55 ++++++++++++++++++++++++++++++++++++++++-------
- fs/smb/client/smb2ops.c   |  3 ++-
- 5 files changed, 71 insertions(+), 37 deletions(-)
+	David
 
 
--- 
-Thanks,
-
-Steve
 
