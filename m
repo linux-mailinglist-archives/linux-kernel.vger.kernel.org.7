@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-880295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92AEC255CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:54:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47088C255D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:55:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61714341777
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 229E1420677
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9948534A3A9;
-	Fri, 31 Oct 2025 13:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9D6341AD8;
+	Fri, 31 Oct 2025 13:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhZ485Fl"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cob1Qxz3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8734A341AD8
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E6D3431F0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761918886; cv=none; b=OEMaYwUwR8X6I0OHuly3XbB/R8fuUkvdUV/7HhEBIhIWHsxBQQCBpuO/9Q+8YyTEWLbKBrOIA6sHc9h5n9Kvo5I5oaC3qOJXXjqX11ExYRgooe2poJk8bfzDVQlvEcKv7GC5jq3YT0cFI4iVqncUbdnFT/2o8pguay+SPAFSJ/I=
+	t=1761918935; cv=none; b=ANsAQRmYS+e3QSaB3kmpzhdXtorZIRKR6sEn5nEK44vFnAYLxDHMmghppwFiAtWom2xGOcFUdoPrFmQO/mZgikiGx/8t7M94XhdzrohIDKJ5DEfEGAVLMWQtwRcTN4UeszcFDdo0c/aGVFmMyMmzKp6Ipof5reuOeyIjjG1uC5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761918886; c=relaxed/simple;
-	bh=FN2tQDX/wwLUC2mxidAL9H47bLyAFnJDpvPQlovcMVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y298vvqfsU2AhntK9tNSYd+hlZo5qQu/zNPm+pKtk6r41s2bK00Pdqet0+zo3j7uxX7fMH4M0Ge1kon3u0I+bg8CchnPRCOkzUMDuVq//zqIRMJspuIfJlAzyxiCHhzvAxDbCV2rruyQoyf5jDsd5TXvUzQmzbf0OBxgSkGUxq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhZ485Fl; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-433100c59dcso3407705ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761918883; x=1762523683; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AIC+1h53umAhjFDxKUylX2ye8sI922EhJMx+ZKGKkKc=;
-        b=MhZ485FldR4fdphq5CwcNTKUjce80RrhTYv9anz8BBd1mRJU6MDV3kgsPWxuPJpOWi
-         7gpAq2SMnB16Oy/k12k6RFZ8G9VDlXVO5E7+OBTdvnSDzUmmtI9GVFYZOq87AGS6U4tm
-         Cz5BLDVbO9pUyw5bvYMq5YYg7tyh6QVabOajjWMG8f0I0ZAw9EYQ0jBLuNkcPPJt61/K
-         pxj4I9VAa6oLxkhAwCBBblp8mTfz9i2EpB+WnZXKVqdTpyoQNT/38sbvKh2A3QZOmUBZ
-         43YOWpVHwZHoZLgMADE/nNWm8YnCx9BMZijhaa/o10DCewwIRX5HI8nyRLm0OXQ6ZqKY
-         8hAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761918883; x=1762523683;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AIC+1h53umAhjFDxKUylX2ye8sI922EhJMx+ZKGKkKc=;
-        b=Sp+Y2+zE9/Qn6VbcXaDb2waLxNzaWi2eE3sKkABeVN5h77AgszmVmX2pKyREMTCuR0
-         qEQiclDxKck9WI70J/zchcsQ9h9oWaz2QTsQdepUV1Ujefwr2xsyHPldrHa7g36wYrlS
-         ggKe8KfRuAZ+uQcIf/EzqlG6iB8XaK7/s/MgiuirUxZCsZUgMF9UrlHU7nnl4LrcLgS6
-         X/5PiPsjZWcplLSo/BOnoDrjGvrLoXlXwsZkwlrecPHwK7CmXLVmmr8qPgN13tehs8WJ
-         JxJFiDwxDa1NArUcK/NF2YBC8SYyXLPLLCg6/SSbwv3OzZjY2lZe7zrvEMGObK4h9vAw
-         pSvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8dsDd2jf4KDk7PKnugmssgqKa1A+eJ3+7yu9OePErTAoFYC/h+A/Kcn4C/8ElF9N070kfErQqMt/4f+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVa7y+wTgOh2GtPZKRyZKQGGqpu84s/QsrbQIE05pvePqVAA0d
-	Q0g7gnfqN22QvgKNcg/xeu9Sag/1R1hca+bmhrRqujj4HAxA9XEsToNB
-X-Gm-Gg: ASbGncuycK/klp3DdGzhByoNqqKDlPbBHPpTTe1na7Eqe6Oo66qCYbDpDWrebEorpSe
-	d62Yt5qsdo4hAHoQv4WU6cIR+zj7g71/so6Y9zJbi22KdMSYtCGCEaUCIBR6OpkP0mYOVJvDHLB
-	+mdOrRdU0TeMVEktfcldFCYfxRkJFgvXMvFuE2fCIENOWBnDDD+k0eJVGZLKGmB1uz8SMWUqA7N
-	7pZsw2wGMRvu/CO+Lvo9GwdfHYZcXyzv8XcrZi8IKHdz0rx/TCL9TQqxXt5OnJx6z8qw3u36L42
-	arL4U/oYffMRRlbYeWwvN6nyWk498XCzN+nb/cbuQc/Fn0V/ScQcrvlRFrnoGU8XvhjHTr7Yz5K
-	cTTUggYowuFDeA9DqzXIUTFT5TezIEzQ+EQYMZ/D4rRZBJgjJFiMJCFu06B/whHggS82MHsw=
-X-Google-Smtp-Source: AGHT+IHCzKlOoNPt0LzvrQC5mz1ulgeoDbMFZSeqzUEOGflwrunfIy79QuN9s2TzFHch5oRbAD1Y3A==
-X-Received: by 2002:a92:cd8c:0:b0:432:fd5c:df03 with SMTP id e9e14a558f8ab-4330d1eb232mr49401325ab.24.1761918883467;
-        Fri, 31 Oct 2025 06:54:43 -0700 (PDT)
-Received: from arch-box ([2607:fea8:54de:2200::c98d])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b6a34b63dfsm721718173.16.2025.10.31.06.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 06:54:43 -0700 (PDT)
-Date: Fri, 31 Oct 2025 09:54:41 -0400
-From: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-To: Heming Zhao <heming.zhao@suse.com>
-Cc: Ahmet Eray Karadag <eraykrdg1@gmail.com>, mark@fasheh.com,
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
-	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
- during read
-Message-ID: <aQS_oUDXGt_nF__d@arch-box>
-References: <20251029225748.11361-2-eraykrdg1@gmail.com>
- <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
- <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
- <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
- <aQQ0DLqL0iVN7D15@arch-box>
- <leys5guzkcvlilaccjmsw7cvncm6o2vqo2wwezhuz7r6lcfjnk@va3cnphl4zf3>
+	s=arc-20240116; t=1761918935; c=relaxed/simple;
+	bh=v3VvIeq1kalKsC6WM5dMlVLengQEPJKTqscmAdyMeYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXz7JoqJ7zA5Xgrdcx8FVt0SkwhEU2okCN3u4zkuqSz3NDm96zps1smQsorXjY4Jm2Y6XWxyOITGED86uc5PKst3MzZfXgA+BNtT7hghyshNv/u8sTlRPyTMTXeIyQ9+J86a8Qg8ZJ/06iIbtehc8DxlTULxOx4HcAIlLB8pfIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cob1Qxz3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D9DC4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761918935;
+	bh=v3VvIeq1kalKsC6WM5dMlVLengQEPJKTqscmAdyMeYc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Cob1Qxz39lpi2xIg4Mj3s4Gz1VcIl4/pAX6C8duKOD5RssUYSdDtdhPKHSrnAoIu5
+	 dg26ILKtrkjhcG9IlQZGPYX/7SPzrnpItbS1qq0f4A7M3CEYli+ALSHlnQTIBCZcPy
+	 oylytXG4+riabH80DYVVETBVMeFyC8nDH1J465jqDAw5CKhjPCLesGcQhpjWDiGaYY
+	 AjlcLU7PrLvxyIqS+tNN9x+b9Ic4V+rP/Va6RQbiyTiDOWTQU95xqxTmWNRXc4Pp7p
+	 HxXA6ZDu+VZhIRqPg1ssftD/pqD/aqCWIGRtoqmQvr/kMtxlRzRDtFjl3RJX5UvfMY
+	 OjfBevp9hlmfA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57f0aa38aadso3320693e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:55:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGZ727ReZhSXKQQChhbQx3cZY1wcByljXXoC7ZhiegwTCzZWqCYfM+z4sFlVkTeEJZWhQDd7UE2eJJK2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXvan8+bI8V+vrq0uxmwIDoPsswCGTenQcTRMuNBNPRTcc0pTh
+	Aiz32Qk4QpWfPy16k6Xg92c4K16DislRTdz0PNxLusV5t6i0gIHuhtQNNUS4xvpLlW1AnIevYs0
+	y7EXfcmNlNkq6gkTkQ3D79pIPmDqKexo=
+X-Google-Smtp-Source: AGHT+IG1bte6snjK1s3dK2Umz9uoYmGqVGgRP20JEm9bJQ/H77GL9ShEJSh/fhD2EeRJZGQNy75zI3xS5uaxX1JUBlE=
+X-Received: by 2002:a05:6512:1247:b0:592:f601:641c with SMTP id
+ 2adb3069b0e04-5941d51804amr1532755e87.13.1761918933518; Fri, 31 Oct 2025
+ 06:55:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <leys5guzkcvlilaccjmsw7cvncm6o2vqo2wwezhuz7r6lcfjnk@va3cnphl4zf3>
+References: <20251031103858.529530-23-ardb+git@google.com> <20251031103858.529530-39-ardb+git@google.com>
+ <20251031135235.000007cb@huawei.com>
+In-Reply-To: <20251031135235.000007cb@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 31 Oct 2025 14:55:22 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXH+3F7qeYEtOYmNFyLgkuAQ9N6UZBf69CmQde7AiRY-6g@mail.gmail.com>
+X-Gm-Features: AWmQ_bmr9chj-sk4Yy6yeLAmYJTGZ-449jqdx9KPPiSXON9Geeejeh87JQ5JRaE
+Message-ID: <CAMj1kXH+3F7qeYEtOYmNFyLgkuAQ9N6UZBf69CmQde7AiRY-6g@mail.gmail.com>
+Subject: Re: [PATCH v4 16/21] crypto/arm64: sm3 - Switch to 'ksimd' scoped
+ guard API
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, ebiggers@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Heming,
+On Fri, 31 Oct 2025 at 14:52, Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
+>
+> On Fri, 31 Oct 2025 11:39:15 +0100
+> Ard Biesheuvel <ardb+git@google.com> wrote:
+>
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Switch to the more abstract 'scoped_ksimd()' API, which will be modified
+> > in a future patch to transparently allocate a kernel mode FP/SIMD state
+> > buffer on the stack, so that kernel mode FP/SIMD code remains
+> > preemptible in principe, but without the memory overhead that adds 528
+> > bytes to the size of struct task_struct.
+> >
+> > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> Hi Ard,
+>
+> Trivial comment inline.
+>
+> > ---
+> >  arch/arm64/crypto/sm3-ce-glue.c   | 15 ++++++++-------
+> >  arch/arm64/crypto/sm3-neon-glue.c | 16 ++++++----------
+> >  2 files changed, 14 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/arch/arm64/crypto/sm3-ce-glue.c b/arch/arm64/crypto/sm3-ce-glue.c
+> > index eac6f5fa0abe..24c1fcfae072 100644
+> > --- a/arch/arm64/crypto/sm3-ce-glue.c
+> > +++ b/arch/arm64/crypto/sm3-ce-glue.c
+> > @@ -5,7 +5,6 @@
+> >   * Copyright (C) 2018 Linaro Ltd <ard.biesheuvel@linaro.org>
+> >   */
+> >
+> > -#include <asm/neon.h>
+> >  #include <crypto/internal/hash.h>
+> >  #include <crypto/sm3.h>
+> >  #include <crypto/sm3_base.h>
+> > @@ -13,6 +12,8 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/module.h>
+> >
+> > +#include <asm/simd.h>
+> > +
+> >  MODULE_DESCRIPTION("SM3 secure hash using ARMv8 Crypto Extensions");
+> >  MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
+> >  MODULE_LICENSE("GPL v2");
+> > @@ -25,18 +26,18 @@ static int sm3_ce_update(struct shash_desc *desc, const u8 *data,
+> >  {
+> >       int remain;
+> >
+> > -     kernel_neon_begin();
+> > -     remain = sm3_base_do_update_blocks(desc, data, len, sm3_ce_transform);
+> > -     kernel_neon_end();
+> > +     scoped_ksimd() {
+>
+> Why does this get brackets unlike other cases?
+>
 
-> I support adding make_bad_inode() in ocfs2_read_inode_block_full().
-> ocfs2_read_locked_inode() calls ocfs2_read_inode_block[_full] to read the inode
-> from disk. However, ocfs2_read_inode_block[_full] have many callers, and in
-> current code, only ocfs2_read_locked_inode() marks the inode as bad. All others
-> forget to set the bad_inode.
-> 
-> The 'forbid' write operations when read-only mode is worth another patch, and
-> I plan to create this patch. This patch adds a similar ext4_emergency_state()
-> function for ocfs2.
-
-We're working on this as part of the Linux Kernel Mentorship Program, and we'd
-love to take on implementing the read-only check if it's not overly
-complicated. We're just beginners, but we thought it would be a great learning
-experience to work on this following the ext4 pattern you mentioned - if you
-haven't already started working on it by the time you see this reply.
-
-> Therefore, your original patch looks good to me. I will provide my Reivewed-by
-> for it.
-
-Thank you so much for your review and the Reviewed-by tag
-
-Cheers,
-	Albin
+No reason other than the fact that some time passed between writing
+the other patches and these ones, and there is no functional
+difference.
 
