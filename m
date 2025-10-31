@@ -1,205 +1,253 @@
-Return-Path: <linux-kernel+bounces-879380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E87C22FA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:23:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DBFC22FB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 428924EF108
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:22:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C95874ECCE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7412765D7;
-	Fri, 31 Oct 2025 02:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F34278E41;
+	Fri, 31 Oct 2025 02:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+gUeQ4p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PKrqk3wj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+gUeQ4p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PKrqk3wj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ODaJ2JG9"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AF0274671
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E5520C463
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761877366; cv=none; b=igD3zTvnUyv3FryeJkUL4eFti/DEHyvM58idV8HHNJ3yBninmSP6k36sFY7F7Yorw6pViW1aenFJHIqTKHlHpsm6Zpgzm9VAM1ljiBnFZoeqNej1IDhoYFzztFsVf5Xo0wqevwSTaCM5Rb2lloM78jYS/H6/iZOkPMaMHJY+OhI=
+	t=1761877504; cv=none; b=Sh63pk6yKQ6GoZpkNh+vYA/uaKVAzRdhZLwbzFIkekwkvSd67nAWjtEvhQm7FR/FPfkK+/SZXVS3clRAirn6XuVyFEIFYW0k1RKtkxh9LxpP0vPKEqCBoBXudtsTrsEBLnscqhpJC9++SKTX1bpKfah27WFrWNxX1/yjoqvNpow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761877366; c=relaxed/simple;
-	bh=bHsOlf7qIydtN72kxsF4rT5fn6daemX/TsZ3MB8Tg5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AainOKCBLxmRUGcYkC0vxX6eEvJ1nFzif27vWUSnFJghw9aJNZEKdOv4G8rGbe7etuO+Qi9HfU9sQSyVw3AGx1WfZOqmRPdTtGkhKPQv4vAl5Jx8+3TBIuyFE9jIymvdMIualrIMoBcRb3L6pr5oBqripOgdtkT0QtdYhmNUXTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+gUeQ4p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PKrqk3wj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+gUeQ4p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PKrqk3wj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AA90E1F6E6;
-	Fri, 31 Oct 2025 02:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761877362;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1761877504; c=relaxed/simple;
+	bh=a0/Aw9rdJRh6TCw+ET1ntS2tFV2UR6oax8kPz5yEtOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YdLDfVk6szQ5KN/ngx/ji63LvpbWXoc+rUXMHLrFa7BYA7z1aCP19WcRasB8+2n0OrGqxbk6AfYQqJJ2HlQBAxdZa8HlXogp8lr97aEoR/0seBguo93AypN2AyZvLD5nwk7TLjDeYam83/4MZn00qQ9pTd7wvNOqXvuJLXwaEQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ODaJ2JG9; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3f706533-6dac-4aff-b71b-65dfc9c0a45f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761877497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=43cEOJYw/wdVi981J29tNB+K+2NPTIjDRN8cGyySw1g=;
-	b=L+gUeQ4pQFc7ZQ+FSh4uGm7/IvN9wJYLdf4O+pmYV4MpiN6uWocm51JKJz7iWswWnCAbts
-	CIuXQl7byj4ONjO96Wzy8hqUQcf0A28+9Xa4N5hcCRlJLQm5zPuIXx43kfVx1TzqUCfyhV
-	XstASkA66aOPL8n5WFTEdAIgnn9vvS8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761877362;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=43cEOJYw/wdVi981J29tNB+K+2NPTIjDRN8cGyySw1g=;
-	b=PKrqk3wjWLIT4ZEfhqx3aN6JWH0LXM1Ptr78WYJ+uDDeA9EsH+VF0vc6Ez5qT2HUsBughL
-	k9Kh/7YMTEu9WkDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761877362;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=43cEOJYw/wdVi981J29tNB+K+2NPTIjDRN8cGyySw1g=;
-	b=L+gUeQ4pQFc7ZQ+FSh4uGm7/IvN9wJYLdf4O+pmYV4MpiN6uWocm51JKJz7iWswWnCAbts
-	CIuXQl7byj4ONjO96Wzy8hqUQcf0A28+9Xa4N5hcCRlJLQm5zPuIXx43kfVx1TzqUCfyhV
-	XstASkA66aOPL8n5WFTEdAIgnn9vvS8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761877362;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=43cEOJYw/wdVi981J29tNB+K+2NPTIjDRN8cGyySw1g=;
-	b=PKrqk3wjWLIT4ZEfhqx3aN6JWH0LXM1Ptr78WYJ+uDDeA9EsH+VF0vc6Ez5qT2HUsBughL
-	k9Kh/7YMTEu9WkDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A6B6134B3;
-	Fri, 31 Oct 2025 02:22:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qsivHXIdBGlFSgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 31 Oct 2025 02:22:42 +0000
-Date: Fri, 31 Oct 2025 03:22:41 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
-Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
-	johannes.thumshirn@wdc.com, fdmanana@suse.com, boris@bur.io,
-	wqu@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] btrfs: define and apply the AUTO_K(V)FREE_PTR
- macros
-Message-ID: <20251031022241.GE13846@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20251024102143.236665-1-mssola@mssola.com>
+	bh=9zXpaf1PUl+ks+7sZWUmsZnpMNh1FxPUUYlNyCCH1AY=;
+	b=ODaJ2JG9/pcH7xJnRc/fb8LZUtMg79iLyQ4vIW8DPiTOAW17Ei7eBT9rLg5xTH0YAblp6b
+	Fl5rIbLihEqpt9BUXftwnCvAsM4IX/mK7nm49nJhFWfaI3ktN4hfRRHGoZ9LGl0a8PeIM9
+	scN71ObN38ZzZ5yUDkrXOXE+gu7Fgx4=
+Date: Fri, 31 Oct 2025 10:24:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Subject: Re: [PATCH v4 15/24] smb: move FILE_SYSTEM_POSIX_INFO to
+ common/smb1pdu.h
+To: Steve French <smfrench@gmail.com>, =?UTF-8?Q?Ralph_B=C3=B6hme?=
+ <slow@samba.org>
+Cc: sfrench@samba.org, linkinjeon@kernel.org, linkinjeon@samba.org,
+ christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251027072206.3468578-1-chenxiaosong.chenxiaosong@linux.dev>
+ <a0d97e2d-91f5-448c-883c-4d0930375f82@linux.dev>
+ <CAH2r5mtHXDuKUSvZ5TZU1f6WnQaH5Dz59=z29ABJsOYmric+1Q@mail.gmail.com>
+ <CAH2r5muwP4uyELKDNrRGU+8YgwNurb1+jQb+5CYOcU74LZhj3w@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <CAH2r5muwP4uyELKDNrRGU+8YgwNurb1+jQb+5CYOcU74LZhj3w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251024102143.236665-1-mssola@mssola.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 24, 2025 at 12:21:39PM +0200, Miquel Sabaté Solà wrote:
-> Changes since v1:
->   - Remove the _PTR suffix
->   - Rename the ipath cleanup function to inode_fs_paths, so it's more
->     explicit on the type.
->   - Improve git message in patch 1.
-> 
-> This patchset introduces and applies throughout the btrfs tree two new
-> macros: AUTO_KFREE and AUTO_KVFREE. Each macro defines a pointer,
-> initializes it to NULL, and sets the kfree/kvfree cleanup attribute. It was
-> suggested by David Sterba in the review of a patch that I submitted here
-> [1].
-> 
-> I have not applied these macros blindly through the tree, but only when
-> using a cleanup attribute actually made things easier for
-> maintainers/developers, and didn't obfuscate things like lifetimes of
-> objects on a given function. So, I've mostly avoided applying this when:
-> 
-> - The object was being re-allocated in the middle of the function
->   (e.g. object re-allocation in a loop).
-> - The ownership of the object was transferred between functions.
-> - The value of a given object might depend on functions returning ERR_PTR()
->   et al.
-> - The cleanup section of a function was a bunch of labels with different
->   exit paths with non-trivial cleanup code (or code that depended on things
->   to go on a specific order).
-> 
-> To come up with this patchset I have glanced through the tree in order to
-> find where and how kfree()/kvfree() were being used, and while doing so I
-> have submitted [2], [3] and [4] separately as they were fixing memory
-> related issues. All in all, this patchset can be divided in three parts:
-> 
-> 1. Patch 1: transforms free_ipath() to be defined via DEFINE_FREE(), which
->    will be useful in order to further simplify some code in patch 3.
-> 2. Patch 2 and 3: define and use the two macros.
-> 3. Patch 4: removing some unneeded kfree() calls from qgroup.c as they were
->    not needed. Since these occurrences weren't memory bugs, and it was a
->    somewhat simple patch, I've refrained from sending this separately as I
->    did in [2], [3] and [4]; but I'll gladly do it if you think it's better
->    for the review.
-> 
-> Note that after these changes some 'return' statements could be made more
-> explicit, and I've also written an explicit 'return 0' whenever it would
-> make more explicit the "happy" path for a given branch, or whenever a 'ret'
-> variable could be avoided that way.
-> 
-> Last, checkpatch.pl script doesn't seem to like patches 2 and 3; but so far
-> it looks like false positives to me. But of course I might just be wrong :)
-> 
-> [1] https://lore.kernel.org/all/20250922103442.GM5333@twin.jikos.cz/
-> [2] https://lore.kernel.org/all/20250925184139.403156-1-mssola@mssola.com/
-> [3] https://lore.kernel.org/all/20250930130452.297576-1-mssola@mssola.com/
-> [4] https://lore.kernel.org/all/20251008121859.440161-1-mssola@mssola.com/
-> 
-> Miquel Sabaté Solà (4):
->   btrfs: declare free_ipath() via DEFINE_FREE()
->   btrfs: define the AUTO_K(V)FREE helper macros
->   btrfs: apply the AUTO_K(V)FREE macros throughout the tree
->   btrfs: add ASSERTs on prealloc in qgroup functions
+Got it, thank you for your answer.
 
-Thanks, patches now added to for-next with some minor adjustments. Feel
-free to send more conversions, there are still some kvfree candidate
-calls. I think we would not mind using it even for the short functions
-(re what's mentioned in the 3rd patch), so it's established as a common
-coding pattern. This change has net negative effect on lines and also
-simplifies the control flow.
+Thanks,
+ChenXiaoSong.
+
+åœ¨ 2025/10/31 09:53, Steve French å†™é“:
+> Sorry forgot to attach the link
+> 
+> https://gitlab.com/samba-team/smb3-posix-spec
+> 
+> On Thu, Oct 30, 2025 at 8:53â€¯PM Steve French <smfrench@gmail.com> wrote:
+>>
+>> Ralph,
+>> Is this link current? or do you have the link to a more current
+>> version of the POSIX extensions documentation?
+>>
+>> On Thu, Oct 30, 2025 at 8:42â€¯PM ChenXiaoSong
+>> <chenxiaosong.chenxiaosong@linux.dev> wrote:
+>>>
+>>> Hi Namjae and Steve,
+>>>
+>>> I couldnâ€™t find the definition of FILE_SYSTEM_POSIX_INFO in any of the
+>>> following MS documents:
+>>>
+>>>     - MS-FSCC:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-fscc%2Ftoc.json
+>>>     - MS-CIFS:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-cifs%2Ftoc.json
+>>>     - MS-SMB:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb%2Ftoc.json
+>>>     - MS-SMB2:
+>>> https://learn.microsoft.com/pdf?url=https%3A%2F%2Flearn.microsoft.com%2Fen-us%2Fopenspecs%2Fwindows_protocols%2Fms-smb2%2Ftoc.json
+>>>
+>>> Is this structure defined in other MS document?
+>>>
+>>> On 10/27/25 3:21 PM, chenxiaosong.chenxiaosong@linux.dev wrote:
+>>>> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>>>
+>>>> Rename "struct filesystem_posix_info" to "FILE_SYSTEM_POSIX_INFO",
+>>>> then move duplicate definitions to common header file.
+>>>>
+>>>> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>>> ---
+>>>>    fs/smb/client/cifspdu.h    | 22 ----------------------
+>>>>    fs/smb/common/smb1pdu.h    | 23 +++++++++++++++++++++++
+>>>>    fs/smb/server/smb2pdu.c    |  4 ++--
+>>>>    fs/smb/server/smb_common.h | 23 -----------------------
+>>>>    4 files changed, 25 insertions(+), 47 deletions(-)
+>>>>
+>>>> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
+>>>> index d106c6850807..55aaae6dbc86 100644
+>>>> --- a/fs/smb/client/cifspdu.h
+>>>> +++ b/fs/smb/client/cifspdu.h
+>>>> @@ -1875,28 +1875,6 @@ typedef struct {
+>>>>
+>>>>    #define CIFS_POSIX_EXTENSIONS           0x00000010 /* support for new QFSInfo */
+>>>>
+>>>> -typedef struct {
+>>>> -     /* For undefined recommended transfer size return -1 in that field */
+>>>> -     __le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+>>>> -     __le32 BlockSize;
+>>>> -    /* The next three fields are in terms of the block size.
+>>>> -     (above). If block size is unknown, 4096 would be a
+>>>> -     reasonable block size for a server to report.
+>>>> -     Note that returning the blocks/blocksavail removes need
+>>>> -     to make a second call (to QFSInfo level 0x103 to get this info.
+>>>> -     UserBlockAvail is typically less than or equal to BlocksAvail,
+>>>> -     if no distinction is made return the same value in each */
+>>>> -     __le64 TotalBlocks;
+>>>> -     __le64 BlocksAvail;       /* bfree */
+>>>> -     __le64 UserBlocksAvail;   /* bavail */
+>>>> -    /* For undefined Node fields or FSID return -1 */
+>>>> -     __le64 TotalFileNodes;
+>>>> -     __le64 FreeFileNodes;
+>>>> -     __le64 FileSysIdentifier;   /* fsid */
+>>>> -     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+>>>> -     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+>>>> -} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
+>>>> -
+>>>>    /* DeviceType Flags */
+>>>>    #define FILE_DEVICE_CD_ROM              0x00000002
+>>>>    #define FILE_DEVICE_CD_ROM_FILE_SYSTEM  0x00000003
+>>>> diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
+>>>> index 82331a8f70e8..38b9c091baab 100644
+>>>> --- a/fs/smb/common/smb1pdu.h
+>>>> +++ b/fs/smb/common/smb1pdu.h
+>>>> @@ -327,6 +327,29 @@ typedef struct {
+>>>>        __le32 BytesPerSector;
+>>>>    } __packed FILE_SYSTEM_INFO;        /* size info, level 0x103 */
+>>>>
+>>>> +typedef struct {
+>>>> +     /* For undefined recommended transfer size return -1 in that field */
+>>>> +     __le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+>>>> +     __le32 BlockSize;
+>>>> +     /* The next three fields are in terms of the block size.
+>>>> +      * (above). If block size is unknown, 4096 would be a
+>>>> +      * reasonable block size for a server to report.
+>>>> +      * Note that returning the blocks/blocksavail removes need
+>>>> +      * to make a second call (to QFSInfo level 0x103 to get this info.
+>>>> +      * UserBlockAvail is typically less than or equal to BlocksAvail,
+>>>> +      * if no distinction is made return the same value in each
+>>>> +      */
+>>>> +     __le64 TotalBlocks;
+>>>> +     __le64 BlocksAvail;       /* bfree */
+>>>> +     __le64 UserBlocksAvail;   /* bavail */
+>>>> +     /* For undefined Node fields or FSID return -1 */
+>>>> +     __le64 TotalFileNodes;
+>>>> +     __le64 FreeFileNodes;
+>>>> +     __le64 FileSysIdentifier;   /* fsid */
+>>>> +     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+>>>> +     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+>>>> +} __packed FILE_SYSTEM_POSIX_INFO;
+>>>> +
+>>>>    /* See MS-CIFS 2.2.8.2.5 */
+>>>>    typedef struct {
+>>>>        __le32 DeviceType;
+>>>> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+>>>> index 47fab72a3588..dc0f0ed4ccb6 100644
+>>>> --- a/fs/smb/server/smb2pdu.c
+>>>> +++ b/fs/smb/server/smb2pdu.c
+>>>> @@ -5633,14 +5633,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+>>>>        }
+>>>>        case FS_POSIX_INFORMATION:
+>>>>        {
+>>>> -             struct filesystem_posix_info *info;
+>>>> +             FILE_SYSTEM_POSIX_INFO *info;
+>>>>
+>>>>                if (!work->tcon->posix_extensions) {
+>>>>                        pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
+>>>>                        path_put(&path);
+>>>>                        return -EOPNOTSUPP;
+>>>>                } else {
+>>>> -                     info = (struct filesystem_posix_info *)(rsp->Buffer);
+>>>> +                     info = (FILE_SYSTEM_POSIX_INFO *)(rsp->Buffer);
+>>>>                        info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
+>>>>                        info->BlockSize = cpu_to_le32(stfs.f_bsize);
+>>>>                        info->TotalBlocks = cpu_to_le64(stfs.f_blocks);
+>>>> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+>>>> index 6141ca8f7e1c..61048568f4c7 100644
+>>>> --- a/fs/smb/server/smb_common.h
+>>>> +++ b/fs/smb/server/smb_common.h
+>>>> @@ -108,29 +108,6 @@ struct file_id_both_directory_info {
+>>>>        char FileName[];
+>>>>    } __packed;
+>>>>
+>>>> -struct filesystem_posix_info {
+>>>> -     /* For undefined recommended transfer size return -1 in that field */
+>>>> -     __le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
+>>>> -     __le32 BlockSize;
+>>>> -     /* The next three fields are in terms of the block size.
+>>>> -      * (above). If block size is unknown, 4096 would be a
+>>>> -      * reasonable block size for a server to report.
+>>>> -      * Note that returning the blocks/blocksavail removes need
+>>>> -      * to make a second call (to QFSInfo level 0x103 to get this info.
+>>>> -      * UserBlockAvail is typically less than or equal to BlocksAvail,
+>>>> -      * if no distinction is made return the same value in each
+>>>> -      */
+>>>> -     __le64 TotalBlocks;
+>>>> -     __le64 BlocksAvail;       /* bfree */
+>>>> -     __le64 UserBlocksAvail;   /* bavail */
+>>>> -     /* For undefined Node fields or FSID return -1 */
+>>>> -     __le64 TotalFileNodes;
+>>>> -     __le64 FreeFileNodes;
+>>>> -     __le64 FileSysIdentifier;   /* fsid */
+>>>> -     /* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
+>>>> -     /* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
+>>>> -} __packed;
+>>>> -
+>>>>    struct smb_version_ops {
+>>>>        u16 (*get_cmd_val)(struct ksmbd_work *swork);
+>>>>        int (*init_rsp_hdr)(struct ksmbd_work *swork);
+>>>
+>>
+>>
+>> --
+>> Thanks,
+>>
+>> Steve
+> 
+> 
+> 
+
 
