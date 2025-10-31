@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-880662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D5AC26469
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:05:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79618C26478
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325511A622D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFDA1A62E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9675830147F;
-	Fri, 31 Oct 2025 17:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD41303A34;
+	Fri, 31 Oct 2025 17:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jIhAsJrC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R0I0SIb2"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E45B2FF151;
-	Fri, 31 Oct 2025 17:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E278B2FE593
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761930261; cv=none; b=tp6sP/GbB9cqye91dc9ZEjfQPfAlfGuGWHy/hDtdEe4/R1MUEebjuSPO9pnDN+b1XVBCUI8lAT+r6uupUwXFzUdNuBb1Mix3119OfBLEr1K79IToZFz/IxaYoPLaCfOpD7ikeaZBKzATxnKf8JtRlnGPCxFiwBQt2IU+LCQTdTs=
+	t=1761930369; cv=none; b=fK1rjw/udkyJc97VgIFefOuOM3eWd6XRPP/356WU0RODEc+jiJ82q3Df/NZ/1NlRxTfkijT6xT982xIA+IuUiqOY50ztzdEfMX+AUS5lszxRqiQSDuuCMD9h/9zpWinfnDQAB/DKsH0hjWMNEDFox72L4XKoMWU8lGeNt2p+EFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761930261; c=relaxed/simple;
-	bh=F+5PVGmLUwXSUWqKEBQQB6UrH6a6KaeXy7dXRxWGRTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I3Khsp80cufBoU1wUqPueH2Tj/TUBBzDSKSTuOZLg6tl9TbTHl6pzuy22FeE88C+nS71j6+CUc0j/i2afj1AXtZGWrmg3xPBP/ZkZ0kiK3YHCJomo0nbq0GXQEakwQuse9E8wSJP/T16oRmpICREft+2dWcVUBjUf4awgnI3ejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jIhAsJrC; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761930259; x=1793466259;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=F+5PVGmLUwXSUWqKEBQQB6UrH6a6KaeXy7dXRxWGRTs=;
-  b=jIhAsJrCI0FOTYtXiHO5RbC1wcEP42wXCA+7WkFBaqYJJmfW5DHdCLPm
-   X4lUUAX31sMwoPQUpDw36qJFTQi4LCUfoxj44Uap1jKauleToAOszu4l4
-   2QC3clEkaYvUS0fqDK9qS6IQoHBHfDX/TNWKMQ7MnO7SOQMX/7AV3ZHrd
-   ZVuCoF9IOhcEbZ2/aFuGyPjqZMdSrTazVHxk3B39Hwx7Dxxu4ePgdH2lq
-   JYKMkJboKHlMngRlNdL7fjNdGduFdQkikSw3yC5Rj7HM5xa9jhzJjMot9
-   LoejMlQFtEgBPdWulbQIpoWix4VM7T9guwuVYmeY/kGPefFhylAYmt8T6
-   g==;
-X-CSE-ConnectionGUID: YMCBL8AOQ2Ge8GmFc+fZjw==
-X-CSE-MsgGUID: wVxNDRDYQYOVBPb36cmuEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63299639"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="63299639"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:04:19 -0700
-X-CSE-ConnectionGUID: K8ZNi2QrQBqrXD62sasFLg==
-X-CSE-MsgGUID: l/21U0N6RXu+reEo984Jpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="217121840"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.52]) ([10.125.110.52])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:04:17 -0700
-Message-ID: <55e59172-59a0-4cb5-b322-a7a7edf3f7ea@intel.com>
-Date: Fri, 31 Oct 2025 10:04:17 -0700
+	s=arc-20240116; t=1761930369; c=relaxed/simple;
+	bh=3zO6hJh3fZZRnhxmcHqGuW4F0oTnh1zP5aEQTYDADeU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=iKTtzk5cMgd8XoRC01bqIQADHF4zAFykx30PIHMOzur6I5bzvh5ruQcomqlc/2D2zHfhNiMVCaw6R1XdY9SYatEt3BlhIz/JIVBkUVHA6DXZyutZZEGWODHux5WgFiyyzBT33Vha/D+z2aYsOVpuskQcU0yPmLJDsKkk5bQPfMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R0I0SIb2; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-93e8839f138so269268539f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761930366; x=1762535166; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L7rkGekV8xK6fIdrAf10YJdw8xerhp0arb9+9f1J3v4=;
+        b=R0I0SIb27ZQzuq6qJ+2HtZe1nvq34AfW3Dt5vlqaad9wiz75EMA8yLb6bpH/M7rGpv
+         wfbaP5aP6P4e3eX94vJ67EVUgWgtuPTubSKYyh+S7xL7ivcEJnbAJHffn1aRQv5dj+He
+         2Wr2+oJekKCg4eR0pB19LfXDBebbSnBmgKn8qwxOx7z2oBIH0ViKITY+NQ/pDi3/VPmJ
+         FR8GIpjqTSErVbUXDAtDcbgcFH62eGs9EZ6GvtbSKbhNv+Qeq4hYtph9Mk6hpF8KB/6P
+         qH06olGdZ3X1GiXek2aHn47zjSjjGj2/Zyr0f2atrg2Xv4re4+iE+lM7IF/S8/PwI0io
+         1Row==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761930366; x=1762535166;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L7rkGekV8xK6fIdrAf10YJdw8xerhp0arb9+9f1J3v4=;
+        b=uGMo/q4SgjE8Z9Wi4tyhJZ1MA4lqc+Dr9KI6XIsdwiS8qI4FBzFaXv3ZsSbPXO99vy
+         +oAK4j/zVKe1aDV3iWFqMtzyrSbvR3vutSI87TBvLyZT2y4OfBNTCfmvvzsWfnXR9rFs
+         UgI/pE6ANtOKsPznLo5E69Jt97CgLl1Bk2o1R9Wl3l6XDfchpVeBWTfS40YDuL2Docuo
+         ekYIbIK7ccUIeDiASBxXfQL0n4fX6a5RKQ+y0yXMawHrjttjVX6QjFZDiCeNctn/1nTg
+         2M3Q1n2oGzF7BzDLk6UB6L3Q7ftcrwfsznYSAZmyq4ewNM2PJDzqdv6vodHMazM9HTh2
+         osDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlT8ubHyJgE3gbSwZ3R5iZWPHqORaLUwKwwS2tS4/DGyUozCT4d0Kc18iQGIaFkEDYPr2er/fE00pEfW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVvB86AZopEX4s/PGMzS3aZhkUt0o/+dV7F4WSo7hkhvhPI41S
+	E3OqLj130kOEH4OiNy57weKBSW7iggWRiXP/NhFYUd8UNkeaWRHBqQXt7Sx1fkkpaMjH+Oy1q70
+	m1E1iHodvWg==
+X-Google-Smtp-Source: AGHT+IGPppdgWImmiqMllVHuCL0LVBd1POfNbnkt1XP6pw+qeSasvHMVbc9KRJdiIi1IyT4HZNv81Doi6WQl
+X-Received: from ior5.prod.google.com ([2002:a05:6602:a005:b0:948:1a37:3c2b])
+ (user=rananta job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:6c13:b0:945:afe6:4bfe
+ with SMTP id ca18e2360f4ac-9482287e91bmr722109939f.4.1761930365863; Fri, 31
+ Oct 2025 10:06:05 -0700 (PDT)
+Date: Fri, 31 Oct 2025 17:06:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/9] x86/cpu: Add an LASS dependency on SMAP
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, "H . Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>,
- "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
- David Woodhouse <dwmw@amazon.co.uk>, Sean Christopherson
- <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Vegard Nossum <vegard.nossum@oracle.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Randy Dunlap <rdunlap@infradead.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-efi@vger.kernel.org
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-3-sohil.mehta@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251029210310.1155449-3-sohil.mehta@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251031170603.2260022-1-rananta@google.com>
+Subject: [PATCH v2 0/2] vfio: Fixes in iommufd vfio token handling
+From: Raghavendra Rao Ananta <rananta@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Alex Williamson <alex@shazbot.org>, 
+	Alex Williamson <alex.williamson@redhat.com>, Longfang Liu <liulongfang@huawei.com>, 
+	David Matlack <dmatlack@google.com>
+Cc: Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Raghavendra Rao Ananta <rananta@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/29/25 14:03, Sohil Mehta wrote:
-> So, make LASS depend on SMAP to conveniently reuse the existing AC bit
-> toggling already in place.
+Hello,
 
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+The series includes a couple of bug fixes that were accidentally
+introduced as a part of VFIO's vf_token management for iommufd.
+
+Patch-1: Fixes ksize arg while copying user struct in
+vfio_df_ioctl_bind_iommufd.
+
+Patch-2: Adds missing .match_token_uuid callback in
+hisi_acc_vfio_pci_migrn_ops.
+
+Thank you.
+Raghavendra
+
+Raghavendra Rao Ananta (2):
+  vfio: Fix ksize arg while copying user struct in
+    vfio_df_ioctl_bind_iommufd()
+  hisi_acc_vfio_pci: Add .match_token_uuid callback in
+    hisi_acc_vfio_pci_migrn_ops
+
+ drivers/vfio/device_cdev.c                     | 2 +-
+ drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.51.1.930.gacf6e81ea2-goog
+
 
