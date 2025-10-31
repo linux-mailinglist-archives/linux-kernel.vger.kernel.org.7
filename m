@@ -1,130 +1,77 @@
-Return-Path: <linux-kernel+bounces-879321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FBDC22D64
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DF9C22D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:04:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BCB84E8ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:02:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BED04E4D2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFCE217F29;
-	Fri, 31 Oct 2025 01:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QXkx2rja"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C8C21D3EE;
+	Fri, 31 Oct 2025 01:04:42 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7DB7261B;
-	Fri, 31 Oct 2025 01:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9AE20298D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761872572; cv=none; b=Cb1hgXwt0WKIv1lGt0Hn29XThsxhFks48FWIKi0FCibLjmIo8F5t84Pl1R8TZ4G4pU3UFlRwCBCqy3TkH6lWdrzfK36p/5ftgEj70vjIEHFBw3Ymk1qsq+Eh0UPuwxvMhtThEVok3JkDIiMSkX60sqCV6NHVdCN1xdUbToh5/P4=
+	t=1761872682; cv=none; b=Pg7jn7ke1BWe26s2Gs0mtMOY/sDUX8CZGsjNRgtwVERpb3GuNuynmRo1/vIjkfrBIiYPXJSVgrAMpiML2lFQuZdfpOMhI+pnxjAAWo/ZbtqtzutF+W0zur9nD1bxrxeTcQqriPgEf0q7V6veEwdAlUwVuCVtTahO93b2rh1rTYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761872572; c=relaxed/simple;
-	bh=EaYGUuCrSTMZmYoLx79I7S+/tp36oNKqy/fQx7wgpu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P/c7jfRiRLGFSB8Z9aNi02mm6b/rTpGMMdW94+9xOg69fRHkAYyxpvLpUQy9PlMZTt9JPFaXskc61dBZzwA88w5TnIQxumsxoJs4LqaG4+MKLJKPit928TVnmdq+Tmvkv/AUbku6SxVo8CtLVWcgPTu/oBNDsWrMdk6zwDqjSck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QXkx2rja; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761872565;
-	bh=P6cBC3miHiRhrWN0nClOrPmei8K9laNqw58pRuAvIQ8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QXkx2rja/fOX2tf14hrOqrmOr8QlPTfcUwNgVs9GbqxhVYYDJjCROow03vvTrn5cL
-	 BsV38B9f4cwK+9JOV3ewhXRIrYDtc8cC8et9BZcCgtAvy1842b9preC2qNGU8bGTva
-	 cOJ55ENySvnJMPk7KP9ub4pEg5JClIs5P7KehPAWHvhIBHNMMBsmA7mWuXUOEVqa3k
-	 XheGjlPDIA3RYsR2/XIwHFxgfcGqN24GJaBkMxz2lXofvGGyeGwV2yVYIRtdubbDjU
-	 ep5fNMovwktWIjm6r4qVoUy+/BgdUy5HBENmEIHwAPTew3ei48d7PrbIJhq+ziiAdX
-	 EzLCR0lteaxSQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyN4h3HQkz4wM9;
-	Fri, 31 Oct 2025 12:02:44 +1100 (AEDT)
-Date: Fri, 31 Oct 2025 12:02:43 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20251031120243.4394e6a8@canb.auug.org.au>
+	s=arc-20240116; t=1761872682; c=relaxed/simple;
+	bh=M71T/ZJ+3xq/7S9fMBH541aTzoNX8hQXml3aB8Tq6G8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tX9lyWEWySPkRGRAE61qkyY57MHG65JBw/ZIPWsIeqKy9qjSkUK2ZIscvQ39ZXlay4C+4STEZL3MHUUlJ7ZIaFiqs+QCYRW0cP4eg15Dcbmg/qjHRWHHnRgGuSvoMKKmo1RBDNC0n3hKAHRAb267QulJBrRZYi1TB4Xg2S34Vw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-431d3a4db56so57758085ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:04:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761872679; x=1762477479;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M71T/ZJ+3xq/7S9fMBH541aTzoNX8hQXml3aB8Tq6G8=;
+        b=utpIZr6iclUxz/GW3Fe0a1OUTvKo4rnqllpKO4QCOWQmcjIuH9qbNEH7ppGnFlYCHv
+         aefHw3fbVgK6xxOy9crNrYbl92mBjfhwDpKFZNUVANVuzipGxS6vUYaSmlrpNVQZf3yn
+         np0E0DbsQK6PIBeE5tH2+p/GWPiWiXmVIqcaazHmVdZZk710k5zeBkq94dKqb6W4cgqD
+         4OCFtRJAegAFhpQ5NqWPk/wz5xl9hYuiHcUODlvvJYHz0z2u2HCeoX5X/krgrdibSc4Y
+         MMG+54L64OBoGbfxKv1QhH/IG3RfvanAmcL8ycAon801mXTPovJLNX7i8ZRfS/nCVAD3
+         IeQw==
+X-Gm-Message-State: AOJu0YxBnOgz9P0pxDL64TI4TGQtcvWCUg29HMNw3UqyN6MZIvNw2Mkb
+	sYe8w0NmxQ265UohkK++xI6aO9nhla0j8X/8y3W+twFDRdUVMY6wK+KT5MWXZLVKiru/7rzrslG
+	HhmOpUnNKIAjMSAtGpzK/TkUJjqN2IXWNcfuJfaFdENs0VPL+dOXIiS9t5is=
+X-Google-Smtp-Source: AGHT+IFJsHISLrNktGAKLZiMWowDS1hkypeDQn1BV6tW+TCnwUZCxg8wKxPaePqJ5SEkq2S74Si9hSzospHVwDaQA5Cm6aZQQzuB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6e02:1a28:b0:430:a14f:314c with SMTP id
+ e9e14a558f8ab-4330d121e2cmr26381185ab.7.1761872679339; Thu, 30 Oct 2025
+ 18:04:39 -0700 (PDT)
+Date: Thu, 30 Oct 2025 18:04:39 -0700
+In-Reply-To: <6889adf3.050a0220.5d226.0002.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69040b27.050a0220.32483.0232.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook
+ (9)
+From: syzbot <syzbot+78ac1e46d2966eb70fda@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Hi all,
+***
 
-After merging the tip tree, today's linux-next build (arm64 defconfig)
-failed like this:
+Subject: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook (9)
+Author: phil@nwl.cc
 
-arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mode':
-arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration of func=
-tion 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mode_prep=
-are'? [-Wimplicit-function-declaration]
-  103 |         exit_to_user_mode_prepare(regs);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-      |         arch_exit_to_user_mode_prepare
-In file included from arch/arm64/include/asm/current.h:5,
-                 from include/linux/sched.h:12,
-                 from include/linux/context_tracking.h:5,
-                 from include/linux/irq-entry-common.h:5,
-                 from kernel/entry/common.c:3:
-kernel/entry/common.c: In function 'exit_to_user_mode_loop':
-kernel/entry/common.c:77:29: error: implicit declaration of function 'rseq_=
-exit_to_user_mode_restart'; did you mean 'arch_exit_to_user_mode_prepare'? =
-[-Wimplicit-function-declaration]
-   77 |                 if (likely(!rseq_exit_to_user_mode_restart(regs, ti=
-_work)))
-      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/compiler.h:76:45: note: in definition of macro 'likely'
-   76 | # define likely(x)      __builtin_expect(!!(x), 1)
-      |                                             ^
-
-Caused by commit
-
-  d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
-
-and maybe following ones.
-
-I have reverted these commits for today:
-
-  69c8e3d16105 ("rseq: Switch to TIF_RSEQ if supported")
-  1b3dd1c538a8 ("rseq: Split up rseq_exit_to_user_mode()")
-  d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkECrMACgkQAVBC80lX
-0Gwwowf9G+TYFuh8UaO6aiMJW/SD95CEcVRWtw714ILsgy9L9JjLfrkiA77/ueMP
-mnDu8fMPazGhYT20HdVgt8jia61x9AkSq10+Ej5HTA75wrUdSOpKaIYGII5sfQyE
-2cAizM37SbW0sh58PBAB9Q+57LNocW3xrH4eyDTnfu3hRUuSu8IYNikSPVsW6csq
-MTGLY/ogiuymcO2B3tskd4ogeFB6dZNVYj/3iIqagOMSW2wUinMz6TA/SQf3+sZQ
-7fIl6XVXBKnqx5UqmwavO0oBkU6je9Nlz0sVa46Pr6EO7MF7Pad4vbClGRZGcbEX
-dwL2eFM+7Qv7s+L/l+gmtGgfY+nqSg==
-=E7QS
------END PGP SIGNATURE-----
-
---Sig_/Lf.HXFi9Zfz3kbPC6eoQVfE--
+#syz test
 
