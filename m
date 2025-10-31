@@ -1,124 +1,233 @@
-Return-Path: <linux-kernel+bounces-879486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48293C2339E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:59:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA382C233AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:01:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D6D3BBB3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DFE3A4A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E25028A1CC;
-	Fri, 31 Oct 2025 03:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7202299AAC;
+	Fri, 31 Oct 2025 04:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdyCPWMy"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMvOi8eh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C4512CDBE
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE96F50F;
+	Fri, 31 Oct 2025 04:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761883154; cv=none; b=rH+NanZQcnanOwu2CT/NziylqQrqPZf95OG/gtU30mnk7LQaxSgDAd7CaPevW7i/vSOaGaNjpn1ogm6G7qc7S1BKWGbJEGhvXfcjphIvpNbLFLeOCvlMf38xVhsGTcdTBSIrD5ORiKD/JkMWflpZVVwDGP2fKyhWxA2TP4S7Yag=
+	t=1761883263; cv=none; b=qFeShJ321aDvi3QhgBQxvJ0GSwkylvWiTz3u2YrhkKGrVgoqVgnSk0psfOKrwRvMMobMX1xuxBDy9x7ZPgh1sB2B5K3By7y7HO4mLdJLA/0qgHqp4L0nMLxZveNC5VEmwuG1SPtBHCBoyWnvnFUr5jNCFAdbO+MWfNjGRpy2nps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761883154; c=relaxed/simple;
-	bh=K463F0WgtQayvGVKq8pk4vbCuftR3MqSiQYta790Raw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfC3SdIsQ6Jd67yj2mUDK3i9Z3Mt8tN0ecWutMp7jCNGdPNPhomSUuvS+qAG8p7R8Bp4/Xmhx829B3dTAF7lLom2OoXdT+VukZ/DIxnQ4a8snBtFi6G/B32dIOYZBIFn4qshHzJfu8R80Q9AaTY6fDw0HybqVIBweb35MtkvySc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdyCPWMy; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-940dbb1e343so119770839f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:59:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761883151; x=1762487951; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVzgaw4KSyg5cjdxONzSMPRVaLN7EB7muCaP1M+QOZ4=;
-        b=HdyCPWMyIC0bdculZNN/fTB5pavIsK/OL+pdDV6BP43ELgyXXMjnIyOK+EhDvMsfgd
-         ZX1B5Gjvazmzb9g6LLhxWy0kwMbG7qEMVI66zg4kUVRx8bEQZW0Hf4LA2TVHIWlVw/Fh
-         A/uJ39QbrcRqxIzLwzgoOFcC+EZ+8Kp6TyUElkU+wdNf7oQICVmQspa3TfSgpQEX1ES1
-         uFfMWZFi6NM4PVLxizZSa7/PSwjPadlA/8DkWotEqudZqEaVIa56aSSxWhvkoPx3s36k
-         aF7gDidj1nUwhLzFciTnFqlDEYCSC4AIqp8G752PwUOEKpswjQf5whfcYaBVUl0pZrAj
-         iELw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761883151; x=1762487951;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CVzgaw4KSyg5cjdxONzSMPRVaLN7EB7muCaP1M+QOZ4=;
-        b=B5T3Ipo5kcTl0AETpc8shRCFvHovXvl+ZkDrFdlFgCQ14IKOS0eifj8plJWHCrTWgV
-         KQ5H0fa0A7HM+aXCFNHkGggt92QoYu7aArY2tDqUn1mVttXIHTd3EZpueQff2V7Op/6s
-         3Wdgyi4ezY+NZ+nnyRUxG6roHcMxiFMRyuh1iJYwQUF6unz13b+XjGX2Z1yt28qexEtf
-         GrMLcUvbSZr+SJrDFo2SZQnMFW5j1fpkDeZg8F9J0zMawNCCvR03curn94p6BHmWlyBw
-         oimMWcz8dv3SAepBydLNqUe7ChrRhIBlSaPdpsT5wW2inEIQ5vYSdLbKwzOrtpztYEOS
-         R1zA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfUs1hVex5Mxeoh9XrgK0qeQbkZ7eesJApAUhMUsgS5rHQls46929k8pp3u2XjnDVf360L+yis4fGzq5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyLSuZfjYQXp5Nge6Rf0opahNpbj3OAYw68HX44qaxYO/52r0L
-	tcu/nK9nE1sE9vPKNLN4bUflkJozvjGUyTet4sBNRoAXYweVJAkVoBGI
-X-Gm-Gg: ASbGnctUci6DPcTw/+8MO+/UZlyAZ77QAjxrDj3amdwNuIJM2cqy8losrCvI71cgwEh
-	+qOHwNHI6p13tBK18l/bS1llqQS7ViJCjFtXh46k+wm0Zw+Rc5TNi/edSkaMYEYvHKttk8GCzt6
-	5i1TS5hU7ogGY+cc7OvirGRUHZ8QOTtDKpbWjAbTwTbjcEguDBdWQKP0gvYTg4XI0OWn/5iT35r
-	Wen0Sz9xLQcJlohrcQ4QVgb9bhzbBBkwLfE9cHsv0oOijSPs7qG04smb5kVBetPrVfgLU+j/+0B
-	Z4rMY2wyxJ6LjgmmLFuy7xQIsLSX23mAhYqTPmX6r5zl6Jqoks01oi9gkM0tRaaeEo0w49tkhvg
-	glzYnFfdEI26COOp5LQ9RHLdLH8vrsVUGCzQSMEfZQKBUKbaUEI45Ku80+v98zqAolfeMm7E=
-X-Google-Smtp-Source: AGHT+IG4begvpcbVwzfsZabnnFSMeIq+HmErPXe/nObkhvCU/XUbrqj72iI4aGEGSEYIIOWKCkdzuA==
-X-Received: by 2002:a05:6e02:1aab:b0:42f:a4d7:ebac with SMTP id e9e14a558f8ab-4330bd94293mr37773685ab.4.1761883151459;
-        Thu, 30 Oct 2025 20:59:11 -0700 (PDT)
-Received: from arch-box ([2607:fea8:54de:2200::c98d])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43310322c59sm2341965ab.20.2025.10.30.20.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 20:59:10 -0700 (PDT)
-Date: Thu, 30 Oct 2025 23:59:08 -0400
-From: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-To: Heming Zhao <heming.zhao@suse.com>
-Cc: Ahmet Eray Karadag <eraykrdg1@gmail.com>, mark@fasheh.com,
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
-	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Subject: Re: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure
- during read
-Message-ID: <aQQ0DLqL0iVN7D15@arch-box>
-References: <20251029225748.11361-2-eraykrdg1@gmail.com>
- <wzykonhpj76qowdn24inwtaji4zfclesmc3lqnnc7cn6jkyjl4@oauagnarupov>
- <CAHxJ8O_7-PfJRyGp9-1KOkwmYJWQDzCvvo_P-jxzbzHoqXyH9Q@mail.gmail.com>
- <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
+	s=arc-20240116; t=1761883263; c=relaxed/simple;
+	bh=OY8xTeGL0F4AxIWU4k4qDONZ/b2HpjqhvNdcy2uziXk=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=kVf5y1Xt82ZhvG4Wizh3e/C/UZoSJM/MqBHS9wvk9XWzu7B7B8PiakSX3v9CNUS6jtra7BQIfjGQPcfCus/WNw+1qlK+AqszKBuJPZ4lYk83b3Wve6FCDjx27HryVwzyHjnjCX4ET/wF58EDO0nW8+2KZjsozMQkKx+sq7QJ6Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMvOi8eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46920C4CEE7;
+	Fri, 31 Oct 2025 04:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761883262;
+	bh=OY8xTeGL0F4AxIWU4k4qDONZ/b2HpjqhvNdcy2uziXk=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=cMvOi8ehMKhVC55R/LsNdKmbGa7lDvRsZ0m9MVOFVDHbuy00i5a62/FkQpJhHoyHq
+	 msx9Gp1grVDpOQcDlmNAlyVhX2hWBdB/M69Tog0ESczAOaIj5QYFm6hbtooYPz3M80
+	 wD3/Q2YlaiAhRvnVwI8at/sFi1FsQ9O8k0/MmEXi2ONqxu+7iy903m2fzP4asSNmo0
+	 fMH0FEbgzx77xk5LsXDD8ofOEA2RgUpOUL5dcKLFNG8WKobCLv91Ut54mS8rvoz+w3
+	 i6d/vSfA3Pu9ovyu8eShtfu+6ayZVKjEYAE6GKJWH00fJiq5gVXFL/Q1QLfUHa8jCG
+	 A7f9v51rRy2YQ==
+Content-Type: multipart/mixed; boundary="===============8639568991618062134=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <qfizhbe5rwzddwnoekr6xjy3gozbqbtl64c5xmfeuudxvficmv@onazesxv4ur6>
+Message-Id: <554b5b314ffd7eb00be58d5997d44c7c4986895ad28776a87a9d6a2bf1c0765c@mail.kernel.org>
+In-Reply-To: <20251031032627.1414462-2-jianyungao89@gmail.com>
+References: <20251031032627.1414462-2-jianyungao89@gmail.com>
+Subject: Re: [PATCH 1/5] libbpf: Add doxygen documentation for bpf_map_* APIs in bpf.h
+From: bot+bpf-ci@kernel.org
+To: jianyungao89@gmail.com,bpf@vger.kernel.org
+Cc: jianyungao89@gmail.com,andrii@kernel.org,eddyz87@gmail.com,ast@kernel.org,daniel@iogearbox.net,martin.lau@linux.dev,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,linux-kernel@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Fri, 31 Oct 2025 04:01:02 +0000 (UTC)
 
-Hi Heming, Thanks for the feedback.
+--===============8639568991618062134==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-> > I had one question about your proposal to combine this patch with
-> > Albin's [1]. When you mentioned, "We should forbid any write
-> > operations," were you referring to Albin's read-only check in
-> > ocfs2_setattr as the mechanism to "forbid" the operation? Or
-> > were you suggesting we should use the inode size sanity check
-> > itself (e.g., by converting the BUG_ON to an -EIO return)
-> > as that mechanism?
-> > 
-> 
-> The 'forbid' refers to the read-only check in ocfs2_setattr.
-> We can refer to ext4_setattr(), which calls ext4_emergency_state()
-> to forbid write operations.
 
-I just looked at the ext4 implementation you mentioned. When we were working on
-it, I actually referenced how XFS's setattr was handling this because I
-couldn't find the exact ext4 implementation for this at the time, so I wasn't
-sure. From what I understand now, ext4 is doing something similar too.
+```
+commit 4da02b18e2168885350f3935b5ce2f1f52c850ba
+Author: Jianyun Gao <jianyungao89@gmail.com>
 
-If everything looks good, we can combine these two patches and send them as a
-patch series.
+libbpf: Add doxygen documentation for bpf_map_* APIs in bpf.h
 
-Best,
-	Albin
+This commit adds Doxygen documentation for 13 bpf_map_* API functions in
+the libbpf user-space library header.
+
+> diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> index e983a3e40..bcb303d95 100644
+> --- a/tools/lib/bpf/bpf.h
+> +++ b/tools/lib/bpf/bpf.h
+
+[ ... ]
+
+> @@ -151,19 +202,452 @@ struct bpf_btf_load_opts {
+>  LIBBPF_API int bpf_btf_load(const void *btf_data, size_t btf_size,
+>  			    struct bpf_btf_load_opts *opts);
+>
+> +/**
+> + * @brief Update or insert an element in a BPF map.
+> + *
+> + * Attempts to store the value referenced by @p value into the BPF map
+> + * identified by @p fd under the key referenced by @p key. The semantics
+> + * of the operation are controlled by @p flags:
+
+[ ... ]
+
+> + * @return 0 on success; -1 on failure with errno set appropriately.
+> + *
+> + * Possible errno values include (not exhaustive):
+> + *   - E2BIG:      Key or value size exceeds map definition.
+> + *   - EINVAL:     Invalid map fd, flags, or unsupported operation for map type.
+> + *   - EBADF:      @p fd is not a valid BPF map descriptor.
+> + *   - ENOENT:     Key does not exist (with BPF_EXIST).
+> + *   - EEXIST:     Key already exists (with BPF_NOEXIST).
+> + *   - ENOMEM:     Kernel memory allocation failure.
+> + *   - EPERM/EACCES: Insufficient privileges or rejected by security policy.
+> + *   - ENOSPC:     Map at capacity (for maps with a max entries limit).
+> + *
+> + */
+>  LIBBPF_API int bpf_map_update_elem(int fd, const void *key, const void *value,
+>  				   __u64 flags);
+
+Is the documented return value correct? The implementation uses
+libbpf_err_errno() which returns negative errno values directly on
+failure (e.g., -EINVAL, -ENOENT), not -1 with errno set. Looking at
+bpf_map_update_elem() in bpf.c:
+
+  int bpf_map_update_elem(int fd, const void *key, const void *value,
+                          __u64 flags)
+  {
+      ...
+      ret = sys_bpf(BPF_MAP_UPDATE_ELEM, &attr, attr_sz);
+      return libbpf_err_errno(ret);
+  }
+
+And libbpf_err_errno() in libbpf_internal.h:
+
+  static inline int libbpf_err_errno(int ret)
+  {
+      return ret < 0 ? -errno : ret;
+  }
+
+So when syscall() returns -1, libbpf_err_errno() converts this to
+-errno. Should the documentation state "negative error code on failure"
+instead of "-1 on failure with errno set"?
+
+For comparison, the existing batch operation docs in the same file
+correctly document: "@return 0, on success; negative error code,
+otherwise (errno is also set to..."
+
+> +/**
+> + * @brief Look up an element in a BPF map by key.
+
+[ ... ]
+
+> + * @return 0 on success (value populated),
+> + *         -1 on failure with errno set appropriately:
+> + *         - ENOENT: The key does not exist in the map.
+
+The same return value documentation issue appears in
+bpf_map_lookup_elem(). The implementation uses libbpf_err_errno() so it
+returns negative errno, not -1.
+
+> +/**
+> + * @brief Look up (read) a value stored in a BPF map.
+
+[ ... ]
+
+> + * @return 0 on success; -1 on failure with errno set appropriately:
+> + *         - ENOENT: No element with the specified key exists.
+
+Same issue in bpf_map_lookup_elem_flags() - should document negative
+errno return, not -1.
+
+> +/**
+> + * @brief Atomically look up and delete a single element from a BPF map.
+
+[ ... ]
+
+> + * @return 0 on success (value copied and element deleted);
+> + *         -1 on failure with errno set:
+> + *         - ENOENT: Key not found in the map.
+
+Same issue in bpf_map_lookup_and_delete_elem() - returns negative errno.
+
+> +/**
+> + * @brief Atomically look up and delete an element from a BPF map with extra flags.
+
+[ ... ]
+
+> + * @return 0 on success; -1 on failure with errno set:
+> + *         - ENOENT: Key not found.
+
+Same issue in bpf_map_lookup_and_delete_elem_flags().
+
+> +/**
+> + * @brief Delete (remove) a single element from a BPF map.
+
+[ ... ]
+
+> + * @return 0 on success; -1 on failure with errno set appropriately.
+> + *
+> + */
+>  LIBBPF_API int bpf_map_delete_elem(int fd, const void *key);
+
+Same issue in bpf_map_delete_elem().
+
+> +/**
+> + * @brief Delete an element from a BPF map with optional flags.
+
+[ ... ]
+
+> + * @return 0 on success; -1 on failure with errno set:
+> + *         - ENOENT: Key not found.
+
+Same issue in bpf_map_delete_elem_flags().
+
+> +/**
+> + * @brief Iterate over keys in a BPF map by retrieving the key that follows a given key.
+
+[ ... ]
+
+> + * @return 0 on success (next key stored in @p next_key);
+> + *         -1 on failure with errno set:
+> + *           - ENOENT: No further keys (end of iteration) or map is empty (when @p key is NULL).
+
+Same issue in bpf_map_get_next_key().
+
+All eight of these functions consistently return negative errno values
+via libbpf_err_errno(), but the documentation states they return -1 with
+errno set (the traditional C API pattern). This creates inconsistency
+with the existing batch operation documentation and could mislead users
+about proper error handling.
+
+
+```
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+In-Reply-To-Subject: `libbpf: Add doxygen documentation for bpf_map_* APIs in bpf.h`
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18961981609
+
+--===============8639568991618062134==--
 
