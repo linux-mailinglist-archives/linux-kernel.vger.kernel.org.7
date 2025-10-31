@@ -1,130 +1,128 @@
-Return-Path: <linux-kernel+bounces-880962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3EEC270DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BF2C270E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E5A1890E05
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3B41892481
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AB6304972;
-	Fri, 31 Oct 2025 21:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389BD3101C0;
+	Fri, 31 Oct 2025 21:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+RVo2Rc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ouxNdgvn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9WFo/7oR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426382F12B5
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 21:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8433930BF79;
+	Fri, 31 Oct 2025 21:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761946552; cv=none; b=fgV28iUPALpJ1vM91VeOl33v8SdCqf/7eoMJyrNk2Ywf+DICoM/B8iiypSpYndeXKhPJBz0q7V1bq9PzRvZAPZG5I723JErXiKnw2TFYFO+6kI1WD2eMNPEC64jTRha639Se4BBwe/OqXqjd6KuVUejsBUx4xf4k//ptLXdmCNw=
+	t=1761946639; cv=none; b=ASX5DJI2T/KcUm+pdbrB/gYTAFIfJa0zTLHXfzvxWoa+8dm6v18/9H7TQxLIsSW1vc7lIhMae3e5qeISQxz25vzMEz9b9k1sEf/upMwG9j9b3ZqmPtgM71sSWWbAaglX7eB1VG9S9MgRw2Ft4Zh22r3Ft4QZLcvb28QTBrPO2JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761946552; c=relaxed/simple;
-	bh=x6L31CG0svo1i4rtHQe15pm7gZjhLeWBH7Dz36e3EoI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IMzNTO3UFKpYLftIRZDJ2bmXN/QbfDOdAzSKrOgD2bLjJuanVo6UJr3Km2NyMX1I7jow4EWFc3YVnngxCRSjhce+yJkoYEG//Ann3nwtWa0/dEQDzJ4gWmzfwnHNP6sOzf7XhYtFPzkfdOHmaNj1oqfFhtgwN8vz63Dt9nScm1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+RVo2Rc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB70C4CEE7;
-	Fri, 31 Oct 2025 21:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761946551;
-	bh=x6L31CG0svo1i4rtHQe15pm7gZjhLeWBH7Dz36e3EoI=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=c+RVo2RcNbmb7uPQsgrPpFbqrLlRW6C2f25hvUJqpBUr6jXCvlzNSo4HOCu1gRyyu
-	 O2zzKs416AeA2yAYwl8FZSzkSd5dtGnwIUwJAG4P2Y73ArbPI2cBjUBb9Dok7+1oyt
-	 cKqivWnwFsQ+QpwPWAYdJLLIlWitXq2P3LRXNRIYeRxCIS/Ovv2kxZ0DAZZtO0Auyt
-	 DiVTOR3d0+4fxk/5CFjWfwbB7wbLRCNuIy8NsYDAv64vZVx5uIgoEw3/+kh08jePn4
-	 khlz9KVAqrddSZNoqLecb98wiG1fSaxXteeFBi2iP3sKIs6+ZbPAAnAc2JKJTviWc8
-	 7IfEYeUb19nOw==
-Date: Fri, 31 Oct 2025 21:35:49 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2] f2fs: add fadvise tracepoint
-Message-ID: <aQUrtSAXWtHtLhtm@google.com>
-References: <20251028195444.3181203-1-jaegeuk@kernel.org>
+	s=arc-20240116; t=1761946639; c=relaxed/simple;
+	bh=QVR16KIfLQSszHkZDKUW/HCpmS6heSz2hEldpIxegJs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=cvNy7vj/jRuinmhhPT93fAkD1aaucUUfNc0MuYm+LOHWfEwvg1+47RB7G6XWXILVFk9z8RxocG2iCC0hf39sxO2oML/o+S8fl+2vpUoi04z8rNIjwt9jYhHV6sCyBIU5aGMZVVPhI7SVG9U5Eq4TYR6E9Td/qBEWPC86p/MJU4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ouxNdgvn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9WFo/7oR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 31 Oct 2025 21:37:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761946635;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z60cZ4V1QRhSqqkrNsWyT2gTmvf9b/JCSVBJ+ckjfgA=;
+	b=ouxNdgvn1wjjDHgseIqL/frWIc/ZIbsoNT/aXJ8siMDY+GJgfex5sFbmdpmAK7c7fWYE+Q
+	kFZ1GpgAOlgrIGzuctv9PQxovci11FOWRAUZKR2CFAvxD5Co+9WKgyW21/ZNstRJp6GPBn
+	quzFb0+aL+RKua1H/L1Ofi1P8G8Aigxyw/igw/lY6fs1iD6z+F31TNZgpKPD/0YQJCd9Qp
+	EtxUR81Dt0Z3w26F03YcEvAnR6s9xgS8b/PWrmNxK1+CCkwy+pj93Kk6kqSV8SdgR+NWz2
+	AMxOtP9UsY4unNuvhbp7o1qZwW5HjEA+Ay6T5IqT/zpOLEnVGOHdrDZzft810w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761946635;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z60cZ4V1QRhSqqkrNsWyT2gTmvf9b/JCSVBJ+ckjfgA=;
+	b=9WFo/7oRaUysVP+pSP8s4NNsRywUTT7wBjLX4EoTwfG8XuioEi6pSroYXWejKMjs8+/LXY
+	AFhhDpq9OY2+iPBQ==
+From: "tip-bot2 for Muchun Song" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq/proc: Fix race in show_irq_affinity()
+Cc: Muchun Song <songmuchun@bytedance.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20251028090408.76331-1-songmuchun@bytedance.com>
+References: <20251028090408.76331-1-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028195444.3181203-1-jaegeuk@kernel.org>
+Message-ID: <176194662566.2601451.1527641984431803773.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-This adds a tracepoint in the fadvise call path.
+The following commit has been merged into the irq/core branch of tip:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Commit-ID:     9ea2b810d51ae662cc5b5578f9395cb620a34a26
+Gitweb:        https://git.kernel.org/tip/9ea2b810d51ae662cc5b5578f9395cb620a=
+34a26
+Author:        Muchun Song <songmuchun@bytedance.com>
+AuthorDate:    Tue, 28 Oct 2025 17:04:08 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 31 Oct 2025 22:30:05 +01:00
+
+genirq/proc: Fix race in show_irq_affinity()
+
+Reading /proc/irq/N/smp_affinity* races with irq_set_affinity() and
+irq_move_masked_irq(), leading to old or torn output for users.
+
+After a user writes a new CPU mask to /proc/irq/N/affinity*, the syscall
+returns success, yet a subsequent read of the same file immediately returns
+a value different from what was just written.
+
+That's due to a race between show_irq_affinity() and irq_move_masked_irq()
+which lets the read observe a transient, inconsistent affinity mask.
+
+Cure it by guarding the read with irq_desc::lock.
+
+[ tglx: Massaged change log ]
+
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://patch.msgid.link/20251028090408.76331-1-songmuchun@bytedance.com
 ---
+ kernel/irq/proc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- v2 from v1:
-  - use i_size_read()
-
- fs/f2fs/file.c              |  2 ++
- include/trace/events/f2fs.h | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7b966f6d40d2..d7047ca6b98d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5288,6 +5288,8 @@ static int f2fs_file_fadvise(struct file *filp, loff_t offset, loff_t len,
- 	struct inode *inode = file_inode(filp);
- 	int err;
- 
-+	trace_f2fs_fadvise(inode, offset, len, advice);
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index 29c2404..77258ea 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -48,6 +48,8 @@ static int show_irq_affinity(int type, struct seq_file *m)
+ 	struct irq_desc *desc =3D irq_to_desc((long)m->private);
+ 	const struct cpumask *mask;
+=20
++	guard(raw_spinlock_irq)(&desc->lock);
 +
- 	if (advice == POSIX_FADV_SEQUENTIAL) {
- 		if (S_ISFIFO(inode->i_mode))
- 			return -ESPIPE;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index e1fae78d64a5..e00611ead024 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -586,6 +586,38 @@ TRACE_EVENT(f2fs_file_write_iter,
- 		__entry->ret)
- );
- 
-+TRACE_EVENT(f2fs_fadvise,
-+
-+	TP_PROTO(struct inode *inode, loff_t offset, loff_t len, int advice),
-+
-+	TP_ARGS(inode, offset, len, advice),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(loff_t, size)
-+		__field(loff_t,	offset)
-+		__field(loff_t,	len)
-+		__field(int,	advice)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= inode->i_sb->s_dev;
-+		__entry->ino	= inode->i_ino;
-+		__entry->size	= i_size_read(inode);
-+		__entry->offset	= offset;
-+		__entry->len	= len;
-+		__entry->advice	= advice;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, i_size = %lld offset:%llu, len:%llu, advise:%d",
-+		show_dev_ino(__entry),
-+		(unsigned long long)__entry->size,
-+		__entry->offset,
-+		__entry->len,
-+		__entry->advice)
-+);
-+
- TRACE_EVENT(f2fs_map_blocks,
- 	TP_PROTO(struct inode *inode, struct f2fs_map_blocks *map, int flag,
- 		 int ret),
--- 
-2.51.2.997.g839fc31de9-goog
-
+ 	switch (type) {
+ 	case AFFINITY:
+ 	case AFFINITY_LIST:
 
