@@ -1,109 +1,110 @@
-Return-Path: <linux-kernel+bounces-880931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF938C26E47
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:28:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAF3C26E60
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30EF31897D68
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:28:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE6BC4E858B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C68C328B47;
-	Fri, 31 Oct 2025 20:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfcYue1o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050A6328B48;
+	Fri, 31 Oct 2025 20:32:55 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6943F2EB841
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F85217705;
+	Fri, 31 Oct 2025 20:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761942494; cv=none; b=jgwxzXsfOvTgjlY0xgFCXI2Y3/1PQBREMai9UUCCWqO+cemZAgj0PwVa9AGnnxrX6eg5ih+dhB4TRDUV58xSQ++pJEAMZUwT28r6D5VTVRdZeyXW6AyDKWAYb7kmXknnuKFtyp9nxIVQWEkt4BR28oV5Zj6h69Cv/J0X7UNAhxw=
+	t=1761942774; cv=none; b=r0g47GlWgcZzU1J07Y2vmZGlP9/OWLltNMjLyXPjmxooUDi4o8ZWHibmYPfoHkuWf+PH2YM5qcvnrH9qV0yGn9P4g2ljoxJXYjmhFFUt/z0fDC3Q6ilmLWkI2PDLMlCQeQxFfn4DxISy2YV+hIofbMiIOhQSpr0AtRMhN7qFrzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761942494; c=relaxed/simple;
-	bh=AjVeRmIbqZi82dYPjfPgsCsGvHgBizwI8tFFClRS8SM=;
+	s=arc-20240116; t=1761942774; c=relaxed/simple;
+	bh=5LMqHgFEj48Y8DAhiLwwyeUDoOrPGL1b1qdwSp3Rx4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNFVPcZOmt/Rq473V3Y+xKoLAuDLmiODtJceQyKkZS7EYpUnvWTsdjcF58PJkcILS9Smn0Q/lzoP94hDcDK9OdpFf4ogIcK0a58pAroOByTPilY1Knyne44dVEHX6DbPOchlf2NYAW6S1v2YHK6JSVLpYCz58T8GtNGKgTUwccY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfcYue1o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27342C4CEE7;
-	Fri, 31 Oct 2025 20:28:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761942494;
-	bh=AjVeRmIbqZi82dYPjfPgsCsGvHgBizwI8tFFClRS8SM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rfcYue1oQ3uq8YHp8V1iDJCRGvnrd06gOmEOqlGneaK2xJXHaFDCppvFgMZTXqyeU
-	 IOR1iFO16AqKcdQCF1pDx/d4o9macTrIFcAKT0aEJHJL4nG+bq4KR2sJif8BOzWHjg
-	 cIAnpkDSmDBA9zYg33ZIO6f1dfUpwHog7yt9oNZWmwFqKL1FLAEBRvEkbs2RGmyrWc
-	 UT7GZFuxR81naZ4cOrp6da/ToPF5PA83nkBloOFa+Rtz+oXkqqedFSgbbvmc9Q1IxP
-	 zrm1Vav/mHjd5is7c8RRPXU/ICZiJsbC60Tl9HaSTaUXQh7BbBMvOPZPnhXReCxDtg
-	 IVlVSuJKDBfJg==
-Date: Fri, 31 Oct 2025 13:28:11 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, 
-	joe.lawrence@redhat.com
-Subject: Re: [PATCH RESEND] powerpc/tools: drop `-o pipefail` in gcc check
- scripts
-Message-ID: <skcy4n4qyoqklhbs2gjefdyhu7nfgwxkwyamxal33ckv66bxr4@3xradd7kt57e>
-References: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cugRWdtccYa/313e3U0nTNO+qwFzSZfk6PqE+VZwQfUoXjEe74P9LwhbiNn3VA8fjNynA80mPY+NtjlCpdPl1DKbjeQDgb8T6j44/D1skWOcrY+/l8L6nZ4U9De47KHL9lzAb1EMuF5cr9AoWjxRADDX2+L8wRVJtZWul3GbPIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 743D93F4; Fri, 31 Oct 2025 15:32:48 -0500 (CDT)
+Date: Fri, 31 Oct 2025 15:32:48 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: encrypted: Return early on allocation failure and
+ drop goto
+Message-ID: <aQUc8ALBiOhX5twQ@mail.hallyn.com>
+References: <20251029163157.119000-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
+In-Reply-To: <20251029163157.119000-1-thorsten.blum@linux.dev>
 
-On Tue, Sep 23, 2025 at 05:32:16PM +0200, Jan Stancek wrote:
-> We've been observing rare non-deterministic kconfig failures during
-> olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
-> disabled and with it number of other config options that depend on it.
+On Wed, Oct 29, 2025 at 05:31:56PM +0100, Thorsten Blum wrote:
+> Return ERR_PTR(-ENOMEM) immediately if memory allocation fails, instead
+> of using goto and returning a NULL pointer, and remove the now-unused
+> 'out' label.
 > 
-> The reason is that gcc-check-fpatchable-function-entry.sh can fail
-> if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit while
-> there is still someone writing on other side of pipe. `pipefail`
-> propagates that error up to kconfig.
+> At the call site, check 'ascii_buf' with IS_ERR() and propagate the
+> error code returned by datablob_format().
 > 
-> This can be seen for example with:
->   # (set -e; set -o pipefail; yes | grep -q y); echo $?
->   141
-> 
-> or by running the actual check script in loop extensively:
->   ----------------------------- 8< -------------------------------
->   function kconfig()
->   {
->     for i in `seq 1 100`; do
->       arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh \
->         ./scripts/dummy-tools/gcc -mlittle-endian \
->         || { echo "Oops"; exit 1; }
->     done
->   }
-> 
->   for ((i=0; i<$(nproc); i++)); do kconfig & done
->   wait; echo "Done"
->   ----------------------------- >8 -------------------------------
-> 
-> Fixes: 0f71dcfb4aef ("powerpc/ftrace: Add support for -fpatchable-function-entry")
-> Fixes: b71c9ffb1405 ("powerpc: Add arch/powerpc/tools directory")
-> Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Ooh, that is nasty...
+It seems like purely personal preference, but I don't see any
+error in it, so in that sense
 
-The fix looks obviously correct: pipefail isn't needed in these cases
-anyway since an earlier pipe failure (e.g., compile error) would result
-in EOF getting piped to grep, causing it to returning an error
-regardless.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-Reviewed-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
--- 
-Josh
+> ---
+>  security/keys/encrypted-keys/encrypted.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+> index be1f2118447c..25df00b7dbe9 100644
+> --- a/security/keys/encrypted-keys/encrypted.c
+> +++ b/security/keys/encrypted-keys/encrypted.c
+> @@ -276,7 +276,7 @@ static char *datablob_format(struct encrypted_key_payload *epayload,
+>  
+>  	ascii_buf = kmalloc(asciiblob_len + 1, GFP_KERNEL);
+>  	if (!ascii_buf)
+> -		goto out;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	ascii_buf[asciiblob_len] = '\0';
+>  
+> @@ -288,7 +288,6 @@ static char *datablob_format(struct encrypted_key_payload *epayload,
+>  	bufp = &ascii_buf[len];
+>  	for (i = 0; i < (asciiblob_len - len) / 2; i++)
+>  		bufp = hex_byte_pack(bufp, iv[i]);
+> -out:
+>  	return ascii_buf;
+>  }
+>  
+> @@ -932,8 +931,8 @@ static long encrypted_read(const struct key *key, char *buffer,
+>  		goto out;
+>  
+>  	ascii_buf = datablob_format(epayload, asciiblob_len);
+> -	if (!ascii_buf) {
+> -		ret = -ENOMEM;
+> +	if (IS_ERR(ascii_buf)) {
+> +		ret = PTR_ERR(ascii_buf);
+>  		goto out;
+>  	}
+>  
+> -- 
+> 2.51.0
 
