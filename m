@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-879644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71706C23A5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC20C23A68
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC921885652
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31BA81888869
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9993F32E158;
-	Fri, 31 Oct 2025 08:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHGCdJL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1469329C53;
+	Fri, 31 Oct 2025 08:01:18 +0000 (UTC)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33A4303A08;
-	Fri, 31 Oct 2025 08:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FC62236E1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897645; cv=none; b=Ik/LdBRDjroFwRLBdpm8hn7lKjavQSwFtLMFmVjH/cM7rP4SfwTePzShuRCmxx3BZjPMub7eAzLwdXNrdJfAu13i51ViXA+04qndHX6LQ72PErDqm11qEq+PFcLoBPqcPSsgPpYSja3atONQG/p4JXthsAhbXEv5c+ZfdYetpZM=
+	t=1761897678; cv=none; b=ZwJZ2skpt5uZk5QRumjhTSq75yhpr1aFybBpJRwL/obXCxrebPI4Jsh7R/nsxE3mWWPMKs1WMTcHjMJ933DHB0htuDtQ7cW3ae88iilI34ydGH7Ucm1IGgSBbC9y6oveJtI05/xLGTXWJ0sutEZD/tisLO0aTRw+TLN9th7MnOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897645; c=relaxed/simple;
-	bh=YAoJrxrOYGrC8GcptnUVlgLCLdcOtYk2kSlCnDVrfcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CEqx9t4xxgGscm3BraUFM7lG1AIVqtiyhvK4kphRDSnTSwkaKLVX/yxfAatx/O8ULjrcARvdUDJZEAG49DFPZ5WmXEaMqXJY7suQbzT6hLJogBcZodN/kVTpUEnctEyNF3h2uE5d3ufT1Tke7R1vBFNXizUHSJO/+2A2+c7QrPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHGCdJL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA15C4AF09;
-	Fri, 31 Oct 2025 08:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761897644;
-	bh=YAoJrxrOYGrC8GcptnUVlgLCLdcOtYk2kSlCnDVrfcA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JHGCdJL0IQ9p/wa6Z09CgutGo8rgGa/8KHSUO2JtiIrMJMLhZDUmXw7vRT4MwLiYm
-	 na3ON8RTsDkI9orwFJvnFqieqsygPhQ67a/U5bK9RbZLHyZx3eW/o5GmtoZ/eRXq+g
-	 9SjyVS/pZy81D/UD7P6h2/htEXsSXk6q6E7lKW6JJOlKPLcAG86JlcjXvMIo9hkxor
-	 2u8jYeJmwttGKu4NTUPRzJfQTLm38XNz0Cu5JPoO8rRzIPrx5c+Xd0d9GFXNfKdsf4
-	 KQ+tnj2ueM4/6fLM+EWpJ91fX1yzrhrLB4THVUnzKp4Jb2xgfTI2B7qSfzoZuV4XhU
-	 DzhJM/UR++7VA==
-Message-ID: <47d6bf68-10a7-499c-8876-7e3f64e4b7bb@kernel.org>
-Date: Fri, 31 Oct 2025 09:00:40 +0100
+	s=arc-20240116; t=1761897678; c=relaxed/simple;
+	bh=6RExzYFt2jFngKeLwZZhIXhryDhrEYofiRI4ar8KsXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VwS0YxapKZWgraP6wRtkN8nj6SwckgIckisfA8q8E1Q3K8nRwNkKaPBU+vGh53amHW+6rji/nEErlmq3w0axFlZTkKAuaRQHkhzpsfadEhnDn2K39HCNCYHChordQ2Y/XJ7ZXJ8xoZJYIaPVtROOBBldCagO9hUZ4C/DyA69NQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-9310a7b2668so694815241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:01:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761897674; x=1762502474;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h9bvdnPD20ODXbm88Rkbvmv8aTDyzXTmQyD55LvW55s=;
+        b=fnvm+iUfPcwyLKlSkU92bFJwlvQ0Cd2dzNJNkDegrJ2Ww4K24fhofQYtoFPXRXfTvC
+         N0IFN/nSqgqaHiuukDTzECll3y2vIFCq34jWYA9fz7cQimEvCtjsoxte1S7D9QpIq3aA
+         3IxEvI58oSZnjLh/DAYwmj482D5IqRw97drRRT3bix7Ex8sxcgev3Ujo4TTUKjloJgFT
+         HiOX0fz8JqvRfpOw+6l+s3VATiyAV8ytQNQcgatBaIVSshTSRIjrWJ6+g+/JpehqwGU0
+         iFcP7o86+Bx2s1x9VR7ItkuXAkOx/0ZOIxABOqW13OkQyzA86meKg/AymAnR1+NPK/N4
+         Tqmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEuPX3wVvv5ecgp2H5CMHtpK14ekF75qj1gQ7CFhCM6oMHG3339USPtQjNEj78PuV9QHmLT56JQ9v1vuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPI589to6X+WOhP2TZ/a6A8fbcQyrGwiOZ3BZdSPcbRHUmMjHQ
+	aoozyZaGd3DB801/4f12IxcVfW0cp9TP7uNIBsz0TpPD6fwAPnHNhD6Yh7H5D6gM
+X-Gm-Gg: ASbGncujpjgwZI4GW2snM20VBPGHbBKuCCLGbpyEEbaxneqdJtbJcrDQ7DdiAaW/wbK
+	X8mthtE4iqgDa3e6vm91FyzLKkuqhF+yMaPVyenycgtqdJHetC9rfrFPLvj/L69s5Hn3i4vDG7D
+	0ZJ/VMr+sTDU6V7azVPMM2sLk7dGU6/fU4CKBX1uSRgNYjTtINXbOhHow5FuE6adNF0eu1zCWW4
+	oOKIVU4mO2Q5TRRHHexcZA7C42JwcqNFUMJoHh9AxbG2xdHHglmcSz6rd15tCepOO3k24CFMsGu
+	wG14KF/KK3HXDmL+0KbCBN4Ef+RAPLTIlQZQkGYep/f+Bge7wJ6gdRPy7+9b7HObqJTctx43BSh
+	5WOcP3a5FH4ochcwJfOsT4DvlTQecq17UwoKAuPIdgB+yyT7/A2vjP27uHXc2RSYVSbyVc0P3u3
+	FJhJySBOkydfNMovk2KZ1ZgV/SanoH3Ovgw1RLLHCnvFFIo1S/BdyN
+X-Google-Smtp-Source: AGHT+IEepKPes2WZf8vIqV+dJKjKa8AuXlW96z8CHBAA77bNcVkBz1LZxHddsV4N917HfgAdB52ccQ==
+X-Received: by 2002:a05:6102:160a:b0:524:3e12:6590 with SMTP id ada2fe7eead31-5dbb121f9c1mr562931137.14.1761897674030;
+        Fri, 31 Oct 2025 01:01:14 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93512d25ec5sm409368241.15.2025.10.31.01.01.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 01:01:13 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-934fb15ee9dso722777241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:01:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+zXnw9Odvy3cC3Qyu9nh8EdXPwmyAnTfArMUmsyHRPRApaofIO441ezaltDtKQUE6c3snmJzo8LS47Oo=@vger.kernel.org
+X-Received: by 2002:a05:6102:4186:b0:538:9b66:7655 with SMTP id
+ ada2fe7eead31-5dbb12466ecmr618067137.18.1761897673256; Fri, 31 Oct 2025
+ 01:01:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] firmware: stratix10-svc: add the compatible value
- for Agilex5
-To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1761648711.git.khairul.anuar.romli@altera.com>
- <08cacb9328c338edb6a6f291c56c6d2c32a9e0cb.1761648711.git.khairul.anuar.romli@altera.com>
- <20251030-wakeful-hospitable-eagle-9dfca1@kuoka>
- <6b3cb11d-afbd-4242-b215-a3a0230cffb8@altera.com>
- <32c35bd4-fc49-428c-9204-a39bda7cef19@kernel.org>
- <eef97a92-40ea-429d-8bc4-6fb22f05d2a7@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <eef97a92-40ea-429d-8bc4-6fb22f05d2a7@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <2fa899eb-60b6-4637-9035-aeff78e261fa@web.de>
+In-Reply-To: <2fa899eb-60b6-4637-9035-aeff78e261fa@web.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Oct 2025 09:01:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX-uKt3-Lb2NaxmONEqWdtFgTOqXEo1nOfGq-R8ysHfcQ@mail.gmail.com>
+X-Gm-Features: AWmQ_blCO1e8lSBOgkh0TQ3Lynfwp2Y7X0NnvV--2NjFJHk-coEQ7bju69mPh3U
+Message-ID: <CAMuHMdX-uKt3-Lb2NaxmONEqWdtFgTOqXEo1nOfGq-R8ysHfcQ@mail.gmail.com>
+Subject: Re: [PATCH] sparc: time: Use pointer from memcpy() call for
+ assignment in setup_sparc64_timer()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: sparclinux@vger.kernel.org, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andreas Larsson <andreas@gaisler.com>, 
+	Christoph Lameter <cl@linux.com>, "David S. Miller" <davem@davemloft.net>, Finn Thain <fthain@linux-m68k.org>, 
+	Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 31/10/2025 00:08, Romli, Khairul Anuar wrote:
-> On 31/10/2025 12:33 am, Krzysztof Kozlowski wrote:
->>> I was excluding the iommu in the current patch series, not that I meant
->>> there is no iommu. It was meant for the future patches that will include
->>
->> Read your bindings again. They clearly do not list IOMMU, meaning there
->> is no IOMMU.
->>
->> Best regards,
->> Krzysztof
-> 
-> I will add that in the next revision also after going through 
-> https://www.kernel.org/doc/Documentation/devicetree/bindings/writing-bindings.rst
-> 
-> One question, if the property only meant for a specific compatible, do 
-> you accept the logical "if" statement to ensure that the property only 
-> for specific device but not others?
+Hi Markus,
 
-Yes, see example-schema how to do it (and property is always described
-in top-level).
+On Fri, 31 Oct 2025 at 08:46, Markus Elfring <Markus.Elfring@web.de> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 31 Oct 2025 08:36:13 +0100
+>
+> A pointer was assigned to a variable. The same pointer was used for
+> the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert two separate statements into a direct variable assignment for
+> the return value from a memory copy action.
+>
+> The source code was transformed by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Best regards,
-Krzysztof
+Thanks for your patch!
+
+> --- a/arch/sparc/kernel/time_64.c
+> +++ b/arch/sparc/kernel/time_64.c
+> @@ -760,9 +760,7 @@ void setup_sparc64_timer(void)
+>                              : /* no outputs */
+>                              : "r" (pstate));
+>
+> -       sevt = this_cpu_ptr(&sparc64_events);
+> -
+> -       memcpy(sevt, &sparc64_clockevent, sizeof(*sevt));
+> +       sevt = memcpy(this_cpu_ptr(&sparc64_events), &sparc64_clockevent, sizeof(*sevt));
+
+IMHO this makes the code harder to read:
+  - Only 0.15% of the memcpy() calls in the kernel use the
+    memcpy() chaining feature,
+  - The line is now longer than the 80-character limit, which is still
+    customary for this file.
+
+>         sevt->cpumask = cpumask_of(smp_processor_id());
+>
+>         clockevents_register_device(sevt);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
