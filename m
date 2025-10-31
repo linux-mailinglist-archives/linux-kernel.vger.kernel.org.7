@@ -1,222 +1,192 @@
-Return-Path: <linux-kernel+bounces-879428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87409C23153
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DBCC23156
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A8E422CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06F6425481
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90C230CDB0;
-	Fri, 31 Oct 2025 02:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5590D30DECF;
+	Fri, 31 Oct 2025 02:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zwqt4hlI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUKSpV+A"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DE328A3F2
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761879235; cv=fail; b=DBya05j8EmRVc+31xdW25mJJzSYXSHBRQdZ/WK6Mc7OpFPHc9FieYiyC1jxto4wKVvD4g4nGYqrPVi428dDFk66VG1MeuRrOuWRu/JKbcmmuUErUu5C+sWgGMhBTsBjCIIlPt+uW8LyajHXwyRgxG7cjl9dk05l3g7CDhOt+gLE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761879235; c=relaxed/simple;
-	bh=w/lAD/MgKqgg3TauLViGuC14EarKb23spljOgewBiH8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TcsQZQUWNN1KlDhM6ADWMXsZvFQK3YgChg6smcUEcySB7bVgDoKrYrGg9nGSfAfdTmZpLRmFbrF6YfR56hasaar3jP0gHrDYq1NLVOiRsZCcwzNlPeVM2uzDGEQg0CwMGPkz6R6Zojxt/oU96oLBYSCOXbL8grgq+PzUPNRzd1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zwqt4hlI; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761879234; x=1793415234;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=w/lAD/MgKqgg3TauLViGuC14EarKb23spljOgewBiH8=;
-  b=Zwqt4hlI7s5Bb04PBGd3OyZN+aPUUchuIJL1jj7MLirTtA9CW0XaLhfe
-   HvS0HZ1Gv+BVyLNEoj6HvsEEDLDFeEjPnNuDztrFpd8X0Ss3Yvwlpitju
-   cy3K5ZFZBLvYUvcq5mpHVVLw7y+5CQifAZwpm2LVU3s4FEcpzEN2TSoJr
-   h+wuTsgqf1bw9X2iVOhIMXsDiPpevYh6J5UZe1uoOsBuEqhm9c9BYVCju
-   yHBcJhdVAPtkXKIRkZ7YsIVHdLUIt36/o9/JLEFfwtvnDdYwJaL/aBkj9
-   Z2WNMpsEO4GPahFptZ72STFXEnOZSko+TnysJJ5QS9JqTb2xSfrG3Eay8
-   Q==;
-X-CSE-ConnectionGUID: 1Q1GryhFRZexcz1SaF9sUA==
-X-CSE-MsgGUID: /DqALfvGTXCs7vcOquyBpQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63947072"
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="63947072"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 19:53:53 -0700
-X-CSE-ConnectionGUID: zsoal2XsQ8m2oI3dGxbsxw==
-X-CSE-MsgGUID: TA0Zr8KaT/GRtXDk+W7ghw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="191267372"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 19:53:53 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 30 Oct 2025 19:53:53 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 30 Oct 2025 19:53:53 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.15)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 30 Oct 2025 19:53:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k+wlajRaeGoIpjoZgMq8Z6y/ZcGB8NhQttrDLPJjby838sGBF+0Tm8Dw0jP/bgeoq/qQIl8E22BcqBz+mOXmYOI94WbLgU8p5o/0eS27IKGtuWiZ/eeAjFqnS28uGMWif6FNHmFmEIsmqooJiccjwWShRlCDh6pbzvIfzu42IaFz9j4aXiM+/cC2BIwpaorwNrU1nUgMGyMGFSvFmytm299QGs4oS8F3EFalTWcyTh3lq4EyvPXID4mld/tbsAejO9mrrie6QZUMIO4dQkYQ16X+Zby6rsKBQSMAwwkXcRVNoVH3+YK2IQxAfJzNW+1symR+2hbtzY+MGs7h7U+0Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i4/tghSe3Q9AlaB0hYiBmC/XZ96WghUEQgvzba7uALg=;
- b=JJshwcmoJvrxw5h5WoqnIgz8U4r4aRWyRvqxp5r1s2ZU/HMzoddB0dFNZ4NHnTBJdbph6eCo1pb/3WjgHIFUPGdoyeVH9UOd4jEySG572fK++/tW++XrTwhVSe4Jsu+koHRbc/G2xc3wNcyCkIKAqMgBGTimz2ZIqGHaCQT+i5aBsrCHKhFlBKaI/XiTGnTphjKgx9oDT56Q2jT35xKdJUDrvHz4wPymzxh6EFLku/zOZ4NXchbhOREmGR6Z0FD8HRBW16GTDH1tcDbPLv/FybFIFgGdcgcFiQUmTUZZdYzv9S0oK23drYTaQyG54OHRC4bSF6HWmgmcj1lKD1+RKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by IA1PR11MB6172.namprd11.prod.outlook.com (2603:10b6:208:3e8::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 02:53:49 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 02:53:49 +0000
-Date: Fri, 31 Oct 2025 10:53:35 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Vishal Annapurve <vannapurve@google.com>
-CC: Sean Christopherson <seanjc@google.com>, <dan.j.williams@intel.com>,
-	"Erdem Aktas" <erdemaktas@google.com>, Dave Hansen <dave.hansen@intel.com>,
-	"Elena Reshetova" <elena.reshetova@intel.com>, "linux-coco@lists.linux.dev"
-	<linux-coco@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, "Reinette
- Chatre" <reinette.chatre@intel.com>, Ira Weiny <ira.weiny@intel.com>, "Kai
- Huang" <kai.huang@intel.com>, "yilun.xu@linux.intel.com"
-	<yilun.xu@linux.intel.com>, "sagis@google.com" <sagis@google.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>, "nik.borisov@suse.com"
-	<nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar
-	<mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini
-	<pbonzini@redhat.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, "Thomas
- Gleixner" <tglx@linutronix.de>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-Message-ID: <aQQkrx2hXkPdcifr@intel.com>
-References: <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch>
- <CAGtprH8g5212M26HPneyaHPq8VKS=x4TU4Q4vbDZqt_gYLO=TA@mail.gmail.com>
- <68ffbfb53f8b5_10e210078@dwillia2-mobl4.notmuch>
- <CAGtprH-rv9T1ano+ti=3eU4FO2APCOcR06buPALggAwUnka3Dg@mail.gmail.com>
- <690026ac52509_10e2100cd@dwillia2-mobl4.notmuch>
- <CAAYXXYyVC0Sm+1PBw=xoYNDV7aa54c_6KTGjMdwVaBAJOd8Hpw@mail.gmail.com>
- <aQFmOZCdw64z14cJ@google.com>
- <6901792e39d13_10e9100ed@dwillia2-mobl4.notmuch>
- <aQIbM5m09G0FYTzE@google.com>
- <CAGtprH_oR44Vx9Z0cfxvq5-QbyLmy_+Gn3tWm3wzHPmC1nC0eg@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAGtprH_oR44Vx9Z0cfxvq5-QbyLmy_+Gn3tWm3wzHPmC1nC0eg@mail.gmail.com>
-X-ClientProxiedBy: SI2P153CA0002.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::16) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E851C262FED
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761879356; cv=none; b=M5HOM3tFPygTEBI3uG9Vu5d2IMZ2Ca+DwfauJ7wsju692VTXfzfQh08NFpY7QsO5Q0tk33/pHsxZZpjKuTB3z1ZHgEdzUCR37XQlPVvOziTC9pr6GlGkEiUfzCnErUC0hQlHQoJv5NNGc8/wkHDyIuDmluYNG9JiiMjxXf51/Pk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761879356; c=relaxed/simple;
+	bh=35IxH3AVqIfszjuIBMqHIXPBco12DNO3hgOgY8U+IZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXK0GjmNAlRIRx7VPofQmaX2I7zxqbd3ECU7wJhq8KoHrQ5EhhUMZ1A5IxX+Ok9Ymv+NICdLtxAo/0oT1w74nO1Vaec1qdK2rMlIgYnfcw4f4VaRLMdwHlsZUbHb3w1Lunyb+I2COyon6cuYOmPrADpgarp86NpyW4jqBQ23xds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SUKSpV+A; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b6d6984a5baso337739466b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761879353; x=1762484153; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dbb+HtAkz5E08qbbx7069G9TclCwWAydoNERXltG7Jo=;
+        b=SUKSpV+An5JSUBKscu1wjho+soc8GgEgqx6fvdHdzodN5+9H9hUeqyt3WIZOKE2u/v
+         fKjmkMROf3QduSKuo/t3i1I4EAij19g3XkdJw3c/hBQPyOGHSecwutAv4KD9ba7Mv2cS
+         7x9BwI3mP1gEUTXPod50HuwSlcheiGh9RSAlWowCIFTkbk2Oza/sg/0VDuLVfSDnZfUt
+         5m/qWZ5GSfkT8jR62GAfyITZ9/t19429B3YTzZS30Pdx9492WKOIhDi9YNhmomccnxH8
+         cgORH0ya+pKllOSDnyf+7uuDLyQdA506b/OdWf6kVHUnOQ9S5/LhKA9SaBaYlp4npdn9
+         lDzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761879353; x=1762484153;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dbb+HtAkz5E08qbbx7069G9TclCwWAydoNERXltG7Jo=;
+        b=EL3Ur6hcQA9JmuYOECbvQYuT81caNWkNB8Kp7BUcBu6wlNnyJ0vfolbFH4lnYQ2FC0
+         PnV1iEdhcfKzIJdHpryBkXN5m05EwRKietz/y67eTsKkK2OO7rOhqKttmmXAFQjxTyMI
+         OGReym7ZYjG5PzLvm0b+64zs2O543dKxBMP+9Pd/Db8gN0sy0h8asavOWy5Thm+7R/Px
+         vPuRSu0tnM1M3erAhDIwjp5Wp6ISKlDrOuhnLuIptDdRQFOGb447JzAcM3Itq9THPy22
+         PWanMmY1ZS5BqiseJ7tRSV2yoHl6UDPFwxbMStCogFp4H69SrTzbXAPHBeYsNsHXeVnE
+         FHkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUn9ZYKQSWE2fWae2F6jbJo7dYbFaDfNY7lYUBOaAoRwkHHaSgkIptrNP2Mb41UFEwptWuGgz9jukxv+DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmzXOFKey/eYbLPdfnSgoYXeQjHcGzCSiKK8vLUrAnsUttdgDV
+	gJD/9D2VB/E8cAHBkWLm7hUfEt27Qnn6tIpmWTEzyHQRTNKvOf5fk+yC
+X-Gm-Gg: ASbGncud4OrXIJkE6x6M94tUCInlDoScK4VKPgDX+yo2NB/9mvYicF1sB5oduWlWPT1
+	5knCxMZtQGRohqEZiYyeCEZoBeQB2JZ3HSVbLpmYYqZfCzyCmtK6rMFp+Z1/50ThEj+xux78xMn
+	PHV62HFKPS9ITBu/MHAR1B417UAZ2cBM4COzaqKiyNZEuUy300RNfYWw1qpPjTtIaYzS2U19M/z
+	sxpavUr7mBYwFjMEjdXpbJz/sBfeBSchrGXT4DUPE/xhWLdQqsKBWxrxsTyca8JJWXMIvVEpLxt
+	8uYbDFNne8V7jqTxPSHpQ/VZjLKXRkDoUm25v72ufF8oak/uhsh1bII+bgq2kZ8D9iHf5DaWWcb
+	/xh8AUohD/nLa3/iwYEuiwZlm/uFJr9M44wcv5Lbatu4AydZDGkVG0j2azt0iUOCT3sJPpDRrds
+	Y=
+X-Google-Smtp-Source: AGHT+IFaVEZlf1vH3SzuCruGg4BO7/3SvDRPUOGQR9RtSR34EJQMmXJ0JlLsI6L2lpx3vT3NXuIEKA==
+X-Received: by 2002:a17:907:3f13:b0:b0e:d477:4972 with SMTP id a640c23a62f3a-b707019d264mr198901366b.25.1761879353147;
+        Thu, 30 Oct 2025 19:55:53 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077cd2d48sm48761266b.60.2025.10.30.19.55.51
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Oct 2025 19:55:52 -0700 (PDT)
+Date: Fri, 31 Oct 2025 02:55:51 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
+	kernel@pankajraghav.com, akpm@linux-foundation.org,
+	mcgrof@kernel.org, nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 3/3] mm/huge_memory: fix kernel-doc comments for
+ folio_split() and related.
+Message-ID: <20251031025551.bmt4wh6e6tmhcr4i@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251030014020.475659-1-ziy@nvidia.com>
+ <20251030014020.475659-4-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|IA1PR11MB6172:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2bd5e91-ecc1-4464-acf4-08de1828b7b6
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?YA7VTk/TaWEM1rF2wjYS/FpdHieiIWhRzjMv/uCTiR7m9fmOcCr9YOxKf8Sf?=
- =?us-ascii?Q?YAWVmNQDcesc1i3FmsCi3VVrORiJJDrskwZYs/lkcSuLwCsaGLMYUsgk3vhu?=
- =?us-ascii?Q?mtvorVA1+uJneK/G22UuASUXfAOEFuNNYRQLJvHET7ur+iRezdRoCd8f3Os2?=
- =?us-ascii?Q?2B3u4kfCn4NVrSDeV9Ds7FXa/UpMLgxZFGdgb8WuZ6ClFaVYzM+O0U7DKcfG?=
- =?us-ascii?Q?ldaMgOd309m+2+B9v3V9akF+WLoYbPX2moq0E4VBKK6/EjRimTLgCcvqvDu1?=
- =?us-ascii?Q?WMIcuHLvbo0fZQr1fOvA8BSAdlrzHTUbd2HQDAN6PRisCH1oMIRVa/VkfbU5?=
- =?us-ascii?Q?Jehh4cv6/BIX7eEWG0ZH+lju4UbIun1XvI3W34/PFehzuxD1mt7ssdhXg+TA?=
- =?us-ascii?Q?PqkyF9nxLKt/qw7DC2NACB/3KzPWGh63ybdpL1D6UUSecly1Sm5IRLH4o7Qr?=
- =?us-ascii?Q?YdSes+16gHb1NDQVvdZaaqhidgNMaVIlvrWPiZW7NEw0s+2X7S3SbC2OmoVA?=
- =?us-ascii?Q?fu1UbQXMDDSAll7zAHJAcaRorm3PLQ2goJtPR5/D9NbnE4Lk91DDQRGGN2vW?=
- =?us-ascii?Q?nhAGVE1Vllshzcc2jTAnkXYwDFO0kll/OuduCK5u6PjaqVoExHiV7lL9OKCX?=
- =?us-ascii?Q?HWoqsiwPFRmbLQBWKBw8mOnPd5YeCKO2TGnhTZF/RmJVK0xti5fwGrWYYlP4?=
- =?us-ascii?Q?j67Wkdnnn3DpQt+U3LJSOluwAIjjl1EEBKsndO8Qwo7fFhJf9zZJ7cB8mlLU?=
- =?us-ascii?Q?0ihqWh209pneIdZ0QMVm74FzsTBvTfWMpehpt7oLt60KVY6Gk3jrxmRQB/iO?=
- =?us-ascii?Q?TbOl3DEwVFBD9mhutNv1GZ6uI8zkuWelqDrm7HvsOn23PnfhdsxdU1nUlMY9?=
- =?us-ascii?Q?3KSYftYNEgWrAvuCVSPzEXBFFd8rZoOU6BBcgvkiKENILa9jzzJ2EIGJLuK6?=
- =?us-ascii?Q?f1eWgS2K4Od/v1tZBKPEhMq1NeIGg3rTafkXpFEfXmOsyw8y03X1LBxhSXdy?=
- =?us-ascii?Q?Fv8DyEzVk+YyAvpyF5Jjn3MooUr0z5VEMXUfHxFZP8FY0ZeejvZ6oBR8zNfp?=
- =?us-ascii?Q?N6THPwkEdXvzZTgC9PoWIAqF5dRhNiH3x753YEBDIidWqoIqHJPGAOx0MGMp?=
- =?us-ascii?Q?EjMPV8SnR0/jseXcWdkP2f9joVSO57hxJT/jpGyupLUae213FZQ5pSwOpCF7?=
- =?us-ascii?Q?i4HUdj6ynwvRtCNlnqmRZXyWVJlgo7whELvn/95bU3zkzWgVtS+4ScAiZcns?=
- =?us-ascii?Q?E37qwo//yF6NJ3bVPx5p7PNkxqjzdQvWHoFCGplGfP9wR6hI5cJzEYbpiwZr?=
- =?us-ascii?Q?DEO+YJ8HuKJWu6l5pOjfPDQz0PGKy82MWQ3PCez5/53ihBhNMLUQKevzcIoU?=
- =?us-ascii?Q?eM9SHett4+cP4XZFW5VVLhe16UqljdTZ6/EG/+2Lq4GupeSYfj4XnMbUrlZ+?=
- =?us-ascii?Q?+tUXWIKO9IFq4VirchlZ+p11yKjPryophyfjNOdzDvuFcy+d7t1ApA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ygyDBIftU6fiKciI1fRTHndw3aUaSbpgpjj9Z4TZXAh4UkH1Nqu2UW6NYTY0?=
- =?us-ascii?Q?9b/Y4mdKG3xPkwA4ljSOEuxbvcFM9MLIeXFa9mhI9NncyCWeUFn9KDh9aJgn?=
- =?us-ascii?Q?eCs4yyAUSAQUivuTA7M5xwY+NboI2Tj09J0ngBtgi1731bkB8GbX/fU0fRDT?=
- =?us-ascii?Q?hFdGlby1srKavMtd2bgt8SF2mhBcLV4u5oSYEl5db/ne/H2VUOlDYurcW+h+?=
- =?us-ascii?Q?y7m8aylua5ntWxjHm68TEaxev+y3x1VVu6VHpHNEU9co0QLCM9YI5CvafqGw?=
- =?us-ascii?Q?KOn685TVVeDhVpxdulpB9fNs6e2EIO7b6R2GPnc5wXltKrmv+MWWAIwzcIs0?=
- =?us-ascii?Q?yC26P/398bCpq9uGlZGOPkmGPyFXto4ay7HUjARQb9aTh0X/gcS+HQnAbhQ4?=
- =?us-ascii?Q?ggGKQm9R2klevFzL52soOoMgt87vGaR2RTfXtFyQJDTKflEbZdLFFTOLqXPP?=
- =?us-ascii?Q?ZgdXFzwM9b4cET07HuUN+Rq66hiaIDTNonT0Xy8BLZUGwOR84uS+6fIg3/6n?=
- =?us-ascii?Q?Egzl4We12RPmOkpV2t68Ckgh4HH7I8XfI55WK0Ssl0p+LIMTJsZOii/eWtn2?=
- =?us-ascii?Q?5PrSMqMSsRuaewK+kqOCv3MbuODJ9F9rHF4jhqBlHZ8HPeVN9e7xNHw1Nx4U?=
- =?us-ascii?Q?EjjwUShyUzLCeLXNx9wY6x88ryDU0UtSXx5gQ2hdmK91gOOF7D+hHb4rJawM?=
- =?us-ascii?Q?YipkfAdSrQSLQVbIFhwZ7irCLb2wLqfmabq7n5+hGyVmMZU6yOyzEcfsT81X?=
- =?us-ascii?Q?RQs1ZTbndY0N4L+m/HcjxQwO+xxA2x8xLDwbiWQ+BTRqQyB3jj6LW7aQrcfV?=
- =?us-ascii?Q?fq/RqivcVYFkSKky36evujWo8xzQZQP46zxkjxQutkPiGa+hPBq6w8BhJasj?=
- =?us-ascii?Q?wuqOg1ljuzCR4H5fONoG/CgBJOSTM3Baiyt/PuxUNBJbPr2lLB+u/uawSSf6?=
- =?us-ascii?Q?U4ikomBgUCJyIzeOMPqGzJNjIV8FU9gYUsYJFm3mGMy7OSDJxjGZq5aFzQF/?=
- =?us-ascii?Q?C4pkUfrR7Iy9uNDIi1dMIhn+Ki/ur3Oi+bhVUbfBJBeVEVlfmdi4vLegy7T4?=
- =?us-ascii?Q?uA1TSblme6eI1EhyTzN/jbiSbnNdrkPYiP0tmsH2D38q1Om85H6d8mVCLoPH?=
- =?us-ascii?Q?UfvmwCndz/Q9aAhrdj24J50LU9p4Ljy4QpFmWrGljab8LGXZN8ePCp8UjWgc?=
- =?us-ascii?Q?1tJODLxop5BDNBXfwEqoivrAlZRSyy7i4FxYiODZbwUMTf8rEPdTnLhXPiyg?=
- =?us-ascii?Q?xYytJT+aCYHtLvhv91DLqG1CSbTWY0qS3uc9J/g5NggGnKoMTvxYSEo6LcEn?=
- =?us-ascii?Q?FiCZtfdSJYi8+4Sx6fwEBMjcE4dCzC7UV0r2HdCzRNWundsCP/ct4Q6FVETo?=
- =?us-ascii?Q?QNBFAiWIRW/aiJr9p5wW2L3nhQ6y/G8JLVSWjWh63HsdxZr/Fver+Jpv6z3N?=
- =?us-ascii?Q?mBBGnc0visEVmcbtJmMc6L/g3oehrOuiTLpYOD/Zfl8Oslw093Xf914rOfTg?=
- =?us-ascii?Q?dNqHYcUk1+fQXoT60vMhHviegAIox4YKm21hfhETU2XEM6fmsc1B9c9xDJmf?=
- =?us-ascii?Q?xUZBzWSScZwGoui1RGs+ypCGo8ZO2jGKUlXIDn3V?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2bd5e91-ecc1-4464-acf4-08de1828b7b6
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 02:53:49.6396
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NJ3l+Iuzl+caRxy3q3IY2VfIe+yDiaSbfAfEYG5nbCMoJAPfteU9NbjumYG6wPSbnzTqSyC2R+Fhr4CiUPsG/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6172
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030014020.475659-4-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
->A reference patch we tested for "Avoid updates during update-sensitive
->times" and one caveat was that
->/sys/devices/virtual/tdx/tdx_tsm/version was not available post update
->failure until a subsequent successful update:
+On Wed, Oct 29, 2025 at 09:40:20PM -0400, Zi Yan wrote:
+>try_folio_split_to_order(), folio_split, __folio_split(), and
+>__split_unmapped_folio() do not have correct kernel-doc comment format.
+>Fix them.
+>
+>Signed-off-by: Zi Yan <ziy@nvidia.com>
+>Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>Acked-by: David Hildenbrand <david@redhat.com>
 
-I also tested this. It works well to prevent updates during TD build, so,
+Generally looks good, while some nit below.
 
-  Tested-by: Chao Gao <chao.gao@intel.com>
+>---
+> include/linux/huge_mm.h | 10 ++++++----
+> mm/huge_memory.c        | 27 +++++++++++++++------------
+> 2 files changed, 21 insertions(+), 16 deletions(-)
+>
+>diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>index 34f8d8453bf3..cbb2243f8e56 100644
+>--- a/include/linux/huge_mm.h
+>+++ b/include/linux/huge_mm.h
+>@@ -386,9 +386,9 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
+> 	return split_huge_page_to_list_to_order(page, NULL, new_order);
+> }
+> 
+>-/*
+>- * try_folio_split_to_order - try to split a @folio at @page to @new_order using
+>- * non uniform split.
+>+/**
+>+ * try_folio_split_to_order() - try to split a @folio at @page to @new_order
+>+ * using non uniform split.
 
-And I can integrate this change into my next version if you don't object.
+This looks try_folio_split_to_order() only perform non uniform split, while the
+following comment mentions it will try uniform split if non uniform split is
+not supported. 
 
-Regarding the caveat, could you check if the diff [*] I posted earlier this
-week can fix it?
+Do you think this is a little confusing?
 
-[1]: https://lore.kernel.org/linux-coco/aQAwRrvYMcaMsu02@intel.com/
+>  * @folio: folio to be split
+>  * @page: split to @new_order at the given page
+>  * @new_order: the target split order
+>@@ -398,7 +398,7 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
+>  * folios are put back to LRU list. Use min_order_for_split() to get the lower
+>  * bound of @new_order.
+>  *
+>- * Return: 0: split is successful, otherwise split failed.
+>+ * Return: 0 - split is successful, otherwise split failed.
+>  */
+> static inline int try_folio_split_to_order(struct folio *folio,
+> 		struct page *page, unsigned int new_order)
+>@@ -486,6 +486,8 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
+> /**
+>  * folio_test_pmd_mappable - Can we map this folio with a PMD?
+>  * @folio: The folio to test
+>+ *
+>+ * Return: true - @folio can be mapped, false - @folio cannot be mapped.
+>  */
+> static inline bool folio_test_pmd_mappable(struct folio *folio)
+> {
+>diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>index 0e24bb7e90d0..381a49c5ac3f 100644
+>--- a/mm/huge_memory.c
+>+++ b/mm/huge_memory.c
+>@@ -3567,8 +3567,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+> 		ClearPageCompound(&folio->page);
+> }
+> 
+>-/*
+>- * It splits an unmapped @folio to lower order smaller folios in two ways.
+>+/**
+>+ * __split_unmapped_folio() - splits an unmapped @folio to lower order folios in
+>+ * two ways: uniform split or non-uniform split.
+>  * @folio: the to-be-split folio
+>  * @new_order: the smallest order of the after split folios (since buddy
+>  *             allocator like split generates folios with orders from @folio's
+
+In the comment of __split_unmapped_folio(), we have some description about the
+split behavior, e.g. update stat, unfreeze.
+
+Is this out-dated?
+
+-- 
+Wei Yang
+Help you, Help me
 
