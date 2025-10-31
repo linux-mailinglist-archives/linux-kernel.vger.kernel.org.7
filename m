@@ -1,417 +1,262 @@
-Return-Path: <linux-kernel+bounces-879568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCBDC237C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A45CC237D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C6114EA04D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:01:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 967AC4E7AC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FE92FA0EF;
-	Fri, 31 Oct 2025 07:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8E030F951;
+	Fri, 31 Oct 2025 07:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GXSlNFAn"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkuCyVFk"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B81A9B46
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2CB2D6619
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894081; cv=none; b=WJuPJOVzN9bmgQ0eKZAOtjAGX161r4MGSABtVEAy9XFmgu5OSKy2p1QIlJ5gm0vIf2l5voKDp8H1TTiWXAZZh2FBFL0WO5TS6Xp9cdBvOgBfXnn1r0K9YPxke9cooTb1jaby5XMEksFrg7za9ovXZtIygFtmS+EXyvUHaD1vlaA=
+	t=1761894165; cv=none; b=HXTMw256lNdYpzV8HnnvCK69rykezy6AzprV9ndDSyGwuQOXPhXJN7odFw5jGTMmK8enTtRm6nctwB6XDozjMIDJ4oHNnPQgB93RZyrKCn4LS+GpeB0J5T1KKMG9rSKXzxyLGo/WgvFyFqXloEwrseY+SvezL/uH+F2C19q/Km0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894081; c=relaxed/simple;
-	bh=q12KDfEkhxXl6/bpkJTQjJy91PPPOKSp6gIdjXvXM+k=;
+	s=arc-20240116; t=1761894165; c=relaxed/simple;
+	bh=En5rIQ21anIy/mSulOiTAMLDn3w2TLh50sdA6UJyo1w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N4/ytRPwEgZIEaYosUVhpJ7wB28w768/qlPcttV/VlfIf4iCbV/WOZlNCKEZUkat6IWAtz2M+0U3O8F1opnyBjxU/h3ukhCy6UG4CXcf9QttRJoYI6iDZt77hNo50RsQ07wFNgTjHTFwbqsUQGOedwhJEvYRolkY1r0o5fDRy8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GXSlNFAn; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-34029c5beabso1920481a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:01:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=K+GPCOTzfxtS2M4A69cwzp1MluenEd1OM6t43yfpFqgtUD2HnQD7oYp4lzCmnHNj1qfs8YlcYYFfehyykXzs1ttHCiyXeqYoLDnULfLmrTTatdGO1gLfLdKmzbSGQecpfLKeKqAxeAMJNPsTtriGrDcAeWCeq6sjpKurGIYXU54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkuCyVFk; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b6d5c59f2b6so486931466b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761894078; x=1762498878; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761894162; x=1762498962; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wn3uuAbqAI8xe0K1MlWuHQhr0lEGAe8UaHyzaH8poqA=;
-        b=GXSlNFAncCtU4SClNhWpDDI/mdxp4OSokg8UOlYtMU0FBoJj/eI2SxGeVUZzh1X3/V
-         K4wmaLAC6Nb+ySDXpebX2bD7SQay/iRBrrk5orC9vbc0rz1/EKTXdXsJ4l7r008S62Vc
-         GdEWRO0pPCDAnufMJUctij/xGqjxnZUBjZ03+PbglxOdFcIBWAn3briUHmk8PQWLmirm
-         7GQlsLn0rDCpoQwo5s71+Yjrh/kT7775Rmut8/RQ5bjCg/fVm0m59pWE5cBnaE8mQaJn
-         W0DBqkhdRpX65Vj2EmAnKRswcWz0opxjabCklXMi8niTEDSd1mmzuhk95WlcAG2KoVJH
-         3KbQ==
+        bh=WhAeKXrpaYinKlRLqV0x2Ic6a8e7XLvoSE3cJgvPELQ=;
+        b=YkuCyVFkQAjFNmWze8xcD5NPs492WmWT4UgvwQU8DEkEp89A6yjUdkbO43ebtpy7uS
+         amqktgIe6jQhudUJbT2b0cwiedtRFG0AdjrVd43DWZtFAxO0mhVxWmYlNVdURv9kFfSx
+         IOuGciEN+6eyb2lpsPzkjeq3wl/WYBqtvr6iLG9QRnKNk+F3pu6NqkniNIJ12DFE1Kbn
+         b9H/qJvLqhR36TJ9V3g4G72EwXWTJXJJle75V7lMXeDf4CuO6c4ANLntRcdSn8AIQYnx
+         1fHF97pGir77RzcrECAi/+UDkihEpkc/WC8jRXOB3ldjAU/7wyFnpXblwQAP0G9kjEsI
+         iwgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761894078; x=1762498878;
+        d=1e100.net; s=20230601; t=1761894162; x=1762498962;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wn3uuAbqAI8xe0K1MlWuHQhr0lEGAe8UaHyzaH8poqA=;
-        b=A9vMG8nUU4keTIebF7/qCcOYyRr3QMtPNWOelcydcPXDD/XYvWyRas/da0VgFIJLY0
-         RFJDAiv7el5wWeboCK/pt/alZxNKy+VRW9Z8Lg84sbe51qVj1YfX3XHaPGXQBJjiY4pP
-         jwbI1bgXN6VN6gjYC8Hsx0zg0X+YKcsi8zCEejlWJ4CN6VfymeoQlC8CaHPARnixuxlY
-         tGkwRyinZTqx95d+BU6NZrKn60sPv/ezJBNIg1spOSoiK5PPJu6RJG4zWcNB8/1vxCzw
-         e4dbZn9ooY3SmTV7/jpSlX2Gyd74IZvY0di0Ml+6PXL658UBCX9fQBQa+eKJJePRGVfg
-         OYEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPZZZSLpec/D7r00TaQpxjGOvRCuk6L9HNbuTCYcB3UQtE04qPcY9rBEB15j6yOGIUMvC4kKZ2GXzlysc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6yUbvFuyQbSLy1FCHQNjjFvFY8p1q2991ZAhsWcatEQpZ6efd
-	bG2MVW7jEmxLgzB8gc42wuejb9j0jlQTp6tYJ2JhTJks4hvj7BTGTeGAE+t7opeVyzw7COxCQ9G
-	dU3IL6OV8JPwIYr3/kXejO66rUBQJZY4Ko7AIajmwwAkO43dO2Mc0A57YKwQ=
-X-Gm-Gg: ASbGncuwkNHYglZpe5MlVrcXeZzxfSMGyIAhoTg0Ei6uD6y/IHCNpdJ2RRj0dZDq51E
-	uPDb0l7bDgKSoUck6NRXu2C8i4YqK5aJBc8+Rp3tvvQ5IweZZ5XwZfpqPO+I33qRO98BWSQPzQt
-	EB4t604wYDfYa4poAE3X7f1TFgBCcWRpKPi/o8Bk4FHmyr6DmH8qkMUPROn81dQJGZkxBj5W5Aj
-	d18AnKfXocU8Ke0RBfxs7ujQFRaP5r11V1qrzXlFaLrgzvAP+FCDmg34A2s9oiWpC97A6V/e5Dw
-	ZCCuc+z1pGXRqvNvOaIwnFiWv6Su
-X-Google-Smtp-Source: AGHT+IHvJ5b6u1Qktl2Zll7CNkYolmqAtjWX5d1nDDzUpnoONbbWcYjJvw0MF2Jr7nmM35PDSy57jIuWhVz7fMMx59o=
-X-Received: by 2002:a17:90b:3f8b:b0:32b:a332:7a0a with SMTP id
- 98e67ed59e1d1-34082fab188mr2999301a91.1.1761894077979; Fri, 31 Oct 2025
- 00:01:17 -0700 (PDT)
+        bh=WhAeKXrpaYinKlRLqV0x2Ic6a8e7XLvoSE3cJgvPELQ=;
+        b=oI5+GgvvSDOlRPvOTJmh+e6vgY8NzCu1loyukezyPIdPmp5VP5aTJsqaUQg+eZZn8V
+         J4GcM8RPfCTanOxzSBGEVDO6v02UPcJbJGArgm1xl7hWPXfo5KR6tNbwNuxVhFQxFX86
+         7509aDj0JKq3CU4yKPyzwqsjqv7pKO82dMOlqJmeNb8q9LjwzQG+VgMNAV8nR7/sp5AD
+         4NL/HwYhqotXJE8UpsOtqEg0pYiF/m/bZh+Uwf6GXTbN4Rk+S/a1Sv3eSWOQYEUodMaD
+         WcMv2Rwu31EIpu4vH4g+hxhvmDpFWu8m5s8eHctnsTrP30XEE1dZDmeOFKwH+6slcm9i
+         4ySQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhitG/HWMdgJAJZnO2Iv6c19tboAlSSPXLGM9ubSjQY5bL9BoxVOgt7BhMFL8D2c60cOlbfrLqsIeHE5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy48CVloE7pH2u5hfGiFX1NBJNzHb+042JAPj75ldxn1M4sS500
+	Urlrw9uSoMYKK17HJNzZFpUKGwRWP6x0HtjyTxWJK4McGpFEEOQA6H3VW8a2NSLVSdPYydMESfB
+	fJGz6vZeEzLL479yyhYEiBy+SG9/3XKg=
+X-Gm-Gg: ASbGnctYPaSvgYR/jdWHWerF34UqUI88YPewxSip/wQ5SfOYkI17RepKFwnmHEJnIWt
+	cnG2tJ2DOuFMEHScTi3aCIQyMCpt0BSjSaNRRTwM8MtCTNJdzcDWYA37+ZOSdcOQPG+kAV8uq5f
+	rfnEXrsQB36yVSbmClcrNzcG3oGZyCz5za+d7cuw4rdS8Rhao4jWaf6gbL6Zo+A5P700wiDZ7tm
+	uTqdTaM9KQHMHoyfjQjyDjCM9Jz42qFdPK2R3rSc5eBafyd+XH6wSsm3qIE
+X-Google-Smtp-Source: AGHT+IFZjqoXBFAlCskVhv74Qiczd37Jbq68RIzzKDrsnIw2gYEJV4GzWhwphPsEr9Q6jQ41UmUSm4dBiWwOuSzsAr4=
+X-Received: by 2002:a17:907:60cd:b0:b3f:1028:a86a with SMTP id
+ a640c23a62f3a-b70700d39cbmr242298666b.3.1761894161735; Fri, 31 Oct 2025
+ 00:02:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030100025.95113-1-eperezma@redhat.com> <20251030100025.95113-6-eperezma@redhat.com>
- <CACycT3sYzQM88dkqHiT-g9eRtfo-8PjW7XcRtZ=5q++=By4RVw@mail.gmail.com> <CAJaqyWexPHJiZjC+RPvVH4J6gS55fCOfPQmKay2eWO-nqrjcRQ@mail.gmail.com>
-In-Reply-To: <CAJaqyWexPHJiZjC+RPvVH4J6gS55fCOfPQmKay2eWO-nqrjcRQ@mail.gmail.com>
-From: Yongji Xie <xieyongji@bytedance.com>
-Date: Fri, 31 Oct 2025 15:01:06 +0800
-X-Gm-Features: AWmQ_bmtgpETmCi0MGzGulnV_O9k88UXrZWEB3j_ApUVZHRFhCreX9iRMKEcR78
-Message-ID: <CACycT3v4zp_uDRA6ELwcZB287TYLsJfx34EepAhSRJ+w6B0hvw@mail.gmail.com>
-Subject: Re: Re: [PATCH v8 5/6] vduse: add vq group asid support
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Laurent Vivier <lvivier@redhat.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev, 
-	Stefano Garzarella <sgarzare@redhat.com>, Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel <linux-kernel@vger.kernel.org>
+References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
+ <20251029-swap-table-p2-v1-15-3d43f3b6ec32@tencent.com> <aQRPfIqCcMLyf6oX@yjaykim-PowerEdge-T330>
+In-Reply-To: <aQRPfIqCcMLyf6oX@yjaykim-PowerEdge-T330>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 31 Oct 2025 15:02:04 +0800
+X-Gm-Features: AWmQ_bnqHJRBw5VgM4IaGt3qE5NKaN--3DSsoGj--BQ80I3X1ms69ibY_wiId_Y
+Message-ID: <CAMgjq7A405kAAY80xzLxFHuKOcGt7iSYeYYv9G0iZaMHcwrWyA@mail.gmail.com>
+Subject: Re: [PATCH 15/19] mm, swap: add folio to swap cache directly on allocation
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, David Hildenbrand <david@redhat.com>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 2:31=E2=80=AFPM Eugenio Perez Martin
-<eperezma@redhat.com> wrote:
+On Fri, Oct 31, 2025 at 1:56=E2=80=AFPM YoungJun Park <youngjun.park@lge.co=
+m> wrote:
 >
-> On Thu, Oct 30, 2025 at 12:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.=
-com> wrote:
+> On Wed, Oct 29, 2025 at 11:58:41PM +0800, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
+>
+> Hello Kairui
+>
+> > The allocator uses SWAP_HAS_CACHE to pin a swap slot upon allocation.
+> > SWAP_HAS_CACHE is being deprecated as it caused a lot of confusion.
+> > This pinning usage here can be dropped by adding the folio to swap
+> > cache directly on allocation.
 > >
-> > On Thu, Oct 30, 2025 at 6:01=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@re=
-dhat.com> wrote:
-> > >
-> > > Add support for assigning Address Space Identifiers (ASIDs) to each V=
-Q
-> > > group.  This enables mapping each group into a distinct memory space.
-> > >
-> > > Now that the driver can change ASID in the middle of operation, the
-> > > domain that each vq address point is also protected by domain_lock.
-> > >
-> > > Acked-by: Jason Wang <jasowang@redhat.com>
-> > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > > ---
-> > > v8:
-> > > * Revert the mutex to rwlock change, it needs proper profiling to
-> > >   justify it.
-> > >
-> > > v7:
-> > > * Take write lock in the error path (Jason).
-> > >
-> > > v6:
-> > > * Make vdpa_dev_add use gotos for error handling (MST).
-> > > * s/(dev->api_version < 1) ?/(dev->api_version < VDUSE_API_VERSION_1)=
- ?/
-> > >   (MST).
-> > > * Fix struct name not matching in the doc.
-> > >
-> > > v5:
-> > > * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET=
-_FD
-> > >   ioctl (Jason).
-> > > * Properly set domain bounce size to divide equally between nas (Jaso=
-n).
-> > > * Exclude "padding" member from the only >V1 members in
-> > >   vduse_dev_request.
-> > >
-> > > v4:
-> > > * Divide each domain bounce size between the device bounce size (Jaso=
-n).
-> > > * revert unneeded addr =3D NULL assignment (Jason)
-> > > * Change if (x && (y || z)) return to if (x) { if (y) return; if (z)
-> > >   return; } (Jason)
-> > > * Change a bad multiline comment, using @ caracter instead of * (Jaso=
-n).
-> > > * Consider config->nas =3D=3D 0 as a fail (Jason).
-> > >
-> > > v3:
-> > > * Get the vduse domain through the vduse_as in the map functions
-> > >   (Jason).
-> > > * Squash with the patch creating the vduse_as struct (Jason).
-> > > * Create VDUSE_DEV_MAX_AS instead of comparing agains a magic number
-> > >   (Jason)
-> > >
-> > > v2:
-> > > * Convert the use of mutex to rwlock.
-> > >
-> > > RFC v3:
-> > > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a low=
-er
-> > >   value to reduce memory consumption, but vqs are already limited to
-> > >   that value and userspace VDUSE is able to allocate that many vqs.
-> > > * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
-> > >   VDUSE_IOTLB_GET_INFO.
-> > > * Use of array_index_nospec in VDUSE device ioctls.
-> > > * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
-> > > * Move the umem mutex to asid struct so there is no contention betwee=
-n
-> > >   ASIDs.
-> > >
-> > > RFC v2:
-> > > * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
-> > >   part of the struct is the same.
-> > > ---
-> > >  drivers/vdpa/vdpa_user/vduse_dev.c | 348 ++++++++++++++++++++-------=
---
-> > >  include/uapi/linux/vduse.h         |  53 ++++-
-> > >  2 files changed, 292 insertions(+), 109 deletions(-)
-> > >
-> > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_u=
-ser/vduse_dev.c
-> > > index 97be04f73fbf..c6909d73d06d 100644
-> > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > @@ -41,6 +41,7 @@
-> > >
-> > >  #define VDUSE_DEV_MAX (1U << MINORBITS)
-> > >  #define VDUSE_DEV_MAX_GROUPS 0xffff
-> > > +#define VDUSE_DEV_MAX_AS 0xffff
-> > >  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
-> > >  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
-> > >  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
-> > > @@ -86,7 +87,14 @@ struct vduse_umem {
-> > >         struct mm_struct *mm;
-> > >  };
-> > >
-> > > +struct vduse_as {
-> > > +       struct vduse_iova_domain *domain;
-> > > +       struct vduse_umem *umem;
-> > > +       struct mutex mem_lock;
-> > > +};
-> > > +
-> > >  struct vduse_vq_group {
-> > > +       struct vduse_as *as;
-> > >         struct vduse_dev *dev;
-> > >  };
-> > >
-> > > @@ -94,7 +102,7 @@ struct vduse_dev {
-> > >         struct vduse_vdpa *vdev;
-> > >         struct device *dev;
-> > >         struct vduse_virtqueue **vqs;
-> > > -       struct vduse_iova_domain *domain;
-> > > +       struct vduse_as *as;
-> > >         char *name;
-> > >         struct mutex lock;
-> > >         spinlock_t msg_lock;
-> > > @@ -122,9 +130,8 @@ struct vduse_dev {
-> > >         u32 vq_num;
-> > >         u32 vq_align;
-> > >         u32 ngroups;
-> > > -       struct vduse_umem *umem;
-> > > +       u32 nas;
-> > >         struct vduse_vq_group *groups;
-> > > -       struct mutex mem_lock;
-> > >         unsigned int bounce_size;
-> > >         struct mutex domain_lock;
-> > >  };
-> > > @@ -314,7 +321,7 @@ static int vduse_dev_set_status(struct vduse_dev =
-*dev, u8 status)
-> > >         return vduse_dev_msg_sync(dev, &msg);
-> > >  }
-> > >
-> > > -static int vduse_dev_update_iotlb(struct vduse_dev *dev,
-> > > +static int vduse_dev_update_iotlb(struct vduse_dev *dev, u32 asid,
-> > >                                   u64 start, u64 last)
-> > >  {
-> > >         struct vduse_dev_msg msg =3D { 0 };
-> > > @@ -323,8 +330,14 @@ static int vduse_dev_update_iotlb(struct vduse_d=
-ev *dev,
-> > >                 return -EINVAL;
-> > >
-> > >         msg.req.type =3D VDUSE_UPDATE_IOTLB;
-> > > -       msg.req.iova.start =3D start;
-> > > -       msg.req.iova.last =3D last;
-> > > +       if (dev->api_version < VDUSE_API_VERSION_1) {
-> > > +               msg.req.iova.start =3D start;
-> > > +               msg.req.iova.last =3D last;
-> > > +       } else {
-> > > +               msg.req.iova_v2.start =3D start;
-> > > +               msg.req.iova_v2.last =3D last;
-> > > +               msg.req.iova_v2.asid =3D asid;
-> > > +       }
-> > >
-> > >         return vduse_dev_msg_sync(dev, &msg);
-> > >  }
-> > > @@ -436,14 +449,29 @@ static __poll_t vduse_dev_poll(struct file *fil=
-e, poll_table *wait)
-> > >         return mask;
-> > >  }
-> > >
-> > > +/* Force set the asid to a vq group without a message to the VDUSE d=
-evice */
-> > > +static void vduse_set_group_asid_nomsg(struct vduse_dev *dev,
-> > > +                                      unsigned int group, unsigned i=
-nt asid)
-> > > +{
-> > > +       mutex_lock(&dev->domain_lock);
-> > > +       dev->groups[group].as =3D &dev->as[asid];
-> > > +       mutex_unlock(&dev->domain_lock);
-> > > +}
-> > > +
-> > >  static void vduse_dev_reset(struct vduse_dev *dev)
-> > >  {
-> > >         int i;
-> > > -       struct vduse_iova_domain *domain =3D dev->domain;
-> > >
-> > >         /* The coherent mappings are handled in vduse_dev_free_cohere=
-nt() */
-> > > -       if (domain && domain->bounce_map)
-> > > -               vduse_domain_reset_bounce_map(domain);
-> > > +       for (i =3D 0; i < dev->nas; i++) {
-> > > +               struct vduse_iova_domain *domain =3D dev->as[i].domai=
-n;
-> > > +
-> > > +               if (domain && domain->bounce_map)
-> > > +                       vduse_domain_reset_bounce_map(domain);
-> > > +       }
-> > > +
-> > > +       for (i =3D 0; i < dev->ngroups; i++)
-> > > +               vduse_set_group_asid_nomsg(dev, i, 0);
-> > >
-> > >         down_write(&dev->rwsem);
-> > >
-> > > @@ -623,6 +651,29 @@ static union virtio_map vduse_get_vq_map(struct =
-vdpa_device *vdpa, u16 idx)
-> > >         return ret;
-> > >  }
-> > >
-> > > +static int vduse_set_group_asid(struct vdpa_device *vdpa, unsigned i=
-nt group,
-> > > +                               unsigned int asid)
-> > > +{
-> > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > +       struct vduse_dev_msg msg =3D { 0 };
-> > > +       int r;
-> > > +
-> > > +       if (dev->api_version < VDUSE_API_VERSION_1 ||
-> > > +           group >=3D dev->ngroups || asid >=3D dev->nas)
-> > > +               return -EINVAL;
-> > > +
-> > > +       msg.req.type =3D VDUSE_SET_VQ_GROUP_ASID;
-> > > +       msg.req.vq_group_asid.group =3D group;
-> > > +       msg.req.vq_group_asid.asid =3D asid;
-> > > +
-> > > +       r =3D vduse_dev_msg_sync(dev, &msg);
-> > > +       if (r < 0)
-> > > +               return r;
-> > > +
-> > > +       vduse_set_group_asid_nomsg(dev, group, asid);
-> > > +       return 0;
-> > > +}
-> > > +
-> > >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx=
+> > All swap allocations are folio-based now (except for hibernation), so
+> > the swap allocator can always take the folio as the parameter. And now
+> > both swap cache (swap table) and swap map are protected by the cluster
+> > lock, scanning the map and inserting the folio can be done in the same
+> > critical section. This eliminates the time window that a slot is pinned
+> > by SWAP_HAS_CACHE, but it has no cache, and avoids touching the lock
+> > multiple times.
+> >
+> > This is both a cleanup and an optimization.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  include/linux/swap.h |   5 --
+> >  mm/swap.h            |   8 +--
+> >  mm/swap_state.c      |  56 +++++++++++-------
+> >  mm/swapfile.c        | 161 +++++++++++++++++++++----------------------=
+--------
+> >  4 files changed, 105 insertions(+), 125 deletions(-)
+> >
+> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > index ac3caa4c6999..4b4b81fbc6a3 100644
+> > --- a/include/linux/swap.h
+> > +++ b/include/linux/swap.h
+> > @@ -452,7 +452,6 @@ static inline long get_nr_swap_pages(void)
+> >  }
+> >
+> >  extern void si_swapinfo(struct sysinfo *);
+> > -void put_swap_folio(struct folio *folio, swp_entry_t entry);
+> >  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+> >  int swap_type_of(dev_t device, sector_t offset);
+> >  int find_first_swap(dev_t *device);
+> > @@ -534,10 +533,6 @@ static inline void swap_put_entries_direct(swp_ent=
+ry_t ent, int nr)
+> >  {
+> >  }
+> >
+> > -static inline void put_swap_folio(struct folio *folio, swp_entry_t swp=
+)
+> > -{
+> > -}
+> > -
+> >  static inline int __swap_count(swp_entry_t entry)
+> >  {
+> >       return 0;
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index 74c61129d7b7..03694ffa662f 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -277,13 +277,13 @@ void __swapcache_clear_cached(struct swap_info_st=
+ruct *si,
+> >   */
+> >  struct folio *swap_cache_get_folio(swp_entry_t entry);
+> >  void *swap_cache_get_shadow(swp_entry_t entry);
+> > -int swap_cache_add_folio(struct folio *folio, swp_entry_t entry,
+> > -                      void **shadow, bool alloc);
+> >  void swap_cache_del_folio(struct folio *folio);
+> >  struct folio *swap_cache_alloc_folio(swp_entry_t entry, gfp_t gfp_flag=
+s,
+> >                                    struct mempolicy *mpol, pgoff_t ilx,
+> >                                    bool *alloced);
+> >  /* Below helpers require the caller to lock and pass in the swap clust=
+er. */
+> > +void __swap_cache_add_folio(struct swap_cluster_info *ci,
+> > +                         struct folio *folio, swp_entry_t entry);
+> >  void __swap_cache_del_folio(struct swap_cluster_info *ci,
+> >                           struct folio *folio, swp_entry_t entry, void =
+*shadow);
+> >  void __swap_cache_replace_folio(struct swap_cluster_info *ci,
+> > @@ -459,8 +459,8 @@ static inline void *swap_cache_get_shadow(swp_entry=
+_t entry)
+> >       return NULL;
+> >  }
+> >
+> > -static inline int swap_cache_add_folio(struct folio *folio, swp_entry_=
+t entry,
+> > -                                    void **shadow, bool alloc)
+> > +static inline void *__swap_cache_add_folio(struct swap_cluster_info *c=
+i,
+> > +             struct folio *folio, swp_entry_t entry)
+> >  {
+> >  }
+>
+> Just a nit,
+> void* return nothing.
+>
+> changed to void (original function prototype is return void)
+> or how about just remove If this is not used on !CONFIG_SWAP
+
+Thanks! Yeah it can be just removed, no one is using it when
+!CONFIG_SWAP after this commit. Will clean it up.
+
+>
+> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+> > index d2bcca92b6e0..85d9f99c384f 100644
+> > --- a/mm/swap_state.c
+> > +++ b/mm/swap_state.c
+> > @@ -122,6 +122,34 @@ void *swap_cache_get_shadow(swp_entry_t entry)
+> >       return NULL;
+> >  }
+> >
+> > +void __swap_cache_add_folio(struct swap_cluster_info *ci,
+> > +                         struct folio *folio, swp_entry_t entry)
+> > +{
+> > +     unsigned long new_tb;
+> > +     unsigned int ci_start, ci_off, ci_end;
+> > +     unsigned long nr_pages =3D folio_nr_pages(folio);
+> > +
+> > +     VM_WARN_ON_ONCE_FOLIO(!folio_test_locked(folio), folio);
+> > +     VM_WARN_ON_ONCE_FOLIO(folio_test_swapcache(folio), folio);
+> > +     VM_WARN_ON_ONCE_FOLIO(!folio_test_swapbacked(folio), folio);
+> > +
+> > +     new_tb =3D folio_to_swp_tb(folio);
+> > +     ci_start =3D swp_cluster_offset(entry);
+> > +     ci_off =3D ci_start;
+> > +     ci_end =3D ci_start + nr_pages;
+> > +     do {
+> > +             VM_WARN_ON_ONCE(swp_tb_is_folio(__swap_table_get(ci, ci_o=
+ff)));
+> > +             __swap_table_set(ci, ci_off, new_tb);
+> > +     } while (++ci_off < ci_end);
+> > +
+> > +     folio_ref_add(folio, nr_pages);
+> > +     folio_set_swapcache(folio);
+> > +     folio->swap =3D entry;
+> > +
+> > +     node_stat_mod_folio(folio, NR_FILE_PAGES, nr_pages);
+> > +     lruvec_stat_mod_folio(folio, NR_SWAPCACHE, nr_pages);
+> > +}
+> > +
+> >  /**
+> >   * swap_cache_add_folio - Add a folio into the swap cache.
+> >   * @folio: The folio to be added.
+> > @@ -136,23 +164,18 @@ void *swap_cache_get_shadow(swp_entry_t entry)
+> >   * The caller also needs to update the corresponding swap_map slots wi=
+th
+> >   * SWAP_HAS_CACHE bit to avoid race or conflict.
+> >   */
+> > -int swap_cache_add_folio(struct folio *folio, swp_entry_t entry,
+> > -                      void **shadowp, bool alloc)
+> > +static int swap_cache_add_folio(struct folio *folio, swp_entry_t entry=
 ,
-> > >                                 struct vdpa_vq_state *state)
-> > >  {
-> > > @@ -794,13 +845,13 @@ static int vduse_vdpa_set_map(struct vdpa_devic=
-e *vdpa,
-> > >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > >         int ret;
-> > >
-> > > -       ret =3D vduse_domain_set_map(dev->domain, iotlb);
-> > > +       ret =3D vduse_domain_set_map(dev->as[asid].domain, iotlb);
-> > >         if (ret)
-> > >                 return ret;
-> > >
-> > > -       ret =3D vduse_dev_update_iotlb(dev, 0ULL, ULLONG_MAX);
-> > > +       ret =3D vduse_dev_update_iotlb(dev, asid, 0ULL, ULLONG_MAX);
-> > >         if (ret) {
-> > > -               vduse_domain_clear_map(dev->domain, iotlb);
-> > > +               vduse_domain_clear_map(dev->as[asid].domain, iotlb);
-> > >                 return ret;
-> > >         }
-> > >
-> > > @@ -843,6 +894,7 @@ static const struct vdpa_config_ops vduse_vdpa_co=
-nfig_ops =3D {
-> > >         .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
-> > >         .reset                  =3D vduse_vdpa_reset,
-> > >         .set_map                =3D vduse_vdpa_set_map,
-> > > +       .set_group_asid         =3D vduse_set_group_asid,
-> > >         .get_vq_map             =3D vduse_get_vq_map,
-> > >         .free                   =3D vduse_vdpa_free,
-> > >  };
-> > > @@ -858,9 +910,10 @@ static void vduse_dev_sync_single_for_device(uni=
-on virtio_map token,
-> > >                 return;
-> > >
-> > >         vdev =3D token.group->dev;
-> > > -       domain =3D vdev->domain;
-> > > -
-> > > +       mutex_lock(&vdev->domain_lock);
-> > > +       domain =3D token.group->as->domain;
-> > >         vduse_domain_sync_single_for_device(domain, dma_addr, size, d=
-ir);
-> > > +       mutex_unlock(&vdev->domain_lock);
-> > >  }
-> > >
-> > >  static void vduse_dev_sync_single_for_cpu(union virtio_map token,
-> > > @@ -874,9 +927,10 @@ static void vduse_dev_sync_single_for_cpu(union =
-virtio_map token,
-> > >                 return;
-> > >
-> > >         vdev =3D token.group->dev;
-> > > -       domain =3D vdev->domain;
-> > > -
-> > > +       mutex_lock(&vdev->domain_lock);
-> > > +       domain =3D token.group->as->domain;
-> > >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir)=
-;
-> > > +       mutex_unlock(&vdev->domain_lock);
-> > >  }
-> > >
-> > >  static dma_addr_t vduse_dev_map_page(union virtio_map token, struct =
-page *page,
-> > > @@ -886,14 +940,18 @@ static dma_addr_t vduse_dev_map_page(union virt=
-io_map token, struct page *page,
-> > >  {
-> > >         struct vduse_dev *vdev;
-> > >         struct vduse_iova_domain *domain;
-> > > +       dma_addr_t r;
-> > >
-> > >         if (!token.group)
-> > >                 return DMA_MAPPING_ERROR;
-> > >
-> > >         vdev =3D token.group->dev;
-> > > -       domain =3D vdev->domain;
-> > > +       mutex_lock(&vdev->domain_lock);
-> >
-> > The mutex_lock can't be used here since the dma ops might be called in
-> > atomic context. And I think we can just remove it since creation and
-> > deletion operations of the iova domain are guaranteed not to execute
-> > concurrently with I/O operations.
-> >
+> > +                             void **shadowp)
 >
-> That would be great indeed! Can you expand on this, what protects here
-> from the moment the two syscalls are issues from userland?
+> It is also a small thing.
+> "alloc" parameter removed then the comment might be updated.
+
+Nice suggestion, will cleanup the comment too.
+
 >
-
-The domain mutex lock is introduced in commit
-d4438d23eeeef8bb1b3a8abe418abffd60bb544a ("vduse: Delay iova domain
-creation"). It's used to prevent concurrent execution between
-vdpa_dev_add() and some vduse device ioctl which needs to access the
-iova domain such as VDUSE_IOTLB_REG_UMEM/DEREG_UMEM. But the dma ops
-would not be called until vdpa_dev_add() completed, so the mutex lock
-is not needed.
-
-Thanks,
-Yongji
+> Thanks,
+> Youngjun Park
+>
 
