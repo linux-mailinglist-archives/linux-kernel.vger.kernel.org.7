@@ -1,162 +1,195 @@
-Return-Path: <linux-kernel+bounces-879550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82600C2368F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:33:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550CDC2365F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97411424C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730391890C13
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ECB303CBE;
-	Fri, 31 Oct 2025 06:31:26 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1B72FD686;
+	Fri, 31 Oct 2025 06:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e9Uk+fRr"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010057.outbound.protection.outlook.com [52.101.193.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E52848B4;
-	Fri, 31 Oct 2025 06:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892286; cv=none; b=Nj7KoP+H0Sagc02ieNW5DFPoj/jMNq+dQazOyx0GPTL1ta1Fgw2EGaHpB82N4OI1W15ABEdJ5pdZtsCkDTzRVxrIq3bcvhbyQShZJyHFJ0uUCpgC9X48lvH18l5NxQG92Gv0UgFJK2/83YG50dDU9fl9PqzvWKb9K8+bkgX3QrU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892286; c=relaxed/simple;
-	bh=o+LIBORoXhKHcJTxfihkDW044OArupUAC8XHP4fDIVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HCkuDYLjcgXrxusmzFda2c3khv2nd55d6Ai1dAmT+wcxTqkATA/owCY1q4bb/JUz4v/oYrqAbT5WG+9B1PwG/gS8+trIHbcR9uPQBannnsGop7C6GxyshKRiaeKtTYSEdmua/MPG3ZxfS4HjsAvAv3oDgmMvsBcSpSgjq8Asu4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cyWMj1mljzYQthv;
-	Fri, 31 Oct 2025 14:31:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 35A1B1A07BD;
-	Fri, 31 Oct 2025 14:31:21 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgBHnESuVwRpEFrWCA--.33311S8;
-	Fri, 31 Oct 2025 14:31:21 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 4/4] ext4: replace ext4_es_insert_extent() when caching on-disk extents
-Date: Fri, 31 Oct 2025 14:29:05 +0800
-Message-ID: <20251031062905.4135909-5-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
-References: <20251031062905.4135909-1-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA30D2F6191;
+	Fri, 31 Oct 2025 06:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761892225; cv=fail; b=R8JgWVD1xRMZ5br/DsdJDM/2Zj2dDU5i0MUXFMkexYCgYfmb1rLvoZT3xxFTQu4x5tJ96DQfcviWnjNu/b8E6thtrrGMWoKkgYsx8SIOXgkWEw21WGmI5a1NiExVyYoUNN/atxGFmUKznBK0iB40wUCLBPesv+BcZU51izXlRlQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761892225; c=relaxed/simple;
+	bh=5RuBHKs6FvHKQRndN7Wr6K7ZCCbLFQ5R9Vr2dOoko+Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kVjn9bePZ26dB8sba341L2tag4YKcy93ZfKqHIMd0D3cYZ9LQ/F6kdzfo9knSe4YPX2gwFsudCwbhzm0B/9jrnGtA5O5znpB9GachjT3VRsncaI/S8qYB4ghZQwkc/ws2KA/MJpXcL2VtcbxTAuCmcpDqPPjjbkE9q9BzXC0uag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e9Uk+fRr; arc=fail smtp.client-ip=52.101.193.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mbgl4cmJFLMvpKPckxCq4QmE5a4ftd8pO+aUW8C6MUjXrWn1uQka8TqWd0W0u6K3qyYZOkp5jCRxgLmQX8m5rIBob+DaC2qJdB4f9OFAJKoKMtWaINU3zcRWbH4FtblU6KVIFcI4SS9Xofo7zcjb4pq433VSt58V30dFO8uDQ75E7eTxRh2oNT/3iJ8iujl5vYUpoZzgkeKOQALl5PrzAQoTzDM+wP6mzhNYg7t/sGOdpzQwwLh6YlsIiH61ZrC3LzdbmiaDoRWyVR0JHRppo1DTdcgtA4UwKKIj13eqatyFby0QqSmNBfAisxaSydiU3ol1R5FPFP7OoPdLoKYaXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KE4b/d/v4lDqhc0it4uwu/ZqJj98Li0/9IFAXqIZV+c=;
+ b=nlzfvwln1+inyzaUm0SVJBOcaJli3lINPOR5jmg9e0fud0wl+sc/Wn+ZR3j0FqTbshg57aP3PTOhEe8l/u/4zxmCUlOb1Nbzsg7TByf745kWjnfHloGUOZY3A7Xte5qIx2Zmu4BnGkXb+0NHDi/80E0/JbhW2TYpm3HQFh0+PLYoo33ismulZA5pROA4yFJSjBKT78b/ToQjQcHxdTrbpvVAylTIA0JyVs81nbeEmNaiLWZ2WsTgg6GHeH6dmi4Yegwj1WHH+QVIIjXdvmf1XiTkDk2fkAXr4HW2GLMYlZf6DbCrBTf4VAw9KbIKEEXr2Z0LxKgSwcBaoXtzqtXE/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KE4b/d/v4lDqhc0it4uwu/ZqJj98Li0/9IFAXqIZV+c=;
+ b=e9Uk+fRry2y74XiS/ae+FDnmt2DmjQPwSb9UUIh1R9zOLNw5GR9TKvnz8o0TRkOXu7p27UQBoKWn7eqvxm4fgiLhafvRArNZsqFfYsGpNdtSNM3rRn9SyQx8q7DElfE2SyVmYWIxPdDHWRtntpfQ3OqoSy/oRY0t3I7fGPjXO3nJe1Q+Wb5rVwmnbr0pArI4KseChFLgubyao/vKWvzOwREO25XKcsWOutTJQQ8PPVGH8gF24uF2K8NNsolk3P44BfN2A57zI58HZW0i6fpc1pJiRD6UV/EYrkjTuy0n2nWoOkoWej1J/rr0JI1rwBzL4qAle54kUM5mgTdzLckQng==
+Received: from BN0PR04CA0129.namprd04.prod.outlook.com (2603:10b6:408:ed::14)
+ by LV3PR12MB9260.namprd12.prod.outlook.com (2603:10b6:408:1b4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
+ 2025 06:30:19 +0000
+Received: from BN2PEPF00004FC1.namprd04.prod.outlook.com
+ (2603:10b6:408:ed:cafe::b4) by BN0PR04CA0129.outlook.office365.com
+ (2603:10b6:408:ed::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
+ 31 Oct 2025 06:30:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN2PEPF00004FC1.mail.protection.outlook.com (10.167.243.187) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 06:30:19 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 30 Oct
+ 2025 23:30:04 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
+ 2025 23:30:04 -0700
+Received: from build-amhetre-focal-20250825.internal (10.127.8.10) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Thu, 30 Oct 2025 23:30:03 -0700
+From: Ashish Mhetre <amhetre@nvidia.com>
+To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <jgg@ziepe.ca>,
+	<nicolinc@nvidia.com>
+CC: <linux-tegra@nvidia.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
+	<amhetre@nvidia.com>
+Subject: [PATCH 0/3] Add device tree support for NVIDIA Tegra CMDQV
+Date: Fri, 31 Oct 2025 06:29:56 +0000
+Message-ID: <20251031062959.1521704-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHnESuVwRpEFrWCA--.33311S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF43tr4DXFyxGrWrtrykGrg_yoW5Ww15pr
-	ZrCr1rGws8Ww1q9FWxJF4UZF15C3WakrW7Gw4IvryrAayrGFyfJF1UtFW2vFWvqrW8Xw1F
-	qF4UK34UCayfCa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
-	xhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC1:EE_|LV3PR12MB9260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85979348-b2d4-4d58-c718-08de1846f669
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1blrZ+wBdFVvQ+TEL79TwkZ1Y4PqqodA6Lti66iBX6+i/N52/aGyReo/+Ub+?=
+ =?us-ascii?Q?8CQaA7NIhOE0YgkSliqTIZWcSTdtFtrRU80uKEgmh5RMOFru6ISRakM1m1ho?=
+ =?us-ascii?Q?1GTVvc+kREhvwXvCNA/z0ruo2eh6kL5I4T1nqUe6yzX9fltutPgleSfYw3AV?=
+ =?us-ascii?Q?W4hJKGnryaMsTFX0IYofL95DLth/xrRQzQFGYfOPWc6+xVUCC7tO6FCkeDBs?=
+ =?us-ascii?Q?WfyugbGeoYGqsxZtGWJSpCVA3vVW6CNokVc2FC1EbLysuy02SEAFeut2VqrJ?=
+ =?us-ascii?Q?+dm/CbPc5EPNZnurYo8kFIcshTcMf0fVTNg2WNA1flz8XD1HqfIkF5Fj9pm0?=
+ =?us-ascii?Q?ssd7z9jAB/ftMR8wMSWLGYBdByvJtSOPvvVPc2UMeu/TnvVWy8rVV3YboSno?=
+ =?us-ascii?Q?yflmCUuiddT6WAI9/Pj3gOXuAGim4Nd63sgP6GGV/t6o0BADvWUwxg0xu38F?=
+ =?us-ascii?Q?jtI0iHPYjQ5MqtHC8lolCEqE9uOyYTu4uhGD8Rz+UYaRjwTkL3WutUCentB2?=
+ =?us-ascii?Q?IGwx/e4NeGyBLR5KZqjQTLYLm5D85TXYvfVmgpFoZqJjuyNVMWeGe9tjIUqG?=
+ =?us-ascii?Q?pjFN2JZ+bYMZxFwy3DD17YNJdRLaTfpdluT8Ztj6dHQxGY1txKqcsgVkiCUb?=
+ =?us-ascii?Q?91GIZWXzyOFlgOppFqKRfv7oDHTC65XfKyUTCOVsOOr22X2fyTuflr+2RbFl?=
+ =?us-ascii?Q?X515MitkCdyftI0ynvMdddp/jexhIwtppFTU1anfuE25rTsO+PMP8/09q2p5?=
+ =?us-ascii?Q?IaJyDIOWy8OhVY0YteZ3+VbTO+DL29NHkTkfDt3WjpnW8NMTwkOJp/THsgmU?=
+ =?us-ascii?Q?yoXr/adb1edtxL2Hc0xoOuAwoS6IhOSeiZZfCAAYrAuYQHqs+AQn6On3kkJM?=
+ =?us-ascii?Q?sJFWyEbi8ekBGy85WnfG1HbZOg1IflQekBNXR5aYLXqty+jBdSWkZ39H/jVp?=
+ =?us-ascii?Q?22ox/ilHqd5L4yu1hZf7ME+MvVIOeX+rIIRdXMMoD5MrmPgX9JNGBFfUmpAX?=
+ =?us-ascii?Q?0utee4h7P3mQ80b/Z6NYCH/iuDhV3qGXPS+ySMHSI3gN7WX6R4O84SsSm3e3?=
+ =?us-ascii?Q?tTAjlC590Pj+dToST1nSx4Hz8TVCocZei7JMF3oYGzobRSusFHHeNvbwsYUc?=
+ =?us-ascii?Q?MuY6JvxCp04XWkhSV8u6OL0jg7O095t7orEXJ8/zqUaX83+DppRDQK698vg/?=
+ =?us-ascii?Q?AcS8jMira7U1TLwU8a+IN6lC0icWOSxliMy0ivH+jiGVhNIwY57uzEu8gaAR?=
+ =?us-ascii?Q?sTk4l/2dRJAhdyLQBTKEij0SXkmrI6RaeDVJdA6VQuesmbS3xDP7NYZjzwLp?=
+ =?us-ascii?Q?G8ofWlgYvKtA2BakM40ngrEiyBcSyk6IYAiQQ+s3CtCnKoZvKFt7T+lBfSil?=
+ =?us-ascii?Q?g3FGQDLc1qfxkJ38hfxpeTAUdJtQkJG6vJamOjNQtj/TSBVOZ2gbwcjbP91/?=
+ =?us-ascii?Q?GlkybumUOaolsSLrE4Kr3TBc7FablwpbPET3EhJxmVpmUk7QLbbtjk42yCKx?=
+ =?us-ascii?Q?MHewUDZWgISlrn+lV1p0R3ROR4dZhzipS/qRd2ir62MxTUXLqQltvy6/HtQO?=
+ =?us-ascii?Q?dGeUSBqTu8bPmsGGHKRKH6J7Pl/uplDx1TTOpXTO?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 06:30:19.2226
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85979348-b2d4-4d58-c718-08de1846f669
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FC1.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9260
 
-From: Zhang Yi <yi.zhang@huawei.com>
+This series adds device tree support for the CMDQ-Virtualization (CMDQV)
+hardware on NVIDIA Tegra264 SoCs.
 
-In ext4, the remaining places for inserting extents into the extent
-status tree within ext4_ext_determine_insert_hole() and
-ext4_map_query_blocks() directly cache on-disk extents. We can use
-ext4_es_cache_extent() instead of ext4_es_insert_extent() in these
-cases. This will help reduce unnecessary increases in extent sequence
-numbers and cache invalidations after supporting IOMAP in the future.
+CMDQV is a hardware block that works alongside the ARM SMMUv3 to assist in
+virtualizing the command queue. It was previously only supported through
+ACPI on Tegra241. This series extends the existing driver to support device
+tree based initialization, which is required for Tegra264 platforms.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/extents.c |  4 ++--
- fs/ext4/inode.c   | 18 +++++++++---------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+The series is structured as follows:
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index c42ceb5aae37..7dc80141350d 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4160,8 +4160,8 @@ static ext4_lblk_t ext4_ext_determine_insert_hole(struct inode *inode,
- insert_hole:
- 	/* Put just found gap into cache to speed up subsequent requests */
- 	ext_debug(inode, " -> %u:%u\n", hole_start, len);
--	ext4_es_insert_extent(inode, hole_start, len, ~0,
--			      EXTENT_STATUS_HOLE, false);
-+	ext4_es_cache_extent(inode, hole_start, len, ~0,
-+			     EXTENT_STATUS_HOLE, true);
- 
- 	/* Update hole_len to reflect hole size after lblk */
- 	if (hole_start != lblk)
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e99306a8f47c..a3c37de552e9 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -504,8 +504,8 @@ static int ext4_map_query_blocks_next_in_leaf(handle_t *handle,
- 	retval = ext4_ext_map_blocks(handle, inode, &map2, 0);
- 
- 	if (retval <= 0) {
--		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
--				      map->m_pblk, status, false);
-+		ext4_es_cache_extent(inode, map->m_lblk, map->m_len,
-+				     map->m_pblk, status, true);
- 		return map->m_len;
- 	}
- 
-@@ -526,13 +526,13 @@ static int ext4_map_query_blocks_next_in_leaf(handle_t *handle,
- 	 */
- 	if (map->m_pblk + map->m_len == map2.m_pblk &&
- 			status == status2) {
--		ext4_es_insert_extent(inode, map->m_lblk,
--				      map->m_len + map2.m_len, map->m_pblk,
--				      status, false);
-+		ext4_es_cache_extent(inode, map->m_lblk,
-+				     map->m_len + map2.m_len, map->m_pblk,
-+				     status, true);
- 		map->m_len += map2.m_len;
- 	} else {
--		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
--				      map->m_pblk, status, false);
-+		ext4_es_cache_extent(inode, map->m_lblk, map->m_len,
-+				     map->m_pblk, status, true);
- 	}
- 
- 	return map->m_len;
-@@ -571,8 +571,8 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
- 			map->m_len == orig_mlen) {
- 		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
--		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
--				      map->m_pblk, status, false);
-+		ext4_es_cache_extent(inode, map->m_lblk, map->m_len,
-+				     map->m_pblk, status, true);
- 		return retval;
- 	}
- 
+Patch 1: Extends the tegra241-cmdqv driver to support device tree probing
+         alongside the existing ACPI support. The SMMU driver now parses
+         the nvidia,cmdqv phandle to associate each SMMU with its
+         corresponding CMDQV instance.
+
+Patch 2: Adds device tree binding documentation for nvidia,tegra264-cmdqv
+         and extends the arm,smmu-v3 binding with an optional nvidia,cmdqv
+         property.
+
+Patch 3: Adds CMDQV device nodes to the Tegra264 device tree and enables
+         them on the tegra264-p3834 platform.
+
+The implementation mirrors the existing ACPI probe path to minimize code
+divergence and maintain consistency with Tegra241 support.
+
+Ashish Mhetre (3):
+  iommu/arm-smmu-v3: Add device-tree support for CMDQV driver
+  dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
+  arm64: dts: nvidia: Add nodes for CMDQV
+
+ .../bindings/iommu/arm,smmu-v3.yaml           | 10 ++++
+ .../bindings/iommu/nvidia,tegra264-cmdqv.yaml | 46 +++++++++++++++++
+ .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |  8 +++
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      | 50 +++++++++++++++++++
+ drivers/iommu/arm/Kconfig                     |  1 -
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 30 +++++++++++
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 43 +++++++++++++++-
+ 7 files changed, 186 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
+
 -- 
-2.46.1
+2.25.1
 
 
