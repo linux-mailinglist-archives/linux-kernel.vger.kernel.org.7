@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-879671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D6AC23BB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:16:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC18AC23B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A35426D7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721CF189AB27
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAE5340298;
-	Fri, 31 Oct 2025 08:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0A2342CA5;
+	Fri, 31 Oct 2025 08:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A18xIDk+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfZ4NeJq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FB532E6B0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F54F2236E1
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897947; cv=none; b=Cgrok2b2R0n06oDuAKM2d/oRbKL9xxVC+tdNJnSBED72QyGaBKkyxZJuk5rQhPBXgOc2yVgRayjhknAh7WUNoes+a9+ZsBEz45gixhtJ3igR65nb9y/L0GJHWtMlqhifCFX8ilxZkL24AJYRwlsMR5fzOjeJnxzziQjmLjZH8Eg=
+	t=1761897949; cv=none; b=bDhWAa0wpYl8Y8BVLh6RQR0pJ+ms3nebPrm+nk5J4gnJbde5XMc5SDhYybdYM5gCaYWn783ti7R7GWAD/l1+WR5cC8cq5+cMDeGmEIwRTxqq5zElbvphhHWR0PsPcOCKI6JBokJBm1kygEilpxt76LMEjZwPSgVZ+rUN87it6rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897947; c=relaxed/simple;
-	bh=Q2xZkwCW0AmTa4qnwcYOKgh1ZpeXBgV48tHAsig79RI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S9m5vG9FG5+ms9rCpz+gs79GybEuSNNTGXOemF0Nt4MhgxFS/YL1ZCs3XiaEklojSPj9QuaVdYPKHo3eXY18SpUozGkQRzRIjmN8wvMqDfjXtMuUDis9OccYb4juCEQoZjMGxmssPp33ZBkqRPWBQeb5pk9f3sToNppOIJ+f1K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A18xIDk+; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1761897949; c=relaxed/simple;
+	bh=5BDc6KcSVzzM4URCYJVmlaEuRLHbvFkYpGfq3+8BKJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oGZzKNS4kZWPMHwpGIyurRKe0EhYzocrT5UTTFm/A8/1bcWfDQyV81bgzFVZHZ5k/UaXO9EoMaIEh5aEiE4P2dfpEkHO9EA8rN+ZIkGdzWbkyo1JQCtWW0qW4TmCQIJlFscbmn+aHKA3H/NaRhRjqD/+iWOoCXzdH20AdNtzwd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfZ4NeJq; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761897946; x=1793433946;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Q2xZkwCW0AmTa4qnwcYOKgh1ZpeXBgV48tHAsig79RI=;
-  b=A18xIDk+crcd/sdj/qQKLGRYHB6uqm6l8HsBNSv3ut0nZBU0ABOaveem
-   KVWzkB5Woxz6+7Z8uSotexM+8BpgbK9SYzKnVAsPhB0N8LT1v+kyzsRJy
-   h5+UFYDJxKJtmqz6LwG7h+zTKhQ+4bpdv6VU5O1wUaMEsMZfIYOvqzfnQ
-   yGQhdwGohwZi+B/E2bog5RhdLbp0/afvwQOxu51L1Z5ArgwCCTBMFTX3d
-   ne133H0tReRLy6aaa+uK03gxHhkhAzAwX2d2E1hHUuZIs51esl8OFvRTC
-   EYz/pjbo1u4s5NnM4xExthVjblUJ6uiwUrvVymSKYIGI9/9m80vDz/UCj
-   g==;
-X-CSE-ConnectionGUID: uFx7GIAOSSqaWdDW1eO0Vg==
-X-CSE-MsgGUID: gwn+ZfZSRpOdPfvk9Fhhtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="86676353"
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="86676353"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:05:45 -0700
-X-CSE-ConnectionGUID: mwoy04vURTS1BdedhmpToA==
-X-CSE-MsgGUID: 1p+/7rVVQ/uQnXhpXxeGJg==
+  t=1761897949; x=1793433949;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5BDc6KcSVzzM4URCYJVmlaEuRLHbvFkYpGfq3+8BKJM=;
+  b=RfZ4NeJqanZEs/bNX9ama/e0ukm8D8XciKQsfTgfIFBh3uOBsrOJNaH8
+   bcMnIt+Tne61oYGnPdoaTyeMjyyJDjEyN+6zmFdwB5SW1J/Vu9xVEiO1v
+   we266gOwcX1F0Xkqn3riMFZsdiFt00jwtWyDH7vniTrB+0G05s8ivNCPa
+   hsg+FBa1FUTCLcmdPYDwoz/GCmhnf5Qz2uJwcgp3gHLvoEBTqJPshYxke
+   eg8xz+Q2Lo4H3AoYXvPU0cJeVbqQV2wBmdKP6SBGwcH+ppWSzci5Xdw4F
+   06HxBTjJlmpaGj0abQDUKrtXPBdnb8XlIy7XYJsJAJ4esAkSvyKz3X7cK
+   w==;
+X-CSE-ConnectionGUID: FrnZ/rg5RPOkP3GqmGOA2A==
+X-CSE-MsgGUID: LEQw6cTiQ7iJKHYYYyA/CA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67888891"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67888891"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:05:46 -0700
+X-CSE-ConnectionGUID: o1JGxKJIQQamQoQ73fzQwA==
+X-CSE-MsgGUID: a7Ij78lpQMiV8ri8NRXAlw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="186631607"
+   d="scan'208";a="191320283"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa009.fm.intel.com with ESMTP; 31 Oct 2025 01:05:43 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 31 Oct 2025 01:05:43 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 9349695; Fri, 31 Oct 2025 09:05:41 +0100 (CET)
+	id 96CB696; Fri, 31 Oct 2025 09:05:41 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mark Brown <broonie@kernel.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
@@ -67,10 +68,12 @@ To: Mark Brown <broonie@kernel.org>,
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v3 0/5] regcache: Split out ->populate() and use it
-Date: Fri, 31 Oct 2025 09:03:15 +0100
-Message-ID: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 1/5] regcache: Add ->populate() callback to separate from ->init()
+Date: Fri, 31 Oct 2025 09:03:16 +0100
+Message-ID: <20251031080540.3970776-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
+References: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,37 +82,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is a refactoring series to decouple cache initialisation and population.
-On its own it has no functional impact but will be used in the further
-development. Besides that I found this split useful on its own (from the design
-perspective). That's why I decided to send it out as is separately from a bigger
-(and ongoing) work.
+In the future changes we would like to change the flow of the cache handling.
+Add ->populate() callback in order to prepare for that.
 
-Changelog v3:
-- added missing space (Mark)
-- collected tags (Sander)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/base/regmap/internal.h |  1 +
+ drivers/base/regmap/regcache.c | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
 
-Changelog v2:
-v2: https://lore.kernel.org/r/20251030173915.3886882-1-andriy.shevchenko@linux.intel.com
-- rebased on top of the recent regcache changes (Mark)
-- a new clean up patch induced by the previous
-
-v1: https://lore.kernel.org/r/20251029073131.3004660-1-andriy.shevchenko@linux.intel.com
-
-Andy Shevchenko (5):
-  regcache: Add ->populate() callback to separate from ->init()
-  regcache: rbtree: Split ->populate() from ->init()
-  regcache: flat: Remove unneeded check and error message for -ENOMEM
-  regcache: flat: Split ->populate() from ->init()
-  regcache: maple: Split ->populate() from ->init()
-
- drivers/base/regmap/internal.h        |  1 +
- drivers/base/regmap/regcache-flat.c   | 37 +++++++++++----------
- drivers/base/regmap/regcache-maple.c  | 47 ++++++++++++---------------
- drivers/base/regmap/regcache-rbtree.c | 31 ++++++++++--------
- drivers/base/regmap/regcache.c        | 16 +++++++++
- 5 files changed, 74 insertions(+), 58 deletions(-)
-
+diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
+index 8d19a1414d5b..1477329410ec 100644
+--- a/drivers/base/regmap/internal.h
++++ b/drivers/base/regmap/internal.h
+@@ -186,6 +186,7 @@ struct regcache_ops {
+ 	enum regcache_type type;
+ 	int (*init)(struct regmap *map);
+ 	int (*exit)(struct regmap *map);
++	int (*populate)(struct regmap *map);
+ #ifdef CONFIG_DEBUG_FS
+ 	void (*debugfs_init)(struct regmap *map);
+ #endif
+diff --git a/drivers/base/regmap/regcache.c b/drivers/base/regmap/regcache.c
+index 0392f5525cf3..319c342bf5a0 100644
+--- a/drivers/base/regmap/regcache.c
++++ b/drivers/base/regmap/regcache.c
+@@ -222,8 +222,24 @@ int regcache_init(struct regmap *map, const struct regmap_config *config)
+ 		if (ret)
+ 			goto err_free;
+ 	}
++
++	if (map->num_reg_defaults && map->cache_ops->populate) {
++		dev_dbg(map->dev, "Populating %s cache\n", map->cache_ops->name);
++		map->lock(map->lock_arg);
++		ret = map->cache_ops->populate(map);
++		map->unlock(map->lock_arg);
++		if (ret)
++			goto err_exit;
++	}
+ 	return 0;
+ 
++err_exit:
++	if (map->cache_ops->exit) {
++		dev_dbg(map->dev, "Destroying %s cache\n", map->cache_ops->name);
++		map->lock(map->lock_arg);
++		ret = map->cache_ops->exit(map);
++		map->unlock(map->lock_arg);
++	}
+ err_free:
+ 	kfree(map->reg_defaults);
+ 	if (map->cache_free)
 -- 
 2.50.1
 
