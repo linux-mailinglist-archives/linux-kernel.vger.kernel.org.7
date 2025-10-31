@@ -1,138 +1,217 @@
-Return-Path: <linux-kernel+bounces-880361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E1FC259B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:37:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873D4C25992
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D60E4F5EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:34:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DBFED351C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5419434C997;
-	Fri, 31 Oct 2025 14:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23C03446C4;
+	Fri, 31 Oct 2025 14:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cvZlJupw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqJAZPms"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D666D34C811;
-	Fri, 31 Oct 2025 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D347270545
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921272; cv=none; b=dciDHKUEZ3PUwTej1ZIq0ni9ZTjxPI31Q2bZ9GPNJnif2rnfJrzV3Is+xvYcMaXyAZ3sy0BfSATXD+T4WvHLImCPXbCzrWjc+b44i96n55MhQJJcez8iZgZ+AQ5regRtG6CsD0XT4bV3ZbVLYcV2b2uu1wALjsSxzzrEzxoprB0=
+	t=1761921339; cv=none; b=o6P+vSMNMAHqdRPj2JaqzkP6pu6z3NjgB7fCOhOJhEs12NHx0Gl9c49p2D6Qk1v+SsmK7dR+FZvmrBIrDHXZEZD5ON7OUz3ww8bEBdRUjM9MArKHy2HbzbPJlhwPKx5sh+SE2OS2BpV4JTqyOZUGDnjBhI6U/Hu2AZwaclT4I+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921272; c=relaxed/simple;
-	bh=/g1AxzJQOcya88xAhA0tStQsU9mezZXtDTiynle222Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7QscrN+x9qpRSmiKCtDpIsXPXTdIMAOKyCtbA5+FsvR1oGJc4jyTahUapxsIth7Xm1aPvVvntnBuZcjGaLKFpk5m8RyayO87TecL5osp/FObC806ennasEl+t7Hrm2zs/q9pZPgmJDh+myoUJL0T88+3dBGyWbFdYVPrWKkpN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cvZlJupw; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761921271; x=1793457271;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/g1AxzJQOcya88xAhA0tStQsU9mezZXtDTiynle222Y=;
-  b=cvZlJupwnd4jtEq6U0PT2GcuxICUJZ0aklBDtrQWyzkWd+EJ7/QCZOSY
-   pXi19iz/GDs9bO3dxHJu62JSPh/xOHEiiBU7vxJZonkQKzpvDeTFluPNR
-   RUmN+zmlbo/gqDkNo9+jPoS96MOlv5vDCQKhk1gMc0G0PfFtt/DFpXPzY
-   g6phIM8UkzoVcxYxkgHesBhpdyqIlx0sAwaF2xVWpwWFKM01O/iyrqkfV
-   NMRqa2lslYOFkP8yOhWw55Bp4GsG35AB+BE2lYO54EyyfMOsHgbHPMhSw
-   P00Mm5Xje1YH57uzw9P0F3SehtA/hua0VhzI4RGDR8+/heHAMXKSLlipm
-   A==;
-X-CSE-ConnectionGUID: r40qX6xxQkC+XhtIRK/zwg==
-X-CSE-MsgGUID: Qxs2tb4bSEiKZXEcG7Mzzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="51654686"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="51654686"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:34:30 -0700
-X-CSE-ConnectionGUID: /EQF3V/oQ/+hpsvXAymnpg==
-X-CSE-MsgGUID: DJ4WcSkuTQmrSZQtuuieLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186990352"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:34:28 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vEqCt-00000004IPL-0Zcq;
-	Fri, 31 Oct 2025 16:34:23 +0200
-Date: Fri, 31 Oct 2025 16:34:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Raag Jadav <raag.jadav@intel.com>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] cpufreq: qcom-nvmem: add compatible fallback for
- ipq806x for no SMEM
-Message-ID: <aQTI7o1HQYbQ_Pl2@smile.fi.intel.com>
-References: <20251031130835.7953-1-ansuelsmth@gmail.com>
- <20251031130835.7953-4-ansuelsmth@gmail.com>
- <aQS5FpuOWk1bWnQd@smile.fi.intel.com>
- <6904c563.050a0220.a13ee.0212@mx.google.com>
+	s=arc-20240116; t=1761921339; c=relaxed/simple;
+	bh=AMSI4zE2Da2CoHXVBxERvsBwEjjKt58XBoEtfuiGLlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vp8EWzwkG9sY9qd/+KCvHGm9+TTxSOWUj2ag3hGrbNSsgTVobnz6B1N4BkxVvV5TpdtzBt+GdOcGHofRTmNSTe2Cc12KVQ2vZsQZsRootljLytvdjahIiS50w1/RDJ8vKSPQ4WdbUyUZDy82oCPjec1WVtRI5SPjIeMIIKFsVzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqJAZPms; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-378ddffb497so28616631fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761921336; x=1762526136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hhKJuz27wu9b2Q/v2pjgIV8qqd+0+y6WrGE4BcakU/8=;
+        b=mqJAZPmsRxzGMJwtLEKgI5sUKxRZs9gdb80UtKbdOCNnffo3CSsnVrW+nq5Rh2Vifw
+         CZJuFpBXFPTnNk25sxRg9KZhrKHR8qDTBGSgvBk1+0IWwhTEsS1AmhOSHidpxybATzgZ
+         yN+j5wlLSC7VNuRc2O9+p7/G9n/u1mHiM+YmildIMBMHr8wnMy5z16I+zOcYpUJIdXr8
+         2skuFjg2/4GN9cgg1DaTQbZoK9kupSwJUxADC+LQm648tPfZBwSK79MVqdP87VDIOtqf
+         Yob6FDQ+hhcjtjg4H2Glx2ViyoQM5rGftAvhh97iLL4r9cKERI0/b4aWJWLZt1/yyl17
+         Ri0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761921336; x=1762526136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hhKJuz27wu9b2Q/v2pjgIV8qqd+0+y6WrGE4BcakU/8=;
+        b=N/UQlMh6ItWhU/mgavYFfzh3VS0moobgGhU4yTLInSpe24sCkBilnn5CjZNxKvKVMg
+         gbPgueQEbcrLvr1Goa8vf1leKAE+XyhcM5OCXvntCuxxoCriWP0OwE+s2sC2/QBtQw/W
+         Voxqx7hqpJ/QEK+pTEjOaC2+WrDvLgvMcYr/2GdIw+cC90Umg60MROUidueVINwwLWUM
+         CzLoevGi0y8CdWmF17sISu+7g9yiUy4Wb6+skE9rNEK8nl1vEZH7RWFHyZj2BaB39Kc+
+         aPwrBRcd3I9itOtCRVvv35bbM+0g0vBiSRzsUzQYSIzzNwcSJArjeXRZ/VItJ6bfyYtu
+         TWDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbiKBZ6/Ww1E3LAXdChB2wgsHur2ssfjV75KTReJZaIdFu0f663GtZV+QwbmlXIV3HO590kaWenSDfcUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqVCIGkc2j/YUlrlO5o2O7FMRj99C0R3p3MUa39UrLnxqxL5Tn
+	PdR0ENVrFn6oBBRT62tq4d2XWYtXkrNze68SOAORi2eJhqE6ontVeaZ/tB7MoD5sOWQSa91nbBp
+	nK+55mHC+fJXp0qbnzp5DRpZK6/C3z+4=
+X-Gm-Gg: ASbGncsH55jDIDD3VKviB2gKqOjukSCp2Lpvefa5JcD4I6dPETya+Am0YVmjQVARWAZ
+	QuPTRu4StC3qn0PopLy7h8UDxjsYCGvsBA7oupcHi3ugG8xRVn0vv9psmPk0WTgeoTwXRCUI8v1
+	kyQmKEx9fa2/qM94W6wHv6v/+nJ/RQq5mcm6nnlbhUmrvhJfmrlhahwCK1/jEfuF+BRrSkokVix
+	ULMTkQiX3muvRXp5/MmtCjPxHBHhQfrTHgVwE4dEah/lb1O8mSLBbrSgI4=
+X-Google-Smtp-Source: AGHT+IE59eDz+HM23HuvxjomEE9A/DkvQf7SFbgGyB96I8VG23RpWREEs1gOfdNBEcb7IlhV8UI/s5eCTPxUgw0+bZE=
+X-Received: by 2002:a05:651c:4093:b0:36e:f1ae:d4bc with SMTP id
+ 38308e7fff4ca-37a18d9b72bmr9194001fa.14.1761921335672; Fri, 31 Oct 2025
+ 07:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6904c563.050a0220.a13ee.0212@mx.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20251031081525.2275894-1-lilinmao@kylinos.cn>
+In-Reply-To: <20251031081525.2275894-1-lilinmao@kylinos.cn>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 31 Oct 2025 10:35:22 -0400
+X-Gm-Features: AWmQ_bmuXGhzGerZwZFRtPGqD7WF3harKpEvUmZcQ9sLxynctPfun-jmZXTsBxA
+Message-ID: <CABBYNZJZeP1eFZXrVPMAhEtdNVSWkuAkyopLcrUG6wbQpvgsww@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Prevent autosuspend when
+ le_scan_disable work is pending
+To: Linmao Li <lilinmao@kylinos.cn>
+Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 03:19:12PM +0100, Christian Marangi wrote:
-> On Fri, Oct 31, 2025 at 03:26:46PM +0200, Andy Shevchenko wrote:
-> > On Fri, Oct 31, 2025 at 02:08:34PM +0100, Christian Marangi wrote:
+Hi,
 
-...
+On Fri, Oct 31, 2025 at 4:15=E2=80=AFAM Linmao Li <lilinmao@kylinos.cn> wro=
+te:
+>
+> When USB autosuspend occurs while le_scan_disable work is scheduled,
+> HCI commands sent by the work fail with timeout, leaving LE scan in
+> an inconsistent state.
+>
+> Scenario:
+>   T=3D0:     LE scan starts, le_scan_disable work queued (+10240ms)
+>   T=3D8s:    Autosuspend check: tx_in_flight=3D0, suspend proceeds
+>   T=3D10s:   le_scan_disable work executes on suspended device
+>            =E2=86=92 HCI command 0x2042 times out
+>
+> The tx_in_flight check only protects actively transmitted URBs, missing
+> the window where work is queued but hasn't submitted its URB yet.
+>
+> Fix by checking delayed_work_pending(&hdev->le_scan_disable) during
+> autosuspend. Return -EBUSY if pending to block suspend until work
+> completes. Only set BTUSB_SUSPENDING after all checks pass to avoid
+> leaving the flag set if suspend is aborted.
 
-> > > +		if (of_machine_is_compatible("qcom,ipq8062"))
-> > > +			msm_id = QCOM_ID_IPQ8062;
-> > > +		else if (of_machine_is_compatible("qcom,ipq8065") ||
-> > > +			 of_machine_is_compatible("qcom,ipq8069"))
-> > > +			msm_id = QCOM_ID_IPQ8065;
-> > > +		else if (of_machine_is_compatible("qcom,ipq8064") ||
-> > > +			 of_machine_is_compatible("qcom,ipq8066") ||
-> > > +			 of_machine_is_compatible("qcom,ipq8068"))
-> > > +			msm_id = QCOM_ID_IPQ8064;
-> > 
-> > A nit-pick (in case you need a new version of the series): I would expect
-> > the conditionals be sorted by assigned value.
-> > 
-> > 		if (of_machine_is_compatible("qcom,ipq8062"))
-> > 			msm_id = QCOM_ID_IPQ8062;
-> > 		else if (of_machine_is_compatible("qcom,ipq8064") ||
-> > 			 of_machine_is_compatible("qcom,ipq8066") ||
-> > 			 of_machine_is_compatible("qcom,ipq8068"))
-> > 			msm_id = QCOM_ID_IPQ8064;
-> > 		else if (of_machine_is_compatible("qcom,ipq8065") ||
-> > 			 of_machine_is_compatible("qcom,ipq8069"))
-> > 			msm_id = QCOM_ID_IPQ8065;
-> >
-> 
-> Hi as said in the commit, parsing 65/69 before 64 is needed as we might
-> have compatible like
-> 
-> "qcom,ipq8065","qcom,ipq8064" so we might incorrectly parse msm_id
-> ipq8064.
+Hmm, we could also just cancel the work then, in face we do have
+hci_suspend_sync->hci_stop_discovery_sync->cancel_delayed_work(&hdev->le_sc=
+an_disable);
+but perhaps it is not being called always because HCI_LE_SCAN is not
+enabled, so I wonder if we should do something like:
 
-Oh, this is unfortunate. Wouldn't it be possible to use some API that returns
-an index (or an error if not found) of the compatible? I believe we have a such
-for the regular 'compatible' properties.
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 1cbdd2ce03f2..59618fde7bcb 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -5464,6 +5464,11 @@ int hci_stop_discovery_sync(struct hci_dev *hdev)
 
--- 
-With Best Regards,
-Andy Shevchenko
+        bt_dev_dbg(hdev, "state %u", hdev->discovery.state);
+
++       /* Always stop le_scan_disable since that works as discovery timer =
+for
++        * the rounds of discovery irrespective of the discovery type.
++        */
++       cancel_delayed_work(&hdev->le_scan_disable);
++
+        if (d->state =3D=3D DISCOVERY_FINDING || d->state =3D=3D DISCOVERY_=
+STOPPING) {
+                if (test_bit(HCI_INQUIRY, &hdev->flags)) {
+                        err =3D __hci_cmd_sync_status(hdev, HCI_OP_INQUIRY_=
+CANCEL,
+@@ -5472,14 +5477,9 @@ int hci_stop_discovery_sync(struct hci_dev *hdev)
+                                return err;
+                }
+
+-               if (hci_dev_test_flag(hdev, HCI_LE_SCAN)) {
+-                       cancel_delayed_work(&hdev->le_scan_disable);
+-
+-                       err =3D hci_scan_disable_sync(hdev);
+-                       if (err)
+-                               return err;
+-               }
+-
++               err =3D hci_scan_disable_sync(hdev);
++               if (err)
++                       return err;
+        } else {
+                err =3D hci_scan_disable_sync(hdev);
+                if (err)
+
+We may as well rename/reworkd le_scan_disable to discovery.work since
+that acts as I commented above it works as discovery timer not just
+le_scan_disable.
+
+> Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
+> ---
+>  drivers/bluetooth/btusb.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 5e9ebf0c5312..a344ea1dc466 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -4389,6 +4389,7 @@ static void btusb_disconnect(struct usb_interface *=
+intf)
+>  static int btusb_suspend(struct usb_interface *intf, pm_message_t messag=
+e)
+>  {
+>         struct btusb_data *data =3D usb_get_intfdata(intf);
+> +       struct hci_dev *hdev =3D data->hdev;
+>
+>         BT_DBG("intf %p", intf);
+>
+> @@ -4402,14 +4403,19 @@ static int btusb_suspend(struct usb_interface *in=
+tf, pm_message_t message)
+>                 return 0;
+>
+>         spin_lock_irq(&data->txlock);
+> -       if (!(PMSG_IS_AUTO(message) && data->tx_in_flight)) {
+> -               set_bit(BTUSB_SUSPENDING, &data->flags);
+> -               spin_unlock_irq(&data->txlock);
+> -       } else {
+> +       if (PMSG_IS_AUTO(message) && data->tx_in_flight) {
+>                 spin_unlock_irq(&data->txlock);
+>                 data->suspend_count--;
+>                 return -EBUSY;
+>         }
+> +       spin_unlock_irq(&data->txlock);
+> +
+> +       if (PMSG_IS_AUTO(message) && delayed_work_pending(&hdev->le_scan_=
+disable)) {
+> +               data->suspend_count--;
+> +               return -EBUSY;
+> +       }
 
 
+
+> +
+> +       set_bit(BTUSB_SUSPENDING, &data->flags);
+>
+>         cancel_work_sync(&data->work);
+>
+> --
+> 2.25.1
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
