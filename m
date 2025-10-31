@@ -1,106 +1,254 @@
-Return-Path: <linux-kernel+bounces-879917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDE1C24661
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:18:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0B8C24643
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8665A1896EEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:15:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816B93A431E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0835337BAB;
-	Fri, 31 Oct 2025 10:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9736933DEC2;
+	Fri, 31 Oct 2025 10:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uoan2qzA"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i1ngeOiu"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEBD337119
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0D033C508
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905696; cv=none; b=Lv66zYObTiXhRCsEuDWT4+NX8/CNy9VEfqaB8gnlXOW/NocSIqoNsyaie2Db/7BfrpnEn27VqcUhLx91kXO4f/Ni6fMXxpCp7P1LShZoMl1T+NAimkchub6bxCiPKgmgRl3VlnoG8Y4FaTgFetiN6rXxZpW7ENs0tlhOlCJ79VY=
+	t=1761905729; cv=none; b=qUOE2N+gUFgyNszF0sp5tC8oDkpGCzklyOV6hw21D9LoewUTLSD6T99STGY8jwX2oRmEuO9t6mHDfw0AV04slh1Q+9OK/1puoP1R8vTBoSJKDIjB4pbglDdvChiIG7GZP1sdlTCRUUihe7dk59y6GA43vOMJ3XoIBryeGbq47kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905696; c=relaxed/simple;
-	bh=leEyrcaxgVEFoDQpBRQADrzJ7aEgLp4CWlT8ZId/kkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQIkp/5K1hMATuOFeWd1DhOSYP5+Yiy6L26NxnGNdsVdUw7Buk4SDTvEu4XLbM8O+Juz9WtJD5gSBWXi9cGOn9oqB7fW9YO7X087NoAHmWgPTTpGY9WiIkmz+LCfyEl4uuEfu5FNIseDmuxSUdQ6SnOcIbJDNB2wc0lQmt0wIBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uoan2qzA; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1761905729; c=relaxed/simple;
+	bh=SXqMJ6ZvizBcruBMmLuzkxA4/jxcW047LcnByCtXJ4c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FeyD2IixO8nHs+FjN7YZ7LeThYK4gZZRy9ZLj6VElPmUXkDKAlDJtMrXjMawET4SdFzBIjYIstsW5fE2DquWfvKUDx715Aqr3uzrhhxFOypPCvf4+icovKwTm+LUu9qEfVeUxUyzyZd2RkjTo8i/03+Te6g5kcq531YJ6zgdw2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i1ngeOiu; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso14578915e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:14:54 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-471b80b994bso25743305e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761905693; x=1762510493; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTsftEfXvbhUS8zh5vLZ13mZZSic/SfiK4lQDUBWE+o=;
-        b=Uoan2qzAIBNrasQ9kywQFbN58IyeAMjIUhAaHttS3uk5y3cip2mZ+qcszej6OEkUf/
-         k3+fZLHyGSajsYormDv6TLbhE7Vb2lJyXGRT8mksQP634NpaSDlE5g2+pO59zy35vHrH
-         7waG3oAol0tnP5Nt89PHg5c04a5brwVTpCPCFhOwUIzAwxmRTUqXYY3kbGiHDF2USN7c
-         xUcSBeWgoyrggWoYcVe8A90ycN7Bz45yxQwlp35FgTKOaKLOS6LELPSK0qePRigT46sl
-         83nXJevCKPl7+uStM0sJygXWYrDyFbMKmLldCqt6P0oYgstmHfmRcBnHdnwz1oo2e6eE
-         m8GA==
+        d=linaro.org; s=google; t=1761905726; x=1762510526; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eE+d1cXEHqkcosUss1w2NBrOE9cjfyKKBw4l7rwMmp0=;
+        b=i1ngeOiuHQ9+h+YpzlKT0cQXbFsRK3lrL5HIronZZeql8/X/0HuelLT/Av5wovyZCc
+         d+/pxMZSillIeSzk83f9DbbfHm9BuooYBaNRqwMhXTxD0OVOnpUsMZGqY7jAzQqYxMVq
+         RvBW7l7sYD7Ovrlp66SMgPJFO40KN1RTle+w127uTXIt6CclbwF3LlpIvft+7b2OF5TG
+         oqBsm0OawT/H+s08WXvHHywx5YDR+2seh8t5KnxpJGAjStz2rKMllHn1GzdLTPsAhSmL
+         UrXOklcaWpW64eCR5BpAOlFJZvwbyD0I4yMoHp+wLT+o98FUDO8FY+AOeB4Cp2lGnFNJ
+         7c0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761905693; x=1762510493;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MTsftEfXvbhUS8zh5vLZ13mZZSic/SfiK4lQDUBWE+o=;
-        b=X0kr8LhBnXhGi3wZHEtVIVtrtkeeaV0G1+f2ks/lz8HV6/WEsQY/ywC3jVl2RgElQS
-         Bm5rm1vYSuNvo8X37nAJ7P9Xs5e9b6QKFTO16jOW5qWiw0tUw5O0PacLuOn0N7XuZY9w
-         E6g2rc1Xf7OnAtZcHzA/XoQF6kVqa4in8+cYjZFfSIVW7syZL+kGNZ8R1waQ7mEiO9+E
-         S8s5sDlPpKRvbR1hxGqmLmP9DBqXOd4uTDURf/a1vRfhvl6eJwvBqprlQlU+3fo72JKi
-         4bNtya1NjNBYmOz5bB3FFkel/1HdqnSnDj72NKVh7AOFiV5JbgpUv2Ww7oaxvgQGvubM
-         HmpA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9hp1A67EGZYf29CG6wqq9uI6wX6WEenCvYRng3iaZ7gpk/ezYZMVhv74v8JivU+EnGaChT+8qPkT9q4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7G5JVJckIFH8lgmyi1qvX1q4eNCRDu/PKk28yGuQ2Hn5WYUZX
-	UV9WvGzaGghBglFEO8WiUDZvy0PSU5tTrPdsdV7Dc1x9FeMWRvqCrMroVz3mVgw1hpg=
-X-Gm-Gg: ASbGncv38q0JuJo4krSCpp1ULXjiIKr5AtLPi0XzQNR7vAvTimo/80dPQJOzU+kJTgK
-	xqJnYC/+qHobUt4/IsvP70ZgTFWhJ0OklEv8yaP70XGcE/jSgM00/Fvoq+SwqKUln/yXa/o+4N0
-	jGb5i0slCfjjjaTMupY+iKNy6HM14OS7lXvzWoUBZLi0ptupnhbOyaaB7LX4psDKtBP6alP+I+x
-	Xa6Qy1nto4zHgjmGmYTVVdlVzUQ+M5gLPLjdNs5oPcbffr8O5ewc4KqDSjnmgoj1OLnlaz5frN4
-	/ndT0V7uwdpacLbRnO7vAURdY3cGvskGkIhr8YxpR3qUkHHsspOzY9TBtqW8qIbc1nooDAJZdSL
-	0SLfzKucXR/ffgDAisRasOvq42ln0ratc87AfTyrxYBbiCg1hR2R8+sqvwIXHUawd8zwV+i+2gJ
-	fs+VYP5pU=
-X-Google-Smtp-Source: AGHT+IH++F13KCtDM5aSmxXlRMY+DkOrtWxUCdzt5Pk2VSvn5xyt2ZqvsBCxug2ep0v/e7g5Vvdu6A==
-X-Received: by 2002:a05:600c:3d98:b0:475:dd59:d8ba with SMTP id 5b1f17b1804b1-477305a35c9mr28731235e9.3.1761905692770;
-        Fri, 31 Oct 2025 03:14:52 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c11182e3sm2792046f8f.11.2025.10.31.03.14.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 03:14:51 -0700 (PDT)
-Date: Fri, 31 Oct 2025 12:14:50 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: tcsrcc-glymur: Update register offsets for
- clock refs
-Message-ID: <ievmorxn4cpwx3xnlr5m5j7tgv4p2ixfbgr5bojsetzmdgmid3@764lndl3yqpv>
-References: <20251031-tcsrcc_glymur-v1-1-0efb031f0ac5@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1761905726; x=1762510526;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eE+d1cXEHqkcosUss1w2NBrOE9cjfyKKBw4l7rwMmp0=;
+        b=F7/6goOSjdZAnbFsc/b61AJdn6XjN/y3jb0SWrd9YWZeAcJeObsa45usOESCmnHeHn
+         GU3E7Jrkx1QWInfG7wECgID0yAlQ6szM3RVWoAVVpcQS+kMtm3DCjzBEeSPlaKXf/mE/
+         XRunkjT/F5zgKZ/dGyQRVjtOwyhMx7CVX3grRjfPyfQM+FBEnJzOzuTfUXc1IdQP/bF1
+         qN+O/LzrpLb8oa2bFZtdESJy+5nJQZc0rMiF+ehW/YA1FwsXl0N6Z8h9h54oR7HvrZyB
+         4znQWCgFoL4az13GeUEZfBP+mA5XdHw7lRqJzITZ+2yQYtHKRHM19T+Y2U6XcPb4M+8w
+         RlXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEmLg1U13iVyIux7xAEEWM3CisPG47hsTjFczIOnpkZ6+gSowDdJq20J0SbgtrvtcrPDU+pXkWq8g1v90=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9lfl/6K2o37LwqcKlUKSOXLP+fcPUQ7vHwJS3MCcosPADqDx+
+	ADbG9RZ/vQkIs0FleX0oaEPIOognpAGDjTF1bj9orKad603XP3+QQvzmLdui60H5Sy4=
+X-Gm-Gg: ASbGncvNo18bT/nXcE1nvvLXCswsF3pn9A7HJ711cEkmUy2I4BVHeeBLPVY+mRt7WK0
+	rnzgBvT04kvBrrL1UkMt3u54vkp8vVqmIwn2iLCFqgoMVUAqUFATqCd7HG9cap3OBMnX+MaR0iO
+	+MxYl6FcIcfuMkbUmr4Vetpl7z9BcXzYyYr8FAK03ljIzPFkV42ZK3H64cNl6WJYoNf0AsUhERi
+	aGOunL+RriPrMDtpuLaxvBnNWnuMiHjLNIo11kQTfDM/7pfaxmdA7ruUiQzJy5VRXYlaS6cxHAQ
+	UM1vfZemtE0fNReo0HF0ZQtKNRr/+QQihHCPp6rHAptdQqBRSYwz1WCvnfWt5Ul3IZBhyX0NjyL
+	Uz5+PTb/JdcoaW6LulufGNhV10i8nHh+yazfokOK0SxoC7o2s70vDu74DHUWqt7X+OIpyCYpIt1
+	LeEHOZTSSNXiMVhsTB01aDpDX4QrfcZI3Gjkn2XtO0pzm6brqI8mijjGXCBKmyipfIVG+ggkMZj
+	Q==
+X-Google-Smtp-Source: AGHT+IEab5HAlvx0nr1OP9Rq6E4OTz6yEzuNxeSysSuw13E9/5p8UkZsu+Z/wlfJOqSRybyRR7JOsg==
+X-Received: by 2002:a05:600c:848f:b0:477:25b9:3917 with SMTP id 5b1f17b1804b1-477308b1aa4mr25211875e9.39.1761905726051;
+        Fri, 31 Oct 2025 03:15:26 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:d967:2bcf:d2d0:b324? ([2a01:e0a:cad:2140:d967:2bcf:d2d0:b324])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13e16f4sm2828576f8f.27.2025.10.31.03.15.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 03:15:25 -0700 (PDT)
+Message-ID: <7642d4ba-72fe-4af7-a02a-96676f8945af@linaro.org>
+Date: Fri, 31 Oct 2025 11:15:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031-tcsrcc_glymur-v1-1-0efb031f0ac5@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 2/2] drm/panel: ilitek-ili9882t: Add support for Ilitek
+ IL79900A-based panels
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, dianders@chromium.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251031100447.253164-1-yelangyan@huaqin.corp-partner.google.com>
+ <20251031100447.253164-3-yelangyan@huaqin.corp-partner.google.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20251031100447.253164-3-yelangyan@huaqin.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25-10-31 15:32:25, Taniya Das wrote:
-> Update the register offsets for all the clock ref branches to match the
-> new address mapping in the TCSR subsystem.
+On 10/31/25 11:04, Langyan Ye wrote:
+> The Ilitek IL79900A display controller is similar to the ILI9882T and can
+> be supported within the existing `panel-ilitek-ili9882t.c` driver.
 > 
-> Fixes: 2c1d6ce4f3da ("clk: qcom: Add TCSR clock driver for Glymur SoC")
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> This patch extends the ILI9882T driver to handle IL79900A-based panels,
+> such as the Tianma TL121BVMS07-00. The IL79900A uses a similar command
+> sequence and initialization flow, with minor differences in power supply
+> configuration and timing.
+> 
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+> ---
+>   drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 69 +++++++++++++++++++
+>   1 file changed, 69 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
+> index 85c7059be214..c52f20863fc7 100644
+> --- a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
+> +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
+> @@ -61,6 +61,13 @@ struct ili9882t {
+>   	mipi_dsi_dcs_write_seq_multi(ctx, ILI9882T_DCS_SWITCH_PAGE, \
+>   				     0x98, 0x82, (page))
+>   
+> +/* IL79900A-specific commands, add new commands as you decode them */
+> +#define IL79900A_DCS_SWITCH_PAGE	0xFF
+> +
+> +#define il79900a_switch_page(ctx, page) \
+> +	mipi_dsi_dcs_write_seq_multi(ctx, IL79900A_DCS_SWITCH_PAGE, \
+> +				     0x5a, 0xa5, (page))
+> +
+>   static int starry_ili9882t_init(struct ili9882t *ili)
+>   {
+>   	struct mipi_dsi_multi_context ctx = { .dsi = ili->dsi };
+> @@ -413,6 +420,38 @@ static int starry_ili9882t_init(struct ili9882t *ili)
+>   	return ctx.accum_err;
+>   };
+>   
+> +static int tianma_il79900a_init(struct ili9882t *ili)
+> +{
+> +	struct mipi_dsi_multi_context ctx = { .dsi = ili->dsi };
+> +
+> +	mipi_dsi_usleep_range(&ctx, 5000, 5100);
+> +
+> +	il79900a_switch_page(&ctx, 0x06);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3e, 0x62);
+> +
+> +	il79900a_switch_page(&ctx, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x1b, 0x20);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5d, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5e, 0x40);
+> +
+> +	il79900a_switch_page(&ctx, 0x07);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0X29, 0x00);
+> +
+> +	il79900a_switch_page(&ctx, 0x06);
+> +	mipi_dsi_dcs_write_seq_multi(&ctx, 0x92, 0x22);
+> +
+> +	il79900a_switch_page(&ctx, 0x00);
+> +	mipi_dsi_dcs_exit_sleep_mode_multi(&ctx);
+> +
+> +	mipi_dsi_msleep(&ctx, 120);
+> +
+> +	mipi_dsi_dcs_set_display_on_multi(&ctx);
+> +
+> +	mipi_dsi_msleep(&ctx, 80);
+> +
+> +	return 0;
+> +};
+> +
+>   static inline struct ili9882t *to_ili9882t(struct drm_panel *panel)
+>   {
+>   	return container_of(panel, struct ili9882t, base);
+> @@ -529,6 +568,19 @@ static const struct drm_display_mode starry_ili9882t_default_mode = {
+>   	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+>   };
+>   
+> +static const struct drm_display_mode tianma_il79900a_default_mode = {
+> +	.clock = 264355,
+> +	.hdisplay = 1600,
+> +	.hsync_start = 1600 + 20,
+> +	.hsync_end = 1600 + 20 + 4,
+> +	.htotal = 1600 + 20 + 4 + 20,
+> +	.vdisplay = 2560,
+> +	.vsync_start = 2560 + 82,
+> +	.vsync_end = 2560 + 82 + 2,
+> +	.vtotal = 2560 + 82 + 2 + 36,
+> +	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+> +};
+> +
+>   static const struct panel_desc starry_ili9882t_desc = {
+>   	.modes = &starry_ili9882t_default_mode,
+>   	.bpc = 8,
+> @@ -543,6 +595,20 @@ static const struct panel_desc starry_ili9882t_desc = {
+>   	.init = starry_ili9882t_init,
+>   };
+>   
+> +static const struct panel_desc tianma_tl121bvms07_desc = {
+> +	.modes = &tianma_il79900a_default_mode,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width_mm = 163,
+> +		.height_mm = 260,
+> +	},
+> +	.lanes = 3,
+> +	.format = MIPI_DSI_FMT_RGB888,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> +		      MIPI_DSI_MODE_LPM,
+> +	.init = tianma_il79900a_init,
+> +};
+> +
+>   static int ili9882t_get_modes(struct drm_panel *panel,
+>   			      struct drm_connector *connector)
+>   {
+> @@ -680,6 +746,9 @@ static const struct of_device_id ili9882t_of_match[] = {
+>   	{ .compatible = "starry,ili9882t",
+>   	  .data = &starry_ili9882t_desc
+>   	},
+> +	{ .compatible = "tianma,tl121bvms07-00",
+> +	  .data = &tianma_tl121bvms07_desc
+> +	},
+>   	{ /* sentinel */ }
+>   };
+>   MODULE_DEVICE_TABLE(of, ili9882t_of_match);
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
