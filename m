@@ -1,145 +1,167 @@
-Return-Path: <linux-kernel+bounces-881003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C7CC272AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:13:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9824C272AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B20554E47B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3F81B265A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B6232B980;
-	Fri, 31 Oct 2025 23:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF7E32ABEF;
+	Fri, 31 Oct 2025 23:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEU749Yw"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pkN8RXiA"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A20329E7A
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F9A329E62
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761952402; cv=none; b=cbaTc3k8f7jZTl6SpqG0hYGD6PN2ZfxXtuoCe8mcv3GPeqywBjdFhR/lOu1kyyic5CaVfeIpyPlWdRnLnmVy7jjLhTo2nnHAnPN8EROw61guV+005NWF2O8ShWaOoVNH53qzEF89nYTurNpeo+wN0tnfM0g4KQfeuKwS7lDtAV4=
+	t=1761952386; cv=none; b=jKRfetuxKBGfUhCkL+EbxLwPF6xxPkWkIgG5gHPLr5GENuScNB3o+tyPQfrF17xqtyOHHDjKQAZibWxq+EnJa4FMclDijby+3u9M5vYiZtASQSKpbQU23NBCpKTmv2LAITEQPD1WdVValV5m4rt4q6QrKJVoHcdLKvP3/eo1pSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761952402; c=relaxed/simple;
-	bh=XWZsqJRZo0jc8TEwczUrIZCZrP8vjp3+VpCSsodHNDc=;
+	s=arc-20240116; t=1761952386; c=relaxed/simple;
+	bh=gY82JgAv1A8rYj9MCaiZVHVrEMWrbrCoiDwppP0oGWg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fIjutscQeCpnFBq42vgGPaG0V9mdwINoLAO7B4bsO/YJ+9m1p17SMomMvPTn17Ehn+GOjMvG6S99/b+hXxU4FZF49XzbbppWy7LS48XBRjSM8d9Zd/KjAWdxQaxb143MYiJA/YdXTe5sN4Q6X5XdEVfw8UW21+f01vGY0nc78EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kEU749Yw; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=hkFkUsCG1SjjUyV8dEWLqDEKGjSVnhYnnDpx1vdqxo9dZH5LgaYXMl3y+BON6W7vrD3xU5mJXxwu8PmDjGpwKAOgGw9R0H6WAHSDGHOMYnVJjfoQD2x72wtr+dNpaSXlf+OMzeKa1bdLaRgQI44oyeSf5QLuIwQooFt70AO/kJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pkN8RXiA; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-592ee9a16adso4264369e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:20 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ea12242d2eso82091cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761952398; x=1762557198; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761952382; x=1762557182; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CduKhDs2d95anLLqO+pCgedfe9nkoQuIaYxFtLlvMAI=;
-        b=kEU749Yw2luBSyqqeosBP2aguvxblfCIFQy0dCF+uFwUIPWuLzDHY8m+vc9S+svxtF
-         ON96JnjkHmcJj+jr4y+TcnyxRPUnBSVGk9Kb8YQfquWuYdZZMzwhR+4ep+EmnGYbW1OZ
-         wjGzSmDhQTlDpNMjqpgCXwC9lVCnmteiIS5C3r5CY+O/o7zgevmNkhAdcjW3lJ4m6RU1
-         Y4U9LMudrBMj2kwmQItNr19AVN/P3f2Ux4Tk/4qbbs9bY1o4pjH0Xb87GC/PwQbGmYqD
-         iE4DIdLAcsusXamwxNMXhe7bigmA+ElXLYDjkqf3dchNEL5sskAz32eeFZS7icmliiWr
-         gVgQ==
+        bh=gY82JgAv1A8rYj9MCaiZVHVrEMWrbrCoiDwppP0oGWg=;
+        b=pkN8RXiAjdXxo7BRN5+terCdOCJFnliS5crjawRNQ5x3UOuShVrfTVS7/ndcHb9rK5
+         XPJ77kaAfE9BoNEsCAXr+3d7DjfbmCPZOQqZf+0sLjvImi4VgycqCUfkOtLOAmTdrDqM
+         3Bv9NiHCI/pUxNMCL0SOrzD13yYc80M8iJDj/Pn7SZ3hbTAkVzseB+I44xaHwZHA25UG
+         b+hXRc179Gp9+IkCuj9XXiHOpqoqvqHp3E5Ukq/gnBpfTc2s78WdqUj0cUM4lPrlaEwI
+         mHUfMlzOadgUghqvFM4HClQq/fB5XEAjzx7T87V82BTE+F1ZZ4+GhbaYdFyLbY/HG3NT
+         Ad3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761952398; x=1762557198;
+        d=1e100.net; s=20230601; t=1761952382; x=1762557182;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CduKhDs2d95anLLqO+pCgedfe9nkoQuIaYxFtLlvMAI=;
-        b=RZFOMlrmhpBS598oRFxga8xGuo8URnOEiofw8u7rPv9Yt0szLXavY9ckprXBCnPP4O
-         HNAxvPq+aVA1pNmeru6pV3cJZViX7fMzZBuDBU+5JmwWpkiBVEQU5bsjNSa/5SJDcfOE
-         +m9XMcH9Ob3eluDajRjGzV39m9eDXFGB2rDHuMEp4rf9RQ/78IBkMCAzWzR+usjf5iyg
-         MOS1Muh72JggEHKLKdxymtYcRqgjub8oWlb0MKTHK48Vln2qEUiXSFPLBdeB+PGlO5Jc
-         VGINRWvhu0TObPruinDjzzNHplBXOjmgwrSwik/myxfcJ6YJtS8QgyF5fhBSrQqstF0i
-         /2wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2sxbfyGXG7ENRatPkc6YCuDanLsm0dsI8S8OmwLz61mrzuYiSRkRM1PIVe4+JpWDYuC/+cvxtvVSqaHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTxALCWkJp+u0KPcFp7yAWkPmVqeZcpXM3GgB9Cbfg/etaqu3w
-	U/Dh0Dj/NELz5dT9+5uWqT3MvZKKWAUnMLivz5HfxhjQeCLKBbDAgwCaIo11sSgs0yfLrN6wBge
-	2b+XguOiHiSmfWuysfTbklbRod5tQIrz44bhjIroF
-X-Gm-Gg: ASbGncvCbxrMQW87xLOyML7vDExzIrT7GNwufKEewwtfNDZ6nGecxjxLQYSy1rSgkfM
-	6NqwO4POCmeVOhvaZ/G5p5Qn41nLEQqsoMR7ATLSkdeLe67+nHI2CLPnzpSTLhr0hFW7T1idTXr
-	EQUTBBc3Agn/b0kFaJAv3HNWxGn9p4dG5eHE5U3QVLGX7rn6yX1OlqkUcKJWZEp7Bjx8WBvJJN4
-	sLighnu8boY+yBWYSazkcOuGFWZftZXavCDfYlYTj3vr859nasmZo/IyuUO
-X-Google-Smtp-Source: AGHT+IExErcOO2EIgmDaicMDUbGTWKxNreSKo2RDOW0/ULZPVApKfmIWoVK+h3uJ79oZ73j1I9/Rf0OSA92b1W105fQ=
-X-Received: by 2002:a05:6512:3c92:b0:591:c8de:467b with SMTP id
- 2adb3069b0e04-5941d542679mr1891506e87.40.1761952398324; Fri, 31 Oct 2025
- 16:13:18 -0700 (PDT)
+        bh=gY82JgAv1A8rYj9MCaiZVHVrEMWrbrCoiDwppP0oGWg=;
+        b=XNrqPSmmg+H9n5JcecM1ZNa8MJjMpQqv+jfMTFoaS6NWNzl/vI7Tj5Cb8OSUpfT2Ld
+         WizxECRO3lNjCf6aIxyMSFIFBzb9siIqDhS51LoiDAvz67vLkvbYxVFE62Bq/CjxEK4l
+         LlpOjeCH6savdzvNV7nsqAnmW4zTO8njVAZxmolGUJG6siDs7XpArer5MDPI6Z8kv+eQ
+         sufk696a/Up8unc7VgqxtGNg9B9XykMLp2spCDVwF3Tn8HeMQsbEVlKriAE0lMyYGP3o
+         zd81IneTG3g6pMoV1O91OpS7QI4XLy+SsA3Uje16fNHVefg31RsS4LtN7VUXFMGCyByZ
+         fAMw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/TphDQpIX+B2f8TYU7buuWmF0gnE4SZmr+dFyn+qEVeqcbnn/rqp1s/ikXF6h6ykY/IvgI9SxfE3P4YU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg8ulBgyeyh2dX75RrfVG4wNCFtU/b705Xv5JD/YNiGYYBH8BZ
+	HOZ96+IMltOKHRhAFN/recS0jRLAh/ZjE4eSOBUT2waaOQZA9bqAkEPP/HgaA/9CpS+HaRgxJNg
+	ios/KAxBJWm/nJjpgXdFwN4zNAejU+2oNYtH7LQiY
+X-Gm-Gg: ASbGnctH7AZbWjlrytGRf7tLEH3uzWeKT+4+RpesQmgTLpc0khKrJRBjVKYNrdQUEc1
+	k9NqDJU/r3Q5FaDD+zfGHzR/WKprO6rVSYWio/0khh9w2edHS5yqCYFcvbG0LZZ+inVfwdpSeYl
+	wCI0pIc5JXzoMWAJ2WG8HPVmST/cP27kUQHp6zMd2IYxkiKt+07JlrFswfn/QYpbXK7+OgtvYm7
+	Su8FPS4cAguirws5GDIAv3KUd5SseWFpvvlgrfpbICmgaAZ34ZOXQ25dxI=
+X-Google-Smtp-Source: AGHT+IENbX2I9QLWCzbGqCz+aeN8c925eFyi708BVOjF22TIfxJHEaH3VCvZrnHqn6i5au9Z3HH9DEYcpuxXzSR6lhg=
+X-Received: by 2002:a05:622a:1991:b0:4b3:1617:e617 with SMTP id
+ d75a77b69052e-4ed424d7c14mr1098221cf.11.1761952382100; Fri, 31 Oct 2025
+ 16:13:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018000713.677779-1-vipinsh@google.com> <20251018000713.677779-9-vipinsh@google.com>
-In-Reply-To: <20251018000713.677779-9-vipinsh@google.com>
-From: David Matlack <dmatlack@google.com>
-Date: Fri, 31 Oct 2025 16:12:50 -0700
-X-Gm-Features: AWmQ_bkA4phyOyQRm4wqvCBQ3eNh3dDXKfq4mZi3gYwoRKx7jeTWqc2Xmhrpb1M
-Message-ID: <CALzav=c9yw2B=1Y6kK2ZuxdBCnwuTHyOyA4VGT8_rLv2Wg5r4A@mail.gmail.com>
-Subject: Re: [RFC PATCH 08/21] vfio/pci: Retrieve preserved VFIO device for
- Live Update Orechestrator
-To: Vipin Sharma <vipinsh@google.com>
-Cc: bhelgaas@google.com, alex.williamson@redhat.com, pasha.tatashin@soleen.com, 
-	jgg@ziepe.ca, graf@amazon.com, pratyush@kernel.org, 
-	gregkh@linuxfoundation.org, chrisl@kernel.org, rppt@kernel.org, 
-	skhawaja@google.com, parav@nvidia.com, saeedm@nvidia.com, 
-	kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
-	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
-	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1761756437.git.lorenzo.stoakes@oracle.com>
+ <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
+ <xnsn5rfqigbm5ryjtbf2rtfotneiwygzesvyfdxiqrzlyzljdr@tmbht4ggnjcv>
+ <61ae955e-310d-488e-b350-59bb809f06e1@lucifer.local> <c736tssdw3z57kamh6eqc23gr575q375n2o2nnszih64afnaf7@zwbqremsbhwf>
+ <053f3a04-9195-4f8d-8959-42e0c3ba077b@lucifer.local> <72ee2324-d599-44b6-92ce-ed0afafed78f@suse.cz>
+ <3ae457cd-6c18-4870-a617-7f937b107cb4@suse.cz> <88b72728-fa3f-4a70-9ea2-40ff50673047@lucifer.local>
+ <a3bcac19-78b7-4918-81b3-641a65a19a9d@suse.cz>
+In-Reply-To: <a3bcac19-78b7-4918-81b3-641a65a19a9d@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 31 Oct 2025 16:12:51 -0700
+X-Gm-Features: AWmQ_bnVgpHA3Q0hYHvJgIIm_FpBFlpB9mdVzh6mL8zZeBp2jS4PiSvnDoBUG6c
+Message-ID: <CAJuCfpEs1JTywfZNPrVmeTHUUyK+7waCU9fqfur2Q_xxx7hacw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
+ guard regions
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Andrei Vagin <avagin@gmail.com>, Barry Song <21cnbao@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 5:07=E2=80=AFPM Vipin Sharma <vipinsh@google.com> w=
-rote:
->  static int vfio_pci_liveupdate_retrieve(struct liveupdate_file_handler *=
-handler,
->                                         u64 data, struct file **file)
->  {
-...
-> +       filep =3D anon_inode_getfile_fmode("[vfio-cdev]", &vfio_device_fo=
-ps, df,
-> +                                        O_RDWR, FMODE_PREAD | FMODE_PWRI=
-TE);
+On Thu, Oct 30, 2025 at 2:48=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 10/30/25 20:47, Lorenzo Stoakes wrote:
+> > On Thu, Oct 30, 2025 at 07:47:34PM +0100, Vlastimil Babka wrote:
+> >> >
+> >> > Could we use MADVISE_VMA_READ_LOCK mode (would be actually an improv=
+ement
+> >> > over the current MADVISE_MMAP_READ_LOCK), together with the atomic f=
+lag
+> >> > setting? I think the places that could race with us to cause RMW use=
+ vma
+> >> > write lock so that would be excluded. Fork AFAICS unfortunately does=
+n't (for
+> >> > the oldmm) and it probably would't make sense to start doing it. May=
+be we
+> >> > could think of something to deal with this special case...
+> >>
+> >> During discussion with Pedro off-list I realized fork takes mmap lock =
+for
+> >> write on the old mm, so if we kept taking mmap sem for read, then vma =
+lock
+> >> for read in addition (which should be cheap enough, also we'd only nee=
+d it
+> >> in case VM_MAYBE_GUARD is not yet set), and set the flag atomicaly, pe=
+rhaps
+> >> that would cover all non-bening races?
+> >>
+> >>
+> >
+> > We take VMA write lock in dup_mmap() on each mpnt (old VMA).
+>
+> Ah yes I thought it was the new one.
+>
+> > We take the VMA write lock (vma_start_write()) for each mpnt.
+> >
+> > We then vm_area_dup() the mpnt to the new VMA before calling:
+> >
+> > copy_page_range()
+> > -> vma_needs_copy()
+> >
+> > Which is where the check is done.
+> >
+> > So we are holding the VMA write lock, so a VMA read lock should suffice=
+ no?
+>
+> Yeah, even better!
+>
+> > For belts + braces we could atomically read the flag in vma_needs_copy(=
+),
+> > though note it's intended VM_COPY_ON_FORK could have more than one flag=
+.
+> >
+> > We could drop that for now and be explicit.
+>
+> Great!
 
-It's a little weird that we have to use an anonymous inode when
-restoring cdev file descriptors. Do we care not about the association
-between VFIO cdev files and their inodes?
-
-If we wanted to have the cdev inode we could have the user pass a file
-path to ioctl(LIVEUPDATE_SESSION_RESTORE_FD)? File handlers can use
-that to find the inode to use when creating a struct file. This would
-avoid the anonymous inode and also ensure that restoring the fd obeys
-the same filesystem permissions as opening a new fd (I think?).
-
-Pasha this would be a uAPI change to LUO. What do you think?
-
-Sami, Jason, what are you planning to do for iommufd?
-
-> +       if (IS_ERR(filep)) {
-> +               err =3D PTR_ERR(filep);
-> +               goto err_anon_inode;
-> +       }
-> +
-> +       /* Paired with the put in vfio_device_fops_release() */
-> +       if (!vfio_device_try_get_registration(device)) {
-> +               err =3D -ENODEV;
-> +               goto err_get_registration;
-> +       }
-> +
-> +       put_device(&device->device);
-> +
-> +       /*
-> +        * Use the pseudo fs inode on the device to link all mmaps
-> +        * to the same address space, allowing us to unmap all vmas
-> +        * associated to this device using unmap_mapping_range().
-> +        */
-> +       filep->f_mapping =3D device->inode->i_mapping;
-
-Most of this code already exists in vfio_device_fops_cdev_open(). I'll
-work on sharing the code in the next version.
+Overall, I think it should be possible to set this flag atomically
+under VMA read-lock. However, if you introduce new vm_flags
+manipulation functions, please make sure they can't be used for other
+vm_flags. In Android I've seen several "interesting" attempts to
+update vm_flags under a read-lock (specifically in the page-fault
+path) and had to explain why that's a bad idea.
 
