@@ -1,137 +1,97 @@
-Return-Path: <linux-kernel+bounces-880257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17C1C253D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:21:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D1BC253FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:24:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B19A3BF027
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:21:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AC484F554B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BA234B667;
-	Fri, 31 Oct 2025 13:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4097C34AAE7;
+	Fri, 31 Oct 2025 13:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZWImuyJM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F351B142D;
-	Fri, 31 Oct 2025 13:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FpDouCZZ"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2418A34216B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761916820; cv=none; b=S8UqkmMQz4jjt29aKOHu9OE/Q6sUVr4AoG6h/p2s7Z0oCO1OXbgkFuHfGhLBo96dlEDFFpJxwH9+dPRjadN19irCb0dJ0EDjx7n/OQTS/sUjUYcJgZ4W0vnjh1nfC0BceoRQ3a+8SxO2EGROpTQOlS05OYDjN3uYHQYB9OZicps=
+	t=1761916835; cv=none; b=CaznNCpDntoT4xhfYjR81Tblh+i11MpHI2iMVI9+5yGfCV71b3WOilNKo9+W8vkyHl2idS7vePCjYIiUS1d2j/cRD8BHOK1hXnZz+5jnfwTtX9YDey2sXzm9FB2f4xLv+8hXY/3T7Q7TUSatCObTcze+foWsbiUMX6sPzQ6MJwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761916820; c=relaxed/simple;
-	bh=DawxYnhCqvS1VLds39qbkKtQE0BqAIbIQ6H60jxljHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GhdWeu0uNs/infHT32At1l8T0mPMGvGl1DTbFcV4dYL7eQRoQvl3a8/yA/U7X234cnCgvt3f6/VjzT8j6upTKx8TzmgE8u3pcVhkc84IsyqWNOThGhoEdupWj/9QDMYZPub/U8vewnp7L83LMY/Bt+Nm9+82NzLSuTWz04xfJR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZWImuyJM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.1.19] (unknown [103.212.145.71])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 006D4201A7D2;
-	Fri, 31 Oct 2025 06:20:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 006D4201A7D2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761916818;
-	bh=jnAwVyIj69/F/fVSjZqV+IT6X9/j+5+6TPTp7CUgj7A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZWImuyJMsrEdzFUuLTme2SU4Dt/KU4jg59orX5Ppr8PNkuptpnRvW0hpRTeBhRokh
-	 MdYiGUTInWEGFJiPHbbLBV/IOs+zsLRWECBYiy+dy2ip7hf4cgBjGmAfvimQCVI38x
-	 M3uftScXNcDyeR0tJHjHk2O1cy6s1rDrUJY/rdfg=
-Message-ID: <347c723b-d47c-49c2-9a3b-b49d967f875b@linux.microsoft.com>
-Date: Fri, 31 Oct 2025 18:50:10 +0530
+	s=arc-20240116; t=1761916835; c=relaxed/simple;
+	bh=yDqDRvzv3OtD+szei2xgYdMKC3DFuSYolugAskX0cqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3WZySIjqjSkidaG+QZXypZgcLP9ABDzByCOY/pfUqzmm1EMrsoOhbMn3IWqVY2p3n0aFrj4xXvM3PP1bLrNtC2FGlYz9euNfjajnmbuJO4/rtru4nyI53WNffsXIYKOygrEnBozfQYLrs3uaJXIrQCzgGJg5DxY8EiA5gDLekQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FpDouCZZ; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 59F3F1A17AE;
+	Fri, 31 Oct 2025 13:20:30 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2A90960704;
+	Fri, 31 Oct 2025 13:20:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E2EDA11818021;
+	Fri, 31 Oct 2025 14:20:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761916829; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=v88FKoOIQ1Lp1eDWBJS2CBsC53ZzxeBQiwrj/87GQDM=;
+	b=FpDouCZZE+kLp1w9G3/2tiWdI4iX1Q6LZaYVCeGHa2Y3eEx0MqkYUfFfrKP6V4RCqoWnst
+	YR4JLDV4nDDzOv5c9mYK07DUpD6YdU7JJQS8N5C75MSRLLlSRP6vWTzCJPPEmo9rHeQ44R
+	Jz6BczJYsK3TtZgv8QtaaQFOFRsT36jAgqxEE9JfcNhMb7GSC7exa3CTJ+Xo6WqREsiwpd
+	ZwMXMHm4vkAzIvMdk8QfV9dnw8pkBc6KTAWvGEZzDyRSLCf5xCZzoxCk5UZHh9oQ2+s6M+
+	jLeQNZRof3hZliiZ8H+j/VmtOlGcf3XDtKPZyfR0dQOr+TnNb48IF5Ch83MeIA==
+Date: Fri, 31 Oct 2025 14:20:27 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Esben Haabendal <esben@geanix.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] Revert "rtc: tps6586x: Fix initial
+ enable_irq/disable_irq balance"
+Message-ID: <176191106316.588156.9101100273340077755.b4-ty@bootlin.com>
+References: <20251031103741.945460-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: mana: Handle SKB if TX SGEs exceed
- hardware limit
-To: Simon Horman <horms@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- longli@microsoft.com, kotaranov@microsoft.com,
- shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
- ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
- shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, gargaditya@microsoft.com
-References: <20251029131235.GA3903@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <aQMqLN0FRmNU3_ke@horms.kernel.org>
-Content-Language: en-US
-From: Aditya Garg <gargaditya@linux.microsoft.com>
-In-Reply-To: <aQMqLN0FRmNU3_ke@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031103741.945460-1-jonathanh@nvidia.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 30-10-2025 14:34, Simon Horman wrote:
-> On Wed, Oct 29, 2025 at 06:12:35AM -0700, Aditya Garg wrote:
->> The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
->> per TX WQE. Exceeding this limit can cause TX failures.
->> Add ndo_features_check() callback to validate SKB layout before
->> transmission. For GSO SKBs that would exceed the hardware SGE limit, clear
->> NETIF_F_GSO_MASK to enforce software segmentation in the stack.
->> Add a fallback in mana_start_xmit() to linearize non-GSO SKBs that still
->> exceed the SGE limit.
->>
->> Return NETDEV_TX_BUSY only for -ENOSPC from mana_gd_post_work_request(),
->> send other errors to free_sgl_ptr to free resources and record the tx
->> drop.
->>
->> Co-developed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
->> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
->> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+On Fri, 31 Oct 2025 10:37:40 +0000, Jon Hunter wrote:
+> Commit 1502fe0e97be ("rtc: tps6586x: Fix initial enable_irq/disable_irq
+> balance") breaks the wake-up alarm for the tps6586x. After this commit
+> was added RTC wake ups from suspend stopped working on the Tegra20
+> Ventana platform.
 > 
-> ...
+> The problem is that this change set the 'irq_en' variable to true prior
+> to calling devm_request_threaded_irq() to indicate that the IRQ is
+> enabled, however, it was over looked that the flag IRQ_NOAUTOEN is
+> already set meaning that the IRQ is not enabled by default. This
+> prevents the IRQ from being enabled as expected. Revert this change to
+> fix this.
 > 
->> @@ -289,6 +290,21 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->>   	cq = &apc->tx_qp[txq_idx].tx_cq;
->>   	tx_stats = &txq->stats;
->>   
->> +	if (MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES &&
->> +	    skb_shinfo(skb)->nr_frags + 2 > MAX_TX_WQE_SGL_ENTRIES) {
->> +		/* GSO skb with Hardware SGE limit exceeded is not expected here
->> +		 * as they are handled in mana_features_check() callback
->> +		 */
-> 
-> Hi,
-> 
-> I'm curious to know if we actually need this code.
-> Are there cases where the mana_features_check() doesn't
-> handle things and the kernel will reach this line?
-> 
->> +		if (skb_is_gso(skb))
->> +			netdev_warn_once(ndev, "GSO enabled skb exceeds max SGE limit\n");
->> +		if (skb_linearize(skb)) {
->> +			netdev_warn_once(ndev, "Failed to linearize skb with nr_frags=%d and is_gso=%d\n",
->> +					 skb_shinfo(skb)->nr_frags,
->> +					 skb_is_gso(skb));
->> +			goto tx_drop_count;
->> +		}
->> +	}
->> +
->>   	pkg.tx_oob.s_oob.vcq_num = cq->gdma_id;
->>   	pkg.tx_oob.s_oob.vsq_frame = txq->vsq_frame;
->>   
-> 
-> ...
+> [...]
 
-Hi Simon,
-As it was previously discussed and agreed on with Eric, this is for 
-Non-GSO skbs which could have possibly nr_frags greater than hardware limit.
+Applied, thanks!
 
-Quoting Eric's comment from v1 thread: 
-https://lore.kernel.org/netdev/CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com/
-"I think that for non GSO, the linearization attempt is fine.
+[1/2] Revert "rtc: tps6586x: Fix initial enable_irq/disable_irq balance"
+      https://git.kernel.org/abelloni/c/b1c9390f0a44
+[2/2] Revert "rtc: cpcap: Fix initial enable_irq/disable_irq balance"
+      https://git.kernel.org/abelloni/c/0d510778c2f4
 
-Note that this is extremely unlikely for non malicious users,
-and MTU being usually small (9K or less),
-the allocation will be much smaller than a GSO packet."
+Best regards,
 
-Regards,
-Aditya
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
