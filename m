@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-880355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D0CC25956
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:32:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0D9C25977
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964571A60F62
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:32:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B2B44F62E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F2D34C12B;
-	Fri, 31 Oct 2025 14:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2B034C12A;
+	Fri, 31 Oct 2025 14:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uArwuJIw"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f+fKj/3+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JPkfZ9K5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BAF34403D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61502EBBAF;
+	Fri, 31 Oct 2025 14:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921123; cv=none; b=s9nch4IU1f7qAV1O4Esg7M+zitNE68DGAW/j3ec1+QinDukyFSwZdKca/ZxxESf8duHHAoqwae3LXBfvBa2fqipSnG185+dJslOuRNXrSLcPPRR+yDxutRi7xDRi8zt0QYjKuweEvbM9pEzSCpMy7DaiJmVmP703sZ83YT9PeJ0=
+	t=1761921180; cv=none; b=iUMyES5G8dIgGlLZpDRogSB6O7ik1vmzYUqPPwVRTJ+MFFped7q41xdqOA8u9zN4lTvjZPFnlNNBGLNRRS7DQPiprXlWvvirqvzE7tpPJ+D90PVzsYBaZvRE0yXINVdtcrMr1eB5YlRZIrDjt0TmshnOztoeWF6sNjXOhskbPCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921123; c=relaxed/simple;
-	bh=ztfuXoIA/8/IzjLvWd47nqIEIo1a/dLhajOHezVjkdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ln2mLAMH5ba1FgdvE4PUstoRumVUx4f+MXDuGTPPuNfmw1BZbEzEPpo6igRLDL0FYK1SspVANdZT2epXDD5eX5zBlNvlkMEmRSlKYrSC3mKkvF9qB1XmLHcnkF4uzHrrQz4WYMfpHHebOvZ0joTzryDb4iERPdL9oJUI7DFgCeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uArwuJIw; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ed0c8e4dbcso306761cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761921120; x=1762525920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G95L3DLvS/DNATNYDSMXETdETrIxVgxQLONU1k6QAU4=;
-        b=uArwuJIwTUniNEAA1PprRS9oxhVNtU+Ai4/DpvgpGCUn9Jkopj5BLEVeS/4VvuO/91
-         hSXFptaPKgu38herXRTgyb5Pc7eZfyY6jQvANkzPQNpAChchsrOBpKRJw6eQJIslAlfM
-         QJcU2zWwF6AiAJlbfekRjUSDjVQrYKniyokufIkvJjRclbR7qs2s23SbmW73TDWiFIAm
-         5HHINoJ+1lYHWO4TwgbkeMkZ1rjMNCWn2rw2/9c5P7HncsomvO4xsVhmV5ZWJDblyIHy
-         56b2LRileIiXbNJ++zHPh3mLsg/JOioK3ghMMq0AMAfp7rTIxG5tzI0yDKazxbHKIXZC
-         SPUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761921120; x=1762525920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G95L3DLvS/DNATNYDSMXETdETrIxVgxQLONU1k6QAU4=;
-        b=spNlzE0UEW+TftN5rZdF730J0Cqau8O61/67m4kKLQDFp732z2XCQkWK2hhVCSCOr2
-         S6RXlntTEamZGFOlZqAoceQgarFoC1WcFcQ1qnyECMcylEVEC5BEarnN2Jdkz2FLZpDH
-         X/0WKeRZAqWYCoMgoyVR/8KHirgzSTuk/2OOSXFoS9heuUu2mycLTSKSqE10kR/eExiH
-         9Bwwjz7tVmsZVYQx6UEcyI33VqnNzxOpFkN9vmYIRMaZGp0lQ2TCg2VPzxWm4wVx1Pdy
-         px9UeBFgY67n7lQTQ6jBBekfwuqjDK7iDqikrlyhv1iOqJwFCSG1UJOv3PQyZk5WoWdR
-         XImw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHuRNeD0CQ13Li5T39lASyBT4ivLd+YLn2PlJG6RJSLRBvQAUghZ1sb/vkKE2/WCpaBkGqGFh+0Y8lIV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGe7jMrEz6izX+YUe24KniBpPeXiv1uyDynlGxYIGytartMaor
-	A8yVh8WIDu11AZG0D6Z3Dr39uePRZRB5xPSLoLXDWcMh21o6DlYURDw7mci3Hmr+7ASkipCMOWC
-	Y+k2doPzrZYK06R1PiAxsNWc/2CGgiXY5EcEhsSRi
-X-Gm-Gg: ASbGncsaYeRsYVW0G1qwI+T9lhKGvoeh5sqY4Wo/yqEqEX16UPrhuHQvxKWDgpllrkL
-	TGnS3PxfKGMELVnHhmfBauA+jC/r+TPZ2mXVxgN+T2HfTqMUWQk+Cy+nO0H1RvKhXAVWgiedT3T
-	UXuB/FhiRB/8E/4hIKA5Q/fr8qxkCq/C8mWlN4imC15jsEy+7eHBmkpsuUzAocptm/5HLZfBaow
-	J9b5ZMimGyJU5S6uyXnH4jBD7a3DVda+tGYx6rq+LBramruf3XeTW7pKYlPqHKJBYEw2gF71OBa
-	teXfTFs7dp7QZDsWVTPmu8vWNIk=
-X-Google-Smtp-Source: AGHT+IF/Qso4SJD1J9Awit7eARmSYManprQ6V5RDK+znSyKxcoLwTsKzFBHsprkHmdeX77HTkMxjecZ+rWe1vvB8RLY=
-X-Received: by 2002:a05:622a:1817:b0:4b4:9590:e091 with SMTP id
- d75a77b69052e-4ed3385bca2mr5839331cf.5.1761921120002; Fri, 31 Oct 2025
- 07:32:00 -0700 (PDT)
+	s=arc-20240116; t=1761921180; c=relaxed/simple;
+	bh=Pql8y+9KVqO2oYJxK+ekz1JwkNsR08SbyFlMz5p4NO8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q4HRzDwwiwDTVC2GyQGEVizePtEUDj63/+mjQXhQ1wuT8Gp49YwPKtymoCu7vsu8qrcCmvrk/DSnS69UlNIfVFcCLwh3xZmdHGCHuQy9sV9UiwruCOHPyc9utgl/q8kP11FnSJwSWQtAV/F1z1AVcGygUnf8/kTS2nyrxts3NUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f+fKj/3+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JPkfZ9K5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761921177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uWjiQGeCH8V9Weyht1eZQ9p8KytDBMq+frDo4cdg/2Y=;
+	b=f+fKj/3+x9Yoob0D8C9xpBzd8QrYbV7HeNBDGK2vU54YY1d6HsRiBY13isO8n6Ro0L/d7u
+	0BCJqfzce1iNcqXFi90ojNruS+so/F1jLi5C4TDIss0AE+5aMdEUO5sR+rCR3hWcorVSJA
+	lBBVJqg7MJd6Yju98/7MCi9e1aqumkogMLIS2pgA9aDCsHcM2WBVoj18iJnUdfi/BY5eka
+	O2kzHQQdICBlLYF7sA4VK8GXxPMud4XMfZFTrvh+zzD5IWT3Vh0JmhLlBsQzcDlpaQo5jz
+	c6El6I87dkkBReSCHv9Zw1tWj/wjN2KrDZuCmPtZ+kiIyxlh/iReqXmHjT7vPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761921177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uWjiQGeCH8V9Weyht1eZQ9p8KytDBMq+frDo4cdg/2Y=;
+	b=JPkfZ9K5WhL9d8W6v8tP3csJHQ4WV0vpBAuMM9yw01vvgszR9JYqMW5oH4rmqP7QZ8nmoe
+	YAe41+yAf+euCZDw==
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, K Prateek Nayak
+ <kprateek.nayak@amd.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [patch V3 02/12] rseq: Add fields and constants for time slice
+ extension
+In-Reply-To: <999E136D-49BE-4AEE-8392-C09D0511351C@oracle.com>
+References: <20251029125514.496134233@linutronix.de>
+ <20251029130403.542731428@linutronix.de>
+ <999E136D-49BE-4AEE-8392-C09D0511351C@oracle.com>
+Date: Fri, 31 Oct 2025 15:32:55 +0100
+Message-ID: <875xbvta3s.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001025442.427697-1-chao.gao@intel.com> <20251001025442.427697-8-chao.gao@intel.com>
- <CAAhR5DEQw9eMVJ_mWRP3G=XqmsR4_46xh030_Vtyx3HzWXn3wA@mail.gmail.com> <6903ef44cbf81_10e9100f4@dwillia2-mobl4.notmuch>
-In-Reply-To: <6903ef44cbf81_10e9100f4@dwillia2-mobl4.notmuch>
-From: Sagi Shahar <sagis@google.com>
-Date: Fri, 31 Oct 2025 09:31:49 -0500
-X-Gm-Features: AWmQ_bmbnxKmBqKoD8vD9Ui7lZxDASP_7X1rDLL5Fan3JEh-qcGYvqIWKACARo8
-Message-ID: <CAAhR5DGvDoCd_OZURF604LO0JOHoFjWM8Btk8uS_jzJVfk5J2w@mail.gmail.com>
-Subject: Re: [PATCH v2 07/21] coco/tdx-host: Expose P-SEAMLDR information via sysfs
-To: dan.j.williams@intel.com
-Cc: Chao Gao <chao.gao@intel.com>, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, reinette.chatre@intel.com, 
-	ira.weiny@intel.com, kai.huang@intel.com, yilun.xu@linux.intel.com, 
-	vannapurve@google.com, paulmck@kernel.org, nik.borisov@suse.com, 
-	Farrah Chen <farrah.chen@intel.com>, "Kirill A. Shutemov" <kas@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 6:05=E2=80=AFPM <dan.j.williams@intel.com> wrote:
->
-> Sagi Shahar wrote:
-> > On Tue, Sep 30, 2025 at 9:55=E2=80=AFPM Chao Gao <chao.gao@intel.com> w=
-rote:
-> > >
-> > > TDX Module updates require userspace to select the appropriate module
-> > > to load. Expose necessary information to facilitate this decision. Tw=
-o
-> > > values are needed:
-> > >
-> > > - P-SEAMLDR version: for compatibility checks between TDX Module and
-> > >                      P-SEAMLDR
-> > > - num_remaining_updates: indicates how many updates can be performed
-> > >
-> > > Expose them as tdx-host device attributes.
-> > >
-> > > Note that P-SEAMLDR sysfs nodes are hidden when INTEL_TDX_MODULE_UPDA=
-TE
-> > > isn't enabled or when P-SEAMLDR isn't loaded by BIOS, both of which
-> > > cause seamldr_get_info() to return NULL.
-> > >
-> > > Signed-off-by: Chao Gao <chao.gao@intel.com>
-> > > Tested-by: Farrah Chen <farrah.chen@intel.com>
-> > > ---
-> > >  .../ABI/testing/sysfs-devices-faux-tdx-host   | 25 ++++++++
-> > >  drivers/virt/coco/tdx-host/tdx-host.c         | 63 +++++++++++++++++=
-+-
-> > >  2 files changed, 87 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/ABI/testing/sysfs-devices-faux-tdx-host b/=
-Documentation/ABI/testing/sysfs-devices-faux-tdx-host
-> >
-> > Trying to apply this patch locally fails because
-> > sysfs-devices-faux-tdx-host does not exist. There are also conflicts
-> > around drivers/virt/coco/tdx-host/tdx-host.c.
-> >
-> > I'm looking at the base commit specified in the cover letter [1] but
-> > even the current head of the tsm/tdx tree [2] doesn't have the
-> > sysfs-devices-faux-tdx-host file. Are there any other dependencies for
-> > this series?
->
-> I hit the same head scratcher, but then realized that Chao did say that
-> you also need to apply:
->
-> https://lore.kernel.org/linux-coco/20251001022309.277238-1-chao.gao@intel=
-.com
->
-> ...so:
->
-> git checkout -b $branch 9332e088937f
-> b4 shazam 20251001022309.277238-1-chao.gao@intel.com
-> b4 shazam 20251001025442.427697-1-chao.gao@intel.com
->
-> ...works for me.
+On Thu, Oct 30 2025 at 22:01, Prakash Sangappa wrote:
 
-Thanks, I missed that one. It's working now
+>> On Oct 29, 2025, at 6:22=E2=80=AFAM, Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>>=20
+>> Aside of a Kconfig knob add the following items:
+>>=20
+>>   - Two flag bits for the rseq user space ABI, which allow user space to
+>>     query the availability and enablement without a syscall.
+>>=20
+>>   - A new member to the user space ABI struct rseq, which is going to be
+>>     used to communicate request and grant between kernel and user space.
+>>=20
+>>   - A rseq state struct to hold the kernel state of this
+>>=20
+>>   - Documentation of the new mechanism
+>>=20
+> [=E2=80=A6]
+>> +
+>> +If both the request bit and the granted bit are false when leaving the
+>> +critical section, then this indicates that a grant was revoked and no
+>> +further action is required by userspace.
+>> +
+>> +The required code flow is as follows::
+>> +
+>> +    rseq->slice_ctrl.request =3D 1;
+>> +    critical_section();
+>> +    if (rseq->slice_ctrl.granted)
+>> +         rseq_slice_yield();
+>> +
+>> +As all of this is strictly CPU local, there are no atomicity requiremen=
+ts.
+>> +Checking the granted state is racy, but that cannot be avoided at all::
+>> +
+>> +    if (rseq->slice_ctrl & GRANTED)
+> Could this be?
+> 	if (rseq->slice_ctrl.granted)
+
+Yes.
 
