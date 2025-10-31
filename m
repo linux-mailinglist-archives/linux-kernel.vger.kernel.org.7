@@ -1,90 +1,118 @@
-Return-Path: <linux-kernel+bounces-880029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9B0C24B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:08:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF80C24B42
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83E38462300
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:07:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40F51882C9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7A434320D;
-	Fri, 31 Oct 2025 11:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDB2344040;
+	Fri, 31 Oct 2025 11:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gkCOozVc"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUjVSJhg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B22341AC1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AFA324B2D;
+	Fri, 31 Oct 2025 11:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761908843; cv=none; b=KWNBrWuK1a7PR7KIrRY3vcfW90yGMPrYJddF34S8wp8kADkyGo1ow8ew1B2I1d1iEOCPtl97DHbvur/xFe+/RrpRTyz33hroFMuRrtS8luQkUEwGNngE17qovansQiYjJ/zxdT/4F02HQTuGeDEc6oW2deIzudhOInSnUbhaXhE=
+	t=1761908989; cv=none; b=UelWbha8zmIKUzZPTuHP7AGfY8KOym3QSVSaBe5Hc1wHB126rfRIQNy17ZPIToOw9evSKMTrJ5BqyjU1VAHneY2CFeslN92oJL5bKmBRocczBeQD7c80RypPschlC/yDuuBeDCLo4x5befQS4R0jNoh4MlVvjXqqSCOY8PpIKDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761908843; c=relaxed/simple;
-	bh=M3Qb9g3bZHc0X1YpiMc193vcKMbFF09mnqTmKUEXPdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k2DDVYnJJeS2YSYEkoyU7trkBwTyCP3LaMEX6aoDTGLlu+FUmxDBXxBaOSPEuFmEHpGKa2Na2yL6h319CST9j49gg2ITmDmI3sKTtW3Dmg/xs9JHKL6Z+i7XOuQfat7/C8Eg/2SZcsI2oHyt12e/41EBt+5gkMbynRWErrFm2vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gkCOozVc; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761908836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=P525aXze3q+eRQRgjVHMUG0duLtS7TQgJYdpfahubEM=;
-	b=gkCOozVcOTNZY+BzZvOG9QsaMUrVwG9A5p9YPPrKrFrVyTz3ktex9eXPeLlfCQaF+ZazwW
-	Xf466KH/nqy9aztbuq96Qc5L98b4t62t32yPhhFDyANfETZlL9zTZzNvX4ce66uPMwl6mA
-	t1uQshmt2tsfd+6afuX1kkZqtyMDnc8=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
-Date: Fri, 31 Oct 2025 12:06:47 +0100
-Message-ID: <20251031110647.102728-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761908989; c=relaxed/simple;
+	bh=I7rzIGhL8xOCEwjsSLVh7bEj5BilIr1yhKEWjb49+sU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=KoBjap4wYVTAqK+6REDtGcFkb3W8hlohV7CpjhzJXNENERogAUUxaQN4ttidnKKd3piiM0zwn0fOph10/CBi9OJZ4BbmKWHm7RlClDXCa9MBbaiq72NeyxCOa2azPRptcUmyTSpI+5nKhCmz3AcwgKCDOKZFGaxrQcJ9a3qasOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUjVSJhg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9919CC4CEF8;
+	Fri, 31 Oct 2025 11:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761908989;
+	bh=I7rzIGhL8xOCEwjsSLVh7bEj5BilIr1yhKEWjb49+sU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=DUjVSJhggL+MIhCfTYxlHlZ6dS+T8pcQycIa9IRczO/3FIGe/wO2IifwIaNys5NK2
+	 BboHfUyOPBXi8OmZjQitgIZe6ZvEH8+NCckKqO547SZvXW9fvt/hq3K0HYlgeB4vjl
+	 3MKx3balmoI/1JfVJUv6yvv4tf26x1P+8E/d1zxUMqvLuTE/r0sh4H3UARc0ALOiK4
+	 +WnE3GshC4coJDUehLB2xuPs8GRQk+yfZe6tuqR6+R7TWgxf8I/h5qjWxDA77B6Zq2
+	 EWQu/rz7d0btKSr8ndLszUeubQwRlZnvJ0HSYZdBSw7dgUz7je0mkKiRUvMNH8klss
+	 dHGh+gTtMZMgA==
+Date: Fri, 31 Oct 2025 06:09:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, 
+ Conor Dooley <conor.dooley@microchip.com>, Paolo Abeni <pabeni@redhat.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ "David S. Miller" <davem@davemloft.net>, Longbin Li <looong.bin@gmail.com>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
+ Han Gao <rabenda.cn@gmail.com>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Icenowy Zheng <uwu@icenowy.me>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Chen Wang <unicorn_wang@outlook.com>, Eric Dumazet <edumazet@google.com>, 
+ sophgo@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, Yixun Lan <dlan@gentoo.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+ linux-kernel@vger.kernel.org, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org, 
+ Yao Zi <ziyao@disroot.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+In-Reply-To: <20251031012428.488184-2-inochiama@gmail.com>
+References: <20251031012428.488184-1-inochiama@gmail.com>
+ <20251031012428.488184-2-inochiama@gmail.com>
+Message-Id: <176190898726.569389.4934903700571310952.robh@kernel.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: net: sophgo,sg2044-dwmac: add phy
+ mode restriction
 
-strcpy() is deprecated and sprintf() does not perform bounds checking
-either. While the current code works correctly, strscpy() and snprintf()
-are safer alternatives that follow secure coding best practices.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/device_cgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, 31 Oct 2025 09:24:26 +0800, Inochi Amaoto wrote:
+> As the ethernet controller of SG2044 and SG2042 only supports
+> RGMII phy. Add phy-mode property to restrict the value.
+> 
+> Also, since SG2042 has internal rx delay in its mac, make
+> only "rgmii-txid" and "rgmii-id" valid for phy-mode.
+> 
+> Fixes: e281c48a7336 ("dt-bindings: net: sophgo,sg2044-dwmac: Add support for Sophgo SG2042 dwmac")
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
 
-diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-index dc4df7475081..a41f558f6fdd 100644
---- a/security/device_cgroup.c
-+++ b/security/device_cgroup.c
-@@ -273,9 +273,9 @@ static char type_to_char(short type)
- static void set_majmin(char *str, unsigned m)
- {
- 	if (m == ~0)
--		strcpy(str, "*");
-+		strscpy(str, "*", MAJMINLEN);
- 	else
--		sprintf(str, "%u", m);
-+		snprintf(str, MAJMINLEN, "%u", m);
- }
- 
- static int devcgroup_seq_show(struct seq_file *m, void *v)
--- 
-2.51.1
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml:93:1: [warning] too many blank lines (2 > 1) (empty-lines)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251031012428.488184-2-inochiama@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
