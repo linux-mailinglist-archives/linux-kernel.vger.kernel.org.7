@@ -1,107 +1,130 @@
-Return-Path: <linux-kernel+bounces-879694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F766C23BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:16:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AFCFC23C36
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB4B1884C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:16:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C6FB4F6544
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7580B280A58;
-	Fri, 31 Oct 2025 08:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHb/SkMi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7E82D23BC;
+	Fri, 31 Oct 2025 08:15:48 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D077F257AEC;
-	Fri, 31 Oct 2025 08:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EA0280325;
+	Fri, 31 Oct 2025 08:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898529; cv=none; b=aRvl0YEVzlTB6l2kJXC8Z5IudV0ZENEsA8pAMBgWkEhySXr91SegG98/EDFdq76PJh/hOVguK5lQ4k+ciZcBKLF2yA/ILUSTheXtVimsXSD8roHR6VK4Gv3Gk7GFKDrcU2I10eHbYlFbnrNs8RvPGyKIYFHx2QXWwnSIobnao9M=
+	t=1761898548; cv=none; b=TQA+mudao2nHN4wlnjtrQ/0ip1REaa9tnT0GZxGWIv11BMzCvQ3TxPUArergziZ05UH0n3pR0t+lLRvobn5wmO1wTYWjFeJwy3Q5LsirpO9zQfnIvFfd2d9drTOARka2p84T4M1GAxfCSpvxeHJoj1w1COPcTWBYl/5BPNRzyTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898529; c=relaxed/simple;
-	bh=LpMT6+KdYml7IMGouPrjUtsmwkVq4998zVK5tNtOfIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OzFaR1Wmq8IeHVjxaPt8WHHR77sSixsypN703FKPdkabHMy0r6vU0o1cnPpGegPSQIlkLsSHrgwQ6BrquxOxoJgkkzkKtAilLoCYk/BQeoMtevDAeR8GmnbPo38N4CkcJXvgLpQVEkPPFLnxtGObjB4y0Wt1jMVi8kNJDjK7KAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHb/SkMi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7722EC4CEFB;
-	Fri, 31 Oct 2025 08:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761898529;
-	bh=LpMT6+KdYml7IMGouPrjUtsmwkVq4998zVK5tNtOfIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fHb/SkMiLB1KIJCF8ifz25lBccCapXvWtnBNrraT5G3gDKud3anb6rbeTopV+RmaW
-	 IcnNnOLWVsNAf8tBLuFWDlRBqz7dnuC5OuIJfPx6XjafqoLUMSCJLVj5fPQxusri9k
-	 y3rjeSHd2TXpbTd/N95PNIhJCwgr0y/pfnX3TIS4mMaxyDhyvti/jaEkAmEvYvTR/H
-	 TF6WuEUhsDZ2P/VAqFufF1eIxgt7YwKmhfmGACao6fa/7OfcPHccN3mmKXV37mhM6l
-	 NoD7/CcKjzg9KyXd0yL65qUAp8EGr40xfsCSGIVLwZX7XhdbuuoNOSJdNF3zaYKTc/
-	 AFt64KnQFbpew==
-Date: Fri, 31 Oct 2025 13:45:17 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	bjorn.andersson@oss.qualcomm.com, arnd@arndb.de, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [RESEND PATCH] arm64: defconfig: Enable SCSI UFS Crypto and
- Block Inline encryption drivers
-Message-ID: <w52ajxs5rszlw5tyuezgf5ym2sz5nqnqlm2bbvbfvqy2rbth6v@jttotxort4rb>
-References: <20251030095509.5877-1-manivannan.sadhasivam@oss.qualcomm.com>
- <27841a96-b8a5-44aa-b0ef-d8bab9ba3477@kernel.org>
- <2oynmuekw5lnzl244uqz2aehpg5rhttddu43lqplnxemyjd3g5@6yzchzihe57h>
- <6f9dd9f2-5b4c-4600-a537-d7c8e1ad0f9b@kernel.org>
+	s=arc-20240116; t=1761898548; c=relaxed/simple;
+	bh=BQEfkHAA/cvrsQwoFjP1JCUVNTwO17DlLYDFoE4HyC4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nco1KG/Jn/cMIMgCqt9xZ6u/RGmrQorO/7kGbNIz7ukSg33FTln+PNRuzMON34mGNNFjkrC/v0fKtXEqZr3KZue4OkDkoOtqgSjO/ppsvkaJp/D9DaxZG31Bgd5TVv7yvvISDt8tQldnM+PYXXEEvxWQ/b1UnqQvFLZ4Y1xw65A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c35c19e2b63111f0a38c85956e01ac42-20251031
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:eed4762e-8c93-4ab9-950e-9de796f78dfd,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:6a368bf88c433b2fdc9f1f42fedcc099,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|15|50,EDM:-3,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: c35c19e2b63111f0a38c85956e01ac42-20251031
+X-User: lilinmao@kylinos.cn
+Received: from llmserver.local [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <lilinmao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1474029217; Fri, 31 Oct 2025 16:15:29 +0800
+From: Linmao Li <lilinmao@kylinos.cn>
+To: linux-bluetooth@vger.kernel.org
+Cc: marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Linmao Li <lilinmao@kylinos.cn>
+Subject: [PATCH] Bluetooth: btusb: Prevent autosuspend when le_scan_disable work is pending
+Date: Fri, 31 Oct 2025 16:15:25 +0800
+Message-Id: <20251031081525.2275894-1-lilinmao@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6f9dd9f2-5b4c-4600-a537-d7c8e1ad0f9b@kernel.org>
 
-On Fri, Oct 31, 2025 at 08:45:38AM +0100, Krzysztof Kozlowski wrote:
-> On 31/10/2025 07:24, Manivannan Sadhasivam wrote:
-> > On Thu, Oct 30, 2025 at 08:48:48PM +0100, Krzysztof Kozlowski wrote:
-> >> On 30/10/2025 10:55, Manivannan Sadhasivam wrote:
-> >>> These drivers will allow using the crypto functionalities of the UFS
-> >>> device, like Inline Crypto Encryption. Both of these drivers are of type
-> >>> 'bool', so they cannot be built as modules.
-> >>
-> >> Is there any device benefiting from these? Which board?
-> >>
-> > 
-> > All ICE capable Qcom UFS based boards.
-> > 
-> >>>
-> >>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> >>> Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
-> >>
-> >> You do not need the second tag. You send it via oss.qualcomm.com which
-> >> is still valid.
-> >>
-> > 
-> > Yes, I know. But I was having some issue in sending email through
-> > oss.qualcomm.com. Now it got fixed in the RESEND patch, but forgot to remove my
-> > korg s-o-b.
-> 
-> 
-> You do not need second sob when sending through korg. Your previous
-> identity was still valid. It's used only when old identity is considered
-> revoked.
-> 
+When USB autosuspend occurs while le_scan_disable work is scheduled,
+HCI commands sent by the work fail with timeout, leaving LE scan in
+an inconsistent state.
 
-Hmm. I thought the s-o-b should always match the maildomain from which the patch
-was sent.
+Scenario:
+  T=0:     LE scan starts, le_scan_disable work queued (+10240ms)
+  T=8s:    Autosuspend check: tx_in_flight=0, suspend proceeds
+  T=10s:   le_scan_disable work executes on suspended device
+           → HCI command 0x2042 times out
 
-Thanks for clarifying.
+The tx_in_flight check only protects actively transmitted URBs, missing
+the window where work is queued but hasn't submitted its URB yet.
 
-- Mani
+Fix by checking delayed_work_pending(&hdev->le_scan_disable) during
+autosuspend. Return -EBUSY if pending to block suspend until work
+completes. Only set BTUSB_SUSPENDING after all checks pass to avoid
+leaving the flag set if suspend is aborted.
 
+Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
+---
+ drivers/bluetooth/btusb.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 5e9ebf0c5312..a344ea1dc466 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -4389,6 +4389,7 @@ static void btusb_disconnect(struct usb_interface *intf)
+ static int btusb_suspend(struct usb_interface *intf, pm_message_t message)
+ {
+ 	struct btusb_data *data = usb_get_intfdata(intf);
++	struct hci_dev *hdev = data->hdev;
+ 
+ 	BT_DBG("intf %p", intf);
+ 
+@@ -4402,14 +4403,19 @@ static int btusb_suspend(struct usb_interface *intf, pm_message_t message)
+ 		return 0;
+ 
+ 	spin_lock_irq(&data->txlock);
+-	if (!(PMSG_IS_AUTO(message) && data->tx_in_flight)) {
+-		set_bit(BTUSB_SUSPENDING, &data->flags);
+-		spin_unlock_irq(&data->txlock);
+-	} else {
++	if (PMSG_IS_AUTO(message) && data->tx_in_flight) {
+ 		spin_unlock_irq(&data->txlock);
+ 		data->suspend_count--;
+ 		return -EBUSY;
+ 	}
++	spin_unlock_irq(&data->txlock);
++
++	if (PMSG_IS_AUTO(message) && delayed_work_pending(&hdev->le_scan_disable)) {
++		data->suspend_count--;
++		return -EBUSY;
++	}
++
++	set_bit(BTUSB_SUSPENDING, &data->flags);
+ 
+ 	cancel_work_sync(&data->work);
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.25.1
+
 
