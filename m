@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-879668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625EBC23BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:18:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCD4C23BC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D29684F7192
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB178460B1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF62B33FE18;
-	Fri, 31 Oct 2025 08:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ED832ED26;
+	Fri, 31 Oct 2025 08:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lT21J+Cd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EhwqZzL4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA7F17E4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C535132ED24
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897946; cv=none; b=WiIjkKWc/h00nj4JV23BUTI1mtdvsGpwizNiRexsT+2SyoTi4NMmOO8q9lNjeXvMnMZ2BLSppxSkG7GTgjfE5Yo/it8fWqmfCGDZN27ZiuIOrrvmbUr102aT/aocNIcYX2tZ+aVvAIbUB/UrbwcJpfrenPnv1BgwKguXBjiXxQk=
+	t=1761897948; cv=none; b=pCKQkK5+dFLLYdtCJlWnvL4Kcipq6iTX1Bi6dKmje3xcTIUZtZ3iwz50FNUsqr8Zo9MdoAsSFiAVaeJaq1DQBSVAL4gIjFNKFv0v2LKnSMtvNPdjx+ZjJdUCU3tmtGBVIxcU98rG2rzc6d0ebkZmBsFuzmmD30s4k78Tm0Aa4N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897946; c=relaxed/simple;
-	bh=p0TML9FLbpbHRHWAs71KOwBosv3+hC/P9zEcIKgeCk0=;
+	s=arc-20240116; t=1761897948; c=relaxed/simple;
+	bh=spUqVFANeu6zA5mqKFPkIzzbgdNgivsG0RxjQcBExq4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bpznductDq+AiTtfbrn96w+SI4D/l1zfn8fNCC8fqEUDzw8lP+mcifF7G8vFY9pb7ZVvWHCuhc7CrW5fe0Q4p2vgkHp4TKU5J0VsZJhGSUl7LkvrSbRECsntFL95FucP2u9eKpyYzWKvK8Q90xpVhWnb17lfRtUr4EDlUr84M1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lT21J+Cd; arc=none smtp.client-ip=198.175.65.19
+	 MIME-Version; b=MwDZOqur1tLJfqfUM0AP44UN97Z9tkSUBJMj8BSMJPpbtlAPdXXFszsPdUbkOHllR9b5n5bt+/PdRHJt6ywBUjrV2mGsQyxAU6icWCrL8qTtd+2YgHmj1HqRIuvkvusvAhvggXVHf1jAV8OVOJJ1VgVz+/SVPtDuzY+ZWC7CtG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EhwqZzL4; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761897945; x=1793433945;
+  t=1761897947; x=1793433947;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=p0TML9FLbpbHRHWAs71KOwBosv3+hC/P9zEcIKgeCk0=;
-  b=lT21J+Cd1OVIHt14MGVkVBzHhqFj6QMQrLamPQCE8yDN9bhl/K2RwtQW
-   brTOpfIN9ITOIgoBBTOKFaCAWk8jFmDxxWuqGtLsVGwaJOGDc7f/6Nv0D
-   stgyVR73MobQEz6N8JEMVCusl58K9jlDsiynP9sLqv0es4UFfn1p1NAXP
-   QgN/0bqH54e0z0w35riAAdLGnIuhNt+GQnE8Kl5NHByrS4dC108qJjN0q
-   EL2yunUtn4Lh/mq78SEMVM7N49CA3hvHbp0Ze0IZVj2fGB/ba82ZDST2a
-   EbIWcXc1oicmEuPTi67mSI6Ozd0zBBTUG+bT9D0D37YWSwM4o/AFO9VyB
-   Q==;
-X-CSE-ConnectionGUID: yBS0RKw4Td2Kv3AG/7qDSQ==
-X-CSE-MsgGUID: N3QciobqTlaWKFe3qQqDkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63939057"
+  bh=spUqVFANeu6zA5mqKFPkIzzbgdNgivsG0RxjQcBExq4=;
+  b=EhwqZzL4rPw6uA9RaVWYPz8w//7kHB4mpJMiyPM469oTDH+efXf/gXQs
+   uC61qZW8rrdjqpPmI0HCHVJRnkxArycWh5YOVsqtYdq8XvMHNQS717lm1
+   GT7d3d+vPenYwBLLcWw+SHn+bqw+SLsjzNlmFqXskKMnd0V2WeTBVf63j
+   Q2CfLv+Nrh1afUWYm5Jsdyxfrg321VU1etuLhXdj9ZZVk+Fc1JWOuyR7G
+   lzE3ANCbgAK3t3e0ONkCvQNDcu7hcDb9fy25CgtTNwKxfmrP8Hx0y/WDe
+   S+TlGDinpR3zQwQYcoPmTEo/fVwaLOXz/do6QU19AvfmYE8ZPR1wUOKyL
+   g==;
+X-CSE-ConnectionGUID: 3s1tbHxLRQOjqDhf/Rzeng==
+X-CSE-MsgGUID: mUOInZvKQfWDXf1yV/YPxw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75503186"
 X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="63939057"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:05:44 -0700
-X-CSE-ConnectionGUID: A0RqXhG1QeagOqmIaKZgmg==
-X-CSE-MsgGUID: Ny/A/36HTDO2/2uSCjgizw==
+   d="scan'208";a="75503186"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:05:47 -0700
+X-CSE-ConnectionGUID: 9HtADjhIR/q20v4VSLKXUw==
+X-CSE-MsgGUID: ZFhhlHvuSUC6p+w0M31Byg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="190254451"
+   d="scan'208";a="216828328"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa003.jf.intel.com with ESMTP; 31 Oct 2025 01:05:42 -0700
+  by orviesa002.jf.intel.com with ESMTP; 31 Oct 2025 01:05:45 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id A400599; Fri, 31 Oct 2025 09:05:41 +0100 (CET)
+	id A82D19A; Fri, 31 Oct 2025 09:05:41 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mark Brown <broonie@kernel.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
@@ -68,9 +68,9 @@ To: Mark Brown <broonie@kernel.org>,
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v3 4/5] regcache: flat: Split ->populate() from ->init()
-Date: Fri, 31 Oct 2025 09:03:19 +0100
-Message-ID: <20251031080540.3970776-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 5/5] regcache: maple: Split ->populate() from ->init()
+Date: Fri, 31 Oct 2025 09:03:20 +0100
+Message-ID: <20251031080540.3970776-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
 References: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
@@ -87,75 +87,99 @@ This decoupling will help for the further changes.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/base/regmap/regcache-flat.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ drivers/base/regmap/regcache-maple.c | 47 +++++++++++++---------------
+ 1 file changed, 21 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/base/regmap/regcache-flat.c b/drivers/base/regmap/regcache-flat.c
-index bacb7137092f..53cc59c84e2f 100644
---- a/drivers/base/regmap/regcache-flat.c
-+++ b/drivers/base/regmap/regcache-flat.c
-@@ -29,7 +29,6 @@ struct regcache_flat_data {
- 
- static int regcache_flat_init(struct regmap *map)
- {
--	int i;
- 	unsigned int cache_size;
- 	struct regcache_flat_data *cache;
- 
-@@ -47,14 +46,6 @@ static int regcache_flat_init(struct regmap *map)
- 
- 	map->cache = cache;
- 
--	for (i = 0; i < map->num_reg_defaults; i++) {
--		unsigned int reg = map->reg_defaults[i].reg;
--		unsigned int index = regcache_flat_get_index(map, reg);
--
--		cache->data[index] = map->reg_defaults[i].def;
--		__set_bit(index, cache->valid);
--	}
--
- 	return 0;
- 
- err_free:
-@@ -75,6 +66,22 @@ static int regcache_flat_exit(struct regmap *map)
- 	return 0;
+diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
+index 2319c30283a6..ca1c72b68f31 100644
+--- a/drivers/base/regmap/regcache-maple.c
++++ b/drivers/base/regmap/regcache-maple.c
+@@ -289,6 +289,23 @@ static int regcache_maple_sync(struct regmap *map, unsigned int min,
+ 	return ret;
  }
  
-+static int regcache_flat_populate(struct regmap *map)
++static int regcache_maple_init(struct regmap *map)
 +{
-+	struct regcache_flat_data *cache = map->cache;
-+	unsigned int i;
++	struct maple_tree *mt;
 +
-+	for (i = 0; i < map->num_reg_defaults; i++) {
-+		unsigned int reg = map->reg_defaults[i].reg;
-+		unsigned int index = regcache_flat_get_index(map, reg);
++	mt = kmalloc(sizeof(*mt), map->alloc_flags);
++	if (!mt)
++		return -ENOMEM;
++	map->cache = mt;
 +
-+		cache->data[index] = map->reg_defaults[i].def;
-+		__set_bit(index, cache->valid);
-+	}
++	mt_init(mt);
++
++	if (!mt_external_lock(mt) && map->lock_key)
++		lockdep_set_class_and_subclass(&mt->ma_lock, map->lock_key, 1);
 +
 +	return 0;
 +}
 +
- static int regcache_flat_read(struct regmap *map,
- 			      unsigned int reg, unsigned int *value)
+ static int regcache_maple_exit(struct regmap *map)
  {
-@@ -134,6 +141,7 @@ struct regcache_ops regcache_flat_ops = {
- 	.name = "flat",
- 	.init = regcache_flat_init,
- 	.exit = regcache_flat_exit,
-+	.populate = regcache_flat_populate,
- 	.read = regcache_flat_read,
- 	.write = regcache_flat_write,
- };
-@@ -143,6 +151,7 @@ struct regcache_ops regcache_flat_sparse_ops = {
- 	.name = "flat-sparse",
- 	.init = regcache_flat_init,
- 	.exit = regcache_flat_exit,
-+	.populate = regcache_flat_populate,
- 	.read = regcache_flat_sparse_read,
- 	.write = regcache_flat_write,
- 	.drop = regcache_flat_drop,
+ 	struct maple_tree *mt = map->cache;
+@@ -340,26 +357,12 @@ static int regcache_maple_insert_block(struct regmap *map, int first,
+ 	return ret;
+ }
+ 
+-static int regcache_maple_init(struct regmap *map)
++static int regcache_maple_populate(struct regmap *map)
+ {
+-	struct maple_tree *mt;
+ 	int i;
+ 	int ret;
+ 	int range_start;
+ 
+-	mt = kmalloc(sizeof(*mt), map->alloc_flags);
+-	if (!mt)
+-		return -ENOMEM;
+-	map->cache = mt;
+-
+-	mt_init(mt);
+-
+-	if (!mt_external_lock(mt) && map->lock_key)
+-		lockdep_set_class_and_subclass(&mt->ma_lock, map->lock_key, 1);
+-
+-	if (!map->num_reg_defaults)
+-		return 0;
+-
+ 	range_start = 0;
+ 
+ 	/* Scan for ranges of contiguous registers */
+@@ -369,23 +372,14 @@ static int regcache_maple_init(struct regmap *map)
+ 			ret = regcache_maple_insert_block(map, range_start,
+ 							  i - 1);
+ 			if (ret != 0)
+-				goto err;
++				return ret;
+ 
+ 			range_start = i;
+ 		}
+ 	}
+ 
+ 	/* Add the last block */
+-	ret = regcache_maple_insert_block(map, range_start,
+-					  map->num_reg_defaults - 1);
+-	if (ret != 0)
+-		goto err;
+-
+-	return 0;
+-
+-err:
+-	regcache_maple_exit(map);
+-	return ret;
++	return regcache_maple_insert_block(map, range_start, map->num_reg_defaults - 1);
+ }
+ 
+ struct regcache_ops regcache_maple_ops = {
+@@ -393,6 +387,7 @@ struct regcache_ops regcache_maple_ops = {
+ 	.name = "maple",
+ 	.init = regcache_maple_init,
+ 	.exit = regcache_maple_exit,
++	.populate = regcache_maple_populate,
+ 	.read = regcache_maple_read,
+ 	.write = regcache_maple_write,
+ 	.drop = regcache_maple_drop,
 -- 
 2.50.1
 
