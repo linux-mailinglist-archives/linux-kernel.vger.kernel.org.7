@@ -1,141 +1,91 @@
-Return-Path: <linux-kernel+bounces-880151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F95C24FE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:27:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27307C24F50
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:18:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5375C42066D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:24:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D268D4F3EB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5022B34844A;
-	Fri, 31 Oct 2025 12:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD28253B42;
+	Fri, 31 Oct 2025 12:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UkUNUh8c"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AU7yhMST"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2FE2E1743;
-	Fri, 31 Oct 2025 12:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46E918B0F;
+	Fri, 31 Oct 2025 12:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913474; cv=none; b=Fk9WNGtBpKbx2C/iL7jS5iegkwp8KLcdlXug7f2TqLchcCddcbzkuWv1REH3dCi6RxnSWQmkITpLzcPmUeETz2hQxCxi/byi9Qtg2cWrhUUdDRp/MZ1hXY7FN7t31swLx0+2e0FCOKg+fga1jSgo0Fj+sOUu63pfrprfQvcreOg=
+	t=1761913055; cv=none; b=oOsiVXVlRk8rZOJAztU1o8EanfsqVprbcyQdX9jSfMjLfqiqq9X5wT+QDMFMXz5EZDXcaj+m7JVV60vJSfcv4y74/nj984zgpPvzUnCtgqgGXF2JwkHEqi2xLt0S7eRMSn94ROrZpqK0uDpUIcy/3iMGddgzmGH3MOBLsCF8YvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913474; c=relaxed/simple;
-	bh=2Nt4r/eYanNf5cDgEn1QKK+iWGBoitcY9r7UXIB3y4g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BNbzs1bIsBwveAfKkQ0I0bPfppMussDMVO7y2RzIHOmd0weAd0CQSEg5JCwFgQKWi8cKlhlkrkZY8PdE3Rx7zMgdDaaZB7xRICexDElxj+/GdPgnjnTEtSQVnH1ZjNjLRe4PdPnGV9vQ1i9S8Agd5Cys4HqRLvZg0xMa1LC6Wfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UkUNUh8c; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761913473; x=1793449473;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2Nt4r/eYanNf5cDgEn1QKK+iWGBoitcY9r7UXIB3y4g=;
-  b=UkUNUh8c9gg9KCTr5N5Lbd+2H7Zm5767R0FTk9MbCLyASOitbwIxUTku
-   pV5CrCUPPSDZxDgXfPN5izGhjz8CDp9gPd9hIy8pbRgZvYOWRrHPWIRny
-   mQIFa4pKJtYmesgvuMzv/RZohNFnQTgNe+foR5SRfs01ZPwqZEUrW0zi6
-   la4L0Hc3UmBsdckiC3qrCOPkCU8Dv6jd8MPNOQJqB7za38FQc6ixAHuOf
-   xT2MUyQxvvyjqVPzFJNH5p26blRG9t2BkpyYMUQ9M+Uv3ZOm/mKkXDACG
-   28dihNVHbsle5+0fRzmOenM3Xw6FzKh5Uoa2BMGSCX5mGmsRVojySHcRf
-   w==;
-X-CSE-ConnectionGUID: q2s9GN/sQTOoIfDSnWmHng==
-X-CSE-MsgGUID: tyuglKZiToCp+KniprnHRg==
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="47883659"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:24:31 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
- chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Fri, 31 Oct 2025 05:23:46 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Fri, 31 Oct 2025 05:23:44 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v4 2/2] net: phy: micrel: lan8842 errata
-Date: Fri, 31 Oct 2025 13:16:29 +0100
-Message-ID: <20251031121629.814935-3-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251031121629.814935-1-horatiu.vultur@microchip.com>
-References: <20251031121629.814935-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1761913055; c=relaxed/simple;
+	bh=PV4plpBGvn3ySVNYP8sVJMuvqxynaDfi65OYBZcuFAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uDGnojHESFRv7rhudDBBd6Qe9THxaO2hvQndgmvw1Gg9MvhrdnQI2B6ApHzJMQysuX70o4TGVEGuQLFXwDlYMo44Z03mre3CbhjVgTvi+62bBSrQuimJXsLG6OUrU+KQG02BSStXtJcbGZX8nqwppQt6Q02S9nKwgGzG2+f2EiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AU7yhMST; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0D3CC4CEE7;
+	Fri, 31 Oct 2025 12:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761913054;
+	bh=PV4plpBGvn3ySVNYP8sVJMuvqxynaDfi65OYBZcuFAw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AU7yhMSTBAVXAJwe55CqU3D+Qq1L53m8rGCH1+bemEy68qjNIhKtUcPMUEDRHvxsz
+	 UcaAD1GZk1PWYYhlakg824nl3N+QjMR8zgcAtyq0zry4jwE7oMaw/i+1F62vajlxcV
+	 2Rr7Vaju9Gv5gatvpLDOY5AhFBkuK6tQtX5vAPE+rF3SeAY1l4OPjgc8lhXlZqO9bb
+	 G8fZKqzzvKMLHIZIgPrFiSeibIKAzfCaJvHrUpQw+O66kCHD8/FQHh+yYX4bypXMQM
+	 lb+6X3nLv1waXfwcw42iLEhOTVLlph3G53kTHlkMRQGNF47Ne4bokzx10sdfIM6kym
+	 4c3Bvzl9LDTRw==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fs: push list presence check into inode_io_list_del()
+Date: Fri, 31 Oct 2025 13:17:27 +0100
+Message-ID: <20251031-brombeeren-gelee-7fe1553b6b5d@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251029131428.654761-1-mjguzik@gmail.com>
+References: <20251029131428.654761-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=981; i=brauner@kernel.org; h=from:subject:message-id; bh=PV4plpBGvn3ySVNYP8sVJMuvqxynaDfi65OYBZcuFAw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyrLiRtVD4RsK/c78Oak20XGi74to3C9s3isXzGuZeq BeRuF/V3FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRnyaMDJ9269y8p3N/U3EO q8S+zzlmbWsM9nkyrDMpaK1UEL91Tp3hf1UHy/+dKtVLFl+cenX66z5vbv8Vgiqbrtze9SeslJF 9AR8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add errata for lan8842. The errata document can be found here [1].
-This is fixing the module 7 ("1000BASE-T PMA EEE TX wake timer is
-non-compliant")
+On Wed, 29 Oct 2025 14:14:27 +0100, Mateusz Guzik wrote:
+> For consistency with sb routines.
+> 
+> 
 
-[1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/Errata/LAN8842-Errata-DS80001172.pdf
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-Fixes: 5a774b64cd6a ("net: phy: micrel: Add support for lan8842")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/micrel.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 1fa56d4c17937..6a1a424e3b30f 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -5965,6 +5965,9 @@ static int lan8842_probe(struct phy_device *phydev)
- 
- #define LAN8814_POWER_MGMT_VAL5		LAN8814_POWER_MGMT_B_C_D
- 
-+#define LAN8814_EEE_WAKE_TX_TIMER			0x0e
-+#define LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL		0x1f
-+
- static const struct lanphy_reg_data short_center_tap_errata[] = {
- 	{ LAN8814_PAGE_POWER_REGS,
- 	  LAN8814_POWER_MGMT_MODE_3_ANEG_MDI,
-@@ -6004,6 +6007,12 @@ static const struct lanphy_reg_data short_center_tap_errata[] = {
- 	  LAN8814_POWER_MGMT_VAL4 },
- };
- 
-+static const struct lanphy_reg_data waketx_timer_errata[] = {
-+	{ LAN8814_PAGE_EEE,
-+	  LAN8814_EEE_WAKE_TX_TIMER,
-+	  LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL },
-+};
-+
- static int lanphy_write_reg_data(struct phy_device *phydev,
- 				 const struct lanphy_reg_data *data,
- 				 size_t num)
-@@ -6022,8 +6031,15 @@ static int lanphy_write_reg_data(struct phy_device *phydev,
- 
- static int lan8842_erratas(struct phy_device *phydev)
- {
--	return lanphy_write_reg_data(phydev, short_center_tap_errata,
-+	int ret;
-+
-+	ret = lanphy_write_reg_data(phydev, short_center_tap_errata,
- 				    ARRAY_SIZE(short_center_tap_errata));
-+	if (ret)
-+		return ret;
-+
-+	return lanphy_write_reg_data(phydev, waketx_timer_errata,
-+				     ARRAY_SIZE(waketx_timer_errata));
- }
- 
- static int lan8842_config_init(struct phy_device *phydev)
--- 
-2.34.1
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
+
+[1/2] fs: push list presence check into inode_io_list_del()
+      https://git.kernel.org/vfs/vfs/c/7ba2ca3d17bb
+[2/2] fs: cosmetic fixes to lru handling
+      https://git.kernel.org/vfs/vfs/c/7e42cf8f61bb
 
