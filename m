@@ -1,128 +1,102 @@
-Return-Path: <linux-kernel+bounces-879413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5842C230CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:45:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB41C230CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:46:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 774594E3FE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E49F406E00
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00636176AC8;
-	Fri, 31 Oct 2025 02:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E032E30AAC1;
+	Fri, 31 Oct 2025 02:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="lEtZsil+"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p89FLzix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7226F220698;
-	Fri, 31 Oct 2025 02:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406391EF09B;
+	Fri, 31 Oct 2025 02:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761878719; cv=none; b=sc/COWymh8as9Rw4CVM8e8WpJSlh4/PQOA87zge0+QQJ88uGJoIssU+6ukjuatcO0fEVfLyeo8u58DPSFdQ9Tza6Hmzr0FUK4FiSIH9xBR31Ggbnguud1txCypz5VbIU6PuTNzG+L8anGb2BJaumAQl2Xi2zV6JtPza5iMSkWBg=
+	t=1761878770; cv=none; b=MhQNJLlmJNTxytTEIcb4/tOkly8olR1o0D9Ha8wtYOz+Ss75lQr4Piah9BVdjRaVtXgaL+SdvVdzefrxjHAMqCtDQkOd/meFFLmIt/qgwWdz/S3478uL58EEqUtDXeugQsS2swecyMpu84Nanoe7ERx8Ovz0umvWGmcDhXNisF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761878719; c=relaxed/simple;
-	bh=mGIfPx3TK2mVjuKeuduli9zM8vPdpqX+k4noXzdYy5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r6bpn+LZcC597wXaUSe2374Yf7Jp4SJR6ehvQksLcaQD1uO8ndhAKKIFmv6KqsDQdP87no9slx4qI17qOR/f9GzZi6al8zq7WDiwv/X+puzIdEQg/ApyY8B7sXriYHcLOnRFmUz6/l24l3GNC+4yLfHeh7e+dseXzXJ2KtiTG1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=lEtZsil+; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1761878656;
-	bh=frwsj15DgVxVMJ8KO7DoMvHVFee+Jhsr1xRKxDB+3cw=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=lEtZsil+X93z2NhcgnwSxRVCvVDA+r9JHfER1EUitRp44zbZRvAU3iOImQ+NoUI8X
-	 0OobxANNDI7SEJMvbHKEdZCd2JoYSVwvPFkM25x3Oy5N2FljDFbxGSrwgkXFHURw0r
-	 WI25hinCahtrUcW9sTEFG+OwHuhuRQ49hspF4lcs=
-X-QQ-mid: zesmtpsz2t1761878650t811abe2e
-X-QQ-Originating-IP: 6sh+ThAW+eQ59N+O6BU1he7uvP2VizEbUxZD6p44FpY=
-Received: from localhost.localdomain ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 31 Oct 2025 10:44:08 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1469372003017503645
-EX-QQ-RecipientCnt: 9
-From: Qiang Ma <maqianga@uniontech.com>
-To: ardb@kernel.org,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: linux-efi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
+	s=arc-20240116; t=1761878770; c=relaxed/simple;
+	bh=NvxzqeF4uE4mI4zxdKyMy4g/6M3+bsTf/7vTppVhSCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gcT0NIL9WABtsU8/1JMJ2B+scJ2l6AVN79A5045m/b92mRrsFQHoqzXQd3W1FVWYtb4nS7q67pE2xECZ5/kNVtsxnkjo2AaI98rBps8Fd3dEGpiSsjAALzSFnx22umsMdS+jognTls2zq5EN6jpc03bYxzljjWQC9esed0uE6Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p89FLzix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A41C4CEF1;
+	Fri, 31 Oct 2025 02:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761878765;
+	bh=NvxzqeF4uE4mI4zxdKyMy4g/6M3+bsTf/7vTppVhSCo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p89FLzixty2F7NQAIjBVSCow3v5xwfqsvu6+juPBizYhk5p1c/50vr7EJCkDnPdmm
+	 pPlna0VvAnfwYQk8tDL4UmqsajxNk6YL85KxC12WZf98pwVxhhZoM3o5rtxFqVOkYe
+	 CkqpxYL36YC0hwglf2V3QZFC2yxsLXH6OUckDZoLT2XEhrn3ikpX9743s7x+9TlLsn
+	 2FzOGVdubgi6alohHR8a8NS9rIxIFrXhG8Lb6G2/8mUCf9npq92sNuTEgtglgLJBc6
+	 rxP+5jxVMO09xiogoqdIX/p5NvV0fSIe2lD9ycr3uCJrt5WuuR8chnP1raN93udH9r
+	 KqD2DqS5SILtw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-kernel@vger.kernel.org,
-	Qiang Ma <maqianga@uniontech.com>
-Subject: [PATCH] efi/riscv: Remove the useless failure return message print
-Date: Fri, 31 Oct 2025 10:43:28 +0800
-Message-Id: <20251031024328.735161-1-maqianga@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v7 0/2] tracing: Add an option to show symbols in _text+offset for function profiler
+Date: Fri, 31 Oct 2025 11:46:01 +0900
+Message-ID: <176187876133.994619.14047043856461447890.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: M7nxhb6mzyWmhLP0LYDlObH120Gmy+iY54Hfc8Ze186KgxhUBnwR49jO
-	PWIf5GLYUKJTEcoOv8rby8+TjtW9ZKTL65qyZar7qHUPfYW9LToiFecsBNVOToJbM9qbHAQ
-	cBXNuaDChAB3nUorAHeI/5zdNu2YeIVw0dg3TE4HYHJc1FWSV/Fa0A11cjpJb2UhkFB6L8G
-	3m6DyUzqWEtL7p58kvIWskHdaGmza0a8cct8MYs0xBqWFNvRk1aucuiTDCBseyuty4U5wNV
-	SBzw9xrVboWkQAydng19hZ18ZPWij/ftTo7t8jXqLwoDZAMgIU4gDR7RgaSAoKuvJft0tJ1
-	9c20YLCzoAb1megViOwaauWji4EBOnTTanOTCcsvx8eiFQ1diCXU66FvtTQTB2tfxIZzPE3
-	vXJnKBDwnl/BB1dnORMs+kVRGrI0Z7XWaXQtgaTUNRu9o+9o04i/aO541c3JNi3tNLSmVai
-	C3pJ/nouBSnkae8Ui1IEnCO8ZyoXtAChg0PFb25+UhBCE+u7GpNOhML9TKhWuoWbsPPSsxy
-	+3nDSYMF0lBKV9BZTXxjy4PM/w+1a3zsGPze5C/rhWcXGvPqEejEKeZTAKSAYXjoifO47c+
-	n+7WC7l4VFKsbx+EPdBzYFvL7P72TW2AWyEChQeCvfAgoLLfVGN+n8Tfz7j1cSF8tmuj4Zp
-	ajVL4A3lT5fzXTHlbOVuJLE7ptb3j616wDGdHp8C8AfTrm5BYP415Ztf/KAv4wvx74Yqq+b
-	JMtRtFqASV/XuIdWhe1lG+MUtYV0p4XRudYFwc5ZEcSoAwOzdhfXIMwCndCTC3AWDypDVpk
-	AeUpcJWnNp6Qz7zA+ZXIiLT0Mvf9SviwzXTExJfrkiCcTTfrsqHu7ynp7P04FuvtoU4XtvH
-	6DDZso8gjwxTQxOOE0nW7j4E7+yXNdNOC1GPdScRDlPkw6AAX8/8gKTMaDHqD0xdUO0k1ic
-	g9qvhpx551t+AtjY7Ot2wh7TbEVLb+xXnVLoGFmiMQ2JHK1tiuA9QbqRgqnurX9GwQwmRD6
-	6s7fh+ALythYypYIO9B/lP+CV5rv6H1w++d6ydvw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
 
-In the efi_create_mapping() in arch/riscv/kernel/efi.c,
-the return value is always 0, and this debug message
-is unnecessary. So, remove it.
+Hi,
 
-Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+This series implements an option to show symbols in _text+OFFSET
+format instead of symbol name in the function profiler.
+This is the 7th version, the previous one is here;
+
+https://lore.kernel.org/all/176179500583.960652.5730113001091388258.stgit@devnote2/
+
+This version is rebased on top of v6.19-rc3 and introduces wrapper
+functions of seq_print_ip_sym() for showing offset or not.
+
+Thank you,
+
 ---
- drivers/firmware/efi/riscv-runtime.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/firmware/efi/riscv-runtime.c b/drivers/firmware/efi/riscv-runtime.c
-index fa71cd898120..4a2588358be2 100644
---- a/drivers/firmware/efi/riscv-runtime.c
-+++ b/drivers/firmware/efi/riscv-runtime.c
-@@ -36,20 +36,12 @@ static bool __init efi_virtmap_init(void)
- 	init_new_context(NULL, &efi_mm);
- 
- 	for_each_efi_memory_desc(md) {
--		phys_addr_t phys = md->phys_addr;
--		int ret;
--
- 		if (!(md->attribute & EFI_MEMORY_RUNTIME))
- 			continue;
- 		if (md->virt_addr == U64_MAX)
- 			return false;
- 
--		ret = efi_create_mapping(&efi_mm, md);
--		if (ret) {
--			pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
--				&phys, ret);
--			return false;
--		}
-+		efi_create_mapping(&efi_mm, md);
- 	}
- 
- 	if (efi_memattr_apply_permissions(&efi_mm, efi_set_mapping_permissions))
--- 
-2.20.1
+Masami Hiramatsu (Google) (2):
+      tracing: Allow tracer to add more than 32 options
+      tracing: Add an option to show symbols in _text+offset for function profiler
 
+
+ kernel/trace/blktrace.c              |    6 +
+ kernel/trace/ftrace.c                |   26 ++++++
+ kernel/trace/trace.c                 |  154 +++++++++++++++++-----------------
+ kernel/trace/trace.h                 |   40 +++++----
+ kernel/trace/trace_events.c          |    4 -
+ kernel/trace/trace_events_synth.c    |    2 
+ kernel/trace/trace_fprobe.c          |    6 +
+ kernel/trace/trace_functions_graph.c |   18 ++--
+ kernel/trace/trace_irqsoff.c         |   30 +++----
+ kernel/trace/trace_kdb.c             |    2 
+ kernel/trace/trace_kprobe.c          |    6 +
+ kernel/trace/trace_output.c          |   18 ++--
+ kernel/trace/trace_output.h          |   11 ++
+ kernel/trace/trace_sched_wakeup.c    |   24 +++--
+ kernel/trace/trace_syscalls.c        |    2 
+ 15 files changed, 196 insertions(+), 153 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
