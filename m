@@ -1,338 +1,159 @@
-Return-Path: <linux-kernel+bounces-880911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04C0C26DB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:03:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACC7C26DBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3DD54223F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:03:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 490A94EF839
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26ED32573D;
-	Fri, 31 Oct 2025 20:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B059325725;
+	Fri, 31 Oct 2025 20:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zG+OIw9J"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyuV7hXB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246D4325710
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FA626ED3D;
+	Fri, 31 Oct 2025 20:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761940997; cv=none; b=SZXChRT5ldDyUlQKHrsRcnIwQ3Z1w9iaDxvz0UzatH+g+rd+2Mw9iIVWzvCC6WE7SSrK/HYnJW+fcjOrZ/+EshMETFIKPwvGxfACAYnuGD8RK1FGVti1/zrKpR/LboltOTrc4kJQJCXc9U+ps2e7UlwMpxnHo5GnynK064J8Sao=
+	t=1761941039; cv=none; b=PSKP20cfGauRzu1g0GAcbrlC6od8zvhmCXyicdHU9wZx6UCtDWHFd59tbP9Ts3DHrO7smgksHlUO1gypk30gVaiIdg8zonLed755KifB9aDEEf2sSRAvUeQgWczHSxUMwUnhmvBJm9ZEOEOdxD8BDFuw1hEBy1739o/cGzsJHMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761940997; c=relaxed/simple;
-	bh=pekSXNuOJMyQ4q/03RRiUcweDeleMd9ySR1swHqoG2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n8KisMu4jQ234Z49thisrZCBwtUF3L+4Smm4XeZIOhcHo6XCBKr1W5p2ut2taQ7FY++6/SL9r+30fVJzP8Ur/k3rxKYTswukj60MjsUtzITn5sM6fab6CzLbKQFRRSSOZEPcEyhvF+mSi7Si6cZbO2SyVsez8dPTNS1tvnwEXP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zG+OIw9J; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429babfccd9so2099286f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761940992; x=1762545792; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xFMVGK4JZfy5QeK8e6Y4XSDkgKnmVKBnb6mic7gpxPA=;
-        b=zG+OIw9JX/g+K8YvO1AnHc8FdFTEuUiURKYFBVHHVHT+E9H6fF5VuEVJKZVUW1ka1M
-         xVEitGOnOod8nts9esNXBYZvnUMM/kMs5Kno5FGMJ+RxNBAINf751mVtg57uVfjbx/cO
-         Xjv0cvz///XNiihUbTjBmTpkfe3i/nlmd8hIVTbYk/DhJjV7Fi5JqhMiMy7yynGnVsm4
-         HYsPH/qIWuazqK1TC+IUwtPCbQIskeQbqphyMD/oDegNE3Mze/ipw9zP/HbrRS6uzzKK
-         JxByuOjexKxXgZb0+H6Ov1SsTKqB0VMTvHBs6g+LhAXZuEB7wYKgegwhqyLmEnEZC7Jg
-         3OSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761940992; x=1762545792;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xFMVGK4JZfy5QeK8e6Y4XSDkgKnmVKBnb6mic7gpxPA=;
-        b=E1abZV9uj0JDXz0o9VRWKY6N6iJePrsqgDmUDLl/8+ofim8jojy8oilKFy9FK5tFXm
-         ft1tI6ICogyHN3TiuoGw8dOH6NmVntR8sySR1+R0ZG7YaVFlEl7EHSTxzifze2OKBKjf
-         CAoLMtJamNBXh4a3CkQfppi/abUwZ4R9Cwitb9yaUpaFsDqsFr+kImjYazTj6a8pON7M
-         m4j0RSJRtj2OnjutN/uXZK4MqrOEQrjXN/A2gY0qWIZMWafE3APlXcy2oPoJ/VvX7qlQ
-         yUQZFLNP9eVYHhOdw05y6Cc54qvUmO7kfrwiVzZreizt1nicF/QoGDb9CEHt+Icmn7t9
-         0FzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhb84bsOd7kajcbHXC5O34FX6oOPRVNSkeqTjZi71Q9Uxsjewwm8tj+de1Ef44z8lBK52k6aIVBs1Jsk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ1RWwDFwJs6Q9uunMjnGP/syquNg3+ezBsHGpRiDHeaBrwmvV
-	Sgf+OMB3BvoUbJ+0i1GIXj2M1BFr+s84denNKfdSZ1sZt3s+4XTZ5gRUgVd6ldDBrgw=
-X-Gm-Gg: ASbGncuzhhCjy8hrgWyWWQra1DoXEqvTGfhesrxxTDkvXLtYvoWSSwn0Pp3ZQN1SNBh
-	PgSZ/UoOPhjPAxNmCSK0d9FRpONlw+ssFtDELUkvPx2QIsPoo6JxLkXp1sfm/r2TczenCP+5zVL
-	PFY1f+I83OPi4Hq3dNczODIa/nqpVLO09gh8vV4XugB8Ka4AxjIGmXhyXSAl+qa9ckE5H7+cpEr
-	Iobjb9A/iam3LALGkrho6S5diOTqy2g1YOPew7M/XsRcHNS64VI9tUF4QRQzK8NwyBNrd2oc3SX
-	Gxe9zXVps14vNFv+e7ticOne8C9+Pc1R54exQAN+uunxg1v9FdwFDPPL8ruan/w2rQm7jJYJnv9
-	SVLU09lSM7ziMHFou8jU+8nONQYLUZAgXDRVH+WRnohNqni5ihXGD6XDsoqbnRLqPWr9qrZNMID
-	sqG04J2FfQNG8mXb+D6tQOm5a5a0dYqernotLVPD8fHKUQ/1Upmzcs
-X-Google-Smtp-Source: AGHT+IFoDMNezZ2FtdDg+VeeaZkZr+rjEweVUyAajc2RHfvBBmHoP8hagvjjFPsfAx8iIgtKBiyJ6A==
-X-Received: by 2002:a5d:5d11:0:b0:427:697:c2db with SMTP id ffacd0b85a97d-429bd6860f9mr4454371f8f.20.1761940992311;
-        Fri, 31 Oct 2025 13:03:12 -0700 (PDT)
-Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fc524ddsm27384415e9.7.2025.10.31.13.03.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 13:03:11 -0700 (PDT)
-Message-ID: <3c35c36d-c116-4a1d-91c8-ae1ee2e1f840@linaro.org>
-Date: Fri, 31 Oct 2025 20:03:09 +0000
+	s=arc-20240116; t=1761941039; c=relaxed/simple;
+	bh=7OpjZrf2rZUatPRiVLDJEnIQhiXR+wFpVF1nDKy21Ik=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ZqpRotQjqa9D4zfMdT5lgIsnlvRnb/9F8ZzmhfwcC3qp2cZCPuQ+BJL8Ol7tP0DrURe38L2MLntUbPX3EIH7UdQu0k+EvYiXX0eLqC8tl7jjvsA/Kjxn9vEw4byS6NXNSboqLrR1zVYThSvvVH0dNQdlpX9OdGa+lb9BsOG6yOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyuV7hXB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EEBC116B1;
+	Fri, 31 Oct 2025 20:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761941039;
+	bh=7OpjZrf2rZUatPRiVLDJEnIQhiXR+wFpVF1nDKy21Ik=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=fyuV7hXB3xAdk4HZRBBZY80r0CFYJPDRMEneWv83X5ImR935R76k6NIhlCmHTVNU8
+	 lmQpfnzQeef40uXtciVx4ZQ0Y5JSR02vhRAfdD0Q+4NVQ6kt02/m5Tbcj5JAShYRvo
+	 dE0UF8nPvDXFXHwt9df8bnxxrPksHdloxlKszFdYmwAxBErC1e5xaSdfTm4U0r525r
+	 eNxkNu/Gx7ZJOPVjc1AwxwmDlHLW/1JFjJVvsRWtFoWmWxV6KKzMe6OJYBPB/GECOq
+	 sbAckZf6tuU+HIaYcILMTzpSpBTbyrRXrNM6RQQHhnZFJL3UQTphKEbZ9SRO5UkPRK
+	 U8y+4FfhvAPZA==
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 7E6CEF4006C;
+	Fri, 31 Oct 2025 16:03:57 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-01.internal (MEProxy); Fri, 31 Oct 2025 16:03:57 -0400
+X-ME-Sender: <xms:LRYFacKrKOf1iscUlDM66NDTTn7db2-Q9dJZXohAqdw7B2BIEYMIrA>
+    <xme:LRYFaW9BCGXcziBIXZ3j9jeTLkeHB4wA_vUoNHpHEF-_F_g1T6Zhr4YcnNlSx8vsB
+    KjSky_-MbdvhWBrm5jL0Q7BOB9FM1LwOjOAPJatpsILYf4LfEbvhlw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedtgedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehnugih
+    ucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecuggftrf
+    grthhtvghrnhepjeejvddvtdehffdtgfejjeefgefgjeeggfeuteeiuedvtefgfffhvdej
+    iefguedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnugihodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduudeiudekheei
+    fedvqddvieefudeiiedtkedqlhhuthhopeepkhgvrhhnvghlrdhorhhgsehlihhnuhigrd
+    hluhhtohdruhhspdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepugifmhifsegrmhgrii
+    honhdrtghordhukhdprhgtphhtthhopegrnhgurhgvfidrtghoohhpvghrfeestghithhr
+    ihigrdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtph
+    htthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehrughu
+    nhhlrghpsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggrvhgvrdhhrghnsh
+    gvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehrihgtkhdrphdrvggughgvtghomhgs
+    vgesihhnthgvlhdrtghomhdprhgtphhtthhopehsohhhihhlrdhmvghhthgrsehinhhtvg
+    hlrdgtohhm
+X-ME-Proxy: <xmx:LRYFaRviLjJGYlm0WNJCc_-A2pn-yO32V4nAbXcmu9NvQwBum--b-Q>
+    <xmx:LRYFafmdouFSWJAiTe7YEAbDXbdYBmqNx0vNCP_GesCqNeH2Rr5e7A>
+    <xmx:LRYFacACaAsq3HcwXn3D5E_Vx3xCmfvQKqicZ2DHjLB-0fcsFCbl6A>
+    <xmx:LRYFafyMb1Q-hl0AnFQwo81XvZeSeA1fGCq6OZVEPLLO7peFd2ATqA>
+    <xmx:LRYFaYfCnOm1QDuYRGKx3g1iFPFYPwX-aUxiz1F2Rb_ydnzfbgNv-_VO>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3C5F1700054; Fri, 31 Oct 2025 16:03:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] media: dt-bindings: Add CAMSS device for Kaanapali
-To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
- Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251030-add-support-for-camss-on-kaanapali-v5-0-f8e12bea3d02@oss.qualcomm.com>
- <20251030-add-support-for-camss-on-kaanapali-v5-2-f8e12bea3d02@oss.qualcomm.com>
- <631e4da1-92a0-4d44-b92e-bdcc56196c26@linaro.org>
- <e9da04ab-5119-4bfd-a25c-50e7b2ef05d3@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <e9da04ab-5119-4bfd-a25c-50e7b2ef05d3@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AZew4vHeQ4DB
+Date: Fri, 31 Oct 2025 13:03:24 -0700
+From: "Andy Lutomirski" <luto@kernel.org>
+To: "Sohil Mehta" <sohil.mehta@intel.com>,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "the arch/x86 maintainers" <x86@kernel.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>
+Cc: "Jonathan Corbet" <corbet@lwn.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ "Josh Poimboeuf" <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Kirill A . Shutemov" <kas@kernel.org>,
+ "Xin Li" <xin@zytor.com>, "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Rick P Edgecombe" <rick.p.edgecombe@intel.com>,
+ "Vegard Nossum" <vegard.nossum@oracle.com>,
+ "Andrew Cooper" <andrew.cooper3@citrix.com>,
+ "Randy Dunlap" <rdunlap@infradead.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, "Kees Cook" <kees@kernel.org>,
+ "Tony Luck" <tony.luck@intel.com>,
+ "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+ linux-doc@vger.kernel.org,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-efi@vger.kernel.org
+Message-Id: <fe662d7c-d537-495e-92e5-baf64ebbcc2d@app.fastmail.com>
+In-Reply-To: <76e8411b-e5ff-4c01-b63c-ef60e29388a3@intel.com>
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+ <20251029210310.1155449-8-sohil.mehta@intel.com>
+ <9a4794f5-2a1f-4048-a870-b99fb5ab8136@intel.com>
+ <76e8411b-e5ff-4c01-b63c-ef60e29388a3@intel.com>
+Subject: Re: [PATCH v11 7/9] x86/traps: Communicate a LASS violation in #GP message
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 31/10/2025 17:39, Vijay Kumar Tumati wrote:
-> 
-> On 10/31/2025 6:50 AM, Bryan O'Donoghue wrote:
->> On 31/10/2025 02:59, Hangxiang Ma wrote:
->>> Add the compatible string "qcom,kaanapali-camss" to support the Camera
->>> Subsystem (CAMSS) on the Qualcomm Kaanapali platform.
->>>
->>> The Kaanapali platform provides:
->>> - 3 x VFE, 5 RDI per VFE
->>> - 2 x VFE Lite, 4 RDI per VFE Lite
->>> - 3 x CSID
->>> - 2 x CSID Lite
->>> - 6 x CSIPHY
->>>
->>> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
->>> ---
->>>   .../bindings/media/qcom,kaanapali-camss.yaml       | 406 ++++++++++ 
->>> +++++++++++
->>>   1 file changed, 406 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali- 
->>> camss.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali- 
->>> camss.yaml
->>> new file mode 100644
->>> index 000000000000..c34867022fd1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
->>> @@ -0,0 +1,406 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-camss.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm Kaanapali Camera Subsystem (CAMSS)
->>> +
->>> +maintainers:
->>> +  - Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
->>> +
->>> +description:
->>> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,kaanapali-camss
->>> +
->>> +  reg:
->>> +    maxItems: 16
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: csid0
->>> +      - const: csid1
->>> +      - const: csid2
->>> +      - const: csid_lite0
->>> +      - const: csid_lite1
->>> +      - const: csiphy0
->>> +      - const: csiphy1
->>> +      - const: csiphy2
->>> +      - const: csiphy3
->>> +      - const: csiphy4
->>> +      - const: csiphy5
->>> +      - const: vfe0
->>> +      - const: vfe1
->>> +      - const: vfe2
->>> +      - const: vfe_lite0
->>> +      - const: vfe_lite1
->>
->> No test pattern generator on this part ?
->>
->> We have patches in-flight to add TPG so it makes no sense to omit 
->> these registers from current or new submissions.
->>
->> https://lore.kernel.org/linux-media/20251017-camss_tpg-v5-1- 
->> cafe3ad42163@oss.qualcomm.com/
->>
->> While we're at it we should consider adding in the other key 
->> functional blocks.
->>
->> OFE, IPE etc, there's no harm in including the registers even if the 
->> intention and outcome is never switching that functionality on.
->>
-> Hi Bryan, we have quite a few register spaces on Kaanapali or any other 
-> target that are not required for the RDI only CAMSS driver, including 
-> ICP, JPEG, OFE, IPE, CDMs and some custom modules like CRE along with 
-> the TPG. So do I understand your suggestion correctly that you advise 
-> all of those are enlisted in the DTSI and the bindings although the 
-> driver doesn't make use of or map them?
 
-TPG is in process of being upstreamed by qcom.
 
-I think the list of registers above should be included in the dts 
-because the DTS is a description of hardware, not a description of 
-camss/rdi.
+On Fri, Oct 31, 2025, at 12:59 PM, Sohil Mehta wrote:
+> On 10/31/2025 10:16 AM, Dave Hansen wrote:
+>> On 10/29/25 14:03, Sohil Mehta wrote:
+>>> To make the transition easier, enhance the #GP Oops message to inclu=
+de a
+>>> hint about LASS violations. Also, add a special hint for kernel NULL
+>>> pointer dereferences to match with the existing #PF message.
+>>=20
+>> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+>>=20
+>> This also reminds me... Are there tests for this somewhere? How did y=
+ou
+>> test all these new messages?
+>
+> I have some very simple kernel modules that access invalid user memory
+> and generate these faults. I configure the kernel not to panic/reboot.
+> But, I have been running them manually.
+>
+> Invalid accesses from the kernel generate:
+> #PF (without LASS):
+>   BUG: kernel NULL pointer dereference, address: 0000000000000000
+>   BUG: unable to handle page fault for address: 0000000000100000
+>
+> #GP (with LASS):
+>   Oops: general protection fault, kernel NULL pointer dereference 0x0:=
+ 0000
+>   Oops: general protection fault, probably LASS violation for address
+> 0x100000: 0000
+>
+> For testing user SIGSEGVs, the Vsyscall tests have been sufficient to
+> cover all scenarios.
+>
+> Were you looking for anything specific? I can clean them up and post
+> them if required.
 
-The point of DTS is to do that, describe hardware and to be consumable 
-outside of the upstream linux kernel.
-
-u-boot, BSD, potentially even a downstream Linux kernel or driver.
-
->>> +
->>> +  clocks:
->>> +    maxItems: 34
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: camnoc_nrt_axi
->>> +      - const: camnoc_rt_axi
->>> +      - const: camnoc_rt_vfe0
->>> +      - const: camnoc_rt_vfe1
->>> +      - const: camnoc_rt_vfe2
->>> +      - const: camnoc_rt_vfe_lite
->>> +      - const: cam_top_ahb
->>> +      - const: cam_top_fast_ahb
->>> +      - const: csid
->>> +      - const: csid_csiphy_rx
->>> +      - const: csiphy0
->>> +      - const: csiphy0_timer
->>> +      - const: csiphy1
->>> +      - const: csiphy1_timer
->>> +      - const: csiphy2
->>> +      - const: csiphy2_timer
->>> +      - const: csiphy3
->>> +      - const: csiphy3_timer
->>> +      - const: csiphy4
->>> +      - const: csiphy4_timer
->>> +      - const: csiphy5
->>> +      - const: csiphy5_timer
->>> +      - const: gcc_hf_axi
->>> +      - const: vfe0
->>> +      - const: vfe0_fast_ahb
->>> +      - const: vfe1
->>> +      - const: vfe1_fast_ahb
->>> +      - const: vfe2
->>> +      - const: vfe2_fast_ahb
->>> +      - const: vfe_lite
->>> +      - const: vfe_lite_ahb
->>> +      - const: vfe_lite_cphy_rx
->>> +      - const: vfe_lite_csid
->>> +      - const: qdss_debug_xo
->>> +
->>> +  interrupts:
->>> +    maxItems: 16
->>> +
->>> +  interrupt-names:
->>> +    items:
->>> +      - const: csid0
->>> +      - const: csid1
->>> +      - const: csid2
->>> +      - const: csid_lite0
->>> +      - const: csid_lite1
->>> +      - const: csiphy0
->>> +      - const: csiphy1
->>> +      - const: csiphy2
->>> +      - const: csiphy3
->>> +      - const: csiphy4
->>> +      - const: csiphy5
->>> +      - const: vfe0
->>> +      - const: vfe1
->>> +      - const: vfe2
->>> +      - const: vfe_lite0
->>> +      - const: vfe_lite1
->>> +
->>> +  interconnects:
->>> +    maxItems: 2
->>> +
->>> +  interconnect-names:
->>> +    items:
->>> +      - const: ahb
->>> +      - const: hf_mnoc
->>> +
->>> +  iommus:
->>> +    maxItems: 1
->>
->>
->> This can't be right.
->>
->> The experience we are having with Iris for example shows that 
->> restricting the iommus is wrong.
->>
->> For this and future bindings I'm expecting to see the full list of 
->> AC_VM_HLOS S2 VMID targets.
->>
->> The second we try to switch on say something like the JPEG encoder 
->> this list and its upstream binding becomes a problem.
->>
->> - S1_IFE_HLOS        @ 0x1c00
->> - S1_CDM_BPS_IPS_HLOS    @ 0x1820
->> - S1_CDM_BPS_IPS_HLOS    @ 0x18c0
->> - S1_CDM_BPS_IPS_HLOS    @ 0x1980
->> - S1_CDM_BPS_IPS_HLOS    @ 0x1800
->> - S1_JPEG_HLOS        @ 0x18a0
->> - S1_RT_CDM_HLOS    @ 0x1860
->> - S1_CDM_BPS_IPE_HLOS    @ 0x1840
->> - S1_CDM_BPS_IPE_HLOS    @ 0x1880
->> - S1_CRE_HLOS        @ 0x18e0
->>
->> The ICP mappings can come later if ever via iommu-maps..
->>
->> ---
->> bod
->>
-> Similar to the above, You are advising to declare all the S2 HLOS mapped 
-> streams in the bindings and the DTSI? If we do that in the DTSI, I 
-> wonder how we can specifically map the RDI output buffers to the IFE 
-> context bank only, for instance, going by the current CAMSS driver 
-> implementation. Perhaps, IFE should be the first one in the list for now 
-> and the driver will be extended later when we support more devices? I 
-> will explore on that. Good to understand these details and practices. 
-> Thank you.
-> 
-
-We've run into trouble with that in Iris.
-
-https://lore.kernel.org/linux-arm-msm/c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org/
-
-The right thing to do is to describe everything that targets the HLOS - 
-main CPU.
-
-For non CPU targets - like say setting up the SMMU for the ICP - we 
-could add those mappings in with iommu-map later.
-
-The CPU side SID map should be complete. It doesn't divulge any 
-propitiatory information or secret sauce, it just makes our lives easier 
-in the end.
-
----
-bod
+LKDTM is basically meant for this use case. If you can=E2=80=99t provoke=
+ a LASS failure from there, maybe just add another failure type?  I woul=
+d expect that LKDTM can already do a SMAP violation.
 
