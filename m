@@ -1,89 +1,99 @@
-Return-Path: <linux-kernel+bounces-879714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C4AC23CC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:28:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A24C23D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787641882349
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:28:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8DE3A4567
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456202DCF5B;
-	Fri, 31 Oct 2025 08:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9612EBBA1;
+	Fri, 31 Oct 2025 08:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="DnjgTqkn"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwLpWJYB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647CA2D23BC;
-	Fri, 31 Oct 2025 08:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8805C2DCF5B;
+	Fri, 31 Oct 2025 08:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899289; cv=none; b=fHfwYTzDuhdrAuuI+5q50KFY9nkSpI37z6BpS8XxuBoijxbO3EtLIFfBvVxpWoc7CzrOv2cfp107Aw810WnmIRN+rMViT8yKx4A9E8MRpg3AqD6Ht2IInJj9bni6TIZjohIRtwGNQFTDJ+G17iugOvfHaSJA4PozKwa3Asburz0=
+	t=1761899340; cv=none; b=s+lBkfDnBl+JwqNNZ0KbN8oLf7/EADw3sdlI4mx+DCPnrQKTnN4aGCyuhzf069d/kYk3NkoFZTqg6+4cIGSWPRoDc5stdEsQJXVItX+4GptSwp1vheA0gyh3Ccl12+L4KqCjkHxeG8jc+kBN4mZj1bk7fGY1Hzs38i3cV80Ls6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899289; c=relaxed/simple;
-	bh=oXSCbUz3maeKFgjhdWEeJ5FVids98Vl53dBlq39zFG8=;
+	s=arc-20240116; t=1761899340; c=relaxed/simple;
+	bh=afPemIP1lycKeC+SVT8WBtBDzPqYgshUVvDunYHHjfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9JK57m+s0EGMb6DunElm/7/gRy6MlHzlCV0LA75O6kbHMdnu2/IC0FwWOlpMQ3mSSZOnQWt/uobiWM/nhf3e9RNTaepw1GvdoHCWuf17ySHgOflMrqHiZ6Y1DTV2MNw8aRVlUAx9t/jTMlTgTSA+k4r5RUUNul9vdmaWe8L4VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=DnjgTqkn; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 299C925F65;
-	Fri, 31 Oct 2025 09:28:02 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id bpGDuZIzpou9; Fri, 31 Oct 2025 09:28:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1761899281; bh=oXSCbUz3maeKFgjhdWEeJ5FVids98Vl53dBlq39zFG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DnjgTqknrUlT5ugGxzUreNCyOhmINJ8PqOdB8p8KvRmaBkcqWJrkN9+CDzBURk/t4
-	 Lefo7EpR7acVodgW1fgYj1RcP++0dp99bbh6hqSbyN8+G0P7D74c/9XZ6UU63LQWaS
-	 NmDZLlwjQVBdZYbtmYDtuS2Ea/2h1H6YCOruYM0JIjBARh8G9dAQMn0XtW7g5EeEva
-	 SoxqL8fIWN1+APR6ysTkO+Mma+R2lWvWkwk4F0vRktMDTl3zh/eogqHNL/0fhXPb89
-	 S3QOUoFqn7+65cyBBLffctmftAyg4k4M2rHeeI0w9PZX/wjYrSopRETPHSP6WyYhSr
-	 NADUSmLqFi5Ow==
-Date: Fri, 31 Oct 2025 08:27:48 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Qiang Ma <maqianga@uniontech.com>, pjw@kernel.org, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, linux-efi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] efi/riscv: Remove the useless failure return message
- print
-Message-ID: <aQRzBOu5Ml9gJbEN@pie>
-References: <20251031024328.735161-1-maqianga@uniontech.com>
- <aQQ3KUap1cB73HOm@pie>
- <CAMj1kXGxP_8FhZgD42iD-7pnnZgjez3mXkTZz69YAc5FPkLBMA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+hygHPRSsq+7tCAJU0lTFxgTfMn8EgjoJWpA7GS1VzdtOxtoj3/IiwLQZIsvpc5GFYBNY5RVpuA0ELH7vMTdh9QPx9Inn/ouwfdzwFfBge28mX/0Y+GDVOeKV5+2aICdjcRCt63/H+VaTlSXKkkh03P2bToG0xPjQsjaSu6AYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwLpWJYB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC00DC4CEF1;
+	Fri, 31 Oct 2025 08:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761899340;
+	bh=afPemIP1lycKeC+SVT8WBtBDzPqYgshUVvDunYHHjfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dwLpWJYBPs/1DcPMsrVRG7G8n9q5GH4Ud0bgdrs1UNQNT9bI0WTaWoCxOk3hBSTWL
+	 d7ez5WxDXb56Bib8T1c4WNr8vyC1yxWIXvHd3tXIH5eKATEzTUebE/H1qk5sBdXz/Z
+	 krt8XOLafocZyo01I3fW56Bmnjit/4zrQzXVOW5rcCcLipgbuvY3uJpuJ9vAY51Eoy
+	 ssEAuagaFuEuecUEdAxpH0HjEGUT2iGs/e2Cpq0Nb9Y3kla3tOMNOy6evdBFGxAqQX
+	 sw319HM+MBtH+jefLtFp6fTZE8oJPEPAxxuRNzS9wLa6952zu/ukGbmPUOIC4q8sQM
+	 5+ojvEx3Y+9sg==
+Date: Fri, 31 Oct 2025 13:58:48 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "open list:PCI POWER CONTROL" <linux-pci@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] PCI/pwrctrl: Propagate dev_err_probe return value
+Message-ID: <j25yrjd2ximum4lxltlbfkwuv2bbpufkqeaqro36ptpptcwle6@ebjpicjf5ffb>
+References: <20251018070221.7872-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGxP_8FhZgD42iD-7pnnZgjez3mXkTZz69YAc5FPkLBMA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251018070221.7872-1-linux.amoon@gmail.com>
 
-On Fri, Oct 31, 2025 at 07:52:10AM +0100, Ard Biesheuvel wrote:
-> On Fri, 31 Oct 2025 at 05:12, Yao Zi <ziyao@disroot.org> wrote:
-> >
-> > On Fri, Oct 31, 2025 at 10:43:28AM +0800, Qiang Ma wrote:
-> > > In the efi_create_mapping() in arch/riscv/kernel/efi.c,
-> > > the return value is always 0, and this debug message
-> > > is unnecessary. So, remove it.
-> >
-> > Should we make efi_create_mapping() return void at the same time, if it
-> > will never fail?
-> >
+On Sat, Oct 18, 2025 at 12:32:18PM +0530, Anand Moon wrote:
+> Ensure that the return value from dev_err_probe() is consistently assigned
+> back to return in all error paths within pci_pwrctrl_slot_probe()
+> function. This ensures the original error code are propagation for
+> debugging.
 > 
-> No.
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/pci/pwrctrl/slot.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pwrctrl/slot.c b/drivers/pci/pwrctrl/slot.c
+> index 3320494b62d89..36a6282fd222d 100644
+> --- a/drivers/pci/pwrctrl/slot.c
+> +++ b/drivers/pci/pwrctrl/slot.c
+> @@ -41,14 +41,13 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+>  	ret = of_regulator_bulk_get_all(dev, dev_of_node(dev),
+>  					&slot->supplies);
+>  	if (ret < 0) {
+> -		dev_err_probe(dev, ret, "Failed to get slot regulators\n");
+> -		return ret;
+> +		return dev_err_probe(dev, ret, "Failed to get slot regulators\n");
+>  	}
+>  
+>  	slot->num_supplies = ret;
+>  	ret = regulator_bulk_enable(slot->num_supplies, slot->supplies);
+>  	if (ret < 0) {
+> -		dev_err_probe(dev, ret, "Failed to enable slot regulators\n");
+> +		ret = dev_err_probe(dev, ret, "Failed to enable slot regulators\n");
 
-Oops, seems a silly question here. Sorry for the noise.
+Again a pointless change.
 
-Best regards,
-Yao Zi
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
