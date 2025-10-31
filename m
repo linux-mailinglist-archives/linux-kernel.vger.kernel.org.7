@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-879500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238A3C2340E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:35:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFBDC23417
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:38:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40FF81A2538D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:36:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D3F44EE550
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF18C279DA2;
-	Fri, 31 Oct 2025 04:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E4B283FFB;
+	Fri, 31 Oct 2025 04:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MUP9Idyh";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EJ4pkpDY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ciC/AbC6";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IneYiMYC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FAD2475C7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30801B3923
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761885329; cv=none; b=V1Nmuda/AuGy7E5S3KeoouKLlvI/wHBMSmUfksIFRJWDpprw1pGm5OsGBKWGBXCd4veyXgIv1v+wc8i1YSBEsJclGGpuCWwa0HhAGCkyPGDhfNFlhjhWtdX5iH6Eigp3WhMmZgUvjm5hIXRZ1fEAxREXRw7DUFi00WkjGwsuxmY=
+	t=1761885479; cv=none; b=Zz/4BkD+rpt+tRBTcBDPOnsJXT3OkJoLY2LSQrpaQRtC1uFCT0T75uPBEEEqEjcduP2cztf2QY/CUyZIKhBLpR43Wmx6NGetivYLaU/VE9HwyX00IjGbuLyRX9elqZN9jWS/YxSU3vfeoeUJAq1R4rYmgoMpFD8WqNfqbm6y6Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761885329; c=relaxed/simple;
-	bh=2RkTq0rhVoKsR1VNjNAG0HX3RDYk3Nzrb7saSouIbPA=;
+	s=arc-20240116; t=1761885479; c=relaxed/simple;
+	bh=lz8UJArWZf8I78gBwEgNke/Fv1gGmVwpNOHFfRqtBU0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fYqk8d10fUO8iWNduHbO8UeZO2HQcAfiv07GpGpkL7NMXzJKjNIbYz4YU8ZMEeRxJTeuGjEqFglC1+WNhmwnpc9kWeiujXHlId3/3fGmETdXvvbNbs3M2nBQf+Y4sCcGZKGAeqtNpPWSyh4Mv+o+F2ReoiGVEUNZAJLxEgz+8D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MUP9Idyh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EJ4pkpDY; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=pDYOI1DC36nmmB5FqpT3LeZ349oHrVHbeo5vr5nguMYPchYXc4MBTebZBUalGy5J9zie3nJ3hhwgrhfLpue0k88rRo9ilQms8s0O/JgyHvgPyW+q4/Hf/TjSTgZp04TgR9q93TskmjGi6GPPjNkWCDbShoVRzUvm4GtmGyqMizs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ciC/AbC6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IneYiMYC; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V2B6wM102654
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:35:26 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59UHpI2q3115480
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:37:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EuOLaPuNvhPnBElt9P239rj2PXCSR2QMFESyHvBzQjc=; b=MUP9Idyhbq28KkTN
-	rFTRQCV1mThNKIqNaWanu9fukb6ci8CIoFKgHXdVZQY4yCBHGNaEguWlXyJOtRpS
-	v6ZwIryZ3ksVJh60nMhWkoemTIXk7jK9EZcK1uExcsY+NfiOQ4yjaL/ee5xlTrTJ
-	5YFEO+xe4tdgq382D+R2s32SXePU5FbFkSCr0ocYuXw+2EPgDN2upc2qcdi8kdGM
-	TcYHgROfOhdhLvdX2Cuch2rwCqSYwZoR0pUQvFziy4dhGn4n/lb5QoAH+UG4VQfu
-	EuzWEecOa1PoxV3cxHFG3tES0LV/W5IcNl8rMF/X04PwC0zRDpv2gXBm+dGBMTyX
-	XXePaQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4ahdhvmu-1
+	geQUANiKRrxXij24pr7zkM3LfP5MoWomVGycUWLTn0g=; b=ciC/AbC6Jpe2HBOi
+	u4WGGlWQ8ls/hbmimghClU6mGG67tqkwr+eHIlaNCWHRhFVyVoWSfz1hy41n0m2K
+	cwfL5Wt0Iy1K/jUuER+aZucRWg/7eVDyFM0jMeitEl55/t3M0gz5/Rf4/UmSpiYA
+	href+FtpjLnCkWnNqF4qUYOZrCpWncOVdjqGwiV3E01h0XslyG+LGVc6fQCR74zr
+	+XVn9skPOwtRkmWppY4dSi681XNVWP2mfcKn3sCJxP17tXDnUXolw0k5Oh6keGrF
+	3/1R4go6BnH3X3jbxaGHt5jgVovRfgkjtK4Oyd87CBBCyJ/rCBbLnF7Hwi6wlEiX
+	Mpytig==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a45b42wrw-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:35:26 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-294ecd3fdd4so18272465ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:35:26 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:37:56 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-28eb14e3cafso30513775ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761885326; x=1762490126; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1761885476; x=1762490276; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EuOLaPuNvhPnBElt9P239rj2PXCSR2QMFESyHvBzQjc=;
-        b=EJ4pkpDYNQoUOImMUiSj7KVwuRYz+qEKJA8sNzW7v431psCWV0AGgOwrfzIlS5AyDk
-         V7yxuDuX+36QjNbZb3G8cRg/V3DSqPEQTFa3P82rePd3y0UT7lfU8YhrxoVOMv0eG2wv
-         Mne5SyApapY7deDeTzP0TmmKn85+RxctKbR84+9F7VjPPNStQJmIa08H9DylDWS0E1m6
-         tJoNN5dUKqekNawMO4obzaTuwBQDlsIAVAJMmoToXIIN0FzOivmfMZcPj3zvu2wJx0CJ
-         U5PbWANy0nUbYwqZgkXfLgZVyRaF0QGehgCt06eDmJKITZu7V3X1BN2BtKiXKVfAQOTu
-         2fCA==
+        bh=geQUANiKRrxXij24pr7zkM3LfP5MoWomVGycUWLTn0g=;
+        b=IneYiMYC2K4XNG0UIWP/HM84q5HFDQPwVCby9In60touP7sWm5EmMVg3OzrxGv/dvs
+         dY+eNUMxBe6OrxI2IMdA0Mq3yI+B3XgmwmL9CmZCRgPLjypa8aCN+EI8vEO7wEYoOt2m
+         eAItENowCCoYStrjgObknjhei0/x65WXv72tCqyH0E9/OJT/Eud9ktuXtK6k6rorr5ft
+         W9EJ/sArErA62W/93+B2NLOTa5Jkoh4USZb5cgpQe83vPJUEb+7JtkIS5aAS0mfBE/Um
+         MCUO24h4ZKhFpMBjfspEm9GgHudFdhIzusKTDq9Kpkz5yffjWVk1X8cVJ+v1rWI362Rl
+         4zDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761885326; x=1762490126;
+        d=1e100.net; s=20230601; t=1761885476; x=1762490276;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EuOLaPuNvhPnBElt9P239rj2PXCSR2QMFESyHvBzQjc=;
-        b=LBcEY59/P6UxEDbHTc587+0N3TAjZBtCnPWvUd5QdYzmTbAK4zPAZFbgzSujHC+TKR
-         qM+KK2W7FCiLW8r89G4/JqdlWSC2b4wMM0sT3J4d16oSvcqUXr/q+vExbnHLuCOBokVY
-         ChtnsvFuGzcvR8f/DK3BgqeJHs0UUs0GlqhOTvnkNZby/swJXBYSXzFqMP5LoZHBI+15
-         6fTV/9q1NpMDODJcHovjoYT9/7szN7ZZswUGB0K/uY9dXZY2+YQz84lNVYSjajfwFXOA
-         pgtvlh54LJiQ8zlzattGSvD+HLVg8paAD1a5TzyPjn6WCrbAcKts502Ufa7ksLd+2UDV
-         RRAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ3gEdqyl+I7Ihif1BTDuC6tKo77i8e6oMzjEGsoCzpwb9nWBjF1Ggs1DXn8cXBl2xVVqaruTsQq7oIec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPZ1PGk/UmMhIYuNBwMKM9+Hg4UYkQf7BfntmpEfxyiv4+ZKCO
-	9NQgyOY/ZPB+uK2GBTgGGOo5ZkhBdYXnLOPrCaYfcXqOQSZ+DzDVtQ2ChOmevLoLLWFbOS9SwKG
-	SFeclssdRIdp0/RKpudiBYrrpf+RjUr0dpyOgfFFEPMSeTaCY6nzH5NHQjkeGHIi2OkA=
-X-Gm-Gg: ASbGnct9ioDluemvKs6Ghw65blU0WSCoLfjCRDLJ0S+/Y1y0OjaSdc5RqZg9H/B1SqF
-	L5AdG07ZLe8KcCQHveV7MAwuwGDdc7v6aYQWJ34DWYrTQBc6yhcRD6Mhvj92hM47UHAGBAt/U0S
-	zxd7vwjYqm7ZFwEi62MggVniYAW37ETa1eqbezENWkXAXp3SKmomtZpZJnZ+HGzvTnk88lhWZUd
-	pLizlVm9ypn7HWDm2vzgTj9IXhelouPEWchP6pk7v+se84DUlKpq7GQXR1aOPx2zMfxh7VxHKjz
-	9Im4RfUTX7l2/ouOaShnLZuzJK8IU3uS2qXOiuvVmLVxJs/gsNxxdM0xKCaVvnBai+zvfuSOKP4
-	3CcZslyykaRHIOw0TLDEguXoPcsKx7CjHS7gkhnSHVEA=
-X-Received: by 2002:a17:902:ecd0:b0:27d:339c:4b0 with SMTP id d9443c01a7336-2951a442a63mr31771485ad.35.1761885325517;
-        Thu, 30 Oct 2025 21:35:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYwp4gUP3Vqxs6YlD5SUkE5WEyM8hNdIE8OE4YwxUbkR5V/o2G6bSftOCOg8QaxCCk4ML4GA==
-X-Received: by 2002:a17:902:ecd0:b0:27d:339c:4b0 with SMTP id d9443c01a7336-2951a442a63mr31771125ad.35.1761885324915;
-        Thu, 30 Oct 2025 21:35:24 -0700 (PDT)
+        bh=geQUANiKRrxXij24pr7zkM3LfP5MoWomVGycUWLTn0g=;
+        b=a3KFC498HMPiK7Kht4g1ODoGD0Y2X5FWAMuGDDUR76x1Z834zSXreXQgFQk8Vh4hKE
+         y4JApUEFHnjGK+tKV2X1nCHThCOP7ddZln3iMzzb8t4UHrTTm1OEpMfXEEMVM+SY+nzr
+         flRUXgKRsUTf2KoG6BSOgx86c7k2u2i5l8NJxckVFHtrmB6tEFxSs1srIUVFMGt8BoQf
+         3PwailhTvfO4ER9PY3cGmp8/5quRCIPxIba/KqA8np2fBfOb+IAQJ4o8E4Jz44cFzgvk
+         nVjDsNd6SNvJ5Isg74ab80kMTjLvQHbsh59biy6Xe5WegQsgels17+j+X+LmVDVVQWLe
+         zikg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZF+YfkERdNaYSkPUqXOuGvTMzEYXVFCYE92HpHs3kbNvCgTYT91SBI/BBoLbrYr1NsgleDLNUiGiILog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVBbuCwFGWqMkILHQrAFqoAbeHW2Phcj8nSsHeLUy3iRptPpbg
+	3LsC5NS3Ogm1Fk+SHd2qYPArNC+KB5T4RxfjgBzLfl57OAQA2CnQ2FiO3hhswuZdgwdI5VSgqGw
+	7hsehlbgVX57lw29/bSeHSMaqYQgllIbwDYPnMMKHV+tEb7Lq2kEWqF5lc121nEo0Dd4=
+X-Gm-Gg: ASbGncsd9ncG//Iuv5Eo4H05AFLEVxA7MWTMOlBSUmE3LNEuzNlLf06FpXaugpa5Kut
+	dYtHLnomnMwNWckYtdpXeySrQd/mRhOrBtP6GO9YhcPNwC+ZHSZk7wnt/XsdkIIBTswvFFptSsK
+	n/4lf4MrE807ttUikURlMdOTPZAHKBGm6gEvOF8fv2SLMg7SkEelXm2+uXgzvve+uahadyNysUw
+	ehinTpjT1sR+bY20oc9rpAJN7lJp4p26hhFC/bDZsugIOPX9J4hKvZbUhGOR54jYuLpkbd+bBwl
+	UNlD/ld4D15q6CFNKh+J0t9uZtUxeBO2QTV52R9lyD7jWIhHs//AINyvYZpRw/61G4Jnvh4thg1
+	kdvhuATbZ/MsTmsX7aBPtmr9CmzqV7k7cYUBVjKmW+Xs=
+X-Received: by 2002:a17:903:2f83:b0:275:1833:96e5 with SMTP id d9443c01a7336-2951a3dd7ddmr29944295ad.24.1761885475569;
+        Thu, 30 Oct 2025 21:37:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGftKe8KCyKs4T7LjRtICkkAGiQAEcZ0CTV2xdzIP+1yJKykipFyBATMMEwA6X/LKEw7fuWSA==
+X-Received: by 2002:a17:903:2f83:b0:275:1833:96e5 with SMTP id d9443c01a7336-2951a3dd7ddmr29944095ad.24.1761885475086;
+        Thu, 30 Oct 2025 21:37:55 -0700 (PDT)
 Received: from [10.151.37.217] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93be4f8d1esm572662a12.26.2025.10.30.21.35.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c866sm7136225ad.86.2025.10.30.21.37.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 21:35:23 -0700 (PDT)
-Message-ID: <7788e25c-4622-4c7d-86b8-0827aac917af@oss.qualcomm.com>
-Date: Fri, 31 Oct 2025 10:05:19 +0530
+        Thu, 30 Oct 2025 21:37:54 -0700 (PDT)
+Message-ID: <4858c946-d77e-47d7-a757-275a72bbb37e@oss.qualcomm.com>
+Date: Fri, 31 Oct 2025 10:07:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,176 +102,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] soc: qcom: smem: introduce qcom_smem_validate_item
- API
-To: Christopher Lew <christopher.lew@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: Chris Lew <chris.lew@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+Subject: Re: [PATCH 2/2] soc: qcom: socinfo: add support to extract more than
+ 32 image versions
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20251030-image-crm-part2-v1-0-676305a652c6@oss.qualcomm.com>
- <20251030-image-crm-part2-v1-1-676305a652c6@oss.qualcomm.com>
- <b46wt76zmlms5h6zkner2rr22hwmsz422jy44qziqe6a2c4qrt@i5x7j6vgrzqo>
- <CAOdFzcjzzymRxqoeF+FDidDo1aa-fNzV-3kERoV7HRW7RpQ1kA@mail.gmail.com>
+ <20251030-image-crm-part2-v1-2-676305a652c6@oss.qualcomm.com>
+ <wyfv5abzo2ow37gbnktormshgasd64cjyf4rjyl3onvq2tgr7y@6hh4nxmk3rpg>
 Content-Language: en-US
 From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-In-Reply-To: <CAOdFzcjzzymRxqoeF+FDidDo1aa-fNzV-3kERoV7HRW7RpQ1kA@mail.gmail.com>
+In-Reply-To: <wyfv5abzo2ow37gbnktormshgasd64cjyf4rjyl3onvq2tgr7y@6hh4nxmk3rpg>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDAzOSBTYWx0ZWRfX8IO5ZxmBsYXb
- o8n9RrO5KDCg4RVYr47AttGD4qqqWVN6aGu72j8uZ2/T/Xc2fx645hRESBlqsgnobyupMW3Y2Ag
- l+P1FDUk0mEY2Qjcj6Wi8EhvnHc8FZXmyr/DuligKM76WRySEAzhR76B4csulaaoN8zZne8S2Rn
- txVDVhjH3b1PcD9woKzNw8Lo1g7/eWBj4HuP/VtOhdNClIW3pK8Ojn5cYF7AnQTtvy/sJF9mEr5
- k2Ih4JVzEGN+U6aWn6pQnqI2jfmrkI8i/jlG0X7uHqVGw1SDtzaSECN0PkqochjBpcfkjqt3v0b
- g3NsTczJSFvxeIi/5Uratp9p7h8C4zZwSVsTlMkVXY2NxHQZLMjxHuDnhqx70E3zUUcIEDzHDkR
- 24ocuN5oKaG82T0cnYyMlgkJNQ9pFQ==
-X-Proofpoint-GUID: B_AZR4eATb2TgTATVYwnGT8jhT1fsR3d
-X-Authority-Analysis: v=2.4 cv=TsnrRTXh c=1 sm=1 tr=0 ts=69043c8e cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDA0MCBTYWx0ZWRfX2uHVxx46sD7i
+ SZ0cJim93heUD2U953Kt0+xPmHPa6qQnsF8hwT9Je1AzussxhVrwOOWKn7lkAVvtMQLdmGFsSkL
+ TK7MV3X+C+HDDYOavH1FdIvWpGdvRoIEbBDVryifjM1rI4uLV1ZMOqG6bvp0y+tt8pK2bVvGQEs
+ 8vxYpZQGFFzMDxYnNDW+tc4FJctyN0NmKmhM6H1ERWhP9dx83jQP/ClTDiLB7gnFGFcoKtJqazR
+ JGqroCjgMCJIuZ0QuXD4pxwyDLM3ZIFVuIo3ZSIS6ngvyVSUTWYQ4bmlrz99/DVjq/uKxXSxcgB
+ T8egC2ZCR3K7BWH0+2jW1/F6aH9iNSm6NIsiSf2Y0FnExOW3lMrqX/pHPuYEPyH/9eAcxljONYz
+ uqEQTk0Km+3LZM8leYkp/RlOVGT0QA==
+X-Authority-Analysis: v=2.4 cv=KePfcAYD c=1 sm=1 tr=0 ts=69043d24 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=I4BHqWkteyIiaMOeR1wA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-ORIG-GUID: B_AZR4eATb2TgTATVYwnGT8jhT1fsR3d
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=pfTqpNOsBDqalM9Tbi0A:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: u3lrgMVaYD461oT5Gvsd2gqS-Tzer1BG
+X-Proofpoint-GUID: u3lrgMVaYD461oT5Gvsd2gqS-Tzer1BG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-10-30_08,2025-10-29_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 phishscore=0 suspectscore=0 adultscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510310039
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310040
 
 
-On 10/31/2025 6:10 AM, Christopher Lew wrote:
-> On Thu, Oct 30, 2025 at 9:48 AM Bjorn Andersson <andersson@kernel.org> wrote:
->> On Thu, Oct 30, 2025 at 03:07:48PM +0530, Kathiravan Thirumoorthy wrote:
->>> When a SMEM item is allocated or retrieved, sanity check on the SMEM item
->>> is performed and backtrace is printed if the SMEM item is invalid.
->>>
->> That sounds overly defensive...
+On 10/30/2025 10:41 PM, Bjorn Andersson wrote:
+> On Thu, Oct 30, 2025 at 03:07:49PM +0530, Kathiravan Thirumoorthy wrote:
+>> SMEM_IMAGE_VERSION_TABLE contains the version of the first 32 images.
+>> Add images beyond that and read these from SMEM_IMAGE_VERSION_TABLE_2.
 >>
-> Discussed with Bjorn a bit offline and we couldn't come up with a
-> really good reason to keep the WARN_ON() check.
-> Dropping WARN_ON() and returning an error back from qcom_smem_get()
-> that clients can act on should suffice.
+>> Not all platforms define the SMEM item number 667, in that case
+>> qcom_smem_get() will throw the invalid item warning. To avoid that,
+>> validate the SMEM item before fetching the version details.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>> ---
+>>   drivers/soc/qcom/socinfo.c | 46 ++++++++++++++++++++++++++++++++++++++--------
+>>   1 file changed, 38 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+>> index 4fd09e2bfd021424b9489cd29eec29dc7c7a16d3..f832ae36942b10f68f0c3304f98d946796e8d1bd 100644
+>> --- a/drivers/soc/qcom/socinfo.c
+>> +++ b/drivers/soc/qcom/socinfo.c
+>> @@ -67,7 +67,17 @@
+>>   #define SMEM_IMAGE_TABLE_GEARVM_INDEX	29
+>>   #define SMEM_IMAGE_TABLE_UEFI_INDEX	30
+>>   #define SMEM_IMAGE_TABLE_CDSP3_INDEX	31
+>> +#define SMEM_IMAGE_TABLE_AUDIOPD_ADSP1_INDEX	32
+>> +#define SMEM_IMAGE_TABLE_AUDIOPD_ADSP2_INDEX	33
+>> +#define SMEM_IMAGE_TABLE_DCP_INDEX	34
+>> +#define SMEM_IMAGE_TABLE_OOBS_INDEX	35
+>> +#define SMEM_IMAGE_TABLE_OOBNS_INDEX	36
+>> +#define SMEM_IMAGE_TABLE_DEVCFG_INDEX	37
+>> +#define SMEM_IMAGE_TABLE_BTPD_INDEX	38
+>> +#define SMEM_IMAGE_TABLE_QECP_INDEX	39
+>> +
+>>   #define SMEM_IMAGE_VERSION_TABLE       469
+>> +#define SMEM_IMAGE_VERSION_TABLE_2	667
+>>   
+>>   /*
+>>    * SMEM Image table names
+>> @@ -79,13 +89,18 @@ static const char *const socinfo_image_names[] = {
+>>   	[SMEM_IMAGE_TABLE_APPSBL_INDEX] = "appsbl",
+>>   	[SMEM_IMAGE_TABLE_APPS_INDEX] = "apps",
+>>   	[SMEM_IMAGE_TABLE_AUDIOPD_INDEX] = "audiopd",
+>> +	[SMEM_IMAGE_TABLE_AUDIOPD_ADSP1_INDEX] = "audiopd_adsp1",
+>> +	[SMEM_IMAGE_TABLE_AUDIOPD_ADSP2_INDEX] = "audiopd_adsp2",
+>>   	[SMEM_IMAGE_TABLE_BOOT_INDEX] = "boot",
+>> +	[SMEM_IMAGE_TABLE_BTPD_INDEX] = "btpd",
+>>   	[SMEM_IMAGE_TABLE_CDSP1_INDEX] = "cdsp1",
+>>   	[SMEM_IMAGE_TABLE_CDSP2_INDEX] = "cdsp2",
+>>   	[SMEM_IMAGE_TABLE_CDSP3_INDEX] = "cdsp3",
+>>   	[SMEM_IMAGE_TABLE_CDSP_INDEX] = "cdsp",
+>>   	[SMEM_IMAGE_TABLE_CHARGERPD_INDEX] = "chargerpd",
+>>   	[SMEM_IMAGE_TABLE_CNSS_INDEX] = "cnss",
+>> +	[SMEM_IMAGE_TABLE_DCP_INDEX] = "dcp",
+>> +	[SMEM_IMAGE_TABLE_DEVCFG_INDEX] = "devcfg",
+>>   	[SMEM_IMAGE_TABLE_DSPS_INDEX] = "dsps",
+>>   	[SMEM_IMAGE_TABLE_GEARVM_INDEX] = "gearvm",
+>>   	[SMEM_IMAGE_TABLE_GPDSP1_INDEX] = "gpdsp1",
+>> @@ -95,6 +110,9 @@ static const char *const socinfo_image_names[] = {
+>>   	[SMEM_IMAGE_TABLE_NPU_INDEX] = "npu",
+>>   	[SMEM_IMAGE_TABLE_OEMPD_INDEX] = "oempd",
+>>   	[SMEM_IMAGE_TABLE_OISPD_INDEX] = "oispd",
+>> +	[SMEM_IMAGE_TABLE_OOBNS_INDEX] = "oobns",
+>> +	[SMEM_IMAGE_TABLE_OOBS_INDEX] = "oobs",
+>> +	[SMEM_IMAGE_TABLE_QECP_INDEX] = "qecp",
+>>   	[SMEM_IMAGE_TABLE_RPM_INDEX] = "rpm",
+>>   	[SMEM_IMAGE_TABLE_SDI_INDEX] = "sdi",
+>>   	[SMEM_IMAGE_TABLE_SENSORPD_INDEX] = "sensorpd",
+>> @@ -644,7 +662,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>>   	struct smem_image_version *versions;
+>>   	struct dentry *dentry;
+>>   	size_t size;
+>> -	int i;
+>> +	int i, j;
+>>   	unsigned int num_pmics;
+>>   	unsigned int pmic_array_offset;
+>>   
+>> @@ -788,20 +806,32 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>>   		break;
+>>   	}
+>>   
+>> -	versions = qcom_smem_get(QCOM_SMEM_HOST_ANY, SMEM_IMAGE_VERSION_TABLE,
+>> -				 &size);
+>> -
+>> -	for (i = 0; i < ARRAY_SIZE(socinfo_image_names); i++) {
+>> +	for (i = 0, j = 0; i < ARRAY_SIZE(socinfo_image_names); i++, j++) {
+>>   		if (!socinfo_image_names[i])
+>>   			continue;
+>>   
+>> +		if (i == 0) {
+>> +			versions = qcom_smem_get(QCOM_SMEM_HOST_ANY,
+>> +						 SMEM_IMAGE_VERSION_TABLE,
+>> +						 &size);
+>> +		}
+>> +		if (i == 32) {
+> Probably nicer to do } else if (...) { here...
 
 
-Thanks Bjorn and Chris for the comments and the suggestions. Based on 
-the below feedback from Chris, I understand that we can just drop the 
-WARN_ON() on both places. I will submit the V2 with that address.
+Ack.
 
 
 >
->>> Image version table in SMEM contains version details for the first 32
->>> images. Beyond that, another SMEM item 667 is being used, which may not
->>> be defined in all the platforms. So directly retrieving the SMEM item 667,
->>> throws the warning as invalid item number.
->>>
->>> To handle such cases, introduce a new API to validate the SMEM item before
->>> processing it. While at it, make use of this API in the SMEM driver where
->>> possible.
->>>
->>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
->>> ---
->>>   drivers/soc/qcom/smem.c       | 16 ++++++++++++++--
->>>   include/linux/soc/qcom/smem.h |  1 +
->>>   2 files changed, 15 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
->>> index c4c45f15dca4fb14f97df4ad494c1189e4f098bd..8a0a832f1e9915b2177a0fe08298ffe8a779e516 100644
->>> --- a/drivers/soc/qcom/smem.c
->>> +++ b/drivers/soc/qcom/smem.c
->>> @@ -396,6 +396,18 @@ bool qcom_smem_is_available(void)
->>>   }
->>>   EXPORT_SYMBOL_GPL(qcom_smem_is_available);
->>>
->>> +/**
->>> + * qcom_smem_validate_item() - Check if SMEM item is within the limit
->> If nothing else, this contradicts the comment by SMEM_ITEM_COUNT.
->>
->>> + * @item:    SMEM item to validate
->>> + *
->>> + * Return: true if SMEM item is valid, false otherwise.
->>> + */
->>> +bool qcom_smem_validate_item(unsigned item)
->>> +{
->>> +     return item < __smem->item_count;
->>> +}
->>> +EXPORT_SYMBOL_GPL(qcom_smem_validate_item);
->>> +
->>>   static int qcom_smem_alloc_private(struct qcom_smem *smem,
->>>                                   struct smem_partition *part,
->>>                                   unsigned item,
->>> @@ -517,7 +529,7 @@ int qcom_smem_alloc(unsigned host, unsigned item, size_t size)
->>>                return -EINVAL;
->>>        }
->>>
->>> -     if (WARN_ON(item >= __smem->item_count))
->>> +     if (WARN_ON(!qcom_smem_validate_item(item)))
->> When we're using a version 11 (global heap, with toc indexed by the item
->> number) the SMEM_ITEM_COUNT actually matters, but when we use version 12
->> the items are stored in linked lists, so the only limit I can see is
->> that the item needs to be max 16 bit.
->>
->> I think we should push this check down to qcom_smem_alloc_global().
->>
->> And have a sanity check for item in qcom_smem_alloc_private() and
->> qcom_smem_get_private() to avoid truncation errors.
->>
-> For alloc, I think we should adhere to the platform defined max
-> item_count. I'm not sure if the remote hosts validate the entries
-> against item_count while they are iterating through the items during
-> their implementation of qcom_smem_get().
+>> +			if (!qcom_smem_validate_item(SMEM_IMAGE_VERSION_TABLE_2))
+> Let's see if we can clean up patch 1 and get rid of this.
+> Other than that, this patch looks good.
+
+
+Yeah, will drop this one and add the check for "versions".
+
+
 >
->>>                return -EINVAL;
->>>
->>>        ret = hwspin_lock_timeout_irqsave(__smem->hwlock,
->>> @@ -690,7 +702,7 @@ void *qcom_smem_get(unsigned host, unsigned item, size_t *size)
->>>        if (!__smem)
->>>                return ptr;
->>>
->>> -     if (WARN_ON(item >= __smem->item_count))
->>> +     if (WARN_ON(!qcom_smem_validate_item(item)))
->> I think we should push this check down to qcom_smem_get_global()
->>
->> I guess we'd still hit your problem on version 11 platforms if we keep
->> the WARN_ON(), but I don't know why that's reason for throwing a splat
->> in the log. Let's drop the WARN_ON() as well.
->>
-> I think it's worth keeping the item_count check here because it acts
-> as a quick short circuit out of the search loop for absurd values in
-> qcom_smem_get_private().
+> Regards,
+> Bjorn
 >
-> Thanks,
-> Chris
->
->>>                return ERR_PTR(-EINVAL);
->>>
->>>        if (host < SMEM_HOST_COUNT && __smem->partitions[host].virt_base) {
->>> diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
->>> index f946e3beca215548ac56dbf779138d05479712f5..05891532d530a25747afb8dc96ad4ba668598197 100644
->>> --- a/include/linux/soc/qcom/smem.h
->>> +++ b/include/linux/soc/qcom/smem.h
->>> @@ -5,6 +5,7 @@
->>>   #define QCOM_SMEM_HOST_ANY -1
->>>
->>>   bool qcom_smem_is_available(void);
->>> +bool qcom_smem_validate_item(unsigned item);
->> This makes the API clunky for no real reason, let's avoid that.
+>> +				break;
+>> +
+>> +			j = 0;
+>> +			versions = qcom_smem_get(QCOM_SMEM_HOST_ANY,
+>> +						 SMEM_IMAGE_VERSION_TABLE_2,
+>> +						 &size);
+>> +		}
+>> +
+>>   		dentry = debugfs_create_dir(socinfo_image_names[i],
+>>   					    qcom_socinfo->dbg_root);
+>> -		debugfs_create_file("name", 0444, dentry, &versions[i],
+>> +		debugfs_create_file("name", 0444, dentry, &versions[j],
+>>   				    &qcom_image_name_ops);
+>> -		debugfs_create_file("variant", 0444, dentry, &versions[i],
+>> +		debugfs_create_file("variant", 0444, dentry, &versions[j],
+>>   				    &qcom_image_variant_ops);
+>> -		debugfs_create_file("oem", 0444, dentry, &versions[i],
+>> +		debugfs_create_file("oem", 0444, dentry, &versions[j],
+>>   				    &qcom_image_oem_ops);
+>>   	}
+>>   }
 >>
+>> -- 
+>> 2.34.1
 >>
->> Adding Chris, in case I'm overlooking something here.
->>
->> Regards,
->> Bjorn
->>
->>>   int qcom_smem_alloc(unsigned host, unsigned item, size_t size);
->>>   void *qcom_smem_get(unsigned host, unsigned item, size_t *size);
->>>
->>>
->>> --
->>> 2.34.1
->>>
 
