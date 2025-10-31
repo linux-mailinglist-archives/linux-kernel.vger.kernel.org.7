@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-880866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C047C26BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:30:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF77CC26BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37451A6297B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:29:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BAFB352712
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BD32F7466;
-	Fri, 31 Oct 2025 19:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E10F340DB0;
+	Fri, 31 Oct 2025 19:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IEXhEahv"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFwnXuOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2572D244677
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FB81DF759;
+	Fri, 31 Oct 2025 19:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761938956; cv=none; b=USauSF0vtUfHWCmFmQz0hdleaxm4AUurNMjsiKauxGTkwyNvfeexGXij2kU/++7qzkHS71Mt+iE6+r8v9x5qfusSg0Gw/oXS7MSeuZ3nJ9cmd3kRYBu5E/5d3kkO/XMrViG1FsHJf/CXk6yuwHM5R2apiTkxSERHUVo/2l4MPno=
+	t=1761938963; cv=none; b=i02RnBnUQ+ZUIcpv4MxsfdrFMY5ryZin28Q+eUmltkq31/QtlWvDqazKbS2fK4wT/TaYayE766aoprMBVrf9P29tbe97MTXxLE4P/1yryfmvTvMQFmCMDAPpJk+pQJmsSqcPLY/j8bd0rljnesC/XXVpojP/9+jPIJ2WF10h91A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761938956; c=relaxed/simple;
-	bh=tap3GZK35XqIeGc0MtuZbkLTyyOpeW4BuzXhKgfHbG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h06pmDL8qSLfMUpFT2HzIf7lIY1AihEpD7L5cQYAbkoQCy6UCEWVj7oheFGFsbA/RH8GLzUKZR6waMGfFKvEk6TPZEu6txyhegljfSTkLyZP4BuluDbIo1FE3Dq+gj4tBqwUc8C16bv2OPfyKCH1DpOvij9+2FDdgwKzHV0W2OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IEXhEahv; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d886e631-851b-4e2f-aecb-ecdb541dfedc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761938938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8D2DjveBXCBvaI02wp6eCLUtpmu3etH8CmtWre82fK8=;
-	b=IEXhEahvBzCb9dsDqryxWKPeJMso0ZXHQY9gEyyNpqyl2hWF5u4qhEzAr0JRfRwCLqCIl1
-	HeCAPFGpEsGQIA//gcpJQ0XzjPttZU94W4D7OjE6FZ446D8MMTQ5ZLa0qTB/iNnEkJvQ9I
-	y+RDvv0IKt3SNjrcHkkaw2+ROSwlSv8=
-Date: Fri, 31 Oct 2025 12:28:50 -0700
+	s=arc-20240116; t=1761938963; c=relaxed/simple;
+	bh=oQVmhMMFW6lHuhAykiZpLS1gzGK8GSGR2gOkw6MBoVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBE1df3ouwjUfsg4MH+KuoVyYWakSlZkhPWyWES5PA4bxp/KflRwrHCnwdskkPYCjcFf4tATL1WISCcUzumx46FfcXxQ06DXa47CpNmRWKo0bq2sX4DiOYlz3JfXk8S5q015NwOZh4d1IMSBJTllGbjyx6j2381LkHvfLUzzShU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFwnXuOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9242C4CEE7;
+	Fri, 31 Oct 2025 19:29:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761938963;
+	bh=oQVmhMMFW6lHuhAykiZpLS1gzGK8GSGR2gOkw6MBoVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFwnXuOmnICJHIAqYXOFJZL3M7NhrFAuz11xIhh6kOKj8LS6mg5LZsT+5OHZV4AYj
+	 ms5mMNoYM9N6Uf+1Hvs51fXmQ8ilD6zIrdW5/D6PNkoQTVxzNZXZP9mSQUyFdeH8Ch
+	 HuStTcK4waCNN6OZ0pvDNxrxCFgr9gNIDL7N9oaGqOefG6Hnt6yloMfjj7lkOyPBQM
+	 4MWyhuT+RBZIpO+oBsTwS8y132B3Wn42IrQ7Uxw5VQiP6XFOJmHvoAQfpoS0zTmFCM
+	 Dzd4syp2gh/F53RzPTkntwCXsfQtR+TVKJhXFcNQ3sBX3mhxFsK17m+XUhrLt8PTSV
+	 V5bXok6YMAslw==
+Date: Fri, 31 Oct 2025 12:29:21 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Howard Chu <howardchu95@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf trace: Increase syscall handler map size to 1024
+Message-ID: <aQUOEU5Srvxvw_ye@google.com>
+References: <20250519232539.831842-1-namhyung@kernel.org>
+ <CAH0uvohxb4gvHYswCZMvCrrOn=0qSOeOaYyDVPEFb4GPhwntgw@mail.gmail.com>
+ <CAP-5=fWZectSpLzkfJUj-W-_oxhDJdnnOE18ET_iPb+bjmTdHw@mail.gmail.com>
+ <aCz-wD2Syq8mj2_0@google.com>
+ <CAP-5=fVNgN5Budwaao_GqrZRN2wSrvo7CQySU-D9eEpnwBhY2A@mail.gmail.com>
+ <CAP-5=fXyxrM4eEjo1AMjBTuC2duqxZLcOPpdqudYQeWQfUiVuQ@mail.gmail.com>
+ <CAP-5=fVBXUeEH2oi6NU2Hs5GCBUqW7BMVUJ6=LDTBfmb=xoL3Q@mail.gmail.com>
+ <aQUJHMtTQ5IVBQ2x@google.com>
+ <CAP-5=fWumaLVt4DbSXXHmJ-9Y-hTyj9K61s2E8m_xZY+ux5nLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: integrate test_tc_edt into
- test_progs
-To: alexis.lothore@bootlin.com
-Cc: ebpf@linuxfoundation.org, bastien.curutchet@bootlin.com,
- thomas.petazzoni@bootlin.com, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- martin.lau@kernel.org, clm@meta.com, ihor.solodrai@linux.dev,
- bot+bpf-ci@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org
-References: <20251031-tc_edt-v1-2-5d34a5823144@bootlin.com>
- <09feef91b51f675195b5b1b9a854d844c9999c0cebb429d785fe60f6c787dc8b@mail.kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <09feef91b51f675195b5b1b9a854d844c9999c0cebb429d785fe60f6c787dc8b@mail.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWumaLVt4DbSXXHmJ-9Y-hTyj9K61s2E8m_xZY+ux5nLg@mail.gmail.com>
 
-On 10/31/25 9:20 AM, bot+bpf-ci@kernel.org wrote:
->> +static void run_test(void)
->> +{
->> +	__u64 rx_bytes_start, rx_bytes_end;
->> +	double rate_mbps, rate_error;
->> +	pthread_t server_thread = 0;
->> +	struct connection *conn;
->> +	__u64 ts_start, ts_end;
->> +	int ret;
->> +
->> +
->> +	conn = setup_connection();
->> +	if (!ASSERT_OK_PTR(conn, "setup client and server connection"))
->> +		return;
->> +
->> +	ret = pthread_create(&server_thread, NULL, run_server,
->> +			     (void *)(&conn->server_conn_fd));
->> +	if (!ASSERT_OK(ret, "start server rx thread"))
->> +		goto end_cleanup_conn;
->> +	if (!ASSERT_OK(read_rx_bytes(&rx_bytes_start), "read rx_bytes"))
->> +		goto end_kill_thread;
->> +	ts_start = get_time_ns();
->> +	while (true) {
->> +		send(conn->client_conn_fd, (void *)tx_buffer, BUFFER_LEN, 0);
->> +		ts_end = get_time_ns();
->> +		if ((ts_end - ts_start)/100000 >= TIMEOUT_MS) {
->                                           ^^^^^^
+On Fri, Oct 31, 2025 at 12:25:41PM -0700, Ian Rogers wrote:
+> On Fri, Oct 31, 2025 at 12:08 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Thu, Oct 30, 2025 at 01:47:55PM -0700, Ian Rogers wrote:
+> > > On Mon, Oct 13, 2025 at 1:22 PM Ian Rogers <irogers@google.com> wrote:
+> > > >
+> > > > On Thu, Aug 21, 2025 at 9:45 AM Ian Rogers <irogers@google.com> wrote:
+> > > > >
+> > > > > On Tue, May 20, 2025 at 3:14 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > >
+> > > > > > Hi Ian,
+> > > > > >
+> > > > > > On Tue, May 20, 2025 at 08:05:37AM -0700, Ian Rogers wrote:
+> > > > > > > On Mon, May 19, 2025 at 4:36 PM Howard Chu <howardchu95@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > Hello Namhyung,
+> > > > > > > >
+> > > > > > > > On Mon, May 19, 2025 at 4:25 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > > > >
+> > > > > > > > > The syscalls_sys_{enter,exit} map in augmented_raw_syscalls.bpf.c has
+> > > > > > > > > max entries of 512.  Usually syscall numbers are smaller than this but
+> > > > > > > > > x86 has x32 ABI where syscalls start from 512.
+> > > > > > > > >
+> > > > > > > > > That makes trace__init_syscalls_bpf_prog_array_maps() fail in the middle
+> > > > > > > > > of the loop when it accesses those keys.  As the loop iteration is not
+> > > > > > > > > ordered by syscall numbers anymore, the failure can affect non-x32
+> > > > > > > > > syscalls.
+> > > > > > > > >
+> > > > > > > > > Let's increase the map size to 1024 so that it can handle those ABIs
+> > > > > > > > > too.  While most systems won't need this, increasing the size will be
+> > > > > > > > > safer for potential future changes.
+> > > > > > >
+> > > > > > > Do we need to worry about MIPS where syscalls can be offset by 1000s?
+> > > > > > > https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.fastmail.com/
+> > > > > >
+> > > > > > Argh..
+> > > > > >
+> > > > > > > We could do with a map that combines BPF_MAP_TYPE_HASH with the tails
+> > > > > > > calls of BPF_MAP_TYPE_PROG_ARRAY.
+> > > > > >
+> > > > > > Right, it'd complicate things but I think it's doable.
+> > > > >
+> > > > > Should we merge the x32 fix while waiting for the hash fix?
+> > > >
+> > > > Just a reminder that this is still not resolved.
+> >
+> > What do you mean by the x32 fix?
 > 
-> Does this time conversion use the correct divisor? The timeout check
-> appears to divide nanoseconds by 100000, but TIMEOUT_MS is 2000
-> milliseconds. Converting nanoseconds to milliseconds requires dividing
-> by 1000000, not 100000. With the current calculation, the timeout would
-> trigger after 200 milliseconds rather than 2000 milliseconds.
+> This patch is the x32 fix. Your commit message says:
+> "Usually syscall numbers are smaller than this but x86 has x32 ABI
+> where syscalls start from 512."
 
-The report is correct, there is a typo in the denominator.
+Oh, you meant this patch. :)
 
-Use the send_recv_data() helper in network_helpers.c. It should simplify 
-this test and no need to pthread_create, while loop, ....etc. 
-send_recv_data limits by the number of bytes instead of the length of 
-time. There is a target rate in this test, so it should be easy to 
-convert from time limit to byte limit and reuse the send_recv_data.
+> 
+> We started discussing a hash table based fix because of MIPS, etc.
 
-pw-bot: cr
+Right, I'll merge this as an interim solution.
+
+Thanks,
+Namhyung
 
 
