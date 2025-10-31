@@ -1,205 +1,261 @@
-Return-Path: <linux-kernel+bounces-880101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDD5C24E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:57:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B3DC24DEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9877563DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:53:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B39874F3B9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB40C336EE1;
-	Fri, 31 Oct 2025 11:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81163271F6;
+	Fri, 31 Oct 2025 11:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uav5HVf7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4My4cDk"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E30F3446AE
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE4131B81D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761911588; cv=none; b=EZEH2ZBTP/Fq3uw9tqHTVGMPgno8key5Bjvsp+drjsZRax8CuGy1i1EAVtTPbrplteC01NF4r4EEybYAl61BYR0sLTcpwI0+/F+UJcl13BCRo2u6W8AVGC+XkkKwTLHnEdQJALEfDSL4nLga0l8gZn/FdHQFDkViQSPteZSTcbU=
+	t=1761911624; cv=none; b=Kj+6MDxiK8FGwIZDAjk5viCb7W5yuUDdfSnE/v0CvXF48AwYEjHVr7LV2xGtADjQOrg9yxJS7BgZlpWC3uBr734L3rD/lb9MaKhbPd9EfHhwVpekd5OvHR2tdZqgM+NEtxAQB01yD1/xoI9CCXlNPFza1ZGC+kAuF7Ly6veJStY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761911588; c=relaxed/simple;
-	bh=6fzFmvYYmy0FD/zsZjCIHvVy5pIl85gYKYFQYc5ntms=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ittQa/6VQEcakggtJx/HfHrSZBQ5IDWabns17qQVqYgsHiz0qy/prHvUS/swnHkzotC66w5sw122O40PXMaDACxTAHdld3FuPjU85Rn+NUPZaGNhOHvMGzKF/gnnlKXZO5VUUS0x6yzo01JfiZuQdLnnHWwS34Z8fiLcEEctTzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uav5HVf7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761911582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTUIS93GUZsQyg4tbyddEkDWsI2/kBv/P3HZONFfij8=;
-	b=Uav5HVf7UCx/oBrDF2yqnnBGSHXipT54/jpP8p0hSuRg+iR7gEc5HsOO/lvI0T7YYj65Bc
-	S2aU0jgbQxI1imxXcTxYU3G9GkWcL6UkvqKygsEtntYGCPrbTYp4G0WuouKSd8cpu/UgP2
-	vrhcjhbY6ToEykxryrnRWoV7cljJTAg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-jz4hgP3sNIuyunS15QRrjg-1; Fri, 31 Oct 2025 07:53:00 -0400
-X-MC-Unique: jz4hgP3sNIuyunS15QRrjg-1
-X-Mimecast-MFC-AGG-ID: jz4hgP3sNIuyunS15QRrjg_1761911579
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-475dca91610so12887075e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:53:00 -0700 (PDT)
+	s=arc-20240116; t=1761911624; c=relaxed/simple;
+	bh=O35spgqehOrZR2tvQvdo7EUbG49QpK95STsTyry3mOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kWcyltZxrQwQHz4QhdIhpfKEReuUnS7KTkfsWPStHE1iQ1sMWZMeFEhiQcb9hJbHbqz2rr/JScpQDbqMZcCqAstyjZ5G/RxSMZ8hE2ReC9hSXZk0tmY81xYeuDWqk4FHrftaQ47D6nRN+u8cdFcmW23DRWS8B4VkH6+P9abpgZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4My4cDk; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6406b8e1fb8so2504004a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761911620; x=1762516420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OCQNcQncDV0pig2wQUB4eR+mXGNrWHfstydWTHE+XYM=;
+        b=k4My4cDkzU6RIL1T67MQWjY5HiDr6FpFLl+wvrIap6ex/NowBUl/lO8geU9VOyUwiv
+         fEwM0IRAjNYDctj53hMCK2h4I+1b91PYoNE7GdkDJGzXNIxzfgfB/hC9rxhI/RUFR41C
+         EyG8gwo7Q0+P5Sfj2WmFpONhDouFjnK6Sin9RFBn46i5E42HY2xySb7IK37cKeMwaODT
+         0ZnhCK6ctCp37v+0xlABZiUrQjo9VsfJBJtjumxDjXATrXzRfd8zgZBSiHYrcGCQvuXQ
+         R9T+z++2jvL8VVeBK9t7A/edlqsum3MLfAqbejg/iWl6pHhCDKm/c5UOifGsyFx5ynX7
+         xF4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761911579; x=1762516379;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gTUIS93GUZsQyg4tbyddEkDWsI2/kBv/P3HZONFfij8=;
-        b=unZPNKxQq8pmjuOal9HCTwV9ZK0xS8K2o9qb/ZtZFWwltaIGGo/1uTYRDUYjxOxAWb
-         7tE1g/jll/QNRFSpOdMe7Q40uE/BUNqMr9EoW6vpLqwaU3M6UI2HRPmymrTdd8GSJnUm
-         p5eVX2PHr+A20de9BW7xLIub1SU5hr3O8eWm/JCRSLrLM7FM7SnWYuDJWJ4eHrGJgPne
-         zl5YKKVwiOCNtr7o0T0gsZfD1g2HezSgDQ3E1DC5fwaq4v0BRc7v9i9Yq6Pb3GI5H8HC
-         zSJjtzaS2EPhUJ93Wd4H/kdBkxzIhPVkd/2nW1Wq1QZw+HqUCv+5bvuIdQTmQkUEvONM
-         I7qQ==
-X-Gm-Message-State: AOJu0YweQ9gvYD5N0MxRbA5rDIulkPa7Jxv5SsKrEdpr29LRcYjqo6xQ
-	EDtB++qA/BxD9WGDuTVbFYyBniohPLuhvb2bVpkAJHHSegTrnzPtu99IiuVTbNXYdDJPOk76jsh
-	JovXXTRo0FzmDr7/s7C9zezmaNlnfxSnGpJ0y+IUpDXtJE5emZJV3i739ytO8+hwHEA==
-X-Gm-Gg: ASbGnct8/xTr7ADmiZAJRmmXUqpZumGINcPfzcj5jtNna2wdbz1OS2m6lcvxlpUpnws
-	tSaTEavKxcte5l1y7MB4TeMovdyZ2RrWvAUr6HWzyzA6UIb9olk36LSnMJml4GdgG6LoPhZbWiT
-	w1bJbo+sFyrETDlwcpzkjyPYFrujt2z+zGzgvFtRwLxA4mr3ZJsugidjaukHvVLJTyiRKkZSzlp
-	e6iYpo8iME2LRgApKXBRGpQjlJZaNKbWomwXgYv9nchLcnSIijlq6kQQJrx3KI40h5GUC6dMOpc
-	mdAbxhU7oX0KDd22PZbWxOnUcRvEMasnjVsUSqufxY5fzVjxVAoBaqoeikvF0WXF54uawVwGUFJ
-	eKr+BfHiYGokkAFH8WRq7b906XkAED3fMAOg/Z96fw4cSxd6tjCEHVW7QcvZo
-X-Received: by 2002:a5d:5888:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-429bd676a88mr2912829f8f.10.1761911579334;
-        Fri, 31 Oct 2025 04:52:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1wuetlLZ34asXy13r1bfmujThSOSUu3cZmMHhgfxqrER8G1YsbbHDsXHGv7ziQ36i83pqkg==
-X-Received: by 2002:a5d:5888:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-429bd676a88mr2912761f8f.10.1761911578857;
-        Fri, 31 Oct 2025 04:52:58 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c1142e7dsm3186896f8f.17.2025.10.31.04.52.57
+        d=1e100.net; s=20230601; t=1761911620; x=1762516420;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OCQNcQncDV0pig2wQUB4eR+mXGNrWHfstydWTHE+XYM=;
+        b=bm2BTLsWL26ryt0KlI2gJEbeykZ5hZVzFVMyRJ/6+n/+lMB/ilMlCNDf0Cm6Ny+zL3
+         gv7kikYuk2VTHXK29VVZlJVfcJi6g+VdZV3a6LX0c7ZBGCDIT8cKV1t2zq+Zu6FmQ2Wx
+         VQs6CpNMWIMcYEuDaFW0FU+bNKV3AslU2IOoNEyI+MvD+i2/v+HGvTe3LdMElNcIcBCq
+         9nHzC5gYvLzAUrbUjv2G5XGXjHYTo3nakEx+w0taSXUNm1gHfwBWRRpaW9ec8pWWHcBX
+         9Lq/1EVD2rlL2Br9UOzdre1HdXh39flm+fNtZD5g+RZ8hQlpZD4PR3EwHXQT/cqRRkRn
+         HfzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnRGu8h9o32PvwCwokzYL/qDKAI+mvRsKU1TxXQaT4GqQ7nG5CvXlvq0C3UTy3tmk5JsyPQeYmkhUTgys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt7b+Rd9qNCBhLBEu99MV7TwUQ1/pwVVT+3jQZm7MK0A+XS/7H
+	kb+YyB+Lj8ZiawGOxW1yq16oUV3KrCnhCSklVRz6YsEfwapM8lsStp6Z
+X-Gm-Gg: ASbGncuKuSXwemOCfbDlAEDQBqy1dRuM4Eua/OLqdQc42+E8/IqQUlD/84IML2sBBcR
+	WtyMF/jx+WBaJFqNXc2YW/TuNTJkmOiR0E1vhNaWeFhvtumMDbXA0au6Xj8F6ed4h0euGwW/4BA
+	psM6xcnMOKU+Box7NBGWF90T5OHey7P3kf8qishphn3Ob2CNR/fV8LsJZTNMQlgAQ+Bb+0wMkkj
+	Q356SUvFkxtYPLjvvHvs80lpr7vzq1ztUmjSkzT7U8un/WRdqT6Bg4Q3PED4lqJioA0lQJ7yg8Z
+	7OYM/UU1+THodpkvswPVx12d67NwdfdxgLodnvRnDH2GAAnhj1J9jOgqGgsvlVsSm8ROebp2ntp
+	QUWjt+LtEcNFYvpEIlj1tAzPeMF4yzq+SMwtV9tj5GznrRR0m9y6b1wn64c27IPUqm8pnd5a5du
+	EOKgP97Zqjn6P/oM3Gl/trzOxEym/ES3gXuwDM/Q9grtE=
+X-Google-Smtp-Source: AGHT+IGxIlFPS8hS595Xkfumk9wGbCOJQPHRYRtPAuDqD8SnR4VGwjFq2oqrDoT+nBuHOhjxEg9Krw==
+X-Received: by 2002:a05:6402:1e94:b0:640:7529:b8b9 with SMTP id 4fb4d7f45d1cf-640770820e2mr2209238a12.30.1761911620065;
+        Fri, 31 Oct 2025 04:53:40 -0700 (PDT)
+Received: from [10.25.210.164] ([128.77.115.157])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b448ed9sm1418859a12.35.2025.10.31.04.53.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:52:58 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Josh
- Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy
- Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Paolo Bonzini
- <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- "David S.
- Miller" <davem@davemloft.net>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, Josh
- Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, Andrew
- Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>,
- Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>, Jann Horn
- <jannh@google.com>, Dan Carpenter <dan.carpenter@linaro.org>, Oleg
- Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Clark
- Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Marcelo Tosatti <mtosatti@redhat.com>, Daniel Wagner <dwagner@suse.de>
-Subject: Re: [PATCH v6 06/29] static_call: Add read-only-after-init static
- calls
-In-Reply-To: <20251030112251.5afcf9ed@mordecai>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <20251010153839.151763-7-vschneid@redhat.com>
- <20251030112251.5afcf9ed@mordecai>
-Date: Fri, 31 Oct 2025 12:52:56 +0100
-Message-ID: <xhsmhqzujp9t3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Fri, 31 Oct 2025 04:53:39 -0700 (PDT)
+Message-ID: <19ef0124-9a61-455d-8402-70e840309cf5@gmail.com>
+Date: Fri, 31 Oct 2025 04:53:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] reset: imx8mp-audiomix: Switch to using regmap API
+To: Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
+ <20251029135229.890-6-laurentiumihalcea111@gmail.com>
+ <105ed81ed67d8e4cacb63a83a606e206a4d6f310.camel@pengutronix.de>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <105ed81ed67d8e4cacb63a83a606e206a4d6f310.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 30/10/25 11:25, Petr Tesarik wrote:
-> On Fri, 10 Oct 2025 17:38:16 +0200
-> Valentin Schneider <vschneid@redhat.com> wrote:
->
->> From: Josh Poimboeuf <jpoimboe@kernel.org>
+
+On 10/30/2025 6:06 AM, Philipp Zabel wrote:
+> On Mi, 2025-10-29 at 06:52 -0700, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >>
->> Deferring a code patching IPI is unsafe if the patched code is in a
->> noinstr region.  In that case the text poke code must trigger an
->> immediate IPI to all CPUs, which can rudely interrupt an isolated NO_HZ
->> CPU running in userspace.
+>> As far as the Linux kernel is concerned, block devices such as i.MX8MP's
+>> AUDIOMIX block control or i.MX8ULP's SIM LPAV can simultaneously act as
+>> clock controllers, reset controllers or mux controllers. Since these IPs
+>> offer different functionalities through different subsystem APIs, it's
+>> important to make sure that the register R-M-W cycles are performed under
+>> the same lock across all subsystem APIs. This will ensure that registers
+>> will not end up with the wrong values because of race conditions (e.g.
+>> clock consumer tries to update block control register A, while, at the
+>> same time, reset consumer tries to update the same block control register).
 >>
->> If a noinstr static call only needs to be patched during boot, its key
->> can be made ro-after-init to ensure it will never be patched at runtime.
+>> However, the aforementioned race conditions will only impact block control
+>> IPs which use the same register for multiple functionalities. For example,
+>> i.MX8MP's AUDIOMIX block control IP provides clock gating functionalities
+>> and reset control functionalities through different registers. This is why
+>> the current approach (i.e. clock control and reset control work using
+>> different locks) has worked well so far.
 >>
->> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+>> Since we want to extend this driver to be usable for i.MX8ULP's SIM LPAV
+>> block control IP, we need to make sure that clock control, reset control,
+>> and mux control APIs use the same lock since all of these functionalities
+>> are performed using the SYSCTRL0 register.
+>>
+>> To do so, we need to switch to the regmap API and, if possible, use the
+>> parent device's regmap, which, in the case of i.MX8ULP, will be the clock
+>> controller. This way, we can make sure that the clock gates and the reset
+>> controller will use the same lock to perform the register R-M-W cycles.
+>>
+>> This change will also work fine for cases where we don't really need to
+>> share the lock across multiple APIs (e.g. i.MX8MP's AUDIOMIX block
+>> control) since regmap will take care of the locking we were previously
+>> explicitly performing in the driver.
+>>
+>> The transition to the regmap API also involves some cleanup. Specifically,
+>> we can make use of devres to unmap the device's memory and get rid of the
+>> memory mapping-related error paths and the remove() function altogether.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >> ---
->>  include/linux/static_call.h | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
+>>  drivers/reset/reset-imx8mp-audiomix.c | 91 +++++++++++++++++----------
+>>  1 file changed, 57 insertions(+), 34 deletions(-)
 >>
->> diff --git a/include/linux/static_call.h b/include/linux/static_call.h
->> index 78a77a4ae0ea8..ea6ca57e2a829 100644
->> --- a/include/linux/static_call.h
->> +++ b/include/linux/static_call.h
->> @@ -192,6 +192,14 @@ extern long __static_call_return0(void);
->>      };								\
->>      ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
->>
->> +#define DEFINE_STATIC_CALL_RO(name, _func)				\
->> +	DECLARE_STATIC_CALL(name, _func);				\
->> +	struct static_call_key __ro_after_init STATIC_CALL_KEY(name) = {\
->> +		.func = _func,						\
->> +		.type = 1,						\
->> +	};								\
->> +	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
->> +
->>  #define DEFINE_STATIC_CALL_NULL(name, _func)				\
->>      DECLARE_STATIC_CALL(name, _func);				\
->>      struct static_call_key STATIC_CALL_KEY(name) = {		\
->> @@ -200,6 +208,14 @@ extern long __static_call_return0(void);
->>      };								\
->>      ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
->>
->> +#define DEFINE_STATIC_CALL_NULL_RO(name, _func)				\
->> +	DECLARE_STATIC_CALL(name, _func);				\
->> +	struct static_call_key __ro_after_init STATIC_CALL_KEY(name) = {\
->> +		.func = NULL,						\
->> +		.type = 1,						\
->> +	};								\
->> +	ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
->> +
+>> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+>> index e9643365a62c..3f6d11270918 100644
+>> --- a/drivers/reset/reset-imx8mp-audiomix.c
+>> +++ b/drivers/reset/reset-imx8mp-audiomix.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>>  #include <linux/of_address.h>
+>> +#include <linux/regmap.h>
+>>  #include <linux/reset-controller.h>
+>>  
+>>  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
+>> @@ -42,8 +43,8 @@ static const struct imx8mp_reset_map reset_map[] = {
+>>  
+>>  struct imx8mp_audiomix_reset {
+>>  	struct reset_controller_dev rcdev;
+>> -	spinlock_t lock; /* protect register read-modify-write cycle */
+>>  	void __iomem *base;
+> Drop base as well, better let devres handle this.
 >
-> I think it would be a good idea to add a comment describing when these
-> macros are supposed to be used, similar to the explanation you wrote for
-> the _NOINSTR variants. Just to provide a clue for people adding a new
-> static key in the future, because the commit message may become a bit
-> hard to find if there are a few cleanup patches on top.
+> [...]
 >
+>> +/* assumption: registered only if not using parent regmap */
+>> +static void imx8mp_audiomix_reset_iounmap(void *data)
+> Pass base instead of dev.
 
-I was about to write such a comment but I had another take; The _NOINSTR
-static key helpers are special and only relevant to IPI deferral; whereas
-the _RO helpers actually change the backing storage for the keys and as a
-bonus are used by the IPI deferral instrumentation.
 
-IMO it's the same here for the static calls, it makes sense to mark the
-relevant ones as _RO regardless of IPI deferral.
+ACK. Will need some extra casts/annotations though as sparse will definitely
 
-I could however add a comment to ANNOTATE_NOINSTR_ALLOWED() itself,
-something like:
+not be happy with this.
 
-```
-/*
- * This is used to tell objtool that a given static key is safe to be used
- * within .noinstr code, and it doesn't need to generate a warning about it.
- *
- * For more information, see tools/objtool/Documentation/objtool.txt,
- * "non-RO static key usage in noinstr code"
- */
-#define ANNOTATE_NOINSTR_ALLOWED(key) __ANNOTATE_NOINSTR_ALLOWED(key)
-```
 
-> Just my two cents,
-> Petr T
+>
+>> +{
+>> +	struct imx8mp_audiomix_reset *priv = dev_get_drvdata(data);
+>> +
+>> +	iounmap(priv->base);
+> 	void __iomem *base = data;
+>
+> 	iounmap(base);
+>
+>> +}
+>> +
+>> +/* assumption: dev_set_drvdata() is called before this */
+> Why not just pass priv instead of dev?
+>
+>> +static int imx8mp_audiomix_reset_get_regmap(struct device *dev)
+>> +{
+>> +	struct imx8mp_audiomix_reset *priv;
+>> +	int ret;
+>> +
+>> +	priv = dev_get_drvdata(dev);
+>> +
+>> +	/* try to use the parent's regmap */
+>> +	priv->regmap = dev_get_regmap(dev->parent, NULL);
+>> +	if (priv->regmap)
+>> +		return 0;
+>> +
+>> +	/* ... if that's not possible then initialize the regmap right now */
+>> +	priv->base = of_iomap(dev->parent->of_node, 0);
+> Make base a local variable ...
+>
+>> +	if (!priv->base)
+>> +		return dev_err_probe(dev, -ENOMEM, "failed to iomap address space\n");
+>> +
+>> +	ret = devm_add_action_or_reset(dev, imx8mp_audiomix_reset_iounmap, dev);
+> ... and pass it as data instead of dev.
+>
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to register action\n");
+>> +
+>> +	priv->regmap = devm_regmap_init_mmio(dev, priv->base, &regmap_config);
+>> +	if (IS_ERR(priv->regmap))
+>> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
+>> +				     "failed to initialize regmap\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
+>>  				       const struct auxiliary_device_id *id)
+>>  {
+>> @@ -105,36 +139,26 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
+>>  	if (!priv)
+>>  		return -ENOMEM;
+>>  
+>> -	spin_lock_init(&priv->lock);
+>> -
+>>  	priv->rcdev.owner     = THIS_MODULE;
+>>  	priv->rcdev.nr_resets = ARRAY_SIZE(reset_map);
+>>  	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
+>>  	priv->rcdev.of_node   = dev->parent->of_node;
+>>  	priv->rcdev.dev	      = dev;
+>>  	priv->rcdev.of_reset_n_cells = 1;
+>> -	priv->base            = of_iomap(dev->parent->of_node, 0);
+>> -	if (!priv->base)
+>> -		return -ENOMEM;
+>>  
+>> +	/* keep before call to imx8mp_audiomix_reset_init_regmap() */
+> Not needed if priv is passed to it directly.
 
+
+right, somehow I forgot that rcdev holds a pointer to our "struct device" even though it's right there....
+
+will make the change, thanks!
+
+
+>
+> regards
+> Philipp
 
