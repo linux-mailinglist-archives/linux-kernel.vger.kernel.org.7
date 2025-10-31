@@ -1,287 +1,170 @@
-Return-Path: <linux-kernel+bounces-880946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC3BC26F75
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:59:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE571C26F7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD5AD4E4BC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743E9421BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A1A329C59;
-	Fri, 31 Oct 2025 20:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100D42836B0;
+	Fri, 31 Oct 2025 21:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0rJ/LYD"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hDOMS/AT"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010046.outbound.protection.outlook.com [52.101.193.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA50A328B5E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761944363; cv=none; b=JAaKTMCdzBJUnfxgmpVBUzp8U4Dfyxei3EXCjL9dtl+kFVoJuzNAr3eAVJJk8TMCfgGNgDXN2z+m7H8Y2AG0rquGCGguFxGn5SFYu9vJTb3mEEE3fWspfW/LeF3/P5iKgJUEZe925hBB6sxBhE8G1NF2kYD2PPLcUWpQeeBd0Us=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761944363; c=relaxed/simple;
-	bh=aLqmljkpD2zl6j6GgB0sK1QrN36B8GI1GZAlwlHtooo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YUeVZC0BNCge88KXiLgTd45FyxmCgUG/Ooy3TctnZHzQrgHL8XJ6K4qNtfg/n/TsK9YfxgR8Co11o35dx3ZKIsRc83IffPSD66YYLlyoMsQOEBAmLk7l8Ox45IUL9FtCkOn4snzzyMmP6/OmZ+VAgveJb50pQ85R4qLOQ0q5t14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0rJ/LYD; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429be5d31c9so999542f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761944360; x=1762549160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bgp3f7L8ordIG8lFk3MXWjOE/D+2lwOocuB1EdZHw3s=;
-        b=R0rJ/LYD03nasPZ1/WWmdWoNDkgs7Wp5O5dN9iGTuvx1ag9NIz0qMExgcajAn2aafL
-         sTHTwdXMbbOOdu7aLbVfa6UZ8c1TDuUwzArEiFVz2Q3Ru8e6n9TCCYEaKrl4S2JM+rbO
-         YHaDzx8O3vCNDEWyBWxO4JPCoku5vnGAXOoktA/rfLzEplgZuGMCzkaoF8Jb54qNymtF
-         z/ze92v+bFB/om2if8HYFZpNG9mwaltE2BJhqRVtRd29VL9I3xUUGck9Th2Tj/cZxwDR
-         BTWmbpLfFRAuzT005B0wikBIf/wTIlTdL1zVOWHW/Oh1Bt7hI0SAcrVHcZwBSSbBzoUh
-         mwww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761944360; x=1762549160;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bgp3f7L8ordIG8lFk3MXWjOE/D+2lwOocuB1EdZHw3s=;
-        b=FT3ZZstd3aKDwVZigYttL+iOnSuJcZhvVf4cG/EcpHwGrVGuLYA+tsWOnmi9y/zPGE
-         C8Ts3C83fgj5pMfpshdjuh+wtthasYBhvfaCPDayKzC6QbW4NHu44Xb9Cy3Y05VefYFX
-         ZnXZMOXyApMaz8nfpwvmzBPsP9/YdZ/UY5NgZchWZPw+lmGhVYYk3pIT7dwyRJL7ph5A
-         /ZR7hxy5aEO+6D7IMhISDcVvyAfJTpylAJS0frJ9Q7HBJU2vWU83efQz5dW7UnVNlQGY
-         wMRit1fplzLLz1Vgz35mEqnWGCzqx/NcZpwmgJ0uwcbETr0DwtCU4u1nq8mM8C7b5o/A
-         JFwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQMZdBKdPgf3aDZv75QXTQiDLtECkNByvXM69QaHDK2HajJPopJw9+fNlzhYxriffx281bRWplOhcHpRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx50z3erbHMa/QufMkyvUdJYscwLJJZRHhD76aY5fnwUAv1KR1z
-	omf7poHmJkASkCqMetCYu+4JSMrIQVw9g8BkAweabSYftK4jbqKpMa0o
-X-Gm-Gg: ASbGnctLgwZ5leLAZ4I/hep5jwi708rWeWQ1dWbw6mmR7zigfd5P+vKbnvFJyvAxt+v
-	oQUOg/NnuUly8IM6vLVUL+0r21AZghoQe7CSyPNRSCOADbOlbUn9vmhoz6SaI8FKJ6JnLNJJ5bT
-	njJEtfLBA4xozOfGLW3HQs+kyfNFQnXCTvCEzCPjiCjZEkitsauHnEqZ7ev7ijLTypGCh4PiIxG
-	FQs/gIM0ramdasRnJrWEMhvWercw6hH9mKmCH3B8u9HrTboEI3/YqqA/NxwZPb9auEYZ+pl14Hc
-	szq74YlE3HkojrR+FOI+W2KhvmQojhwm4TmG+y9DpBdNfP4fQCcH0lKqFOe1x1sjAqHQRSw7umI
-	mxLQcQTnIGp1aTI+k3uqg1jrGWXxLwSrhVp/88XUx51CmqQ6QT3MNxvQFS8MQYt60IT6dKxuPKF
-	XhEbmICkkzvhb1NztjP8qwSyZcwThIrEbLGMeDv/GQcg==
-X-Google-Smtp-Source: AGHT+IEpkOT+lds5i+MlFlnlvPse3C56GNXRHFvHhbzk78p7CP82ggJGlgmNbIHMcxNRtkEcmzgV3w==
-X-Received: by 2002:a5d:59c5:0:b0:429:c66c:5bc9 with SMTP id ffacd0b85a97d-429c66c6504mr432614f8f.27.1761944359598;
-        Fri, 31 Oct 2025 13:59:19 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c1405fffsm5167638f8f.45.2025.10.31.13.59.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 13:59:19 -0700 (PDT)
-Date: Fri, 31 Oct 2025 20:59:17 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Cc: u.kleine-koenig@baylibre.com, Nicolas Pitre <npitre@baylibre.com>, Oleg
- Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Li
- RongQing <lirongqing@baidu.com>, Yu Kuai <yukuai3@huawei.com>, Khazhismel
- Kumykov <khazhy@chromium.org>, Jens Axboe <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 4/9] lib: Add mul_u64_add_u64_div_u64() and
- mul_u64_u64_div_u64_roundup()
-Message-ID: <20251031205917.56763269@pumpkin>
-In-Reply-To: <20251029173828.3682-5-david.laight.linux@gmail.com>
-References: <20251029173828.3682-1-david.laight.linux@gmail.com>
-	<20251029173828.3682-5-david.laight.linux@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66C11C695;
+	Fri, 31 Oct 2025 21:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761944430; cv=fail; b=SUzTNqsptx7UtvcjJMJVkwsykCWtsV1t6rGNL7hhUBsAremMYgG+Y309tcKk0Qj2MEDfViszwJgGQ6OFrcIVPgDaGQ3gv1I/FkadbMsByf8nDNMWng2XeSmxpZKoaeobNDb0P3NPQFJKTKzX+kD4A9G2fG9sEVbxl5oQu6Hx6Sc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761944430; c=relaxed/simple;
+	bh=Tduzn1VYg6Hs2/R+01qFBYX3s9z9a0wjUp7pOXmwbXM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=in55C0i5Q9t7qnSvQEIWwCxyi/ZCBB4hrcsf1mFEA7ciZDSZMfMiHJ4og/yLIzlsSU3WrfOFxj8ENcm73BfisOszAEnARdywacf9ptx+H5VSLEOs26ibW1ho/QGKWpxmLFNYqyWpkKN8LUEhbeuP+1BxZ9EHx0LX/sQ4Xde+kbY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hDOMS/AT; arc=fail smtp.client-ip=52.101.193.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vWKO0Mdw2KLIaeFwtazqt3BgGQ4tN7ou3QJmLsvwZ/4lg9GKWzQRL/Xeh+n1LKyI4rFcmt+3XPOPkEzVutf0hsQlQC5Pu3VjSjwrApizVNxTjhVNhOguneVqbXTemCHt3DGGwKOmhCv1NwN49ENekiZOYA+SGCQQ9OWUumGBWZsGfDVWWpjcCtkMXhsFkPDb9X2S63wdX8GyNCZgDJX5X57JhKz4D855fPWPXdfsGZrRe/ywhjOwLhUwHuu+lFB3lVn77EfhYv3E29DVA1suGiMuAMjtKn2ENXkEz/Zkqwf8h8t2GSFSZc9vwJppVbXR9BeNxJwaachpQkSvNom9uA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iRcR63eSkad99HHrIf8c3stt2LgXQ3oTsHFraoTOF8o=;
+ b=weQqi7xkr2bXuY5VGcRsHhCFMpOJTPhaTvOkK53UmUj+gaVhah9ofgQTG1PsQOcMqSAIy6x1G6mUdKfl4Lg+x5v7lIVB+Fdf+k/QD3zO0riij07x+k3sLzu1d1AVOlQBzy9zLXOU4CSyketTfuPPljROw2ZN7Le7DeiN+khJulr+dEkqUbjmoG/sZQx8AorEWIM1qhhKHihbdBRKHW+LMs5N/ss69qIEzwejP4ZdWNR4d8597KJVXunFW4qvSH/Q7oETjSMFvozcx929vPYVpBpUsUhL3HkXRfatZ3HPiq38vjVEXDUsjckKwIKlrtOdnzFhWRwntPp1j/LtJsBcRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iRcR63eSkad99HHrIf8c3stt2LgXQ3oTsHFraoTOF8o=;
+ b=hDOMS/ATNpMkCpre9zjRG1WX608KezVxQtLmAwmvUwX+mYe9tnnWu7ItxedrRM0ywDcRxmC4cPTEPsUcNT6jMYoszxDaht/EIMxjYdv/66xOzINYrB1nUbS1C+g7b0uaDACKkB2ZdrNibH1ClkDUeUCANlZOkuIe2vK0J0cHxdiK8IuZ7DbScw1gg/t8F94PMA2+NXIG3PYfGam8QWyLGXPw9BiKfQBxM6LuhQCtE3yrmQsktJWixrLXmKraqQSAHvQ1gIaWUklLQyfeiQBWB3er5JSSVoipSupZbf6MKbHL6nRchMB5BrHmbjuJCXTyGddI+3qk2194WEgXdmlItw==
+Received: from SN7P222CA0025.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:124::35)
+ by DS0PR12MB8293.namprd12.prod.outlook.com (2603:10b6:8:f3::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.15; Fri, 31 Oct 2025 21:00:24 +0000
+Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
+ (2603:10b6:806:124:cafe::b1) by SN7P222CA0025.outlook.office365.com
+ (2603:10b6:806:124::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
+ 31 Oct 2025 21:00:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 21:00:24 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 31 Oct
+ 2025 14:00:06 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 31 Oct 2025 14:00:05 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 31 Oct 2025 14:00:04 -0700
+Date: Fri, 31 Oct 2025 14:00:03 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Ashish Mhetre <amhetre@nvidia.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <jgg@ziepe.ca>, <linux-tegra@nvidia.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
+Message-ID: <aQUjU/mgccX7mt8R@Asurada-Nvidia>
+References: <20251031062959.1521704-1-amhetre@nvidia.com>
+ <20251031062959.1521704-3-amhetre@nvidia.com>
+ <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|DS0PR12MB8293:EE_
+X-MS-Office365-Filtering-Correlation-Id: b15feded-d508-41c3-01f8-08de18c082e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?c/Cl4llGOpzFNh3Yoy0vS7Kx4oDSH1w8EPJ5BszjFfJFFeTs1OMDtHsMNiDD?=
+ =?us-ascii?Q?Lbmctt2e3PdrcIc6Oz5Ro44hnf+58RRUNe0bQCDpQ0b3RHDW59kYb7ASYnsd?=
+ =?us-ascii?Q?KecmQcTjbeeceWeShwWoNdyvmFkYn/aVWbFYSJlVwi6RrO9TcP8parNfTp2x?=
+ =?us-ascii?Q?xDrgjqT3EHDjFwcdeVg1ycaoSCSn3aN+3Mx+1N49lVblz05ytgdo3wY1dQ1b?=
+ =?us-ascii?Q?vaOni9bjOgx+kZoQqw8lWZ8xqWeJLlw7M8gpKKNgwIar8uridv54smRDTwM3?=
+ =?us-ascii?Q?ZoviNXMVDUOC2tq59TQ1mk95Z0FM/BedH6kLyMvfvh5+AMmoopG7BPg3Yxll?=
+ =?us-ascii?Q?IW5HJueIWVE+5vIYFbwhF9bAn5FocUhmccP0VC82q7BR+cFTbvkVqRyWtznp?=
+ =?us-ascii?Q?MIvo6oxS9Cy8SbmQzzrmZ1x6QkO/0HYXKn45OVvfEzLo37jn6kmVLu2hNJ35?=
+ =?us-ascii?Q?Uyg1ly3CjxizJmnAyigyGsu9/agOm0baThiNwooVxWg9kHMaSf6vFba1uMPp?=
+ =?us-ascii?Q?2Ro5+NP7Xi5UyU8DaFEErCkY9S8sFKB+YnFwpSC5F60JNUOow8mLP9pHVjLw?=
+ =?us-ascii?Q?4/jVzcpovWfbnACjHBBY/uFnz6RtjDKh0VEZvNuJdnVK6rxY8duLfre2idMP?=
+ =?us-ascii?Q?6uKuzjCzi/Vm8+EuD24gonnCwVCijGHTGPk/Y/2D9T9+ICW7BHfSU9d7eLh5?=
+ =?us-ascii?Q?Gy9Wvhvc4aBzi5H9GfzYJD81vjWSV7jtpCRvwMVTIxoazd23CLyxluSzxPJs?=
+ =?us-ascii?Q?KbQvDRRSVqtWKKLKb08xOc1N4pa+uv4taYyrDmP5uR3alRWl/a/4yBptKN95?=
+ =?us-ascii?Q?91Kqov5er8APN3efmPcR4SDQn81gsKTOjPpE2VJYCGAn6dgtMjJGeTAHshua?=
+ =?us-ascii?Q?AOs6kYjXgXXiUOEzyF9AhtZ7KFd+3EKExDF09i7Jocy1CI7eREDcGQikrZkx?=
+ =?us-ascii?Q?mYT/YSB7H+15nBu1V7AuMAai+nQQ7rhsVnk2XgNKkEZ5BynV1C9MlaTiQVwu?=
+ =?us-ascii?Q?XmolAuXAUCYpOciUU/Gb5bjNjqHUcQt6CB/Mmi8Ghp9blMQQL6Eyw7up67bC?=
+ =?us-ascii?Q?ljdfWq/VhcoaXsRvwtNJDRPPO0QnVO4NHmyLpt2+vwhmbzgmoPn8Nw7MZGLG?=
+ =?us-ascii?Q?uorVaejBVWCkO5aRYCCp5ryLAopiEFRRrsTevKtqtrGDKiAamucBLTOgwKwp?=
+ =?us-ascii?Q?5DtvwwwaFgYbW3Cg8VTTAoQFBSgi1icgwHXA+N3Ip7iBmi+ISNPMSF5Dcnbt?=
+ =?us-ascii?Q?VrSfPAPcSRTiabaTH9WU2YKIL0aGYX+Ef4QyynZyQChmNhGhHVjUVdi3AJlj?=
+ =?us-ascii?Q?/6plgKG6z8Adw1MLh3s61YGr2YGJpz3gri/yTgxg1WvGKXezrtxSlwxMFAo2?=
+ =?us-ascii?Q?XJsgR90DMdCA/3BjdH5bkOsgPY9lqDtCSZMxhInByLTT8tlM3WjRf6WqrxBd?=
+ =?us-ascii?Q?cMN4GuFTQox9ZhdaaUOa98k9q1bP1qXubchnkg8wwMMFeN+x+tYiVtnmXezc?=
+ =?us-ascii?Q?QZf66pSLcIFLbC/d59l5qg+ZqcKmNUoUg3X/lcND1LK8CRX9WO4yQXQFyN1M?=
+ =?us-ascii?Q?YuwYAHLnYAGtanAeMTk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 21:00:24.0777
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b15feded-d508-41c3-01f8-08de18c082e8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002529E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8293
 
-On Wed, 29 Oct 2025 17:38:23 +0000
-David Laight <david.laight.linux@gmail.com> wrote:
+On Fri, Oct 31, 2025 at 09:14:25AM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Oct 31, 2025 at 06:29:58AM +0000, Ashish Mhetre wrote:
+> > +  The CMDQ-Virtualization hardware block is part of the SMMUv3 implementation
+> > +  on Tegra264 SoCs. It assists in virtualizing the command queue for the SMMU.
+> > +
+> > +maintainers:
+> > +  - NVIDIA Corporation <linux-tegra@nvidia.com>
+> 
+> No. It should be a person. If entire Nvidia cannot find a person, I
+> don't think we are interested in having this in the kernel.
 
-There is a slight bug ...
+I was the submitter of the driver. I can take it up.
 
-> The existing mul_u64_u64_div_u64() rounds down, a 'rounding up'
-> variant needs 'divisor - 1' adding in between the multiply and
-> divide so cannot easily be done by a caller.
-> 
-> Add mul_u64_add_u64_div_u64(a, b, c, d) that calculates (a * b + c)/d
-> and implement the 'round down' and 'round up' using it.
-> 
-> Update the x86-64 asm to optimise for 'c' being a constant zero.
-> 
-> Add kerndoc definitions for all three functions.
-> 
-> Signed-off-by: David Laight <david.laight.linux@gmail.com>
-> ---
-> 
-> Changes for v2 (formally patch 1/3):
-> - Reinstate the early call to div64_u64() on 32bit when 'c' is zero.
->   Although I'm not convinced the path is common enough to be worth
->   the two ilog2() calls.
-> 
-> Changes for v3 (formally patch 3/4):
-> - The early call to div64_u64() has been removed by patch 3.
->   Pretty much guaranteed to be a pessimisation.
-> 
-> Changes for v4:
-> - For x86-64 split the multiply, add and divide into three asm blocks.
->   (gcc makes a pigs breakfast of (u128)a * b + c)
-> - Change the kerndoc since divide by zero will (probably) fault.
-> 
->  arch/x86/include/asm/div64.h | 20 +++++++++------
->  include/linux/math64.h       | 48 +++++++++++++++++++++++++++++++++++-
->  lib/math/div64.c             | 14 ++++++-----
->  3 files changed, 67 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
-> index 9931e4c7d73f..cabdc2d5a68f 100644
-> --- a/arch/x86/include/asm/div64.h
-> +++ b/arch/x86/include/asm/div64.h
-> @@ -84,21 +84,25 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
->   * Will generate an #DE when the result doesn't fit u64, could fix with an
->   * __ex_table[] entry when it becomes an issue.
->   */
-> -static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
-> +static inline u64 mul_u64_add_u64_div_u64(u64 rax, u64 mul, u64 add, u64 div)
->  {
-> -	u64 q;
-> +	u64 rdx;
->  
-> -	asm ("mulq %2; divq %3" : "=a" (q)
-> -				: "a" (a), "rm" (mul), "rm" (div)
-> -				: "rdx");
-> +	asm ("mulq %[mul]" : "+a" (rax), "=d" (rdx) : [mul] "rm" (mul));
->  
-> -	return q;
-> +	if (statically_true(add))
-
-This needs to be:
-	if (!statically_true(!add))
-
-Do you need me to resend the full series?
-
-	David
-
-> +		asm ("addq %[add], %[lo]; adcq $0, %[hi]" :
-> +			[lo] "+r" (rax), [hi] "+r" (rdx) : [add] "irm" (add));
-> +
-> +	asm ("divq %[div]" : "+a" (rax), "+d" (rdx) : [div] "rm" (div));
-> +
-> +	return rax;
->  }
-> -#define mul_u64_u64_div_u64 mul_u64_u64_div_u64
-> +#define mul_u64_add_u64_div_u64 mul_u64_add_u64_div_u64
->  
->  static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 div)
->  {
-> -	return mul_u64_u64_div_u64(a, mul, div);
-> +	return mul_u64_add_u64_div_u64(a, mul, 0, div);
->  }
->  #define mul_u64_u32_div	mul_u64_u32_div
->  
-> diff --git a/include/linux/math64.h b/include/linux/math64.h
-> index 6aaccc1626ab..e889d850b7f1 100644
-> --- a/include/linux/math64.h
-> +++ b/include/linux/math64.h
-> @@ -282,7 +282,53 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
->  }
->  #endif /* mul_u64_u32_div */
->  
-> -u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
-> +/**
-> + * mul_u64_add_u64_div_u64 - unsigned 64bit multiply, add, and divide
-> + * @a: first unsigned 64bit multiplicand
-> + * @b: second unsigned 64bit multiplicand
-> + * @c: unsigned 64bit addend
-> + * @d: unsigned 64bit divisor
-> + *
-> + * Multiply two 64bit values together to generate a 128bit product
-> + * add a third value and then divide by a fourth.
-> + * The Generic code divides by 0 if @d is zero and returns ~0 on overflow.
-> + * Architecture specific code may trap on zero or overflow.
-> + *
-> + * Return: (@a * @b + @c) / @d
-> + */
-> +u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d);
-> +
-> +/**
-> + * mul_u64_u64_div_u64 - unsigned 64bit multiply and divide
-> + * @a: first unsigned 64bit multiplicand
-> + * @b: second unsigned 64bit multiplicand
-> + * @d: unsigned 64bit divisor
-> + *
-> + * Multiply two 64bit values together to generate a 128bit product
-> + * and then divide by a third value.
-> + * The Generic code divides by 0 if @d is zero and returns ~0 on overflow.
-> + * Architecture specific code may trap on zero or overflow.
-> + *
-> + * Return: @a * @b / @d
-> + */
-> +#define mul_u64_u64_div_u64(a, b, d) mul_u64_add_u64_div_u64(a, b, 0, d)
-> +
-> +/**
-> + * mul_u64_u64_div_u64_roundup - unsigned 64bit multiply and divide rounded up
-> + * @a: first unsigned 64bit multiplicand
-> + * @b: second unsigned 64bit multiplicand
-> + * @d: unsigned 64bit divisor
-> + *
-> + * Multiply two 64bit values together to generate a 128bit product
-> + * and then divide and round up.
-> + * The Generic code divides by 0 if @d is zero and returns ~0 on overflow.
-> + * Architecture specific code may trap on zero or overflow.
-> + *
-> + * Return: (@a * @b + @d - 1) / @d
-> + */
-> +#define mul_u64_u64_div_u64_roundup(a, b, d) \
-> +	({ u64 _tmp = (d); mul_u64_add_u64_div_u64(a, b, _tmp - 1, _tmp); })
-> +
->  
->  /**
->   * DIV64_U64_ROUND_UP - unsigned 64bit divide with 64bit divisor rounded up
-> diff --git a/lib/math/div64.c b/lib/math/div64.c
-> index 7158d141b6e9..25295daebde9 100644
-> --- a/lib/math/div64.c
-> +++ b/lib/math/div64.c
-> @@ -183,13 +183,13 @@ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
->  }
->  EXPORT_SYMBOL(iter_div_u64_rem);
->  
-> -#ifndef mul_u64_u64_div_u64
-> -u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
-> +#ifndef mul_u64_add_u64_div_u64
-> +u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  {
->  #if defined(__SIZEOF_INT128__)
->  
->  	/* native 64x64=128 bits multiplication */
-> -	u128 prod = (u128)a * b;
-> +	u128 prod = (u128)a * b + c;
->  	u64 n_lo = prod, n_hi = prod >> 64;
->  
->  #else
-> @@ -198,8 +198,10 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
->  	u32 a_lo = a, a_hi = a >> 32, b_lo = b, b_hi = b >> 32;
->  	u64 x, y, z;
->  
-> -	x = (u64)a_lo * b_lo;
-> -	y = (u64)a_lo * b_hi + (u32)(x >> 32);
-> +	/* Since (x-1)(x-1) + 2(x-1) == x.x - 1 two u32 can be added to a u64 */
-> +	x = (u64)a_lo * b_lo + (u32)c;
-> +	y = (u64)a_lo * b_hi + (u32)(c >> 32);
-> +	y += (u32)(x >> 32);
->  	z = (u64)a_hi * b_hi + (u32)(y >> 32);
->  	y = (u64)a_hi * b_lo + (u32)y;
->  	z += (u32)(y >> 32);
-> @@ -265,5 +267,5 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
->  
->  	return res;
->  }
-> -EXPORT_SYMBOL(mul_u64_u64_div_u64);
-> +EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
->  #endif
-
+Thanks
+Nicolin
 
