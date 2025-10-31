@@ -1,163 +1,130 @@
-Return-Path: <linux-kernel+bounces-879915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4098FC2462A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:16:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FFAC2464C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C03462A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534851B235DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0429F336EEE;
-	Fri, 31 Oct 2025 10:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1169B337B8A;
+	Fri, 31 Oct 2025 10:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ML8MCTxO"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FOHff1DU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3C931E11D;
-	Fri, 31 Oct 2025 10:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CBF336EEE;
+	Fri, 31 Oct 2025 10:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905532; cv=none; b=Zlk6l7NR+M/3xmm+mxHvDOafVzlLWD1uAERwm1kfGZ4+qfUI3JShxwt9emehwHRXiDvtwLsNas//WdNFaYwlbawszOeVh6bt9VjmRrcA54IQHMt+lZ2lndGGaZCd1aCqZNZ7C+TKX5Q99A+TQFbnG6At578YYfUEeGBUgu8vCZI=
+	t=1761905629; cv=none; b=UUwtqxpZTLRbRsEhvU62uIqOOtBdXEKXUvGFwNgSunm4tRCu8E60vFugls/VmAVbsdbMA9YNlOpqhsgZYorvo/1UV5rc3D8zM/SPKJODJxqtJujwUqL4WoqF3esMDcA2YEE3pBTO2PP15EwsAxkE0rD9y99MVMm5ibRsuZ5bss4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905532; c=relaxed/simple;
-	bh=TQJktnr4yScsi5Tta/zqoyR3rOa8Bbb/Za++lVTNwrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GmiOSmTndWTjLbxVLP19744XqWJiybMprDZgdlrP++2enCho5aJAOflsWgelpWVQDN25ZpdmlUVA+3jkGWxWsir0QoqTvHn1iIqGJ9T7xuPhEKPr/1gXbIHIBrdPv5LACQwDZcngYTJZBlo++grvRv5NE9Cmz7D4f/Jlu/PUcvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ML8MCTxO; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761905527; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=g6oI0vJYYXPMjkPo3D/XTsMC06H/GsSoglrYSSMno2I=;
-	b=ML8MCTxOgLLkCUd/YDQHTrgkeJ4ypEbE5yPIWykBZvVDL1QL1NjPIXmSGrlkTMh/nbF+mE2d35jh2P2p/UQ4WtjO/t1Kf5wv84YeSGPkeVZP85LTE24z2KTbA6vOvJRnNVWgNA13zmDptfO4Ps5c0yGXEl0OCD50wO2n8qwHSHY=
-Received: from 30.221.132.210(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrObqpp_1761905525 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 18:12:06 +0800
-Message-ID: <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
-Date: Fri, 31 Oct 2025 18:12:05 +0800
+	s=arc-20240116; t=1761905629; c=relaxed/simple;
+	bh=j1jjnwDIh5t39z7XcYR7u4oLR3Jy9sTKHizlMRr8z+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1bnxyl/+rUi74iTzW6WKMpg1rdd6f5syUuyuW6KyrwkePTQVT4nLvbYMtt7bUzloBaO8y//MwGByJxmRN4OFS3Dc64Mlzra0YPMGjpcQr+imNfktPcXDJpvYVUXQx0FEkMJp0fbUGtz2IxuDFleP31mvg9dloyLzhzT2FkdNMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FOHff1DU; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761905628; x=1793441628;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j1jjnwDIh5t39z7XcYR7u4oLR3Jy9sTKHizlMRr8z+Q=;
+  b=FOHff1DU7eqQzM3eVWvaR9wlyR5udglSetKcU4pweRMw8v8XIrAG9QKs
+   dUOo4IFs3dvASFOnGDEbU01961ZjgmF/h1UeBQ57ewOEd6tOWt9iFt2lE
+   8dPcC/LscyhD9i6MlEOncTtBzafwluOr1FPCEKil7kdPWjaxpJ/Gql8Y4
+   xcuRZATdwxyR4s3wljQ36+LtIvFdJW9VDZ+jdKOkPYbdbmwxRiETTyP70
+   q7ZdSao1QJMct56pmjLp6Lag1DfcYU1wwoo922SdaVNIG7RE2eW2LHtph
+   EgW/TO2zaVL7PEHgoRtxKzbsqlo9p79uhdEDCEdaUoGvQPSW9sWnHsttu
+   g==;
+X-CSE-ConnectionGUID: pWe0dcH8R1++Gki+HxlovQ==
+X-CSE-MsgGUID: PykOsH5TTHCocq3HWus+mw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64163390"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="64163390"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 03:13:46 -0700
+X-CSE-ConnectionGUID: XtNKVTXjR/6tWVY+YomUTA==
+X-CSE-MsgGUID: j445RgFrTFeePPFGCO4Utg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="190551159"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 03:13:44 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vEm8a-00000004EWX-0pWz;
+	Fri, 31 Oct 2025 12:13:40 +0200
+Date: Fri, 31 Oct 2025 12:13:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jorge Marques <jorge.marques@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, gastmaier@gmail.com
+Subject: Re: [PATCH] iio: accel: Change adxl345 depend to negate adxl35x
+Message-ID: <aQSL0wCr56zr5Y35@smile.fi.intel.com>
+References: <20251031-adxl345-allow-adxl34x-mod-v1-1-cd65749ba89c@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
- zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20210818144542.19305-1-hch@lst.de>
- <20210818144542.19305-4-hch@lst.de>
- <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
- <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
- <2025103155-definite-stays-ebfe@gregkh>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2025103155-definite-stays-ebfe@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031-adxl345-allow-adxl34x-mod-v1-1-cd65749ba89c@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Greg,
+On Fri, Oct 31, 2025 at 11:05:08AM +0100, Jorge Marques wrote:
+> Change 'depends on INPUT_ADXL34X=n' to '!(INPUT_ADXL34X)' to allow both
+> drivers to be compiled as modules. The user then can use the blacklist
+> to block loading one.
 
-On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
-> On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
->>
->>
->> On 2025/10/31 17:45, Christoph Hellwig wrote:
->>> On Fri, Oct 31, 2025 at 05:36:45PM +0800, Gao Xiang wrote:
->>>> Right, sorry yes, disk_uevent(KOBJ_ADD) is in the end.
->>>>
->>>>>    Do you see that earlier, or do you have
->>>>> code busy polling for a node?
->>>>
->>>> Personally I think it will break many userspace programs
->>>> (although I also don't think it's a correct expectation.)
->>>
->>> We've had this behavior for a few years, and this is the first report
->>> I've seen.
->>>
->>>> After recheck internally, the userspace program logic is:
->>>>     - stat /dev/vdX;
->>>>     - if exists, mount directly;
->>>>     - if non-exists, listen uevent disk_add instead.
->>>>
->>>> Previously, for devtmpfs blkdev files, such stat/mount
->>>> assumption is always valid.
->>>
->>> That assumption doesn't seem wrong.
->>
->> ;-) I was thought UNIX mknod doesn't imply the device is
->> ready or valid in any case (but dev files in devtmpfs
->> might be an exception but I didn't find some formal words)...
->> so uevent is clearly a right way, but..
+> ---
+> There are two drivers for the compatible:
 > 
-> Yes, anyone can do a mknod and attempt to open a device that isn't
-> present.
+> - adi,adxl345
 > 
-> when devtmpfs creates the device node, it should be there.  Unless it
-> gets removed, and then added back, so you could race with userspace, but
-> that's not normal.
+> * IIO: 
+>   drivers/iio/accel/adxl345_core.c
+>   drivers/iio/accel/adxl345_spi.c
+>   drivers/iio/accel/adxl345_i2c.c
+> * Inputs:
+>   drivers/input/misc/adxl34x-spi.c
+>   drivers/input/misc/adxl34x-i2c.c
 > 
->>> But why does the device node
->>> get created earlier?  My assumption was that it would only be
->>> created by the KOBJ_ADD uevent.  Adding the device model maintainers
->>> as my little dig through the core drivers/base/ code doesn't find
->>> anything to the contrary, but maybe I don't fully understand it.
->>
->> AFAIK, device_add() is used to trigger devtmpfs file
->> creation, and it can be observed if frequently
->> hotpluging device in the VM and mount.  Currently
->> I don't have time slot to build an easy reproducer,
->> but I think it's a real issue anyway.
+> To disallows both being complied, the depends INPUT_ADXL34X=n
+> was added to ADXL345 symbols. However, it should be possible to compile
+> both as modules, then blacklist one of them in the /etc/modprobe.d/blacklist.conf
+> file. This patch changes the rule to !(INPUT_ADXL34X) to allow both as
+> modules, but still disallow INPUT_ADXL34X to be built-in and ADXL345 as
+> module.
 > 
-> As I say above, that's not normal, and you have to be root to do this,
-
-Just thinking out if I am a random reporter, I could
-report the original symptom now because we face it,
-but everyone has his own internal business or even
-with limited kernel ability for example, in any
-case, there is no such expectation to rush someone
-into build a clean reproducer.
-
-Nevertheless, I will take time on the reproducer, and
-I think it could just add some artificial delay just
-after device_add(). I could try anyway, but no rush.
-
-> so I don't understand what you are trying to prevent happening?  What is
-
-The original report was
-https://lore.kernel.org/r/43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com/
-
-> the bug and why is it just showing up now (i.e. what changed to cause
-> it?)
-
-I don't know, I think just because 6.6 is a relatively
-newer kernel, and most userspace logic has retry logic
-to cover this up.
-
-
-Thanks,
-Gao Xiang
-
-
+> The following compatibles are not shared between both drivers:
 > 
-> thanks,
-> 
-> greg k-h
+> * IIO:
+>   adi,adxl375 spi/i2c
+> * Inputs:
+>   adi,adxl34x i2c
+
+I like the idea, but I think this needs to be clearly stated in the Kconfig
+help for both symbols. So user will _know_ that in such a case it's their
+responsibility of properly made choice. On top of that you might want to
+investigate existing DTS in the kernel and see if some of the choices may be
+made at the platform / CPU level.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
