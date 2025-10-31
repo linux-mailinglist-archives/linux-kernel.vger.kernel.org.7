@@ -1,226 +1,217 @@
-Return-Path: <linux-kernel+bounces-880755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF13AC2675B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:46:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CDAC2676A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9AE1892F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF56C18875D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABB7324B10;
-	Fri, 31 Oct 2025 17:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FF034402C;
+	Fri, 31 Oct 2025 17:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KQvCDgXx";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Njt+z226"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mm/enWZA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B46C2D0C99
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0533E37E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761932701; cv=none; b=GKwletRMsl1fC6Fi2MeMNUG72dBOm3gxZcbF4K/puskXtIZ/7kcLXHIZ0TeC7HMVTIBy46nHirxSwpSvE8vQaXRJkdVWSrhEhtr92b/uQxha3ISv3Fyf+gRzp/YGVuwQYO0kS0P0ywhiOpq5SA1g7Zmayp5Z6Zp40ijfqZHA8tE=
+	t=1761932754; cv=none; b=hN2y2iphekME6WaGwJgQK8YJ2EBfxGO7GgctAlHKO0qpe0Pc0cUFHy5eEfmIgJTGfDr/kWwByyrliNTslD1+qNwcAMo9JaMmtSdCttbSRCdrRuLUqR8Jr3pZ4WtjFhNTMcK/eiRkrKf8lDDtaMpElzrUvFO+ix9dFymuhuT1vmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761932701; c=relaxed/simple;
-	bh=MMN6o0nRNxpKuhgb1l1PbN/WsZE5u4tVnTaWtoOH30w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBNqkB/mliTTeVwx7VWi5f9iRnQL3WtE10udek/XCpxbYLsFIQKv60Kk8XKSFjyYgFm4f8z82BYzn+BRUPwRW+Rjm/aPnn1DMeH75c/VvKki4maalMtfW8uJ2AF+slXI9zF4kdynHfM5Iys1q40Egx/lWaZ6JHefuYwoC7bjH2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KQvCDgXx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Njt+z226; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59VF7Dbw3210518
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:44:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vvHKLumKKaVNpfG3W6t6aYP4
-	CbJ/5LJdAfa5MGOu8/4=; b=KQvCDgXxzqVclXNmB/ngqm50Mk7X6iKbKzWhNvSZ
-	3UOCW9qdgrNnEhPbnfM8eiYiRoHX03qLmUAIo1ISyAVsf/690rZHRCi212QFmYoC
-	MxwhMx99YqoMX4x6p0oi5H0zFOziho/1iXldgNH5SYdvwKq9ArNlY8vkFBMgCGH9
-	t34Kbv/jT5VjbaWOinGglah/q5jqQYRwHShskdT4mhcytUeOu0E4/5eKkbBWStil
-	+Zp2V8ITUy1QEUpi7Le4mhpRqu8dnw4c8VOuus9SW18opppNxMnwLGbfy2aWlp7S
-	7zPJDOaOJ4agF8YSsEARJozB5mkk2aqGY3U/7ZV/q0K15Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4yfpge79-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:44:56 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4eba1cea10dso86532731cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761932696; x=1762537496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvHKLumKKaVNpfG3W6t6aYP4CbJ/5LJdAfa5MGOu8/4=;
-        b=Njt+z226R/3CopOAlqm1PHF7g/wuD9MCmZ3GwzueLXO2fhftlu6brwKgJduU6xuhP9
-         FrIID8zkdpgCxffeCdy6zKWTy/Un8pD8s5Wn/6GpSNp0e3ZDCuXfeeVOSZyKgm8mappW
-         rwYYXEBrY/kdQ574nnP3/rzwn7St1TGVdWEvml20s4ovIc+ELw3uyRg34JzFqQQ2pWK2
-         RIOxilRvimQ4E+qbMbe2UBbhe3GwcADOi3BWyS8s5+rc1arN961s1COpfz8tmw6ubsor
-         fKTSMre7A4RZX0UUJvdovTD+jUBuwEUiSYUJm1PBH1MQACkNLywtXhVI35y6/XmL065k
-         A1JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761932696; x=1762537496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvHKLumKKaVNpfG3W6t6aYP4CbJ/5LJdAfa5MGOu8/4=;
-        b=Q24pofQym4bHU48yVyZBFwXvwL5sMfEUDK1g8o+jVQqMF/X/C+E3BQ/RIWn3YrW/KO
-         rSc1tsOkmewyDtb4Olx0b8tn+G8CZbgep3o9NrinXmraPT1lEOjWROXAvJVHjHXcBRHV
-         uFxo74waV5VB4Ob/KvJWJtZZbO4AhZsj6M3qpBi2MftrKxG9kcAN8GAjEnEug/yjrU86
-         mf5yfL2D/XVkDBJw/6OksUWh0ZyTq7mOUjUhja0qK7oIyaGSZGkIFBlDHKpzzeN7yqrs
-         gz05I+ou2PMh1FkrhsP/rzI7XHw/XSlejPrIle4ET4o3AUTP8dpMCDu++N477hu5FMI1
-         AlUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl/MoXlJgitiQwPmrHQv1891snby9IPyJzma9s6lcSeqGelPFzxn2D24Bxmg3t13x7FT5Zp/Kptp427Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylSrivBynPDqkSGqoZ7JycElJIqfTOv6JRpzkBOOdjh2UOmm0N
-	dcKoWAA6tZR6zu/uBWJz4eV82MZWxu5TIjsieA8uijGnDjDzvYOnGLPS0XIn+DqjiO8/UVO7L2H
-	wL3MNL63dXSj7acDI44GgWBvMPlIMk1zbvG4W+q81dcv+ZhELZwP4a9KgmBulD1p7X90=
-X-Gm-Gg: ASbGncslaq5PUooH4u2oRQcQAGZ/b63GZpx8cyZdWRSw/4dQfZeOv3SH10gwJPnIKrW
-	297+vOMwwH5yltHMr0fUKHjic/BeffQZ5FvlNT5ZsOCZTW9gYhb0sLpI6mYX9dO8X5W8vz6ocB7
-	qTHJzyLJm4w6zaQoqJ3VppQauQwDjkslgkZtN16ZhsbzHceVzgnycLuT/TjqcX/+Hgxg4PrqVKR
-	AgfcEe/QupIHKKbYehYXGCNAZQ2InLCAikrUGMuf1P1YfoIm5gKtRhCz4gGcp4NPouNqlHx46/M
-	QdwID3zq5K+xwcPyZkZS7TEn1T/mjMVxmQO36maYRIoX/X/VFqNrycVN0G5seXMCBUYqJraXWWQ
-	HQSwCla8a/Zx4OfFwQqhXvGMiI1vzQHX4nqhu70Kr74Lt0ZsIO4utpJjrt+AC4i5UkalkwHSGCS
-	3yySxUmdm78mmj
-X-Received: by 2002:a05:622a:1aa4:b0:4ec:f4be:cd9e with SMTP id d75a77b69052e-4ed3109b8f2mr50682701cf.73.1761932695707;
-        Fri, 31 Oct 2025 10:44:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9bEHzE8FUhJ91Y/44yaTELcPDElgy8o9JtMJnkidFrR8S2ct4TEYiKDSKIhS6PFHQgLRXEQ==
-X-Received: by 2002:a05:622a:1aa4:b0:4ec:f4be:cd9e with SMTP id d75a77b69052e-4ed3109b8f2mr50682271cf.73.1761932695194;
-        Fri, 31 Oct 2025 10:44:55 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5b5cc4sm639106e87.72.2025.10.31.10.44.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 10:44:54 -0700 (PDT)
-Date: Fri, 31 Oct 2025 19:44:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, robin.clark@oss.qualcomm.com,
-        lumag@kernel.org, abhinav.kumar@linux.dev, sean@poorly.run,
-        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 08/12] arm64: defconfig: Enable NT37801 DSI panel driver
-Message-ID: <epz7tibi4kduo6agfirr4fe477dakdccwob4xq2nz6qkjqakr6@jmweqjka4xgd>
-References: <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
- <20251023080609.1212-3-yuanjie.yang@oss.qualcomm.com>
- <wuh7agcgg6spghilnx4amqukaaydj25u7kbdiod7fl6pu2ulvm@pmosyuo43cyw>
- <aQF98RvLuOlJZlFi@yuanjiey.ap.qualcomm.com>
- <38c8e26c-08a4-42d9-8f6d-93969af90d50@kernel.org>
- <aQLOaI3ngjswi7kd@yuanjiey.ap.qualcomm.com>
- <7c1e0cb5-2483-4efa-be52-84cbe5d1a4b2@kernel.org>
- <aQMOz4P2/WyjXy1b@yuanjiey.ap.qualcomm.com>
- <4e444fd3-b079-4e0c-9449-1c119e1d710a@kernel.org>
- <aQQevC/Jd76rTNSU@yuanjiey.ap.qualcomm.com>
+	s=arc-20240116; t=1761932754; c=relaxed/simple;
+	bh=8Z5thQC+rZDV7YQzns00IgbOSJUd9ppvWPw+j4n6pWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hR66jY2PJnBqxmix+RikdyCW5Zqz5nljms8kmPh2jP07L2HVGsTa+HmtOFjk56OhPn1DH2vRARC1Twi7rU0dXTfIjJi5FiUNQDmdJXK4YsuuwFHgcmvwqq2augKh6/3rKxl2ThfgzG1GBA6/E4lGwI1Cel0qvTF0565TNoJH2/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mm/enWZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A471C4CEFD
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761932753;
+	bh=8Z5thQC+rZDV7YQzns00IgbOSJUd9ppvWPw+j4n6pWM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Mm/enWZAWMDexVX/fM2kYROrmhHpBdzm8nbycEeWDHnO8PA6XXIyNOcJjSWX8bZqn
+	 2OdmViUgwKEHTRFYwD5BgZE10XvwxitQi0+ZD61Nzq8aRrVN2lMfT03tG+dKxr1NYQ
+	 K92snLHJa+AlDf0mSJvP6DfsWKAU1JkCDOWJF4f6IdAMKIjiKHTH1OLq/3cbELc3DJ
+	 wvZCVb1xLk7serWJIZ67u1/RPAd2BS9tZe3GOIFRxb/9dGq4FBY/c/d2Sdm4UkrBLG
+	 jF4OR3sbBwvEi1O9WI/OFg/DyDSuQWE5/dryDqJh6Zs3mEygo8hMwQ1rtwsGhBg/iR
+	 /i9CZ8dqZ4bkg==
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcac45so29894107b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:45:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVwyVMZ502ddMR+kJLtXnJ3YzH1fn0s8YFeooUl1utJyV+3NbVQ0BgYxId/kFhqyqGcyDW70UPZPbsMN4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrNmRT3yX2u8naQcQUXLEEaKy2Fvi+7egeybwR2GmdRYPytC1S
+	GH3BGsgDF3umV7BSu3p4h7mb84/57Lncde9IW9DAiRDwlu4Rps0aoELT9dOVIZM5U67CvAXgUus
+	W2bq6yKWgObN6iK20QUDPWE3oE/HOR30pSdk4gP43jw==
+X-Google-Smtp-Source: AGHT+IFqrgTBfMBmVRiXWO3Rn5PwN2T0UvwtVFKxReo6CBC7EejYTOkW7+aB0EyRLa858pu/9lZjhalDMoVSb2xP8ow=
+X-Received: by 2002:a05:690c:dd5:b0:785:bfd8:c4c6 with SMTP id
+ 00721157ae682-78648526568mr44021407b3.49.1761932752205; Fri, 31 Oct 2025
+ 10:45:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQQevC/Jd76rTNSU@yuanjiey.ap.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDE1OCBTYWx0ZWRfX3sOKPc3eeDv6
- +W2zxh0mmwTRyf5710i+36Nz6pMieBGKIMQpqKg9ZK0PQkw4lW+CpH1gif1/x+zwbwjfdH56S4O
- Ii1XQtpT8nqpAxT0F2xIOazzyS5QXkx2o9nQHSnEbIgymXfCd81CCd++o5X25BvBE1ek3qgNeEl
- 5W07XAg4SqOmGGIoOYY570kOl0eLoBXZVqxPEL0ZNFVAJNtwWCBvGYKywRYZUt1k/CywH6153B6
- bDiVWuRdyYuiWNrPDD1iJV9E2gvumKL6ED9sVdnCW1KTBgInhcOkVBHLLgVacKKjqMmcNtscz41
- uyMTxhu87M/YaBObujfQPMs5EclClVDbs+3y4OwsFq0S3urtfdtyx7x4x0Fv4pgwwi/XlNOf44K
- IGfOQ7r1ikIGDZqbQ/Z3zYVP3XBM5Q==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=6904f598 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=P-IC7800AAAA:8 a=EUspDBNiAAAA:8 a=SA9wRs256TnAP9KdDBoA:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22 a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-GUID: ytkzoLK7vxsBYGNyke4KR5zTO48syIh7
-X-Proofpoint-ORIG-GUID: ytkzoLK7vxsBYGNyke4KR5zTO48syIh7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-31_06,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 clxscore=1015 adultscore=0 bulkscore=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310158
+References: <20251024-swap-clean-after-swap-table-p1-v2-0-c5b0e1092927@tencent.com>
+ <20251024-swap-clean-after-swap-table-p1-v2-1-c5b0e1092927@tencent.com>
+In-Reply-To: <20251024-swap-clean-after-swap-table-p1-v2-1-c5b0e1092927@tencent.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 31 Oct 2025 10:45:40 -0700
+X-Gmail-Original-Message-ID: <CACePvbVEaRzFet1_PcRP32MUcDs9M+5-Ssw04dYbLUCgMygBZw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkBLbpzK-7LQwl8d_11rWtB-YUCktamd5vXceO5ofoa6GX9KxB-9BfXeC4
+Message-ID: <CACePvbVEaRzFet1_PcRP32MUcDs9M+5-Ssw04dYbLUCgMygBZw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] mm, swap: do not perform synchronous discard
+ during allocation
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	YoungJun Park <youngjun.park@lge.com>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 10:28:12AM +0800, yuanjiey wrote:
-> On Thu, Oct 30, 2025 at 11:43:49AM +0100, Krzysztof Kozlowski wrote:
-> > On 30/10/2025 08:07, yuanjiey wrote:
-> > > On Thu, Oct 30, 2025 at 06:37:40AM +0100, Krzysztof Kozlowski wrote:
-> > >> On 30/10/2025 03:33, yuanjiey wrote:
-> > >>> On Wed, Oct 29, 2025 at 02:05:20PM +0100, Krzysztof Kozlowski wrote:
-> > >>>> On 29/10/2025 03:37, yuanjiey wrote:
-> > >>>>> On Mon, Oct 27, 2025 at 10:51:23PM -0500, Bjorn Andersson wrote:
-> > >>>>>> On Thu, Oct 23, 2025 at 04:06:05PM +0800, yuanjie yang wrote:
-> > >>>>>>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > >>>>>>>
-> > >>>>>>> Build the NT37801 DSI panel driver as module.
-> > >>>>>>>
-> > >>>>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > >>>>>>> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > >>>>>>
-> > >>>>>> You (Yuanjie) authored the patch, but forgot to sign-off, then Yongxing
-> > >>>>>> provided certificate of origin, then you provide certificate of origin
-> > >>>>>> and send it to list?
-> > >>>>>>
-> > >>>>>> Please correct.
-> > >>>>>
-> > >>>>> All the display patches were jointly developed by Yongxing and me.
-> > >>>>> So every patch 
-> > >>>>
-> > >>>>
-> > >>>> So two people were working on this absolutely trivial defconfig change?
-> > >>>> I have troubles believing this.
-> > >>> I want to say these patches I am first author and yongxing give me support, so
-> > >>> I think yongxing is second author.
-> > >>>
-> > >>> I want to express my gratitude for Yongxing's support in every patch, so I included
-> > >>> both our names in the sign-off for each one.
-> > >>>
-> > >>> However, if my intention causes any trouble for maintainer, I can remove Yongxing's
-> > >>> sign-off from this patch.
-> > >>
-> > >>
-> > >> Please read submitting patches to understand what Signed-off-by means.
-> > >> Otherwise I have doubts we can accept your patches - you simply do not
-> > >> understand what you are certifying.
-> > > Thanks for your tips, and I learn some tips from submitting patches: 
-> > > https://elixir.bootlin.com/linux/v6.18-rc3/source/Documentation/process/submitting-patches.rst#L524
-> > > 
-> > > I thinks below sign should be true, if you also think it true, I will use it in next patches.
-> > > 
-> > >  Co-developed-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > 
-> > How does co-developing match what you wrote "give me support"?
-> OK, I will fix sign, will keep sign below in next patch:
-> 
-> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+On Thu, Oct 23, 2025 at 11:34=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
+te:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
+> fast path"), swap allocation is protected by a local lock, which means
+> we can't do any sleeping calls during allocation.
+>
+> However, the discard routine is not taken well care of. When the swap
+> allocator failed to find any usable cluster, it would look at the
+> pending discard cluster and try to issue some blocking discards. It may
+> not necessarily sleep, but the cond_resched at the bio layer indicates
+> this is wrong when combined with a local lock. And the bio GFP flag used
+> for discard bio is also wrong (not atomic).
+>
+> It's arguable whether this synchronous discard is helpful at all. In
+> most cases, the async discard is good enough. And the swap allocator is
+> doing very differently at organizing the clusters since the recent
+> change, so it is very rare to see discard clusters piling up.
+>
+> So far, no issues have been observed or reported with typical SSD setups
+> under months of high pressure. This issue was found during my code
+> review. But by hacking the kernel a bit: adding a mdelay(500) in the
+> async discard path, this issue will be observable with WARNING triggered
+> by the wrong GFP and cond_resched in the bio layer for debug builds.
+>
+> So now let's apply a hotfix for this issue: remove the synchronous
+> discard in the swap allocation path. And when order 0 is failing with
+> all cluster list drained on all swap devices, try to do a discard
+> following the swap device priority list. If any discards released some
+> cluster, try the allocation again. This way, we can still avoid OOM due
+> to swap failure if the hardware is very slow and memory pressure is
+> extremely high.
+>
+> This may cause more fragmentation issues if the discarding hardware is
+> really slow. Ideally, we want to discard pending clusters before
+> continuing to iterate the fragment cluster lists. This can be
+> implemented in a cleaner way if we clean up the device list iteration
+> part first.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast pa=
+th")
+> Acked-by: Nhat Pham <nphamcs@gmail.com>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-There was already one and it doesn't help, because co-developing means
-actually developing together or one after another. "giving support" is
-not co-developing-by.
+Acked-by: Chris Li <chrisl@kernel.org>
 
-> 
-> Thanks,
-> Yuanjie
->  
-> > >  Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > >  Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > 
-> > 
-> > 
-> > Best regards,
-> > Krzysztof
+Chris
 
--- 
-With best wishes
-Dmitry
+
+> ---
+>  mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------
+>  1 file changed, 33 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index cb2392ed8e0e..33e0bd905c55 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(stru=
+ct swap_info_struct *si, int o
+>                         goto done;
+>         }
+>
+> -       /*
+> -        * We don't have free cluster but have some clusters in discardin=
+g,
+> -        * do discard now and reclaim them.
+> -        */
+> -       if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard(s=
+i))
+> -               goto new_cluster;
+> -
+>         if (order)
+>                 goto done;
+>
+> @@ -1394,6 +1387,33 @@ static bool swap_alloc_slow(swp_entry_t *entry,
+>         return false;
+>  }
+>
+> +/*
+> + * Discard pending clusters in a synchronized way when under high pressu=
+re.
+> + * Return: true if any cluster is discarded.
+> + */
+> +static bool swap_sync_discard(void)
+> +{
+> +       bool ret =3D false;
+> +       int nid =3D numa_node_id();
+> +       struct swap_info_struct *si, *next;
+> +
+> +       spin_lock(&swap_avail_lock);
+> +       plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail=
+_lists[nid]) {
+> +               spin_unlock(&swap_avail_lock);
+> +               if (get_swap_device_info(si)) {
+> +                       if (si->flags & SWP_PAGE_DISCARD)
+> +                               ret =3D swap_do_scheduled_discard(si);
+> +                       put_swap_device(si);
+> +               }
+> +               if (ret)
+> +                       return true;
+> +               spin_lock(&swap_avail_lock);
+> +       }
+> +       spin_unlock(&swap_avail_lock);
+> +
+> +       return false;
+> +}
+> +
+>  /**
+>   * folio_alloc_swap - allocate swap space for a folio
+>   * @folio: folio we want to move to swap
+> @@ -1432,11 +1452,17 @@ int folio_alloc_swap(struct folio *folio, gfp_t g=
+fp)
+>                 }
+>         }
+>
+> +again:
+>         local_lock(&percpu_swap_cluster.lock);
+>         if (!swap_alloc_fast(&entry, order))
+>                 swap_alloc_slow(&entry, order);
+>         local_unlock(&percpu_swap_cluster.lock);
+>
+> +       if (unlikely(!order && !entry.val)) {
+> +               if (swap_sync_discard())
+> +                       goto again;
+> +       }
+> +
+>         /* Need to call this even if allocation failed, for MEMCG_SWAP_FA=
+IL. */
+>         if (mem_cgroup_try_charge_swap(folio, entry))
+>                 goto out_free;
+>
+> --
+> 2.51.0
+>
 
