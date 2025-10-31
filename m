@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-879774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D763FC24061
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F2C2400E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:05:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22598567558
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7425856741D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A5532ED24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238CF32E755;
 	Fri, 31 Oct 2025 09:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sq2sLfmj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="01K1rCA1"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E2832C93D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402132D0F2;
 	Fri, 31 Oct 2025 09:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901318; cv=none; b=WYZ5NxNpWMeaR34XOP7aoo2AjIuTLEcCO4/1gU+AOIPIbRi6+djy/uKmNJO+EDQ3i7YGxbAm+rfN/8LPptqvTep1rupcH9YCocdWYhH9IZN6sVUHhKycyyTolV160EAJfaosLBoPM3G/Uz+Eq3xSDmr+SvN4v03l2DuvPL+4lf0=
+	t=1761901318; cv=none; b=gTN/YAejVQkqSaiH7uEJkY343ReyvMqUoy8zBkPCpXM1lYq97b66oY8R/djTa/cqv589VtkN7yYFVWmN16iTHn0ozy9AOn8wnisK0ebruaTkkhRWk9a12IYHhMxd2dOUTixpbMx8qvVf1QEUolmnJNcn9JElzSe+I4qFbmBHovk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761901318; c=relaxed/simple;
-	bh=WrRAkZWX2mY1Sn4BYh8lP0+Uv8J4x4xta8TyjbzO6EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gfwJAPwu9PZn2cBT0Jbh8JQxfd287t6lp7ReUQPRigybjrxU5pKExRLAXBMVI1BE+OiUDIq2B2c1QtBAQlMQy1yOCI1cAzhnpLCC62wszfXfb+4F0afD2CDeuJe8MopWvpOGUjgkJ5epD2oJeNOrXDovAYXcU9eEvkw89pMe7zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sq2sLfmj; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761901317; x=1793437317;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WrRAkZWX2mY1Sn4BYh8lP0+Uv8J4x4xta8TyjbzO6EM=;
-  b=Sq2sLfmje2ZeDz5hZSVX9mEkwXjHmQr0YQElNkrBZKrzfOHbZPdYAXcK
-   UlibsXE7whgpwzpISuXg+jr2ZgBW0vEmOv2VHY/hBnfkkCay3zwJsyqj6
-   gJPXUKoXP8nKzH7/qRGgKnul+DaNHFRoYCv7yOhpoXItUnQu0Vxcapzg5
-   c+xUXbDCu9AVR4jco/m89OVlCxykle7vHi4o/g0Yu1XitLBXXPrU9opfb
-   v/IBLCXYYqM7QNlVlqGem5nG6Xp67DrNDV8PlBo8aJJ7w0CbFpuPDZUZm
-   Iw6w8auzgJQtGd3On1hIhDUfsR+Nl5vimpEnm9qQBhCrCF3nRjmFNxe6J
-   A==;
-X-CSE-ConnectionGUID: tNRuY/7aTt6vJcUw0m1jpg==
-X-CSE-MsgGUID: KeXux0DyQzSHV5wTuHddlQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="66671060"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="66671060"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:00:58 -0700
-X-CSE-ConnectionGUID: Dd9eBStPTB2R+zNgqb0uKQ==
-X-CSE-MsgGUID: AT1MnrH1RWGItLZni9BlRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186120016"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:00:50 -0700
-Message-ID: <326290aa-def6-478c-9ef3-1649e027e5d5@linux.intel.com>
-Date: Fri, 31 Oct 2025 17:00:48 +0800
+	bh=mqvC6RlbP3oeEflL7AIfw7ofEo2NITuMjz5Yg98lAwA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hsCNxNwiJ2KjuZcuKeYepeGfUdbhn3Gm9nrpjMoumRIRXbQDNgJVf0KyBQ3pyN29WpymbH3AsMRfhk3HQM+aXtFQ12kczAhkBwu04BeaEEFmcd8KzoI38YVTT9dK7vWFtb3ZePq9GJtuyVA5ibxuFL895oqQWJ1hr7Nk+9bSzQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=01K1rCA1; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B2F7A1A17A8;
+	Fri, 31 Oct 2025 09:01:54 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8229260704;
+	Fri, 31 Oct 2025 09:01:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CCB3A1181083D;
+	Fri, 31 Oct 2025 10:01:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761901313; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=0dcDKq9UuBF20o0hyNzb1Nz3YZY3Z4xE5wso7h6K0Sc=;
+	b=01K1rCA1W+aEl0wk61vycso2DndXwdNGIeDX8edqTDo0yicG1WoV+arUK21ttnUpUW13JZ
+	CY5VaWWXoxoZP3+hclLqf3r6sF8bBRkXuLgun0QKW92EkwnZSHRCSAIfSPJ5C3WKo5eFh7
+	2uJvgesb1oaxuN08rqH3dhrhgc1HOalZjgrm+TO2dP7SQ7ayfoWqxgkbCBDhm6/5kXj7FM
+	evRBCgofpMNmwW2MzAKQPm7zuR6WdHsAPpxZU4G2+dFamfWruI2RQI0wtqohxkzNGsIxRV
+	SxlvHKOeXPx1SNwTCeWVWR8jl0oIXz9JEmntQtMAp6Jvm93x/76SVPCYHg0Vvw==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Date: Fri, 31 Oct 2025 10:01:41 +0100
+Subject: [PATCH bpf-next 1/3] selftests/bpf: skip tc_tunnel subtest if its
+ setup fails
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 19/28] KVM: TDX: Derive error argument names from the
- local variable names
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251030200951.3402865-1-seanjc@google.com>
- <20251030200951.3402865-20-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251030200951.3402865-20-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251031-tc_tunnel_improv-v1-1-0ffe44d27eda@bootlin.com>
+References: <20251031-tc_tunnel_improv-v1-0-0ffe44d27eda@bootlin.com>
+In-Reply-To: <20251031-tc_tunnel_improv-v1-0-0ffe44d27eda@bootlin.com>
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
+A subtest setup can fail in a wide variety of ways, so make sure not to
+run it if an issue occurs during its setup. The return value is
+already representing whether the setup succeeds or fails, it is just
+about wiring it.
 
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+ tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 10/31/2025 4:09 AM, Sean Christopherson wrote:
-> When printing SEAMCALL errors, use the name of the variable holding an
-> error parameter instead of the register from whence it came, so that flows
-> which use descriptive variable names will similarly print descriptive
-> error messages.
->
-> Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+diff --git a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
+index cf2e088bfe8e..1d8d38e67f8b 100644
+--- a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
+@@ -666,8 +666,8 @@ void test_tc_tunnel(void)
+ 		ret = build_subtest_name(cfg, cfg->name, TEST_NAME_MAX_LEN);
+ 		if (ret < 0 || !test__start_subtest(cfg->name))
+ 			continue;
+-		subtest_setup(skel, cfg);
+-		run_test(cfg);
++		if (subtest_setup(skel, cfg) == 0)
++			run_test(cfg);
+ 		subtest_cleanup(cfg);
+ 	}
+ 	cleanup();
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   arch/x86/kvm/vmx/tdx.c | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 5e6f2d8b6014..63d4609cc3bc 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -41,14 +41,15 @@
->   #define TDX_BUG_ON(__err, __fn, __kvm)				\
->   	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
->   
-> -#define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
-> -	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
-> +#define TDX_BUG_ON_1(__err, __fn, a1, __kvm)			\
-> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #a1 " 0x%llx", a1)
->   
-> -#define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
-> -	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, __rdx)
-> +#define TDX_BUG_ON_2(__err, __fn, a1, a2, __kvm)	\
-> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #a1 " 0x%llx, " #a2 " 0x%llx", a1, a2)
->   
-> -#define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
-> -	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%llx", __rcx, __rdx, __r8)
-> +#define TDX_BUG_ON_3(__err, __fn, a1, a2, a3, __kvm)	\
-> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #a1 " 0x%llx, " #a2 ", 0x%llx, " #a3 " 0x%llx", \
-> +		     a1, a2, a3)
->   
->   
->   bool enable_tdx __ro_after_init;
+-- 
+2.51.1.dirty
 
 
