@@ -1,145 +1,101 @@
-Return-Path: <linux-kernel+bounces-880158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045E8C25005
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:30:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D391EC25011
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2F76350D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B553BDDCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309634845B;
-	Fri, 31 Oct 2025 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6249348897;
+	Fri, 31 Oct 2025 12:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="gHKvRPN9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NAacxvQK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305E91922DD;
-	Fri, 31 Oct 2025 12:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913796; cv=pass; b=MkZOK1880Pgh0SY0pXL2cHBxD8yRJXhBTYggME9wmMJN9Su1AZUdYDbTMnfFUWXlH/EdgVZePN5EJqx6vndelHvBjevpkGc8+CwnV8rBQkhBUqTraycWpsmjZxInMkIpnUldBrZFMTosUGKWYsCDIvGbXatViVJiX8bhCvhq6+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913796; c=relaxed/simple;
-	bh=gEr6wUDalR20obqcCqsJpn2+gnQyfPKeWURJKuUhkQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bW9I/qHYi6mpjrtkRlSmEZgojMukJHDg2ewniRYGRTlN+1Pd+y5kfgxyXpV71ZyxfNRaTzu6B+nwakodHg3Wjngbg1SVFK5XGCvcZpPwwS2+O4jLzizQocOhgOf/XmwtvgO7au7zSOknWxZOUTaTXm/7Pv0tXxDBn3gMU/biLh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=gHKvRPN9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761913773; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Lbv+fXr9nldSZ6bg2HxAoLbBLIzWWdu/lCarcLknvjWruEAX72qbG2BejhKPOlAwN5ZzV3YQBkuP5enNXNxGYiE9/9WuEll7ddxT82q8CnApUPaV1j5s+LZpNKN4ZpF7nDuaVpmkpfwF7IEy3VTi9k3hcK0kCyaD/TyASu5t6/I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761913773; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=i4PdjAgGN9CXMADjTYH6Vrnejj2e5huADOUeceii3Ag=; 
-	b=VjjbDznmMFtS6Cmdz6hoJi+GITJJ23e5wz0WnnFjbyGQDdu/BiSFoCwWREhaTtzz6AnZ7vR44hHaJTGEUddxPtHHORjctN2ohZUjzZ/OyBz2hVkgCVvXXcoz1nxLFLhC1bAwz6KUkTVAaznLOo+vqScX8aEqOfqJKDQBfUD/FSo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761913773;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=i4PdjAgGN9CXMADjTYH6Vrnejj2e5huADOUeceii3Ag=;
-	b=gHKvRPN9Tr1hv3oHVcXGKSvjBpijr3x2hWyzkr57PZTRUoUfwmZeTlH66YqGOOcc
-	jFCdXsJEY9zQRdS/yl7j4HDOrK3i1UMRfiLAZml+Fsh1RltGxyHWeEb2FEjGCd6XTDV
-	EfLPRnMBl8EBvnX73mNzngposYFIGN4ax4WCWStA=
-Received: by mx.zohomail.com with SMTPS id 1761913772134279.7995112453409;
-	Fri, 31 Oct 2025 05:29:32 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Anand Moon <linux.amoon@gmail.com>,
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>,
- Shawn Lin <shawn.lin@rock-chips.com>, Hans Zhang <18255117159@163.com>,
- "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>,
- "moderated list:ARM/Rockchip SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
-Date: Fri, 31 Oct 2025 13:29:25 +0100
-Message-ID: <15087240.uLZWGnKmhe@workhorse>
-In-Reply-To: <b2micr4atfax2sgolsublmjk4kwvbmdnqjlk2lb7cflzeycm5i@bi62lg75ilo6>
-References:
- <20251027145602.199154-1-linux.amoon@gmail.com>
- <20251027145602.199154-2-linux.amoon@gmail.com>
- <b2micr4atfax2sgolsublmjk4kwvbmdnqjlk2lb7cflzeycm5i@bi62lg75ilo6>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DEE348477;
+	Fri, 31 Oct 2025 12:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761913805; cv=none; b=ZAarUCKJ8S7e3soI+LpRro8I0SiRjxptUcUj4xMfuV6Iqn55irwgQROXWs+Up9DVvuberOHzJlOYKL2wXanh0zBn51PW6sEVoqpeZVVfHfOGZfKNkVNquwc1wLFicAuH66mFvNugXLPEYWLsmCErA1EY0OqItDj+dMBMx7RBQG0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761913805; c=relaxed/simple;
+	bh=ZfBeZeOrfeCfA4IySjbQEl56zVTIo3NBKvN2p8nK5EA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVPyclRMg2u40YMiaH2mcOrHQPINz2JfkH+FuWxF3AUxgiKBrG2UGOssPm0aed+1IaSDsZpu23kdWXVIvABqjDwk+PIfhru8soe2tFs0c0neE55lLEm/VP+myn2uQmnurG6ryW4CoH9LbVHScl/Wz2c/rqqCs1MJlxwyspt8a1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NAacxvQK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B467A40E021A;
+	Fri, 31 Oct 2025 12:30:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fTS8d06j1pil; Fri, 31 Oct 2025 12:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761913796; bh=5W8cFUSX+1C2+f7kJV0HMrg+JK7CQzCAJMjTC+oP5I0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NAacxvQKxHE0dPthBsBaPtsdILOOvIBJv67+sKLIEqUE44MpKgJnfJoLUKdYiUcXh
+	 P/d0E+/sZv30I8IAq0vjqlXyyFhpHf/ZeZaSlpjDgcZZp8oqe9bXk/RCtOV9HBARv4
+	 34NJnluqgwB3Ez+EnIf9mswJRyp8dZESsMxktoRJO2LeZmvVDRlth9QHUL7QhxcxaI
+	 CMtrulPq6QIf9gSvelYg9VZoSoMXMjjEJP/dr5Z8kDtLaTkR3tMaHxQ2kjRnGbBuEP
+	 uqIsK9G8K8aXmLdQ7qvy4jczlUKiJKPXSGFbc/gTG2FAMPbwDhk0h60/Nmnz+OdxaT
+	 hCQpsnM158Btl2JA/zNqAqEEWMuSZynvwhQdn6iFsT3zHCDeOMjkcsdHYy4c5BA4HO
+	 SyLkQfW/HOOA2bOlaD+/3RZWCVFSH+WhQkWQlgPEXKDikOvh7WaE/yUT+0mI6XMuGG
+	 GHAkgCAkvFb0Ezs6yRAlKAANIOAaPQ1Uhpi/givOfq5JvheZ2sVvftbMWKm+0rJ+la
+	 XmzJPzClpR1+TPPbwTA5/JOhOBIvr/hGDmTBm9LSLTKu1NYUSpbddFCzwsKR7EysDk
+	 fqVL4Lp+EsuxMGZBqX7afwS4G9V/ajIC1FZR+k4eUAchhcZgKGTsHHXaq4fInM0Bf7
+	 HAriFeBSCfkRn4T3SO9L/G+8=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 0538740E016D;
+	Fri, 31 Oct 2025 12:29:38 +0000 (UTC)
+Date: Fri, 31 Oct 2025 13:29:38 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Kiryl Shutsemau <kas@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, hpa@zytor.com, x86@kernel.org, apopple@nvidia.com,
+	thuth@redhat.com, nik.borisov@suse.com,
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	kernel-team@meta.com, Michael van der Westhuizen <rmikey@meta.com>,
+	Tobias Fleig <tfleig@meta.com>
+Subject: Re: [PATCH v2 0/2] x86: Fix kexec 5-level to 4-level paging
+ transition
+Message-ID: <20251031122938.GLaQSrsjuXOp6FA8p7@fat_crate.local>
+References: <20251028105637.769470-1-usamaarif642@gmail.com>
+ <20251029204814.GHaQJ9jhw4u5SU1rNJ@fat_crate.local>
+ <e7h3mlj6x4k36e2ydsmbqkulh3ombhm3j4kvmw4pzlynoaaxjz@yrth4sw2tf26>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e7h3mlj6x4k36e2ydsmbqkulh3ombhm3j4kvmw4pzlynoaaxjz@yrth4sw2tf26>
 
-On Friday, 31 October 2025 09:36:05 Central European Standard Time Manivannan Sadhasivam wrote:
-> On Mon, Oct 27, 2025 at 08:25:29PM +0530, Anand Moon wrote:
-> > Introduce a .remove() callback to the Rockchip DesignWare PCIe
-> > controller driver to ensure proper resource deinitialization during
-> > device removal. This includes disabling clocks and deinitializing the
-> > PCIe PHY.
-> > 
-> 
-> How can you remove a driver that is only built-in? You are just sending some
-> pointless patches that were not tested and does not make sense at all.
+On Thu, Oct 30, 2025 at 10:23:11AM +0000, Kiryl Shutsemau wrote:
+> Older kernels in our fleet run with 5-level paging disabled. The newer
+> one enables it. Machines need to switch between kernel version from time
+> to time for different reasons. Switching from the newer kernel to an
+> older one triggered the issue.
 
-The better question would be: why does Kconfig make PCIE_ROCKCHIP_DW
-a bool rather than a tristate? I see other PCIE_DW drivers using
-tristate, so this doesn't seem like a technical limitation with the
-IP.
+Thx, makes sense.
 
-> 
-> Please stop wasting others time.
-> 
-> - Mani
-> 
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > index 87dd2dd188b4..b878ae8e2b3e 100644
-> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
-> >  	return ret;
-> >  }
-> >  
-> > +static void rockchip_pcie_remove(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
-> > +
-> > +	/* Perform other cleanups as necessary */
-> > +	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
-> > +	rockchip_pcie_phy_deinit(rockchip);
-> > +}
-> > +
-> >  static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
-> >  	.mode = DW_PCIE_RC_TYPE,
-> >  };
-> > @@ -754,5 +764,6 @@ static struct platform_driver rockchip_pcie_driver = {
-> >  		.suppress_bind_attrs = true,
-> >  	},
-> >  	.probe = rockchip_pcie_probe,
-> > +	.remove = rockchip_pcie_remove,
-> >  };
-> >  builtin_platform_driver(rockchip_pcie_driver);
-> 
-> 
+-- 
+Regards/Gruss,
+    Boris.
 
-
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
