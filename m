@@ -1,167 +1,276 @@
-Return-Path: <linux-kernel+bounces-879681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BFCC23C1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:22:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E100CC23C46
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D131562D9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:12:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5463D4FBF1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC822F6594;
-	Fri, 31 Oct 2025 08:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB9B33508F;
+	Fri, 31 Oct 2025 08:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lc+9FDXr"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZP7IkYKn"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD39311C16
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E31334C3D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898182; cv=none; b=EXjIuO9wS0hp91RzyCfNGbNnySG7n8MCQvTx8zEeqwN7SXcGMIpwMwRQgy99RAW+/q73ceairxPQx09j7inrLGorkxxNeU1IV8dD4tAbycCpHVUWcvv8lXENNds3GkAXbuLksx3ObbN0AMDFiuCc61b7n20tMBSCZCWquZhpkUg=
+	t=1761898197; cv=none; b=XD+9pBJWorwPN2AzuSQY+nyapGjQW/jRmlwssYaXkqPOc9ekhucp73/10NwVgYCN6x86/Y+ympK+tvIb/P+Vnfn6vFKKnL6YeJ+Z6ognPOCzsb5WLHlFyoZNrKL+Ll2T37fbh5OAB3DMiKpiFU8Vgld02VBInohsXPhQj2YQ1/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898182; c=relaxed/simple;
-	bh=kf8HyOsYwdOePIqwVTCWV7fE1+Z/HvbEoskwb19+yBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFgXVHxItAR0SLYMhFvxeOd6kiSArTlxFgEAkh0XYVENccEof/Od4uDEbOE28oM1v/LxRQ2GGwcU7Kk8H6dPKjoviOiWFpdTHmQtmd+2f9WLwIZkXR+v4Pjo8xxL6AW7Q9XMxahrA1C01DU6xGv9BtN90URNmB6NBtbaTCv4ZIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lc+9FDXr; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4770d4df4deso32795e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:09:40 -0700 (PDT)
+	s=arc-20240116; t=1761898197; c=relaxed/simple;
+	bh=6VABkFcdL4pP7sAm/yTHqwl6N6WhkVJoAUECazfWono=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eOKULreEK2qiCCEbLiNrnf/O18Ef2GD5rHKF49bRJZzkUAMicLmIOKkPDb6QCwWc2EkFRaVmdbWQI292tZH+WybUREg6vkuO+O3BmLKqHF2nhpvOfwRTwIOem0nuXxJK68nQ3p6tpAq+s1lpXHYIkiId/4P6hcAswt2nqI+OOB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZP7IkYKn; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so1954969b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761898179; x=1762502979; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VvPD2QlzwFWzsFKSo3tRWtjQG+OHFkXfXTJssyHMdKI=;
-        b=lc+9FDXrXiwwWzDDfFnplss3ObNmbbrWWaihGwjrLxv1r0ZdJw0MVyxlmMApFUZEgz
-         st/QJm3RFNqy5yRjukpwVIP6qSCXU3/FZOGtQmwts2TRqcidB+GwENkb/+ILY6om6L7v
-         bYTiI6KB/U/SI8usArVmDLX6VZtd+GbJveN3n68ql7C7Fj36m4E5uq1d/KRRwF28uGqU
-         +XFU8KK/+7NXLzstpc1Hr+c0vv1rR9qZdtsVzFtX2FWUr+NGJ720BkHZjlA12OejbOzb
-         bhh7JNNlqr47dj+Q9VOmPOrwj67kqa+yNXvU1u0ilSqmTMLNBxG3r2ey7pPgisUc6bMC
-         0HtA==
+        d=gmail.com; s=20230601; t=1761898195; x=1762502995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5yjTzpVAIcEmdotVWgALP9aimDetWuj08C3OGruDkEs=;
+        b=ZP7IkYKnPruSHniXH7gcFfP/CbkXhj5K0EySkKRIiOIRy29DbgeAND4WTHYbgL6Scg
+         cTm8wscxFU5KFsQKpqBQUoO9qU05zk/PaqCLEC6PM3KZhubvoq1c2rSRISFuW/lq8XG0
+         Ublq+vhrsU5uqAkl2eq6OlvGUHC3srHkAwWmHTCyJTlNoTPz3yzr7IQ89fSMlTqGpzgb
+         1aPbcZAoPamahuWbd45yFSDhDmaf1JFVe7HEiLRVzH1cJ1aelCplBsvmdorbym4JMJkb
+         KPI6l2BGsLcalrZYATNydvE9hKkut3VvNCtkNCF3fj1QPa8AzP9xrYuj8eGQe2yd0WHE
+         2Onw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761898179; x=1762502979;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VvPD2QlzwFWzsFKSo3tRWtjQG+OHFkXfXTJssyHMdKI=;
-        b=b1I6rDjAogO7DTEwDQ6DYwnyd3cJysBQ4egl5I0vmUlpEJikTrNlSgiqy2SY1g+xYb
-         gPVM+yVScy4lt9+ctWZSUy9Kqziv74xQ8RIxCseL2atOmbA3QPrThzAeq2/Iw3Qz+OAz
-         1MZVZDdCnHQTUrrY0zo+IgQjSy+jj/a8zsgRC+V5DxAeplmlwS8jO7jAxZE4QLJ4fc21
-         QEq1MgY/Ljz/XSJ5loK5Opb9M3wyftoaX9ypOODOh5LbYe0DMdVND/x7qK47DXx1VVPW
-         5jyQbEn3kcrUMb0wsN/J1wDTw6uRQg9Hqb9qxoqbW2MhxPM17kllIpvaxyfgH2FEtXs+
-         JnFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcj812bh8OFEh5iRtKULwnNwpgUEljgq37r+wdkZxes/1XmTr8Vc2VVLnDkM5XUyeAHx8taMRCV3Dms2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxN/wa7gYlBhVP7m2qKt5heFbn5xU/mxmetqnUXosnTMm3x8uc
-	V1yz4eQVt3FEZNsz+76FUImzHpmMKBrSlmC9uZOzCGYmlIrSk//XB+gxmHq4EnwR4A==
-X-Gm-Gg: ASbGncstap5JWNsqvFttNNuANY3A5COwIiBTsabp0MKJbJ9nf3BRHQ440p3kbjlZjm+
-	zmFGGEXghy8rYKOnAEodrEL8c+KSh6ioPQYQZn3eZH2sv3vtnYFsZPngWZksLyLhC5zUFA2eIR8
-	rfCbB+eImCT9tbi/t0LI233b2Tj7DshfQZkVCkrPFqu2xMWbRzluGt6NE9BwsxwPv3723INUCFK
-	cOMX0p+k+XdaQ8HwW3sFT3attyzw7eycCbjrjZ2okdgxmCClaGq7K49TOnzYWbo14Kxbispbq/p
-	70zgqMGo+Hz0CtwTFkKVQHQ/D0QBSLjoE9H7e3W5ZY/f50qA8ip7RpVfpGeZ8a6KeNZRhcd07cj
-	3HVJcM86Fr0tL6IMMgjZU4wlD5UYN7sCsO+0Z75GpTDEkW9oReZSGWzwVAlFrEMDjfuAGgIzrJ/
-	g4My1FXOtGuqIDSVFZvTkV1p9Vr/MkHCggew3df4Iu8MFf+m1hdoGrEMAUKw==
-X-Google-Smtp-Source: AGHT+IEowXI+Xa7Cev+Atw93C9B+sivtK/myXmK5E4UjFwYC2UVYflMXTzX7icRn1YESBGhfSybnGw==
-X-Received: by 2002:a05:600c:3ba8:b0:477:1afe:b962 with SMTP id 5b1f17b1804b1-477324afbe5mr1342845e9.1.1761898178470;
-        Fri, 31 Oct 2025 01:09:38 -0700 (PDT)
-Received: from google.com (177.112.205.35.bc.googleusercontent.com. [35.205.112.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47733023256sm19735575e9.17.2025.10.31.01.09.37
+        d=1e100.net; s=20230601; t=1761898195; x=1762502995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5yjTzpVAIcEmdotVWgALP9aimDetWuj08C3OGruDkEs=;
+        b=pbE0YL0Dnlin2HcKPi6v355sKgkDcEQuvTBKWaJSSGkvNG+th/MSkNCTIeqCm7I+Pn
+         0pcFOXdqgzAGmIyYVcmtR2bvtCLR9E1JbkA/HHXYExoEckk4wGx/ENaDszOe3F9+pGXX
+         6LITIj3ZA2lf7u6B+CyKddhWWQykDt2SzR9Px2JjYGagNorkScqyafZqmvCLMuUoA0oV
+         7DEZZNk963COM5LfDDu2tdHRI5vILgRzVSDh2Kd72neVqtR6UIUaZYd1iUbF128LRO3H
+         sM9i7/ln7qv77+9TGNwUXldPRyOsLPg+YaWkD08xLciXEvd/P4HgKrZMMEwxXC2b8THz
+         4FwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgFRdXtsCyhssmWzmmqJlIHzKxHAky0ntJ9FWegebDgEgHGx5PmJuvsLvXyxOde5wwsH+4HkMmV9cqLVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcfr/FB5qeDlGHe8PJRAEX30i/NOIK82yE6077SjmXxlIzyPBb
+	O46HkoBMZoOvfQV0wCCBxUGvm8STa78L9g91flnFA+OLPRxKML1v1wu6
+X-Gm-Gg: ASbGncvbQdMxkd++iBwErzl7Z1SThwLi9WOjtF15BPDu+Tozd7F9KzHC73hKm1SaAjY
+	FEpfi/n2X2hwvnPrqf2ZmNNdyNODtXMeRGQzvwQfENR4nA0NS1TuQdL6hqj2IKoImFEqGXU+s2z
+	Ohi5vCP/jq47C2J02U9zTLh5P6U8aMwzxtAOyEqmeuNqb2x2c4ENeG96+i0e3E191Tuizrp1HTn
+	daUbu1o7Fc2WKI+ffEVgTygdZoJ1DyvAF9+5fJqHqXjE4bM3jRoSqgqe2LcXCefVgoXAeIsXTX4
+	GOAq9EFH2vdvvxSsDKI0i5ePlNYEzDfG4viKyY/hk2BXD3FCf+Yw2oVfKuhyuZ22gZl5W0DpHFl
+	A/kbZxJ+cdhHfU5aRT5KZ54Hto0gaMD+17zjWsTU18KHhztoyaVsBiVQjLs/hKm7sg5EW7O+dvq
+	84tLwzxvjGGnXa
+X-Google-Smtp-Source: AGHT+IG+jjw5n2v8QevhSrZ53DsQ1U593U2bn2lanUX2sGqPkPrpdNzon5zxAsGiKnBgq/jOXhIkIQ==
+X-Received: by 2002:a05:6a20:1585:b0:342:1265:158f with SMTP id adf61e73a8af0-348cc6f4f2fmr4037368637.51.1761898194825;
+        Fri, 31 Oct 2025 01:09:54 -0700 (PDT)
+Received: from fedora ([2401:4900:1f32:68ad:2e67:289c:5dac:46fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db86cdd2sm1265276b3a.58.2025.10.31.01.09.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 01:09:37 -0700 (PDT)
-Date: Fri, 31 Oct 2025 08:09:34 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, perlarsen@google.com,
-	ayrton@google.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KVM: arm64: fix FF-A call failure when ff-a driver
- is built-in
-Message-ID: <aQRuvu8V3woqnqCV@google.com>
-References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
- <20251027191729.1704744-2-yeoreum.yun@arm.com>
+        Fri, 31 Oct 2025 01:09:54 -0700 (PDT)
+From: Shi Hao <i.shihao.999@gmail.com>
+To: linux-fbdev@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	deller@gmx.de,
+	linux-kernel@vger.kernel.org,
+	adaplas@gmail.com,
+	i.shihao.999@gmail.com
+Subject: [PATCH] fbdev: i810: use appopriate log interface dev_info
+Date: Fri, 31 Oct 2025 13:39:42 +0530
+Message-ID: <20251031080942.14112-1-i.shihao.999@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251027191729.1704744-2-yeoreum.yun@arm.com>
 
-On Mon, Oct 27, 2025 at 07:17:28PM +0000, Yeoreum Yun wrote:
+There were many printk log interfaces which do no had
+any KERN_INFO with them and they can be replaced with
+dev_info which will allow better log level handling
+making messages clear and manageable.
 
-Hi Yeoreum,
+No functional changes to the driver behavior are introduced.
+Only the logging method has been replaced as per modern
+kernel coding guidelines.
 
-> Until has_version_negotiated is set to true,
-> all FF-A function calls fail except FFA_VERSION.
-> The has_version_negotiated flag is set to true when
-> the first FFA_VERSION call is made after init_hyp_mode().
-> 
-> This works fine when the FF-A driver is built as a module,
-> since ffa_init() is invoked after kvm_arm_init(), allowing do_ffa_version()
-> to set has_version_negotiated to true.
-> 
-> However, when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y),
-> all FF-A calls fail. This happens because ffa_init() runs before
-> kvm_arm_init() — the init level of ffa_init() is rootfs_initcall.
-> As a result, the hypervisor cannot set has_version_negotiated,
-> since the FFA_VERSION call made in ffa_init() does not trap to the hypervisor
-> (HCR_EL2.TSC is cleared before kvm_arm_init()).
-> 
+Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
+---
+ drivers/video/fbdev/i810/i810_main.c | 46 ++++++++++++++--------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-I understand the reason behind the patch but this is problematic to have
-the builtin driver load before pKVM because the hypervisor would be
-un-aware of the host mapped buffers. (eg. the call from ffa_rxtx_map is
-not trapped because it is too early). Essentially, you will end up
-bypassing the hyp FF-A proxy which I think you will want to avoid.
+diff --git a/drivers/video/fbdev/i810/i810_main.c b/drivers/video/fbdev/i810/i810_main.c
+index d73a795fe1be..cc5d09e3bd2b 100644
+--- a/drivers/video/fbdev/i810/i810_main.c
++++ b/drivers/video/fbdev/i810/i810_main.c
+@@ -1012,7 +1012,7 @@ static int i810_check_params(struct fb_var_screeninfo *var,
+ 						      var->bits_per_pixel);
+ 			vidmem = line_length * info->var.yres;
+ 			if (vxres < var->xres) {
+-				printk("i810fb: required video memory, "
++				dev_info(&par->dev->dev, "i810fb: required video memory, "
+ 				       "%d bytes, for %dx%d-%d (virtual) "
+ 				       "is out of range\n",
+ 				       vidmem, vxres, vyres,
+@@ -1067,9 +1067,9 @@ static int i810_check_params(struct fb_var_screeninfo *var,
+ 				|(info->monspecs.hfmax-HFMAX)
+ 				|(info->monspecs.vfmin-VFMIN)
+ 				|(info->monspecs.vfmax-VFMAX);
+-			printk("i810fb: invalid video mode%s\n",
+-			       default_sync ? "" : ". Specifying "
+-			       "vsyncN/hsyncN parameters may help");
++			dev_err(&par->dev->dev, "i810fb: invalid video mode%s\n",
++				default_sync ? "" : ". Specifying "
++				"vsyncN/hsyncN parameters may help");
+ 			retval = -EINVAL;
+ 		}
+ 	}
+@@ -1674,19 +1674,19 @@ static int i810_alloc_agp_mem(struct fb_info *info)
+ 	size = par->fb.size + par->iring.size;
 
-> Consequently, this causes failures when using EFI variable services
-> with secure partitions that rely on FFA_SEND_DIRECT_MSG.
-> 
-> To fix this, call hyp_ffa_post_init() and set has_version_negotiated
-> during hyp_ffa_init() when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y).
-> 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 4e16f9b96f63..0ae87ff61758 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -984,5 +984,17 @@ int hyp_ffa_init(void *pages)
->  	};
->  
->  	version_lock = __HYP_SPIN_LOCK_UNLOCKED;
-> +
-> +	if (IS_BUILTIN(CONFIG_ARM_FFA_TRANSPORT)) {
-> +		hyp_spin_lock(&version_lock);
-> +		if (hyp_ffa_post_init()) {
-> +			hyp_spin_unlock(&version_lock);
-> +			return -EOPNOTSUPP;
-> +		}
-> +
-> +		smp_store_release(&has_version_negotiated, true);
-> +		hyp_spin_unlock(&version_lock);
-> +	}
-> +
->  	return 0;
->  }
+ 	if (!(bridge = agp_backend_acquire(par->dev))) {
+-		printk("i810fb_alloc_fbmem: cannot acquire agpgart\n");
++		dev_warn(&par->dev->dev, "i810fb_alloc_fbmem: cannot acquire agpgart\n");
+ 		return -ENODEV;
+ 	}
+ 	if (!(par->i810_gtt.i810_fb_memory =
+ 	      agp_allocate_memory(bridge, size >> 12, AGP_NORMAL_MEMORY))) {
+-		printk("i810fb_alloc_fbmem: can't allocate framebuffer "
++		dev_warn(&par->dev->dev, "i810fb_alloc_fbmem: can't allocate framebuffer "
+ 		       "memory\n");
+ 		agp_backend_release(bridge);
+ 		return -ENOMEM;
+ 	}
+ 	if (agp_bind_memory(par->i810_gtt.i810_fb_memory,
+ 			    par->fb.offset)) {
+-		printk("i810fb_alloc_fbmem: can't bind framebuffer memory\n");
++		dev_warn(&par->dev->dev, "i810fb_alloc_fbmem: can't bind framebuffer memory\n");
+ 		agp_backend_release(bridge);
+ 		return -EBUSY;
+ 	}
+@@ -1694,14 +1694,14 @@ static int i810_alloc_agp_mem(struct fb_info *info)
+ 	if (!(par->i810_gtt.i810_cursor_memory =
+ 	      agp_allocate_memory(bridge, par->cursor_heap.size >> 12,
+ 				  AGP_PHYSICAL_MEMORY))) {
+-		printk("i810fb_alloc_cursormem:  can't allocate "
++		dev_warn(&par->dev->dev, "i810fb_alloc_cursormem:  can't allocate "
+ 		       "cursor memory\n");
+ 		agp_backend_release(bridge);
+ 		return -ENOMEM;
+ 	}
+ 	if (agp_bind_memory(par->i810_gtt.i810_cursor_memory,
+ 			    par->cursor_heap.offset)) {
+-		printk("i810fb_alloc_cursormem: cannot bind cursor memory\n");
++		dev_warn(&par->dev->dev, "i810fb_alloc_cursormem: cannot bind cursor memory\n");
+ 		agp_backend_release(bridge);
+ 		return -EBUSY;
+ 	}
+@@ -1844,7 +1844,7 @@ static int i810_allocate_pci_resource(struct i810fb_par *par,
+ 	int err;
 
-Thanks,
-Sebastian
+ 	if ((err = pci_enable_device(par->dev))) {
+-		printk("i810fb_init: cannot enable device\n");
++		dev_err(&par->dev->dev, "i810fb_init: cannot enable device\n");
+ 		return err;
+ 	}
+ 	par->res_flags |= PCI_DEVICE_ENABLED;
+@@ -1859,14 +1859,14 @@ static int i810_allocate_pci_resource(struct i810fb_par *par,
+ 		par->mmio_start_phys = pci_resource_start(par->dev, 0);
+ 	}
+ 	if (!par->aperture.size) {
+-		printk("i810fb_init: device is disabled\n");
++		dev_warn(&par->dev->dev, "i810fb_init: device is disabled\n");
+ 		return -ENOMEM;
+ 	}
 
-> -- 
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> 
+ 	if (!request_mem_region(par->aperture.physical,
+ 				par->aperture.size,
+ 				i810_pci_list[entry->driver_data])) {
+-		printk("i810fb_init: cannot request framebuffer region\n");
++		dev_warn(&par->dev->dev, "i810fb_init: cannot request framebuffer region\n");
+ 		return -ENODEV;
+ 	}
+ 	par->res_flags |= FRAMEBUFFER_REQ;
+@@ -1874,14 +1874,14 @@ static int i810_allocate_pci_resource(struct i810fb_par *par,
+ 	par->aperture.virtual = ioremap_wc(par->aperture.physical,
+ 					   par->aperture.size);
+ 	if (!par->aperture.virtual) {
+-		printk("i810fb_init: cannot remap framebuffer region\n");
++		dev_warn(&par->dev->dev, "i810fb_init: cannot remap framebuffer region\n");
+ 		return -ENODEV;
+ 	}
+
+ 	if (!request_mem_region(par->mmio_start_phys,
+ 				MMIO_SIZE,
+ 				i810_pci_list[entry->driver_data])) {
+-		printk("i810fb_init: cannot request mmio region\n");
++		dev_warn(&par->dev->dev, "i810fb_init: cannot request mmio region\n");
+ 		return -ENODEV;
+ 	}
+ 	par->res_flags |= MMIO_REQ;
+@@ -1889,7 +1889,7 @@ static int i810_allocate_pci_resource(struct i810fb_par *par,
+ 	par->mmio_start_virtual = ioremap(par->mmio_start_phys,
+ 						  MMIO_SIZE);
+ 	if (!par->mmio_start_virtual) {
+-		printk("i810fb_init: cannot remap mmio region\n");
++		dev_warn(&par->dev->dev, "i810fb_init: cannot remap mmio region\n");
+ 		return -ENODEV;
+ 	}
+
+@@ -1921,12 +1921,12 @@ static void i810fb_find_init_mode(struct fb_info *info)
+ 	}
+
+ 	if (!err)
+-		printk("i810fb_init_pci: DDC probe successful\n");
++		dev_info(&par->dev->dev, "i810fb_init_pci: DDC probe successful\n");
+
+ 	fb_edid_to_monspecs(par->edid, specs);
+
+ 	if (specs->modedb == NULL)
+-		printk("i810fb_init_pci: Unable to get Mode Database\n");
++		dev_info(&par->dev->dev, "i810fb_init_pci: Unable to get Mode Database\n");
+
+ 	fb_videomode_to_modelist(specs->modedb, specs->modedb_len,
+ 				 &info->modelist);
+@@ -2072,7 +2072,7 @@ static int i810fb_init_pci(struct pci_dev *dev,
+
+ 	if (err < 0) {
+     		i810fb_release_resource(info, par);
+-		printk("i810fb_init: cannot register framebuffer device\n");
++		dev_warn(&par->dev->dev, "i810fb_init: cannot register framebuffer device\n");
+     		return err;
+     	}
+
+@@ -2084,10 +2084,10 @@ static int i810fb_init_pci(struct pci_dev *dev,
+ 	vfreq = hfreq/(info->var.yres + info->var.upper_margin +
+ 		       info->var.vsync_len + info->var.lower_margin);
+
+-      	printk("I810FB: fb%d         : %s v%d.%d.%d%s\n"
+-      	       "I810FB: Video RAM   : %dK\n"
+-	       "I810FB: Monitor     : H: %d-%d KHz V: %d-%d Hz\n"
+-	       "I810FB: Mode        : %dx%d-%dbpp@%dHz\n",
++	dev_info(&par->dev->dev, "I810FB: fb%d         : %s v%d.%d.%d%s\n"
++		"I810FB: Video RAM   : %dK\n"
++		"I810FB: Monitor     : H: %d-%d KHz V: %d-%d Hz\n"
++		"I810FB: Mode        : %dx%d-%dbpp@%dHz\n",
+ 	       info->node,
+ 	       i810_pci_list[entry->driver_data],
+ 	       VERSION_MAJOR, VERSION_MINOR, VERSION_TEENIE, BRANCH_VERSION,
+@@ -2137,7 +2137,7 @@ static void i810fb_remove_pci(struct pci_dev *dev)
+
+ 	unregister_framebuffer(info);
+ 	i810fb_release_resource(info, par);
+-	printk("cleanup_module:  unloaded i810 framebuffer device\n");
++	dev_info(&par->dev->dev, "cleanup_module:  unloaded i810 framebuffer device\n");
+ }
+
+ #ifndef MODULE
+--
+2.51.0
+
 
