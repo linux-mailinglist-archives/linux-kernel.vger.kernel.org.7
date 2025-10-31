@@ -1,200 +1,178 @@
-Return-Path: <linux-kernel+bounces-879466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A08C23305
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:37:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CF0C23312
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE9624ECE0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D47440549B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9079D27F010;
-	Fri, 31 Oct 2025 03:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD527A91F;
+	Fri, 31 Oct 2025 03:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W6oinO+d"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iF3Waumu";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cOiXJEe+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600881F03D7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F9226CE39
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761881811; cv=none; b=fC8Pn91jgQo2Y1GrQ9BmvsQGuysDAjuMw7o+UGC9HeewXFxpQPEzirnVPq6sw+ii/bS85hrxjSWUqv1aitNghViZM0O+CBYSIRiXLyIUujgjeJWqQ7bw4R9qJUN22IpwJUWuA5n4vSkVfIM4ruhkrIn7GFgN4xE+VqPwc8eJoLo=
+	t=1761881954; cv=none; b=WeMHEffcUj53YxYBlj7y1MkyH9swP3bP4ckC6BsGMYtdznjJj/tRJJ9/Aj93/AT9n5McksY75nSNZ3Zs0G67fb35uc0/sYHYbQqxgGmerjsf72kNhTcRE1A2oXYzX0azBdbi8zj6lHX0c6UYO6LtWkxnKyC4jznJz23L5mi0Q6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761881811; c=relaxed/simple;
-	bh=l3mm+lBFPHAks+LwRIC7KHR/F6NM7jW/PvnGW725S5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LPf/NcwBCr+1e+hnP9bkn4WIQ5I1CWWNTYqo0bExoRvaey6EkfH/A8nPm4SgG2f4htDtzcH/1PBxqxSjTIpcAhtuS3vk/jSrqHQ8RaMWIOYoivSGftg1DRPP8DwsHvpTrHqrruS+cfoDsLKvD+l6aY4ISv3qQgrEKUljDOF8v80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W6oinO+d; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-784826b75a4so23364837b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:36:50 -0700 (PDT)
+	s=arc-20240116; t=1761881954; c=relaxed/simple;
+	bh=b/c0TtRbUx8JtnHR4dV4m75OEsqkoKzuORRPKWB222M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZQFrGx/mXL2b6889hMTDh8FDT51CcM9ydqrquf6vxgFI6xxyKysaTAg9jtheg+FWTYtB2xGvhMTCkyvSgG7w/PGESOr0QEbf3WPAbA0DRvubBMT/TMS5yom+kl4d3Df0qFBgA0/Gq+xRUOdOwuKPeLLwF6jgHACczz08sIvbVDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iF3Waumu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cOiXJEe+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V39Tlo102648
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:39:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=i4IorI58Uj68IO5CjjCNPB
+	BlGw6Gmk20pgNjO40wFiI=; b=iF3Waumu7YmzPqbhZFaigxE2atA0dgJS7+Ag5K
+	cjdyrTZhJethbkNtaKLPtNQYBbzgV/wRgJuYKlhqNkinz6lRsq4cLsmqXkjEch0N
+	x1O7JI7GwqA937Vakt5JrtvZ398AaE36bB+TVqO3sjrueSD7UveFXPrH0uBgjh0D
+	M0EUTKHZg+02JQQCRasy4g8/aBWsI6lq0UORJmPzhrNHJ7xD8FxtwN7pcUDJwSHx
+	qJwhJo4EQt61Z+wA+/1FPo6sAki9ZqHiBfss+qG81HaW95+jP3C0KRu/b9oWHuul
+	vaS2by/UJKtTBPFjbGbi5rRlUrK6CEYnIu/Cg/dVYua67NEg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4ahdhs3f-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:39:12 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3403e994649so3792652a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 20:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761881809; x=1762486609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+gv0KDSDdRFFvN+HUcCWv1GSnQA5FAvdjB0Eum3nw4=;
-        b=W6oinO+dev/uST9GryQXsNDZkQLWI+P1zPNa6uPlW/4Vro55I7i65zLbLnOcci4GNR
-         ECTTBqmct0snFh5q2aFKWrmSybVASZuLJzdb+vXuz/PVpMeqrw1YVSzQikIOgcWLLWSu
-         5Bik3dxYMaUiFYALKvG+CbuhYSftjGt2BRz9wYypB/FjZXau9v55ut+ZUcIDp7VILH7c
-         1h5CLdS/Uy3TOQzUGeIaxvvCPwyZ9mhfaqr/otNE/ejcO20zknCXRxTnyxD419qHfSaV
-         RGueWlhNjm5x5HwgBxNZDSPeo7VITJTNwxK57a1Uy8nEqQykNYq+Vy68wY1LUWfDWUzM
-         AICQ==
+        d=oss.qualcomm.com; s=google; t=1761881952; x=1762486752; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i4IorI58Uj68IO5CjjCNPBBlGw6Gmk20pgNjO40wFiI=;
+        b=cOiXJEe+aO/A2h+2o1+JeIVaXajXDlx+Bq/pzhnoXtHX9FHr8OQCF5Bp3q6V6Z2FOA
+         awlBjKhBnI0qszdxvq5+T9qGcvXQw+9fUeuB6mqVRRm2aHZEn+aULbvCOTv242jx565L
+         8hbqkCoGG99xUK+tLC0vscrdDCiUa7HSUs0o7Iep5s9tlMK9T7e95c3JYjwjUY7ilnr2
+         Kq+wmXNe5DTGOdrdXhdwgjkuzQ7AtqB5gYbJOCOL9DXkCvP1I9Kvj3ZmHQlxSS0mH99M
+         9aiuo0VhBTOn/MhijyHICscy7JoR8C/rYxCclgOeTVlaoi3I5ZhQmxfDHPO3O6bkbG3G
+         uQkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761881809; x=1762486609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I+gv0KDSDdRFFvN+HUcCWv1GSnQA5FAvdjB0Eum3nw4=;
-        b=IgGgJ1sJqRQva82qEZA9u16VToC+SFNJ1C7Yfn5+jlpnasNQ8QmPw8YNxLaP6AdBBE
-         pdStCfMOco6FGllzeOMQg8r6vWQPSpEzmSqhIPHQwxBq6844s6qs7xgnxERMtgqJwdzZ
-         cycwVWl19gpxj7fH7LOEoaydZtwor9DsK0MVTgM7cKbQ1VXRkfkCB89hrrBrO+ZHTjki
-         dCEXqzYnhIzOxJdq8TDU0xqsrj8NcW9XxMCWHRYv74ZD5lmBnzmeVAK8TExg/DeKv5bR
-         QrHHlP4xp++z8JvXnP6l6HAnTpgrUQUwy6+eu/5lRPHdIeeFBOaoWTi0iSqMXDZLIdPE
-         iMew==
-X-Forwarded-Encrypted: i=1; AJvYcCX7iZn67wDnuuwJYJRSCXKEd16e9+y5pyFufamAfVOve9iTfOkaakwAEAqaXDdN8+vijZz5s0aUjJ9H8UY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRK9POeA7fkofhXYITeqhJKmwILROsXXWrueIZq+15eWy6U2/x
-	VrMNGLLtfiJ1sDIpsRtnpFttK2NNRaIUslU+z4H081DBgzO/twE6+Ail9TBDKprmdIg4iPUuQjY
-	VTrBih2Xrtit3MJMDhlcqK0fXuf6sQxo=
-X-Gm-Gg: ASbGnctNGMLdeWKSzugRy7ZUA74XPOEojk82qalJ6GvDwat7Imf0YJUdognIaY5ayHi
-	vvbYMw5+ErigCtGQqgM4oOQYamLKmUhULIfgxHhYXRgKEkELWXY+rQ4RNtyk0HHpYILxf4V9qq6
-	vRYOXUJsc7qIzeGXUaL/xDTzlViupvB3EBXTLDOz2eAaWIFQ4nYfm+QAlHrteOHIFo4pv2iwGBn
-	l5a0hqkXn4fEYI779O/2ZzXa13KrOIkXC2UvJZrpO/E/CIpoVeISVPbhERwxXCH
-X-Google-Smtp-Source: AGHT+IHBmFr/f7KUXhuoC5VAA8WBA2v3pQ2OxS/qFztuZcGPw4PY9FleCBb81VjY5kGRmzystYJN7lAr1Uhl6zn6/9s=
-X-Received: by 2002:a05:690c:6011:b0:785:cbf4:7534 with SMTP id
- 00721157ae682-786484164f5mr18054737b3.29.1761881809184; Thu, 30 Oct 2025
- 20:36:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761881952; x=1762486752;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i4IorI58Uj68IO5CjjCNPBBlGw6Gmk20pgNjO40wFiI=;
+        b=fXj9onXULqiSKN7H5ARpnkcug1+pplqg/V+rUm5+JoBWLFBhPCsqIfbNo03RzsWmhT
+         LzesESwGSrGh+uyybKTiA7aLpha7+C3g4axXBmUU63uHZWlvpu5mL9bqNVEucWQlBcWF
+         iYzhFM39bz0OR2KhD3gfUpTnOlRgJKiLO8RsY4jDXyoAEdGwUeHCgob6gHUIuVfL+1US
+         CC3peDO/+nMYi5OfEnhiy9AFJ1B5A85hSXRHiWK6ZJaKakL9PPHDTY7xXSvevQwJKOUZ
+         8myk5hoj9MOcW2NLBNMsm8eV1Nt0N2CdU8r+plGDW0mtHEWuI1f/n6fEmhHQeBCxTwQS
+         +TNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNqaVzicNt0au4YnVIswHu524x1G98TSuZY0hE9HRVkxdo06w80K3KIAPdF8QP6RiolWWHSldsLuARNXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK6RzXcMPVMrFVQWQOCkqmWvMSHsRboPoxZblvfhF2Hjmomrcg
+	Ql9qK2/fcsZpPf0QJJmCvfXZQTFH/ns0PNrjABf6eLEXl3Tl7VC33k/dw35vkqcdVrU+nUHSLbu
+	LpWTtBzzymyV3FexIz0r4UUdA6tiot8xvRN9SZVH06idKys9JmaLy49kt0lb/47AxnZE=
+X-Gm-Gg: ASbGncsfXbU79Xb3Remk68+KpRH7tfw+KontD0k0HSXJYwA19MHqdbwEgSd44eEHX+8
+	nDqQA8A2uGMon1YV336kCNGu51V7uLrQ9201zvscqNy1yLATDvv540kIw/yWKh8bI/0jYtiAwmV
+	IWPnysU2yy7+BUKaEj0lBx+Y6bKQY4w/z3lxl+vUH3fNE8sWPrK24QelvXPe5UTs68x8TLTWlcG
+	QdhwtIT9tew5enfh3I6K7KhgW0sS0sRbFER+Ml92KuNWN6/PYqMftS+WB+EAL8cVM81XKhBnaAt
+	7+uqsBmWpSvxQKO1vfH64vWYGBar6Zu26hJsaaZh1vy7QxHIsZoW/46QiLQNPOe3WPASKLdEuY1
+	3Rc+XE13dyCDgZCfnmHYJgw==
+X-Received: by 2002:a17:90b:1f82:b0:32e:a5ae:d00 with SMTP id 98e67ed59e1d1-34082fc7b43mr2536968a91.13.1761881951750;
+        Thu, 30 Oct 2025 20:39:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjnJe4PvNt1debsSjTxLEoIU/F68bM+PqIGJDGv+FMr2j17u2RS7apMk5Va8eik46A4OJF4Q==
+X-Received: by 2002:a17:90b:1f82:b0:32e:a5ae:d00 with SMTP id 98e67ed59e1d1-34082fc7b43mr2536934a91.13.1761881951267;
+        Thu, 30 Oct 2025 20:39:11 -0700 (PDT)
+Received: from [169.254.0.7] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407f0845d1sm646419a91.4.2025.10.30.20.39.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 20:39:10 -0700 (PDT)
+From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+Subject: [PATCH v4 0/2] Add interconnect support for Kaanapali SoC
+Date: Fri, 31 Oct 2025 03:38:46 +0000
+Message-Id: <20251031-knp-interconnect-v4-0-568bba2cb3e5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026030143.23807-1-dongml2@chinatelecom.cn>
- <20251026030143.23807-5-dongml2@chinatelecom.cn> <CAADnVQLfxjOUqbbexFvvVJ4JTUQ2TKL0wvUn3iHv6vXvGfitoQ@mail.gmail.com>
-In-Reply-To: <CAADnVQLfxjOUqbbexFvvVJ4JTUQ2TKL0wvUn3iHv6vXvGfitoQ@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Fri, 31 Oct 2025 11:36:37 +0800
-X-Gm-Features: AWmQ_bmKglPpjYeN8wPTAXBHJxvfdd8Q3ML6kp5pKVrlzSQxwPJihOrL8DGnJA4
-Message-ID: <CADxym3Y4nc2Qaq00Pp7XwmCXJHn0SsEoOejK8ZxhydepcbB8kQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting
- for x86_64
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEYvBGkC/2WOSw6DIBCGr2JYFwOIEbvqPRoXSMdKWkEZNG2Md
+ y+aJl10M8k3+V8rQQgWkJyzlQRYLFrvEshTRkyv3R2ovSUmgomS1byiDzdS6yIE450DE6lURpi
+ at11XKpJsY4DOvo7Ia5O41Qi0DdqZfg8aNCbzVxhgmlNl/Kl7i9GH97FnKfbvUc1Zwf6rl4Iyq
+ pmSWgolKl5ePGI+zfpp/DDk6ZBm27YPmPMqGeUAAAA=
+X-Change-ID: 20250917-knp-interconnect-48c2c91bff58
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDAzMCBTYWx0ZWRfXyvJtnBr1tf3A
+ 2n/CKR7FNyZ3rrv+X8Oxu4Lv8rJVGf3yrI1p/7im7TAOhv4staeU+eZqQtNL3mIhd3WMXbZy7Xv
+ K8wBiryJbCBEpYmojKoMc/0UJVUBsRIjxDdwvU9UVeWtAnav879IbwoVxdNQPIAG+ACliIAfJ/h
+ xCMeGginA1Ha1FkdDbt3AbEsBE2yecRhsVK3kYpvcd2vMMALQqYxmDdslW0JpXjW6wIW+OKXraH
+ is4HKTFc2lBh2tizJx7lmx1wwnNCiGn92F3UYk+GbTL78Y2dVf3Ks9ETpy9D0Tg4Hr1H/73QhhH
+ X+YN3bpgZeDMexLMmSQeAzYsAM+UAGvuqoARRojXT1FGVr9AuDFkx15RD3Cs90NdOngtfaw70nB
+ 6c1pQu12WhRYPU/zbUmEjzTnXNiuYw==
+X-Proofpoint-GUID: vzydTUb14I-1lPimspnAFoUo3h6r8FWC
+X-Authority-Analysis: v=2.4 cv=TsnrRTXh c=1 sm=1 tr=0 ts=69042f60 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=06_svp_evkBEmB2vVC0A:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: vzydTUb14I-1lPimspnAFoUo3h6r8FWC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_08,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ spamscore=0 bulkscore=0 phishscore=0 suspectscore=0 adultscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510310030
 
-On Fri, Oct 31, 2025 at 9:42=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong8.dong@gma=
-il.com> wrote:
-> >
-> > Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_session_entry an=
-d
-> > invoke_bpf_session_exit is introduced for this purpose.
-> >
-> > In invoke_bpf_session_entry(), we will check if the return value of the
-> > fentry is 0, and set the corresponding session flag if not. And in
-> > invoke_bpf_session_exit(), we will check if the corresponding flag is
-> > set. If set, the fexit will be skipped.
-> >
-> > As designed, the session flags and session cookie address is stored aft=
-er
-> > the return value, and the stack look like this:
-> >
-> >   cookie ptr    -> 8 bytes
-> >   session flags -> 8 bytes
-> >   return value  -> 8 bytes
-> >   argN          -> 8 bytes
-> >   ...
-> >   arg1          -> 8 bytes
-> >   nr_args       -> 8 bytes
-> >   ...
-> >   cookieN       -> 8 bytes
-> >   cookie1       -> 8 bytes
-> >
-> > In the entry of the session, we will clear the return value, so the fen=
-try
-> > will always get 0 with ctx[nr_args] or bpf_get_func_ret().
-> >
-> > Before the execution of the BPF prog, the "cookie ptr" will be filled w=
-ith
-> > the corresponding cookie address, which is done in
-> > invoke_bpf_session_entry() and invoke_bpf_session_exit().
->
-> ...
->
-> > +       if (session->nr_links) {
-> > +               for (i =3D 0; i < session->nr_links; i++) {
-> > +                       if (session->links[i]->link.prog->call_session_=
-cookie)
-> > +                               stack_size +=3D 8;
-> > +               }
-> > +       }
-> > +       cookies_off =3D stack_size;
->
-> This is not great. It's all root and such,
-> but if somebody attaches 64 progs that use session cookies
-> then the trampoline will consume 64*8 of stack space just for
-> these cookies. Plus more for args, cookie, ptr, session_flag, etc.
+Add interconnect dt-bindings and driver support for Qualcomm Kaanapali SoC.
 
-The session cookie stuff does take a lot of stack memory.
-For fprobe, it will store the cookie into its shadow stack, which
-can free the stack.
+Change since V3:
+  - Removed unused header dependencies from bindings [Bjorn]
+  - Link to v3: https://lore.kernel.org/r/20251030-knp-interconnect-v3-0-a084a4282715@oss.qualcomm.com
 
-How about we remove the session cookie stuff? Therefore,
-only 8-bytes(session flags) are used on the stack. And if we reuse
-the nr_regs slot, no stack will be consumed. However, it will make
-thing complex, which I don't think we should do.
+Changes since V2:
+  - Removed the dependency on clock header in "qcom,kaanapali-rpmh.yaml"
+    bindings file [Krzysztof]
+  - Corrected the patch revision number.
 
-> Sigh.
-> I understand that cookie from one session shouldn't interfere
-> with another, but it's all getting quite complex
-> especially when everything is in assembly.
-> And this is just x86 JIT. Other JITs would need to copy
-> this complex logic :(
+Changes since V1:
+  - Added b4 dependency on the clock patch [Rob]
+  - Updated the Module Description to "Qualcomm Kaanapali NoC driver"
+    [Dmitry]
 
-Without the session cookie, it will be much easier to implement
-in another arch. And with the hepler of AI(such as cursor), it can
-be done easily ;)
+---
+Raviteja Laggyshetty (2):
+      dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in Kaanapali SoC
+      interconnect: qcom: add Kaanapali interconnect provider driver
 
-> At this point I'm not sure that "symmetry with kprobe_multi_session"
-> is justified as a reason to add all that.
-> We don't have a kprobe_session for individual kprobes after all.
+ .../bindings/interconnect/qcom,kaanapali-rpmh.yaml |  124 ++
+ drivers/interconnect/qcom/Kconfig                  |    9 +
+ drivers/interconnect/qcom/Makefile                 |    2 +
+ drivers/interconnect/qcom/kaanapali.c              | 1868 ++++++++++++++++++++
+ .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h |  149 ++
+ 5 files changed, 2152 insertions(+)
+---
+base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+change-id: 20250917-knp-interconnect-48c2c91bff58
 
-As for my case, the tracing session can make my code much
-simpler, as I always use the fentry+fexit to hook a function. And
-the fexit skipping according to the return value of fentry can also
-achieve better performance.
+Best regards,
+-- 
+Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
 
-AFAIT, the mast usage of session cookie in kprobe is passing the
-function arguments to the exit. For tracing, we can get the args
-in the fexit. So the session cookie in tracing is not as important as
-in kprobe.
-
-What do you think?
-
-Thanks!
-Menglong Dong
-
-> I think we better spend the energy designing a mechanism to
-> connect existing fentry prog with fexit prog without hacking
-> it through a stack in the bpf trampoline.
->
-> Sorry.
->
-> pw-bot: cr
 
