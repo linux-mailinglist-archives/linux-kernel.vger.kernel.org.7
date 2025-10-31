@@ -1,108 +1,147 @@
-Return-Path: <linux-kernel+bounces-879318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D586CC22D3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BFAC22D42
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894643A5AD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF5C3BB27D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2FF20A5EA;
-	Fri, 31 Oct 2025 00:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkrefraction-com.20230601.gappssmtp.com header.i=@darkrefraction-com.20230601.gappssmtp.com header.b="ElCFkYEk"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357F120CCCC;
+	Fri, 31 Oct 2025 00:53:47 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573A1A9FA0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CD01B78F3;
+	Fri, 31 Oct 2025 00:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761871969; cv=none; b=JXtKtPJz51FtCDFzhcqNNJ7E/kQBrNe6YdDLtaG52XrliDUiPQCy2CZIP/HmJ0gKamvRfDXaFe7+OLQ1Jc2bbuaL3jrjNVJeSQwB4BnKMe/hZEiVJrzepeubKOjKDcEy3phEoNbIkZTe3OS82JruVyT7vUDbMrl0X3otKILaLAM=
+	t=1761872026; cv=none; b=OccQTx9LbOK9bcVxlx1jFtvj5IGDFRwq+B7ph6ZQvSN9F/DB2BXAQeErwzScDhBEmwHDZOmmNg/CAHCShxAb9gdRszA7JoFY0cF9yuO2CtcaC04YiC+2vilVUk5fY1gexoteGOZsIlYU0Y2OGgMWGHq+ASaKmJOmVFGxmKDAmfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761871969; c=relaxed/simple;
-	bh=SBGuCSqkpGwJjxei1YoM4sQr4LyzW3ZZsg7tLfs8uCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N92V538DvnJkZ78/DtP6iKGEx3yGwF6DnJfMSbffBG1KRwmMwTYZJA7TBZMqrS0PxHnvrEfeFLH0UddyGiKfOQytOBXRVcgFAWxJAzJfyvNub+/AIbp++RMm2I+U7XuSofgMhSf0mz059GpkYN8ci0R9XuX2BsvHQ6niJjODseg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkrefraction.com; spf=none smtp.mailfrom=darkrefraction.com; dkim=pass (2048-bit key) header.d=darkrefraction-com.20230601.gappssmtp.com header.i=@darkrefraction-com.20230601.gappssmtp.com header.b=ElCFkYEk; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkrefraction.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=darkrefraction.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63c523864caso3449026a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkrefraction-com.20230601.gappssmtp.com; s=20230601; t=1761871966; x=1762476766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gEQ18anQMYI+7tHFQ9c7MoTWULdEXT6+PJ++e+/5Yis=;
-        b=ElCFkYEk29md+5NzL6mMNI/b3aOjeQq49ij9szpOYXgP9dK5emKUfCPV31ijNdFihA
-         25AHP7Zeykfff78qg0Xw54ssuegs7gVMaHKmvzYgcnqioFGOiJAUyY3yuWrRCN3obJ8T
-         EglC9qUjn2HrCqCLnEPl/d5wGrLzJ5UIxQ6W0piW6q4KqKoqfd2Sm8JxM6gsCyBjgZ1M
-         /g+2dR5CG42gFf5dfdjCkTQbFbS8GyI+WFVfOODV7oh/3kJjukUflucb1zQFuaABedr+
-         P7oFJ01WXYQlwMf/cfpo16Vqh0UFpWLTFBhGZwMVBRLgTb/UTxpzX9FzjQtBnk36+Ouc
-         O4vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761871966; x=1762476766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gEQ18anQMYI+7tHFQ9c7MoTWULdEXT6+PJ++e+/5Yis=;
-        b=NMdBaOs7pcBnt4F8oVFd7CyQSclRFhB3DJHZrLexmcULbnVPqKzOzlBvwcGXk3qzIy
-         m81CrvuoSuQOxLysI1Ng8ocjef/pnN0cgAveOVH7sPkQuPZ2gHmzFTnWeEKF6UnsaEiK
-         NVvEBdsWoGHbwcfsOs/kCrRVg1O7JizmAsc1ljO8FcbnLgD2NtweXvj5yUgjPmUA9CeZ
-         MfQ1G+fVjsg5muRvwvMYpXm9A54nPed0GNBu/VLgw+XX37O0mPnqDVJPU2MT9Wm5/Ck7
-         PIE55pcWGJtiNAOtIU6WVUD/v36gY7tBKzg8QKo7KWTkAt6x6VFmamwOdWwDir4n6z9a
-         IYLQ==
-X-Gm-Message-State: AOJu0YyOUNq07cBIBXYGmfN3U+39/ZtNUlTl3tOvgL4/2cI8fRZg4X9H
-	Eofd7Koort/w/5JLM51bcbKyaqwAtGAVP7HRDcdJHxT4LGnPjm1DPJ/qNStCfKC0ActwDP1q1qe
-	HamkRdBe2ITum/UXlNWLJvcL18y6F+kYtDl2suV0y6w==
-X-Gm-Gg: ASbGncsI+XnzsSnrGyKpjEgrZU9JV1VXis5q65Kg+f1G6aynORdTB5Fl/V67zxw6upp
-	bGBHisDYWY8pZethVU3+uws1qhCAOUTuzeliep30G508cKWSNQHxv0+ddsCO3ZWDStxy6EOBbYz
-	fjvzNMOyMo0s7TeLf3MmVxCP5dUHV+te3UKYpIjy27g/Pw18NTOS0d5IW1ZdBuAKdEiuun4+AIO
-	PYmJ2v1TXHq93laiwTcMvT2q6f3+uzzLTt9A/mdCMOUyOzlySj6+2PtsTbQ
-X-Google-Smtp-Source: AGHT+IH2SGUq2JivC0VwG4m1roqAWpSLfoI246C8KIQXIlrqoVKC3sTa2sFKJ2ZdL8ZfCzcdbIrSayRHAHYKBw+6C5s=
-X-Received: by 2002:a05:6402:4315:b0:63e:142e:4b18 with SMTP id
- 4fb4d7f45d1cf-64076f6beeamr1270481a12.7.1761871965943; Thu, 30 Oct 2025
- 17:52:45 -0700 (PDT)
+	s=arc-20240116; t=1761872026; c=relaxed/simple;
+	bh=avj7CwmN4vwzU+RqZSmcaRvBwgDhGJ1dXxVYEA27O2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sWNXp15WTqZb6WzUQm/z0hRm3n/u8FqDHhLeTT/qCLcIx26Iy9VAwwuj403ZvvuhEotZagu5boTZWQHC41B1SjFU1G/x4JtAGK3k6Q9ahmRyByeiGhEde92Q/3mCW5mi1RzKO/xbCdbFU0ttwFCtqiZZ24A7jYmp90HxLkBTdHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cyMt63Ff6zYQtgk;
+	Fri, 31 Oct 2025 08:53:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 0969D1A0D3F;
+	Fri, 31 Oct 2025 08:53:42 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP3 (Coremail) with SMTP id _Ch0CgCnOt+RCARpqpGMCA--.36160S2;
+	Fri, 31 Oct 2025 08:53:38 +0800 (CST)
+Message-ID: <bd8413ea-bdfe-4bc3-a3d0-aed6e4c576e5@huaweicloud.com>
+Date: Fri, 31 Oct 2025 08:53:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030230357.45070-1-mohamedahmedegypt2001@gmail.com> <20251030230357.45070-3-mohamedahmedegypt2001@gmail.com>
-In-Reply-To: <20251030230357.45070-3-mohamedahmedegypt2001@gmail.com>
-From: M Henning <mhenning@darkrefraction.com>
-Date: Thu, 30 Oct 2025 20:52:19 -0400
-X-Gm-Features: AWmQ_bnsMkSJn0hwatI9MRI7jNKarfabhU-buAXAiUf2EvCIPzigfImDg_Tk7nc
-Message-ID: <CAAgWFh02dw=omW-yiBqZ8S7Q2ka79=5eNicXVhBb7Zz_fEB81g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] drm/nouveau/uvmm: Allow larger pages
-To: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Mary Guillemard <mary@mary.zone>, Faith Ekstrand <faith.ekstrand@collabora.com>, 
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3] sched/core: Skip user_cpus_ptr masking if no
+ online CPU left
+To: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+References: <20250718164143.31338-1-longman@redhat.com>
+ <20251029212724.1005063-1-longman@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251029212724.1005063-1-longman@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgCnOt+RCARpqpGMCA--.36160S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tryfGrWrtw1fZF1UAr47urg_yoW5JFWrpF
+	WkKFWUCFZ2qF1UCayxu3y2kF1Fqa9xJ3WaqF4Syr1FvFWagF40kry0gFnxXr15KrsakFyU
+	tFWagrZ29r1qqrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
+	mii3UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Thu, Oct 30, 2025 at 7:04=E2=80=AFPM Mohamed Ahmed
-<mohamedahmedegypt2001@gmail.com> wrote:
-> +static bool
-> +op_map_aligned_to_page_shift(const struct drm_gpuva_op_map *op, u8 page_=
-shift)
-> +{
-> +       u64 non_page_bits =3D (1ULL << page_shift) - 1;
-> +
-> +       return op->va.addr & non_page_bits =3D=3D 0 &&
-> +              op->va.range & non_page_bits =3D=3D 0 &&
-> +              op->gem.offset & non_page_bits =3D=3D 0;
-> +}
 
-As discussed on irc/discord, this is buggy because it needs more
-parenthesis =F0=9F=A4=A6=E2=80=8D=E2=99=80=EF=B8=8F
+
+On 2025/10/30 5:27, Waiman Long wrote:
+> Chen Ridong reported that cpuset could report a kernel warning for a task
+> due to set_cpus_allowed_ptr() returning failure in the corner case that:
+> 
+> 1) the task used sched_setaffinity(2) to set its CPU affinity mask to
+>    be the same as the cpuset.cpus of its cpuset,
+> 2) all the CPUs assigned to that cpuset were taken offline, and
+> 3) cpuset v1 is in use and the task had to be migrated to top_cpuset.
+>    Task migration is not needed for cpuset v2.
+> 
+> Due to the fact that CPU affinity of the tasks in the top cpuset are
+> not updated when a CPU hotplug online/offline event happens, offline
+> CPUs are included in CPU affinity of those tasks. It is possible
+> that further masking with user_cpus_ptr set by sched_setaffinity(2)
+> in __set_cpus_allowed_ptr() will leave only offline CPUs in the new
+> mask causing the subsequent call to __set_cpus_allowed_ptr_locked()
+> to return failure with an empty CPU affinity.
+> 
+> Fix this failure by skipping user_cpus_ptr masking if there is no online
+> CPU left.
+> 
+> Reported-by: Chen Ridong <chenridong@huaweicloud.com>
+> Closes: https://lore.kernel.org/lkml/20250714032311.3570157-1-chenridong@huaweicloud.com/
+> Fixes: da019032819a ("sched: Enforce user requested affinity")
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/sched/core.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index f1ebf67b48e2..66cd21582822 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3146,12 +3146,13 @@ int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
+>  
+>  	rq = task_rq_lock(p, &rf);
+>  	/*
+> -	 * Masking should be skipped if SCA_USER or any of the SCA_MIGRATE_*
+> -	 * flags are set.
+> +	 * Masking should be skipped if SCA_USER, any of the SCA_MIGRATE_*
+> +	 * flags are set or no online CPU left.
+>  	 */
+>  	if (p->user_cpus_ptr &&
+>  	    !(ctx->flags & (SCA_USER | SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) &&
+> -	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr))
+> +	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr) &&
+> +	    cpumask_intersects(rq->scratch_mask, cpu_active_mask))
+>  		ctx->new_mask = rq->scratch_mask;
+>  
+>  	return __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
+
+This patch have been tested with our test project.
+
+Reviewed-by: Chen Ridong<chenridong@huawei.com>
+
+-- 
+Best regards,
+Ridong
+
 
