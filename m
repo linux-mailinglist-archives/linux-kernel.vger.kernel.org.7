@@ -1,335 +1,143 @@
-Return-Path: <linux-kernel+bounces-879775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A91C23FD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:04:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D763FC24061
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B62AB4F1976
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22598567558
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA0732D441;
-	Fri, 31 Oct 2025 09:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A5532ED24;
+	Fri, 31 Oct 2025 09:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vQSTRGHZ"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sq2sLfmj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B232E68E;
-	Fri, 31 Oct 2025 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901320; cv=none; b=PaIm0ClRYLJ+8WBueg+M4kNLHCy9mQBvBcIw+SP2diZj1g2XW9SY2rr/6hbaUtEPWYw51A8B1z+KBEYbgNa+e71o1X1Ttp94uWb4VSwrxqTI5oh/CnzAIiZHo0Qt26BFNC+K5i94sszImenWIbk+wXbnDe39uSYkoFo5yxzEsOk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901320; c=relaxed/simple;
-	bh=xqZ4ks0zodwVdhdoU6aLILyMcPX95g56qW1FHGqGTRY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jkRxCPGzVI8ZVL1X0HBvsR3pR/7bLK8NXL6cLR0/58eLpo7B6XIKaONlFhIYpIHU21nuyMvNTug34MZyDyGF5Z3lg02R1RYgdIzBgasBDA7uNH9V+NCSsbkK9vB8UCxCMGq6n1lZ5jI0wZjgbawOv9KDhrC/9+mliCk5AbuJ0wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vQSTRGHZ; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id F20E6C0E94F;
-	Fri, 31 Oct 2025 09:01:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7949160704;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E2832C93D;
 	Fri, 31 Oct 2025 09:01:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B59E411810838;
-	Fri, 31 Oct 2025 10:01:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761901315; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=kef/BUw/7kskzjxgi11EVQHCfO8iul2HvO8swTDNzfU=;
-	b=vQSTRGHZG/JHOsfT87atsoYUt+0Zdf0vxb5xD00YJoYSQ5OlznKJiLzo5FjfW2uGEMIsJT
-	3hJIQ0agBbQG5L9+6HqvbDt5hDvlk9NC9ZYVwgH8O8R2gk6LOyFe2m4m3wTMpWE9qYnE0W
-	5QwLh/QzomfBMtz1FRXycJhmAjJNyeG3b/zkUw43LTJr/kgX0zeEIRzNJQtISekfapwtpu
-	BUd2EJedANGGSdrLJSL//5u3z24f4E3/M09q6BsunwyTd6jkAdSEg8cuQBpQ0xeeinD0p/
-	MhkImuqyE4qp9GFM+EQOV1Fmb5c2+CtZWetjqOyOyR3AEgb2sK/EmwPVz5uqnA==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Fri, 31 Oct 2025 10:01:42 +0100
-Subject: [PATCH bpf-next 2/3] selftests/bpf: add checks in tc_tunnel when
- entering net namespaces
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761901318; cv=none; b=WYZ5NxNpWMeaR34XOP7aoo2AjIuTLEcCO4/1gU+AOIPIbRi6+djy/uKmNJO+EDQ3i7YGxbAm+rfN/8LPptqvTep1rupcH9YCocdWYhH9IZN6sVUHhKycyyTolV160EAJfaosLBoPM3G/Uz+Eq3xSDmr+SvN4v03l2DuvPL+4lf0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761901318; c=relaxed/simple;
+	bh=WrRAkZWX2mY1Sn4BYh8lP0+Uv8J4x4xta8TyjbzO6EM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gfwJAPwu9PZn2cBT0Jbh8JQxfd287t6lp7ReUQPRigybjrxU5pKExRLAXBMVI1BE+OiUDIq2B2c1QtBAQlMQy1yOCI1cAzhnpLCC62wszfXfb+4F0afD2CDeuJe8MopWvpOGUjgkJ5epD2oJeNOrXDovAYXcU9eEvkw89pMe7zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sq2sLfmj; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761901317; x=1793437317;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WrRAkZWX2mY1Sn4BYh8lP0+Uv8J4x4xta8TyjbzO6EM=;
+  b=Sq2sLfmje2ZeDz5hZSVX9mEkwXjHmQr0YQElNkrBZKrzfOHbZPdYAXcK
+   UlibsXE7whgpwzpISuXg+jr2ZgBW0vEmOv2VHY/hBnfkkCay3zwJsyqj6
+   gJPXUKoXP8nKzH7/qRGgKnul+DaNHFRoYCv7yOhpoXItUnQu0Vxcapzg5
+   c+xUXbDCu9AVR4jco/m89OVlCxykle7vHi4o/g0Yu1XitLBXXPrU9opfb
+   v/IBLCXYYqM7QNlVlqGem5nG6Xp67DrNDV8PlBo8aJJ7w0CbFpuPDZUZm
+   Iw6w8auzgJQtGd3On1hIhDUfsR+Nl5vimpEnm9qQBhCrCF3nRjmFNxe6J
+   A==;
+X-CSE-ConnectionGUID: tNRuY/7aTt6vJcUw0m1jpg==
+X-CSE-MsgGUID: KeXux0DyQzSHV5wTuHddlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="66671060"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="66671060"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:00:58 -0700
+X-CSE-ConnectionGUID: Dd9eBStPTB2R+zNgqb0uKQ==
+X-CSE-MsgGUID: AT1MnrH1RWGItLZni9BlRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="186120016"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:00:50 -0700
+Message-ID: <326290aa-def6-478c-9ef3-1649e027e5d5@linux.intel.com>
+Date: Fri, 31 Oct 2025 17:00:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251031-tc_tunnel_improv-v1-2-0ffe44d27eda@bootlin.com>
-References: <20251031-tc_tunnel_improv-v1-0-0ffe44d27eda@bootlin.com>
-In-Reply-To: <20251031-tc_tunnel_improv-v1-0-0ffe44d27eda@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 19/28] KVM: TDX: Derive error argument names from the
+ local variable names
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251030200951.3402865-1-seanjc@google.com>
+ <20251030200951.3402865-20-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251030200951.3402865-20-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-test_tc_tunnel is missing checks on any open_netns. Add those checks
-anytime we try to enter a net namespace, and skip the related operations
-if we fail. While at it, reduce the number of open_netns/close_netns for
-cases involving operations in two distinct namespaces: the test
-currently does the following:
 
-  nstoken = open_netns("foo")
-  do_operation();
-  close(nstoken);
-  nstoken = open_netns("bar")
-  do_another_operation();
-  close(nstoken);
 
-As already stated in reviews for the initial test, we don't need to go
-back to the root net namespace to enter a second namespace, so just do:
+On 10/31/2025 4:09 AM, Sean Christopherson wrote:
+> When printing SEAMCALL errors, use the name of the variable holding an
+> error parameter instead of the register from whence it came, so that flows
+> which use descriptive variable names will similarly print descriptive
+> error messages.
+>
+> Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-  ntoken_client = open_netns("foo")
-  do_operation();
-  nstoken_server = open_netns("bar")
-  do_another_operation();
-  close(nstoken_server);
-  close(nstoken_client);
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
- .../selftests/bpf/prog_tests/test_tc_tunnel.c      | 134 ++++++++++++++-------
- 1 file changed, 88 insertions(+), 46 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-index 1d8d38e67f8b..deea90aaefad 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-@@ -133,8 +133,12 @@ static void set_subtest_addresses(struct subtest_cfg *cfg)
- 
- static int run_server(struct subtest_cfg *cfg)
- {
--	struct nstoken *nstoken = open_netns(SERVER_NS);
- 	int family = cfg->ipproto == 6 ? AF_INET6 : AF_INET;
-+	struct nstoken *nstoken;
-+
-+	nstoken = open_netns(SERVER_NS);
-+	if (!ASSERT_OK_PTR(nstoken, "open server ns"))
-+		return -1;
- 
- 	cfg->server_fd = start_reuseport_server(family, SOCK_STREAM,
- 						cfg->server_addr, TEST_PORT,
-@@ -319,6 +323,10 @@ static int configure_encapsulation(struct subtest_cfg *cfg)
- static int configure_kernel_decapsulation(struct subtest_cfg *cfg)
- {
- 	struct nstoken *nstoken = open_netns(SERVER_NS);
-+	int ret = -1;
-+
-+	if (!ASSERT_OK_PTR(nstoken, "open server ns"))
-+		return ret;
- 
- 	if (cfg->configure_fou_rx_port &&
- 	    !ASSERT_OK(add_fou_rx_port(cfg), "configure FOU RX port"))
-@@ -337,11 +345,11 @@ static int configure_kernel_decapsulation(struct subtest_cfg *cfg)
- 	SYS(fail, "sysctl -qw net.ipv4.conf.all.rp_filter=0");
- 	SYS(fail, "sysctl -qw net.ipv4.conf.testtun0.rp_filter=0");
- 	SYS(fail, "ip link set dev testtun0 up");
--	close_netns(nstoken);
--	return 0;
-+
-+	ret = 0;
- fail:
- 	close_netns(nstoken);
--	return -1;
-+	return ret;
- }
- 
- static void remove_kernel_decapsulation(struct subtest_cfg *cfg)
-@@ -356,6 +364,10 @@ static void remove_kernel_decapsulation(struct subtest_cfg *cfg)
- static int configure_ebpf_decapsulation(struct subtest_cfg *cfg)
- {
- 	struct nstoken *nstoken = open_netns(SERVER_NS);
-+	int ret = -1;
-+
-+	if (!ASSERT_OK_PTR(nstoken, "open server ns"))
-+		return ret;
- 
- 	if (!cfg->expect_kern_decap_failure)
- 		SYS(fail, "ip link del testtun0");
-@@ -363,17 +375,20 @@ static int configure_ebpf_decapsulation(struct subtest_cfg *cfg)
- 	if (!ASSERT_OK(tc_prog_attach("veth2", cfg->server_ingress_prog_fd, -1),
- 		       "attach_program"))
- 		goto fail;
--	close_netns(nstoken);
--	return 0;
-+
-+	ret = 0;
- fail:
- 	close_netns(nstoken);
--	return -1;
-+	return ret;
- }
- 
- static void run_test(struct subtest_cfg *cfg)
- {
- 	struct nstoken *nstoken = open_netns(CLIENT_NS);
- 
-+	if (!ASSERT_OK_PTR(nstoken, "open client ns"))
-+		return;
-+
- 	if (!ASSERT_OK(run_server(cfg), "run server"))
- 		goto fail;
- 
-@@ -407,7 +422,7 @@ static void run_test(struct subtest_cfg *cfg)
- 
- static int setup(void)
- {
--	struct nstoken *nstoken = NULL;
-+	struct nstoken *nstoken_client, *nstoken_server;
- 	int fd, err;
- 
- 	fd = open("/dev/urandom", O_RDONLY);
-@@ -424,52 +439,75 @@ static int setup(void)
- 	    !ASSERT_OK(make_netns(SERVER_NS), "create server ns"))
- 		goto fail;
- 
--	nstoken = open_netns(CLIENT_NS);
--	SYS(fail, "ip link add %s type veth peer name %s",
-+	nstoken_client = open_netns(CLIENT_NS);
-+	if (!ASSERT_OK_PTR(nstoken_client, "open client ns"))
-+		goto fail_delete_ns;
-+	SYS(fail_close_ns_client, "ip link add %s type veth peer name %s",
- 	    "veth1 mtu 1500 netns " CLIENT_NS " address " MAC_ADDR_VETH1,
- 	    "veth2 mtu 1500 netns " SERVER_NS " address " MAC_ADDR_VETH2);
--	SYS(fail, "ethtool -K veth1 tso off");
--	SYS(fail, "ip link set veth1 up");
--	close_netns(nstoken);
--	nstoken = open_netns(SERVER_NS);
--	SYS(fail, "ip link set veth2 up");
--	close_netns(nstoken);
--
-+	SYS(fail_close_ns_client, "ethtool -K veth1 tso off");
-+	SYS(fail_close_ns_client, "ip link set veth1 up");
-+	nstoken_server = open_netns(SERVER_NS);
-+	if (!ASSERT_OK_PTR(nstoken_server, "open server ns"))
-+		goto fail_close_ns_client;
-+	SYS(fail_close_ns_server, "ip link set veth2 up");
-+
-+	close_netns(nstoken_server);
-+	close_netns(nstoken_client);
- 	return 0;
-+
-+fail_close_ns_server:
-+	close_netns(nstoken_server);
-+fail_close_ns_client:
-+	close_netns(nstoken_client);
-+fail_delete_ns:
-+	SYS_NOFAIL("ip netns del " CLIENT_NS);
-+	SYS_NOFAIL("ip netns del " SERVER_NS);
- fail:
--	close_netns(nstoken);
--	return 1;
-+	return -1;
- }
- 
- static int subtest_setup(struct test_tc_tunnel *skel, struct subtest_cfg *cfg)
- {
--	struct nstoken *nstoken;
-+	struct nstoken *nstoken_client, *nstoken_server;
-+	int ret = -1;
- 
- 	set_subtest_addresses(cfg);
- 	if (!ASSERT_OK(set_subtest_progs(cfg, skel),
- 		       "find subtest progs"))
--		return -1;
-+		goto fail;
- 	if (cfg->extra_decap_mod_args_cb)
- 		cfg->extra_decap_mod_args_cb(cfg, cfg->extra_decap_mod_args);
- 
--	nstoken = open_netns(CLIENT_NS);
--	SYS(fail, "ip -4 addr add " IP4_ADDR_VETH1 "/24 dev veth1");
--	SYS(fail, "ip -4 route flush table main");
--	SYS(fail, "ip -4 route add " IP4_ADDR_VETH2 " mtu 1450 dev veth1");
--	SYS(fail, "ip -6 addr add " IP6_ADDR_VETH1 "/64 dev veth1 nodad");
--	SYS(fail, "ip -6 route flush table main");
--	SYS(fail, "ip -6 route add " IP6_ADDR_VETH2 " mtu 1430 dev veth1");
--	close_netns(nstoken);
--
--	nstoken = open_netns(SERVER_NS);
--	SYS(fail, "ip -4 addr add " IP4_ADDR_VETH2 "/24 dev veth2");
--	SYS(fail, "ip -6 addr add " IP6_ADDR_VETH2 "/64 dev veth2 nodad");
--	close_netns(nstoken);
--
--	return 0;
-+	nstoken_client = open_netns(CLIENT_NS);
-+	if (!ASSERT_OK_PTR(nstoken_client, "open client ns"))
-+		goto fail;
-+	SYS(fail_close_client_ns,
-+	    "ip -4 addr add " IP4_ADDR_VETH1 "/24 dev veth1");
-+	SYS(fail_close_client_ns, "ip -4 route flush table main");
-+	SYS(fail_close_client_ns,
-+	    "ip -4 route add " IP4_ADDR_VETH2 " mtu 1450 dev veth1");
-+	SYS(fail_close_client_ns,
-+	    "ip -6 addr add " IP6_ADDR_VETH1 "/64 dev veth1 nodad");
-+	SYS(fail_close_client_ns, "ip -6 route flush table main");
-+	SYS(fail_close_client_ns,
-+	    "ip -6 route add " IP6_ADDR_VETH2 " mtu 1430 dev veth1");
-+	nstoken_server = open_netns(SERVER_NS);
-+	if (!ASSERT_OK_PTR(nstoken_server, "open server ns"))
-+		goto fail_close_client_ns;
-+	SYS(fail_close_server_ns,
-+	    "ip -4 addr add " IP4_ADDR_VETH2 "/24 dev veth2");
-+	SYS(fail_close_server_ns,
-+	    "ip -6 addr add " IP6_ADDR_VETH2 "/64 dev veth2 nodad");
-+
-+	ret = 0;
-+
-+fail_close_server_ns:
-+	close_netns(nstoken_server);
-+fail_close_client_ns:
-+	close_netns(nstoken_client);
- fail:
--	close_netns(nstoken);
--	return -1;
-+	return ret;
- }
- 
- 
-@@ -478,15 +516,19 @@ static void subtest_cleanup(struct subtest_cfg *cfg)
- 	struct nstoken *nstoken;
- 
- 	nstoken = open_netns(CLIENT_NS);
--	SYS_NOFAIL("tc qdisc delete dev veth1 parent ffff:fff1");
--	SYS_NOFAIL("ip a flush veth1");
--	close_netns(nstoken);
-+	if (ASSERT_OK_PTR(nstoken, "open clien ns")) {
-+		SYS_NOFAIL("tc qdisc delete dev veth1 parent ffff:fff1");
-+		SYS_NOFAIL("ip a flush veth1");
-+		close_netns(nstoken);
-+	}
- 	nstoken = open_netns(SERVER_NS);
--	SYS_NOFAIL("tc qdisc delete dev veth2 parent ffff:fff1");
--	SYS_NOFAIL("ip a flush veth2");
--	if (!cfg->expect_kern_decap_failure)
--		remove_kernel_decapsulation(cfg);
--	close_netns(nstoken);
-+	if (ASSERT_OK_PTR(nstoken, "open clien ns")) {
-+		SYS_NOFAIL("tc qdisc delete dev veth2 parent ffff:fff1");
-+		SYS_NOFAIL("ip a flush veth2");
-+		if (!cfg->expect_kern_decap_failure)
-+			remove_kernel_decapsulation(cfg);
-+		close_netns(nstoken);
-+	}
- }
- 
- static void cleanup(void)
-
--- 
-2.51.1.dirty
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 13 +++++++------
+>   1 file changed, 7 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 5e6f2d8b6014..63d4609cc3bc 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -41,14 +41,15 @@
+>   #define TDX_BUG_ON(__err, __fn, __kvm)				\
+>   	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
+>   
+> -#define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
+> -	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
+> +#define TDX_BUG_ON_1(__err, __fn, a1, __kvm)			\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #a1 " 0x%llx", a1)
+>   
+> -#define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
+> -	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, __rdx)
+> +#define TDX_BUG_ON_2(__err, __fn, a1, a2, __kvm)	\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #a1 " 0x%llx, " #a2 " 0x%llx", a1, a2)
+>   
+> -#define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
+> -	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%llx", __rcx, __rdx, __r8)
+> +#define TDX_BUG_ON_3(__err, __fn, a1, a2, a3, __kvm)	\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #a1 " 0x%llx, " #a2 ", 0x%llx, " #a3 " 0x%llx", \
+> +		     a1, a2, a3)
+>   
+>   
+>   bool enable_tdx __ro_after_init;
 
 
