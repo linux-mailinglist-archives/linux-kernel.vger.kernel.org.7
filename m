@@ -1,168 +1,134 @@
-Return-Path: <linux-kernel+bounces-880283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CE7C25571
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A233CC2556B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CA6B4E9DCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:48:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 523E14E42CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DF82BF017;
-	Fri, 31 Oct 2025 13:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ACB3431F0;
+	Fri, 31 Oct 2025 13:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQQwEpWW"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTQsfIJ9"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7E5241679
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299B22BF017
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761918489; cv=none; b=Df8CGXyELYwyOUYBSg491290YvaTRG5miqOXPJH2yJaSnW1QBKvd30KeSsTaBsldi7SohNbvinhK2TTlZKhCJTw4Q0HOknmHDk80D1oQmzRN7AW8DhqmZ9NQaHNX2TWC6eC3i2LfEj/raqSj2oFS+pvrbi2B+Y0gXizpXzhR+lg=
+	t=1761918471; cv=none; b=btJ68O6ZwZxZl3uwSMTinrBj5ooXYOOhG6NYcUeJ5zlxgBQbZ8ICXfEGSCZ7UShGMODNi8Y9o92pXVHl6xoKclu8GpT5P7352okM/1rZ4hLnOC/09TMXuR+m8Z1B17XgeUIZdnERloynP8LbH1n35R1QjxLy1bP3B+dWDhGHNww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761918489; c=relaxed/simple;
-	bh=m4d0TEVEKPm8SxpLnu/gK8YS9LXAMy6B2RvDA6hQIcs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yddmn5rDUKQRswCF02h3zXdt+0zyjgZW03YQPU2SUVGm2yGrHGmq1VBobe/qyKC2RSOa9F2CPZgvf54qzxgRZ5TPV6cRpCBIRLFhJhNoLlaoo1bg1/dou74++MlTFIzlXzumtz2EULPI31CbXDCF7Sru5VcUPR5c5tuxfJHQ3Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eQQwEpWW; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63e16fbdd50so2174412d50.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:48:05 -0700 (PDT)
+	s=arc-20240116; t=1761918471; c=relaxed/simple;
+	bh=lv9Fkug8UarBKmWSdJNWbQ+qkbQQqSj5ooPZo0eIpzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=akiCFzGH13zIFJ2ZWa22vqsMuSEpqOrrMZqDe7LNgDofdPs5DBcjXxBXZlJysonvfVCvxa/WP9ob4EV/EGTa+UA8uudYE0cDlwXnPyp7n7Zuxzignv3oVIJwOZ4UNQPhRoSbNBHot98/NwHfDlBmU6cECwL9RcDmhFFOPACtsIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bTQsfIJ9; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6ceb3b68feso1857593a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761918485; x=1762523285; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9IKMsypE+yNRUurFmetSHUW8DIToelSK2hDWwm/+SOg=;
-        b=eQQwEpWWCjo3DTyh7AnsJMlLnAE1zTc3nR+9purxkZvLfKTFuDBKqYxGW/GhA4Quux
-         GAI6VSbsr0AtZKEkRm+CUCsTGaQ9zBLRfo+1bDHtIHO9zrSdag1rX7wcIyqhIi9GcdM6
-         NoPzD7DkF/qLMBQZApBj1Zf5lW6m71AZ3Hju+ws7IUnqLAnB3fyIwlR6Z7/VkC5ILwtI
-         yyYICYUEKGGLL7787t66IUE2/y8BMk4nN4+TNpLJqBKiEhF5Fu2JsqO4Bnp0vpXMgrhx
-         ltBvCWGD9wNXm1xbAXVkxReLEwIKM5ClE+5ENYSWG72lMXcdBeJFeO5lJQ7bI1/eKkN5
-         z4rw==
+        d=gmail.com; s=20230601; t=1761918469; x=1762523269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTLpp1CXptXP5Avq6h7xCmd4Mk+qUexmMRpLJiy3rE8=;
+        b=bTQsfIJ9+d7GQrGN1IGGHbjXoNXGiAeuaw+1nBBG9baw2t8q8kLHPct07b/KkaFY5D
+         4Y9ivtVJ9Ne9M5PuNaJmS75d9A+jkycVWRwkwDmvEl5kwU42PHUkjYg6oC2fIn+fsGMJ
+         0y3HmROpy4ny7ktIK0dY+n3dvKn8XgBaOdzAEjzLMipgg8ANwIxhx343HEce/lbmHzdK
+         uc0Kyc5OA8sIx4CGMh8wqYax2kHEL5WqsETQDbW3wRWPvAz+oGxJrOuKBfj5WaAvhppF
+         2Pfw4lL470SMittOq6zMInGc/LScVK3lGUs7zBwTL3IdfG1kShfTOaPAocp9UEd6Fw+u
+         fNVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761918485; x=1762523285;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761918469; x=1762523269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9IKMsypE+yNRUurFmetSHUW8DIToelSK2hDWwm/+SOg=;
-        b=SkbRQJETUtmmPG+YkADu5Jm/hzFDqL1FLIH+fzbi4v2Hyj2iD7GFWijVdWO0gkJazA
-         EDEIbmJsTAaIm/VJphnB0sXtCOUMFPLQeNvJj+n26v9j2Ff0sYwXxZqZ7DawvL1Fh3fM
-         ABfLmuvQl4LZtOD8nuBtgVHlzF4UVv0VnvM7bn3zJe0kU3A2FOTStiNP2nSifCvxxSVY
-         rbknzHJwFIuDTgoEfwahrenndAsLdJ+Ow6ZjzBm6spzFoSE1gllP74gSa2k+JWzT0zCr
-         4X+Jg3gA6kTx4UYP2i8HAWND/JIeSOA7QcKA2Je/CWKkoOdgRoMBp/jDNujGRKrFdetC
-         5TVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWPo3SFAMaWya0hDGfwaKKc/M1HSrAfIqBVmo7c3IFH2IPqE3JhO5+cR4WgN9OK5TJz8KB8ZUGPXtLswc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjXrUKJuUhRUQycWZY0NrN9WEmj9RYpkMEnGsr1b9wmsPYxJo
-	ZWpbJ3KZaKCQYZ3fD9AVPsJMLsH6323yy//BVhKWgra8qh3Qv4pS7lZi1U8FcWj0o0dB0QKlisU
-	7V53at3TmVauGKqLFJKP3FROIjvuI7WsxxAuTAX7teQ==
-X-Gm-Gg: ASbGncsf391ELLIwLpqLPX1MMBAgfOiNFSg6Mj/fV0G1FIdNuLtUXZFCa6bP0G8VIsy
-	zh9Tf4wHql9qjMs73ICQwEanfqAgI7YM0ytjN1Drb3FrLiXAHErJSVrSPi3rvolPVtOyuvZYTUy
-	zuijPKCnBFU4FeNGv6Q5OMbHuDPCpeQHlbB0OD+IVCOTktdWIVKxNS0+ESpt8zDo6fArLfaWMQY
-	JYtl9rem3PDD9qL7lwwtrUu6HXgfCkkiRRGXr555ixhMw/OjQ9CeJFWxMhg3A==
-X-Google-Smtp-Source: AGHT+IGVcGqzFiIeaGUMTxGjSBMNFcrT+skyvR/Zq38w4b0meGhVP0vyEmyQ6O9HNiJoistD3h5W4kD1DiETyutaiP0=
-X-Received: by 2002:a53:d018:0:b0:63f:556b:5b6 with SMTP id
- 956f58d0204a3-63f922eff6emr2519034d50.39.1761918484805; Fri, 31 Oct 2025
- 06:48:04 -0700 (PDT)
+        bh=vTLpp1CXptXP5Avq6h7xCmd4Mk+qUexmMRpLJiy3rE8=;
+        b=V3bLEsDxmGDPQ+NoH8g0JAwEStrPTprY02AESRKBWwirmXRh+46D/0aqkCktLJgbFZ
+         7+r1nukxuVxo4xAtHwMsucpotgsZCc+JysXuE8Kh/bOcPC6qvstDZ5ZaCDpnK9BnLQWc
+         ITocbsAZLBAKNaxqOLuL2Sz+RFGaG8hMdJr//pTOAgNb5ZGtGG7C2AzvJHsVWwagtAZx
+         RA5QC5nBGyN56Abd6FAl2AYM2A0TKDcVjSh8ytUaN2HkWQPD3lMwHB8MqA9FdC4WMMDK
+         hnHM6eDMfGy9x62+WFQ2Xi1YhU256bJ/4B+9ai05FwbbdklZ3K8uDisIqGqvs2+usLSk
+         g6qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmp+VPZiN2p+51UK+HJmlPEWrBlZv9b1edx+GWA1hYk8TjsMDvBLfWj5GfKCbgWR3FN5zSvnbouNSjz9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKFlc5ce8VMFIv5HyTHc9YWU+BFB3VJqDVHX8mRwuY49Pr888M
+	JLdx6t4QrYB86Vypcel/dPOZaxILzUaTcTWvI4dIEg/khKXUJeaiWu0=
+X-Gm-Gg: ASbGncsDxL/maj3x9dCE9NqSe6+rBfkRxG0Z/iPSGeWJiYQ8cAWcfl2wqVzbezKIqCa
+	MgCd62t+pWEmEyJgH76mH20C9G1QNAtsHGWP+LU6ZuAIeLuETRife/IAo6xtoZJ+8PH8nVLJ2hT
+	nzRuSiL3wKd8ccSIJC6ogha8kXfRWQgRy21ICwvARGg542rabdSK6ZA3fz7MiHq9ppDGeQ47/jn
+	OabizsMrwT8wB5LOpKfsIDT98q+sRjTrng+jLRh1+TQxScjZEdptTSb4JEuNMMfePJawIdTfI/u
+	MmxQ+77DT2rOdP6gZqEiBF8gLz1vb14ASrRjM/P5ufb4c89qHBMaaIwl8mmda+9wYZ9LANMI+FH
+	lomrWpngMKjAH/FXPFsMSTUA43ygwBruhAfNdgYaP7zKC4NAiyVl2h3PdqqS7jPv/hbuds9CNoy
+	2DkRQedWIn9EDDThplcag=
+X-Google-Smtp-Source: AGHT+IFVleGd6d3qrffkbGaQm6oVAD7m7ue1Q8ELzAj6WTVMPmkx761XB58Q9EV/1aJXIUifd9ioFQ==
+X-Received: by 2002:a17:902:e54c:b0:282:2c52:508e with SMTP id d9443c01a7336-29517c194fcmr54681425ad.8.1761918469347;
+        Fri, 31 Oct 2025 06:47:49 -0700 (PDT)
+Received: from VSPRIME.. ([2401:4900:52f2:3b59:ca2f:95c0:7c6b:6e6a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952689e942sm24650595ad.25.2025.10.31.06.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 06:47:48 -0700 (PDT)
+From: vsshingne <vaibhavshingne66@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vsshingne <vaibhavshingne66@gmail.com>
+Subject: [PATCH] usb: core: prevent double URB enqueue causing list corruption
+Date: Fri, 31 Oct 2025 19:17:39 +0530
+Message-ID: <20251031134739.222555-1-vaibhavshingne66@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-2-ulf.hansson@linaro.org> <20251029081014.443psmqznd2pqm4i@lcpd911>
- <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com> <20251030164542.atnhs4wgk6ggmmly@lcpd911>
-In-Reply-To: <20251030164542.atnhs4wgk6ggmmly@lcpd911>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 31 Oct 2025 14:47:29 +0100
-X-Gm-Features: AWmQ_bkXYtLkHgQjUQNJqO9va0xDnvSagkeSDoJ8ysCheRg4L2MKvBY7iRS11PA
-Message-ID: <CAPDyKFqTS6-69QfqdPtRrbkSqwxEnO1CPXLnRvM6WsOKNZgyQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
-To: Dhruva Gole <d-gole@ti.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-[...]
+Prevents the same URB from being enqueued twice on the same endpoint,
+which could lead to list corruption detected by list_debug.c.
 
-> >
-> > > It seems an overkill to me that a userspace program be required to hold
-> > > open this file just to make sure the constraints are honoured for the
-> > > lifetime of the device. We should definitely give the freedom to just be
-> > > able to echo and also be able to cat and read back from the same place
-> > > about the latency constraint being set.
-> >
-> > So you'd want a sysfs attribute here, but that has its own issues (the
-> > last writer "wins", so if there are multiple users of it with
-> > different needs in user space, things get tricky).
->
-> sysfs makes sense, then would it make sense to have something like a
-> /sys/devices/system/cpu/cpu0/power/cpu_wakeup_latency entry?
->
-> IMHO userspace should decide accordingly to manage it's users and how/whom to allow to
-> set the latency constraint.
-> We already have CPU latency QoS entry for example which is sysfs too.
->
-> >
-> > > One other thing on my mind is - and probably unrelated to this specific
-> > > series, but I think we must have some sysfs entry either appear in
-> > > /sys/.../cpu0/cpuidle or s2idle/ where we can show next feesible s2idle
-> > > state that the governor has chosen to enter based on the value set in
-> > > cpu_wakeup_latency.
-> >
-> > Exit latency values for all states are exposed via sysfs.  Since
-> > s2idle always uses the deepest state it can use, it is quite
-> > straightforward to figure out which of them will be used going
-> > forward, given a specific latency constraint.
->
-> I disagree regarding the straightforward part. There could be
-> multiple domain heirarchy in a system for eg. and all these multiple
-> domains would have their own set of domain-idle-states. All of them having their own
-> entry, exit, and residency latencies. I myself while testing this series
-> have been thoroughly confused at times what idle-state did the kernel
-> actually pick this time, and had to add prints just to figure that out.
+This was observed in syzbot reports where URBs were re-submitted
+before completion, triggering 'list_add double add' errors.
 
-If I understand correctly, most of that confusion is because of the
-misunderstanding of including the residency in the state selection in
-regards to QoS.
+Adding a check to return -EEXIST if the URB is already on a queue
+prevents this corruption.
 
-Residency should not be accounted for, but only enter+exit latencies.
+Signed-off-by: vsshingne <vaibhavshingne66@gmail.com>
+---
+ drivers/usb/core/hcd.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
->
-> When implementing these things for the first
-> time, especially when one has complex and many a domain idle-states it
-> would indeed help alot if the kernel could just advertise somewhere what
-> the governor is going to pick as the next s2idle state.
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 87fcb78c34a8..66861f372daf 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -1758,16 +1758,15 @@ void usb_hcd_giveback_urb(struct usb_hcd *hcd, struct urb *urb, int status)
+ 		pr_warn("usb: URB already linked to bh->head, skipping duplicate addition\n");
+ 		return;
+ 	}
+-	
+ 	list_add_tail(&urb->urb_list, &bh->head);
+ 	running = bh->running;
+ 	spin_unlock(&bh->lock);
+ 
+ 	if (!running) {
+-        	if (bh->high_prio)
+-                	queue_work(system_bh_highpri_wq, &bh->bh);
+-        	else
+-        	        queue_work(system_bh_wq, &bh->bh);
++		if (bh->high_prio)
++			queue_work(system_bh_highpri_wq, &bh->bh);
++		else
++			queue_work(system_bh_wq, &bh->bh);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(usb_hcd_giveback_urb);
+-- 
+2.48.1
 
-The problem with advertising upfront is that the state selection is
-done dynamically. It simply can't work.
-
->
-> Also, I am not quite sure if these latencies are exposed in the
-> domain-idle-states scenario ...
-> I tried checking in /sys/kernel/debug/pm_genpd/XXX/ but I only see
-> these:
-> active_time  current_state  devices  idle_states  sub_domains  total_idle_time
->
-> Maybe an additional s2idle_state or something appearing here is what I
-> was inclined toward.
-
-That sounds like an idea that is worth exploring, if what you are
-suggesting is to extend the idle state statistics. In principle we
-want a new counter per idle state that indicates the number of times
-we entered this state in s2idle, right?
-
-While I was testing this feature, I used trace_printk - and afterward
-it's easy to digest the trace buffer to see what happened.
-
-Kind regards
-Uffe
 
