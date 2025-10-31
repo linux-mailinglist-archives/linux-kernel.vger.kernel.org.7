@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-879843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1225BC24341
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 145C6C2434D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 728954F26C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:37:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 540A14F3DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6092932E13F;
-	Fri, 31 Oct 2025 09:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE403321C1;
+	Fri, 31 Oct 2025 09:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="ZB8rS59V"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="bJS1iOl+"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2E32D9797;
-	Fri, 31 Oct 2025 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A54F329E61;
+	Fri, 31 Oct 2025 09:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761903416; cv=none; b=W5E1p2cWrZy2eYKBdQoBXWHNSF1y9FdHwcahT/p5wdBM5KlNB5Mwv3tusmtqoc6CcimfH8SrNbg1u02AZpHaVjuXPNutGPSDMsDF/M6foXeUXTqJ92RDQvnEtgGBj0ttF83NLQSswQPzb1ph9fze+LjgnEi4cQ+Cxfv5UM40Vqk=
+	t=1761903427; cv=none; b=AKwmC7/M/EhMmqAOOFC8sbvAZdN08c0f1bT1AtVFLX/dB7LvD3dANLCpoW+THnxoF4qKj+qe/C/qMoROZ2Llak+sPXKPoqbLU5UdwhveFURkOChRwmW71Q5mbhYScYxTcBZmjetYR2HcObHnwYWfSgWTlNxQdvQ+z5AT6WiyKSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761903416; c=relaxed/simple;
-	bh=ns3Df3/IDjgiLjT2xWQPnkTNmJNCSUdEVm0TyzBHwhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpkRM+xXj/PhFBIgDx+P/uvxS9e5CFb5zNuTzjx7+oBsDdwCUWX9jat5lijTkvxtfqAiAQo+7qax6H+lmZJoHv7wZ+uYjvLl3zvmznUHJTA5O9RMeGnm+ZW44BRnULWPA5zSQi6yJrwoiShZTrZf3balzS8ba2eWPY0O6JpV3No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=ZB8rS59V; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=cqeky3OkmbvUdQlSzLhyQGgk21GypekfDm8TxtKkmIA=; 
-	b=ZB8rS59V42dcerMAQy55TktpfJLJWmU3JN+nxl4PBRX0r+LXNkwl+VYrTnczl+E1kEW56Yh8XMv
-	oZCvBaZLxx/mckA8gsoZwrgCEviUipFkDFv/XqFNshEPuXaxvk2hezJxcl3fLcwoLJbXASlGheyaH
-	a9z9PC9goYiay1SLqasO7ucjfEAsNJ6MHSNl9VgQ2xtmM+wXoILWgRAOEtiQGXA8KCA0/+VunXHNL
-	o34XdzQBVBeEWVh9PsjgnmVcgIbovLLrx0wVKhvXmTFUv9Os1ebU8aSp9qIAMfo7Dy6q+VNu9m1zS
-	AGv0mGvrXaBPtOsosPPUZA/+vjKd/a0CA/LQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vElYs-00H1YE-0T;
-	Fri, 31 Oct 2025 17:36:47 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 Oct 2025 17:36:46 +0800
-Date: Fri, 31 Oct 2025 17:36:46 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: T Pratham <t-pratham@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Manorit Chawdhry <m-chawdhry@ti.com>,
-	Kamlesh Gurudasani <kamlesh@ti.com>,
-	Shiva Tripathi <s-tripathi1@ti.com>,
-	Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-	Vishal Mahaveer <vishalm@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] crypto: ti - Add support for AES-CTR in DTHEv2
- driver
-Message-ID: <aQSDLpD2LXlqILku@gondor.apana.org.au>
-References: <20251022180302.729728-1-t-pratham@ti.com>
- <20251022180302.729728-3-t-pratham@ti.com>
+	s=arc-20240116; t=1761903427; c=relaxed/simple;
+	bh=3gr1UG/m17wdgdAI2Acm1hwv9P3oJIgkKfDDH4C8zi8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tN5gpeLzefHn8cDq2CFSUYVQWrz8fvIctCfXGgPEs6RwmA0EcwGbYqiuPBX0AUiSpepMi1HI6myYWkDgr6s9whG6BROtXqrLG34i3NpDxhB3jFUipIdB5zR1XQ+5vSCh4/16h295WQPCftuO636xfQYtriUbvErK4BC4olqEUGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=bJS1iOl+; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=STnG01yfLSK1RKYAI3HkwU0KpYP9Y48pUPKUiedUaew=;
+  b=bJS1iOl+8AjcQiOuLUC9S3+y1t8CfwNUf+1jAGCiJvBg698OkgkmKZER
+   pfCaz3MNj6pR/dY7Rd33vCGL4KpA4YwdvNBE1Hy4fse6O4caKu1FFHHFX
+   iKU+uZ6ec1F+G1dM9iHn0J1m8xle/ry0O1DCHsIySVGT43Ld87dmcHMjX
+   M=;
+X-CSE-ConnectionGUID: vzxMhzRXQHyCwLAC8vT4WQ==
+X-CSE-MsgGUID: EYNeUUBUQPSqX0w0c9G0rw==
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.19,269,1754949600"; 
+   d="scan'208";a="129563541"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:37:01 +0100
+Date: Fri, 31 Oct 2025 10:37:00 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Naman Jain <namjain@linux.microsoft.com>
+cc: Markus Elfring <Markus.Elfring@web.de>, linux-hyperv@vger.kernel.org, 
+    x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+    "K. Y. Srinivasan" <kys@microsoft.com>, Long Li <longli@microsoft.com>, 
+    Mukesh Rathor <mrathor@linux.microsoft.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+    Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] x86/hyperv: Use pointer from memcpy() call for assignment
+ in hv_crash_setup_trampdata()
+In-Reply-To: <cea9d987-0231-4131-82ac-9ba8c852f963@linux.microsoft.com>
+Message-ID: <193768a-6914-5217-8815-ab1c75f1c8d@inria.fr>
+References: <d209991b-5aee-4222-aec3-cb662ccb7433@web.de> <cea9d987-0231-4131-82ac-9ba8c852f963@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022180302.729728-3-t-pratham@ti.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Oct 22, 2025 at 11:15:40PM +0530, T Pratham wrote:
+
+
+On Fri, 31 Oct 2025, Naman Jain wrote:
+
 >
-> +	if (ctx->aes_mode == DTHE_AES_CTR) {
-> +		/*
-> +		 * CTR mode can operate on any input length, but the hardware
-> +		 * requires input length to be a multiple of the block size.
-> +		 * We need to handle the padding in the driver.
-> +		 */
-> +		if (req->cryptlen % AES_BLOCK_SIZE) {
-> +			/* Need to create a new SG list with padding */
-> +			pad_len = ALIGN(req->cryptlen, AES_BLOCK_SIZE) - req->cryptlen;
-> +			struct scatterlist *sg;
-> +
-> +			src = kmalloc_array((src_nents + 1), sizeof(*src), GFP_KERNEL);
+>
+> On 10/31/2025 2:03 PM, Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Fri, 31 Oct 2025 09:24:31 +0100
+> >
+> > A pointer was assigned to a variable. The same pointer was used for
+> > the destination parameter of a memcpy() call.
+> > This function is documented in the way that the same value is returned.
+> > Thus convert two separate statements into a direct variable assignment for
+> > the return value from a memory copy action.
+> >
+> > The source code was transformed by using the Coccinelle software.
+> >
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >   arch/x86/hyperv/hv_crash.c | 4 +---
+> >   1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/arch/x86/hyperv/hv_crash.c b/arch/x86/hyperv/hv_crash.c
+> > index c0e22921ace1..745d02066308 100644
+> > --- a/arch/x86/hyperv/hv_crash.c
+> > +++ b/arch/x86/hyperv/hv_crash.c
+> > @@ -464,9 +464,7 @@ static int hv_crash_setup_trampdata(u64 trampoline_va)
+> >   		return -1;
+> >   	}
+> >   -	dest = (void *)trampoline_va;
+> > -	memcpy(dest, &hv_crash_asm32, size);
+> > -
+> > +	dest = memcpy((void *)trampoline_va, &hv_crash_asm32, size);
+> >   	dest += size;
+> >   	dest = (void *)round_up((ulong)dest, 16);
+> >   	tramp = (struct hv_crash_tramp_data *)dest;
+>
+>
+> I tried running spatch Coccinelle checks on this file, but could not get it to
+> flag this improvement. Do you mind sharing more details on the issue
+> reproduction please.
+>
+> I am OK with this change, though it may cost code readability a little bit.
+> But if this is a result of some known standard rule, added as part of these
+> Coccinelle rules, we should be good.
 
-You can't allocate memory on the data path.  The request might have
-been issued by the storage layer and doing a GFP_KERNEL allocation
-here risks dead-lock.
+Multiple people have suggested that due to the loos of readability the
+change is not a good idea.
 
-Failing the allocation is also not good.
+It's not done by a standard rule.
 
-Ideally you should make the hardware deal with the multiple of block
-size data, and then handle the trailer in your driver.
+julia
 
-But if it's too hard just send the whole thing to the fallback.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
