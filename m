@@ -1,92 +1,136 @@
-Return-Path: <linux-kernel+bounces-880136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6A2C24F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:18:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F13C24F5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:19:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F9B234C5B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04623AC7FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C602DC766;
-	Fri, 31 Oct 2025 12:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718142E1743;
+	Fri, 31 Oct 2025 12:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bF9CDJZi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dtLRiFGt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A47614A4CC;
-	Fri, 31 Oct 2025 12:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F512E401;
+	Fri, 31 Oct 2025 12:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913107; cv=none; b=mylIzdhGGPe2joYRhC5kVdhk7zv8a9JASAS7m18lz7FkYvNW13IzcIdQ4iEc68HzL8BG4vmVvtFXTZ6mgxEYcNnYk6BUBD8SN+b5ebQCwiByVsBl6Ob3f4Dgh8tme2bGJui2KplZihhI3nOSA4GxA3eRP2i/kZRDN9qwXMjq+/I=
+	t=1761913183; cv=none; b=j4N0wOdqeiFkFiOnR93xp8yjV9H21YiOWOl/h0nUESgfWiZkTWjgr1DL1xbuqtnFBx8HnVo2U5etClaQQu3ZXCkNWcUkQi5vB8gN4bPqdUQR8wxljttW/PmXoLNj9KLVN0hNJfKuFKxayVNTd/q7SRUkovuWCJUR6snO8kYo+gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913107; c=relaxed/simple;
-	bh=0izUsxBWgyKvtaP0ArWOlw4EsPJlU5WFlQUo38lMkIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mnw25Gw3n4pi0WYp/4rmZMAf5Cj8qkzJqV0q3aOsnwPxP10AdJ54lWImkFr/RCo33DudJ/M+ceVElDGLANdICwbn/u+hRLkCSp8QJi9GamegqAScNZMi0HM2Z0OtIuTeYul/KU748UWFbplfTLuFYG3Wxrujp4yyloL7aJgwCZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bF9CDJZi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14075C4CEE7;
-	Fri, 31 Oct 2025 12:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761913106;
-	bh=0izUsxBWgyKvtaP0ArWOlw4EsPJlU5WFlQUo38lMkIk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bF9CDJZis5oborOba5foFiFpWlstTaDemwZga1eqaZcy7T8FLDW3yXhm4Q+4Ro/5i
-	 AJ+xvwPA6an0mqQZIpf9Uk+elCXQzhTuLEpsCS8fBNBbAoNGB4lreUjGg8QvAQITkh
-	 3XSiBmipI6qz1usJKVFYjUvPXi4t3ZQydEfdTFDpOrlPQt3er4j6L5eSF1syd1cYav
-	 G9zAlp7jgVFNWnIV7cPU6HFVQI7aA9abqKy5MV/nyDrUB+TZBTJ82NW7FnzqX3TBOZ
-	 +fCZjEGsFwSL8HIn90PE0V/mTFFpmMdOxezTUFH4ZdafbbsZNg4BGld06V4EDpoucW
-	 pUKBnmttRUVkw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: touch up predicts in putname()
-Date: Fri, 31 Oct 2025 13:18:21 +0100
-Message-ID: <20251031-hautpflege-auszog-418eb5e786b6@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251029134952.658450-1-mjguzik@gmail.com>
-References: <20251029134952.658450-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1761913183; c=relaxed/simple;
+	bh=dT6kDyIp8MnyYNrNozXVkRFEY5aT2X5uIUkMcsMzINM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QG7MXkeItipEPb6AuiYzsC2GsEan2NCqiU1gSWOj6GtSGOsDsBD8faC5AEixZaHCaGFKniXZhZIaTuiWvPE83CZnC3aMmDBM8Ca+I+4HYSRdERyU5VDU5oWfX1NxF7psKL2syC8H4RtHMQIq+S2G3lkKKqgAGHfqRz7qZu01KWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dtLRiFGt; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761913182; x=1793449182;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dT6kDyIp8MnyYNrNozXVkRFEY5aT2X5uIUkMcsMzINM=;
+  b=dtLRiFGteG16aguDFHWJTSd+5p/x62uwOt47tffhSxY4AddN3JslHu1E
+   6UkuG1FypmJe3mAPO8IIGqwIzFY6o2Wqqs37g+Tt+OCz/dw/9wrHeGJYC
+   DajW8ZkDWeuKJteAlpJ9U9FebtCcBNHN8rSYAGYwDuimA3okpCYPyo/4U
+   wJPvxWaiCAA7W23nAMZiXt65yh1yHaqd1tMjEx1wdz7Dd6F5RYP6F4txR
+   9h2nhop2XyAwuhwFwglOMnUhEv3adHPIvIOwoCd3ySUNs00sayzUT7sNJ
+   V0VMEvKXtRCzI/+6wOo2uMuQEZF0d9ppFIBr3YXbP/fDjdG6VFaBkypHb
+   Q==;
+X-CSE-ConnectionGUID: CfwGiGT5QoyQso6IovkT8g==
+X-CSE-MsgGUID: G7QUEbXCSXml75tIq0221Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="51645315"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="51645315"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:19:41 -0700
+X-CSE-ConnectionGUID: fTTR/R0NRDy/611ccDKfQw==
+X-CSE-MsgGUID: 0TL+EGaZRWWRg0ayPfR35Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="186965714"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 31 Oct 2025 05:19:39 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEo5z-000N5U-2z;
+	Fri, 31 Oct 2025 12:19:19 +0000
+Date: Fri, 31 Oct 2025 20:18:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gladyshev Ilya <foxido@foxido.dev>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chris Mason <chris.mason@fusionio.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: make ASSERT no-op in release builds
+Message-ID: <202510311956.w2iYoQcn-lkp@intel.com>
+References: <20251030182322.4085697-1-foxido@foxido.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=984; i=brauner@kernel.org; h=from:subject:message-id; bh=0izUsxBWgyKvtaP0ArWOlw4EsPJlU5WFlQUo38lMkIk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSyrOS75GmVfkFbWnDq+WOiC4OOTFrk6VIUwclwtcPkj KPp2YijHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxy2b4H+EqpThxsutGaVcP o2yGM9Eev9XYZfOn1V+PiHrbMSGokOGf5qlHNepx79RvrvrK3mam8kPEPX2L93r+fWZh9vr/K9P ZAQ==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030182322.4085697-1-foxido@foxido.dev>
 
-On Wed, 29 Oct 2025 14:49:52 +0100, Mateusz Guzik wrote:
-> 1. we already expect the refcount is 1.
-> 2. path creation predicts name == iname
-> 
-> I verified this straightens out the asm, no functional changes.
-> 
-> 
+Hi Gladyshev,
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+kernel test robot noticed the following build warnings:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+[auto build test WARNING on e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6]
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+url:    https://github.com/intel-lab-lkp/linux/commits/Gladyshev-Ilya/btrfs-make-ASSERT-no-op-in-release-builds/20251031-024059
+base:   e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+patch link:    https://lore.kernel.org/r/20251030182322.4085697-1-foxido%40foxido.dev
+patch subject: [PATCH] btrfs: make ASSERT no-op in release builds
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251031/202510311956.w2iYoQcn-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510311956.w2iYoQcn-lkp@intel.com/reproduce)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510311956.w2iYoQcn-lkp@intel.com/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
+All warnings (new ones prefixed by >>):
 
-[1/1] fs: touch up predicts in putname()
-      https://git.kernel.org/vfs/vfs/c/20052f2ef08a
+>> fs/btrfs/raid56.c:302:13: warning: function 'full_page_sectors_uptodate' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+     302 | static bool full_page_sectors_uptodate(struct btrfs_raid_bio *rbio,
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +/full_page_sectors_uptodate +302 fs/btrfs/raid56.c
+
+53b381b3abeb86 David Woodhouse 2013-01-29  301  
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01 @302  static bool full_page_sectors_uptodate(struct btrfs_raid_bio *rbio,
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  303  				       unsigned int page_nr)
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  304  {
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  305  	const u32 sectorsize = rbio->bioc->fs_info->sectorsize;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  306  	const u32 sectors_per_page = PAGE_SIZE / sectorsize;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  307  	int i;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  308  
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  309  	ASSERT(page_nr < rbio->nr_pages);
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  310  
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  311  	for (i = sectors_per_page * page_nr;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  312  	     i < sectors_per_page * page_nr + sectors_per_page;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  313  	     i++) {
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  314  		if (!rbio->stripe_sectors[i].uptodate)
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  315  			return false;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  316  	}
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  317  	return true;
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  318  }
+d4e28d9b5f04d8 Qu Wenruo       2022-04-01  319  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
