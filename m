@@ -1,76 +1,82 @@
-Return-Path: <linux-kernel+bounces-880157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28932C24FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:27:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E23C24FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 98E133511F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:27:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5714075E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CDF348467;
-	Fri, 31 Oct 2025 12:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dt6ITrFV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829512E1743;
+	Fri, 31 Oct 2025 12:27:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7C534845E;
-	Fri, 31 Oct 2025 12:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B170E3074B7;
+	Fri, 31 Oct 2025 12:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913627; cv=none; b=Uk5Hpv5kWGYfKpSuTxDWfhE7G9+LCustWmlFeby9kCxRWKzEv25rT4SgW8I1HNTwIGnz+gziKuelBaV81/lLQdxbo3/GjXhSkpQe50rCTeOH1F5yr0fAOB/DcZ/eN3bi51YhCO0JQm4QotBtOt8aveSBf6wOlEZNeCrQcWsf4yw=
+	t=1761913624; cv=none; b=X5Ff6pLjpsrtU5L5j3OBdMISt72F1ijL2EjX57BdezMzT974gNZOWzk1s4+fAIAK/n6xMKH6rCg2m7GqlOAFUUAq/w5phYZd5wKXCwO+B8wfmSFu33cy8B0+k47dy2uxxjeGXe76XhQZTEnGGlj7MZ2plYBuUrkLI5Ep+LwlFZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913627; c=relaxed/simple;
-	bh=RCW/NGhtrZbMiM2IHWS3n40LEepZGpSaey0rTMR2euM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5KIRTQYTbHAB0NVOEC8NXwXz5KijE6Jkzch0vDwafo9kQXydEBzdI9hSufdIMPfCa9/Tx1pT41cntIv9NvjUkOHS+Ubhv00NUbVMTGJhlKfv5kHCXeATVGg1MCz5DyXaNw4MOtvNjrNGe2ZfYgDt7JzRNzcN7/kESgK6PvSwvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dt6ITrFV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB57C4CEE7;
-	Fri, 31 Oct 2025 12:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761913626;
-	bh=RCW/NGhtrZbMiM2IHWS3n40LEepZGpSaey0rTMR2euM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dt6ITrFVrDYzYXId/FS1iclpFNVXcECxEt4H4Wyuf++dExc3dvd2DRxE9nLc3bPwo
-	 ZDSHslx9aGfLIOzG2TskVqJidL6ZhSFuOAo4sW1e2pWdpoo2Gj93FMD8NiOwWqw5rQ
-	 HV9fPsaLdHBTluo288j7zmJUKKpRh0ogrt11XcNU=
-Date: Fri, 31 Oct 2025 13:27:03 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Doug Berger <doug.berger@broadcom.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH stable 6.12] sched/deadline: only set free_cpus for
- online runqueues
-Message-ID: <2025103157-effective-bulk-f9f6@gregkh>
-References: <20251027224351.2893946-1-florian.fainelli@broadcom.com>
- <20251027224351.2893946-5-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1761913624; c=relaxed/simple;
+	bh=fVFMpcUYzC7lROgUiN+Kd68HAS4hARr415HOhh5fqQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fSrpfCwVghp8Tz3987lE3xvm5K1RuMbWxK+Of/DIGuuT6wIVn6q6TY6hB77ITdRpWNxASz1iD5OLx+5EISgOi/V0YUeGtD87n7kStkmXXbQrn4K6nQVxNi+QisExirRxsTpzuQePAzhyZq9xQdZUBI9KcC031VDwqnYaz0z0/jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 79DD588883;
+	Fri, 31 Oct 2025 12:26:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id C6CAA20027;
+	Fri, 31 Oct 2025 12:26:51 +0000 (UTC)
+Date: Fri, 31 Oct 2025 08:27:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] tracing: Add an option to show symbols in
+ _text+offset for function profiler
+Message-ID: <20251031082736.1a2c4660@gandalf.local.home>
+In-Reply-To: <20251031102947.c2cc7f437db1399c7ebc1863@kernel.org>
+References: <176179500583.960652.5730113001091388258.stgit@devnote2>
+	<20251030052548.31130e33@gandalf.local.home>
+	<20251031102947.c2cc7f437db1399c7ebc1863@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027224351.2893946-5-florian.fainelli@broadcom.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 6fwz4nd6whrukrcio93uzcdkn19sq1rq
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: C6CAA20027
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/edgf66x+Btf8xQ8WQhG1sdAO8qOqjXWE=
+X-HE-Tag: 1761913611-768975
+X-HE-Meta: U2FsdGVkX1/19D0SJZyDdU2GtP2lleHfsL+rRxEhg3mLlEq1/IdF80+pSu4QrdnrNu8PcHrNQxBipxlWXo5JpBM3X1RoW+L6SYiea71TXX1/Iv8CwuUuEm2RBA9xwfWkmgtDzz4WTf1CBJkhI2HtYTGGnaBsM9nckl2Vhjl0cMqz6mTQ9rvMy4ZvW1cl/5c/1t9Fx0zwe0WicDHcQNJROZHxdCDvVFZmffskY85vScz0KFtiO04AHd/lmQSGoNdMhWIJooeJVRjFzTm4rK3pNRYb8xm0dF7A37F/O32p9HiO8NnrJj+tekopGUWiiA3mxGxlMTApX37TmzK9tzqQByis54X/XLf+
 
-On Mon, Oct 27, 2025 at 03:43:49PM -0700, Florian Fainelli wrote:
-> From: Doug Berger <opendmb@gmail.com>
+On Fri, 31 Oct 2025 10:29:47 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> > +static inline int probe_print_ip_sym(struct trace_seq *s, unsigned long ip,
+> > +				     int flags)
+> > +{
+> > +	retun seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET);
+> > +}
+> > 
+> > And use that instead.  
 > 
-> [ Upstream commit 382748c05e58a9f1935f5a653c352422375566ea ]
+> Shouldn't we make it trace-wide function ? 
 
-Not a valid git id :(
+Sure.
+
+-- Steve
 
