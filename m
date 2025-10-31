@@ -1,184 +1,204 @@
-Return-Path: <linux-kernel+bounces-880375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9127AC25A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:44:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD75C25A22
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9EBF4F5A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E55405DD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1226834C98E;
-	Fri, 31 Oct 2025 14:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77DE34C9A5;
+	Fri, 31 Oct 2025 14:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oM1YfZPE"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IRUWm0rp"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011011.outbound.protection.outlook.com [40.93.194.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F0834C829;
-	Fri, 31 Oct 2025 14:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921665; cv=none; b=kUj92iK4gvq00K1bBNasy5rAP3WSGvYrrHIC3ww7dXVr4Ep9JPQnVfBGukJlz+eN4k1v48guL3cgmFShfIL5Of1iv0WUhHxOoujfkYReJ2rsauYSbGrStRg9O5bdLJ1dOgVirm7GMGbzaIK2wV32/iDLvxS+//kl3Sv/RI0J/zk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921665; c=relaxed/simple;
-	bh=ViiHpZJMZyDxLPatqQLOhRIrDkTpsGqBdd/rhfNNR9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BWOL2Ro22LdCNQMscj+pkyawr9aBC/wqVWoMhOqCvdomfgb2sTCzNjLCk+y19c4UbXtJRUvdVa8P9bkhv6xPYDRUuwqTh/P++m07XFUV2i+6q5rguXRzuIo+Da/s9Wg1kZl6OnWtREABiPDNPtM09WLgUfgmiGfayejXGzIFY1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oM1YfZPE; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761921648; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=rRP5U1puhOFNZW6X5aXL2VEcfc6ahJc/GiVy3zRzEXE=;
-	b=oM1YfZPESF+GNZ02YR+KiXNB6FL93+FQb/DCxayP9cJqJttwu8UgEiTXxqdaOiRvszSV/T+A/P3jy3qAecMRffIxpJDxX4be5yyVaA6yzqjFbZ1RN6e1CQtaiEXthRri7vRkFknigF6mhyTR8FrjkDPbf4SQJjYcDwUbT752dcY=
-Received: from 30.180.79.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrPDjyg_1761921646 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 22:40:47 +0800
-Message-ID: <7f3ee1f2-b399-4d31-839e-1c35004ffa4e@linux.alibaba.com>
-Date: Fri, 31 Oct 2025 22:40:45 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF4734C82D;
+	Fri, 31 Oct 2025 14:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761921777; cv=fail; b=LKJr6eTXn4z+uVQ3KhoZHcSQ4zTwR1imxa/SmFkShAt8fy3Wpquw0cuDpN2P6JkXB/g1EpUNZ8Bq5hWBnq8avesNeu07KXuTxb/trC1gURlfSoAO2EgIBtZ8xJqs6L8h2G0VgFjpB9UTuU8SzT8oDnAM4mUhVprIfqZ2AqtDnXo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761921777; c=relaxed/simple;
+	bh=GbTcGtdy5nc04bMN/Ppv/y+iotyRl6+ld55b/Tci3rc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WfsMQcNS9IGh4g2m1yqa3NA7NnMXAsYlQcXbQ5BBZlvudNne7UbM9snZJ+2f2pGEBjvvjBnQoYK8rPxEu5FqZnaYHLfHzJV6e5kY/7+fx0H+11v6TZkw4wFTLH36W/evrDh3+WjueUlYN/EsBkCL04+F5XgTzAiNUW7jrG0bMNo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IRUWm0rp; arc=fail smtp.client-ip=40.93.194.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FZtzxbdMGIMroQfSOzIWbDPhwkdQ3+mSiNWGVX0MDxaZvLiXU97WuAvD398D+HML88N60zmyCgCEj2tSZd9tpBNrtiiBvFFuRGFvON6HzMlhfGDUgNcVMH7nJAE2aSN5+1KYTnWvOXuCgaGkB6oOtegn07nJHL84YNqdJW8w0KIaLrXQ3nPCAO0rJLhyWxngEaJ9MiT9Dw/DC1gZZYLjmECKgbpOnm68YfxkegYODMUvwh6RHkGHDVN/Qvl/GQZqh2PGDsFYp4/biNSplR5PeNm5Z1bIsNj124b2EoB94J3z/MVEOMlbjiB2LWFzVbtDxxkOItu1Dm7ty6YYYoXxng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8jNgLgU+8Dhd7NVBFoNb21G3Q8hVCVLA9VFcRjhpm5M=;
+ b=CnEcSH+l9gU7tdStpAoD3LzqHs+ATLDEslgHc2V/cDKeb9kdJdLRGNHxKkw037zNqF1F0p9l1Nd+cPwuJThnCB6f6hFjyaaqrbUYC05qX+HGP7XhkLAXhuCWTVSZoy10W6oVUCGvytSuVOE96pw6g5mb0y6B3t7qKixUs2T9HSdBp6bC5cBY5/hMgu316HgSHROkRGrqtvPR5VnVQs9ztN9sc6rhh7QXNXiOxd3KoRx5Y+mfLB9sCsloiOAjEPqcIhHffcnwX0k22Yl9dorxs5BvsKSmnLBKXpyDBku5KM7splT2680II0wVuTHfl9h8lEZhiLACcCmKQEnWDY/uWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8jNgLgU+8Dhd7NVBFoNb21G3Q8hVCVLA9VFcRjhpm5M=;
+ b=IRUWm0rpM17peMxxOktS2YirEKUZqPpuNv14V2zSzbQsgYrBa4KT0ibFxGmxiJOopFRr0Ub2etfC5YfDJ1YKaAW8ohBDaJv1qlmAmko1ao2IVRTWIPMENBfGYViln2J61v+QaliXi1xfot58K6WwmazcBsjFpznOWVfyTJMJRLQ=
+Received: from MN2PR12CA0024.namprd12.prod.outlook.com (2603:10b6:208:a8::37)
+ by CH0PR10MB5209.namprd10.prod.outlook.com (2603:10b6:610:da::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
+ 2025 14:42:51 +0000
+Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
+ (2603:10b6:208:a8:cafe::72) by MN2PR12CA0024.outlook.office365.com
+ (2603:10b6:208:a8::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
+ 31 Oct 2025 14:42:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 14:42:51 +0000
+Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 31 Oct
+ 2025 09:42:45 -0500
+Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE211.ent.ti.com
+ (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 31 Oct
+ 2025 09:42:45 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 31 Oct 2025 09:42:45 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.233.103])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59VEgf5V4024498;
+	Fri, 31 Oct 2025 09:42:42 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Aniket Limaye
+	<a-limaye@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <gehariprasath@ti.com>
+Subject: Re: [PATCH v3] arm64: dts: ti: k3-j784s4: Fix I2C pinmux pull configuration
+Date: Fri, 31 Oct 2025 20:10:53 +0530
+Message-ID: <176192142809.427883.385396429453219228.b4-ty@ti.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251022122638.234367-1-a-limaye@ti.com>
+References: <20251022122638.234367-1-a-limaye@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
- zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20210818144542.19305-1-hch@lst.de>
- <20210818144542.19305-4-hch@lst.de>
- <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
- <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
- <2025103155-definite-stays-ebfe@gregkh>
- <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
- <2025103145-obedient-paramedic-465d@gregkh>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2025103145-obedient-paramedic-465d@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|CH0PR10MB5209:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed08deda-bb62-415d-5bf0-08de188bc4d8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|34020700016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V1U3ZlQ4SXBuUjVrTjZPZHV3VlplVTNYb2lUaWxwSHNGWDZQNnp2YjVKeGNT?=
+ =?utf-8?B?MnBFd3hKYStBUExWSCtKdXJSQno2dWlyNWxzTjRLbFVkb2U1ZGhvRzhVTTYr?=
+ =?utf-8?B?NFdDdFljcWJ4Y3gwZUtMeUZjT1kxMTNienVRZ3N3ajNuSU5BbUZUN3VueHFL?=
+ =?utf-8?B?WW53MHhVcFRDcmRyKzJzTjBWQ2MwK25ZZXNrQ1hVdEZtU3Vub3NoZUlFMGZZ?=
+ =?utf-8?B?NzhSTnBCb3lSa3BPd0JFUkpLZXJ0V0o1SVFCS2tUZ3YzWnJsMUFNNGdwNjVn?=
+ =?utf-8?B?OHJwcEppZ3VKK0VkUzh0ZWlaQSs3dVZLM25XTWg4SkhLQjF6ZXVJU2VzTlA1?=
+ =?utf-8?B?cjZoL2xvR2dSRlgvMExYc3NHd1ZQVWh6K01ndURPdlV6K0lLYjNsSytZTVVQ?=
+ =?utf-8?B?TUVEaEF2aTN4cWQvaXhUd1BCdlVtYjRaWVl5akNDUjRRMGhmQzhheGZtQ2tP?=
+ =?utf-8?B?REhFTlNjT2o5ZkNlazRwSXhSc2lpamlHb1FhYzVuNHdYZ2JxbEpTOEVkaW13?=
+ =?utf-8?B?RlBFYnJYWFhkaEZVc1h3UGZGNXQ0anFWVGVSdWU3bWNvRUlmd1M1SEJIbk5D?=
+ =?utf-8?B?bjZNaGpSeVIxRm5qYkFEOS9JYnJDbXNQbTljOHAzdk1oWTlMMWxBVTEvQWpr?=
+ =?utf-8?B?MXY2c01nVTVzejF6K3NnK1o0ZmxwUEljOVdlTzNPM0FuZngrekpzZlVEMmpM?=
+ =?utf-8?B?TDRVR0JxemtZVG83dmszZ0F0RlVSRGZwZmFDcWNqNTJSMVFMd0RiYURrVWpJ?=
+ =?utf-8?B?NjFSWnAwci9IQ1YyS2JyQlJvL3J3eG4vUkEza1pXS2hRZWFOUGV2MFk2WGZD?=
+ =?utf-8?B?NDhnTnpPK01yaStQRmdjczdSZ2NBZnVuMlEvYkw2cFlDV1B1clFYTWF5c1VZ?=
+ =?utf-8?B?eVFvWVBpRGc1WFFVNlZSeFg5VnFlWnJIaFlVMUZuOVg1U01KTUd4ZHhzVlZh?=
+ =?utf-8?B?TzYxeU9XeVBwSUtzdkZPeTdpNmVNdGt2dXI2amg2cjZKSUMzM2dDMUdKYlc4?=
+ =?utf-8?B?ejhweGpkNUVkSkcwdlJ2RkFxYXRWSXQzR0kyckgvNEsydDVHZUlqY2REZS90?=
+ =?utf-8?B?U3FUS2JQSmxoRlJFMmtmckFId29OOGJ4RGlyMlNVVlkxbjU0UzJGM21nakVa?=
+ =?utf-8?B?OE9vd0ZkQlpCcDZuT3k1V3FacnZnVzlwcmwrQU5LaUQ4a1gxZHFRVFlueFpU?=
+ =?utf-8?B?MWZkZ28yclA0ZTdtdlZ2R3g5cjg4VkhqMmN0djR2Tk9ua3htSFhFYnUyQVNv?=
+ =?utf-8?B?eFZsSG5LK2ZKbFl2bU4zZjV4dnBwSnE5ZktuZHpVNlhpeFFBWkhPSXBGMURo?=
+ =?utf-8?B?QW5VWkczUlgrazJlTysrSzFuRjNEdklkUDlLWkwxVm0zOHErS21GNFpWU0dY?=
+ =?utf-8?B?cjBqMGVReVp6ODdCbGFQSElOWmVPbXlmNHJjWkRCd2h1c1lCeC9YSjdjZ213?=
+ =?utf-8?B?TmN0SGFyVU9qdlpTTzFFcm5rb3JFTHpwb1BSRVZOdkdOWkxLREJoaWxsWGNQ?=
+ =?utf-8?B?cUl1Mmw4T3ZpbjBIdWVScEs5UFY5NTJyQ2pNMmhRR3hzN2plSTlTVElsdGl3?=
+ =?utf-8?B?ZGdrckQxa2pWS2tCQ1o4aUNmakVrWkpubEpPbW5HbUgwOTFvQnBQTXpnSlpx?=
+ =?utf-8?B?NmNVVUIvM1FjRFI1R0xkYStnUXFiWFltVWdsZlJMVzdGSlgxdXRobWtOSnZG?=
+ =?utf-8?B?MHV3d1ZGVGlwekRKRHFhUnRRdys0bDAxOEtJaktGejBQWThPUDFxamJBYmJs?=
+ =?utf-8?B?R3JyNUdIaVNyanNYS2l2NFIwN3k4QWtkZkE3Vm9tMGJDU01lN0RqdUJOWlFa?=
+ =?utf-8?B?QTN3a2owQTFBN2xOTklObjN2VlJ5ZXRyZDdkMXE4QzFqVERSWHp1Q0Mremgx?=
+ =?utf-8?B?ZThiRDhDTmhtMGpkMzZTVkxxdERXOGowZmEzeXdBYmVUUW9Jem9RTS9nOFhm?=
+ =?utf-8?B?clZZZUgrTHN1RFFGUEhSb001Q0F4VUgzSlJvY1M5OVU1ZENUWkZwNVBSdVFJ?=
+ =?utf-8?B?STc4cGlGUmNVUkplM3JRZ0NUUWFhejZ3Z3BjcXJQdlVMWXNmS2lRZ2l6TVdJ?=
+ =?utf-8?B?dUh0UmlhSkMvMDJ0RDJzNnppR1VBalM2bnd5MWc2NEFkSThxTFhJUjB5U3Bx?=
+ =?utf-8?Q?hOkg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(34020700016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 14:42:51.4500
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed08deda-bb62-415d-5bf0-08de188bc4d8
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5209
 
+Hi Aniket Limaye,
 
-
-On 2025/10/31 22:31, Greg Kroah-Hartman wrote:
-> On Fri, Oct 31, 2025 at 06:12:05PM +0800, Gao Xiang wrote:
->> Hi Greg,
->>
->> On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
->>> On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
->>>>
->>>>
->>>> On 2025/10/31 17:45, Christoph Hellwig wrote:
->>>>> On Fri, Oct 31, 2025 at 05:36:45PM +0800, Gao Xiang wrote:
->>>>>> Right, sorry yes, disk_uevent(KOBJ_ADD) is in the end.
->>>>>>
->>>>>>>     Do you see that earlier, or do you have
->>>>>>> code busy polling for a node?
->>>>>>
->>>>>> Personally I think it will break many userspace programs
->>>>>> (although I also don't think it's a correct expectation.)
->>>>>
->>>>> We've had this behavior for a few years, and this is the first report
->>>>> I've seen.
->>>>>
->>>>>> After recheck internally, the userspace program logic is:
->>>>>>      - stat /dev/vdX;
->>>>>>      - if exists, mount directly;
->>>>>>      - if non-exists, listen uevent disk_add instead.
->>>>>>
->>>>>> Previously, for devtmpfs blkdev files, such stat/mount
->>>>>> assumption is always valid.
->>>>>
->>>>> That assumption doesn't seem wrong.
->>>>
->>>> ;-) I was thought UNIX mknod doesn't imply the device is
->>>> ready or valid in any case (but dev files in devtmpfs
->>>> might be an exception but I didn't find some formal words)...
->>>> so uevent is clearly a right way, but..
->>>
->>> Yes, anyone can do a mknod and attempt to open a device that isn't
->>> present.
->>>
->>> when devtmpfs creates the device node, it should be there.  Unless it
->>> gets removed, and then added back, so you could race with userspace, but
->>> that's not normal.
->>>
->>>>> But why does the device node
->>>>> get created earlier?  My assumption was that it would only be
->>>>> created by the KOBJ_ADD uevent.  Adding the device model maintainers
->>>>> as my little dig through the core drivers/base/ code doesn't find
->>>>> anything to the contrary, but maybe I don't fully understand it.
->>>>
->>>> AFAIK, device_add() is used to trigger devtmpfs file
->>>> creation, and it can be observed if frequently
->>>> hotpluging device in the VM and mount.  Currently
->>>> I don't have time slot to build an easy reproducer,
->>>> but I think it's a real issue anyway.
->>>
->>> As I say above, that's not normal, and you have to be root to do this,
->>
->> Just thinking out if I am a random reporter, I could
->> report the original symptom now because we face it,
->> but everyone has his own internal business or even
->> with limited kernel ability for example, in any
->> case, there is no such expectation to rush someone
->> into build a clean reproducer.
->>
->> Nevertheless, I will take time on the reproducer, and
->> I think it could just add some artificial delay just
->> after device_add(). I could try anyway, but no rush.
->>
->>> so I don't understand what you are trying to prevent happening?  What is
->>
->> The original report was
->> https://lore.kernel.org/r/43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com/
+On Wed, 22 Oct 2025 17:56:33 +0530, Aniket Limaye wrote:
+> The I2C pins for some of the instances on J784S4/J742S2/AM69 are
+> configured as PIN_INPUT_PULLUP while these pins are open-drain type and
+> do not support internal pull-ups [0][1][2]. The pullup configuration
+> bits in the corresponding padconfig registers are reserved and any
+> writes to them have no effect and readback checks on those bits fail.
 > 
-> So you see cases where the device node is present, you try to open it,
-> but yet there is no real block device behind it at all?
-
-Roughly yes, block devices have a pseudo filesystem, briefly
-it registered the block device with device_add() so the
-devtmpfs file is visible then but bdev_add() is not called yet
-so for example, mounting like bdev_file_open_by_dev() cannot
-find this and return ENXIO.
-
+> Update the pinmux settings to use PIN_INPUT instead of PIN_INPUT_PULLUP
+> to reflect the correct hardware behaviour.
 > 
->>> the bug and why is it just showing up now (i.e. what changed to cause
->>> it?)
->>
->> I don't know, I think just because 6.6 is a relatively
->> newer kernel, and most userspace logic has retry logic
->> to cover this up.
-> 
-> 6.6 has been out for 2 years now, this is a long time in kernel
-> development cycles for things to just start showing up now.
+> [...]
 
-I think for most cases devices are added during boot so
-it's hard to find, but in the stress hotplug cases, it
-can be observed easily honestly.
+I have applied the following to branch ti-next on [1].
+Thank you!
 
-Thanks,
-Gao Xiang
+[1/1] arm64: dts: ti: k3-j784s4: Fix I2C pinmux pull configuration
+      commit: 671c852fc53d1b6f5eccdb03c1889a484c9d1996
 
-> 
-> thanks,
-> 
-> greg k-h
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
