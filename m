@@ -1,175 +1,117 @@
-Return-Path: <linux-kernel+bounces-880749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED3CC266E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:43:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC827C267B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3460188C366
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AE8A426192
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625B6309EF6;
-	Fri, 31 Oct 2025 17:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FF9uIm7E"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DC23081B5;
+	Fri, 31 Oct 2025 17:43:20 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F83306D20
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036C726ED55;
+	Fri, 31 Oct 2025 17:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761932562; cv=none; b=Fz7LVKVSq3AzBfG8TQc5hU6DYbGroe9Q6OakkIpBI80azat1wd0p/C7zqMkAbSxmi04QPO4AGjunp6LCcQ0zSm/eqiSsPxcMQqDKOjoRJ8xazKifJbydUFXLmez1IuVIMxe5uDcsw2wIbm8/vZ3JgEqRr4stkMSmOlCl/3+05sY=
+	t=1761932600; cv=none; b=OoU8MJJnq72RmKO+nTtjaR6FDlwZ2bbc7pzJhJsLP/jO/3nambx42aewwm785XTrkLCIql8emXiMRfmyQrt5+cZ691GLDR8S2F25GVv7aRXV6a1h+FOCs8BsOD97beMCJR0vkxAG1psBZIMH2c/kWHy6GSruPa2v5IqherlkFWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761932562; c=relaxed/simple;
-	bh=Vi1AK7tDXHNu8+6GtOYCB2t8PHiERIYxjsDeSZzFi74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WOztZHLLx9jsMLmJS8K7qeZJfvMNK6XlinVbuRG/FpVVuw448bhvITFWsGGQCh8VvGkWdpSsIFT8U5wxIk/NagfcJytcPfUGoC7m74Wnlct2J0wnvccL0jeExXtW8EqOtfkZc4HEErvAH1JADthL2Hnngva2zr2zYS72d8MM8vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FF9uIm7E; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-475dc0ed8aeso17029915e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761932559; x=1762537359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1UIJC3NBM2UMTqk3PoOY9/nc0pjUoYvTCpDCDkdmqZY=;
-        b=FF9uIm7Exou+2N+0e6oUKT2+SbjNAFwYdQud0Kh1eGQm+XgEkQcMuoKI1GaqUPBGyv
-         ziBxWld/spuW4Jdm2VN48+6iKdL6xsY6u+QjZQ1FignyeNyVFV3wJojvInDe3XEzH1A7
-         Uo6mXVs/hapkYK5yR4gcId3Rr/Ep7nPR07r1dWbSj9xErw6yOpDnh3MpD9hMAB+EToCF
-         Sv+LccIEy7CmmNJs16GST6JTB7Z5EGdlLsX0z9NbtVXsLgQ8yR8dNCElukaDww+AjdwR
-         FLLzbTVvJUYis/9X00l6zuE6Yneyi+V7aalio+TzfNVoB/7CsAq4kVh5RzVY1HRvlIx/
-         boGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761932559; x=1762537359;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1UIJC3NBM2UMTqk3PoOY9/nc0pjUoYvTCpDCDkdmqZY=;
-        b=dPpkfioQV2gpP7FWCgsAN/uSkgbLe2saLnAojBeLM26ZzlXLYdSClozTNWLGbHcC62
-         WdkPXULj4xtQxB6IhbuOZu9CeVotDM45ao6IBAriyYrXKYeeZKTcHdeUEu2yL96ruxzm
-         MsKJ1zL/xbYNHATfchTfeTsw02O6KvfLHuZqV+zU3/Xi8fgUkp4snMLGu8/dCN4OawWM
-         fzfBW0SfJS+tIhp9ZeykgXY1IwpaOIAbuWdLrZIt/WWJFOKnoLPWE9MAhVA6FoSq31zK
-         rYmySMoEZOx3pBFQ+GrqpQt4+qVOGeZj54C6V0kZ4t/6P7WXWoh54mqefVG16Kralc9v
-         7RHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk7TPney/UDNmvmhqq5xAnJz0AClKCC2vciy3h5zcU5SspgQCKL3GS/eD5WZmf+yKUPCFV2FakgvWBMtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqi2wXwY+w4d9lWMAE5OYzXlC8HEGfFuG93RmIyuocW5OVPuGr
-	zw4x56P65fiy1GNQW3qaw4M4d/czVuTQZwx5v9UKpwn0+lpZcQWErf28
-X-Gm-Gg: ASbGncvhfsFc5jv3HafqaDUAeWmyR7UVJ5gW+V/+6597ucjKeAacrfFzB1hIFUyY8ZG
-	WkSMh8fvIeTCUt+SDc/vfB39TNEBByU8IjDaggouB/MbLaiuxCmaQg5jeu2EDRkjQSIiaEOESd8
-	i4cH1ty23svv1Z68QQu1L63xrw6OA6ZxGfNzNLW8UI7NFjVsVZJLGE2snIyQYve2/iVAKWNVcyb
-	oEvWe0kkSX49bWtys8UU3WR2np75pdCKKHfznTmgzjgX+5bmyBGJGt7xTAogWO0IVFjW5RfzsQi
-	tXELpNTbakuUgE0R2dD7WDnl6JM0HazCAyK9S8kCT+bPQ65IpMGZR5mKilyVhhNuFyU6z9lb9ac
-	PkLuiagIC65mK81cz5LKY6Bu9wMkgnX7r9GdpXjRykw2SNB3lotQQTrm+Jt0HoaQvImtsx/ShOM
-	tCAKX9gOwIMF/WhH+0CRqrBC1wn+kyHs+Fwa6Hf2id24VxuQJSGmbbxxNcdCkprZoiCcDKow==
-X-Google-Smtp-Source: AGHT+IHibtVJIWc/K0mBwQe+U2KmBQDQucGno7lWKNr4elHe+BJ6Gz1X/k6uEZugfHrHL+Io8kpDnw==
-X-Received: by 2002:a05:600c:8b30:b0:471:15df:9fc7 with SMTP id 5b1f17b1804b1-4773086d57cmr36912715e9.26.1761932558871;
-        Fri, 31 Oct 2025 10:42:38 -0700 (PDT)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c53eafbsm6728865e9.12.2025.10.31.10.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 10:42:38 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	tglx@linutronix.de,
-	pfalcato@suse.de,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-Date: Fri, 31 Oct 2025 18:42:20 +0100
-Message-ID: <20251031174220.43458-4-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251031174220.43458-1-mjguzik@gmail.com>
-References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
- <20251031174220.43458-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1761932600; c=relaxed/simple;
+	bh=vroR35+0m/WOqTCc3pHB+dq6wrRsNeMwH4SL+cTs0Zs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZiNQKPCFH7d3Kcwbrz7EAByJe9SuINBFSR3LHvi93tIPmoajLp2Ro6fQbKyBJyjESUt78eTlA9+H5lFggwT7QAWc4UvybjQCx29DuCzp0UlU6SQeY3UekUQHuTppra2LQhcKSbrZn/Zsk/pvFfa59OVbGaJE+yaNYNVN8fG75sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 382B5C4CEE7;
+	Fri, 31 Oct 2025 17:43:11 +0000 (UTC)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Subject: [PATCH 0/3] PCI: meson: Fix the parsing of DBI region
+Date: Fri, 31 Oct 2025 23:12:58 +0530
+Message-Id: <20251031-pci-meson-fix-v1-0-ed29ee5b54f9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACL1BGkC/x2MQQqAIBAAvyJ7bkENJfpKdEjbag+pKEQg/j3pO
+ AMzFQplpgKzqJDp4cIxdFCDAH9t4STkvTNoqY2So8LkGW8qMeDBL/rJWaOct9Zq6E3K1PX/W9b
+ WPrPmlXNfAAAA
+X-Change-ID: 20251031-pci-meson-fix-c8b651bc6662
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Hanjie Lin <hanjie.lin@amlogic.com>, Yue Wang <yue.wang@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Andrew Murray <amurray@thegoodpenguin.co.uk>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ stable+noautosel@kernel.org, stable@vger.kernel.org, 
+ Linnaea Lavia <linnaea-von-lavia@live.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1509;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=vroR35+0m/WOqTCc3pHB+dq6wrRsNeMwH4SL+cTs0Zs=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBpBPUv/ByYAMlVSnih7i/7vpgUV16Ct4fpIK8Kc
+ YRDlbdh7viJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaQT1LwAKCRBVnxHm/pHO
+ 9UKrB/4jcLEeWocGJwfF6C2jbmqDNLzp+AgmCielD3AzwWmZi1u/nuZk23uQrE/nUyALXisj1NV
+ YTlJXdSp5Ua/KpwmqVwlEiRlT/2o7zQ1aZMjkBHuw3+RIjDM23ngzTsB3SfDidXqGoDD1vDwu6x
+ VbvARVbvAhtStxViBSpXAgBNDBXkAVR95izzw989HAIQ1CFq2YhSSqgu8goOtWH5ZdF2rWdJnvm
+ trXrsKghDytyE4UjlP/CztKgJYtzY3KnoWG/stR4IwIWGjQ0BXgPP9hx29yqFe55Y6PLSCVP+e5
+ 6AumRv0O79SN7H9dIMbI8Zklyo9bM0gWpgPE/Dkrp+1a/nn/
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-The var is used twice for every path lookup, while the cache is
-initialized early and stays valid for the duration.
+Hi,
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+This compile tested only series aims to fix the DBI parsing issue repored in
+[1]. The issue stems from the fact that the DT and binding describing 'dbi'
+region as 'elbi' from the start.
+
+Now, both binding and DTs are fixed and the driver is reworked to work with both
+old and new DTs.
+
+Note: The driver patch is OK to be backported till 6.2 where the common resource
+parsing code was introduced. But the DTS patch should not be backported. And I'm
+not sure about the backporting of the binding.
+
+Please test this series on the Meson board with old and new DTs.
+
+- Mani
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 ---
- fs/dcache.c                       |  1 +
- include/asm-generic/vmlinux.lds.h |  3 ++-
- include/linux/fs.h                | 17 +++++++++++++++--
- 3 files changed, 18 insertions(+), 3 deletions(-)
+Manivannan Sadhasivam (3):
+      dt-bindings: PCI: amlogic: Fix the register name of the DBI region
+      arm64: dts: amlogic: Fix the register name of the 'DBI' region
+      PCI: meson: Fix parsing the DBI register region
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index de3e4e9777ea..1afef6cf16b7 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3259,6 +3259,7 @@ void __init vfs_caches_init(void)
- {
- 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
-+	runtime_const_init(ptr, names_cachep);
- 
- 	dcache_init();
- 	inode_init();
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index dcdbd962abd6..c7d85c80111c 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -939,7 +939,8 @@
- 
- #define RUNTIME_CONST_VARIABLES						\
- 		RUNTIME_CONST(shift, d_hash_shift)			\
--		RUNTIME_CONST(ptr, dentry_hashtable)
-+		RUNTIME_CONST(ptr, dentry_hashtable)			\
-+		RUNTIME_CONST(ptr, names_cachep)
- 
- /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
- #define KUNIT_TABLE()							\
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 947d7958eb72..bf0606ace221 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -50,6 +50,10 @@
- #include <linux/unicode.h>
- 
- #include <asm/byteorder.h>
-+#ifndef MODULE
-+#include <asm/runtime-const-accessors.h>
-+#endif
-+
- #include <uapi/linux/fs.h>
- 
- struct backing_dev_info;
-@@ -3044,8 +3048,17 @@ extern void __init vfs_caches_init(void);
- 
- extern struct kmem_cache *names_cachep;
- 
--#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
--#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
-+/*
-+ * XXX The runtime_const machinery does not support modules at the moment.
-+ */
-+#ifdef MODULE
-+#define __names_cachep_accessor		names_cachep
-+#else
-+#define __names_cachep_accessor		runtime_const_ptr(names_cachep)
-+#endif
-+
-+#define __getname()		kmem_cache_alloc(__names_cachep_accessor, GFP_KERNEL)
-+#define __putname(name)		kmem_cache_free(__names_cachep_accessor, (void *)(name))
- 
- extern struct super_block *blockdev_superblock;
- static inline bool sb_is_blkdev_sb(struct super_block *sb)
+ .../devicetree/bindings/pci/amlogic,axg-pcie.yaml      |  6 +++---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi             |  4 ++--
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi      |  2 +-
+ drivers/pci/controller/dwc/pci-meson.c                 | 18 +++++++++++++++---
+ drivers/pci/controller/dwc/pcie-designware.c           | 12 +++++++-----
+ 5 files changed, 28 insertions(+), 14 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251031-pci-meson-fix-c8b651bc6662
+
+Best regards,
 -- 
-2.34.1
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
 
