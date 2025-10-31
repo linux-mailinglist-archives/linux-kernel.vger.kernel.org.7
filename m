@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-879923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A0EC246AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:21:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D205C2463D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:17:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE05B189C76C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:18:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B9D84E4AC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6031D33FE02;
-	Fri, 31 Oct 2025 10:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AUV6GpP4"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBFF33F372;
-	Fri, 31 Oct 2025 10:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F9E334C17;
+	Fri, 31 Oct 2025 10:17:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A28F33F8BA
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905861; cv=none; b=Bdx+oLmWqDAhqmjL5FaUy86PQlQ2Pn9sfgJorgGc+oWNBxU29oZZtEm6MJTgOj0K5lf8qiVRbqIe7flID08XzHyCR6iTuTPVF3yaI6EGofs2FV/1HafQ9nbAdh2imjqz1pZgpL2mq6WRZF6PcH/nydAfV5uLXVXgpVCQiITmDPc=
+	t=1761905833; cv=none; b=lW7t3I7XBDdRv5Rg63/ZHaftZBiq9dq4b9+MT3jua1cR8iBv4jyLza/6Qq/eC945smnltySPK1Zh6a0To0pOTCvoUwExOjYTZQxRk60qVGn014g9Fi64lB2nHqrw4CRALY0D0cuAD+wy3uDzAfBa3Dl7wCcvrbM0yp30Et7Uo4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905861; c=relaxed/simple;
-	bh=npRj2RXUFZlU2cO9NMobnA7pSPSkczGeScDnUdo66G8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p0j9phse1yqrjrTYeSYXWPFARjQl2AbuQELen/CBOjWu4toXf01vWMxq/o3rLgIeHkwEcaDBevb/LzUfgRqrK+X3Yi+eO4p00rBAbt/EKxQxlTs2prnz7wy4KCB+k0wZZ+hhJA9W9m8TB6Q4Qh44h9/0Br9nyVaVn8UavbTAOpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AUV6GpP4; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from ubuntu.. (unknown [131.107.174.57])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 546FF211D8DC;
-	Fri, 31 Oct 2025 03:17:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 546FF211D8DC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761905859;
-	bh=A2i5xH5KTXr40A99Hzhc/aUW5RD8StWwacVH2CbWm1A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AUV6GpP4wi+BZ6pCkO3IkX3Ete+4C82XNWOfvHit5bYS7zbXLGrMcldAffwtgvJ3U
-	 P16e5xmBPMs/Bwqhyys5JYXi96VqZYJiXiZFOFrpMBZ6wX9R2/g3ouFbsC7anpzpN9
-	 2UlSgivPwknyM4k1ShJXrKQVYXaK8WJeivuWjXo8=
-From: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
-To: wufan@kernel.org,
-	paul@paul-moore.com,
-	mic@digikod.net
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	corbet@lwn.net,
-	yanzhuhuang@linux.microsoft.com,
-	linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ipe: Update documentation for script enforcement
+	s=arc-20240116; t=1761905833; c=relaxed/simple;
+	bh=+pis7+ZNnJnbSfB1IZE62P3r6KUIstDnQ3XvjGz/ACg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JtnkUhZTGd2ec+NPdfG3bvNntUz/hiWH9G5/ERnBgMgH42kD7TeBNlMqm4Td+U2qGCt0hyW/Wq39gUetGr5HnYb7UL2paPUst5+ANNfikS18FCx/LU3sQp9GtrulhtIjYWzgJkFwC0FaRp9AV6Rus4vwLr9pFfrI3f5S9pww+hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FCA21595;
+	Fri, 31 Oct 2025 03:16:56 -0700 (PDT)
+Received: from [10.57.37.29] (unknown [10.57.37.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 092CE3F673;
+	Fri, 31 Oct 2025 03:17:01 -0700 (PDT)
+Message-ID: <394a9798-06e4-4e61-b081-eeecbc67a22d@arm.com>
 Date: Fri, 31 Oct 2025 10:17:00 +0000
-Message-ID: <20251031101700.694964-3-yanzhuhuang@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251031101700.694964-1-yanzhuhuang@linux.microsoft.com>
-References: <20251023233656.661344-1-yanzhuhuang@linux.microsoft.com>
- <20251031101700.694964-1-yanzhuhuang@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/fair: Prefer cache locality for EAS wakeup
+To: shubhang@os.amperecomputing.com, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Shubhang Kaushik <sh@gentwo.org>,
+ Shijie Huang <Shijie.Huang@amperecomputing.com>,
+ Frank Wang <zwang@amperecomputing.com>
+Cc: Christopher Lameter <cl@gentwo.org>, Adam Li
+ <adam.li@amperecomputing.com>, linux-kernel@vger.kernel.org
+References: <20251030-b4-follow-up-v2-1-19a23c83b837@os.amperecomputing.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20251030-b4-follow-up-v2-1-19a23c83b837@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch adds explanation of script enforcement mechanism in admin
-guide documentation. Describes how IPE supports integrity enforcement
-for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
-how this differs from kernel enforcement for compiled executables.
+On 10/30/25 19:19, Shubhang Kaushik via B4 Relay wrote:
+> From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+> 
+> When Energy Aware Scheduling (EAS) is enabled, a task waking up on a
+> sibling CPU might migrate away from its previous CPU even if that CPU
+> is not overutilized. This sacrifices cache locality and introduces
+> unnecessary migration overhead.
+> 
+> This patch refines the wakeup heuristic in `select_idle_sibling()`. If
+> EAS is active and the task's previous CPU (`prev`) is not overutilized,
+> the scheduler will prioritize waking the task on `prev`, avoiding an
+> unneeded migration and preserving cache-hotness.
+> 
+> ---
+> v2:
+> - Addressed reviewer comments to handle this special condition
+>   within the selection logic, prioritizing the
+>   previous CPU if not overutilized for EAS.
+> - Link to v1: https://lore.kernel.org/all/20251017-b4-sched-cfs-refactor-propagate-v1-1-1eb0dc5b19b3@os.amperecomputing.com/
+> 
+> Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+> ---
+>  kernel/sched/fair.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 25970dbbb27959bc130d288d5f80677f75f8db8b..ac94463627778f09522fb5420f67b903a694ad4d 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7847,9 +7847,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  	    asym_fits_cpu(task_util, util_min, util_max, target))
+>  		return target;
+>  
+> -	/*
+> -	 * If the previous CPU is cache affine and idle, don't be stupid:
+> -	 */
+> +	/* Reschedule on an idle, cache-sharing sibling to preserve affinity: */
+>  	if (prev != target && cpus_share_cache(prev, target) &&
+>  	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
+>  	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
+> @@ -7861,6 +7859,14 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  		prev_aff = prev;
+>  	}
+>  
+> +	/*
+> +	 * If the previous CPU is not overutilized, prefer it for cache locality.
+> +	 * This prevents migration away from a cache-hot CPU that can still
+> +	 * handle the task without causing an overload.
+> +	 */
+> +	if (sched_energy_enabled() && !cpu_overutilized(prev))
+> +		return prev;
+> +
+>  	/*
+>  	 * Allow a per-cpu kthread to stack with the wakee if the
+>  	 * kworker thread and the tasks previous CPUs are the same.
+> 
+> ---
+> base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+> change-id: 20251030-b4-follow-up-ff03b4533a2d
+> 
+> Best regards,
 
-Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
----
- Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index dc7088451f9d..3f205d7dd533 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -95,7 +95,20 @@ languages when these scripts are invoked by passing these program files
- to the interpreter. This is because the way interpreters execute these
- files; the scripts themselves are not evaluated as executable code
- through one of IPE's hooks, but they are merely text files that are read
--(as opposed to compiled executables) [#interpreters]_.
-+(as opposed to compiled executables). However, with the introduction of the
-+``AT_EXECVE_CHECK`` flag (see `AT_EXECVE_CHECK <https://docs.kernel.org/userspace-api/check_exec.html#at-execve-check>`__),
-+interpreters can use it to signal the kernel that a script file will be executed,
-+and request the kernel to perform LSM security checks on it.
-+
-+IPE's EXECUTE operation enforcement differs between compiled executables and
-+interpreted scripts: For compiled executables, enforcement is triggered
-+automatically by the kernel during ``execve()``, ``execveat()``, ``mmap()``
-+and ``mprotect()`` syscalls when loading executable content. For interpreted
-+scripts, enforcement requires explicit interpreter integration using
-+``execveat()`` with ``AT_EXECVE_CHECK`` flag. Unlike exec syscalls that IPE
-+intercepts during the execution process, this mechanism needs the interpreter
-+to take the initiative, and existing interpreters won't be automatically
-+supported unless the signal call is added.
- 
- Threat Model
- ------------
-@@ -806,8 +819,6 @@ A:
- 
- .. [#digest_cache_lsm] https://lore.kernel.org/lkml/20240415142436.2545003-1-roberto.sassu@huaweicloud.com/
- 
--.. [#interpreters] There is `some interest in solving this issue <https://lore.kernel.org/lkml/20220321161557.495388-1-mic@digikod.net/>`_.
--
- .. [#devdoc] Please see :doc:`the design docs </security/ipe>` for more on
-              this topic.
- 
--- 
-2.43.0
-
+So if you're actually targetting EAS I don't get why you would check overutilized (instead
+of asym_fits, what about uclamp?) but also, given that many EAS systems have only one common
+llc I don't quite get why you would want this anyway.
+Do you have a system / workload showing a benefit?
+(I find with EAS heavily relying on wakeups, what we do in the slow path isn't that important
+for most workloads...)
 
