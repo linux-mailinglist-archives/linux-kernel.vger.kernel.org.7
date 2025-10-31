@@ -1,172 +1,101 @@
-Return-Path: <linux-kernel+bounces-880054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0597C24C43
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:23:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB33DC24C34
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF543B280F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2813F188A731
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3996634572B;
-	Fri, 31 Oct 2025 11:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60F33446D0;
+	Fri, 31 Oct 2025 11:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FrAfpZ81";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nSHxtqUZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FrAfpZ81";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nSHxtqUZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZ5Bxy/T"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44513191DA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9241386C9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761909771; cv=none; b=Bk2mikc1LMjfvOiwDEwLQMmI3pflKEqLebcdbEQGx8YdtOMNLQ45cgmBq5JbO43+QvS3xMABtO/04M7MbnD3qd4hB/yPGtXVamG/0ENXfqz0tHG0+GU9hAzJAQQ0FOzpFa9MawDUgbuEt/Tz09267LOsKHEKrDyKxUgOJytQq98=
+	t=1761909674; cv=none; b=jICJmJA+r+iu5b3T6BP0pUUitT5yFYjIGvTn69VDI65JPD3ImcU+OVpVY0QamV1Ey/0R8ibA0Q2kLHfuUBhUk00mY5F6mKiVGvAAzNfWP5uvtMAs4XvI7FNBuDCwNQ6rDJnjYjf3ulAN3mrELqF22sPj9NSTToFcSaKLn6MoUCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761909771; c=relaxed/simple;
-	bh=PLlU+2lXCMBeRfEItViZ1qjg2X0CS7+oNhR6439GPLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CWzwPLBOUa0XhnnBd1xJXM2bRxfEhHJc2WTPEI6qscibH1ExJayodrBK6GEe+e779oVojYNvqyKxi/ZH/RrsV/7HEJ5+R5edZ+bBY9w7sqEGGraxz9KCijYCmADq96DZHZY5VIUwJFfDG4bxCT0sYncyrpaZCCu7j/9KiRr1Fd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FrAfpZ81; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nSHxtqUZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FrAfpZ81; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nSHxtqUZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9E27D1F79A;
-	Fri, 31 Oct 2025 11:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761909766; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BcnJIvSwDZhs7ECp6zYOD/Q72ZYy8BvgDp8BJdvIbgc=;
-	b=FrAfpZ81CatnXX99hYcuVHm9zf6EDXCBOtvxZX55dZIj3BFEmAU4L+ONQgrEYuLem4AJvI
-	P2uz32iLuyMDamQ4rUeoLnM3DbYXhNWvuNKeNkzJKwhwFak/d8UrybsJlkjtilWMO8CDHi
-	YfnjFW5svbXS4fQg5LIYlfuqw6R3N6A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761909766;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BcnJIvSwDZhs7ECp6zYOD/Q72ZYy8BvgDp8BJdvIbgc=;
-	b=nSHxtqUZwbSJY+T8FtWIIYEiqZjqk+rOcdHCIxiTljG446k6xdxxCAXRMiylCYdUvwD/V6
-	JAr+sxtm4WHpIDCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FrAfpZ81;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=nSHxtqUZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761909766; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BcnJIvSwDZhs7ECp6zYOD/Q72ZYy8BvgDp8BJdvIbgc=;
-	b=FrAfpZ81CatnXX99hYcuVHm9zf6EDXCBOtvxZX55dZIj3BFEmAU4L+ONQgrEYuLem4AJvI
-	P2uz32iLuyMDamQ4rUeoLnM3DbYXhNWvuNKeNkzJKwhwFak/d8UrybsJlkjtilWMO8CDHi
-	YfnjFW5svbXS4fQg5LIYlfuqw6R3N6A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761909766;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BcnJIvSwDZhs7ECp6zYOD/Q72ZYy8BvgDp8BJdvIbgc=;
-	b=nSHxtqUZwbSJY+T8FtWIIYEiqZjqk+rOcdHCIxiTljG446k6xdxxCAXRMiylCYdUvwD/V6
-	JAr+sxtm4WHpIDCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27E7B13393;
-	Fri, 31 Oct 2025 11:22:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CeIDBwacBGnhSwAAD6G6ig
-	(envelope-from <clopez@suse.de>); Fri, 31 Oct 2025 11:22:46 +0000
-From: =?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>
-To: linux-kernel@vger.kernel.org
-Cc: willy@infradead.org,
-	=?UTF-8?q?Carlos=20L=C3=B3pez?= <clopez@suse.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] checkpatch: add IDR to the deprecated list
-Date: Fri, 31 Oct 2025 12:19:09 +0100
-Message-ID: <20251031111908.2266077-2-clopez@suse.de>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761909674; c=relaxed/simple;
+	bh=trBGG14+bE8UKAyiCKZ22diZpFWw0p7vHgvrWEtkBng=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YWdwnb/xpWiLCQQ+UP9t7bHQ7Rd+zr9mKBo0kWSZJszJhReJkao2MgHKlMA9DAAHh+vB7U8c8DqfJCMXnATPpK+sGvFtfsx9++xKcsvYLY2xjlgFKF1+7sAq+gmmcrYf4s+OdK+MlbhH3q8ryiYUGxjHUbPNh6mSmseAqBdPZlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZ5Bxy/T; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761909672; x=1793445672;
+  h=date:from:to:cc:subject:message-id;
+  bh=trBGG14+bE8UKAyiCKZ22diZpFWw0p7vHgvrWEtkBng=;
+  b=QZ5Bxy/Thhjnm4mgv/7SXJVciNT3r3BhuLU85czrOMsPE56pK/N0eMKZ
+   ioQQRGOh03RngpHTjifB70LcL2oGrzYFVUROMkkWCEu8Hx+s7Cb0TSC6x
+   Li/O9Vlf2xjHVTJ6UsR2D0ZCRXjDusUjU5znjTEM9bXLMe3zTJ+M8epQq
+   SBddKAGTG1H116vBr1kLBHArfmtDD9zrxU2yGWVtofqNP5x4NqipN6soC
+   F2MzBKAqxgRn8eVUJi6p8r5RgdrlfzaFtA2/UwEZkLUOsvyuUQ69+XBxo
+   Doo3fdovbDpi15OtiWKEILw8mpf/uz5+U3WvGKVH5f78aVIUCwrMv1hr9
+   Q==;
+X-CSE-ConnectionGUID: E9rq7kglRcW2TgLg7Uqt2Q==
+X-CSE-MsgGUID: pmk6Kfy4Tuat3qEMwzU81A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="81698074"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="81698074"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 04:21:11 -0700
+X-CSE-ConnectionGUID: 9nC/8IJORCm60RtJPSla6A==
+X-CSE-MsgGUID: TNEi4rstR8uPBOMAIg97Ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="186150362"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 31 Oct 2025 04:21:11 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEnBK-000N2K-0t;
+	Fri, 31 Oct 2025 11:20:45 +0000
+Date: Fri, 31 Oct 2025 19:20:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 89216c9051ef6635f1514f8e0d2f9cd63b37a3b6
+Message-ID: <202510311927.OzSp4TXe-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9E27D1F79A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[infradead.org,suse.de,intel.com,canonical.com,perches.com,gmail.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email]
-X-Spam-Score: -2.01
 
-As of commit 85656ec193e9, the IDR interface is marked as deprecated
-in the documentation, but no checks are made in that regard for new
-code. Add the existing IDR initialization APIs to the deprecated list
-in checkpatch, so that if new code is introduced using these APIs, a
-warning is emitted.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 89216c9051ef6635f1514f8e0d2f9cd63b37a3b6  x86/cpu: Add/fix core comments for {Panther,Nova} Lake
 
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Carlos López <clopez@suse.de>
----
- scripts/checkpatch.pl | 4 ++++
- 1 file changed, 4 insertions(+)
+elapsed time: 1454m
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 92669904eecc..bc72fa66c0ef 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -860,6 +860,10 @@ our %deprecated_apis = (
- 	"kunmap"				=> "kunmap_local",
- 	"kmap_atomic"				=> "kmap_local_page",
- 	"kunmap_atomic"				=> "kunmap_local",
-+	#These should be enough to drive away new IDR users
-+	"DEFINE_IDR"				=> "DEFINE_XARRAY",
-+	"idr_init"				=> "xa_init",
-+	"idr_init_base"				=> "xa_init_flags"
- );
- 
- #Create a search pattern for all these strings to speed up a loop below
--- 
-2.51.0
+configs tested: 9
+configs skipped: 129
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                          allnoconfig    gcc-14
+x86_64                        allnoconfig    clang-20
+x86_64  buildonly-randconfig-001-20251031    clang-20
+x86_64  buildonly-randconfig-002-20251031    gcc-14
+x86_64  buildonly-randconfig-003-20251031    clang-20
+x86_64  buildonly-randconfig-004-20251031    gcc-14
+x86_64  buildonly-randconfig-005-20251031    gcc-14
+x86_64  buildonly-randconfig-006-20251031    gcc-14
+x86_64                          defconfig    gcc-14
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
