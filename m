@@ -1,357 +1,181 @@
-Return-Path: <linux-kernel+bounces-879649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295B0C23A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:05:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797C1C23ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472E93B0B45
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:04:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1D474F6054
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1E52EFDA5;
-	Fri, 31 Oct 2025 08:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150903043D8;
+	Fri, 31 Oct 2025 08:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhqHqbmY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ob4cVRpg"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8434F285C8C;
-	Fri, 31 Oct 2025 08:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271A723816C;
+	Fri, 31 Oct 2025 08:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897881; cv=none; b=hOZpawTYE83P/R4JCvvrK9KMiX6uYtxqqiTSlo9JJO63c37MNeNrvqk/a/Q9OO/nu59Wi3OvbrFtBHUaQUeXb/6x62GvAk15fy915TiS68tMGBvaB/39czDCWNAk/qTq2JlJ1mxiN0omNhqs9pDtcgTec++kFLTcJRXocKQitNU=
+	t=1761897894; cv=none; b=W9ticguol6Lu07Mn7dIrv2tHFoLnMVrOwIwN/TZxqS+x0KQMKD5CmZ10z3hlKeCJlqGpn6TE3SwcEHee5rpBoxs62UVXInDyU3PbdX8S2s4hw7geNlBEMmXjK0xRJLuw2SuHvun0hE3KuTgfo2jHzFkC9gkBtZXmEro2tF7GuCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897881; c=relaxed/simple;
-	bh=546etZjxB2dCRx5TRDsxExeuWWF+d4Iy+TeI2nSmrmE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XJ+oRnOpRUM1ohh2uNZvg2qHnpyEVyoqiI4MMxnXEeRGMpdV3ZWgU/f0++gH3HYf6hqUPEmA4xY7PzCmDhwEn/WocIiR8nyhWB8oValmQqJ4OKheb8DJAtNpPMMY4kL3p3yas5Jv8yl0lqTPyv7C4rkCyP8JMCp0yDw5/GJ32xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhqHqbmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A395C4CEE7;
-	Fri, 31 Oct 2025 08:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761897881;
-	bh=546etZjxB2dCRx5TRDsxExeuWWF+d4Iy+TeI2nSmrmE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=uhqHqbmYcivsUxPX+RYdkwTde0PdlS+BT4GwY03ZtYB6riJazTikkvm5aX4pSarBU
-	 wAuqdHWnKvawwrxzZdETZGZae4jI0OH/pYfKuXov5flO+BDrT5TJ/fIgnOGG+DjNb+
-	 Q3tRH03HTvOlKVMWq1zoJ+SW/zey19MHlYVrjJAGOeGhVBaBNjvk54IRE9ZzqUMIEF
-	 ygLoKs3nIDMxoUyMOsv1RCuUmc4ZSUTCrzrj4ojO03VWLHXARlwyYRHKYPI0o3fphN
-	 sbYbDbg6h811Kq7TnCU/W/D6QXc0yqwFAcT2pS41eyPC59CSWoqbnyIxVeTXBth6dT
-	 i7tLeQoucVpyw==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.j.williams@intel.com, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH RESEND v2 06/12] coco: host: arm64: Add RMM device
- communication helpers
-In-Reply-To: <20251030181246.00006328@huawei.com>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
- <20251027095602.1154418-7-aneesh.kumar@kernel.org>
- <20251029183306.0000485c@huawei.com> <yq5apla4cqex.fsf@kernel.org>
- <20251030181246.00006328@huawei.com>
-Date: Fri, 31 Oct 2025 13:34:33 +0530
-Message-ID: <yq5ams57cx9q.fsf@kernel.org>
+	s=arc-20240116; t=1761897894; c=relaxed/simple;
+	bh=/fIlMoCVtfAkMLxLU6rMfA4iyIayW+obhotqMO34MNs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uVoJGCNCDEBb5JuEnp8DICTZ7D5QLJpgKhwsHHrdTj6EJFC+yr5ZCATOQ18d1/U2I9kdueom0/d2cRfB11F9nK75qMpQEb+ThMYVfUxjYz/PA7OoE2jrFW7EuIwLWBTXmDqnj6Hg5jXUnpdJkeMbvlw5Fjjjmuvzk0bqubsybNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ob4cVRpg; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 0D4161A176D;
+	Fri, 31 Oct 2025 08:04:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D290560704;
+	Fri, 31 Oct 2025 08:04:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5D2051180FB50;
+	Fri, 31 Oct 2025 09:04:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761897886; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=zASfK0vPq1/4Nb33lJuBcso06uGImpqUSDtZvTvCZV8=;
+	b=ob4cVRpg+X51uqtpe+A23/YvrDyAC1pkwAdvcLBAz4ya6yjBfw0hq9zu4ZWmPfyHAy1teI
+	iNmP56cQPR8DC2R1zJD/e9rfYMNlMCil/fnCEFELTdWOyG2PnoH1ep5i1r8zJDBOF2mFTn
+	NcY1ZykT4ry6IMytvJ8Zb8gjLSKjAz/LKeJVnAChb24n3CVagWhsIS8OjfSL4Q77r40rb2
+	/s48qRx+W+toNquJ5R+9XYHR+huLYVRFMTHmh8swCAkEJODcX31/SwClNWBJv9ATNSpU2w
+	YoKLuD2E8og8ghsfnG7zEwz5U9aPzmzWo9Ca0qIWnUO/8Jk++Lb/nTIKwQyjGQ==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v7 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+Date: Fri, 31 Oct 2025 09:04:36 +0100
+Message-Id: <20251031-xsk-v7-0-39fe486593a3@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJRtBGkC/23NS07EMAyA4auMsiYoseM8WHEPxKJNXSYCmlFbV
+ UWj3p0oRVA0s7Ts7/dVTDwmnsTT6SpGXtKU8lAG93AS8dwMbyxTV2YBCkiB9nKd3qWKfVAcHHX
+ aiHJ5GblPa628iPbSy4HXWbyWzTlNcx6/an7RdV9LqLGWFi2VdOiMg9AEbMNzm/P8kYbHmD9rY
+ YE/FRTsCorSLlo01BFoulV4VGZXWFRk9MCI2vg7yhwU/ChTFCgmR+ha7+ytol+llba7oqKshRi
+ IW6/UnV/2oCDsyhZFjcXGmq7vg/+vtm37BuTtDZWwAQAA
+X-Change-ID: 20250218-xsk-0cf90e975d14
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Jonathan Cameron <jonathan.cameron@huawei.com> writes:
+Hi all,
 
-> On Thu, 30 Oct 2025 21:50:22 +0530
-> "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
->
->> Jonathan Cameron <jonathan.cameron@huawei.com> writes:
->> 
->> > On Mon, 27 Oct 2025 15:25:56 +0530
->> > "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
->> >  
->> 
->> ...
->> 
->> >> +static int __do_dev_communicate(enum dev_comm_type type,
->> >> +				struct pci_tsm *tsm, unsigned long error_state)
->> >> +{
->> >> +	int ret;
->> >> +	int state;
->> >> +	struct rmi_dev_comm_enter *io_enter;
->> >> +	struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
->> >> +
->> >> +	io_enter = &pf0_dsc->comm_data.io_params->enter;
->> >> +	io_enter->resp_len = 0;
->> >> +	io_enter->status = RMI_DEV_COMM_NONE;
->> >> +
->> >> +	ret = ___do_dev_communicate(type, tsm);  
->> >
->> > Think up a more meaningful name.  Counting _ doesn't make for readable code.
->> >  
->> 
->> I am not sure about this. What do you think?
->> 
->> modified   drivers/virt/coco/arm-cca-host/rmi-da.c
->> @@ -188,7 +188,7 @@ static inline gfp_t cache_obj_id_to_gfp_flags(u8 cache_obj_id)
->>  	return GFP_KERNEL_ACCOUNT;
->>  }
->>  
->> -static int ___do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm)
->> +static int __do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm)
->>  {
->>  	gfp_t cache_alloc_flags;
->>  	int ret, nbytes, cp_len;
->> @@ -319,7 +319,7 @@ static int ___do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm)
->>  	return 0;
->>  }
->>  
->> -static int __do_dev_communicate(enum dev_comm_type type,
->> +static int do_dev_communicate(enum dev_comm_type type,
->>  				struct pci_tsm *tsm, unsigned long error_state)
->>  {
->>  	int ret;
->> @@ -331,7 +331,7 @@ static int __do_dev_communicate(enum dev_comm_type type,
->>  	io_enter->resp_len = 0;
->>  	io_enter->status = RMI_DEV_COMM_NONE;
->>  
->> -	ret = ___do_dev_communicate(type, tsm);
->> +	ret = __do_dev_communicate(type, tsm);
->>  	if (ret) {
->>  		if (type == PDEV_COMMUNICATE)
->>  			rmi_pdev_abort(virt_to_phys(pf0_dsc->rmm_pdev));
->> @@ -355,14 +355,14 @@ static int __do_dev_communicate(enum dev_comm_type type,
->>  	return state;
->>  }
->>  
->> -static int do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm,
->> -			      unsigned long target_state,
->> -			      unsigned long error_state)
->> +static int move_dev_to_state(enum dev_comm_type type, struct pci_tsm *tsm,
->
-> Naming is always tricky.  Not sure why this name is appropriate given it's definitely
-> still related to dev_communicate.
->
-> Maybe just squash do_dev_communicate and __do_dev_coummnicate.
-> Slightly long lines will be the result but not too bad.
-> I haven't checked what it ends up as after the whole series though
-> so maybe it doesn't work out.
->
-> static int do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm,
-> 			      unsigned long target_state,
-> 			      unsigned long error_state)
-> {
-> 	
->
-> 	do {
-> 		int state, ret;
-> 		struct rmi_dev_comm_enter *io_enter;
-> 		struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
->
-> 		io_enter = &pf0_dsc->comm_data.io_params->enter;
-> 		io_enter->resp_len = 0;
-> 		io_enter->status = RMI_DEV_COMM_NONE;
->
-> 		ret = ___do_dev_communicate(type, tsm);
-> //renamed
->
-> 		if (ret) {
-> 			if (type == PDEV_COMMUNICATE)
-> 				rmi_pdev_abort(virt_to_phys(pf0_dsc->rmm_pdev));
->
-> 			state = error_state;
-> 		} else {
-> 			/*
-> 			 * Some device communication error will transition the
-> 			 * device to error state. Report that.
-> 			 */
-> 			if (type == PDEV_COMMUNICATE)
-> 				ret = rmi_pdev_get_state(virt_to_phys(pf0_dsc->rmm_pdev),
-> 							 (enum rmi_pdev_state *)&state);
-> 			if (ret)
-> 				state = error_state;
-> 		}
-> 	
-> 		if (state == error_state) {
-> 			pci_err(tsm->pdev, "device communication error\n");
-> 			return state;
-> 		}
-> 		if (state == target_state)
-> 			return state;
-> 	} while (1);
-> }
-> Jonathan
->
+The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+are defined in xksxceiver.c. Since this script is used to test real
+hardware, the goal here is to leave it as it is, and only integrate the
+tests that run on veth peers into the test_progs framework.
 
-I need the existing __do_dev_communicate for a followup patch where the
-device communication won't loop till state transition.
+PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+tests available to test_progs.
+PATCH 2 to 7 fix small issues in the current test
+PATCH 8 to 13 handle all errors to release resources instead of calling
+exit() when any error occurs.
+PATCH 14 isolates the tests that won't fit in the CI
+PATCH 15 integrates the CI tests to the test_progs framework
 
-Something like 
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Changes in v7:
+- Restore 'test_ns' prefix to allow parallel execution.
+- PATCH 11: fix potential uninitialized variable spotted by AI.
+- PACTH 12: fix potential resource leak spotted by AI
+- Link to v6: https://lore.kernel.org/r/20251029-xsk-v6-0-5a63a64dff98@bootlin.com
 
-void vdev_fetch_object_work(struct work_struct *work)
-{
-	int state;
-	struct pci_tsm *tsm;
-	struct cca_host_pf0_dsc *pf0_dsc;
-	struct dev_comm_work *setup_work;
-	struct rmi_dev_comm_enter *io_enter;
+Changes in v6:
+- Setup veth peer once for each mode instead of once for each substest
+- Rename the 'flaky' table 'skip-ci' table and move the automatically
+  skipped and the longest tests into it
+- Link to v5: https://lore.kernel.org/r/20251016-xsk-v5-0-662c95eb8005@bootlin.com
 
-	setup_work = container_of(work, struct dev_comm_work, work);
-	tsm = setup_work->tsm;
-	pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
+Changes in v5:
+- Rebase on latest bpf-next_base
+- Move XDP_ADJUST_TAIL_SHRINK_MULTI_BUFF to the flaky table
+- Add Maciej's reviewed-by
+- Link to v4: https://lore.kernel.org/r/20250924-xsk-v4-0-20e57537b876@bootlin.com
 
-	io_enter = &pf0_dsc->comm_data.io_params->enter;
-	io_enter->resp_len = 0;
-	io_enter->status = RMI_DEV_COMM_NONE;
+Changes in v4:
+- Fix test_xsk.sh's summary report.
+- Merge PATCH 11 & 12 together, otherwise PATCH 11 fails to build.
+- Split old PATCH 3 in two patches. The first one fixes
+  testapp_stats_rx_dropped(), the second one fixes
+  testapp_xdp_shared_umem(). The unecessary frees (in
+  testapp_stats_rx_full() and testapp_stats_fill_empty() are removed)
+- Link to v3: https://lore.kernel.org/r/20250904-xsk-v3-0-ce382e331485@bootlin.com
 
-	guard(mutex)(&pf0_dsc->object_lock);
+Changes in v3:
+- Rebase on latest bpf-next_base to integrate commit c9110e6f7237 ("selftests/bpf:
+Fix count write in testapp_xdp_metadata_copy()").
+- Move XDP_METADATA_COPY_* tests from flaky-tests to nominal tests
+- Link to v2: https://lore.kernel.org/r/20250902-xsk-v2-0-17c6345d5215@bootlin.com
 
-	*setup_work->cache_offset = 0;
-	memset(setup_work->cache_buf, 0, setup_work->cache_size);
-	state = __do_dev_communicate(VDEV_COMMUNICATE, tsm, RMI_VDEV_ERROR);
-	/* return status through dev_comm_work.cache_cache */
-	if (state == RMI_VDEV_ERROR)
-		setup_work->cache_size = 0;
+Changes in v2:
+- Rebase on the latest bpf-next_base and integrate the newly added tests
+  to the work (adjust_tail* and tx_queue_consumer tests)
+- Re-order patches to split xkxceiver sooner.
+- Fix the bug reported by Maciej.
+- Fix verbose mode in test_xsk.sh by keeping kselftest (remove PATCH 1,
+  7 and 8)
+- Link to v1: https://lore.kernel.org/r/20250313-xsk-v1-0-7374729a93b9@bootlin.com
 
-	complete(&setup_work->complete);
-}
+---
+Bastien Curutchet (eBPF Foundation) (15):
+      selftests/bpf: test_xsk: Split xskxceiver
+      selftests/bpf: test_xsk: Initialize bitmap before use
+      selftests/bpf: test_xsk: Fix __testapp_validate_traffic()'s return value
+      selftests/bpf: test_xsk: fix memory leak in testapp_stats_rx_dropped()
+      selftests/bpf: test_xsk: fix memory leak in testapp_xdp_shared_umem()
+      selftests/bpf: test_xsk: Wrap test clean-up in functions
+      selftests/bpf: test_xsk: Release resources when swap fails
+      selftests/bpf: test_xsk: Add return value to init_iface()
+      selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
+      selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
+      selftests/bpf: test_xsk: Don't exit immediately when workers fail
+      selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+      selftests/bpf: test_xsk: Don't exit immediately on allocation failures
+      selftests/bpf: test_xsk: Isolate non-CI tests
+      selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
 
-Considering current usage is loop till we reach a specific target state,
-how abou the below?
+ tools/testing/selftests/bpf/Makefile              |   11 +-
+ tools/testing/selftests/bpf/prog_tests/test_xsk.c | 2596 ++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/test_xsk.h |  298 +++
+ tools/testing/selftests/bpf/prog_tests/xsk.c      |  151 ++
+ tools/testing/selftests/bpf/xskxceiver.c          | 2696 +--------------------
+ tools/testing/selftests/bpf/xskxceiver.h          |  156 --
+ 6 files changed, 3184 insertions(+), 2724 deletions(-)
+---
+base-commit: 1e2d874b04ba46a3b9fe6697097aa437641f4339
+change-id: 20250218-xsk-0cf90e975d14
 
-modified   drivers/virt/coco/arm-cca-host/rmi-da.c
-@@ -188,7 +188,7 @@ static inline gfp_t cache_obj_id_to_gfp_flags(u8 cache_obj_id)
- 	return GFP_KERNEL_ACCOUNT;
- }
- 
--static int ___do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm)
-+static int _do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm)
- {
- 	gfp_t cache_alloc_flags;
- 	int ret, nbytes, cp_len;
-@@ -319,7 +319,7 @@ static int ___do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm)
- 	return 0;
- }
- 
--static int __do_dev_communicate(enum dev_comm_type type,
-+static int do_dev_communicate(enum dev_comm_type type,
- 				struct pci_tsm *tsm, unsigned long error_state)
- {
- 	int ret;
-@@ -331,7 +331,7 @@ static int __do_dev_communicate(enum dev_comm_type type,
- 	io_enter->resp_len = 0;
- 	io_enter->status = RMI_DEV_COMM_NONE;
- 
--	ret = ___do_dev_communicate(type, tsm);
-+	ret = _do_dev_communicate(type, tsm);
- 	if (ret) {
- 		if (type == PDEV_COMMUNICATE)
- 			rmi_pdev_abort(virt_to_phys(pf0_dsc->rmm_pdev));
-@@ -355,14 +355,14 @@ static int __do_dev_communicate(enum dev_comm_type type,
- 	return state;
- }
- 
--static int do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm,
-+static int wait_for_dev_state(enum dev_comm_type type, struct pci_tsm *tsm,
- 			      unsigned long target_state,
- 			      unsigned long error_state)
- {
- 	int state;
- 
- 	do {
--		state = __do_dev_communicate(type, tsm, error_state);
-+		state = do_dev_communicate(type, tsm, error_state);
- 
- 		if (state == target_state || state == error_state)
- 			return state;
-@@ -372,9 +372,9 @@ static int do_dev_communicate(enum dev_comm_type type, struct pci_tsm *tsm,
- 	return error_state;
- }
- 
--static int do_pdev_communicate(struct pci_tsm *tsm, enum rmi_pdev_state target_state)
-+static int wait_for_pdev_state(struct pci_tsm *tsm, enum rmi_pdev_state target_state)
- {
--	return do_dev_communicate(PDEV_COMMUNICATE, tsm, target_state, RMI_PDEV_ERROR);
-+	return wait_for_dev_state(PDEV_COMMUNICATE, tsm, target_state, RMI_PDEV_ERROR);
- }
- 
- static int parse_certificate_chain(struct pci_tsm *tsm)
-@@ -497,7 +497,7 @@ static int pdev_set_public_key(struct pci_tsm *tsm)
- 				   virt_to_phys(key_params));
- }
- 
--static void pdev_communicate_work(struct work_struct *work)
-+static void pdev_state_transition_workfn(struct work_struct *work)
- {
- 	unsigned long state;
- 	struct pci_tsm *tsm;
-@@ -509,13 +509,13 @@ static void pdev_communicate_work(struct work_struct *work)
- 	pf0_dsc = to_cca_pf0_dsc(tsm->dsm_dev);
- 
- 	guard(mutex)(&pf0_dsc->object_lock);
--	state = do_pdev_communicate(tsm, setup_work->target_state);
-+	state = wait_for_pdev_state(tsm, setup_work->target_state);
- 	WARN_ON(state != setup_work->target_state);
- 
- 	complete(&setup_work->complete);
- }
- 
--static int submit_pdev_comm_work(struct pci_dev *pdev, int target_state)
-+static int submit_pdev_state_transition_work(struct pci_dev *pdev, int target_state)
- {
- 	int ret;
- 	enum rmi_pdev_state state;
-@@ -523,7 +523,7 @@ static int submit_pdev_comm_work(struct pci_dev *pdev, int target_state)
- 	struct cca_host_pf0_dsc *pf0_dsc = to_cca_pf0_dsc(pdev);
- 	struct cca_host_comm_data *comm_data = to_cca_comm_data(pdev);
- 
--	INIT_WORK_ONSTACK(&comm_work.work, pdev_communicate_work);
-+	INIT_WORK_ONSTACK(&comm_work.work, pdev_state_transition_workfn);
- 	init_completion(&comm_work.complete);
- 	comm_work.tsm = pdev->tsm;
- 	comm_work.target_state = target_state;
-@@ -548,7 +548,7 @@ int cca_pdev_ide_setup(struct pci_dev *pdev)
- {
- 	int ret;
- 
--	ret = submit_pdev_comm_work(pdev, RMI_PDEV_NEEDS_KEY);
-+	ret = submit_pdev_state_transition_work(pdev, RMI_PDEV_NEEDS_KEY);
- 	if (ret)
- 		return ret;
- 	/*
-@@ -563,7 +563,7 @@ int cca_pdev_ide_setup(struct pci_dev *pdev)
- 	if (ret)
- 		return ret;
- 
--	return submit_pdev_comm_work(pdev, RMI_PDEV_READY);
-+	return submit_pdev_state_transition_work(pdev, RMI_PDEV_READY);
- }
- 
- void cca_pdev_stop_and_destroy(struct pci_dev *pdev)
-@@ -576,7 +576,7 @@ void cca_pdev_stop_and_destroy(struct pci_dev *pdev)
- 	if (WARN_ON(ret != RMI_SUCCESS))
- 		return;
- 
--	submit_pdev_comm_work(pdev, RMI_PDEV_STOPPED);
-+	submit_pdev_state_transition_work(pdev, RMI_PDEV_STOPPED);
- 
- 	ret = rmi_pdev_destroy(rmm_pdev_phys);
- 	if (WARN_ON(ret != RMI_SUCCESS))
+Best regards,
+-- 
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 
-
-
-
--aneesh
 
