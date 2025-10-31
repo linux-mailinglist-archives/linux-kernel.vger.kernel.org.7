@@ -1,82 +1,145 @@
-Return-Path: <linux-kernel+bounces-880156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E23C24FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:28:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045E8C25005
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5714075E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:27:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2F76350D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829512E1743;
-	Fri, 31 Oct 2025 12:27:04 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309634845B;
+	Fri, 31 Oct 2025 12:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="gHKvRPN9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B170E3074B7;
-	Fri, 31 Oct 2025 12:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913624; cv=none; b=X5Ff6pLjpsrtU5L5j3OBdMISt72F1ijL2EjX57BdezMzT974gNZOWzk1s4+fAIAK/n6xMKH6rCg2m7GqlOAFUUAq/w5phYZd5wKXCwO+B8wfmSFu33cy8B0+k47dy2uxxjeGXe76XhQZTEnGGlj7MZ2plYBuUrkLI5Ep+LwlFZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913624; c=relaxed/simple;
-	bh=fVFMpcUYzC7lROgUiN+Kd68HAS4hARr415HOhh5fqQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fSrpfCwVghp8Tz3987lE3xvm5K1RuMbWxK+Of/DIGuuT6wIVn6q6TY6hB77ITdRpWNxASz1iD5OLx+5EISgOi/V0YUeGtD87n7kStkmXXbQrn4K6nQVxNi+QisExirRxsTpzuQePAzhyZq9xQdZUBI9KcC031VDwqnYaz0z0/jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 79DD588883;
-	Fri, 31 Oct 2025 12:26:53 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id C6CAA20027;
-	Fri, 31 Oct 2025 12:26:51 +0000 (UTC)
-Date: Fri, 31 Oct 2025 08:27:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] tracing: Add an option to show symbols in
- _text+offset for function profiler
-Message-ID: <20251031082736.1a2c4660@gandalf.local.home>
-In-Reply-To: <20251031102947.c2cc7f437db1399c7ebc1863@kernel.org>
-References: <176179500583.960652.5730113001091388258.stgit@devnote2>
-	<20251030052548.31130e33@gandalf.local.home>
-	<20251031102947.c2cc7f437db1399c7ebc1863@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305E91922DD;
+	Fri, 31 Oct 2025 12:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761913796; cv=pass; b=MkZOK1880Pgh0SY0pXL2cHBxD8yRJXhBTYggME9wmMJN9Su1AZUdYDbTMnfFUWXlH/EdgVZePN5EJqx6vndelHvBjevpkGc8+CwnV8rBQkhBUqTraycWpsmjZxInMkIpnUldBrZFMTosUGKWYsCDIvGbXatViVJiX8bhCvhq6+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761913796; c=relaxed/simple;
+	bh=gEr6wUDalR20obqcCqsJpn2+gnQyfPKeWURJKuUhkQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bW9I/qHYi6mpjrtkRlSmEZgojMukJHDg2ewniRYGRTlN+1Pd+y5kfgxyXpV71ZyxfNRaTzu6B+nwakodHg3Wjngbg1SVFK5XGCvcZpPwwS2+O4jLzizQocOhgOf/XmwtvgO7au7zSOknWxZOUTaTXm/7Pv0tXxDBn3gMU/biLh8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=gHKvRPN9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761913773; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Lbv+fXr9nldSZ6bg2HxAoLbBLIzWWdu/lCarcLknvjWruEAX72qbG2BejhKPOlAwN5ZzV3YQBkuP5enNXNxGYiE9/9WuEll7ddxT82q8CnApUPaV1j5s+LZpNKN4ZpF7nDuaVpmkpfwF7IEy3VTi9k3hcK0kCyaD/TyASu5t6/I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761913773; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=i4PdjAgGN9CXMADjTYH6Vrnejj2e5huADOUeceii3Ag=; 
+	b=VjjbDznmMFtS6Cmdz6hoJi+GITJJ23e5wz0WnnFjbyGQDdu/BiSFoCwWREhaTtzz6AnZ7vR44hHaJTGEUddxPtHHORjctN2ohZUjzZ/OyBz2hVkgCVvXXcoz1nxLFLhC1bAwz6KUkTVAaznLOo+vqScX8aEqOfqJKDQBfUD/FSo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761913773;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=i4PdjAgGN9CXMADjTYH6Vrnejj2e5huADOUeceii3Ag=;
+	b=gHKvRPN9Tr1hv3oHVcXGKSvjBpijr3x2hWyzkr57PZTRUoUfwmZeTlH66YqGOOcc
+	jFCdXsJEY9zQRdS/yl7j4HDOrK3i1UMRfiLAZml+Fsh1RltGxyHWeEb2FEjGCd6XTDV
+	EfLPRnMBl8EBvnX73mNzngposYFIGN4ax4WCWStA=
+Received: by mx.zohomail.com with SMTPS id 1761913772134279.7995112453409;
+	Fri, 31 Oct 2025 05:29:32 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Anand Moon <linux.amoon@gmail.com>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>,
+ Shawn Lin <shawn.lin@rock-chips.com>, Hans Zhang <18255117159@163.com>,
+ "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>,
+ "moderated list:ARM/Rockchip SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+Subject:
+ Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
+Date: Fri, 31 Oct 2025 13:29:25 +0100
+Message-ID: <15087240.uLZWGnKmhe@workhorse>
+In-Reply-To: <b2micr4atfax2sgolsublmjk4kwvbmdnqjlk2lb7cflzeycm5i@bi62lg75ilo6>
+References:
+ <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-2-linux.amoon@gmail.com>
+ <b2micr4atfax2sgolsublmjk4kwvbmdnqjlk2lb7cflzeycm5i@bi62lg75ilo6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 6fwz4nd6whrukrcio93uzcdkn19sq1rq
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: C6CAA20027
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/edgf66x+Btf8xQ8WQhG1sdAO8qOqjXWE=
-X-HE-Tag: 1761913611-768975
-X-HE-Meta: U2FsdGVkX1/19D0SJZyDdU2GtP2lleHfsL+rRxEhg3mLlEq1/IdF80+pSu4QrdnrNu8PcHrNQxBipxlWXo5JpBM3X1RoW+L6SYiea71TXX1/Iv8CwuUuEm2RBA9xwfWkmgtDzz4WTf1CBJkhI2HtYTGGnaBsM9nckl2Vhjl0cMqz6mTQ9rvMy4ZvW1cl/5c/1t9Fx0zwe0WicDHcQNJROZHxdCDvVFZmffskY85vScz0KFtiO04AHd/lmQSGoNdMhWIJooeJVRjFzTm4rK3pNRYb8xm0dF7A37F/O32p9HiO8NnrJj+tekopGUWiiA3mxGxlMTApX37TmzK9tzqQByis54X/XLf+
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 31 Oct 2025 10:29:47 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> > +static inline int probe_print_ip_sym(struct trace_seq *s, unsigned long ip,
-> > +				     int flags)
-> > +{
-> > +	retun seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET);
-> > +}
+On Friday, 31 October 2025 09:36:05 Central European Standard Time Manivannan Sadhasivam wrote:
+> On Mon, Oct 27, 2025 at 08:25:29PM +0530, Anand Moon wrote:
+> > Introduce a .remove() callback to the Rockchip DesignWare PCIe
+> > controller driver to ensure proper resource deinitialization during
+> > device removal. This includes disabling clocks and deinitializing the
+> > PCIe PHY.
 > > 
-> > And use that instead.  
 > 
-> Shouldn't we make it trace-wide function ? 
+> How can you remove a driver that is only built-in? You are just sending some
+> pointless patches that were not tested and does not make sense at all.
 
-Sure.
+The better question would be: why does Kconfig make PCIE_ROCKCHIP_DW
+a bool rather than a tristate? I see other PCIE_DW drivers using
+tristate, so this doesn't seem like a technical limitation with the
+IP.
 
--- Steve
+> 
+> Please stop wasting others time.
+> 
+> - Mani
+> 
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > index 87dd2dd188b4..b878ae8e2b3e 100644
+> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+> >  	return ret;
+> >  }
+> >  
+> > +static void rockchip_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
+> > +
+> > +	/* Perform other cleanups as necessary */
+> > +	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+> > +	rockchip_pcie_phy_deinit(rockchip);
+> > +}
+> > +
+> >  static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
+> >  	.mode = DW_PCIE_RC_TYPE,
+> >  };
+> > @@ -754,5 +764,6 @@ static struct platform_driver rockchip_pcie_driver = {
+> >  		.suppress_bind_attrs = true,
+> >  	},
+> >  	.probe = rockchip_pcie_probe,
+> > +	.remove = rockchip_pcie_remove,
+> >  };
+> >  builtin_platform_driver(rockchip_pcie_driver);
+> 
+> 
+
+
+
+
 
