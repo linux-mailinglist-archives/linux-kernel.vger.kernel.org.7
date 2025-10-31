@@ -1,164 +1,135 @@
-Return-Path: <linux-kernel+bounces-880977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB762C2719E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:08:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B831C271BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3516F34822D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA2042856B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D39329E64;
-	Fri, 31 Oct 2025 22:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4E332B997;
+	Fri, 31 Oct 2025 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DpJAyHn2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2wWWv5T0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4LMjaStg"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F57726C3BE;
-	Fri, 31 Oct 2025 22:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986CB1E8826;
+	Fri, 31 Oct 2025 22:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761948486; cv=none; b=g3nV+JOh7apOH5eRQivW7LMa37+q5RqcyBh4KP9U/rg34h6KFtvvBDGj0F3Fo3QZJSlB4kkKwin5NdDCN/5J0qEk5P6nV2vRfe93EbkJ/ClFFNkcR+ifCsFBsilKXgJvMPA0otFVry4bHV+gltzniJ34dxxNNQNIQSI4kyQLqF0=
+	t=1761948636; cv=none; b=UBm09Ui2Ro9LdCXdQkDUQL1kv/GYtJlooqKmPuFCogzTEo0+VHbCkFT3fkjehgryUFjcMf7i+0ipnB/i5MfhClSBsFyn+R8A++lGT//VN481btNvfMrDtd+wjXFxTM0iNwh3HLu0yF4ka+ry0rGIH5B8dAdEz2/d7QSbeAzRbww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761948486; c=relaxed/simple;
-	bh=3Vpaq6bL6JMo9tDmg6tASzD2Ws30qGCzI1GzvYMHmAg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kpDmV34a8i7FQ0RdHOoLbzpguII+PdZxSI7vDb85oiywe/FlNOourSOBRC1hrGseIEbngS29rW2Pe9+C/x9rzbNyVQjkUSwz70PQSdB0j64/EhD0xnQMh4z+0jfypijdubu9ayNbmO70YunvQgagDiSLFDlRpsBwp+47YSw/8qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DpJAyHn2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2wWWv5T0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 31 Oct 2025 22:08:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761948482;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R8tgJ6Q5XWo2fwfyYMQQE2+9PToi2nnEjNQX2we4uUE=;
-	b=DpJAyHn2NGBxmIunDjBTWx+QVE722eBXG0SKToNZV9JekIyhJMCryCK4D5wfBWPg/tHp0J
-	qhyhpCXoo54KLdruFaebCrwj81vZyLLtuPrQX06WU+GaBrjce/kei22iII9IUGOp75R5Kt
-	wY3JQ1SUj8ZHot8tMtG4U1DwAN+suDQJ5Dzr8xlCZHqtKLo6cZRy9jRjmwa56nnzP97uB1
-	WO54tRE7cbUIiskG+APUC4LSZq6rLlZkQZKzHW6scjwevDYp9wzpncvzn7xXTux0PeMkYD
-	43PSD77QI2F7XrslSXAqHZKrCpj4LLhOlDOiSq/GhZc9387w7BnZ17A8mcr2Kw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761948482;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R8tgJ6Q5XWo2fwfyYMQQE2+9PToi2nnEjNQX2we4uUE=;
-	b=2wWWv5T0xPGbroimihOWUSog7a0o2CqAZIOjqpX0IP0yJ2UNZyKyPH6zrPonKF9wXza7iw
-	O0ok1fwsPAiZpqDQ==
-From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/mm: Ensure clear_page() variants always have
- __kcfi_typeid_ symbols
-Cc: Nathan Chancellor <nathan@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Sami Tolvanen <samitolvanen@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C20251013-x86-fix-clear=5Fpage-cfi-full-lto-errors-?=
- =?utf-8?q?v1-1-d69534c0be61=40kernel=2Eorg=3E?=
-References: =?utf-8?q?=3C20251013-x86-fix-clear=5Fpage-cfi-full-lto-errors-v?=
- =?utf-8?q?1-1-d69534c0be61=40kernel=2Eorg=3E?=
+	s=arc-20240116; t=1761948636; c=relaxed/simple;
+	bh=nKBOettWaa9pD6fqUbnve1xXwVoFQ9NnjoRR+YTMrQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PrwlnALtqCjF5f2T6PxVcfYdYb37J3AT9A6fS5zytyn/0nVft9/Kbq5SpVZ5jqsSRdE0mncr72AEvAaNp2ZbIXbe0GRLFvzx55bm/Al189YQ7uCFZaXrDM7Cz8TpP6kzMSApfj+LxDYiuHwbCe9ePYj1j52a5Hg/w4m+Eq1isNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4LMjaStg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=RCA5EFSksST1h7GGV5nB7JZEARYhgQmdDRPr1+5iH94=; b=4LMjaStgwdzYsA1UwJNJJ6/6UM
+	hijNFvmA8DAWr0ggzHedHqV69LL+MWvx8ioToi7GH7JH2epZqmQATsQuVh6AyuqIVs0g2V1TY2xTA
+	0ef36pafwaYg4cWlw/y7og3ET9ZAenKPOTW9k88+zAkGN840SGV/OoexbROT3/y8kMSXrvvx67+67
+	Y0HcE9fwUx4PpigC/zFSJyYkpcHJcwcKNWtUtqaEQ46OTJ7n274hbQa/7VNfii/rQRTpMVSbEKBSX
+	vqBnk59X8AUujSJTxSfiETwwWcneFferjCEOHnFenDbpHRm3v2MEk8+fZHKKyyw/Lql05DVLWpTze
+	EtUDailQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vExJr-00000006qiy-0FlZ;
+	Fri, 31 Oct 2025 22:10:03 +0000
+Message-ID: <d442965b-8716-4f89-be88-bc62459af712@infradead.org>
+Date: Fri, 31 Oct 2025 15:10:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176194848107.2601451.9808956538373601331.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v22 17/28] riscv/signal: save and restore of shadow stack
+ for signal
+To: Paul Walmsley <pjw@kernel.org>, Deepak Gupta <debug@rivosinc.com>,
+ Andy Chiu <andybnac@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com,
+ evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com,
+ samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com,
+ rust-for-linux@vger.kernel.org
+References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
+ <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com>
+ <a8f469b8-5750-dfec-2390-09bad4515f99@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <a8f469b8-5750-dfec-2390-09bad4515f99@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     9b041a4b66b3b62c30251e700b5688324cf66625
-Gitweb:        https://git.kernel.org/tip/9b041a4b66b3b62c30251e700b5688324cf=
-66625
-Author:        Nathan Chancellor <nathan@kernel.org>
-AuthorDate:    Mon, 13 Oct 2025 14:27:36 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 31 Oct 2025 22:47:24 +01:00
 
-x86/mm: Ensure clear_page() variants always have __kcfi_typeid_ symbols
+On 10/31/25 1:07 PM, Paul Walmsley wrote:
+> On Thu, 23 Oct 2025, Deepak Gupta via B4 Relay wrote:
+> 
+>> From: Deepak Gupta <debug@rivosinc.com>
+>>
+>> Save shadow stack pointer in sigcontext structure while delivering signal.
+>> Restore shadow stack pointer from sigcontext on sigreturn.
+>>
 
-When building with CONFIG_CFI=3Dy and CONFIG_LTO_CLANG_FULL=3Dy, there is a s=
-eries
-of errors from the various versions of clear_page() not having __kcfi_typeid_
-symbols.
+> 
+> This patch causes some 'checkpatch.pl --strict' messages:
+> 
+> CHECK: Comparison to NULL could be written "!saved_shstk_ptr"
+> #271: FILE: arch/riscv/kernel/usercfi.c:186:
+> +	if (saved_shstk_ptr == NULL)
+> 
+> CHECK: Lines should not end with a '('
+> #300: FILE: arch/riscv/kernel/usercfi.c:215:
+> +		pr_info_ratelimited(
+> 
+> I've fixed them up here in the event that v22 goes in, but please do the 
+> same on your side in case a new version is needed.
 
-  $ cat kernel/configs/repro.config
-  CONFIG_CFI=3Dy
-  # CONFIG_LTO_NONE is not set
-  CONFIG_LTO_CLANG_FULL=3Dy
+Hi Paul,
 
-  $ make -skj"$(nproc)" ARCH=3Dx86_64 LLVM=3D1 clean defconfig repro.config b=
-zImage
-  ld.lld: error: undefined symbol: __kcfi_typeid_clear_page_rep
-  >>> referenced by ld-temp.o
-  >>>               vmlinux.o:(__cfi_clear_page_rep)
+Is checkpatch.pl --strict the norm for arch/riscv/ ?
 
-  ld.lld: error: undefined symbol: __kcfi_typeid_clear_page_orig
-  >>> referenced by ld-temp.o
-  >>>               vmlinux.o:(__cfi_clear_page_orig)
+If there are enough arch/riscv/-specific patch expectations,
+maybe they could be documented in Documentation/process/maintainer-riscv.rst
+(a new file).
 
-  ld.lld: error: undefined symbol: __kcfi_typeid_clear_page_erms
-  >>> referenced by ld-temp.o
-  >>>               vmlinux.o:(__cfi_clear_page_erms)
+Thanks.
+-- 
+~Randy
 
-With full LTO, it is possible for LLVM to realize that these functions never
-have their address taken (as they are only used within an alternative, which
-will make them a direct call) across the whole kernel and either drop or skip
-generating their kCFI type identification symbols.
-
-clear_page_{rep,orig,erms}() are defined in clear_page_64.S with
-SYM_TYPED_FUNC_START as a result of
-
-  2981557cb040 ("x86,kcfi: Fix EXPORT_SYMBOL vs kCFI"),
-
-as exported functions are free to be called indirectly thus need kCFI type
-identifiers.
-
-Use KCFI_REFERENCE with these clear_page() functions to force LLVM to see
-these functions as address-taken and generate then keep the kCFI type
-identifiers.
-
-Fixes: 2981557cb040 ("x86,kcfi: Fix EXPORT_SYMBOL vs kCFI")
-Closes: https://github.com/ClangBuiltLinux/linux/issues/2128
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-Link: https://patch.msgid.link/20251013-x86-fix-clear_page-cfi-full-lto-error=
-s-v1-1-d69534c0be61@kernel.org
----
- arch/x86/include/asm/page_64.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index 015d23f..53f4089 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -43,6 +43,9 @@ extern unsigned long __phys_addr_symbol(unsigned long);
- void clear_page_orig(void *page);
- void clear_page_rep(void *page);
- void clear_page_erms(void *page);
-+KCFI_REFERENCE(clear_page_orig);
-+KCFI_REFERENCE(clear_page_rep);
-+KCFI_REFERENCE(clear_page_erms);
-=20
- static inline void clear_page(void *page)
- {
 
