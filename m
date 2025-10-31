@@ -1,115 +1,77 @@
-Return-Path: <linux-kernel+bounces-879766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29528C23FA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:01:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371AAC23F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:00:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1464C5653ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A3E188D54C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863D532ABC4;
-	Fri, 31 Oct 2025 08:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5882329E48;
+	Fri, 31 Oct 2025 08:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fACj2G1h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unP919Z8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22066329C53;
-	Fri, 31 Oct 2025 08:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35B328B70;
+	Fri, 31 Oct 2025 08:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901152; cv=none; b=ftcksk2WpUgBwCSWbXITop4SwINI6pAE7635CaRPJQXdOGuwQ2kaj3cKym0VzmF2HGXXvcJyv4F+pVH08VlOmlkLiVcMtPH8p7nNSPGGAgO9SGjX4jVyB0FO9Jqz9zABLGCSorPlbQTEkRTPo5FSRfnQJ/UIez5E46Jekdk9Mpo=
+	t=1761901144; cv=none; b=OdyP8iL5llBQ3FNcda1mm03sjfeV3orY0uEUB6NCY+BXkldoOZRh/MV799E/ACGr4/7lUof0UQ/vW5bufjRtCJrfuYgWUgmEBSnXX0UKRsVT0WlMtGtXIxzfmKpNO6gAK4DvZTeu5jZwmAXK26LfZVJ34IKnYJ2Nvd2y8pCyKwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901152; c=relaxed/simple;
-	bh=14teRbdSNDZoo6LY1BdIEFiTD+Kt/E9bpeaMX41fhsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FLdPu2uhNpgrJAw8s9RHB9+1oZSvj84oq0JWyfb0mEno5OrrD3xDau/IK3zqw0eE2udHILS7nu/UUQTJyEuXRDPoGVGalgVhdKQbqqBNxbnpBYhZve6wchKP4EoePOQAd7GsEnCnrSXxGqsG+HLMwtey4xntLsiwwLvRQjn0bZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fACj2G1h; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761901152; x=1793437152;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=14teRbdSNDZoo6LY1BdIEFiTD+Kt/E9bpeaMX41fhsM=;
-  b=fACj2G1huC3BjSANlqRNVV6cQ6XESOtH1ut6OKV/gj0KHYJpqwNwYfHz
-   J/bDKESFqWHxfwMAmxvjNp9CdZepgyXsYflyfacK+TP4Fo4BO7TLTBvBC
-   vWhtPQF/IYTY4qr2/GNkJKD2IUlGTx24kwKl2czh7TgjvTxrSK1TerG/N
-   l4btOrpy3Bnpha/S3avLt1RgyBWxw5dXvlD2I0UosoERogJj2iQ9X9Trx
-   Tkc89Wo7tzGGcUy3WAHfbAMynoD6NVFJ7yYmoYsVOBxH5frpPY1bAhhRQ
-   f+tUPHtzwLthsWOA7TsmU0pgdTcT2btPizSs2P9502+UiSPfGMRwZTTMi
-   g==;
-X-CSE-ConnectionGUID: OVjCLDqlSFW2pGDTY1MIlg==
-X-CSE-MsgGUID: xCnUw1JrRL2IW6jfHxJ6Tg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67892975"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67892975"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:59:11 -0700
-X-CSE-ConnectionGUID: Qkn6DZO5Rceyyp8KD2OnrQ==
-X-CSE-MsgGUID: hAjIabqjQHemJifWFRIz7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186119255"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:59:02 -0700
-Message-ID: <5eaab97d-30c3-46a5-8be2-2ea1ef28e71e@linux.intel.com>
-Date: Fri, 31 Oct 2025 16:58:59 +0800
+	s=arc-20240116; t=1761901144; c=relaxed/simple;
+	bh=xFpjtWYV2SQoqcfVJ/GJHQsZC2tJsIB7IOZRD/Qjhdg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=j+DY0C16rITBXEhlo00t5zfBAfoY5vl0hzrRDeFmEHdXYJd2d6Yn//RMc64NmAC0MYQItHi2DquQQ5C1mLTgHTyWBsNf4jl7mp8NCQxjeP3nXD31OzSPwqjGs8cH3YJ2HkyHGBPG2IS/WL/v6vDdilMD+sAEc5WKubiMsjrI8Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unP919Z8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91565C4CEFB;
+	Fri, 31 Oct 2025 08:59:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761901144;
+	bh=xFpjtWYV2SQoqcfVJ/GJHQsZC2tJsIB7IOZRD/Qjhdg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=unP919Z8MvN7EXJQKJbdabv5WU2Fem1pGp3gWMs7BpzDuaWEzU7vRo0Xgs21Wxmgy
+	 hDAlSP21kILZCFW78QjlVtKHgqJsknmuPWCh9EP5WHkyEVSfW5+3Er1wSxZf1cyrLX
+	 t7L5aIbr45kEn9htd5EhIGnpELEfrJpRZDqzI1n/h84OBbtX3E+yseE1ozEalH7oEK
+	 ELDgfRARKehwSodKEaWqF1MRAiWsvG4rWBwXKOCtDrJO3wc3hiROO9eW+/HH1Tfx4e
+	 c0t1GD22mAWzus1b0VqBVr+Wc4+UF5QkU1fZn+3OcIrOC+h6F+GShQW7JvNGAUkAvJ
+	 MdYjvhvnFgorQ==
+Date: Fri, 31 Oct 2025 09:59:01 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Masami Ichikawa <masami256@gmail.com>
+cc: bentiss@kernel.org, minbell.kim@samsung.com, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] HID: hid-ntrig: Prevent memory leak in
+ ntrig_report_version()
+In-Reply-To: <20250921053102.150182-1-masami256@gmail.com>
+Message-ID: <844o8550-rr14-1915-qn38-55239sq5o6n1@xreary.bet>
+References: <20250921053102.150182-1-masami256@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/28] KVM: TDX: Combine KVM_BUG_ON + pr_tdx_error()
- into TDX_BUG_ON()
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20251030200951.3402865-1-seanjc@google.com>
- <20251030200951.3402865-19-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251030200951.3402865-19-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Sun, 21 Sep 2025, Masami Ichikawa wrote:
 
+> Use a scope-based cleanup helper for the buffer allocated with kmalloc()
+> in ntrig_report_version() to simplify the cleanup logic and prevent
+> memory leaks.
+> 
+> Fixes: 185c926283da ("HID: hid-ntrig: fix unable to handle page fault in ntrig_report_version()")
+> Signed-off-by: Masami Ichikawa <masami256@gmail.com>
 
-On 10/31/2025 4:09 AM, Sean Christopherson wrote:
-> Add TDX_BUG_ON() macros (with varying numbers of arguments) to deduplicate
-> the myriad flows that do KVM_BUG_ON()/WARN_ON_ONCE() followed by a call to
-> pr_tdx_error().  In addition to reducing boilerplate copy+paste code, this
-> also helps ensure that KVM provides consistent handling of SEAMCALL errors.
->
-> Opportunistically convert a handful of bare WARN_ON_ONCE() paths to the
-> equivalent of KVM_BUG_ON(), i.e. have them terminate the VM.  If a SEAMCALL
-> error is fatal enough to WARN on, it's fatal enough to terminate the TD.
->
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+I have added an explicit reference to the real actual leak being fixed 
+into the changelog, and applied, thanks.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+-- 
+Jiri Kosina
+SUSE Labs
+
 
