@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-880530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3FDC26023
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:08:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507AEC25F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBC21B225DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3C5461434
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252EE2FD7DF;
-	Fri, 31 Oct 2025 15:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DF12EACF9;
+	Fri, 31 Oct 2025 15:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lIADUMlA"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="fwN9tres"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4481C2FB608;
-	Fri, 31 Oct 2025 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB282EAB61
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926340; cv=none; b=T5AvDI5ZtMLiI3AZdmGu/5S+JJNegt3r3TzTiDj5anlrMCqPBTeK7JlYo7SKsHY+5EbhiZZJ1xNWKC58/wN4nXP7IndhwdLqHr1T2Tkkoy2DgstcxXtJSGjgxBu+KmhXdeBLMrbb0U34rFcuD3ral9FKyXs1J5dwzygDNIOHUt0=
+	t=1761926245; cv=none; b=KQrMUF+8CTC9q6oepBXNX8exmsli2G6F9hE/lAH2ZsjeGCwFNYJFUKLQyiyjLEl3wj3yIs5S7hsuPvgdBk4Ftsrxm7a2guSiZm18jgxAUXWgTFXjanOkHO9M2YBgzc5bEzli3qnXmnsAyw9+Oc7vBswCnm68/lx2Hggl3XuYAMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926340; c=relaxed/simple;
-	bh=4xIblpGUfjyG+10F8/m6xSf7mP+lNcSUwrE66GuDSuE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FD+0BV67CvXl1fzqNmmUO9OWK+qdSaTW2b0sVzNR52pLopaE8RGs0LV1rAqa6+hFXvcQ6a83Pa0BmtDcFkLF/ApLlBJq7NmBudrAdP8HnSXdcqVTFqit11RA7d0FKDLzSTHvOYD/VBBkzlqIria+0xor+wdufy2eRVgHAdzDWMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lIADUMlA; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 79a12ef0b67211f0ae1e63ff8927bad3-20251031
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Dtp9ROovLQiWfFN8FjIVqf9lkWCcFmW8lai1C8SSfxg=;
-	b=lIADUMlA52zbLVJH8R3TMBFmp52l8AIs0C9I9ifQtqtNpW65tmCZta2xewPmAYkpoxSg6dCMgUxOyHk05uC/Dhi6MJO5A4DzOgk2NYMhPOF9zg1V4m1qBEu77ipv/CbG+fsUoDjOTVNnsmw6n/YB7QP3AylL2Y1pJ9b7S4bCwgk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:727437bf-137d-4328-96e1-e40e8ffcc463,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:70bdfedf-3890-4bb9-a90e-2a6a4ecf6c66,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 79a12ef0b67211f0ae1e63ff8927bad3-20251031
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 367961224; Fri, 31 Oct 2025 23:58:43 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 31 Oct 2025 23:58:41 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Fri, 31 Oct 2025 23:58:41 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
-	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
-	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
- Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
- Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH 9/9] soc: mediatek: mtk-cmdq: Add mminfra_offset adjustment for DRAM addresses
-Date: Fri, 31 Oct 2025 23:56:37 +0800
-Message-ID: <20251031155838.1650833-10-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251031155838.1650833-1-jason-jh.lin@mediatek.com>
-References: <20251031155838.1650833-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1761926245; c=relaxed/simple;
+	bh=yjHBWC05s3h3HRSExiyGSQQjmN1twKVXh2uNlBYdM2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iLxgJiyJrgPDcBEJTU6ohdGDIYcehuIWJVCVTVDgEk9pdYM9dymiioB5G6GH0XhW0OICL4DFsnGoXEpABabM5l69ekgh3r5oK4pmh9GEExawv8zMzp415f7o31kmx9oTnpTL1wjNAAZ4SnqA74kFrvSiZ4HSiZUp/dhtXfw3tCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=fwN9tres; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c4f1e7243so3725227a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1761926242; x=1762531042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nI+jUGUgrFwdA9J/BWhhFb2SDMktkHvnyj/zPRmzijE=;
+        b=fwN9tresWOg1cdG3fZ4c832HvC+AZylVC3VBLWrDNFN3FFKqS/zy00NjcRBsU330ja
+         VtiGrF3fS2pFsapADEgh9ShqU0GLfx/KNe9qd93uE6nVYUNjtHGq6pyPKgNOZptFXKH7
+         6PabjL45+5URVvEJOoPoW15fkrNjGvxzBr7aqIrM2DFkasr+Q7/1wFl7iPvkfHvxYTwd
+         TFe9igj9rQKn8xEXOrjrLp+jZVOxY6Rtx+4Z1ve2bmyVZKUf/phig2/fJMabRKHMRo3+
+         z0gpvFJx7KJRb2Wxvg5onj0dcAdpyoJL4Bg1c8dAs9aKe+izobD63sAqv6VZksX/cEAQ
+         STVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761926242; x=1762531042;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nI+jUGUgrFwdA9J/BWhhFb2SDMktkHvnyj/zPRmzijE=;
+        b=VSubyOFbTNLTNHy98Td03kXBJ9zpDoawP/qrQ6yBHCGJrVWq1NVJ1FovGyIbSj0kAz
+         oAEx6dJ2djEX/+zpzH6yJwrXs8M9FQ6mZYjEcZev0oTy7uUL3iPBnPe6Bmg4AXCFqB5M
+         93Uo8Q8eU/Eq9aTGv5MPRQya8kV/1cP/Eg/Zhuuvf9OMgPxjjyjpf4uI84md9b389zOB
+         k932rzMp8KHIbk9mWLu/QR46uMHv7Qp7003nfWWBeJUcqYTt4VqeV5Hk1ZXsYDj8L68W
+         3B66qEv8LQOw2ILYT/gvgD54FxKZvuTyWH7FJYRvjV7Iead+LM+h12CaKy6SV/6HkY/X
+         Lh2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmeHFcC7bMSalWENMqF9lidLe7WsgLadkFMl4GlXGisN3/NApuwOUQrX56A5rouTalsZEl3bYmq33ltYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu+c2lMCN8FHkcX3D/NtAs2i2n2EChgiEXrSCis/qVQhH22bmC
+	P1cPvPsoMvdJSjIOthLhxRBjgLeUklqmBqJspwuHkUkh1oIykxMUZqo=
+X-Gm-Gg: ASbGncsv4uddoJtche6ni0X5qXofyxQvWv1aSjAQVQV8FuFu3WQUwidNS22PyiEch43
+	pEtx8LihaqibQ7hk49bxwxfDm9HqOH+yt3ptqCFx8oq6mbieHKuXLUKXPalzI/h2qvD9ctpHem0
+	GrFccsoSL5qkRhdYywzvmVPY3NzOl/YJYf4XZE/SFJrsRpyU0c4zVE4Z+KaqMmQ9tC/prXm+ugz
+	F8dOiKkKtyXpduGBr47OIAIPMvVPkL743SANHOU+EL190qFys41G/xGjtA/+mvmW8beORGjtmef
+	WtJqvmUKBp5zY3Iu6BYNvHPgtpaLB/knXaVjDieyxIniZ5k02rurDlc2M7uSd5ragNiSkQdSuXb
+	lEQW6E6tFcVmicHZLXt2aBW85QrKOh99ePiJGzZTvAGYGodBclrZ8606RCAyxx9jgmD8uN5SnVG
+	UGgBdz1RksbjvjCah7kejNa7yFh9qyHjZjmd34cCW37nLayDcbA3YrUw==
+X-Google-Smtp-Source: AGHT+IHdC5nEkh3EIsfe801CuOexng04liN2h1LnrXQkauZMgdGcyum5TaU1FRbxBKL0FAJSkSNDMg==
+X-Received: by 2002:a17:906:478b:b0:b6d:603b:490f with SMTP id a640c23a62f3a-b70704c40b5mr378182466b.35.1761926241353;
+        Fri, 31 Oct 2025 08:57:21 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ac3bb.dip0.t-ipconnect.de. [91.42.195.187])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077d065fesm206856066b.72.2025.10.31.08.57.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 08:57:20 -0700 (PDT)
+Message-ID: <19689e2c-5dd1-4c3f-a243-84b69a552f91@googlemail.com>
+Date: Fri, 31 Oct 2025 16:57:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 00/40] 6.12.57-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, sr@sladewatkins.com
+References: <20251031140043.939381518@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20251031140043.939381518@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-Since GCE has been moved to MMINFRA in MT8196, all transactions from
-MMINFRA to DRAM will have their addresses adjusted by subtracting a
-mminfra_offset.
+Am 31.10.2025 um 15:00 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.57 release.
+> There are 40 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Therefore, the CMDQ helper driver needs to get the mminfra_offset value
-of the SoC from cmdq_mbox_priv of cmdq_pkt and then add it to the DRAM
-address when generating instructions to ensure GCE accesses the correct
-DRAM address. CMDQ users can then call CMDQ helper APIs as usual.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/soc/mediatek/mtk-cmdq-helper.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index b30715ef0d6f..67e5879374ac 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -372,6 +372,7 @@ int cmdq_pkt_mem_move(struct cmdq_pkt *pkt, dma_addr_t src_addr, dma_addr_t dst_
- 	int ret;
- 
- 	/* read the value of src_addr into high_addr_reg_idx */
-+	src_addr += pkt->priv.mminfra_offset;
- 	ret = cmdq_pkt_assign(pkt, high_addr_reg_idx, CMDQ_ADDR_HIGH(src_addr));
- 	if (ret < 0)
- 		return ret;
-@@ -380,6 +381,7 @@ int cmdq_pkt_mem_move(struct cmdq_pkt *pkt, dma_addr_t src_addr, dma_addr_t dst_
- 		return ret;
- 
- 	/* write the value of value_reg_idx into dst_addr */
-+	dst_addr += pkt->priv.mminfra_offset;
- 	ret = cmdq_pkt_assign(pkt, high_addr_reg_idx, CMDQ_ADDR_HIGH(dst_addr));
- 	if (ret < 0)
- 		return ret;
-@@ -505,7 +507,7 @@ int cmdq_pkt_poll_addr(struct cmdq_pkt *pkt, dma_addr_t addr, u32 value, u32 mas
- 	inst.op = CMDQ_CODE_MASK;
- 	inst.dst_t = CMDQ_REG_TYPE;
- 	inst.sop = CMDQ_POLL_ADDR_GPR;
--	inst.value = addr;
-+	inst.value = addr + pkt->priv.mminfra_offset;
- 	ret = cmdq_pkt_append_command(pkt, inst);
- 	if (ret < 0)
- 		return ret;
-@@ -565,7 +567,7 @@ int cmdq_pkt_jump_abs(struct cmdq_pkt *pkt, dma_addr_t addr, u8 shift_pa)
- 	struct cmdq_instruction inst = {
- 		.op = CMDQ_CODE_JUMP,
- 		.offset = CMDQ_JUMP_ABSOLUTE,
--		.value = addr >> shift_pa
-+		.value = (addr +  pkt->priv.mminfra_offset) >> pkt->priv.shift_pa
- 	};
- 	return cmdq_pkt_append_command(pkt, inst);
- }
+
+Beste Grüße,
+Peter Schneider
+
 -- 
-2.43.0
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
