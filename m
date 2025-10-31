@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-879874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A3BC244CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:58:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAC5C244CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAED4282CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0192446085A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0386B334C28;
-	Fri, 31 Oct 2025 09:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5733345B;
+	Fri, 31 Oct 2025 09:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HnV2yq7M"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Grj0I0sM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453F33345B;
-	Fri, 31 Oct 2025 09:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D05D333443;
+	Fri, 31 Oct 2025 09:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904464; cv=none; b=lcPM21gTYc+KU3lOoISEmjTbAFcjCTs9EHhW81PLxSEwwPhd0ANlhatMd/S8WcIsrn87SPldYRZZR77ipHWVtP29s3jbF9Iv6X3cqOTYCakxONNKc2WwC1uNJ5Fa6cPpj8SvOywEQce7TPJFfEPHpjQSHU119Lfm0otwehi4R4w=
+	t=1761904481; cv=none; b=JpVOiigNuUBhF8IUlhBDL0K/w+Bly4G0h6VeQ184pDKyGiiWh+u9oZQOS6RRNFLokuPi9+lTqx3iKI3ThawxPP8pj20ZPgIURVKeeZ3fe/R0JAsZSNZdUnSLQ84EllrS2/0A9bnJgrBW1j3cyQFTAGZGYdDqzt+ezoI3UEdPTJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904464; c=relaxed/simple;
-	bh=Qs4ggnpyC8OpSAy9Yb0bJBsNO13Eq7G/g14GI+pEqSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tkEMKubS9DIh68V7/wtXv78wXf52LGRimK85YqmoufJML+zGG8uKvliy/elNWyZlXDAZnkRdEyvfac64FXFaudJKcpjch0rcsap9QrntKRUs6wjZKoisG6qPOrqpt47B5kql3NS7g1N7SrMHpeoYTC5mttxRxA3YV2IFi4S1pQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HnV2yq7M; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761904452; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=V6KM2FGZe0yUHDU7WK2IN28Yp5FlE7rIbHcELeToGpw=;
-	b=HnV2yq7MxaTKvRIgjGFBWt18PHFF/TTrCgCXVNBs6c6M9BNji76zzuWJbrfAOyWs94rKMZCQHzrjmzoeNwGLd46XK4kbk8YezEXhkwHmV7GpHdr6JY+qXvAkv5VAMS6lE/HgPdY/gjr2PXQqAuwK0XTnElLRnHKAgh4n+ncyVDw=
-Received: from 30.221.132.210(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrOUk-u_1761904451 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 17:54:12 +0800
-Message-ID: <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
-Date: Fri, 31 Oct 2025 17:54:10 +0800
+	s=arc-20240116; t=1761904481; c=relaxed/simple;
+	bh=v6cA50shDse4b25yyBe2a2iAc/jDGF6aKsH7khX41VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ywm0b8KOu5SRTasFv14YJmKmoJp5m8UuwAy2AYlEwD9diyGeKGdGGVPHTJrIjaR1rtcXFy0Bfc+6swUUzwPpjqFEsduoYsJHtTIPLYU94CaSydeLLwV5RU3ITPc3xJp/kG0OaAWKbMJN5xV4bvErsMdT7B7pktOV7z9udRtwdAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Grj0I0sM; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761904479; x=1793440479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=v6cA50shDse4b25yyBe2a2iAc/jDGF6aKsH7khX41VA=;
+  b=Grj0I0sMvvIaOfT+6IDF8lVlw+SD/6Nl2TMpObur75Ks1K+IoOoXFJ5K
+   iMpLoAF5+8dThjMaBif2Njg14A0ALeZDzLXVVkLWp/sgkTeyxlPRHszp5
+   YMO/qUMfqZsblXZ0eT8QAzBjZCtqZXgA/dHQYQwKrAY8ZJsTkDHvBJTzy
+   Adw9/+DD2AOMpXNF2jlBEbwxxO6dJjmn85LKgBh50pSUubrWzcTwDE+K9
+   RGgiFVAMQn5nyWJuETVoeOUsR4rRtZYvDRYG6CrfqDKLx5VqpQqJ8S1PB
+   WnLffxngH6PL+Fv0Du4KlETWZ+8VnYal9cd2wskBFBPYvbGxWFBBysDrZ
+   A==;
+X-CSE-ConnectionGUID: BFArgXLQQguUVaupAAJtng==
+X-CSE-MsgGUID: 4QptMlgiS9ez/2NBA5rnxw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63269853"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="63269853"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:54:38 -0700
+X-CSE-ConnectionGUID: rjQq+IrBQB6lTHj3dXT+ug==
+X-CSE-MsgGUID: VUcsmbyoRhqWiLd9scZVdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="191343912"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:54:37 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vElq3-00000004EGH-2YMt;
+	Fri, 31 Oct 2025 11:54:31 +0200
+Date: Fri, 31 Oct 2025 11:54:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jyoti Bhayana <jbhayana@google.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2()
+ with ilog2()
+Message-ID: <aQSHVsWGXzigTEMe@smile.fi.intel.com>
+References: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
+ <20251031094336.6f352b4f@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>, "Michael S. Tsirkin"
- <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
- zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20210818144542.19305-1-hch@lst.de>
- <20210818144542.19305-4-hch@lst.de>
- <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20251031094552.GA10011@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251031094336.6f352b4f@pumpkin>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Fri, Oct 31, 2025 at 09:43:36AM +0000, David Laight wrote:
+> On Fri, 31 Oct 2025 08:45:00 +0100
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
+...
 
-On 2025/10/31 17:45, Christoph Hellwig wrote:
-> On Fri, Oct 31, 2025 at 05:36:45PM +0800, Gao Xiang wrote:
->> Right, sorry yes, disk_uevent(KOBJ_ADD) is in the end.
->>
->>>   Do you see that earlier, or do you have
->>> code busy polling for a node?
->>
->> Personally I think it will break many userspace programs
->> (although I also don't think it's a correct expectation.)
+> >  		tstamp_scale = sensor->sensor_info->tstamp_scale +
+> > -			       const_ilog2(NSEC_PER_SEC) / const_ilog2(10);
+> > +			       ilog2(NSEC_PER_SEC) / ilog2(10);
 > 
-> We've had this behavior for a few years, and this is the first report
-> I've seen.
+> Is that just a strange way of writing 9 ?
+
+Why? It's correct way of writing log¹⁰(NSEC_PER_SEC), the problem here is that
+"i" people do not think about :-) But we have intlog10(), I completely forgot
+about it.
+
+> Mathematically log2(x)/log2(10) is log10(x) - which would be 9.
+> The code does seem to be 'in luck' though.
+> NSEC_PER_SEC is 10^9 or 0x3b9aca00, so ilog2(NSEC_PER_SEC) is 29.
+> ilog2(10) is 3, and 29/3 is 9.
 > 
->> After recheck internally, the userspace program logic is:
->>    - stat /dev/vdX;
->>    - if exists, mount directly;
->>    - if non-exists, listen uevent disk_add instead.
->>
->> Previously, for devtmpfs blkdev files, such stat/mount
->> assumption is always valid.
-> 
-> That assumption doesn't seem wrong.
+> Do the same for 10^10 and you get 11.
 
-;-) I was thought UNIX mknod doesn't imply the device is
-ready or valid in any case (but dev files in devtmpfs
-might be an exception but I didn't find some formal words)...
-so uevent is clearly a right way, but..
+That code looks like working by luck entirely, TBH. I just took the scope of
+the patch to start dropping const_ilog2() usages.
 
-> But why does the device node
-> get created earlier?  My assumption was that it would only be
-> created by the KOBJ_ADD uevent.  Adding the device model maintainers
-> as my little dig through the core drivers/base/ code doesn't find
-> anything to the contrary, but maybe I don't fully understand it.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-AFAIK, device_add() is used to trigger devtmpfs file
-creation, and it can be observed if frequently
-hotpluging device in the VM and mount.  Currently
-I don't have time slot to build an easy reproducer,
-but I think it's a real issue anyway.
-
-Thanks,
-Gao Xiang
 
 
