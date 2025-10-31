@@ -1,274 +1,253 @@
-Return-Path: <linux-kernel+bounces-880010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC62C24A2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:55:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455AEC24A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDEBA4F22FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:55:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 003934F1C5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3486E3431EA;
-	Fri, 31 Oct 2025 10:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FC63431EE;
+	Fri, 31 Oct 2025 10:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U2oyjWhf"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rs7jJpYW"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010028.outbound.protection.outlook.com [52.101.85.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4606E3431E4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761908086; cv=none; b=rXxozvmSe8DZblL+2cn61KpuU8vzxqY3nMHrLaPw0plXesK6o12sD5IgrCmtNvP+b6BoMho6CTVA9snIBpCg3wNhxUa231MdWWujkPK9D2Rcvd1XljvunExXvbxlnj9BsEjY7pJbais0cBsyqh6WsxD00GXAd9ynOeCpIoiZAZ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761908086; c=relaxed/simple;
-	bh=G3/YU1QordgrcT8LsqQ5yEAOA2Fbkwsq0D8nhkPPh44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Usenwhp/lVrAGdUtmBIDx1m806frSpZPbRRD50b22HyUgZMdgO6j10mna+Efjh8IyIRTztkQ8U5kECesKauGIjCeqzycn2YvXUKa2lTtPrq/VH7+gT7k68I6lEIchjJNgka2HCk1zKe3O2rF9RSniwmfp/3tU19nGQX5RW60KpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U2oyjWhf; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-475d9de970eso14504965e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761908082; x=1762512882; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nrx14+IMecvzAl4UiexDkJHLOgwmOpHv9KRq9o4Ztbk=;
-        b=U2oyjWhfPZcGSkvBcWXDnN+o34YXVgN5rultADkRIjQwb2nxzMV3NuHeJDSNUwWTqh
-         RGbTsgFomotZAvZZMDDAFFLmjUXyUGZNN39VeFoDM7QwydUsQlYmY/vOAJyW8jk/iFIE
-         yWNWQf5k7S5dNNC50OfSt5Wi++CGetqkyiZY5jdQZldhgLJLX483Z9zf8lmV9N2Y7rXB
-         HUSeljoLCl6gQhgnADiIjdFitFNXJdgNpH8+RHBY1uRjqepIXQa+L1UGSDTJjdOWcmvj
-         0SWUPLtEeP4X1aF94xQxY/NGwf89akmb3zMX2QBfwaYQ3zScsE6RGCgvY1Ykl0V6p6e4
-         +UsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761908083; x=1762512883;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nrx14+IMecvzAl4UiexDkJHLOgwmOpHv9KRq9o4Ztbk=;
-        b=tFr9Q1Zag3OEI8KAKMYUZf2k+JzFHoo+Jn7h3LEkdvqC2clY7RH8tkg1eV4KptBeJo
-         s1Etvb6qZ7u1cm/uFrXqRKEaaukCXB3JdsuETPijjOuRH0rDb2s50pGyRKo+lwiOcCe2
-         QVl2XPWJ6kIqI20d87ihi6TpAYoLftcu9JbrD/8wHsXNUDbF0mMrvVQTz4NhF/Ff4bxL
-         129QMNHOxjFO1Sy2o3dmCiCuRC94gJTIdoBCdfc60T4wEPiXrCrRPgCIoN6kuxi3u4MS
-         GbL5JG0uf4KhnRQcvDmQMk+K9sJP87RRoahTS9kKc6qGWahNn+UZZeHKLVy8Rhp9BcbE
-         02Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkK9tfHURX8qPxdyzQsU9sMsPlUEUmK8iGUW0SqeE5XqARvgOMo0lVQ7JN9Fl5NmYeGKtLYvQBpz8xGYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDpFGQbpfAklvV6qJfgado1V6ww7dGuy5mtkLZ5vGR2wAivj0c
-	rj0PynBAD9OskSYhBw8mi21bVtPh+iGVwIhMwHQrRyMEysysreIBrdUoIvWb9PAeV7U=
-X-Gm-Gg: ASbGncuzh2eLCfehZK3R3NDPGPWtsz9QmRwMR6azPKibIdwAZAOwcB7CSlNFVNwzJdM
-	b8p8uEAyi60lP9W7HiNJPWz7St5fbIrIde/2rMdXp11sSZp+s05IJDG94u/TRXmATWRTGogeEJ8
-	C82Z8I2FTU8gIiwaZl8YTS3aOyrC9wErMpD5kuP9LmN6RwqvNVaVyxrBXeiz1h3HujC6dKzm55t
-	mTopiScDdRkT3XWXjq9JIEu6pf+THs4MvO0pGWabQbNYwFABF5+nhOydlD3BgLoE+LU0KYT4Q+w
-	4G2yO++87Y3s2uhA6nQMajojcgTGVEI+92k93n0IDKjnbHNvlOAydFtlGlGl/OPkL+h1TZIgrbi
-	twdmZ77teQdL0JFopuTp8e8jqg4mRq4fT6i/4bcNbaAcg56+8ILgZCLz2A/NCZA5wzZ5sB9/q2c
-	fK1JDa4fN+cnCuQhXYttA+ab+ScO9PQbI899K8mZ/+gxWKwbNWuz2gVLDROgxzYUg=
-X-Google-Smtp-Source: AGHT+IH1qwkEmgqVmTN+ivxafY9W2GaHGk/oAp1YQ7VELJ5K8DOaakj6qrEcg5qy1AZEt18IlcwCmw==
-X-Received: by 2002:a05:600c:3548:b0:471:16b1:b824 with SMTP id 5b1f17b1804b1-4773088be8bmr33966175e9.28.1761908082467;
-        Fri, 31 Oct 2025 03:54:42 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:d967:2bcf:d2d0:b324? ([2a01:e0a:cad:2140:d967:2bcf:d2d0:b324])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47732dc28d4sm26747545e9.1.2025.10.31.03.54.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 03:54:42 -0700 (PDT)
-Message-ID: <796fa6dc-d2a0-4f9d-8dc2-6e64d90deddd@linaro.org>
-Date: Fri, 31 Oct 2025 11:54:41 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8E2288D2;
+	Fri, 31 Oct 2025 10:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761908180; cv=fail; b=lIhYE78Jd0nINKUjGBTyw+MCrUXT1p1c2CnV93PEYV2pb5NWbyL3BzNJgezO0QkbWHDLXV3hC+uX+4znABYaHQ9yZB6z36pBkv726oM9xVA/r273iG6P1VUW4S2m2v8WQXrY16676NsQvj8T19DOz0GIPzo7yCMFBRNfrL2QG5E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761908180; c=relaxed/simple;
+	bh=JLmTmOc8YsXo2kFfGL+VF3hGf/4wSWW188kZk5T7j78=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iaykbjLaRgqUNaRdgF1YMCTcJs0UvYmuT7Iu+1/Hnkaf2y+R8A5/MnWtp7aB4NZ3KTz/EDyyBi0uaWgK5ouU4vKXqU5CzDhKIsS/MIWHPuZiKXqWpRStzXTe94L05ZxhGG2eEu6oWBN3t4e+AL20NRV2VwpNRBKRU08dxLdpyKY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rs7jJpYW; arc=fail smtp.client-ip=52.101.85.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZAkaWB1hz6AOo0AYz1RCMkdIqucIJKoz3xYyuDOEox84JLsCfCRloe3hrh7Zkm8F/NxlWxCKI+ZT1zmFJgTJVYS+XzrUAsoq7MpJ7I9uFAnuI+t9abtC5RMnnEBVG1CYcswJQbYq5rPKydqytQOAJAYDz2jRs3FoVAW0hqyNaxEst+8RCzHbLeNRoLyW5KDTcIk8Wnr3nuCNxLvhg2sQmsWO9CfERO1N2kavGoeAaEcONLMiL6YBocyWzSgOZmQl4Uq0DtDaZ4IYJhVbTNk1yzR3r6xeGwysm5FJy1di2JOYoo7hRUTXFoYkwgbsZu8uYkqOkHzkdB69p2bDAsd4+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0uabOSvmJdwt/Vl97plvI37QDI0VugSMyvyc+8pCkH0=;
+ b=o36/haWKPt0Z+wME3XwpKBYD4lfNtLEUBPhKgtzzL1+6j2/16Xf4FB5d1SzOiPDaMwRPWCFoYt63/XXWswR7sXMo2pi7vDUSqtiz5TCaS1mY4wS88J5+JefRHjEBCf9/wNAu//IlFA32s8FTdl8kRkVMfRZhWmj+Ey9mm1TIcxolKFjDqOuk+zttioM/I1/3w8GXWZQtkHWKfiQPZS3JtVhE+IVj8Rn7oNlh7SUIW7qeqBa9o+7actCfZ38dveFseOn9EpgioWj4iZ4EuOInPYQB3ldLVrz6XIv7ve9t4Pohm8n/zv5fX6O8B5T2MnMV7110RVPhwN/gCVqd11XZfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0uabOSvmJdwt/Vl97plvI37QDI0VugSMyvyc+8pCkH0=;
+ b=Rs7jJpYW/4yhi5zAn7kULH/Y0qf7v41Dm8rV3Cy0fzFI2HSoEoImIp9FBw/03Sfm20vXl3rt8bGzHFQm7QvqjOBv3j1o/S4MUgRTAKL5zFKAZYr5fVJQcT+PNMT2wv/i9x6JlMTqQeLxYbZyIVMQP0AQndwNYDU53AXg14nF6ktHkP/5NhbiAiZlotLbxUX40YrRtVZ8j1+FztrK/ftz4jLxH+wBIqi6FltPKQxOQwwU30xn+8byIZxxP32WLggfnyiQcszWP14ym5Wum+Hw+2UoC+SZjBa8pDefsedbffgJrdcWtpRU1b2wqhX7z1WvgXHnFlSreA0qAy2MOGvqUQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by PH0PR12MB8798.namprd12.prod.outlook.com (2603:10b6:510:28d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
+ 2025 10:56:16 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 10:56:15 +0000
+Message-ID: <80bc8cae-a91a-4bd4-abd7-f12f9af18eed@nvidia.com>
+Date: Fri, 31 Oct 2025 10:56:09 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] NVIDIA Tegra210 NVJPG support
+To: Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt>
+ <yvzfp5igm2trom4kil337wfsyum75amvgmxkadi537dohmnbqy@wgbm3zxojldc>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <yvzfp5igm2trom4kil337wfsyum75amvgmxkadi537dohmnbqy@wgbm3zxojldc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0245.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a7::16) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 4/5] media: qcom: iris: Add flip support for encoder
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bod@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
- quic_renjiang@quicinc.com
-References: <20251031-iris_encoder_enhancements-v2-0-319cd75cbb45@oss.qualcomm.com>
- <20251031-iris_encoder_enhancements-v2-4-319cd75cbb45@oss.qualcomm.com>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20251031-iris_encoder_enhancements-v2-4-319cd75cbb45@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH0PR12MB8798:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd3f9a97-8a25-4f89-8b51-08de186c1cfa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|10070799003|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bHU3YnZaY2NQU3Z2SlMvMEY3SkdrYjdDd1FVNE5INWtMcHBESHZCb081Rjha?=
+ =?utf-8?B?eTVKS1JQdUhTWWUwQTRGaDRLUDk3UTdsVnVSWGNXTkdDTkxOMWt0bitpS2R5?=
+ =?utf-8?B?SzhaMjlUWkVUVzVrcDhadWUyVkd0QjBUajRUK2ZyUTcwbjJmaThsS2dwT3po?=
+ =?utf-8?B?RkpNNmNnR2MzbnRxM2doNGF5allPRXpxaEJRUHI3cjZ0Q0N0SU1RbHpEZzYw?=
+ =?utf-8?B?bzQ4QWVmTGFOaWlQdUwzWW1Xa1BIYVVTcHlzRUc0OUVZQlZ4dkNSblhKTzNz?=
+ =?utf-8?B?WnV0SDAxNWp3L1o2TndZc3JDazNXK2JWQmUzZ2tlcDNXcEE4TmRRZENCSnFR?=
+ =?utf-8?B?Tm1iWXhpWURpQTl4UUozeFVnai9zdll2QnBQVVdhNldEL3puTkJHa25pNis2?=
+ =?utf-8?B?dWk3TlRjVXMxUXora2VwUmtWblRleHhnL0tRVjlNMlloV0hvMWpWK0NQNVJn?=
+ =?utf-8?B?aHVhK0E4VDl4ZEtNMXAzOVB6U252Y1dmNmFvQUdybzhSc3pOSk9XVVphZzBx?=
+ =?utf-8?B?OEpQRmUyVkh1cTJBenNZRDZIaWZnUDJOOGxlcWhkaGNScmJmMnBqMG8wcE1m?=
+ =?utf-8?B?L1VtTzVvQlhtVUlsSWtkS05teVljdnFGZ0FYYmw5MTZjb3FqdDhDcXdId0V4?=
+ =?utf-8?B?YTV3QzhnNDQ0ODNEMG5HcWR3WTBpcUlWdklGeldJbVhFM2xaM0JDWS9Kc3JU?=
+ =?utf-8?B?SlRQL3JtNDIzQVhkKzQ3MWIyRFAwdlpwK1loR2p6SG9sQlp0K1JNZGdLNjFG?=
+ =?utf-8?B?aGY5UFJHdDhNc3JLMjBwVjF3QmZQZUdjRURPQVozazY5T203aE9ZblpMdjBG?=
+ =?utf-8?B?SzhiR0Y0dnQxMUc0dk1oMjhoY3MvSkRRblk1VnQzakU3TzJaZGsxczcrMkdH?=
+ =?utf-8?B?WU81WFdqYVIvY25JaytidWFKTHBHYm01ZS9Sa2hMU3JzOCtBSkp2S2dLbnRl?=
+ =?utf-8?B?VE03UExFM21mRTVkekNTODlXK3J1R2UrT0pyV0ZiTzROMmNHNDJyc0ptZnpY?=
+ =?utf-8?B?SktqT3FEQy8vblFzdTVrckk3V0JsUGlvd0JCMmcvbXdRNmc5cmxiMldhUEcr?=
+ =?utf-8?B?RTdvOGNWV0oxNXc3ajd2UkMvZUcycG1mSHA0NllnYkZrZUVhMlpkWUVTUzFT?=
+ =?utf-8?B?QWpnTTFaK3Y1cmIxWjBvNW9VanV3QzV0ZmZZbEVpQ2FFSlNPcHRzOGdoY0hx?=
+ =?utf-8?B?ZW9Pek85UUZDaGpRa2Rqd0Z1MWJtRkRCOFF0aFFrY3hTUHdDMzV0MEM0NEkr?=
+ =?utf-8?B?b3lTclNLeWFKZHJPY0NrUTJSTm9yd2N0K3NqMVN1T0ZjZHY4RnNpNVBxeGZl?=
+ =?utf-8?B?V0xCdWJXZkF1YTdYYWtwbU9sS1ZLdjNyN2lsdjk4dW0weS95Q0lGWVZnVks5?=
+ =?utf-8?B?WFp3MC9WQnFzWGpmY3VjZU1Hdi81NTFqbmdReURqTzNhb3R2cGNjdXhOcXhX?=
+ =?utf-8?B?V3N3aHpTTGJiYy9IZ1pKbFE4aXhRdkRlTG8rbWFCYjFBL2trT3ViTVBMTkFo?=
+ =?utf-8?B?enFkcHRkczNqS3VlUmNQWm1RYm1GVms5Lzg3Q0lsUndHdnFpZ0RvdHV5TWJ6?=
+ =?utf-8?B?VFYvUGd5SzlVaHJLd29pWlRNWFlRWVpIWDdZdmgrbjJFVFBZOStVcS90ZFhu?=
+ =?utf-8?B?Z09rUXdLbmZMQ3NWelI4WnV5aVk4T0daN0hpaVZQc0E2ei9PVklWeDZob3JC?=
+ =?utf-8?B?YTRnVEkvN2lGUkhHemM5MUtEWHJnMWlBTkdNOWlEVFJmSkY5VzVBcEtJNGxn?=
+ =?utf-8?B?alU3Y2xkeHVoMmJudHoyWEtFdFFud1FHL1ZVR0JwWEpSbUpjaWhiUG9xQlQy?=
+ =?utf-8?B?NzVBU3hnTUNweGNXcUVOcndyL1Qwemc2a1NMZm1GWk8rVXp5TGtYSW94TkZ6?=
+ =?utf-8?B?ZWd6YmtCSUZzWkJrSkcwREtkRFdMenVMMituTFJMNXdQRHRCd3VSWVBrV24z?=
+ =?utf-8?Q?6l661/Kdzc0QAJdZ0GxLN3RBXOAIzIn8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(10070799003)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZlpFbEx6TjNZelVYaENTRVp0V293bUFmaFROV2pwRm8wVENHWHZPc2VVT2lz?=
+ =?utf-8?B?MlowVDJyTGdtMmpsSFFLd2kvejNuWDhPdE0wZXlMdE4wWXdkU1NwYXBqdnpZ?=
+ =?utf-8?B?d2xGczFYQmlVQVpMTGhYVTF1dDNIQ3dNVWc5WkFCOHdjeFdHWGc3NDZxR3R3?=
+ =?utf-8?B?STBpT2xmbzlmUFNqWHQrVWMrRG9vQnRHN2QvVlRaMS94V0Q0eTAra2RJckZ4?=
+ =?utf-8?B?c0xiSGJjaW13aGZIN1JTcGN3ellYNWxoV0VzWGJYMjBaQ21hMWk1eWttcTNo?=
+ =?utf-8?B?eEVQa2puc3AzMFJ0elNTQ25tdzdLT3JCVDYrNnl6RTBYb05rWThqaTNCUFRr?=
+ =?utf-8?B?RVl6SFFmTGt1UHBKM1Z6UnFRTlJ1b0krYU9JTkJuY1ZudTVqQWEydlhIOXVq?=
+ =?utf-8?B?dy9jVmFYZERUVTR0UTVYdnkrM2wvdnlWWmFDamFPcDdZZUREWURXL1RMemNj?=
+ =?utf-8?B?OWN4MTMrUm5LcU5zTzFWUVhpT2lhQWZvUFFmTFV0Q1E1U2ZtbXBBaStJOUdl?=
+ =?utf-8?B?L1VyYmFZWXJnSDc4SzllSFBxYklmWVdUaDlZTTROWm5kZ2VITDFrK0hNY3FN?=
+ =?utf-8?B?a2xEN3FXdTlGN1dlcXZ4Sys0RkZjcmc4Y3J0dkpDMlQzeDl0elljcjAvanBh?=
+ =?utf-8?B?QmxXVWo0VFpyN3RmRGJCNTF6Ty9WYVpnTzhJZzc3UXVBNTRqR1VPVUpKbVZz?=
+ =?utf-8?B?M0xjVEl5MDVZMHBQSWxJVTFUSTdzbEREcUsxOS80RUJBRUVrZGxmcmt2bFlv?=
+ =?utf-8?B?cGI4aHlMVXd3YVA4K0Z2OXQ3MlFFVU9HT3d3UlYwVmhUS1lFTWdHY01EWG1Q?=
+ =?utf-8?B?MjlGZUhQMmNmdElFNFdFeFBPd3lEYlpXMDJNd0Z6VWZmaTB5Q0dzbldPNG5W?=
+ =?utf-8?B?SnJ6RDBZSGkwc1Y2NnFOOVk1b0VvMlJyVThXTGl2SVZIU3hEK3VSNUdvTm5t?=
+ =?utf-8?B?MkNxM3BqcC9JNjI2eU5PdkFlOGJjb0IwNklnZWJsUERCVzIrSnJCNE5icTYy?=
+ =?utf-8?B?TThoQ2UrUkMrOE15YmdlYjZtQ2UvUTlkVVpQUkZPdElhVXlPbVVTRnZlYUJJ?=
+ =?utf-8?B?YjRGbjlvVG8yRUJvTHl5S1pWZUhIdzlWQWpPbXVpT2k1NW14YWFFYkE0ODB0?=
+ =?utf-8?B?R21YZEJPY1ExS2J1MmM0WGREeVp5Q1ZpUmJ4V1N2L1NJU3g1QlpycExlK1FV?=
+ =?utf-8?B?ZWZMemVzNnB6bEpGQkI3elhWcSs5K2dueW5Rb0pyUUl3ZDJjN3hlOUhpTmRa?=
+ =?utf-8?B?TWRLYUZZOTBWT3A3eG9PbHNIVC9JSktEanV4ODB5U2FrU0RRclhZWWIySXNH?=
+ =?utf-8?B?YkRYVkVnbHhUbGNaYk52OFVSbmk3ZjgyK0piYWtucVkzSHJubUlrTU9KdGtZ?=
+ =?utf-8?B?UEN0TW9SWHV6cElENml4RHVUVzY5SUwvRjhNSUZEbXA2Q25wRTI4cTlYRWdB?=
+ =?utf-8?B?OXBObWpiUDV2ZlNoUU9SUXpFT21nbnZ4WDFCaDNuVi9saER6YVAyazJINWZ1?=
+ =?utf-8?B?Y0NUT21PQ3hWU0ZhVk54enA3ZW1wOTV2SnVkUVh5c2dCUzV4QnpkcWN0UW9S?=
+ =?utf-8?B?K2FxK1gwaXF2MnE5TWV1SkloYzBuKzNMR3dxZUdsc3VRVzQxQ2V0dWtFOXlO?=
+ =?utf-8?B?bk1JR3pxWmFMdFhqRk13bHNUQ3lna2FVMWdDQUU3TDFTMUxJcFoydEp0Uyt1?=
+ =?utf-8?B?Y2hWZG1uMUxuZjF1Q01wem1tY2NCdk0xaW15SU1KeWtVNHVkTHhQQWI5Y0Fs?=
+ =?utf-8?B?aldURlVxVEJSbXhadHV0eTJ3SEhiTWFIdDdQTVhJbzVERHBKRzEzenQ2NTFu?=
+ =?utf-8?B?cmRrNTlyYXZWSFo2MEtNNE02cTdKZzh6UHdzU1dkcnJ6ek0vNkJrWjJFUWdt?=
+ =?utf-8?B?SjV4aklTV25DVThNcDdHYjlVeXQycjMvUithMXdBenJ5ZjZKOVJmUkFQUmdP?=
+ =?utf-8?B?UmhaT3dkem9KSHBWaWJQQzhOV3YxZ1lQWjk0N3pOcEdkc1k5dWk4Z1ZhWUZH?=
+ =?utf-8?B?K0hrT2NsczJZOEd0T1Rib2dYZHpzY3p3cFRob3VXclZkODhtUDFhQ2VJeFUv?=
+ =?utf-8?B?WHQ5OG9xb2RYVDV1RVFvOERieTY4SjZvclFWb2pRakJwdFpueHp4cTExT3lU?=
+ =?utf-8?B?RTlibFB4aGd6UU5TV2xnMmxROWJ3K0p4RDlialBCZVJUM2lMSGJzN0lNZ3Z4?=
+ =?utf-8?B?UVNIYUIyQkVnMWZlZzlNUmtPdDdMOEI5dVN2VDZOZitwYjJMT0Q5SU5INnMw?=
+ =?utf-8?B?QzBOeGpoVWwycjdYTThndFZQbnpnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd3f9a97-8a25-4f89-8b51-08de186c1cfa
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 10:56:15.8439
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ljeu3+Rkx0l8s138damu4p9FV0Hwx56Gn6xfgRDgqNnfdsUefnkXqNyX/g0tu8lW3zh9IWTKfuvdmdJc9IjCsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8798
 
-On 10/31/25 10:50, Wangao Wang wrote:
-> Add support for V4L2_CID_HFLIP and V4L2_CID_VFLIP controls in encoder.
-> 
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
-> ---
->   drivers/media/platform/qcom/iris/iris_ctrls.c      | 27 ++++++++++++++++++++++
->   drivers/media/platform/qcom/iris/iris_ctrls.h      |  1 +
->   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  8 +++++++
->   .../platform/qcom/iris/iris_platform_common.h      |  2 ++
->   .../media/platform/qcom/iris/iris_platform_gen2.c  | 22 ++++++++++++++++++
->   5 files changed, 60 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> index 00949c207ddb0203e51df359214bf23c3d8265d0..8f74c12f2f41f23d75424819c707aff61ea61b33 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> @@ -100,6 +100,10 @@ static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
->   		return B_FRAME_QP_HEVC;
->   	case V4L2_CID_ROTATE:
->   		return ROTATION;
-> +	case V4L2_CID_HFLIP:
-> +		return HFLIP;
-> +	case V4L2_CID_VFLIP:
-> +		return VFLIP;
->   	default:
->   		return INST_FW_CAP_MAX;
->   	}
-> @@ -189,6 +193,10 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
->   		return V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP;
->   	case ROTATION:
->   		return V4L2_CID_ROTATE;
-> +	case HFLIP:
-> +		return V4L2_CID_HFLIP;
-> +	case VFLIP:
-> +		return V4L2_CID_VFLIP;
->   	default:
->   		return 0;
->   	}
-> @@ -917,6 +925,25 @@ int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->   					     &hfi_val, sizeof(u32));
->   }
->   
-> +int iris_set_flip(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	u32 hfi_val = HFI_DISABLE_FLIP;
-> +
-> +	if (inst->fw_caps[HFLIP].value)
-> +		hfi_val |= HFI_HORIZONTAL_FLIP;
-> +
-> +	if (inst->fw_caps[VFLIP].value)
-> +		hfi_val |= HFI_VERTICAL_FLIP;
-> +
-> +	return hfi_ops->session_set_property(inst, hfi_id,
-> +					     HFI_HOST_FLAGS_NONE,
-> +					     iris_get_port_info(inst, cap_id),
-> +					     HFI_PAYLOAD_U32_ENUM,
-> +					     &hfi_val, sizeof(u32));
-> +}
-> +
->   int iris_set_properties(struct iris_inst *inst, u32 plane)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.h b/drivers/media/platform/qcom/iris/iris_ctrls.h
-> index 3ea0a00c7587a516f19bb7307a0eb9a60c856ab0..355a592049f3fcc715a1b9df44b4d1398b052653 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.h
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.h
-> @@ -33,6 +33,7 @@ int iris_set_max_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
->   int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->   int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->   int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
-> +int iris_set_flip(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->   int iris_set_properties(struct iris_inst *inst, u32 plane);
->   
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> index 4edcce7faf5e2f74bfecfdbf574391d5b1c9cca5..0f92468dca91cbb2ca9b451ebce255180066b3a4 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> @@ -92,6 +92,14 @@ enum hfi_rotation {
->   };
->   
->   #define HFI_PROP_ROTATION			0x0300014b
-> +
-> +enum hfi_flip {
-> +	HFI_DISABLE_FLIP    = 0x00000000,
-> +	HFI_HORIZONTAL_FLIP = 0x00000001,
-> +	HFI_VERTICAL_FLIP   = 0x00000002,
-> +};
-> +
-> +#define HFI_PROP_FLIP				0x0300014c
->   #define HFI_PROP_SIGNAL_COLOR_INFO		0x03000155
->   #define HFI_PROP_PICTURE_TYPE			0x03000162
->   #define HFI_PROP_DEC_DEFAULT_HEADER		0x03000168
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 9a4232b1c64eea6ce909e1e311769dd958b84c6e..284d6bde6d6bcdf70016646d1c92e6ae7f067efc 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -141,6 +141,8 @@ enum platform_inst_fw_cap_type {
->   	B_FRAME_QP_H264,
->   	B_FRAME_QP_HEVC,
->   	ROTATION,
-> +	HFLIP,
-> +	VFLIP,
->   	INST_FW_CAP_MAX,
->   };
->   
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index c1f83e179d441c45df8d6487dc87e137e482fb63..e74bdd00a4bb2f457ec9352e0acaebc820dae235 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -598,6 +598,28 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
->   		.flags = CAP_FLAG_OUTPUT_PORT,
->   		.set = iris_set_rotation,
->   	},
-> +	{
-> +		.cap_id = HFLIP,
-> +		.min = 0,
-> +		.max = 1,
-> +		.step_or_mask = 1,
-> +		.value = 0,
-> +		.hfi_id = HFI_PROP_FLIP,
-> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_INPUT_PORT |
-> +			CAP_FLAG_DYNAMIC_ALLOWED,
-> +		.set = iris_set_flip,
-> +	},
-> +	{
-> +		.cap_id = VFLIP,
-> +		.min = 0,
-> +		.max = 1,
-> +		.step_or_mask = 1,
-> +		.value = 0,
-> +		.hfi_id = HFI_PROP_FLIP,
-> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_INPUT_PORT |
-> +			CAP_FLAG_DYNAMIC_ALLOWED,
-> +		.set = iris_set_flip,
-> +	},
->   };
->   
->   static struct platform_inst_caps platform_inst_cap_sm8550 = {
-> 
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
+On 04/07/2025 10:04, Thierry Reding wrote:
+> On Mon, Jun 30, 2025 at 09:48:41AM +0100, Diogo Ivo wrote:
+>> Hello,
+>>
+>> This series adds support for the NVJPG hardware accelerator found in the
+>> Tegra210 SoC.
+>>
+>> The kernel driver is essentially a copy of the NVDEC driver as both
+>> engines are Falcon-based.
+>>
+>> For the userspace part I have written a Mesa Gallium backend [1] that,
+>> while still very much experimental, works in decoding images with VA-API.
+>>
+>> I have been using ffmpeg to call VA-API with the following command:
+>>
+>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev /dev/fb0
+>>
+>> which decodes <input.jpg> and shows the result in the framebuffer.
+>>
+>> The firmware for the engine can be obtained from a Linux for Tegra
+>> distribution. Due to the way the Gallium implementation works for Tegra
+>> the GPU also needs to be enabled.
+>>
+>> Thanks!
+>>
+>> Diogo
+>>
+>> To: Thierry Reding <thierry.reding@gmail.com>
+>> To: Mikko Perttunen <mperttunen@nvidia.com>
+>> To: David Airlie <airlied@gmail.com>
+>> To: Simona Vetter <simona@ffwll.ch>
+>> To: Jonathan Hunter <jonathanh@nvidia.com>
+>> To: Philipp Zabel <p.zabel@pengutronix.de>
+>> To: Rob Herring <robh@kernel.org>
+>> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+>> To: Conor Dooley <conor+dt@kernel.org>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: dri-devel@lists.freedesktop.org
+>> Cc: linux-tegra@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+>>
+>> [1]: https://gitlab.freedesktop.org/d.ivo/mesa/-/tree/diogo/vaapi_gl?ref_type=heads
+> 
+> Dave, Simona,
+> 
+> This doesn't add new userspace ABI and instead reuses the same ABI that
+> we use for VIC and NVDEC, but it does technically add a new driver for
+> one of the multimedia engines.
+> 
+> Given that we have Diogo's VA-API work on gitlab, I think all of the
+> criteria are met to exercise this.
+> 
+> If you don't have any objections, I'd like to apply this for the
+> upcoming release.
+
+We would like to merge this for v6.19 and so please let us know if you 
+have any objections.
+
+For the series ...
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
+
 
