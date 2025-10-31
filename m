@@ -1,100 +1,83 @@
-Return-Path: <linux-kernel+bounces-880512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F4DC25F3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:00:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247BBC25F31
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57BDE1B21D09
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:58:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5E9734D1BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F10B2EDD6B;
-	Fri, 31 Oct 2025 15:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9FE2F5479;
+	Fri, 31 Oct 2025 15:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FygITviR"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="duhoxMid"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0455B2EBBA9
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFAD2E8894;
+	Fri, 31 Oct 2025 15:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926170; cv=none; b=Hrn+cyxGsSzF3Cs3ClTgzZIT+8upr8rkBRJp8yJ77SpUtRKBHmU4x526BHquHhtql5qHRI9W8ciKKv7S9hHFZHlO+JPPE/QV9c4nEWQHfbD8OqauYGOFCOhk9LSXQbJ9wqr75zrYRXAYjU9D57P9AoRAnLLak7nLGhAr4c+4Q70=
+	t=1761926332; cv=none; b=niGqkgHPUxj0AtKeGSkYyWemTUUZIWZTeRdisW0vzjWuUsBQ6d345PWzRvX5t1ovbArUTu98yWO7EYXABUFZkB4BugIGbnL6OA1spik5mx2gzmcO+6Ue73W69j5Rl8ImVdevEseE3sKjBGKHQjiC5wPw9bH3PWfdutFtw4npa8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926170; c=relaxed/simple;
-	bh=z5xO/m0rwDTo6NQigKOGrGGFnxACU0bxzZRjptLe6+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eE6NYU+Ov3Nlc5dokx2ajLKjRHxAt44Y9RAJE7fyOcLN4VHw3Y0lE1pl3ohDP0NaF7psNIPqlhAs6F/21JWZdDu2+AqifUM3BTQ1tn9n1Is5/aso4XOjz/hUEtaS9qJlZi6HCAQFGShigy747g1dP+P4Lt+r4isb530//gyajig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FygITviR; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-295291fdde4so1313185ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761926168; x=1762530968; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o/TEbnCurHUc/3b7e5l2i0tBuf8bGlvt/g1WNhbQ+jQ=;
-        b=FygITviRWtTYXvpapv6V14AZIOOpjUOsSTTD0kjx9GCiJQdtx2/5VZYVk2z4tZoFG9
-         Hsy8/lKKPsonP/gLO8JS/E9rgtGgrbQUQzmHznUi3bg63FrXmAy6jm39SCsCDEHJv6tV
-         lU4LW3iUIQSSI0ESgxwQooY3dZKSSwIQQC/eQ3YroUxBbbzXR2rcIxWzJOdczdagF/BW
-         3fZlfOEx7/zZpm9CmtseKVRoP5djW2/3Jjw0vzAn82794b4mXCXOZ3pR7r/9/NcLV2ZA
-         XhuQRDATlPsZ3G0vBbqlGSvsIaOW8Qi2OgzvaPe/UY7MPuhm9adlwDNcRoAkjtQ8lIMI
-         Cxig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761926168; x=1762530968;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o/TEbnCurHUc/3b7e5l2i0tBuf8bGlvt/g1WNhbQ+jQ=;
-        b=XZhKt4wSwkNo5dEce/o1XyhrDn9MANBXE2aeefBzQJupy0Ht9TNZVFlWnj+p8nBl9Y
-         U6/1hcq4o2m+WI/G4Ywecydv1Jl07zp4rgykC+6qDhTsdAwelIGXyj+WMmx2+8T8tMkL
-         7YDARLfdDpjT6c1U6mUx9Ehj61ZuazQDFZCOVaOcaisjMBKOcM6jFEstnuh/3j2gQq3B
-         cugJzyLRkAaEJkbrViZ8HCblGmUG2med1bjNh3ECh5vkp+2sz0xCPa9v8R8GylB8+ji7
-         Wr5s9pHYf0EL5Yf2PiHMjGcCEp0W9vIv8OyhIMQ1oU5RSJuGxvaO39sMXUk7FbBUvtEz
-         ELnw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9rASIgqhG5cxt7N89lePaev0SuG05+s+TqQpzgnrjTk7+FCH9wnmmzXGQ3n5mUSPHOfqxgShbKmZvQ4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzTFFfhcyKWS/2T0BcRT2uoIDaTV0o12E3wRrBeGwSkDaEpY2f
-	JYb8Oe1cdGtpp5QDm0I8cJ2ILZu45+oeHbzOjF7VtPY2cumUIGHa6YKK
-X-Gm-Gg: ASbGncud++oV94e68hZt4qkucnLies7U/tOm0eV55ByRoBILciRzzdxwp+f5YZ6ndY/
-	p/Ib0pYZg5QWPewDRD3ROD7TNT8LwBO0cwweDdrZzoNuq49UfnlBhwBQcS3WdWYo6mAwzl/N0FN
-	eucnb2ffT8srfKR4hWm2iruwjQmatH9TygmiNBBV1Xa9gTMpcw4yqWluazh3ckLWwPFEVlTZame
-	gagCF5RANpwI1S+9pZGCK5FWXsfVfkvDaRBm/rItZj/CE49gPrYGur5deii3yIT7YhbqD0oco7W
-	liyWZKM+lE9VJWX+NbDgce/r+VehNyaw8F9w7xnibN4oRx7SELwlmwKra0ajK7Hp/OKdV5G70jA
-	sC+YM/Hb+Ey1B7Yb9QtT4zSD07D+2PvaZy8S/WwVOTyBGoEEw5yPAitYTtJXRfIE8ueNsp6C/Nt
-	G1SY7+QgQ6bB9+Uz3WFX+UY0h2e+qIRIIYsoKnfQo6f7qlH5FX0VcB
-X-Google-Smtp-Source: AGHT+IGMvOOUVVK2H3mZ+2QgikwPdprzOKFpvLw8gb/AJwO95Vom6hBHxKSXXhgqcHK2Bk5A3VmauQ==
-X-Received: by 2002:a17:902:f395:b0:26c:3c15:f780 with SMTP id d9443c01a7336-2951a49dd38mr19515115ad.8.1761926167936;
-        Fri, 31 Oct 2025 08:56:07 -0700 (PDT)
-Received: from ranganath.. ([2406:7400:10c:5702:8dcc:c993:b9bb:4994])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29526871b31sm28664475ad.8.2025.10.31.08.56.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 08:56:07 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: edumazet@google.com
-Cc: davem@davemloft.net,
-	david.hunter.linux@gmail.com,
-	horms@kernel.org,
-	jhs@mojatatu.com,
-	jiri@resnulli.us,
-	khalid@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	skhan@linuxfoundation.org,
-	syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com,
-	vnranganath.20@gmail.com,
-	xiyou.wangcong@gmail.com
-Subject: Re: [PATCH] net: sched: act_ife: initialize struct tc_ife to fix KMSAN kernel-infoleak
-Date: Fri, 31 Oct 2025 21:25:58 +0530
-Message-ID: <20251031155558.449699-1-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CANn89iJL3upMfHB+DsuS8Ux06fM36dbHeaU5xof5-T+Fe80tFg@mail.gmail.com>
-References: <CANn89iJL3upMfHB+DsuS8Ux06fM36dbHeaU5xof5-T+Fe80tFg@mail.gmail.com>
+	s=arc-20240116; t=1761926332; c=relaxed/simple;
+	bh=7ZocrOdZoOe8U0HbdKT4/kjrzm5YzPGNjP4XkVa5BWs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L4UHYiQrmTWXy8QdtVexeyt8foonA8+vGxBZ5YihTDvHBKrwdjiIYXa8jLqnPMJojvlTdCICxui2rGa5iXylIvJi0jTdD1igipigFs7vkUs0R7bJNa+MI0MI8Gae4FamGEas9bMnr76uY9zP9C+E2/c1/r8O4VZqaNC5FxbVZj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=duhoxMid; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 787881f4b67211f0b33aeb1e7f16c2b6-20251031
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=bov98rlRxQkhC4GLJxADuB3XDxqpYat/vql3Q23B3/o=;
+	b=duhoxMidtH5SSxYzqL5w5+blGJJ2NumIp1jIV4xwe3YQ75SVVWR1NbdsjTBx8+t773mbJqK+kFORVve9CW9X4kFOyN4R7F7KdNr7xfULE2Vuomeqb+dAO2ffYTZsbSTbAM4d6OzIBUcj39u901QBc1GJmc+Dnm3MoTvIFxzLXqo=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:76af375b-8c22-495a-9007-4ab11db5d6a8,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:4413e76a-d4bd-4ab9-8221-0049857cc502,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:99|1,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0
+	,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 787881f4b67211f0b33aeb1e7f16c2b6-20251031
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 561415047; Fri, 31 Oct 2025 23:58:41 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 31 Oct 2025 23:58:39 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Fri, 31 Oct 2025 23:58:39 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
+	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
+	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
+ Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
+ Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
+	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+	Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
+Subject: [PATCH 0/9] Add GCE support for MT8196 (series 1/4)
+Date: Fri, 31 Oct 2025 23:56:28 +0800
+Message-ID: <20251031155838.1650833-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,72 +85,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
->> Fix a KMSAN kernel-infoleak detected  by the syzbot .
->>
->> [net?] KMSAN: kernel-infoleak in __skb_datagram_iter
->>
->> In tcf_ife_dump(), the variable 'opt' was partially initialized using a
->> designatied initializer. While the padding bytes are reamined
->> uninitialized. nla_put() copies the entire structure into a
->> netlink message, these uninitialized bytes leaked to userspace.
->>
->> Initialize the structure with memset before assigning its fields
->> to ensure all members and padding are cleared prior to beign copied.
->>
->> This change silences the KMSAN report and prevents potential information
->> leaks from the kernel memory.
->>
->> This fix has been tested and validated by syzbot. This patch closes the
->> bug reported at the following syzkaller link and ensures no infoleak.
->>
->> Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
->> Tested-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
->> Fixes: ef6980b6becb ("introduce IFE action")
->> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
->> ---
->> Fix a KMSAN kernel-infoleak detected  by the syzbot .
->>
->> [net?] KMSAN: kernel-infoleak in __skb_datagram_iter
->>
->> In tcf_ife_dump(), the variable 'opt' was partially initialized using a
->> designatied initializer. While the padding bytes are reamined
->> uninitialized. nla_put() copies the entire structure into a
->> netlink message, these uninitialized bytes leaked to userspace.
->>
->> Initialize the structure with memset before assigning its fields
->> to ensure all members and padding are cleared prior to beign copied.
->> ---
->>  net/sched/act_ife.c | 13 ++++++++-----
->>  1 file changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/net/sched/act_ife.c b/net/sched/act_ife.c
->> index 107c6d83dc5c..608ef6cc2224 100644
->> --- a/net/sched/act_ife.c
->> +++ b/net/sched/act_ife.c
->> @@ -644,13 +644,16 @@ static int tcf_ife_dump(struct sk_buff *skb, struct tc_action *a, int bind,
->>         unsigned char *b = skb_tail_pointer(skb);
->>         struct tcf_ife_info *ife = to_ife(a);
->>         struct tcf_ife_params *p;
->> -       struct tc_ife opt = {
->> -               .index = ife->tcf_index,
->> -               .refcnt = refcount_read(&ife->tcf_refcnt) - ref,
->> -               .bindcnt = atomic_read(&ife->tcf_bindcnt) - bind,
->> -       };
->> +       struct tc_ife opt;
->>         struct tcf_t t;
->>
->> +       memset(&opt, 0, sizeof(opt));
->> +       memset(&t, 0, sizeof(t));
->
->Why is the second memset() needed ? Please do not add unrelated changes.
->
->Also I would also fix tcf_connmark_dump()
+From: Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
 
-Hi Eric,
-Do you want me fix tcf_connmark_dump() in this patch or new?
+This series adds initial support for the MediaTek MT8196 GCE in the CMDQ
+driver, including related API changes for new hardware requirements.
 
-Regards,
-Ranganath
+Series application order:
+  1. [Fixes] Refine DMA address handling for the command buffer
+  - https://lore.kernel.org/all/20251022171847.379470-1-jason-jh.lin@mediatek.com/
+  2. [Series 1/4] Add GCE support for MT8196 and update CMDQ APIs (this series)
+  3. [Series 2/4] Migrate subsystems to new CMDQ APIs
+  4. [Series 3/4] Remove shift_pa from CMDQ jump functions
+  5. [Series 4/4] Remove deprecated CMDQ APIs
+
+Please apply this series after the DMA address handling Fixes patch[1],
+and before the following series.
+
+---
+
+Jason-JH Lin (9):
+  arm64: dts: mediatek: Add GCE header for MT8196
+  mailbox: mtk-cmdq: Add cmdq private data to cmdq_pkt for generating
+    instruction
+  mailbox: mtk-cmdq: Add GCE hardware virtualization configuration
+  mailbox: mtk-cmdq: Add mminfra_offset configuration for DRAM
+    transaction
+  mailbox: mtk-cmdq: Add driver data to support for MT8196
+  soc: mediatek: mtk-cmdq: Add cmdq_get_mbox_priv() in cmdq_pkt_create()
+  soc: mediatek: mtk-cmdq: Add pa_base parsing for hardware without
+    subsys ID support
+  soc: mediatek: mtk-cmdq: Extend cmdq_pkt_write API for SoCs without
+    subsys ID
+  soc: mediatek: mtk-cmdq: Add mminfra_offset adjustment for DRAM
+    addresses
+
+ arch/arm64/boot/dts/mediatek/mt8196-gce.h | 612 ++++++++++++++++++++++
+ drivers/mailbox/mtk-cmdq-mailbox.c        |  74 ++-
+ drivers/soc/mediatek/mtk-cmdq-helper.c    |  77 ++-
+ include/linux/mailbox/mtk-cmdq-mailbox.h  |  19 +
+ include/linux/soc/mediatek/mtk-cmdq.h     |  93 ++++
+ 5 files changed, 869 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-gce.h
+
+-- 
+2.43.0
+
 
