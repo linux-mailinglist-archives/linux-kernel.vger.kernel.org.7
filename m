@@ -1,133 +1,164 @@
-Return-Path: <linux-kernel+bounces-879924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BAAC2467F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0314C246D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:22:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837843AF8C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F05E3A6531
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B22340263;
-	Fri, 31 Oct 2025 10:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FC033FE22;
+	Fri, 31 Oct 2025 10:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWq0Skq7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XscP88ph"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB0C340260
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968FA33E350;
+	Fri, 31 Oct 2025 10:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905864; cv=none; b=WyMJhBgT0KrD1PEsW483CAFlh5gbc+TgonCcdLeoqxxBsqIKdF/SNgXwlwrzRKS2HHZcwfvCoNEqSPEE5XZxWoqm4jVpXa9Q0mQqWe+HBjVSgqfLb/j4JPAlHD8tUIZlI1Y/HXaqMkzDPoaEDqWwo/AUlBhx4KeOoxO1mGKy2ds=
+	t=1761906075; cv=none; b=ijlbKsdhHaEQvDDq1iVFxzeZ3iFbzad4G2XouPyqsBHoljmAXWsjeQg0ATfl/jV8SJwZ7Ghy0MpgFlfStWDrIwMBeEG9nmM96CQG4xFpkGE5pY3IP2tq0vcBSdYJ7qB7smZBJ2TNVIyr6m8n4tofiCb6vuBZ3Ii3l8rRksx7bgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905864; c=relaxed/simple;
-	bh=FJrE0lSFQZBK043V/LtbxfzjWtZPDRbITX2KjEJ2uAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hQEJvnuRwRR7hpv09SLUkHnyf8kr30zx05nmNrdFn0GhmDbD0lQ0hCbRrOu2P9Q8xkz5nf0rSqjl8PWOGkHMwVs9DgL/04ibBTa/nNUkE+X+xl++E4dTWXyL2puFe30PK59680tbr6IU7X6tXvcDrULpe3umOM0T2BEyXvI+I88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWq0Skq7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E66AC19423
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:17:44 +0000 (UTC)
+	s=arc-20240116; t=1761906075; c=relaxed/simple;
+	bh=acn91U54LoPQMMs8xoiZSrTiOMoYJO9PhIpHKdmkwoM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J4UFYxxuZF21/RljPwJHQXtmw0ZHsGMyncSBBaG6BhZ2fHnaFLAt/WW2odWStTdN5YjBhg5qexdZA+fSytQYJmC4DLz94Jb0Y3KIvz1nmx51sF+Fw5mIDaFtE3R3hEaXjLA2VceD5E4IhgJDRFsaKfq7NXNLDjvNsbxYqFPn1L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XscP88ph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2FD41C4CEE7;
+	Fri, 31 Oct 2025 10:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761905864;
-	bh=FJrE0lSFQZBK043V/LtbxfzjWtZPDRbITX2KjEJ2uAA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HWq0Skq7Rdp0rFhFtk5XOSD8PRfo2tD53ukMFgpYyV3F5wTbQfDHPdtSarM9g+6XG
-	 UlKUj/oddMtEdJ/NHkPOJQTg7jJaG5I3KKvhGCuthUfJkbXqqeM1KwC4v8YvyFpPSR
-	 Y5IG5yzdbFuLBMnGUDjn/lG91Ee9h6JchomBVixF7tgPkHb5omaL8Jil3t/kojLGQB
-	 P6NHnp8JwSSNk6bZNRTQ7I09xdrh7q1XZZmty1Dx8VWjZcxxcefPwKdFiMi2BYChtS
-	 ifpoD19Ra8mhtJIR/3c7vU8Hx4ksPl0QjGAnYJQXHYw9jm10ymnW6BPf5gQXpElf3H
-	 zTaPlC+sPCXTg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-592fb5d644bso2425326e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:17:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVUX3UJ1jP79y9GxvkjVnQuzJqNm+NlzQq9gxFsMoZc54ipdGF87S3RLKzDGAQf8v1euSp7v9rqeJYsBfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg04oGNvaAAHC/vtDO3V+Or4nv5bSzUvGL11CjbDwxBbtqMKTb
-	oJFM3GqD7d4IsryPQUVxwEfkgp1SZvygMuFqG6ypKT5hHPwNLzZy3xQ5X6QjcJZuabOAMSi7zW9
-	IRztxaSLpauhcuZw4ua4ae4TBNb/ZS10=
-X-Google-Smtp-Source: AGHT+IH1ZEHr87j2HoKj1XaUcVDdOsggjsFDOdzdoOlF9lh9gcHn+r8V9f88w7CAvAI41912p57YNIFruHCm8xaE6UY=
-X-Received: by 2002:a05:6512:3ca2:b0:591:ebc3:a682 with SMTP id
- 2adb3069b0e04-5941d540ba0mr1016268e87.39.1761905862858; Fri, 31 Oct 2025
- 03:17:42 -0700 (PDT)
+	s=k20201202; t=1761906075;
+	bh=acn91U54LoPQMMs8xoiZSrTiOMoYJO9PhIpHKdmkwoM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=XscP88phpNfS4k5699F4zwNn76u0D3XYzR742Y5rSB47F2y9TvhTyvN8RZ4eu9Cz9
+	 GtdyGMl5ZvLXnZ1UwO8lL03hwBky6X2VEXLBjyREp41VjYF2bZDxBVh57jEidwcNUZ
+	 kBAvUt6nyK35UHnorNCMI/IxsAQHBpEz5q/IrT97td89oZTJwTn+Osox3fKVldW0OJ
+	 FtB05bqJEusATb4Y1ez+7ZpXl0MVOqOjlKBeZmaWWW/deGWdDHKDJM+KbwQ7NYhdP4
+	 2v3UgzGXTK6Tm4cjiL5it2ChYubzLceqDoqzrWJK4uS0cYL//YgbPW7IVa8PSuKSFy
+	 ra6fsXOMUsVXw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A88ACCF9FE;
+	Fri, 31 Oct 2025 10:21:15 +0000 (UTC)
+From: Hrishabh Rajput via B4 Relay <devnull+hrishabh.rajput.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v4 0/2] Add support for Gunyah Watchdog
+Date: Fri, 31 Oct 2025 10:18:12 +0000
+Message-Id: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031084101.701159-1-adriana@arista.com> <20251031101009.704759-1-adriana@arista.com>
-In-Reply-To: <20251031101009.704759-1-adriana@arista.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 31 Oct 2025 11:17:31 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGUyzPQu14SOBs8GSsJ3+ASssNR1vCN5T8OzeEbXdBbBQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkKjB1tG7deRtSl6aNw5JR9AFyZIvnTZ2CmZSskDiUBWY9B3XT6QmLog1c
-Message-ID: <CAMj1kXGUyzPQu14SOBs8GSsJ3+ASssNR1vCN5T8OzeEbXdBbBQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] DMI: Scan for DMI table from DTS info
-To: adriana <adriana@arista.com>
-Cc: ilias.apalodimas@linaro.org, trini@konsulko.com, robh@kernel.org, 
-	krzk@kernel.org, jdelvare@suse.com, frowand.list@gmail.com, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, vasilykh@arista.com, 
-	arm.ebbr-discuss@arm.com, boot-architecture@lists.linaro.org, 
-	linux-efi@vger.kernel.org, uefi-discuss@lists.uefi.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOSMBGkC/3XPTQqDMBAF4KtI1o1MfhTTVe9RSolmqoFqWqO2I
+ t690UUpWDcDb+B9w0zEY2vRk2M0kRYH661rQpCHiBSVbkqk1oRMOPAEFAha9s2oq+tLd0VlXEm
+ 54alUUmTIFQmtR4s3+17F8yXkyvrOteN6YGDLdt8aGAUqNKYKEgEo85PzPn72+l64uo7DIAs58
+ C/DANItwymjuVJGMiMTmcAOI34Ynm0ZERhMDUMd3suZ+cPM8/wB4e0TOUMBAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761906073; l=3387;
+ i=hrishabh.rajput@oss.qualcomm.com; s=20250903; h=from:subject:message-id;
+ bh=acn91U54LoPQMMs8xoiZSrTiOMoYJO9PhIpHKdmkwoM=;
+ b=CwgQim5PY7Ls6s+OyZ5Ux3KurdQGoNnBd4uhwbVzoWN6aJ53nJaD/E9VIOR2f+T9z/rDWeagV
+ bCSaMaypllnD/eOew5BNZtCoDf6O4jopKNE2BDSjsKl+lsjU7/VxMFm
+X-Developer-Key: i=hrishabh.rajput@oss.qualcomm.com; a=ed25519;
+ pk=syafMitrjr3b/OYAtA2Im06AUb3fxZY2vJ/t4iCPmgw=
+X-Endpoint-Received: by B4 Relay for
+ hrishabh.rajput@oss.qualcomm.com/20250903 with auth_id=509
+X-Original-From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Reply-To: hrishabh.rajput@oss.qualcomm.com
 
-On Fri, 31 Oct 2025 at 11:10, adriana <adriana@arista.com> wrote:
->
-> Some bootloaders like U-boot, particularly for the ARM architecture,
-> provide SMBIOS/DMI tables at a specific memory address. However, these
-> systems often do not boot using a full UEFI environment, which means the
-> kernel's standard EFI DMI scanner cannot find these tables.
->
-> This series adds support for the kernel to find these tables by
-> reading the associated property from the Device Tree /chosen node. The
-> bootloader can specify the physical addresses using the property
-> "linux,smbios3-entrypoint".
->
-> The first patch introduces the device tree binding documentation for this
-> new ABI, and the second patch implements the driver logic in dmi_scan.c.
->
-> Changes in v4:
->   - Renamed linux,smbios3-table.yaml file, removed mention of ARM/ARM64
->     (Patch 1/2).
->   - Drop the second definition of dmi_scan_from_dt() and fold checking
->     for CONFIG_OF (Patch 2/2).
->   - Drop unnecessary goto on the success case (Patch 2/2).
->   - Replace magic number for entrypoint size with SMBIOS3_ENTRY_POINT_SIZE
->     definition (Patch 2/2).
->
-> Changes in v3:
->   - Removed linux,smbios-table property, only keep the SMBIOSv3 property
->     (Patch 1/2).
->   - Search DT for linux,smbios3-table only, removed the code searching
->     for the previous property (Patch 2/2).
->
-> Changes in v2:
->   - Add missing Device Tree binding documentation (Patch 1/2).
->   - Split the original patch into a 2-part series (binding + driver).
->   - (No functional changes to the driver code in patch 2/2).
->
-> adriana (2):
->   dt-bindings: firmware: Add binding for SMBIOS /chosen properties
->   drivers: firmware: dmi_scan: Add support for reading SMBIOS from DT
->
+Gunyah is a Type-I hypervisor which was introduced in the patch series
+[1]. It is an open source hypervisor. The source repo is available at
+[2].
 
-For the series,
+The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
+access the MMIO watchdog. It either provides the fully emulated MMIO
+based watchdog interface or the SMC-based watchdog interface depending
+on the hypervisor configuration.
+The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
+version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+This patch series adds support for the SMC-based watchdog interface
+provided by the Gunyah Hypervisor.
 
-I can take the second patch, but bindings need to go in separately IIRC.
+This series is tested on SM8750 platform.
 
-Rob?
+[1]
+https://lore.kernel.org/all/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com/
+
+[2]
+https://github.com/quic/gunyah-hypervisor
+
+Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+---
+Changes in v4:
+- Move the contents of gunyah_wdt_init() to qcom_smem_probe() to make
+  sure we're registering the watchdog only on the Qualcomm devices.
+- Link to v3: https://lore.kernel.org/r/20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com
+
+Changes in v3:
+- Move back to platform driver model. In module init, determine if we're
+  running on a Qualcomm device and there is no supported memory-mapped
+  watchdog present. Then proceed to register platform device and driver
+  for SMC-based Gunyah watchdog.
+- To determine if we're running on a Qualcomm device we're checking the
+  presence of "qcom,smem" compatible devicetree node. As an alternative,
+  we also tried using socinfo for the same purpose. When both
+  gunyah_wdt and socinfo drivers were made built-in, it couldn't be
+  ensured that the socinfo driver probed successfully before gunyah_wdt
+  init was called. Hence, we resorted to the devicetree node approach.
+- Limit the errors listed in gunyah_error to the ones that can be
+  produced by the driver.
+- Link to v2: https://lore.kernel.org/r/20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com
+
+Changes in v2:
+- Move away from platform driver model since the devicetree overlay does
+  not happen by default.
+  See https://lore.kernel.org/all/91002189-9d9e-48a2-8424-c42705fed3f8@quicinc.com/
+- Only when MMIO-based watchdog device is absent in the devicetree,
+  proceed to detect SMC-based watchdog using GUNYAH_WDT_STATUS SMC and
+  initialize if SMC returns success.
+- Implement pm notifiers as gunyah_wdt is no longer a platform driver so
+  dev_pm_ops cannot be used.
+- Pretimeout IRQ is no longer supported.
+- Remove struct gunyah_wdt since it is not required.
+- Move the contents of gunyah_errno.h to gunyah_wdt.c.
+- Link to v1: https://lore.kernel.org/r/20250903-gunyah_watchdog-v1-0-3ae690530e4b@oss.qualcomm.com
+
+---
+Hrishabh Rajput (2):
+      soc: qcom: smem: Register gunyah watchdog device
+      watchdog: Add driver for Gunyah Watchdog
+
+ MAINTAINERS                   |   1 +
+ drivers/soc/qcom/smem.c       |  37 +++++++
+ drivers/watchdog/Kconfig      |  14 +++
+ drivers/watchdog/Makefile     |   1 +
+ drivers/watchdog/gunyah_wdt.c | 249 ++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 302 insertions(+)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250903-gunyah_watchdog-2d2649438e29
+
+Best regards,
+-- 
+Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
 
 
->  .../firmware/linux,smbios3-entrypoint.yaml    | 25 +++++++++
->  drivers/firmware/dmi_scan.c                   | 54 +++++++++++++++++++
->  2 files changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/linux,smbios3-entrypoint.yaml
->
-> --
-> 2.51.0
->
 
