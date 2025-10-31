@@ -1,124 +1,191 @@
-Return-Path: <linux-kernel+bounces-879825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579A0C241E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:23:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9457DC24287
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8CAA4F5ECD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4BD4072C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F053330313;
-	Fri, 31 Oct 2025 09:18:44 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D65330338;
+	Fri, 31 Oct 2025 09:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ek4n8HBb"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2080329399
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B83329399
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761902324; cv=none; b=uwGOJ3iLN7iFhufj4emVfP8PKopla/IENXaGFp/PmvC3ggd87hJunnKqHcDAtYCuJGD9Jl8OsPGuRBWKmQ+tR8dOuPoSg74vv8aGb1JLgC1bc+StWK3QlvXIDC1L3qzYZOs2GPDn912mQHNEo9lwDOXW03OlaN9/s41hF284eC8=
+	t=1761902365; cv=none; b=iCu3bwrGkIt/mr/meE+opLzDHIdifLjbwzYZbCY3DU421VTlcePMsyZzB9uJRg1lp/hrWvSDeVGZBELm+zq2RzxhknWRRcq7FcyEYQzB59cFNEgvkjn67iS3KIx+FHoLhBw/1aloniZpQeEU0YWjo5nmuE+Njd88e1z8Gajx1V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761902324; c=relaxed/simple;
-	bh=CKwLRXWSs8CRQTtdRUeDXnJdU3d4K2VDAIjleCdmPeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HMR3ZoOUnh4R1NQzqABvInXOBDos78oKo5tSquPE5//OJz+amIDN+M5hxjMe0HhnpZVxmlaubVCVtIyYRC1gUh5KUoenqj1Z53u4vuwgW4hIk6TKhguv42ypQOPcBkGjdpZ8HmnAOaiin9an1u3WS/4N1ZLQkq5m0i+ruJKujn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+	s=arc-20240116; t=1761902365; c=relaxed/simple;
+	bh=1XvO4iPNfcd8g9nVmXWngDXCVUXYVP3ksUjbrbpAMdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=twhrlbVg2ocpZtIthhZnEfoLvaodTwNPZW/ecotSZj//DFhvl843uVzYJgnElZ1oz6e9LiG6ImuBA32MhUuga39ZjFRFcLF6Ysw4Pagjb0A0VRYdD3WdjEn7ha6sLMoCfXRVzjt5gZQNuaRhAOtbh3Ggl91Scbc05dHmqDs3uqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ek4n8HBb; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2953ad5517dso898515ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:18:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761902322; x=1762507122;
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429c48e05aeso66256f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761902361; x=1762507161; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zv+NGUkJFrKXhqIcfxzTSRTFdDofncsQ+M9ii/bGVVo=;
+        b=Ek4n8HBbo1kukhPmg80kELefMJeP6AkEbUo8xbVE0ZS1yBnsmFL9yf8t0KcFcWOOVg
+         /r3oUE874P2nLUpsIr62VVBujoaAuJUiyy2yMDowVc+96cuh5buZhjaP8wHiaTZ6rjDu
+         X9o3AtPOAXbXxEUow3aGBGUb27g5uMVVimgJEu9lS6qAx48YZc5o6wiaITxdAO2ZxHkO
+         CcCZxnm9ecdVGAAQX3Ohx1rF+C+kulvgXT6FGOLj4n0TYcz6xxT+pn7+guwv/5HrAXPk
+         qA3w7qiP9WBpXHv4+ktSS76eX4/27aTF0uuQBxozw9/zSb6mXP8eYASeTeNRJhTZnojf
+         FsgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761902361; x=1762507161;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W+NZHuy7slH1tEgRbDXmTQJQ+Q/vMpvRiCleu5bnlac=;
-        b=a/8hT/muW4PRsymUbKi3j17MwytWY10nN0b9pv0xzZm+GEOvpOdNtIdCSKdkVQsSrF
-         lU6ETCFdD9zwXbWQu7vX/HIOxY4edmZxGW+B2QAGGWKycetTE1ncGLMEwVPJyCmSLrhs
-         uXX8iKeT0H4a2phmrEYc7vGBktDD9BS6ehRo4avpIsDLBnAnYn4SBc7OuLN/B6Sy3FtO
-         p2VR75e+d24DTuDPw0lBbeE7qndTCtrZO63r8qok6MPzQqG1lyjaGaYxy7gJnc5Tyeiv
-         r8JXRMPygsV9WVxB5m50inTd5R40/XUtYS2Gl7dyOrd+DKMtUlzg+3Z1tyzSTwh9xvGE
-         vKfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUimy3fwwNqf7whH1wEZgiBOSI32O0MeLZHM0FzT6n3nZMKw2IDfRpZb28Va0KlY9PYie0THMICGnY13jE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpus1Zcksa+WVHkmErywijVgIL5j8l01GMkSgU/rO9y9V038ha
-	BNO+53tXStMk7sG3kjaS10G3ohooviNuNgzA97DxvpZ+dml6tLmjWvPR
-X-Gm-Gg: ASbGncuw3HvF7ZezVGnw9uiytW5vJppNg/yk48CGR250dGnYaa33/a/D8DXebIkwfOW
-	4YVg4CkzucSsDp2i3R5B3ljWz5jB7soUGenfz/NRj6uGmS8CqOIAHcwq1FDSqO19WxV2mU4DYOI
-	DI75yYFQiH5+tb7C4F6adKCK3/T27TVibS2b5j8qfT2NqQfeuZd6+DfJ8JtaS75qnivG62lCe1p
-	gALE8+Q4KR9oVl7Vq3FXNefhRU/ZFgHlMxXf6o/goWil5MDVPdhqNM2FGzUq1XkdgNW+aAQc2fJ
-	Fx/LnjQOjUhFewVM242skeCQO+HcREWNI2YDTEg9nXOHceBoKb96WirK4RblRSQ0eyd+bvzhfHh
-	hf5webJ0eMdX1r3rzr5vW1kELa+2fWIytJEeBMvF0AD+MdGVKIoV4JhYypC+VvclqTs0KBRPQBN
-	fVCGHoK6maTe7KcP6Q3qt3wjE=
-X-Google-Smtp-Source: AGHT+IGaY5+g1K6KFzwg6ulzp43eGNlMp6k/vOU+6dw4kyEoznXaP1AMdrHNLfDz0Nl70DbFrEP/Wg==
-X-Received: by 2002:a17:903:18a:b0:290:7803:9e8 with SMTP id d9443c01a7336-2951a48cf38mr43274965ad.48.1761902322016;
-        Fri, 31 Oct 2025 02:18:42 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3409288c7c0sm1524575a91.5.2025.10.31.02.18.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 31 Oct 2025 02:18:41 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org
-Cc: big-sleep-vuln-reports@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	rppt@kernel.org,
-	willy@infradead.org,
-	david@redhat.com,
-	stable@vger.kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH 1/1] mm/secretmem: fix use-after-free race in fault handler
-Date: Fri, 31 Oct 2025 17:18:18 +0800
-Message-ID: <20251031091818.66843-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
-References: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
+        bh=Zv+NGUkJFrKXhqIcfxzTSRTFdDofncsQ+M9ii/bGVVo=;
+        b=Ffoe29daKt/4a0dKVS+4SGKI4npDYsrKLmOmXnZvGTHZWzTYhJyQ2SCXnZ1BIhncXB
+         YB3iePAGw9oFdKyzUZKfWQ6NWxdG+LowG6PpgiitSjg2Ig8DujeswY/QQ962wRNREUYz
+         iyMDt6+cxvEw6c5lSJZvmzEs5nlsQ6e9SntIRmZ/DG1cfKhrzYveQn7EgGmscOKgmfOu
+         00lIAUe4TLrdqLDM9ghoZxM4tQE90k+GbGs/Zg6fyOt45b9pSZKvapqGzkVw2x+rTNzw
+         OP93PrGnLa/llMS0fiLILpqszAUSyfq0QNP1Z/HASj8ugx74HegbTSZzlUthbux/xHOj
+         AUsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBebZ76oZexyJHqRRZ7RRdd1R/lHUah8y+wTHmBngXIT3bZBOSZ/H5olYjjD8KlMChZoC659EizLxEMjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkDkaH+qDCrpmZpzFrBjoL3Mn0q4xVfNTBgelQeM+PhCwcsaCz
+	Zc1bFY5zHfbFgQRS4T3QmT1wsl8W8+6490ut8my6G5WCz8qOKFDJj1qhIa9Zmg==
+X-Gm-Gg: ASbGncvwY72vmFmaOyZwuYlxQz37I025XAv0keEYBUeycIlaW10IPApLOZQaDc2Zs7l
+	3/WDtyLTgDLY7wGYZGQ61fqrIkCtujHixn/Ft+/PQZ9UEmjsiNpZCiVdEICfxB9K6+p4EX9rr1e
+	6qShO/0a9Y3+uq8iUfQKXVK9vEweKM8XCoiXqRu0xbKRrvbPLfmBqWgcQGhQbYxUOz8u54qIcaD
+	RLJcdkE9qRWhkD52zX2wNGPpIreHeL7kYzquf340cuNc60lUcvo3LjvpeWi0Ho8KHqNfStJBhCX
+	PyfIJzJcIfh2Z66vZiXtL9V4QBLihb5AVYxYzVuJWl+FJ4osZPlhfQwLxKz/WU2gmwFR2vp2e4r
+	8EChke/QgeaMQxlWQ03b7Gl8NMLoYmtTWRWqEoKBuGtjrsanjKRfLaiDWX/7akb5d/Ql5qOVYrJ
+	UuRHfBfLvQgAjAhHUiYmFARlcQfT4lNbVFxWBQGwwilSL8N3QIYK9j
+X-Google-Smtp-Source: AGHT+IG0cOgQcCBPAPSHEqS7ZoaA0ltKBsXWBUigW0apu1LeOuM2fjU9xeG+X8n3/zbvXMNzpJRQwQ==
+X-Received: by 2002:a05:6000:420b:b0:429:ba48:4be with SMTP id ffacd0b85a97d-429bcd0502bmr2862414f8f.7.1761902361275;
+        Fri, 31 Oct 2025 02:19:21 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c114c944sm2439306f8f.20.2025.10.31.02.19.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 02:19:20 -0700 (PDT)
+Date: Fri, 31 Oct 2025 09:19:18 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Nicolas Pitre <npitre@baylibre.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, Yu Kuai
+ <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe
+ <axboe@kernel.dk>, x86@kernel.org
+Subject: Re: [PATCH v4 next 3/9] lib: mul_u64_u64_div_u64() simplify check
+ for a 64bit product
+Message-ID: <20251031091918.643b0868@pumpkin>
+In-Reply-To: <26p1nq66-8pq5-3655-r7n5-102o989391s2@onlyvoer.pbz>
+References: <20251029173828.3682-1-david.laight.linux@gmail.com>
+	<20251029173828.3682-4-david.laight.linux@gmail.com>
+	<26p1nq66-8pq5-3655-r7n5-102o989391s2@onlyvoer.pbz>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Lance Yang <lance.yang@linux.dev>
+On Wed, 29 Oct 2025 14:11:08 -0400 (EDT)
+Nicolas Pitre <npitre@baylibre.com> wrote:
 
-The error path in secretmem_fault() frees a folio before restoring its
-direct map status, which is a race leading to a panic.
+> On Wed, 29 Oct 2025, David Laight wrote:
+> 
+> > If the product is only 64bits div64_u64() can be used for the divide.
+> > Replace the pre-multiply check (ilog2(a) + ilog2(b) <= 62) with a
+> > simple post-multiply check that the high 64bits are zero.
+> > 
+> > This has the advantage of being simpler, more accurate and less code.
+> > It will always be faster when the product is larger than 64bits.
+> > 
+> > Most 64bit cpu have a native 64x64=128 bit multiply, this is needed
+> > (for the low 64bits) even when div64_u64() is called - so the early
+> > check gains nothing and is just extra code.
+> > 
+> > 32bit cpu will need a compare (etc) to generate the 64bit ilog2()
+> > from two 32bit bit scans - so that is non-trivial.
+> > (Never mind the mess of x86's 'bsr' and any oddball cpu without
+> > fast bit-scan instructions.)
+> > Whereas the additional instructions for the 128bit multiply result
+> > are pretty much one multiply and two adds (typically the 'adc $0,%reg'
+> > can be run in parallel with the instruction that follows).
+> > 
+> > The only outliers are 64bit systems without 128bit mutiply and
+> > simple in order 32bit ones with fast bit scan but needing extra
+> > instructions to get the high bits of the multiply result.
+> > I doubt it makes much difference to either, the latter is definitely
+> > not mainstream.
+> > 
+> > If anyone is worried about the analysis they can look at the
+> > generated code for x86 (especially when cmov isn't used).
+> > 
+> > Signed-off-by: David Laight <david.laight.linux@gmail.com>  
+> 
+> Comment below.
+> 
+> 
+> > ---
+> > 
+> > Split from patch 3 for v2, unchanged since.
+> > 
+> >  lib/math/div64.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/lib/math/div64.c b/lib/math/div64.c
+> > index 1092f41e878e..7158d141b6e9 100644
+> > --- a/lib/math/div64.c
+> > +++ b/lib/math/div64.c
+> > @@ -186,9 +186,6 @@ EXPORT_SYMBOL(iter_div_u64_rem);
+> >  #ifndef mul_u64_u64_div_u64
+> >  u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> >  {
+> > -	if (ilog2(a) + ilog2(b) <= 62)
+> > -		return div64_u64(a * b, d);
+> > -
+> >  #if defined(__SIZEOF_INT128__)
+> >  
+> >  	/* native 64x64=128 bits multiplication */
+> > @@ -224,6 +221,9 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> >  		return ~0ULL;
+> >  	}
+> >  
+> > +	if (!n_hi)
+> > +		return div64_u64(n_lo, d);  
+> 
+> I'd move this before the overflow test. If this is to be taken then 
+> you'll save one test. same cost otherwise.
+> 
 
-Fix the ordering to restore the map before the folio is freed.
+I wanted the 'divide by zero' result to be consistent.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: Google Big Sleep <big-sleep-vuln-reports@google.com>
-Closes: https://lore.kernel.org/linux-mm/CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com/
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
- mm/secretmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Additionally the change to stop the x86-64 version panicking on
+overflow also makes it return ~0 for divide by zero.
+If that is done then this version needs to be consistent and
+return ~0 for divide by zero - which div64_u64() won't do.
 
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index c1bd9a4b663d..37f6d1097853 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -82,13 +82,13 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
- 		__folio_mark_uptodate(folio);
- 		err = filemap_add_folio(mapping, folio, offset, gfp);
- 		if (unlikely(err)) {
--			folio_put(folio);
- 			/*
- 			 * If a split of large page was required, it
- 			 * already happened when we marked the page invalid
- 			 * which guarantees that this call won't fail
- 			 */
- 			set_direct_map_default_noflush(folio_page(folio, 0));
-+			folio_put(folio);
- 			if (err == -EEXIST)
- 				goto retry;
+It is worth remembering that the chance of (a * b + c)/d being ~0
+is pretty small (for non-test inputs), and any code that might expect
+such a value is likely to have to handle overflow as well.
+(Not to mention avoiding overflow of 'a' and 'b'.)
+So using ~0 for overflow isn't really a problem.
+
+	David
+
+
  
--- 
-2.49.0
-
 
