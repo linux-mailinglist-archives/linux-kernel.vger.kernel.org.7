@@ -1,145 +1,190 @@
-Return-Path: <linux-kernel+bounces-880129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA06C24EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:10:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BFFC24F16
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 120734F18C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9BA3B651D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B08347FC6;
-	Fri, 31 Oct 2025 12:10:17 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB7B347BBE;
+	Fri, 31 Oct 2025 12:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pxuhDPyn";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HxctMC8S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E045B3451CF
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450D521420B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761912616; cv=none; b=enR8G1Hsoq/f/mWEa04+rO6/NVC23fcpWSUtr7CvHK+ccREdWJGw0QgIAJwtbvm2AwIh3S76pgAc11mk9SfZC+sfyYjyTC8ECWY7GglZGNZRnFC2Mak5YLG1bJJQq5n6zA2nTBcBMJnzGFKis/dxG7nP4Y8dQBVuSGFXgQG25Rw=
+	t=1761912727; cv=none; b=FS0LoMZH7njqGbXCv14lzHsreQ2RiTsQfXMq0bkG6bMbb2t6+1pzPJcDvtOiOk5ARAWwkUj9m6tlW/P4QYqBg2AL0CipD7P/8+6DnJn0DM988xlCNRPNEzERF3fQqJoT+lBHh8OHXLeQtWtBmRNZo0QqFCzuagdHe46hGNnYEdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761912616; c=relaxed/simple;
-	bh=lkAHTmhNMxqkX+eVSbbiNIZj9cWdHWyf6xYu3kI0alM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VH0McrC5gZ8+ww0vM6uIXtgJr12dAnYHmwOFjmQefGBVfr8yHuNa87HbnkiMsxk7P7NroRREiEymo5S+/FDyLzHNIHk1akgF8xBinnBa3HbizB3Sw8XvxBA6PvbzX++6a1bXgN7Z3mnpxJv0QVpBdXYCBR06Ho8B8VoVDLrW1cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-294fc62d7f4so17208525ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:10:13 -0700 (PDT)
+	s=arc-20240116; t=1761912727; c=relaxed/simple;
+	bh=histqgWYWRJzF/fRVEEH99JEM6BEShvYwzywG0nFBU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dPs/3LsvsgPzkU0vJSbbwUSyJYXDNuaOICqCB90CJGqMOAbU4s8Hq8s3pflxsFGmy0T4sla4ZVs8yr7jBqYDHjW6pfzdKZtkC2DcXiFFdithsGxj8P9cg8CaIpLy8Q2vhX0HbreVS8JlS+h1XT2hFYRlvpJepHHZFl6NgqNrtF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pxuhDPyn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HxctMC8S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59VA8V0A1512264
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:12:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=t0ntCCJGokp8wjeBNRQ5jO4E
+	1nDyS9ibjhGJgiXXXCc=; b=pxuhDPynTe4oatb/be/N1kufH8tqBh8BbQmUFBc+
+	Umae1vEejTxvazmw5bvc+rHDy6X0tdczjJq/396cXHR2D1eZbWcpYCcNjHhmdSNF
+	LC1jiUmQa3FR7DHngMBz09YZ+OR+le24Hkt4/7DA7RUAOqaAy1rGZmE8d3nBAr36
+	VRX1BOc6HJdEUORYGDWcGtja+amIz9ACOq3Sn9yRgGfCpQXAzMi14saO8+P1xJhT
+	w2JZ8V676+YMrKc/jV3fkQGy5P0EfXnrPbB/AO/dekXxSWOZ0p1wPP++V0z0R+cs
+	vi1X49No2SxHc9HfuRR2Fq0cDjcQp0Eslg/3yj26SrmlDg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4k69hkxb-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:12:04 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29526a0d1afso7707055ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:12:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761912724; x=1762517524; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t0ntCCJGokp8wjeBNRQ5jO4E1nDyS9ibjhGJgiXXXCc=;
+        b=HxctMC8SnZOJ9PZ1n8ODxwYZMkQgUnenrWXRZ9vrltF1VnwgJeQwu6VsOFlkcOA/el
+         bimyCac1jBG1PGT4n12L+hWfGneqWUurFqxLEzO9o4ZeSR6Fxn4GYqQg9w6M7a+Wjg0A
+         VRFmY1vDaRqtJnYi7GazA3nTev6fIPz3v+a+oZyZyhMZZqkyzVDAyZ4ctk+lUA8vuO1c
+         lbvFF3WI8DRGBsoKqRWpHsecCf5ke0ozpp5Kgd+j+DOVBk8xl84oj+l0dqEKsN9Hp+Fb
+         dFt4F95BO7sdpc0OdvWpeO9NalhZd9JHkQ/5uX4CKzbJHo3hwwzzSk+mWAACXap3LaxU
+         /WsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761912613; x=1762517413;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t0WbfK5vwuoBUWDeRvrXFDT7iz9UNmzAdlRjdob6MPo=;
-        b=FVoQ2BtOoDz8+/8rPgfMUBA2oWd58bci9NsXIv9cOn7y6p31cwzllA8pSqZQVUi8gZ
-         rB4UPQ31bn4JXWPlI6SbR2jKJSFjlqlNHK92ZSyA17CHKt3e3Cj6/Qq7f7yvZgoT2u3c
-         yRHv7QLtRRWlsLlMUGRbrx3LvB0tnhlTiVQ/S/+ZJyaF5D8UBKP1W7umzN+vHvqGNlZS
-         ID0NYACYbzhKMABKlDKkfIaE2+a0bbUI4ooL9g/D3A8qBsQZXgwyR2qs/qQPpsvY+mVh
-         ggB8f2I9KEktAK+CYnHj9aLRHHjUYs6ya2u432ryGn8vl/rLoRVFK2SrrsW/ghg9lM29
-         ZQLw==
-X-Gm-Message-State: AOJu0YxuNyiVZ8zjUVSt9B89dBx17q50b8fdb8xdKDinB0SS4ZjpyZgF
-	dPhiklsU9wxRrY94x+g1uZnOfBkOmFqPT13TTbt3JmqA1xScLKd8r48T
-X-Gm-Gg: ASbGnctsuK3RYsNk7pdf+WNns2lpwhttmixDGTBPfaDNqAs1w15rZTW/Mg3ZW5VBJIl
-	yPmnvVVxnqc++UQBleHSOSsdxHAQa/teLNlWPyZT4QkDCE4kyFdClDp6M3gfJgysQt8mjwlhDuX
-	NTWAYPw5IaxL3Pmrj2yX8jrA6PC7JAhMlh9Xmy+hikPXiRnGxgqzz20oQuzo7jjb3ra+a1LXtov
-	qpITN+GcPnFoS0y0oPek23D4skiH9TTmrXVCxAs/j+Igbqffr082ZQXR3cLEFzIaJV9CD+yCbJq
-	rsAMDnfb/PyHUWd+lo4GHwoe4+rtmqcZdSotsi2AiDqT83si7er2WMsbD5EMCjqtSwbziUQMnPT
-	7x2zjRV6t3h/i/UsPcM8DEhDPWyASd9tuhgPIn91J4EhZdgYGU1tQfqxin/86pFPAnaGK2RioT1
-	dQZWZD4ujAowOJxqLIjVrDBih6Ig==
-X-Google-Smtp-Source: AGHT+IFkZYYrPO9da+1rqdpxHxQzVGAbYeTTm9iNmfhwPCVX2eqm9vtdFUdqrf7DEDE/y6nY5qWI1A==
-X-Received: by 2002:a17:902:8ec9:b0:269:8059:83ab with SMTP id d9443c01a7336-2951a50e59amr30879555ad.51.1761912612853;
-        Fri, 31 Oct 2025 05:10:12 -0700 (PDT)
-Received: from localhost.localdomain ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269b95bdsm21683055ad.93.2025.10.31.05.10.08
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 31 Oct 2025 05:10:12 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	rppt@kernel.org,
-	willy@infradead.org,
-	david@redhat.com,
-	ioworker0@gmail.com,
-	big-sleep-vuln-reports@google.com,
-	stable@vger.kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH v2 1/1] mm/secretmem: fix use-after-free race in fault handler
-Date: Fri, 31 Oct 2025 20:09:55 +0800
-Message-ID: <20251031120955.92116-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1761912724; x=1762517524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t0ntCCJGokp8wjeBNRQ5jO4E1nDyS9ibjhGJgiXXXCc=;
+        b=WT2xje2A31cdLv+UKKBU7RzJeTuKPNGHsCLI7x6YxanZ+EE1XjE+5Nz3XMdNKA41AO
+         VLrIGU+Dmn/c1tnHagWM1eC61Jjf+JPeP8houLl7z4n9jJDxy+9SGvpJTCSBa3/H4uWa
+         vbJfBWIO12K9fTjdmKxfbX8mpkqDc6/1nh6QBNzmvZo7dap4dwbYd7DIb5uv1Hy55wUP
+         NpFxlgm5sIJ8dAPasOAKY3D/Dbywtfs5iMDxBEyFkcuNBk3LI8wj1+YMGCuZmr2CYKpn
+         AFJ7LaM9jk+OoBAWau5O0y8dY5G3BNVfpFL4a45Olu4Epd/S+bXR2fyfVO8nFeTIXKyd
+         3XtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQdOe5FHc6WB/yMapSdaL+U7+7V+WQ6/5yIz7lL+Nffndz3mOGJTcUmWrCz8RgmWy7wr6zd3aRCBe+Aek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm+JgK4kTwSFHyeD9n1cBlckakIV8vcgYHxe5ZWiFNd8Z2QKEi
+	flp9VyMjOgQKTVnR8loQs0hWOOlBZISPWCDzqvjwJtzZOIs4HD71eVAs64QY5dIFmZQpU3aVx1d
+	vjKPcHPGQclojcuQgNzwLcE2yriZqhc+tlZqCcLHfIVYlvzZiklOIczqfryENqEiSuMA=
+X-Gm-Gg: ASbGncsCZljtGJsMYDxAF6+q4nKTlts+SKPJxJKSibGgbiQ87nBUE/kpr5TZfaNZabE
+	27S/KOx+XdnvWNd69Xnk9zcEcxKRzUs9WZ6eF5S8kx+Prkab6iLs8wrQaSNQcnCd7GWlzNG3Hhn
+	oZolRplRLRYiATHEmj+VcbFPSzjsCqi4aQcjQbTtkL4nqHuVLkSiFWLfnKSxzhp8z742ZC0AKFd
+	3QBJBdJ7PUMBT0oew1F0/YLmWk9EkO5SjPimm6uDwQa2mjsTYGaSSUm8K4cyX3hTd9SiryUicxb
+	CLG6Py9wasFALl01QUE0BiOoakn5yhx8pxujezhNobmQu0JxwGMH6p2hb4dCDnvYHwxvpsvYGOy
+	0of28E3WUiXUKZuRE+OueGi0lCp2k84gT
+X-Received: by 2002:a17:902:dad1:b0:27e:f03e:c6b7 with SMTP id d9443c01a7336-294ed0982fbmr89140565ad.10.1761912723487;
+        Fri, 31 Oct 2025 05:12:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFkkeZRsiuTlC1EpCac6wkygqEXe2Ou1I4f8XHFqwZycCb3yybQhK+4zAvwptAWwbxS1hO5w==
+X-Received: by 2002:a17:902:dad1:b0:27e:f03e:c6b7 with SMTP id d9443c01a7336-294ed0982fbmr89140035ad.10.1761912722819;
+        Fri, 31 Oct 2025 05:12:02 -0700 (PDT)
+Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295268b553bsm21984775ad.39.2025.10.31.05.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 05:12:02 -0700 (PDT)
+Date: Fri, 31 Oct 2025 17:41:56 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v4 2/2] watchdog: Add driver for Gunyah Watchdog
+Message-ID: <09e8485f-f512-4069-be9f-3e94fb142aa3@quicinc.com>
+References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
+ <20251031-gunyah_watchdog-v4-2-7abb1ee11315@oss.qualcomm.com>
+ <13d2963d-e931-4e51-b875-a1650b899bb7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13d2963d-e931-4e51-b875-a1650b899bb7@kernel.org>
+X-Proofpoint-ORIG-GUID: KhcKWbKA6I6gRyQOuhnBaJXW9Vi0oqEX
+X-Proofpoint-GUID: KhcKWbKA6I6gRyQOuhnBaJXW9Vi0oqEX
+X-Authority-Analysis: v=2.4 cv=OYaVzxTY c=1 sm=1 tr=0 ts=6904a795 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=SWRU6URpa7t1zXFJtNkA:9
+ a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDExMCBTYWx0ZWRfX6GOXVfkLpxOG
+ IjHL1Z78VpkX6qaiLxmU/H4LoJhynsk8LroEyJ7oOeN6NR9RKz6bNXx1E81+9VmemASYREQWX1/
+ IxJslG3IOzPhem2sPbZuS0eSuy9aXhSjJKuULOGizRqDZdJoeBq/4fUxgSNDEoXcyYBMHWFaJ7D
+ E8NwDkjFmvymwN5PuqV3A0O4F7avaTj811fCLx04P3hjAugTKj3bJFMLrf5+4GYyUtM01qq7vA7
+ LZ+dfZJC97z7rc3IODURk0g8/98vmPqZPnVi0cpwPoAzjsf6HwkLrYIg+k1PZfYJGJc9FFLEOjj
+ zHQJtLnkqhvPjUN23RRbHZPbCp7rRP+tPl9APHn1u+surKQvbs7xdH5CqKRq6Bzj1wIaKIAUI9Y
+ jlHcoO8SOqOsay//SHdkjEoB2C6vVw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_03,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 impostorscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310110
 
-From: Lance Yang <lance.yang@linux.dev>
+On Fri, Oct 31, 2025 at 12:48:18PM +0100, Krzysztof Kozlowski wrote:
+> On 31/10/2025 11:18, Hrishabh Rajput via B4 Relay wrote:
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(gunyah_wdt_pm_ops, gunyah_wdt_suspend, gunyah_wdt_resume);
+> > +
+> > +static struct platform_driver gunyah_wdt_driver = {
+> > +	.probe = gunyah_wdt_probe,
+> > +	.driver = {
+> > +		.name = "gunyah-wdt",
+> > +		.pm = pm_sleep_ptr(&gunyah_wdt_pm_ops),
+> > +	},
+> > +};
+> > +
+> > +static int __init gunyah_wdt_init(void)
+> > +{
+> > +	return platform_driver_register(&gunyah_wdt_driver);
+> > +}
+> > +
+> > +module_init(gunyah_wdt_init);
+> 
+> 
+> Heh, what was my last message? If I see module_init() I will NAK it.
+> 
+> At v3 you really ignored entire feedback and this one here continues the
+> pattern.
+> 
+> NAK, please read how Linux driver model is works.
 
-When a page fault occurs in a secret memory file created with
-`memfd_secret(2)`, the kernel will allocate a new folio for it, mark the
-underlying page as not-present in the direct map, and add it to the file
-mapping.
+You mentioned in your previous reply that
 
-If two tasks cause a fault in the same page concurrently, both could end
-up allocating a folio and removing the page from the direct map, but only
-one would succeed in adding the folio to the file mapping. The task that
-failed undoes the effects of its attempt by (a) freeing the folio again
-and (b) putting the page back into the direct map. However, by doing
-these two operations in this order, the page becomes available to the
-allocator again before it is placed back in the direct mapping.
+```
+If you call any module_init other than module_foo_driver I will keep
+NAKing your patch because it is wrong. I explained why wrong already
+multiple times in previous threads and other discussions.
+```
 
-If another task attempts to allocate the page between (a) and (b), and
-the kernel tries to access it via the direct map, it would result in a
-supervisor not-present page fault.
+If you are referring to why module_platform_driver() is not called here,
+Hrishabh answered that already previously. Please see
+https://lore.kernel.org/all/ndwwddd7vzjpgvzg55whdno4ondfxvyg25p2jbdsvy4lmzsfyy@jnn3wywc7xtp/
 
-Fix the ordering to restore the direct map before the folio is freed.
+If this is not what you are referring, please let us know. Thanks for
+your constant support/feedback on this series.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
-Reported-by: Google Big Sleep <big-sleep-vuln-reports@google.com>
-Closes: https://lore.kernel.org/linux-mm/CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com/
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
-v1 -> v2:
- - Collect Reviewed-by from Mike and Lorenzo - thanks!
- - Collect Acked-by from David - thanks!
- - Update the changelog as Mike suggested
- - https://lore.kernel.org/linux-mm/aQSIdCpf-2pJLwAF@kernel.org/
-
- mm/secretmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index c1bd9a4b663d..37f6d1097853 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -82,13 +82,13 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
- 		__folio_mark_uptodate(folio);
- 		err = filemap_add_folio(mapping, folio, offset, gfp);
- 		if (unlikely(err)) {
--			folio_put(folio);
- 			/*
- 			 * If a split of large page was required, it
- 			 * already happened when we marked the page invalid
- 			 * which guarantees that this call won't fail
- 			 */
- 			set_direct_map_default_noflush(folio_page(folio, 0));
-+			folio_put(folio);
- 			if (err == -EEXIST)
- 				goto retry;
- 
--- 
-2.49.0
-
+Thanks,
+Pavan
 
