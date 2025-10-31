@@ -1,290 +1,153 @@
-Return-Path: <linux-kernel+bounces-880743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CFAC26743
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:45:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1726AC26770
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1EC3BFFEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:40:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07A5E4F2B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7489273816;
-	Fri, 31 Oct 2025 17:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D555E27FB37;
+	Fri, 31 Oct 2025 17:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="JsL8uDP+"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JpLR0xap"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57882D2381
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF5F2AF1D;
+	Fri, 31 Oct 2025 17:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761932413; cv=none; b=Qfi0yoMMIus6dWi+MbdSXpXp/rNAJqz/sb7nhP1WVS8WqhXd13ZOcHC5MPDc1GZXxXGT5EKGNpNDfZS6vDSxB7HjpRDnKx2wd6bUpFcSVqqIWYuAu4+lHtDyxFGsGwt3w1u2ZLDYEg8NSvJiwD5u+dOOVgUhP9N2Ajf/rtMV6e0=
+	t=1761932493; cv=none; b=IvZfDD6sNQO8mcoxN625BbutWckeH+9D6C/PIscy7VSWY3GuIwQxo00FMNFdzeNhLbV0EKmSNIAQ9jIIh23rEbRvvqvqJaPj8omgMPQDC1AszRwuBS/HVzVD8oXhXyNMJwRPyujotmaFGJWcJ0An7aopg42GE/zai7RztGUCtGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761932413; c=relaxed/simple;
-	bh=1T93+sMv5tPAVfplzHfP7R8MyhMUaOzEKPRnkR9FHMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yb/6ww8cjKOaQwH2eItz2k72YvxdVSAnK1bvBD1kLuJRKV7ZU2wzYp3ra8MlQXw5c+gZorudrLvFbePl2cqq0oipfaCNV1etQry7FMkt9CZMCGfnoexj9t4mXGu5sgA9n3PCmkthlyGmGykb+3gsd9iUcmtmjVeE1npsFSdCbLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=JsL8uDP+; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b3c2c748bc8so344057466b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1761932410; x=1762537210; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g0MslenNMNRz9hncNuGH0nUy8fkx7bjabprrZbRn1I0=;
-        b=JsL8uDP+OgQdf6ItZ3aXkyVxMLjGnTHdDoY3RDhd1GYhVtnx3ais10nAVFUEdeItnu
-         1XJMd1j+jDyR8rHAO4CEPcSfMh8pMv1SsCsGvGIMFPwnz08jkcBL2l5dzPVbtfF3gwKC
-         69RkNVfVElbpgMG5yKX5xmiE1ZyMNqQ3nLFTo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761932410; x=1762537210;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0MslenNMNRz9hncNuGH0nUy8fkx7bjabprrZbRn1I0=;
-        b=Yb+pcL5C9eZ4inbRN+H6gQhnQPsYHs5ObQJgqu2bAxtQcBy05kWC6nj7I1iUOl7+pk
-         oi3OxSAkcYIzpBOjSqSG9T68Yvtw7cJhE6qr2Cfy8ikMSAyQgGxXnxOobo463dIWnvpg
-         wsMBoVLGwL9fvKQZQJPSDpb1iWfGljHWQmuI0Kq9gvKhn/jNcVAB77pA2Av3pkdni3t4
-         xwaqP91ZSCj8kRXF3ke4EeGTCVlLFEqjRBCMreUyN1ePy2rb0xMOUaKcfoFCTS2bAcoL
-         XE+45Gp+hyUB4VRU/yRdlFbq/SAvncRPCururW7JpDr+fY0iwTCKxxhVHPzazk5779Mk
-         xF1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXd1MXw8ZVhQO0rrIy2u4cS0lQF29gnWbVq5tT7DJfdvy2y3qHE4H8nPLD32e9XNXvXcUhcHJdlgoRDeJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjjfGiHJZDUHgjr34asx/zp+qiodv3WylyTmoxGg+k5FKArZu6
-	woiWc7E5C62h0lgmkddt4V6Ov9OBnlFpc0gqidrWWw7HaF1TVVQ8e9BuOYgkQ3Q9V5Y=
-X-Gm-Gg: ASbGnctVC/zDXiRO5Rsf1trXvTnz/khYUi0VE9fFYwogQ7ge2tqSmUqJs/6GWCaRlVv
-	aLxzXVVxN8QCezebqweCJ5q9CSbu8jf0VOBAFn8idM/xGY7u/9osPvfCbM3zbl5cN5dNcZT9J4W
-	fwU8EzPRij8bReJCeUY8NOPfznx6ZG5iCWduG/aAdasgrwoCdPOBc9WDh0ct6eg3g95E1WITExP
-	VxV+au7UpdBCQA28UDcPfApCDyzFb9VSoL5Juo4zutZynlPuEVUDzX3PaWCB6K7q+j8+Si5MtLI
-	c3/okdk4cF3Ww6o7Xsqfx283M4F/a0T6WR+PFL2kKwGS0qUcFb+ZgM1o1yj0aEm6rwRn/7/dVkS
-	2X0M0Mj+u/eUsdPYC5Nm4/FBPPjv4Pcm81QTI3rXZG6GAByclIc6F6ZaHEpqmOwFtzzhQ3M6pSJ
-	ffmyKt51h9Yf58XMcXjrsLjw==
-X-Google-Smtp-Source: AGHT+IFbOBwf98bBMLnyAAZrOMm+hJ35dRhtFe2UhgAlTZPlhjoRrNX+iSO04sWdZ50B8Ps8qRcs4g==
-X-Received: by 2002:a17:907:7e8d:b0:b6f:198e:c348 with SMTP id a640c23a62f3a-b7070630cfcmr467732066b.46.1761932409693;
-        Fri, 31 Oct 2025 10:40:09 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077c82ef6sm227660766b.52.2025.10.31.10.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 10:40:08 -0700 (PDT)
-Date: Fri, 31 Oct 2025 18:40:06 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, l.stach@pengutronix.de,
-	shengjiu.wang@gmail.com, perex@perex.cz, tiwai@suse.com,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH v7 1/7] dt-bindings: display: imx: add HDMI PAI for
- i.MX8MP
-Message-ID: <aQT0dlZ88jDVptLF@phenom.ffwll.local>
-Mail-Followup-To: Liu Ying <victor.liu@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, l.stach@pengutronix.de,
-	shengjiu.wang@gmail.com, perex@perex.cz, tiwai@suse.com,
-	linux-sound@vger.kernel.org
-References: <20250923053001.2678596-1-shengjiu.wang@nxp.com>
- <20250923053001.2678596-2-shengjiu.wang@nxp.com>
- <aPc9-wYxGB1KYPyQ@phenom.ffwll.local>
- <7e0fb617-088b-4075-9631-e37645b4c40d@nxp.com>
+	s=arc-20240116; t=1761932493; c=relaxed/simple;
+	bh=dlPRa3XHKOQ+Yq2C2R9IS+oZpCsb3FILGSzcgmKkB4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k767UazlJUyCKbznETzgyC1Nt5w8WG1NWLfaYPkoKRCU/8bXfLMhGOdKifD+cNsdfJ/HQ8TczmokmnhfmhLNDJawVeoJWA4dWLWNcneIjfbgha208YaTRpmONmCjBrkN/FmrxBeAAhot8HbKN7QkIdFFPCN0rkJYnm7OMn2ZTxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JpLR0xap; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761932492; x=1793468492;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dlPRa3XHKOQ+Yq2C2R9IS+oZpCsb3FILGSzcgmKkB4k=;
+  b=JpLR0xapLLcPnijpdDbFODYIO7dmlPqqkhJMGRCHCY9T5hokNuT1el+q
+   yGCb8uKFwv8G+YQ/0U6GhDNsZi3KSIUD142P+v80AAm/s2m4wTu5aYcY6
+   3qfyWVtKeBaN6bT2wRs6yAEZTl0FhXY2bNuJ6iRNYjVcS5m+z9acrA0Re
+   BoF5pUZi1dWnIjbI0d2R7+PY5lQy5PSFcq+17l3oCeq6hTjsLLSmybHEb
+   HP+uON7Yy7ZzNtANM2upBeYUzldIWCIuXNJkYu46Ox8e+5Q8STebECx39
+   XgKcAg2xpqw/WU2TPb/cMx4F3Mz/VHvZb+fvgtdSYQi7BT6zGBtAVzzG0
+   g==;
+X-CSE-ConnectionGUID: jzfj7sMjRQaskDVGDJcNSw==
+X-CSE-MsgGUID: gSpECR2OQvypz7kwNOS+/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63796196"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="63796196"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:41:32 -0700
+X-CSE-ConnectionGUID: SB+fD1PuSnCWu5gcuyNZzw==
+X-CSE-MsgGUID: cCagRDWQSCKXXt6YQQDcWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="217129708"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.52]) ([10.125.110.52])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:41:30 -0700
+Message-ID: <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
+Date: Fri, 31 Oct 2025 10:41:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e0fb617-088b-4075-9631-e37645b4c40d@nxp.com>
-X-Operating-System: Linux phenom 6.12.38+deb13-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI
+ runtime services
+To: Andy Lutomirski <luto@kernel.org>, Sohil Mehta <sohil.mehta@intel.com>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>
+Cc: Jonathan Corbet <corbet@lwn.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ard Biesheuvel <ardb@kernel.org>, "Kirill A . Shutemov" <kas@kernel.org>,
+ Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Sean Christopherson <seanjc@google.com>,
+ Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ linux-doc@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-efi@vger.kernel.org
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+ <20251029210310.1155449-6-sohil.mehta@intel.com>
+ <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
+ <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025 at 04:51:40PM +0800, Liu Ying wrote:
-> Hi Sima,
-> 
-> On 10/21/2025, Simona Vetter wrote:
-> > On Tue, Sep 23, 2025 at 01:29:55PM +0800, Shengjiu Wang wrote:
-> >> Add binding for the i.MX8MP HDMI parallel Audio interface block.
-> >>
-> >> The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
-> >> acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
-> >> This IP block is found in the HDMI subsystem of the i.MX8MP SoC.
-> >>
-> >> Aud2htx module in Audio Subsystem, HDMI PAI module and HDMI TX
-> >> Controller compose the HDMI audio pipeline.
-> >>
-> >> In fsl,imx8mp-hdmi-tx.yaml, add port@2 that is linked to pai_to_hdmi_tx.
-> >>
-> >> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > 
-> > dt patches need an ack from dt maintainers before you push them, please
-> > make sure you follow that for the next changes.
-> 
-> Just want to make sure I may follow that correctly in the future.
-> As Krzysztof is one of DT binding maintainers and this patch has
-> Krzysztof's R-b tag, need more ack from DT maintainers?
-
-Sorry for the late reply, caught a cold :-/
-
-No, that's enough, I wasn't entirely awake when I processed the PR
-containing these patches. I only noticed because of a a new check in dim
-for maintainer actions like merging a PR, which misfired on these two
-patches - the r-b should have been counted as an ack (even though strictly
-it's better to record both).
-
-Apologies for the noise.
--Sima
-
-> 
-> > -Sima
-> > 
-> >> ---
-> >>  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 12 ++++
-> >>  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 69 +++++++++++++++++++
-> >>  2 files changed, 81 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml b/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml
-> >> index 05442d437755..6211ab8bbb0e 100644
-> >> --- a/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml
-> >> +++ b/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-tx.yaml
-> >> @@ -49,6 +49,10 @@ properties:
-> >>          $ref: /schemas/graph.yaml#/properties/port
-> >>          description: HDMI output port
-> >>  
-> >> +      port@2:
-> >> +        $ref: /schemas/graph.yaml#/properties/port
-> >> +        description: Parallel audio input port
-> >> +
-> >>      required:
-> >>        - port@0
-> >>        - port@1
-> >> @@ -98,5 +102,13 @@ examples:
-> >>                      remote-endpoint = <&hdmi0_con>;
-> >>                  };
-> >>              };
-> >> +
-> >> +            port@2 {
-> >> +                reg = <2>;
-> >> +
-> >> +                endpoint {
-> >> +                    remote-endpoint = <&pai_to_hdmi_tx>;
-> >> +                };
-> >> +            };
-> >>          };
-> >>      };
-> >> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
-> >> new file mode 100644
-> >> index 000000000000..4f99682a308d
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
-> >> @@ -0,0 +1,69 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8mp-hdmi-pai.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Freescale i.MX8MP HDMI Parallel Audio Interface
-> >> +
-> >> +maintainers:
-> >> +  - Shengjiu Wang <shengjiu.wang@nxp.com>
-> >> +
-> >> +description:
-> >> +  The HDMI TX Parallel Audio Interface (HTX_PAI) is a bridge between the
-> >> +  Audio Subsystem to the HDMI TX Controller.
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: fsl,imx8mp-hdmi-pai
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  interrupts:
-> >> +    maxItems: 1
-> >> +
-> >> +  clocks:
-> >> +    maxItems: 1
-> >> +
-> >> +  clock-names:
-> >> +    const: apb
-> >> +
-> >> +  power-domains:
-> >> +    maxItems: 1
-> >> +
-> >> +  port:
-> >> +    $ref: /schemas/graph.yaml#/properties/port
-> >> +    description: Output to the HDMI TX controller.
-> >> +
-> >> +required:
-> >> +  - compatible
-> >> +  - reg
-> >> +  - interrupts
-> >> +  - clocks
-> >> +  - clock-names
-> >> +  - power-domains
-> >> +  - port
-> >> +
-> >> +additionalProperties: false
-> >> +
-> >> +examples:
-> >> +  - |
-> >> +    #include <dt-bindings/clock/imx8mp-clock.h>
-> >> +    #include <dt-bindings/power/imx8mp-power.h>
-> >> +
-> >> +    audio-bridge@32fc4800 {
-> >> +        compatible = "fsl,imx8mp-hdmi-pai";
-> >> +        reg = <0x32fc4800 0x800>;
-> >> +        interrupt-parent = <&irqsteer_hdmi>;
-> >> +        interrupts = <14>;
-> >> +        clocks = <&clk IMX8MP_CLK_HDMI_APB>;
-> >> +        clock-names = "apb";
-> >> +        power-domains = <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
-> >> +
-> >> +        port {
-> >> +            pai_to_hdmi_tx: endpoint {
-> >> +                remote-endpoint = <&hdmi_tx_from_pai>;
-> >> +            };
-> >> +        };
-> >> +    };
-> >> -- 
-> >> 2.34.1
-> >>
-> > 
-> 
-> 
-> -- 
-> Regards,
-> Liu Ying
-
--- 
-Simona Vetter
-Software Engineer
-http://blog.ffwll.ch
+On 10/31/25 10:38, Andy Lutomirski wrote:
+> Am I imagining an issue that doesn’t exist?  Is there some way to be
+> reasonably convinced that you haven’t missed another EFI code path?
+> Would it be ridiculous to defer enabling LASS until we’re almost
+> ready to run user code?
+Deferring is a good idea. I was just asking for the same thing for the
+CR pinning enforcement. The earlier we try to do these things, the more
+we just trip over ourselves.
 
