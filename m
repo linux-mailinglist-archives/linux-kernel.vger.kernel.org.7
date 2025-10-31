@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-880928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F48C26E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:22:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F8C26E44
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC17A3B91A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:22:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28F9A4E8738
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4C8328620;
-	Fri, 31 Oct 2025 20:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B4D328635;
+	Fri, 31 Oct 2025 20:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZdEJ9tJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHYMpYLF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A5230B50D;
-	Fri, 31 Oct 2025 20:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2E283FD6;
+	Fri, 31 Oct 2025 20:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761942152; cv=none; b=p3sjLfkmYrNLi+gnnIdaINnFxxiVpGAAf4POu0+LJcAc/FaZg2tINxdeOc/wkajxEwAc/ktzpzvWv9Dm8LiqX2LhzRZeB6/0cXQ95crrgi84MX9MGNIzv+X6ibn+SHEZ3wUX9TmoI0XAFhXchdLf8iZlU7Lb9pyltZ1L6xZukjg=
+	t=1761942331; cv=none; b=NBh8u+eVCT09+BqBPRZG23oR7LtOWk+6/FNEm+d6w6KDY9cHL4lethk5fSy31r1vIiSnV38cx769zmmAXZSlIlBoZKpW8nfkCYxCjixvP5Ei9NJ84s+rmczyaGOoRjkNkxsj/tFlwDwV/I8O03Eo4VJ3tDgjAa1viZ3RNKKw098=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761942152; c=relaxed/simple;
-	bh=y1D8hn9Sl4ZYB7RrFaRiMdoHrKffc/670nzt3jGiV/s=;
+	s=arc-20240116; t=1761942331; c=relaxed/simple;
+	bh=ekWfu0jFUCvipEAA7CjOSxLrpj/17ejOSajkemq7+RM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmMZLoNYtELkNid9tCWaRTPVpHpoZvstXMV1dMeCI9BnRQy6A+NXUk3YvTNhnHF5cLTyiFP0pKFF5IucLZsFHQ5C19yWEV9+SlkEhMrZtStFLPamtjkFckJJQVIRO6YGQY4kLq9GfvX+5Wfl+jhMH9gn/vuyYCiprg8SB/C7SxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZdEJ9tJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9720C4CEE7;
-	Fri, 31 Oct 2025 20:22:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cxNxnKDU/My6olpBCgc7B/eeXT/uRsbpwF2Dxc4Vhuvc9LxJ95xEZXtcOws64IuB3OSkiceaRF0RmdS2Kico2YpyBWvKuplYo4sC+nZrR9tExULla3sS4RImZ32pu7sHUxaixfHbzE34UqGMo8GJGzeWZ8ClCFK3s8hzdLnR/WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHYMpYLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0A7C4CEE7;
+	Fri, 31 Oct 2025 20:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761942151;
-	bh=y1D8hn9Sl4ZYB7RrFaRiMdoHrKffc/670nzt3jGiV/s=;
+	s=k20201202; t=1761942331;
+	bh=ekWfu0jFUCvipEAA7CjOSxLrpj/17ejOSajkemq7+RM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sZdEJ9tJ/RZI6iBBX32t5YukhuFRlY6K1hb1ZW9BypwQiZBjMSo8ORRWRCiLbzNIU
-	 zZqMb/XyzE19rFbTLbzkv03CkX1MO4zxEtj4Xd1FpsQDG++vh687wRd807J9P1lAQ8
-	 LOYvEZ4IcZWaAGYVnVmGRqy4aBs35SaxqIBkVq8Ek7HYeW7w4s7YRZYHLe83hg7akN
-	 90VO2WBhaaxyBbRxAcpHC78ykJ1ZXH/ZIbIeLzrA5Egb5NOhD4KP0IWbc4D7Hs1Zuu
-	 ONYAPJfoyX8jRTQ1oQ9VlZUl9IoxOvg2dvBwatxkKpRAXA/iSpWxO40lZkNKbs0/5h
-	 LHVJWjocHIKtA==
-Date: Fri, 31 Oct 2025 16:22:26 -0400
+	b=AHYMpYLF5pe34hRnZrK1ExWTV+KBRS2sMbJZmh4Un+w4/keZ+g8fIwnshpP9ODSZu
+	 KlLekXpe4GYiOU7DR9v9qEZ5QHnPe746Il3G9oVUofiVTw+LFoqusgPjC5lt+EbHBZ
+	 vw3SD6APCa8Sp95c+jaZfTSG9cMn8WxZOjWZsvdemgYs2dLTvAiDChXDIlJ2yQCb5q
+	 fi0jOfcuPXmJWqWc3bWbPRFmJlePfOKui0qo1fEkZu9xwQhA4pBtoGa41+Y8+87TJz
+	 WeAe4B6ZIRF1V4Rm521Yx4kvi+c0vneVoNoberCbWbpFLDu8G6YWfB/h6hhhV7Egzt
+	 WdhEP82bpkWQw==
+Date: Fri, 31 Oct 2025 16:25:26 -0400
 From: Nathan Chancellor <nathan@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/mm: Ensure clear_page() variants always have
- __kcfi_typeid_ symbols
-Message-ID: <20251031202226.GA2486902@ax162>
-References: <20251013-x86-fix-clear_page-cfi-full-lto-errors-v1-1-d69534c0be61@kernel.org>
- <20251030192819.GFaQO8U29xvWcPT_s2@fat_crate.local>
- <20251031142044.GB3022331@ax162>
- <20251031144624.GHaQTLwONX3j6aDkkP@fat_crate.local>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org
+Subject: Re: [tip: objtool/core] objtool/klp: Add --debug option to show
+ cloning decisions
+Message-ID: <20251031202526.GB2486902@ax162>
+References: <176060833509.709179.4619457534479145477.tip-bot2@tip-bot2>
+ <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
+ <20251031140944.GA3022331@ax162>
+ <20251031142100.GEaQTFzKD-nV3kQkhj@fat_crate.local>
+ <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,25 +62,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251031144624.GHaQTLwONX3j6aDkkP@fat_crate.local>
+In-Reply-To: <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
 
-On Fri, Oct 31, 2025 at 03:46:24PM +0100, Borislav Petkov wrote:
-> On Fri, Oct 31, 2025 at 10:20:44AM -0400, Nathan Chancellor wrote:
-> > These errors occur in Linus's tree so could this go before that one then
-> > it could just update the instances of KCFI_ADDRESSABLE? I don't have a
-> > strong opinion, I found these series of errors tangentially but this
-> > feels like something that could go via x86/urgent and that series could
-> > just rebase on it.
+On Fri, Oct 31, 2025 at 09:11:44AM -0700, Josh Poimboeuf wrote:
+> On Fri, Oct 31, 2025 at 03:21:00PM +0100, Borislav Petkov wrote:
+> > On Fri, Oct 31, 2025 at 10:09:44AM -0400, Nathan Chancellor wrote:
+> > > Yeah, that looks good to me and matches the workaround that Peter did in
+> > > include/linux/compiler-clang.h. If cleanup is going to be used more in
+> > > objtool, it might be worth taking that approach there too like:
+> > > 
+> > >   #ifdef __clang__
+> > >   #define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
+> > >   #else
+> > >   #define __cleanup(func) __attribute__((__cleanup__(func)))
+> > >   #endif
+> > 
+> > LGTM.
+> > 
+> > I'll wait for the objool-er folks to lemme know what they want before
+> > I productize it.
+> > 
+> > Thx Nathan!
 > 
-> Sure, that works too.
-> 
-> I guess we want that in stable too, considering where the Fixes: tag commit
-> landed...?
+> How about __maybe_unused unconditionally without the #ifdef damage?
 
-Yeah, I should have explicitly tagged this change for stable but I have
-been a little lazy since AUTOSEL often picks up the slack :) If you want
-a resend with that adjusted, let me know.
+Yeah I had only suggested that to mirror the kernel but fundamentally,
+GCC already treats it that way so I don't think there is any harm in
+just doing this unconditionally.
 
-Cheers,
 Nathan
 
