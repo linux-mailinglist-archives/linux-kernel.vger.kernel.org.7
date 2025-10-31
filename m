@@ -1,164 +1,301 @@
-Return-Path: <linux-kernel+bounces-880648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA3AC263E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 360A2C263F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:56:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131EC189DD3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9DB1A20353
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A89A2FD67F;
-	Fri, 31 Oct 2025 16:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E882FD1BF;
+	Fri, 31 Oct 2025 16:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVOJjmI5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="doWPlNbU"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164672F0671;
-	Fri, 31 Oct 2025 16:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161D62BEC20
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761929705; cv=none; b=Oyg+bDokTAr/RxlNdsYlPTBRGEoj/iiBS1YXEqTenSHf8eRdvW80vYxbQSSsqi2YNKUyh3bort8GgVM9kcvl2arV5ug3tvIvQlenrVjwuNAqurMm+dhFh0DgQycMlz1EoAzP0nIe4L6GfoUhLh5tbIF9lF6rhbCmvxM386g1RPA=
+	t=1761929741; cv=none; b=aeAiby/H52+c7UeNAkAllbDlnKU/azpCqC2bLpbsqZEfxmNEFaNRxjAYPThqnvGtTG2hJ6DSOCk2rhXcf/lC+OUHDykWEsuX62oJnYOMiho7LYeincnUHiWkgHo9RnSwxUgoaYCWTT5X3JMMJZd+s9f/mk+P0rwu2yqUbv9MOy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761929705; c=relaxed/simple;
-	bh=mE1Nacho2z2E7aj19mlpYVozO+U1hfyyMLxt4xW3lTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S9jHlQiAWSbF2SG1XdzbbVceQUWbX2pfhMvEGaSRNiajTY17Dn6dKSXM1cNFc/cR8SUXTHdxbh+jZMZkJtcfEXCoZ7WnKkhLf+Ue1DWtyIx7kleZKt/4Hylrmc3v7zXPAHd2tTlD79NNWsPab2Hv3L4bPw+xJNwtcQxmHVXLJQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVOJjmI5; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761929704; x=1793465704;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mE1Nacho2z2E7aj19mlpYVozO+U1hfyyMLxt4xW3lTs=;
-  b=WVOJjmI54Oy4zOJsAF6W5J54zKw8CXFhZgIAVA6TYSt1q3UOsZP31Axp
-   O8LI5QxPIPGWHaiJ7TXpxgGWaKhKRgt+B7oVkm6ZDOqgEsWlASYN5u/jW
-   TUNF5uAvfcnQkaDTaB3kExpZaDhGqploN9WehpoDFDTHsBeA10bgwdFrK
-   qXI3M0F3XKusd6j/cKeLjY8jxrvtLydJppGCw10YkrGJ0iIVkV0KOHSAN
-   iKbQ2Z1li2O7gZq2PHaYpjDnAmypxURyA42rtvYuQQ+4biR4ZyMDNpwmG
-   wLkoL0To7IILulLOxQhSe2B+wI4DPo27dRovY/GiWwUgoDSHHwp7Jnlie
-   Q==;
-X-CSE-ConnectionGUID: hyqCD9IJQ5yTZBdRIXvQHQ==
-X-CSE-MsgGUID: UqdhOagySpmQ5V1b2nFyXw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="67750424"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="67750424"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:55:03 -0700
-X-CSE-ConnectionGUID: MIQ+2tf3QFiBgB8VYnsr8w==
-X-CSE-MsgGUID: jX0/fKWfROCUL4AocpFS5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="217119772"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.52]) ([10.125.110.52])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:55:02 -0700
-Message-ID: <f559e1fa-dfc6-435f-9337-30315891a394@intel.com>
-Date: Fri, 31 Oct 2025 09:55:01 -0700
+	s=arc-20240116; t=1761929741; c=relaxed/simple;
+	bh=56YP9bOOwpxRWaqA+O3PwGVFgv7zsAGCzkLhzmLCRpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFU6f6bq4t3+AlKK93pu0K2OHkeRIo7QmWWUK4xceGy5h+hb2M6zFikYnVJ8F3lHWIUULpTq/EAg6ldfT8XzMngDia9GEmoRMlWLY48LBmpliuXfGSSZria2QeIcAVIsfhhvl0evDIXjU3UdtOrwxJ8O5TJKTfSuW5PBw904xmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=doWPlNbU; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed0c8e4dbcso10381cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:55:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761929739; x=1762534539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x2PgiNfT03NpyavbwhUGeVVJeE0kuxyW1JyOtkY0SVg=;
+        b=doWPlNbUPa4G8pwp1iwF//1pgOF2HwkI0r2CEzlVXjXawOGLfnLhYcKDR9fSug2IWY
+         SuD0FNA2jSHe+9geNRJEdhX+5lff1MukjXUSJMzrSedCXwRVXJd3LY6GgM1c+mYd61VR
+         3EMo5yoAsKtnid65GOLPLv2Wi423lVm4mJSSrrTSanhD7fqfd8Kd6oG8hymjZ/tKRdTU
+         vjIk054+vjW+D1364To2LyfN1eSxdMOXatLzlvhGPwKP6Q4zY3qDhCZnuh6o5tHhKk4Z
+         gGtb8s+itiOJTlsU0eibkWRrFsuD11WieDrucDWfJh1EhQZKu+1ozPJN34nIHDS54/s8
+         SBww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761929739; x=1762534539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x2PgiNfT03NpyavbwhUGeVVJeE0kuxyW1JyOtkY0SVg=;
+        b=OdayZl05d2f7sPJjqFBeAYoN4hitGJD/ZSMjQ649G0OS5A3MJbzcL/vnndpnAA6t27
+         TJtAxGTdPqQRGdgB4TewvLlFeaM1ggou7Sa5CoDB7ss3+5kbc6qaZg7A4HYqbT22/ia/
+         rQ6DjRaDuPZRoHMs7OeNY5t7fH9F9g9q04KfiLLwuZP1V9zB1hoNodUvhSYCcFuYVUq2
+         w43VuJw4zl75KppSenNvvMdwp0LDDpb66s0Af0xCncDJG24LXyCAGiQSPokh12Ka7qY5
+         vnOSROyv2eSDU8ZOLVWNbTcMwW7XkZzaRmZZzNErmhbWJ60dcbZgpl0nxuUBdFVvqqOz
+         ME4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXfUhS0PZ/dXS/FnAblvy8Yz/HiPZ0QUpmuMNziid4jBZY3dOtRcrYuOHkA9Zhgy4U6QLi6GBD7Cwe7Rg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzBQc//r5N1ZNrckR4TvdWACUNpuANkLZEeDjgG+nGeKHknLAX
+	InP5+mRTo8LzdZLUO1zdQQe0zfDbpQBuAU9CUeDtf9Wli3FL54hvCLzgX/L2n7jBe05zO231lHT
+	M65eNx3ncppNlso7MZBPD6d5eYvimpT1timSqgCy5nmgPGEVPNiyM3APVoKLuug==
+X-Gm-Gg: ASbGncuHL7b6/asFOgYMbvQ60cgkMS+74yNwNQ1K+Lz1/mUIWuSka5MStX6V1iqXcHe
+	QGfWmsfENleD5zfclNIGHsrkynM2gIo2bQzkPjugmWzxtla7SAiwBfC5HfnK90QIs2TH3cfarLy
+	+Eg1g/vvcHCfu2uWLQStdbyUhHzjsgagb+AqP0uQ6yWwM4k002xDt9VA4dhmBTFU6Af1q/eoALD
+	5GeTpl+ZCNSX/c9BlkHyAxGej8vwbDee6Mo4OE1R7rfWKCPu5pXIMvbOA88k59VY7Nsc2LVgg/w
+	l0jTl0AXvX0oUu9Q159+pkkqKlb1rZhlkn7xQw==
+X-Google-Smtp-Source: AGHT+IEJfbaI9O8W6tmM+KPDJeLSPU2pRJ3c2ODobEUnDZqE66zG4QbCQYq9QXR0kiOjpXSXTYj8u13C633eOGbldWU=
+X-Received: by 2002:a05:622a:e:b0:4ed:2f7d:bd46 with SMTP id
+ d75a77b69052e-4ed338c4dc1mr6590451cf.13.1761929738538; Fri, 31 Oct 2025
+ 09:55:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 9/9] x86/cpu: Enable LASS by default during CPU
- initialization
-To: David Laight <david.laight.linux@gmail.com>,
- Sohil Mehta <sohil.mehta@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- the arch/x86 maintainers <x86@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ard Biesheuvel <ardb@kernel.org>, "Kirill A . Shutemov" <kas@kernel.org>,
- Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Sean Christopherson <seanjc@google.com>,
- Rick P Edgecombe <rick.p.edgecombe@intel.com>,
- Vegard Nossum <vegard.nossum@oracle.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Randy Dunlap <rdunlap@infradead.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-doc@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-efi@vger.kernel.org
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-10-sohil.mehta@intel.com>
- <789ADBB5-F7AC-4B08-B343-F23260FB8FBC@zytor.com>
- <13681100-ddc3-4ef0-bd13-744282324ff1@app.fastmail.com>
- <d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com>
- <20251030211318.74d90c3f@pumpkin>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251030211318.74d90c3f@pumpkin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251001025442.427697-1-chao.gao@intel.com>
+In-Reply-To: <20251001025442.427697-1-chao.gao@intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Fri, 31 Oct 2025 11:55:27 -0500
+X-Gm-Features: AWmQ_bkPE5YTmxbtr1eAnNNvO5lcJ4CGGWinWFilxPEZHxRyXdDTaeKu0umSWCY
+Message-ID: <CAAhR5DF74PhX_YpMebbqnZOJom-sR=1s7xbhrk5WCTS8jn7U7Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	reinette.chatre@intel.com, ira.weiny@intel.com, kai.huang@intel.com, 
+	dan.j.williams@intel.com, yilun.xu@linux.intel.com, vannapurve@google.com, 
+	paulmck@kernel.org, nik.borisov@suse.com, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/25 14:13, David Laight wrote:
->> Unfortunately, CONFIG_X86_VSYSCALL_EMULATION defaults to y. Also, the
->> default Vsyscall mode is XONLY. So even if vsyscalls are deprecated,
->> there is a non-zero possibility someone would complain about it.
-> Presumably a command line parameter could be used to disable LASS
-> in order to enable vsyscall emulation?
-> 
-> That might let LASS be enabled by default.
+On Tue, Sep 30, 2025 at 9:54=E2=80=AFPM Chao Gao <chao.gao@intel.com> wrote=
+:
+>
+> Changelog:
+> v1->v2:
+>  - Replace tdx subsystem with a "tdx-host" device implementation
+>  - Reorder patches to reduce reviewer's mental "list of things to look ou=
+t for"
+>  - Replace "TD-Preserving update" with "runtime TDX Module Update"
+>  - Drop the temporary "td_preserving_ready" flag
+>  - Move low-level SEAMCALL helpers to its own header file
+>  - Don't create a new, inferior framework to save/restore VMCS
+>  - Minor cleanups and changelog improvements for clarity and consistency
+>  - Collect review tags
+>  - I didn't add Sagi Shahar's Tested-by due to various changes/reorder et=
+c.
+>  - v1: https://lore.kernel.org/kvm/20250523095322.88774-1-chao.gao@intel.=
+com/
+>
+> Hi Reviewers,
+>
+> This series adds support for runtime TDX Module updates that preserve
+> running TDX guests.
+>
+> =3D=3D Background =3D=3D
+>
+> Intel TDX isolates Trusted Domains (TDs), or confidential guests, from th=
+e
+> host. A key component of Intel TDX is the TDX Module, which enforces
+> security policies to protect the memory and CPU states of TDs from the
+> host. However, the TDX Module is software that require updates.
+>
+> =3D=3D Problems =3D=3D
+>
+> Currently, the TDX Module is loaded by the BIOS at boot time, and the onl=
+y
+> way to update it is through a reboot, which results in significant system
+> downtime. Users expect the TDX Module to be updatable at runtime without
+> disrupting TDX guests.
+>
+> =3D=3D Solution =3D=3D
+>
+> On TDX platforms, P-SEAMLDR[1] is a component within the protected SEAM
+> range. It is loaded by the BIOS and provides the host with functions to
+> install a TDX Module at runtime.
+>
+> Implement a TDX Module update facility via the fw_upload mechanism. Given
+> that there is variability in which module update to load based on feature=
+s,
+> fix levels, and potentially reloading the same version for error recovery
+> scenarios, the explicit userspace chosen payload flexibility of fw_upload
+> is attractive.
+>
+> This design allows the kernel to accept a bitstream instead of loading a
+> named file from the filesystem, as the module selection and policy
+> enforcement for TDX Modules are quite complex (see more in patch 8). By
+> doing so, much of this complexity is shifted out of the kernel. The kerne=
+l
+> need to expose information, such as the TDX Module version, to userspace.
+> Userspace must understand the TDX Module versioning scheme and update
+> policy to select the appropriate TDX Module (see "TDX Module Versioning"
+> below).
+>
+> In the unlikely event the update fails, for example userspace picks an
+> incompatible update image, or the image is otherwise corrupted, all TDs
+> will experience SEAMCALL failures and be killed. The recovery of TD
+> operation from that event requires a reboot.
+>
+> Given there is no mechanism to quiesce SEAMCALLs, the TDs themselves must
+> pause execution over an update. The most straightforward way to meet the
+> 'pause TDs while update executes' constraint is to run the update in
+> stop_machine() context. All other evaluated solutions export more
+> complexity to KVM, or exports more fragility to userspace.
+>
+> =3D=3D How to test this series =3D=3D
+>
+> This series can be tested using the userspace tool that is able to
+> select the appropriate TDX module and install it via the interfaces
+> exposed by this series:
+>
+>  # git clone https://github.com/intel/tdx-module-binaries
+>  # cd tdx-module-binaries
+>  # python version_select_and_load.py --update
+>
+> =3D=3D Base commit =3D=3D
+>
+> This series is based on:
+> https://git.kernel.org/pub/scm/linux/kernel/git/devsec/tsm.git/commit/?h=
+=3Dtdx&id=3D9332e088937f
 
-Sure... There are a million ways to skin this cat. That's the problem.
+Can you clarify which patches are needed from this tree? Is it just
+"coco/tdx-host: Introduce a "tdx_host" device" or is this series also
+depends on other patches?
 
-The compile switch is the smallest amount of code with the fewest
-implications to ABI or documentation that we can muster. All I'm saying
-is we should _start_ here, not _end_ here.
+More specifically, does this series depend on "Move VMXON/VMXOFF
+handling from KVM to CPU lifecycle"?
 
-If anyone agrees with that approach, acks would be appreciated.
+>
+> and the TDX Module version series at:
+> https://lore.kernel.org/linux-coco/20251001022309.277238-1-chao.gao@intel=
+.com
+>
+>
+> =3D=3D Other information relevant to Runtime TDX Module updates =3D=3D
+>
+> =3D=3D=3D TDX Module versioning =3D=3D=3D
+>
+> Each TDX Module is assigned a version number x.y.z, where x represents th=
+e
+> "major" version, y the "minor" version, and z the "update" version.
+>
+> Runtime TDX Module updates are restricted to Z-stream releases.
+>
+> Note that Z-stream releases do not necessarily guarantee compatibility. A
+> new release may not be compatible with all previous versions. To address =
+this,
+> Intel provides a separate file containing compatibility information, whic=
+h
+> specifies the minimum module version required for a particular update. Th=
+is
+> information is referenced by the tool to determine if two modules are
+> compatible.
+>
+> =3D=3D=3D TCB Stability =3D=3D=3D
+>
+> Updates change the TCB as viewed by attestation reports. In TDX there is
+> a distinction between launch-time version and current version where
+> runtime TDX Module updates cause that latter version number to change,
+> subject to Z-stream constraints.
+>
+> The concern that a malicious host may attack confidential VMs by loading
+> insecure updates was addressed by Alex in [3]. Similarly, the scenario
+> where some "theoretical paranoid tenant" in the cloud wants to audit
+> updates and stop trusting the host after updates until audit completion
+> was also addressed in [4]. Users not in the cloud control the host machin=
+e
+> and can manage updates themselves, so they don't have these concerns.
+>
+> See more about the implications of current TCB version changes in
+> attestation as summarized by Dave in [5].
+>
+> =3D=3D=3D TDX Module Distribution Model =3D=3D=3D
+>
+> At a high level, Intel publishes all TDX Modules on the github [2], along
+> with a mapping_file.json which documents the compatibility information
+> about each TDX Module and a userspace tool to install the TDX Module. OS
+> vendors can package these modules and distribute them. Administrators
+> install the package and use the tool to select the appropriate TDX Module
+> and install it via the interfaces exposed by this series.
+>
+> [1]: https://cdrdv2.intel.com/v1/dl/getContent/733584
+> [2]: https://github.com/intel/tdx-module-binaries
+> [3]: https://lore.kernel.org/all/665c5ae0-4b7c-4852-8995-255adf7b3a2f@ama=
+zon.com/
+> [4]: https://lore.kernel.org/all/5d1da767-491b-4077-b472-2cc3d73246d6@ama=
+zon.com/
+> [5]: https://lore.kernel.org/all/94d6047e-3b7c-4bc1-819c-85c16ff85abf@int=
+el.com/
+>
+>
+> Chao Gao (20):
+>   x86/virt/tdx: Print SEAMCALL leaf numbers in decimal
+>   x86/virt/tdx: Use %# prefix for hex values in SEAMCALL error messages
+>   x86/virt/tdx: Prepare to support P-SEAMLDR SEAMCALLs
+>   x86/virt/seamldr: Introduce a wrapper for P-SEAMLDR SEAMCALLs
+>   x86/virt/seamldr: Retrieve P-SEAMLDR information
+>   coco/tdx-host: Expose P-SEAMLDR information via sysfs
+>   coco/tdx-host: Implement FW_UPLOAD sysfs ABI for TDX Module updates
+>   x86/virt/seamldr: Block TDX Module updates if any CPU is offline
+>   x86/virt/seamldr: Verify availability of slots for TDX Module updates
+>   x86/virt/seamldr: Allocate and populate a module update request
+>   x86/virt/seamldr: Introduce skeleton for TDX Module updates
+>   x86/virt/seamldr: Abort updates if errors occurred midway
+>   x86/virt/seamldr: Shut down the current TDX module
+>   x86/virt/tdx: Reset software states after TDX module shutdown
+>   x86/virt/seamldr: Handle TDX Module update failures
+>   x86/virt/seamldr: Install a new TDX Module
+>   x86/virt/seamldr: Do TDX per-CPU initialization after updates
+>   x86/virt/tdx: Establish contexts for the new TDX Module
+>   x86/virt/tdx: Update tdx_sysinfo and check features post-update
+>   x86/virt/tdx: Enable TDX Module runtime updates
+>
+> Kai Huang (1):
+>   x86/virt/tdx: Move low level SEAMCALL helpers out of <asm/tdx.h>
+>
+>  .../ABI/testing/sysfs-devices-faux-tdx-host   |  25 ++
+>  arch/x86/Kconfig                              |  12 +
+>  arch/x86/include/asm/seamldr.h                |  29 ++
+>  arch/x86/include/asm/tdx.h                    |  38 +-
+>  arch/x86/include/asm/tdx_global_metadata.h    |   5 +
+>  arch/x86/virt/vmx/tdx/Makefile                |   1 +
+>  arch/x86/virt/vmx/tdx/seamcall.h              | 106 +++++
+>  arch/x86/virt/vmx/tdx/seamldr.c               | 382 ++++++++++++++++++
+>  arch/x86/virt/vmx/tdx/tdx.c                   | 149 ++++---
+>  arch/x86/virt/vmx/tdx/tdx.h                   |  12 +-
+>  arch/x86/virt/vmx/tdx/tdx_global_metadata.c   |  13 +
+>  drivers/virt/coco/tdx-host/tdx-host.c         | 189 ++++++++-
+>  12 files changed, 884 insertions(+), 77 deletions(-)
+>  create mode 100644 arch/x86/include/asm/seamldr.h
+>  create mode 100644 arch/x86/virt/vmx/tdx/seamcall.h
+>  create mode 100644 arch/x86/virt/vmx/tdx/seamldr.c
+>
+> --
+> 2.47.3
+>
 
