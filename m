@@ -1,299 +1,196 @@
-Return-Path: <linux-kernel+bounces-879926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49ED7C2469D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:21:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D2CC24682
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6853B4F0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:20:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FA014F1FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABBC33F377;
-	Fri, 31 Oct 2025 10:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA1F33E350;
+	Fri, 31 Oct 2025 10:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OP8Y0iNg"
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KjhSmG07"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F89E33B949
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013B033F38A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905995; cv=none; b=fa79H3NZ24buxGnYeifzidxPn2VpAQFNggV/oUQSidY9nQjcNinijP/BdmS/jqvmaM9TxX0Cq7eAtN4rDrEfjELLO4d9IwmFobLpl62id/aou4HInKl5Nj0Jjvi7uPdWrdqA8kXs6q30V90NMEPIc0K3EAaS2OI69AlFs+kojx0=
+	t=1761905998; cv=none; b=cVQu5Hoag5CExMDI/AHfP4iL9T9PQ3CrVpSVzHTVgq9H0w5qZMSk2ywHWGWj6fciB1bgR9q6ZbDj5YXgjrcT+AfHRwrw5JBFIbdDEaIMZRpXgqyhn9J4jBg/R6fHOhptR+j83lDLLu342U2KPo0uzecgqCi7ogz92kWE4rP66uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905995; c=relaxed/simple;
-	bh=vYEp5LCQLKcZt/AJH9FMShktlCjD0MSMpUC07j93mL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WHQefokuXDsxLmCXXEcx9mw6JycwWuu9HkF2CzGjS/uCgzGGjjJemKW5Apz9EzHv+mZ03ttTdT2/T1/Hnv4JKsyt200X4fQVkwJQ2C0/4SQXo6DKt6LkY2wIq0wUj4iDaqoTzLlssyOT66UJps7OeTveLMOVWWLg4keqsg6OsJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OP8Y0iNg; arc=none smtp.client-ip=74.125.224.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63f945d2060so614401d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761905992; x=1762510792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aPKXKxyxHjncQ9cjShE0Ho84jnqExLGCProdqRHO1kU=;
-        b=OP8Y0iNgHOYlUJu+BQ2U1RvXgGXeCeFpMEtRqFQOshuqjn6lq4aUcdN9BdWM8U8XjG
-         Pm0ay4iWZRmsGDl/yD8x8lgRNhJFDDAFBhSlfkhRKxv87WHHBU/9dzzXPvO1/PqH2G0n
-         B2APsIa/lmc7w/0dRsHf5mitHZasXSPlaKgDcIQdwc+NT4zfdVHWrhNI/YX05+61QRnc
-         JXaNO3kjYL3IPeonQG2FuvJ+EObIGduwLQiA3Ss3gEMSvKR1A6N/o7nyBAW6/Eu2AXF7
-         QkcddyRamLY1kpugY7vJP9LUtOINgTv2z5J8T/Tp1IbxDBVqP0Z43X1dfi/A7Ox5gLlz
-         Wxlg==
+	s=arc-20240116; t=1761905998; c=relaxed/simple;
+	bh=Futz9rPqdcpNZR/dNrHDdyBGLoH2jmV0bTLWGdXsz4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gWjRnKz0eIkfB/wLU7OoEvgv2Cv/cBVwsXM2yQJZgCB/5C03ASIZW7eJtvOsH9ufyVUlc+CCDQpAQUuMgEV9u0oyFovPBeZecq0Hala1IvmaV6OLcRkfEufeuzKZLOMsuiRIKer0ps/t/FjAlWKGhgYT+IK6E78Dvq3zRPNw0tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KjhSmG07; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761905996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OUhdGI6/kAp9JoyXZrueKpHAebmQrRzAuLyMXHq++7U=;
+	b=KjhSmG072+2G7jXf8m+5amgVEH8aIry/bOmDSHpKLPV2Cm6PixfvxZXGCDBBxyTGSWF2q4
+	GjGEaSp3xKH/xhE2W0XapuALPgm5XuBu1BuA3bqD5ZVcV17hW1OZU9xVuJd3eVwYem8bxU
+	1CJXkQFefkXYS2NwZ8qJHW3p3+rUgf0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-266-v25N3dLxOfuCY-jMzD58Lw-1; Fri, 31 Oct 2025 06:19:54 -0400
+X-MC-Unique: v25N3dLxOfuCY-jMzD58Lw-1
+X-Mimecast-MFC-AGG-ID: v25N3dLxOfuCY-jMzD58Lw_1761905993
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-42705afbf19so1184652f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:19:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761905992; x=1762510792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aPKXKxyxHjncQ9cjShE0Ho84jnqExLGCProdqRHO1kU=;
-        b=SeVmAWGCdyVQROx2LrNAdzsWBK02VZCWqMzDSZJU55dnau1mufEOxAvJYa5VD6ptqn
-         l1R/+t637Pgv+dXeKfxd5STrqy1RBHFyhMLAQIo8tA63x53nqKnRewghPm4Mhh7PwrpG
-         n8W7n4t02JlCsVW6pkzt1AuFyjpVL2GlzyUB+4AkfoDLVN0naps1EHYZVB/n72CL5yEB
-         WbQ3j3zDGiYwcwUqzN8Q2qp4G9AOm75xz78lNHwaCa6mdvGY/ZT7T4m9+aGqrz4oDgHo
-         Z/g8pKkAAaYHo9ZtByRXVRcaoGhNcfeNJR4+uKuxEAoI4QG8FIv2cSt2RqNKIZJfHEOv
-         561w==
-X-Forwarded-Encrypted: i=1; AJvYcCVlqo93Mz5dmXRxDvsDfdiAMBfbs9NTiuSQispy+nI+gcPtyS+CG+M480quMwA0/uJOYlrYBAl25VdWbYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIZgTVXWnzqYaxrvILxYGPQ8w+K24ZgqPPoE/n+Xe4sJelAbr4
-	ZIJyQAoRArmZbfh/eYe89BCnDcG6ZMHUEdJ/eyJtRx90OtKR+ttRYwfVk+Js2LQqkyc0Z3UAco7
-	h8nN0nQ1Ohm1ukKqufIIO61Dvk/VA5U6gIfydLoqDIQ==
-X-Gm-Gg: ASbGncuLzKjNTAHEoiWWug8h7LV8PP+DrX4CD/84zeczYJBrac82FR/T5wAnZK9JeZQ
-	FB4AIWMB8C81/IBnKI67rjGLMACy3R4zVSlf6Zh4dDPlbuPXmbdtvlrIc4tey1NfphJ1Llul9FP
-	FNJJ4NyAoRp7eLdQ5b0NkrfyzcvWNOX9iTF666pPA4/Jn49UsRh4reWdUimZ78yusIlEbUikbZP
-	pJgtkYn4oXtSekQE90yPByak+SuUoGONVOYqtLBG5T4gGrkBcCu2gLx7tOtvg==
-X-Google-Smtp-Source: AGHT+IFsTiLTA6cpzlCTzrmxVqWzDKcCRkhAd4TjVbco+5uODr6qAdgcAAlWDTr7vSuTaJZgkuQGUU1CQMg4deAauaI=
-X-Received: by 2002:a05:690c:b88:b0:785:c415:6a8 with SMTP id
- 00721157ae682-786485304f1mr22769367b3.56.1761905991904; Fri, 31 Oct 2025
- 03:19:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761905993; x=1762510793;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OUhdGI6/kAp9JoyXZrueKpHAebmQrRzAuLyMXHq++7U=;
+        b=epN+dosYUhkeWJ1UkN6liKsO1rc+hnWSuFtWpxHVfAH8R6BIZbKYJqqxrygogp87PU
+         ObScnn2JGpXeDBWxXKXY6YQ0Dmy7SrTb2Z7OxW8uj9LX2aMGBlEnxWq9d6oTC7Bc/uTH
+         SmhdM06EUx/JrwPKGX/1rENbFEghqmGnyPqPyoMr2A/1Nai11/tN+mSfITvPvNuDOlVG
+         7fYyrnpj+XZaISZdAdUCGuAcAbJlXWOz/bifqegTCLW+JBeEJ4Am/iO7BhNeD/HV4HrN
+         s2Rk2r2wRQu29i/3mVSkOCT9fB4l9z3S/ZnLALiF0MYnWZ4d2qdMDd/2+AjReU9V112t
+         TaKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV09uykSKRA1+6oviSGMFdvBsXCAVtpvY1joosycSFhZMhs253x+H2QJQbDMuS4beiTCW19FRNZDKeo+M4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7jzZeKCPAS2L6WHRHscA2DxsbvMpYjUujvU2fhqhXy+rvPdPI
+	+50bablQhDRIBf20oCTd3zmSisJm+/XCQlXDHE8Mt01aSdd+a6xRC2okTLRhwlKjCIkTZTSl3H6
+	mnNeFHF0H1uqJKTINCdA9ilFKagnq/mI7Uh9lbyK1vs1xF/aT8UP52aLun1Pl0UC7pNMpPBmeRQ
+	==
+X-Gm-Gg: ASbGncvg7Pfygqd0hgWwdRnwYsZ1docuzvCtELuas0l5m0p2Z7NN1/IJkba1vmUXwTb
+	S+FO8v5Z54QJn7OcvtU++JGwG+Adbq+lHJWiIak4VQ6FKiLjkA/AHPoClbtinfZgSgSlgmQx2y8
+	b38uMLFiz/WVMChujWR1hAfgtlfpzpLTraS7qlfgzopB5Rk/rsz0z+ELXeZGkaJjENk/XzFmZhK
+	ohAY04vLr8knLi5P5nE6PqSRoVg+IHx/IEIr2jCry9pVLHLqaghRXLRztBWZadDcyBPz0neHhGN
+	3rHbn4qlzl1d+qcTQZMdskOe3qJqZr3zro3J5LKAZBQOoFGmo3/CAW+N/D8C4XISt0DpA0xw74f
+	IXZp7zr29S2AHrGbPIId/MUAM0uUU1EggZWCszteyNz/XB8I586ok8NIzwhKkuubCcHvK4EIKeL
+	1FcwPCJDJUehBZyboZhlbyk6P7Y9M=
+X-Received: by 2002:a5d:5d85:0:b0:426:dac0:8ee8 with SMTP id ffacd0b85a97d-429bcd05203mr2998219f8f.10.1761905993324;
+        Fri, 31 Oct 2025 03:19:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8jpSFh3hhPp3PzJX0f48uDqqqBw7iyd7GjZkB/l1xZ2kBNbllkQmlUEXSQLnQvjsz9LvTiQ==
+X-Received: by 2002:a5d:5d85:0:b0:426:dac0:8ee8 with SMTP id ffacd0b85a97d-429bcd05203mr2998195f8f.10.1761905992898;
+        Fri, 31 Oct 2025 03:19:52 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13e0311sm2647741f8f.30.2025.10.31.03.19.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 03:19:52 -0700 (PDT)
+Message-ID: <38f0ff98-3dcd-4dc2-87f1-3ea34bb9935a@redhat.com>
+Date: Fri, 31 Oct 2025 11:19:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-3-ulf.hansson@linaro.org> <CAJZ5v0hPUYoLFs=jZ10a1cX6TE1bmRF7CkBH1Ebejao9Hdfhnw@mail.gmail.com>
- <CAPDyKFrrhw5vMYLEWJ5LRphVzwPwjiU-n=tdbgOtOmFSXGd0GQ@mail.gmail.com>
- <CAJZ5v0g5p-8WrmNQ6-tvTEy50gVjfEMsmXxTK8bmLqafe30jKw@mail.gmail.com>
- <CAPDyKFo+U=oJVxXCDBN_WZLBpkwPgv_=qw96hauAttFnAQuPtw@mail.gmail.com>
- <CAJZ5v0h_OFzmhcKohS3SNWwz_vwpq6frymXSSgFjk_K27ncSTg@mail.gmail.com>
- <CAPDyKFqs_Mn57SxPNy5_e56LuFxx3KkfJfHqgg9_wp77rpn7Pw@mail.gmail.com> <CAJZ5v0jTVZtyV2yeFNpGo4TnZY79CH_fpaSbVq1T9BJ0BohZsg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jTVZtyV2yeFNpGo4TnZY79CH_fpaSbVq1T9BJ0BohZsg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 31 Oct 2025 11:19:15 +0100
-X-Gm-Features: AWmQ_bn_ES3pms530igeilc5LJpLblVGtlMFWIl2LYJGbqgHLcd8baXCa4JRQcs
-Message-ID: <CAPDyKFoPzFqbXo1nD_6r-mW+OYUHSdH+P19ov-0kjb8znLYtYw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pmdomain: Respect the CPU system-wakeup QoS limit
- during s2idle
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm/secretmem: fix use-after-free race in fault
+ handler
+To: Mike Rapoport <rppt@kernel.org>, Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, big-sleep-vuln-reports@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, willy@infradead.org, stable@vger.kernel.org
+References: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
+ <20251031091818.66843-1-lance.yang@linux.dev> <aQSIdCpf-2pJLwAF@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aQSIdCpf-2pJLwAF@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 30 Oct 2025 at 19:11, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Oct 30, 2025 at 4:07=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Thu, 30 Oct 2025 at 15:02, Rafael J. Wysocki <rafael@kernel.org> wro=
-te:
-> > >
-> > > On Thu, Oct 30, 2025 at 1:32=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > > >
-> > > > On Thu, 30 Oct 2025 at 13:23, Rafael J. Wysocki <rafael@kernel.org>=
- wrote:
-> > > > >
-> > > > > On Thu, Oct 30, 2025 at 1:00=E2=80=AFPM Ulf Hansson <ulf.hansson@=
-linaro.org> wrote:
-> > > > > >
-> > > > > > On Thu, 30 Oct 2025 at 11:45, Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> > > > > > >
-> > > > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hans=
-son@linaro.org> wrote:
-> > > > > > > >
-> > > > > > > > A CPU system-wakeup QoS limit may have been requested by us=
-er-space. To
-> > > > > > > > avoid breaking this constraint when entering a low-power st=
-ate during
-> > > > > > > > s2idle through genpd, let's extend the corresponding genpd =
-governor for
-> > > > > > > > CPUs. More precisely, during s2idle let the genpd governor =
-select a
-> > > > > > > > suitable low-power state, by taking into account the QoS li=
-mit.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > > > > ---
-> > > > > > > >
-> > > > > > > > Changes in v2:
-> > > > > > > >         - Limite the change to the genpd governor for CPUs.
-> > > > > > > >
-> > > > > > > > ---
-> > > > > > > >  drivers/pmdomain/core.c     | 10 ++++++++--
-> > > > > > > >  drivers/pmdomain/governor.c | 27 +++++++++++++++++++++++++=
-++
-> > > > > > > >  include/linux/pm_domain.h   |  1 +
-> > > > > > > >  3 files changed, 36 insertions(+), 2 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/cor=
-e.c
-> > > > > > > > index 61c2277c9ce3..4fd546ef0448 100644
-> > > > > > > > --- a/drivers/pmdomain/core.c
-> > > > > > > > +++ b/drivers/pmdomain/core.c
-> > > > > > > > @@ -1425,8 +1425,14 @@ static void genpd_sync_power_off(str=
-uct generic_pm_domain *genpd, bool use_lock,
-> > > > > > > >                         return;
-> > > > > > > >         }
-> > > > > > > >
-> > > > > > > > -       /* Choose the deepest state when suspending */
-> > > > > > > > -       genpd->state_idx =3D genpd->state_count - 1;
-> > > > > > > > +       if (genpd->gov && genpd->gov->system_power_down_ok)=
- {
-> > > > > > > > +               if (!genpd->gov->system_power_down_ok(&genp=
-d->domain))
-> > > > > > > > +                       return;
-> > > > > > > > +       } else {
-> > > > > > > > +               /* Default to the deepest state. */
-> > > > > > > > +               genpd->state_idx =3D genpd->state_count - 1=
-;
-> > > > > > > > +       }
-> > > > > > > > +
-> > > > > > > >         if (_genpd_power_off(genpd, false)) {
-> > > > > > > >                 genpd->states[genpd->state_idx].rejected++;
-> > > > > > > >                 return;
-> > > > > > > > diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain=
-/governor.c
-> > > > > > > > index 39359811a930..bd1b9d66d4a5 100644
-> > > > > > > > --- a/drivers/pmdomain/governor.c
-> > > > > > > > +++ b/drivers/pmdomain/governor.c
-> > > > > > > > @@ -415,9 +415,36 @@ static bool cpu_power_down_ok(struct d=
-ev_pm_domain *pd)
-> > > > > > > >         return false;
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > +static bool cpu_system_power_down_ok(struct dev_pm_domain =
-*pd)
-> > > > > > > > +{
-> > > > > > > > +       s64 constraint_ns =3D cpu_wakeup_latency_qos_limit(=
-) * NSEC_PER_USEC;
-> > > > > > >
-> > > > > > > I'm not sure why genpd needs to take cpu_wakeup_latency_qos_l=
-imit()
-> > > > > > > into account directly.
-> > > > > > >
-> > > > > > > It should be told by cpuidle which state has been selected on=
- the CPU
-> > > > > > > side and it should not go any deeper than that anyway.
-> > > > > >
-> > > > > > For PSCI OS-initiated mode, cpuidle doesn't know about the stat=
-es that
-> > > > > > may be shared among a group of CPUs.
-> > > > > >
-> > > > > > Instead, those states are controlled through the PM domain topo=
-logy by
-> > > > > > genpd and its governor, hence this is needed too.
-> > > > >
-> > > > > All right, but I'd like to understand how all of that works.
-> > > > >
-> > > > > So cpuidle selects a state to enter for the given CPU and then ge=
-npd
-> > > > > is invoked.  It has to take the exit latency of that state into
-> > > > > account, so it doesn't go too deep.  How does it do that?
-> > > >
-> > > > Depending on the state selected, in cpuidle-psci.c we may end up
-> > > > calling __psci_enter_domain_idle_state() (only for the deepest
-> > > > CPU-state).
-> > > >
-> > > > For s2idle this means we call dev_pm_genpd_suspend|resume(), to man=
-age
-> > > > the reference counting of the PM domains via genpd. This then may l=
-ead
-> > > > to that genpd_sync_power_off() tries to select a state by calling t=
-he
-> > > > new governor function above.
-> > > >
-> > > > Did that make sense?
-> > >
-> > > So IIUC this will only happen if the deepest idle state is selected i=
-n
-> > > which case the cpu_wakeup_latency_qos_limit() value is greater than
-> > > the exit latency of that state, but it may still need to be taken int=
-o
-> > > account when selecting the domain state.  However, this means that th=
-e
-> >
-> > Correct.
-> >
-> > > exit latency number for the deepest idle state is too low (it should
-> > > represent the worst-case exit latency which means the maximum domain
-> > > exit latency in this particular case).
-> >
-> > Yes, from the cpuidle state-selection point of view, but how is that a =
-problem?
->
-> It is confusing.  Otherwise, for s2idle, I guess it is not a big deal.
->
-> I guess what happens is that genpd has a range of states with
-> different latency values to choose from and it is not practical to
-> expose all of them as CPU idle states, so you end up exposing just one
-> of them with the lowest latency value to allow cpuidle to involve
-> genpd often enough.
+On 31.10.25 10:59, Mike Rapoport wrote:
+> On Fri, Oct 31, 2025 at 05:18:18PM +0800, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> The error path in secretmem_fault() frees a folio before restoring its
+>> direct map status, which is a race leading to a panic.
+> 
+> Let's use the issue description from the report:
+> 
+> When a page fault occurs in a secret memory file created with
+> `memfd_secret(2)`, the kernel will allocate a new folio for it, mark
+> the underlying page as not-present in the direct map, and add it to
+> the file mapping.
+> 
+> If two tasks cause a fault in the same page concurrently, both could
+> end up allocating a folio and removing the page from the direct map,
+> but only one would succeed in adding the folio to the file
+> mapping. The task that failed undoes the effects of its attempt by (a)
+> freeing the folio again and (b) putting the page back into the direct
+> map. However, by doing these two operations in this order, the page
+> becomes available to the allocator again before it is placed back in
+> the direct mapping.
+> 
+> If another task attempts to allocate the page between (a) and (b), and
+> the kernel tries to access it via the direct map, it would result in a
+> supervisor not-present page fault.
+>   
+>> Fix the ordering to restore the map before the folio is freed.
+> 
+> ... restore the direct map
+> 
+> With these changes
+> 
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Yes, the states that are CPU specific are exposed to CPU-idle.
+Fully agreed
 
-The states that are shared with other CPUs are managed by genpd,
-because those need reference counting. Not even limited to CPUs.
+Acked-by: David Hildenbrand <david@redhat.com>
 
->
-> If that's the case, I'd make a note of that somewhere if I were you,
-> or people will routinely get confused by it.
+-- 
+Cheers
 
-Documentation is always nice.
+David / dhildenb
 
-We have DT docs and the PSCI spec, but we lack proper documentation of
-the whole genpd interface. Actually, I have started working on
-documentation for genpd, but haven't reached the point of submitting a
-patch for it.
-
->
-> > If the genpd-governor doesn't find a suitable "domain-idle-state", we
-> > fallback to using the one cpuidle selected.
-> >
-> > >
-> > > Moreover, it looks like the "runtime" cpuidle has the same problem, d=
-oesn't it?
-> >
-> > It works in a very similar way, but I fail to understand why you think
-> > there is a problem.
->
-> There is a problem because it may violate a "runtime" latency constraint.
->
-> Say you expose 2 CPU idle states, a shallow one and a genpd one.  The
-> advertised exit latency of the genpd state is X and the current
-> latency constraint is Y > X.  The genpd state is selected and genpd
-> doesn't look at the cpuidle_governor_latency_req() return value, so it
-> chooses a real state with exit latency Z > Y.
->
-> To a minimum, genpd should be made aware of
-> cpuidle_governor_latency_req(), but even then cpuidle governors take
-> exit latency into consideration in their computations, so things may
-> get confused somewhat.
-
-Please have a look at cpu_power_down_ok(), which is the function that
-runs to select the domain-idle-state. It does take the constraints
-into account during runtime, even it doesn't call
-cpuidle_governor_latency_req() explicitly.
-
-Kind regards
-Uffe
 
