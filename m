@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-880919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCBC3C26DF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:12:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04C0C26DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38EBA4E9D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3DD54223F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900803271E8;
-	Fri, 31 Oct 2025 20:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26ED32573D;
+	Fri, 31 Oct 2025 20:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pT5YBr7v"
-Received: from sonic314-20.consmr.mail.gq1.yahoo.com (sonic314-20.consmr.mail.gq1.yahoo.com [98.137.69.83])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zG+OIw9J"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FC331B83B
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246D4325710
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761941543; cv=none; b=CwnrhRDKiIwomSHLgguPw8Le9IMzKU75CjRs/ab9dixKs39Wq6NFbTILOFlZRLPb9uteqs4muS6WijNEwBpcI36qJ6O183egAKwomQx1ewxIGbxEmc5JGpkGDZVu+GBppYU4XdFEFJ2enxy5udr86XIQ1I5anYOwM1XsL+SC+FQ=
+	t=1761940997; cv=none; b=SZXChRT5ldDyUlQKHrsRcnIwQ3Z1w9iaDxvz0UzatH+g+rd+2Mw9iIVWzvCC6WE7SSrK/HYnJW+fcjOrZ/+EshMETFIKPwvGxfACAYnuGD8RK1FGVti1/zrKpR/LboltOTrc4kJQJCXc9U+ps2e7UlwMpxnHo5GnynK064J8Sao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761941543; c=relaxed/simple;
-	bh=zShKxfP0nVEMYim+rC7RNh4h8Uy6aeRNwb1snK7E9FM=;
+	s=arc-20240116; t=1761940997; c=relaxed/simple;
+	bh=pekSXNuOJMyQ4q/03RRiUcweDeleMd9ySR1swHqoG2c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k7Ovo8IF0aByZ4p0hYE2JDyVwfIheoDGzXTNpSfRjVtfaAUOTMCQnMABvOe6MRmiPD9H8Y1BMxxzde2Bc4hV1EgcjFT9tZ7pQjPWEPnqTfiOYy3c09VRc53xzAAwZSuKdtHkjjIbmj4/RFufM93DjCUwk7BAz1ZOixuiBbsO5Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pT5YBr7v; arc=none smtp.client-ip=98.137.69.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761941535; bh=BOJ5Jw7QZ2Hwk9e5yvlRJo3M6jwqiPaySJ51gXkIEA4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=pT5YBr7vlLrqdrzfgZEuXmRQYsYqrmLG5nHRnOeyPJccxyhIuKf5DaREGt06Gg6YEOfwi36G91mfyhsoDcFHjGKaALb/vU0K77VzWQxCiRfd0yC5NRKI77VKzLoWijGCVf56eax5s8Rk3H99SUr+jdmdnKEHh+Y9GFDZpkfaMCQePJSkEMB4FYbBThkB6D31ECFIplyTKag6g7NBxfFCAZkGdU1QGWpdn+uFcokimb9UBfY0UlGKT4sNcm8hKI++khHjO9C5/OV28x4tLH5+dTyAfE4MjjUyzl8sF8FVTx3bSuVtJkvCWdaxpBFNS+/fzdQ7X9LngC22QSjUjGAczw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761941535; bh=ay68o+8OQSrVhTr3aKx/RY6x292PzPE+i9uK2zOQIpA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=feskGi+TeIT4BsrmqZL+zp+IuW+kF5XpfRvFBFvT2H06c6xCbge5ShygxkGhsi4e6MbgOBJGyatRBTRKmpPFYu4em7SOq24xZIl1UO/12cUV1wRbacpvybD4WDiuvzhlxBVs9zYldSLJ6+vRZ3dvV6CEniKQ9Au1d9HrS7b9SLRLCyWhULgeNnd5rSIu4vPtiCltIhYC4xxaQZi0nj4F8AoreSv0wU8XConkRsTyWMY2cYPNS9DBqLB14DM3OO1Mz74HHRXcV8++9Ht/AD6bUcY2GGmGa8YI7GuQhe/q2Q86482SeUfUcsWdnhpn6HJZljjTNv+Zlp7ex78Ra+VS1A==
-X-YMail-OSG: i5zodQ4VM1kZF8iwGb2vMiF.eay8FlyGapXXFu9sBOtutZnUc27RCNIt1yAbBPT
- eYJY4fXFg2tU06wW1Kzk1.EPVTGfl8Nf7DHjw3UrqEVQtjQx40Q3YsaVdrmCc61hUsOIABRcJtMT
- s9FB73Zz55X_Qn_C4SGpXAKrZcaPMwDQFzCWxEu4dJ27EAsc4UNQ2QLPGYQmMa5x0SWam5YjOAU6
- hwRA1zTkTHGv.TTT6Mm1vP2s9Szp4SJPW9Smwz3idbwvrB0WDfFus06o7JEeG5SAmrDt_xEI4wAd
- ei6D0Ym6JV.A8W__PJai890JQUvGraPj6VEkquHldVVge6FIHsYUOhFVU4sWN3rnN5ZEHbyfkqty
- mfkl0yYVwXwQYDOdZg8eAWpt.T7CMgHQcW2svAIYdzcKH3H3Hrb6OGgdjZ8O7VjYPB_J6C1ntvc6
- oJc7zZQzHZRlnHUlRZmAJrY7xGIuyQ8PYNWZRfPpiWLE.N.TkwfOsK9rr.2R0qQogaOC8V7hSneG
- gr93WUeF.dG8TxUQhZ1W6rV2b0HDb97qAYMTFobXoFySNYsylyTtdJR._UrEOwgyepWQLjOxwObw
- TROvUp69vhalCtdD1BCjHtR2LW5Jsv1.RjSSnorkErw8zOXy4v.oja5MtlR9T0OU3IVgUxDbFn3w
- 5CPiPxFcB9HGMKJvRgm.M6w8iq07OFJlK_S0YEdev5Tbs4l0t88fkOek9Jw9Wyo46nqUZ9SqnPhN
- xA_lAe.BL.OvSjykC3uTtGJLab9XntTpMrUEK2330Tq5Eit5WjWxuktUX_lUJanb6.ILFVd3xjE3
- 6dI2fnhFqyvvif.eT7zmr10kwuqidT6sE8NSyggts7jcOGbPOyZCj0IpeUImEwNO1pgQ5CeaFt0G
- smrNwJtqtP5IWtE3CM6c7DW8HR8c6wvhQ6cFbWNcZ9lpzl053lh2lOZ9OaRoRHjReHWYULnjKVgj
- mA3ZsIzB9Q3jneyWa4kKz8t9EZ.T56dbdtMD.ca2KVIb5B1rHWHT61qNCZ71A5hI95J661e.xUqb
- bZpfokGwpZdQvLqBlQMojrE5c8x.GFipmtboZHxZjFWo4VXg2Hv3r2Qr7EORTw_k_U_ZfV2vPtsC
- Fv7jYtp5GMHe5LL.oSnW6lSyoBIXSbI.seZJtBfZ6Ml_WQLHQeSV8rRufQZaBqHyHpJw7DHN3vTx
- lTpGgBAD7sK2jyaC9yTRpsUYROrV78OweE08YuUQkBPzmZIHFn3WSo_lFFnvThJriN_M26c9f8EU
- Sv.TYE.M9.Nugk7DwGzI1D7udctRkh3IkqWlwzUSyBX5IoBVsHuOfeVG0yimEPa2caYA2WKjaQ.M
- GtXvpZ9Y2mbUpzF26TxGog4llm9cYD2OOb4X.KbCFb_56mbSgpD34HMckU67Dt5dnZ9UhNbKbK_b
- x8BwMq8DpChmvg3Ay2TsnR8R1Vel2Ya8porV3BuOEzDHHyskEypjuaeRwQrQD57G8NziIXh.fnpR
- VekNsZ_FOFrryqCJnXFS2DjYKR337k6LPnW04hmeij7LbDtpP3lXiYawiP4l8lgPq7n3Cta01NCS
- uOgnpGyDllv6cjS_jUKeOLmhsiAQIXMeJAm2HzOZF9ZF7Jt0tiz7h6Oh15ZwV3EFVy0pz8LhNdkm
- W6NbURv5oS9QW8YSEUV.3hMzkoWZqLolGEqABiC17k3Gqe.gFi1GcJBxP0c1OSTSHWUQFFtMNEeK
- YiM2fdhl4bafUaggGx_VFtCr8G0hx3NAQ1smZosF_5wCoxcLqgoXxWTZMv89mb7SQL72QawEzk5U
- 9HRgjcyWeN3bEPze6ll9p98VtsfQSvZftc7Wij_bozyWQjth_QiN0Ha.5kPPEz1QZGSgy5OTUZ2W
- KOIi9FFsRHNZAAky39q8F_yoY5Knsdmmh3xikNV0q0hS0bLzz9vRibzdl_a4WebMULZIMD.xrzKn
- fM3rsQ38Q0Muz3alVeVcytdrDwhgSUqbxBOhNlM70jz7xt4CUv36iLSgbn5CGz2qPGwIQPSaVDrj
- b2SAyCN.eZ9NiJfcZTC4lU92ltsl9n4bI1iV6ARRZ1ug2dZHtQ1ffO3lFL0Eto1Yur9YU14i57Ry
- bsXz5dTWnfJQMyN0FOA_6hf4ThW78gmDMXvLBEZ34tHqiNic0RaKNnF_cTtr9klYWWwQKeE7IPSX
- U6Az1mlwVowgUezrnRTyQVEv7Ul7HTvOUZfvnlQEUT0Uq4VCHKjVDk8MXbUMc0JJ0gVZ.WaNC0C_
- 2IEUIE3gUgP6nBPsNtaHO1VxAxQrZ1cQH01wNQQJpFcp3UyRXfdB906n402KPL6FJFFtpv2R0hej
- LPJtxDjOeEthk
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 1aa3a47d-2071-4549-b0bb-ab07f69b22cc
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.gq1.yahoo.com with HTTP; Fri, 31 Oct 2025 20:12:15 +0000
-Received: by hermes--production-ir2-5fcfdd8d7f-72pzv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 047a24e14e331714b0dc96afdb1dc439;
-          Fri, 31 Oct 2025 20:02:02 +0000 (UTC)
-Message-ID: <939c78fc-ea90-4e5d-a9b1-e750dd6b4e25@yahoo.com>
-Date: Fri, 31 Oct 2025 21:01:56 +0100
+	 In-Reply-To:Content-Type; b=n8KisMu4jQ234Z49thisrZCBwtUF3L+4Smm4XeZIOhcHo6XCBKr1W5p2ut2taQ7FY++6/SL9r+30fVJzP8Ur/k3rxKYTswukj60MjsUtzITn5sM6fab6CzLbKQFRRSSOZEPcEyhvF+mSi7Si6cZbO2SyVsez8dPTNS1tvnwEXP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zG+OIw9J; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429babfccd9so2099286f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761940992; x=1762545792; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xFMVGK4JZfy5QeK8e6Y4XSDkgKnmVKBnb6mic7gpxPA=;
+        b=zG+OIw9JX/g+K8YvO1AnHc8FdFTEuUiURKYFBVHHVHT+E9H6fF5VuEVJKZVUW1ka1M
+         xVEitGOnOod8nts9esNXBYZvnUMM/kMs5Kno5FGMJ+RxNBAINf751mVtg57uVfjbx/cO
+         Xjv0cvz///XNiihUbTjBmTpkfe3i/nlmd8hIVTbYk/DhJjV7Fi5JqhMiMy7yynGnVsm4
+         HYsPH/qIWuazqK1TC+IUwtPCbQIskeQbqphyMD/oDegNE3Mze/ipw9zP/HbrRS6uzzKK
+         JxByuOjexKxXgZb0+H6Ov1SsTKqB0VMTvHBs6g+LhAXZuEB7wYKgegwhqyLmEnEZC7Jg
+         3OSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761940992; x=1762545792;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xFMVGK4JZfy5QeK8e6Y4XSDkgKnmVKBnb6mic7gpxPA=;
+        b=E1abZV9uj0JDXz0o9VRWKY6N6iJePrsqgDmUDLl/8+ofim8jojy8oilKFy9FK5tFXm
+         ft1tI6ICogyHN3TiuoGw8dOH6NmVntR8sySR1+R0ZG7YaVFlEl7EHSTxzifze2OKBKjf
+         CAoLMtJamNBXh4a3CkQfppi/abUwZ4R9Cwitb9yaUpaFsDqsFr+kImjYazTj6a8pON7M
+         m4j0RSJRtj2OnjutN/uXZK4MqrOEQrjXN/A2gY0qWIZMWafE3APlXcy2oPoJ/VvX7qlQ
+         yUQZFLNP9eVYHhOdw05y6Cc54qvUmO7kfrwiVzZreizt1nicF/QoGDb9CEHt+Icmn7t9
+         0FzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhb84bsOd7kajcbHXC5O34FX6oOPRVNSkeqTjZi71Q9Uxsjewwm8tj+de1Ef44z8lBK52k6aIVBs1Jsk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ1RWwDFwJs6Q9uunMjnGP/syquNg3+ezBsHGpRiDHeaBrwmvV
+	Sgf+OMB3BvoUbJ+0i1GIXj2M1BFr+s84denNKfdSZ1sZt3s+4XTZ5gRUgVd6ldDBrgw=
+X-Gm-Gg: ASbGncuzhhCjy8hrgWyWWQra1DoXEqvTGfhesrxxTDkvXLtYvoWSSwn0Pp3ZQN1SNBh
+	PgSZ/UoOPhjPAxNmCSK0d9FRpONlw+ssFtDELUkvPx2QIsPoo6JxLkXp1sfm/r2TczenCP+5zVL
+	PFY1f+I83OPi4Hq3dNczODIa/nqpVLO09gh8vV4XugB8Ka4AxjIGmXhyXSAl+qa9ckE5H7+cpEr
+	Iobjb9A/iam3LALGkrho6S5diOTqy2g1YOPew7M/XsRcHNS64VI9tUF4QRQzK8NwyBNrd2oc3SX
+	Gxe9zXVps14vNFv+e7ticOne8C9+Pc1R54exQAN+uunxg1v9FdwFDPPL8ruan/w2rQm7jJYJnv9
+	SVLU09lSM7ziMHFou8jU+8nONQYLUZAgXDRVH+WRnohNqni5ihXGD6XDsoqbnRLqPWr9qrZNMID
+	sqG04J2FfQNG8mXb+D6tQOm5a5a0dYqernotLVPD8fHKUQ/1Upmzcs
+X-Google-Smtp-Source: AGHT+IFoDMNezZ2FtdDg+VeeaZkZr+rjEweVUyAajc2RHfvBBmHoP8hagvjjFPsfAx8iIgtKBiyJ6A==
+X-Received: by 2002:a5d:5d11:0:b0:427:697:c2db with SMTP id ffacd0b85a97d-429bd6860f9mr4454371f8f.20.1761940992311;
+        Fri, 31 Oct 2025 13:03:12 -0700 (PDT)
+Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fc524ddsm27384415e9.7.2025.10.31.13.03.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 13:03:11 -0700 (PDT)
+Message-ID: <3c35c36d-c116-4a1d-91c8-ae1ee2e1f840@linaro.org>
+Date: Fri, 31 Oct 2025 20:03:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,334 +82,257 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: af_unix: Add tests for ECONNRESET and EOF
- semantics
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: "=David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- David Hunter <david.hunter.linux@gmail.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251025190256.11352-1-adelodunolaoluwa.ref@yahoo.com>
- <20251025190256.11352-1-adelodunolaoluwa@yahoo.com>
- <CAAVpQUAbDfaiAZ_NCppGE5vsafWoU7V1xvnqtQQM44cwv6jHsA@mail.gmail.com>
- <7c4070ed-1702-4288-90c6-7edb90468718@yahoo.com>
- <CAAVpQUAT8CVwQfSXq+P78kgPVy8gyD9thEgBcAz45Jpxh=1smw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] media: dt-bindings: Add CAMSS device for Kaanapali
+To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251030-add-support-for-camss-on-kaanapali-v5-0-f8e12bea3d02@oss.qualcomm.com>
+ <20251030-add-support-for-camss-on-kaanapali-v5-2-f8e12bea3d02@oss.qualcomm.com>
+ <631e4da1-92a0-4d44-b92e-bdcc56196c26@linaro.org>
+ <e9da04ab-5119-4bfd-a25c-50e7b2ef05d3@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-In-Reply-To: <CAAVpQUAT8CVwQfSXq+P78kgPVy8gyD9thEgBcAz45Jpxh=1smw@mail.gmail.com>
+In-Reply-To: <e9da04ab-5119-4bfd-a25c-50e7b2ef05d3@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 10/31/25 20:41, Kuniyuki Iwashima wrote:
-> On Thu, Oct 30, 2025 at 6:45 AM Sunday Adelodun
-> <adelodunolaoluwa@yahoo.com> wrote:
->> On 10/28/25 19:28, Kuniyuki Iwashima wrote:
->>> On Sat, Oct 25, 2025 at 12:03 PM Sunday Adelodun
->>> <adelodunolaoluwa@yahoo.com> wrote:
->>>> Add selftests to verify and document Linux’s intended behaviour for
->>>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
->>>> The tests cover:
->>>>
->>>>     1. EOF returned when a SOCK_STREAM peer closes normally.
->>>>     2. ECONNRESET returned when a SOCK_STREAM peer closes with unread data.
->>>>     3. SOCK_DGRAM sockets not returning ECONNRESET on peer close.
->>>>
->>>> This follows up on review feedback suggesting a selftest to clarify
->>>> Linux’s semantics.
->>>>
->>>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
->>>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
->>>> ---
->>>> Changelog:
->>>>
->>>> Changes made from v1:
->>>>
->>>> - Patch prefix updated to selftest: af_unix:.
->>>>
->>>> - All mentions of “UNIX” changed to AF_UNIX.
->>>>
->>>> - Removed BSD references from comments.
->>>>
->>>> - Shared setup refactored using FIXTURE_VARIANT().
->>>>
->>>> - Cleanup moved to FIXTURE_TEARDOWN() to always run.
->>>>
->>>> - Tests consolidated to reduce duplication: EOF, ECONNRESET, SOCK_DGRAM peer close.
->>>>
->>>> - Corrected ASSERT usage and initialization style.
->>>>
->>>> - Makefile updated for new directory af_unix.
->>>>
->>>>    tools/testing/selftests/net/af_unix/Makefile  |   1 +
->>>>    .../selftests/net/af_unix/unix_connreset.c    | 161 ++++++++++++++++++
->>>>    2 files changed, 162 insertions(+)
->>>>    create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>
->>>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
->>>> index de805cbbdf69..5826a8372451 100644
->>>> --- a/tools/testing/selftests/net/af_unix/Makefile
->>>> +++ b/tools/testing/selftests/net/af_unix/Makefile
->>>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
->>>>           scm_pidfd \
->>>>           scm_rights \
->>>>           unix_connect \
->>>> +       unix_connreset \
->>>>    # end of TEST_GEN_PROGS
->>>>
->>>>    include ../../lib.mk
->>>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
->>>> new file mode 100644
->>>> index 000000000000..c65ec997d77d
->>>> --- /dev/null
->>>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
->>>> @@ -0,0 +1,161 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
->>>> + *
->>>> + * This test verifies that:
->>>> + *  1. SOCK_STREAM sockets return EOF when peer closes normally.
->>>> + *  2. SOCK_STREAM sockets return ECONNRESET if peer closes with unread data.
->>>> + *  3. SOCK_DGRAM sockets do not return ECONNRESET when peer closes.
->>>> + *
->>>> + * These tests document the intended Linux behaviour.
->>>> + *
->>>> + */
->>>> +
->>>> +#define _GNU_SOURCE
->>>> +#include <stdlib.h>
->>>> +#include <string.h>
->>>> +#include <fcntl.h>
->>>> +#include <unistd.h>
->>>> +#include <errno.h>
->>>> +#include <sys/socket.h>
->>>> +#include <sys/un.h>
->>>> +#include "../../kselftest_harness.h"
->>>> +
->>>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
->>>> +
->>>> +static void remove_socket_file(void)
->>>> +{
->>>> +       unlink(SOCK_PATH);
->>>> +}
->>>> +
->>>> +FIXTURE(unix_sock)
->>>> +{
->>>> +       int server;
->>>> +       int client;
->>>> +       int child;
->>>> +};
->>>> +
->>>> +FIXTURE_VARIANT(unix_sock)
->>>> +{
->>>> +       int socket_type;
->>>> +       const char *name;
->>>> +};
->>>> +
->>>> +/* Define variants: stream and datagram */
->>>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
->>>> +       .socket_type = SOCK_STREAM,
->>>> +       .name = "SOCK_STREAM",
->>>> +};
->>>> +
->>>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
->>>> +       .socket_type = SOCK_DGRAM,
->>>> +       .name = "SOCK_DGRAM",
->>>> +};
->>> Let's add coverage for SOCK_SEQPACKET,
->>> which needs listen() / connect() but other semantics
->>> are similar to SOCK_DGRAM.
->> I will add it through:
->> if (variant->socket_type == SOCK_STREAM ||
->>                  variant->socket_type == SOCK_SEQPACKET)
->>
->>
->> in both the setup and teardown fixtures with a little bit of modification
->>
->> where necessary (especially in the setup fixture).
->>
->> And also the fixture_variant_add macro.
->>
->>>> +
->>>> +FIXTURE_SETUP(unix_sock)
->>>> +{
->>>> +       struct sockaddr_un addr = {};
->>>> +       int err;
->>>> +
->>>> +       addr.sun_family = AF_UNIX;
->>>> +       strcpy(addr.sun_path, SOCK_PATH);
->>>> +
->>>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
->>>> +       ASSERT_LT(-1, self->server);
->>>> +
->>>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
->>>> +       ASSERT_EQ(0, err);
->>>> +
->>>> +       if (variant->socket_type == SOCK_STREAM) {
->>>> +               err = listen(self->server, 1);
->>>> +               ASSERT_EQ(0, err);
->>>> +
->>>> +               self->client = socket(AF_UNIX, SOCK_STREAM, 0);
->>>> +               ASSERT_LT(-1, self->client);
->>>> +
->>>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
->>>> +               ASSERT_EQ(0, err);
->>>> +
->>>> +               self->child = accept(self->server, NULL, NULL);
->>>> +               ASSERT_LT(-1, self->child);
->>>> +       } else {
->>>> +               /* Datagram: bind and connect only */
->>>> +               self->client = socket(AF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK, 0);
->>>> +               ASSERT_LT(-1, self->client);
->>>> +
->>>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
->>>> +               ASSERT_EQ(0, err);
->>>> +       }
->>>> +}
->>>> +
->>>> +FIXTURE_TEARDOWN(unix_sock)
->>>> +{
->>>> +       if (variant->socket_type == SOCK_STREAM)
->>>> +               close(self->child);
->>>> +
->>>> +       close(self->client);
->>>> +       close(self->server);
->>>> +       remove_socket_file();
->>>> +}
->>>> +
->>>> +/* Test 1: peer closes normally */
->>>> +TEST_F(unix_sock, eof)
->>>> +{
->>>> +       char buf[16] = {};
->>>> +       ssize_t n;
->>>> +
->>>> +       if (variant->socket_type != SOCK_STREAM)
->>>> +               SKIP(return, "This test only applies to SOCK_STREAM");
->>> Instead of skipping, let's define final ASSERT() results
->>> for each type.
+On 31/10/2025 17:39, Vijay Kumar Tumati wrote:
+> 
+> On 10/31/2025 6:50 AM, Bryan O'Donoghue wrote:
+>> On 31/10/2025 02:59, Hangxiang Ma wrote:
+>>> Add the compatible string "qcom,kaanapali-camss" to support the Camera
+>>> Subsystem (CAMSS) on the Qualcomm Kaanapali platform.
 >>>
->>> Same for other 2 tests.
->> can I use a switch statement in all the tests? say, for example
-> switch() is completely fine, but I guess "if" will be shorter :)
-I will go for if then.
->
->> test1:
->>
->> ...
->>
->> switch (variant->socket_type) {
->>
->> case SOCK_STREAM:
->>
->> case SOCK_SEQPACKET:
->>
->>           ASSERT_EQ(0, n);
-> You need break; here.
-Thank you. It was an omission
->
->> case SOCK_DGRAM:
->>
->>           ASSERT(-1, n);
->>
->>           ASSERT_EQ(EAGAIN, errno);
->>
->>           break;
-> And also please make sure the compiler will not complain
-> without default: depending on inherited build options.
-I will look into this
->
->> }
->>
->> ...
->>
->> test2:
->>
->> ...
->>
->> switch (variant->socket_type) {
->>
->> case SOCK_STREAM:
->>
->> case SOCK_SEQPACKET:
->>
->>           ASSERT_EQ(-1, n);
->>
->>           ASSERT_EQ(ECONNRESET, errno);
->>
->>           break;
->>
->> case SOCK_DGRAM:
->>
->>           ASSERT(-1, n);
->>
->>           ASSERT_EQ(EAGAIN, errno);
->>
->>           break;
->>
->> }
->> ...
->>
->> test 3:
->>
->> ...
->>
->> switch (variant->socket_type) {
->>
->> case SOCK_STREAM:
->>
->> case SOCK_SEQPACKET:
->>
->>           ASSERT_EQ(-1, n);
->>
->>           ASSERT_EQ(ECONNRESET, errno);
->>
->>           break;
->>
->> case SOCK_DGRAM:
->>
->>           ASSERT(-1, n);
->>
->>           ASSERT_EQ(EAGAIN, errno);
->>
->>           break;
->>
->> }
->>
->> ...
->>
->> if not these, could you kindly shed more light to what you meant
->>
+>>> The Kaanapali platform provides:
+>>> - 3 x VFE, 5 RDI per VFE
+>>> - 2 x VFE Lite, 4 RDI per VFE Lite
+>>> - 3 x CSID
+>>> - 2 x CSID Lite
+>>> - 6 x CSIPHY
 >>>
->>>> +
->>>> +       /* Peer closes normally */
->>>> +       close(self->child);
->>>> +
->>>> +       n = recv(self->client, buf, sizeof(buf), 0);
->>>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
->>>> +       if (n == -1)
->>>> +               ASSERT_EQ(ECONNRESET, errno);
->>> ... otherwise, we don't see an error here
+>>> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+>>> ---
+>>>   .../bindings/media/qcom,kaanapali-camss.yaml       | 406 ++++++++++ 
+>>> +++++++++++
+>>>   1 file changed, 406 insertions(+)
 >>>
->>>> +
->>>> +       if (n != -1)
->>>> +               ASSERT_EQ(0, n);
->>> and this can be checked unconditionally.
->> did you mean I should remove the if (n != -1) ASSERT_EQ(0, n); part?
-> If SOCK_DGRAM does not reuse this test, yes.
->
-> The point is we do not want to miss future regression by
-> preparing both if (n == -1) case and if  (n == 0) case, one
-> of which should never happen at this point.
->
-> Thanks!
->
-Thank you for these.
-I will work on them and send v3 shortly.
+>>> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali- 
+>>> camss.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali- 
+>>> camss.yaml
+>>> new file mode 100644
+>>> index 000000000000..c34867022fd1
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
+>>> @@ -0,0 +1,406 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-camss.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm Kaanapali Camera Subsystem (CAMSS)
+>>> +
+>>> +maintainers:
+>>> +  - Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+>>> +
+>>> +description:
+>>> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,kaanapali-camss
+>>> +
+>>> +  reg:
+>>> +    maxItems: 16
+>>> +
+>>> +  reg-names:
+>>> +    items:
+>>> +      - const: csid0
+>>> +      - const: csid1
+>>> +      - const: csid2
+>>> +      - const: csid_lite0
+>>> +      - const: csid_lite1
+>>> +      - const: csiphy0
+>>> +      - const: csiphy1
+>>> +      - const: csiphy2
+>>> +      - const: csiphy3
+>>> +      - const: csiphy4
+>>> +      - const: csiphy5
+>>> +      - const: vfe0
+>>> +      - const: vfe1
+>>> +      - const: vfe2
+>>> +      - const: vfe_lite0
+>>> +      - const: vfe_lite1
+>>
+>> No test pattern generator on this part ?
+>>
+>> We have patches in-flight to add TPG so it makes no sense to omit 
+>> these registers from current or new submissions.
+>>
+>> https://lore.kernel.org/linux-media/20251017-camss_tpg-v5-1- 
+>> cafe3ad42163@oss.qualcomm.com/
+>>
+>> While we're at it we should consider adding in the other key 
+>> functional blocks.
+>>
+>> OFE, IPE etc, there's no harm in including the registers even if the 
+>> intention and outcome is never switching that functionality on.
+>>
+> Hi Bryan, we have quite a few register spaces on Kaanapali or any other 
+> target that are not required for the RDI only CAMSS driver, including 
+> ICP, JPEG, OFE, IPE, CDMs and some custom modules like CRE along with 
+> the TPG. So do I understand your suggestion correctly that you advise 
+> all of those are enlisted in the DTSI and the bindings although the 
+> driver doesn't make use of or map them?
 
-Thanks once again.
+TPG is in process of being upstreamed by qcom.
 
+I think the list of registers above should be included in the dts 
+because the DTS is a description of hardware, not a description of 
+camss/rdi.
+
+The point of DTS is to do that, describe hardware and to be consumable 
+outside of the upstream linux kernel.
+
+u-boot, BSD, potentially even a downstream Linux kernel or driver.
+
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 34
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: camnoc_nrt_axi
+>>> +      - const: camnoc_rt_axi
+>>> +      - const: camnoc_rt_vfe0
+>>> +      - const: camnoc_rt_vfe1
+>>> +      - const: camnoc_rt_vfe2
+>>> +      - const: camnoc_rt_vfe_lite
+>>> +      - const: cam_top_ahb
+>>> +      - const: cam_top_fast_ahb
+>>> +      - const: csid
+>>> +      - const: csid_csiphy_rx
+>>> +      - const: csiphy0
+>>> +      - const: csiphy0_timer
+>>> +      - const: csiphy1
+>>> +      - const: csiphy1_timer
+>>> +      - const: csiphy2
+>>> +      - const: csiphy2_timer
+>>> +      - const: csiphy3
+>>> +      - const: csiphy3_timer
+>>> +      - const: csiphy4
+>>> +      - const: csiphy4_timer
+>>> +      - const: csiphy5
+>>> +      - const: csiphy5_timer
+>>> +      - const: gcc_hf_axi
+>>> +      - const: vfe0
+>>> +      - const: vfe0_fast_ahb
+>>> +      - const: vfe1
+>>> +      - const: vfe1_fast_ahb
+>>> +      - const: vfe2
+>>> +      - const: vfe2_fast_ahb
+>>> +      - const: vfe_lite
+>>> +      - const: vfe_lite_ahb
+>>> +      - const: vfe_lite_cphy_rx
+>>> +      - const: vfe_lite_csid
+>>> +      - const: qdss_debug_xo
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 16
+>>> +
+>>> +  interrupt-names:
+>>> +    items:
+>>> +      - const: csid0
+>>> +      - const: csid1
+>>> +      - const: csid2
+>>> +      - const: csid_lite0
+>>> +      - const: csid_lite1
+>>> +      - const: csiphy0
+>>> +      - const: csiphy1
+>>> +      - const: csiphy2
+>>> +      - const: csiphy3
+>>> +      - const: csiphy4
+>>> +      - const: csiphy5
+>>> +      - const: vfe0
+>>> +      - const: vfe1
+>>> +      - const: vfe2
+>>> +      - const: vfe_lite0
+>>> +      - const: vfe_lite1
+>>> +
+>>> +  interconnects:
+>>> +    maxItems: 2
+>>> +
+>>> +  interconnect-names:
+>>> +    items:
+>>> +      - const: ahb
+>>> +      - const: hf_mnoc
+>>> +
+>>> +  iommus:
+>>> +    maxItems: 1
+>>
+>>
+>> This can't be right.
+>>
+>> The experience we are having with Iris for example shows that 
+>> restricting the iommus is wrong.
+>>
+>> For this and future bindings I'm expecting to see the full list of 
+>> AC_VM_HLOS S2 VMID targets.
+>>
+>> The second we try to switch on say something like the JPEG encoder 
+>> this list and its upstream binding becomes a problem.
+>>
+>> - S1_IFE_HLOS        @ 0x1c00
+>> - S1_CDM_BPS_IPS_HLOS    @ 0x1820
+>> - S1_CDM_BPS_IPS_HLOS    @ 0x18c0
+>> - S1_CDM_BPS_IPS_HLOS    @ 0x1980
+>> - S1_CDM_BPS_IPS_HLOS    @ 0x1800
+>> - S1_JPEG_HLOS        @ 0x18a0
+>> - S1_RT_CDM_HLOS    @ 0x1860
+>> - S1_CDM_BPS_IPE_HLOS    @ 0x1840
+>> - S1_CDM_BPS_IPE_HLOS    @ 0x1880
+>> - S1_CRE_HLOS        @ 0x18e0
+>>
+>> The ICP mappings can come later if ever via iommu-maps..
+>>
+>> ---
+>> bod
+>>
+> Similar to the above, You are advising to declare all the S2 HLOS mapped 
+> streams in the bindings and the DTSI? If we do that in the DTSI, I 
+> wonder how we can specifically map the RDI output buffers to the IFE 
+> context bank only, for instance, going by the current CAMSS driver 
+> implementation. Perhaps, IFE should be the first one in the list for now 
+> and the driver will be extended later when we support more devices? I 
+> will explore on that. Good to understand these details and practices. 
+> Thank you.
+> 
+
+We've run into trouble with that in Iris.
+
+https://lore.kernel.org/linux-arm-msm/c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org/
+
+The right thing to do is to describe everything that targets the HLOS - 
+main CPU.
+
+For non CPU targets - like say setting up the SMMU for the ICP - we 
+could add those mappings in with iommu-map later.
+
+The CPU side SID map should be complete. It doesn't divulge any 
+propitiatory information or secret sauce, it just makes our lives easier 
+in the end.
+
+---
+bod
 
