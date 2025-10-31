@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-880209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A684AC251D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4496C251CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA0514F6E53
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:52:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EC564F4434
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BF0348472;
-	Fri, 31 Oct 2025 12:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50EA348443;
+	Fri, 31 Oct 2025 12:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BHfCZb1E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GXH3YiIh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3127C1E834B;
-	Fri, 31 Oct 2025 12:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C9C12DDA1;
+	Fri, 31 Oct 2025 12:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915139; cv=none; b=cjuEyqXdYRRinjo0fnixjC/0VZ4f8mWijReYbRs86Vt9amGjrXLHYP5YMiJC993g9G4DhJqW0x1CvqDr/v3xTFc3V7me4MwvEVLzDJ2zs7Zkjh6KtTlHxZ38GP8i47micMc5C6YYJiYfTyncTgnARINkLldRViXRm1r+DFalKo8=
+	t=1761915128; cv=none; b=IfgpkbkEnM9yfTMSCvJ+qEDbxMm9W2MWpkZBSCikBfS5cmsFFv33a03BYvBq1628vd8WNSwcbAzq4v15p61m86js6cG7Zof98eIcVtuMX0pIZkgiyNs0y5apN+QRE7EUUZ4QUidonou83BWUUAhEDepziVMru4DjrsnCUn60x48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915139; c=relaxed/simple;
-	bh=UhgY56L2Y48rGqsa8FjhgUlMRK793nBioVqcnGX0uUc=;
+	s=arc-20240116; t=1761915128; c=relaxed/simple;
+	bh=GkOQLeyfaij/XYkI3FhobsjBO6mHEPS5prVE1+pfEoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoOsUNtUhAR6UvuiCdJJdOs+aHDuD1b213PmSO650E4pdxXjjROlAWT3z0lDZk44toRD64LAA5sQzsIeWmlWKSbnp9I6goUROjJAeR1spHY1FquHNrD9lJx9e64ABHdk6d3AW9nRjNjYnXnmpocMyHlrYm5dBDPjpo5w1LQjemA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BHfCZb1E; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=lWtnCO2Po7cCU6r5IY+fKI1csQPoR0t3KlwByRjGG7JA0xQhIkNP1p5ahsVPMmHD+9vPFE0v/k2ZNV3JtBHtnUc2NMrivVo4p2MRWJ7AgYcFroLrhMh82X6XZI/BnX/h2pbfqVf10Vdxh7aK6SR6VdyundYGMOuhlqSduTgpQVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GXH3YiIh; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761915138; x=1793451138;
+  t=1761915127; x=1793451127;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UhgY56L2Y48rGqsa8FjhgUlMRK793nBioVqcnGX0uUc=;
-  b=BHfCZb1EZ3tBoITxYE9VKlPoD8OBGdWJtjX9dgDc8F6vnOotR0p9qiSj
-   R+gjWUG4NGU0QqNeX4GUGP+QxeqLNUoEKI8MuNF3IARKNLapFLbQ678aP
-   JGuoGEO9tTfHOaa+x7Nc+xtIJsL6SX/X7QaLh3IheBuYJR1rREt+3M5PQ
-   5RV+Js4PGNEl15BNpxOuq9YmFVJ1y7LSJgsG/urpJhM2PB9Xwf+N+fDXb
-   GjPBHNBYFcW2xFpx7UcVwsvftiYkxSiWlPKPHNaLTH194URwy1vd/ngDs
-   QJz3X8F+K40FzG9HE8+U4JpdvM+SedAkq3EO+JDiYUBlIjR9kT9bLePKx
-   w==;
-X-CSE-ConnectionGUID: X6ldc/rLT66o6nfWyM20DA==
-X-CSE-MsgGUID: pY4+gmZQT1OVaxxcu8ot1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="66688128"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="66688128"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:17 -0700
-X-CSE-ConnectionGUID: fotXEm+rSS+AXCY654oD1A==
-X-CSE-MsgGUID: UZoZcDi8SNi3Kv7d80kCHQ==
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=GkOQLeyfaij/XYkI3FhobsjBO6mHEPS5prVE1+pfEoU=;
+  b=GXH3YiIhT/9ae+/1FJMrtl0mGTWj3mMWJIC2KBPSb9c1TtRllkJ3IpSB
+   a5M/6UyqCPaOuRxk+zkhdksOQOTerinBcw7WUVWF7QKF4wrnOjL0jMEF1
+   y65plJ6QDrTw2jolTB0utC/QrCGNF/cN6e9j2H+7yY4AX2m48Aw5eGd59
+   z7bM5Uqy4o1ghVpFnR6RdLuBtDJG5XIp7MYTU6pIfsynfX6DM0tZ6GPGT
+   hk21f62RqtLDX1rRK1OHMOU406XP569/cBtHCQWk+wZuXOemgG+ZPYPw1
+   Wp//l6sLghz+MEa7RxOZ6/QharpWS/152WDw48YeGIwom+WYWULyBiafa
+   g==;
+X-CSE-ConnectionGUID: yQwi5v69TmyULNRTaAE7Gw==
+X-CSE-MsgGUID: JC2CAWuzT66iV25NWSrxHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67913081"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67913081"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:06 -0700
+X-CSE-ConnectionGUID: BV+22n4ISQWlcC43elCuTw==
+X-CSE-MsgGUID: HlD5QPeoRMSTDy3WVngyOg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="209793862"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 31 Oct 2025 05:52:15 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEobv-000N7U-1K;
-	Fri, 31 Oct 2025 12:52:08 +0000
-Date: Fri, 31 Oct 2025 20:51:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>, linux-alpha@vger.kernel.org,
-	Chen Gang <gang.chen@asianux.com>, Matt Turner <mattst88@gmail.com>,
-	Richard Henderson <richard.henderson@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] alpha: Use pointers from memcpy() calls for assignments
- in two functions
-Message-ID: <202510312008.rLcaBIfL-lkp@intel.com>
-References: <1605dd43-5e95-46eb-a0c6-78ff8b4d51b3@web.de>
+   d="scan'208";a="185915353"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:03 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEobm-00000004GU1-308i;
+	Fri, 31 Oct 2025 14:51:58 +0200
+Date: Fri, 31 Oct 2025 14:51:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jyoti Bhayana <jbhayana@google.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2()
+ with ilog2()
+Message-ID: <aQSw7V7tYjBOtJ7k@smile.fi.intel.com>
+References: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
+ <20251031094336.6f352b4f@pumpkin>
+ <aQSHVsWGXzigTEMe@smile.fi.intel.com>
+ <20251031124530.3db7805b@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1605dd43-5e95-46eb-a0c6-78ff8b4d51b3@web.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251031124530.3db7805b@pumpkin>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Markus,
+On Fri, Oct 31, 2025 at 12:45:30PM +0000, David Laight wrote:
+> On Fri, 31 Oct 2025 11:54:30 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, Oct 31, 2025 at 09:43:36AM +0000, David Laight wrote:
+> > > On Fri, 31 Oct 2025 08:45:00 +0100
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on mattst88-alpha/for-linus v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > >  		tstamp_scale = sensor->sensor_info->tstamp_scale +
+> > > > -			       const_ilog2(NSEC_PER_SEC) / const_ilog2(10);
+> > > > +			       ilog2(NSEC_PER_SEC) / ilog2(10);  
+> > > 
+> > > Is that just a strange way of writing 9 ?  
+> > 
+> > Why? It's correct way of writing log¹⁰(NSEC_PER_SEC), the problem here is that
+> > "i" people do not think about :-)
+> 
+> Even without the "i" the division could easily give 8.999999.
+> So you'd be relying on rounding to get the required integral value.
+> 
+> > But we have intlog10(), I completely forgot about it.
+> 
+> And it isn't the function the code is looking for.
+> (The result is shifted left 24 and it doesn't have an optimisation
+> for constants.)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/alpha-Use-pointers-from-memcpy-calls-for-assignments-in-two-functions/20251031-003938
-base:   linus/master
-patch link:    https://lore.kernel.org/r/1605dd43-5e95-46eb-a0c6-78ff8b4d51b3%40web.de
-patch subject: [PATCH] alpha: Use pointers from memcpy() calls for assignments in two functions
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251031/202510312008.rLcaBIfL-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312008.rLcaBIfL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510312008.rLcaBIfL-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   arch/alpha/kernel/smp.c: In function 'send_secondary_console_msg':
->> arch/alpha/kernel/smp.c:201:24: warning: variable 'cp1' set but not used [-Wunused-but-set-variable]
-     201 |         register char *cp1, *cp2;
-         |                        ^~~
-   arch/alpha/kernel/smp.c: In function 'recv_secondary_console_msg':
-   arch/alpha/kernel/smp.c:237:13: warning: variable 'mycpu' set but not used [-Wunused-but-set-variable]
-     237 |         int mycpu, i, cnt;
-         |             ^~~~~
-
-
-vim +/cp1 +201 arch/alpha/kernel/smp.c
-
-^1da177e4c3f415 Linus Torvalds 2005-04-16  192  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  193  /*
-^1da177e4c3f415 Linus Torvalds 2005-04-16  194   * Send a message to a secondary's console.  "START" is one such
-^1da177e4c3f415 Linus Torvalds 2005-04-16  195   * interesting message.  ;-)
-^1da177e4c3f415 Linus Torvalds 2005-04-16  196   */
-ab39c77c3246f84 Paul Gortmaker 2013-06-17  197  static void
-^1da177e4c3f415 Linus Torvalds 2005-04-16  198  send_secondary_console_msg(char *str, int cpuid)
-^1da177e4c3f415 Linus Torvalds 2005-04-16  199  {
-^1da177e4c3f415 Linus Torvalds 2005-04-16  200  	struct percpu_struct *cpu;
-^1da177e4c3f415 Linus Torvalds 2005-04-16 @201  	register char *cp1, *cp2;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  202  	unsigned long cpumask;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  203  	size_t len;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  204  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  205  	cpu = (struct percpu_struct *)
-^1da177e4c3f415 Linus Torvalds 2005-04-16  206  		((char*)hwrpb
-^1da177e4c3f415 Linus Torvalds 2005-04-16  207  		 + hwrpb->processor_offset
-^1da177e4c3f415 Linus Torvalds 2005-04-16  208  		 + cpuid * hwrpb->processor_size);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  209  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  210  	cpumask = (1UL << cpuid);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  211  	if (wait_for_txrdy(cpumask))
-^1da177e4c3f415 Linus Torvalds 2005-04-16  212  		goto timeout;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  213  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  214  	cp2 = str;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  215  	len = strlen(cp2);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  216  	*(unsigned int *)&cpu->ipc_buffer[0] = len;
-c37a29a96dcfc93 Markus Elfring 2025-10-30  217  	cp1 = memcpy(&cpu->ipc_buffer[1], cp2, len);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  218  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  219  	/* atomic test and set */
-^1da177e4c3f415 Linus Torvalds 2005-04-16  220  	wmb();
-^1da177e4c3f415 Linus Torvalds 2005-04-16  221  	set_bit(cpuid, &hwrpb->rxrdy);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  222  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  223  	if (wait_for_txrdy(cpumask))
-^1da177e4c3f415 Linus Torvalds 2005-04-16  224  		goto timeout;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  225  	return;
-^1da177e4c3f415 Linus Torvalds 2005-04-16  226  
-^1da177e4c3f415 Linus Torvalds 2005-04-16  227   timeout:
-^1da177e4c3f415 Linus Torvalds 2005-04-16  228  	printk("Processor %x not ready\n", cpuid);
-^1da177e4c3f415 Linus Torvalds 2005-04-16  229  }
-^1da177e4c3f415 Linus Torvalds 2005-04-16  230  
+Do you have an idea how to improve that?
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
