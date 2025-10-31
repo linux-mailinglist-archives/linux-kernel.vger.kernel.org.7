@@ -1,52 +1,56 @@
-Return-Path: <linux-kernel+bounces-880684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DCCC26575
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:28:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FD7C265F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B0E54EE387
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:27:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1336A341B5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31600308F1A;
-	Fri, 31 Oct 2025 17:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477D63563DD;
+	Fri, 31 Oct 2025 17:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1q94A7e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OQU8H40z"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACDB2F7479;
-	Fri, 31 Oct 2025 17:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3C435580D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931636; cv=none; b=nJrIvcRTmv3pWQNzCSEulAJwMB5IsDr9YipESArs6mK47brq9R6cKa3of09x+xm7RUTW2gam9Ty/v+B+9F6Unn66mBG8rjdVto7x4Hk08sQWgKvhX5DxTv8YPaGoQDztBG2mRwFNlsDG942VhfBn2VGI+BZMYUKX2vY/XUGlBbw=
+	t=1761931724; cv=none; b=rhqglq28yn09zlM1CW1YxEFUsv6c5urRdowYK+DRiU6Qb2UsE9kCeERMYmCtTl2jMWrpUVHjVQVnMEQ0DkehzCToPhsbxf2M+af6lEC0x0dfij459MgGXgcPrjkJoelOHixbHi7ISlVpUb7XDjEF1/BhLBrEk9x9BP1t3xBWpKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931636; c=relaxed/simple;
-	bh=p2mT5ghCrdyTCWnU0vH7XPeN9JbRC4F/94aiLq32Z9Y=;
+	s=arc-20240116; t=1761931724; c=relaxed/simple;
+	bh=zJmzCZukFrUHaKsBwk+BpBUSinGesW5h8IXqGaaPpxY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kNQaQoDQtkqHW1gIV626vv1cSUmBdOZUAWkSUcymhS99c7XkuXJY9EPmwOnjOlSCFNas/zDlhIrON5mAFC2xxb5AY9V9FVQk7glxMy2V3DjKW0n/kPdYxO/bDYSUzv2E8DObhRmGRoSUICb9rYZPZpTs0cc+qM2NwMtt9foUisk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1q94A7e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F38D6C4CEFD;
-	Fri, 31 Oct 2025 17:27:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761931636;
-	bh=p2mT5ghCrdyTCWnU0vH7XPeN9JbRC4F/94aiLq32Z9Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=a1q94A7e1tB/Ndw3YaERBAvBBHnHmwpkQz1T/cx1sKJyueluvPzr5uULV30AELkko
-	 OYMfz/tmwhjXX1x9BsRr/mX7t3aGc/uLGNv3jmE5GJc76maQs8Nh357oRzeAsRoBbv
-	 6eWDyr1snOYReKrsAI/wnr1DZqcBjRED15OZZWDTDhNp1BsYH9oVJc1oLQ49WsafGs
-	 Ydhm8lQrn/fF3SAUV0NUymlT3Knmvw4usVDIc7ZNMhi0uBbrc5Wy0uWhBIfFUcAnjt
-	 0Sjk9gV9CX35hzLSeQ6mqq/PG6yrVpXg/F/6CWiAVT06WScPNE8VjGBryECA6RF0oP
-	 3q2Gi5wfgIJGw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39B9CCFA00;
-	Fri, 31 Oct 2025 17:27:15 +0000 (UTC)
-From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
-Date: Sat, 01 Nov 2025 01:27:07 +0800
-Subject: [PATCH net-next v2 1/4] net: stmmac: socfpga: Agilex5 EMAC
- platform configuration
+	 In-Reply-To:To:Cc; b=XCBzjT4gb4/AtMLKFjbM3/mQgLI7LNzeOXADf/x0nyrs/5Kz6uOuoa1K5QOQor+8RhxQEcOpJE4ea4EKpSDQaY0EiVrvhaOB5WU9YSiHSYklrsJ79o08wiX5Y7HD6+zJZfdTfstyM/EAi9y8NBhi+fUJElmD45wz/7oetrLWjjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OQU8H40z; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DE62CC0E95A;
+	Fri, 31 Oct 2025 17:28:20 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6A9AB60704;
+	Fri, 31 Oct 2025 17:28:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DB15C1181800B;
+	Fri, 31 Oct 2025 18:28:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761931720; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=dDe4j5e1a+Bm1K5ZQ2VOjxbCwe35OfOvHUNHbqYEBCM=;
+	b=OQU8H40zhHDYyzpyBy35Qe++qVhY8HighZjajGJghAuu4atrS+eNn2O2JBTc4ACXcYTz5/
+	2ua93PkmSv17jrw7i9lq/knC8bQtCvkoiLC+MKZq3iCDizD2yzgJz2qgSBG9hoKA8pYMvx
+	ZBOQ9gpmwKclyA7hOlCiwQNH9VtXDcfk92oKOnAR87vYXwiyr5VTgFbJ/qmSeYlVZyKC+t
+	d79SLWKyIUSEEeOQxF0unF2JMpWGixWuttehktjYeq/xV+ZqButVQtpFIqhGEWESGAUSu9
+	kOVMCmKOw76BjYRzH5u8pgcAkKS7Rs7yTBAhPmoRtpX6QDw9Lt2IppeEFllG3g==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Date: Fri, 31 Oct 2025 18:27:07 +0100
+Subject: [PATCH 23/28] mtd: spinand: Add support for setting a bus
+ interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,126 +59,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251101-agilex5_ext-v2-1-a6b51b4dca4d@altera.com>
-References: <20251101-agilex5_ext-v2-0-a6b51b4dca4d@altera.com>
-In-Reply-To: <20251101-agilex5_ext-v2-0-a6b51b4dca4d@altera.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Rohan G Thomas <rohan.g.thomas@altera.com>
+Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-23-be42de23ebf1@bootlin.com>
+References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+To: Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761931634; l=3455;
- i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
- bh=vntBDZwpth1lYOT1gYNvvzXdYXYWr60f8HSNHxW366k=;
- b=HqeT8OjjuqcrdJzqlau3nGAQRSE7vEu6aZPenJXIQ6PQ2HX6N2GytKv8laI1uw9z9vSrrXAwf
- QLHNl52JUwxAY+CrHPyW+OGjd+sKn5ppyam5qhcFD+DdH1WPKYgc3eb
-X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
- pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
-X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
- with auth_id=494
-X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
-Reply-To: rohan.g.thomas@altera.com
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Create a bus interface enumeration, currently only containing the
+one we support: SSDR, for single SDR, so any operation whose command is
+sent over a single data line in SDR mode, ie. any operation matching
+1S-XX-XX.
 
-Agilex5 HPS EMAC uses the dwxgmac-3.10a IP, unlike previous socfpga
-platforms which use dwmac1000 IP. Due to differences in platform
-configuration, Agilex5 requires a distinct setup.
+The main spinand_device structure gets a new parameter to store this
+enumeration, for now unused. Of course it is set to SSDR during the SSDR
+templates initialization to further clarify the state we are in at the
+moment.
 
-Introduce a setup_plat_dat() callback in socfpga_dwmac_ops to handle
-platform-specific setup. This callback is invoked before
-stmmac_dvr_probe() to ensure the platform data is correctly
-configured. Also, implemented separate setup_plat_dat() callback for
-current socfpga platforms and Agilex5.
+This member is subject to be used to know in which bus configuration we
+and be updated by the core when we switch to faster mode(s).
 
-Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    | 30 +++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ drivers/mtd/nand/spi/core.c |  1 +
+ include/linux/mtd/spinand.h | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index 2ff5db6d41ca08a1652d57f3eb73923b9a9558bf..5666b01723643984f21b996e7653a36f4dc22e30 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -44,6 +44,7 @@
- struct socfpga_dwmac;
- struct socfpga_dwmac_ops {
- 	int (*set_phy_mode)(struct socfpga_dwmac *dwmac_priv);
-+	void (*setup_plat_dat)(struct socfpga_dwmac *dwmac_priv);
- };
- 
- struct socfpga_dwmac {
-@@ -441,6 +442,23 @@ static int socfpga_dwmac_init(struct platform_device *pdev, void *bsp_priv)
- 	return dwmac->ops->set_phy_mode(dwmac);
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index caf549617f369ada2c1712e863e563ae547ca0e6..fc7263fad7afbd084ecf015dd1d764d6683b46a8 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -1321,6 +1321,7 @@ static void spinand_init_ssdr_templates(struct spinand_device *spinand)
+ 	tmpl->page_read = (struct spi_mem_op)SPINAND_PAGE_READ_1S_1S_0_OP(0);
+ 	tmpl->prog_exec = (struct spi_mem_op)SPINAND_PROG_EXEC_1S_1S_0_OP(0);
+ 	spinand->op_templates = &spinand->ssdr_op_templates;
++	spinand->bus_iface = SSDR;
  }
  
-+static void socfpga_gen5_setup_plat_dat(struct socfpga_dwmac *dwmac)
-+{
-+	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
-+
-+	plat_dat->core_type = DWMAC_CORE_GMAC;
-+
-+	/* Rx watchdog timer in dwmac is buggy in this hw */
-+	plat_dat->riwt_off = 1;
-+}
-+
-+static void socfpga_agilex5_setup_plat_dat(struct socfpga_dwmac *dwmac)
-+{
-+	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
-+
-+	plat_dat->core_type = DWMAC_CORE_XGMAC;
-+}
-+
- static int socfpga_dwmac_probe(struct platform_device *pdev)
- {
- 	struct plat_stmmacenet_data *plat_dat;
-@@ -497,25 +515,31 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
- 	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
- 	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
- 	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
--	plat_dat->core_type = DWMAC_CORE_GMAC;
- 
--	plat_dat->riwt_off = 1;
-+	ops->setup_plat_dat(dwmac);
- 
- 	return devm_stmmac_pltfr_probe(pdev, plat_dat, &stmmac_res);
- }
- 
- static const struct socfpga_dwmac_ops socfpga_gen5_ops = {
- 	.set_phy_mode = socfpga_gen5_set_phy_mode,
-+	.setup_plat_dat = socfpga_gen5_setup_plat_dat,
+ static int spinand_support_vendor_ops(struct spinand_device *spinand,
+diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+index 0565cdeb3f7b652699d420a8c05c3fe53fcc2253..7d059956c81a3a6fd337bab43fb4f1130997ab0f 100644
+--- a/include/linux/mtd/spinand.h
++++ b/include/linux/mtd/spinand.h
+@@ -480,6 +480,14 @@ struct spinand_user_otp {
+ 	const struct spinand_user_otp_ops *ops;
  };
  
- static const struct socfpga_dwmac_ops socfpga_gen10_ops = {
- 	.set_phy_mode = socfpga_gen10_set_phy_mode,
-+	.setup_plat_dat = socfpga_gen5_setup_plat_dat,
++/**
++ * enum spinand_bus_interface - SPI NAND bus interface types
++ * @SSDR: Bus configuration supporting all 1S-XX-XX operations, including dual and quad
++ */
++enum spinand_bus_interface {
++	SSDR,
 +};
 +
-+static const struct socfpga_dwmac_ops socfpga_agilex5_ops = {
-+	.set_phy_mode = socfpga_gen10_set_phy_mode,
-+	.setup_plat_dat = socfpga_agilex5_setup_plat_dat,
- };
+ /**
+  * struct spinand_info - Structure used to describe SPI NAND chips
+  * @model: model name
+@@ -642,6 +650,7 @@ struct spinand_mem_ops {
+  * @flags: NAND flags
+  * @ssdr_op_templates: Templates for all single SDR SPI mem operations
+  * @op_templates: Templates for all SPI mem operations
++ * @bus_iface: Current bus interface
+  * @select_target: select a specific target/die. Usually called before sending
+  *		   a command addressing a page or an eraseblock embedded in
+  *		   this die. Only required if your chip exposes several dies
+@@ -677,6 +686,7 @@ struct spinand_device {
  
- static const struct of_device_id socfpga_dwmac_match[] = {
- 	{ .compatible = "altr,socfpga-stmmac", .data = &socfpga_gen5_ops },
- 	{ .compatible = "altr,socfpga-stmmac-a10-s10", .data = &socfpga_gen10_ops },
--	{ .compatible = "altr,socfpga-stmmac-agilex5", .data = &socfpga_gen10_ops },
-+	{ .compatible = "altr,socfpga-stmmac-agilex5", .data = &socfpga_agilex5_ops },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, socfpga_dwmac_match);
+ 	struct spinand_mem_ops ssdr_op_templates;
+ 	struct spinand_mem_ops *op_templates;
++	enum spinand_bus_interface bus_iface;
+ 
+ 	struct spinand_dirmap *dirmaps;
+ 
 
 -- 
-2.43.7
-
+2.51.0
 
 
