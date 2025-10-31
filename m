@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-880963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BF2C270E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:37:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCF5C270EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3B41892481
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:37:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C71E934B77B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389BD3101C0;
-	Fri, 31 Oct 2025 21:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CFD30DEA0;
+	Fri, 31 Oct 2025 21:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ouxNdgvn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9WFo/7oR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fHBakwCY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8433930BF79;
-	Fri, 31 Oct 2025 21:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D837F241664
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 21:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761946639; cv=none; b=ASX5DJI2T/KcUm+pdbrB/gYTAFIfJa0zTLHXfzvxWoa+8dm6v18/9H7TQxLIsSW1vc7lIhMae3e5qeISQxz25vzMEz9b9k1sEf/upMwG9j9b3ZqmPtgM71sSWWbAaglX7eB1VG9S9MgRw2Ft4Zh22r3Ft4QZLcvb28QTBrPO2JA=
+	t=1761946735; cv=none; b=Yvxafx3tro69IPcRZuiSKfBFS0frdSKMnwy16lBb0k9slA4lYCeDd3AcsSIKQHAjWDiuifjZxeaavD3dzzfsJMOoInNwU/Ce5/3JfxUBNjku6VHatYT235EhWjcDr7qE9m2ncBA2cdR/p2o/Z4GnNDMIdyqATbr9jZQrPyz84E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761946639; c=relaxed/simple;
-	bh=QVR16KIfLQSszHkZDKUW/HCpmS6heSz2hEldpIxegJs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=cvNy7vj/jRuinmhhPT93fAkD1aaucUUfNc0MuYm+LOHWfEwvg1+47RB7G6XWXILVFk9z8RxocG2iCC0hf39sxO2oML/o+S8fl+2vpUoi04z8rNIjwt9jYhHV6sCyBIU5aGMZVVPhI7SVG9U5Eq4TYR6E9Td/qBEWPC86p/MJU4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ouxNdgvn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9WFo/7oR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 31 Oct 2025 21:37:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761946635;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z60cZ4V1QRhSqqkrNsWyT2gTmvf9b/JCSVBJ+ckjfgA=;
-	b=ouxNdgvn1wjjDHgseIqL/frWIc/ZIbsoNT/aXJ8siMDY+GJgfex5sFbmdpmAK7c7fWYE+Q
-	kFZ1GpgAOlgrIGzuctv9PQxovci11FOWRAUZKR2CFAvxD5Co+9WKgyW21/ZNstRJp6GPBn
-	quzFb0+aL+RKua1H/L1Ofi1P8G8Aigxyw/igw/lY6fs1iD6z+F31TNZgpKPD/0YQJCd9Qp
-	EtxUR81Dt0Z3w26F03YcEvAnR6s9xgS8b/PWrmNxK1+CCkwy+pj93Kk6kqSV8SdgR+NWz2
-	AMxOtP9UsY4unNuvhbp7o1qZwW5HjEA+Ay6T5IqT/zpOLEnVGOHdrDZzft810w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761946635;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z60cZ4V1QRhSqqkrNsWyT2gTmvf9b/JCSVBJ+ckjfgA=;
-	b=9WFo/7oRaUysVP+pSP8s4NNsRywUTT7wBjLX4EoTwfG8XuioEi6pSroYXWejKMjs8+/LXY
-	AFhhDpq9OY2+iPBQ==
-From: "tip-bot2 for Muchun Song" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/proc: Fix race in show_irq_affinity()
-Cc: Muchun Song <songmuchun@bytedance.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20251028090408.76331-1-songmuchun@bytedance.com>
-References: <20251028090408.76331-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1761946735; c=relaxed/simple;
+	bh=TPlNsDOB7+xC1rP2NRdQURfwtV/edU8Mt1F+x7pBCXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGEb+02DR/0Evn9esA41+XQd17Wj2QjL6+rztdO+zQvcynH0VPSerMORQBx5DHUUGW3EhZyootJEwsztwkeIxOIClgWnV727kmGMiMRIX5ns+nEX22sqts5rhKcYiLcmy6FE0ol2by9a//9sqSiG2xP9/eI3IjrjacjR/Cz4bQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fHBakwCY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DF28740E0200;
+	Fri, 31 Oct 2025 21:38:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id EQZhjGuVSxoA; Fri, 31 Oct 2025 21:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761946720; bh=1q5upS3f0bzQp9+k/9ubCPycN4qxugW9/lCNLd+NxXE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fHBakwCYD1UE56zh2UVtrsdpNTCA+P3A63QZ/WoZwLrISg3iUtX3X8tYM4pgtFLV9
+	 IWG05ggFZ3oxtzHftTEyxPVHlPcdCy5hY27mV19bpubfmuzLb0RJGCFpgc7qT5eMlB
+	 b65VH5vEsGYsmC7xjxOPdzbiKwUOWexGkmn0ceSqK40DoQ4ERDThZ8cu4zaYi17sXC
+	 J9jVGRrmMeDpnjZVTP8HQNqnXN0KK5+BQgF081KEP2/KMb14HwOY+eHOzfOSA+YkTa
+	 MlJC/QLZLwqtddHep9Qq2VSN2rRDCOhszXhWse/dnAVIGcS7UMjgQx/htL0hr+8sGu
+	 2t5Oxj0xl8sWVzYZsJ/OEb9YpasDy+nFrezK1JRyFl/7Mkj3dI6r7t0VyPXOAo1TwW
+	 iQcyilQbUbI7e+wUp6r887cCglqtfe6WZJaysNjBsYkZvcBEv4D3cGKO14TrQ3l7Oi
+	 +v0okfeOLADFg+Lf8i6xNzGbX0HYMg7vZBdcQLZ5jBZMNcG3766z/o2u/HJYIOA8RT
+	 xhk9k13jP4D/Qz3GTjORsMyqsI2EMehQCU3i76egs+2qjhaiRcv2/6qQVlk+EhmMXZ
+	 bh8epxoFn6B5PBuAvrzBF2Gm7NEcWBAdPwm2vFrSLl44Lvhc4j1lrzCWg5UBkEPQ30
+	 UnMNsxfs1VEPLkLVqLriBWcA=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 201DE40E016E;
+	Fri, 31 Oct 2025 21:38:31 +0000 (UTC)
+Date: Fri, 31 Oct 2025 22:38:22 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] x86/mm: Ensure clear_page() variants always have
+ __kcfi_typeid_ symbols
+Message-ID: <20251031213822.GKaQUsTs_FhPgB6H9k@fat_crate.local>
+References: <20251013-x86-fix-clear_page-cfi-full-lto-errors-v1-1-d69534c0be61@kernel.org>
+ <20251030192819.GFaQO8U29xvWcPT_s2@fat_crate.local>
+ <20251031142044.GB3022331@ax162>
+ <20251031144624.GHaQTLwONX3j6aDkkP@fat_crate.local>
+ <20251031202226.GA2486902@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176194662566.2601451.1527641984431803773.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251031202226.GA2486902@ax162>
 
-The following commit has been merged into the irq/core branch of tip:
+On Fri, Oct 31, 2025 at 04:22:26PM -0400, Nathan Chancellor wrote:
+> Yeah, I should have explicitly tagged this change for stable but I have
+> been a little lazy since AUTOSEL often picks up the slack :) If you want
+> a resend with that adjusted, let me know.
 
-Commit-ID:     9ea2b810d51ae662cc5b5578f9395cb620a34a26
-Gitweb:        https://git.kernel.org/tip/9ea2b810d51ae662cc5b5578f9395cb620a=
-34a26
-Author:        Muchun Song <songmuchun@bytedance.com>
-AuthorDate:    Tue, 28 Oct 2025 17:04:08 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 31 Oct 2025 22:30:05 +01:00
+Nah, that's fine.
 
-genirq/proc: Fix race in show_irq_affinity()
+I'm asking explicitly because we have this basic rule:
 
-Reading /proc/irq/N/smp_affinity* races with irq_set_affinity() and
-irq_move_masked_irq(), leading to old or torn output for users.
+stable material => urgent branch and goes to Linus now
 
-After a user writes a new CPU mask to /proc/irq/N/affinity*, the syscall
-returns success, yet a subsequent read of the same file immediately returns
-a value different from what was just written.
+So it basically determines where I route it to.
 
-That's due to a race between show_irq_affinity() and irq_move_masked_irq()
-which lets the read observe a transient, inconsistent affinity mask.
+Lemme take care of it.
 
-Cure it by guarding the read with irq_desc::lock.
+Thx.
 
-[ tglx: Massaged change log ]
+-- 
+Regards/Gruss,
+    Boris.
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://patch.msgid.link/20251028090408.76331-1-songmuchun@bytedance.com
----
- kernel/irq/proc.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 29c2404..77258ea 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -48,6 +48,8 @@ static int show_irq_affinity(int type, struct seq_file *m)
- 	struct irq_desc *desc =3D irq_to_desc((long)m->private);
- 	const struct cpumask *mask;
-=20
-+	guard(raw_spinlock_irq)(&desc->lock);
-+
- 	switch (type) {
- 	case AFFINITY:
- 	case AFFINITY_LIST:
+https://people.kernel.org/tglx/notes-about-netiquette
 
