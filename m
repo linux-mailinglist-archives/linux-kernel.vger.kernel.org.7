@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-880688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4110DC26596
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:29:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740D5C26584
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:29:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C02D54EA33A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0383B3BF6F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EBF30AD17;
-	Fri, 31 Oct 2025 17:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924B131280F;
+	Fri, 31 Oct 2025 17:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OUydQVO8"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0mbD0KPT"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805F7309EE3
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BB9309F02;
+	Fri, 31 Oct 2025 17:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931695; cv=none; b=Y++6Hhgf1J2X0YhqoC8VxWuuJwCiqjYSAFaaP180vHtCMBo9nyk01ZLMW6ar8ri5qzKruiDhXM1no+/H9VjIO04xN9YIKUBZoIzAsDINcD5UmLfN0gd1eEa/zkRM1hSdt2Uyj8+xrm8OkmIlOkAHcCXu3LKmJ0xqLANUv0RPqa4=
+	t=1761931696; cv=none; b=Fd4HC8j2DZk5zPoiHoWAbyZa0WUWiWfvZuE809AP0hNcLu64QvuruqKpfwBRs7SAGBeRGqjhHpnmAu4Bwfk91q45oBorAd1mOuJoTcddYasnrSxNe5CLfMjAiixTt08ymdRgyt40jRtcySEvrvh8jtXpiRaqSJuLsGOhD5v8MD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931695; c=relaxed/simple;
-	bh=Ml0+puobOr15atbDR6Js54+RvH0AL45e5tSJs6UJB+4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k42wCbpUmhBZzfdh9vEmBwL36StZO8zVHU3pQQul1vDRye4GA+g6mzNBSEsdBda7HjlnMKvGagP0FALJIjwu8CRn+ZkM6rzJ1/roKkRh1FlMacaAYys0i+x96wHCnemYVN2vXrPD4bB9QQAClWFyWXHcpm9z2R7FaIxZgNvW7ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OUydQVO8; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1761931696; c=relaxed/simple;
+	bh=mX89eJtEOIjPqb5TiEEkJfU1H4NCQ2v2Gs/X8mYcvyA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fF1Icdk8q23qbjBua/f3VdRYo5NSfeq8HncKxtFwIV8IxxC6LsyEB+j0FbymgEra4PgYZhTZ3LLg8jdxAQyXMpyYc3OqOZVmfrRfS1YcRUbWlE10MGzUk5xDhBsIGAjXSqZUXTMNgL7wpim0OCNcjQmP72JrDysa0OxMDNSziVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0mbD0KPT; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E4F1F1A17C2;
-	Fri, 31 Oct 2025 17:28:10 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3706D4E4143C;
+	Fri, 31 Oct 2025 17:28:12 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AF75660704;
-	Fri, 31 Oct 2025 17:28:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 39D5C11818007;
-	Fri, 31 Oct 2025 18:28:06 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0816960704;
+	Fri, 31 Oct 2025 17:28:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4C8051181800A;
+	Fri, 31 Oct 2025 18:28:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761931689; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=Fq+SD7dZXVNCzjRnu2v6o1CWVJn5BJ/WuAi9xUnaeHo=;
-	b=OUydQVO8Cu07f+UP4SO047uIenuskYJFzXnEozwc4WSizjn254jbRDCjiA0n+CBQkAiuU7
-	l3bhqYGvEARuqGTfgHwtlkmu0Zll4M+fAMEIFaY9vjnkSrgAr9vdE+JQ/LIDd0mcXCkcZ0
-	O1h6Em1pdCHZW56wOKtvY6Ua9knPQS5bNz0iWb+Gp+CKKyDfBLRzwstlqvAZAdO+ABhW8P
-	gauuyTchQm49P4yD+hBXGMhWMaG36ahLdbldvEUCwIQmQb39BlLZlrixN2jpasBxVO+gfj
-	CkFibuXIIkpYFYTfoJGl2eri76ONht8Co6e7kTLtN6Jx7c1MNK+uG4KmWvu6jw==
+	t=1761931691; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=oHqEV/g7XFmkq0UzLPDeIwZV/fV2EtIfxTRhi9zC2G8=;
+	b=0mbD0KPT1S8Q8Ue7MzvbGhBFxqwNL0QzL4nZpL1eCu8ne+RM5g7oXJQ81BjqMRAwz9sQNa
+	795Rb2z5UWU7jG0/k+L2EIsv6F3Np+Cu6v2t/7Vhk/DgLya4NtZpE3Cl4hEDJPGLqjtm7W
+	qapdOmzpQLDdwqk2nJfCTlYNrqRkKSGnZbDJijg9cWfmyZn/e5bdworZewV8jnjaqOxIgf
+	POLdpIv6/LQOZmCbIgvPc98ixwurVTCmdcZ/Ci2JrzwYeHKnYixxvaA3AoXnPm5fUbmftY
+	QuVSl9E7peBkcYcaUV96Rmdlg5pfj1FecEqsfwtM+GVqJd0veK/WDajA5R5gqQ==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 00/28] mtd: spinand: Octal DTR support
-Date: Fri, 31 Oct 2025 18:26:44 +0100
-Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+Date: Fri, 31 Oct 2025 18:26:45 +0100
+Subject: [PATCH 01/28] spi: spi-mem: Make the DTR command operation macro
+ more suitable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,11 +58,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAFTxBGkC/x3MOwqFQAxA0a1IagMT/7qVh4WaqGlmJAM+Qdy7g
- +Up7r0hiqlEGLIbTE6NGnwC5Rks++Q3QeVkKFxRkysJ/+rn4BnPBqlFWwgDs2HZ1aurmq6auIc
- UHyarXt/4Nz7PCxPSFORoAAAA
-X-Change-ID: 20251031-winbond-v6-17-rc1-oddr-385f04684ad9
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-1-be42de23ebf1@bootlin.com>
+References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
+In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
 To: Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, 
  Vignesh Raghavendra <vigneshr@ti.com>
 Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -72,92 +73,40 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
-
-This series adds support for 8D-8D-8D in SPI NAND, which can already be
-leveraged without any SPI changes as controllers already have this
-support for some SPI NOR devices.
-
-The series is a bit long because many preparation patches were needed
-in order to have a clean 8D-8D-8D introduction (one of the last
-patches), but I believe the split is worth it.
-
-Among the few spi-mem patches, they are needed for building the SPI NAND
-changes (especially the ODTR introduction at the end) and therefore an
-immutable tag will be needed for merging in the MTD tree (unless all the
-series goes through MTD directly ofc).
-
-There is a benchmark in the last Winbond patch, we get +55% read speed
-and +26% write speed with this series, at 25MHz!
-
-    1S-8S-8S:
-    
-       # flash_speed /dev/mtd0 -c1 -d
-       eraseblock write speed is 7529 KiB/s
-       eraseblock read speed is 15058 KiB/s
-    
-    8D-8D-8D:
-    
-       # flash_speed /dev/mtd0 -c1 -d
-       eraseblock write speed is 9481 KiB/s
-       eraseblock read speed is 23272 KiB/s
-
-I am excited to see this finally upstream! Next step will be to see TI's
-PHY tuning series from Santhosh in conjunction with this one to operate at
-maximum speed.
-
-Thanks!
-Miquèl
+In order to introduce DTR support in SPI NAND, a number of macros had to
+be created in the spi-mem layer. One of them remained unused at this
+point, SPI_MEM_DTR_OP_CMD. Being in the process of introducing octal DTR
+support now, experience shows that as-is the macro is not useful. In
+order to be really useful in octal DTR mode, the command opcode (one
+byte) must always be transmitted on the 8 data lines on both the rising
+and falling edge of the clock. Align the macro with the real needs by
+duplicating the opcode in the buffer and doubling its size.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
-Miquel Raynal (28):
-      spi: spi-mem: Make the DTR command operation macro more suitable
-      spi: spi-mem: Create a repeated address operation
-      spi: spi-mem: Limit octal DTR constraints to octal DTR situations
-      mtd: spinand: Fix kernel doc
-      mtd: spinand: Add missing check
-      mtd: spinand: Remove stale definitions
-      mtd: spinand: Use standard return values
-      mtd: spinand: Decouple write enable and write disable operations
-      mtd: spinand: Create an array of operation templates
-      mtd: spinand: Make use of the operation templates through SPINAND_OP()
-      mtd: spinand: Convert vendor drivers to SPINAND_OP()
-      mtd: spinand: macronix: Convert vendor specific operation to SPINAND_OP()
-      mtd: spinand: winbond: Convert W25N specific operation to SPINAND_OP()
-      mtd: spinand: winbond: Convert W35N specific operation to SPINAND_OP()
-      mtd: spinand: List vendor specific operations and make sure they are supported
-      mtd: spinand: macronix: Register vendor specific operation
-      mtd: spinand: winbond: Register W25N vendor specific operation
-      mtd: spinand: winbond: Register W35N vendor specific operation
-      mtd: spinand: winbond: Fix style
-      mtd: spinand: winbond: Rename IO_MODE register macro
-      mtd: spinand: winbond: Configure the IO mode after the dummy cycles
-      mtd: spinand: Gather all the bus interface steps in one single function
-      mtd: spinand: Add support for setting a bus interface
-      mtd: spinand: Propagate the bus interface across core helpers
-      mtd: spinand: Give the bus interface to the configuration helper
-      mtd: spinand: Warn if using SSDR-only vendor commands in a non SSDR mode
-      mtd: spinand: Add octal DTR support
-      mtd: spinand: winbond: W35N octal DTR support
+ include/linux/spi/spi-mem.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/mtd/nand/spi/core.c       | 297 +++++++++++++++++++++++++++++++-------
- drivers/mtd/nand/spi/esmt.c       |   4 +-
- drivers/mtd/nand/spi/gigadevice.c |   8 +-
- drivers/mtd/nand/spi/macronix.c   |  49 ++++++-
- drivers/mtd/nand/spi/micron.c     |   8 +-
- drivers/mtd/nand/spi/toshiba.c    |   3 +-
- drivers/mtd/nand/spi/winbond.c    | 129 ++++++++++++-----
- drivers/spi/spi-mem.c             |  15 +-
- include/linux/mtd/spinand.h       | 246 ++++++++++++++++++++++++++++---
- include/linux/spi/spi-mem.h       |  14 +-
- 10 files changed, 646 insertions(+), 127 deletions(-)
----
-base-commit: 604a0841a26de188280b47fb7e78dcdaa966a09e
-change-id: 20251031-winbond-v6-17-rc1-oddr-385f04684ad9
+diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
+index 82390712794c5a4dcef1319c19d74b77b6e1e724..81c9c7e793b6ab894675e0198d412d84b8525c2e 100644
+--- a/include/linux/spi/spi-mem.h
++++ b/include/linux/spi/spi-mem.h
+@@ -20,10 +20,10 @@
+ 		.opcode = __opcode,				\
+ 	}
+ 
+-#define SPI_MEM_DTR_OP_CMD(__opcode, __buswidth)		\
++#define SPI_MEM_DTR_OP_RPT_CMD(__opcode, __buswidth)		\
+ 	{							\
+-		.nbytes = 1,					\
+-		.opcode = __opcode,				\
++		.nbytes = 2,					\
++		.opcode = __opcode | __opcode << 8,		\
+ 		.buswidth = __buswidth,				\
+ 		.dtr = true,					\
+ 	}
 
-Best regards,
 -- 
-Miquel Raynal <miquel.raynal@bootlin.com>
+2.51.0
 
 
