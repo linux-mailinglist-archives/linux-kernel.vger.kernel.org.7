@@ -1,200 +1,168 @@
-Return-Path: <linux-kernel+bounces-880281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37C9C25562
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:47:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CE7C25571
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1F8189A783
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:48:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CA6B4E9DCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5E0337B8E;
-	Fri, 31 Oct 2025 13:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DF82BF017;
+	Fri, 31 Oct 2025 13:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="ShO+uEFY"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQQwEpWW"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7968070814;
-	Fri, 31 Oct 2025 13:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7E5241679
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761918458; cv=none; b=EsvmV/NzX/LB7yDWDqDI6Er3DuWVkNhrWFE1eIby+xD5CZ7kreeEnxeyG4sr6RUX8bjwXO9UgswnaeCCozhTtbSgWw5UpJ8z3ymi6w0LMnsMciQB6e0UKu3ESJLdCuz/hrPnBTXdQMGsP2ZuQvJAc2HD1YZUrcTsNtqhoBeH4AE=
+	t=1761918489; cv=none; b=Df8CGXyELYwyOUYBSg491290YvaTRG5miqOXPJH2yJaSnW1QBKvd30KeSsTaBsldi7SohNbvinhK2TTlZKhCJTw4Q0HOknmHDk80D1oQmzRN7AW8DhqmZ9NQaHNX2TWC6eC3i2LfEj/raqSj2oFS+pvrbi2B+Y0gXizpXzhR+lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761918458; c=relaxed/simple;
-	bh=RGf9cfCIhxuq/vaRuNGbk2qeO2YTTDICUdifwVGN2Ps=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pA5+D3qg5+Caf/kcNdSQ3wjog04qXMh0XPVaqWQDMw9WSJ53cU/8uWbc/yXCcvXXr+BNinsu8/NaRcRZUm5TXymwQrOzQZB/vBKI7rYKdwRsqo1qhGqDIbLENC0iSYmBnX8U6G9wjiHlgcs3FiwQw2aSzJRYAY2/FKsqNdruD1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=ShO+uEFY; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761918441; x=1762523241; i=spasswolf@web.de;
-	bh=eEf9FtMftpf7rRdhDbyeVWuCRJ8OhLV37hbp0uqbBD4=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ShO+uEFYOmYlOgvsAsuB5M2OswcdOTiSek/gSQkissa60zfCH5rz0Yb0AFxwWYQx
-	 zbT8gxIpizohDkhQGHJOlm2sf2O5t7h5mmNeEBfF8QBZUHXEdcxnJqU6oSpNNBZlW
-	 H0GXf6y9diutdl7UitbJDgmwXtAxjiiHeB9npZi9YxePYiCoHLjJUPwLpNB9PEWGf
-	 Fuy/KYO4XyetNI2Wo2EPlakQjNpwsUwLoSMzpeQMmb98bYMnxtWJSaP4CPATXzpmQ
-	 D5JhTg9sOisvEOzgWoAo2CXY9tnglwLJjkXx2PHo5GN+7dhUXdrkqJrqS95xmvA8Q
-	 fJh0lUdppUaJpZBcgA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMpCg-1vVOO52iRQ-00Tpm6; Fri, 31
- Oct 2025 14:47:21 +0100
-Message-ID: <26bf82303f661cdd34e4e8c16997e33eb21d1ee4.camel@web.de>
-Subject: Re: [REGRESSION 00/04] Crash during resume of pcie bridge
-From: Bert Karwatzki <spasswolf@web.de>
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Mario
- Limonciello <superm1@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, regressions@lists.linux.dev, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J . Wysocki"
-	 <rafael.j.wysocki@intel.com>, spasswolf@web.de
-Date: Fri, 31 Oct 2025 14:47:20 +0100
-In-Reply-To: <f18bafacbd8316c9623658e2935f8fc3b276af64.camel@web.de>
-References: <20251006120944.7880-1-spasswolf@web.de>
-					 <8edcc464-c467-4e83-a93b-19b92a2cf193@kernel.org>
-					 <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
-					 <4a8302a0-209f-446a-9825-36cb267c1718@kernel.org>
-					 <25f36fa7-d1d6-4b81-a42f-64c445d6f065@amd.com>
-		 <1853e2af7f70cf726df278137b6d2d89d9d9dc82.camel@web.de>
-	 <f18bafacbd8316c9623658e2935f8fc3b276af64.camel@web.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1761918489; c=relaxed/simple;
+	bh=m4d0TEVEKPm8SxpLnu/gK8YS9LXAMy6B2RvDA6hQIcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yddmn5rDUKQRswCF02h3zXdt+0zyjgZW03YQPU2SUVGm2yGrHGmq1VBobe/qyKC2RSOa9F2CPZgvf54qzxgRZ5TPV6cRpCBIRLFhJhNoLlaoo1bg1/dou74++MlTFIzlXzumtz2EULPI31CbXDCF7Sru5VcUPR5c5tuxfJHQ3Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eQQwEpWW; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63e16fbdd50so2174412d50.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761918485; x=1762523285; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9IKMsypE+yNRUurFmetSHUW8DIToelSK2hDWwm/+SOg=;
+        b=eQQwEpWWCjo3DTyh7AnsJMlLnAE1zTc3nR+9purxkZvLfKTFuDBKqYxGW/GhA4Quux
+         GAI6VSbsr0AtZKEkRm+CUCsTGaQ9zBLRfo+1bDHtIHO9zrSdag1rX7wcIyqhIi9GcdM6
+         NoPzD7DkF/qLMBQZApBj1Zf5lW6m71AZ3Hju+ws7IUnqLAnB3fyIwlR6Z7/VkC5ILwtI
+         yyYICYUEKGGLL7787t66IUE2/y8BMk4nN4+TNpLJqBKiEhF5Fu2JsqO4Bnp0vpXMgrhx
+         ltBvCWGD9wNXm1xbAXVkxReLEwIKM5ClE+5ENYSWG72lMXcdBeJFeO5lJQ7bI1/eKkN5
+         z4rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761918485; x=1762523285;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9IKMsypE+yNRUurFmetSHUW8DIToelSK2hDWwm/+SOg=;
+        b=SkbRQJETUtmmPG+YkADu5Jm/hzFDqL1FLIH+fzbi4v2Hyj2iD7GFWijVdWO0gkJazA
+         EDEIbmJsTAaIm/VJphnB0sXtCOUMFPLQeNvJj+n26v9j2Ff0sYwXxZqZ7DawvL1Fh3fM
+         ABfLmuvQl4LZtOD8nuBtgVHlzF4UVv0VnvM7bn3zJe0kU3A2FOTStiNP2nSifCvxxSVY
+         rbknzHJwFIuDTgoEfwahrenndAsLdJ+Ow6ZjzBm6spzFoSE1gllP74gSa2k+JWzT0zCr
+         4X+Jg3gA6kTx4UYP2i8HAWND/JIeSOA7QcKA2Je/CWKkoOdgRoMBp/jDNujGRKrFdetC
+         5TVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWPo3SFAMaWya0hDGfwaKKc/M1HSrAfIqBVmo7c3IFH2IPqE3JhO5+cR4WgN9OK5TJz8KB8ZUGPXtLswc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGjXrUKJuUhRUQycWZY0NrN9WEmj9RYpkMEnGsr1b9wmsPYxJo
+	ZWpbJ3KZaKCQYZ3fD9AVPsJMLsH6323yy//BVhKWgra8qh3Qv4pS7lZi1U8FcWj0o0dB0QKlisU
+	7V53at3TmVauGKqLFJKP3FROIjvuI7WsxxAuTAX7teQ==
+X-Gm-Gg: ASbGncsf391ELLIwLpqLPX1MMBAgfOiNFSg6Mj/fV0G1FIdNuLtUXZFCa6bP0G8VIsy
+	zh9Tf4wHql9qjMs73ICQwEanfqAgI7YM0ytjN1Drb3FrLiXAHErJSVrSPi3rvolPVtOyuvZYTUy
+	zuijPKCnBFU4FeNGv6Q5OMbHuDPCpeQHlbB0OD+IVCOTktdWIVKxNS0+ESpt8zDo6fArLfaWMQY
+	JYtl9rem3PDD9qL7lwwtrUu6HXgfCkkiRRGXr555ixhMw/OjQ9CeJFWxMhg3A==
+X-Google-Smtp-Source: AGHT+IGVcGqzFiIeaGUMTxGjSBMNFcrT+skyvR/Zq38w4b0meGhVP0vyEmyQ6O9HNiJoistD3h5W4kD1DiETyutaiP0=
+X-Received: by 2002:a53:d018:0:b0:63f:556b:5b6 with SMTP id
+ 956f58d0204a3-63f922eff6emr2519034d50.39.1761918484805; Fri, 31 Oct 2025
+ 06:48:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:EjRqDMd/Z70FrDVz13IfKacOJSLO+KqbIRk3DhAnL3MhjrI/TPe
- hgag+npBPbfOJsus7sL7uxfamxeJGX78r2y0RV08TjDwY9RbUMx0eV0cLT+HviCHf5bX5ld
- ZarmhKmP7UOEhrN9vI44sDiwAZiDOWNNLitwP/Gm2pGXDFL0hl9GplQdCS8BUyXTCbI2Fop
- MU5nQv5zd+LR53ljbbAJA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pzeKkoOKzOQ=;+MX7KvkhiMrJ7amnBNF6vIVRSnJ
- 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
- jDYFg==
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <20251016151929.75863-2-ulf.hansson@linaro.org> <20251029081014.443psmqznd2pqm4i@lcpd911>
+ <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com> <20251030164542.atnhs4wgk6ggmmly@lcpd911>
+In-Reply-To: <20251030164542.atnhs4wgk6ggmmly@lcpd911>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 31 Oct 2025 14:47:29 +0100
+X-Gm-Features: AWmQ_bkXYtLkHgQjUQNJqO9va0xDnvSagkeSDoJ8ysCheRg4L2MKvBY7iRS11PA
+Message-ID: <CAPDyKFqTS6-69QfqdPtRrbkSqwxEnO1CPXLnRvM6WsOKNZgyQQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
+To: Dhruva Gole <d-gole@ti.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Upon closer inspection I noticed that the PCIe bandwitdth has been reduced=
-:
+[...]
 
->=20
-> [76621.870884] [    T140] pcieport 0000:01:00.0: Unable to change power =
-state from D3cold to D0, device inaccessible
-> [76621.870977] [    T140] pcieport 0000:02:00.0: Unable to change power =
-state from D3cold to D0, device inaccessible
-> [76621.876006] [    T140] pci_bus 0000:03: busn_res: [bus 03] is release=
-d
-> [76621.878237] [    T140] pci_bus 0000:02: busn_res: [bus 02-03] is rele=
-ased
-> [76621.879867] [    T140] pcieport 0000:00:01.1: pciehp: Slot(0): Card p=
-resent
-> [76621.879873] [    T140] pcieport 0000:00:01.1: pciehp: Slot(0): Link U=
-p
-> [76622.006565] [    T140] pci 0000:01:00.0: [1002:1478] type 01 class 0x=
-060400 PCIe Switch Upstream Port
-> [76622.006606] [    T140] pci 0000:01:00.0: BAR 0 [mem 0xfcc00000-0xfcc0=
-3fff]
-> [76622.006616] [    T140] pci 0000:01:00.0: PCI bridge to [bus 02-03]
-> [76622.006630] [    T140] pci 0000:01:00.0:   bridge window [mem 0xfca00=
-000-0xfcbfffff]
-> [76622.006644] [    T140] pci 0000:01:00.0:   bridge window [mem 0xfc000=
-00000-0xfe0fffffff 64bit pref]
-> [76622.006772] [    T140] pci 0000:01:00.0: PME# supported from D0 D3hot=
- D3cold
+> >
+> > > It seems an overkill to me that a userspace program be required to hold
+> > > open this file just to make sure the constraints are honoured for the
+> > > lifetime of the device. We should definitely give the freedom to just be
+> > > able to echo and also be able to cat and read back from the same place
+> > > about the latency constraint being set.
+> >
+> > So you'd want a sysfs attribute here, but that has its own issues (the
+> > last writer "wins", so if there are multiple users of it with
+> > different needs in user space, things get tricky).
+>
+> sysfs makes sense, then would it make sense to have something like a
+> /sys/devices/system/cpu/cpu0/power/cpu_wakeup_latency entry?
+>
+> IMHO userspace should decide accordingly to manage it's users and how/whom to allow to
+> set the latency constraint.
+> We already have CPU latency QoS entry for example which is sysfs too.
+>
+> >
+> > > One other thing on my mind is - and probably unrelated to this specific
+> > > series, but I think we must have some sysfs entry either appear in
+> > > /sys/.../cpu0/cpuidle or s2idle/ where we can show next feesible s2idle
+> > > state that the governor has chosen to enter based on the value set in
+> > > cpu_wakeup_latency.
+> >
+> > Exit latency values for all states are exposed via sysfs.  Since
+> > s2idle always uses the deepest state it can use, it is quite
+> > straightforward to figure out which of them will be used going
+> > forward, given a specific latency constraint.
+>
+> I disagree regarding the straightforward part. There could be
+> multiple domain heirarchy in a system for eg. and all these multiple
+> domains would have their own set of domain-idle-states. All of them having their own
+> entry, exit, and residency latencies. I myself while testing this series
+> have been thoroughly confused at times what idle-state did the kernel
+> actually pick this time, and had to add prints just to figure that out.
 
-The PCIe band with seems to be have been reduce to PCIe 1.0 (2.5GT/s):
+If I understand correctly, most of that confusion is because of the
+misunderstanding of including the residency in the state selection in
+regards to QoS.
 
-> [76622.006874] [    T140] pci 0000:01:00.0: 16.000 Gb/s available PCIe b=
-andwidth, limited by 2.5 GT/s PCIe x8 link at 0000:00:01.1 (capable of 126=
-.024 Gb/s with
-> 16.0 GT/s PCIe x8 link)
->=20
-> Bert Karwatzki
+Residency should not be accounted for, but only enter+exit latencies.
 
-This is the same message from system startup (here it's PCIe 3.0 (8.0GT/s)=
-, which is the PCIe version
-of the CPU (AMD Ryzen 7 5800H with Radeon Graphics)):=09
-[    0.289221] [      T1] pci 0000:01:00.0: 63.008 Gb/s available PCIe ban=
-dwidth, limited by 8.0 GT/s PCIe x8 link at 0000:00:01.1 (capable of 126.0=
-24 Gb/s with
-16.0 GT/s PCIe x8 link)
+>
+> When implementing these things for the first
+> time, especially when one has complex and many a domain idle-states it
+> would indeed help alot if the kernel could just advertise somewhere what
+> the governor is going to pick as the next s2idle state.
 
-Bert Karwatzki
+The problem with advertising upfront is that the state selection is
+done dynamically. It simply can't work.
+
+>
+> Also, I am not quite sure if these latencies are exposed in the
+> domain-idle-states scenario ...
+> I tried checking in /sys/kernel/debug/pm_genpd/XXX/ but I only see
+> these:
+> active_time  current_state  devices  idle_states  sub_domains  total_idle_time
+>
+> Maybe an additional s2idle_state or something appearing here is what I
+> was inclined toward.
+
+That sounds like an idea that is worth exploring, if what you are
+suggesting is to extend the idle state statistics. In principle we
+want a new counter per idle state that indicates the number of times
+we entered this state in s2idle, right?
+
+While I was testing this feature, I used trace_printk - and afterward
+it's easy to digest the trace buffer to see what happened.
+
+Kind regards
+Uffe
 
