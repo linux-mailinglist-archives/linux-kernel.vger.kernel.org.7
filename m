@@ -1,84 +1,108 @@
-Return-Path: <linux-kernel+bounces-881018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84283C2737D
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:50:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EA3C27386
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731843B8384
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A5D4073DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E22832F757;
-	Fri, 31 Oct 2025 23:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1D932F74B;
+	Fri, 31 Oct 2025 23:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6WdUmFB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dl1xHIOE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA51D17A2F0;
-	Fri, 31 Oct 2025 23:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9899D32D0CF
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761954600; cv=none; b=hYAmJli/dGJMCTz60tPd77XHflY38G3GyXT03pvQ6mc+jwo1S/J7/Np/rqfeGF8SrMkzWdpV9WlOzgOuiZn+3n4QBkcRJbfDChxZkQ5Gjc9dh3XHu/4B79v9mSDG7Q5ha/HUHE+564w7wuCz8dhvmofXs2llta3VYAR1pCAEIRg=
+	t=1761954618; cv=none; b=UladxviU6PTvbF2vq24ZhbdbTU0md0Ad1RAYUdpUH1AD+I5/NC4RfhtTPV0BO/A0yZwMmWiPBXXVMB2cjydjtdyi3KTmQ8bR11gcfJS/6p9X7JdM9WtehVXOunMJpX+dLrNyMXEkupVRzixAWJowyWmifXTQ4b5RdCynhv/15tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761954600; c=relaxed/simple;
-	bh=nZX5tS1tXPuRCqWFG9SL8xYo5+hc5KgXS1X0YbBBRss=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FN9gZcgD6mGtZ9VUKfdH02T2jguLR5ipE6a0SPu6SSOwk5nsiHq0Nlwh0lA9wO7fA42EIB1xx3er/1kZhEAPUSNRCZLmH3VTC9tcf8/dH86LLFN/EQY1xqhXaoOiZCrSc/2h33lOJKqxPwhSLeY4Ia7pVIAPrV36zCMMDLHrGl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6WdUmFB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AEADC4CEE7;
-	Fri, 31 Oct 2025 23:49:59 +0000 (UTC)
+	s=arc-20240116; t=1761954618; c=relaxed/simple;
+	bh=/2/ajoMcL0nJ8XaYHk8GNFJXrKDu+Fo31MBZehKtJwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qx3HuH7ddR3cCzgWdxzfzZnPmQIF256LwvdLlXvBXqghxmhAn2ZlkioOwsKNsJLVaLfEUUN0RxmC487yCcy89gKFUNzK3XhpTqR43eQUk+oMEyz9aZI4wPv1+Pmoi8dux9nKiTDQTNGvPLOhYU77tiV3oLZJvXT3aiV9HyuZQq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dl1xHIOE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A525C16AAE
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:50:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761954600;
-	bh=nZX5tS1tXPuRCqWFG9SL8xYo5+hc5KgXS1X0YbBBRss=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a6WdUmFBFKmM+JCCebjFrJuP1xMmII6iRm5IkJNoy+adEsXtj0qPDpA2qlxhsJHJj
-	 cHoXbDj9fX34mwRDxdvmKS1+S9kvoIf0PnjqppdoQZLmgOsVmW4iDZaUla7hSINST6
-	 037T5d+PjPBYt+ua+AecXcPmDLuqKsPiLxmHi3SP5T7KwjoILe1TDRUgVxBv8plVHd
-	 xCdde+QdHm0B9nlkOC7Yb0mCWwABgvnbex7S956Gv1gDX6PPB9UKaOIJ43j66d+u+v
-	 EkyHENe1rgYyXTeUYhOQa5hnVjxjKVngVL8YkRkTtVtPnKrIm9progavEgqtlWU4kQ
-	 lZhJh6PeQ/lBw==
-Date: Fri, 31 Oct 2025 16:49:58 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, Pablo Neira Ayuso
- <pablo@netfilter.org>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>,
- Phil Sutter <phil@nwl.cc>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v1 1/1] treewide: Rename ERR_PTR_PCPU() -->
- PCPU_ERR_PTR()
-Message-ID: <20251031164958.29f75595@kernel.org>
-In-Reply-To: <20251030083632.3315128-1-andriy.shevchenko@linux.intel.com>
-References: <20251030083632.3315128-1-andriy.shevchenko@linux.intel.com>
+	s=k20201202; t=1761954618;
+	bh=/2/ajoMcL0nJ8XaYHk8GNFJXrKDu+Fo31MBZehKtJwI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dl1xHIOEsevKwhp4hBvf7FnHJuHwUXF5tMIPL5VvdrN4G7KMwF/7tF791/hzsWb/d
+	 PhS11YZFfIXuxaX9as+Yjhfn0sKWN0qlpCUnOYxN3C+HXVPBe9cO17Eh3IX/8ELvuG
+	 hKdEA7KpgVd8d0xaE3G1Hf7f61Z/E2QBGPqVUfPtCauPIAUc5htcQXyHeQ+F1wbPcx
+	 Jxu2XWXLhAHXmaD+5kKvTPEvhPUyUTM6Y3ytzzTDSXy4MwyEtR2nmPUuRMviuZSXrr
+	 Buf6+sFXvuBHvESPq4iSyJKdcYeyV3JugAcAaBjOTaLO3cPgrQ/S6XyhTPkedZ2MAz
+	 1m7U+cKuzRlTQ==
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b550eff972eso1964545a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:50:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvURMOSD5qtUR0m5zkW12/ikoIPBcd/qNcWEqbjBFT6jbHYtmQtexi+GKEce4/FcPLSrHsNocfXblFmj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFNPIRFWh9nWVQuzvakb/irF5vXjCgETQuFYTGV9zl8xOQOXLJ
+	wjhQ2hMb9Ukh2Q84cT2H2EmR1WHratVSd6sE5TYSGiuTN63sbUCUwx4rdM5VTeRhxpV4KNPV1wT
+	OTbTbRf6ohT/KPw8Rn9mARTO644rTL9M=
+X-Google-Smtp-Source: AGHT+IF/IzsfRTe4tVhaCIKS8r/3VLdW2aUi6RokBL0QcMpp8EEpsvKRse2CEt0IwBh6tkQ5GvlWCyM3+iFSoVFVEEU=
+X-Received: by 2002:a17:903:22c6:b0:295:5132:1a99 with SMTP id
+ d9443c01a7336-295513221b7mr16477645ad.44.1761954617741; Fri, 31 Oct 2025
+ 16:50:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251023233656.661344-1-yanzhuhuang@linux.microsoft.com>
+ <20251031101700.694964-1-yanzhuhuang@linux.microsoft.com> <20251031101700.694964-3-yanzhuhuang@linux.microsoft.com>
+In-Reply-To: <20251031101700.694964-3-yanzhuhuang@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Fri, 31 Oct 2025 16:50:10 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkE_Jg3Sjw-HBKK1aZTwv2a6wM8BWpBZ5XK4aM-6e_rT5w@mail.gmail.com>
+X-Gm-Features: AWmQ_bkLeLDp6SONSBbYTeZsktbD5GFNx2gqFUxFKj5LrtAnbBK3sYoYIfVNLm0
+Message-ID: <CAKtyLkE_Jg3Sjw-HBKK1aZTwv2a6wM8BWpBZ5XK4aM-6e_rT5w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ipe: Update documentation for script enforcement
+To: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
+Cc: wufan@kernel.org, paul@paul-moore.com, mic@digikod.net, jmorris@namei.org, 
+	serge@hallyn.com, corbet@lwn.net, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 30 Oct 2025 09:35:53 +0100 Andy Shevchenko wrote:
-> Make the namespace of specific ERR_PTR() macro leading the thing.
-> This is already done for IOMEM_ERR_PTR(). Follow the same pattern
-> in PCPU_ERR_PTR().
+On Fri, Oct 31, 2025 at 3:17=E2=80=AFAM Yanzhu Huang
+<yanzhuhuang@linux.microsoft.com> wrote:
+>
+> This patch adds explanation of script enforcement mechanism in admin
+> guide documentation. Describes how IPE supports integrity enforcement
+> for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
+> how this differs from kernel enforcement for compiled executables.
+>
+> Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
+> ---
+>  Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
+guide/LSM/ipe.rst
+> index dc7088451f9d..3f205d7dd533 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -95,7 +95,20 @@ languages when these scripts are invoked by passing th=
+ese program files
+>  to the interpreter. This is because the way interpreters execute these
+>  files; the scripts themselves are not evaluated as executable code
+>  through one of IPE's hooks, but they are merely text files that are read
+> -(as opposed to compiled executables) [#interpreters]_.
+> +(as opposed to compiled executables). However, with the introduction of =
+the
+> +``AT_EXECVE_CHECK`` flag (see `AT_EXECVE_CHECK <https://docs.kernel.org/=
+userspace-api/check_exec.html#at-execve-check>`__),
 
-TBH I find the current naming to be typical. _PCPU() is the "flavor" of
-the API. Same as we usually append _rcu() to functions which expect
-to operate under RCU. All error pointer helpers end with _PCPU().
+Using url here might not be ideal, perhaps change it to
+:doc:`AT_EXECVE_CHECK </userspace-api/check_exec>`
 
-I don't feel strongly so fine if anyone else wants to apply this.
-But I will not :)
+-Fan
 
