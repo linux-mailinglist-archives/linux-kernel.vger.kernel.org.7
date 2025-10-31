@@ -1,165 +1,148 @@
-Return-Path: <linux-kernel+bounces-880177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3689C250CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:39:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F383C250F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D5B40371A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763D41A68476
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306C534A77D;
-	Fri, 31 Oct 2025 12:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AACF34A79E;
+	Fri, 31 Oct 2025 12:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckIMRIcw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezrt3+t3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D0B340DB2;
-	Fri, 31 Oct 2025 12:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23C3342CA5;
+	Fri, 31 Oct 2025 12:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914358; cv=none; b=atPAgzzL9bPQp+OoYbe9D4p6GCgmxTV9ywoPjHZfJwCwmXE+uKDWLjrOPghVl5+1Ps01EAr5oqS3DXOJvZ0nSvkJz7i8b4aZ+6FDCti8yA93U8cYzGe9QWmwgqzRJQU2F1RauLCKWeZej9IpmYm65Ii79kTsgqEVS6sOQWu2gB4=
+	t=1761914622; cv=none; b=uyhVdn3IuUn6RLET10eNb0JvGo6JDxxJFgjyCj7SPF9KQzGKHcHzRvcl5sHfp8cMaILOW9Ua78N5pPdf+/D8dlpyYHCRh+lDLbmLiX8HuHBP1SqN+qnCXGg/895d2s4Y1dKkZC7R4IeHX5ujk4PRaXMq/dPbzoe6iqOWPD0iOKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914358; c=relaxed/simple;
-	bh=Mf3SBZaReDiM9X2FtR7wf7HpZfO4MPTDbwjoFqP0IJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tEpSCCfzAIDEqg3ZgS9lSbG4yeNPE8lGJBHhEy6Laqw1uq9ir4857+0uzY99JUjiBepaRu17ESWv52y/3lnIrBQJFEAKb6Gj6eitENwlGtRNF8uAdm8qQOVQ57OqPVoRwzmWfrILhcNC56GWxVbQdsm1Q4NaS7MzRHB+v+I+/EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckIMRIcw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A838CC4CEFB;
-	Fri, 31 Oct 2025 12:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761914357;
-	bh=Mf3SBZaReDiM9X2FtR7wf7HpZfO4MPTDbwjoFqP0IJk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ckIMRIcwmsh/SXoQyLum0k4EjM7BUnZTJe6YsgD4+zIaE5IXtJdMcJZ6s5GHHZODw
-	 Vi1XK4YJZSFZvTrZTWWwcJ3ykywumwaBB9SllrOuTGbIy3fYXyKjfkHCit7bsAH4RB
-	 UcmyphbnpSWkoQDvtczmVPmPzKXIxJ8tNlaf5o7k7q1bY+A42DRUjkNdkbyg5LlXdL
-	 iN7FzrF7qE+FEV6M0WjZSJUuWEKw90xRb6b03yRLBLPCgJ86Cpm+9wCrflquRk/qcU
-	 aJQBNgqju6T/yYXcKZs5u+IIW/K7ka2POsP7L4I9wJu0IAKNd0FiioEmoTqo4P/a3w
-	 nphJKx1+eo13A==
-Message-ID: <68b2b40a-da98-46b8-bf48-ce17fb3b79cd@kernel.org>
-Date: Fri, 31 Oct 2025 13:39:11 +0100
+	s=arc-20240116; t=1761914622; c=relaxed/simple;
+	bh=sF35hppqD3HWncobGIVIUzqVORCZRJuB6R7SU1cG6+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEy35fTzxvkSOZmyKwf8JXGkBABuYPQYICPe9Ubw/442LQ3Ch1rFOxMKdCChaa0yk7eqtXdRK3XSmIg1w8PDpDrfEhjGXwDBppLW5zmJxLH7qYEE/3cadT6FyLf3ZAHJ6/ZrcVcs+ciBZOe8fByAKhKNtRQUlGX8vYY8PTCthuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezrt3+t3; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761914607; x=1793450607;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sF35hppqD3HWncobGIVIUzqVORCZRJuB6R7SU1cG6+U=;
+  b=ezrt3+t31QLLFGHgQo6NIgHwvxsx7rJuP39gYI2YnKWIaepA69umuWhQ
+   9QugiwP1BKFMs0V5qetbN7BxqaqGp+LacZgP5sdFfrkhXicn/EIgRjOia
+   61KTk7iopk9SenzAb9SwrJX+qgPLGfvcE9k2JClXK7qIJLQgyIKdhrCUE
+   MYNCVv9dPDn5yumFfi6fMSM3Lh7RjoXM4JDLXBjlrKJgyV91SJxV8nRP8
+   70uK/0iT7cSjKuhT6JGFSGm4nkiU7A1HgszwG4PgtwItiR4VpGpkgE0NA
+   R4By3qO9/OENnqOjpWUetmbPRZrUqLHBh/eNcj8GKvVlptCv7O6hGlVO9
+   A==;
+X-CSE-ConnectionGUID: GU3bK0a7S0SWLpy3A/PTVQ==
+X-CSE-MsgGUID: 8EdR+VC7T+WJngi1x3yjmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="67935027"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="67935027"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:43:22 -0700
+X-CSE-ConnectionGUID: AwmRUQfkS8mQ6Q97oh0umQ==
+X-CSE-MsgGUID: Ko1mJjW+QF6FrzORNVX+vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="185500706"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 31 Oct 2025 05:43:19 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEoSz-000N6m-10;
+	Fri, 31 Oct 2025 12:42:55 +0000
+Date: Fri, 31 Oct 2025 20:40:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Wu <wusamuel@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, tuhaowen@uniontech.com,
+	Samuel Wu <wusamuel@google.com>,
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] PM: Support aborting sleep during filesystem sync
+Message-ID: <202510312048.Ylb5GU76-lkp@intel.com>
+References: <20251030210110.298612-1-wusamuel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] watchdog: Add driver for Gunyah Watchdog
-To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-Cc: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
- <20251031-gunyah_watchdog-v4-2-7abb1ee11315@oss.qualcomm.com>
- <13d2963d-e931-4e51-b875-a1650b899bb7@kernel.org>
- <09e8485f-f512-4069-be9f-3e94fb142aa3@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <09e8485f-f512-4069-be9f-3e94fb142aa3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030210110.298612-1-wusamuel@google.com>
 
-On 31/10/2025 13:11, Pavan Kondeti wrote:
-> On Fri, Oct 31, 2025 at 12:48:18PM +0100, Krzysztof Kozlowski wrote:
->> On 31/10/2025 11:18, Hrishabh Rajput via B4 Relay wrote:
->>> +
->>> +static DEFINE_SIMPLE_DEV_PM_OPS(gunyah_wdt_pm_ops, gunyah_wdt_suspend, gunyah_wdt_resume);
->>> +
->>> +static struct platform_driver gunyah_wdt_driver = {
->>> +	.probe = gunyah_wdt_probe,
->>> +	.driver = {
->>> +		.name = "gunyah-wdt",
->>> +		.pm = pm_sleep_ptr(&gunyah_wdt_pm_ops),
->>> +	},
->>> +};
->>> +
->>> +static int __init gunyah_wdt_init(void)
->>> +{
->>> +	return platform_driver_register(&gunyah_wdt_driver);
->>> +}
->>> +
->>> +module_init(gunyah_wdt_init);
->>
->>
->> Heh, what was my last message? If I see module_init() I will NAK it.
->>
->> At v3 you really ignored entire feedback and this one here continues the
->> pattern.
->>
->> NAK, please read how Linux driver model is works.
-> 
-> You mentioned in your previous reply that
-> 
-> ```
-> If you call any module_init other than module_foo_driver I will keep
-> NAKing your patch because it is wrong. I explained why wrong already
-> multiple times in previous threads and other discussions.
-> ```
-> 
-> If you are referring to why module_platform_driver() is not called here,
-> Hrishabh answered that already previously. Please see
-> https://lore.kernel.org/all/ndwwddd7vzjpgvzg55whdno4ondfxvyg25p2jbdsvy4lmzsfyy@jnn3wywc7xtp/
-> 
+Hi Samuel,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Wu/PM-Support-aborting-sleep-during-filesystem-sync/20251031-050330
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20251030210110.298612-1-wusamuel%40google.com
+patch subject: [PATCH v6] PM: Support aborting sleep during filesystem sync
+config: arm64-randconfig-r061-20251031 (https://download.01.org/0day-ci/archive/20251031/202510312048.Ylb5GU76-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312048.Ylb5GU76-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510312048.Ylb5GU76-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/power/main.c: In function 'pm_init':
+>> kernel/power/main.c:1159:17: error: implicit declaration of function 'pm_start_fs_sync_workqueue'; did you mean 'pm_start_workqueue'? [-Wimplicit-function-declaration]
+    1159 |         error = pm_start_fs_sync_workqueue();
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                 pm_start_workqueue
 
 
-Your commit msg does not explain why this cannot be unloaded. What you
-want - intended to be a persistent module - is not relevant here. I want
-it to be a proper and regular driver module and I said it last time.
+vim +1159 kernel/power/main.c
 
-Best regards,
-Krzysztof
+  1153	
+  1154	static int __init pm_init(void)
+  1155	{
+  1156		int error = pm_start_workqueue();
+  1157		if (error)
+  1158			return error;
+> 1159		error = pm_start_fs_sync_workqueue();
+  1160		if (error)
+  1161			return error;
+  1162		hibernate_image_size_init();
+  1163		hibernate_reserved_size_init();
+  1164		pm_states_init();
+  1165		power_kobj = kobject_create_and_add("power", NULL);
+  1166		if (!power_kobj)
+  1167			return -ENOMEM;
+  1168		error = sysfs_create_groups(power_kobj, attr_groups);
+  1169		if (error)
+  1170			return error;
+  1171		pm_print_times_init();
+  1172		return pm_autosleep_init();
+  1173	}
+  1174	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
