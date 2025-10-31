@@ -1,154 +1,167 @@
-Return-Path: <linux-kernel+bounces-879297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63940C22C64
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:19:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573AAC22C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E7844E83AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED771896953
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5070B190664;
-	Fri, 31 Oct 2025 00:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAA81DB551;
+	Fri, 31 Oct 2025 00:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="WR8lxUAx"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERwvNhrf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C871624DF
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B291C8631;
+	Fri, 31 Oct 2025 00:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761869974; cv=none; b=IRYewB/m/Rt9W8vGZ7Sht/ImMYGnaycqKNHNr3sI7HJqenVx7DNhsmtcaVLF/2oWaBNh57BdsnOGgNQ4jZ0DISfbehrlixb8tu/5J76/VtWlKRVXIOx924eyqtFzXLk8VlLgeVDen8lLhLMvBljNtNT7bdWl3jY5ws9kHumihcM=
+	t=1761870566; cv=none; b=gZf+GtI5TAq1/BcLRMNH28BDVzNfJ7hQjqZVk/cCEvPAgc9A3ENywCFrHbkuIhPeQqSSVoHVAvA3p/TlYa0OuOa5h1GVRO4wvTYzvkOjqj/WxP7yCCBAenK+5Qg0qyzuExuLwgck7Csqb1aX8D7imbc2RwbBnjA7FPjkSG88oD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761869974; c=relaxed/simple;
-	bh=8rHUYkXKPL5IW43a+4rQNutLuyHqHIoW5Z0VxJSm0u4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KcA8ma4C09uknR4RUlXyCBJkJsHQensrltxJMQMwD/e623KHP8blm5VkZADgxvk8ZNhOLcS8mO0r5kjv3d7L/THtemAHwjjjDWaocnGd1FW4KBfovCe4Hpsl7Dzfz7P06NWVUb3uvFFcMo2jzaySuxDpag9uyOHUwpq4PlpKa4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=WR8lxUAx; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64071184811so1892506a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761869971; x=1762474771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cv3Ljvf1heM/ChX+5Kbnk959i79o/ym9ON91SVXdVic=;
-        b=WR8lxUAxQmD+DWLD1tgzmINQnPnyk6Vm976ZZpfc/IITPpAPs+kxbXZbaybX0nFwbv
-         NP62A1PqWLovWAkXh9DGcUrXuzEEQQpxKJ3JorgCVpURG+3TKFcJ9nQy3vy+SWPmR3NS
-         X8PTqprIfWt1r8qoyEIY8+qr8MTuKr8btlRjGZ2k1dZ7zM41eNj7VKyWMl1RNHRk6Zav
-         0IxobgQB8mmDp07zCyQVT5Jn4zr7J1GWVIvCUjPxfK9x782d6AEE0y2XdGOLZJ5OPbNx
-         xq4vRUKVwBDN8go1aAmpL3GcFErz41o/O7lOstO8c67Lob+4CzOstfEduiGJ6TAwzc5Q
-         O/DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761869971; x=1762474771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cv3Ljvf1heM/ChX+5Kbnk959i79o/ym9ON91SVXdVic=;
-        b=NN9aBr2iFKDOXCVnhoUnnGW9SE6wOKbPpkPqa/fxDD6ZJV0+YkOZE+aEK29Z5tciPP
-         ARf5N8ihMcFGOPbqeVeFHGz0Vka7MexqJYuOwjDDIf0B++Yw9PMAayocITF6vvmECA5b
-         TiA5MSBSWPe9vbJXkLu3vssXDaYiHcELF05rPSWNbwb6zbilU+styrGs6U3U9Uax8TIJ
-         cToBdNt+Ut3DSsvuNJal0TMzkpay6RfQ9vwkZqHGx3eFklokaBM9sp5J2Mdk/zrHbM6+
-         fxlvguO6yGXrTx5jRj1zV0Vh1ow8zxDceM2i2JtGRD/SSsm5HX8/BniAJTUGWFcHkH9a
-         ilnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXB4HJc6lPUArbM+L8Zw5jTVPyRIUBdc8686SNFSgfEu86ddpsM9R/HpPtG7wtuLFS+tRPltNNZscDs59g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+i70H9cM+aGHngOHuTE7Obqh4aqRlWNMO77uu7VcJ53eWocsO
-	d/n+DUipEg9/vDhaCtZU9tGIvwbkBpN9v3VlPqanJX6KHbTa4A8I0t2auzvjkm2Jsc4cXJ0uTPb
-	cPPMNu5E7i633pskRKGFLjmkR4hud+GsiHhu5RL8kZQ==
-X-Gm-Gg: ASbGnctt5/ke5jgbtEMloPlY0jUKZ4AZapFlUddPiLHrT2GcNYgVgqjF50ZnvDHyczi
-	6I8rLzYYbZgXoWyZLUyf0USM+m3uDA850maid4MBuGmGclnpfdEQLx9SsRfDaZ/5rpmq8bNabB/
-	nOyW0i4P7vkCMN6UpcfmeSbUBv+69G5isAu/l7BdeJmabCqssmnTSXVRdNBc6AKW1lbk/vDdJjF
-	sTXqnItEhVVXlE/Aj/AcrxrIi9sR8a6rwWlkb6y7H0H2lD9JvbDlgq43hZmlxxAZ7EV
-X-Google-Smtp-Source: AGHT+IHAmJ5aHdM6JoD2TOJsB7BThxEoT5eo1YrDOCS0gC6NmplAKbJLD+yZsTcgPKK2dj5Dhi5gMIE8RdzNHN72sus=
-X-Received: by 2002:a05:6402:13cb:b0:640:6a18:2931 with SMTP id
- 4fb4d7f45d1cf-6407702dcd1mr1160377a12.29.1761869971150; Thu, 30 Oct 2025
- 17:19:31 -0700 (PDT)
+	s=arc-20240116; t=1761870566; c=relaxed/simple;
+	bh=UM6Yec175jS9Q0JhM4JNCSEyAxYvmozftEKcUDIq/6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocUc2DdC4YqdV8oXDJ6yQ1H67bccig8EWXjB+60nE++dkztXN9YuXdHFFq80NE7zFldfLXIHbzvpHUoHsdSnyeJmLlp3e84feKsrpxcBTLgdtSE4OU0eTBRvf+DJedxCIaLVD4wfgnXgmqlsOtQzqS5apRsNI9ANz5x6qtcUvug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERwvNhrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9E4C4CEFD;
+	Fri, 31 Oct 2025 00:29:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761870565;
+	bh=UM6Yec175jS9Q0JhM4JNCSEyAxYvmozftEKcUDIq/6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ERwvNhrf/gsDEr0bowe5JNBZOzVxJ4JdGt7r9dEooUme9uL5lqn11eL80IxQZGPEM
+	 sIkp6GxNDrxgVVSy9qkOreT1mXS3vpcRHt+1TPkm9aFkug9OOwq+QMd1bhO9BhF4y3
+	 M0kqO8Vg9a+sb7bH7LSCM1KIxHNMFN4em0Pn6njkWAzBhFBV/0TVaauo5i2+xOVmQb
+	 bOs0+DnyvT3lutfzWX5EQsBKIt2pDS+CZSh55mIN6veCD00XD9s6lto2/pieC0JAsp
+	 dG68k9MmPAHoyzChAnN1PUegm/F/c/5eklc7K45Te2Gtv+Cwkp6NSBNlkShDEZr5Ce
+	 y6BqEwoUQzhvA==
+Date: Thu, 30 Oct 2025 19:29:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v5 06/12] dt-bindings: net: dsa: lantiq,gswip:
+ add support for MII delay properties
+Message-ID: <20251031002924.GA516142-robh@kernel.org>
+References: <cover.1761823194.git.daniel@makrotopia.org>
+ <8025f8c5fcc31adf6c82f78e5cfaf75b0f89397c.1761823194.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018000713.677779-1-vipinsh@google.com> <20251018000713.677779-7-vipinsh@google.com>
- <20251027134430.00007e46@linux.microsoft.com> <aQPwSltoH7rRsnV9@google.com>
-In-Reply-To: <aQPwSltoH7rRsnV9@google.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 30 Oct 2025 20:18:54 -0400
-X-Gm-Features: AWmQ_bmaQn5U2r87lGmHMokOwG7--caG9FTwwPKr2aHRFfrExiLwJYx42aUNdvg
-Message-ID: <CA+CK2bD-E0HKsuE0SPpZqEoJyEK4=KJCBw-h1WFP7O1KEoKuNQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 06/21] vfio/pci: Accept live update preservation
- request for VFIO cdev
-To: David Matlack <dmatlack@google.com>
-Cc: Jacob Pan <jacob.pan@linux.microsoft.com>, Vipin Sharma <vipinsh@google.com>, 
-	bhelgaas@google.com, alex.williamson@redhat.com, jgg@ziepe.ca, 
-	graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org, 
-	chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com, parav@nvidia.com, 
-	saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com, david@redhat.com, 
-	jgowans@amazon.com, dwmw2@infradead.org, epetron@amazon.de, 
-	junaids@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8025f8c5fcc31adf6c82f78e5cfaf75b0f89397c.1761823194.git.daniel@makrotopia.org>
 
-On Thu, Oct 30, 2025 at 7:10=E2=80=AFPM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On 2025-10-27 01:44 PM, Jacob Pan wrote:
-> > On Fri, 17 Oct 2025 17:06:58 -0700 Vipin Sharma <vipinsh@google.com> wr=
-ote:
-> > >  static int vfio_pci_liveupdate_retrieve(struct
-> > > liveupdate_file_handler *handler, u64 data, struct file **file)
-> > >  {
-> > > @@ -21,10 +28,17 @@ static int vfio_pci_liveupdate_retrieve(struct
-> > > liveupdate_file_handler *handler, static bool
-> > > vfio_pci_liveupdate_can_preserve(struct liveupdate_file_handler
-> > > *handler, struct file *file) {
-> > > -   return -EOPNOTSUPP;
-> > > +   struct vfio_device *device =3D vfio_device_from_file(file);
-> > > +
-> > > +   if (!device)
-> > > +           return false;
-> > > +
-> > > +   guard(mutex)(&device->dev_set->lock);
-> > > +   return vfio_device_cdev_opened(device);
-> >
-> > IIUC, vfio_device_cdev_opened(device) will only return true after
-> > vfio_df_ioctl_bind_iommufd(). Where it does:
-> >       device->cdev_opened =3D true;
-> >
-> > Does this imply that devices not bound to an iommufd cannot be
-> > preserved?
->
-> Event if being bound to an iommufd is required, it seems wrong to check
-> it in can_preserve(), as the device can just be unbound from the iommufd
-> before preserve().
->
-> I think can_preserve() just needs to check if this is a VFIO cdev file,
-> i.e. vfio_device_from_file() returns non-NULL.
+On Thu, Oct 30, 2025 at 11:28:35AM +0000, Daniel Golle wrote:
+> Add support for standard tx-internal-delay-ps and rx-internal-delay-ps
+> properties on port nodes to allow fine-tuning of RGMII clock delays.
+> 
+> The GSWIP switch hardware supports delay values in 500 picosecond
+> increments from 0 to 3500 picoseconds, with a post-reset default of 2000
+> picoseconds for both TX and RX delays. The driver currently sets the
+> delay to 0 in case the PHY is setup to carry out the delay by the
+> corresponding interface modes ("rgmii-id", "rgmii-rxid", "rgmii-txid").
+> 
+> This corresponds to the driver changes that allow adjusting MII delays
+> using Device Tree properties instead of relying solely on the PHY
+> interface mode.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v4:
+>  * remove misleading defaults
+> 
+> v3:
+>  * redefine ports node so properties are defined actually apply
+>  * RGMII port with 2ps delay is 'rgmii-id' mode
+> 
+>  .../bindings/net/dsa/lantiq,gswip.yaml        | 31 +++++++++++++++++--
+>  1 file changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> index f3154b19af78..8ccbc8942eb3 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> @@ -6,8 +6,31 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Lantiq GSWIP Ethernet switches
+>  
+> -allOf:
+> -  - $ref: dsa.yaml#/$defs/ethernet-ports
 
-+1, can_preserve() must be fast, as it might be called on every single
-FD that is being preserved, to check if type is correct.
-So, simply check if "struct file" is cdev via ops check perhaps via
-and thats it. It should be a very simple operation
+I think you can keep this as you aren't adding custom properties.
 
->
-> >
-> > If so, I am confused about your cover letter step #15
-> > > 15. It makes usual bind iommufd and attach page table calls.
-> >
-> > Does it mean after restoration, we have to bind iommufd again?
->
-> This is still being discussed. These are the two options currently:
->
->  - When userspace retrieves the iommufd from LUO after kexec, the kernel
->    will internally restore all VFIO cdevs and bind them to the iommufd
->    in a single step.
->
->  - Userspace will retrieve the iommufd and cdevs from LUO separately,
->    and then bind each cdev to the iommufd like they were before kexec.
+> +$ref: dsa.yaml#
+> +
+> +patternProperties:
+> +  "^(ethernet-)?ports$":
+> +    type: object
+> +    patternProperties:
+> +      "^(ethernet-)?port@[0-6]$":
+
+> +        $ref: dsa-port.yaml#
+> +        unevaluatedProperties: false
+
+And drop these lines. You may need 'additionalProperties: true' if the 
+tools warn.
+
+> +
+> +        properties:
+> +          tx-internal-delay-ps:
+> +            enum: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500]
+> +            description:
+> +              RGMII TX Clock Delay defined in pico seconds.
+> +              The delay lines adjust the MII clock vs. data timing.
+> +              If this property is not present the delay is determined by
+> +              the interface mode.
+> +          rx-internal-delay-ps:
+> +            enum: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500]
+> +            description:
+> +              RGMII RX Clock Delay defined in pico seconds.
+> +              The delay lines adjust the MII clock vs. data timing.
+> +              If this property is not present the delay is determined by
+> +              the interface mode.
+>  
+>  maintainers:
+>    - Hauke Mehrtens <hauke@hauke-m.de>
+> @@ -113,8 +136,10 @@ examples:
+>                      port@0 {
+>                              reg = <0>;
+>                              label = "lan3";
+> -                            phy-mode = "rgmii";
+> +                            phy-mode = "rgmii-id";
+>                              phy-handle = <&phy0>;
+> +                            tx-internal-delay-ps = <2000>;
+> +                            rx-internal-delay-ps = <2000>;
+>                      };
+>  
+>                      port@1 {
+> -- 
+> 2.51.2
 
