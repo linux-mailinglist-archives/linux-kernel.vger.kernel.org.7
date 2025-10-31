@@ -1,209 +1,228 @@
-Return-Path: <linux-kernel+bounces-880812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3133FC26A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A36D2C26A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555301A66025
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C89641A66071
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93A528689A;
-	Fri, 31 Oct 2025 18:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4DE225762;
+	Fri, 31 Oct 2025 18:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="huY7BBw9"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013070.outbound.protection.outlook.com [52.101.83.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="N8p1fiMp"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EAA2222A0;
-	Fri, 31 Oct 2025 18:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761936311; cv=fail; b=E/mCQBEw3tW0i3tSfpTyJiFezU1ZRqw8C/0qNoPmzBzJTAfte1HjfwrZYVUt4OWrDJ+DNqxMmwR07jzSgI2grVRgCPfGXxFn7LInqI5exDp5J378104NhF5Se2lgXxc2nmbNYOXUMMBrDlFgaQ6MIPrI5cAMD/foiPKVybAniHk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761936311; c=relaxed/simple;
-	bh=U+KbS2sMTPkUFJ+04/GPq8Fc+xx02Rf1SajQDzQbHX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QuMiwk5LBrYg83wEkQVJt2tDOX2NQhxEV8BcSV/LNMsjeSEoLrYpPVTq1IaEEkNO/qZqAi3ZpNW2WFx5aha8ac/EjIIXGIICJoMZXU9X2NR+CeYURYF2bCL1b9cJpJMhbJPmnYTFy6kQwGgpTtsF+ZBf/AIOuLwx5vqtbKG8KxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=huY7BBw9; arc=fail smtp.client-ip=52.101.83.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cU+1GVoWbHSXf0CCSfjGHhUFBrLEueWIYhMdZexO9xp/S5X5fPiQMPCg1hGh/7jcZJQPJgMFcG1Y1gH9ZfAnCIPbQnOIBdCr10mM9QkzS5qgnN1lNEIc/E5N+Sh4QqRq67LFHcxOgmkuF7Iltkl+ytRHBKOpFi2nA49Mi2+5TAbrFyTwUvTPZiwZjOQk1vIeyZ/nHSqoPbY+Kvsgbc9iqdy8/J8Dn4FIoHonAIRJliq0hX1tcpEOkw+Y4x6XmIYatHhq84cfRu5jKQlJnlXPA6imLeRhF1cLd/+pS7Mgj8rLsFpDbIjnwqPbto90J7midX+K3z/M5OB3KyJg1tA5pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t2UN7D5fHbBXn5HyWgsqdvCESwAE9VVmnSElMDz2F5w=;
- b=RrI3KR7/2LovAnQLBUhk5PSMl+vkFLRViMAhMpyUWvPHPqodyeUuJl8GYcI5kYrmz+G6ajhBdMAJV8V4v80l6iSZ7Vguquqf+DXoGUNxq4e4lwm4qtNhy3tMU7jj7HhR5gqj6+UNjUthATUF+UOXz3VDIgL3SAmXKh4xNTuesLteyuWZZd8GpmuE4qUGGsXSt/OWoCPNaxXxM0AosTa8UuxDr5yfuVfLMoyOa0SeKBXmrgNst60fg4nSZ7rPogaLZNB0iesPKniC+dBv1eJNE+m7SHMRdev/myXSZREHLWTk/9Em5TvNRRe94fWNJcrevPJucHca+fNobg+GmZ74WQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t2UN7D5fHbBXn5HyWgsqdvCESwAE9VVmnSElMDz2F5w=;
- b=huY7BBw95P4Tw5vdHzC9z7JeJrkEe9mqBi5tLpKh2naqsOvb7VClK4WPpNSZqkmS15Vteo1WuvSCpBj5q5TwJZr7xBOR+cBOrZOUFQeO1OERdaQwlZrVnk6ddBUNhck08M32Sda6KjTUvx0vGzAU9ag7SaxD1T49QqFgVYIeLGLNSNesrJzoGr0bn/+DLRZF4q2Aq8SDwNX+JZUZ3+GDBBEvEIVdqngCOPYuHue065FEX7yb/ybsERh51CP0ocojWlRihuH72n79fuuKd0W4okguPIMXvSSXe8K48cYzZww5DMDHqRouLAOJSpr9RGYkFTzEYRbeY2PXBZhF4JMjaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by GV1PR04MB9216.eurprd04.prod.outlook.com (2603:10a6:150:2b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 18:45:06 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 18:45:05 +0000
-Date: Fri, 31 Oct 2025 14:44:57 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: adrianhoyin.ng@altera.com
-Cc: alexandre.belloni@bootlin.com, wsa+renesas@sang-engineering.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	dinguyen@kernel.org, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] arm64: dts: intel: agilex5: Add Altera compatible
- for I3C controllers
-Message-ID: <aQUDqTBciwz49A//@lizhi-Precision-Tower-5810>
-References: <cover.1761901158.git.adrianhoyin.ng@altera.com>
- <f1a8b8265fc2b0fc7d89023f91a74bf048639751.1761901158.git.adrianhoyin.ng@altera.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1a8b8265fc2b0fc7d89023f91a74bf048639751.1761901158.git.adrianhoyin.ng@altera.com>
-X-ClientProxiedBy: PH8PR22CA0002.namprd22.prod.outlook.com
- (2603:10b6:510:2d1::26) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D91F27472
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761936356; cv=none; b=qzDVyYC3FgcMSTM4C/o+UaQ1rPxB3+rDwttpGJ0JbtXMTuNjlUAVYYAOhuawoVOrfp21m1JUqR1OLM33qIw4g0aFGtGgbR6qtoRUryIcpUPUwvKQiOqG5ozn2RsPahZ64R+10DShzvDjv/acSwPS/roUvd5T/rPaakbVSMHewQM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761936356; c=relaxed/simple;
+	bh=tvr1A4yl6ZqHy8xjurGdQOmYDNNUQvkQ1JmOifa6VqI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nFmf4pygqfBg+oc28YZRS8Jyg1ugFP4xXyIpC5+NOBn3JoUXfwQNChrW+AJNL6z9yw50zmycrrOS9s2YOC6/4506cVf6AkIteZhONwjiypl7yhkLXsjj2kk2zeN2AiAkpom6PKjWyd5u67Cvu+47937GvRcTqcmPwIMUqg88RN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=N8p1fiMp; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-8804650ca32so724826d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761936352; x=1762541152; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pT4v28yIdvIKuKQuZoRoZnqzD4LiC42FT1gxWVGUvrQ=;
+        b=N8p1fiMp9U4NJANO99OlZ5fso9HVNR30PD/IxIIWA3grQY5aqZL2Z+e4tvDXsf81VO
+         6GOAyKG0svyClzS9IPQH0CHd1d64LAO9Xj6uHQprQ0aqdKAfrzvGX8beyQXRQ7T6SPDt
+         KUmUKMqfxxX7szZQC9aVDVf1A1mYff3gF5h5iLyjQT9JPFZwtRsT8xtedFyKNDBQ5x7u
+         OlvOb9k+uRoGseBuRbZs4e2YJvps/8cMVM3qLmQPIlcZURjQO8adEUEqRREep8imcWP4
+         5ZLlpRJjDM4+xY3fpWWmDjs1CS2QrYvZQfzwsMRfS+Bzk0lMCQLgYl47QSby72XF7w50
+         NjKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761936352; x=1762541152;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pT4v28yIdvIKuKQuZoRoZnqzD4LiC42FT1gxWVGUvrQ=;
+        b=J3/M05xyl+Mi8VA+FWWzXe5Ysq0xtAtWwSgOaait+FceH6NX7IvXj7sEDRUaePYnqT
+         7hd7HrBvSqY/f0rnsz8ylaV+04kjjgQcYjLRpvsqljvLM3fOlZnsqBXurogDIEzNwiV9
+         Uy/EorzspjA3T0uBuiqTYPTim2DSEiWSKRck91XXdl0oEUUv/GY7uSaE5+/4DwXwMu7e
+         pGF4FXpAPuA4LxeBMlZWVe/V0UdMruq2K+eI4mSfBfI7ZQKn1SvH2i/HxDv7v3oOe+6S
+         QaQ57wwweN3pRqaTkK2bFfqjaxbnwMVzprejk/urhKE5L/nkDmH1lMIZ2iQShkssRgGO
+         +d7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVO6/AgFKD7HPAWIkLocM8Yc7cLXa/ieWCwwXU7yjSyqunke1Wuy3dj0xoP8nluexUGeY5NXIoI36Zby9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywNXLF0ynfZdrye6JsMey4cFYvqRBLpX1WJs7diBgpITLaGWdE
+	vi1uNFdF0X2DiIuNScKobq7nArqk4OakvTLKeI89gB7A4h2Qj7zdFS9EvOmquv8h3po=
+X-Gm-Gg: ASbGncsH7Ht0Ut0jUkd/oroinHs/FGrljsEJXXKRwec6BhUnsc239tfedla25SEjraF
+	t5VmGUz0rSU6C7XlqDuILXRsgOFwL7x+LTmRQ+zB+P9YfccSgdZ0gyXsDXDPTnB/+oFAZewetZg
+	jVQUZUv5r84ritsqjSqDZ53pHptpcKQQ5P8dpsNh+xR6XAPyLaZLRMV6ph1ZVPYqerHepwESgC1
+	mrRPuZuI0E8rRiMAdoYSTAmymj5MI4Pv3QC3YKaUBDJpRgOA9GgvvsiRjIfV2uPl8dZlq2w2vIL
+	VhTCj4tMlg49qQY/wwHnbxiYwwq4LzjvCYtidKGwxbsIEW5LI3AO6FyHkoloGqgLGBwriajE+eT
+	lYOyFt7wJIAGcIwUmfClWkRhkWlnKeI+NLmq/vgdUQUSIPcXtFadb0SdzhHhyUsHQxPfbk3JNBk
+	VUck3LGZz2QF4+KqKwtMsvNeYLAcBe7Q==
+X-Google-Smtp-Source: AGHT+IEZewel5dfeu23WjC5PDmeMH8piiDMOsKyv8SzWCUJvsUnNs2jVApnjV9zOu7qBYs4d/oPVlQ==
+X-Received: by 2002:a05:6214:f29:b0:87e:d590:89b7 with SMTP id 6a1803df08f44-8802f2f1847mr70034896d6.19.1761936351907;
+        Fri, 31 Oct 2025 11:45:51 -0700 (PDT)
+Received: from xanadu (modemcable048.4-80-70.mc.videotron.ca. [70.80.4.48])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880360bda55sm15903686d6.26.2025.10.31.11.45.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 11:45:51 -0700 (PDT)
+Date: Fri, 31 Oct 2025 14:45:49 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, 
+    Yu Kuai <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, 
+    Jens Axboe <axboe@kernel.dk>, x86@kernel.org
+Subject: Re: [PATCH v4 next 3/9] lib: mul_u64_u64_div_u64() simplify check
+ for a 64bit product
+In-Reply-To: <20251031180424.006f117b@pumpkin>
+Message-ID: <0o57noo5-5691-r898-9277-891355713011@onlyvoer.pbz>
+References: <20251029173828.3682-1-david.laight.linux@gmail.com> <20251029173828.3682-4-david.laight.linux@gmail.com> <26p1nq66-8pq5-3655-r7n5-102o989391s2@onlyvoer.pbz> <20251031091918.643b0868@pumpkin> <689390nn-ssr5-3341-018r-s181qrr81qop@onlyvoer.pbz>
+ <20251031180424.006f117b@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|GV1PR04MB9216:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94b4ec81-9b87-449e-a463-08de18ad9be9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|52116014|376014|7416014|366016|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+XPN99nRUEUXgJX4WO2+Uf/5L+Cd0pilaFdnhmVg/RpbdgB3KBS8eYUrRRYh?=
- =?us-ascii?Q?f4U6vWHsMjf4Byhlmv+TyavoF0VuQkG3HAIox4GDSE/SqzAzYEa1QF3YFRe+?=
- =?us-ascii?Q?/CRJ7ubObHnPuWTwNHXv/TopjB6cznlL6toI9mST+0SH8eMIf7b155s5a8Ib?=
- =?us-ascii?Q?sszxipTVskuyUfBjbFM12kPIfAa0jWGMrRJID7I7+mhukQd7uU9j9W/JTzD8?=
- =?us-ascii?Q?pNZiNVf5plNq3y9uhxzFJOJ07JBvr9QVYzeTwZy22vwwtrZn4Tg3jvPpXKrm?=
- =?us-ascii?Q?j/sulC1ZYpfBdcd5bAx0dtwCdcd5xhAEn8DhFthZQt407RtshLH9epKUgCmX?=
- =?us-ascii?Q?/Oud7xRi5J4C7K2cf+uUjhRAi2A93NymNBrxD268jv3jwKWFbbmClojx5saD?=
- =?us-ascii?Q?3g3nc2IZAi5w+qCBefXJL5v23lBuiT9IWqIiOCDUvlc81UEy318DxRJWHF8i?=
- =?us-ascii?Q?5a0Ogp1nkSBBQM25d8QGOlq0lcuhwiibqskso7819qESFdvow+E6H/xyPn/J?=
- =?us-ascii?Q?ujp5iNcMN8yTNt/EcclDqqDym0P5g8GkmaOdKmw64Ro/9S/DQsgFXZpCSDYY?=
- =?us-ascii?Q?mKJ2C4KqA960+wryUnNRV3dFPPjTlHeXa72vFpAMpGW4ra9udfcxm3IQzfIm?=
- =?us-ascii?Q?Llvca+boDHnGsvn+PajUPfazNXSASqhYei/3L0cE2xJRjO/mJKtO79FP2T03?=
- =?us-ascii?Q?dUHy+/sJRmDAKlEnNwuZOn+Bh94D3BkELybuCcWBaE8aejZ1i80o+tTQmc/E?=
- =?us-ascii?Q?jbf54a7BI3zNQ5m9cpKcdpC5YRaPFf11XoLzwh3wp25hCvd9/eYWLDnEDHoy?=
- =?us-ascii?Q?sfA8aEOatbKEGP79z5l+MH0HP8MXnPX94cWTH/O4oCf92wifWuftlH4HJ9E9?=
- =?us-ascii?Q?oUg7sPaySGuhWAmF3bjFnJxrAc/tqx3oI0aKK0vgtjpm+dXrMXlSFB4QaRrH?=
- =?us-ascii?Q?u2cDOYtEJI8/QWheji3X0daB9BzElY6sxSxSwYVGd2ZMXGhcGHanZRCSGopz?=
- =?us-ascii?Q?TTvOs0Y8f+OqA9asclq6VWs63MfBCc71JUGrLyhNC7JOH9CYXPSSKF34b/yi?=
- =?us-ascii?Q?dqECha0rpcYI362xdtGmegeqtQzH/0MJa4xZDNxDy6LPa7SgSY+7nyGSTHGm?=
- =?us-ascii?Q?8PPwFG7yF1IsCYsfXWYeZkOrp+JG5R8SRUWpsiTNTSTgspf8P7IoqbNJ0UBS?=
- =?us-ascii?Q?T1LC5jtLcKds9Op7DMoHMpzEm6Iau4ByzKKc7/BMpvmzrLnCDlx6tsUAh4dh?=
- =?us-ascii?Q?n5lJcEtrNSoZVY5AO+N8TqvjYt7iQrvPt8/P18EWyUkhRqPbW3+OYpxn9bsX?=
- =?us-ascii?Q?eyMK1xrQuptxFOs8QUy2PwNYGSlddT1C6iPARsC/cYGF4fNxV95E4Hu0C8qt?=
- =?us-ascii?Q?egcOr5GhOHODtRIf/Lasr630H1HFnBjzn4pjV+DxVdRSxHrr+JSpozBhzHZx?=
- =?us-ascii?Q?+SAejAldyzHed0dtTX+NcRRnrIwsqUptz1cZJuUPMBEUWQkfawNeqQxN+JAy?=
- =?us-ascii?Q?/M4NbNRmHoB2+/0hJ74E6L0mlFwiGmfofGUR?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?h7IyylTISbvAZ32v4M5pMPZAAWoXa8sI+fpm12fmwROpd5FRz9py4w6qkKgb?=
- =?us-ascii?Q?dNaW7S1u3iNwP89OVZV+DLLAHfOr64aeHyqYy+nYQxyZuKRRxROyW+eUr/ut?=
- =?us-ascii?Q?KvM3Lv0x40xZQt7Ieo6fkI2qf+7y81K3jqcV89KHke/of0bCfazUhb5zfqCm?=
- =?us-ascii?Q?9hUo5T7h0s79wk4tExFlKBMcVskbxDKeUejBVJBxhDn0O23d9NXURSf6ao+U?=
- =?us-ascii?Q?hzIQYAmiNiysfY8i79V0jdw3ZvCzciayU3+B+CQQAqN/bb6ay998zQyLRU4Z?=
- =?us-ascii?Q?JbeDiaOqWLwVyRQLcIcRpxlo2ZqBTUvKQZ953tQUUXfNdHlXgQpnmK0j0j7d?=
- =?us-ascii?Q?ZGQ/va3NnBN1N6AfW6mL+1xMV/jvUaQ8J7u+X3s465GkqOeqN7iOghBo0Mp2?=
- =?us-ascii?Q?zhibmTPFzcJO+vcxcF2MwrjFcrCCm1UHmkfXWTXtBkcNNgryFbYWjtbu2Zhq?=
- =?us-ascii?Q?0ELHmyhObBNw5LPE90+usH+DSdesW+69No2TV1ZB5ndgJxTjG/VyL8j/HN5C?=
- =?us-ascii?Q?MfMgF6LHTlgdlSqoBTG+SGbKOWbx0tIDwSmcmjpg4UToLNyfBYEZKTD9/qgw?=
- =?us-ascii?Q?4yhUsZhC70OcTA9QptNCrnL18GOt0/K62MSMUrJ8NDJeW1Itp/2D8zhiWrNy?=
- =?us-ascii?Q?EOHsr+jbcMFl2biZTs63Ao5JiTqmmuwkz6a/ij74C7nG0R3cP/7KEp1E4l8p?=
- =?us-ascii?Q?rtWsGpKUNnUFTOOCfG2V11MOQmfPGTPL6w6uGc7Z7rfb0Nv0E2ZqXQtMtWAf?=
- =?us-ascii?Q?iye4958++q7lswMSw1gAnp7laL1B26F1SlWrdyEVYk/rc2PQdwXONABN/a6+?=
- =?us-ascii?Q?hoAoNLDa1358HS/8NnspDBvKN1Tbqdvm+6oqxjctB2FX3kprwkhXnX7zzqaj?=
- =?us-ascii?Q?4uQJSkojXjZomS19apEH9NxTwWX+eNr55NJ3VI/9mwlD/GHPF+COoC/UN5a1?=
- =?us-ascii?Q?sGAXNciiIQgS4LgMzw+8PtCRfVtNkbOXBmOLh4DcuLus4WkS3m3R6aZztkq8?=
- =?us-ascii?Q?7vbGQoYhK4G5cOxjBfA6sqcICyeeQ1MsPJEUFYaEuiw2JNEY7ZjnnUYVuBGm?=
- =?us-ascii?Q?J4MBLO8+dlF5khD5glvNQr4Ir8SXcc7vYGFgegOui8OAu2zbrG+c6E/TyJ2J?=
- =?us-ascii?Q?ZZE6fb/psw07TUAalcvGJGFVhiXDWgoJwItCYkRagh/FUPI6+ovOokatHTc1?=
- =?us-ascii?Q?Cnh6IvDR966fSod/p8PYLsP8NIIkK/t0tsFcvrmlflct7vh1lVHRF4ktu7rZ?=
- =?us-ascii?Q?UfW7qv5GQUmvJXOUk+U3MP45i/7okoy5FLU1gUt5QCRBpdH3zDM+WrIsLPeI?=
- =?us-ascii?Q?6Pd5vMFWwHawqdw5RNxjvX+3ZfC5eyipqhc8m8a8N20uHS5bmDcJD5Crr6BG?=
- =?us-ascii?Q?sDCm5HIWkOm/l6yHOEkAoLdFW0sdPngHGlgGPNV3JV+ojBopt7QWVEWKeK/t?=
- =?us-ascii?Q?GfJWIZloQ1dsAwYsoyiStHozCtqZ5vh0Al4FGuhNm+2xtDCOfxyX9liiBvao?=
- =?us-ascii?Q?brnb63YxsOYFRQOKfPsehK9V1eIhvRbQcAq7xrOcQQgXPG8cKdULiSS8NiBu?=
- =?us-ascii?Q?AkxTogPD2tGL2THcor1TQxdGbgyWYIXbV/VYojN2?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94b4ec81-9b87-449e-a463-08de18ad9be9
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 18:45:05.9201
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jl+EmNaYzHLMGpv99VOampLu7678YzUyFabHFHhiEa2yJQfoIOcb2mlM5qrTXCtqYSvINVAFVHLoAdHG5WVNXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9216
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Oct 31, 2025 at 05:05:57PM +0800, adrianhoyin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
->
-> Add the "altr,agilex5-dw-i3c-master" compatible string to the
-> I3C controller nodes on the Agilex5 SoCFPGA platform.
+On Fri, 31 Oct 2025, David Laight wrote:
 
-Suppose this should be enough. the below context is common sense.
+> On Fri, 31 Oct 2025 13:26:41 -0400 (EDT)
+> Nicolas Pitre <npitre@baylibre.com> wrote:
+> 
+> > On Fri, 31 Oct 2025, David Laight wrote:
+> > 
+> > > On Wed, 29 Oct 2025 14:11:08 -0400 (EDT)
+> > > Nicolas Pitre <npitre@baylibre.com> wrote:
+> > >   
+> > > > On Wed, 29 Oct 2025, David Laight wrote:
+> > > >   
+> > > > > If the product is only 64bits div64_u64() can be used for the divide.
+> > > > > Replace the pre-multiply check (ilog2(a) + ilog2(b) <= 62) with a
+> > > > > simple post-multiply check that the high 64bits are zero.
+> > > > > 
+> > > > > This has the advantage of being simpler, more accurate and less code.
+> > > > > It will always be faster when the product is larger than 64bits.
+> > > > > 
+> > > > > Most 64bit cpu have a native 64x64=128 bit multiply, this is needed
+> > > > > (for the low 64bits) even when div64_u64() is called - so the early
+> > > > > check gains nothing and is just extra code.
+> > > > > 
+> > > > > 32bit cpu will need a compare (etc) to generate the 64bit ilog2()
+> > > > > from two 32bit bit scans - so that is non-trivial.
+> > > > > (Never mind the mess of x86's 'bsr' and any oddball cpu without
+> > > > > fast bit-scan instructions.)
+> > > > > Whereas the additional instructions for the 128bit multiply result
+> > > > > are pretty much one multiply and two adds (typically the 'adc $0,%reg'
+> > > > > can be run in parallel with the instruction that follows).
+> > > > > 
+> > > > > The only outliers are 64bit systems without 128bit mutiply and
+> > > > > simple in order 32bit ones with fast bit scan but needing extra
+> > > > > instructions to get the high bits of the multiply result.
+> > > > > I doubt it makes much difference to either, the latter is definitely
+> > > > > not mainstream.
+> > > > > 
+> > > > > If anyone is worried about the analysis they can look at the
+> > > > > generated code for x86 (especially when cmov isn't used).
+> > > > > 
+> > > > > Signed-off-by: David Laight <david.laight.linux@gmail.com>    
+> > > > 
+> > > > Comment below.
+> > > > 
+> > > >   
+> > > > > ---
+> > > > > 
+> > > > > Split from patch 3 for v2, unchanged since.
+> > > > > 
+> > > > >  lib/math/div64.c | 6 +++---
+> > > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > > 
+> > > > > diff --git a/lib/math/div64.c b/lib/math/div64.c
+> > > > > index 1092f41e878e..7158d141b6e9 100644
+> > > > > --- a/lib/math/div64.c
+> > > > > +++ b/lib/math/div64.c
+> > > > > @@ -186,9 +186,6 @@ EXPORT_SYMBOL(iter_div_u64_rem);
+> > > > >  #ifndef mul_u64_u64_div_u64
+> > > > >  u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> > > > >  {
+> > > > > -	if (ilog2(a) + ilog2(b) <= 62)
+> > > > > -		return div64_u64(a * b, d);
+> > > > > -
+> > > > >  #if defined(__SIZEOF_INT128__)
+> > > > >  
+> > > > >  	/* native 64x64=128 bits multiplication */
+> > > > > @@ -224,6 +221,9 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> > > > >  		return ~0ULL;
+> > > > >  	}
+> > > > >  
+> > > > > +	if (!n_hi)
+> > > > > +		return div64_u64(n_lo, d);    
+> > > > 
+> > > > I'd move this before the overflow test. If this is to be taken then 
+> > > > you'll save one test. same cost otherwise.
+> > > >   
+> > > 
+> > > I wanted the 'divide by zero' result to be consistent.  
+> > 
+> > It is. div64_u64(x, 0) will produce the same result/behavior.
+> 
+> Are you sure, for all architectures?
 
-> This allows
-> the platform to use the generic Synopsys DW I3C master driver while
-> enabling platform-specific quirks or configurations associated with
-> Altera SoCFPGA devices.
->
-> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-> ---
->  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> index 04e99cd7e74b..c494b3bbb5e9 100644
-> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> @@ -203,7 +203,8 @@ i2c4: i2c@10c02c00 {
->  		};
->
->  		i3c0: i3c@10da0000 {
-> -			compatible = "snps,dw-i3c-master-1.00a";
-> +			compatible = "altr,agilex5-dw-i3c-master",
-> +						"snps,dw-i3c-master-1.00a";
+At least all the ones I'm familiar with.
 
-Need align to previous line
+> > 
+> > > Additionally the change to stop the x86-64 version panicking on
+> > > overflow also makes it return ~0 for divide by zero.
+> > > If that is done then this version needs to be consistent and
+> > > return ~0 for divide by zero - which div64_u64() won't do.  
+> > 
+> > Well here I disagree. If that is some x86 peculiarity then x86 should 
+> > deal with it and not impose it on everybody. At least having most other 
+> > architectures raising SIGFPE when encountering a divide by 0 should 
+> > provide enough coverage to have such obviously buggy code fixed.
+> 
+> The issue here is that crashing the kernel isn't really acceptable.
 
-Frank
+Encountering a div-by-0 _will_ crash the kernel (or at least kill the 
+current task) with most CPUs. They do raise an exception already with 
+the other division types. This is no different.
 
->  			reg = <0x10da0000 0x1000>;
->  			#address-cells = <3>;
->  			#size-cells = <0>;
-> @@ -213,7 +214,8 @@ i3c0: i3c@10da0000 {
->  		};
->
->  		i3c1: i3c@10da1000 {
-> -			compatible = "snps,dw-i3c-master-1.00a";
-> +			compatible = "altr,agilex5-dw-i3c-master",
-> +						"snps,dw-i3c-master-1.00a";
->  			reg = <0x10da1000 0x1000>;
->  			#address-cells = <3>;
->  			#size-cells = <0>;
-> --
-> 2.49.GIT
->
+> An extra parameter could be added to return the 'status',
+> but that makes the calling interface horrid.
+
+No please.
+
+> So returning ~0 on overflow and divide-by-zero makes it possible
+> for the caller to check for errors.
+
+The caller should check for a possible zero divisor _before_ performing 
+a division not after. Relying on the div-by_0 CPU behavior is a bug.
+
+> Ok, you lose ~0 as a valid result - but that is very unlikely to
+> need to be treated differently to 'overflow'.
+
+I disagree. You need to check for a zero divisor up front and not rely 
+on the division to tell you about it.  This is true whether you do
+a = b/c; a = div64_u64(b, c); or a = mul_u64_u64_div_u64(a, b, c);.
+Most architectures will simply raise an exception if you attempt a div 
+by 0, some will return a plain 0. You can't rely on that.
+
+But you need to perform the mul+div before you know there is an 
+overflow. Maybe the handling of those cases is the same for the caller 
+but this is certainly not universal.
+
+
+Nicolas
 
