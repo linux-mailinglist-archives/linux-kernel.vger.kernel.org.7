@@ -1,238 +1,266 @@
-Return-Path: <linux-kernel+bounces-879567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DF3C237BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:00:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D3AC237B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A63C3B7658
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2888A40070F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F2130CDA9;
-	Fri, 31 Oct 2025 06:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAED630DD2A;
+	Fri, 31 Oct 2025 06:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ms1nzK0C"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZk8vO2L"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7472834D3B1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6311C30C36B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761893978; cv=none; b=MEIA6uGwbsDLNmCxoX4yLMkxKgQmdiLiQsLrLb3rEFue9VgYO3l5XX/pE8McOxhDfeSivdNa4PHGw6YANWy3UfpvYr1XAbd65WOkI0YVXzA8bkt4zjM58Ah7lIQrYvwkA7US45R75UekYvafwQWNBNy/YMEQzEPnJ5IYFEh1xg0=
+	t=1761893952; cv=none; b=PWE5in+efQZ9gwItzdLO+Gl8fapdmvIxDQiYmVZrQ/0y3TDouNKH22QvzUftAapTujWAQZozs7ATwO/vyPhWy8p4BWWtQwcu1aWzr8YKg4z8tPjYJE9+BabVmrbxS98moTx8+sY1DdmfG+3etMphL/UdWQEAw07EG5AbkZURAaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761893978; c=relaxed/simple;
-	bh=9BtHEqneFzU9QLRal6pIwf+tE4qGkklVwsPKkao5v08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KcY5ui1te901eF6ppDyoOuy8EkU06bax8pLraMtqrg9Y1vues04rSlOCx2+pQsLlfxEGFjLrz1kfX9xdIK5Eocoo3V5iIZHF9m4zIChx8E4u+sDiH33pjT0IlVgK7nQ1xTHyRxhK05dw79iNPmqrH/0zvzi1fHMubZgxnGUmSjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ms1nzK0C; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1761893952; c=relaxed/simple;
+	bh=bU3cz7gefuxevtxeT/aKl0hymDKSfR0/CL8hEJ3KI30=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qNY7oXa48YtzExsG7/Ji10Ev8YiryJb9OB7omBUDLAVBTamM06DRFxq+DKG004nE22IZh9sGGsX1E4/lvkCQtOB3TQ7unZYoEpoW8L9Z4xe2n4VvKZb8uqX8M8vOVI1INERh1NUZusWy7onvKD+kHKGdUjd0uQ7oJjBg/3ofmlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZk8vO2L; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63c4f1e7243so2895831a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:59:36 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290af0e154fso2880215ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761893975; x=1762498775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bonxoFN411G1mtJ9G7HJf6xneNKoAlfM/6PZsK2PYNc=;
-        b=ms1nzK0CoF89uom4Gjb7FaZrsYmkiYRMZZ/T080DjB51X+c60kte+rxgGQBV5PL7ce
-         4mHJ3K9BfkqqAFuToQX5x7L+71tYbuN0IGpbBEJEEt5dznbpNp+CPU1jWrsRcEC7N8tm
-         3QGpT3sXkVv3b/0cdb0mLoYZ0bKaKarB09U15lB8rE06hgAG5nlubTrm/6nERc7DXHpu
-         Baai/aXTpocQU1/SER6lWZZ5i/f/vmUye+lDNvPCvHdBlRpDiVUAix609n60tuniwK9G
-         Gfv0SftaKJ5w/J23cY7mxEAKWjgv+Umm7ooJ73Ysk49PsVCm6ebTHvWD8bdffAnabvxi
-         //4w==
+        d=gmail.com; s=20230601; t=1761893949; x=1762498749; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PhEPNy5CfOfu6wXPfE9ph7f15qCimLG0nvQNttivtF0=;
+        b=kZk8vO2LtQ2wKUsiZKtCD8XPTA2kv/d2oKavUmwRqtsmOpOs4mUGLlzimQU8bfv20H
+         4Lm9N+qPY7O1EMhWM1c0ceQIoX2PDneIQ5Ex9UNNLhqggSPopuJogHOZ2q9gzvwmYLIG
+         vhyc/S4er6YDFjrEUqkiGolJzr+DRJmaB/dph/ulhr/pP0iT/n5xNMXHzVmSzQArqSJw
+         2YeREIwV1wMkYfZiDFRlm/suj/Y7qwROBa+g90ku6piChCMOzru09Hngu9xxHVDu9z/q
+         2hkMGtjziEQ02iTvIzlwYAaoft1sReYmTy/ARygga+IbSs8qLYh+gtaKcdWz9MIuTQSr
+         ID4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761893975; x=1762498775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bonxoFN411G1mtJ9G7HJf6xneNKoAlfM/6PZsK2PYNc=;
-        b=lJpZ727pAOatzzmISIG97orah1YNQVXdQAkaEt2B5LVw5Ug56OP8sItsOzKh+2uadz
-         L90A8hA0EDdux/FHN8tA3CEYKjJPrKG7Fc0z8hXYJ2lwBdzjwTnl7GxyhgkUHrxUO1IE
-         a9bzfOYceHmfhMsDm7G2QCwRU5cGMFdZKvDFXTI8TKb7+WQmJhHD+y3fOGAll2iLaIm0
-         qaxwtbeQ6pMD8pGAmHqnprW7S0O27jCTFWu+UBU1keYh3rgdjToe1GXjXMxkJLGsW/z/
-         o2tSPREYQjghP1/iut2f2hZbavXHP69vFqdHsQ+990gaUnXobBwCZG0UfmO+pi/23qLE
-         KmDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUeRN8DqDvJb59FUObfxbb/N3OJ6DICab1Lt8J70Qn53GVSJON0bAakiIK37nzFfKAwS4xSRxDeYGn5xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRteFqioNDnBdgO8yD/6Otc1K/sacTQ55zmGtLJrbjU2y5hjXX
-	DQI+D1koGmSwKI60YrW3GRNkBRQU0U0Z8kMvF6grrKh2MFjhyg3a+epkKO7+dnFyoPcBPHT+3hW
-	XGTO95Ffzftcrd74Yl1/EoXud1yFkkBc=
-X-Gm-Gg: ASbGncv9KEXabGXDIIuyTsYXmaE3ZJB1mwFpuyPmkOgRINAr2MeXWAxh8FNyFQUkEHy
-	uDWVAJxlnrGcBQRNEk6GlwDSMBV1wQ7CS54evNN9fv+C2WDDxXJYO0oPmWWyiQXrVcDsFacRZtJ
-	HqCewhKejgWm4ZICwn4N3y+nsLTxMoHmn4F25CgrAwWt06j+1TdgwH1EzyRL523SOP21QjvcIkc
-	KzOcUVoYKKTBhQmvkhS6kGfN2vwQDvyDJnTGCgx2GMmRkqFbcRNjHUbymYl
-X-Google-Smtp-Source: AGHT+IHGr1hi2b+pfVxXmRcZv7A2p33ANK3bqTjSjN3kzwzBVtrMI2IKzUdQ/4oNe6YhVGFoplORFbICYJmdH9bYSvE=
-X-Received: by 2002:a05:6402:3494:b0:634:a8fb:b91d with SMTP id
- 4fb4d7f45d1cf-64076de1816mr1872200a12.0.1761893974392; Thu, 30 Oct 2025
- 23:59:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761893949; x=1762498749;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PhEPNy5CfOfu6wXPfE9ph7f15qCimLG0nvQNttivtF0=;
+        b=YAH2tqawV40WBELXVeI7ooVdi4t5f+p3DVR7kHAy7ujeWZCraeY3YW5GfXH4qEUP3g
+         ktsMTmMf57NtlmdpNHAYbIK3aoTw/M3LUt0yEzX/awi/UXXBblwWw8EmCLrwUd3+B+3a
+         Lc9LN8xooRPLEx1j3K52bFaauM98USJS/sSAP5YnDKFQSjQOxpQzwCOOJTG3S7cpcvbg
+         S9r9UUVZKyfxZczX9GPizWc9nGqI7RfUpwjVdhAD6M5zDoo5Y1T4RWFGYBHyOTXoAmVF
+         0iUU4mxX5XXfmFHXln49p6a3fh4ipV1y7thF7uIVTDRW27bJT9U0jrQ5VRVRl+423S9I
+         dOKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaQOcCjUy8ejAeP+Q91aHH2dGieXOAOQiQiH7DjZCiC3dX8+XyNxd9Lm0Ynqi6/olibe7j89zmXhTud9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxka9v5bINYX6wRr/qwCw1EqTaj8LNUScwtGGRJi2PSP4E4VQl0
+	zoi5nQ1a0G5D3oz52syvNcrZt6vW62/XK0fWe/UXdoIYfuo3hYw/L2ODCRIPntkV
+X-Gm-Gg: ASbGncupAjhNuGj2RVuJmJVXYUXNiw4JVR1Yz21iYG5qkc0Ftg2v3WdJWK37JbPXRLA
+	2qcSpFFFUCQzPIsrN2njSGgKdMB5hQZZ5tMRky9WXUHWXRiWC85uKtG4zY3NHBtC2+qfQSvSooJ
+	TBzJgr7xwxu937HiUaWUQEyeXHKlSZxmZTKLuaTZtCefDMZtALoDVUpjJW/p06l2WiAe6zFutYJ
+	fwEBDrDUQDXRPUqv7Ka8c2IEEpymr2bs/s6k+xEZHNz2ADV9EDQb2Iv4KAsp0w7BB6rxrvVKhso
+	zZGMPuWd6tT5UDq6dbCD34GpJAO72uxP+PIyE2HYNJqv0PT7U8uXPg4M1MGDGZWWRX3METaB9Dq
+	7SdpVS8be/IoufaV1RJx5VxNU1kXhiGnQBlKyDLmuohvGiBE60UYSyIJZHiazJmLmnWc2ii37Ta
+	py6T47nBIf9Z1kx5WBGzYdt9dufWcxHeE+zws+q1KtLg==
+X-Google-Smtp-Source: AGHT+IGJVY6WJWx0DWqULbMOTTkJ7Spnmdevrci9sNXZyjY4LGdqTxO8bnCJ1jdmRkX0FWoYjaek/A==
+X-Received: by 2002:a05:6a21:2d89:b0:342:41fd:38dd with SMTP id adf61e73a8af0-348cc4dd575mr1785021637.3.1761893948989;
+        Thu, 30 Oct 2025 23:59:08 -0700 (PDT)
+Received: from [127.0.1.1] ([2406:7400:10c:5702:8dcc:c993:b9bb:4994])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93f1d8f356sm918215a12.6.2025.10.30.23.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 23:59:08 -0700 (PDT)
+From: Ranganath V N <vnranganath.20@gmail.com>
+Date: Fri, 31 Oct 2025 12:29:02 +0530
+Subject: [PATCH v5] Asoc: dt_bindings: ti,pcm186x: convert to dtschema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com> <bvavihwrtkbnsqgjbotwihckxzmnhdd4e6jre4j7xdiyyeyv5o@dnnuyacthvms>
-In-Reply-To: <bvavihwrtkbnsqgjbotwihckxzmnhdd4e6jre4j7xdiyyeyv5o@dnnuyacthvms>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 31 Oct 2025 14:58:58 +0800
-X-Gm-Features: AWmQ_bngUH51OPE8Nr1L_1C4UgHIWE6Hp2m_74eI1jG787uNXrEWhtGWTucSHxA
-Message-ID: <CAMgjq7AC9D6nOcU46ceWcLxCcPp=dezeOeaoMwsdHdSsLp85Ew@mail.gmail.com>
-Subject: Re: [PATCH 00/19] mm, swap: never bypass swap cache and cleanup flags
- (swap table phase II)
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251031-dtbs-v5-1-ee1dc0b2fa40@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADVeBGkC/13MQQqDMBCF4atI1k1xZtSarnqP0kUcEw1ULUakR
+ bx7E3EhLt8w378Ib0ZnvLgnixjN7Lwb+jDySyK41X1jpKvDFphiDimCrKfKS9IEtlCKswJEeP2
+ Mxrrvlnm+wm6dn4bxt1VniNdTYAYJMlPEoDXmVPGj6bR7X3noRAzMeETFjjAgrqm6AWksS3NGd
+ ERqRxQQMUOBiMCIZ5QdEKU7yiKy1lJEAOqI1nX9A4zVLsc3AQAA
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+ david.hunter.linux@gmail.com, khalid@kernel.org, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ Ranganath V N <vnranganath.20@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761893945; l=4667;
+ i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
+ bh=bU3cz7gefuxevtxeT/aKl0hymDKSfR0/CL8hEJ3KI30=;
+ b=76ZWWZ/LgC/MeCIyO84v84+uZMU7mCms+8FU9rIgwnOL/fNeJGiSYred3eXi6KGHCfWZ63bX8
+ AbGN5H/rhMqCZ+1ffdgAZnLmaFg49uGDLDJyZWCSZ7PnRNzQMRjC9rB
+X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
+ pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
 
-On Fri, Oct 31, 2025 at 7:05=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev>=
- wrote:
->
-> On Wed, Oct 29, 2025 at 11:58:26PM +0800, Kairui Song wrote:
-> > This series removes the SWP_SYNCHRONOUS_IO swap cache bypass code and
-> > special swap bits including SWAP_HAS_CACHE, along with many historical
-> > issues. The performance is about ~20% better for some workloads, like
-> > Redis with persistence. This also cleans up the code to prepare for
-> > later phases, some patches are from a previously posted series.
-> >
-> > Swap cache bypassing and swap synchronization in general had many
-> > issues. Some are solved as workarounds, and some are still there [1]. T=
-o
-> > resolve them in a clean way, one good solution is to always use swap
-> > cache as the synchronization layer [2]. So we have to remove the swap
-> > cache bypass swap-in path first. It wasn't very doable due to
-> > performance issues, but now combined with the swap table, removing
-> > the swap cache bypass path will instead improve the performance,
-> > there is no reason to keep it.
-> >
-> > Now we can rework the swap entry and cache synchronization following
-> > the new design. Swap cache synchronization was heavily relying on
-> > SWAP_HAS_CACHE, which is the cause of many issues. By dropping the usag=
-e
-> > of special swap map bits and related workarounds, we get a cleaner code
-> > base and prepare for merging the swap count into the swap table in the
-> > next step.
-> >
-> > Test results:
-> >
-> > Redis / Valkey bench:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Testing on a ARM64 VM 1.5G memory:
-> > Server: valkey-server --maxmemory 2560M
-> > Client: redis-benchmark -r 3000000 -n 3000000 -d 1024 -c 12 -P 32 -t ge=
-t
-> >
-> >         no persistence              with BGSAVE
-> > Before: 460475.84 RPS               311591.19 RPS
-> > After:  451943.34 RPS (-1.9%)       371379.06 RPS (+19.2%)
-> >
-> > Testing on a x86_64 VM with 4G memory (system components takes about 2G=
-):
-> > Server:
-> > Client: redis-benchmark -r 3000000 -n 3000000 -d 1024 -c 12 -P 32 -t ge=
-t
-> >
-> >         no persistence              with BGSAVE
-> > Before: 306044.38 RPS               102745.88 RPS
-> > After:  309645.44 RPS (+1.2%)       125313.28 RPS (+22.0%)
-> >
-> > The performance is a lot better when persistence is applied. This shoul=
-d
-> > apply to many other workloads that involve sharing memory and COW. A
-> > slight performance drop was observed for the ARM64 Redis test: We are
-> > still using swap_map to track the swap count, which is causing redundan=
-t
-> > cache and CPU overhead and is not very performance-friendly for some
-> > arches. This will be improved once we merge the swap map into the swap
-> > table (as already demonstrated previously [3]).
-> >
-> > vm-scabiity
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > usemem --init-time -O -y -x -n 32 1536M (16G memory, global pressure,
-> > simulated PMEM as swap), average result of 6 test run:
-> >
-> >                            Before:         After:
-> > System time:               282.22s         283.47s
-> > Sum Throughput:            5677.35 MB/s    5688.78 MB/s
-> > Single process Throughput: 176.41 MB/s     176.23 MB/s
-> > Free latency:              518477.96 us    521488.06 us
-> >
-> > Which is almost identical.
-> >
-> > Build kernel test:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > Test using ZRAM as SWAP, make -j48, defconfig, on a x86_64 VM
-> > with 4G RAM, under global pressure, avg of 32 test run:
-> >
-> >                 Before            After:
-> > System time:    1379.91s          1364.22s (-0.11%)
-> >
-> > Test using ZSWAP with NVME SWAP, make -j48, defconfig, on a x86_64 VM
-> > with 4G RAM, under global pressure, avg of 32 test run:
-> >
-> >                 Before            After:
-> > System time:    1822.52s          1803.33s (-0.11%)
-> >
-> > Which is almost identical.
-> >
-> > MySQL:
-> > =3D=3D=3D=3D=3D=3D
-> > sysbench /usr/share/sysbench/oltp_read_only.lua --tables=3D16
-> > --table-size=3D1000000 --threads=3D96 --time=3D600 (using ZRAM as SWAP,=
- in a
-> > 512M memory cgroup, buffer pool set to 3G, 3 test run and 180s warm up)=
-.
-> >
-> > Before: 318162.18 qps
-> > After:  318512.01 qps (+0.01%)
-> >
-> > In conclusion, the result is looking better or identical for most cases=
-,
-> > and it's especially better for workloads with swap count > 1 on SYNC_IO
-> > devices, about ~20% gain in above test. Next phases will start to merge
-> > swap count into swap table and reduce memory usage.
-> >
-> > One more gain here is that we now have better support for THP swapin.
-> > Previously, the THP swapin was bound with swap cache bypassing, which
-> > only works for single-mapped folios. Removing the bypassing path also
-> > enabled THP swapin for all folios. It's still limited to SYNC_IO
-> > devices, though, this limitation can will be removed later. This may
-> > cause more serious thrashing for certain workloads, but that's not an
-> > issue caused by this series, it's a common THP issue we should resolve
-> > separately.
-> >
-> > Link: https://lore.kernel.org/linux-mm/CAMgjq7D5qoFEK9Omvd5_Zqs6M+TEoG0=
-3+2i_mhuP5CQPSOPrmQ@mail.gmail.com/ [1]
-> > Link: https://lore.kernel.org/linux-mm/20240326185032.72159-1-ryncsn@gm=
-ail.com/ [2]
-> > Link: https://lore.kernel.org/linux-mm/20250514201729.48420-1-ryncsn@gm=
-ail.com/ [3]
-> >
-> > Suggested-by: Chris Li <chrisl@kernel.org>
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
->
-> Unfortunately I don't have time to go through the series and review it,
-> but I wanted to just say awesome work here. The special cases in the
-> swap code to avoid using the swapcache have always been a pain.
->
-> In fact, there's one more special case that we can probably remove in
-> zswap_load() now, the one introduced by commit 25cd241408a2 ("mm: zswap:
-> fix data loss on SWP_SYNCHRONOUS_IO devices").
+convert the Texas Instruments PCM186x Universal audio ADC bindings
+to DT schema.
 
-Thanks! Oh, now I remember that one, it can be removed indeed. There
-are several more cleanup and optimizations that can be done after this
-series, it's getting too long already so I didn't include everything.
+Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+---
+Convert the Texas Instruments PCM186x audio ADC bindings to DT schema.
+---
+Changes in v5:
+- Resolved previous patch warnings/errors
+- dtschema/dtc warnings/errors:
+- /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml: 
+- $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+- 	 $id: http://devicetree.org/schemas/sound/ti,pcm186x.yaml
+- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml
+- Link to v4: https://lore.kernel.org/r/20251030-dtbs-v4-1-3fff32221119@gmail.com
 
-But removing 25cd241408a2 is easy to do and easy to review, I can
-include it in the next update.
+Changes in v4:
+- Corrected subject dt_bindings:sound to Asoc: dt_bindings:
+- Corrected the filename to match one of the compitables in the file 
+- ti,pcm186x.yaml to ti,pcm1862.yaml
+- Link to v3: https://lore.kernel.org/r/20251029-dtbs-v3-1-3cc162221c22@gmail.com
+
+Changes in v3:
+- Unicode FEFF character was present in the begining of the file,
+- Removed unicode character.
+- Link to v2: https://lore.kernel.org/r/20251026-dtbs-v2-1-cd3b713a288e@gmail.com
+
+Changes in v2:
+- Fixes as per the reviews suggested for the v1.
+- Link to v1: https://lore.kernel.org/r/20251021-dtbs-v1-1-493c1aa253bc@gmail.com
+---
+ .../devicetree/bindings/sound/pcm186x.txt          | 42 ---------------
+ .../devicetree/bindings/sound/ti,pcm1862.yaml      | 61 ++++++++++++++++++++++
+ 2 files changed, 61 insertions(+), 42 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/pcm186x.txt b/Documentation/devicetree/bindings/sound/pcm186x.txt
+deleted file mode 100644
+index 1087f4855980..000000000000
+--- a/Documentation/devicetree/bindings/sound/pcm186x.txt
++++ /dev/null
+@@ -1,42 +0,0 @@
+-Texas Instruments PCM186x Universal Audio ADC
+-
+-These devices support both I2C and SPI (configured with pin strapping
+-on the board).
+-
+-Required properties:
+-
+- - compatible : "ti,pcm1862",
+-                "ti,pcm1863",
+-                "ti,pcm1864",
+-                "ti,pcm1865"
+-
+- - reg : The I2C address of the device for I2C, the chip select
+-         number for SPI.
+-
+- - avdd-supply: Analog core power supply (3.3v)
+- - dvdd-supply: Digital core power supply
+- - iovdd-supply: Digital IO power supply
+-        See regulator/regulator.txt for more information
+-
+-CODEC input pins:
+- * VINL1
+- * VINR1
+- * VINL2
+- * VINR2
+- * VINL3
+- * VINR3
+- * VINL4
+- * VINR4
+-
+-The pins can be used in referring sound node's audio-routing property.
+-
+-Example:
+-
+-	pcm186x: audio-codec@4a {
+-		compatible = "ti,pcm1865";
+-		reg = <0x4a>;
+-
+-		avdd-supply = <&reg_3v3_analog>;
+-		dvdd-supply = <&reg_3v3>;
+-		iovdd-supply = <&reg_1v8>;
+-	};
+diff --git a/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml b/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml
+new file mode 100644
+index 000000000000..b76330ff9de3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/ti,pcm1862.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/ti,pcm1862.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments PCM186x Universal Audio ADC
++
++maintainers:
++  - Ranganath V N <vnranganath.20@gmail.com>
++
++description:
++  The Texas Instruments PCM186x family are multi-channel audio ADCs
++  that support both I2C and SPI control interfaces, selected by
++  pin strapping. These devices include on-chip programmable gain
++  amplifiers and support differential or single-ended analog inputs.
++
++properties:
++  compatible:
++    enum:
++      - ti,pcm1862
++      - ti,pcm1863
++      - ti,pcm1864
++      - ti,pcm1865
++
++  reg:
++    maxItems: 1
++
++  avdd-supply: true
++
++  dvdd-supply: true
++
++  iovdd-supply: true
++
++  '#sound-dai-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - avdd-supply
++  - dvdd-supply
++  - iovdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        audio-codec@4a {
++            compatible = "ti,pcm1865";
++            reg = <0x4a>;
++
++            avdd-supply = <&reg_3v3_analog>;
++            dvdd-supply = <&reg_3v3>;
++            iovdd-supply = <&reg_1v8>;
++        };
++    };
+
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251021-dtbs-3a31f699c461
+
+Best regards,
+-- 
+Ranganath V N <vnranganath.20@gmail.com>
+
 
