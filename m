@@ -1,80 +1,110 @@
-Return-Path: <linux-kernel+bounces-880179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F383C250F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:43:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3265AC250E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763D41A68476
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DAE33AEF6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AACF34A79E;
-	Fri, 31 Oct 2025 12:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B457134A786;
+	Fri, 31 Oct 2025 12:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezrt3+t3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uAI5DTWR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/hhDtoIN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uAI5DTWR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/hhDtoIN"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23C3342CA5;
-	Fri, 31 Oct 2025 12:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848A9311C21
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914622; cv=none; b=uyhVdn3IuUn6RLET10eNb0JvGo6JDxxJFgjyCj7SPF9KQzGKHcHzRvcl5sHfp8cMaILOW9Ua78N5pPdf+/D8dlpyYHCRh+lDLbmLiX8HuHBP1SqN+qnCXGg/895d2s4Y1dKkZC7R4IeHX5ujk4PRaXMq/dPbzoe6iqOWPD0iOKk=
+	t=1761914539; cv=none; b=IO7pMJtk/wVhppm4Tm3/NQkXALZY/WJsR4Xh6DylPZDO7yj8xgR/22/A0jr4HpGUZNc2dlJOOUaRHqwmLjDB82AGypiSVvP7tNUa/+gSiUJrhR0XhXHRgkYOp2nTGIU131aYJypfQzRSzrj7JNXAhwPWs6TUps+XGJt96B+wY6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914622; c=relaxed/simple;
-	bh=sF35hppqD3HWncobGIVIUzqVORCZRJuB6R7SU1cG6+U=;
+	s=arc-20240116; t=1761914539; c=relaxed/simple;
+	bh=sxOhA30+Jvuo5D039VsSi76s9ywyi4gy1xaMXfDVFb0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NEy35fTzxvkSOZmyKwf8JXGkBABuYPQYICPe9Ubw/442LQ3Ch1rFOxMKdCChaa0yk7eqtXdRK3XSmIg1w8PDpDrfEhjGXwDBppLW5zmJxLH7qYEE/3cadT6FyLf3ZAHJ6/ZrcVcs+ciBZOe8fByAKhKNtRQUlGX8vYY8PTCthuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezrt3+t3; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761914607; x=1793450607;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sF35hppqD3HWncobGIVIUzqVORCZRJuB6R7SU1cG6+U=;
-  b=ezrt3+t31QLLFGHgQo6NIgHwvxsx7rJuP39gYI2YnKWIaepA69umuWhQ
-   9QugiwP1BKFMs0V5qetbN7BxqaqGp+LacZgP5sdFfrkhXicn/EIgRjOia
-   61KTk7iopk9SenzAb9SwrJX+qgPLGfvcE9k2JClXK7qIJLQgyIKdhrCUE
-   MYNCVv9dPDn5yumFfi6fMSM3Lh7RjoXM4JDLXBjlrKJgyV91SJxV8nRP8
-   70uK/0iT7cSjKuhT6JGFSGm4nkiU7A1HgszwG4PgtwItiR4VpGpkgE0NA
-   R4By3qO9/OENnqOjpWUetmbPRZrUqLHBh/eNcj8GKvVlptCv7O6hGlVO9
-   A==;
-X-CSE-ConnectionGUID: GU3bK0a7S0SWLpy3A/PTVQ==
-X-CSE-MsgGUID: 8EdR+VC7T+WJngi1x3yjmQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="67935027"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="67935027"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:43:22 -0700
-X-CSE-ConnectionGUID: AwmRUQfkS8mQ6Q97oh0umQ==
-X-CSE-MsgGUID: Ko1mJjW+QF6FrzORNVX+vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="185500706"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 31 Oct 2025 05:43:19 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEoSz-000N6m-10;
-	Fri, 31 Oct 2025 12:42:55 +0000
-Date: Fri, 31 Oct 2025 20:40:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Wu <wusamuel@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, tuhaowen@uniontech.com,
-	Samuel Wu <wusamuel@google.com>,
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] PM: Support aborting sleep during filesystem sync
-Message-ID: <202510312048.Ylb5GU76-lkp@intel.com>
-References: <20251030210110.298612-1-wusamuel@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdTLtuW2vmthg6SOMtCeGWI0V3PQb+j/gzfE26u1ZZRO4XiAAyXLGI+yUFJjqsU/PpxSN9mWT+gdz55ndpachGOn4EKyIJ4CwUXQIHTz+PXJe8s4IpoyRcks01i/kq3n09+cW4AvFQN5cByRhz1whdIymbxpV+vzXQgpElcxYQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uAI5DTWR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/hhDtoIN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uAI5DTWR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/hhDtoIN; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 80F71227C3;
+	Fri, 31 Oct 2025 12:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761914534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dm6HxKnXDQV1vh0w3Guce1AW162/25i2NlPD4vr68jU=;
+	b=uAI5DTWRJQfdazvq+HcSrktP4fXpGP430h6rT5sCY7WJvIF1/NJWn1f/AHS34IsAxeTJWa
+	APeXroY8H10akc75KjABgqwnb44N4jmMZJNbCuhceRkYFoLqDiuWil0i/DMnQ57JftdPEI
+	PevPc/9DdI07OrCRkUPqApFSKRp+4fo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761914534;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dm6HxKnXDQV1vh0w3Guce1AW162/25i2NlPD4vr68jU=;
+	b=/hhDtoINxds6cnilnv+tpIM2/o10+jv/gPc9kSC0qF0plhhYhjr+hsWUvfuvgfllXky6cf
+	JTeMpWrc3Yr+HzCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761914534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dm6HxKnXDQV1vh0w3Guce1AW162/25i2NlPD4vr68jU=;
+	b=uAI5DTWRJQfdazvq+HcSrktP4fXpGP430h6rT5sCY7WJvIF1/NJWn1f/AHS34IsAxeTJWa
+	APeXroY8H10akc75KjABgqwnb44N4jmMZJNbCuhceRkYFoLqDiuWil0i/DMnQ57JftdPEI
+	PevPc/9DdI07OrCRkUPqApFSKRp+4fo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761914534;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dm6HxKnXDQV1vh0w3Guce1AW162/25i2NlPD4vr68jU=;
+	b=/hhDtoINxds6cnilnv+tpIM2/o10+jv/gPc9kSC0qF0plhhYhjr+hsWUvfuvgfllXky6cf
+	JTeMpWrc3Yr+HzCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6671413393;
+	Fri, 31 Oct 2025 12:42:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fSOoGKauBGnSGwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 31 Oct 2025 12:42:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DAFC9A28C0; Fri, 31 Oct 2025 13:42:09 +0100 (CET)
+Date: Fri, 31 Oct 2025 13:42:09 +0100
+From: Jan Kara <jack@suse.cz>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2] jbd2: allocate lock_class_key for jbd2_handle
+ dynamically
+Message-ID: <rrtgpocnwhmi2muaw3uk44dgmnt3oqotx4ohutftknjkaucjkh@qp6d2v2oxftx>
+References: <fwsxrb7ugi5zeosugo6hyjdbhw36ppa5kekfi6n7we2vvi3r7m@ljrizqoagsg7>
+ <93744126-237b-4e36-8a62-a33e1fb52051@I-love.SAKURA.ne.jp>
+ <mjzb7q6juxndqtmoaee3con6xtma5vfzkgfcicjjmt7ltv2gtt@ps2np5r36vn3>
+ <96c8fca1-7568-46c8-a5ad-af4699b95d5e@I-love.SAKURA.ne.jp>
+ <doq4csrkuhpha7v5lunesdrscmqmjvt3flids3iai2gvpbhp3j@mxldi4yvvymw>
+ <a6fcc693-42f0-4d70-a1af-fc1bfb328eb7@I-love.SAKURA.ne.jp>
+ <rajbaoxp7zvaiftmuip4mxdvrdxthhgvbjvtuq3zrwijtdab2j@ouligqrqxyth>
+ <987110fc-5470-457a-a218-d286a09dd82f@I-love.SAKURA.ne.jp>
+ <vgpy66rcs3mvitijmt2v2yfwuhkijh33z3s76ghlsqq6yjgmtw@prlpxdeoitif>
+ <8482e4e3-b233-4540-aa47-4573ee87fe96@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,66 +113,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251030210110.298612-1-wusamuel@google.com>
+In-Reply-To: <8482e4e3-b233-4540-aa47-4573ee87fe96@I-love.SAKURA.ne.jp>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-Hi Samuel,
+On Fri 31-10-25 20:28:34, Tetsuo Handa wrote:
+> Who can take this patch?
 
-kernel test robot noticed the following build errors:
+Ted should pick it up. He's in CC so I'm sure he'll eventually get to it
+when gathering patches for the next merge window.
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+								Honza
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Wu/PM-Support-aborting-sleep-during-filesystem-sync/20251031-050330
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20251030210110.298612-1-wusamuel%40google.com
-patch subject: [PATCH v6] PM: Support aborting sleep during filesystem sync
-config: arm64-randconfig-r061-20251031 (https://download.01.org/0day-ci/archive/20251031/202510312048.Ylb5GU76-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312048.Ylb5GU76-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510312048.Ylb5GU76-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/power/main.c: In function 'pm_init':
->> kernel/power/main.c:1159:17: error: implicit declaration of function 'pm_start_fs_sync_workqueue'; did you mean 'pm_start_workqueue'? [-Wimplicit-function-declaration]
-    1159 |         error = pm_start_fs_sync_workqueue();
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                 pm_start_workqueue
-
-
-vim +1159 kernel/power/main.c
-
-  1153	
-  1154	static int __init pm_init(void)
-  1155	{
-  1156		int error = pm_start_workqueue();
-  1157		if (error)
-  1158			return error;
-> 1159		error = pm_start_fs_sync_workqueue();
-  1160		if (error)
-  1161			return error;
-  1162		hibernate_image_size_init();
-  1163		hibernate_reserved_size_init();
-  1164		pm_states_init();
-  1165		power_kobj = kobject_create_and_add("power", NULL);
-  1166		if (!power_kobj)
-  1167			return -ENOMEM;
-  1168		error = sysfs_create_groups(power_kobj, attr_groups);
-  1169		if (error)
-  1170			return error;
-  1171		pm_print_times_init();
-  1172		return pm_autosleep_init();
-  1173	}
-  1174	
-
+> 
+> On 2025/10/23 16:59, Jan Kara wrote:
+> > On Wed 22-10-25 20:11:37, Tetsuo Handa wrote:
+> >> syzbot is reporting possibility of deadlock due to sharing lock_class_key
+> >> for jbd2_handle across ext4 and ocfs2. But this is a false positive, for
+> >> one disk partition can't have two filesystems at the same time.
+> >>
+> >> Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+> >> Closes: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+> >> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >> Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+> > 
+> > Thanks! Tha patch looks good. Feel free to add:
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > 								Honza
+> > 
+> >> ---
+> >>  fs/jbd2/journal.c    | 6 ++++--
+> >>  include/linux/jbd2.h | 6 ++++++
+> >>  2 files changed, 10 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> >> index d480b94117cd..f43474002f50 100644
+> >> --- a/fs/jbd2/journal.c
+> >> +++ b/fs/jbd2/journal.c
+> >> @@ -1521,7 +1521,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
+> >>  			struct block_device *fs_dev,
+> >>  			unsigned long long start, int len, int blocksize)
+> >>  {
+> >> -	static struct lock_class_key jbd2_trans_commit_key;
+> >>  	journal_t *journal;
+> >>  	int err;
+> >>  	int n;
+> >> @@ -1530,6 +1529,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+> >>  	if (!journal)
+> >>  		return ERR_PTR(-ENOMEM);
+> >>  
+> >> +	lockdep_register_key(&journal->jbd2_trans_commit_key);
+> >>  	journal->j_blocksize = blocksize;
+> >>  	journal->j_dev = bdev;
+> >>  	journal->j_fs_dev = fs_dev;
+> >> @@ -1560,7 +1560,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+> >>  	journal->j_max_batch_time = 15000; /* 15ms */
+> >>  	atomic_set(&journal->j_reserved_credits, 0);
+> >>  	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
+> >> -			 &jbd2_trans_commit_key, 0);
+> >> +			 &journal->jbd2_trans_commit_key, 0);
+> >>  
+> >>  	/* The journal is marked for error until we succeed with recovery! */
+> >>  	journal->j_flags = JBD2_ABORT;
+> >> @@ -1611,6 +1611,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+> >>  	kfree(journal->j_wbuf);
+> >>  	jbd2_journal_destroy_revoke(journal);
+> >>  	journal_fail_superblock(journal);
+> >> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+> >>  	kfree(journal);
+> >>  	return ERR_PTR(err);
+> >>  }
+> >> @@ -2187,6 +2188,7 @@ int jbd2_journal_destroy(journal_t *journal)
+> >>  		jbd2_journal_destroy_revoke(journal);
+> >>  	kfree(journal->j_fc_wbuf);
+> >>  	kfree(journal->j_wbuf);
+> >> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+> >>  	kfree(journal);
+> >>  
+> >>  	return err;
+> >> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> >> index 43b9297fe8a7..f5eaf76198f3 100644
+> >> --- a/include/linux/jbd2.h
+> >> +++ b/include/linux/jbd2.h
+> >> @@ -1253,6 +1253,12 @@ struct journal_s
+> >>  	 */
+> >>  	struct lockdep_map	j_trans_commit_map;
+> >>  #endif
+> >> +	/**
+> >> +	 * @jbd2_trans_commit_key:
+> >> +	 *
+> >> +	 * "struct lock_class_key" for @j_trans_commit_map
+> >> +	 */
+> >> +	struct lock_class_key	jbd2_trans_commit_key;
+> >>  
+> >>  	/**
+> >>  	 * @j_fc_cleanup_callback:
+> >> -- 
+> >> 2.47.3
+> >>
+> >>
+> 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
