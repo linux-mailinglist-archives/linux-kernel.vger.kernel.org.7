@@ -1,178 +1,108 @@
-Return-Path: <linux-kernel+bounces-879522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A72EC234D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:44:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A4C234D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B850E3A4B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:44:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8CDC1A25024
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1E62DA759;
-	Fri, 31 Oct 2025 05:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B91C25A651;
+	Fri, 31 Oct 2025 05:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uT/cmhNa"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UPnl7EGG"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA54125A0;
-	Fri, 31 Oct 2025 05:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDF41A76BB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761889458; cv=none; b=qKwluZY0WZiOnexRGvk/wFnVAitGCKdTGhzi/1YfA8h4Yv8zuodbi8TKNW9wLg63ZCjVjYr17U2pHRU2ec3TsRc0Eb64rZQCTjCy3B7j3oDMHchhPiZghiL/bJKbD8gZnh2ntyl4O/vcJZ3QECSzvGVX+Z9vkTmCNAkV6J9ve+E=
+	t=1761889676; cv=none; b=IZw3iX8QhQgMSOYSUTJUqKrDUZs+41L/IgntV/J2kRD33kmaPoh5Jztqa64IObS6ZrYFcgxcmZUU6LimZiiTDJVH8wee/yERj3fPkOFQNYvYVuFQcdJIDe9MKdrXOiiWZQLDeQL2QImX6D8z8FK8Q6S5n/BnOoBsU8ophWUxh24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761889458; c=relaxed/simple;
-	bh=hJZcwaREdyooTw7ekMFhetoz3m4WKC3YzfAuftLEIn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtn6/Vw1v4HEWOaIIeyromaWSM/KPZeSwXhCUa5GyVP9loQuP+PjgfGu5ig6irAyfwhXmDSwsrjvwxKV1fEglQ9dojzyUtUSDbKhRKEAd32sLyja2JvGES+M2PQNzqMm6x/sWX8b5slXUscYdL2XbB133+WcEkjcwfzg2W1Pz+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uT/cmhNa; arc=none smtp.client-ip=115.124.30.110
+	s=arc-20240116; t=1761889676; c=relaxed/simple;
+	bh=VJDbbvB0CrYiZo3mFa1LHXvTVP85LBC/tY2lks1F4Ow=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3fcbf6XlWZhWxHYREGAVwd5cdHyPusprMzTu0iOn3pbN15x2v5F3lWjGjXQCjzysnpRDHcmqYBBb2MQMqPrOBibMXSKna8DS0GT8+WJmEo0YCY/m08Qr5x5n7NL14eDTJ1/Ke1JkoY9Yq7IWATF+PvoCWQXrpvi3hzihCndACM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UPnl7EGG; arc=none smtp.client-ip=115.124.30.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1761889452; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=prp471TDpmlGTa1VRCbwN+HtEDRrSF74UDrkF5mmx9g=;
-	b=uT/cmhNaypWnogdEKkueYvkREyBroAZ00i3vLysvUnG12g7gp7qWGmNwCjeeRKv1nERZO1s87GZyVnF3NKKaz44l25623F1oIBnlZenTaF0c2mi9TBGdFO+IZzg+3XBMUcecgwAdRtDu9Dlc4PqHyo05dAZVgOCR6DVIPgTo+Aw=
-Received: from localhost(mailfrom:yaoyuan@linux.alibaba.com fp:SMTPD_---0WrNrsWB_1761889451 cluster:ay36)
+	t=1761889665; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=wfeFgdZvyu0jYTVA6vIV7jCk6gqYdTkVFzYAV142tGo=;
+	b=UPnl7EGGf0/rRH1SdfcTmtldmHQ5Zvfn34dMiCaZft0EpLgrLO5W6/9/7eJYPLk+P+xo1Zo4itYwBup63ao17a7PJsv5epoHQjk3beZowm3e9Gt1pjBodxTleJhROPyc/G2iCQAxhPRSPTw3HApxU283zAvSvyHJ5GzApMQyav4=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrNt.oV_1761889660 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 13:44:12 +0800
-Date: Fri, 31 Oct 2025 13:44:11 +0800
-From: Yao Yuan <yaoyuan@linux.alibaba.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: Add a helper to dedup reporting of unhandled
- VM-Exits
-Message-ID: <bophxumzbp2yuovzhvt62jeb5e6vwc2mirvcl6uyztse5mqvjt@xmbhgmqnpn5d>
-References: <20251030185004.3372256-1-seanjc@google.com>
+          Fri, 31 Oct 2025 13:47:45 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Robert Morris <rtm@csail.mit.edu>
+Subject: [PATCH] erofs: avoid infinite loop due to incomplete zstd-compressed data
+Date: Fri, 31 Oct 2025 13:47:39 +0800
+Message-ID: <20251031054739.1814530-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030185004.3372256-1-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 11:50:03AM +0800, Sean Christopherson wrote:
-> Add and use a helper, kvm_prepare_unexpected_reason_exit(), to dedup the
-> code that fills the exit reason and CPU when KVM encounters a VM-Exit that
-> KVM doesn't know how to handle.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/svm/svm.c          |  7 +------
->  arch/x86/kvm/vmx/tdx.c          |  6 +-----
->  arch/x86/kvm/vmx/vmx.c          |  9 +--------
->  arch/x86/kvm/x86.c              | 12 ++++++++++++
->  5 files changed, 16 insertions(+), 19 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 48598d017d6f..4fbe4b7ce1da 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -2167,6 +2167,7 @@ void __kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu,
->  void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu);
->
->  void kvm_prepare_event_vectoring_exit(struct kvm_vcpu *vcpu, gpa_t gpa);
-> +void kvm_prepare_unexpected_reason_exit(struct kvm_vcpu *vcpu, u64 exit_reason);
->
->  void kvm_enable_efer_bits(u64);
->  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index f14709a511aa..83e0d4d5f4c5 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -3451,13 +3451,8 @@ static bool svm_check_exit_valid(u64 exit_code)
->
->  static int svm_handle_invalid_exit(struct kvm_vcpu *vcpu, u64 exit_code)
->  {
-> -	vcpu_unimpl(vcpu, "svm: unexpected exit reason 0x%llx\n", exit_code);
->  	dump_vmcb(vcpu);
-> -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> -	vcpu->run->internal.ndata = 2;
-> -	vcpu->run->internal.data[0] = exit_code;
-> -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +	kvm_prepare_unexpected_reason_exit(vcpu, exit_code);
->  	return 0;
->  }
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 326db9b9c567..079d9f13eddb 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -2145,11 +2145,7 @@ int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
->  	}
->
->  unhandled_exit:
-> -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> -	vcpu->run->internal.ndata = 2;
-> -	vcpu->run->internal.data[0] = vp_enter_ret;
-> -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +	kvm_prepare_unexpected_reason_exit(vcpu, vp_enter_ret);
->  	return 0;
->  }
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 1021d3b65ea0..08f7957ed4c3 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6642,15 +6642,8 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
->
->  unexpected_vmexit:
-> -	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n",
-> -		    exit_reason.full);
->  	dump_vmcs(vcpu);
-> -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -	vcpu->run->internal.suberror =
-> -			KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> -	vcpu->run->internal.ndata = 2;
-> -	vcpu->run->internal.data[0] = exit_reason.full;
-> -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +	kvm_prepare_unexpected_reason_exit(vcpu, exit_reason.full);
->  	return 0;
->  }
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index b4b5d2d09634..c826cd05228a 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9110,6 +9110,18 @@ void kvm_prepare_event_vectoring_exit(struct kvm_vcpu *vcpu, gpa_t gpa)
->  }
->  EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_prepare_event_vectoring_exit);
->
-> +void kvm_prepare_unexpected_reason_exit(struct kvm_vcpu *vcpu, u64 exit_reason)
-> +{
-> +	vcpu_unimpl(vcpu, "unexpected exit reason 0x%llx\n", exit_reason);
+Currently, the decompression logic incorrectly spins if compressed
+data is truncated in crafted (deliberately corrupted) images.
 
-I like the dedup, and this brings above for tdx which not
-before. Just one small thing: Will it be better if keep the
-"vmx"/"svm" hint as before and plus the "tdx" hint yet ?
+Fixes: 7c35de4df105 ("erofs: Zstandard compression support")
+Reported-by: Robert Morris <rtm@csail.mit.edu>
+Closes: https://lore.kernel.org/r/50958.1761605413@localhost
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+Actually I suspect multi-shot decompressor lzma may have a similar
+issue (but it seems deflate is not), will check later.
 
-Reviewed-by: Yao Yuan <yaoyuan@linux.alibaba.com>
+ fs/erofs/decompressor_zstd.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-> +
-> +	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> +	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> +	vcpu->run->internal.ndata = 2;
-> +	vcpu->run->internal.data[0] = exit_reason;
-> +	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +}
-> +EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_prepare_unexpected_reason_exit);
-> +
->  static int handle_emulation_failure(struct kvm_vcpu *vcpu, int emulation_type)
->  {
->  	struct kvm *kvm = vcpu->kvm;
->
-> base-commit: 4cc167c50eb19d44ac7e204938724e685e3d8057
-> --
-> 2.51.1.930.gacf6e81ea2-goog
->
+diff --git a/fs/erofs/decompressor_zstd.c b/fs/erofs/decompressor_zstd.c
+index b4bfe14229f9..e38d93bb2104 100644
+--- a/fs/erofs/decompressor_zstd.c
++++ b/fs/erofs/decompressor_zstd.c
+@@ -172,7 +172,6 @@ static int z_erofs_zstd_decompress(struct z_erofs_decompress_req *rq,
+ 	dctx.bounce = strm->bounce;
+ 
+ 	do {
+-		dctx.avail_out = out_buf.size - out_buf.pos;
+ 		dctx.inbuf_sz = in_buf.size;
+ 		dctx.inbuf_pos = in_buf.pos;
+ 		err = z_erofs_stream_switch_bufs(&dctx, &out_buf.dst,
+@@ -188,14 +187,18 @@ static int z_erofs_zstd_decompress(struct z_erofs_decompress_req *rq,
+ 		in_buf.pos = dctx.inbuf_pos;
+ 
+ 		zerr = zstd_decompress_stream(stream, &out_buf, &in_buf);
+-		if (zstd_is_error(zerr) || (!zerr && rq->outputsize)) {
++		dctx.avail_out = out_buf.size - out_buf.pos;
++		if (zstd_is_error(zerr) ||
++		    ((rq->outputsize + dctx.avail_out) && (!zerr || (zerr > 0 &&
++				!(rq->inputsize + in_buf.size - in_buf.pos))))) {
+ 			erofs_err(sb, "failed to decompress in[%u] out[%u]: %s",
+ 				  rq->inputsize, rq->outputsize,
+-				  zerr ? zstd_get_error_name(zerr) : "unexpected end of stream");
++				  zstd_is_error(zerr) ? zstd_get_error_name(zerr) :
++					"unexpected end of stream");
+ 			err = -EFSCORRUPTED;
+ 			break;
+ 		}
+-	} while (rq->outputsize || out_buf.pos < out_buf.size);
++	} while (rq->outputsize + dctx.avail_out);
+ 
+ 	if (dctx.kout)
+ 		kunmap_local(dctx.kout);
+-- 
+2.43.5
+
 
