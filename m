@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-880988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645A2C27226
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:37:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B38EC27229
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:38:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF093A86A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:37:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F9744F36B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E6F2EB84F;
-	Fri, 31 Oct 2025 22:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13672FB990;
+	Fri, 31 Oct 2025 22:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OS9LKwX/"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3K6A1ECk"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142F02EB5CF
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DB12EB84F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761950250; cv=none; b=iOox05eueV3jj1D34v9vFHe7+IuUP/XV69/O6FP2WURrHXmHAMZAi2h41zBG56gIzgzd3YYG1MF5TrTB/bQ8TDK9QwNyizQ2fe78UBojv0Z/Yy8lBM39Sgc7Qkl5BzgVoaNMXOB0jR7AGhigSAhEzHL1BAja77CJK89p3Dwvg/Y=
+	t=1761950258; cv=none; b=nj4MDR1SyGlMfJYzSHQhykexChsqA+v7gSm4Xojha0A8r0GWgr44X/ZreLQCHHpU8O8Ef2Jt5gq+H9t46aRQcIg4yo3pDxtJnQPV/5Ce3L3dQSwuD6acx+Hs2g5TbCfNdHvofoZsRDloKEeVeIaCpATDg/ciiLOfTZ1/3dDPFBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761950250; c=relaxed/simple;
-	bh=lyoMRXm6f9/VrNX6C+nyCiEeZEgKdKGMwqial2YdLtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOjvl9nU4l5U2diiFuCQvgpx40/qey+NcZCekfHnpCiQS1OkB55w5Hrys745nHLpICBvPubMYIXWtHu3LiaFY3F9pNSWUV+IiYnxuvMJkTNVvrffnCfdNo5er5FnfXky1pZz6qeEy3tWmFx+apDTSAq3GQzRP4ekbm4KuGHSs+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OS9LKwX/; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-433071389e1so21701145ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:37:28 -0700 (PDT)
+	s=arc-20240116; t=1761950258; c=relaxed/simple;
+	bh=vux0Wwx/9W3FtLrC7lRRcKcZZ6Lsj4RQdTq5HQzzrgs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JvgiBq8EsbmRu1QMx5Gip9m6A9H3+hQwNefymaBDjeYyH2MGR+zEVTdW60q2oyezaeiwSQXe2hcvM75ddngwGm8A/vHOGYNhVsG/3eaMioFLyEgTe0BHGoXp4ITiDyujHOKhPmhR5Sf274Nb4DpQWUt44CmkVt7OggSCsgGp/Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3K6A1ECk; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340c0604e3dso2394a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1761950248; x=1762555048; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sYZpsZRI4LYROmtgQIPxauwwjRjZshuAEYwDGnWdS9Q=;
-        b=OS9LKwX/rHbjoNUuDCf+D7Jb8NP0ZoI+DEN+yZUn6AWL2h+tW1sX+58WxisFBrlrvf
-         roAfSG/EQYL8BsaMbHtyfEGoJ0VUi/cbHv8YVZ3vOnKA25I3+DevO9aWBEPE7neKO/42
-         3UZg7tT+pk6HpiwGJdiuy6iZ7p5Gf2cV5WJPM=
+        d=google.com; s=20230601; t=1761950256; x=1762555056; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2T//pv73tE9Ei8o1XpXkzLHPQNKRotM7rF6yYw0F0ng=;
+        b=3K6A1ECkAh+26/VlWFKuVCrJ/YLOpSz5sm9cbHT4Vt5AvKQEMyehBLDF1rLv0/XU9o
+         PQZcD2q4VUMuarS+ia2u0SiLKQaCsYsG++i0BSWhV7P6oUuW4fZHiTXDtEF6ItckxYV1
+         p9UThRufukTUcFOCoIgGzNzsy5/Zc3ukaP2P19L1Meg/7hfsA+O4bQSIFaIl1u4W7tWO
+         2EkyTFkfNY42GpfuLeMYCfffk50bl1tg8SfghBA2m5IS8GK1dekvz9tZMoks8GRKKoBW
+         3FjHVaN5sd8oQ58GvqfuefVtqyFHEDlPhbA7lGxAP/VHlc4wJbKaLCNcbObsDnmsxxKG
+         QF4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761950248; x=1762555048;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sYZpsZRI4LYROmtgQIPxauwwjRjZshuAEYwDGnWdS9Q=;
-        b=c66UM3Ot9+3f/JtzdqXuxuqYEYe0u1HNO6Zyjsh5/pA0DZnWlD5htBuFUXs7FpeqZZ
-         cP3twOdsNbB2cm/QBWSZ7TDGnnQtMW+VjdbVIwgvK9MrmHDQaMK/YB8yRNF/Iob1I9WX
-         fCIsdXeudJ4jYTjS9LtlXzuUmI/v+P07rGiPsA7Nxq2xsfZVjXuzrWXeRI5wjutIF5UY
-         0A/5Ya4ML8d0cRDqrAwqlvUxcCZdbOpr994HrI6BZfN0jcYhtGMGjTIIPcj7uMRJIVZF
-         CTrteXhaoIqBhPNS0Xr3RuC21xVvnsgHWXDvEv0CJcHhXIeO8xcOB71WJKCMFLXWqBfu
-         QKFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyn5vMtYYk5XF6JGBeXXdV+5gg6zKm3a+nRCW5RC/oAYmrfacjHUvrVW2ek3jE9T1tu/saiCcFe4udA+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0//Mk7eDxZ6iHamJZxSEmM549SmvOZo3jpsx9vyGacpQLMdS1
-	j07cE73TV3VIbfLxb43lIJsDiMqfLLvlVsgKrBOcsmLoSbXAa4//naGjLdaKYNisbhM=
-X-Gm-Gg: ASbGncucqhjKMr1awuPn4Lh1LcNsHr9/a/0X5spAvNINHXH5Q00MJKDjLAZc4JyJ9vQ
-	hlJjbM5hoAAndcD7cDCF0E3K+DkiawPBdxGe+ILT6Tns7bgVqwPuBSTBExapxSszjfgV1VRpcyl
-	Jf7yD3UcCh80hZ7f+WQgnM6ZtYX4RPms82npE/zfnuiaV8nrAht4jTWI55jBA+4ajLZluImehxt
-	XevnyuITMnrAn/Gzk8Cgqmdv+TebLtsGnxFLLe4r7smfI+nOVlK42T8a3kfHtVjLAwtOIhE3WAZ
-	L4LphuPouvVxd44lMANRYibUCa38YeUhKYv2gyNPM7bJmWLT1J3KGwbVExCnehIQV2WBd4oc094
-	Um/faWbnmCkkc5evt2U1bWU3/tGi1fYC0zu+LfBaEP4Zd2W6nx62dNo6VGnplWTiTIk8haCmQIj
-	wSWVUAGPXLzCkT
-X-Google-Smtp-Source: AGHT+IHQbq8xoN+qH3Deos3yPtiJSPDT57c1SPO4PDOvJb5EBUgTWDF+VAiwrMirbjgmdTNntAVEoQ==
-X-Received: by 2002:a05:6e02:3397:b0:430:9f96:23c8 with SMTP id e9e14a558f8ab-4330d14876fmr85117115ab.14.1761950248190;
-        Fri, 31 Oct 2025 15:37:28 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b6a34b8c3asm1161665173.17.2025.10.31.15.37.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 15:37:27 -0700 (PDT)
-Message-ID: <993bf106-a8e7-4f71-b340-7db170ad10e2@linuxfoundation.org>
-Date: Fri, 31 Oct 2025 16:37:25 -0600
+        d=1e100.net; s=20230601; t=1761950256; x=1762555056;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2T//pv73tE9Ei8o1XpXkzLHPQNKRotM7rF6yYw0F0ng=;
+        b=FWUEqM39tcyk/wbpcFCjbXU+bs0jr3/9eVsOrPL3fjo9kriLOu5bIX9vGhQsd+5Ib+
+         OJ22l1dmI9T3srL+/wSyMDReneuPKi66Bh/A4PKK0l45In9rgOGtVCLKRzn1StoR0GMq
+         saFQ0dbCSKJWgi5ioTtldmZvnhBWvu9k0LOdgNqXE9uu1eoUtdPlUSWJfgK1b2nBt1Gq
+         2SUGalgS4bwAzb61tB6hqKVorXOR/9eVK7/VnMmJmnXLeitROQNvc6pFpH+KAeImtr2a
+         z9k0YR61lEX1IIbYVBQELmAGiwUJb9bxlspF5SazDLkUutg8L3PjvnIjcylKg+Hc0SCK
+         maVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8etzBv5EU/ulUYV/8LiKPCnGxeqn5LOBr9YbhkQamp5icgn+mncVrXidVI4GGJQN4ieDaT5fh9BBHhkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Ai4pEQPhWnkJBHk9SQqDvu4sAZ7zymO5DzPIOtFp+5fUfDZI
+	076FQyjn1GwnuqVrOpdby7yHQuRUhfoPaMMWAKCYT5c1uIHDa+FmBKegvf/yU9noYXdG7hfKeZ3
+	U1iDaUw==
+X-Google-Smtp-Source: AGHT+IFBSsgOmDJAP0ZowasZdt6RS6QGflURINqQVeeKx6xgginy5tuxDnXnTajxz/ozqhWCKYOExEAszeA=
+X-Received: from pjzh17.prod.google.com ([2002:a17:90a:ea91:b0:340:bd8e:458f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:dfcc:b0:339:f09b:d36f
+ with SMTP id 98e67ed59e1d1-3408308a1b0mr5879498a91.28.1761950256248; Fri, 31
+ Oct 2025 15:37:36 -0700 (PDT)
+Date: Fri, 31 Oct 2025 15:37:34 -0700
+In-Reply-To: <20251031222804.s26squjrtbaq7aly@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 00/32] 6.6.116-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, sr@sladewatkins.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20251031140042.387255981@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20251031140042.387255981@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-4-seanjc@google.com>
+ <20251031222804.s26squjrtbaq7aly@desk>
+Message-ID: <aQU6LqP-PxBQ-R0m@google.com>
+Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the MMIO
+ Stale Data mitigation
+From: Sean Christopherson <seanjc@google.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 10/31/25 08:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.116 release.
-> There are 32 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Oct 31, 2025, Pawan Gupta wrote:
+> On Thu, Oct 30, 2025 at 05:30:35PM -0700, Sean Christopherson wrote:
+> > Convert the MMIO Stale Data mitigation flag from a static branch into an
+> > X86_FEATURE_xxx so that it can be used via ALTERNATIVE_2 in KVM.
+> > 
+> > No functional change intended.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/include/asm/cpufeatures.h   |  1 +
+> >  arch/x86/include/asm/nospec-branch.h |  2 --
+> >  arch/x86/kernel/cpu/bugs.c           | 11 +----------
+> >  arch/x86/kvm/mmu/spte.c              |  2 +-
+> >  arch/x86/kvm/vmx/vmx.c               |  4 ++--
+> >  5 files changed, 5 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > index 7129eb44adad..d1d7b5ec6425 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -501,6 +501,7 @@
+> >  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
+> >  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
+> >  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
+> > +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
 > 
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.116-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> Some bikeshedding from my side too:
+> s/iff/if/
 
-Compiled and booted on my test system. No dmesg regressions.
-
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+Heh, that's actually intentional.  "iff" is shorthand for "if and only if".  But
+this isn't the first time my use of "iff" has confused people, so I've no objection
+to switching to "if".
 
