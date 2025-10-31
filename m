@@ -1,96 +1,180 @@
-Return-Path: <linux-kernel+bounces-880926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B12C26E20
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:19:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E93C26E35
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AFDF4F2E0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2940A401C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E48328626;
-	Fri, 31 Oct 2025 20:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67E328633;
+	Fri, 31 Oct 2025 20:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ky5Eq+Me"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dnfmtsd/"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197F718BC3D;
-	Fri, 31 Oct 2025 20:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA3B30B50D
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761941968; cv=none; b=c5tDsUyjcN14ZDtxcsR2xHHHkvbYagARdbvpt096+4ULw3vrp71O1VciVFu2Mlcv8YTZy/Q3qNusBUWsKn2tRbGSBMOoCkX09x16RKXOf0pTwHt+313DqPDBBVnRpfz6of5I2jnmKJsf7v94Q6cfbItF6LiCkLXI14HwQTyuANw=
+	t=1761942162; cv=none; b=s8CU3KTiKHOFn8W4743wz/iwiE1wjyGkw6q2X/8XPUvhW78eoH1XJOh933bgomTlMbSuG5cFpW+3XVQ1uYYT5O1t6KHsrZWfTkRUG7PrDs78RRLDoMTbohRzZYW1fT8nZOBWhqbaLZ1v2WLf7d50MIrQOUNO2e9ODCMJZCUfwfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761941968; c=relaxed/simple;
-	bh=+H2Kb7Uaz1YcISZpEOyhak2luzO19Hkcp3qJ6q98JGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pKQLhO47VnBkVzI9Ovoo+SNHUK5CEtzwamJ9vngWvVBZJ2YPeoxlsZddtyJ7JXOhsNZFMx/EnZpAfyjcRdu9Bxo+pFijniyNKEmRVor3uQ55i8MhHt0GDDdWwwyjWNtg0+o0WZHacOOHCH+LyChtsqHe0KDI+CNMOK/BSokbqkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ky5Eq+Me; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD6AC4CEE7;
-	Fri, 31 Oct 2025 20:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761941967;
-	bh=+H2Kb7Uaz1YcISZpEOyhak2luzO19Hkcp3qJ6q98JGw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ky5Eq+MevFe5gkHqEpGg2eYUggciZPB25AqlQUu1HfOW0LNq3a4+SLzpMXarJt1cU
-	 z8EpopUMWJfWtUWbOLgRscZeQ/J/IIHaNbCT/GDoPK4EazoECO7/8M9uNw+auFcgEC
-	 7EQDEjByUVIphUArFp0FM6961fMPMPZ0dak1J5Wq41nyHGwXgUj4wA0OcgOpnwW6+P
-	 YJl248fs5VSHOyyzghV1+WJhH1HU1J4AIS6zu52q1AljWp4zQaOWV4DM9RDezwJ9C4
-	 VPrqlzo1NNH+H31/Y9XAm9yDZ2J+v73C6OelkDZAESA3e7gYfx9MV2+2m0Nh7lYI/R
-	 Igv36h0CYTCJQ==
-Date: Fri, 31 Oct 2025 15:19:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Johan Hovold <johan@kernel.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Klaus Kudielka <klaus.kudielka@gmail.com>
-Subject: [GIT PULL] PCI fixes for v6.18
-Message-ID: <20251031201926.GA1706862@bhelgaas>
+	s=arc-20240116; t=1761942162; c=relaxed/simple;
+	bh=xG56qsMH2WuZG3c7wHt0lGtWrKdZNmLha+U2JMxWS24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QSvz02orWUQ/0pU/vFrC9PlN/N6AN+Uks+khnsJYkO0YE0d+IIEfGUfZnVeow0jfA6Zf6RNKmTb6HAH78tmGB4/nePvDsLCClDJLQ2g/M0fM26oK1zksbA3xAIGO8Ka3fNfyeNVcAVlf5D6rMZZXAp7l+e7m591xcrQHSA2q/EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dnfmtsd/; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592fa38fe60so3467871e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761942158; x=1762546958; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qsZcwQVtwdhCivWDhKm/5zaUeqA1jP6eTb4+KpUSqwc=;
+        b=Dnfmtsd/2UPto3N512HWy0p6HVN4bGZjYL80D0TJsw80Lzob49WkluayNIGeEEMG7s
+         QIfpZvrkdhauNgYGLYvl7JdcAl4dio8McASFWffevhouzftHdwx0Gc+bVy263Lec9jGd
+         A3r5C3il4z78pHaDC7EItw1PhSBe0uvi2uv2wAxCCz3Pl97oSmh4WX1keL+NC/u1f9mP
+         zBhfZbD9pjr/2r0GKPwnDXLmUFCrSxEkt9A7FlxX+3v+uMbiy4ZXjrDF3i49MeeM0JQb
+         39+Eoc8bWsdxq9PNVmnzrwPrTNDKUzhaar+1Fswsu9bL5xp03+kd8B8fwAZgpmQGDKld
+         OGvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761942158; x=1762546958;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qsZcwQVtwdhCivWDhKm/5zaUeqA1jP6eTb4+KpUSqwc=;
+        b=LoA2MwJsqKr+DMA0+KtwqsMPoAZ8mjPQumBQCZ5ftK5mVtw9kWES7JcHgkAWWVkJYo
+         BqsEdWNuklmXm/q+ZeFd00Fp0I3KI8B3xJMF1RZnwn4LFzE6XWeKmOk9S7WO3ObrLi7V
+         lzEBxniXhpfBtMYYeOotN/21utzxjP7QY5Zjc7X/qGWn7N2WSlHCfH/uEiCEAZiAZKdc
+         5EBctrl6HrlloDJKZx1jIrshu4U+wJJ/GeelRU2EHPD96fjiYvyftFIBSAj8xYNr1Nzm
+         L0TeFge3qF7TfpHhvWHkBMMfb0FZEa4QZkqyu7dj5cGvjO7/0jBOzNxnzDUy30ojw94d
+         fUDQ==
+X-Gm-Message-State: AOJu0YzC1z3R+jJpxL7TlcqpDA6Q5QRJYbUlfTSsf9z5LSEAKEO6i0Mz
+	J0uEYeSTzE1BeQLgomrl2ZbpeiMXEBlbm3xdO1YXDjmtHraahz9BaAPbKHU4aQoZ
+X-Gm-Gg: ASbGncs1SZl+nzFk9kJrzmPZVgNg1FfaD8FQzIB9RwwcIQtrzVeNef2iBsaKd/W6bC0
+	RZngzoxpalqC9tCAhun8GPLE+yR4nP4zHXF/0VelViWwbeqmgsUK2gKY9NONBt8ke8qyFaIe8lw
+	CLNHVZ+sZxGs+U+rhUnG25xRlG5iayhHcpADCdiKoc5I4pOY+QOQs0eoRgmnaUjcXvSeoZ4AAkf
+	vIGKxF9uZPLQwxJ2eqEGB9+UDQSK4Nufq59e529vtrR3P17pQp2DCECNPA968HW/6inqEwkTpYo
+	cmS4qNgssn9srKvKD78tV6aprkN86qTvolJeOmrFsHNn+fz3nD3CbkNDaWOPS9o34NaCDYo92V4
+	Qu0qbNZvi1jXpu4U2IK79E/s2oIs/k+gKjhyXXxhO5sDaZzGkSBWUfmjicRyQKJw0UCRha7xY65
+	fKlR0=
+X-Google-Smtp-Source: AGHT+IEFROwv14v4VtNeXmBx07IO0llOFTdpkWeY0h878Ddr9Ngru7QFo7D5rPTu2YYfmOzcxZIaTQ==
+X-Received: by 2002:a05:6512:1384:b0:592:f814:7c94 with SMTP id 2adb3069b0e04-5941d5079a9mr1680972e87.1.1761942158041;
+        Fri, 31 Oct 2025 13:22:38 -0700 (PDT)
+Received: from archlinux ([109.234.31.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5b5d3csm706058e87.68.2025.10.31.13.22.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 13:22:36 -0700 (PDT)
+From: zntsproj <vacacax16@gmail.com>
+X-Google-Original-From: zntsproj <vseokaktusah7@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: bamv2005@gmail.com,
+	shuah@kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	zntsproj <vseokaktusah7@gmail.com>
+Subject: [PATCH] gpio-selftests: replace fixed sleep with polling+timeout
+Date: Fri, 31 Oct 2025 23:22:26 +0300
+Message-ID: <20251031202226.7148-1-vseokaktusah7@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+Replace the hard-coded sleep 0.1 with a polling loop with timeout
+to check the sysfs GPIO value. This avoids timing-dependent
+flaky failures in CI and on slower machines.
+---
+ .../testing/selftests/gpio/gpio-aggregator.sh | 59 +++++++++++++++----
+ 1 file changed, 46 insertions(+), 13 deletions(-)
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+diff --git a/tools/testing/selftests/gpio/gpio-aggregator.sh b/tools/testing/selftests/gpio/gpio-aggregator.sh
+index 9b6f80ad9..1e81e62e9 100755
+--- a/tools/testing/selftests/gpio/gpio-aggregator.sh
++++ b/tools/testing/selftests/gpio/gpio-aggregator.sh
+@@ -671,26 +671,59 @@ teardown_4() {
+ 	agg_configfs_cleanup
+ }
+ 
++# helper: wait for sysfs file to become a given value (timeout in seconds)
++wait_for_sysfs_value() {
++    file="$1"
++    expected="$2"
++    timeout="${3:-2}"   # seconds
++    interval="0.01"     # seconds per poll
++    max=$((timeout * 100))
++    i=0
++
++    while [ "$i" -lt "$max" ]; do
++        if [ "$(cat "$file")" = "$expected" ]; then
++            return 0
++        fi
++        sleep "$interval"
++        i=$((i + 1))
++    done
++
++    return 1
++}
++
+ echo "4.1. Forwarding set values"
+ setup_4
+ OFFSET=0
+ for SETTING in $SETTINGS; do
+-	CHIP=$(echo "$SETTING" | cut -d: -f1)
+-	BANK=$(echo "$SETTING" | cut -d: -f2)
+-	LINE=$(echo "$SETTING" | cut -d: -f3)
+-	DEVNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/dev_name")
+-	CHIPNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/$BANK/chip_name")
+-	VAL_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio${LINE}/value"
+-	test $(cat $VAL_PATH) = "0" || fail "incorrect value read from sysfs"
+-	$BASE_DIR/gpio-mockup-cdev -s 1 "/dev/$(agg_configfs_chip_name agg0)" "$OFFSET" &
+-	mock_pid=$!
+-	sleep 0.1 # FIXME Any better way?
+-	test "$(cat $VAL_PATH)" = "1" || fail "incorrect value read from sysfs"
+-	kill "$mock_pid"
+-	OFFSET=$(expr $OFFSET + 1)
++    CHIP=$(echo "$SETTING" | cut -d: -f1)
++    BANK=$(echo "$SETTING" | cut -d: -f2)
++    LINE=$(echo "$SETTING" | cut -d: -f3)
++    DEVNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/dev_name")
++    CHIPNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/$BANK/chip_name")
++    VAL_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio${LINE}/value"
++
++    test "$(cat "$VAL_PATH")" = "0" || fail "incorrect value read from sysfs"
++
++    $BASE_DIR/gpio-mockup-cdev -s 1 "/dev/$(agg_configfs_chip_name agg0)" "$OFFSET" &
++    mock_pid=$!
++
++    # wait up to 2s for value to flip to "1"
++    if ! wait_for_sysfs_value "$VAL_PATH" "1" 2; then
++        kill "$mock_pid" 2>/dev/null || true
++        wait "$mock_pid" 2>/dev/null || true
++        fail "timeout waiting for $VAL_PATH to become 1"
++    fi
++
++    test "$(cat "$VAL_PATH")" = "1" || fail "incorrect value read from sysfs"
++
++    kill "$mock_pid" 2>/dev/null || true
++    wait "$mock_pid" 2>/dev/null || true
++
++    OFFSET=$((OFFSET + 1))
+ done
+ teardown_4
+ 
++
+ echo "4.2. Forwarding set config"
+ setup_4
+ OFFSET=0
+-- 
+2.51.2
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.18-fixes-4
-
-for you to fetch changes up to 437aa64c8e32b724fc6d60100ef0eb313d32c88f:
-
-  PCI: Do not size non-existing prefetchable window (2025-10-31 15:07:21 -0500)
-
-----------------------------------------------------------------
-
-- Restore custom qcom ASPM enablement code so L1 PM Substates are enabled
-  as they were in v6.17 even though the PCI core now enables just L0s and
-  L1 by default (Bjorn Helgaas)
-
-- Size prefetchable bridge windows only when they actually exist, to avoid
-  a WARN_ON() regression (Ilpo Järvinen)
-
-----------------------------------------------------------------
-Bjorn Helgaas (1):
-      Revert "PCI: qcom: Remove custom ASPM enablement code"
-
-Ilpo Järvinen (1):
-      PCI: Do not size non-existing prefetchable window
-
- drivers/pci/controller/dwc/pcie-qcom.c | 32 ++++++++++++++++++++++++++++++++
- drivers/pci/setup-bus.c                |  2 +-
- 2 files changed, 33 insertions(+), 1 deletion(-)
 
