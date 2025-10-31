@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-879885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2942EC24500
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:01:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABA9C24524
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59B1B4F58F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41953BB9F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF233373F;
-	Fri, 31 Oct 2025 09:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F5333732;
+	Fri, 31 Oct 2025 09:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y6LRvkO0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/X9S9bo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB7B33372E;
-	Fri, 31 Oct 2025 09:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6D21B87EB;
+	Fri, 31 Oct 2025 09:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904735; cv=none; b=UOwr7qk3MLiLPHLW/c8m7BBYSZDI3xtxrqQ3/kbRYVGs67KxlQgWKyE5hZGvTFi88khodgCrt3ytzSo5Y5+H7gIlx0XCxFvT35cLgNOS2LHBTjSyBZyku2poT+U1YeXWEL1OFvpWPnAABjQHouviL7fL7JBQpmuvXqYPIbONbRE=
+	t=1761904763; cv=none; b=DvFZYCeZ271YaKMfQKyqO/PYBvBKO0N03CwRxNx/40JDIfwNhTAwY+wqtXg+/E8JGx7xBBmCW+DEsmGZKghIG7QMrYtVsv3mR8Asc4vHuRyiItTTmWiKiuujPrkoVEveZ1EpuAeQOb6LMIRsRojuPPDM+c+tFqnooRfJcjSci7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904735; c=relaxed/simple;
-	bh=V3hG8BzpMh/pCP+5pYVHsS9SYsFsgrpbWinK543RY6g=;
+	s=arc-20240116; t=1761904763; c=relaxed/simple;
+	bh=fbWfcUSRmmSGBIa7RvGFKILcyx2LFQdk812Ih8G0axY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XM7CzUgdsVD+KjhMY2O5pen4jHsPGj7Wv9ArRWeV2z7IbtsdjDQFXNgIe0eFMtavF9nxTYN90cek85UgCiDc0zUs0ARyJOPzVwywmzMU/PYJJG2zYY4N5GDl4n5h0TV3EkDGs2OE3fY+ebIH3gRKdK1+CFwa9vAWCW08RxhwHR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y6LRvkO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BDEC4CEE7;
-	Fri, 31 Oct 2025 09:58:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761904735;
-	bh=V3hG8BzpMh/pCP+5pYVHsS9SYsFsgrpbWinK543RY6g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnLolD1ieruFTgqTCQbn43KqvVXeO4jYKgxNBET3IXrAqN+MiOEimPvYRXR9t7UGkNED9+l2svmjaXrhqzVD8Tz7ybl2MSiPxqurzuRb076hjZ1r00mFuFJL+EUxks6G+VVyLoyBKMsEg3ShZmJywjm+funEz8awwxB5GcWBVsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/X9S9bo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00199C4CEE7;
+	Fri, 31 Oct 2025 09:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761904763;
+	bh=fbWfcUSRmmSGBIa7RvGFKILcyx2LFQdk812Ih8G0axY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y6LRvkO0nH4Lrd0R/ZQ4vAlfY/yv/hr+pM6ePE6Cb7iKQ4cYZoY5qF96v/wXXYGmH
-	 Hfluq/K+Cq6ZitMw/PkoPYpUDtupRztNUwNmsqh0DvkI257yesZVI0prHygBtEm8Ck
-	 WinaWOoDVRkQamzD/LH2XVTI+7SH2BkLqG98PvjY=
-Date: Fri, 31 Oct 2025 10:58:52 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	guanghuifeng@linux.alibaba.com, zongyong.wzy@alibaba-inc.com,
-	zyfjeff@linux.alibaba.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: question about bd_inode hashing against device_add() // Re:
- [PATCH 03/11] block: call bdev_add later in device_add_disk
-Message-ID: <2025103155-definite-stays-ebfe@gregkh>
-References: <20210818144542.19305-1-hch@lst.de>
- <20210818144542.19305-4-hch@lst.de>
- <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
- <20251031090925.GA9379@lst.de>
- <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
- <20251031094552.GA10011@lst.de>
- <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+	b=B/X9S9bovPQF50GHgjwW/vIf0AsSsp64qbJdE19thdNyppfFyHrowADfIzxgilHha
+	 A/jpOa69Lv0SgKllffjaNRCbjvkRI+7+1JiP9CJCKDYqqZM6Tjm/7tbvPhObuzx/9R
+	 BO7w4YmmWcwxi2Yg6d9QS/dTwBEXtoFACYU+hbBqz4p4LUt7imQtt+5wEKXZClcoUY
+	 DkyhTugW2NZiY/Pf8gSGz9ZaHj1mHzJQRPTPEnKgxiE2CFWnQzq9ppapfN+GQeS4Vw
+	 DV+f3c1KGZWPnuX/3/NeCVIaatiRrx6mXXSe+YVieVb3GpCdgVdqo+ttN1IEHCm06p
+	 7jJojaeQqffYA==
+Date: Fri, 31 Oct 2025 11:59:16 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, big-sleep-vuln-reports@google.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, willy@infradead.org, david@redhat.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] mm/secretmem: fix use-after-free race in fault
+ handler
+Message-ID: <aQSIdCpf-2pJLwAF@kernel.org>
+References: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
+ <20251031091818.66843-1-lance.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,64 +60,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+In-Reply-To: <20251031091818.66843-1-lance.yang@linux.dev>
 
-On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
+On Fri, Oct 31, 2025 at 05:18:18PM +0800, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
 > 
+> The error path in secretmem_fault() frees a folio before restoring its
+> direct map status, which is a race leading to a panic.
+
+Let's use the issue description from the report:
+
+When a page fault occurs in a secret memory file created with
+`memfd_secret(2)`, the kernel will allocate a new folio for it, mark
+the underlying page as not-present in the direct map, and add it to
+the file mapping.
+
+If two tasks cause a fault in the same page concurrently, both could
+end up allocating a folio and removing the page from the direct map,
+but only one would succeed in adding the folio to the file
+mapping. The task that failed undoes the effects of its attempt by (a)
+freeing the folio again and (b) putting the page back into the direct
+map. However, by doing these two operations in this order, the page
+becomes available to the allocator again before it is placed back in
+the direct mapping.
+
+If another task attempts to allocate the page between (a) and (b), and
+the kernel tries to access it via the direct map, it would result in a
+supervisor not-present page fault.
+ 
+> Fix the ordering to restore the map before the folio is freed.
+
+... restore the direct map
+
+With these changes
+
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
 > 
-> On 2025/10/31 17:45, Christoph Hellwig wrote:
-> > On Fri, Oct 31, 2025 at 05:36:45PM +0800, Gao Xiang wrote:
-> > > Right, sorry yes, disk_uevent(KOBJ_ADD) is in the end.
-> > > 
-> > > >   Do you see that earlier, or do you have
-> > > > code busy polling for a node?
-> > > 
-> > > Personally I think it will break many userspace programs
-> > > (although I also don't think it's a correct expectation.)
-> > 
-> > We've had this behavior for a few years, and this is the first report
-> > I've seen.
-> > 
-> > > After recheck internally, the userspace program logic is:
-> > >    - stat /dev/vdX;
-> > >    - if exists, mount directly;
-> > >    - if non-exists, listen uevent disk_add instead.
-> > > 
-> > > Previously, for devtmpfs blkdev files, such stat/mount
-> > > assumption is always valid.
-> > 
-> > That assumption doesn't seem wrong.
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Google Big Sleep <big-sleep-vuln-reports@google.com>
+> Closes: https://lore.kernel.org/linux-mm/CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com/
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+>  mm/secretmem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> ;-) I was thought UNIX mknod doesn't imply the device is
-> ready or valid in any case (but dev files in devtmpfs
-> might be an exception but I didn't find some formal words)...
-> so uevent is clearly a right way, but..
-
-Yes, anyone can do a mknod and attempt to open a device that isn't
-present.
-
-when devtmpfs creates the device node, it should be there.  Unless it
-gets removed, and then added back, so you could race with userspace, but
-that's not normal.
-
-> > But why does the device node
-> > get created earlier?  My assumption was that it would only be
-> > created by the KOBJ_ADD uevent.  Adding the device model maintainers
-> > as my little dig through the core drivers/base/ code doesn't find
-> > anything to the contrary, but maybe I don't fully understand it.
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index c1bd9a4b663d..37f6d1097853 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -82,13 +82,13 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+>  		__folio_mark_uptodate(folio);
+>  		err = filemap_add_folio(mapping, folio, offset, gfp);
+>  		if (unlikely(err)) {
+> -			folio_put(folio);
+>  			/*
+>  			 * If a split of large page was required, it
+>  			 * already happened when we marked the page invalid
+>  			 * which guarantees that this call won't fail
+>  			 */
+>  			set_direct_map_default_noflush(folio_page(folio, 0));
+> +			folio_put(folio);
+>  			if (err == -EEXIST)
+>  				goto retry;
+>  
+> -- 
+> 2.49.0
 > 
-> AFAIK, device_add() is used to trigger devtmpfs file
-> creation, and it can be observed if frequently
-> hotpluging device in the VM and mount.  Currently
-> I don't have time slot to build an easy reproducer,
-> but I think it's a real issue anyway.
 
-As I say above, that's not normal, and you have to be root to do this,
-so I don't understand what you are trying to prevent happening?  What is
-the bug and why is it just showing up now (i.e. what changed to cause
-it?)
-
-thanks,
-
-greg k-h
+-- 
+Sincerely yours,
+Mike.
 
