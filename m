@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-879542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D78C2363E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:29:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B860C23647
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845521895044
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97CAC3BA13C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E152F5302;
-	Fri, 31 Oct 2025 06:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51D92F6904;
+	Fri, 31 Oct 2025 06:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZxFcScXu"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaCUrI5v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8712F7442;
-	Fri, 31 Oct 2025 06:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5832F3635;
+	Fri, 31 Oct 2025 06:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892094; cv=none; b=qvpkBHVmGzJgEMdctGrm22SSn/WNqRG48DKHvhzTHR+BW8jQpq8PinwF4hsT6LU6PepvmiSNG8LtyYG2GL+Aic2CsG78PGBVHg2a9cbEgnFPQ6vMI8dk+M181GVetPh2DTkxjI30CnfBkbds8XavevoUFKMWt3Frx/00/dSsn0s=
+	t=1761892146; cv=none; b=Gyt5iGS4X7iHT4H18qIDRfdH/O2H+xt5rUh8zU8ZvGGXhGUl0Rp+v36iehpXpIOGxpE1vUSkLtXFJS+19Zk5SZZmss3WmhEi9xGi3GMhSqsCFUXi3oPyExgLzTK6dOOd6kt2UUNdjhGc/PnOiQN9oY6vjADq0S0K2msNXVC7XLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892094; c=relaxed/simple;
-	bh=qZ8sSAg6LdTukdSO3xRwYSH4xcCqgQuncnsp6QO9xMU=;
+	s=arc-20240116; t=1761892146; c=relaxed/simple;
+	bh=msn+7rMR8CJtIfyaABC/gzeHRs3sw2VizOv0Jwt5B8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BaQGxQ2S2p1vo15mgHqypWriRqq6X73COm9qLvNCN/4GjubzvpI+UhV9s7GFTj9IquYQg+N5CyQGhcRmt/3iyEYpM42PK90DIpt0KgkVRj/wlhCLHToG9BM5QMQq5MYvUKysKmW0s+LO8RBOIaYLkGLwb5NIMcda/0gU1IqSkvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZxFcScXu; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761892088; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=8Syu7VWqGIYQ5g2Y0bYBRZ9HkZTN3zBj8saulIxh9yA=;
-	b=ZxFcScXu9o8pKoyFXmsKHvUqc8L1kD7xEfQx3rrfhDF7ghHEGs78LX7ATerNGzsFhIpC6qyVxXYey3cVWlUZ1ycS2P1Cl5s/tXZ8UXzksugowv1Vgjg+gZJg6eufkQn2qkuaahqPyCAyRTwXa2Uc6MNXdiexQzHDIb8H2cafz0g=
-Received: from localhost(mailfrom:yaoyuan@linux.alibaba.com fp:SMTPD_---0WrO49tQ_1761892088 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 31 Oct 2025 14:28:08 +0800
-Date: Fri, 31 Oct 2025 14:28:07 +0800
-From: Yao Yuan <yaoyuan@linux.alibaba.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>
-Subject: Re: [PATCH 0/2] KVM: x86: Fix an FPU+CET splat
-Message-ID: <sr4fifgvdqmjg54waukwtfaws3vdblgsb5vtfxpp3crfwzbtzf@wzjlefmpc7vb>
-References: <20251030185802.3375059-1-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=omWA3su8f+3oDRsmFfgq0j7VLLOlWz8oFqmygP1aufxmH8lWNLa8dTqXI/Y7vV8PSCnA82JQs4EDuATT5k0L2175XPsAMUHlvjUvC/GLf42OzlxOxU+SkaxPF3lMSSxFSN3nqq8RZVo/fX80X+W3iT5+v+unQmN9HDeztNmL6Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaCUrI5v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 577C6C4CEF8;
+	Fri, 31 Oct 2025 06:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761892145;
+	bh=msn+7rMR8CJtIfyaABC/gzeHRs3sw2VizOv0Jwt5B8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EaCUrI5vxJaXFfl708BD6FrjRFKQ7JfRhoUr8rCD41bDDp2pFd0cTixlCKNXbCX0a
+	 MstcelW2cNJZQxKXgFDZgAh2dPBezDuFIIipZUH9lHmyVwmksYNsWulZag5pjfvHZo
+	 nbghdH/+lV1zLJ8WfpToldEXnKaqb8X2NxFvRBitLOp4ihk2hiBbEn6i4Cij9ljh4q
+	 mKhYMh+Kae7ixD7f3niw2+28xIMZ4cB8Af2/rxx4T6BITw8P/N0dHTzT29CIcwhpOo
+	 Ubu9o4Mmfo70d1Akwg0QKQBzTAt7hK1r0x9+Ci/TwbAWRwOEiAsHJAfFR7TQkKdtB8
+	 bgjzuXwcUOQFg==
+Date: Fri, 31 Oct 2025 11:58:56 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] PCI: qcom: Use frequency and level based OPP
+ lookup
+Message-ID: <ozlhnzkzwwifwhqn54ja5xqndtyjf35nbjnsidl5nn6xe3eijf@ptzzqchq2kwq>
+References: <20251013-opp_pcie-v5-5-eb64db2b4bd3@oss.qualcomm.com>
+ <20251029203948.GA1585122@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251030185802.3375059-1-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251029203948.GA1585122@bhelgaas>
 
-On Thu, Oct 30, 2025 at 11:58:00AM +0800, Sean Christopherson wrote:
-> Fix a explosion found via syzkaller+KASAN where KVM attempts to "put" an
-> FPU without first having loading the FPU.  The underlying problem is the
-> ugly hack for dealing with INIT being processed during MP_STATE.
->
-> KVM needs to ensure the FPU state is resident in memory in order to clear
-> MPX and CET state.  In most cases, INIT is emulated during KVM_RUN, and so
-> KVM needs to put the FPU.  But for MP_STATE, the FPU doesn't need to be
-> loaded, and so isn't.  Except when KVM predicts that the FPU will be
-> unloaded.  CET enabling updated the "put" path but missed the prediction
-> logic in MP_STATE.
->
-> Rip out the ugly hack and instead do the obvious-in-hindsight thing of
-> checking if the FPU is loaded (or not).  To retain a sanity check, e.g.
-> that the FPU is loaded as expected during KVM_RUN, WARN if the FPU being
-> loaded and the vCPU wanting to run aren't equal.
->
-> Sean Christopherson (2):
->   KVM: x86: Unload "FPU" state on INIT if and only if its currently
->     in-use
->   KVM: x86: Harden KVM against imbalanced load/put of guest FPU state
->
->  arch/x86/kvm/x86.c | 31 +++++++++++++++++++++----------
->  1 file changed, 21 insertions(+), 10 deletions(-)
->
-With my experience on KVM AMX related issue debugging before, and revisit
-the kvm_load_guest_fpu() today:
+On Wed, Oct 29, 2025 at 03:39:48PM -0500, Bjorn Helgaas wrote:
+> On Mon, Oct 13, 2025 at 04:23:32PM +0530, Krishna Chaitanya Chundru wrote:
+> > PCIe link configurations such as 8GT/s x2 and 16GT/s x1 may operate at
+> > the same frequency but differ in other characteristics like RPMh votes.
+> > The existing OPP selection based solely on frequency cannot distinguish
+> > between such cases.
+> > 
+> > In such cases, frequency alone is insufficient to identify the correct OPP.
+> > Use the newly introduced dev_pm_opp_find_key_exact() API to match both
+> > frequency and level when selecting an OPP, here level indicates PCIe
+> > data rate.
+> > 
+> > To support older device tree's where opp-level is not defined, check if
+> > opp-level is present or not using dev_pm_opp_find_level_exact(). if
+> > not present fallback to frequency only match.
+> 
+> What are the names of the DT properties here for the exact (frequency
+> + level) and frequency-only values?  I'd like to mention them in the
+> commit log so we can look at a DT and figure out what to expect from
+> this change.
 
-Reviewed-by: Yao Yuan <yaoyuan@linux.alibaba.com>
+Frequency: opp-hz
+Level: opp-level
 
->
-> base-commit: 4361f5aa8bfcecbab3fc8db987482b9e08115a6a
-> --
-> 2.51.1.930.gacf6e81ea2-goog
->
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
