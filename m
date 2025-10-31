@@ -1,160 +1,274 @@
-Return-Path: <linux-kernel+bounces-880131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC10CC24F2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:14:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00BBC24F34
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:15:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BB13AC97E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96C4188E53A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111BF347BCC;
-	Fri, 31 Oct 2025 12:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E292C86D;
+	Fri, 31 Oct 2025 12:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="XMxT3c6c"
-Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="UsSBwXkj"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010055.outbound.protection.outlook.com [52.101.84.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A1921420B
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761912845; cv=none; b=bdS+X5tB4ZgR2SbnYEK0vLEOiZHPd8ZE7fltNuqnlPFxMqDiKT6XzlTP33U7AEuZglsmoiSn1pqTjzSORxNZgbEO0Jd6GmJPciLPKo3OXRUZg2UxsMFoBs48Ro0JOzGqzAF+jPtxVzdn4mdedB7NeAAmeME16Wnm4PC8P9igkAs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761912845; c=relaxed/simple;
-	bh=KAsRDWgv2NXfZ3B+X8i2YPvusK0gxuSGNIOhrjdxmG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAvZKj/pgFVfIkkgLwZ1tVsBmLQ20I87lPkzJEBw5lKjRBqDODKQQ3l5d3TVcPp3cpk1/vJXrcrQFha4Nh40GCm5yLV0heqfi+G2YZe4CShDP03Xm3T6XEaAOVmSlZR+MAJx/wG3f8qqE+sfqHap9Fb3Yi6PozeRotNXTFtRb6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=XMxT3c6c; arc=none smtp.client-ip=37.27.248.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay10 (localhost.localdomain [127.0.0.1])
-	by relay10.grserver.gr (Proxmox) with ESMTP id E89024603F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:13:55 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay10.grserver.gr (Proxmox) with ESMTPS id 1FBCE45F8E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:13:55 +0200 (EET)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 3628D200A8C
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:13:54 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761912834;
-	bh=XDLMqD7nEFshp2WG4Ildq72xmi2MAqdYc3+r4s9+n3I=;
-	h=Received:From:Subject:To;
-	b=XMxT3c6cYq/np081G8OluK7vC3c31RmDeMsO8A1vL033VcbVf7l5vjlKPsi/wULMP
-	 o0ucaRJYs/IEAcDSbjg0PjzskF9A5WpUB8yzmajFukZltcCYfJdfdCqKCd6roVOFLd
-	 mwvKhLVjL16CIaSgfBrbmsouGl+jw3wK8Yg9Ji0Uii5Qjh1hdjzYk80KpDdMaNZ/Du
-	 UbIfT5oxyrgzZavajfdT365RHWPfHh0PMsZ0TqxjCXtSN9I3FlkxpLCzx0GgBOzduM
-	 jQNGhoPowdyazIjbvmvP8eUyp4mKnwlKZU9VA+wHAdf46h/TQT2lNs2YIHqekzt0c6
-	 zTHkkqkjEbZoQ==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-36d77de259bso15165951fa.3
-        for <linux-kernel@vger.kernel.org>;
- Fri, 31 Oct 2025 05:13:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWzhUK68xiaHLD7Fg9YLn8mbNAOh/cRyb5PoUmirBsYc9WbrT5xDFFRvFZilxc+/y6ihY/4oxc8vC4+OtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJs94FkpQFX5NMryArrBcIun9HQg1cE/jPF5FUpb9MU9UiNUIY
-	Rr/cnKcgKumfpNdSGZp4GPDrr6zM249wHwLJ8lCO7ELIkCsCi2ZY9ABEoFrFddz0bf1LNVBCHcq
-	nzOC9L5JssI1tvXGKh1Ll4aabWGsA69M=
-X-Google-Smtp-Source: 
- AGHT+IHLvg+QVKJLRgPQGaJgLJOka5UXPrAEhFAvF8BSPVZ7o3I8EUXF/J/4/XYlnPpyRCbSAkYX/I4BHhW+qLfd2Gs=
-X-Received: by 2002:a05:651c:19a1:b0:360:e364:bb3d with SMTP id
- 38308e7fff4ca-37a18cf70a1mr12519561fa.0.1761912833609; Fri, 31 Oct 2025
- 05:13:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC2AD2FB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761912919; cv=fail; b=IbGFQA+FbdhkA3b8RVBjNnbctZq9lrFIRtGq8fB79EkjhUaDBiP8YrQkdoZJPbcBVwH259t3BoPf0INh1dVoKBGnrH7vrx97P750zkceN2yQrndCzReOEqYxB7EumEZhlKJ9UmCQST65GhlyYsNzK5FsX+jzKCLrOneB1rpRkYI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761912919; c=relaxed/simple;
+	bh=8BBfk0LWX2955rF+o3djTh+URs859/Ab17R/0Zidz3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fSL9Vc8N0131vqiIteAgx/2ythP+3PKYJ+r1uF3AHLQhxeYVtzk8VQmqks0raAlfj+p6c393wVFTA9pvZEvfESr3wxGFGn7mB9kKEhzuBupFQ+FX+vUmkgpwWyBw+FqCng2OpdDQJYvo/xHMNLwRhOkUNCSDD3PKZj0ki1jfN44=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=UsSBwXkj; arc=fail smtp.client-ip=52.101.84.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I7FxcFksLvOqCYF9Xu3pSCTsmw5Ncqkockba9zE5u428VNi4JhuJRmWMlkGodnWKAK/McQZaLpBlj3IR6P0Gn3pq2jT208nM2cUBeDcoiKxVGjNt+/sbQbhGDDSlA/FSpd6LAHjYHlRDmYGNXS+xNuka8jW8vzV74q9udPv1bmzMUEH0GpCyPvzjakThK16EIpaUVxTNDK5jW2emjU7y/ItWkVw6CXxBFi8hRCipZQb8gsUkPkiLjvWmHNrGVQVxl1JtGZL1NoLuxGs/4QRSjDpvDO+5Ipg45Q/53Ro4tEjlBJKu0PS8Q+G0HfBvRmicroPcNMIIGYKWwj77wON9uQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QFtWnMg7Uhet9d3YnVeZ4EL10kP2OkEq2Wh0jKXZQ8I=;
+ b=orX8ws3c2sPY2DgL1bF+iVwvQdSVFwVTWFoD4kyf11E5RP5FRtpxm4A1Gcyhe36Uf1mLoi6nzMOi/Ft8IkzINRgrfczWTzvxJDHM9UHZKhv4+biiZI8lfjMoPw/Uh12MFw/AoXVRZ9+d0NWrlL394eAt4EXyYDp/1Cz6dil0d6FtMJQSZf5m85q5UUF8pMG7DRrUruJRuzmyZlnPGq3jgE9x2dvjmRCyGos2NzX5rY0widthPCZTkmyWlnHZeWaIlL7FClyp9VXeLdnpI8byH+ixXUPlDLDggImbE//c20fVp/tjVscnCTo0Q6fZoanhODE0DLuE0+ACCGb4uv4yXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QFtWnMg7Uhet9d3YnVeZ4EL10kP2OkEq2Wh0jKXZQ8I=;
+ b=UsSBwXkjK2ttLRLxY+zIlMIzu+Nj0PPsn6y3tsQm52k4gWcbBu3LNVtYwLmE8u45s0JExTGavFvIsJKFvTK+p1wGQDXRm5cJrIJzkIzIM4uRmVI+dkT10b7pWJa0AiVZJ3M/4ydN3PFLf27R6iR0BJHcjyFQfvoCpJEBRyKGYpxuCR4iHimLcyvC8VZHo9/eOUDsWN1kGBTRjzTXI53jnx2phsVwfZK6rY4/pMLzAU0dEqsFIhQdwtFzK3ETJF9aRL/KNq4TFUUERXhxqSNhbPqWWxqSmw2uwE7yoruMbmt/Bd+VJeEN7hH5ObIakBclwbbB23z0cBFNG3D1ik0AvQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com (2603:10a6:150:26::19)
+ by PAXPR04MB8750.eurprd04.prod.outlook.com (2603:10a6:102:20c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Fri, 31 Oct
+ 2025 12:15:12 +0000
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442]) by GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442%7]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
+ 12:15:12 +0000
+Date: Fri, 31 Oct 2025 14:15:08 +0200
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: imx@lists.linux.dev, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org, Sandor Yu <sandor.yu@nxp.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 5/9] drm/imx: Add support for i.MX94 DCIF
+Message-ID: <m6dh52cih2xzzxb45hsfohrkrqdr3hqnewbeupqk43wzlcyznm@j5sfwnhealvx>
+References: <20250911-dcif-upstreaming-v5-0-a1e8dab8ae40@oss.nxp.com>
+ <20250911-dcif-upstreaming-v5-5-a1e8dab8ae40@oss.nxp.com>
+ <DDWCVYBQSV10.2MFZFEEHPYJY4@bootlin.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDWCVYBQSV10.2MFZFEEHPYJY4@bootlin.com>
+X-ClientProxiedBy: AS4P195CA0020.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d6::7) To GV1PR04MB9135.eurprd04.prod.outlook.com
+ (2603:10a6:150:26::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018101759.4089-6-lkml@antheas.dev>
- <202510222013.EBLC609m-lkp@intel.com>
- <CAGwozwGDBj2e83JBW71G_z6hMD5PsOXTQLqFVdPKZ6sU54tsGw@mail.gmail.com>
- <39n24387-0o0n-50p8-s2rn-9qoqs6sq8336@xreary.bet>
-In-Reply-To: <39n24387-0o0n-50p8-s2rn-9qoqs6sq8336@xreary.bet>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Fri, 31 Oct 2025 13:13:42 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwFgd91n2HnHn0VEL3BTGkj8QCRnp2jfCsMB38JqK8znNg@mail.gmail.com>
-X-Gm-Features: AWmQ_blJS4pzpONNbJGbKFFyV7UhrXL_Gbz5apymTl2RdEt79wy1YgZX4ddGWr4
-Message-ID: 
- <CAGwozwFgd91n2HnHn0VEL3BTGkj8QCRnp2jfCsMB38JqK8znNg@mail.gmail.com>
-Subject: Re: [PATCH v7 5/9] platform/x86: asus-wmi: Add support for multiple
- kbd led handlers
-To: Jiri Kosina <jikos@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
- "Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Denis Benato <benato.denis96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176191283453.2961612.7360718649353961438@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB9135:EE_|PAXPR04MB8750:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5170dcc7-7aee-47d8-7c5a-08de1877241b
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?r2BqaRQbgbI4QEbbH5y8ZiG+5ptcGQ2PUcp7E8F+zN1ixdEyHXNTvtwmOcPj?=
+ =?us-ascii?Q?gR7oeGuREKQufhq7wwQEqGOCM0TWL+DF5QOTwblGXqSedlzCR7LWwZmmirkQ?=
+ =?us-ascii?Q?jwQKll3E4RJmt2TxdhaXA73qF7xVEWtlfyJ/lck6D3bsciGiUCNlAG/Y3Ooz?=
+ =?us-ascii?Q?jpDgoPI72vwcPO5/56b+HPhlHDziPPfZC99zf86zsnUdq5QcEDQ2xgMOIBcO?=
+ =?us-ascii?Q?t1QIDKZu60dx0KSDTWfYWLBB8EJFgjTOtvWIXHKl8+NLZzSuQj09prSfhmok?=
+ =?us-ascii?Q?gzqC72QNwvk9aqisuXGoMPL2XmRI6d06axan90+dpBaw41/xfI00Y3Qnl3Zm?=
+ =?us-ascii?Q?+w9ImXW4ax6T7ZTvlCEGay4HlBUDix5s9n58m79/KM8IFi6eQhz0AHu2rUlJ?=
+ =?us-ascii?Q?TwIBN/jYaV8QIkK8s4lnOE1vdNNwj1BMJ7ABp6QCs9SOSbra9gcf4umdaVTq?=
+ =?us-ascii?Q?xuq4u7u1eQeVv5knoBAHQ9QZIjcqUsjcMfyURBkL419Y3WvPqNGbvEqCuEOq?=
+ =?us-ascii?Q?4ba/9MruvbBaxVNEFO32DJIuLj4X45NBaEFNT5CvMED6dA0YJnYGvvi3s09+?=
+ =?us-ascii?Q?NzOxH4WWqb1Y6DE6wInqt1CHFYyz6GDbT6ISQlzd1R5OSIjxwQT9Oo3O26vo?=
+ =?us-ascii?Q?GWh2QUJRI1rJ457S3hhWivWV6FwWS2J2EDvEyN3Vf9YN1yNyXwqcIUqsLF9z?=
+ =?us-ascii?Q?tUvTiA8Jw9iBT7WwSRGOQpzc/CYid8Qimg6X88oBMPc1+ofAcsxPtGeRcn8S?=
+ =?us-ascii?Q?9SfycK0HsRN5ZmWB7GgK/X6gizc221JwEC37cyQ2om/wzPEHZW0rwuEvLCkF?=
+ =?us-ascii?Q?h42PTGRiNnV3Dyc/d0SBpZc5DBakrg2rzVW6uhmLM9K6Nyy/UxyblAbajrdu?=
+ =?us-ascii?Q?THGYDmzAFazLsoHDL7ygCqOQsKYiQZR9JJWTpFQpgnSwunqewZpANs5/PFjq?=
+ =?us-ascii?Q?buDLCD4l/MAHMs1N686bm4CpiNPsqgyxHkZflJB6u/ukYUbBkhH9QtCehjay?=
+ =?us-ascii?Q?C1i0vnGmW3eDWJ0luWeCBDfAeUlyMUoRyw4DiBKOID0tyVCkdGIX5+vMlu6C?=
+ =?us-ascii?Q?pZRZ/74EXElT+JcsVe47pG1ity2UJyfSNHDpfPcWZCG+aP+Nq6WRKiHzhp14?=
+ =?us-ascii?Q?jTtl68WEiwKl7V9JZDjCEh1/3T+fP9/fsFAsSBviPu5iBJIP6Qxnsp/AXeu3?=
+ =?us-ascii?Q?BNl/zpNkFhsxLuk3+gKU78+qK1BfyTxloc3/SR5v/sJCXZcU71fLQ3RTl7AT?=
+ =?us-ascii?Q?gFB2ANhrssD2JFzt7G/G7uC3BZ3lalYn1uhFgSiHT9nrryc4VDBnlOhFYSR4?=
+ =?us-ascii?Q?Xo3DXr9f1mxU058uQnFr+rI/jEN903UhLAkWO2XQJSjggwysS3jo1y3Az9t1?=
+ =?us-ascii?Q?aoTK71ZikYTkLhEDEbny587FcpOm?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Nh4Hi/esARfSQcJg6bzxkvct3TpzSUXB1QW82xcyu3keuKBKbzUnhAGm4TXZ?=
+ =?us-ascii?Q?qeEQlcDOk9NB9usYmW9efliVsUcHMKDKT8YY6xsY+y7nODXquerropthtI6f?=
+ =?us-ascii?Q?nhdAktkgs22pdxyhLryggm14jJPrWcIdicF90+u1UgSNyyBu9lHOPRKWvQQV?=
+ =?us-ascii?Q?vsSzG3vIbwv4MLSshqeaFMVbtduGnGtHBkclNkLrr0Ale1UBehtcL6uQ7Kwl?=
+ =?us-ascii?Q?bg5+dAd/SYIwa4V7f+uI7K3WTvBkK23e+v4+cCxOlNQl2TmO4oZYKku2KmB8?=
+ =?us-ascii?Q?OXXk4qlK7V7Fxfkd08vAnO4YVKZGX5KKFMYAdnnmi5QvtNO0YdiaqLLOj/Wp?=
+ =?us-ascii?Q?eNNXce6+Iy0kfoTNiMsRN3owUpgNR4E+Eeniwo6rIw7RHMEgfyMORhOYibwC?=
+ =?us-ascii?Q?lm1+KmRO4CdHRI1lqqWpr+I1zAg68skb4kWiGHUU1G4q7p9R1/njWEX3TC4r?=
+ =?us-ascii?Q?TIkj24pnX5OvGiYO0iDV+8PKVeF4hjXrvil6RwGEFatINE4eKnKa0Vp/Pf3y?=
+ =?us-ascii?Q?3Co7c9I5aW08nxmDYK3dMfpUynWb5qAdp+uqg+KnJR8hUKa1Eo81kObpHS5O?=
+ =?us-ascii?Q?7JN3vMtIO45sN3I5YHV5pTGYkT8TMnGZy+WX7llzWNkFInRfrFvnbNxcIrGi?=
+ =?us-ascii?Q?KetZs/ts6qRatx8Pb5Au2itQSVvfd8ybj0UAOuJ2hZgiJH3vAKETlhOinTsr?=
+ =?us-ascii?Q?MuRn2mBx3kZTjUHzjAnOTbh27HYI58LJ8oxN0Qt9zosOXsnwPtBrpcjxcOnP?=
+ =?us-ascii?Q?bXN+StKiY5n6xc4CUBIObb8RK7QmWMyI9Z2E32WsNVZ/apM9bRvv/KjLTQ/d?=
+ =?us-ascii?Q?rDwLy/J3xmeFuKk8lhv0y/+AVvOyKMR7uMNEQM6vbSI6dwmXqS1lwb26ECE5?=
+ =?us-ascii?Q?tReVD4EEDbhiqbiIg1xuDc6jXW+Y4cMs0y7gEd7YbGUQYU7dFMCMjpxsh8Ft?=
+ =?us-ascii?Q?NLutGfssqv7mG+ldMK/EC8nC/VFhtl/UtGK26waOP6m1kLjDP4iHR2pV8fab?=
+ =?us-ascii?Q?M15US0xpd/Cee9XVgxuR0FVV7Ibf2DJRP/5tNC8T0iNT6rrbs/Ty83ylpzcN?=
+ =?us-ascii?Q?+l7JnFtO6EcmU1pimHMT42G40nr7mFcH5NnzNfDZvsCm5Kx8lWuwzXVlnQQr?=
+ =?us-ascii?Q?WExlQ9cHkJOlVfRi5kufd8y2hHme+zsi6TI5cAtJv7RVmMwe3xP2abgqME9G?=
+ =?us-ascii?Q?kWo/FvC/PE+j/UmJpw0DeAP1XYNQ9UbymTN2uKJ67DFLYJmm9jyclJ9nAyXG?=
+ =?us-ascii?Q?RBAx0TpXJV6huZzqCCiusxNpNiUMb/QQHQ3NNtxs08o/zM6EYNFRAsPq4489?=
+ =?us-ascii?Q?IhpOGtJFKnWSoqZtjFUN2+0aUobDHA/xMEf227Frkkay9OJb6BU02j7zOnNo?=
+ =?us-ascii?Q?rHb7gKZOk85++jpNbRqTvK29NikuO344d3RkioGfssaiItok8kBP1Q/VE3Wu?=
+ =?us-ascii?Q?iKEuJ7oXjms+3zOAz3FYjIQ0xBnhbC28RrGpAjsabrOhULJP+g89wlQexFMZ?=
+ =?us-ascii?Q?2075jIiuISxXtR5RMkl5ly+FFmuAApd1omyDshwkJ/ScrQcqJWIjY+94sVDn?=
+ =?us-ascii?Q?OMgpYRAcS8AfLI7WemZKgyV5/Ppm112Fuv8f9Htyq01RpnQmUqHJ5SEvatKr?=
+ =?us-ascii?Q?Sw=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5170dcc7-7aee-47d8-7c5a-08de1877241b
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9135.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 12:15:12.3365
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g8IcxW1OhAg1XEtoHCey4REVl4eZKXvU6gHLwThK3jXQ2PN3kfgSkdu742sBDoiUS3nfvTfePRAvlO82JB8sfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8750
 
-On Fri, 31 Oct 2025 at 09:27, Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Thu, 23 Oct 2025, Antheas Kapenekakis wrote:
->
-> > >   1589
-> > >   1590  static void kbd_led_update_all(struct work_struct *work)
-> > >   1591  {
-> > >   1592          enum led_brightness value;
-> > >   1593          struct asus_wmi *asus;
-> > >   1594          bool registered, notify;
-> > >   1595          int ret;
-> >                               /\ value should have been an int and
-> > placed here. It can take the value -1 hence the check
->
-> Thanks, that needs to be fixed before the final merge.
->
-> > Are there any other comments on the series?
-> >
-> > The only issue I am aware of is that Denis identified a bug in asusd
-> > (asusctl userspace program daemon) in certain Asus G14/G16 laptops
-> > that cause laptop keys to become sticky, I have had users also report
-> > that bug in previous versions of the series. WIthout asusd running,
-> > keyboards work fine incl. with brightness control (did not work
-> > before). Given it will take two months for this to reach mainline, I
-> > think it is a fair amount of time to address the bug.
->
-> One thing that is not clear to me about this -- is this causing a visible
-> user-space behavior regression before vs. after the patchset with asusctl?
->
-> If so, I am afraid this needs to be root-caused and fixed before the set
-> can be considered for inclusion.
+Hi Luca,
 
-Commit 591ba2074337 ("HID: asus: prevent binding to all HID devices on
-ROG") adds HID_QUIRK_INPUT_PER_APP and the extra devices seem to
-confuse asusd. Since the devices are the same as with hid-asus not
-loaded, it is specific to that program.
+On Fri, Oct 31, 2025 at 09:14:45AM +0100, Luca Ceresoli wrote:
+> Hello Laurentiu,
+> 
+> On Thu Sep 11, 2025 at 1:37 PM CEST, Laurentiu Palcu wrote:
+> 
+> ...
+> 
+> > +static struct drm_bridge *dcif_crtc_get_bridge(struct drm_crtc *crtc,
+> > +					       struct drm_crtc_state *crtc_state)
+> > +{
+> > +	struct drm_connector_state *conn_state;
+> > +	struct drm_encoder *encoder;
+> > +	struct drm_connector *conn;
+> > +	struct drm_bridge *bridge;
+> > +	int i;
+> > +
+> > +	for_each_new_connector_in_state(crtc_state->state, conn, conn_state, i) {
+> > +		if (crtc != conn_state->crtc)
+> > +			continue;
+> > +
+> > +		encoder = conn_state->best_encoder;
+> > +
+> > +		bridge = drm_bridge_chain_get_first_bridge(encoder);
+> 
+> The bridge returned by drm_bridge_chain_get_first_bridge() is refcounted
+> since v6.18-rc1 [0], so you have to put that reference...
+> 
+> > +		if (bridge)
+> > +			return bridge;
+> > +	}
+> > +
+> > +	return NULL;
+> > +}
+> > +
+> > +static void dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
+> > +					      struct drm_crtc_state *crtc_state)
+> > +{
+> > +	struct dcif_crtc_state *dcif_state = to_dcif_crtc_state(crtc_state);
+> > +	struct drm_bridge_state *bridge_state;
+> > +	struct drm_bridge *bridge;
+> > +
+> > +	dcif_state->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+> > +	dcif_state->bus_flags = 0;
+> > +
+> > +	bridge = dcif_crtc_get_bridge(crtc, crtc_state);
+> > +	if (!bridge)
+> > +		return;
+> > +
+> > +	bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state, bridge);
+> > +	if (!bridge_state)
+> > +		return;
+> > +
+> > +	dcif_state->bus_format = bridge_state->input_bus_cfg.format;
+> > +	dcif_state->bus_flags = bridge_state->input_bus_cfg.flags;
+> 
+> ...perhaps here, when both the bridge pointer and the bridge_state pointer
+> referencing it go out of scope.
+> 
+> > +}
+> 
+> You can just call drm_bridge_put(bridge) there, or (at your option) use a
+> cleanup action:
+> 
+>  static void dcif_crtc_query_output_bus_format(struct drm_crtc *crtc,
+>                                                struct drm_crtc_state *crtc_state)
+>  {
+>          struct dcif_crtc_state *dcif_state = to_dcif_crtc_state(crtc_state);
+>          struct drm_bridge_state *bridge_state;
+> -        struct drm_bridge *bridge;
+> 
+>          dcif_state->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+>          dcif_state->bus_flags = 0;
+> 
+> -        bridge = dcif_crtc_get_bridge(crtc, crtc_state);
+> +        struct drm_bridge *bridge __free(drm_bridge_put) = dcif_crtc_get_bridge(crtc, crtc_state);
+>          if (!bridge)
+>                  return;
+> 
+>          bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state, bridge);
+>          if (!bridge_state)
+>                  return;
+> 
+>          dcif_state->bus_format = bridge_state->input_bus_cfg.format;
+>          dcif_state->bus_flags = bridge_state->input_bus_cfg.flags;
+>  }
+> 
+> This would call drm_bridge_put() at end of scope, i.e. end of function.
+> 
+> You can also have a look at recent commits involving drm_bridge_put (git
+> log -p -Gdrm_bridge_put v6.16..origin/master) to see how other parts of the
+> kernel have added drm_bridge_put().
 
-We can delay that patch until Denis who took over maintenance of the
-program can have a deeper look. I will still keep the last part of
-that patch that skips the input check, because that causes errors in
-devices that do not create an input device (e.g., lightbar).
+Thanks for reviewing and the heads-up on using drm_bridge_put(). I'll
+send a v6 next week with the fix.
 
-Antheas
+Thanks,
+Laurentiu
 
-> Thanks,
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
->
-
+> 
+> [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8fa5909400f377351836419223c33f1131f0f7d3
+> 
+> Best regards,
+> Luca
+> 
+> ---
+> Luca Ceresoli, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
