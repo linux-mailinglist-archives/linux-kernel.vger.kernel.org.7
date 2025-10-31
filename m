@@ -1,83 +1,55 @@
-Return-Path: <linux-kernel+bounces-880208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4496C251CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:56:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C31C251CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EC564F4434
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DAF9189602E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50EA348443;
-	Fri, 31 Oct 2025 12:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44FC343D72;
+	Fri, 31 Oct 2025 12:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GXH3YiIh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QC191b6n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C9C12DDA1;
-	Fri, 31 Oct 2025 12:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4421D12DDA1;
+	Fri, 31 Oct 2025 12:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915128; cv=none; b=IfgpkbkEnM9yfTMSCvJ+qEDbxMm9W2MWpkZBSCikBfS5cmsFFv33a03BYvBq1628vd8WNSwcbAzq4v15p61m86js6cG7Zof98eIcVtuMX0pIZkgiyNs0y5apN+QRE7EUUZ4QUidonou83BWUUAhEDepziVMru4DjrsnCUn60x48=
+	t=1761915272; cv=none; b=uodX637aXgOcwVAPAztaadgYAHWqHuZFbo4MLfTTLPtuR30fWdgCQq7fgFBaLwxHYwtptOB1pb44B+l8iOmYSxlQfxM3Jt/iF9b1Mp+hnliiMLBHNUjt9tuyFjUEzckQt+FDx8IrDLAcSILbwIJGkF+J6DfRbRSiYXc0ljZGa0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915128; c=relaxed/simple;
-	bh=GkOQLeyfaij/XYkI3FhobsjBO6mHEPS5prVE1+pfEoU=;
+	s=arc-20240116; t=1761915272; c=relaxed/simple;
+	bh=s7+79ffWDBP2O1Ekl9g4IEvYubPlK22MnD2z/5IWwuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWtnCO2Po7cCU6r5IY+fKI1csQPoR0t3KlwByRjGG7JA0xQhIkNP1p5ahsVPMmHD+9vPFE0v/k2ZNV3JtBHtnUc2NMrivVo4p2MRWJ7AgYcFroLrhMh82X6XZI/BnX/h2pbfqVf10Vdxh7aK6SR6VdyundYGMOuhlqSduTgpQVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GXH3YiIh; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761915127; x=1793451127;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GkOQLeyfaij/XYkI3FhobsjBO6mHEPS5prVE1+pfEoU=;
-  b=GXH3YiIhT/9ae+/1FJMrtl0mGTWj3mMWJIC2KBPSb9c1TtRllkJ3IpSB
-   a5M/6UyqCPaOuRxk+zkhdksOQOTerinBcw7WUVWF7QKF4wrnOjL0jMEF1
-   y65plJ6QDrTw2jolTB0utC/QrCGNF/cN6e9j2H+7yY4AX2m48Aw5eGd59
-   z7bM5Uqy4o1ghVpFnR6RdLuBtDJG5XIp7MYTU6pIfsynfX6DM0tZ6GPGT
-   hk21f62RqtLDX1rRK1OHMOU406XP569/cBtHCQWk+wZuXOemgG+ZPYPw1
-   Wp//l6sLghz+MEa7RxOZ6/QharpWS/152WDw48YeGIwom+WYWULyBiafa
-   g==;
-X-CSE-ConnectionGUID: yQwi5v69TmyULNRTaAE7Gw==
-X-CSE-MsgGUID: JC2CAWuzT66iV25NWSrxHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67913081"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67913081"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:06 -0700
-X-CSE-ConnectionGUID: BV+22n4ISQWlcC43elCuTw==
-X-CSE-MsgGUID: HlD5QPeoRMSTDy3WVngyOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="185915353"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:52:03 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vEobm-00000004GU1-308i;
-	Fri, 31 Oct 2025 14:51:58 +0200
-Date: Fri, 31 Oct 2025 14:51:57 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jyoti Bhayana <jbhayana@google.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2()
- with ilog2()
-Message-ID: <aQSw7V7tYjBOtJ7k@smile.fi.intel.com>
-References: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
- <20251031094336.6f352b4f@pumpkin>
- <aQSHVsWGXzigTEMe@smile.fi.intel.com>
- <20251031124530.3db7805b@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+rV6w73reVrq8gYR0I9n2PF7Yc0qDycknQYqpf0NG5HfmbXNQigGII2c4osZo0lZN/LTht+l/7P+zugXU8v7ApemWaO+sUheEf/zUsCTSeADNtB5exo/KQ2moWu+5nPSpWOLzy01rogNiIr860DRh+RiAf62M+mvjONnjWztv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QC191b6n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BF9C4CEE7;
+	Fri, 31 Oct 2025 12:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761915271;
+	bh=s7+79ffWDBP2O1Ekl9g4IEvYubPlK22MnD2z/5IWwuQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QC191b6nXeKNfrKaDWuh6Obxm3u6z+iDiTufflV+Zh0uh6axmtDbWxI7uJquyShSn
+	 0o8ImSxq5LDVqFDp4s89/oQqcI12apfQ2+rDs2M83fAn8AAMXIdsBp8rxGuXaU16cP
+	 kvrWh8cQa1nf1UBWYdEM/1BDXm/PjownVbyYGWhAW/n8uc24JUfsffTw8QsiqMJp58
+	 jFUYGbysqbEFzms3+yGdlpx4+PeK/W5KNifYI22F/Ah2dWS8kDVCkkyDkfjsbgO3dF
+	 0De0hwb4cxy4ffNZ3q+mERMLt8FvWxD1A412Ec5s/qQxyjUjh+HfLvXBeZ6loHKo9S
+	 nyToa8upovziw==
+Date: Fri, 31 Oct 2025 13:54:27 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: GuangFei Luo <luogf2025@163.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mount: fix duplicate mounts using the new mount API
+Message-ID: <20251031-gerufen-rotkohl-7d86b0c3dfe2@brauner>
+References: <20251025024934.1350492-1-luogf2025@163.com>
+ <20251025033601.GJ2441659@ZenIV>
+ <788d8763-0c2c-458a-9b0b-a5634e50c029@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,42 +59,58 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251031124530.3db7805b@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <788d8763-0c2c-458a-9b0b-a5634e50c029@163.com>
 
-On Fri, Oct 31, 2025 at 12:45:30PM +0000, David Laight wrote:
-> On Fri, 31 Oct 2025 11:54:30 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Oct 31, 2025 at 09:43:36AM +0000, David Laight wrote:
-> > > On Fri, 31 Oct 2025 08:45:00 +0100
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
-
-...
-
-> > > >  		tstamp_scale = sensor->sensor_info->tstamp_scale +
-> > > > -			       const_ilog2(NSEC_PER_SEC) / const_ilog2(10);
-> > > > +			       ilog2(NSEC_PER_SEC) / ilog2(10);  
-> > > 
-> > > Is that just a strange way of writing 9 ?  
+On Sat, Oct 25, 2025 at 02:02:51PM +0800, GuangFei Luo wrote:
+> 
+> 
+> On 10/25/2025 11:36 AM, Al Viro wrote:
+> > On Sat, Oct 25, 2025 at 10:49:34AM +0800, GuangFei Luo wrote:
 > > 
-> > Why? It's correct way of writing log¹⁰(NSEC_PER_SEC), the problem here is that
-> > "i" people do not think about :-)
-> 
-> Even without the "i" the division could easily give 8.999999.
-> So you'd be relying on rounding to get the required integral value.
-> 
-> > But we have intlog10(), I completely forgot about it.
-> 
-> And it isn't the function the code is looking for.
-> (The result is shifted left 24 and it doesn't have an optimisation
-> for constants.)
+> > > @@ -4427,6 +4427,7 @@ SYSCALL_DEFINE5(move_mount,
+> > >   {
+> > >   	struct path to_path __free(path_put) = {};
+> > >   	struct path from_path __free(path_put) = {};
+> > > +	struct path path __free(path_put) = {};
+> > >   	struct filename *to_name __free(putname) = NULL;
+> > >   	struct filename *from_name __free(putname) = NULL;
+> > >   	unsigned int lflags, uflags;
+> > > @@ -4472,6 +4473,14 @@ SYSCALL_DEFINE5(move_mount,
+> > >   			return ret;
+> > >   	}
+> > > +	ret = user_path_at(AT_FDCWD, to_pathname, LOOKUP_FOLLOW, &path);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/* Refuse the same filesystem on the same mount point */
+> > > +	if (path.mnt->mnt_sb == to_path.mnt->mnt_sb && path_mounted(&path))
+> > > +		return -EBUSY;
+> > Races galore:
+> > 	* who said that string pointed to by to_pathname will remain
+> > the same bothe for user_path_at() and getname_maybe_null()?
+> > 	* assuming it is not changed, who said that it will resolve
+> > to the same location the second time around?
+> > 	* not a race but... the fact that to_dfd does not affect anything
+> > in that check looks odd, doesn't it?  And if you try to pass it instead
+> > of AT_FDCWD... who said that descriptor will correspond to the same
+> > opened file for both?
+> > 
+> > Besides... assuming that nothing's changing under you, your test is basically
+> > "we are not moving anything on top of existing mountpoint" - both path and
+> > to_path come from resolving to_pathname, after all.  It doesn't depend upon
+> > the thing you are asked to move over there - the check is done before you
+> > even look at from_pathname.
+> > 
+> > What's more, you are breaking the case of mount --move, which had never had
+> > that constraint of plain mount.  Same for mount --bind, for that matter.
+> > 
+> > I agree that it's a regression in mount(8) conversion to new API, but this
+> > is not a fix.
+> Thanks for the review. Perhaps fixing this in |move_mount| isn't the best
+> approach, and I don’t have a good solution yet.
 
-Do you have an idea how to improve that?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Sorry, no. This restriction never made any sense in the old mount api
+and it certainly has no place in the new mount api. And it has been
+_years_ since the new mount api was released. Any fix is likely to break
+someone else that's already relying on that working.
 
