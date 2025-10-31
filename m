@@ -1,74 +1,57 @@
-Return-Path: <linux-kernel+bounces-879691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54149C23C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:22:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034E8C23C42
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ECBA3BD9D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:14:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98BB63A5B34
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FEB32C95A;
-	Fri, 31 Oct 2025 08:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D5A32AAC9;
+	Fri, 31 Oct 2025 08:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ij79pMyw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJbKnESF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B795E23816C
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369EA3009DE;
+	Fri, 31 Oct 2025 08:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898469; cv=none; b=SFGZBEPZNEjBuCSbSXPih6JqTnt8sKEEJR5beqPFOfb04fzlssaHb6JY11z98W6ixHrijqZNnmqYhbt20m2316bbeMAMoMOsql2ejbHNVUzFGeuSXKFapbwETSXCyjzLHg9AZkkKAhVkSaEC53q/3DAo3RvaSEmK3cREnxeDEA8=
+	t=1761898468; cv=none; b=EkP7TlwtxRCP+xJND5+9QAl2VmwcpvbLr1tPSr6jze42w4xgL08PRW3sXzh9VmFuSjEtX7fWD0lNizZ7FkLTcb0CTN6lrUrvsTMBNNYf+IarGPIKsDHf+/7quq2NZ3ML+VEQ+a7B7wsNymhDbKiz3jbSvJrijb09pQw4PeuOu/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898469; c=relaxed/simple;
-	bh=TFcqH0KS7dGqn2UMno92l3s5EumsPiNteFTWvUZLlz4=;
+	s=arc-20240116; t=1761898468; c=relaxed/simple;
+	bh=T7nI7xvtFl7krfWTdP/qjx1BlQ3XmAzSZCU1Kz/Md9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qc4kOqzuac9dnej8sN9AFnnXsiIE1tL2i72SppQwhcYl96YTbxGCd8ReVddx6rI1Fwm269Lbg1yBfRVJMw7h7E0tTD5hXHJXhi4wmQRdBucqHoWxnslVFE/JhKuPrxZc6BA4ivPKp+5VmqyY+X5yoshLABEuEe4irX4xsS0evPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ij79pMyw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761898467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1DCpBMK/CVYvWwXkCeSJHMCwNNqeKlHlSBvLEzOXoHA=;
-	b=ij79pMywd6nt42SZcue5i6omR9kXCQ8QeiWh0tQq8pFVDh0AvayHErE7A5GpLDM6Zifs/z
-	1yyG9qnKXW54d8BPvlxtGm6E2OAtj70FuHhM53u61uyU8AP6E6x7fGa1H+9o9zZFgo2qNZ
-	/2dCHvLur6RZQDSQRfy3lSRRuD961Nc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-611-pnSbGfjMNuG9Ehjx6rmGCQ-1; Fri,
- 31 Oct 2025 04:14:22 -0400
-X-MC-Unique: pnSbGfjMNuG9Ehjx6rmGCQ-1
-X-Mimecast-MFC-AGG-ID: pnSbGfjMNuG9Ehjx6rmGCQ_1761898461
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BDDA1195D02A;
-	Fri, 31 Oct 2025 08:14:19 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.19])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF9FE30001A1;
-	Fri, 31 Oct 2025 08:14:17 +0000 (UTC)
-Date: Fri, 31 Oct 2025 16:14:12 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Qiang Ma <maqianga@uniontech.com>
-Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kexec: print out debugging message if required for
- kexec_load
-Message-ID: <aQRv1JCoeYY4u7OX@MiWiFi-R3L-srv>
-References: <20251030073316.529106-1-maqianga@uniontech.com>
- <aQMzFnqMC0MnLZFO@MiWiFi-R3L-srv>
- <C798DAB0066FD66B+590e2398-b667-40dd-abfb-99dcd728b573@uniontech.com>
- <aQNvHdZcVzletjdi@MiWiFi-R3L-srv>
- <9362A6495165FCC0+d659800e-6751-4d26-a8b8-183705798e96@uniontech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4O8g6Q0JOWN2XufPa6QGFk2cNx3MYQuUndsqCWvsVKV3mQcO/P6GoKcFP4Y1eey+orRMxjRSBPwV3EgUznQxd6EXVD8FqB2+rJPJajdEjbyx63AO4VvCtI+EbtgD2ftQGPho4DDcrKhQMBtMt7LC7hhBajaIQUw4ClBj0t9czk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJbKnESF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754F3C4CEFB;
+	Fri, 31 Oct 2025 08:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761898468;
+	bh=T7nI7xvtFl7krfWTdP/qjx1BlQ3XmAzSZCU1Kz/Md9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LJbKnESFg6XyUjYSq7gFteRw1AzLeEOwhq/R1FQ9acELAGb+1lo+BK3K6HG4G/O9k
+	 xCbFSxVcLC6lxIA0RrBry1xU4Ny6c2H9iQpJGAXLuYmETlnLIP8hBxSbvlZPayn7P3
+	 pcdWLf2PtvqhAnCGPD2p3hRJ9Lk1gYYEF4knXXJYhNNNRjes5DC7lcoG0kLdNdtV/1
+	 nCEB4VgBWNM6NXS1awmf6VveSzpRC4x8tIriIrbbOk8w5xV8RlXWbSdrKrJV1DsLdn
+	 UnSBH3oBfQXE59g/0J4wbD5O4tEdAtNlrTE0qdoi8niaUfHbef0uVckyS7o8sjZq5k
+	 qYs5Od5VGpOrQ==
+Date: Fri, 31 Oct 2025 09:14:25 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ashish Mhetre <amhetre@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	thierry.reding@gmail.com, jonathanh@nvidia.com, jgg@ziepe.ca, nicolinc@nvidia.com, 
+	linux-tegra@nvidia.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: iommu: Add NVIDIA Tegra CMDQV support
+Message-ID: <20251031-witty-sociable-chachalaca-b73dbc@kuoka>
+References: <20251031062959.1521704-1-amhetre@nvidia.com>
+ <20251031062959.1521704-3-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,111 +60,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9362A6495165FCC0+d659800e-6751-4d26-a8b8-183705798e96@uniontech.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20251031062959.1521704-3-amhetre@nvidia.com>
 
-On 10/31/25 at 10:40am, Qiang Ma wrote:
+On Fri, Oct 31, 2025 at 06:29:58AM +0000, Ashish Mhetre wrote:
+> The Command Queue Virtualization (CMDQV) hardware is part of the
+> SMMUv3 implementation on NVIDIA Tegra SoCs. It assists in
+> virtualizing the command queue for the SMMU.
+
+If this is specific to Nvidia, then I think you need specific front
+compatible and disallow it for other vendors.
+
 > 
-> 在 2025/10/30 21:58, Baoquan He 写道:
-> > On 10/30/25 at 07:41pm, Qiang Ma wrote:
-> > > 在 2025/10/30 17:42, Baoquan He 写道:
-> > > > On 10/30/25 at 03:33pm, Qiang Ma wrote:
-> > > > > The commit a85ee18c7900 ("kexec_file: print out debugging message
-> > > > > if required") has added general code printing in kexec_file_load(),
-> > > > > but not in kexec_load().
-> > > > > 
-> > > > > Especially in the RISC-V architecture, kexec_image_info() has been
-> > > > > removed(commit eb7622d908a0 ("kexec_file, riscv: print out debugging
-> > > > > message if required")). As a result, when using '-d' for the kexec_load
-> > > > > interface, print nothing in the kernel space. This might be helpful for
-> > > > > verifying the accuracy of the data passed to the kernel. Therefore, refer to
-> > > > > this commit a85ee18c7900 ("kexec_file: print out debugging message
-> > > > > if required"), debug print information has been added.
-> > > > kexec_file_dbg_print setting when CONFIG_KEXEC_FILE is set. I doubt it
-> > > > doesn't work when you unset CONFIG_KEXEC_FILE.
-> > > Yes, I just actually tested it and it really doesn't work when unset
-> > > CONFIG_KEXEC_FILE.
-> > > 
-> > > In the next version, I can add a KEXEC_DEBUG for the kernel and kexec-tools.
-> > Hold on please, it may not need that highweight change. I will reply to
-> > you tomorrow if I have other idea.
-> Ok. My current idea is to refer to kexec_file, define a kexec_dbg_print,
-> initialize it in the kimage_alloc_init(), modify KEXEC_FLAGS and
-> kexec_dprintk,
-> and add the judgment of kexec_debug.
+> Add a new device tree binding document for nvidia,tegra264-cmdqv.
+> 
+> Also update the arm,smmu-v3 binding to include an optional nvidia,cmdqv
+> property. This property is a phandle to the CMDQV device node, allowing
+> the SMMU driver to associate with its corresponding CMDQV instance.
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  .../bindings/iommu/arm,smmu-v3.yaml           | 10 ++++
+>  .../bindings/iommu/nvidia,tegra264-cmdqv.yaml | 46 +++++++++++++++++++
+>  2 files changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> index 75fcf4cb52d9..edc0c20a0c80 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> @@ -58,6 +58,15 @@ properties:
+>  
+>    msi-parent: true
+>  
+> +  nvidia,cmdqv:
+> +    description: |
+> +      A phandle to its pairing CMDQV extension for an implementation on NVIDIA
+> +      Tegra SoC.
+> +
+> +      If this property is absent, CMDQ-Virtualization won't be used and SMMU
+> +      will only use its own CMDQ.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+>    hisilicon,broken-prefetch-cmd:
+>      type: boolean
+>      description: Avoid sending CMD_PREFETCH_* commands to the SMMU.
+> @@ -92,4 +101,5 @@ examples:
+>              dma-coherent;
+>              #iommu-cells = <1>;
+>              msi-parent = <&its 0xff0000>;
+> +            nvidia,cmdqv = <&cmdqv>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
+> new file mode 100644
+> index 000000000000..f22c370278a3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra264 CMDQV
 
-Maybe we can unify it because kexec_file_dbg_print is declared and
-defined in CONFIG_KEXEC_CORE scope. Rename it to kexec_core_dbg_print
-and initialize it in do_kimage_alloc_init() for both, or in
-kimage_alloc_init() for kexec, and kimage_file_alloc_init() for
-kexec_file. It needs a new flag for kexec. What do you think?
+Missing blank line
 
-Please feel free to take it as reference, or you can go in other ways
-you have better one.
+> +description: |
 
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index ff7e231b0485..df33a0dd5780 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -525,10 +525,10 @@ static inline int arch_kexec_post_alloc_pages(void *vaddr, unsigned int pages, g
- static inline void arch_kexec_pre_free_pages(void *vaddr, unsigned int pages) { }
- #endif
- 
--extern bool kexec_file_dbg_print;
-+extern bool kexec_core_dbg_print;
- 
- #define kexec_dprintk(fmt, arg...) \
--        do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
-+        do { if (kexec_core_dbg_print) pr_info(fmt, ##arg); } while (0)
- 
- extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
- extern void kimage_unmap_segment(void *buffer);
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index 28008e3d462e..570adb845662 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -42,6 +42,7 @@ static int kimage_alloc_init(struct kimage **rimage, unsigned long entry,
- 	if (!image)
- 		return -ENOMEM;
- 
-+	kexec_core_dbg_print = !!(flags & KEXEC_DEBUG);
- 	image->start = entry;
- 	image->nr_segments = nr_segments;
- 	memcpy(image->segment, segments, nr_segments * sizeof(*segments));
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index fa00b239c5d9..3af3ba77a3bd 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -619,6 +619,7 @@ void kimage_free(struct kimage *image)
- 	if (image->file_mode)
- 		kimage_file_post_load_cleanup(image);
- 
-+	kexec_core_dbg_print = false;
- 	kfree(image);
- }
- 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index eb62a9794242..4a24aadbad02 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -138,8 +138,6 @@ void kimage_file_post_load_cleanup(struct kimage *image)
- 	 */
- 	kfree(image->image_loader_data);
- 	image->image_loader_data = NULL;
--
--	kexec_file_dbg_print = false;
- }
- 
- #ifdef CONFIG_KEXEC_SIG
-@@ -314,7 +312,7 @@ kimage_file_alloc_init(struct kimage **rimage, int kernel_fd,
- 	if (!image)
- 		return -ENOMEM;
- 
--	kexec_file_dbg_print = !!(flags & KEXEC_FILE_DEBUG);
-+	kexec_core_dbg_print = !!(flags & KEXEC_FILE_DEBUG);
- 	image->file_mode = 1;
- 
- #ifdef CONFIG_CRASH_DUMP
+Do not need '|' unless you need to preserve formatting.
+
+> +  The CMDQ-Virtualization hardware block is part of the SMMUv3 implementation
+> +  on Tegra264 SoCs. It assists in virtualizing the command queue for the SMMU.
+> +
+> +maintainers:
+> +  - NVIDIA Corporation <linux-tegra@nvidia.com>
+
+No. It should be a person. If entire Nvidia cannot find a person, I
+don't think we are interested in having this in the kernel.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra264-cmdqv
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: cmdqv
+
+Drop interript names, obvious.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    cmdqv: cmdqv@8105200000 {
+
+Drop unused label
+
+Best regards,
+Krzysztof
 
 
