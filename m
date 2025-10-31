@@ -1,55 +1,94 @@
-Return-Path: <linux-kernel+bounces-880479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC96AC25DB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:35:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797CAC25DC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A64E30BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16DE31A25666
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160432DE70D;
-	Fri, 31 Oct 2025 15:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5747F2DFA5B;
+	Fri, 31 Oct 2025 15:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w++npf0j"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jvvuLBX6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CSaLgj5u";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N1VBlHlW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C3ibAOSu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905592D8DB8;
-	Fri, 31 Oct 2025 15:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25842D8DB8
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761924913; cv=none; b=bLOLJc4dM8abpn8+uYBoyKe4nhgEnxiHntGi6KofCDVHnX2rwQryPwBvRHwO+FNwXUbSRAmP6EdcyuOj14Dn/Krslho/iL7e/8LaVBoucj7P0vXuNU8g7WMd7YoAWLud1MHoQ/zdNgNRkF9wy/I8n5klsU002RgvDe1O+u6+kj8=
+	t=1761924941; cv=none; b=ieZmaX2JrzzzNY/AMyVEcBMNnjhtC/CmCvtX8QHUWy+npb6/tZ85n1cbE/yqxIknCGyG2yHWlvQmilGsB+cgKzl0zyRMadXYlkQR/GzYpw+nmHgDaysns+xCqeKvpaKaXXEKMMAwxMhx5DPDrrXc+Jd+v6+j4Byr4CJ3OrQfLAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761924913; c=relaxed/simple;
-	bh=lSvuC/KcxKeVuAb60LPnWWm4nybSjq56GDvtKBR7ZDw=;
+	s=arc-20240116; t=1761924941; c=relaxed/simple;
+	bh=u1H8y8Vd7BNxaixOkx1N50pHvue9IBSpzBkkFlBBc7k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WMpl2t6DN0OvLLNodTfGO24UB3bWOQfturBqX6G/nkmgwolE91pcxR66KgCixP2NgNok00+NX8bh2Uydv+Y5DeRMBYmQmooo53dkZl9HD7bdhMVr8jFm69qm/A4BkTnfkDPCs/3RwneVvtWZwzYYhvAWdh1M72PJoB5QEiWI3Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=w++npf0j; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761924903; x=1762529703; i=markus.elfring@web.de;
-	bh=lSvuC/KcxKeVuAb60LPnWWm4nybSjq56GDvtKBR7ZDw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=w++npf0jE1C9TUmzat86JRZ2EP3Zfo2HGZEyptFBTYPNcbfEvP+xDRe8YAd8HGkB
-	 7tUz5TN5nAmHOgv7s9nq9R4NMOsIPvyAjzdxwEBRbjc9zUxTTB2tfOz4tv4DWQf28
-	 ckp53NQei0wWhy1aq+Vse4CT7J2PM/MS6bN1SpeT1BalR/ACRIxNEWsY5p01mvzZ9
-	 RTIXDUNMybC6Ec7xgcW8tsXMOYbbHDqL3rwwdraKgrx+GlQ+KiRSZbvVQurfHDZFO
-	 b5W8QBHxQmOLGH4bsalfmR+ZmZwkiKRezApRULtvKJs0JOJREhwVgDjTYzSEQ/3vb
-	 gvexq3a55oqpEIIj9A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.206]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mi4z5-1vsZct3n3h-00p3Zj; Fri, 31
- Oct 2025 16:35:02 +0100
-Message-ID: <2dd26f37-7a42-44b3-8902-5c6b5492655a@web.de>
-Date: Fri, 31 Oct 2025 16:34:59 +0100
+	 In-Reply-To:Content-Type; b=JuDnieOE1RDuDxWe95zkuYEIRgQHo7a+3ffS2C+2qWUDgLv6McEIwabQ0EL+0Rm5rSsiVFbmBvvG8DFppdiU2iQgih9Of8ZTKuvKevHlckS5QLqKO0eBSFoNiHPQ76kGYiDhLcthJBXmWlV3rmhd4av/+0It1VrcD259RmfYpSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jvvuLBX6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CSaLgj5u; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N1VBlHlW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C3ibAOSu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EAFFD22060;
+	Fri, 31 Oct 2025 15:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761924938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTrayXkWBQ243Fr06I9R6N8F/Dz2fVCExTzhLcSW7QA=;
+	b=jvvuLBX6eRZdWnDxZUWCLDdwDqCQxJPndp0Js5OViRrYAsZXgJYFQgSYsvXUFmNuj+0n0x
+	Q+sIPjS8dN4Sid6iNm3HqhQNVsI5EB5MFdMvQqOhYCtKb5u0clrJj6TLT9CluOghoKHJGt
+	iVQRwIG8q5wdeYfSSN177UKJEP5a88g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761924938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTrayXkWBQ243Fr06I9R6N8F/Dz2fVCExTzhLcSW7QA=;
+	b=CSaLgj5uB8ub8e3FaH0J8twmCDxYJoejo1OmiZBQDlZhn567tL9cApOsAODybbc30je3Ld
+	Dv02ulfmJqe4WzCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761924937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTrayXkWBQ243Fr06I9R6N8F/Dz2fVCExTzhLcSW7QA=;
+	b=N1VBlHlWxGpseLfy8E7f7YYKtHURzfK4Be2EB539ih///9PoZp+V/WvmdhebUx8r746z2h
+	NavdJ/iMupKJcxLHVs90DW1lvqlQzT4R5DDV3avDnDG4a++7Y5gWNMo/VfY4t4TAyQCKvG
+	PwIJunSb5PP5KyrTDkUcgoYeTg//6y4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761924937;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTrayXkWBQ243Fr06I9R6N8F/Dz2fVCExTzhLcSW7QA=;
+	b=C3ibAOSuwE0e3RVd590Zly7JfAteqpmrYBGX/qBahRWUX+DcZQvqN2ttiM/l3iF4t7zhyf
+	kYh2gK8WTJUUkjAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5946413393;
+	Fri, 31 Oct 2025 15:35:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Oiw2DknXBGn+SwAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Fri, 31 Oct 2025 15:35:37 +0000
+Message-ID: <eef9a83f-6103-4ab2-927c-921dd9a6a5b3@suse.de>
+Date: Fri, 31 Oct 2025 17:35:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,114 +96,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/qaic: Use pointer from memcpy() call for assignment
- in copy_partial_exec_reqs()
-To: Jeff Hugo <jeff.hugo@oss.qualcomm.com>, dri-devel@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Miaoqian Lin <linmq006@gmail.com>,
- Carl Vanderlip <carl.vanderlip@oss.qualcomm.com>,
- Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
- Oded Gabbay <ogabbay@kernel.org>,
- Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-References: <d154d3c4-dd3e-488d-862f-5361867a70f1@web.de>
- <ce252b99-c011-428f-a89a-5792f14c2eaa@oss.qualcomm.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ce252b99-c011-428f-a89a-5792f14c2eaa@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/5] dd ethernet support for RPi5
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil Elwell
+ <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <20251031114518.GA17287@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20251031114518.GA17287@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QQ69HncWRHyZuyvGaUuWLaFhIt0L1EXDVyvCv2b6FDcfYGAPQSD
- JhzivJCPjdpZb+PqLh5Y/ra4qNOHEWl+KpiWmuVZ86rh7M10JV79tN1IOzshR2HC2hYTsgW
- IWe9em6Wgm37RMQ+/itD/h1LWNuSHwKznWn2fqEPLsJyKd7FfwSi7Qhgv07WfW9VtsaUl4f
- mcsLK5UhSL65tjPd07uUg==
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dt,netdev];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bimFpOyyXuc=;chMbPRywxQ1rvlagtHj/ePTUlqF
- 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
- +qc3nDzDvIckVpgkU=
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Fri, 31 Oct 2025 11:26:33 +0100
-=E2=80=A6>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->=20
-> This does not match the address this patch was received from, therefore =
-DCO does not appear to be satisfied.=C2=A0 I cannot accept this.
+Hi Laurent,
 
-I find such a change rejection questionable.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.18-rc3#n409
+On 10/31/25 1:45 PM, Laurent Pinchart wrote:
+> Hi Stan,
+> 
+> On Fri, Aug 22, 2025 at 12:34:35PM +0300, Stanimir Varbanov wrote:
+>> Hello,
+>>
+>> Changes in v2:
+>>  - In 1/5 updates according to review comments (Nicolas)
+>>  - In 1/5 added Fixes tag (Nicolas)
+>>  - Added Reviewed-by and Acked-by tags.
+>>
+>> v1 can found at [1].
+>>
+>> Comments are welcome!
+> 
+> I'm very happy to see support for Raspberry Pi 5 progressing fast
+> upstream.
+> 
+> I've tested the latest mainline kernel (v6.18-rc3) that includes this
+> series (except for 1/5 that is replaced by
+> https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootlin.com/
+> as far as I understand). The ethernet controller is successfully
+> detected, and so is the PHY. Link status seems to work fine too, but
+> data doesn't seem to go through when the kernel tries to get a DHCP
+> address (for NFS root). Here's the end of the kernel log (with the
+> messages related to the USB controller stripped out):
+> 
+> [    0.896779] rp1_pci 0002:01:00.0: assign IRQ: got 27
+> [    0.896809] rp1_pci 0002:01:00.0: enabling device (0000 -> 0002)
+> [    0.896840] rp1_pci 0002:01:00.0: enabling bus mastering
+> [    0.931874] macb 1f00100000.ethernet: invalid hw address, using random
+> [    0.944448] macb 1f00100000.ethernet eth0: Cadence GEM rev 0x00070109 at 0x1f00100000 irq 95 (da:2e:6d:9d:52:a4)
+> [    0.989067] macb 1f00100000.ethernet eth0: PHY [1f00100000.ethernet-ffffffff:01] driver [Broadcom BCM54210E] (irq=POLL)
+> [    0.989272] macb 1f00100000.ethernet eth0: configuring for phy/rgmii-id link mode
+> [    0.991271] macb 1f00100000.ethernet: gem-ptp-timer ptp clock registered.
+> [    4.039490] macb 1f00100000.ethernet eth0: Link is Up - 1Gbps/Full - flow control tx
+> [    4.062589] Sending DHCP requests .....
+> [   40.902771] macb 1f00100000.ethernet eth0: Link is Down
+> [   43.975334] macb 1f00100000.ethernet eth0: Link is Up - 1Gbps/Full - flow control tx
+> 
+> I've tried porting patches to drivers/net/phy/broadcom.c from the
+> Raspberry Pi kernel to specifically support the BCM54213PE PHY (which is
+> otherwise identified as a BCM54210E), but they didn't seem to help.
+> 
+> What's the status of ethernet support on the Pi 5, is it supposed to
+> work upstream, or are there pieces still missing ?
+> 
 
-Regards,
-Markus
+We have this [1] patch queued up, could you give it a try please.
+
+[1] https://www.spinics.net/lists/kernel/msg5889475.html
+
+
+
 
