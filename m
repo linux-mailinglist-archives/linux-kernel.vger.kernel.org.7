@@ -1,262 +1,263 @@
-Return-Path: <linux-kernel+bounces-879793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB55C240C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:12:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8389C240A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0516D189AC11
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:08:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2FC44F5010
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C7132ED3E;
-	Fri, 31 Oct 2025 09:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ADC32ED26;
+	Fri, 31 Oct 2025 09:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hj3nAC8k"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010055.outbound.protection.outlook.com [52.101.61.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQiY8rpk"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB96929AAE3;
-	Fri, 31 Oct 2025 09:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901684; cv=fail; b=jD1Brf+z27O1rYM7Lq2RVoCm88Ywy5vKyEFCWo4uITKnlbzT2IKmlxtmK4Ppmi7MfrfpkR+PeqHBYUZRCTejCXSKMAdzxMNfY5BsDeo5Wn4UgfnHvdOH/PaSuIjqiXH/EZgwMo519/gYb4qV1aYgTDbbUGcgvtJv5zp3d8ETGsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901684; c=relaxed/simple;
-	bh=1drKImxJ/zolF04FEhq5Vmnu3zvDAAW6Vq5mB0Kcwig=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kVedVZjSBWalzab6OzLq483TiB8BnpGvzgKiHaB6SO0bdZlBitjaF90By+9U33/2EJ5SL/V+qhyBnrM5/8guNqR1JdpXbIhhiDqh4T7X6g32xEPPFbj0Bb7yOZ+3cXqVnhnuqUzOSfITBhgBuAtVPXFAL4SN0sOELiQaLItJJ14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hj3nAC8k; arc=fail smtp.client-ip=52.101.61.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L5jZluuyJhog0VB7XMlw5ul/hodAx/bypq+bloiZ/r2d1+eS3gFQR30qepO/AQCjQnxm5DmxiznfDtUeE5yd087YPmZXqXKuTy7cR4n4onLn/5ASWJ27EOvhSAwUpgWBpOx+amszHKy3rmRZDfg7DLmifYhD8W7N+qrEB4OJA/1iVSx1T/yZdqzjnjUHIUlFjjn5YGQCLfb8zinHB6hWPamdmvyiAzE2X7MNqbCdyWKQu2gICfNoVV2KpTQVNLWctJ6Nrl347vGm1gzR5sM744/oVL7A6ebVeSN7U3eaqQY3MVJ7oV1gslhDLMpfvp4JkeHlMM0llrf215As98HIyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QdNvOiQ1LXcb13VOXga0h/FFdJUqY66hyml/hMGWAEI=;
- b=LT05SD1gf83ic3Yo51mHI7c/sXAV3i5t9Sl/StUMfWHhOOqDz0YNaR3KTTR/41Ffkq7IIkvIT2vNk5wdhRDPmG8JkcaSqK2WnjBB2xMadsseannBLZOYOKk+MoRUdEyoDcefqUR2pXGzf5QsMN4nH98hVvmTHxn4iqyZzwJzqWNojwQFYU08CDO98dK1KWT0znUSVj8CoBY418xF9k7waY7CUQZLAcTnOPm/B5LJFbIKiaOnWl418wp2g2DX9naPiDI05jFJ6m34mmswRu0mhHP4wjO5uo8CBB4pKEYMyeoeNwzszEr3GZGxoEXmBjJ70bQe9rd4TctmylApxFqLfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QdNvOiQ1LXcb13VOXga0h/FFdJUqY66hyml/hMGWAEI=;
- b=hj3nAC8kRu53LFEFQ1eIf3hSZoZpg62uimlrBoxl1txqUhSpi7r25HvSjWk7G8Nlw2NV11ib2ty9C7BO57KlOq0VKPDVhwrD5chWpa28CGmMz56PshgEaJLt5BgBACU9qXmgTAODAvVdhcdrvk0K8OQQiCG0qm+ygFSG9kA9IrE=
-Received: from BY5PR04CA0029.namprd04.prod.outlook.com (2603:10b6:a03:1d0::39)
- by IA1PR12MB6458.namprd12.prod.outlook.com (2603:10b6:208:3aa::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 09:07:55 +0000
-Received: from SJ1PEPF00001CE0.namprd05.prod.outlook.com
- (2603:10b6:a03:1d0:cafe::14) by BY5PR04CA0029.outlook.office365.com
- (2603:10b6:a03:1d0::39) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Fri,
- 31 Oct 2025 09:07:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ1PEPF00001CE0.mail.protection.outlook.com (10.167.242.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 09:07:54 +0000
-Received: from FRAPPELLOUX01-WSLPUB.amd.com (10.180.168.240) by
- satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 31 Oct 2025 02:07:52 -0700
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
-	<dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
-	<sumit.semwal@linaro.org>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, "Mikhail
- Gavrilov" <mikhail.v.gavrilov@gmail.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
-	<christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linaro-mm-sig@lists.linaro.org>
-Subject: [PATCH v2] drm/sched: Fix deadlock in drm_sched_entity_kill_jobs_cb
-Date: Fri, 31 Oct 2025 10:07:03 +0100
-Message-ID: <20251031090704.1111-1-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDF432E6AD
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761901629; cv=none; b=Eo711rAxYuTdzlxl5w68UoTEvl0iqOJnqNKMdoICQGf4lz5PbZdh0h8FEte5BL+iIGRZ+8u/mZJv3UPZK/+iqbn/l19tPvZ/Ja4fl9HEr3ER70cAl4V+Ki1mDMyCmXp2mFPUcuE8ITgcURnIOioE80dYe8AmOA2eIBOeo8cxKX0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761901629; c=relaxed/simple;
+	bh=rQJ6m5izqAPGX/XkFvXmv2Y6nNiOodtTyPT9ISPslA4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VxDkUE9IZN/wc8jTaDgrkzyquex99UU7cG0k/HIMSBEkE77K7c6Czm8XfKHRELdL+hpb49BF0xHAwK4A35Ma9gjEngq7umRQvPpNc0MOflWYP3TUmo3VB2ButnPUPvKAOFfdSTOJHAJsHvfl53AsTdnZpw/STHFV5lMA1Diz+w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DQiY8rpk; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b7043504650so332104166b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761901625; x=1762506425; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=29d2Teid1vY8nWEM/2hMCD7Hus+R2bdLREzpsdHxTuA=;
+        b=DQiY8rpkm4eZ9wBhwjojXGGYeoXR1WqMsoways3QfhHrzqoEVzOpE2FB7QGDWPY3Tp
+         ej/ct9i+6NMreNT3e1WnM2CQ8eMlRHfq6tXE0Fv7gPr950gu5I98clrkUsIlbmFqPxU1
+         Naibh7DukVK7aEmTM74JH28GgURJ+SGcv45ONNXr82qR0AEvG1sSIc8NNIrJmqpt5wcX
+         HKAvLjSvK4G74eCS88rC+3AesK5dvcLOsLyqwVCf1yWaz/YzmSvunbqDy8ZtMqvEkd8b
+         GwaKBiYq3BFrhl31pogaMjxm6FQkGLATtU/CKTsQcmb+SoqER+YK/kYzf7CNNG2XuJ0N
+         DL1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761901625; x=1762506425;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=29d2Teid1vY8nWEM/2hMCD7Hus+R2bdLREzpsdHxTuA=;
+        b=VFGq1FB2/OARSxEjt3VVOBoQ8+/aNULIlkFQj874lJjNIwTWo2XMny1Gq+iO+ApImu
+         wIrrSDSA4ya1cuPubtIRsrQP0Rb/S9Zya2iN/G3cRLbAF0uV0bTwukR36QJx4huW6qsf
+         Y4ZUn1ZPD26ukaJroyxjuzJNpvFTOUjUOlvC6sJoTVtdZwYu2F9O430Q5/JhKhy2Hyia
+         W4QFIpep8Hch6mW81lLOqkmrCjAfW/QE48iPyG/lDZBtMJJD+WYzBPCr7wQubz80DX7Y
+         saeRRuhStbimcddbNlFu0xtnC/mi3N684xa14DiWMRVvy74+V6HeKtILMOpQNrfWdVxk
+         4DXA==
+X-Forwarded-Encrypted: i=1; AJvYcCX11DnALfXQKnXvYhVr55c3hIdHg7slmC1rL2Ib3FPLn9nUpvs3npLTRmyy4tNvoODRHN9PDvAYlzO88Q4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsglnwV78JH2LnNffGs4iZnrW1skbdG66pZrsIT4Oj8FShPaDz
+	O4YbV7+rxUhXH/wwBDSBgjvRFw8TnFtyfEY0PsSG3Xc2LZBEK1eBPEtJdnzH8cwdpm0TAuh2hp8
+	7skQ8Uswi1sq9yYukkw==
+X-Google-Smtp-Source: AGHT+IHQfde77LTsYs+H7ayeimd+wwm/8KMTrV3Sd6Adno8GuLpiuQxfMBuEYeebpFBJheF7ldHY2iKlk8Y3ghY=
+X-Received: from ejac23.prod.google.com ([2002:a17:906:3d7:b0:b6d:6aad:e8ff])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:a0c8:b0:b07:87f1:fc42 with SMTP id a640c23a62f3a-b706e54f35cmr331607566b.16.1761901624817;
+ Fri, 31 Oct 2025 02:07:04 -0700 (PDT)
+Date: Fri, 31 Oct 2025 09:07:04 +0000
+In-Reply-To: <20251030154842.450518-2-zhiw@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE0:EE_|IA1PR12MB6458:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04bc99fa-1d1e-4ecc-f922-08de185cfa72
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013|13003099007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bnBmTGNNUFpFMVNzTjVuZHcrUEZjWGtVRmlna2xoMVBIZ3QrNVdWL1BWS3hU?=
- =?utf-8?B?U04yZ3dNbXBobktUMmZNSk9TZXVsMEgyNTFlRUZ1UGFNMU9vc1hiMFlCaExX?=
- =?utf-8?B?ZVNraUhZaWhBTFc3b3VqczJxZFdtNW1rZHZXR3h1Y25QblRuUUVYK3NGN0t3?=
- =?utf-8?B?R0pkMHZBZXRZL0p6S014eWU1SFBxSW9kclVtVlJIZkFlWlNudFI2bE1xTHY4?=
- =?utf-8?B?K2NKWWRYMmRlbTlrKy9yaFNJdm5uZHl1RnpHZnloV09HZXkyZkttZzJtTkhH?=
- =?utf-8?B?THV0eEJxZ1NvRHQyd09JVGdSOTBweUlod2RsVHZjSlpWa2xubVlXZFY3OE1w?=
- =?utf-8?B?NDVXdlU3TFVXaGprMnNSems0Q1BLMDM5SEZ2WE1UazQ0Sm1nUlRpYnVBR0li?=
- =?utf-8?B?T050Z0tTMW9UQUdJSFV5TE1TWHpXOHJhc2tTUWtvTmhDTzNvRUY4d2VJT2dj?=
- =?utf-8?B?RW5jTHNvcHJsVzZ2RjZyYzk2djBJWGYwV0ZIR1ZXNjJsMk03V2RvNHFUS3JQ?=
- =?utf-8?B?cUpSRlFSNmlNaVcwZGQ1Rk9sRE9ib1FBZkZBMkJnRTA4QW5Db0RjSTl6cnQ2?=
- =?utf-8?B?VGQxaEZmWmxBM3p5SzB2NUw2R1RzelRSRFVhRWpzdzhPUjl0UnA5RDZmbmsv?=
- =?utf-8?B?bytoUTd0TWM5QkdWZFROSFlySmtraVpWeHpxUkpRWVZyZkJJUXJDakhxcHY3?=
- =?utf-8?B?bklGd0p1Nm8wQ2RpYnlSZFlMby9TUGZlZFNLb3VxV0h6U2Z1azE2NUh0VjZI?=
- =?utf-8?B?Q1VGem1aYWxNWEZ1UUNhMWhjN1dSL3VUWWttZGlSNTFWWjRyV0RkU1NPSjBD?=
- =?utf-8?B?MHlXWmtQYUZNQXRLT1JWd1ZhZG1JeUtmZDFNQVFuVGViRDZPTFpVNENGd2Jz?=
- =?utf-8?B?c203N0I5bDhST2hDWkMzbEJRSFB1Ti9lU2Z2V3E5N0FlZDk0WjJjRnBvbm9u?=
- =?utf-8?B?am8vMzZ2QjJiUHZjYnlYTmYyaGNDbkhLem5BNEhzVkJYSnpkKzlKLzFVbURq?=
- =?utf-8?B?QTRqOTZTSkIxM1p2aE9Way96eXAwZFovUFlNYllBSU5NdVVZdTRFcXFvRDZw?=
- =?utf-8?B?UGEreHNVK2QzSHlqVy9KR0c2SXdNankvYVdXOEFLbU1ja3pKZGU1aG5vN1Rp?=
- =?utf-8?B?eDNtYVJMQ0ZjMDNNWENScSszM1Jnc3ZTU0VqaG9VbUQ2ekdzYXFENVlQbmFD?=
- =?utf-8?B?aTdXcmg3WExrb0o3SHBJSW5vVnhUQW9IWkV6SUt0Si9FNjdCQzI2RWlIKzBl?=
- =?utf-8?B?a21BblpmOXEyMWlZdzJGeHd0clJXc01RUEJScGFxVmF1cEpOaHZGdWVacUtt?=
- =?utf-8?B?KzFDbEpNRXdrUHBDcVV6MkVDMkhLRWVGcWRwS1Uxeit0UVNFa1NETmJtR2tP?=
- =?utf-8?B?Zi94M05mQVlvZDNSRm1MY1N4WWo4ZTAybkhyU1FkNjdxUlNSL2xNTEdVd3hP?=
- =?utf-8?B?ak9rejl0SndkNlhJSVJFVkZJM0FHSnRoc09yU0oyNjZYQTJOWlVNVFVVNnV0?=
- =?utf-8?B?Z1d3QWp5QjRqQ0tNU1k4bm1HTElHeGFtMzZMNlVWM1N0L3pSd0tyZDd5Yk5Z?=
- =?utf-8?B?QWlDUWQ1c2lNUExRa3d3a2dsY1pYRFVRZHQ0cENNTlIvRTdLdWMrcEdJTmRK?=
- =?utf-8?B?bUc5Z3VENTc1dkg0cTMyNy9pQm5rYmswazljZkt3VHMzbDNEN0FseW1HNlhZ?=
- =?utf-8?B?b1RVRmFSaEQ2Z1Ivc1VPak5vUWtlV1dZUUZBVTVRbUJ4bjgzNTFicE9wR0V3?=
- =?utf-8?B?N2ZUeWFDSVZvTFNhL2RadWVLaTZMblFQd24xWEdUbWRzUk82a1ZGNGRHc0pR?=
- =?utf-8?B?NFNiaUJvL2Z0bFk4YnVWTUJyZDl2NG14L2ZPYXpDY1Nkd0FCVkZ5TGNsVE5I?=
- =?utf-8?B?b3ZPUWlPblU5UmY5K0t3Vytka09YeEp1WEhFUXhQZXFJOVpOVE5Zd2ZQQTBn?=
- =?utf-8?B?UWN5ZFg5M2FXL2RUUWRPeGRZTGMwTXRxZkdGYmZ4eFA0NW94SzBLZlFNNU9w?=
- =?utf-8?B?MlcvK3A0NnNFVEhIc3dGU2pKR0t4a0hyZTNMSFpOM0t4anJ4THJiOGtXREJY?=
- =?utf-8?Q?exbM1M?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013)(13003099007)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 09:07:54.9755
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04bc99fa-1d1e-4ecc-f922-08de185cfa72
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6458
+Mime-Version: 1.0
+References: <20251030154842.450518-1-zhiw@nvidia.com> <20251030154842.450518-2-zhiw@nvidia.com>
+Message-ID: <aQR8OPVnU_fPJTCI@google.com>
+Subject: Re: [PATCH v3 1/5] rust: io: factor common I/O helpers into Io trait
+From: Alice Ryhl <aliceryhl@google.com>
+To: Zhi Wang <zhiw@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, dakr@kernel.org, bhelgaas@google.com, 
+	kwilczynski@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, cjia@nvidia.com, 
+	smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com, 
+	kwankhede@nvidia.com, targupta@nvidia.com, zhiwang@kernel.org, 
+	acourbot@nvidia.com, joelagnelf@nvidia.com, jhubbard@nvidia.com, 
+	markus.probst@posteo.de, Bjorn Helgaas <helgaas@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-The Mesa issue referenced below pointed out a possible deadlock:
+On Thu, Oct 30, 2025 at 03:48:38PM +0000, Zhi Wang wrote:
+> The previous Io<SIZE> type combined both the generic I/O access helpers
+> and MMIO implementation details in a single struct.
+> 
+> To establish a cleaner layering between the I/O interface and its concrete
+> backends, paving the way for supporting additional I/O mechanisms in the
+> future, Io<SIZE> need to be factored.
+> 
+> Factor the common helpers into a new Io trait, and move the MMIO-specific
+> logic into a dedicated Mmio<SIZE> type implementing that trait. Rename the
+> IoRaw to MmioRaw and update the bus MMIO implementations to use MmioRaw.
+> 
+> No functional change intended.
+> 
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Bjorn Helgaas <helgaas@kernel.org>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Zhi Wang <zhiw@nvidia.com>
 
-[ 1231.611031]  Possible interrupt unsafe locking scenario:
+> +/// Represents a region of I/O space of a fixed size.
+> +///
+> +/// Provides common helpers for offset validation and address
+> +/// calculation on top of a base address and maximum size.
+> +///
+> +/// Types implementing this trait (e.g. MMIO BARs or PCI config
+> +/// regions) can share the same accessors.
+> +pub trait Io<const SIZE: usize> {
 
-[ 1231.611033]        CPU0                    CPU1
-[ 1231.611034]        ----                    ----
-[ 1231.611035]   lock(&xa->xa_lock#17);
-[ 1231.611038]                                local_irq_disable();
-[ 1231.611039]                                lock(&fence->lock);
-[ 1231.611041]                                lock(&xa->xa_lock#17);
-[ 1231.611044]   <Interrupt>
-[ 1231.611045]     lock(&fence->lock);
-[ 1231.611047]
-                *** DEADLOCK ***
+I would consider moving SIZE to an associated constant.
 
-In this example, CPU0 would be any function accessing job->dependencies
-through the xa_* functions that doesn't disable interrupts (eg:
-drm_sched_job_add_dependency, drm_sched_entity_kill_jobs_cb).
+	pub trait Io {
+	    const MIN_SIZE: usize;
+	
+	    ...
+	}
 
-CPU1 is executing drm_sched_entity_kill_jobs_cb as a fence signalling
-callback so in an interrupt context. It will deadlock when trying to
-grab the xa_lock which is already held by CPU0.
+If it's a generic parameter, then the same type can implement both Io<5>
+and Io<7> at the same time, but I don't think it makes sense for a
+single type to implement Io with different minimum sizes.
 
-Replacing all xa_* usage by their xa_*_irq counterparts would fix
-this issue, but Christian pointed out another issue: dma_fence_signal
-takes fence.lock and so does dma_fence_add_callback.
+>      /// Returns the base address of this mapping.
+> -    #[inline]
+> -    pub fn addr(&self) -> usize {
+> -        self.0.addr()
+> -    }
+> +    fn addr(&self) -> usize;
+>  
+>      /// Returns the maximum size of this mapping.
+> -    #[inline]
+> -    pub fn maxsize(&self) -> usize {
+> -        self.0.maxsize()
+> -    }
+> -
+> -    #[inline]
+> -    const fn offset_valid<U>(offset: usize, size: usize) -> bool {
+> -        let type_size = core::mem::size_of::<U>();
+> -        if let Some(end) = offset.checked_add(type_size) {
+> -            end <= size && offset % type_size == 0
+> -        } else {
+> -            false
+> -        }
+> -    }
+> +    fn maxsize(&self) -> usize;
+>  
+> +    /// Returns the absolute I/O address for a given `offset`.
+> +    /// Performs runtime bounds checks using [`offset_valid`]
+>      #[inline]
+>      fn io_addr<U>(&self, offset: usize) -> Result<usize> {
+> -        if !Self::offset_valid::<U>(offset, self.maxsize()) {
+> +        if !offset_valid::<U>(offset, self.maxsize()) {
+>              return Err(EINVAL);
+>          }
+>  
+> @@ -217,50 +215,197 @@ fn io_addr<U>(&self, offset: usize) -> Result<usize> {
+>          self.addr().checked_add(offset).ok_or(EINVAL)
+>      }
+>  
+> +    /// Returns the absolute I/O address for a given `offset`,
+> +    /// performing compile-time bound checks.
+>      #[inline]
+>      fn io_addr_assert<U>(&self, offset: usize) -> usize {
+> -        build_assert!(Self::offset_valid::<U>(offset, SIZE));
+> +        build_assert!(offset_valid::<U>(offset, SIZE));
+>  
+>          self.addr() + offset
+>      }
+>  
+> -    define_read!(read8, try_read8, readb -> u8);
+> -    define_read!(read16, try_read16, readw -> u16);
+> -    define_read!(read32, try_read32, readl -> u32);
+> +    /// Infallible 8-bit read with compile-time bounds check.
+> +    fn read8(&self, _offset: usize) -> u8 {
+> +        !0
+> +    }
+> +
+> +    /// Infallible 16-bit read with compile-time bounds check.
+> +    fn read16(&self, _offset: usize) -> u16 {
+> +        !0
+> +    }
+> +
+> +    /// Infallible 32-bit read with compile-time bounds check.
+> +    fn read32(&self, _offset: usize) -> u32 {
+> +        !0
+> +    }
+> +
+> +    /// Infallible 64-bit read with compile-time bounds check (64-bit only).
+> +    #[cfg(CONFIG_64BIT)]
+> +    fn read64(&self, _offset: usize) -> u64 {
+> +        !0
+> +    }
+> +
+> +    /// Fallible 8-bit read with runtime bounds check.
+> +    fn try_read8(&self, _offset: usize) -> Result<u8> {
+> +        Err(ENOTSUPP)
+> +    }
+> +
+> +    /// Fallible 16-bit read with runtime bounds check.
+> +    fn try_read16(&self, _offset: usize) -> Result<u16> {
+> +        Err(ENOTSUPP)
+> +    }
+> +
+> +    /// Fallible 32-bit read with runtime bounds check.
+> +    fn try_read32(&self, _offset: usize) -> Result<u32> {
+> +        Err(ENOTSUPP)
+> +    }
+> +
+> +    /// Fallible 64-bit read with runtime bounds check (64-bit only).
+> +    #[cfg(CONFIG_64BIT)]
+> +    fn try_read64(&self, _offset: usize) -> Result<u64> {
+> +        Err(ENOTSUPP)
+> +    }
+> +
+> +    /// Infallible 8-bit write with compile-time bounds check.
+> +    fn write8(&self, _value: u8, _offset: usize) {
+> +        ()
+> +    }
+> +
+> +    /// Infallible 16-bit write with compile-time bounds check.
+> +    fn write16(&self, _value: u16, _offset: usize) {
+> +        ()
+> +    }
+> +
+> +    /// Infallible 32-bit write with compile-time bounds check.
+> +    fn write32(&self, _value: u32, _offset: usize) {
+> +        ()
+> +    }
+> +
+> +    /// Infallible 64-bit write with compile-time bounds check (64-bit only).
+> +    #[cfg(CONFIG_64BIT)]
+> +    fn write64(&self, _value: u64, _offset: usize) {
+> +        ()
+> +    }
+> +
+> +    /// Fallible 8-bit write with runtime bounds check.
+> +    fn try_write8(&self, value: u8, offset: usize) -> Result;
+> +
+> +    /// Fallible 16-bit write with runtime bounds check.
+> +    fn try_write16(&self, value: u16, offset: usize) -> Result;
+> +
+> +    /// Fallible 32-bit write with runtime bounds check.
+> +    fn try_write32(&self, value: u32, offset: usize) -> Result;
+> +
+> +    /// Fallible 64-bit write with runtime bounds check (64-bit only).
+> +    #[cfg(CONFIG_64BIT)]
+> +    fn try_write64(&self, _value: u64, _offset: usize) -> Result {
+> +        Err(ENOTSUPP)
+> +    }
 
-  dma_fence_signal() // locks f1.lock
-  -> drm_sched_entity_kill_jobs_cb()
-  -> foreach dependencies
-     -> dma_fence_add_callback() // locks f2.lock
+Why are there default implementations for all of these trait methods? I
+would suggest not providing any default implementations at all.
 
-This will deadlock if f1 and f2 share the same spinlock.
-
-To fix both issues, the code iterating on dependencies and re-arming them
-is moved out to drm_sched_entity_kill_jobs_work.
-
-Link: https://gitlab.freedesktop.org/mesa/mesa/-/issues/13908
-Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Suggested-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
----
- drivers/gpu/drm/scheduler/sched_entity.c | 34 +++++++++++++-----------
- 1 file changed, 19 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index c8e949f4a568..fe174a4857be 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -173,26 +173,15 @@ int drm_sched_entity_error(struct drm_sched_entity *entity)
- }
- EXPORT_SYMBOL(drm_sched_entity_error);
- 
-+static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-+					  struct dma_fence_cb *cb);
-+
- static void drm_sched_entity_kill_jobs_work(struct work_struct *wrk)
- {
- 	struct drm_sched_job *job = container_of(wrk, typeof(*job), work);
--
--	drm_sched_fence_scheduled(job->s_fence, NULL);
--	drm_sched_fence_finished(job->s_fence, -ESRCH);
--	WARN_ON(job->s_fence->parent);
--	job->sched->ops->free_job(job);
--}
--
--/* Signal the scheduler finished fence when the entity in question is killed. */
--static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
--					  struct dma_fence_cb *cb)
--{
--	struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
--						 finish_cb);
-+	struct dma_fence *f;
- 	unsigned long index;
- 
--	dma_fence_put(f);
--
- 	/* Wait for all dependencies to avoid data corruptions */
- 	xa_for_each(&job->dependencies, index, f) {
- 		struct drm_sched_fence *s_fence = to_drm_sched_fence(f);
-@@ -220,6 +209,21 @@ static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
- 		dma_fence_put(f);
- 	}
- 
-+	drm_sched_fence_scheduled(job->s_fence, NULL);
-+	drm_sched_fence_finished(job->s_fence, -ESRCH);
-+	WARN_ON(job->s_fence->parent);
-+	job->sched->ops->free_job(job);
-+}
-+
-+/* Signal the scheduler finished fence when the entity in question is killed. */
-+static void drm_sched_entity_kill_jobs_cb(struct dma_fence *f,
-+					  struct dma_fence_cb *cb)
-+{
-+	struct drm_sched_job *job = container_of(cb, struct drm_sched_job,
-+						 finish_cb);
-+
-+	dma_fence_put(f);
-+
- 	INIT_WORK(&job->work, drm_sched_entity_kill_jobs_work);
- 	schedule_work(&job->work);
- }
--- 
-2.43.0
-
+Alice
 
