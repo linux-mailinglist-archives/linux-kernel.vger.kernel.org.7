@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-879980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984D4C248BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:42:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86CBC248C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FBCA4F191A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:42:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2EEC6350172
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9D8346FAC;
-	Fri, 31 Oct 2025 10:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4019346FC8;
+	Fri, 31 Oct 2025 10:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oNGIc+RJ"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JIEniFNI"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3B134678E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E6D3469E9
 	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761907202; cv=none; b=bxM/FBAUO79MhEkvBkMvtoIbalBSBTLT32GsZCQjb4MQwj5MWH08i5iUbncA3V6nIQvZbblzzwn2X96FNV6+OlxBQSxocMk9YZ3K3yMx8qY9WXxQTltOgMeySQba5C2wfEvJI9KuSsWJ+noiTSg7gi4xcnMwwyXor4NY4WzhGVk=
+	t=1761907202; cv=none; b=CDVIra9ZbIZ6Kaci+1nvdkce2edtbqsvB05aDwpjVCLQclG6HPWYl4upcol6w6G8WOnYwCY4MjyZgzuU8Ea7+xRGlV0AFVbjtTVO+5QumIqTzQt+ioG5XKg5Gf11wSr6dx2KTAsU76hDQbW4ZrvGSDs7PG8QuLubD8nI8WRKgzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761907202; c=relaxed/simple;
-	bh=THSYwS2QbD5A2iM+nFKxv+UIHkNNGdsVXqfTT1Y2lNw=;
+	bh=OTHWBoff2PzsQfKx5tYIGytixloTvdhFhmJWQ7BVRmE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=df3x0qwFQLfO2P9SkRnRh7NTxYyPlxoy4++YWiFdrRAQAXfKpm6kg23+sdC5vV5mwQLjh6IOFak5A7bG4jetbQVJobbgxUqAOxR5wKPj2Nhm5ax26ADL+MWadaIRStv/SxHnmK+afBCis7nXwVH6wJchx2GDgOkHTosJ5unZwtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oNGIc+RJ; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=tkS19pwdoC9udFUBoH0whaWxdtEfBIeenJ6HElDp+C+FxwyY2D6dWye6ZH7ZKd181cn1nxCBYJ5Qn1pivxcJaJvCxtzOTrZzv9MMGWyS6Psfo/j301pQWA8SXsMJHlSU9wyGNN4LTgv7b307Gjlz7PykdyNqzgNhn6Pnux42Fig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JIEniFNI; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-475da25c4c4so15270305e9.0
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-427015f63faso1237859f8f.0
         for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:40:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20230601; t=1761907199; x=1762511999; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4s6P+Feh6QTHXx+j4+pZbRiwHHcjHTLEIbaDo5nXNow=;
-        b=oNGIc+RJeI3rTUXbpxF3Xvix2wKvdyhFE0OHbhRhD+kgyAhdl7xVW9xaGjRQnXdV69
-         clMpHi/i6EJxJQDLKJwqTgrEiSnEGX+iBlIWKxbB0cHwruqGUSV/Rm41zGpgTiqlqKBH
-         LzHbJP/qa+gXJ1iR/AFgDvucspQXCCbvrMuYUreuWzE+3rpKss34rSxzq4yXOHhuVgT8
-         jZOE09zlpZW4n8+3jP8duyvJ6CzmDXscGTu/3lMskuDKCdpp+K24ZpQUsvkgR8LsCgd0
-         JkDHJuiPaNEQ4NOzgbHzDfK5oApTbpQgx/91joQTK+jEh1/wFDPn0sUPKiVHpfrAre7r
-         Mb8g==
+        bh=8r3QIAGejqa8NPmAEDiNAoce3SvTXlMmEJ2PuS5pgns=;
+        b=JIEniFNIVqR68or89bm9dzpdB/YUnieWja71JcAlqbhZM+s04A1G3mgDxXdiOPRaLq
+         /TMXg3Ih5DmYoPm7ouK/6UyH7BgkTWNiaArCMFf8z+7FZ1ErMA/xS9f01UnYVCn/MAGI
+         CSPC7IXd/laNZQOXxyP822mXWrlH261M5B22VKfM4cKGDH8WWnXsiYimEy8nESmQm2PV
+         5mD73nDG7dWiH8O1pZJKvsWwMb2B1JsvH6WfAr+77nHiHcqV3oDn62H50e0zpTPAkrAN
+         UeopT1+Manbmubz0nslOACeIWICRg4/2WpYZpwCNTUU69/xOasjqb1cvDxUPnBMUY8tk
+         V7YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761907199; x=1762511999;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4s6P+Feh6QTHXx+j4+pZbRiwHHcjHTLEIbaDo5nXNow=;
-        b=l412cbgEWhKsETvB9s85cpb8NbEwLQRmsTF0OGCQTtbaApvyUrtVgdjw45Hn3dkgxI
-         y9DHXwFJkR5Z2jI8TvmaJhcZswB93k8I5o0ZTbPyiRcF0MLWksl8Uc6/1XhPvTm5FzSw
-         GcLp2dBP6Y81T2JbCC2pGLR5XeMuLMrdJk9UAYSIGNpjBLSAFLxflWGm1OZtFtRQHKnk
-         Bzrc7jqGpU2EZiRO4y2YABdBiYpLr9fYCFnR2C88fdK89DyVRKpVqZAkDypdkGyFhqO6
-         82N0Uq4P/N5gmV35n8PpNJKmzyaPkXJY6fwBIykZRz7HZ7TG6sMjwn44kPouyebCw8zZ
-         vyfw==
-X-Gm-Message-State: AOJu0Ywne8GzsRTb3Qn2Dd7UVHU3vM9pf5UJ7vZpQP+sALkcgu91Qe1K
-	WMEC7jBwyNeyVITaiMFMYG9VbHS9fR17qG5Zi7at2fJToTuFwU50FkXGoZqOEEYeYsInj3f1Ew=
+        bh=8r3QIAGejqa8NPmAEDiNAoce3SvTXlMmEJ2PuS5pgns=;
+        b=DQXR9sFpRfI0+Vmbkq62JDwriRkWVuXif8crtkmdUdn18KDto5w7WKqH9eRz6LJSiV
+         vJbamk0nVN9MeDCWP+avmu7u3QaEwtCLRZxzmEsPv4IUKZPgNpXMY815ciTTEIMFqWNn
+         Jl9IzHwNHgy7gzhyuenCsl5URKYH7zDVS5mdDS6uNHaIlVxnLPTRYturESJF+c7QIole
+         lJSFPThAqPVA1XMkibu/Qm7VjHwBZ9UGmTYN4eycsEi/U76Z+Z/98iLvnnFJ+wW4Eyv/
+         X3UVy80YVlAeokKpz4HhJy8WlfSOvFbxJPki/lUxoMnAWw/9gbo2GB/rByXfPdmdTMZl
+         AR2A==
+X-Gm-Message-State: AOJu0Yw5MMr0TT2vnb8SVgiblywrcNKfl/RQLVuAQP6lGlEStUb5mi9o
+	ElYBBn4j8X1eyoJQlI0U1D7szOAXbdQ1KQ/pfcC8/ker/NR79MCb8kuNzAI4ay/PxRiWcFBTJg=
 	=
-X-Google-Smtp-Source: AGHT+IEfIHxmt0Akn8ZOdGgYUmWAojffoRFxXG63QnY50c3838BNl1o+lCSGk7AdLGAKU776OVcmZYAl
-X-Received: from wmbf23.prod.google.com ([2002:a05:600c:5957:b0:475:d8ac:bbb0])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:190e:b0:46e:3cd9:e56f
- with SMTP id 5b1f17b1804b1-47730802ca0mr29236185e9.6.1761907198711; Fri, 31
- Oct 2025 03:39:58 -0700 (PDT)
-Date: Fri, 31 Oct 2025 11:39:12 +0100
+X-Google-Smtp-Source: AGHT+IHA3+sT6jB9B/KN6RWBYWXqri0+R/04SATB2rPp1zUItDUhniCQ0O44BM/cLxoWHqbEStWH964U
+X-Received: from wmdd17.prod.google.com ([2002:a05:600c:a211:b0:475:da28:9004])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:3107:b0:3eb:5ff:cb2e
+ with SMTP id ffacd0b85a97d-429bd6c18c6mr2345917f8f.29.1761907199634; Fri, 31
+ Oct 2025 03:39:59 -0700 (PDT)
+Date: Fri, 31 Oct 2025 11:39:13 +0100
 In-Reply-To: <20251031103858.529530-23-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,14 +72,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251031103858.529530-23-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1189; i=ardb@kernel.org;
- h=from:subject; bh=gI3hKx/eLJBwHcKg2Z09pXqMlir5s87xW/Yb/W5o4zk=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIZNl4jWpy2tS+Bo75wd5RN++5pC6flaDZOhdjaXyL29rv
- ptye2tARykLgxgXg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZhI7DtGho6N39KFNuivY32j
- GDljvd68v90bNjKtOyAX6WXkfGla2RxGhlksDTN+Lky+f+d0gcYX0Ud7VrsIxVS0X5aRuJh5ySK YgQ8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1693; i=ardb@kernel.org;
+ h=from:subject; bh=OwQNFyTd57ahcVrUrGlQonZMFcw8cHUaJECkttM55ZY=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIZNl4vX9e1blpTIus+YpZ055on81Z6uG6Kzv/3bW/3FVt
+ VieGfW2o5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEyE/TAjw+ZcN4knofcXpPy4
+ 84prj+PpMyWG05oFHEREzzJYzPdvVWX4Hy/3sbJlSWGW+WfZ7pZugYuliV1rvwfdWbFudeXKb3f zmAA=
 X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251031103858.529530-36-ardb+git@google.com>
-Subject: [PATCH v4 13/21] crypto/arm64: nhpoly1305 - Switch to 'ksimd' scoped
+Message-ID: <20251031103858.529530-37-ardb+git@google.com>
+Subject: [PATCH v4 14/21] crypto/arm64: polyval - Switch to 'ksimd' scoped
  guard API
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
@@ -99,25 +99,43 @@ bytes to the size of struct task_struct.
 Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/crypto/nhpoly1305-neon-glue.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm64/crypto/polyval-ce-glue.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/crypto/nhpoly1305-neon-glue.c b/arch/arm64/crypto/nhpoly1305-neon-glue.c
-index e4a0b463f080..013de6ac569a 100644
---- a/arch/arm64/crypto/nhpoly1305-neon-glue.c
-+++ b/arch/arm64/crypto/nhpoly1305-neon-glue.c
-@@ -25,9 +25,8 @@ static int nhpoly1305_neon_update(struct shash_desc *desc,
- 	do {
- 		unsigned int n = min_t(unsigned int, srclen, SZ_4K);
+diff --git a/arch/arm64/crypto/polyval-ce-glue.c b/arch/arm64/crypto/polyval-ce-glue.c
+index c4e653688ea0..51eefbe97885 100644
+--- a/arch/arm64/crypto/polyval-ce-glue.c
++++ b/arch/arm64/crypto/polyval-ce-glue.c
+@@ -15,7 +15,7 @@
+  * ARMv8 Crypto Extensions instructions to implement the finite field operations.
+  */
  
--		kernel_neon_begin();
--		crypto_nhpoly1305_update_helper(desc, src, n, nh_neon);
--		kernel_neon_end();
-+		scoped_ksimd()
-+			crypto_nhpoly1305_update_helper(desc, src, n, nh_neon);
- 		src += n;
- 		srclen -= n;
- 	} while (srclen);
+-#include <asm/neon.h>
++#include <asm/simd.h>
+ #include <crypto/internal/hash.h>
+ #include <crypto/polyval.h>
+ #include <crypto/utils.h>
+@@ -45,16 +45,14 @@ asmlinkage void pmull_polyval_mul(u8 *op1, const u8 *op2);
+ static void internal_polyval_update(const struct polyval_tfm_ctx *keys,
+ 	const u8 *in, size_t nblocks, u8 *accumulator)
+ {
+-	kernel_neon_begin();
+-	pmull_polyval_update(keys, in, nblocks, accumulator);
+-	kernel_neon_end();
++	scoped_ksimd()
++		pmull_polyval_update(keys, in, nblocks, accumulator);
+ }
+ 
+ static void internal_polyval_mul(u8 *op1, const u8 *op2)
+ {
+-	kernel_neon_begin();
+-	pmull_polyval_mul(op1, op2);
+-	kernel_neon_end();
++	scoped_ksimd()
++		pmull_polyval_mul(op1, op2);
+ }
+ 
+ static int polyval_arm64_setkey(struct crypto_shash *tfm,
 -- 
 2.51.1.930.gacf6e81ea2-goog
 
