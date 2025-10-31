@@ -1,159 +1,138 @@
-Return-Path: <linux-kernel+bounces-880360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0C1C25971
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:34:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E1FC259B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3571A22317
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:35:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D60E4F5EAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD25D3271EB;
-	Fri, 31 Oct 2025 14:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5419434C997;
+	Fri, 31 Oct 2025 14:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Qq9sD7TS"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cvZlJupw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4CC3446C4;
-	Fri, 31 Oct 2025 14:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D666D34C811;
+	Fri, 31 Oct 2025 14:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921269; cv=none; b=FDyQ4NMLokBZkeRhKYLQ+P/Pb7Tar16HAZuad0/DaJGdqZNyLlq/EGRNub9jwoKi4WARwy7O0J9CY9bH+DV6aIJ1ElW0kJvN3heKk4LoaPvvBDifZExK55sPF5tJLEt4aWm0cQuPwUncgbF8Wa+I4OJU9GtVaCwWe91Bos+45AU=
+	t=1761921272; cv=none; b=dciDHKUEZ3PUwTej1ZIq0ni9ZTjxPI31Q2bZ9GPNJnif2rnfJrzV3Is+xvYcMaXyAZ3sy0BfSATXD+T4WvHLImCPXbCzrWjc+b44i96n55MhQJJcez8iZgZ+AQ5regRtG6CsD0XT4bV3ZbVLYcV2b2uu1wALjsSxzzrEzxoprB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921269; c=relaxed/simple;
-	bh=fUtT4yyaxPZDIJm+CMf9XzeSHwaBFvBHzs3q09vOeow=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=NwdnlQ9WEwqUPoqq4Asq8sOhFyzmwxsdFCdXLRx6WpklFMKN1bGeUSoZRqSkW5DYKmUO0vqMWeFKXLQxD364XtVOhZefbXNha28MnS6XkmeSvNsSL2ZyEb3YBx3CqapH+XFSXjzhr3uGaa4GxWp2CZ4U5Ln++W1rXx0NbRrxuq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Qq9sD7TS; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=mZR9Pq04nskBCnZfHR64uH8c7tW1FVjIhdfQXoh36wA=; b=Qq9sD7TScjYoYu+npw7XmZcDcg
-	1oUcBaaanP3cn8MCTFkHxj6n24qb6dY4XI8aISeJxnDmOleBgtsUAZNHoeessS8uU7tvkMBnLbUyt
-	gyOTV2rIDFkU/ytgqCjXsCkqtEKk1FvyYpf4rcSn3hMKOBKLp4pPqm4AxxwQ4SHuMm3w=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:53038 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vEqCr-00059X-9u; Fri, 31 Oct 2025 10:34:22 -0400
-Date: Fri, 31 Oct 2025 10:34:20 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: biju.das.au <biju.das.au@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
- wsa+renesas <wsa+renesas@sang-engineering.com>, Prabhakar Mahadev Lad
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
- <linux-serial@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
- <linux-renesas-soc@vger.kernel.org>
-Message-Id: <20251031103420.e02c11d51e6f8e8871d22b96@hugovil.com>
-In-Reply-To: <TY3PR01MB11346985328E37A14287CB3B986F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
-	<20251030175811.607137-4-biju.das.jz@bp.renesas.com>
-	<20251030162155.d08e9d6fd3100092be2ade80@hugovil.com>
-	<TY3PR01MB1134686842EA2A6EF864E1ABD86F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-	<TY3PR01MB11346985328E37A14287CB3B986F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761921272; c=relaxed/simple;
+	bh=/g1AxzJQOcya88xAhA0tStQsU9mezZXtDTiynle222Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7QscrN+x9qpRSmiKCtDpIsXPXTdIMAOKyCtbA5+FsvR1oGJc4jyTahUapxsIth7Xm1aPvVvntnBuZcjGaLKFpk5m8RyayO87TecL5osp/FObC806ennasEl+t7Hrm2zs/q9pZPgmJDh+myoUJL0T88+3dBGyWbFdYVPrWKkpN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cvZlJupw; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761921271; x=1793457271;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/g1AxzJQOcya88xAhA0tStQsU9mezZXtDTiynle222Y=;
+  b=cvZlJupwnd4jtEq6U0PT2GcuxICUJZ0aklBDtrQWyzkWd+EJ7/QCZOSY
+   pXi19iz/GDs9bO3dxHJu62JSPh/xOHEiiBU7vxJZonkQKzpvDeTFluPNR
+   RUmN+zmlbo/gqDkNo9+jPoS96MOlv5vDCQKhk1gMc0G0PfFtt/DFpXPzY
+   g6phIM8UkzoVcxYxkgHesBhpdyqIlx0sAwaF2xVWpwWFKM01O/iyrqkfV
+   NMRqa2lslYOFkP8yOhWw55Bp4GsG35AB+BE2lYO54EyyfMOsHgbHPMhSw
+   P00Mm5Xje1YH57uzw9P0F3SehtA/hua0VhzI4RGDR8+/heHAMXKSLlipm
+   A==;
+X-CSE-ConnectionGUID: r40qX6xxQkC+XhtIRK/zwg==
+X-CSE-MsgGUID: Qxs2tb4bSEiKZXEcG7Mzzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="51654686"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="51654686"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:34:30 -0700
+X-CSE-ConnectionGUID: /EQF3V/oQ/+hpsvXAymnpg==
+X-CSE-MsgGUID: DJ4WcSkuTQmrSZQtuuieLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="186990352"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:34:28 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEqCt-00000004IPL-0Zcq;
+	Fri, 31 Oct 2025 16:34:23 +0200
+Date: Fri, 31 Oct 2025 16:34:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Raag Jadav <raag.jadav@intel.com>,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] cpufreq: qcom-nvmem: add compatible fallback for
+ ipq806x for no SMEM
+Message-ID: <aQTI7o1HQYbQ_Pl2@smile.fi.intel.com>
+References: <20251031130835.7953-1-ansuelsmth@gmail.com>
+ <20251031130835.7953-4-ansuelsmth@gmail.com>
+ <aQS5FpuOWk1bWnQd@smile.fi.intel.com>
+ <6904c563.050a0220.a13ee.0212@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.4 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6904c563.050a0220.a13ee.0212@mx.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, 31 Oct 2025 07:08:24 +0000
-Biju Das <biju.das.jz@bp.renesas.com> wrote:
+On Fri, Oct 31, 2025 at 03:19:12PM +0100, Christian Marangi wrote:
+> On Fri, Oct 31, 2025 at 03:26:46PM +0200, Andy Shevchenko wrote:
+> > On Fri, Oct 31, 2025 at 02:08:34PM +0100, Christian Marangi wrote:
 
-> 
-> 
-> > -----Original Message-----
-> > From: Biju Das
-> > Sent: 31 October 2025 07:07
-> > To: 'Hugo Villeneuve' <hugo@hugovil.com>; biju.das.au <biju.das.au@gmail.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Jiri Slaby <jirislaby@kernel.org>; wsa+renesas
-> > <wsa+renesas@sang-engineering.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>;
-> > Geert Uytterhoeven <geert+renesas@glider.be>; linux-kernel@vger.kernel.org; linux-
-> > serial@vger.kernel.org; linux-renesas-soc@vger.kernel.org
-> > Subject: RE: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
+...
+
+> > > +		if (of_machine_is_compatible("qcom,ipq8062"))
+> > > +			msm_id = QCOM_ID_IPQ8062;
+> > > +		else if (of_machine_is_compatible("qcom,ipq8065") ||
+> > > +			 of_machine_is_compatible("qcom,ipq8069"))
+> > > +			msm_id = QCOM_ID_IPQ8065;
+> > > +		else if (of_machine_is_compatible("qcom,ipq8064") ||
+> > > +			 of_machine_is_compatible("qcom,ipq8066") ||
+> > > +			 of_machine_is_compatible("qcom,ipq8068"))
+> > > +			msm_id = QCOM_ID_IPQ8064;
 > > 
-> > Hi Hugo,
+> > A nit-pick (in case you need a new version of the series): I would expect
+> > the conditionals be sorted by assigned value.
 > > 
-> > > -----Original Message-----
-> > > From: Hugo Villeneuve <hugo@hugovil.com>
-> > > Sent: 30 October 2025 20:22
-> > > Subject: Re: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
-> > >
-> > > Hi Biju,
-> > >
-> > > On Thu, 30 Oct 2025 17:57:51 +0000
-> > > Biju <biju.das.au@gmail.com> wrote:
-> > >
-> > > > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > > >
-> > > > Shorten the number lines in sci_init_clocks() by fitting the error
-> > > > messages within an 100-character length limit.
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > ---
-> > > > v1->v2:
-> > > >  * Updated commit message 80-character->100-character.
-> > > >  * Increased line limit for error messages to 100-column limit.
-> > > > ---
-> > > >  drivers/tty/serial/sh-sci.c | 13 ++++---------
-> > > >  1 file changed, 4 insertions(+), 9 deletions(-)
-> > > >
-> > > > diff --git a/drivers/tty/serial/sh-sci.c
-> > > > b/drivers/tty/serial/sh-sci.c index b33894d0273b..e9345f898224
-> > > > 100644
-> > > > --- a/drivers/tty/serial/sh-sci.c
-> > > > +++ b/drivers/tty/serial/sh-sci.c
-> > > > @@ -3008,11 +3008,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
-> > > >  			return PTR_ERR(clk);
-> > > >
-> > > >  		if (!clk && sci_port->type == SCI_PORT_RSCI &&
-> > > > -		    (i == SCI_FCK || i == SCI_BRG_INT)) {
-> > > > -			return dev_err_probe(dev, -ENODEV,
-> > > > -					     "failed to get %s\n",
-> > > > -					     name);
-> > > > -		}
-> > > > +		    (i == SCI_FCK || i == SCI_BRG_INT))
-> > > > +			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
-> > > >
-> > > >  		if (!clk && i == SCI_FCK) {
-> > > >  			/*
-> > > > @@ -3022,16 +3019,14 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
-> > > >  			 */
-> > > >  			clk = devm_clk_get(dev, "peripheral_clk");
-> > > >  			if (IS_ERR(clk))
-> > > > -				return dev_err_probe(dev, PTR_ERR(clk),
-> > > > -						     "failed to get %s\n",
-> > > > +				return dev_err_probe(dev, PTR_ERR(clk), "failed to get %s\n",
-> > > >  						     name);
-> > >
-> > > This one can also be on one line (99 characters).
-> > 
-> > It is 101 characters.
+> > 		if (of_machine_is_compatible("qcom,ipq8062"))
+> > 			msm_id = QCOM_ID_IPQ8062;
+> > 		else if (of_machine_is_compatible("qcom,ipq8064") ||
+> > 			 of_machine_is_compatible("qcom,ipq8066") ||
+> > 			 of_machine_is_compatible("qcom,ipq8068"))
+> > 			msm_id = QCOM_ID_IPQ8064;
+> > 		else if (of_machine_is_compatible("qcom,ipq8065") ||
+> > 			 of_machine_is_compatible("qcom,ipq8069"))
+> > 			msm_id = QCOM_ID_IPQ8065;
+> >
 > 
-> Sorry, 100 Characters. Let me run checkpatch to see, it generates warning.
+> Hi as said in the commit, parsing 65/69 before 64 is needed as we might
+> have compatible like
+> 
+> "qcom,ipq8065","qcom,ipq8064" so we might incorrectly parse msm_id
+> ipq8064.
 
-Hi Biju,
-I already did before replying, it was fine.
+Oh, this is unfortunate. Wouldn't it be possible to use some API that returns
+an index (or an error if not found) of the compatible? I believe we have a such
+for the regular 'compatible' properties.
 
-Hugo.
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
