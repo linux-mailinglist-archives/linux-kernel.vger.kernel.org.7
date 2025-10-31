@@ -1,192 +1,190 @@
-Return-Path: <linux-kernel+bounces-879429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DBCC23156
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:57:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BFCC2315A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06F6425481
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:56:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 298A64E56C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5590D30DECF;
-	Fri, 31 Oct 2025 02:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA36530E83D;
+	Fri, 31 Oct 2025 02:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUKSpV+A"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukhDa1qk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E851C262FED
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BFB27E040;
+	Fri, 31 Oct 2025 02:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761879356; cv=none; b=M5HOM3tFPygTEBI3uG9Vu5d2IMZ2Ca+DwfauJ7wsju692VTXfzfQh08NFpY7QsO5Q0tk33/pHsxZZpjKuTB3z1ZHgEdzUCR37XQlPVvOziTC9pr6GlGkEiUfzCnErUC0hQlHQoJv5NNGc8/wkHDyIuDmluYNG9JiiMjxXf51/Pk=
+	t=1761879443; cv=none; b=BUM+sHAbkMLCyw4fRsYZhPl2Xc1cKxlZH0DB3QNT9pJjp8K9FPGkTz+nkGdLRHhfAxe9Igos9ALUSxpufYH6nfI0CEnef0rNCXwOQADUkbO8h0ctjgNCGNAi6wh+zFOvqPUgLJZ77akZ3T1Cm91KIHDg9mzPNWuNm8nysi7m7kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761879356; c=relaxed/simple;
-	bh=35IxH3AVqIfszjuIBMqHIXPBco12DNO3hgOgY8U+IZQ=;
+	s=arc-20240116; t=1761879443; c=relaxed/simple;
+	bh=KUsx73wI6sPC91XwqDu6VZod5VCxoTfFdHsrrDX5nf8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXK0GjmNAlRIRx7VPofQmaX2I7zxqbd3ECU7wJhq8KoHrQ5EhhUMZ1A5IxX+Ok9Ymv+NICdLtxAo/0oT1w74nO1Vaec1qdK2rMlIgYnfcw4f4VaRLMdwHlsZUbHb3w1Lunyb+I2COyon6cuYOmPrADpgarp86NpyW4jqBQ23xds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SUKSpV+A; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b6d6984a5baso337739466b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761879353; x=1762484153; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dbb+HtAkz5E08qbbx7069G9TclCwWAydoNERXltG7Jo=;
-        b=SUKSpV+An5JSUBKscu1wjho+soc8GgEgqx6fvdHdzodN5+9H9hUeqyt3WIZOKE2u/v
-         fKjmkMROf3QduSKuo/t3i1I4EAij19g3XkdJw3c/hBQPyOGHSecwutAv4KD9ba7Mv2cS
-         7x9BwI3mP1gEUTXPod50HuwSlcheiGh9RSAlWowCIFTkbk2Oza/sg/0VDuLVfSDnZfUt
-         5m/qWZ5GSfkT8jR62GAfyITZ9/t19429B3YTzZS30Pdx9492WKOIhDi9YNhmomccnxH8
-         cgORH0ya+pKllOSDnyf+7uuDLyQdA506b/OdWf6kVHUnOQ9S5/LhKA9SaBaYlp4npdn9
-         lDzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761879353; x=1762484153;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dbb+HtAkz5E08qbbx7069G9TclCwWAydoNERXltG7Jo=;
-        b=EL3Ur6hcQA9JmuYOECbvQYuT81caNWkNB8Kp7BUcBu6wlNnyJ0vfolbFH4lnYQ2FC0
-         PnV1iEdhcfKzIJdHpryBkXN5m05EwRKietz/y67eTsKkK2OO7rOhqKttmmXAFQjxTyMI
-         OGReym7ZYjG5PzLvm0b+64zs2O543dKxBMP+9Pd/Db8gN0sy0h8asavOWy5Thm+7R/Px
-         vPuRSu0tnM1M3erAhDIwjp5Wp6ISKlDrOuhnLuIptDdRQFOGb447JzAcM3Itq9THPy22
-         PWanMmY1ZS5BqiseJ7tRSV2yoHl6UDPFwxbMStCogFp4H69SrTzbXAPHBeYsNsHXeVnE
-         FHkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn9ZYKQSWE2fWae2F6jbJo7dYbFaDfNY7lYUBOaAoRwkHHaSgkIptrNP2Mb41UFEwptWuGgz9jukxv+DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmzXOFKey/eYbLPdfnSgoYXeQjHcGzCSiKK8vLUrAnsUttdgDV
-	gJD/9D2VB/E8cAHBkWLm7hUfEt27Qnn6tIpmWTEzyHQRTNKvOf5fk+yC
-X-Gm-Gg: ASbGncud4OrXIJkE6x6M94tUCInlDoScK4VKPgDX+yo2NB/9mvYicF1sB5oduWlWPT1
-	5knCxMZtQGRohqEZiYyeCEZoBeQB2JZ3HSVbLpmYYqZfCzyCmtK6rMFp+Z1/50ThEj+xux78xMn
-	PHV62HFKPS9ITBu/MHAR1B417UAZ2cBM4COzaqKiyNZEuUy300RNfYWw1qpPjTtIaYzS2U19M/z
-	sxpavUr7mBYwFjMEjdXpbJz/sBfeBSchrGXT4DUPE/xhWLdQqsKBWxrxsTyca8JJWXMIvVEpLxt
-	8uYbDFNne8V7jqTxPSHpQ/VZjLKXRkDoUm25v72ufF8oak/uhsh1bII+bgq2kZ8D9iHf5DaWWcb
-	/xh8AUohD/nLa3/iwYEuiwZlm/uFJr9M44wcv5Lbatu4AydZDGkVG0j2azt0iUOCT3sJPpDRrds
-	Y=
-X-Google-Smtp-Source: AGHT+IFaVEZlf1vH3SzuCruGg4BO7/3SvDRPUOGQR9RtSR34EJQMmXJ0JlLsI6L2lpx3vT3NXuIEKA==
-X-Received: by 2002:a17:907:3f13:b0:b0e:d477:4972 with SMTP id a640c23a62f3a-b707019d264mr198901366b.25.1761879353147;
-        Thu, 30 Oct 2025 19:55:53 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077cd2d48sm48761266b.60.2025.10.30.19.55.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Oct 2025 19:55:52 -0700 (PDT)
-Date: Fri, 31 Oct 2025 02:55:51 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
-	kernel@pankajraghav.com, akpm@linux-foundation.org,
-	mcgrof@kernel.org, nao.horiguchi@gmail.com,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 3/3] mm/huge_memory: fix kernel-doc comments for
- folio_split() and related.
-Message-ID: <20251031025551.bmt4wh6e6tmhcr4i@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030014020.475659-4-ziy@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7qWVxLhYAzbB6g9sSXhzjZ6KMI2Ek32q1CS9cTsSL1Ag/YbCK21CaXBwVjJNHg3W9dNL3fizfRBbjACh19+7xvob3KRPIoVqvBvf+G5jJ5WRDIv7z62oESq1k2kKngSMY4ZsVgK46RYdD1m6nOHWmmKDSuknCnRhl2L5ZazVmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukhDa1qk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E85C4CEF1;
+	Fri, 31 Oct 2025 02:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761879441;
+	bh=KUsx73wI6sPC91XwqDu6VZod5VCxoTfFdHsrrDX5nf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ukhDa1qkvjAzY+T6gBWTtd0jrGSBFVBl09O0lJYB2SHzAOkMz6sTMtOR/dj+TnIXd
+	 LKZzJvbJ/0Qcoa+mSFCf6INBUkBhBfcr+xfw83aFPRW3DgpByzn8jq71LeoORgFtXF
+	 rsspDY5bF10qgLba/5IRnXdYcg6qvi65+5BaZ3g49HXYWerJIuM5AFURncimGWqQgo
+	 gJYMwHgKqFcjWR22DcBqvbRcLpg8c0pMZVtQKyhMzYkpO51WfoyYTYXPf/6BhtC63p
+	 9a3LBIl6DJQhdIN1PTVP87RynTFfRaInze9g3nZSylz9YcqYTyNxlxhFgvhmOc//U7
+	 dNf7nuRJe+ArQ==
+Date: Fri, 31 Oct 2025 10:57:12 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Peter Chen <hzpeterchen@gmail.com>, Chaoyi Chen <kernel@airkyi.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
+ support for DisplayPort
+Message-ID: <20251031025712.GA1284354@nchen-desktop>
+References: <20251029071435.88-11-kernel@airkyi.com>
+ <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
+ <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com>
+ <e0c5bda3-7428-49e0-9955-fa23f1e4f35d@rock-chips.com>
+ <CAL411-oXfvp-iqN+uRmFHijdmW=1omKwozKOoZ2shxukMHmwPg@mail.gmail.com>
+ <C6253E8254C80B0F+839b71d0-1bd8-40b7-9515-7ce4a1eb8673@airkyi.com>
+ <CAL411-pULVu4AYybW9oW7kmr4M_kJhdytgBjLPb4y6w_2dj+0w@mail.gmail.com>
+ <7853bbf0-34e5-4880-a2f4-2d73f25cd5e6@rock-chips.com>
+ <CAL411-rFK0o_cxBO_yJFHWurGFKxZGxw6=kpqxRipMetJskTaQ@mail.gmail.com>
+ <e2fcc437-0650-4fdf-bb75-3463a80299fe@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251030014020.475659-4-ziy@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e2fcc437-0650-4fdf-bb75-3463a80299fe@rock-chips.com>
 
-On Wed, Oct 29, 2025 at 09:40:20PM -0400, Zi Yan wrote:
->try_folio_split_to_order(), folio_split, __folio_split(), and
->__split_unmapped_folio() do not have correct kernel-doc comment format.
->Fix them.
->
->Signed-off-by: Zi Yan <ziy@nvidia.com>
->Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->Acked-by: David Hildenbrand <david@redhat.com>
-
-Generally looks good, while some nit below.
-
->---
-> include/linux/huge_mm.h | 10 ++++++----
-> mm/huge_memory.c        | 27 +++++++++++++++------------
-> 2 files changed, 21 insertions(+), 16 deletions(-)
->
->diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->index 34f8d8453bf3..cbb2243f8e56 100644
->--- a/include/linux/huge_mm.h
->+++ b/include/linux/huge_mm.h
->@@ -386,9 +386,9 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
-> 	return split_huge_page_to_list_to_order(page, NULL, new_order);
-> }
+On 25-10-30 14:50:33, Chaoyi Chen wrote:
+> > Hi Chaoyi,
+> > 
+> > There are two questions I have still not seen the answer to:
+> > - Why USB2 PHY is related to your Type-C patch?
 > 
->-/*
->- * try_folio_split_to_order - try to split a @folio at @page to @new_order using
->- * non uniform split.
->+/**
->+ * try_folio_split_to_order() - try to split a @folio at @page to @new_order
->+ * using non uniform split.
-
-This looks try_folio_split_to_order() only perform non uniform split, while the
-following comment mentions it will try uniform split if non uniform split is
-not supported. 
-
-Do you think this is a little confusing?
-
->  * @folio: folio to be split
->  * @page: split to @new_order at the given page
->  * @new_order: the target split order
->@@ -398,7 +398,7 @@ static inline int split_huge_page_to_order(struct page *page, unsigned int new_o
->  * folios are put back to LRU list. Use min_order_for_split() to get the lower
->  * bound of @new_order.
->  *
->- * Return: 0: split is successful, otherwise split failed.
->+ * Return: 0 - split is successful, otherwise split failed.
->  */
-> static inline int try_folio_split_to_order(struct folio *folio,
-> 		struct page *page, unsigned int new_order)
->@@ -486,6 +486,8 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
-> /**
->  * folio_test_pmd_mappable - Can we map this folio with a PMD?
->  * @folio: The folio to test
->+ *
->+ * Return: true - @folio can be mapped, false - @folio cannot be mapped.
->  */
-> static inline bool folio_test_pmd_mappable(struct folio *folio)
-> {
->diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->index 0e24bb7e90d0..381a49c5ac3f 100644
->--- a/mm/huge_memory.c
->+++ b/mm/huge_memory.c
->@@ -3567,8 +3567,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
-> 		ClearPageCompound(&folio->page);
-> }
+> I was just following other people's approach. Sorry, this should be removed from the dts.
 > 
->-/*
->- * It splits an unmapped @folio to lower order smaller folios in two ways.
->+/**
->+ * __split_unmapped_folio() - splits an unmapped @folio to lower order folios in
->+ * two ways: uniform split or non-uniform split.
->  * @folio: the to-be-split folio
->  * @new_order: the smallest order of the after split folios (since buddy
->  *             allocator like split generates folios with orders from @folio's
+> 
+> > - How does the USB role switch event notify the USB controller driver, eg dwc3?
+> 
+> Sorry, I misunderstood what you said before. There is indeed a missing usb-role-switch now. I referred to the approach in rk3588-evb1-v10.dts. Is the following way of writing correct?
+> 
+> &usbc_connector {
+>     ports {
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+> 
+>         port@0 {
+>             reg = <0>;
+> 
+>             usbc_orien_sw: endpoint {
+>                 remote-endpoint = <&tcphy0_typec_orien_sw>;
+>             };
+>         };
+> 
+>         port@1 {
+>             reg = <1>;
+> 
+>             usbc_role_sw: endpoint {
+>                 remote-endpoint = <&dwc3_0_role_switch>;
+>             };
+>         };
+> 
+> 
+>         port@2 {
+>             reg = <2>;
+> 
+>             usbc_dp: endpoint {
+>                 remote-endpoint = <&tcphy0_typec_dp>;
+>             };
+>         };
+>     };
+> };
+> 
+> &usbdrd_dwc3_0 {
+>     status = "okay";
+>     usb-role-switch;
+> 
+>     port {
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+>         dwc3_0_role_switch: endpoint@0 {
+>             reg = <0>;
+>             remote-endpoint = <&usbc_role_sw>;
+>         };
+>     };
+> };
+> 
+> &tcphy0_usb3 {
+>     orientation-switch;
+> 
+>     port {
+>         tcphy0_typec_orien_sw: endpoint {
+>             remote-endpoint = <&usbc_orien_sw>;
+>         };
+>     };
+> };
+> 
+> &tcphy0_dp {
+>     mode-switch;
+> 
+>     port {
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+> 
+>         tcphy0_typec_dp: endpoint@0 {
+>             reg = <0>;
+>             remote-endpoint = <&usbc_dp>;
+>         };
+>     };
+> };
+> 
 
-In the comment of __split_unmapped_folio(), we have some description about the
-split behavior, e.g. update stat, unfreeze.
-
-Is this out-dated?
+The general hierarchy is okay, just need to fix some dts coding
+style issue.
 
 -- 
-Wei Yang
-Help you, Help me
+
+Best regards,
+Peter
 
