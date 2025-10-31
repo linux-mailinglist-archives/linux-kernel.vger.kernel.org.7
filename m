@@ -1,96 +1,130 @@
-Return-Path: <linux-kernel+bounces-880960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0F3C270D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:34:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D21C270CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82A071890566
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:33:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0C4943427C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D722E426B;
-	Fri, 31 Oct 2025 21:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF7A3101C0;
+	Fri, 31 Oct 2025 21:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O7wYv5oJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pzJjMn2O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scPetG/8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2307C2D8362
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 21:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA38306B3D;
+	Fri, 31 Oct 2025 21:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761946377; cv=none; b=l9UA0KzZtdEyxqdBz4vC8BGKB1Hr3/l8kBiXVz4Z7BSS5SKo/77HLRu2yyIhs8rmSpKxEuASLO+cCbkI4/LaNRy/C77vtLtxPoh2wqHXA+tZqpMgIS/KXB+0XVSekRQLdiVLvCoflnV8e2CSLQIH5gNKprwDl8bw83ckI674Cgw=
+	t=1761946380; cv=none; b=J5zwGNPmXncFGF/pRdDi7jF86w+hi8eNkR2fUpOT60oUVGnP8ncHDmpDRf0vbZig8EdflUBGXl1+rHZN1c1efBcCoWKWWaohSjjSlIdL0d1TAde/irBefNDvPCdUa7v18omwllNO/XZd3kDwZB4eaAvf4SOR0KIf/+CNJIvIOGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761946377; c=relaxed/simple;
-	bh=3jcCB8/EkZPfz7coyBYWsShFlwvNE2phWmXKkqmYyoI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=amZX/ACmY3tsPvQYv40VqOqB1f7kC2jHXLRQfzIpqX4Zr75IiEZrw9abJnfxODSoFX1TvKx2OSY93ulB+TFKamx6VgkbtpEVgWrD++nG+zGBAeWq0kZ6E3tRFKj121qZqjBAiYshTgizo4gouExbn5AMlX36gB+Mbm1qOjaBjbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O7wYv5oJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pzJjMn2O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761946373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=73A5YyJdt58GaQCs7MXkkXB1WngwQ/eBfsUfjTWrvnk=;
-	b=O7wYv5oJq1h7dE26GIu2j81t/YNiR0MJAjptP1kv8ZonMUfBy8eOQAclPrnVjWsx76k73L
-	/0qix1LVjtxzoSAsdI+k3xuRklgUXv6wGEcT6I3TWYSlVy0w5sLEq1HhYcqloXJ4uj0mA2
-	bXnLfVAAKCjdkqmcjpIUrTds4Ul/bOTzda7xKZbZTRYElVucwTZDOntn2MH6Dd0aKHhj7M
-	VuH7urFOZSvQrvqFjY2e2ddmwFBPNIYHiM+pB3dZlLeeCJFTapypGKH8C8UDxHNG7Addtb
-	BZwHpuPhbGuxK/YcyXU854paEJ4z4GBWZO4UATiBIgPNV2j0UI5xJRu9m5Es7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761946373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=73A5YyJdt58GaQCs7MXkkXB1WngwQ/eBfsUfjTWrvnk=;
-	b=pzJjMn2OwJPgc4jUGKphIkDCS2aXhq5St61jCoWQQg0AWQuSu5zcdPJ3ALedcbBok2UzsQ
-	q1nbdR6C9ao06SCQ==
-To: Charles Mirabile <cmirabil@redhat.com>, lkp@intel.com
-Cc: cmirabil@redhat.com, linux-kernel@vger.kernel.org, lzampier@redhat.com,
- oe-kbuild-all@lists.linux.dev, x86@kernel.org
-Subject: Re: [tip:irq/drivers 22/22]
- drivers/irqchip/irq-sifive-plic.c:590:55: sparse: sparse: incorrect type
- in argument 1 (different address spaces)
-In-Reply-To: <20251027174725.1014197-1-cmirabil@redhat.com>
-References: <202510271316.AQM7gCCy-lkp@intel.com>
- <20251027174725.1014197-1-cmirabil@redhat.com>
-Date: Fri, 31 Oct 2025 22:32:52 +0100
-Message-ID: <87346ysqnv.ffs@tglx>
+	s=arc-20240116; t=1761946380; c=relaxed/simple;
+	bh=Q4jsAPOYgiCp2KBXrG94dO+Z5cGNiyamdcVsqHPG6eM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gfmp+KxaAE6u9vCd8fyS2VyIvvXWjkgxfZCgVCD1T+IqnJk8JiEiV6pNN2pFGuTVhP38a/SBVAJS47EwO6iGr1rm5NVtytTEPaxVLPL81FOQawyr5yo9ijTkcjGuYaY0odz7Fye5ZQ7SFE7+z2hB6o8A6MOP5kU9tY3w3XToros=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scPetG/8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE0BC4CEE7;
+	Fri, 31 Oct 2025 21:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761946379;
+	bh=Q4jsAPOYgiCp2KBXrG94dO+Z5cGNiyamdcVsqHPG6eM=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=scPetG/8GyxPOp5NeOGZMQrNgPWI6rBtLqVJwmQQNXxtmixSR3lctbzXBP3bSETJ8
+	 OnAwpatmqDVSwsZHVga36biummiWSTCJxbHFjyYwYG7pAY5n56+e3Pjn/pN3h8yYtI
+	 WvetyPgBQY5r4jDatzGOP2vVqyLwBDghoLO6HkUcEcyxL7LcVQppeGf/rRaghjt9h3
+	 yMqziMyZ+vWh+J4B5F7NaP/Qk1AOWN8nmdvBs7UqjgOusnmkNkziqzA0jsSudpR15p
+	 rSvl24o0f6k6NRcC5UexL876spmEuDWkRhQFNLqd1RKl3xWRhtTlnjCtuKNbx92PNH
+	 wjOO4lNYT4ufg==
+Message-ID: <0406562e-2066-4cf8-9902-b2b0616dd742@kernel.org>
+Date: Fri, 31 Oct 2025 22:32:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu()
+ operations
+To: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org, linux-modules@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+ <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27 2025 at 13:47, Charles Mirabile wrote:
-> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-> index 9c4af7d58846..fbf7378899d3 100644
-> --- a/drivers/irqchip/irq-sifive-plic.c
-> +++ b/drivers/irqchip/irq-sifive-plic.c
-> @@ -590,12 +590,12 @@ static int plic_probe(struct fwnode_handle *fwnode)
->  		if (parent_hwirq != RV_IRQ_EXT) {
->  			/* Disable S-mode enable bits if running in M-mode. */
->  			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
-> -				void __iomem *enable_base = priv->regs +
-> +				u32 __iomem *enable_base = priv->regs +
->  					CONTEXT_ENABLE_BASE +
->  					i * CONTEXT_ENABLE_SIZE;
->  
-> -				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
-> -					__plic_toggle(enable_base, hwirq, 0);
-> +				for (int j = 0; j <= nr_irqs / 32; j++)
-> +					writel(0, enable_base + j);
->  			}
->  			continue;
->  		}
 
-Care to send a proper patch for that?
+
+On 10/09/2025 10.01, Vlastimil Babka wrote:
+> Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
+> For caches with sheaves, on each cpu maintain a rcu_free sheaf in
+> addition to main and spare sheaves.
+> 
+> kfree_rcu() operations will try to put objects on this sheaf. Once full,
+> the sheaf is detached and submitted to call_rcu() with a handler that
+> will try to put it in the barn, or flush to slab pages using bulk free,
+> when the barn is full. Then a new empty sheaf must be obtained to put
+> more objects there.
+> 
+> It's possible that no free sheaves are available to use for a new
+> rcu_free sheaf, and the allocation in kfree_rcu() context can only use
+> GFP_NOWAIT and thus may fail. In that case, fall back to the existing
+> kfree_rcu() implementation.
+> 
+> Expected advantages:
+> - batching the kfree_rcu() operations, that could eventually replace the
+>   existing batching
+> - sheaves can be reused for allocations via barn instead of being
+>   flushed to slabs, which is more efficient
+>   - this includes cases where only some cpus are allowed to process rcu
+>     callbacks (Android)
+> 
+> Possible disadvantage:
+> - objects might be waiting for more than their grace period (it is
+>   determined by the last object freed into the sheaf), increasing memory
+>   usage - but the existing batching does that too.
+> 
+> Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
+> implementation favors smaller memory footprint over performance.
+> 
+> Also for now skip the usage of rcu sheaf for CONFIG_PREEMPT_RT as the
+> contexts where kfree_rcu() is called might not be compatible with taking
+> a barn spinlock or a GFP_NOWAIT allocation of a new sheaf taking a
+> spinlock - the current kfree_rcu() implementation avoids doing that.
+> 
+> Teach kvfree_rcu_barrier() to flush all rcu_free sheaves from all caches
+> that have them. This is not a cheap operation, but the barrier usage is
+> rare - currently kmem_cache_destroy() or on module unload.
+> 
+> Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
+> count how many kfree_rcu() used the rcu_free sheaf successfully and how
+> many had to fall back to the existing implementation.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+
+Hi Vlastimil,
+
+This patch increases kmod selftest (stress module loader) runtime by about
+~50-60%, from ~200s to ~300s total execution time. My tested kernel has
+CONFIG_KVFREE_RCU_BATCHED enabled. Any idea or suggestions on what might be
+causing this, or how to address it?
 
