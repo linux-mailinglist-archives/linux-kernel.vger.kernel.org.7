@@ -1,119 +1,112 @@
-Return-Path: <linux-kernel+bounces-880235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18262C2528E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:04:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E77C2529A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2004424286
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:04:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 413974FB154
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D9134A789;
-	Fri, 31 Oct 2025 13:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061A1348472;
+	Fri, 31 Oct 2025 12:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AWUEHXVz"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h3sj5XBa"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E41EA7DD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58A911CA9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915875; cv=none; b=M8k1SYqfXFlpJQ2QVNw2p6elftSOJGW82u8BS5IhM6MzXv5n6jLgUqcSA24mY6739LD2ZY2at33O16x09mpL4HR3tL5bN+/39TqN7oR3t2KBXEOQ3ajs34ChAKVjdOFgwzveN4geoDR1GNxi1TYIEYB89Vd8z/91OzDDdqf0onk=
+	t=1761915430; cv=none; b=N53B9ML/yGu6kBSAe6gzQzQR5yY1KXnmot8TQ+fzViJd4NFbYpd7nLDh/lRuROdT6jkTVlRYwJYAy/QhJmWK7lF3jb93PlatYLgUV4fKxiAlkq4xuddkARwhQIse7IsiV+tz71raPauuknUxedmKjIIfT7UIG4lmauD1AmW348k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915875; c=relaxed/simple;
-	bh=yeiq88IC/wiatgkkK0r6GR62xuv/O/ItLS4vy5v9HZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uL8M2tjhe+j1YfCjCKL2e8sRwRWgPgXYRR0BKk6zPj7xjSKUEwfMc9WLdKl9hzMYbZ9pQ//WNanS2731ejrzoWMcShqIVZUY5ZXzNr1/bV0spYtruv1poR7m6GO/yyQM5grQmW09Snxb1Uljc6UGp7jgymHk8oOSuLXMlHHUcaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AWUEHXVz; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47114a40161so25294765e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:04:33 -0700 (PDT)
+	s=arc-20240116; t=1761915430; c=relaxed/simple;
+	bh=l1q3ZoTg1Enh2GqilNhs4U1NnvY2DHGQklHOE6qU9DA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sHUjYHcYtCUfi0k8Lh1ZdnOEuB5aiF8jOoGCnFptzxIHneHvQGEf8sO6LmnS7p9tHAHkoPMscqRFKpDTmT29BhvQ16/WMYMR+xf7ISZ7KzHEh2fvLs8xW1bri8xv6sJYY46jtLoqOWIlQ/LE6ZyQB0cqJXKYYcWW0iArxBuEAvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h3sj5XBa; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-475db4369b1so12059305e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:57:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761915872; x=1762520672; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qhTG70xhFOoL3LxdnSOH1s4YIgOQ3cukod+Akz7RCDg=;
-        b=AWUEHXVzRER+h3Fa/h/PpkzNHYFo+BN1THtGkFpY5ACBoaNibcfs88be+6wTqjh5c8
-         4+rLyQEHYb7P4zllAPFRz9VCNRiRvSDvqT80y8xqGrp1ryUg6VhmMt4Gmm9sXvzNuThu
-         I+Q9YNN+DawHtGuUNqAfa6lt14W4ZlfL1U2bt5weoYD/n9CxZVj6haqd6oFAD4/Ds9AF
-         b5IDNha0wTlqbgIKwEDgNk1sTybAEMIH3iMM3nzkDGkvM4Q8Patnj0bwuu997iAHSztQ
-         gt7kBpINEcP5qJsYeonUmMevIdL3Ugr3+F17Qa85h65aGcA1ootFzMqkoT76epJpDb+n
-         bwHw==
+        d=google.com; s=20230601; t=1761915427; x=1762520227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l1q3ZoTg1Enh2GqilNhs4U1NnvY2DHGQklHOE6qU9DA=;
+        b=h3sj5XBa4731oQLt7oa0+cXd8Xa0wNXNnLN9gwa8bQ+BLN92wa7NGrbRAPt7DwTaY3
+         IF5hoVjeIkTcz2QK5rYymTwVNeK9f+XxFjJmj80xSDhnvjr5kw2TcsVnt+BVwHA4rWbV
+         y3Nd+mjtZ9aM1uRFgddVy7ZC1kFM9tvzgO3lqFCWM3PM/8nzl4jPCX8UTSO0mjTfvy7U
+         ErkwDuiX7/CA0LWw8yTmRIZ9/0ESgzAOV9b1msJ+JkwI4CQXC812NQJm289qluN0TECP
+         eXfFp6pUtuGYdVQTxS6zNL2ddcQ2tUdVdkZLqlhAFrBIkFI8awoJHBhFZnlx6VpENLJF
+         8rNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761915872; x=1762520672;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qhTG70xhFOoL3LxdnSOH1s4YIgOQ3cukod+Akz7RCDg=;
-        b=AH8iY/AT8H7bIVwU9SPL2uw78z8MY90aQxRSeaGmsUJBJq4cMuOH7Kz9t347m5GhsT
-         TtvqFc25kshjPM7HfPdu8xSqID7Bw0QHCA++bpSpgnpQreS7L9mP0rE9AJ9ctk2YpW9S
-         xmXiduEj6yFc3k0uIeRQ40AAStVHKnfnDdR6U8OvDU3r6GFv8C3kB1POpb3Sc4YN9Zn8
-         rIhFFpNVhb5KeOTZUibBOt88gkmLwKAkuSrZonD7T4GXBY58CsDTH6khRZ/g/5E7Tw3h
-         GrnJ8n12OcdpHSPGI3xn77XA28QlkXjDDdsjK0EOYXN2ZauDXqvwln+3dogrBVix1VJc
-         paQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkOPPHEJnloIzBYxjlhFctaCyCgGFQtVneMjwmr2a5GIw0KxvWaHdtCRmObVTNEXKWypECnvw2g2P2aGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm3JUP/UmluBbyspQ0FeLtJMCKf9HVzygcZZrjP3D+MLPgf1RC
-	zAo6BtGec7L3BrBJtqwUdFlPz417JAbyOQZMKO+pN16Pk2C/a8qROZV78hJQKomZgWA=
-X-Gm-Gg: ASbGncsP2p0euEbnRbn2CT8CZuW/5wPEJV6yOt6sIOWsX6Jr88hmO2WBDkyl45wX4W4
-	5Se6UzWogfAigrCn4dB88ggM5QHzcgfR8X6zrplg23aTnxINBiIaiWqIrWEtElLj0qtdjb8xBu8
-	bhON8gKNSrDMdo9af8yVSEwhS/o+IM7fwX7rcsDpDpoDVRIePGBJqDrBB2K8qrfgts4oz2p8zsh
-	CK67e/z76FbULaj0GCKKjg80Dc7siLZA6z7VYldiQlp4FkbrWthM9tzVZ1MjL9ZBjaRbKBqFQqW
-	WxKY5KMLDk+awGhf5oFaLLk8HELqHdOtCw0IqcB2zUonETsSLgW6c0PaCrv9zV2sMfQLkeqpajT
-	sjvbS7P/Xny9YrZm6sxohy9E2hwYTmfFzNNg+Xovh7K/ZM4IatlILeL7CEN9ZjZ/zNjFhhzYueB
-	v4LYaromTtEq+MiD3W
-X-Google-Smtp-Source: AGHT+IESqZPWaIgD3AFJm0+ERJLsHPPT26aWWfG1t25b6cC3jhoS3LSTQWz0ZPa8qZHwD6kKbm0TEA==
-X-Received: by 2002:a05:600c:1907:b0:46e:59bd:f7d3 with SMTP id 5b1f17b1804b1-4773089c432mr29850955e9.20.1761915872032;
-        Fri, 31 Oct 2025 06:04:32 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47733023256sm33788435e9.17.2025.10.31.06.04.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 06:04:31 -0700 (PDT)
-Date: Fri, 31 Oct 2025 16:04:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
-Message-ID: <aQSz3KnK4wFIJoe3@stanley.mountain>
+        d=1e100.net; s=20230601; t=1761915427; x=1762520227;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l1q3ZoTg1Enh2GqilNhs4U1NnvY2DHGQklHOE6qU9DA=;
+        b=f0iEG78vZga310ejj0HF49/ZMmARCEu0rjCrTNzoKSIEYhvK2Gedq69UzCg2X0Nw8z
+         Dm/p0AXuC2fjtZ0RYVK4Xyo22wUklYXBSoMUMYI+dYljVgZi5tCq04JWhYCXEuPSno4g
+         gIQiXFvlMDuWYJbieNInkgQUp2Y/+ydy01EYT3n7jVIgv6EfwppvK5CUHxkg2Ly1JgAQ
+         v/AOEbMQ1680abNF8FuBdCZU6XEEnYn0/e2i6ej6A6jXDad2744wWy9vjWSXEsH826TK
+         khZTurFxcWYZkEblfEBKhC0Ga3zg0JtsikXSiCmycvs+lbXfbqMcQcg49MOnIwgRuRRb
+         8eJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLN1KeRxIAmCYsFcZSvZ7bWNhlmUoxjTuhG6gT1IftfZ7YfoomXGBRM8d2JmYXaj+1zSz/dWwPKh4EYH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS3L3zhQTUIkyRxZPH3ZlOugNc5VDLzXOl4sRSnBU5FclF3yJQ
+	2Mhkb2SJM130YTpsYMXI9r48zsrxojYy7nlaVWV4y9Wx5UHrj00rMTLHHItf8xK2uyIw2DOBQSi
+	Mng3Ml47umlT9BA==
+X-Google-Smtp-Source: AGHT+IEgK0CDGQv4ZwQyy3z5e1eyJRGphw1PkE6nao1q39MEjhZWIjfrdy3ipQ14wEs0ezfStNH2iPM+yHd9Ww==
+X-Received: from wmbjp10.prod.google.com ([2002:a05:600c:558a:b0:46e:2640:aa83])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5249:b0:477:c37:2ebf with SMTP id 5b1f17b1804b1-4773086dbc6mr29546005e9.22.1761915427124;
+ Fri, 31 Oct 2025 05:57:07 -0700 (PDT)
+Date: Fri, 31 Oct 2025 12:57:06 +0000
+In-Reply-To: <80dec5ff-a9b2-4622-9dc9-ac65ca06e187@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Mime-Version: 1.0
+References: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com> <80dec5ff-a9b2-4622-9dc9-ac65ca06e187@linutronix.de>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDWIW4V2X9EX.1VQ2QCG6AU78R@google.com>
+Subject: Re: [PATCH v3] selftests/run_kselftest.sh: exit with error if tests fail
+From: Brendan Jackman <jackmanb@google.com>
+To: "=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, 
+	Brendan Jackman <jackmanb@google.com>
+Cc: Shuah Khan <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The "->allstasleep" variable is a 1 bit bitfield.  It can only be
-0 or 1.  This "= -1" assignement was supposed to be "= 1".  This
-doesn't change how the code works, it's just a cleanup.
+On Fri Oct 31, 2025 at 12:48 PM UTC, Thomas Wei=C3=9Fschuh wrote:
+> Hi Brendan,
+>
+> Oct 14, 2025 16:45:32 Brendan Jackman <jackmanb@google.com>:
+>
+> (...)
+>
+>> In case any user depends on the current behaviour, such as running this
+>> from a script with `set -e` and parsing the result for failures
+>> afterwards, add a flag they can set to get the old behaviour, namely
+>> --no-error-on-fail.
+>
+> IMO this new flag is also unnecessary.
+> The user can just do "|| true" when needed.
+>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-Found with a static checker rule that Harshit and I wrote.
+`|| true` is not the same thing, if you do that then you completely hide
+all failures of the script. With --no-error-on-fail you just skip the
+specific case of tests failing.
 
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-index 7252bc621211..7ef57b1c674c 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
-@@ -694,7 +694,7 @@ void rtl88e_set_p2p_ps_offload_cmd(struct ieee80211_hw *hw, u8 p2p_ps_state)
- 
- 			if (P2P_ROLE_GO == rtlpriv->mac80211.p2p) {
- 				p2p_ps_offload->role = 1;
--				p2p_ps_offload->allstasleep = -1;
-+				p2p_ps_offload->allstasleep = 1;
- 			} else {
- 				p2p_ps_offload->role = 0;
- 			}
--- 
-2.51.0
-
+I did say somewhere in a previous thread that this distinction (test
+failure vs test harness failure) is always gonna be a bit sketchy for
+this script since it's running on the kernel under test. But that
+doesn't mean we should give up on it completely completely.
 
