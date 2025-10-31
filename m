@@ -1,147 +1,251 @@
-Return-Path: <linux-kernel+bounces-880579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1A6C26135
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:21:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B0CC261AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:27:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56E3F4F7640
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:15:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA56580EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917472F658D;
-	Fri, 31 Oct 2025 16:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80D12E92D9;
+	Fri, 31 Oct 2025 16:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ZnPyPZNa"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MMkebEAu"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36B82ED86F;
-	Fri, 31 Oct 2025 16:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C27F2E92A2
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761927004; cv=none; b=hxAP1fUxsD5L2h9JRbPkiByztHYzusjZoyYvDEZeg1wMYt1Kzm1+simqYy5C1h6dYZOTCWxK9f4VJQtSuUCZMNiLze8gb105OMxp7jzhw0hi9Ofsky2gJJFrFuDtjh4s9jVpF46v+DiCoqcVf1G0MJA9UDEesQRGCi3M0ywDH/s=
+	t=1761927040; cv=none; b=FmMVyS5mZ/qaoC/QQNQaKh+h0aqZDZlKZa/tbMcEApW/l3SQV8DZyu4610KpuV+T8stbsNwLPL+iXJEBk1LuuFvZMdVYZmWrYsIxuiRPdPDlDQe6F6gtYk8R2SC3RAgit7Nb3Ww/XzBglvm3o9i4weDatb7R5ty/9RsftVDDO/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761927004; c=relaxed/simple;
-	bh=q4K6DmiYG9BhAg14/84SvF6SxZ+12Je3AHQfOc88CL8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VwhM7Y5q3wC1ME/1hcZyRFhLPb3m8hceidnRZX88TGl2WyxAUndHifDBwTEzV6CxN0m1BHy8o7VTkvFi6DEZqVAIEM+4rImYoUcoQJFnQGr3gBpVQJrKmLJs9EfihKnG6ILv1ud1i2uDCVLoWOvflB5xHTpr8BEeIGkS98581Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ZnPyPZNa; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0c2f5b9cb67411f0b33aeb1e7f16c2b6-20251101
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=pQ7Y6ikIfmTL4OiHioZhpeLNoYrylE0Dm3P0nx4WjG0=;
-	b=ZnPyPZNaO6nnN5VmxCL9MFP7zkwUa096CrCfWBD5sTEhswsXfIz9lr9sL7RYFBh/Ql5GepWy2Bu++WVNAlwAr81HvIat58slmkPVt4gQCFxBxxYbbHPJf1gRJbfpJn3fd1qLKqDLpCZywLVX9ESonVRJw58A3Kt7GEbbWUE7SQY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:bce2dfdb-92ac-46db-9863-8a24cdde6e36,IP:0,UR
-	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:100
-X-CID-META: VersionHash:a9d874c,CLOUDID:9c52c818-3399-4579-97ab-008f994989ea,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	3|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 0c2f5b9cb67411f0b33aeb1e7f16c2b6-20251101
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1890367973; Sat, 01 Nov 2025 00:09:58 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 1 Nov 2025 00:09:57 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Sat, 1 Nov 2025 00:09:57 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
-	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
-	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
- Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
- Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH 3/3] mailbox: mtk-cmdq: Remove unsued cmdq_get_shift_pa()
-Date: Sat, 1 Nov 2025 00:09:34 +0800
-Message-ID: <20251031160955.1659524-4-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251031160955.1659524-1-jason-jh.lin@mediatek.com>
-References: <20251031160955.1659524-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1761927040; c=relaxed/simple;
+	bh=TAxzTfAH15ikAqnfTFk68QwqGL+1mN/BsZnt/ZLstuk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=IV+VnBeNmtnRb9QpbY3UCP9/kP/IaxrajGQ5uenXFhRFQp0fTRiShZ3xFgBTDqUEecjcXn8si7i/FeVVywCTGkIh3czH5NBvz+Xwyja0D1GJPKxCbR7ekbiTf3jmw8Fdl3KLaMe0Ai/gHP8xZbSJQoor6qMQJZn/LmUtd0ASMJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MMkebEAu; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-290da96b37fso223895ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761927038; x=1762531838; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ox59yowNWyjiX1gk5+cWPDLZYRx/RstMsmczOvK3gpc=;
+        b=MMkebEAu+iNPLEhYuao4kg4t3WmW4E3LR0a0Y7EZlWyUpWvnyRR/RLpw3pBWVOcIo1
+         5GAEK4hCeB+6/5rIpQJU4ipHqdEkhxPwrWs7jEprLapOkXKz/+EuXDsKtxc6e0LS+lef
+         1yXuB5mnxd8FXjWOylhxCmOFcpxdBAPe8uDO4f4XpZF2h7BjoLhszpELWK7V/8e4wek8
+         itgW5nhjhRK4sHLUqkK2rQ3b9twYwTdyhmuZdtgdY2ktt/xLlZpWS4OI/xUwLOUiuTxa
+         TS2fMOSyKs9RTWjEcqwGbEJmrOD/Br/sGFPFmSQWLpaZXUZqpRHNaaGMcHsGWxFdzS+0
+         7jsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761927038; x=1762531838;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ox59yowNWyjiX1gk5+cWPDLZYRx/RstMsmczOvK3gpc=;
+        b=eOUeFB893q53rfcf2LZqO8YRKQdOSzU+ero5uUtH+idO9uL+4aUcZzx8aTJ58OIsCg
+         vpgloeNfUqjYotp+2zg8cs3dZZrnlUxcwsIp9PlzLgqYmxKwYH//a5i/McqTraO/m/bl
+         wkApFOm7MrEhwHnSmi5lUlOzrhH8UGklwvCbcqL3uhCIp/5qxDbHRrc8+g4fuZJHSB5O
+         ZhC2e0Wi3kVUy+I1oAKYul2VMWqUospQBeFa7nnhz2UcX/Jsynh7N2jxHQy9kuoyGOda
+         Sucj6Ibkj9ZfJNkvN3EtECGtA4BmrEpNlia7v8jmIrAQIgC7fUDQCPZmXu/+6n8AE0Ol
+         cvuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGzhFVLIad2pqAsZiPWE9FH6dhWRChHdSWrOVeC6js+biFoiWhKWtYwB/1KslA0uPHspax6PErn98bt+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPX69H9GEnCjtcz09a4DZHOK/7F1fAKjaM0qZaDJ1i1PtS0+rb
+	RQELEZOu0Udelp7LzhbO6j1HI4mk2LIv+4obQblFBj+kI9vruzDeVjUr0mBOAgPR2OGLBcWWYUC
+	aqrYxOUt4oEjX7ftVV1Yj47PvAyQGwmm7fxPObwSw
+X-Gm-Gg: ASbGncujii7kzs7uXzTeGgnKC92qeR/JiR0fp/YgY9YLqlXoRupAWFmLUKDxwfqsYJk
+	Kve0v9ieYdso2SruEi86PbuUljaysJyQvuJi2ayLaUK/9uzPJcOK2prLBF2MXbQ8uptGklPh96c
+	8CBYBUUNNvD35q3WAiEdwg02dTI26vkdEqBraifmENPstLBpkSV+PFVarF/zMRcSgzMEJKLaDr0
+	NaOufQ0yYRFRjOhe6XnrU5y6SFrS1vCbaLwyhNmfmTn+NfxYLG8s7xK9PBlF98sCFmOZVMmSHJj
+	vtf8pSsgb9+PGFc=
+X-Google-Smtp-Source: AGHT+IFgpKfqGZMjY3OVk2+0ldI4BFAwiXgWaEbASeMv6uWptaDbA+XCFixqgI0jJ65953CGbIqkmUd14ITbU/4zts8=
+X-Received: by 2002:a17:903:2f8a:b0:265:e66:6c10 with SMTP id
+ d9443c01a7336-2951e61f447mr5020115ad.4.1761927038157; Fri, 31 Oct 2025
+ 09:10:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <20251030172140.1113556-1-irogers@google.com>
+In-Reply-To: <20251030172140.1113556-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 31 Oct 2025 09:10:26 -0700
+X-Gm-Features: AWmQ_blD1fpniav2g4meIWSAmydK7XkPmCLw6-WavK4mFbwbHTpdGktypqvI2cI
+Message-ID: <CAP-5=fXvRK6PpYctLa4UXFbr5xzGDCAUkFuc4JWCEtd0s5QRaQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf s390-sample-raw: Cache counter names
+To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since the mailbox driver data can be obtained using cmdq_get_mbox_priv()
-and all CMDQ users have transitioned to cmdq_get_mbox_priv(),
-cmdq_get_shift_pa() can be removed.
+On Thu, Oct 30, 2025 at 10:21=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> Searching all event names is slower now that legacy names are
+> included. Add a cache to avoid long iterative searches.
+>
+> Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+> Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-=
+e4a64ed61d38@linux.ibm.com/
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> --
+> v2: Small tweak to the cache_key, just make it match the wanted event val=
+ue.
 
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/mailbox/mtk-cmdq-mailbox.c       |  8 --------
- include/linux/mailbox/mtk-cmdq-mailbox.h | 12 ------------
- 2 files changed, 20 deletions(-)
+In this thread Thomas added his Tested-by tag:
+https://lore.kernel.org/linux-perf-users/0d4b605b-64ab-48a0-bd95-8465dabbba=
+e3@linux.ibm.com/
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 1bf6984948ef..81cd98fc9664 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -123,14 +123,6 @@ void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv)
- }
- EXPORT_SYMBOL(cmdq_get_mbox_priv);
- 
--u8 cmdq_get_shift_pa(struct mbox_chan *chan)
--{
--	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
--
--	return cmdq->pdata->shift;
--}
--EXPORT_SYMBOL(cmdq_get_shift_pa);
--
- static void cmdq_vm_init(struct cmdq *cmdq)
- {
- 	int i;
-diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
-index 07c1bfbdb8c4..a42b44d5fd49 100644
---- a/include/linux/mailbox/mtk-cmdq-mailbox.h
-+++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
-@@ -96,16 +96,4 @@ struct cmdq_pkt {
-  */
- void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv);
- 
--/**
-- * cmdq_get_shift_pa() - get the shift bits of physical address
-- * @chan: mailbox channel
-- *
-- * GCE can only fetch the command buffer address from a 32-bit register.
-- * Some SOCs support more than 32-bit command buffer address for GCE, which
-- * requires some shift bits to make the address fit into the 32-bit register.
-- *
-- * Return: the shift bits of physical address
-- */
--u8 cmdq_get_shift_pa(struct mbox_chan *chan);
--
- #endif /* __MTK_CMDQ_MAILBOX_H__ */
--- 
-2.43.0
+Thanks!
+Ian
 
+> ---
+>  tools/perf/util/s390-sample-raw.c | 56 ++++++++++++++++++++++++++++---
+>  1 file changed, 51 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sam=
+ple-raw.c
+> index 335217bb532b..f5acf6dfa8d0 100644
+> --- a/tools/perf/util/s390-sample-raw.c
+> +++ b/tools/perf/util/s390-sample-raw.c
+> @@ -19,12 +19,14 @@
+>
+>  #include <sys/stat.h>
+>  #include <linux/compiler.h>
+> +#include <linux/err.h>
+>  #include <asm/byteorder.h>
+>
+>  #include "debug.h"
+>  #include "session.h"
+>  #include "evlist.h"
+>  #include "color.h"
+> +#include "hashmap.h"
+>  #include "sample-raw.h"
+>  #include "s390-cpumcf-kernel.h"
+>  #include "util/pmu.h"
+> @@ -132,8 +134,8 @@ static int get_counterset_start(int setnr)
+>  }
+>
+>  struct get_counter_name_data {
+> -       int wanted;
+> -       char *result;
+> +       long wanted;
+> +       const char *result;
+>  };
+>
+>  static int get_counter_name_callback(void *vdata, struct pmu_event_info =
+*info)
+> @@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, s=
+truct pmu_event_info *info)
+>
+>         rc =3D sscanf(event_str, "event=3D%x", &event_nr);
+>         if (rc =3D=3D 1 && event_nr =3D=3D data->wanted) {
+> -               data->result =3D strdup(info->name);
+> +               data->result =3D info->name;
+>                 return 1; /* Terminate the search. */
+>         }
+>         return 0;
+>  }
+>
+> +static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unuse=
+d)
+> +{
+> +       return key;
+> +}
+> +
+> +static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void=
+ *ctx __maybe_unused)
+> +{
+> +       return key1 =3D=3D key2;
+> +}
+> +
+>  /* Scan the PMU and extract the logical name of a counter from the event=
+. Input
+>   * is the counter set and counter number with in the set. Construct the =
+event
+>   * number and use this as key. If they match return the name of this cou=
+nter.
+> @@ -164,17 +176,51 @@ static int get_counter_name_callback(void *vdata, s=
+truct pmu_event_info *info)
+>   */
+>  static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
+>  {
+> +       static struct hashmap *cache;
+> +       static struct perf_pmu *cache_pmu;
+> +       long cache_key =3D get_counterset_start(set) + nr;
+>         struct get_counter_name_data data =3D {
+> -               .wanted =3D get_counterset_start(set) + nr,
+> +               .wanted =3D cache_key,
+>                 .result =3D NULL,
+>         };
+> +       char *result =3D NULL;
+>
+>         if (!pmu)
+>                 return NULL;
+>
+> +       if (cache_pmu =3D=3D pmu && hashmap__find(cache, cache_key, &resu=
+lt))
+> +               return strdup(result);
+> +
+>         perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=3D*/ true,
+>                                  &data, get_counter_name_callback);
+> -       return data.result;
+> +
+> +       if (data.result)
+> +               result =3D strdup(data.result);
+> +
+> +       if (cache_pmu =3D=3D NULL) {
+> +               struct hashmap *tmp =3D hashmap__new(get_counter_name_has=
+h_fn,
+> +                                                  get_counter_name_hashm=
+ap_equal_fn,
+> +                                                  /*ctx=3D*/NULL);
+> +
+> +               if (!IS_ERR(cache)) {
+> +                       cache =3D tmp;
+> +                       cache_pmu =3D pmu;
+> +               }
+> +       }
+> +
+> +       if (cache_pmu =3D=3D pmu) {
+> +               char *old_value =3D NULL, *new_value =3D strdup(result);
+> +
+> +               if (new_value) {
+> +                       hashmap__set(cache, cache_key, new_value, /*old_k=
+ey=3D*/NULL, &old_value);
+> +                        /*
+> +                         * Free in case of a race, but resizing would be=
+ broken
+> +                       f  * in that case.
+
+Oh, there's a typo here. I'll send v3 with just this comment fix.
+
+Thanks,
+Ian
+
+> +                         */
+> +                       free(old_value);
+> +               }
+> +       }
+> +       return result;
+>  }
+>
+>  static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample =
+*sample)
+> --
+> 2.51.1.930.gacf6e81ea2-goog
+>
 
