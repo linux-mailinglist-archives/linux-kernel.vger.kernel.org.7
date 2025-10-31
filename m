@@ -1,99 +1,87 @@
-Return-Path: <linux-kernel+bounces-879584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6965C2383D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:15:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F91BC237E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA80404081
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:15:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EFA9B34C374
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EF732863E;
-	Fri, 31 Oct 2025 07:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898AA3161B7;
+	Fri, 31 Oct 2025 07:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="f2wz2SzZ"
-Received: from mail-m15577.qiye.163.com (mail-m15577.qiye.163.com [101.71.155.77])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TGTDACZ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7651328611;
-	Fri, 31 Oct 2025 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CF6315777;
+	Fri, 31 Oct 2025 07:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894928; cv=none; b=J78BY+Mvw9GMF2vp4fmh3gx2+QQUu6KMaiAqaLsTVspwCwAd+T5UM728xIwU3qktNIe9O6yErqqLsJphs8qjwfzj5sBxPqNtbVK+a1MyU5Msfcaizzi0/EssP4NRN8qcMo4AbvSAH9cS9T7sQ+hk7XlpQUA9/AwFfmbxcGLSEZ4=
+	t=1761894385; cv=none; b=nErIrNZunPpE05+5tV+Gm18FECSOxEYt7jlyBWN6yN0Hv+hnB7FP09yhWkw5xl9inZyo+JmP89ZiO7tGkR2BvoI7zg4D0Iyb77vPDqMzw3yBCk6uYWhL+tRBsZiIL7PqubmSJYNSwZxxA2luqddhmjkW+lgfMN3uA+8uFRblKNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894928; c=relaxed/simple;
-	bh=rZYojajc/GZnnqfLJ0TerXgFrRFfpRChE26/+4ZhIU8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MqqIynA77ZlzlX0WBU7JP51qQUP9lkP+eKTckK7A/zKr4vaS2hf0drm+OQa5TJ413b4okVJVDGgMNFFkbD9o8kpFsnR6tcaLz6jA+1WC0G2ZILaUaIcyRkJgpv45x37bwZrKCzqMGO80yl0tRqsenyGxm72I76244OzL41oVWVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=f2wz2SzZ; arc=none smtp.client-ip=101.71.155.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 27df65d1c;
-	Fri, 31 Oct 2025 12:52:53 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: arnd@arndb.de
-Cc: soc@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	krzk@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	ulf.hansson@linaro.org,
-	conor+dt@kernel.org,
-	yangzh0906@thundersoft.com
-Subject: Re: [PATCH v5 0/6] arm64: introduce Black Sesame Technologies C1200 SoC and CDCU1.0 board
-Date: Fri, 31 Oct 2025 12:52:53 +0800
-Message-ID: <20251031045253.789621-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251016120558.2390960-1-yangzh0906@thundersoft.com>
-References: <20251016120558.2390960-1-yangzh0906@thundersoft.com>
+	s=arc-20240116; t=1761894385; c=relaxed/simple;
+	bh=G1ycpf3dyZ/G8sbQY6PK6OPq5HydjTWbqCPd9vt18uo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzrIBVLQhA4krJKdR+vd2G2AyTYzyHW0mSqjVYrfoFXKMOY+XPd58qaoA30mcHjeczTvbnARxPBATrPb4oKoKlRyESCKCqoS4WjkpX54pGbkcmS2oUPyfkaa+ZmospMhKE6OOaT19/Y3Y6a9G3cpCGs7rLKzObjYkoG3JrfaPgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TGTDACZ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2FCCC4CEE7;
+	Fri, 31 Oct 2025 07:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761894384;
+	bh=G1ycpf3dyZ/G8sbQY6PK6OPq5HydjTWbqCPd9vt18uo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TGTDACZ8gXt3w2Ze2V5oxP+HifFY0wk0uV4Nu8DVH0Xrq+x9i14qPtKhSXiPBVdZJ
+	 N5hH5peN22TqRX7vQPm592HuJt9fKQ7yDzKsC4jfsSjGf9Ryr2zDJKEIRsjMvamuby
+	 5x30zv4N9Exe3NCmXCtyME3/K4k4zGXQ6etOhuSE=
+Date: Fri, 31 Oct 2025 08:06:21 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hugo Villeneuve <hugo@hugovil.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Subject: Re: [PATCH v3 11/14] serial: sc16is7xx: use KBUILD_MODNAME
+Message-ID: <2025103109-astronaut-oblivious-ad13@gregkh>
+References: <20251027142957.1032073-1-hugo@hugovil.com>
+ <20251027142957.1032073-12-hugo@hugovil.com>
+ <aQM_VBg_7JwyGGLG@black.igk.intel.com>
+ <20251030160142.e1ae7b158216b8101582cd49@hugovil.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a389c874609cckunm02ed9fdf61527c
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSU9CVklDHR4eS0lJTElNQ1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=f2wz2SzZAlsfxhX8+oVUJd3MqUei8pXHJ3+WZFzhM6YiBUlGgF3ubrCPUCRGn1W3cx0ZlLk1bjiCa/hbXjQH7H/2AzH8Ocmnusys3lhyStBM0vC9XSZgAt/P/rfzRKobJvB8M/UidwAlh4qnhAf9Y68BZotzrG5O40/WuUvAN5U=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=rZYojajc/GZnnqfLJ0TerXgFrRFfpRChE26/+4ZhIU8=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030160142.e1ae7b158216b8101582cd49@hugovil.com>
 
-Hi Arnd,
+On Thu, Oct 30, 2025 at 04:01:42PM -0400, Hugo Villeneuve wrote:
+> On Thu, 30 Oct 2025 11:35:00 +0100
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> 
+> > On Mon, Oct 27, 2025 at 10:29:53AM -0400, Hugo Villeneuve wrote:
+> > > 
+> > > There is no need to redefine the driver name. Use KBUILD_MODNAME and get
+> > > rid of DRV_NAME altogether.
+> > 
+> > Actually I am slightly against this change. The modname (and hence modalias)
+> > are parts of an ABI (visible via sysfs). Changing the module name (file name
+> > in this case) may inadvertently break this. Yes, it most likely not critical
+> > in this case, but should be taken into account.
+> 
+> Hi Andy,
+> thank you for pointing that out. It didn't occur to me that this could
+> impact the sysfs ABI.
 
-Following up on the v5 series for BST C1200 SoC support. The dt-bindings
-patches have received the necessary reviews (Rob's Acked-by for 1/6 and
-Krzysztof's Reviewed-by for 2/6).
+This should not be an issue, the device name will not have changed, and
+that's the normal sysfs path for things.  The module/driver name can
+always change, this isn't a real problem.
 
-I now understand that the SoC-specific patches (Kconfig, DTS, defconfig,
-MAINTAINERS) should be reviewed by the ARM SoC maintainers rather than
-the DT bindings reviewers. Please correct me if I'm misunderstanding the
-process.
+thanks,
 
-In your previous feedback [1], you mentioned you'd be happy to merge the
-SoC portions in arch/arm64 and suggested resubmitting for 6.19 once
-6.18-rc1 is out. Could you advise on the next steps? Is there anything
-I should prepare or address before the 6.19 merge window?
-
-If I've misunderstood anything about the process, please let me know.
-
-Series: https://lore.kernel.org/lkml/20251016120558.2390960-1-yangzh0906@thundersoft.com/
-
-[1] https://lore.kernel.org/lkml/09b1318e-21dc-4354-8733-866b70696295@app.fastmail.com/
-
-Thanks,
-Albert
-
+greg k-h
 
