@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-879556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A85C236BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:43:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75523C236C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1493B4E7C6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1D43AEE89
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745DE2F90C5;
-	Fri, 31 Oct 2025 06:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hyg11viS"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE742FD1B0;
+	Fri, 31 Oct 2025 06:45:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55F813B58B;
-	Fri, 31 Oct 2025 06:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377C42F7ABB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892971; cv=none; b=e9yvoDnHig3SzSiL2UeeUyoDfvUpBK+L/Kl3hkq1O1L4lM6vwpXPuThqmHBnPTPBoEyRlizkLLhr8cmuGuVyqzNU/uUmcxNIXy7Axk2FxFWd84JlAdozc0ezHp9lCJQhmojW7HvTZsPk+Q8fhx/uFXtMTJ9I8j+4YcUn58fg9ew=
+	t=1761893105; cv=none; b=SRbvJi6KyD4JkXCIj9dcuw2I4qshUVVx4G99xXM3LmjOMYgeHMGY36h1FxxVWJ8MS+1XlIKl38htPeeFUY+xSZQnlQ8jrNqiUiLJwh6Nhi1F8b2ncR7yWVdBf0PUsI3XRFEKbwkTpL/FN5uJ8E1PQZFtBsrUgRF2GioAs6ngNJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892971; c=relaxed/simple;
-	bh=Jr7uQINqJKCYQimDm+Nj1yJenH96XpWnb3kI5SA51jo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tVIYVoTUjarUlLNsFMxdIYBSqGyCWbuBs8us76ZNK0imXo6fjW87y1Hz8QhG0OYsUmuBVarijijSbOxXNuUz8N0TlCsiXbNEhjYH9/qgtS6Q51jSvOCEaC95iXMGI23E4TFPaSPgoiQaoqWoZ5wuP7T8PFn7mSHbMscliDLWloI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hyg11viS; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59V6fs8X3050203
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 30 Oct 2025 23:41:55 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59V6fs8X3050203
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1761892917;
-	bh=v0W2vuEQFIicFBqp5bhGyzIVnMExYE181rXr0yLdDRk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=hyg11viSFxrXnCMHjhaJ4rWQKn3mR6bSc/mkYL0waRA/NRPaAL0iTg+lCQOmP4H8H
-	 2+VP61+JcJh8RNXi8i9QeRjoR0LwZQzio3kYucdZyYWdyE0SE11IQ055hPRPdYL13q
-	 zGfHYfWHLjlLAHCHTxlINduUDIwfipbgAx+zEHfQH0/ij2/CmCOnRNCP+Ufu1LsO4e
-	 gxlh8tWgWnNQv488pd6ja6ziVWqxNtxoXyWa5Xzx+Da0a/0koG5s3eOuY1bm6pyXyH
-	 LaJKszSFFQZYLadgUY+1bw6vlvGLqNZz/698yius+0PVhABRc69IEX5UiUiqcbYc+f
-	 8cynS3UiQ/BQQ==
-Date: Thu, 30 Oct 2025 23:41:54 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: David Laight <david.laight.linux@gmail.com>,
-        Sohil Mehta <sohil.mehta@intel.com>
-CC: Andy Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Sean Christopherson <seanjc@google.com>,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_9/9=5D_x86/cpu=3A_Enable_LA?=
- =?US-ASCII?Q?SS_by_default_during_CPU_initialization?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20251030211318.74d90c3f@pumpkin>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-10-sohil.mehta@intel.com> <789ADBB5-F7AC-4B08-B343-F23260FB8FBC@zytor.com> <13681100-ddc3-4ef0-bd13-744282324ff1@app.fastmail.com> <d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com> <20251030211318.74d90c3f@pumpkin>
-Message-ID: <6C5D6437-5C95-41E1-BF88-0107C83B9CCB@zytor.com>
+	s=arc-20240116; t=1761893105; c=relaxed/simple;
+	bh=6OowjB9orD1CHywv3l0ULBS5+U4i1WAVTOislAtkrkw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=vDEFmhAHj1ZqmX7ooVsXl2xhCOWhbaggOpjksLgOneM3GiGSuSYIqzQ1tCn5fWoCMR3CnIUCQytuiiAEb38D1rLKwZbO1/fiqdw6GvtAzXP1POmFdIXj7nCtXMDq51ZZ+gI8wiyh8SQIECiyXR3rxB6JTV0Wjex3pgzC/6JB1nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-945c705df24so355049639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761893102; x=1762497902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eu3tgcD8OjLMYXfT/s/p2VJrdoIBjeArHlIv1rvNgoU=;
+        b=BEFjaf8OMxs3fd+7h1xVxhgcWGRmNT5rva7RbfZjse/Z5AHWKgQaAYEfECBV3JUGOI
+         ZOyNG1+2r4jim7J6YrunqAdXLVbat/FEdYT6fBfmFi0W0obZPgrSCEsbLaJl3DWrVQX9
+         8qW+HnVNjbWzUCPOT0TrHQtGAVULPD4y3qhhcPlxEPmsAbE2jr/aa19/okHlJaCI3UC1
+         4NROuLbOzGFmAnrwOkRjEo6MRAu6JczZ28xGeAQwZE7ruwEfq35XPSqCvLINoW8ph5lj
+         oC6GRmq/zWUj6lrAJlL+jyE53/eMgN4PVYaGwqtp8SCdUJOxdBbBJn9Kvgf7LqyPRr4g
+         TBTQ==
+X-Gm-Message-State: AOJu0Yyg1hgm6yIEfPYHGIJSpSPJ3GawfWatbt7BEfAewsWw5nlYfECl
+	kQARnLmd9ID8jXR1QZxrqJGz4d+6XMRiQVb67UtDPYPBrwyMLrYwOGjBiB8y5ZL2M0XSnsJkLyT
+	S1+FJP1doSSCPzvcsivCBmTDMqCqjbyB7Lz/xR0rgy+IVdB7EZh4geypsY2M=
+X-Google-Smtp-Source: AGHT+IH3EQN3RQNYxaPT4iIe+IFhGXjDXdXXM4z1rZcTGLWFTn0J7QP/H6rFgBR94R4CuXHZxbQ6osjFNIccr0ld3sZCUkZ0y5D5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1:b0:431:da98:3519 with SMTP id
+ e9e14a558f8ab-4330bcf69e9mr48176355ab.0.1761893102447; Thu, 30 Oct 2025
+ 23:45:02 -0700 (PDT)
+Date: Thu, 30 Oct 2025 23:45:02 -0700
+In-Reply-To: <69039850.a70a0220.5b2ed.005d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69045aee.050a0220.e9cb8.0000.GAE@google.com>
+Subject: Forwarded: general protection fault in sigd_send
+From: syzbot <syzbot+1f22cb1769f249df9fa0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On October 30, 2025 2:13:18 PM PDT, David Laight <david=2Elaight=2Elinux@gm=
-ail=2Ecom> wrote:
->On Thu, 30 Oct 2025 09:44:02 -0700
->Sohil Mehta <sohil=2Emehta@intel=2Ecom> wrote:
->
->> On 10/30/2025 8:45 AM, Andy Lutomirski wrote:
->> > On Thu, Oct 30, 2025, at 1:40 AM, H=2E Peter Anvin wrote: =20
->> >> Legacy vsyscalls have been obsolete for how long now? =20
->> >=20
->> > A looooong time=2E
->> >=20
->> > I would suggest defaulting LASS to on and *maybe* decoding just enoug=
-h to log, once per boot, that a legacy vsyscall may have been attempted=2E =
-It=E2=80=99s too bad that #GP doesn=E2=80=99t report the faulting address=
-=2E
->> >  =20
->>=20
->> Unfortunately, CONFIG_X86_VSYSCALL_EMULATION defaults to y=2E Also, the
->> default Vsyscall mode is XONLY=2E So even if vsyscalls are deprecated,
->> there is a non-zero possibility someone would complain about it=2E
->
->Presumably a command line parameter could be used to disable LASS
->in order to enable vsyscall emulation?
->
->That might let LASS be enabled by default=2E
->
->	David
->
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-So I talked with Sohil about this earlier today, and there was a bit of a =
-miscommunication =E2=80=94 XONLY mode is just fine=2E It is read emulation =
-mode that has problems=2E
+***
+
+Subject: general protection fault in sigd_send
+Author: hsukrut3@gmail.com
+
+#syz test
+---
+ net/atm/signaling.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/atm/signaling.c b/net/atm/signaling.c
+index e70ae2c113f9..0fda16975c70 100644
+--- a/net/atm/signaling.c
++++ b/net/atm/signaling.c
+@@ -63,6 +63,11 @@ static void modify_qos(struct atm_vcc *vcc, struct atmsvc_msg *msg)
+ 
+ static int sigd_send(struct atm_vcc *vcc, struct sk_buff *skb)
+ {
++	if (vcc != sigd || !test_bit(ATM_VF_SESSION, &vcc->flags)) {
++		dev_kfree_skb(skb);
++		return -EPERM;
++	}
++
+ 	struct atmsvc_msg *msg;
+ 	struct atm_vcc *session_vcc;
+ 	struct sock *sk;
+-- 
+2.43.0
+
 
