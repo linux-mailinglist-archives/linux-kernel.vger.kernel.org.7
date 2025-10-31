@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-880938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6E0C26EAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:38:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3FAC26EB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 669DD4F56F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1A1407E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB918328B4E;
-	Fri, 31 Oct 2025 20:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE581328B6D;
+	Fri, 31 Oct 2025 20:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTVNVGmd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="VI6ofPWt"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1566E30497A;
-	Fri, 31 Oct 2025 20:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9CA22173D;
+	Fri, 31 Oct 2025 20:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761943072; cv=none; b=GXvZlyzTc5WIC32DobphOsl6UIac6SPC8I+n4oUClSJPC63CeoSPvR/JOHUOuCk8wJlRfAb5tizdZIA1KSPjKA8VpPrn7lbBFe+RT6MsUQ5c9bOSTM/+VTUtsMA1w9lPZKDSJkVLOfisQXLLR7aUJQ8LDi+1QSuYzS3XwyPGl+U=
+	t=1761943158; cv=none; b=urI0Iop2vHaYVfoHm7FtXka0f21dblYvj/Sd4YjF+5VMUhb33v3p/dILz0l5z5UaVvPU4lYen/IpWSiJg7nC0SrWSRiKz3Nb82HHjHAUQ3Q97gl3ucI6HAjG8AfrkGlDiOeNDVAOGq5iJ+tbSNqYD441VZdxa8Cf8AoZZkU2VQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761943072; c=relaxed/simple;
-	bh=06p3NygxEpzTyI9vzctkNxGfa/fJn/Y5U5F4DP7lLu4=;
+	s=arc-20240116; t=1761943158; c=relaxed/simple;
+	bh=ptmIrf/ickaTEt8Cr1Wp6wOrWD+FMuputVpxh1GuSbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FN3VZnH2f/N+3hrDsl38FyjgKBR4eNyDZ6/8ZKArIDncJ+RKZmiPwEBZxeLa94aP8VT48Mm78Rqh7/Se/RoA0QgQAwoT54n1an5JMLK5kJhWC6IYepmCJDyPj41Fp+IQQh4U5a1M0+Wk72rkZRpFA1ez2G7VcIbyTX5HK4masDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTVNVGmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9ABCC4CEE7;
-	Fri, 31 Oct 2025 20:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761943071;
-	bh=06p3NygxEpzTyI9vzctkNxGfa/fJn/Y5U5F4DP7lLu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oTVNVGmd+tbuj/k9c5IhGeEZh6E2dxZN+wP3B0vnwUaDnQbmwUoDQ/KdCZjRYTwRm
-	 7ohmIPyqtROUs9kfyD9L20WXyWq+KfXGtHmi/tih9LiZccsxWnwxNNaMyKi2ZNvDTk
-	 fVAxuzVSPflmTsSsEow0r6JBSrEGeklMRx2punr+Chk59Ka7Fpkm3OeTltcuXyb8Wu
-	 VBlnh0dIixICrv7topusConPHLKSBt5r9+Hy8KzaFwUYs4zzYxSX7wZNIqIWqZhonH
-	 3Nw2RH2/W9M11+y5+0XHDpiK+LjG4zLCpnzp48v9liZ0qsqW2GNoTdsKM/4cFYiUDv
-	 O7fO36/2kLttA==
-Date: Fri, 31 Oct 2025 16:37:46 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Gladyshev Ilya <foxido@foxido.dev>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Chris Mason <chris.mason@fusionio.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: make ASSERT no-op in release builds
-Message-ID: <20251031203746.GE2486902@ax162>
-References: <20251030182322.4085697-1-foxido@foxido.dev>
- <202510311956.w2iYoQcn-lkp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYCTIpnlva+6nHrFBYLN8yMCqbyj1b2AQRxHhSPBsGHzU5ObwQPcC/7uTvD1o1vS4YlAGmndtVjCm9m8QN70zmbskhSwKXKoEAz48cauGYuNrk9tqaA+Gdr0UDRQFKMQd460cuGWJMnCJ119Ar1A7AMMGk45guDNpl6Wixcs74Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=VI6ofPWt; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8840411866451;
+	Fri, 31 Oct 2025 21:39:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1761943152; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=vJsyv3wyvly78tOTDhC16Mgw0yq4JcHggWTNoDEklkU=;
+	b=VI6ofPWtmdOQADWGBEzv3XUrlWOZGf21uOW/eAU+6ev7jS2nNA5xgo8eRd9tqB1Zk3liub
+	IGvDDs051S8J9AYEpkL3pcvAv28+N3NO47+/8y8CrDMocRtHlN9Api6B7ROe847aY4tzlw
+	3XCFT0H0nzA34dBOgo1OhUq3GYz7CQpcMwx1EAYUP5mcByDAThGjyhSlRQZqMjIAzW12ct
+	V179AO65Yt+66pwxnnBn0LhVmJlELJ5EY7XZidCCc3mbSNnmElGG5s92HM2X/G6C8OvF//
+	I5dmVAMsxdZazgz+uJEaZE/tilcFya0rps3tWyNv0cwmtYrx0xS9Ciscy7zq3g==
+Date: Fri, 31 Oct 2025 21:39:06 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	sr@sladewatkins.com
+Subject: Re: [PATCH 6.12 00/40] 6.12.57-rc1 review
+Message-ID: <aQUeankW3WBvgDdb@duo.ucw.cz>
+References: <20251031140043.939381518@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FA1OVxOVPb6/wLyz"
+Content-Disposition: inline
+In-Reply-To: <20251031140043.939381518@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--FA1OVxOVPb6/wLyz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202510311956.w2iYoQcn-lkp@intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 08:18:50PM +0800, kernel test robot wrote:
-> Hi Gladyshev,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Gladyshev-Ilya/btrfs-make-ASSERT-no-op-in-release-builds/20251031-024059
-> base:   e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
-> patch link:    https://lore.kernel.org/r/20251030182322.4085697-1-foxido%40foxido.dev
-> patch subject: [PATCH] btrfs: make ASSERT no-op in release builds
-> config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251031/202510311956.w2iYoQcn-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510311956.w2iYoQcn-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510311956.w2iYoQcn-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> fs/btrfs/raid56.c:302:13: warning: function 'full_page_sectors_uptodate' is not needed and will not be emitted [-Wunneeded-internal-declaration]
->      302 | static bool full_page_sectors_uptodate(struct btrfs_raid_bio *rbio,
->          |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
->    1 warning generated.
+Hi!
 
-Just in case it is not obvious: full_page_sectors_uptodate() is only
-called within an ASSERT() macro, so after this change, it is only
-referenced within sizeof(), so it won't be emitted in .text (which may
-be a bug). Presumably that is expected in this case, so I would
-recommend marking this as __maybe_unused to avoid the warning.
+> This is the start of the stable review cycle for the 6.12.57 release.
+> There are 40 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Cheers,
-Nathan
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--FA1OVxOVPb6/wLyz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaQUeagAKCRAw5/Bqldv6
+8vbaAKCQixX4xRCKBar8YxOtOdKtghdTnwCfUCfJnOHfr865nWhwVniLv/u8Ums=
+=Kk8q
+-----END PGP SIGNATURE-----
+
+--FA1OVxOVPb6/wLyz--
 
