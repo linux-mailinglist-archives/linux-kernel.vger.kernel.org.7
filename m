@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-880937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBEFC26EA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:36:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6E0C26EAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95FC1B21567
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:36:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 669DD4F56F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C7E329377;
-	Fri, 31 Oct 2025 20:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB918328B4E;
+	Fri, 31 Oct 2025 20:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKCn1nrE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTVNVGmd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684BF328B72;
-	Fri, 31 Oct 2025 20:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1566E30497A;
+	Fri, 31 Oct 2025 20:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761942892; cv=none; b=ub+3lx40WEjJGkOELGK+XKL31IfT7ODBt+SwZB4ut5vcjRpHSZmONkNnk3xPCFj5cxUstddAibnTwDXDC8z5hC32+8eRCDGVzCXBDR2+NJT+XdCm0r3KY+y3WukZD3PRejkbudZf8bsEtvr+fIkJEmSThuFtfkc/UwScYeEHV/E=
+	t=1761943072; cv=none; b=GXvZlyzTc5WIC32DobphOsl6UIac6SPC8I+n4oUClSJPC63CeoSPvR/JOHUOuCk8wJlRfAb5tizdZIA1KSPjKA8VpPrn7lbBFe+RT6MsUQ5c9bOSTM/+VTUtsMA1w9lPZKDSJkVLOfisQXLLR7aUJQ8LDi+1QSuYzS3XwyPGl+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761942892; c=relaxed/simple;
-	bh=eaC3FfZxJWWchwEb1p6d5lCoWti7psSYXuw5oCrNqpM=;
+	s=arc-20240116; t=1761943072; c=relaxed/simple;
+	bh=06p3NygxEpzTyI9vzctkNxGfa/fJn/Y5U5F4DP7lLu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Et6o6r66CbuOZIWj46IsquyFiDasgC4ybVfh4sNwOXv/jotczsv1dPKRfp7EZaprgvJXdXGA/qm1z1U14bncR+xHkQp1PcCkdV+5CL27514G3qiEtOVb/hmZyvZj7hNPuFdL4Pw0RWQ02N6GWlE220j1681JuqxqUJv+CEWgRMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKCn1nrE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00468C116B1;
-	Fri, 31 Oct 2025 20:34:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FN3VZnH2f/N+3hrDsl38FyjgKBR4eNyDZ6/8ZKArIDncJ+RKZmiPwEBZxeLa94aP8VT48Mm78Rqh7/Se/RoA0QgQAwoT54n1an5JMLK5kJhWC6IYepmCJDyPj41Fp+IQQh4U5a1M0+Wk72rkZRpFA1ez2G7VcIbyTX5HK4masDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTVNVGmd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9ABCC4CEE7;
+	Fri, 31 Oct 2025 20:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761942891;
-	bh=eaC3FfZxJWWchwEb1p6d5lCoWti7psSYXuw5oCrNqpM=;
+	s=k20201202; t=1761943071;
+	bh=06p3NygxEpzTyI9vzctkNxGfa/fJn/Y5U5F4DP7lLu4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKCn1nrEXYR+sGYuQPxZG5neXvAlbt0EngVb/GV5zXs8b+1Wc2rkekZzILixCS0Ij
-	 2Im4Xkx0kgrfB/SFaa38w5VOmwasbtHrZYFdzD1gn/v4ySgnWf/SSLEtnMwOWJJ/SE
-	 MBFD4Z+W9JkdpSaDRItQW/4l7mEUDyq/pgEElBITM4yWKJ0mz89SJbHKjpL9/wvBUO
-	 HyXqFLBaZox8WOOMon7PYozUn/DDONnnAqyD/oquhp/jo0VFrrxLf/fyxT753hGEEo
-	 eWmFpWl4QJwwRpiyiq7FAe1IUi8OA0UJi0VIFwTrHKvWCArxEIr2aWGePv/okng6+g
-	 NUgFx5hG2KfRQ==
-Date: Fri, 31 Oct 2025 16:34:46 -0400
+	b=oTVNVGmd+tbuj/k9c5IhGeEZh6E2dxZN+wP3B0vnwUaDnQbmwUoDQ/KdCZjRYTwRm
+	 7ohmIPyqtROUs9kfyD9L20WXyWq+KfXGtHmi/tih9LiZccsxWnwxNNaMyKi2ZNvDTk
+	 fVAxuzVSPflmTsSsEow0r6JBSrEGeklMRx2punr+Chk59Ka7Fpkm3OeTltcuXyb8Wu
+	 VBlnh0dIixICrv7topusConPHLKSBt5r9+Hy8KzaFwUYs4zzYxSX7wZNIqIWqZhonH
+	 3Nw2RH2/W9M11+y5+0XHDpiK+LjG4zLCpnzp48v9liZ0qsqW2GNoTdsKM/4cFYiUDv
+	 O7fO36/2kLttA==
+Date: Fri, 31 Oct 2025 16:37:46 -0400
 From: Nathan Chancellor <nathan@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: LiangCheng Wang <zaq14760@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] drm/tiny: pixpaper: Prevent inlining of send helpers to
- reduce stack usage
-Message-ID: <20251031203446.GD2486902@ax162>
-References: <20251031-fix_202510270858-v1-1-6b111d475ce2@gmail.com>
- <0d9e5bf4036dc0706fac603764276d2327d0bc69@intel.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Gladyshev Ilya <foxido@foxido.dev>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Chris Mason <chris.mason@fusionio.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: make ASSERT no-op in release builds
+Message-ID: <20251031203746.GE2486902@ax162>
+References: <20251030182322.4085697-1-foxido@foxido.dev>
+ <202510311956.w2iYoQcn-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,94 +60,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0d9e5bf4036dc0706fac603764276d2327d0bc69@intel.com>
+In-Reply-To: <202510311956.w2iYoQcn-lkp@intel.com>
 
-On Fri, Oct 31, 2025 at 10:40:13AM +0200, Jani Nikula wrote:
-> On Fri, 31 Oct 2025, LiangCheng Wang <zaq14760@gmail.com> wrote:
-> > Clang reports that pixpaper_panel_hw_init() exceeds the 8 KB stack
-> > frame limit:
-> >
-> >     drivers/gpu/drm/tiny/pixpaper.c:579:12: warning:
-> >       stack frame size (20024) exceeds limit (8192)
-> >       in 'pixpaper_panel_hw_init'
-> >
-> > This warning occurs because the compiler aggressively inlines
-> > pixpaper_send_cmd() and pixpaper_send_data() into
-> > pixpaper_panel_hw_init(), which inflates the estimated stack usage.
-> >
-> > Mark these two helper functions as 'noinline' to prevent inlining.
-> > This significantly reduces the reported stack usage without changing
-> > runtime behavior.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202510270858.1GzE6iQg-lkp@intel.com/
-> > Fixes: c9e70639f591 ("drm: tiny: Add support for Mayqueen Pixpaper e-ink panel")
-> > Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
-> > ---
-> > When building with Clang and frame size warnings enabled
-> > (-Wframe-larger-than=8192), the compiler reports that
-> > pixpaper_panel_hw_init() consumes over 20 KB of stack space:
-> >
-> >     drivers/gpu/drm/tiny/pixpaper.c:579:12: warning:
-> >       stack frame size (20024) exceeds limit (8192)
-> >       in 'pixpaper_panel_hw_init'
-> >
-> > This happens because Clang aggressively inlines
-> > pixpaper_send_cmd() and pixpaper_send_data() into
-> > pixpaper_panel_hw_init(), causing the calculated stack usage
-> > to balloon far beyond the warning threshold.
-> >
-> > The fix is straightforward: mark these two helper functions as
-> > 'noinline' to prevent inlining. This reduces the reported stack
-> > usage to within normal limits without changing runtime behavior.
+On Fri, Oct 31, 2025 at 08:18:50PM +0800, kernel test robot wrote:
+> Hi Gladyshev,
 > 
-> I really *really* wish we wouldn't have to go this route at all.
+> kernel test robot noticed the following build warnings:
 > 
-> But if we have to, I think noinline_for_stack is the keyword to use.
+> [auto build test WARNING on e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Gladyshev-Ilya/btrfs-make-ASSERT-no-op-in-release-builds/20251031-024059
+> base:   e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+> patch link:    https://lore.kernel.org/r/20251030182322.4085697-1-foxido%40foxido.dev
+> patch subject: [PATCH] btrfs: make ASSERT no-op in release builds
+> config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251031/202510311956.w2iYoQcn-lkp@intel.com/config)
+> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510311956.w2iYoQcn-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510311956.w2iYoQcn-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> fs/btrfs/raid56.c:302:13: warning: function 'full_page_sectors_uptodate' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+>      302 | static bool full_page_sectors_uptodate(struct btrfs_raid_bio *rbio,
+>          |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>    1 warning generated.
 
-For what it's worth, the configuration in the report linked above has
-CONFIG_KASAN_STACK=y, which is known to be broken with clang and
-requires !COMPILE_TEST to even select it (which the robot should be
-using to avoid pathological cases such as this). If I disable
-CONFIG_KASAN_STACK, there is no warning even with a 1024 byte limit, so
-realistically, I think we can just leave this be.
+Just in case it is not obvious: full_page_sectors_uptodate() is only
+called within an ASSERT() macro, so after this change, it is only
+referenced within sizeof(), so it won't be emitted in .text (which may
+be a bug). Presumably that is expected in this case, so I would
+recommend marking this as __maybe_unused to avoid the warning.
 
 Cheers,
 Nathan
-
-> > ---
-> >  drivers/gpu/drm/tiny/pixpaper.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tiny/pixpaper.c b/drivers/gpu/drm/tiny/pixpaper.c
-> > index 32598fb2fee7fcdea3ea0696c2bf54404fcffa2e..70e3239adfd0f86f92551991872486380489fb9b 100644
-> > --- a/drivers/gpu/drm/tiny/pixpaper.c
-> > +++ b/drivers/gpu/drm/tiny/pixpaper.c
-> > @@ -536,7 +536,7 @@ static void pixpaper_spi_sync(struct spi_device *spi, struct spi_message *msg,
-> >  		err->errno_code = ret;
-> >  }
-> >  
-> > -static void pixpaper_send_cmd(struct pixpaper_panel *panel, u8 cmd,
-> > +static noinline void pixpaper_send_cmd(struct pixpaper_panel *panel, u8 cmd,
-> >  			      struct pixpaper_error_ctx *err)
-> >  {
-> >  	if (err->errno_code)
-> > @@ -556,7 +556,7 @@ static void pixpaper_send_cmd(struct pixpaper_panel *panel, u8 cmd,
-> >  	pixpaper_spi_sync(panel->spi, &msg, err);
-> >  }
-> >  
-> > -static void pixpaper_send_data(struct pixpaper_panel *panel, u8 data,
-> > +static noinline void pixpaper_send_data(struct pixpaper_panel *panel, u8 data,
-> >  			       struct pixpaper_error_ctx *err)
-> >  {
-> >  	if (err->errno_code)
-> >
-> > ---
-> > base-commit: d127176862a93c4b3216bda533d2bee170af5e71
-> > change-id: 20251031-fix_202510270858-2e4643b00545
-> >
-> > Best regards,
-> 
-> -- 
-> Jani Nikula, Intel
 
