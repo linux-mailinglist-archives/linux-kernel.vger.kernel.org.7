@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-881005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0CDC272DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:26:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B266AC272FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 254C2350603
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:26:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A22C4E86D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C3632BF47;
-	Fri, 31 Oct 2025 23:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0DF32D7D6;
+	Fri, 31 Oct 2025 23:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn/HqSez"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZmjR12q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9652FE589;
-	Fri, 31 Oct 2025 23:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB86A2EFD92;
+	Fri, 31 Oct 2025 23:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761953175; cv=none; b=nAUu7eDBPejhg6i1fXWw4/DR7cwfepOwE9Z5Ie7bYWJmZJt2/pNPg7ULXDQYUUF9WgfPH2e8gs9pF5KeYrHAMwysaPyDGluHHfwLNoDk8dk0TiCY59FHqI4ZZYZWren8vCJRsEbMwgnwrCzmk9kvZzJtbmBvs1wK0GvJUyvVWfQ=
+	t=1761953531; cv=none; b=dMi6AMroHfYxYqVEXS7wXKW+Zyx4v1UuZQPrHbow+f0XfymNsXPykzed9ska8oEuFAq5XG/+3GUNvdRDzDl8IPDS13wV3yOLfcaXD8E5tTzX0mmpKYOeRqmER6bKMxBmBYROspJOMma/U+hfm05+dCMW6dkRAx9X1QePFcBSwUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761953175; c=relaxed/simple;
-	bh=ZqYwds0sADNzMvSeVgW+LyUJYBSkAX/vctdG2rH2Xyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DjffOgl4LyDwJe+wZcrUrJEqJNAyOKkhm8zQxmnsNa9NH9FT7kJRBVB5KKv9QiQv7BehYM7m3zMD0K7waWL2ZzC1vjH4enfHS22sDj19k5u/5/MNJcis3EkzkBS/37JbGi7JXisgga5QLi3CgKD6521bq1n7fBzlZ8rTmb0+Ul0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tn/HqSez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540E4C4CEE7;
-	Fri, 31 Oct 2025 23:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761953173;
-	bh=ZqYwds0sADNzMvSeVgW+LyUJYBSkAX/vctdG2rH2Xyg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tn/HqSezV0K0CMxaqCJwynVF+/f3ZFf4ysKGofSN+ILlPcSdB4+8pSQXWIB8Pg3R+
-	 7dtcmHtKOCONHLp61Cb6NYnpkOd0F+lora2zDFyONiGN2PAX3XgPPOQ2TRhk/fZj1y
-	 zVq3N2lDYQK9UKRYAlMHNdZq+x73jTLYsfCkFyrk5oqC7e00ZKfLvztexrlD1IyXwI
-	 HRDSaUIrcMmfWY7ZYk4vCpww0LsShsUPDaZMZrRRiFKGg2R0oNX58x9f24mpLgG/le
-	 dibLsikaZekaiwuti0vWHT2qp1Vwt/FCgnaZQB75I+G0Vvxq4JjcGcx3o97uTMfOw0
-	 V67NjHeDm0j7g==
-Date: Fri, 31 Oct 2025 16:26:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aditya Garg <gargaditya@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, longli@microsoft.com,
- kotaranov@microsoft.com, horms@kernel.org,
- shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
- ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
- shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, gargaditya@microsoft.com
-Subject: Re: [PATCH net-next v2] net: mana: Handle SKB if TX SGEs exceed
- hardware limit
-Message-ID: <20251031162611.2a981fdf@kernel.org>
-In-Reply-To: <20251029131235.GA3903@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20251029131235.GA3903@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1761953531; c=relaxed/simple;
+	bh=h+r0tqFwhhtjNk7d58FTTkux3ySidbSHA65iwckG4zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqI0R0dqWhxRJmTs6DEOp5Bi0SsxAH4eP+SPUvYenW5ap0/Pg8bswVB77QD5VvI1ZE1/HNbYTsrxjrYYfew2MNiAeMwMHnO1NbXgYcYspyTw/HQUkgFNDwszVgbCQXnFgzWLEo2GwNjKs1fWGVZ+e3Kv5Nhm1MphH02rD3AE/5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZmjR12q; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761953530; x=1793489530;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h+r0tqFwhhtjNk7d58FTTkux3ySidbSHA65iwckG4zY=;
+  b=OZmjR12q/3j4bWzWVTzMSXKEdCVgF9lHX8t3LUtTpCNTGX7l+HCbbmwM
+   ++M5FVL53LNOv61iPqJ3kFUMbfz684TCUEY0mxWKGSdFLRPUcZ76lmADu
+   MacQSr/LNw/9N6mXsGtpp8+n94Giltnq8PeLxzykVsahxmh1Ow80/ATYy
+   VAK47shw/5in5t6zYsP4wimRLcOa0Xw+FgrDzZ8+P0358+CTTIVS5Dg7A
+   UGZp1vyqcm5Nq9PEQB/5rfqBCFLU+iDNqn6v8+2SSahljKW+SvRQESVQq
+   lE4Dncc5P9nLkz22lWEWgvDc5Sm/vKG9SOStIL+4+/kz2f4MMvj9J68hU
+   A==;
+X-CSE-ConnectionGUID: u27puJaOTOW+Aoa6zKTbhw==
+X-CSE-MsgGUID: njfkjZegTKC89lYefjH7tw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63140428"
+X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
+   d="scan'208";a="63140428"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 16:32:09 -0700
+X-CSE-ConnectionGUID: 2PAsw1AfSUqU0iBpZvJi8Q==
+X-CSE-MsgGUID: zUGAZRtjTl2DJjLHGudMnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
+   d="scan'208";a="186686652"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Oct 2025 16:32:07 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEyaU-000Nii-0P;
+	Fri, 31 Oct 2025 23:31:58 +0000
+Date: Sat, 1 Nov 2025 07:30:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
+Message-ID: <202511010731.B5nbGjbm-lkp@intel.com>
+References: <20251031174220.43458-4-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031174220.43458-4-mjguzik@gmail.com>
 
-On Wed, 29 Oct 2025 06:12:35 -0700 Aditya Garg wrote:
-> @@ -289,6 +290,21 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  	cq = &apc->tx_qp[txq_idx].tx_cq;
->  	tx_stats = &txq->stats;
->  
-> +	if (MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES &&
-> +	    skb_shinfo(skb)->nr_frags + 2 > MAX_TX_WQE_SGL_ENTRIES) {
-> +		/* GSO skb with Hardware SGE limit exceeded is not expected here
-> +		 * as they are handled in mana_features_check() callback
-> +		 */
-> +		if (skb_is_gso(skb))
-> +			netdev_warn_once(ndev, "GSO enabled skb exceeds max SGE limit\n");
+Hi Mateusz,
 
-This could be the same question Simon asked but why do you think you
-need this line? Sure you need to linearize non-GSO but why do you care
-to warn specifically about GSO?! Looks like defensive programming or
-testing leftover..
+kernel test robot noticed the following build warnings:
 
-> +		if (skb_linearize(skb)) {
-> +			netdev_warn_once(ndev, "Failed to linearize skb with nr_frags=%d and is_gso=%d\n",
-> +					 skb_shinfo(skb)->nr_frags,
-> +					 skb_is_gso(skb));
+[auto build test WARNING on arnd-asm-generic/master]
+[also build test WARNING on linus/master brauner-vfs/vfs.all v6.18-rc3 next-20251031]
+[cannot apply to linux/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-.. in practice including is_gso() here as you do is probably enough for
-debug
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-fix-access_ok-and-valid_user_address-using-wrong-USER_PTR_MAX-in-modules/20251101-054539
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251031174220.43458-4-mjguzik%40gmail.com
+patch subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
+config: um-allnoconfig (https://download.01.org/0day-ci/archive/20251101/202511010731.B5nbGjbm-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010731.B5nbGjbm-lkp@intel.com/reproduce)
 
-> +			goto tx_drop_count;
-> +		}
-> +	}
-> +
->  	pkg.tx_oob.s_oob.vcq_num = cq->gdma_id;
->  	pkg.tx_oob.s_oob.vsq_frame = txq->vsq_frame;
->  
-> @@ -402,8 +418,6 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  		}
->  	}
->  
-> -	WARN_ON_ONCE(pkg.wqe_req.num_sge > MAX_TX_WQE_SGL_ENTRIES);
-> -
->  	if (pkg.wqe_req.num_sge <= ARRAY_SIZE(pkg.sgl_array)) {
->  		pkg.wqe_req.sgl = pkg.sgl_array;
->  	} else {
-> @@ -438,9 +452,13 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  
->  	if (err) {
->  		(void)skb_dequeue_tail(&txq->pending_skbs);
-> +		mana_unmap_skb(skb, apc);
->  		netdev_warn(ndev, "Failed to post TX OOB: %d\n", err);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511010731.B5nbGjbm-lkp@intel.com/
 
-You have a print right here and in the callee. This condition must
-(almost) never happen in practice. It's likely fine to just drop
-the packet.
+All warnings (new ones prefixed by >>):
 
-Either way -- this should be a separate patch.
+   In file included from fs/dcache.c:38:
+   In file included from ./arch/um/include/generated/asm/runtime-const.h:1:
+>> include/asm-generic/runtime-const.h:11:9: warning: 'runtime_const_ptr' macro redefined [-Wmacro-redefined]
+      11 | #define runtime_const_ptr(sym) (sym)
+         |         ^
+   arch/x86/include/asm/runtime-const-accessors.h:21:9: note: previous definition is here
+      21 | #define runtime_const_ptr(sym) ({                               \
+         |         ^
+   In file included from fs/dcache.c:38:
+   In file included from ./arch/um/include/generated/asm/runtime-const.h:1:
+>> include/asm-generic/runtime-const.h:12:9: warning: 'runtime_const_shift_right_32' macro redefined [-Wmacro-redefined]
+      12 | #define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
+         |         ^
+   arch/x86/include/asm/runtime-const-accessors.h:35:9: note: previous definition is here
+      35 | #define runtime_const_shift_right_32(val, sym) ({               \
+         |         ^
+   2 warnings generated.
 
-> -		err = NETDEV_TX_BUSY;
-> -		goto tx_busy;
-> +		if (err == -ENOSPC) {
-> +			err = NETDEV_TX_BUSY;
-> +			goto tx_busy;
-> +		}
-> +		goto free_sgl_ptr;
->  	}
->  
->  	err = NETDEV_TX_OK;
-> @@ -478,6 +496,25 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  	return NETDEV_TX_OK;
->  }
+
+vim +/runtime_const_ptr +11 include/asm-generic/runtime-const.h
+
+e78298556ee5d8 Linus Torvalds 2024-06-04   4  
+e78298556ee5d8 Linus Torvalds 2024-06-04   5  /*
+e78298556ee5d8 Linus Torvalds 2024-06-04   6   * This is the fallback for when the architecture doesn't
+e78298556ee5d8 Linus Torvalds 2024-06-04   7   * support the runtime const operations.
+e78298556ee5d8 Linus Torvalds 2024-06-04   8   *
+e78298556ee5d8 Linus Torvalds 2024-06-04   9   * We just use the actual symbols as-is.
+e78298556ee5d8 Linus Torvalds 2024-06-04  10   */
+e78298556ee5d8 Linus Torvalds 2024-06-04 @11  #define runtime_const_ptr(sym) (sym)
+e78298556ee5d8 Linus Torvalds 2024-06-04 @12  #define runtime_const_shift_right_32(val, sym) ((u32)(val)>>(sym))
+e78298556ee5d8 Linus Torvalds 2024-06-04  13  #define runtime_const_init(type,sym) do { } while (0)
+e78298556ee5d8 Linus Torvalds 2024-06-04  14  
+
 -- 
-pw-bot: cr
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
