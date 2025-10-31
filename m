@@ -1,187 +1,200 @@
-Return-Path: <linux-kernel+bounces-880280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CBEC25517
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:45:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37C9C25562
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46CF24E27E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1F8189A783
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F52238D52;
-	Fri, 31 Oct 2025 13:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5E0337B8E;
+	Fri, 31 Oct 2025 13:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="lxhBoj+n"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="ShO+uEFY"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900D81DFE22;
-	Fri, 31 Oct 2025 13:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7968070814;
+	Fri, 31 Oct 2025 13:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761918314; cv=none; b=McSTGL5azuJv9WNhvKrciSt8qTBd/+5qSNe3pheRujkDBv5+Ml48Q3kkBlsaLTTyV3rZ0KPPXaVYH5ZIfQzWj6LBN8Kvw3lKyE5Pt6Qfyn+KlHEgu6MVhSgkv85Jp80RSCFq638f4q/CpDrSkMO3fXBrLP9I2xiGxpFs7WN1Bys=
+	t=1761918458; cv=none; b=EsvmV/NzX/LB7yDWDqDI6Er3DuWVkNhrWFE1eIby+xD5CZ7kreeEnxeyG4sr6RUX8bjwXO9UgswnaeCCozhTtbSgWw5UpJ8z3ymi6w0LMnsMciQB6e0UKu3ESJLdCuz/hrPnBTXdQMGsP2ZuQvJAc2HD1YZUrcTsNtqhoBeH4AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761918314; c=relaxed/simple;
-	bh=O45XE8Vu9DTRBTlT3E54Vbg2Iy5Ih0eKSesjW5/ErXY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Hj/lGBrWUFN+WDHTlSnH3onX/SJDtFIkU5+RmpqhCCWG5Zknki5F4C4ujO6DA+XmjX/9NDKwB8F/MmqTd2BVgPPFl0ISSIN8d9JOUeLIy6vcE9ygPRygvBC0F8L5E2Qd9EJe/9N2VCzsaR24dAw7AINAEmse4yLkr6oNNbJaMmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=lxhBoj+n; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cyj0D3R39z9t4k;
-	Fri, 31 Oct 2025 14:45:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1761918300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O0O5a8R1BPxwQ8QmbLrr2Wpw5/Ede2Ocx8fNc84mnug=;
-	b=lxhBoj+nFifMqHZUHZELdPLthribMfxIBRsBMTlBfvwz5xz4/7t+MNuSL0r/tcY4TfU7E/
-	wXfVoCkZonsSLKVYm6gQN27Z4vJoIZbBvX8naz5PSpBBHY+dSaw8229s6l+BmBpO8vtOUN
-	z5vxQPH9XH1aIwislHMRClGbPNCAIdC7Ls7QMMEbqVwDe6IZ9MEfwcNurM5Gc5g6wEY6s0
-	hvZiCew18WkHvtblFouRihf+lZdmMc5sMI1ffH1N79bF/4KWtH49tworqBnHhJTF/nbRCi
-	ThgmoDtkVwPD3N//0WzuZlLVmI/K1XxUDLD5guNCGcTdDkT5zOKuYTQz0W+VRQ==
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-btrfs@vger.kernel.org,  clm@fb.com,  dsterba@suse.com,
-  johannes.thumshirn@wdc.com,  fdmanana@suse.com,  boris@bur.io,
-  wqu@suse.com,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] btrfs: define and apply the AUTO_K(V)FREE_PTR
- macros
-In-Reply-To: <20251031022241.GE13846@twin.jikos.cz> (David Sterba's message of
-	"Fri, 31 Oct 2025 03:22:41 +0100")
-References: <20251024102143.236665-1-mssola@mssola.com>
-	<20251031022241.GE13846@twin.jikos.cz>
-Date: Fri, 31 Oct 2025 14:44:53 +0100
-Message-ID: <87v7jv89t6.fsf@>
+	s=arc-20240116; t=1761918458; c=relaxed/simple;
+	bh=RGf9cfCIhxuq/vaRuNGbk2qeO2YTTDICUdifwVGN2Ps=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pA5+D3qg5+Caf/kcNdSQ3wjog04qXMh0XPVaqWQDMw9WSJ53cU/8uWbc/yXCcvXXr+BNinsu8/NaRcRZUm5TXymwQrOzQZB/vBKI7rYKdwRsqo1qhGqDIbLENC0iSYmBnX8U6G9wjiHlgcs3FiwQw2aSzJRYAY2/FKsqNdruD1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=ShO+uEFY; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761918441; x=1762523241; i=spasswolf@web.de;
+	bh=eEf9FtMftpf7rRdhDbyeVWuCRJ8OhLV37hbp0uqbBD4=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ShO+uEFYOmYlOgvsAsuB5M2OswcdOTiSek/gSQkissa60zfCH5rz0Yb0AFxwWYQx
+	 zbT8gxIpizohDkhQGHJOlm2sf2O5t7h5mmNeEBfF8QBZUHXEdcxnJqU6oSpNNBZlW
+	 H0GXf6y9diutdl7UitbJDgmwXtAxjiiHeB9npZi9YxePYiCoHLjJUPwLpNB9PEWGf
+	 Fuy/KYO4XyetNI2Wo2EPlakQjNpwsUwLoSMzpeQMmb98bYMnxtWJSaP4CPATXzpmQ
+	 D5JhTg9sOisvEOzgWoAo2CXY9tnglwLJjkXx2PHo5GN+7dhUXdrkqJrqS95xmvA8Q
+	 fJh0lUdppUaJpZBcgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMpCg-1vVOO52iRQ-00Tpm6; Fri, 31
+ Oct 2025 14:47:21 +0100
+Message-ID: <26bf82303f661cdd34e4e8c16997e33eb21d1ee4.camel@web.de>
+Subject: Re: [REGRESSION 00/04] Crash during resume of pcie bridge
+From: Bert Karwatzki <spasswolf@web.de>
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Mario
+ Limonciello <superm1@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, regressions@lists.linux.dev, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J . Wysocki"
+	 <rafael.j.wysocki@intel.com>, spasswolf@web.de
+Date: Fri, 31 Oct 2025 14:47:20 +0100
+In-Reply-To: <f18bafacbd8316c9623658e2935f8fc3b276af64.camel@web.de>
+References: <20251006120944.7880-1-spasswolf@web.de>
+					 <8edcc464-c467-4e83-a93b-19b92a2cf193@kernel.org>
+					 <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
+					 <4a8302a0-209f-446a-9825-36cb267c1718@kernel.org>
+					 <25f36fa7-d1d6-4b81-a42f-64c445d6f065@amd.com>
+		 <1853e2af7f70cf726df278137b6d2d89d9d9dc82.camel@web.de>
+	 <f18bafacbd8316c9623658e2935f8fc3b276af64.camel@web.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-
---=-=-=
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EjRqDMd/Z70FrDVz13IfKacOJSLO+KqbIRk3DhAnL3MhjrI/TPe
+ hgag+npBPbfOJsus7sL7uxfamxeJGX78r2y0RV08TjDwY9RbUMx0eV0cLT+HviCHf5bX5ld
+ ZarmhKmP7UOEhrN9vI44sDiwAZiDOWNNLitwP/Gm2pGXDFL0hl9GplQdCS8BUyXTCbI2Fop
+ MU5nQv5zd+LR53ljbbAJA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:pzeKkoOKzOQ=;+MX7KvkhiMrJ7amnBNF6vIVRSnJ
+ 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
+ jDYFg==
 
-David Sterba @ 2025-10-31 03:22 +01:
+Upon closer inspection I noticed that the PCIe bandwitdth has been reduced=
+:
 
-> On Fri, Oct 24, 2025 at 12:21:39PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
-ote:
->> Changes since v1:
->>   - Remove the _PTR suffix
->>   - Rename the ipath cleanup function to inode_fs_paths, so it's more
->>     explicit on the type.
->>   - Improve git message in patch 1.
->>
->> This patchset introduces and applies throughout the btrfs tree two new
->> macros: AUTO_KFREE and AUTO_KVFREE. Each macro defines a pointer,
->> initializes it to NULL, and sets the kfree/kvfree cleanup attribute. It =
-was
->> suggested by David Sterba in the review of a patch that I submitted here
->> [1].
->>
->> I have not applied these macros blindly through the tree, but only when
->> using a cleanup attribute actually made things easier for
->> maintainers/developers, and didn't obfuscate things like lifetimes of
->> objects on a given function. So, I've mostly avoided applying this when:
->>
->> - The object was being re-allocated in the middle of the function
->>   (e.g. object re-allocation in a loop).
->> - The ownership of the object was transferred between functions.
->> - The value of a given object might depend on functions returning ERR_PT=
-R()
->>   et al.
->> - The cleanup section of a function was a bunch of labels with different
->>   exit paths with non-trivial cleanup code (or code that depended on thi=
-ngs
->>   to go on a specific order).
->>
->> To come up with this patchset I have glanced through the tree in order to
->> find where and how kfree()/kvfree() were being used, and while doing so I
->> have submitted [2], [3] and [4] separately as they were fixing memory
->> related issues. All in all, this patchset can be divided in three parts:
->>
->> 1. Patch 1: transforms free_ipath() to be defined via DEFINE_FREE(), whi=
-ch
->>    will be useful in order to further simplify some code in patch 3.
->> 2. Patch 2 and 3: define and use the two macros.
->> 3. Patch 4: removing some unneeded kfree() calls from qgroup.c as they w=
-ere
->>    not needed. Since these occurrences weren't memory bugs, and it was a
->>    somewhat simple patch, I've refrained from sending this separately as=
- I
->>    did in [2], [3] and [4]; but I'll gladly do it if you think it's bett=
-er
->>    for the review.
->>
->> Note that after these changes some 'return' statements could be made more
->> explicit, and I've also written an explicit 'return 0' whenever it would
->> make more explicit the "happy" path for a given branch, or whenever a 'r=
-et'
->> variable could be avoided that way.
->>
->> Last, checkpatch.pl script doesn't seem to like patches 2 and 3; but so =
-far
->> it looks like false positives to me. But of course I might just be wrong=
- :)
->>
->> [1] https://lore.kernel.org/all/20250922103442.GM5333@twin.jikos.cz/
->> [2] https://lore.kernel.org/all/20250925184139.403156-1-mssola@mssola.co=
-m/
->> [3] https://lore.kernel.org/all/20250930130452.297576-1-mssola@mssola.co=
-m/
->> [4] https://lore.kernel.org/all/20251008121859.440161-1-mssola@mssola.co=
-m/
->>
->> Miquel Sabat=C3=A9 Sol=C3=A0 (4):
->>   btrfs: declare free_ipath() via DEFINE_FREE()
->>   btrfs: define the AUTO_K(V)FREE helper macros
->>   btrfs: apply the AUTO_K(V)FREE macros throughout the tree
->>   btrfs: add ASSERTs on prealloc in qgroup functions
->
-> Thanks, patches now added to for-next with some minor adjustments. Feel
-> free to send more conversions, there are still some kvfree candidate
-> calls. I think we would not mind using it even for the short functions
-> (re what's mentioned in the 3rd patch), so it's established as a common
-> coding pattern. This change has net negative effect on lines and also
-> simplifies the control flow.
+>=20
+> [76621.870884] [    T140] pcieport 0000:01:00.0: Unable to change power =
+state from D3cold to D0, device inaccessible
+> [76621.870977] [    T140] pcieport 0000:02:00.0: Unable to change power =
+state from D3cold to D0, device inaccessible
+> [76621.876006] [    T140] pci_bus 0000:03: busn_res: [bus 03] is release=
+d
+> [76621.878237] [    T140] pci_bus 0000:02: busn_res: [bus 02-03] is rele=
+ased
+> [76621.879867] [    T140] pcieport 0000:00:01.1: pciehp: Slot(0): Card p=
+resent
+> [76621.879873] [    T140] pcieport 0000:00:01.1: pciehp: Slot(0): Link U=
+p
+> [76622.006565] [    T140] pci 0000:01:00.0: [1002:1478] type 01 class 0x=
+060400 PCIe Switch Upstream Port
+> [76622.006606] [    T140] pci 0000:01:00.0: BAR 0 [mem 0xfcc00000-0xfcc0=
+3fff]
+> [76622.006616] [    T140] pci 0000:01:00.0: PCI bridge to [bus 02-03]
+> [76622.006630] [    T140] pci 0000:01:00.0:   bridge window [mem 0xfca00=
+000-0xfcbfffff]
+> [76622.006644] [    T140] pci 0000:01:00.0:   bridge window [mem 0xfc000=
+00000-0xfe0fffffff 64bit pref]
+> [76622.006772] [    T140] pci 0000:01:00.0: PME# supported from D0 D3hot=
+ D3cold
 
-Thanks for adding them!
+The PCIe band with seems to be have been reduce to PCIe 1.0 (2.5GT/s):
 
-Will keep an eye then if there are places where it's safe to use them.
+> [76622.006874] [    T140] pci 0000:01:00.0: 16.000 Gb/s available PCIe b=
+andwidth, limited by 2.5 GT/s PCIe x8 link at 0000:00:01.1 (capable of 126=
+.024 Gb/s with
+> 16.0 GT/s PCIe x8 link)
+>=20
+> Bert Karwatzki
 
-Greetings,
-Miquel
+This is the same message from system startup (here it's PCIe 3.0 (8.0GT/s)=
+, which is the PCIe version
+of the CPU (AMD Ryzen 7 5800H with Radeon Graphics)):=09
+[    0.289221] [      T1] pci 0000:01:00.0: 63.008 Gb/s available PCIe ban=
+dwidth, limited by 8.0 GT/s PCIe x8 link at 0000:00:01.1 (capable of 126.0=
+24 Gb/s with
+16.0 GT/s PCIe x8 link)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmkEvVUbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZaSwD/0bftnJ/zbP87OB9IgTaDW+7z5sqlQ4cATReNX2FyRMTYy3FGBaBG6AUNPn
-DiD5Y5OC+n3vas7tQgfIYoI+z7gcmIwaTLDOMPQtMuRq6e5BFhcsAlsXfbJjkKdp
-b046c0iWe9Xwb0aURP6wNN1pm88OR4yAe4cx8FaDevH9ZIn+wjpqUaaT3pNZBgZ6
-15iFI68f5VyjChxLHIDoYMDIrLccYNxVPqc88sC170F2a7A2V4nl4hIBy8wMDgYn
-98XHcmznW3HRvXj8ZG4f5XzKrMCWDpoAdg2ijB/ucC/zwffclVUg1OG7B7xPEjpV
-GCK6CQS3HJz1BF0GbMOdxtKKS7hxLwQ7maqyjqYDVVyV2kYgqcttrrIS0q3lVlFi
-5V92Q0A9yWca8TNjSJ+FSLkTpkXtHrfmztygLpt2+A052uDpA9zSvA1xPrvTpQe8
-h3AXjgYmFeOa9v8AqOHnVXRqvyXuzK9nd97ZyzPJ1j1NHnXA+bs55QJyLxxQZmHF
-iycUu6XenZtrRjiJQZlvtntpY/dgsHieEAH2zWsjss10aeH3qUQO/dRJDJ4Nv86R
-CLDlWxndlOAGpWP1actZtv4mqjz1DqvCdat6eBoRy85iISK5L7t4vlqv42PiKC/Q
-Rfn+M4LU79SVgRwwmNhSsi1ZICwbmp5BXjZYjceJBTVK5y8Jmw==
-=zMc4
------END PGP SIGNATURE-----
---=-=-=--
+Bert Karwatzki
 
