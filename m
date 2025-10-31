@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-879621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F1EC23981
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:45:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3ACC23987
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B934404B8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A9540653F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F32F32AABE;
-	Fri, 31 Oct 2025 07:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720EC32ABEF;
+	Fri, 31 Oct 2025 07:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eOHjJCbu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mLZ5ZGOQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C072E7182;
-	Fri, 31 Oct 2025 07:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA179329E70;
+	Fri, 31 Oct 2025 07:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761896690; cv=none; b=p1WhQYocvSDy5VBq3LCzmMIhQV+5JfyZqaDcYgRowGOdaOjT5d6RN7UNfV/qFS8TL23bUsdBNRinfafegyG+5sEzSn4dI93uLQj1bgDzMWZFw4OyhXH4/m6qBKgwMOnfF7LzbPAzzVWKI8vG88LswR8Q6sW+R3oDk+T4i30gB4s=
+	t=1761896707; cv=none; b=GostI2qkWAgDHIxmtKSPearwuhl53wqe/vC3NvBSN6bW2vax1eXBTX5MScKYclFtS+kg1fwxEaQv0s1iqx/UJhgTSuM3uE+fgLTrXTdC7P0FFqsQAsPSZXry/53d2ihokGiwRGpnxRPL9SruwwL7GLZGsr7OcqrkzfJcoOSz4Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761896690; c=relaxed/simple;
-	bh=VztEw2IJcjo2gATUWIYWaNfaOhNlLjB6rGgcXp7n9MY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLJX8FXeE4Jx5TzG/VoiIfy7iHCFS5Xeih4S/eBz7lj9WfPJDS47SZ6uby75EQRDOu2H9cZ2bqBsdPml2ad1/C8hAwOpxhIIhyW9QsCeKYLGckGKxs1NFDFolBsajkuXHLClgtd/UGy9q/XRV6syh4e7aNNi+DufxghDJZJ5+ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eOHjJCbu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A392EC4CEFB;
-	Fri, 31 Oct 2025 07:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761896690;
-	bh=VztEw2IJcjo2gATUWIYWaNfaOhNlLjB6rGgcXp7n9MY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eOHjJCbuvplv4O1ny3Lds2wYINPgutoYRzQYh2udPN+AnR0BDLETIpfTZyJPOtGS8
-	 AdqwTAsONJdCc3n/UeFeiaboj7/1A8kw+bxhqEDTzknDMARF3sTMsHehTmofYhAe5w
-	 fktZoJIa+GJ9V3Z/TOs7CuLKtiTLUDolhvpzrCUc=
-Date: Fri, 31 Oct 2025 08:44:47 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>, Ronnie Sahlberg <lsahlber@redhat.com>,
-	Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH] ksmbd: server: avoid busy polling in accept loop
-Message-ID: <2025103116-grinning-component-3aea@gregkh>
-References: <20251030064736.24061-1-dqfext@gmail.com>
- <CAKYAXd9nkQFgXPpKpOY+O_B5HRLeyiZKO5a4X5MdfjYoO_O+Aw@mail.gmail.com>
- <CALW65jZQzTMv1HMB3R9cSACebVagtUsMM9iiL8zkTGmethfcPg@mail.gmail.com>
+	s=arc-20240116; t=1761896707; c=relaxed/simple;
+	bh=DIa0t7rQHt59sCQtcDI0ZpiS1egH2dMVWGrfPPCEM4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j/D933tBVaByy594/2cVUi+TgX1lAKI9GQtUb2CMAQbOEkjS/kglJIAqc599j1B7/eqdKMOy9ZgOaaTR50LLox/pA/+15MD4oRSa8a1s0QhyBAKKeSNzzxXR8rfk6677uzt9SWe5m8PEtn0228qVc8FBwfTy1OpxZxQgJVd0MxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mLZ5ZGOQ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761896706; x=1793432706;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DIa0t7rQHt59sCQtcDI0ZpiS1egH2dMVWGrfPPCEM4o=;
+  b=mLZ5ZGOQEdTfJO4TVDfaznIzZZdB52m1Qh4E5jpcoWRtL8c5puxk1ncy
+   K5qM5vsoZbYgLt9gaBzb9TiL8/MUWFgMZE1zxfQmhY+QxhCpFILomLqjq
+   vBAnYJ/H97aAZrFtrtlH4Jwk5XRwVNB+WIaH/xXbhoYYiP11MxMh+9F8H
+   jOPUYQO9MBB490EpGiZsaVd8Or04mUtsIuD1sneBJ4wJDnO0X2R6VmXMZ
+   n10rxtYtczD7t7xIN5iRbAz8gdmFE2hcilBkQOTB9nh/2q3LLmiD+ljoi
+   9PfYOsYY1Vlmu5evT1BOT8E2TEoeO2k47xul0jGhWHIR8YMSGziv0FELw
+   Q==;
+X-CSE-ConnectionGUID: XJLtxn9qR7G57HFbUhF0Mg==
+X-CSE-MsgGUID: X7QZ4b0vS9yRNfGuRUyg3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="51624589"
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="51624589"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 00:45:05 -0700
+X-CSE-ConnectionGUID: L+dVuAYcTsyc3RdXURjhGQ==
+X-CSE-MsgGUID: Y+8N4W3yRwSOLMK7kTPntQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="186285126"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa008.jf.intel.com with ESMTP; 31 Oct 2025 00:45:03 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 2977F95; Fri, 31 Oct 2025 08:45:02 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jyoti Bhayana <jbhayana@google.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2() with ilog2()
+Date: Fri, 31 Oct 2025 08:45:00 +0100
+Message-ID: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALW65jZQzTMv1HMB3R9cSACebVagtUsMM9iiL8zkTGmethfcPg@mail.gmail.com>
 
-On Fri, Oct 31, 2025 at 03:32:06PM +0800, Qingfang Deng wrote:
-> Hi Namjae,
-> 
-> On Thu, Oct 30, 2025 at 4:11 PM Namjae Jeon <linkinjeon@kernel.org> wrote:
-> > > Fixes: 0626e6641f6b ("cifsd: add server handler for central processing and tranport layers")
-> > > Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> > Applied it to #ksmbd-for-next-next.
-> > Thanks!
-> 
-> I just found that this depends on another commit which is not in
-> kernel versions earlier than v6.1:
-> a7c01fa93aeb ("signal: break out of wait loops on kthread_stop()")
-> 
-> With the current Fixes tag, this commit will be backported to v5.15
-> automatically. But without said commit, kthread_stop() cannot wake up
-> a blocking kernel_accept().
-> Should I change the Fixes tag, or inform linux-stable not to backport
-> this patch to v5.15?
+const_ilog2() was a workaround of some sparse issue, which was
+never appeared in the C functions. Replace it with ilog2().
 
-Email stable@vger.kernel.org when it lands in Linus's tree to not
-backport it that far.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/iio/common/scmi_sensors/scmi_iio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/drivers/iio/common/scmi_sensors/scmi_iio.c b/drivers/iio/common/scmi_sensors/scmi_iio.c
+index 39c61c47022a..b40c6d6442e6 100644
+--- a/drivers/iio/common/scmi_sensors/scmi_iio.c
++++ b/drivers/iio/common/scmi_sensors/scmi_iio.c
+@@ -69,7 +69,7 @@ static int scmi_iio_sensor_update_cb(struct notifier_block *nb,
+ 		 *  Converting the timestamp to nanoseconds below.
+ 		 */
+ 		tstamp_scale = sensor->sensor_info->tstamp_scale +
+-			       const_ilog2(NSEC_PER_SEC) / const_ilog2(10);
++			       ilog2(NSEC_PER_SEC) / ilog2(10);
+ 		if (tstamp_scale < 0) {
+ 			do_div(time, int_pow(10, abs(tstamp_scale)));
+ 			time_ns = time;
+-- 
+2.50.1
 
-greg k-h
 
