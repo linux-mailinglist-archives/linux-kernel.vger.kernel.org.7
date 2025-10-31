@@ -1,314 +1,195 @@
-Return-Path: <linux-kernel+bounces-879616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2726CC23949
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:41:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05CAC23954
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8AD83AA757
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927443AE215
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3D2329E47;
-	Fri, 31 Oct 2025 07:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D9832A3F2;
+	Fri, 31 Oct 2025 07:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O+lRAaPr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M4Y3vsP6";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="f+SksGqu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694AA17D6
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973F329C6B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761896495; cv=none; b=bBO5S/mkjh74mAWjrseCDqdbSizP/V0UJrM7djDNI1yUTGrJN4YvezjNZz5CCO9e7LpD8QLAL5gafijWsWhUyWBfs3wy2Ic8ig89sC4vlDGhMXLPkrWr0dJ9Ntbi9WoU+xmdIn+Us7/cRDjjmhOv3LH9RaUb4yjlJw9lTH0Noiw=
+	t=1761896523; cv=none; b=hKtNrg8kMhhM4oZIGnt8nMTaFESYAbRB08WuYB0ABVQuz7GPCER2NfIkr1flrmSym6gwC0HqUhBP9rRtdAK92O74zQacEaW6YaUWs7s8hJSg2KrvtLmvlFaJpN1pUbDocwLrYsF3tYL1PbeVXx1itC0cXMC9+ypOt1dCQ6+HLKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761896495; c=relaxed/simple;
-	bh=1DWKSJF8OEYqjcJrqFR6FrT+o8y4zSzWVVe3d/IbG9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZMWHWVStzSqyU/btlIqpMuWcJvP4+6ZxgotBdGPdk/uOElZaItWHX5Xd3HX6WJo/5SdRkzmt6HD2O3zqLhKvZyxlXdxazng4CT0N4nAdFNZ3g+Z8p7pg0GGJ3MBzmE2cWBScuSe6NUcXQldNPNhl7Qasdvoh3nVuzrdD5h+R2uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O+lRAaPr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761896492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x1U8+0OYOpaOguLvykcf3aLOzyj6wguuzkEUvWSZdG8=;
-	b=O+lRAaPrh/jG5S6qSqYbxC8Lf5TtYALWnlaSQU5iK5nrJx+wTgT4DDVxSQpvMpQ2MlR7+R
-	D4D9/sJaoFNKf7gvPgv5ordE8701aWtnN1pwPTXCiHlO4SFkwg7tRFAyW1SvmpRmPidYJs
-	kFmJ+zNmQ4gosOzcLUIOoyfi/oqKyLI=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-s9Y2XShiNeaFJV83Bkq2cA-1; Fri, 31 Oct 2025 03:41:30 -0400
-X-MC-Unique: s9Y2XShiNeaFJV83Bkq2cA-1
-X-Mimecast-MFC-AGG-ID: s9Y2XShiNeaFJV83Bkq2cA_1761896489
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29520b8e248so7029755ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:41:30 -0700 (PDT)
+	s=arc-20240116; t=1761896523; c=relaxed/simple;
+	bh=rlsZNO3r9jM3pXZk7rHdjWG3W9uPoXZ+KGBQDQntePk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=N+BW9tQqCgVY7i2nznwKavJ+NmNEm0nO7iVflwTLzwwTat1vFGi7jVG71taYpzDdVrvcYZj87q6GuI18A+0Xtk9iE4oehRu5s2pGyUDiUxmk/v7u5g7KwUBPNErBCtABXXPEV60fXpeJRcnOBX0ACf6q7Kv3uFfm6iFfM/wm5oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M4Y3vsP6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=f+SksGqu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59ULrQ7q898142
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:42:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ovRnpTLoXzZqTnzO7mofmt
+	3S7grzyD3/EeCjszf/sVY=; b=M4Y3vsP6Dcw2wF78sSC5Z0ULnuulTtQX8NUoIb
+	5K7INk7y5FS5wzF+YFDZUKgZFfjTgBjs/ahN++XNqE0T4OQVp0bxv8wof/XC7thb
+	nr59Dhwb8WRhFsY1NmP6rHszu4BxKCQCtJM8/KNI3rOSyntcdRdgO+XsIw3amvOS
+	OzBZNgJTLRjWtuW+Vl4Ap07aZnPH+7NIbehc9C8qQ4pZ7gaF1QqqicKpWxt0ST5C
+	u9oVZ3UdGoQTdxMuk5AxhBXK1nUhjvoeYtxX631azPODHC/57k5oHs0EvLTf3Im7
+	GjHsqooao4BZAA2RqOYx8n/5xQcc/CiVI4tFbCqiy5l9SYBw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4gb21872-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:42:01 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290d860acbcso39936265ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:42:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761896520; x=1762501320; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ovRnpTLoXzZqTnzO7mofmt3S7grzyD3/EeCjszf/sVY=;
+        b=f+SksGquD8NnU97nd2DrmidNGW6KUHr9BHkFzvrYRR/9cyCpbKjLBlawSsWGkmm+nF
+         8z9dgSWCWU3uuJhYEYjBac2HPA5UBtIWZ6WqQ84yoqzWGsRHa48pAFdSIJE4eemDChiM
+         j6DsqYW2zPp7J26uUOar5V2/0+hG8Px7tMIk6tQaK30X3iA3p6Yg1L6Oi6V8EapcwwFg
+         iD/aWhpbsm4jD/YUiJMdQ98Xx8Qyvv7dU3WkGveDZMbGeu28IzNUx8bdHwMwyN0KavuT
+         5gffBgs3ls6kMQQtVr3ZV4hu8UdimelibPWeMEb4Mq3livMZB29gfz0AaJhW1YLcR21U
+         FR6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761896489; x=1762501289;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x1U8+0OYOpaOguLvykcf3aLOzyj6wguuzkEUvWSZdG8=;
-        b=B62WAxv0LnY6Y9ssAx8LFiV9ehYckWQXLxdILIuM8JtsQb1BAob2AhCNh3fLKrfwRk
-         pwhP1DHXU2uRX/XdY43uI0JAN6BVC32i9B5hG0So5UOiOZOT4nsRqT6J/1N1ZpNkeZIN
-         YVO0KlbYC9JV0sKKS0ijYLl32EauTrcmqVxl1SekPbRW/8KH5sG0VeAK/Welea2nqQIt
-         +qmkdl2/St5TeIEsnHuqU7Eoy5vt8PhkkioE6bWpXNLAimrOOk7C3MQDKdyup7M5Woxd
-         Tn773f7b6k6hGvvaP4lb8sVIhIgbAwqPWJ5yRpnA4HiBUvOqX30yJDj4XWdTgFQGax4K
-         UMOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzNgj9oC3BP+Yd9+sUU2H5XG8I+CfvdWia2msVdm3l3cLU2B7EGXS46ozMFETfodD2zVoJzInlftpo2ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUem5X4+OhzQ+K6woTfckD9QIElO5pCd2waHslz4P6FvLI77x2
-	mwOon1cfrSNd07+sOx2OT2hIuFwqVtCJ/xZmGIZXVU7S03iLOHM//e1RiegiYqoJixk7oHYSr/n
-	lsGipURbC3a82/knQUCmK1t4abV8nzBbE3lVhXPBYtTL7VxmJAoyxysjxPxJ27FiQ9A==
-X-Gm-Gg: ASbGncskCUPiOS5+ZfGNPfw+IaeEvlYFKmjiHkjpBmJCSdSRVMnzWYlvH1bIMmBTz4V
-	ZHzQ/i92/gqG82jFUjNWGr7WQHE05eu4gotHfCI7tjd6Zw7MNvmXaR57YRWhf+sjT9oE37vYcEr
-	nXk7sZaZ6DAjf8qrdq6Htn57qdfu2gn90UQPbmhH00Uk3DK1Iv2XodhJpGLEB3Nu/RKjoMjHNWV
-	s3yktY/9ej6QoQU7JuDoD35j4qf/4P+KtkfnRkuuSHFHDl/8Uc6sOc9CrG5Wl2t3Y+vPBOfzIrt
-	XPkKQ8HAJsEYg11VRtmwgOKP93qWP2p2I/vhbaIs3lAXEtL6NBlmRqrBLSkmwmrGIA==
-X-Received: by 2002:a17:903:2c7:b0:26c:e270:6dad with SMTP id d9443c01a7336-2951a4fcb51mr32136175ad.60.1761896489182;
-        Fri, 31 Oct 2025 00:41:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUvnpn03zGYM9wkLBYIw6ClAfviiBezzYgMRg1RS9G1UI4cgyI/q3aZ1UE8CEnS8k4YLVEmQ==
-X-Received: by 2002:a17:903:2c7:b0:26c:e270:6dad with SMTP id d9443c01a7336-2951a4fcb51mr32135925ad.60.1761896488704;
-        Fri, 31 Oct 2025 00:41:28 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295268b43d7sm13094335ad.35.2025.10.31.00.41.27
+        d=1e100.net; s=20230601; t=1761896520; x=1762501320;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ovRnpTLoXzZqTnzO7mofmt3S7grzyD3/EeCjszf/sVY=;
+        b=lnK4E/o+f9FCbN+T7Fh9NVLiwBhv3pPe/0gt60IEkazy+jc1BSuocNS7M+J8KQZgQ2
+         HQVJh+JnZQ9hD3bYHitrY5bjcHQ+9Vu6jphjnPiPtMVcp9KOY0ejxGIngSeDspOFY8VU
+         fhwMGT42KxxflcdLbOUrpbPI76YHwsdarBf3KSlclbCRGE14evvXks3FoQP6wva/J98R
+         GDF9VY8GMsj3BTg7IC48yEOXqcKWKH4senyWz0YoXdqPKhkrM2aurwqiDo+1Fde1LaHf
+         uZ7NsICRBo6c6WlN87BMSBnIwDYpsmFzv+QWWtHJSR28wWQPxJ0aCm3/nIoqLk6Ju0gt
+         Oj3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXr9ExKc4qIeQPbzDyh+jvmrkq/nS/0OctKWitkA4MYbcIpet2s2K9M7QyvjbnfRVeBVu7p2wGcHMUzW5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzss3255x6eRbK9jYFHrOXRfHWXg3x4F5lOK8UKOKvOHJx28HJB
+	UoSmqpVbfTDeAsJgaWx8/HXgF7NqVCDi0PHTWUa7vTNBzeExHt8uk7YJz63hiW5GKc/2MIgRHtt
+	ipKyhUEGy8Zw4LTIBKRbKLAqSCchtHmWECSJR2yOk3l4iyiOevw0MKFVOxc2/Fa3DxB0=
+X-Gm-Gg: ASbGncvG2FNPb2qCq2uTd1OxhYTGSoAdXaZvhNH8+FoNO3BhA2kErasKb9fWwQojWGC
+	bl6sqIKbIN1aZYpB/04bzbl8ueD8sNcocZ3r2n2hnzU9UdpvINaFMEX6FEPHx1BzBSNVQm6llhS
+	9rp1AFALpOxaQbr1J5KnOadGwqr7R+KxE5zCd6r1RcaC96fj5irIPN6hKwGi0zbwOQvFg6XKtLz
+	yOJ22dVIRy/gShMF7jSSxNLjhI/ImcEFIOsm0UxTPinHSl/+urKvB3oIHfgvLWNA/OhufUSBAIT
+	VhZzuki4Ru3VY9ps1ti0PjcL4Fu2Huf69KyH2eIby+eaOgXGccitgzKOZW7VZBYJM0ukeM18N7i
+	eMUJDV33fAxw70M4vpGuQfy1FGJbw9QuqR3aBgd+ToBAAI+wqmA==
+X-Received: by 2002:a17:902:c947:b0:295:1e50:e7cb with SMTP id d9443c01a7336-2951e50eb4amr29425975ad.23.1761896520302;
+        Fri, 31 Oct 2025 00:42:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnOvple5E/jpu7Ojs3vJuSdtwKz4L73asmo+O5/kr7zaTkjX8j3txjYMGu4cHSGN+TDfMUMw==
+X-Received: by 2002:a17:902:c947:b0:295:1e50:e7cb with SMTP id d9443c01a7336-2951e50eb4amr29425675ad.23.1761896519768;
+        Fri, 31 Oct 2025 00:41:59 -0700 (PDT)
+Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952696f0c8sm13276735ad.71.2025.10.31.00.41.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 00:41:28 -0700 (PDT)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>
-Cc: Karel Srot <ksrot@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-modules@vger.kernel.org (open list:MODULE SUPPORT)
-Subject: [PATCH v2] lsm,ima: new LSM hook security_kernel_module_read_file to access decompressed kernel module
-Date: Fri, 31 Oct 2025 15:40:15 +0800
-Message-ID: <20251031074016.1975356-1-coxu@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250928030358.3873311-1-coxu@redhat.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
+        Fri, 31 Oct 2025 00:41:59 -0700 (PDT)
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Subject: [PATCH v3 0/3] mailbox: qcom-ipcc: Add dt-bindings and header
+ files for Kaanapali and Glymur Platforms
+Date: Fri, 31 Oct 2025 00:41:43 -0700
+Message-Id: <20251031-knp-ipcc-v3-0-62ffb4168dff@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADdoBGkC/22Nyw7CIBREf6Vh7W3gtlVw5X8YF7xqifYhKNE0/
+ XehC3XhZpJJ5pyZSbDe2UD2xUy8jS64cUil2hREd3I4W3AmdYIUG0aRw2WYwE1aw1bVjIt2xxg
+ ykuaTt617rqrjKXUlgwXl5aC7LEgw5lnnwn30r/Uwsjxe3VRg/XVHBgwaI6zQqhHS1IcxhPL2k
+ Fc99n2ZguSLiB8+6cUPj0CBK1nRSiqOxv7hl2V5AyI9euD+AAAA
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761896518; l=2031;
+ i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
+ bh=rlsZNO3r9jM3pXZk7rHdjWG3W9uPoXZ+KGBQDQntePk=;
+ b=OV2NRnkecWvBSoptNP9Hzj90ZICtv0J9DF+D+bN6dKOSlY6MQsUxFBkEXBDiv7MuBJeB16Vyr
+ 7B1krNcWNyWAtRdSWHt63Q6ZEUil9tflf79bYJyqEguqqISJ2dtlN00
+X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
+ pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
+X-Authority-Analysis: v=2.4 cv=efswvrEH c=1 sm=1 tr=0 ts=69046849 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=2HIG4QdnYvknWnWHaxgA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDA2OSBTYWx0ZWRfX0XBfwt9VbD4H
+ EFztfqwA+MTiK0cO6Bjmk7KuY11tuAqpQi2PJt976XlP2reNLEoMtYVDl3ekP4pJPdakqDKWMk+
+ 50S68ySbek4l01gNsXY0p733Ka/qTxpHoPss7c6VuuKe/6wBhHxgc95tCvk03HMtrN+nxAmg5gW
+ T/db/dWzg2XY/anoMhQVqJ5UvpRXXQtuXhSBTDh0FOfu129mZv1XwVoBVxRgl9PJyAxr1dKnXL1
+ JjYtXg6hcLfr9pp8sZB55C/khky2mLejXyYPxlkpl04vG5ckRTGg2+L7/wiHFcywT4JfDeUeSGQ
+ jZLlkhqa+D1tGmdSvi06ywznRUto9x42krNGD+Mpn74cOIiUz/MI9mZRQ+hJ2gzKFclBuSX3c3R
+ hhTJHYDjJ+UgsC7xVZFQsttdAGUp8w==
+X-Proofpoint-GUID: oF89G-isJYETncpnrhPx6jb_wQ0laLYP
+X-Proofpoint-ORIG-GUID: oF89G-isJYETncpnrhPx6jb_wQ0laLYP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310069
 
-Currently, when in-kernel module decompression (CONFIG_MODULE_DECOMPRESS)
-is enabled, IMA has no way to verify the appended module signature as it
-can't decompress the module.
+Add dt-bindings and header files for the Inter-Processor Communication
+Controller on Kaanapali and Glymur platforms.
 
-Define a new LSM hook security_kernel_module_read_file which will be
-called after kernel module decompression is done so IMA can access the
-decompressed kernel module to verify the appended signature.
+On earlier platforms, Inter Process Communication Controller (IPCC) used
+virtual client IDs and performed virtual-to-physical mapping in hardware,
+so the IDs defined in dt-bindings/mailbox/qcom-ipcc.h are common across
+platforms. Physical client IDs instead of virtual client IDs are used for
+qcom new platforms like Kaanapali and Glymur, which will be parsed by the
+devicetree and passed to hardware to use Physical client IDs directly,
+so header files are defined under dts.
 
-Since IMA can access both xattr and appended kernel module signature
-with the new LSM hook, it no longer uses the security_kernel_post_read_file
-LSM hook for kernel module loading.
-
-Before enabling in-kernel module decompression, a kernel module in
-initramfs can still be loaded with ima_policy=secure_boot. So adjust the
-kernel module rule in secure_boot policy to allow either an IMA
-signature OR an appended signature i.e. to use
-"appraise func=MODULE_CHECK appraise_type=imasig|modsig".
-
-Reported-by: Karel Srot <ksrot@redhat.com>
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 ---
-v1: https://lore.kernel.org/linux-integrity/20250928030358.3873311-1-coxu@redhat.com/
+Changes in v3:
+- Move header files from dt-binding to dts - Krzysztof
+- Reorganize patches
+- more detailed information in commit msg - Bjorn
+- Link to v2: https://lore.kernel.org/r/20251029-knp-ipcc-v2-0-8ba303ab82de@oss.qualcomm.com
 
- include/linux/lsm_hook_defs.h       |  2 ++
- include/linux/security.h            |  7 +++++++
- kernel/module/main.c                | 10 +++++++++-
- security/integrity/ima/ima_main.c   | 26 ++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c |  2 +-
- security/security.c                 | 17 +++++++++++++++++
- 6 files changed, 62 insertions(+), 2 deletions(-)
+Changes in v2:
+- Add separate header files for different platforms
+- Merge binding and header file in one patch
+- squash glymur ipcc change from: https://lore.kernel.org/linux-arm-msm/20250924183726.509202-1-sibi.sankar@oss.qualcomm.com/T/#m186ef6ceb50936185d07b81e2d36228a5a361d34
+- Link to v1: https://lore.kernel.org/r/20250924-knp-ipcc-v1-1-5d9e9cb59ad4@oss.qualcomm.com
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 8c42b4bde09c..ced42eb8b618 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -232,6 +232,8 @@ LSM_HOOK(int, 0, kernel_read_file, struct file *file,
- 	 enum kernel_read_file_id id, bool contents)
- LSM_HOOK(int, 0, kernel_post_read_file, struct file *file, char *buf,
- 	 loff_t size, enum kernel_read_file_id id)
-+LSM_HOOK(int, 0, kernel_module_read_file, struct file *file, char *buf,
-+	 loff_t size)
- LSM_HOOK(int, 0, task_fix_setuid, struct cred *new, const struct cred *old,
- 	 int flags)
- LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 92ac3f27b973..e47951292c73 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -508,6 +508,7 @@ int security_kernel_read_file(struct file *file, enum kernel_read_file_id id,
- 			      bool contents);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
-+int security_kernel_module_read_file(struct file *file, char *buf, loff_t size);
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags);
- int security_task_fix_setgid(struct cred *new, const struct cred *old,
-@@ -1295,6 +1296,12 @@ static inline int security_kernel_post_read_file(struct file *file,
- 	return 0;
- }
- 
-+static inline int security_kernel_module_read_file(struct file *file,
-+						   char *buf, loff_t size)
-+{
-+	return 0;
-+}
-+
- static inline int security_task_fix_setuid(struct cred *new,
- 					   const struct cred *old,
- 					   int flags)
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index c66b26184936..40bc86fa7384 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3678,6 +3678,7 @@ static int init_module_from_file(struct file *f, const char __user * uargs, int
- 	struct load_info info = { };
- 	void *buf = NULL;
- 	int len;
-+	int err;
- 
- 	len = kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MODULE);
- 	if (len < 0) {
-@@ -3686,7 +3687,7 @@ static int init_module_from_file(struct file *f, const char __user * uargs, int
- 	}
- 
- 	if (flags & MODULE_INIT_COMPRESSED_FILE) {
--		int err = module_decompress(&info, buf, len);
-+		err = module_decompress(&info, buf, len);
- 		vfree(buf); /* compressed data is no longer needed */
- 		if (err) {
- 			mod_stat_inc(&failed_decompress);
-@@ -3698,6 +3699,13 @@ static int init_module_from_file(struct file *f, const char __user * uargs, int
- 		info.len = len;
- 	}
- 
-+	err = security_kernel_module_read_file(f, (char *)info.hdr, info.len);
-+	if (err) {
-+		mod_stat_inc(&failed_kreads);
-+		free_copy(&info, flags);
-+		return err;
-+	}
-+
- 	return load_module(&info, uargs, flags);
- }
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index cdd225f65a62..53d2e90176ea 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -635,6 +635,27 @@ static int ima_file_check(struct file *file, int mask)
- 					   MAY_APPEND), FILE_CHECK);
- }
- 
-+/**
-+ * ima_read_kernel_module - collect/appraise/audit measurement
-+ * @file: file pointer to the module.
-+ * @buf: buffer containing module data (possibly decompressed).
-+ * @size: size of the buffer.
-+ *
-+ * This IMA hook for kernel_module_read_file LSM hook is called after a kernel
-+ * module has been read into memory and (if applicable) decompressed. It
-+ * measures and/or appraises the module based on the IMA policy.
-+ *
-+ * Return: 0 on success, negative error code on failure.
-+ */
-+static int ima_read_kernel_module(struct file *file, char *buf, loff_t size)
-+{
-+	struct lsm_prop prop;
-+
-+	security_current_getlsmprop_subj(&prop);
-+	return process_measurement(file, current_cred(), &prop, buf, size,
-+				   MAY_READ, MODULE_CHECK);
-+}
-+
- static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
- 			    size_t buf_size)
- {
-@@ -881,6 +902,10 @@ static int ima_post_read_file(struct file *file, char *buf, loff_t size,
- 	enum ima_hooks func;
- 	struct lsm_prop prop;
- 
-+	/* kernel module will be addressed in ima_read_kernel_module */
-+	if (read_id == READING_MODULE)
-+		return 0;
-+
- 	/* permit signed certs */
- 	if (!file && read_id == READING_X509_CERTIFICATE)
- 		return 0;
-@@ -1250,6 +1275,7 @@ static struct security_hook_list ima_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(kernel_load_data, ima_load_data),
- 	LSM_HOOK_INIT(kernel_post_load_data, ima_post_load_data),
- 	LSM_HOOK_INIT(kernel_read_file, ima_read_file),
-+	LSM_HOOK_INIT(kernel_module_read_file, ima_read_kernel_module),
- 	LSM_HOOK_INIT(kernel_post_read_file, ima_post_read_file),
- 	LSM_HOOK_INIT(path_post_mknod, ima_post_path_mknod),
- #ifdef CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 128fab897930..2c9bdc618ac9 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -241,7 +241,7 @@ static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
- 
- static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	{.action = APPRAISE, .func = MODULE_CHECK,
--	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
-+	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED | IMA_CHECK_BLACKLIST},
- 	{.action = APPRAISE, .func = FIRMWARE_CHECK,
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
- 	{.action = APPRAISE, .func = KEXEC_KERNEL_CHECK,
-diff --git a/security/security.c b/security/security.c
-index 4d3c03a4524c..311ba63a8889 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3442,6 +3442,23 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- }
- EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
- 
-+/**
-+ * security_kernel_module_read_file() - Read a kernel module loaded by finit_module
-+ * @file: file
-+ * @buf: contents of decompressed kernel module
-+ * @size: size of decompressed kernel module
-+ *
-+ * Read a kernel module loaded by the finit_module syscall. Unlike
-+ * security_kernel_post_read_file, it has access to the decompressed kernel module.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_kernel_module_read_file(struct file *file, char *buf, loff_t size)
-+{
-+	return call_int_hook(kernel_module_read_file, file, buf, size);
-+}
-+EXPORT_SYMBOL_GPL(security_kernel_module_read_file);
-+
- /**
-  * security_kernel_load_data() - Load data provided by userspace
-  * @id: data identifier
+---
+Jingyi Wang (2):
+      dt-bindings: mailbox: qcom: Add IPCC support for Kaanapali and Glymur Platforms
+      arm64: dts: qcom: Add header file for IPCC physical client IDs on Kaanapali platform
 
-base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+Sibi Sankar (1):
+      arm64: dts: qcom: Add header file for IPCC physical client IDs on Glymur platform
+
+ .../devicetree/bindings/mailbox/qcom-ipcc.yaml     |  2 +
+ arch/arm64/boot/dts/qcom/glymur-ipcc.h             | 68 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/kaanapali-ipcc.h          | 58 ++++++++++++++++++
+ 3 files changed, 128 insertions(+)
+---
+base-commit: aaa9c3550b60d6259d6ea8b1175ade8d1242444e
+change-id: 20251028-knp-ipcc-6b4189f71121
+
+Best regards,
 -- 
-2.51.0
+Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
 
