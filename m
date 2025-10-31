@@ -1,134 +1,86 @@
-Return-Path: <linux-kernel+bounces-881023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE920C273AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:55:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4DCC273BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 00:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3043F18940DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE66B3A1DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FFB330B03;
-	Fri, 31 Oct 2025 23:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E88330B01;
+	Fri, 31 Oct 2025 23:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BgeoZ9Az"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvaRmDWA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9BC30F951;
-	Fri, 31 Oct 2025 23:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CA932862C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761954940; cv=none; b=oJfBQGKae9Lfl7XYm70JLHFzWJUDbw7eIF42GxoWwyfVrYPPc40MYKIARVx0kYkttkceSqtnyCQQ+vTvUrtGc7TtutlHrtNrAwbjOc8vRB8GUCshyzpJC7pMUVHOUY5QQACMkvqjhcjthFhZoXbTNh+CCv++SNvrdja6R8v5tP4=
+	t=1761955014; cv=none; b=OuvXr+zn7LiLSp0xVb3cVgfc12wra52PsBwfjdrKhsZ/4S6MtQfA7uXV4oOT/DJfZACsc6n1nhDzz/C2LkKg8WYz9cfIJ6PLB1OXknjJaJl2kCpvkthrYP5hP8bfaYJiFHOmro7Cqd2jRqaj7mz0obLjUeiUNbfMBpo8FZo9ynk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761954940; c=relaxed/simple;
-	bh=IgEyLuJD3uU+/Fkjfih5JoAxJ/acgTqLSAUy4L+dzj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qzzPG2VQxWBOCHI/ILZ1biKpDI6uX0Wex0UHOpQB2H7vu4iTNmU3m97wZW1wzqyls+7LMmqc7puFo1g+I3PKJIGqXLxEuzdVEJaaG1rU5doQHSerK6r8SGNWVT20uswV8UKX4qC/UygW6f51L4f+zTlMFDbEgRY7i8oNAqdm9ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BgeoZ9Az; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761954938; x=1793490938;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IgEyLuJD3uU+/Fkjfih5JoAxJ/acgTqLSAUy4L+dzj4=;
-  b=BgeoZ9AzvzqU9mnc1VcQfYZ05mzulxWsHR4AUSw8I6YHOtKCSrApE50h
-   NXHaKwxGPkXD40oU6cY2ac4H/qTNzBFuKZ2gyNBcAC0RwOd8UQnFDx1x+
-   2gEDichLgZK83oYvBBTHQ1uht4fzMF8GIUrc9nRWR7lH0EeZtORmze9q2
-   w7sSMLiWxsO4aGpFiIXIjmckPLwxWYVh9IX4THdHYbJSJj1pBcRL9BKL3
-   6UKk0BuX8aEXzCuqlGP8GZxiDX09EemAUeIz6DjBnNadiOMDeaUAJ0Vmg
-   TtrfNJvMPx2iFq/bz1xiPO5jKuUi7s0uRXS848IxqGOvDBDATm4J6co6y
-   w==;
-X-CSE-ConnectionGUID: Lc2FaeMmSUSYU9JDTOsBCA==
-X-CSE-MsgGUID: qhigV5T5TIWtVSwsj8Z8BA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64040655"
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="64040655"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 16:55:37 -0700
-X-CSE-ConnectionGUID: E55U3mslQdKxA5GfBKMnxA==
-X-CSE-MsgGUID: 7VmckiH8S4im/CbZ6ccR9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="185578112"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.220.87])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 16:55:37 -0700
-Date: Fri, 31 Oct 2025 16:55:24 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-Message-ID: <20251031235524.cuwrx4qys46xnpjr@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-5-seanjc@google.com>
+	s=arc-20240116; t=1761955014; c=relaxed/simple;
+	bh=bqI3w/EdVHtkpGOIjbdCki5QbmrM49X6+tmUZLIaD0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eGtZyXqJ7jez8o0gns46A/e1Z7VcdenAId7uV52lJZy7ymS39WSD7vZofG5Y2zmgLeBYsKLc4ok4I9nvoMx117XDxAhmGGycDuxQTxlasxKm7Ye4iAj42VisqcGY2GakCYXeOqcyliNSdSp3HlmF8vMue9DLVbwMA11xphDYXi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvaRmDWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E745C4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761955013;
+	bh=bqI3w/EdVHtkpGOIjbdCki5QbmrM49X6+tmUZLIaD0w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UvaRmDWAnFi7wBp0BjB4vMz1AJ1ZfQU/5g9go+Bs06V2FMknl+OVW24moAfTUfnB1
+	 G0ItuCd3mvQ6zuTSUidHo6cG2nwvHabFhtrrGdgI+i3af+hLf+6s+fM/CDvqGVoqo0
+	 Py7IXhw7AqpbwqEOnMAg+17JHC5eievG+Ra8AiY5u6rlMj8mutzINyUf9aGSLgg1Fg
+	 Lci/b7rcnh5Uk1govGBsGJUaeKEPMZJPyxzhTMttN6C223mCb5MFaLyKzq/dCTEpHX
+	 upBXgGJJwLzY+dXoqM5Qc2wpC5f+CWVH8XCLQB3fluTmn9MrwHnKEsrqhScf3bNoiD
+	 0tiRn2fmnFoxw==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c3c7d3d53so5305754a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:56:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYpVaqoCiPuDQFmlQngcz1xvI/qJXmhFYXeSXFXtpgo47cYLYFp3iQ/LGI6eg1+ggS/cA1uJKOrgx16Vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw09gpLH0QNGKKYKwd/9CC47cpEmiGCebEJ8AU7W1zmBKXUs19/
+	M5QlTKMyk+EeENSV6pawO9PBJP75LxreUBPP3A7iT5V+tx1fowXkaTd0yXikTUnUCbSqDfZ6iGR
+	Kch/h41pP88ISStksSx57Ncq4K+0zySg=
+X-Google-Smtp-Source: AGHT+IFS0DvMpUbXxn+6OnOchHuBTnSOE/UdbxWu85/JAWMcUGEVjijIBgVl1+W5kewyHjDwxxYBNF2xj2EPurSWu5M=
+X-Received: by 2002:a05:6402:510e:b0:639:f54d:9274 with SMTP id
+ 4fb4d7f45d1cf-64076f67014mr4297145a12.2.1761955012177; Fri, 31 Oct 2025
+ 16:56:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-5-seanjc@google.com>
+References: <20251017084610.3085644-1-chenxiaosong.chenxiaosong@linux.dev> <20251017084610.3085644-3-chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <20251017084610.3085644-3-chenxiaosong.chenxiaosong@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 1 Nov 2025 08:56:39 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-DxRTEu65-YKwXw8jA478jmgQAtOUNR66Tjb+czxp=xw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkEZgpbfvaXa0KW49_u9vc9ThnnjE8dBjQSTUJsPOAkri7qLId8BB8gr1o
+Message-ID: <CAKYAXd-DxRTEu65-YKwXw8jA478jmgQAtOUNR66Tjb+czxp=xw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] smb/server: fix return value of smb2_notify()
+To: chenxiaosong.chenxiaosong@linux.dev
+Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ChenXiaoSong <chenxiaosong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
-...
-> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> index 1f99a98a16a2..61a809790a58 100644
-> --- a/arch/x86/kvm/vmx/vmenter.S
-> +++ b/arch/x86/kvm/vmx/vmenter.S
-> @@ -71,6 +71,7 @@
->   * @regs:	unsigned long * (to guest registers)
->   * @flags:	VMX_RUN_VMRESUME:	use VMRESUME instead of VMLAUNCH
->   *		VMX_RUN_SAVE_SPEC_CTRL: save guest SPEC_CTRL into vmx->spec_ctrl
-> + *		VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO: vCPU can access host MMIO
->   *
->   * Returns:
->   *	0 on VM-Exit, 1 on VM-Fail
-> @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
->  	/* Load @regs to RAX. */
->  	mov (%_ASM_SP), %_ASM_AX
->  
-> +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
-> +	ALTERNATIVE_2 "",								\
-> +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
-> +		      X86_FEATURE_CLEAR_CPU_BUF_MMIO,					\
-> +		      "", X86_FEATURE_CLEAR_CPU_BUF_VM
-> +
->  	/* Check if vmlaunch or vmresume is needed */
->  	bt   $VMX_RUN_VMRESUME_SHIFT, %ebx
->  
-> @@ -161,7 +168,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
->  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
->  
->  	/* Clobbers EFLAGS.ZF */
-> -	VM_CLEAR_CPU_BUFFERS
-> +	ALTERNATIVE_2 "",							\
-> +		      __stringify(jz .Lskip_clear_cpu_buffers;			\
-> +				  CLEAR_CPU_BUFFERS_SEQ;			\
-> +				  .Lskip_clear_cpu_buffers:),			\
-> +		      X86_FEATURE_CLEAR_CPU_BUF_MMIO,				\
-> +		      __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF_VM
-
-Another way to write this could be:
-
-	ALTERNATIVE_2 "jmp .Lskip_clear_cpu_buffers",					\
-		      "jz  .Lskip_clear_cpu_buffers", X86_FEATURE_CLEAR_CPU_BUF_MMIO,	\
-		      "",			      X86_FEATURE_CLEAR_CPU_BUF_VM
-
-	CLEAR_CPU_BUFFERS_SEQ
-.Lskip_clear_cpu_buffers:
-
-With this jmp;verw; would show up in the disassembly on unaffected CPUs, I
-don't know how big a problem is that. OTOH, I find this easier to understand.
+On Fri, Oct 17, 2025 at 5:47=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
+v> wrote:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> smb2_notify() should return error code when an error occurs,
+> __process_request() will print the error messages.
+>
+> I may implement the SMB2 CHANGE_NOTIFY response (see MS-SMB2 2.2.36)
+> in the future.
+Do you have any plans to implement SMB2 CHANGE_NOTIFY?
+Thanks.
 
