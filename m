@@ -1,113 +1,184 @@
-Return-Path: <linux-kernel+bounces-880335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C40C2587B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:19:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2A7C25811
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:15:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 494DE4F78AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9571897C51
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E0F34B667;
-	Fri, 31 Oct 2025 14:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2E42586C9;
+	Fri, 31 Oct 2025 14:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="fHBcc4jJ"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXIrCE/2"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E097931A7E1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC5A2253B0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761920031; cv=none; b=KojpZlY/9pb9PSFp/tp3qhjzK3Ccn/qj8h1pr6OR3kJgTWoaJo5gpXsTSyWzolwLt6EIgCyTbIL5LnzkKfH+jduOVWIE8KHbTaQ/SmaJJ9UQPJnlYZaNKnS4IoOfinORD04hh1aM++UIimKsFH3+/VuMbDKj6+sDTVrCAYONLBE=
+	t=1761920121; cv=none; b=VpvI1lykGOtMeC5ETWHnpUaWyHIaZFByqNczBVS0FuyMHyQxqlPeFExmO2JLQCeljxne3hmvh5vYvvrEz5VjZ7hl+s8rthSveCs/SxatxPIdqN1oOvswVbS+4/V2951ZxovawywJZLBz3DvqSyWsGxBQVjxZd7NFOqfBzcuNFmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761920031; c=relaxed/simple;
-	bh=5IkfxjJZ4r9JL3RHKmEuNeI8JfBtFUokKvT9TMT3Zl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=soe7gGtV9A8kR+gWiLzBwqQjNJeGyuAdhEWXHzkwbZroLpcHwiKbsso61KHT3LfWB7V+ZkQHLECSTuFQ1Ge7P9HxZDr6cR7eWsq0ajQRKTB80ABqwPc3BaZnoSRtUX8sX1eeCUDLi/JC3UMih82geCFC2ZcZmtHMJBLPbmcCevs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=fHBcc4jJ; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-932bf9d3deeso2402822241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:13:49 -0700 (PDT)
+	s=arc-20240116; t=1761920121; c=relaxed/simple;
+	bh=RfbSfjINgNk+KIwhm8ycWoAdKTiJ0fFRB2w72BkSG9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Comdk9+pbl9ZDfoxLlUHBqumINwZ0kr1Rx5QIqZg6lTKD5wUw6bqINSIPfs1pWhrloqM7tbomDIBhMKSUso291uIASY1sdEkxta2XO0mKGrMD/OzwzKdCUfI5tEZEvx8AdXKIH1xOiQD658vvLZHLNgvGwQo+JaoAo5D0k7bqQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aXIrCE/2; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so1191795a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1761920029; x=1762524829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pDa5fR2h0z+rmz32KUZOMrbkoBXGhQsX0WYRDCHkFfs=;
-        b=fHBcc4jJa7Wb+sEL6wly90c1odJUBgQPhSDO/YRTvEp35O3G9tO3x5Cokt1Q8CnarN
-         HF3ZOrwUhpU6vt6atg/6kiTvTR1z+QqiknZY3lPeTsiH8jkOBlPJI9OpjenX6eun9QKA
-         9VI1Lfa1KjijOeHXJuirSqmpyYbrv2rGgqwlcsahWh9bJzFPcOVo6yvStr6fExbCIh9p
-         bY4lsd7ujRHid/XoPS0cpSas/SWEP0nc5wOIZzj8SSdcJbltyibjIk/2v3Ap0he7BVpP
-         O2gCCqkCPBJc3r01rbVRT8NZ4x5BygMskx0AsoCR7EYvJ2bzLZ1GMGWUsZhXK7xMZZdj
-         sCNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761920029; x=1762524829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761920117; x=1762524917; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pDa5fR2h0z+rmz32KUZOMrbkoBXGhQsX0WYRDCHkFfs=;
-        b=F1myJ3D+IwKTu5PMd/v3VhyxhpBi852wfPI2yHAtjVTVBqZe7YaTHEKdgQfOPejIYA
-         2+5W+ynrw6Vc/DhaNCE/FHQ0uuODZARcu+fUYQT/wLKTidP3HbYvRC5biRVqZ01TxXW3
-         aw8/wd6/nYortfrN5ncmQaWGzCjB/p6J0y+Cg43q2xw2RVcrzP76cBIsky+dQkff3DEI
-         RpfLyZCG+B5IxDZUkV74GHhnBCDS0eH73VX0s9DyVQRM5xeEvL0YhpODQbGWYItAInSF
-         k2OunwGJBzNP5qRLGYUWRdf0uxuq+WPIqhvyBqcJ0AQoEHG/x3n+lhr8D1iuXIszd3a/
-         q/WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVChPQWBY6Nt4HyWYuqrw2kzcpVoOEIKmGnq2m9sQemSgTpUgLfoUg0YRkNHu4dqr1+bjmoJzda2rWmSRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrV+MMqvJBamR3QJl0D1mpCCt5dGZQo2FU31MHuBEwoU3cFmFe
-	9q2VwV3JF8ygnssMmH/1QJjVKtEt+1tZfUi1WP0jAFYxjK/fpNK5QWtQCExKusglxA==
-X-Gm-Gg: ASbGncs98vVt3oNcRQVw9weLqJhwHV+7CxaUWwSlAtWDk+ynNR7rCq6PtOUEJy6gnSP
-	rflcmGBuH74xpa5Vby+znLDerPKXhmoNOHxijhrv2mg7dRnandzceDbu3l1wMMGYmCKMpmE5mC/
-	6WhnHfgb29ZXbd19qpqyDvlkTJeSmOt9OWflJk2loO/CnP6wnIqwsMiHhgwkm0suxouo2eMJlyM
-	KB+7uZDu2XvBRFu1ZcxgryTOfvtLrP2PLud6uqMK27RONghNs8MlZRb9KW9BqWYIody0eqFCFFV
-	y53uONykQhgn4VpTk+MmGY7AeCLGNgRrXmsqR+6Zb1NFbiM7ryJbhREqVC0moxL+F6CHSPpahT3
-	tMMGO1M8AIjzuJYSWPLrrrb+LaWKmjsDrDD8Gug2aDklpXbiO9Us6fVIcopDWGNsFLdfVMx2o3Z
-	kezw==
-X-Google-Smtp-Source: AGHT+IGo4scF0aeVTx9EAY8LQ4pBPDZX0toR71iJZDoumY2K4E0RX07ncJjkg0VKEHLHrCsLSrejmQ==
-X-Received: by 2002:a05:6102:e09:b0:5d7:de28:5618 with SMTP id ada2fe7eead31-5dbb11e0f91mr1298048137.5.1761920028703;
-        Fri, 31 Oct 2025 07:13:48 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:d03:1700::db9a])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88035fe28c8sm12037696d6.8.2025.10.31.07.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 07:13:48 -0700 (PDT)
-Date: Fri, 31 Oct 2025 10:13:45 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: vsshingne <vaibhavshingne66@gmail.com>, skhan@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: core: prevent double URB enqueue causing list
- corruption
-Message-ID: <6c81d455-a4f2-4173-be72-9d77728378c1@rowland.harvard.edu>
-References: <20251031134739.222555-1-vaibhavshingne66@gmail.com>
- <2025103118-smugness-estimator-d5be@gregkh>
+        bh=OYsX3dXvtTLPwG3M/sH5RR0fEhEx/a2A0niUgfDtB7c=;
+        b=aXIrCE/2jm8S4JGyTj245k+VqvoKp7lF4GCKd/oX85kgPoFb3Ku/LcARWm5vo/iLp+
+         mZxv6n7K+k0/rDNyND+nD3+QmLh9hAgfL38TTedz1ddtdew2JToO134yVShlKCZk6sLB
+         SZjrTaE9gOA3ZW7LVzHKJMm0H5GHNXnkadwaZ3Bi2js3THwrMwvJ6dDz/UquXCSehYCs
+         0I4sjSzsf6a4Nh09SwMkw42g1TZF/Y5e18NkgHAlwPPz67J+/KpqnZqI+zYrFL6Ks0f2
+         ETkkzrJe+hvAHgksSFGd//NEgsdUR6PPHfcNkZOBX6D40sU4Qf0H0oIlh+ynrDmA1mXu
+         A6Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761920117; x=1762524917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OYsX3dXvtTLPwG3M/sH5RR0fEhEx/a2A0niUgfDtB7c=;
+        b=ICUypZpwDEhtCM9GextMDOSivxx2KU562mHXb+q11asFesqjMEyORWgjbEr3N9LWJ5
+         fZJddEioB89ODBcnEUaFJPQVAaINy7JtXArCeuuDYkHO4JVzlprVwlqMZU4sodgtfyMh
+         xeeINYKbZdBeJOV7gLW9fKf7YtajMhYg51AXtJMfGZzjoJnFVFbAcxYqcztULQJ6gBe9
+         jv5PwsCihiLVIKkVUsMiDRumPZHa59V6vhHACq02D7/ICNuvaTQMRJb7TY6IWoEvKCB7
+         uA1ou0qF3agmQPWT7NCBQgYCeG3hEwlT/931ExSXbs6EGkzjMf5/WP7UcPItFWtJo8Q6
+         T8Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1kPDnmB2cN6K/GnoKItuPIMzf6iCO3QxFkTVlVLj4TkHxf1zwxJP9K+P98omobckFZhL/zmbXapBSQQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2AeZuu7Nc1uj/juvqb3CoXmguDzwLZBDXAMozzQmLZGD2LG2q
+	Peza3fRjwbd2eCC9Kr6/+IV0RIK0tbnpFXwWd25OMFZAnH1SFml3wKriVd81Ptp6s1seoYyLUHR
+	eegH8HGM8CuMuZvt9+P/vib2OZUd5N1E=
+X-Gm-Gg: ASbGncuXcOtESgIUIlJojWz8RQEXPwjPqOleA3GZGiGnoXt5ZWmUOCUSmVcspdvAPQ6
+	QMqYgX9JEgVOgpx7Ob9ouJA4sBNKpuBtNfykyJKSfvQON9E0YRqn3Oz+WJui0X2fX1rea2Yf4IN
+	+QQ5hUBU/Zv4+nmwYz1wIssDLPdWWRrl9Uzj9V/TCWi/zcxJbWiLp36HJeBZn8UTASxO0xnvIjD
+	oKeBZZ63g050im6N19ocP9drLFLV5WZMsZ1MbMX2ke2cuX7/fh71SJz0z1n
+X-Google-Smtp-Source: AGHT+IHCoMYa3G6T0j0Lwg3aXNYQKN1oVik+PtSFNAWANM/X1vB53TmrMd1fdfWNGyBVzHkp5GN4Wj+zYmrBBjKjOxY=
+X-Received: by 2002:a05:6402:4314:b0:63b:dc7d:7308 with SMTP id
+ 4fb4d7f45d1cf-64076f66b7emr3214619a12.5.1761920116612; Fri, 31 Oct 2025
+ 07:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025103118-smugness-estimator-d5be@gregkh>
+References: <2daa603f-13fe-c803-17fc-4fdd8e5723ba@gmail.com> <87ldkr36cv.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87ldkr36cv.wl-kuninori.morimoto.gx@renesas.com>
+From: harikrishna <hariconscious@gmail.com>
+Date: Fri, 31 Oct 2025 19:45:04 +0530
+X-Gm-Features: AWmQ_bnT3bfpqUrnEdxX-SgDqm70z_JJkkRze91XfXQ4PqGozK-YlIywu8eTu9I
+Message-ID: <CABBwEEh7gjMPi8dybAcd_4rTT0ZJU=zi99ahSgdzCAjMtL6zdg@mail.gmail.com>
+Subject: Re: [RFC] ASoC: soc-core: proposal to remove num_auto_selectable_formats
+ from snd_soc_dai_ops
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	shuah@kernel.org, david.hunter.linux@gmail.com, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 02:59:07PM +0100, Greg KH wrote:
-> On Fri, Oct 31, 2025 at 07:17:39PM +0530, vsshingne wrote:
-> > Prevents the same URB from being enqueued twice on the same endpoint,
-> > which could lead to list corruption detected by list_debug.c.
-> > 
-> > This was observed in syzbot reports where URBs were re-submitted
-> > before completion, triggering 'list_add double add' errors.
-> > 
-> > Adding a check to return -EEXIST if the URB is already on a queue
-> > prevents this corruption.
-> 
-> This text makes no sense at all, it does not describe what this patch
-> does in any way.  Please do not use AI to generate patches.
+On Fri, Oct 31, 2025 at 12:28=E2=80=AFPM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>
+>
+> Hi HariKrishna
+>
+> Thank you for suggestion
+>
+> > I=CA=BCd like to propose a small cleanup and simplification in the
+> > snd_soc_dai_ops structure by removing the
+> > "num_auto_selectable_formats" parameter.
+>
+> Do you mean like this ?
+>
+>         struct snd_soc_dai_ops {
+>                 ...
+>                 const u64 *auto_selectable_formats;
+>         -       int num_auto_selectable_formats;
+>                 ...
+>         };
+>
+> > Currently,snd_soc_dai_ops includes the "num_auto_selectable_formats"
+> > field to indicate the number of entries in the "auto_selectable_formats=
+"
+> > array.However, this count can be derived programmatically using the
+> > ARRAY_SIZE() macro wherever needed.
+>
+> If my understanding was correct, unfortunately we can't do it.
+>
+> We can use ARRAY_SIZE() in each driver, because we can access to raw arra=
+y.
+> But can't use it on ASoC framework, becase auto_selectable_formats is jus=
+t
+> a pointer. see how ARRAY_SIZE() is defined.
+>
+>         --- driver ---
+>         my_formats[] =3D {
+>                 [0] =3D SND_SOC_POSSIBLE_DAIFMT_xxx | SND_SOC_POSSIBLE_DA=
+IFMT_xxx ...,
+>                 [1] =3D SND_SOC_POSSIBLE_DAIFMT_xxx | SND_SOC_POSSIBLE_DA=
+IFMT_xxx ...,
+>         };
+>
+>         // We can use ARRAY_SIZE() in driver, because we know raw array.
+>         my_dai_ops =3D {
+>                 ...
+>                 .auto_selectable_formats        =3D my_formats,
+> =3D>              .num_auto_selectable_formats    =3D ARRAY_SIZE(my_forma=
+ts),
+>         };
+>
+>         --- soc-xxx.c ---
+>         // it will be error, because we don't know its size
+> =3D>      int num =3D ARRAY_SIZE(ops->auto_selectable_formats);
+>
+> Or do you mean create new macro, like this ?
+>
+>         #define ASOC_SELECT_FORMATS(array)\
+>                 .auto_selectable_formats        =3D array,
+>                 .num_auto_selectable_formats    =3D ARRAY_SIZE(array)
+>
+>         my_ops =3D {
+>                 ...
+>         -       .auto_selectable_formats        =3D my_formats,
+>         -       .num_auto_selectable_formats    =3D ARRAY_SIZE(my_formats=
+),
+>         +       ASOC_SELECT_FORMATS(my_formats),
+>         };
+>
+> Or am I misunderstanding your suggestion ?
+>
+>
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
 
-In fact, the patch doesn't do _anything_ (except maybe change some 
-whitespace).  And it does not apply to any recent kernel source.
+Hi Kuninori Morimoto,
 
-Alan Stern
+Yes, you are right.
+I have got it now.
+We can use it in codec driver not in framework.
+Thought of changing the type of "U64 *auto_selectable_formats" to
+"U64 (*auto_selectable_formats)[]" and removing the
+"num_auto_selectable_formats".
+But cannot be used to get count. Apologies for this.
+
+Thanks for the guidance.
+
+Regards,
+HariKrishna.
 
