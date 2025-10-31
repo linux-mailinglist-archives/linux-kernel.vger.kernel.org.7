@@ -1,119 +1,162 @@
-Return-Path: <linux-kernel+bounces-880426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D458C25BEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:06:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30605C25C2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 854901B27640
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F85E188ECAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E37C1EE019;
-	Fri, 31 Oct 2025 14:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8D628FFF6;
+	Fri, 31 Oct 2025 14:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GPKDZ4Ji"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="vrYl1tBn"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48307192B84;
-	Fri, 31 Oct 2025 14:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94383284B29;
+	Fri, 31 Oct 2025 14:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922082; cv=none; b=t+YWSXTEj+97zrobfxvjO8VOGwPZcA8wjRxOXyZqYMy6cz7E6zw79XSfx0+nbB00wXkNRWFuczstxSMAivGqEXT4HReR9I4fAlSxbP+tG3vBEOFnidwMTGtXKxz38PJ88o5iI54UYrrW4Xpon3+Xd5DUSvhLd7nlV0G7uQ22IJc=
+	t=1761922150; cv=none; b=AsPyjF9gFqtmbe+S9TUufnxsNY09e9L+cMNrOylXnKcx5qG9nfIMAOJFtsLjScRK8IEN92WUDCywHUgHouYueg0wFSmC50wCO5/Wl8c0JTlcWw5+6B1lLLq4z0kOmmqiDyt5o8LPC8gGW57eXXj0YO5Nw1WB4IoLzKgfiOF3vj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922082; c=relaxed/simple;
-	bh=wUbU0LdBSZ9qpL5qWJVMd119J9mcG2Lz3LJ8hYUx95A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=p0+yGrPUw6Ojlk4K96XDURH9fdQVRwChSv+5O2WGVdFOYiieJ7li4HosQOm9uRFtZavzo1K2nXv9vIGo7WvS+APycgKuFB2plDBXl3+MkrpBPpRTkoHIw7YM3G4nsHNd3rMJci6OUBwhobm4NSEKH7FrP2BEtBNEKbJAnHrsEgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GPKDZ4Ji; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cykFd5Ty1z9t6Q;
-	Fri, 31 Oct 2025 15:41:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761921701; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r7oF0pHiTKfHggDqHbs4XCDSzjGm+M2FdqzdYufdWyg=;
-	b=GPKDZ4JixaBKjXl2cX9I1oyUFn+2gT1Mvzzfp+dtw61j63t1VKbr4wE/3DL7lHcmGtms1L
-	WYLpHlKRysiK/+AcAOIE/Lc2UcB50ZdPWhASbd33rwMQ8BXpZmtRQcbn9n0NzpFbnF1khc
-	A5ehcjerpzth4q8Q3Be+aJIzdcM9+QqZfRgdXgttIevy5WsSUHNyzyEjzej2Lh7UD8nUNk
-	EvRXRqtQ+VVlDQ2XO4NMVOXK7sr2Pl8xUHlh0UnyzkLt0a36mYR/idiWnlnmQsBGguYH67
-	eNqtW8UV2otQBr9uK9A4mF9IRvWhv+0LAwWwCqgr6XUSdJ4Nhws9I+SedACoHw==
-Message-ID: <3006a63b5e38f3d3bfd07047fa8e8ed2e9d2a93d.camel@mailbox.org>
-Subject: Re: [PATCH v3] drm/sched: Add warning for removing hack in
- drm_sched_fini()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>, Philipp Stanner
- <phasta@kernel.org>, Matthew Brost <matthew.brost@intel.com>, Danilo
- Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <ckoenig.leichtzumerken@gmail.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org
-Date: Fri, 31 Oct 2025 15:41:38 +0100
-In-Reply-To: <ebc028f2-3d2d-4f42-a667-df7d6c2b7eb0@damsy.net>
-References: <20251023123429.139848-2-phasta@kernel.org>
-	 <ebc028f2-3d2d-4f42-a667-df7d6c2b7eb0@damsy.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761922150; c=relaxed/simple;
+	bh=zELbUNvODsjEk+Mru2ftqbAJE3XgDtge+h5wiOsMAEo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a23qMuAHJw1lgwskIK+sT7QHX9RyP/rQKGJELAmBM36gdz6V3q4Jl7DHc6KhdN07yWmFovps2XkOvIgQ3OwncjPyzaF4BmuhV6Mqz1c5KuzzEFjMqjvGAgd6JD8nCiTCjXpUUJqPZP/qBes4N3YL+YIghCsWAhPWXptx2odPUKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=vrYl1tBn; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+	s=smtpout1; t=1761921761;
+	bh=mn4Rixq7zXBuMBlaqQmjCKrD+qIqVw6PlXV4D24CrIA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vrYl1tBnleKUc4qHluXabp2KWvP7tFw41yKB5QTaottntuaQHyecL2vgW+tfXF4gz
+	 darLlhPDsAeHo6IkH5oZ4g1u4DCfVlN4rz2N1IhzSND/lFNGYQQskYOgsNer6VoZ8b
+	 tKgvQ7MwI2+LrvpgEwtUjYIsB//ERgHd+dUnJv4u6aZbr/Ixk7R9fa59XS6vK41wBl
+	 eaEnB0Sa+VLgsEfaJ8w4tTbi25BuQQOn+cyNcpXZXstZxTwCNsFJ1roNAUU6LYq2zp
+	 sGulXKyqQ8oHirybdrD4cWYv2jjkjSe5HBj19iZSXoBeqlsiszvMtXmfnqnI3uub4S
+	 cYsNGocmld9Ig==
+Received: from thinkos.internal.efficios.com (mtl.efficios.com [216.120.195.104])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4cykGn4jKfzGXX;
+	Fri, 31 Oct 2025 10:42:41 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Mateusz Guzik <mjguzik@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Sweet Tea Dorminy <sweettea@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Martin Liu <liumartin@google.com>,
+	David Rientjes <rientjes@google.com>,
+	christian.koenig@amd.com,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	SeongJae Park <sj@kernel.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <liam.howlett@oracle.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	Yu Zhao <yuzhao@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Matthew Wilcox <willy@infradead.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>
+Subject: [RFC PATCH v7 0/2] mm: Fix OOM killer inaccuracy on large many-core systems
+Date: Fri, 31 Oct 2025 10:42:30 -0400
+Message-Id: <20251031144232.15284-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: ozkjknk9jqrgne35isjct51z4rm7d7ye
-X-MBO-RS-ID: 718dfa83b9c480413cf
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-10-31 at 15:10 +0100, Pierre-Eric Pelloux-Prayer wrote:
-> Hi Philipp,
->=20
-> Le 23/10/2025 =C3=A0 14:34, Philipp Stanner a =C3=A9crit=C2=A0:
-> > The assembled developers agreed at the X.Org Developers Conference 2025
-> > that the hack added for amdgpu in drm_sched_fini() shall be removed. It
-> > shouldn't be needed by amdgpu anymore.
-> >=20
-> > As it's unclear whether all drivers really follow the life time rule of
-> > entities having to be torn down before their scheduler, it is reasonabl=
-e
-> > to warn for a while before removing the hack.
-> >=20
-> > Add a warning in drm_sched_fini() that fires if an entity is still
-> > active.
-> >=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Introduce hierarchical per-cpu counters and use them for rss tracking to
+fix the per-mm RSS tracking which has become too inaccurate for OOM
+killer purposes on large many-core systems.
 
-[=E2=80=A6]
+The approach proposed here is to replace this by the hierarchical
+per-cpu counters, which bounds the inaccuracy based on the system
+topology with O(N*logN).
 
->=20
-> The patch is Acked-by: Pierre-Eric Pelloux-Prayer=20
-> <pierre-eric.pelloux-prayer@amd.com>
+Relevant delta since v6: Rebase to v6.18-rc3 and implement
+get_mm_counter_sum() as percpu_counter_tree_precise_sum().
 
-Pushed to drm-misc-next, thanks.
+Testing and feedback are welcome!
 
-For the future: b4 / maintainer-tools wasn't able to automatically
-harvest your Acked-by. Would be helpful if you have the A-b on a single
-line without line break and without other content in the future
+Thanks,
 
-Have a nice weekend,
-P.
+Mathieu
 
->=20
-> Thanks.
->=20
->=20
-> > =C2=A0=C2=A0		spin_unlock(&rq->lock);
-> > =C2=A0=C2=A0		kfree(sched->sched_rq[i]);
-> > =C2=A0=C2=A0	}
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Martin Liu <liumartin@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: christian.koenig@amd.com
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Sweet Tea Dorminy <sweettea@google.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R . Howlett" <liam.howlett@oracle.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Miaohe Lin <linmiaohe@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mm@kvack.org
+Cc: linux-trace-kernel@vger.kernel.org
+Cc: Yu Zhao <yuzhao@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>
 
+Mathieu Desnoyers (2):
+  lib: Introduce hierarchical per-cpu counters
+  mm: Fix OOM killer inaccuracy on large many-core systems
+
+ include/linux/mm.h                  |  10 +-
+ include/linux/mm_types.h            |   4 +-
+ include/linux/percpu_counter_tree.h | 203 ++++++++++++++
+ include/trace/events/kmem.h         |   2 +-
+ kernel/fork.c                       |  32 ++-
+ lib/Makefile                        |   1 +
+ lib/percpu_counter_tree.c           | 394 ++++++++++++++++++++++++++++
+ 7 files changed, 627 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/percpu_counter_tree.h
+ create mode 100644 lib/percpu_counter_tree.c
+
+-- 
+2.39.5
 
