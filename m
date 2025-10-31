@@ -1,130 +1,74 @@
-Return-Path: <linux-kernel+bounces-879695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFCFC23C36
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:23:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01EEC23C63
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:25:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C6FB4F6544
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:16:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 545B24F5FDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7E82D23BC;
-	Fri, 31 Oct 2025 08:15:48 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1D32E3387;
+	Fri, 31 Oct 2025 08:16:24 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EA0280325;
-	Fri, 31 Oct 2025 08:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E705253957;
+	Fri, 31 Oct 2025 08:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898548; cv=none; b=TQA+mudao2nHN4wlnjtrQ/0ip1REaa9tnT0GZxGWIv11BMzCvQ3TxPUArergziZ05UH0n3pR0t+lLRvobn5wmO1wTYWjFeJwy3Q5LsirpO9zQfnIvFfd2d9drTOARka2p84T4M1GAxfCSpvxeHJoj1w1COPcTWBYl/5BPNRzyTM=
+	t=1761898584; cv=none; b=JTg5imKosOVdcUDAs2ym9Z1oBaV6Uyi3hnnYSJheWeB6gntH/5DKUJ0+4/ANbXs1yWVjcO9nthCpiOlk5ZcJ4Z9S2xOLZMMecyJZ7uIo8xD44iJtGMiR8aizupani5bQIdHLDZjJqij9rQxhu1/rODM2jzX4ATxRnzuUhADeLZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898548; c=relaxed/simple;
-	bh=BQEfkHAA/cvrsQwoFjP1JCUVNTwO17DlLYDFoE4HyC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nco1KG/Jn/cMIMgCqt9xZ6u/RGmrQorO/7kGbNIz7ukSg33FTln+PNRuzMON34mGNNFjkrC/v0fKtXEqZr3KZue4OkDkoOtqgSjO/ppsvkaJp/D9DaxZG31Bgd5TVv7yvvISDt8tQldnM+PYXXEEvxWQ/b1UnqQvFLZ4Y1xw65A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c35c19e2b63111f0a38c85956e01ac42-20251031
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:eed4762e-8c93-4ab9-950e-9de796f78dfd,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:6a368bf88c433b2fdc9f1f42fedcc099,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|15|50,EDM:-3,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: c35c19e2b63111f0a38c85956e01ac42-20251031
-X-User: lilinmao@kylinos.cn
-Received: from llmserver.local [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <lilinmao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1474029217; Fri, 31 Oct 2025 16:15:29 +0800
-From: Linmao Li <lilinmao@kylinos.cn>
-To: linux-bluetooth@vger.kernel.org
-Cc: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-kernel@vger.kernel.org,
-	Linmao Li <lilinmao@kylinos.cn>
-Subject: [PATCH] Bluetooth: btusb: Prevent autosuspend when le_scan_disable work is pending
-Date: Fri, 31 Oct 2025 16:15:25 +0800
-Message-Id: <20251031081525.2275894-1-lilinmao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1761898584; c=relaxed/simple;
+	bh=fGhIYsT50Xq9t6CI5lMf9dFSVPFae+PCvqQq0D8Qkm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NU0xziyH+Yhpx97ap7X8bKhwh71PwsDYKRLzfKXFq5/t2MWcOYE1AS96EafOxmhdB7GWrWgyieLpKItzGL/ZbQk7WKJdF887J7/cKB/g3BqgczqjB5kgnZ4JoLmVmlnc8Tws5dGCTgttQwoZE213hY/kT5MxgNtltYQMLnNMNK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E229C4CEE7;
+	Fri, 31 Oct 2025 08:16:23 +0000 (UTC)
+Date: Fri, 31 Oct 2025 09:16:21 +0100
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, 
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/6] dt-bindings: i2c: qcom-cci: Document Kaanapali
+ compatible
+Message-ID: <20251031-truthful-worm-of-force-7ef435@kuoka>
+References: <20251030-add-support-for-camss-on-kaanapali-v5-0-f8e12bea3d02@oss.qualcomm.com>
+ <20251030-add-support-for-camss-on-kaanapali-v5-1-f8e12bea3d02@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251030-add-support-for-camss-on-kaanapali-v5-1-f8e12bea3d02@oss.qualcomm.com>
 
-When USB autosuspend occurs while le_scan_disable work is scheduled,
-HCI commands sent by the work fail with timeout, leaving LE scan in
-an inconsistent state.
+On Thu, Oct 30, 2025 at 07:59:48PM -0700, Hangxiang Ma wrote:
+> Add Kaanapali compatible consistent with CAMSS CCI interfaces.
+> 
+> Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Scenario:
-  T=0:     LE scan starts, le_scan_disable work queued (+10240ms)
-  T=8s:    Autosuspend check: tx_in_flight=0, suspend proceeds
-  T=10s:   le_scan_disable work executes on suspended device
-           → HCI command 0x2042 times out
+Why do you send it again? Do you read messages on the mailing list?
 
-The tx_in_flight check only protects actively transmitted URBs, missing
-the window where work is queued but hasn't submitted its URB yet.
-
-Fix by checking delayed_work_pending(&hdev->le_scan_disable) during
-autosuspend. Return -EBUSY if pending to block suspend until work
-completes. Only set BTUSB_SUSPENDING after all checks pass to avoid
-leaving the flag set if suspend is aborted.
-
-Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
----
- drivers/bluetooth/btusb.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 5e9ebf0c5312..a344ea1dc466 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -4389,6 +4389,7 @@ static void btusb_disconnect(struct usb_interface *intf)
- static int btusb_suspend(struct usb_interface *intf, pm_message_t message)
- {
- 	struct btusb_data *data = usb_get_intfdata(intf);
-+	struct hci_dev *hdev = data->hdev;
- 
- 	BT_DBG("intf %p", intf);
- 
-@@ -4402,14 +4403,19 @@ static int btusb_suspend(struct usb_interface *intf, pm_message_t message)
- 		return 0;
- 
- 	spin_lock_irq(&data->txlock);
--	if (!(PMSG_IS_AUTO(message) && data->tx_in_flight)) {
--		set_bit(BTUSB_SUSPENDING, &data->flags);
--		spin_unlock_irq(&data->txlock);
--	} else {
-+	if (PMSG_IS_AUTO(message) && data->tx_in_flight) {
- 		spin_unlock_irq(&data->txlock);
- 		data->suspend_count--;
- 		return -EBUSY;
- 	}
-+	spin_unlock_irq(&data->txlock);
-+
-+	if (PMSG_IS_AUTO(message) && delayed_work_pending(&hdev->le_scan_disable)) {
-+		data->suspend_count--;
-+		return -EBUSY;
-+	}
-+
-+	set_bit(BTUSB_SUSPENDING, &data->flags);
- 
- 	cancel_work_sync(&data->work);
- 
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
