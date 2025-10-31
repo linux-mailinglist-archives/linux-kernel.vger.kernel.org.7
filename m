@@ -1,251 +1,149 @@
-Return-Path: <linux-kernel+bounces-879736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67122C23D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:38:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C2EC23DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C8C3BBF3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAFAE1891B7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650232E62CE;
-	Fri, 31 Oct 2025 08:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53F22F0661;
+	Fri, 31 Oct 2025 08:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jgCtW3qK"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVthp2o3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E6F2E8B81
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A50A2E8B81;
+	Fri, 31 Oct 2025 08:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899901; cv=none; b=gu6PNF9JJX6YP+kp9V+nLD1aaVegnfqwqlWGM02TyU28X0Z1l/sv6xqXdsS4sLDCCn7rLxGvMKWw3jwA00uOxv00cuYivrRCECWvIMJRDCNW9yr1T+vgKahzEiQpiJlXzF+2tV1IGeq40yMrZC9QASDxGUGaRmqLd3U5bCe4cU8=
+	t=1761899960; cv=none; b=Nbc4nqdw1iztYLpJho2tDr+2uchRcbo6wjTb3ow76DpNM5chpTyU8ThVoGNcR6b/dXtntZYWIWXIRF0DrKUzJTiu1J3cFdB3rKrwjRos/OeELEDF0kuNe9wbyR4TACGFlvHCWYz0j/AXkDrgXtw5uTV4OYmgX4YZWM7uPTcvJdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899901; c=relaxed/simple;
-	bh=mvdRL0eRXqSA+526MRb8wrH/hIEEZzYdIMjUsLSo1m8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bWpjoFse4CHkLvZVNPepOsU173Tq/wP/8cRC9WL4CZE3dXszLuAod1q+EvW0a+dXiyrk0bOlxRKvGHXyP3Dhb4ukbCaSgfq2ZmQHSOZryTojXG+L8tR2NAWWucjCcacMu5xGJiuPjA7zwZOiwDEQ4294D3ukbzOky8Y8YMcBmQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jgCtW3qK; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-427007b1fe5so1495902f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761899898; x=1762504698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f6lvlxZOeNShZGHSRhU6n7ci4eXoYPRCi1nv1xhCxuA=;
-        b=jgCtW3qK5geev2iqj26PVjKsaoO+eSCRdhHPpqOSCIQPv67Amebmtu175bz1379NXd
-         FHFq3mbSf4KbW12RIXTsxU29irz55Ub69zOeuViqpbPLlM8MUVqdUH1ndNblA+g6lJ4Q
-         GiZAOd89k5m1Tj/T/lYJJDZ3W3AX8I9XUIl4dNR9jxzw86UTybY7uNNggnjBQXaAb6GJ
-         6gY+iCYrfw/cng/mFAwSjBqqzASmP6xTocdC1OEA962u3/gPLnh0FZhIt+BTJFuyT4hX
-         9GFgN36UpnwpumHKpT5tYeF50KDQvRMZpOA+AqDYyD9nu6bOxarFayvRzPfTnT4eZcEV
-         6ihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761899898; x=1762504698;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=f6lvlxZOeNShZGHSRhU6n7ci4eXoYPRCi1nv1xhCxuA=;
-        b=CwVvGIeKSFVWd2oHoU782j4W3SLltlz0zuPyDyZpSOw3ZePuBrfE0t/6gPkruUM3S3
-         8owatkoUP+WA5qoaBOApdoC8j7MAFZIQkipXUX1/4vGh7SFcbObSF95NpZn9Z6ygXRLk
-         y0srTvE9OaqtKbM7wWysyZl/EdJTLlYTTbuzyP76rmKTQ8Wf+kfmDjvNdEH73ZalCmba
-         2tLx1hEXUR4O50T2up13iyyCBUDA180vN4bYz9y4t+vGQm7jSAS8L57IigSPoETjMcL1
-         Ad6JTCh6UMpmwdE/R3l/s1fcTizYBWGGTa+bofoISCk+SgNr+rvIQGzSvUnNwBxt9nXR
-         I8Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXS7n58OrkyVkj6V/VPXw5eBvXGnMHM43d8RzQyZYqIqzPSfhGsm9Qkqy18H92PETBcffeqLiTx+hdCLb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGUxRg/8wJX151y73fv/2AAAifzyJrN839Ddosts/jvTVgVk8b
-	irOTOR2/t9GdHRqaFKhOi68DbHP/CRF8CaK666N55KT1qusRnUDMnCBhdXbT2PH3Ry4=
-X-Gm-Gg: ASbGncv1TmcnJwGGXpkXjfDl8PV/Se1AWXbjed/l61+ExMlbI/LSjIOSR+aNxMP7KlN
-	RPrANPAqUbrugkb2YFUuHcUt6MMby+rmgYgXvoh+KlPknNkrJdfQfeWKKOdcGq/e1oI+zpv2PNE
-	ag/FbjMOwVzpNo3GHazKVj43Pkwm4h7qArpv2LeVP6Z8WDm7i1DCqUnzvbutAQizyNUJUXUn21P
-	S9r/wDwk+/6YYiBOzRnhTqJkcGLcaNYfXSmN4FmHMLGpp/Kw4Ytyv/Gd/y86H6s5AkctuB4rnJr
-	f4i/mZv2L2WcgSfFemcc86RqlYMlmCKzuKkzLnE5Y6EbfFyZth3zw2Ue3q/Mkxr9bKBL+FDJabr
-	u4+qFR5LBGLlyiqA00Ujg/Fm2NtVaN1RTrhAmTTVyjvy9QTdQzl3b4BQMsaUq+ZBQvl/kcntIWz
-	LK0tTsUnUHbQ/8FKTbJ9uqn7I350lDS6ScIBsQA++X2TtTuZeLwPz37wzr4D5IIkg=
-X-Google-Smtp-Source: AGHT+IErXLg/QmSgzOAE18wcz9HH6P7fSPY03Id1jjTfataBPrbX11spvWK9xxIDtFbQtBn/mPn0cA==
-X-Received: by 2002:a05:6000:2489:b0:429:b751:7929 with SMTP id ffacd0b85a97d-429bd6ae1f4mr2336595f8f.45.1761899897805;
-        Fri, 31 Oct 2025 01:38:17 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:d967:2bcf:d2d0:b324? ([2a01:e0a:cad:2140:d967:2bcf:d2d0:b324])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13edc36sm2278703f8f.37.2025.10.31.01.38.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 01:38:17 -0700 (PDT)
-Message-ID: <f5041496-ee83-479a-995f-79b6952bcafe@linaro.org>
-Date: Fri, 31 Oct 2025 09:38:15 +0100
+	s=arc-20240116; t=1761899960; c=relaxed/simple;
+	bh=k79R0Hpx74QOJ14uPbnMxmO5AYu0XzyA/jnOzGhcDXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlIozpXtFznRcHHnvAVlZEY5+M3tbaTN+W4/EBoMoa2hds8BFmkTBum4qpKPK06SNSH6ZqLwa0ELLCoGQ8Lt2u3doLIqcWLVT7sAzJ0uACLoXojLPkHiyWpUuxw2wPqZtTANUdqDSjZjcN0fxMmT8Om0lGyakO3cQTI2P82aq1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVthp2o3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8112EC4CEE7;
+	Fri, 31 Oct 2025 08:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761899959;
+	bh=k79R0Hpx74QOJ14uPbnMxmO5AYu0XzyA/jnOzGhcDXo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WVthp2o3amxt2TBTbBgyM45rfymEwJoPZwEW9FhdA7296shiaUGS1dax/8mhMdXH7
+	 ogY9IlrGVeamaW8vqfi0VaLkm+60ibSG6d1B+ANO+kJi53cf/BOFIi130riPokoKgA
+	 qg38nsA5JflgYuxLpSBOpzWbClZVWwVodc0jvx0y1EDuLIpRj2zgH+zRQ5hvMP3yfs
+	 Y7eyaTzvuXq4BVseuffgmanbQIwniOfpzthdZGLnGR6wmR/7VJGS/ijIg10UHph/pv
+	 /ybpYX75EQuKWzIOn3BVIVpsva8pvLZFEGITebmzL311N0Bci+62OhdiB/Z5lFnhfZ
+	 f7p0Tq13gdDlg==
+Date: Fri, 31 Oct 2025 14:09:06 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Hans Zhang <18255117159@163.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] PCI: dw-rockchip: Add runtime PM support to
+ Rockchip PCIe driver
+Message-ID: <ukgkfetbggzon4ppndl7gpitlsz7hjhzhyx3dgxqhdo52exguy@bqksd7d27lpy>
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-3-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC RFT] drm/msm: adreno: attach the GMU device to a
- driver
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20251022-topic-adreno-attach-gmu-to-driver-v1-1-999037f7c83e@linaro.org>
- <c8058713-b126-461b-8ae6-19c4574a8105@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <c8058713-b126-461b-8ae6-19c4574a8105@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251027145602.199154-3-linux.amoon@gmail.com>
 
-Hi,
-
-On 10/30/25 22:29, Akhil P Oommen wrote:
-> On 10/22/2025 6:14 PM, Neil Armstrong wrote:
->> Due to the sync_state is enabled by default in pmdomain & CCF since v6.17,
->> the GCC and GPUCC sync_state would stay pending, leaving the resources in
->> full performance:
->> gcc-x1e80100 100000.clock-controller: sync_state() pending due to 3d6a000.gmu
->> gpucc-x1e80100 3d90000.clock-controller: sync_state() pending due to 3d6a000.gmu
->>
->> In order to fix this state and allow the GMU to be properly
->> probed, let's add a proper driver for the GMU and add it to
->> the MSM driver components.
->>
->> Only the proper GMU has been tested since I don't have
->> access to hardware with a GMU wrapper.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 354 ++++++++++++++---------------
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |   6 -
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h      |   3 -
->>   drivers/gpu/drm/msm/adreno/adreno_device.c |   4 +
->>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |   4 +
->>   drivers/gpu/drm/msm/msm_drv.c              |  16 +-
->>   6 files changed, 192 insertions(+), 195 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> index fc62fef2fed8..6e7c3e627509 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> @@ -1859,11 +1859,14 @@ void a6xx_gmu_sysprof_setup(struct msm_gpu *gpu)
->>   	pm_runtime_put(&gpu->pdev->dev);
->>   }
->>   
->> -void a6xx_gmu_remove(struct a6xx_gpu *a6xx_gpu)
->> +static void a6xx_gmu_unbind(struct device *dev, struct device *master, void *data)
->>   {
+On Mon, Oct 27, 2025 at 08:25:30PM +0530, Anand Moon wrote:
+> Add runtime power management support to the Rockchip DesignWare PCIe
+> controller driver by enabling devm_pm_runtime() in the probe function.
+> These changes allow the PCIe controller to suspend and resume dynamically,
+> improving power efficiency on supported platforms.
 > 
-> I feel we should keep gmu and gmu_wrapper implementations separate. It
-> is already overloaded. How about adding a separate gmu_wrapper_bind_ops
-> and keep it in the match data?
 
-Good idea, will try something like that.
+Seriously? How can this patch improve the power efficiency if it is not doing
+any PM operation on its own?
 
+Again a pointless patch.
+
+- Mani
+
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
->> -	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
->> +	struct platform_device *pdev = to_platform_device(dev);
->> +	struct msm_drm_private *priv = dev_get_drvdata(master);
->> +	struct msm_gpu *gpu = priv->gpu;
+> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> index b878ae8e2b3e..5026598d09f8 100644
+> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reset.h>
+>  
+> @@ -690,6 +691,20 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto deinit_phy;
+>  
+> +	ret = pm_runtime_set_suspended(dev);
+> +	if (ret)
+> +		goto disable_pm_runtime;
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret) {
+> +		ret = dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+> +		goto deinit_clk;
+> +	}
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		goto disable_pm_runtime;
+> +
+>  	switch (data->mode) {
+>  	case DW_PCIE_RC_TYPE:
+>  		ret = rockchip_pcie_configure_rc(pdev, rockchip);
+> @@ -709,7 +724,10 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>  
+>  	return 0;
+>  
+> +disable_pm_runtime:
+> +	pm_runtime_disable(dev);
+>  deinit_clk:
+> +	pm_runtime_no_callbacks(dev);
+>  	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+>  deinit_phy:
+>  	rockchip_pcie_phy_deinit(rockchip);
+> @@ -725,6 +743,9 @@ static void rockchip_pcie_remove(struct platform_device *pdev)
+>  	/* Perform other cleanups as necessary */
+>  	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+>  	rockchip_pcie_phy_deinit(rockchip);
+> +	pm_runtime_put_sync(dev);
+> +	pm_runtime_disable(dev);
+> +	pm_runtime_no_callbacks(dev);
+>  }
+>  
+>  static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
+> -- 
+> 2.50.1
 > 
-> << snip >>
-> 
->>   static inline uint32_t get_wptr(struct msm_ringbuffer *ring)
->>   {
->> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
->> index 7e977fec4100..0618da7e8b40 100644
->> --- a/drivers/gpu/drm/msm/msm_drv.c
->> +++ b/drivers/gpu/drm/msm/msm_drv.c
->> @@ -998,18 +998,30 @@ static const struct of_device_id msm_gpu_match[] = {
->>   	{ },
->>   };
->>   
->> +static const struct of_device_id msm_gmu_match[] = {
->> +	{ .compatible = "qcom,adreno-gmu" },
->> +	{ .compatible = "qcom,adreno-gmu-wrapper" },
->> +	{ },
->> +};
->> +
->>   static int add_gpu_components(struct device *dev,
->>   			      struct component_match **matchptr)
->>   {
->> -	struct device_node *np;
->> +	struct device_node *np, *gmu;
->>   
->>   	np = of_find_matching_node(NULL, msm_gpu_match);
->>   	if (!np)
->>   		return 0;
->>   
->> -	if (of_device_is_available(np) && adreno_has_gpu(np))
->> +	if (of_device_is_available(np) && adreno_has_gpu(np)) {
->>   		drm_of_component_match_add(dev, matchptr, component_compare_of, np);
->>   
->> +		gmu = of_find_matching_node(NULL, msm_gmu_match);
-> 
-> Instead of this, we can probably use the gmu phandle from "qcom,gmu"
-> property? That is quicker and also doesn't assume that there is only a
-> single GPU.
 
-Ack you're right, let's do this since we have the GPU node already.
-
-> 
->> +		if (of_device_is_available(gmu))
->> +			drm_of_component_match_add(dev, matchptr, component_compare_of, gmu);
->> +		of_node_put(gmu);
-> I think you missed the recently added headless support. Please check
-> separate_gpu_kms modparam and msm_gpu_probe().
-
-I saw it but seems I probably forgot the check if it's still functional,
-will double check.
-
-Thanks,
-Neil
-
-> 
-> -Akhil
-> 
->> +	}
->> +
->>   	of_node_put(np);
->>   
->>   	return 0;
->>
->> ---
->> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
->> change-id: 20251022-topic-adreno-attach-gmu-to-driver-e47025fd7ebb
->>
->> Best regards,
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
