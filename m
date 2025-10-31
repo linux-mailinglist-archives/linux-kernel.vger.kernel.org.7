@@ -1,157 +1,297 @@
-Return-Path: <linux-kernel+bounces-880551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D43BC2607A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:11:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09134C260C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACE6C4F6F36
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:08:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FB03BADA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B5C2EC080;
-	Fri, 31 Oct 2025 16:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5512EC0BF;
+	Fri, 31 Oct 2025 16:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WaAq1KKY"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwb9f8FM"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EAB2F2915
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A819170826
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926694; cv=none; b=Uh9Em8IDo7QiefCSBdfwaPRgbg9UqCZzQPffGgUTenALgpN2IEu648T9+ECCo2J/IPuFK1s9JNUt3lUtQpsAPRINpHeIyQ9JpGkUI6qU1mP1NL+KaJs7FTIYE/wtz4PmIHPZrgiOWB5Zx3zCsuIqnOfy0YvhxtDpTYeKZK3ukhk=
+	t=1761926692; cv=none; b=DdzBpgMHW52CKzgoc78r4e0KxaBQZumhUADUfyt/zPDzxtQWETnaJCU+qukha2pgs9KyVtGvES6NH7zpJe/Y7xUYJhCdjTU1p9riVjtGNvqiqVibvwvse5cjqbEU5IxTX/GA2cuYROE54jS05o7Fh+Hb9GpmaLUiajr2d1T+Efs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926694; c=relaxed/simple;
-	bh=tB2xm0tHoFpBrehX5ultMyNxbTezXcjRnBrfqVxMnrY=;
+	s=arc-20240116; t=1761926692; c=relaxed/simple;
+	bh=bKTxsXPniedvZveiJEwt7RUcC0psBlMO8tL7pHglkeE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I1uH1qaaWx5p77bDDfaw5LjyOT5ugXALH29PVFCq6P67EXsK6nX//C1T/suSX3eIIgZNO1gg/E0MIL3auS82LOGyrub+SX9sUCbhdWcwfmmwPEUFkaptLK6fJI+2AvOqk9Wfga2IbrGeRkU8kT0U+vPQ+YwxbrRqYjwEKsJdIB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WaAq1KKY; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so528074566b.3
+	 To:Cc:Content-Type; b=ahnL5UzAAwiidHsSNlQObchLSGhtLxBS4Mizz+LlimU2oxXE68RGd28BCImjKMTa7gJ2i1oX2zD0t0KCWFEpNDgy6Y6O4i3dFMu7GO/06dtf4jfqMS5Z7JmEBQbaS3grCpFwALPSxQfNLRbOzzSE4KXPI9tfrUvcvyIAR6xwdfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hwb9f8FM; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27d67abd215so262085ad.0
         for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:04:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761926690; x=1762531490; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=60wW3RdT/GxZgMsGz0dv4U+v3VStlN+NgjbyhA221jo=;
-        b=WaAq1KKYS+dDnhPh/U/7KvILvcBrD3JNnr6zCrXJZGzqvpiZx4qAYLV57167fNt0Ir
-         RPrKymyQr+H2I6z+e4C8NJK43gNlIjSb1cjgX9eRCVoQmLxkcUli+pEmdwPl/jvNL+N8
-         OiGdJ3l4LPOnqWqi/ej0k+PVsrwhRgVMrXFlg=
+        d=google.com; s=20230601; t=1761926690; x=1762531490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eLVC4iHlDAqCvKvsojHxwUrg7mXLg1rTWMixQxC3wXw=;
+        b=hwb9f8FMYbHo76pst2oDpPVbsGN9niKiF+VuUl7uniOk+7Dalt6ffnU29138wJ9jyv
+         8w4EhqbGXrATGpbQMiWKdYOym0yoNkgYP6siiK9OqGlEL0Yo8xSX2QUYBT79z46GXCU4
+         GqRsbpatnzEhdL7omIe5Gye9x8sjkvqHUyjypx1IgOw8NfaDe1UZnaHACL0UzsVmG5cd
+         OWLL+nZPVOkns3vru+C6GD0BaLBUNKwyEhz8N3Q73dvFE/cbdVMH2aSm4iPhFnyhvRjY
+         ll3axdIaMkWSZ4ICDOP2/sNetUuVjcfBVGXIRWOzDkw8m6idlZJDUkuv+fM64PxN3jFO
+         tNJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761926690; x=1762531490;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=60wW3RdT/GxZgMsGz0dv4U+v3VStlN+NgjbyhA221jo=;
-        b=VTAlCtiDyUzeoEwar8Hi3md2O12MZ+PiBH8yECMx89F/4Lu9x7kSBmRssToSZPUxE/
-         y+k10gYZhxpo0pp4imhK4a1aW3pmES/RYV9TPA2YlExxWmLG41btEy2uVE5CTviLdil/
-         7JdDawFToI2jCKxHc/Szb9MeMXhlPUGglF1ByXQduOnJqCmpgse//7mzU+9Y+pVAKPbB
-         syCh1M4Ml/loPgcIEnR8XV+0ctNq/zGIEc28W3hZds5SV/JuS5vQORHLYteE8QncDsnc
-         ktEEl1GJHKJ/UEzOrWLLuF1qFvgxURBXDCWZVghWNu7qpPrbRq6LTIM3uNnf++P314X/
-         bz2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUdl1SHzb1ndBjxmJ3WGelBT6fseXiWJhc8XtOOsCRjvE/F7Aj5JtXGoC/pvkX/dsz7aYmCH/WjvvZhkB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2QWXanlL4eCeUQCn4hJEst1DSdQorNHkgJwPuq9aFquUCHD6j
-	/3iAHZ2xJzFr+i9+zcOu2wunNbBek9ED0nvbmi9tJv3ACvrnXFCBYVxE2kEe7Pr0HZ3l3UaVEO+
-	FaaPDFmA=
-X-Gm-Gg: ASbGncvpqgmmy8lCxDeIiA95kwlH1mupfedAhcqI7/MUnWpN/KZaczTKDCEts1cDCfG
-	7Xs1qWLfkFeuGxqp1boRJ+k2q4uL3u1Qg/Z7nBRu1aNK+CEUIf1CYSxxyGB+Jf0OLkn7yJ5vLVZ
-	erJSjhiFKUmJWkcvPl00LelYpz/ugLvan5U7vOEasyAXXyRvAuigMxFTj9j3gXD8exSY+yraU1r
-	u+u/wNpR/VWVWno5QxAjB4LXI9b5TNXJIPv/DpsNNngAgoRh7ub7zf2/EDgtJTyxmXxg8oTPIXe
-	Nbtsqk7HjhsWZUnKuIEM3Dc31l6/MuvV3W9QoVFh2eqpvCn71V+tP+i5USzgTwvz5f8mjY+HNrf
-	60ZTgCU2vWQzzww9RUcZ/xoKYkCS6i2Kyx0OpfCJsPB3HhYvcV+b6N/D9hzUuaUQFud/vnxG22I
-	QdODWAqv8vDD+97UaucpCZIIP2tP3MIVersX+heiqYDnQvWyPGKwKjubslwdmD
-X-Google-Smtp-Source: AGHT+IHz34rNDqSz4z94CVzOsHgEb+1kpAcYz2v/SG9ERs1m82uLOedyNiDpOKHmHHxRuS28/+l8gQ==
-X-Received: by 2002:a17:906:4fd3:b0:b2d:d7ba:8e7b with SMTP id a640c23a62f3a-b70701b183cmr449581666b.23.1761926690152;
-        Fri, 31 Oct 2025 09:04:50 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077975cfesm208802466b.4.2025.10.31.09.04.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 09:04:49 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso4354974a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:04:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWET10+gw8KngIIFVG90zYK5GwuRN3bJy4ddLpKHgmWL28nVdGtHGyeu5+OdRF3n5Z7niDh2jZkkjClPo8=@vger.kernel.org
-X-Received: by 2002:a05:6402:1e94:b0:634:ad98:669e with SMTP id
- 4fb4d7f45d1cf-64076f67832mr3110351a12.3.1761926688856; Fri, 31 Oct 2025
- 09:04:48 -0700 (PDT)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eLVC4iHlDAqCvKvsojHxwUrg7mXLg1rTWMixQxC3wXw=;
+        b=SssXre9wZphoFadpUyb6wVht+focqlVGSggTund16XGru4nGVp6vAkVYZ1zdqDXvhG
+         vTQmv9+Gr9YbmDOwlcZd9N611vjqWneQD8/YfMtHuChHS3nXvRsbW7IZhIcpaaxEIuBt
+         ichc2r8MKpHZougsy5x4hu7ToIGJ4GM8dB4m7jz1mAKGnuRGbTypWaUDaadl6m0m+Irp
+         4VFNTQnjgUbEp5dzet8PTBfpYtzRSm4sTgPURmEvrXjZqvBd4rYxvOMKm4pTPOH+OANx
+         rs2RpiHT0bLsYYbZvjuKkyfLAItpfCnuz6j3XuCXfbsXOLUhRqW0CmZ0nRg7Ygvo0ASX
+         DGIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwfX3E4uf6KEQhlnB4lRqfQnCwQWwnnEwy6lOzdu2bZK3d9lTS3NKjfwJHPv6cMeemfRIPXAIIRcJj0P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+pd3DPQYzjaJeSkxqpuY391oY9nLmEQEiOjpeWfT7b9RUEGQu
+	u3a3kSmMq+eX3vN1sSA4SI9+V2FzHWxFdNbgUupaezhTU18hdnty4QYtPOdLe9uIC/6XaufX2/K
+	LXOY2Q1r894/f3dPVScczJNWbGghwLvHKd6/cDYCJ
+X-Gm-Gg: ASbGncvZpcoPEympMFnmBkU8g8AYDy2QR2WtA2h/udm00N+FEqwFdXJcXT3za/8kEoW
+	M4HGXbP+/+T2PMT19meqB9mt7eZ5vsG/RNZf9z/vSD2z5ZMSD+3SJMGE/VXE0W6O+elPPi2fQ7h
+	ppT5K2KAdSUj7/gf7Q2tniKKtd1+Oi9Xaac9hSVQBOAALWyUITJ2xFkt5vSn2WaBQio51IM/o8T
+	SLnFNB0wH6BpqppcnVupj4fy+MOT1/tCWxgOOg0K7kBOw1o668yRDsKtQRFLL4zBBmVx2HL9VYL
+	sIaoxK31JxAnRT8=
+X-Google-Smtp-Source: AGHT+IEcB+8h5eOHGJ2YPKcye/aiEf9ENj87BXKVudOlNz+B6I519uQ0kYlL9DP9225qjguMeBiXUTLElwPTer24Mu0=
+X-Received: by 2002:a17:902:e811:b0:290:d4dd:b042 with SMTP id
+ d9443c01a7336-2951e77995amr5957285ad.16.1761926689972; Fri, 31 Oct 2025
+ 09:04:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030105242.801528-1-mjguzik@gmail.com> <CAHk-=wj5o+BPgrUNase4tOuzbBMmiqyiYO9apO9Ou-M_M1-tKQ@mail.gmail.com>
- <CAGudoHG_WYnoqAYgN2P5LcjyT6r-vORgeAG2EHbHoH+A-PvDUA@mail.gmail.com>
- <CAHk-=wgGFUAPb7z5RzUq=jxRh2PO7yApd9ujMnC5OwXa-_e3Qw@mail.gmail.com>
- <CAGudoHH817CKv0ts4dO08j5FOfEAWtvoBeoT06KarjzOh_U6ug@mail.gmail.com>
- <20251031-liehen-weltoffen-cddb6394cc14@brauner> <CAGudoHE-9R0ZfFk-bE9TBhejkmZE3Hu2sT0gGiy=i_1_He=9GA@mail.gmail.com>
-In-Reply-To: <CAGudoHE-9R0ZfFk-bE9TBhejkmZE3Hu2sT0gGiy=i_1_He=9GA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 31 Oct 2025 09:04:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg8yBs7y+TVUFP=k=rjFa3eQFqqmXDDgnzN4buzSdToiA@mail.gmail.com>
-X-Gm-Features: AWmQ_bnRDX2Gol1yij6lUw-TnphkeV13i2oTAsPwXYUAWwp3tGTy0FOLWSc_Muc
-Message-ID: <CAHk-=wg8yBs7y+TVUFP=k=rjFa3eQFqqmXDDgnzN4buzSdToiA@mail.gmail.com>
-Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	pfalcato@suse.de
+References: <20251023015043.38868-1-xueshuai@linux.alibaba.com>
+ <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
+ <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com> <eed27aaf-fd0a-4609-a30b-68e7c5c11890@linux.alibaba.com>
+ <CAP-5=fVLGRsn7icH1cgmb==f5_D6Vr2CbzirAv7DY4Afjm4O2A@mail.gmail.com> <5a06462a-697d-47b6-b51e-6438005b6130@linux.alibaba.com>
+In-Reply-To: <5a06462a-697d-47b6-b51e-6438005b6130@linux.alibaba.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 31 Oct 2025 09:04:38 -0700
+X-Gm-Features: AWmQ_bkelkfpf4y93i1UE_icgV-ko7nWCsbmdO2_BgOqFLH2IQ2RjuUM-6Q_tIE
+Message-ID: <CAP-5=fUvwokP=MYmS7kZqjCk+ZYs8A-9G+i3zt-zvjdZA6E_Jg@mail.gmail.com>
+Subject: Re: [PATCH] perf record: skip synthesize event when open evsel failed
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org, 
+	james.clark@arm.com, leo.yan@linaro.org, mingo@redhat.com, 
+	baolin.wang@linux.alibaba.com, acme@kernel.org, mark.rutland@arm.com, 
+	jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nathan@kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 31 Oct 2025 at 08:13, Mateusz Guzik <mjguzik@gmail.com> wrote:
+On Thu, Oct 30, 2025 at 7:36=E2=80=AFPM Shuai Xue <xueshuai@linux.alibaba.c=
+om> wrote:
 >
-> I slept on it and I think the pragmatic way forward is to split up
-> runtime-const.h instead.
+> =E5=9C=A8 2025/10/31 01:32, Ian Rogers =E5=86=99=E9=81=93:
+> > On Wed, Oct 29, 2025 at 5:55=E2=80=AFAM Shuai Xue <xueshuai@linux.aliba=
+ba.com> wrote:
+> >>
+> >>
+> >>
+> >> =E5=9C=A8 2025/10/24 10:45, Shuai Xue =E5=86=99=E9=81=93:
+> >>>
+> >>>
+> >>> =E5=9C=A8 2025/10/24 00:08, Ian Rogers =E5=86=99=E9=81=93:
+> >>>> On Wed, Oct 22, 2025 at 6:50=E2=80=AFPM Shuai Xue <xueshuai@linux.al=
+ibaba.com> wrote:
+> >>>>>
+> >>>>> When using perf record with the `--overwrite` option, a segmentatio=
+n fault
+> >>>>> occurs if an event fails to open. For example:
+> >>>>>
+> >>>>>     perf record -e cycles-ct -F 1000 -a --overwrite
+> >>>>>     Error:
+> >>>>>     cycles-ct:H: PMU Hardware doesn't support sampling/overflow-int=
+errupts. Try 'perf stat'
+> >>>>>     perf: Segmentation fault
+> >>>>>         #0 0x6466b6 in dump_stack debug.c:366
+> >>>>>         #1 0x646729 in sighandler_dump_stack debug.c:378
+> >>>>>         #2 0x453fd1 in sigsegv_handler builtin-record.c:722
+> >>>>>         #3 0x7f8454e65090 in __restore_rt libc-2.32.so[54090]
+> >>>>>         #4 0x6c5671 in __perf_event__synthesize_id_index synthetic-=
+events.c:1862
+> >>>>>         #5 0x6c5ac0 in perf_event__synthesize_id_index synthetic-ev=
+ents.c:1943
+> >>>>>         #6 0x458090 in record__synthesize builtin-record.c:2075
+> >>>>>         #7 0x45a85a in __cmd_record builtin-record.c:2888
+> >>>>>         #8 0x45deb6 in cmd_record builtin-record.c:4374
+> >>>>>         #9 0x4e5e33 in run_builtin perf.c:349
+> >>>>>         #10 0x4e60bf in handle_internal_command perf.c:401
+> >>>>>         #11 0x4e6215 in run_argv perf.c:448
+> >>>>>         #12 0x4e653a in main perf.c:555
+> >>>>>         #13 0x7f8454e4fa72 in __libc_start_main libc-2.32.so[3ea72]
+> >>>>>         #14 0x43a3ee in _start ??:0
+> >>>>>
+> >>>>> The --overwrite option implies --tail-synthesize, which collects no=
+n-sample
+> >>>>> events reflecting the system status when recording finishes. Howeve=
+r, when
+> >>>>> evsel opening fails (e.g., unsupported event 'cycles-ct'), session-=
+>evlist
+> >>>>> is not initialized and remains NULL. The code unconditionally calls
+> >>>>> record__synthesize() in the error path, which iterates through the =
+NULL
+> >>>>> evlist pointer and causes a segfault.
+> >>>>>
+> >>>>> To fix it, move the record__synthesize() call inside the error chec=
+k block, so
+> >>>>> it's only called when there was no error during recording, ensuring=
+ that evlist
+> >>>>> is properly initialized.
+> >>>>>
+> >>>>> Fixes: 4ea648aec019 ("perf record: Add --tail-synthesize option")
+> >>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> >>>>
+> >>>> This looks great! I wonder if we can add a test, perhaps here:
+> >>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-=
+next.git/tree/tools/perf/tests/shell/record.sh?h=3Dperf-tools-next#n435
+> >>>> something like:
+> >>>> ```
+> >>>> $ perf record -e foobar -F 1000 -a --overwrite -o /dev/null -- sleep=
+ 0.1
+> >>>> ```
+> >>>> in a new test subsection for test_overwrite? foobar would be an even=
+t
+> >>>> that we could assume isn't present. Could you help with a test
+> >>>> covering the problems you've uncovered and perhaps related flags?
+> >>>>
+> >>>
+> >>> Hi, Ian,
+> >>>
+> >>> Good suggestion, I'd like to add a test. But foobar may not a good ca=
+se.
+> >>>
+> >>> Regarding your example:
+> >>>
+> >>>     perf record -e foobar -a --overwrite -o /dev/null -- sleep 0.1
+> >>>     event syntax error: 'foobar'
+> >>>                          \___ Bad event name
+> >>>
+> >>>     Unable to find event on a PMU of 'foobar'
+> >>>     Run 'perf list' for a list of valid events
+> >>>
+> >>>      Usage: perf record [<options>] [<command>]
+> >>>         or: perf record [<options>] -- <command> [<options>]
+> >>>
+> >>>         -e, --event <event>   event selector. use 'perf list' to list=
+ available events
+> >>>
+> >>>
+> >>> The issue with using foobar is that it's an invalid event name, and t=
+he
+> >>> perf parser will reject it much earlier. This means the test would ex=
+it
+> >>> before reaching the part of the code path we want to verify (where
+> >>> record__synthesize() could be called).
+> >>>
+> >>> A potential alternative could be testing an error case such as EACCES=
+:
+> >>>
+> >>>     perf record -e cycles -C 0 --overwrite -o /dev/null -- sleep 0.1
+> >>>
+> >>> This could reproduce the scenario of a failure when attempting to acc=
+ess
+> >>> a valid event, such as due to permission restrictions. However, the
+> >>> limitation here is that users may override
+> >>> /proc/sys/kernel/perf_event_paranoid, which affects whether or not th=
+is
+> >>> test would succeed in triggering an EACCES error.
+> >>>
+> >>>
+> >>> If you have any other suggestions or ideas for a better way to simula=
+te
+> >>> this situation, I'd love to hear them.
+> >>>
+> >>> Thanks.
+> >>> Shuai
+> >>
+> >> Hi, Ian,
+> >>
+> >> Gentle ping.
+> >
+> > Sorry, for the delay. I was trying to think of a better way given the
+> > problems you mention and then got distracted. I wonder if a legacy
+> > event that core PMUs never implement would be a good candidate to
+> > test. For example, the event "node-prefetch-misses" is for "Local
+> > memory prefetch misses" but the memory controller tends to be a
+> > separate PMU and this event is never implemented to my knowledge.
+> > Running this locally I see:
+> >
+> > ```
+> > $ perf record -e node-prefetch-misses -a --overwrite -o /dev/null -- sl=
+eep 0.1
+> > Lowering default frequency rate from 4000 to 1750.
+> > Please consider tweaking /proc/sys/kernel/perf_event_max_sample_rate.
+> > Error:
+> > Failure to open event 'cpu_atom/node-prefetch-misses/' on PMU
+> > 'cpu_atom' which will be removed.
+> > No fallback found for 'cpu_atom/node-prefetch-misses/' for error 2
+> > Error:
+> > Failure to open event 'cpu_core/node-prefetch-misses/' on PMU
+> > 'cpu_core' which will be removed.
+> > No fallback found for 'cpu_core/node-prefetch-misses/' for error 2
+> > Error:
+> > Failure to open any events for recording.
+> > perf: Segmentation fault
+> >     #0 0x55a487ad8b87 in dump_stack debug.c:366
+> >     #1 0x55a487ad8bfd in sighandler_dump_stack debug.c:378
+> >     #2 0x55a4878c6f94 in sigsegv_handler builtin-record.c:722
+> >     #3 0x7f72aae49df0 in __restore_rt libc_sigaction.c:0
+> >     #4 0x55a487b57ef8 in __perf_event__synthesize_id_index
+> > synthetic-events.c:1862
+> >     #5 0x55a487b58346 in perf_event__synthesize_id_index synthetic-even=
+ts.c:1943
+> >     #6 0x55a4878cb2a3 in record__synthesize builtin-record.c:2150
+> >     #7 0x55a4878cdada in __cmd_record builtin-record.c:2963
+> >     #8 0x55a4878d11ca in cmd_record builtin-record.c:4453
+> >     #9 0x55a48795b3cc in run_builtin perf.c:349
+> >     #10 0x55a48795b664 in handle_internal_command perf.c:401
+> >     #11 0x55a48795b7bd in run_argv perf.c:448
+> >     #12 0x55a48795bb06 in main perf.c:555
+> >     #13 0x7f72aae33ca8 in __libc_start_call_main libc_start_call_main.h=
+:74
+> >     #14 0x7f72aae33d65 in __libc_start_main_alias_2 libc-start.c:128
+> >     #15 0x55a4878acf41 in _start perf[52f41]
+> > Segmentation fault
+> > ```
+>
+>
+> Hi, Ian=EF=BC=8C
+>
+> Is node-prefetch-misses a platform specific event? Running it on ARM Yiti=
+an 710
+> and Intel SPR platform, I see:
+>
+> $sudo perf record -e node-prefetch-misses
+> Error:
+> The node-prefetch-misses event is not supported.
 
-I don't think that would be wrong, but I do think the real bug was to
-include runtime-const.h in any headers at all.
+Hi Shuai,
 
-It should only be included by C code that is always built-in.
+So node-prefetch-misses is a legacy event. Perf has a notion of events
+that are inbuilt to the kernel/PMU driver and get special fixed
+encodings. That said, the PMU driver in the kernel can just fail to
+support the events and I think that's uniformly the case for
+node-prefetch-misses. As shown by my reproduction of the crash, which
+I hope this suffices for a test - i.e. it is an event that parses but
+one that is never supported.
 
-And it's all my fault and due to incompetence: this was introduced by
-me in commit 86e6b1547b3d ("x86: fix user address masking
-non-canonical speculation issue").
-
-The original runtime const design was for core code optimization only,
-and I just didn't think about the module case when I did that thing.
-
-Sadly, this goes beyond just the trivial "access_ok()" - which can
-trivially be fixed by just making it out-of-line. It ends up impacting
-user address masking too.
-
-It so happens that all our can_do_masked_user_access() optimizations
-are in core code, so it's not an *actual* bug, just a potential one,
-but it's one that Thomas' patches to do the nice scoped user accesses
-will likely make much more common, just because his interface is so
-much more convenient.
-
-End result: I think your patch to just use
-
-  #ifdef MODULE
-
-in the header was the right one. Except instead of that
-
-+#ifdef MODULE
-+#define __USER_PTR_MAX USER_PTR_MAX
-+#else
-
-thing, I think the right thing to do is to just do
-
-  #ifdef MODULE
-   #include <asm-generic/runtime-const.h>
-   #undef runtime_const_init
- #else
-   #include <asm/runtime-const.h>
-  #endif
-
-in the x86 uaccess_64.h header file.
-
-Let me think about this a bit more, but I feel really bad about having
-missed this bug. I'm relieved to say that it looks largely harmless in
-practice, but it really is me having royally messed up.
-
-                  Linus
+Thanks,
+Ian
 
