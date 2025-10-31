@@ -1,297 +1,253 @@
-Return-Path: <linux-kernel+bounces-880550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09134C260C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:14:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB7BC26029
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FB03BADA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:08:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 23F2D35179C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5512EC0BF;
-	Fri, 31 Oct 2025 16:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C568E2F0678;
+	Fri, 31 Oct 2025 16:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwb9f8FM"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJ13Lrwc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A819170826
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926692; cv=none; b=DdzBpgMHW52CKzgoc78r4e0KxaBQZumhUADUfyt/zPDzxtQWETnaJCU+qukha2pgs9KyVtGvES6NH7zpJe/Y7xUYJhCdjTU1p9riVjtGNvqiqVibvwvse5cjqbEU5IxTX/GA2cuYROE54jS05o7Fh+Hb9GpmaLUiajr2d1T+Efs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926692; c=relaxed/simple;
-	bh=bKTxsXPniedvZveiJEwt7RUcC0psBlMO8tL7pHglkeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ahnL5UzAAwiidHsSNlQObchLSGhtLxBS4Mizz+LlimU2oxXE68RGd28BCImjKMTa7gJ2i1oX2zD0t0KCWFEpNDgy6Y6O4i3dFMu7GO/06dtf4jfqMS5Z7JmEBQbaS3grCpFwALPSxQfNLRbOzzSE4KXPI9tfrUvcvyIAR6xwdfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hwb9f8FM; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27d67abd215so262085ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761926690; x=1762531490; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLVC4iHlDAqCvKvsojHxwUrg7mXLg1rTWMixQxC3wXw=;
-        b=hwb9f8FMYbHo76pst2oDpPVbsGN9niKiF+VuUl7uniOk+7Dalt6ffnU29138wJ9jyv
-         8w4EhqbGXrATGpbQMiWKdYOym0yoNkgYP6siiK9OqGlEL0Yo8xSX2QUYBT79z46GXCU4
-         GqRsbpatnzEhdL7omIe5Gye9x8sjkvqHUyjypx1IgOw8NfaDe1UZnaHACL0UzsVmG5cd
-         OWLL+nZPVOkns3vru+C6GD0BaLBUNKwyEhz8N3Q73dvFE/cbdVMH2aSm4iPhFnyhvRjY
-         ll3axdIaMkWSZ4ICDOP2/sNetUuVjcfBVGXIRWOzDkw8m6idlZJDUkuv+fM64PxN3jFO
-         tNJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761926690; x=1762531490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eLVC4iHlDAqCvKvsojHxwUrg7mXLg1rTWMixQxC3wXw=;
-        b=SssXre9wZphoFadpUyb6wVht+focqlVGSggTund16XGru4nGVp6vAkVYZ1zdqDXvhG
-         vTQmv9+Gr9YbmDOwlcZd9N611vjqWneQD8/YfMtHuChHS3nXvRsbW7IZhIcpaaxEIuBt
-         ichc2r8MKpHZougsy5x4hu7ToIGJ4GM8dB4m7jz1mAKGnuRGbTypWaUDaadl6m0m+Irp
-         4VFNTQnjgUbEp5dzet8PTBfpYtzRSm4sTgPURmEvrXjZqvBd4rYxvOMKm4pTPOH+OANx
-         rs2RpiHT0bLsYYbZvjuKkyfLAItpfCnuz6j3XuCXfbsXOLUhRqW0CmZ0nRg7Ygvo0ASX
-         DGIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwfX3E4uf6KEQhlnB4lRqfQnCwQWwnnEwy6lOzdu2bZK3d9lTS3NKjfwJHPv6cMeemfRIPXAIIRcJj0P8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+pd3DPQYzjaJeSkxqpuY391oY9nLmEQEiOjpeWfT7b9RUEGQu
-	u3a3kSmMq+eX3vN1sSA4SI9+V2FzHWxFdNbgUupaezhTU18hdnty4QYtPOdLe9uIC/6XaufX2/K
-	LXOY2Q1r894/f3dPVScczJNWbGghwLvHKd6/cDYCJ
-X-Gm-Gg: ASbGncvZpcoPEympMFnmBkU8g8AYDy2QR2WtA2h/udm00N+FEqwFdXJcXT3za/8kEoW
-	M4HGXbP+/+T2PMT19meqB9mt7eZ5vsG/RNZf9z/vSD2z5ZMSD+3SJMGE/VXE0W6O+elPPi2fQ7h
-	ppT5K2KAdSUj7/gf7Q2tniKKtd1+Oi9Xaac9hSVQBOAALWyUITJ2xFkt5vSn2WaBQio51IM/o8T
-	SLnFNB0wH6BpqppcnVupj4fy+MOT1/tCWxgOOg0K7kBOw1o668yRDsKtQRFLL4zBBmVx2HL9VYL
-	sIaoxK31JxAnRT8=
-X-Google-Smtp-Source: AGHT+IEcB+8h5eOHGJ2YPKcye/aiEf9ENj87BXKVudOlNz+B6I519uQ0kYlL9DP9225qjguMeBiXUTLElwPTer24Mu0=
-X-Received: by 2002:a17:902:e811:b0:290:d4dd:b042 with SMTP id
- d9443c01a7336-2951e77995amr5957285ad.16.1761926689972; Fri, 31 Oct 2025
- 09:04:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D84F2ED86F;
+	Fri, 31 Oct 2025 16:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761926730; cv=fail; b=oDcBQWUaFztGYsLaTKUYsLUrWKX6YRF/uKMZZ+N+Nf9hePg/t1np1bCoRBS+Dz53yLspweBs9lBO0AhMkw7+KdU71JNWC7fH1inAg8M8Ai9xcxm1WZtpsvdlc38JiEoeXJ/nY68jjB34td4FekKLV5Yzfsqb46WMGtEuqVaf84g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761926730; c=relaxed/simple;
+	bh=JTrko/Txc+uyZpWXeUdiqPDPY6jyiqrnYocEFPkM8cY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p4BCj0UZId8ZhmEjM3fVAj0juKj9+zc+EL806iw6mTeGEWoBBakaAKnxxTVhAcdd6HYQ87H2astps+CpjQ2AnbbBbFpA9uubd1LbVTJhCb6vCZ3sU6AKmw47bRW53/OQQM3/Xr3Y3blU2KxF76HbvBcd2TQFSbtcv05wlQgf5iU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJ13Lrwc; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761926729; x=1793462729;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=JTrko/Txc+uyZpWXeUdiqPDPY6jyiqrnYocEFPkM8cY=;
+  b=BJ13Lrwc41O77EVktZnPvPFEfEwzLVZ+jsopdx9UTuVnXew87bo84NsB
+   eLQqadDKjFkKXHXmmrkBkGb5g+xekjjI9OW7yMFBWykxakV17gEBLqZAA
+   JTnlLpN7uUXzY63uviJvSOSkVhGI/EymkzeK00SFfX72uGV701Hl1RfGY
+   SJvJXjghmpK/BC2ASeuVR0daHLuZD5MHbk0V0jab+9hJM0846Vdh0ys8/
+   mbZmH6Pnbzxh5OJfCe3way3Add/raFtZgUSy3Jc4V7aC+bQAF35Fq+bjz
+   C3A5KvGbLw16yRE4sU2Xr/wvdE8nIhlo0xcRkAjYrmK+00aSegnYUKbwB
+   Q==;
+X-CSE-ConnectionGUID: KOpbVn9VQqmjCPA4xeWM6Q==
+X-CSE-MsgGUID: rILqUqdkRgOjBFcQ118EOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="51662339"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="51662339"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:05:28 -0700
+X-CSE-ConnectionGUID: ovtPTlzWTAiX+Hijigi4lw==
+X-CSE-MsgGUID: 6jN03M6kTrGe6uf78YX+ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="185484123"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:05:28 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 31 Oct 2025 09:05:27 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 31 Oct 2025 09:05:27 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.4) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 31 Oct 2025 09:05:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LWAkfRdAbPs2Um1EdN0S6xfOdSwCB3285qzvTOQe37EPN4tRZ0uYViLkJ0WD3bblvNU8wE7+8vRPdtdCIZlBcafx7yIvtJ50QMq+eycQo/1AwsBhLleunLMdqzV6JMWHmLhdvRof6IIsrKCS9SMTq9y68kIwE9aUlZqP3GQcHRLsi+w7nNTxNcRSdbiQkU51FKVcv7QtmrhFobii1BQq9Oa/pL8LSC3tYtvZ7IVJJtV2Td8/XOALcX2gh3Ja6YCFTDr5FtHFUg6BM9UQarbE5JeXrfKet2BdeWxdvrZNnzMyAYr14rdD/HBhsisP/se/HMWPU0hhcfJIT3S54dbVBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7SCW8LUi+Nk2NyFVvP7yJhdkkaG27oZZwKCtCdgqT+8=;
+ b=p3ZMZcxpE85Pqb6T2RRasoKjXFpzBCaHR3sDzIkZ17+1MkznqpPDUcCnNdeA7wsdb36/hS7KxBeQugf0vbbJH8nkKC1juNn6HwAuK/TqkaO+LVEHJVkeG53smL821czHTnDXJTcoq5+4z1MBZ0XZVv/vRtIeePL3ZHW97LCFLsjToUQll4QdfvtNzOcO403EHJ7rnJaYeulSopR+sWbCnFyQtGhGu3sHw32Agd3FqNtWm+6OLGcNJA4NyZ9GZ0jovb5JTfrk3RWjqQ1cez0k3/2FOoyHO+3cTfGJpU3rNEoY5B5Udn2y8W3ce/yzyfFuEXsvWVGgt96F3PTPZXEmPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM4PR11MB8226.namprd11.prod.outlook.com (2603:10b6:8:182::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
+ 2025 16:05:25 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9228.015; Fri, 31 Oct 2025
+ 16:05:25 +0000
+Message-ID: <32ae07aa-33b1-427b-bd51-394f231ea3e8@intel.com>
+Date: Fri, 31 Oct 2025 09:05:22 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 19/23] KVM: selftests: Finalize TD memory as part of
+ kvm_arch_vm_finalize_vcpus
+To: Sagi Shahar <sagis@google.com>, <linux-kselftest@vger.kernel.org>, "Paolo
+ Bonzini" <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, "Sean
+ Christopherson" <seanjc@google.com>, Ackerley Tng <ackerleytng@google.com>,
+	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
+	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas
+	<erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, "Roger
+ Wang" <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, "Oliver
+ Upton" <oliver.upton@linux.dev>, "Pratik R. Sampat"
+	<pratikrajesh.sampat@amd.com>, Ira Weiny <ira.weiny@intel.com>, Chao Gao
+	<chao.gao@intel.com>, Chenyi Qiang <chenyi.qiang@intel.com>
+CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+References: <20251028212052.200523-1-sagis@google.com>
+ <20251028212052.200523-20-sagis@google.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251028212052.200523-20-sagis@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0124.namprd04.prod.outlook.com
+ (2603:10b6:303:84::9) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023015043.38868-1-xueshuai@linux.alibaba.com>
- <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
- <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com> <eed27aaf-fd0a-4609-a30b-68e7c5c11890@linux.alibaba.com>
- <CAP-5=fVLGRsn7icH1cgmb==f5_D6Vr2CbzirAv7DY4Afjm4O2A@mail.gmail.com> <5a06462a-697d-47b6-b51e-6438005b6130@linux.alibaba.com>
-In-Reply-To: <5a06462a-697d-47b6-b51e-6438005b6130@linux.alibaba.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 31 Oct 2025 09:04:38 -0700
-X-Gm-Features: AWmQ_bkelkfpf4y93i1UE_icgV-ko7nWCsbmdO2_BgOqFLH2IQ2RjuUM-6Q_tIE
-Message-ID: <CAP-5=fUvwokP=MYmS7kZqjCk+ZYs8A-9G+i3zt-zvjdZA6E_Jg@mail.gmail.com>
-Subject: Re: [PATCH] perf record: skip synthesize event when open evsel failed
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org, 
-	james.clark@arm.com, leo.yan@linaro.org, mingo@redhat.com, 
-	baolin.wang@linux.alibaba.com, acme@kernel.org, mark.rutland@arm.com, 
-	jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nathan@kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM4PR11MB8226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 39d6cedd-e1b9-4d17-68c9-08de18974d3f
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cGVTclY2VCtDalZwamk5RUJvaGk4Y00zOE5nUmlzd3puM0RJYlQwR2QxNXhK?=
+ =?utf-8?B?V3N6WUpjVTBTYW02RmpQejcwYkEzbEVROWtFVy81Y3RkL0JoVmk1WlF3NGJr?=
+ =?utf-8?B?U1Z4TUdSdFBGZWkybmdjRXIyQnYwakZEUWRVZFJ2WTFWekRGeGZXWUVCczdW?=
+ =?utf-8?B?YWMxdVdDYjFMRjFjQ2NlcHB3Z2M2dlpJeDlsU1F5Z2dXMkZyV0RPTUx5Rlp4?=
+ =?utf-8?B?UXU1RHozajlWNHZkaHYzSVZrMHBrNi9BQVYvR0lpL2lYSnl6Mm5ocGRidnBp?=
+ =?utf-8?B?VHJTbWxqUTlXY0xSQURDV3FsUkw2U1NnYlVHcGZmVEdTTTFRRlo2aGdYUEtp?=
+ =?utf-8?B?VVlUMUs4aGkwWnlLYXRXaDR3TGMrUklZeTlsZHJKWFdlYkdUUXRkcHVsV1RR?=
+ =?utf-8?B?WGZoU1ZTOWp0eHljYWJycGpacDdkYlBRVmp0anQzVldKM2I1bUl0djJyYitr?=
+ =?utf-8?B?L1pCZkRNNlNERTdQZ2ZsN1YwS3BhcUkzZE9GbTB2N3lqMmRxRHFiWG5HZzF0?=
+ =?utf-8?B?eVRUVlZmY0VVN0VTeEN5dlFwT1YrVDVRTGdUcjlDdW9LMFV5MnkzUWlIV3BF?=
+ =?utf-8?B?aVpEakNtOVJhSGdMQkNTU21LT1VOcXIxd0RCQ3czN05pMVYrQy9MR1MwTzh6?=
+ =?utf-8?B?QTFNKzdIamFUZVRZbkdSR0FVd1B1Qy9PNXBVRFRIMEZrZVhWVGZmMlc0WG00?=
+ =?utf-8?B?ejJqRDJ4MGlUb2ZTR3MzRnJNdGZKUnNLYW1TZlJFekNsNnRqMXdaOGZtd0V1?=
+ =?utf-8?B?VzVpbHFESG1kRzZBQ2htdTl6K2gzaTF0cUUwcUFkVHVUUVVQbGhkaThJK3B3?=
+ =?utf-8?B?S2g3Rnp6aXpLR2ZFYUliY3NlZkxaTE00Sy9QSnptY01pZHB4U3pTaDVDS1Z4?=
+ =?utf-8?B?TmRPMEtxSFhtSmRYbVBaSEtFR3loYkxPQy9Ca2xBRFV2bzV4K013UGl1THpW?=
+ =?utf-8?B?NzFUeVR0Ulk2MUJGcjVaNEFqRFdXT3BydnBxNVEzMVBWMytPOXhJMmJXT3cz?=
+ =?utf-8?B?MDBCWVlmelJCaEFQTnlSUkFMVURKL2xDejZ0OWs4Qk84WUdRMVFKWUoyREdR?=
+ =?utf-8?B?NWtQb3c4d3ViZ1c1NkRJQk5FdnhtNFlQSVhjSjF2ZWVuQkU2R1FTN0dIQWtH?=
+ =?utf-8?B?UzlnZmVCZncrcVV3Q2F3djFDV21wZzhJZEtZbTNNREV3aWRlekY2VGY1ZkFT?=
+ =?utf-8?B?ZTlQTVZJdHlZVk15dDZsS05lMm14T3l4NldxdHJrUzhPSnhRTGZFVm8vdlRT?=
+ =?utf-8?B?dTIrY2tuOVN4dWxYYk42b24zVStJWkR2YlozcEJBWWVaK1JVKzRCemxlWUNE?=
+ =?utf-8?B?TldUenZnc0V6QnplR2wvWmdiSmhrV21tREl4ZE5NUU1LSzNFYVN5Q0U4SDNP?=
+ =?utf-8?B?VEFGSmZVQk53alIreC8yNWZNcGdyVkx4MHg1S2VodmhqVlkzakZjamtScFIw?=
+ =?utf-8?B?ditob2RlZVpMMmVoS1NMTE1NNkw4WVFHUzNDUGx5cnZJcWwwTnZtUDZOT0NF?=
+ =?utf-8?B?U2x2YU1pUFNNT3JDS0FoQnljUnZQdWNYREord2VLbUExcTNDSFlpK2ltbXFx?=
+ =?utf-8?B?R2loUmZQbWNieGZoS0luekczNkY4R0k3MDhKaEJIUzhCakRnMUh5MTN5NzUr?=
+ =?utf-8?B?d2c2a09hNVQxTmM3dW5CaE1vd0x0Yis0QndjRFNQcFVlcTI1WG16VHdCVzRw?=
+ =?utf-8?B?cVdrc2ZTYXNUeWFtamdaWk4xUG5pcmpMSC9YdFl0eWdOVGltejBhYm9xK3I0?=
+ =?utf-8?B?c3FFZzZBbW12SlRCZ3BIQ3JscWRocGpWZ0o1THl2elRaaS9wZWhYTTZtcXJz?=
+ =?utf-8?B?VThwTVR2c3pHWlpHaVBQbU05VnFQekFwRTJpMzFJMjRsd0F1NUd0VDJLNy96?=
+ =?utf-8?B?Z0FVTTlpNnZodXFDTHUzY25DTG0yNmdHRFEzSGdtTmZpVzAwWHZsMW9HMHh6?=
+ =?utf-8?B?VnRlRWViNUk2YUJlUkY0SHJNTVdRa3Roc2dCK0J3NVZ5SlJsZERzSEo2bEU2?=
+ =?utf-8?Q?khiTSPWnwiM3g8PBtl2p38AC/Rpt9E=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T085eDR1SG53UzlaTGowbE1udFowQWk3aXFsc1ZvTnhucTd4S2VGUEZwNnZI?=
+ =?utf-8?B?WmI2anZXUkREQzV6OUIxRTVGK1Blbkd4dyszMU1VZmRLQThFbE5tZUtjRjlv?=
+ =?utf-8?B?b29FdHF4Nm01aWgwcXY0dmZPV29QUlBBTHFnMlk0M2FPM2FSQkdReXdRdXNo?=
+ =?utf-8?B?WmlVY2pYa3lXREN0Q3dUbFNEaWxXdkduT2xoWnB6QTZUeHB3azJKRFR1MElq?=
+ =?utf-8?B?dTJaenBNVE9peVRyNW9ZdEg5K3hpQXVQdDdlWVlNNDg0ODhoS1VSaUsrK1Jr?=
+ =?utf-8?B?NzdWWTJDQXAxMVRic1NiYmYwbGEySjNFa2ozM2JMaWlQNXUreEQ5S1pVVEdE?=
+ =?utf-8?B?bVJMUlk1NEdjMytwOHd3RDNUYnJEWDJWSk5vSVFvMmdmU3dMNnRHSGI3MU1i?=
+ =?utf-8?B?djBXT1JDMEt2UGM3SDN0U1NvUjlFdkR4Ky9EQmxmUFFJN0FUOUxjaUN1cnVU?=
+ =?utf-8?B?cCtnVkNFUklTOWl6VlZPT1JocDlwcXBVSVhsLzRUR3BqblJrTk15b1ZGU0d3?=
+ =?utf-8?B?ZEI5NGxnWU01ck1wNXRzYzNmcUFob2cyRkFYRHJQNi9MTmZyOUNuQkxlSnFt?=
+ =?utf-8?B?V2hPbTFOOTRKek42UndsTjZUYlYxRmlPZjdsaTh0bm43bEpmRWtLTFhJOVVu?=
+ =?utf-8?B?Y081TElPMUtjRlA0WGxMRWw1MW9qS3ZKSDZXYm9UUmUyM3k2SjJkbVNnZFcv?=
+ =?utf-8?B?UnZYMVBtenQwWTdOT0ZGb0YrZ1V1WlRkaGZSZUhTWHFGMktCbUpUc3EvS3RE?=
+ =?utf-8?B?bTFnckx5RlAxUWNBWmZKTDIxT290Yk52T29odUk1aVJZV1ZXeUNRRXZRYlB1?=
+ =?utf-8?B?RUtLdGtlS0dsQU9WM2l2dnlUOTY1Q1UxRFoxSmwrWmxKMml2WG9CNzJiZ1Ry?=
+ =?utf-8?B?TlZ1VkYySU9TcE43VUkyeXJjWm1jRTNTc2w5Q1luaVVnZVMzYWJkTDE0d0lH?=
+ =?utf-8?B?U3pzYTZjMHV5ZjB0TDlxRldsRTA4Qnp0bW96empncnFBT2pqeDJGNnBnSTJM?=
+ =?utf-8?B?UVdHaFd5K3RkaEpEemE5UjF2N2ROYXVXOVJKd0d3aUR1cHgwbWFxNHlzUitn?=
+ =?utf-8?B?cEtRNlA0UkE0VVhmWnQ5RENyZHBoRW5KRnhTZlczZmpEdUZ1OVI1SU51VWJW?=
+ =?utf-8?B?eGhBN2FPdnpqMkhlM1RWYllTYkNhbWF3dldFR2h2a09XUVVhS0lmaFlEenZl?=
+ =?utf-8?B?a2RNZEJrNXgzQ3QwTVgyMkRRUG5tYnRab1NtSjZoWlgybDd6L0RUaGV5RkFR?=
+ =?utf-8?B?anR6T0c0dHZBQXZwSlYzSW5LZXRwY3R0cURrZVU4N013NU9SdWg3TzhMajhj?=
+ =?utf-8?B?a240RmJTTmNZTmY3NTJHZGJqVEtHOENBZFNCMk5HRVBobFI2QVBQN1RnUGxX?=
+ =?utf-8?B?MXNLTi9neXFMazdGQ0xFUjJndStzY0N2WHFIdzFrdXVnS1JkVi9ET001ak9i?=
+ =?utf-8?B?NzBsbTRaNEh6czNvOVN4RDJKbHBPYU5CZEorL2RzaHVTUy9wdTFNdzF4cVRB?=
+ =?utf-8?B?SVVPQ3d4djkreUlsMkFVc0QrMXFQdWZPY2RIZ2lPaVBaMlFtMjg0ZEl0M2Np?=
+ =?utf-8?B?N2x6Tm0zK1EwK1VHbEFMbUpKdVhQSHRSMXFQcFdCaVQwclZUWHo3VjFmS0lU?=
+ =?utf-8?B?VC90cG5ZT2JTc0R3Y2Zvb2l3cFVkeUY5Y3BIaHVGSWpNZmxpMXpHbzBxNFV0?=
+ =?utf-8?B?SXI5TFhXcUlrbEJJOTlZZU9jcis4WXVXYTVIVmZBakFCNXJsZmNxRERueWJk?=
+ =?utf-8?B?Zlh2Vlg3RjU2UVptbjNDQ3FuVktkWkhSZGZsdk10MWRqV2NnTTU2THVyK0Jl?=
+ =?utf-8?B?TXdIcERHUzQ4RzdEWHVzWnpjdkY3aENpK21ITXNKWlg0TTROZmdIQ3FSRVp4?=
+ =?utf-8?B?YmpiWkZ1RXRYbjdXRlMrWUlaNUVaNCtNVmZaeFlvNFdZS25SQkRrNEVwL3N4?=
+ =?utf-8?B?OCtYVjJGdkRRamtkcW9peUdIS25Ldnl0NkgzMGdGRkM0eC9PUXl5NHcrK1ZV?=
+ =?utf-8?B?RlAyTll4OGUwSk1pa0d3MTNXTll1TjZVL1BmTU9tRXFORjc5ZFcxeTRZcHhB?=
+ =?utf-8?B?YjRhN1A5NEdVT25Rc3FKYW0xWWZ2eWtVcFRWaS9SbjFmdHQzS1lNaHYzTGtD?=
+ =?utf-8?B?aWc1Qy9TSDl0WlMrRFg3cndJRjBabUlnVVFSdFRYMUNwRFFhaU1aOWpwa1VB?=
+ =?utf-8?B?K3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39d6cedd-e1b9-4d17-68c9-08de18974d3f
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 16:05:24.9518
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 31f/8pOgjvmlJqHuo7OTzAIjivDPQpVZCMUoFjVtWQU/S0/PbwVDB+4PAzc+2xStJLN2cMvKtZ4JJIVgZi/40fDDUs+YxNQva0t51EWd5e4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8226
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 30, 2025 at 7:36=E2=80=AFPM Shuai Xue <xueshuai@linux.alibaba.c=
-om> wrote:
->
-> =E5=9C=A8 2025/10/31 01:32, Ian Rogers =E5=86=99=E9=81=93:
-> > On Wed, Oct 29, 2025 at 5:55=E2=80=AFAM Shuai Xue <xueshuai@linux.aliba=
-ba.com> wrote:
-> >>
-> >>
-> >>
-> >> =E5=9C=A8 2025/10/24 10:45, Shuai Xue =E5=86=99=E9=81=93:
-> >>>
-> >>>
-> >>> =E5=9C=A8 2025/10/24 00:08, Ian Rogers =E5=86=99=E9=81=93:
-> >>>> On Wed, Oct 22, 2025 at 6:50=E2=80=AFPM Shuai Xue <xueshuai@linux.al=
-ibaba.com> wrote:
-> >>>>>
-> >>>>> When using perf record with the `--overwrite` option, a segmentatio=
-n fault
-> >>>>> occurs if an event fails to open. For example:
-> >>>>>
-> >>>>>     perf record -e cycles-ct -F 1000 -a --overwrite
-> >>>>>     Error:
-> >>>>>     cycles-ct:H: PMU Hardware doesn't support sampling/overflow-int=
-errupts. Try 'perf stat'
-> >>>>>     perf: Segmentation fault
-> >>>>>         #0 0x6466b6 in dump_stack debug.c:366
-> >>>>>         #1 0x646729 in sighandler_dump_stack debug.c:378
-> >>>>>         #2 0x453fd1 in sigsegv_handler builtin-record.c:722
-> >>>>>         #3 0x7f8454e65090 in __restore_rt libc-2.32.so[54090]
-> >>>>>         #4 0x6c5671 in __perf_event__synthesize_id_index synthetic-=
-events.c:1862
-> >>>>>         #5 0x6c5ac0 in perf_event__synthesize_id_index synthetic-ev=
-ents.c:1943
-> >>>>>         #6 0x458090 in record__synthesize builtin-record.c:2075
-> >>>>>         #7 0x45a85a in __cmd_record builtin-record.c:2888
-> >>>>>         #8 0x45deb6 in cmd_record builtin-record.c:4374
-> >>>>>         #9 0x4e5e33 in run_builtin perf.c:349
-> >>>>>         #10 0x4e60bf in handle_internal_command perf.c:401
-> >>>>>         #11 0x4e6215 in run_argv perf.c:448
-> >>>>>         #12 0x4e653a in main perf.c:555
-> >>>>>         #13 0x7f8454e4fa72 in __libc_start_main libc-2.32.so[3ea72]
-> >>>>>         #14 0x43a3ee in _start ??:0
-> >>>>>
-> >>>>> The --overwrite option implies --tail-synthesize, which collects no=
-n-sample
-> >>>>> events reflecting the system status when recording finishes. Howeve=
-r, when
-> >>>>> evsel opening fails (e.g., unsupported event 'cycles-ct'), session-=
->evlist
-> >>>>> is not initialized and remains NULL. The code unconditionally calls
-> >>>>> record__synthesize() in the error path, which iterates through the =
-NULL
-> >>>>> evlist pointer and causes a segfault.
-> >>>>>
-> >>>>> To fix it, move the record__synthesize() call inside the error chec=
-k block, so
-> >>>>> it's only called when there was no error during recording, ensuring=
- that evlist
-> >>>>> is properly initialized.
-> >>>>>
-> >>>>> Fixes: 4ea648aec019 ("perf record: Add --tail-synthesize option")
-> >>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> >>>>
-> >>>> This looks great! I wonder if we can add a test, perhaps here:
-> >>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-=
-next.git/tree/tools/perf/tests/shell/record.sh?h=3Dperf-tools-next#n435
-> >>>> something like:
-> >>>> ```
-> >>>> $ perf record -e foobar -F 1000 -a --overwrite -o /dev/null -- sleep=
- 0.1
-> >>>> ```
-> >>>> in a new test subsection for test_overwrite? foobar would be an even=
-t
-> >>>> that we could assume isn't present. Could you help with a test
-> >>>> covering the problems you've uncovered and perhaps related flags?
-> >>>>
-> >>>
-> >>> Hi, Ian,
-> >>>
-> >>> Good suggestion, I'd like to add a test. But foobar may not a good ca=
-se.
-> >>>
-> >>> Regarding your example:
-> >>>
-> >>>     perf record -e foobar -a --overwrite -o /dev/null -- sleep 0.1
-> >>>     event syntax error: 'foobar'
-> >>>                          \___ Bad event name
-> >>>
-> >>>     Unable to find event on a PMU of 'foobar'
-> >>>     Run 'perf list' for a list of valid events
-> >>>
-> >>>      Usage: perf record [<options>] [<command>]
-> >>>         or: perf record [<options>] -- <command> [<options>]
-> >>>
-> >>>         -e, --event <event>   event selector. use 'perf list' to list=
- available events
-> >>>
-> >>>
-> >>> The issue with using foobar is that it's an invalid event name, and t=
-he
-> >>> perf parser will reject it much earlier. This means the test would ex=
-it
-> >>> before reaching the part of the code path we want to verify (where
-> >>> record__synthesize() could be called).
-> >>>
-> >>> A potential alternative could be testing an error case such as EACCES=
-:
-> >>>
-> >>>     perf record -e cycles -C 0 --overwrite -o /dev/null -- sleep 0.1
-> >>>
-> >>> This could reproduce the scenario of a failure when attempting to acc=
-ess
-> >>> a valid event, such as due to permission restrictions. However, the
-> >>> limitation here is that users may override
-> >>> /proc/sys/kernel/perf_event_paranoid, which affects whether or not th=
-is
-> >>> test would succeed in triggering an EACCES error.
-> >>>
-> >>>
-> >>> If you have any other suggestions or ideas for a better way to simula=
-te
-> >>> this situation, I'd love to hear them.
-> >>>
-> >>> Thanks.
-> >>> Shuai
-> >>
-> >> Hi, Ian,
-> >>
-> >> Gentle ping.
-> >
-> > Sorry, for the delay. I was trying to think of a better way given the
-> > problems you mention and then got distracted. I wonder if a legacy
-> > event that core PMUs never implement would be a good candidate to
-> > test. For example, the event "node-prefetch-misses" is for "Local
-> > memory prefetch misses" but the memory controller tends to be a
-> > separate PMU and this event is never implemented to my knowledge.
-> > Running this locally I see:
-> >
-> > ```
-> > $ perf record -e node-prefetch-misses -a --overwrite -o /dev/null -- sl=
-eep 0.1
-> > Lowering default frequency rate from 4000 to 1750.
-> > Please consider tweaking /proc/sys/kernel/perf_event_max_sample_rate.
-> > Error:
-> > Failure to open event 'cpu_atom/node-prefetch-misses/' on PMU
-> > 'cpu_atom' which will be removed.
-> > No fallback found for 'cpu_atom/node-prefetch-misses/' for error 2
-> > Error:
-> > Failure to open event 'cpu_core/node-prefetch-misses/' on PMU
-> > 'cpu_core' which will be removed.
-> > No fallback found for 'cpu_core/node-prefetch-misses/' for error 2
-> > Error:
-> > Failure to open any events for recording.
-> > perf: Segmentation fault
-> >     #0 0x55a487ad8b87 in dump_stack debug.c:366
-> >     #1 0x55a487ad8bfd in sighandler_dump_stack debug.c:378
-> >     #2 0x55a4878c6f94 in sigsegv_handler builtin-record.c:722
-> >     #3 0x7f72aae49df0 in __restore_rt libc_sigaction.c:0
-> >     #4 0x55a487b57ef8 in __perf_event__synthesize_id_index
-> > synthetic-events.c:1862
-> >     #5 0x55a487b58346 in perf_event__synthesize_id_index synthetic-even=
-ts.c:1943
-> >     #6 0x55a4878cb2a3 in record__synthesize builtin-record.c:2150
-> >     #7 0x55a4878cdada in __cmd_record builtin-record.c:2963
-> >     #8 0x55a4878d11ca in cmd_record builtin-record.c:4453
-> >     #9 0x55a48795b3cc in run_builtin perf.c:349
-> >     #10 0x55a48795b664 in handle_internal_command perf.c:401
-> >     #11 0x55a48795b7bd in run_argv perf.c:448
-> >     #12 0x55a48795bb06 in main perf.c:555
-> >     #13 0x7f72aae33ca8 in __libc_start_call_main libc_start_call_main.h=
-:74
-> >     #14 0x7f72aae33d65 in __libc_start_main_alias_2 libc-start.c:128
-> >     #15 0x55a4878acf41 in _start perf[52f41]
-> > Segmentation fault
-> > ```
->
->
-> Hi, Ian=EF=BC=8C
->
-> Is node-prefetch-misses a platform specific event? Running it on ARM Yiti=
-an 710
-> and Intel SPR platform, I see:
->
-> $sudo perf record -e node-prefetch-misses
-> Error:
-> The node-prefetch-misses event is not supported.
+Hi Sagi,
 
-Hi Shuai,
+In subject, use () to indicate a function name: kvm_arch_vm_finalize_vcpus().
+Even so, I think the subject can be improved to describe what the patch does
+instead of describing what function is changed. For example,
+	"Finalize TDX VM after creation to make it runnable"
 
-So node-prefetch-misses is a legacy event. Perf has a notion of events
-that are inbuilt to the kernel/PMU driver and get special fixed
-encodings. That said, the PMU driver in the kernel can just fail to
-support the events and I think that's uniformly the case for
-node-prefetch-misses. As shown by my reproduction of the crash, which
-I hope this suffices for a test - i.e. it is an event that parses but
-one that is never supported.
+On 10/28/25 2:20 PM, Sagi Shahar wrote:
+> Call vm_tdx_finalize() as part of kvm_arch_vm_finalize_vcpus if this is
+> a TDX vm
 
-Thanks,
-Ian
+This needs a proper changelog. Above just writes out in words exactly what can be
+seen from the patch.
+
+> 
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>  tools/testing/selftests/kvm/lib/x86/processor.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
+> index 17f5a381fe43..09cc75ae8d26 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> @@ -1360,3 +1360,9 @@ bool kvm_arch_has_default_irqchip(void)
+>  {
+>  	return true;
+>  }
+> +
+> +void kvm_arch_vm_finalize_vcpus(struct kvm_vm *vm)
+> +{
+> +	if (is_tdx_vm(vm))
+> +		vm_tdx_finalize(vm);
+> +}
+
+Reinette
 
