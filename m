@@ -1,51 +1,89 @@
-Return-Path: <linux-kernel+bounces-880319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7CFC25839
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:17:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE37C258C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A4A564C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:07:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FEA3AEFF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F4D34C15F;
-	Fri, 31 Oct 2025 14:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF05F34C149;
+	Fri, 31 Oct 2025 14:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZNuayPN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Jwt3yo0T"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44534C135;
-	Fri, 31 Oct 2025 14:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919610; cv=none; b=IRMFRij6jPLfsusZcEG5+O5rYakoUeu1H6XT/LKsEnjUGxH8LyLcvGnZ9JzNfBtcZtMDk3Y9DZvUqQA52rE8H4L0Gflo+AOwHmnRAgftuBul0rN8PgjlzTdxRlR9J50mjqKWr8lX30+j9v9J2b/ROs9mdN4BrzFZWGkt7WooRcY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919610; c=relaxed/simple;
-	bh=Srakam9afkBWsyM8ZSqlUr6TdJbYj/XFwaqGL0k1kLw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QtzGkoDrMs3R3VYDr7C5yDRKXlF39PhjGVojnSmROD9Amj5txFl8pSrNCNvNyYlNEvfImy39zDMcl5hUc+Il+DyYGLTNZwa4OzTjWyxWF6M6/DQjXgxAXnR4A97RR35B7K2Q6ItA4oeiPtk1oJIcC8bY/5AVPFgMLz0Clnn8cnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZNuayPN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D9B22C4CEE7;
-	Fri, 31 Oct 2025 14:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761919609;
-	bh=Srakam9afkBWsyM8ZSqlUr6TdJbYj/XFwaqGL0k1kLw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=aZNuayPNNc3EUH2c4rxIClMgiiTUolg1OYi9q04y0LqzfLAeR1qGj1dICWgLdLOQf
-	 xmLZZ7QY5F+YzY+HIWV/DMpjsRFJlQx+zYgzkrmZG7qJY0bMm+Rtd48a6LVgX2jrLZ
-	 ToDJoB7/SixlOHIQeJnQA2ifVvL7CoY++UVLSFX3frO5rgW78EFlYzD0C+OiU3NxJk
-	 /FinbcCfQF+MVFmnz99vbo9S5/Kz/g6bUQ1j9L+q4YCbpVQ6j9qifzgjC/C1eqkvYZ
-	 dG/6MncngVE5MZe9qPzJ3u4v+2Qz5upK8fLNm09EWR/6+ktJ0Cm+Y3RhHyFSRd3C9+
-	 pPXrw/7Q/G2Kw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C993ACCF9FE;
-	Fri, 31 Oct 2025 14:06:49 +0000 (UTC)
-From: Jan Petrous via B4 Relay <devnull+jan.petrous.oss.nxp.com@kernel.org>
-Date: Fri, 31 Oct 2025 15:06:17 +0100
-Subject: [PATCH v2] arm64: dts: freescale: Add GMAC Ethernet for S32G2 EVB
- and RDB2 and S32G3 RDB3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57A424BBEC;
+	Fri, 31 Oct 2025 14:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761919656; cv=fail; b=egX1UocV7qY73VuDdGK2YITZCgXrH6JwQ9rMfgjpXpEM3yMKwD5Y398iQHjOfGDILMeYV3RDMgicp34t1d+eOz3idauPt+4Bad1zDyp5+Zaqyz4iqgJxBhIEDJFNBdOi3varUHiQQhaUunFY1owX03FhA8lw/ghQx5esUyKmafA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761919656; c=relaxed/simple;
+	bh=QtWST023JpA1PuA2iO8rqZ6Z2DmhfdRlDNq/sOG3JJA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nNUK8Xum/LncKPjOiRYRyDk2p3+UZ7E+CBZETKcKfOoGeauYL6vnEIK8IiwtnRQdPWweefBRZ20FpAgSCHw4S4EWidOdSacMQWTKK8cNxntdecgDDok6e4jX2dc0QJyxkV5YrgiAY9D0GhkaDGwK9d7SuCiUeUmUdTroma8xsDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Jwt3yo0T; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59VDSSlm179537;
+	Fri, 31 Oct 2025 15:07:14 +0100
+Received: from pa4pr04cu001.outbound.protection.outlook.com (mail-francecentralazon11013011.outbound.protection.outlook.com [40.107.162.11])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4a4s369nr3-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 15:07:14 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PZYqgJzWb0OGc24NY+7ULfU1rncwc9YfSDzsPw2391CdKAP5Yh6SgNlVIpD2R3A/2NTR66zu0rZAxr07O/ICIKO9TTuLfzXi4KTx0U/FU3Q4r5SbHiXSr7M8N/h1lqH8FDHGrgM62s5BtGYu0Om2SGyvth/AD9qo+KfDRFwHoseQ5ZXVKcMr5wR4OtUS4a5NKJiHml90MlI79AdCl88lVtkZUzWrDrUudt5ikRw2WQNbMKrlbQUkODFaxWxTEdSJUdFTFfX+z6ofngXfkIFbdiJuT2ddd8ObrMX92AlMLzmxSBv/6ezNwYfY3BRyNLQ0FXYcB9Yb+4in3va9OqVK5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qlwAGT7NbLV13GOn7P+DNmpN1PL4GS3fRAbRDB5pQCU=;
+ b=q42Fla8zZxWI0uu1BbcmfUZMAkJ0ChJn6GOB5Qtta28CMktwQXh9JWPlgna6zChyK6LHRJv31IlfbtNll06ZS1GXazxKVrM/a0nFucLSo9jSfD77GG4WEk7jH0NNlJ0hTeInCMSlFV9I1K2/MAJb7oTStjqUNjggxseUTpHH6eQ2hRyyBAG7zEUMtYXWyRBFyJ8X/nFKR69XdOoLWUr3k9vxSC/c6pUiEWjfpjsIeNZlH+Af7K0/bwSTuHNvZrPJpb/VtDX/LYkftAWTED1rDiKcUYLuFFzEa2VEHcGFQ7NAwgLjN3dhhJPBB4WNnWiYU25ltj6UtHZE86FNvc1vEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.44) smtp.rcpttodomain=gmail.com smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qlwAGT7NbLV13GOn7P+DNmpN1PL4GS3fRAbRDB5pQCU=;
+ b=Jwt3yo0TlhjVbypO9x8WHfpCuwgbz2nG2RuQP2XB/2V7ktDGs1yBc4EJNPIbKq82kTQbcLbxtHIiNLZ4bh7kZdUsmGBRjvrVNPEY/ZzM6cPdC+0sB6+348jFSD5yKMg4Y+D7u3wDOGfd66qrT/TbqJYU4P6evIzOPnST5PbmAhtYeW38wf7f9PcI7tioe1oNW82eafLgsRFJKTXnsDujFWtVWUzfWJa3WRCWJS4A0SRN51JgUWaBiXO7BP3kWdbygVzXQpI+bU+0cgS3NbMH+UDk4jr2n/5m/EEOOE6k9CJ/QhSPtnDznNiiYIwMYi5kSdgjVvCGaUAKufOayc+MxA==
+Received: from DU7P251CA0020.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:551::22)
+ by AS8PR10MB7500.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5af::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Fri, 31 Oct
+ 2025 14:07:12 +0000
+Received: from DB3PEPF0000885C.eurprd02.prod.outlook.com
+ (2603:10a6:10:551:cafe::29) by DU7P251CA0020.outlook.office365.com
+ (2603:10a6:10:551::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
+ 31 Oct 2025 14:07:09 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.44)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.44 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.44; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.44) by
+ DB3PEPF0000885C.mail.protection.outlook.com (10.167.242.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Fri, 31 Oct 2025 14:07:11 +0000
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
+ (10.250.44.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Fri, 31 Oct
+ 2025 14:59:46 +0100
+Received: from localhost (10.252.30.100) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Fri, 31 Oct
+ 2025 15:07:10 +0100
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Date: Fri, 31 Oct 2025 15:07:03 +0100
+Subject: [PATCH v4] arm64: dts: st: Add memory-region-names property for
+ stm32mp257f-ev1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,342 +92,153 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-nxp-s32g-boards-v2-1-6e214f247f4e@oss.nxp.com>
-X-B4-Tracking: v=1; b=H4sIAFjCBGkC/3WNwQ6DIBBEf8XsuWtgG8T21P9oPKCAcigYtjE2h
- n8v9d7jm8y8OYBdDo7h3hyQ3RY4pFiBLg1Mi4mzw2ArAwlSUogO474iX2nGMZlsGclK1ZFSo7o
- R1NWanQ/7aXwOlZfA75Q/58Emf+l/1yZRotfCKD32otf+kZjb2mqn9IKhlPIFhRSidrAAAAA=
-To: Chester Lin <chester62515@gmail.com>, 
- Matthias Brugger <mbrugger@suse.com>, 
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
- NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, Enric Balletbo i Serra <eballetb@redhat.com>, 
- "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761919608; l=7502;
- i=jan.petrous@oss.nxp.com; s=20240922; h=from:subject:message-id;
- bh=Su3BAxA6SBNR4XfbrIKIFNt01TOwYKZFUS6VmQVlP1U=;
- b=i3rydhtY1bWZ9jK1kaeVX90I4TK0PoPRydjO74xv6L9E+8tKUzx7wXKuU/AmDteIv2jnv0hC9
- ip0irIpy+MWCB5GbjNgoRGyXDJ4jXenMIIQ6EYfvwIfB37Aps4SUTOi
-X-Developer-Key: i=jan.petrous@oss.nxp.com; a=ed25519;
- pk=Ke3wwK7rb2Me9UQRf6vR8AsfJZfhTyoDaxkUCqmSWYY=
-X-Endpoint-Received: by B4 Relay for jan.petrous@oss.nxp.com/20240922 with
- auth_id=217
-X-Original-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-Reply-To: jan.petrous@oss.nxp.com
+Message-ID: <20251031-upstream_fix_dts_omm-v4-1-e4a059a50074@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAIbCBGkC/43NSw6CMBCA4auYri2ZFlrQlfcwhkAf0gWUdCrRE
+ O5uYaUxRpf/TOabmaAJziA57mYSzOTQ+SFFsd8R1TXD1VCnUxMOXEAFkt5GjME0fW3dvdYRa9/
+ 3VAHIVh6g4JaRdDoGk9Ybe76k7hxGHx7bl4mt0x/gxCijRlaKCaMLzvXJesQMY6Z8T1Zy4i8MY
+ 18YnhgAa4WAUrZafDL5P0yeGFWwSrallKVq35llWZ5bAsIgSAEAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB3PEPF0000885C:EE_|AS8PR10MB7500:EE_
+X-MS-Office365-Filtering-Correlation-Id: 43c06323-ae1e-4172-a291-08de1886c995
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dm5QSkZNRjFxRjZLZnUwMm1SWGkzNXNPYkVTamJIVm11aTk1cFFROEZHK1A0?=
+ =?utf-8?B?RG5ydEJHTmFESkpWaDZnUjArR3hxbDV4VGNrL0tiS2FCYVFzdzV2Q2w1U0Ir?=
+ =?utf-8?B?QzJ2WU9mU05nWTdLVVhSZ1FQQnoya1VUUjJPMHVQakprMnc5ZkhjNStPdFVL?=
+ =?utf-8?B?cm5VL1V1VjdRblZ1MkZwNWlreW5YR004VXdSWHM4NGRCNXNNZmZMRy9ROWdR?=
+ =?utf-8?B?a2tPMllpcVB0MTY5ZUMzVzBWa0RWbm5Xd09LaTF0OCtmMDhPb0hpaGp0NXg3?=
+ =?utf-8?B?ZEcxNW05N0toaExiblpDMExmQkFabWhKK0JKcTdUTTVPbXZiTDJqOUNlTEti?=
+ =?utf-8?B?aFJpaHY3eHRhQm5RWWJ4ZUxrWnlMNHhGY01CYXZ1RHQxUWlrRGd2cHh5WGJl?=
+ =?utf-8?B?VzFaalRNNGdrendCZTNsMzFENWlPeEZ2bHpVdWtkUkNHS0pzLzJKWmx3REFR?=
+ =?utf-8?B?MnI1bnc3c2VqZUtCd0VkRVQ5a0szcmNPMmN2d0tKV3J0MGNXdlh3LzNGUm9x?=
+ =?utf-8?B?eTExRC9telZzUTdndFZhQjZXc201RW1iL0o5RlZyOW82d3VjamRwSkdXOWdI?=
+ =?utf-8?B?SDJzcHRDdEc4c0NIdmF2dis1bnl0UDJ2aVNjTEJmeC9WdjNCNS9UQlFPNzZz?=
+ =?utf-8?B?bGJrU2wyZUkwZ3F6WFNMU2pVT3hHQXF2ckNkbFpZMjBuMHpDYUxVWmlQbjlt?=
+ =?utf-8?B?ZjhLclFNdDkvWHVMM1dLdy9QTVcrZ08zUkRlN1ZaKytYalRLYVBVZDVKZFlv?=
+ =?utf-8?B?bUtXTm9sNjkxL0pGYXpCUGRDOURLb1U3QkcxNXlvWVFQYTdzcEFsWGdzeVdt?=
+ =?utf-8?B?UE12OHBFZGJkdmxnblI1bnlocDFtSEwwTWlvODBIdjBUMVVabzJ2ZVN0T3pM?=
+ =?utf-8?B?VHM1ZmhQS2JPeGJaWUVwamRLakVKUjR2dHFxWlh2dmNRTFlzcFpSNGRoQXlJ?=
+ =?utf-8?B?bWUyQTB2bldJRlV2U0N5QXlhK3ZvTzRHSjYzeDVGd3ZMMDVOZHFBNjNZekNT?=
+ =?utf-8?B?eHpydlJsSEFlcjM5S0xYUUNSZSsvTDRqM25yNW94emdzV081VWVhelRSRUhH?=
+ =?utf-8?B?bGZpRkQ1c2NCaFVZSUdSZlFqeldFUm9abmlqYnhYUVNPVmRqbzdkMml0SVQ1?=
+ =?utf-8?B?d1lKclZ4RU5BMmptUGxsWTN0Njgrd2lDMDUvT2xyazF4MmE5b01yZ0p5VXpB?=
+ =?utf-8?B?eVFHUUJKRkNlaW9aMWpTMFY2RGFFNHNrOVo0Ly8vKzUzUmFpeEhvdENXV3h0?=
+ =?utf-8?B?OTJZQkxlVTVIR1BjWHd2bng4Y1FsUkVZRWRMUnFMMGFQektnSTBxOFh1V1hD?=
+ =?utf-8?B?aW82UmdQSXUweGpFQUhPKzlPRlVDZzhMTWxBQit5alNac1I5Uy9XdzBaK2dZ?=
+ =?utf-8?B?MnAvQ3VRb3lScUMycjdmajU2Qzl5UEhCWFl5bmRCZStLUjhlTXZnRFlybEps?=
+ =?utf-8?B?dnZjOEpkS1cyZXFFS0NaaUx3MmJjNHNSc1FiaEZKVXB5OXliUDdreUh6MlVL?=
+ =?utf-8?B?dTVwa3pxdlRCWWZodENlWTRvanBIT25mT04wUHpFZm5uaGxEWHNwQWJCQVk5?=
+ =?utf-8?B?RjRqYnNkanRSS3dtKytkazNtRHJHM1BlRDc4Y3R6R29FcW9JNDMzSWluSnFF?=
+ =?utf-8?B?anJaZGpQVVU0K2ZsN1RqV1RDTEs5SzZKTktrWnN4VVhhNVFhWkIvak05dUgw?=
+ =?utf-8?B?YzVhMjBiM2RQTlhXWEhqR2lzSldxcExRUjRQQysrMzYwY0t5bEdpSnIyams4?=
+ =?utf-8?B?dUVnemM4ektnOFdLVW1Ja3BXRUZqZC9idTNaV2xNUFlRYlI1Z3hxUUZ6VlNa?=
+ =?utf-8?B?aGlFU2puV0NBeXk4VHhXdVFYK3ZVZkxIZjQ2WkJKZDluZmVIMnJkM1lnVFJa?=
+ =?utf-8?B?VWZ1QS9ySzMwQndkVVF0OGM0VS9wSVNUcjhKYmdTNXE3VVJ4T1Fjc1RHWlNC?=
+ =?utf-8?B?TDdPVUFqL2tlTmU5S3MzY3N6bGtrRmwvMUdmeS9kelpUOG1KMFd4UWRaUWZh?=
+ =?utf-8?B?WXB1V3lHT0c5N2UxeGs3RTd6MUxRNDBJTDBpVXAxb3ZkN1hVUmlkMDlwcHBl?=
+ =?utf-8?B?WW5uUmVSdXlzZDFESWZsVTlwME5Hay93b0lpcE1lYUpVTTY4RnRQdXlmdm1z?=
+ =?utf-8?Q?CCVlpMFt+3ddRrIXMZrwcm4Lu?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.44;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 14:07:11.8717
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43c06323-ae1e-4172-a291-08de1886c995
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.44];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB3PEPF0000885C.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7500
+X-Authority-Analysis: v=2.4 cv=P6E3RyAu c=1 sm=1 tr=0 ts=6904c292 cx=c_pps
+ a=sVc/mxcIhDaUo2azsgtTig==:117 a=Tm9wYGWyy1fMlzdxM1lUeQ==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=ZDeCC95CVvMA:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=8b9GpE9nAAAA:8
+ a=N1czKCc1mgkcdJKb_p0A:9 a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDEyNyBTYWx0ZWRfX8W1XQIkBbqva
+ dSRv64jgP/58v1LpfJQ60Iy0LzvH9t0KyXCziW5c7dcF0f5ZHT+gpxdz9mTcNSEfzDr9KbRSsK1
+ elD7NzUODrrvNIhC2gKgrbR3dWhOK1BIdYehziTEws95ta43SPZLKVOGSXTNMeETH3c2YsO0u8F
+ 6x1tuDgw6b9wLczzmjzgQFJxhv4mvFHsxqFKenZdr3Gq7pBj3FDZFfHM5iB24NqzS/Kue7b7MFh
+ hWotarw7tra+uqMtFZfedqt6KxI2XCT4qZIJsX/YaPneZY4LDRQxl+NhnE6fEwlk/yJo7pWqbc0
+ GZQthI4ateC4oBbsBkNHk+x1jMXScAdaKyAgcgXsVoCFj4K0pN5TAhxlvcajhJaIByonDca0F53
+ OwU25N+7vLf3x7Rb/WyqAhUDG7vF0A==
+X-Proofpoint-GUID: OJWwzMvgIl16UPw0Ci9zfMX2eKvgE-YM
+X-Proofpoint-ORIG-GUID: OJWwzMvgIl16UPw0Ci9zfMX2eKvgE-YM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 phishscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310127
 
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+In order to set the AMCR register, which configures the
+memory-region split between ospi1 and ospi2, we need to
+identify the ospi instance.
 
-Add support for the Ethernet connection over GMAC controller connected to
-the Micrel KSZ9031 Ethernet RGMII PHY located on the boards.
+By using memory-region-names, it allows to identify the
+ospi instance this memory-region belongs to.
 
-The mentioned GMAC controller is one of two network controllers
-embedded on the NXP Automotive SoCs S32G2 and S32G3.
-
-The supported boards:
- * EVB:  S32G-VNP-EVB with S32G2 SoC
- * RDB2: S32G-VNP-RDB2
- * RDB3: S32G-VNP-RDB3
-
-Tested-by: Enric Balletbo i Serra <eballetb@redhat.com>
-Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+Fixes: cad2492de91c ("arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board")
+Cc: stable@vger.kernel.org
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 ---
+Changes in v4:
+- Rebase on v6.18-rc1
+- Link to v3: https://lore.kernel.org/r/20250811-upstream_fix_dts_omm-v3-1-c4186b7667cb@foss.st.com
+
+Changes in v3:
+- Set again "Cc: <stable@vger.kernel.org>"
+- Link to v2: https://lore.kernel.org/r/20250811-upstream_fix_dts_omm-v2-1-00ff55076bd5@foss.st.com
+
 Changes in v2:
- - fixed correct instance orders, include blank lines
- - Link to v1: https://lore.kernel.org/r/20251006-nxp-s32g-boards-v1-1-f70a57b8087f@oss.nxp.com
+- Update commit message.
+- Use correct memory-region-names value.
+- Remove "Cc: <stable@vger.kernel.org>" tag as the fixed patch is not part of a LTS.
+- Link to v1: https://lore.kernel.org/r/20250806-upstream_fix_dts_omm-v1-1-e68c15ed422d@foss.st.com
 ---
- arch/arm64/boot/dts/freescale/s32g2.dtsi        | 58 ++++++++++++++++++++++++-
- arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 21 ++++++++-
- arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 19 ++++++++
- arch/arm64/boot/dts/freescale/s32g3.dtsi        | 58 ++++++++++++++++++++++++-
- arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts | 21 ++++++++-
- 5 files changed, 173 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-index d167624d1f0c..6f0a307fbab1 100644
---- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-@@ -3,7 +3,7 @@
-  * NXP S32G2 SoC family
-  *
-  * Copyright (c) 2021 SUSE LLC
-- * Copyright 2017-2021, 2024 NXP
-+ * Copyright 2017-2021, 2024-2025 NXP
-  */
+diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+index 6e165073f732..bb6d6393d2e4 100644
+--- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
++++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+@@ -266,6 +266,7 @@ &i2c8 {
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -727,6 +727,62 @@ usdhc0: mmc@402f0000 {
- 			status = "disabled";
- 		};
- 
-+		gmac0: ethernet@4033c000 {
-+			compatible = "nxp,s32g2-dwmac";
-+			reg = <0x4033c000 0x2000>, /* gmac IP */
-+			      <0x4007c004 0x4>;    /* GMAC_0_CTRL_STS */
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq";
-+			snps,mtl-rx-config = <&mtl_rx_setup>;
-+			snps,mtl-tx-config = <&mtl_tx_setup>;
-+			status = "disabled";
-+
-+			mtl_rx_setup: rx-queues-config {
-+				snps,rx-queues-to-use = <5>;
-+
-+				queue0 {
-+				};
-+
-+				queue1 {
-+				};
-+
-+				queue2 {
-+				};
-+
-+				queue3 {
-+				};
-+
-+				queue4 {
-+				};
-+			};
-+
-+			mtl_tx_setup: tx-queues-config {
-+				snps,tx-queues-to-use = <5>;
-+
-+				queue0 {
-+				};
-+
-+				queue1 {
-+				};
-+
-+				queue2 {
-+				};
-+
-+				queue3 {
-+				};
-+
-+				queue4 {
-+				};
-+			};
-+
-+			gmac0mdio: mdio {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				compatible = "snps,dwmac-mdio";
-+			};
-+		};
-+
- 		gic: interrupt-controller@50800000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x50800000 0x10000>,
-diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-index c4a195dd67bf..fb4002a2aa67 100644
---- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
- /*
-  * Copyright (c) 2021 SUSE LLC
-- * Copyright 2019-2021, 2024 NXP
-+ * Copyright 2019-2021, 2024-2025 NXP
-  */
- 
- /dts-v1/;
-@@ -14,6 +14,7 @@ / {
- 	compatible = "nxp,s32g274a-evb", "nxp,s32g2";
- 
- 	aliases {
-+		ethernet0 = &gmac0;
- 		serial0 = &uart0;
- 	};
- 
-@@ -43,3 +44,21 @@ &usdhc0 {
- 	no-1-8-v;
- 	status = "okay";
- };
-+
-+&gmac0 {
-+	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
-+	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&rgmiiaphy4>;
-+	status = "okay";
-+};
-+
-+&gmac0mdio {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	/* KSZ 9031 on RGMII */
-+	rgmiiaphy4: ethernet-phy@4 {
-+		reg = <4>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-index 4f58be68c818..b632b0ffd6a8 100644
---- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-@@ -14,6 +14,7 @@ / {
- 	compatible = "nxp,s32g274a-rdb2", "nxp,s32g2";
- 
- 	aliases {
-+		ethernet0 = &gmac0;
- 		serial0 = &uart0;
- 		serial1 = &uart1;
- 	};
-@@ -77,3 +78,21 @@ &usdhc0 {
- 	no-1-8-v;
- 	status = "okay";
- };
-+
-+&gmac0 {
-+	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
-+	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&rgmiiaphy1>;
-+	status = "okay";
-+};
-+
-+&gmac0mdio {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	/* KSZ 9031 on RGMII */
-+	rgmiiaphy1: ethernet-phy@1 {
-+		reg = <1>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-index be3a582ebc1b..ccb761137273 100644
---- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-- * Copyright 2021-2024 NXP
-+ * Copyright 2021-2025 NXP
-  *
-  * Authors: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-  *          Ciprian Costea <ciprianmarian.costea@nxp.com>
-@@ -804,6 +804,62 @@ usdhc0: mmc@402f0000 {
- 			status = "disabled";
- 		};
- 
-+		gmac0: ethernet@4033c000 {
-+			compatible = "nxp,s32g2-dwmac";
-+			reg = <0x4033c000 0x2000>, /* gmac IP */
-+			      <0x4007c004 0x4>;    /* GMAC_0_CTRL_STS */
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq";
-+			snps,mtl-rx-config = <&mtl_rx_setup>;
-+			snps,mtl-tx-config = <&mtl_tx_setup>;
-+			status = "disabled";
-+
-+			mtl_rx_setup: rx-queues-config {
-+				snps,rx-queues-to-use = <5>;
-+
-+				queue0 {
-+				};
-+
-+				queue1 {
-+				};
-+
-+				queue2 {
-+				};
-+
-+				queue3 {
-+				};
-+
-+				queue4 {
-+				};
-+			};
-+
-+			mtl_tx_setup: tx-queues-config {
-+				snps,tx-queues-to-use = <5>;
-+
-+				queue0 {
-+				};
-+
-+				queue1 {
-+				};
-+
-+				queue2 {
-+				};
-+
-+				queue3 {
-+				};
-+
-+				queue4 {
-+				};
-+			};
-+
-+			gmac0mdio: mdio {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				compatible = "snps,dwmac-mdio";
-+			};
-+		};
-+
- 		swt8: watchdog@40500000 {
- 			compatible = "nxp,s32g3-swt", "nxp,s32g2-swt";
- 			reg = <40500000 0x1000>;
-diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-index e94f70ad82d9..d7213d2872a4 100644
---- a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-- * Copyright 2021-2024 NXP
-+ * Copyright 2021-2025 NXP
-  *
-  * NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3)
-  */
-@@ -15,6 +15,7 @@ / {
- 	compatible = "nxp,s32g399a-rdb3", "nxp,s32g3";
- 
- 	aliases {
-+		ethernet0 = &gmac0;
- 		mmc0 = &usdhc0;
- 		serial0 = &uart0;
- 		serial1 = &uart1;
-@@ -93,3 +94,21 @@ &usdhc0 {
- 	disable-wp;
- 	status = "okay";
- };
-+
-+&gmac0 {
-+	clocks = <&clks 24>, <&clks 19>, <&clks 18>, <&clks 15>;
-+	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&rgmiiaphy1>;
-+	status = "okay";
-+};
-+
-+&gmac0mdio {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	/* KSZ 9031 on RGMII */
-+	rgmiiaphy1: ethernet-phy@1 {
-+		reg = <1>;
-+	};
-+};
+ &ommanager {
+ 	memory-region = <&mm_ospi1>;
++	memory-region-names = "ospi1";
+ 	pinctrl-0 = <&ospi_port1_clk_pins_a
+ 		     &ospi_port1_io03_pins_a
+ 		     &ospi_port1_cs0_pins_a>;
 
 ---
-base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
-change-id: 20251006-nxp-s32g-boards-2d156255b592
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20250806-upstream_fix_dts_omm-c006b69042f1
 
 Best regards,
 -- 
-Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-
+Patrice Chotard <patrice.chotard@foss.st.com>
 
 
