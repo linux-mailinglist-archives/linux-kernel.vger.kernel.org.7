@@ -1,141 +1,153 @@
-Return-Path: <linux-kernel+bounces-879377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2C8C22F90
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:20:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E215BC22F99
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF92318967B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:20:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED2E40544F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9F9275AE8;
-	Fri, 31 Oct 2025 02:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1395227702D;
+	Fri, 31 Oct 2025 02:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VY7YDhSm"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1gbfvX8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2949A221271
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5372A221271;
+	Fri, 31 Oct 2025 02:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761877199; cv=none; b=D7dAsPDSv2hjNm0bx9zgIm1TNzBEzxm2hi+rE4wBZAGp6dTfx8jvwU5ScIRFJDxGXgaYXUEVqLBOqh6j+sXXhn6MvSyvce+75rQX1r4zdiy6296LKd9H0BRx/tncNG/noMwWTv8ILtd/CFqTEoYmN4Bn8aN/o9VAv3W/FXGH21Q=
+	t=1761877220; cv=none; b=jvh7dnAy4OPPwfa/oduGlr2YhWfHC483AH8s6ZbxerTe2hQCf5q61ZhPBCDMot/nOIop8S1z3nOQBP7aLivqsI9BQZShmlSRw/HsUYUDpEMhD7X5AjuuqAsObXTXvCF9ipKmdQhx18jnkR5NxzCzpkcoZRiuwsV/tqc6jYnR6j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761877199; c=relaxed/simple;
-	bh=3zQ1xqV8A42MGAiFtuedptKR3TjX9ZAKsBp2ihtBCQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvTRIXdsCK1Yp2FRvyH/uesvtf1S4Nkft+cZedyEsqLXANRvx+y45yltLZJujeX1/ueH3FLTc71m1pIp9b/7JNVGTwWSJr+OHRTMm2cohosQwRdK+yg4t+We8+TEw93EKiSpGoiqQFIbXzvPJPnFSbQmywkxjvMKWNs0hsEdDzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VY7YDhSm; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c45c11be7so2917202a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761877196; x=1762481996; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAuHBkzBsMSaj0Gbuvv+XkhIsngSwsrTuvil52QriUA=;
-        b=VY7YDhSmVcypp67EV2qpwLqG4zSbBoPf6AFPi2vaevt/ezLVlrBGpC8f/++EoKxyWG
-         UGMbUNGm4hO3K98AEHLY7PvrFUVhfVK9T7sPoIwp2+FIFY9FaObD6f/aqb2k9FeEurhY
-         dS6cGTE/lQnWCeiyVAgGo2sSwDFrUDZhxTdHo1/PRAMBD1HCqoH8ScT+3fRcMh+0gBYE
-         7CaOF1RL7rVC+7+jrHZ31ZtbQY6fTazRT2j2rvAVS7+cCO6BabC3tOM7pW1p/l6PhxvG
-         zb1logAH/2v3YguO97LhFa4DSM8SdvINEILuDixMpdSdrLCOqi1jOrjK+miIIckgcOI3
-         TgZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761877196; x=1762481996;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nAuHBkzBsMSaj0Gbuvv+XkhIsngSwsrTuvil52QriUA=;
-        b=rmoSbe5mqT/po5rpNbd1/cZYkBmb05p4fXAlWWUhMTf8Cts51G5iuewMvryE8Cx65d
-         5DOSziYo9fJF9s/YmTNaXQQCUJa/cMeIJpTRK8GsqBGAbMyOLiukEwEKVuSJxPTLV0YV
-         n3VUHSTD4Aq9Cd3ubkYQNPEKj8BKeKInRvcisrSPRseTEzDhqVmAO2BgtwQsc6qGRlkH
-         yvJWjV6IA8VW2iIechQcA8o6V3bHnNcEE4Gbc721U6rbjofQgE0V0g4sO9hADkRXKgJB
-         Awlr1Iy5s0pSw6sc0vDFVocIiQoSoKlJkDtE2iUobYmjUsIv/IBK+Uh6JNwhavLAS9dn
-         Ogxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOMqF84PMOy2e/JOnmynA81doGbtN82QGaDE/4nB3EHOIajZ49q2vWTrZwfKntM6n/UHrBO3VfgVSl3kM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkM0UVmc2GdGAYzY7Lant227sxV86Thk/zsOVsHrvnHbOidCOI
-	ZdGbC837N0GdnouUnyt4XO9B/qETdP/MySlyXZL2o/RE5qhLgIsGM4ah
-X-Gm-Gg: ASbGnct+2Pa1yvqN2s+elaOw0v6Qhhiuuc/iHni7oaPCkjKa5kWsKhMQNCYFDfAqaRw
-	FxTdl9U8VHfNpHgOq+WpZbKiivk0CyPBv4nidu6Ps4EIlg0QDtFio+XyRgdjnwYvwfDLE8knXPa
-	O3o0eiuwaLG0AyolegnKmvLNIVvuyGZMwfOywzpwhci+e85sq96rVPIOaBD4J9fHCibs5odY5r/
-	4ysphTwiFKCpFcsGuFbQSmsbChMbdG1L9qXwqrq09XB/B+mfNMz+qep2cgWCqFLeqz4u2nWhVEB
-	yHPfBQ4JdLGAm2jtCX/xa7gS/pMJruwgV62ieLD44gJavO5M/FYWyQxFS+gbD1hKQB9aogILqjo
-	ZUKRlayM+BYqkQLqP8JSQyHzkmzL5OROFNqLU41MxcKScYZbZzCKGLAnHbBuWm9/dzxLhWuE32X
-	GgKicANTkuEA==
-X-Google-Smtp-Source: AGHT+IEcH4kOFzp6/56rakvTEjeBVzfv6qBiWaY3eKFtuXFG29gDskvq3YaNRtp/ukRJ/0KfRNrsvg==
-X-Received: by 2002:a05:6402:1445:b0:63c:4f1e:6d7a with SMTP id 4fb4d7f45d1cf-640770127d6mr1311349a12.19.1761877196183;
-        Thu, 30 Oct 2025 19:19:56 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b427a23sm488415a12.21.2025.10.30.19.19.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Oct 2025 19:19:55 -0700 (PDT)
-Date: Fri, 31 Oct 2025 02:19:54 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
-	kernel@pankajraghav.com, akpm@linux-foundation.org,
-	mcgrof@kernel.org, nao.horiguchi@gmail.com,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Yang Shi <shy828301@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4] mm/huge_memory: preserve PG_has_hwpoisoned if a folio
- is split to >0 order
-Message-ID: <20251031021954.ba2pymy2hjvgzohf@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251023030521.473097-1-ziy@nvidia.com>
+	s=arc-20240116; t=1761877220; c=relaxed/simple;
+	bh=zhRf3WzvDJyPeejmO5aptZIISSdrujJbMf1xOd4/lhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n8tn29qiHpdXVkW9fkNd0QBKmP5xxpD1solQUbeXTMPvOzsBY6VCbd3LnEhjfadiG6lS61qYByQaXvy0NcMMgmQRi1MMQK5E3JRHgztqhOCo8hq8iWefv7XyNsCl9Jjv6f2H6dCYJV/3qlsyrZH00LJkWp8REkH37mnPkWbQyc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1gbfvX8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA93C4CEFD;
+	Fri, 31 Oct 2025 02:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761877219;
+	bh=zhRf3WzvDJyPeejmO5aptZIISSdrujJbMf1xOd4/lhM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k1gbfvX8XNS+ou0cZHxljo92H+tqL6GPLLAUgYbPMES9QCOufZdnukq5wfv1ytkCW
+	 fIWCLdZAAzqivVON/zd7EEuIDCgxubjpmfmvKYl0Y/VndCGbxWaYiHz3dDETaiWfgG
+	 2DzEciXJ6D5oJATynijfrhkF6Gty3okDR43txlhY47en64B2m/AK1rBLFOioX0uu0i
+	 YnFIYnBTA2igU00wQlqEnDvMG1TOa2HM0mB0ii9LOs3Oh8eDEn4tUeO+STG+uZt25f
+	 DuIy5ylH5B6yIua1F/OFyfBhv/+hu/87SPGP8HtJwpATy8rd1DNHr6GgNT3DyNXkZ9
+	 t/fj9OFblawHw==
+Date: Thu, 30 Oct 2025 19:20:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: I Viswanath <viswanathiyyappan@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, sdf@fomichev.me, kuniyu@google.com, ahmed.zaki@intel.com,
+ aleksander.lobakin@intel.com, jacob.e.keller@intel.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+ david.hunter.linux@gmail.com, khalid@kernel.org
+Subject: Re: [RFC/RFT PATCH net-next v3 1/2] net: Add ndo_write_rx_config
+ and helper structs and functions:
+Message-ID: <20251030192018.28dcd830@kernel.org>
+In-Reply-To: <20251028174222.1739954-2-viswanathiyyappan@gmail.com>
+References: <20251028174222.1739954-1-viswanathiyyappan@gmail.com>
+	<20251028174222.1739954-2-viswanathiyyappan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023030521.473097-1-ziy@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 11:05:21PM -0400, Zi Yan wrote:
->folio split clears PG_has_hwpoisoned, but the flag should be preserved in
->after-split folios containing pages with PG_hwpoisoned flag if the folio is
->split to >0 order folios. Scan all pages in a to-be-split folio to
->determine which after-split folios need the flag.
->
->An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
->avoid the scan and set it on all after-split folios, but resulting false
->positive has undesirable negative impact. To remove false positive, caller
->of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
->do the scan. That might be causing a hassle for current and future callers
->and more costly than doing the scan in the split code. More details are
->discussed in [1].
->
->This issue can be exposed via:
->1. splitting a has_hwpoisoned folio to >0 order from debugfs interface;
->2. truncating part of a has_hwpoisoned folio in
->   truncate_inode_partial_folio().
->
->And later accesses to a hwpoisoned page could be possible due to the
->missing has_hwpoisoned folio flag. This will lead to MCE errors.
->
->Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
->Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
->Cc: stable@vger.kernel.org
->Signed-off-by: Zi Yan <ziy@nvidia.com>
+On Tue, 28 Oct 2025 23:12:21 +0530 I Viswanath wrote:
+> @@ -1421,6 +1426,7 @@ struct net_device_ops {
+>  	void			(*ndo_change_rx_flags)(struct net_device *dev,
+>  						       int flags);
+>  	void			(*ndo_set_rx_mode)(struct net_device *dev);
+> +	void			(*ndo_write_rx_config)(struct net_device *dev);
+>  	int			(*ndo_set_mac_address)(struct net_device *dev,
+>  						       void *addr);
+>  	int			(*ndo_validate_addr)(struct net_device *dev);
+> @@ -1767,6 +1773,12 @@ enum netdev_reg_state {
+>  	NETREG_DUMMY,		/* dummy device for NAPI poll */
+>  };
+>  
+> +struct rx_config_work {
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+pls make sure to prefix names of types and functions with netif,
+netdev or net
 
--- 
-Wei Yang
-Help you, Help me
+> +	struct work_struct config_write;
+> +	struct net_device *dev;
+> +	spinlock_t config_lock;
+> +};
+> +
+
+> +#define update_snapshot(config_ptr, type)						\
+> +	do {										\
+> +		typeof((config_ptr)) rx_config = ((type *)(dev->priv))->rx_config;	\
+> +		unsigned long flags;							\
+> +		spin_lock_irqsave(&((dev)->rx_work->config_lock), flags);		\
+> +		*rx_config = *(config_ptr);						\
+> +		spin_unlock_irqrestore(&((dev)->rx_work->config_lock), flags);		\
+> +	} while (0)
+
+The driver you picked is relatively trivial, advanced drivers need
+to sync longer lists of mcast / ucast addresses. Bulk of the complexity
+is in keeping those lists. Simple 
+
+	*rx_config = *(config_ptr);
+
+assignment is not enough. The driver needs to know old and new entries
+and send ADD/DEL commands to FW. Converting virtio_net would be better,
+but it does one huge dump which is also not representative of most
+advanced NICs.
+
+> @@ -11961,9 +11989,17 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+>  	refcount_set(&dev->dev_refcnt, 1);
+>  #endif
+>  
+> -	if (dev_addr_init(dev))
+> +	dev->rx_work = kmalloc(sizeof(*dev->rx_work), GFP_KERNEL);
+
+Let's only allocate any extra state if driver has the NDO
+
+> +	if (!dev->rx_work)
+>  		goto free_pcpu;
+>  
+> +	dev->rx_work->dev = dev;
+> +	spin_lock_init(&dev->rx_work->config_lock);
+> +	INIT_WORK(&dev->rx_work->config_write, execute_write_rx_config);
+> +
+> +	if (dev_addr_init(dev))
+> +		goto free_rx_work;
+> +
+>  	dev_mc_init(dev);
+>  	dev_uc_init(dev);
+>  
+> @@ -12045,6 +12081,10 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+>  	free_netdev(dev);
+>  	return NULL;
+>  
+> +free_rx_work:
+> +	cancel_work_sync(&dev->rx_work->config_write);
+> +	kfree(dev->rx_work);
+> +
+>  free_pcpu:
+>  #ifdef CONFIG_PCPU_DEV_REFCNT
+>  	free_percpu(dev->pcpu_refcnt);
+> @@ -12130,6 +12170,9 @@ void free_netdev(struct net_device *dev)
+>  		return;
+>  	}
+>  
+> +	cancel_work_sync(&dev->rx_work->config_write);
+> +	kfree(dev->rx_work);
+
+We need to shut down sooner, some time between ndo_stop and ndo_uninit
+
 
