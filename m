@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-880710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D82C265D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:32:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314CBC2661B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC8F2351F99
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02EB742598E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586E7350A26;
-	Fri, 31 Oct 2025 17:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6FD3557F0;
+	Fri, 31 Oct 2025 17:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aD5hd/QZ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ecJtDpaW"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23FE3054F7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E021F350D47
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931716; cv=none; b=J8K/pCXy5SQlmkR7aVtCXYheUaefY/Dq4KsLeDsxXdESRtJq8+kajJTMch4Vzp1U/6PWo2lsx2gi94drkf7TzM+EAUJ7EHbcUcgH2cnGu9sUhjeYxgKXvhjE3xMoOP4Rj+wueSFEkj5xwkwhis4zqImuRGv1lBKq7/OcSX4P2e8=
+	t=1761931721; cv=none; b=cmZZYR5nYGW5aevKncVZJj9XAofE+oTa5Zsyi5pH7u6ZrvDgYRyZdAa0wbpenLR9PfoPhrF9XWY+7tTwj2qtfooeCMbiaezvAjnc5JSKmD6m3iUhndv38ZHO01AHFy7HHH3SYmtQDiDFRQSSCYFleot34eyKVPCeUThR+2oAsYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931716; c=relaxed/simple;
-	bh=pOlUZ/eYmURkI9UAYzXg8XzcXPBjNBMhjQguuGX/sPU=;
+	s=arc-20240116; t=1761931721; c=relaxed/simple;
+	bh=L2jskCFzVI8vu/VxoOiuw8oJHvcjhXC0BGW7Tik0EZE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qv7XSbsYbdmPOv3+rnNfuEkKQBWDD905098T3K0t88JgjXqUrD5HrYDQRUIv7+U1uC30rX5wdWDzF5SXXgjUTqeV2I7iM8EhkjKlrncCUAtscHLZ1elvEzl1jZRkM+Q8lD0Z4WOcekXheWs+NqHvtOkyDIJbh9D0yDMTI5fImvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aD5hd/QZ; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=BbSB3tWDEZYjE3tXCd+0V0bL1Yx5+WTz4UKFh2y0dx3oxbV5lxoxD7zGuRgQNfO+pU0bD/QznlruKY+fx4TdKuWjHJKrlk0MIL2E6kFMFdUztRh1Q0PWdZbc3bTRpFHyih8UeIdszWhHU1miCEoARyABZ6QNuPlIN/E6ol32IE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ecJtDpaW; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3A5073A2;
-	Fri, 31 Oct 2025 18:26:42 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 12DF3B5;
+	Fri, 31 Oct 2025 18:26:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761931602;
-	bh=pOlUZ/eYmURkI9UAYzXg8XzcXPBjNBMhjQguuGX/sPU=;
+	s=mail; t=1761931607;
+	bh=L2jskCFzVI8vu/VxoOiuw8oJHvcjhXC0BGW7Tik0EZE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=aD5hd/QZjuAu2DbdSCIPFQhjdZbcliqwShb3T5PBuEnYTMAShyXKMkJ+X8PMwRWrI
-	 FKP1P4m0hVoyJC0nhaAgGl6dU8mBPg+Z3anTwd3j5e46b4aGQzfjGagdvDUcVCpRKs
-	 SM0jPtD/9gOTtDhovWhGO/D7oBRNtr+wE90OySkA=
+	b=ecJtDpaWBSsdWbqTB9WfO0ZAgCfK6oPUBQFzr4ywkc8ILhY7PBrk287JgiwN8iYgX
+	 +aJOUevbMNbzDVzfQyifE/oRFZIc6qgbo/i5RrWT/GEL48whOkLQLKJX/jjrxAydkU
+	 mKQ+vN2+hTsI/y1wDef537z7BWF5pDJFHCizyLCc=
 From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Fri, 31 Oct 2025 22:57:25 +0530
-Subject: [PATCH 05/13] platform/raspberrypi: vchiq-mmal: Add in the bayer
- and gray formats
+Date: Fri, 31 Oct 2025 22:57:26 +0530
+Subject: [PATCH 06/13] platform/raspberrypi: vchiq-mmal: Update video
+ parameters
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-b4-vc-sm-cma-v1-5-0dd5c0ec3f5c@ideasonboard.com>
+Message-Id: <20251031-b4-vc-sm-cma-v1-6-0dd5c0ec3f5c@ideasonboard.com>
 References: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
 In-Reply-To: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>, 
@@ -68,87 +68,85 @@ Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Jai Luthra <jai.luthra@ideasonboard.com>, 
  Dave Stevenson <dave.stevenson@raspberrypi.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3072;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2277;
  i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=spTPBZUUYTCoXyLwYiPFicRWxsPp0oGfOuM0+6jDegE=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpBPGYZjTE6iQ+/Z2roISP58pFWBX1/U/xtzJhV
- izcRsgqeX6JAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQTxmAAKCRBD3pH5JJpx
- RfqPEAC/u7t7MEC6xEzkyZzkuWCQII9Y7t6g7mP0O/cPj7eXyBH3pJaoo7Uw8tYMMJA16RFM4dJ
- 1HmEFDNI+mR7Uwx1xXNXhpG8zDivegPfepY/+AXmXwqrkT2MysaIsKWSM519IU8fjgw1UbfoyAe
- 4qIeZfHgGH9iZ4jclCh2A9zo13pb48/Z3qI4BxT8OXYVR+EcME+wEMTgTk5S/EvTYDgCGIt6bi1
- DroblV5lXv47lettfSxpsvWUwqe4kvxt1vynCJyduS6cV1mmooU77r38JoFlMt1PXUlC7akJfRZ
- n7zCksgq4E5Lpj+MdTjugHnLds+TZmDN4Tz8l54jv31jjP4uSayOe+mKOADJih7jhilGA3So6uN
- yJLPnWuTKuW5CVBvJxHw/GuQ9WNnaV2D5jc4+BYrdgAcf0b+Eo+V/Iot/RBdILePQmr7cuckaoN
- PrVPugMLoQdLHU/6v/HLClIMxCXBzXItswM64o+BhlzFiiG7XPlKWjj/uBui/8sQhdOMHdu09wD
- SKv6+lCAT1m21KtQSf84BNC9tyhqPVN6pKTuILldx0SfHdk8LrXmyti2g02waKD6UOhm0ZOeO9t
- soEytmYGldaBGX4zJ9y5azgF/DFf/OhKPQFGJltLFxNU4TgnL4S/o5LuoRJttke2JlReTmJFoj7
- 2OKL32+/nLwqKZg==
+ bh=chq8KEMAdpSsSzxQiDjebF7K761kG8qgjKO6tzXXFxo=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpBPGZeNUdnT5uwGciICWjn0Bs341CwEpZvzpCw
+ F6gnxeQh7aJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQTxmQAKCRBD3pH5JJpx
+ RXzsD/0UKwNYQXhWfszp1SLk0j7aatmNyK4ciO8eqrV2Qq+TfuYyP79JDN7/nwMKwndxEV4MiBO
+ 3oOMK8DR9kt+OiAfIxR7I5Ccb637XMmOVj6EHcZUUA9HsmOYpZfERK9isM44t/2L4lB1Pv9MjDe
+ OdXSxrQqw1qWGMvZyX+v1tSWF8K5MKeNlqN7sqtHXKKAS4BIaD7ZwWQbsN6PzkfLFUkFu4oKRsC
+ pyCXm3wbRD2P3OBdZOJBq1UXrlO7jVRoavxU32hce80+2OYnOsB5Rvj1a2Wuak3BALVtIB6+gNy
+ TCjsskoEsQL2T/6u3bB9QXSCBevOPjFeOBgNXV9hfzEUB7nNIfg7LNfuTMkCg4ph9cYx5GS7F47
+ kkgmpcbzruKOkI1eszELBykdlzJuXLAIga6PayDg/sdq4Hj6D7XsI6A8k2vA0TCJY+Zv1qLArlp
+ sZccIkJ63nylB49Q8QY4eD5CEMDQ0OxVQMuoFR0rFUzZjvrGOYWKYJRM9FuxjsM2pJp7onoOkUF
+ FQyYhsCNjSfvOpifwJNQMzndAUTu24n1zu56tSLZIH2ZV1AGwGxsBE/4zJoznSZ7/tb1W6SrRiu
+ /2iQqDdYzpp7a1tvyV0JGfFLJJpVilUifHmLefxy7w8GIBQneVXnALlOw6KNLxvRbADnN2Dk9gS
+ 7CLz6YS2tXlKTtw==
 X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
  fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
 From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
-The ISP and codec support bayer and gray formats, so add in the
-encodings for them.
+mmal_parameters.h hasn't been updated to reflect additions made
+over the last few years. Update it to reflect the currently
+supported parameters.
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 ---
- drivers/platform/raspberrypi/vchiq-mmal/mmal-encodings.h | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-parameters.h | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-encodings.h b/drivers/platform/raspberrypi/vchiq-mmal/mmal-encodings.h
-index e15ae7b24f73fd055806e2e88e5eec0e1b8bfe9d..826ed66deafd082f43539c5b4702a2e0b6a2fe95 100644
---- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-encodings.h
-+++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-encodings.h
-@@ -69,6 +69,47 @@
-  */
- #define MMAL_ENCODING_OPAQUE           MMAL_FOURCC('O', 'P', 'Q', 'V')
+diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-parameters.h b/drivers/platform/raspberrypi/vchiq-mmal/mmal-parameters.h
+index a0cdd28101f2dd67fd6b64ce1c95c0cbbfe15fc4..0a4fc9252b1798d883047e22bbfca050017f938e 100644
+--- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-parameters.h
++++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-parameters.h
+@@ -577,7 +577,43 @@ enum mmal_parameter_video_type {
+ 	MMAL_PARAMETER_VIDEO_ENCODE_H264_LOW_DELAY_HRD_FLAG,
  
-+/**
-+ * Bayer formats
-+ * FourCC values copied from V4L2 where defined.
-+ */
-+/* 8 bit per pixel Bayer formats. */
-+#define MMAL_ENCODING_BAYER_SBGGR8     MMAL_FOURCC('B', 'A', '8', '1')
-+#define MMAL_ENCODING_BAYER_SGBRG8     MMAL_FOURCC('G', 'B', 'R', 'G')
-+#define MMAL_ENCODING_BAYER_SGRBG8     MMAL_FOURCC('G', 'R', 'B', 'G')
-+#define MMAL_ENCODING_BAYER_SRGGB8     MMAL_FOURCC('R', 'G', 'G', 'B')
+ 	/**< @ref MMAL_PARAMETER_BOOLEAN_T */
+-	MMAL_PARAMETER_VIDEO_ENCODE_INLINE_HEADER
++	MMAL_PARAMETER_VIDEO_ENCODE_INLINE_HEADER,
 +
-+/* 10 bit per pixel packed Bayer formats. */
-+#define MMAL_ENCODING_BAYER_SBGGR10P   MMAL_FOURCC('p', 'B', 'A', 'A')
-+#define MMAL_ENCODING_BAYER_SGRBG10P   MMAL_FOURCC('p', 'g', 'A', 'A')
-+#define MMAL_ENCODING_BAYER_SGBRG10P   MMAL_FOURCC('p', 'G', 'A', 'A')
-+#define MMAL_ENCODING_BAYER_SRGGB10P   MMAL_FOURCC('p', 'R', 'A', 'A')
++	/**< Take a @ref MMAL_PARAMETER_BOOLEAN_T. */
++	MMAL_PARAMETER_VIDEO_ENCODE_SEI_ENABLE,
 +
-+/* 12 bit per pixel packed Bayer formats. */
-+#define MMAL_ENCODING_BAYER_SBGGR12P   MMAL_FOURCC('p', 'B', '1', '2')
-+#define MMAL_ENCODING_BAYER_SGRBG12P   MMAL_FOURCC('p', 'g', '1', '2')
-+#define MMAL_ENCODING_BAYER_SGBRG12P   MMAL_FOURCC('p', 'G', '1', '2')
-+#define MMAL_ENCODING_BAYER_SRGGB12P   MMAL_FOURCC('p', 'R', '1', '2')
++	/**< Take a @ref MMAL_PARAMETER_BOOLEAN_T. */
++	MMAL_PARAMETER_VIDEO_ENCODE_INLINE_VECTORS,
 +
-+/* 14 bit per pixel packed Bayer formats. */
-+#define MMAL_ENCODING_BAYER_SBGGR14P   MMAL_FOURCC('p', 'B', 'E', 'E')
-+#define MMAL_ENCODING_BAYER_SGBRG14P   MMAL_FOURCC('p', 'G', 'E', 'E')
-+#define MMAL_ENCODING_BAYER_SGRBG14P   MMAL_FOURCC('p', 'g', 'E', 'E')
-+#define MMAL_ENCODING_BAYER_SRGGB14P   MMAL_FOURCC('p', 'R', 'E', 'E')
++	/**< Take a @ref MMAL_PARAMETER_VIDEO_RENDER_STATS_T. */
++	MMAL_PARAMETER_VIDEO_RENDER_STATS,
 +
-+/* 16 bit per pixel Bayer formats. */
-+#define MMAL_ENCODING_BAYER_SBGGR16    MMAL_FOURCC('B', 'G', '1', '6')
-+#define MMAL_ENCODING_BAYER_SGBRG16    MMAL_FOURCC('G', 'B', '1', '6')
-+#define MMAL_ENCODING_BAYER_SGRBG16    MMAL_FOURCC('G', 'R', '1', '6')
-+#define MMAL_ENCODING_BAYER_SRGGB16    MMAL_FOURCC('R', 'G', '1', '6')
++	/**< Take a @ref MMAL_PARAMETER_VIDEO_INTERLACE_TYPE_T. */
++	MMAL_PARAMETER_VIDEO_INTERLACE_TYPE,
 +
-+/* MIPI packed monochrome images */
-+#define MMAL_ENCODING_GREY    MMAL_FOURCC('G', 'R', 'E', 'Y')
-+#define MMAL_ENCODING_Y10P    MMAL_FOURCC('Y', '1', '0', 'P')
-+#define MMAL_ENCODING_Y12P    MMAL_FOURCC('Y', '1', '2', 'P')
-+#define MMAL_ENCODING_Y14P    MMAL_FOURCC('Y', '1', '4', 'P')
-+#define MMAL_ENCODING_Y16     MMAL_FOURCC('Y', '1', '6', ' ')
++	/**< Takes a @ref MMAL_PARAMETER_BOOLEAN_T */
++	MMAL_PARAMETER_VIDEO_INTERPOLATE_TIMESTAMPS,
 +
- /** An EGL image handle
-  */
- #define MMAL_ENCODING_EGL_IMAGE        MMAL_FOURCC('E', 'G', 'L', 'I')
++	/**< Takes a @ref MMAL_PARAMETER_BOOLEAN_T */
++	MMAL_PARAMETER_VIDEO_ENCODE_SPS_TIMING,
++
++	/**< Takes a @ref MMAL_PARAMETER_UINT32_T */
++	MMAL_PARAMETER_VIDEO_MAX_NUM_CALLBACKS,
++
++	/**< Takes a @ref MMAL_PARAMETER_SOURCE_PATTERN_T */
++	MMAL_PARAMETER_VIDEO_SOURCE_PATTERN,
++
++	/**< Takes a @ref MMAL_PARAMETER_BOOLEAN_T */
++	MMAL_PARAMETER_VIDEO_ENCODE_SEPARATE_NAL_BUFS,
++
++	/**< Takes a @ref MMAL_PARAMETER_UINT32_T */
++	MMAL_PARAMETER_VIDEO_DROPPABLE_PFRAME_LENGTH,
++
++	/**< Take a @ref MMAL_PARAMETER_VIDEO_STALL_T */
++	MMAL_PARAMETER_VIDEO_STALL_THRESHOLD,
++
++	/**< Take a @ref MMAL_PARAMETER_BOOLEAN_T */
++	MMAL_PARAMETER_VIDEO_ENCODE_HEADERS_WITH_FRAME,
+ };
+ 
+ /** Valid mirror modes */
 
 -- 
 2.51.0
