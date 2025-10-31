@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-880180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BD5C250FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:44:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AF0C25107
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 716264EBC44
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:44:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEC8C34C95D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA06E34AAE7;
-	Fri, 31 Oct 2025 12:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990A834B1BD;
+	Fri, 31 Oct 2025 12:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OQfzmTJf"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w4E/e1To"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676C434A77F;
-	Fri, 31 Oct 2025 12:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAF32550AF
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914651; cv=none; b=Z9pANp93mFWaM19v7vAXNM8l+l6Z6wfMYBp+jzf7dN6mWLg0dmGIe03soX91Ap9qjN5ZGof9aZ5iK8fTsgX7yCjHzZHc4wjWDQtdjajQ8guxiA4F0ZF+RGQGJn2dMBVRvZC5yq+6xn7zgnJ353BCwtdAG+6LQEqInWwyX1Z4zdQ=
+	t=1761914689; cv=none; b=LxLnkpJcJhtoVRl/CYiUbxe40u4Yexjv87Q0y4AbvEtcFNXrHw/47pMCJ2PdvQG1fpngT1fbz64Ux1NIeE1fn4LxyZoTY0PTSIm0zEBdY51TV6Y0VmAuZQFwW7t1e3K/+OQFBSYRzspNVIk5drcI7UaNRV/zv2nR3jcxBKBhkKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914651; c=relaxed/simple;
-	bh=0lHrH2OeUdBNMRkuy48s9W6OB58NUesLG0pn4Ff3d2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jveIqWrQjwhdEqXOEe7YcJCyuDsyiTEFP0mB6liqd8HDCaFJ26JMHtc7+TroEs9Y2Bue+3Vei6X/FJr6UphmK8wUzEYJMZnEC0zg7NgjYXurP5WD3VlqHn4Y5IeXkBOqFVZ3bbGVvMt5Nibdi8gaQhkFIDIXLWvlAotkOOHBJ8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OQfzmTJf; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2DtW5Hfe73up2P6J00tK78FRvf/3zihm0Np1q799QV0=; b=OQfzmTJfQXNTh62MJNFYXla/eI
-	gRusMiaVCqvTM7nc8yVmQAEA6pbDkUqOLUgaXL1F3JQXgdtI+XYwtlFKrSlvf5EHlpWcf7bJlmfyu
-	rmt/sallaaZ5d6EhoOn/wj+M3ZPWbZ6TYRWuR13BGPu2QdJmNQ6w4McMHekppaLvT/QY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vEoTo-00Cb8E-91; Fri, 31 Oct 2025 13:43:44 +0100
-Date: Fri, 31 Oct 2025 13:43:44 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: spacemit: Implement emac_set_pauseparam properly
-Message-ID: <c180925d-68fe-4af1-aa4f-57fb2cd1e9ca@lunn.ch>
-References: <20251030-k1-ethernet-fix-autoneg-v1-1-baa572607ccc@iscas.ac.cn>
- <2eb5f9fc-d173-4b9e-89a3-87ad17ddd163@lunn.ch>
- <ee49cb12-2116-4f0d-8265-cd1c42b6037b@iscas.ac.cn>
+	s=arc-20240116; t=1761914689; c=relaxed/simple;
+	bh=CvFGZtOf26dYUowBbWluZEW4m1VkUdBhmnfG6Yu+Vrc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ak+rywxB7pEo1m8/vMAurlcUf3Sa43US3PCdaXk9i0rT6jKVD05a5oSeUxXYdV4pa3k6yCD2mzW7wU9co9JCkOy7AXzDRSE0gWOS21z6rXwSsrCH90oaUUo4FlpdaaJ8WzsBHcmIn98iHJJlJe6zN1IiDC4zI23hZMQGtUDeW20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w4E/e1To; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b4626b2d07bso149990966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761914670; x=1762519470; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CvFGZtOf26dYUowBbWluZEW4m1VkUdBhmnfG6Yu+Vrc=;
+        b=w4E/e1ToSxACHbjeiQQRoiGgPJTsQwcGVaJ4BHnpDrbdK22SkM32KW1iyPAyuaPC35
+         Qs+MjHhxgppVWencfKCudOl0gzfA9xWBR9q6c04Y0/WRaBqED9Zr47zKM3vCauqBlX9D
+         +puIsFL1OIu0Ry75ONG+s1K0zlzq8QRMnfajIdI/mZK83CNUHtRSbr9IJ9ipWBYOhFej
+         HTUDK0bgJjfQyGip9oId26ih1AgMRSwyVt/xMwn2kT+1F+3h+ZSyc6nRbrEYB/MvR22Z
+         sTF5nFwiqr6MbDpwa8wjiQqPk25qGIJnkHJTyeWTXEJyuwnvXRht+mBZhB63Jn43kbck
+         4mAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761914670; x=1762519470;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CvFGZtOf26dYUowBbWluZEW4m1VkUdBhmnfG6Yu+Vrc=;
+        b=UzFQ1x0qt991zHI9NR1B+/PjWZwfeyt5iMPZM3M25IERlKVuGKWevbsPeIf2qCuQ7v
+         H9iYetlDxt6fVkDH5Hr5T508caoHkKa8zHsCSsQecD8ffGmBwjUzi6RPjizoyzyyeYWK
+         wwaOzzwAD57FtFeh9RxZyqdd9qEys3aZvt1oYFKabi4vlRI8+hZ1vEck6PaXYXsRKhsB
+         04mIEOBXOHj9s87S4ADTYSJDbt5og7v0FLblu5TafO2aJjCMaBrlWjkPKO1nVRlpZkga
+         LiJGv+kCy38Hlu6vDrIYh5BCwPkSXEziLiw3ltisdWJxurxSt9qxfRR2IXujnWC3gtki
+         FnUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWnGyjAz7csNYSe2mRHWPOh+h8ZdYkHTdt4CaCbrBux/fURQgt+8a3/4ksvhpjYa2NHOu6RdGZLLXwoCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNEvkmHYErleyQleUc1nsCdrk0OYtm694hU4gB3mB4W/+GUDGI
+	HTlWEMUf/LNuJXw0Od9b1UWst1RGcNvdr+Ql0QwCffdYIOGZY4HCuE5CNSDk/zixEpmBtngYnT8
+	2uekcjI3eHKWzHQ==
+X-Google-Smtp-Source: AGHT+IHU8weZjAEhs2IehgqJcwvwtB2UGWE4Em0q57RBbrPppiWnDSvsBrl9MlsbTlimASqXdDTHfslYBQ30Kw==
+X-Received: from ejcsp10.prod.google.com ([2002:a17:907:394a:b0:b70:4a91:9d5a])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:97cc:b0:b3e:e16a:8cdb with SMTP id a640c23a62f3a-b70700db192mr431743566b.12.1761914669956;
+ Fri, 31 Oct 2025 05:44:29 -0700 (PDT)
+Date: Fri, 31 Oct 2025 12:44:29 +0000
+In-Reply-To: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee49cb12-2116-4f0d-8265-cd1c42b6037b@iscas.ac.cn>
+Mime-Version: 1.0
+References: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDWIMGXNSBHN.3LI1W4BHB75W0@google.com>
+Subject: Re: [PATCH v3] selftests/run_kselftest.sh: exit with error if tests fail
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, Shuah Khan <shuah@kernel.org>
+Cc: "=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, <linux-kselftest@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 31, 2025 at 03:22:56PM +0800, Vivian Wang wrote:
-> 
-> On 10/31/25 05:32, Andrew Lunn wrote:
-> >> [...]
-> >>
-> >> -		emac_set_fc(priv, fc);
-> >> -	}
-> >> +	phy_set_asym_pause(dev->phydev, pause->rx_pause, pause->tx_pause);
-> > It is hard to read what this patch is doing, but there are 3 use cases.
-> 
-> Yeah, I guess the patch doesn't look great. I'll reorganize it in the
-> next version to make it clearer what the new implementation is and also
-> fix it up per your other comments.
-> 
-> > 1) general autoneg for link speed etc, and pause autoneg
-> > 2) general autoneg for link speed etc, and forced pause
-> > 3) forced link speed etc, and forced pause.
-> 
-> Thanks for the tip on the different cases. However, there's one bit I
-> don't really understand: Isn't this set_pauseparam thing only for
-> setting pause autoneg / force?
+On Tue Oct 14, 2025 at 2:45 PM UTC, Brendan Jackman wrote:
+> Parsing KTAP is quite an inconvenience, but most of the time the thing
+> you really want to know is "did anything fail"?
+>
+> Let's give the user the his information without them needing
+> to parse anything.
+>
+> Because of the use of subshells and namespaces, this needs to be
+> communicated via a file. Just write arbitrary data into the file and
+> treat non-empty content as a signal that something failed.
+>
+> In case any user depends on the current behaviour, such as running this
+> from a script with `set -e` and parsing the result for failures
+> afterwards, add a flag they can set to get the old behaviour, namely
+> --no-error-on-fail.
+>
+> Signed-off-by: Brendan Jackman <jackmanb@google.com>
 
-Nope. You need to think about how it interacts with generic autoneg.
+Hi Shuah,
 
-       ethtool -A|--pause devname [autoneg on|off] [rx on|off] [tx on|off]
+Can you take a look at this?
 
-       ethtool -s devname [speed N] [lanes N] [duplex half|full]
-              [port tp|aui|bnc|mii] [mdix auto|on|off] [autoneg on|off]
-
-These autoneg are different things. -s is about generic autoneg,
-speed, duplex, etc. However pause can also be negotiated, or not,
-using -A.
-
-You can only autoneg pause if you are doing generic autoneg. So there
-are three combinations you need to handle.
-
-With pause autoneg off, you can set registers in the MAC immediately,
-but you need to be careful not to overwrite the values when generic
-autoneg completes and the adjust_link callback is called.
-
-If you have pause autoneg on, you have to wait for the adjust_link
-callback to be called with the results of the negotiation, including
-pause.
-
-phylink hides all this logic. There is a link_up callback, which tells
-you how to program the hardware. You just do it, no logic needed.
-
-	Andrew
+Cheers,
+Brendan
 
