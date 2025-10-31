@@ -1,230 +1,205 @@
-Return-Path: <linux-kernel+bounces-880100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E65C24DC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:53:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDD5C24E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CDEE4F22F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9877563DBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40358347BCA;
-	Fri, 31 Oct 2025 11:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB40C336EE1;
+	Fri, 31 Oct 2025 11:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="F8dpL654"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011015.outbound.protection.outlook.com [40.107.208.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uav5HVf7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2066C346FB0;
-	Fri, 31 Oct 2025 11:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761911578; cv=fail; b=GDAzfXU13K6nf21PjBKlG77SGLtOC3SvYKtrxBp1cGL/5syt/5R3lvyf/XUXgrnougNjVw6LTxB60GqY8a72lcfz/xgzQ9G/GwpUKJ2mLwLMfH2k4Tr5kXcFVMyohZ9FZgATYwp2+CXa26CtYvqgFwXrEdnmmm09PHPBjgrjdYc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761911578; c=relaxed/simple;
-	bh=J00ERh7pxE6m1EkJpK9t0f8cBqhuL3hyWqk/OgLMwvE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OPX3MgE3NzvJtcOmZtdA+lG/UDhb/v64T2vHHcfUIqrZRRLnloDBHSKKlteEPFOpuwTHpwp+1dp7JI/i2klHFRL4ltp3YzV8RLfzMkSr9PHoyPgzZsngvSPpC6Q7YKaOQcZyiO+tISflTNK7TvTJth3D1kOgMxMSZS1A9uZ+egw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=F8dpL654; arc=fail smtp.client-ip=40.107.208.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ptV3ivHJ2+Vhtqw+7LfHhr7J5qsIc5WhIUdV6x61sTIUStqMgDlS2k/kOQW8Q1L3+milpDHpOnMT2/AUIRuW8gP2vvo/RF/Xn/TpMJ9+lDd4rCS5g/pu0mqANWAvOCun7OQw4XWckfOJ8qwh3GVBnGxALX9tR9XtwfYSoEnFo5OgcfwVTDhD8S+V20v66/hjdBU6URrEldLDPdvTFMfaSvA7v9BeSWLHYD6UexDkZlYmc61tAUdpw0RNWQ0b1vip/+eGhu9CXH/bL05NK6VOI9lwUOiL3cwTaDFC8Iu+gOG9D//nyjGfKzgORZZZWD157FTx6gByQmh8v16yOZVtsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QznhOdgCGkoE5XJ32yecM8L1CgoHTAqYu7b3zywpQ4s=;
- b=Q6j7t/9fT0hqp7QQw4/4rZVFv4DI9iT2JP+0PvTcUidFVbVVulwsKkELyBISW+c+toyID9COGfmmch9X8Apjtz1OkWlUrmbRzoxLYiXPjK5KkuKAxVTOyutc+JGQGkWEOqiBnXdt+piTqpZM+b7PS5JDzs8qA0rrukxUA5I9ow+xTfM9ZQT6x3BUGIRfKwVwnAkJoA+9nswZJutweAcbpYP2C8YRakIX81DAmq1V+TPkmpv2AQoirhWdmFgM09LsNYL2JTK6JaJ4jYF8hh5VWPcVgbRLM93/0m3Gh/h80duPfUpFDA/oKR9g8/oSJec4yzPHlrEzrOe2oriPK1P/sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QznhOdgCGkoE5XJ32yecM8L1CgoHTAqYu7b3zywpQ4s=;
- b=F8dpL654l+v5TJP4ZDbt0xSSLdjQroCt6L9tcigOubDWHieO1eQjVACDsVU5s/6xj2/ASisbmQp8fUB7Nm/i4+VTXOWbRKSsbM24F+nAOc/vCTFTZrSjJ/lhBwbpHSpmahAAJaP6wKtwXz5K4Qsh/g+u9iaSjQD570Rwh3hEWs8PzhSFo+G/cmDAUR0DOJZPXrp0AMTJdnD7NPMLfn7FuQpo8Zz+WvgQNCCtF/yVHflz7c9YO8QE7DvDDYwOsBmXw0CyDjg6ppRsBUBh8+x92x6vaVEYLxZSXSFjSX7Yo9ZO6V1EFKtziWyA8hvsX2kFxFnX0hZyo4dUUP0NwTSNAw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BL1PR03MB6037.namprd03.prod.outlook.com (2603:10b6:208:309::10)
- by SA1PR03MB6612.namprd03.prod.outlook.com (2603:10b6:806:1cb::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 11:52:51 +0000
-Received: from BL1PR03MB6037.namprd03.prod.outlook.com
- ([fe80::9413:f1a2:1d92:93f1]) by BL1PR03MB6037.namprd03.prod.outlook.com
- ([fe80::9413:f1a2:1d92:93f1%3]) with mapi id 15.20.9253.018; Fri, 31 Oct 2025
- 11:52:51 +0000
-Message-ID: <24d2beec-129e-4545-b777-c1c717be956c@altera.com>
-Date: Fri, 31 Oct 2025 19:52:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] EDAC/altera: Add IO96B ECC support for Agilex5
- SoCFPGA
-To: Borislav Petkov <bp@alien8.de>
-Cc: dinguyen@kernel.org, matthew.gerlach@altera.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, tony.luck@intel.com,
- linux-edac@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251028092232.773991-1-niravkumarlaxmidas.rabara@altera.com>
- <20251028092232.773991-5-niravkumarlaxmidas.rabara@altera.com>
- <20251030143051.GJaQN2m2fniYVRtBxn@fat_crate.local>
-Content-Language: en-US
-From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-In-Reply-To: <20251030143051.GJaQN2m2fniYVRtBxn@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KU0P306CA0091.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:22::14) To BL1PR03MB6037.namprd03.prod.outlook.com
- (2603:10b6:208:309::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E30F3446AE
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761911588; cv=none; b=EZEH2ZBTP/Fq3uw9tqHTVGMPgno8key5Bjvsp+drjsZRax8CuGy1i1EAVtTPbrplteC01NF4r4EEybYAl61BYR0sLTcpwI0+/F+UJcl13BCRo2u6W8AVGC+XkkKwTLHnEdQJALEfDSL4nLga0l8gZn/FdHQFDkViQSPteZSTcbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761911588; c=relaxed/simple;
+	bh=6fzFmvYYmy0FD/zsZjCIHvVy5pIl85gYKYFQYc5ntms=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ittQa/6VQEcakggtJx/HfHrSZBQ5IDWabns17qQVqYgsHiz0qy/prHvUS/swnHkzotC66w5sw122O40PXMaDACxTAHdld3FuPjU85Rn+NUPZaGNhOHvMGzKF/gnnlKXZO5VUUS0x6yzo01JfiZuQdLnnHWwS34Z8fiLcEEctTzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uav5HVf7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761911582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gTUIS93GUZsQyg4tbyddEkDWsI2/kBv/P3HZONFfij8=;
+	b=Uav5HVf7UCx/oBrDF2yqnnBGSHXipT54/jpP8p0hSuRg+iR7gEc5HsOO/lvI0T7YYj65Bc
+	S2aU0jgbQxI1imxXcTxYU3G9GkWcL6UkvqKygsEtntYGCPrbTYp4G0WuouKSd8cpu/UgP2
+	vrhcjhbY6ToEykxryrnRWoV7cljJTAg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-542-jz4hgP3sNIuyunS15QRrjg-1; Fri, 31 Oct 2025 07:53:00 -0400
+X-MC-Unique: jz4hgP3sNIuyunS15QRrjg-1
+X-Mimecast-MFC-AGG-ID: jz4hgP3sNIuyunS15QRrjg_1761911579
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-475dca91610so12887075e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:53:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761911579; x=1762516379;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gTUIS93GUZsQyg4tbyddEkDWsI2/kBv/P3HZONFfij8=;
+        b=unZPNKxQq8pmjuOal9HCTwV9ZK0xS8K2o9qb/ZtZFWwltaIGGo/1uTYRDUYjxOxAWb
+         7tE1g/jll/QNRFSpOdMe7Q40uE/BUNqMr9EoW6vpLqwaU3M6UI2HRPmymrTdd8GSJnUm
+         p5eVX2PHr+A20de9BW7xLIub1SU5hr3O8eWm/JCRSLrLM7FM7SnWYuDJWJ4eHrGJgPne
+         zl5YKKVwiOCNtr7o0T0gsZfD1g2HezSgDQ3E1DC5fwaq4v0BRc7v9i9Yq6Pb3GI5H8HC
+         zSJjtzaS2EPhUJ93Wd4H/kdBkxzIhPVkd/2nW1Wq1QZw+HqUCv+5bvuIdQTmQkUEvONM
+         I7qQ==
+X-Gm-Message-State: AOJu0YweQ9gvYD5N0MxRbA5rDIulkPa7Jxv5SsKrEdpr29LRcYjqo6xQ
+	EDtB++qA/BxD9WGDuTVbFYyBniohPLuhvb2bVpkAJHHSegTrnzPtu99IiuVTbNXYdDJPOk76jsh
+	JovXXTRo0FzmDr7/s7C9zezmaNlnfxSnGpJ0y+IUpDXtJE5emZJV3i739ytO8+hwHEA==
+X-Gm-Gg: ASbGnct8/xTr7ADmiZAJRmmXUqpZumGINcPfzcj5jtNna2wdbz1OS2m6lcvxlpUpnws
+	tSaTEavKxcte5l1y7MB4TeMovdyZ2RrWvAUr6HWzyzA6UIb9olk36LSnMJml4GdgG6LoPhZbWiT
+	w1bJbo+sFyrETDlwcpzkjyPYFrujt2z+zGzgvFtRwLxA4mr3ZJsugidjaukHvVLJTyiRKkZSzlp
+	e6iYpo8iME2LRgApKXBRGpQjlJZaNKbWomwXgYv9nchLcnSIijlq6kQQJrx3KI40h5GUC6dMOpc
+	mdAbxhU7oX0KDd22PZbWxOnUcRvEMasnjVsUSqufxY5fzVjxVAoBaqoeikvF0WXF54uawVwGUFJ
+	eKr+BfHiYGokkAFH8WRq7b906XkAED3fMAOg/Z96fw4cSxd6tjCEHVW7QcvZo
+X-Received: by 2002:a5d:5888:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-429bd676a88mr2912829f8f.10.1761911579334;
+        Fri, 31 Oct 2025 04:52:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1wuetlLZ34asXy13r1bfmujThSOSUu3cZmMHhgfxqrER8G1YsbbHDsXHGv7ziQ36i83pqkg==
+X-Received: by 2002:a5d:5888:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-429bd676a88mr2912761f8f.10.1761911578857;
+        Fri, 31 Oct 2025 04:52:58 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c1142e7dsm3186896f8f.17.2025.10.31.04.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 04:52:58 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
+ x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy
+ Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Paolo Bonzini
+ <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
+ <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
+ Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
+ Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
+ "David S.
+ Miller" <davem@davemloft.net>, Neeraj Upadhyay
+ <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, Josh
+ Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, Andrew
+ Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>, Jann Horn
+ <jannh@google.com>, Dan Carpenter <dan.carpenter@linaro.org>, Oleg
+ Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Clark
+ Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
+ Marcelo Tosatti <mtosatti@redhat.com>, Daniel Wagner <dwagner@suse.de>
+Subject: Re: [PATCH v6 06/29] static_call: Add read-only-after-init static
+ calls
+In-Reply-To: <20251030112251.5afcf9ed@mordecai>
+References: <20251010153839.151763-1-vschneid@redhat.com>
+ <20251010153839.151763-7-vschneid@redhat.com>
+ <20251030112251.5afcf9ed@mordecai>
+Date: Fri, 31 Oct 2025 12:52:56 +0100
+Message-ID: <xhsmhqzujp9t3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR03MB6037:EE_|SA1PR03MB6612:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1bbf6ce-393a-4c99-8282-08de18740491
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cE5mekxzYzBQNWxpRmI5aUY2a2pITWpIQTFhbFhESnlaZnlFWWJHVGtsaC9h?=
- =?utf-8?B?bUJmZGMzVG1pNnFaWHh5UktUWmMrL0ZOdXJwK2R4R2VFQ2xJM3lKVDZSSGtE?=
- =?utf-8?B?RGo0T3Q2a1BqNnBZZ2xrajZQSU9Wb24xelNDOGRxZUx5L3l3UzJIdG04WDhW?=
- =?utf-8?B?TUo5K3hvTm9uNXpYdnNnU0xBaGx4WE55YTF4Zi82STdOMjdpYWhEQUZHYnlK?=
- =?utf-8?B?d3RrcmEyTklKMC9xN1FEbmJqWEdXZzhOU245c1kwTEpibWVFc2ZWQVZGVmg5?=
- =?utf-8?B?cEtCYmd1Q1lhaWcwSE1Eem80aTRubDc5ZDYvZ25renZFc3haYmc2WGhxK1VX?=
- =?utf-8?B?OEs1YnptTHJVbWN3VHllNit2MWNJRWxidlZXRkJ6WlFQa1lqTzEzb0lVZkNC?=
- =?utf-8?B?UUk1NG5BbkhHNXVxZSs2Wmpaa3NvNy96M0ZBeFBZOXFYYWpiczM0bUpNK0JY?=
- =?utf-8?B?VGxFM3Z2M3ZZckV5cm5mU3pOYnNEcklPSWNRb1VyeWRCMHc0Q1NJMStXbjRL?=
- =?utf-8?B?dVc2QlpYTExzTVZJMXU0b1BaWDJHNkJFalowUW9ZMGppWTJ6cGtsWldNbm9Z?=
- =?utf-8?B?MUdiQVZFWUtKMW5HQ21WY2duK1huZkZaYW1QVVBHYWRSY0VlRGxGQXQvMGha?=
- =?utf-8?B?ODVuNHlEQjA1REJkZGszSmhFcVVVcVV3d212UHUzeXBxMnErRmtlVUo0djhk?=
- =?utf-8?B?TmRZZHJnYVlGR1k4MWErY2FESzNLczFWV2VXRndHNDBkSmJSb2x1OTJhNnZT?=
- =?utf-8?B?d1UySm9kVWJ4T2JacGV0U0QzQmtVVE1VQjZYakdnby9RYXRyREtDSzZuSDlN?=
- =?utf-8?B?K3lzSHRTKzZ4alE4TlVyWm1iL2VnOGJCNzhHQlpSZHBPVzljVVkyMzRXZ01h?=
- =?utf-8?B?Tkx4bmYvQlltSW5qeGI2ekFiWkZBR1BVRGVjOVRuK3NWa1Nla2FBcXVXbGpy?=
- =?utf-8?B?RmI4Vm80UWRHZ1pYc2NNSno0bnpLd2FUTVU5bmdzaUdMNXBDM3dUWHZlNnMy?=
- =?utf-8?B?TXlsZUFPcDVPVEl6VG1UUmtvOUZqdVhUQXFyd2dlL3RxaWZOcXNuWUtEbnhj?=
- =?utf-8?B?NHdUcjBESnBVODA5SFJoVkNNTE41dEpGTml0cDdRdzlvYVFubDl1bGJWRzdT?=
- =?utf-8?B?b2VuNTlXQVl6L2FYdHFuYXI4cjlqS1NHa0k4bXRlTVd5Q3JkL3dDTXIzSWFu?=
- =?utf-8?B?QjJlZ3BMcDh3SVptTEd4ZEZzcVNtV3ZCZkgvY2E4QWRpUk41dlhIMkRCUkg5?=
- =?utf-8?B?N1lnRFI0SG9TVndjRkNiQ3ExUE9hczBQOE9HanVYaUNoMHdWdHlscUtkNTN1?=
- =?utf-8?B?cENZTVUvZVpTMHBYZGpONWhxdjdyMjBpUTdrYlFWOEVLcFkvNzZYYXYxczM1?=
- =?utf-8?B?cG9hK29tSnlrUE1YSU9mMlFqN1RwazZhTXR0NSt3UHYydVk0aEU1ekNSSENt?=
- =?utf-8?B?b2oxWGZNNzNQR05TWlMzb3JHcHBZZ1lKZmZGWGlOcUlQWGJxbUU3QUFtYTQ4?=
- =?utf-8?B?VWZOeGJsUll2UnhkZ21wVVZaU04xZ2JxdlpHV3lKMWtlRTdETVNvKzFWQW8r?=
- =?utf-8?B?RjVCSjFYNG9NTERDRU56VkhQN3hpUUtzRXJHcnZWaGdaRzVRVlhnS0VVSEVm?=
- =?utf-8?B?M1VJQW84SWZiQUwybmhmUnk4d05UVlkvaFhZYURnVS82Z0l6dzFya1BieWJL?=
- =?utf-8?B?Y2NvdkdQN1BCcDJvOXpkK1QxL0FKZFkwUGtaYkdUUEJTeXcycllVaVl0dlQz?=
- =?utf-8?B?NzIvWWF5T2xUS0dxUGNOTDExVFNMRnVSSmFGYjA5QUZIK1haL3Z6YnpOUVor?=
- =?utf-8?B?dWRlVEprVjhXSmV6S1Z1aHZnTnFlU1BvQmQ2dnMrcVBjdTVzcWh4WTVQNzdu?=
- =?utf-8?B?Vjk0ZXdyK2pJMVh2Tm1ZblNicllXYjR3ZW5ZNEZIVWhpczVkZDJWSG1tdXBl?=
- =?utf-8?Q?cvPKNX1IiC8JZGf/RtIb94sOsA1cRCd3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR03MB6037.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cVpFUjhTYytDL2JJdTV3Zm9XcW9SM3IxMjFrYk9VWmdOQTJzT2hNNU0xMGVZ?=
- =?utf-8?B?a3BiTlROVGdlckI4RTM5R0ttZUpRTlIzakNGV1N2VGs3V21leWorRDNjNzhQ?=
- =?utf-8?B?K2JKNFRmQU1EaWRXbEM2cVFYQlhmdUtYMWhoWFdXWUowMmxyMUFYY0ZlMXg4?=
- =?utf-8?B?bmx0eUh4Ym5OUnhjWjlQaE4vRFFvVWJPT2tXbWZDQWdScGY2SUkxcmo4aENP?=
- =?utf-8?B?M3hDNHcxR0Y4T3ozUkdCRURRS05kSk5YOFFOeDl2d0lMT2tGUVNWT3lLdDR2?=
- =?utf-8?B?ZXRhclM3M0ZIWUpXZVZteEVLeC9jV3lJbXRlWHQzbC9mMzhidzBheFZ2eHlh?=
- =?utf-8?B?OUpTdkhCclFESUlrYWNUYkZSUjN2THBCS0NCQlk0bnZVMGpFdDJxWUZYWUVu?=
- =?utf-8?B?N1BaSzI4VzZJbUxKK2dVUG53L1ZLL3dUMFVxdkMwZUFZRVczeGQvUTRibU9z?=
- =?utf-8?B?T2FlVWwrRXUzQlM0VlBwZmJ5NEVTbDhuWXQycTNSR3JaSmtLY3NTL2NVNjRj?=
- =?utf-8?B?d25qSE5LQTRZMCtmc0NOa0pDdkVnS3UwVkFmNVJWSzJadzJrOVMrK1hpYTJ1?=
- =?utf-8?B?dTZ4cStUZCsveVgzRHJkQXh4Q3hYTGEwQ05MRkR4emRiYWZmMk1sbVBrbmxL?=
- =?utf-8?B?d2hFRmt4U0tBK2haS0FUcWJVU2hGbWVMRnlLNmRKaUNla3VLQVkyWTVXOHFS?=
- =?utf-8?B?eXZyNC9qdll5QkM4Nm9ydExCaXh5dmlxbUdWYjNFQTZmRzBjakY0R1RyendT?=
- =?utf-8?B?TWtjNjlQcHR6aDVMZnFlRXlIZGtObktudFJid0FiRUt5eHhncWw1MmR6cFgz?=
- =?utf-8?B?b1poRjFYMUJvdjNISFpma0toZFp0UmQ3WDBPYXV1VUorVjZqcnZaUUF1QWlS?=
- =?utf-8?B?UGw3UjdPN0szeXZUMk4yUDZqRy85WHgzWUNNb2VFUjhEU2RURm5EdUR4UTNK?=
- =?utf-8?B?WTBtdjZGa0lKdnRZOHZIWnhiYndadVY5eEo2OXoxcUlIK0lPNU1SNGlyaU9z?=
- =?utf-8?B?RVJFV0QrNkFaTythbzZsM052WVVzTVBucjNmTm9TRXVsM3V0elpjajNSdHF5?=
- =?utf-8?B?Q1BhOU1EeThqRlpTaW5EaGpiUWk4d3dqdVoxanpISjVHRzVxRFlVdE1BYUt6?=
- =?utf-8?B?WDZSZmRzL2hvWWt2L01vK3VudG9OVVBTeDEzM2FRQ3YzcTFpZ1pIU2hOZkRK?=
- =?utf-8?B?ZFVoOWYrNVo4ZXdBcWd5bWpWNnprd1FWSEJVRllzNFIwd1ZlOWZpL1JVM2Nj?=
- =?utf-8?B?eVBKekUzZHlOUHpScnFQb0JSMnZrekE3STB3aDFjNFRocG1qNnd4bWRSTWFq?=
- =?utf-8?B?R0YyQTBQMmFxMW5CaDFXYllXRzM4NjF5Z3VOUzBHN2pFYlozdlV4TlUvaHk2?=
- =?utf-8?B?QUl2SW1HZ0c5K1RWM0s1TnBxQ2hDeS9oU2xjL2FmK3cxVGxVSWYvbG1kck04?=
- =?utf-8?B?L0xEZi9BQ3ZySWNCaW1jYWtBRnM0dy9TZFZoTS9Lamh4RHFaalhRcHozSHBq?=
- =?utf-8?B?NjlSZVJmdkcxa0FwSVRqM2ZVdUp0R1FTNWNKeWlJMTRBTGZsZGpMaENpTDF2?=
- =?utf-8?B?SWkvZ2lyaThjU0RoYm13MElGZlYxUVdyanRJb2gySzFSL0pSNXczMzVHN3BV?=
- =?utf-8?B?R2tmSDRmUFArNTNUVktLWjRDTnJseXhCQm5jYzY3ZC9oeks4eXV0eE5HY2lr?=
- =?utf-8?B?WVhta2d2dTdYbkZzYWRBb1d2SzNXYlhYYSsvM3hYYVJxMzJGV05rMzFVOHBW?=
- =?utf-8?B?Q04yTzVoU1RMei9rSW1UZTdaQUpVN1k1eXFoY3dPR1BOdHlXSFg0SlZXM0xa?=
- =?utf-8?B?Vm1WVzFJZEZSN3FHZ0NaRFlYVXZaNWR0UDZ6bzgydnhxSGxkWVpGdGhUUU1k?=
- =?utf-8?B?RjRiS1FHdU5RTDZyNTgxRitPektVWlR1TzZEOXdpMGRhaFg1R1htSlk5RGtE?=
- =?utf-8?B?Qkt3YjZYZmJieFl1YTBzajJ2SEw5cm42Y3o1Nm9RUEhveDRRNEUrSVYwYlFj?=
- =?utf-8?B?eStTbm0xcFc5Kzg2OFN0N09qUGUvR2F3MzI5ZFhvZHc3c2RLbS9FcHNTaFlo?=
- =?utf-8?B?d2VySEg5Wkt4RjY2V3I4Wkw0dW1vUElBeklVTGhxUDhmMTRtU2lNSGVCd0hp?=
- =?utf-8?B?TWVPaTlpVGFiUHNNUlQwb2NqbjlZaWFYUXZwVzRrV2I3Z0tpK3o2T1ljbXJT?=
- =?utf-8?B?T2l6U2RqVUtvTGtaS3VVMTJQTVp4ZDAvcTMwbDhjU0ErM0JnY0QvZ3J4TkJ0?=
- =?utf-8?Q?Uy0MBOI0KvUxTqUSdvfxuvyEgHzoBf+fiZ2RIVFvUY=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1bbf6ce-393a-4c99-8282-08de18740491
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR03MB6037.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 11:52:50.9788
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sw3GxnLALQK1oXxi5Tqi/4BCoekMPwPWSUw8qYtdD+CMzMpRXfmpBjuBCbj5nyw3ru6SZ2ZxvBKijbxPc/URcFo12o4A/m8mtYT0HWeb/ZYQI5TOKqt0ooG6+GwW/bGd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR03MB6612
+Content-Type: text/plain
 
+On 30/10/25 11:25, Petr Tesarik wrote:
+> On Fri, 10 Oct 2025 17:38:16 +0200
+> Valentin Schneider <vschneid@redhat.com> wrote:
+>
+>> From: Josh Poimboeuf <jpoimboe@kernel.org>
+>>
+>> Deferring a code patching IPI is unsafe if the patched code is in a
+>> noinstr region.  In that case the text poke code must trigger an
+>> immediate IPI to all CPUs, which can rudely interrupt an isolated NO_HZ
+>> CPU running in userspace.
+>>
+>> If a noinstr static call only needs to be patched during boot, its key
+>> can be made ro-after-init to ensure it will never be patched at runtime.
+>>
+>> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+>> ---
+>>  include/linux/static_call.h | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/include/linux/static_call.h b/include/linux/static_call.h
+>> index 78a77a4ae0ea8..ea6ca57e2a829 100644
+>> --- a/include/linux/static_call.h
+>> +++ b/include/linux/static_call.h
+>> @@ -192,6 +192,14 @@ extern long __static_call_return0(void);
+>>      };								\
+>>      ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
+>>
+>> +#define DEFINE_STATIC_CALL_RO(name, _func)				\
+>> +	DECLARE_STATIC_CALL(name, _func);				\
+>> +	struct static_call_key __ro_after_init STATIC_CALL_KEY(name) = {\
+>> +		.func = _func,						\
+>> +		.type = 1,						\
+>> +	};								\
+>> +	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
+>> +
+>>  #define DEFINE_STATIC_CALL_NULL(name, _func)				\
+>>      DECLARE_STATIC_CALL(name, _func);				\
+>>      struct static_call_key STATIC_CALL_KEY(name) = {		\
+>> @@ -200,6 +208,14 @@ extern long __static_call_return0(void);
+>>      };								\
+>>      ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
+>>
+>> +#define DEFINE_STATIC_CALL_NULL_RO(name, _func)				\
+>> +	DECLARE_STATIC_CALL(name, _func);				\
+>> +	struct static_call_key __ro_after_init STATIC_CALL_KEY(name) = {\
+>> +		.func = NULL,						\
+>> +		.type = 1,						\
+>> +	};								\
+>> +	ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
+>> +
+>
+> I think it would be a good idea to add a comment describing when these
+> macros are supposed to be used, similar to the explanation you wrote for
+> the _NOINSTR variants. Just to provide a clue for people adding a new
+> static key in the future, because the commit message may become a bit
+> hard to find if there are a few cleanup patches on top.
+>
 
+I was about to write such a comment but I had another take; The _NOINSTR
+static key helpers are special and only relevant to IPI deferral; whereas
+the _RO helpers actually change the backing storage for the keys and as a
+bonus are used by the IPI deferral instrumentation.
 
-On 30/10/2025 10:30 pm, Borislav Petkov wrote:
-> On Tue, Oct 28, 2025 at 05:22:30PM +0800,niravkumarlaxmidas.rabara@altera.com wrote:
->> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
->> index 39352b9b7a7e..33a9fccde2fe 100644
->> --- a/drivers/edac/Kconfig
->> +++ b/drivers/edac/Kconfig
->> @@ -410,6 +410,16 @@ config EDAC_ALTERA_SDRAM
->>   	  preloader must initialize the SDRAM before loading
->>   	  the kernel.
->>   
->> +config EDAC_ALTERA_IO96B
->> +	bool "Altera I096B ECC"
-> Is this and the other new Kconfig symbols you're adding absolutely needed?
-> 
-> IOW, why can't the driver simply load on that new hw without needing Kconfig
-> symbols at all?
-> 
-> What are they really saving?
-> 
-> Thx.
-> 
-> -- Regards/Gruss, Boris.
+IMO it's the same here for the static calls, it makes sense to mark the
+relevant ones as _RO regardless of IPI deferral.
 
+I could however add a comment to ANNOTATE_NOINSTR_ALLOWED() itself,
+something like:
 
-Hi Boris,
+```
+/*
+ * This is used to tell objtool that a given static key is safe to be used
+ * within .noinstr code, and it doesn't need to generate a warning about it.
+ *
+ * For more information, see tools/objtool/Documentation/objtool.txt,
+ * "non-RO static key usage in noinstr code"
+ */
+#define ANNOTATE_NOINSTR_ALLOWED(key) __ANNOTATE_NOINSTR_ALLOWED(key)
+```
 
-Thanks for your review.
-Your point is absolutely valid — I was initially hesitant to introduce a 
-different flow in the common altera_edac.c driver, so I followed the 
-existing architecture where each ECC device has its own Kconfig entry 
-and corresponding #ifdef blocks in the code.
-
-In terms of savings, this approach mainly avoids compiling code based on 
-Kconfig selection.
-
-If the preferred approach is to detect and handle the new hardware 
-without adding a separate Kconfig symbol, I’ll revise the patch accordingly.
-
-In next version, I also need to address Krzysztof’s review comments 
-regarding the introduction of new ECC device names in the DT bindings.
-
-Thanks,
-Nirav
-
-
-
+> Just my two cents,
+> Petr T
 
 
