@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-880679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F28AC26539
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:24:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5F0C2652D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:21:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80B83B910A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:21:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFDB6347CA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DB32F28F6;
-	Fri, 31 Oct 2025 17:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4869305E26;
+	Fri, 31 Oct 2025 17:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XbNG1Vpl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IoRNMGQx"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F392F6567;
-	Fri, 31 Oct 2025 17:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA1F3054C8
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931293; cv=none; b=knsIAS/EjsWUFEOKGqMY25y9+nsAXkIY1VKWjvz1adgtnXt127tBIVB7IEGB54igP2VH5mErbHynejuQc5YIpjEL1pusfc/PiysCbKHHr+yHQ6F/3aXFR90tWt0auG/CteCYrURPjuktYFhAGRgLaS5IN3lo7bviJr4FCUO0vqo=
+	t=1761931297; cv=none; b=PG/Z9ZEHqbnKmz391vwb7RdFFUeZgbGYQNQcTAx9Uk9mCjD0alTReAbQQNw2tt2FzXeQYX4VEjM61lY2n6q4MB3gVCkXzBDswaZz+EAD5XQ55Pn2LHt2NXSzc3wZn1ZobnqSsydb550uLefEV0VLytEwN4W4W2gRfiJMywMS2NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931293; c=relaxed/simple;
-	bh=ZTJBgB9UC9DeEzZHT0VM2hUv/d1GJVlcINh2TkYBjaM=;
+	s=arc-20240116; t=1761931297; c=relaxed/simple;
+	bh=9dIYlCqSuay+P18dQ0M4/XCMXtFDI35HoGfcLtJV++I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rCfWwQs6eAxSj8akZ/1BuzTyuoEQBFT9A1ufe25Sf1yMFxbnLFID86UGm8fEA61887jtPKCw4C4M1/XgpH/+UpaaXLCWUGQkvBZaGYCR/nkeelRlzvFuH6bjcTPq2DyjIm0yMhib7L5/aw78chun/b99ZK/3blo+PjdEp7WOjq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XbNG1Vpl; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761931292; x=1793467292;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ZTJBgB9UC9DeEzZHT0VM2hUv/d1GJVlcINh2TkYBjaM=;
-  b=XbNG1VplKa74aFQNnoPQvkoNBh2KIguvCKKIkmMIn1hlZvkLsVQPQ37G
-   6VbELUJiTdaRuwDwvc5Crlixwk+ZX4gxqSZO/tmuctB2kYVlS+X4jdn7u
-   +R32AOgNwieqfxg3hnSYPBXZnDcUpbeLNLjUVrcZqYdFVHvQVIkWitLMa
-   ILUqHVMnDh+NMwybngg5EFeP+G7f/OrH+WkhZMDtzE2zj1CChqYQF7ZlJ
-   f8a6G0HHkpvixvVfiNebufNIXS5JrU1U3eYvMK6JviBqzVDUmzrzF7U3/
-   4/bJfCWWagL3X2eBjXj+vOpEq81i0YGszCF8Udr76cnj5rTDHKAxRTwhK
-   A==;
-X-CSE-ConnectionGUID: 5iMICB8aQv6wKp8CM9AhLw==
-X-CSE-MsgGUID: e8euoM1SS26OZCBcEHynLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63300954"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="63300954"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:21:31 -0700
-X-CSE-ConnectionGUID: RCvf1SJQQt+BNMs5gX5x3w==
-X-CSE-MsgGUID: bMPdhYiUTKuIgwfi8jDPsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="217125250"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.52]) ([10.125.110.52])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:21:29 -0700
-Message-ID: <50a8d23c-8c91-467c-9ee4-5894dc31d2f7@intel.com>
-Date: Fri, 31 Oct 2025 10:21:30 -0700
+	 In-Reply-To:Content-Type; b=lrEaQDW2Ko4t8wrlzxnqIfUfcU4bVY/XSSBp1qUwrXYSjtR5RtRNfKguFGmTp6DUTNxWVG/tXTRCUs2YiEdlFEoGCkatkaGWyHMwRsAbxdiRPXbJ+M6Q02qNoxhPvm3BQC58fIFJTMdFt9UYlUk+vUaLb77xcIPj3W9mIo43xgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IoRNMGQx; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-65363319bacso1304782eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1761931294; x=1762536094; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2arCVoySu4BoT6qvWYZ5TCMKdFyAl6i0QIhKt61vYqE=;
+        b=IoRNMGQxaJE7gCHO6SpA5/PCegsQmApO7UECLD8M3+Y731+VqrxG4PVu5py4rj5chA
+         KVigy7MOCQOGOf3W6bghZB0aYXfYrPwI8X/50Qqzh23070ycIm5D8wu/mtzr0+Wv27zm
+         CeT3OdwVHFx3osRQKoMlIHHh6li3gscz/w344=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761931294; x=1762536094;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2arCVoySu4BoT6qvWYZ5TCMKdFyAl6i0QIhKt61vYqE=;
+        b=sVSmKAgxIllC76h2at5bkHSH3VPC0pSymETLZI8hKDciiG2j8hmysiV01K/sC/pjZz
+         9nRxaPvQYXS2pNh829hgy8ttGFkuNCEgVpC/2RYjDff7tQH80clvjI0fJ84QoPUBipDW
+         oZWgA7sJi2OFzdOcohQGEqI8JhxyWASk/f4l0c+8tyi3U7EtiD95697Gc6RA3Lasn4Dl
+         TDJsj5+L0xb0dGuPuSMxaTfdqP5eBk1TKE3bvJtBb8zW2ejxHlDvuhQgxqajJ1xchGax
+         mcck45wFdRTtlWHSAD2HvoqCSa2InMBXSxOECO9a8SayycZL6ACDYBG7JkOX6wl1o9oE
+         KetA==
+X-Forwarded-Encrypted: i=1; AJvYcCVu+JB6vPeh0twyG9iz0Jlt3zfhXZCkPS5lpMVy4aO36JeMcC6Sd3Fipfcu8/kLj6kvgzQbyxxWMe1WAww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKaMbgOWCBR6h6EAci++Ft7/iMjCeA4V9JL+jM7A+0c8gbq3tr
+	6Ed4LEBy7DQY1rdmrKoJ/QxNiOnOjst3zxtSYwQ7e86wvhkZxdUe64thHFLZDNRHqkSWN+DTX+l
+	aynQo
+X-Gm-Gg: ASbGncvzm07x0NsVdxnQjhxf+bWVAs4Gf1H/zRPzuwId8ORuGCIkbhSh9LivW/a3E5a
+	Y26oPw8tz0eGR4Xtgfd7mqsyhulujzd/pOTb+xggRSlR7U+PozaylVsktA1E+0MrYVVTc3A+fYA
+	gOWU9btq4qx8Sbq6dqCl2Q8u0PcDAR87DSH0DOS28rhsNaI5FqRLgMYUNu+T54DtlrPQtNAW950
+	j3nyXLF1dpH8FMpO+YKhat7iNIvjRKXCuTcO7oyCfbwPwXmmMb7YCee7d5TSoPSuL4qwDmtOan0
+	+JKQa7IyDXbmVFSd9kUA+1WmJXoTtwTk+St2c9jY6ZpZdL85vap4v3a7BdF3uFa1Ca8597IeoNJ
+	YP/wqt4w1Sf3AAtCfoRAp5thP5URzaC/pFgHSizMNQHI5soz4/TkyY2YC5EO4SXEGcloap0VjLS
+	QbYG0otXVWcwtZ4X5Ss+bGFbQ=
+X-Google-Smtp-Source: AGHT+IFHV5mqBxfVnLGrK24cHPx0N/RAB4xpvKPnhRbNDbS9+AwnDKl1gfiMXkoDBtzu6gX4xQcp0Q==
+X-Received: by 2002:a05:6808:2184:b0:441:8f74:e95 with SMTP id 5614622812f47-44f9601fa1dmr1922372b6e.63.1761931294049;
+        Fri, 31 Oct 2025 10:21:34 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-44f9d9a4cbfsm500332b6e.24.2025.10.31.10.21.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 10:21:33 -0700 (PDT)
+Message-ID: <3a9185ef-c212-41bc-978b-0dea75a86e7b@linuxfoundation.org>
+Date: Fri, 31 Oct 2025 11:21:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,111 +80,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 9/9] x86/cpu: Enable LASS by default during CPU
- initialization
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, "H . Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>,
- "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
- David Woodhouse <dwmw@amazon.co.uk>, Sean Christopherson
- <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Vegard Nossum <vegard.nossum@oracle.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Randy Dunlap <rdunlap@infradead.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-efi@vger.kernel.org
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-10-sohil.mehta@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] usb: core: prevent double URB enqueue causing list
+ corruption
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Greg KH <gregkh@linuxfoundation.org>
+Cc: vsshingne <vaibhavshingne66@gmail.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20251031134739.222555-1-vaibhavshingne66@gmail.com>
+ <2025103118-smugness-estimator-d5be@gregkh>
+ <6c81d455-a4f2-4173-be72-9d77728378c1@rowland.harvard.edu>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251029210310.1155449-10-sohil.mehta@intel.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <6c81d455-a4f2-4173-be72-9d77728378c1@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/29/25 14:03, Sohil Mehta wrote:
-...
-> +static __always_inline void setup_lass(struct cpuinfo_x86 *c)
-> +{
-> +	if (cpu_feature_enabled(X86_FEATURE_LASS)) {
-> +		/*
-> +		 * Legacy vsyscall page access causes a #GP when LASS is
-> +		 * active. However, vsyscall emulation isn't supported
-> +		 * with #GP. To avoid breaking userspace, disable LASS
-> +		 * if the emulation code is compiled in.
-> +		 */
-> +		if (IS_ENABLED(CONFIG_X86_VSYSCALL_EMULATION)) {
-> +			pr_info_once("x86/cpu: Disabling LASS due to CONFIG_X86_VSYSCALL_EMULATION=y\n");
-> +			setup_clear_cpu_cap(X86_FEATURE_LASS);
-> +			return;
-> +		}
-> +
-> +		cr4_set_bits(X86_CR4_LASS);
-> +	}
-> +}
-This breaks two rules I have:
+On 10/31/25 08:13, Alan Stern wrote:
+> On Fri, Oct 31, 2025 at 02:59:07PM +0100, Greg KH wrote:
+>> On Fri, Oct 31, 2025 at 07:17:39PM +0530, vsshingne wrote:
+>>> Prevents the same URB from being enqueued twice on the same endpoint,
+>>> which could lead to list corruption detected by list_debug.c.
+>>>
+>>> This was observed in syzbot reports where URBs were re-submitted
+>>> before completion, triggering 'list_add double add' errors.
+>>>
+>>> Adding a check to return -EEXIST if the URB is already on a queue
+>>> prevents this corruption.
+>>
+>> This text makes no sense at all, it does not describe what this patch
+>> does in any way.  Please do not use AI to generate patches.
+> 
+> In fact, the patch doesn't do _anything_ (except maybe change some
+> whitespace).  And it does not apply to any recent kernel source.
+> 
 
- 1. Indent as little as practical
- 2. Keep the main code flow at the lowest indentation level
+Agree - this patch does nothing. Looks like the patch isn't sent
+to right people either.
 
-IOW, this should be.
+This person happens to be in the mentorship program - I will make
+sure they won't send such patches in the future.
 
-static __always_inline void setup_lass(struct cpuinfo_x86 *c)
-{
-	if (!cpu_feature_enabled(X86_FEATURE_LASS))
-		return;
-...
-
-But I can fix that up when I apply this. I think it's mostly ready.
-
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+thanks,
+-- Shuah
 
