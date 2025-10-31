@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-880922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0B8C26E08
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:18:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5F2C26E0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F4B188E20E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:18:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2BC14F3648
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407E3327205;
-	Fri, 31 Oct 2025 20:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9379D327205;
+	Fri, 31 Oct 2025 20:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="RhUgj4wm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OQxt5+1i"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J6dY3Cm4"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3AE18BC3D;
-	Fri, 31 Oct 2025 20:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4062E11A6;
+	Fri, 31 Oct 2025 20:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761941875; cv=none; b=fE8KbZCvIJG2ZJyR7j8wUUB9wUnu1ShZA+tHsg6IOuxzJlHRIUjMsPcpNcZmIcJ1bTXb8UUXH0xD8lAYX/SQgaGb0yCMSCcuvlC2uCAnkojS9zqawzWNEKVQHEXm2LANN2LUuwgR6YVUGknC89u0xbbKYHOEftwvFSxqnuexa7g=
+	t=1761941882; cv=none; b=pEcYVBsvgdALma9gK7JEgp1qStGifJ3tKR7QqgrsGZUvSpItpICU6GMmMG9IWe3SiWJkDoXvpXVXe4pEX8TpEP9Pc3p1oRO8EUIrsgTRbdLxrHw0dBkQMyPP/H5qLyrclL/AfzZlDOHgl2dHL4fjAKHeZl/+vJQBP0BfHH7+KyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761941875; c=relaxed/simple;
-	bh=Bz0yzeZQKrfsxOHq72XZfOEz//gtiTMA6VjTcyy/jws=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QN4GmGnXiNyf3vJVr59vzlh93OVr15pY1dIYI6shaxS8ts7GHJfba1v+QVYgrEffUSc9fEE6OnKhN2AU6LKanxm4yVdKkGu3+W7KocqTLMAt4hYmqETbTLZDldUiOQEB1DbjN5cIvnvwxD5sqlGLIOJFqg/nIJM+rxDbQ4GMA2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=RhUgj4wm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OQxt5+1i; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 976F0EC016E;
-	Fri, 31 Oct 2025 16:17:50 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Fri, 31 Oct 2025 16:17:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1761941870; x=1762028270; bh=Ld
-	g6f8Dfob7yJj01FzUu/RFUP9hmk1XczWYXSzoAcQM=; b=RhUgj4wmFcK0UZmYnz
-	NOvr7fBdUMUiophWN8d3w+DmE3QlpQCPDM1TO347k9o9Vg4p70KwFF8TQ45/QJer
-	nGl8ySlsiPjjqAAq0bRxEfJi/3AxKqPld3dDWvXOnVomvE79x1WJwnj+ePcYPiU8
-	l4yNTaGEVQ8VNWBR3w6ERb/MOuvp/wU7RlwWLBK+zJNnDvrbqyogFKJ+IqBP+Zhy
-	NgxcYqnlFhIfL6A0hDMq/IJj8K+3dKQt6jZUMNR7LEcEqpgl4Cy4gGcQV4+iV/fb
-	Y+Y2wgUQNSOwZEWBx/Wft84Pvd/AWOYBeqEffXK/xUWAhjQ+m/S1l6MqSaYCkNeG
-	2MYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1761941870; x=1762028270; bh=Ldg6f8Dfob7yJj01FzUu/RFUP9hm
-	k1XczWYXSzoAcQM=; b=OQxt5+1i0PpxQb82WU6e6cv64I+6BXz7Exeu1MRtXRG2
-	XTZBG7ei/q2IERboR+Fm6ecQp0/bnpmr/h+alHZb5K38m3c6Uf81yCvlMyfnu4Zi
-	fWop9zpjts6m4Pg2wVU3jEBAA6YEJUDigv+qdaMY4Omi3AgUJGeRE53NoCKUwPIl
-	IWCj/Rt5CkrseT/fTTfKjVHTBm/VjQNSCo/cr3l23NWYPe6gbi9pJDS8hpJ04hiY
-	j6Ucw3L4PIMvhKRefodn+9ypgbOBQO8jf7p1icv9831Ei29AiJ1xzOUs6YdbfAI3
-	mWV2q2VFmKOXzGiArn7qS+EYdPfFSVhoJsgg9T4ixg==
-X-ME-Sender: <xms:bhkFaeGmv_2HIPfzz6iwGPs2r2km3agAG99mCvHxpOUfrJ91s4-JSw>
-    <xme:bhkFadJBFAknOkM8f3sj1XaHtui5SHki81m8VwqBtJwgMW8PLNaZam2Rn4u9wmIb7
-    pVZhdjmRQAFQwjC2SUoUB7HgfNzQxHqZU5Az3-rHCqcM2Fi4Jwv>
-X-ME-Received: <xmr:bhkFaSnom4eEdsw6DmkBfA-3KWZfakaGX3ZDHjup4dJ4dZLGrA05dBnoQLs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedtgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucghihhl
-    lhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepieefgeeileehheeuhefghefhgfehvdfgtdeiffeuhfdvvdekhefhueeuudfffeel
-    necuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrlhgvgiesshhhrgiisghothdrohhrghdpnhgs
-    pghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrg
-    hlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehkvhhm
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmrghsthhrohesfhgs
-    rdgtohhm
-X-ME-Proxy: <xmx:bhkFaVT9WLIe-tXb2qXfJ3qlsG5eGCzu7eLHW__THJ6THLeRJK_IEA>
-    <xmx:bhkFaUJo2MwMx_QEblqPDTMJr1tV_FaqIxtqfoiq4AyZZxVThfkvzQ>
-    <xmx:bhkFabCW1BmWvCJXbmRAJjNDjZFFU6Zxaoe2q9HRQUG2j6hJexOKng>
-    <xmx:bhkFadDbOCyYHwPkBwzU_OOWaQpNWsF33Dr-Mcn82saPsdg7uqkO0Q>
-    <xmx:bhkFaVUhBt_jq2iVeG1qV9gAY6MU9P38Y57m5VQHwpu_pHiJKbPtExTB>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 31 Oct 2025 16:17:49 -0400 (EDT)
-Date: Fri, 31 Oct 2025 14:17:47 -0600
-From: Alex Williamson <alex@shazbot.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, amastro@fb.com
-Subject: [GIT PULL] VFIO update for v6.18-rc4
-Message-ID: <20251031141747.1fd01a0a@shazbot.org>
+	s=arc-20240116; t=1761941882; c=relaxed/simple;
+	bh=ANfjRKTDBumqVnzSGxMUtE0u60fnIvXvMXynn9e7B9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kudGC/+WKdyY7Hx+lujHbhu23Bv6ZwNo7kMKxoAAEsadGiTexkb82x0Tn+C7CrXxjGZFghoC92AaJvfTdWWV+HKYwyuvF6aiajUfIrZtwsqOyJ/mzfzsb84cl5oB1LJdidrtdo6q4VKL1aYXXOqxNvvMaF+Gt8JE9Kz+zsGoSIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=J6dY3Cm4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hvvj1olFiGUWaOfStpqkjlz5LPohc8dQ3HsHoNUMM4U=; b=J6dY3Cm4NJlIrMAVxI42gQ13es
+	BztzBkksn5oaPR37CxVeBRDEav3vPen/ICIF9L6IALzLwIVlyevU1ZKM570rVz6Mf4/AGu+JU+evH
+	pUiuxxl71VgNdUw0/Z1BHOGPww34p2FZwc7/tOYCD8D2qNkqdmpF0qVp8fS61z9YGRgWWDtd+/20H
+	n14jZhXi5QMEZrXu54hw1iB4fSwkfLyfQ9yvcYMxSMBY9IpbSBt+MsSzky06zzjcItHu0msabf4Qi
+	N+hZD54DWrPcjcewgfSsjN1/y0Y3Oy8uevUz/IO5JjqSpjz15VRmUXORZvib1DxRbZuhUwW3TTIqN
+	qgE8b5Tw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEvZJ-0000000BbrZ-1NoC;
+	Fri, 31 Oct 2025 20:17:53 +0000
+Date: Fri, 31 Oct 2025 20:17:53 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: touch up predicts in putname()
+Message-ID: <20251031201753.GD2441659@ZenIV>
+References: <20251029134952.658450-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029134952.658450-1-mjguzik@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Linus,
+On Wed, Oct 29, 2025 at 02:49:52PM +0100, Mateusz Guzik wrote:
+> 1. we already expect the refcount is 1.
+> 2. path creation predicts name == iname
+> 
+> I verified this straightens out the asm, no functional changes.
 
-The following changes since commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
+FWIW, I think I know how to get rid of atomic there.  Doesn't
+invalidate your patch...
 
-  Linux 6.18-rc3 (2025-10-26 15:59:49 -0700)
+Look:
 
-are available in the Git repository at:
+0) get rid of audit_reusename() and aname->uptr (I have that series,
+massaging it for posting at the moment).  Basically, don't have
+getname et.al. called in retry loops - there are few places doing
+that, and they are not hard to fix.
 
-  https://github.com/awilliam/linux-vfio.git tags/vfio-v6.18-rc4
+1) provide getname_alien(), differing from plain getname() only
+in the lack of audit_getname() call.
 
-for you to fetch changes up to de8d1f2fd5a510bf2c1c25b84e1a718a0f0af105:
+2) have io_uring use it for references that might be handled in
+a worker thread.
 
-  vfio: selftests: add end of address space DMA map/unmap tests (2025-10-28 15:54:41 -0600)
+3) provide something like
 
-----------------------------------------------------------------
-VFIO update for v6.18-rc4
+struct filename *take_filename(struct filename **p)
+{
+	struct filename *res = no_free_ptr(*p);
+	audit_getname(res);
+	return res;
+}
 
- - Fix overflows in vfio type1 backend for mappings at the end of the
-   64-bit address space, resulting in leaked pinned memory.  New
-   selftest support included to avoid such issues in the future.
-   (Alex Mastro)
+and have places like io_mkdirat() switch from
+        ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
+	 
+	req->flags &= ~REQ_F_NEED_CLEANUP;
+to
+	ret = do_mkdirat(mkd->dfd, take_filename(&mkd->filename), mkd->mode);
 
-----------------------------------------------------------------
-Alex Mastro (5):
-      vfio/type1: sanitize for overflow using check_*_overflow()
-      vfio/type1: move iova increment to unmap_unpin_*() caller
-      vfio/type1: handle DMA map/unmap up to the addressable limit
-      vfio: selftests: update DMA map/unmap helpers to support more test kinds
-      vfio: selftests: add end of address space DMA map/unmap tests
+Voila - no need for atomic.  Prior to audit_getname() it's going to be 1;
+after that only the thread that has called audit_getname() is going to see
+the address of the object (and all accesses are going to be process-synchronous).
+IOW, it becomes a plain int refcount.  Sure, we still want that prediction there,
+but the atomicity cost is no more...
 
- drivers/vfio/vfio_iommu_type1.c                     | 173 +++++++++++++--------
- .../testing/selftests/vfio/lib/include/vfio_util.h  |  27 +++-
- tools/testing/selftests/vfio/lib/vfio_pci_device.c  | 104 ++++++++++---
- .../testing/selftests/vfio/vfio_dma_mapping_test.c  |  95 ++++++++++-
- 4 files changed, 308 insertions(+), 91 deletions(-)
+I'll post the ->uptr removal series tonight or tomorrow; figuring out the right
+calling conventions for getname_alien() is the main obstacle for (1--3) ATM...
 
