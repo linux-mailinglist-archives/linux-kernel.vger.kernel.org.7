@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-880315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECBFC25796
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:10:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470D9C2571B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E1644F6FAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98651562BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073A723F417;
-	Fri, 31 Oct 2025 14:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7AD34C12D;
+	Fri, 31 Oct 2025 14:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFJrYsXb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fz+gedH/"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5952A2512E6
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C068E22A4D6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919533; cv=none; b=sbMzNoJ81JyGtmsebkqXb2CHBgbnAQXjrihd9Ebx2v6+rjG4gAjhhJvW1KR7YBAktj4GSFxGdcHWv+WkbRUWYXcsC8b+4Z2iQrIbT6p2ENXwoc9Aqrvm8ZHxc5kXjxBdUcl+mTsu6c6n18be44UZ34I8pde9WJ4tlNY0hp9jhz0=
+	t=1761919535; cv=none; b=OPtFZQfOvJthehS/BC8yElPi0TJnf7VqioNpHwidK7kfsZedzzh7+yADA/8DaS5LzRqUIeI6ZVWD6gWXva1Kz2iOFKftOpAPC4tg72X8khe4VrfKOhQOLdVp28u0+l/mcdR2M8PS1XRSFYt6Q5HxWUTPSJ/B+9YMxKPc5YJIcGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919533; c=relaxed/simple;
-	bh=uj/ZlfFSuGh87bLUZBain32EiwylAIzOLbNNPboS71c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GF5HDToOtK57RBDkw7IBlxRLH3nSRXb7D5O+QSQxo3NKskw9zXyFIn53glUKlKraL4n8IqPby/Q8Dcyv5VSjsH9ePgFnozm+ceJH2CjRGB/lZGWyF63O5tvCExxFTgfsK3xRDsJ4cm8mu4/Ub+SPUmaOkpXWAaR2VLGEDDDRWD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFJrYsXb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28608C4CEFD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761919533;
-	bh=uj/ZlfFSuGh87bLUZBain32EiwylAIzOLbNNPboS71c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UFJrYsXbqrOJNvjxLmImQz4gJ+MWtlDo5SyX6Oc0Ool0gh13fHTVQpPuML3GLF74v
-	 WKl6J4HtDo1hfwREpyz0F7IwSaYUfzVB8neaNmYVpHHciGdZdO193RZ/XF+E7VJS5T
-	 AyOg7qnZBsZCj5q80JaOYlTBx2qeENWa5cfI7wYObFhv8C8V1bZ5oIambHR1edFOjZ
-	 to+dLqSNQCgtc78NR0xYaXuBOaM+DAlzmsnGePsEyRPOzz7p7HDnHrQlMs6rvyfYpi
-	 GAjx6SnSA2SiQs4k1RfgwbkDLfZyyaJNN+hC/Lk/D1V1ns2x/6KQbC5iWWY++6V+b0
-	 LVlCHCMThzVig==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57992ba129eso3022560e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:05:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqI15OL51TK2hJDUhDBvm4agii97l6lHW14aKsRv09V3D0TLfGhUoSzPAJIXUSofexmD800P/iIIUs9FQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWiMPEu/sZqw6jQta9k7w/z7YaJ1ltjrTMQqLZKvCu54XSTx6h
-	Lu7sa8jeCoy/0eZj1Wkg1axJoA3S1TrS2JAC+cFXLJfSV2i50jjA1DtKIGrdhPgdKB2j8pHnyPS
-	ZMb9zpVcqnW8pO4CmgKz9a3gbjZ/GW1o=
-X-Google-Smtp-Source: AGHT+IHxedjSkvxKkv90NCDn2L1W+uzOFU/ki2EFNLnaSTgc3pXi1eADnpmiAPba+uDgY3ddk1bvQQvTu14wKMJoNJQ=
-X-Received: by 2002:a05:6512:4019:b0:592:f41d:4dae with SMTP id
- 2adb3069b0e04-5941d511d69mr1308147e87.3.1761919531454; Fri, 31 Oct 2025
- 07:05:31 -0700 (PDT)
+	s=arc-20240116; t=1761919535; c=relaxed/simple;
+	bh=zzVlqW9hueD8hoeNeOTWFaheBheTqIFRhvAiJ5OyXvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vx+iBVsCn/jO56qzGjsQcWA5fQ+ZOu+EWuTDUwyaU2OuqrRGLpLLLVqzsPrGLQG38cW7d2v8hMTRUcmVIx0UyTWk6PRhBsRPpHNxR7m7gavgURi/hVJ2XYY+QZdHo8JTBorov8q9JpPEp2xZwnwQt+5rTJgoHicu5yKu2kgvWYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fz+gedH/; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 8A9A84E41438;
+	Fri, 31 Oct 2025 14:05:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 49A0B60704;
+	Fri, 31 Oct 2025 14:05:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 52D671181802A;
+	Fri, 31 Oct 2025 15:05:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761919528; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=MN4LGdyaF3Stts7YNtw3SrpLzrqRulD1HBAMpz3BSCw=;
+	b=fz+gedH/0XIjpPd9R60mnvB89JedvPNybQstaMf83GBkQoB7683iJRPxXblxf+B525AxMm
+	NKlJH+AwNarLLohcqmZotsvviPKHt1DhfmYuxCOHd4am3+fSL8vyPx9TGq9oUO2MGYQU9q
+	4eirpZfcpgMkjHevamAoxVhZFvJqK3sVi597uAMoaeKvXBMlQbkkoVeFnHACZDF4jTKPo4
+	M4cU3pxAC7qjr/ZggkShk/1edkyiuX0EcQOS1oHR61QOvYiqifUu/4Ww/UoFPmh/u4m77j
+	q5sSkfqQScsGxVdGPVDtpCVYiSRY5nmj8XbPoMPKH8ATlRDWldDIbQzSwVkDeg==
+Message-ID: <d7ebdab4-64ab-472d-9bb8-87fa30092c4d@bootlin.com>
+Date: Fri, 31 Oct 2025 15:05:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031103858.529530-23-ardb+git@google.com> <20251031103858.529530-31-ardb+git@google.com>
- <20251031134909.00006bf3@huawei.com> <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
-In-Reply-To: <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 31 Oct 2025 15:05:19 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com>
-X-Gm-Features: AWmQ_bl0cRHww67O1TA2qm0ejud4NB4PHqq4Dz-q88By71LxnM0QIuZZvhBuGWw
-Message-ID: <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com>
-Subject: Re: [PATCH v4 08/21] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
- guard API
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, ebiggers@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: dsa: microchip: Fix a link check in
+ ksz9477_pcs_read()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Tristram Ha <tristram.ha@microchip.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aQSz_euUg0Ja8ZaH@stanley.mountain>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <aQSz_euUg0Ja8ZaH@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 31 Oct 2025 at 14:52, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Fri, 31 Oct 2025 at 14:49, Jonathan Cameron
-> <jonathan.cameron@huawei.com> wrote:
-> >
-> > On Fri, 31 Oct 2025 11:39:07 +0100
-> > Ard Biesheuvel <ardb+git@google.com> wrote:
-> >
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > Before modifying the prototypes of kernel_neon_begin() and
-> > > kernel_neon_end() to accommodate kernel mode FP/SIMD state buffers
-> > > allocated on the stack, move arm64 to the new 'ksimd' scoped guard API,
-> > > which encapsulates the calls to those functions.
-> > >
-> > > For symmetry, do the same for 32-bit ARM too.
-> > >
-> > > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > ---
-> > >  lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
-> > >  lib/crc/arm/crc32.h        | 11 ++++-------
-> > >  lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
-> > >  lib/crc/arm64/crc32.h      | 16 ++++++----------
-> > >  4 files changed, 20 insertions(+), 39 deletions(-)
-> > >
-> > > diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
-> > > index 63441de5e3f1..aaeeab0defb5 100644
-> > > --- a/lib/crc/arm/crc-t10dif.h
-> > > +++ b/lib/crc/arm/crc-t10dif.h
-> >
-> > >  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
-> > > @@ -20,21 +19,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
-> > >  static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
-> > >  {
-> > >       if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
-> > > -             if (static_branch_likely(&have_pmull)) {
-> > > -                     if (likely(may_use_simd())) {
-> > > -                             kernel_neon_begin();
-> > > -                             crc = crc_t10dif_pmull64(crc, data, length);
-> > > -                             kernel_neon_end();
-> > > -                             return crc;
-> > > -                     }
-> > > +             if (static_branch_likely(&have_pmull) && likely(may_use_simd())) {
-> > > +                     scoped_ksimd()
-> > > +                             return crc_t10dif_pmull64(crc, data, length);
-> >
-> > >               } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
-> > >                          static_branch_likely(&have_neon) &&
-> > >                          likely(may_use_simd())) {
-> >
-> > I briefly thought this was a functional change but it's not because
-> > of may_use_simd() being something that isn't going to change between
-> > the two evaluations.
-> >
-> > Would it hurt at all to pull that up to be
-> >         if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE && likely(may_use_simd())) {
-> >                 if (static_branch_likely(&have_pmull)) {
-> >                         scoped_ksimd()
-> >                                 return crc_t10dif_pmull64(crc, data, length);
-> >
-> >                 } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
-> >                            static_branch_likely(&have_neon)) {
-> >                 ...
-> >
-> > ?
-> >
->
-> Yeah that would be a reasonable cleanup, I guess.
+Hi Dan,
 
-Actually, looking more closely, that would result in may_use_simd()
-being evaluated even when the static keys are set to false, given that
-the compiler is unlikely to be able to figure out by itself that
-may_use_simd() has no side effects.
+On 31/10/2025 14:05, Dan Carpenter wrote:
+> The BMSR_LSTATUS define is 0x4 but the "p->phydev.link" variable
+> is a 1 bit bitfield in a u32.  Since 4 doesn't fit in 0-1 range
+> it means that ".link" is always set to false.  Add a !! to fix
+> this.
+> 
+> Fixes: e8c35bfce4c1 ("net: dsa: microchip: Add SGMII port support to KSZ9477 switch")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Interesting issue. I was able to confirm that your patch is
+correct by testing on ksz9477 (p->phydev.link stays at 0 no matter
+what without this fix), but I was wondering why things weren't
+broken even with this bug.
+
+The first thing is that this path is only taken when using 1000BaseX
+on that port. I've tested with 1000BaseX, and I'm still getting link
+up. That's because we don't do anything at all with p->phydev.link.
+
+The "val" value is returned, and interpreted by the pcs-xpcs.c driver,
+who correctly uses "!!(val & BMSR_LSTATUS)", reports the link state to
+phylink, and link shows as up/down as expected.
+
+Looking at the code, it seems that p->phydev is almost completely useless,
+and is merely used to store the current speed/link/duplex settings.
+
+So all in all your patch is correct and can be merged, but it doesn't
+fix a real bug, and the long term thing to do would simply be to get
+rid of p->phydev...
+
+Maybe someone from Microchip can comment on that and why we have that
+p->phydev, and can we safely remove that ? We could replace it with
+3 fields in ksz_port : link, speed and duplex.
+
+Maxime
+
+> ---
+> This is from a new static checker warning Harshit and I wrote.  Untested.
+> 
+>  drivers/net/dsa/microchip/ksz9477.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
+> index d747ea1c41a7..cf67d6377719 100644
+> --- a/drivers/net/dsa/microchip/ksz9477.c
+> +++ b/drivers/net/dsa/microchip/ksz9477.c
+> @@ -244,7 +244,7 @@ static int ksz9477_pcs_read(struct mii_bus *bus, int phy, int mmd, int reg)
+>  				p->phydev.link = 0;
+>  			}
+>  		} else if (reg == MII_BMSR) {
+> -			p->phydev.link = (val & BMSR_LSTATUS);
+> +			p->phydev.link = !!(val & BMSR_LSTATUS);
+>  		}
+>  	}
+>  
+
 
