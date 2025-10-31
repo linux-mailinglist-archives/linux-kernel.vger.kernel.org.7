@@ -1,115 +1,153 @@
-Return-Path: <linux-kernel+bounces-879853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F26DC243D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:47:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8359EC243D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:47:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 466364F068D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:46:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A2E14EB16F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9931E9B3D;
-	Fri, 31 Oct 2025 09:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A08333424;
+	Fri, 31 Oct 2025 09:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="hWhP5c6p"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UheooJD3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B8F283FDD;
-	Fri, 31 Oct 2025 09:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7028A1E9B3D;
+	Fri, 31 Oct 2025 09:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761903989; cv=none; b=k2gO+zvuHbgqfOyIoHTpdqJD3LNiUBT7ZNuvja5Wg5QuqLdWNtzj0y4nPrWbNP9OKbQUv58lO/ZBRzn5fKMhSKdDRm5zj/BYc1XIHWaoMAcIIpjY2+mu9c2b2vgYrxn4UfVjVDEzgygOJ5DCH+qLk5dOibBakEImgJkEunoBdak=
+	t=1761904016; cv=none; b=UK5JRgkV+Rdbzjs08dhKhbTFqTx24XFmc/ndcFt1YTwW953fO7QQ3NPhxA4aaYOYr9OrlzzieoHHXqipFlkEpVoX6ziXJCPU4op/lvktfphWw5lzNceHMwA8JrYLiGViamIlwM3xqeJ3A3y3NbWQJASady2pw6uTnlqNG3qs6Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761903989; c=relaxed/simple;
-	bh=MCEVVTR+IDNll82YXpubf/nlMfQ+KMZBMAj8dhvv5Iw=;
+	s=arc-20240116; t=1761904016; c=relaxed/simple;
+	bh=2eMlBgwX73pe9RAiAfHmesRjr+Xow2HzEmR6TjqXqSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/DzGXgIorxMmmwv/leeQw9RUVYu3OGra6JPhKJctG0AzqimXxaC6JyuZaT8sTiB5wkxOC8x7Vp+0Dt7EB+ZYM5SFSCknUMwi/zBrY/nAmHlRBCTtKYF0b3pZlQesdawkOD5wJYNvOzYSml2BDWg0qfK0buvdZtMjX+rtyMzBmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=hWhP5c6p; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=B1PKOuO0OsC5V4PgCIPFKkYiextAr0fyxviZCbND01Y=; 
-	b=hWhP5c6p7g5zheiRb5trI0oLXlW8YDKKQbF1cZAAcMkjzKSSUO4WB1xlKP0T7mL3Zm8sRc+9g1d
-	ZNsEOYbPJbo5XcTHRQ4L6u/fVpoDrBlpVy3s2LlbiOO7GYQ27YupjIdFB8FDOlxbyTxflgJNw2Mb9
-	Ol5T3rR3YhHeEb5oSvya3CYhaFeLwsQrevdiBT2YSG2M9OHe8oAfFRnNemvBJiVTYqpHTz1yiL1Ey
-	oWlvnKM2g3l2/SFA5/zSBZxTPv325Djj3+XJxS1lbybKVnoRjDvw48PJaUb9w1+ueVZnLGX3RaY2J
-	QLP+cCmHdjkgIArRTR8R6y6+aTUDMuFrZMDw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vEli8-00H1ef-0E;
-	Fri, 31 Oct 2025 17:46:21 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 Oct 2025 17:46:20 +0800
-Date: Fri, 31 Oct 2025 17:46:20 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: T Pratham <t-pratham@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Manorit Chawdhry <m-chawdhry@ti.com>,
-	Kamlesh Gurudasani <kamlesh@ti.com>,
-	Shiva Tripathi <s-tripathi1@ti.com>,
-	Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-	Vishal Mahaveer <vishalm@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: aead - Add support for on-stack AEAD req
- allocation
-Message-ID: <aQSFbEdedID5f5B8@gondor.apana.org.au>
-References: <20251022171902.724369-2-t-pratham@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERSi9nySFiQaAx9/A0Qful8mEnEhojKRpAU5c9RbyGaB5ybrxFFT969jIT8kOKfhLVDIXIR2VNpU0mORu3AB3kj3390Yk3zDfwCteR13dODc5ym9VIzQ8pVPOaHTxjIpOca+wGjrVAEEnd2HfoEW0/j9JdjjQkV/2IQhldebAl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UheooJD3; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761904015; x=1793440015;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2eMlBgwX73pe9RAiAfHmesRjr+Xow2HzEmR6TjqXqSY=;
+  b=UheooJD3raSfEj9nkVon/uD67uSbkM+Be8BAWqjbvJFcYuVBjW6yhEIQ
+   Uiyo5wEi5K4nwISWfzlywY6kfKbq2Fe1OaFWEbE2+saT3rwQ9ZY0EqeV/
+   trVcN8ZURvsuGEHdb4dz6kXDxYmT/3ZA548/U1YgyBNeLf6yJQ3A+6RED
+   KNeUO4jGHKy7GwyPzyWF2y/HSQK2en2D1rP9V9gI5yi4gax0LRLYS9305
+   nS8VddtWwpS2TxyYGCbX1p1sVUIkDNnYgHHnD0Er9ZnpSlNhwtSHuXONa
+   ANay/rpdcHJj/+IS531ZqQz8wVMXxHBvglRhQmeeHpxcJsNyuf5Rza0zr
+   w==;
+X-CSE-ConnectionGUID: vmibVxc7SGqhB8RkucyWcQ==
+X-CSE-MsgGUID: 53e7CBsuR3mrFT1GpVDtsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67901001"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67901001"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:46:54 -0700
+X-CSE-ConnectionGUID: NU+JcNjpT7W+uY91AWHlcA==
+X-CSE-MsgGUID: 8Mpc5cneR4OWCfngFJAIoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="216850790"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:46:51 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEliX-00000004E91-1gch;
+	Fri, 31 Oct 2025 11:46:45 +0200
+Date: Fri, 31 Oct 2025 11:46:44 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 03/10] software node: allow referencing firmware nodes
+Message-ID: <aQSFhHB3txNJ-8uc@smile.fi.intel.com>
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
+ <aQMy00pxp7lrIrvh@smile.fi.intel.com>
+ <CAMRc=MdP58d=o7ZL4bAdsaYwzrs6nJo3bhS7Jf1UkDNwPOnAsg@mail.gmail.com>
+ <aQRyFSHWzccTPa3M@smile.fi.intel.com>
+ <CAMRc=McT+Q8ZVk9_HTyWd6uS0OoP92E_phwef7CDyDVeNbJCqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251022171902.724369-2-t-pratham@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McT+Q8ZVk9_HTyWd6uS0OoP92E_phwef7CDyDVeNbJCqA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 22, 2025 at 10:48:42PM +0530, T Pratham wrote:
-> This patch introduces infrastructure for allocating req objects on the
-> stack for AEADs. The additions mirror the existing sync skcipher APIs.
-> This can be used in cases where simple sync AEAD operations are being
-> done. So allocating the request on stack avoides possible out-of-memory
-> errors.
-> 
-> The struct crypto_sync_aead is a wrapper around crypto_aead and should
-> be used in its place when sync only requests will be done on the stack.
-> Correspondingly, the request should be allocated with
-> SYNC_AEAD_REQUEST_ON_STACK().
-> 
-> Similar to sync_skcipher APIs, the new sync_aead APIs are wrappers
-> around the regular aead APIs to facilitate sync only operations. The
-> following crypto APIs are added:
->  - struct crypto_sync_aead
->  - crypto_alloc_sync_aead()
->  - crypto_free_sync_aead()
->  - crypto_aync_aead_tfm()
->  - crypto_sync_aead_setkey()
->  - crypto_sync_aead_setauthsize()
->  - crypto_sync_aead_authsize()
->  - crypto_sync_aead_maxauthsize()
->  - crypto_sync_aead_ivsize()
->  - crypto_sync_aead_blocksize()
->  - crypto_sync_aead_get_flags()
->  - crypto_sync_aead_set_flags()
->  - crypto_sync_aead_clear_flags()
->  - crypto_sync_aead_reqtfm()
->  - aead_request_set_sync_tfm()
->  - SYNC_AEAD_REQUEST_ON_STACK()
-> 
-> Signed-off-by: T Pratham <t-pratham@ti.com>
-> ---
->  crypto/aead.c         | 19 ++++++++++
->  include/crypto/aead.h | 87 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 106 insertions(+)
+On Fri, Oct 31, 2025 at 10:00:37AM +0100, Bartosz Golaszewski wrote:
+> On Fri, Oct 31, 2025 at 9:24 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Oct 30, 2025 at 04:17:48AM -0700, Bartosz Golaszewski wrote:
 
-Patch applied.  Thanks.
+...
+
+> > But first of all, your series doesn't compile AFAICS:
+> >
+> > drivers/reset/core.c:981:6: error: variable 'ret' is used uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninitialized]
+> >   981 |         if (IS_ERR(rgpio_dev->swnode))
+> >       |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/reset/core.c:1001:9: note: uninitialized use occurs here
+> >        1001 |         return ret;
+> >             |                ^~~
+> > drivers/reset/core.c:981:2: note: remove the 'if' if its condition is always false
+> >   981 |         if (IS_ERR(rgpio_dev->swnode))
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >   982 |                 goto err_put_of_node;
+> >       |                 ~~~~~~~~~~~~~~~~~~~~
+> > drivers/reset/core.c:905:13: note: initialize the variable 'ret' to silence this warning
+> >   905 |         int id, ret, lflags;
+> >       |                    ^
+> >       |                     = 0
+> > 1 error generated.
+> 
+> You're not wrong but for the record: it builds fine for me with
+> aarch64-linux-gnu-gcc 14.2 for some reason so I didn't notice it. I'll
+> fix it.
+
+GCC is not _the_ compiler nowadays. And building with `make W=1` should be a good
+practice for subsystem maintainers :-)
+
+...
+
+> > So, but to the topic
+> >
+> > I have applied this and get the only error as per above
+> >
+> >  (const struct software_node_ref_args) {                                \
+> >  -       ._node = _ref,                                          \
+> >  +       .swnode = _Generic(_ref, const struct software_node *: _ref, default: NULL), \
+> >  +       .fwnode = _Generic(_ref, struct fwnode_handle *: _ref, default: NULL), \
+> >
+> 
+> That works, thanks for the idea.
+
+You're welcome!
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+With Best Regards,
+Andy Shevchenko
+
+
 
