@@ -1,208 +1,131 @@
-Return-Path: <linux-kernel+bounces-880587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53534C26171
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:24:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB502C2617B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:24:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492AC1B20C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DDFB1B22C5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BE92FD684;
-	Fri, 31 Oct 2025 16:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D853093D7;
+	Fri, 31 Oct 2025 16:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tqvkS52U"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORVqpIt1"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6BF2FBE1D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABE0308F17
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761927140; cv=none; b=DzGrEjaCMnBRSJpQX+cudL3/W1QuQhfs3d4Xi1jfp/lKYVGW0g7wuIVdRAYH1zndxJfhEJuww9TNC6QHKyPDZi+gpyERrZxt9fTeeZCOccNnCRRZIGiqaAA7ZRaCkjmV9JPN5HujtIFIdDxR6FuGSMjdLcnfrseydVthUHJjabQ=
+	t=1761927212; cv=none; b=ZTHmdsU3kVt/ng/INNOHW+anyXw+9j1bVGMltdfrb7BWRoGQM6vLKukKZZQk9bzMIALH+ZgUTGFC4fcHMJ/r6tn6oeGDI5YtwbF4zzXKPnLoHSKq+p0SqCp6cznjO2yW5Ro76lq4UrymddCgR5Sf1IGNK2NCXRsHyVPTa2dt2UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761927140; c=relaxed/simple;
-	bh=EWOQMT+JKd/Top0TeRgZ/qc0hM77pODoeMMWw8NLJt4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=p4JYr+ZMr7DWclK7JsF7gTlrZ9kgvEfYMOCx8iPXa9PdqdiEYd+qpzzui/mlMgJm9VmK7DOQ0tpqkpNoaDrSaFeNukSyGnVqQHqCMtr3kQeGdIQtiqy/FyAHZIDJHlKIwb6jXoMlS/Lft4J9Y9cxt/oIE7ILB/dnrZmRbePQYZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tqvkS52U; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32edda89a37so2360381a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:12:18 -0700 (PDT)
+	s=arc-20240116; t=1761927212; c=relaxed/simple;
+	bh=9RdCBa4+4sRCwXB20xmXer78rbra+zl9rgLx/Ct8cus=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Yp6CteUiB+7RIgDsn+nODSuyZxTF0lSZMvesN0HLqHzxq+Iq65LXRBbYTXTWfoHz4G+gYb+e5MCJlIijfB4zL2A68kgDejsg/JwqXmOEuC2og7OEee3lWAByGkmLyLpcaO8fHER1KIslh9H4o7TICE6/h/LDfClZTsiVgLDDJQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORVqpIt1; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8801f4e308dso21163336d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:13:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761927138; x=1762531938; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+        d=gmail.com; s=20230601; t=1761927209; x=1762532009; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=T6/09WGAJAn8LAn4YiRmu+c8rt+gg84XRjAXswJ2pws=;
-        b=tqvkS52UhVTYJnE70FsP6akmSiHm21r47RmNU66pR8Ym+SmjyJo+5TkzuisIHRaOaY
-         sKmovpnU1E43d7/bQObMzAPy2L70B7K6TjN1YDdmzcQgZ67NviPlzB1K8JeE3vuRd9IW
-         GKvQWNLQ3ekL/+ag1+BGse94/043M0x5qGHbiJdPpf1qvb4nqGJjbmuCjsWFu2GoNPxL
-         Wwi0Xygu9IgnqMlWzQso6ttfECXOEAP7v/88J+6fV2bZKA9r8pNCHITzlcBas5y66z/X
-         ncofEw9uWVtIf9RA5u3BOZp5/d1pMZdbbcbH6UQpnMuQKpAE/XDAdAyn4IWjxeetDOy2
-         5rfA==
+        bh=2xkF6zKonfubE7Gp45g4295GunQ1O6+736QRxZvvn1w=;
+        b=ORVqpIt1GmcIbDzbHsdSmDxORXdoKcRKGqL25FqvEJ0kc1gcyxGte81BM55QZyD3K8
+         jpxCCykrkM1QDVeYAjXI173urdb+58NPBWLTLEO5Pz1MbSEeRB9S6yQ2ySIQQ/yq7Y/J
+         4AxNuLFo2kKv6WV5fpJWgWzRFSK3brUMrwC+KQHFSHngNzP4syeKmL71OwV5DLrmn+NN
+         hfEHCbi4697f1zdB008F/a4f7AosnFlGZE94aK0HsZkg0lKVv4Prchm+A8nfv7YWC58x
+         mno3k5J+/GiW8opwg3lhoOw+N54wfnguxHmaA7747ylFWiYX+5GYGE4bAgzjTbg/G1qG
+         y9zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761927138; x=1762531938;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1761927209; x=1762532009;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T6/09WGAJAn8LAn4YiRmu+c8rt+gg84XRjAXswJ2pws=;
-        b=MltQMLjYLJPTT0D2YZlPFga/nflugOs0rtNNsVxtx4T4mlNFrbovLagwJYfwiEKK+p
-         cJfN4lQAjrwLf4hGdmUV4DKbSGKe3Y9N/xUXVZv+lrqvT0ywYA7yi4nYDYQwBZ0l1Dx1
-         Yl1WPzdB6XObKwA2OSOJVq2awHztLV1eZ6DLFnmqQixUnaVPRW8uR5grh57vBpflDNet
-         dEG1XPOPchKS/pexFubLqpDyH3rS5HyJ5upWbkIEDz10Ql+c4fqZoMEO134ZhZLRHtKr
-         tSAV4EByyIUjW4rrpEH0kaGZnPjzGrRO5txRJJ2Gj3tDQF6Ed3/dZK621l+ejjIrvOMx
-         uYTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUO5d7X0Dx2zJIboCfjS6xNu9E1oVfvAmA+5SvEyYQJLtMyTzf/rQSlxBzGHfNoDB9BvXu3+VNJRINGbvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfGfLap/5Tqa42f6cHKWWBnj8PgN/5KzW08wZiezcquuRv0RyM
-	sdAY478w82AnhNWf2rOvEwmzsCdo2RjbcIeFSpz3mTKR8sPKmHMaPYbeNHe0QOl9rdjQeH5jyD6
-	AoJildQ27Uw==
-X-Google-Smtp-Source: AGHT+IG+P7uOq+vIIChbnCVPjpGYOpxHBV+jPCpjRvMqQmt1EZMkXmKHh9vsItuAjQGNAiX686IcQ7lE+bC+
-X-Received: from pjsf3.prod.google.com ([2002:a17:90a:6543:b0:33b:51fe:1a97])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:134e:b0:32e:3830:65d5
- with SMTP id 98e67ed59e1d1-3408308c65cmr4613491a91.36.1761927138475; Fri, 31
- Oct 2025 09:12:18 -0700 (PDT)
-Date: Fri, 31 Oct 2025 09:12:13 -0700
+        bh=2xkF6zKonfubE7Gp45g4295GunQ1O6+736QRxZvvn1w=;
+        b=iDqwKFHHA/3BiVmhAvzJB5HbPWsuBKYoOusjE//keqwq+xZdQMmC9wSSnI4fdy0sKN
+         Nk4ZGsfIM1CDVf9jOzzx7OL3Qqht6qxeYXjgswXgaOryiHRn1cV7/bdRDRd7PebMn+/4
+         s1NnPR4V0UDBZkwPDm56i/aqey1EmtTHPSNRBrR4WZwnZZlUrICyp64pHz+q6Wysckx5
+         re2mS5BBRFo2NgDvCfXHuiahMIZhtclMHjXqiGLGf2nar83usXhIzDwqYekwKymP+jgv
+         JIt2M3ALqzDs8XXSZTTcHkPcNZ6G5oJPrHjo8+jjPPr0BidtMTDuVWkeEx/JJsR61PMY
+         DY1Q==
+X-Gm-Message-State: AOJu0YxhJ4lJZBFEHTjy5fD9phpjZqj9LB2qv0Ak0xBNVh6GSgbGKsRe
+	0+3Md+rDoI+E77fJDkRGatQj6zWf7Cdo/0dVR1iRZzFmW9YMyv1e8qs9KyyrJVJnikVrFIO6+uK
+	SKdsXPTG+ntSDvPqCMP+6uJuksm8h2FI2RgjsTWo=
+X-Gm-Gg: ASbGncsl4e/1yOB6mi96gt31i0iQ/Jvgy3u/rCaPl051vjlzd6Ybz/u4QuAlIZWPGhh
+	QarpSGzE6r5RY4z9RdGAmsjEMugGisE/7bk9wGX9a09+q/TvS794poXTzm/TUOyankEcJrvQ9sn
+	B/g2xYnazDcjBXyxynZtTf2XnThgvRZ7izTs03u1daCye0G5T/FfiACpZnwrg2+9DEydxtJl35v
+	JQahHsGt2Wr80jb1NPiD3mfI4WN+RM1zlDFrRoUjg/WWRiFWT6eePdk6TOARkfm1wwE26YSZa19
+	uwdEbTi4ejSB4TPWgwzhkHPfQywwwhua+w2qwekXY5OnRIy7sxSpzBI44xSOZ/AmxaneOsYgZXV
+	xhp46tA9E7USPKUrnQPemMs/nA0tUwlVRVKzFzVnnjqH0AJsW1TXjVtvFjk6a+FO0Z/SyAil/mZ
+	wh46Ebvh248g==
+X-Google-Smtp-Source: AGHT+IE52OHr9noC3oLJ1WckJWhHadkdiT7DbUmXmXtxox11pJWlk5r6sZIzlJMLBkAH7DXTCdcA9fcO7XZllyQdAeQ=
+X-Received: by 2002:a05:6214:20ac:b0:880:415d:a9ff with SMTP id
+ 6a1803df08f44-880415dacc8mr18734106d6.37.1761927209173; Fri, 31 Oct 2025
+ 09:13:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251031161213.1452901-1-irogers@google.com>
-Subject: [PATCH v3] perf s390-sample-raw: Cache counter names
-From: Ian Rogers <irogers@google.com>
-To: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 31 Oct 2025 11:13:15 -0500
+X-Gm-Features: AWmQ_blIddoJEuR4b-Bb6q2Sqpv8Ry0bX3Y62WreUtUF4tvYBQPX1WS7N1E64rg
+Message-ID: <CAH2r5mvmJJAp1AX2Sda3ungmu7hcaYje2NYS6YtngC4F67PHeA@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Searching all event names is slower now that legacy names are
-included. Add a cache to avoid long iterative searches.
+Please pull the following changes since commit
+dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
 
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Closes: https://lore.kernel.org/linux-perf-users/09943f4f-516c-4b93-877c-e4a64ed61d38@linux.ibm.com/
-Signed-off-by: Ian Rogers <irogers@google.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
----
-v3: Fix minor comment typo, add Thomas' tag.
-v2: Small tweak to the cache_key, just make it match the wanted event value.
----
- tools/perf/util/s390-sample-raw.c | 56 ++++++++++++++++++++++++++++---
- 1 file changed, 51 insertions(+), 5 deletions(-)
+  Linux 6.18-rc3 (2025-10-26 15:59:49 -0700)
 
-diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
-index 335217bb532b..4f269ea7c93b 100644
---- a/tools/perf/util/s390-sample-raw.c
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -19,12 +19,14 @@
- 
- #include <sys/stat.h>
- #include <linux/compiler.h>
-+#include <linux/err.h>
- #include <asm/byteorder.h>
- 
- #include "debug.h"
- #include "session.h"
- #include "evlist.h"
- #include "color.h"
-+#include "hashmap.h"
- #include "sample-raw.h"
- #include "s390-cpumcf-kernel.h"
- #include "util/pmu.h"
-@@ -132,8 +134,8 @@ static int get_counterset_start(int setnr)
- }
- 
- struct get_counter_name_data {
--	int wanted;
--	char *result;
-+	long wanted;
-+	const char *result;
- };
- 
- static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
-@@ -151,12 +153,22 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
- 
- 	rc = sscanf(event_str, "event=%x", &event_nr);
- 	if (rc == 1 && event_nr == data->wanted) {
--		data->result = strdup(info->name);
-+		data->result = info->name;
- 		return 1; /* Terminate the search. */
- 	}
- 	return 0;
- }
- 
-+static size_t get_counter_name_hash_fn(long key, void *ctx __maybe_unused)
-+{
-+	return key;
-+}
-+
-+static bool get_counter_name_hashmap_equal_fn(long key1, long key2, void *ctx __maybe_unused)
-+{
-+	return key1 == key2;
-+}
-+
- /* Scan the PMU and extract the logical name of a counter from the event. Input
-  * is the counter set and counter number with in the set. Construct the event
-  * number and use this as key. If they match return the name of this counter.
-@@ -164,17 +176,51 @@ static int get_counter_name_callback(void *vdata, struct pmu_event_info *info)
-  */
- static char *get_counter_name(int set, int nr, struct perf_pmu *pmu)
- {
-+	static struct hashmap *cache;
-+	static struct perf_pmu *cache_pmu;
-+	long cache_key = get_counterset_start(set) + nr;
- 	struct get_counter_name_data data = {
--		.wanted = get_counterset_start(set) + nr,
-+		.wanted = cache_key,
- 		.result = NULL,
- 	};
-+	char *result = NULL;
- 
- 	if (!pmu)
- 		return NULL;
- 
-+	if (cache_pmu == pmu && hashmap__find(cache, cache_key, &result))
-+		return strdup(result);
-+
- 	perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/ true,
- 				 &data, get_counter_name_callback);
--	return data.result;
-+
-+	if (data.result)
-+		result = strdup(data.result);
-+
-+	if (cache_pmu == NULL) {
-+		struct hashmap *tmp = hashmap__new(get_counter_name_hash_fn,
-+						   get_counter_name_hashmap_equal_fn,
-+						   /*ctx=*/NULL);
-+
-+		if (!IS_ERR(cache)) {
-+			cache = tmp;
-+			cache_pmu = pmu;
-+		}
-+	}
-+
-+	if (cache_pmu == pmu) {
-+		char *old_value = NULL, *new_value = strdup(result);
-+
-+		if (new_value) {
-+			hashmap__set(cache, cache_key, new_value, /*old_key=*/NULL, &old_value);
-+			/*
-+			 * Free in case of a race, but resizing would be broken
-+			 * in that case.
-+			 */
-+			free(old_value);
-+		}
-+	}
-+	return result;
- }
- 
- static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
+are available in the Git repository at:
+
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.18-rc3-smb-client-fixes
+
+for you to fetch changes up to 895ad6f7083b0c9f1902b23b84136298a492cbeb:
+
+  smb: client: call smbd_destroy() in the same splace as
+kernel_sock_shutdown()/sock_release() (2025-10-29 20:13:13 -0500)
+
+----------------------------------------------------------------
+Four smb client fixes
+- Fix potential UAF in statfs
+- DFS fix for expired referrals
+- Fix minor modinfo typo
+- small improvement to reconnect for smbdirect
+----------------------------------------------------------------
+Henrique Carvalho (1):
+      smb: client: fix potential cfid UAF in smb2_query_info_compound
+
+Paulo Alcantara (1):
+      smb: client: handle lack of IPC in dfs_cache_refresh()
+
+Stefan Metzmacher (1):
+      smb: client: call smbd_destroy() in the same splace as
+kernel_sock_shutdown()/sock_release()
+
+Steve French (1):
+      cifs: fix typo in enable_gcm_256 module parameter
+
+ fs/smb/client/cifsfs.c    |  2 +-
+ fs/smb/client/cifsproto.h |  2 ++
+ fs/smb/client/connect.c   | 46 ++++++++++++++++-----------------------
+ fs/smb/client/dfs_cache.c | 55 ++++++++++++++++++++++++++++++++++++++++-------
+ fs/smb/client/smb2ops.c   |  3 ++-
+ 5 files changed, 71 insertions(+), 37 deletions(-)
+
+
 -- 
-2.51.1.930.gacf6e81ea2-goog
+Thanks,
 
+Steve
 
